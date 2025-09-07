@@ -1,0 +1,162 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/pipeline_automation_app/app/node_modules/.prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Repository {
+  id          String   @id @default(cuid())
+  name        String
+  owner       String
+  url         String
+  branch      String   @default("main")
+  token       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  pipelines   Pipeline[]
+  
+  @@unique([owner, name])
+  @@map("repositories")
+}
+
+model Pipeline {
+  id            String        @id @default(cuid())
+  name          String
+  type          PipelineType
+  description   String?
+  config        Json          // Store pipeline configuration (YAML, DMIAC steps, etc.)
+  asciiVisualization String?   // For DMIAC workflows
+  markdownExport String?      // Markdown companion for DMIAC
+  isTemplate    Boolean       @default(false)
+  isActive      Boolean       @default(true)
+  repositoryId  String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  repository    Repository?   @relation(fields: [repositoryId], references: [id])
+  executions    PipelineExecution[]
+  feedback      PipelineFeedback[]
+  
+  @@map("pipelines")
+}
+
+model PipelineExecution {
+  id          String              @id @default(cuid())
+  pipelineId  String
+  status      ExecutionStatus
+  triggerType TriggerType
+  startedAt   DateTime           @default(now())
+  completedAt DateTime?
+  logs        String?
+  output      Json?
+  errorMsg    String?
+  
+  pipeline    Pipeline           @relation(fields: [pipelineId], references: [id])
+  
+  @@map("pipeline_executions")
+}
+
+model Agent {
+  id          String      @id @default(cuid())
+  name        String
+  type        String
+  status      AgentStatus
+  endpoint    String?
+  version     String?
+  deployedAt  DateTime?
+  lastSeen    DateTime?
+  config      Json?
+  
+  monitoring  AgentMonitoring[]
+  
+  @@map("agents")
+}
+
+model AgentMonitoring {
+  id          String    @id @default(cuid())
+  agentId     String
+  timestamp   DateTime  @default(now())
+  status      String
+  cpuUsage    Float?
+  memoryUsage Float?
+  errorCount  Int       @default(0)
+  errors      Json?     // Store error details
+  metrics     Json?     // Store additional metrics
+  
+  agent       Agent     @relation(fields: [agentId], references: [id])
+  
+  @@map("agent_monitoring")
+}
+
+model PipelineFeedback {
+  id          String       @id @default(cuid())
+  pipelineId  String
+  userId      String?      // Optional user identification
+  rating      Int?         // 1-5 rating
+  comment     String?
+  category    FeedbackCategory
+  isResolved  Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  
+  pipeline    Pipeline     @relation(fields: [pipelineId], references: [id])
+  
+  @@map("pipeline_feedback")
+}
+
+model RefactorTemplate {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  category    String
+  template    Json     // Store template configuration
+  isBuiltIn   Boolean  @default(false)
+  usageCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("refactor_templates")
+}
+
+enum PipelineType {
+  CI_CD
+  DMIAC
+  REFACTOR
+  COMBINED
+}
+
+enum ExecutionStatus {
+  QUEUED
+  RUNNING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+enum TriggerType {
+  MANUAL
+  WEBHOOK
+  SCHEDULED
+  AUTO
+}
+
+enum AgentStatus {
+  ACTIVE
+  INACTIVE
+  ERROR
+  DEPLOYING
+}
+
+enum FeedbackCategory {
+  BUG
+  FEATURE_REQUEST
+  PERFORMANCE
+  USABILITY
+  OTHER
+}
