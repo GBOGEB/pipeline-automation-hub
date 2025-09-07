@@ -14,7 +14,15 @@ import {
   Zap,
   FileText,
   Play,
-  Clock
+  Clock,
+  Github,
+  User,
+  Database,
+  ExternalLink,
+  Rocket,
+  Shield,
+  Link,
+  Info
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -96,23 +104,101 @@ export function Dashboard() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Pipeline Automation Hub</h1>
-          <p className="text-muted-foreground">
-            Orchestrate your CI/CD, DMIAC workflows, and agent monitoring from one central location
-          </p>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Pipeline Automation Hub</h1>
+            <p className="text-muted-foreground">
+              Orchestrate your CI/CD, DMIAC workflows, and agent monitoring from one central location
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="flex items-center gap-1 bg-yellow-50 border-yellow-200">
+              <Info className="h-3 w-3 text-yellow-600" />
+              Demo Mode
+            </Badge>
+            <Badge variant="outline" className="flex items-center gap-1">
+              <Activity className="h-3 w-3" />
+              System Active
+            </Badge>
+            <Button 
+              size="sm" 
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={() => {
+                if (window.confirm('Deploy to production environment?')) {
+                  alert('Deployment initiated! Check the Executions tab for progress.');
+                }
+              }}
+            >
+              <Rocket className="h-4 w-4 mr-2" />
+              Deploy Live
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Badge variant="outline" className="flex items-center gap-1">
-            <Activity className="h-3 w-3" />
-            System Active
-          </Badge>
-          <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-            <Zap className="h-4 w-4 mr-2" />
-            Quick Start
-          </Button>
-        </div>
+
+        {/* External Services Section */}
+        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <ExternalLink className="h-5 w-5 text-blue-600" />
+              External Service Integrations
+            </CardTitle>
+            <CardDescription>
+              Connect your external services and launch integrated workflows
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white h-auto py-3 px-4 flex flex-col items-center gap-2"
+                onClick={() => window.open('https://github.com', '_blank')}
+              >
+                <Github className="h-5 w-5" />
+                <span className="text-xs">GitHub</span>
+              </Button>
+              
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white h-auto py-3 px-4 flex flex-col items-center gap-2"
+                onClick={() => window.open('/api/user/profile', '_blank')}
+              >
+                <User className="h-5 w-5" />
+                <span className="text-xs">Local User</span>
+              </Button>
+              
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white h-auto py-3 px-4 flex flex-col items-center gap-2"
+                onClick={() => window.open('https://gitlab.com', '_blank')}
+              >
+                <GitBranch className="h-5 w-5" />
+                <span className="text-xs">GitLab</span>
+              </Button>
+              
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white h-auto py-3 px-4 flex flex-col items-center gap-2"
+                onClick={() => window.open('/api/database/admin', '_blank')}
+              >
+                <Database className="h-5 w-5" />
+                <span className="text-xs">Database</span>
+              </Button>
+              
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white h-auto py-3 px-4 flex flex-col items-center gap-2"
+                onClick={() => window.open('https://bitbucket.org', '_blank')}
+              >
+                <Link className="h-5 w-5" />
+                <span className="text-xs">Bitbucket</span>
+              </Button>
+              
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white h-auto py-3 px-4 flex flex-col items-center gap-2"
+                onClick={() => window.open('/api/security/vault', '_blank')}
+              >
+                <Shield className="h-5 w-5" />
+                <span className="text-xs">Vault</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Stats Grid */}
@@ -134,6 +220,9 @@ export function Dashboard() {
               <CardContent>
                 <div className="text-2xl font-bold">
                   {loading ? '...' : stat.value.toLocaleString()}
+                  <Badge variant="outline" className="ml-2 text-xs text-orange-600 border-orange-200">
+                    Demo
+                  </Badge>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {stat.change}
@@ -182,7 +271,12 @@ export function Dashboard() {
       >
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList className="grid w-full lg:grid-cols-6">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger 
+              value="overview"
+              onClick={() => console.log('Overview tab clicked')}
+            >
+              Overview
+            </TabsTrigger>
             <TabsTrigger value="repositories">Repositories</TabsTrigger>
             <TabsTrigger value="pipelines">Pipelines</TabsTrigger>
             <TabsTrigger value="executions">Executions</TabsTrigger>
@@ -197,21 +291,33 @@ export function Dashboard() {
                   <CardTitle className="flex items-center gap-2">
                     <FileText className="h-5 w-5 text-blue-500" />
                     Recent Activity
+                    <Badge variant="outline" className="text-xs text-orange-600 border-orange-200">
+                      Demo Data
+                    </Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
-                      <span>DMIAC Quality Pipeline</span>
-                      <Badge variant="secondary">Running</Badge>
+                      <div>
+                        <div className="font-medium">DMIAC Quality Pipeline</div>
+                        <div className="text-xs text-muted-foreground">GitHub • repo/quality-control</div>
+                      </div>
+                      <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">Running</Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span>CI/CD Full Stack</span>
-                      <Badge variant="outline" className="text-green-600">Success</Badge>
+                      <div>
+                        <div className="font-medium">CI/CD Full Stack</div>
+                        <div className="text-xs text-muted-foreground">GitHub • repo/web-app</div>
+                      </div>
+                      <Badge variant="outline" className="text-green-600 border-green-200">Success</Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span>Refactor Template Applied</span>
-                      <Badge variant="secondary">Completed</Badge>
+                      <div>
+                        <div className="font-medium">Refactor Template Applied</div>
+                        <div className="text-xs text-muted-foreground">Local • code-improvement</div>
+                      </div>
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-700">Completed</Badge>
                     </div>
                   </div>
                 </CardContent>
@@ -222,17 +328,33 @@ export function Dashboard() {
                   <CardTitle className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-orange-500" />
                     Upcoming Tasks
+                    <Badge variant="outline" className="text-xs text-orange-600 border-orange-200">
+                      Demo Data
+                    </Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <div className="text-sm">
                       <div className="font-medium">Deploy to Production</div>
-                      <div className="text-muted-foreground">Scheduled in 2 hours</div>
+                      <div className="text-muted-foreground flex items-center gap-2">
+                        <Clock className="h-3 w-3" />
+                        Scheduled in 2 hours
+                      </div>
                     </div>
                     <div className="text-sm">
                       <div className="font-medium">Weekly DMIAC Review</div>
-                      <div className="text-muted-foreground">Tomorrow at 9 AM</div>
+                      <div className="text-muted-foreground flex items-center gap-2">
+                        <Clock className="h-3 w-3" />
+                        Tomorrow at 9 AM
+                      </div>
+                    </div>
+                    <div className="text-sm">
+                      <div className="font-medium">Agent Health Check</div>
+                      <div className="text-muted-foreground flex items-center gap-2">
+                        <Clock className="h-3 w-3" />
+                        Every 30 minutes
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -243,21 +365,33 @@ export function Dashboard() {
                   <CardTitle className="flex items-center gap-2">
                     <TestTube className="h-5 w-5 text-purple-500" />
                     Testing Status
+                    <Badge variant="outline" className="text-xs text-orange-600 border-orange-200">
+                      Demo Data
+                    </Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
-                      <span>Unit Tests</span>
-                      <Badge variant="outline" className="text-green-600">Passing</Badge>
+                      <div>
+                        <div className="font-medium">Unit Tests</div>
+                        <div className="text-xs text-muted-foreground">847 tests • 2.3s</div>
+                      </div>
+                      <Badge variant="outline" className="text-green-600 border-green-200">Passing</Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span>Integration Tests</span>
-                      <Badge variant="outline" className="text-green-600">Passing</Badge>
+                      <div>
+                        <div className="font-medium">Integration Tests</div>
+                        <div className="text-xs text-muted-foreground">156 tests • 45s</div>
+                      </div>
+                      <Badge variant="outline" className="text-green-600 border-green-200">Passing</Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span>E2E Tests</span>
-                      <Badge variant="secondary">Running</Badge>
+                      <div>
+                        <div className="font-medium">E2E Tests</div>
+                        <div className="text-xs text-muted-foreground">23 tests • running...</div>
+                      </div>
+                      <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">Running</Badge>
                     </div>
                   </div>
                 </CardContent>
