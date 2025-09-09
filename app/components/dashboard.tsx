@@ -377,7 +377,7 @@ export function Dashboard() {
         transition={{ delay: 0.6 }}
       >
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList className="grid w-full lg:grid-cols-8">
+          <TabsList className="grid w-full lg:grid-cols-9">
             <TabsTrigger 
               value="overview"
               onClick={() => console.log('Overview tab clicked')}
@@ -387,6 +387,7 @@ export function Dashboard() {
             <TabsTrigger value="repositories">Repositories</TabsTrigger>
             <TabsTrigger value="pipelines">Pipelines</TabsTrigger>
             <TabsTrigger value="dmiac">DMIAC</TabsTrigger>
+            <TabsTrigger value="document-engines">Doc Engines</TabsTrigger>
             <TabsTrigger value="io-dashboard">I/O Files</TabsTrigger>
             <TabsTrigger value="test-campaign">Test Campaign</TabsTrigger>
             <TabsTrigger value="executions">Executions</TabsTrigger>
@@ -753,6 +754,430 @@ export function Dashboard() {
                   </CardContent>
                 </Card>
               </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="document-engines">
+            <div className="space-y-6">
+              {/* Document Processing Engines Header */}
+              <Card className="bg-gradient-to-r from-orange-50 to-red-50 border-orange-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileType className="h-5 w-5 text-orange-600" />
+                    Document Processing Engines
+                    <Badge variant="outline" className="text-xs text-orange-600 border-orange-200">
+                      MASTER_INPUT
+                    </Badge>
+                  </CardTitle>
+                  <CardDescription>
+                    Specialized engines for PPT, PDF processing, metadata extraction, and Markdown digital twin generation
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                      <FileType className="h-8 w-8 text-orange-600" />
+                      <div>
+                        <div className="font-semibold text-lg">23</div>
+                        <div className="text-sm text-muted-foreground">PPT Files</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                      <FileDiff className="h-8 w-8 text-red-600" />
+                      <div>
+                        <div className="font-semibold text-lg">18</div>
+                        <div className="text-sm text-muted-foreground">PDF Generated</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                      <FileText className="h-8 w-8 text-blue-600" />
+                      <div>
+                        <div className="font-semibold text-lg">23</div>
+                        <div className="text-sm text-muted-foreground">MD Twins</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                      <Hash className="h-8 w-8 text-purple-600" />
+                      <div>
+                        <div className="font-semibold text-lg">456</div>
+                        <div className="text-sm text-muted-foreground">Metadata Items</div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Processing Engines */}
+              <div className="grid gap-6 md:grid-cols-3">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileType className="h-5 w-5 text-orange-600" />
+                      PPT Engine
+                    </CardTitle>
+                    <CardDescription>
+                      PowerPoint processing and conversion engine
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="p-2 bg-orange-50 rounded-lg">
+                        <div className="font-medium text-sm mb-2">Active Files Processing:</div>
+                        <div className="space-y-1 text-xs">
+                          <div>• QSYS - Architecture for MINERVA.pptx</div>
+                          <div>• Values_Commitments_v1 2025-06-05.pptx</div>
+                          <div>• QPLANT_GrantingPhase_Status.pptx</div>
+                          <div>• QSYS Naming Conventions.pptx</div>
+                          <div>• Path to PED compliance.pptx</div>
+                        </div>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Status: Processing 23 files → PDF conversion
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="bg-orange-600 h-2 rounded-full" style={{width: '78%'}}></div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">78% Complete</div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileDiff className="h-5 w-5 text-red-600" />
+                      PDF Engine
+                    </CardTitle>
+                    <CardDescription>
+                      PDF processing and parsing engine
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="p-2 bg-red-50 rounded-lg">
+                        <div className="font-medium text-sm mb-2">PDF Conversions:</div>
+                        <div className="space-y-1 text-xs">
+                          <div>✓ QSYS - He Recovery_fontnorm.pdf</div>
+                          <div>✓ redrawn_figure5_fontnorm.pdf</div>
+                          <div>✓ QSYS Buildings Overview.pdf</div>
+                          <div>🔄 QSYS Process and Utilities.pdf</div>
+                          <div>⏳ QSYS - Installation Overview.pdf</div>
+                        </div>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Status: Converting PPT → PDF for parsing
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="bg-red-600 h-2 rounded-full" style={{width: '65%'}}></div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">18/23 Converted</div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-blue-600" />
+                      Markdown Engine
+                    </CardTitle>
+                    <CardDescription>
+                      Digital twin generation from PPT/PDF inputs
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="p-2 bg-blue-50 rounded-lg">
+                        <div className="font-medium text-sm mb-2">Digital Twins Generated:</div>
+                        <div className="space-y-1 text-xs">
+                          <div>✓ QSYS_Architecture_MINERVA.md</div>
+                          <div>✓ Values_Commitments_v1.md</div>
+                          <div>✓ QSYS_Naming_Conventions.md</div>
+                          <div>🔄 QPLANT_Buildings.md</div>
+                          <div>⏳ Path_PED_compliance_Cryo.md</div>
+                        </div>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Status: Generating Markdown digital twins
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="bg-blue-600 h-2 rounded-full" style={{width: '52%'}}></div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">12/23 Generated</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Master Input Files Discovery */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FolderOpen className="h-5 w-5 text-purple-600" />
+                    Master Input Files Discovery
+                    <Badge variant="outline" className="text-xs text-purple-600 border-purple-200">
+                      FREE STANDING
+                    </Badge>
+                  </CardTitle>
+                  <CardDescription>
+                    PowerPoint and PDF files in ROOT/Master_Input folder (not allocated to subfolders)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* File List with Ranking */}
+                    <div className="grid gap-3">
+                      <div className="flex items-center justify-between p-3 border rounded-lg bg-gradient-to-r from-orange-50 to-yellow-50">
+                        <div className="flex items-center gap-3">
+                          <Badge variant="secondary" className="bg-orange-100 text-orange-700 font-mono text-xs">RANK-001</Badge>
+                          <FileType className="h-4 w-4 text-orange-600" />
+                          <div>
+                            <div className="font-medium text-sm">QSYS - Architecture for MINERVA.pptx</div>
+                            <div className="text-xs text-muted-foreground">Category: SYSTEM_ARCHITECTURE | Size: 2.4MB | Slides: 24</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-green-600 border-green-200 text-xs">HIGH PRIORITY</Badge>
+                          <Badge variant="outline" className="text-blue-600 border-blue-200 text-xs">SCK CEN/0245</Badge>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <Badge variant="secondary" className="bg-orange-100 text-orange-700 font-mono text-xs">RANK-002</Badge>
+                          <FileType className="h-4 w-4 text-orange-600" />
+                          <div>
+                            <div className="font-medium text-sm">Values_Commitments_v1 2025-06-05 19_04_08.pptx</div>
+                            <div className="text-xs text-muted-foreground">Category: VALUES_POLICY | Size: 1.8MB | Slides: 18</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-green-600 border-green-200 text-xs">HIGH PRIORITY</Badge>
+                          <Badge variant="outline" className="text-blue-600 border-blue-200 text-xs">SCK CEN/0156</Badge>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <Badge variant="secondary" className="bg-orange-100 text-orange-700 font-mono text-xs">RANK-003</Badge>
+                          <FileType className="h-4 w-4 text-orange-600" />
+                          <div>
+                            <div className="font-medium text-sm">QPLANT_GrantingPhase_Status.pptx</div>
+                            <div className="text-xs text-muted-foreground">Category: PROJECT_STATUS | Size: 3.2MB | Slides: 32</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-orange-600 border-orange-200 text-xs">MEDIUM PRIORITY</Badge>
+                          <Badge variant="outline" className="text-blue-600 border-blue-200 text-xs">SCK CEN/0789</Badge>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <Badge variant="secondary" className="bg-orange-100 text-orange-700 font-mono text-xs">RANK-004</Badge>
+                          <FileType className="h-4 w-4 text-orange-600" />
+                          <div>
+                            <div className="font-medium text-sm">QSYS Naming Conventions.pptx</div>
+                            <div className="text-xs text-muted-foreground">Category: STANDARDS | Size: 1.2MB | Slides: 15</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-green-600 border-green-200 text-xs">HIGH PRIORITY</Badge>
+                          <Badge variant="outline" className="text-blue-600 border-blue-200 text-xs">SCK CEN/0334</Badge>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <Badge variant="secondary" className="bg-orange-100 text-orange-700 font-mono text-xs">RANK-005</Badge>
+                          <FileType className="h-4 w-4 text-orange-600" />
+                          <div>
+                            <div className="font-medium text-sm">Path to PED compliance of Cryo systems.pptx</div>
+                            <div className="text-xs text-muted-foreground">Category: COMPLIANCE | Size: 2.1MB | Slides: 28</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-red-600 border-red-200 text-xs">CRITICAL</Badge>
+                          <Badge variant="outline" className="text-blue-600 border-blue-200 text-xs">SCK CEN/0567</Badge>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-center">
+                      <Button variant="outline" className="text-xs">
+                        View All 23 Files →
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Task Agents & Processing Status */}
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Bot className="h-5 w-5 text-indigo-600" />
+                      Task Agents Discovery
+                    </CardTitle>
+                    <CardDescription>
+                      Specialized agents for document processing and analysis
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-2 bg-indigo-50 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Bot className="h-4 w-4 text-indigo-600" />
+                          <span className="text-sm font-medium">PPT_Parser_Agent</span>
+                        </div>
+                        <div className="text-xs">
+                          <Badge variant="secondary" className="bg-green-100 text-green-700">Active</Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-indigo-50 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Bot className="h-4 w-4 text-indigo-600" />
+                          <span className="text-sm font-medium">PDF_Extraction_Agent</span>
+                        </div>
+                        <div className="text-xs">
+                          <Badge variant="secondary" className="bg-green-100 text-green-700">Active</Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-indigo-50 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Bot className="h-4 w-4 text-indigo-600" />
+                          <span className="text-sm font-medium">Metadata_Extraction_Agent</span>
+                        </div>
+                        <div className="text-xs">
+                          <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">Processing</Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-indigo-50 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Bot className="h-4 w-4 text-indigo-600" />
+                          <span className="text-sm font-medium">Cross_Reference_Agent</span>
+                        </div>
+                        <div className="text-xs">
+                          <Badge variant="outline" className="text-blue-600 border-blue-200">Indexing</Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-indigo-50 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Bot className="h-4 w-4 text-indigo-600" />
+                          <span className="text-sm font-medium">Visual_Artifact_Agent</span>
+                        </div>
+                        <div className="text-xs">
+                          <Badge variant="secondary" className="bg-purple-100 text-purple-700">Scanning</Badge>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Hash className="h-5 w-5 text-green-600" />
+                      Cross-Reference Extraction
+                    </CardTitle>
+                    <CardDescription>
+                      SCK CEN references and numbering system analysis
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="p-3 border rounded-lg bg-green-50">
+                        <div className="font-medium text-sm mb-2">Extracted References:</div>
+                        <div className="space-y-1 text-xs">
+                          <div>• SCK CEN/0245 - MINERVA Architecture</div>
+                          <div>• SCK CEN/0156 - Values & Commitments</div>
+                          <div>• SCK CEN/0789 - QPLANT Status</div>
+                          <div>• SCK CEN/0334 - Naming Conventions</div>
+                          <div>• SCK CEN/0567 - PED Compliance</div>
+                          <div>• SCK CEN/0892 - He Recovery System</div>
+                          <div>• SCK CEN/0445 - IADR Overview</div>
+                          <div>• SCK CEN/0623 - Installation Process</div>
+                        </div>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Global Reference List: 8 unique numbers extracted
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Status: Building cross-reference index for navigation
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Metadata & Visual Artifacts */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Eye className="h-5 w-5 text-purple-600" />
+                    Visual Artifacts & Metadata Extraction
+                  </CardTitle>
+                  <CardDescription>
+                    Comprehensive analysis of slides, diagrams, tables, and visual content
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <h4 className="font-medium text-sm mb-3">Extracted Visual Content:</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                          <span>System Architecture Diagrams</span>
+                          <Badge variant="outline" className="text-xs">12 found</Badge>
+                        </div>
+                        <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                          <span>Process Flow Charts</span>
+                          <Badge variant="outline" className="text-xs">8 found</Badge>
+                        </div>
+                        <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                          <span>Technical Tables</span>
+                          <Badge variant="outline" className="text-xs">24 found</Badge>
+                        </div>
+                        <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                          <span>Code Snippets</span>
+                          <Badge variant="outline" className="text-xs">6 found</Badge>
+                        </div>
+                        <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                          <span>Screenshots/Images</span>
+                          <Badge variant="outline" className="text-xs">18 found</Badge>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-medium text-sm mb-3">Metadata Categories:</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                          <span>Document Properties</span>
+                          <Badge variant="outline" className="text-xs">23 files</Badge>
+                        </div>
+                        <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                          <span>Author Information</span>
+                          <Badge variant="outline" className="text-xs">Complete</Badge>
+                        </div>
+                        <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                          <span>Creation/Modified Dates</span>
+                          <Badge variant="outline" className="text-xs">Tracked</Badge>
+                        </div>
+                        <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                          <span>Content Categories</span>
+                          <Badge variant="outline" className="text-xs">7 types</Badge>
+                        </div>
+                        <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                          <span>Priority Rankings</span>
+                          <Badge variant="outline" className="text-xs">Assigned</Badge>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
 
