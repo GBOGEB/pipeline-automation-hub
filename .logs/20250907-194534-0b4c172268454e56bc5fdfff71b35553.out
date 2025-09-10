@@ -1,0 +1,38 @@
+  ▲ Next.js 14.2.28
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/4) ...
+   Generating static pages (1/4) 
+   Generating static pages (2/4) 
+   Generating static pages (3/4) 
+ ✓ Generating static pages (4/4)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    84.3 kB         171 kB
+├ ○ /_not-found                          872 B            88 kB
+├ ƒ /api/agent-monitoring                0 B                0 B
+├ ƒ /api/agents                          0 B                0 B
+├ ƒ /api/dashboard/stats                 0 B                0 B
+├ ƒ /api/pipeline-executions             0 B                0 B
+├ ƒ /api/pipelines                       0 B                0 B
+├ ƒ /api/refactor-templates              0 B                0 B
+└ ƒ /api/repositories                    0 B                0 B
++ First Load JS shared by all            87.2 kB
+  ├ chunks/156-534f698a002d2e2f.js       31.7 kB
+  ├ chunks/ceb5afef-99e02eb1f0bc6cb1.js  53.6 kB
+  └ other shared chunks (total)          1.86 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+exit_code=0
