@@ -1,0 +1,86 @@
+
+name: 📄 Document Processing Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      process_type:
+        description: 'Processing type to run'
+        required: true
+        default: 'full_pipeline'
+        type: choice
+        options:
+          - full_pipeline
+          - ppt_only
+          - recursive_build_only
+          - metadata_extraction
+  push:
+    paths:
+      - 'app/public/master_input/**'
+      - 'scripts/**'
+
+jobs:
+  document-processing:
+    name: 🔄 Run Document Processing
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install Processing Dependencies
+        run: |
+          pip install pathlib datetime hashlib json re
+          echo "Processing dependencies installed"
+
+      - name: 🔄 Run Full Processing Pipeline
+        if: github.event.inputs.process_type == 'full_pipeline' || github.event.inputs.process_type == ''
+        run: |
+          cd scripts
+          echo "🚀 Starting complete document processing pipeline..."
+          python run_processing.py
+          python recursive_build.py
+          echo "✅ Complete pipeline processing finished!"
+
+      - name: 📄 PPT Processing Only
+        if: github.event.inputs.process_type == 'ppt_only'
+        run: |
+          cd scripts  
+          echo "🔄 Running PowerPoint processing only..."
+          python ppt_processor.py
+          echo "✅ PPT processing completed!"
+
+      - name: 🏗️ Recursive Build Only
+        if: github.event.inputs.process_type == 'recursive_build_only'
+        run: |
+          cd scripts
+          echo "🏗️ Running recursive build system..."
+          python recursive_build.py
+          echo "✅ Recursive build completed!"
+
+      - name: 📊 Generate Processing Report
+        run: |
+          echo "=== 📊 Processing Report ==="
+          echo "⏰ Processing completed: $(date)"
+          echo "📁 Digital twins: $(find app/public/outputs/digital_twins -name "*.md" | wc -l 2>/dev/null || echo 'N/A')"
+          echo "📊 Metadata files: $(find app/public/outputs/metadata -name "*.json" | wc -l 2>/dev/null || echo 'N/A')"
+          echo "🔗 Cross-references: $(find app/public/outputs/cross_references -name "*.json" | wc -l 2>/dev/null || echo 'N/A')"
+          echo "🏗️ Recursive build: $(ls app/public/outputs/recursive_build/ 2>/dev/null | wc -l || echo 'N/A') files"
+
+      - name: 💾 Commit Processed Files
+        if: github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add app/public/outputs/
+          git diff --staged --quiet || git commit -m "🤖 Automated document processing
+
+          - Updated digital twins and metadata
+          - Refreshed cross-reference mappings  
+          - Rebuilt recursive navigation system
+          - Processing completed: $(date)"
+          git push || echo "No changes to push"
