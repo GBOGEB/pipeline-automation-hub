@@ -1,0 +1,1094 @@
+
+# Pipeline Diagrams and System Architecture
+
+## Executive Summary
+
+This document provides comprehensive ASCII and Mermaid diagrams illustrating the Conversation_track project's pipeline flows, system architecture, interfaces, and integration patterns. The diagrams showcase the purpose, goals, and main pipeline flows with detailed links to KEB (Knowledge Exchange Bus) components.
+
+## 1. System Architecture Overview
+
+### 1.1 High-Level Architecture
+
+```mermaid
+graph TB
+    subgraph "User Interface Layer"
+        UI[Web Interface]
+        API[REST API]
+        CLI[Command Line Interface]
+        WEBHOOK[Webhook Endpoints]
+    end
+    
+    subgraph "Conversation Track Core"
+        subgraph "Orchestration Engine"
+            MCB[MCB Orchestrator]
+            SCHEDULER[Task Scheduler]
+            ROUTER[Message Router]
+        end
+        
+        subgraph "AI Agent Layer"
+            CONV_AGENT[Conversation Agent]
+            TECH_AGENT[Technical Agent]
+            ORCH_AGENT[Orchestration Agent]
+            REVIEW_AGENT[Review Agent]
+        end
+        
+        subgraph "Processing Layer"
+            DMAIC[DMAIC Processor]
+            TASK_PROC[Task Processor]
+            CONTEXT_MGR[Context Manager]
+            HANDOVER[Handover Manager]
+        end
+    end
+    
+    subgraph "Knowledge Exchange Bus (KEB)"
+        KEB_CORE[KEB Core]
+        KEB_STORE[Knowledge Store]
+        KEB_INDEX[Search Index]
+        KEB_CACHE[Cache Layer]
+    end
+    
+    subgraph "External Integrations"
+        GITHUB[GitHub Enterprise]
+        REDHAT[RedHat OpenShift]
+        MONITORING[Monitoring Stack]
+        STORAGE[Persistent Storage]
+    end
+    
+    subgraph "Data Layer"
+        POSTGRES[(PostgreSQL)]
+        REDIS[(Redis Cache)]
+        ELASTICSEARCH[(Elasticsearch)]
+        S3[(Object Storage)]
+    end
+    
+    %% User Interface Connections
+    UI --> API
+    CLI --> API
+    WEBHOOK --> API
+    API --> MCB
+    
+    %% Core Processing Flow
+    MCB --> SCHEDULER
+    MCB --> ROUTER
+    SCHEDULER --> DMAIC
+    ROUTER --> CONV_AGENT
+    ROUTER --> TECH_AGENT
+    ROUTER --> ORCH_AGENT
+    ROUTER --> REVIEW_AGENT
+    
+    %% Agent Interactions
+    CONV_AGENT --> HANDOVER
+    TECH_AGENT --> HANDOVER
+    ORCH_AGENT --> HANDOVER
+    REVIEW_AGENT --> HANDOVER
+    HANDOVER --> TASK_PROC
+    TASK_PROC --> CONTEXT_MGR
+    
+    %% KEB Integration
+    CONTEXT_MGR --> KEB_CORE
+    KEB_CORE --> KEB_STORE
+    KEB_CORE --> KEB_INDEX
+    KEB_CORE --> KEB_CACHE
+    
+    %% External Integrations
+    ORCH_AGENT --> GITHUB
+    MCB --> REDHAT
+    TASK_PROC --> MONITORING
+    KEB_STORE --> STORAGE
+    
+    %% Data Layer Connections
+    KEB_STORE --> POSTGRES
+    KEB_CACHE --> REDIS
+    KEB_INDEX --> ELASTICSEARCH
+    STORAGE --> S3
+    
+    %% Styling
+    classDef userLayer fill:#e1f5fe
+    classDef coreLayer fill:#f3e5f5
+    classDef kebLayer fill:#e8f5e8
+    classDef externalLayer fill:#fff3e0
+    classDef dataLayer fill:#fce4ec
+    
+    class UI,API,CLI,WEBHOOK userLayer
+    class MCB,SCHEDULER,ROUTER,CONV_AGENT,TECH_AGENT,ORCH_AGENT,REVIEW_AGENT,DMAIC,TASK_PROC,CONTEXT_MGR,HANDOVER coreLayer
+    class KEB_CORE,KEB_STORE,KEB_INDEX,KEB_CACHE kebLayer
+    class GITHUB,REDHAT,MONITORING,STORAGE externalLayer
+    class POSTGRES,REDIS,ELASTICSEARCH,S3 dataLayer
+```
+
+### 1.2 ASCII Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           CONVERSATION TRACK ARCHITECTURE                       │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                │
+│  │   Web Interface │  │    REST API     │  │  CLI Interface  │                │
+│  └─────────┬───────┘  └─────────┬───────┘  └─────────┬───────┘                │
+│            │                    │                    │                        │
+│            └────────────────────┼────────────────────┘                        │
+│                                 │                                             │
+│  ┌─────────────────────────────────────────────────────────────────────────┐   │
+│  │                    MCB ORCHESTRATION LAYER                             │   │
+│  │                                                                         │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐   │   │
+│  │  │MCB Core     │  │Task         │  │Message      │  │DMAIC        │   │   │
+│  │  │Orchestrator │  │Scheduler    │  │Router       │  │Processor    │   │   │
+│  │  └─────┬───────┘  └─────┬───────┘  └─────┬───────┘  └─────┬───────┘   │   │
+│  └────────┼──────────────────┼──────────────────┼──────────────────┼───────┘   │
+│           │                  │                  │                  │           │
+│  ┌────────┼──────────────────┼──────────────────┼──────────────────┼───────┐   │
+│  │        │                  │                  │                  │       │   │
+│  │  ┌─────▼───┐  ┌─────▼───┐  ┌─────▼───┐  ┌─────▼───┐  ┌─────▼───┐     │   │
+│  │  │Conv     │  │Tech     │  │Orch     │  │Review   │  │Context  │     │   │
+│  │  │Agent    │  │Agent    │  │Agent    │  │Agent    │  │Manager  │     │   │
+│  │  └─────┬───┘  └─────┬───┘  └─────┬───┘  └─────┬───┘  └─────┬───┘     │   │
+│  │        │            │            │            │            │         │   │
+│  │        └────────────┼────────────┼────────────┼────────────┘         │   │
+│  │                     │            │            │                      │   │
+│  │                ┌────▼────────────▼────────────▼────┐                 │   │
+│  │                │        HANDOVER MANAGER          │                 │   │
+│  │                └────────────────┬────────────────┘                 │   │
+│  └─────────────────────────────────┼─────────────────────────────────────┘   │
+│                                    │                                         │
+│  ┌─────────────────────────────────┼─────────────────────────────────────┐   │
+│  │           KNOWLEDGE EXCHANGE BUS (KEB)                               │   │
+│  │                                 │                                     │   │
+│  │  ┌─────────────┐  ┌─────────────▼─┐  ┌─────────────┐  ┌─────────────┐ │   │
+│  │  │KEB Core     │  │Knowledge      │  │Search       │  │Cache        │ │   │
+│  │  │Engine       │  │Store          │  │Index        │  │Layer        │ │   │
+│  │  └─────┬───────┘  └─────┬─────────┘  └─────┬───────┘  └─────┬───────┘ │   │
+│  └────────┼──────────────────┼──────────────────┼──────────────────┼─────┘   │
+│           │                  │                  │                  │         │
+│  ┌────────┼──────────────────┼──────────────────┼──────────────────┼─────┐   │
+│  │        │                  │                  │                  │     │   │
+│  │  ┌─────▼───┐  ┌─────▼───┐  ┌─────▼───┐  ┌─────▼───┐  ┌─────▼───┐   │   │
+│  │  │GitHub   │  │PostgreSQL│ │Elasticsearch│ │Redis    │  │S3       │   │   │
+│  │  │Enterprise│ │Database   │ │Search       │ │Cache    │  │Storage  │   │   │
+│  │  └─────────┘  └─────────┘  └─────────┘  └─────────┘  └─────────┘   │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+## 2. DMAIC Pipeline Flow
+
+### 2.1 DMAIC Process Flow Diagram
+
+```mermaid
+graph TD
+    START([Start DMAIC Process]) --> DEFINE_INIT[Initialize Define Phase]
+    
+    subgraph "DEFINE PHASE"
+        DEFINE_INIT --> PROBLEM_DEF[Problem Definition]
+        PROBLEM_DEF --> STAKEHOLDER[Stakeholder Analysis]
+        STAKEHOLDER --> PROJECT_CHARTER[Project Charter Creation]
+        PROJECT_CHARTER --> DEFINE_REVIEW{Define Review}
+        DEFINE_REVIEW -->|Approved| DEFINE_COMPLETE[Define Complete]
+        DEFINE_REVIEW -->|Rejected| PROBLEM_DEF
+    end
+    
+    DEFINE_COMPLETE --> MEASURE_INIT[Initialize Measure Phase]
+    
+    subgraph "MEASURE PHASE"
+        MEASURE_INIT --> CURRENT_STATE[Current State Mapping]
+        CURRENT_STATE --> DATA_COLLECTION[Data Collection Setup]
+        DATA_COLLECTION --> BASELINE_METRICS[Baseline Metrics]
+        BASELINE_METRICS --> DATA_VALIDATION[Data Validation]
+        DATA_VALIDATION --> MEASURE_REVIEW{Measure Review}
+        MEASURE_REVIEW -->|Valid| MEASURE_COMPLETE[Measure Complete]
+        MEASURE_REVIEW -->|Invalid| DATA_COLLECTION
+    end
+    
+    MEASURE_COMPLETE --> ANALYZE_INIT[Initialize Analyze Phase]
+    
+    subgraph "ANALYZE PHASE"
+        ANALYZE_INIT --> ROOT_CAUSE[Root Cause Analysis]
+        ROOT_CAUSE --> STATISTICAL_ANALYSIS[Statistical Analysis]
+        STATISTICAL_ANALYSIS --> HYPOTHESIS_TEST[Hypothesis Testing]
+        HYPOTHESIS_TEST --> ANALYZE_REVIEW{Analysis Review}
+        ANALYZE_REVIEW -->|Confirmed| ANALYZE_COMPLETE[Analyze Complete]
+        ANALYZE_REVIEW -->|Inconclusive| ROOT_CAUSE
+    end
+    
+    ANALYZE_COMPLETE --> IMPROVE_INIT[Initialize Improve Phase]
+    
+    subgraph "IMPROVE PHASE"
+        IMPROVE_INIT --> SOLUTION_DESIGN[Solution Design]
+        SOLUTION_DESIGN --> PILOT_IMPL[Pilot Implementation]
+        PILOT_IMPL --> RESULTS_VALIDATION[Results Validation]
+        RESULTS_VALIDATION --> IMPROVE_REVIEW{Improvement Review}
+        IMPROVE_REVIEW -->|Successful| IMPROVE_COMPLETE[Improve Complete]
+        IMPROVE_REVIEW -->|Failed| SOLUTION_DESIGN
+    end
+    
+    IMPROVE_COMPLETE --> CONTROL_INIT[Initialize Control Phase]
+    
+    subgraph "CONTROL PHASE"
+        CONTROL_INIT --> CONTROL_PLAN[Control Plan Creation]
+        CONTROL_PLAN --> MONITORING_SETUP[Monitoring Setup]
+        MONITORING_SETUP --> DOCUMENTATION[Documentation]
+        DOCUMENTATION --> KNOWLEDGE_TRANSFER[Knowledge Transfer]
+        KNOWLEDGE_TRANSFER --> CONTROL_COMPLETE[Control Complete]
+    end
+    
+    CONTROL_COMPLETE --> END([DMAIC Process Complete])
+    
+    %% KEB Integration Points
+    PROBLEM_DEF -.-> KEB_STORE[KEB Knowledge Store]
+    STAKEHOLDER -.-> KEB_STORE
+    DATA_COLLECTION -.-> KEB_STORE
+    ROOT_CAUSE -.-> KEB_STORE
+    SOLUTION_DESIGN -.-> KEB_STORE
+    DOCUMENTATION -.-> KEB_STORE
+    
+    %% Styling
+    classDef definePhase fill:#ffebee
+    classDef measurePhase fill:#e8f5e8
+    classDef analyzePhase fill:#e3f2fd
+    classDef improvePhase fill:#fff3e0
+    classDef controlPhase fill:#f3e5f5
+    classDef kebIntegration fill:#f5f5f5,stroke:#666,stroke-dasharray: 5 5
+    
+    class DEFINE_INIT,PROBLEM_DEF,STAKEHOLDER,PROJECT_CHARTER,DEFINE_REVIEW,DEFINE_COMPLETE definePhase
+    class MEASURE_INIT,CURRENT_STATE,DATA_COLLECTION,BASELINE_METRICS,DATA_VALIDATION,MEASURE_REVIEW,MEASURE_COMPLETE measurePhase
+    class ANALYZE_INIT,ROOT_CAUSE,STATISTICAL_ANALYSIS,HYPOTHESIS_TEST,ANALYZE_REVIEW,ANALYZE_COMPLETE analyzePhase
+    class IMPROVE_INIT,SOLUTION_DESIGN,PILOT_IMPL,RESULTS_VALIDATION,IMPROVE_REVIEW,IMPROVE_COMPLETE improvePhase
+    class CONTROL_INIT,CONTROL_PLAN,MONITORING_SETUP,DOCUMENTATION,KNOWLEDGE_TRANSFER,CONTROL_COMPLETE controlPhase
+    class KEB_STORE kebIntegration
+```
+
+### 2.2 ASCII DMAIC Flow
+
+```
+DMAIC PROCESS FLOW
+==================
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                  DEFINE                                         │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│  Problem Definition → Stakeholder Analysis → Project Charter → Review Gate     │
+│         │                     │                    │              │            │
+│         ▼                     ▼                    ▼              ▼            │
+│    [KEB Store]           [KEB Store]          [KEB Store]    [Approval?]       │
+└─────────────────────────────────────────────────────────────────┬───────────────┘
+                                                                  │
+┌─────────────────────────────────────────────────────────────────▼───────────────┐
+│                                 MEASURE                                         │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│  Current State → Data Collection → Baseline Metrics → Data Validation → Review │
+│       │               │                 │                   │             │    │
+│       ▼               ▼                 ▼                   ▼             ▼    │
+│  [Process Map]   [KEB Store]       [Metrics DB]       [Validation]  [Valid?]  │
+└─────────────────────────────────────────────────────────────────┬───────────────┘
+                                                                  │
+┌─────────────────────────────────────────────────────────────────▼───────────────┐
+│                                ANALYZE                                          │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│  Root Cause Analysis → Statistical Analysis → Hypothesis Testing → Review      │
+│         │                      │                     │               │         │
+│         ▼                      ▼                     ▼               ▼         │
+│    [AI Analysis]          [Statistics]         [Testing]       [Confirmed?]    │
+│         │                      │                     │               │         │
+│         └──────────────────────┼─────────────────────┘               │         │
+│                                ▼                                     │         │
+│                          [KEB Store]                                 │         │
+└─────────────────────────────────────────────────────────────────────┼─────────┘
+                                                                      │
+┌─────────────────────────────────────────────────────────────────────▼─────────┐
+│                               IMPROVE                                         │
+├───────────────────────────────────────────────────────────────────────────────┤
+│  Solution Design → Pilot Implementation → Results Validation → Review        │
+│        │                   │                      │               │          │
+│        ▼                   ▼                      ▼               ▼          │
+│   [Design Docs]       [Test Deploy]          [Validation]   [Successful?]   │
+│        │                   │                      │               │          │
+│        └───────────────────┼──────────────────────┘               │          │
+│                            ▼                                      │          │
+│                      [KEB Store]                                  │          │
+└───────────────────────────────────────────────────────────────────┼──────────┘
+                                                                    │
+┌───────────────────────────────────────────────────────────────────▼──────────┐
+│                              CONTROL                                         │
+├───────────────────────────────────────────────────────────────────────────────┤
+│  Control Plan → Monitoring Setup → Documentation → Knowledge Transfer       │
+│       │              │                   │               │                  │
+│       ▼              ▼                   ▼               ▼                  │
+│  [Control Sys]  [Monitoring]        [KEB Store]    [Training]              │
+│       │              │                   │               │                  │
+│       └──────────────┼───────────────────┼───────────────┘                  │
+│                      ▼                   ▼                                  │
+│                [Continuous Monitoring] [Knowledge Base]                     │
+└───────────────────────────────────────────────────────────────────────────────┘
+```
+
+## 3. Multi-AI Handover Flow
+
+### 3.1 Agent Handover Sequence
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant ConvAgent as Conversation Agent
+    participant TechAgent as Technical Agent
+    participant OrchAgent as Orchestration Agent
+    participant ReviewAgent as Review Agent
+    participant KEB as Knowledge Exchange Bus
+    participant GitHub as GitHub Enterprise
+    
+    User->>ConvAgent: Initial Request
+    ConvAgent->>KEB: Store Context
+    ConvAgent->>ConvAgent: Analyze Request Type
+    
+    alt Technical Analysis Required
+        ConvAgent->>TechAgent: Handover with Context
+        TechAgent->>KEB: Retrieve Context
+        TechAgent->>TechAgent: Perform Analysis
+        TechAgent->>KEB: Store Analysis Results
+        
+        alt Implementation Needed
+            TechAgent->>OrchAgent: Handover for Implementation
+            OrchAgent->>KEB: Retrieve Analysis
+            OrchAgent->>GitHub: Create Branch
+            OrchAgent->>GitHub: Implement Changes
+            OrchAgent->>GitHub: Create Pull Request
+            OrchAgent->>ReviewAgent: Request Review
+            
+            ReviewAgent->>GitHub: Review Code
+            ReviewAgent->>KEB: Store Review Results
+            
+            alt Review Approved
+                ReviewAgent->>OrchAgent: Approval Notification
+                OrchAgent->>GitHub: Merge PR
+                OrchAgent->>ConvAgent: Implementation Complete
+            else Review Rejected
+                ReviewAgent->>TechAgent: Revision Required
+                TechAgent->>OrchAgent: Updated Implementation
+            end
+        end
+        
+        TechAgent->>ConvAgent: Analysis Complete
+    end
+    
+    ConvAgent->>KEB: Store Final Results
+    ConvAgent->>User: Response with Results
+    
+    Note over ConvAgent,KEB: All handovers preserve context through KEB
+    Note over GitHub: All code changes tracked in GitHub
+```
+
+### 3.2 ASCII Handover Flow
+
+```
+MULTI-AI AGENT HANDOVER FLOW
+=============================
+
+User Request
+     │
+     ▼
+┌─────────────────┐
+│ Conversation    │ ◄─── Initial contact point
+│ Agent           │      Handles natural language
+└─────┬───────────┘      Determines next steps
+      │
+      ▼
+┌─────────────────┐
+│ Context Store   │ ◄─── All context preserved
+│ (KEB)           │      Enables seamless handover
+└─────┬───────────┘
+      │
+      ▼
+   Decision Point
+      │
+      ├─── Technical Analysis ──► ┌─────────────────┐
+      │                          │ Technical       │
+      │                          │ Agent           │
+      │                          └─────┬───────────┘
+      │                                │
+      │                                ▼
+      │                          ┌─────────────────┐
+      │                          │ Analysis        │
+      │                          │ Results         │
+      │                          └─────┬───────────┘
+      │                                │
+      │                                ▼
+      │                          Implementation?
+      │                                │
+      │                                ├─── Yes ──► ┌─────────────────┐
+      │                                │            │ Orchestration   │
+      │                                │            │ Agent           │
+      │                                │            └─────┬───────────┘
+      │                                │                  │
+      │                                │                  ▼
+      │                                │            ┌─────────────────┐
+      │                                │            │ GitHub          │
+      │                                │            │ Integration     │
+      │                                │            └─────┬───────────┘
+      │                                │                  │
+      │                                │                  ▼
+      │                                │            ┌─────────────────┐
+      │                                │            │ Review          │
+      │                                │            │ Agent           │
+      │                                │            └─────┬───────────┘
+      │                                │                  │
+      │                                └─── No ────────────┼───────────┐
+      │                                                   │           │
+      └─── Direct Response ──────────────────────────────────────────┘
+                                                          │
+                                                          ▼
+                                                    ┌─────────────────┐
+                                                    │ Final Response  │
+                                                    │ to User         │
+                                                    └─────────────────┘
+
+Legend:
+───► Sequential flow
+◄─── Data storage/retrieval
+├─── Decision branch
+```
+
+## 4. KEB Integration Architecture
+
+### 4.1 Knowledge Exchange Bus Flow
+
+```mermaid
+graph LR
+    subgraph "Data Sources"
+        CONV[Conversations]
+        CODE[Code Analysis]
+        METRICS[Performance Metrics]
+        DOCS[Documentation]
+        FEEDBACK[User Feedback]
+    end
+    
+    subgraph "KEB Core Processing"
+        INGESTION[Data Ingestion]
+        PROCESSING[Data Processing]
+        INDEXING[Indexing Engine]
+        STORAGE[Storage Manager]
+    end
+    
+    subgraph "KEB Storage Layer"
+        POSTGRES[(PostgreSQL)]
+        ELASTICSEARCH[(Elasticsearch)]
+        REDIS[(Redis Cache)]
+        S3[(Object Storage)]
+    end
+    
+    subgraph "KEB API Layer"
+        SEARCH_API[Search API]
+        KNOWLEDGE_API[Knowledge API]
+        ANALYTICS_API[Analytics API]
+        STREAMING_API[Streaming API]
+    end
+    
+    subgraph "Consumers"
+        AI_AGENTS[AI Agents]
+        DASHBOARDS[Dashboards]
+        REPORTS[Reports]
+        INTEGRATIONS[External Integrations]
+    end
+    
+    %% Data Flow
+    CONV --> INGESTION
+    CODE --> INGESTION
+    METRICS --> INGESTION
+    DOCS --> INGESTION
+    FEEDBACK --> INGESTION
+    
+    INGESTION --> PROCESSING
+    PROCESSING --> INDEXING
+    PROCESSING --> STORAGE
+    
+    STORAGE --> POSTGRES
+    STORAGE --> S3
+    INDEXING --> ELASTICSEARCH
+    PROCESSING --> REDIS
+    
+    POSTGRES --> KNOWLEDGE_API
+    ELASTICSEARCH --> SEARCH_API
+    REDIS --> STREAMING_API
+    S3 --> ANALYTICS_API
+    
+    SEARCH_API --> AI_AGENTS
+    KNOWLEDGE_API --> AI_AGENTS
+    ANALYTICS_API --> DASHBOARDS
+    STREAMING_API --> REPORTS
+    KNOWLEDGE_API --> INTEGRATIONS
+    
+    %% Styling
+    classDef sourceLayer fill:#e1f5fe
+    classDef processingLayer fill:#f3e5f5
+    classDef storageLayer fill:#e8f5e8
+    classDef apiLayer fill:#fff3e0
+    classDef consumerLayer fill:#fce4ec
+    
+    class CONV,CODE,METRICS,DOCS,FEEDBACK sourceLayer
+    class INGESTION,PROCESSING,INDEXING,STORAGE processingLayer
+    class POSTGRES,ELASTICSEARCH,REDIS,S3 storageLayer
+    class SEARCH_API,KNOWLEDGE_API,ANALYTICS_API,STREAMING_API apiLayer
+    class AI_AGENTS,DASHBOARDS,REPORTS,INTEGRATIONS consumerLayer
+```
+
+### 4.2 ASCII KEB Architecture
+
+```
+KNOWLEDGE EXCHANGE BUS (KEB) ARCHITECTURE
+==========================================
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              DATA SOURCES                                      │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│  Conversations │ Code Analysis │ Performance │ Documentation │ User Feedback   │
+│       │        │       │       │   Metrics   │       │       │       │         │
+│       ▼        │       ▼       │      ▼      │       ▼       │       ▼         │
+│   [Chat Logs]  │  [Static      │ [Telemetry] │   [Docs]      │  [Ratings]      │
+│                │   Analysis]   │             │               │                 │
+└───────┬────────┴───────┬───────┴──────┬──────┴───────┬───────┴───────┬─────────┘
+        │                │               │              │               │
+        └────────────────┼───────────────┼──────────────┼───────────────┘
+                         │               │              │
+                         ▼               ▼              ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           KEB CORE PROCESSING                                  │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐           │
+│  │Data         │  │Data         │  │Indexing     │  │Storage      │           │
+│  │Ingestion    │  │Processing   │  │Engine       │  │Manager      │           │
+│  └─────┬───────┘  └─────┬───────┘  └─────┬───────┘  └─────┬───────┘           │
+│        │                │                │                │                   │
+│        └────────────────┼────────────────┼────────────────┘                   │
+│                         │                │                                    │
+│                         ▼                ▼                                    │
+│                  ┌─────────────┐  ┌─────────────┐                            │
+│                  │Transformation│ │Index        │                            │
+│                  │& Enrichment  │  │Generation   │                            │
+│                  └─────┬───────┘  └─────┬───────┘                            │
+└────────────────────────┼──────────────────┼─────────────────────────────────────┘
+                         │                  │
+                         ▼                  ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                          STORAGE LAYER                                         │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐           │
+│  │PostgreSQL   │  │Elasticsearch│  │Redis        │  │S3 Object    │           │
+│  │(Structured) │  │(Search)     │  │(Cache)      │  │Storage      │           │
+│  └─────┬───────┘  └─────┬───────┘  └─────┬───────┘  └─────┬───────┘           │
+└────────┼──────────────────┼──────────────────┼──────────────────┼─────────────────┘
+         │                  │                  │                  │
+         ▼                  ▼                  ▼                  ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                            API LAYER                                           │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐           │
+│  │Search       │  │Knowledge    │  │Analytics    │  │Streaming    │           │
+│  │API          │  │API          │  │API          │  │API          │           │
+│  └─────┬───────┘  └─────┬───────┘  └─────┬───────┘  └─────┬───────┘           │
+└────────┼──────────────────┼──────────────────┼──────────────────┼─────────────────┘
+         │                  │                  │                  │
+         ▼                  ▼                  ▼                  ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           CONSUMERS                                            │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐           │
+│  │AI Agents    │  │Dashboards   │  │Reports      │  │External     │           │
+│  │             │  │             │  │             │  │Integrations │           │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘           │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+## 5. GitHub Integration Flow
+
+### 5.1 GitHub Workflow Integration
+
+```mermaid
+graph TD
+    subgraph "GitHub Events"
+        PUSH[Push Event]
+        PR[Pull Request]
+        ISSUE[Issue Created]
+        RELEASE[Release Event]
+    end
+    
+    subgraph "Webhook Processing"
+        WEBHOOK_RECEIVER[Webhook Receiver]
+        EVENT_PARSER[Event Parser]
+        VALIDATION[Signature Validation]
+    end
+    
+    subgraph "MCB Processing"
+        TASK_CREATION[Task Creation]
+        AGENT_SELECTION[Agent Selection]
+        WORKFLOW_TRIGGER[Workflow Trigger]
+    end
+    
+    subgraph "Agent Actions"
+        CODE_ANALYSIS[Code Analysis]
+        AUTOMATED_REVIEW[Automated Review]
+        DEPLOYMENT[Deployment]
+        NOTIFICATION[Notification]
+    end
+    
+    subgraph "GitHub Actions"
+        STATUS_UPDATE[Status Update]
+        COMMENT_CREATION[Comment Creation]
+        LABEL_MANAGEMENT[Label Management]
+        MERGE_AUTOMATION[Merge Automation]
+    end
+    
+    %% Event Flow
+    PUSH --> WEBHOOK_RECEIVER
+    PR --> WEBHOOK_RECEIVER
+    ISSUE --> WEBHOOK_RECEIVER
+    RELEASE --> WEBHOOK_RECEIVER
+    
+    WEBHOOK_RECEIVER --> VALIDATION
+    VALIDATION --> EVENT_PARSER
+    EVENT_PARSER --> TASK_CREATION
+    
+    TASK_CREATION --> AGENT_SELECTION
+    AGENT_SELECTION --> WORKFLOW_TRIGGER
+    
+    WORKFLOW_TRIGGER --> CODE_ANALYSIS
+    WORKFLOW_TRIGGER --> AUTOMATED_REVIEW
+    WORKFLOW_TRIGGER --> DEPLOYMENT
+    WORKFLOW_TRIGGER --> NOTIFICATION
+    
+    CODE_ANALYSIS --> STATUS_UPDATE
+    AUTOMATED_REVIEW --> COMMENT_CREATION
+    DEPLOYMENT --> LABEL_MANAGEMENT
+    NOTIFICATION --> MERGE_AUTOMATION
+    
+    %% Feedback Loops
+    STATUS_UPDATE -.-> WEBHOOK_RECEIVER
+    COMMENT_CREATION -.-> WEBHOOK_RECEIVER
+    LABEL_MANAGEMENT -.-> WEBHOOK_RECEIVER
+    
+    %% Styling
+    classDef githubEvents fill:#f0f8ff
+    classDef webhookProcessing fill:#f5f5dc
+    classDef mcbProcessing fill:#e6e6fa
+    classDef agentActions fill:#f0fff0
+    classDef githubActions fill:#ffe4e1
+    
+    class PUSH,PR,ISSUE,RELEASE githubEvents
+    class WEBHOOK_RECEIVER,EVENT_PARSER,VALIDATION webhookProcessing
+    class TASK_CREATION,AGENT_SELECTION,WORKFLOW_TRIGGER mcbProcessing
+    class CODE_ANALYSIS,AUTOMATED_REVIEW,DEPLOYMENT,NOTIFICATION agentActions
+    class STATUS_UPDATE,COMMENT_CREATION,LABEL_MANAGEMENT,MERGE_AUTOMATION githubActions
+```
+
+### 5.2 ASCII GitHub Integration
+
+```
+GITHUB INTEGRATION WORKFLOW
+============================
+
+GitHub Events                    Webhook Processing               MCB Processing
+─────────────                    ──────────────────               ──────────────
+
+┌─────────────┐                 ┌─────────────────┐              ┌─────────────┐
+│Push Event   │────────────────►│Webhook          │─────────────►│Task         │
+└─────────────┘                 │Receiver         │              │Creation     │
+                                └─────────────────┘              └─────────────┘
+┌─────────────┐                          │                              │
+│Pull Request │──────────────────────────┤                              │
+└─────────────┘                          │                              ▼
+                                         ▼                      ┌─────────────┐
+┌─────────────┐                 ┌─────────────────┐              │Agent        │
+│Issue Created│────────────────►│Event Parser &   │─────────────►│Selection    │
+└─────────────┘                 │Validation       │              └─────────────┘
+                                └─────────────────┘                      │
+┌─────────────┐                          │                              │
+│Release Event│──────────────────────────┘                              ▼
+└─────────────┘                                                 ┌─────────────┐
+                                                                │Workflow     │
+                                                                │Trigger      │
+                                                                └─────┬───────┘
+                                                                      │
+                    ┌─────────────────────────────────────────────────┼─────────────────────────────────────────────────┐
+                    │                                                 │                                                 │
+                    ▼                                                 ▼                                                 ▼
+            ┌─────────────┐                                   ┌─────────────┐                                 ┌─────────────┐
+            │Code         │                                   │Automated    │                                 │Deployment   │
+            │Analysis     │                                   │Review       │                                 │Process      │
+            └─────┬───────┘                                   └─────┬───────┘                                 └─────┬───────┘
+                  │                                                 │                                               │
+                  ▼                                                 ▼                                               ▼
+            ┌─────────────┐                                   ┌─────────────┐                                 ┌─────────────┐
+            │Status       │                                   │Comment      │                                 │Label        │
+            │Update       │                                   │Creation     │                                 │Management   │
+            └─────┬───────┘                                   └─────┬───────┘                                 └─────┬───────┘
+                  │                                                 │                                               │
+                  └─────────────────────────────────────────────────┼───────────────────────────────────────────────┘
+                                                                    │
+                                                                    ▼
+                                                            ┌─────────────┐
+                                                            │Merge        │
+                                                            │Automation   │
+                                                            └─────────────┘
+```
+
+## 6. Performance Monitoring Dashboard
+
+### 6.1 Monitoring Architecture
+
+```mermaid
+graph TB
+    subgraph "Application Layer"
+        MCB[MCB Orchestrator]
+        AGENTS[AI Agents]
+        KEB[KEB System]
+        GITHUB_INT[GitHub Integration]
+    end
+    
+    subgraph "Metrics Collection"
+        PROMETHEUS[Prometheus]
+        JAEGER[Jaeger Tracing]
+        FLUENTD[Fluentd Logs]
+        CUSTOM_METRICS[Custom Metrics]
+    end
+    
+    subgraph "Storage & Processing"
+        TSDB[(Time Series DB)]
+        ELASTICSEARCH_LOGS[(Elasticsearch)]
+        METRICS_PROCESSOR[Metrics Processor]
+    end
+    
+    subgraph "Visualization & Alerting"
+        GRAFANA[Grafana Dashboards]
+        ALERTMANAGER[Alert Manager]
+        KIBANA[Kibana Logs]
+        CUSTOM_DASH[Custom Dashboards]
+    end
+    
+    subgraph "External Integrations"
+        SLACK[Slack Notifications]
+        EMAIL[Email Alerts]
+        PAGERDUTY[PagerDuty]
+        WEBHOOK_ALERTS[Webhook Alerts]
+    end
+    
+    %% Metrics Flow
+    MCB --> PROMETHEUS
+    MCB --> JAEGER
+    MCB --> FLUENTD
+    
+    AGENTS --> PROMETHEUS
+    AGENTS --> JAEGER
+    AGENTS --> CUSTOM_METRICS
+    
+    KEB --> PROMETHEUS
+    KEB --> FLUENTD
+    
+    GITHUB_INT --> CUSTOM_METRICS
+    GITHUB_INT --> FLUENTD
+    
+    %% Storage Flow
+    PROMETHEUS --> TSDB
+    JAEGER --> TSDB
+    FLUENTD --> ELASTICSEARCH_LOGS
+    CUSTOM_METRICS --> METRICS_PROCESSOR
+    METRICS_PROCESSOR --> TSDB
+    
+    %% Visualization Flow
+    TSDB --> GRAFANA
+    TSDB --> ALERTMANAGER
+    ELASTICSEARCH_LOGS --> KIBANA
+    METRICS_PROCESSOR --> CUSTOM_DASH
+    
+    %% Alert Flow
+    ALERTMANAGER --> SLACK
+    ALERTMANAGER --> EMAIL
+    ALERTMANAGER --> PAGERDUTY
+    CUSTOM_DASH --> WEBHOOK_ALERTS
+    
+    %% Styling
+    classDef appLayer fill:#e1f5fe
+    classDef metricsLayer fill:#f3e5f5
+    classDef storageLayer fill:#e8f5e8
+    classDef visualLayer fill:#fff3e0
+    classDef externalLayer fill:#fce4ec
+    
+    class MCB,AGENTS,KEB,GITHUB_INT appLayer
+    class PROMETHEUS,JAEGER,FLUENTD,CUSTOM_METRICS metricsLayer
+    class TSDB,ELASTICSEARCH_LOGS,METRICS_PROCESSOR storageLayer
+    class GRAFANA,ALERTMANAGER,KIBANA,CUSTOM_DASH visualLayer
+    class SLACK,EMAIL,PAGERDUTY,WEBHOOK_ALERTS externalLayer
+```
+
+### 6.2 ASCII Monitoring Flow
+
+```
+PERFORMANCE MONITORING ARCHITECTURE
+====================================
+
+Application Layer                 Metrics Collection              Storage & Processing
+─────────────────                ───────────────────              ────────────────────
+
+┌─────────────┐                 ┌─────────────────┐              ┌─────────────────┐
+│MCB          │────────────────►│Prometheus       │─────────────►│Time Series DB   │
+│Orchestrator │                 │(Metrics)        │              │                 │
+└─────────────┘                 └─────────────────┘              └─────────────────┘
+       │                                 │                               │
+       │                                 │                               │
+       ▼                                 ▼                               ▼
+┌─────────────┐                 ┌─────────────────┐              ┌─────────────────┐
+│AI Agents    │────────────────►│Jaeger           │─────────────►│Elasticsearch    │
+│             │                 │(Tracing)        │              │(Logs)           │
+└─────────────┘                 └─────────────────┘              └─────────────────┘
+       │                                 │                               │
+       │                                 │                               │
+       ▼                                 ▼                               ▼
+┌─────────────┐                 ┌─────────────────┐              ┌─────────────────┐
+│KEB System   │────────────────►│Fluentd          │─────────────►│Metrics          │
+│             │                 │(Logs)           │              │Processor        │
+└─────────────┘                 └─────────────────┘              └─────────────────┘
+       │                                 │                               │
+       │                                 │                               │
+       ▼                                 ▼                               ▼
+┌─────────────┐                 ┌─────────────────┐              
+│GitHub       │────────────────►│Custom Metrics   │              
+│Integration  │                 │Collector        │              
+└─────────────┘                 └─────────────────┘              
+
+                                                                 Visualization & Alerting
+                                                                 ────────────────────────
+
+                                                                 ┌─────────────────┐
+                                                                 │Grafana          │
+                                                                 │Dashboards       │
+                                                                 └─────────────────┘
+                                                                          │
+                                                                          │
+                                                                          ▼
+                                                                 ┌─────────────────┐
+                                                                 │Alert Manager    │
+                                                                 │                 │
+                                                                 └─────┬───────────┘
+                                                                       │
+                                    ┌──────────────────────────────────┼──────────────────────────────────┐
+                                    │                                  │                                  │
+                                    ▼                                  ▼                                  ▼
+                            ┌─────────────┐                    ┌─────────────┐                  ┌─────────────┐
+                            │Slack        │                    │Email        │                  │PagerDuty    │
+                            │Notifications│                    │Alerts       │                  │Integration  │
+                            └─────────────┘                    └─────────────┘                  └─────────────┘
+```
+
+## 7. Deployment Architecture
+
+### 7.1 RedHat OpenShift Deployment
+
+```mermaid
+graph TB
+    subgraph "OpenShift Cluster"
+        subgraph "Control Plane"
+            API_SERVER[API Server]
+            ETCD[etcd]
+            SCHEDULER[Scheduler]
+            CONTROLLER[Controller Manager]
+        end
+        
+        subgraph "MCB Namespace"
+            subgraph "Orchestrator Pods"
+                MCB_POD1[MCB Pod 1]
+                MCB_POD2[MCB Pod 2]
+                MCB_POD3[MCB Pod 3]
+            end
+            
+            subgraph "Agent Pods"
+                CONV_POD[Conversation Agent]
+                TECH_POD[Technical Agent]
+                ORCH_POD[Orchestration Agent]
+                REVIEW_POD[Review Agent]
+            end
+            
+            subgraph "KEB Pods"
+                KEB_CORE[KEB Core]
+                KEB_API[KEB API]
+                KEB_PROCESSOR[KEB Processor]
+            end
+        end
+        
+        subgraph "Data Namespace"
+            POSTGRES_POD[PostgreSQL]
+            REDIS_POD[Redis]
+            ELASTICSEARCH_POD[Elasticsearch]
+        end
+        
+        subgraph "Monitoring Namespace"
+            PROMETHEUS_POD[Prometheus]
+            GRAFANA_POD[Grafana]
+            JAEGER_POD[Jaeger]
+        end
+        
+        subgraph "Storage"
+            PV1[Persistent Volume 1]
+            PV2[Persistent Volume 2]
+            PV3[Persistent Volume 3]
+        end
+        
+        subgraph "Networking"
+            INGRESS[Ingress Controller]
+            SERVICE_MESH[Service Mesh]
+            LOAD_BALANCER[Load Balancer]
+        end
+    end
+    
+    subgraph "External Services"
+        GITHUB[GitHub Enterprise]
+        EXTERNAL_API[External APIs]
+        MONITORING_EXTERNAL[External Monitoring]
+    end
+    
+    %% Control Plane Connections
+    API_SERVER --> ETCD
+    API_SERVER --> SCHEDULER
+    API_SERVER --> CONTROLLER
+    
+    %% Pod Deployments
+    SCHEDULER --> MCB_POD1
+    SCHEDULER --> MCB_POD2
+    SCHEDULER --> MCB_POD3
+    SCHEDULER --> CONV_POD
+    SCHEDULER --> TECH_POD
+    SCHEDULER --> ORCH_POD
+    SCHEDULER --> REVIEW_POD
+    SCHEDULER --> KEB_CORE
+    SCHEDULER --> KEB_API
+    SCHEDULER --> KEB_PROCESSOR
+    
+    %% Data Connections
+    MCB_POD1 --> POSTGRES_POD
+    MCB_POD2 --> REDIS_POD
+    KEB_CORE --> ELASTICSEARCH_POD
+    
+    %% Storage Connections
+    POSTGRES_POD --> PV1
+    REDIS_POD --> PV2
+    ELASTICSEARCH_POD --> PV3
+    
+    %% Network Flow
+    LOAD_BALANCER --> INGRESS
+    INGRESS --> SERVICE_MESH
+    SERVICE_MESH --> MCB_POD1
+    SERVICE_MESH --> KEB_API
+    
+    %% External Connections
+    ORCH_POD --> GITHUB
+    KEB_API --> EXTERNAL_API
+    PROMETHEUS_POD --> MONITORING_EXTERNAL
+    
+    %% Styling
+    classDef controlPlane fill:#ffebee
+    classDef mcbNamespace fill:#e8f5e8
+    classDef dataNamespace fill:#e3f2fd
+    classDef monitoringNamespace fill:#fff3e0
+    classDef storage fill:#f3e5f5
+    classDef networking fill:#fce4ec
+    classDef external fill:#f5f5f5
+    
+    class API_SERVER,ETCD,SCHEDULER,CONTROLLER controlPlane
+    class MCB_POD1,MCB_POD2,MCB_POD3,CONV_POD,TECH_POD,ORCH_POD,REVIEW_POD,KEB_CORE,KEB_API,KEB_PROCESSOR mcbNamespace
+    class POSTGRES_POD,REDIS_POD,ELASTICSEARCH_POD dataNamespace
+    class PROMETHEUS_POD,GRAFANA_POD,JAEGER_POD monitoringNamespace
+    class PV1,PV2,PV3 storage
+    class INGRESS,SERVICE_MESH,LOAD_BALANCER networking
+    class GITHUB,EXTERNAL_API,MONITORING_EXTERNAL external
+```
+
+### 7.2 ASCII Deployment Architecture
+
+```
+REDHAT OPENSHIFT DEPLOYMENT ARCHITECTURE
+=========================================
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                            OPENSHIFT CLUSTER                                   │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  ┌─────────────────────────────────────────────────────────────────────────┐   │
+│  │                          CONTROL PLANE                                  │   │
+│  │                                                                         │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐   │   │
+│  │  │API Server   │  │etcd         │  │Scheduler    │  │Controller   │   │   │
+│  │  │             │  │             │  │             │  │Manager      │   │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘   │   │
+│  └─────────────────────────────────────────────────────────────────────────┘   │
+│                                       │                                         │
+│  ┌─────────────────────────────────────┼─────────────────────────────────────┐   │
+│  │                    MCB NAMESPACE    │                                     │   │
+│  │                                     ▼                                     │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │   │
+│  │  │MCB Pod 1    │  │MCB Pod 2    │  │MCB Pod 3    │  │Load         │     │   │
+│  │  │(Leader)     │  │(Follower)   │  │(Follower)   │  │Balancer     │     │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘     │   │
+│  │                                                                         │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │   │
+│  │  │Conversation │  │Technical    │  │Orchestration│  │Review       │     │   │
+│  │  │Agent        │  │Agent        │  │Agent        │  │Agent        │     │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘     │   │
+│  │                                                                         │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                     │   │
+│  │  │KEB Core     │  │KEB API      │  │KEB          │                     │   │
+│  │  │             │  │             │  │Processor    │                     │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘                     │   │
+│  └─────────────────────────────────────────────────────────────────────────┘   │
+│                                       │                                         │
+│  ┌─────────────────────────────────────┼─────────────────────────────────────┐   │
+│  │                  DATA NAMESPACE     │                                     │   │
+│  │                                     ▼                                     │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                       │   │
+│  │  │PostgreSQL   │  │Redis        │  │Elasticsearch│                       │   │
+│  │  │Cluster      │  │Cluster      │  │Cluster      │                       │   │
+│  │  └─────┬───────┘  └─────┬───────┘  └─────┬───────┘                       │   │
+│  │        │                │                │                               │   │
+│  │        ▼                ▼                ▼                               │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                       │   │
+│  │  │PV Storage 1 │  │PV Storage 2 │  │PV Storage 3 │                       │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘                       │   │
+│  └─────────────────────────────────────────────────────────────────────────┘   │
+│                                       │                                         │
+│  ┌─────────────────────────────────────┼─────────────────────────────────────┐   │
+│  │               MONITORING NAMESPACE  │                                     │   │
+│  │                                     ▼                                     │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                       │   │
+│  │  │Prometheus   │  │Grafana      │  │Jaeger       │                       │   │
+│  │  │             │  │             │  │             │                       │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘                       │   │
+│  └─────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+                                       │
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                          EXTERNAL SERVICES                                     │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐           │
+│  │GitHub       │  │External     │  │Monitoring   │  │Third-party  │           │
+│  │Enterprise   │  │APIs         │  │Services     │  │Integrations │           │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘           │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+## 8. Conclusion
+
+This comprehensive set of diagrams provides a complete visual representation of the Conversation_track project's architecture, including:
+
+- **System Architecture**: High-level component relationships and data flows
+- **DMAIC Integration**: Process-driven workflow implementation
+- **Multi-AI Handover**: Agent coordination and context preservation
+- **KEB Architecture**: Knowledge management and exchange patterns
+- **GitHub Integration**: Source control and automation workflows
+- **Monitoring**: Performance tracking and observability
+- **Deployment**: Production-ready OpenShift deployment patterns
+
+The diagrams serve as both documentation and implementation guides, showing the purpose, goals, interfaces, and main pipeline flows with detailed KEB integration points. They provide a foundation for understanding the system's complexity while maintaining clarity for different stakeholder audiences.
+
