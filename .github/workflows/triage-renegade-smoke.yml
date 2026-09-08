@@ -1,0 +1,29 @@
+name: TRIAGE Renegade Smoke
+
+on:
+  pull_request:
+    paths:
+      - 'triage/renegade_incubator/**'
+      - 'scripts/triage_renegade_smoke.py'
+      - '.github/workflows/triage-renegade-smoke.yml'
+  push:
+    branches:
+      - 'triage/renegade-incubator-*'
+    paths:
+      - 'triage/renegade_incubator/**'
+      - 'scripts/triage_renegade_smoke.py'
+      - '.github/workflows/triage-renegade-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --disable-pip-version-check pyyaml
+      - run: python scripts/triage_renegade_smoke.py
