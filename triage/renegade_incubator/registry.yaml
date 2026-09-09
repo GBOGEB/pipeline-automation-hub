@@ -1,6 +1,6 @@
-schema: triage-renegade-incubator/v0.1
-wave: W01
-created_utc: 2026-09-08T08:45:00Z
+schema: triage-renegade-incubator/v0.2
+wave: W02
+created_utc: 2026-09-10T00:00:00Z
 authority: DISCOVERY_ONLY
 release_credit_allowed: false
 primary_repositories:
@@ -12,80 +12,62 @@ routing_policy:
   analysis_owner: GBOGEB/ABACUS
   federation_owner: GBOGEB/CODEX
   incubator_host: GBOGEB/pipeline-automation-hub
-  merge_rule: nuance_only
+  merge_rule: modernize_locally_federate_bounded_delta
   duplicate_code_bulk_merge_allowed: false
   exact_sha_receipt_required_for_promotion: true
+coverage:
+  target_repositories: 7
+  explored_repositories: 7
+  promotion_capable_repositories: 5
+  deferred_repositories: 1
+  storage_only_repositories: 1
 candidates:
   - repository: GBOGEB/pipeline-automation-hub
-    observed_sha: 35e1f1e613702e9f6c7d80e19d76cbf668dc6939
-    approx_size_kb: 86578
-    class: INCUBATOR_BRIDGE
-    disposition: KEEP_AND_FEDERATE
+    observed_sha: 872df0d9ee4479f53a3deb7cacefa1b285214b86
+    approx_size_kb: 86585
+    class: STANDALONE_ORCHESTRATION_HUB
+    disposition: MODERNIZE_AND_FEDERATE
     bridge_to: TRIAGE
-    value:
-      - existing deterministic QPS satellite adapter
-      - RTM automation pipeline
-      - metadata-only processing manifest lineage
-    duplicate_policy: preserve adapter/orchestration nuance; do not copy primary SSOT data
+    value: [deterministic QPS satellite adapter, RTM automation pipeline, metadata-only manifest lineage]
   - repository: GBOGEB/CODESPACES_jyperter
-    observed_sha: 8728de0b22a5ba07c8d7daf61da21d04267bd7b5
-    approx_size_kb: 78084
-    class: LARGE_LEGACY_ENGINEERING
-    disposition: INCUBATE_AND_SCRUB
+    class: STANDALONE_ENGINEERING_WORKSPACE
+    disposition: MODERNIZE_AND_FEDERATE
     bridge_to: GBOGEB/cryoplant-project
-    value:
-      - helium flow and compressor calculations
-      - cold-box heat-balance material
-      - QSYS/SBS and S-header calculation inputs
-      - artifact index and recursive-build ideas
-    defects:
-      - GLOBAL_index repository identity appears stale and requires self-repo repair before promotion
-    duplicate_policy: compare calculations against current canonical values; import deltas/nuance only
+    approx_size_kb: 78084
+    observed_sha: 92de9d49d51f235762366d5f643be637b498429a
+    value: [scope-aware artifact census, helium property boundary, executable QPLANT profiles, engineering calculators]
   - repository: GBOGEB/DOCX_RTM_Automation
-    observed_sha: e693802ecf0882c4d576fcfb2356bc19aff80524
-    approx_size_kb: 38130
-    class: PARALLEL_RTM_LINEAGE
-    disposition: BRIDGE_AND_SCRUB
+    class: STANDALONE_REQUIREMENTS_AUTOMATION
+    disposition: MODERNIZE_AND_FEDERATE
     bridge_to: GBOGEB/ABACUS
-    value:
-      - independent QPLANT RTM generators
-      - SoR extraction lineage
-      - existing ADR/OCD federation bridge and validation
-      - alternate hierarchy records
-    duplicate_policy: treat matching RTM generation as independent replication; promote only taxonomy, provenance, parser or requirement deltas
+    approx_size_kb: 38130
+    observed_sha: 9991c245a80db642ba163e72b18daaf305b13631
+    value: [direct DOCX source extraction, source-clause identifiers, RTM and deliverable heuristics, rendering lineage]
   - repository: GBOGEB/cryo_leak_rate_dashboard
-    observed_sha: 0e473475dbe0662541a67af52f86a79b93b6e7d6
-    approx_size_kb: 12315
     class: INDEPENDENT_ENGINEERING_VALIDATION
     disposition: KEEP_AS_VALIDATION_SATELLITE
     bridge_to: GBOGEB/ABACUS
-    value:
-      - RTM to implementation to test traceability
-      - independent leak-rate calculation lane
-      - prior warm-compressor comparison evidence
-    duplicate_policy: preserve independent calculation; compare outputs rather than merging engines
+    approx_size_kb: 12315
+    observed_sha: 0e473475dbe0662541a67af52f86a79b93b6e7d6
+    value: [first-principles leak conversion, RTM-to-test traceability, compressor comparison, HTML/dashboard generation]
   - repository: GBOGEB/cryogenic-accelerator-workspace
+    class: STANDALONE_ORCHESTRATION_PROTOTYPE
+    disposition: MODERNIZE_AND_FEDERATE
+    bridge_to: GBOGEB/CODEX
     approx_size_kb: 161
-    class: SMALL_EXPERIMENTAL
-    disposition: SCOUT
-    bridge_to: GBOGEB/cryoplant-project
-    value:
-      - helium-property and mass-balance validator concept
-      - compact knowledge topology
-    duplicate_policy: no promotion until numerical method and source basis are qualified
+    observed_sha: 8f15e0661e6ff32a80293f0b15954f2abbdaa2dd
+    value: [cross-chat orchestration, MCP bridge patterns, exhibit extraction tuples, integration manifests]
   - repository: GBOGEB/cryogenic-compliance
-    approx_size_kb: 1
-    class: LOW_DENSITY_LEGACY
+    class: LOW_DENSITY_COMPLIANCE_SEED
     disposition: DEFER
     bridge_to: GBOGEB/ABACUS
-    value: []
-    duplicate_policy: no action until a concrete current consumer or unique evidence atom is found
+    approx_size_kb: 1
+    value: [requirements/rtm/standards/deliverables taxonomy only]
+  - repository: GBOGEB/github_Documents
+    class: PRIVATE_BINARY_EVIDENCE_VAULT
+    disposition: STORAGE_ONLY
+    bridge_to: TRIAGE
+    approx_size_kb: 106
+    value: [binary release/provenance storage, handover payload retention]
 promotion_gate:
-  required:
-    - self_repo_analysis
-    - exact_source_sha
-    - smoke_pass
-    - unique_nuance_recorded
-    - primary_owner_disposition
-    - no_authority_collision
-    - provenance_or_test_receipt
+  required: [self_repo_analysis, exact_source_sha, smoke_pass, unique_value_recorded, primary_owner_disposition, no_authority_collision, provenance_or_test_receipt]
