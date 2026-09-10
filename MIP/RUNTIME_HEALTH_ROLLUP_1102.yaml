@@ -1,0 +1,10 @@
+schema_version: "0.1"
+rollup_id: ABACUS-1102-RUNTIME-HEALTH
+seed: {repo: GBOGEB/ABACUS, pr: 1102, merge_sha: 8841dc701a1896233273413c81d7c88d268b9498}
+active_window: 24h
+role: FEDERATION_DISPATCH_AND_ACTIVITY_ROLLUP
+runtime_health_relevance: [RUNNERS, MCP, DISPATCH, RECEIPT_ROUTING]
+routing_rule: only ACTIVE repos receive bounded work; exact source/head/output digests required
+maintenance_worker_allocation: 0
+authority_transfer: false
+next_victory: dispatch one active satellite task and return exact-SHA runtime-health receipt through DOW_KEB to child
