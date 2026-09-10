@@ -1,0 +1,20 @@
+schema: gbogeb-federation-activity/1.0.0
+as_of: '2026-09-10T06:47:00+02:00'
+repo: GBOGEB/pipeline-automation-hub
+classification: FEDERATION_CANDIDATE
+federation_role: CROSS_REPO_PIPELINE_AND_ORCHESTRATION_HUB
+recent_activity:
+  - {pr: 10, role: satellite_coverage_and_modernisation}
+  - {pr: 7, role: dependency_security_update, state: OPEN_AT_CENSUS}
+mip_state: {modernize: ACTIVE, innovate: ORCHESTRATION_CANDIDATE, perpetuate: WITHHELD}
+three_p_capability: {P1_source_atom: false, P2_integration_graph: true, P3_evidence_control: true}
+runtime_proof: {state: PARTIAL, required: cross_repo_exact_sha_dispatch_and_return_receipt}
+source_authority: {state: NONE_RUNTIME_ONLY, may_override_qps_child: false}
+produces_receipts: [dispatch_receipt, worker_return_receipt, pipeline_health_receipt]
+consumes_receipts: [federation_task_contract, repo_activity_record]
+current_blocker: governed cross-repo task dispatch with exact-SHA return and no authority leakage
+next_victory: dispatch one bounded satellite task and return exact source/head/output digests through the federation contract
+federation_dependencies:
+  upstream: [GBOGEB/CODEX, GBOGEB/ABACUS]
+  downstream: [GBOGEB/cryogenic-accelerator-workspace, GBOGEB/cryo_leak_rate_dashboard, GBOGEB/CODESPACES_jyperter]
+controls: {authority_effect: NONE, engineering_credit: false, compliance_credit: false}
