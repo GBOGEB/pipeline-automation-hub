@@ -1,0 +1,15 @@
+{
+  "schema": "gbogeb-level1-ssot/v1",
+  "repo": "GBOGEB/pipeline-automation-hub",
+  "role": "FEDERATION_ROUTING_ORCHESTRATION_HUB",
+  "default_branch": "master",
+  "existing_runtime_refs": ["scripts/run_processing.py", "app"],
+  "inputs": ["worker execution requests", "source/head/output digests", "document-processing jobs"],
+  "outputs": ["dispatch plans", "correlated receipts", "routing status", "processing outputs"],
+  "authority": {
+    "may": ["route", "dispatch", "correlate exact-SHA receipts", "orchestrate worker execution"],
+    "must_not": ["promote engineering truth", "promote compliance", "transfer child authority", "treat routing success as evidence acceptance"]
+  },
+  "federation_targets": ["GBOGEB/DOCX_RTM_Automation", "GBOGEB/CODESPACES_jyperter", "GBOGEB/cryogenic-accelerator-workspace", "GBOGEB/cryo_leak_rate_dashboard", "GBOGEB/document-organization-system", "GBOGEB/github_Documents", "GBOGEB/CODEX", "GBOGEB/ABACUS", "GBOGEB/cryoplant-project"],
+  "status": "PC1_CONTROL_PLANE"
+}
