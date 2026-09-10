@@ -1,0 +1,26 @@
+schema: gbogeb-recent-activity-index/1.0.0
+as_of: '2026-09-10T06:55:00+02:00'
+owner: GBOGEB
+purpose: repo_self_index_census_and_worker_routing
+repos:
+  - {repo: GBOGEB/cryoplant-project, class: CORE_ACTIVE, role: QPS_CHILD_AUTHORITY, recent_pr: 832, activity_pr: 835, state: REENTRY_OPEN, next_victory: glossary_3pc_3pr_child_acceptance}
+  - {repo: GBOGEB/CODEX, class: CORE_ACTIVE, role: KEB_SEMANTIC_PROVENANCE, recent_pr: 587, activity_pr: 590, state: W98_RECEIPT_PASS_ACTIVITY_INDEX_OPEN, next_victory: recurse_on_independent_W69_zero_delta_red}
+  - {repo: GBOGEB/ABACUS, class: CORE_ACTIVE, role: DOW_RUNTIME_METRICS_PROJECTION, recent_pr: 1091, activity_pr: 1094, state: W98_RECEIPT_PASS_RUNTIME_DEBT_OPEN, next_victory: repair_missing_python_github_dependency_boundary}
+  - {repo: GBOGEB/DOCX_RTM_Automation, class: SATELLITE_ACTIVE, role: SOURCE_EXTRACTION_RTM_RECONCILIATION, recent_pr_range: '22-26', activity_pr: 27, activity_merge_sha: 299922371f70da652adf75f83611acbf8cd81a8c, state: INDEX_MERGED, next_victory: repeated_exact_head_source_clause_receipt}
+  - {repo: GBOGEB/CODESPACES_jyperter, class: SATELLITE_ACTIVE, role: DEVELOPER_RUNTIME_HELIUM_PROPERTIES, recent_pr: 54, activity_pr: 55, activity_merge_sha: 52fd3ace16ea42964168b4476b68c7560ddb8b57, state: INDEX_MERGED, next_victory: fresh_notebook_cli_property_runtime_receipt}
+  - {repo: GBOGEB/cryogenic-accelerator-workspace, class: SATELLITE_ACTIVE, role: ACCELERATOR_RTM_BRIDGE, activity_pr: 6, activity_merge_sha: f12148f17ec88381665017c38ebf31db639854d7, state: INDEX_MERGED, next_victory: exact_head_bridge_rtm_receipt}
+  - {repo: GBOGEB/cryo_leak_rate_dashboard, class: SATELLITE_ACTIVE, role: LEAK_PHYSICS_EVIDENCE, activity_pr: 5, activity_merge_sha: da5222765d55f0db4e66d44af6592d47d63f0537, state: INDEX_MERGED, next_victory: exact_sha_build_output_hash_receipt}
+  - {repo: GBOGEB/pipeline-automation-hub, class: FEDERATION_CANDIDATE, role: CROSS_REPO_PIPELINE_ORCHESTRATION, activity_pr: 11, activity_merge_sha: af5b00ca860899ce2481ae10a4f65d4d2b80e1d7, state: INDEX_MERGED, next_victory: bounded_satellite_dispatch_and_exact_sha_return}
+  - {repo: GBOGEB/document-organization-system, class: FEDERATION_CANDIDATE, role: DOCUMENT_ORGANISATION_ARTIFACT_INDEX, activity_pr: 29, activity_merge_sha: ef24cdf90b9a628a03c24887e8929d4bed5fa50d, state: INDEX_MERGED, next_victory: deterministic_artifact_index_and_hashes}
+  - {repo: GBOGEB/github_Documents, class: FEDERATION_CANDIDATE, role: PRIVATE_BYTE_PROVENANCE_VAULT, activity_pr: 3, activity_merge_sha: fb39404185c575dbc7f0cc6b8601362a9bf40892, state: INDEX_MERGED_PRIVATE, next_victory: deterministic_ingress_retrieval_hash_cycle}
+  - {repo: GBOGEB/stale, class: MAINTENANCE_ONLY, role: NONE, recent_pr: 8, activity_pr: 9, state: INDEX_OPEN, next_victory: keep_federation_worker_allocation_zero}
+routing:
+  authority_spine: [GBOGEB/cryoplant-project, GBOGEB/CODEX, GBOGEB/ABACUS]
+  active_satellites: [GBOGEB/DOCX_RTM_Automation, GBOGEB/CODESPACES_jyperter, GBOGEB/cryogenic-accelerator-workspace, GBOGEB/cryo_leak_rate_dashboard]
+  federation_candidates: [GBOGEB/pipeline-automation-hub, GBOGEB/document-organization-system, GBOGEB/github_Documents]
+  maintenance_only: [GBOGEB/stale]
+worker_policy:
+  allocate_to_maintenance_only: false
+  require_exact_sha_receipt_for_perpetuate: true
+  child_disposition_authority: GBOGEB/cryoplant-project
+  parent_may_self_promote_engineering_truth: false
