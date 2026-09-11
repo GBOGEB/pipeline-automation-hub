@@ -65,8 +65,10 @@ jobs:
       - name: Enforce HOME self-validation
         if: always()
         shell: bash
-        run: test "${{ steps.home_probe.outcome }}" = "success"
+        run: |
+          test "${{ steps.home_probe.outcome }}" = "success"
       - name: Enforce Mission-II federation DoV gate
         if: always()
         shell: bash
-        run: grep -q '"status": "PASS_FEDERATION_GATE"' mission-control/qps-triage-ultra/receipts/federation-gate-result.json
+        run: |
+          grep -q '"status": "PASS_FEDERATION_GATE"' mission-control/qps-triage-ultra/receipts/federation-gate-result.json
