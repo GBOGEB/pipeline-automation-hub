@@ -22,5 +22,30 @@ jobs:
           expected="${{ github.event.pull_request.head.sha || github.sha }}"
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$expected"
-      - name: Validate mission-control W0
-        run: python mission-control/qps-triage-ultra/validate_w0.py
+      - name: Execute HOME control-plane validation
+        id: probe
+        continue-on-error: true
+        run: |
+          python mission-control/qps-triage-ultra/validate_w0.py
+          python mission-control/qps-triage-ultra/validate_federation.py --structure-only
+          python mission-control/qps-triage-ultra/validate_federation.py --self-test
+      - name: Emit HOME fleet receipt
+        if: always()
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          PROBE_OUTCOME: ${{ steps.probe.outcome }}
+        run: |
+          python mission-control/qps-triage-ultra/emit_receipt.py \
+            --source-sha "$SOURCE_SHA" \
+            --outcome "$PROBE_OUTCOME" \
+            --out mission-control/qps-triage-ultra/receipts/qps-receipt-ULTRA.json
+      - name: Upload HOME fleet receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-receipt-ULTRA-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/receipts/qps-receipt-ULTRA.json
+      - name: Enforce HOME validation outcome
+        if: always()
+        shell: bash
+        run: test "${{ steps.probe.outcome }}" = "success"
