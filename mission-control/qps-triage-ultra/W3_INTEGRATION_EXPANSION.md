@@ -1,6 +1,6 @@
 # QPS TRIAGE ULTRA — W3 Integration / Productization / Controlled Expansion
 
-Status: `ACTIVE`
+Status: `ACTIVE — 3/16 strict PASS`
 Entry condition: W2 federation DoD 12/12 and repeated post-merge DoV PASS.
 Entry master: `8d71e73bb59b5ebf36bd11dcb458b55ac365fd32`
 
@@ -22,12 +22,12 @@ W3 is intentionally ambitious but bounded. M04/CLOUD16 remain held until W3 show
 
 ## Fixed W3 denominator — 16 gates
 
-| Gate | Requirement | Entry state |
+| Gate | Requirement | Current state |
 |---|---|---|
 | W3-01 | W2 federation is repeated CONTROL baseline | PASS |
 | W3-02 | M02A material evaluator/database exact-source lineage frozen with evidence classes | PASS |
-| W3-03 | Independent authoritative parity spot-checks cover representative material families | PENDING |
-| W3-04 | M02A material evaluator/data exact blobs imported with identity proof | PENDING |
+| W3-03 | Independent authoritative parity spot-checks cover represented material families | **PASS — 5/5 families, 10/10 material IDs** |
+| W3-04 | M02A material evaluator/data exact blobs imported with identity proof | PARTIAL — evaluator exact `2fff568b...`; database import pending |
 | W3-05 | M02A unit/range/equation/adaptor tests execute >0 and emit receipt | PENDING |
 | W3-06 | Actual modular dashboard bundle replaces placeholder under explicit lineage | PENDING |
 | W3-07 | Calculation/export trace binds source SHA + data SHA + algorithm SHA | PENDING |
@@ -41,7 +41,15 @@ W3 is intentionally ambitious but bounded. M04/CLOUD16 remain held until W3 show
 | W3-15 | Explicit observed pairwise intervention outcomes support fleet BT ranking | PENDING |
 | W3-16 | M03 four-frontier W0 reconnaissance completes with coverage floor, lineage and no authority transfer | PENDING |
 
-Entry strict progress: **2/16 = 12.5%**.
+Strict progress: **3/16 = 18.75%**. Partial implementation does not receive strict gate credit.
+
+## First W3 REX
+
+The first material evaluator import was semantically equivalent but changed literal JavaScript Unicode escape sequences into rendered characters. Its Git blob became `5bfc26b5...` rather than the source `2fff568b...`.
+
+The import was rejected and repaired. The current imported evaluator is byte-identical to source blob `2fff568b3b5f73874581a5004553f1046f7c15a4`.
+
+This establishes a useful W3 control rule: **semantic equality is insufficient where source-lineage DoV requires byte identity.**
 
 ## W3 DoD
 
@@ -57,21 +65,22 @@ W3 is victorious when:
 4. ULTRA uses measured telemetry for PCA and real intervention outcomes for BT rather than synthetic seed data; and
 5. M03 reconnaissance demonstrates four concurrent frontiers can remain above the coverage floor without degrading receipt quality.
 
+## Current authoritative material parity scope
+
+The source coefficients/ranges/equation forms were checked against NIST's cryogenic material-property pages for the represented families: 316 stainless, 6061-T6 aluminum, G-10 CR, OFHC copper RRR 50/100/150/300/500, and Ti-6Al-4V. This is a bounded coefficient/equation/range parity result, not a re-fit of experimental source data and not a claim of zero uncertainty.
+
 ## Burndown pressure
 
-Priority is not simple gate order. Default control ranking:
-
-1. M02A authoritative materials/data provenance — highest user value and unlocks the real hosted tool.
-2. M02A material adapter + actual dashboard Pages path — converts recovered code into consumed product.
-3. M02B second kernel + external consumer — proves bunker is a capability source, not a one-kernel demo.
-4. M01 HEPAK/reference closure — highest remaining engineering-authority risk.
-5. Comparable pulse telemetry — unlocks measured PCA.
-6. Real intervention comparisons — unlocks BT.
-7. M03 reconnaissance — expansion runs in parallel but cannot steal the core coverage floor.
+1. **W3-BD01:** finish exact material database import + unit/range/equation adapter receipt.
+2. **W3-BD02:** recover/integrate actual modular dashboard, trace source/data/algorithm SHAs, deploy/repeat real Pages tool.
+3. **W3-BD03:** second Math Bunker kernel + non-origin consumer.
+4. **W3-BD04:** M01 HEPAK/reference closure.
+5. **W3-BD05:** measured pulse telemetry -> PCA -> observed BT.
+6. **W3-BD06:** M03 four-frontier controlled reconnaissance.
 
 ## Horizons
 
-- **N+5:** authoritative material provenance + exact evaluator/data import + adapter receipt; second Math Bunker kernel selected/implemented.
+- **N+5:** exact database import + adapter receipt; second Math Bunker kernel selected/implemented.
 - **N+10:** real dashboard replaces placeholder, Pages calculation is traceable/repeated, one external consumer exists, M01 reference gate materially advanced.
 - **N+50:** M03 reconnaissance dispositions feed the next fleet topology; mature W3 components contract into CONTROL; measured PCA shifts attention to PC2+ rather than repeatedly optimizing already-flat PC1 surfaces.
 
