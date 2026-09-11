@@ -1,6 +1,8 @@
 name: QPS TRIAGE ULTRA W0
 
 on:
+  push:
+    branches: [mission/qps-triage-ultra-w0-20260911]
   pull_request:
     branches: [master]
   workflow_dispatch:
