@@ -1,13 +1,25 @@
-schema: qps-triage-burndown/v1
+schema: qps-triage-burndown/v2
 slice_id: ULTRA_W2_FEDERATION
 parent_merge_sha: f41e96dfe5fde5312f3ebb5dc41fc391cb593c6d
+proof_head_sha: 505b6ef3fb48daf305d5be9877fbaf3ee9f78930
+proof_run_id: 34617530641
+proof_artifact_digest: sha256:c32ff7353e4f687f8271585410dfc01f96275e1090623afbf7efb480beab9e12
+merge_sha: 8d71e73bb59b5ebf36bd11dcb458b55ac365fd32
+control_repeat_run_id: 34617570505
+control_repeat_artifact_digest: sha256:43172dd2773c015d6db6d76600193fc46f92539bac21c0762de318d7e9391d2c
 denominator: 12
-strict_passed: 7
-implementation_ready: 8
-strict_dod_fraction: 0.5833
-implementation_ready_fraction: 0.6667
-dov: WITHHELD
+strict_passed: 12
+implementation_ready: 12
+strict_dod_fraction: 1.0
+implementation_ready_fraction: 1.0
+dod: ACHIEVED
+dov: ACHIEVED_AND_REPEATED_CONTROLLED
 and_gate: ULTRA-M02-FED-AND-001
+and_gate_result: PASS_FEDERATION_GATE
+validated_nodes: [M02A, M02B, ULTRA]
+validated_outcomes: {M02A: SUCCESS, M02B: SUCCESS, ULTRA: SUCCESS}
+authority_transfer: false
+engineering_acceptance: false
 analytics:
   pca: DEFER_INSUFFICIENT_COMPARABLE_MEASURED_OBSERVATIONS
   bt: DEFER_NO_EXPLICIT_PAIRWISE_OUTCOMES
@@ -19,19 +31,22 @@ gates:
   W2-05: {state: PASS, evidence: M02B_RUN_34615269215_HEAD_7d544a63}
   W2-06: {state: PASS, evidence: qps-fleet-receipt-v1_contract}
   W2-07: {state: PASS, evidence: recovered_blob_2d23e1d0_byte_identical}
-  W2-08: {state: IMPLEMENTED_PENDING_EXACT_HEAD_RECEIPT, evidence: disconnected_graph_guard_and_reference_challenge}
-  W2-09: {state: PENDING, evidence: M02A_PR6_HEAD_05d8e34d}
-  W2-10: {state: PENDING, evidence: M02B_MERGED_CHILD_HEAD_5c1d86f9}
-  W2-11: {state: PENDING, evidence: ULTRA_W2_CURRENT_EXACT_HEAD}
-  W2-12: {state: PENDING, evidence: AND_GATE_CONSUMPTION}
-backlog:
-  - {id: BD-01, rank: 1, target: THREE_RECEIPT_ENABLED_EXACT_HEAD_RUNS, unlock: AND_GATE_INPUTS}
-  - {id: BD-02, rank: 2, target: HOME_CONSUMES_AND_VALIDATES_THREE_RECEIPTS, unlock: W2_DOV}
-  - {id: BD-03, rank: 3, target: M02A_MATERIALS_AND_DATA_PROVENANCE, unlock: ENGINEERING_CALCULATION_BOUNDARY}
-  - {id: BD-04, rank: 4, target: M02A_DETERMINISTIC_PAGES_PRODUCTIZATION, unlock: HOSTED_ENGINEERING_OUTPOST}
-  - {id: BD-05, rank: 5, target: M02B_SECOND_INDEPENDENT_KERNEL, unlock: MATH_BUNKER_BREADTH}
-  - {id: BD-06, rank: 6, target: EXTERNAL_CONSUMPTION, unlock: E5_CONSUMED}
-  - {id: BD-07, rank: 7, target: THREE_COMPARABLE_MEASURED_PULSE_ROWS, unlock: MEASURED_PCA}
-  - {id: BD-08, rank: 8, target: EXPLICIT_PAIRWISE_INTERVENTION_OUTCOMES, unlock: OBSERVED_BT}
-  - {id: BD-09, rank: 9, target: M01_HEPAK_AND_EXTERNAL_CONSUMER, unlock: M01_DOV2_CONTROL}
-  - {id: BD-10, rank: 10, target: POST_MERGE_FRESH_CHECKOUT_REPEAT, unlock: CONTROL_PROMOTION}
+  W2-08: {state: PASS, evidence: M02B_repair_run_34617236017_head_43d23c38}
+  W2-09: {state: PASS, evidence: M02A_run_34616804184_receipt_SUCCESS}
+  W2-10: {state: PASS, evidence: M02B_run_34617236017_receipt_SUCCESS}
+  W2-11: {state: PASS, evidence: ULTRA_run_34617530641_head_505b6ef3_receipt_SUCCESS}
+  W2-12: {state: PASS, evidence: ULTRA_M02_FED_AND_001_PASS_and_master_repeat_34617570505}
+closed_backlog:
+  - {id: BD-01, result: PASS, target: THREE_RECEIPT_ENABLED_EXACT_HEAD_RUNS}
+  - {id: BD-02, result: PASS, target: HOME_CONSUMES_AND_VALIDATES_THREE_RECEIPTS}
+  - {id: BD-10, result: PASS, target: POST_MERGE_HOME_FRESH_CHECKOUT_REPEAT}
+carried_forward_to_W3:
+  - {id: BD-03, rank: 1, target: M02A_MATERIALS_AND_DATA_PROVENANCE, unlock: ENGINEERING_CALCULATION_BOUNDARY}
+  - {id: BD-04, rank: 2, target: M02A_DETERMINISTIC_REAL_PAGES_PRODUCTIZATION, unlock: HOSTED_ENGINEERING_OUTPOST}
+  - {id: BD-05, rank: 3, target: M02B_SECOND_INDEPENDENT_KERNEL, unlock: MATH_BUNKER_BREADTH}
+  - {id: BD-06, rank: 4, target: EXTERNAL_CONSUMPTION, unlock: E5_CONSUMED}
+  - {id: BD-07, rank: 5, target: THREE_COMPARABLE_MEASURED_PULSE_ROWS, unlock: MEASURED_PCA}
+  - {id: BD-08, rank: 6, target: EXPLICIT_PAIRWISE_INTERVENTION_OUTCOMES, unlock: OBSERVED_BT}
+  - {id: BD-09, rank: 7, target: M01_HEPAK_AND_EXTERNAL_CONSUMER, unlock: M01_DOV2_CONTROL}
+control_statement: >-
+  W2 is closed. Its 12-gate denominator is immutable. The exact proof head and the merged master both returned PASS_FEDERATION_GATE with M02A, M02B and ULTRA SUCCESS. New capability work belongs to W3 rather than extending W2.

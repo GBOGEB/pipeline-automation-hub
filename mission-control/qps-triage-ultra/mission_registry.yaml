@@ -1,81 +1,78 @@
-schema: qps-mission-registry/v4
-global_seq: 4
+schema: qps-mission-registry/v5
+global_seq: 5
 control_node:
   id: ULTRA
   repo: GBOGEB/pipeline-automation-hub
-  branch: mission/qps-triage-ultra-w2-federation
-  parent_merge_sha: f41e96dfe5fde5312f3ebb5dc41fc391cb593c6d
-  phase: W2_FEDERATION_AND_GATE
-  source_binding: CURRENT_EXACT_HEAD
-  status: STAY
-  next_target: THREE_W2_EXACT_HEAD_FLEET_RECEIPTS_TO_AND_GATE
+  master_sha: 8d71e73bb59b5ebf36bd11dcb458b55ac365fd32
+  phase: W2_CONTROL_W3_RELEASE
+  status: CONTROLLED
+  w2:
+    dod: 12/12
+    dov: ACHIEVED_AND_REPEATED
+    proof_head_sha: 505b6ef3fb48daf305d5be9877fbaf3ee9f78930
+    proof_run_id: 34617530641
+    merge_sha: 8d71e73bb59b5ebf36bd11dcb458b55ac365fd32
+    control_repeat_run_id: 34617570505
+    gate: ULTRA-M02-FED-AND-001
+  next_target: W3_PRODUCTIZE_CONSUME_MEASURE
 active_missions:
   M01:
     repo: GBOGEB/CoolProp
     moniker: COOLPROP_DARKLAND
     phase: CONTROL_GATE_TO_FEDERATION
-    baseline_sha: a3c743026521ff557f8c2e85701c726898b00e0b
     current_master_sha: 7a4eb02b87f9000df797bb36bde122b48f24be8a
     status: STAY
     authority_hold: HEPAK_2K_CROSSCHECK_REQUIRED
-    next_target: M01-CG-HEPAK-CROSSCHECK
+    next_target: HEPAK_CROSSCHECK_THEN_GOVERNED_ADAPTER_AND_EXTERNAL_CONSUMER
   M02A:
     repo: GBOGEB/Q_engineering_tools
+    moniker: ENGINEERING_OUTPOST
+    phase: W3_MATERIALS_PROVENANCE_TO_REAL_PAGES
     parent_pr: 5
     parent_merge_sha: 9a9131cfeb90843586c87df16f7cd2ff60323046
-    pr: 6
-    branch: mission/m02a-engineering-outpost-w2
-    moniker: ENGINEERING_OUTPOST
-    phase: W2_EXACT_RECOVERED_SOURCE_PROOF
-    baseline_sha: 4f9304fed18168e8e152cdbcca93864dead34490
-    current_candidate_sha: 05d8e34df6246601b1ee5edabc898e6f7efd174b
+    w2_pr: 6
+    w2_proof_head_sha: 05d8e34df6246601b1ee5edabc898e6f7efd174b
+    w2_proof_run_id: 34616804184
+    w2_merge_sha: 1511615c84fe0d1b9d3edd44370f721f65b0a0a1
     status: STAY
-    runtime_proof:
-      sha: b52f65fcd651bf06f5720958124640e1dd226bd9
-      run_id: 34615256406
-      outcome: SUCCESS
-      exact_head_assertion: PASS
-      mission_step_gt0: PASS
-      scope: INDEPENDENT_NUMERICAL_GOLDEN_CASE
-    pages_parent:
-      run_id: 34615854134
-      outcome: SUCCESS
-      boundary: PUBLICATION_PATH_ONLY_NOT_REAL_DASHBOARD_DOV
-    w2_candidate:
-      recovered_blob_sha: 2d23e1d0ac041d85e45ba157088c699b3f1c9fe6
-      byte_identical_blob_local: OBSERVED_PASS
-      direct_import_probe: IMPLEMENTED_PENDING_EXACT_HEAD_CI
-      receipt_enabled: true
-      run_id: 34616804184
-      run_state: QUEUED
-    receipt_gate: AWAIT_W2_EXACT_HEAD_RECEIPT
-    next_target: W2_RECEIPT_THEN_MATERIALS_CALCULATION_PROVENANCE
+    w2_evidence:
+      recovered_numerics_blob_sha: 2d23e1d0ac041d85e45ba157088c699b3f1c9fe6
+      receipt_outcome: SUCCESS
+      receipt_evidence_class: EXECUTED_EXACT_RECOVERED_BLOB
+    w3_discovery:
+      source_repo: GBOGEB/document-organization-system
+      source_sha: cea7bfb533c246c797ef43652579fe00a39dcd4d
+      materials_js_blob_sha: 2fff568b3b5f73874581a5004553f1046f7c15a4
+      materials_json_blob_sha: 65be104be14dc694efb519c98e8939ae7184afec
+      source_claim: NIST_VALIDATED_COEFFICIENTS
+      evidence_status: SOURCE_CLAIM_NOT_YET_INDEPENDENTLY_VERIFIED
+    next_target: PROVE_MATERIAL_PROPERTY_SOURCE_LINEAGE_AND_RANGE_UNITS_THEN_REAL_DASHBOARD
   M02B:
     repo: GBOGEB/gg_MATH
-    pr: 1
-    merged_child_head_sha: 5c1d86f9bbed4a632eb061eea68454097c447bfb
-    merge_sha: 543567ebc778d590a1ee396c21fb8a6a64dc2980
     moniker: MATH_BUNKER
-    phase: W2_SEMANTIC_REFERENCE_CHALLENGE_MERGED
-    baseline_sha: 71cf681eb14acfb219d3200d40589dd89a1ffbc1
+    phase: W3_SECOND_KERNEL_AND_CONSUMER
+    parent_pr: 1
+    parent_merge_sha: 543567ebc778d590a1ee396c21fb8a6a64dc2980
+    repair_pr: 2
+    repair_proof_head_sha: 43d23c38b268e8980f02ad58e74ad48704ab7304
+    repair_proof_run_id: 34617236017
+    repair_merge_sha: bbbfc61b293c31d4d9d98adbeacba0845f7daa6d
     status: STAY
-    runtime_proof:
-      sha: 7d544a63a3480c8cb271adf888f6e8be7cd6b1d6
-      run_id: 34615269215
-      outcome: SUCCESS
-      exact_head_assertion: PASS
-      mission_step_gt0: PASS
-      scope: FIRST_BT_KERNEL_GOLDEN_ORDER
-    w2_candidate:
-      first_red: DISCONNECTED_COMPARISON_GRAPH_GUARD_MISSING
-      repair: MERGED
-      independent_reference_suite: MERGED_PENDING_EXACT_HEAD_RECEIPT
-      receipt_enabled: true
-      run_id: 34616625888
-      run_state: QUEUED
-    receipt_gate: AWAIT_W2_EXACT_HEAD_RECEIPT
-    next_target: W2_RECEIPT_THEN_SECOND_MATH_KERNEL_AND_EXTERNAL_CONSUMER
-future:
-  M03: {frontier_count: 4, state: RECON_ONLY_UNTIL_M02_FED_GATE}
-  M04: {frontier_count: 8, state: OUTLINED}
-  CLOUD16: {frontier_count: 16, state: W0_CANDIDATE_CLOUD}
+    rex:
+      failed_run_id: 34616625888
+      first_red: TEST_IMPORT_ROOT_MISSING
+      failure_receipt_preserved: true
+    next_target: SECOND_INDEPENDENT_KERNEL_THEN_NON_ORIGIN_CONSUMER
+expansion:
+  M03:
+    frontier_count: 4
+    state: W0_RECON_RELEASED
+    constraint: COVERAGE_FLOOR_AND_NO_AUTHORITY_TRANSFER
+    launch_condition: W2_CONTROL_REPEAT_PASS
+  M04: {frontier_count: 8, state: OUTLINED_NOT_RELEASED}
+  CLOUD16: {frontier_count: 16, state: CANDIDATE_CLOUD_NOT_RELEASED}
+analytics:
+  pca: DEFER_INSUFFICIENT_COMPARABLE_MEASURED_OBSERVATIONS
+  pca_unlock: AT_LEAST_3_COMPARABLE_MEASURED_PULSE_ROWS
+  bt: DEFER_NO_EXPLICIT_PAIRWISE_OUTCOMES
+  bt_unlock: EXPLICIT_REAL_INTERVENTION_WIN_LOSS_OBSERVATIONS
