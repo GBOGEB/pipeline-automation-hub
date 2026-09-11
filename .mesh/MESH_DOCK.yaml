@@ -1,0 +1,14 @@
+schema: gbogeb-mesh-dock/1.0
+repo: GBOGEB/pipeline-automation-hub
+node_id: repo.pipeline_hub
+ring: R1_ACTIVE_EXECUTION
+role: FEDERATION_ROUTING_ORCHESTRATION_HUB
+local_ssot: {primary: level1/ssot.json}
+global_directory: {repo: GBOGEB/CODEX, census: federation/mesh/GLOBAL_HIVE_CENSUS_v1.yaml, action_taxonomy: federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml, dock_protocol: federation/mesh/GLOBAL_MESH_DOCK_PROTOCOL_v1.yaml}
+authority:
+  may: [route, dispatch, correlate_exact_SHA_receipts, orchestrate_workers]
+  must_not: [promote_engineering_truth, promote_compliance, treat_routing_success_as_acceptance]
+inputs: [worker_execution_requests, source_head_output_digests, document_processing_jobs]
+outputs: [dispatch_plans, correlated_receipts, routing_status, processing_outputs]
+action_classes: [FE, CR, PB, BG, RR, WD]
+first_use_case: route a typed request to the appropriate worker and correlate the returned receipt
