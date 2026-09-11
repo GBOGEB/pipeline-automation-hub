@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate QPS TRIAGE fleet receipts without transferring engineering authority."""
 from __future__ import annotations
-import argparse, copy, json, re, sys
+import argparse, copy, json, re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -27,6 +27,8 @@ def structural_errors():
 
 def receipt_errors(receipt, node_name):
     errors = []
+    if node_name not in GATE.get("required_nodes", {}):
+        return ["unknown_node"]
     node = GATE["required_nodes"][node_name]
     for key in CONTRACT["required_top_level"]:
         if key not in receipt:
@@ -84,10 +86,22 @@ def self_test():
     return "authority_transfer" in receipt_errors(bad, "M02A")
 
 
+def load_inbox(supplied):
+    inbox = ROOT / "receipts" / "inbox"
+    if not inbox.is_dir():
+        return
+    for path in sorted(inbox.glob("*.json")):
+        receipt = json.loads(path.read_text(encoding="utf-8"))
+        mission = receipt.get("mission_id")
+        if mission and mission not in supplied:
+            supplied[mission] = receipt
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--structure-only", action="store_true")
     ap.add_argument("--self-test", action="store_true")
+    ap.add_argument("--inbox", action="store_true", help="load receipts/inbox/*.json")
     ap.add_argument("--receipt", action="append", default=[], help="NODE=path")
     args = ap.parse_args()
 
@@ -110,24 +124,43 @@ def main():
             print(json.dumps({"status": "FAIL_ARGUMENT", "item": item}))
             return 1
         supplied[name] = json.loads(Path(path).read_text(encoding="utf-8"))
-    required = set(GATE["required_nodes"])
-    missing = sorted(required - set(supplied))
-    if missing:
-        print(json.dumps({"status": "DEFER_MISSING_RECEIPTS", "missing": missing, "is_project_dov": False}, indent=2))
-        return 0
+    if args.inbox:
+        load_inbox(supplied)
 
+    required = set(GATE["required_nodes"])
     errors = {}
-    for name in sorted(required):
-        e = receipt_errors(supplied[name], name)
-        required_outcome = GATE["required_nodes"][name]["required_outcome"]
-        if supplied[name].get("execution", {}).get("outcome") != required_outcome:
+    outcomes = {}
+    for name, receipt in sorted(supplied.items()):
+        e = receipt_errors(receipt, name)
+        required_outcome = GATE.get("required_nodes", {}).get(name, {}).get("required_outcome")
+        observed_outcome = receipt.get("execution", {}).get("outcome")
+        outcomes[name] = observed_outcome
+        if required_outcome and observed_outcome != required_outcome:
             e.append("required_outcome_not_met")
         if e:
             errors[name] = sorted(set(e))
     if errors:
-        print(json.dumps({"status": "FAIL_FEDERATION_GATE", "errors": errors, "is_project_dov": False}, indent=2))
+        print(json.dumps({"status": "FAIL_FEDERATION_GATE", "errors": errors, "validated_nodes": sorted(supplied), "is_project_dov": False}, indent=2))
         return 1
-    print(json.dumps({"status": "PASS_FEDERATION_GATE", "gate": GATE["gate_id"], "is_project_dov": True}, indent=2))
+
+    missing = sorted(required - set(supplied))
+    if missing:
+        print(json.dumps({
+            "status": "DEFER_MISSING_RECEIPTS",
+            "validated_nodes": sorted(supplied),
+            "validated_outcomes": outcomes,
+            "missing": missing,
+            "is_project_dov": False
+        }, indent=2))
+        return 0
+
+    print(json.dumps({
+        "status": "PASS_FEDERATION_GATE",
+        "gate": GATE["gate_id"],
+        "validated_nodes": sorted(supplied),
+        "validated_outcomes": outcomes,
+        "is_project_dov": True
+    }, indent=2))
     return 0
 
 
