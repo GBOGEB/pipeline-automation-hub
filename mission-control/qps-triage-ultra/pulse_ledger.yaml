@@ -46,6 +46,42 @@ events:
     result: CONTROL_GATE_GREEN_FEDERATION_PENDING
     current_master_sha: 7a4eb02b87f9000df797bb36bde122b48f24be8a
     next_target: HEPAK_CROSSCHECK_THEN_EXTERNAL_CONSUMER
+  - global_seq: 5
+    timestamp: 2026-09-11T17:17:40+02:00
+    mission_id: M02A
+    wave_id: W1
+    pulse_id: P002
+    action: REQUEST_EXACT_HEAD_NUMERICS_CI
+    evidence_class: MEASURED
+    result: QUEUED
+    run_id: 34615256406
+    head_sha: b52f65fcd651bf06f5720958124640e1dd226bd9
+    blocker_class: BG_RUNNER_NOT_YET_ASSIGNED
+    next_target: RUNNER_GT0_THEN_NUMERICS_PASS
+  - global_seq: 6
+    timestamp: 2026-09-11T17:17:40+02:00
+    mission_id: M02B
+    wave_id: W1
+    pulse_id: P002
+    action: REQUEST_EXACT_HEAD_BT_KERNEL_CI
+    evidence_class: MEASURED
+    result: QUEUED
+    run_id: 34615269215
+    head_sha: 7d544a63a3480c8cb271adf888f6e8be7cd6b1d6
+    blocker_class: BG_RUNNER_NOT_YET_ASSIGNED
+    next_target: RUNNER_GT0_THEN_BT_KERNEL_PASS
+  - global_seq: 7
+    timestamp: 2026-09-11T17:18:20+02:00
+    mission_id: ULTRA
+    wave_id: W0
+    pulse_id: P002
+    action: REQUEST_EXACT_HEAD_ULTRA_VALIDATION
+    evidence_class: MEASURED
+    result: QUEUED
+    run_id: 34615318967
+    head_sha: 59b3069b77c22cfcce9630b1115d88936b802c5a
+    blocker_class: BG_RUNNER_NOT_YET_ASSIGNED
+    next_target: RUNNER_GT0_THEN_ULTRA_W0_RECEIPT
 analytics_state:
   pca: DEFER_INSUFFICIENT_COMPARABLE_MEASURED_OBSERVATIONS
   bt: DEFER_NO_EXPLICIT_FLEET_PAIRWISE_OUTCOMES
