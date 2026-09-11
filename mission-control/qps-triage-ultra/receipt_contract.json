@@ -1,0 +1,33 @@
+{
+  "schema": "qps-fleet-receipt-contract/v1",
+  "receipt_schema": "qps-fleet-receipt/v1",
+  "required_top_level": [
+    "schema",
+    "mission_id",
+    "repo",
+    "source_sha",
+    "observed_at",
+    "execution",
+    "evidence_class",
+    "authority_transfer",
+    "engineering_acceptance"
+  ],
+  "required_execution": [
+    "kernel",
+    "outcome",
+    "steps_gt0",
+    "workflow_run_id",
+    "workflow_run_attempt"
+  ],
+  "allowed_outcomes": ["SUCCESS", "FAILURE", "CANCELLED", "SKIPPED"],
+  "promotion_outcome": "SUCCESS",
+  "source_sha_rule": "exact 40-character lowercase hexadecimal source/head SHA",
+  "invariants": {
+    "authority_transfer": false,
+    "engineering_acceptance": false,
+    "steps_gt0_for_consumable_receipt": true,
+    "exact_source_binding_required": true,
+    "failure_receipts_are_telemetry_not_promotion": true
+  },
+  "evidence_note": "A conforming receipt proves execution provenance/status only. Engineering, evidence and compliance acceptance remain outside ULTRA and require the governed KEB/DOW/child chain."
+}
