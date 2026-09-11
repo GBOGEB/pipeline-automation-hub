@@ -1,6 +1,6 @@
-schema: qps-triage-pulse-ledger/v1
+schema: qps-triage-pulse-ledger/v2
 policy: append_only_semantic_history
-note: numeric progress fields below are controller assessments unless evidence_class says MEASURED.
+note: numeric progress fields are controller assessments unless evidence_class says MEASURED.
 events:
   - global_seq: 1
     timestamp: 2026-09-11T17:14:00+02:00
@@ -82,6 +82,132 @@ events:
     head_sha: 59b3069b77c22cfcce9630b1115d88936b802c5a
     blocker_class: BG_RUNNER_NOT_YET_ASSIGNED
     next_target: RUNNER_GT0_THEN_ULTRA_W0_RECEIPT
+  - global_seq: 8
+    timestamp: 2026-09-11T17:26:04+02:00
+    mission_id: M02A
+    wave_id: W1
+    pulse_id: P003
+    action: COMPLETE_EXACT_HEAD_NUMERICAL_RUNTIME
+    evidence_class: MEASURED
+    result: PASS
+    run_id: 34615256406
+    head_sha: b52f65fcd651bf06f5720958124640e1dd226bd9
+    exact_head_assertion: PASS
+    mission_step_gt0: PASS
+    retired_blockers: [BG_RUNNER_NOT_YET_ASSIGNED, BG_RUNTIME_UNKNOWN]
+  - global_seq: 9
+    timestamp: 2026-09-11T17:26:30+02:00
+    mission_id: M02B
+    wave_id: W1
+    pulse_id: P003
+    action: COMPLETE_EXACT_HEAD_BT_RUNTIME
+    evidence_class: MEASURED
+    result: PASS
+    run_id: 34615269215
+    head_sha: 7d544a63a3480c8cb271adf888f6e8be7cd6b1d6
+    exact_head_assertion: PASS
+    mission_step_gt0: PASS
+    retired_blockers: [BG_RUNNER_NOT_YET_ASSIGNED, BG_RUNTIME_UNKNOWN]
+  - global_seq: 10
+    timestamp: 2026-09-11T17:23:36+02:00
+    mission_id: M02A
+    wave_id: W1
+    pulse_id: P004
+    action: MERGE_W0_W1_AND_DEPLOY_PAGES
+    evidence_class: MEASURED
+    result: PASS
+    merge_sha: 9a9131cfeb90843586c87df16f7cd2ff60323046
+    pr: 5
+    pages_run_id: 34615854134
+    pages_outcome: SUCCESS
+    note: Pages deployment proves publication path, not yet real-dashboard engineering DoV.
+  - global_seq: 11
+    timestamp: 2026-09-11T17:29:00+02:00
+    mission_id: M02B
+    wave_id: W2
+    pulse_id: P004
+    action: ANALYZE_AND_REPAIR_BT_DISCONNECTED_GRAPH_GAP
+    evidence_class: OBSERVED_CODE_SEMANTICS
+    result: REPAIR_IMPLEMENTED_PENDING_EXACT_HEAD_RECEIPT
+    first_red: DISCONNECTED_COMPARISON_GRAPH_GUARD_MISSING
+    consequence: disconnected_pairwise_islands_could_receive_non_identifiable_relative_ranking
+    repair: explicit_component_guard_and_independent_reference_challenge
+  - global_seq: 12
+    timestamp: 2026-09-11T17:32:54+02:00
+    mission_id: M02B
+    wave_id: W2
+    pulse_id: P005
+    action: MERGE_MATH_BUNKER_CHILD
+    evidence_class: MEASURED
+    result: PASS_LINEAGE_EVENT
+    pr: 1
+    merged_child_head_sha: 5c1d86f9bbed4a632eb061eea68454097c447bfb
+    merge_sha: 543567ebc778d590a1ee396c21fb8a6a64dc2980
+    receipt_run_id: 34616625888
+    receipt_run_state_at_observation: QUEUED
+  - global_seq: 13
+    timestamp: 2026-09-11T17:33:10+02:00
+    mission_id: ULTRA
+    wave_id: W1
+    pulse_id: P003
+    action: MERGE_HOME_CONTROL_PLANE
+    evidence_class: MEASURED
+    result: PASS_LINEAGE_EVENT
+    pr: 20
+    merged_child_head_sha: 169a38709839c479fc969e219aa40309784eb285
+    merge_sha: f41e96dfe5fde5312f3ebb5dc41fc391cb593c6d
+  - global_seq: 14
+    timestamp: 2026-09-11T17:33:10+02:00
+    mission_id: ULTRA
+    wave_id: W2
+    pulse_id: P001
+    action: START_FEDERATION_CONTROL_FROM_MERGED_HOME
+    evidence_class: MEASURED
+    result: PASS
+    parent_merge_sha: f41e96dfe5fde5312f3ebb5dc41fc391cb593c6d
+    branch: mission/qps-triage-ultra-w2-federation
+    gate: ULTRA-M02-FED-AND-001
+  - global_seq: 15
+    timestamp: 2026-09-11T17:33:10+02:00
+    mission_id: M02A
+    wave_id: W2
+    pulse_id: P001
+    action: PROVE_LOCAL_BYTE_IDENTITY_AND_OPEN_W2_PR
+    evidence_class: MEASURED_PLUS_IMPLEMENTED
+    result: EXACT_BLOB_IDENTITY_PASS_RUNTIME_RECEIPT_PENDING
+    recovered_blob_sha: 2d23e1d0ac041d85e45ba157088c699b3f1c9fe6
+    candidate_sha: 05d8e34df6246601b1ee5edabc898e6f7efd174b
+    pr: 6
+    run_id: 34616804184
+    run_state_at_observation: QUEUED
+  - global_seq: 16
+    timestamp: 2026-09-11T17:33:10+02:00
+    mission_id: M02B
+    wave_id: W2
+    pulse_id: P006
+    action: REQUEST_REPAIRED_SEMANTIC_RECEIPT
+    evidence_class: MEASURED
+    result: QUEUED
+    candidate_sha: 5c1d86f9bbed4a632eb061eea68454097c447bfb
+    run_id: 34616625888
+  - global_seq: 17
+    timestamp: 2026-09-11T17:33:10+02:00
+    mission_id: ULTRA
+    wave_id: W2
+    pulse_id: P002
+    action: FREEZE_FIXED_12_GATE_BURNDOWN
+    evidence_class: OBSERVED_CONTROL_STATE
+    result: ACTIVE
+    strict_passed: 7
+    denominator: 12
+    strict_dod_fraction: 0.5833
+    implementation_ready: 8
+    implementation_ready_fraction: 0.6667
+    dov: WITHHELD
 analytics_state:
   pca: DEFER_INSUFFICIENT_COMPARABLE_MEASURED_OBSERVATIONS
   bt: DEFER_NO_EXPLICIT_FLEET_PAIRWISE_OUTCOMES
+next_conquest:
+  id: BD-01
+  target: THREE_W2_RECEIPT_ENABLED_EXACT_HEAD_SUCCESS_ARTIFACTS
+  then: ULTRA_CONSUMES_RECEIPTS_AND_PASSES_ALL_REQUIRED_GATE

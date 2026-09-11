@@ -1,9 +1,10 @@
-schema: qps-mission-registry/v3
-global_seq: 3
+schema: qps-mission-registry/v4
+global_seq: 4
 control_node:
   id: ULTRA
   repo: GBOGEB/pipeline-automation-hub
-  branch: mission/qps-triage-ultra-w0-20260911
+  branch: mission/qps-triage-ultra-w2-federation
+  parent_merge_sha: f41e96dfe5fde5312f3ebb5dc41fc391cb593c6d
   phase: W2_FEDERATION_AND_GATE
   source_binding: CURRENT_EXACT_HEAD
   status: STAY
@@ -20,7 +21,10 @@ active_missions:
     next_target: M01-CG-HEPAK-CROSSCHECK
   M02A:
     repo: GBOGEB/Q_engineering_tools
-    pr: 5
+    parent_pr: 5
+    parent_merge_sha: 9a9131cfeb90843586c87df16f7cd2ff60323046
+    pr: 6
+    branch: mission/m02a-engineering-outpost-w2
     moniker: ENGINEERING_OUTPOST
     phase: W2_EXACT_RECOVERED_SOURCE_PROOF
     baseline_sha: 4f9304fed18168e8e152cdbcca93864dead34490
@@ -33,20 +37,27 @@ active_missions:
       exact_head_assertion: PASS
       mission_step_gt0: PASS
       scope: INDEPENDENT_NUMERICAL_GOLDEN_CASE
+    pages_parent:
+      run_id: 34615854134
+      outcome: SUCCESS
+      boundary: PUBLICATION_PATH_ONLY_NOT_REAL_DASHBOARD_DOV
     w2_candidate:
       recovered_blob_sha: 2d23e1d0ac041d85e45ba157088c699b3f1c9fe6
       byte_identical_blob_local: OBSERVED_PASS
       direct_import_probe: IMPLEMENTED_PENDING_EXACT_HEAD_CI
       receipt_enabled: true
+      run_id: 34616804184
+      run_state: QUEUED
     receipt_gate: AWAIT_W2_EXACT_HEAD_RECEIPT
     next_target: W2_RECEIPT_THEN_MATERIALS_CALCULATION_PROVENANCE
   M02B:
     repo: GBOGEB/gg_MATH
     pr: 1
+    merged_child_head_sha: 5c1d86f9bbed4a632eb061eea68454097c447bfb
+    merge_sha: 543567ebc778d590a1ee396c21fb8a6a64dc2980
     moniker: MATH_BUNKER
-    phase: W2_SEMANTIC_REFERENCE_CHALLENGE
+    phase: W2_SEMANTIC_REFERENCE_CHALLENGE_MERGED
     baseline_sha: 71cf681eb14acfb219d3200d40589dd89a1ffbc1
-    current_candidate_sha: 5c1d86f9bbed4a632eb061eea68454097c447bfb
     status: STAY
     runtime_proof:
       sha: 7d544a63a3480c8cb271adf888f6e8be7cd6b1d6
@@ -57,9 +68,11 @@ active_missions:
       scope: FIRST_BT_KERNEL_GOLDEN_ORDER
     w2_candidate:
       first_red: DISCONNECTED_COMPARISON_GRAPH_GUARD_MISSING
-      repair: IMPLEMENTED
-      independent_reference_suite: IMPLEMENTED_PENDING_EXACT_HEAD_CI
+      repair: MERGED
+      independent_reference_suite: MERGED_PENDING_EXACT_HEAD_RECEIPT
       receipt_enabled: true
+      run_id: 34616625888
+      run_state: QUEUED
     receipt_gate: AWAIT_W2_EXACT_HEAD_RECEIPT
     next_target: W2_RECEIPT_THEN_SECOND_MATH_KERNEL_AND_EXTERNAL_CONSUMER
 future:
