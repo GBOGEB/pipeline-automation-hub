@@ -1,20 +1,21 @@
 {
-  "schema": "qps-federation-gate/v2",
+  "schema": "qps-federation-gate/v3",
   "gate_id": "ULTRA-M02-FED-AND-001",
   "mode": "ALL_REQUIRED",
   "authority_transfer": false,
   "required_nodes": {
     "ULTRA": {
       "repo": "GBOGEB/pipeline-automation-hub",
-      "branch": "mission/qps-triage-ultra-w0-20260911",
+      "branch": "mission/qps-triage-ultra-w2-federation",
       "source_binding": "CURRENT_EXACT_HEAD",
       "receipt_artifact_prefix": "qps-receipt-ULTRA-",
       "required_outcome": "SUCCESS"
     },
     "M02A": {
       "repo": "GBOGEB/Q_engineering_tools",
-      "pr": 5,
-      "branch": "mission/m02a-engineering-outpost-w0",
+      "pr": 6,
+      "parent_merge_sha": "9a9131cfeb90843586c87df16f7cd2ff60323046",
+      "branch": "mission/m02a-engineering-outpost-w2",
       "target_head_sha": "05d8e34df6246601b1ee5edabc898e6f7efd174b",
       "receipt_artifact_prefix": "qps-receipt-M02A-",
       "required_outcome": "SUCCESS",
@@ -24,7 +25,8 @@
     "M02B": {
       "repo": "GBOGEB/gg_MATH",
       "pr": 1,
-      "branch": "mission/m02b-math-bunker-w0",
+      "merged_child_head_sha": "5c1d86f9bbed4a632eb061eea68454097c447bfb",
+      "merge_sha": "543567ebc778d590a1ee396c21fb8a6a64dc2980",
       "target_head_sha": "5c1d86f9bbed4a632eb061eea68454097c447bfb",
       "receipt_artifact_prefix": "qps-receipt-M02B-",
       "required_outcome": "SUCCESS",
@@ -41,6 +43,6 @@
     "M02A proves recovered blob identity before execution",
     "M02B proves disconnected comparison graphs DEFER rather than manufacture ranking"
   ],
-  "dov": "Mission-II federation slice is verified only when ULTRA consumes three conforming exact-head SUCCESS receipts and records the AND-gate PASS. Structural conformance and older-head runtime success are necessary but not sufficient.",
+  "dov": "Mission-II federation slice is verified only when ULTRA consumes three conforming exact-head SUCCESS receipts and records the AND-gate PASS. Structural conformance, merge events and older-head runtime success are necessary but not sufficient.",
   "state": "DEFER_AWAITING_W2_EXACT_HEAD_RECEIPTS"
 }
