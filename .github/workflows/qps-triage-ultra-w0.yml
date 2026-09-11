@@ -27,30 +27,46 @@ jobs:
           expected="${{ github.event.pull_request.head.sha || github.sha }}"
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$expected"
-      - name: Execute HOME control-plane validation
-        id: probe
+      - name: Execute HOME self-validation
+        id: home_probe
         continue-on-error: true
         run: |
           python mission-control/qps-triage-ultra/validate_w0.py
           python mission-control/qps-triage-ultra/validate_federation.py --structure-only
           python mission-control/qps-triage-ultra/validate_federation.py --self-test
-      - name: Emit HOME fleet receipt
+      - name: Emit current-head HOME fleet receipt
         if: always()
         env:
           SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-          PROBE_OUTCOME: ${{ steps.probe.outcome }}
+          PROBE_OUTCOME: ${{ steps.home_probe.outcome }}
         run: |
           python mission-control/qps-triage-ultra/emit_receipt.py \
             --source-sha "$SOURCE_SHA" \
             --outcome "$PROBE_OUTCOME" \
             --out mission-control/qps-triage-ultra/receipts/qps-receipt-ULTRA.json
-      - name: Upload HOME fleet receipt
+      - name: Validate child inbox plus current HOME receipt
+        id: federation_probe
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          python mission-control/qps-triage-ultra/validate_federation.py \
+            --inbox \
+            --receipt ULTRA=mission-control/qps-triage-ultra/receipts/qps-receipt-ULTRA.json \
+            | tee mission-control/qps-triage-ultra/receipts/federation-gate-result.json
+      - name: Upload HOME receipt and gate result
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: qps-receipt-ULTRA-${{ github.event.pull_request.head.sha || github.sha }}
-          path: mission-control/qps-triage-ultra/receipts/qps-receipt-ULTRA.json
-      - name: Enforce HOME validation outcome
+          path: |
+            mission-control/qps-triage-ultra/receipts/qps-receipt-ULTRA.json
+            mission-control/qps-triage-ultra/receipts/federation-gate-result.json
+      - name: Enforce HOME self-validation
         if: always()
         shell: bash
-        run: test "${{ steps.probe.outcome }}" = "success"
+        run: test "${{ steps.home_probe.outcome }}" = "success"
+      - name: Enforce Mission-II federation DoV gate
+        if: always()
+        shell: bash
+        run: grep -q '"status": "PASS_FEDERATION_GATE"' mission-control/qps-triage-ultra/receipts/federation-gate-result.json
