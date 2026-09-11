@@ -1,0 +1,38 @@
+schema: qps-triage-metric-registry/v1
+identity_keys: [timestamp, global_seq, mission_id, wave_id, pulse_id, source_sha]
+progress:
+  formula: 0.25*coverage + 0.25*execution + 0.25*verification + 0.25*assimilation
+  fields:
+    coverage: required_territory_evidenced_fraction
+    execution: scoped_capability_with_gt0_runtime_fraction
+    verification: executed_capability_with_QA_evidence_fraction
+    assimilation: verified_capability_consumed_outside_frontier_fraction
+quality:
+  evidence_levels: {E0: UNKNOWN, E1: CLAIMED, E2: OBSERVED, E3: EXECUTED, E4: VERIFIED, E5: CONSUMED, E6: REPEATED_CONTROLLED}
+  uncertainty_formula: (unknown + unverified + contradictory) / total
+per_pulse_fields:
+  - coverage
+  - execution
+  - verification
+  - assimilation
+  - uncertainty
+  - blocker_count
+  - resource_units
+  - novelty_discovered
+  - reuse_score
+  - rework_fraction
+  - proof_velocity
+  - discovery_yield
+  - assimilation_yield
+  - convergence_gradient
+analytics:
+  pca:
+    input_policy: MEASURED_NUMERIC_ONLY
+    minimum_observations: 3
+    insufficient_state: DEFER_INSUFFICIENT_OBSERVATIONS
+  bt:
+    input_policy: EXPLICIT_PAIRWISE_OUTCOMES_ONLY
+    insufficient_state: DEFER_NO_USABLE_COMPARISONS
+views:
+  - chronological_time
+  - ordered_wave_pulse

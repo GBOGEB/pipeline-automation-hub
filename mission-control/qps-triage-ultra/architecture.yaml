@@ -1,0 +1,24 @@
+schema: qps-triage-ultra-architecture/v1
+node: QPS_TRIAGE_ULTRA
+moniker: MEGAMIND_HOME
+host_repo: GBOGEB/pipeline-automation-hub
+baseline_sha: 438be679ae9897e1ad2a545980daf77723670cce
+authority_transfer: false
+seats:
+  U01: {role: MISSION_COMMANDER_GOVERNOR, functions: [authorize_mission_state, gate_promotion, hold_authority_boundary]}
+  U02: {role: CHIEF_ARCHITECT, functions: [people_model, function_model, role_model, node_edge_atom_graph, temporal_architecture]}
+  U03: {role: PROJECT_MANAGER, secondment: DOW, functions: [portfolio_sequence, dependencies, burndown, resource_plan]}
+  U04: {role: FLEET_ORCHESTRATOR, functions: [dispatch, schedule, fanout, fanin, receipt_correlation]}
+  U05: {role: ANALYST, functions: [dmaic, measured_pca, observed_bt, convergence_metrics]}
+  U06: {role: QA_SIGNALMAN, functions: [exact_sha_receipts, independent_attestation, message_home]}
+  U07: {role: CARTOGRAPHER_OCULARS, functions: [topology, lineage_graph, temporal_views, derived_dashboards]}
+  U08: {role: REX_KEB_INTEGRATOR, secondment: KEB, functions: [lessons_learned, technical_challenge, doctrine_update]}
+relations:
+  - [U03, U04, plans_for]
+  - [U02, U04, constrains_architecture]
+  - [U04, FRONTIER, dispatches]
+  - [FRONTIER, U06, returns_receipt]
+  - [U06, U01, attests]
+  - [U05, U03, ranks_next_action]
+  - [U08, U01, challenges]
+  - [U07, ALL, observes]

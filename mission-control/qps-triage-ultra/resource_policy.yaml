@@ -1,0 +1,26 @@
+schema: qps-triage-resource-policy/v1
+principles:
+  - every_active_frontier_gets_a_floor
+  - discretionary_resource_follows_evidenced_pressure
+  - stable_components_contract_to_control
+  - specialists_surge_only_on_concentrated_blockers
+  - no_frontier_silently_disappears
+resource_units_are: LOGICAL_COMPETENCY_EQUIVALENTS_NOT_FTE
+allocation:
+  floor_per_active_frontier: 2.0
+  reserve_fraction: 0.15
+  weight_formula: priority_x_remaining_work_x_uncertainty_x_unlock_x_user_priority
+  factors:
+    priority: {min: 0.1, max: 1.0}
+    remaining_work: {expression: 1-progress, min: 0.05}
+    uncertainty: {expression: 0.5+uncertainty, min: 0.5, max: 1.5}
+    unlock: {min: 0.5, max: 1.5}
+    user_priority: {min: 1.0, max: 1.5}
+coverage:
+  required_metrics: [coverage_mean, coverage_floor]
+  wave_dod_rule: coverage_floor_must_be_explicit
+  frontier_exit_requires_one_of: [receipt, DEFER, PARK, PRUNE]
+surge:
+  reinforce_when: convergence_flat_and_uncertainty_high_and_blocker_concentrated
+  control_when: convergence_flat_and_evidence_high_and_uncertainty_low
+  park_when: convergence_flat_and_discovery_yield_low_and_reuse_low

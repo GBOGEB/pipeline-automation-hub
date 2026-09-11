@@ -1,0 +1,46 @@
+{
+  "schema": "qps-federation-gate/v2",
+  "gate_id": "ULTRA-M02-FED-AND-001",
+  "mode": "ALL_REQUIRED",
+  "authority_transfer": false,
+  "required_nodes": {
+    "ULTRA": {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "branch": "mission/qps-triage-ultra-w0-20260911",
+      "source_binding": "CURRENT_EXACT_HEAD",
+      "receipt_artifact_prefix": "qps-receipt-ULTRA-",
+      "required_outcome": "SUCCESS"
+    },
+    "M02A": {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "pr": 5,
+      "branch": "mission/m02a-engineering-outpost-w0",
+      "target_head_sha": "05d8e34df6246601b1ee5edabc898e6f7efd174b",
+      "receipt_artifact_prefix": "qps-receipt-M02A-",
+      "required_outcome": "SUCCESS",
+      "proof_scope": "BYTE_IDENTICAL_RECOVERED_NUMERICS_BLOB_PLUS_REFERENCE_CASES",
+      "next_after_gate": "MATERIALS_CALCULATION_PROVENANCE_THEN_PAGES_PRODUCTIZATION"
+    },
+    "M02B": {
+      "repo": "GBOGEB/gg_MATH",
+      "pr": 1,
+      "branch": "mission/m02b-math-bunker-w0",
+      "target_head_sha": "5c1d86f9bbed4a632eb061eea68454097c447bfb",
+      "receipt_artifact_prefix": "qps-receipt-M02B-",
+      "required_outcome": "SUCCESS",
+      "proof_scope": "BT_CONNECTED_GRAPH_PLUS_DISCONNECTED_AND_SELF_ONLY_GUARDS",
+      "next_after_gate": "SECOND_MATH_KERNEL_PLUS_EXTERNAL_CONSUMER"
+    }
+  },
+  "dod": [
+    "all three nodes emit qps-fleet-receipt/v1",
+    "every receipt is exact-source bound",
+    "every node executes greater than zero mission steps",
+    "every required outcome is SUCCESS",
+    "failed/deferred states remain visible rather than omitted",
+    "M02A proves recovered blob identity before execution",
+    "M02B proves disconnected comparison graphs DEFER rather than manufacture ranking"
+  ],
+  "dov": "Mission-II federation slice is verified only when ULTRA consumes three conforming exact-head SUCCESS receipts and records the AND-gate PASS. Structural conformance and older-head runtime success are necessary but not sufficient.",
+  "state": "DEFER_AWAITING_W2_EXACT_HEAD_RECEIPTS"
+}
