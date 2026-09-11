@@ -1,8 +1,11 @@
-name: QPS TRIAGE ULTRA W0
+name: QPS TRIAGE ULTRA Federation Control
 
 on:
   push:
-    branches: [mission/qps-triage-ultra-w0-20260911]
+    branches:
+      - master
+      - mission/qps-triage-ultra-w0-20260911
+      - mission/qps-triage-ultra-w2-federation
   pull_request:
     branches: [master]
   workflow_dispatch:
@@ -11,7 +14,7 @@ permissions:
   contents: read
 
 jobs:
-  validate-ultra-w0:
+  validate-ultra-control:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact source head
