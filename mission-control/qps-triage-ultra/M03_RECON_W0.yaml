@@ -1,0 +1,57 @@
+schema: qps-m03-recon-ring/v1
+mission: M03
+wave: W0_RECON
+state: ACTIVE_BOUNDED_RECON
+authority_transfer: false
+coverage_floor_units_each: 2.0
+surge_requires_evidence: true
+frontiers:
+  M03A:
+    repo: GBOGEB/github-mcp-server
+    moniker: MCP_BRIDGEHEAD
+    role: PROTOCOL_AND_TOOL_BRIDGE_RECON
+    default_branch: main
+    frozen_head_sha: ec9df7a1900e5075d6667d5874200bb19f00de6b
+    repo_size_kb: 42329
+    evidence_class: MEASURED_REPO_METADATA
+    next: CENSUS_TOOLS_RESOURCES_PROMPTS_TRANSPORT_SECURITY_AND_UPSTREAM_DELTA
+  M03B:
+    repo: GBOGEB/scientific-agent-skills
+    moniker: SCIENTIFIC_SKILL_INCUBATOR
+    role: SCIENTIFIC_CAPABILITY_RECON
+    default_branch: main
+    frozen_head_sha: cbcae7bbf776cd41aeaa59ea06b8f0e6eacfb16f
+    repo_size_kb: 35691
+    evidence_class: MEASURED_REPO_METADATA
+    next: SKILL_CENSUS_PROVENANCE_DEPENDENCY_QPS_RELEVANCE_AND_ONE_BOUNDED_RUNTIME
+  M03C:
+    repo: GBOGEB/GEMINI
+    moniker: OBSERVER_TWIN
+    role: COMPARATIVE_INTELLIGENCE_AND_GOVERNANCE_OBSERVER
+    default_branch: main
+    frozen_head_sha: 436836d6466218ba6e4de1505a379f8f353b2c65
+    repo_size_kb: 299
+    evidence_class: MEASURED_REPO_METADATA
+    next: MAP_LOCAL_SSOT_GLOSSARY_STITCH_DRIFT_AND_OBSERVER_EDGES_TO_ULTRA
+  M03D:
+    repo: GBOGEB/orchestration-sandbox
+    moniker: EXPERIMENT_RANGE
+    role: DISPOSABLE_ORCHESTRATION_TEST_RANGE
+    default_branch: main
+    frozen_head_sha: b1526e6c0e1359f9082afdf678ed0a9efe787771
+    repo_size_kb: 0
+    evidence_class: MEASURED_REPO_METADATA
+    next: VERIFY_MINIMAL_CONTENT_THEN_DECIDE_PARK_SEED_OR_USE_AS_DESTRUCTIVE_TEST_RANGE
+rules:
+  - reconnaissance_only_until_each_cell_has_identity_lineage_census_and_disposition_candidate
+  - no_direct_promotion_to_GLOBAL_MESH_without_bounded_runtime_or_explicit_reference_only_disposition
+  - no_frontier_below_coverage_floor_while_active
+  - pipeline_automation_hub_remains_HOME_not_a_frontier
+  - Q_engineering_tools_and_gg_MATH_keep_priority_execution_floor
+w3_gate_16:
+  current_state: PARTIAL
+  pass_requires:
+    - all_four_cells_complete_W0_identity_lineage_and_content_census
+    - each_has_initial_PRUNE_PARK_REFERENCE_EXTRACT_ADAPT_PROMOTE_candidate
+    - coverage_floor_preserved
+    - no_authority_transfer
