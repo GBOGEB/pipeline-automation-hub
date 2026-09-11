@@ -1,5 +1,5 @@
 {
-  "schema": "qps-federation-gate/v3",
+  "schema": "qps-federation-gate/v4",
   "gate_id": "ULTRA-M02-FED-AND-001",
   "mode": "ALL_REQUIRED",
   "authority_transfer": false,
@@ -24,13 +24,15 @@
     },
     "M02B": {
       "repo": "GBOGEB/gg_MATH",
-      "pr": 1,
-      "merged_child_head_sha": "5c1d86f9bbed4a632eb061eea68454097c447bfb",
-      "merge_sha": "543567ebc778d590a1ee396c21fb8a6a64dc2980",
-      "target_head_sha": "5c1d86f9bbed4a632eb061eea68454097c447bfb",
+      "parent_pr": 1,
+      "parent_merge_sha": "543567ebc778d590a1ee396c21fb8a6a64dc2980",
+      "failed_receipt_run_id": "34616625888",
+      "pr": 2,
+      "branch": "mission/m02b-math-bunker-w2-repair",
+      "target_head_sha": "43d23c38b268e8980f02ad58e74ad48704ab7304",
       "receipt_artifact_prefix": "qps-receipt-M02B-",
       "required_outcome": "SUCCESS",
-      "proof_scope": "BT_CONNECTED_GRAPH_PLUS_DISCONNECTED_AND_SELF_ONLY_GUARDS",
+      "proof_scope": "BT_CONNECTED_GRAPH_PLUS_DISCONNECTED_AND_SELF_ONLY_GUARDS_WITH_DETERMINISTIC_TEST_IMPORT",
       "next_after_gate": "SECOND_MATH_KERNEL_PLUS_EXTERNAL_CONSUMER"
     }
   },
@@ -41,8 +43,9 @@
     "every required outcome is SUCCESS",
     "failed/deferred states remain visible rather than omitted",
     "M02A proves recovered blob identity before execution",
-    "M02B proves disconnected comparison graphs DEFER rather than manufacture ranking"
+    "M02B proves disconnected comparison graphs DEFER rather than manufacture ranking",
+    "M02B preserves failed receipt 34616625888 as REX and replaces it only with a later successful exact-head receipt"
   ],
-  "dov": "Mission-II federation slice is verified only when ULTRA consumes three conforming exact-head SUCCESS receipts and records the AND-gate PASS. Structural conformance, merge events and older-head runtime success are necessary but not sufficient.",
-  "state": "DEFER_AWAITING_W2_EXACT_HEAD_RECEIPTS"
+  "dov": "Mission-II federation slice is verified only when ULTRA consumes three conforming exact-head SUCCESS receipts and records the AND-gate PASS. Structural conformance, merge events, failed receipts and older-head runtime successes remain lineage but do not satisfy the final gate.",
+  "state": "DEFER_AWAITING_M02B_REPAIR_AND_ULTRA_W2_RECEIPTS"
 }
