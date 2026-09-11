@@ -1,0 +1,51 @@
+schema: qps-triage-pulse-ledger/v1
+policy: append_only_semantic_history
+note: numeric progress fields below are controller assessments unless evidence_class says MEASURED.
+events:
+  - global_seq: 1
+    timestamp: 2026-09-11T17:14:00+02:00
+    mission_id: ULTRA
+    wave_id: W0
+    pulse_id: P001
+    action: FREEZE_HOME_AND_FRONTIER_HEADS
+    evidence_class: MEASURED
+    sources:
+      pipeline_hub: 438be679ae9897e1ad2a545980daf77723670cce
+      M02A: 4f9304fed18168e8e152cdbcca93864dead34490
+      M02B: 71cf681eb14acfb219d3200d40589dd89a1ffbc1
+    result: PASS
+  - global_seq: 2
+    timestamp: 2026-09-11T17:14:00+02:00
+    mission_id: M02A
+    wave_id: W0
+    pulse_id: P001
+    action: RECOVER_NUMERICAL_SOURCE_LINEAGE
+    evidence_class: MEASURED
+    result: PASS
+    evidence:
+      repo: GBOGEB/document-organization-system
+      sha: cea7bfb533c246c797ef43652579fe00a39dcd4d
+      blob: 2d23e1d0ac041d85e45ba157088c699b3f1c9fe6
+    next_target: EXECUTE_RECOVERED_NUMERICAL_KERNEL_GT0
+  - global_seq: 3
+    timestamp: 2026-09-11T17:14:00+02:00
+    mission_id: M02B
+    wave_id: W0
+    pulse_id: P001
+    action: ESTABLISH_CANDIDATE_TAXONOMY_AND_BT_KERNEL
+    evidence_class: OBSERVED
+    result: IMPLEMENTED_PENDING_CI
+    next_target: EXACT_HEAD_BT_KERNEL_GT0
+  - global_seq: 4
+    timestamp: 2026-09-11T17:14:00+02:00
+    mission_id: M01
+    wave_id: CONTROL
+    pulse_id: P001
+    action: RECURSE_CURRENT_STATE
+    evidence_class: MEASURED
+    result: CONTROL_GATE_GREEN_FEDERATION_PENDING
+    current_master_sha: 7a4eb02b87f9000df797bb36bde122b48f24be8a
+    next_target: HEPAK_CROSSCHECK_THEN_EXTERNAL_CONSUMER
+analytics_state:
+  pca: DEFER_INSUFFICIENT_COMPARABLE_MEASURED_OBSERVATIONS
+  bt: DEFER_NO_EXPLICIT_FLEET_PAIRWISE_OUTCOMES
