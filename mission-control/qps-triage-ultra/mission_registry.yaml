@@ -1,0 +1,30 @@
+schema: qps-mission-registry/v1
+global_seq: 1
+active_missions:
+  M01:
+    repo: GBOGEB/CoolProp
+    moniker: COOLPROP_DARKLAND
+    phase: CONTROL_GATE_TO_FEDERATION
+    baseline_sha: a3c743026521ff557f8c2e85701c726898b00e0b
+    current_master_sha: 7a4eb02b87f9000df797bb36bde122b48f24be8a
+    status: STAY
+    authority_hold: HEPAK_2K_CROSSCHECK_REQUIRED
+    next_target: M01-CG-HEPAK-CROSSCHECK
+  M02A:
+    repo: GBOGEB/Q_engineering_tools
+    moniker: ENGINEERING_OUTPOST
+    phase: W0_W1_LAUNCH
+    baseline_sha: 4f9304fed18168e8e152cdbcca93864dead34490
+    status: STAY
+    next_target: RECOVER_REAL_DASHBOARD_AND_PROVE_NUMERICAL_KERNEL
+  M02B:
+    repo: GBOGEB/gg_MATH
+    moniker: MATH_BUNKER
+    phase: W0_W1_LAUNCH
+    baseline_sha: 71cf681eb14acfb219d3200d40589dd89a1ffbc1
+    status: STAY
+    next_target: CANDIDATE_ATOMS_AND_FIRST_EXECUTABLE_KERNEL
+future:
+  M03: {frontier_count: 4, state: PLANNED}
+  M04: {frontier_count: 8, state: OUTLINED}
+  CLOUD16: {frontier_count: 16, state: W0_CANDIDATE_CLOUD}
