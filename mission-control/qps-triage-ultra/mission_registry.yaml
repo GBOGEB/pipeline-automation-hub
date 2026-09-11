@@ -1,13 +1,13 @@
-schema: qps-mission-registry/v2
-global_seq: 2
+schema: qps-mission-registry/v3
+global_seq: 3
 control_node:
   id: ULTRA
   repo: GBOGEB/pipeline-automation-hub
   branch: mission/qps-triage-ultra-w0-20260911
-  phase: W1_FEDERATION_GATE
+  phase: W2_FEDERATION_AND_GATE
   source_binding: CURRENT_EXACT_HEAD
   status: STAY
-  next_target: THREE_EXACT_HEAD_FLEET_RECEIPTS_TO_AND_GATE
+  next_target: THREE_W2_EXACT_HEAD_FLEET_RECEIPTS_TO_AND_GATE
 active_missions:
   M01:
     repo: GBOGEB/CoolProp
@@ -22,9 +22,9 @@ active_missions:
     repo: GBOGEB/Q_engineering_tools
     pr: 5
     moniker: ENGINEERING_OUTPOST
-    phase: W1_RECEIPT_FEDERATION
+    phase: W2_EXACT_RECOVERED_SOURCE_PROOF
     baseline_sha: 4f9304fed18168e8e152cdbcca93864dead34490
-    current_candidate_sha: d49f9510255fd0858e8200ca2727bac30073fd9e
+    current_candidate_sha: 05d8e34df6246601b1ee5edabc898e6f7efd174b
     status: STAY
     runtime_proof:
       sha: b52f65fcd651bf06f5720958124640e1dd226bd9
@@ -32,15 +32,21 @@ active_missions:
       outcome: SUCCESS
       exact_head_assertion: PASS
       mission_step_gt0: PASS
-    receipt_gate: AWAIT_EXACT_HEAD_RECEIPT_ENABLED_RUN
-    next_target: RECEIPT_ENABLED_RUN_THEN_DIRECT_RECOVERED_SOURCE_EXECUTION
+      scope: INDEPENDENT_NUMERICAL_GOLDEN_CASE
+    w2_candidate:
+      recovered_blob_sha: 2d23e1d0ac041d85e45ba157088c699b3f1c9fe6
+      byte_identical_blob_local: OBSERVED_PASS
+      direct_import_probe: IMPLEMENTED_PENDING_EXACT_HEAD_CI
+      receipt_enabled: true
+    receipt_gate: AWAIT_W2_EXACT_HEAD_RECEIPT
+    next_target: W2_RECEIPT_THEN_MATERIALS_CALCULATION_PROVENANCE
   M02B:
     repo: GBOGEB/gg_MATH
     pr: 1
     moniker: MATH_BUNKER
-    phase: W1_RECEIPT_FEDERATION
+    phase: W2_SEMANTIC_REFERENCE_CHALLENGE
     baseline_sha: 71cf681eb14acfb219d3200d40589dd89a1ffbc1
-    current_candidate_sha: e5cf35a1f44083bd7ea5bf59387160b4d1425e82
+    current_candidate_sha: 5c1d86f9bbed4a632eb061eea68454097c447bfb
     status: STAY
     runtime_proof:
       sha: 7d544a63a3480c8cb271adf888f6e8be7cd6b1d6
@@ -48,8 +54,14 @@ active_missions:
       outcome: SUCCESS
       exact_head_assertion: PASS
       mission_step_gt0: PASS
-    receipt_gate: AWAIT_EXACT_HEAD_RECEIPT_ENABLED_RUN
-    next_target: RECEIPT_ENABLED_RUN_THEN_INDEPENDENT_REFERENCE_AND_SECOND_KERNEL
+      scope: FIRST_BT_KERNEL_GOLDEN_ORDER
+    w2_candidate:
+      first_red: DISCONNECTED_COMPARISON_GRAPH_GUARD_MISSING
+      repair: IMPLEMENTED
+      independent_reference_suite: IMPLEMENTED_PENDING_EXACT_HEAD_CI
+      receipt_enabled: true
+    receipt_gate: AWAIT_W2_EXACT_HEAD_RECEIPT
+    next_target: W2_RECEIPT_THEN_SECOND_MATH_KERNEL_AND_EXTERNAL_CONSUMER
 future:
   M03: {frontier_count: 4, state: RECON_ONLY_UNTIL_M02_FED_GATE}
   M04: {frontier_count: 8, state: OUTLINED}
