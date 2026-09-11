@@ -1,5 +1,13 @@
-schema: qps-mission-registry/v1
-global_seq: 1
+schema: qps-mission-registry/v2
+global_seq: 2
+control_node:
+  id: ULTRA
+  repo: GBOGEB/pipeline-automation-hub
+  branch: mission/qps-triage-ultra-w0-20260911
+  phase: W1_FEDERATION_GATE
+  source_binding: CURRENT_EXACT_HEAD
+  status: STAY
+  next_target: THREE_EXACT_HEAD_FLEET_RECEIPTS_TO_AND_GATE
 active_missions:
   M01:
     repo: GBOGEB/CoolProp
@@ -12,19 +20,37 @@ active_missions:
     next_target: M01-CG-HEPAK-CROSSCHECK
   M02A:
     repo: GBOGEB/Q_engineering_tools
+    pr: 5
     moniker: ENGINEERING_OUTPOST
-    phase: W0_W1_LAUNCH
+    phase: W1_RECEIPT_FEDERATION
     baseline_sha: 4f9304fed18168e8e152cdbcca93864dead34490
+    current_candidate_sha: d49f9510255fd0858e8200ca2727bac30073fd9e
     status: STAY
-    next_target: RECOVER_REAL_DASHBOARD_AND_PROVE_NUMERICAL_KERNEL
+    runtime_proof:
+      sha: b52f65fcd651bf06f5720958124640e1dd226bd9
+      run_id: 34615256406
+      outcome: SUCCESS
+      exact_head_assertion: PASS
+      mission_step_gt0: PASS
+    receipt_gate: AWAIT_EXACT_HEAD_RECEIPT_ENABLED_RUN
+    next_target: RECEIPT_ENABLED_RUN_THEN_DIRECT_RECOVERED_SOURCE_EXECUTION
   M02B:
     repo: GBOGEB/gg_MATH
+    pr: 1
     moniker: MATH_BUNKER
-    phase: W0_W1_LAUNCH
+    phase: W1_RECEIPT_FEDERATION
     baseline_sha: 71cf681eb14acfb219d3200d40589dd89a1ffbc1
+    current_candidate_sha: e5cf35a1f44083bd7ea5bf59387160b4d1425e82
     status: STAY
-    next_target: CANDIDATE_ATOMS_AND_FIRST_EXECUTABLE_KERNEL
+    runtime_proof:
+      sha: 7d544a63a3480c8cb271adf888f6e8be7cd6b1d6
+      run_id: 34615269215
+      outcome: SUCCESS
+      exact_head_assertion: PASS
+      mission_step_gt0: PASS
+    receipt_gate: AWAIT_EXACT_HEAD_RECEIPT_ENABLED_RUN
+    next_target: RECEIPT_ENABLED_RUN_THEN_INDEPENDENT_REFERENCE_AND_SECOND_KERNEL
 future:
-  M03: {frontier_count: 4, state: PLANNED}
+  M03: {frontier_count: 4, state: RECON_ONLY_UNTIL_M02_FED_GATE}
   M04: {frontier_count: 8, state: OUTLINED}
   CLOUD16: {frontier_count: 16, state: W0_CANDIDATE_CLOUD}
