@@ -1,0 +1,42 @@
+{
+  "schema": "qps-federation-gate/v1",
+  "gate_id": "ULTRA-M02-FED-AND-001",
+  "mode": "ALL_REQUIRED",
+  "authority_transfer": false,
+  "required_nodes": {
+    "ULTRA": {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "branch": "mission/qps-triage-ultra-w0-20260911",
+      "source_binding": "CURRENT_EXACT_HEAD",
+      "receipt_artifact_prefix": "qps-receipt-ULTRA-",
+      "required_outcome": "SUCCESS"
+    },
+    "M02A": {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "pr": 5,
+      "branch": "mission/m02a-engineering-outpost-w0",
+      "target_head_sha": "2188ddc5721f7d6917418999f570aff9dba0ba6a",
+      "receipt_artifact_prefix": "qps-receipt-M02A-",
+      "required_outcome": "SUCCESS",
+      "next_after_gate": "EXECUTE_RECOVERED_SOURCE_MODULE_DIRECTLY"
+    },
+    "M02B": {
+      "repo": "GBOGEB/gg_MATH",
+      "pr": 1,
+      "branch": "mission/m02b-math-bunker-w0",
+      "target_head_sha": "27e202c484aea5ed121766649e6cc97abbff37a2",
+      "receipt_artifact_prefix": "qps-receipt-M02B-",
+      "required_outcome": "SUCCESS",
+      "next_after_gate": "ADD_INDEPENDENT_REFERENCE_AND_SECOND_KERNEL"
+    }
+  },
+  "dod": [
+    "all three nodes emit qps-fleet-receipt/v1",
+    "every receipt is exact-source bound",
+    "every node executes greater than zero mission steps",
+    "every required outcome is SUCCESS",
+    "failed/deferred states remain visible rather than omitted"
+  ],
+  "dov": "Mission-II federation slice is verified only when ULTRA consumes three conforming exact-head SUCCESS receipts and records the AND-gate PASS. Structural conformance alone is not DoV.",
+  "state": "DEFER_AWAITING_EXECUTED_RECEIPTS"
+}
