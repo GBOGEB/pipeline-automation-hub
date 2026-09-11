@@ -1,4 +1,4 @@
-schema: qps-triage-pulse-ledger/v2
+schema: qps-triage-pulse-ledger/v3
 policy: append_only_semantic_history
 note: numeric progress fields are controller assessments unless evidence_class says MEASURED.
 events:
@@ -9,10 +9,7 @@ events:
     pulse_id: P001
     action: FREEZE_HOME_AND_FRONTIER_HEADS
     evidence_class: MEASURED
-    sources:
-      pipeline_hub: 438be679ae9897e1ad2a545980daf77723670cce
-      M02A: 4f9304fed18168e8e152cdbcca93864dead34490
-      M02B: 71cf681eb14acfb219d3200d40589dd89a1ffbc1
+    sources: {pipeline_hub: 438be679ae9897e1ad2a545980daf77723670cce, M02A: 4f9304fed18168e8e152cdbcca93864dead34490, M02B: 71cf681eb14acfb219d3200d40589dd89a1ffbc1}
     result: PASS
   - global_seq: 2
     timestamp: 2026-09-11T17:14:00+02:00
@@ -22,10 +19,7 @@ events:
     action: RECOVER_NUMERICAL_SOURCE_LINEAGE
     evidence_class: MEASURED
     result: PASS
-    evidence:
-      repo: GBOGEB/document-organization-system
-      sha: cea7bfb533c246c797ef43652579fe00a39dcd4d
-      blob: 2d23e1d0ac041d85e45ba157088c699b3f1c9fe6
+    evidence: {repo: GBOGEB/document-organization-system, sha: cea7bfb533c246c797ef43652579fe00a39dcd4d, blob: 2d23e1d0ac041d85e45ba157088c699b3f1c9fe6}
     next_target: EXECUTE_RECOVERED_NUMERICAL_KERNEL_GT0
   - global_seq: 3
     timestamp: 2026-09-11T17:14:00+02:00
@@ -35,7 +29,6 @@ events:
     action: ESTABLISH_CANDIDATE_TAXONOMY_AND_BT_KERNEL
     evidence_class: OBSERVED
     result: IMPLEMENTED_PENDING_CI
-    next_target: EXACT_HEAD_BT_KERNEL_GT0
   - global_seq: 4
     timestamp: 2026-09-11T17:14:00+02:00
     mission_id: M01
@@ -45,7 +38,6 @@ events:
     evidence_class: MEASURED
     result: CONTROL_GATE_GREEN_FEDERATION_PENDING
     current_master_sha: 7a4eb02b87f9000df797bb36bde122b48f24be8a
-    next_target: HEPAK_CROSSCHECK_THEN_EXTERNAL_CONSUMER
   - global_seq: 5
     timestamp: 2026-09-11T17:17:40+02:00
     mission_id: M02A
@@ -56,8 +48,6 @@ events:
     result: QUEUED
     run_id: 34615256406
     head_sha: b52f65fcd651bf06f5720958124640e1dd226bd9
-    blocker_class: BG_RUNNER_NOT_YET_ASSIGNED
-    next_target: RUNNER_GT0_THEN_NUMERICS_PASS
   - global_seq: 6
     timestamp: 2026-09-11T17:17:40+02:00
     mission_id: M02B
@@ -68,8 +58,6 @@ events:
     result: QUEUED
     run_id: 34615269215
     head_sha: 7d544a63a3480c8cb271adf888f6e8be7cd6b1d6
-    blocker_class: BG_RUNNER_NOT_YET_ASSIGNED
-    next_target: RUNNER_GT0_THEN_BT_KERNEL_PASS
   - global_seq: 7
     timestamp: 2026-09-11T17:18:20+02:00
     mission_id: ULTRA
@@ -80,8 +68,6 @@ events:
     result: QUEUED
     run_id: 34615318967
     head_sha: 59b3069b77c22cfcce9630b1115d88936b802c5a
-    blocker_class: BG_RUNNER_NOT_YET_ASSIGNED
-    next_target: RUNNER_GT0_THEN_ULTRA_W0_RECEIPT
   - global_seq: 8
     timestamp: 2026-09-11T17:26:04+02:00
     mission_id: M02A
@@ -94,7 +80,6 @@ events:
     head_sha: b52f65fcd651bf06f5720958124640e1dd226bd9
     exact_head_assertion: PASS
     mission_step_gt0: PASS
-    retired_blockers: [BG_RUNNER_NOT_YET_ASSIGNED, BG_RUNTIME_UNKNOWN]
   - global_seq: 9
     timestamp: 2026-09-11T17:26:30+02:00
     mission_id: M02B
@@ -107,7 +92,6 @@ events:
     head_sha: 7d544a63a3480c8cb271adf888f6e8be7cd6b1d6
     exact_head_assertion: PASS
     mission_step_gt0: PASS
-    retired_blockers: [BG_RUNNER_NOT_YET_ASSIGNED, BG_RUNTIME_UNKNOWN]
   - global_seq: 10
     timestamp: 2026-09-11T17:23:36+02:00
     mission_id: M02A
@@ -120,7 +104,6 @@ events:
     pr: 5
     pages_run_id: 34615854134
     pages_outcome: SUCCESS
-    note: Pages deployment proves publication path, not yet real-dashboard engineering DoV.
   - global_seq: 11
     timestamp: 2026-09-11T17:29:00+02:00
     mission_id: M02B
@@ -130,8 +113,6 @@ events:
     evidence_class: OBSERVED_CODE_SEMANTICS
     result: REPAIR_IMPLEMENTED_PENDING_EXACT_HEAD_RECEIPT
     first_red: DISCONNECTED_COMPARISON_GRAPH_GUARD_MISSING
-    consequence: disconnected_pairwise_islands_could_receive_non_identifiable_relative_ranking
-    repair: explicit_component_guard_and_independent_reference_challenge
   - global_seq: 12
     timestamp: 2026-09-11T17:32:54+02:00
     mission_id: M02B
@@ -143,8 +124,6 @@ events:
     pr: 1
     merged_child_head_sha: 5c1d86f9bbed4a632eb061eea68454097c447bfb
     merge_sha: 543567ebc778d590a1ee396c21fb8a6a64dc2980
-    receipt_run_id: 34616625888
-    receipt_run_state_at_observation: QUEUED
   - global_seq: 13
     timestamp: 2026-09-11T17:33:10+02:00
     mission_id: ULTRA
@@ -154,7 +133,6 @@ events:
     evidence_class: MEASURED
     result: PASS_LINEAGE_EVENT
     pr: 20
-    merged_child_head_sha: 169a38709839c479fc969e219aa40309784eb285
     merge_sha: f41e96dfe5fde5312f3ebb5dc41fc391cb593c6d
   - global_seq: 14
     timestamp: 2026-09-11T17:33:10+02:00
@@ -165,7 +143,6 @@ events:
     evidence_class: MEASURED
     result: PASS
     parent_merge_sha: f41e96dfe5fde5312f3ebb5dc41fc391cb593c6d
-    branch: mission/qps-triage-ultra-w2-federation
     gate: ULTRA-M02-FED-AND-001
   - global_seq: 15
     timestamp: 2026-09-11T17:33:10+02:00
@@ -178,8 +155,6 @@ events:
     recovered_blob_sha: 2d23e1d0ac041d85e45ba157088c699b3f1c9fe6
     candidate_sha: 05d8e34df6246601b1ee5edabc898e6f7efd174b
     pr: 6
-    run_id: 34616804184
-    run_state_at_observation: QUEUED
   - global_seq: 16
     timestamp: 2026-09-11T17:33:10+02:00
     mission_id: M02B
@@ -200,14 +175,118 @@ events:
     result: ACTIVE
     strict_passed: 7
     denominator: 12
-    strict_dod_fraction: 0.5833
-    implementation_ready: 8
-    implementation_ready_fraction: 0.6667
     dov: WITHHELD
+  - global_seq: 18
+    timestamp: 2026-09-11T17:35:53+02:00
+    mission_id: M02A
+    wave_id: W2
+    pulse_id: P002
+    action: COMPLETE_EXACT_RECOVERED_SOURCE_RECEIPT
+    evidence_class: MEASURED
+    result: PASS
+    head_sha: 05d8e34df6246601b1ee5edabc898e6f7efd174b
+    run_id: 34616804184
+    artifact_id: 10271366170
+    artifact_digest: sha256:1e9b81f88f6a42d25fa15db85869a51a9b3eb6bd836344782681a951265c38d0
+    recovered_blob_identity: PASS
+    receipt_outcome: SUCCESS
+  - global_seq: 19
+    timestamp: 2026-09-11T17:34:50+02:00
+    mission_id: M02B
+    wave_id: W2
+    pulse_id: P007
+    action: PRESERVE_FAILED_SEMANTIC_RECEIPT
+    evidence_class: MEASURED
+    result: FAIL_CONTROL_WRAPPER
+    head_sha: 5c1d86f9bbed4a632eb061eea68454097c447bfb
+    run_id: 34616625888
+    first_red: MODULE_NOT_FOUND_KERNELS_IN_TEST_HARNESS
+    kernel_semantics: PASS_BEFORE_IMPORT_FAILURE
+    failure_receipt_preserved: true
+  - global_seq: 20
+    timestamp: 2026-09-11T17:37:59+02:00
+    mission_id: M02B
+    wave_id: W2
+    pulse_id: P008
+    action: COMPLETE_REPAIR_RECEIPT
+    evidence_class: MEASURED
+    result: PASS
+    head_sha: 43d23c38b268e8980f02ad58e74ad48704ab7304
+    run_id: 34617236017
+    artifact_id: 10270917592
+    artifact_digest: sha256:2c7e12e82fe5e9c03ab0d7e39ecf5457f5bbc6f7dc8cee67affd1aca7315abd7
+    receipt_outcome: SUCCESS
+  - global_seq: 21
+    timestamp: 2026-09-11T17:39:00+02:00
+    mission_id: M02
+    wave_id: W2
+    pulse_id: P003
+    action: MERGE_CHILD_W2_PROOFS
+    evidence_class: MEASURED
+    result: PASS
+    M02A_merge_sha: 1511615c84fe0d1b9d3edd44370f721f65b0a0a1
+    M02B_merge_sha: bbbfc61b293c31d4d9d98adbeacba0845f7daa6d
+  - global_seq: 22
+    timestamp: 2026-09-11T17:43:05+02:00
+    mission_id: ULTRA
+    wave_id: W2
+    pulse_id: P003
+    action: PASS_THREE_NODE_FEDERATION_GATE
+    evidence_class: MEASURED
+    result: PASS_FEDERATION_GATE
+    head_sha: 505b6ef3fb48daf305d5be9877fbaf3ee9f78930
+    run_id: 34617530641
+    artifact_id: 10270713584
+    artifact_digest: sha256:c32ff7353e4f687f8271585410dfc01f96275e1090623afbf7efb480beab9e12
+    validated_nodes: [M02A, M02B, ULTRA]
+    validated_outcomes: {M02A: SUCCESS, M02B: SUCCESS, ULTRA: SUCCESS}
+    is_project_dov: true
+  - global_seq: 23
+    timestamp: 2026-09-11T17:40:56+02:00
+    mission_id: ULTRA
+    wave_id: W2
+    pulse_id: P004
+    action: MERGE_EXACT_PROVEN_HOME_HEAD
+    evidence_class: MEASURED
+    result: PASS_LINEAGE_EVENT
+    proof_head_sha: 505b6ef3fb48daf305d5be9877fbaf3ee9f78930
+    merge_sha: 8d71e73bb59b5ebf36bd11dcb458b55ac365fd32
+    pr: 21
+  - global_seq: 24
+    timestamp: 2026-09-11T17:43:55+02:00
+    mission_id: ULTRA
+    wave_id: W2
+    pulse_id: P005
+    action: REPEAT_FEDERATION_GATE_ON_MERGED_MASTER
+    evidence_class: MEASURED
+    result: PASS_FEDERATION_GATE
+    head_sha: 8d71e73bb59b5ebf36bd11dcb458b55ac365fd32
+    run_id: 34617570505
+    artifact_id: 10271378429
+    artifact_digest: sha256:43172dd2773c015d6db6d76600193fc46f92539bac21c0762de318d7e9391d2c
+    validated_nodes: [M02A, M02B, ULTRA]
+    validated_outcomes: {M02A: SUCCESS, M02B: SUCCESS, ULTRA: SUCCESS}
+    is_project_dov: true
+  - global_seq: 25
+    timestamp: 2026-09-11T17:44:00+02:00
+    mission_id: ULTRA
+    wave_id: W2
+    pulse_id: P006
+    action: CLOSE_W2_RELEASE_W3_AND_M03_RECON
+    evidence_class: OBSERVED_CONTROL_STATE
+    result: CONTROL
+    strict_passed: 12
+    denominator: 12
+    strict_dod_fraction: 1.0
+    dov: ACHIEVED_AND_REPEATED_CONTROLLED
+    next_wave: W3_PRODUCTIZE_CONSUME_MEASURE
+    expansion: M03_W0_RECON_RELEASED
 analytics_state:
   pca: DEFER_INSUFFICIENT_COMPARABLE_MEASURED_OBSERVATIONS
+  pca_unlock: AT_LEAST_3_COMPARABLE_MEASURED_PULSE_ROWS
   bt: DEFER_NO_EXPLICIT_FLEET_PAIRWISE_OUTCOMES
+  bt_unlock: EXPLICIT_REAL_INTERVENTION_WIN_LOSS_OBSERVATIONS
 next_conquest:
-  id: BD-01
-  target: THREE_W2_RECEIPT_ENABLED_EXACT_HEAD_SUCCESS_ARTIFACTS
-  then: ULTRA_CONSUMES_RECEIPTS_AND_PASSES_ALL_REQUIRED_GATE
+  wave: W3
+  primary: M02A_MATERIALS_PROVENANCE_TO_REAL_DETERMINISTIC_PAGES
+  parallel: [M02B_SECOND_KERNEL_AND_CONSUMER, M01_HEPAK_AUTHORITY_CLOSURE, M03_W0_RECON_CENSUS]
