@@ -1,0 +1,33 @@
+wave: W70
+program: MIP_INGESTION_ORCHESTRATION
+repository: GBOGEB/pipeline-automation-hub
+role: generalized_document_ingestion_orchestrator
+modernize:
+  - normalize PPT/PDF/digital-twin outputs to a common source atom envelope
+  - bind each extracted atom to source file, locator, extraction method and digest
+  - align document outputs with DOCX_RTM_Automation rather than create parallel requirement authority
+innovate:
+  - route source atoms to CODEX for semantic normalization
+  - expose metadata and cross-reference graphs to ABACUS for coverage and duplicate analysis
+  - support bidirectional challenge packets back to extraction workers
+perpetuate:
+  - rerun only affected document shards after source or parser change
+  - retain source/output digests and extraction deltas
+  - recurse on first extraction loss, locator loss or semantic ambiguity
+outputs:
+  - source_atom_manifest.json
+  - extraction_receipt.json
+  - cross_reference_graph.json
+federation:
+  sibling_ingestor: DOCX_RTM_Automation
+  semantic_consumer: CODEX
+  analytics_consumer: ABACUS
+  domain_authority: cryoplant-project
+victory:
+  - one real source document produces >0 source-bound atoms
+  - CODEX consumes at least one atom without provenance loss
+  - child disposition can point back to exact source locator
+claim_guards:
+  - EXTRACTED_ATOM_NE_ACCEPTED_REQUIREMENT
+  - DIGITAL_TWIN_NE_SOURCE_AUTHORITY
+  - PIPELINE_SUCCESS_NE_ENGINEERING_CREDIT
