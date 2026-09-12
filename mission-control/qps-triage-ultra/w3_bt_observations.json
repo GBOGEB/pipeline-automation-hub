@@ -1,25 +1,63 @@
 {
-  "schema": "qps-w3-observed-intervention-bt/v1",
+  "schema": "qps-w3-observed-intervention-bt/v2",
   "authority_transfer": false,
   "policy": {
     "project_bt_evidence": "EXPLICIT_REAL_CURRENT_FRONTIER_INTERVENTION_WIN_LOSS_ONLY",
     "historical_rex_is_seed_only": true,
     "synthetic_fixture_is_project_evidence": false,
     "minimum_current_frontier_pairs": 2,
-    "comparison_graph_must_be_connected": true
+    "comparison_graph_must_be_connected": true,
+    "pair_evidence_class_required": "MEASURED",
+    "shared_baseline_semantics": "UNREPAIRED_BASELINE means the measured first-red head immediately preceding a bounded repair on the same objective; it is a comparator class, not one shared code revision.",
+    "cross_objective_claim_boundary": "BT ranks observed intervention types against the common unrepaired-baseline class. It does not claim that W3-10 beat W3-11 or vice versa."
   },
   "current_frontier": {
     "candidates": [
-      "W3-10_11_M02B_SECOND_KERNEL_AND_CONSUMER",
-      "W3-12_M01_HEPAK_AUTHORITY_CLOSURE",
-      "W3-16_M03_FRONTIER_CENSUS"
+      "SEMANTIC_BOUNDARY_GUARD_REPAIR",
+      "STATISTICAL_TOLERANCE_REPAIR",
+      "UNREPAIRED_BASELINE"
     ],
-    "pairs": [],
-    "state": "DEFER_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES"
+    "pairs": [
+      {
+        "winner": "SEMANTIC_BOUNDARY_GUARD_REPAIR",
+        "loser": "UNREPAIRED_BASELINE",
+        "objective": "W3-10_M02B_MONTE_CARLO_SECOND_KERNEL",
+        "evidence_class": "MEASURED",
+        "loser_run_id": 34685627860,
+        "loser_exact_sha": "aeff0803e3c2a96045ceb954e37e47ed5e4be14b",
+        "loser_outcome": "FAIL",
+        "loser_first_red": "ZERO_WIDTH_TRIANGULAR_BOUNDARY_REJECTED",
+        "winner_run_id": 34685651566,
+        "winner_exact_sha": "4cd2645ce60c8fe7d6d7ca8afaeb48aad3e032c8",
+        "winner_outcome": "SUCCESS",
+        "control_repeat_run_id": 34685675385,
+        "control_repeat_exact_sha": "d3799ae0ee4d9666d3ec985c7b7edde12cc98306",
+        "control_repeat_outcome": "SUCCESS",
+        "source": "mission-control/qps-triage-ultra/analytics/W3_13_MEASURED_PULSES.json"
+      },
+      {
+        "winner": "STATISTICAL_TOLERANCE_REPAIR",
+        "loser": "UNREPAIRED_BASELINE",
+        "objective": "W3-11_NON_ORIGIN_MATH_CONSUMER",
+        "evidence_class": "MEASURED",
+        "loser_run_id": 34685697076,
+        "loser_exact_sha": "bd93394387d10c1506d8efc67e34d39dfe57f651",
+        "loser_outcome": "FAIL",
+        "loser_first_red": "MAGIC_ABSOLUTE_MONTE_CARLO_TOLERANCE",
+        "winner_run_id": 34685737519,
+        "winner_exact_sha": "a6936341e99e4c90744527c94871130c4a4b52a2",
+        "winner_outcome": "SUCCESS",
+        "control_repeat_run_id": 34685792883,
+        "control_repeat_exact_sha": "0fff3a6a3038918b7dd2e062f4972ee775774480",
+        "control_repeat_outcome": "SUCCESS",
+        "source": "mission-control/qps-triage-ultra/analytics/W3_13_MEASURED_PULSES.json"
+      }
+    ],
+    "state": "OBSERVED_CURRENT_WAVE_PAIRS_AVAILABLE"
   },
   "historical_control_rex": {
     "eligible_for_w3_15": false,
-    "purpose": "Preserve real intervention outcomes and validate the BT evidence shape without ranking today's remaining frontier.",
+    "purpose": "Preserve earlier real intervention outcomes and validate evidence shape without contributing W3-15 credit.",
     "pairs": [
       {
         "winner": "PAGES_PRODUCTION_BRANCH_UNIQUE_ARTIFACT_REPEAT",
