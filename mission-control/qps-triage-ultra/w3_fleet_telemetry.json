@@ -1,0 +1,100 @@
+{
+  "schema": "qps-w3-measured-fleet-telemetry/v1",
+  "evidence_class": "MEASURED_API_OBSERVATION",
+  "purpose": "Comparable CI proof-pulse telemetry for W3-13 and measured runtime-footprint PCA for W3-14.",
+  "authority_transfer": false,
+  "interpretation_boundary": "These rows measure CI/runtime proof footprint. They do not directly measure engineering maturity, user value, or mission progress.",
+  "comparability_contract": {
+    "minimum_rows": 3,
+    "minimum_distinct_repos": 3,
+    "minimum_distinct_missions": 3,
+    "required_common_numeric_fields": [
+      "queue_delay_s",
+      "job_duration_s",
+      "executed_step_count",
+      "artifact_count",
+      "artifact_bytes"
+    ],
+    "constant_guard_fields": [
+      "runner_assigned",
+      "terminal_success",
+      "failed_step_count"
+    ],
+    "pca_policy": "z-score only measured numeric fields; drop zero-variance fields; never substitute seeded/controller scores"
+  },
+  "rows": [
+    {
+      "mission_id": "M02A",
+      "repo": "GBOGEB/Q_engineering_tools",
+      "role": "ENGINEERING_OUTPOST_PRODUCT_REPEAT",
+      "run_id": 34683957097,
+      "job_id": 103527534591,
+      "source_sha": "2e9dc6fa2c607346e95761095cc2b5a3301b86c4",
+      "product_sha_under_test": "84ec3846d749edaa0951717f7f8f1f606683c79f",
+      "created_at": "2026-09-12T08:42:28Z",
+      "started_at": "2026-09-12T08:42:31Z",
+      "completed_at": "2026-09-12T08:42:45Z",
+      "queue_delay_s": 3,
+      "job_duration_s": 14,
+      "executed_step_count": 18,
+      "artifact_count": 3,
+      "artifact_bytes": 65917,
+      "runner_assigned": 1,
+      "terminal_success": 1,
+      "failed_step_count": 0,
+      "evidence": {
+        "run": "https://api.github.com/repos/GBOGEB/Q_engineering_tools/actions/runs/34683957097",
+        "jobs": "https://api.github.com/repos/GBOGEB/Q_engineering_tools/actions/runs/34683957097/jobs",
+        "artifacts": "https://api.github.com/repos/GBOGEB/Q_engineering_tools/actions/runs/34683957097/artifacts"
+      }
+    },
+    {
+      "mission_id": "M02B",
+      "repo": "GBOGEB/gg_MATH",
+      "role": "MATH_BUNKER_KERNEL_PROOF",
+      "run_id": 34617236017,
+      "job_id": 103322083637,
+      "source_sha": "43d23c38b268e8980f02ad58e74ad48704ab7304",
+      "created_at": "2026-09-11T15:37:35Z",
+      "started_at": "2026-09-11T15:37:57Z",
+      "completed_at": "2026-09-11T15:38:03Z",
+      "queue_delay_s": 22,
+      "job_duration_s": 6,
+      "executed_step_count": 9,
+      "artifact_count": 1,
+      "artifact_bytes": 517,
+      "runner_assigned": 1,
+      "terminal_success": 1,
+      "failed_step_count": 0,
+      "evidence": {
+        "run": "https://api.github.com/repos/GBOGEB/gg_MATH/actions/runs/34617236017",
+        "jobs": "https://api.github.com/repos/GBOGEB/gg_MATH/actions/runs/34617236017/jobs",
+        "artifacts": "https://api.github.com/repos/GBOGEB/gg_MATH/actions/runs/34617236017/artifacts"
+      }
+    },
+    {
+      "mission_id": "ULTRA",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "role": "HOME_FEDERATION_REPEAT",
+      "run_id": 34617570505,
+      "job_id": 103323211016,
+      "source_sha": "8d71e73bb59b5ebf36bd11dcb458b55ac365fd32",
+      "created_at": "2026-09-11T15:40:59Z",
+      "started_at": "2026-09-11T15:43:51Z",
+      "completed_at": "2026-09-11T15:43:58Z",
+      "queue_delay_s": 172,
+      "job_duration_s": 7,
+      "executed_step_count": 11,
+      "artifact_count": 1,
+      "artifact_bytes": 847,
+      "runner_assigned": 1,
+      "terminal_success": 1,
+      "failed_step_count": 0,
+      "evidence": {
+        "run": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/runs/34617570505",
+        "jobs": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/runs/34617570505/jobs",
+        "artifacts": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/runs/34617570505/artifacts"
+      }
+    }
+  ]
+}
