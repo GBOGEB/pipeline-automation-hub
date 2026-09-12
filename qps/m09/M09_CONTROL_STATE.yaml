@@ -1,0 +1,47 @@
+schema: qps.m09.control_state.v1
+mission: M09_LEGACY_PROCESSOR_REHABILITATION
+state: POST_MERGE_CONTROL_REPEAT_REQUESTED
+historical_truth:
+  run_id: 34686319216
+  source_head_sha: 1e0eadabb4794652697ea322440d5ac30b3bb6e2
+  result: PASS_TRUTH_PROBE
+  classification: LEGACY_FILENAME_METADATA_AND_TEMPLATE_TWIN_GENERATOR
+  first_red: INVALID_NON_ZIP_PPTX_ACCEPTED_AND_FILENAME_HEURISTICS_OVERCLAIMED
+repair:
+  pr: 36
+  candidate_head_sha: a1e06cae52c715e128fdca51b70ed367cb0fb119
+  merge_sha: fe85ee5572efbc6503845d73165afde7720ca548
+  candidate_run_id: 34689271798
+  candidate_result: PASS_FAIL_CLOSED_METADATA_ONLY_REPAIR
+post_merge_control:
+  required: true
+  victory:
+    - exact_current_master_checkout
+    - invalid_non_zip_pptx_rejected
+    - minimal_valid_openxml_package_accepted
+    - metadata_only_boundary_retained
+    - retained_exact_head_receipt_uploaded
+  on_pass:
+    mission_disposition: CONTROL_REFERENCE_HARVEST_BOUNDED_PATTERNS
+    crew_action: RETURN_AMBASSADOR_AND_DOCTOR_TO_FLEET
+  on_red:
+    routing:
+      code_regression: Doctor
+      runtime_zero_steps: Dockmaster
+      claim_boundary: Ambassador_and_TM
+      governance: Governor
+harvest_candidates:
+  - fail_closed_package_intake
+  - sha256_file_identity
+  - output_directory_partitioning
+  - metadata_manifest_shape
+  - portable_cli_env_pathing
+  - exact_head_regression_receipt
+not_promoted:
+  - slide_content_parsing
+  - semantic_cross_reference_extraction
+  - OCR
+  - PDF_conversion
+  - document_truth
+  - engineering_authority
+authority_transfer: false
