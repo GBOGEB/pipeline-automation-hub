@@ -1,0 +1,90 @@
+schema: qps.m09.legacy_document_processor_control.v1
+mission: M09_PIPELINE_AUTOMATION_HUB_LEGACY_PROCESSOR
+state: TRUTH_PROBE_PENDING_RUNTIME
+purpose: >-
+  Consume the mature QPS TRIAGE ULTRA / MIP lineage already present in this repository
+  and investigate only the older document-processing surface. Do not create a second
+  HOME control plane. Measure the old PPT processor honestly before deciding whether
+  to repair, harvest, reference, or retire it.
+
+lineage_boundary:
+  current_HOME_role: FEDERATION_ROUTING_ORCHESTRATION_HUB
+  current_QPS_ULTRA_lineage: ACTIVE_AND_MATURE
+  legacy_surface_under_test:
+    - scripts/ppt_processor.py
+    - scripts/run_processing.py
+    - README_document_processing_claims
+  rule: M09_must_not_compete_with_or_replace_QPS_TRIAGE_ULTRA
+
+observed_first_reds:
+  - id: M09-R01
+    finding: cross_reference_extraction_is_explicitly_simulated_from_filename
+    class: CLAIM_VS_IMPLEMENTATION_BOUNDARY
+    owner: Analyst
+  - id: M09-R02
+    finding: content_analysis_and_visual_detection_are_template_placeholders
+    class: CLAIM_VS_IMPLEMENTATION_BOUNDARY
+    owner: Analyst
+  - id: M09-R03
+    finding: processor_main_and_run_processing_use_hardcoded_home_ubuntu_paths
+    class: PORTABILITY_DEBT
+    owner: Doctor
+  - id: M09-R04
+    finding: processing_timestamp_uses_wall_clock_and_changes_generated_twin_metadata
+    class: DETERMINISM_DEBT
+    owner: Doctor
+
+runtime_probe:
+  fixture: invalid_non_zip_bytes_named_QPLANT_Status.pptx
+  expected_truth: >-
+    The current implementation will still report COMPLETED and generate metadata,
+    cross-reference JSON and a Markdown twin because it does not parse PPTX content.
+  victory: exact_head_CI_confirms_boundary_and_emits_receipt
+
+claim_policy:
+  allow_now:
+    - filename_metadata_classification
+    - file_SHA256_hashing
+    - heuristic_filename_cross_reference_suggestion
+    - template_Markdown_twin_generation
+    - output_partitioning_and_manifest_patterns
+  prohibit_until_real_parser_receipt:
+    - claim_PPTX_content_extraction
+    - claim_content_derived_cross_reference_extraction
+    - claim_visual_artifact_detection
+    - claim_PDF_to_Markdown_fidelity
+    - claim_100_percent_document_processing_completion_as_content_DoV
+
+management:
+  PM_DOW: STAY_ONE_TRUTH_PULSE
+  TM_KEB: HOLD_DOCUMENT_TRUTH_AUTHORITY
+  Analyst:
+    DMAIC:
+      Define: separate_mature_HOME_control_from_legacy_document_processor_claims
+      Measure: execute_invalid_PPTX_truth_fixture
+      Analyze: distinguish_filename_heuristic_from_content_parser
+      Improve: only_after_runtime_truth_receipt
+      Control: future_claims_must_bind_to_executed_parser_receipts
+    PCA: USE_EXISTING_W3_ANALYTICS_NOT_A_NEW_M09_PCA
+    BT:
+      rank_1: truth_probe
+      rank_2: README_claim_reconciliation
+      rank_3: portability_repair
+      rank_4: harvest_or_retire_decision
+  active_crew: [Reader_2, Smoker, Analyst, QA]
+  reserve: [Doctor, Ambassador, Engineer]
+
+DoD:
+  consume_existing_HOME_lineage: PASS
+  legacy_code_read: PASS
+  first_reds_bound: PASS
+  exact_head_truth_probe: PENDING
+  disposition: PENDING
+
+DoV:
+  DoV_1: exact_head_truth_probe_and_honest_capability_classification
+  DoV_2: only_if_a_repaired_content_parser_is_consumed_else_NOT_REQUIRED
+  DoV_3: only_for_promoted_capability_not_for_reference_or_retirement
+
+BG: BG_M09_LEGACY_DOCUMENT_PROCESSING_CLAIMS_EXCEED_EXECUTED_CAPABILITY
+CG: CG_M09_EXACT_HEAD_TRUTH_RECEIPT_THEN_AMBASSADOR_DISPOSITION
