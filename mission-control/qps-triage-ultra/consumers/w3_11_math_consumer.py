@@ -26,16 +26,26 @@ inputs = {
     "offset": 10.0,
 }
 result = propagate_triangular(**inputs)
-expected_mean = 10.0 + 3.0 * ((1.0 + 2.0 + 5.0) / 3.0)
-if abs(result["mean"] - expected_mean) >= 0.05:
-    raise AssertionError((result["mean"], expected_mean))
+low, mode, high, coefficient = 1.0, 2.0, 5.0, 3.0
+expected_mean = 10.0 + coefficient * ((low + mode + high) / 3.0)
+triangular_variance = (
+    low * low + mode * mode + high * high
+    - low * mode - low * high - mode * high
+) / 18.0
+standard_error = math.sqrt((coefficient ** 2) * triangular_variance / inputs["samples"])
+mean_error = abs(result["mean"] - expected_mean)
+mean_limit = 5.0 * standard_error
+
+failures: list[str] = []
+if mean_error >= mean_limit:
+    failures.append(f"mean_error={mean_error} >= five_sigma_limit={mean_limit}")
 if result.get("authority_transfer") is not False:
-    raise AssertionError("producer kernel changed authority semantics")
+    failures.append("producer kernel changed authority semantics")
 if not (result["q05"] < result["q50"] < result["q95"]):
-    raise AssertionError("consumer quantiles are not ordered")
+    failures.append("consumer quantiles are not ordered")
 
 receipt = {
-    "schema": "qps-w3-11-non-origin-consumer/v1",
+    "schema": "qps-w3-11-non-origin-consumer/v2",
     "observed_at": datetime.now(timezone.utc).isoformat(),
     "producer": {
         "repo": "GBOGEB/gg_MATH",
@@ -47,13 +57,21 @@ receipt = {
         "sha": a.consumer_sha,
     },
     "inputs": inputs,
+    "reference": {
+        "type": "closed_form_triangular_mean_and_variance",
+        "expected_mean": expected_mean,
+        "standard_error": standard_error,
+        "five_sigma_limit": mean_limit,
+        "observed_mean_error": mean_error,
+    },
     "execution": {
         "steps_gt0": True,
-        "outcome": "SUCCESS",
+        "outcome": "FAILURE" if failures else "SUCCESS",
         "mean": result["mean"],
         "q05": result["q05"],
         "q50": result["q50"],
         "q95": result["q95"],
+        "failures": failures,
     },
     "authority_transfer": False,
     "engineering_acceptance": False,
@@ -62,3 +80,5 @@ out = Path(a.out)
 out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 print(json.dumps(receipt, sort_keys=True))
+if failures:
+    raise AssertionError("; ".join(failures))
