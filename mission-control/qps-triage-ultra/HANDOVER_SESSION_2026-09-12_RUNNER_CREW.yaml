@@ -1,0 +1,275 @@
+schema: qps.triage.ultra.session_handover.v1
+session_date: 2026-09-12
+purpose: >-
+  Continue the Elastic Expedition Mesh from the measured queue-vs-execution and
+  ACTIVE-vs-BD conclusions. This is an executable action plan, not a narrative
+  summary. Preserve exact-SHA receipts, first-red recursion, authority boundaries,
+  temporal event logging and the canonical mission table.
+
+frozen_heads:
+  HOME_pipeline_automation_hub_master: 462f1a6afc08413671797a72ccf95470a01c9455
+  QPS_cryoplant_project_main_observed: 3efb53c8b21104e9949573e9466d984ea49db1cf
+
+session_tail_closed:
+  - id: W3_15_OBSERVED_BT
+    result: PASS_MERGED
+    evidence: run_34686126465_exact_head_feaab33e_then_merge_7cc101f4
+  - id: FLEET_TEMPORAL_LEDGER
+    result: PASS_MERGED
+    evidence: pipeline_automation_hub_PR_35
+  - id: M09_TRUTH_PROBE
+    result: PASS
+    evidence: run_34686319216_artifact_10295712462
+  - id: M09_REPAIR_CANDIDATE
+    result: PASS_MERGED
+    evidence: PR_36_head_a1e06cae_run_34689271798_merge_fe85ee55
+  - id: M09_POST_MERGE_CONTROL
+    result: PASS_MERGED_CONTROL
+    evidence: PR_37_head_267f21ce_run_34689318185_merge_462f1a6a
+  - id: W3_12_HEPAK_PREFLIGHT
+    result: PASS_MERGED_NO_NUMERIC_CREDIT
+    evidence: cryoplant_PR_988
+  - id: W3_12_LOCAL_EXECUTION_CARD
+    result: PASS_MERGED_NO_NUMERIC_CREDIT
+    evidence: cryoplant_PR_990
+
+live_tail: []
+
+strategic_state:
+  W3_fixed_denominator: 16
+  W3_strict_passed: 15
+  W3_fraction: 0.9375
+  W3_DoV: WITHHELD
+  sole_strategic_gate: W3_12_LICENSED_HEPAK_NUMERIC_RECEIPT
+
+mission_crew_policy:
+  ACTIVE:
+    purpose: attack_current_BG_to_CG
+    recommended_strategic_WIP_limit: 1
+    can_change_authoritative_state: true_only_through_QA_TM_Governor_gates
+  BD0:
+    purpose: next_fully_prepared_activation_candidates
+    recommended_limit: 2
+    target_activation_latency: MINIMIZE
+  BD1:
+    purpose: near_horizon_candidates_with_one_named_blocker
+    recommended_limit: 3
+  CONTROL:
+    purpose: recurrence_and_regression_only
+    allocation: minimal
+  RESERVE:
+    purpose: summon_only_on_named_first_red
+    specialists: [Doctor, Dockmaster, Scientist, Engineer, Governor]
+  RETURNED:
+    purpose: zero_current_marginal_value_return_to_fleet
+
+current_crew_topology:
+  ACTIVE:
+    target: W3_12_HEPAK_NUMERIC_RECEIPT
+    crew: [Technical_Manager_KEB, Scientist, QA, Licensed_Local_Runtime_Operator]
+  BD0:
+    - target: RUNTIME_LANE_SCHEDULER
+      crew: [Analyst, Engineer, Project_Manager_DOW]
+      readiness: HIGH
+  BD1:
+    - target: M01_PRIVATE_QPS_RUNNER
+      crew: [Dockmaster]
+      blocker: PRIVATE_RUNNER_ASSIGNMENT
+  CONTROL:
+    - M09_LEGACY_PROCESSOR
+    - M05_PROVENANCE
+    - W3_15_ANALYTICS_BT
+    - M07_LEAK_EVIDENCE
+    - M08_PROPERTY_ADMISSION
+  PARK:
+    - M06_TELEGRAF_EXPANSION
+  RESERVE:
+    - Doctor
+    - Dockmaster
+    - Scientist
+    - Engineer
+    - Governor
+  RETURNED_THIS_SESSION:
+    - M09_Ambassador
+    - M09_Doctor
+
+runtime_lane_policy:
+  measured_inputs:
+    - queue_seconds
+    - execute_seconds
+    - queue_execute_ratio
+    - queue_fraction
+    - predicted_execute_seconds
+    - runner_class
+    - cache_hit
+    - build_fraction
+    - artifact_bytes
+    - mission_state
+    - crew_units_waiting
+    - DoV_unlock
+  lanes:
+    FAST:
+      predicted_execute_seconds_max: 60
+      examples: [receipt_validation, schema_gate, small_python_probe, BT_PCA_gate, truth_probe]
+    NORMAL:
+      predicted_execute_seconds_max: 300
+      examples: [ordinary_tests, small_consumer, moderate_calculation]
+    HEAVY:
+      predicted_execute_seconds_min_exclusive: 300
+      examples: [source_build, large_dependency_install, docker_build, large_artifact]
+    SPECIAL:
+      predicate: requires_dedicated_habitat
+      examples: [Windows_HEPAK_Excel, private_runner, GPU, licensed_runtime]
+  starvation_class:
+    name: STARVED_FAST
+    initial_expert_seeded_rule:
+      predicted_execute_seconds_max: 60
+      queue_execute_ratio_min: 5
+      mission_state_in: [ACTIVE, BD0]
+    action: priority_release_or_reserved_fast_capacity
+    evidence_class: EXPERT_SEEDED_UNTIL_CALIBRATED
+
+long_execution_optimizer_order:
+  - repeated_dependency_install: CACHE_OR_PREBUILT_IMAGE
+  - repeated_upstream_compile: BUILD_ONCE_EXACT_SHA_ARTIFACT_CONSUME_MANY
+  - monolithic_workflow: SPLIT_DAG_AND_PARALLELIZE_INDEPENDENT_STAGES
+  - large_checkout: SPARSE_SHALLOW_TARGETED_CHECKOUT
+  - wrong_runner_class: ROUTE_TO_FAST_NORMAL_HEAVY_SPECIAL
+  - persistent_queue_pressure_after_routing: CONSIDER_EXTRA_RUNNER
+  - intrinsically_compute_heavy_after_optimization: LARGER_OR_PARALLEL_HEAVY_RUNNER
+
+runner_scale_gate:
+  principle: OPTIMIZE_REMOVE_REUSE_SPLIT_ROUTE_PRIORITIZE_THEN_SCALE
+  extra_FAST_runner_candidate_when:
+    - at_least_3_comparable_measured_pulses_show_STARVED_FAST
+    - at_least_2_useful_FAST_jobs_are_simultaneously_runnable
+    - queue_pressure_is_not_only_external_private_runner_failure
+    - reserved_fast_capacity_would_reduce_ACTIVE_or_BD0_critical_path
+  extra_HEAVY_runner_candidate_when:
+    - caching_reuse_and_decomposition_have_been_attempted_or_ruled_out
+    - remaining_work_is_parallelizable_or_larger_runner_is_resource_justified
+    - heavy_lane_blocks_ACTIVE_or_BD0_progress
+  no_scale_if:
+    - one_off_job
+    - low_DoV_unlock
+    - repeated_build_can_be_eliminated_by_artifact_reuse
+    - job_is_waiting_on_external_license_or_private_admission
+  metrics:
+    QER: queue_seconds_div_execute_seconds
+    queue_fraction: queue_seconds_div_total_seconds
+    crew_wait_loss: queue_seconds_times_active_crew_units
+
+PCA_BT_DMAIC_policy:
+  PCA:
+    role: discover_latent_workload_structure_not_direct_scheduler
+    current_runtime_hypothesis:
+      PC1: execution_or_workload_footprint
+      PC2: queue_or_admission_friction
+      possible_future_PC3: human_dependency_or_crew_wait
+    scheduler_uses_raw_measured_fields: true
+  BT:
+    role: rank_next_intervention_or_BD_promotion_from_observed_outcomes
+    reverse_pressure_question: what_must_be_false_for_current_rank_1_to_lose_priority
+  DMAIC:
+    Define: named_BG_and_target_CG
+    Measure: exact_runtime_and_receipts
+    Analyze: queue_vs_execute_vs_evidence_vs_rework
+    Improve: lowest_cost_highest_DoV_unlock_action
+    Control: merged_or_fresh_repeat_with_temporal_receipt
+
+execution_plan:
+  - seq: 1
+    id: CLOSE_M09_CONTROL_TAIL
+    state: CLOSED_PASS
+    result:
+      repair_candidate_run: 34689271798
+      repair_merge: fe85ee5572efbc6503845d73165afde7720ca548
+      post_merge_repeat_run: 34689318185
+      post_merge_control_merge: 462f1a6afc08413671797a72ccf95470a01c9455
+      disposition: CONTROL_REFERENCE_HARVEST_BOUNDED_PATTERNS
+      crew: RETURN_AMBASSADOR_AND_DOCTOR
+  - seq: 2
+    id: W3_12_LOCAL_HEPAK_EXECUTION
+    state: ACTIVE_EXTERNAL_LOCAL
+    repo: GBOGEB/cryoplant-project
+    actions:
+      - use_merged_W3_12_local_execution_card
+      - run_static_preflight
+      - run_tools/hepak_bridge/run_hepak_lowt_receipt.ps1_on_Windows_Excel_licensed_HEPAK
+      - return_receipts/he_reference_hepak_lowT_grid.csv
+      - return_receipts/he_reference_hepak_lowT_grid.csv.manifest.json
+      - validate_exact_8_state_contract
+      - bind_workbook_CSV_manifest_hashes
+    forbidden:
+      - CoolProp_as_governing_substitute_in_2_to_4p5K_band
+      - manual_numeric_fill
+      - committing_licensed_workbook_or_addin
+    victory: GOVERNED_8_ROW_HEPAK_RECEIPT_PASS
+  - seq: 3
+    id: W3_12_ADAPTER_CONSUMER_CLOSE
+    state: BLOCKED_BY_SEQ_2
+    actions:
+      - hydrate_property_adapter_from_valid_HEPAK_receipt
+      - independent_non_origin_consumer_executes_gt0
+      - QA_exact_SHA_receipt
+      - TM_accepts_validity_domain
+      - DOW_closes_work_edge
+      - Governor_accepts_bounded_scope
+      - update_W3_to_16_of_16_candidate
+      - fresh_control_repeat_before_terminal_DoV
+  - seq: 4
+    id: BUILD_RUNTIME_LANE_SCHEDULER
+    state: BD0_READY
+    repo: GBOGEB/pipeline-automation-hub
+    build_outputs:
+      - mission-control/qps-triage-ultra/scheduler/runtime_lane_policy.yaml
+      - mission-control/qps-triage-ultra/scheduler/classify_runtime_lane.py
+      - mission-control/qps-triage-ultra/scheduler/runner_scale_gate.py
+      - mission-control/qps-triage-ultra/scheduler/crew_allocation_policy.yaml
+      - mission-control/qps-triage-ultra/receipts/runtime_scheduler_receipt.json
+      - exact_head_CI_workflow
+    implementation_requirements:
+      - consume_existing_temporal_fleet_ledger_not_duplicate_it
+      - classify_FAST_NORMAL_HEAVY_SPECIAL
+      - classify_ACTIVE_BD0_BD1_CONTROL_RESERVE_RETURNED
+      - compute_QER_queue_fraction_crew_wait_loss
+      - emit_STARVED_FAST_candidates
+      - emit_optimization_before_scale_recommendations
+      - emit_extra_runner_candidate_only_when_scale_gate_passes
+      - preserve_evidence_class_MEASURED_vs_EXPERT_SEEDED
+      - no_actual_runner_provisioning_in_first_slice
+    DoD:
+      - deterministic_classifier
+      - replayable_receipt
+      - at_least_3_measured_historical_pulses_classified
+      - one_STARVED_FAST_and_one_HEAVY_case_demonstrated_from_observed_data
+      - no_authority_transfer
+    DoV:
+      - scheduler_recommendation_changes_one_real_next_dispatch_or_lane_choice
+      - subsequent_receipt_confirms_expected_queue_or_execution_effect
+  - seq: 5
+    id: M01_PRIVATE_RUNNER_WATCH
+    state: BD1_EXTERNAL_BLOCK
+    actions:
+      - keep_single_Dockmaster_watch_cell
+      - do_not_patch_application_code_while_runner_id_eq_0_and_steps_eq_0
+      - on_runner_nonzero_execute_unchanged_consumer
+      - classify_first_actual_step_red_or_green
+  - seq: 6
+    id: CONTROL_AND_RETURN
+    state: CONTINUOUS
+    actions:
+      - keep_M09_M05_M07_M08_on_small_control_cells
+      - keep_M06_parked_unless_real_observer_need_appears
+      - append_every_material_pulse_to_temporal_ledger
+      - canonical_table_first_dashboard_projection_second
+
+next_chat_start_command: >-
+  Read this handover and the current HOME temporal ledger. Recheck live repo and
+  workflow state first. M09 is CONTROL/REFERENCE after candidate and post-merge
+  exact-head green receipts. Keep W3-12 as the sole ACTIVE strategic gate and do
+  not fabricate licensed HEPAK outputs. In parallel implement the BD0 runtime lane
+  scheduler as a bounded classifier/recommendation system consuming existing
+  measured ledger rows. Do not provision extra runners until the scale gate is
+  supported by measured pressure. Recurse on first red, append temporal metrics,
+  and report the canonical mission table plus compact queue/execute/crew dashboard.
