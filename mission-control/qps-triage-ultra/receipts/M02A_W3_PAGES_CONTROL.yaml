@@ -1,0 +1,60 @@
+schema: qps-m02a-w3-pages-control-receipt/v1
+mission_id: M02A
+moniker: ENGINEERING_OUTPOST
+status: PASS_CONTROLLED_PRODUCT
+product_repo: GBOGEB/Q_engineering_tools
+product_sha: 84ec3846d749edaa0951717f7f8f1f606683c79f
+control_carrier_sha: 2e9dc6fa2c607346e95761095cc2b5a3301b86c4
+source_authority:
+  repo: GBOGEB/document-organization-system
+  sha: cea7bfb533c246c797ef43652579fe00a39dcd4d
+  subtree: cryo_dashboard_v0_3_0/cryo_dashboard_v0_3_0
+artifact:
+  manifest_sha256: d6be92629b5e287be600b0b3cb0d38501c92733274cb256d5a104b2162b35d10
+  file_count: 21
+public_product:
+  url: https://gbogeb.github.io/Q_engineering_tools
+  first_run_id: 34683757093
+  first_outcome: SUCCESS
+  repeat_run_id: 34683957097
+  repeat_outcome: SUCCESS
+  first_and_repeat_same_product_sha: true
+  first_and_repeat_same_manifest_sha256: true
+calculation:
+  material: CuRRR100
+  material_name: OFHC Copper RRR 100
+  property: k
+  Tmin_K: 4
+  Tmax_K: 20
+  area_m2: 0.0001
+  length_m: 1
+  primary_method: Romberg_level_6
+  crosscheck_method: Composite_trapezoid_2000_intervals
+  integral_W_per_m: 27397.58859288235
+  crosscheck_integral_W_per_m: 27397.58798670458
+  relative_method_delta: 2.2125223510281592e-8
+  qdot_W: 2.7397588592882354
+  validity_range_status: PASS
+  first_public_receipt: SUCCESS
+  repeat_public_receipt: SUCCESS
+trace:
+  schema: qps-engineering-outpost-trace/v1
+  visible_UI_trace: true
+  JSON_export_trace: true
+  CSV_export_trace: true
+  source_blob_map: true
+rex_preserved:
+  - SAME_RUN_RERUN_DUPLICATE_GITHUB_PAGES_ARTIFACT
+  - NON_PRODUCTION_BRANCH_GITHUB_PAGES_ENVIRONMENT_RESTRICTION
+  - DEPLOY_PAGES_REQUIRES_GITHUB_PAGES_ENVIRONMENT
+control_invariant:
+  ordinary_pages_job_on_repeat_carrier: SKIPPED
+  product_under_test_remained: 84ec3846d749edaa0951717f7f8f1f606683c79f
+  authority_transfer: false
+  engineering_acceptance: false
+w3_gate_credit:
+  W3-05: PASS
+  W3-06: PASS
+  W3-07: PASS
+  W3-08: PASS
+  W3-09: PASS

@@ -1,9 +1,9 @@
-schema: qps-triage-w3-burndown/v3
+schema: qps-triage-w3-burndown/v4
 slice_id: ULTRA_W3_INTEGRATION_EXPANSION
 entry_master_sha: 8d71e73bb59b5ebf36bd11dcb458b55ac365fd32
 denominator: 16
-strict_passed: 4
-strict_progress: 0.25
+strict_passed: 9
+strict_progress: 0.5625
 dod: ACTIVE
 dov: WITHHELD
 analytics:
@@ -14,11 +14,11 @@ gates:
   W3-02: {state: PASS, target: M02A_MATERIAL_SOURCE_LINEAGE_FROZEN, evidence: source_cea7bfb_materials_js_2fff568b_materials_json_65be104b}
   W3-03: {state: PASS, target: AUTHORITATIVE_MATERIAL_PARITY_SPOTCHECKS, evidence: NIST_5_families_10_material_ids_coefficient_range_equation_parity}
   W3-04: {state: PASS, target: EXACT_MATERIAL_EVALUATOR_DATA_IMPORT_IDENTITY, evidence: evaluator_2fff568b_and_database_65be104b_exact_blob_identity}
-  W3-05: {state: PENDING_CI, target: MATERIAL_ADAPTER_UNIT_RANGE_EQUATION_RECEIPT, evidence: M02A_PR7_head_a6cad333_run_34618710538_queued}
-  W3-06: {state: PENDING, target: REAL_MODULAR_DASHBOARD_REPLACES_PLACEHOLDER}
-  W3-07: {state: PENDING, target: CALC_EXPORT_TRACE_BINDS_SOURCE_DATA_ALGORITHM_SHAS}
-  W3-08: {state: PENDING, target: REAL_PAGES_URL_TRACEABLE_CALCULATION}
-  W3-09: {state: PENDING, target: EXACT_MERGED_PAGES_REPEAT}
+  W3-05: {state: PASS, target: MATERIAL_ADAPTER_UNIT_RANGE_EQUATION_RECEIPT, evidence: M02A_run_34618710538_head_a6cad333_SUCCESS_PR7_merge_0e85ac40}
+  W3-06: {state: PASS, target: REAL_MODULAR_DASHBOARD_REPLACES_PLACEHOLDER, evidence: M02A_PR8_candidate_run_34683737153_SUCCESS_merge_84ec3846_real_dashboard_from_source_cea7bfb}
+  W3-07: {state: PASS, target: CALC_EXPORT_TRACE_BINDS_SOURCE_DATA_ALGORITHM_SHAS, evidence: qps_engineering_outpost_trace_v1_source_blob_map_plus_JSON_CSV_trace_overlay_manifest_d6be9262}
+  W3-08: {state: PASS, target: REAL_PAGES_URL_TRACEABLE_CALCULATION, evidence: M02A_run_34683757093_target_84ec3846_PUBLIC_GITHUB_PAGES_SUCCESS_url_gbogeb_github_io_Q_engineering_tools}
+  W3-09: {state: PASS, target: EXACT_MERGED_PAGES_REPEAT, evidence: repeat_run_34683957097_exact_target_84ec3846_manifest_d6be9262_PUBLIC_GITHUB_PAGES_SUCCESS}
   W3-10: {state: PENDING, target: M02B_SECOND_KERNEL_INDEPENDENT_CHALLENGE}
   W3-11: {state: PENDING, target: NON_ORIGIN_CONSUMER_RECEIPT}
   W3-12: {state: PENDING, target: M01_HEPAK_ADAPTER_EXTERNAL_CONSUMER_DOV2}
@@ -27,15 +27,48 @@ gates:
   W3-15: {state: PENDING, target: OBSERVED_INTERVENTION_BT_PASS}
   W3-16: {state: PARTIAL_RECON, target: M03_FOUR_FRONTIER_W0_RECON_WITH_COVERAGE_FLOOR, evidence: four_exact_heads_and_roles_frozen_content_census_pending}
 ranked_burndown:
-  - {rank: 1, id: W3-BD01, gates: [W3-05], target: MATERIAL_ADAPTER_RECEIPT_AND_RANGE_GUARDS}
-  - {rank: 2, id: W3-BD02, gates: [W3-06, W3-07, W3-08, W3-09], target: REAL_DETERMINISTIC_ENGINEERING_PAGES_PRODUCT}
-  - {rank: 3, id: W3-BD03, gates: [W3-10, W3-11], target: MATH_BUNKER_BREADTH_AND_CONSUMPTION}
-  - {rank: 4, id: W3-BD04, gates: [W3-12], target: M01_ENGINEERING_AUTHORITY_CLOSURE}
-  - {rank: 5, id: W3-BD05, gates: [W3-13, W3-14, W3-15], target: MEASURED_PCA_AND_OBSERVED_BT_CONTROL}
-  - {rank: 6, id: W3-BD06, gates: [W3-16], target: M03_COMPLETE_CONTENT_CENSUS_AND_DISPOSITIONS}
-first_w3_rex:
-  issue: SEMANTICALLY_EQUAL_EVALUATOR_WAS_NOT_BYTE_IDENTICAL
-  observed_wrong_blob: 5bfc26b5efb30c8a111dc798beb2c7242e68b522
-  source_blob: 2fff568b3b5f73874581a5004553f1046f7c15a4
-  cause: literal_Unicode_escape_sequences_were_rendered_as_characters_during_first_import
-  repair_result: exact_blob_identity_2fff568b3b5f73874581a5004553f1046f7c15a4
+  - {rank: 1, id: W3-BD03, gates: [W3-10, W3-11], target: MATH_BUNKER_BREADTH_AND_NON_ORIGIN_CONSUMPTION}
+  - {rank: 2, id: W3-BD04, gates: [W3-12], target: M01_ENGINEERING_AUTHORITY_CLOSURE}
+  - {rank: 3, id: W3-BD05, gates: [W3-13, W3-14, W3-15], target: MEASURED_PCA_AND_OBSERVED_BT_CONTROL}
+  - {rank: 4, id: W3-BD06, gates: [W3-16], target: M03_COMPLETE_CONTENT_CENSUS_AND_DISPOSITIONS}
+completed_burndown:
+  - {id: W3-BD01, gates: [W3-05], result: PASS, target: MATERIAL_ADAPTER_RECEIPT_AND_RANGE_GUARDS}
+  - {id: W3-BD02, gates: [W3-06, W3-07, W3-08, W3-09], result: PASS_CONTROLLED, target: REAL_DETERMINISTIC_ENGINEERING_PAGES_PRODUCT}
+rex:
+  - id: W3-REX-01
+    issue: SEMANTICALLY_EQUAL_EVALUATOR_WAS_NOT_BYTE_IDENTICAL
+    observed_wrong_blob: 5bfc26b5efb30c8a111dc798beb2c7242e68b522
+    source_blob: 2fff568b3b5f73874581a5004553f1046f7c15a4
+    cause: literal_Unicode_escape_sequences_were_rendered_as_characters_during_first_import
+    repair_result: exact_blob_identity_2fff568b3b5f73874581a5004553f1046f7c15a4
+  - id: W3-REX-02
+    issue: SAME_WORKFLOW_RUN_RERUN_ACCUMULATED_DUPLICATE_GITHUB_PAGES_ARTIFACTS
+    affected_run: 34683757093_attempt_2
+    product_build_result: PASS_SAME_MANIFEST_d6be9262
+    deployment_result: FAIL_PLATFORM_ARTIFACT_AMBIGUITY
+    lesson: Pages_deployment_repeat_must_use_a_fresh_run_with_unique_artifact_name
+  - id: W3-REX-03
+    issue: NON_PRODUCTION_CONTROL_BRANCH_CANNOT_SATISFY_GITHUB_PAGES_ENVIRONMENT_CONTRACT
+    affected_runs: [34683866534, 34683902095]
+    product_build_result: PASS_SAME_MANIFEST_d6be9262_on_runner_path
+    deployment_result: FAIL_ENVIRONMENT_POLICY_OR_MISSING_ENVIRONMENT
+    repair: tagged_production_branch_repeat_carrier_with_explicit_target_product_SHA
+control_receipt:
+  product_sha: 84ec3846d749edaa0951717f7f8f1f606683c79f
+  recovered_source_sha: cea7bfb533c246c797ef43652579fe00a39dcd4d
+  artifact_manifest_sha256: d6be92629b5e287be600b0b3cb0d38501c92733274cb256d5a104b2162b35d10
+  first_public_run: 34683757093
+  repeat_public_run: 34683957097
+  public_url: https://gbogeb.github.io/Q_engineering_tools
+  calculation:
+    material: CuRRR100
+    property: k
+    Tmin_K: 4
+    Tmax_K: 20
+    integral_W_per_m: 27397.58859288235
+    crosscheck_integral_W_per_m: 27397.58798670458
+    relative_method_delta: 2.2125223510281592e-8
+    qdot_W: 2.7397588592882354
+    validity_range_status: PASS
+  authority_transfer: false
+  engineering_acceptance: false

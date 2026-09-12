@@ -1,11 +1,11 @@
-schema: qps-mission-registry/v5
-global_seq: 5
+schema: qps-mission-registry/v6
+global_seq: 6
 control_node:
   id: ULTRA
   repo: GBOGEB/pipeline-automation-hub
-  master_sha: 8d71e73bb59b5ebf36bd11dcb458b55ac365fd32
-  phase: W2_CONTROL_W3_RELEASE
-  status: CONTROLLED
+  master_sha: d34f94a40cad8224c03536973f6474faec6c8d05
+  phase: W3_INTEGRATION_EXPANSION
+  status: CONTROLLED_W2_ACTIVE_W3
   w2:
     dod: 12/12
     dov: ACHIEVED_AND_REPEATED
@@ -14,7 +14,12 @@ control_node:
     merge_sha: 8d71e73bb59b5ebf36bd11dcb458b55ac365fd32
     control_repeat_run_id: 34617570505
     gate: ULTRA-M02-FED-AND-001
-  next_target: W3_PRODUCTIZE_CONSUME_MEASURE
+  w3:
+    strict_passed: 9
+    denominator: 16
+    strict_progress: 0.5625
+    dov: WITHHELD
+  next_target: M02B_SECOND_KERNEL_AND_NON_ORIGIN_CONSUMER
 active_missions:
   M01:
     repo: GBOGEB/CoolProp
@@ -27,26 +32,37 @@ active_missions:
   M02A:
     repo: GBOGEB/Q_engineering_tools
     moniker: ENGINEERING_OUTPOST
-    phase: W3_MATERIALS_PROVENANCE_TO_REAL_PAGES
-    parent_pr: 5
-    parent_merge_sha: 9a9131cfeb90843586c87df16f7cd2ff60323046
-    w2_pr: 6
-    w2_proof_head_sha: 05d8e34df6246601b1ee5edabc898e6f7efd174b
-    w2_proof_run_id: 34616804184
-    w2_merge_sha: 1511615c84fe0d1b9d3edd44370f721f65b0a0a1
-    status: STAY
-    w2_evidence:
-      recovered_numerics_blob_sha: 2d23e1d0ac041d85e45ba157088c699b3f1c9fe6
-      receipt_outcome: SUCCESS
-      receipt_evidence_class: EXECUTED_EXACT_RECOVERED_BLOB
-    w3_discovery:
-      source_repo: GBOGEB/document-organization-system
+    phase: W3_PAGES_PRODUCT_CONTROL
+    status: CONTROLLED_PRODUCT
+    source_authority:
+      repo: GBOGEB/document-organization-system
+      sha: cea7bfb533c246c797ef43652579fe00a39dcd4d
+      subtree: cryo_dashboard_v0_3_0/cryo_dashboard_v0_3_0
+      numerics_blob: 2d23e1d0ac041d85e45ba157088c699b3f1c9fe6
+      material_evaluator_blob: 2fff568b3b5f73874581a5004553f1046f7c15a4
+      material_database_blob: 65be104be14dc694efb519c98e8939ae7184afec
+    w3_material_adapter:
+      pr: 7
+      proof_head_sha: a6cad3338d3b87871d633ddc366c2a93817708bc
+      proof_run_id: 34618710538
+      merge_sha: 0e85ac404009f9c2c137f9c7bc7bda79d7422f29
+      outcome: SUCCESS
+    w3_pages_product:
+      pr: 8
+      candidate_run_id: 34683737153
+      product_sha: 84ec3846d749edaa0951717f7f8f1f606683c79f
       source_sha: cea7bfb533c246c797ef43652579fe00a39dcd4d
-      materials_js_blob_sha: 2fff568b3b5f73874581a5004553f1046f7c15a4
-      materials_json_blob_sha: 65be104be14dc694efb519c98e8939ae7184afec
-      source_claim: NIST_VALIDATED_COEFFICIENTS
-      evidence_status: SOURCE_CLAIM_NOT_YET_INDEPENDENTLY_VERIFIED
-    next_target: PROVE_MATERIAL_PROPERTY_SOURCE_LINEAGE_AND_RANGE_UNITS_THEN_REAL_DASHBOARD
+      artifact_manifest_sha256: d6be92629b5e287be600b0b3cb0d38501c92733274cb256d5a104b2162b35d10
+      first_public_run_id: 34683757093
+      repeat_control_pr: 9
+      repeat_carrier_merge_sha: 2e9dc6fa2c607346e95761095cc2b5a3301b86c4
+      repeat_public_run_id: 34683957097
+      public_url: https://gbogeb.github.io/Q_engineering_tools
+      public_calculation_outcome: SUCCESS
+      repeated_exact_product: PASS
+      authority_transfer: false
+      engineering_acceptance: false
+    next_target: CONTROL_WATCH_AND_EXTERNAL_CONSUMPTION_ONLY
   M02B:
     repo: GBOGEB/gg_MATH
     moniker: MATH_BUNKER
@@ -66,13 +82,14 @@ active_missions:
 expansion:
   M03:
     frontier_count: 4
-    state: W0_RECON_RELEASED
+    state: W0_RECON_RELEASED_PARTIAL
     constraint: COVERAGE_FLOOR_AND_NO_AUTHORITY_TRANSFER
     launch_condition: W2_CONTROL_REPEAT_PASS
+    next_target: COMPLETE_CONTENT_CENSUS_AND_DISPOSITION_CANDIDATE_PER_FRONTIER
   M04: {frontier_count: 8, state: OUTLINED_NOT_RELEASED}
   CLOUD16: {frontier_count: 16, state: CANDIDATE_CLOUD_NOT_RELEASED}
 analytics:
   pca: DEFER_INSUFFICIENT_COMPARABLE_MEASURED_OBSERVATIONS
   pca_unlock: AT_LEAST_3_COMPARABLE_MEASURED_PULSE_ROWS
-  bt: DEFER_NO_EXPLICIT_PAIRWISE_OUTCOMES
+  bt: DEFER_NO_EXPLICIT_FLEET_PAIRWISE_OUTCOMES
   bt_unlock: EXPLICIT_REAL_INTERVENTION_WIN_LOSS_OBSERVATIONS
