@@ -1,101 +1,99 @@
-
 #!/usr/bin/env python3
-"""
-Run the complete document processing pipeline
-"""
+"""Run the bounded legacy PPTX metadata pipeline.
 
-import sys
-import os
-from pathlib import Path
-import subprocess
+M09 boundary: this runner validates PPTX packages and emits metadata/hash/template
+twins. It does not claim slide-content extraction, PDF conversion, or semantic
+cross-reference extraction.
+"""
+from __future__ import annotations
+
+import argparse
 import json
+import os
+import subprocess
+import sys
+from pathlib import Path
 
-# Add the current directory to Python path
-current_dir = Path(__file__).parent
-sys.path.append(str(current_dir))
+CURRENT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = CURRENT_DIR.parent
+DEFAULT_INPUT_DIR = REPO_ROOT / "app" / "public" / "master_input"
+DEFAULT_OUTPUT_DIR = REPO_ROOT / "app" / "public" / "outputs"
 
-def run_ppt_processing():
-    """Execute PowerPoint processing"""
-    print("🔄 Phase 1: PowerPoint Processing Engine")
-    print("-" * 50)
-    
-    try:
-        # Run the PPT processor
-        result = subprocess.run([
-            sys.executable, 
-            str(current_dir / "ppt_processor.py")
-        ], capture_output=True, text=True, cwd=current_dir)
-        
-        if result.returncode == 0:
-            print("✅ PPT Processing completed successfully!")
-            print(result.stdout)
-        else:
-            print("❌ PPT Processing failed!")
-            print(result.stderr)
-            return False
-            
-    except Exception as e:
-        print(f"❌ Error running PPT processor: {e}")
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run bounded legacy metadata-only PPTX pipeline")
+    parser.add_argument(
+        "--input-dir",
+        default=os.environ.get("PIPELINE_INPUT_DIR", str(DEFAULT_INPUT_DIR)),
+        help="PPTX input directory",
+    )
+    parser.add_argument(
+        "--output-dir",
+        default=os.environ.get("PIPELINE_OUTPUT_DIR", str(DEFAULT_OUTPUT_DIR)),
+        help="Output directory",
+    )
+    return parser.parse_args()
+
+
+def run_ppt_processing(input_dir: Path, output_dir: Path) -> bool:
+    print("Phase 1: bounded legacy PPTX metadata processor")
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(CURRENT_DIR / "ppt_processor.py"),
+            "--input-dir",
+            str(input_dir),
+            "--output-dir",
+            str(output_dir),
+        ],
+        capture_output=True,
+        text=True,
+        cwd=REPO_ROOT,
+    )
+    if result.stdout:
+        print(result.stdout.rstrip())
+    if result.returncode != 0:
+        if result.stderr:
+            print(result.stderr.rstrip(), file=sys.stderr)
         return False
-    
     return True
 
-def generate_summary_report():
-    """Generate processing summary report"""
-    print("\n📊 Generating Summary Report")
-    print("-" * 50)
-    
-    try:
-        summary_path = Path("/home/ubuntu/pipeline_automation_app/app/public/outputs/processing_summary.json")
-        
-        if summary_path.exists():
-            with open(summary_path, 'r') as f:
-                summary = json.load(f)
-            
-            print(f"📁 Total Files Processed: {summary.get('total_files', 0)}")
-            print(f"✅ Successful: {summary.get('successful', 0)}")
-            print(f"❌ Failed: {summary.get('failed', 0)}")
-            
-            print("\n📂 Categories Found:")
-            for category, count in summary.get('categories_summary', {}).items():
-                print(f"  • {category}: {count} files")
-            
-            print(f"\n🔗 Cross-references Extracted: {len(summary.get('cross_references_global', []))}")
-            for ref in summary.get('cross_references_global', []):
-                print(f"  • {ref}")
-            
-            return True
-        else:
-            print("⚠️  Summary file not found")
-            return False
-            
-    except Exception as e:
-        print(f"❌ Error generating summary: {e}")
-        return False
 
-def main():
-    """Main processing pipeline"""
-    print("🎯 Pipeline Automation Hub - Document Processing Pipeline")
-    print("=" * 60)
-    
-    # Phase 1: PPT Processing
-    if not run_ppt_processing():
-        print("❌ Pipeline failed at PPT processing stage")
-        sys.exit(1)
-    
-    # Generate Summary
-    if not generate_summary_report():
-        print("⚠️  Warning: Could not generate summary report")
-    
-    print("\n🎉 Document Processing Pipeline Completed Successfully!")
-    print("=" * 60)
-    
-    # Show output locations
-    output_base = "/home/ubuntu/pipeline_automation_app/app/public/outputs"
-    print(f"📁 Digital Twins: {output_base}/digital_twins/")
-    print(f"📊 Metadata: {output_base}/metadata/")
-    print(f"🔗 Cross-references: {output_base}/cross_references/")
-    print(f"📋 Summary: {output_base}/processing_summary.json")
+def summarize(output_dir: Path) -> bool:
+    summary_path = output_dir / "processing_summary.json"
+    if not summary_path.exists():
+        print(f"Summary missing: {summary_path}", file=sys.stderr)
+        return False
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    print(
+        json.dumps(
+            {
+                "processing_scope": summary.get("processing_scope"),
+                "total_files": summary.get("total_files", 0),
+                "successful": summary.get("successful", 0),
+                "failed": summary.get("failed", 0),
+                "candidate_cross_references": len(summary.get("cross_references_global", [])),
+                "authority": "METADATA_ONLY_NOT_DOCUMENT_TRUTH",
+                "summary_path": str(summary_path.resolve()),
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return summary.get("failed", 0) == 0
+
+
+def main() -> int:
+    args = parse_args()
+    input_dir = Path(args.input_dir)
+    output_dir = Path(args.output_dir)
+    print("Pipeline Automation Hub - bounded legacy document metadata pipeline")
+    print(f"input={input_dir.resolve()}")
+    print(f"output={output_dir.resolve()}")
+    if not run_ppt_processing(input_dir, output_dir):
+        return 2
+    return 0 if summarize(output_dir) else 3
+
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
