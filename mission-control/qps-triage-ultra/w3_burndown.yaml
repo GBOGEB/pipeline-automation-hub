@@ -1,14 +1,19 @@
-schema: qps-triage-w3-burndown/v4
+schema: qps-triage-w3-burndown/v5
 slice_id: ULTRA_W3_INTEGRATION_EXPANSION
 entry_master_sha: 8d71e73bb59b5ebf36bd11dcb458b55ac365fd32
 denominator: 16
-strict_passed: 9
-strict_progress: 0.5625
+strict_passed: 11
+strict_progress: 0.6875
 dod: ACTIVE
 dov: WITHHELD
 analytics:
-  pca: DEFER_INSUFFICIENT_COMPARABLE_MEASURED_OBSERVATIONS
-  bt: DEFER_NO_EXPLICIT_PAIRWISE_OUTCOMES
+  pca: PASS_MEASURED_RUNTIME_FOOTPRINT_PCA
+  pca_scope: CI_RUNTIME_PROOF_FOOTPRINT_NOT_ENGINEERING_MATURITY
+  pca_rows: 3
+  pca_distinct_repos: 3
+  pca_pc1_explained_variance_ratio: 0.8583968205056489
+  pca_pc2_explained_variance_ratio: 0.14160317949435108
+  bt: DEFER_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES
 gates:
   W3-01: {state: PASS, target: W2_REPEATED_CONTROL_BASELINE, evidence: ULTRA_run_34617570505_master_8d71e73b}
   W3-02: {state: PASS, target: M02A_MATERIAL_SOURCE_LINEAGE_FROZEN, evidence: source_cea7bfb_materials_js_2fff568b_materials_json_65be104b}
@@ -22,18 +27,36 @@ gates:
   W3-10: {state: PENDING, target: M02B_SECOND_KERNEL_INDEPENDENT_CHALLENGE}
   W3-11: {state: PENDING, target: NON_ORIGIN_CONSUMER_RECEIPT}
   W3-12: {state: PENDING, target: M01_HEPAK_ADAPTER_EXTERNAL_CONSUMER_DOV2}
-  W3-13: {state: PENDING, target: THREE_COMPARABLE_MEASURED_FLEET_PULSES}
-  W3-14: {state: PENDING, target: MEASURED_PCA_PASS}
-  W3-15: {state: PENDING, target: OBSERVED_INTERVENTION_BT_PASS}
+  W3-13: {state: PASS, target: THREE_COMPARABLE_MEASURED_FLEET_PULSES, evidence: analytics_run_34685677445_rows_M02A_M02B_ULTRA_three_distinct_repos_MEASURED_API_OBSERVATION}
+  W3-14: {state: PASS, target: MEASURED_PCA_PASS, evidence: qps_w3_measured_analytics_receipt_v1_run_34685677445_PC1_0p8583968205_PC2_0p1416031795}
+  W3-15: {state: PENDING, target: OBSERVED_INTERVENTION_BT_PASS, evidence: historical_M02A_deploy_rex_available_but_current_frontier_pairwise_graph_not_yet_supplied}
   W3-16: {state: PARTIAL_RECON, target: M03_FOUR_FRONTIER_W0_RECON_WITH_COVERAGE_FLOOR, evidence: four_exact_heads_and_roles_frozen_content_census_pending}
 ranked_burndown:
   - {rank: 1, id: W3-BD03, gates: [W3-10, W3-11], target: MATH_BUNKER_BREADTH_AND_NON_ORIGIN_CONSUMPTION}
   - {rank: 2, id: W3-BD04, gates: [W3-12], target: M01_ENGINEERING_AUTHORITY_CLOSURE}
-  - {rank: 3, id: W3-BD05, gates: [W3-13, W3-14, W3-15], target: MEASURED_PCA_AND_OBSERVED_BT_CONTROL}
+  - {rank: 3, id: W3-BD05B, gates: [W3-15], target: CURRENT_FRONTIER_OBSERVED_BT_CONTROL}
   - {rank: 4, id: W3-BD06, gates: [W3-16], target: M03_COMPLETE_CONTENT_CENSUS_AND_DISPOSITIONS}
 completed_burndown:
   - {id: W3-BD01, gates: [W3-05], result: PASS, target: MATERIAL_ADAPTER_RECEIPT_AND_RANGE_GUARDS}
   - {id: W3-BD02, gates: [W3-06, W3-07, W3-08, W3-09], result: PASS_CONTROLLED, target: REAL_DETERMINISTIC_ENGINEERING_PAGES_PRODUCT}
+  - {id: W3-BD05A, gates: [W3-13, W3-14], result: PASS_MEASURED, target: THREE_REPO_TELEMETRY_PLUS_STANDARDIZED_PCA}
+measured_pca:
+  receipt: mission-control/qps-triage-ultra/w3_measured_analytics_receipt.json
+  ci_run: 34685677445
+  ci_head: d394f7604f26fbed6355c7bc377da4ac9e0598b2
+  artifact_id: 10295681186
+  artifact_digest: sha256:33ebfb7b58ece93c602ba7e1f4762a1595eb30e1783bbf050cdbf8c0d4693d5d
+  fields: [queue_delay_s, job_duration_s, executed_step_count, artifact_count, artifact_bytes]
+  standardization: sample_z_score
+  PC1:
+    explained_variance_ratio: 0.8583968205056489
+    dominant_positive_loadings: {artifact_count: 0.48227045169823557, artifact_bytes: 0.4821773686879956, job_duration_s: 0.47677101797334037, executed_step_count: 0.467077161257914}
+    interpretation: PRODUCT_PROOF_FOOTPRINT_COMPLEXITY
+  PC2:
+    explained_variance_ratio: 0.14160317949435108
+    dominant_loading: {queue_delay_s: 0.9328246300916585}
+    interpretation: RUNNER_QUEUE_FRICTION
+  statistical_boundary: n_equals_registry_minimum_3_rank_at_most_2_not_causal_not_engineering_maturity
 rex:
   - id: W3-REX-01
     issue: SEMANTICALLY_EQUAL_EVALUATOR_WAS_NOT_BYTE_IDENTICAL
