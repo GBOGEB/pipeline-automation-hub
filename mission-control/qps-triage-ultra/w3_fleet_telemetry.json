@@ -1,5 +1,5 @@
 {
-  "schema": "qps-w3-measured-fleet-telemetry/v1",
+  "schema": "qps-w3-measured-fleet-telemetry/v2",
   "evidence_class": "MEASURED_API_OBSERVATION",
   "purpose": "Comparable CI proof-pulse telemetry for W3-13 and measured runtime-footprint PCA for W3-14.",
   "authority_transfer": false,
@@ -51,7 +51,7 @@
     {
       "mission_id": "M02B",
       "repo": "GBOGEB/gg_MATH",
-      "role": "MATH_BUNKER_KERNEL_PROOF",
+      "role": "MATH_BUNKER_FIRST_KERNEL_PROOF",
       "run_id": 34617236017,
       "job_id": 103322083637,
       "source_sha": "43d23c38b268e8980f02ad58e74ad48704ab7304",
@@ -94,6 +94,55 @@
         "run": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/runs/34617570505",
         "jobs": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/runs/34617570505/jobs",
         "artifacts": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/runs/34617570505/artifacts"
+      }
+    },
+    {
+      "mission_id": "W3-10",
+      "repo": "GBOGEB/gg_MATH",
+      "role": "MATH_BUNKER_MONTE_CARLO_REFERENCE",
+      "run_id": 34685675385,
+      "job_id": 103532132997,
+      "source_sha": "d3799ae0ee4d9666d3ec985c7b7edde12cc98306",
+      "created_at": "2026-09-12T09:22:26Z",
+      "started_at": "2026-09-12T09:22:28Z",
+      "completed_at": "2026-09-12T09:22:33Z",
+      "queue_delay_s": 2,
+      "job_duration_s": 5,
+      "executed_step_count": 9,
+      "artifact_count": 1,
+      "artifact_bytes": 541,
+      "runner_assigned": 1,
+      "terminal_success": 1,
+      "failed_step_count": 0,
+      "evidence": {
+        "run": "https://api.github.com/repos/GBOGEB/gg_MATH/actions/runs/34685675385",
+        "jobs": "https://api.github.com/repos/GBOGEB/gg_MATH/actions/runs/34685675385/jobs",
+        "artifacts": "https://api.github.com/repos/GBOGEB/gg_MATH/actions/runs/34685675385/artifacts"
+      }
+    },
+    {
+      "mission_id": "W3-11",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "role": "NON_ORIGIN_MATH_CONSUMER",
+      "run_id": 34685792883,
+      "job_id": 103532440469,
+      "source_sha": "0fff3a6a3038918b7dd2e062f4972ee775774480",
+      "producer_sha": "d3799ae0ee4d9666d3ec985c7b7edde12cc98306",
+      "created_at": "2026-09-12T09:25:06Z",
+      "started_at": "2026-09-12T09:25:08Z",
+      "completed_at": "2026-09-12T09:25:19Z",
+      "queue_delay_s": 2,
+      "job_duration_s": 11,
+      "executed_step_count": 11,
+      "artifact_count": 1,
+      "artifact_bytes": 803,
+      "runner_assigned": 1,
+      "terminal_success": 1,
+      "failed_step_count": 0,
+      "evidence": {
+        "run": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/runs/34685792883",
+        "jobs": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/runs/34685792883/jobs",
+        "artifacts": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/runs/34685792883/artifacts"
       }
     }
   ]
