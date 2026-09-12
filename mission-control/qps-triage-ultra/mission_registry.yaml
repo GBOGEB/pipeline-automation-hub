@@ -1,9 +1,9 @@
-schema: qps-mission-registry/v7
-global_seq: 7
+schema: qps-mission-registry/v8
+global_seq: 8
 control_node:
   id: ULTRA
   repo: GBOGEB/pipeline-automation-hub
-  master_sha: bf66b6e6f72effb42c81a863194594f013c1f132
+  master_sha: ab2ba0cbab8da08fb7645aa79087947835cc8f95
   phase: W3_INTEGRATION_EXPANSION
   status: CONTROLLED_W2_ACTIVE_W3
   w2:
@@ -15,27 +15,39 @@ control_node:
     control_repeat_run_id: 34617570505
     gate: ULTRA-M02-FED-AND-001
   w3:
-    strict_passed: 11
+    strict_passed: 14
     denominator: 16
-    strict_progress: 0.6875
+    strict_progress: 0.875
     dov: WITHHELD
+    blockers:
+      - W3-12_MISSING_EXACT_LICENSED_HEPAK_NUMERIC_RECEIPT
+      - W3-15_EXACT_HEAD_BT_CANDIDATE_QUEUED_WITHOUT_RUNNER
     measured_analytics:
-      telemetry_rows: 3
-      distinct_repos: 3
-      distinct_missions: 3
-      ci_run_id: 34685677445
+      telemetry_minimum: PASS
+      current_wave_measured_pulses: 6
       pca: PASS_MEASURED_RUNTIME_FOOTPRINT_PCA
-      bt: WITHHELD_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES
-  next_target: M02B_SECOND_KERNEL_NON_ORIGIN_CONSUMER_THEN_CURRENT_FRONTIER_BT
+      pca_run_id: 34685677445
+      pca_scope: CI_RUNTIME_PROOF_FOOTPRINT_NOT_ENGINEERING_MATURITY
+      bt: PENDING_RUNNER
+      bt_candidate_pr: 31
+      bt_candidate_head_sha: feaab33e02cdafc026ce81c2dee701eead5510e3
+      bt_candidate_runs: [34686116162, 34686126465]
+  next_target: EXECUTE_W3_15_QUEUED_BT_THEN_CLOSE_EXTERNAL_W3_12_HEPAK_AUTHORITY_GATE
+
 active_missions:
   M01:
     repo: GBOGEB/CoolProp
     moniker: COOLPROP_DARKLAND
-    phase: CONTROL_GATE_TO_FEDERATION
-    current_master_sha: 7a4eb02b87f9000df797bb36bde122b48f24be8a
-    status: STAY
-    authority_hold: HEPAK_2K_CROSSCHECK_REQUIRED
-    next_target: HEPAK_CROSSCHECK_THEN_GOVERNED_ADAPTER_AND_EXTERNAL_CONSUMER
+    phase: W3_12_GOVERNED_AUTHORITY_HOLD
+    current_master_sha: 6fd6ee317ecf10218d4365af38e0ac0b7af7281c
+    status: HOLD_EXTERNAL_EVIDENCE
+    authority_gate_run_id: 34685855591
+    authority_gate_result: SUCCESS_HOLD_ENFORCED
+    authority_hold: MISSING_EXACT_LICENSED_HEPAK_NUMERIC_RECEIPT
+    next_target: INGEST_EXACT_LICENSED_HEPAK_2P0_TO_4P5K_NUMERIC_RECEIPT_THEN_GOVERNED_ADAPTER_AND_EXTERNAL_CONSUMER
+    authority_transfer: false
+    engineering_acceptance: false
+
   M02A:
     repo: GBOGEB/Q_engineering_tools
     moniker: ENGINEERING_OUTPOST
@@ -69,37 +81,69 @@ active_missions:
       repeated_exact_product: PASS
       authority_transfer: false
       engineering_acceptance: false
-    next_target: CONTROL_WATCH_AND_EXTERNAL_CONSUMPTION_ONLY
+    next_target: CONTROL_WATCH_ONLY
+
   M02B:
     repo: GBOGEB/gg_MATH
     moniker: MATH_BUNKER
-    phase: W3_SECOND_KERNEL_AND_CONSUMER
-    parent_pr: 1
-    parent_merge_sha: 543567ebc778d590a1ee396c21fb8a6a64dc2980
-    repair_pr: 2
-    repair_proof_head_sha: 43d23c38b268e8980f02ad58e74ad48704ab7304
-    repair_proof_run_id: 34617236017
-    repair_merge_sha: bbbfc61b293c31d4d9d98adbeacba0845f7daa6d
-    status: STAY
+    phase: W3_SECOND_KERNEL_AND_NON_ORIGIN_CONSUMPTION_CONTROL
+    current_main_sha: d3799ae0ee4d9666d3ec985c7b7edde12cc98306
+    status: CONTROLLED_BREADTH_PRODUCER
+    first_kernel:
+      repair_merge_sha: bbbfc61b293c31d4d9d98adbeacba0845f7daa6d
+      repair_proof_run_id: 34617236017
+    second_kernel:
+      type: MONTE_CARLO_MEAN_ESTIMATOR
+      merged_sha: d3799ae0ee4d9666d3ec985c7b7edde12cc98306
+      control_run_id: 34685675385
+      job_id: 103532132997
+      artifact_id: 10295666486
+      outcome: SUCCESS
+      independent_reference_challenge: PASS
+    non_origin_consumer:
+      repo: GBOGEB/pipeline-automation-hub
+      consumer_sha: 0fff3a6a3038918b7dd2e062f4972ee775774480
+      producer_sha: d3799ae0ee4d9666d3ec985c7b7edde12cc98306
+      control_run_id: 34685792883
+      job_id: 103532440469
+      artifact_id: 10296110923
+      outcome: SUCCESS
+      authority_transfer: false
     rex:
-      failed_run_id: 34616625888
-      first_red: TEST_IMPORT_ROOT_MISSING
-      failure_receipt_preserved: true
-    next_target: SECOND_INDEPENDENT_KERNEL_THEN_NON_ORIGIN_CONSUMER
+      first_kernel_failed_run_id: 34616625888
+      first_kernel_first_red: TEST_IMPORT_ROOT_MISSING
+      w3_10_first_red_run_id: 34685627860
+      w3_10_first_red: ZERO_WIDTH_TRIANGULAR_BOUNDARY_REJECTED
+      w3_11_first_red_run_id: 34685697076
+      w3_11_first_red: MAGIC_ABSOLUTE_MONTE_CARLO_TOLERANCE
+    next_target: CONTROL_WATCH_AND_FEED_OBSERVED_BT
+
 expansion:
   M03:
     frontier_count: 4
-    state: W0_RECON_RELEASED_PARTIAL
+    state: W0_RECON_PASS_CONTROLLED
+    merged_home_sha: 8586e2dea77a96cbed1edc7c8d28b01376b53e8c
+    control_run_id: 34685848485
+    control_job_id: 103532586180
     constraint: COVERAGE_FLOOR_AND_NO_AUTHORITY_TRANSFER
-    launch_condition: W2_CONTROL_REPEAT_PASS
-    next_target: COMPLETE_CONTENT_CENSUS_AND_DISPOSITION_CANDIDATE_PER_FRONTIER
-  M04: {frontier_count: 8, state: OUTLINED_NOT_RELEASED}
-  CLOUD16: {frontier_count: 16, state: CANDIDATE_CLOUD_NOT_RELEASED}
+    dispositions:
+      MCP_BRIDGEHEAD: {sha: ec9df7a1900e5075d6667d5874200bb19f00de6b, files: 471, disposition: ADAPT}
+      SCIENTIFIC_SKILL_INCUBATOR: {sha: cbcae7bbf776cd41aeaa59ea06b8f0e6eacfb16f, files: 1333, disposition: EXTRACT}
+      OBSERVER_TWIN: {sha: 436836d6466218ba6e4de1505a379f8f353b2c65, files: 54, disposition: REFERENCE}
+      EXPERIMENT_RANGE: {sha: b1526e6c0e1359f9082afdf678ed0a9efe787771, files: 1, disposition: PARK}
+    next_target: KEEP_M04_AND_CLOUD16_HELD_UNTIL_W3_DOV
+  M04: {frontier_count: 8, state: HELD}
+  CLOUD16: {frontier_count: 16, state: HELD}
+
 analytics:
-  pca: PASS_MEASURED_RUNTIME_FOOTPRINT_PCA
-  pca_scope: CI_RUNTIME_PROOF_FOOTPRINT_NOT_ENGINEERING_MATURITY
-  pca_evidence:
-    input: mission-control/qps-triage-ultra/w3_fleet_telemetry.json
+  measured_pulse_ledger:
+    path: mission-control/qps-triage-ultra/analytics/W3_13_MEASURED_PULSES.json
+    pulse_count: 6
+    evidence_class: MEASURED
+    sequences: [W3_10_RED_REPAIR_CONTROL, W3_11_RED_REPAIR_CONTROL]
+  pca:
+    status: PASS_MEASURED_RUNTIME_FOOTPRINT_PCA
+    scope: CI_RUNTIME_PROOF_FOOTPRINT_NOT_ENGINEERING_MATURITY
     receipt: mission-control/qps-triage-ultra/w3_measured_analytics_receipt.json
     run_id: 34685677445
     artifact_id: 10295681186
@@ -107,5 +151,10 @@ analytics:
     PC2_explained_variance_ratio: 0.14160317949435108
     PC1_pressure: PRODUCT_PROOF_FOOTPRINT_COMPLEXITY
     PC2_pressure: RUNNER_QUEUE_FRICTION
-  bt: DEFER_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES
-  bt_unlock: EXPLICIT_REAL_CURRENT_FRONTIER_INTERVENTION_WIN_LOSS_OBSERVATIONS
+  bt:
+    status: PENDING_RUNNER
+    candidate_pr: 31
+    candidate_head_sha: feaab33e02cdafc026ce81c2dee701eead5510e3
+    candidate_runs: [34686116162, 34686126465]
+    model_boundary: INTERVENTION_TYPES_VS_UNREPAIRED_BASELINE_NOT_CROSS_WORKSTREAM_WINNER
+    pass_condition: MEASURED_FAIL_TO_SUCCESS_TO_CONTROL_PAIRS_CONNECTED_AND_EXACT_HEAD_CI_SUCCESS
