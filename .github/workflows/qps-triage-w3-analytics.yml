@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - mission/qps-triage-ultra-w3-measured-analytics
+      - mission/qps-triage-ultra-w3-observed-bt-control
     paths:
       - mission-control/qps-triage-ultra/w3_fleet_telemetry.json
       - mission-control/qps-triage-ultra/w3_analytics.py
@@ -30,11 +31,11 @@ jobs:
       - name: Checkout exact source head
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Assert exact source head
         shell: bash
-        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
 
       - name: Execute measured fleet analytics
         run: |
@@ -72,7 +73,7 @@ jobs:
             --input mission-control/qps-triage-ultra/w3_bt_observations.json \
             --out w3_observed_bt_receipt.json
 
-      - name: Enforce historical REX is usable but cannot close W3-15
+      - name: Enforce W3-15 observed current-wave intervention BT
         shell: bash
         run: |
           python - <<'PY'
@@ -80,13 +81,16 @@ jobs:
           r=json.load(open('w3_observed_bt_receipt.json', encoding='utf-8'))
           assert r['historical_control_rex']['result']['status']=='PASS_OBSERVED_BT', r
           assert r['historical_control_rex']['eligible_for_w3_15'] is False, r
-          assert r['w3_15']=='WITHHELD_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES', r
+          assert r['current_frontier']['pair_count'] >= 2, r
+          assert not r['current_frontier']['pair_validation_failures'], r
+          assert r['current_frontier']['result']['status']=='PASS_OBSERVED_BT', r
+          assert r['w3_15']=='PASS_OBSERVED_INTERVENTION_BT', r
           PY
 
       - name: Upload measured analytics and BT receipts
         uses: actions/upload-artifact@v4
         with:
-          name: qps-w3-measured-analytics-${{ github.sha }}
+          name: qps-w3-measured-analytics-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             w3_measured_analytics_receipt.json
             w3_observed_bt_receipt.json
