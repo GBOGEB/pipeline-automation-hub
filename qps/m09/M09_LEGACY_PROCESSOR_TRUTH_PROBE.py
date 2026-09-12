@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-"""Truth probe for the legacy Pipeline Automation Hub PPT processor.
+"""Regression probe for the bounded M09 legacy PPTX metadata processor.
 
-This does not modify the legacy processor. It measures what the current code
-actually does so QPS can distinguish reusable metadata/orchestration patterns
-from claims of PPTX content extraction.
+The original truth probe proved that invalid bytes with a .pptx suffix were
+accepted and that filename heuristics were presented too strongly. This repair
+probe preserves that historical finding while asserting the improved boundary:
+invalid packages are rejected, minimally valid OpenXML packages are accepted,
+and output remains explicitly metadata-only rather than document truth.
 """
 from __future__ import annotations
 
 import importlib.util
 import json
 import tempfile
+import zipfile
 from pathlib import Path
 
 
@@ -26,48 +29,78 @@ def load_processor_module():
     return module
 
 
+def write_minimal_pptx(path: Path) -> None:
+    with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr(
+            "[Content_Types].xml",
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+            '<Default Extension="xml" ContentType="application/xml"/>'
+            '</Types>',
+        )
+        archive.writestr(
+            "ppt/presentation.xml",
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<p:presentation xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"/>',
+        )
+
+
 def run_probe() -> dict[str, object]:
     module = load_processor_module()
-    with tempfile.TemporaryDirectory(prefix="qps-m09-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="qps-m09-repair-") as tmp:
         root = Path(tmp)
         input_dir = root / "input"
         output_dir = root / "output"
         input_dir.mkdir()
-
-        # Deliberately not a valid PPTX/ZIP package. A real PPT content parser
-        # should reject this as content input; the current legacy implementation
-        # only hashes and classifies the filename.
-        fake = input_dir / "QPLANT_Status.pptx"
-        fake.write_bytes(b"THIS IS NOT A PPTX FILE\n")
-
         processor = module.PPTProcessor(str(input_dir), str(output_dir))
-        result = processor.process_file(fake.name)
 
-        metadata_path = output_dir / "metadata" / "QPLANT_Status_metadata.json"
-        refs_path = output_dir / "cross_references" / "QPLANT_Status_cross_refs.json"
-        twin_path = output_dir / "digital_twins" / "QPLANT_Status.md"
+        invalid = input_dir / "QPLANT_Status.pptx"
+        invalid.write_bytes(b"THIS IS NOT A PPTX FILE\n")
+        invalid_rejected = False
+        invalid_error = None
+        try:
+            processor.process_file(invalid.name)
+        except Exception as exc:
+            invalid_rejected = True
+            invalid_error = str(exc)
+
+        valid = input_dir / "QPLANT_Status_Valid.pptx"
+        write_minimal_pptx(valid)
+        result = processor.process_file(valid.name)
+
+        metadata_path = output_dir / "metadata" / "QPLANT_Status_Valid_metadata.json"
+        refs_path = output_dir / "cross_references" / "QPLANT_Status_Valid_cross_refs.json"
+        twin_path = output_dir / "digital_twins" / "QPLANT_Status_Valid.md"
         metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
         refs = json.loads(refs_path.read_text(encoding="utf-8"))
         twin = twin_path.read_text(encoding="utf-8")
+        source_text = PROCESSOR_PATH.read_text(encoding="utf-8")
 
         findings = {
-            "invalid_pptx_accepted_as_completed": result["processing_status"] == "COMPLETED",
-            "digital_twin_claimed_for_invalid_pptx": result["digital_twin_generated"] is True,
-            "filename_drives_category": metadata.get("category") == "PROJECT_STATUS",
-            "filename_drives_qplant_reference": any(r.get("reference") == "SCK CEN/0789" for r in refs),
-            "twin_contains_placeholder_content_analysis": "Detection pending" in twin and "Scanning scheduled" in twin,
-            "legacy_main_hardcodes_home_ubuntu": "/home/ubuntu/pipeline_automation_app" in PROCESSOR_PATH.read_text(encoding="utf-8"),
+            "invalid_pptx_rejected_fail_closed": invalid_rejected,
+            "valid_openxml_package_accepted": result["processing_status"] == "METADATA_ONLY_COMPLETED",
+            "valid_package_marked_content_not_parsed": result["content_parsed"] is False and metadata.get("content_parsed") is False,
+            "filename_reference_is_unverified_candidate": any(
+                r.get("reference") == "SCK CEN/0789"
+                and r.get("type") == "heuristic_candidate"
+                and r.get("authority") == "UNVERIFIED_CANDIDATE"
+                for r in refs
+            ),
+            "twin_declares_metadata_only_boundary": "METADATA_ONLY_NOT_DOCUMENT_TRUTH" in twin and "NOT PARSED" in twin,
+            "legacy_home_ubuntu_path_removed": "/home/ubuntu/pipeline_automation_app" not in source_text,
+            "pptx_package_validation_recorded": metadata.get("pptx_package_validated") is True,
         }
-        assert all(findings.values()), findings
+        assert all(findings.values()), {"findings": findings, "invalid_error": invalid_error}
 
         return {
-            "schema": "qps.m09.legacy_processor_truth_probe.v1",
-            "status": "PASS_PROBE_CONFIRMS_METADATA_HEURISTIC_ONLY_BOUNDARY",
+            "schema": "qps.m09.legacy_processor_repair_probe.v2",
+            "status": "PASS_FAIL_CLOSED_METADATA_ONLY_REPAIR",
             "processor": str(PROCESSOR_PATH.relative_to(REPO_ROOT)),
-            "synthetic_fixture": "invalid_non_zip_bytes_with_pptx_extension",
+            "historical_first_red": "INVALID_NON_ZIP_PPTX_WAS_ACCEPTED_AND_FILENAME_HEURISTICS_OVERCLAIMED",
+            "invalid_fixture_error": invalid_error,
             "findings": findings,
-            "classification": "LEGACY_FILENAME_METADATA_AND_TEMPLATE_TWIN_GENERATOR",
-            "not_proven": [
+            "classification": "BOUNDED_PPTX_PACKAGE_METADATA_AND_TEMPLATE_TWIN_GENERATOR",
+            "still_not_proven": [
                 "PPTX_slide_content_parsing",
                 "content_derived_cross_reference_extraction",
                 "visual_artifact_detection",
@@ -75,6 +108,7 @@ def run_probe() -> dict[str, object]:
                 "Markdown_engine_content_fidelity",
             ],
             "reusable_candidates": [
+                "fail_closed_package_intake",
                 "file_hashing",
                 "output_directory_partitioning",
                 "manifest_metadata_shape",

@@ -1,331 +1,308 @@
-
 #!/usr/bin/env python3
-"""
-PowerPoint Processing Engine for Pipeline Automation Hub
-Extracts metadata, content, and generates Markdown digital twins
+"""Legacy PowerPoint metadata/twin generator for Pipeline Automation Hub.
+
+QPS M09 boundary:
+- validates that input is at least a PPTX/ZIP package before reporting success;
+- hashes files and derives *heuristic* metadata/cross-reference candidates from filenames;
+- emits a Markdown metadata twin;
+- does NOT parse slide text, tables, images, diagrams, or document semantics.
+
+Use a real PPTX content parser/OCR/rendering pipeline for content-derived evidence.
 """
 
-import os
-import json
-import re
-from datetime import datetime
-from pathlib import Path
+from __future__ import annotations
+
+import argparse
 import hashlib
-from typing import Dict, List, Any, Optional
+import json
+import os
+import re
+import zipfile
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Dict, List
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_INPUT_DIR = REPO_ROOT / "app" / "public" / "master_input"
+DEFAULT_OUTPUT_DIR = REPO_ROOT / "app" / "public" / "outputs"
+
+
+def _timestamp_now() -> str:
+    """Return a reproducible UTC timestamp when SOURCE_DATE_EPOCH is provided."""
+    source_date_epoch = os.environ.get("SOURCE_DATE_EPOCH")
+    if source_date_epoch:
+        try:
+            return datetime.fromtimestamp(int(source_date_epoch), tz=timezone.utc).isoformat()
+        except ValueError as exc:
+            raise ValueError("SOURCE_DATE_EPOCH must be an integer Unix timestamp") from exc
+    return datetime.now(timezone.utc).isoformat()
+
 
 class PPTProcessor:
+    """Filename-metadata/hash/template-twin generator with fail-closed PPTX intake."""
+
     def __init__(self, input_dir: str, output_dir: str):
         self.input_dir = Path(input_dir)
         self.output_dir = Path(output_dir)
         self.metadata_dir = self.output_dir / "metadata"
         self.twins_dir = self.output_dir / "digital_twins"
         self.cross_refs_dir = self.output_dir / "cross_references"
-        
-        # Create output directories
+
         for dir_path in [self.metadata_dir, self.twins_dir, self.cross_refs_dir]:
             dir_path.mkdir(parents=True, exist_ok=True)
-    
-    def extract_filename_metadata(self, filename: str) -> Dict[str, Any]:
-        """Extract metadata from filename patterns"""
-        metadata = {
+
+    def validate_pptx_package(self, filepath: Path) -> None:
+        """Reject renamed/non-PPTX bytes before any COMPLETED result is emitted."""
+        if filepath.suffix.lower() != ".pptx":
+            raise ValueError(f"not a .pptx file: {filepath.name}")
+        if not filepath.is_file():
+            raise FileNotFoundError(filepath)
+        if not zipfile.is_zipfile(filepath):
+            raise ValueError(f"invalid PPTX package (not ZIP/OpenXML): {filepath.name}")
+        with zipfile.ZipFile(filepath) as archive:
+            names = set(archive.namelist())
+        required = {"[Content_Types].xml", "ppt/presentation.xml"}
+        missing = sorted(required - names)
+        if missing:
+            raise ValueError(f"invalid PPTX package; missing required OpenXML members: {missing}")
+
+    def extract_filename_metadata(self, filename: str, processing_timestamp: str | None = None) -> Dict[str, Any]:
+        """Derive non-authoritative metadata from filename patterns only."""
+        metadata: Dict[str, Any] = {
             "original_filename": filename,
-            "normalized_name": re.sub(r'[^a-zA-Z0-9._-]', '_', filename),
+            "normalized_name": re.sub(r"[^a-zA-Z0-9._-]", "_", filename),
             "file_type": "PPTX",
-            "processing_timestamp": datetime.now().isoformat(),
-            "file_hash": None
+            "processing_timestamp": processing_timestamp or _timestamp_now(),
+            "file_hash": None,
+            "processing_scope": "FILENAME_METADATA_HASH_AND_TEMPLATE_TWIN",
+            "content_parsed": False,
+            "cross_reference_basis": "FILENAME_HEURISTIC_ONLY",
+            "authority": "METADATA_ONLY_NOT_DOCUMENT_TRUTH",
         }
-        
-        # Categorize based on filename patterns
+
         filename_lower = filename.lower()
-        
-        if any(term in filename_lower for term in ['architecture', 'minerva']):
-            metadata.update({
-                "category": "SYSTEM_ARCHITECTURE",
-                "priority": "HIGH",
-                "sub_category": "CORE_SYSTEMS"
-            })
-        elif any(term in filename_lower for term in ['values', 'commitments']):
-            metadata.update({
-                "category": "VALUES_POLICY", 
-                "priority": "HIGH",
-                "sub_category": "GOVERNANCE"
-            })
-        elif any(term in filename_lower for term in ['status', 'granting', 'phase']):
-            metadata.update({
-                "category": "PROJECT_STATUS",
-                "priority": "MEDIUM", 
-                "sub_category": "PROGRESS_TRACKING"
-            })
-        elif any(term in filename_lower for term in ['naming', 'conventions']):
-            metadata.update({
-                "category": "STANDARDS",
-                "priority": "HIGH",
-                "sub_category": "DOCUMENTATION"
-            })
-        elif any(term in filename_lower for term in ['ped', 'compliance']):
-            metadata.update({
-                "category": "COMPLIANCE",
-                "priority": "CRITICAL",
-                "sub_category": "REGULATORY"
-            })
-        elif any(term in filename_lower for term in ['buildings', 'qplant']):
-            metadata.update({
-                "category": "INFRASTRUCTURE",
-                "priority": "MEDIUM",
-                "sub_category": "FACILITIES"
-            })
-        elif any(term in filename_lower for term in ['recovery', 'pressure', 'he']):
-            metadata.update({
-                "category": "SYSTEMS",
-                "priority": "HIGH",
-                "sub_category": "OPERATIONS"
-            })
+        if any(term in filename_lower for term in ["architecture", "minerva"]):
+            metadata.update(category="SYSTEM_ARCHITECTURE", priority="HIGH", sub_category="CORE_SYSTEMS")
+        elif any(term in filename_lower for term in ["values", "commitments"]):
+            metadata.update(category="VALUES_POLICY", priority="HIGH", sub_category="GOVERNANCE")
+        elif any(term in filename_lower for term in ["status", "granting", "phase"]):
+            metadata.update(category="PROJECT_STATUS", priority="MEDIUM", sub_category="PROGRESS_TRACKING")
+        elif any(term in filename_lower for term in ["naming", "conventions"]):
+            metadata.update(category="STANDARDS", priority="HIGH", sub_category="DOCUMENTATION")
+        elif any(term in filename_lower for term in ["ped", "compliance"]):
+            metadata.update(category="COMPLIANCE", priority="CRITICAL", sub_category="REGULATORY")
+        elif any(term in filename_lower for term in ["buildings", "qplant"]):
+            metadata.update(category="INFRASTRUCTURE", priority="MEDIUM", sub_category="FACILITIES")
+        elif any(term in filename_lower for term in ["recovery", "pressure", "he"]):
+            metadata.update(category="SYSTEMS", priority="HIGH", sub_category="OPERATIONS")
         else:
-            metadata.update({
-                "category": "GENERAL",
-                "priority": "MEDIUM",
-                "sub_category": "MISC"
-            })
-        
+            metadata.update(category="GENERAL", priority="MEDIUM", sub_category="MISC")
         return metadata
-    
+
     def extract_cross_references(self, filename: str) -> List[Dict[str, str]]:
-        """Extract SCK CEN references and other cross-references"""
-        cross_refs = []
-        
-        # Simulate SCK CEN reference extraction (in real implementation, would parse file content)
-        sck_patterns = [
-            "SCK CEN/0245", "SCK CEN/0156", "SCK CEN/0789", "SCK CEN/0334",
-            "SCK CEN/0567", "SCK CEN/0892", "SCK CEN/0445", "SCK CEN/0623"
-        ]
-        
-        # Assign references based on filename
+        """Return filename-derived *candidate* references; no file-content parsing occurs."""
+        cross_refs: List[Dict[str, str]] = []
         filename_lower = filename.lower()
-        if 'minerva' in filename_lower or 'architecture' in filename_lower:
-            cross_refs.append({"reference": "SCK CEN/0245", "context": "MINERVA Architecture", "type": "primary"})
-        if 'values' in filename_lower or 'commitments' in filename_lower:
-            cross_refs.append({"reference": "SCK CEN/0156", "context": "Values & Commitments", "type": "primary"})
-        if 'qplant' in filename_lower or 'status' in filename_lower:
-            cross_refs.append({"reference": "SCK CEN/0789", "context": "QPLANT Status", "type": "primary"})
-        if 'naming' in filename_lower or 'conventions' in filename_lower:
-            cross_refs.append({"reference": "SCK CEN/0334", "context": "Naming Conventions", "type": "primary"})
-        if 'ped' in filename_lower or 'compliance' in filename_lower:
-            cross_refs.append({"reference": "SCK CEN/0567", "context": "PED Compliance", "type": "primary"})
-        
+
+        def candidate(reference: str, context: str) -> Dict[str, str]:
+            return {
+                "reference": reference,
+                "context": context,
+                "type": "heuristic_candidate",
+                "evidence_basis": "filename_only",
+                "authority": "UNVERIFIED_CANDIDATE",
+            }
+
+        if "minerva" in filename_lower or "architecture" in filename_lower:
+            cross_refs.append(candidate("SCK CEN/0245", "MINERVA Architecture"))
+        if "values" in filename_lower or "commitments" in filename_lower:
+            cross_refs.append(candidate("SCK CEN/0156", "Values & Commitments"))
+        if "qplant" in filename_lower or "status" in filename_lower:
+            cross_refs.append(candidate("SCK CEN/0789", "QPLANT Status"))
+        if "naming" in filename_lower or "conventions" in filename_lower:
+            cross_refs.append(candidate("SCK CEN/0334", "Naming Conventions"))
+        if "ped" in filename_lower or "compliance" in filename_lower:
+            cross_refs.append(candidate("SCK CEN/0567", "PED Compliance"))
         return cross_refs
-    
+
     def generate_file_hash(self, filepath: Path) -> str:
-        """Generate SHA256 hash of file"""
-        if not filepath.exists():
-            return ""
-        
         hash_sha256 = hashlib.sha256()
-        with open(filepath, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):
+        with filepath.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(4096), b""):
                 hash_sha256.update(chunk)
         return hash_sha256.hexdigest()
-    
+
     def create_digital_twin(self, filename: str, metadata: Dict[str, Any], cross_refs: List[Dict[str, str]]) -> str:
-        """Generate Markdown digital twin"""
-        md_filename = metadata["normalized_name"].replace('.pptx', '.md')
-        
-        # Create comprehensive Markdown content
-        markdown_content = f"""# {filename.replace('.pptx', '')}
+        """Generate an explicitly metadata-only Markdown twin."""
+        timestamp = metadata["processing_timestamp"]
+        return f"""# {filename.replace('.pptx', '')}
+
+> **Legacy M09 boundary:** this file is a metadata/template twin only. The legacy processor has not parsed slide text, tables, images, diagrams, or document semantics.
 
 ## Document Metadata
 - **Original Filename**: {filename}
-- **Category**: {metadata.get('category', 'UNKNOWN')}
-- **Priority**: {metadata.get('priority', 'MEDIUM')}
-- **Sub-category**: {metadata.get('sub_category', 'GENERAL')}
+- **Category**: {metadata.get('category', 'UNKNOWN')} *(filename heuristic)*
+- **Priority**: {metadata.get('priority', 'MEDIUM')} *(filename heuristic)*
+- **Sub-category**: {metadata.get('sub_category', 'GENERAL')} *(filename heuristic)*
 - **File Type**: {metadata.get('file_type', 'PPTX')}
-- **Processing Date**: {metadata.get('processing_timestamp', 'N/A')}
+- **Processing Date**: {timestamp}
 - **File Hash**: {metadata.get('file_hash', 'N/A')}
+- **Content Parsed**: false
+- **Authority**: METADATA_ONLY_NOT_DOCUMENT_TRUTH
 
-## Cross-References
+## Candidate Cross-References
 {self._format_cross_references(cross_refs)}
 
 ## Content Analysis
-### Estimated Content Structure
-- **Slides**: {metadata.get('estimated_slides', 'TBD')}
-- **Visual Content**: {metadata.get('has_visuals', 'Detection pending')}
-- **Tables**: {metadata.get('has_tables', 'Detection pending')}
-- **Code Snippets**: {metadata.get('has_code', 'Detection pending')}
+- Slide text/content: **NOT PARSED by this legacy processor**
+- Tables: **NOT PARSED**
+- Images/diagrams: **NOT PARSED**
+- Visual artifacts: **NOT PARSED**
+- PDF conversion: **NOT EXECUTED by this processor**
 
-### Visual Artifacts
-{self._format_visual_artifacts(metadata)}
-
-### Processing Status
-- **Status**: {metadata.get('processing_status', 'QUEUED')}
-- **Engines**: PPT Engine → PDF Engine → Markdown Engine
-- **Task Agents**: PPT_Parser_Agent, Metadata_Extraction_Agent, Visual_Artifact_Agent
+## Processing Status
+- **Status**: METADATA_ONLY_COMPLETED
+- **Executed capability**: PPTX package validation → SHA256 → filename metadata → filename heuristic references → Markdown template twin
 
 ## KEB Frontend Integration
 ```json
 {{
   "keb_id": "{metadata.get('normalized_name', filename)}",
   "digital_twin": true,
-  "recursive_build": true,
-  "master_input_mirror": true,
-  "visual_cues": "enabled",
-  "purposeful_dissemination": true
+  "content_parsed": false,
+  "cross_reference_basis": "filename_heuristic_only",
+  "authority": "metadata_only_not_document_truth"
 }}
 ```
 
 ## Change Log
-- **Created**: {datetime.now().isoformat()}
-- **Last Modified**: {datetime.now().isoformat()}
-- **Version**: 1.0.0
-- **Generator**: PPT_Processor_v1.0
+- **Created**: {timestamp}
+- **Last Modified**: {timestamp}
+- **Version**: 1.1.0-m09
+- **Generator**: PPT_Processor_legacy_metadata_guard
 
 ---
-*Digital Twin generated by Pipeline Automation Hub Document Processing Engine*
+*Metadata-only twin generated by Pipeline Automation Hub legacy processor.*
 """
-        
-        return markdown_content
-    
+
     def _format_cross_references(self, cross_refs: List[Dict[str, str]]) -> str:
-        """Format cross-references for Markdown"""
         if not cross_refs:
-            return "- No cross-references detected"
-        
-        formatted = []
-        for ref in cross_refs:
-            formatted.append(f"- **{ref['reference']}**: {ref['context']} ({ref['type']})")
-        
-        return "\n".join(formatted)
-    
-    def _format_visual_artifacts(self, metadata: Dict[str, Any]) -> str:
-        """Format visual artifacts information"""
-        return """- **Architecture Diagrams**: Detection in progress
-- **Process Flow Charts**: Scanning scheduled  
-- **Technical Tables**: Extraction queued
-- **Code Snippets**: Analysis pending
-- **Screenshots/Images**: Processing pipeline active"""
-    
+            return "- No filename-derived candidate references"
+        return "\n".join(
+            f"- **{ref['reference']}**: {ref['context']} — {ref['type']}, {ref['evidence_basis']}, {ref['authority']}"
+            for ref in cross_refs
+        )
+
     def process_file(self, filename: str) -> Dict[str, Any]:
-        """Process a single PowerPoint file"""
         filepath = self.input_dir / filename
-        
-        # Extract metadata
-        metadata = self.extract_filename_metadata(filename)
-        
-        # Add file hash
-        if filepath.exists():
-            metadata["file_hash"] = self.generate_file_hash(filepath)
-            metadata["file_size"] = filepath.stat().st_size
-        
-        # Extract cross-references
+        self.validate_pptx_package(filepath)
+
+        timestamp = _timestamp_now()
+        metadata = self.extract_filename_metadata(filename, timestamp)
+        metadata["file_hash"] = self.generate_file_hash(filepath)
+        metadata["file_size"] = filepath.stat().st_size
+        metadata["pptx_package_validated"] = True
+
         cross_refs = self.extract_cross_references(filename)
-        
-        # Generate digital twin
         twin_content = self.create_digital_twin(filename, metadata, cross_refs)
-        
-        # Save outputs
+
         self._save_metadata(filename, metadata)
         self._save_cross_references(filename, cross_refs)
         self._save_digital_twin(filename, twin_content, metadata)
-        
+
         return {
             "filename": filename,
             "metadata": metadata,
             "cross_references": cross_refs,
             "digital_twin_generated": True,
-            "processing_status": "COMPLETED"
+            "content_parsed": False,
+            "processing_status": "METADATA_ONLY_COMPLETED",
         }
-    
-    def _save_metadata(self, filename: str, metadata: Dict[str, Any]):
-        """Save metadata as JSON"""
-        json_filename = filename.replace('.pptx', '_metadata.json')
-        output_path = self.metadata_dir / json_filename
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(metadata, f, indent=2, ensure_ascii=False)
-    
-    def _save_cross_references(self, filename: str, cross_refs: List[Dict[str, str]]):
-        """Save cross-references as JSON"""
-        json_filename = filename.replace('.pptx', '_cross_refs.json')
-        output_path = self.cross_refs_dir / json_filename
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(cross_refs, f, indent=2, ensure_ascii=False)
-    
-    def _save_digital_twin(self, filename: str, content: str, metadata: Dict[str, Any]):
-        """Save digital twin as Markdown"""
-        md_filename = metadata["normalized_name"].replace('.pptx', '.md')
-        output_path = self.twins_dir / md_filename
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(content)
-    
+
+    def _save_metadata(self, filename: str, metadata: Dict[str, Any]) -> None:
+        output_path = self.metadata_dir / filename.replace(".pptx", "_metadata.json")
+        output_path.write_text(json.dumps(metadata, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    def _save_cross_references(self, filename: str, cross_refs: List[Dict[str, str]]) -> None:
+        output_path = self.cross_refs_dir / filename.replace(".pptx", "_cross_refs.json")
+        output_path.write_text(json.dumps(cross_refs, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    def _save_digital_twin(self, filename: str, content: str, metadata: Dict[str, Any]) -> None:
+        md_filename = metadata["normalized_name"].replace(".pptx", ".md")
+        (self.twins_dir / md_filename).write_text(content, encoding="utf-8")
+
     def process_all_files(self) -> Dict[str, Any]:
-        """Process all PowerPoint files in input directory"""
-        results = {
-            "processing_started": datetime.now().isoformat(),
+        started = _timestamp_now()
+        results: Dict[str, Any] = {
+            "processing_started": started,
+            "processing_scope": "LEGACY_METADATA_ONLY",
             "files_processed": [],
             "total_files": 0,
             "successful": 0,
             "failed": 0,
             "cross_references_global": [],
-            "categories_summary": {}
+            "categories_summary": {},
         }
-        
-        # Find all PPTX files
+
         pptx_files = list(self.input_dir.glob("*.pptx"))
         results["total_files"] = len(pptx_files)
-        
-        categories = {}
-        global_refs = set()
-        
+        categories: Dict[str, int] = {}
+        global_refs: set[str] = set()
+
         for filepath in pptx_files:
             try:
                 result = self.process_file(filepath.name)
                 results["files_processed"].append(result)
                 results["successful"] += 1
-                
-                # Collect category statistics
                 category = result["metadata"].get("category", "UNKNOWN")
                 categories[category] = categories.get(category, 0) + 1
-                
-                # Collect global cross-references
                 for ref in result["cross_references"]:
                     global_refs.add(ref["reference"])
-                
-            except Exception as e:
+            except Exception as exc:
                 results["failed"] += 1
-                results["files_processed"].append({
-                    "filename": filepath.name,
-                    "error": str(e),
-                    "processing_status": "FAILED"
-                })
-        
+                results["files_processed"].append(
+                    {"filename": filepath.name, "error": str(exc), "processing_status": "REJECTED_OR_FAILED"}
+                )
+
         results["categories_summary"] = categories
-        results["cross_references_global"] = sorted(list(global_refs))
-        results["processing_completed"] = datetime.now().isoformat()
-        
-        # Save processing summary
-        summary_path = self.output_dir / "processing_summary.json"
-        with open(summary_path, 'w', encoding='utf-8') as f:
-            json.dump(results, f, indent=2, ensure_ascii=False)
-        
+        results["cross_references_global"] = sorted(global_refs)
+        results["processing_completed"] = _timestamp_now()
+        (self.output_dir / "processing_summary.json").write_text(
+            json.dumps(results, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
         return results
 
 
-if __name__ == "__main__":
-    # Configuration
-    input_directory = "/home/ubuntu/pipeline_automation_app/app/public/master_input"
-    output_directory = "/home/ubuntu/pipeline_automation_app/app/public/outputs"
-    
-    # Initialize processor
-    processor = PPTProcessor(input_directory, output_directory)
-    
-    # Process all files
-    print("🚀 Starting PowerPoint Processing Engine...")
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Legacy metadata-only PPTX processing surface")
+    parser.add_argument(
+        "--input-dir",
+        default=os.environ.get("PIPELINE_INPUT_DIR", str(DEFAULT_INPUT_DIR)),
+        help="PPTX input directory (default: repo app/public/master_input or PIPELINE_INPUT_DIR)",
+    )
+    parser.add_argument(
+        "--output-dir",
+        default=os.environ.get("PIPELINE_OUTPUT_DIR", str(DEFAULT_OUTPUT_DIR)),
+        help="Output directory (default: repo app/public/outputs or PIPELINE_OUTPUT_DIR)",
+    )
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = _parse_args()
+    processor = PPTProcessor(args.input_dir, args.output_dir)
+    print("Starting legacy metadata-only PPTX processor...")
     results = processor.process_all_files()
-    
-    print(f"✅ Processing completed!")
-    print(f"📊 Total files: {results['total_files']}")
-    print(f"✅ Successful: {results['successful']}")
-    print(f"❌ Failed: {results['failed']}")
-    print(f"📁 Categories found: {list(results['categories_summary'].keys())}")
-    print(f"🔗 Cross-references: {len(results['cross_references_global'])}")
-    print(f"💾 Outputs saved to: {output_directory}")
+    print(json.dumps({
+        "scope": results["processing_scope"],
+        "total_files": results["total_files"],
+        "successful": results["successful"],
+        "failed": results["failed"],
+        "output_dir": str(Path(args.output_dir).resolve()),
+    }, indent=2))
+    return 0 if results["failed"] == 0 else 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

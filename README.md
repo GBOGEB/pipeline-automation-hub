@@ -1,113 +1,121 @@
 # Pipeline Automation Hub
 
-## 🎯 Overview
-Complete pipeline automation and orchestration platform for CI/CD, DMIAC workflows, and document processing.
+## Overview
+Pipeline/orchestration repository containing the current QPS TRIAGE ULTRA control plane plus older document-processing surfaces.
 
-## 📁 Project Structure
+The **legacy PowerPoint processor is intentionally bounded** after the M09 truth probe. It validates that an input is a PPTX/OpenXML package, hashes it, derives filename-based metadata and candidate references, and generates a metadata/template Markdown twin. It **does not parse slide text, tables, images, diagrams, or document semantics**, and it does not establish engineering/document truth.
+
+## Project structure
+
+```text
+app/                              Next.js application and legacy output surfaces
+scripts/                          Legacy processing utilities
+qps/m09/                          M09 truth/regression probes
+mission-control/qps-triage-ultra/ Current QPS TRIAGE ULTRA control/analytics surfaces
 ```
-├── app/                          # Next.js application
-│   ├── components/              # React components
-│   ├── api/                     # API routes
-│   └── public/outputs/          # Processed document outputs
-├── scripts/                     # Processing scripts
-└── README.md                    # This file
+
+## Legacy PPTX metadata pipeline
+
+### Inputs
+
+Default location:
+
+```text
+app/public/master_input/
 ```
 
-## 🔄 Document Processing Pipeline
+Only `.pptx` files that pass basic ZIP/OpenXML package validation are accepted. A renamed arbitrary file with a `.pptx` suffix is rejected fail-closed.
 
-### Master Input Processing
-- **Location**: `app/public/master_input/`
-- **Supported Formats**: PowerPoint (.pptx), PDF (.pdf)
-- **Processing Engines**: PPT Engine → PDF Engine → Markdown Engine
+### Outputs
 
-### Output Structure
-```
+```text
 app/public/outputs/
-├── digital_twins/              # Markdown digital twin representations
-├── metadata/                   # JSON metadata files
-├── cross_references/           # SCK CEN reference mappings
-└── processing_summary.json     # Overall processing summary
+├── digital_twins/          metadata/template Markdown twins
+├── metadata/               JSON filename/hash metadata
+├── cross_references/       filename-derived unverified reference candidates
+└── processing_summary.json
 ```
 
-## 🚀 Features
+### Proven capability
 
-### Document Processing
-- ✅ **PPT Engine**: PowerPoint parsing and content extraction
-- ✅ **PDF Engine**: Document conversion and processing  
-- ✅ **Markdown Engine**: Digital twin generation with KEB integration
-- ✅ **Metadata Extraction**: Comprehensive document analysis
-- ✅ **Cross-Reference Indexing**: SCK CEN numbering system support
+- PPTX package validation;
+- SHA-256 file identity;
+- filename-derived category/priority metadata;
+- filename-derived **candidate** SCK CEN references;
+- deterministic/reproducible timestamps when `SOURCE_DATE_EPOCH` is supplied;
+- metadata/template Markdown twins;
+- repo-relative or caller-supplied input/output paths.
 
-### Pipeline Management
-- 🔄 **DMIAC Workflows**: Define-Measure-Analyze-Improve-Control cycles
-- 📊 **I/O Dashboard**: File management and processing status
-- 🧪 **Test Campaign Management**: Complete test lifecycle tracking
-- 🤖 **Task Agents**: Automated processing and monitoring
+### Explicitly not proven by this legacy processor
 
-### Integration & Monitoring
-- 🌐 **GitHub Integration**: Version control and collaboration
-- 📈 **Real-time Monitoring**: Processing status and metrics
-- 🔄 **Change Tracking**: Comprehensive audit trails
-- 📱 **Visual Dashboard**: Web-based management interface
+- slide text/content parsing;
+- table or image extraction;
+- diagram/visual interpretation;
+- content-derived SCK CEN reference extraction;
+- PDF conversion;
+- Markdown semantic/content fidelity;
+- engineering, compliance, or document-truth authority.
 
-## 📊 Processing Statistics
-- **Total Files Processed**: 24 PowerPoint presentations
-- **Categories**: 8 distinct content categories
-- **Cross-References**: 5 SCK CEN references extracted
-- **Success Rate**: 100% processing completion
-- **Digital Twins**: 24 Markdown documents generated
+Use a dedicated PPTX parser/rendering/OCR/document-analysis pipeline when content-derived evidence is required.
 
-## 🎛️ Usage
+## Usage
 
-### Start Development Server
+Run from the repository root:
+
 ```bash
-cd app
-yarn dev
+python scripts/run_processing.py
 ```
 
-### Run Document Processing
+Or provide explicit paths:
+
 ```bash
-cd scripts
-python3 run_processing.py
+python scripts/run_processing.py --input-dir path/to/pptx --output-dir path/to/output
 ```
 
-### Access Dashboard
-- **Local**: http://localhost:3000
-- **Features**: Document Engines, I/O Dashboard, Test Campaign Management
+Environment equivalents are also supported:
 
-## 🔗 Cross-Reference System
-The system automatically extracts and indexes SCK CEN references:
-- **SCK CEN/0245**: MINERVA Architecture
-- **SCK CEN/0156**: Values & Commitments  
-- **SCK CEN/0334**: Naming Conventions
-- **SCK CEN/0567**: PED Compliance
-- **SCK CEN/0789**: QPLANT Status
+```text
+PIPELINE_INPUT_DIR
+PIPELINE_OUTPUT_DIR
+SOURCE_DATE_EPOCH
+```
 
-## 📈 Categories Processed
-- **SYSTEM_ARCHITECTURE**: 3 files - Core system designs
-- **SYSTEMS**: 4 files - Operational systems
-- **COMPLIANCE**: 2 files - Regulatory compliance
-- **INFRASTRUCTURE**: 3 files - Facility and infrastructure
-- **STANDARDS**: 2 files - Documentation standards
-- **VALUES_POLICY**: 1 file - Organizational values
-- **PROJECT_STATUS**: 1 file - Project tracking
-- **GENERAL**: 8 files - Miscellaneous content
+A run returns non-zero when any discovered PPTX input is rejected or processing fails.
 
-## 🛠️ Technology Stack
-- **Frontend**: Next.js 14, React 18, TypeScript
-- **Backend**: Node.js API routes
-- **Processing**: Python 3 processing engines
-- **UI**: Tailwind CSS, Radix UI components
-- **Animation**: Framer Motion
-- **Version Control**: Git with comprehensive change tracking
+## M09 evidence boundary
 
-## 📝 Change Log
-- **2025-09-10**: Initial repository setup and document processing completion
-- **Features**: Document processing engines, digital twin generation, metadata extraction
-- **Status**: Production ready with 24 files successfully processed
+The first M09 truth probe demonstrated that the historical implementation could mark deliberately invalid non-ZIP bytes named `QPLANT_Status.pptx` as completed and could derive category/reference claims from the filename alone. The Ambassador/Doctor repair therefore changes the behavior rather than hiding that history:
 
-## 🤝 Contributing
-This system provides a complete pipeline automation solution with comprehensive document processing capabilities.
+```text
+invalid package -> REJECT
+valid OpenXML package -> METADATA_ONLY_COMPLETED
+filename reference -> UNVERIFIED_CANDIDATE
+content_parsed -> false
+authority -> METADATA_ONLY_NOT_DOCUMENT_TRUTH
+```
 
----
-*Generated by Pipeline Automation Hub - Document Processing System*
+The exact-head regression probe lives at:
+
+```text
+qps/m09/M09_LEGACY_PROCESSOR_TRUTH_PROBE.py
+```
+
+## QPS TRIAGE ULTRA
+
+The repository also hosts the HOME/federation control plane under:
+
+```text
+mission-control/qps-triage-ultra/
+```
+
+Those control, telemetry, DMAIC, PCA, BT, federation and burndown surfaces are separate from the legacy document processor. Modernizing the legacy processor does not create a second QPS SSOT or transfer engineering authority.
+
+## Development server
+
+The existing Next.js application can still be started from `app/` using its project package-manager configuration. Treat UI claims about document processing according to the bounded capability above unless separately evidenced by another runtime path.
+
+## Status
+
+- QPS TRIAGE ULTRA control plane: active/current mission-control surface.
+- Legacy PPTX processor: bounded metadata-only utility under M09 rehabilitation.
+- Full PowerPoint semantic extraction pipeline: **not claimed by this README**.
