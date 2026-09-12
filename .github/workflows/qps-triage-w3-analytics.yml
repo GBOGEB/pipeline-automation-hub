@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - mission/qps-triage-ultra-w3-measured-analytics
+      - mission/w3-15-observed-current-frontier-bt
     paths:
       - mission-control/qps-triage-ultra/w3_fleet_telemetry.json
       - mission-control/qps-triage-ultra/w3_analytics.py
@@ -72,7 +73,7 @@ jobs:
             --input mission-control/qps-triage-ultra/w3_bt_observations.json \
             --out w3_observed_bt_receipt.json
 
-      - name: Enforce historical REX is usable but cannot close W3-15
+      - name: Enforce W3-15 observed current-frontier intervention BT
         shell: bash
         run: |
           python - <<'PY'
@@ -80,7 +81,17 @@ jobs:
           r=json.load(open('w3_observed_bt_receipt.json', encoding='utf-8'))
           assert r['historical_control_rex']['result']['status']=='PASS_OBSERVED_BT', r
           assert r['historical_control_rex']['eligible_for_w3_15'] is False, r
-          assert r['w3_15']=='WITHHELD_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES', r
+          assert r['current_frontier']['pair_count'] >= 2, r
+          assert r['current_frontier']['result']['status']=='PASS_OBSERVED_BT', r
+          assert r['w3_15']=='PASS_OBSERVED_INTERVENTION_BT', r
+          assert r['evidence_policy']['synthetic_fixture_is_project_evidence'] is False, r
+          assert r['authority_transfer'] is False, r
+          scores=r['current_frontier']['result']['scores']
+          assert 'PRESERVE_FAILED_ASSUMPTION' in scores, r
+          assert 'W3_10_ZERO_WIDTH_BOUNDARY_REPAIR' in scores, r
+          assert 'W3_11_VARIANCE_DERIVED_TOLERANCE_REPAIR' in scores, r
+          assert scores['W3_10_ZERO_WIDTH_BOUNDARY_REPAIR'] > scores['PRESERVE_FAILED_ASSUMPTION'], r
+          assert scores['W3_11_VARIANCE_DERIVED_TOLERANCE_REPAIR'] > scores['PRESERVE_FAILED_ASSUMPTION'], r
           PY
 
       - name: Upload measured analytics and BT receipts
