@@ -1,0 +1,46 @@
+name: W3-13 Measured Fleet Telemetry
+
+on:
+  push:
+    branches:
+      - master
+      - mission/w3-13-measured-telemetry
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  measured-floor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact head and measured-only floor
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('mission-control/qps-triage-ultra/analytics/W3_13_MEASURED_PULSES.json')
+          d = json.loads(p.read_text())
+          rows = d['rows']
+          assert len(rows) >= 3
+          assert all(r['evidence_class'] == 'MEASURED' for r in rows)
+          assert len({r['run_id'] for r in rows}) == len(rows)
+          assert d['pca_input_policy']['synthetic_rows'] == 0
+          assert d['pca_input_policy']['expert_seeded_rows'] == 0
+          assert d['pca_input_policy']['user_mandated_rows'] == 0
+          features = d['features']
+          assert {'wall_seconds','outcome_success','defect_observed','repair_present_in_head','consumer_execution','receipt_emitted'} <= set(features)
+          for r in rows:
+              assert r['wall_seconds'] > 0
+              assert r['exact_sha'] and len(r['exact_sha']) == 40
+              for f in features[1:]:
+                  assert r[f] in (0,1)
+          print(json.dumps({'schema':'qps-w3-13-validation/v1','rows':len(rows),'outcome':'PASS','evidence_class':'MEASURED','synthetic_rows':0,'authority_transfer':False}, sort_keys=True))
+          PY
