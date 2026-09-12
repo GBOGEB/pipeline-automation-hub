@@ -7,7 +7,7 @@ purpose: >-
   temporal event logging and the canonical mission table.
 
 frozen_heads:
-  HOME_pipeline_automation_hub_master: fe85ee5572efbc6503845d73165afde7720ca548
+  HOME_pipeline_automation_hub_master: 462f1a6afc08413671797a72ccf95470a01c9455
   QPS_cryoplant_project_main_observed: 3efb53c8b21104e9949573e9466d984ea49db1cf
 
 session_tail_closed:
@@ -23,6 +23,9 @@ session_tail_closed:
   - id: M09_REPAIR_CANDIDATE
     result: PASS_MERGED
     evidence: PR_36_head_a1e06cae_run_34689271798_merge_fe85ee55
+  - id: M09_POST_MERGE_CONTROL
+    result: PASS_MERGED_CONTROL
+    evidence: PR_37_head_267f21ce_run_34689318185_merge_462f1a6a
   - id: W3_12_HEPAK_PREFLIGHT
     result: PASS_MERGED_NO_NUMERIC_CREDIT
     evidence: cryoplant_PR_988
@@ -30,15 +33,7 @@ session_tail_closed:
     result: PASS_MERGED_NO_NUMERIC_CREDIT
     evidence: cryoplant_PR_990
 
-live_tail:
-  - id: M09_POST_MERGE_CONTROL
-    repo: GBOGEB/pipeline-automation-hub
-    pr: 37
-    head_sha: 267f21ce652105180b966fe292feea42bb07b58e
-    state: WAIT_EXACT_HEAD_CI
-    victory: PASS_FAIL_CLOSED_METADATA_ONLY_REPAIR_on_post_merge_lineage
-    on_green: MERGE_AND_MOVE_M09_TO_CONTROL_REFERENCE
-    on_red: RECURSE_FIRST_RED
+live_tail: []
 
 strategic_state:
   W3_fixed_denominator: 16
@@ -76,14 +71,12 @@ current_crew_topology:
     - target: RUNTIME_LANE_SCHEDULER
       crew: [Analyst, Engineer, Project_Manager_DOW]
       readiness: HIGH
-    - target: M09_POST_MERGE_CONTROL
-      crew: [QA]
-      readiness: IN_FLIGHT
   BD1:
     - target: M01_PRIVATE_QPS_RUNNER
       crew: [Dockmaster]
       blocker: PRIVATE_RUNNER_ASSIGNMENT
   CONTROL:
+    - M09_LEGACY_PROCESSOR
     - M05_PROVENANCE
     - W3_15_ANALYTICS_BT
     - M07_LEAK_EVIDENCE
@@ -96,6 +89,9 @@ current_crew_topology:
     - Scientist
     - Engineer
     - Governor
+  RETURNED_THIS_SESSION:
+    - M09_Ambassador
+    - M09_Doctor
 
 runtime_lane_policy:
   measured_inputs:
@@ -184,14 +180,14 @@ PCA_BT_DMAIC_policy:
 execution_plan:
   - seq: 1
     id: CLOSE_M09_CONTROL_TAIL
-    state: IN_FLIGHT
-    actions:
-      - wait_for_PR_37_exact_head_workflow
-      - if_green_merge_PR_37
-      - record_post_merge_control_receipt
-      - move_M09_to_CONTROL_REFERENCE
-      - return_Ambassador_and_Doctor
-    stop_on: first_actual_red
+    state: CLOSED_PASS
+    result:
+      repair_candidate_run: 34689271798
+      repair_merge: fe85ee5572efbc6503845d73165afde7720ca548
+      post_merge_repeat_run: 34689318185
+      post_merge_control_merge: 462f1a6afc08413671797a72ccf95470a01c9455
+      disposition: CONTROL_REFERENCE_HARVEST_BOUNDED_PATTERNS
+      crew: RETURN_AMBASSADOR_AND_DOCTOR
   - seq: 2
     id: W3_12_LOCAL_HEPAK_EXECUTION
     state: ACTIVE_EXTERNAL_LOCAL
@@ -263,16 +259,17 @@ execution_plan:
     id: CONTROL_AND_RETURN
     state: CONTINUOUS
     actions:
-      - keep_M05_M07_M08_on_small_control_cells
+      - keep_M09_M05_M07_M08_on_small_control_cells
       - keep_M06_parked_unless_real_observer_need_appears
       - append_every_material_pulse_to_temporal_ledger
       - canonical_table_first_dashboard_projection_second
 
 next_chat_start_command: >-
-  Read this handover and the current HOME temporal ledger. Recheck live PR/workflow
-  state first. Close M09 PR #37 only on exact-head green. Keep W3-12 as ACTIVE and
-  do not fabricate licensed HEPAK outputs. In parallel implement the BD0 runtime
-  lane scheduler as a bounded classifier/recommendation system consuming existing
+  Read this handover and the current HOME temporal ledger. Recheck live repo and
+  workflow state first. M09 is CONTROL/REFERENCE after candidate and post-merge
+  exact-head green receipts. Keep W3-12 as the sole ACTIVE strategic gate and do
+  not fabricate licensed HEPAK outputs. In parallel implement the BD0 runtime lane
+  scheduler as a bounded classifier/recommendation system consuming existing
   measured ledger rows. Do not provision extra runners until the scale gate is
   supported by measured pressure. Recurse on first red, append temporal metrics,
   and report the canonical mission table plus compact queue/execute/crew dashboard.
