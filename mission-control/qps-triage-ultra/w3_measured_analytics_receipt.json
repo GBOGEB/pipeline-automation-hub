@@ -1,0 +1,69 @@
+{
+  "authority_transfer": false,
+  "components": [
+    {
+      "component": "PC1",
+      "eigenvalue": 4.291984102528242,
+      "explained_variance_ratio": 0.8583968205056489,
+      "loadings": {
+        "artifact_bytes": 0.4821773686879956,
+        "artifact_count": 0.48227045169823557,
+        "executed_step_count": 0.467077161257914,
+        "job_duration_s": 0.47677101797334037,
+        "queue_delay_s": -0.2990794516442303
+      },
+      "scores": [
+        {"mission_id": "M02A", "repo": "GBOGEB/Q_engineering_tools", "run_id": 34683957097, "score": 2.39011130939429},
+        {"mission_id": "M02B", "repo": "GBOGEB/gg_MATH", "run_id": 34617236017, "score": -1.1083951154801661},
+        {"mission_id": "ULTRA", "repo": "GBOGEB/pipeline-automation-hub", "run_id": 34617570505, "score": -1.2817161939141235}
+      ]
+    },
+    {
+      "component": "PC2",
+      "eigenvalue": 0.7080158974717551,
+      "explained_variance_ratio": 0.14160317949435108,
+      "loadings": {
+        "artifact_bytes": 0.05491447252907765,
+        "artifact_count": 0.04971309821013675,
+        "executed_step_count": 0.2998462573427498,
+        "job_duration_s": 0.18558943942236494,
+        "queue_delay_s": 0.9328246300916585
+      },
+      "scores": [
+        {"mission_id": "M02A", "repo": "GBOGEB/Q_engineering_tools", "run_id": 34683957097, "score": 0.040642761391895835},
+        {"mission_id": "M02B", "repo": "GBOGEB/gg_MATH", "run_id": 34617236017, "score": -0.8610216970581969},
+        {"mission_id": "ULTRA", "repo": "GBOGEB/pipeline-automation-hub", "run_id": 34617570505, "score": 0.820378935666301}
+      ]
+    }
+  ],
+  "distinct_missions": 3,
+  "distinct_repos": 3,
+  "evidence_class": "MEASURED_NUMERIC_ONLY",
+  "field_stats": {
+    "artifact_bytes": {"maximum": 65917.0, "mean": 22427.0, "minimum": 517.0, "sample_std": 37663.806233571246},
+    "artifact_count": {"maximum": 3.0, "mean": 1.6666666666666667, "minimum": 1.0, "sample_std": 1.1547005383792517},
+    "executed_step_count": {"maximum": 18.0, "mean": 12.666666666666666, "minimum": 9.0, "sample_std": 4.725815626252608},
+    "job_duration_s": {"maximum": 14.0, "mean": 9.0, "minimum": 6.0, "sample_std": 4.358898943540674},
+    "queue_delay_s": {"maximum": 172.0, "mean": 65.66666666666667, "minimum": 3.0, "sample_std": 92.57609482654436}
+  },
+  "outcome": "PASS_MEASURED_RUNTIME_FOOTPRINT_PCA",
+  "pca_fields": ["queue_delay_s", "job_duration_s", "executed_step_count", "artifact_count", "artifact_bytes"],
+  "row_count": 3,
+  "rows": [
+    {"mission_id": "M02A", "repo": "GBOGEB/Q_engineering_tools", "run_id": 34683957097, "source_sha": "2e9dc6fa2c607346e95761095cc2b5a3301b86c4"},
+    {"mission_id": "M02B", "repo": "GBOGEB/gg_MATH", "run_id": 34617236017, "source_sha": "43d23c38b268e8980f02ad58e74ad48704ab7304"},
+    {"mission_id": "ULTRA", "repo": "GBOGEB/pipeline-automation-hub", "run_id": 34617570505, "source_sha": "8d71e73bb59b5ebf36bd11dcb458b55ac365fd32"}
+  ],
+  "schema": "qps-w3-measured-analytics-receipt/v1",
+  "standardization": "sample_z_score",
+  "statistical_boundary": "n=3 is the registry minimum; covariance rank is at most n-1. Interpret loadings as runtime-footprint pressure, not engineering maturity or causal effect.",
+  "w3_13": "PASS_THREE_COMPARABLE_MEASURED_FLEET_PULSES",
+  "w3_14": "PASS_MEASURED_PCA",
+  "w3_15": "WITHHELD_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES",
+  "ci_proof": {
+    "run_id": 34685677445,
+    "head_sha": "d394f7604f26fbed6355c7bc377da4ac9e0598b2",
+    "artifact_id": 10295681186,
+    "artifact_digest": "sha256:33ebfb7b58ece93c602ba7e1f4762a1595eb30e1783bbf050cdbf8c0d4693d5d"
+  }
+}

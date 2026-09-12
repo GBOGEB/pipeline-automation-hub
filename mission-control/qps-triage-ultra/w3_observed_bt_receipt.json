@@ -1,0 +1,39 @@
+{
+  "authority_transfer": false,
+  "current_frontier": {
+    "candidates": [
+      "W3-10_11_M02B_SECOND_KERNEL_AND_CONSUMER",
+      "W3-12_M01_HEPAK_AUTHORITY_CLOSURE",
+      "W3-16_M03_FRONTIER_CENSUS"
+    ],
+    "pair_count": 0,
+    "result": {"scores": {}, "status": "DEFER_NO_USABLE_COMPARISONS"}
+  },
+  "evidence_policy": {
+    "comparison_graph_must_be_connected": true,
+    "historical_rex_is_seed_only": true,
+    "minimum_current_frontier_pairs": 2,
+    "project_bt_evidence": "EXPLICIT_REAL_CURRENT_FRONTIER_INTERVENTION_WIN_LOSS_ONLY",
+    "synthetic_fixture_is_project_evidence": false
+  },
+  "historical_control_rex": {
+    "eligible_for_w3_15": false,
+    "pair_count": 2,
+    "result": {
+      "scores": {
+        "PAGES_NON_PRODUCTION_CONTROL_BRANCH": 9.999999999996666e-13,
+        "PAGES_PRODUCTION_BRANCH_UNIQUE_ARTIFACT_REPEAT": 2.999999999998,
+        "PAGES_SAME_WORKFLOW_RUN_RERUN": 9.999999999996666e-13
+      },
+      "status": "PASS_OBSERVED_BT"
+    }
+  },
+  "schema": "qps-w3-observed-bt-receipt/v1",
+  "w3_15": "WITHHELD_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES",
+  "ci_proof": {
+    "run_id": 34685772355,
+    "head_sha": "7d26ae5f893eb4dc0e11b4d566cf89d9bf36586b",
+    "artifact_id": 10296050515,
+    "artifact_digest": "sha256:3eb1e261cc9652134afb34344a16002ae1f889d967b3efa44d3962c08c2f2d5f"
+  }
+}

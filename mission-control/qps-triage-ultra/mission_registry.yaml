@@ -1,9 +1,9 @@
-schema: qps-mission-registry/v6
-global_seq: 6
+schema: qps-mission-registry/v7
+global_seq: 7
 control_node:
   id: ULTRA
   repo: GBOGEB/pipeline-automation-hub
-  master_sha: d34f94a40cad8224c03536973f6474faec6c8d05
+  master_sha: bf66b6e6f72effb42c81a863194594f013c1f132
   phase: W3_INTEGRATION_EXPANSION
   status: CONTROLLED_W2_ACTIVE_W3
   w2:
@@ -15,11 +15,18 @@ control_node:
     control_repeat_run_id: 34617570505
     gate: ULTRA-M02-FED-AND-001
   w3:
-    strict_passed: 9
+    strict_passed: 11
     denominator: 16
-    strict_progress: 0.5625
+    strict_progress: 0.6875
     dov: WITHHELD
-  next_target: M02B_SECOND_KERNEL_AND_NON_ORIGIN_CONSUMER
+    measured_analytics:
+      telemetry_rows: 3
+      distinct_repos: 3
+      distinct_missions: 3
+      ci_run_id: 34685677445
+      pca: PASS_MEASURED_RUNTIME_FOOTPRINT_PCA
+      bt: WITHHELD_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES
+  next_target: M02B_SECOND_KERNEL_NON_ORIGIN_CONSUMER_THEN_CURRENT_FRONTIER_BT
 active_missions:
   M01:
     repo: GBOGEB/CoolProp
@@ -89,7 +96,16 @@ expansion:
   M04: {frontier_count: 8, state: OUTLINED_NOT_RELEASED}
   CLOUD16: {frontier_count: 16, state: CANDIDATE_CLOUD_NOT_RELEASED}
 analytics:
-  pca: DEFER_INSUFFICIENT_COMPARABLE_MEASURED_OBSERVATIONS
-  pca_unlock: AT_LEAST_3_COMPARABLE_MEASURED_PULSE_ROWS
-  bt: DEFER_NO_EXPLICIT_FLEET_PAIRWISE_OUTCOMES
-  bt_unlock: EXPLICIT_REAL_INTERVENTION_WIN_LOSS_OBSERVATIONS
+  pca: PASS_MEASURED_RUNTIME_FOOTPRINT_PCA
+  pca_scope: CI_RUNTIME_PROOF_FOOTPRINT_NOT_ENGINEERING_MATURITY
+  pca_evidence:
+    input: mission-control/qps-triage-ultra/w3_fleet_telemetry.json
+    receipt: mission-control/qps-triage-ultra/w3_measured_analytics_receipt.json
+    run_id: 34685677445
+    artifact_id: 10295681186
+    PC1_explained_variance_ratio: 0.8583968205056489
+    PC2_explained_variance_ratio: 0.14160317949435108
+    PC1_pressure: PRODUCT_PROOF_FOOTPRINT_COMPLEXITY
+    PC2_pressure: RUNNER_QUEUE_FRICTION
+  bt: DEFER_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES
+  bt_unlock: EXPLICIT_REAL_CURRENT_FRONTIER_INTERVENTION_WIN_LOSS_OBSERVATIONS

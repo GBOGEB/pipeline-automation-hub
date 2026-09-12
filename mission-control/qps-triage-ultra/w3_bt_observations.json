@@ -1,0 +1,40 @@
+{
+  "schema": "qps-w3-observed-intervention-bt/v1",
+  "authority_transfer": false,
+  "policy": {
+    "project_bt_evidence": "EXPLICIT_REAL_CURRENT_FRONTIER_INTERVENTION_WIN_LOSS_ONLY",
+    "historical_rex_is_seed_only": true,
+    "synthetic_fixture_is_project_evidence": false,
+    "minimum_current_frontier_pairs": 2,
+    "comparison_graph_must_be_connected": true
+  },
+  "current_frontier": {
+    "candidates": [
+      "W3-10_11_M02B_SECOND_KERNEL_AND_CONSUMER",
+      "W3-12_M01_HEPAK_AUTHORITY_CLOSURE",
+      "W3-16_M03_FRONTIER_CENSUS"
+    ],
+    "pairs": [],
+    "state": "DEFER_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES"
+  },
+  "historical_control_rex": {
+    "eligible_for_w3_15": false,
+    "purpose": "Preserve real intervention outcomes and validate the BT evidence shape without ranking today's remaining frontier.",
+    "pairs": [
+      {
+        "winner": "PAGES_PRODUCTION_BRANCH_UNIQUE_ARTIFACT_REPEAT",
+        "loser": "PAGES_SAME_WORKFLOW_RUN_RERUN",
+        "objective": "repeat exact merged Pages product",
+        "winner_evidence": "run_34683957097_SUCCESS",
+        "loser_evidence": "run_34683757093_attempt_2_FAIL_duplicate_github_pages_artifacts"
+      },
+      {
+        "winner": "PAGES_PRODUCTION_BRANCH_UNIQUE_ARTIFACT_REPEAT",
+        "loser": "PAGES_NON_PRODUCTION_CONTROL_BRANCH",
+        "objective": "repeat exact merged Pages product",
+        "winner_evidence": "run_34683957097_SUCCESS",
+        "loser_evidence": "runs_34683866534_and_34683902095_FAIL_pages_environment_contract"
+      }
+    ]
+  }
+}
