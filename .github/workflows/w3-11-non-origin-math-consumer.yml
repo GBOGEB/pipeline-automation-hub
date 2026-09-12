@@ -1,0 +1,62 @@
+name: W3-11 Non-Origin Math Consumer
+
+on:
+  push:
+    branches:
+      - master
+      - mission/w3-11-non-origin-math-consumer
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  consume:
+    runs-on: ubuntu-latest
+    env:
+      PRODUCER_SHA: d3799ae0ee4d9666d3ec985c7b7edde12cc98306
+    steps:
+      - name: Checkout exact consumer head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: consumer
+      - name: Assert exact consumer head
+        shell: bash
+        working-directory: consumer
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Checkout exact producer head
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/gg_MATH
+          ref: ${{ env.PRODUCER_SHA }}
+          path: producer
+      - name: Assert exact producer head
+        shell: bash
+        working-directory: producer
+        run: test "$(git rev-parse HEAD)" = "$PRODUCER_SHA"
+      - name: Execute controlled producer capability from non-origin consumer
+        id: consume
+        continue-on-error: true
+        shell: bash
+        run: |
+          python consumer/mission-control/qps-triage-ultra/consumers/w3_11_math_consumer.py \
+            --producer-root producer \
+            --producer-sha "$PRODUCER_SHA" \
+            --consumer-sha "${{ github.event.pull_request.head.sha || github.sha }}" \
+            --out consumer/mission-control/qps-triage-ultra/receipts/W3_11_NON_ORIGIN_CONSUMER.json
+      - name: Upload consumer receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: W3-11-non-origin-consumer-${{ github.event.pull_request.head.sha || github.sha }}
+          path: consumer/mission-control/qps-triage-ultra/receipts/W3_11_NON_ORIGIN_CONSUMER.json
+      - name: Enforce consumer outcome
+        if: always()
+        shell: bash
+        run: test "${{ steps.consume.outcome }}" = "success"
