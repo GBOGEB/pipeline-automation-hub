@@ -1,0 +1,78 @@
+name: QPS TRIAGE W3 Measured Analytics
+
+on:
+  push:
+    branches:
+      - master
+      - mission/qps-triage-ultra-w3-measured-analytics
+    paths:
+      - mission-control/qps-triage-ultra/w3_fleet_telemetry.json
+      - mission-control/qps-triage-ultra/w3_analytics.py
+      - .github/workflows/qps-triage-w3-analytics.yml
+  pull_request:
+    paths:
+      - mission-control/qps-triage-ultra/w3_fleet_telemetry.json
+      - mission-control/qps-triage-ultra/w3_analytics.py
+      - .github/workflows/qps-triage-w3-analytics.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  measured-analytics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Assert exact source head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+
+      - name: Execute measured fleet analytics
+        run: |
+          python mission-control/qps-triage-ultra/w3_analytics.py \
+            --input mission-control/qps-triage-ultra/w3_fleet_telemetry.json \
+            --out w3_measured_analytics_receipt.json
+
+      - name: Enforce W3-13 comparable measured pulse gate
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('w3_measured_analytics_receipt.json', encoding='utf-8'))
+          assert r['w3_13']=='PASS_THREE_COMPARABLE_MEASURED_FLEET_PULSES', r
+          assert r['row_count'] >= 3, r
+          assert r['distinct_repos'] >= 3, r
+          assert r['distinct_missions'] >= 3, r
+          PY
+
+      - name: Enforce W3-14 measured PCA gate
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('w3_measured_analytics_receipt.json', encoding='utf-8'))
+          assert r['w3_14']=='PASS_MEASURED_PCA', r
+          assert r['outcome']=='PASS_MEASURED_RUNTIME_FOOTPRINT_PCA', r
+          assert r['evidence_class']=='MEASURED_NUMERIC_ONLY', r
+          assert len(r['components']) >= 1, r
+          PY
+
+      - name: Enforce W3-15 remains withheld without current frontier comparisons
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('w3_measured_analytics_receipt.json', encoding='utf-8'))
+          assert r['w3_15']=='WITHHELD_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES', r
+          PY
+
+      - name: Upload measured analytics receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-w3-measured-analytics-${{ github.sha }}
+          path: w3_measured_analytics_receipt.json
