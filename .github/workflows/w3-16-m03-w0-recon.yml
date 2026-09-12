@@ -1,0 +1,111 @@
+name: W3-16 M03 W0 Recon
+
+on:
+  push:
+    branches:
+      - master
+      - mission/w3-16-m03-w0-recon
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-head-census:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact HOME census head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: home
+      - name: Assert exact HOME head
+        working-directory: home
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Checkout MCP BRIDGEHEAD
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/github-mcp-server
+          ref: ec9df7a1900e5075d6667d5874200bb19f00de6b
+          path: mcp
+      - name: Checkout SCIENTIFIC SKILL INCUBATOR
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/scientific-agent-skills
+          ref: cbcae7bbf776cd41aeaa59ea06b8f0e6eacfb16f
+          path: skills
+      - name: Checkout OBSERVER TWIN
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/GEMINI
+          ref: 436836d6466218ba6e4de1505a379f8f353b2c65
+          path: gemini
+      - name: Checkout EXPERIMENT RANGE
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/orchestration-sandbox
+          ref: b1526e6c0e1359f9082afdf678ed0a9efe787771
+          path: sandbox
+      - name: Verify frozen heads and census markers
+        id: recon
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C mcp rev-parse HEAD)" = "ec9df7a1900e5075d6667d5874200bb19f00de6b"
+          test "$(git -C skills rev-parse HEAD)" = "cbcae7bbf776cd41aeaa59ea06b8f0e6eacfb16f"
+          test "$(git -C gemini rev-parse HEAD)" = "436836d6466218ba6e4de1505a379f8f353b2c65"
+          test "$(git -C sandbox rev-parse HEAD)" = "b1526e6c0e1359f9082afdf678ed0a9efe787771"
+          test -f mcp/Dockerfile
+          test -f mcp/LICENSE
+          test -f skills/LICENSE.md
+          test -d skills/scientific-skills
+          test -f gemini/src/pipeline.py
+          test -f gemini/config/blsn_config.yaml
+          test -f sandbox/README.md
+          test "$(find sandbox -maxdepth 1 -type f | wc -l)" -eq 1
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          roots = {
+              "MCP_BRIDGEHEAD": ("mcp", "ec9df7a1900e5075d6667d5874200bb19f00de6b", "ADAPT"),
+              "SCIENTIFIC_SKILL_INCUBATOR": ("skills", "cbcae7bbf776cd41aeaa59ea06b8f0e6eacfb16f", "EXTRACT"),
+              "OBSERVER_TWIN": ("gemini", "436836d6466218ba6e4de1505a379f8f353b2c65", "REFERENCE"),
+              "EXPERIMENT_RANGE": ("sandbox", "b1526e6c0e1359f9082afdf678ed0a9efe787771", "PARK"),
+          }
+          frontiers = {}
+          for name, (root, sha, disposition) in roots.items():
+              p = Path(root)
+              files = [x for x in p.rglob("*") if x.is_file() and ".git" not in x.parts]
+              frontiers[name] = {
+                  "frozen_sha": sha,
+                  "files_observed": len(files),
+                  "provisional_disposition": disposition,
+              }
+          receipt = {
+              "schema": "qps-w3-16-m03-recon-receipt/v1",
+              "home_sha": os.environ.get("GITHUB_SHA"),
+              "execution": {"steps_gt0": True, "outcome": "SUCCESS"},
+              "frontiers": frontiers,
+              "m04": "HELD",
+              "cloud16": "HELD",
+              "authority_transfer": False,
+              "full_implementation_launched": False,
+          }
+          out = Path("home/mission-control/qps-triage-ultra/receipts/W3_16_M03_W0_RECON.json")
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
+          print(json.dumps(receipt, sort_keys=True))
+          PY
+      - name: Upload W3-16 reconnaissance receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: W3-16-M03-W0-recon-${{ github.event.pull_request.head.sha || github.sha }}
+          path: home/mission-control/qps-triage-ultra/receipts/W3_16_M03_W0_RECON.json
+      - name: Enforce reconnaissance outcome
+        if: always()
+        shell: bash
+        run: test "${{ steps.recon.outcome }}" = "success"

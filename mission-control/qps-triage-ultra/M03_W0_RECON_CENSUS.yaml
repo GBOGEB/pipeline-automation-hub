@@ -1,0 +1,125 @@
+schema: qps-triage-ultra-m03-w0-recon/v1
+mission: M03
+wave: W0_RECON
+control_plane: GBOGEB/pipeline-automation-hub
+m04: HELD
+cloud16: HELD
+coverage_floor:
+  preserve_M02B: true
+  preserve_M01: true
+  no_full_frontier_launch: true
+  authority_transfer: false
+frontiers:
+  MCP_BRIDGEHEAD:
+    repo: GBOGEB/github-mcp-server
+    frozen_sha: ec9df7a1900e5075d6667d5874200bb19f00de6b
+    evidence_class: MEASURED_REPOSITORY_CENSUS
+    runtime_surfaces:
+      - Go server runtime
+      - remote MCP HTTP endpoint described by upstream
+      - local Docker runtime
+      - GitHub Actions CI/CD and release surfaces
+    ssot_governance:
+      - upstream GitHub MCP policies and governance are authoritative for server behavior
+      - HOME remains QPS mission SSOT
+    reusable_blocks:
+      - repository and code read/search
+      - issue and pull-request automation
+      - workflow intelligence
+      - release and collaboration toolsets
+    boundaries:
+      license: LICENSE present at frozen head
+      security: PAT/OAuth/GitHub App permissions are explicit trust boundaries
+      maintenance: large upstream-derived active Go codebase; do not fork-diverge casually
+    mesh_adjacency:
+      - HOME orchestration
+      - CODEX/ABACUS GitHub automation
+      - CI runtime evidence collection
+    provisional_disposition: ADAPT
+    secondary_dispositions: [REFERENCE]
+    rationale: high mesh leverage, but adapt through bounded toolsets and least-privilege credentials rather than promote the fork as QPS authority
+  SCIENTIFIC_SKILL_INCUBATOR:
+    repo: GBOGEB/scientific-agent-skills
+    frozen_sha: cbcae7bbf776cd41aeaa59ea06b8f0e6eacfb16f
+    evidence_class: MEASURED_REPOSITORY_CENSUS
+    runtime_surfaces:
+      - Agent Skills packages under scientific-skills
+      - Python/uv environment
+      - repository skill scanners
+      - external scientific packages, APIs, and databases invoked by individual skills
+    ssot_governance:
+      - skill-local SKILL.md files define individual workflows
+      - HOME remains QPS mission SSOT
+      - third-party scientific sources retain their own authority
+    reusable_blocks:
+      - optimization and simulation skills
+      - statistics and ML skills
+      - scientific database lookup patterns
+      - scientific communication and research workflows
+    boundaries:
+      license: MIT license declared
+      security: repository explicitly warns that skills may execute code, install packages, call networks, and modify files
+      maintenance: broad community-contributed surface; selective pinning and review required
+    mesh_adjacency:
+      - Math Bunker
+      - CoolProp/HEPAK science challenge
+      - QPS analyst and research lanes
+    provisional_disposition: EXTRACT
+    secondary_dispositions: [ADAPT, PARK]
+    rationale: selectively extract pinned reviewed skills; do not bulk-promote 135-skill surface into trusted QPS runtime
+  OBSERVER_TWIN:
+    repo: GBOGEB/GEMINI
+    frozen_sha: 436836d6466218ba6e4de1505a379f8f353b2c65
+    evidence_class: MEASURED_REPOSITORY_CENSUS
+    runtime_surfaces:
+      - src/pipeline.py Python renderer/validator
+      - GitHub Actions report generation
+      - config-driven baseline rendering
+    ssot_governance:
+      repo_claim: repository README calls config/blsn_config.yaml its SSOT
+      qps_rule: GEMINI may observe and compare but must not silently become QPS SSOT
+      effective_authority: REFERENCE_OBSERVER_ONLY
+    reusable_blocks:
+      - config-to-report rendering
+      - baseline validation
+      - multi-format handover patterns
+    boundaries:
+      license: LICENSE present
+      security: ordinary code/config execution boundary; generated outputs are derived views
+      maintenance: small purpose-built repository with possible semantic overlap with HOME
+    mesh_adjacency:
+      - HOME comparison/observer lane
+      - engineering baseline renderers
+      - dashboard/report views
+    provisional_disposition: REFERENCE
+    secondary_dispositions: [EXTRACT]
+    rationale: useful observer and renderer patterns, but its internal SSOT claim conflicts with HOME authority if promoted wholesale
+  EXPERIMENT_RANGE:
+    repo: GBOGEB/orchestration-sandbox
+    frozen_sha: b1526e6c0e1359f9082afdf678ed0a9efe787771
+    evidence_class: MEASURED_REPOSITORY_CENSUS
+    runtime_surfaces: []
+    ssot_governance:
+      - no meaningful SSOT/governance surface observed at frozen head
+      - HOME remains authority
+    reusable_blocks: []
+    boundaries:
+      license: NOT_OBSERVED_AT_FROZEN_HEAD
+      security: treat as disposable public experiment surface; never place secrets or authority-bearing artifacts here
+      maintenance: minimal repository containing only a short README at frozen head
+    mesh_adjacency:
+      - disposable probes
+      - unsafe/experimental orchestration trials
+    provisional_disposition: PARK
+    secondary_dispositions: [ADAPT]
+    rationale: preserve as an isolation shell and only adapt when a concrete disposable probe needs it; no current capability justifies promotion
+recon_gate:
+  content_census_all_four: PASS
+  runtime_surfaces_identified: PASS
+  governance_ssot_identified: PASS
+  reusable_blocks_identified: PASS
+  security_license_maintenance_boundaries: PASS
+  mesh_adjacency_identified: PASS
+  provisional_dispositions_assigned: PASS
+  full_implementation_launched: false
+  M04_CLOUD16_held: true
