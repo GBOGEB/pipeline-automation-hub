@@ -1,21 +1,65 @@
 {
-  "schema": "qps-w3-observed-intervention-bt/v1",
+  "schema": "qps-w3-observed-intervention-bt/v2",
   "authority_transfer": false,
   "policy": {
     "project_bt_evidence": "EXPLICIT_REAL_CURRENT_FRONTIER_INTERVENTION_WIN_LOSS_ONLY",
     "historical_rex_is_seed_only": true,
     "synthetic_fixture_is_project_evidence": false,
     "minimum_current_frontier_pairs": 2,
-    "comparison_graph_must_be_connected": true
+    "comparison_graph_must_be_connected": true,
+    "ties_are_allowed": true,
+    "unobserved_blockers_are_not_fabricated_into_pairwise_outcomes": true
   },
   "current_frontier": {
     "candidates": [
-      "W3-10_11_M02B_SECOND_KERNEL_AND_CONSUMER",
-      "W3-12_M01_HEPAK_AUTHORITY_CLOSURE",
-      "W3-16_M03_FRONTIER_CENSUS"
+      "W3_10_ZERO_WIDTH_BOUNDARY_REPAIR",
+      "W3_11_VARIANCE_DERIVED_TOLERANCE_REPAIR",
+      "PRESERVE_FAILED_ASSUMPTION"
     ],
-    "pairs": [],
-    "state": "DEFER_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES"
+    "pairs": [
+      {
+        "winner": "W3_10_ZERO_WIDTH_BOUNDARY_REPAIR",
+        "loser": "PRESERVE_FAILED_ASSUMPTION",
+        "objective": "execute independent Monte Carlo reference challenge at exact head",
+        "winner_evidence": "run_34685651566_SUCCESS_sha_4cd2645ce60c8fe7d6d7ca8afaeb48aad3e032c8",
+        "loser_evidence": "run_34685627860_FAILURE_sha_aeff0803e3c2a96045ceb954e37e47ed5e4be14b_zero_width_triangular_rejected",
+        "observation_class": "MEASURED_CURRENT_FRONTIER_INTERVENTION_OUTCOME",
+        "authority_transfer": false
+      },
+      {
+        "winner": "W3_10_ZERO_WIDTH_BOUNDARY_REPAIR",
+        "loser": "PRESERVE_FAILED_ASSUMPTION",
+        "objective": "repeat merged Monte Carlo kernel after the same semantic repair",
+        "winner_evidence": "run_34685675385_SUCCESS_sha_d3799ae0ee4d9666d3ec985c7b7edde12cc98306",
+        "loser_evidence": "run_34685627860_FAILURE_sha_aeff0803e3c2a96045ceb954e37e47ed5e4be14b_zero_width_triangular_rejected",
+        "observation_class": "MEASURED_CURRENT_FRONTIER_CONTROL_REPEAT",
+        "authority_transfer": false
+      },
+      {
+        "winner": "W3_11_VARIANCE_DERIVED_TOLERANCE_REPAIR",
+        "loser": "PRESERVE_FAILED_ASSUMPTION",
+        "objective": "consume controlled Monte Carlo capability from non-origin HOME node",
+        "winner_evidence": "run_34685737519_SUCCESS_sha_a6936341e99e4c90744527c94871130c4a4b52a2",
+        "loser_evidence": "run_34685697076_FAILURE_sha_bd93394387d10c1506d8efc67e34d39dfe57f651_magic_absolute_tolerance",
+        "observation_class": "MEASURED_CURRENT_FRONTIER_INTERVENTION_OUTCOME",
+        "authority_transfer": false
+      },
+      {
+        "winner": "W3_11_VARIANCE_DERIVED_TOLERANCE_REPAIR",
+        "loser": "PRESERVE_FAILED_ASSUMPTION",
+        "objective": "repeat merged non-origin consumer after variance-derived tolerance repair",
+        "winner_evidence": "run_34685792883_SUCCESS_sha_0fff3a6a3038918b7dd2e062f4972ee775774480",
+        "loser_evidence": "run_34685697076_FAILURE_sha_bd93394387d10c1506d8efc67e34d39dfe57f651_magic_absolute_tolerance",
+        "observation_class": "MEASURED_CURRENT_FRONTIER_CONTROL_REPEAT",
+        "authority_transfer": false
+      }
+    ],
+    "state": "READY_OBSERVED_CURRENT_FRONTIER_BT",
+    "interpretation_boundary": {
+      "W3_12_M01_HEPAK_AUTHORITY_CLOSURE": "UNOBSERVED_EXTERNAL_EVIDENCE_BLOCKER_NOT_INSERTED_AS_SYNTHETIC_BT_PAIR",
+      "W3_16_M03_FRONTIER_CENSUS": "SEPARATE_RECON_GATE_NOT_USED_TO_FORCE_BT_DISCRIMINATION",
+      "expected_top_tie": "W3-10 and W3-11 repairs have equal observed wins against their respective preserved failed assumption; a tie is evidence, not a defect."
+    }
   },
   "historical_control_rex": {
     "eligible_for_w3_15": false,
