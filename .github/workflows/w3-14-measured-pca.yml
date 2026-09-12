@@ -1,0 +1,53 @@
+name: W3-14 Measured PCA
+
+on:
+  push:
+    branches:
+      - master
+      - mission/w3-14-measured-pca
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  measured-pca:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Execute PCA only over W3-13 measured rows
+        shell: bash
+        run: |
+          python mission-control/qps-triage-ultra/analytics/w3_14_measured_pca.py \
+            --input mission-control/qps-triage-ultra/analytics/W3_13_MEASURED_PULSES.json \
+            --out mission-control/qps-triage-ultra/receipts/W3_14_MEASURED_PCA.json \
+            --source-sha "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Validate PCA receipt
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('mission-control/qps-triage-ultra/receipts/W3_14_MEASURED_PCA.json').read_text())
+          assert r['input_rows'] >= 3
+          assert r['row_evidence_class'] == 'MEASURED'
+          assert r['synthetic_rows'] == 0
+          assert r['execution']['steps_gt0'] is True
+          assert r['execution']['outcome'] == 'SUCCESS'
+          assert len(r['components']) >= 2
+          assert r['next_action_ranking']
+          assert r['authority_transfer'] is False
+          print(json.dumps({'PC1':r['components'][0],'PC2':r['components'][1],'navigation':r['pc1_flattening_interpretation'],'ranking':r['next_action_ranking']}, sort_keys=True))
+          PY
+      - name: Upload W3-14 receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: W3-14-measured-PCA-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/receipts/W3_14_MEASURED_PCA.json
