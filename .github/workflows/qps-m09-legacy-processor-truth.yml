@@ -1,4 +1,4 @@
-name: QPS M09 Legacy Processor Truth Probe
+name: QPS M09 Legacy Processor Repair Probe
 
 on:
   pull_request:
@@ -6,6 +6,7 @@ on:
       - "qps/m09/**"
       - "scripts/ppt_processor.py"
       - "scripts/run_processing.py"
+      - "README.md"
       - ".github/workflows/qps-m09-legacy-processor-truth.yml"
   workflow_dispatch:
 
@@ -13,10 +14,11 @@ permissions:
   contents: read
 
 jobs:
-  truth-probe:
+  repair-probe:
     runs-on: ubuntu-latest
     env:
       SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      SOURCE_DATE_EPOCH: "1789200000"
     steps:
       - name: Checkout exact source head
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -29,23 +31,23 @@ jobs:
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
-      - name: Execute legacy processor truth probe
+      - name: Execute fail-closed M09 repair regression
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p artifacts/m09
-          python qps/m09/M09_LEGACY_PROCESSOR_TRUTH_PROBE.py | tee artifacts/m09/M09_TRUTH_PROBE.json
-          grep -q 'PASS_PROBE_CONFIRMS_METADATA_HEURISTIC_ONLY_BOUNDARY' artifacts/m09/M09_TRUTH_PROBE.json
-      - name: Bind exact-head receipt
+          python qps/m09/M09_LEGACY_PROCESSOR_TRUTH_PROBE.py | tee artifacts/m09/M09_REPAIR_PROBE.json
+          grep -q 'PASS_FAIL_CLOSED_METADATA_ONLY_REPAIR' artifacts/m09/M09_REPAIR_PROBE.json
+      - name: Bind exact-head repair receipt
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
           import hashlib, json, os, pathlib, subprocess
-          probe=pathlib.Path('artifacts/m09/M09_TRUTH_PROBE.json')
+          probe=pathlib.Path('artifacts/m09/M09_REPAIR_PROBE.json')
           data=json.loads(probe.read_text(encoding='utf-8'))
           receipt={
-            'schema':'qps.m09.truth_receipt.v1',
+            'schema':'qps.m09.repair_receipt.v2',
             'repo':os.environ['GITHUB_REPOSITORY'],
             'source_head_sha':os.environ['SOURCE_HEAD_SHA'],
             'observed_git_head':subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip(),
@@ -53,15 +55,16 @@ jobs:
             'run_attempt':os.environ['GITHUB_RUN_ATTEMPT'],
             'probe_sha256':hashlib.sha256(probe.read_bytes()).hexdigest(),
             'classification':data['classification'],
+            'historical_first_red':data['historical_first_red'],
             'status':'PASS',
             'authority':'OBSERVATION_ONLY_NO_DOCUMENT_TRUTH_TRANSFER'
           }
           assert receipt['source_head_sha']==receipt['observed_git_head']
-          pathlib.Path('artifacts/m09/M09_TRUTH_RECEIPT.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          pathlib.Path('artifacts/m09/M09_REPAIR_RECEIPT.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n',encoding='utf-8')
           PY
-      - name: Upload retained truth receipt
+      - name: Upload retained M09 repair receipt
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: qps-m09-truth-${{ env.SOURCE_HEAD_SHA }}
+          name: qps-m09-repair-${{ env.SOURCE_HEAD_SHA }}
           path: artifacts/m09/
           if-no-files-found: error
