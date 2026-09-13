@@ -72,9 +72,18 @@ jobs:
               assert r['promotion_allowed'] is False
               assert r['authority_transfer'] is False
               assert r['rex_preflight']['checklist_version']=='missioncontrol.rex.reuse_checklist.v1'
+              order=r['execution_order']
+              assert order['counterbalance_basis']=='SOURCE_SHA_PARITY_XOR_HABITAT'
+              assert order['index'] >= 1
+              if r['pair_id'] is not None:
+                  assert order['pair_position'] in {1,2}
+                  assert order['pair_direction'] in {'A_THEN_B','B_THEN_A'}
           assert len(rows)==8, len(rows)
-          assert sum(r['pair_id'] is not None for r in rows)==6
-          print(json.dumps({'status':'PASS_FRONTIER_RAW','habitat':habitat,'receipts':len(rows),'source_sha':actual},sort_keys=True))
+          pair_rows=[r for r in rows if r['pair_id'] is not None]
+          assert len(pair_rows)==6
+          directions={r['execution_order']['pair_direction'] for r in pair_rows}
+          assert len(directions)==1, directions
+          print(json.dumps({'status':'PASS_FRONTIER_RAW_COUNTERBALANCED','habitat':habitat,'receipts':len(rows),'pair_direction':next(iter(directions)),'source_sha':actual},sort_keys=True))
       - name: Upload raw frontier receipts
         uses: actions/upload-artifact@v4
         with:
@@ -118,6 +127,7 @@ jobs:
         shell: python
         run: |
           import json
+          import math
           import subprocess
           from pathlib import Path
           root=Path('mission-control/qps-triage-ultra/crew/measured/frontier')
@@ -127,23 +137,39 @@ jobs:
           assert result['task_receipts']==16
           assert result['accepted']==16 and result['rejected']==0
           assert result['habitats']==['linux','windows']
+          design=result['experimental_design']
+          assert design['pair_order_control']=='PASS_COUNTERBALANCED'
+          assert design['counterbalance_basis']=='SOURCE_SHA_PARITY_XOR_HABITAT'
+          assert all(set(v)=={'A_THEN_B','B_THEN_A'} for v in design['directions_by_pair'].values())
           assert result['pca']['status']=='READY_MEASURED'
           assert len(result['pca']['components']) >= 2
           assert result['pca']['feature_count'] >= 2
           assert result['bt']['status']=='READY_OBSERVED'
           assert result['bt']['observed_pairs']==6
+          assert result['bt']['model']=='TWO_NODE_BT_LOG_ODDS_V1'
+          assert result['bt']['analytic_scale_fixture']=='PASS'
           assert all(e['comparable'] for e in result['bt']['edges'])
+          assert all(e['pair_direction'] in {'A_THEN_B','B_THEN_A'} for e in result['bt']['edges'])
+          nodes={n['strategy']:n for n in result['bt']['nodes']}
+          assert set(nodes)=={'ALLOC_SINGLE_CELL','ALLOC_PAIRED_CELL'}
+          a=nodes['ALLOC_PAIRED_CELL']
+          b=nodes['ALLOC_SINGLE_CELL']
+          expected=math.log((a['wins']+0.5)/(b['wins']+0.5))
+          observed=a['bt_log_strength']-b['bt_log_strength']
+          assert math.isclose(observed, expected, rel_tol=1e-12, abs_tol=1e-12)
           assert result['competency_promotions']==0
           assert result['authority_transfer'] is False
           print(json.dumps({
-              'status':'PASS_CREW_FRONTIER_PCA_BT_DOV',
+              'status':'PASS_CREW_FRONTIER_PCA_BT_COUNTERBALANCED_DOV',
               'source_sha':actual,
               'task_receipts':result['task_receipts'],
               'habitats':result['habitats'],
+              'pair_order_control':design['pair_order_control'],
               'pca':result['pca']['status'],
               'pc1_explained':result['pca']['components'][0]['explained_variance_ratio'],
               'pc2_explained':result['pca']['components'][1]['explained_variance_ratio'],
               'bt':result['bt']['status'],
+              'bt_model':result['bt']['model'],
               'observed_pairs':result['bt']['observed_pairs'],
               'competency_promotions':0
           },sort_keys=True))
