@@ -2,14 +2,21 @@
   "schema": "qps.gm_iv_evidence_economics.v1",
   "mission": "GM-IV",
   "authority_transfer": false,
+  "model_scope": {
+    "evidence_economics_models": "LOCAL_GMIV_RING2_ECONOMICS_ONLY",
+    "global_model_context": "SEPARATE_MEASURED_CREW_PC3_AND_CONDITIONAL_BT_MAY_EXIST",
+    "rule": "LOCAL_ECONOMICS_DEFER_DOES_NOT_REVOKE_OR_REPLACE_SEPARATE_GLOBAL_MODEL_RESULTS"
+  },
   "fleet_invariant": {
     "reconnaissance_observed": 2,
     "reconnaissance_denominator": 8,
     "canonical_children_bound": 0,
+    "canonical_candidate_frontiers": ["GM-IV-F01", "GM-IV-F02"],
     "f03_bound": false,
     "f04_bound": false,
+    "f03_f04_expected_unfilled": true,
     "gm_v_state": "HELD",
-    "rule": "RECONNAISSANCE_EVIDENCE_DOES_NOT_CREATE_CHILD_BINDING"
+    "rule": "RECONNAISSANCE_EVIDENCE_OR_EXPERIMENTAL_WORKFLOW_NAMING_DOES_NOT_CREATE_CHILD_BINDING"
   },
   "metric_contract": {
     "queue_seconds": "MEASURED_FROM_JOB_CREATED_AT_TO_STARTED_AT",
@@ -111,13 +118,15 @@
     "interpretation": "PROVENANCE_BOUND_THE_REFERENCE_RETURN_DECISION_WITH_MUCH_HIGHER_EVIDENCE_PER_EXECUTION_SECOND_THAN_THE_REDUNDANT_FULL_RUNTIME_LANE"
   },
   "pca_gate": {
+    "scope": "LOCAL_GMIV_RING2_EVIDENCE_ECONOMICS",
     "state": "DEFER",
     "reason": "ONLY_THREE_ROWS_FROM_ONE_MISSION_AND_CREW_TIME_NOT_INSTRUMENTED",
-    "minimum_next_condition": "ADD_COMPARABLE_MEASURED_ROWS_ACROSS_AT_LEAST_TWO_FRONTIERS_AND_INSTRUMENT_CREW_TIME_BEFORE_USING_CREW_TIME_IN_PCA"
+    "minimum_next_condition": "ADD_COMPARABLE_MEASURED_ECONOMICS_ROWS_ACROSS_AT_LEAST_TWO_MISSIONS_OR_APPROVED_COMPARABLE_FRONTIER_CLASSES_AND_INSTRUMENT_CREW_TIME_BEFORE_USING_CREW_TIME_IN_THIS_PCA"
   },
   "bt_gate": {
+    "scope": "LOCAL_GMIV_RING2_EVIDENCE_ECONOMICS",
     "state": "DEFER",
-    "reason": "ONE_USEFUL_OBSERVED_PROVENANCE_VS_RUNTIME_COMPARISON_IS_NOT_A_STABLE_PAIRWISE_RANKING_SAMPLE",
-    "minimum_next_condition": "COLLECT_MULTIPLE_COMPARABLE_INTERVENTION_PAIRS_WITH_OBSERVED_OUTCOMES"
+    "reason": "ONE_USEFUL_OBSERVED_PROVENANCE_VS_RUNTIME_COMPARISON_IS_NOT_A_STABLE_LOCAL_PAIRWISE_RANKING_SAMPLE",
+    "minimum_next_condition": "COLLECT_MULTIPLE_COMPARABLE_ECONOMICS_INTERVENTION_PAIRS_WITH_OBSERVED_OUTCOMES"
   }
 }
