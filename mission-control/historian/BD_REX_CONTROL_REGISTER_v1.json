@@ -7,13 +7,17 @@
   "historian_parent_issue": 76,
   "runner_economics_issue": 79,
   "bounded_sample": {
-    "audited_prs": 9,
-    "review_findings_observed": 19,
-    "unresolved_finding_occurrences": 15,
-    "unique_open_bd_roots": 13,
-    "implemented_surviving_findings": 4,
-    "recurring_open_roots": 2,
-    "fleet_denominator_claim": false
+    "audited_prs": 15,
+    "review_findings_observed_cumulative": 24,
+    "current_unresolved_finding_occurrences_minimum": 9,
+    "durable_bd_roots_total": 14,
+    "current_open_bd_roots": 9,
+    "historian_positive_survival_findings_minimum": 6,
+    "recurring_roots_total": 2,
+    "recurring_open_roots": 0,
+    "controlled_recurring_roots": 2,
+    "fleet_denominator_claim": false,
+    "expansion_note": "Adds CODEX PRs 665/668/670 and Q_engineering_tools PRs 12/13/15 to the prior 9-PR MissionControl sample. PRs with zero review findings still count as audited PRs; only observed findings enter finding counts."
   },
   "lifecycle": [
     "TODO",
@@ -33,6 +37,19 @@
     "Negative, rejected, invalidated, and superseded evidence is retained rather than deleted.",
     "Synthetic or inferred counts are not PCA/BT eligible."
   ],
+  "control_proof": {
+    "first_proof_pr": 93,
+    "first_proof_sha": "6b7a014887c188ae7a0b2f536db201e76a9e6313",
+    "first_measured_run": 34774328258,
+    "repeat_pr": 94,
+    "repeat_sha": "208c40499db82c8a0b5f3e6277bf469c74e12afe",
+    "repeat_measured_run": 34774493436,
+    "repeat_frontier_run": 34774493526,
+    "repeat_merge_sha": "e507a4eae14d0bd12b137dbd409554c4cb14edad",
+    "repeat_triggered_workflows": 11,
+    "repeat_all_triggered_workflows_green": true,
+    "repair_code_unchanged_between_first_and_repeat": true
+  },
   "root_fields_required": [
     "bd_id",
     "title",
@@ -130,14 +147,15 @@
       "class": "REX_PREFLIGHT",
       "semantic_signature": "rex_preflight_not_fail_closed_before_execution",
       "severity": "P1",
-      "state": "ACTIVE",
+      "state": "CONTROL",
       "occurrence_count": 2,
       "source_prs": [47, 53],
       "repos": ["GBOGEB/pipeline-automation-hub"],
-      "current_code_evidence": "run_measured_tasks.py and frontier runners still materialize blocking_rex_ids as empty after workload execution",
+      "current_code_evidence": "shared rex_runtime_control.py is invoked before payload by measured/frontier/PC3 runners; blocked/admitted fixture passes",
       "rex_control_id": "REX-CM-001",
       "crew_owner": ["Doctor.REX", "RUNNER", "QA_SIGNALMAN"],
-      "done_when": "preflight executes before payload, blocking REX vetoes payload, receipt binds evaluated checks and a distinct-SHA repeat passes"
+      "proof_refs": ["PR#93@6b7a014887c188ae7a0b2f536db201e76a9e6313/run34774328258", "PR#94@208c40499db82c8a0b5f3e6277bf469c74e12afe/run34774493436"],
+      "done_when": "SATISFIED: fail-closed preflight plus distinct-source repeat"
     },
     {
       "bd_id": "HIST-BD-007",
@@ -145,14 +163,14 @@
       "class": "REX_RECURRENCE",
       "semantic_signature": "rex_recurrence_history_ignored",
       "severity": "P1",
-      "state": "TODO",
+      "state": "DONE",
       "occurrence_count": 1,
       "source_prs": [47],
       "repos": ["GBOGEB/pipeline-automation-hub"],
-      "current_code_evidence": "run_measured_tasks.py assigns recurrence_level NEW without consulting prior provenance-bound history",
-      "rex_control_id": null,
+      "current_code_evidence": "shared runtime kernel derives NEW/RECURRING/PERSISTENT/REGRESSION from retained prior evidence and regression fixture repeated on distinct SHA",
+      "rex_control_id": "REX-CM-001",
       "crew_owner": ["Doctor.REX", "HISTORIAN"],
-      "done_when": "postflight recurrence derives from prior occurrences and distinguishes NEW/RECURRING/PERSISTENT/REGRESSION"
+      "done_when": "SATISFIED for implementation; future observed recurrence remains a CONTROL regression sentinel"
     },
     {
       "bd_id": "HIST-BD-008",
@@ -160,14 +178,15 @@
       "class": "PCA_GATE",
       "semantic_signature": "ineligible_rows_contaminate_pca_readiness_variance",
       "severity": "P1",
-      "state": "ACTIVE",
+      "state": "DONE",
       "occurrence_count": 1,
       "source_prs": [47],
       "repos": ["GBOGEB/pipeline-automation-hub"],
-      "current_code_evidence": "build_measured_allocation.py computes varying features from all rows before selecting allocation_eligible rows",
-      "rex_control_id": null,
+      "current_code_evidence": "builder selects allocation_eligible rows before PCA readiness variance; workflow asserts variance_population=ALLOCATION_ELIGIBLE_ONLY",
+      "rex_control_id": "REX-CM-002",
       "crew_owner": ["Doctor.Analytics", "QA_SIGNALMAN"],
-      "done_when": "eligible rows are selected before every PCA readiness statistic"
+      "proof_refs": ["run34774328258", "run34774493436"],
+      "done_when": "SATISFIED"
     },
     {
       "bd_id": "HIST-BD-009",
@@ -194,7 +213,7 @@
       "occurrence_count": 1,
       "source_prs": [53],
       "repos": ["GBOGEB/pipeline-automation-hub"],
-      "current_code_evidence": "frontier runner executes manifest order sequentially without randomized/counterbalanced pair order",
+      "current_code_evidence": "frontier runner still executes manifest order sequentially without a recorded counterbalance/randomization contract",
       "rex_control_id": "REX-CM-002",
       "crew_owner": ["Doctor.Analytics", "PERFORMANCE_SPECIALIST"],
       "done_when": "pair order is counterbalanced or randomized across repeated trials and order is recorded"
@@ -205,14 +224,15 @@
       "class": "BT_MODEL",
       "semantic_signature": "two_node_bt_log_odds_separation_doubled",
       "severity": "P1",
-      "state": "ACTIVE",
+      "state": "CONTROL",
       "occurrence_count": 2,
       "source_prs": [53, 56],
       "repos": ["GBOGEB/pipeline-automation-hub"],
-      "current_code_evidence": "build_measured_allocation.py assigns each node full regularized log win/loss odds then centers, doubling two-node separation",
+      "current_code_evidence": "TWO_NODE_BT_LOG_ODDS_V1 enforces one log-odds separation; analytic 8-vs-4 fixture passes on two distinct exact source SHAs",
       "rex_control_id": "REX-CM-002",
       "crew_owner": ["Doctor.Analytics", "PERFORMANCE_SPECIALIST", "QA_SIGNALMAN"],
-      "done_when": "BT ability scale satisfies analytic fixtures and distinct-SHA repeat"
+      "proof_refs": ["PR#93/run34774328258", "PR#94/run34774493436"],
+      "done_when": "SATISFIED: analytic fixture plus distinct-source repeat"
     },
     {
       "bd_id": "HIST-BD-012",
@@ -220,14 +240,14 @@
       "class": "BT_EVIDENCE_DERIVATION",
       "semantic_signature": "stored_pair_labels_trusted_without_raw_timing_consistency",
       "severity": "P2",
-      "state": "ACTIVE",
+      "state": "DONE",
       "occurrence_count": 1,
       "source_prs": [56],
       "repos": ["GBOGEB/pipeline-automation-hub"],
-      "current_code_evidence": "builder validates winner enum but does not recompute winner/relative_gap from seconds_a/seconds_b and tie threshold",
+      "current_code_evidence": "builder derives winner/gap from seconds_a/seconds_b and tie threshold and fails closed on mismatch; repeated green on distinct SHA",
       "rex_control_id": "REX-CM-002",
       "crew_owner": ["Doctor.Analytics", "QA_SIGNALMAN"],
-      "done_when": "raw timings deterministically derive or fail-closed validate winner/gap"
+      "done_when": "SATISFIED"
     },
     {
       "bd_id": "HIST-BD-013",
@@ -243,33 +263,59 @@
       "rex_control_id": null,
       "crew_owner": ["Doctor.Contracts", "QA_SIGNALMAN"],
       "done_when": "receipt records and validates both candidate SHA and MissionControl source SHA"
+    },
+    {
+      "bd_id": "HIST-BD-014",
+      "title": "Do not use optimizable Python assert for lldb-mcp runtime pipe invariants",
+      "class": "RUNTIME_FAIL_CLOSED",
+      "semantic_signature": "runtime_pipe_invariant_relies_on_python_assert_removed_by_optimization",
+      "severity": "P2",
+      "state": "ACTIVE",
+      "occurrence_count": 1,
+      "source_prs": [668],
+      "repos": ["GBOGEB/CODEX"],
+      "current_code_evidence": "CODEX main retained `assert proc.stdin is not None and proc.stdout is not None` in scripts/qps_lldb_mcp_probe.py during Historian check; bounded repair opened as CODEX PR#676",
+      "rex_control_id": null,
+      "crew_owner": ["Doctor.Runtime", "QA_SIGNALMAN"],
+      "repair_ref": "GBOGEB/CODEX#676@dceb67f38b5efd1c5a5211e346df94bfc35d47ab",
+      "done_when": "explicit fail-closed pipe check emits structured REJECT/WITHHELD receipt and current CONTROL workflows remain green"
     }
   ],
   "control_measures": [
     {
       "control_id": "REX-CM-001",
-      "root_ids": ["HIST-BD-006"],
-      "state": "ACTIVE_REPAIR",
-      "measure_type": ["FAIL_CLOSED_PREFLIGHT", "REGRESSION_TEST", "EXACT_RECEIPT"],
-      "activation_reason": "recurrence_count>=2 across distinct PRs",
+      "root_ids": ["HIST-BD-006", "HIST-BD-007"],
+      "state": "CONTROL",
+      "measure_type": ["FAIL_CLOSED_PREFLIGHT", "HISTORY_AWARE_RECURRENCE", "REGRESSION_TEST", "EXACT_RECEIPT"],
+      "activation_reason": "HIST-BD-006 recurrence_count>=2 across distinct PRs",
       "crew": ["Doctor.REX", "RUNNER", "QA_SIGNALMAN"],
-      "control_gate": "blocking REX must stop payload before subprocess execution; admitted path records checked/triggered/blocking IDs; repeat on distinct source SHA"
+      "control_gate": "blocking REX stops payload before execution; admitted path records checked/triggered/blocking IDs; recurrence derives from retained history",
+      "control_proof": ["6b7a014887c188ae7a0b2f536db201e76a9e6313", "208c40499db82c8a0b5f3e6277bf469c74e12afe"]
     },
     {
       "control_id": "REX-CM-002",
-      "root_ids": ["HIST-BD-010", "HIST-BD-011", "HIST-BD-012"],
-      "state": "ACTIVE_REPAIR",
-      "measure_type": ["ANALYTIC_FIXTURE", "RAW_TIMING_DERIVATION", "ORDER_COUNTERBALANCE", "REGRESSION_TEST"],
+      "root_ids": ["HIST-BD-008", "HIST-BD-010", "HIST-BD-011", "HIST-BD-012"],
+      "state": "PARTIAL_CONTROL",
+      "measure_type": ["ELIGIBLE_ONLY_PCA_GATE", "ANALYTIC_FIXTURE", "RAW_TIMING_DERIVATION", "ORDER_COUNTERBALANCE", "REGRESSION_TEST"],
       "activation_reason": "BT scale root recurrence_count>=2 plus adjacent experiment-design/evidence-integrity roots",
       "crew": ["Doctor.Analytics", "PERFORMANCE_SPECIALIST", "QA_SIGNALMAN"],
-      "control_gate": "two-node known-odds fixture, raw timing consistency, pair-order evidence and distinct source repeat all pass before measured BT promotion eligibility"
+      "controlled_roots": ["HIST-BD-011"],
+      "done_roots": ["HIST-BD-008", "HIST-BD-012"],
+      "active_roots": ["HIST-BD-010"],
+      "control_gate": "BT scale/raw timing/PCA gate are repeated; full family CONTROL withheld until pair-order counterbalance is implemented and repeated"
     }
   ],
   "implemented_surviving_positive_controls": [
     "conceptual C06 current control authority remains false",
     "prior measured receipts restored before allocation aggregation",
     "canonical returned receipts validated before allocation evidence",
-    "pairwise schema/evidence/comparability/source identity validation survives with residual HIST-BD-012"
+    "pairwise schema/evidence/comparability/source identity validation survives",
+    "Q_engineering_tools PR13 P1 malformed LLDB -o pair repaired by PR15 and survives current main",
+    "CODEX PR668 executable-bit/shebang review finding survives: qps_lldb_mcp_probe.py is mode 100755"
+  ],
+  "invalidated_or_contextualized_review_findings": [
+    "CODEX PR668 generic subprocess/untrusted-input warning: executable is internally resolved and invocation uses no shell",
+    "CODEX PR668 broad outer Exception: retained as intentional probe boundary converting protocol/runtime faults into structured REJECT receipt"
   ],
   "expansion_algorithm": [
     "append observed occurrence",
@@ -297,5 +343,5 @@
     "time_to_first_red",
     "time_to_control"
   ],
-  "pca_bt_eligibility": "DEFER_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE"
+  "pca_bt_eligibility": "MEASURED_LOCAL_MODELS_CONTROLLED_WITH_BOUNDARIES; FLEET_CROSS_REPO_PCA_BT_DEFER_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE"
 }
