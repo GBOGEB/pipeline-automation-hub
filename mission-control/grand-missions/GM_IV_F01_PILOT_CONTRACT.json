@@ -1,0 +1,31 @@
+{
+  "schema": "qps.gm_iv_f01_pilot_contract.v1",
+  "wave": "GM-FLEET-04-F01-PILOT",
+  "mission": "GM-IV",
+  "slot": "GM-IV-F01",
+  "repository": "GBOGEB/DOCX_RTM_Automation",
+  "source_sha": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96",
+  "pilot_capability": "EXACT_SHA_SELF_INDEX_VERIFICATION_AND_MISSIONCONTROL_CONSUMPTION",
+  "producer": "scripts/mip_repo_self_index.py",
+  "independent_verifier": "scripts/mip_verify_self_index.py",
+  "crew": ["ENGINEER", "SMOKER", "QA"],
+  "required": {
+    "verifier_result": "PASS",
+    "root_runs": 2,
+    "root_normalized_equal": true,
+    "head_sha_exact": true,
+    "missioncontrol_consumer_executes_gt0": true,
+    "deterministic_repeat": true,
+    "authority_transfer": false,
+    "children_bound": false
+  },
+  "success_disposition": "PILOT_CONTROL_CANDIDATE",
+  "post_success_gate": "DEFAULT_BRANCH_REPEAT_BEFORE_ANY_CHILD_BINDING",
+  "forbidden": [
+    "MUTATE_F01_SOURCE",
+    "BIND_GM_IV_CHILD_FROM_PILOT_ALONE",
+    "TRANSFER_ENGINEERING_AUTHORITY",
+    "PROMOTE_PCA_OR_BT_FROM_THIS_SINGLE_FRONTIER",
+    "SURGE_DOCTOR_WITHOUT_OBSERVED_APPLICATION_RED"
+  ]
+}
