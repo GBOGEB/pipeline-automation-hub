@@ -58,6 +58,7 @@ jobs:
           python - <<'PY'
           import json
           import os
+          import subprocess
           import time
           from datetime import datetime, timezone
           from pathlib import Path
@@ -77,6 +78,10 @@ jobs:
           active = (ended - started).total_seconds()
           release = (released - ended).total_seconds()
           exposure = (released - opened).total_seconds()
+          source_sha = subprocess.check_output(
+              ['git', 'rev-parse', 'HEAD'],
+              text=True,
+          ).strip()
 
           receipt = {
               'schema': 'missioncontrol.crew_exposure_receipt.v1',
@@ -93,9 +98,9 @@ jobs:
               'active_seconds': active,
               'release_seconds': release,
               'exposure_seconds': exposure,
-              'intervention_type': 'MEASURE',
+              'intervention_type': 'INSTRUMENTATION',
               'outcome': 'CONTROL',
-              'source_sha': os.environ['GITHUB_SHA'],
+              'source_sha': source_sha,
               'receipt_evidence_class': 'INSTRUMENTATION_CANARY_ONLY',
               'authority_transfer': False,
               'child_binding': False,
