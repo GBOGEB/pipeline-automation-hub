@@ -52,44 +52,24 @@
       "name": "EIGHT_FRONTIER_EXPANSION",
       "frontier_count": 8,
       "objective": "scale_controlled_reconnaissance_to_eight_frontiers_without_receipt_or_authority_degradation",
-      "state": "STAGED_ACTIVE_PILOT_2_OF_8",
+      "state": "STAGED_ACTIVE_RECON_2_OF_8",
       "children": [],
-      "crew_posture": "TWO_PILOT_CONTROL_CELLS",
+      "crew_posture": "BOUNDED_RECON_SECONDMENT",
       "observed": false,
       "activation_observed": true,
-      "activation_stage": "PILOT_2_OF_8",
-      "candidate_frontiers": ["GM-IV-F01", "GM-IV-F03"],
-      "controlled_pilot_frontiers": ["GM-IV-F01", "GM-IV-F03"],
-      "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
-      "unfilled_frontier_slots": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
-      "launch_gate": "GM_IV_TWO_INDEPENDENT_CONTROLLED_PILOTS_PASS",
+      "activation_stage": "RECON_2_OF_8",
+      "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02"],
+      "unfilled_frontier_slots": ["GM-IV-F03", "GM-IV-F04", "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+      "launch_gate": "GM_FLEET_03_FIRST_EXACT_SHA_RUNTIME_GATE_PASS",
       "activation_evidence": {
-        "prior_stage": "RECON_2_OF_8",
-        "pilot_pair": [
-          {
-            "frontier": "GM-IV-F01",
-            "repository": "GBOGEB/DOCX_RTM_Automation",
-            "target_sha": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96",
-            "control_source_sha": "2cb9de6b07ec7228578da29dd3d7b5804499ba7c",
-            "workflow_run_id": 34768296758,
-            "artifact_id": 10320854729,
-            "artifact_digest": "sha256:74f7566e41112ece5cc8f014ca6574170854e23ec718993f0384aae6fe24cffa",
-            "capability": "ADR_OCD_QPS_BRIDGE_VALIDATION"
-          },
-          {
-            "frontier": "GM-IV-F03",
-            "repository": "GBOGEB/codespaces-jupyter",
-            "target_sha": "1eba2240a86d1fd2bd6375e2fac481caf645cdde",
-            "control_source_sha": "6dd4d5b375859dabd5e94aac26b8acc61a757ad7",
-            "workflow_run_id": 34772053427,
-            "artifact_id": 10322471532,
-            "artifact_digest": "sha256:24fc6d6122077bee933d2c5b752a9159fa10ed34ea83c4bfebb3ebdfb0cca38c",
-            "capability": "REPRODUCIBLE_NOTEBOOK_RUNTIME_RECEIPT"
-          }
-        ],
-        "decision": "PILOT_2_OF_8_REQUIRES_GOVERNOR_GATE_PASS"
+        "source_sha": "12d54ba2d6e08ff8c816d2fbc9ed44c3f167fef1",
+        "workflow_run_id": 34767440206,
+        "job_id": 103750817832,
+        "artifact_id": 10320783667,
+        "artifact_digest": "sha256:f66628e8cc49099747d26f998f3ab6b02138a3ea50685798b682a1727f405983",
+        "decision": "READY_FOR_RECON_2_OF_8_RUNTIME_PROOF"
       },
-      "promotion_boundary": "PILOT_2_OF_8_BINDS_TWO_CONTROLLED_PILOT_FRONTIERS_ONLY;_NO_CHILD_BINDING_OR_AUTHORITY_TRANSFER;_RECON_4_OF_8_REQUIRES_A_SEPARATE_GATE"
+      "promotion_boundary": "CANDIDATE_RECON_DOES_NOT_CREATE_CHILD_BINDING;_EACH_FRONTIER_REQUIRES_BOUNDED_RUNTIME_RECEIPT_AND_EXPLICIT_DISPOSITION_BEFORE_PILOT"
     },
     {
       "id": "GM-V",
@@ -110,7 +90,6 @@
     "NO_PCA_OR_BT_PROMOTION_FROM_SYNTHETIC_ROWS",
     "NO_CREW_SURGE_WITHOUT_NAMED_FRONTIER_AND_RETURN_PATH",
     "GM_IV_CANDIDATE_RECON_IS_NOT_CHILD_ACCEPTANCE",
-    "GM_IV_PILOT_STAGE_DOES_NOT_BIND_CHILDREN_OR_TRANSFER_AUTHORITY",
     "GM_V_REMAINS_HELD_UNTIL_GM_IV_REPEAT_CONTROL"
   ]
 }
