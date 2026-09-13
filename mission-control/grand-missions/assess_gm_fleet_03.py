@@ -55,28 +55,42 @@ def main():
         if int(o.get("steps_executed", 0) or 0) == 0 and o.get("state") == "BLOCKED"
     ]
 
-    gm_iv_state = by_id["GM-IV"]["state"]
-    gm_iv_valid_state = gm_iv_state in ["HELD", "STAGED_ACTIVE_RECON_2_OF_8"]
+    gm_iv = by_id["GM-IV"]
+    gm_iv_state = gm_iv["state"]
+    gm_iv_valid_state = gm_iv_state in [
+        "HELD",
+        "STAGED_ACTIVE_RECON_2_OF_8",
+        "STAGED_ACTIVE_PILOT_2_OF_8",
+    ]
     staged_shape_ok = True
     if gm_iv_state == "STAGED_ACTIVE_RECON_2_OF_8":
         staged_shape_ok = (
-            by_id["GM-IV"].get("children") == []
-            and by_id["GM-IV"].get("activation_stage") == "RECON_2_OF_8"
-            and by_id["GM-IV"].get("candidate_frontiers") == ["GM-IV-F01", "GM-IV-F02"]
+            gm_iv.get("children") == []
+            and gm_iv.get("activation_stage") == "RECON_2_OF_8"
+            and gm_iv.get("candidate_frontiers") == ["GM-IV-F01", "GM-IV-F02"]
+            and len(gm_iv.get("unfilled_frontier_slots", [])) == 6
+        )
+    elif gm_iv_state == "STAGED_ACTIVE_PILOT_2_OF_8":
+        staged_shape_ok = (
+            gm_iv.get("children") == []
+            and gm_iv.get("activation_stage") == "PILOT_2_OF_8"
+            and gm_iv.get("controlled_pilot_frontiers") == ["GM-IV-F01", "GM-IV-F03"]
+            and gm_iv.get("reference_frontiers") == ["GM-IV-F02", "GM-IV-F04"]
+            and gm_iv.get("unfilled_frontier_slots") == ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"]
         )
 
     checks = [
         ("01_gm_iii_control", by_id["GM-III"]["state"] == "RECON_CONTROL", by_id["GM-III"]["state"]),
         ("02_gm_iv_held_or_controlled_staged", gm_iv_valid_state, gm_iv_state),
         ("03_gm_v_hard_held", by_id["GM-V"]["state"] == "HELD" and by_id["GM-V"].get("children") == [], by_id["GM-V"]["state"]),
-        ("04_two_named_candidate_frontiers", len(candidates.get("candidate_ring", [])) == 2, len(candidates.get("candidate_ring", []))),
-        ("05_six_slots_remain_unfilled", len(candidates.get("unfilled_slots", [])) == 6, len(candidates.get("unfilled_slots", []))),
+        ("04_original_recon_ring_is_evidence_backed", len(candidates.get("candidate_ring", [])) == 2, len(candidates.get("candidate_ring", []))),
+        ("05_current_stage_frontier_shape", staged_shape_ok, gm_iv.get("activation_stage")),
         ("06_required_capability_host_coverage", all_capabilities_covered, capability_rows),
         ("07_no_authority_transfer", contract.get("authority_transfer") is False and candidates.get("authority_transfer") is False, False),
         ("08_registered_capacity_not_claimed_runtime", contract["capacity_classes"]["REGISTERED"].startswith("counted_from"), len(records)),
         ("09_snapshot_not_promoted_to_measured", snap.get("snapshot_class") == "MIXED_OBSERVED_AND_EXPERT_SEEDED", snap.get("snapshot_class")),
         ("10_candidate_recon_not_child_binding", "CANDIDATE_RECON_IS_NOT_A_GM_IV_CHILD_BINDING" in candidates.get("invariants", []), True),
-        ("11_staged_shape_if_promoted", staged_shape_ok, gm_iv_state),
+        ("11_staged_shape_governed", staged_shape_ok, gm_iv_state),
     ]
 
     failed = [c for c in checks if not c[1]]
@@ -85,8 +99,10 @@ def main():
         decision = "HELD_STRUCTURAL_GATE_RED"
     elif gm_iv_state == "HELD":
         decision = "READY_FOR_RECON_2_OF_8_RUNTIME_PROOF"
-    else:
+    elif gm_iv_state == "STAGED_ACTIVE_RECON_2_OF_8":
         decision = "PASS_STAGED_ACTIVE_RECON_2_OF_8_CONTROL_SHAPE"
+    else:
+        decision = "PASS_STAGED_ACTIVE_PILOT_2_OF_8_CONTROL_SHAPE"
 
     receipt = {
         "schema": "qps.gm_fleet_03_capacity_receipt.v1",
@@ -100,10 +116,13 @@ def main():
         "maturity_counts": dict(sorted(maturity.items())),
         "load_counts": dict(sorted(loads.items())),
         "capability_coverage": capability_rows,
-        "candidate_frontiers": candidates.get("candidate_ring", []),
-        "unfilled_slots": candidates.get("unfilled_slots", []),
+        "original_candidate_ring": candidates.get("candidate_ring", []),
+        "controlled_pilot_frontiers": gm_iv.get("controlled_pilot_frontiers", []),
+        "reference_frontiers": gm_iv.get("reference_frontiers", []),
+        "unfilled_slots": gm_iv.get("unfilled_frontier_slots", candidates.get("unfilled_slots", [])),
         "retained_zero_step_observations": len(zero_step_blocks),
         "gm_iv_state": gm_iv_state,
+        "gm_iv_activation_stage": gm_iv.get("activation_stage"),
         "structural_checks": [
             {"check": n, "result": "PASS" if ok else "FAIL", "detail": detail}
             for n, ok, detail in checks
@@ -122,13 +141,14 @@ def main():
     print(json.dumps({
         "result": "PASS_GM_FLEET_03_STRUCTURE" if structural_release else "FAIL_GM_FLEET_03_STRUCTURE",
         "registered_crew_records": len(records),
-        "candidate_frontiers": len(candidates.get("candidate_ring", [])),
         "gm_iv_state": gm_iv_state,
+        "gm_iv_activation_stage": gm_iv.get("activation_stage"),
         "activation_decision": decision,
         "source_sha": receipt["source_sha"],
     }, sort_keys=True))
     if failed:
         raise SystemExit(1)
+
 
 if __name__ == "__main__":
     main()
