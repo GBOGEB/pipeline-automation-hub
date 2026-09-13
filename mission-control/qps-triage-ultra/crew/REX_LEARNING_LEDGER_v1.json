@@ -1,0 +1,92 @@
+{
+  "schema": "missioncontrol.crew.rex_learning_ledger.v1",
+  "status": "CANDIDATE_CANONICAL",
+  "purpose": "Route lessons learned into crew competencies, validators, doctrine and future allocation.",
+  "entries": [
+    {
+      "rex_id": "REX-001",
+      "title": "namespace/action-status collision",
+      "source_class": "DECLARED_GLOBAL_REX",
+      "affected_competencies": ["architecture", "evidence_provenance", "operations_control"],
+      "primary_roles": ["U02", "U07", "U08"],
+      "preventive_controls": ["registered_namespaces", "state_machine_validation", "collision_check"],
+      "learning_signal": "Repeated ambiguity between entity/action/state names must trigger taxonomy repair before new automation is added.",
+      "recurrence_metric": "namespace_collision_count"
+    },
+    {
+      "rex_id": "REX-002",
+      "title": "unregistered semantic vocabulary",
+      "source_class": "DECLARED_GLOBAL_REX",
+      "affected_competencies": ["deep_reading", "architecture", "evidence_provenance", "rex_learning"],
+      "primary_roles": ["U08", "S06", "U02"],
+      "preventive_controls": ["vocabulary_registry", "KEB_challenge", "schema_enum_or_glossary_binding"],
+      "learning_signal": "New terms are provisional until registered or mapped to canonical vocabulary.",
+      "recurrence_metric": "unregistered_term_count"
+    },
+    {
+      "rex_id": "REX-003",
+      "title": "YAML line length",
+      "source_class": "DECLARED_GLOBAL_REX",
+      "affected_competencies": ["build_repair", "runtime_execution"],
+      "primary_roles": ["S05", "U08"],
+      "preventive_controls": ["lint_before_merge", "bounded_line_formatting"],
+      "learning_signal": "Formatting defects that repeatedly block CI should be converted from human memory into automated lint gates.",
+      "recurrence_metric": "yaml_lint_failure_count"
+    },
+    {
+      "rex_id": "REX-004",
+      "title": "stale active-dock action namespace",
+      "source_class": "DECLARED_GLOBAL_REX",
+      "affected_competencies": ["architecture", "planning", "operations_control"],
+      "primary_roles": ["U02", "U04", "U07"],
+      "preventive_controls": ["active_namespace_census", "return_or_retire_stale_actions", "temporal_lineage"],
+      "learning_signal": "An action surface must not remain active merely because it existed in a previous wave.",
+      "recurrence_metric": "stale_active_action_count"
+    },
+    {
+      "rex_id": "REX-005",
+      "title": "unbound promotion/proof gate",
+      "source_class": "DECLARED_GLOBAL_REX",
+      "affected_competencies": ["evidence_provenance", "operations_control", "planning"],
+      "primary_roles": ["U01", "U03", "U06", "U08", "S01", "S06"],
+      "preventive_controls": ["explicit_DoV", "exact_SHA_receipt", "independent_challenge", "bounded_authority_gate"],
+      "learning_signal": "No promotion may occur without a named proof gate, evidence owner and accepted receipt.",
+      "recurrence_metric": "unbound_promotion_count"
+    },
+    {
+      "rex_id": "REX-006",
+      "title": "zero-step GitHub Actions preexecution",
+      "source_class": "DECLARED_GLOBAL_REX_AND_OBSERVED_RUNTIME_PATTERN",
+      "affected_competencies": ["runtime_execution", "evidence_provenance", "operations_control"],
+      "primary_roles": ["S03", "U06", "U04", "S05", "S07"],
+      "preventive_controls": ["runner_id_gt_0", "steps_executed_gt_0", "do_not_patch_application_before_runner_assignment", "runtime_receipt"],
+      "learning_signal": "A workflow object is not execution evidence until a real runner is assigned and at least one step executes.",
+      "recurrence_metric": "zero_step_run_count"
+    }
+  ],
+  "learning_loop": [
+    "mission_event",
+    "classify_REX_or_new_signal",
+    "bind_affected_competency_and_roles",
+    "add_preventive_control",
+    "execute_future_mission",
+    "measure_recurrence",
+    "update_competency_evidence",
+    "promote_merge_prune_or_retrain_role"
+  ],
+  "ledger_fields_for_future_entries": [
+    "rex_id",
+    "title",
+    "source_class",
+    "event_sha_or_receipt",
+    "affected_competencies",
+    "primary_roles",
+    "preventive_controls",
+    "learning_signal",
+    "recurrence_metric",
+    "before_count",
+    "after_count",
+    "accepted_by",
+    "closed_at"
+  ]
+}

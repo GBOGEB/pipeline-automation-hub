@@ -1,0 +1,100 @@
+{
+  "schema": "missioncontrol.crew.role_development_policy.v1",
+  "status": "CANDIDATE_CANONICAL",
+  "principle": "New roles are demand-created by repeated mission need, not title-created in advance.",
+  "role_need_triggers": [
+    "same_first_red_recurs_across_two_or_more_missions",
+    "existing_role_has_persistent_queue_or_crew_wait_pressure",
+    "authority_boundary_requires_independent_specialist",
+    "repeated_REX_has_no_clear_owner",
+    "new_tool_habitat_or_license_creates_special_execution_lane",
+    "semantic_or_evidence_gap_repeatedly_blocks_promotion",
+    "PCA_or_BT_exposes_stable_latent_work_cluster_not_owned_by_current_role"
+  ],
+  "proposal_required_fields": [
+    "candidate_role_id",
+    "problem_statement",
+    "mission_feedback_refs",
+    "required_competencies",
+    "authority_boundary",
+    "tools_resources",
+    "trial_mission",
+    "mentor_or_challenger",
+    "success_receipts",
+    "failure_or_merge_condition",
+    "expected_PCA_or_BT_effect"
+  ],
+  "lifecycle": [
+    {
+      "state": "NEED_SIGNAL",
+      "entry": "mission_feedback_or_REX_or_measured_pressure",
+      "exit_gate": "problem_is_repeated_or_structurally_distinct"
+    },
+    {
+      "state": "CONCEPTUAL",
+      "entry": "role_card_created_with_target_profile",
+      "rules": ["no_promotion_authority", "no_CONTROL_authority", "no_claim_of_measured_competence"],
+      "exit_gate": "bounded_trial_defined"
+    },
+    {
+      "state": "TRIAL",
+      "entry": "one_named_mission_and_victory_condition",
+      "rules": ["pair_with_existing_authority_or_challenger", "capture_accepted_rejected_deferred_work", "capture_runtime_and_REX_feedback"],
+      "exit_gate": "trial_receipt_returned"
+    },
+    {
+      "state": "PARTIAL",
+      "entry": "at_least_one_accepted_bounded_task",
+      "rules": ["competency_vector_remains_seeded_except_measured_dimensions", "repeat_on_second_context"],
+      "exit_gate": "two_independent_accepted_tasks_or_explicit_domain_exception"
+    },
+    {
+      "state": "OBSERVED",
+      "entry": "repeatable_work_pattern_and_evidence_history",
+      "rules": ["may_be_scheduled_normally", "authority_still_separate_from_competence"],
+      "exit_gate": "CONTROL_eligibility_or_specialist_merge_prune_decision"
+    },
+    {
+      "state": "CONTROL_ELIGIBLE",
+      "entry": "repeat_evidence_plus_bounded_authority_plus_relevant_REX_controls",
+      "rules": ["retain_minimum_control_cell", "watch_recurrence", "return_surplus_capacity"],
+      "exit_gate": "stable_CONTROL_or_reopen_on_red"
+    },
+    {
+      "state": "MERGED_PRUNED_RETURNED",
+      "entry": "role_duplicates_existing_capability_or_need_disappears_or_mission_enters_CONTROL",
+      "rules": ["preserve_lineage", "preserve_REX", "do_not_delete_history"]
+    }
+  ],
+  "feedback_channels": {
+    "mission_feedback": ["PASS", "FAIL", "DEFER", "first_red", "accepted_work", "rejected_work", "crew_wait"],
+    "runtime_feedback": ["queue_seconds", "execute_seconds", "runner_class", "steps_executed", "retries", "artifact_reuse"],
+    "evidence_feedback": ["exact_SHA", "independent_consumer", "source_authority", "challenge_result", "fresh_repeat"],
+    "REX_feedback": ["new_REX", "recurrence", "prevented_recurrence", "doctrine_update"],
+    "resource_feedback": ["current_load", "secondment", "tool_access", "license", "special_habitat", "capacity_pressure"]
+  },
+  "role_merge_rules": [
+    "merge_when_two_roles_have_same_authority_boundary_and_more_than_80_percent_shared_measured_tasks",
+    "keep_separate_when_independence_is_required_for_verification_or_challenge",
+    "keep_specialist_when_tool_or_habitat_is_unique_and_recurring",
+    "return_specialist_to_reserve_when_marginal_value_is_zero",
+    "prune_conceptual_role_after_three_trials_without_distinct_value_unless_blocked_by_external_condition"
+  ],
+  "candidate_roles_seeded_now": [
+    {"crew_id": "C01", "role": "Scout", "need": "structured frontier discovery before deep read"},
+    {"crew_id": "C02", "role": "Reader", "need": "separate observation from repair pressure"},
+    {"crew_id": "C03", "role": "Targeter", "need": "explicit bounded-objective design from BT/PCA/first-red"},
+    {"crew_id": "C04", "role": "Builder / Repairer", "need": "generic implementation role distinct from Doctor specialist"},
+    {"crew_id": "C05", "role": "Integrator / Federator", "need": "independent cross-repo adapter and consumer closure"},
+    {"crew_id": "C06", "role": "Operator", "need": "stable post-promotion execution and CONTROL watch"},
+    {"crew_id": "C07", "role": "Performance Specialist", "need": "queue-vs-execute and resource optimization beyond generic analysis"},
+    {"crew_id": "C08", "role": "Independent Verifier", "need": "structural independence where QA seat alone is insufficient"}
+  ],
+  "ambassador_rule": {
+    "crew_id": "S01",
+    "state": "OBSERVED_SPECIALIST",
+    "activation_triggers": ["claim_boundary_red", "README_or_CI_authority_mismatch", "historical_lineage_needs_visible_reconciliation"],
+    "return_trigger": "claim_boundary_reconciled_and_control_receipt_accepted",
+    "must_not": ["silently_rewrite_historical_results", "assume_engineering_authority", "promote_without_TM_QA_Governor_gate"]
+  }
+}

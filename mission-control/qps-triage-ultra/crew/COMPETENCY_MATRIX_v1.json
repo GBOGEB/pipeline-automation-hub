@@ -1,0 +1,70 @@
+{
+  "schema": "missioncontrol.crew.competency_matrix.v1",
+  "status": "CANDIDATE_CANONICAL",
+  "scale": {
+    "L0": "UNPROVEN: no accepted evidence",
+    "L1": "AWARE: understands vocabulary and constraints",
+    "L2": "ASSISTED: completes bounded work with guidance",
+    "L3": "INDEPENDENT: completes ordinary work independently",
+    "L4": "ADVANCED: handles abnormal or complex conditions",
+    "L5": "EXPERT: designs methods and mentors other crews",
+    "L6": "AUTHORITY: defines canonical rules or approves bounded state"
+  },
+  "dimensions": {
+    "discovery": "Find repos, branches, files, systems, dependencies and unexplored surfaces.",
+    "deep_reading": "Read code, documents, logs, issues, history and interfaces without substituting assumptions for evidence.",
+    "architecture": "Model functions, roles, nodes, edges, authority, lineage and temporal structure.",
+    "planning": "Turn target state into bounded actions, dependencies, resources, gates and victory conditions.",
+    "build_repair": "Create, modify, debug and repair implementation artifacts.",
+    "runtime_execution": "Execute real >0-step probes, workflows, tests and operational procedures.",
+    "evidence_provenance": "Produce and challenge exact-source, exact-SHA, receipt and independent-consumer evidence.",
+    "analysis_pca_bt": "Use DMAIC, measured PCA, BT and reverse pressure to rank interventions and expose latent workload structure.",
+    "operations_control": "Operate stable capability, monitor recurrence and apply bounded CONTROL rules.",
+    "rex_learning": "Assimilate lessons, prevent recurrence, update doctrine and generate reusable REX."
+  },
+  "evidence_classes": {
+    "TARGET_PROFILE": "Desired competency for a role that is not yet proven.",
+    "EXPERT_SEEDED_FROM_OBSERVED_ROLE": "Planning prior inferred from an observed role definition; not measured competence.",
+    "EXPERT_SEEDED_FROM_OBSERVED_M09_ROLE": "Planning prior anchored to observed M09 work; still not measured competence.",
+    "EXPERT_SEEDED_FROM_OBSERVED_ROLE_ALIASES": "Planning prior for an observed surface represented under multiple role names.",
+    "MEASURED": "Derived from accepted mission/runtime receipts and reproducible telemetry."
+  },
+  "promotion_rules": {
+    "L0_to_L1": ["role_definition_exists", "vocabulary_and_authority_boundary_acknowledged"],
+    "L1_to_L2": ["one_bounded_trial", "mentor_or_gate_review", "receipt_returned"],
+    "L2_to_L3": ["two_accepted_independent_tasks", "no_unresolved_authority_breach", "replayable_evidence"],
+    "L3_to_L4": ["abnormal_case_handled", "first_red_recovery_proven", "REX_assimilated"],
+    "L4_to_L5": ["method_improves_multiple_missions", "teaches_or_reduces_dependency_on_single_expert", "measured_repeat"],
+    "L5_to_L6": ["explicit_authority_assignment", "independent_challenge", "repeat_control_evidence", "no_authority_transfer_violation"]
+  },
+  "control_eligibility_gate": [
+    "maturity_is_OBSERVED_or_PARTIAL_with_required_receipts",
+    "at_least_one_fresh_repeat_after_initial_acceptance",
+    "accepted_work_exceeds_rejected_work_for_bounded_scope",
+    "all_relevant_REX_controls_applied",
+    "authority_is_explicit_and_scope_bounded",
+    "no_conceptual_role_is_control_eligible"
+  ],
+  "measurement_fields": [
+    "accepted_receipt_count",
+    "rejected_receipt_count",
+    "defer_count",
+    "first_red_recovery_count",
+    "repeat_pass_count",
+    "rex_recurrence_count",
+    "queue_seconds",
+    "execute_seconds",
+    "crew_wait_loss",
+    "independent_consumer_count",
+    "authority_breach_count",
+    "last_evidence_sha"
+  ],
+  "competence_formula": "knowledge + skill + tool_access + runtime_experience + evidence_quality + decision_authority + REX_history + repeatability",
+  "anti_patterns": [
+    "code_generated_is_not_execution_competency",
+    "test_written_is_not_verification_competency",
+    "repo_read_is_not_architecture_competency",
+    "claim_made_is_not_KEB_evidence_competency",
+    "single_PASS_is_not_CONTROL_competency"
+  ]
+}
