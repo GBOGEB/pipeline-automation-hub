@@ -1,0 +1,97 @@
+{
+  "schema": "qps.gm_iv_ring2_scout_scoreboard.v1",
+  "mission": "GM-IV",
+  "state": "CANDIDATE_SCOUTING_ONLY",
+  "canonical_children_bound": 0,
+  "formal_slots_assigned_by_this_artifact": 0,
+  "selection_basis": "information_gain_plus_provenance_plus_executable_surface_minus_overlap_and_evidence_cost",
+  "candidates": [
+    {
+      "rank": 1,
+      "repository": "GBOGEB/codespaces-jupyter",
+      "source_sha": "1eba2240a86d1fd2bd6375e2fac481caf645cdde",
+      "size_kb": 607,
+      "novelty": 0.90,
+      "provenance_clarity": 0.85,
+      "executable_surface": 0.92,
+      "strategic_relevance": 0.82,
+      "evidence_cost_efficiency": 0.88,
+      "overlap_penalty": 0.15,
+      "score": 0.86,
+      "evidence": [
+        "recent GBOGEB W69 runtime-producer federation",
+        "W111 mesh dock at exact head",
+        "explicit victory requires >0 notebook cells twice plus equivalent governed output",
+        "small repository surface and LICENSE present"
+      ],
+      "next_action": "SCOUT_A_EXACT_SHA_NOTEBOOK_REPEAT",
+      "slot_binding": false
+    },
+    {
+      "rank": 2,
+      "repository": "GBOGEB/yaml-reference-parser",
+      "source_sha": "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99",
+      "size_kb": 2066,
+      "novelty": 0.82,
+      "provenance_clarity": 0.45,
+      "executable_surface": 0.80,
+      "strategic_relevance": 0.72,
+      "evidence_cost_efficiency": 0.78,
+      "overlap_penalty": 0.10,
+      "score": 0.70,
+      "evidence": [
+        "Makefile plus test surface present",
+        "YAML 1.2/1.3 parser surface is capability-diverse",
+        "latest head is Clojure port",
+        "upstream/provenance boundary still requires explicit scout proof"
+      ],
+      "next_action": "SCOUT_B_PROVENANCE_AND_TEST_SURFACE",
+      "slot_binding": false
+    },
+    {
+      "rank": 3,
+      "repository": "GBOGEB/cryogenic-accelerator-workspace",
+      "source_sha": "96c2212823c9af101cc6791edd26351960fd89ec",
+      "size_kb": 181,
+      "score": 0.58,
+      "reason_downranked": "strong executable evidence but substantial M08/QPS authority overlap already harvested",
+      "slot_binding": false
+    },
+    {
+      "rank": 4,
+      "repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "source_sha": "6f6ce5fe1042e4ff59be06909b248a6444136e92",
+      "size_kb": 12357,
+      "score": 0.52,
+      "reason_downranked": "M07 split disposition already proved independent leak kernel and quarantined QPLANT authority; lower new information gain",
+      "slot_binding": false
+    },
+    {
+      "rank": 5,
+      "repository": "GBOGEB/docker-stacks",
+      "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "size_kb": 8148,
+      "score": 0.43,
+      "reason_downranked": "upstream-style Jupyter image fleet with materially heavier runtime cost and overlap with Scout-A runtime habitat",
+      "slot_binding": false
+    },
+    {
+      "rank": 6,
+      "repository": "GBOGEB/telegraf",
+      "source_sha": "d19411ff5927a3a733ae8e146e7645c560a180b6",
+      "size_kb": 74503,
+      "score": 0.28,
+      "reason_downranked": "observed M06 compile/artifact cost was high for low incremental value; bounded Observer control already recommends crew return",
+      "slot_binding": false
+    }
+  ],
+  "scout_a": "GBOGEB/codespaces-jupyter",
+  "scout_b": "GBOGEB/yaml-reference-parser",
+  "stop_rules": [
+    "SCOUT_RANKING_DOES_NOT_BIND_GM_IV_FRONTIER_SLOT",
+    "SCOUT_PASS_DOES_NOT_CREATE_CANONICAL_CHILD",
+    "NO_DOMAIN_AUTHORITY_FROM_NOTEBOOK_OR_PARSER_RUNTIME",
+    "NO_DOCTOR_BEFORE_OBSERVED_APPLICATION_RED_GT0_STEPS",
+    "GM_V_REMAINS_HELD"
+  ]
+}
