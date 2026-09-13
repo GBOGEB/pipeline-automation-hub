@@ -1,0 +1,23 @@
+{
+  "schema": "missioncontrol.bd_control_repeat_request.v1",
+  "status": "REQUEST_EXACT_HEAD_DISTINCT_SHA_REPEAT",
+  "as_of": "2026-09-13",
+  "root_ids": ["HIST-BD-010", "HIST-BD-011"],
+  "control_id": "REX-CM-002",
+  "repair_pr": 97,
+  "repair_head_sha": "ffae05b1e47a4a0e1fe8b3829cfc15f4de99c158",
+  "purpose": "Trigger a later exact-head Linux+Windows frontier repeat after the pair-order counterbalance and sibling BT scale repair. This request is evidence-routing metadata only; it does not itself claim PASS or CONTROL.",
+  "required_observations": [
+    "16/16 frontier task receipts accepted",
+    "both Linux and Windows execute >0 steps",
+    "every pair observes both A_THEN_B and B_THEN_A across habitats",
+    "counterbalance basis SOURCE_SHA_PARITY_XOR_HABITAT",
+    "BT model TWO_NODE_BT_LOG_ODDS_V1",
+    "analytic scale fixture PASS",
+    "raw pair semantic equivalence preserved",
+    "competency_promotions=0",
+    "authority_transfer=false"
+  ],
+  "promotion_rule": "Only a green exact-head repeat on a distinct source SHA may promote HIST-BD-010 to CONTROL and restore REX-CM-002/HIST-BD-011 control after the observed sibling-surface escape.",
+  "authority_transfer": false
+}
