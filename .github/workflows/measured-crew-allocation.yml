@@ -36,7 +36,7 @@ jobs:
         run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
       - name: Execute predeclared Mission Crew Task Runtime chain
         env:
-          GITHUB_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python mission-control/qps-triage-ultra/crew/measured/run_measured_tasks.py
       - name: Build measured allocation evidence
         run: python mission-control/qps-triage-ultra/crew/measured/build_measured_allocation.py
@@ -45,10 +45,14 @@ jobs:
         run: |
           python - <<'PY'
           import json
+          import subprocess
           from pathlib import Path
           root=Path('mission-control/qps-triage-ultra/crew/measured')
           summary=json.loads((root/'receipts/RUN_SUMMARY.json').read_text())
           alloc=json.loads((root/'MEASURED_ALLOCATION_RECEIPT.json').read_text())
+          actual=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
+          assert summary['source_sha'] == actual
+          assert summary['checkout_sha'] == actual
           assert summary['task_count'] == 4
           assert summary['accepted'] == 4
           assert summary['rejected'] == 0
@@ -60,10 +64,11 @@ jobs:
               r=json.loads(p.read_text())
               assert r['attribution_basis']=='PREDECLARED_ASSIGNMENT'
               assert r['steps_executed'] > 0
+              assert r['source_sha'] == actual
               assert r['source_sha'] == summary['source_sha']
               assert r['promotion_allowed'] is False
               assert r['rex_preflight']['checklist_version']=='missioncontrol.rex.reuse_checklist.v1'
-          print(json.dumps({'status':'PASS_MEASURED_CREW_CHAIN','allocation_rows':len(alloc['rows']),'pca':alloc['pca'],'bt':alloc['bt']},sort_keys=True))
+          print(json.dumps({'status':'PASS_MEASURED_CREW_CHAIN','exact_source_sha':actual,'allocation_rows':len(alloc['rows']),'pca':alloc['pca'],'bt':alloc['bt']},sort_keys=True))
           PY
       - name: Upload measured crew receipts
         uses: actions/upload-artifact@v4
