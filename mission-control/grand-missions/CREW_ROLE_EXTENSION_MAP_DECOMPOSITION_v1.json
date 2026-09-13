@@ -1,0 +1,49 @@
+{
+  "schema": "missioncontrol.crew_role_extension.map_decomposition.v1",
+  "status": "CANDIDATE_CANONICAL",
+  "roles": [
+    {
+      "role_id": "GEOGRAPHER",
+      "primary_function": "BREADTH",
+      "question": "What exists, where is it, and what fraction is covered?",
+      "outputs": ["estate map", "surface census", "coverage denominator", "coverage gaps", "subrepo candidates"]
+    },
+    {
+      "role_id": "GEOLOGIST",
+      "primary_function": "DEPTH",
+      "question": "What lies beneath the visible surface and how deep have we verified?",
+      "outputs": ["recursive tree map", "hidden strata", "nested boundaries", "deep dependency paths", "P-level"]
+    },
+    {
+      "role_id": "NEURON",
+      "primary_function": "DECOMPOSITION",
+      "question": "What are the nodes, edges, atoms, graphs and dependencies?",
+      "outputs": ["node-edge-atom ledger", "dependency graph", "critical paths", "cycles", "orphans", "floating components", "fan-in/fan-out"]
+    },
+    {
+      "role_id": "CALLIGRAPHER",
+      "aliases": ["COLIGRAPHER"],
+      "primary_function": "FLOW_REPRESENTATION",
+      "question": "How does the process/workflow/state transition clearly flow?",
+      "formats": ["ASCII", "Mermaid flowchart", "Mermaid sequence", "Mermaid state", "workflow diagram"],
+      "outputs": ["canonical ASCII", "canonical Mermaid", "direction legend", "feedback/feedforward view", "crew handoff view", "runtime path view"],
+      "constraint": "represent observed/governed structure only; do not invent missing execution"
+    }
+  ],
+  "related_roles": {
+    "SCOUT": "discovers frontier",
+    "READER": "interprets content",
+    "CARTOGRAPHER_OCULARS": "renders topology/dashboard and temporal views",
+    "RUNNER": "proves execution",
+    "QA_SIGNALMAN": "verifies evidence"
+  },
+  "canonical_pipeline": "SCOUT -> GEOGRAPHER -> GEOLOGIST -> NEURON -> CALLIGRAPHER -> RUNNER -> QA_SIGNALMAN -> MISSIONCONTROL -> CARTOGRAPHER_OCULARS",
+  "metrics": {
+    "Pen": "b*d",
+    "breadth_owner": "GEOGRAPHER",
+    "depth_owner": "GEOLOGIST",
+    "graph_owner": "NEURON",
+    "workflow_representation_owner": "CALLIGRAPHER",
+    "runtime_owner": "RUNNER"
+  }
+}
