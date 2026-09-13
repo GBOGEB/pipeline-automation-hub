@@ -9,6 +9,16 @@ on:
       - 'app/app/qps-ui-contract/**'
       - 'app/package.json'
       - '.github/workflows/qps-triage-web.yml'
+  push:
+    branches:
+      - 'qps-web-dov-pulse-*'
+    paths:
+      - 'mission-control/qps-triage-ultra/site/**'
+      - 'mission-control/qps-triage-ultra/web/**'
+      - 'app/lib/qps-ui-tokens.ts'
+      - 'app/app/qps-ui-contract/**'
+      - 'app/package.json'
+      - '.github/workflows/qps-triage-web.yml'
   workflow_dispatch:
 
 jobs:

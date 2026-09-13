@@ -1,0 +1,9 @@
+{
+  "schema": "qps.web.dov_pulse.v1",
+  "pulse": "QPS_WEB_DOV_PULSE_001",
+  "owner": "H4_QPS_TRIAGE",
+  "purpose": "Trigger the first hosted QPS Triage Web DoV run against the canonical workflow now resident on master.",
+  "expected_gates": ["J1_SOURCE", "J2_GENERATE", "J3_STRUCTURE", "J4_VISUAL", "J5_IDENTITY", "J6_REPEAT"],
+  "promotion_target": "CONTROL",
+  "status": "HOSTED_DOV_REQUESTED"
+}
