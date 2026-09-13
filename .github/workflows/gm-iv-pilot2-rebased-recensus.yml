@@ -1,0 +1,102 @@
+name: GM-IV PILOT_2_OF_8 Rebased Recensus
+
+on:
+  push:
+    branches:
+      - mission/gm-iv-governor-pilot2-rebased
+      - master
+    paths:
+      - 'mission-control/grand-missions/**'
+      - 'mission-control/qps-triage-ultra/crew/measured/**'
+      - '.github/workflows/gm-iv-pilot2-rebased-recensus.yml'
+      - '.github/workflows/crew-exposure-instrumentation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rebased-recensus:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Bind exact source SHA
+        shell: bash
+        run: |
+          SOURCE_SHA="$(git rev-parse HEAD)"
+          test "$SOURCE_SHA" = "${{ github.sha }}"
+          echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
+
+      - name: Compile control surface
+        shell: bash
+        run: |
+          python -m py_compile \
+            mission-control/grand-missions/run_gm_iv_pilot2_recensus.py \
+            mission-control/grand-missions/run_gm_iv_pilot2_recensus_v2.py \
+            mission-control/grand-missions/assess_gm_iv_ring1.py \
+            mission-control/grand-missions/assess_gm_iv_f01_pilot.py \
+            mission-control/grand-missions/assess_gm_iv_ring2.py \
+            mission-control/grand-missions/assess_gm_iv_f03_pilot.py \
+            mission-control/grand-missions/assess_gm_iv_pilot2_governor.py \
+            mission-control/grand-missions/validate_gm_fleet.py \
+            mission-control/grand-missions/assess_gm_fleet_03.py \
+            mission-control/grand-missions/validate_gm_iv_evidence_economics.py \
+            mission-control/qps-triage-ultra/crew/measured/validate_crew_exposure.py \
+            mission-control/qps-triage-ultra/crew/measured/validate_exposure_pca_control.py
+
+      - name: Install bounded recensus dependencies
+        shell: bash
+        run: |
+          python -m pip install --disable-pip-version-check -q \
+            pyyaml nbformat nbconvert ipykernel pandas matplotlib
+
+      - name: Execute rebased four-frontier and control recensus
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/gm-iv-pilot2-recensus"
+          python mission-control/grand-missions/run_gm_iv_pilot2_recensus_v2.py \
+            --out-dir "$RUNNER_TEMP/gm-iv-pilot2-recensus" \
+            | tee "$RUNNER_TEMP/gm-iv-pilot2-recensus.log"
+
+      - name: Enforce terminal Governor and moving-base boundary
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path(os.environ['RUNNER_TEMP']) / 'gm-iv-pilot2-recensus'
+          d = json.loads((root / 'GM_IV_PILOT2_FINAL_RECENSUS.json').read_text(encoding='utf-8'))
+          assert d['source_sha'] == os.environ['SOURCE_SHA']
+          assert d['result'] == 'PASS'
+          assert all(d['checks'].values())
+          assert d['checks']['15_exposure_pca_control_history_forward'] is True
+          pca = d['moving_base_controls']['crew_exposure_pca_control']
+          assert pca['status'] == 'PASS'
+          assert pca['historical_evidence_stage'] == 'STAGED_ACTIVE_RECON_2_OF_8'
+          assert pca['current_mission_state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
+          assert pca['authority_transfer'] is False
+          assert pca['competency_promotions'] == 0
+          assert d['controlled_pilots'] == ['GM-IV-F01', 'GM-IV-F03']
+          assert d['references'] == ['GM-IV-F02', 'GM-IV-F04']
+          assert d['unfilled'] == ['GM-IV-F05', 'GM-IV-F06', 'GM-IV-F07', 'GM-IV-F08']
+          assert d['children_bound'] is False
+          assert d['authority_transfer'] is False
+          assert d['gm_v_state'] == 'HELD'
+          assert d['next_stage'] == 'WITHHELD_PENDING_SEPARATE_RECON_4_OF_8_GOVERNOR_GATE'
+          print('PASS_GM_IV_PILOT2_REBASED_RECENSUS_BOUNDARY')
+          PY
+
+      - name: Upload exact-head rebased recensus
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-pilot2-rebased-recensus-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/gm-iv-pilot2-recensus/**
+            ${{ runner.temp }}/gm-iv-pilot2-recensus.log
+          if-no-files-found: error
