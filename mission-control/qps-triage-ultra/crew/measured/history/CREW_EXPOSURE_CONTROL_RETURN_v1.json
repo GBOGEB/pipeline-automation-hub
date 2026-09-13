@@ -1,16 +1,16 @@
 {
   "schema": "missioncontrol.crew_exposure_control_return.v1",
-  "status": "CONTROL_ACCEPTED_REPEAT",
+  "status": "CONTROL_ACCEPTED_THREE_PULSE",
   "mission_id": "MC-CREW-MEASURE-001",
   "authority_transfer": false,
   "child_binding": false,
   "frontier_binding": false,
   "competency_promotions": 0,
   "repeat_gate": {
-    "required_distinct_runs": 2,
-    "required_distinct_source_shas": 2,
-    "observed_distinct_runs": 2,
-    "observed_distinct_source_shas": 2,
+    "required_distinct_runs": 3,
+    "required_distinct_source_shas": 3,
+    "observed_distinct_runs": 3,
+    "observed_distinct_source_shas": 3,
     "assignments_per_run": 4,
     "all_assignments_predeclared": true,
     "all_assignments_accepted": true,
@@ -20,11 +20,11 @@
     "authority_transfer": false
   },
   "feature_eligibility": {
-    "status": "CONTROLLED_OPTIONAL_FEATURES",
+    "status": "CONTROLLED_PCA_CANDIDATE_FEATURES",
     "eligible_for_allocation_features": true,
     "eligible_for_pca_candidate_features": true,
     "eligible_for_bt_outcome": false,
-    "pca_readiness_rule": "feature eligibility does not imply PCA readiness; measured variance and existing PCA gates still apply",
+    "pca_readiness_rule": "three distinct accepted SHAs satisfy exposure-repeat gate; measured row count and varying-feature gates still decide PCA readiness; sample rank remains bounded by n-1",
     "features": [
       "mean_waiting_seconds",
       "mean_active_seconds",
@@ -77,6 +77,29 @@
         {"assignment_id":"A002","task_id":"T002-CREW-TELEMETRY-VERIFY","crew_id":"U04","waiting_seconds":0.000012,"active_seconds":0.019423,"release_seconds":0.000102,"exposure_seconds":0.019537,"runtime_execute_seconds":0.019420,"outcome":"ACCEPT"},
         {"assignment_id":"A003","task_id":"T003-ROLE-GAP-MEASURE","crew_id":"U05","waiting_seconds":0.000011,"active_seconds":0.023362,"release_seconds":0.000126,"exposure_seconds":0.023499,"runtime_execute_seconds":0.023358,"outcome":"ACCEPT"},
         {"assignment_id":"A004","task_id":"T004-REX-REUSE-VERIFY","crew_id":"U08","waiting_seconds":0.000011,"active_seconds":0.020684,"release_seconds":0.000214,"exposure_seconds":0.020909,"runtime_execute_seconds":0.020679,"outcome":"ACCEPT"}
+      ]
+    },
+    {
+      "evidence_class": "THIRD_DISTINCT_SHA_PULSE",
+      "source_sha": "3e3ee98d738b6e9c6f416709d8ceb2494bbc1064",
+      "run_id": "34773479659",
+      "job_id": "103767210943",
+      "artifact": {
+        "id": "10322502934",
+        "digest": "sha256:46873d8b495d4c1e37d8bf4044f27a888ab0abe2b12749d98016069fc8452e9e"
+      },
+      "totals": {
+        "waiting_seconds": 0.000088,
+        "active_seconds": 0.095314,
+        "release_seconds": 0.000674,
+        "exposure_seconds": 0.096076,
+        "runtime_execute_seconds": 0.095295
+      },
+      "assignments": [
+        {"assignment_id":"A001","task_id":"T001-CREW-STRUCTURE-VERIFY","crew_id":"U06","waiting_seconds":0.000041,"active_seconds":0.024265,"release_seconds":0.000188,"exposure_seconds":0.024494,"runtime_execute_seconds":0.024258,"outcome":"ACCEPT"},
+        {"assignment_id":"A002","task_id":"T002-CREW-TELEMETRY-VERIFY","crew_id":"U04","waiting_seconds":0.000016,"active_seconds":0.022660,"release_seconds":0.000172,"exposure_seconds":0.022848,"runtime_execute_seconds":0.022653,"outcome":"ACCEPT"},
+        {"assignment_id":"A003","task_id":"T003-ROLE-GAP-MEASURE","crew_id":"U05","waiting_seconds":0.000017,"active_seconds":0.026811,"release_seconds":0.000128,"exposure_seconds":0.026956,"runtime_execute_seconds":0.026809,"outcome":"ACCEPT"},
+        {"assignment_id":"A004","task_id":"T004-REX-REUSE-VERIFY","crew_id":"U08","waiting_seconds":0.000014,"active_seconds":0.021578,"release_seconds":0.000186,"exposure_seconds":0.021778,"runtime_execute_seconds":0.021575,"outcome":"ACCEPT"}
       ]
     }
   ]
