@@ -1,0 +1,216 @@
+name: GM-FLEET-03 F03 Pilot
+
+on:
+  push:
+    branches:
+      - mission/gm-fleet-03-f03-pilot
+      - master
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/**'
+      - '.github/workflows/gm-fleet-03-f03-pilot.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  f03-pilot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout MissionControl exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: hub
+
+      - name: Bind MissionControl exact SHA
+        working-directory: hub
+        run: |
+          echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          git rev-parse HEAD
+
+      - name: Fetch F03 exact source without submodule traversal
+        run: |
+          mkdir f03
+          git -C f03 init
+          git -C f03 remote add origin https://github.com/GBOGEB/codespaces-jupyter.git
+          git -C f03 fetch --depth=1 origin 1eba2240a86d1fd2bd6375e2fac481caf645cdde
+          git -C f03 checkout --detach FETCH_HEAD
+          test "$(git -C f03 rev-parse HEAD)" = "1eba2240a86d1fd2bd6375e2fac481caf645cdde"
+
+      - name: Validate positive F03 authority boundary
+        working-directory: hub
+        run: |
+          python3 mission-control/grand-missions/validate_gm_iv_f03_boundary.py \
+            ../f03/level1/ssot.json | tee "$RUNNER_TEMP/f03-boundary-positive.log"
+          grep -F 'F03 authority validation passed' "$RUNNER_TEMP/f03-boundary-positive.log"
+
+      - name: Execute negative authority mutation probe
+        working-directory: hub
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          src = Path('../f03/level1/ssot.json')
+          data = json.loads(src.read_text(encoding='utf-8'))
+          data['authority_transfer'] = True
+          out = Path(os.environ['RUNNER_TEMP']) / 'f03-ssot-invalid.json'
+          out.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+          PY
+          set +e
+          python3 mission-control/grand-missions/validate_gm_iv_f03_boundary.py \
+            "$RUNNER_TEMP/f03-ssot-invalid.json" \
+            > "$RUNNER_TEMP/f03-boundary-negative.log" 2>&1
+          rc=$?
+          set -e
+          echo "NEGATIVE_RC=$rc" >> "$GITHUB_ENV"
+          test "$rc" -ne 0
+          grep -F 'authority_transfer must be false' "$RUNNER_TEMP/f03-boundary-negative.log"
+          cat "$RUNNER_TEMP/f03-boundary-negative.log"
+
+      - name: Emit boundary QA receipt
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          pos = (Path(os.environ['RUNNER_TEMP']) / 'f03-boundary-positive.log').read_text(encoding='utf-8')
+          neg = (Path(os.environ['RUNNER_TEMP']) / 'f03-boundary-negative.log').read_text(encoding='utf-8')
+          markers = [
+              'validated F03 Level-1 SSOT identity',
+              'validated F03 runtime producer role',
+              'validated F03 authority_transfer=false',
+              'validated F03 must_not authority boundary',
+              'F03 authority validation passed',
+          ]
+          receipt = {
+              'schema': 'qps.gm_iv_f03_boundary_receipt.v1',
+              'positive_exit_code': 0,
+              'positive_marker_count': sum(m in pos for m in markers),
+              'negative_exit_code': int(os.environ['NEGATIVE_RC']),
+              'negative_rejection_observed': 'authority_transfer must be false' in neg,
+              'target_repository_modified': False,
+          }
+          p = Path(os.environ['RUNNER_TEMP']) / 'f03-boundary.json'
+          p.write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+          print(json.dumps(receipt, indent=2, sort_keys=True))
+          assert receipt['positive_marker_count'] == 5
+          assert receipt['negative_exit_code'] != 0
+          assert receipt['negative_rejection_observed']
+          PY
+
+      - name: Install bounded notebook runtime
+        run: |
+          python3 -m pip install --disable-pip-version-check -q \
+            nbformat nbconvert ipykernel pandas matplotlib
+
+      - name: Execute F03 notebook twice and emit controlled runtime receipt
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+          import nbformat
+          from nbconvert.preprocessors import ExecutePreprocessor
+
+          notebook = Path('f03/notebooks/population.ipynb')
+          def execute():
+              nb = nbformat.read(notebook, as_version=4)
+              ExecutePreprocessor(timeout=120, kernel_name='python3').preprocess(
+                  nb, {'metadata': {'path': 'f03/notebooks'}})
+              cells = errors = 0
+              governed = []
+              for cell in nb.cells:
+                  if cell.cell_type != 'code':
+                      continue
+                  cells += 1
+                  outputs = []
+                  for out in cell.get('outputs', []):
+                      kind = out.get('output_type')
+                      item = {'output_type': kind}
+                      if kind == 'error':
+                          errors += 1
+                          item.update(ename=out.get('ename'), evalue=out.get('evalue'))
+                      elif kind == 'stream':
+                          item.update(name=out.get('name'), text=out.get('text', ''))
+                      elif kind in ('execute_result', 'display_data'):
+                          data = out.get('data', {})
+                          item['data'] = {k: data[k] for k in sorted(data) if k in ('text/plain', 'text/html')}
+                      outputs.append(item)
+                  governed.append({'source': cell.source, 'outputs': outputs})
+              raw = json.dumps(governed, sort_keys=True, separators=(',', ':')).encode()
+              return cells, errors, hashlib.sha256(raw).hexdigest()
+
+          c1, e1, d1 = execute()
+          c2, e2, d2 = execute()
+          dirty = subprocess.check_output(['git', '-C', 'f03', 'status', '--porcelain'], text=True).splitlines()
+          receipt = {
+              'schema': 'qps.gm_iv_f03_controlled_runtime_receipt.v1',
+              'target_sha': '1eba2240a86d1fd2bd6375e2fac481caf645cdde',
+              'run1_code_cells': c1,
+              'run2_code_cells': c2,
+              'total_error_count': e1 + e2,
+              'run1_digest': d1,
+              'run2_digest': d2,
+              'repeat_equal': d1 == d2,
+              'target_dirty_count': len(dirty),
+              'gm_v_state': 'HELD',
+          }
+          p = Path(os.environ['RUNNER_TEMP']) / 'f03-runtime-control.json'
+          p.write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+          print(json.dumps(receipt, indent=2, sort_keys=True))
+          assert c1 > 0 and c2 > 0
+          assert e1 == 0 and e2 == 0
+          assert d1 == d2
+          assert not dirty
+          PY
+
+      - name: Assess F03 pilot first pass
+        working-directory: hub
+        run: |
+          python3 mission-control/grand-missions/assess_gm_iv_f03_pilot.py \
+            --contract mission-control/grand-missions/GM_IV_F03_PILOT_CONTRACT.json \
+            --runtime "$RUNNER_TEMP/f03-runtime-control.json" \
+            --boundary "$RUNNER_TEMP/f03-boundary.json" \
+            --source-sha "$SOURCE_SHA" \
+            --out "$RUNNER_TEMP/f03-pilot-1.json"
+
+      - name: Assess F03 pilot repeat
+        working-directory: hub
+        run: |
+          python3 mission-control/grand-missions/assess_gm_iv_f03_pilot.py \
+            --contract mission-control/grand-missions/GM_IV_F03_PILOT_CONTRACT.json \
+            --runtime "$RUNNER_TEMP/f03-runtime-control.json" \
+            --boundary "$RUNNER_TEMP/f03-boundary.json" \
+            --source-sha "$SOURCE_SHA" \
+            --out "$RUNNER_TEMP/f03-pilot-2.json"
+
+      - name: Enforce deterministic pilot repeat and non-promotion
+        run: |
+          cmp "$RUNNER_TEMP/f03-pilot-1.json" "$RUNNER_TEMP/f03-pilot-2.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          d = json.loads((Path(os.environ['RUNNER_TEMP']) / 'f03-pilot-1.json').read_text(encoding='utf-8'))
+          assert d['result'] == 'PASS'
+          assert d['frontier_disposition'] == 'PILOT_CONTROL_READY'
+          assert d['controlled_pilot_pair_if_master_repeats'] == ['GM-IV-F01', 'GM-IV-F03']
+          assert d['mission_promotion'] == 'WITHHELD_PENDING_SEPARATE_PILOT_2_OF_8_GOVERNOR_ASSESSMENT'
+          assert d['mission_state'] == 'STAGED_ACTIVE_RECON_2_OF_8'
+          assert d['children_bound'] is False
+          assert d['authority_transfer'] is False
+          assert d['gm_v_state'] == 'HELD'
+          print('PASS_F03_PILOT_CONTROL_READY_NO_MISSION_PROMOTION')
+          PY
+
+      - name: Upload F03 pilot evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-fleet-03-f03-pilot-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/f03-runtime-control.json
+            ${{ runner.temp }}/f03-boundary.json
+            ${{ runner.temp }}/f03-boundary-positive.log
+            ${{ runner.temp }}/f03-boundary-negative.log
+            ${{ runner.temp }}/f03-pilot-1.json
+            ${{ runner.temp }}/f03-pilot-2.json
+          if-no-files-found: error
