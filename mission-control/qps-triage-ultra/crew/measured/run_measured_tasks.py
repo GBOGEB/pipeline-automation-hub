@@ -7,6 +7,8 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+from rex_runtime_control import collect_history, evaluate_preflight, summarize_recurrence
+
 ROOT = Path(__file__).resolve().parent
 CREW = ROOT.parent
 OUT = ROOT / "receipts"
@@ -37,6 +39,7 @@ seen_assignments = set()
 seen_tasks = set()
 receipts = []
 exposure_receipts = []
+rex_history = collect_history([ROOT / "history", OUT])
 
 intervention_map = {
     "VERIFY": "VERIFY",
@@ -70,23 +73,49 @@ for task in manifest["tasks"]:
     command = task["command"]
     command_text = json.dumps(command, separators=(",", ":"))
     command_sha = hashlib.sha256(command_text.encode()).hexdigest()
-    task_started = datetime.now(timezone.utc)
-    runtime_start = time.monotonic()
-    proc = subprocess.run(command, text=True, capture_output=True)
-    runtime_elapsed = round(time.monotonic() - runtime_start, 6)
-    task_ended = datetime.now(timezone.utc)
-    stdout = proc.stdout or ""
-    stderr = proc.stderr or ""
+    yaml_mutation_planned = any(str(arg).lower().endswith((".yaml", ".yml")) for arg in command)
+    preflight = evaluate_preflight(
+        checklist_schema=checklist["schema"],
+        applicable_rex_ids=applicable,
+        facts={
+            "namespace_registered": True,
+            "vocabulary_registered": True,
+            "yaml_mutation_planned": yaml_mutation_planned,
+            "yaml_lint_prechecked": False,
+            "active_assignment_current": True,
+            "proof_gate_bound": bool(task.get("accept_condition")) and task.get("promotion_allowed") is False,
+            "execution_context_reached": True,
+        },
+    )
 
+    task_started = datetime.now(timezone.utc)
+    stdout = ""
+    stderr = ""
+    runtime_elapsed = 0.0
+    exit_code = None
+    steps_executed = 0
+
+    if preflight["payload_allowed"]:
+        runtime_start = time.monotonic()
+        proc = subprocess.run(command, text=True, capture_output=True)
+        runtime_elapsed = round(time.monotonic() - runtime_start, 6)
+        stdout = proc.stdout or ""
+        stderr = proc.stderr or ""
+        exit_code = proc.returncode
+        steps_executed = 1
+
+    task_ended = datetime.now(timezone.utc)
     expected = task["accept_condition"].split("stdout contains ", 1)[-1]
-    accepted = proc.returncode == 0 and expected in stdout
+    accepted = preflight["payload_allowed"] and exit_code == 0 and expected in stdout
     disposition = "ACCEPT" if accepted else "REJECT"
 
-    rex_triggered = []
-    if proc.returncode != 0 and "REX-006" in applicable:
-        rex_triggered.append("REX-006")
-    if not task.get("accept_condition") and "REX-005" in applicable:
-        rex_triggered.append("REX-005")
+    # A preflight block is an observed REX event. Payload failure is not
+    # automatically REX-006; that REX is specifically zero-step preexecution.
+    rex_triggered = list(preflight["triggered_rex_ids"])
+    recurrence = summarize_recurrence(rex_triggered, rex_history)
+    new_rex = sorted(
+        rex_id for rex_id, level in recurrence["by_rex_id"].items() if level == "NEW"
+    )
 
     receipt = {
         "schema": "missioncontrol.mission_crew_task_runtime_receipt.v1",
@@ -106,32 +135,36 @@ for task in manifest["tasks"]:
         "started_at": task_started.isoformat(),
         "ended_at": task_ended.isoformat(),
         "execute_seconds": runtime_elapsed,
-        "steps_executed": 1,
-        "exit_code": proc.returncode,
+        "steps_executed": steps_executed,
+        "exit_code": exit_code,
         "disposition": disposition,
         "stdout_sha256": hashlib.sha256(stdout.encode()).hexdigest(),
         "stderr_sha256": hashlib.sha256(stderr.encode()).hexdigest(),
         "command_sha256": command_sha,
         "receipt_evidence_class": "MEASURED_RUNTIME_ACCEPTED" if accepted else "MEASURED_RUNTIME_REJECTED",
         "promotion_allowed": False,
-        "rex_preflight": {
-            "checklist_version": checklist["schema"],
-            "rex_ids_checked": applicable,
-            "automated_checks": ["registered_rex_ids", "predeclared_assignment", "named_accept_condition", "exact_source_sha"],
-            "manual_checklist_items": "NOT_ASSESSED_BY_RUNTIME_WRAPPER",
-            "blocking_rex_ids": []
-        },
+        "rex_preflight": preflight,
         "rex_postflight": {
             "rex_ids_observed": rex_triggered,
-            "new_rex_signal": None,
-            "recurrence_level": "NEW" if rex_triggered else None,
-            "preventive_action_effective": True if "REX-006" in applicable and proc.returncode == 0 else None,
+            "new_rex_signal": new_rex or None,
+            "recurrence_level": recurrence["highest"],
+            "recurrence_by_rex_id": recurrence["by_rex_id"],
+            "preventive_action_effective": True if "REX-006" in applicable and accepted else None,
             "ledger_update_required": bool(rex_triggered)
         }
     }
     path = OUT / f"{tid}.json"
     path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     receipts.append(receipt)
+
+    # Update in-memory temporal history so later tasks in the same run cannot be
+    # incorrectly labelled NEW after an earlier observed occurrence.
+    for rex_id in rex_triggered:
+        rex_history.setdefault("counts", {})[rex_id] = int(rex_history.get("counts", {}).get(rex_id, 0)) + 1
+    if "REX-006" in applicable and accepted:
+        controls = set(rex_history.get("preventive_controls", []))
+        controls.add("REX-006")
+        rex_history["preventive_controls"] = sorted(controls)
 
     assignment_released = datetime.now(timezone.utc)
     waiting_seconds = round((task_started - assignment_opened).total_seconds(), 6)
@@ -181,6 +214,8 @@ for task in manifest["tasks"]:
         "task_id": tid,
         "crew_id": task["crew_id"],
         "disposition": disposition,
+        "preflight_complete": preflight["preflight_complete"],
+        "blocking_rex_ids": preflight["blocking_rex_ids"],
         "runtime_execute_seconds": runtime_elapsed,
         "waiting_seconds": waiting_seconds,
         "active_seconds": active_seconds,
@@ -197,6 +232,7 @@ summary = {
     "task_count": len(receipts),
     "accepted": sum(r["disposition"] == "ACCEPT" for r in receipts),
     "rejected": sum(r["disposition"] == "REJECT" for r in receipts),
+    "preflight_blocked": sum(bool(r["rex_preflight"]["blocking_rex_ids"]) for r in receipts),
     "crew_exposure_receipts": len(exposure_receipts),
     "crew_exposure_seconds_total": round(sum(r["exposure_seconds"] for r in exposure_receipts), 6),
     "crew_waiting_seconds_total": round(sum(r["waiting_seconds"] for r in exposure_receipts), 6),

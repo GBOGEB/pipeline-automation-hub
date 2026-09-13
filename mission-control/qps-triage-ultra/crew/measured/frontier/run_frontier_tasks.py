@@ -13,6 +13,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parents[4]
 CREW = ROOT.parents[1]
+sys.path.insert(0, str(ROOT.parent))
+from rex_runtime_control import collect_history, evaluate_preflight, summarize_recurrence
+
 MANIFEST = json.loads((ROOT / "FRONTIER_TASK_MANIFEST_v1.json").read_text(encoding="utf-8"))
 CHECKLIST = json.loads((ROOT.parent / "REX_REUSE_CHECKLIST_v1.json").read_text(encoding="utf-8"))
 REGISTRY = json.loads((CREW / "CREW_REGISTRY_v1.json").read_text(encoding="utf-8"))
@@ -155,6 +158,9 @@ def main():
     runner_arch = os.environ.get("RUNNER_ARCH", "UNKNOWN")
     seen = set()
     receipts = []
+    rex_history = collect_history([ROOT.parent / "history", out])
+    proof_gate_bound = bool(MANIFEST.get("objective")) and bool(MANIFEST.get("comparison_rule")) and MANIFEST.get("promotion_allowed") is False
+
     for task in MANIFEST["tasks"]:
         if task["task_id"] in seen:
             raise SystemExit("FAIL duplicate task")
@@ -165,23 +171,48 @@ def main():
             raise SystemExit(f"FAIL unknown competency {task['competency_dimension']}")
         if set(task["applicable_rex_ids"]) - REX_IDS:
             raise SystemExit(f"FAIL unknown REX in {task['task_id']}")
+
+        preflight = evaluate_preflight(
+            checklist_schema=CHECKLIST["schema"],
+            applicable_rex_ids=task["applicable_rex_ids"],
+            facts={
+                "namespace_registered": True,
+                "vocabulary_registered": task["workload"]["kind"] in WORKLOADS,
+                "yaml_mutation_planned": False,
+                "yaml_lint_prechecked": False,
+                "active_assignment_current": True,
+                "proof_gate_bound": proof_gate_bound,
+                "execution_context_reached": True,
+            },
+        )
+
         workload = task["workload"]
-        fn = WORKLOADS[workload["kind"]]
         started = datetime.now(timezone.utc).isoformat()
         t0 = time.perf_counter()
         disposition = "ACCEPT"
         error = None
-        try:
-            digest, units = fn(int(workload["iterations"]), int(workload["workers"]))
-        except Exception as exc:
-            digest, units = None, 0
+        digest = None
+        units = 0
+        steps_executed = 0
+        if preflight["payload_allowed"]:
+            fn = WORKLOADS[workload["kind"]]
+            steps_executed = 1
+            try:
+                digest, units = fn(int(workload["iterations"]), int(workload["workers"]))
+            except Exception as exc:
+                digest, units = None, 0
+                disposition = "REJECT"
+                error = repr(exc)
+        else:
             disposition = "REJECT"
-            error = repr(exc)
-        elapsed = round(time.perf_counter() - t0, 6)
+            error = f"REX_PREFLIGHT_BLOCKED:{','.join(preflight['blocking_rex_ids'])}"
+        elapsed = round(time.perf_counter() - t0, 6) if steps_executed else 0.0
         ended = datetime.now(timezone.utc).isoformat()
-        observed = []
-        if disposition == "REJECT" and "REX-006" in task["applicable_rex_ids"]:
-            observed.append("REX-006")
+
+        observed = list(preflight["triggered_rex_ids"])
+        recurrence = summarize_recurrence(observed, rex_history)
+        new_rex = sorted(rex_id for rex_id, level in recurrence["by_rex_id"].items() if level == "NEW")
+
         receipt = {
             "schema": "missioncontrol.crew_frontier_runtime_receipt.v1",
             "mission_id": MANIFEST["mission_id"],
@@ -202,28 +233,31 @@ def main():
             "started_at": started,
             "ended_at": ended,
             "execute_seconds": elapsed,
-            "steps_executed": 1,
+            "steps_executed": steps_executed,
             "semantic_digest": digest,
             "disposition": disposition,
             "error": error,
             "promotion_allowed": False,
             "authority_transfer": False,
-            "rex_preflight": {
-                "checklist_version": CHECKLIST["schema"],
-                "rex_ids_checked": task["applicable_rex_ids"],
-                "blocking_rex_ids": [],
-                "manual_checklist_items": "NOT_ASSESSED_BY_RUNTIME_WRAPPER"
-            },
+            "rex_preflight": preflight,
             "rex_postflight": {
                 "rex_ids_observed": observed,
-                "recurrence_level": "NEW" if observed else None,
+                "new_rex_signal": new_rex or None,
+                "recurrence_level": recurrence["highest"],
+                "recurrence_by_rex_id": recurrence["by_rex_id"],
                 "preventive_action_effective": True if "REX-006" in task["applicable_rex_ids"] and disposition == "ACCEPT" else None,
                 "ledger_update_required": bool(observed)
             }
         }
         (out / f"{args.habitat}__{task['task_id']}.json").write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         receipts.append(receipt)
-        print(json.dumps({"task_id": task["task_id"], "habitat": args.habitat, "strategy": task["allocation_strategy"], "seconds": elapsed, "disposition": disposition}, sort_keys=True))
+        for rex_id in observed:
+            rex_history.setdefault("counts", {})[rex_id] = int(rex_history.get("counts", {}).get(rex_id, 0)) + 1
+        if "REX-006" in task["applicable_rex_ids"] and disposition == "ACCEPT":
+            controls = set(rex_history.get("preventive_controls", []))
+            controls.add("REX-006")
+            rex_history["preventive_controls"] = sorted(controls)
+        print(json.dumps({"task_id": task["task_id"], "habitat": args.habitat, "strategy": task["allocation_strategy"], "seconds": elapsed, "steps_executed": steps_executed, "blocking_rex_ids": preflight["blocking_rex_ids"], "disposition": disposition}, sort_keys=True))
     summary = {
         "schema": "missioncontrol.crew_frontier_run_summary.v1",
         "mission_id": MANIFEST["mission_id"],
@@ -233,6 +267,7 @@ def main():
         "task_count": len(receipts),
         "accepted": sum(r["disposition"] == "ACCEPT" for r in receipts),
         "rejected": sum(r["disposition"] == "REJECT" for r in receipts),
+        "preflight_blocked": sum(bool(r["rex_preflight"]["blocking_rex_ids"]) for r in receipts),
         "pair_members": sum(r["pair_id"] is not None for r in receipts),
         "competency_promotions": 0,
         "authority_transfer": False
