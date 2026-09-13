@@ -1,6 +1,14 @@
 name: GM-IV Evidence Economics
 
 on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'mission-control/grand-missions/GM_IV_EVIDENCE_ECONOMICS.json'
+      - 'mission-control/grand-missions/validate_gm_iv_evidence_economics.py'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - '.github/workflows/gm-iv-evidence-economics.yml'
   pull_request:
     paths:
       - 'mission-control/grand-missions/GM_IV_EVIDENCE_ECONOMICS.json'
