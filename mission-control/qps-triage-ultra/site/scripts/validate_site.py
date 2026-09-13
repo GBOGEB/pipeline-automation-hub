@@ -8,8 +8,8 @@ import re
 import sys
 
 SITE = pathlib.Path(__file__).resolve().parents[1]
-ROOT = SITE.parents[2]
-WEB = ROOT / "qps-triage-ultra" / "web"
+TRIAGE = SITE.parent
+WEB = TRIAGE / "web"
 BUILT = pathlib.Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else SITE / "_site"
 
 errors: list[str] = []
