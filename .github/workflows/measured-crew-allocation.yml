@@ -34,6 +34,8 @@ jobs:
           test "$actual" = "$expected"
       - name: Validate reusable REX checklist
         run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
+      - name: Validate canonical evidence returns
+        run: python mission-control/qps-triage-ultra/crew/measured/validate_evidence_returns.py
       - name: Execute predeclared Mission Crew Task Runtime chain
         env:
           MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -57,9 +59,17 @@ jobs:
           assert summary['accepted'] == 4
           assert summary['rejected'] == 0
           assert summary['competency_promotions'] == 0
-          assert alloc['receipt_count'] >= 4
+          assert alloc['receipt_count'] >= 12
+          assert alloc['returned_run_count'] >= 2
+          assert alloc['allocation_eligible_rows'] == 4
+          assert all(r['allocation_eligible'] for r in alloc['rows'])
+          assert all(r['allocation_basis'] == 'MEASURED_ONLY' for r in alloc['rows'])
+          assert all(r['distinct_accepted_runs'] >= 2 for r in alloc['rows'])
+          assert all(r['distinct_source_shas'] >= 2 for r in alloc['rows'])
           assert alloc['competency_promotions'] == 0
           assert alloc['authority_transfer'] is False
+          assert alloc['pca']['status'] != 'READY' or alloc['pca']['varying_features'] >= 2
+          assert alloc['bt']['status'] == 'DEFER_INSUFFICIENT_OBSERVED_PAIRS'
           for p in root.joinpath('receipts').glob('T*.json'):
               r=json.loads(p.read_text())
               assert r['attribution_basis']=='PREDECLARED_ASSIGNMENT'
@@ -68,7 +78,16 @@ jobs:
               assert r['source_sha'] == summary['source_sha']
               assert r['promotion_allowed'] is False
               assert r['rex_preflight']['checklist_version']=='missioncontrol.rex.reuse_checklist.v1'
-          print(json.dumps({'status':'PASS_MEASURED_CREW_CHAIN','exact_source_sha':actual,'allocation_rows':len(alloc['rows']),'pca':alloc['pca'],'bt':alloc['bt']},sort_keys=True))
+          print(json.dumps({
+              'status':'PASS_MEASURED_CREW_ALLOCATION_GATE',
+              'exact_source_sha':actual,
+              'allocation_rows':len(alloc['rows']),
+              'allocation_eligible_rows':alloc['allocation_eligible_rows'],
+              'returned_run_count':alloc['returned_run_count'],
+              'competency_promotions':0,
+              'pca':alloc['pca'],
+              'bt':alloc['bt']
+          },sort_keys=True))
           PY
       - name: Upload measured crew receipts
         uses: actions/upload-artifact@v4

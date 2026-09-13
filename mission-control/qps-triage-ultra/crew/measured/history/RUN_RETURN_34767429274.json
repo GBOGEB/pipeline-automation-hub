@@ -1,0 +1,40 @@
+{
+  "schema": "missioncontrol.measured_task_run_return.v1",
+  "status": "ACCEPTED_EXACT_SHA_RUNTIME_RETURN",
+  "authority_transfer": false,
+  "mission_id": "MC-CREW-MEASURE-001",
+  "run_id": "34767429274",
+  "job_id": "103750790498",
+  "source_sha": "208a7000ad9ab54190810b80361f56835d4bc17d",
+  "head_branch": "mission/measured-crew-allocation-v1-20260913",
+  "workflow_name": "MissionControl Measured Crew Allocation",
+  "run_conclusion": "success",
+  "exact_sha_asserted": true,
+  "rex_checklist_status": "PASS_REX_REUSE_CHECKLIST",
+  "competency_promotions": 0,
+  "artifact": {
+    "id": 10320429194,
+    "name": "measured-crew-allocation-208a7000ad9ab54190810b80361f56835d4bc17d",
+    "size_in_bytes": 5468,
+    "digest": "sha256:69508a8db2e0bf30a4bc8feadd6e3d3d0b2043a174c6ff8f15c974f5c4b13608",
+    "created_at": "2026-09-13T16:03:35Z",
+    "expires_at": "2026-12-12T16:03:28Z"
+  },
+  "source_evidence": {
+    "workflow_run": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/34767429274",
+    "artifact_list_api": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/runs/34767429274/artifacts",
+    "return_basis": "Observed GitHub hosted-runner logs plus GitHub artifact metadata; task internals remain bound by the retained artifact digest."
+  },
+  "task_observations": [
+    {"task_id":"T001-CREW-STRUCTURE-VERIFY","assignment_id":"A001","crew_id":"U06","task_type":"VERIFY","competency_dimension":"evidence_provenance","predeclared_task_level":4,"execute_seconds":0.027457,"disposition":"ACCEPT","rex_ids_observed":[],"preventive_action_effective":true},
+    {"task_id":"T002-CREW-TELEMETRY-VERIFY","assignment_id":"A002","crew_id":"U04","task_type":"EXECUTE","competency_dimension":"runtime_execution","predeclared_task_level":4,"execute_seconds":0.025716,"disposition":"ACCEPT","rex_ids_observed":[],"preventive_action_effective":true},
+    {"task_id":"T003-ROLE-GAP-MEASURE","assignment_id":"A003","crew_id":"U05","task_type":"MEASURE","competency_dimension":"analysis_pca_bt","predeclared_task_level":4,"execute_seconds":0.031379,"disposition":"ACCEPT","rex_ids_observed":[],"preventive_action_effective":null},
+    {"task_id":"T004-REX-REUSE-VERIFY","assignment_id":"A004","crew_id":"U08","task_type":"REX","competency_dimension":"rex_learning","predeclared_task_level":4,"execute_seconds":0.026094,"disposition":"ACCEPT","rex_ids_observed":[],"preventive_action_effective":true}
+  ],
+  "rex_postflight": {
+    "recurring": [],
+    "persistent": [],
+    "regression": [],
+    "note": "No REX recurrence was observed in this bounded run; REX-006 prevention was demonstrated by real >0-step execution."
+  }
+}
