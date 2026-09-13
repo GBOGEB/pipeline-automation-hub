@@ -40,9 +40,19 @@ jobs:
         env:
           MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python mission-control/qps-triage-ultra/crew/measured/run_measured_tasks.py
+      - name: Validate measured crew exposure receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          for receipt in mission-control/qps-triage-ultra/crew/measured/receipts/exposure/*__EXPOSURE.json; do
+            python mission-control/qps-triage-ultra/crew/measured/validate_crew_exposure.py "$receipt"
+            count=$((count + 1))
+          done
+          test "$count" -eq 4
       - name: Build measured allocation evidence
         run: python mission-control/qps-triage-ultra/crew/measured/build_measured_allocation.py
-      - name: Enforce evidence and no false promotion
+      - name: Enforce evidence exposure and no false promotion
         shell: bash
         run: |
           python - <<'PY'
@@ -58,7 +68,29 @@ jobs:
           assert summary['task_count'] == 4
           assert summary['accepted'] == 4
           assert summary['rejected'] == 0
+          assert summary['crew_exposure_receipts'] == 4
+          assert summary['crew_exposure_seconds_total'] >= summary['crew_active_seconds_total']
+          assert summary['crew_waiting_seconds_total'] >= 0
+          assert summary['crew_release_seconds_total'] >= 0
+          assert summary['crew_exposure_pca_eligible'] is False
+          assert summary['crew_exposure_bt_eligible'] is False
           assert summary['competency_promotions'] == 0
+          exposure=list(root.joinpath('receipts/exposure').glob('*__EXPOSURE.json'))
+          assert len(exposure) == 4
+          for p in exposure:
+              r=json.loads(p.read_text())
+              assert r['receipt_evidence_class'] == 'MEASURED_CREW_EXPOSURE'
+              assert r['attribution_basis'] == 'PREDECLARED_ASSIGNMENT'
+              assert r['source_sha'] == actual
+              assert r['mission_performance_eligible'] is True
+              assert r['pca_eligible'] is False
+              assert r['bt_eligible'] is False
+              assert r['competency_promotion_eligible'] is False
+              assert r['authority_transfer'] is False
+              assert r['child_binding'] is False
+              assert r['frontier_binding'] is False
+              assert r['exposure_seconds'] >= r['active_seconds']
+              assert abs(r['exposure_seconds'] - (r['waiting_seconds'] + r['active_seconds'] + r['release_seconds'])) < 1e-5
           assert alloc['receipt_count'] >= 12
           assert alloc['returned_run_count'] >= 2
           assert alloc['allocation_eligible_rows'] == 4
@@ -92,11 +124,18 @@ jobs:
               assert r['promotion_allowed'] is False
               assert r['rex_preflight']['checklist_version']=='missioncontrol.rex.reuse_checklist.v1'
           print(json.dumps({
-              'status':'PASS_MEASURED_CREW_ALLOCATION_WITH_FRONTIER_CONTROL',
+              'status':'PASS_MEASURED_CREW_ALLOCATION_WITH_REAL_EXPOSURE',
               'exact_source_sha':actual,
               'allocation_rows':len(alloc['rows']),
               'allocation_eligible_rows':alloc['allocation_eligible_rows'],
               'returned_run_count':alloc['returned_run_count'],
+              'crew_exposure_receipts':summary['crew_exposure_receipts'],
+              'crew_waiting_seconds_total':summary['crew_waiting_seconds_total'],
+              'crew_active_seconds_total':summary['crew_active_seconds_total'],
+              'crew_release_seconds_total':summary['crew_release_seconds_total'],
+              'crew_exposure_seconds_total':summary['crew_exposure_seconds_total'],
+              'crew_exposure_pca_eligible':False,
+              'crew_exposure_bt_eligible':False,
               'competency_promotions':0,
               'crew_row_pca':alloc['pca'],
               'frontier_pca':alloc['frontier_pca'],
@@ -109,4 +148,5 @@ jobs:
           name: measured-crew-allocation-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             mission-control/qps-triage-ultra/crew/measured/receipts/*.json
+            mission-control/qps-triage-ultra/crew/measured/receipts/exposure/*.json
             mission-control/qps-triage-ultra/crew/measured/MEASURED_ALLOCATION_RECEIPT.json
