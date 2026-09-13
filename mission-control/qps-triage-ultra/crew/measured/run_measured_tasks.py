@@ -20,13 +20,16 @@ competencies = json.loads((CREW / "COMPETENCY_MATRIX_v1.json").read_text(encodin
 crew_ids = {x["crew_id"] for x in registry["crew"]}
 rex_ids = {x["rex_id"] for x in checklist["checklist"]}
 dimensions = set(competencies["dimensions"])
-source_sha = os.environ.get("GITHUB_SHA", "")
+source_sha = os.environ.get("MC_SOURCE_SHA", "")
+checkout_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
 run_id = os.environ.get("GITHUB_RUN_ID", "LOCAL_UNBOUND")
 job_ref = os.environ.get("GITHUB_JOB", "LOCAL_UNBOUND")
 runner_ref = os.environ.get("RUNNER_NAME", "LOCAL_UNBOUND")
 
 if len(source_sha) != 40:
-    raise SystemExit("FAIL: exact 40-char GITHUB_SHA required")
+    raise SystemExit("FAIL: exact 40-char MC_SOURCE_SHA required")
+if source_sha != checkout_sha:
+    raise SystemExit(f"FAIL: receipt source SHA {source_sha} != checkout HEAD {checkout_sha}")
 
 seen_assignments = set()
 seen_tasks = set()
@@ -121,6 +124,7 @@ summary = {
     "schema": "missioncontrol.measured_task_run_summary.v1",
     "mission_id": manifest["mission_id"],
     "source_sha": source_sha,
+    "checkout_sha": checkout_sha,
     "run_id": str(run_id),
     "task_count": len(receipts),
     "accepted": sum(r["disposition"] == "ACCEPT" for r in receipts),
