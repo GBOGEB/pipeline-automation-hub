@@ -19,7 +19,8 @@ def us(seconds: float) -> int:
 
 
 def delta_us(a: datetime, b: datetime) -> int:
-    return int(round((b - a).total_seconds() * MICROS))
+    delta = b - a
+    return ((delta.days * 86400 + delta.seconds) * MICROS) + delta.microseconds
 
 
 def main() -> int:
@@ -61,6 +62,7 @@ def main() -> int:
         "release_math": receipt_release_us == release_us,
         "exposure_math": receipt_exposure_us == exposure_us,
         "sum_identity": receipt_exposure_us == receipt_waiting_us + receipt_active_us + receipt_release_us,
+        "timestamp_sum_identity": exposure_us == waiting_us + active_us + release_us,
         "authority_transfer_false": receipt.get("authority_transfer") is False,
         "child_binding_false": receipt.get("child_binding") is False,
         "frontier_binding_false": receipt.get("frontier_binding") is False,
