@@ -1,0 +1,225 @@
+{
+  "schema": "missioncontrol.historian_bd_backlog.v1",
+  "status": "OBSERVED_CURRENT_MASTER_AUDIT",
+  "as_of": "2026-09-13",
+  "audited_repository": "GBOGEB/pipeline-automation-hub",
+  "audited_master_sha": "84f8859d1a36cab5cd608d18ddc127d952673654",
+  "audited_prs": [41, 42, 46, 47, 49, 53, 56, 62, 67],
+  "review_findings_observed": 19,
+  "unresolved_finding_occurrences": 15,
+  "unique_open_bd_items": 13,
+  "implemented_and_surviving_findings": 4,
+  "rules": [
+    "A review comment becomes BD only after checking current master.",
+    "Duplicate findings across PRs are one root BD item with recurrence_count > 1.",
+    "PR intent, NEXT and TODO text is not evidence that work was completed.",
+    "IMPLEMENTED requires current-code evidence; CONTROL requires runtime evidence.",
+    "SUPERSEDED requires an explicit replacement path, not silence."
+  ],
+  "open_bd": [
+    {
+      "bd_id": "HIST-BD-001",
+      "severity": "P1",
+      "source_prs": [41],
+      "class": "REX_SEMANTICS",
+      "title": "Derive observed REX verbs from completed dispositions, not requested actions",
+      "current_state": "STILL_PRESENT",
+      "current_evidence": "crew_rex_bridge.py builds observed_verbs from requested_action values",
+      "owner_bias": ["H2_KEB", "REX_KEB", "QA_SIGNALMAN"],
+      "h4_pressure": ["evidence_integrity", "rex_truth"],
+      "done_when": "runtime report counts ASSIMILATE/PRUNE/BRIDGE only from accepted/completed disposition evidence"
+    },
+    {
+      "bd_id": "HIST-BD-002",
+      "severity": "P2",
+      "source_prs": [41],
+      "class": "CONTRACT_VALIDATION",
+      "title": "Enforce CREW_REX report_required_fields including timestamp before round-trip PASS",
+      "current_state": "STILL_PRESENT",
+      "current_evidence": "contract requires timestamp but seed ledger omits it and bridge does not validate declared required fields",
+      "owner_bias": ["H2_KEB", "QA_SIGNALMAN"],
+      "h4_pressure": ["provenance_gap", "temporal_lineage_gap"],
+      "done_when": "all crew reports fail closed on any missing report_required_fields and temporal ordering is valid"
+    },
+    {
+      "bd_id": "HIST-BD-003",
+      "severity": "P2",
+      "source_prs": [42],
+      "class": "COMPETENCY_CONTRACT",
+      "title": "Require the complete L0-L6 competency scale",
+      "current_state": "STILL_PRESENT",
+      "current_evidence": "validate_crew_system.py checks only that L6 exists",
+      "owner_bias": ["H2_KEB", "QA_SIGNALMAN"],
+      "h4_pressure": ["crew_depth_integrity"],
+      "done_when": "validator requires exact L0..L6 key set"
+    },
+    {
+      "bd_id": "HIST-BD-004",
+      "severity": "P2",
+      "source_prs": [46],
+      "class": "TELEMETRY_CONTRACT",
+      "title": "Validate every telemetry event_required field",
+      "current_state": "STILL_PRESENT",
+      "current_evidence": "validate_crew_telemetry.py validates selected values but never enforces telemetry.event_required",
+      "owner_bias": ["H2_KEB", "H4_QPS_TRIAGE", "QA_SIGNALMAN"],
+      "h4_pressure": ["telemetry_quality", "crew_depth_integrity"],
+      "done_when": "every live observation is validated against all declared required keys before value checks"
+    },
+    {
+      "bd_id": "HIST-BD-005",
+      "severity": "P2",
+      "source_prs": [46],
+      "class": "TRIAL_CONTRACT",
+      "title": "Align role trial records with policy trial_requirements and enforce them",
+      "current_state": "STILL_PRESENT",
+      "current_evidence": "ROLE_TRIALS uses scope/required_competencies while policy requires mission_or_task_scope/competency_target_profile; validator ignores trial_requirements",
+      "owner_bias": ["H2_KEB", "H3_DOW", "QA_SIGNALMAN"],
+      "h4_pressure": ["role_trial_integrity", "reinforcement_quality"],
+      "done_when": "trial records and policy share one contract and validator enforces every required field"
+    },
+    {
+      "bd_id": "HIST-BD-006",
+      "severity": "P1",
+      "source_prs": [47, 53],
+      "recurrence_count": 2,
+      "class": "REX_PREFLIGHT",
+      "title": "Execute applicable REX checks before task execution and acceptance",
+      "current_state": "RECURRING_STILL_PRESENT",
+      "current_evidence": "run_measured_tasks.py and run_frontier_tasks.py hard-code blocking_rex_ids=[] and leave manual checklist unassessed while still executing workload",
+      "owner_bias": ["H1_QPS", "H2_KEB", "REX_KEB", "RUNNER", "QA_SIGNALMAN"],
+      "h4_pressure": ["control_degradation_risk", "rex_gap", "false_accept_risk"],
+      "done_when": "preflight is evaluated before work, blocking REX vetoes execution/acceptance, and receipt records evaluated checks"
+    },
+    {
+      "bd_id": "HIST-BD-007",
+      "severity": "P1",
+      "source_prs": [47],
+      "class": "REX_RECURRENCE",
+      "title": "Escalate repeated REX from NEW to RECURRING/PERSISTENT/REGRESSION using history",
+      "current_state": "STILL_PRESENT",
+      "current_evidence": "run_measured_tasks.py assigns recurrence_level NEW whenever rex_triggered and does not consult history",
+      "owner_bias": ["H2_KEB", "HISTORIAN", "REX_KEB"],
+      "h4_pressure": ["recurrence_pressure", "veto_integrity"],
+      "done_when": "postflight recurrence class is computed from prior provenance-bound occurrences"
+    },
+    {
+      "bd_id": "HIST-BD-008",
+      "severity": "P1",
+      "source_prs": [47],
+      "class": "PCA_GATE",
+      "title": "Compute PCA readiness variance from eligible measured rows only",
+      "current_state": "STILL_PRESENT",
+      "current_evidence": "build_measured_allocation.py computes varying features across all rows before selecting eligible_rows",
+      "owner_bias": ["H4_QPS_TRIAGE", "ANALYST"],
+      "h4_pressure": ["analytics_validity"],
+      "done_when": "eligible rows are selected first and both row count and feature variance derive only from that population"
+    },
+    {
+      "bd_id": "HIST-BD-009",
+      "severity": "P1",
+      "source_prs": [49],
+      "class": "NEGATIVE_EVIDENCE_RETENTION",
+      "title": "Retain validated rejected task observations in canonical evidence history",
+      "current_state": "STILL_PRESENT",
+      "current_evidence": "validate_evidence_returns.py requires ACCEPTED return, successful run, and every observation disposition ACCEPT",
+      "owner_bias": ["H1_QPS", "H2_KEB", "HISTORIAN", "QA_SIGNALMAN"],
+      "h4_pressure": ["selection_bias", "crew_depth_bias", "repair_survival_bias"],
+      "done_when": "validated negative/rejected runtime evidence is retained without promoting it and affects eligibility/history correctly"
+    },
+    {
+      "bd_id": "HIST-BD-010",
+      "severity": "P1",
+      "source_prs": [53],
+      "class": "EXPERIMENT_DESIGN",
+      "title": "Counterbalance or randomize paired allocation task execution order",
+      "current_state": "STILL_PRESENT",
+      "current_evidence": "run_frontier_tasks.py iterates manifest order sequentially; pair variant order remains confounded with warm-cache/order effects",
+      "owner_bias": ["H4_QPS_TRIAGE", "ANALYST", "PERFORMANCE_SPECIALIST"],
+      "h4_pressure": ["bt_validity", "experimental_bias"],
+      "done_when": "pair order is randomized/counterbalanced across repeated trials and order is recorded as an observed factor"
+    },
+    {
+      "bd_id": "HIST-BD-011",
+      "severity": "P1",
+      "source_prs": [53, 56],
+      "recurrence_count": 2,
+      "class": "BT_MODEL",
+      "title": "Fit Bradley-Terry abilities on the correct scale",
+      "current_state": "RECURRING_STILL_PRESENT",
+      "current_evidence": "build_measured_allocation.py assigns each strategy full regularized log win/loss odds, centers them, then softmaxes, doubling two-node log-odds separation",
+      "owner_bias": ["H4_QPS_TRIAGE", "ANALYST"],
+      "h4_pressure": ["bt_validity", "allocation_bias"],
+      "done_when": "BT abilities are jointly fitted or two-node log odds are split consistently and regression-tested"
+    },
+    {
+      "bd_id": "HIST-BD-012",
+      "severity": "P2",
+      "source_prs": [56],
+      "class": "BT_EVIDENCE_DERIVATION",
+      "title": "Derive/validate pair winner and relative gap from recorded timings",
+      "current_state": "STILL_PRESENT",
+      "current_evidence": "build_measured_allocation.py accepts stored winner labels without recomputing winner/relative_gap from seconds_a/seconds_b and tie threshold",
+      "owner_bias": ["H4_QPS_TRIAGE", "ANALYST", "QA_SIGNALMAN"],
+      "h4_pressure": ["bt_evidence_integrity"],
+      "done_when": "winner and relative gap are derived from raw timings or exact consistency is asserted fail-closed"
+    },
+    {
+      "bd_id": "HIST-BD-013",
+      "severity": "P2",
+      "source_prs": [62],
+      "class": "PROVENANCE_BINDING",
+      "title": "Bind MissionControl exact SHA inside Ring2 scout receipt",
+      "current_state": "STILL_PRESENT",
+      "current_evidence": "execute_gm_iv_ring2_jupyter_scout.py records candidate SHA but no MissionControl source SHA",
+      "owner_bias": ["H1_QPS", "H2_KEB", "QA_SIGNALMAN"],
+      "h4_pressure": ["provenance_gap"],
+      "done_when": "receipt contains and validates the checked-out MissionControl SHA in addition to candidate SHA"
+    }
+  ],
+  "implemented_surviving": [
+    {
+      "source_pr": 42,
+      "finding": "conceptual C06 must have current control authority false",
+      "status": "IMPLEMENTED_STATIC_SURVIVES",
+      "evidence": "current CREW_REGISTRY C06 authority.control=false"
+    },
+    {
+      "source_pr": 47,
+      "finding": "restore prior receipts before measured allocation aggregation",
+      "status": "IMPLEMENTED_STATIC_SURVIVES",
+      "evidence": "canonical history returns are now read by build_measured_allocation"
+    },
+    {
+      "source_pr": 47,
+      "finding": "validate canonical returned receipts before allocation evidence",
+      "status": "IMPLEMENTED_STATIC_SURVIVES",
+      "evidence": "validate_evidence_returns.py exists and measured workflow invokes it before task/allocation processing"
+    },
+    {
+      "source_pr": 47,
+      "finding": "validate observed pairwise evidence before BT readiness",
+      "status": "IMPLEMENTED_STATIC_SURVIVES_WITH_RESIDUAL_BD_012",
+      "evidence": "builder now validates schema/evidence/comparability/source identity but still trusts stored winner/relative_gap"
+    }
+  ],
+  "mission_next_backlog": [
+    {
+      "source_pr": 67,
+      "item": "separate F03 Engineer+Smoker+QA pilot/control proof",
+      "status": "BD_OPEN",
+      "authority_boundary": "does not bind canonical GM-IV child by itself"
+    },
+    {
+      "source_pr": 67,
+      "item": "fresh master recurrence required before PILOT_2_OF_8",
+      "status": "BD_OPEN_OR_RECHECK_AGAINST_NEWER_GM_IV_CONTROL",
+      "authority_boundary": "must be re-evaluated against post-PR67 GM-IV state before execution"
+    }
+  ],
+  "h3_h4_routing": {
+    "H3_DOW": "owns explicit BD work packages, closure receipts, supersession and reopen state",
+    "H4_QPS_TRIAGE": "uses severity, recurrence, centrality and evidence impact to prioritize reinforcement/sequence",
+    "H2_KEB": "challenges contract/provenance/semantic defects",
+    "H1_QPS": "owns runtime implementation defects and observed proof"
+  }
+}
