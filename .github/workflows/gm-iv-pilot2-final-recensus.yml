@@ -55,6 +55,18 @@ jobs:
           python -m pip install --disable-pip-version-check -q \
             pyyaml nbformat nbconvert ipykernel pandas matplotlib
 
+      - name: Bind temporary recensus repo-root compatibility path
+        shell: bash
+        run: |
+          compat_root="$GITHUB_WORKSPACE/../mission-control/qps-triage-ultra/crew"
+          mkdir -p "$compat_root"
+          test ! -e "$compat_root/measured"
+          ln -s \
+            "$GITHUB_WORKSPACE/mission-control/qps-triage-ultra/crew/measured" \
+            "$compat_root/measured"
+          test -f "$compat_root/measured/validate_crew_exposure.py"
+          echo PASS_RECENSUS_REPO_ROOT_COMPATIBILITY_PATH
+
       - name: Execute four-frontier and control recensus
         shell: bash
         run: |
