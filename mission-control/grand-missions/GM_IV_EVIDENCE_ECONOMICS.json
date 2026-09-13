@@ -1,0 +1,123 @@
+{
+  "schema": "qps.gm_iv_evidence_economics.v1",
+  "mission": "GM-IV",
+  "authority_transfer": false,
+  "fleet_invariant": {
+    "reconnaissance_observed": 2,
+    "reconnaissance_denominator": 8,
+    "canonical_children_bound": 0,
+    "f03_bound": false,
+    "f04_bound": false,
+    "gm_v_state": "HELD",
+    "rule": "RECONNAISSANCE_EVIDENCE_DOES_NOT_CREATE_CHILD_BINDING"
+  },
+  "metric_contract": {
+    "queue_seconds": "MEASURED_FROM_JOB_CREATED_AT_TO_STARTED_AT",
+    "execute_seconds": "MEASURED_FROM_JOB_STARTED_AT_TO_COMPLETED_AT",
+    "payload_execute_seconds": "MEASURED_FROM_PRIMARY_EVIDENCE_STEP_WHEN_AVAILABLE",
+    "crew_time_seconds": "NULL_UNTIL_HUMAN_OR_AGENT_CREW_START_STOP_IS_INSTRUMENTED",
+    "accepted_evidence_units": "COUNT_OF_NEW_BOUND_FACTS_ACCEPTED_BY_THE_FRONTIER_DECISION",
+    "disposition_yield": "1_IF_THE_PULSE_PRODUCED_OR_CONFIRMED_A_BOUNDED_DISPOSITION_ELSE_0",
+    "evidence_rate": "accepted_evidence_units / execute_seconds",
+    "crew_time_policy": "DO_NOT_SUBSTITUTE_RUNNER_TIME_OR_EXPERT_SEEDED_LCE_FOR_MEASURED_CREW_TIME"
+  },
+  "rows": [
+    {
+      "row_id": "GMIV_RING2_SCOUT_A_RUNTIME_PASS",
+      "frontier": "SCOUT_A",
+      "repository": "GBOGEB/codespaces-jupyter",
+      "candidate_source_sha": "1eba2240a86d1fd2bd6375e2fac481caf645cdde",
+      "missioncontrol_source_sha": "3999c5ab5f3ef0bbf063160a64257cbbdc611828",
+      "workflow_run_id": 34768603080,
+      "job_id": 103753955108,
+      "evidence_class": "MEASURED",
+      "queue_seconds": 2,
+      "execute_seconds": 34,
+      "payload_execute_seconds": 3,
+      "crew_time_seconds": null,
+      "crew_time_status": "NOT_INSTRUMENTED",
+      "accepted_evidence_units": 4,
+      "accepted_facts": [
+        "exact_candidate_SHA_fetched",
+        "notebook_executed_more_than_zero_code_cells_twice",
+        "repeat_output_was_governed_and_deterministic",
+        "candidate_checkout_remained_clean"
+      ],
+      "disposition": "CANDIDATE_RUNTIME_PASS_CONTINUE_RECON",
+      "disposition_yield": 1,
+      "evidence_rate": 0.1176470588,
+      "slot_bound": false,
+      "child_bound": false,
+      "authority_transfer": false
+    },
+    {
+      "row_id": "GMIV_RING2_SCOUT_B_PROVENANCE_PASS",
+      "frontier": "SCOUT_B",
+      "repository": "GBOGEB/yaml-reference-parser",
+      "candidate_source_sha": "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99",
+      "missioncontrol_source_sha": "4e4b65d9a2dc6598ed1e34324d2adf0765406148",
+      "workflow_run_id": 34768719046,
+      "job_id": 103754267019,
+      "evidence_class": "MEASURED",
+      "queue_seconds": 2,
+      "execute_seconds": 7,
+      "payload_execute_seconds": 0,
+      "crew_time_seconds": null,
+      "crew_time_status": "NOT_INSTRUMENTED",
+      "accepted_evidence_units": 4,
+      "accepted_facts": [
+        "candidate_is_a_true_upstream_fork",
+        "candidate_unique_commits_vs_upstream_equal_zero",
+        "upstream_has_one_commit_after_frozen_candidate",
+        "full_runtime_not_required_to_bind_reference_return"
+      ],
+      "disposition": "REFERENCE_RETURN_NO_RUNTIME",
+      "disposition_yield": 1,
+      "evidence_rate": 0.5714285714,
+      "slot_bound": false,
+      "child_bound": false,
+      "authority_transfer": false
+    },
+    {
+      "row_id": "GMIV_RING2_SCOUT_B_FULL_RUNTIME_PRUNED",
+      "frontier": "SCOUT_B_PARALLEL_RUNTIME",
+      "repository": "GBOGEB/yaml-reference-parser",
+      "candidate_source_sha": "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99",
+      "missioncontrol_source_sha": "27382d530c5f23015518df6448f477a9bbfe15de",
+      "workflow_run_id": 34768752434,
+      "job_id": 103754355194,
+      "evidence_class": "MEASURED",
+      "queue_seconds": 7,
+      "execute_seconds": 78,
+      "payload_execute_seconds": 62,
+      "crew_time_seconds": null,
+      "crew_time_status": "NOT_INSTRUMENTED",
+      "accepted_evidence_units": 1,
+      "accepted_facts": [
+        "legacy_upstream_make_test_failed_after_real_execution"
+      ],
+      "disposition": "PRUNE_FULL_RUNTIME_KEEP_PROVENANCE_REFERENCE",
+      "disposition_yield": 1,
+      "evidence_rate": 0.0128205128,
+      "slot_bound": false,
+      "child_bound": false,
+      "authority_transfer": false
+    }
+  ],
+  "derived_comparisons": {
+    "scout_b_provenance_vs_full_runtime_evidence_rate_ratio": 44.57142857,
+    "scout_b_runtime_extra_execute_seconds": 71,
+    "scout_b_runtime_extra_queue_seconds": 5,
+    "interpretation": "PROVENANCE_BOUND_THE_REFERENCE_RETURN_DECISION_WITH_MUCH_HIGHER_EVIDENCE_PER_EXECUTION_SECOND_THAN_THE_REDUNDANT_FULL_RUNTIME_LANE"
+  },
+  "pca_gate": {
+    "state": "DEFER",
+    "reason": "ONLY_THREE_ROWS_FROM_ONE_MISSION_AND_CREW_TIME_NOT_INSTRUMENTED",
+    "minimum_next_condition": "ADD_COMPARABLE_MEASURED_ROWS_ACROSS_AT_LEAST_TWO_FRONTIERS_AND_INSTRUMENT_CREW_TIME_BEFORE_USING_CREW_TIME_IN_PCA"
+  },
+  "bt_gate": {
+    "state": "DEFER",
+    "reason": "ONE_USEFUL_OBSERVED_PROVENANCE_VS_RUNTIME_COMPARISON_IS_NOT_A_STABLE_PAIRWISE_RANKING_SAMPLE",
+    "minimum_next_condition": "COLLECT_MULTIPLE_COMPARABLE_INTERVENTION_PAIRS_WITH_OBSERVED_OUTCOMES"
+  }
+}

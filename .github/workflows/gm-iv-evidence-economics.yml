@@ -1,0 +1,50 @@
+name: GM-IV Evidence Economics
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/GM_IV_EVIDENCE_ECONOMICS.json'
+      - 'mission-control/grand-missions/validate_gm_iv_evidence_economics.py'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - '.github/workflows/gm-iv-evidence-economics.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-evidence-economics:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+
+      - name: Validate measured evidence economics
+        shell: bash
+        run: |
+          python mission-control/grand-missions/validate_gm_iv_evidence_economics.py \
+            | tee mission-control/grand-missions/GM_IV_EVIDENCE_ECONOMICS_RECEIPT.json
+          grep -q '"status": "PASS"' mission-control/grand-missions/GM_IV_EVIDENCE_ECONOMICS_RECEIPT.json
+
+      - name: Deterministic repeat
+        shell: bash
+        run: |
+          python mission-control/grand-missions/validate_gm_iv_evidence_economics.py \
+            > /tmp/evidence-economics-repeat.json
+          cmp mission-control/grand-missions/GM_IV_EVIDENCE_ECONOMICS_RECEIPT.json /tmp/evidence-economics-repeat.json
+
+      - name: Upload exact-head evidence economics receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-evidence-economics-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/grand-missions/GM_IV_EVIDENCE_ECONOMICS_RECEIPT.json
+          if-no-files-found: error
