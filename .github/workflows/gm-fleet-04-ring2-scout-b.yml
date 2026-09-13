@@ -1,0 +1,104 @@
+name: GM-FLEET-04 Ring2 Scout B
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/gm-fleet-04-ring2-scout-b.yml'
+      - 'mission-control/grand-missions/GM_IV_RING2_SCOUT_SCOREBOARD.json'
+      - 'mission-control/grand-missions/execute_gm_iv_ring2_yaml_scout.py'
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/gm-fleet-04-ring2-scout-b.yml'
+      - 'mission-control/grand-missions/GM_IV_RING2_SCOUT_SCOREBOARD.json'
+      - 'mission-control/grand-missions/execute_gm_iv_ring2_yaml_scout.py'
+
+permissions:
+  contents: read
+
+jobs:
+  scout-b:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout MissionControl exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: hub
+
+      - name: Bind MissionControl exact SHA
+        shell: bash
+        run: |
+          source_sha="$(git -C hub rev-parse HEAD)"
+          echo "MISSIONCONTROL_SHA=$source_sha" >> "$GITHUB_ENV"
+          test -n "$source_sha"
+
+      - name: Setup legacy-compatible Node runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14.x'
+
+      - name: Fetch Scout B exact source twice
+        shell: bash
+        run: |
+          for d in candidate-a candidate-b; do
+            mkdir "$d"
+            git -C "$d" init
+            git -C "$d" remote add origin https://github.com/GBOGEB/yaml-reference-parser.git
+            git -C "$d" fetch --depth=1 origin 2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99
+            git -C "$d" checkout --detach FETCH_HEAD
+            git -C "$d" config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+            git -C "$d" fetch --depth=1 origin '+refs/heads/*:refs/remotes/origin/*'
+            test "$(git -C "$d" rev-parse HEAD)" = "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99"
+            test -z "$(git -C "$d" status --porcelain --untracked-files=no)"
+          done
+
+      - name: Execute upstream make-test contract twice
+        shell: bash
+        run: |
+          python3 hub/mission-control/grand-missions/execute_gm_iv_ring2_yaml_scout.py \
+            --repo-a candidate-a \
+            --repo-b candidate-b \
+            --expected-sha 2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99 \
+            --out "$RUNNER_TEMP/ring2-scout-b.json" \
+            --log-a "$RUNNER_TEMP/ring2-scout-b-a.log" \
+            --log-b "$RUNNER_TEMP/ring2-scout-b-b.log" \
+            | tee "$RUNNER_TEMP/ring2-scout-b.log"
+          grep -F 'PASS_GM_IV_RING2_SCOUT_B' "$RUNNER_TEMP/ring2-scout-b.log"
+
+      - name: Enforce fork-reference and candidate-only boundaries
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          p=os.path.join(os.environ['RUNNER_TEMP'], 'ring2-scout-b.json')
+          d=json.load(open(p, encoding='utf-8'))
+          assert d['provenance']['is_fork'] is True
+          assert d['provenance']['parent_repository'] == 'yaml/yaml-reference-parser'
+          assert d['provenance']['source_repository'] == 'yaml/yaml-reference-parser'
+          assert d['provenance']['upstream_contract'] == 'make test'
+          assert d['semantic_repeat'] is True
+          assert d['run_a']['returncode'] == 0 and d['run_b']['returncode'] == 0
+          assert d['candidate_slot_bound'] is False
+          assert d['canonical_child_bound'] is False
+          assert d['domain_authority'] is False
+          assert d['engineering_authority'] is False
+          board=json.load(open('hub/mission-control/grand-missions/GM_IV_RING2_SCOUT_SCOREBOARD.json', encoding='utf-8'))
+          assert board['canonical_children_bound'] == 0
+          assert board['formal_slots_assigned_by_this_artifact'] == 0
+          assert board['scout_b'] == 'GBOGEB/yaml-reference-parser'
+          assert all(item['slot_binding'] is False for item in board['candidates'])
+          print('PASS_RING2_SCOUT_B_FAIL_CLOSED_BOUNDARIES')
+          PY
+
+      - name: Upload exact-head Scout B receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-ring2-scout-b-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/ring2-scout-b.json
+            ${{ runner.temp }}/ring2-scout-b.log
+            ${{ runner.temp }}/ring2-scout-b-a.log
+            ${{ runner.temp }}/ring2-scout-b-b.log
+          if-no-files-found: error
