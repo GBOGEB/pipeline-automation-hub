@@ -1,0 +1,115 @@
+name: GM-FLEET-04 F01 Bounded Pilot
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/gm-fleet-04-f01-pilot.yml'
+      - 'mission-control/grand-missions/GM_IV_F01_PILOT_CONTRACT.json'
+      - 'mission-control/grand-missions/consume_gm_iv_f01_pilot.py'
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/gm-fleet-04-f01-pilot.yml'
+      - 'mission-control/grand-missions/GM_IV_F01_PILOT_CONTRACT.json'
+      - 'mission-control/grand-missions/consume_gm_iv_f01_pilot.py'
+
+permissions:
+  contents: read
+
+jobs:
+  pilot:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout MissionControl exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: hub
+
+      - name: Bind MissionControl exact SHA
+        shell: bash
+        run: |
+          source_sha="$(git -C hub rev-parse HEAD)"
+          echo "MISSIONCONTROL_SHA=$source_sha" >> "$GITHUB_ENV"
+          test -n "$source_sha"
+
+      - name: Fetch F01 exact source
+        shell: bash
+        run: |
+          mkdir f01
+          git -C f01 init
+          git -C f01 remote add origin https://github.com/GBOGEB/DOCX_RTM_Automation.git
+          git -C f01 fetch --depth=1 origin d85dc2de1b4beb88bc8e8ce4796784f4577f9a96
+          git -C f01 checkout --detach FETCH_HEAD
+          test "$(git -C f01 rev-parse HEAD)" = "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96"
+
+      - name: Execute F01 independent verifier first pass
+        shell: bash
+        run: |
+          GITHUB_REPOSITORY=GBOGEB/DOCX_RTM_Automation \
+          EXPECTED_SHA=d85dc2de1b4beb88bc8e8ce4796784f4577f9a96 \
+          python3 f01/scripts/mip_verify_self_index.py \
+            --summary "$RUNNER_TEMP/f01-verifier-1.json"
+
+      - name: Consume verifier result first pass
+        shell: bash
+        run: |
+          MISSIONCONTROL_SHA="$MISSIONCONTROL_SHA" \
+          python3 hub/mission-control/grand-missions/consume_gm_iv_f01_pilot.py \
+            --summary "$RUNNER_TEMP/f01-verifier-1.json" \
+            --out "$RUNNER_TEMP/f01-pilot-receipt-1.json"
+
+      - name: Execute F01 independent verifier repeat
+        shell: bash
+        run: |
+          GITHUB_REPOSITORY=GBOGEB/DOCX_RTM_Automation \
+          EXPECTED_SHA=d85dc2de1b4beb88bc8e8ce4796784f4577f9a96 \
+          python3 f01/scripts/mip_verify_self_index.py \
+            --summary "$RUNNER_TEMP/f01-verifier-2.json"
+
+      - name: Consume verifier result repeat
+        shell: bash
+        run: |
+          MISSIONCONTROL_SHA="$MISSIONCONTROL_SHA" \
+          python3 hub/mission-control/grand-missions/consume_gm_iv_f01_pilot.py \
+            --summary "$RUNNER_TEMP/f01-verifier-2.json" \
+            --out "$RUNNER_TEMP/f01-pilot-receipt-2.json"
+
+      - name: Enforce deterministic pilot repeat
+        shell: bash
+        run: |
+          cmp "$RUNNER_TEMP/f01-verifier-1.json" "$RUNNER_TEMP/f01-verifier-2.json"
+          cmp "$RUNNER_TEMP/f01-pilot-receipt-1.json" "$RUNNER_TEMP/f01-pilot-receipt-2.json"
+          echo PASS_GM_IV_F01_PILOT_DETERMINISTIC_REPEAT
+
+      - name: Enforce authority and child-binding boundaries
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          p=os.path.join(os.environ['RUNNER_TEMP'], 'f01-pilot-receipt-1.json')
+          d=json.load(open(p, encoding='utf-8'))
+          assert d['executed_steps_gt0'] is True
+          assert d['producer_verifier_chain'] == 'PASS'
+          assert d['authority_transfer'] is False
+          assert d['children_bound'] is False
+          assert d['disposition'] == 'PILOT_CONTROL_CANDIDATE'
+          assert d['next_gate'] == 'DEFAULT_BRANCH_REPEAT_BEFORE_ANY_CHILD_BINDING'
+          print('PASS_F01_PILOT_FAIL_CLOSED_BOUNDARIES')
+          PY
+
+      - name: Show bounded pilot receipt
+        shell: bash
+        run: cat "$RUNNER_TEMP/f01-pilot-receipt-1.json"
+
+      - name: Upload exact-SHA F01 pilot receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-f01-pilot-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/f01-verifier-1.json
+            ${{ runner.temp }}/f01-verifier-2.json
+            ${{ runner.temp }}/f01-pilot-receipt-1.json
+            ${{ runner.temp }}/f01-pilot-receipt-2.json
+          if-no-files-found: error
