@@ -1,0 +1,54 @@
+{
+  "schema":"qps.crew_rex_bidirectional.v1",
+  "purpose":"bidirectional crew reporting, REX learning and Mission Control feedback",
+  "authority_transfer":false,
+  "forward_path":[
+    "CREW_REPORT",
+    "OBSERVED_RECEIPT",
+    "REX_CLASSIFY",
+    "LEARN",
+    "IMPROVE_OR_REPAIR",
+    "ASSIMILATE",
+    "PRUNE_OR_BRIDGE",
+    "MISSION_CONTROL_REVIEW"
+  ],
+  "return_path":[
+    "MISSION_CONTROL_DISPOSITION",
+    "CREW_ACTION",
+    "RETURN_STAY_REINFORCE_OR_RESECOND",
+    "UPDATED_GUARDRAIL",
+    "NEXT_BOUNDED_ACTION",
+    "TEMPORAL_LOG_APPEND"
+  ],
+  "verbs":{
+    "LEARN":"extract reusable evidence-backed lesson without promotion",
+    "IMPROVE":"change process or implementation only when authorized by observed evidence",
+    "UPDATE":"refresh controlled state from newer bound evidence",
+    "REPAIR":"correct an observed defect at the classified owner",
+    "ASSIMILATE":"adopt accepted reusable learning into canonical control surfaces",
+    "PRUNE":"remove proven superseded duplicate or zero-value implementation after replacement proof",
+    "BRIDGE":"connect bounded producer-consumer or home-base-mission interfaces without authority leakage"
+  },
+  "first_red_routing":{
+    "SOURCE":["SCOUT","READER","AMBASSADOR"],
+    "SEMANTIC":["READER","TM"],
+    "SCIENCE":["SCIENTIST","TM"],
+    "APPLICATION_GT0":["DOCTOR","ENGINEER"],
+    "HABITAT_OR_ZERO_STEP":["DOCKMASTER"],
+    "INTERFACE":["AMBASSADOR","ENGINEER"],
+    "DELIVERY":["PM"],
+    "AUTHORITY":["GOVERNOR","TM"]
+  },
+  "report_required_fields":["event_id","mission_id","crew_role","timestamp","event_type","evidence_class","source_ref","observation","requested_action"],
+  "mission_control_dispositions":["ACCEPT_LEARNING","REJECT_LEARNING","DEFER","REPAIR","IMPROVE","UPDATE","ASSIMILATE","PRUNE","BRIDGE","RETURN","STAY","REINFORCE","RESECOND"],
+  "hard_guards":[
+    "CREW_REPORT_IS_NOT_ENGINEERING_ACCEPTANCE",
+    "REX_LEARNING_CANNOT_SELF_PROMOTE",
+    "PRUNE_REQUIRES_PROVEN_REPLACEMENT_OR_EXPLICIT_ZERO_VALUE_DISPOSITION",
+    "ASSIMILATE_REQUIRES_ACCEPTED_EVIDENCE_AND_AUTHORITY_OWNER",
+    "REPAIR_REQUIRES_OBSERVED_DEFECT",
+    "DOCTOR_REPAIR_REQUIRES_GT0_EXECUTED_STEPS",
+    "BRIDGE_MUST_PRESERVE_SOURCE_SHA_AND_AUTHORITY_BOUNDARY",
+    "EVERY_MATERIAL_DISPOSITION_RETURNS_TO_TEMPORAL_LOG"
+  ]
+}
