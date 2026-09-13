@@ -1,0 +1,30 @@
+{
+  "schema": "qps.gm_iv_ring2_scout_b_provenance.v1",
+  "mission": "GM-IV",
+  "wave": "GM-FLEET-04-RING2-SCOUT-B",
+  "candidate_repository": "GBOGEB/yaml-reference-parser",
+  "candidate_sha": "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99",
+  "upstream_repository": "yaml/yaml-reference-parser",
+  "upstream_sha": "d58347b997eea4d7e5ba33b36871535dad6db081",
+  "observed_github_relationship": "FORK_OF_UPSTREAM",
+  "expected_git_relationship": {
+    "candidate_is_ancestor_of_upstream": true,
+    "upstream_commits_after_candidate": 1,
+    "candidate_unique_commits_vs_upstream": 0
+  },
+  "information_gain": "LOW_NO_GBOGEB_SPECIFIC_DELTA_AT_FROZEN_HEAD",
+  "runtime_policy": "DO_NOT_SPEND_FULL_TEST_RUNTIME_UNTIL_LOCAL_DELTA_EXISTS",
+  "disposition_if_proven": "REFERENCE_RETURN_NO_RUNTIME",
+  "crew": ["SCOUT", "READER"],
+  "return_after": "PROVENANCE_RELATIONSHIP_BOUND",
+  "candidate_slot_bound": false,
+  "canonical_child_bound": false,
+  "authority_transfer": false,
+  "gm_v_state": "HELD",
+  "stop_rules": [
+    "NO_F03_OR_F04_BINDING_FROM_PROVENANCE_ONLY",
+    "NO_FULL_MAKE_TEST_FOR_ZERO_LOCAL_DELTA",
+    "NO_ENGINEER_OR_DOCTOR_SURGE",
+    "NO_DOMAIN_AUTHORITY_TRANSFER"
+  ]
+}
