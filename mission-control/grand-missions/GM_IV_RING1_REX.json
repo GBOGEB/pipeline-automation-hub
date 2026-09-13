@@ -1,0 +1,36 @@
+{
+  "schema": "qps.gm_iv_ring1_rex.v1",
+  "wave": "GM-FLEET-03-RING1",
+  "authority_transfer": false,
+  "events": [
+    {
+      "rex_id": "REX-GMF-03-R1-001",
+      "class": "SOURCE_CHECKOUT_BOUNDARY",
+      "observed_on_hub_sha": "ba45d6984beecc196307f2377217faa04102ed5c",
+      "failed_run_id": 34767890206,
+      "target_repository": "GBOGEB/DOCX_RTM_Automation",
+      "target_sha": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96",
+      "observation": "actions_checkout_fetched_the_exact_target_SHA_then_failed_during_auth_cleanup_because_the_tree_exposes_DOCX_RTM_Automation_as_a_gitlink_without_a_matching_gitmodules_URL",
+      "classification": "SOURCE_OR_CHECKOUT_BOUNDARY_NOT_APPLICATION_FAILURE",
+      "correct_route": ["SCOUT", "READER", "AMBASSADOR"],
+      "forbidden_reaction": "DO_NOT_PATCH_TARGET_APPLICATION_CODE",
+      "repair": "bounded_git_init_fetch_exact_SHA_checkout_detach_without_submodule_traversal",
+      "repair_proof": {
+        "feature_hub_sha": "4e34859d50b355d18d926a8ec3d74fe300770bc5",
+        "feature_run_id": 34767917293,
+        "feature_job_id": 103752111488,
+        "feature_artifact_id": 10320649570,
+        "feature_artifact_digest": "sha256:1f32b1dcc74194787e39195e039199e4fcf74fd79b90ca2514620a57b1ff0e93",
+        "master_sha": "b6f63fa4ed19ef1be517c2c752c32327c8442bee",
+        "master_run_id": 34767966606,
+        "master_job_id": 103752248610,
+        "master_artifact_id": 10320054225,
+        "master_artifact_digest": "sha256:110d237261706c24d4d6db85376c8d9943b6fbec5bb90def9a6e8a7e1d86abfc",
+        "target_exact_sha": true,
+        "target_application_modified": false,
+        "ring_disposition": "F01_PILOT_READY__F02_REFERENCE"
+      },
+      "assimilation_rule": "for external recon targets with malformed or intentionally unresolved gitlinks use bounded exact-SHA fetch for observation before considering any repo repair"
+    }
+  ]
+}
