@@ -1,0 +1,133 @@
+{
+  "schema": "qps.gm_iv_scout_ledger.v1",
+  "wave": "GM-FLEET-03-CANDIDATE-SCOUT",
+  "as_of": "2026-09-13",
+  "canonical_assignment_authorized": false,
+  "canonical_blocker": "GM_IV_LAUNCH_GATE_NOT_YET_PROVEN_AS_SATISFIED",
+  "summary": {
+    "provisional_slots": 8,
+    "repo_exists": "8/8",
+    "exact_head_captured": "8/8",
+    "semantic_content_scouted": "8/8",
+    "current_or_prior_bounded_runtime_evidence": "3/8",
+    "current_exact_head_runtime_evidence": "1/8",
+    "runtime_probe_pending": "5/8",
+    "canonical_children_written": "0/8"
+  },
+  "frontiers": [
+    {
+      "slot": "GM-IV-A",
+      "repo": "GBOGEB/telegraf",
+      "default_branch": "master",
+      "observed_head": "d19411ff5927a3a733ae8e146e7645c560a180b6",
+      "moniker": "TELEMETRY_LISTENER",
+      "content_evidence": "README describes metrics/log/data collection with 300+ plugins including OpenTelemetry, Prometheus, Docker, OPC-UA/Modbus-class device surfaces",
+      "runtime_evidence": {
+        "state": "PASS_OBSERVED_GT0",
+        "source_head": "9a2f306c551549cca696173023b3d7ec80327c88",
+        "run_id": 34685712612,
+        "runner_id": 1000252910,
+        "elapsed_seconds": 410,
+        "proof": ["exact_head_checkout", "telegraf_build", "bounded_exec_input", "file_output", "metric_assertion", "receipt_binding", "artifact_upload"],
+        "existing_disposition": "REFERENCE_AND_PARK_CURRENT_ONE_METRIC_SLICE"
+      },
+      "scout_disposition": "ACCEPT_CAPABILITY_REFERENCE_REENTER_FOR_MULTI_SIGNAL_CASE",
+      "next_probe": "only re-enter for real multi-signal runner/process/Docker/OPC-UA telemetry where aggregation justifies footprint"
+    },
+    {
+      "slot": "GM-IV-B",
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "default_branch": "main",
+      "observed_head": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96",
+      "moniker": "TRACEABILITY_FOUNDRY",
+      "content_evidence": "README exposes DOCX/PDF/TXT parsing, RTM/OTC/DEL relationships, DMAIC, visualization, orchestration and multi-format outputs",
+      "runtime_evidence": {
+        "state": "PASS_PRIOR_EXACT_HEAD_LINEAGE_CURRENT_HEAD_NOT_REPEATED",
+        "proof_head": "de8a62af406ec72d0883ce41fc4b988f51587e8c",
+        "run_id": 34712361991,
+        "proof": ["exact_SHA_self_index", "two_run_normalized_equality", "clean_check", "sanitized_artifact"]
+      },
+      "scout_disposition": "ACCEPT_CONDITIONAL_CURRENT_HEAD_PROBE",
+      "next_probe": "run one generic non-QPS document-to-traceability transform on current exact head and emit sanitized receipt"
+    },
+    {
+      "slot": "GM-IV-C",
+      "repo": "GBOGEB/attest-build-provenance",
+      "default_branch": "main",
+      "observed_head": "10334b5f1e684784025c3fc0a277c88c19089275",
+      "moniker": "PROVENANCE_NOTARY",
+      "content_evidence": "README defines SLSA provenance, in-toto predicate, Sigstore signing and artifact digest binding",
+      "runtime_evidence": {"state": "PENDING_BOUNDED_SCOUT_PROBE"},
+      "scout_disposition": "ACCEPT_TO_PROBE",
+      "next_probe": "attest or verify one harmless public artifact/test subject without creating authority over MissionControl state"
+    },
+    {
+      "slot": "GM-IV-D",
+      "repo": "GBOGEB/RouteLLM",
+      "default_branch": "main",
+      "observed_head": "0b64fdafe049e596a3f5657c219329f24af24198",
+      "moniker": "ROUTING_EXCHANGE",
+      "content_evidence": "README exposes router calibration, strong/weak model routing, evaluation and OpenAI-compatible serving",
+      "runtime_evidence": {"state": "PENDING_OFFLINE_OR_MOCKABLE_PROBE"},
+      "risk": "provider/API dependencies can make naive runtime non-deterministic or costly",
+      "scout_disposition": "ACCEPT_TO_OFFLINE_PROBE",
+      "next_probe": "exercise deterministic router/evaluator surface with fixture or mock; do not require paid external model calls"
+    },
+    {
+      "slot": "GM-IV-E",
+      "repo": "GBOGEB/docker-stacks",
+      "default_branch": "main",
+      "observed_head": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "moniker": "HABITAT_FACTORY",
+      "content_evidence": "README defines ready-to-run Jupyter Docker images, local containers, ephemeral mounts and multi-architecture images",
+      "runtime_evidence": {"state": "PENDING_MINIMAL_IMAGE_PROBE"},
+      "risk": "full upstream build is expensive and unnecessary for scout",
+      "scout_disposition": "ACCEPT_TO_MINIMAL_PROBE",
+      "next_probe": "use one minimal pinned image/profile and capture startup, execution, cleanup and resource receipt"
+    },
+    {
+      "slot": "GM-IV-F",
+      "repo": "GBOGEB/CODESPACES_jyperter",
+      "default_branch": "main",
+      "observed_head": "bd0c516288c27dd6ad0b1008f0ebda6540116785",
+      "moniker": "DISPOSABLE_WORKBENCH",
+      "content_evidence": "README exposes ZIP smoke/integration pipeline and PowerPoint preview generator; repository also carries exact-head worker history",
+      "runtime_evidence": {
+        "state": "PASS_PRIOR_EXACT_HEAD_LINEAGE_CURRENT_HEAD_NOT_REPEATED",
+        "prior_pr": 65,
+        "proof": ["exact_head_assert", "real_QPLANT_CLI_gt0_output", "output_hash", "child_receipt_hash", "deterministic_JSON_receipt"]
+      },
+      "risk": "embedded venv material observed in code search inflates footprint and contaminates census",
+      "scout_disposition": "ACCEPT_CONDITIONAL_HYGIENE_AND_CURRENT_HEAD_PROBE",
+      "next_probe": "isolate clean worker surface, exclude vendored environment from census, run current-head ZIP or preview worker"
+    },
+    {
+      "slot": "GM-IV-G",
+      "repo": "GBOGEB/camelot",
+      "default_branch": "master",
+      "observed_head": "6b7b67d857289bcf5fe47aa1db0bcfc2ca1091b0",
+      "moniker": "TABLE_EXTRACTOR",
+      "content_evidence": "README exposes text-PDF table extraction, parsing accuracy/whitespace metrics and CSV/JSON/Excel/HTML/Markdown/SQLite outputs",
+      "runtime_evidence": {"state": "PENDING_PUBLIC_FIXTURE_PROBE"},
+      "scout_disposition": "ACCEPT_TO_PROBE",
+      "next_probe": "extract the repository public fixture twice, compare table count, parsing metrics and export hashes"
+    },
+    {
+      "slot": "GM-IV-H",
+      "repo": "GBOGEB/grid-table-editor",
+      "default_branch": "master",
+      "observed_head": "ffc249daba32b0164acbcd9e192d4abef56c3b7a",
+      "moniker": "STRUCTURED_DATA_DESK",
+      "content_evidence": "README exposes CSV/Markdown/JSON import-edit-export, row/column edits and test-data generation",
+      "runtime_evidence": {"state": "PENDING_ROUNDTRIP_PROBE"},
+      "scout_disposition": "ACCEPT_TO_PROBE",
+      "next_probe": "fixture CSV -> edit delta -> Markdown/JSON -> re-import; prove semantic row/column parity and machine-readable delta"
+    }
+  ],
+  "acceptance_classes": {
+    "ACCEPTED_NOW": ["GBOGEB/telegraf"],
+    "ACCEPTED_CONDITIONAL_CURRENT_HEAD_REPEAT": ["GBOGEB/DOCX_RTM_Automation", "GBOGEB/CODESPACES_jyperter"],
+    "ACCEPTED_TO_BOUNDED_PROBE": ["GBOGEB/attest-build-provenance", "GBOGEB/RouteLLM", "GBOGEB/docker-stacks", "GBOGEB/camelot", "GBOGEB/grid-table-editor"]
+  },
+  "promotion_condition": "8/8 must reach ACCEPTED_NOW or explicit REFERENCE_ONLY disposition with observed evidence; then remeasure capacity/control degradation; only if GM-IV launch gate passes may GRAND_MISSION_REGISTRY receive the eight children"
+}
