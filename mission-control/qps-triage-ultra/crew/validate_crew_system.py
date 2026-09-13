@@ -72,7 +72,18 @@ def main() -> int:
         if maturity == "CONCEPTUAL":
             require(control == "NOT_ELIGIBLE", f"{crew_id}: conceptual role cannot be CONTROL eligible", errors)
             require(authority.get("promote") is False, f"{crew_id}: conceptual role cannot promote", errors)
-            require(authority.get("control") is False, f"{crew_id}: conceptual role cannot hold CONTROL authority", errors)
+            conceptual_control = authority.get("control")
+            require(
+                conceptual_control in {False, "BOUNDED_AFTER_PROMOTION"},
+                f"{crew_id}: conceptual role cannot hold current CONTROL authority",
+                errors,
+            )
+            if conceptual_control == "BOUNDED_AFTER_PROMOTION":
+                require(
+                    control == "NOT_ELIGIBLE",
+                    f"{crew_id}: future bounded CONTROL declaration requires current NOT_ELIGIBLE state",
+                    errors,
+                )
             require(member.get("last_evidence_sha") is None, f"{crew_id}: conceptual role must not fabricate evidence SHA", errors)
         elif maturity in {"OBSERVED", "PARTIAL"}:
             require(bool(member.get("source_refs")), f"{crew_id}: observed/partial role needs source_refs", errors)
