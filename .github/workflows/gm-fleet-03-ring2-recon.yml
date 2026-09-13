@@ -58,7 +58,6 @@ jobs:
       - name: Execute F03 notebook twice and emit receipt
         run: |
           python3 - <<'PY'
-          import copy
           import hashlib
           import json
           import os
@@ -243,7 +242,7 @@ jobs:
             "$RUNNER_TEMP/gm-iv-ring2-2.json"
           echo PASS_GM_IV_RING2_DETERMINISTIC_REPEAT
 
-      - name: Enforce bounded dispositions and non-promotion
+      - name: Enforce bounded dispositions and preserved history
         run: |
           python3 - <<'PY'
           import json
@@ -256,13 +255,18 @@ jobs:
           assert d['dispositions']['GM-IV-F04']['disposition'] == 'REFERENCE'
           assert d['pilot_gate'] == \
               'SECOND_PILOT_CANDIDATE_READY_FOR_BOUNDED_CONTROL'
-          assert d['mission_promotion'] == \
-              'WITHHELD_UNTIL_SECOND_PILOT_CONTROL_RECURRENCE'
-          assert d['mission_state'] == 'STAGED_ACTIVE_RECON_2_OF_8'
+          assert d['mission_promotion'].startswith('WITHHELD_FROM_RING2_RECURRENCE')
+          assert d['historical_evidence_stage'] == 'STAGED_ACTIVE_RECON_2_OF_8'
+          assert d['mission_state'] in {
+              'STAGED_ACTIVE_RECON_2_OF_8',
+              'STAGED_ACTIVE_PILOT_2_OF_8',
+              'STAGED_ACTIVE_RECON_4_OF_8',
+              'ACTIVE_8_OF_8',
+          }
           assert d['children_bound'] is False
           assert d['authority_transfer'] is False
           assert d['gm_v_state'] == 'HELD'
-          print('PASS_F03_PILOT_READY_F04_REFERENCE_NO_PROMOTION')
+          print('PASS_RING2_HISTORY_PRESERVED_NO_SELF_PROMOTION')
           PY
 
       - name: Upload exact-SHA Ring2 receipts

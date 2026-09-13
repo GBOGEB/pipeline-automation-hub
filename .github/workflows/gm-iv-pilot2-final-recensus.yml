@@ -1,0 +1,132 @@
+name: GM-IV PILOT_2_OF_8 Final Recensus
+
+on:
+  push:
+    branches:
+      - mission/gm-iv-governor-pilot2-final
+      - master
+    paths:
+      - 'mission-control/grand-missions/**'
+      - 'mission-control/qps-triage-ultra/crew/measured/**'
+      - '.github/workflows/gm-iv-pilot2-final-recensus.yml'
+      - '.github/workflows/gm-fleet-03-f01-pilot.yml'
+      - '.github/workflows/gm-fleet-03-f03-pilot.yml'
+      - '.github/workflows/gm-fleet-03-ring2-recon.yml'
+      - '.github/workflows/crew-exposure-instrumentation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  final-recensus:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Bind exact source SHA
+        shell: bash
+        run: |
+          SOURCE_SHA="$(git rev-parse HEAD)"
+          test "$SOURCE_SHA" = "${{ github.sha }}"
+          echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
+
+      - name: Compile recensus and stage-aware assessors
+        shell: bash
+        run: |
+          python -m py_compile \
+            mission-control/grand-missions/run_gm_iv_pilot2_recensus.py \
+            mission-control/grand-missions/assess_gm_iv_ring1.py \
+            mission-control/grand-missions/assess_gm_iv_f01_pilot.py \
+            mission-control/grand-missions/assess_gm_iv_ring2.py \
+            mission-control/grand-missions/assess_gm_iv_f03_pilot.py \
+            mission-control/grand-missions/assess_gm_iv_pilot2_governor.py \
+            mission-control/grand-missions/validate_gm_fleet.py \
+            mission-control/grand-missions/assess_gm_fleet_03.py \
+            mission-control/grand-missions/validate_gm_iv_evidence_economics.py \
+            mission-control/qps-triage-ultra/crew/measured/validate_crew_exposure.py
+
+      - name: Install bounded recensus dependencies
+        shell: bash
+        run: |
+          python -m pip install --disable-pip-version-check -q \
+            pyyaml nbformat nbconvert ipykernel pandas matplotlib
+
+      - name: Bind temporary recensus repo-root compatibility path
+        shell: bash
+        run: |
+          compat_root="$GITHUB_WORKSPACE/../mission-control/qps-triage-ultra/crew"
+          mkdir -p "$compat_root"
+          test ! -e "$compat_root/measured"
+          ln -s \
+            "$GITHUB_WORKSPACE/mission-control/qps-triage-ultra/crew/measured" \
+            "$compat_root/measured"
+          test -f "$compat_root/measured/validate_crew_exposure.py"
+          echo PASS_RECENSUS_REPO_ROOT_COMPATIBILITY_PATH
+
+      - name: Execute four-frontier and control recensus
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/gm-iv-pilot2-recensus"
+          python mission-control/grand-missions/run_gm_iv_pilot2_recensus.py \
+            --out-dir "$RUNNER_TEMP/gm-iv-pilot2-recensus" \
+            | tee "$RUNNER_TEMP/gm-iv-pilot2-recensus.log"
+
+      - name: Enforce terminal Governor boundary
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path(os.environ['RUNNER_TEMP']) / 'gm-iv-pilot2-recensus'
+          d = json.loads((root / 'GM_IV_PILOT2_FINAL_RECENSUS.json').read_text(encoding='utf-8'))
+          assert d['source_sha'] == os.environ['SOURCE_SHA']
+          assert d['result'] == 'PASS'
+          assert all(d['checks'].values())
+          assert d['controlled_pilots'] == ['GM-IV-F01', 'GM-IV-F03']
+          assert d['references'] == ['GM-IV-F02', 'GM-IV-F04']
+          assert d['unfilled'] == ['GM-IV-F05', 'GM-IV-F06', 'GM-IV-F07', 'GM-IV-F08']
+          assert d['children_bound'] is False
+          assert d['authority_transfer'] is False
+          assert d['gm_v_state'] == 'HELD'
+          assert d['next_stage'] == 'WITHHELD_PENDING_SEPARATE_RECON_4_OF_8_GOVERNOR_GATE'
+          print('PASS_GM_IV_PILOT2_FINAL_RECENSUS_BOUNDARY')
+          PY
+
+      - name: Show historical/current stage separation
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path(os.environ['RUNNER_TEMP']) / 'gm-iv-pilot2-recensus'
+          f01 = json.loads((root / 'f01-assess-1.json').read_text(encoding='utf-8'))
+          f03 = json.loads((root / 'f03-assess-1.json').read_text(encoding='utf-8'))
+          r1 = json.loads((root / 'ring1-1.json').read_text(encoding='utf-8'))
+          r2 = json.loads((root / 'ring2-1.json').read_text(encoding='utf-8'))
+          assert f01['historical_evidence_stage'] == 'STAGED_ACTIVE_RECON_2_OF_8'
+          assert f03['historical_evidence_stage'] == 'STAGED_ACTIVE_RECON_2_OF_8'
+          assert r1['historical_evidence_stage'] == 'RECON_2_OF_8'
+          assert r2['historical_evidence_stage'] == 'STAGED_ACTIVE_RECON_2_OF_8'
+          assert f01['gm_iv_state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
+          assert f03['mission_state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
+          assert r1['current_mission_state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
+          assert r2['mission_state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
+          print('PASS_HISTORY_IMMUTABLE_CURRENT_STAGE_FORWARD')
+          PY
+
+      - name: Upload exact-head final recensus
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-pilot2-final-recensus-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/gm-iv-pilot2-recensus/**
+            ${{ runner.temp }}/gm-iv-pilot2-recensus.log
+          if-no-files-found: error

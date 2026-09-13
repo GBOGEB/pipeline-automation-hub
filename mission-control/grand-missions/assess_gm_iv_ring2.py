@@ -2,8 +2,10 @@
 import argparse
 import hashlib
 import json
-import os
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+REGISTRY = ROOT / "GRAND_MISSION_REGISTRY.json"
 
 
 def load(path):
@@ -31,11 +33,24 @@ def main():
     contract = load(a.contract)
     f03 = load(a.f03)
     f04 = load(a.f04)
+    registry = load(REGISTRY)
+    gm = {m["id"]: m for m in registry["grand_missions"]}
+    gm4 = gm["GM-IV"]
+    gm5 = gm["GM-V"]
+    current_state = gm4.get("state")
+    allowed_forward_states = {
+        "STAGED_ACTIVE_RECON_2_OF_8",
+        "STAGED_ACTIVE_PILOT_2_OF_8",
+        "STAGED_ACTIVE_RECON_4_OF_8",
+        "ACTIVE_8_OF_8",
+    }
 
     checks = {}
     checks["01_contract_mission_bounded"] = (
         contract["mission_id"] == "GM-IV"
         and contract["mission_state_required"] == "STAGED_ACTIVE_RECON_2_OF_8"
+        and current_state in allowed_forward_states
+        and gm4.get("children") == []
         and contract["authority_transfer"] is False
         and contract["children_bound"] is False
     )
@@ -56,7 +71,11 @@ def main():
     checks["10_f04_reference_identity"] = f04.get("reference_parser_identity") is True
     checks["11_f04_no_qps_authority"] = f04.get("qps_authority_claim_detected") is False
     checks["12_f04_clean_source"] = f04.get("source_dirty_count") == 0
-    checks["13_gm_v_held"] = "GM_V_REMAINS_HELD" in contract["promotion_invariants"]
+    checks["13_gm_v_held"] = (
+        "GM_V_REMAINS_HELD" in contract["promotion_invariants"]
+        and gm5.get("state") == "HELD"
+        and gm5.get("children") == []
+    )
 
     f03_ready = all(checks[k] for k in [
         "02_f03_exact_sha", "03_f03_gt0_cells", "04_f03_no_errors",
@@ -88,11 +107,12 @@ def main():
             }
         },
         "pilot_gate": "SECOND_PILOT_CANDIDATE_READY_FOR_BOUNDED_CONTROL" if f03_ready else "SECOND_PILOT_NOT_READY",
-        "mission_promotion": "WITHHELD_UNTIL_SECOND_PILOT_CONTROL_RECURRENCE",
-        "mission_state": "STAGED_ACTIVE_RECON_2_OF_8",
+        "mission_promotion": "WITHHELD_FROM_RING2_RECURRENCE__CURRENT_STAGE_MAY_HAVE_BEEN_PROMOTED_SEPARATELY",
+        "historical_evidence_stage": "STAGED_ACTIVE_RECON_2_OF_8",
+        "mission_state": current_state,
         "children_bound": False,
         "authority_transfer": False,
-        "gm_v_state": "HELD",
+        "gm_v_state": gm5.get("state"),
         "input_digests": {
             "contract": sha256_file(a.contract),
             "f03": sha256_file(a.f03),
