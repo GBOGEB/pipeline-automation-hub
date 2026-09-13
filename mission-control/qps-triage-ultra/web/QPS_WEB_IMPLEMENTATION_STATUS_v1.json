@@ -1,21 +1,33 @@
 {
   "schema": "qps.web.implementation_status.v1",
   "owner": "H4_QPS_TRIAGE",
-  "branch": "qps-triage-web-jekyll-v1-2",
-  "state": "IMPLEMENTED_AWAITING_HOSTED_DOV",
+  "branch": "qps-web-control-promotion-001",
+  "state": "CONTROL",
   "items": [
-    {"id": 1, "name": "JEKYLL_RENDERER_NOT_SSOT", "state": "IMPLEMENTED", "evidence": ["QPS_WEB_BUILDOUT_v1.2.md", "site/_config.yml"]},
-    {"id": 2, "name": "HTML_MACHINE_IDENTITY", "state": "IMPLEMENTED", "evidence": ["site/_layouts/qps.html", "site/scripts/prepare_site.py"]},
-    {"id": 3, "name": "QPS_UI_CSS_1_2", "state": "IMPLEMENTED", "evidence": ["QPS_UI_TOKENS_v1.2.json", "site/assets/css/qps-ui-1.2.css"]},
-    {"id": 4, "name": "SHARED_NEXT_JEKYLL_TOKENS", "state": "IMPLEMENTED", "evidence": ["app/lib/qps-ui-tokens.ts", "app/app/qps-ui-contract/page.tsx"]},
-    {"id": 5, "name": "STATIC_QPS_VIEWS", "state": "IMPLEMENTED", "evidence": ["site/index.md"]},
-    {"id": 6, "name": "DURABLE_MERMAID_SVG", "state": "IMPLEMENTED", "evidence": ["site/assets/diagrams/qps-web-architecture.mmd", "site/assets/diagrams/qps-web-architecture.svg"]},
-    {"id": 7, "name": "J1_J6_BUILD_GATES", "state": "IMPLEMENTED", "evidence": ["QPS_WEB_GATE_REGISTRY_v1.json", "site/scripts/validate_site.py", ".github/workflows/qps-triage-web.yml"]},
-    {"id": 8, "name": "BROWSER_SUPPORT_CONTRACT", "state": "IMPLEMENTED", "evidence": ["QPS_BROWSER_SUPPORT_v1.2.md", "app/package.json"]}
+    {"id": 1, "name": "JEKYLL_RENDERER_NOT_SSOT", "state": "CONTROL", "evidence": ["QPS_WEB_BUILDOUT_v1.2.md", "site/_config.yml"]},
+    {"id": 2, "name": "HTML_MACHINE_IDENTITY", "state": "CONTROL", "evidence": ["site/_layouts/qps.html", "site/scripts/prepare_site.py"]},
+    {"id": 3, "name": "QPS_UI_CSS_1_2", "state": "CONTROL", "evidence": ["QPS_UI_TOKENS_v1.2.json", "site/assets/css/qps-ui-1.2.css"]},
+    {"id": 4, "name": "SHARED_NEXT_JEKYLL_TOKENS", "state": "CONTROL", "evidence": ["app/lib/qps-ui-tokens.ts", "app/app/qps-ui-contract/page.tsx"]},
+    {"id": 5, "name": "STATIC_QPS_VIEWS", "state": "CONTROL", "evidence": ["site/index.md"]},
+    {"id": 6, "name": "DURABLE_MERMAID_SVG", "state": "CONTROL", "evidence": ["site/assets/diagrams/qps-web-architecture.mmd", "site/assets/diagrams/qps-web-architecture.svg"]},
+    {"id": 7, "name": "J1_J6_BUILD_GATES", "state": "CONTROL", "evidence": ["QPS_WEB_GATE_REGISTRY_v1.json", "site/scripts/validate_site.py", ".github/workflows/qps-triage-web.yml"]},
+    {"id": 8, "name": "BROWSER_SUPPORT_CONTRACT", "state": "CONTROL", "evidence": ["QPS_BROWSER_SUPPORT_v1.2.md", "app/package.json"]}
   ],
   "promotion": {
-    "current": "IMPROVE",
+    "current": "CONTROL",
     "target": "CONTROL",
-    "remaining": ["hosted J1-J6 PASS", "exact-SHA artifact receipt", "repeatability PASS"]
+    "remaining": [],
+    "basis": {
+      "hosted_workflow": "QPS Triage Web DoV",
+      "run_id": 34776122386,
+      "validated_source_sha": "4641d3d5360fb509079459e47180642416a69af6",
+      "j1_j5": "PASS",
+      "j6_repeatability": "PASS",
+      "artifact_publish": "PASS",
+      "artifact_id": 10323841416,
+      "artifact_name": "qps-triage-web-4641d3d5360fb509079459e47180642416a69af6",
+      "artifact_sha256": "55bf8c411661c7aeb9edd81d62826e3ad23d877c58a8e42cb7098e0c5c2de7ae"
+    },
+    "control_rule": "Every future web-relevant pull request and canonical master push must execute QPS Triage Web DoV; a failed gate returns the surface to repair/IMPROVE before acceptance."
   }
 }

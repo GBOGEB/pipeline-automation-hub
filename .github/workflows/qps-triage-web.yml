@@ -11,7 +11,9 @@ on:
       - '.github/workflows/qps-triage-web.yml'
   push:
     branches:
+      - 'master'
       - 'qps-web-dov-pulse-*'
+      - 'qps-web-control-promotion-*'
     paths:
       - 'mission-control/qps-triage-ultra/site/**'
       - 'mission-control/qps-triage-ultra/web/**'
