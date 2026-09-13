@@ -1,0 +1,72 @@
+name: GM-FLEET-03 Capacity Gate
+
+on:
+  push:
+    branches:
+      - mission/gm-fleet-03-capacity-gate
+      - master
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/**'
+      - 'mission-control/qps-triage-ultra/crew/**'
+      - '.github/workflows/gm-fleet-03-capacity-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capacity-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+
+      - name: Preserve GM-FLEET-02B control baseline
+        run: |
+          python3 mission-control/grand-missions/validate_gm_fleet.py \
+            --out mission-control/grand-missions/runtime/gm_fleet_02b_regression_receipt.json
+
+      - name: Assess Mission City capacity first pass
+        run: |
+          python3 mission-control/grand-missions/assess_gm_fleet_03.py \
+            --out mission-control/grand-missions/runtime/gm_fleet_03_capacity_1.json
+
+      - name: Assess Mission City capacity repeat
+        run: |
+          python3 mission-control/grand-missions/assess_gm_fleet_03.py \
+            --out mission-control/grand-missions/runtime/gm_fleet_03_capacity_2.json
+
+      - name: Enforce deterministic capacity repeat
+        run: |
+          cmp \
+            mission-control/grand-missions/runtime/gm_fleet_03_capacity_1.json \
+            mission-control/grand-missions/runtime/gm_fleet_03_capacity_2.json
+          echo "PASS_GM_FLEET_03_DETERMINISTIC_REPEAT"
+
+      - name: Verify fail-closed analytics and GM-V hold
+        run: |
+          python3 - <<'PY'
+          import json
+          p='mission-control/grand-missions/runtime/gm_fleet_03_capacity_1.json'
+          d=json.load(open(p, encoding='utf-8'))
+          assert d['gm_v_state'] == 'HELD'
+          assert d['authority_transfer'] is False
+          assert d['pca_gate'].startswith('DEFER_')
+          assert d['bt_gate'].startswith('DEFER_')
+          print('PASS_FAIL_CLOSED_ANALYTICS_AND_GM_V_HOLD')
+          PY
+
+      - name: Show bounded capacity result
+        run: |
+          cat mission-control/grand-missions/runtime/gm_fleet_03_capacity_1.json
+
+      - name: Upload exact-SHA capacity receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-fleet-03-${{ github.sha }}
+          path: |
+            mission-control/grand-missions/runtime/gm_fleet_02b_regression_receipt.json
+            mission-control/grand-missions/runtime/gm_fleet_03_capacity_1.json
+            mission-control/grand-missions/runtime/gm_fleet_03_capacity_2.json
+          if-no-files-found: error
