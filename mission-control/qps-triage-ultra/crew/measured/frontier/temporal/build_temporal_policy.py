@@ -10,6 +10,7 @@ import zipfile
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parent
 CONFIG = json.loads((ROOT / 'TEMPORAL_POLICY_CONFIG_v1.json').read_text(encoding='utf-8'))
@@ -19,12 +20,24 @@ def parse_ts(value):
     return datetime.fromisoformat(value.replace('Z', '+00:00')) if value else None
 
 
+class CrossHostAuthStrippingRedirect(urllib.request.HTTPRedirectHandler):
+    """Follow GitHub artifact redirects without forwarding GitHub auth to SAS blob storage."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        redirected = super().redirect_request(req, fp, code, msg, headers, newurl)
+        if redirected and urlparse(newurl).netloc != urlparse(req.full_url).netloc:
+            redirected.remove_header('Authorization')
+            redirected.remove_header('X-GitHub-Api-Version')
+        return redirected
+
+
 def api_request(url, token, binary=False):
     req = urllib.request.Request(url)
     req.add_header('Accept', 'application/vnd.github+json')
     req.add_header('Authorization', f'Bearer {token}')
     req.add_header('X-GitHub-Api-Version', '2022-11-28')
-    with urllib.request.urlopen(req, timeout=45) as response:
+    opener = urllib.request.build_opener(CrossHostAuthStrippingRedirect()) if binary else urllib.request.build_opener()
+    with opener.open(req, timeout=45) as response:
         raw = response.read()
     return raw if binary else json.loads(raw.decode('utf-8'))
 
@@ -304,7 +317,12 @@ def main():
             if window:
                 windows.append(window)
         except (urllib.error.HTTPError, urllib.error.URLError, ValueError, KeyError, zipfile.BadZipFile) as exc:
-            errors.append({'run_id': str(run.get('id')), 'error': type(exc).__name__})
+            errors.append({
+                'run_id': str(run.get('id')),
+                'error': type(exc).__name__,
+                'http_code': getattr(exc, 'code', None),
+                'detail': str(exc)[:240]
+            })
 
     windows.append(make_window(current_run, analysis, admission, sha256(analysis_raw), 'CURRENT_EXACT_SHA'))
     dedup = {}
@@ -320,6 +338,7 @@ def main():
         'distinct_shas': receipt['distinct_source_shas'],
         'span_seconds': receipt['temporal_span_seconds'],
         'scarcity': receipt['natural_scarcity']['status'],
+        'historical_errors': len(errors),
         'policies': {k: v['policy_status'] for k, v in receipt['policies'].items()},
         'recommendations': {k: v['allocation_recommendation'] for k, v in receipt['policies'].items()},
         'promoted_rules': sum(v['allocation_policy_promotion'] for v in receipt['policies'].values())
