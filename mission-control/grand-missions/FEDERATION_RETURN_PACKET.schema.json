@@ -1,0 +1,41 @@
+{
+  "schema": "missioncontrol.federation.return_packet.v1",
+  "status": "CANDIDATE_CANONICAL_PROTOCOL",
+  "authority_transfer": false,
+  "required": [
+    "mission_id",
+    "repo",
+    "crew",
+    "exact_head",
+    "evidence_class",
+    "observation_class",
+    "lineage",
+    "capabilities",
+    "runtime_surface",
+    "authority_boundary",
+    "risk",
+    "novelty",
+    "overlap",
+    "rex_in",
+    "rex_out",
+    "consumer_edges",
+    "next_bounded_action",
+    "pca_eligibility",
+    "bt_eligibility",
+    "freshness",
+    "disposition"
+  ],
+  "observation_class_enum": ["OBSERVED", "INFERRED", "PROPOSED"],
+  "evidence_class_enum": ["EXACT_SHA_RUNTIME", "EXACT_SHA_SOURCE", "REPO_METADATA", "SEMANTIC_READ", "REFERENCE_ONLY"],
+  "disposition_enum": ["ACCEPT_SCOUT", "ACCEPT_READER", "DEFER", "REPLACE", "REJECT", "REFERENCE_ONLY", "PARK", "PRUNE_REVIEW"],
+  "consumer_effect_enum": ["SPEED", "RISK", "QUALITY", "COST", "COVERAGE", "CONTROL"],
+  "rules": [
+    "all_governed_cross_feed_routes_through_MissionControl",
+    "downstream_use_must_not_strengthen_upstream_authority",
+    "future_mission_consumption_does_not_equal_launch_or_assignment",
+    "only_observed_provenance_bound_rows_are_measured_PCA_or_BT_eligible",
+    "conflicts_route_to_KEB_challenge_and_H4_first_red",
+    "crew_secondments_return_REX_and_competency_evidence_to_home_base",
+    "a_complete_return_declares_at_least_one_consumer_edge_or_NO_CROSS_FEED_JUSTIFIED"
+  ]
+}
