@@ -1,0 +1,48 @@
+{
+  "schema": "missioncontrol.crew.role_gap_policy.v1",
+  "purpose": "Convert repeated mission feedback into bounded evidence for role creation, reuse, secondment, merge or prune decisions.",
+  "authority_transfer": false,
+  "principle": "Prefer reuse, secondment, training or tool/resource repair before creating a permanent new role.",
+  "signals": {
+    "recurrence": {"weight": 0.20, "description": "Same unmet capability appears across distinct tasks/missions."},
+    "blocked_missions": {"weight": 0.20, "description": "Number/severity of mission gates blocked by the missing capability."},
+    "crew_wait_pressure": {"weight": 0.15, "description": "Measured crew wait or queue loss attributable to the gap."},
+    "rex_recurrence": {"weight": 0.15, "description": "Repeated REX events lack an effective role owner."},
+    "special_habitat": {"weight": 0.10, "description": "Capability requires a distinct licensed/tool/runtime habitat."},
+    "independence_boundary": {"weight": 0.10, "description": "Verification/authority separation cannot be safely combined with existing owner."},
+    "pca_bt_cluster": {"weight": 0.10, "description": "Measured PCA/BT shows a persistent workload/intervention cluster."}
+  },
+  "penalties": {
+    "existing_role_overlap": {"weight": 0.20, "description": "Existing role can cover the need with bounded training/secondment."},
+    "one_off_need": {"weight": 0.20, "description": "Need is isolated or unlikely to recur."},
+    "tool_or_resource_only": {"weight": 0.15, "description": "The gap is better repaired by tool/resource availability than role creation."}
+  },
+  "normalization": "All signal and penalty inputs are normalized to 0..1 before scoring.",
+  "score_formula": "max(0,min(1,sum(signal*weight)-sum(penalty*weight)))",
+  "decision_bands": [
+    {"min": 0.65, "decision": "TRIAL_CANDIDATE", "conditions": ["at_least_two_independent_need_signals", "no_authority_collision", "trial_mission_defined", "mentor_or_challenger_defined", "success_and_failure_evidence_defined"]},
+    {"min": 0.45, "max_exclusive": 0.65, "decision": "WATCH_OR_SECOND", "conditions": ["reuse_or_secondment_test_first"]},
+    {"min": 0.00, "max_exclusive": 0.45, "decision": "REUSE_TRAIN_TOOL_OR_PRUNE", "conditions": ["do_not_create_permanent_role"]}
+  ],
+  "new_role_lifecycle": ["NEED_SIGNAL", "CONCEPTUAL", "TRIAL", "PARTIAL", "OBSERVED", "CONTROL_ELIGIBLE", "MERGED_OR_PRUNED_OR_RETURNED"],
+  "trial_requirements": [
+    "candidate_role_id",
+    "mission_or_task_scope",
+    "competency_target_profile",
+    "allowed_authority",
+    "tools_resources",
+    "mentor_or_challenger",
+    "expected_receipts",
+    "success_condition",
+    "failure_condition",
+    "return_or_merge_rule"
+  ],
+  "anti_proliferation_rules": [
+    "Do not create a new permanent role for a single task.",
+    "Do not create a role solely because an existing crew member is overloaded; test reallocation/resource repair first.",
+    "Do not duplicate a KEB, DOW, QA, Governor or child authority boundary under a new title.",
+    "Conceptual and trial roles cannot promote engineering/compliance truth.",
+    "A successful trial defaults to PARTIAL, not CONTROL_ELIGIBLE.",
+    "If evidence shows strong overlap with an existing role, merge the competency into that role and retire the candidate role ID."
+  ]
+}
