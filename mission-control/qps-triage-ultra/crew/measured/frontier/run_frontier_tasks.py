@@ -78,8 +78,6 @@ def validation_bundle(iterations, workers):
 
 
 def analytics_sweep(iterations, workers):
-    # Deterministic integer workload. Thread fanout changes allocation/resource
-    # shape without changing the semantic result.
     ranges = []
     step = (iterations + workers - 1) // workers
     for start in range(0, iterations, step):
@@ -208,8 +206,8 @@ def main():
             "semantic_digest": digest,
             "disposition": disposition,
             "error": error,
-            "promotion_allowed": false,
-            "authority_transfer": false,
+            "promotion_allowed": False,
+            "authority_transfer": False,
             "rex_preflight": {
                 "checklist_version": CHECKLIST["schema"],
                 "rex_ids_checked": task["applicable_rex_ids"],
@@ -218,16 +216,11 @@ def main():
             },
             "rex_postflight": {
                 "rex_ids_observed": observed,
-                "recurrence_level": "NEW" if observed else null,
-                "preventive_action_effective": true if "REX-006" in task["applicable_rex_ids"] and disposition == "ACCEPT" else null,
+                "recurrence_level": "NEW" if observed else None,
+                "preventive_action_effective": True if "REX-006" in task["applicable_rex_ids"] and disposition == "ACCEPT" else None,
                 "ledger_update_required": bool(observed)
             }
         }
-        # JSON literals above are expressed as Python values here.
-        receipt["promotion_allowed"] = False
-        receipt["authority_transfer"] = False
-        receipt["rex_postflight"]["recurrence_level"] = "NEW" if observed else None
-        receipt["rex_postflight"]["preventive_action_effective"] = True if "REX-006" in task["applicable_rex_ids"] and disposition == "ACCEPT" else None
         (out / f"{args.habitat}__{task['task_id']}.json").write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         receipts.append(receipt)
         print(json.dumps({"task_id": task["task_id"], "habitat": args.habitat, "strategy": task["allocation_strategy"], "seconds": elapsed, "disposition": disposition}, sort_keys=True))
