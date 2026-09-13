@@ -46,8 +46,7 @@ intervention_map = {
 }
 
 for task in manifest["tasks"]:
-    assignment_opened_iso = datetime.now(timezone.utc).isoformat()
-    assignment_opened_mono = time.monotonic()
+    assignment_opened = datetime.now(timezone.utc)
 
     aid = task["assignment_id"]
     tid = task["task_id"]
@@ -71,12 +70,11 @@ for task in manifest["tasks"]:
     command = task["command"]
     command_text = json.dumps(command, separators=(",", ":"))
     command_sha = hashlib.sha256(command_text.encode()).hexdigest()
-    start_iso = datetime.now(timezone.utc).isoformat()
-    start = time.monotonic()
+    task_started = datetime.now(timezone.utc)
+    runtime_start = time.monotonic()
     proc = subprocess.run(command, text=True, capture_output=True)
-    elapsed = round(time.monotonic() - start, 6)
-    end_mono = time.monotonic()
-    end_iso = datetime.now(timezone.utc).isoformat()
+    runtime_elapsed = round(time.monotonic() - runtime_start, 6)
+    task_ended = datetime.now(timezone.utc)
     stdout = proc.stdout or ""
     stderr = proc.stderr or ""
 
@@ -105,9 +103,9 @@ for task in manifest["tasks"]:
         "run_id": str(run_id),
         "job_ref": job_ref,
         "runner_ref": runner_ref,
-        "started_at": start_iso,
-        "ended_at": end_iso,
-        "execute_seconds": elapsed,
+        "started_at": task_started.isoformat(),
+        "ended_at": task_ended.isoformat(),
+        "execute_seconds": runtime_elapsed,
         "steps_executed": 1,
         "exit_code": proc.returncode,
         "disposition": disposition,
@@ -135,11 +133,11 @@ for task in manifest["tasks"]:
     path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     receipts.append(receipt)
 
-    released_mono = time.monotonic()
-    released_iso = datetime.now(timezone.utc).isoformat()
-    waiting_seconds = round(start - assignment_opened_mono, 6)
-    release_seconds = round(released_mono - end_mono, 6)
-    exposure_seconds = round(released_mono - assignment_opened_mono, 6)
+    assignment_released = datetime.now(timezone.utc)
+    waiting_seconds = round((task_started - assignment_opened).total_seconds(), 6)
+    active_seconds = round((task_ended - task_started).total_seconds(), 6)
+    release_seconds = round((assignment_released - task_ended).total_seconds(), 6)
+    exposure_seconds = round((assignment_released - assignment_opened).total_seconds(), 6)
 
     exposure_receipt = {
         "schema": "missioncontrol.crew_exposure_receipt.v1",
@@ -148,14 +146,15 @@ for task in manifest["tasks"]:
         "assignment_id": aid,
         "crew_id": task["crew_id"],
         "crew_role": task["crew_role_at_assignment"],
-        "assignment_opened_at": assignment_opened_iso,
-        "task_started_at": start_iso,
-        "task_ended_at": end_iso,
-        "assignment_released_at": released_iso,
+        "assignment_opened_at": assignment_opened.isoformat(),
+        "task_started_at": task_started.isoformat(),
+        "task_ended_at": task_ended.isoformat(),
+        "assignment_released_at": assignment_released.isoformat(),
         "waiting_seconds": waiting_seconds,
-        "active_seconds": elapsed,
+        "active_seconds": active_seconds,
         "release_seconds": release_seconds,
         "exposure_seconds": exposure_seconds,
+        "runtime_execute_seconds": runtime_elapsed,
         "intervention_type": intervention_map[task["task_type"]],
         "outcome": disposition,
         "source_sha": source_sha,
@@ -182,8 +181,9 @@ for task in manifest["tasks"]:
         "task_id": tid,
         "crew_id": task["crew_id"],
         "disposition": disposition,
-        "execute_seconds": elapsed,
+        "runtime_execute_seconds": runtime_elapsed,
         "waiting_seconds": waiting_seconds,
+        "active_seconds": active_seconds,
         "release_seconds": release_seconds,
         "exposure_seconds": exposure_seconds,
     }, sort_keys=True))
@@ -202,6 +202,7 @@ summary = {
     "crew_waiting_seconds_total": round(sum(r["waiting_seconds"] for r in exposure_receipts), 6),
     "crew_active_seconds_total": round(sum(r["active_seconds"] for r in exposure_receipts), 6),
     "crew_release_seconds_total": round(sum(r["release_seconds"] for r in exposure_receipts), 6),
+    "crew_runtime_execute_seconds_total": round(sum(r["runtime_execute_seconds"] for r in exposure_receipts), 6),
     "crew_exposure_pca_eligible": False,
     "crew_exposure_bt_eligible": False,
     "competency_promotions": 0,
