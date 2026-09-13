@@ -1,0 +1,42 @@
+{
+  "schema": "qps.gm_iv_pilot_2_of_8_governor_contract.v1",
+  "wave": "GM-FLEET-03-GOVERNOR-PILOT2",
+  "mission_id": "GM-IV",
+  "from_state": "STAGED_ACTIVE_RECON_2_OF_8",
+  "to_state": "STAGED_ACTIVE_PILOT_2_OF_8",
+  "to_activation_stage": "PILOT_2_OF_8",
+  "authority_transfer": false,
+  "children_bound": false,
+  "controlled_pilots": {
+    "GM-IV-F01": {
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "target_sha": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96",
+      "master_source_sha": "2cb9de6b07ec7228578da29dd3d7b5804499ba7c",
+      "workflow_run_id": 34768296758,
+      "artifact_id": 10320854729,
+      "artifact_digest": "sha256:74f7566e41112ece5cc8f014ca6574170854e23ec718993f0384aae6fe24cffa",
+      "disposition": "PILOT_CONTROL_READY"
+    },
+    "GM-IV-F03": {
+      "repository": "GBOGEB/codespaces-jupyter",
+      "target_sha": "1eba2240a86d1fd2bd6375e2fac481caf645cdde",
+      "master_source_sha": "6dd4d5b375859dabd5e94aac26b8acc61a757ad7",
+      "workflow_run_id": 34772053427,
+      "artifact_id": 10322471532,
+      "artifact_digest": "sha256:24fc6d6122077bee933d2c5b752a9159fa10ed34ea83c4bfebb3ebdfb0cca38c",
+      "disposition": "PILOT_CONTROL_READY"
+    }
+  },
+  "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
+  "unfilled_frontier_slots": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+  "required_invariants": [
+    "TWO_INDEPENDENT_CONTROLLED_PILOTS_HAVE_FRESH_MASTER_RECURRENCE",
+    "F01_AND_F03_ARE_CONTROLLED_PILOT_CAPABILITIES",
+    "F02_AND_F04_REMAIN_REFERENCE_FRONTIERS",
+    "CANONICAL_CHILDREN_REMAIN_EMPTY",
+    "ENGINEERING_AUTHORITY_DOES_NOT_TRANSFER",
+    "GM_V_REMAINS_HELD",
+    "PILOT_2_OF_8_DOES_NOT_IMPLY_RECON_4_OF_8"
+  ],
+  "next_stage_gate": "SEPARATE_GOVERNED_RECON_4_OF_8_DISCOVERY_AND_RUNTIME_GATE"
+}
