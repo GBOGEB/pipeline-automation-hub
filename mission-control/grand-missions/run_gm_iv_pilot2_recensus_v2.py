@@ -2,7 +2,8 @@
 """Compatibility/control wrapper for the GM-IV PILOT_2_OF_8 recensus.
 
 v1 remains the immutable four-frontier evidence executor. v2 supplies the
-single observed schema alias from the first v1 run and adds the later-arriving
+single observed schema alias from the first v1 run, repairs the Actions
+workspace repository-root resolution in memory, and adds the later-arriving
 Crew Exposure PCA Control validator as a terminal moving-base gate.
 """
 
@@ -17,7 +18,7 @@ from pathlib import Path
 import run_gm_iv_pilot2_recensus as v1
 
 HERE = Path(__file__).resolve().parent
-REPO = HERE.parents[2]
+REPO = HERE.parents[1]
 PY = sys.executable
 
 
@@ -26,6 +27,11 @@ def main() -> int:
     ap.add_argument("--out-dir", required=True)
     known, _ = ap.parse_known_args()
     out_dir = Path(known.out_dir).resolve()
+
+    # v1 was first exercised in Actions with HERE.parents[2], which resolves
+    # to the outer workspace rather than the checked-out repository. Preserve
+    # the v1 file as observed evidence and repair its runtime root in memory.
+    v1.REPO = REPO
 
     original_read_json = v1.read_json
 
