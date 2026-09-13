@@ -1,0 +1,67 @@
+{
+  "schema": "missioncontrol.bd_rex_control_proof.v1",
+  "status": "PR_PROVEN_AWAITING_DISTINCT_SHA_REPEAT",
+  "authority_transfer": false,
+  "source_pr": 93,
+  "source_head_sha": "6b7a014887c188ae7a0b2f536db201e76a9e6313",
+  "merged_master_sha": "fe5f5699f187fce41d2ef08533ef5610eb76c362",
+  "proof_runs": {
+    "measured_crew_allocation": {
+      "run_id": 34774328258,
+      "conclusion": "success",
+      "checks": [
+        "blocked_and_admitted_rex_runtime_control",
+        "normal_preflight_zero_blockers",
+        "exposure_pca_preserved",
+        "eligible_only_pre_exposure_pca_variance",
+        "raw_pair_timing_consistency",
+        "two_node_bt_scale_fixture"
+      ]
+    },
+    "frontier_pca_bt": {
+      "run_id": 34774328286,
+      "conclusion": "success",
+      "habitats": ["linux", "windows"],
+      "analysis": "success"
+    },
+    "pc3_conditional_bt": {
+      "run_id": 34774328277,
+      "conclusion": "success",
+      "multi_habitat_control": true
+    }
+  },
+  "all_pr_head_workflows": {
+    "count": 12,
+    "all_success": true
+  },
+  "runner_economics_observation": {
+    "workflow": "MissionControl Measured Crew Allocation",
+    "run_id": 34774328258,
+    "job_id": 103769526237,
+    "job_created_at": "2026-09-13T18:20:38Z",
+    "job_started_at": "2026-09-13T18:20:51Z",
+    "queue_or_admission_seconds": 13,
+    "runner_id": 1000266566,
+    "steps_executed_positive": true,
+    "classification": "ASSIGNED_RUNNER_QUEUE_PRESSURE_NOT_INFRA_PREEXECUTION"
+  },
+  "repeat_contract": {
+    "repair_code_must_remain_unchanged": true,
+    "repeat_source_sha_must_differ_from_source_head_sha": true,
+    "required_repeat_checks": [
+      "rex_blocked_admitted_self_test",
+      "measured_preflight",
+      "eligible_only_pca_gate",
+      "raw_timing_consistency",
+      "bt_scale_fixture"
+    ],
+    "promotion_after_green_repeat": {
+      "HIST-BD-006": "CONTROL_CANDIDATE",
+      "HIST-BD-007": "DONE_CANDIDATE",
+      "HIST-BD-008": "DONE_CANDIDATE",
+      "HIST-BD-010": "REMAIN_ACTIVE",
+      "HIST-BD-011": "CONTROL_CANDIDATE",
+      "HIST-BD-012": "DONE_CANDIDATE"
+    }
+  }
+}
