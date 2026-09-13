@@ -1,0 +1,26 @@
+{
+  "schema": "qps.gm_fleet_03_burndown.v1",
+  "wave": "GM-FLEET-03",
+  "fixed_denominator": 12,
+  "items": [
+    {"id": 1, "item": "capacity_contract", "state": "MATERIALIZED"},
+    {"id": 2, "item": "capacity_class_separation", "state": "MATERIALIZED"},
+    {"id": 3, "item": "required_capability_host_map", "state": "MATERIALIZED"},
+    {"id": 4, "item": "staged_activation_model", "state": "MATERIALIZED"},
+    {"id": 5, "item": "two_evidence_backed_candidate_frontiers", "state": "MATERIALIZED"},
+    {"id": 6, "item": "six_slots_explicitly_unfilled", "state": "MATERIALIZED"},
+    {"id": 7, "item": "gm_v_hard_hold_invariant", "state": "MATERIALIZED"},
+    {"id": 8, "item": "executable_capacity_assessor", "state": "MATERIALIZED"},
+    {"id": 9, "item": "first_exact_sha_gt0_runtime_gate", "state": "PASS", "evidence": {"source_sha":"12d54ba2d6e08ff8c816d2fbc9ed44c3f167fef1","run_id":34767440206,"job_id":103750817832,"artifact_id":10320783667,"artifact_digest":"sha256:f66628e8cc49099747d26f998f3ab6b02138a3ea50685798b682a1727f405983"}},
+    {"id": 10, "item": "promote_gm_iv_to_staged_active_recon_2_of_8", "state": "PASS_STAGED_ACTIVE"},
+    {"id": 11, "item": "repeat_exact_sha_staged_state_proof", "state": "PASS", "evidence": {"source_sha":"73f1e9aaad1ab9f59235f1596108d56277d1a395","run_id":34767555199,"job_id":103751129752,"artifact_id":10320589278,"artifact_digest":"sha256:c1eeaf27c04eb5b5f26f139dee2a1d9235379e8a008a6be9a558b122a8e53c8a","decision":"PASS_STAGED_ACTIVE_RECON_2_OF_8_CONTROL_SHAPE"}},
+    {"id": 12, "item": "default_branch_control_repeat", "state": "PENDING_MERGE"}
+  ],
+  "stop_rules": [
+    "NO_PROMOTION_IF_RUNTIME_STEPS_EQUAL_ZERO",
+    "NO_PROMOTION_IF_ANY_STRUCTURAL_CHECK_FAILS",
+    "NO_CHILD_BINDING_FROM_CANDIDATE_RECON_ONLY",
+    "GM_V_REMAINS_HELD",
+    "PCA_AND_BT_REMAIN_DEFERRED_UNTIL_MEASURED_EVIDENCE_EXISTS"
+  ]
+}
