@@ -1,0 +1,34 @@
+<!doctype html>
+{% assign q = site.data.qps_build %}
+<html lang="en"
+      data-qps-ui="{{ site.qps_ui_version }}"
+      data-release-id="{{ q.release_id }}"
+      data-source-sha="{{ q.source_sha }}"
+      data-schema-version="{{ q.schema_version }}"
+      data-evidence-state="{{ q.evidence_state }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="qps-release-id" content="{{ q.release_id }}">
+  <meta name="qps-source-sha" content="{{ q.source_sha }}">
+  <meta name="qps-schema-version" content="{{ q.schema_version }}">
+  <meta name="qps-evidence-state" content="{{ q.evidence_state }}">
+  <title>{{ page.title }} · {{ site.title }}</title>
+  <link rel="stylesheet" href="{{ '/assets/css/qps-ui-1.2.css' | relative_url }}">
+</head>
+<body>
+<main>
+  <header>
+    <p><a href="{{ '/' | relative_url }}">QPS Triage Evidence Atlas</a></p>
+    <h1>{{ page.title }}</h1>
+    <dl class="qps-meta qps-card">
+      <div><dt>Release</dt><dd>{{ q.release_id }}</dd></div>
+      <div><dt>Source SHA</dt><dd><code>{{ q.source_sha }}</code></dd></div>
+      <div><dt>Schema</dt><dd>{{ q.schema_version }}</dd></div>
+      <div><dt>Evidence</dt><dd>{{ q.evidence_state }}</dd></div>
+    </dl>
+  </header>
+  {{ content }}
+</main>
+</body>
+</html>
