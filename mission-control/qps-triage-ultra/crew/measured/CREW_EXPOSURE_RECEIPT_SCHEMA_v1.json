@@ -1,0 +1,65 @@
+{
+  "schema": "missioncontrol.crew_exposure_receipt.v1",
+  "purpose": "Measure bounded crew assignment exposure separately from runner execution so Evidence Economics can distinguish waiting, active intervention and release without fabricating human/FTE time.",
+  "authority_transfer": false,
+  "required_fields": [
+    "mission_id",
+    "task_id",
+    "assignment_id",
+    "crew_id",
+    "crew_role",
+    "assignment_opened_at",
+    "task_started_at",
+    "task_ended_at",
+    "assignment_released_at",
+    "waiting_seconds",
+    "active_seconds",
+    "release_seconds",
+    "exposure_seconds",
+    "intervention_type",
+    "outcome",
+    "source_sha",
+    "receipt_evidence_class"
+  ],
+  "time_semantics": {
+    "waiting_seconds": "task_started_at - assignment_opened_at",
+    "active_seconds": "task_ended_at - task_started_at",
+    "release_seconds": "assignment_released_at - task_ended_at",
+    "exposure_seconds": "assignment_released_at - assignment_opened_at",
+    "identity": "exposure_seconds = waiting_seconds + active_seconds + release_seconds"
+  },
+  "intervention_types": [
+    "SCOUT",
+    "READ",
+    "VERIFY",
+    "REPAIR",
+    "RUNTIME_OPERATOR",
+    "DOCKMASTER",
+    "ANALYSIS",
+    "GOVERNANCE"
+  ],
+  "outcomes": [
+    "ACCEPT",
+    "REJECT",
+    "DEFER",
+    "REFERENCE_RETURN",
+    "PRUNE",
+    "CONTROL"
+  ],
+  "receipt_evidence_classes": [
+    "MEASURED_CREW_EXPOSURE",
+    "INSTRUMENTATION_CANARY_ONLY"
+  ],
+  "promotion_gate": {
+    "mission_performance_eligible": "only MEASURED_CREW_EXPOSURE from a predeclared assignment may enter mission economics",
+    "canary": "INSTRUMENTATION_CANARY_ONLY proves clock arithmetic and receipt mechanics only; it must never enter PCA, BT, competency promotion or frontier admission"
+  },
+  "forbidden": [
+    "runner_seconds_relabelled_as_crew_seconds",
+    "estimated_human_time_as_measured_time",
+    "post_hoc_assignment",
+    "canary_row_as_mission_performance",
+    "crew_exposure_as_authority_transfer",
+    "crew_exposure_as_frontier_child_binding"
+  ]
+}
