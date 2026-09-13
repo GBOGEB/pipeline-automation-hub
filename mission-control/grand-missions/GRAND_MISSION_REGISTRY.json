@@ -1,0 +1,80 @@
+{
+  "schema": "qps.grand_mission_fleet.v1",
+  "wave": "GM-FLEET-02B",
+  "authority_transfer": false,
+  "namespace": {
+    "grand_mission_prefix": "GM-",
+    "horizontal_mission_prefix": "HM-",
+    "local_mission_prefix": "LM-",
+    "invariant": "GRAND_HORIZONTAL_LOCAL_IDENTIFIERS_MUST_NOT_COLLIDE"
+  },
+  "grand_missions": [
+    {
+      "id": "GM-I",
+      "name": "COOLPROP_DARKLAND",
+      "frontier_count": 1,
+      "objective": "governed_independent_helium_property_reference_and_validation",
+      "state": "HOLD_EXTERNAL_OR_HABITAT_GATE",
+      "children": ["GBOGEB/CoolProp"],
+      "crew_posture": "CONTRACTED_DOCKMASTER_WATCH",
+      "observed": true,
+      "promotion_boundary": "NO_GOVERNING_LOW_TEMPERATURE_AUTHORITY_WITHOUT_REQUIRED_EXTERNAL_REFERENCE"
+    },
+    {
+      "id": "GM-II",
+      "name": "TWO_OUTPOST_FEDERATION",
+      "frontier_count": 2,
+      "objective": "prove_independent_engineering_and_math_capabilities_can_federate_and_be_consumed",
+      "state": "CONTROL",
+      "children": ["GBOGEB/Q_engineering_tools", "GBOGEB/gg_MATH"],
+      "monikers": ["ENGINEERING_OUTPOST", "MATH_BUNKER"],
+      "crew_posture": "SMALL_RECURRENCE_CELLS",
+      "observed": true
+    },
+    {
+      "id": "GM-III",
+      "name": "FOUR_FRONTIER_RECON",
+      "frontier_count": 4,
+      "objective": "prove_controlled_heterogeneous_multi_frontier_reconnaissance_without_authority_leakage",
+      "state": "RECON_CONTROL",
+      "children": [
+        "GBOGEB/github-mcp-server",
+        "GBOGEB/scientific-agent-skills",
+        "GBOGEB/GEMINI",
+        "GBOGEB/orchestration-sandbox"
+      ],
+      "dispositions": ["ADAPT", "EXTRACT", "REFERENCE", "PARK"],
+      "crew_posture": "BROAD_CREW_RETURNED_SPECIALISTS_RESERVE",
+      "observed": true
+    },
+    {
+      "id": "GM-IV",
+      "name": "EIGHT_FRONTIER_EXPANSION",
+      "frontier_count": 8,
+      "objective": "scale_controlled_reconnaissance_to_eight_frontiers_without_receipt_or_authority_degradation",
+      "state": "HELD",
+      "children": [],
+      "crew_posture": "COMMAND_SKELETON_ONLY",
+      "observed": false,
+      "launch_gate": "GM_III_CONTROL_PLUS_MEASURED_CAPACITY_AND_NO_CONTROL_DEGRADATION"
+    },
+    {
+      "id": "GM-V",
+      "name": "CLOUD16",
+      "frontier_count": 16,
+      "objective": "prove_elastic_mission_city_operation_at_sixteen_frontiers",
+      "state": "HELD",
+      "children": [],
+      "crew_posture": "UNALLOCATED",
+      "observed": false,
+      "launch_gate": "GM_IV_CONTROL_PLUS_MEASURED_CAPACITY_AND_NO_CONTROL_DEGRADATION"
+    }
+  ],
+  "scaling_invariant": [1, 2, 4, 8, 16],
+  "stop_rules": [
+    "NO_FABRICATED_CHILDREN_FOR_HELD_MISSIONS",
+    "NO_AUTHORITY_TRANSFER_FROM_FLEET_CONTROL",
+    "NO_PCA_OR_BT_PROMOTION_FROM_SYNTHETIC_ROWS",
+    "NO_CREW_SURGE_WITHOUT_NAMED_FRONTIER_AND_RETURN_PATH"
+  ]
+}
