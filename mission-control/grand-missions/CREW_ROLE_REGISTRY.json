@@ -1,0 +1,27 @@
+{
+  "schema": "qps.grand_mission_crew_roles.v1",
+  "wave": "GM-FLEET-02B",
+  "roles": [
+    {"id":"SCOUT","purpose":"breadth_discovery","home_base":"MISSION_CITY_FLEET_POOL","activate_on":["UNKNOWN_TARGET_SPACE","NEW_FRONTIER"],"return_on":["SEARCH_SATURATION"]},
+    {"id":"READER","purpose":"deep_read_semantics_architecture_provenance","home_base":"KEB","activate_on":["SCOUT_FINDING","AMBIGUOUS_SOURCE"],"return_on":["MEANING_AND_SOURCE_BOUND"]},
+    {"id":"AMBASSADOR","purpose":"boundary_federation_upstream_downstream_handshake","home_base":"MISSION_CITY_FEDERATION_POOL","activate_on":["NEW_BOUNDARY","UPSTREAM_DOWNSTREAM_CONTRACT"],"return_on":["BOUNDARY_CONTRACT_STABLE"]},
+    {"id":"SCIENTIST","purpose":"domain_physics_statistics_validity","home_base":"QPS_TECHNICAL_POOL","activate_on":["PHYSICAL_VALIDITY_RED","DOMAIN_UNCERTAINTY"],"return_on":["VALIDITY_ENVELOPE_BOUND","EXTERNAL_BLOCK"]},
+    {"id":"ENGINEER","purpose":"implementation_adapter_tests_workflow","home_base":"DOW_BUILD_POOL","activate_on":["BUILDABLE_PATH","APPLICATION_REPAIR_APPROVED"],"return_on":["IMPLEMENTATION_CONTROL","NO_NAMED_DEFECT"]},
+    {"id":"SMOKER","purpose":"smallest_real_runtime_probe","home_base":"RUNTIME_POOL","activate_on":["EXECUTABLE_CANDIDATE"],"return_on":["OBSERVED_RESULT_BOUND"]},
+    {"id":"DOCTOR","purpose":"diagnose_observed_application_pathology","home_base":"REPAIR_RESERVE","activate_on":["OBSERVED_APPLICATION_RED_GT0_STEPS"],"return_on":["REPAIR_CONTROL_REPEAT_PASS"]},
+    {"id":"DOCKMASTER","purpose":"runner_container_environment_runtime_habitat","home_base":"RUNTIME_DOCK","activate_on":["RUNNER_ZERO_STEP","ENVIRONMENT_RED","HABITAT_RED"],"return_on":["HABITAT_STABLE"]},
+    {"id":"QA","purpose":"independent_receipt_and_proof_binding","home_base":"QA_POOL","activate_on":["CANDIDATE_RECEIPT","CONTROL_REPEAT"],"return_on":["CONTROL_MINIMAL_RECURRENCE_ONLY"]},
+    {"id":"ANALYST","purpose":"DMAIC_PCA_BT_and_decision_support","home_base":"MISSION_CONTROL_ANALYTICS","activate_on":["MEASURED_ROWS","RERANK_REQUEST"],"return_on":["NO_DECISION_DEMAND"]},
+    {"id":"PM","purpose":"scope_work_graph_dependencies_resources_delivery_closure","home_base":"DOW","activate_on":["MISSION_CHARTER"],"return_on":["MISSION_CONTROL_OR_CLOSED"]},
+    {"id":"TM","purpose":"technical_baseline_validity_evidence_architecture_acceptance_recommendation","home_base":"KEB","activate_on":["MISSION_CHARTER"],"return_on":["MISSION_CONTROL_OR_CLOSED"]},
+    {"id":"GOVERNOR","purpose":"promotion_and_authority_boundary","home_base":"GOVERNANCE_POOL","activate_on":["PROMOTION_DECISION","AUTHORITY_RED"],"return_on":["DECISION_RECORDED"]},
+    {"id":"ORCHESTRATOR","purpose":"dispatch_executable_actions_from_authorized_work_graph","home_base":"MISSION_CONTROL","activate_on":["EXECUTABLE_ACTION_AVAILABLE"],"return_on":["NO_EXECUTABLE_ACTION"]}
+  ],
+  "invariants": [
+    "DOCTOR_REQUIRES_OBSERVED_APPLICATION_RED_AND_STEPS_GT_0",
+    "ZERO_STEP_RED_ROUTES_TO_DOCKMASTER_NOT_DOCTOR",
+    "ANALYST_HAS_NO_PROMOTION_AUTHORITY",
+    "ORCHESTRATOR_HAS_NO_ENGINEERING_AUTHORITY",
+    "RETURNED_CREW_REMAINS_AVAILABLE_TO_FLEET"
+  ]
+}

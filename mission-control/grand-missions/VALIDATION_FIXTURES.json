@@ -1,0 +1,16 @@
+{
+  "schema":"qps.gm_fleet_validation_fixtures.v1",
+  "crew_transitions":[
+    {"from":"AVAILABLE","to":"SCOUTING","expected":"ALLOW"},
+    {"from":"ACTIVE","to":"CONTROL","expected":"ALLOW"},
+    {"from":"RETURNED","to":"ACTIVE","expected":"ALLOW"},
+    {"from":"PARKED","to":"ACTIVE","expected":"REJECT"},
+    {"from":"ACTIVE","to":"SCOUTING","expected":"REJECT"}
+  ],
+  "routing":[
+    {"first_red":"HABITAT","executed_steps":0,"expected_roles":["DOCKMASTER"],"forbidden_roles":["DOCTOR"]},
+    {"first_red":"APPLICATION","executed_steps":3,"expected_roles":["DOCTOR","ENGINEER"],"forbidden_roles":[]}
+  ],
+  "namespace_negative_examples":["GM-I","LM-01","HM-H1"],
+  "namespace_rule":"PREFIXES_MUST_REMAIN_DISJOINT"
+}

@@ -1,0 +1,35 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"qps.grand_mission_bt_evidence.v1",
+  "type":"object",
+  "required":["schema","comparisons"],
+  "properties":{
+    "schema":{"const":"qps.grand_mission_bt_evidence.v1"},
+    "comparisons":{
+      "type":"array",
+      "items":{
+        "type":"object",
+        "required":["comparison_id","evidence_class","winner_intervention","loser_intervention","baseline_class","source_refs","observed_outcome"],
+        "properties":{
+          "comparison_id":{"type":"string","minLength":1},
+          "evidence_class":{"const":"MEASURED_OBSERVED_PAIRWISE"},
+          "winner_intervention":{"type":"string","minLength":1},
+          "loser_intervention":{"type":"string","minLength":1},
+          "baseline_class":{"type":"string","minLength":1},
+          "source_refs":{"type":"array","minItems":2,"items":{"type":"string","minLength":1}},
+          "observed_outcome":{"enum":["WIN","TIE"]},
+          "mission_ids":{"type":"array","items":{"enum":["GM-I","GM-II","GM-III","GM-IV","GM-V"]}}
+        },
+        "additionalProperties":false
+      }
+    }
+  },
+  "additionalProperties":false,
+  "bt_gate":{
+    "minimum_pairs":2,
+    "requires_connected_comparison_graph":true,
+    "requires_observed_outcomes":true,
+    "forbid_synthetic_pair_credit":true,
+    "model_boundary":"INTERVENTION_RANKING_NOT_PROBABILITY_AND_NOT_ENGINEERING_AUTHORITY"
+  }
+}

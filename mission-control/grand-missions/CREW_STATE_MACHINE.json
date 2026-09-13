@@ -1,0 +1,39 @@
+{
+  "schema":"qps.grand_mission_crew_state_machine.v1",
+  "states":["AVAILABLE","SCOUTING","READING","SECONDED","ACTIVE","RESERVE","CONTROL","RETURNED","PARKED"],
+  "allowed_transitions":[
+    ["AVAILABLE","SCOUTING"],["AVAILABLE","READING"],["AVAILABLE","SECONDED"],["AVAILABLE","ACTIVE"],["AVAILABLE","RESERVE"],
+    ["SCOUTING","READING"],["SCOUTING","RETURNED"],["SCOUTING","AVAILABLE"],
+    ["READING","SECONDED"],["READING","ACTIVE"],["READING","RETURNED"],["READING","AVAILABLE"],
+    ["SECONDED","ACTIVE"],["SECONDED","CONTROL"],["SECONDED","RETURNED"],
+    ["ACTIVE","CONTROL"],["ACTIVE","RESERVE"],["ACTIVE","RETURNED"],["ACTIVE","PARKED"],
+    ["RESERVE","ACTIVE"],["RESERVE","RETURNED"],["RESERVE","AVAILABLE"],
+    ["CONTROL","ACTIVE"],["CONTROL","RETURNED"],["CONTROL","PARKED"],
+    ["RETURNED","AVAILABLE"],["RETURNED","SCOUTING"],["RETURNED","READING"],["RETURNED","SECONDED"],["RETURNED","ACTIVE"],["RETURNED","RESERVE"],
+    ["PARKED","AVAILABLE"],["PARKED","SCOUTING"]
+  ],
+  "activation_rules":[
+    {"predicate":"mission_state == HELD","action":"NO_OPERATIONAL_CREW_SURGE"},
+    {"predicate":"first_red.class == HABITAT || executed_steps == 0","action":"ACTIVATE_DOCKMASTER"},
+    {"predicate":"first_red.class == APPLICATION && executed_steps > 0","action":"ACTIVATE_DOCTOR_AND_ENGINEER"},
+    {"predicate":"first_red.class == SCIENCE","action":"ACTIVATE_SCIENTIST_AND_TM"},
+    {"predicate":"first_red.class == SEMANTIC","action":"ACTIVATE_READER_AND_TM_KEB"},
+    {"predicate":"first_red.class == SOURCE","action":"ACTIVATE_SCOUT_READER_AMBASSADOR"},
+    {"predicate":"first_red.class == INTERFACE","action":"ACTIVATE_AMBASSADOR_AND_ENGINEER"},
+    {"predicate":"first_red.class == DELIVERY","action":"ACTIVATE_PM_DOW"},
+    {"predicate":"first_red.class == AUTHORITY","action":"ACTIVATE_GOVERNOR_AND_TM"}
+  ],
+  "return_rules":[
+    "RETURN_SCOUTS_AT_SEARCH_SATURATION",
+    "RETURN_READERS_WHEN_SOURCE_AND_MEANING_ARE_BOUND",
+    "RETURN_DOCTOR_AFTER_REPAIR_CONTROL_REPEAT",
+    "RETURN_ENGINEER_WHEN_IMPLEMENTATION_CONTROL_AND_NO_NAMED_DEFECT",
+    "CONTRACT_QA_PM_TM_TO_MINIMAL_CONTROL_WHEN_MISSION_ENTERS_CONTROL",
+    "RETURN_UNUSED_FRONTIER_CREW_BEFORE_NEXT_SCALING_RING"
+  ],
+  "illegal_transitions":[
+    ["PARKED","ACTIVE"],
+    ["HELD_MISSION","ACTIVE_CREW_SURGE"]
+  ],
+  "authority_transfer":false
+}

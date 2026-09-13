@@ -1,0 +1,67 @@
+name: GM-FLEET-02B Closeout
+
+on:
+  push:
+    branches:
+      - mission/gm-fleet-02b-closeout
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/**'
+      - '.github/workflows/gm-fleet-02b.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+
+      - name: Validate GM fleet first execution
+        run: |
+          python3 mission-control/grand-missions/validate_gm_fleet.py \
+            --out mission-control/grand-missions/runtime/gm_fleet_receipt_1.json
+
+      - name: Execute crew REX bidirectional bridge first pass
+        run: |
+          python3 mission-control/grand-missions/crew_rex_bridge.py \
+            --out mission-control/grand-missions/runtime/crew_rex_report_1.json
+
+      - name: Validate GM fleet repeat execution
+        run: |
+          python3 mission-control/grand-missions/validate_gm_fleet.py \
+            --out mission-control/grand-missions/runtime/gm_fleet_receipt_2.json
+
+      - name: Execute crew REX bidirectional bridge repeat
+        run: |
+          python3 mission-control/grand-missions/crew_rex_bridge.py \
+            --out mission-control/grand-missions/runtime/crew_rex_report_2.json
+
+      - name: Enforce deterministic repeat
+        run: |
+          cmp \
+            mission-control/grand-missions/runtime/gm_fleet_receipt_1.json \
+            mission-control/grand-missions/runtime/gm_fleet_receipt_2.json
+          cmp \
+            mission-control/grand-missions/runtime/crew_rex_report_1.json \
+            mission-control/grand-missions/runtime/crew_rex_report_2.json
+          echo "PASS_DETERMINISTIC_REPEAT"
+
+      - name: Show bounded results
+        run: |
+          cat mission-control/grand-missions/runtime/gm_fleet_receipt_1.json
+          cat mission-control/grand-missions/runtime/crew_rex_report_1.json
+
+      - name: Upload exact-SHA receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-fleet-02b-${{ github.sha }}
+          path: |
+            mission-control/grand-missions/runtime/gm_fleet_receipt_1.json
+            mission-control/grand-missions/runtime/gm_fleet_receipt_2.json
+            mission-control/grand-missions/runtime/crew_rex_report_1.json
+            mission-control/grand-missions/runtime/crew_rex_report_2.json
+          if-no-files-found: error
