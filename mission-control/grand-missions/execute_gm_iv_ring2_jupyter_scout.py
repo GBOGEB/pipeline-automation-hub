@@ -9,7 +9,6 @@ import importlib.metadata
 import json
 import platform
 import subprocess
-from copy import deepcopy
 from pathlib import Path
 
 import nbformat
@@ -45,10 +44,12 @@ def canonical_outputs(nb: dict) -> dict:
     return payload
 
 
-def execute(source: Path, cwd: Path) -> dict:
+def execute(source: Path) -> dict:
     nb = nbformat.read(source, as_version=4)
     ep = ExecutePreprocessor(timeout=240, kernel_name="python3", allow_errors=False)
-    ep.preprocess(nb, {"metadata": {"path": str(cwd)}})
+    # Preserve the notebook's own relative-path semantics. For notebooks/foo.ipynb,
+    # '../data/...' is intentionally resolved from notebooks/, not the repo root.
+    ep.preprocess(nb, {"metadata": {"path": str(source.parent)}})
     return canonical_outputs(nb)
 
 
@@ -75,8 +76,8 @@ def main() -> int:
     before = subprocess.check_output(["git", "-C", str(repo), "status", "--porcelain"], text=True)
     assert before == "", "candidate checkout must start clean"
 
-    run1 = execute(notebook, repo)
-    run2 = execute(notebook, repo)
+    run1 = execute(notebook)
+    run2 = execute(notebook)
     after = subprocess.check_output(["git", "-C", str(repo), "status", "--porcelain"], text=True)
     assert after == "", "candidate checkout must remain clean"
     assert run1["executed_code_cells"] > 0, "scout requires >0 executed notebook cells"
@@ -88,6 +89,7 @@ def main() -> int:
         "candidate_repository": "GBOGEB/codespaces-jupyter",
         "candidate_sha": actual_sha,
         "notebook": args.notebook,
+        "notebook_working_directory": str(Path(args.notebook).parent),
         "source_file_sha256": hashlib.sha256(notebook.read_bytes()).hexdigest(),
         "run_1": run1,
         "run_2_digest_sha256": run2["digest_sha256"],
