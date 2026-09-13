@@ -1,0 +1,71 @@
+{
+  "schema": "qps.gm_iv_pilot2_governor_contract.v1",
+  "wave": "GM-FLEET-03-GOVERNOR-PILOT2",
+  "mission_id": "GM-IV",
+  "from_state": "STAGED_ACTIVE_RECON_2_OF_8",
+  "to_state": "STAGED_ACTIVE_PILOT_2_OF_8",
+  "to_activation_stage": "PILOT_2_OF_8",
+  "retry_context": "FINAL_UNIQUE_OPENED_EVENT_CENSUS_AFTER_PR81_PR83_PR87_WITHHELD_WRAPPERS",
+  "authority_transfer": false,
+  "children_bound": false,
+  "gm_v_required_state": "HELD",
+  "crew": ["GOVERNOR", "TM", "QA"],
+  "controlled_pilots": {
+    "GM-IV-F01": {
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "target_sha": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96",
+      "master_source_sha": "2cb9de6b07ec7228578da29dd3d7b5804499ba7c",
+      "workflow_run_id": 34768296758,
+      "artifact_id": 10320854729,
+      "artifact_digest": "sha256:74f7566e41112ece5cc8f014ca6574170854e23ec718993f0384aae6fe24cffa",
+      "disposition": "PILOT_CONTROL_READY"
+    },
+    "GM-IV-F03": {
+      "repository": "GBOGEB/codespaces-jupyter",
+      "target_sha": "1eba2240a86d1fd2bd6375e2fac481caf645cdde",
+      "master_source_sha": "6dd4d5b375859dabd5e94aac26b8acc61a757ad7",
+      "workflow_run_id": 34772053427,
+      "artifact_id": 10322471532,
+      "artifact_digest": "sha256:24fc6d6122077bee933d2c5b752a9159fa10ed34ea83c4bfebb3ebdfb0cca38c",
+      "disposition": "PILOT_CONTROL_READY"
+    }
+  },
+  "reference_frontiers": {
+    "GM-IV-F02": {
+      "repository": "GBOGEB/attest-build-provenance",
+      "target_sha": "10334b5f1e684784025c3fc0a277c88c19089275",
+      "master_source_sha": "b6f63fa4ed19ef1be517c2c752c32327c8442bee",
+      "workflow_run_id": 34767966606,
+      "artifact_id": 10320054225,
+      "artifact_digest": "sha256:110d237261706c24d4d6db85376c8d9943b6fbec5bb90def9a6e8a7e1d86abfc",
+      "disposition": "REFERENCE"
+    },
+    "GM-IV-F04": {
+      "repository": "GBOGEB/yaml-reference-parser",
+      "target_sha": "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99",
+      "master_source_sha": "c728fab25f18745425419c34db2de5a836a1f686",
+      "workflow_run_id": 34771874257,
+      "artifact_id": 10322441334,
+      "artifact_digest": "sha256:a04d2b7219c7001dfe73d3e2553bff5a3403c5c0eb92302a64b6d9e78398bea2",
+      "disposition": "REFERENCE"
+    }
+  },
+  "current_frontier_shape": {
+    "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"],
+    "controlled_pilot_frontiers": ["GM-IV-F01", "GM-IV-F03"],
+    "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
+    "unfilled_frontier_slots": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"]
+  },
+  "promotion_checks": [
+    "two independent controlled pilot frontiers have fresh merged-master recurrence",
+    "both controlled pilot artifacts are bound by exact master SHA and digest",
+    "F02 and F04 remain bounded references rather than authority-bearing children",
+    "GM-IV canonical children remain empty",
+    "authority_transfer remains false",
+    "Mission City state is synchronized",
+    "active fleet and capacity validators accept the promoted shape",
+    "local Evidence Economics remains measured and fail-closed for PCA/BT",
+    "GM-V remains HELD"
+  ],
+  "next_stage_boundary": "PILOT_2_OF_8_DOES_NOT_AUTHORIZE_RECON_4_OF_8; A_SEPARATE_GOVERNOR_GATE_IS_REQUIRED"
+}
