@@ -245,6 +245,11 @@ jobs:
           --input-root mission-control/qps-triage-ultra/crew/measured/frontier/pc3/aggregate
           --admission-telemetry mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_ADMISSION_TELEMETRY.json
           --out mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_CONDITIONAL_BT_RECEIPT.json
+      - name: Scan latent component migration
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/pc3/scan_component_migration.py
+          --analysis mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_CONDITIONAL_BT_RECEIPT.json
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_COMPONENT_MIGRATION.json
       - name: Enforce PC3 + conditional BT DoV
         shell: python
         run: |
@@ -252,13 +257,16 @@ jobs:
           from pathlib import Path
           root=Path('mission-control/qps-triage-ultra/crew/measured/frontier/pc3')
           r=json.loads((root/'PC3_CONDITIONAL_BT_RECEIPT.json').read_text())
+          migration=json.loads((root/'PC3_COMPONENT_MIGRATION.json').read_text())
           actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
-          assert r['source_sha']==actual
+          assert r['source_sha']==actual and migration['source_sha']==actual
           assert r['task_receipts']==72 and r['accepted']==72 and r['rejected']==0
           assert len(r['cells'])==6
           assert r['pca']['status']=='READY_MEASURED_PC3'
           assert len(r['pca']['components'])>=3 and r['pca']['feature_count']>=10
           assert r['pca']['pc3_pressure_hypothesis']['status'] in {'SUPPORTED','MIXED','NOT_SUPPORTED'}
+          assert migration['pressure_disposition'] in {'DETECTED_PC1_NOT_PC3','DETECTED_PC2_NOT_PC3','DETECTED_PC3','DETECTED_PC4_NOT_PC3','DETECTED_PC5_NOT_PC3','NO_DOMINANT_PRESSURE_COMPONENT_PC1_PC5'}
+          assert migration['authority_transfer'] is False and migration['competency_promotions']==0
           assert r['bt_global']['status']=='READY_OBSERVED' and r['bt_global']['observed_pairs']==30
           assert len(r['bt_conditional_by_task_class'])==5
           assert all(v['status']=='READY_CONDITIONAL_OBSERVED' and v['observed_pairs']==6 for v in r['bt_conditional_by_task_class'].values())
@@ -274,6 +282,8 @@ jobs:
               'pc2_explained':r['pca']['components'][1]['explained_variance_ratio'],
               'pc3_explained':r['pca']['components'][2]['explained_variance_ratio'],
               'pc3_hypothesis':r['pca']['pc3_pressure_hypothesis'],
+              'component_migration':migration['axes'],
+              'pressure_disposition':migration['pressure_disposition'],
               'conditional_bt_classes':{k:{'pairs':v['observed_pairs'],'nodes':v['nodes']} for k,v in r['bt_conditional_by_task_class'].items()},
               'competency_promotions':0
           },sort_keys=True))
@@ -284,4 +294,5 @@ jobs:
           path: |
             mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_ADMISSION_TELEMETRY.json
             mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_CONDITIONAL_BT_RECEIPT.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_COMPONENT_MIGRATION.json
             mission-control/qps-triage-ultra/crew/measured/frontier/pc3/aggregate/*.json
