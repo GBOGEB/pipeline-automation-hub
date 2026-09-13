@@ -74,12 +74,48 @@
       "source": "mission-control/qps-triage-ultra/EXPEDITION_FLEET_STATUS.md"
     }
   ],
+  "live_control_rows": [
+    {
+      "workflow": "MissionControl Measured Crew Allocation",
+      "run_id": 34774328258,
+      "job_id": 103769526237,
+      "source_sha": "6b7a014887c188ae7a0b2f536db201e76a9e6313",
+      "created_at": "2026-09-13T18:20:38Z",
+      "runner_started_at": "2026-09-13T18:20:51Z",
+      "completed_at": "2026-09-13T18:21:00Z",
+      "queue_or_admission_seconds": 13,
+      "job_runtime_seconds": 9,
+      "queue_to_job_runtime_ratio": 1.444444,
+      "runner_id": 1000266566,
+      "steps_executed_positive": true,
+      "class": "QUEUE_DOMINATED",
+      "classification_boundary": "assigned real runner; not INFRA_PREEXECUTION"
+    },
+    {
+      "workflow": "MissionControl Measured Crew Allocation",
+      "run_id": 34774493436,
+      "job_id": 103769982301,
+      "source_sha": "208c40499db82c8a0b5f3e6277bf469c74e12afe",
+      "created_at": "2026-09-13T18:23:54Z",
+      "runner_started_at": "2026-09-13T18:24:39Z",
+      "completed_at": "2026-09-13T18:24:49Z",
+      "queue_or_admission_seconds": 45,
+      "job_runtime_seconds": 10,
+      "queue_to_job_runtime_ratio": 4.5,
+      "runner_id": 1000266756,
+      "steps_executed_positive": true,
+      "class": "QUEUE_DOMINATED",
+      "classification_boundary": "assigned real runner; not INFRA_PREEXECUTION"
+    }
+  ],
   "derived_sample_signal": {
-    "lightweight_successful_pulses_with_execute_le_30_seconds": 4,
-    "queue_dominated_count": 3,
-    "queue_dominated_fraction": 0.75,
+    "historical_lightweight_successful_pulses_with_execute_le_30_seconds": 4,
+    "historical_queue_dominated_count": 3,
+    "historical_queue_dominated_fraction": 0.75,
+    "new_exact_sha_control_repeat_rows": 2,
+    "new_exact_sha_control_repeat_queue_dominated": 2,
     "fleet_denominator_claim": false,
-    "interpretation": "bounded sample supports runner-economics optimization after admission; it does not estimate whole-fleet prevalence"
+    "interpretation": "two fresh exact-SHA control jobs independently reinforce the prior queue-dominance signal, but job-runtime rows are retained separately from the earlier expedition execute-time table rather than silently pooled"
   },
   "infra_preexecution_control": {
     "authoritative_open_gate": "GBOGEB/cryoplant-project#923",
@@ -92,7 +128,8 @@
       "child ACCEPT/REJECT/DEFER disposition",
       "fresh-head repeat"
     ],
-    "historical_cross_repo_signal": "zero-step history also exists outside cryoplant; classify as historical account/repo admission evidence until fresh current telemetry proves a shared live condition"
+    "historical_cross_repo_signal": "zero-step history also exists outside cryoplant; classify as historical account/repo admission evidence until fresh current telemetry proves a shared live condition",
+    "non_compensation_observation": "pipeline-automation-hub runs 34774328258 and 34774493436 both obtained real runners and executed; they prove ordinary queue pressure on that repo only and do not clear cryoplant#923"
   },
   "sentinel_rules": [
     "runner_id=0 or steps=0 before payload => INFRA_PREEXECUTION; do not patch application/debugger semantics",
@@ -128,7 +165,7 @@
       "required_before_after": ["admission_success_rate", "queue_seconds", "utilization", "crew_time", "accepted_receipt_yield"]
     }
   ],
-  "h4_objective": "expected_pressure_reduction * evidence_confidence * reuse_multiplier / (crew_time + queue_time + execution_time + coordination_drag)",
+  "h4_objective": "expected pressure reduction * evidence confidence * reuse multiplier / (crew time + queue time + execution time + coordination drag)",
   "pca_features_after_contract_freeze": [
     "admission_success",
     "queue_seconds",
