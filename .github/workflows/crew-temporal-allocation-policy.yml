@@ -1,0 +1,417 @@
+name: MissionControl Temporal Allocation Policy
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/**'
+      - '.github/workflows/crew-temporal-allocation-policy.yml'
+  push:
+    branches:
+      - master
+      - mission/crew-temporal-policy-v1-20260913
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/**'
+      - '.github/workflows/crew-temporal-allocation-policy.yml'
+  schedule:
+    - cron: '17 1,7,13,19 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  prepare-reuse-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Build deterministic reusable artifact
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: python
+        run: |
+          import json, os
+          from pathlib import Path
+          p=Path('mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed/REUSE_ARTIFACT.json')
+          p.parent.mkdir(parents=True, exist_ok=True)
+          p.write_text(json.dumps({
+              'schema':'missioncontrol.pc3.reuse_seed.v1',
+              'source_sha':os.environ['SOURCE_SHA'],
+              'purpose':'artifact-cache-reuse'
+          },sort_keys=True)+'\n')
+      - name: Upload reusable artifact seed
+        uses: actions/upload-artifact@v4
+        with:
+          name: temporal-reuse-seed-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed/REUSE_ARTIFACT.json
+
+  held-admission-gate:
+    needs: prepare-reuse-artifact
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deliberate bounded admission hold
+        shell: python
+        run: |
+          import time
+          t=time.perf_counter()
+          time.sleep(8.0)
+          print({'status':'PASS_HELD_ADMISSION_GATE','observed_seconds':round(time.perf_counter()-t,3)})
+
+  discover-constrained-runner:
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.discover.outputs.enabled }}
+      labels: ${{ steps.discover.outputs.labels }}
+      habitat: ${{ steps.discover.outputs.habitat }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Discover declared constrained runner
+        id: discover
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MC_CONSTRAINED_RUNNER_LABELS_JSON: ${{ vars.MC_CONSTRAINED_RUNNER_LABELS_JSON }}
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/discover_constrained_runner.py
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_RUNNER_DISCOVERY.json
+      - name: Upload constrained runner discovery
+        uses: actions/upload-artifact@v4
+        with:
+          name: constrained-runner-discovery-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_RUNNER_DISCOVERY.json
+
+  collect-baseline:
+    name: collect-${{ matrix.habitat }}-baseline
+    needs: prepare-reuse-artifact
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - habitat: linux
+            runner: ubuntu-latest
+          - habitat: windows
+            runner: windows-latest
+          - habitat: macos
+            runner: macos-latest
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Assert exact source head
+        shell: python
+        run: |
+          import subprocess
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert actual==expected,(actual,expected)
+      - name: Validate reusable REX checklist
+        run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
+      - name: Download reusable artifact seed
+        uses: actions/download-artifact@v4
+        with:
+          name: temporal-reuse-seed-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed
+      - name: Execute temporal baseline cell
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          MC_REUSE_ARTIFACT: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed/REUSE_ARTIFACT.json
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/pc3/run_pc3_tasks.py
+          --habitat ${{ matrix.habitat }}
+          --lane baseline
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/receipts/${{ matrix.habitat }}-baseline
+      - name: Enforce temporal baseline cell
+        env:
+          HABITAT: ${{ matrix.habitat }}
+        shell: python
+        run: |
+          import json, os, subprocess
+          from pathlib import Path
+          h=os.environ['HABITAT']; cell=f'{h}-baseline'
+          root=Path('mission-control/qps-triage-ultra/crew/measured/frontier/temporal/receipts')/cell
+          actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          rows=[json.loads(p.read_text()) for p in root.glob(f'{cell}__PC3-F*.json')]
+          assert len(rows)==12 and sum(r['pair_id'] is not None for r in rows)==10
+          assert all(r['source_sha']==actual and r['disposition']=='ACCEPT' for r in rows)
+          assert all(r['promotion_allowed'] is False and r['authority_transfer'] is False for r in rows)
+      - name: Upload temporal baseline receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: temporal-pc3-raw-${{ matrix.habitat }}-baseline-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/receipts/${{ matrix.habitat }}-baseline/*.json
+
+  collect-held:
+    name: collect-${{ matrix.habitat }}-held
+    needs: [prepare-reuse-artifact, held-admission-gate]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - habitat: linux
+            runner: ubuntu-latest
+          - habitat: windows
+            runner: windows-latest
+          - habitat: macos
+            runner: macos-latest
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Assert exact source head
+        shell: python
+        run: |
+          import subprocess
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert actual==expected,(actual,expected)
+      - name: Validate reusable REX checklist
+        run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
+      - name: Download reusable artifact seed
+        uses: actions/download-artifact@v4
+        with:
+          name: temporal-reuse-seed-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed
+      - name: Execute temporal held cell
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          MC_REUSE_ARTIFACT: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed/REUSE_ARTIFACT.json
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/pc3/run_pc3_tasks.py
+          --habitat ${{ matrix.habitat }}
+          --lane held
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/receipts/${{ matrix.habitat }}-held
+      - name: Enforce temporal held cell
+        env:
+          HABITAT: ${{ matrix.habitat }}
+        shell: python
+        run: |
+          import json, os, subprocess
+          from pathlib import Path
+          h=os.environ['HABITAT']; cell=f'{h}-held'
+          root=Path('mission-control/qps-triage-ultra/crew/measured/frontier/temporal/receipts')/cell
+          actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          rows=[json.loads(p.read_text()) for p in root.glob(f'{cell}__PC3-F*.json')]
+          assert len(rows)==12 and sum(r['pair_id'] is not None for r in rows)==10
+          assert all(r['source_sha']==actual and r['disposition']=='ACCEPT' for r in rows)
+          assert all(r['promotion_allowed'] is False and r['authority_transfer'] is False for r in rows)
+      - name: Upload temporal held receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: temporal-pc3-raw-${{ matrix.habitat }}-held-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/receipts/${{ matrix.habitat }}-held/*.json
+
+  constrained-habitat:
+    needs: [prepare-reuse-artifact, discover-constrained-runner]
+    if: needs.discover-constrained-runner.outputs.enabled == 'true'
+    runs-on: ${{ fromJSON(needs.discover-constrained-runner.outputs.labels) }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head and Python availability
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          python --version
+      - name: Validate reusable REX checklist
+        run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
+      - name: Download reusable artifact seed
+        uses: actions/download-artifact@v4
+        with:
+          name: temporal-reuse-seed-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed
+      - name: Execute real constrained habitat cell
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          MC_REUSE_ARTIFACT: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed/REUSE_ARTIFACT.json
+          RUNNER_ENVIRONMENT: self-hosted-constrained
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/pc3/run_pc3_tasks.py
+          --habitat ${{ needs.discover-constrained-runner.outputs.habitat }}
+          --lane baseline
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/constrained
+      - name: Analyze constrained habitat
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/analyze_constrained_habitat.py
+          --input-root mission-control/qps-triage-ultra/crew/measured/frontier/temporal/constrained
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_HABITAT_WINDOW.json
+      - name: Upload constrained habitat evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: constrained-habitat-window-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_HABITAT_WINDOW.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/temporal/constrained/*.json
+
+  analyze-temporal-policy:
+    needs: [collect-baseline, collect-held, discover-constrained-runner, constrained-habitat]
+    if: ${{ always() && needs.collect-baseline.result == 'success' && needs.collect-held.result == 'success' && needs.discover-constrained-runner.result == 'success' && (needs.constrained-habitat.result == 'success' || needs.constrained-habitat.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Download six hosted temporal cell receipt sets
+        uses: actions/download-artifact@v4
+        with:
+          pattern: temporal-pc3-raw-*-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/aggregate
+          merge-multiple: true
+      - name: Download constrained runner discovery
+        uses: actions/download-artifact@v4
+        with:
+          name: constrained-runner-discovery-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal
+      - name: Download constrained habitat evidence when assigned
+        if: needs.constrained-habitat.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: constrained-habitat-window-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal
+      - name: Collect observed admission and runner telemetry
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/pc3/collect_pc3_queue_telemetry.py
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/PC3_ADMISSION_TELEMETRY.json
+      - name: Analyze current PC3 conditional BT window
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/pc3/analyze_pc3_frontier.py
+          --input-root mission-control/qps-triage-ultra/crew/measured/frontier/temporal/aggregate
+          --admission-telemetry mission-control/qps-triage-ultra/crew/measured/frontier/temporal/PC3_ADMISSION_TELEMETRY.json
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/PC3_CONDITIONAL_BT_RECEIPT.json
+      - name: Scan current component migration
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/pc3/scan_component_migration.py
+          --analysis mission-control/qps-triage-ultra/crew/measured/frontier/temporal/PC3_CONDITIONAL_BT_RECEIPT.json
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/PC3_COMPONENT_MIGRATION.json
+      - name: Build temporal policy learning ledger
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/build_temporal_policy.py
+          --current-analysis mission-control/qps-triage-ultra/crew/measured/frontier/temporal/PC3_CONDITIONAL_BT_RECEIPT.json
+          --current-admission mission-control/qps-triage-ultra/crew/measured/frontier/temporal/PC3_ADMISSION_TELEMETRY.json
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_RAW.json
+      - name: Bind constrained habitat extension
+        shell: bash
+        run: |
+          args=(
+            --policy mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_RAW.json
+            --discovery mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_RUNNER_DISCOVERY.json
+            --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_ALLOCATION_POLICY_RECEIPT.json
+          )
+          if [ -f mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_HABITAT_WINDOW.json ]; then
+            args+=(--constrained-window mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_HABITAT_WINDOW.json)
+          fi
+          python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/augment_temporal_policy.py "${args[@]}"
+      - name: Enforce temporal policy promotion gates
+        shell: python
+        run: |
+          import json, subprocess
+          from pathlib import Path
+          root=Path('mission-control/qps-triage-ultra/crew/measured/frontier/temporal')
+          config=json.loads((root/'TEMPORAL_POLICY_CONFIG_v1.json').read_text())
+          current=json.loads((root/'PC3_CONDITIONAL_BT_RECEIPT.json').read_text())
+          receipt=json.loads((root/'TEMPORAL_ALLOCATION_POLICY_RECEIPT.json').read_text())
+          actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert current['source_sha']==actual
+          assert current['task_receipts']==72 and current['accepted']==72 and current['rejected']==0
+          assert current['bt_global']['observed_pairs']==30
+          assert receipt['independent_windows']>=1 and receipt['distinct_source_shas']>=1
+          assert receipt['competency_promotions']==0 and receipt['authority_transfer'] is False
+          assert receipt['natural_scarcity']['designed_held_gate_excluded'] is True
+          rg=config['recommend_repeat_stable_gate']; cg=config['control_policy_gate']
+          for name,p in receipt['policies'].items():
+            assert p['competency_promotion'] is False and p['authority_transfer'] is False
+            if p['policy_status']=='CONTROL_POLICY':
+              assert p['allocation_policy_promotion'] is True
+              assert p['independent_windows']>=cg['min_independent_windows']
+              assert p['distinct_source_shas']>=cg['min_distinct_source_shas']
+              assert p['temporal_span_seconds']>=cg['min_temporal_span_seconds']
+              assert p['directional_windows']>=cg['min_directional_windows']
+              assert p['direction_consistency']>=cg['min_direction_consistency']
+              assert p['pooled_winner_strength']>=cg['min_pooled_winner_strength']
+              assert p['allocation_recommendation'] in {'ALLOC_SINGLE_CELL','ALLOC_PAIRED_CELL'}
+            elif p['policy_status']=='RECOMMEND_REPEAT_STABLE':
+              assert p['allocation_policy_promotion'] is False
+              assert p['independent_windows']>=rg['min_independent_windows']
+              assert p['distinct_source_shas']>=rg['min_distinct_source_shas']
+              assert p['temporal_span_seconds']>=rg['min_temporal_span_seconds']
+              assert p['directional_windows']>=rg['min_directional_windows']
+              assert p['direction_consistency']>=rg['min_direction_consistency']
+              assert p['pooled_winner_strength']>=rg['min_pooled_winner_strength']
+            else:
+              assert p['allocation_policy_promotion'] is False
+          ext=receipt['constrained_runner_extension']
+          if ext['real_constrained_habitat_observed']:
+            assert ext['status']=='REAL_CONSTRAINED_HABITAT_OBSERVED'
+            assert ext['window']['runner']['environment']=='self-hosted-constrained'
+          print(json.dumps({
+            'status':'PASS_TEMPORAL_ALLOCATION_POLICY_DOV',
+            'source_sha':actual,
+            'windows':receipt['independent_windows'],
+            'distinct_shas':receipt['distinct_source_shas'],
+            'span_seconds':receipt['temporal_span_seconds'],
+            'scarcity':receipt['natural_scarcity']['status'],
+            'constrained':ext['status'],
+            'policies':{k:v['policy_status'] for k,v in receipt['policies'].items()},
+            'recommendations':{k:v['allocation_recommendation'] for k,v in receipt['policies'].items()},
+            'promoted_rules':sum(v['allocation_policy_promotion'] for v in receipt['policies'].values()),
+            'competency_promotions':0,
+            'authority_transfer':False
+          },sort_keys=True))
+      - name: Upload temporal allocation policy evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-temporal-pc3-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            mission-control/qps-triage-ultra/crew/measured/frontier/temporal/PC3_ADMISSION_TELEMETRY.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/temporal/PC3_CONDITIONAL_BT_RECEIPT.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/temporal/PC3_COMPONENT_MIGRATION.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_RAW.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_ALLOCATION_POLICY_RECEIPT.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_RUNNER_DISCOVERY.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_HABITAT_WINDOW.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/temporal/aggregate/*.json
+          if-no-files-found: warn
