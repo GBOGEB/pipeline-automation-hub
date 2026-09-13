@@ -1,0 +1,157 @@
+name: MissionControl Crew Frontier PCA BT
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/**'
+      - '.github/workflows/crew-frontier-pca-bt.yml'
+  push:
+    branches:
+      - master
+      - mission/crew-frontier-variance-bt-v1-20260913
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/**'
+      - '.github/workflows/crew-frontier-pca-bt.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  collect:
+    name: collect-${{ matrix.habitat }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - habitat: linux
+            runner: ubuntu-latest
+          - habitat: windows
+            runner: windows-latest
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: python
+        run: |
+          import subprocess
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
+          assert actual == expected, (actual, expected)
+          print(actual)
+      - name: Validate reusable REX checklist
+        run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
+      - name: Execute predeclared frontier task mix
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/run_frontier_tasks.py
+          --habitat ${{ matrix.habitat }}
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/receipts/${{ matrix.habitat }}
+      - name: Enforce raw frontier receipts
+        shell: python
+        run: |
+          import json
+          import subprocess
+          from pathlib import Path
+          habitat='${{ matrix.habitat }}'
+          root=Path('mission-control/qps-triage-ultra/crew/measured/frontier/receipts')/habitat
+          actual=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
+          rows=[]
+          for p in root.glob(f'{habitat}__F*.json'):
+              r=json.loads(p.read_text())
+              rows.append(r)
+              assert r['source_sha']==actual
+              assert r['disposition']=='ACCEPT'
+              assert r['steps_executed'] > 0
+              assert r['promotion_allowed'] is False
+              assert r['authority_transfer'] is False
+              assert r['rex_preflight']['checklist_version']=='missioncontrol.rex.reuse_checklist.v1'
+          assert len(rows)==8, len(rows)
+          assert sum(r['pair_id'] is not None for r in rows)==6
+          print(json.dumps({'status':'PASS_FRONTIER_RAW','habitat':habitat,'receipts':len(rows),'source_sha':actual},sort_keys=True))
+      - name: Upload raw frontier receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-frontier-raw-${{ matrix.habitat }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/receipts/${{ matrix.habitat }}/*.json
+
+  analyze:
+    name: analyze-pca-bt
+    needs: collect
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Download both habitat receipt sets
+        uses: actions/download-artifact@v4
+        with:
+          pattern: crew-frontier-raw-*-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/aggregate
+          merge-multiple: true
+      - name: Collect observed queue/admission telemetry
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/collect_queue_telemetry.py
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/QUEUE_TELEMETRY.json
+      - name: Analyze measured PCA and observed BT graph
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/analyze_frontier.py
+          --input-root mission-control/qps-triage-ultra/crew/measured/frontier/aggregate
+          --queue-telemetry mission-control/qps-triage-ultra/crew/measured/frontier/QUEUE_TELEMETRY.json
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/FRONTIER_ANALYSIS_RECEIPT.json
+      - name: Enforce frontier DoV
+        shell: python
+        run: |
+          import json
+          import subprocess
+          from pathlib import Path
+          root=Path('mission-control/qps-triage-ultra/crew/measured/frontier')
+          result=json.loads((root/'FRONTIER_ANALYSIS_RECEIPT.json').read_text())
+          actual=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
+          assert result['source_sha']==actual
+          assert result['task_receipts']==16
+          assert result['accepted']==16 and result['rejected']==0
+          assert result['habitats']==['linux','windows']
+          assert result['pca']['status']=='READY_MEASURED'
+          assert len(result['pca']['components']) >= 2
+          assert result['pca']['feature_count'] >= 2
+          assert result['bt']['status']=='READY_OBSERVED'
+          assert result['bt']['observed_pairs']==6
+          assert all(e['comparable'] for e in result['bt']['edges'])
+          assert result['competency_promotions']==0
+          assert result['authority_transfer'] is False
+          print(json.dumps({
+              'status':'PASS_CREW_FRONTIER_PCA_BT_DOV',
+              'source_sha':actual,
+              'task_receipts':result['task_receipts'],
+              'habitats':result['habitats'],
+              'pca':result['pca']['status'],
+              'pc1_explained':result['pca']['components'][0]['explained_variance_ratio'],
+              'pc2_explained':result['pca']['components'][1]['explained_variance_ratio'],
+              'bt':result['bt']['status'],
+              'observed_pairs':result['bt']['observed_pairs'],
+              'competency_promotions':0
+          },sort_keys=True))
+      - name: Upload frontier analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-frontier-pca-bt-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            mission-control/qps-triage-ultra/crew/measured/frontier/FRONTIER_ANALYSIS_RECEIPT.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/QUEUE_TELEMETRY.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/aggregate/*.json
