@@ -1,5 +1,5 @@
 {
-  "schema": "missioncontrol.crew_role_extension.map_decomposition.v1",
+  "schema": "missioncontrol.crew_role_extension.map_decomposition.v2",
   "status": "CANDIDATE_CANONICAL",
   "roles": [
     {
@@ -15,33 +15,46 @@
       "outputs": ["recursive tree map", "hidden strata", "nested boundaries", "deep dependency paths", "P-level"]
     },
     {
+      "role_id": "HISTORIAN",
+      "primary_function": "TEMPORAL_LINEAGE_RECONSTRUCTION",
+      "question": "How did the present state evolve through commits, branches, PRs, merges, reversals, failures and prior REX?",
+      "invokes": ["READER on commit history", "READER on PR history", "READER on issue/discussion history", "NEURON for lineage decomposition"],
+      "reads": ["commit DAG", "merge parents", "branch ancestry", "PR open/merge/close history", "PR changed-file lineage", "review comments", "issue chronology", "workflow-run history", "release/tag history", "historical REX and mission logs"],
+      "outputs": ["commit lineage", "PR lineage", "branch ancestry", "change genealogy", "historical first-red sequence", "revert/supersession map", "REX recurrence map", "temporal parent-child edges", "historical authority drift", "historical crew contribution evidence"],
+      "constraints": ["observed Git objects and PR records remain distinct from inferred causal explanations", "do not infer execution from merged code alone", "preserve exact SHA and PR identifiers", "superseded evidence stays historically valid but is marked stale for current authority"]
+    },
+    {
       "role_id": "NEURON",
       "primary_function": "DECOMPOSITION",
       "question": "What are the nodes, edges, atoms, graphs and dependencies?",
-      "outputs": ["node-edge-atom ledger", "dependency graph", "critical paths", "cycles", "orphans", "floating components", "fan-in/fan-out"]
+      "outputs": ["node-edge-atom ledger", "dependency graph", "critical paths", "cycles", "orphans", "floating components", "fan-in/fan-out", "temporal lineage graph"]
     },
     {
       "role_id": "CALLIGRAPHER",
       "aliases": ["COLIGRAPHER"],
       "primary_function": "FLOW_REPRESENTATION",
       "question": "How does the process/workflow/state transition clearly flow?",
-      "formats": ["ASCII", "Mermaid flowchart", "Mermaid sequence", "Mermaid state", "workflow diagram"],
-      "outputs": ["canonical ASCII", "canonical Mermaid", "direction legend", "feedback/feedforward view", "crew handoff view", "runtime path view"],
+      "formats": ["ASCII", "Mermaid flowchart", "Mermaid sequence", "Mermaid state", "workflow diagram", "genealogy diagram"],
+      "outputs": ["canonical ASCII", "canonical Mermaid", "direction legend", "feedback/feedforward view", "crew handoff view", "runtime path view", "historical lineage view"],
       "constraint": "represent observed/governed structure only; do not invent missing execution"
     }
   ],
   "related_roles": {
     "SCOUT": "discovers frontier",
-    "READER": "interprets content",
+    "READER": "interprets current and historical content",
+    "HISTORIAN": "reconstructs temporal lineage from Reader-observed history",
     "CARTOGRAPHER_OCULARS": "renders topology/dashboard and temporal views",
     "RUNNER": "proves execution",
-    "QA_SIGNALMAN": "verifies evidence"
+    "QA_SIGNALMAN": "verifies evidence",
+    "REX_KEB": "assimilates historical lessons and challenges provenance"
   },
-  "canonical_pipeline": "SCOUT -> GEOGRAPHER -> GEOLOGIST -> NEURON -> CALLIGRAPHER -> RUNNER -> QA_SIGNALMAN -> MISSIONCONTROL -> CARTOGRAPHER_OCULARS",
+  "canonical_pipeline": "SCOUT -> GEOGRAPHER -> GEOLOGIST -> READER -> HISTORIAN -> NEURON -> CALLIGRAPHER -> RUNNER -> QA_SIGNALMAN -> MISSIONCONTROL -> CARTOGRAPHER_OCULARS",
+  "history_feedback_loop": "RUN/PR/COMMIT/REX -> HISTORIAN -> NEURON lineage graph -> KEB challenge + REX recurrence -> H4 pressure/reinforcement -> next mission action",
   "metrics": {
     "Pen": "b*d",
     "breadth_owner": "GEOGRAPHER",
     "depth_owner": "GEOLOGIST",
+    "history_owner": "HISTORIAN",
     "graph_owner": "NEURON",
     "workflow_representation_owner": "CALLIGRAPHER",
     "runtime_owner": "RUNNER"
