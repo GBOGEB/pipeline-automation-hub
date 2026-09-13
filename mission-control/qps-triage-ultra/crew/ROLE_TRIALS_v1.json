@@ -1,0 +1,66 @@
+{
+  "schema": "missioncontrol.crew.role_trials.v1",
+  "authority_transfer": false,
+  "trials": [
+    {
+      "trial_id": "RT-C05-001",
+      "candidate_role_id": "C05",
+      "role": "Integrator / Federator",
+      "state": "PLANNED_NOT_ACTIVATED",
+      "activation_trigger": "A real cross-repository edge requires contract binding plus independent non-origin consumer proof and cannot be cleanly owned by U04 alone.",
+      "scope": "One bounded cross-repo integration edge only.",
+      "required_competencies": {
+        "discovery": 3,
+        "deep_reading": 4,
+        "architecture": 5,
+        "planning": 4,
+        "build_repair": 4,
+        "runtime_execution": 5,
+        "evidence_provenance": 5,
+        "analysis_pca_bt": 3,
+        "operations_control": 4,
+        "rex_learning": 4
+      },
+      "allowed_authority": ["build_adapter", "execute_integration_probe", "emit_integration_receipt"],
+      "forbidden_authority": ["promote_engineering_truth", "override_child_disposition", "override_KEB", "override_DOW", "self_accept_origin_and_consumer"],
+      "tools_resources": ["GitHub", "contracts", "adapters", "cross_repo_receipts", "independent_consumer_runtime"],
+      "mentor_or_challenger": ["U04", "U06", "U08"],
+      "feedback_inputs": ["edge_failures", "consumer_rejects", "queue_execute_metrics", "REX", "child_return"],
+      "expected_receipts": ["origin_exact_SHA", "consumer_exact_SHA", "steps_executed_gt_0", "independent_consumer_disposition", "REX_delta"],
+      "success_condition": "Two distinct bounded integration edges complete with accepted independent-consumer evidence and no authority collision.",
+      "failure_condition": "Work is adequately handled by U04/U06 secondment, or trial repeatedly creates duplicated authority/rework.",
+      "promotion_after_success": "PARTIAL_ONLY",
+      "return_or_merge_rule": "Merge competencies into U04/U06 if recurrence/independence does not justify a permanent cell."
+    },
+    {
+      "trial_id": "RT-C08-001",
+      "candidate_role_id": "C08",
+      "role": "Independent Verifier",
+      "state": "PLANNED_NOT_ACTIVATED",
+      "activation_trigger": "A mission explicitly requires origin/build separation from verification, beyond ordinary U06 QA attestation.",
+      "scope": "One bounded non-origin verification chain only.",
+      "required_competencies": {
+        "discovery": 2,
+        "deep_reading": 5,
+        "architecture": 3,
+        "planning": 2,
+        "build_repair": 1,
+        "runtime_execution": 4,
+        "evidence_provenance": 6,
+        "analysis_pca_bt": 2,
+        "operations_control": 4,
+        "rex_learning": 5
+      },
+      "allowed_authority": ["execute_non_origin_probe", "challenge_receipt", "accept_or_reject_verification_evidence"],
+      "forbidden_authority": ["modify_origin_to_force_green", "promote_domain_truth_without_TM_or_child_authority", "replace_Governor"],
+      "tools_resources": ["fresh_checkout", "independent_runtime", "exact_SHA", "receipt_validator", "source_contract"],
+      "mentor_or_challenger": ["U06", "U08", "U01"],
+      "feedback_inputs": ["verification_disagreements", "false_green_prevention", "fresh_repeat_results", "REX"],
+      "expected_receipts": ["independent_checkout_SHA", "steps_executed_gt_0", "verification_result", "origin_vs_consumer_comparison", "fresh_repeat"],
+      "success_condition": "Two distinct verification chains demonstrate material independence value, including at least one challenge that ordinary origin-side checks could not supply.",
+      "failure_condition": "U06 QA already provides sufficient independence or trial adds latency without changing disposition quality.",
+      "promotion_after_success": "PARTIAL_ONLY",
+      "return_or_merge_rule": "Merge verification competencies into U06 if separate independence is not recurrently necessary."
+    }
+  ]
+}
