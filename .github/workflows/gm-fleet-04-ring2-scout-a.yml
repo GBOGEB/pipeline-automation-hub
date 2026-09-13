@@ -1,0 +1,93 @@
+name: GM-FLEET-04 Ring2 Scout A
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/gm-fleet-04-ring2-scout-a.yml'
+      - 'mission-control/grand-missions/GM_IV_RING2_SCOUT_SCOREBOARD.json'
+      - 'mission-control/grand-missions/execute_gm_iv_ring2_jupyter_scout.py'
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/gm-fleet-04-ring2-scout-a.yml'
+      - 'mission-control/grand-missions/GM_IV_RING2_SCOUT_SCOREBOARD.json'
+      - 'mission-control/grand-missions/execute_gm_iv_ring2_jupyter_scout.py'
+
+permissions:
+  contents: read
+
+jobs:
+  scout-a:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout MissionControl exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: hub
+
+      - name: Bind MissionControl exact SHA
+        shell: bash
+        run: |
+          source_sha="$(git -C hub rev-parse HEAD)"
+          echo "MISSIONCONTROL_SHA=$source_sha" >> "$GITHUB_ENV"
+          test -n "$source_sha"
+
+      - name: Fetch Scout A exact source
+        shell: bash
+        run: |
+          mkdir candidate
+          git -C candidate init
+          git -C candidate remote add origin https://github.com/GBOGEB/codespaces-jupyter.git
+          git -C candidate fetch --depth=1 origin 1eba2240a86d1fd2bd6375e2fac481caf645cdde
+          git -C candidate checkout --detach FETCH_HEAD
+          test "$(git -C candidate rev-parse HEAD)" = "1eba2240a86d1fd2bd6375e2fac481caf645cdde"
+          test -z "$(git -C candidate status --porcelain)"
+
+      - name: Install bounded notebook execution dependencies
+        shell: bash
+        run: |
+          python3 -m pip install --disable-pip-version-check \
+            nbformat nbconvert ipykernel pandas==2.2.2 matplotlib==3.8.4
+
+      - name: Execute exact-SHA notebook twice
+        shell: bash
+        run: |
+          python3 hub/mission-control/grand-missions/execute_gm_iv_ring2_jupyter_scout.py \
+            --repo candidate \
+            --notebook notebooks/population.ipynb \
+            --expected-sha 1eba2240a86d1fd2bd6375e2fac481caf645cdde \
+            --out "$RUNNER_TEMP/ring2-scout-a.json" | tee "$RUNNER_TEMP/ring2-scout-a.log"
+          grep -F 'PASS_GM_IV_RING2_SCOUT_A' "$RUNNER_TEMP/ring2-scout-a.log"
+
+      - name: Enforce candidate-only boundaries
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          p=os.path.join(os.environ['RUNNER_TEMP'], 'ring2-scout-a.json')
+          d=json.load(open(p, encoding='utf-8'))
+          assert d['run_1']['executed_code_cells'] > 0
+          assert d['deterministic_repeat'] is True
+          assert d['target_dirty_file_count'] == 0
+          assert d['candidate_slot_bound'] is False
+          assert d['canonical_child_bound'] is False
+          assert d['domain_authority'] is False
+          assert d['disposition'] == 'SCOUT_RUNTIME_PASS_CANDIDATE_ONLY'
+          board=json.load(open('hub/mission-control/grand-missions/GM_IV_RING2_SCOUT_SCOREBOARD.json', encoding='utf-8'))
+          assert board['canonical_children_bound'] == 0
+          assert board['formal_slots_assigned_by_this_artifact'] == 0
+          assert board['scout_a'] == 'GBOGEB/codespaces-jupyter'
+          assert all(item['slot_binding'] is False for item in board['candidates'])
+          print('PASS_RING2_SCOUT_A_FAIL_CLOSED_BOUNDARIES')
+          PY
+
+      - name: Upload exact-head scout receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-ring2-scout-a-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/ring2-scout-a.json
+            ${{ runner.temp }}/ring2-scout-a.log
+          if-no-files-found: error
