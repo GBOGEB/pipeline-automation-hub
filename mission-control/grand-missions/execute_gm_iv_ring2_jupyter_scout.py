@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import importlib.metadata
 import json
+import os
 import platform
 import subprocess
 from pathlib import Path
@@ -68,6 +69,10 @@ def main() -> int:
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
 
+    missioncontrol_sha = os.environ.get("MISSIONCONTROL_SHA", "")
+    if len(missioncontrol_sha) != 40:
+        raise SystemExit("FAIL: exact 40-char MISSIONCONTROL_SHA required")
+
     repo = args.repo.resolve()
     notebook = repo / args.notebook
     actual_sha = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
@@ -86,6 +91,7 @@ def main() -> int:
 
     receipt = {
         "schema": "qps.gm_iv_ring2_jupyter_scout.v1",
+        "missioncontrol_source_sha": missioncontrol_sha,
         "candidate_repository": "GBOGEB/codespaces-jupyter",
         "candidate_sha": actual_sha,
         "notebook": args.notebook,
@@ -112,6 +118,7 @@ def main() -> int:
     args.out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({
         "status": "PASS_GM_IV_RING2_SCOUT_A",
+        "missioncontrol_source_sha": missioncontrol_sha,
         "candidate": receipt["candidate_repository"],
         "candidate_sha": actual_sha,
         "executed_code_cells": run1["executed_code_cells"],
