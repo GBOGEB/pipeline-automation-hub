@@ -15,6 +15,12 @@ def fail(msg):
     sys.exit(1)
 
 
+def require_fields(record, required, context):
+    missing = sorted(set(required) - set(record))
+    if missing:
+        fail(f"{context} missing required fields {missing}")
+
+
 def main():
     registry = load("CREW_REGISTRY_v1.json")
     snapshot = load("CREW_SNAPSHOT_2026-09-13.json")
@@ -43,7 +49,11 @@ def main():
     if len(crew) != counts["total_registered_records"]:
         fail("total crew count mismatch")
 
+    event_required = telemetry.get("event_required", [])
+    if not event_required:
+        fail("telemetry event_required contract must not be empty")
     for event in snapshot["live_observations"]:
+        require_fields(event, event_required, f"telemetry event {event.get('event_id', '<missing>')}")
         if event["crew_id"] not in crew:
             fail(f"unknown telemetry crew {event['crew_id']}")
         if event["event_type"] not in telemetry["event_types"]:
@@ -68,11 +78,16 @@ def main():
         if crew[role_id].get("maturity") != "CONCEPTUAL":
             fail(f"role-gap candidate {role_id} must remain conceptual")
 
+    trial_required = policy.get("trial_requirements", [])
+    if not trial_required:
+        fail("role-gap policy trial_requirements must not be empty")
     trial_ids = set()
+    dimensions = set(load("COMPETENCY_MATRIX_v1.json")["dimensions"])
     for trial in trials["trials"]:
         if trial["trial_id"] in trial_ids:
             fail(f"duplicate trial id {trial['trial_id']}")
         trial_ids.add(trial["trial_id"])
+        require_fields(trial, trial_required, f"trial {trial['trial_id']}")
         role_id = trial["candidate_role_id"]
         if role_id not in crew:
             fail(f"trial references unknown role {role_id}")
@@ -86,6 +101,11 @@ def main():
             fail(f"trial {trial['trial_id']} missing mentor/challenger")
         if not trial.get("success_condition") or not trial.get("failure_condition"):
             fail(f"trial {trial['trial_id']} missing success/failure bounds")
+        profile = trial.get("competency_target_profile", {})
+        if set(profile) != dimensions:
+            fail(f"trial {trial['trial_id']} competency_target_profile must exactly match registered dimensions")
+        if any(not isinstance(value, int) or not 0 <= value <= 6 for value in profile.values()):
+            fail(f"trial {trial['trial_id']} competency_target_profile values must be integers 0..6")
 
     if policy.get("authority_transfer") is not False or trials.get("authority_transfer") is not False:
         fail("authority transfer must remain false")
@@ -94,8 +114,10 @@ def main():
         "status": "PASS_CREW_TELEMETRY_STRUCTURE",
         "crew_records": len(crew),
         "live_events": len(snapshot["live_observations"]),
+        "event_required_fields": len(event_required),
         "seed_role_gap_candidates": len(candidates),
         "planned_trials": len(trials["trials"]),
+        "trial_required_fields": len(trial_required),
         "competency_promotions": 0,
         "authority_transfer": False
     }, sort_keys=True))
