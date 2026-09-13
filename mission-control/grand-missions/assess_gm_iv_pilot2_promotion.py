@@ -21,6 +21,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--contract", required=True)
     p.add_argument("--pre-registry", required=True)
+    p.add_argument("--pre-sha", required=True)
     p.add_argument("--post-registry", required=True)
     p.add_argument("--f01", required=True)
     p.add_argument("--f03", required=True)
@@ -44,7 +45,7 @@ def main():
     pilots = c["controlled_pilots"]
 
     checks = {
-        "01_contract_pre_master_exact": c["pre_promotion_master_sha"] == "6dd4d5b375859dabd5e94aac26b8acc61a757ad7",
+        "01_contract_pre_master_exact": c["pre_promotion_master_sha"] == a.pre_sha,
         "02_pre_state_recon_2_of_8": pre_iv.get("state") == c["transition"]["from_state"] and pre_iv.get("activation_stage") == c["transition"]["from_stage"] and pre_iv.get("children") == [],
         "03_post_state_pilot_2_of_8": post_iv.get("state") == c["transition"]["to_state"] and post_iv.get("activation_stage") == c["transition"]["to_stage"],
         "04_post_two_controlled_pilots": post_iv.get("controlled_pilot_frontiers") == ["GM-IV-F01", "GM-IV-F03"] and post_iv.get("candidate_frontiers") == ["GM-IV-F01", "GM-IV-F03"],
@@ -70,6 +71,7 @@ def main():
         "schema": "qps.gm_iv_pilot2_governor_receipt.v1",
         "wave": c["wave"],
         "source_sha": a.source_sha,
+        "pre_promotion_master_sha": a.pre_sha,
         "result": result,
         "checks": checks,
         "governor_decision": "PROMOTE_PILOT_2_OF_8" if result == "PASS" else "WITHHOLD_PILOT_2_OF_8",
