@@ -5,6 +5,8 @@ title: QPS Triage Evidence Atlas
 
 This static surface publishes governed MissionControl evidence. It does not own operational state.
 
+![QPS web architecture](assets/diagrams/qps-web-architecture.svg)
+
 ## Fleet
 
 Grand Mission and Horizontal Mission state, launch/hold boundaries, and federation returns.
