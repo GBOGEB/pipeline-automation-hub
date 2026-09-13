@@ -8,15 +8,16 @@
     "rule": "LOCAL_ECONOMICS_DEFER_DOES_NOT_REVOKE_OR_REPLACE_SEPARATE_GLOBAL_MODEL_RESULTS"
   },
   "fleet_invariant": {
-    "reconnaissance_observed": 2,
-    "reconnaissance_denominator": 8,
+    "mission_stage": "PILOT_2_OF_8",
     "canonical_children_bound": 0,
-    "canonical_candidate_frontiers": ["GM-IV-F01", "GM-IV-F02"],
-    "f03_bound": false,
-    "f04_bound": false,
-    "f03_f04_expected_unfilled": true,
+    "controlled_pilot_frontiers": ["GM-IV-F01", "GM-IV-F03"],
+    "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
+    "unfilled_frontier_slots": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+    "f03_child_bound": false,
+    "f04_child_bound": false,
+    "pilot_frontier_labels_do_not_imply_children": true,
     "gm_v_state": "HELD",
-    "rule": "RECONNAISSANCE_EVIDENCE_OR_EXPERIMENTAL_WORKFLOW_NAMING_DOES_NOT_CREATE_CHILD_BINDING"
+    "rule": "CONTROLLED_PILOT_OR_REFERENCE_FRONTIER_LABELS_DO_NOT_CREATE_CANONICAL_CHILD_BINDING_OR_AUTHORITY_TRANSFER"
   },
   "metric_contract": {
     "queue_seconds": "MEASURED_FROM_JOB_CREATED_AT_TO_STARTED_AT",
