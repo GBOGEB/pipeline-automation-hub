@@ -52,6 +52,8 @@ jobs:
           test "$count" -eq 4
       - name: Build measured allocation evidence
         run: python mission-control/qps-triage-ultra/crew/measured/build_measured_allocation.py
+      - name: Enrich allocation with controlled exposure history
+        run: python mission-control/qps-triage-ultra/crew/measured/enrich_allocation_with_exposure.py
       - name: Enforce evidence exposure and no false promotion
         shell: bash
         run: |
@@ -101,6 +103,25 @@ jobs:
           assert alloc['competency_promotions'] == 0
           assert alloc['authority_transfer'] is False
           assert alloc['pca']['status'] != 'READY' or alloc['pca']['varying_features'] >= 2
+          exposure_control=alloc['exposure_control']
+          assert exposure_control['status'] == 'CONTROLLED_OPTIONAL_FEATURES'
+          assert exposure_control['controlled_rows'] == 4
+          assert exposure_control['distinct_runs'] >= 2
+          assert exposure_control['distinct_source_shas'] >= 2
+          assert exposure_control['pca_feature_ingest_status'] == 'DEFER_PENDING_THIRD_DISTINCT_SHA_PULSE'
+          assert exposure_control['bt_status'] == 'NO_CHANGE_EXISTING_BT_OUTCOME_GATE'
+          assert exposure_control['competency_promotions'] == 0
+          assert exposure_control['authority_transfer'] is False
+          assert len(exposure_control['varying_features']) >= 2
+          for row in alloc['rows']:
+              assert row['exposure_control_eligible'] is True
+              assert row['exposure_distinct_runs'] >= 2
+              assert row['exposure_distinct_source_shas'] >= 2
+              assert row['exposure_evidence_class'] == 'CONTROLLED_MEASURED_REPEAT'
+              assert row['mean_waiting_seconds'] >= 0
+              assert row['mean_active_seconds'] > 0
+              assert row['mean_release_seconds'] >= 0
+              assert row['mean_exposure_seconds'] >= row['mean_active_seconds']
           frontier=alloc['frontier_pca']
           assert frontier['status'] == 'CONTROL_READY_MEASURED_REPEAT'
           assert frontier['repeat_runs'] >= 2
@@ -124,18 +145,13 @@ jobs:
               assert r['promotion_allowed'] is False
               assert r['rex_preflight']['checklist_version']=='missioncontrol.rex.reuse_checklist.v1'
           print(json.dumps({
-              'status':'PASS_MEASURED_CREW_ALLOCATION_WITH_REAL_EXPOSURE',
+              'status':'PASS_MEASURED_CREW_ALLOCATION_WITH_CONTROLLED_EXPOSURE_FEATURES',
               'exact_source_sha':actual,
               'allocation_rows':len(alloc['rows']),
               'allocation_eligible_rows':alloc['allocation_eligible_rows'],
               'returned_run_count':alloc['returned_run_count'],
               'crew_exposure_receipts':summary['crew_exposure_receipts'],
-              'crew_waiting_seconds_total':summary['crew_waiting_seconds_total'],
-              'crew_active_seconds_total':summary['crew_active_seconds_total'],
-              'crew_release_seconds_total':summary['crew_release_seconds_total'],
-              'crew_exposure_seconds_total':summary['crew_exposure_seconds_total'],
-              'crew_exposure_pca_eligible':False,
-              'crew_exposure_bt_eligible':False,
+              'crew_exposure_control':exposure_control,
               'competency_promotions':0,
               'crew_row_pca':alloc['pca'],
               'frontier_pca':alloc['frontier_pca'],
