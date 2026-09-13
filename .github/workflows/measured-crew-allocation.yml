@@ -34,6 +34,8 @@ jobs:
           test "$actual" = "$expected"
       - name: Validate reusable REX checklist
         run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
+      - name: Prove blocked and admitted REX runtime control
+        run: python mission-control/qps-triage-ultra/crew/measured/test_rex_runtime_control.py
       - name: Validate canonical evidence returns
         run: python mission-control/qps-triage-ultra/crew/measured/validate_evidence_returns.py
       - name: Execute predeclared Mission Crew Task Runtime chain
@@ -54,11 +56,12 @@ jobs:
         run: python mission-control/qps-triage-ultra/crew/measured/build_measured_allocation.py
       - name: Enrich allocation with controlled exposure history and PCA
         run: python mission-control/qps-triage-ultra/crew/measured/enrich_allocation_with_exposure.py
-      - name: Enforce exposure PCA and no false promotion
+      - name: Enforce exposure PCA and recurrent controls
         shell: bash
         run: |
           python - <<'PY'
           import json
+          import math
           import subprocess
           from pathlib import Path
           root=Path('mission-control/qps-triage-ultra/crew/measured')
@@ -70,6 +73,7 @@ jobs:
           assert summary['task_count'] == 4
           assert summary['accepted'] == 4
           assert summary['rejected'] == 0
+          assert summary['preflight_blocked'] == 0
           assert summary['crew_exposure_receipts'] == 4
           assert summary['crew_exposure_seconds_total'] >= summary['crew_active_seconds_total']
           assert summary['crew_waiting_seconds_total'] >= 0
@@ -91,6 +95,18 @@ jobs:
               assert r['authority_transfer'] is False
               assert r['child_binding'] is False
               assert r['frontier_binding'] is False
+          task_receipts=list(root.joinpath('receipts').glob('T*.json'))
+          assert len(task_receipts) == 4
+          for p in task_receipts:
+              r=json.loads(p.read_text())
+              assert r['attribution_basis'] == 'PREDECLARED_ASSIGNMENT'
+              assert r['steps_executed'] > 0
+              assert r['source_sha'] == actual
+              assert r['promotion_allowed'] is False
+              assert r['rex_preflight']['checklist_version'] == 'missioncontrol.rex.reuse_checklist.v1'
+              assert r['rex_preflight']['preflight_complete'] is True
+              assert r['rex_preflight']['payload_allowed'] is True
+              assert r['rex_preflight']['blocking_rex_ids'] == []
           assert alloc['allocation_eligible_rows'] == 4
           assert all(r['allocation_eligible'] for r in alloc['rows'])
           assert alloc['competency_promotions'] == 0
@@ -128,6 +144,7 @@ jobs:
           assert len(pca['components']) >= 2
           assert pca['pre_exposure_status'] == 'DEFER_INSUFFICIENT_MEASURED_VARIANCE'
           assert alloc['pca_pre_exposure']['status'] == 'DEFER_INSUFFICIENT_MEASURED_VARIANCE'
+          assert alloc['pca_pre_exposure']['variance_population'] == 'ALLOCATION_ELIGIBLE_ONLY'
           frontier=alloc['frontier_pca']
           assert frontier['status'] == 'CONTROL_READY_MEASURED_REPEAT'
           assert frontier['repeat_runs'] >= 2
@@ -136,11 +153,17 @@ jobs:
           assert frontier['rex_persistent_or_regression_total'] == 0
           assert alloc['bt']['status'] == 'READY_OBSERVED'
           assert alloc['bt']['observed_pairs'] == 12
+          assert alloc['bt']['model_contract'] == 'TWO_NODE_BT_LOG_ODDS_V1'
+          assert alloc['bt']['raw_timing_consistency'] == 'FAIL_CLOSED'
+          assert alloc['bt']['analytic_fixture'] == 'PASS'
           nodes={n['strategy']:n for n in alloc['bt']['nodes']}
           assert nodes['ALLOC_SINGLE_CELL']['wins'] == 8.0
           assert nodes['ALLOC_PAIRED_CELL']['wins'] == 4.0
+          observed_sep=nodes['ALLOC_SINGLE_CELL']['bt_log_strength']-nodes['ALLOC_PAIRED_CELL']['bt_log_strength']
+          expected_sep=math.log(8.5/4.5)
+          assert math.isclose(observed_sep, expected_sep, rel_tol=1e-12, abs_tol=1e-12)
           print(json.dumps({
-              'status':'PASS_EXPOSURE_ENHANCED_CREW_ROW_PCA_SMALL_N',
+              'status':'PASS_EXPOSURE_PCA_WITH_REX_BT_CONTROL',
               'exact_source_sha':actual,
               'crew_exposure_control':exposure_control,
               'crew_row_pca':pca,
