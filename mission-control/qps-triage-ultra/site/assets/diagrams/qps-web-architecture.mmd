@@ -1,0 +1,7 @@
+flowchart LR
+  SSOT[MissionControl SSOT\nJSON/YAML/Receipts/REX] --> NEXT[Next/React\nOperational Cockpit]
+  SSOT --> JEKYLL[Jekyll\nStatic Evidence Atlas]
+  TOKENS[QPS UI Tokens v1.2] --> NEXT
+  TOKENS --> JEKYLL
+  JEKYLL --> PARITY[Same-release parity\nHTML/PDF/XLSX]
+  NEXT -. runtime evidence .-> SSOT

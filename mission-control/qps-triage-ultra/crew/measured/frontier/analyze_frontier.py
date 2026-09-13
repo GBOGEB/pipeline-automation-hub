@@ -66,6 +66,7 @@ def validate_pairs(rows):
         if r.get('pair_id'):
             grouped[(r['habitat']['id'], r['pair_id'])].append(r)
     observations = []
+    directions_by_pair = defaultdict(set)
     for (habitat, pair_id), rs in sorted(grouped.items()):
         if len(rs) != 2:
             raise SystemExit(f'FAIL pair {habitat}/{pair_id} has {len(rs)} members')
@@ -81,6 +82,22 @@ def validate_pairs(rows):
             raise SystemExit(f'FAIL workload equivalence {habitat}/{pair_id}')
         if a['disposition'] != 'ACCEPT' or b['disposition'] != 'ACCEPT':
             raise SystemExit(f'FAIL rejected pair member {habitat}/{pair_id}')
+
+        oa = a.get('execution_order', {})
+        ob = b.get('execution_order', {})
+        direction = oa.get('pair_direction')
+        if direction not in {'A_THEN_B', 'B_THEN_A'} or ob.get('pair_direction') != direction:
+            raise SystemExit(f'FAIL missing pair-order contract {habitat}/{pair_id}')
+        if {oa.get('pair_position'), ob.get('pair_position')} != {1, 2}:
+            raise SystemExit(f'FAIL pair-order positions {habitat}/{pair_id}')
+        if direction == 'A_THEN_B' and not (oa['pair_position'] == 1 and ob['pair_position'] == 2):
+            raise SystemExit(f'FAIL A_THEN_B positions {habitat}/{pair_id}')
+        if direction == 'B_THEN_A' and not (oa['pair_position'] == 2 and ob['pair_position'] == 1):
+            raise SystemExit(f'FAIL B_THEN_A positions {habitat}/{pair_id}')
+        if oa.get('counterbalance_basis') != 'SOURCE_SHA_PARITY_XOR_HABITAT' or ob.get('counterbalance_basis') != 'SOURCE_SHA_PARITY_XOR_HABITAT':
+            raise SystemExit(f'FAIL counterbalance basis {habitat}/{pair_id}')
+        directions_by_pair[pair_id].add(direction)
+
         ta, tb = a['execute_seconds'], b['execute_seconds']
         rel_gap = abs(ta - tb) / max(ta, tb, 1e-12)
         if rel_gap < 0.02:
@@ -100,9 +117,20 @@ def validate_pairs(rows):
             'relative_gap': rel_gap,
             'winner': winner,
             'semantic_digest': a['semantic_digest'],
+            'pair_direction': direction,
             'comparable': True
         })
-    return observations
+    habitats = {r['habitat']['id'] for r in rows}
+    if {'linux', 'windows'}.issubset(habitats):
+        for pair_id, directions in directions_by_pair.items():
+            if directions != {'A_THEN_B', 'B_THEN_A'}:
+                raise SystemExit(f'FAIL pair order not counterbalanced across habitats for {pair_id}: {sorted(directions)}')
+    return observations, {k: sorted(v) for k, v in sorted(directions_by_pair.items())}
+
+
+def two_node_bt_abilities(wins_a, wins_b):
+    log_ratio = math.log((wins_a + 0.5) / (wins_b + 0.5))
+    return log_ratio / 2.0, -log_ratio / 2.0
 
 
 def bt_model(observations):
@@ -118,23 +146,34 @@ def bt_model(observations):
         else:
             stats[b]['wins'] += 1.0; stats[a]['losses'] += 1.0
         edges.append(o)
-    raw = {}
-    for strategy, s in stats.items():
-        raw[strategy] = math.log((s['wins'] + 0.5) / (s['losses'] + 0.5))
-    center = mean(list(raw.values())) if raw else 0.0
+    strategies = sorted(stats)
+    if len(strategies) != 2:
+        raise SystemExit('FAIL frontier BT v1 requires exactly two strategies; >2 needs validated joint fit')
+    a, b = strategies
+    ability_a, ability_b = two_node_bt_abilities(stats[a]['wins'], stats[b]['wins'])
+    strengths = {a: ability_a, b: ability_b}
+    denom = sum(math.exp(v) for v in strengths.values()) or 1.0
     nodes = []
-    denom = sum(math.exp(v - center) for v in raw.values()) or 1.0
-    for strategy in sorted(raw):
-        score = raw[strategy] - center
+    for strategy in strategies:
+        score = strengths[strategy]
         nodes.append({
             'strategy': strategy,
             'bt_log_strength': score,
             'normalized_strength': math.exp(score) / denom,
             **stats[strategy]
         })
+
+    # REX-CM-002/HIST-BD-011 regression fixture: a two-node model must expose
+    # one regularized log-odds separation, never the previous doubled value.
+    fa, fb = two_node_bt_abilities(8.0, 4.0)
+    expected = math.log(8.5 / 4.5)
+    if not math.isclose(fa - fb, expected, rel_tol=1e-12, abs_tol=1e-12):
+        raise SystemExit('FAIL BT analytic scale fixture')
+
     return {
         'status': 'READY_OBSERVED' if len(observations) >= 3 else 'DEFER_INSUFFICIENT_OBSERVED_PAIRS',
-        'model': 'regularized_bradley_terry_log_odds',
+        'model': 'TWO_NODE_BT_LOG_ODDS_V1',
+        'analytic_scale_fixture': 'PASS',
         'observed_pairs': len(observations),
         'nodes': nodes,
         'edges': edges
@@ -229,7 +268,7 @@ def main():
         if habitat and delay is not None:
             queue_by_habitat.setdefault(habitat, []).append(float(delay))
     queue_by_habitat = {k: mean(v) for k,v in queue_by_habitat.items()}
-    pair_obs = validate_pairs(rows)
+    pair_obs, pair_directions = validate_pairs(rows)
     pca = pca_model(rows, queue_by_habitat)
     bt = bt_model(pair_obs)
     rex = {
@@ -248,6 +287,11 @@ def main():
         'accepted': len(rows),
         'rejected': 0,
         'queue_telemetry': queue_by_habitat,
+        'experimental_design': {
+            'pair_order_control': 'PASS_COUNTERBALANCED',
+            'counterbalance_basis': 'SOURCE_SHA_PARITY_XOR_HABITAT',
+            'directions_by_pair': pair_directions
+        },
         'pca': pca,
         'bt': bt,
         'rex': rex,
@@ -260,13 +304,15 @@ def main():
         raise SystemExit('FAIL BT frontier did not reach observed readiness')
     Path(args.out).write_text(json.dumps(out, indent=2, sort_keys=True) + '\n', encoding='utf-8')
     print(json.dumps({
-        'status': 'PASS_CREW_FRONTIER_PCA_BT',
+        'status': 'PASS_CREW_FRONTIER_PCA_BT_COUNTERBALANCED',
         'source_sha': out['source_sha'],
         'task_receipts': len(rows),
         'habitats': out['habitats'],
+        'pair_order_control': out['experimental_design']['pair_order_control'],
         'pca_status': pca['status'],
         'pca_features': pca['feature_count'],
         'bt_status': bt['status'],
+        'bt_model': bt['model'],
         'observed_pairs': bt['observed_pairs'],
         'rex_events': rex['observed_event_count'],
         'competency_promotions': 0

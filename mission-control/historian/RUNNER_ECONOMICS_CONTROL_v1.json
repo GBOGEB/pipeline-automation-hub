@@ -1,0 +1,182 @@
+{
+  "schema": "missioncontrol.runner_economics_control.v1",
+  "status": "ACTIVE_MEASURE_AND_IMPROVE",
+  "as_of": "2026-09-13",
+  "authority_transfer": false,
+  "parent_issue": 79,
+  "historian_issue": 76,
+  "bd_rex_issue": 85,
+  "crew_owner": "Doctor.Runtime",
+  "classes": {
+    "INFRA_PREEXECUTION": {
+      "definition": "job never obtains usable execution habitat; runner_id=0 and/or zero executed steps",
+      "semantic_repair_allowed": false,
+      "routing": ["Dockmaster", "owner/account runner administration", "trusted self-hosted capacity if approved"],
+      "non_compensation_rule": "successful execution in another repo does not clear the blocked repo-local gate"
+    },
+    "QUEUE_DOMINATED": {
+      "definition": "runner executes normally but queue/admission delay exceeds useful execution time for a lightweight pulse",
+      "semantic_repair_allowed": false,
+      "routing": ["H4 scheduling", "fast lane", "job consolidation where evidence boundaries allow", "selective self-hosted capacity"]
+    },
+    "BUILD_DOMINATED": {
+      "definition": "useful execution is dominated by dependency install/build rather than queue",
+      "semantic_repair_allowed": false,
+      "routing": ["prebuilt habitat", "dependency/build cache", "build once then artifact reuse", "sparse/shallow checkout"]
+    },
+    "EXECUTION_DOMINATED": {
+      "definition": "intrinsic compute dominates elapsed work after queue/build costs are bounded",
+      "semantic_repair_allowed": "only when algorithm/runtime semantics justify it",
+      "routing": ["heavy runner lane", "parallelism", "algorithmic optimization"]
+    }
+  },
+  "measured_baseline": [
+    {
+      "pulse": "M05 exact attest",
+      "queue_seconds": 3,
+      "execute_seconds": 14,
+      "class": "EXECUTION_DOMINATED",
+      "source": "mission-control/qps-triage-ultra/EXPEDITION_FLEET_STATUS.md",
+      "note": "lightweight but queue does not dominate"
+    },
+    {
+      "pulse": "M07 leak kernel",
+      "queue_seconds": 160,
+      "execute_seconds": 16,
+      "class": "QUEUE_DOMINATED",
+      "queue_to_execute_ratio": 10.0,
+      "source": "mission-control/qps-triage-ultra/EXPEDITION_FLEET_STATUS.md"
+    },
+    {
+      "pulse": "M08 guard",
+      "queue_seconds": 98,
+      "execute_seconds": 8,
+      "class": "QUEUE_DOMINATED",
+      "queue_to_execute_ratio": 12.25,
+      "source": "mission-control/qps-triage-ultra/EXPEDITION_FLEET_STATUS.md"
+    },
+    {
+      "pulse": "W3-15 analytics",
+      "queue_seconds": 487,
+      "execute_seconds": 10,
+      "class": "QUEUE_DOMINATED",
+      "queue_to_execute_ratio": 48.7,
+      "source": "mission-control/qps-triage-ultra/EXPEDITION_FLEET_STATUS.md"
+    },
+    {
+      "pulse": "M06 Telegraf",
+      "queue_seconds": 2,
+      "execute_seconds": 410,
+      "build_seconds": 379,
+      "artifact_mb": 150.8,
+      "class": "BUILD_DOMINATED",
+      "build_fraction_of_execute": 0.92439,
+      "source": "mission-control/qps-triage-ultra/EXPEDITION_FLEET_STATUS.md"
+    }
+  ],
+  "live_control_rows": [
+    {
+      "workflow": "MissionControl Measured Crew Allocation",
+      "run_id": 34774328258,
+      "job_id": 103769526237,
+      "source_sha": "6b7a014887c188ae7a0b2f536db201e76a9e6313",
+      "created_at": "2026-09-13T18:20:38Z",
+      "runner_started_at": "2026-09-13T18:20:51Z",
+      "completed_at": "2026-09-13T18:21:00Z",
+      "queue_or_admission_seconds": 13,
+      "job_runtime_seconds": 9,
+      "queue_to_job_runtime_ratio": 1.444444,
+      "runner_id": 1000266566,
+      "steps_executed_positive": true,
+      "class": "QUEUE_DOMINATED",
+      "classification_boundary": "assigned real runner; not INFRA_PREEXECUTION"
+    },
+    {
+      "workflow": "MissionControl Measured Crew Allocation",
+      "run_id": 34774493436,
+      "job_id": 103769982301,
+      "source_sha": "208c40499db82c8a0b5f3e6277bf469c74e12afe",
+      "created_at": "2026-09-13T18:23:54Z",
+      "runner_started_at": "2026-09-13T18:24:39Z",
+      "completed_at": "2026-09-13T18:24:49Z",
+      "queue_or_admission_seconds": 45,
+      "job_runtime_seconds": 10,
+      "queue_to_job_runtime_ratio": 4.5,
+      "runner_id": 1000266756,
+      "steps_executed_positive": true,
+      "class": "QUEUE_DOMINATED",
+      "classification_boundary": "assigned real runner; not INFRA_PREEXECUTION"
+    }
+  ],
+  "derived_sample_signal": {
+    "historical_lightweight_successful_pulses_with_execute_le_30_seconds": 4,
+    "historical_queue_dominated_count": 3,
+    "historical_queue_dominated_fraction": 0.75,
+    "new_exact_sha_control_repeat_rows": 2,
+    "new_exact_sha_control_repeat_queue_dominated": 2,
+    "fleet_denominator_claim": false,
+    "interpretation": "two fresh exact-SHA control jobs independently reinforce the prior queue-dominance signal, but job-runtime rows are retained separately from the earlier expedition execute-time table rather than silently pooled"
+  },
+  "infra_preexecution_control": {
+    "authoritative_open_gate": "GBOGEB/cryoplant-project#923",
+    "current_state": "WITHHELD_REPO_LOCAL_ADMISSION",
+    "victory": [
+      "runner_id != 0",
+      "steps_executed > 0",
+      "unchanged child validator executes",
+      "exact-SHA receipt emitted",
+      "child ACCEPT/REJECT/DEFER disposition",
+      "fresh-head repeat"
+    ],
+    "historical_cross_repo_signal": "zero-step history also exists outside cryoplant; classify as historical account/repo admission evidence until fresh current telemetry proves a shared live condition",
+    "non_compensation_observation": "pipeline-automation-hub runs 34774328258 and 34774493436 both obtained real runners and executed; they prove ordinary queue pressure on that repo only and do not clear cryoplant#923"
+  },
+  "sentinel_rules": [
+    "runner_id=0 or steps=0 before payload => INFRA_PREEXECUTION; do not patch application/debugger semantics",
+    "runner assigned and queue_seconds > execute_seconds on bounded lightweight task => QUEUE_DOMINATED",
+    "build_or_install_seconds dominates execute_seconds => BUILD_DOMINATED",
+    "do not merge queue time, designed human wait, dependency build time and zero-step admission into one latency feature",
+    "self-hosted capacity is justified only by measured avoided queue/build cost and utilization, not by one slow run",
+    "solved LLDB/DAP/MCP/debugpy/js-debug surfaces remain CONTROL unless runtime regression is observed"
+  ],
+  "candidate_interventions": [
+    {
+      "id": "RE-INT-001",
+      "name": "fast lane for short queue-sensitive control pulses",
+      "eligible_class": "QUEUE_DOMINATED",
+      "required_before_after": ["queue_seconds", "execute_seconds", "semantic_digest", "exact_source_sha"]
+    },
+    {
+      "id": "RE-INT-002",
+      "name": "prebuilt warm Docker/runtime habitat",
+      "eligible_class": "BUILD_DOMINATED",
+      "required_before_after": ["image_build_or_pull_seconds", "dependency_install_seconds", "execute_seconds", "semantic_digest"]
+    },
+    {
+      "id": "RE-INT-003",
+      "name": "dependency/build cache and build-once artifact reuse",
+      "eligible_class": "BUILD_DOMINATED",
+      "required_before_after": ["cold_build_seconds", "warm_build_seconds", "artifact_reuse_seconds", "artifact_digest"]
+    },
+    {
+      "id": "RE-INT-004",
+      "name": "selective labelled self-hosted capacity",
+      "eligible_class": "QUEUE_DOMINATED",
+      "required_before_after": ["admission_success_rate", "queue_seconds", "utilization", "crew_time", "accepted_receipt_yield"]
+    }
+  ],
+  "h4_objective": "expected pressure reduction * evidence confidence * reuse multiplier / (crew time + queue time + execution time + coordination drag)",
+  "pca_features_after_contract_freeze": [
+    "admission_success",
+    "queue_seconds",
+    "execute_seconds",
+    "build_install_seconds",
+    "cache_hit",
+    "artifact_reuse",
+    "cleanup_failure",
+    "contention",
+    "accepted_receipt_yield"
+  ],
+  "bt_rule": "pair only comparable interventions on the same workload class, source contract and semantic outcome; order must be counterbalanced or observed",
+  "control_exit": "at least one exact-source before/after intervention reduces measured pressure with unchanged semantic output and survives a distinct-source repeat"
+}

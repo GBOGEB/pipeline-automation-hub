@@ -1,0 +1,21 @@
+{
+  "schema": "qps.web.implementation_status.v1",
+  "owner": "H4_QPS_TRIAGE",
+  "branch": "qps-triage-web-jekyll-v1-2",
+  "state": "IMPLEMENTED_AWAITING_HOSTED_DOV",
+  "items": [
+    {"id": 1, "name": "JEKYLL_RENDERER_NOT_SSOT", "state": "IMPLEMENTED", "evidence": ["QPS_WEB_BUILDOUT_v1.2.md", "site/_config.yml"]},
+    {"id": 2, "name": "HTML_MACHINE_IDENTITY", "state": "IMPLEMENTED", "evidence": ["site/_layouts/qps.html", "site/scripts/prepare_site.py"]},
+    {"id": 3, "name": "QPS_UI_CSS_1_2", "state": "IMPLEMENTED", "evidence": ["QPS_UI_TOKENS_v1.2.json", "site/assets/css/qps-ui-1.2.css"]},
+    {"id": 4, "name": "SHARED_NEXT_JEKYLL_TOKENS", "state": "IMPLEMENTED", "evidence": ["app/lib/qps-ui-tokens.ts", "app/app/qps-ui-contract/page.tsx"]},
+    {"id": 5, "name": "STATIC_QPS_VIEWS", "state": "IMPLEMENTED", "evidence": ["site/index.md"]},
+    {"id": 6, "name": "DURABLE_MERMAID_SVG", "state": "IMPLEMENTED", "evidence": ["site/assets/diagrams/qps-web-architecture.mmd", "site/assets/diagrams/qps-web-architecture.svg"]},
+    {"id": 7, "name": "J1_J6_BUILD_GATES", "state": "IMPLEMENTED", "evidence": ["QPS_WEB_GATE_REGISTRY_v1.json", "site/scripts/validate_site.py", ".github/workflows/qps-triage-web.yml"]},
+    {"id": 8, "name": "BROWSER_SUPPORT_CONTRACT", "state": "IMPLEMENTED", "evidence": ["QPS_BROWSER_SUPPORT_v1.2.md", "app/package.json"]}
+  ],
+  "promotion": {
+    "current": "IMPROVE",
+    "target": "CONTROL",
+    "remaining": ["hosted J1-J6 PASS", "exact-SHA artifact receipt", "repeatability PASS"]
+  }
+}

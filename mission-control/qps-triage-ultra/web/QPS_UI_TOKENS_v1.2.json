@@ -1,0 +1,25 @@
+{
+  "schema": "qps.ui.tokens.v1.2",
+  "status": "CONTROLLED_DRAFT",
+  "principles": {
+    "meaning_not_color_alone": true,
+    "shared_across_next_and_jekyll": true,
+    "print_safe": true,
+    "reduced_motion_safe": true
+  },
+  "states": {
+    "PASS": {"symbol": "PASS", "class": "qps-state-pass"},
+    "PARTIAL": {"symbol": "PARTIAL", "class": "qps-state-partial"},
+    "BLOCKED": {"symbol": "BLOCKED", "class": "qps-state-blocked"},
+    "HELD": {"symbol": "HELD", "class": "qps-state-held"},
+    "CONTROL": {"symbol": "CONTROL", "class": "qps-state-control"}
+  },
+  "flows": {
+    "FEEDFORWARD": {"line": "solid", "arrow": "forward"},
+    "FEEDBACK": {"line": "dashed", "arrow": "reverse"},
+    "FEDERATION": {"line": "double", "arrow": "bidirectional"},
+    "EVIDENCE": {"line": "dotted", "arrow": "forward"},
+    "BLOCKED": {"line": "crossed", "arrow": "none"}
+  },
+  "depth": ["D1", "D2", "D3", "D4", "D5_PLUS"]
+}
