@@ -1,0 +1,140 @@
+name: GM-IV PILOT_2_OF_8 Governor
+
+on:
+  push:
+    branches:
+      - mission/gm-iv-governor-pilot2
+      - master
+    paths:
+      - 'mission-control/grand-missions/**'
+      - 'mission-control/qps-triage-ultra/crew/**'
+      - '.github/workflows/gm-iv-pilot2-governor.yml'
+      - '.github/workflows/crew-exposure-instrumentation.yml'
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/**'
+      - 'mission-control/qps-triage-ultra/crew/**'
+      - '.github/workflows/gm-iv-pilot2-governor.yml'
+      - '.github/workflows/crew-exposure-instrumentation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  governor-pilot2:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Bind exact source SHA
+        shell: bash
+        run: |
+          SOURCE_SHA="$(git rev-parse HEAD)"
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$SOURCE_SHA" = "$expected"
+          echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
+
+      - name: Compile promotion validators
+        shell: bash
+        run: |
+          python -m py_compile \
+            mission-control/grand-missions/assess_gm_iv_pilot2_governor.py \
+            mission-control/grand-missions/validate_gm_fleet.py \
+            mission-control/grand-missions/assess_gm_fleet_03.py \
+            mission-control/grand-missions/assess_gm_iv_ring1.py \
+            mission-control/grand-missions/validate_gm_iv_evidence_economics.py
+
+      - name: Governor assessment first pass
+        shell: bash
+        run: |
+          python mission-control/grand-missions/assess_gm_iv_pilot2_governor.py \
+            --out /tmp/gm-iv-pilot2-governor-1.json
+
+      - name: Governor assessment repeat
+        shell: bash
+        run: |
+          python mission-control/grand-missions/assess_gm_iv_pilot2_governor.py \
+            --out /tmp/gm-iv-pilot2-governor-2.json
+          cmp \
+            /tmp/gm-iv-pilot2-governor-1.json \
+            /tmp/gm-iv-pilot2-governor-2.json
+
+      - name: Fleet regression
+        shell: bash
+        run: |
+          python mission-control/grand-missions/validate_gm_fleet.py \
+            --out /tmp/gm-fleet-regression.json
+
+      - name: Capacity regression first pass
+        shell: bash
+        run: |
+          python mission-control/grand-missions/assess_gm_fleet_03.py \
+            --out /tmp/gm-fleet-03-capacity-1.json
+
+      - name: Capacity regression repeat
+        shell: bash
+        run: |
+          python mission-control/grand-missions/assess_gm_fleet_03.py \
+            --out /tmp/gm-fleet-03-capacity-2.json
+          cmp \
+            /tmp/gm-fleet-03-capacity-1.json \
+            /tmp/gm-fleet-03-capacity-2.json
+
+      - name: Evidence Economics regression first pass
+        shell: bash
+        run: |
+          python mission-control/grand-missions/validate_gm_iv_evidence_economics.py \
+            | tee /tmp/gm-iv-economics-1.json
+          grep -q '"status": "PASS"' /tmp/gm-iv-economics-1.json
+
+      - name: Evidence Economics regression repeat
+        shell: bash
+        run: |
+          python mission-control/grand-missions/validate_gm_iv_evidence_economics.py \
+            > /tmp/gm-iv-economics-2.json
+          cmp /tmp/gm-iv-economics-1.json /tmp/gm-iv-economics-2.json
+
+      - name: Enforce promotion boundary
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          p = Path('/tmp/gm-iv-pilot2-governor-1.json')
+          d = json.loads(p.read_text(encoding='utf-8'))
+          assert d['source_sha'] == os.environ['SOURCE_SHA']
+          assert d['result'] == 'PASS'
+          assert d['promotion_decision'] == 'PROMOTE_PILOT_2_OF_8'
+          assert d['mission_state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
+          assert d['controlled_pilot_frontiers'] == ['GM-IV-F01', 'GM-IV-F03']
+          assert d['reference_frontiers'] == ['GM-IV-F02', 'GM-IV-F04']
+          assert d['unfilled_frontier_slots'] == [
+              'GM-IV-F05', 'GM-IV-F06', 'GM-IV-F07', 'GM-IV-F08'
+          ]
+          assert d['children_bound'] is False
+          assert d['authority_transfer'] is False
+          assert d['gm_v_state'] == 'HELD'
+          assert d['next_stage'] == \
+              'WITHHELD_PENDING_SEPARATE_RECON_4_OF_8_GOVERNOR_GATE'
+          print('PASS_GM_IV_PILOT_2_OF_8_GOVERNOR_BOUNDARY')
+          PY
+
+      - name: Upload Governor and regression receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-pilot2-governor-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/gm-iv-pilot2-governor-1.json
+            /tmp/gm-iv-pilot2-governor-2.json
+            /tmp/gm-fleet-regression.json
+            /tmp/gm-fleet-03-capacity-1.json
+            /tmp/gm-fleet-03-capacity-2.json
+            /tmp/gm-iv-economics-1.json
+            /tmp/gm-iv-economics-2.json
+          if-no-files-found: error
