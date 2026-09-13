@@ -1,0 +1,158 @@
+name: GM-FLEET-03 F01 Pilot
+
+on:
+  push:
+    branches:
+      - mission/gm-fleet-03-f01-pilot
+      - master
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/**'
+      - '.github/workflows/gm-fleet-03-f01-pilot.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  f01-pilot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout MissionControl exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: hub
+
+      - name: Bind MissionControl exact SHA
+        working-directory: hub
+        run: |
+          echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          git rev-parse HEAD
+
+      - name: Fetch F01 exact source without submodule traversal
+        run: |
+          mkdir f01
+          git -C f01 init
+          git -C f01 remote add origin https://github.com/GBOGEB/DOCX_RTM_Automation.git
+          git -C f01 fetch --depth=1 origin d85dc2de1b4beb88bc8e8ce4796784f4577f9a96
+          git -C f01 checkout --detach FETCH_HEAD
+          test "$(git -C f01 rev-parse HEAD)" = "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96"
+
+      - name: Install declared pilot dependency
+        run: |
+          grep -i 'pyyaml' f01/setup.py
+          python3 -m pip install --disable-pip-version-check pyyaml
+
+      - name: Smoker positive ADR OCD bridge validation
+        run: |
+          set -o pipefail
+          python3 f01/scripts/validate_adr_ocd_bridge.py | tee "$RUNNER_TEMP/f01-positive.txt"
+          grep -F 'validated glossary:' "$RUNNER_TEMP/f01-positive.txt"
+          grep -F 'validated bridge manifest:' "$RUNNER_TEMP/f01-positive.txt"
+          grep -F 'validated taxonomy:' "$RUNNER_TEMP/f01-positive.txt"
+          grep -F 'validated QPS triage applicability:' "$RUNNER_TEMP/f01-positive.txt"
+          grep -F 'ADR_OCD bridge validation passed' "$RUNNER_TEMP/f01-positive.txt"
+          echo 'PASS_F01_POSITIVE_BRIDGE_VALIDATION'
+
+      - name: QA negative authority mutation must fail closed
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, yaml
+          src=pathlib.Path('f01/federation/ADR_OCD/bridge_manifest.yaml')
+          data=yaml.safe_load(src.read_text(encoding='utf-8'))
+          data['qps_authority_source']['repo']='GBOGEB/NOT_THE_QPS_AUTHORITY'
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'bad_bridge_manifest.yaml'
+          out.write_text(yaml.safe_dump(data, sort_keys=False), encoding='utf-8')
+          print(out)
+          PY
+          set +e
+          python3 f01/scripts/validate_adr_ocd_bridge.py \
+            --manifest "$RUNNER_TEMP/bad_bridge_manifest.yaml" \
+            > "$RUNNER_TEMP/f01-negative.txt" 2>&1
+          rc=$?
+          set -e
+          test "$rc" -ne 0
+          echo "$rc" > "$RUNNER_TEMP/f01-negative-rc.txt"
+          grep -F 'qps_authority_source.repo must be GBOGEB/cryoplant-project' "$RUNNER_TEMP/f01-negative.txt"
+          echo 'PASS_F01_NEGATIVE_AUTHORITY_FAIL_CLOSED'
+
+      - name: Prove target remained clean and emit runtime receipt
+        run: |
+          test -z "$(git -C f01 status --porcelain)"
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, subprocess
+          root=pathlib.Path('f01')
+          positive=pathlib.Path(os.environ['RUNNER_TEMP'])/'f01-positive.txt'
+          negative=pathlib.Path(os.environ['RUNNER_TEMP'])/'f01-negative.txt'
+          rc=int((pathlib.Path(os.environ['RUNNER_TEMP'])/'f01-negative-rc.txt').read_text().strip())
+          pos=positive.read_text(encoding='utf-8')
+          neg=negative.read_text(encoding='utf-8')
+          dirty=subprocess.check_output(['git','-C','f01','status','--porcelain'], text=True).splitlines()
+          receipt={
+            'schema':'qps.gm_iv_f01_target_runtime.v1',
+            'target_repository':'GBOGEB/DOCX_RTM_Automation',
+            'target_sha':subprocess.check_output(['git','-C','f01','rev-parse','HEAD'], text=True).strip(),
+            'entrypoint':'scripts/validate_adr_ocd_bridge.py',
+            'positive_exit_code':0,
+            'positive_pass_marker':'ADR_OCD bridge validation passed' in pos,
+            'positive_validated_surface_count':sum(marker in pos for marker in [
+              'validated glossary:', 'validated bridge manifest:', 'validated taxonomy:', 'validated QPS triage applicability:'
+            ]),
+            'positive_output_sha256':hashlib.sha256(positive.read_bytes()).hexdigest(),
+            'negative_exit_code':rc,
+            'negative_rejection_marker':'qps_authority_source.repo must be GBOGEB/cryoplant-project' in neg,
+            'negative_output_sha256':hashlib.sha256(negative.read_bytes()).hexdigest(),
+            'target_dirty_file_count':len(dirty),
+            'target_application_modified':False,
+          }
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'f01-pilot-runtime.json'
+          out.write_text(json.dumps(receipt, indent=2, sort_keys=True)+'\n', encoding='utf-8')
+          print(json.dumps(receipt, sort_keys=True))
+          PY
+
+      - name: Assess F01 pilot first pass
+        working-directory: hub
+        run: |
+          python3 mission-control/grand-missions/assess_gm_iv_f01_pilot.py \
+            --runtime-receipt "$RUNNER_TEMP/f01-pilot-runtime.json" \
+            --out "$RUNNER_TEMP/f01-pilot-assessment-1.json"
+
+      - name: Assess F01 pilot repeat
+        working-directory: hub
+        run: |
+          python3 mission-control/grand-missions/assess_gm_iv_f01_pilot.py \
+            --runtime-receipt "$RUNNER_TEMP/f01-pilot-runtime.json" \
+            --out "$RUNNER_TEMP/f01-pilot-assessment-2.json"
+
+      - name: Enforce deterministic pilot repeat
+        run: |
+          cmp "$RUNNER_TEMP/f01-pilot-assessment-1.json" "$RUNNER_TEMP/f01-pilot-assessment-2.json"
+          echo 'PASS_F01_PILOT_DETERMINISTIC_REPEAT'
+
+      - name: Enforce frontier-only disposition
+        run: |
+          python3 - <<'PY'
+          import json, os
+          p=os.path.join(os.environ['RUNNER_TEMP'], 'f01-pilot-assessment-1.json')
+          d=json.load(open(p, encoding='utf-8'))
+          assert d['source_sha'] == os.environ['SOURCE_SHA']
+          assert d['frontier_disposition'] == 'PILOT_CONTROL_READY'
+          assert d['mission_promotion'].startswith('WITHHELD_')
+          assert d['authority_transfer'] is False
+          assert d['children_bound'] is False
+          assert d['gm_v_state'] == 'HELD'
+          print('PASS_F01_FRONTIER_ONLY_NO_MISSION_PROMOTION')
+          PY
+
+      - name: Upload exact-SHA pilot receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-fleet-03-f01-pilot-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/f01-positive.txt
+            ${{ runner.temp }}/f01-negative.txt
+            ${{ runner.temp }}/f01-pilot-runtime.json
+            ${{ runner.temp }}/f01-pilot-assessment-1.json
+            ${{ runner.temp }}/f01-pilot-assessment-2.json
+          if-no-files-found: error
