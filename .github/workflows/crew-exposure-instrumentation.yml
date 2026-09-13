@@ -1,0 +1,149 @@
+name: Crew Exposure Instrumentation
+
+on:
+  pull_request:
+    paths:
+      - "mission-control/qps-triage-ultra/crew/measured/**"
+      - ".github/workflows/crew-exposure-instrumentation.yml"
+  push:
+    branches: [master]
+    paths:
+      - "mission-control/qps-triage-ultra/crew/measured/**"
+      - ".github/workflows/crew-exposure-instrumentation.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-crew-exposure:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+
+      - name: Enforce Grand Mission invariant
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = Path('mission-control/grand-missions/GRAND_MISSION_REGISTRY.json')
+          d = json.loads(p.read_text(encoding='utf-8'))
+          by_id = {x['id']: x for x in d['grand_missions']}
+          gm4 = by_id['GM-IV']
+          gm5 = by_id['GM-V']
+          assert gm4['state'] == 'STAGED_ACTIVE_RECON_2_OF_8'
+          assert gm4['children'] == []
+          assert gm4['candidate_frontiers'] == ['GM-IV-F01', 'GM-IV-F02']
+          assert 'GM-IV-F03' in gm4['unfilled_frontier_slots']
+          assert 'GM-IV-F04' in gm4['unfilled_frontier_slots']
+          assert gm5['state'] == 'HELD'
+          assert gm5['children'] == []
+          print('PASS_FLEET_INVARIANT')
+          PY
+
+      - name: Execute crew exposure canary
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          import time
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          def now():
+              return datetime.now(timezone.utc)
+
+          opened = now()
+          time.sleep(1)
+          started = now()
+          time.sleep(2)
+          ended = now()
+          time.sleep(1)
+          released = now()
+
+          waiting = (started - opened).total_seconds()
+          active = (ended - started).total_seconds()
+          release = (released - ended).total_seconds()
+          exposure = (released - opened).total_seconds()
+          source_sha = subprocess.check_output(
+              ['git', 'rev-parse', 'HEAD'],
+              text=True,
+          ).strip()
+
+          receipt = {
+              'schema': 'missioncontrol.crew_exposure_receipt.v1',
+              'mission_id': 'INSTRUMENTATION_CANARY',
+              'task_id': 'CREW_EXPOSURE_CANARY',
+              'assignment_id': os.environ['GITHUB_RUN_ID'],
+              'crew_id': 'CANARY_ONLY',
+              'crew_role': 'INSTRUMENTATION_CANARY',
+              'assignment_opened_at': opened.isoformat(),
+              'task_started_at': started.isoformat(),
+              'task_ended_at': ended.isoformat(),
+              'assignment_released_at': released.isoformat(),
+              'waiting_seconds': waiting,
+              'active_seconds': active,
+              'release_seconds': release,
+              'exposure_seconds': exposure,
+              'intervention_type': 'INSTRUMENTATION',
+              'outcome': 'CONTROL',
+              'source_sha': source_sha,
+              'receipt_evidence_class': 'INSTRUMENTATION_CANARY_ONLY',
+              'authority_transfer': False,
+              'child_binding': False,
+              'frontier_binding': False,
+              'pca_eligible': False,
+              'bt_eligible': False,
+              'competency_promotion_eligible': False,
+              'mission_performance_eligible': False,
+          }
+          out = Path('mission-control/qps-triage-ultra/crew/measured')
+          out = out / 'CREW_EXPOSURE_CANARY_RECEIPT.json'
+          out.write_text(
+              json.dumps(receipt, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          print(json.dumps(receipt, indent=2, sort_keys=True))
+          PY
+
+      - name: Validate exposure receipt
+        shell: bash
+        run: |
+          python \
+            mission-control/qps-triage-ultra/crew/measured/validate_crew_exposure.py \
+            mission-control/qps-triage-ultra/crew/measured/CREW_EXPOSURE_CANARY_RECEIPT.json \
+            | tee /tmp/crew-exposure-validation.json
+          grep -q '"status": "PASS"' /tmp/crew-exposure-validation.json
+
+      - name: Deterministic validator repeat
+        shell: bash
+        run: |
+          python \
+            mission-control/qps-triage-ultra/crew/measured/validate_crew_exposure.py \
+            mission-control/qps-triage-ultra/crew/measured/CREW_EXPOSURE_CANARY_RECEIPT.json \
+            > /tmp/crew-exposure-validation-repeat.json
+          cmp \
+            /tmp/crew-exposure-validation.json \
+            /tmp/crew-exposure-validation-repeat.json
+
+      - name: Upload crew exposure canary
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-exposure-canary-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            mission-control/qps-triage-ultra/crew/measured/CREW_EXPOSURE_CANARY_RECEIPT.json
+            /tmp/crew-exposure-validation.json
+          if-no-files-found: error
