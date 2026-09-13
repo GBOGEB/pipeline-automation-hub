@@ -1,0 +1,187 @@
+{
+  "schema": "qps.grand_mission_candidate_frontier_board.v1",
+  "wave": "GM-FLEET-03-CANDIDATE-SCOUT",
+  "generated_date": "2026-09-13",
+  "authority_transfer": false,
+  "canonical_registry_unchanged": true,
+  "evidence_class": "PRELIMINARY_REPO_METADATA_PLUS_README_SEMANTIC_SEED",
+  "runtime_telemetry_used_for_selection": false,
+  "purpose": "discover_and_rank_real_GBOGEB_repositories_for_GM_IV_scouting_and_GM_V_reserve_without_fabricating_held_mission_children",
+  "hard_exclusions": {
+    "already_assigned_grand_mission_repos": [
+      "GBOGEB/CoolProp",
+      "GBOGEB/Q_engineering_tools",
+      "GBOGEB/gg_MATH",
+      "GBOGEB/github-mcp-server",
+      "GBOGEB/scientific-agent-skills",
+      "GBOGEB/GEMINI",
+      "GBOGEB/orchestration-sandbox"
+    ],
+    "horizontal_qps_triage_core": [
+      "GBOGEB/pipeline-automation-hub",
+      "GBOGEB/CODEX",
+      "GBOGEB/ABACUS",
+      "GBOGEB/cryoplant-project"
+    ]
+  },
+  "scoring": {
+    "scale": "0_to_5",
+    "utility_formula": "0.15*eligibility + 0.20*novelty + 0.10*(5-overlap_penalty) + 0.20*runtime + 0.25*missioncontrol_value + 0.10*(5-risk)",
+    "pca_features": [
+      "runtime_execution",
+      "provenance_security",
+      "orchestration_routing",
+      "telemetry_observability",
+      "documents_requirements",
+      "data_extraction",
+      "habitat_environment",
+      "ui_visualization",
+      "engineering_domain",
+      "log10_repo_size_kb"
+    ],
+    "pca_explained_variance_ratio": {
+      "PC1": 0.295056,
+      "PC2": 0.248495,
+      "PC3": 0.154424,
+      "PC4": 0.081577,
+      "PC5": 0.078452,
+      "PC1_to_PC3_total": 0.697975
+    },
+    "selection_rule": "greedy_maximize_0.65_normalized_utility_plus_0.35_min_distance_in_standardized_PC1_PC2_PC3_space",
+    "stability_check": "same_8_selected_for_utility_weight_0.50_through_0.70",
+    "warning": "PCA is a preliminary diversity aid from repository metadata and semantic capability seeds. Promotion PCA must be recomputed from observed scout/runtime telemetry."
+  },
+  "gm_iv": {
+    "canonical_state": "HELD",
+    "canonical_children": [],
+    "provisional_frontier_count": 8,
+    "provisional_state": "SCOUT_ACCEPTED_PRELAUNCH_NOT_CANONICAL",
+    "launch_gate": "GM_III_CONTROL_PLUS_MEASURED_CAPACITY_AND_NO_CONTROL_DEGRADATION",
+    "frontiers": [
+      {
+        "rank": 1,
+        "repo": "GBOGEB/telegraf",
+        "moniker": "TELEMETRY_LISTENER",
+        "utility_score": 4.60,
+        "semantic_evidence_confidence": "HIGH",
+        "preliminary_task": "census metric/log plugins; identify GitHub Actions, Docker, OpenTelemetry, Prometheus and system telemetry paths; prototype a bounded MissionControl telemetry adapter",
+        "scout_acceptance": "identity_lineage_content_runtime_surface_and_bounded_adapter_plan",
+        "status": "ACCEPT_TO_SCOUT"
+      },
+      {
+        "rank": 2,
+        "repo": "GBOGEB/DOCX_RTM_Automation",
+        "moniker": "TRACEABILITY_FOUNDRY",
+        "utility_score": 4.60,
+        "semantic_evidence_confidence": "HIGH",
+        "preliminary_task": "separate its Grand Mission role from QPS projection work; map document parsing, RTM/OTC/DEL traceability, deterministic output and exact-SHA receipt surfaces into a generic traceability worker contract",
+        "scout_acceptance": "preserve_non_authoritative_tooling_boundary_and_prove_one_generic_exact_head_transform",
+        "status": "ACCEPT_TO_SCOUT"
+      },
+      {
+        "rank": 3,
+        "repo": "GBOGEB/attest-build-provenance",
+        "moniker": "PROVENANCE_NOTARY",
+        "utility_score": 4.50,
+        "semantic_evidence_confidence": "HIGH",
+        "preliminary_task": "map SLSA/in-toto/Sigstore artifact attestations onto MissionControl release and runtime receipts; prove one bounded artifact identity verification path",
+        "scout_acceptance": "attestation_subject_digest_and_verification_result_bind_to_exact_artifact_identity",
+        "status": "ACCEPT_TO_SCOUT"
+      },
+      {
+        "rank": 4,
+        "repo": "GBOGEB/RouteLLM",
+        "moniker": "ROUTING_EXCHANGE",
+        "utility_score": 4.40,
+        "semantic_evidence_confidence": "HIGH",
+        "preliminary_task": "evaluate cost-quality routing as a MissionControl crew/model allocation primitive using bounded offline or mockable evaluation before any provider-dependent runtime",
+        "scout_acceptance": "router_contract_benchmark_surface_cost_quality_metrics_and_external_dependency_boundary",
+        "status": "ACCEPT_TO_SCOUT"
+      },
+      {
+        "rank": 5,
+        "repo": "GBOGEB/docker-stacks",
+        "moniker": "HABITAT_FACTORY",
+        "utility_score": 4.30,
+        "semantic_evidence_confidence": "HIGH",
+        "preliminary_task": "identify minimal reproducible Jupyter/worker images; map cache/prebuild/multi-arch opportunities; define a bounded crew habitat profile rather than adopting the full upstream image estate",
+        "scout_acceptance": "one_minimal_image_profile_with_reproducible_runtime_and_resource_cost_receipt",
+        "status": "ACCEPT_TO_SCOUT"
+      },
+      {
+        "rank": 6,
+        "repo": "GBOGEB/CODESPACES_jyperter",
+        "moniker": "DISPOSABLE_WORKBENCH",
+        "utility_score": 4.15,
+        "semantic_evidence_confidence": "HIGH",
+        "preliminary_task": "formalize ZIP pipeline, notebook/CLI and slide-preview capabilities as disposable workers; census repository hygiene including embedded environment material and isolate a clean executable surface",
+        "scout_acceptance": "clean_bounded_worker_executes_gt0_steps_and_returns_deterministic_sanitized_receipt",
+        "status": "ACCEPT_TO_SCOUT"
+      },
+      {
+        "rank": 7,
+        "repo": "GBOGEB/camelot",
+        "moniker": "TABLE_EXTRACTOR",
+        "utility_score": 4.15,
+        "semantic_evidence_confidence": "HIGH",
+        "preliminary_task": "prove deterministic PDF table extraction on a public fixture; record parsing accuracy/whitespace metrics and export parity for CSV/JSON/HTML/Markdown",
+        "scout_acceptance": "public_fixture_gt0_tables_metrics_and_repeatable_export_hashes",
+        "status": "ACCEPT_TO_SCOUT"
+      },
+      {
+        "rank": 8,
+        "repo": "GBOGEB/grid-table-editor",
+        "moniker": "STRUCTURED_DATA_DESK",
+        "utility_score": 4.05,
+        "semantic_evidence_confidence": "HIGH",
+        "preliminary_task": "test human-in-the-loop structured edits and CSV/Markdown/JSON round-trip parity; assess usefulness as a controlled MissionControl review surface",
+        "scout_acceptance": "roundtrip_semantics_preserved_and_edit_operations_have_machine_readable_delta",
+        "status": "ACCEPT_TO_SCOUT"
+      }
+    ],
+    "canonical_promotion_rule": "DO_NOT_WRITE_THESE_REPOS_INTO_GRAND_MISSION_REGISTRY_UNTIL_GM_IV_LAUNCH_GATE_PASSES_AND_SCOUT_RUNTIME_EVIDENCE_IS_ACCEPTED"
+  },
+  "gm_v_candidate_pool": {
+    "canonical_state": "HELD",
+    "canonical_children": [],
+    "selection_now_forbidden": true,
+    "purpose": "ranked_reserve_only_until_GM_IV_CONTROL",
+    "ranked_reserve": [
+      {"rank": 1, "repo": "GBOGEB/tesseract", "utility_score": 4.05, "theme": "OCR_scanned_evidence"},
+      {"rank": 2, "repo": "GBOGEB/vscode-powershell", "utility_score": 4.05, "theme": "PowerShell_execution_and_IDE"},
+      {"rank": 3, "repo": "GBOGEB/openai-node", "utility_score": 3.85, "theme": "API_client_runtime"},
+      {"rank": 4, "repo": "GBOGEB/python-sdk", "utility_score": 3.85, "theme": "Python_API_client_runtime"},
+      {"rank": 5, "repo": "GBOGEB/vscode-drawio", "utility_score": 3.85, "theme": "architecture_diagram_authoring"},
+      {"rank": 6, "repo": "GBOGEB/plotly.py", "utility_score": 3.75, "theme": "interactive_visualization"},
+      {"rank": 7, "repo": "GBOGEB/gk-cli", "utility_score": 3.70, "theme": "CLI_tooling_and_orchestration"},
+      {"rank": 8, "repo": "GBOGEB/cryo_leak_rate_dashboard", "utility_score": 3.55, "theme": "domain_dashboard_and_reproducible_handover", "risk_note": "historical_QPLANT_values_require_current_authority_reconciliation"},
+      {"rank": 9, "repo": "GBOGEB/document-organization-system", "utility_score": 3.55, "theme": "source_bound_material_dashboard", "overlap_note": "already_feeds_GM_II_engineering_outpost"},
+      {"rank": 10, "repo": "GBOGEB/yaml-reference-parser", "utility_score": 3.50, "theme": "configuration_reference_parsing", "confidence": "LOW_UNTIL_SCOUT"},
+      {"rank": 11, "repo": "GBOGEB/ExcelAddinInstaller", "utility_score": 3.45, "theme": "desktop_delivery_and_Office_integration", "confidence": "LOW_UNTIL_SCOUT"},
+      {"rank": 12, "repo": "GBOGEB/python-proofreader", "utility_score": 3.35, "theme": "text_quality_worker", "confidence": "LOW_UNTIL_SCOUT"},
+      {"rank": 13, "repo": "GBOGEB/notebook", "utility_score": 3.30, "theme": "interactive_notebook_runtime"},
+      {"rank": 14, "repo": "GBOGEB/codespaces-jupyter", "utility_score": 3.30, "theme": "small_Codespaces_Jupyter_template", "overlap_note": "high_overlap_with_GM_IV_CANDIDATE_CODESPACES_jyperter"},
+      {"rank": 15, "repo": "GBOGEB/yaml-grammar", "utility_score": 3.15, "theme": "YAML_syntax_and_validation", "confidence": "LOW_UNTIL_SCOUT"},
+      {"rank": 16, "repo": "GBOGEB/openai-cookbook", "utility_score": 3.00, "theme": "reference_patterns_and_examples", "risk_note": "large_reference_surface_and_low_direct_authority"}
+    ],
+    "not_in_top_16_reserve": [
+      {"repo": "GBOGEB/skills", "reason": "high_overlap_with_existing_scientific_agent_skills_frontier"},
+      {"repo": "GBOGEB/downloads-organization", "reason": "small_surface_and_lower_expected_mission_value_until_scouted"},
+      {"repo": "GBOGEB/cryogenic-accelerator-workspace", "reason": "high_overlap_with_existing_QPS_domain_and_horizontal_authority_surfaces"}
+    ],
+    "future_selection_rule": "after_GM_IV_CONTROL_recompute_scores_and_PCA_using_observed_scout_runtime_REX_queue_and_receipt_telemetry_then_select_16"
+  },
+  "scout_gates": [
+    "REPO_EXISTS_AND_ACCESSIBLE",
+    "DEFAULT_BRANCH_AND_EXACT_HEAD_CAPTURED",
+    "IDENTITY_AND_LINEAGE_CLASSIFIED",
+    "CONTENT_AND_RUNTIME_SURFACE_CENSUSED",
+    "NOVELTY_AND_OVERLAP_REASSESSED_FROM_CONTENT",
+    "RISK_AND_AUTHORITY_BOUNDARY_EXPLICIT",
+    "ONE_BOUNDED_GT0_STEP_RUNTIME_OR_EXPLICIT_REFERENCE_ONLY_DISPOSITION",
+    "SANITIZED_EXACT_SHA_RECEIPT",
+    "REX_RETURNED_TO_MISSIONCONTROL",
+    "NO_DEGRADATION_OF_GM_I_TO_GM_III_CONTROL"
+  ],
+  "next_state_transition": "SCOUT_EIGHT_IN_PARALLEL_WITH_BOUNDED_RESOURCE_FLOOR_THEN_RECOMPUTE_MEASURED_PCA_AND_ACCEPT_REJECT_REPLACE_EACH_SLOT"
+}
