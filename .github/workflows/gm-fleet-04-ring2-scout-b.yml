@@ -1,0 +1,102 @@
+name: GM-FLEET-04 Ring2 Scout B
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/gm-fleet-04-ring2-scout-b.yml'
+      - 'mission-control/grand-missions/GM_IV_RING2_SCOUT_B_PROVENANCE.json'
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/gm-fleet-04-ring2-scout-b.yml'
+      - 'mission-control/grand-missions/GM_IV_RING2_SCOUT_B_PROVENANCE.json'
+
+permissions:
+  contents: read
+
+jobs:
+  provenance:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout MissionControl exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: hub
+
+      - name: Fetch exact candidate and upstream refs
+        shell: bash
+        run: |
+          git init probe
+          git -C probe remote add fork https://github.com/GBOGEB/yaml-reference-parser.git
+          git -C probe remote add upstream https://github.com/yaml/yaml-reference-parser.git
+          git -C probe fetch --depth=2 fork 2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99
+          git -C probe update-ref refs/scout/candidate FETCH_HEAD
+          git -C probe fetch --depth=2 upstream d58347b997eea4d7e5ba33b36871535dad6db081
+          git -C probe update-ref refs/scout/upstream FETCH_HEAD
+          test "$(git -C probe rev-parse refs/scout/candidate)" = "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99"
+          test "$(git -C probe rev-parse refs/scout/upstream)" = "d58347b997eea4d7e5ba33b36871535dad6db081"
+
+      - name: Prove zero local divergence and one upstream commit
+        shell: bash
+        run: |
+          git -C probe merge-base --is-ancestor refs/scout/candidate refs/scout/upstream
+          upstream_ahead="$(git -C probe rev-list --count refs/scout/candidate..refs/scout/upstream)"
+          candidate_unique="$(git -C probe rev-list --count refs/scout/upstream..refs/scout/candidate)"
+          test "$upstream_ahead" = "1"
+          test "$candidate_unique" = "0"
+          echo "UPSTREAM_AHEAD=$upstream_ahead" >> "$GITHUB_ENV"
+          echo "CANDIDATE_UNIQUE=$candidate_unique" >> "$GITHUB_ENV"
+          echo PASS_SCOUT_B_PROVENANCE_RELATIONSHIP
+
+      - name: Enforce fail-closed disposition contract
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          p='hub/mission-control/grand-missions/GM_IV_RING2_SCOUT_B_PROVENANCE.json'
+          d=json.load(open(p, encoding='utf-8'))
+          assert d['observed_github_relationship'] == 'FORK_OF_UPSTREAM'
+          assert d['expected_git_relationship']['upstream_commits_after_candidate'] == int(os.environ['UPSTREAM_AHEAD']) == 1
+          assert d['expected_git_relationship']['candidate_unique_commits_vs_upstream'] == int(os.environ['CANDIDATE_UNIQUE']) == 0
+          assert d['disposition_if_proven'] == 'REFERENCE_RETURN_NO_RUNTIME'
+          assert d['candidate_slot_bound'] is False
+          assert d['canonical_child_bound'] is False
+          assert d['authority_transfer'] is False
+          assert d['gm_v_state'] == 'HELD'
+          print('PASS_GM_IV_RING2_SCOUT_B_REFERENCE_RETURN')
+          PY
+
+      - name: Emit provenance receipt
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          contract=json.load(open('hub/mission-control/grand-missions/GM_IV_RING2_SCOUT_B_PROVENANCE.json', encoding='utf-8'))
+          receipt={
+            'schema':'qps.gm_iv_ring2_scout_b_receipt.v1',
+            'missioncontrol_sha': subprocess.check_output(['git','-C','hub','rev-parse','HEAD'],text=True).strip(),
+            'candidate_repository': contract['candidate_repository'],
+            'candidate_sha': contract['candidate_sha'],
+            'upstream_repository': contract['upstream_repository'],
+            'upstream_sha': contract['upstream_sha'],
+            'upstream_commits_after_candidate': int(os.environ['UPSTREAM_AHEAD']),
+            'candidate_unique_commits_vs_upstream': int(os.environ['CANDIDATE_UNIQUE']),
+            'executed_steps_gt0': True,
+            'disposition':'REFERENCE_RETURN_NO_RUNTIME',
+            'candidate_slot_bound':False,
+            'canonical_child_bound':False,
+            'authority_transfer':False,
+          }
+          out=os.path.join(os.environ['RUNNER_TEMP'],'ring2-scout-b.json')
+          open(out,'w',encoding='utf-8').write(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(receipt,sort_keys=True))
+          PY
+
+      - name: Upload exact-head Scout B receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-ring2-scout-b-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/ring2-scout-b.json
+          if-no-files-found: error
