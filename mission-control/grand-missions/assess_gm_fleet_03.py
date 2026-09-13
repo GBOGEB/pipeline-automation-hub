@@ -92,7 +92,7 @@ def main():
         "schema": "qps.gm_fleet_03_capacity_receipt.v1",
         "wave": "GM-FLEET-03",
         "repo": os.getenv("GITHUB_REPOSITORY", "LOCAL"),
-        "source_sha": os.getenv("GITHUB_SHA", os.getenv("SOURCE_SHA", "UNKNOWN")),
+        "source_sha": os.getenv("SOURCE_SHA", os.getenv("GITHUB_SHA", "UNKNOWN")),
         "run_id": os.getenv("GITHUB_RUN_ID", "LOCAL"),
         "ref": os.getenv("GITHUB_REF", "LOCAL"),
         "authority_transfer": False,
