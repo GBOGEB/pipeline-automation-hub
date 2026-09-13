@@ -1,0 +1,32 @@
+{
+  "schema": "missioncontrol.mission_crew_task_runtime_receipt.v1",
+  "purpose": "Bind every measured crew-performance observation to a predeclared mission, crew assignment, task, real runtime and immutable receipt.",
+  "authority_transfer": false,
+  "chain": ["MISSION", "REX_PREFLIGHT", "CREW_ASSIGNMENT", "TASK", "RUNTIME", "RECEIPT", "DISPOSITION", "REX_POSTFLIGHT", "COMPETENCY_OBSERVATION", "ALLOCATION_FEEDBACK"],
+  "required_receipt_fields": ["mission_id", "task_id", "assignment_id", "crew_id", "attribution_basis", "task_type", "competency_dimension", "predeclared_task_level", "source_sha", "run_id", "job_ref", "runner_ref", "started_at", "ended_at", "execute_seconds", "steps_executed", "exit_code", "disposition", "stdout_sha256", "command_sha256", "receipt_evidence_class", "rex_preflight", "rex_postflight"],
+  "attribution_basis": ["PREDECLARED_ASSIGNMENT"],
+  "task_types": ["EXPLORE", "SCOUT", "READ", "MODEL", "TARGET", "PLAN", "BUILD", "REPAIR", "EXECUTE", "VERIFY", "INTEGRATE", "OPERATE", "MEASURE", "CONTROL", "REX"],
+  "dispositions": ["ACCEPT", "REJECT", "DEFER"],
+  "receipt_evidence_classes": ["MEASURED_RUNTIME", "MEASURED_RUNTIME_ACCEPTED", "MEASURED_RUNTIME_REJECTED"],
+  "runtime_gate": {
+    "source_sha": "exact 40-character commit SHA",
+    "steps_executed": ">0 for ACCEPT or REJECT runtime evidence",
+    "execute_seconds": ">=0 and observed by wrapper",
+    "command": "originates from committed task manifest",
+    "assignment": "exists before execution",
+    "receipt": "emitted after runtime from observed return code and hashes"
+  },
+  "rex_gate": {
+    "preflight": "mandatory checklist against active REX ledger before task execution",
+    "postflight": "mandatory recurrence/resolution update after task execution",
+    "persistent_rex": "may veto allocation, promotion or CONTROL until preventive action is verified"
+  },
+  "competency_observation": {
+    "accepted_task": "one observation of demonstrated performance at the predeclared task level; not a promotion",
+    "rejected_task": "failure/rework signal; cannot increase demonstrated level",
+    "same_run_repeat": "may support diagnostics only",
+    "cross_run_repeat": "required for allocation confidence and promotion eligibility",
+    "independent_or_control_repeat": "required for L3+ promotion eligibility"
+  },
+  "forbidden": ["post_hoc_crew_attribution", "role_name_as_performance_evidence", "expert_seeded_score_as_measured_score", "queued_job_as_execution", "zero_step_acceptance", "single_run_registry_promotion", "PCA_or_BT_from_insufficient_sample", "conceptual_role_receiving_operational_authority_from_measurement_alone", "task_execution_without_REX_preflight"]
+}

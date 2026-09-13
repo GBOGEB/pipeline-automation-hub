@@ -1,0 +1,79 @@
+name: MissionControl Measured Crew Allocation
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/**'
+      - '.github/workflows/measured-crew-allocation.yml'
+  push:
+    branches:
+      - master
+      - mission/measured-crew-allocation-v1-20260913
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/**'
+      - '.github/workflows/measured-crew-allocation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  measured-crew-allocation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Validate reusable REX checklist
+        run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
+      - name: Execute predeclared Mission Crew Task Runtime chain
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python mission-control/qps-triage-ultra/crew/measured/run_measured_tasks.py
+      - name: Build measured allocation evidence
+        run: python mission-control/qps-triage-ultra/crew/measured/build_measured_allocation.py
+      - name: Enforce evidence and no false promotion
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+          root=Path('mission-control/qps-triage-ultra/crew/measured')
+          summary=json.loads((root/'receipts/RUN_SUMMARY.json').read_text())
+          alloc=json.loads((root/'MEASURED_ALLOCATION_RECEIPT.json').read_text())
+          actual=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
+          assert summary['source_sha'] == actual
+          assert summary['checkout_sha'] == actual
+          assert summary['task_count'] == 4
+          assert summary['accepted'] == 4
+          assert summary['rejected'] == 0
+          assert summary['competency_promotions'] == 0
+          assert alloc['receipt_count'] >= 4
+          assert alloc['competency_promotions'] == 0
+          assert alloc['authority_transfer'] is False
+          for p in root.joinpath('receipts').glob('T*.json'):
+              r=json.loads(p.read_text())
+              assert r['attribution_basis']=='PREDECLARED_ASSIGNMENT'
+              assert r['steps_executed'] > 0
+              assert r['source_sha'] == actual
+              assert r['source_sha'] == summary['source_sha']
+              assert r['promotion_allowed'] is False
+              assert r['rex_preflight']['checklist_version']=='missioncontrol.rex.reuse_checklist.v1'
+          print(json.dumps({'status':'PASS_MEASURED_CREW_CHAIN','exact_source_sha':actual,'allocation_rows':len(alloc['rows']),'pca':alloc['pca'],'bt':alloc['bt']},sort_keys=True))
+          PY
+      - name: Upload measured crew receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: measured-crew-allocation-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            mission-control/qps-triage-ultra/crew/measured/receipts/*.json
+            mission-control/qps-triage-ultra/crew/measured/MEASURED_ALLOCATION_RECEIPT.json

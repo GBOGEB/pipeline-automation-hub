@@ -1,0 +1,69 @@
+{
+  "schema": "missioncontrol.rex.reuse_checklist.v1",
+  "status": "CANDIDATE_CANONICAL",
+  "purpose": "Make the REX ledger an active reusable checklist for recurring and persistent problems before and after every measured task.",
+  "ledger_ref": "../REX_LEARNING_LEDGER_v1.json",
+  "authority_transfer": false,
+  "preflight_required": true,
+  "postflight_required": true,
+  "recurrence_levels": {
+    "NEW": "first observed occurrence; bind event and immediate disposition",
+    "RECURRING": "same REX on >=2 distinct task_id or run_id; add or strengthen automated prevention/checklist",
+    "PERSISTENT": "same REX on >=3 distinct tasks or >=2 distinct missions, or recurrence after an accepted preventive control; force architecture/resource/role review",
+    "REGRESSION": "reappears after CONTROL/closure; reopen REX, block relevant CONTROL claim and create first-red action"
+  },
+  "checklist": [
+    {
+      "rex_id": "REX-001",
+      "problem": "namespace/action-status collision",
+      "before_task": ["mission_id task_id assignment_id crew_id and state use registered namespaces", "entity action status and lifecycle state are not overloaded", "new namespace has a declared owner"],
+      "if_triggered": ["STOP semantic promotion", "route to Architect/Cartographer/REX", "repair registry or state machine before adding automation"],
+      "proof_of_prevention": ["namespace validator PASS", "collision count unchanged or reduced"]
+    },
+    {
+      "rex_id": "REX-002",
+      "problem": "unregistered semantic vocabulary",
+      "before_task": ["new mission task role evidence and status terms are registered or explicitly provisional", "KEB mapping exists for synonyms/aliases"],
+      "if_triggered": ["DEFER semantic claim", "register or map vocabulary", "bind exact source/definition"],
+      "proof_of_prevention": ["vocabulary check PASS", "no unregistered term in emitted receipt"]
+    },
+    {
+      "rex_id": "REX-003",
+      "problem": "YAML line length / recurring formatting CI defect",
+      "before_task": ["changed YAML is linted before merge", "generated YAML obeys bounded formatting rules"],
+      "if_triggered": ["repair generator or lint rule instead of repeated manual patch", "record recurrence against builder/generator surface"],
+      "proof_of_prevention": ["lint >0 steps PASS"]
+    },
+    {
+      "rex_id": "REX-004",
+      "problem": "stale active-dock action namespace",
+      "before_task": ["active assignment is current for this mission", "returned/retired actions are not dispatched", "temporal lineage identifies superseded surfaces"],
+      "if_triggered": ["RETURN or RETIRE stale action", "repair active registry", "do not count stale queue as current load"],
+      "proof_of_prevention": ["active namespace census PASS", "no stale active assignment"]
+    },
+    {
+      "rex_id": "REX-005",
+      "problem": "unbound promotion/proof gate",
+      "before_task": ["victory condition and DoV are named", "evidence owner/challenger is named", "exact-SHA receipt path is defined", "promotion authority is explicit and bounded"],
+      "if_triggered": ["WITHHOLD promotion", "bind missing proof gate", "require independent or merged-head repeat where applicable"],
+      "proof_of_prevention": ["accepted exact-SHA receipt", "independent/control repeat when required"]
+    },
+    {
+      "rex_id": "REX-006",
+      "problem": "zero-step GitHub Actions preexecution",
+      "before_task": ["workflow existence is not treated as runtime evidence", "runner/job telemetry will capture actual execution"],
+      "if_triggered": ["route to Dockmaster/runtime lane", "do not patch application code before runner assignment unless separate evidence justifies it", "withhold runtime competency credit"],
+      "proof_of_prevention": ["runner/job reference present", "steps_executed > 0", "runtime receipt bound to exact SHA"]
+    }
+  ],
+  "task_record_required": {
+    "preflight": ["rex_ids_checked", "triggered_rex_ids", "blocking_rex_ids", "checklist_version"],
+    "postflight": ["rex_ids_observed", "new_rex_signal", "recurrence_level", "preventive_action_effective", "ledger_update_required"]
+  },
+  "allocation_rules": [
+    "persistent or regression REX affecting a competency adds reverse pressure against assigning the same unsupported crew/resource pattern",
+    "successful preventive-control repeats add positive evidence to the responsible crew competency but never auto-promote a role",
+    "PCA features may include REX recurrence and prevention-success counts only when sourced from measured task receipts",
+    "BT pairwise outcomes may compare allocation strategies on REX recurrence only for comparable task classes"
+  ]
+}

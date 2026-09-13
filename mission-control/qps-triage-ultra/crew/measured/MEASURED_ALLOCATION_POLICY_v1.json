@@ -1,0 +1,50 @@
+{
+  "schema": "missioncontrol.measured_crew_allocation_policy.v1",
+  "authority_transfer": false,
+  "purpose": "Replace role-name/expert-seeded allocation with demonstrated task evidence as repeat receipts accumulate, while keeping PCA/BT fail-closed until their denominators are sufficient.",
+  "seed_policy": {
+    "seed_is_prior_only": true,
+    "seed_may_unlock_measured_allocation": false,
+    "seed_may_unlock_promotion": false,
+    "measured_allocation_replaces_seed_after_gate": true,
+    "display_seed_weight_formula": "max(0, 1 - distinct_accepted_runs/4); informational only"
+  },
+  "measured_allocation_gate": {
+    "min_accepted_distinct_runs": 2,
+    "min_distinct_source_shas": 2,
+    "accepted_must_exceed_rejected": true,
+    "no_blocking_rex_levels": ["PERSISTENT", "REGRESSION"],
+    "attribution_basis": "PREDECLARED_ASSIGNMENT"
+  },
+  "demonstrated_level_rule": "For a crew+competency dimension, use the minimum predeclared task level across accepted gate-eligible receipts; this is deliberately conservative.",
+  "allocation_features": [
+    "demonstrated_level",
+    "acceptance_rate",
+    "distinct_accepted_runs",
+    "distinct_source_shas",
+    "mean_execute_seconds",
+    "rex_trigger_rate",
+    "prevention_success_rate"
+  ],
+  "pca_gate": {
+    "min_measured_rows": 3,
+    "min_varying_features": 2,
+    "expert_seeded_rows": 0,
+    "synthetic_rows": 0,
+    "status_before_gate": "DEFER_INSUFFICIENT_MEASURED_ROWS"
+  },
+  "bt_gate": {
+    "min_observed_pairwise_comparisons": 3,
+    "comparability_required": true,
+    "same_task_class_or_declared_equivalence": true,
+    "synthetic_pairwise": 0,
+    "status_before_gate": "DEFER_INSUFFICIENT_OBSERVED_PAIRS"
+  },
+  "reverse_pressure": {
+    "persistent_rex": "penalize repeating the same unsupported crew/resource pattern and raise target priority for the missing prevention capability",
+    "high_queue_or_wait": "route to runtime/performance resource intervention before assuming competence deficit",
+    "rejection": "increase repair/training/challenge pressure; never infer lower competence if rejection is caused by external habitat without evidence",
+    "repeat_accept": "increase measured allocation confidence for the demonstrated competency dimension"
+  },
+  "promotion_boundary": "Allocation eligibility is not competency promotion. Registry maturity/level changes remain governed by COMPETENCY_MATRIX_v1 promotion rules and explicit authority gates."
+}
