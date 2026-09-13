@@ -1,0 +1,76 @@
+{
+  "schema": "missioncontrol.crew.telemetry.v1",
+  "purpose": "Record observed crew work, resource use, runtime proof, feedback and REX without converting activity counts directly into competence claims.",
+  "authority_transfer": false,
+  "event_required": [
+    "event_id",
+    "observed_at",
+    "crew_id",
+    "mission_id",
+    "task_id",
+    "event_type",
+    "state",
+    "evidence_class"
+  ],
+  "event_types": [
+    "ASSIGN",
+    "SECOND",
+    "QUEUE",
+    "RUN_START",
+    "RUN_STEP",
+    "RUN_END",
+    "ACCEPT",
+    "REJECT",
+    "DEFER",
+    "RETURN",
+    "REX_LEARNED",
+    "REX_GENERATED",
+    "ROLE_GAP_SIGNAL",
+    "CONTROL_REPEAT"
+  ],
+  "states": ["ACTIVE", "BD0", "BD1", "CONTROL", "RESERVE", "RETURNED", "PARK", "BLOCKED", "CONCEPTUAL"],
+  "evidence_classes": ["OBSERVED", "MEASURED", "ACCEPTED", "REJECTED", "EXPERT_SEEDED", "TARGET_PROFILE", "UNPROVEN"],
+  "runtime_fields": {
+    "run_id": "nullable string",
+    "job_id": "nullable string",
+    "runner_id": "nullable string",
+    "queue_seconds": "nullable number >= 0",
+    "execute_seconds": "nullable number >= 0",
+    "steps_executed": "nullable integer >= 0",
+    "exit_code": "nullable integer",
+    "source_sha": "nullable 40-char git SHA",
+    "receipt_ref": "nullable string"
+  },
+  "work_fields": {
+    "task_type": ["EXPLORE", "SCOUT", "READ", "MODEL", "TARGET", "PLAN", "BUILD", "REPAIR", "EXECUTE", "VERIFY", "INTEGRATE", "OPERATE", "MEASURE", "CONTROL", "REX"],
+    "accepted": "nullable boolean",
+    "rejection_reason": "nullable string",
+    "resource_units": "nullable number >= 0",
+    "tools_resources": "array[string]",
+    "rex_ids": "array[string]"
+  },
+  "competency_observation": {
+    "dimension": "one registered competency dimension",
+    "observed_level": "L0-L6 integer 0..6",
+    "basis": ["TASK_OBSERVATION", "RUNTIME_RECEIPT", "INDEPENDENT_VERIFICATION", "CONTROL_REPEAT"],
+    "promotion_eligible": "boolean",
+    "rule": "No single event may promote a crew member. Promotion requires accepted evidence and repeat/independence gates from COMPETENCY_MATRIX_v1.json."
+  },
+  "derived_metrics": {
+    "acceptance_rate": "accepted / disposed where disposed > 0",
+    "rejection_rate": "rejected / disposed where disposed > 0",
+    "QER": "queue_seconds / execute_seconds where execute_seconds > 0",
+    "queue_fraction": "queue_seconds / (queue_seconds + execute_seconds)",
+    "crew_wait_loss": "queue_seconds * resource_units",
+    "rex_recurrence": "count of repeated REX id across distinct task_id or mission_id",
+    "evidence_repeat_count": "accepted receipts at distinct source_sha/run_id pairs"
+  },
+  "forbidden_inference": [
+    "activity_count_implies_competence",
+    "queued_job_implies_runtime_execution",
+    "workflow_created_implies_PASS",
+    "single_PASS_implies_CONTROL",
+    "conceptual_role_implies_available_crew",
+    "expert_seeded_score_implies_measured_score"
+  ]
+}
