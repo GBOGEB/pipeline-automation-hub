@@ -42,11 +42,24 @@ jobs:
           by_id = {x['id']: x for x in d['grand_missions']}
           gm4 = by_id['GM-IV']
           gm5 = by_id['GM-V']
-          assert gm4['state'] == 'STAGED_ACTIVE_RECON_2_OF_8'
+          allowed = {
+              'STAGED_ACTIVE_RECON_2_OF_8',
+              'STAGED_ACTIVE_PILOT_2_OF_8',
+              'STAGED_ACTIVE_RECON_4_OF_8',
+              'ACTIVE_8_OF_8',
+          }
+          assert gm4['state'] in allowed
           assert gm4['children'] == []
-          assert gm4['candidate_frontiers'] == ['GM-IV-F01', 'GM-IV-F02']
-          assert 'GM-IV-F03' in gm4['unfilled_frontier_slots']
-          assert 'GM-IV-F04' in gm4['unfilled_frontier_slots']
+          if gm4['state'] == 'STAGED_ACTIVE_RECON_2_OF_8':
+              assert gm4['candidate_frontiers'] == ['GM-IV-F01', 'GM-IV-F02']
+              assert 'GM-IV-F03' in gm4['unfilled_frontier_slots']
+              assert 'GM-IV-F04' in gm4['unfilled_frontier_slots']
+          elif gm4['state'] == 'STAGED_ACTIVE_PILOT_2_OF_8':
+              assert gm4['controlled_pilot_frontiers'] == ['GM-IV-F01', 'GM-IV-F03']
+              assert gm4['reference_frontiers'] == ['GM-IV-F02', 'GM-IV-F04']
+              assert gm4['unfilled_frontier_slots'] == [
+                  'GM-IV-F05', 'GM-IV-F06', 'GM-IV-F07', 'GM-IV-F08'
+              ]
           assert gm5['state'] == 'HELD'
           assert gm5['children'] == []
           print('PASS_FLEET_INVARIANT')

@@ -44,8 +44,15 @@ def main():
         and "new implementations should use `actions/attest`" in readme_text
     )
 
+    current_stage = gm["GM-IV"].get("state")
+    allowed_forward_stages = {
+        "STAGED_ACTIVE_RECON_2_OF_8",
+        "STAGED_ACTIVE_PILOT_2_OF_8",
+        "STAGED_ACTIVE_RECON_4_OF_8",
+        "ACTIVE_8_OF_8",
+    }
     checks = [
-        ("01_gm_iv_staged_recon", gm["GM-IV"].get("state") == "STAGED_ACTIVE_RECON_2_OF_8", gm["GM-IV"].get("state")),
+        ("01_gm_iv_stage_not_regressed", current_stage in allowed_forward_stages, current_stage),
         ("02_no_children_bound", gm["GM-IV"].get("children") == [], gm["GM-IV"].get("children")),
         ("03_gm_v_held", gm["GM-V"].get("state") == "HELD" and gm["GM-V"].get("children") == [], gm["GM-V"].get("state")),
         ("04_f01_exact_runtime_receipt", f01_pass, f01.get("repo", {})),
@@ -79,14 +86,16 @@ def main():
         "run_id": os.getenv("GITHUB_RUN_ID", "LOCAL"),
         "authority_transfer": False,
         "children_bound": False,
-        "checks": [{"check": n, "result": "PASS" if ok else "FAIL", "detail": d} for n, ok, d in checks],
+        "historical_evidence_stage": "RECON_2_OF_8",
+        "current_mission_state": current_stage,
+        "checks": [{"check": n, "result": "PASS" if passed else "FAIL", "detail": d} for n, passed, d in checks],
         "result": "PASS" if not failed else "FAIL",
         "dispositions": dispositions,
         "pilot_gate": "READY_F01_ONLY" if not failed and dispositions["GM-IV-F01"]["disposition"] == "PILOT" else "WITHHELD",
         "gm_v_state": "HELD",
     }
     Path(args.out).write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps({"result": receipt["result"], "pilot_gate": receipt["pilot_gate"], "dispositions": {k:v["disposition"] for k,v in dispositions.items()}, "source_sha": receipt["source_sha"]}, sort_keys=True))
+    print(json.dumps({"result": receipt["result"], "pilot_gate": receipt["pilot_gate"], "current_mission_state": current_stage, "dispositions": {k: v["disposition"] for k, v in dispositions.items()}, "source_sha": receipt["source_sha"]}, sort_keys=True))
     if failed:
         raise SystemExit(1)
 

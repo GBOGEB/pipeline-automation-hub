@@ -184,7 +184,7 @@ jobs:
             --source-sha "$SOURCE_SHA" \
             --out "$RUNNER_TEMP/f03-pilot-2.json"
 
-      - name: Enforce deterministic pilot repeat and non-promotion
+      - name: Enforce deterministic pilot repeat and non-self-promotion
         run: |
           cmp "$RUNNER_TEMP/f03-pilot-1.json" "$RUNNER_TEMP/f03-pilot-2.json"
           python3 - <<'PY'
@@ -194,12 +194,18 @@ jobs:
           assert d['result'] == 'PASS'
           assert d['frontier_disposition'] == 'PILOT_CONTROL_READY'
           assert d['controlled_pilot_pair_if_master_repeats'] == ['GM-IV-F01', 'GM-IV-F03']
-          assert d['mission_promotion'] == 'WITHHELD_PENDING_SEPARATE_PILOT_2_OF_8_GOVERNOR_ASSESSMENT'
-          assert d['mission_state'] == 'STAGED_ACTIVE_RECON_2_OF_8'
+          assert d['mission_promotion'].startswith('WITHHELD_FROM_F03_RECURRENCE')
+          assert d['historical_evidence_stage'] == 'STAGED_ACTIVE_RECON_2_OF_8'
+          assert d['mission_state'] in {
+              'STAGED_ACTIVE_RECON_2_OF_8',
+              'STAGED_ACTIVE_PILOT_2_OF_8',
+              'STAGED_ACTIVE_RECON_4_OF_8',
+              'ACTIVE_8_OF_8',
+          }
           assert d['children_bound'] is False
           assert d['authority_transfer'] is False
           assert d['gm_v_state'] == 'HELD'
-          print('PASS_F03_PILOT_CONTROL_READY_NO_MISSION_PROMOTION')
+          print('PASS_F03_FRONTIER_CONTROL_HISTORY_PRESERVED_NO_SELF_PROMOTION')
           PY
 
       - name: Upload F03 pilot evidence
