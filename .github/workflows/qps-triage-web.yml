@@ -1,0 +1,51 @@
+name: QPS Triage Web DoV
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/qps-triage-ultra/site/**'
+      - 'mission-control/qps-triage-ultra/web/**'
+      - '.github/workflows/qps-triage-web.yml'
+  workflow_dispatch:
+
+jobs:
+  qps-web-dov:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mission-control/qps-triage-ultra/site
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Install Jekyll dependencies
+        run: bundle install
+
+      - name: Bind exact build identity
+        env:
+          QPS_EVIDENCE_STATE: OBSERVED
+        run: python3 scripts/prepare_site.py
+
+      - name: J1-J5 build and validate
+        run: |
+          rm -rf _site_a
+          bundle exec jekyll build --destination _site_a
+          python3 scripts/validate_site.py _site_a
+
+      - name: J6 repeatability
+        run: |
+          rm -rf _site_b
+          bundle exec jekyll build --destination _site_b
+          diff -qr _site_a _site_b
+
+      - name: Publish evidence artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-triage-web-${{ github.sha }}
+          path: mission-control/qps-triage-ultra/site/_site_a
+          if-no-files-found: error
