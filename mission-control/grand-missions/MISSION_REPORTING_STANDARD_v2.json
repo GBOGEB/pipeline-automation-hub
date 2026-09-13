@@ -1,0 +1,35 @@
+{
+  "schema": "missioncontrol.mission_reporting_standard.v2",
+  "scope": ["GM-I", "GM-II", "GM-III", "GM-IV", "GM-V", "V+", "MISSION_H1", "MISSION_H2", "MISSION_H3", "MISSION_H4"],
+  "purpose": "make every mission report comparable for breadth, depth, runtime, crew learning, resource pressure and reinforcement decisions",
+  "required_sections": {
+    "identity": ["mission_id", "mission_name", "state", "lifecycle_stage", "authority_owner", "report_sha", "as_of"],
+    "coverage": ["repos_in_scope", "repos_seen", "breadth_level_B", "breadth_fraction_b", "subrepos_discovered", "hidden_surfaces_discovered", "coverage_gaps"],
+    "penetration": ["penetration_level_P", "depth_fraction_d", "Pen_bxd", "max_tree_depth_observed", "nested_boundaries_resolved", "unresolved_strata"],
+    "runtime": ["runtime_level_R", "runtime_paths_identified", "runtime_paths_proven", "exact_sha_runs", "repeat_runs", "failure_paths_observed", "queue_time", "execute_time", "runner_state"],
+    "decomposition": ["nodes", "edges", "atoms_or_modules", "dependency_cycles", "critical_paths", "orphan_or_floating_nodes", "fan_in_fan_out", "unresolved_dependencies"],
+    "workflow_representation": ["ascii_view", "mermaid_view", "state_or_sequence_view", "feedback_feedforward_edges", "diagram_source_sha"],
+    "crew": ["crew_active", "crew_peak", "role_mix", "crew_depth_summary", "secondments", "effective_worker_capacity", "coordination_drag", "reinforcement_recommendation"],
+    "rex": ["rex_in", "rex_learned", "rex_generated", "rex_reused", "rex_rejected", "rex_recurrence", "rex_consumers", "doctrine_changes"],
+    "federation": ["producer_edges", "consumer_edges", "cross_mission_dependencies", "feedforward", "feedback", "conflicts_challenges"],
+    "analytics": ["PCA_features_observed", "PCA_features_seeded", "BT_pairs_observed", "pressure_vector", "resource_allocation_basis"],
+    "verification": ["DoV_state", "DoD_state", "first_red", "blocked_by", "next_bounded_action", "evidence_class", "exact_source_refs"]
+  },
+  "crew_depth_reporting": {
+    "report_per_crew_member": ["crew_id", "roles", "role_depth", "repo_familiarity", "mission_familiarity", "runtime_proof_depth", "evidence_depth", "rex_depth", "cross_mission_depth", "tool_readiness", "availability", "effective_capacity", "last_evidence_sha"],
+    "no_synthetic_scores": "numeric crew-depth values require observed receipts, accepted work or explicit expert-seeded classification"
+  },
+  "visual_contract": {
+    "minimum_ascii": "mission -> MissionControl -> consumers plus first-red and next action",
+    "minimum_mermaid": "state or flow diagram with feedback/feedforward directions",
+    "calligrapher_owner": true,
+    "neuron_graph_input": true
+  },
+  "anti_overclaim": [
+    "breadth does not imply depth",
+    "Pen does not imply runtime",
+    "diagram completeness does not imply execution",
+    "crew headcount does not equal effective capacity",
+    "REX volume does not equal REX value"
+  ]
+}
