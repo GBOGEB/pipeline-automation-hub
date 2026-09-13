@@ -1,0 +1,94 @@
+{
+  "schema": "missioncontrol.crew.role_extension.v1",
+  "status": "CANDIDATE_CANONICAL",
+  "authority_transfer": false,
+  "extends": "mission-control/qps-triage-ultra/crew/CREW_REGISTRY_v1.json",
+  "roles": [
+    {
+      "role_id": "GEOGRAPHER",
+      "name": "Geographer / Breadth Officer",
+      "home_base": "MISSIONCONTROL_FLEET",
+      "primary_axis": "BREADTH_b",
+      "mission": "measure and expand horizontal estate coverage without confusing census coverage with understanding or execution",
+      "competency_vector": {
+        "discovery": 6,
+        "estate_census": 6,
+        "topology": 6,
+        "hidden_surface_discovery": 5,
+        "lineage": 4,
+        "deep_reading": 3,
+        "runtime_execution": 1,
+        "evidence_provenance": 4,
+        "analysis_pca_bt": 4,
+        "rex_learning": 4
+      },
+      "owns": [
+        "repository_census",
+        "breadth_denominator",
+        "breadth_fraction_b",
+        "frontier_boundaries",
+        "repo_and_subrepo_adjacency",
+        "hidden_directory_inventory",
+        "unmapped_surface_queue",
+        "coverage_gap_map"
+      ],
+      "does_not_own": ["deep_recursive_semantic_penetration", "runtime_proof", "promotion_authority"],
+      "handoffs": {
+        "to_GEOLOGIST": "surface requires recursive penetration, nested-boundary resolution or execution-path tracing",
+        "to_CARTOGRAPHER": "render breadth/topology state",
+        "to_SCOUT": "targeted unknown frontier needs first-contact discovery"
+      },
+      "primary_metrics": ["b", "B_level", "estate_coverage_fraction", "hidden_surface_coverage", "nested_boundary_discovery_rate"]
+    },
+    {
+      "role_id": "GEOLOGIST",
+      "name": "Geologist / Depth Officer",
+      "home_base": "MISSIONCONTROL_FLEET",
+      "primary_axis": "DEPTH_d",
+      "mission": "penetrate selected repositories through hidden and nested strata until true subproject, dependency, authority and execution boundaries are resolved",
+      "competency_vector": {
+        "discovery": 4,
+        "estate_census": 3,
+        "recursive_tree_analysis": 6,
+        "deep_reading": 6,
+        "architecture": 5,
+        "dependency_resolution": 6,
+        "runtime_path_tracing": 5,
+        "runtime_execution": 3,
+        "evidence_provenance": 5,
+        "analysis_pca_bt": 4,
+        "rex_learning": 5
+      },
+      "owns": [
+        "penetration_level_P0_P8",
+        "depth_fraction_d",
+        "recursive_tree_census",
+        "nested_hidden_directories",
+        "nested_manifests",
+        "submodule_and_workspace_boundaries",
+        "embedded_project_classification",
+        "entrypoint_dependency_output_trace",
+        "depth_gap_queue"
+      ],
+      "does_not_own": ["fleet_breadth_denominator", "runtime_receipt_authority", "promotion_authority"],
+      "handoffs": {
+        "to_RUNNER": "mapped execution path is ready for observed >0-step proof",
+        "to_GEOGRAPHER": "new nested project or hidden surface changes breadth map",
+        "to_CARTOGRAPHER": "render strata/dependency topology"
+      },
+      "primary_metrics": ["d", "P_level", "max_verified_tree_depth", "nested_boundary_resolution", "execution_path_trace_coverage"]
+    }
+  ],
+  "combined_metric": {
+    "name": "Pen",
+    "formula": "Pen = b * d",
+    "range": "0_to_1",
+    "interpretation": "combined horizontal coverage and vertical penetration; neither breadth-only nor depth-only work can produce a high score",
+    "runtime_relation": "Runtime remains independent as R0-R7. Pen MUST NOT imply execution proof."
+  },
+  "role_relationships": [
+    "SCOUT discovers; GEOGRAPHER expands/map coverage; GEOLOGIST penetrates; RUNNER executes; QA verifies; CARTOGRAPHER visualizes; KEB/REX normalizes learning; H4 allocates pressure",
+    "GEOGRAPHER and GEOLOGIST may be seconded as a paired survey team for high-value frontiers",
+    "a GEOLOGIST-discovered nested project is returned to the GEOGRAPHER so fleet breadth denominators can expand recursively"
+  ]
+}
