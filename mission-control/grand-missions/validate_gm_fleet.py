@@ -40,6 +40,7 @@ def main():
     fixtures = load("VALIDATION_FIXTURES.json")
 
     checks = []
+
     def ok(name, condition, detail=""):
         require(condition, f"{name}: {detail}")
         checks.append({"check": name, "result": "PASS", "detail": detail})
@@ -47,10 +48,10 @@ def main():
     missions = registry["grand_missions"]
     ids = [m["id"] for m in missions]
     ok("01_canonical_gm_registry", ids == ["GM-I", "GM-II", "GM-III", "GM-IV", "GM-V"], str(ids))
-    ok("02_scaling_sequence", [m["frontier_count"] for m in missions] == [1,2,4,8,16], "1-2-4-8-16")
+    ok("02_scaling_sequence", [m["frontier_count"] for m in missions] == [1, 2, 4, 8, 16], "1-2-4-8-16")
 
     role_ids = [r["id"] for r in roles["roles"]]
-    required_roles = {"SCOUT","READER","AMBASSADOR","SCIENTIST","ENGINEER","SMOKER","DOCTOR","DOCKMASTER","QA","ANALYST","PM","TM","GOVERNOR","ORCHESTRATOR"}
+    required_roles = {"SCOUT", "READER", "AMBASSADOR", "SCIENTIST", "ENGINEER", "SMOKER", "DOCTOR", "DOCKMASTER", "QA", "ANALYST", "PM", "TM", "GOVERNOR", "ORCHESTRATOR"}
     ok("03_crew_role_registry", set(role_ids) == required_roles and len(role_ids) == len(set(role_ids)), f"roles={len(role_ids)}")
 
     allowed = {tuple(x) for x in machine["allowed_transitions"]}
@@ -63,40 +64,55 @@ def main():
             require(tuple(pair) not in allowed, f"illegal transition present in allowed list: {pair}")
     ok("04_activation_return_state_machine", True, f"fixtures={len(fixtures['crew_transitions'])}")
 
-    gm = {m["id"]:m for m in missions}
-    ok("05_gm_i_genealogy", genealogy["missions"]["GM-I"]["observed_returned_workers"] == ["Scout_1","Scout_2","Scout_3","Reader_1","Reader_2"], "observed returned crew bound")
+    gm = {m["id"]: m for m in missions}
+    ok("05_gm_i_genealogy", genealogy["missions"]["GM-I"]["observed_returned_workers"] == ["Scout_1", "Scout_2", "Scout_3", "Reader_1", "Reader_2"], "observed returned crew bound")
     ok("06_gm_ii_two_child_genealogy", len(genealogy["missions"]["GM-II"]["children"]) == 2 and len(gm["GM-II"]["children"]) == 2, "two children")
     ok("07_gm_iii_four_frontier_genealogy", len(genealogy["missions"]["GM-III"]["frontiers"]) == 4 and len(gm["GM-III"]["children"]) == 4, "four frontiers")
 
     gm_iv = gm["GM-IV"]
-    gm_iv_state_ok = gm_iv["state"] in {"HELD", "STAGED_ACTIVE_RECON_2_OF_8"}
+    gm_iv_state_ok = gm_iv["state"] in {
+        "HELD",
+        "STAGED_ACTIVE_RECON_2_OF_8",
+        "STAGED_ACTIVE_PILOT_2_OF_8",
+    }
     gm_iv_stage_ok = True
     if gm_iv["state"] == "STAGED_ACTIVE_RECON_2_OF_8":
         gm_iv_stage_ok = (
             gm_iv.get("activation_stage") == "RECON_2_OF_8"
             and gm_iv.get("candidate_frontiers") == ["GM-IV-F01", "GM-IV-F02"]
+            and gm_iv.get("children") == []
+        )
+    elif gm_iv["state"] == "STAGED_ACTIVE_PILOT_2_OF_8":
+        gm_iv_stage_ok = (
+            gm_iv.get("activation_stage") == "PILOT_2_OF_8"
+            and gm_iv.get("candidate_frontiers") == ["GM-IV-F01", "GM-IV-F03"]
+            and gm_iv.get("controlled_pilot_frontiers") == ["GM-IV-F01", "GM-IV-F03"]
+            and gm_iv.get("reference_frontiers") == ["GM-IV-F02", "GM-IV-F04"]
+            and gm_iv.get("unfilled_frontier_slots") == ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"]
+            and gm_iv.get("children") == []
         )
     ok(
         "08_gm_iv_8_no_fabrication_or_ungoverned_promotion",
         gm_iv_state_ok and gm_iv_stage_ok and gm_iv["frontier_count"] == 8 and gm_iv["children"] == [],
-        f"state={gm_iv['state']} frontier_count=8 children=0"
+        f"state={gm_iv['state']} frontier_count=8 children=0",
     )
     ok("09_gm_v_held_16_no_fabrication", gm["GM-V"]["state"] == "HELD" and gm["GM-V"]["frontier_count"] == 16 and gm["GM-V"]["children"] == [], "HELD/16 children=0")
 
     city_nodes = {n["id"] for n in city["nodes"]}
-    ok("10_mission_city_graph", set(ids).issubset(city_nodes) and {"DOW","KEB","QPS","RUNTIME_DOCK","MISSION_CONTROL"}.issubset(city_nodes), f"nodes={len(city_nodes)}")
+    city_state_matches = city.get("mission_states", {}).get("GM-IV") == gm_iv["state"]
+    ok("10_mission_city_graph", set(ids).issubset(city_nodes) and {"DOW", "KEB", "QPS", "RUNTIME_DOCK", "MISSION_CONTROL"}.issubset(city_nodes) and city_state_matches, f"nodes={len(city_nodes)} gm_iv_state_sync={city_state_matches}")
 
     prefixes = registry["namespace"]
     prefix_values = [prefixes["grand_mission_prefix"], prefixes["horizontal_mission_prefix"], prefixes["local_mission_prefix"]]
     ok("11_namespace_disjointness", len(prefix_values) == len(set(prefix_values)) and all(i.startswith("GM-") for i in ids), str(prefix_values))
 
-    routing = {r["first_red"]:r for r in fixtures["routing"]}
+    routing = {r["first_red"]: r for r in fixtures["routing"]}
     require("DOCKMASTER" in routing["HABITAT"]["expected_roles"] and "DOCTOR" in routing["HABITAT"]["forbidden_roles"], "zero-step routing fixture malformed")
     require("DOCTOR" in routing["APPLICATION"]["expected_roles"] and routing["APPLICATION"]["executed_steps"] > 0, "application routing fixture malformed")
     ok("12_illegal_crew_routing_guard", True, "zero-step=>Dockmaster; application>0=>Doctor+Engineer")
 
     verbs = set(bridge["verbs"].keys())
-    ok("13_bidirectional_rex_contract", {"LEARN","IMPROVE","UPDATE","REPAIR","ASSIMILATE","PRUNE","BRIDGE"}.issubset(verbs) and bridge["authority_transfer"] is False, "learning loop bound")
+    ok("13_bidirectional_rex_contract", {"LEARN", "IMPROVE", "UPDATE", "REPAIR", "ASSIMILATE", "PRUNE", "BRIDGE"}.issubset(verbs) and bridge["authority_transfer"] is False, "learning loop bound")
 
     events = ledger["events"]
     event_ids = {e["event_id"] for e in events}
@@ -119,29 +135,38 @@ def main():
     ref = os.environ.get("GITHUB_REF", "LOCAL")
 
     receipt = {
-        "schema":"qps.gm_fleet_02b_runtime_receipt.v1",
-        "wave":"GM-FLEET-02B",
-        "repo":repo,
-        "source_sha":source_sha,
-        "ref":ref,
-        "run_id":run_id,
-        "executed_steps_gt0":True,
-        "static_materialisation":"PASS_12_OF_12",
-        "validation_check_count":len(checks),
-        "validation_checks":checks,
-        "crew_rex_bidirectional":"PASS",
-        "pca_runtime_gate":"DEFER_NO_COMPARABLE_MEASURED_GM_I_TO_V_ROWS",
-        "bt_runtime_gate":"DEFER_NO_CONNECTED_OBSERVED_GM_PAIRWISE_GRAPH",
-        "authority_transfer":False,
-        "input_digest_sha256":canonical_digest({
-            "registry":registry,"roles":roles,"machine":machine,"genealogy":genealogy,
-            "city":city,"bridge":bridge,"telemetry":telemetry,"bt":bt,"ledger":ledger,"fixtures":fixtures
-        })
+        "schema": "qps.gm_fleet_02b_runtime_receipt.v1",
+        "wave": "GM-FLEET-02B",
+        "repo": repo,
+        "source_sha": source_sha,
+        "ref": ref,
+        "run_id": run_id,
+        "executed_steps_gt0": True,
+        "static_materialisation": "PASS_12_OF_12",
+        "validation_check_count": len(checks),
+        "validation_checks": checks,
+        "crew_rex_bidirectional": "PASS",
+        "pca_runtime_gate": "DEFER_NO_COMPARABLE_MEASURED_GM_I_TO_V_ROWS",
+        "bt_runtime_gate": "DEFER_NO_CONNECTED_OBSERVED_GM_PAIRWISE_GRAPH",
+        "authority_transfer": False,
+        "input_digest_sha256": canonical_digest({
+            "registry": registry,
+            "roles": roles,
+            "machine": machine,
+            "genealogy": genealogy,
+            "city": city,
+            "bridge": bridge,
+            "telemetry": telemetry,
+            "bt": bt,
+            "ledger": ledger,
+            "fixtures": fixtures,
+        }),
     }
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps({"result":"PASS_GM_FLEET_02B","checks":len(checks),"source_sha":source_sha,"pca":receipt["pca_runtime_gate"],"bt":receipt["bt_runtime_gate"]}, sort_keys=True))
+    print(json.dumps({"result": "PASS_GM_FLEET_02B", "checks": len(checks), "source_sha": source_sha, "pca": receipt["pca_runtime_gate"], "bt": receipt["bt_runtime_gate"]}, sort_keys=True))
+
 
 if __name__ == "__main__":
     main()

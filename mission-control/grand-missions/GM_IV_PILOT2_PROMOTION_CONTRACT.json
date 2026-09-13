@@ -1,0 +1,58 @@
+{
+  "schema": "qps.gm_iv_pilot2_promotion_contract.v1",
+  "wave": "GM-FLEET-03-PILOT2-GATE",
+  "mission": "GM-IV",
+  "pre_promotion_master_sha": "54e4627793d42f78b2ac87cbb08b763b8c8e7640",
+  "transition": {
+    "from_state": "STAGED_ACTIVE_RECON_2_OF_8",
+    "from_stage": "RECON_2_OF_8",
+    "to_state": "STAGED_ACTIVE_PILOT_2_OF_8",
+    "to_stage": "PILOT_2_OF_8"
+  },
+  "semantic_registration": {
+    "STAGED_ACTIVE_PILOT_2_OF_8": "exactly two independent controlled pilot frontiers are bound for bounded recurrence; no GM-IV children are created and no authority transfers"
+  },
+  "controlled_pilots": [
+    {
+      "frontier": "GM-IV-F01",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "target_sha": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96",
+      "capability": "ADR_OCD_QPS_BRIDGE_VALIDATION",
+      "master_source_sha": "2cb9de6b07ec7228578da29dd3d7b5804499ba7c",
+      "master_run_id": 34768296758,
+      "master_artifact_id": 10320854729,
+      "master_artifact_digest": "sha256:74f7566e41112ece5cc8f014ca6574170854e23ec718993f0384aae6fe24cffa",
+      "return_trigger": "contract to CONTROL recurrence; re-expand only on failed recurrence, changed target SHA, authority-boundary change, or explicit next-stage challenge"
+    },
+    {
+      "frontier": "GM-IV-F03",
+      "repository": "GBOGEB/codespaces-jupyter",
+      "target_sha": "1eba2240a86d1fd2bd6375e2fac481caf645cdde",
+      "capability": "REPRODUCIBLE_NOTEBOOK_RUNTIME_RECEIPT",
+      "master_source_sha": "6dd4d5b375859dabd5e94aac26b8acc61a757ad7",
+      "master_run_id": 34772053427,
+      "master_artifact_id": 10322471532,
+      "master_artifact_digest": "sha256:24fc6d6122077bee933d2c5b752a9159fa10ed34ea83c4bfebb3ebdfb0cca38c",
+      "return_trigger": "contract to CONTROL recurrence; re-expand only on failed recurrence, changed target SHA, authority-boundary change, or explicit next-stage challenge"
+    }
+  ],
+  "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
+  "unfilled_frontiers": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+  "governor_checks": [
+    "pre-promotion master is exact and was RECON_2_OF_8",
+    "F01 and F03 are distinct repositories and distinct capabilities",
+    "both pilots have fresh merged-master CONTROL recurrence evidence",
+    "both exact target SHAs are re-challenged with more-than-zero executable work",
+    "authority boundaries reject negative mutations where applicable",
+    "GM-III remains RECON_CONTROL",
+    "GM-IV children remain empty",
+    "authority_transfer remains false",
+    "GM-V remains HELD with no children",
+    "no PCA or BT synthetic promotion credit is used",
+    "legacy fleet validators accept the registered pilot state"
+  ],
+  "next_stage_boundary": "PILOT_2_OF_8 does not authorize RECON_4_OF_8; that requires a separate controlled release gate",
+  "authority_transfer": false,
+  "children_bound": false,
+  "gm_v_must_remain": "HELD"
+}
