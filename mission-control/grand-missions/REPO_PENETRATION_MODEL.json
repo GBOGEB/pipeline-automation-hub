@@ -1,6 +1,43 @@
 {
-  "schema": "missioncontrol.repo_penetration_model.v1",
-  "purpose": "separate fleet breadth from repository penetration depth and runtime proof",
+  "schema": "missioncontrol.repo_penetration_model.v2",
+  "purpose": "separate fleet breadth, repository penetration depth and runtime proof, with explicit Geographer/Geologist ownership",
+  "metric": {
+    "formula": "Pen = b * d",
+    "b": "normalized breadth in [0,1]",
+    "d": "normalized structural/semantic penetration depth in [0,1]",
+    "Pen": "combined penetration score in [0,1]",
+    "runtime": "reported separately as R0-R7 and MUST NOT be inferred from Pen",
+    "normalization": {
+      "repo_b": "covered_applicable_surfaces / discovered_applicable_surfaces",
+      "fleet_b": "repositories_at_required_breadth_gate / repositories_in_scope",
+      "d": "verified_penetration_level / 8.0",
+      "example": "b=0.75, verified P4 => d=0.50, Pen=0.375"
+    },
+    "anti_gaming": [
+      "high breadth with shallow depth yields low Pen",
+      "deep inspection of a tiny unrepresentative surface yields low Pen",
+      "runtime is independent: Pen=1.0 with R0 still means no executed proof"
+    ]
+  },
+  "role_ownership": {
+    "GEOGRAPHER": {
+      "primary_axis": "breadth",
+      "mission": "map the estate and horizontal surface area",
+      "owns": ["repo census", "topology", "surface inventory", "hidden-directory discovery", "subrepo candidate discovery", "coverage gaps", "frontier boundaries", "cross-repo adjacency"],
+      "handoff_to": "GEOLOGIST when a surface requires recursive penetration or strata resolution"
+    },
+    "GEOLOGIST": {
+      "primary_axis": "depth",
+      "mission": "penetrate repository strata and resolve what lies beneath root-level visibility",
+      "owns": ["recursive tree census", "nested hidden folders", "nested manifests", "submodules", "workspaces", "embedded projects", "entrypoint-to-output traces", "dependency strata", "runtime-path depth questions"],
+      "handoff_to": "RUNNER for execution proof and back to GEOGRAPHER for map updates"
+    },
+    "RUNNER": {
+      "primary_axis": "runtime",
+      "mission": "convert mapped and penetrated paths into observed >0-step evidence",
+      "owns": ["runtime receipts", "repeatability", "integration execution", "failure paths", "CONTROL runtime"]
+    }
+  },
   "axes": {
     "breadth": {
       "B0": "unknown/unseen repository",
@@ -35,15 +72,15 @@
   },
   "nested_surface_rules": [
     "dot-prefixed directories are first-class surfaces, not ignored noise",
-    "detect .gitmodules, nested package manifests, workspace files, Dockerfiles, devcontainers, workflows, scripts, tests, docs, examples and generated folders",
-    "a nested package or embedded project receives its own P/R state when it has an independent manifest, workflow, build, runtime or authority boundary",
+    "detect .gitmodules, nested .git boundaries where observable, package manifests, workspace files, Dockerfiles, devcontainers, workflows, scripts, tests, docs, examples and generated folders",
+    "a nested package or embedded project receives its own B/P/R state when it has an independent manifest, workflow, build, runtime or authority boundary",
     "large upstream repositories may be breadth-covered while intentionally shallow-penetrated until value justifies deeper traversal",
     "P4+ requires recursive structure evidence rather than README inference",
     "P6+ requires traced execution evidence; source reading alone cannot satisfy runtime depth"
   ],
   "reporting_contract": {
-    "per_repo": ["breadth_level", "penetration_level", "runtime_level", "max_tree_depth_observed", "hidden_dirs_seen", "nested_project_boundaries", "submodule_state", "workflow_count_or_surface", "runtime_paths_proven", "coverage_gaps", "next_depth_action"],
-    "fleet": ["repo_breadth_fraction", "P0_to_P8_histogram", "R0_to_R7_histogram", "weighted_depth_score", "hidden_surface_coverage", "nested_boundary_coverage", "runtime_coverage", "control_coverage"]
+    "per_repo": ["breadth_level", "breadth_fraction_b", "penetration_level", "depth_fraction_d", "Pen_bxd", "runtime_level", "max_tree_depth_observed", "hidden_dirs_seen", "nested_project_boundaries", "submodule_state", "workflow_count_or_surface", "runtime_paths_proven", "coverage_gaps", "next_depth_action"],
+    "fleet": ["repo_breadth_fraction", "P0_to_P8_histogram", "R0_to_R7_histogram", "Pen_distribution", "weighted_Pen", "hidden_surface_coverage", "nested_boundary_coverage", "runtime_coverage", "control_coverage"]
   },
-  "anti_overclaim": "BREADTH_COVERAGE_NEVER_IMPLIES_PENETRATION_OR_RUNTIME_COVERAGE"
+  "anti_overclaim": "BREADTH_COVERAGE_NEVER_IMPLIES_DEPTH_OR_RUNTIME_COVERAGE"
 }
