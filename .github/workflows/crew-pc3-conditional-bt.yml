@@ -1,0 +1,298 @@
+name: MissionControl Crew PC3 Conditional BT
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/pc3/**'
+      - '.github/workflows/crew-pc3-conditional-bt.yml'
+  push:
+    branches:
+      - master
+      - mission/crew-pc3-conditional-bt-v2-20260913
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/pc3/**'
+      - '.github/workflows/crew-pc3-conditional-bt.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  prepare-reuse-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Build deterministic reusable artifact
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: python
+        run: |
+          import json, os
+          from pathlib import Path
+          p=Path('mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed/REUSE_ARTIFACT.json')
+          p.parent.mkdir(parents=True, exist_ok=True)
+          p.write_text(json.dumps({
+              'schema':'missioncontrol.pc3.reuse_seed.v1',
+              'source_sha':os.environ['SOURCE_SHA'],
+              'purpose':'artifact-cache-reuse'
+          },sort_keys=True)+'\n')
+      - name: Upload reusable artifact seed
+        uses: actions/upload-artifact@v4
+        with:
+          name: pc3-reuse-seed-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed/REUSE_ARTIFACT.json
+
+  held-admission-gate:
+    needs: prepare-reuse-artifact
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deliberate bounded admission hold
+        shell: python
+        run: |
+          import time
+          t=time.perf_counter()
+          time.sleep(8.0)
+          print({'status':'PASS_HELD_ADMISSION_GATE','observed_seconds':round(time.perf_counter()-t,3)})
+
+  collect-baseline:
+    name: collect-${{ matrix.habitat }}-baseline
+    needs: prepare-reuse-artifact
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - habitat: linux
+            runner: ubuntu-latest
+          - habitat: windows
+            runner: windows-latest
+          - habitat: macos
+            runner: macos-latest
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Assert exact source head
+        shell: python
+        run: |
+          import subprocess
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert actual==expected,(actual,expected)
+      - name: Validate reusable REX checklist
+        run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
+      - name: Download reusable artifact seed
+        uses: actions/download-artifact@v4
+        with:
+          name: pc3-reuse-seed-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed
+      - name: Execute PC3 baseline cell
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          MC_REUSE_ARTIFACT: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed/REUSE_ARTIFACT.json
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/pc3/run_pc3_tasks.py
+          --habitat ${{ matrix.habitat }}
+          --lane baseline
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/pc3/receipts/${{ matrix.habitat }}-baseline
+      - name: Enforce raw PC3 baseline cell
+        env:
+          HABITAT: ${{ matrix.habitat }}
+        shell: python
+        run: |
+          import json, os, subprocess
+          from pathlib import Path
+          h=os.environ['HABITAT']; cell=f'{h}-baseline'
+          root=Path('mission-control/qps-triage-ultra/crew/measured/frontier/pc3/receipts')/cell
+          actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          rows=[json.loads(p.read_text()) for p in root.glob(f'{cell}__PC3-F*.json')]
+          assert len(rows)==12 and sum(r['pair_id'] is not None for r in rows)==10
+          assert all(r['source_sha']==actual and r['disposition']=='ACCEPT' for r in rows)
+          assert all(r['promotion_allowed'] is False and r['authority_transfer'] is False for r in rows)
+          reuse=[r for r in rows if r['resource_profile']['artifact_reuse']]
+          assert len(reuse)==3 and all(r['measured_resource']['artifact_reused'] for r in reuse)
+          assert all(r['measured_resource']['cache_reused'] for r in reuse)
+          waits=[r for r in rows if r['resource_profile']['human_dependency_wait_seconds']>0]
+          assert len(waits)==3 and all(r['measured_resource']['human_dependency_wait_seconds']>0 for r in waits)
+          contended=[r for r in rows if r['resource_profile']['contention_processes']>0]
+          assert len(contended)==3 and all(r['measured_resource']['contention_processes']==2 for r in contended)
+          print({'status':'PASS_PC3_RAW_CELL','cell':cell,'receipts':len(rows),'source_sha':actual})
+      - name: Upload PC3 baseline receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-pc3-raw-${{ matrix.habitat }}-baseline-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/receipts/${{ matrix.habitat }}-baseline/*.json
+
+  collect-held:
+    name: collect-${{ matrix.habitat }}-held
+    needs: [prepare-reuse-artifact, held-admission-gate]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - habitat: linux
+            runner: ubuntu-latest
+          - habitat: windows
+            runner: windows-latest
+          - habitat: macos
+            runner: macos-latest
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Assert exact source head
+        shell: python
+        run: |
+          import subprocess
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert actual==expected,(actual,expected)
+      - name: Validate reusable REX checklist
+        run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
+      - name: Download reusable artifact seed
+        uses: actions/download-artifact@v4
+        with:
+          name: pc3-reuse-seed-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed
+      - name: Execute PC3 held cell
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          MC_REUSE_ARTIFACT: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed/REUSE_ARTIFACT.json
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/pc3/run_pc3_tasks.py
+          --habitat ${{ matrix.habitat }}
+          --lane held
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/pc3/receipts/${{ matrix.habitat }}-held
+      - name: Enforce raw PC3 held cell
+        env:
+          HABITAT: ${{ matrix.habitat }}
+        shell: python
+        run: |
+          import json, os, subprocess
+          from pathlib import Path
+          h=os.environ['HABITAT']; cell=f'{h}-held'
+          root=Path('mission-control/qps-triage-ultra/crew/measured/frontier/pc3/receipts')/cell
+          actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          rows=[json.loads(p.read_text()) for p in root.glob(f'{cell}__PC3-F*.json')]
+          assert len(rows)==12 and sum(r['pair_id'] is not None for r in rows)==10
+          assert all(r['source_sha']==actual and r['disposition']=='ACCEPT' for r in rows)
+          assert all(r['promotion_allowed'] is False and r['authority_transfer'] is False for r in rows)
+          reuse=[r for r in rows if r['resource_profile']['artifact_reuse']]
+          assert len(reuse)==3 and all(r['measured_resource']['artifact_reused'] for r in reuse)
+          assert all(r['measured_resource']['cache_reused'] for r in reuse)
+          waits=[r for r in rows if r['resource_profile']['human_dependency_wait_seconds']>0]
+          assert len(waits)==3 and all(r['measured_resource']['human_dependency_wait_seconds']>0 for r in waits)
+          contended=[r for r in rows if r['resource_profile']['contention_processes']>0]
+          assert len(contended)==3 and all(r['measured_resource']['contention_processes']==2 for r in contended)
+          print({'status':'PASS_PC3_RAW_CELL','cell':cell,'receipts':len(rows),'source_sha':actual})
+      - name: Upload PC3 held receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-pc3-raw-${{ matrix.habitat }}-held-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/receipts/${{ matrix.habitat }}-held/*.json
+
+  analyze-pc3-conditional-bt:
+    needs: [collect-baseline, collect-held]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Download all six PC3 cell receipt sets
+        uses: actions/download-artifact@v4
+        with:
+          pattern: crew-pc3-raw-*-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/aggregate
+          merge-multiple: true
+      - name: Collect observed admission and runner telemetry
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/pc3/collect_pc3_queue_telemetry.py
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_ADMISSION_TELEMETRY.json
+      - name: Analyze PC3 and conditional BT
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/pc3/analyze_pc3_frontier.py
+          --input-root mission-control/qps-triage-ultra/crew/measured/frontier/pc3/aggregate
+          --admission-telemetry mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_ADMISSION_TELEMETRY.json
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_CONDITIONAL_BT_RECEIPT.json
+      - name: Scan latent component migration
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/pc3/scan_component_migration.py
+          --analysis mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_CONDITIONAL_BT_RECEIPT.json
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_COMPONENT_MIGRATION.json
+      - name: Enforce PC3 + conditional BT DoV
+        shell: python
+        run: |
+          import json, subprocess
+          from pathlib import Path
+          root=Path('mission-control/qps-triage-ultra/crew/measured/frontier/pc3')
+          r=json.loads((root/'PC3_CONDITIONAL_BT_RECEIPT.json').read_text())
+          migration=json.loads((root/'PC3_COMPONENT_MIGRATION.json').read_text())
+          actual=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert r['source_sha']==actual and migration['source_sha']==actual
+          assert r['task_receipts']==72 and r['accepted']==72 and r['rejected']==0
+          assert len(r['cells'])==6
+          assert r['pca']['status']=='READY_MEASURED_PC3'
+          assert len(r['pca']['components'])>=3 and r['pca']['feature_count']>=10
+          assert r['pca']['pc3_pressure_hypothesis']['status'] in {'SUPPORTED','MIXED','NOT_SUPPORTED'}
+          assert migration['pressure_disposition'] in {'DETECTED_PC1_NOT_PC3','DETECTED_PC2_NOT_PC3','DETECTED_PC3','DETECTED_PC4_NOT_PC3','DETECTED_PC5_NOT_PC3','NO_DOMINANT_PRESSURE_COMPONENT_PC1_PC5'}
+          assert migration['authority_transfer'] is False and migration['competency_promotions']==0
+          assert r['bt_global']['status']=='READY_OBSERVED' and r['bt_global']['observed_pairs']==30
+          assert len(r['bt_conditional_by_task_class'])==5
+          assert all(v['status']=='READY_CONDITIONAL_OBSERVED' and v['observed_pairs']==6 for v in r['bt_conditional_by_task_class'].values())
+          assert all(all(e['comparable'] for e in v['edges']) for v in r['bt_conditional_by_task_class'].values())
+          assert r['rex']['persistent_or_regression_count']==0
+          assert r['competency_promotions']==0 and r['authority_transfer'] is False
+          print(json.dumps({
+              'status':'PASS_CREW_PC3_CONDITIONAL_BT_DOV',
+              'source_sha':actual,
+              'task_receipts':r['task_receipts'],
+              'feature_count':r['pca']['feature_count'],
+              'pc1_explained':r['pca']['components'][0]['explained_variance_ratio'],
+              'pc2_explained':r['pca']['components'][1]['explained_variance_ratio'],
+              'pc3_explained':r['pca']['components'][2]['explained_variance_ratio'],
+              'pc3_hypothesis':r['pca']['pc3_pressure_hypothesis'],
+              'component_migration':migration['axes'],
+              'pressure_disposition':migration['pressure_disposition'],
+              'conditional_bt_classes':{k:{'pairs':v['observed_pairs'],'nodes':v['nodes']} for k,v in r['bt_conditional_by_task_class'].items()},
+              'competency_promotions':0
+          },sort_keys=True))
+      - name: Upload PC3 analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-pc3-conditional-bt-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_ADMISSION_TELEMETRY.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_CONDITIONAL_BT_RECEIPT.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/pc3/PC3_COMPONENT_MIGRATION.json
+            mission-control/qps-triage-ultra/crew/measured/frontier/pc3/aggregate/*.json
