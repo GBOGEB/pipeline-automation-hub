@@ -30,17 +30,17 @@ jobs:
           echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
           git rev-parse HEAD
 
-      - name: Checkout F01 exact source
-        uses: actions/checkout@v4
-        with:
-          repository: GBOGEB/DOCX_RTM_Automation
-          ref: d85dc2de1b4beb88bc8e8ce4796784f4577f9a96
-          path: f01
-          persist-credentials: false
+      - name: Fetch F01 exact source without submodule traversal
+        run: |
+          mkdir f01
+          git -C f01 init
+          git -C f01 remote add origin https://github.com/GBOGEB/DOCX_RTM_Automation.git
+          git -C f01 fetch --depth=1 origin d85dc2de1b4beb88bc8e8ce4796784f4577f9a96
+          git -C f01 checkout --detach FETCH_HEAD
+          test "$(git -C f01 rev-parse HEAD)" = "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96"
 
       - name: Verify and execute F01 bounded self-index
         run: |
-          test "$(git -C f01 rev-parse HEAD)" = "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96"
           python3 f01/scripts/mip_repo_self_index.py --output "$RUNNER_TEMP/f01-self-index.json"
           python3 - <<'PY'
           import json, os
@@ -52,17 +52,17 @@ jobs:
           print('PASS_F01_EXACT_SHA_GT0_SELF_INDEX')
           PY
 
-      - name: Checkout F02 exact source
-        uses: actions/checkout@v4
-        with:
-          repository: GBOGEB/attest-build-provenance
-          ref: 10334b5f1e684784025c3fc0a277c88c19089275
-          path: f02
-          persist-credentials: false
+      - name: Fetch F02 exact source
+        run: |
+          mkdir f02
+          git -C f02 init
+          git -C f02 remote add origin https://github.com/GBOGEB/attest-build-provenance.git
+          git -C f02 fetch --depth=1 origin 10334b5f1e684784025c3fc0a277c88c19089275
+          git -C f02 checkout --detach FETCH_HEAD
+          test "$(git -C f02 rev-parse HEAD)" = "10334b5f1e684784025c3fc0a277c88c19089275"
 
       - name: Verify F02 exact source and contract boundary
         run: |
-          test "$(git -C f02 rev-parse HEAD)" = "10334b5f1e684784025c3fc0a277c88c19089275"
           grep -F 'using: "composite"' f02/action.yml
           grep -F 'uses: actions/attest@' f02/action.yml
           grep -F 'wrapper' f02/README.md
