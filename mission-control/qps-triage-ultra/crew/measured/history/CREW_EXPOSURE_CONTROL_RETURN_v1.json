@@ -1,0 +1,83 @@
+{
+  "schema": "missioncontrol.crew_exposure_control_return.v1",
+  "status": "CONTROL_ACCEPTED_REPEAT",
+  "mission_id": "MC-CREW-MEASURE-001",
+  "authority_transfer": false,
+  "child_binding": false,
+  "frontier_binding": false,
+  "competency_promotions": 0,
+  "repeat_gate": {
+    "required_distinct_runs": 2,
+    "required_distinct_source_shas": 2,
+    "observed_distinct_runs": 2,
+    "observed_distinct_source_shas": 2,
+    "assignments_per_run": 4,
+    "all_assignments_predeclared": true,
+    "all_assignments_accepted": true,
+    "all_exposure_identities_valid": true,
+    "no_canary_rows": true,
+    "no_estimated_or_post_hoc_time": true,
+    "authority_transfer": false
+  },
+  "feature_eligibility": {
+    "status": "CONTROLLED_OPTIONAL_FEATURES",
+    "eligible_for_allocation_features": true,
+    "eligible_for_pca_candidate_features": true,
+    "eligible_for_bt_outcome": false,
+    "pca_readiness_rule": "feature eligibility does not imply PCA readiness; measured variance and existing PCA gates still apply",
+    "features": [
+      "mean_waiting_seconds",
+      "mean_active_seconds",
+      "mean_release_seconds",
+      "mean_exposure_seconds"
+    ]
+  },
+  "evidence_runs": [
+    {
+      "evidence_class": "PR_EXACT_HEAD",
+      "source_sha": "de598441058d880824905a4b0154456298068010",
+      "run_id": "34773315848",
+      "job_id": "103766769917",
+      "artifact": {
+        "id": "10322318595",
+        "digest": "sha256:03380bb80b75d8cf7a58c58f507a70eab86fc6fa2dc4c196876aa42eab7e7967"
+      },
+      "totals": {
+        "waiting_seconds": 0.000091,
+        "active_seconds": 0.119383,
+        "release_seconds": 0.000917,
+        "exposure_seconds": 0.120391,
+        "runtime_execute_seconds": 0.119357
+      },
+      "assignments": [
+        {"assignment_id":"A001","task_id":"T001-CREW-STRUCTURE-VERIFY","crew_id":"U06","waiting_seconds":0.000037,"active_seconds":0.029448,"release_seconds":0.000229,"exposure_seconds":0.029714,"runtime_execute_seconds":0.029440,"outcome":"ACCEPT"},
+        {"assignment_id":"A002","task_id":"T002-CREW-TELEMETRY-VERIFY","crew_id":"U04","waiting_seconds":0.000019,"active_seconds":0.028780,"release_seconds":0.000190,"exposure_seconds":0.028989,"runtime_execute_seconds":0.028774,"outcome":"ACCEPT"},
+        {"assignment_id":"A003","task_id":"T003-ROLE-GAP-MEASURE","crew_id":"U05","waiting_seconds":0.000017,"active_seconds":0.033623,"release_seconds":0.000232,"exposure_seconds":0.033872,"runtime_execute_seconds":0.033617,"outcome":"ACCEPT"},
+        {"assignment_id":"A004","task_id":"T004-REX-REUSE-VERIFY","crew_id":"U08","waiting_seconds":0.000018,"active_seconds":0.027532,"release_seconds":0.000266,"exposure_seconds":0.027816,"runtime_execute_seconds":0.027526,"outcome":"ACCEPT"}
+      ]
+    },
+    {
+      "evidence_class": "MERGED_MASTER",
+      "source_sha": "ad601641d0174325b022a102877132de5d3cb302",
+      "run_id": "34773345704",
+      "job_id": "103766850761",
+      "artifact": {
+        "id": "10322737009",
+        "digest": "sha256:e244212a8947f2aff307821f220ee12c2715f161b1dfe6003f97a635c84debc0"
+      },
+      "totals": {
+        "waiting_seconds": 0.000067,
+        "active_seconds": 0.084936,
+        "release_seconds": 0.000589,
+        "exposure_seconds": 0.085592,
+        "runtime_execute_seconds": 0.084917
+      },
+      "assignments": [
+        {"assignment_id":"A001","task_id":"T001-CREW-STRUCTURE-VERIFY","crew_id":"U06","waiting_seconds":0.000033,"active_seconds":0.021467,"release_seconds":0.000147,"exposure_seconds":0.021647,"runtime_execute_seconds":0.021460,"outcome":"ACCEPT"},
+        {"assignment_id":"A002","task_id":"T002-CREW-TELEMETRY-VERIFY","crew_id":"U04","waiting_seconds":0.000012,"active_seconds":0.019423,"release_seconds":0.000102,"exposure_seconds":0.019537,"runtime_execute_seconds":0.019420,"outcome":"ACCEPT"},
+        {"assignment_id":"A003","task_id":"T003-ROLE-GAP-MEASURE","crew_id":"U05","waiting_seconds":0.000011,"active_seconds":0.023362,"release_seconds":0.000126,"exposure_seconds":0.023499,"runtime_execute_seconds":0.023358,"outcome":"ACCEPT"},
+        {"assignment_id":"A004","task_id":"T004-REX-REUSE-VERIFY","crew_id":"U08","waiting_seconds":0.000011,"active_seconds":0.020684,"release_seconds":0.000214,"exposure_seconds":0.020909,"runtime_execute_seconds":0.020679,"outcome":"ACCEPT"}
+      ]
+    }
+  ]
+}
