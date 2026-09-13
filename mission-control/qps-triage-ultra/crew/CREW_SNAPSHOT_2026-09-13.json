@@ -1,0 +1,125 @@
+{
+  "schema": "missioncontrol.crew.snapshot.v1",
+  "observed_at": "2026-09-13T17:12:00+02:00",
+  "registry_head": "1222e6f992c7fa1777261e7ebf8b8a90cad0dbb6",
+  "authority_transfer": false,
+  "snapshot_class": "MIXED_OBSERVED_AND_EXPERT_SEEDED",
+  "fleet_population": {
+    "permanent_home_seats": 8,
+    "observed_or_partial_specialists": 7,
+    "conceptual_candidates": 8,
+    "total_registered_records": 23
+  },
+  "live_observations": [
+    {
+      "event_id": "CT-20260913-001",
+      "crew_id": "S03",
+      "mission_id": "MC-CREW-01",
+      "task_id": "PR42_CREW_CAPABILITY_VALIDATION",
+      "event_type": "QUEUE",
+      "state": "BLOCKED",
+      "evidence_class": "OBSERVED",
+      "run_id": "34761293883",
+      "job_id": "103734479024",
+      "runner_id": null,
+      "steps_executed": 0,
+      "source_sha": "1222e6f992c7fa1777261e7ebf8b8a90cad0dbb6",
+      "rex_ids": ["REX-006"],
+      "interpretation": "Dockmaster first-red: workflow exists but no runtime competence or PASS may be claimed until a runner executes >0 steps."
+    },
+    {
+      "event_id": "CT-20260913-002",
+      "crew_id": "U06",
+      "mission_id": "MC-CREW-01",
+      "task_id": "PR42_CREW_CAPABILITY_VALIDATION",
+      "event_type": "DEFER",
+      "state": "BLOCKED",
+      "evidence_class": "OBSERVED",
+      "source_sha": "1222e6f992c7fa1777261e7ebf8b8a90cad0dbb6",
+      "rex_ids": ["REX-005", "REX-006"],
+      "interpretation": "QA attestation remains withheld because the exact-head validator has not executed."
+    },
+    {
+      "event_id": "CT-20260913-003",
+      "crew_id": "U08",
+      "mission_id": "MC-CREW-01",
+      "task_id": "PR42_CREW_CAPABILITY_VALIDATION",
+      "event_type": "REX_LEARNED",
+      "state": "CONTROL",
+      "evidence_class": "OBSERVED",
+      "source_sha": "1222e6f992c7fa1777261e7ebf8b8a90cad0dbb6",
+      "rex_ids": ["REX-006"],
+      "interpretation": "The new crew system immediately reuses the existing zero-step lesson rather than declaring a false green."
+    }
+  ],
+  "competency_promotion": {
+    "promotions_this_snapshot": 0,
+    "reason": "No accepted new runtime receipt exists for the crew capability system.",
+    "rule": "Observed queue/block state changes workload knowledge, not competency level."
+  },
+  "initial_role_gap_assessments": [
+    {
+      "candidate": "C01_SCOUT",
+      "evidence_class": "EXPERT_SEEDED",
+      "decision": "WATCH_OR_SECOND",
+      "preferred_existing_hosts": ["U07_CARTOGRAPHER_OCULARS", "U02_CHIEF_ARCHITECT"],
+      "reason": "Discovery is needed, but current evidence does not yet prove a permanent independent Scout authority or workload."
+    },
+    {
+      "candidate": "C02_READER",
+      "evidence_class": "EXPERT_SEEDED",
+      "decision": "WATCH_OR_SECOND",
+      "preferred_existing_hosts": ["U08_REX_KEB_INTEGRATOR", "U02_CHIEF_ARCHITECT", "S06_TM_KEB"],
+      "reason": "Deep reading is already embedded in semantic, architecture and KEB roles; measure recurring dedicated load before separation."
+    },
+    {
+      "candidate": "C03_TARGETER",
+      "evidence_class": "EXPERT_SEEDED",
+      "decision": "REUSE_TRAIN_TOOL_OR_PRUNE",
+      "preferred_existing_hosts": ["U03_PM_DOW", "U05_ANALYST"],
+      "reason": "Target selection is already jointly represented by sequencing plus PCA/BT; avoid duplicate authority."
+    },
+    {
+      "candidate": "C04_BUILDER_REPAIRER",
+      "evidence_class": "EXPERT_SEEDED",
+      "decision": "REUSE_TRAIN_TOOL_OR_PRUNE",
+      "preferred_existing_hosts": ["S02_DOCTOR", "S05_ENGINEER"],
+      "reason": "Strong role overlap; treat Builder and Repairer as competencies unless observed mission demand proves a separate operating cell."
+    },
+    {
+      "candidate": "C05_INTEGRATOR_FEDERATOR",
+      "evidence_class": "EXPERT_SEEDED",
+      "decision": "TRIAL_CANDIDATE",
+      "preferred_existing_hosts": ["U04_FLEET_ORCHESTRATOR", "U06_QA_SIGNALMAN"],
+      "reason": "Cross-repository independent-consumer and federation work can create a distinct boundary; trial must prove recurring workload without stealing child/KEB/DOW authority."
+    },
+    {
+      "candidate": "C06_OPERATOR",
+      "evidence_class": "EXPERT_SEEDED",
+      "decision": "WATCH_OR_SECOND",
+      "preferred_existing_hosts": ["U04_FLEET_ORCHESTRATOR", "S03_DOCKMASTER", "S07_LICENSED_LOCAL_RUNTIME_OPERATOR"],
+      "reason": "Operational work exists but is currently habitat-specific or orchestration-bound; measure post-CONTROL recurrence first."
+    },
+    {
+      "candidate": "C07_PERFORMANCE_SPECIALIST",
+      "evidence_class": "EXPERT_SEEDED",
+      "decision": "WATCH_OR_SECOND",
+      "preferred_existing_hosts": ["U05_ANALYST", "U04_FLEET_ORCHESTRATOR"],
+      "reason": "Queue/execute optimization is a real need, but the current runtime-lane scheduler is still a BD0 competency expansion rather than proof of a new permanent role."
+    },
+    {
+      "candidate": "C08_INDEPENDENT_VERIFIER",
+      "evidence_class": "EXPERT_SEEDED",
+      "decision": "TRIAL_CANDIDATE",
+      "preferred_existing_hosts": ["U06_QA_SIGNALMAN"],
+      "reason": "Non-origin independent verification may require separation from QA that built or routed the proof; trial only where independence is materially required."
+    }
+  ],
+  "next_evidence_targets": [
+    "MC-CREW-01 runner assignment and >0-step validator receipt",
+    "first accepted telemetry event with queue and execute timings",
+    "first mission feedback record that changes a crew assignment",
+    "first role trial plan for C05 or C08 only if a real mission need activates it",
+    "no conceptual-role promotion from this seed snapshot"
+  ]
+}
