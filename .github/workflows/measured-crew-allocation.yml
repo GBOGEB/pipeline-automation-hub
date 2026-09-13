@@ -69,7 +69,20 @@ jobs:
           assert alloc['competency_promotions'] == 0
           assert alloc['authority_transfer'] is False
           assert alloc['pca']['status'] != 'READY' or alloc['pca']['varying_features'] >= 2
-          assert alloc['bt']['status'] == 'DEFER_INSUFFICIENT_OBSERVED_PAIRS'
+          frontier=alloc['frontier_pca']
+          assert frontier['status'] == 'CONTROL_READY_MEASURED_REPEAT'
+          assert frontier['repeat_runs'] >= 2
+          assert frontier['distinct_source_shas'] >= 2
+          assert frontier['feature_count'] >= 2
+          assert len(frontier['components']) >= 2
+          assert frontier['max_abs_explained_delta'] < 0.02
+          assert frontier['rex_persistent_or_regression_total'] == 0
+          assert alloc['bt']['status'] == 'READY_OBSERVED'
+          assert alloc['bt']['observed_pairs'] == 12
+          assert len(alloc['bt']['nodes']) == 2
+          nodes={n['strategy']:n for n in alloc['bt']['nodes']}
+          assert nodes['ALLOC_SINGLE_CELL']['wins'] == 8.0
+          assert nodes['ALLOC_PAIRED_CELL']['wins'] == 4.0
           for p in root.joinpath('receipts').glob('T*.json'):
               r=json.loads(p.read_text())
               assert r['attribution_basis']=='PREDECLARED_ASSIGNMENT'
@@ -79,13 +92,14 @@ jobs:
               assert r['promotion_allowed'] is False
               assert r['rex_preflight']['checklist_version']=='missioncontrol.rex.reuse_checklist.v1'
           print(json.dumps({
-              'status':'PASS_MEASURED_CREW_ALLOCATION_GATE',
+              'status':'PASS_MEASURED_CREW_ALLOCATION_WITH_FRONTIER_CONTROL',
               'exact_source_sha':actual,
               'allocation_rows':len(alloc['rows']),
               'allocation_eligible_rows':alloc['allocation_eligible_rows'],
               'returned_run_count':alloc['returned_run_count'],
               'competency_promotions':0,
-              'pca':alloc['pca'],
+              'crew_row_pca':alloc['pca'],
+              'frontier_pca':alloc['frontier_pca'],
               'bt':alloc['bt']
           },sort_keys=True))
           PY
