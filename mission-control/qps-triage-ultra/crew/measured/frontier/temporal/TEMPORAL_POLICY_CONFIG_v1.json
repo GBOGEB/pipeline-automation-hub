@@ -1,0 +1,78 @@
+{
+  "schema": "missioncontrol.temporal_allocation_policy_config.v1",
+  "mission_id": "MC-CREW-FRONTIER-004",
+  "status": "PREDECLARED_TEMPORAL_POLICY_LEARNING",
+  "authority_transfer": false,
+  "competency_promotion_allowed": false,
+  "task_classes": [
+    "short_compute",
+    "long_compute_contended",
+    "validation_bundle",
+    "cache_artifact_reuse",
+    "human_dependency_wait_proxy"
+  ],
+  "strategies": ["ALLOC_SINGLE_CELL", "ALLOC_PAIRED_CELL"],
+  "window_contract": {
+    "independent_window_key": "workflow_run_id",
+    "rerun_attempts_do_not_create_new_independent_windows": true,
+    "distinct_sha_is_tracked_separately_from_distinct_window": true,
+    "exact_sha_required": true,
+    "all_six_hosted_cells_required": true,
+    "conditional_bt_pairs_per_class_required": 6,
+    "persistent_or_regression_rex_veto": true
+  },
+  "direction_contract": {
+    "single_if_normalized_strength_gte": 0.55,
+    "paired_if_normalized_strength_lte": 0.45,
+    "otherwise": "INDETERMINATE",
+    "note": "Direction is assessed from ALLOC_SINGLE_CELL normalized BT strength; 0.45-0.55 is deliberately non-directional."
+  },
+  "recommend_repeat_stable_gate": {
+    "min_independent_windows": 3,
+    "min_distinct_source_shas": 2,
+    "min_temporal_span_seconds": 3600,
+    "min_directional_windows": 3,
+    "min_direction_consistency": 0.8,
+    "min_pooled_winner_strength": 0.65,
+    "latest_two_directional_windows_must_agree": true
+  },
+  "control_policy_gate": {
+    "min_independent_windows": 6,
+    "min_distinct_source_shas": 3,
+    "min_temporal_span_seconds": 86400,
+    "min_directional_windows": 5,
+    "min_direction_consistency": 0.8,
+    "min_pooled_winner_strength": 0.7,
+    "latest_two_directional_windows_must_agree": true,
+    "min_hosted_runner_classes": 3,
+    "requires_baseline_and_held_lanes": true
+  },
+  "natural_scarcity_extension": {
+    "eligible_measurements": [
+      "baseline admission_proxy_seconds_from_run_creation",
+      "held post_gate_admission_seconds"
+    ],
+    "exclude_designed_held_gate_from_scarcity_claim": true,
+    "scarcity_threshold_seconds": 30.0,
+    "status_when_seen": "SCARCITY_OBSERVED",
+    "status_when_not_seen": "SCARCITY_UNPROVEN"
+  },
+  "constrained_runner_extension": {
+    "mode": "OPTIONAL_DECLARED_LABELS_ONLY",
+    "repository_variable": "MC_CONSTRAINED_RUNNER_LABELS_JSON",
+    "required_first_label": "self-hosted",
+    "absence_status": "DEFERRED_NO_DECLARED_CONSTRAINED_RUNNER",
+    "forbidden": [
+      "fabricated_self_hosted_availability",
+      "fallback_to_github_hosted_relabelled_as_self_hosted",
+      "queue_delay_relabelled_as_human_wait"
+    ]
+  },
+  "policy_outputs": {
+    "learning": "LEARNING",
+    "repeat_stable": "RECOMMEND_REPEAT_STABLE",
+    "control": "CONTROL_POLICY",
+    "veto": "VETO_REX",
+    "unstable": "LEARNING_DIRECTION_UNSTABLE"
+  }
+}
