@@ -1,0 +1,63 @@
+{
+  "schema": "missioncontrol.measured_task_manifest.v1",
+  "status": "PILOT_PREDECLARED",
+  "authority_transfer": false,
+  "mission_id": "MC-CREW-MEASURE-001",
+  "mission_objective": "Produce the first attributed Mission-to-Crew-to-Task-to-Runtime-to-Receipt observations without promoting competence from a single run.",
+  "assignment_rule": "Assignments are declared in this committed manifest before runtime. Post-hoc attribution is forbidden.",
+  "rex_checklist_ref": "REX_REUSE_CHECKLIST_v1.json",
+  "tasks": [
+    {
+      "assignment_id": "A001",
+      "task_id": "T001-CREW-STRUCTURE-VERIFY",
+      "crew_id": "U06",
+      "crew_role_at_assignment": "QA_SIGNALMAN_VERIFIER",
+      "task_type": "VERIFY",
+      "competency_dimension": "evidence_provenance",
+      "predeclared_task_level": 4,
+      "command": ["python", "mission-control/qps-triage-ultra/crew/validate_crew_system.py"],
+      "applicable_rex_ids": ["REX-001", "REX-002", "REX-005", "REX-006"],
+      "accept_condition": "exit_code == 0 and stdout contains PASS_CREW_SYSTEM",
+      "promotion_allowed": false
+    },
+    {
+      "assignment_id": "A002",
+      "task_id": "T002-CREW-TELEMETRY-VERIFY",
+      "crew_id": "U04",
+      "crew_role_at_assignment": "FLEET_ORCHESTRATOR",
+      "task_type": "EXECUTE",
+      "competency_dimension": "runtime_execution",
+      "predeclared_task_level": 4,
+      "command": ["python", "mission-control/qps-triage-ultra/crew/validate_crew_telemetry.py"],
+      "applicable_rex_ids": ["REX-004", "REX-005", "REX-006"],
+      "accept_condition": "exit_code == 0 and stdout contains PASS_CREW_TELEMETRY_STRUCTURE",
+      "promotion_allowed": false
+    },
+    {
+      "assignment_id": "A003",
+      "task_id": "T003-ROLE-GAP-MEASURE",
+      "crew_id": "U05",
+      "crew_role_at_assignment": "ANALYST_DMAIC_PCA_BT",
+      "task_type": "MEASURE",
+      "competency_dimension": "analysis_pca_bt",
+      "predeclared_task_level": 4,
+      "command": ["python", "mission-control/qps-triage-ultra/crew/score_role_gaps.py", "--policy", "mission-control/qps-triage-ultra/crew/ROLE_GAP_POLICY_v1.json", "--signals", "mission-control/qps-triage-ultra/crew/ROLE_GAP_SIGNALS_SEED_2026-09-13.json"],
+      "applicable_rex_ids": ["REX-005"],
+      "accept_condition": "exit_code == 0 and stdout contains missioncontrol.crew.role_gap_score_receipt.v1",
+      "promotion_allowed": false
+    },
+    {
+      "assignment_id": "A004",
+      "task_id": "T004-REX-REUSE-VERIFY",
+      "crew_id": "U08",
+      "crew_role_at_assignment": "REX_KEB_INTEGRATOR",
+      "task_type": "REX",
+      "competency_dimension": "rex_learning",
+      "predeclared_task_level": 4,
+      "command": ["python", "mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py"],
+      "applicable_rex_ids": ["REX-001", "REX-002", "REX-003", "REX-004", "REX-005", "REX-006"],
+      "accept_condition": "exit_code == 0 and stdout contains PASS_REX_REUSE_CHECKLIST",
+      "promotion_allowed": false
+    }
+  ]
+}
