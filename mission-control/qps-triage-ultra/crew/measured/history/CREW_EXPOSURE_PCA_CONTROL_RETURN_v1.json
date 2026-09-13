@@ -1,0 +1,129 @@
+{
+  "schema": "missioncontrol.crew_exposure_pca_control_return.v1",
+  "status": "CONTROL_READY_MEASURED_REPEAT_SMALL_N",
+  "mission_id": "MC-CREW-MEASURE-001",
+  "model_scope": "CREW_ROW_ALLOCATION_WITH_CONTROLLED_EXPOSURE",
+  "authority_transfer": false,
+  "competency_promotions": 0,
+  "causal_interpretation_allowed": false,
+  "small_n": true,
+  "sample_rank_cap": 3,
+  "fleet_invariant": {
+    "gm_iv_reconnaissance": "2/8",
+    "gm_iv_canonical_children": 0,
+    "f03_bound": false,
+    "f04_bound": false,
+    "gm_v_state": "HELD"
+  },
+  "repeat_gate": {
+    "exact_head_pass": true,
+    "merged_master_pass": true,
+    "same_model_scope": true,
+    "same_features_used": true,
+    "same_rank_cap": true,
+    "same_component_count": 3,
+    "frontier_pca_control_preserved": true,
+    "bt_control_preserved": true,
+    "bt_observed_pairs": 12,
+    "bt_single_cell_wins": 8.0,
+    "bt_paired_cell_wins": 4.0
+  },
+  "features_used": [
+    "mean_execute_seconds",
+    "mean_waiting_seconds",
+    "mean_active_seconds",
+    "mean_release_seconds",
+    "mean_exposure_seconds"
+  ],
+  "evidence_runs": [
+    {
+      "evidence_class": "PR_EXACT_HEAD",
+      "source_sha": "4611bb619ab590df6ed9aaf43f67f05170e325cf",
+      "run_id": "34773679611",
+      "job_id": "103767752847",
+      "artifact": {
+        "id": "10322936979",
+        "digest": "sha256:b66ab49791af2141908e9cc58c5269f78ecbb3651ad1c42e1d99bf29129a2946"
+      },
+      "components": [
+        {
+          "component": "PC1",
+          "explained_variance_ratio": 0.656788,
+          "interpretation": "EXECUTION_ACTIVE_EXPOSURE_MAGNITUDE",
+          "dominant_features": ["mean_execute_seconds", "mean_active_seconds", "mean_exposure_seconds"]
+        },
+        {
+          "component": "PC2",
+          "explained_variance_ratio": 0.206443,
+          "interpretation": "QUEUE_WAIT_PRESSURE",
+          "dominant_features": ["mean_waiting_seconds", "mean_release_seconds", "mean_exposure_seconds"]
+        },
+        {
+          "component": "PC3",
+          "explained_variance_ratio": 0.136769,
+          "interpretation": "RELEASE_HANDOFF_OVERHEAD",
+          "dominant_features": ["mean_release_seconds", "mean_waiting_seconds", "mean_exposure_seconds"]
+        }
+      ]
+    },
+    {
+      "evidence_class": "MERGED_MASTER",
+      "source_sha": "c62ade05ccac8782a89ad8f40efe58d750abfed0",
+      "run_id": "34773738858",
+      "job_id": "103767915596",
+      "artifact": {
+        "id": "10323136223",
+        "digest": "sha256:e175cdcde0c6132a4431c8335282b066353f5f422eea5da514334f275cacb7cb"
+      },
+      "components": [
+        {
+          "component": "PC1",
+          "explained_variance_ratio": 0.6566259018268262,
+          "interpretation": "EXECUTION_ACTIVE_EXPOSURE_MAGNITUDE",
+          "dominant_features": ["mean_execute_seconds", "mean_active_seconds", "mean_exposure_seconds"],
+          "loadings": {
+            "mean_execute_seconds": 0.5456962434707227,
+            "mean_active_seconds": 0.5439307764130531,
+            "mean_exposure_seconds": 0.5425653425170665,
+            "mean_release_seconds": -0.3345645786548104,
+            "mean_waiting_seconds": -0.006656736550497718
+          }
+        },
+        {
+          "component": "PC2",
+          "explained_variance_ratio": 0.20645164159383045,
+          "interpretation": "QUEUE_WAIT_PRESSURE",
+          "dominant_features": ["mean_waiting_seconds", "mean_release_seconds", "mean_exposure_seconds"],
+          "loadings": {
+            "mean_waiting_seconds": 0.9559650529922917,
+            "mean_release_seconds": 0.26772681929689235,
+            "mean_exposure_seconds": 0.08941866912655162,
+            "mean_active_seconds": 0.08004283213755588,
+            "mean_execute_seconds": 0.0071143742978135496
+          }
+        },
+        {
+          "component": "PC3",
+          "explained_variance_ratio": 0.13692245657934335,
+          "interpretation": "RELEASE_HANDOFF_OVERHEAD",
+          "dominant_features": ["mean_release_seconds", "mean_waiting_seconds", "mean_exposure_seconds"],
+          "loadings": {
+            "mean_release_seconds": -0.9032257092659338,
+            "mean_waiting_seconds": 0.28729179360958074,
+            "mean_exposure_seconds": -0.19211604559968992,
+            "mean_execute_seconds": -0.1804117508779585,
+            "mean_active_seconds": -0.17941507354157266
+          }
+        }
+      ]
+    }
+  ],
+  "control_limits": {
+    "component_identity_must_remain_semantically_consistent": true,
+    "sample_rank_cap_must_not_exceed_three_until_row_count_expands": true,
+    "no_competency_promotion_from_pca": true,
+    "no_authority_transfer_from_pca": true,
+    "exposure_is_not_bt_outcome": true,
+    "new_rows_should_expand_sample_before_increasing_interpretive_authority": true
+  }
+}
