@@ -1,0 +1,34 @@
+{
+  "schema": "missioncontrol.parent_child_lineage_contract.v1",
+  "status": "CANDIDATE_CANONICAL_PROTOCOL",
+  "purpose": "make mission, repo, work, crew, evidence and historical lineage explicit and recursively traceable",
+  "entity_types": ["MISSION", "REPO", "SUBREPO", "WORK_PACKAGE", "TASK", "CREW", "EVIDENCE", "COMMIT", "PR", "BRANCH", "REX", "GRAPH_NODE"],
+  "required_node_fields": ["id", "type", "state", "authority", "evidence_class", "observed_at"],
+  "required_edge_fields": ["parent_id", "child_id", "relationship", "observation_class", "source_ref"],
+  "relationship_enum": [
+    "PARENT_OF", "CHILD_OF", "CONTAINS", "DERIVED_FROM", "DEPENDS_ON", "BLOCKS", "IMPLEMENTS", "VERIFIES", "SUPERSEDES", "REVERTS", "MERGES", "BRANCHED_FROM", "PR_FOR", "COMMIT_IN", "EVIDENCE_FOR", "CREW_ASSIGNED_TO", "REX_LEARNED_FROM", "CROSS_FEEDS"
+  ],
+  "rules": [
+    "every child must resolve to at least one parent except declared roots",
+    "parent-child does not imply authority inheritance",
+    "authority inheritance must be explicitly declared and is false by default",
+    "commit and PR lineage preserves exact immutable identifiers",
+    "historical supersession never deletes prior evidence; it marks currency separately",
+    "nested repo/subrepo boundaries receive their own node when manifest workflow runtime or authority is independent",
+    "mission child promotion requires observed evidence and the mission launch gate; scout/read relationships alone never promote",
+    "cross-mission edges route through MissionControl federation"
+  ],
+  "roots": ["MISSIONCONTROL"],
+  "reporting": {
+    "per_node": ["parent_ids", "child_ids", "ancestor_depth", "descendant_count", "authority_source", "lineage_complete", "history_depth"],
+    "per_edge": ["relationship", "source_sha_or_pr", "historian_status", "current_or_superseded"],
+    "mission": ["direct_children", "recursive_children", "unresolved_parentage", "floating_children", "cross_mission_children"]
+  },
+  "historian_binding": {
+    "owner": "HISTORIAN",
+    "reader_invocation": ["commit history", "PR history", "merge ancestry", "issue chronology", "workflow history"],
+    "neuron_handoff": "decompose temporal lineage into nodes and edges",
+    "keb_handoff": "challenge inferred causal edges and authority claims",
+    "h4_handoff": "use recurrence, reversals and lineage complexity as resource-pressure features"
+  }
+}
