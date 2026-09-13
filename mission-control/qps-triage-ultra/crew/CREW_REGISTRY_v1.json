@@ -471,7 +471,7 @@
       "home_base": "MISSIONCONTROL_FLEET",
       "roles": ["OPERATOR", "CONTROL_OPERATOR"],
       "competency_vector": {"discovery": 2, "deep_reading": 3, "architecture": 3, "planning": 3, "build_repair": 2, "runtime_execution": 5, "evidence_provenance": 4, "analysis_pca_bt": 3, "operations_control": 6, "rex_learning": 5, "basis": "TARGET_PROFILE"},
-      "authority": {"build": false, "execute": true, "verify": true, "promote": false, "control": "BOUNDED_AFTER_PROMOTION"},
+      "authority": {"build": false, "execute": true, "verify": true, "promote": false, "control": false},
       "tools_resources": ["health_checks", "telemetry", "incident_log", "control_limits"],
       "active_mission": "NONE_CONCEPTUAL",
       "secondment": null,
