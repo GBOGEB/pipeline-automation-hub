@@ -1,0 +1,25 @@
+{
+  "schema":"qps.mission_city_graph.v1",
+  "nodes":[
+    {"id":"MISSION_CONTROL","type":"control"},
+    {"id":"DOW","type":"home_base"},{"id":"KEB","type":"home_base"},{"id":"QPS","type":"home_base"},{"id":"RUNTIME_DOCK","type":"home_base"},{"id":"QA_POOL","type":"home_base"},{"id":"GOVERNANCE_POOL","type":"home_base"},{"id":"FLEET_POOL","type":"home_base"},
+    {"id":"GM-I","type":"grand_mission"},{"id":"GM-II","type":"grand_mission"},{"id":"GM-III","type":"grand_mission"},{"id":"GM-IV","type":"grand_mission"},{"id":"GM-V","type":"grand_mission"}
+  ],
+  "home_assignments":{
+    "PM":"DOW","TM":"KEB","SCIENTIST":"QPS","DOCKMASTER":"RUNTIME_DOCK","SMOKER":"RUNTIME_DOCK","QA":"QA_POOL","GOVERNOR":"GOVERNANCE_POOL","SCOUT":"FLEET_POOL","AMBASSADOR":"FLEET_POOL","DOCTOR":"FLEET_POOL","ANALYST":"MISSION_CONTROL","ORCHESTRATOR":"MISSION_CONTROL","ENGINEER":"DOW","READER":"KEB"
+  },
+  "secondment_rules":[
+    "MISSION_BORROWS_CREW_FROM_HOME_BASE",
+    "SECONDMENT_REQUIRES_NAMED_MISSION_ROLE_AND_RETURN_TRIGGER",
+    "HOME_BASE_RETAINS_ROLE_IDENTITY_AND_REUSABILITY",
+    "RETURNED_CREW_MAY_BE_RESECONDED_TO_ANOTHER_MISSION",
+    "MISSION_CONTROL_MAY_RERANK_BUT_NOT_SELF_PROMOTE_ENGINEERING_TRUTH"
+  ],
+  "mission_states":{"GM-I":"HOLD_EXTERNAL_OR_HABITAT_GATE","GM-II":"CONTROL","GM-III":"RECON_CONTROL","GM-IV":"HELD","GM-V":"HELD"},
+  "edges":[
+    ["DOW","GM-I","SECOND_PM"],["KEB","GM-I","SECOND_TM"],["RUNTIME_DOCK","GM-I","SECOND_DOCKMASTER"],["QA_POOL","GM-I","SECOND_QA"],
+    ["DOW","GM-II","SECOND_PM_ENGINEER"],["KEB","GM-II","SECOND_TM_READER"],["QA_POOL","GM-II","SECOND_QA"],["FLEET_POOL","GM-II","SECOND_AMBASSADOR"],
+    ["DOW","GM-III","SECOND_PM_ENGINEER"],["KEB","GM-III","SECOND_TM_READER"],["FLEET_POOL","GM-III","SECOND_SCOUT_AMBASSADOR"],["GOVERNANCE_POOL","GM-III","SECOND_GOVERNOR"],
+    ["MISSION_CONTROL","GM-IV","HELD_COMMAND_SKELETON"],["MISSION_CONTROL","GM-V","HELD_COMMAND_SKELETON"]
+  ]
+}
