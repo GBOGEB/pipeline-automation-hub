@@ -1,0 +1,160 @@
+schema: qps-expansion-release-gate/v1
+as_of: 2026-09-13
+home_repo: GBOGEB/pipeline-automation-hub
+home_baseline_sha: 55ce66b04ef6dee9630c1976efa8051fd21d451b
+authority_transfer: false
+
+strategy:
+  doubling_ladder:
+    mission_II:
+      frontier_count: 2
+      proof_objective: FEDERATION
+      state: CONTROL
+    mission_III:
+      frontier_count: 4
+      proof_objective: CLASSIFICATION_AND_ELASTICITY
+      state: CONTROLLED_RECON
+    mission_IV:
+      frontier_count: 8
+      proof_objective: SCALABLE_PARALLEL_ORCHESTRATION
+      state: HELD
+    mission_V:
+      frontier_count: 16
+      codename: CLOUD16
+      proof_objective: FLEET_LEVEL_CONTROL
+      state: HELD
+
+current_gate:
+  w3_denominator: 16
+  w3_strict_passed: 15
+  w3_progress: 0.9375
+  w3_dov: WITHHELD
+  sole_blocker: W3-12
+  blocker_class: EXTERNAL_LOCAL_LICENSED_EXECUTION
+  required_evidence: EXACT_LICENSED_HEPAK_NUMERIC_RECEIPT
+  local_execution_card:
+    repo: GBOGEB/cryoplant-project
+    pr: 990
+    merge_sha: 59254d0233b795fbe26e3348d287761a83701372
+    path: controls/W3_12_HEPAK_LOCAL_EXECUTION_CARD.md
+
+w3_12_victory_chain:
+  - id: H1
+    required: LICENSED_HEPAK_RECEIPT
+    predicate: exact_eight_state_csv_and_manifest_from_windows_excel_hepak_runtime
+  - id: H2
+    required: QA_BINDING
+    predicate: csv_manifest_workbook_identity_and_hashes_validate_without_fallback_or_manual_substitution
+  - id: H3
+    required: GOVERNED_ADAPTER
+    predicate: adapter_consumes_only_validated_return_and_preserves_authority_boundary
+  - id: H4
+    required: INDEPENDENT_CONSUMER
+    predicate: non_origin_consumer_executes_greater_than_zero_steps_and_emits_exact_source_receipt
+  - id: H5
+    required: W3_PROMOTION
+    predicate: W3_12_PASS_and_w3_strict_equals_16_of_16
+  - id: H6
+    required: MERGED_CONTROL_REPEAT
+    predicate: same_16_of_16_gate_repeats_from_merged_home_head_with_exact_sha_receipt
+
+mission_IV_release:
+  current_state: HELD
+  release_mode: FAIL_CLOSED
+  release_requires:
+    - w3_strict_passed_equals_16
+    - w3_denominator_equals_16
+    - w3_dov_candidate_pass
+    - merged_home_repeat_pass
+    - no_unresolved_authority_transfer
+  before_release:
+    allowed:
+      - build_candidate_pool
+      - measure_repo_metadata
+      - define_selection_schema
+      - define_coverage_floor
+      - define_runtime_and_return_contract
+    forbidden:
+      - freeze_final_eight
+      - claim_eight_active
+      - assign_production_authority
+      - count_unexecuted_repo_as_pass
+  census_freeze:
+    size: 8
+    selection: MEASURED_NOT_RANDOM
+    required_fields:
+      - repo
+      - exact_head_sha
+      - role
+      - activity_evidence
+      - runtime_surface
+      - source_or_provenance_surface
+      - federation_adjacency
+      - duplication_risk
+      - authority_boundary
+      - first_red
+      - disposition_candidate
+    eligibility:
+      - outside_core_QPS_authority_repos
+      - exact_head_resolvable
+      - bounded_mission_hypothesis_exists
+      - no_duplicate_authority_plane
+      - runtime_or_reference_value_is_testable
+    coverage_floor:
+      active_units_per_frontier: 2
+      no_frontier_starvation: true
+      surge_requires_measured_pressure: true
+    launch_requires:
+      - exactly_8_eligible_rows
+      - exact_sha_for_all_8
+      - one_bounded_first_red_per_repo
+      - one_return_contract_per_repo
+      - coverage_floor_allocated
+      - HOME_control_plane_remains_authoritative
+
+mission_IV_measurement:
+  per_iteration_fields:
+    - queue_delay_s
+    - runtime_s
+    - executed_steps
+    - artifact_count
+    - artifact_bytes
+    - first_red_class
+    - repair_iterations
+    - consumer_count
+    - disposition
+    - crew_wait_loss_s
+  pca_policy:
+    status_at_launch: DEFER_UNTIL_COMPARABLE_ROWS
+    activate_when: at_least_3_frontiers_have_at_least_2_comparable_measured_pulses
+    use: resource_pressure_and_runtime_footprint_not_engineering_authority
+  bt_policy:
+    evidence: OBSERVED_PAIRWISE_ONLY
+    use: reverse_pressure_and_intervention_ranking
+    prohibit: synthetic_wins
+
+mission_V_release:
+  current_state: HELD
+  size: 16
+  release_requires:
+    - mission_IV_has_8_of_8_governed_dispositions
+    - mission_IV_control_repeat_pass
+    - measured_pca_available_or_explicitly_deferred_with_reason
+    - observed_bt_graph_connected_or_explicitly_deferred_with_reason
+    - no_frontier_below_coverage_floor
+  graduation_rule:
+    description: Mission_V_population_is_selected_from_measured_Mission_IV_outcomes_plus_new_eligible_frontiers_not_by_simple_copy_or_random_doubling
+    required_inputs:
+      - runtime_economics
+      - observed_intervention_outcomes
+      - duplication_pruning
+      - authority_boundaries
+      - federation_value
+      - crew_efficiency
+
+stop_rules:
+  - do_not_fabricate_HEPAK_values
+  - do_not_use_CoolProp_as_HEPAK_authority_substitute
+  - do_not_freeze_Mission_IV_eight_before_H6
+  - do_not_release_CLOUD16_before_Mission_IV_control
+  - local_success_does_not_compensate_for_missing_cross_repo_consumer
