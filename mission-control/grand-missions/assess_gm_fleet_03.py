@@ -50,11 +50,24 @@ def main():
         })
 
     live_obs = snap.get("live_observations", [])
-    zero_step_blocks = [o for o in live_obs if int(o.get("steps_executed", 0) or 0) == 0 and o.get("state") == "BLOCKED"]
+    zero_step_blocks = [
+        o for o in live_obs
+        if int(o.get("steps_executed", 0) or 0) == 0 and o.get("state") == "BLOCKED"
+    ]
+
+    gm_iv_state = by_id["GM-IV"]["state"]
+    gm_iv_valid_state = gm_iv_state in ["HELD", "STAGED_ACTIVE_RECON_2_OF_8"]
+    staged_shape_ok = True
+    if gm_iv_state == "STAGED_ACTIVE_RECON_2_OF_8":
+        staged_shape_ok = (
+            by_id["GM-IV"].get("children") == []
+            and by_id["GM-IV"].get("activation_stage") == "RECON_2_OF_8"
+            and by_id["GM-IV"].get("candidate_frontiers") == ["GM-IV-F01", "GM-IV-F02"]
+        )
 
     checks = [
         ("01_gm_iii_control", by_id["GM-III"]["state"] == "RECON_CONTROL", by_id["GM-III"]["state"]),
-        ("02_gm_iv_held_before_release", by_id["GM-IV"]["state"] == "HELD", by_id["GM-IV"]["state"]),
+        ("02_gm_iv_held_or_controlled_staged", gm_iv_valid_state, gm_iv_state),
         ("03_gm_v_hard_held", by_id["GM-V"]["state"] == "HELD" and by_id["GM-V"].get("children") == [], by_id["GM-V"]["state"]),
         ("04_two_named_candidate_frontiers", len(candidates.get("candidate_ring", [])) == 2, len(candidates.get("candidate_ring", []))),
         ("05_six_slots_remain_unfilled", len(candidates.get("unfilled_slots", [])) == 6, len(candidates.get("unfilled_slots", []))),
@@ -63,14 +76,17 @@ def main():
         ("08_registered_capacity_not_claimed_runtime", contract["capacity_classes"]["REGISTERED"].startswith("counted_from"), len(records)),
         ("09_snapshot_not_promoted_to_measured", snap.get("snapshot_class") == "MIXED_OBSERVED_AND_EXPERT_SEEDED", snap.get("snapshot_class")),
         ("10_candidate_recon_not_child_binding", "CANDIDATE_RECON_IS_NOT_A_GM_IV_CHILD_BINDING" in candidates.get("invariants", []), True),
+        ("11_staged_shape_if_promoted", staged_shape_ok, gm_iv_state),
     ]
 
     failed = [c for c in checks if not c[1]]
     structural_release = not failed
-    # Existing zero-step observations are retained as telemetry/REX, but are not
-    # treated as a veto on this assessor's own runtime. The workflow running this
-    # script must itself prove >0 steps before the receipt can be accepted.
-    decision = "READY_FOR_RECON_2_OF_8_RUNTIME_PROOF" if structural_release else "HELD_STRUCTURAL_GATE_RED"
+    if not structural_release:
+        decision = "HELD_STRUCTURAL_GATE_RED"
+    elif gm_iv_state == "HELD":
+        decision = "READY_FOR_RECON_2_OF_8_RUNTIME_PROOF"
+    else:
+        decision = "PASS_STAGED_ACTIVE_RECON_2_OF_8_CONTROL_SHAPE"
 
     receipt = {
         "schema": "qps.gm_fleet_03_capacity_receipt.v1",
@@ -87,6 +103,7 @@ def main():
         "candidate_frontiers": candidates.get("candidate_ring", []),
         "unfilled_slots": candidates.get("unfilled_slots", []),
         "retained_zero_step_observations": len(zero_step_blocks),
+        "gm_iv_state": gm_iv_state,
         "structural_checks": [
             {"check": n, "result": "PASS" if ok else "FAIL", "detail": detail}
             for n, ok, detail in checks
@@ -106,6 +123,7 @@ def main():
         "result": "PASS_GM_FLEET_03_STRUCTURE" if structural_release else "FAIL_GM_FLEET_03_STRUCTURE",
         "registered_crew_records": len(records),
         "candidate_frontiers": len(candidates.get("candidate_ring", [])),
+        "gm_iv_state": gm_iv_state,
         "activation_decision": decision,
         "source_sha": receipt["source_sha"],
     }, sort_keys=True))
