@@ -1,6 +1,7 @@
 {
   "schema": "missioncontrol.crew.snapshot.v1",
   "observed_at": "2026-09-13T17:12:00+02:00",
+  "observed_at_semantics": "Snapshot capture time. Historical live observations inherit this recorded observation time because a more granular event-occurrence timestamp was not captured; no finer timing is inferred.",
   "registry_head": "1222e6f992c7fa1777261e7ebf8b8a90cad0dbb6",
   "authority_transfer": false,
   "snapshot_class": "MIXED_OBSERVED_AND_EXPERT_SEEDED",
@@ -13,6 +14,8 @@
   "live_observations": [
     {
       "event_id": "CT-20260913-001",
+      "observed_at": "2026-09-13T17:12:00+02:00",
+      "observed_at_basis": "SNAPSHOT_CAPTURE_TIME",
       "crew_id": "S03",
       "mission_id": "MC-CREW-01",
       "task_id": "PR42_CREW_CAPABILITY_VALIDATION",
@@ -29,6 +32,8 @@
     },
     {
       "event_id": "CT-20260913-002",
+      "observed_at": "2026-09-13T17:12:00+02:00",
+      "observed_at_basis": "SNAPSHOT_CAPTURE_TIME",
       "crew_id": "U06",
       "mission_id": "MC-CREW-01",
       "task_id": "PR42_CREW_CAPABILITY_VALIDATION",
@@ -41,6 +46,8 @@
     },
     {
       "event_id": "CT-20260913-003",
+      "observed_at": "2026-09-13T17:12:00+02:00",
+      "observed_at_basis": "SNAPSHOT_CAPTURE_TIME",
       "crew_id": "U08",
       "mission_id": "MC-CREW-01",
       "task_id": "PR42_CREW_CAPABILITY_VALIDATION",
