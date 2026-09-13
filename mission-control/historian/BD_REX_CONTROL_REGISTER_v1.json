@@ -9,15 +9,15 @@
   "bounded_sample": {
     "audited_prs": 15,
     "review_findings_observed_cumulative": 24,
-    "current_unresolved_finding_occurrences_minimum": 9,
+    "current_unresolved_finding_occurrences_minimum": 8,
     "durable_bd_roots_total": 14,
-    "current_open_bd_roots": 9,
+    "current_open_bd_roots": 8,
     "historian_positive_survival_findings_minimum": 6,
     "recurring_roots_total": 2,
     "recurring_open_roots": 0,
     "controlled_recurring_roots": 2,
     "fleet_denominator_claim": false,
-    "expansion_note": "Adds CODEX PRs 665/668/670 and Q_engineering_tools PRs 12/13/15 to the prior 9-PR MissionControl sample. PRs with zero review findings still count as audited PRs; only observed findings enter finding counts."
+    "expansion_note": "Adds CODEX PRs 665/668/670 and Q_engineering_tools PRs 12/13/15 to the prior 9-PR MissionControl sample. PRs with zero review findings still count as audited PRs; only observed findings enter finding counts. PR#100 is a control repeat, not an added audit denominator."
   },
   "lifecycle": [
     "TODO",
@@ -48,7 +48,16 @@
     "repeat_merge_sha": "e507a4eae14d0bd12b137dbd409554c4cb14edad",
     "repeat_triggered_workflows": 11,
     "repeat_all_triggered_workflows_green": true,
-    "repair_code_unchanged_between_first_and_repeat": true
+    "repair_code_unchanged_between_first_and_repeat": true,
+    "analytics_escape_repair_pr": 97,
+    "analytics_escape_repair_sha": "ffae05b1e47a4a0e1fe8b3829cfc15f4de99c158",
+    "analytics_control_repeat_pr": 100,
+    "analytics_control_repeat_sha": "7babb2111a32773c663fbd1bb26df0f7190d9129",
+    "analytics_control_repeat_run": 34775932604,
+    "analytics_control_repeat_merge_sha": "3a67d3b20f7ced8010e722dfcf0529ebf6379c70",
+    "analytics_repeat_real_runners": [1000267383, 1000267386, 1000267411],
+    "analytics_repeat_triggered_workflows": 12,
+    "analytics_repeat_all_triggered_workflows_green": true
   },
   "root_fields_required": [
     "bd_id",
@@ -209,14 +218,15 @@
       "class": "EXPERIMENT_DESIGN",
       "semantic_signature": "paired_runtime_order_confounded_with_warm_cache",
       "severity": "P1",
-      "state": "ACTIVE",
+      "state": "CONTROL",
       "occurrence_count": 1,
-      "source_prs": [53],
+      "source_prs": [53, 97],
       "repos": ["GBOGEB/pipeline-automation-hub"],
-      "current_code_evidence": "frontier runner still executes manifest order sequentially without a recorded counterbalance/randomization contract",
+      "current_code_evidence": "PR#97 counterbalances pair order with SOURCE_SHA_PARITY_XOR_HABITAT and records execution index/position/direction; PR#100 exact-head repeat passed Linux, Windows and final analysis on distinct SHA 7babb2111a32773c663fbd1bb26df0f7190d9129",
       "rex_control_id": "REX-CM-002",
-      "crew_owner": ["Doctor.Analytics", "PERFORMANCE_SPECIALIST"],
-      "done_when": "pair order is counterbalanced or randomized across repeated trials and order is recorded"
+      "crew_owner": ["Doctor.Analytics", "PERFORMANCE_SPECIALIST", "QA_SIGNALMAN"],
+      "proof_refs": ["PR#97@ffae05b1e47a4a0e1fe8b3829cfc15f4de99c158", "PR#100@7babb2111a32773c663fbd1bb26df0f7190d9129/run34775932604", "merge@3a67d3b20f7ced8010e722dfcf0529ebf6379c70"],
+      "done_when": "SATISFIED: counterbalanced observed order plus distinct-source exact-head repeat"
     },
     {
       "bd_id": "HIST-BD-011",
@@ -225,14 +235,14 @@
       "semantic_signature": "two_node_bt_log_odds_separation_doubled",
       "severity": "P1",
       "state": "CONTROL",
-      "occurrence_count": 2,
-      "source_prs": [53, 56],
+      "occurrence_count": 3,
+      "source_prs": [53, 56, 97],
       "repos": ["GBOGEB/pipeline-automation-hub"],
-      "current_code_evidence": "TWO_NODE_BT_LOG_ODDS_V1 enforces one log-odds separation; analytic 8-vs-4 fixture passes on two distinct exact source SHAs",
+      "current_code_evidence": "TWO_NODE_BT_LOG_ODDS_V1 enforces one log-odds separation on measured-allocation and frontier sibling surfaces. PR#97 repaired the frontier control escape; PR#100 repeated unchanged frontier repair on a later exact SHA with analytic DoV green.",
       "rex_control_id": "REX-CM-002",
       "crew_owner": ["Doctor.Analytics", "PERFORMANCE_SPECIALIST", "QA_SIGNALMAN"],
-      "proof_refs": ["PR#93/run34774328258", "PR#94/run34774493436"],
-      "done_when": "SATISFIED: analytic fixture plus distinct-source repeat"
+      "proof_refs": ["PR#93/run34774328258", "PR#94/run34774493436", "PR#97@ffae05b1e47a4a0e1fe8b3829cfc15f4de99c158", "PR#100@7babb2111a32773c663fbd1bb26df0f7190d9129/run34775932604"],
+      "done_when": "SATISFIED: analytic fixture, sibling-surface repair, and post-escape distinct-source repeat"
     },
     {
       "bd_id": "HIST-BD-012",
@@ -295,14 +305,15 @@
     {
       "control_id": "REX-CM-002",
       "root_ids": ["HIST-BD-008", "HIST-BD-010", "HIST-BD-011", "HIST-BD-012"],
-      "state": "PARTIAL_CONTROL",
+      "state": "CONTROL",
       "measure_type": ["ELIGIBLE_ONLY_PCA_GATE", "ANALYTIC_FIXTURE", "RAW_TIMING_DERIVATION", "ORDER_COUNTERBALANCE", "REGRESSION_TEST"],
       "activation_reason": "BT scale root recurrence_count>=2 plus adjacent experiment-design/evidence-integrity roots",
       "crew": ["Doctor.Analytics", "PERFORMANCE_SPECIALIST", "QA_SIGNALMAN"],
-      "controlled_roots": ["HIST-BD-011"],
+      "controlled_roots": ["HIST-BD-010", "HIST-BD-011"],
       "done_roots": ["HIST-BD-008", "HIST-BD-012"],
-      "active_roots": ["HIST-BD-010"],
-      "control_gate": "BT scale/raw timing/PCA gate are repeated; full family CONTROL withheld until pair-order counterbalance is implemented and repeated"
+      "active_roots": [],
+      "control_gate": "eligible-only PCA gate, raw-timing derivation, corrected BT scale and cross-habitat pair-order counterbalance are all installed; the post-escape repair repeated green on distinct exact SHA",
+      "control_proof": ["PR#97@ffae05b1e47a4a0e1fe8b3829cfc15f4de99c158", "PR#100@7babb2111a32773c663fbd1bb26df0f7190d9129/run34775932604", "merge@3a67d3b20f7ced8010e722dfcf0529ebf6379c70"]
     }
   ],
   "implemented_surviving_positive_controls": [
