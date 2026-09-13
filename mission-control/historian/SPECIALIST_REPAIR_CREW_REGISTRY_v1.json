@@ -21,15 +21,16 @@
     {
       "crew_id": "DOCTOR_ANALYTICS",
       "display_name": "Doctor.Analytics",
-      "state": "ACTIVE_NARROWED",
+      "state": "RETURNED_CONTROL_RESERVE",
       "triggered_by_roots": ["HIST-BD-008", "HIST-BD-010", "HIST-BD-011", "HIST-BD-012"],
       "primary_competencies": ["PCA eligibility", "Bradley-Terry", "experimental design", "analytic fixtures", "timing evidence"],
-      "current_mission": "HIST-BD-010_PAIR_ORDER_COUNTERBALANCE",
+      "current_mission": null,
       "secondment": ["H4_QPS_TRIAGE", "QA_SIGNALMAN"],
       "tools_resources": ["pairwise receipts", "timing rows", "analytic fixtures", "allocation builder", "frontier runner"],
-      "closed_scope": ["HIST-BD-008", "HIST-BD-011", "HIST-BD-012"],
-      "active_scope": ["HIST-BD-010"],
-      "victory_condition": "counterbalance or randomize paired runtime order, record observed order, then repeat on a distinct source SHA"
+      "closed_scope": ["HIST-BD-008", "HIST-BD-010", "HIST-BD-011", "HIST-BD-012"],
+      "active_scope": [],
+      "return_evidence": ["PR#97@ffae05b1e47a4a0e1fe8b3829cfc15f4de99c158", "PR#100@7babb2111a32773c663fbd1bb26df0f7190d9129/run34775932604", "merge@3a67d3b20f7ced8010e722dfcf0529ebf6379c70"],
+      "victory_condition": "SATISFIED: REX-CM-002 CONTROL after counterbalanced Linux/Windows repeat; reactivate only on statistical control escape/regression or a new high-pressure analytics root"
     },
     {
       "crew_id": "DOCTOR_RUNTIME",
