@@ -1,0 +1,57 @@
+{
+  "schema": "missioncontrol.historian_first_pass.v1",
+  "status": "OBSERVED_BOUNDED_SAMPLE",
+  "as_of": "2026-09-13",
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "scope": {
+    "recent_commits_examined": 20,
+    "mission_related_prs_examined": 18,
+    "full_archive_complete": false,
+    "causal_decomposition_complete": false
+  },
+  "observed_lineages": [
+    {
+      "lineage_id": "QPS_TRIAGE_CONTROL_LINEAGE",
+      "nodes": ["PR#20", "PR#21", "PR#22", "PR#27", "PR#31", "PR#33", "PR#35"],
+      "interpretation": "HOME control plane -> federation AND-gate -> W2 CONTROL -> measured telemetry/PCA -> observed BT/control reconciliation -> persistent cross-mission ledger/dashboard",
+      "observation_class": "OBSERVED_PLUS_SUMMARIZED",
+      "notes": ["PR#21 explicitly binds parent/child merge lineage", "PR#22 freezes W2 at 12/12 CONTROL and releases W3", "PR#35 persists temporal/recursive cross-mission telemetry"]
+    },
+    {
+      "lineage_id": "CREW_REX_ALLOCATION_SCIENCE",
+      "nodes": ["PR#41", "PR#42", "PR#46", "PR#47", "PR#49", "PR#53", "MERGE_COMMIT_0c425e8a"],
+      "interpretation": "fleet crew lifecycle + bidirectional REX -> canonical crew registry -> role-gap telemetry -> measured Mission->Crew->Task->Runtime->Receipt loop -> retained measured allocation evidence -> broadened measured PCA/observed BT -> assimilated frontier PCA/BT evidence",
+      "observation_class": "OBSERVED_PLUS_SUMMARIZED",
+      "notes": ["authority_transfer remained false throughout sampled lineage", "seeded competency was repeatedly separated from measured evidence", "REX remained a veto/reverse-pressure input"]
+    },
+    {
+      "lineage_id": "GM_IV_STAGED_RECON_LINEAGE",
+      "nodes": ["PR#48", "MERGE_PR#62", "MERGE_PR#65", "PR#67", "MERGE_COMMIT_c728fab2"],
+      "interpretation": "measured Mission City capacity -> staged GM-IV recon -> F03 candidate-only deterministic runtime -> F04 provenance/reference return -> F03 PILOT_READY + F04 REFERENCE without child binding",
+      "observation_class": "OBSERVED_PLUS_SUMMARIZED",
+      "notes": ["GM-IV remained STAGED_ACTIVE_RECON_2_OF_8 in sampled history", "children remained empty", "GM-V remained HELD", "runtime proof and reference classification were kept distinct"]
+    }
+  ],
+  "historian_findings": [
+    "MissionControl already contains strong temporal evidence, but it is distributed across commit messages, PR bodies, receipts and ledgers rather than one lineage graph",
+    "parent-child lineage appears explicitly in some PRs but is not yet uniformly mandatory across all mission returns",
+    "crew/resource science evolved incrementally and should preserve superseded versions rather than flatten them into one current-state record",
+    "GM-IV history shows a useful distinction between reconnaissance, pilot readiness, reference-only disposition and canonical child binding",
+    "historical recurrence can now become an H4 pressure feature instead of remaining narrative REX only"
+  ],
+  "next_historian_queue": [
+    "walk merge-parent DAG for sampled merge commits",
+    "read PR comments/reviews for decision reversals and rejected alternatives",
+    "bind workflow run receipts to PR/commit lineage",
+    "build commit->PR->mission->REX parent-child graph",
+    "classify superseded vs current authority claims",
+    "calculate recurrence counts for first-red classes and repair classes",
+    "feed lineage complexity and recurrence into H4 reinforcement calculations"
+  ],
+  "anti_overclaim": [
+    "this is a bounded first pass, not a full repository history census",
+    "PR body intent is not runtime proof",
+    "merge is not CONTROL unless a qualifying post-merge repeat exists",
+    "summarized causal language remains interpretation unless directly evidenced by lineage objects"
+  ]
+}
