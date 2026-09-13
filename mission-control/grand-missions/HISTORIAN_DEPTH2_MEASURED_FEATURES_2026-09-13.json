@@ -1,0 +1,104 @@
+{
+  "schema": "missioncontrol.historian_depth2_measured_features.v1",
+  "status": "PARTIAL_MEASURED_ELIGIBLE_WITH_DEFERRED_DENOMINATORS",
+  "as_of": "2026-09-13",
+  "source_repository": "GBOGEB/pipeline-automation-hub",
+  "source_master_sha_checked": "84f8859d1a36cab5cd608d18ddc127d952673654",
+  "source_backlog_commit": "814ee571bd4174e12caa1a1456e6b0455f66daaf",
+  "fanout_registry_commit": "3964ec8adfdcb46ab8a48a51bc48b2e445ae5097",
+  "sample": {
+    "audited_prs": 9,
+    "review_finding_occurrences": 19,
+    "unresolved_finding_occurrences": 15,
+    "unique_open_bd_roots": 13,
+    "implemented_surviving_findings": 4,
+    "recurring_open_bd_roots": 2,
+    "open_p1_roots": 7,
+    "open_p2_roots": 6,
+    "mission_next_items": 2
+  },
+  "measured_features": {
+    "unresolved_finding_rate": {
+      "value": 0.789474,
+      "formula": "15/19",
+      "evidence_class": "DERIVED_FROM_OBSERVED_CURRENT_CODE_AUDIT"
+    },
+    "implemented_surviving_finding_rate": {
+      "value": 0.210526,
+      "formula": "4/19",
+      "evidence_class": "DERIVED_FROM_OBSERVED_CURRENT_CODE_AUDIT",
+      "warning": "not a full repair-survival metric because not every finding had an attempted repair"
+    },
+    "recurring_root_fraction": {
+      "value": 0.153846,
+      "formula": "2/13",
+      "evidence_class": "DERIVED_FROM_OBSERVED_REVIEW_LINEAGE"
+    },
+    "review_pressure_severity_units_per_open_root": {
+      "value": 1.538462,
+      "formula": "(7*2 + 6*1)/13 where P1=2 and P2=1",
+      "evidence_class": "DERIVED_ORDINAL",
+      "pca_eligibility": "INELIGIBLE_UNTIL_SEVERITY_WEIGHT_CONTRACT_IS_FROZEN"
+    },
+    "merge_parent_edges_verified_minimum": {
+      "value": 4,
+      "basis": "two sampled merge commits with two observed parents each",
+      "evidence_class": "OBSERVED_PARTIAL",
+      "warning": "minimum only; not full DAG edge count"
+    },
+    "recurring_rex_preflight_review_occurrences": {
+      "value": 2,
+      "source_prs": [47, 53],
+      "evidence_class": "OBSERVED_REVIEW_RECURRENCE"
+    },
+    "recurring_bt_scale_review_occurrences": {
+      "value": 2,
+      "source_prs": [53, 56],
+      "evidence_class": "OBSERVED_REVIEW_RECURRENCE"
+    },
+    "stale_current_state_examples": {
+      "value": 1,
+      "example": "cryoplant QPS_DEBUG_DAG_PILOT current-lane prose is superseded in part by later CODEX debugger/MCP CONTROL lineage and cryoplant #1063",
+      "evidence_class": "OBSERVED_CROSS_REPO_TEMPORAL_SUPERSESSION",
+      "warning": "example count, not estate census"
+    }
+  },
+  "deferred_features": {
+    "full_lineage_complexity": "DEFER_FULL_NODE_EDGE_CENSUS",
+    "repair_survival_rate": "DEFER_NEEDS_ATTEMPT_TO_POST_MERGE_REPEAT_MAPPING",
+    "post_merge_survival_rate": "DEFER_NEEDS_QUALIFYING_RUNTIME_REPEAT_DENOMINATOR",
+    "negative_evidence_retention_rate": "DEFER_NEEDS_ACCEPTED_PLUS_REJECTED_CANONICAL_DENOMINATOR",
+    "runtime_receipt_density": "DEFER_NEEDS_PER_REPO_RECEIPT_AND_TIME_OR_PR_DENOMINATOR",
+    "runner_blocked_fraction": "DEFER_NEEDS_FLEET_RUNNABLE_JOB_DENOMINATOR",
+    "queue_vs_execute_pressure": "DEFER_UNTIL_NORMALIZED_FLEET_JOB_ROWS_BOUND",
+    "reinforcement_effectiveness": "DEFER_NEEDS_PRE_POST_INTERVENTION_PAIR"
+  },
+  "h4_pressure_roots": [
+    {"root":"REX_PREFLIGHT_NOT_EXECUTED_FAIL_CLOSED","occurrences":2,"priority":"P1","recommended_role_shortfall":["REX_KEB","QA_SIGNALMAN","RUNNER"]},
+    {"root":"BT_ABILITY_SCALE_OVERSTATEMENT","occurrences":2,"priority":"P1","recommended_role_shortfall":["ANALYST","QA_SIGNALMAN"]},
+    {"root":"NEGATIVE_RUNTIME_EVIDENCE_DROPPED","occurrences":1,"priority":"P1","recommended_role_shortfall":["HISTORIAN","QA_SIGNALMAN","H1_QPS"]},
+    {"root":"PCA_VARIANCE_USES_INELIGIBLE_ROWS","occurrences":1,"priority":"P1","recommended_role_shortfall":["ANALYST"]},
+    {"root":"PAIR_ORDER_CONFOUNDING","occurrences":1,"priority":"P1","recommended_role_shortfall":["PERFORMANCE_SPECIALIST","ANALYST"]},
+    {"root":"RUNNER_ADMISSION_NON_COMPENSATING","occurrences":"REPEATED_CROSS_WAVE","priority":"P0_EXTERNAL","recommended_role_shortfall":["DOCKMASTER","OWNER_SIDE_RUNNER_ADMIN"]}
+  ],
+  "runtime_debug_rollup": {
+    "control_surfaces": ["lldb-dap", "debugpy", "js-debug", "Docker remote LLDB", "strict LLVM lldb-mcp", "heartbeat/perpetuation"],
+    "control_owner_repo": "GBOGEB/CODEX",
+    "active_non_compensating_gate": "GBOGEB/cryoplant-project#923",
+    "runner_economics_issue": "GBOGEB/pipeline-automation-hub#79",
+    "first_victory": "runner_id_nonzero_and_steps_gt_zero_on_current_cryoplant_child_sha",
+    "reopen_debugger_feature_work": false
+  },
+  "pca_bt_gate": {
+    "eligible_now": [
+      "unresolved_finding_rate",
+      "implemented_surviving_finding_rate",
+      "recurring_root_fraction",
+      "recurring_rex_preflight_review_occurrences",
+      "recurring_bt_scale_review_occurrences"
+    ],
+    "planning_only": ["review_pressure_severity_units_per_open_root"],
+    "withheld": ["all deferred_features"],
+    "rule": "Historian-derived features may influence H4 only when their denominator and evidence class are explicit; they cannot compensate a failed AND-gate"
+  }
+}
