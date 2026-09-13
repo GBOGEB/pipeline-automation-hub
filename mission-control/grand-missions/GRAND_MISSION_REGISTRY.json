@@ -1,6 +1,6 @@
 {
   "schema": "qps.grand_mission_fleet.v1",
-  "wave": "GM-FLEET-02B",
+  "wave": "GM-FLEET-03",
   "authority_transfer": false,
   "namespace": {
     "grand_mission_prefix": "GM-",
@@ -52,11 +52,24 @@
       "name": "EIGHT_FRONTIER_EXPANSION",
       "frontier_count": 8,
       "objective": "scale_controlled_reconnaissance_to_eight_frontiers_without_receipt_or_authority_degradation",
-      "state": "HELD",
+      "state": "STAGED_ACTIVE_RECON_2_OF_8",
       "children": [],
-      "crew_posture": "COMMAND_SKELETON_ONLY",
+      "crew_posture": "BOUNDED_RECON_SECONDMENT",
       "observed": false,
-      "launch_gate": "GM_III_CONTROL_PLUS_MEASURED_CAPACITY_AND_NO_CONTROL_DEGRADATION"
+      "activation_observed": true,
+      "activation_stage": "RECON_2_OF_8",
+      "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02"],
+      "unfilled_frontier_slots": ["GM-IV-F03", "GM-IV-F04", "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+      "launch_gate": "GM_FLEET_03_FIRST_EXACT_SHA_RUNTIME_GATE_PASS",
+      "activation_evidence": {
+        "source_sha": "12d54ba2d6e08ff8c816d2fbc9ed44c3f167fef1",
+        "workflow_run_id": 34767440206,
+        "job_id": 103750817832,
+        "artifact_id": 10320783667,
+        "artifact_digest": "sha256:f66628e8cc49099747d26f998f3ab6b02138a3ea50685798b682a1727f405983",
+        "decision": "READY_FOR_RECON_2_OF_8_RUNTIME_PROOF"
+      },
+      "promotion_boundary": "CANDIDATE_RECON_DOES_NOT_CREATE_CHILD_BINDING;_EACH_FRONTIER_REQUIRES_BOUNDED_RUNTIME_RECEIPT_AND_EXPLICIT_DISPOSITION_BEFORE_PILOT"
     },
     {
       "id": "GM-V",
@@ -72,9 +85,11 @@
   ],
   "scaling_invariant": [1, 2, 4, 8, 16],
   "stop_rules": [
-    "NO_FABRICATED_CHILDREN_FOR_HELD_MISSIONS",
+    "NO_FABRICATED_CHILDREN_FOR_HELD_OR_STAGED_RECON_MISSIONS",
     "NO_AUTHORITY_TRANSFER_FROM_FLEET_CONTROL",
     "NO_PCA_OR_BT_PROMOTION_FROM_SYNTHETIC_ROWS",
-    "NO_CREW_SURGE_WITHOUT_NAMED_FRONTIER_AND_RETURN_PATH"
+    "NO_CREW_SURGE_WITHOUT_NAMED_FRONTIER_AND_RETURN_PATH",
+    "GM_IV_CANDIDATE_RECON_IS_NOT_CHILD_ACCEPTANCE",
+    "GM_V_REMAINS_HELD_UNTIL_GM_IV_REPEAT_CONTROL"
   ]
 }
