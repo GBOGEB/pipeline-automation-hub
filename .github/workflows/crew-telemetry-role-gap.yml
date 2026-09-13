@@ -1,0 +1,63 @@
+name: MissionControl Crew Telemetry + Role Gap
+
+on:
+  pull_request:
+    branches:
+      - master
+      - mission/crew-capability-system-v1-20260913
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-crew-telemetry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+
+      - name: Validate crew telemetry structure
+        run: |
+          python mission-control/qps-triage-ultra/crew/validate_crew_telemetry.py
+
+      - name: Score seeded role gaps
+        run: |
+          python mission-control/qps-triage-ultra/crew/score_role_gaps.py \
+            --policy mission-control/qps-triage-ultra/crew/ROLE_GAP_POLICY_v1.json \
+            --signals mission-control/qps-triage-ultra/crew/ROLE_GAP_SIGNALS_SEED_2026-09-13.json \
+            --out mission-control/qps-triage-ultra/crew/receipts/role-gap-seed-receipt.json
+
+      - name: Enforce seeded evidence boundary
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('mission-control/qps-triage-ultra/crew/receipts/role-gap-seed-receipt.json')
+          d = json.loads(p.read_text())
+          assert d['source_evidence_class'] == 'EXPERT_SEEDED_NOT_MEASURED'
+          assert d['permanent_role_promotion_allowed'] is False
+          decisions = {x['candidate_role_id']: x['decision'] for x in d['results']}
+          assert decisions['C05'] == 'TRIAL_CANDIDATE'
+          assert decisions['C08'] == 'TRIAL_CANDIDATE'
+          assert decisions['C04'] == 'REUSE_TRAIN_TOOL_OR_PRUNE'
+          print(json.dumps({'status':'PASS_SEEDED_ROLE_BOUNDARY','decisions':decisions}, sort_keys=True))
+          PY
+
+      - name: Upload telemetry and role-gap receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-telemetry-role-gap-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            mission-control/qps-triage-ultra/crew/CREW_SNAPSHOT_2026-09-13.json
+            mission-control/qps-triage-ultra/crew/receipts/role-gap-seed-receipt.json
