@@ -1,0 +1,98 @@
+{
+  "evidence_runs": [
+    {
+      "accepted": 16,
+      "artifact": {
+        "artifact_id": 10320539866,
+        "digest": "sha256:470caacf0f590a911ab796dc4754906f79b994b53147cb97e690d6cd757b4c3b"
+      },
+      "authority_transfer": false,
+      "bt": {
+        "nodes": [
+          {"bt_log_strength": -0.5877866649021191, "losses": 4.0, "normalized_strength": 0.2358490566037736, "strategy": "ALLOC_PAIRED_CELL", "ties": 0, "wins": 2.0},
+          {"bt_log_strength": 0.5877866649021191, "losses": 2.0, "normalized_strength": 0.7641509433962264, "strategy": "ALLOC_SINGLE_CELL", "ties": 0, "wins": 4.0}
+        ],
+        "observed_pairs": 6,
+        "status": "READY_OBSERVED"
+      },
+      "competency_promotions": 0,
+      "evidence_class": "PR_HEAD",
+      "habitats": ["linux", "windows"],
+      "pca": {
+        "components": [
+          {
+            "component": "PC1",
+            "eigenvalue": 2.2814129178244564,
+            "explained_variance_ratio": 0.32591613111777945,
+            "loadings": {"crew_size": -0.28748987705826085, "habitat_windows": 0.09375301629344147, "log_execute_ms": 0.5660935745326948, "log_workload_units": -0.4791161436257041, "rex_exposure_count": 0.5351146747001493, "task_level": -0.053199527503453775, "worker_count": -0.26337772022116845}
+          },
+          {
+            "component": "PC2",
+            "eigenvalue": 1.791106610819891,
+            "explained_variance_ratio": 0.2558723729742701,
+            "loadings": {"crew_size": 0.5934363955034947, "habitat_windows": 0.08180898173082701, "log_execute_ms": 0.3049649156801036, "log_workload_units": -0.30179084406208645, "rex_exposure_count": 0.048684630154158824, "task_level": 0.1963748737704349, "worker_count": 0.6450782412877557}
+          }
+        ],
+        "feature_count": 7,
+        "status": "READY_MEASURED"
+      },
+      "queue_admission_proxy_seconds": {"linux": 3.0, "windows": 3.0},
+      "rejected": 0,
+      "rex": {"checklist_version": "missioncontrol.rex.reuse_checklist.v1", "observed_event_count": 0, "persistent_or_regression_count": 0, "preventive_success_count": 14},
+      "run_id": "34768120732",
+      "source_sha": "198caf50e985732790c2b7e0b60e34605e632a8d",
+      "status": "ACCEPTED_EXACT_SHA_FRONTIER_RETURN",
+      "task_receipts": 16
+    },
+    {
+      "accepted": 16,
+      "artifact": {
+        "artifact_id": 10321014156,
+        "digest": "sha256:21d900f3dfff8c446e54b7c84a1720f1cc22fb0480ffd588df5dba2dc43eae40"
+      },
+      "authority_transfer": false,
+      "bt": {
+        "nodes": [
+          {"bt_log_strength": -0.5877866649021191, "losses": 4.0, "normalized_strength": 0.2358490566037736, "strategy": "ALLOC_PAIRED_CELL", "ties": 0, "wins": 2.0},
+          {"bt_log_strength": 0.5877866649021191, "losses": 2.0, "normalized_strength": 0.7641509433962264, "strategy": "ALLOC_SINGLE_CELL", "ties": 0, "wins": 4.0}
+        ],
+        "observed_pairs": 6,
+        "status": "READY_OBSERVED"
+      },
+      "competency_promotions": 0,
+      "evidence_class": "MERGED_MASTER",
+      "habitats": ["linux", "windows"],
+      "pca": {
+        "components": [
+          {
+            "component": "PC1",
+            "eigenvalue": 2.2510663899544268,
+            "explained_variance_ratio": 0.3215809128506324,
+            "loadings": {"crew_size": -0.29015295472776664, "habitat_windows": 0.1258296504005392, "log_execute_ms": 0.5668839548544687, "log_workload_units": -0.47008647320726454, "rex_exposure_count": 0.5380119989679685, "task_level": -0.03166749626507889, "worker_count": -0.2591904898443021}
+          },
+          {
+            "component": "PC2",
+            "eigenvalue": 1.803606094766376,
+            "explained_variance_ratio": 0.2576580135380537,
+            "loadings": {"crew_size": 0.5857749302783433, "habitat_windows": 0.10864253384528211, "log_execute_ms": 0.31439376593090135, "log_workload_units": -0.2795455116603276, "rex_exposure_count": 0.03938653494051445, "task_level": 0.22060092095144257, "worker_count": 0.6464203990377969}
+          }
+        ],
+        "feature_count": 7,
+        "status": "READY_MEASURED"
+      },
+      "queue_admission_proxy_seconds": {"linux": 2.0, "windows": 2.0},
+      "rejected": 0,
+      "rex": {"checklist_version": "missioncontrol.rex.reuse_checklist.v1", "observed_event_count": 0, "persistent_or_regression_count": 0, "preventive_success_count": 14},
+      "run_id": "34768170499",
+      "source_sha": "c1b21d54736064642ca2062edc31da2f0efe55bc",
+      "status": "ACCEPTED_EXACT_SHA_FRONTIER_RETURN",
+      "task_receipts": 16
+    }
+  ],
+  "mission_id": "MC-CREW-FRONTIER-002",
+  "purpose": "Canonicalize repeated exact-SHA PCA/BT frontier evidence after PR-head and merged-master execution.",
+  "repeat_gate": {"all_16_of_16_accepted": true, "authority_transfer": false, "bt_ready_all_runs": true, "distinct_runs": 2, "distinct_source_shas": 2, "pca_ready_all_runs": true, "zero_competency_promotions": true},
+  "rex_control": {"checklist_version": "missioncontrol.rex.reuse_checklist.v1", "observed_recurrence_events_total": 0, "persistent_or_regression_total": 0, "preventive_success_total": 28, "rule": "PERSISTENT or REGRESSION remains reverse-pressure and may veto allocation/promotion regardless of PCA/BT score."},
+  "schema": "missioncontrol.crew_frontier_control_return.v1",
+  "status": "CONTROL_ACCEPTED_REPEAT"
+}
