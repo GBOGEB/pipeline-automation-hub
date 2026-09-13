@@ -8,6 +8,7 @@ on:
       - '.github/workflows/crew-capability-system.yml'
   push:
     branches:
+      - master
       - mission/crew-capability-system-v1-20260913
     paths:
       - 'mission-control/qps-triage-ultra/crew/**'
