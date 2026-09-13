@@ -1,0 +1,55 @@
+{
+  "schema": "qps.gm_iv_f03_pilot_contract.v1",
+  "wave": "GM-FLEET-03-F03-PILOT",
+  "mission": "GM-IV",
+  "frontier": "GM-IV-F03",
+  "target": {
+    "repository": "GBOGEB/codespaces-jupyter",
+    "source_sha": "1eba2240a86d1fd2bd6375e2fac481caf645cdde",
+    "capability": "REPRODUCIBLE_NOTEBOOK_RUNTIME_RECEIPT",
+    "entrypoint": "notebooks/population.ipynb",
+    "authority_contract": "level1/ssot.json"
+  },
+  "crew": ["ENGINEER", "SMOKER", "QA"],
+  "authority_transfer": false,
+  "children_bound": false,
+  "mission_state_must_remain": "STAGED_ACTIVE_RECON_2_OF_8",
+  "existing_controlled_pilot": "GM-IV-F01",
+  "f04_state": "REFERENCE",
+  "positive_probe": {
+    "execute_notebook_twice": true,
+    "minimum_executed_code_cells_per_run": 1,
+    "maximum_error_count": 0,
+    "repeat_output_digest_equal": true,
+    "authority_contract_requires": {
+      "schema": "gbogeb-level1-ssot/v1",
+      "repo": "GBOGEB/codespaces-jupyter",
+      "role": "REPRODUCIBLE_NOTEBOOK_RUNTIME_PRODUCER",
+      "authority_transfer": false,
+      "must_not_include": [
+        "promote notebook execution to engineering authority",
+        "promote runtime PASS to domain validation",
+        "override child authority"
+      ]
+    }
+  },
+  "negative_qa_probe": {
+    "mutation": "temporary copy of level1/ssot.json with authority_transfer changed from false to true",
+    "target_repository_modified": false,
+    "must_exit_nonzero": true,
+    "must_emit": "authority_transfer must be false"
+  },
+  "pilot_victory": [
+    "exact target SHA",
+    "positive authority contract validation passes",
+    "real notebook executes more than zero code cells twice",
+    "both executions contain zero notebook errors",
+    "normalized governed output digest repeats exactly",
+    "negative authority mutation is rejected",
+    "target checkout remains clean",
+    "deterministic MissionControl receipt repeat",
+    "GM-IV canonical mission stage remains unchanged during frontier pilot",
+    "GM-V remains HELD"
+  ],
+  "promotion_boundary": "frontier may become PILOT_CONTROL_READY; second independent controlled pilot exists only after merged-master recurrence; PILOT_2_OF_8 remains a separate Governor promotion decision"
+}
