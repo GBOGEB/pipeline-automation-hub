@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"
+      data-qps-ui="{{ site.qps_ui_version }}"
+      data-release-id="{{ page.release_id | default: 'UNBOUND' }}"
+      data-source-sha="{{ page.source_sha | default: 'UNBOUND' }}"
+      data-schema-version="{{ page.schema_version | default: 'UNBOUND' }}"
+      data-evidence-state="{{ page.evidence_state | default: 'UNBOUND' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="qps-release-id" content="{{ page.release_id | default: 'UNBOUND' }}">
+  <meta name="qps-source-sha" content="{{ page.source_sha | default: 'UNBOUND' }}">
+  <meta name="qps-schema-version" content="{{ page.schema_version | default: 'UNBOUND' }}">
+  <meta name="qps-evidence-state" content="{{ page.evidence_state | default: 'UNBOUND' }}">
+  <title>{{ page.title }} · {{ site.title }}</title>
+  <link rel="stylesheet" href="{{ '/assets/css/qps-ui-1.2.css' | relative_url }}">
+</head>
+<body>
+  <main>
+    <header>
+      <p><a href="{{ '/' | relative_url }}">QPS Triage Evidence Atlas</a></p>
+      <h1>{{ page.title }}</h1>
+      <dl class="qps-meta qps-card">
+        <div><dt>Release</dt><dd>{{ page.release_id | default: 'UNBOUND' }}</dd></div>
+        <div><dt>Source SHA</dt><dd><code>{{ page.source_sha | default: 'UNBOUND' }}</code></dd></div>
+        <div><dt>Schema</dt><dd>{{ page.schema_version | default: 'UNBOUND' }}</dd></div>
+        <div><dt>Evidence</dt><dd>{{ page.evidence_state | default: 'UNBOUND' }}</dd></div>
+      </dl>
+    </header>
+    {{ content }}
+  </main>
+</body>
+</html>
