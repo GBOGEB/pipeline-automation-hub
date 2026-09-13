@@ -1,0 +1,44 @@
+{
+  "schema": "qps.gm_iv_f01_pilot_contract.v1",
+  "wave": "GM-FLEET-03-F01-PILOT",
+  "mission": "GM-IV",
+  "frontier": "GM-IV-F01",
+  "target": {
+    "repository": "GBOGEB/DOCX_RTM_Automation",
+    "source_sha": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96",
+    "capability": "ADR_OCD_QPS_BRIDGE_VALIDATION",
+    "entrypoint": "scripts/validate_adr_ocd_bridge.py"
+  },
+  "crew": ["ENGINEER", "SMOKER", "QA"],
+  "authority_transfer": false,
+  "children_bound": false,
+  "mission_state_must_remain": "STAGED_ACTIVE_RECON_2_OF_8",
+  "f02_state": "REFERENCE",
+  "positive_probe": {
+    "command": "python3 scripts/validate_adr_ocd_bridge.py",
+    "must_exit": 0,
+    "must_emit": [
+      "validated glossary:",
+      "validated bridge manifest:",
+      "validated taxonomy:",
+      "validated QPS triage applicability:",
+      "ADR_OCD bridge validation passed"
+    ]
+  },
+  "negative_qa_probe": {
+    "mutation": "temporary copy of bridge_manifest.yaml with qps_authority_source.repo changed away from GBOGEB/cryoplant-project",
+    "target_repository_modified": false,
+    "must_exit_nonzero": true,
+    "must_emit": "qps_authority_source.repo must be GBOGEB/cryoplant-project"
+  },
+  "pilot_victory": [
+    "exact target SHA",
+    "positive validator executes >0 steps and passes",
+    "negative authority mutation is rejected",
+    "target checkout remains clean",
+    "deterministic MissionControl receipt repeat",
+    "GM-IV canonical mission stage unchanged",
+    "GM-V remains HELD"
+  ],
+  "promotion_boundary": "frontier may become PILOT_CONTROL_READY; this does not promote GM-IV to PILOT_2_OF_8 and does not bind a child"
+}
