@@ -21,6 +21,13 @@ jobs:
     steps:
       - name: Checkout exact source
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Bind checked-out exact SHA
+        run: |
+          echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          git rev-parse HEAD
 
       - name: Preserve GM-FLEET-02B control baseline
         run: |
@@ -48,13 +55,15 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
+          import os
           p='mission-control/grand-missions/runtime/gm_fleet_03_capacity_1.json'
           d=json.load(open(p, encoding='utf-8'))
+          assert d['source_sha'] == os.environ['SOURCE_SHA']
           assert d['gm_v_state'] == 'HELD'
           assert d['authority_transfer'] is False
           assert d['pca_gate'].startswith('DEFER_')
           assert d['bt_gate'].startswith('DEFER_')
-          print('PASS_FAIL_CLOSED_ANALYTICS_AND_GM_V_HOLD')
+          print('PASS_EXACT_SHA_FAIL_CLOSED_ANALYTICS_AND_GM_V_HOLD')
           PY
 
       - name: Show bounded capacity result
@@ -64,7 +73,7 @@ jobs:
       - name: Upload exact-SHA capacity receipts
         uses: actions/upload-artifact@v4
         with:
-          name: gm-fleet-03-${{ github.sha }}
+          name: gm-fleet-03-${{ env.SOURCE_SHA }}
           path: |
             mission-control/grand-missions/runtime/gm_fleet_02b_regression_receipt.json
             mission-control/grand-missions/runtime/gm_fleet_03_capacity_1.json
