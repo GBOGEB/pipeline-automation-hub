@@ -1,0 +1,14 @@
+{
+  "schema":"missioncontrol.bd_rex_control_escape_proof.v1",
+  "status":"PR_PROVEN_AWAITING_DISTINCT_SHA_REPEAT",
+  "authority_transfer":false,
+  "control_id":"REX-CM-002",
+  "roots":["HIST-BD-010","HIST-BD-011"],
+  "control_escape":{"root":"HIST-BD-011","classification":"REGRESSION_CONTROL_ESCAPE","prior_narrow_control_refs":["PR#93/run34774328258","PR#94/run34774493436"],"escaped_surface":"mission-control/qps-triage-ultra/crew/measured/frontier/analyze_frontier.py"},
+  "repair_pr":97,
+  "repair_head_sha":"ffae05b1e47a4a0e1fe8b3829cfc15f4de99c158",
+  "repair_merge_sha":"eca7946bc10fa0861e78e8a390668c762a29b29e",
+  "proof_runs":{"frontier_pca_bt":{"run_id":34774964825,"conclusion":"success","requirements":["linux_windows_collection","pair_order_counterbalanced_across_habitats","TWO_NODE_BT_LOG_ODDS_V1","analytic_scale_fixture","no_competency_promotion","no_authority_transfer"]},"measured_allocation":{"run_id":34774964822,"conclusion":"success"}},
+  "all_pr_head_workflows":{"count":11,"all_success":true},
+  "repeat_contract":{"repair_code_must_remain_unchanged":true,"repeat_source_sha_must_differ_from_repair_head_sha":true,"required_repeat_checks":["both_pair_directions_per_pair","counterbalance_basis_SOURCE_SHA_PARITY_XOR_HABITAT","frontier_two_node_bt_scale_fixture","frontier_exact_source_receipt","no_competency_promotion","no_authority_transfer"],"promotion_after_green_repeat":{"HIST-BD-010":"CONTROL_CANDIDATE","HIST-BD-011":"CONTROL_CANDIDATE_AFTER_CONTROL_ESCAPE","REX-CM-002":"CONTROL_CANDIDATE"}}
+}
