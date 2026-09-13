@@ -1,0 +1,72 @@
+{
+  "schema": "qps.gm_iv_ring2_recon_contract.v1",
+  "wave": "GM-FLEET-03-RING2",
+  "mission_id": "GM-IV",
+  "mission_state_required": "STAGED_ACTIVE_RECON_2_OF_8",
+  "authority_transfer": false,
+  "children_bound": false,
+  "selection_basis": "evidence-backed ordinal pre-probe scoring; not PCA",
+  "candidate_pool": [
+    {
+      "repository": "GBOGEB/codespaces-jupyter",
+      "observed": [
+        "local .mesh/MESH_DOCK.yaml",
+        "role REPRODUCIBLE_NOTEBOOK_RUNTIME_PRODUCER",
+        "local Level-1 SSOT",
+        "recent W111 runtime mesh commits"
+      ],
+      "scores_0_to_5": {"novelty": 5, "overlap": 2, "runtime": 5, "risk": 2, "mission_control_value": 5},
+      "selection": "GM-IV-F03",
+      "reason": "locally extended runtime producer with explicit non-authority boundary and an unclosed exact-head >0-cell deterministic receipt gap"
+    },
+    {
+      "repository": "GBOGEB/yaml-reference-parser",
+      "observed": [
+        "fork of yaml/yaml-reference-parser",
+        "README advertises make test",
+        "generated YAML 1.2 reference parsers",
+        "no observed QPS authority contract"
+      ],
+      "scores_0_to_5": {"novelty": 3, "overlap": 3, "runtime": 4, "risk": 2, "mission_control_value": 3},
+      "selection": "GM-IV-F04",
+      "reason": "bounded semantic/runtime reference candidate useful for classifying extract-vs-reference value without duplicating KEB authority"
+    },
+    {
+      "repository": "GBOGEB/yaml-grammar",
+      "observed": ["fork of yaml/yaml-grammar", "older fork head", "strong overlap with yaml-reference-parser"],
+      "scores_0_to_5": {"novelty": 2, "overlap": 5, "runtime": 2, "risk": 2, "mission_control_value": 2},
+      "selection": "POOL_LATER",
+      "reason": "defer behind parser because immediate overlap is high"
+    },
+    {
+      "repository": "GBOGEB/docker-stacks",
+      "observed": ["fork of jupyter/docker-stacks", "Docker/Jupyter execution habitat", "large build surface"],
+      "scores_0_to_5": {"novelty": 4, "overlap": 2, "runtime": 4, "risk": 5, "mission_control_value": 4},
+      "selection": "POOL_LATER",
+      "reason": "high-value habitat frontier but deliberately deferred from this bounded two-frontier pulse because runtime/build risk is materially larger"
+    }
+  ],
+  "frontiers": {
+    "GM-IV-F03": {
+      "repository": "GBOGEB/codespaces-jupyter",
+      "target_sha": "1eba2240a86d1fd2bd6375e2fac481caf645cdde",
+      "initial_crew": ["SCOUT", "READER", "AMBASSADOR"],
+      "bounded_probe": "execute notebooks/population.ipynb twice at exact SHA and compare normalized output digests",
+      "pilot_ready_requires": ["exact_sha", "mesh_contract", "executed_code_cells_gt0", "zero_notebook_errors", "repeat_digest_equal", "clean_checkout"]
+    },
+    "GM-IV-F04": {
+      "repository": "GBOGEB/yaml-reference-parser",
+      "target_sha": "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99",
+      "initial_crew": ["SCOUT", "READER", "AMBASSADOR"],
+      "bounded_probe": "run repository-advertised make test under timeout and inspect authority/federation markers",
+      "reference_requires": ["exact_sha", "real_test_attempt", "reference_parser_identity", "no_qps_authority_claim", "clean_checkout"]
+    }
+  },
+  "allowed_dispositions": ["PILOT_READY", "REFERENCE", "EXTRACT", "PARK", "DEFER_RUNTIME"],
+  "promotion_invariants": [
+    "F03_OR_F04_RECON_DOES_NOT_BIND_A_CHILD",
+    "ONE_EXISTING_F01_CONTROLLED_PILOT_PLUS_ONE_PILOT_READY_RECON_IS_NOT_YET_PILOT_2_OF_8",
+    "SECOND_PILOT_MUST_COMPLETE_ITS_OWN_CONTROL_RECURRENCE_BEFORE_GM_IV_PROMOTION",
+    "GM_V_REMAINS_HELD"
+  ]
+}

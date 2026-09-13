@@ -1,0 +1,278 @@
+name: GM-FLEET-03 Ring2 Recon
+
+on:
+  push:
+    branches:
+      - mission/gm-fleet-03-ring2-recon
+      - master
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/**'
+      - '.github/workflows/gm-fleet-03-ring2-recon.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ring2-recon:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout MissionControl exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: hub
+
+      - name: Bind MissionControl exact SHA
+        working-directory: hub
+        run: |
+          echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          git rev-parse HEAD
+
+      - name: Fetch F03 exact source
+        run: |
+          mkdir f03
+          git -C f03 init
+          git -C f03 remote add origin \
+            https://github.com/GBOGEB/codespaces-jupyter.git
+          git -C f03 fetch --depth=1 origin \
+            1eba2240a86d1fd2bd6375e2fac481caf645cdde
+          git -C f03 checkout --detach FETCH_HEAD
+          test "$(git -C f03 rev-parse HEAD)" = \
+            "1eba2240a86d1fd2bd6375e2fac481caf645cdde"
+
+      - name: Verify F03 mesh authority boundary
+        run: |
+          grep -F \
+            'role: REPRODUCIBLE_NOTEBOOK_RUNTIME_PRODUCER' \
+            f03/.mesh/MESH_DOCK.yaml
+          grep -F 'override_child_authority' f03/.mesh/MESH_DOCK.yaml
+          test -f f03/level1/ssot.json
+
+      - name: Install bounded F03 notebook runtime
+        run: |
+          python3 -m pip install --disable-pip-version-check -q \
+            nbformat nbconvert ipykernel pandas matplotlib
+
+      - name: Execute F03 notebook twice and emit receipt
+        run: |
+          python3 - <<'PY'
+          import copy
+          import hashlib
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          import nbformat
+          from nbconvert.preprocessors import ExecutePreprocessor
+
+          target = '1eba2240a86d1fd2bd6375e2fac481caf645cdde'
+          notebook = Path('f03/notebooks/population.ipynb')
+
+          def run_once():
+              nb = nbformat.read(notebook, as_version=4)
+              ep = ExecutePreprocessor(timeout=120, kernel_name='python3')
+              ep.preprocess(nb, {'metadata': {'path': 'f03/notebooks'}})
+              normalized = []
+              executed = 0
+              errors = 0
+              for cell in nb.cells:
+                  if cell.cell_type != 'code':
+                      continue
+                  executed += 1
+                  outs = []
+                  for out in cell.get('outputs', []):
+                      kind = out.get('output_type')
+                      item = {'output_type': kind}
+                      if kind == 'stream':
+                          item['name'] = out.get('name')
+                          item['text'] = out.get('text', '')
+                      elif kind in ('execute_result', 'display_data'):
+                          data = out.get('data', {})
+                          item['data'] = {
+                              k: data[k]
+                              for k in sorted(data)
+                              if k in ('text/plain', 'text/html')
+                          }
+                      elif kind == 'error':
+                          errors += 1
+                          item['ename'] = out.get('ename')
+                          item['evalue'] = out.get('evalue')
+                      outs.append(item)
+                  normalized.append({'source': cell.source, 'outputs': outs})
+              raw = json.dumps(
+                  normalized,
+                  sort_keys=True,
+                  separators=(',', ':'),
+              ).encode()
+              return executed, errors, hashlib.sha256(raw).hexdigest()
+
+          cells1, errors1, digest1 = run_once()
+          cells2, errors2, digest2 = run_once()
+          dirty = subprocess.check_output(
+              ['git', '-C', 'f03', 'status', '--porcelain'],
+              text=True,
+          ).splitlines()
+          receipt = {
+              'schema': 'qps.gm_iv_f03_runtime_receipt.v1',
+              'target_sha': target,
+              'executed_code_cells': min(cells1, cells2),
+              'error_count': errors1 + errors2,
+              'run1_digest': digest1,
+              'run2_digest': digest2,
+              'repeat_equal': digest1 == digest2,
+              'mesh_role': 'REPRODUCIBLE_NOTEBOOK_RUNTIME_PRODUCER',
+              'must_not_override_child_authority': True,
+              'source_dirty_count': len(dirty),
+          }
+          out = Path(os.environ['RUNNER_TEMP']) / 'f03-runtime.json'
+          out.write_text(
+              json.dumps(receipt, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          print(json.dumps(receipt, indent=2, sort_keys=True))
+          assert cells1 > 0 and cells2 > 0
+          assert errors1 == 0 and errors2 == 0
+          assert digest1 == digest2
+          assert not dirty
+          PY
+
+      - name: Fetch F04 exact source
+        run: |
+          mkdir f04
+          git -C f04 init
+          git -C f04 remote add origin \
+            https://github.com/GBOGEB/yaml-reference-parser.git
+          git -C f04 fetch --depth=1 origin \
+            2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99
+          git -C f04 checkout --detach FETCH_HEAD
+          test "$(git -C f04 rev-parse HEAD)" = \
+            "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99"
+
+      - name: Execute F04 advertised test as bounded recon
+        shell: bash
+        run: |
+          cp -a f04 "$RUNNER_TEMP/f04-run"
+          set +e
+          timeout 180 make -C "$RUNNER_TEMP/f04-run" test \
+            > "$RUNNER_TEMP/f04-test.log" 2>&1
+          rc=$?
+          set -e
+          echo "F04_TEST_RC=$rc" >> "$GITHUB_ENV"
+          tail -n 80 "$RUNNER_TEMP/f04-test.log" || true
+          echo "F04_TEST_ATTEMPTED_RC=$rc"
+
+      - name: Emit F04 reference-boundary receipt
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          target = '2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99'
+          readme = Path('f04/ReadMe.md').read_text(encoding='utf-8')
+          identity = (
+              'YAML 1.2 Reference Parsers' in readme
+              and 'make test' in readme
+          )
+          authority_claim = False
+          needles = ('GBOGEB/cryoplant-project', 'QPS authority')
+          for p in Path('f04').rglob('*'):
+              if not p.is_file() or '.git' in p.parts or p.stat().st_size > 1000000:
+                  continue
+              try:
+                  text = p.read_text(encoding='utf-8')
+              except (UnicodeDecodeError, OSError):
+                  continue
+              if any(n.lower() in text.lower() for n in needles):
+                  authority_claim = True
+                  break
+          dirty = subprocess.check_output(
+              ['git', '-C', 'f04', 'status', '--porcelain'],
+              text=True,
+          ).splitlines()
+          receipt = {
+              'schema': 'qps.gm_iv_f04_reference_receipt.v1',
+              'target_sha': target,
+              'test_attempted': True,
+              'test_exit_code': int(os.environ['F04_TEST_RC']),
+              'reference_parser_identity': identity,
+              'qps_authority_claim_detected': authority_claim,
+              'source_dirty_count': len(dirty),
+          }
+          out = Path(os.environ['RUNNER_TEMP']) / 'f04-reference.json'
+          out.write_text(
+              json.dumps(receipt, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          print(json.dumps(receipt, indent=2, sort_keys=True))
+          assert identity
+          assert not authority_claim
+          assert not dirty
+          PY
+
+      - name: Assess Ring2 first pass
+        working-directory: hub
+        run: |
+          python3 mission-control/grand-missions/assess_gm_iv_ring2.py \
+            --contract \
+            mission-control/grand-missions/GM_IV_RING2_RECON_CONTRACT.json \
+            --f03 "$RUNNER_TEMP/f03-runtime.json" \
+            --f04 "$RUNNER_TEMP/f04-reference.json" \
+            --source-sha "$SOURCE_SHA" \
+            --out "$RUNNER_TEMP/gm-iv-ring2-1.json"
+
+      - name: Assess Ring2 repeat
+        working-directory: hub
+        run: |
+          python3 mission-control/grand-missions/assess_gm_iv_ring2.py \
+            --contract \
+            mission-control/grand-missions/GM_IV_RING2_RECON_CONTRACT.json \
+            --f03 "$RUNNER_TEMP/f03-runtime.json" \
+            --f04 "$RUNNER_TEMP/f04-reference.json" \
+            --source-sha "$SOURCE_SHA" \
+            --out "$RUNNER_TEMP/gm-iv-ring2-2.json"
+
+      - name: Enforce deterministic Ring2 repeat
+        run: |
+          cmp \
+            "$RUNNER_TEMP/gm-iv-ring2-1.json" \
+            "$RUNNER_TEMP/gm-iv-ring2-2.json"
+          echo PASS_GM_IV_RING2_DETERMINISTIC_REPEAT
+
+      - name: Enforce bounded dispositions and non-promotion
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          p = Path(os.environ['RUNNER_TEMP']) / 'gm-iv-ring2-1.json'
+          d = json.loads(p.read_text(encoding='utf-8'))
+          assert d['source_sha'] == os.environ['SOURCE_SHA']
+          assert d['dispositions']['GM-IV-F03']['disposition'] == 'PILOT_READY'
+          assert d['dispositions']['GM-IV-F04']['disposition'] == 'REFERENCE'
+          assert d['pilot_gate'] == \
+              'SECOND_PILOT_CANDIDATE_READY_FOR_BOUNDED_CONTROL'
+          assert d['mission_promotion'] == \
+              'WITHHELD_UNTIL_SECOND_PILOT_CONTROL_RECURRENCE'
+          assert d['mission_state'] == 'STAGED_ACTIVE_RECON_2_OF_8'
+          assert d['children_bound'] is False
+          assert d['authority_transfer'] is False
+          assert d['gm_v_state'] == 'HELD'
+          print('PASS_F03_PILOT_READY_F04_REFERENCE_NO_PROMOTION')
+          PY
+
+      - name: Upload exact-SHA Ring2 receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-fleet-03-ring2-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/f03-runtime.json
+            ${{ runner.temp }}/f04-reference.json
+            ${{ runner.temp }}/f04-test.log
+            ${{ runner.temp }}/gm-iv-ring2-1.json
+            ${{ runner.temp }}/gm-iv-ring2-2.json
+          if-no-files-found: error
