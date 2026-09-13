@@ -96,13 +96,16 @@ for (crew,dim), rs in sorted(groups.items()):
       'seed_display_weight':round(seed_weight,3),'blocking_rex_levels':sorted(set(blocking))
     })
 
+# HIST-BD-008: PCA readiness must be derived from the same eligible measured
+# population that may actually enter the allocation model. Ineligible rows may
+# remain visible in the receipt but cannot create artificial variance.
+eligible_rows=[r for r in rows if r['allocation_eligible']]
 varying=0
 feature_names=['demonstrated_level','acceptance_rate','distinct_accepted_runs','distinct_source_shas','mean_execute_seconds','rex_trigger_rate']
 for f in feature_names:
-    vals=[r[f] for r in rows if r[f] is not None]
+    vals=[r[f] for r in eligible_rows if r[f] is not None]
     if len(vals)>=2 and len(set(vals))>1:
         varying+=1
-eligible_rows=[r for r in rows if r['allocation_eligible']]
 pca_ready=len(eligible_rows)>=policy['pca_gate']['min_measured_rows'] and varying>=policy['pca_gate']['min_varying_features']
 
 if pca_ready:
@@ -111,6 +114,40 @@ elif len(eligible_rows)<policy['pca_gate']['min_measured_rows']:
     pca_status='DEFER_INSUFFICIENT_ELIGIBLE_MEASURED_ROWS'
 else:
     pca_status='DEFER_INSUFFICIENT_MEASURED_VARIANCE'
+
+
+def derive_pair_outcome(observation, tie_threshold):
+    """Derive the timing result rather than trusting a stored winner label."""
+    seconds_a=float(observation['seconds_a'])
+    seconds_b=float(observation['seconds_b'])
+    scale=max(seconds_a,seconds_b)
+    relative_gap=0.0 if scale==0 else abs(seconds_a-seconds_b)/scale
+    if relative_gap < tie_threshold or seconds_a==seconds_b:
+        winner='TIE'
+    elif seconds_a < seconds_b:
+        winner=observation['strategy_a']
+    else:
+        winner=observation['strategy_b']
+    return relative_gap,winner
+
+
+def two_node_bt_abilities(wins_a, wins_b):
+    """Return centered two-node BT log abilities with Jeffreys-style smoothing.
+
+    For two strategies, BT requires ability_a-ability_b == logit(P(a beats b)).
+    The previous full-log-odds-per-node shortcut doubled this separation after
+    centering. This contract intentionally supports exactly two nodes; a larger
+    graph requires a separately validated joint-fit implementation.
+    """
+    log_ratio=math.log((wins_a+0.5)/(wins_b+0.5))
+    return log_ratio/2.0,-log_ratio/2.0
+
+
+# REX-CM-002 analytic scale fixture. 8 wins vs 4 wins must produce one log-odds
+# separation, not twice that amount.
+_fixture_a,_fixture_b=two_node_bt_abilities(8.0,4.0)
+_fixture_expected=math.log(8.5/4.5)
+assert math.isclose(_fixture_a-_fixture_b,_fixture_expected,rel_tol=1e-12,abs_tol=1e-12)
 
 # Fail-closed observed pairwise evidence. Timing cannot count until equivalent
 # workload results were proved by the frontier semantic digest contract.
@@ -121,6 +158,9 @@ if pairwise_path.exists():
     assert pair_doc.get('schema')=='missioncontrol.pairwise_allocation_observations.v1'
     assert pair_doc.get('status')=='CANONICAL_OBSERVED'
     assert pair_doc.get('authority_transfer') is False
+    comparison_contract=pair_doc.get('comparison_contract',{})
+    tie_threshold=float(comparison_contract.get('tie_relative_gap_below',-1))
+    assert 0.0 <= tie_threshold < 1.0
     seen_ids=set()
     for o in pair_doc.get('observations',[]):
         oid=o.get('observation_id')
@@ -135,6 +175,11 @@ if pairwise_path.exists():
         assert o.get('winner') in {o['strategy_a'],o['strategy_b'],'TIE'}
         assert isinstance(o.get('semantic_digest'),str) and len(o['semantic_digest'])==64
         assert float(o.get('seconds_a',-1))>=0 and float(o.get('seconds_b',-1))>=0
+        derived_gap,derived_winner=derive_pair_outcome(o,tie_threshold)
+        assert math.isclose(float(o.get('relative_gap')),
+                            derived_gap,rel_tol=1e-9,abs_tol=1e-12), \
+            f"pair relative_gap mismatch for {oid}"
+        assert o.get('winner')==derived_winner, f"pair winner mismatch for {oid}"
         pairs.append(o)
     summary=pair_doc.get('summary',{})
     assert summary.get('observed_pairs')==len(pairs)
@@ -151,13 +196,19 @@ for o in pairs:
         stats[a]['wins']+=1.0; stats[b]['losses']+=1.0
     else:
         stats[b]['wins']+=1.0; stats[a]['losses']+=1.0
-raw={s:math.log((v['wins']+0.5)/(v['losses']+0.5)) for s,v in stats.items()}
-center=statistics.mean(raw.values()) if raw else 0.0
-denom=sum(math.exp(v-center) for v in raw.values()) or 1.0
+
 bt_nodes=[]
-for s in sorted(raw):
-    strength=raw[s]-center
-    bt_nodes.append({'strategy':s,'bt_log_strength':strength,'normalized_strength':math.exp(strength)/denom,**stats[s]})
+if stats:
+    strategies=sorted(stats)
+    assert len(strategies)==2, 'BT v1 control supports exactly two strategies; >2 requires a validated joint-fit contract'
+    a,b=strategies
+    strength_a,strength_b=two_node_bt_abilities(stats[a]['wins'],stats[b]['wins'])
+    strengths={a:strength_a,b:strength_b}
+    denom=sum(math.exp(v) for v in strengths.values()) or 1.0
+    for s in strategies:
+        strength=strengths[s]
+        bt_nodes.append({'strategy':s,'bt_log_strength':strength,'normalized_strength':math.exp(strength)/denom,**stats[s]})
+
 bt_ready=len(pairs)>=policy['bt_gate']['min_observed_pairwise_comparisons']
 
 # Canonical frontier PCA is kept separate from the crew-row PCA above. It is a
@@ -191,9 +242,16 @@ out={
  'receipt_count':len(receipts),'returned_run_count':len({r['run_id'] for r in receipts if r.get('evidence_return_status')}),
  'rows':rows,
  'allocation_eligible_rows':len(eligible_rows),
- 'pca':{'status':pca_status,'measured_rows':len(rows),'eligible_rows':len(eligible_rows),'varying_features':varying},
+ 'pca':{'status':pca_status,'measured_rows':len(rows),'eligible_rows':len(eligible_rows),'varying_features':varying,'variance_population':'ALLOCATION_ELIGIBLE_ONLY'},
  'frontier_pca':frontier_pca,
- 'bt':{'status':'READY_OBSERVED' if bt_ready else policy['bt_gate']['status_before_gate'],'observed_pairs':len(pairs),'nodes':bt_nodes},
+ 'bt':{
+   'status':'READY_OBSERVED' if bt_ready else policy['bt_gate']['status_before_gate'],
+   'observed_pairs':len(pairs),
+   'nodes':bt_nodes,
+   'model_contract':'TWO_NODE_BT_LOG_ODDS_V1',
+   'raw_timing_consistency':'FAIL_CLOSED',
+   'analytic_fixture':'PASS'
+ },
  'competency_promotions':0,'authority_transfer':False
 }
 (ROOT/'MEASURED_ALLOCATION_RECEIPT.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
