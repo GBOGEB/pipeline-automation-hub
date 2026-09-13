@@ -1,68 +1,15 @@
 {
-  "schema": "missioncontrol.specialist_repair_crew_registry.v1",
-  "status": "ACTIVE",
-  "as_of": "2026-09-13",
-  "authority_transfer": false,
-  "activation_rule": "recurrence || P0/P1 severity || cross_repo_centrality || repeated_failed_repair",
-  "return_rule": "repair + exact proof + distinct_source_repeat + accepted_control_measure",
-  "crew": [
-    {
-      "crew_id": "DOCTOR_REX",
-      "display_name": "Doctor.REX",
-      "state": "RETURNED_CONTROL_RESERVE",
-      "triggered_by_roots": ["HIST-BD-006", "HIST-BD-007"],
-      "primary_competencies": ["REX policy", "fail-closed preflight", "recurrence classification", "governance/runtime boundary"],
-      "current_mission": null,
-      "secondment": ["H2_KEB", "H3_DOW", "H4_QPS_TRIAGE"],
-      "tools_resources": ["Historian lineage", "REX registry", "runtime receipts", "validator/preflight tests"],
-      "return_evidence": ["PR#93@6b7a014887c188ae7a0b2f536db201e76a9e6313", "PR#94@208c40499db82c8a0b5f3e6277bf469c74e12afe"],
-      "victory_condition": "SATISFIED: REX-CM-001 CONTROL; reactivate only on control escape/regression or a new high-pressure REX root"
-    },
-    {
-      "crew_id": "DOCTOR_ANALYTICS",
-      "display_name": "Doctor.Analytics",
-      "state": "ACTIVE_NARROWED",
-      "triggered_by_roots": ["HIST-BD-008", "HIST-BD-010", "HIST-BD-011", "HIST-BD-012"],
-      "primary_competencies": ["PCA eligibility", "Bradley-Terry", "experimental design", "analytic fixtures", "timing evidence"],
-      "current_mission": "HIST-BD-010_PAIR_ORDER_COUNTERBALANCE",
-      "secondment": ["H4_QPS_TRIAGE", "QA_SIGNALMAN"],
-      "tools_resources": ["pairwise receipts", "timing rows", "analytic fixtures", "allocation builder", "frontier runner"],
-      "closed_scope": ["HIST-BD-008", "HIST-BD-011", "HIST-BD-012"],
-      "active_scope": ["HIST-BD-010"],
-      "victory_condition": "counterbalance or randomize paired runtime order, record observed order, then repeat on a distinct source SHA"
-    },
-    {
-      "crew_id": "DOCTOR_RUNTIME",
-      "display_name": "Doctor.Runtime",
-      "state": "ACTIVE",
-      "triggered_by_roots": ["RUNNER-ECONOMICS-79", "CRYOPLANT-923", "HIST-BD-014"],
-      "primary_competencies": ["runner admission", "queue vs execute", "Docker habitat", "cache/prebuild", "self-hosted capacity economics", "fail-closed runtime probes"],
-      "current_mission": "RUNNER_ECONOMICS_PLUS_BD014",
-      "secondment": ["H1_QPS", "H4_QPS_TRIAGE", "GBOGEB/CODEX#676"],
-      "tools_resources": ["workflow job telemetry", "Docker/runtime receipts", "queue/build/cache timings", "debugger CONTROL regression probes"],
-      "victory_condition": "repo-local admission is separated from ordinary queue pressure; BD014 closes without debugger capability regression; at least one exact-source economics intervention improves pressure without semantic change"
-    },
-    {
-      "crew_id": "DOCTOR_CONTRACTS",
-      "display_name": "Doctor.Contracts",
-      "state": "READY_ON_DEMAND",
-      "triggered_by_roots": ["HIST-BD-002", "HIST-BD-003", "HIST-BD-004", "HIST-BD-005", "HIST-BD-013"],
-      "primary_competencies": ["schema", "Zod", "required-field enforcement", "provenance binding", "contract drift"],
-      "current_mission": null,
-      "secondment": ["H2_KEB", "QA_SIGNALMAN"],
-      "tools_resources": ["schemas", "validators", "contracts", "source-SHA receipts"],
-      "victory_condition": "activate when H4 bundles compatible contract roots into a bounded repair package"
-    },
-    {
-      "crew_id": "DEBUG_SURGEON",
-      "display_name": "Debug Surgeon",
-      "state": "RETURNED_CONTROL_RESERVE",
-      "triggered_by_roots": [],
-      "primary_competencies": ["LLDB", "DAP", "debugpy", "js-debug", "MCP", "deep first-red isolation"],
-      "current_mission": null,
-      "secondment": ["CODEX", "Q_engineering_tools"],
-      "tools_resources": ["lldb-dap", "LLDB-MCP", "Docker remote debug", "debug protocol probes"],
-      "victory_condition": "do not reactivate for BD014 unless the bounded robustness repair causes a real debugger/runtime regression; capability remains CONTROL"
-    }
+  "schema":"missioncontrol.specialist_repair_crew_registry.v1",
+  "status":"ACTIVE",
+  "as_of":"2026-09-13",
+  "authority_transfer":false,
+  "activation_rule":"recurrence || P0/P1 severity || cross_repo_centrality || repeated_failed_repair || control_escape",
+  "return_rule":"repair + exact proof + distinct_source_repeat + accepted_control_measure",
+  "crew":[
+    {"crew_id":"DOCTOR_REX","display_name":"Doctor.REX","state":"RETURNED_CONTROL_RESERVE","triggered_by_roots":["HIST-BD-006","HIST-BD-007"],"primary_competencies":["REX policy","fail-closed preflight","recurrence classification","governance/runtime boundary"],"current_mission":null,"secondment":["H2_KEB","H3_DOW","H4_QPS_TRIAGE"],"tools_resources":["Historian lineage","REX registry","runtime receipts","validator/preflight tests"],"return_evidence":["PR#93@6b7a014887c188ae7a0b2f536db201e76a9e6313","PR#94@208c40499db82c8a0b5f3e6277bf469c74e12afe"],"victory_condition":"REX-CM-001 remains CONTROL; reactivate only on its own control escape/regression or a new high-pressure REX root"},
+    {"crew_id":"DOCTOR_ANALYTICS","display_name":"Doctor.Analytics","state":"ACTIVE_REPEAT_GATE","triggered_by_roots":["HIST-BD-008","HIST-BD-010","HIST-BD-011","HIST-BD-012"],"primary_competencies":["PCA eligibility","Bradley-Terry","experimental design","analytic fixtures","timing evidence","control-escape census"],"current_mission":"REX-CM-002_DISTINCT_SHA_REPEAT","secondment":["H4_QPS_TRIAGE","QA_SIGNALMAN","HISTORIAN"],"tools_resources":["pairwise receipts","timing rows","analytic fixtures","allocation builder","frontier runner","frontier analyzer"],"closed_scope":["HIST-BD-008","HIST-BD-012"],"active_scope":["HIST-BD-010","HIST-BD-011"],"control_escape":{"root":"HIST-BD-011","surface":"mission-control/qps-triage-ultra/crew/measured/frontier/analyze_frontier.py","classification":"REGRESSION_CONTROL_ESCAPE","repair_pr":97,"repair_head_sha":"ffae05b1e47a4a0e1fe8b3829cfc15f4de99c158","repair_merge_sha":"eca7946bc10fa0861e78e8a390668c762a29b29e","exact_head_frontier_run":34774964825,"exact_head_green":true},"victory_condition":"repair is PR-proven; return only after a distinct source SHA proves counterbalanced pair order and correct BT scale across the frontier surface"},
+    {"crew_id":"DOCTOR_RUNTIME","display_name":"Doctor.Runtime","state":"ACTIVE","triggered_by_roots":["RUNNER-ECONOMICS-79","CRYOPLANT-923","HIST-BD-014"],"primary_competencies":["runner admission","queue vs execute","Docker habitat","cache/prebuild","self-hosted capacity economics","fail-closed runtime probes"],"current_mission":"RUNNER_ECONOMICS_PLUS_BD014","secondment":["H1_QPS","H4_QPS_TRIAGE","GBOGEB/CODEX#676"],"tools_resources":["workflow job telemetry","Docker/runtime receipts","queue/build/cache timings","debugger CONTROL regression probes"],"victory_condition":"repo-local admission is separated from ordinary queue pressure; BD014 closes without debugger capability regression; at least one exact-source economics intervention improves pressure without semantic change"},
+    {"crew_id":"DOCTOR_CONTRACTS","display_name":"Doctor.Contracts","state":"READY_ON_DEMAND","triggered_by_roots":["HIST-BD-002","HIST-BD-003","HIST-BD-004","HIST-BD-005","HIST-BD-013"],"primary_competencies":["schema","Zod","required-field enforcement","provenance binding","contract drift"],"current_mission":null,"secondment":["H2_KEB","QA_SIGNALMAN"],"tools_resources":["schemas","validators","contracts","source-SHA receipts"],"victory_condition":"activate when H4 bundles compatible contract roots into a bounded repair package"},
+    {"crew_id":"DEBUG_SURGEON","display_name":"Debug Surgeon","state":"RETURNED_CONTROL_RESERVE","triggered_by_roots":[],"primary_competencies":["LLDB","DAP","debugpy","js-debug","MCP","deep first-red isolation"],"current_mission":null,"secondment":["CODEX","Q_engineering_tools"],"tools_resources":["lldb-dap","LLDB-MCP","Docker remote debug","debug protocol probes"],"victory_condition":"do not reactivate for BD014 unless the bounded robustness repair causes a real debugger/runtime regression; debugger capability remains CONTROL"}
   ]
 }
