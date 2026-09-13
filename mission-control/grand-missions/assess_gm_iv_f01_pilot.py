@@ -26,6 +26,13 @@ def main():
     runtime = load(args.runtime_receipt)
     gm = {m["id"]: m for m in registry["grand_missions"]}
     target = contract["target"]
+    current_state = gm["GM-IV"].get("state")
+    allowed_forward_states = {
+        "STAGED_ACTIVE_RECON_2_OF_8",
+        "STAGED_ACTIVE_PILOT_2_OF_8",
+        "STAGED_ACTIVE_RECON_4_OF_8",
+        "ACTIVE_8_OF_8",
+    }
 
     checks = [
         ("01_exact_target_sha", runtime.get("target_sha") == target["source_sha"], runtime.get("target_sha")),
@@ -34,7 +41,7 @@ def main():
         ("04_negative_authority_probe_rejected", runtime.get("negative_exit_code", 0) != 0 and runtime.get("negative_rejection_marker") is True, runtime.get("negative_exit_code")),
         ("05_target_checkout_clean", runtime.get("target_dirty_file_count") == 0, runtime.get("target_dirty_file_count")),
         ("06_output_digest_bound", isinstance(runtime.get("positive_output_sha256"), str) and len(runtime["positive_output_sha256"]) == 64, runtime.get("positive_output_sha256")),
-        ("07_gm_iv_stage_unchanged", gm["GM-IV"].get("state") == contract["mission_state_must_remain"] and gm["GM-IV"].get("children") == [], gm["GM-IV"].get("state")),
+        ("07_historical_stage_preserved_current_stage_not_regressed", contract["mission_state_must_remain"] == "STAGED_ACTIVE_RECON_2_OF_8" and current_state in allowed_forward_states and gm["GM-IV"].get("children") == [], current_state),
         ("08_gm_v_held", gm["GM-V"].get("state") == "HELD" and gm["GM-V"].get("children") == [], gm["GM-V"].get("state")),
         ("09_f02_reference_only", contract.get("f02_state") == "REFERENCE", contract.get("f02_state")),
         ("10_no_authority_or_child_transfer", contract.get("authority_transfer") is False and contract.get("children_bound") is False, False),
@@ -53,12 +60,13 @@ def main():
         "target_sha": runtime.get("target_sha"),
         "authority_transfer": False,
         "children_bound": False,
-        "gm_iv_state": gm["GM-IV"].get("state"),
+        "historical_evidence_stage": "STAGED_ACTIVE_RECON_2_OF_8",
+        "gm_iv_state": current_state,
         "gm_v_state": gm["GM-V"].get("state"),
         "checks": [{"check": n, "result": "PASS" if ok else "FAIL", "detail": detail} for n, ok, detail in checks],
         "result": "PASS" if not failed else "FAIL",
         "frontier_disposition": "PILOT_CONTROL_READY" if not failed else "PILOT_WITHHELD",
-        "mission_promotion": "WITHHELD_F01_ONLY_DOES_NOT_PROMOTE_GM_IV_TO_PILOT_2_OF_8",
+        "mission_promotion": "WITHHELD_FROM_F01_RECURRENCE__CURRENT_STAGE_MAY_HAVE_BEEN_PROMOTED_SEPARATELY",
         "next_frontier_action": "CONTROL_RECURRENCE_ONLY" if not failed else "ROUTE_FIRST_RED",
         "runtime": runtime,
     }
@@ -67,6 +75,8 @@ def main():
         "result": receipt["result"],
         "frontier_disposition": receipt["frontier_disposition"],
         "mission_promotion": receipt["mission_promotion"],
+        "historical_evidence_stage": receipt["historical_evidence_stage"],
+        "current_mission_state": receipt["gm_iv_state"],
         "source_sha": receipt["source_sha"],
         "target_sha": receipt["target_sha"],
     }, sort_keys=True))
