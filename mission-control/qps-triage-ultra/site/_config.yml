@@ -1,0 +1,12 @@
+title: QPS Triage Evidence Atlas
+description: Static, auditable publication surface for MissionControl QPS triage.
+source: .
+destination: _site
+markdown: kramdown
+strict_front_matter: true
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - scripts
+qps_ui_version: "1.2"
