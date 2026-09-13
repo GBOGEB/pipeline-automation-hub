@@ -1,0 +1,78 @@
+{
+  "schema": "missioncontrol.crew.role_gap_signals.v1",
+  "evidence_class": "EXPERT_SEEDED_NOT_MEASURED",
+  "observed_at": "2026-09-13T17:12:00+02:00",
+  "candidates": [
+    {
+      "candidate_role_id": "C05",
+      "name": "Integrator / Federator",
+      "signals": {
+        "recurrence": 1.0,
+        "blocked_missions": 0.8,
+        "crew_wait_pressure": 0.6,
+        "rex_recurrence": 0.6,
+        "special_habitat": 0.3,
+        "independence_boundary": 1.0,
+        "pca_bt_cluster": 0.8
+      },
+      "penalties": {
+        "existing_role_overlap": 0.1,
+        "one_off_need": 0.0,
+        "tool_or_resource_only": 0.1
+      },
+      "independent_need_signals": ["cross_repo_federation", "independent_non_origin_consumer", "receipt_correlation"],
+      "trial_ready": true,
+      "authority_collision": false,
+      "trial_scope": "one bounded cross-repo integration edge with independent consumer proof",
+      "mentor_or_challenger": ["U04", "U06", "U08"],
+      "warning": "Values are seeded planning priors and must be replaced by measured mission telemetry before permanent role promotion."
+    },
+    {
+      "candidate_role_id": "C08",
+      "name": "Independent Verifier",
+      "signals": {
+        "recurrence": 1.0,
+        "blocked_missions": 0.9,
+        "crew_wait_pressure": 0.5,
+        "rex_recurrence": 0.7,
+        "special_habitat": 0.0,
+        "independence_boundary": 1.0,
+        "pca_bt_cluster": 0.8
+      },
+      "penalties": {
+        "existing_role_overlap": 0.2,
+        "one_off_need": 0.05,
+        "tool_or_resource_only": 0.0
+      },
+      "independent_need_signals": ["non_origin_consumer", "separate_acceptance_evidence", "fresh_repeat_challenge"],
+      "trial_ready": true,
+      "authority_collision": false,
+      "trial_scope": "one bounded independent verification where origin/build and verification must be separated",
+      "mentor_or_challenger": ["U06", "U08", "U01"],
+      "warning": "Values are seeded planning priors and must be replaced by measured mission telemetry before permanent role promotion."
+    },
+    {
+      "candidate_role_id": "C04",
+      "name": "Builder / Repairer",
+      "signals": {
+        "recurrence": 0.8,
+        "blocked_missions": 0.4,
+        "crew_wait_pressure": 0.3,
+        "rex_recurrence": 0.4,
+        "special_habitat": 0.0,
+        "independence_boundary": 0.1,
+        "pca_bt_cluster": 0.4
+      },
+      "penalties": {
+        "existing_role_overlap": 1.0,
+        "one_off_need": 0.1,
+        "tool_or_resource_only": 0.1
+      },
+      "independent_need_signals": ["repair_work"],
+      "trial_ready": false,
+      "authority_collision": false,
+      "preferred_reuse": ["S02", "S05"],
+      "warning": "Strong existing-role overlap makes a new permanent role unjustified unless measured evidence changes."
+    }
+  ]
+}
