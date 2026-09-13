@@ -1,0 +1,214 @@
+{
+  "schema": "missioncontrol.fleet_historian_fanout.v1",
+  "status": "ACTIVE_TRIAGE_FIRST_FANOUT",
+  "as_of": "2026-09-13",
+  "parent_issue": "GBOGEB/pipeline-automation-hub#76",
+  "estate_denominator": 83,
+  "coverage_rule": {
+    "all_repositories": "H0 identity/current-head + Historian disposition required",
+    "mission_repositories": "H1/H2 merge-parent + PR/review/TODO debt required",
+    "active_pressure_repositories": "H3/H4 workflow receipts + measured recurrence/repair/reinforcement features required",
+    "control_repositories": "regression monitoring only unless current defect or measured H4 pressure reopens IMPROVE",
+    "issues_disabled_fallback": "MissionControl child row is authoritative; native repo issue is optional"
+  },
+  "priority_waves": [
+    {
+      "wave": "T0_HORIZONTAL_CORE",
+      "count": 4,
+      "depth": "H3_H4_ACTIVE",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub",
+        "GBOGEB/CODEX",
+        "GBOGEB/ABACUS",
+        "GBOGEB/cryoplant-project"
+      ]
+    },
+    {
+      "wave": "F1_GM_I_TO_III",
+      "count": 7,
+      "depth": "H1_H2_REQUIRED_DEEPEN_ON_PRESSURE",
+      "repos": [
+        "GBOGEB/CoolProp",
+        "GBOGEB/Q_engineering_tools",
+        "GBOGEB/gg_MATH",
+        "GBOGEB/github-mcp-server",
+        "GBOGEB/scientific-agent-skills",
+        "GBOGEB/GEMINI",
+        "GBOGEB/orchestration-sandbox"
+      ]
+    },
+    {
+      "wave": "F2_GM_IV_PROVISIONAL_RECON",
+      "count": 8,
+      "depth": "H1_PLUS_READER_THEN_H2_ON_ACCEPT",
+      "canonical_child_binding": false,
+      "repos": [
+        "GBOGEB/telegraf",
+        "GBOGEB/DOCX_RTM_Automation",
+        "GBOGEB/attest-build-provenance",
+        "GBOGEB/RouteLLM",
+        "GBOGEB/docker-stacks",
+        "GBOGEB/CODESPACES_jyperter",
+        "GBOGEB/camelot",
+        "GBOGEB/grid-table-editor"
+      ]
+    },
+    {
+      "wave": "F3_GM_V_RESERVE",
+      "count": 16,
+      "depth": "H0_H1_PRIMING_ONLY_UNTIL_GM_IV_CONTROL",
+      "repos": [
+        "GBOGEB/tesseract",
+        "GBOGEB/vscode-powershell",
+        "GBOGEB/openai-node",
+        "GBOGEB/python-sdk",
+        "GBOGEB/vscode-drawio",
+        "GBOGEB/plotly.py",
+        "GBOGEB/gk-cli",
+        "GBOGEB/cryo_leak_rate_dashboard",
+        "GBOGEB/document-organization-system",
+        "GBOGEB/yaml-reference-parser",
+        "GBOGEB/ExcelAddinInstaller",
+        "GBOGEB/python-proofreader",
+        "GBOGEB/notebook",
+        "GBOGEB/codespaces-jupyter",
+        "GBOGEB/yaml-grammar",
+        "GBOGEB/openai-cookbook"
+      ]
+    },
+    {
+      "wave": "F4_V_PLUS_RESERVE",
+      "count": 32,
+      "depth": "H0_SHALLOW_H1_ON_H4_PRESSURE",
+      "repos": [
+        "GBOGEB/cryogenic-compliance",
+        "GBOGEB/markdownlint",
+        "GBOGEB/OMI_PTIT",
+        "GBOGEB/omi",
+        "GBOGEB/gpt_session_toolkit",
+        "GBOGEB/Edit_WORD_Roundtrip",
+        "GBOGEB/downloads-organization",
+        "GBOGEB/segment-anything",
+        "GBOGEB/ExplorerPatcher",
+        "GBOGEB/stale",
+        "GBOGEB/vscode-emacs-mcx",
+        "GBOGEB/dmaic-recursive-pipeline",
+        "GBOGEB/ariana",
+        "GBOGEB/node-glob",
+        "GBOGEB/codex-universal",
+        "GBOGEB/prettier",
+        "GBOGEB/prettier-vscode",
+        "GBOGEB/eslint-config-prettier",
+        "GBOGEB/prettier-eslint",
+        "GBOGEB/code-prettify",
+        "GBOGEB/morris.js",
+        "GBOGEB/vscode",
+        "GBOGEB/cli",
+        "GBOGEB/python",
+        "GBOGEB/skills",
+        "GBOGEB/awesome-system-design-resources",
+        "GBOGEB/awesome-sysadmin",
+        "GBOGEB/awesome-deep-learning",
+        "GBOGEB/cryogenic-accelerator-workspace",
+        "GBOGEB/ARTSTYLE-WIP",
+        "GBOGEB/GBOGEB-PROGRAM-COOL",
+        "GBOGEB/inkscape"
+      ]
+    },
+    {
+      "wave": "F5_RESIDUAL_TAIL",
+      "count": 16,
+      "depth": "H0_CLASSIFY_ONLY_UNLESS_PROMOTED",
+      "repos": [
+        "GBOGEB/skills-introduction-to-github",
+        "GBOGEB/GBOGEB-profile",
+        "GBOGEB/welcome-_-test",
+        "GBOGEB/awesome",
+        "GBOGEB/the-book-of-secret-knowledge",
+        "GBOGEB/document-organization-system_GBOGEB",
+        "GBOGEB/GBOGEB",
+        "GBOGEB/Encode-Sans",
+        "GBOGEB/qplant-system-v0-1-1-dmaic2-temp",
+        "GBOGEB/dmaic-recursive-pipeline_ALL_agennts-CP-G5-GEM-ABAC-as-4-sources",
+        "GBOGEB/haikus-for-codespaces",
+        "GBOGEB/Awesome-Hacking",
+        "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+        "GBOGEB/github_Documents",
+        "GBOGEB/css-protips",
+        "GBOGEB/anthropic"
+      ]
+    }
+  ],
+  "first_rollup_cluster": {
+    "name": "LLDB_DOCKER_RUNNER",
+    "priority": "P0_NON_COMPENSATING_RUNTIME",
+    "producer_control": "GBOGEB/CODEX#675",
+    "dow_consumer": "GBOGEB/ABACUS#1180",
+    "independent_execution": "GBOGEB/Q_engineering_tools#32",
+    "child_runtime_gate": "GBOGEB/cryoplant-project#923",
+    "missioncontrol_parent": "GBOGEB/cryoplant-project#1063",
+    "observed_control_boundary": [
+      "CODEX lldb-dap CONTROL",
+      "CODEX debugpy CONTROL",
+      "CODEX js-debug CONTROL",
+      "CODEX Docker remote LLDB CONTROL",
+      "CODEX strict LLVM lldb-mcp CONTROL",
+      "heartbeat/perpetuation CONTROL"
+    ],
+    "active_first_red": "cryoplant #923 runner admission",
+    "victory_chain": [
+      "runner_id_nonzero",
+      "steps_gt_zero",
+      "unchanged_validator_same_sha",
+      "exact_sha_receipt",
+      "child_disposition",
+      "fresh_head_repeat"
+    ],
+    "non_compensation": "federated producer or sibling runner success cannot close cryoplant repo-local admission"
+  },
+  "native_child_tracking": [
+    {"repo":"GBOGEB/CODEX","issue":"#675","state":"OPEN"},
+    {"repo":"GBOGEB/ABACUS","issue":"#1180","state":"OPEN"},
+    {"repo":"GBOGEB/Q_engineering_tools","issue":"#32","state":"OPEN"},
+    {"repo":"GBOGEB/gg_MATH","issue":"#4","state":"OPEN"},
+    {"repo":"GBOGEB/GEMINI","issue":"#6","state":"OPEN"},
+    {"repo":"GBOGEB/orchestration-sandbox","issue":"#1","state":"OPEN"},
+    {"repo":"GBOGEB/cryoplant-project","issue":"#923","state":"EXISTING_AUTHORITY_GATE"},
+    {"repo":"GBOGEB/cryoplant-project","issue":"#1063","state":"EXISTING_MISSIONCONTROL_PARENT"},
+    {"repo":"GBOGEB/CoolProp","issue":null,"state":"ISSUES_DISABLED_MC_CHILD_ROW"},
+    {"repo":"GBOGEB/github-mcp-server","issue":null,"state":"ISSUES_DISABLED_MC_CHILD_ROW"},
+    {"repo":"GBOGEB/scientific-agent-skills","issue":null,"state":"ISSUES_DISABLED_MC_CHILD_ROW"}
+  ],
+  "required_historian_features": [
+    "review_finding_count",
+    "open_bd_count",
+    "recurring_bd_count",
+    "recurrence_frequency",
+    "merge_parent_depth",
+    "pr_lineage_complexity",
+    "review_pressure",
+    "repair_survival_rate",
+    "post_merge_survival_rate",
+    "negative_evidence_retention",
+    "stale_current_state_count",
+    "unimplemented_suggestion_count",
+    "runtime_receipt_density",
+    "runner_blocked_fraction",
+    "queue_vs_execute_pressure",
+    "reinforcement_effectiveness"
+  ],
+  "classification_enum": [
+    "IMPLEMENTED_SURVIVES",
+    "SUPERSEDED_WITH_REPLACEMENT",
+    "STILL_BD",
+    "INVALIDATED",
+    "UNKNOWN_NEEDS_READER"
+  ],
+  "anti_overclaim": [
+    "merge is not repair survival",
+    "review suggestion is not defect until current code is checked",
+    "old current-state prose is historical when newer exact evidence supersedes it",
+    "CONTROL lanes reopen only on current regression, current defect, or measured H4 pressure",
+    "all 83 repos get coverage but depth is pressure-weighted"
+  ]
+}
