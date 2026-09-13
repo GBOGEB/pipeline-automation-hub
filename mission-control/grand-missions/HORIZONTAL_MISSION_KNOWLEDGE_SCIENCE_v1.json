@@ -1,0 +1,80 @@
+{
+  "schema": "missioncontrol.horizontal_knowledge_science.v1",
+  "status": "CANDIDATE_CANONICAL",
+  "purpose": "apply breadth-depth-history-decomposition-flow-runtime-REX-resource science to H1-H4",
+  "shared_axes": {
+    "breadth": "B0-B6 / b",
+    "depth": "P0-P8 / d",
+    "penetration": "Pen=b*d",
+    "history": "commit/PR/merge/branch/REX lineage",
+    "runtime": "R0-R7",
+    "decomposition": "nodes-edges-atoms-graphs-dependencies",
+    "flow_representation": "ASCII/Mermaid/state/sequence/genealogy",
+    "crew_capacity": "crew-depth/EWC/TEAM_EWC",
+    "mission_pressure": "MP",
+    "reinforcement_need": "RN"
+  },
+  "missions": {
+    "MISSION_H1_QPS": {
+      "parent": "MISSIONCONTROL",
+      "knowledge_domain": "engineering_and_runtime_truth",
+      "children": ["engineering_children", "runtime_lanes", "runner_lanes", "proof_gates", "receipts"],
+      "geographer": ["execution-authority repos", "workflow surfaces", "runtime habitats", "receipts", "runner lanes"],
+      "geologist": ["entrypoint-to-output chains", "nested workflow/build/test layers", "runtime failure strata"],
+      "historian": ["runtime regression lineage", "repair-to-control commit chain", "PR merge ancestry", "runner failure recurrence", "historical first-reds"],
+      "neuron": ["jobs", "steps", "runners", "artifacts", "gates", "runtime dependencies", "temporal repair graph"],
+      "calligrapher": ["build-test-run-receipt", "first-red chain", "promotion gate", "repair genealogy"],
+      "pressure_focus": ["runner scarcity", "queue time", "execute time", "zero-step risk", "child proof gaps", "regression recurrence"],
+      "reinforcement_bias": ["RUNNER", "BUILDER", "QA_SIGNALMAN", "GEOLOGIST", "HISTORIAN when recurrence/history matters"]
+    },
+    "MISSION_H2_KEB": {
+      "parent": "MISSIONCONTROL",
+      "knowledge_domain": "semantic_truth_provenance_vocabulary_contracts",
+      "children": ["source_sets", "semantic_contracts", "claim_graphs", "challenge_edges", "REX_knowledge_nodes"],
+      "geographer": ["source corpus", "semantic vocabularies", "standards", "contracts", "exact-SHA evidence links"],
+      "geologist": ["source lineage", "claim-to-source chains", "nested provenance", "conflicting meanings"],
+      "historian": ["claim evolution", "source supersession", "contract changes", "semantic collision recurrence", "PR discussion lineage"],
+      "neuron": ["claims", "terms", "sources", "provenance edges", "challenge edges", "authority nodes", "supersession graph"],
+      "calligrapher": ["source->claim->challenge->accept/reject", "provenance resolution", "semantic genealogy"],
+      "pressure_focus": ["unbound claims", "semantic collision", "stale source", "missing provenance", "historical authority drift"],
+      "reinforcement_bias": ["REX_KEB", "READER", "HISTORIAN", "GEOLOGIST", "NEURON", "QA_SIGNALMAN"]
+    },
+    "MISSION_H3_DOW": {
+      "parent": "MISSIONCONTROL",
+      "knowledge_domain": "delivery_work_execution_closure",
+      "children": ["work_packages", "issues", "deliverables", "handoffs", "closure_receipts"],
+      "geographer": ["work packages", "issues", "dependencies", "deliverables", "owners", "closure states"],
+      "geologist": ["task decomposition", "blocked subwork", "nested dependency chains", "handoff strata"],
+      "historian": ["work-item chronology", "reopen/rework cycles", "handoff delay lineage", "closure reversals", "PR-to-deliverable lineage"],
+      "neuron": ["tasks", "owners", "dependencies", "deliverables", "handoffs", "critical path", "historical rework edges"],
+      "calligrapher": ["plan->execute->verify->close", "handoff", "dependency release", "rework genealogy"],
+      "pressure_focus": ["backlog", "blocked dependencies", "handoff delay", "closure debt", "rework recurrence"],
+      "reinforcement_bias": ["PROJECT_MANAGER", "FLEET_ORCHESTRATOR", "HISTORIAN when recurrence dominates", "NEURON", "CALLIGRAPHER"]
+    },
+    "MISSION_H4_QPS_TRIAGE": {
+      "parent": "MISSIONCONTROL",
+      "knowledge_domain": "portfolio_control_allocation_first_red_PCA_BT",
+      "children": ["mission_pressure_rows", "BT_pairs", "PCA_feature_rows", "veto_edges", "reinforcement_actions", "contraction_actions"],
+      "geographer": ["active missions", "queues", "blockers", "crew pools", "evidence gaps", "reinforcement candidates"],
+      "geologist": ["root-cause pressure chains", "serial bottlenecks", "hidden dependency coupling", "capacity drag"],
+      "historian": ["persistent first-red lineage", "past allocation outcomes", "reinforcement success/failure", "PCA/BT model evolution", "REX recurrence", "mission promotion/reversal history"],
+      "neuron": ["mission nodes", "pressure edges", "resource edges", "BT pairs", "PCA feature graph", "temporal allocation graph"],
+      "calligrapher": ["observe->score->route->execute->measure->reallocate", "reverse-pressure BT", "reinforcement/contraction genealogy"],
+      "pressure_focus": ["global bottleneck", "capacity imbalance", "queue/execute asymmetry", "control degradation", "historical recurrence", "cross-mission pressure"],
+      "reinforcement_bias": ["MATCHED_ROLE_ONLY", "NO_RAW_HEADCOUNT_SURGE", "highest marginal pressure reduction per crew-time", "history-adjusted recurrence risk"]
+    }
+  },
+  "horizontal_cross_feed": {
+    "H1_to_H2": "runtime receipts and engineering claims for provenance challenge",
+    "H2_to_H1": "semantic/provenance corrections and historical source gates",
+    "H1_to_H3": "executable work state and child disposition",
+    "H3_to_H1": "closure/work dependency and rework pressure",
+    "H2_to_H3": "contract/source/semantic constraints",
+    "H3_to_H2": "delivery evidence and unresolved semantic blockers",
+    "H1_H2_H3_to_H4": "observed features, lineage, first-reds, crew load, pressure, REX recurrence",
+    "H4_to_H1_H2_H3": "priority, reinforcement, contraction, sequencing and veto decisions"
+  },
+  "contracts": ["MISSION_REPORTING_STANDARD_v3", "PARENT_CHILD_LINEAGE_CONTRACT_v1", "contracts/mission_report.zod.ts", "FEDERATION_RETURN_PACKET_v3"],
+  "control_loop": "H1/H2/H3 current+historical returns -> MissionControl -> H4 pressure/reinforcement -> bounded allocation -> execution -> Historian recurrence read -> REX/crew-depth update -> repeat",
+  "anti_overclaim": ["historical inference is not observed runtime", "H4 does not manufacture engineering truth", "H2 does not replace runtime proof", "H3 closure does not strengthen source authority", "resource allocation labels seeded estimates separately from observed pressure"]
+}
