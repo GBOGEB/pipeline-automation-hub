@@ -1,7 +1,15 @@
 {
   "schema": "missioncontrol.crew.rex_learning_ledger.v1",
   "status": "CANDIDATE_CANONICAL",
-  "purpose": "Route lessons learned into crew competencies, validators, doctrine and future allocation.",
+  "purpose": "Route lessons learned into crew competencies, validators, doctrine, task preflight/postflight and future allocation.",
+  "reuse_checklist_ref": "measured/REX_REUSE_CHECKLIST_v1.json",
+  "operational_policy": {
+    "preflight_required_for_measured_tasks": true,
+    "postflight_required_for_measured_tasks": true,
+    "recurrence_levels": ["NEW", "RECURRING", "PERSISTENT", "REGRESSION"],
+    "persistent_or_regression_may_veto": ["allocation", "promotion", "CONTROL"],
+    "reuse_rule": "Before repeating a task class, inspect applicable REX preventive controls; after execution record recurrence/resolution evidence rather than relying on crew memory."
+  },
   "entries": [
     {
       "rex_id": "REX-001",
@@ -66,12 +74,15 @@
   ],
   "learning_loop": [
     "mission_event",
+    "REX_preflight_reuse_checklist",
     "classify_REX_or_new_signal",
     "bind_affected_competency_and_roles",
-    "add_preventive_control",
+    "add_or_strengthen_preventive_control",
     "execute_future_mission",
+    "REX_postflight_recurrence_or_resolution",
     "measure_recurrence",
     "update_competency_evidence",
+    "apply_reverse_pressure_to_allocation",
     "promote_merge_prune_or_retrain_role"
   ],
   "ledger_fields_for_future_entries": [
@@ -84,8 +95,10 @@
     "preventive_controls",
     "learning_signal",
     "recurrence_metric",
+    "recurrence_level",
     "before_count",
     "after_count",
+    "preventive_action_effective",
     "accepted_by",
     "closed_at"
   ]
