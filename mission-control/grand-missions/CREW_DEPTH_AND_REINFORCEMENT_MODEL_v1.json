@@ -1,0 +1,69 @@
+{
+  "schema": "missioncontrol.crew_depth_reinforcement.v1",
+  "purpose": "estimate useful worker capacity and reinforcement need from observed crew evidence rather than raw headcount",
+  "crew_depth_dimensions": {
+    "role_depth": "competence in assigned role from observed accepted work and receipts",
+    "repo_familiarity": "knowledge of target repository/subrepo structure and history",
+    "mission_familiarity": "knowledge of mission doctrine, gates, authority and current first-red",
+    "runtime_proof_depth": "ability to execute and interpret bounded/exact-SHA runtime",
+    "evidence_depth": "provenance, verification and exact-source discipline",
+    "rex_depth": "ability to consume, generate and reuse relevant REX",
+    "cross_mission_depth": "ability to transfer useful findings across mission boundaries",
+    "tool_readiness": "availability and demonstrated use of required tools/resources"
+  },
+  "normalization": "each dimension is 0..1 when measured; expert-seeded values must be marked SEEDED and excluded from measured PCA until observed",
+  "crew_depth_score": {
+    "formula": "CD = 0.20*role_depth + 0.15*repo_familiarity + 0.15*mission_familiarity + 0.15*runtime_proof_depth + 0.10*evidence_depth + 0.10*rex_depth + 0.10*cross_mission_depth + 0.05*tool_readiness",
+    "interpretation": "capability maturity, not authority"
+  },
+  "effective_worker_capacity": {
+    "formula": "EWC = availability * CD * task_role_match * evidence_confidence * (1 - coordination_drag)",
+    "range": "0..1 equivalent effective worker for one bounded task",
+    "notes": [
+      "raw headcount is reported separately",
+      "coordination_drag rises with unnecessary parallelism, handoffs and unresolved dependency coupling",
+      "specialists may have high EWC for one task and low EWC for another"
+    ]
+  },
+  "crew_team_capacity": {
+    "formula": "TEAM_EWC = sum(EWC_i) * coupling_factor",
+    "coupling_factor": "0..1 observed or provisionally estimated from dependency/communication graph",
+    "anti_double_count": "two crew members sharing the same bottleneck or authority gate do not count as fully additive capacity"
+  },
+  "mission_pressure": {
+    "dimensions": ["coverage_gap", "depth_gap", "runtime_gap", "first_red_severity", "queue_pressure", "execution_pressure", "provenance_gap", "dependency_pressure", "rex_gap", "control_degradation_risk"],
+    "formula": "MP = weighted normalized sum of observed pressure dimensions",
+    "requirement": "weights and values must be provenance-bound; seeded pressure is planning-only"
+  },
+  "reinforcement_need": {
+    "formula": "RN = max(0, MP - TEAM_EWC)",
+    "decision": {
+      "RN_0": "HOLD_OR_CONTRACT",
+      "RN_low": "NO_SURGE; improve routing/tooling/reuse first",
+      "RN_medium": "ADD_ONE_MATCHED_SPECIALIST_OR_SECONDMENT",
+      "RN_high": "SURGE_MATCHED_CREW plus split/caching/habitat optimization",
+      "persistent_high": "architectural bottleneck review before adding more workers"
+    }
+  },
+  "reinforcement_selection": {
+    "objective": "maximize marginal pressure reduction per crew-time",
+    "candidate_score": "MPR = task_role_match * expected_pressure_reduction * evidence_confidence * reuse_multiplier / (crew_time_cost * coordination_penalty)",
+    "prefer": ["role match", "existing repo familiarity", "reusable REX", "available habitat/tooling", "low coordination drag"],
+    "avoid": ["adding generalists to specialist bottlenecks", "adding runners before runnable path exists", "adding builders before authority/gate is clear", "parallelizing tightly serial critical paths"]
+  },
+  "rex_effect": {
+    "formula": "REX_GAIN = accepted_reuse_events * recurrence_prevention_or_speed_gain",
+    "capacity_credit": "reused REX may lower mission pressure or increase EWC, but only after observed benefit",
+    "reinforcement_learning_loop": "mission return -> REX update -> crew-depth update -> pressure recompute -> reinforcement recompute"
+  },
+  "role_specific_examples": {
+    "GEOGRAPHER": "reinforce when breadth denominator or unexplored surfaces dominate pressure",
+    "GEOLOGIST": "reinforce when hidden/nested strata or unresolved subprojects dominate pressure",
+    "NEURON": "reinforce when dependency graph, cycles, orphan/floating nodes or critical-path uncertainty dominate pressure",
+    "CALLIGRAPHER": "reinforce when workflow/state ambiguity causes handoff or execution errors; not as a substitute for missing evidence",
+    "RUNNER": "reinforce when runnable paths exist and queue/execute pressure dominates",
+    "QA_SIGNALMAN": "reinforce when verification/provenance backlog limits promotion",
+    "REX_KEB": "reinforce when repeated defects or semantic conflicts recur across missions"
+  },
+  "reporting": ["raw_headcount", "peak_headcount", "TEAM_EWC", "MP", "RN", "role_shortfall_vector", "recommended_reinforcement", "expected_marginal_pressure_reduction", "actual_post_reinforcement_effect"]
+}
