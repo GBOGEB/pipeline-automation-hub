@@ -1,0 +1,23 @@
+{
+  "schema":"qps.gm_fleet_02b_burndown.v1",
+  "fixed_denominator":14,
+  "items":[
+    {"id":1,"target":"canonical GM-I..GM-V registry","state":"MATERIALIZED"},
+    {"id":2,"target":"crew-role registry","state":"MATERIALIZED"},
+    {"id":3,"target":"activation/return state machine","state":"MATERIALIZED"},
+    {"id":4,"target":"GM-I observed genealogy","state":"MATERIALIZED"},
+    {"id":5,"target":"GM-II two-child genealogy","state":"MATERIALIZED"},
+    {"id":6,"target":"GM-III four-frontier genealogy","state":"MATERIALIZED"},
+    {"id":7,"target":"GM-IV HELD/8 no fabricated children","state":"MATERIALIZED"},
+    {"id":8,"target":"GM-V HELD/16 no fabricated children","state":"MATERIALIZED"},
+    {"id":9,"target":"Mission City home-base/secondment graph","state":"MATERIALIZED"},
+    {"id":10,"target":"namespace and crew transition validator","state":"MATERIALIZED"},
+    {"id":11,"target":"measured fleet telemetry schema future PCA","state":"MATERIALIZED_GATE_DEFER_UNTIL_DATA"},
+    {"id":12,"target":"observed pairwise evidence schema future BT","state":"MATERIALIZED_GATE_DEFER_UNTIL_DATA"},
+    {"id":13,"target":"validator executes >0 steps","state":"PENDING_RUNTIME"},
+    {"id":14,"target":"exact-SHA receipt and deterministic repeat","state":"PENDING_RUNTIME"}
+  ],
+  "static_materialisation":"12/12",
+  "terminal_DoV_rule":"items_13_14_require_observed_runtime; merge_alone_is_not_proof",
+  "authority_transfer":false
+}
