@@ -67,7 +67,20 @@ def main():
     ok("05_gm_i_genealogy", genealogy["missions"]["GM-I"]["observed_returned_workers"] == ["Scout_1","Scout_2","Scout_3","Reader_1","Reader_2"], "observed returned crew bound")
     ok("06_gm_ii_two_child_genealogy", len(genealogy["missions"]["GM-II"]["children"]) == 2 and len(gm["GM-II"]["children"]) == 2, "two children")
     ok("07_gm_iii_four_frontier_genealogy", len(genealogy["missions"]["GM-III"]["frontiers"]) == 4 and len(gm["GM-III"]["children"]) == 4, "four frontiers")
-    ok("08_gm_iv_held_8_no_fabrication", gm["GM-IV"]["state"] == "HELD" and gm["GM-IV"]["frontier_count"] == 8 and gm["GM-IV"]["children"] == [], "HELD/8 children=0")
+
+    gm_iv = gm["GM-IV"]
+    gm_iv_state_ok = gm_iv["state"] in {"HELD", "STAGED_ACTIVE_RECON_2_OF_8"}
+    gm_iv_stage_ok = True
+    if gm_iv["state"] == "STAGED_ACTIVE_RECON_2_OF_8":
+        gm_iv_stage_ok = (
+            gm_iv.get("activation_stage") == "RECON_2_OF_8"
+            and gm_iv.get("candidate_frontiers") == ["GM-IV-F01", "GM-IV-F02"]
+        )
+    ok(
+        "08_gm_iv_8_no_fabrication_or_ungoverned_promotion",
+        gm_iv_state_ok and gm_iv_stage_ok and gm_iv["frontier_count"] == 8 and gm_iv["children"] == [],
+        f"state={gm_iv['state']} frontier_count=8 children=0"
+    )
     ok("09_gm_v_held_16_no_fabrication", gm["GM-V"]["state"] == "HELD" and gm["GM-V"]["frontier_count"] == 16 and gm["GM-V"]["children"] == [], "HELD/16 children=0")
 
     city_nodes = {n["id"] for n in city["nodes"]}
@@ -100,7 +113,7 @@ def main():
     bt_gate = bt["bt_gate"]
     ok("16_observed_pairwise_bt_schema", bt_gate["minimum_pairs"] >= 2 and bt_gate["requires_connected_comparison_graph"] and bt_gate["forbid_synthetic_pair_credit"], "future BT fail-closed")
 
-    source_sha = os.environ.get("GITHUB_SHA", os.environ.get("SOURCE_SHA", "LOCAL_UNBOUND"))
+    source_sha = os.environ.get("SOURCE_SHA", os.environ.get("GITHUB_SHA", "LOCAL_UNBOUND"))
     run_id = os.environ.get("GITHUB_RUN_ID", "LOCAL")
     repo = os.environ.get("GITHUB_REPOSITORY", "GBOGEB/pipeline-automation-hub")
     ref = os.environ.get("GITHUB_REF", "LOCAL")
