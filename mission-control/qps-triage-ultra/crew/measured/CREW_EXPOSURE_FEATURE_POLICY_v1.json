@@ -1,0 +1,63 @@
+{
+  "schema": "missioncontrol.crew_exposure_feature_policy.v1",
+  "authority_transfer": false,
+  "source_control_return": "history/CREW_EXPOSURE_CONTROL_RETURN_v1.json",
+  "allocation_eligibility_gate": {
+    "status_required": "CONTROL_ACCEPTED_THREE_PULSE",
+    "minimum_distinct_runs": 2,
+    "minimum_distinct_source_shas": 2,
+    "require_predeclared_assignment": true,
+    "require_all_accept": true,
+    "require_no_canary_rows": true,
+    "require_no_estimated_or_post_hoc_time": true
+  },
+  "pca_candidate_gate": {
+    "status_required": "CONTROL_ACCEPTED_THREE_PULSE",
+    "minimum_distinct_runs": 3,
+    "minimum_distinct_source_shas": 3,
+    "require_predeclared_assignment": true,
+    "require_all_accept": true,
+    "require_no_canary_rows": true,
+    "require_no_estimated_or_post_hoc_time": true,
+    "minimum_measured_rows_still_governed_by": "MEASURED_ALLOCATION_POLICY_v1.json",
+    "minimum_varying_features_still_governed_by": "MEASURED_ALLOCATION_POLICY_v1.json"
+  },
+  "allocation_features": [
+    "mean_waiting_seconds",
+    "mean_active_seconds",
+    "mean_release_seconds",
+    "mean_exposure_seconds"
+  ],
+  "pca": {
+    "candidate_features": [
+      "mean_waiting_seconds",
+      "mean_active_seconds",
+      "mean_release_seconds",
+      "mean_exposure_seconds"
+    ],
+    "feature_eligibility_is_not_readiness": true,
+    "small_n_rule": "with four crew rows the standardized PCA rank is at most three; emit loadings as measured small-N exploratory control evidence only",
+    "if_variance_is_insufficient": "DEFER_INSUFFICIENT_MEASURED_VARIANCE"
+  },
+  "bt": {
+    "exposure_is_not_an_outcome_by_itself": true,
+    "status": "NO_CHANGE_TO_EXISTING_BT_GATE"
+  },
+  "routing": {
+    "high_waiting_seconds": "PERFORMANCE_OR_SCHEDULER_INTERVENTION_NOT_COMPETENCY_DEFICIT",
+    "high_release_seconds": "ORCHESTRATION_OR_HANDOFF_INTERVENTION",
+    "high_active_seconds": "COMPARE_WITH_TASK_LEVEL_AND_ACCEPTED_OUTCOME_BEFORE_INTERVENTION",
+    "high_exposure_seconds": "DECOMPOSE_WAIT_ACTIVE_RELEASE_BEFORE_RESOURCE_SCALING"
+  },
+  "forbidden": [
+    "canary_rows_in_allocation_features",
+    "single_run_exposure_as_control",
+    "two_run_exposure_as_PCA_candidate",
+    "exposure_feature_as_competency_promotion",
+    "exposure_feature_as_authority_transfer",
+    "exposure_feature_as_frontier_or_child_binding",
+    "exposure_feature_as_BT_outcome",
+    "forcing_PCA_READY_when_variance_gate_fails",
+    "small_n_PCA_interpreted_as_causal_or_maturity_score"
+  ]
+}

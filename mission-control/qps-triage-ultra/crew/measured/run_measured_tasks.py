@@ -10,7 +10,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 CREW = ROOT.parent
 OUT = ROOT / "receipts"
+EXPOSURE_OUT = OUT / "exposure"
 OUT.mkdir(parents=True, exist_ok=True)
+EXPOSURE_OUT.mkdir(parents=True, exist_ok=True)
 
 manifest = json.loads((ROOT / "MEASURED_TASK_MANIFEST_v1.json").read_text(encoding="utf-8"))
 checklist = json.loads((ROOT / "REX_REUSE_CHECKLIST_v1.json").read_text(encoding="utf-8"))
@@ -34,8 +36,18 @@ if source_sha != checkout_sha:
 seen_assignments = set()
 seen_tasks = set()
 receipts = []
+exposure_receipts = []
+
+intervention_map = {
+    "VERIFY": "VERIFY",
+    "EXECUTE": "RUNTIME_OPERATOR",
+    "MEASURE": "ANALYSIS",
+    "REX": "GOVERNANCE",
+}
 
 for task in manifest["tasks"]:
+    assignment_opened = datetime.now(timezone.utc)
+
     aid = task["assignment_id"]
     tid = task["task_id"]
     if aid in seen_assignments or tid in seen_tasks:
@@ -52,15 +64,17 @@ for task in manifest["tasks"]:
         raise SystemExit(f"FAIL: unknown REX ids {unknown_rex}")
     if task.get("promotion_allowed") is not False:
         raise SystemExit(f"FAIL: pilot task {tid} may not promote competence")
+    if task["task_type"] not in intervention_map:
+        raise SystemExit(f"FAIL: no exposure intervention mapping for {task['task_type']}")
 
     command = task["command"]
     command_text = json.dumps(command, separators=(",", ":"))
     command_sha = hashlib.sha256(command_text.encode()).hexdigest()
-    start_iso = datetime.now(timezone.utc).isoformat()
-    start = time.monotonic()
+    task_started = datetime.now(timezone.utc)
+    runtime_start = time.monotonic()
     proc = subprocess.run(command, text=True, capture_output=True)
-    elapsed = round(time.monotonic() - start, 6)
-    end_iso = datetime.now(timezone.utc).isoformat()
+    runtime_elapsed = round(time.monotonic() - runtime_start, 6)
+    task_ended = datetime.now(timezone.utc)
     stdout = proc.stdout or ""
     stderr = proc.stderr or ""
 
@@ -89,9 +103,9 @@ for task in manifest["tasks"]:
         "run_id": str(run_id),
         "job_ref": job_ref,
         "runner_ref": runner_ref,
-        "started_at": start_iso,
-        "ended_at": end_iso,
-        "execute_seconds": elapsed,
+        "started_at": task_started.isoformat(),
+        "ended_at": task_ended.isoformat(),
+        "execute_seconds": runtime_elapsed,
         "steps_executed": 1,
         "exit_code": proc.returncode,
         "disposition": disposition,
@@ -118,7 +132,61 @@ for task in manifest["tasks"]:
     path = OUT / f"{tid}.json"
     path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     receipts.append(receipt)
-    print(json.dumps({"task_id": tid, "crew_id": task["crew_id"], "disposition": disposition, "execute_seconds": elapsed}, sort_keys=True))
+
+    assignment_released = datetime.now(timezone.utc)
+    waiting_seconds = round((task_started - assignment_opened).total_seconds(), 6)
+    active_seconds = round((task_ended - task_started).total_seconds(), 6)
+    release_seconds = round((assignment_released - task_ended).total_seconds(), 6)
+    exposure_seconds = round((assignment_released - assignment_opened).total_seconds(), 6)
+
+    exposure_receipt = {
+        "schema": "missioncontrol.crew_exposure_receipt.v1",
+        "mission_id": manifest["mission_id"],
+        "task_id": tid,
+        "assignment_id": aid,
+        "crew_id": task["crew_id"],
+        "crew_role": task["crew_role_at_assignment"],
+        "assignment_opened_at": assignment_opened.isoformat(),
+        "task_started_at": task_started.isoformat(),
+        "task_ended_at": task_ended.isoformat(),
+        "assignment_released_at": assignment_released.isoformat(),
+        "waiting_seconds": waiting_seconds,
+        "active_seconds": active_seconds,
+        "release_seconds": release_seconds,
+        "exposure_seconds": exposure_seconds,
+        "runtime_execute_seconds": runtime_elapsed,
+        "intervention_type": intervention_map[task["task_type"]],
+        "outcome": disposition,
+        "source_sha": source_sha,
+        "run_id": str(run_id),
+        "job_ref": job_ref,
+        "runner_ref": runner_ref,
+        "attribution_basis": "PREDECLARED_ASSIGNMENT",
+        "receipt_evidence_class": "MEASURED_CREW_EXPOSURE",
+        "mission_performance_eligible": True,
+        "pca_eligible": False,
+        "bt_eligible": False,
+        "competency_promotion_eligible": False,
+        "authority_transfer": False,
+        "child_binding": False,
+        "frontier_binding": False
+    }
+    exposure_path = EXPOSURE_OUT / f"{tid}__EXPOSURE.json"
+    exposure_path.write_text(
+        json.dumps(exposure_receipt, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    exposure_receipts.append(exposure_receipt)
+    print(json.dumps({
+        "task_id": tid,
+        "crew_id": task["crew_id"],
+        "disposition": disposition,
+        "runtime_execute_seconds": runtime_elapsed,
+        "waiting_seconds": waiting_seconds,
+        "active_seconds": active_seconds,
+        "release_seconds": release_seconds,
+        "exposure_seconds": exposure_seconds,
+    }, sort_keys=True))
 
 summary = {
     "schema": "missioncontrol.measured_task_run_summary.v1",
@@ -129,6 +197,14 @@ summary = {
     "task_count": len(receipts),
     "accepted": sum(r["disposition"] == "ACCEPT" for r in receipts),
     "rejected": sum(r["disposition"] == "REJECT" for r in receipts),
+    "crew_exposure_receipts": len(exposure_receipts),
+    "crew_exposure_seconds_total": round(sum(r["exposure_seconds"] for r in exposure_receipts), 6),
+    "crew_waiting_seconds_total": round(sum(r["waiting_seconds"] for r in exposure_receipts), 6),
+    "crew_active_seconds_total": round(sum(r["active_seconds"] for r in exposure_receipts), 6),
+    "crew_release_seconds_total": round(sum(r["release_seconds"] for r in exposure_receipts), 6),
+    "crew_runtime_execute_seconds_total": round(sum(r["runtime_execute_seconds"] for r in exposure_receipts), 6),
+    "crew_exposure_pca_eligible": False,
+    "crew_exposure_bt_eligible": False,
     "competency_promotions": 0,
     "authority_transfer": False
 }

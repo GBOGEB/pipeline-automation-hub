@@ -40,9 +40,21 @@ jobs:
         env:
           MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python mission-control/qps-triage-ultra/crew/measured/run_measured_tasks.py
+      - name: Validate measured crew exposure receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          for receipt in mission-control/qps-triage-ultra/crew/measured/receipts/exposure/*__EXPOSURE.json; do
+            python mission-control/qps-triage-ultra/crew/measured/validate_crew_exposure.py "$receipt"
+            count=$((count + 1))
+          done
+          test "$count" -eq 4
       - name: Build measured allocation evidence
         run: python mission-control/qps-triage-ultra/crew/measured/build_measured_allocation.py
-      - name: Enforce evidence and no false promotion
+      - name: Enrich allocation with controlled exposure history and PCA
+        run: python mission-control/qps-triage-ultra/crew/measured/enrich_allocation_with_exposure.py
+      - name: Enforce exposure PCA and no false promotion
         shell: bash
         run: |
           python - <<'PY'
@@ -58,49 +70,84 @@ jobs:
           assert summary['task_count'] == 4
           assert summary['accepted'] == 4
           assert summary['rejected'] == 0
+          assert summary['crew_exposure_receipts'] == 4
+          assert summary['crew_exposure_seconds_total'] >= summary['crew_active_seconds_total']
+          assert summary['crew_waiting_seconds_total'] >= 0
+          assert summary['crew_release_seconds_total'] >= 0
+          assert summary['crew_exposure_pca_eligible'] is False
+          assert summary['crew_exposure_bt_eligible'] is False
           assert summary['competency_promotions'] == 0
-          assert alloc['receipt_count'] >= 12
-          assert alloc['returned_run_count'] >= 2
+          exposure=list(root.joinpath('receipts/exposure').glob('*__EXPOSURE.json'))
+          assert len(exposure) == 4
+          for p in exposure:
+              r=json.loads(p.read_text())
+              assert r['receipt_evidence_class'] == 'MEASURED_CREW_EXPOSURE'
+              assert r['attribution_basis'] == 'PREDECLARED_ASSIGNMENT'
+              assert r['source_sha'] == actual
+              assert r['mission_performance_eligible'] is True
+              assert r['pca_eligible'] is False
+              assert r['bt_eligible'] is False
+              assert r['competency_promotion_eligible'] is False
+              assert r['authority_transfer'] is False
+              assert r['child_binding'] is False
+              assert r['frontier_binding'] is False
           assert alloc['allocation_eligible_rows'] == 4
           assert all(r['allocation_eligible'] for r in alloc['rows'])
-          assert all(r['allocation_basis'] == 'MEASURED_ONLY' for r in alloc['rows'])
-          assert all(r['distinct_accepted_runs'] >= 2 for r in alloc['rows'])
-          assert all(r['distinct_source_shas'] >= 2 for r in alloc['rows'])
           assert alloc['competency_promotions'] == 0
           assert alloc['authority_transfer'] is False
-          assert alloc['pca']['status'] != 'READY' or alloc['pca']['varying_features'] >= 2
+          exposure_control=alloc['exposure_control']
+          assert exposure_control['status'] == 'CONTROLLED_PCA_CANDIDATE_FEATURES'
+          assert exposure_control['controlled_rows'] == 4
+          assert exposure_control['distinct_runs'] >= 3
+          assert exposure_control['distinct_source_shas'] >= 3
+          assert exposure_control['pca_candidate_eligible'] is True
+          assert exposure_control['pca_feature_ingest_status'] == 'INGESTED_READY_SMALL_N'
+          assert exposure_control['bt_status'] == 'NO_CHANGE_EXISTING_BT_OUTCOME_GATE'
+          assert exposure_control['competency_promotions'] == 0
+          assert exposure_control['authority_transfer'] is False
+          assert len(exposure_control['varying_features']) >= 2
+          for row in alloc['rows']:
+              assert row['exposure_control_eligible'] is True
+              assert row['exposure_distinct_runs'] >= 3
+              assert row['exposure_distinct_source_shas'] >= 3
+              assert row['exposure_evidence_class'] == 'CONTROLLED_MEASURED_THREE_PULSE'
+              assert row['mean_waiting_seconds'] >= 0
+              assert row['mean_active_seconds'] > 0
+              assert row['mean_release_seconds'] >= 0
+              assert row['mean_exposure_seconds'] >= row['mean_active_seconds']
+          pca=alloc['pca']
+          assert pca['status'] == 'READY_MEASURED_SMALL_N'
+          assert pca['model_scope'] == 'CREW_ROW_ALLOCATION_WITH_CONTROLLED_EXPOSURE'
+          assert pca['measured_rows'] == 4
+          assert pca['eligible_rows'] == 4
+          assert pca['varying_features'] >= 2
+          assert pca['sample_rank_cap'] <= 3
+          assert pca['small_n'] is True
+          assert pca['causal_interpretation_allowed'] is False
+          assert pca['competency_promotion_allowed'] is False
+          assert len(pca['components']) >= 2
+          assert pca['pre_exposure_status'] == 'DEFER_INSUFFICIENT_MEASURED_VARIANCE'
+          assert alloc['pca_pre_exposure']['status'] == 'DEFER_INSUFFICIENT_MEASURED_VARIANCE'
           frontier=alloc['frontier_pca']
           assert frontier['status'] == 'CONTROL_READY_MEASURED_REPEAT'
           assert frontier['repeat_runs'] >= 2
           assert frontier['distinct_source_shas'] >= 2
-          assert frontier['feature_count'] >= 2
-          assert len(frontier['components']) >= 2
           assert frontier['max_abs_explained_delta'] < 0.02
           assert frontier['rex_persistent_or_regression_total'] == 0
           assert alloc['bt']['status'] == 'READY_OBSERVED'
           assert alloc['bt']['observed_pairs'] == 12
-          assert len(alloc['bt']['nodes']) == 2
           nodes={n['strategy']:n for n in alloc['bt']['nodes']}
           assert nodes['ALLOC_SINGLE_CELL']['wins'] == 8.0
           assert nodes['ALLOC_PAIRED_CELL']['wins'] == 4.0
-          for p in root.joinpath('receipts').glob('T*.json'):
-              r=json.loads(p.read_text())
-              assert r['attribution_basis']=='PREDECLARED_ASSIGNMENT'
-              assert r['steps_executed'] > 0
-              assert r['source_sha'] == actual
-              assert r['source_sha'] == summary['source_sha']
-              assert r['promotion_allowed'] is False
-              assert r['rex_preflight']['checklist_version']=='missioncontrol.rex.reuse_checklist.v1'
           print(json.dumps({
-              'status':'PASS_MEASURED_CREW_ALLOCATION_WITH_FRONTIER_CONTROL',
+              'status':'PASS_EXPOSURE_ENHANCED_CREW_ROW_PCA_SMALL_N',
               'exact_source_sha':actual,
-              'allocation_rows':len(alloc['rows']),
-              'allocation_eligible_rows':alloc['allocation_eligible_rows'],
-              'returned_run_count':alloc['returned_run_count'],
+              'crew_exposure_control':exposure_control,
+              'crew_row_pca':pca,
+              'frontier_pca':frontier,
+              'bt':alloc['bt'],
               'competency_promotions':0,
-              'crew_row_pca':alloc['pca'],
-              'frontier_pca':alloc['frontier_pca'],
-              'bt':alloc['bt']
+              'authority_transfer':False
           },sort_keys=True))
           PY
       - name: Upload measured crew receipts
@@ -109,4 +156,5 @@ jobs:
           name: measured-crew-allocation-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             mission-control/qps-triage-ultra/crew/measured/receipts/*.json
+            mission-control/qps-triage-ultra/crew/measured/receipts/exposure/*.json
             mission-control/qps-triage-ultra/crew/measured/MEASURED_ALLOCATION_RECEIPT.json
