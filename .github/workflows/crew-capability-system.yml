@@ -1,0 +1,47 @@
+name: MissionControl Crew Capability System
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/**'
+      - '.github/workflows/crew-capability-system.yml'
+  push:
+    branches:
+      - mission/crew-capability-system-v1-20260913
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/**'
+      - '.github/workflows/crew-capability-system.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-crew-system:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Validate Crew Registry Competency Matrix and REX Ledger
+        run: |
+          python mission-control/qps-triage-ultra/crew/validate_crew_system.py \
+            | tee mission-control/qps-triage-ultra/crew/CREW_VALIDATION_RECEIPT.json
+      - name: Enforce real execution evidence
+        shell: bash
+        run: |
+          test -s mission-control/qps-triage-ultra/crew/CREW_VALIDATION_RECEIPT.json
+          grep -q '"status": "PASS_CREW_SYSTEM"' mission-control/qps-triage-ultra/crew/CREW_VALIDATION_RECEIPT.json
+      - name: Upload crew validation receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-capability-receipt-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/crew/CREW_VALIDATION_RECEIPT.json
