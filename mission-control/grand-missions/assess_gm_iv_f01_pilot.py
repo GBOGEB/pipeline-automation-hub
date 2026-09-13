@@ -62,6 +62,7 @@ def main():
         "children_bound": False,
         "historical_evidence_stage": "STAGED_ACTIVE_RECON_2_OF_8",
         "gm_iv_state": current_state,
+        "mission_state": current_state,
         "gm_v_state": gm["GM-V"].get("state"),
         "checks": [{"check": n, "result": "PASS" if ok else "FAIL", "detail": detail} for n, ok, detail in checks],
         "result": "PASS" if not failed else "FAIL",
