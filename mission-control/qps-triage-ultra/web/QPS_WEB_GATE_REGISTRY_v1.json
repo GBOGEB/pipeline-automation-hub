@@ -1,0 +1,17 @@
+{
+  "schema": "qps.web.gates.v1",
+  "owner": "H4_QPS_TRIAGE",
+  "ui_contract": "QPS-UI/CSS v1.2",
+  "gates": [
+    {"id": "J1_SOURCE", "purpose": "Validate canonical JSON/YAML/schema inputs and prohibit Jekyll-owned operational truth."},
+    {"id": "J2_GENERATE", "purpose": "Inject exact release/source identity and build static publication output."},
+    {"id": "J3_STRUCTURE", "purpose": "Validate HTML structure, links, required assets and provenance metadata."},
+    {"id": "J4_VISUAL", "purpose": "Check desktop/mobile/print/reduced-motion presentation contract."},
+    {"id": "J5_IDENTITY", "purpose": "Require release_id/source_sha/schema/evidence identity and enable same-release parity with JSON/PDF/XLSX."},
+    {"id": "J6_REPEAT", "purpose": "Repeat clean build and require governed output equivalence before CONTROL."}
+  ],
+  "promotion": {
+    "target": "CONTROL",
+    "requires": ["J1_SOURCE", "J2_GENERATE", "J3_STRUCTURE", "J4_VISUAL", "J5_IDENTITY", "J6_REPEAT"]
+  }
+}
