@@ -26,11 +26,25 @@ jobs:
 
       - name: Bind exact source and pre-promotion master
         working-directory: hub
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
         run: |
           SOURCE_SHA="$(git rev-parse HEAD)"
-          PRE_SHA="6dd4d5b375859dabd5e94aac26b8acc61a757ad7"
+          PRE_SHA="$(python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path(
+              'mission-control/grand-missions/'
+              'GM_IV_PILOT2_PROMOTION_CONTRACT.json'
+          )
+          print(json.loads(p.read_text())['pre_promotion_master_sha'])
+          PY
+          )"
           echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
           echo "PRE_SHA=$PRE_SHA" >> "$GITHUB_ENV"
+          if [ -n "$PR_BASE_SHA" ]; then
+            test "$PRE_SHA" = "$PR_BASE_SHA"
+          fi
           git fetch --depth=1 origin "$PRE_SHA"
           git show \
             "$PRE_SHA:mission-control/grand-missions/GRAND_MISSION_REGISTRY.json" \
@@ -300,6 +314,7 @@ jobs:
             --contract \
             mission-control/grand-missions/GM_IV_PILOT2_PROMOTION_CONTRACT.json \
             --pre-registry "$RUNNER_TEMP/pre-registry.json" \
+            --pre-sha "$PRE_SHA" \
             --post-registry \
             mission-control/grand-missions/GRAND_MISSION_REGISTRY.json \
             --f01 "$RUNNER_TEMP/f01-governor.json" \
@@ -317,6 +332,7 @@ jobs:
             --contract \
             mission-control/grand-missions/GM_IV_PILOT2_PROMOTION_CONTRACT.json \
             --pre-registry "$RUNNER_TEMP/pre-registry.json" \
+            --pre-sha "$PRE_SHA" \
             --post-registry \
             mission-control/grand-missions/GRAND_MISSION_REGISTRY.json \
             --f01 "$RUNNER_TEMP/f01-governor.json" \
