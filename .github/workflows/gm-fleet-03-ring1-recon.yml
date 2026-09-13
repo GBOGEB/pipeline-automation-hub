@@ -1,0 +1,122 @@
+name: GM-FLEET-03 Ring1 Recon
+
+on:
+  push:
+    branches:
+      - mission/gm-fleet-03-recon-ring1
+      - master
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/**'
+      - '.github/workflows/gm-fleet-03-ring1-recon.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ring1-recon:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout MissionControl exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: hub
+
+      - name: Bind MissionControl exact SHA
+        working-directory: hub
+        run: |
+          echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          git rev-parse HEAD
+
+      - name: Fetch F01 exact source without submodule traversal
+        run: |
+          mkdir f01
+          git -C f01 init
+          git -C f01 remote add origin https://github.com/GBOGEB/DOCX_RTM_Automation.git
+          git -C f01 fetch --depth=1 origin d85dc2de1b4beb88bc8e8ce4796784f4577f9a96
+          git -C f01 checkout --detach FETCH_HEAD
+          test "$(git -C f01 rev-parse HEAD)" = "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96"
+
+      - name: Verify and execute F01 bounded self-index
+        run: |
+          python3 f01/scripts/mip_repo_self_index.py --output "$RUNNER_TEMP/f01-self-index.json"
+          python3 - <<'PY'
+          import json, os
+          p=os.path.join(os.environ['RUNNER_TEMP'], 'f01-self-index.json')
+          d=json.load(open(p, encoding='utf-8'))
+          assert d['repo']['sha'] == 'd85dc2de1b4beb88bc8e8ce4796784f4577f9a96'
+          assert d['census']['file_count'] > 0
+          assert d['repo']['dirty_file_count'] == 0
+          print('PASS_F01_EXACT_SHA_GT0_SELF_INDEX')
+          PY
+
+      - name: Fetch F02 exact source
+        run: |
+          mkdir f02
+          git -C f02 init
+          git -C f02 remote add origin https://github.com/GBOGEB/attest-build-provenance.git
+          git -C f02 fetch --depth=1 origin 10334b5f1e684784025c3fc0a277c88c19089275
+          git -C f02 checkout --detach FETCH_HEAD
+          test "$(git -C f02 rev-parse HEAD)" = "10334b5f1e684784025c3fc0a277c88c19089275"
+
+      - name: Verify F02 exact source and contract boundary
+        run: |
+          grep -F 'using: "composite"' f02/action.yml
+          grep -F 'uses: actions/attest@' f02/action.yml
+          grep -F 'wrapper' f02/README.md
+          grep -F 'new implementations should use `actions/attest`' f02/README.md
+          echo "PASS_F02_EXACT_SHA_CONTRACT_REFERENCE_PROBE"
+
+      - name: Assess ring-1 first pass
+        working-directory: hub
+        run: |
+          python3 mission-control/grand-missions/assess_gm_iv_ring1.py \
+            --f01-receipt "$RUNNER_TEMP/f01-self-index.json" \
+            --f02-action ../f02/action.yml \
+            --f02-readme ../f02/README.md \
+            --out "$RUNNER_TEMP/gm_iv_ring1_1.json"
+
+      - name: Assess ring-1 repeat
+        working-directory: hub
+        run: |
+          python3 mission-control/grand-missions/assess_gm_iv_ring1.py \
+            --f01-receipt "$RUNNER_TEMP/f01-self-index.json" \
+            --f02-action ../f02/action.yml \
+            --f02-readme ../f02/README.md \
+            --out "$RUNNER_TEMP/gm_iv_ring1_2.json"
+
+      - name: Enforce deterministic recon repeat
+        run: |
+          cmp "$RUNNER_TEMP/gm_iv_ring1_1.json" "$RUNNER_TEMP/gm_iv_ring1_2.json"
+          echo "PASS_GM_IV_RING1_DETERMINISTIC_REPEAT"
+
+      - name: Enforce bounded dispositions
+        run: |
+          python3 - <<'PY'
+          import json, os
+          p=os.path.join(os.environ['RUNNER_TEMP'], 'gm_iv_ring1_1.json')
+          d=json.load(open(p, encoding='utf-8'))
+          assert d['source_sha'] == os.environ['SOURCE_SHA']
+          assert d['dispositions']['GM-IV-F01']['disposition'] == 'PILOT'
+          assert d['dispositions']['GM-IV-F02']['disposition'] == 'REFERENCE'
+          assert d['pilot_gate'] == 'READY_F01_ONLY'
+          assert d['authority_transfer'] is False
+          assert d['children_bound'] is False
+          assert d['gm_v_state'] == 'HELD'
+          print('PASS_RING1_PILOT_F01_REFERENCE_F02')
+          PY
+
+      - name: Show ring-1 receipt
+        run: cat "$RUNNER_TEMP/gm_iv_ring1_1.json"
+
+      - name: Upload exact-SHA recon receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-fleet-03-ring1-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/f01-self-index.json
+            ${{ runner.temp }}/gm_iv_ring1_1.json
+            ${{ runner.temp }}/gm_iv_ring1_2.json
+          if-no-files-found: error

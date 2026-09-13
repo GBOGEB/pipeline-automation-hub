@@ -1,0 +1,38 @@
+{
+  "schema": "qps.gm_iv_ring1_recon.v1",
+  "wave": "GM-FLEET-03-RING1",
+  "mission": "GM-IV",
+  "activation_stage": "RECON_2_OF_8",
+  "authority_transfer": false,
+  "children_bound": false,
+  "frontiers": [
+    {
+      "slot": "GM-IV-F01",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "source_sha": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96",
+      "probe_class": "BOUNDED_EXECUTABLE_SELF_INDEX",
+      "probe_command": "python3 scripts/mip_repo_self_index.py --output <runner-temp>/f01-self-index.json",
+      "crew": ["SCOUT", "READER", "AMBASSADOR"],
+      "promotion_boundary": "runtime_gt0_plus_receipt_plus_explicit_disposition",
+      "return_trigger": "scope_and_authority_boundary_classified_or_search_saturation"
+    },
+    {
+      "slot": "GM-IV-F02",
+      "repository": "GBOGEB/attest-build-provenance",
+      "source_sha": "10334b5f1e684784025c3fc0a277c88c19089275",
+      "probe_class": "BOUNDED_CONTRACT_REFERENCE_PROBE",
+      "probe_command": "inspect action.yml and README at exact SHA; do not mint an attestation",
+      "crew": ["SCOUT", "READER", "AMBASSADOR"],
+      "promotion_boundary": "contract_probe_gt0_plus_receipt_plus_explicit_disposition",
+      "return_trigger": "integration_value_and_authority_boundary_classified_or_search_saturation"
+    }
+  ],
+  "allowed_dispositions": ["ADAPT", "EXTRACT", "REFERENCE", "PARK", "PILOT"],
+  "invariants": [
+    "CANDIDATE_RECON_IS_NOT_CHILD_BINDING",
+    "NO_AUTHORITY_TRANSFER",
+    "NO_PILOT_WITHOUT_RUNTIME_OR_CONTRACT_RECEIPT",
+    "NO_ENGINEER_OR_DOCTOR_SURGE_BEFORE_ACTUAL_FIRST_RED",
+    "GM_V_REMAINS_HELD"
+  ]
+}
