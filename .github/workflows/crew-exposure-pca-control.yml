@@ -1,0 +1,51 @@
+name: Crew Exposure PCA Control
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/measured/history/CREW_EXPOSURE_PCA_CONTROL_RETURN_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/validate_exposure_pca_control.py'
+      - '.github/workflows/crew-exposure-pca-control.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/measured/history/CREW_EXPOSURE_PCA_CONTROL_RETURN_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/validate_exposure_pca_control.py'
+      - '.github/workflows/crew-exposure-pca-control.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-control:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Validate exposure PCA control return
+        shell: bash
+        run: |
+          python mission-control/qps-triage-ultra/crew/measured/validate_exposure_pca_control.py \
+            | tee /tmp/crew-exposure-pca-control.json
+          grep -q '"status": "PASS"' /tmp/crew-exposure-pca-control.json
+      - name: Deterministic repeat
+        shell: bash
+        run: |
+          python mission-control/qps-triage-ultra/crew/measured/validate_exposure_pca_control.py \
+            > /tmp/crew-exposure-pca-control-repeat.json
+          cmp /tmp/crew-exposure-pca-control.json /tmp/crew-exposure-pca-control-repeat.json
+      - name: Upload control validation
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-exposure-pca-control-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/crew-exposure-pca-control.json
+          if-no-files-found: error
