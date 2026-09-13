@@ -1,0 +1,39 @@
+{
+  "schema": "qps.gm_iv_frontier_candidates.v1",
+  "wave": "GM-FLEET-03",
+  "mission_id": "GM-IV",
+  "authority_transfer": false,
+  "candidate_ring": [
+    {
+      "slot": "GM-IV-F01",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "state": "CANDIDATE_RECON",
+      "evidence_class": "OBSERVED_REPOSITORY",
+      "observed_surface": "document_processing_RTM_OTC_DEL_DMAIC_orchestration",
+      "source_ref": "README.md@main",
+      "why_frontier": "independent_document_and_requirements_automation_capability_relevant_to_QPS_deliverable_and_traceability_work",
+      "initial_crew": ["SCOUT", "READER", "AMBASSADOR"],
+      "return_trigger": "scope_and_authority_boundary_classified_or_search_saturation",
+      "promotion_requires": ["bounded_runtime_probe_gt0", "receipt", "explicit_disposition"]
+    },
+    {
+      "slot": "GM-IV-F02",
+      "repository": "GBOGEB/attest-build-provenance",
+      "state": "CANDIDATE_RECON",
+      "evidence_class": "OBSERVED_REPOSITORY",
+      "observed_surface": "signed_build_provenance_attestation_SLSA_in_toto_Sigstore",
+      "source_ref": "README.md@main",
+      "why_frontier": "independent_provenance_capability_relevant_to_exact_SHA_receipts_and_release_identity",
+      "initial_crew": ["SCOUT", "READER", "AMBASSADOR"],
+      "return_trigger": "integration_value_and_authority_boundary_classified_or_search_saturation",
+      "promotion_requires": ["bounded_runtime_or_contract_probe_gt0", "receipt", "explicit_disposition"]
+    }
+  ],
+  "unfilled_slots": ["GM-IV-F03", "GM-IV-F04", "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+  "invariants": [
+    "CANDIDATE_RECON_IS_NOT_A_GM_IV_CHILD_BINDING",
+    "NO_SLOT_IS_FILLED_WITHOUT_OBSERVED_REPOSITORY_EVIDENCE",
+    "NO_FRONTIER_RECEIVES_ENGINEERING_AUTHORITY_FROM_MISSION_CONTROL",
+    "UNFILLED_SLOTS_REMAIN_EXPLICIT"
+  ]
+}
