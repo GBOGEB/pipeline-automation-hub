@@ -16,6 +16,9 @@ FRONTIER = ROOT.parent
 MEASURED = FRONTIER.parent
 CREW = MEASURED.parent
 REPO = CREW.parents[2]
+sys.path.insert(0, str(MEASURED))
+from rex_runtime_control import collect_history, evaluate_preflight, summarize_recurrence
+
 MANIFEST = json.loads((ROOT / 'FRONTIER_TASK_MANIFEST_v2.json').read_text(encoding='utf-8'))
 CHECKLIST = json.loads((MEASURED / 'REX_REUSE_CHECKLIST_v1.json').read_text(encoding='utf-8'))
 REGISTRY = json.loads((CREW / 'CREW_REGISTRY_v1.json').read_text(encoding='utf-8'))
@@ -162,6 +165,8 @@ def main():
     artifact_reused = bool(os.environ.get('MC_REUSE_ARTIFACT'))
     cache_reused = cache_path.exists()
     receipts = []
+    rex_history = collect_history([MEASURED / 'history', out])
+    proof_gate_bound = bool(MANIFEST.get('hypothesis')) and bool(MANIFEST.get('comparison_contract')) and MANIFEST.get('promotion_allowed') is False
 
     for task in MANIFEST['tasks']:
         if task['primary_crew_id'] not in CREW_IDS or any(x not in CREW_IDS for x in task['crew_combination']):
@@ -171,36 +176,63 @@ def main():
         if set(task['applicable_rex_ids']) - REX_IDS:
             raise SystemExit(f"FAIL unknown REX in {task['task_id']}")
 
+        preflight = evaluate_preflight(
+            checklist_schema=CHECKLIST['schema'],
+            applicable_rex_ids=task['applicable_rex_ids'],
+            facts={
+                'namespace_registered': True,
+                'vocabulary_registered': True,
+                'yaml_mutation_planned': False,
+                'yaml_lint_prechecked': False,
+                'active_assignment_current': True,
+                'proof_gate_bound': proof_gate_bound,
+                'execution_context_reached': True,
+            },
+        )
+
         workload = task['workload']
         rp = task['resource_profile']
-        wait_target = float(rp.get('human_dependency_wait_seconds', 0.0))
-        wait_t0 = time.perf_counter()
-        if wait_target > 0:
-            time.sleep(wait_target)
-        wait_observed = round(time.perf_counter() - wait_t0, 6) if wait_target > 0 else 0.0
-
-        burners = start_contention(int(rp.get('contention_processes', 0)))
+        wait_observed = 0.0
+        burners = []
         started = datetime.now(timezone.utc).isoformat()
-        t0 = time.perf_counter()
         disposition = 'ACCEPT'
         error = None
-        try:
-            kind = workload['kind']
-            if kind == 'analytics_sweep':
-                semantic, units = analytics_sweep(int(workload['iterations']), int(workload['workers']))
-            elif kind == 'validation_bundle':
-                semantic, units = validation_bundle(int(workload['iterations']), int(workload['workers']))
-            elif kind == 'artifact_crosscheck':
-                semantic, units = artifact_crosscheck(int(workload['iterations']), int(workload['workers']), artifact_path, cache_path)
-            elif kind == 'rex_surface_scan':
-                semantic, units = rex_surface_scan(int(workload['iterations']), int(workload['workers']))
-            else:
-                raise RuntimeError(f'unknown workload {kind}')
-        except Exception as exc:
-            semantic, units = None, 0
+        semantic = None
+        units = 0
+        elapsed = 0.0
+        steps_executed = 0
+
+        if preflight['payload_allowed']:
+            wait_target = float(rp.get('human_dependency_wait_seconds', 0.0))
+            wait_t0 = time.perf_counter()
+            if wait_target > 0:
+                time.sleep(wait_target)
+            wait_observed = round(time.perf_counter() - wait_t0, 6) if wait_target > 0 else 0.0
+
+            burners = start_contention(int(rp.get('contention_processes', 0)))
+            t0 = time.perf_counter()
+            steps_executed = 1
+            try:
+                kind = workload['kind']
+                if kind == 'analytics_sweep':
+                    semantic, units = analytics_sweep(int(workload['iterations']), int(workload['workers']))
+                elif kind == 'validation_bundle':
+                    semantic, units = validation_bundle(int(workload['iterations']), int(workload['workers']))
+                elif kind == 'artifact_crosscheck':
+                    semantic, units = artifact_crosscheck(int(workload['iterations']), int(workload['workers']), artifact_path, cache_path)
+                elif kind == 'rex_surface_scan':
+                    semantic, units = rex_surface_scan(int(workload['iterations']), int(workload['workers']))
+                else:
+                    raise RuntimeError(f'unknown workload {kind}')
+            except Exception as exc:
+                semantic, units = None, 0
+                disposition = 'REJECT'
+                error = repr(exc)
+            elapsed = round(time.perf_counter() - t0, 6)
+        else:
             disposition = 'REJECT'
-            error = repr(exc)
-        elapsed = round(time.perf_counter() - t0, 6)
+            error = f"REX_PREFLIGHT_BLOCKED:{','.join(preflight['blocking_rex_ids'])}"
+
         ended = datetime.now(timezone.utc).isoformat()
         for p in burners:
             try:
@@ -208,9 +240,9 @@ def main():
             except subprocess.TimeoutExpired:
                 p.kill()
 
-        observed_rex = []
-        if disposition == 'REJECT' and 'REX-006' in task['applicable_rex_ids']:
-            observed_rex.append('REX-006')
+        observed_rex = list(preflight['triggered_rex_ids'])
+        recurrence = summarize_recurrence(observed_rex, rex_history)
+        new_rex = sorted(rex_id for rex_id, level in recurrence['by_rex_id'].items() if level == 'NEW')
         receipt = {
             'schema': 'missioncontrol.crew_frontier_pc3_runtime_receipt.v2',
             'mission_id': MANIFEST['mission_id'],
@@ -228,9 +260,9 @@ def main():
             'workload_units': units,
             'resource_profile': rp,
             'measured_resource': {
-                'contention_processes': int(rp.get('contention_processes', 0)),
-                'cache_reused': bool(rp.get('cache_reuse')) and cache_reused,
-                'artifact_reused': bool(rp.get('artifact_reuse')) and artifact_reused,
+                'contention_processes': int(rp.get('contention_processes', 0)) if steps_executed else 0,
+                'cache_reused': bool(rp.get('cache_reuse')) and cache_reused if steps_executed else False,
+                'artifact_reused': bool(rp.get('artifact_reuse')) and artifact_reused if steps_executed else False,
                 'human_dependency_wait_seconds': wait_observed
             },
             'habitat': {'id': args.habitat, 'lane': args.lane, 'runner': runner},
@@ -239,21 +271,18 @@ def main():
             'started_at': started,
             'ended_at': ended,
             'execute_seconds': elapsed,
-            'steps_executed': 1,
+            'steps_executed': steps_executed,
             'semantic_digest': semantic,
             'disposition': disposition,
             'error': error,
             'promotion_allowed': False,
             'authority_transfer': False,
-            'rex_preflight': {
-                'checklist_version': CHECKLIST['schema'],
-                'rex_ids_checked': task['applicable_rex_ids'],
-                'blocking_rex_ids': [],
-                'manual_checklist_items': 'NOT_ASSESSED_BY_RUNTIME_WRAPPER'
-            },
+            'rex_preflight': preflight,
             'rex_postflight': {
                 'rex_ids_observed': observed_rex,
-                'recurrence_level': 'NEW' if observed_rex else None,
+                'new_rex_signal': new_rex or None,
+                'recurrence_level': recurrence['highest'],
+                'recurrence_by_rex_id': recurrence['by_rex_id'],
                 'preventive_action_effective': True if 'REX-006' in task['applicable_rex_ids'] and disposition == 'ACCEPT' else None,
                 'ledger_update_required': bool(observed_rex)
             }
@@ -261,7 +290,13 @@ def main():
         path = out / f'{cell_id}__{task["task_id"]}.json'
         path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n', encoding='utf-8')
         receipts.append(receipt)
-        print(json.dumps({'cell': cell_id, 'task_id': task['task_id'], 'class': task['task_class'], 'strategy': task['allocation_strategy'], 'seconds': elapsed, 'human_wait': wait_observed, 'disposition': disposition}, sort_keys=True))
+        for rex_id in observed_rex:
+            rex_history.setdefault('counts', {})[rex_id] = int(rex_history.get('counts', {}).get(rex_id, 0)) + 1
+        if 'REX-006' in task['applicable_rex_ids'] and disposition == 'ACCEPT':
+            controls = set(rex_history.get('preventive_controls', []))
+            controls.add('REX-006')
+            rex_history['preventive_controls'] = sorted(controls)
+        print(json.dumps({'cell': cell_id, 'task_id': task['task_id'], 'class': task['task_class'], 'strategy': task['allocation_strategy'], 'seconds': elapsed, 'human_wait': wait_observed, 'steps_executed': steps_executed, 'blocking_rex_ids': preflight['blocking_rex_ids'], 'disposition': disposition}, sort_keys=True))
 
     summary = {
         'schema': 'missioncontrol.crew_frontier_pc3_run_summary.v2',
@@ -274,6 +309,7 @@ def main():
         'task_count': len(receipts),
         'accepted': sum(r['disposition'] == 'ACCEPT' for r in receipts),
         'rejected': sum(r['disposition'] == 'REJECT' for r in receipts),
+        'preflight_blocked': sum(bool(r['rex_preflight']['blocking_rex_ids']) for r in receipts),
         'pair_members': sum(r['pair_id'] is not None for r in receipts),
         'artifact_reused': artifact_reused,
         'cache_reused': cache_reused,
