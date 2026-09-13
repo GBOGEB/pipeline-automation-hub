@@ -1,0 +1,70 @@
+{
+  "schema": "qps.gm_fleet_03_capacity_contract.v1",
+  "wave": "GM-FLEET-03",
+  "authority_transfer": false,
+  "objective": "measure_mission_city_capacity_and_control_gm_iv_staged_activation_without_degrading_existing_control",
+  "capacity_classes": {
+    "REGISTERED": "counted_from_the_canonical_crew_registry_but_not_claimed_as_runtime_capacity",
+    "OBSERVED_ELIGIBLE": "registry_record_with_observed_maturity_and_an_explicit_host_or_role_mapping_for_the_required_capability",
+    "RUNTIME_PROVEN": "exact_SHA_workflow_execution_with_more_than_zero_steps_and_a_bound_receipt",
+    "OPERATIONALLY_AVAILABLE": "runtime_proven_capacity_with_no_current_noncompensating_blocker_and_a_defined_return_path"
+  },
+  "required_activation_capabilities": {
+    "COMMAND": ["U01", "U03", "U04"],
+    "TECHNICAL_BOUNDARY": ["U02", "U08", "S06"],
+    "RECON": ["U07", "U02", "S01"],
+    "ANALYSIS": ["U05"],
+    "RUNTIME": ["S03", "U04"],
+    "QA": ["U06"],
+    "BUILD_REPAIR_RESERVE": ["S02", "S05"],
+    "GOVERNANCE": ["U01"]
+  },
+  "stage_model": [
+    {
+      "stage": "HELD_0_OF_8",
+      "meaning": "no_GM_IV_child_is_instantiated",
+      "maximum_bound_frontiers": 0
+    },
+    {
+      "stage": "RECON_2_OF_8",
+      "meaning": "two_named_candidate_frontiers_may_receive_scout_reader_ambassador_recon_only",
+      "maximum_bound_frontiers": 2,
+      "authority_transfer": false
+    },
+    {
+      "stage": "PILOT_2_OF_8",
+      "meaning": "two_recon_frontiers_may_receive_bounded_engineer_smoker_QA_work_after_recon_acceptance",
+      "maximum_bound_frontiers": 2,
+      "authority_transfer": false
+    },
+    {
+      "stage": "RECON_4_OF_8",
+      "meaning": "up_to_four_named_frontiers_under_controlled_reconnaissance",
+      "maximum_bound_frontiers": 4,
+      "authority_transfer": false
+    },
+    {
+      "stage": "ACTIVE_8_OF_8",
+      "meaning": "eight_frontiers_only_after_repeat_control_capacity_and_receipt_quality_are_demonstrated",
+      "maximum_bound_frontiers": 8,
+      "authority_transfer": false
+    }
+  ],
+  "release_invariants": [
+    "GM_III_MUST_REMAIN_RECON_CONTROL",
+    "GM_V_MUST_REMAIN_HELD",
+    "NO_UNRESOLVED_NONCOMPENSATING_VETO",
+    "NO_FABRICATED_FRONTIER_IDENTITY",
+    "EVERY_ACTIVATED_FRONTIER_REQUIRES_A_RETURN_TRIGGER",
+    "RUNTIME_PROOF_MUST_EXECUTE_MORE_THAN_ZERO_STEPS",
+    "CANDIDATE_RECON_DOES_NOT_TRANSFER_ENGINEERING_SEMANTIC_OR_DELIVERY_AUTHORITY",
+    "REGISTERED_CREW_COUNT_IS_NOT_OPERATIONAL_CAPACITY",
+    "EXPERT_SEEDED_COMPETENCY_IS_NOT_MEASURED_CAPACITY"
+  ],
+  "measurement_policy": {
+    "inventory_measurement": "permitted_from_current_registry",
+    "runtime_capacity_measurement": "requires_exact_SHA_runtime_receipt",
+    "cross_mission_pca": "defer_until_comparable_MEASURED_rows_exist",
+    "fleet_bt": "defer_until_connected_observed_pairwise_allocation_outcomes_exist"
+  }
+}
