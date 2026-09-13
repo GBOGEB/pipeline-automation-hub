@@ -1,0 +1,29 @@
+{
+  "schema": "missioncontrol.crew.secondment.v1",
+  "status": "CANDIDATE_CANONICAL_PROTOCOL",
+  "required": [
+    "secondment_id",
+    "crew_id",
+    "home_base",
+    "mission_id",
+    "repo",
+    "role",
+    "allowed_actions",
+    "forbidden_actions",
+    "start_evidence_sha",
+    "return_evidence_sha",
+    "rex_learned",
+    "rex_generated",
+    "consumer_edges",
+    "load_class",
+    "return_disposition"
+  ],
+  "lifecycle": ["HOME", "BRIEF", "SECONDMENT", "SCOUT_OR_READ", "RETURN_PACKET", "REX_COMPETENCY_UPDATE", "HOME_OR_REASSIGN"],
+  "roles": ["SCOUT", "READER", "SCOUT_READER_PAIR"],
+  "rules": [
+    "secondment_never_transfers_canonical_authority",
+    "runtime_builder_or_repair_authority_requires_explicit_gate_or_bounded_probe",
+    "every_secondment_closes_with_return_packet",
+    "two_consecutive_low_novelty_no_consumer_returns_trigger_contraction_review"
+  ]
+}
