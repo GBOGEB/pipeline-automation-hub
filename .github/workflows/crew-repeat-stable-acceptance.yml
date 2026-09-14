@@ -1,0 +1,45 @@
+name: MissionControl Repeat Stable Acceptance
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/REPEAT_STABLE_ACCEPTANCE_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/validate_repeat_stable_acceptance.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json'
+      - '.github/workflows/crew-repeat-stable-acceptance.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/REPEAT_STABLE_ACCEPTANCE_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/validate_repeat_stable_acceptance.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json'
+      - '.github/workflows/crew-repeat-stable-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-repeat-stable-acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Validate bounded repeat-stable acceptance
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/validate_repeat_stable_acceptance.py
+          --acceptance mission-control/qps-triage-ultra/crew/measured/frontier/temporal/REPEAT_STABLE_ACCEPTANCE_v1.json
+          --config mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json
