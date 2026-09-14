@@ -23,6 +23,10 @@ def delta_us(a: datetime, b: datetime) -> int:
     return ((delta.days * 86400 + delta.seconds) * MICROS) + delta.microseconds
 
 
+def nonempty_string(value: object) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("receipt")
@@ -83,9 +87,9 @@ def main() -> int:
         checks.update({
             "measured_predeclared_assignment": receipt.get("attribution_basis") == "PREDECLARED_ASSIGNMENT",
             "measured_exact_sha": isinstance(receipt.get("source_sha"), str) and len(receipt["source_sha"]) == 40,
-            "measured_run_bound": bool(str(receipt.get("run_id", ""))),
-            "measured_job_bound": bool(str(receipt.get("job_ref", ""))),
-            "measured_runner_bound": bool(str(receipt.get("runner_ref", ""))),
+            "measured_run_bound": nonempty_string(receipt.get("run_id")),
+            "measured_job_bound": nonempty_string(receipt.get("job_ref")),
+            "measured_runner_bound": nonempty_string(receipt.get("runner_ref")),
             "measured_mission_performance": receipt.get("mission_performance_eligible") is True,
             "measured_not_pca_before_repeat": receipt.get("pca_eligible") is False,
             "measured_not_bt_before_repeat": receipt.get("bt_eligible") is False,
