@@ -60,12 +60,10 @@ def direction_from_bt(bt):
     single = float(nodes['ALLOC_SINGLE_CELL']['normalized_strength'])
     dc = CONFIG['direction_contract']
     if single >= float(dc['single_if_normalized_strength_gte']):
-        direction = 'ALLOC_SINGLE_CELL'
-    elif single <= float(dc['paired_if_normalized_strength_lte']):
-        direction = 'ALLOC_PAIRED_CELL'
-    else:
-        direction = 'INDETERMINATE'
-    return direction, single
+        return 'ALLOC_SINGLE_CELL', single
+    if single <= float(dc['paired_if_normalized_strength_lte']):
+        return 'ALLOC_PAIRED_CELL', single
+    return 'INDETERMINATE', single
 
 
 def scarcity_from_admission(admission):
@@ -100,7 +98,7 @@ def make_window(run, analysis, admission, analysis_digest, source_kind):
         raise ValueError('workflow head/source mismatch')
     if analysis.get('task_receipts') != 72 or analysis.get('accepted') != 72 or analysis.get('rejected') != 0:
         raise ValueError('window is not 72/72 accepted')
-    rex_veto = analysis.get('rex', {}).get('persistent_or_regression_count') != 0
+
     classes = {}
     for task_class in CONFIG['task_classes']:
         bt = analysis['bt_conditional_by_task_class'][task_class]
@@ -113,7 +111,7 @@ def make_window(run, analysis, admission, analysis_digest, source_kind):
             'paired_normalized_strength': 1.0 - single_strength,
             'observed_pairs': int(bt['observed_pairs']),
         }
-    created_at = run.get('created_at') or datetime.now(timezone.utc).isoformat()
+
     return {
         'window_id': str(run['id']),
         'run_attempt': int(run.get('run_attempt') or 1),
@@ -122,40 +120,77 @@ def make_window(run, analysis, admission, analysis_digest, source_kind):
         'event': run.get('event'),
         'head_branch': run.get('head_branch'),
         'source_sha': source_sha,
-        'created_at': created_at,
+        'created_at': run.get('created_at') or datetime.now(timezone.utc).isoformat(),
         'source_kind': source_kind,
         'analysis_digest_sha256': analysis_digest,
         'hosted_runner_classes': sorted({r.get('habitat') for r in admission.get('rows', []) if r.get('habitat')}),
         'lanes': sorted({r.get('lane') for r in admission.get('rows', []) if r.get('lane')}),
         'scarcity': scarcity_from_admission(admission),
-        'rex_veto': rex_veto,
+        'rex_veto': analysis.get('rex', {}).get('persistent_or_regression_count') != 0,
         'task_classes': classes,
     }
 
 
-def collect_historical(repo, token, current_run_id):
+def select_historical_runs(recent_runs, scheduled_runs, current_run_id):
+    """Retain learning and CONTROL histories independently so one cannot crowd out the other."""
+    contract = CONFIG['window_contract']
     wanted_paths = {
         '.github/workflows/crew-pc3-conditional-bt.yml',
         '.github/workflows/crew-temporal-allocation-policy.yml',
     }
-    runs = []
+
+    def usable(run):
+        return (
+            str(run.get('id')) != str(current_run_id)
+            and run.get('status') == 'completed'
+            and run.get('conclusion') == 'success'
+            and run.get('path') in wanted_paths
+        )
+
+    learning = sorted((r for r in recent_runs if usable(r)), key=lambda r: r.get('created_at', ''))
+    learning = learning[-int(contract.get('historical_learning_window_limit', 24)):]
+
+    control = sorted(
+        (
+            r for r in scheduled_runs
+            if usable(r)
+            and r.get('event') == contract['control_eligible_event']
+            and r.get('path') == contract['control_eligible_workflow_path']
+        ),
+        key=lambda r: r.get('created_at', ''),
+    )
+    control = control[-int(contract.get('historical_control_window_limit', 24)):]
+
+    dedup = {str(r['id']): r for r in learning}
+    for run in control:
+        dedup[str(run['id'])] = run
+    return sorted(dedup.values(), key=lambda r: (r.get('created_at', ''), int(r['id'])))
+
+
+def collect_historical(repo, token, current_run_id):
+    recent_runs = []
     for page in range(1, 6):
         payload = api_request(f'https://api.github.com/repos/{repo}/actions/runs?per_page=100&page={page}', token)
         batch = payload.get('workflow_runs', [])
-        runs.extend(batch)
+        recent_runs.extend(batch)
         if len(batch) < 100:
             break
-    selected = []
-    for run in runs:
-        if str(run.get('id')) == str(current_run_id):
-            continue
-        if run.get('status') != 'completed' or run.get('conclusion') != 'success':
-            continue
-        if run.get('path') not in wanted_paths:
-            continue
-        selected.append(run)
-    selected.sort(key=lambda r: r.get('created_at', ''))
-    return selected[-24:]
+
+    contract = CONFIG['window_contract']
+    workflow_file = contract['control_eligible_workflow_path'].rsplit('/', 1)[-1]
+    scheduled_runs = []
+    for page in range(1, 4):
+        payload = api_request(
+            f'https://api.github.com/repos/{repo}/actions/workflows/{workflow_file}/runs'
+            f'?event={contract["control_eligible_event"]}&per_page=100&page={page}',
+            token,
+        )
+        batch = payload.get('workflow_runs', [])
+        scheduled_runs.extend(batch)
+        if len(batch) < 100:
+            break
+
+    return select_historical_runs(recent_runs, scheduled_runs, current_run_id)
 
 
 def window_from_artifact(repo, token, run):
@@ -164,7 +199,8 @@ def window_from_artifact(repo, token, run):
     ).get('artifacts', [])
     candidates = [
         a for a in artifacts
-        if a.get('name', '').startswith(('crew-pc3-conditional-bt-', 'crew-temporal-pc3-')) and not a.get('expired')
+        if a.get('name', '').startswith(('crew-pc3-conditional-bt-', 'crew-temporal-pc3-'))
+        and not a.get('expired')
     ]
     if not candidates:
         return None
@@ -211,7 +247,6 @@ def class_metrics(windows, task_class):
     dominant, dominant_count = counts.most_common(1)[0] if counts else ('INDETERMINATE', 0)
     consistency = (dominant_count / len(directional)) if directional else 0.0
     latest_two = [r['direction'] for r in directional[-2:]]
-    latest_two_agree = len(latest_two) >= 2 and len(set(latest_two)) == 1
     total_pairs = sum(r['observed_pairs'] for r in records)
     pooled_single = (
         sum(r['single_normalized_strength'] * r['observed_pairs'] for r in records) / total_pairs
@@ -223,7 +258,7 @@ def class_metrics(windows, task_class):
         'direction_counts': dict(sorted(counts.items())),
         'dominant_direction': dominant,
         'direction_consistency': consistency,
-        'latest_two_directional_windows_agree': latest_two_agree,
+        'latest_two_directional_windows_agree': len(latest_two) >= 2 and len(set(latest_two)) == 1,
         'pooled_single_strength': pooled_single,
         'pooled_winner_strength': max(pooled_single, 1.0 - pooled_single),
         'observed_pairs_total': total_pairs,
@@ -305,12 +340,12 @@ def build_policy(windows):
             'competency_promotion': False,
             'authority_transfer': False,
         }
+
         if any_rex_veto:
             policy['policy_status'] = 'VETO_REX'
         else:
-            control_policy = {'independent_windows': scheduled_metrics['independent_windows']}
             control = gate_pass(
-                control_policy,
+                {'independent_windows': scheduled_metrics['independent_windows']},
                 CONFIG['control_policy_gate'],
                 scheduled_metrics['distinct_source_shas'],
                 scheduled_metrics['temporal_span_seconds'],
