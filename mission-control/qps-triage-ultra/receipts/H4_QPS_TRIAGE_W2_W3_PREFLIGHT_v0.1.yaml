@@ -1,0 +1,134 @@
+schema: qps-triage-ultra/w2-w3-preflight-receipt/0.1
+as_of: '2026-09-14T10:50:00+02:00'
+mission: H4_QPS_TRIAGE
+status: NONBLOCKING_PREFLIGHT_COMPLETE_FORMAL_EXECUTION_GATED
+authority_transfer: false
+formal_qps_credit_delta: 0
+
+purpose: >-
+  Retain the work that can safely advance W2 and W3 while the cryoplant child
+  runtime admission gate remains unresolved. This receipt is planning/prebinding
+  evidence only: it does not start W2 or W3, mutate child engineering state,
+  update a Mission Control current pointer, or claim Table-10/release credit.
+
+observed_gate_state:
+  w1:
+    receipt: mission-control/qps-triage-ultra/receipts/H4_QPS_TRIAGE_W1_RECEIPT_v1.0.yaml
+    state: BOUNDED_DOV_WITH_ONE_EXTERNAL_RUNTIME_DEFER
+    merge_sha: 3029059ffe08a7a8ba03afab074f568e406ae504
+  cryoplant_runtime:
+    state: BLOCKED_PREEXECUTION
+    last_bound_zero_step_example:
+      workflow: QPS_TRIAGE_Reliability_Applicability
+      run_id: 34823727164
+      job_id: 103910918373
+      runner_id: 0
+      intended_steps: 0
+      conclusion: failure
+    rule: ZERO_STEP_RUN_NE_EXACT_HEAD_PROOF
+  child_current_snapshot:
+    repo: GBOGEB/cryoplant-project
+    main_sha: fe2d856f470825743a88d3cf7474cf0ffeeeafde
+    qrt_b_pr: 1122
+    qrt_b_merge_sha: fe2d856f470825743a88d3cf7474cf0ffeeeafde
+    qrt_b_effect: >-
+      HP internal analysis is frozen behind external bidder/OEM return; downstream
+      routes are armed. Cold-compressor train is explicitly high-information with
+      common-cause/non-overlap as the first residual.
+
+w2_nonblocking_progress:
+  method: 3PC_PLUS_MIP_I
+  formal_state: HOLD
+  preflight_state: PASS_WITH_RESIDUALS
+  preferred_atom: COLD_COMPRESSOR_TRAIN
+  selected_child_records:
+    - path: ocd-adr/20_canonical/analysis/QPS_ALAT_CC_PROMOTION_READINESS_v0.1.yaml
+      blob_sha: c211bb47732fe99e7100d46f092944327f3eb92d
+    - path: ocd-adr/20_canonical/analysis/QPS_CC_BIDDER_2K_REDUNDANCY_CROSSWALK_v0.1.yaml
+      blob_sha: 34e4a0931b504974f8e357a8406846fa58cfdfc1
+    - path: ocd-adr/40_implementation/QPS_W87_C1_ALAT_CC_MTBF_MTTR_REENTRY_v0.1.yaml
+      blob_sha: 1f8d40f22907ba46774604e22104012484833152
+    - path: ocd-adr/40_implementation/QPS_ALAT_AGENDA_SOURCE_VALIDATION_W74_v0.1.yaml
+      blob_sha: 406133b2f66ae25d2714ed521ca90295abaaebc4
+  consumer_prebound:
+    repo: GBOGEB/DOCX_RTM_Automation
+    main_sha: 57b48c04a5f71be68f919d4e7da0e4ff99408d18
+    path: src/dashboard/qps_reliability_bridge.py
+    blob_sha: 2165b7dec7ed36bcd1740b7d57f0586b7457d4e6
+  frozen_facts:
+    architecture: 3_SERIES_STAGES_3_REQUIRED_NO_ONLINE_STAGE_REDUNDANCY
+    MTBF_h_per_stage: 105000
+    selected_total_MTTR_h: 13
+    preserved_state_after_single_stage_loss: FOUR_K_SB_OR_TS_SB
+    provisional_independent_train_rate_per_year: 0.2502857143
+    verified_Table10_rate_per_year: 0.0
+    common_cause_nonoverlap: OPEN
+  p1_prepare_residuals:
+    - freeze_exact_C1462_TN_001_reliability_table_page_or_table_locator
+    - freeze_formal_W2_reference_period
+    - retain_issue_75_common_cause_and_MTBF_scope_nonoverlap_as_open
+  p2_proof_vector_defined: true
+  p2_executed: false
+  p3_disposition_contract_defined: true
+  p3_applied: false
+  mip_i_field_maturity_mapped: true
+  mip_i_adapter_implemented: false
+  result: >-
+    W2 moved from generic planning to a concrete preferred-atom transaction
+    preflight with exact child/consumer blob identities and explicit residuals.
+    Formal PREPARE/PROVE/COMMIT remains held.
+
+w3_nonblocking_progress:
+  method: 3P3_PLUS_MIP_P
+  formal_state: HOLD_W2_LOCAL_DOV
+  package_skeleton_defined: true
+  authority_invariants_defined: true
+  exact_identity_contract_defined: true
+  restart_card_skeleton_defined: true
+  candidate_target_assessment_complete: true
+  preferred_conditional_target: QPS_COST_MASTER_RELIABILITY_VIEW
+  preferred_target_reason: >-
+    Highest integration value because it tests the W2 shared operating-state
+    ledger boundary between reliability exposure and the existing COST/OPEX
+    numerical SSOT. It remains independently gated by current G6/QRT-D release
+    identity/parity controls.
+  fallback_target: QPS_OFFER_EVALUATION_RELIABILITY_EVIDENCE_VIEW
+  generic_global_fanout: HOLD_NO_CURRENT_NEED
+  propagation_executed: false
+  REX_credit: 0
+  result: >-
+    W3 moved from generic planning to a bounded package/target predecision, but no
+    consumer was touched and no propagation/control credit was claimed.
+
+state_vector:
+  CG: W2_EXACT_TRANSACTION_PREFLIGHT_AND_W3_PROPAGATION_PREFLIGHT_BOUND
+  BG: CRYOPLANT_CHILD_RUNTIME_EX_GT_0_KR_MISSING
+  EX: PREFLIGHT_ONLY
+  QH: PREFLIGHT_CONTRACT_PASS
+  KR: THIS_PREFLIGHT_RECEIPT_ONLY
+  DR: W2_INPUTS_SUBSTANTIALLY_READY_W3_TARGET_PREDECISION_READY
+  SR: W1_CANONICAL_W2_W3_FORMAL_GATES_PRESERVED
+  WD: CONTINUE_RUNTIME_BLOCKER_ONLY_PLUS_EXTERNAL_SOURCE_RETURNS
+  PB: NONBLOCKING_PROGRESS_ONLY_ZERO_AUTHORITY_CREDIT
+
+next_actions:
+  blocking_lane:
+    owner: CRYOPLANT_RUNTIME_PLATFORM
+    goal: one intended exact-head child validation with runner_id != 0, EX > 0, QH PASS and durable KR
+    effect: release formal W2 P1 only
+  w2_after_release:
+    - close P1 page_or_table_locator and reference_period residuals
+    - execute P2 proof vector on exact child and consumer identities
+    - P3 child disposition ACCEPT_ANALYTICAL_CONSUMER or explicit DEFER/HOLD/REJECT
+    - implement only the justified shared-state adapter after transaction proof
+  w3_after_w2_dov:
+    - instantiate package with exact W2 receipt
+    - select exactly one governed consumer
+    - propagate once
+    - emit REX/restart/prune control
+    - STOP
+
+stop_rule: >-
+  Do not convert this preflight into formal wave credit. Do not touch candidate
+  W3 consumers, build the W2 adapter, promote Table-10 rates, or update global
+  current pointers until their explicit entry gates are satisfied.
