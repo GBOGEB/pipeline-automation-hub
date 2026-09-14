@@ -1,0 +1,111 @@
+schema: qps-triage-ultra/h4-mission-alignment/1.0
+as_of: '2026-09-14T10:32:00+02:00'
+mission: H4_QPS_TRIAGE
+status: ACTIVE_ALIGNMENT_PROJECTION
+authority_transfer: false
+source_fleet_status: mission-control/qps-triage-ultra/EXPEDITION_FLEET_STATUS.md
+source_iteration_ledger: >-
+  mission-control/qps-triage-ultra/analytics/
+  EXPEDITION_FLEET_ITERATION_LEDGER_v1.json
+rule: >-
+  This is a scheduling/alignment projection. Existing canonical mission tables
+  and mission-specific receipts remain authoritative. H4 does not rewrite their
+  DoV or consume local/scarce resources without a measured need.
+
+alignment:
+  - mission_id: W3_12_HEPAK_REFERENCE
+    fleet_state: IMPROVE_TO_EXECUTE_EXTERNAL_LOCAL
+    relation_to_h4: RESOURCE_SEPARATE
+    action: >-
+      Preserve the sole licensed-local W3 gate. H4 reliability triage must not
+      consume the Windows/Excel/HEPAK local cell. Use cloud GitHub work for H4.
+    conflation_forbidden: true
+
+  - mission_id: M01_COOLPROP_PRIVATE_QPS
+    fleet_state: CONTROL_EXTERNAL_BLOCKED
+    relation_to_h4: BLOCKER_PATTERN_REFERENCE_ONLY
+    action: >-
+      Both lanes can exhibit execution-habitat/runner symptoms, but treat them
+      as separate defects unless exact runner evidence proves a shared root cause.
+      H4 P1 remains owned by the cryoplant runtime/platform lane.
+
+  - mission_id: M03_GITHUB_MCP
+    fleet_state: CONTROL_BOUNDED_DOV3
+    relation_to_h4: CONTROL_PATTERN_REUSE
+    action: >-
+      Reuse exact-identity, bounded-recurrence and selective-pruning discipline;
+      do not reopen broad MCP capability work for H4.
+
+  - mission_id: M05_PROVENANCE_ATTESTATION
+    fleet_state: CONTROL_BOUNDED_DOV3
+    relation_to_h4: DIRECT_METHOD_REUSE
+    action: >-
+      Reuse exact source/artifact/receipt semantics for SOURCE_BOUND reliability
+      atoms and H4 KR. No new provenance framework is required.
+
+  - mission_id: M06_TELEGRAF_OBSERVER
+    fleet_state: RETURN_REFERENCE_PARK
+    relation_to_h4: VALUE_GATE_REFERENCE
+    action: >-
+      Preserve the lesson that technically green but low-conversion infrastructure
+      should be parked. Do not add a reliability telemetry service unless a real
+      time-series/multi-signal consumer appears.
+
+  - mission_id: M07_CRYO_LEAK_DASHBOARD
+    fleet_state: CONTROL_SPLIT_DISPOSITION
+    relation_to_h4: SOURCE_RECENCY_PATTERN_REUSE
+    action: >-
+      Reuse the split between a valid analytical kernel and stale project inputs.
+      Reliability calculations may remain valid while project-source promotion is
+      quarantined or scenario-only.
+
+  - mission_id: M08_CRYOGENIC_ACCELERATOR_WORKSPACE
+    fleet_state: CONTROL_QUARANTINE_REFERENCE
+    relation_to_h4: UNIT_AND_PROVENANCE_GUARD_REUSE
+    action: >-
+      Reuse dimensional/source-provenance discipline for MTBF hours/years,
+      lambda per year/hour and state-exposure inputs.
+
+  - mission_id: M09_PIPELINE_AUTOMATION_HUB_LEGACY_PROCESSOR
+    fleet_state: EXECUTE_QUEUED_TRUTH_PROBE
+    relation_to_h4: CLOUD_CAPACITY_COEXISTENCE
+    action: >-
+      H4 should not displace this high-information runnable truth probe. Both can
+      use cloud capacity; Mission Control should preserve small bounded cells.
+
+  - mission_id: W3_15_OBSERVED_BT
+    fleet_state: CONTROL_PASS_MERGED
+    relation_to_h4: BT_METHOD_REUSE
+    action: >-
+      Reuse observed-outcome reverse pressure for crew/resource scheduling only.
+      H4 BT cannot create QPS engineering or Table-10 authority.
+
+h4_resource_contract:
+  local_licensed_capacity: DO_NOT_CONSUME
+  cloud_github_capacity: SMALL_PARALLEL_CELLS
+  p1_h1_qps: one child/runtime cell only until EX_GT_0
+  p2_h2_keb: one owner-lane first-red cell only
+  p3_h3_dow: RETURN_TO_CONTROL_AFTER_MERGE
+  h4_coordinator: small persistent control cell
+  dashboard_ui: PARK_UNTIL_W2_MODEL_CONTRACT_STABLE
+
+mission_state:
+  current_wave: H4_QPS_TRIAGE:W1
+  current_classification: REPAIR_REENTRY
+  first_blockers:
+    - P1_CRYOPLANT_RUNTIME_PLATFORM_EX_GT_0
+    - P2_CODEX_OWNER_PR_678_EXACT_HEAD_GREEN
+  closed_or_controlled:
+    - MIP_M_APPLICABILITY_V0_3
+    - P3_DOW_FIVE_ATOM_BASELINE
+  planned:
+    - H4_QPS_TRIAGE:W2_3PC_PLUS_MIP_I
+    - H4_QPS_TRIAGE:W3_3P3_PLUS_MIP_P
+
+no_growth_rules:
+  - no_full_106_row_QPS_ingestion_in_W1
+  - no_new_provenance_framework
+  - no_new_semantic_controller
+  - no_local_HEPAK_resource_consumption
+  - no_dashboard_feature_expansion_before_W2_contract
+  - no_PCA_until_comparable_population_exists
