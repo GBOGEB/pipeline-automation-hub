@@ -72,6 +72,19 @@ def test_non_scheduled_windows_cannot_satisfy_control_clock():
     assert all(p["allocation_policy_promotion"] is False for p in receipt["policies"].values())
 
 
+def test_six_fabricated_15ks_windows_are_vnv_not_a_24h_clock():
+    windows = [make_window(i, i * 15000, event="schedule") for i in range(6)]
+    receipt = policy.build_policy(windows)
+    frontier = receipt["scheduled_control_frontier"]
+
+    assert all(w["source_kind"] == "SYNTHETIC_TEST" for w in windows)
+    assert frontier["independent_windows"] == 6
+    assert frontier["temporal_span_seconds"] == 75000
+    assert frontier["temporal_span_seconds"] < policy.CONFIG["control_policy_gate"]["min_temporal_span_seconds"]
+    assert all(p["policy_status"] != "CONTROL_POLICY" for p in receipt["policies"].values())
+    assert all(p["allocation_policy_promotion"] is False for p in receipt["policies"].values())
+
+
 def test_control_requires_six_genuine_scheduled_windows_and_full_span():
     windows = [make_window(i, i * 18000, event="schedule") for i in range(6)]
     receipt = policy.build_policy(windows)
@@ -119,6 +132,7 @@ def test_scheduled_history_cannot_be_crowded_out_by_learning_traffic():
 
 if __name__ == "__main__":
     test_non_scheduled_windows_cannot_satisfy_control_clock()
+    test_six_fabricated_15ks_windows_are_vnv_not_a_24h_clock()
     test_control_requires_six_genuine_scheduled_windows_and_full_span()
     test_scheduled_history_cannot_be_crowded_out_by_learning_traffic()
     print("PASS_SCHEDULED_CONTROL_FRONTIER")
