@@ -40,3 +40,11 @@ Every active frontier must close a wave with either the required evidence receip
 
 ## Reuse
 The existing `level1/runtime.py` remains the executable census/MIP/PCA/BT/orchestration engine. ULTRA extends it with fleet state; it does not duplicate healthy Level-1 logic.
+
+## Repository function topology
+
+Repository routing is controlled by function rather than by historical activity alone. The current machine-readable topology is `topology/QPS_REPO_FUNCTION_TOPOLOGY_v1.yaml`; the human control view is `topology/QPS_REPO_FUNCTION_TOPOLOGY_v1.md`.
+
+The topology distinguishes `ACTIVE_USED`, `EXECUTION_SATELLITE`, `CONTROL_RESERVE`, `CONDITIONAL_RESERVE`, `DORMANT_CANDIDATE`, and `MAINTENANCE_ONLY`. These are routing states only. They do not alter the authority boundary above.
+
+Current high-value route: QPS engineering/source/disposition remains in `GBOGEB/cryoplant-project`; `GBOGEB/Q_engineering_tools` is the bounded exact-payload execution carrier when child Actions admission is blocked; `GBOGEB/CODEX` and `GBOGEB/ABACUS` remain semantic and independent-measurement receivers; `GBOGEB/gg_MATH` is a reusable math provider held in CONTROL reserve. Dormant candidates receive no workers until a named source/consumer blocker justifies activation.
