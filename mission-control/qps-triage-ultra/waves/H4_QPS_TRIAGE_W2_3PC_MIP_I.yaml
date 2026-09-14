@@ -1,19 +1,49 @@
-schema: qps-triage-ultra/h4-w2-3pc-mip-i/1.0
-as_of: '2026-09-14T10:20:00+02:00'
+schema: qps-triage-ultra/h4-w2-3pc-mip-i/1.1
+as_of: '2026-09-14T10:50:00+02:00'
 mission: H4_QPS_TRIAGE
 wave: H4_QPS_TRIAGE:W2
-lifecycle_state: PLANNED
-runtime_state: GATED
+lifecycle_state: PREPARE_PREFLIGHT_BOUND
+runtime_state: FORMAL_EXECUTION_GATED_BY_CHILD_RUNTIME
 method: 3PC_PLUS_MIP_I
 authority_class: MISSION_CONTROL_ORCHESTRATION_ONLY
 authority_transfer: false
+formal_wave_started: false
+formal_qps_credit_delta: 0
 
 entry_conditions:
-  - H4_QPS_TRIAGE_W1_HAS_BOUNDED_DISPOSITION
-  - QPS_TRIAGE_APPLICABILITY_V0_3_CANONICAL
-  - P1_CHILD_BOUNDARY_RECEIPT_OR_EXPLICIT_RUNTIME_DEFER
-  - P2_KEB_RECEIPT_OR_EXPLICIT_INHERITED_DEFER
-  - P3_DOW_MEASUREMENT_RECEIPT
+  H4_QPS_TRIAGE_W1_HAS_BOUNDED_DISPOSITION:
+    state: PASS
+    receipt: mission-control/qps-triage-ultra/receipts/H4_QPS_TRIAGE_W1_RECEIPT_v1.0.yaml
+    merge_sha: 3029059ffe08a7a8ba03afab074f568e406ae504
+  QPS_TRIAGE_APPLICABILITY_V0_3_CANONICAL:
+    state: PASS
+    repo: GBOGEB/DOCX_RTM_Automation
+    merge_sha: a3bc7919bfc0c8d4ba572a6d6c95628406875c4b
+  P1_CHILD_BOUNDARY_RECEIPT:
+    state: PASS_CONTENT_DEFER_RUNTIME
+    repo: GBOGEB/cryoplant-project
+    pr: 1121
+    merge_sha: 342bc5a601a6e9d102722bfec1a0a291787d3b54
+    retained_blocker: >-
+      One intended cryoplant exact-head child validation with runner_id != 0,
+      EX > 0 and durable KR has not yet been observed. Zero-step hosted runs do
+      not satisfy this condition.
+  P2_KEB_RECEIPT:
+    state: PASS
+    repo: GBOGEB/CODEX
+    repair_pr: 680
+    merge_sha: efa47b1353a67595c4302616fa07817871e957e5
+  P3_DOW_MEASUREMENT_RECEIPT:
+    state: PASS
+    repo: GBOGEB/ABACUS
+    pr: 1202
+    merge_sha: 2b11e7f4d7f68cfef5f07247fcb6700c3e025b03
+
+formal_release_condition: >-
+  Do not enter formal H4-QPS-W2-P1 execution until the retained child runtime
+  condition is satisfied or H4 records a separately justified bounded waiver
+  that preserves the missing proof requirement. This preflight does not create
+  such a waiver.
 
 intent: >-
   Prove one bounded end-to-end transaction from an exact QPS reliability source
@@ -21,9 +51,131 @@ intent: >-
   re-entry, while adding only the shared operating-state ledger innovation
   justified by the reliability/lifecycle integration study.
 
+nonblocking_preflight:
+  disposition: PASS_WITH_EXPLICIT_RESIDUALS
+  child_main_snapshot:
+    repo: GBOGEB/cryoplant-project
+    sha: fe2d856f470825743a88d3cf7474cf0ffeeeafde
+    includes:
+      - PR_1120_APPLICABILITY_PROFILE
+      - PR_1121_CHILD_REENTRY_BOUNDARY
+      - PR_1122_QRT_B_RELIABILITY_EVIDENCE_BURNDOWN
+  preferred_atom_selection:
+    atom: COLD_COMPRESSOR_TRAIN
+    selected: true
+    selection_basis: >-
+      QRT-B identifies the cold-compressor train as the highest-information
+      downstream atom: single-stage consequence/restoration is already bounded,
+      while common-cause/non-overlap remains an explicit non-compensating gate.
+    qrt_b_control:
+      path: controls/QPS_QRT_B_RELIABILITY_EVIDENCE_BURNDOWN_v0.1.yaml
+      state: ARMED_HIGH_INFORMATION_ATOM
+      evidence_id: EVID-QPS-CC-001
+      issue: 75
+      first_gate: COMMON_CAUSE_AND_NON_OVERLAP
+  exact_child_records:
+    promotion_readiness:
+      path: ocd-adr/20_canonical/analysis/QPS_ALAT_CC_PROMOTION_READINESS_v0.1.yaml
+      blob_sha: c211bb47732fe99e7100d46f092944327f3eb92d
+      status: PROMOTION_READY_EXCEPT_COMMON_CAUSE_AND_ACCEPTED_LINEAGE
+    bidder_crosswalk:
+      path: ocd-adr/20_canonical/analysis/QPS_CC_BIDDER_2K_REDUNDANCY_CROSSWALK_v0.1.yaml
+      blob_sha: 34e4a0931b504974f8e357a8406846fa58cfdfc1
+      status: CONTROLLED_SERIES_SINGLE_POINT_EVIDENCE
+    accepted_evidence_reentry:
+      path: ocd-adr/40_implementation/QPS_W87_C1_ALAT_CC_MTBF_MTTR_REENTRY_v0.1.yaml
+      blob_sha: 1f8d40f22907ba46774604e22104012484833152
+      atom: ALAT_CC_MTBF_MTTR_001
+      scope: MTBF_MTTR_EVIDENCE_ONLY
+    source_validation:
+      path: ocd-adr/40_implementation/QPS_ALAT_AGENDA_SOURCE_VALIDATION_W74_v0.1.yaml
+      blob_sha: 406133b2f66ae25d2714ed521ca90295abaaebc4
+      item: W74-C07
+    historical_planning_rate_record:
+      path: ocd-adr/20_canonical/analysis/QPS_FIRST_EVENT_BUDGET_CONTRIBUTOR_v0.1.yaml
+      blob_sha: 30261eee1e41f6461dc31566fe065cdb34c8d671
+      role: SUPPORTING_OLDER_PLANNING_RECORD_NOT_SELECTED_DURATION_AUTHORITY
+  exact_consumer_candidate:
+    repo: GBOGEB/DOCX_RTM_Automation
+    main_sha: 57b48c04a5f71be68f919d4e7da0e4ff99408d18
+    bridge_path: src/dashboard/qps_reliability_bridge.py
+    bridge_blob_sha: 2165b7dec7ed36bcd1740b7d57f0586b7457d4e6
+    originating_pr: 54
+    originating_merge_sha: b94319a8f824dd3a709d03194bdb0f5e1f9a1d8e
+    role: ANALYSIS_CONSUMER_ONLY_NO_ENGINEERING_OR_COMPLIANCE_PROMOTION
+  controlled_input_snapshot:
+    bidder: ALAT
+    bidder_document_family: C1462-TN-001
+    architecture:
+      installed_stages: 3
+      required_stages_for_full_2K: 3
+      arrangement: SERIES
+      online_stage_redundancy: NONE
+    reliability:
+      MTBF_h_per_stage: 105000
+      independent_stage_lambda_per_year: 0.0834285714
+      provisional_three_stage_independent_lambda_per_year: 0.2502857143
+      source_class: CURRENT_ALAT_OFFER_RELIABILITY_TABLE
+    restoration:
+      selected_total_MTTR_h: 13
+      selected_basis: CURRENT_OFFER_RELIABILITY_TABLE_FULL_SERVICE_RESTORATION
+      note: >-
+        The current promotion-readiness and W87 re-entry records explicitly bind
+        13 h total MTTR for service restoration. The older first-event planning
+        record retains 8 h local MTTR + 3 h recovery / 11 h MDT and is not the
+        selected duration authority for W2. Preserve that distinction rather
+        than silently reconciling the records.
+    consequence:
+      single_stage_loss_full_2K: LOST
+      highest_preserved_cold_state: FOUR_K_SB_OR_TS_SB
+      automatic_warm_stop: false
+      provisional_class_direction: B
+    table10:
+      verified_allocated_rate_per_year: 0.0
+      provisional_independent_candidate_per_year: 0.2502857143
+      promotion_allowed_now: false
+  prepare_residuals:
+    - id: W2-P1-R01
+      state: OPEN
+      gap: UNDERLYING_BIDDER_PAGE_OR_TABLE_LOCATOR_NOT_FROZEN_IN_W2_RECEIPT
+      action: >-
+        Freeze the exact C1462-TN-001 reliability-table locator used by the
+        accepted child re-entry before formal P1 is credited.
+    - id: W2-P1-R02
+      state: OPEN_EXTERNAL
+      gap: COMMON_CAUSE_AND_MTBF_SCOPE_NONOVERLAP
+      owner: issue_75_RFI_QPS_CC_01
+      required:
+        - shared_power_and_protection_dependencies
+        - shared_PLC_controls_and_interlocks
+        - shared_cooling_instrumentation_and_support_dependencies
+        - shared_headers_isolation_or_vacuum_dependencies
+        - maintenance_or_procedural_multi_stage_disablement
+        - confirm_105000h_stage_MTBF_scope_vs_shared_exposure
+        - non_double_counting_rule
+    - id: W2-P1-R03
+      state: OPEN
+      gap: REFERENCE_PERIOD_FOR_FORMAL_CONSUMER_TRANSACTION_NOT_YET_FROZEN
+      note: >-
+        A 90-day diagnostic exists in the child record, but W2 must explicitly
+        choose and label its reference period before P2 model execution.
+  prepare_preflight_result:
+    exact_child_record_identity: PASS
+    exact_consumer_identity: PASS
+    bidder_family_identity: PASS
+    architecture_boundary: PASS
+    component_system_boundary: PASS
+    selected_service_restoration_duration: PASS_13H
+    common_cause_scope: OPEN
+    bidder_page_table_locator: OPEN
+    formal_reference_period: OPEN
+    formal_P1_credit: 0
+
 three_pulse_transaction:
   - pulse: H4-QPS-W2-P1
     method_step: PREPARE
+    formal_state: HOLD_GATE_NOT_RELEASED
+    preflight_state: SUBSTANTIAL_INPUTS_FROZEN_RESIDUALS_EXPLICIT
     primary_lane: H1_QPS
     supporting_lanes: [H2_KEB, H3_DOW]
     objective: >-
@@ -32,6 +184,12 @@ three_pulse_transaction:
       re-entry question before any reliability calculation is credited.
     preferred_atom: COLD_COMPRESSOR_TRAIN
     fallback_atom: ALAT_HP_COMPRESSOR
+    explicit_child_reentry_question: >-
+      Given the accepted ALAT three-stage series architecture, 105000 h per-stage
+      MTBF and 13 h total service-restoration MTTR, does the child accept the
+      analytical consumer contract for provisional independent-stage reliability
+      diagnostics while keeping common-cause/non-overlap and Table-10 promotion
+      DEFERred until issue #75 evidence closes?
     required_output:
       - exact_source_identity
       - exact_consumer_identity
@@ -44,12 +202,23 @@ three_pulse_transaction:
 
   - pulse: H4-QPS-W2-P2
     method_step: PROVE
+    formal_state: HOLD_GATE_NOT_RELEASED
+    preflight_state: PROOF_VECTOR_DEFINED_NOT_EXECUTED
     primary_lane: H3_DOW
     supporting_lanes: [H2_KEB, H1_QPS]
     objective: >-
       Reproduce MTBF/lambda/exposure/Poisson outputs deterministically, verify
       provenance survival, and separately test whether system consequence is
       source-bound or remains scenario-only.
+    proof_vector:
+      - per_stage_MTBF_105000h_normalization
+      - three_stage_independent_series_rate_0_2502857143_per_year
+      - selected_reference_period_mu_P0_P_ge_1_Pk
+      - exact_child_blob_and_consumer_blob_provenance
+      - preserve_SOURCE_BOUND_vs_SCENARIO_vs_USER_OVERRIDE
+      - preserve_component_vs_system_scope
+      - assert_common_cause_open_is_not_zero
+      - assert_verified_Table10_rate_remains_0_0_per_year
     required_output:
       - deterministic_MTBF_lambda_parity
       - deterministic_mu_P0_P_ge_1_Pk
@@ -62,6 +231,8 @@ three_pulse_transaction:
 
   - pulse: H4-QPS-W2-P3
     method_step: COMMIT
+    formal_state: HOLD_GATE_NOT_RELEASED
+    preflight_state: DISPOSITION_CONTRACT_DEFINED_NOT_APPLIED
     primary_lane: H1_QPS
     supporting_lanes: [H2_KEB, H4_QPS_TRIAGE]
     objective: >-
@@ -82,6 +253,8 @@ three_pulse_transaction:
 
 mip_innovation:
   phase: I_INNOVATE
+  formal_state: HOLD_WITH_W2
+  preflight_state: FIELD_MATURITY_MAPPED_NO_ADAPTER_IMPLEMENTATION
   justification: >-
     The reliability/lifecycle integration study identifies one missing shared
     operating-state ledger as the common denominator for energy/OPEX and failure
@@ -102,21 +275,36 @@ mip_innovation:
     - spare_id
     - source_ref
     - evidence_class
+  cold_compressor_field_preflight:
+    state_id: PARTIAL_BOUND_2K_OP_TO_4K_SB_OR_TS_SB
+    exposure_h: OPEN_FORMAL_REFERENCE_PERIOD
+    power_kW: NOT_REQUIRED_FOR_RELIABILITY_PROOF_AND_NOT_BOUND_HERE
+    energy_kWh: DERIVED_ONLY_AFTER_STATE_EXPOSURE_AND_POWER_SOURCE
+    starts: NOT_BOUND
+    lambda_native_by_failure_mode: BOUND_PROVISIONAL_INDEPENDENT_ONLY
+    p_propagate_to_beam: NOT_BOUND
+    event_class: PROVISIONAL_B_DIRECTION_NOT_VERIFIED_TABLE10
+    MTTR_h: BOUND_13H_FULL_SERVICE_RESTORATION
+    MDT_h: NOT_SELECTED_FOR_W2
+    spare_id: OPEN_FOR_ALAT_SELECTED_STRATEGY
+    source_ref: BOUND_CHILD_RECORDS_BIDDER_FAMILY_PAGE_LOCATOR_RESIDUAL
+    evidence_class: CURRENT_ALAT_OFFER_COMPONENT_EVIDENCE
   guardrails:
     - TABLE10_COUNT_BUDGET_REMAINS_HARD_AUTHORITY
     - ANALYTICAL_POISSON_NE_CONTRACT_COMPLIANCE
     - SHARED_LEDGER_NE_COMPETING_SSOT
     - STATE_EXPOSURE_DRIVES_ENERGY_AND_RELIABILITY_SEPARATELY
+    - LKT_SPARE_OR_RESTORATION_EVIDENCE_NE_ALAT_EVIDENCE
 
 CG: ONE_EXACT_SOURCE_TO_CHILD_REENTRY_TRANSACTION_PROVED
-BG: W1_BOUNDARIES_OR_RUNTIME_RECEIPTS_NOT_YET_CLOSED
-EX: NOT_STARTED
-QH: NOT_STARTED
-KR: NOT_STARTED
-DR: GATED_BY_W1
+BG: CHILD_RUNTIME_ADMISSION_PLUS_P1_LOCATOR_REFERENCE_PERIOD_RESIDUALS
+EX: NOT_STARTED_FORMAL
+QH: NOT_STARTED_FORMAL
+KR: PREFLIGHT_RECEIPT_ONLY
+DR: PREPARE_PREFLIGHT_READY_FORMAL_GATE_HELD
 SR: CANONICAL_V0_3_READY
-WD: HOLD_UNTIL_ENTRY_CONDITIONS
-PB: ZERO_UNTIL_W2_STARTS
+WD: HOLD_FORMAL_W2_PROGRESS_ONLY_NONBLOCKING_PREFLIGHT
+PB: PREFLIGHT_PROGRESS_ONLY_ZERO_AUTHORITY_CREDIT
 
 victory_condition: >-
   One exact source atom traverses Prepare -> Prove -> Commit with no authority
@@ -125,5 +313,7 @@ victory_condition: >-
 
 stop_rule: >-
   Stop W2 after one successful bounded transaction and one justified ledger
-  adapter. Do not expand to all five atoms in the same wave. Expansion becomes
-  a separate measured wave only if the first transaction proves reusable value.
+  adapter. Do not expand to all five atoms in the same wave. While the formal
+  gate remains held, permit source/consumer identity prebinding, residual
+  enumeration and proof-vector definition only; do not execute P2, mutate child
+  disposition, mutate Mission Control current pointers or implement the adapter.
