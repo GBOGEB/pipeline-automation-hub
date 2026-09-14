@@ -1,0 +1,65 @@
+{
+  "schema": "qps.gm_iv_active8_governor_contract.v1",
+  "wave": "GM-FLEET-03-GOVERNOR-ACTIVE8",
+  "mission_id": "GM-IV",
+  "predecessor_recon4_control_sha": "74919f516eaa12d3245e82eb542eefff26d11d36",
+  "readiness_base_sha": "104f9d3009d42762b1be5cf75c4eddd183e55e5d",
+  "from_state": "STAGED_ACTIVE_RECON_4_OF_8",
+  "proposed_to_state": "ACTIVE_8_OF_8",
+  "proposed_activation_stage": "ACTIVE_8_OF_8",
+  "authority_transfer": false,
+  "children_bound": false,
+  "gm_v_required_state": "HELD",
+  "crew": ["GOVERNOR", "GEOGRAPHER", "GEOLOGIST", "HISTORIAN", "NEURONS", "QA", "SCOUT", "READER", "AMBASSADOR"],
+  "capacity_requirement": {
+    "contract": "GM_FLEET_03_CAPACITY_CONTRACT.json",
+    "stage": "ACTIVE_8_OF_8",
+    "maximum_bound_frontiers": 8,
+    "meaning": "eight_frontiers_only_after_repeat_control_capacity_and_receipt_quality_are_demonstrated"
+  },
+  "current_control_shape": {
+    "state": "STAGED_ACTIVE_RECON_4_OF_8",
+    "activation_stage": "RECON_4_OF_8",
+    "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"],
+    "controlled_pilot_frontiers": ["GM-IV-F01", "GM-IV-F03"],
+    "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
+    "unfilled_frontier_slots": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+    "children": []
+  },
+  "proposed_eight_frontier_shape": {
+    "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04", "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+    "controlled_pilot_frontiers_retained": ["GM-IV-F01", "GM-IV-F03"],
+    "reference_frontiers_retained": ["GM-IV-F02", "GM-IV-F04"],
+    "new_candidate_recon_frontiers": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+    "unfilled_frontier_slots": [],
+    "children": []
+  },
+  "frontier_evidence": {
+    "GM-IV-F01": {"repository": "GBOGEB/DOCX_RTM_Automation", "target_sha": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96", "class": "CONTROLLED_PILOT_RETAINED"},
+    "GM-IV-F02": {"repository": "GBOGEB/attest-build-provenance", "target_sha": "10334b5f1e684784025c3fc0a277c88c19089275", "class": "REFERENCE_RETAINED"},
+    "GM-IV-F03": {"repository": "GBOGEB/codespaces-jupyter", "target_sha": "1eba2240a86d1fd2bd6375e2fac481caf645cdde", "class": "CONTROLLED_PILOT_RETAINED"},
+    "GM-IV-F04": {"repository": "GBOGEB/yaml-reference-parser", "target_sha": "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99", "class": "REFERENCE_RETAINED"},
+    "GM-IV-F05": {"repository": "GBOGEB/ABACUS", "target_sha": "cb1f29a8c598b5b8bc196554abff9c16f488db63", "class": "OBSERVED_CANDIDATE_RECON", "observed_surface": "DMAIC_delivery_work_execution_and_federated_MIP_consumption"},
+    "GM-IV-F06": {"repository": "GBOGEB/CODEX", "target_sha": "b4fff9852b27412f35a22439d09c427dc364158a", "class": "OBSERVED_CANDIDATE_RECON", "observed_surface": "semantic_manifest_provenance_and_MIP_self_index_control"},
+    "GM-IV-F07": {"repository": "GBOGEB/cryo_leak_rate_dashboard", "target_sha": "6f6ce5fe1042e4ff59be06909b248a6444136e92", "class": "OBSERVED_CANDIDATE_RECON", "observed_surface": "independent_cryo_leak_kernel_dashboard_with_authority_quarantine"},
+    "GM-IV-F08": {"repository": "GBOGEB/document-organization-system", "target_sha": "3729f3864c3f6019c4b0a4e2bbe0c1ad419bff68", "class": "OBSERVED_CANDIDATE_RECON", "observed_surface": "document_topology_causal_attribution_and_bounded_routing"}
+  },
+  "admission_predicates": [
+    "current canonical GM-IV remains RECON_4 while readiness is evaluated",
+    "RECON_4 promotion merge remains an ancestor of exact readiness head",
+    "all eight frontier identities are unique and evidence-backed",
+    "F01 and F03 retain controlled-pilot evidence",
+    "F02 and F04 retain bounded-reference evidence",
+    "F05 through F08 exact target SHAs are fetchable and each bounded probe executes more than zero filesystem entries",
+    "fleet capacity structural gate passes with required capability host coverage",
+    "evidence economics control passes without promoting synthetic PCA or BT",
+    "generic fleet validator rejects ACTIVE_8 before a separate promotion transaction",
+    "no canonical child is created and no engineering semantic or delivery authority transfers",
+    "GM-V remains HELD with no children"
+  ],
+  "decision_semantics": {
+    "READY": "READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR",
+    "WITHHOLD": "WITHHOLD_ACTIVE_8_PROMOTION"
+  },
+  "promotion_boundary": "THIS_GATE_MAY_ADMIT_A_SEPARATE_ACTIVE_8_PROMOTION_TRANSACTION_BUT_DOES_NOT_MUTATE_THE_CANONICAL_RECON_4_STATE,_CREATE_CHILDREN,_TRANSFER_AUTHORITY,_OR_PROMOTE_GM_V."
+}
