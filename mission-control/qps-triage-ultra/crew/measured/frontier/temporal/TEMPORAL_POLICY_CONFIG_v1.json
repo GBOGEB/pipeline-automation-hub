@@ -26,6 +26,59 @@
     "historical_learning_window_limit": 24,
     "historical_control_window_limit": 24
   },
+  "evidence_lanes": {
+    "vnv_signal": {
+      "source_kind": "SYNTHETIC_TEST",
+      "purpose": ["DMAIC", "mechanism_vnv", "boundary_regression", "fault_injection", "negative_testing"],
+      "may_exercise_control_logic": true,
+      "counts_toward_governed_control_clock": false,
+      "counts_toward_control_promotion": false
+    },
+    "observed_signal": {
+      "purpose": ["runtime_learning", "operational_measurement"],
+      "counts_toward_governed_control_clock": false
+    },
+    "control_signal": {
+      "required_event": "schedule",
+      "required_workflow_path": ".github/workflows/crew-temporal-allocation-policy.yml",
+      "purpose": ["governed_temporal_evidence", "control_entry", "control_surveillance"],
+      "counts_toward_governed_control_clock": true
+    },
+    "challenge_signal": {
+      "purpose": ["independent_recomputation", "federation_vnv", "adversarial_validation"],
+      "adds_control_clock_seconds": false
+    },
+    "surveillance_signal": {
+      "required_source": "genuine_control_signal",
+      "purpose": ["post_control_persistence", "drift_detection", "regression_detection"],
+      "adds_new_observed_time": true,
+      "does_not_redefine_control_entry_gate": true
+    }
+  },
+  "synthetic_vnv_program": {
+    "principle": "fabricate_scenarios_never_governed_time",
+    "reference_fixture_windows": 6,
+    "reference_fixture_spacing_seconds": 15000,
+    "reference_fixture_span_seconds": 75000,
+    "note": "Six fixtures at 15000-second spacing create five intervals and a 75000-second first-to-last span; they test mechanism behavior only.",
+    "minimum_cases": [
+      "positive_gate_logic",
+      "five_of_six_window_rejection",
+      "86399_second_rejection",
+      "86400_second_boundary",
+      "direction_reversal",
+      "indeterminate_direction",
+      "pooled_strength_0_699_rejection",
+      "pooled_strength_0_700_boundary",
+      "duplicate_run_id",
+      "rerun_attempt_non_independence",
+      "insufficient_sha_diversity",
+      "missing_runner_class",
+      "missing_baseline_or_held_lane",
+      "rex_veto",
+      "learning_traffic_cannot_crowd_control_history"
+    ]
+  },
   "direction_contract": {
     "single_if_normalized_strength_gte": 0.55,
     "paired_if_normalized_strength_lte": 0.45,
@@ -51,6 +104,67 @@
     "latest_two_directional_windows_must_agree": true,
     "min_hosted_runner_classes": 3,
     "requires_baseline_and_held_lanes": true
+  },
+  "temporal_surveillance_horizons": {
+    "control_entry": {
+      "minimum_span_seconds": 86400,
+      "role": "unchanged_governed_control_entry_gate"
+    },
+    "medium_72h": {
+      "target_span_seconds": 259200,
+      "role": "robustness_surveillance_not_additional_promotion_gate",
+      "metrics": [
+        "direction_flip_count",
+        "indeterminate_window_fraction",
+        "rolling_direction_consistency",
+        "rolling_pooled_winner_strength",
+        "jackknife_min_pooled_winner_strength",
+        "jackknife_direction_preservation_fraction",
+        "early_vs_late_direction_agreement",
+        "source_sha_concentration",
+        "runner_class_concentration",
+        "lane_concentration",
+        "rex_veto_count",
+        "first_red_count"
+      ]
+    },
+    "medium_7d": {
+      "target_span_seconds": 604800,
+      "role": "persistence_and_regime_change_detection",
+      "metrics": [
+        "daily_direction_consistency",
+        "daily_pooled_winner_strength",
+        "direction_reversal_count",
+        "control_state_transition_count",
+        "time_since_last_first_red_seconds",
+        "distinct_source_shas",
+        "runner_and_lane_coverage",
+        "independent_recomputation_agreement_fraction"
+      ]
+    },
+    "long_30d": {
+      "target_span_seconds": 2592000,
+      "role": "long_term_control_surveillance",
+      "metrics": [
+        "weekly_direction_consistency",
+        "weekly_pooled_winner_strength",
+        "control_survival_fraction",
+        "regression_count",
+        "veto_count",
+        "policy_drift_events",
+        "federated_recomputation_disagreements",
+        "evidence_provenance_failures"
+      ]
+    }
+  },
+  "surveillance_rules": {
+    "medium_and_long_horizons_do_not_lower_or_raise_control_entry_thresholds": true,
+    "post_control_failure_can_weaken_or_revoke_control_state": true,
+    "synthetic_results_never_increment_observed_window_count": true,
+    "synthetic_results_never_increment_temporal_span": true,
+    "independent_recomputation_is_conjunctive_dov_not_extra_clock": true,
+    "competency_promotions": 0,
+    "authority_transfer": false
   },
   "natural_scarcity_extension": {
     "eligible_measurements": [
