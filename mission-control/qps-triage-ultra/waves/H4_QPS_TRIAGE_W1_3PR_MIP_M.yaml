@@ -1,0 +1,146 @@
+schema: qps-triage-ultra/h4-w1-3pr-mip-m/1.0
+as_of: '2026-09-14T09:57:00+02:00'
+mission: H4_QPS_TRIAGE
+wave: H4_QPS_TRIAGE:W1
+lifecycle_state: IMPROVE
+runtime_state: EXECUTE
+control_eligibility: false
+authority_class: MISSION_CONTROL_ORCHESTRATION_ONLY
+authority_transfer: false
+
+intent: >-
+  Execute a three-pulse 3PR refresh of QPS child authority, KEB semantics/provenance,
+  and DOW runtime/measurement; then apply only the observed MIP-M modernization
+  required to make QPS TRIAGE applicability cover reliability analytics and Mission Control.
+
+observed_baseline:
+  reliability_bridge:
+    repo: GBOGEB/DOCX_RTM_Automation
+    merged_pr: 54
+    merge_sha: b94319a8f824dd3a709d03194bdb0f5e1f9a1d8e
+    exact_head_runtime: PASS
+    role: ANALYSIS_CONSUMER_ONLY
+  first_real_atom:
+    child_repo: GBOGEB/cryoplant-project
+    component: ALAT_HP_COMPRESSOR
+    source_ref: ocd-adr/20_canonical/analysis/QPS_HP_COMPRESSOR_ALAT_EVIDENCE_v0.1.yaml
+    source_commit_observed: 63121ad911b65869783adfbd50e10b2703f6eb8e
+    mtbf_h: 333450
+    mttr_h: 78
+    system_consequence: OPEN
+    table10_promotion: FORBIDDEN_PENDING_CHILD_GATES
+  tooling_applicability:
+    repo: GBOGEB/DOCX_RTM_Automation
+    artifact: federation/ADR_OCD/qps_triage_applicability.yaml
+    current_version: 0.2.0
+    observed_gap:
+      - no explicit TRIAGE-RELIABILITY lane
+      - reliability model disposition not explicitly separated from triage disposition
+      - Mission Control plane not registered
+      - 3PR/MIP/3PC/3P3 method applicability not encoded
+  existing_scout_lane:
+    repo: GBOGEB/DOCX_RTM_Automation
+    pr: 55
+    disposition: KEEP_SEPARATE_H2_SCOUT_REFERENCE
+    rule: DO_NOT_OVERLOAD_WITH_GLOBAL_APPLICABILITY_AUTHORITY
+
+CG: >-
+  W1_ACCEPTED_THREE_PULSE_RECEIPTS_PLUS_APPLICABILITY_V0_3_CONTROLLED_PROJECTION_CANDIDATE
+BG: >-
+  CURRENT_APPLICABILITY_CONTRACT_DOES_NOT_YET_MODEL_RELIABILITY_ANALYSIS_MISSION_CONTROL_OR_METHOD_SELECTION
+EX: ACTIVE
+QH: PENDING
+KR: PENDING_EXACT_SHA_RECEIPTS
+DR: PARTIAL_READY
+SR: REPAIR_REQUIRED
+WD: CONTINUE
+PB: ZERO_PROMOTION_CREDIT_UNTIL_RECEIPTS
+
+pulses:
+  - pulse: H4-QPS-W1-P1
+    horizontal_lane: H1_QPS
+    method: 3PR
+    owner_repo: GBOGEB/cryoplant-project
+    role: CHILD_ENGINEERING_RUNTIME_AND_FINAL_DISPOSITION
+    objective: >-
+      Bind the merged reliability consumer to the exact ALAT HP evidence atom and classify
+      the child re-entry boundary without promoting component MTBF to a system event rate.
+    required_receipt:
+      - exact child source locator and source identity
+      - consumer merge identity
+      - component versus system consequence split
+      - explicit Table-10 delta = 0
+      - next engineering gate / first red
+    stop_on_first_red: true
+
+  - pulse: H4-QPS-W1-P2
+    horizontal_lane: H2_KEB
+    method: 3PR
+    owner_repo: GBOGEB/CODEX
+    role: SEMANTIC_PROVENANCE_EXACT_SOURCE_CHALLENGE
+    objective: >-
+      Challenge the proposed applicability v0.3 state taxonomy and method vocabulary against
+      existing mesh-closure and Mission Control semantics; create no new semantic framework
+      when existing canonical terms already suffice.
+    required_receipt:
+      - engineering versus tooling versus model versus mission state separation
+      - exact-source / provenance invariant
+      - method names 3PR MIP 3PC 3P3 resolve to existing controller semantics
+      - zero QPS engineering authority transfer
+    stop_on_first_red: true
+
+  - pulse: H4-QPS-W1-P3
+    horizontal_lane: H3_DOW
+    method: 3PR
+    owner_repo: GBOGEB/ABACUS
+    role: INDEPENDENT_CONSUMER_AND_DELIVERY_CLOSURE
+    objective: >-
+      Independently measure the five-atom pilot readiness surface and report denominator,
+      source binding, architecture completeness, executable proof and residual gaps.
+    required_receipt:
+      - five-atom denominator fixed
+      - source-bound versus scenario states measured
+      - architecture gate completeness measured
+      - EX QH KR fields reported
+      - PCA/BT used only if enough comparable observations exist
+    stop_on_first_red: true
+
+mip:
+  phase: M_MODERNIZE
+  justified_by_observed_gap: true
+  target_repo: GBOGEB/DOCX_RTM_Automation
+  target_artifact: federation/ADR_OCD/qps_triage_applicability.yaml
+  required_changes:
+    - register Mission Control as orchestration projection, not engineering authority
+    - add TRIAGE-RELIABILITY analytical consumer lane
+    - separate triage dispositions from model dispositions ACTIVE/SCENARIO_ONLY/EXCLUDED
+    - encode 3PR MIP 3PC 3P3 applicability and stop rules by reference to existing controller semantics
+    - add reliability provenance and system-consequence control gates
+  forbidden_changes:
+    - no child engineering disposition mutation
+    - no Table-10 allocation promotion
+    - no competing numerical SSOT
+    - no PCA or BT authority promotion
+
+planned_follow_on:
+  H4_QPS_TRIAGE:W2:
+    method: 3PC_PLUS_MIP_I
+    goal: bounded child re-entry transaction plus shared operating-state ledger adapter
+  H4_QPS_TRIAGE:W3:
+    method: 3P3_PLUS_MIP_P
+    goal: one global propagation receipt plus recurrence/restart/control hook
+
+session_plan:
+  S_H4: Mission Control roll-up, wave receipts, stop/reallocation decisions
+  S_H1: child source/consequence/Table-10 re-entry
+  S_H2: semantic/provenance/state-contract challenge
+  S_H3: independent runtime/census/metrics
+  S_DASH: specialist UI only after W2 model/authority contract is stable
+
+promotion_rule: >-
+  W1 may close only when each pulse has an exact evidence receipt or explicit DEFER/PARK/PRUNE,
+  the applicability modernization is validated, and no plane has silently promoted another plane's state.
+
+stop_rule: >-
+  After W1 DoV, do not repeat 3PR unless material repo/PR/evidence state changes. Proceed to W2
+  only if a bounded child re-entry transaction remains necessary; otherwise STOP.

@@ -1,0 +1,226 @@
+schema: qps-triage-ultra/h4-mission-alignment/1.2
+as_of: '2026-09-14T11:01:00+02:00'
+mission: H4_QPS_TRIAGE
+status: W1_CONTROL_W2_HOLD_REPO_LOCAL_ADMISSION_FIRST_RED
+authority_transfer: false
+source_fleet_status: mission-control/qps-triage-ultra/EXPEDITION_FLEET_STATUS.md
+source_iteration_ledger: >-
+  mission-control/qps-triage-ultra/analytics/
+  EXPEDITION_FLEET_ITERATION_LEDGER_v1.json
+canonical_w1_receipt: >-
+  mission-control/qps-triage-ultra/receipts/H4_QPS_TRIAGE_W1_RECEIPT_v1.0.yaml
+canonical_method_profile: >-
+  mission-control/qps-triage-ultra/methods/QPS_TRIAGE_GLOBAL_METHOD_PROFILE_v1.md
+rule: >-
+  This is a scheduling/alignment projection. Existing canonical mission tables,
+  child engineering controls and mission-specific receipts remain authoritative.
+  H4 does not rewrite their DoV or consume local/scarce resources without a
+  measured need.
+
+method_selector:
+  sequence: >-
+    3PR -> MIP only if an observed structural/recurrence gap exists -> 3PC if a
+    bounded transaction/re-entry remains -> one 3P3 only if reusable propagation
+    proof is missing -> STOP
+  current_position: W1_CONTROL_BEFORE_W2_ENTRY
+  repeat_3PR: ONLY_ON_MATERIAL_SOURCE_REPO_PR_OR_EVIDENCE_CHANGE
+  repeat_MIP: ONLY_ON_NEW_STRUCTURAL_OR_RECURRENCE_GAP
+  repeat_3PC: ONLY_FOR_A_NEW_BOUNDED_TRANSACTION
+  repeat_3P3: ONLY_FOR_A_NEW_GENERALISATION_CLASS
+
+runtime_probe_observation:
+  child_repo: GBOGEB/cryoplant-project
+  child_pr: 1135
+  exact_head_sha: 90322dc4d7f299f737e42bf45effa36300f367fa
+  workflow: QPS_TRIAGE_Reliability_Applicability
+  workflow_run_id: 34825502815
+  job_id: 103916589064
+  conclusion: failure
+  runner_id: 0
+  observed_steps: 0
+  classification: REX_006_PREEXECUTION_REPO_LOCAL_ADMISSION
+  first_red: QPS_REPO_LOCAL_RUNNER_923
+  interpretation: >-
+    The intended validator did not execute. This is repository-local Actions
+    admission/runtime evidence, not a validator, applicability-profile, model,
+    semantic or child-engineering failure. W2 therefore remains HOLD and H4
+    must not compensate by creating another method/framework layer.
+  next_action: >-
+    Restore private-repository Actions admission or attach the already-supported
+    runner path, then rerun the same exact-head applicability workflow unchanged.
+
+alignment:
+  - mission_id: W3_12_HEPAK_REFERENCE
+    fleet_state: IMPROVE_TO_EXECUTE_EXTERNAL_LOCAL
+    relation_to_h4: RESOURCE_SEPARATE
+    action: >-
+      Preserve the sole licensed-local W3 gate. H4 reliability triage must not
+      consume the Windows/Excel/HEPAK local cell. Use cloud GitHub work for H4.
+    conflation_forbidden: true
+
+  - mission_id: M01_COOLPROP_PRIVATE_QPS
+    fleet_state: CONTROL_EXTERNAL_BLOCKED
+    relation_to_h4: BLOCKER_PATTERN_REFERENCE_ONLY
+    action: >-
+      Both lanes can exhibit execution-habitat/runner symptoms, but treat them
+      as separate defects unless exact runner evidence proves a shared root cause.
+      H4 P1 remains owned by the cryoplant runtime/platform lane.
+
+  - mission_id: M03_GITHUB_MCP
+    fleet_state: CONTROL_BOUNDED_DOV3
+    relation_to_h4: CONTROL_PATTERN_REUSE
+    action: >-
+      Reuse exact-identity, bounded-recurrence and selective-pruning discipline;
+      do not reopen broad MCP capability work for H4.
+
+  - mission_id: M05_PROVENANCE_ATTESTATION
+    fleet_state: CONTROL_BOUNDED_DOV3
+    relation_to_h4: DIRECT_METHOD_REUSE
+    action: >-
+      Reuse exact source/artifact/receipt semantics for SOURCE_BOUND reliability
+      atoms and H4 KR. No new provenance framework is required.
+
+  - mission_id: M06_TELEGRAF_OBSERVER
+    fleet_state: RETURN_REFERENCE_PARK
+    relation_to_h4: VALUE_GATE_REFERENCE
+    action: >-
+      Preserve the lesson that technically green but low-conversion infrastructure
+      should be parked. Do not add a reliability telemetry service unless a real
+      time-series/multi-signal consumer appears.
+
+  - mission_id: M07_CRYO_LEAK_DASHBOARD
+    fleet_state: CONTROL_SPLIT_DISPOSITION
+    relation_to_h4: SOURCE_RECENCY_PATTERN_REUSE
+    action: >-
+      Reuse the split between a valid analytical kernel and stale project inputs.
+      Reliability calculations may remain valid while project-source promotion is
+      quarantined or scenario-only.
+
+  - mission_id: M08_CRYOGENIC_ACCELERATOR_WORKSPACE
+    fleet_state: CONTROL_QUARANTINE_REFERENCE
+    relation_to_h4: UNIT_AND_PROVENANCE_GUARD_REUSE
+    action: >-
+      Reuse dimensional/source-provenance discipline for MTBF hours/years,
+      lambda per year/hour and state-exposure inputs.
+
+  - mission_id: M09_PIPELINE_AUTOMATION_HUB_LEGACY_PROCESSOR
+    fleet_state: EXECUTE_QUEUED_TRUTH_PROBE
+    relation_to_h4: CLOUD_CAPACITY_COEXISTENCE
+    action: >-
+      H4 should not displace this high-information runnable truth probe. Both can
+      use cloud capacity; Mission Control should preserve small bounded cells.
+
+  - mission_id: W3_15_OBSERVED_BT
+    fleet_state: CONTROL_PASS_MERGED
+    relation_to_h4: BT_METHOD_REUSE
+    action: >-
+      Reuse observed-outcome reverse pressure for crew/resource scheduling only.
+      H4 BT cannot create QPS engineering or Table-10 authority.
+
+h4_resource_contract:
+  local_licensed_capacity: DO_NOT_CONSUME
+  cloud_github_capacity: SMALL_PARALLEL_CELLS
+  p1_h1_qps: ONE_CHILD_RUNTIME_CELL_UNTIL_EX_GT_0
+  p2_h2_keb: RETURN_TO_CONTROL_PASS_CANONICAL
+  p3_h3_dow: RETURN_TO_CONTROL_PASS_CANONICAL
+  h4_coordinator: SMALL_PERSISTENT_CONTROL_CELL
+  dashboard_ui: PARK_UNTIL_W2_MODEL_CONTRACT_STABLE
+
+mission_state:
+  current_wave: H4_QPS_TRIAGE:W1_CONTROL
+  current_classification: CONTROLLED_PARTIAL_W2_GATED
+  canonical_w1_status: BOUNDED_DOV_WITH_ONE_EXTERNAL_RUNTIME_DEFER
+  current_first_blocker: QPS_REPO_LOCAL_RUNNER_923
+  current_first_red_classification: REX_006_PREEXECUTION_REPO_LOCAL_ADMISSION
+  current_non_compensating_veto: QPS_REPO_LOCAL_RUNNER_923
+  closed_or_controlled:
+    - MIP_M_APPLICABILITY_V0_3
+    - P1_CHILD_CONTENT_BOUNDARY
+    - P2_KEB_PASS_CANONICAL
+    - P3_DOW_FIVE_ATOM_BASELINE
+    - W1_METHOD_BURN_IN
+  planned:
+    - H4_QPS_TRIAGE:W2_3PC_PLUS_MIP_I
+    - H4_QPS_TRIAGE:W3_3P3_PLUS_MIP_P
+
+three_wave_burn_in:
+  W1:
+    method: 3PR_PLUS_MIP_M
+    state: CONTROL_BOUNDED_DOV
+    purpose: REFRESH_AUTHORITY_SEMANTICS_MEASUREMENT_AND_MODERNIZE_APPLICABILITY
+    residual: P1_RUNTIME_KR_EXTERNAL_DEFER_REPO_LOCAL_ADMISSION
+  W2:
+    method: 3PC_PLUS_MIP_I
+    state: HOLD_ENTRY_GATE
+    preferred_atom: COLD_COMPRESSOR_TRAIN
+    fallback_atom: ALAT_HP_COMPRESSOR
+    purpose: ONE_EXACT_SOURCE_TO_CHILD_REENTRY_TRANSACTION_PLUS_SHARED_OPERATING_STATE_LEDGER_ADAPTER
+    release_condition: ONE_INTENDED_CRYOPLANT_EXACT_HEAD_VALIDATION_WITH_EX_GT_0_AND_DURABLE_KR_OR_EXPLICIT_BOUNDED_WAIVER
+  W3:
+    method: 3P3_PLUS_MIP_P
+    state: GATED_BY_W2_LOCAL_DOV
+    purpose: ONE_REUSABLE_PROPAGATION_PROOF_PLUS_REX_RESTART_RECURRENCE_CONTROL
+    stop: ONE_PROPAGATION_PROOF_THEN_STOP
+
+next_goals:
+  P0:
+    owner: CRYOPLANT_RUNTIME_PLATFORM_LANE
+    goal: RESTORE_REPO_LOCAL_ACTIONS_ADMISSION_OR_ATTACH_SUPPORTED_RUNNER_AND_RERUN_UNCHANGED
+    victory: RUNNER_ID_NE_0_AND_STEPS_GT_0
+    credit_effect: NONE_UNTIL_VALIDATOR_RUNTIME_RECEIPT
+  P1:
+    owner: H4_QPS_TRIAGE
+    goal: CONSUME_FIRST_REAL_VALIDATOR_RESULT_AND_RELEASE_OR_KEEP_HOLD_ON_W2
+    rule: NO_W2_PREPARE_PROVE_COMMIT_BEFORE_ENTRY_GATE
+  P2:
+    owner: H1_QPS_H3_DOW_WITH_H2_SUPPORT
+    goal: W2_ONE_ATOM_PREPARE_PROVE_COMMIT_IF_RELEASED
+  P3:
+    owner: H4_QPS_TRIAGE
+    goal: W3_ONE_PROPAGATION_PROOF_IF_W2_LOCAL_DOV_AND_REUSABLE_GLOBAL_PROOF_STILL_MISSING
+
+session_plan:
+  QRT_A_APPLICABILITY_CONTROL:
+    owner: H4_QPS_TRIAGE_PLUS_H1_QPS
+    goal: maintain child profile, exact-SHA runtime receipt and W2 entry decision
+    current_state: BLOCKED_REPO_LOCAL_ADMISSION_NO_VALIDATOR_STEPS
+  QRT_B_EVIDENCE_BURNDOWN:
+    owner: H1_QPS
+    goal: cold-compressor-train source and architecture evidence for W2 preferred atom
+    current_state: PREPARE_NON_PROMOTING_SOURCE_CENSUS_ONLY
+  QRT_C_TRANSACTION_RUNTIME:
+    owner: H3_DOW_WITH_H2_KEB
+    goal: deterministic W2 prove path and independent provenance/runtime receipt
+    current_state: GATED_BY_W2_RELEASE
+  QRT_D_PRESENTATION_REUSE:
+    owner: TOOLING_PRESENTATION
+    goal: return controlled outputs to DOCX_XLSX_PPTX_HTML after model and authority contract stability
+    current_state: PARK
+  S_H4:
+    goal: portfolio roll-up, receipts, reallocation, stop and restart decisions
+  S_H1:
+    goal: source consequence architecture Table-10 and engineering re-entry only
+  S_H2:
+    goal: semantics provenance state separation and exact-source challenge only
+  S_H3:
+    goal: executable proof metrics independent calculations and delivery QA only
+
+parallel_noncompensating_fronts:
+  G6_release_identity: ACTIVE_SEPARATE_FRONT
+  visual_N200: ACTIVE_SEPARATE_FRONT
+  OFFER_workbook_delta: ACTIVE_SEPARATE_FRONT
+  W152_evidence_return: ACTIVE_SEPARATE_FRONT
+  QPS_REPO_LOCAL_RUNNER_923: ACTIVE_NON_COMPENSATING_VETO
+
+no_growth_rules:
+  - no_full_QPS_corpus_ingestion_before_measured_need
+  - no_new_provenance_framework
+  - no_new_semantic_controller
+  - no_new_child_reliability_engineering_lane
+  - TRIAGE_RELIABILITY_is_analytical_overlay_only
+  - no_local_HEPAK_resource_consumption
+  - no_dashboard_feature_expansion_before_W2_contract
+  - no_PCA_until_comparable_population_exists
+  - no_W2_credit_while_P1_runtime_KR_is_withheld
+  - no_W3_fanout_before_W2_local_DOV
+  - no_validator_code_repair_when_runner_id_is_0_and_steps_are_0

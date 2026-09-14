@@ -1,0 +1,127 @@
+schema: qps-triage-ultra/competency-profile/1.0
+profile_id: QPS_TRIAGE_GLOBAL_COMPETENCY_PROFILE
+status: CANDIDATE_GLOBAL_METHOD_COMPETENCY
+scope: GBOGEB_GLOBAL_WITH_QPS_FOCUS
+authority: PLANNING_ROUTING_MEASUREMENT_ONLY
+authority_transfer: false
+note: >-
+  This is a Mission Control competency/method profile, not an OpenAI Skill package and not
+  an engineering authority registry. Competence must be proven by receipts, not titles.
+
+competencies:
+  - id: QT-C01
+    name: Authority Cartography
+    description: Map source, child, tooling, federation, analytical and publication authority without collapsing them.
+    primary_seats: [U01, U02, U07]
+    horizontal_lane: H1_QPS
+    evidence_required: exact source/SSOT/re-entry locators
+
+  - id: QT-C02
+    name: Triage Applicability
+    description: Assign primary/secondary triage lanes, dispositions, maturity and downstream impacts.
+    primary_seats: [U02, U03, U08]
+    horizontal_lane: H4_QPS_TRIAGE
+    evidence_required: applicability contract plus validator receipt
+
+  - id: QT-C03
+    name: Semantic and Provenance Challenge
+    description: Preserve canonical terms, exact source lineage, state-class separation and anti-overclaim guards.
+    primary_seats: [U06, U08]
+    horizontal_lane: H2_KEB
+    evidence_required: semantic/provenance challenge receipt
+
+  - id: QT-C04
+    name: Runtime Evidence Qualification
+    description: Distinguish workflow registration from intended executed validation and exact-SHA retained proof.
+    primary_seats: [U04, U05, U06]
+    horizontal_lane: H3_DOW
+    evidence_required: EX>0 plus QH PASS plus KR exact-SHA
+
+  - id: QT-C05
+    name: Reliability Evidence Consumption
+    description: Convert valid MTBF/lambda inputs deterministically while preserving component/system/consequence boundaries.
+    primary_seats: [U02, U05, U06]
+    horizontal_lane: H1_QPS
+    evidence_required: source-bound input plus model receipt plus child consequence boundary
+
+  - id: QT-C06
+    name: DMAIC / KPI Burndown
+    description: Report before-observed-delta-target-gap and move IMPROVE to CONTROL only on measured recurrence.
+    primary_seats: [U03, U05]
+    horizontal_lane: H4_QPS_TRIAGE
+    evidence_required: repeated comparable receipts
+
+  - id: QT-C07
+    name: PCA / BT Diagnostic Allocation
+    description: Use measured PCA and observed/reverse-pressure BT only for diagnosis, prioritization and crew/resource allocation.
+    primary_seats: [U04, U05]
+    horizontal_lane: H3_DOW
+    evidence_required: comparable feature population and explicit non-authority guard
+
+  - id: QT-C08
+    name: Bounded Re-entry Transaction
+    description: Prepare, prove and commit or defer an exact bounded child/tooling/release transaction.
+    primary_seats: [U01, U03, U06]
+    method: 3PC
+    evidence_required: exact inputs, execution proof, durable transaction receipt
+
+  - id: QT-C09
+    name: Recursive Convergence Control
+    description: Recurse only on first material blocker and stop when further passes add no evidence/protection.
+    primary_seats: [U01, U03, U04, U08]
+    method: MESH_CLOSURE_CONTROL
+    evidence_required: CG/BG/EX/QH/KR/WD state vector
+
+  - id: QT-C10
+    name: REX / Perpetuation
+    description: Convert repeated mission outcomes into controlled lessons, recurrence hooks, restart cards and pruning rules.
+    primary_seats: [U08, U06]
+    method: MIP_P
+    evidence_required: time-separated recurrence or accepted reusable propagation proof
+
+method_selection:
+  3PR:
+    competencies: [QT-C01, QT-C03, QT-C04, QT-C06, QT-C09]
+    entry: material state/evidence changed or first blocker stale
+    exit: refreshed state plus exact first blocker plus bounded next action
+  MIP:
+    competencies: [QT-C02, QT-C06, QT-C09, QT-C10]
+    entry: observed structural or recurrence gap
+    exit: repaired structure plus one justified innovation plus perpetuation hook
+  3PC:
+    competencies: [QT-C01, QT-C04, QT-C08, QT-C09]
+    entry: bounded transaction or re-entry required
+    exit: COMMIT/ACCEPT or explicit HOLD/DEFER with exact receipt
+  3P3:
+    competencies: [QT-C03, QT-C04, QT-C09, QT-C10]
+    entry: local DoV satisfied and reusable generalisation proof missing
+    exit: one propagation receipt then STOP
+
+qps_reliability_specialization:
+  required_fields:
+    - component_or_failure_mode
+    - origin
+    - evidence_disposition
+    - source_ref
+    - exact_source_identity
+    - reference_period
+    - mtbf_or_lambda
+    - architecture_response
+    - common_cause_state
+    - preserved_state
+    - recovery_or_mdt
+    - consequence_class
+    - table10_promotion_state
+  model_state_enum: [ACTIVE, SCENARIO_ONLY, EXCLUDED]
+  anti_overclaim:
+    - COMPONENT_MTBF_NE_SYSTEM_EVENT_MTBF
+    - MODEL_ACTIVE_NE_QPS_ENGINEERING_ACCEPTED
+    - TOOLING_ACCEPT_NE_CHILD_ACCEPT
+    - PCA_BT_NE_AUTHORITY
+
+promotion_policy:
+  competency_promotion_requires:
+    - observed mission/runtime receipts
+    - exact identity where applicable
+    - recurrence when claiming CONTROL-level competence
+  conceptual_or_seeded_profiles_are_planning_priors_only: true
