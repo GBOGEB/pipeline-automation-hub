@@ -5,6 +5,7 @@ on:
     paths:
       - 'mission-control/grand-missions/validate_gm_fleet.py'
       - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - 'mission-control/grand-missions/GM_IV_RECON4_GOVERNOR_CONTRACT.json'
       - 'mission-control/grand-missions/test_gm_iv_forward_gate_safety.py'
       - 'mission-control/qps-triage-ultra/crew/measured/validate_crew_exposure.py'
       - '.github/workflows/gm-iv-forward-gate-safety.yml'
@@ -13,6 +14,7 @@ on:
     paths:
       - 'mission-control/grand-missions/validate_gm_fleet.py'
       - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - 'mission-control/grand-missions/GM_IV_RECON4_GOVERNOR_CONTRACT.json'
       - 'mission-control/grand-missions/test_gm_iv_forward_gate_safety.py'
       - 'mission-control/qps-triage-ultra/crew/measured/validate_crew_exposure.py'
       - '.github/workflows/gm-iv-forward-gate-safety.yml'
@@ -38,7 +40,7 @@ jobs:
           test "$actual" = "$expected"
           echo "PASS_EXACT_SOURCE_HEAD=$actual"
 
-      - name: Execute forward-gate negative regression proof
+      - name: Execute stage-aware forward-gate safety proof
         shell: bash
         run: |
           python3 mission-control/grand-missions/test_gm_iv_forward_gate_safety.py \
@@ -60,7 +62,7 @@ jobs:
             /tmp/gm-fleet-forward-safety-positive.json \
             /tmp/gm-fleet-forward-safety-repeat.json
 
-      - name: Assert no stage promotion in repair lane
+      - name: Assert current controlled boundary
         shell: bash
         run: |
           python3 - <<'PY'
@@ -71,16 +73,25 @@ jobs:
           by_id = {m['id']: m for m in d['grand_missions']}
           gm4 = by_id['GM-IV']
           gm5 = by_id['GM-V']
-          assert gm4['state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
+          assert gm4['state'] in {
+              'STAGED_ACTIVE_PILOT_2_OF_8',
+              'STAGED_ACTIVE_RECON_4_OF_8',
+          }
           assert gm4['children'] == []
           assert gm4['controlled_pilot_frontiers'] == ['GM-IV-F01', 'GM-IV-F03']
           assert gm4['reference_frontiers'] == ['GM-IV-F02', 'GM-IV-F04']
           assert gm4['unfilled_frontier_slots'] == [
               'GM-IV-F05', 'GM-IV-F06', 'GM-IV-F07', 'GM-IV-F08'
           ]
+          if gm4['state'] == 'STAGED_ACTIVE_RECON_4_OF_8':
+              assert gm4['activation_stage'] == 'RECON_4_OF_8'
+              assert gm4['recon_4_of_8_evidence']['decision'] == \
+                  'READY_FOR_SEPARATE_RECON_4_PROMOTION_PR'
+          else:
+              assert gm4['activation_stage'] == 'PILOT_2_OF_8'
           assert gm5['state'] == 'HELD'
           assert gm5['children'] == []
-          print('PASS_NO_STAGE_PROMOTION_REPAIR_LANE')
+          print('PASS_CURRENT_GM_IV_CONTROLLED_BOUNDARY')
           PY
 
       - name: Upload exact-SHA safety proof
