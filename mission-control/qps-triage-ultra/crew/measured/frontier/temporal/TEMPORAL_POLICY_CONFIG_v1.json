@@ -19,7 +19,10 @@
     "exact_sha_required": true,
     "all_six_hosted_cells_required": true,
     "conditional_bt_pairs_per_class_required": 6,
-    "persistent_or_regression_rex_veto": true
+    "persistent_or_regression_rex_veto": true,
+    "control_eligible_event": "schedule",
+    "control_eligible_workflow_path": ".github/workflows/crew-temporal-allocation-policy.yml",
+    "non_control_events_remain_learning_evidence": true
   },
   "direction_contract": {
     "single_if_normalized_strength_gte": 0.55,
