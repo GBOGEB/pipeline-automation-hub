@@ -1,8 +1,8 @@
-schema: qps-triage-ultra/h4-w2-3pc-mip-i/1.1
-as_of: '2026-09-14T10:50:00+02:00'
+schema: qps-triage-ultra/h4-w2-3pc-mip-i/1.2
+as_of: '2026-09-14T11:00:00+02:00'
 mission: H4_QPS_TRIAGE
 wave: H4_QPS_TRIAGE:W2
-lifecycle_state: PREPARE_PREFLIGHT_BOUND
+lifecycle_state: PREPARE_PREFLIGHT_READY_GATE_HELD
 runtime_state: FORMAL_EXECUTION_GATED_BY_CHILD_RUNTIME
 method: 3PC_PLUS_MIP_I
 authority_class: MISSION_CONTROL_ORCHESTRATION_ONLY
@@ -52,10 +52,11 @@ intent: >-
   justified by the reliability/lifecycle integration study.
 
 nonblocking_preflight:
-  disposition: PASS_WITH_EXPLICIT_RESIDUALS
+  disposition: LOCAL_PREPARE_INPUTS_FROZEN_EXTERNAL_GATE_RETAINED
   child_main_snapshot:
     repo: GBOGEB/cryoplant-project
-    sha: fe2d856f470825743a88d3cf7474cf0ffeeeafde
+    sha_at_source_freeze: 1eccef9d086a8fe1c2e8e694eae0b458c6f7e6dc
+    reliability_baseline_merge_sha: fe2d856f470825743a88d3cf7474cf0ffeeeafde
     includes:
       - PR_1120_APPLICABILITY_PROFILE
       - PR_1121_CHILD_REENTRY_BOUNDARY
@@ -91,6 +92,16 @@ nonblocking_preflight:
       path: ocd-adr/40_implementation/QPS_ALAT_AGENDA_SOURCE_VALIDATION_W74_v0.1.yaml
       blob_sha: 406133b2f66ae25d2714ed521ca90295abaaebc4
       item: W74-C07
+    authoritative_source_recovery:
+      path: ocd-adr/20_canonical/analysis/W104_C2_CC_AUTHORITATIVE_SOURCE_RECOVERY.yaml
+      blob_sha: 28ad8907622a1710ff9683dfac807b6c250be598
+      source_pdf: SRC-CURRENT-ALAT-OFFER-2026__ALAT_-_Offer_1_bookmarked_1_.pdf
+      source_sha256: bd7922ce5c946e84701ba87655330ed194c59d080dd91810123415b27f5b2831
+      controlled_identity: C1462-TN-001_SCK_CEN_offer_2026
+      reliability_locator: p168_section_2.10.1
+      finding: COLD_COMPRESSOR_MTBF_105000H_AND_MTTR_13H_QUOTED
+      source_status: SOURCE_BOUND_PARTIAL
+      retained_residual: EXPLICIT_105000H_SCOPE_VS_COMMON_MODE_EXPOSURE
     historical_planning_rate_record:
       path: ocd-adr/20_canonical/analysis/QPS_FIRST_EVENT_BUDGET_CONTRIBUTOR_v0.1.yaml
       blob_sha: 30261eee1e41f6461dc31566fe065cdb34c8d671
@@ -106,6 +117,10 @@ nonblocking_preflight:
   controlled_input_snapshot:
     bidder: ALAT
     bidder_document_family: C1462-TN-001
+    exact_source:
+      controlled_identity: C1462-TN-001_SCK_CEN_offer_2026
+      pdf_sha256: bd7922ce5c946e84701ba87655330ed194c59d080dd91810123415b27f5b2831
+      reliability_locator: p168_section_2.10.1
     architecture:
       installed_stages: 3
       required_stages_for_full_2K: 3
@@ -125,6 +140,17 @@ nonblocking_preflight:
         record retains 8 h local MTTR + 3 h recovery / 11 h MDT and is not the
         selected duration authority for W2. Preserve that distinction rather
         than silently reconciling the records.
+    reference_period:
+      rate_normalization: calendar_year
+      hours_per_year: 8760
+      campaign_diagnostic_days: 90
+      campaign_diagnostic_hours: 2160
+      campaign_role: ANALYTICAL_DIAGNOSTIC_ONLY
+      basis: >-
+        The child promotion-readiness record already carries a 90-day campaign
+        diagnostic and the analytical bridge normalizes source MTBF to lambda per
+        calendar year before applying campaign_days. This does not replace the
+        Contract cumulative Table-10 count budget.
     consequence:
       single_stage_loss_full_2K: LOST
       highest_preserved_cold_state: FOUR_K_SB_OR_TS_SB
@@ -136,11 +162,12 @@ nonblocking_preflight:
       promotion_allowed_now: false
   prepare_residuals:
     - id: W2-P1-R01
-      state: OPEN
-      gap: UNDERLYING_BIDDER_PAGE_OR_TABLE_LOCATOR_NOT_FROZEN_IN_W2_RECEIPT
-      action: >-
-        Freeze the exact C1462-TN-001 reliability-table locator used by the
-        accepted child re-entry before formal P1 is credited.
+      state: PASS_EXACT_SOURCE_LOCATOR_FROZEN
+      former_gap: UNDERLYING_BIDDER_PAGE_OR_TABLE_LOCATOR_NOT_FROZEN_IN_W2_RECEIPT
+      proof:
+        source_pdf_sha256: bd7922ce5c946e84701ba87655330ed194c59d080dd91810123415b27f5b2831
+        locator: p168_section_2.10.1
+        recovery_record_blob_sha: 28ad8907622a1710ff9683dfac807b6c250be598
     - id: W2-P1-R02
       state: OPEN_EXTERNAL
       gap: COMMON_CAUSE_AND_MTBF_SCOPE_NONOVERLAP
@@ -154,28 +181,31 @@ nonblocking_preflight:
         - confirm_105000h_stage_MTBF_scope_vs_shared_exposure
         - non_double_counting_rule
     - id: W2-P1-R03
-      state: OPEN
-      gap: REFERENCE_PERIOD_FOR_FORMAL_CONSUMER_TRANSACTION_NOT_YET_FROZEN
-      note: >-
-        A 90-day diagnostic exists in the child record, but W2 must explicitly
-        choose and label its reference period before P2 model execution.
+      state: PASS_REFERENCE_PERIOD_FROZEN
+      former_gap: REFERENCE_PERIOD_FOR_FORMAL_CONSUMER_TRANSACTION_NOT_YET_FROZEN
+      proof:
+        rate_normalization: calendar_year
+        campaign_days: 90
+        campaign_hours: 2160
+        contract_substitution: false
   prepare_preflight_result:
     exact_child_record_identity: PASS
     exact_consumer_identity: PASS
-    bidder_family_identity: PASS
+    exact_bidder_source_identity: PASS
+    bidder_page_table_locator: PASS_P168_SECTION_2_10_1
+    formal_reference_period: PASS_CALENDAR_YEAR_WITH_90D_DIAGNOSTIC
     architecture_boundary: PASS
     component_system_boundary: PASS
     selected_service_restoration_duration: PASS_13H
-    common_cause_scope: OPEN
-    bidder_page_table_locator: OPEN
-    formal_reference_period: OPEN
+    common_cause_scope: OPEN_EXTERNAL
+    local_prepare_freeze: PASS
     formal_P1_credit: 0
 
 three_pulse_transaction:
   - pulse: H4-QPS-W2-P1
     method_step: PREPARE
     formal_state: HOLD_GATE_NOT_RELEASED
-    preflight_state: SUBSTANTIAL_INPUTS_FROZEN_RESIDUALS_EXPLICIT
+    preflight_state: READY_GATE_HELD
     primary_lane: H1_QPS
     supporting_lanes: [H2_KEB, H3_DOW]
     objective: >-
@@ -213,7 +243,8 @@ three_pulse_transaction:
     proof_vector:
       - per_stage_MTBF_105000h_normalization
       - three_stage_independent_series_rate_0_2502857143_per_year
-      - selected_reference_period_mu_P0_P_ge_1_Pk
+      - calendar_year_normalization_with_90d_campaign_mu_P0_P_ge_1_Pk
+      - exact_bidder_pdf_sha256_and_p168_locator_provenance
       - exact_child_blob_and_consumer_blob_provenance
       - preserve_SOURCE_BOUND_vs_SCENARIO_vs_USER_OVERRIDE
       - preserve_component_vs_system_scope
@@ -277,7 +308,7 @@ mip_innovation:
     - evidence_class
   cold_compressor_field_preflight:
     state_id: PARTIAL_BOUND_2K_OP_TO_4K_SB_OR_TS_SB
-    exposure_h: OPEN_FORMAL_REFERENCE_PERIOD
+    exposure_h: BOUND_DIAGNOSTIC_2160H_FOR_90D_CAMPAIGN
     power_kW: NOT_REQUIRED_FOR_RELIABILITY_PROOF_AND_NOT_BOUND_HERE
     energy_kWh: DERIVED_ONLY_AFTER_STATE_EXPOSURE_AND_POWER_SOURCE
     starts: NOT_BOUND
@@ -287,7 +318,7 @@ mip_innovation:
     MTTR_h: BOUND_13H_FULL_SERVICE_RESTORATION
     MDT_h: NOT_SELECTED_FOR_W2
     spare_id: OPEN_FOR_ALAT_SELECTED_STRATEGY
-    source_ref: BOUND_CHILD_RECORDS_BIDDER_FAMILY_PAGE_LOCATOR_RESIDUAL
+    source_ref: BOUND_TO_ALAT_PDF_SHA256_AND_P168_SECTION_2_10_1
     evidence_class: CURRENT_ALAT_OFFER_COMPONENT_EVIDENCE
   guardrails:
     - TABLE10_COUNT_BUDGET_REMAINS_HARD_AUTHORITY
@@ -297,13 +328,13 @@ mip_innovation:
     - LKT_SPARE_OR_RESTORATION_EVIDENCE_NE_ALAT_EVIDENCE
 
 CG: ONE_EXACT_SOURCE_TO_CHILD_REENTRY_TRANSACTION_PROVED
-BG: CHILD_RUNTIME_ADMISSION_PLUS_P1_LOCATOR_REFERENCE_PERIOD_RESIDUALS
+BG: CHILD_RUNTIME_ADMISSION_PLUS_EXTERNAL_COMMON_CAUSE_NONOVERLAP
 EX: NOT_STARTED_FORMAL
 QH: NOT_STARTED_FORMAL
-KR: PREFLIGHT_RECEIPT_ONLY
-DR: PREPARE_PREFLIGHT_READY_FORMAL_GATE_HELD
+KR: PREFLIGHT_SOURCE_FREEZE_RECEIPT_ONLY
+DR: P1_PREFLIGHT_LOCALLY_READY_FORMAL_GATE_HELD
 SR: CANONICAL_V0_3_READY
-WD: HOLD_FORMAL_W2_PROGRESS_ONLY_NONBLOCKING_PREFLIGHT
+WD: HOLD_FORMAL_W2_CONTINUE_RUNTIME_AND_EXTERNAL_SOURCE_OWNERS_ONLY
 PB: PREFLIGHT_PROGRESS_ONLY_ZERO_AUTHORITY_CREDIT
 
 victory_condition: >-
