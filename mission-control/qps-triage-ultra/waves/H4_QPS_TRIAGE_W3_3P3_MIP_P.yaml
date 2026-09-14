@@ -1,0 +1,108 @@
+schema: qps-triage-ultra/h4-w3-3p3-mip-p/1.0
+as_of: '2026-09-14T10:22:00+02:00'
+mission: H4_QPS_TRIAGE
+wave: H4_QPS_TRIAGE:W3
+lifecycle_state: PLANNED
+runtime_state: GATED
+method: 3P3_PLUS_MIP_P
+authority_class: MISSION_CONTROL_ORCHESTRATION_ONLY
+authority_transfer: false
+
+entry_conditions:
+  - W2_LOCAL_DOV_SATISFIED
+  - ONE_BOUNDED_REENTRY_TRANSACTION_HAS_DURABLE_RECEIPT
+  - REUSABLE_GLOBAL_PROPAGATION_PROOF_IS_STILL_MISSING
+
+intent: >-
+  Run exactly one reusable propagation/generalisation proof for the canonical QPS
+  TRIAGE reliability pattern, then perpetuate the proven controls through REX,
+  restart and recurrence surfaces. Do not fan out merely for repository symmetry.
+
+three_pulse_generalisation:
+  - pulse: H4-QPS-W3-P1
+    method_step: PACKAGE
+    primary_lane: H4_QPS_TRIAGE
+    supporting_lanes: [H1_QPS, H2_KEB, H3_DOW]
+    objective: >-
+      Package the proven W2 transaction into the smallest reusable contract:
+      authority map, source/model state classes, exact provenance fields,
+      execution-proof requirements, child re-entry rule and stop logic.
+    required_output:
+      - reusable_contract
+      - authority_invariants
+      - exact_identity_contract
+      - method_selector
+      - restart_card
+    stop_gate: LOCAL_DOV_NOT_ACTUALLY_PROVEN
+
+  - pulse: H4-QPS-W3-P2
+    method_step: PROPAGATE_ONCE
+    primary_lane: H3_DOW
+    supporting_lanes: [H2_KEB, H4_QPS_TRIAGE]
+    objective: >-
+      Apply the reusable contract to one independent consumer or sibling surface
+      and prove that source identity, state separation, deterministic calculations
+      and child authority survive the propagation unchanged.
+    candidate_targets:
+      - QPS_COST_MASTER_RELIABILITY_VIEW
+      - QPS_OFFER_EVALUATION_RELIABILITY_EVIDENCE_VIEW
+      - GLOBAL_GBOGEB_TRIAGE_CONSUMER
+    target_selection_rule: >-
+      Choose one target with real current demand and independent consumer value.
+      Do not propagate to multiple repos in W3.
+    required_output:
+      - target_identity
+      - independent_consumer_receipt
+      - exact_source_lineage_preserved
+      - state_classes_preserved
+      - zero_authority_transfer
+    stop_gate: FIRST_PROPAGATION_RED
+
+  - pulse: H4-QPS-W3-P3
+    method_step: CONTROL
+    primary_lane: H4_QPS_TRIAGE
+    supporting_lanes: [H2_KEB, H3_DOW]
+    objective: >-
+      Convert the proven generalisation into bounded Control: REX lesson,
+      recurrence trigger, restart prompt, pruning rule, owner lane and stop state.
+    required_output:
+      - REX_entry
+      - recurrence_trigger
+      - restart_instruction
+      - owner_lane
+      - prune_or_keep_decision
+      - global_stop_state
+
+mip_perpetuation:
+  phase: P_PERPETUATE
+  required_controls:
+    - exact_SHA_or_exact_artifact_receipt
+    - authority_class_regression_gate
+    - component_system_anti_overclaim_gate
+    - source_scenario_override_origin_gate
+    - model_state_ne_engineering_state_gate
+    - no_ceremonial_repeat_gate
+  recurrence_policy:
+    repeat_3PR: ONLY_ON_MATERIAL_STATE_OR_EVIDENCE_CHANGE
+    rerun_MIP: ONLY_ON_NEW_STRUCTURAL_OR_RECURRENCE_GAP
+    rerun_3PC: ONLY_FOR_A_NEW_BOUNDED_TRANSACTION
+    rerun_3P3: ONLY_IF_A_NEW_GENERALISATION_CLASS_IS_REQUIRED
+
+CG: GLOBAL_REUSABLE_QPS_TRIAGE_PATTERN_PROVED_ONCE_AND_CONTROLLED
+BG: W2_LOCAL_DOV_NOT_YET_SATISFIED
+EX: NOT_STARTED
+QH: NOT_STARTED
+KR: NOT_STARTED
+DR: GATED_BY_W2
+SR: CANONICAL_METHOD_PROFILE_READY
+WD: HOLD_UNTIL_W2_DOV
+PB: ZERO_UNTIL_W3_STARTS
+
+victory_condition: >-
+  One independent propagation receipt proves the reusable contract, REX and
+  recurrence controls are installed, and Mission Control can return capacity
+  instead of growing a permanent new framework lane.
+
+stop_rule: >-
+  After the one propagation proof and MIP-P control hooks pass, STOP. Additional
+  repositories require a new observed consumer need; symmetry is not a reason.

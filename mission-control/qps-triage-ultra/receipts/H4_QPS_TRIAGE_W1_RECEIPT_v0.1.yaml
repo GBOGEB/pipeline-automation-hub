@@ -1,0 +1,140 @@
+schema: qps-triage-ultra/h4-w1-receipt/0.1
+as_of: '2026-09-14T10:28:00+02:00'
+mission: H4_QPS_TRIAGE
+wave: H4_QPS_TRIAGE:W1
+method: 3PR_PLUS_MIP_M
+status: CONTROLLED_PARTIAL_WITH_EXPLICIT_DEFERS
+authority_transfer: false
+formal_qps_credit_delta: 0
+
+purpose: >-
+  Retain the first live three-pulse QPS TRIAGE burn-in state. A pulse is credited
+  only when its intended evidence path executes and is durably bound; explicit
+  DEFER is a valid bounded disposition but does not masquerade as PASS.
+
+mip_m:
+  disposition: PASS_CANONICAL
+  repo: GBOGEB/DOCX_RTM_Automation
+  pr: 56
+  merge_sha: a3bc7919bfc0c8d4ba572a6d6c95628406875c4b
+  result:
+    - TRIAGE_RELIABILITY lane canonical
+    - reliability model states separated from tooling and child dispositions
+    - SOURCE_BOUND / SCENARIO / USER_OVERRIDE origin canonical
+    - Mission Control projection authority_transfer=false
+    - 3PR MIP 3PC 3P3 applicability canonical
+    - QPS OFFER v7.1 triage alignment included
+  qps_engineering_delta: 0
+
+pulses:
+  - pulse: H4-QPS-W1-P1
+    lane: H1_QPS
+    repo: GBOGEB/cryoplant-project
+    pr: 1121
+    disposition: DEFER_RUNTIME_PLATFORM
+    content_result: PASS_BOUNDARY_CANDIDATE
+    runtime_result: FAIL_TO_PROVE_EXACT_HEAD
+    evidence:
+      source_atom: ALAT_HP_COMPRESSOR
+      source_blob_sha: 1cd312315325991100d90d3f4b2ef51e6796bad6
+      component_mtbf_h: 333450
+      component_mttr_h: 78
+      first_engineering_red: GHP03_N_MINUS_1_CAPACITY
+      table10_rate_delta_per_year: 0.0
+    blocker: >-
+      Independent runner-family probes on ubuntu-latest, ubuntu-22.04 and
+      windows-latest failed without intended job steps, consistent with the
+      existing cryoplant runner/platform execution blocker. KR is withheld.
+    next_owner: CRYOPLANT_RUNTIME_PLATFORM_LANE
+
+  - pulse: H4-QPS-W1-P2
+    lane: H2_KEB
+    repo: GBOGEB/CODEX
+    pr: 679
+    disposition: DEFER_KR_OWNER_LANE_REPAIR
+    content_result: PASS_CANDIDATE
+    owner_repair_pr: 678
+    owner_repair_head_at_receipt: 2a55111197be43a9c9478b52b82f574106b18251
+    repaired_first_reds:
+      - semantic_replay governed in PIPELINE/GLOSSARY_EXTENSIONS.yaml
+      - closed-loop test aligned from superseded 8 tuples to current 10 tuples and 9 edges
+      - mandatory W003 governance header added to PR metadata
+    observed_owner_lane_support:
+      - ABACUS Semantic Runtime previously reached PASS after tuple-count repair
+      - CODEX Semantic Runtime previously reached PASS on prior head
+      - current exact-head rerun queued after governance metadata repair
+    blocker: CURRENT_OWNER_LANE_EXACT_HEAD_CHECKS_NOT_YET_FINAL
+    next_owner: CODEX_PR_678
+
+  - pulse: H4-QPS-W1-P3
+    lane: H3_DOW
+    repo: GBOGEB/ABACUS
+    pr: 1202
+    disposition: PASS_CANONICAL
+    merge_sha: 2b11e7f4d7f68cfef5f07247fcb6700c3e025b03
+    measured_baseline:
+      pilot_atoms: 5
+      real_source_bound_atoms: 1
+      real_source_bound_coverage: 0.20
+      deterministic_component_math_bound: 1
+      system_consequence_bound: 0
+      table10_promotable_atoms: 0
+      exact_source_blob_bound_atoms: 1
+    pca: DEFER_INSUFFICIENT_COMPARABLE_POPULATION
+    bt_role: SCHEDULING_ONLY
+    next_atom_order:
+      - COLD_COMPRESSOR_TRAIN
+      - PVPS
+      - TURBINE_EXPANDER
+      - QPLANT_CLASS_A_SYSTEM
+
+state_vector:
+  CG: W1_ALL_THREE_PULSES_DURABLY_DISPOSITIONED_AND_METHOD_BURN_IN_RETAINED
+  BG: >-
+    P1 exact-head child runtime remains blocked by the cryoplant runner/platform
+    lane; P2 exact-head semantic owner repair is still converging on CODEX PR 678.
+  EX: PARTIAL
+  QH: MIXED_PASS_AND_EXPLICIT_DEFER
+  KR: PARTIAL_TWO_CANONICAL_ONE_OWNER_REPAIR_ONE_PLATFORM_DEFER
+  DR: PARTIAL
+  SR: PASS_CANONICAL_APPLICABILITY_V0_3
+  WD: CONTINUE_FIRST_BLOCKERS_ONLY
+  PB:
+    mip_m: 1.0
+    p3_measurement: 1.0
+    p2_semantic_content: 1.0
+    p2_kr: 0.0
+    p1_boundary_content: 1.0
+    p1_kr: 0.0
+    authority_note: PB_IS_PROGRESS_ONLY
+
+w1_dov:
+  applicability_modernization: PASS
+  independent_five_atom_measurement: PASS
+  child_authority_boundary: PASS_CONTENT_DEFER_RUNTIME
+  semantic_provenance_challenge: PASS_CONTENT_DEFER_KR
+  all_exact_head_receipts: NOT_YET
+  global_qps_engineering_promotion: WITHHELD
+
+next_narrow_victories:
+  - owner: CODEX_PR_678
+    goal: current exact-head semantic + W003 governance checks PASS
+    then: refresh P2 once and STOP KEB expansion
+  - owner: CRYOPLANT_RUNTIME_PLATFORM_LANE
+    goal: one intended exact-head child validation records EX_GT_0
+    then: bind P1 KR without changing the engineering first red GHP03
+  - owner: H4_QPS_TRIAGE
+    goal: update this receipt to v1.0 after P1/P2 dispositions stabilize
+    then: decide whether W2 PREPARE may start or remains HOLD
+
+w2_gate:
+  current: HOLD
+  reason: >-
+    Planning is complete, but W2 execution should not outrun unresolved P1/P2
+    proof boundaries. Start only when this receipt is promoted to v1.0 or H4
+    explicitly records a bounded DEFER that still preserves the transaction's
+    intended proof path.
+
+stop_rule: >-
+  No new framework layer in W1. Recurse only on CODEX PR 678 and the existing
+  cryoplant runtime/platform blocker. All other W1 lanes are STOP/CONTROL.
