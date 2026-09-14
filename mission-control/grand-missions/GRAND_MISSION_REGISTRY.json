@@ -52,12 +52,12 @@
       "name": "EIGHT_FRONTIER_EXPANSION",
       "frontier_count": 8,
       "objective": "scale_controlled_reconnaissance_to_eight_frontiers_without_receipt_or_authority_degradation",
-      "state": "STAGED_ACTIVE_PILOT_2_OF_8",
+      "state": "STAGED_ACTIVE_RECON_4_OF_8",
       "children": [],
-      "crew_posture": "TWO_CONTROLLED_PILOTS_WITH_RECON_RESERVE",
+      "crew_posture": "FOUR_NAMED_FRONTIERS_UNDER_CONTROLLED_RECON_WITH_TWO_CONTROLLED_PILOTS",
       "observed": false,
       "activation_observed": true,
-      "activation_stage": "PILOT_2_OF_8",
+      "activation_stage": "RECON_4_OF_8",
       "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"],
       "controlled_pilot_frontiers": ["GM-IV-F01", "GM-IV-F03"],
       "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
@@ -91,7 +91,16 @@
           "disposition": "PILOT_CONTROL_READY"
         }
       },
-      "promotion_boundary": "PILOT_2_OF_8_BINDS_TWO_CONTROLLED_FRONTIER_CAPABILITIES_BUT_BINDS_NO_CANONICAL_CHILD_AND_TRANSFERS_NO_ENGINEERING_AUTHORITY;_NEXT_STAGE_REQUIRES_SEPARATE_RECON_4_OF_8_GATE"
+      "recon_4_of_8_evidence": {
+        "source_sha": "42b966ff18ce1f1471f5894c50753ea9903461ad",
+        "workflow_run_id": 34812456207,
+        "artifact_id": 10335023900,
+        "artifact_digest": "sha256:d32bda080035c1237346e6d4965032092a47e99241f4536bddcc0a77ca83cad0",
+        "decision": "READY_FOR_SEPARATE_RECON_4_PROMOTION_PR",
+        "post_merge_workflow_success_count": 14,
+        "post_merge_workflow_total": 14
+      },
+      "promotion_boundary": "RECON_4_OF_8_BINDS_FOUR_NAMED_FRONTIER_IDENTITIES_TO_CONTROLLED_RECONNAISSANCE_WHILE_RETAINING_F01_F03_AS_CONTROLLED_PILOTS_AND_F02_F04_AS_REFERENCES;_NO_CANONICAL_CHILD_OR_ENGINEERING_AUTHORITY_IS_BOUND;_ACTIVE_8_REQUIRES_A_SEPARATE_GOVERNOR_GATE"
     },
     {
       "id": "GM-V",
