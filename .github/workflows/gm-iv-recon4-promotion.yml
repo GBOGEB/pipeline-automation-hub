@@ -1,0 +1,202 @@
+name: GM-IV RECON_4 Promotion Control
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/GM_IV_RECON4_PROMOTION_CONTRACT.json'
+      - 'mission-control/grand-missions/validate_gm_iv_recon4_promotion.py'
+      - 'mission-control/grand-missions/GM_IV_RECON4_GOVERNOR_CONTRACT.json'
+      - 'mission-control/grand-missions/assess_gm_iv_recon4_governor.py'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - 'mission-control/grand-missions/MISSION_CITY_GRAPH.json'
+      - 'mission-control/grand-missions/GM_IV_EVIDENCE_ECONOMICS.json'
+      - 'mission-control/grand-missions/validate_gm_iv_evidence_economics.py'
+      - 'mission-control/grand-missions/validate_gm_fleet.py'
+      - '.github/workflows/gm-iv-recon4-promotion.yml'
+      - '.github/workflows/gm-iv-recon4-governor.yml'
+      - '.github/workflows/gm-iv-forward-gate-safety.yml'
+      - '.github/workflows/gm-iv-pilot2-governor.yml'
+      - '.github/workflows/gm-iv-pilot2-final-recensus.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_IV_RECON4_PROMOTION_CONTRACT.json'
+      - 'mission-control/grand-missions/validate_gm_iv_recon4_promotion.py'
+      - 'mission-control/grand-missions/GM_IV_RECON4_GOVERNOR_CONTRACT.json'
+      - 'mission-control/grand-missions/assess_gm_iv_recon4_governor.py'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - 'mission-control/grand-missions/MISSION_CITY_GRAPH.json'
+      - 'mission-control/grand-missions/GM_IV_EVIDENCE_ECONOMICS.json'
+      - 'mission-control/grand-missions/validate_gm_iv_evidence_economics.py'
+      - 'mission-control/grand-missions/validate_gm_fleet.py'
+      - '.github/workflows/gm-iv-recon4-promotion.yml'
+      - '.github/workflows/gm-iv-recon4-governor.yml'
+      - '.github/workflows/gm-iv-forward-gate-safety.yml'
+      - '.github/workflows/gm-iv-pilot2-governor.yml'
+      - '.github/workflows/gm-iv-pilot2-final-recensus.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  promote-recon4-control:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          echo "SOURCE_SHA=$actual" >> "$GITHUB_ENV"
+          echo "PASS_EXACT_SOURCE_HEAD=$actual"
+
+      - name: Assert accepted Governor merge is ancestral
+        shell: bash
+        run: |
+          predecessor="42b966ff18ce1f1471f5894c50753ea9903461ad"
+          git merge-base --is-ancestor "$predecessor" HEAD
+          echo "PASS_RECON4_GOVERNOR_ANCESTRY=$predecessor"
+
+      - name: Reverify accepted Governor run and artifact identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          curl -fsSL \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/34812456207" \
+            > /tmp/recon4-governor-run.json
+          curl -fsSL \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10335023900" \
+            > /tmp/recon4-governor-artifact.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          run=json.loads(Path('/tmp/recon4-governor-run.json').read_text())
+          artifact=json.loads(Path('/tmp/recon4-governor-artifact.json').read_text())
+          expected_sha='42b966ff18ce1f1471f5894c50753ea9903461ad'
+          expected_digest='sha256:d32bda080035c1237346e6d4965032092a47e99241f4536bddcc0a77ca83cad0'
+          assert run['id']==34812456207
+          assert run['head_sha']==expected_sha
+          assert run['event']=='push'
+          assert run['status']=='completed'
+          assert run['conclusion']=='success'
+          assert artifact['id']==10335023900
+          assert artifact['digest']==expected_digest
+          assert artifact['expired'] is False
+          assert artifact['workflow_run']['id']==34812456207
+          assert artifact['workflow_run']['head_sha']==expected_sha
+          print('PASS_LIVE_RECON4_GOVERNOR_EVIDENCE_IDENTITY')
+          PY
+
+      - name: Compile promotion controls
+        shell: bash
+        run: |
+          python3 -m py_compile \
+            mission-control/grand-missions/validate_gm_iv_recon4_promotion.py \
+            mission-control/grand-missions/assess_gm_iv_recon4_governor.py \
+            mission-control/grand-missions/validate_gm_fleet.py \
+            mission-control/grand-missions/validate_gm_iv_evidence_economics.py
+
+      - name: Execute promotion validator and deterministic repeat
+        shell: bash
+        run: |
+          python3 mission-control/grand-missions/validate_gm_iv_recon4_promotion.py \
+            --source-sha "$SOURCE_SHA" \
+            --out /tmp/gm-iv-recon4-promotion-1.json \
+            | tee /tmp/gm-iv-recon4-promotion.stdout.json
+          python3 mission-control/grand-missions/validate_gm_iv_recon4_promotion.py \
+            --source-sha "$SOURCE_SHA" \
+            --out /tmp/gm-iv-recon4-promotion-2.json \
+            >/tmp/gm-iv-recon4-promotion-repeat.stdout.json
+          cmp /tmp/gm-iv-recon4-promotion-1.json /tmp/gm-iv-recon4-promotion-2.json
+          grep -q 'PASS_GM_IV_RECON4_PROMOTION' /tmp/gm-iv-recon4-promotion-1.json
+
+      - name: Repeat fleet validator
+        shell: bash
+        run: |
+          SOURCE_SHA="$SOURCE_SHA" python3 mission-control/grand-missions/validate_gm_fleet.py \
+            --out /tmp/gm-fleet-recon4-1.json
+          SOURCE_SHA="$SOURCE_SHA" python3 mission-control/grand-missions/validate_gm_fleet.py \
+            --out /tmp/gm-fleet-recon4-2.json
+          cmp /tmp/gm-fleet-recon4-1.json /tmp/gm-fleet-recon4-2.json
+
+      - name: Repeat Evidence Economics validator
+        shell: bash
+        run: |
+          python3 mission-control/grand-missions/validate_gm_iv_evidence_economics.py \
+            > /tmp/gm-iv-economics-recon4-1.json
+          python3 mission-control/grand-missions/validate_gm_iv_evidence_economics.py \
+            > /tmp/gm-iv-economics-recon4-2.json
+          cmp /tmp/gm-iv-economics-recon4-1.json /tmp/gm-iv-economics-recon4-2.json
+          grep -q '"status": "PASS"' /tmp/gm-iv-economics-recon4-1.json
+
+      - name: Repeat RECON_4 Governor in CONTROL mode
+        shell: bash
+        run: |
+          python3 mission-control/grand-missions/assess_gm_iv_recon4_governor.py \
+            --source-sha "$SOURCE_SHA" \
+            --out /tmp/gm-iv-recon4-governor-control-1.json \
+            >/tmp/gm-iv-recon4-governor-control.stdout.json
+          python3 mission-control/grand-missions/assess_gm_iv_recon4_governor.py \
+            --source-sha "$SOURCE_SHA" \
+            --out /tmp/gm-iv-recon4-governor-control-2.json \
+            >/tmp/gm-iv-recon4-governor-control-repeat.stdout.json
+          cmp \
+            /tmp/gm-iv-recon4-governor-control-1.json \
+            /tmp/gm-iv-recon4-governor-control-2.json
+
+      - name: Enforce terminal promotion boundary
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('/tmp/gm-iv-recon4-promotion-1.json').read_text())
+          g=json.loads(Path('/tmp/gm-iv-recon4-governor-control-1.json').read_text())
+          assert d['result']=='PASS_GM_IV_RECON4_PROMOTION'
+          assert d['check_count']==15 and all(d['checks'].values())
+          assert d['current_state']=='STAGED_ACTIVE_RECON_4_OF_8'
+          assert d['activation_stage']=='RECON_4_OF_8'
+          assert d['children_bound'] is False
+          assert d['authority_transfer'] is False
+          assert d['gm_v_state']=='HELD'
+          assert d['active_8_authorized'] is False
+          assert d['next_stage']=='WITHHELD_PENDING_SEPARATE_ACTIVE_8_GOVERNOR_GATE'
+          assert g['result']=='PASS'
+          assert g['mode']=='CONTROL'
+          assert g['decision']=='CONTROL_RECON_4_OF_8'
+          assert g['promotion_executed'] is True
+          assert g['active_8_authorized'] is False
+          print('PASS_GM_IV_RECON4_TERMINAL_PROMOTION_BOUNDARY')
+          PY
+
+      - name: Upload exact-SHA promotion proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-recon4-promotion-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/recon4-governor-run.json
+            /tmp/recon4-governor-artifact.json
+            /tmp/gm-iv-recon4-promotion-1.json
+            /tmp/gm-iv-recon4-promotion-2.json
+            /tmp/gm-iv-recon4-promotion.stdout.json
+            /tmp/gm-fleet-recon4-1.json
+            /tmp/gm-fleet-recon4-2.json
+            /tmp/gm-iv-economics-recon4-1.json
+            /tmp/gm-iv-economics-recon4-2.json
+            /tmp/gm-iv-recon4-governor-control-1.json
+            /tmp/gm-iv-recon4-governor-control-2.json
+          if-no-files-found: error
