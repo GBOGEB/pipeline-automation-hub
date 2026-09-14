@@ -28,7 +28,7 @@ permissions:
   contents: read
 
 jobs:
-  recon4-readiness:
+  recon4-governor:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout exact source head
@@ -43,6 +43,7 @@ jobs:
           expected="${{ github.event.pull_request.head.sha || github.sha }}"
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$expected"
+          echo "SOURCE_SHA=$actual" >> "$GITHUB_ENV"
           echo "PASS_EXACT_SOURCE_HEAD=$actual"
 
       - name: Assert predecessor safety control is ancestral
@@ -59,30 +60,26 @@ jobs:
             mission-control/grand-missions/assess_gm_iv_recon4_governor.py \
             mission-control/grand-missions/validate_gm_fleet.py
 
-      - name: Execute RECON_4 Governor readiness gate
+      - name: Execute RECON_4 Governor gate
         shell: bash
         run: |
-          sha="$(git rev-parse HEAD)"
           python3 mission-control/grand-missions/assess_gm_iv_recon4_governor.py \
-            --source-sha "$sha" \
+            --source-sha "$SOURCE_SHA" \
             --out /tmp/gm-iv-recon4-governor.json \
             | tee /tmp/gm-iv-recon4-governor.stdout.json
-          grep -q 'READY_FOR_SEPARATE_RECON_4_PROMOTION_PR' \
-            /tmp/gm-iv-recon4-governor.json
 
-      - name: Repeat readiness gate deterministically
+      - name: Repeat Governor gate deterministically
         shell: bash
         run: |
-          sha="$(git rev-parse HEAD)"
           python3 mission-control/grand-missions/assess_gm_iv_recon4_governor.py \
-            --source-sha "$sha" \
+            --source-sha "$SOURCE_SHA" \
             --out /tmp/gm-iv-recon4-governor-repeat.json \
             >/tmp/gm-iv-recon4-governor-repeat.stdout.json
           cmp \
             /tmp/gm-iv-recon4-governor.json \
             /tmp/gm-iv-recon4-governor-repeat.json
 
-      - name: Assert gate-only boundary
+      - name: Assert stage-aware Governor boundary
         shell: bash
         run: |
           python3 - <<'PY'
@@ -97,24 +94,35 @@ jobs:
           gm5 = missions['GM-V']
 
           assert receipt['result'] == 'PASS'
-          assert receipt['decision'] == 'READY_FOR_SEPARATE_RECON_4_PROMOTION_PR'
           assert receipt['check_count'] == 14
           assert all(receipt['checks'].values())
-          assert receipt['promotion_executed'] is False
-          assert receipt['registry_mutated'] is False
-          assert receipt['mission_city_mutated'] is False
           assert receipt['children_bound'] is False
           assert receipt['authority_transfer'] is False
-
-          assert gm4['state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
-          assert gm4['activation_stage'] == 'PILOT_2_OF_8'
+          assert receipt['active_8_authorized'] is False
           assert gm4['children'] == []
           assert gm5['state'] == 'HELD'
           assert gm5['children'] == []
-          print('PASS_RECON4_GATE_ONLY_NO_PROMOTION')
+
+          if gm4['state'] == 'STAGED_ACTIVE_PILOT_2_OF_8':
+              assert receipt['mode'] == 'READINESS'
+              assert receipt['decision'] == 'READY_FOR_SEPARATE_RECON_4_PROMOTION_PR'
+              assert receipt['promotion_executed'] is False
+              assert receipt['registry_mutated'] is False
+              assert receipt['mission_city_mutated'] is False
+              print('PASS_RECON4_READINESS_GATE_ONLY')
+          elif gm4['state'] == 'STAGED_ACTIVE_RECON_4_OF_8':
+              assert receipt['mode'] == 'CONTROL'
+              assert receipt['decision'] == 'CONTROL_RECON_4_OF_8'
+              assert receipt['promotion_executed'] is True
+              assert receipt['registry_mutated'] is True
+              assert receipt['mission_city_mutated'] is True
+              assert receipt['next_action'] == 'SEPARATE_ACTIVE_8_GOVERNOR_REQUIRED'
+              print('PASS_RECON4_PROMOTED_CONTROL_BOUNDARY')
+          else:
+              raise AssertionError(f"unsupported current GM-IV state: {gm4['state']}")
           PY
 
-      - name: Upload exact-SHA Governor readiness receipt
+      - name: Upload exact-SHA Governor receipt
         uses: actions/upload-artifact@v4
         with:
           name: gm-iv-recon4-governor-${{ github.event.pull_request.head.sha || github.sha }}
