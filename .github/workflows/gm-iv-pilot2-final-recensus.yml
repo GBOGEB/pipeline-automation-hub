@@ -27,14 +27,26 @@ jobs:
         with:
           ref: ${{ github.sha }}
 
-      - name: Bind exact source SHA
+      - name: Bind exact source SHA and current GM-IV stage
         shell: bash
         run: |
           SOURCE_SHA="$(git rev-parse HEAD)"
           test "$SOURCE_SHA" = "${{ github.sha }}"
           echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
+          stage="$(python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('mission-control/grand-missions/GRAND_MISSION_REGISTRY.json').read_text())
+          print(next(m for m in d['grand_missions'] if m['id']=='GM-IV')['state'])
+          PY
+          )"
+          case "$stage" in
+            STAGED_ACTIVE_PILOT_2_OF_8|STAGED_ACTIVE_RECON_4_OF_8) ;;
+            *) echo "Unsupported GM-IV stage for PILOT_2 recensus control: $stage"; exit 1 ;;
+          esac
+          echo "GM_IV_STAGE=$stage" >> "$GITHUB_ENV"
 
-      - name: Compile recensus and stage-aware assessors
+      - name: Compile recensus and control validators
         shell: bash
         run: |
           python -m py_compile \
@@ -50,12 +62,14 @@ jobs:
             mission-control/qps-triage-ultra/crew/measured/validate_crew_exposure.py
 
       - name: Install bounded recensus dependencies
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_PILOT_2_OF_8'
         shell: bash
         run: |
           python -m pip install --disable-pip-version-check -q \
             pyyaml nbformat nbconvert ipykernel pandas matplotlib
 
       - name: Bind temporary recensus repo-root compatibility path
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_PILOT_2_OF_8'
         shell: bash
         run: |
           compat_root="$GITHUB_WORKSPACE/../mission-control/qps-triage-ultra/crew"
@@ -68,6 +82,7 @@ jobs:
           echo PASS_RECENSUS_REPO_ROOT_COMPATIBILITY_PATH
 
       - name: Execute four-frontier and control recensus
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_PILOT_2_OF_8'
         shell: bash
         run: |
           mkdir -p "$RUNNER_TEMP/gm-iv-pilot2-recensus"
@@ -75,58 +90,85 @@ jobs:
             --out-dir "$RUNNER_TEMP/gm-iv-pilot2-recensus" \
             | tee "$RUNNER_TEMP/gm-iv-pilot2-recensus.log"
 
-      - name: Enforce terminal Governor boundary
+      - name: Enforce terminal PILOT_2 Governor boundary
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_PILOT_2_OF_8'
         shell: bash
         run: |
           python - <<'PY'
           import json
           import os
           from pathlib import Path
-
-          root = Path(os.environ['RUNNER_TEMP']) / 'gm-iv-pilot2-recensus'
-          d = json.loads((root / 'GM_IV_PILOT2_FINAL_RECENSUS.json').read_text(encoding='utf-8'))
-          assert d['source_sha'] == os.environ['SOURCE_SHA']
-          assert d['result'] == 'PASS'
-          assert all(d['checks'].values())
-          assert d['controlled_pilots'] == ['GM-IV-F01', 'GM-IV-F03']
-          assert d['references'] == ['GM-IV-F02', 'GM-IV-F04']
-          assert d['unfilled'] == ['GM-IV-F05', 'GM-IV-F06', 'GM-IV-F07', 'GM-IV-F08']
+          root=Path(os.environ['RUNNER_TEMP'])/'gm-iv-pilot2-recensus'
+          d=json.loads((root/'GM_IV_PILOT2_FINAL_RECENSUS.json').read_text())
+          assert d['source_sha']==os.environ['SOURCE_SHA']
+          assert d['result']=='PASS' and all(d['checks'].values())
+          assert d['controlled_pilots']==['GM-IV-F01','GM-IV-F03']
+          assert d['references']==['GM-IV-F02','GM-IV-F04']
+          assert d['unfilled']==['GM-IV-F05','GM-IV-F06','GM-IV-F07','GM-IV-F08']
           assert d['children_bound'] is False
           assert d['authority_transfer'] is False
-          assert d['gm_v_state'] == 'HELD'
-          assert d['next_stage'] == 'WITHHELD_PENDING_SEPARATE_RECON_4_OF_8_GOVERNOR_GATE'
+          assert d['gm_v_state']=='HELD'
           print('PASS_GM_IV_PILOT2_FINAL_RECENSUS_BOUNDARY')
           PY
 
-      - name: Show historical/current stage separation
+      - name: Prove historical PILOT_2 evidence retention after RECON_4
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_RECON_4_OF_8'
         shell: bash
         run: |
+          mkdir -p "$RUNNER_TEMP/gm-iv-pilot2-history"
+          SOURCE_SHA="$SOURCE_SHA" python mission-control/grand-missions/validate_gm_fleet.py \
+            --out "$RUNNER_TEMP/gm-iv-pilot2-history/fleet.json"
+          python mission-control/grand-missions/validate_gm_iv_evidence_economics.py \
+            > "$RUNNER_TEMP/gm-iv-pilot2-history/economics.json"
           python - <<'PY'
           import json
           import os
           from pathlib import Path
-
-          root = Path(os.environ['RUNNER_TEMP']) / 'gm-iv-pilot2-recensus'
-          f01 = json.loads((root / 'f01-assess-1.json').read_text(encoding='utf-8'))
-          f03 = json.loads((root / 'f03-assess-1.json').read_text(encoding='utf-8'))
-          r1 = json.loads((root / 'ring1-1.json').read_text(encoding='utf-8'))
-          r2 = json.loads((root / 'ring2-1.json').read_text(encoding='utf-8'))
-          assert f01['historical_evidence_stage'] == 'STAGED_ACTIVE_RECON_2_OF_8'
-          assert f03['historical_evidence_stage'] == 'STAGED_ACTIVE_RECON_2_OF_8'
-          assert r1['historical_evidence_stage'] == 'RECON_2_OF_8'
-          assert r2['historical_evidence_stage'] == 'STAGED_ACTIVE_RECON_2_OF_8'
-          assert f01['gm_iv_state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
-          assert f03['mission_state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
-          assert r1['current_mission_state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
-          assert r2['mission_state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
+          root=Path('mission-control/grand-missions')
+          registry=json.loads((root/'GRAND_MISSION_REGISTRY.json').read_text())
+          pilot=json.loads((root/'GM_IV_PILOT2_GOVERNOR_CONTRACT.json').read_text())
+          recon=json.loads((root/'GM_IV_RECON4_GOVERNOR_CONTRACT.json').read_text())
+          gm={m['id']:m for m in registry['grand_missions']}
+          gm4=gm['GM-IV']; gm5=gm['GM-V']
+          assert gm4['state']=='STAGED_ACTIVE_RECON_4_OF_8'
+          assert gm4['activation_stage']=='RECON_4_OF_8'
+          assert gm4['pilot_2_of_8_evidence']['F01']==pilot['controlled_pilots']['GM-IV-F01']
+          assert gm4['pilot_2_of_8_evidence']['F03']==pilot['controlled_pilots']['GM-IV-F03']
+          assert gm4['recon_4_of_8_evidence']==recon['accepted_gate_evidence']
+          assert gm4['children']==[]
+          assert registry['authority_transfer'] is False
+          assert gm5['state']=='HELD' and gm5['children']==[]
+          receipt={
+            'schema':'qps.gm_iv_pilot2_final_historical_retention.v1',
+            'source_sha':os.environ['SOURCE_SHA'],
+            'historical_stage':'STAGED_ACTIVE_PILOT_2_OF_8',
+            'current_stage':'STAGED_ACTIVE_RECON_4_OF_8',
+            'pilot_evidence_retained':True,
+            'recon4_gate_evidence_bound':True,
+            'children_bound':False,
+            'authority_transfer':False,
+            'gm_v_state':'HELD',
+            'result':'PASS'
+          }
+          out=Path(os.environ['RUNNER_TEMP'])/'gm-iv-pilot2-history'/'historical-retention.json'
+          out.write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
           print('PASS_HISTORY_IMMUTABLE_CURRENT_STAGE_FORWARD')
           PY
 
-      - name: Upload exact-head final recensus
+      - name: Upload exact-head current PILOT_2 recensus
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_PILOT_2_OF_8'
         uses: actions/upload-artifact@v4
         with:
           name: gm-iv-pilot2-final-recensus-${{ github.sha }}
           path: |
             ${{ runner.temp }}/gm-iv-pilot2-recensus/**
             ${{ runner.temp }}/gm-iv-pilot2-recensus.log
+          if-no-files-found: error
+
+      - name: Upload historical PILOT_2 retention control
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_RECON_4_OF_8'
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-pilot2-historical-retention-${{ github.sha }}
+          path: ${{ runner.temp }}/gm-iv-pilot2-history/**
           if-no-files-found: error

@@ -81,33 +81,42 @@ def main() -> int:
     exposure = load_module("crew_exposure_validator", EXPOSURE_DIR / "validate_crew_exposure.py")
 
     registry = json.loads((GRAND / "GRAND_MISSION_REGISTRY.json").read_text(encoding="utf-8"))
+    contract = json.loads((GRAND / "GM_IV_RECON4_GOVERNOR_CONTRACT.json").read_text(encoding="utf-8"))
     gm_iv = next(item for item in registry["grand_missions"] if item["id"] == "GM-IV")
 
     require(
-        gm_iv["state"] == "STAGED_ACTIVE_PILOT_2_OF_8",
-        f"expected current controlled baseline, got {gm_iv['state']}",
+        gm_iv["state"] in {"STAGED_ACTIVE_PILOT_2_OF_8", "STAGED_ACTIVE_RECON_4_OF_8"},
+        f"unexpected controlled baseline: {gm_iv['state']}",
     )
-    require(fleet.gm_iv_supported_shape(gm_iv), "current PILOT_2 shape must remain accepted")
+    require(fleet.gm_iv_supported_shape(gm_iv), "current governed GM-IV shape must be accepted")
 
     recon4 = copy.deepcopy(gm_iv)
-    recon4["state"] = "STAGED_ACTIVE_RECON_4_OF_8"
-    recon4["activation_stage"] = "RECON_4_OF_8"
-    require(
-        not fleet.gm_iv_supported_shape(recon4),
-        "RECON_4 must fail closed until its separate Governor defines the complete shape",
-    )
+    recon4.update(contract["proposed_shape"])
+    recon4["frontier_count"] = 8
+    if gm_iv["state"] == "STAGED_ACTIVE_RECON_4_OF_8":
+        recon4["recon_4_of_8_evidence"] = contract["accepted_gate_evidence"]
+        require(fleet.gm_iv_supported_shape(recon4), "governed RECON_4 shape must be accepted after promotion")
+    else:
+        recon4.pop("recon_4_of_8_evidence", None)
+        require(
+            not fleet.gm_iv_supported_shape(recon4),
+            "RECON_4 must fail closed before separate promotion binds accepted evidence",
+        )
 
-    active8 = copy.deepcopy(gm_iv)
+    active8 = copy.deepcopy(recon4)
     active8["state"] = "ACTIVE_8_OF_8"
     active8["activation_stage"] = "ACTIVE_8_OF_8"
     require(
         not fleet.gm_iv_supported_shape(active8),
         "ACTIVE_8 must fail closed until its separate Governor defines the complete shape",
     )
-
+    require(
+        "ACTIVE_8_OF_8" in fleet.FORWARD_GM_IV_STATES_REQUIRING_GOVERNOR,
+        "ACTIVE_8 must remain explicitly Governor-gated",
+    )
     require(
         fleet.FORWARD_GM_IV_STATES_REQUIRING_GOVERNOR.isdisjoint(fleet.SUPPORTED_GM_IV_STATES),
-        "forward stages must not leak into generic supported-state set",
+        "unsupported forward stages must not leak into generic supported-state set",
     )
 
     for good in ("run-1", " job://1 ", "runner://1"):
@@ -138,13 +147,12 @@ def main() -> int:
 
     print(json.dumps({
         "result": "PASS_GM_IV_FORWARD_GATE_SAFETY",
-        "positive_controls": 2,
-        "forward_stage_negative_controls": 2,
+        "current_state": gm_iv["state"],
+        "recon_4_authorized": gm_iv["state"] == "STAGED_ACTIVE_RECON_4_OF_8",
+        "active_8_authorized": False,
         "provenance_negative_controls": 15,
         "authority_transfer": False,
         "child_binding": False,
-        "gm_iv_state_changed": False,
-        "recon_4_authorized": False,
     }, sort_keys=True))
     return 0
 

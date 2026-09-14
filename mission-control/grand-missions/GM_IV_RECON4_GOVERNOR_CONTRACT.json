@@ -26,20 +26,31 @@
     "unfilled_frontier_slots": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
     "children": []
   },
+  "accepted_gate_evidence": {
+    "source_sha": "42b966ff18ce1f1471f5894c50753ea9903461ad",
+    "workflow_run_id": 34812456207,
+    "artifact_id": 10335023900,
+    "artifact_digest": "sha256:d32bda080035c1237346e6d4965032092a47e99241f4536bddcc0a77ca83cad0",
+    "decision": "READY_FOR_SEPARATE_RECON_4_PROMOTION_PR",
+    "post_merge_workflow_success_count": 14,
+    "post_merge_workflow_total": 14
+  },
   "admission_checks": [
     "predecessor fail-closed safety merge is an ancestor of the exact gate head",
-    "current GM-IV state remains PILOT_2_OF_8 while this gate is evaluated",
+    "current GM-IV state remains PILOT_2_OF_8 while readiness is evaluated or equals RECON_4_OF_8 while control is evaluated",
     "F01 and F03 retain exact bound PILOT_CONTROL_READY evidence",
     "F02 and F04 retain exact bound REFERENCE evidence and no authority claim",
     "capacity contract defines RECON_4_OF_8 as at most four named frontiers with no authority transfer",
-    "Mission City exposes scout reserve and Governor stage control for GM-IV",
+    "Mission City exposes bounded recon and Governor stage control for GM-IV",
     "GM-IV canonical children remain empty",
-    "generic fleet validator still rejects RECON_4 before a separate promotion patch explicitly binds the complete shape",
+    "accepted post-merge Governor evidence is exact and complete",
+    "ACTIVE_8 remains fail-closed pending a separate Governor",
     "GM-V remains HELD with no children"
   ],
   "decision_semantics": {
     "READY": "READY_FOR_SEPARATE_RECON_4_PROMOTION_PR",
+    "CONTROL": "CONTROL_RECON_4_OF_8",
     "WITHHOLD": "WITHHOLD_RECON_4_PROMOTION"
   },
-  "promotion_boundary": "THIS_CONTRACT_AND_ITS_GATE_ONLY_PROVE_READINESS; THEY_DO_NOT_CHANGE_THE_REGISTRY_STATE,_BIND_CHILDREN,_OR_TRANSFER_AUTHORITY. A_SEPARATE_EXACT_HEAD_PROMOTION_PR_MUST_UPDATE_REGISTRY,_MISSION_CITY,_AND_THE_FAIL_CLOSED_VALIDATOR_TO_THE_COMPLETE_RECON_4_SHAPE."
+  "promotion_boundary": "READINESS_PROVES_THE_SEPARATE_PROMOTION_PR_MAY_BE_EVALUATED; CONTROL_PROVES_THE_PROMOTED_RECON_4_SHAPE_IS_CANONICAL_AND_GOVERNED. NEITHER_MODE_BINDS_CANONICAL_CHILDREN,_TRANSFERS_ENGINEERING_AUTHORITY,_NOR_AUTHORIZES_ACTIVE_8."
 }

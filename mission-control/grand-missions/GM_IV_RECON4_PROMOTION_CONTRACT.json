@@ -1,0 +1,43 @@
+{
+  "schema": "qps.gm_iv_recon4_promotion_contract.v1",
+  "wave": "GM-FLEET-03-PROMOTE-RECON4",
+  "mission_id": "GM-IV",
+  "from_state": "STAGED_ACTIVE_PILOT_2_OF_8",
+  "to_state": "STAGED_ACTIVE_RECON_4_OF_8",
+  "to_activation_stage": "RECON_4_OF_8",
+  "predecessor_governor_merge_sha": "42b966ff18ce1f1471f5894c50753ea9903461ad",
+  "accepted_governor_evidence": {
+    "source_sha": "42b966ff18ce1f1471f5894c50753ea9903461ad",
+    "workflow_run_id": 34812456207,
+    "artifact_id": 10335023900,
+    "artifact_digest": "sha256:d32bda080035c1237346e6d4965032092a47e99241f4536bddcc0a77ca83cad0",
+    "decision": "READY_FOR_SEPARATE_RECON_4_PROMOTION_PR",
+    "post_merge_workflow_success_count": 14,
+    "post_merge_workflow_total": 14
+  },
+  "required_shape": {
+    "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"],
+    "controlled_pilot_frontiers": ["GM-IV-F01", "GM-IV-F03"],
+    "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
+    "unfilled_frontier_slots": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+    "children": []
+  },
+  "allowed_mutations": [
+    "GM-IV canonical state and activation stage to RECON_4_OF_8",
+    "bind exact accepted RECON_4 Governor evidence",
+    "synchronize Mission City GM-IV state and bounded recon command edges",
+    "admit the exact RECON_4 shape into the generic fleet validator",
+    "synchronize Evidence Economics fleet-stage semantics",
+    "convert superseded PILOT_2 wrappers to historical-retention controls"
+  ],
+  "forbidden_mutations": [
+    "bind any GM-IV canonical child",
+    "transfer engineering authority",
+    "authorize ACTIVE_8_OF_8",
+    "promote GM-V from HELD",
+    "change F01/F03 controlled-pilot dispositions",
+    "change F02/F04 reference dispositions",
+    "fill F05-F08"
+  ],
+  "post_promotion_boundary": "RECON_4_OF_8_IS_A_CONTROLLED_RECONNAISSANCE_STATE,_NOT_FULL_EIGHT_FRONTIER_ACTIVATION. ACTIVE_8_OF_8_REQUIRES_A_SEPARATE_GOVERNOR_AND_EXACT_HEAD_PROMOTION_TRANSACTION."
+}
