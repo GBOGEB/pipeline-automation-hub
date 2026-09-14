@@ -1,0 +1,82 @@
+{
+  "schema": "qps-w189-federation-expansion-runtime-control/v1",
+  "wave": "W189R",
+  "sample_id": "FED-SAMPLE-004-W184F-N200-MIRROR",
+  "status": "AUTHORITATIVE_RETURN_CANDIDATE",
+  "source_package": {
+    "repo": "GBOGEB/cryoplant-project",
+    "pr": 1169,
+    "head": "e4bce25ef4d07d4d472f29aad9793f6974eb43ad",
+    "merge": "dd28b8471bada007add5b1a94b3d131f7d0b6748"
+  },
+  "native_source_runtime": {
+    "run_id": 34869673997,
+    "job_id": 104062162358,
+    "recorded_steps": 0,
+    "classification": "WITHHELD_INFRA_PREEXECUTION_REX_006",
+    "compensated": false
+  },
+  "federated_exact_execution": {
+    "repo": "GBOGEB/ABACUS",
+    "pr": 1210,
+    "source_exact_blob_count": 7,
+    "pr_head": {
+      "sha": "2ad9bea507e75abc0416d536eeb9db96217e92ef",
+      "run_id": 34870010866,
+      "job_id": 104063747625,
+      "runner_id": 1000279224,
+      "artifact_id": 10358408631,
+      "artifact_digest": "sha256:b47e407cce90f62db6ba38ec8ecf354d95b8a69cddaa8899b73536a3b38216bf",
+      "result": "PASS"
+    },
+    "postmerge_repeat": {
+      "merge_sha": "13b072208bc9eacba18a69e6e7c299325b778fb6",
+      "run_id": 34870512101,
+      "job_id": 104064963064,
+      "runner_id": 1000279443,
+      "artifact_id": 10359305424,
+      "artifact_digest": "sha256:d33623e43da71b0e320743dc15fff3f5266f1f0b64fcaa3eaa4e374b728c4143",
+      "result": "PASS"
+    }
+  },
+  "acceptance": {
+    "breadth": {"numerator": 30, "denominator": 30, "value": 1.0},
+    "depth": {"numerator": 8, "denominator": 8, "value": 1.0},
+    "penetration": 1.0,
+    "accepted_sample": true,
+    "accepted_bounded_sample_count": 4,
+    "known_sample_set_denominator": 4,
+    "global_fleet_denominator": null,
+    "global_fleet_penetration": null
+  },
+  "pca": {
+    "state": "MEASURED_SMALL_N_N4_PC1_STABLE_PC2_ROTATING",
+    "n": 4,
+    "features": 6,
+    "explained_variance_ratio": [0.756426721, 0.136093479, 0.107479800],
+    "pc1_loading_congruence_abs": 0.998988824,
+    "pc2_loading_congruence_abs": 0.118590668,
+    "pc12_subspace_principal_angles_deg": [0.67326683, 83.13861784],
+    "guard": "DESCRIPTIVE_SMALL_N_ONLY_PC1_STABLE_PC2_NOT_STABLE"
+  },
+  "bt": {
+    "observed_pairwise_outcomes": 4,
+    "repeated_transport_comparisons": 2,
+    "transport_component_connected": true,
+    "transport_component_outcome": "2_TO_0_COMPLETE_SEPARATION",
+    "transport_unregularized_mle": "NO_FINITE_MLE",
+    "global_state": "WITHHELD_DISCONNECTED_HETEROGENEOUS_COMPARISON_GRAPH",
+    "rule": "NO_FINITE_UNREGULARIZED_BT_SCORE_FROM_COMPLETE_SEPARATION; NO_GLOBAL_FIT_BEFORE_CONNECTED_COMPARABLE_GRAPH"
+  },
+  "fleet_census": {
+    "state": "PARTIAL_CLASSIFICATION_DENOMINATOR_NOT_YET_FROZEN",
+    "confirmed_core_repositories": 6,
+    "accessible_repository_universe": null,
+    "mission_relevant_governed_surface_denominator": null
+  },
+  "child_guard": {
+    "visual_n200_control_promotion": false,
+    "federation_acceptance_may_not_promote_child": true
+  },
+  "formal_credit_delta": {"engineering":0,"compliance":0,"negotiation":0,"acceptance":0,"release":0}
+}
