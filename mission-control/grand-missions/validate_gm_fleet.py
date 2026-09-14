@@ -14,9 +14,9 @@ SUPPORTED_GM_IV_STATES = {
     "HELD",
     "STAGED_ACTIVE_RECON_2_OF_8",
     "STAGED_ACTIVE_PILOT_2_OF_8",
+    "STAGED_ACTIVE_RECON_4_OF_8",
 }
 FORWARD_GM_IV_STATES_REQUIRING_GOVERNOR = {
-    "STAGED_ACTIVE_RECON_4_OF_8",
     "ACTIVE_8_OF_8",
 }
 
@@ -36,6 +36,25 @@ def canonical_digest(obj):
     return hashlib.sha256(raw).hexdigest()
 
 
+def valid_recon4_evidence(item):
+    return (
+        isinstance(item, dict)
+        and isinstance(item.get("source_sha"), str)
+        and len(item["source_sha"]) == 40
+        and isinstance(item.get("workflow_run_id"), int)
+        and item["workflow_run_id"] > 0
+        and isinstance(item.get("artifact_id"), int)
+        and item["artifact_id"] > 0
+        and isinstance(item.get("artifact_digest"), str)
+        and item["artifact_digest"].startswith("sha256:")
+        and len(item["artifact_digest"]) == 71
+        and item.get("decision") == "READY_FOR_SEPARATE_RECON_4_PROMOTION_PR"
+        and item.get("post_merge_workflow_success_count") == item.get("post_merge_workflow_total")
+        and isinstance(item.get("post_merge_workflow_total"), int)
+        and item["post_merge_workflow_total"] > 0
+    )
+
+
 def gm_iv_supported_shape(gm_iv):
     state = gm_iv.get("state")
     if state not in SUPPORTED_GM_IV_STATES:
@@ -51,9 +70,8 @@ def gm_iv_supported_shape(gm_iv):
                 "GM-IV-F07", "GM-IV-F08",
             ]
         )
-    return (
-        gm_iv.get("activation_stage") == "PILOT_2_OF_8"
-        and gm_iv.get("candidate_frontiers") == [
+    common_four = (
+        gm_iv.get("candidate_frontiers") == [
             "GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"
         ]
         and gm_iv.get("controlled_pilot_frontiers") == ["GM-IV-F01", "GM-IV-F03"]
@@ -61,6 +79,13 @@ def gm_iv_supported_shape(gm_iv):
         and gm_iv.get("unfilled_frontier_slots") == [
             "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"
         ]
+    )
+    if state == "STAGED_ACTIVE_PILOT_2_OF_8":
+        return gm_iv.get("activation_stage") == "PILOT_2_OF_8" and common_four
+    return (
+        gm_iv.get("activation_stage") == "RECON_4_OF_8"
+        and common_four
+        and valid_recon4_evidence(gm_iv.get("recon_4_of_8_evidence"))
     )
 
 
