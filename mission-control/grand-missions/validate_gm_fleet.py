@@ -36,6 +36,34 @@ def canonical_digest(obj):
     return hashlib.sha256(raw).hexdigest()
 
 
+def gm_iv_supported_shape(gm_iv):
+    state = gm_iv.get("state")
+    if state not in SUPPORTED_GM_IV_STATES:
+        return False
+    if state == "HELD":
+        return True
+    if state == "STAGED_ACTIVE_RECON_2_OF_8":
+        return (
+            gm_iv.get("activation_stage") == "RECON_2_OF_8"
+            and gm_iv.get("candidate_frontiers") == ["GM-IV-F01", "GM-IV-F02"]
+            and gm_iv.get("unfilled_frontier_slots") == [
+                "GM-IV-F03", "GM-IV-F04", "GM-IV-F05", "GM-IV-F06",
+                "GM-IV-F07", "GM-IV-F08",
+            ]
+        )
+    return (
+        gm_iv.get("activation_stage") == "PILOT_2_OF_8"
+        and gm_iv.get("candidate_frontiers") == [
+            "GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"
+        ]
+        and gm_iv.get("controlled_pilot_frontiers") == ["GM-IV-F01", "GM-IV-F03"]
+        and gm_iv.get("reference_frontiers") == ["GM-IV-F02", "GM-IV-F04"]
+        and gm_iv.get("unfilled_frontier_slots") == [
+            "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"
+        ]
+    )
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
@@ -87,33 +115,9 @@ def main():
     ok("07_gm_iii_four_frontier_genealogy", len(genealogy["missions"]["GM-III"]["frontiers"]) == 4 and len(gm["GM-III"]["children"]) == 4, "four frontiers")
 
     gm_iv = gm["GM-IV"]
-    gm_iv_state_ok = gm_iv["state"] in SUPPORTED_GM_IV_STATES
-    gm_iv_stage_ok = True
-    if gm_iv["state"] == "STAGED_ACTIVE_RECON_2_OF_8":
-        gm_iv_stage_ok = (
-            gm_iv.get("activation_stage") == "RECON_2_OF_8"
-            and gm_iv.get("candidate_frontiers") == ["GM-IV-F01", "GM-IV-F02"]
-            and gm_iv.get("unfilled_frontier_slots") == [
-                "GM-IV-F03", "GM-IV-F04", "GM-IV-F05", "GM-IV-F06",
-                "GM-IV-F07", "GM-IV-F08",
-            ]
-        )
-    elif gm_iv["state"] == "STAGED_ACTIVE_PILOT_2_OF_8":
-        gm_iv_stage_ok = (
-            gm_iv.get("activation_stage") == "PILOT_2_OF_8"
-            and gm_iv.get("candidate_frontiers") == [
-                "GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"
-            ]
-            and gm_iv.get("controlled_pilot_frontiers") == ["GM-IV-F01", "GM-IV-F03"]
-            and gm_iv.get("reference_frontiers") == ["GM-IV-F02", "GM-IV-F04"]
-            and gm_iv.get("unfilled_frontier_slots") == [
-                "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"
-            ]
-        )
     ok(
         "08_gm_iv_8_no_fabrication_or_ungoverned_promotion",
-        gm_iv_state_ok
-        and gm_iv_stage_ok
+        gm_iv_supported_shape(gm_iv)
         and gm_iv["frontier_count"] == 8
         and gm_iv["children"] == [],
         f"state={gm_iv['state']} frontier_count=8 children=0",
