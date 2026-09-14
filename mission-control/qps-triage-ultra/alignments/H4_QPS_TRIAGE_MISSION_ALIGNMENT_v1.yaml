@@ -1,7 +1,7 @@
-schema: qps-triage-ultra/h4-mission-alignment/1.1
-as_of: '2026-09-14T10:54:00+02:00'
+schema: qps-triage-ultra/h4-mission-alignment/1.2
+as_of: '2026-09-14T11:01:00+02:00'
 mission: H4_QPS_TRIAGE
-status: W1_CONTROL_W2_GATED_ALIGNMENT
+status: W1_CONTROL_W2_HOLD_REPO_LOCAL_ADMISSION_FIRST_RED
 authority_transfer: false
 source_fleet_status: mission-control/qps-triage-ultra/EXPEDITION_FLEET_STATUS.md
 source_iteration_ledger: >-
@@ -27,6 +27,27 @@ method_selector:
   repeat_MIP: ONLY_ON_NEW_STRUCTURAL_OR_RECURRENCE_GAP
   repeat_3PC: ONLY_FOR_A_NEW_BOUNDED_TRANSACTION
   repeat_3P3: ONLY_FOR_A_NEW_GENERALISATION_CLASS
+
+runtime_probe_observation:
+  child_repo: GBOGEB/cryoplant-project
+  child_pr: 1135
+  exact_head_sha: 90322dc4d7f299f737e42bf45effa36300f367fa
+  workflow: QPS_TRIAGE_Reliability_Applicability
+  workflow_run_id: 34825502815
+  job_id: 103916589064
+  conclusion: failure
+  runner_id: 0
+  observed_steps: 0
+  classification: REX_006_PREEXECUTION_REPO_LOCAL_ADMISSION
+  first_red: QPS_REPO_LOCAL_RUNNER_923
+  interpretation: >-
+    The intended validator did not execute. This is repository-local Actions
+    admission/runtime evidence, not a validator, applicability-profile, model,
+    semantic or child-engineering failure. W2 therefore remains HOLD and H4
+    must not compensate by creating another method/framework layer.
+  next_action: >-
+    Restore private-repository Actions admission or attach the already-supported
+    runner path, then rerun the same exact-head applicability workflow unchanged.
 
 alignment:
   - mission_id: W3_12_HEPAK_REFERENCE
@@ -109,7 +130,8 @@ mission_state:
   current_wave: H4_QPS_TRIAGE:W1_CONTROL
   current_classification: CONTROLLED_PARTIAL_W2_GATED
   canonical_w1_status: BOUNDED_DOV_WITH_ONE_EXTERNAL_RUNTIME_DEFER
-  current_first_blocker: P1_CRYOPLANT_RUNTIME_PLATFORM_EX_GT_0
+  current_first_blocker: QPS_REPO_LOCAL_RUNNER_923
+  current_first_red_classification: REX_006_PREEXECUTION_REPO_LOCAL_ADMISSION
   current_non_compensating_veto: QPS_REPO_LOCAL_RUNNER_923
   closed_or_controlled:
     - MIP_M_APPLICABILITY_V0_3
@@ -126,7 +148,7 @@ three_wave_burn_in:
     method: 3PR_PLUS_MIP_M
     state: CONTROL_BOUNDED_DOV
     purpose: REFRESH_AUTHORITY_SEMANTICS_MEASUREMENT_AND_MODERNIZE_APPLICABILITY
-    residual: P1_RUNTIME_KR_EXTERNAL_DEFER
+    residual: P1_RUNTIME_KR_EXTERNAL_DEFER_REPO_LOCAL_ADMISSION
   W2:
     method: 3PC_PLUS_MIP_I
     state: HOLD_ENTRY_GATE
@@ -143,11 +165,12 @@ three_wave_burn_in:
 next_goals:
   P0:
     owner: CRYOPLANT_RUNTIME_PLATFORM_LANE
-    goal: ONE_INTENDED_EXACT_HEAD_QPS_TRIAGE_APPLICABILITY_VALIDATION_WITH_EX_GT_0_AND_DURABLE_KR
-    credit_effect: P1_RUNTIME_RECEIPT_ONLY
+    goal: RESTORE_REPO_LOCAL_ACTIONS_ADMISSION_OR_ATTACH_SUPPORTED_RUNNER_AND_RERUN_UNCHANGED
+    victory: RUNNER_ID_NE_0_AND_STEPS_GT_0
+    credit_effect: NONE_UNTIL_VALIDATOR_RUNTIME_RECEIPT
   P1:
     owner: H4_QPS_TRIAGE
-    goal: RELEASE_OR_KEEP_HOLD_ON_W2_FROM_THE_P1_RUNTIME_RECEIPT
+    goal: CONSUME_FIRST_REAL_VALIDATOR_RESULT_AND_RELEASE_OR_KEEP_HOLD_ON_W2
     rule: NO_W2_PREPARE_PROVE_COMMIT_BEFORE_ENTRY_GATE
   P2:
     owner: H1_QPS_H3_DOW_WITH_H2_SUPPORT
@@ -160,7 +183,7 @@ session_plan:
   QRT_A_APPLICABILITY_CONTROL:
     owner: H4_QPS_TRIAGE_PLUS_H1_QPS
     goal: maintain child profile, exact-SHA runtime receipt and W2 entry decision
-    current_state: ACTIVE_ON_P1_RUNTIME_ONLY
+    current_state: BLOCKED_REPO_LOCAL_ADMISSION_NO_VALIDATOR_STEPS
   QRT_B_EVIDENCE_BURNDOWN:
     owner: H1_QPS
     goal: cold-compressor-train source and architecture evidence for W2 preferred atom
@@ -187,7 +210,7 @@ parallel_noncompensating_fronts:
   visual_N200: ACTIVE_SEPARATE_FRONT
   OFFER_workbook_delta: ACTIVE_SEPARATE_FRONT
   W152_evidence_return: ACTIVE_SEPARATE_FRONT
-  QPS_REPO_LOCAL_RUNNER_923: NON_COMPENSATING_VETO
+  QPS_REPO_LOCAL_RUNNER_923: ACTIVE_NON_COMPENSATING_VETO
 
 no_growth_rules:
   - no_full_QPS_corpus_ingestion_before_measured_need
@@ -200,3 +223,4 @@ no_growth_rules:
   - no_PCA_until_comparable_population_exists
   - no_W2_credit_while_P1_runtime_KR_is_withheld
   - no_W3_fanout_before_W2_local_DOV
+  - no_validator_code_repair_when_runner_id_is_0_and_steps_are_0
