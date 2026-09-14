@@ -25,6 +25,7 @@ DIMENSIONS = {
     "operations_control",
     "rex_learning",
 }
+EXPECTED_SCALE = {f"L{i}" for i in range(7)}
 
 
 def load(path: Path) -> dict:
@@ -98,9 +99,15 @@ def main() -> int:
         require("AMBASSADOR" in by_id["S01"].get("roles", []), "S01 must carry AMBASSADOR role", errors)
         require(by_id["S01"].get("maturity") == "OBSERVED", "Ambassador must remain OBSERVED", errors)
 
-    # Matrix integrity.
+    # Matrix integrity. The entire L0..L6 scale is contractual; merely finding
+    # L6 would allow omitted/interpolated levels to pass silently (HIST-BD-003).
     require(set(matrix.get("dimensions", {})) == DIMENSIONS, "matrix dimensions must exactly match validator dimensions", errors)
-    require("L6" in matrix.get("scale", {}), "competency scale must define L0..L6 through L6", errors)
+    actual_scale = set(matrix.get("scale", {}))
+    require(
+        actual_scale == EXPECTED_SCALE,
+        f"competency scale must be exactly L0..L6; observed={sorted(actual_scale)}",
+        errors,
+    )
     evidence_classes = set(matrix.get("evidence_classes", {}))
     for member in crew:
         basis = member.get("competency_vector", {}).get("basis")
@@ -149,6 +156,7 @@ def main() -> int:
                 "maturity_counts": maturity_counts,
                 "rex_count": len(rex_ids),
                 "candidate_role_count": len(candidate_ids),
+                "competency_scale": sorted(EXPECTED_SCALE),
                 "ambassador": "S01_OBSERVED",
                 "authority_transfer": False,
             },

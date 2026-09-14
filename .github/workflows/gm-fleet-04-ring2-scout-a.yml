@@ -61,13 +61,15 @@ jobs:
             --out "$RUNNER_TEMP/ring2-scout-a.json" | tee "$RUNNER_TEMP/ring2-scout-a.log"
           grep -F 'PASS_GM_IV_RING2_SCOUT_A' "$RUNNER_TEMP/ring2-scout-a.log"
 
-      - name: Enforce candidate-only boundaries
+      - name: Enforce candidate-only boundaries and source identities
         shell: bash
         run: |
           python3 - <<'PY'
           import json, os
           p=os.path.join(os.environ['RUNNER_TEMP'], 'ring2-scout-a.json')
           d=json.load(open(p, encoding='utf-8'))
+          assert d['missioncontrol_source_sha'] == os.environ['MISSIONCONTROL_SHA']
+          assert d['candidate_sha'] == '1eba2240a86d1fd2bd6375e2fac481caf645cdde'
           assert d['run_1']['executed_code_cells'] > 0
           assert d['deterministic_repeat'] is True
           assert d['target_dirty_file_count'] == 0
@@ -80,7 +82,7 @@ jobs:
           assert board['formal_slots_assigned_by_this_artifact'] == 0
           assert board['scout_a'] == 'GBOGEB/codespaces-jupyter'
           assert all(item['slot_binding'] is False for item in board['candidates'])
-          print('PASS_RING2_SCOUT_A_FAIL_CLOSED_BOUNDARIES')
+          print('PASS_RING2_SCOUT_A_FAIL_CLOSED_BOUNDARIES_AND_SOURCE_BINDING')
           PY
 
       - name: Upload exact-head scout receipt

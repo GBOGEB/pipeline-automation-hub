@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 from collections import Counter, defaultdict
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -10,6 +11,15 @@ ROOT = Path(__file__).resolve().parent
 
 def load(name):
     return json.loads((ROOT / name).read_text(encoding="utf-8"))
+
+
+def validate_timestamp(value, event_id):
+    if not isinstance(value, str) or not value:
+        raise SystemExit(f"FAIL {event_id}: timestamp must be a non-empty string")
+    try:
+        datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise SystemExit(f"FAIL {event_id}: timestamp is not ISO-8601: {value}") from exc
 
 
 def main():
@@ -20,6 +30,21 @@ def main():
     contract = load("CREW_REX_BIDIRECTIONAL_CONTRACT.json")
     ledger = load("CREW_REX_LEDGER.json")
     events = ledger["events"]
+
+    required_fields = contract.get("report_required_fields", [])
+    if not required_fields:
+        raise SystemExit("FAIL CREW_REX report_required_fields contract is empty")
+    seen_event_ids = set()
+    for event in events:
+        event_id = event.get("event_id", "<missing>")
+        missing = sorted(set(required_fields) - set(event))
+        if missing:
+            raise SystemExit(f"FAIL {event_id}: missing report_required_fields {missing}")
+        if event_id in seen_event_ids:
+            raise SystemExit(f"FAIL duplicate event_id: {event_id}")
+        seen_event_ids.add(event_id)
+        validate_timestamp(event["timestamp"], event_id)
+
     by_mission = defaultdict(list)
     for event in events:
         by_mission[event["mission_id"]].append(event)
@@ -42,7 +67,9 @@ def main():
             "crew_to_mc": sum(1 for r in rows if r["direction"] == "CREW_TO_MC"),
             "mc_to_crew": sum(1 for r in rows if r["direction"] == "MC_TO_CREW"),
             "requested_actions": sorted({r["requested_action"] for r in rows}),
-            "latest_observations": [r["observation"] for r in rows[-2:]]
+            "latest_observations": [r["observation"] for r in rows[-2:]],
+            "recorded_at_min": min(r["timestamp"] for r in rows),
+            "recorded_at_max": max(r["timestamp"] for r in rows),
         }
 
     lessons = [
@@ -59,6 +86,7 @@ def main():
         "source_sha":os.environ.get("GITHUB_SHA",os.environ.get("SOURCE_SHA","LOCAL_UNBOUND")),
         "run_id":os.environ.get("GITHUB_RUN_ID","LOCAL"),
         "bidirectional_round_trip":"PASS",
+        "report_required_fields_validated": required_fields,
         "crew_report_count":len(crew_reports),
         "unmatched_crew_reports":unmatched,
         "mission_reports":mission_reports,
@@ -74,7 +102,7 @@ def main():
     path = Path(args.out)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps({"result":"PASS_CREW_REX_BIDIRECTIONAL","crew_reports":len(crew_reports),"missions":len(mission_reports),"dormant":dormant_verbs}, sort_keys=True))
+    print(json.dumps({"result":"PASS_CREW_REX_BIDIRECTIONAL","crew_reports":len(crew_reports),"missions":len(mission_reports),"required_fields":len(required_fields),"dormant":dormant_verbs}, sort_keys=True))
 
 if __name__ == "__main__":
     main()
