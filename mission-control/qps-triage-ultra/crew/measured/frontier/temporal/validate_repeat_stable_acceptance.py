@@ -23,6 +23,7 @@ def main():
     c = load(args.config)
     repeat = c["recommend_repeat_stable_gate"]
     control = c["control_policy_gate"]
+    contract = c["window_contract"]
 
     assert a["schema"] == "missioncontrol.repeat_stable_acceptance.v1"
     assert a["authority_transfer"] is False
@@ -31,6 +32,19 @@ def main():
     assert a["basis"]["rex_veto"] is False
     assert a["basis"]["historical_collection_errors"] == []
     assert set(a["basis"]["hosted_cells"]) == EXPECTED_HOSTED_CELLS
+
+    frontier = a["scheduled_control_frontier"]
+    assert frontier["eligibility_event"] == contract["control_eligible_event"]
+    assert frontier["eligibility_workflow_path"] == contract["control_eligible_workflow_path"]
+    assert frontier["independent_windows"] == len(frontier["window_ids"])
+    assert frontier["distinct_source_shas"] >= 1
+    assert frontier["temporal_span_seconds"] >= 0
+    assert frontier["required_independent_windows"] == control["min_independent_windows"]
+    assert frontier["required_distinct_source_shas"] == control["min_distinct_source_shas"]
+    assert frontier["required_temporal_span_seconds"] == control["min_temporal_span_seconds"]
+    assert frontier["clock_gate_met"] is (
+        frontier["temporal_span_seconds"] >= control["min_temporal_span_seconds"]
+    )
 
     configured = set(c["task_classes"])
     accepted = a["accepted_task_classes"]
@@ -67,10 +81,14 @@ def main():
     assert cp["required_independent_windows"] == control["min_independent_windows"]
     assert cp["required_distinct_source_shas"] == control["min_distinct_source_shas"]
     assert cp["required_temporal_span_seconds"] == control["min_temporal_span_seconds"]
+    assert cp["observed_independent_windows"] == frontier["independent_windows"]
+    assert cp["observed_distinct_source_shas"] == frontier["distinct_source_shas"]
+    assert cp["observed_temporal_span_seconds"] == frontier["temporal_span_seconds"]
+
     control_still_blocked = (
-        cp["observed_independent_windows"] < control["min_independent_windows"]
-        or cp["observed_distinct_source_shas"] < control["min_distinct_source_shas"]
-        or cp["observed_temporal_span_seconds"] < control["min_temporal_span_seconds"]
+        frontier["independent_windows"] < control["min_independent_windows"]
+        or frontier["distinct_source_shas"] < control["min_distinct_source_shas"]
+        or frontier["temporal_span_seconds"] < control["min_temporal_span_seconds"]
     )
     assert control_still_blocked
 
@@ -78,6 +96,8 @@ def main():
         "status": "PASS_REPEAT_STABLE_ACCEPTANCE",
         "accepted_task_classes": sorted(accepted_names),
         "withheld_task_classes": sorted(withheld_names),
+        "scheduled_control_windows": frontier["independent_windows"],
+        "scheduled_control_span_seconds": frontier["temporal_span_seconds"],
         "control_policy": "WITHHELD",
         "competency_promotions": 0,
         "authority_transfer": False,

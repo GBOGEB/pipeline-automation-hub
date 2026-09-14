@@ -27,17 +27,21 @@
     "source_is_live_master": true
   },
   "scheduled_control_frontier": {
-    "rule": "Only genuine schedule-event runs of crew-temporal-allocation-policy.yml are used to prove temporal separation for the CONTROL frontier; push/manual windows may remain learning evidence but do not manufacture clock separation.",
-    "scheduled_windows": 4,
-    "scheduled_distinct_source_shas": 3,
-    "scheduled_temporal_span_seconds": 65247.0,
-    "scheduled_window_ids": [
+    "rule": "Only genuine schedule-event runs of crew-temporal-allocation-policy.yml are CONTROL-eligible. Other successful windows remain learning evidence and cannot satisfy CONTROL window, SHA, span, direction, consistency, strength, or latest-two gates.",
+    "eligibility_event": "schedule",
+    "eligibility_workflow_path": ".github/workflows/crew-temporal-allocation-policy.yml",
+    "independent_windows": 4,
+    "distinct_source_shas": 3,
+    "temporal_span_seconds": 65247.0,
+    "window_ids": [
       "34777489874",
       "34796773101",
       "34818972954",
       "34849592029"
     ],
-    "latest_scheduled_window_id": "34849592029",
+    "latest_window_id": "34849592029",
+    "required_independent_windows": 6,
+    "required_distinct_source_shas": 3,
     "required_temporal_span_seconds": 86400,
     "clock_gate_met": false
   },
@@ -130,21 +134,22 @@
     "status": "WITHHELD",
     "authority_transfer": false,
     "competency_promotions": 0,
-    "observed_independent_windows": 9,
+    "observed_independent_windows": 4,
     "required_independent_windows": 6,
-    "observed_distinct_source_shas": 8,
+    "observed_distinct_source_shas": 3,
     "required_distinct_source_shas": 3,
     "observed_temporal_span_seconds": 65247.0,
     "required_temporal_span_seconds": 86400,
     "blockers": [
+      "genuine scheduled independent windows 4 < 6",
       "genuine scheduled temporal separation 65247.0 < 86400"
     ],
     "class_specific_notes": {
-      "cache_artifact_reuse": "repeat-stable; pooled winner 0.9941176470588237; CONTROL remains clock-gated",
-      "validation_bundle": "repeat-stable; pooled winner 0.9941176470588236; CONTROL remains clock-gated",
-      "long_compute_contended": "repeat-stable paired; pooled winner 0.7290141189685757 now exceeds the CONTROL strength threshold 0.70; CONTROL remains clock-gated",
-      "human_dependency_wait_proxy": "repeat-stable single; pooled winner 0.6840656401359069 remains below the CONTROL strength threshold 0.70",
-      "short_compute": "remains LEARNING_DIRECTION_UNSTABLE; pooled winner 0.598930094701077 and latest-two directional windows disagree"
+      "cache_artifact_reuse": "scheduled CONTROL slice: 4 directional windows, consistency 1.0, winner 0.9941176470588236, latest-two agree; sample-count and clock gates remain red",
+      "validation_bundle": "scheduled CONTROL slice: 4 directional windows, consistency 1.0, winner 0.9941176470588236, latest-two agree; sample-count and clock gates remain red",
+      "long_compute_contended": "scheduled CONTROL slice: paired in all 4 directional windows, consistency 1.0, winner 0.854764526299985 exceeds 0.70, latest-two agree; sample-count and clock gates remain red",
+      "human_dependency_wait_proxy": "scheduled CONTROL slice: single in all 4 directional windows, consistency 1.0, winner 0.813109954456734 exceeds 0.70, latest-two agree; sample-count and clock gates remain red",
+      "short_compute": "scheduled CONTROL slice remains unstable: 3 directional windows, consistency 0.6666666666666666, winner 0.5905172413793104, latest-two disagree"
     }
   }
 }
