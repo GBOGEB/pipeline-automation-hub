@@ -1,0 +1,129 @@
+schema: qps-triage-ultra/h4-w2-3pc-mip-i/1.0
+as_of: '2026-09-14T10:20:00+02:00'
+mission: H4_QPS_TRIAGE
+wave: H4_QPS_TRIAGE:W2
+lifecycle_state: PLANNED
+runtime_state: GATED
+method: 3PC_PLUS_MIP_I
+authority_class: MISSION_CONTROL_ORCHESTRATION_ONLY
+authority_transfer: false
+
+entry_conditions:
+  - H4_QPS_TRIAGE_W1_HAS_BOUNDED_DISPOSITION
+  - QPS_TRIAGE_APPLICABILITY_V0_3_CANONICAL
+  - P1_CHILD_BOUNDARY_RECEIPT_OR_EXPLICIT_RUNTIME_DEFER
+  - P2_KEB_RECEIPT_OR_EXPLICIT_INHERITED_DEFER
+  - P3_DOW_MEASUREMENT_RECEIPT
+
+intent: >-
+  Prove one bounded end-to-end transaction from an exact QPS reliability source
+  atom through the canonical analytical consumer and back to explicit child
+  re-entry, while adding only the shared operating-state ledger innovation
+  justified by the reliability/lifecycle integration study.
+
+three_pulse_transaction:
+  - pulse: H4-QPS-W2-P1
+    method_step: PREPARE
+    primary_lane: H1_QPS
+    supporting_lanes: [H2_KEB, H3_DOW]
+    objective: >-
+      Freeze one exact source atom, exact consumer version, reference period,
+      component/system boundary, architecture fields, and expected child
+      re-entry question before any reliability calculation is credited.
+    preferred_atom: COLD_COMPRESSOR_TRAIN
+    fallback_atom: ALAT_HP_COMPRESSOR
+    required_output:
+      - exact_source_identity
+      - exact_consumer_identity
+      - source_origin
+      - reference_period
+      - architecture_and_common_cause_fields
+      - explicit_child_reentry_question
+      - zero_promotion_before_proof
+    stop_gate: MISSING_EXACT_SOURCE_OR_CONSEQUENCE_SCOPE
+
+  - pulse: H4-QPS-W2-P2
+    method_step: PROVE
+    primary_lane: H3_DOW
+    supporting_lanes: [H2_KEB, H1_QPS]
+    objective: >-
+      Reproduce MTBF/lambda/exposure/Poisson outputs deterministically, verify
+      provenance survival, and separately test whether system consequence is
+      source-bound or remains scenario-only.
+    required_output:
+      - deterministic_MTBF_lambda_parity
+      - deterministic_mu_P0_P_ge_1_Pk
+      - exact_provenance_parity
+      - model_state
+      - architecture_readiness
+      - system_consequence_readiness
+      - exact_SHA_receipt
+    stop_gate: FIRST_EXECUTION_OR_PROVENANCE_RED
+
+  - pulse: H4-QPS-W2-P3
+    method_step: COMMIT
+    primary_lane: H1_QPS
+    supporting_lanes: [H2_KEB, H4_QPS_TRIAGE]
+    objective: >-
+      Commit only the bounded child disposition: accept the analytical consumer
+      contract for the proven scope or explicitly DEFER/HOLD it. Do not convert
+      component evidence into Table-10 credit unless the child consequence gates
+      independently support that promotion.
+    allowed_dispositions: [ACCEPT_ANALYTICAL_CONSUMER, DEFER, HOLD, REJECT]
+    forbidden_dispositions:
+      - AUTO_TABLE10_PROMOTE
+      - AUTO_N_PLUS_1_ACCEPT
+      - AUTO_SYSTEM_EVENT_RATE
+    required_output:
+      - child_disposition
+      - exact_source_and_consumer_identity
+      - formal_credit_delta
+      - next_first_red_if_deferred
+
+mip_innovation:
+  phase: I_INNOVATE
+  justification: >-
+    The reliability/lifecycle integration study identifies one missing shared
+    operating-state ledger as the common denominator for energy/OPEX and failure
+    exposure. This is a bounded integration innovation, not a new master.
+  owner_numerical_ssot: QPS_COST_MASTER
+  adapter_role: SPECIALIST_PROJECTION
+  minimum_fields:
+    - state_id
+    - exposure_h
+    - power_kW
+    - energy_kWh
+    - starts
+    - lambda_native_by_failure_mode
+    - p_propagate_to_beam
+    - event_class
+    - MTTR_h
+    - MDT_h
+    - spare_id
+    - source_ref
+    - evidence_class
+  guardrails:
+    - TABLE10_COUNT_BUDGET_REMAINS_HARD_AUTHORITY
+    - ANALYTICAL_POISSON_NE_CONTRACT_COMPLIANCE
+    - SHARED_LEDGER_NE_COMPETING_SSOT
+    - STATE_EXPOSURE_DRIVES_ENERGY_AND_RELIABILITY_SEPARATELY
+
+CG: ONE_EXACT_SOURCE_TO_CHILD_REENTRY_TRANSACTION_PROVED
+BG: W1_BOUNDARIES_OR_RUNTIME_RECEIPTS_NOT_YET_CLOSED
+EX: NOT_STARTED
+QH: NOT_STARTED
+KR: NOT_STARTED
+DR: GATED_BY_W1
+SR: CANONICAL_V0_3_READY
+WD: HOLD_UNTIL_ENTRY_CONDITIONS
+PB: ZERO_UNTIL_W2_STARTS
+
+victory_condition: >-
+  One exact source atom traverses Prepare -> Prove -> Commit with no authority
+  leakage, the shared operating-state adapter is defined against the existing
+  numerical SSOT, and all outputs are exact-SHA or exact-artifact bound.
+
+stop_rule: >-
+  Stop W2 after one successful bounded transaction and one justified ledger
+  adapter. Do not expand to all five atoms in the same wave. Expansion becomes
+  a separate measured wave only if the first transaction proves reusable value.
