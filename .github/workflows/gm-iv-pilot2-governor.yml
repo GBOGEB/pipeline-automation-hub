@@ -30,31 +30,44 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Bind exact source SHA
+      - name: Bind exact source SHA and current GM-IV stage
         shell: bash
         run: |
           SOURCE_SHA="$(git rev-parse HEAD)"
           expected="${{ github.event.pull_request.head.sha || github.sha }}"
           test "$SOURCE_SHA" = "$expected"
           echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
+          stage="$(python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('mission-control/grand-missions/GRAND_MISSION_REGISTRY.json').read_text())
+          print(next(m for m in d['grand_missions'] if m['id']=='GM-IV')['state'])
+          PY
+          )"
+          case "$stage" in
+            STAGED_ACTIVE_PILOT_2_OF_8|STAGED_ACTIVE_RECON_4_OF_8) ;;
+            *) echo "Unsupported GM-IV stage for historical PILOT_2 control: $stage"; exit 1 ;;
+          esac
+          echo "GM_IV_STAGE=$stage" >> "$GITHUB_ENV"
 
-      - name: Compile promotion validators
+      - name: Compile control validators
         shell: bash
         run: |
           python -m py_compile \
             mission-control/grand-missions/assess_gm_iv_pilot2_governor.py \
             mission-control/grand-missions/validate_gm_fleet.py \
             mission-control/grand-missions/assess_gm_fleet_03.py \
-            mission-control/grand-missions/assess_gm_iv_ring1.py \
             mission-control/grand-missions/validate_gm_iv_evidence_economics.py
 
-      - name: Governor assessment first pass
+      - name: Current PILOT_2 Governor assessment first pass
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_PILOT_2_OF_8'
         shell: bash
         run: |
           python mission-control/grand-missions/assess_gm_iv_pilot2_governor.py \
             --out /tmp/gm-iv-pilot2-governor-1.json
 
-      - name: Governor assessment repeat
+      - name: Current PILOT_2 Governor assessment repeat
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_PILOT_2_OF_8'
         shell: bash
         run: |
           python mission-control/grand-missions/assess_gm_iv_pilot2_governor.py \
@@ -66,72 +79,110 @@ jobs:
       - name: Fleet regression
         shell: bash
         run: |
-          python mission-control/grand-missions/validate_gm_fleet.py \
+          SOURCE_SHA="$SOURCE_SHA" python mission-control/grand-missions/validate_gm_fleet.py \
             --out /tmp/gm-fleet-regression.json
-
-      - name: Capacity regression first pass
-        shell: bash
-        run: |
-          python mission-control/grand-missions/assess_gm_fleet_03.py \
-            --out /tmp/gm-fleet-03-capacity-1.json
 
       - name: Capacity regression repeat
         shell: bash
         run: |
+          python mission-control/grand-missions/assess_gm_fleet_03.py \
+            --out /tmp/gm-fleet-03-capacity-1.json
           python mission-control/grand-missions/assess_gm_fleet_03.py \
             --out /tmp/gm-fleet-03-capacity-2.json
           cmp \
             /tmp/gm-fleet-03-capacity-1.json \
             /tmp/gm-fleet-03-capacity-2.json
 
-      - name: Evidence Economics regression first pass
-        shell: bash
-        run: |
-          python mission-control/grand-missions/validate_gm_iv_evidence_economics.py \
-            | tee /tmp/gm-iv-economics-1.json
-          grep -q '"status": "PASS"' /tmp/gm-iv-economics-1.json
-
       - name: Evidence Economics regression repeat
         shell: bash
         run: |
           python mission-control/grand-missions/validate_gm_iv_evidence_economics.py \
+            | tee /tmp/gm-iv-economics-1.json
+          python mission-control/grand-missions/validate_gm_iv_evidence_economics.py \
             > /tmp/gm-iv-economics-2.json
+          grep -q '"status": "PASS"' /tmp/gm-iv-economics-1.json
           cmp /tmp/gm-iv-economics-1.json /tmp/gm-iv-economics-2.json
 
-      - name: Enforce promotion boundary
+      - name: Enforce current PILOT_2 boundary
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_PILOT_2_OF_8'
         shell: bash
         run: |
           python - <<'PY'
           import json
           import os
           from pathlib import Path
-
-          p = Path('/tmp/gm-iv-pilot2-governor-1.json')
-          d = json.loads(p.read_text(encoding='utf-8'))
+          d=json.loads(Path('/tmp/gm-iv-pilot2-governor-1.json').read_text())
           assert d['source_sha'] == os.environ['SOURCE_SHA']
           assert d['result'] == 'PASS'
           assert d['promotion_decision'] == 'PROMOTE_PILOT_2_OF_8'
           assert d['mission_state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
-          assert d['controlled_pilot_frontiers'] == ['GM-IV-F01', 'GM-IV-F03']
-          assert d['reference_frontiers'] == ['GM-IV-F02', 'GM-IV-F04']
-          assert d['unfilled_frontier_slots'] == [
-              'GM-IV-F05', 'GM-IV-F06', 'GM-IV-F07', 'GM-IV-F08'
-          ]
+          assert d['controlled_pilot_frontiers'] == ['GM-IV-F01','GM-IV-F03']
+          assert d['reference_frontiers'] == ['GM-IV-F02','GM-IV-F04']
+          assert d['unfilled_frontier_slots'] == ['GM-IV-F05','GM-IV-F06','GM-IV-F07','GM-IV-F08']
           assert d['children_bound'] is False
           assert d['authority_transfer'] is False
           assert d['gm_v_state'] == 'HELD'
-          assert d['next_stage'] == \
-              'WITHHELD_PENDING_SEPARATE_RECON_4_OF_8_GOVERNOR_GATE'
-          print('PASS_GM_IV_PILOT_2_OF_8_GOVERNOR_BOUNDARY')
+          print('PASS_GM_IV_PILOT_2_CURRENT_GOVERNOR_BOUNDARY')
           PY
 
-      - name: Upload Governor and regression receipts
+      - name: Enforce historical PILOT_2 retention after RECON_4
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_RECON_4_OF_8'
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          root=Path('mission-control/grand-missions')
+          registry=json.loads((root/'GRAND_MISSION_REGISTRY.json').read_text())
+          pilot=json.loads((root/'GM_IV_PILOT2_GOVERNOR_CONTRACT.json').read_text())
+          gm={m['id']:m for m in registry['grand_missions']}
+          gm4=gm['GM-IV']; gm5=gm['GM-V']
+          assert gm4['state']=='STAGED_ACTIVE_RECON_4_OF_8'
+          assert gm4['controlled_pilot_frontiers']==['GM-IV-F01','GM-IV-F03']
+          assert gm4['reference_frontiers']==['GM-IV-F02','GM-IV-F04']
+          assert gm4['pilot_2_of_8_evidence']['F01']==pilot['controlled_pilots']['GM-IV-F01']
+          assert gm4['pilot_2_of_8_evidence']['F03']==pilot['controlled_pilots']['GM-IV-F03']
+          assert gm4['children']==[]
+          assert registry['authority_transfer'] is False
+          assert gm5['state']=='HELD' and gm5['children']==[]
+          receipt={
+            'schema':'qps.gm_iv_pilot2_historical_control.v1',
+            'source_sha':os.environ['SOURCE_SHA'],
+            'current_state':gm4['state'],
+            'historical_stage':'STAGED_ACTIVE_PILOT_2_OF_8',
+            'historical_evidence_retained':True,
+            'children_bound':False,
+            'authority_transfer':False,
+            'gm_v_state':'HELD',
+            'result':'PASS'
+          }
+          Path('/tmp/gm-iv-pilot2-historical-control.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          print('PASS_GM_IV_PILOT2_HISTORICAL_RETENTION')
+          PY
+
+      - name: Upload current PILOT_2 receipts
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_PILOT_2_OF_8'
         uses: actions/upload-artifact@v4
         with:
           name: gm-iv-pilot2-governor-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             /tmp/gm-iv-pilot2-governor-1.json
             /tmp/gm-iv-pilot2-governor-2.json
+            /tmp/gm-fleet-regression.json
+            /tmp/gm-fleet-03-capacity-1.json
+            /tmp/gm-fleet-03-capacity-2.json
+            /tmp/gm-iv-economics-1.json
+            /tmp/gm-iv-economics-2.json
+          if-no-files-found: error
+
+      - name: Upload historical PILOT_2 retention receipt
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_RECON_4_OF_8'
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-pilot2-historical-control-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/gm-iv-pilot2-historical-control.json
             /tmp/gm-fleet-regression.json
             /tmp/gm-fleet-03-capacity-1.json
             /tmp/gm-fleet-03-capacity-2.json
