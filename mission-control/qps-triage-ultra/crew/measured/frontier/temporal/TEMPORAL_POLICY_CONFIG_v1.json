@@ -22,7 +22,9 @@
     "persistent_or_regression_rex_veto": true,
     "control_eligible_event": "schedule",
     "control_eligible_workflow_path": ".github/workflows/crew-temporal-allocation-policy.yml",
-    "non_control_events_remain_learning_evidence": true
+    "non_control_events_remain_learning_evidence": true,
+    "historical_learning_window_limit": 24,
+    "historical_control_window_limit": 24
   },
   "direction_contract": {
     "single_if_normalized_strength_gte": 0.55,
