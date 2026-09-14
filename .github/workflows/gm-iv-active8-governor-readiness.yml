@@ -1,0 +1,160 @@
+name: GM-IV ACTIVE_8 Governor Readiness
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/**'
+      - '.github/workflows/gm-iv-active8-governor-readiness.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/**'
+      - '.github/workflows/gm-iv-active8-governor-readiness.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  active8-readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact event SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Prove exact-head identity and RECON_4 predecessor ancestry
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          git merge-base --is-ancestor 74919f516eaa12d3245e82eb542eefff26d11d36 HEAD
+
+      - name: Compile Governor controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            mission-control/grand-missions/assess_gm_iv_active8_governor.py \
+            mission-control/grand-missions/validate_gm_fleet.py \
+            mission-control/grand-missions/validate_gm_iv_evidence_economics.py
+
+      - name: Probe F05-F08 exact candidate SHAs with greater-than-zero entries
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p active8-probes
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json')
+          d = json.loads(p.read_text(encoding='utf-8'))
+          for fid in ['GM-IV-F05','GM-IV-F06','GM-IV-F07','GM-IV-F08']:
+              x=d['frontier_evidence'][fid]
+              print(fid, x['repository'], x['target_sha'])
+          PY
+          while read -r fid repo sha; do
+            test -n "$fid"
+            d="active8-probes/$fid"
+            mkdir -p "$d/repo"
+            git -C "$d/repo" init -q
+            git -C "$d/repo" remote add origin "https://github.com/${repo}.git"
+            git -C "$d/repo" fetch -q --depth=1 origin "$sha"
+            git -C "$d/repo" checkout -q --detach FETCH_HEAD
+            observed="$(git -C "$d/repo" rev-parse HEAD)"
+            count="$(find "$d/repo" -mindepth 1 -not -path '*/.git/*' -not -name '.git' | wc -l | tr -d ' ')"
+            test "$observed" = "$sha"
+            test "$count" -gt 0
+            printf '%s\n' "$observed" > "$d/HEAD_SHA"
+            printf '%s\n' "$count" > "$d/ENTRY_COUNT"
+            rm -rf "$d/repo"
+          done < <(python - <<'PY'
+          import json
+          d=json.load(open('mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json',encoding='utf-8'))
+          for fid in ['GM-IV-F05','GM-IV-F06','GM-IV-F07','GM-IV-F08']:
+              x=d['frontier_evidence'][fid]
+              print(fid, x['repository'], x['target_sha'])
+          PY
+          )
+
+      - name: Run fleet capacity control
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/assess_gm_fleet_03.py --out active8-capacity.json
+
+      - name: Run evidence economics control
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/validate_gm_iv_evidence_economics.py
+
+      - name: Run ACTIVE_8 Governor twice and compare receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/assess_gm_iv_active8_governor.py \
+            --contract mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json \
+            --source-sha "$GITHUB_SHA" \
+            --probe-root active8-probes \
+            --out active8-governor-1.json
+          python mission-control/grand-missions/assess_gm_iv_active8_governor.py \
+            --contract mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json \
+            --source-sha "$GITHUB_SHA" \
+            --probe-root active8-probes \
+            --out active8-governor-2.json
+          cmp active8-governor-1.json active8-governor-2.json
+          python - <<'PY'
+          import json
+          r=json.load(open('active8-governor-1.json',encoding='utf-8'))
+          assert r['result']=='PASS'
+          assert r['decision']=='READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR'
+          assert r['canonical_state_after_gate']=='STAGED_ACTIVE_RECON_4_OF_8'
+          assert r['children_bound'] is False
+          assert r['authority_transfer'] is False
+          assert r['gm_v_state']=='HELD'
+          PY
+
+      - name: Negative proof - ACTIVE_8 remains unsupported by canonical fleet validator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import copy, importlib.util, json
+          from pathlib import Path
+          root=Path('mission-control/grand-missions')
+          spec=importlib.util.spec_from_file_location('fleet', root/'validate_gm_fleet.py')
+          fleet=importlib.util.module_from_spec(spec); spec.loader.exec_module(fleet)
+          d=json.load(open(root/'GRAND_MISSION_REGISTRY.json',encoding='utf-8'))
+          gm4=next(x for x in d['grand_missions'] if x['id']=='GM-IV')
+          active=copy.deepcopy(gm4)
+          active['state']='ACTIVE_8_OF_8'
+          active['activation_stage']='ACTIVE_8_OF_8'
+          active['candidate_frontiers']=[f'GM-IV-F{i:02d}' for i in range(1,9)]
+          active['unfilled_frontier_slots']=[]
+          assert not fleet.gm_iv_supported_shape(active)
+          print('PASS_ACTIVE_8_FAIL_CLOSED')
+          PY
+
+      - name: Emit exact-SHA readiness bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p active8-readiness-bundle
+          cp active8-governor-1.json active8-readiness-bundle/ACTIVE8_GOVERNOR_RECEIPT.json
+          cp active8-capacity.json active8-readiness-bundle/CAPACITY_RECEIPT.json
+          cp mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json active8-readiness-bundle/
+          printf '%s\n' "$GITHUB_SHA" > active8-readiness-bundle/SOURCE_SHA.txt
+          sha256sum active8-readiness-bundle/* > active8-readiness-bundle/SHA256SUMS.txt
+
+      - name: Upload exact-SHA ACTIVE_8 readiness evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-active8-readiness-${{ github.sha }}
+          path: active8-readiness-bundle/
+          if-no-files-found: error
+          retention-days: 30
