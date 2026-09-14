@@ -1,0 +1,94 @@
+name: GM-IV Forward Gate Safety
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/validate_gm_fleet.py'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - 'mission-control/grand-missions/test_gm_iv_forward_gate_safety.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/validate_crew_exposure.py'
+      - '.github/workflows/gm-iv-forward-gate-safety.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/validate_gm_fleet.py'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - 'mission-control/grand-missions/test_gm_iv_forward_gate_safety.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/validate_crew_exposure.py'
+      - '.github/workflows/gm-iv-forward-gate-safety.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fail-closed-forward-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          echo "PASS_EXACT_SOURCE_HEAD=$actual"
+
+      - name: Execute forward-gate negative regression proof
+        shell: bash
+        run: |
+          python3 mission-control/grand-missions/test_gm_iv_forward_gate_safety.py \
+            | tee /tmp/gm-iv-forward-gate-safety.json
+          grep -q 'PASS_GM_IV_FORWARD_GATE_SAFETY' \
+            /tmp/gm-iv-forward-gate-safety.json
+
+      - name: Preserve current fleet positive control
+        shell: bash
+        run: |
+          SOURCE_SHA="$(git rev-parse HEAD)" \
+          python3 mission-control/grand-missions/validate_gm_fleet.py \
+            --out /tmp/gm-fleet-forward-safety-positive.json
+          grep -q 'PASS_GM_FLEET_02B' \
+            <(SOURCE_SHA="$(git rev-parse HEAD)" python3 \
+              mission-control/grand-missions/validate_gm_fleet.py \
+              --out /tmp/gm-fleet-forward-safety-repeat.json)
+          cmp \
+            /tmp/gm-fleet-forward-safety-positive.json \
+            /tmp/gm-fleet-forward-safety-repeat.json
+
+      - name: Assert no stage promotion in repair lane
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('mission-control/grand-missions/GRAND_MISSION_REGISTRY.json')
+          d = json.loads(p.read_text(encoding='utf-8'))
+          by_id = {m['id']: m for m in d['grand_missions']}
+          gm4 = by_id['GM-IV']
+          gm5 = by_id['GM-V']
+          assert gm4['state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
+          assert gm4['children'] == []
+          assert gm4['controlled_pilot_frontiers'] == ['GM-IV-F01', 'GM-IV-F03']
+          assert gm4['reference_frontiers'] == ['GM-IV-F02', 'GM-IV-F04']
+          assert gm4['unfilled_frontier_slots'] == [
+              'GM-IV-F05', 'GM-IV-F06', 'GM-IV-F07', 'GM-IV-F08'
+          ]
+          assert gm5['state'] == 'HELD'
+          assert gm5['children'] == []
+          print('PASS_NO_STAGE_PROMOTION_REPAIR_LANE')
+          PY
+
+      - name: Upload exact-SHA safety proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-forward-gate-safety-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/gm-iv-forward-gate-safety.json
+            /tmp/gm-fleet-forward-safety-positive.json
+            /tmp/gm-fleet-forward-safety-repeat.json
+          if-no-files-found: error
