@@ -1,0 +1,125 @@
+name: GM-IV RECON_4 Governor Gate
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/GM_IV_RECON4_GOVERNOR_CONTRACT.json'
+      - 'mission-control/grand-missions/assess_gm_iv_recon4_governor.py'
+      - 'mission-control/grand-missions/GM_IV_PILOT2_GOVERNOR_CONTRACT.json'
+      - 'mission-control/grand-missions/GM_FLEET_03_CAPACITY_CONTRACT.json'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - 'mission-control/grand-missions/MISSION_CITY_GRAPH.json'
+      - 'mission-control/grand-missions/validate_gm_fleet.py'
+      - '.github/workflows/gm-iv-recon4-governor.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_IV_RECON4_GOVERNOR_CONTRACT.json'
+      - 'mission-control/grand-missions/assess_gm_iv_recon4_governor.py'
+      - 'mission-control/grand-missions/GM_IV_PILOT2_GOVERNOR_CONTRACT.json'
+      - 'mission-control/grand-missions/GM_FLEET_03_CAPACITY_CONTRACT.json'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - 'mission-control/grand-missions/MISSION_CITY_GRAPH.json'
+      - 'mission-control/grand-missions/validate_gm_fleet.py'
+      - '.github/workflows/gm-iv-recon4-governor.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recon4-readiness:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          echo "PASS_EXACT_SOURCE_HEAD=$actual"
+
+      - name: Assert predecessor safety control is ancestral
+        shell: bash
+        run: |
+          predecessor="23bbe093784f87feecb33d16fe008c8e041b72ee"
+          git merge-base --is-ancestor "$predecessor" HEAD
+          echo "PASS_PREDECESSOR_CONTROL_ANCESTRY=$predecessor"
+
+      - name: Compile Governor assessor
+        shell: bash
+        run: |
+          python3 -m py_compile \
+            mission-control/grand-missions/assess_gm_iv_recon4_governor.py \
+            mission-control/grand-missions/validate_gm_fleet.py
+
+      - name: Execute RECON_4 Governor readiness gate
+        shell: bash
+        run: |
+          sha="$(git rev-parse HEAD)"
+          python3 mission-control/grand-missions/assess_gm_iv_recon4_governor.py \
+            --source-sha "$sha" \
+            --out /tmp/gm-iv-recon4-governor.json \
+            | tee /tmp/gm-iv-recon4-governor.stdout.json
+          grep -q 'READY_FOR_SEPARATE_RECON_4_PROMOTION_PR' \
+            /tmp/gm-iv-recon4-governor.json
+
+      - name: Repeat readiness gate deterministically
+        shell: bash
+        run: |
+          sha="$(git rev-parse HEAD)"
+          python3 mission-control/grand-missions/assess_gm_iv_recon4_governor.py \
+            --source-sha "$sha" \
+            --out /tmp/gm-iv-recon4-governor-repeat.json \
+            >/tmp/gm-iv-recon4-governor-repeat.stdout.json
+          cmp \
+            /tmp/gm-iv-recon4-governor.json \
+            /tmp/gm-iv-recon4-governor-repeat.json
+
+      - name: Assert gate-only boundary
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path('mission-control/grand-missions')
+          registry = json.loads((root / 'GRAND_MISSION_REGISTRY.json').read_text())
+          receipt = json.loads(Path('/tmp/gm-iv-recon4-governor.json').read_text())
+          missions = {m['id']: m for m in registry['grand_missions']}
+          gm4 = missions['GM-IV']
+          gm5 = missions['GM-V']
+
+          assert receipt['result'] == 'PASS'
+          assert receipt['decision'] == 'READY_FOR_SEPARATE_RECON_4_PROMOTION_PR'
+          assert receipt['check_count'] == 14
+          assert all(receipt['checks'].values())
+          assert receipt['promotion_executed'] is False
+          assert receipt['registry_mutated'] is False
+          assert receipt['mission_city_mutated'] is False
+          assert receipt['children_bound'] is False
+          assert receipt['authority_transfer'] is False
+
+          assert gm4['state'] == 'STAGED_ACTIVE_PILOT_2_OF_8'
+          assert gm4['activation_stage'] == 'PILOT_2_OF_8'
+          assert gm4['children'] == []
+          assert gm5['state'] == 'HELD'
+          assert gm5['children'] == []
+          print('PASS_RECON4_GATE_ONLY_NO_PROMOTION')
+          PY
+
+      - name: Upload exact-SHA Governor readiness receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-recon4-governor-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/gm-iv-recon4-governor.json
+            /tmp/gm-iv-recon4-governor.stdout.json
+            /tmp/gm-iv-recon4-governor-repeat.json
+          if-no-files-found: error
