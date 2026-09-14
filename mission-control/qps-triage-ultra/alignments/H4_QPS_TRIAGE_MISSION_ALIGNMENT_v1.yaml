@@ -1,16 +1,32 @@
-schema: qps-triage-ultra/h4-mission-alignment/1.0
-as_of: '2026-09-14T10:32:00+02:00'
+schema: qps-triage-ultra/h4-mission-alignment/1.1
+as_of: '2026-09-14T10:54:00+02:00'
 mission: H4_QPS_TRIAGE
-status: ACTIVE_ALIGNMENT_PROJECTION
+status: W1_CONTROL_W2_GATED_ALIGNMENT
 authority_transfer: false
 source_fleet_status: mission-control/qps-triage-ultra/EXPEDITION_FLEET_STATUS.md
 source_iteration_ledger: >-
   mission-control/qps-triage-ultra/analytics/
   EXPEDITION_FLEET_ITERATION_LEDGER_v1.json
+canonical_w1_receipt: >-
+  mission-control/qps-triage-ultra/receipts/H4_QPS_TRIAGE_W1_RECEIPT_v1.0.yaml
+canonical_method_profile: >-
+  mission-control/qps-triage-ultra/methods/QPS_TRIAGE_GLOBAL_METHOD_PROFILE_v1.md
 rule: >-
-  This is a scheduling/alignment projection. Existing canonical mission tables
-  and mission-specific receipts remain authoritative. H4 does not rewrite their
-  DoV or consume local/scarce resources without a measured need.
+  This is a scheduling/alignment projection. Existing canonical mission tables,
+  child engineering controls and mission-specific receipts remain authoritative.
+  H4 does not rewrite their DoV or consume local/scarce resources without a
+  measured need.
+
+method_selector:
+  sequence: >-
+    3PR -> MIP only if an observed structural/recurrence gap exists -> 3PC if a
+    bounded transaction/re-entry remains -> one 3P3 only if reusable propagation
+    proof is missing -> STOP
+  current_position: W1_CONTROL_BEFORE_W2_ENTRY
+  repeat_3PR: ONLY_ON_MATERIAL_SOURCE_REPO_PR_OR_EVIDENCE_CHANGE
+  repeat_MIP: ONLY_ON_NEW_STRUCTURAL_OR_RECURRENCE_GAP
+  repeat_3PC: ONLY_FOR_A_NEW_BOUNDED_TRANSACTION
+  repeat_3P3: ONLY_FOR_A_NEW_GENERALISATION_CLASS
 
 alignment:
   - mission_id: W3_12_HEPAK_REFERENCE
@@ -83,29 +99,104 @@ alignment:
 h4_resource_contract:
   local_licensed_capacity: DO_NOT_CONSUME
   cloud_github_capacity: SMALL_PARALLEL_CELLS
-  p1_h1_qps: one child/runtime cell only until EX_GT_0
-  p2_h2_keb: one owner-lane first-red cell only
-  p3_h3_dow: RETURN_TO_CONTROL_AFTER_MERGE
-  h4_coordinator: small persistent control cell
+  p1_h1_qps: ONE_CHILD_RUNTIME_CELL_UNTIL_EX_GT_0
+  p2_h2_keb: RETURN_TO_CONTROL_PASS_CANONICAL
+  p3_h3_dow: RETURN_TO_CONTROL_PASS_CANONICAL
+  h4_coordinator: SMALL_PERSISTENT_CONTROL_CELL
   dashboard_ui: PARK_UNTIL_W2_MODEL_CONTRACT_STABLE
 
 mission_state:
-  current_wave: H4_QPS_TRIAGE:W1
-  current_classification: REPAIR_REENTRY
-  first_blockers:
-    - P1_CRYOPLANT_RUNTIME_PLATFORM_EX_GT_0
-    - P2_CODEX_OWNER_PR_678_EXACT_HEAD_GREEN
+  current_wave: H4_QPS_TRIAGE:W1_CONTROL
+  current_classification: CONTROLLED_PARTIAL_W2_GATED
+  canonical_w1_status: BOUNDED_DOV_WITH_ONE_EXTERNAL_RUNTIME_DEFER
+  current_first_blocker: P1_CRYOPLANT_RUNTIME_PLATFORM_EX_GT_0
+  current_non_compensating_veto: QPS_REPO_LOCAL_RUNNER_923
   closed_or_controlled:
     - MIP_M_APPLICABILITY_V0_3
+    - P1_CHILD_CONTENT_BOUNDARY
+    - P2_KEB_PASS_CANONICAL
     - P3_DOW_FIVE_ATOM_BASELINE
+    - W1_METHOD_BURN_IN
   planned:
     - H4_QPS_TRIAGE:W2_3PC_PLUS_MIP_I
     - H4_QPS_TRIAGE:W3_3P3_PLUS_MIP_P
 
+three_wave_burn_in:
+  W1:
+    method: 3PR_PLUS_MIP_M
+    state: CONTROL_BOUNDED_DOV
+    purpose: REFRESH_AUTHORITY_SEMANTICS_MEASUREMENT_AND_MODERNIZE_APPLICABILITY
+    residual: P1_RUNTIME_KR_EXTERNAL_DEFER
+  W2:
+    method: 3PC_PLUS_MIP_I
+    state: HOLD_ENTRY_GATE
+    preferred_atom: COLD_COMPRESSOR_TRAIN
+    fallback_atom: ALAT_HP_COMPRESSOR
+    purpose: ONE_EXACT_SOURCE_TO_CHILD_REENTRY_TRANSACTION_PLUS_SHARED_OPERATING_STATE_LEDGER_ADAPTER
+    release_condition: ONE_INTENDED_CRYOPLANT_EXACT_HEAD_VALIDATION_WITH_EX_GT_0_AND_DURABLE_KR_OR_EXPLICIT_BOUNDED_WAIVER
+  W3:
+    method: 3P3_PLUS_MIP_P
+    state: GATED_BY_W2_LOCAL_DOV
+    purpose: ONE_REUSABLE_PROPAGATION_PROOF_PLUS_REX_RESTART_RECURRENCE_CONTROL
+    stop: ONE_PROPAGATION_PROOF_THEN_STOP
+
+next_goals:
+  P0:
+    owner: CRYOPLANT_RUNTIME_PLATFORM_LANE
+    goal: ONE_INTENDED_EXACT_HEAD_QPS_TRIAGE_APPLICABILITY_VALIDATION_WITH_EX_GT_0_AND_DURABLE_KR
+    credit_effect: P1_RUNTIME_RECEIPT_ONLY
+  P1:
+    owner: H4_QPS_TRIAGE
+    goal: RELEASE_OR_KEEP_HOLD_ON_W2_FROM_THE_P1_RUNTIME_RECEIPT
+    rule: NO_W2_PREPARE_PROVE_COMMIT_BEFORE_ENTRY_GATE
+  P2:
+    owner: H1_QPS_H3_DOW_WITH_H2_SUPPORT
+    goal: W2_ONE_ATOM_PREPARE_PROVE_COMMIT_IF_RELEASED
+  P3:
+    owner: H4_QPS_TRIAGE
+    goal: W3_ONE_PROPAGATION_PROOF_IF_W2_LOCAL_DOV_AND_REUSABLE_GLOBAL_PROOF_STILL_MISSING
+
+session_plan:
+  QRT_A_APPLICABILITY_CONTROL:
+    owner: H4_QPS_TRIAGE_PLUS_H1_QPS
+    goal: maintain child profile, exact-SHA runtime receipt and W2 entry decision
+    current_state: ACTIVE_ON_P1_RUNTIME_ONLY
+  QRT_B_EVIDENCE_BURNDOWN:
+    owner: H1_QPS
+    goal: cold-compressor-train source and architecture evidence for W2 preferred atom
+    current_state: PREPARE_NON_PROMOTING_SOURCE_CENSUS_ONLY
+  QRT_C_TRANSACTION_RUNTIME:
+    owner: H3_DOW_WITH_H2_KEB
+    goal: deterministic W2 prove path and independent provenance/runtime receipt
+    current_state: GATED_BY_W2_RELEASE
+  QRT_D_PRESENTATION_REUSE:
+    owner: TOOLING_PRESENTATION
+    goal: return controlled outputs to DOCX_XLSX_PPTX_HTML after model and authority contract stability
+    current_state: PARK
+  S_H4:
+    goal: portfolio roll-up, receipts, reallocation, stop and restart decisions
+  S_H1:
+    goal: source consequence architecture Table-10 and engineering re-entry only
+  S_H2:
+    goal: semantics provenance state separation and exact-source challenge only
+  S_H3:
+    goal: executable proof metrics independent calculations and delivery QA only
+
+parallel_noncompensating_fronts:
+  G6_release_identity: ACTIVE_SEPARATE_FRONT
+  visual_N200: ACTIVE_SEPARATE_FRONT
+  OFFER_workbook_delta: ACTIVE_SEPARATE_FRONT
+  W152_evidence_return: ACTIVE_SEPARATE_FRONT
+  QPS_REPO_LOCAL_RUNNER_923: NON_COMPENSATING_VETO
+
 no_growth_rules:
-  - no_full_106_row_QPS_ingestion_in_W1
+  - no_full_QPS_corpus_ingestion_before_measured_need
   - no_new_provenance_framework
   - no_new_semantic_controller
+  - no_new_child_reliability_engineering_lane
+  - TRIAGE_RELIABILITY_is_analytical_overlay_only
   - no_local_HEPAK_resource_consumption
   - no_dashboard_feature_expansion_before_W2_contract
   - no_PCA_until_comparable_population_exists
+  - no_W2_credit_while_P1_runtime_KR_is_withheld
+  - no_W3_fanout_before_W2_local_DOV
