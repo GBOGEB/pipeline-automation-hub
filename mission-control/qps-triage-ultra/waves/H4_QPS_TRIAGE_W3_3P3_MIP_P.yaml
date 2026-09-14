@@ -1,26 +1,140 @@
-schema: qps-triage-ultra/h4-w3-3p3-mip-p/1.0
-as_of: '2026-09-14T10:22:00+02:00'
+schema: qps-triage-ultra/h4-w3-3p3-mip-p/1.1
+as_of: '2026-09-14T10:50:00+02:00'
 mission: H4_QPS_TRIAGE
 wave: H4_QPS_TRIAGE:W3
-lifecycle_state: PLANNED
-runtime_state: GATED
+lifecycle_state: PROPAGATION_PREFLIGHT_BOUND
+runtime_state: FORMAL_EXECUTION_GATED_BY_W2_LOCAL_DOV
 method: 3P3_PLUS_MIP_P
 authority_class: MISSION_CONTROL_ORCHESTRATION_ONLY
 authority_transfer: false
+formal_wave_started: false
+formal_qps_credit_delta: 0
 
 entry_conditions:
-  - W2_LOCAL_DOV_SATISFIED
-  - ONE_BOUNDED_REENTRY_TRANSACTION_HAS_DURABLE_RECEIPT
-  - REUSABLE_GLOBAL_PROPAGATION_PROOF_IS_STILL_MISSING
+  W2_LOCAL_DOV_SATISFIED:
+    state: NOT_YET
+    reason: FORMAL_W2_REMAINS_GATED_BY_CHILD_RUNTIME
+  ONE_BOUNDED_REENTRY_TRANSACTION_HAS_DURABLE_RECEIPT:
+    state: NOT_YET
+  REUSABLE_GLOBAL_PROPAGATION_PROOF_IS_STILL_MISSING:
+    state: YES_CANDIDATE
+    note: >-
+      W1 proves method/applicability/semantic/measurement burn-in, but no W2
+      source-to-child transaction has yet been packaged and propagated as the
+      reusable reliability transaction contract.
 
 intent: >-
   Run exactly one reusable propagation/generalisation proof for the canonical QPS
   TRIAGE reliability pattern, then perpetuate the proven controls through REX,
   restart and recurrence surfaces. Do not fan out merely for repository symmetry.
 
+nonblocking_preflight:
+  disposition: PASS_PLANNING_ONLY_NO_PROPAGATION
+  w1_canonical_receipt:
+    path: mission-control/qps-triage-ultra/receipts/H4_QPS_TRIAGE_W1_RECEIPT_v1.0.yaml
+    merge_sha: 3029059ffe08a7a8ba03afab074f568e406ae504
+  w2_preflight_dependency:
+    path: mission-control/qps-triage-ultra/waves/H4_QPS_TRIAGE_W2_3PC_MIP_I.yaml
+    state: PREPARE_PREFLIGHT_BOUND_FORMAL_GATE_HELD
+    preferred_atom: COLD_COMPRESSOR_TRAIN
+  reusable_package_skeleton:
+    authority_invariants:
+      - QPS_CHILD_DISPOSITION_REMAINS_IN_GBOGEB_CRYOPLANT_PROJECT
+      - MISSION_CONTROL_AUTHORITY_TRANSFER_FALSE
+      - TOOLING_OR_MODEL_ACCEPT_NE_CHILD_ACCEPT
+      - COMPONENT_MTBF_NE_SYSTEM_EVENT_MTBF
+      - TABLE10_PROMOTION_REQUIRES_CHILD_REENTRY
+      - PCA_BT_PB_NE_AUTHORITY
+    source_model_state_contract:
+      origin_enum: [SOURCE_BOUND, SCENARIO, USER_OVERRIDE]
+      model_state_enum: [ACTIVE, SCENARIO_ONLY, EXCLUDED]
+      child_disposition_and_model_state_must_remain_separate: true
+    exact_identity_contract:
+      required:
+        - source_repo
+        - source_commit_or_exact_artifact_identity
+        - source_path_or_locator
+        - consumer_repo
+        - consumer_commit_or_exact_artifact_identity
+        - consumer_path_or_version
+        - durable_execution_receipt
+      exact_identity_must_survive_propagation: true
+    execution_contract:
+      required: [EX_GT_0, QH_PASS, DURABLE_KR]
+      zero_step_or_runner_id_zero_is_not_proof: true
+    child_reentry_contract:
+      required_for_engineering_promotion: true
+      no_automatic_promotion_from_independent_consumer: true
+    stop_contract:
+      propagation_count_in_wave: 1
+      symmetry_fanout_forbidden: true
+      further_target_requires_new_observed_consumer_need: true
+  restart_card_skeleton:
+    trigger: >-
+      Start W3 only after W2 local DoV and one durable bounded re-entry receipt.
+    first_action: >-
+      Re-read the exact W2 receipt, freeze one target identity and rerun the
+      authority/source/model-state invariants before any target integration.
+    stop_on:
+      - LOCAL_W2_DOV_NOT_PROVEN
+      - TARGET_IDENTITY_NOT_EXACT
+      - SOURCE_LINEAGE_LOST
+      - STATE_CLASS_COLLAPSE
+      - AUTHORITY_TRANSFER_DETECTED
+      - FIRST_PROPAGATION_RED
+
+candidate_target_assessment:
+  QPS_COST_MASTER_RELIABILITY_VIEW:
+    current_demand: HIGH
+    independence_value: HIGH_FOR_CROSS_DOMAIN_NUMERICAL_CONSUMPTION
+    method_value: HIGH
+    rationale: >-
+      This target directly exercises the W2 MIP-I shared operating-state ledger
+      boundary between reliability exposure and the existing numerical COST/OPEX
+      SSOT without creating a second master.
+    current_gate: >-
+      QRT-D outward-pack control and G6 release identity/parity remain separately
+      gated. Do not propagate reliability into a substitute or ungoverned COST
+      release while that consumer identity is unresolved.
+    selection_state: PREFERRED_CONDITIONAL_TARGET
+  QPS_OFFER_EVALUATION_RELIABILITY_EVIDENCE_VIEW:
+    current_demand: HIGH
+    independence_value: MEDIUM
+    method_value: MEDIUM
+    current_gate: >-
+      OFFER evaluation has its own W176 source/scoring/generator controls. A W3
+      propagation must remain an evidence view and must not couple reliability
+      model state to scoring or procurement acceptance.
+    selection_state: FALLBACK_IF_COST_TARGET_NOT_READY
+  GLOBAL_GBOGEB_TRIAGE_CONSUMER:
+    current_demand: MEDIUM
+    independence_value: HIGH
+    method_value: MEDIUM
+    current_gate: >-
+      CODEX and ABACUS already participated in W1 semantic/runtime burn-in; a
+      generic global consumer would add less new information unless a concrete
+      current consumer need appears after W2.
+    selection_state: HOLD_NO_SYMMETRY_FANOUT
+
+target_selection_predecision:
+  preferred: QPS_COST_MASTER_RELIABILITY_VIEW
+  status: CONDITIONAL_NOT_COMMITTED
+  selection_release_conditions:
+    - W2_LOCAL_DOV_SATISFIED
+    - ONE_DURABLE_W2_REENTRY_RECEIPT
+    - TARGET_HAS_EXACT_GOVERNED_RELEASE_OR_ARTIFACT_IDENTITY
+    - TARGET_CAN_CONSUME_WITHOUT_BECOMING_AUTHORITY
+  fallback_rule: >-
+    If the COST target remains blocked by its independent identity gate after W2
+    local DoV, choose the OFFER evidence view only if its exact consumer identity
+    is governed and the propagation adds independent value. Otherwise STOP and
+    do not create a generic global fanout merely to complete W3.
+
 three_pulse_generalisation:
   - pulse: H4-QPS-W3-P1
     method_step: PACKAGE
+    formal_state: HOLD_W2_LOCAL_DOV
+    preflight_state: PACKAGE_SKELETON_DEFINED_NO_W2_TRANSACTION_PAYLOAD
     primary_lane: H4_QPS_TRIAGE
     supporting_lanes: [H1_QPS, H2_KEB, H3_DOW]
     objective: >-
@@ -37,6 +151,8 @@ three_pulse_generalisation:
 
   - pulse: H4-QPS-W3-P2
     method_step: PROPAGATE_ONCE
+    formal_state: HOLD_W2_LOCAL_DOV
+    preflight_state: TARGET_RANKED_NOT_TOUCHED
     primary_lane: H3_DOW
     supporting_lanes: [H2_KEB, H4_QPS_TRIAGE]
     objective: >-
@@ -60,6 +176,8 @@ three_pulse_generalisation:
 
   - pulse: H4-QPS-W3-P3
     method_step: CONTROL
+    formal_state: HOLD_W2_LOCAL_DOV
+    preflight_state: CONTROL_TEMPLATE_DEFINED_NO_REX_CREDIT
     primary_lane: H4_QPS_TRIAGE
     supporting_lanes: [H2_KEB, H3_DOW]
     objective: >-
@@ -75,6 +193,8 @@ three_pulse_generalisation:
 
 mip_perpetuation:
   phase: P_PERPETUATE
+  formal_state: NOT_STARTED
+  preflight_state: CONTROL_CONTRACT_DEFINED
   required_controls:
     - exact_SHA_or_exact_artifact_receipt
     - authority_class_regression_gate
@@ -90,13 +210,13 @@ mip_perpetuation:
 
 CG: GLOBAL_REUSABLE_QPS_TRIAGE_PATTERN_PROVED_ONCE_AND_CONTROLLED
 BG: W2_LOCAL_DOV_NOT_YET_SATISFIED
-EX: NOT_STARTED
-QH: NOT_STARTED
-KR: NOT_STARTED
-DR: GATED_BY_W2
+EX: NOT_STARTED_FORMAL
+QH: NOT_STARTED_FORMAL
+KR: PREFLIGHT_PACKAGE_ONLY
+DR: TARGET_PREDECISION_READY_GATE_HELD
 SR: CANONICAL_METHOD_PROFILE_READY
-WD: HOLD_UNTIL_W2_DOV
-PB: ZERO_UNTIL_W3_STARTS
+WD: HOLD_FORMAL_W3_ALLOW_PACKAGE_AND_TARGET_PREFLIGHT_ONLY
+PB: PREFLIGHT_PROGRESS_ONLY_ZERO_AUTHORITY_CREDIT
 
 victory_condition: >-
   One independent propagation receipt proves the reusable contract, REX and
@@ -104,5 +224,7 @@ victory_condition: >-
   instead of growing a permanent new framework lane.
 
 stop_rule: >-
-  After the one propagation proof and MIP-P control hooks pass, STOP. Additional
-  repositories require a new observed consumer need; symmetry is not a reason.
+  After the one propagation proof and MIP-P control hooks pass, STOP. While W2
+  local DoV is absent, permit only package skeletons, target assessment, restart
+  logic and invariant definition. Do not modify candidate consumers, emit a
+  propagation PASS, create REX control credit or fan out across repositories.
