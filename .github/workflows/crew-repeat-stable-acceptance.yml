@@ -6,6 +6,8 @@ on:
     paths:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/REPEAT_STABLE_ACCEPTANCE_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/validate_repeat_stable_acceptance.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/build_temporal_policy.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_scheduled_control_frontier.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json'
       - '.github/workflows/crew-repeat-stable-acceptance.yml'
   push:
@@ -13,6 +15,8 @@ on:
     paths:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/REPEAT_STABLE_ACCEPTANCE_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/validate_repeat_stable_acceptance.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/build_temporal_policy.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_scheduled_control_frontier.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json'
       - '.github/workflows/crew-repeat-stable-acceptance.yml'
   workflow_dispatch:
@@ -43,3 +47,6 @@ jobs:
           python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/validate_repeat_stable_acceptance.py
           --acceptance mission-control/qps-triage-ultra/crew/measured/frontier/temporal/REPEAT_STABLE_ACCEPTANCE_v1.json
           --config mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json
+      - name: Prove scheduled-only CONTROL frontier
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_scheduled_control_frontier.py
