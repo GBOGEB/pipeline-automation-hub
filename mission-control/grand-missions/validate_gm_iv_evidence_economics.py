@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate GM-IV evidence economics without promoting pilot labels into children."""
+"""Validate GM-IV evidence economics without promoting recon labels into children."""
 
 from __future__ import annotations
 
@@ -26,11 +26,11 @@ def main() -> int:
     gm5 = gm["GM-V"]
 
     ok(
-        "01_pilot_2_of_8",
-        inv["mission_stage"] == "PILOT_2_OF_8"
-        and gm4["state"] == "STAGED_ACTIVE_PILOT_2_OF_8"
-        and gm4["activation_stage"] == "PILOT_2_OF_8",
-        "GM-IV registry and economics agree on PILOT_2_OF_8",
+        "01_recon_4_of_8",
+        inv["mission_stage"] == "RECON_4_OF_8"
+        and gm4["state"] == "STAGED_ACTIVE_RECON_4_OF_8"
+        and gm4["activation_stage"] == "RECON_4_OF_8",
+        "GM-IV registry and economics agree on RECON_4_OF_8",
     )
     ok(
         "02_zero_children",
@@ -38,34 +38,40 @@ def main() -> int:
         "GM-IV canonical children remain empty",
     )
     ok(
-        "03_controlled_pilot_pair",
-        inv["controlled_pilot_frontiers"] == ["GM-IV-F01", "GM-IV-F03"]
-        and gm4.get("controlled_pilot_frontiers") == ["GM-IV-F01", "GM-IV-F03"],
-        "F01 and F03 are the controlled pilot pair",
+        "03_named_recon_frontiers",
+        inv["named_recon_frontiers"] == ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"]
+        and gm4.get("candidate_frontiers") == ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"],
+        "F01-F04 are the four named controlled-recon frontier identities",
     )
     ok(
-        "04_reference_frontiers",
+        "04_controlled_pilot_pair",
+        inv["controlled_pilot_frontiers"] == ["GM-IV-F01", "GM-IV-F03"]
+        and gm4.get("controlled_pilot_frontiers") == ["GM-IV-F01", "GM-IV-F03"],
+        "F01 and F03 remain the controlled pilot pair",
+    )
+    ok(
+        "05_reference_frontiers",
         inv["reference_frontiers"] == ["GM-IV-F02", "GM-IV-F04"]
         and gm4.get("reference_frontiers") == ["GM-IV-F02", "GM-IV-F04"],
         "F02 and F04 remain references",
     )
     ok(
-        "05_unfilled_f05_f08",
+        "06_unfilled_f05_f08",
         inv["unfilled_frontier_slots"] == ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"]
         and gm4.get("unfilled_frontier_slots") == ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
         "only F05-F08 remain unfilled",
     )
     ok(
-        "06_no_child_binding_or_authority_leakage",
+        "07_no_child_binding_or_authority_leakage",
         inv["f03_child_bound"] is False
         and inv["f04_child_bound"] is False
         and inv["pilot_frontier_labels_do_not_imply_children"] is True
         and ledger["authority_transfer"] is False
         and gm4["children"] == [],
-        "pilot/reference frontier labels do not bind children or transfer authority",
+        "recon/pilot/reference frontier labels do not bind children or transfer authority",
     )
     ok(
-        "07_gmv_held",
+        "08_gmv_held",
         inv["gm_v_state"] == "HELD"
         and gm5["state"] == "HELD"
         and gm5["children"] == [],
@@ -74,12 +80,12 @@ def main() -> int:
 
     rows = ledger["rows"]
     ok(
-        "08_three_measured_rows",
+        "09_three_measured_rows",
         len(rows) == 3 and all(r["evidence_class"] == "MEASURED" for r in rows),
         "three measured Ring2 economics rows",
     )
     ok(
-        "09_no_fabricated_crew_time",
+        "10_no_fabricated_crew_time",
         all(
             r["crew_time_seconds"] is None
             and r["crew_time_status"] == "NOT_INSTRUMENTED"
@@ -88,12 +94,12 @@ def main() -> int:
         "crew time remains explicit telemetry gap",
     )
     ok(
-        "10_no_slot_or_child_binding_from_economics",
+        "11_no_slot_or_child_binding_from_economics",
         all(r["slot_bound"] is False and r["child_bound"] is False for r in rows),
         "economics rows cannot bind frontier slots or children",
     )
     ok(
-        "11_no_authority_transfer",
+        "12_no_authority_transfer",
         ledger["authority_transfer"] is False
         and all(r["authority_transfer"] is False for r in rows),
         "authority remains external to economics",
@@ -108,7 +114,7 @@ def main() -> int:
         )
         rates_ok = rates_ok and abs(expected - row["evidence_rate"]) < 1e-9
     ok(
-        "12_evidence_rate_math",
+        "13_evidence_rate_math",
         rates_ok,
         "evidence_rate = accepted_evidence_units / execute_seconds",
     )
@@ -118,23 +124,23 @@ def main() -> int:
     full = by_id["GMIV_RING2_SCOUT_B_FULL_RUNTIME_PRUNED"]
     ratio = prov["evidence_rate"] / full["evidence_rate"]
     ok(
-        "13_provenance_efficiency_signal",
+        "14_provenance_efficiency_signal",
         ratio > 40 and full["payload_execute_seconds"] == 62,
         f"provenance/full-runtime evidence-rate ratio={ratio:.6f}",
     )
     ok(
-        "14_pruned_runtime_disposition",
+        "15_pruned_runtime_disposition",
         full["disposition"] == "PRUNE_FULL_RUNTIME_KEEP_PROVENANCE_REFERENCE",
         "redundant runtime remains pruned",
     )
     ok(
-        "15_local_model_scope",
+        "16_local_model_scope",
         scope["evidence_economics_models"] == "LOCAL_GMIV_RING2_ECONOMICS_ONLY"
         and "SEPARATE_MEASURED_CREW_PC3" in scope["global_model_context"],
         "local economics gate does not override separate global models",
     )
     ok(
-        "16_pca_bt_fail_closed_locally",
+        "17_pca_bt_fail_closed_locally",
         ledger["pca_gate"]["scope"] == "LOCAL_GMIV_RING2_EVIDENCE_ECONOMICS"
         and ledger["pca_gate"]["state"] == "DEFER"
         and ledger["bt_gate"]["scope"] == "LOCAL_GMIV_RING2_EVIDENCE_ECONOMICS"
@@ -149,7 +155,7 @@ def main() -> int:
         "passed": passed,
         "denominator": len(checks),
         "checks": checks,
-        "fleet_invariant": "GM-IV PILOT_2_OF_8; controlled F01/F03; references F02/F04; children=0; F05-F08 unfilled; GM-V HELD",
+        "fleet_invariant": "GM-IV RECON_4_OF_8; named F01-F04; controlled F01/F03; references F02/F04; children=0; F05-F08 unfilled; GM-V HELD",
         "model_scope": "LOCAL_GMIV_RING2_EVIDENCE_ECONOMICS",
         "authority_transfer": False,
     }
