@@ -1,0 +1,191 @@
+schema: qps-triage-ultra/h4-w1-receipt/1.0
+as_of: '2026-09-14T10:52:00+02:00'
+mission: H4_QPS_TRIAGE
+wave: H4_QPS_TRIAGE:W1
+method: 3PR_PLUS_MIP_M
+status: BOUNDED_DOV_WITH_ONE_EXTERNAL_RUNTIME_DEFER
+authority_transfer: false
+formal_qps_credit_delta: 0
+supersedes: mission-control/qps-triage-ultra/receipts/H4_QPS_TRIAGE_W1_RECEIPT_v0.1.yaml
+
+purpose: >-
+  Canonical W1 burn-in receipt after the applicability modernization, child
+  authority boundary, KEB semantic repair and DOW five-atom measurement have
+  all reached durable repository dispositions. One exact-head child runtime
+  receipt remains explicitly deferred to the existing cryoplant runner/platform
+  lane; that external execution limitation does not become false PASS credit.
+
+method_result:
+  selector: >-
+    3PR -> MIP if observed structural/recurrence gap -> 3PC if transactional ->
+    one 3P3 if reusable generalisation proof is missing -> STOP
+  disposition: BURNED_IN
+  next_rule: >-
+    Do not repeat W1 3PR unless material source, repo, PR or evidence state
+    changes. Re-enter only on the retained P1 runtime blocker or a genuinely new
+    triage applicability defect.
+
+mip_m:
+  disposition: PASS_CANONICAL
+  repo: GBOGEB/DOCX_RTM_Automation
+  pr: 56
+  merge_sha: a3bc7919bfc0c8d4ba572a6d6c95628406875c4b
+  canonical_effect:
+    - TRIAGE_RELIABILITY analytical-consumer lane
+    - QPS child, tooling, reliability-model and mission state classes separated
+    - SOURCE_BOUND / SCENARIO / USER_OVERRIDE origin preserved
+    - Mission Control projection authority_transfer=false
+    - 3PR / MIP / 3PC / 3P3 applicability encoded by reference to existing controller semantics
+    - QPS OFFER v7.1 triage alignment retained
+  qps_engineering_delta: 0
+
+pulses:
+  - pulse: H4-QPS-W1-P1
+    lane: H1_QPS
+    repo: GBOGEB/cryoplant-project
+    pr: 1121
+    merge_sha: 342bc5a601a6e9d102722bfec1a0a291787d3b54
+    content_disposition: PASS_CANONICAL
+    runtime_disposition: DEFER_RUNTIME_PLATFORM
+    KR: WITHHELD_EXTERNAL_EXECUTION_BLOCKER
+    evidence:
+      source_atom: ALAT_HP_COMPRESSOR
+      source_blob_sha: 1cd312315325991100d90d3f4b2ef51e6796bad6
+      component_mtbf_h: 333450
+      component_mttr_h: 78
+      component_math_allowed: true
+      system_event_promotion_allowed: false
+      table10_rate_delta_per_year: 0.0
+      first_engineering_red: GHP03_N_MINUS_1_CAPACITY
+      follow_on_order:
+        - GHP03_N_MINUS_1_CAPACITY
+        - GHP04_PRESERVED_STATE
+        - GHP05_RECOVERY
+        - GHP06_COMMON_CAUSE
+        - GHP07_ACCEPTANCE_TRACE
+        - TABLE10_REENTRY_REVIEW
+    external_blocker: >-
+      The cryoplant exact-head runner-family path did not provide the intended
+      EX>0 child validation receipt. Ownership remains with the existing
+      cryoplant runtime/platform lane. Do not reopen the reliability method lane
+      to compensate for runner/platform execution.
+
+  - pulse: H4-QPS-W1-P2
+    lane: H2_KEB
+    repo: GBOGEB/CODEX
+    primary_pr: 679
+    primary_merge_sha: 4bb63f49cb285796ab696fdfc020ad2953550f5f
+    repair_pr: 680
+    repair_merge_sha: efa47b1353a67595c4302616fa07817871e957e5
+    owner_semantic_pr: 678
+    owner_semantic_merge_sha: be763c10fb0c8575ce1d9f36700316be3a05d912
+    disposition: PASS_CANONICAL
+    EX: PASS
+    QH: PASS
+    KR: PASS_EXACT_HEAD
+    exact_head_proof:
+      semantic_runtime: PASS
+      w003_governance: PASS
+      runtime_federation: PASS
+      validate_federation: PASS
+      qps_canonicalization: PASS
+      full_stack_governance: PASS
+      normal_ci_test_steps: PASS
+    first_reds_repaired:
+      - inherited A7.2 semantic vocabulary debt through owner PR 678
+      - stale 8-tuple test expectation updated to 10 tuples / 9 edges
+      - accidental semantic-prefixed P2 metadata key replaced by existing owner-lane naming
+      - invalid S1-P2R PR metadata replaced by governed S1-P2 identity
+    stop: H2_EXPANSION_STOP
+
+  - pulse: H4-QPS-W1-P3
+    lane: H3_DOW
+    repo: GBOGEB/ABACUS
+    pr: 1202
+    merge_sha: 2b11e7f4d7f68cfef5f07247fcb6700c3e025b03
+    disposition: PASS_CANONICAL
+    EX: PASS
+    QH: PASS
+    KR: PASS
+    measured_baseline:
+      pilot_atoms: 5
+      real_source_bound_atoms: 1
+      real_source_bound_coverage: 0.20
+      deterministic_component_math_bound: 1
+      deterministic_component_math_coverage: 0.20
+      system_consequence_bound: 0
+      system_consequence_coverage: 0.00
+      table10_promotable_atoms: 0
+      table10_promotion_coverage: 0.00
+      exact_source_blob_bound_atoms: 1
+    pca: DEFER_INSUFFICIENT_COMPARABLE_POPULATION
+    bt_role: SCHEDULING_ONLY
+    preferred_next_atom_order:
+      - COLD_COMPRESSOR_TRAIN
+      - PVPS
+      - TURBINE_EXPANDER
+      - QPLANT_CLASS_A_SYSTEM
+    stop: P3_RETURN_TO_CONTROL
+
+state_vector:
+  CG: W1_BOUNDED_DOV_CANONICAL_WITH_EXTERNAL_P1_RUNTIME_DEFER
+  BG: CRYOPLANT_RUNTIME_PLATFORM_EX_GT_0_RECEIPT_MISSING
+  EX: PARTIAL_DUE_ONLY_TO_P1_EXTERNAL_RUNTIME
+  QH: PASS_FOR_CANONICAL_CONTENT_AND_P2_P3_RUNTIME
+  KR: P2_PASS_P3_PASS_P1_WITHHELD_EXTERNAL
+  DR: PARTIAL_READY
+  SR: PASS_CANONICAL_APPLICABILITY_V0_3
+  WD: HOLD_W2_COMMIT_CONTINUE_ONLY_EXISTING_P1_RUNTIME_BLOCKER
+  PB:
+    mip_m: 1.0
+    p1_content: 1.0
+    p1_runtime_kr: 0.0
+    p2: 1.0
+    p3: 1.0
+    authority_note: PB_IS_PROGRESS_ONLY_NOT_ENGINEERING_CREDIT
+
+w1_dov:
+  method_burn_in: PASS
+  applicability_modernization: PASS
+  child_authority_boundary: PASS_CANONICAL
+  child_exact_head_runtime: DEFER_EXTERNAL_PLATFORM
+  semantic_provenance_challenge: PASS_CANONICAL
+  independent_five_atom_measurement: PASS_CANONICAL
+  qps_engineering_promotion: WITHHELD
+  table10_promotion: WITHHELD
+  session_classification: CONTROLLED_PARTIAL
+
+w2_gate:
+  wave: H4_QPS_TRIAGE:W2
+  method: 3PC_PLUS_MIP_I
+  planning: PASS
+  prepare: HOLD
+  prove: HOLD
+  commit: HOLD
+  release_condition: >-
+    Either obtain one intended cryoplant exact-head child validation with EX>0
+    and durable KR, or H4 records a future explicitly justified bounded waiver
+    that preserves the same proof requirement without pretending the missing
+    runtime receipt exists.
+  preferred_atom_after_release: COLD_COMPRESSOR_TRAIN
+  fallback_atom: ALAT_HP_COMPRESSOR
+  innovation_scope: SHARED_OPERATING_STATE_LEDGER_ADAPTER_ONLY
+
+w3_gate:
+  wave: H4_QPS_TRIAGE:W3
+  method: 3P3_PLUS_MIP_P
+  state: GATED_BY_W2_LOCAL_DOV
+  rule: ONE_PROPAGATION_PROOF_THEN_STOP
+
+next_narrow_victory:
+  owner: CRYOPLANT_RUNTIME_PLATFORM_LANE
+  goal: one intended exact-head child validation with EX_GT_0 and retained KR
+  effect_on_h4: >-
+    Promote P1 runtime receipt only. Do not change GHP03 or Table-10 status unless
+    separate engineering evidence changes those child gates.
+
+stop_rule: >-
+  W1 is closed for method/applicability/semantic/measurement expansion. The only
+  retained W1 blocker is the external P1 runtime proof. No full-QPS ingestion,
+  new semantic framework, new provenance layer, PCA expansion or dashboard
+  feature growth is authorized by this receipt.
