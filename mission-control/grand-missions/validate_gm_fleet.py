@@ -7,6 +7,19 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 
+# Only stages with a complete shape contract may be accepted by the generic
+# fleet validator. Forward stages remain fail-closed until their separate
+# Governor defines and proves the full stage-specific invariants.
+SUPPORTED_GM_IV_STATES = {
+    "HELD",
+    "STAGED_ACTIVE_RECON_2_OF_8",
+    "STAGED_ACTIVE_PILOT_2_OF_8",
+}
+FORWARD_GM_IV_STATES_REQUIRING_GOVERNOR = {
+    "STAGED_ACTIVE_RECON_4_OF_8",
+    "ACTIVE_8_OF_8",
+}
+
 
 def load(name):
     with (ROOT / name).open("r", encoding="utf-8") as f:
@@ -74,14 +87,7 @@ def main():
     ok("07_gm_iii_four_frontier_genealogy", len(genealogy["missions"]["GM-III"]["frontiers"]) == 4 and len(gm["GM-III"]["children"]) == 4, "four frontiers")
 
     gm_iv = gm["GM-IV"]
-    allowed_gm_iv_states = {
-        "HELD",
-        "STAGED_ACTIVE_RECON_2_OF_8",
-        "STAGED_ACTIVE_PILOT_2_OF_8",
-        "STAGED_ACTIVE_RECON_4_OF_8",
-        "ACTIVE_8_OF_8",
-    }
-    gm_iv_state_ok = gm_iv["state"] in allowed_gm_iv_states
+    gm_iv_state_ok = gm_iv["state"] in SUPPORTED_GM_IV_STATES
     gm_iv_stage_ok = True
     if gm_iv["state"] == "STAGED_ACTIVE_RECON_2_OF_8":
         gm_iv_stage_ok = (
