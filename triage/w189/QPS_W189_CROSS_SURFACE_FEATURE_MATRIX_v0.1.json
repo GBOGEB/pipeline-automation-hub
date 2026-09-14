@@ -11,7 +11,10 @@
   "pca_feature_columns":["repositories_observed","artifact_units","runtime_vectors","lineage_nodes","lineage_edges","runtime_first_red_present"],
   "constant_columns_excluded_from_pca":["specialist_outputs","breadth_ratio","runner_assigned"],
   "acceptance_dependent_columns_excluded_from_pca":["depth_ratio","penetration","accepted_sample"],
-  "accepted_n3_reference": {"state":"MEASURED_SMALL_N_ACCEPTED","explained_variance_ratio":[0.827676357,0.172323643]},
+  "accepted_n3_reference": {
+    "state":"MEASURED_SMALL_N_ACCEPTED",
+    "explained_variance_ratio":[0.827676357,0.172323643]
+  },
   "measured_n4_stability": {
     "state":"MEASURED_SMALL_N_N4_PC1_STABLE_PC2_ROTATING",
     "standardization":"COLUMN_ZSCORE_SAMPLE_STD_DDOF_1",
@@ -24,8 +27,31 @@
     "guard":"SMALL_N_DESCRIPTIVE_ONLY_NO_CAUSAL_GLOBAL_OR_RESOURCE_OPTIMALITY_CLAIM"
   },
   "execution_evidence": {
-    "source_pr":1169,"source_head":"e4bce25ef4d07d4d472f29aad9793f6974eb43ad","source_merge":"dd28b8471bada007add5b1a94b3d131f7d0b6748","native_run":34869673997,"native_recorded_steps":0,"federated_repo":"GBOGEB/ABACUS","federated_pr":1210,"federated_pr_head_run":34870010866,"federated_pr_head_runner":1000279224,"federated_merge":"13b072208bc9eacba18a69e6e7c299325b778fb6","federated_postmerge_run":34870512101,"federated_postmerge_runner":1000279443
+    "source_pr":1169,
+    "source_head":"e4bce25ef4d07d4d472f29aad9793f6974eb43ad",
+    "source_merge":"dd28b8471bada007add5b1a94b3d131f7d0b6748",
+    "native_run":34869673997,
+    "native_recorded_steps":0,
+    "federated_repo":"GBOGEB/ABACUS",
+    "federated_pr":1210,
+    "federated_pr_head_run":34870010866,
+    "federated_pr_head_runner":1000279224,
+    "federated_merge":"13b072208bc9eacba18a69e6e7c299325b778fb6",
+    "federated_postmerge_run":34870512101,
+    "federated_postmerge_runner":1000279443
   },
-  "analytics_gate":{"row_count":4,"accepted_row_count":4,"pca_state":"MEASURED_SMALL_N_N4_PC1_STABLE_PC2_ROTATING","bt_state":"REPEATED_TRANSPORT_COMPONENT_CONNECTED_BUT_SEPARATED_GLOBAL_FIT_WITHHELD"},
-  "fleet_sampling_guard":{"accepted_bounded_samples":4,"known_sample_set_denominator":4,"global_fleet_denominator":null,"global_fleet_penetration":null,"grand_mission_penetration":null,"rule":"ACCEPTED_SAMPLE_SET_DENOMINATOR_IS_NOT_GLOBAL_FLEET_DENOMINATOR"}
+  "analytics_gate": {
+    "row_count":4,
+    "accepted_row_count":4,
+    "pca_state":"MEASURED_SMALL_N_N4_PC1_STABLE_PC2_ROTATING",
+    "bt_state":"REPEATED_TRANSPORT_COMPONENT_CONNECTED_BUT_SEPARATED_GLOBAL_FIT_WITHHELD"
+  },
+  "fleet_sampling_guard": {
+    "accepted_bounded_samples":4,
+    "known_sample_set_denominator":4,
+    "global_fleet_denominator":null,
+    "global_fleet_penetration":null,
+    "grand_mission_penetration":null,
+    "rule":"ACCEPTED_SAMPLE_SET_DENOMINATOR_IS_NOT_GLOBAL_FLEET_DENOMINATOR"
+  }
 }
