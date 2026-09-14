@@ -84,6 +84,22 @@ def test_control_requires_six_genuine_scheduled_windows_and_full_span():
     assert all(p["allocation_policy_promotion"] is True for p in receipt["policies"].values())
     assert all(p["control_frontier"]["independent_windows"] == 6 for p in receipt["policies"].values())
 
+    for row in receipt["policies"].values():
+        control = row["control_frontier"]
+        assert row["independent_windows"] == control["independent_windows"]
+        assert row["directional_windows"] == control["directional_windows"]
+        assert row["distinct_source_shas"] == control["distinct_source_shas"]
+        assert row["temporal_span_seconds"] == control["temporal_span_seconds"]
+        assert row["direction_counts"] == control["direction_counts"]
+        assert row["dominant_direction"] == control["dominant_direction"]
+        assert row["direction_consistency"] == control["direction_consistency"]
+        assert row["latest_two_directional_windows_agree"] == control["latest_two_directional_windows_agree"]
+        assert row["pooled_single_strength"] == control["pooled_single_strength"]
+        assert row["pooled_winner_strength"] == control["pooled_winner_strength"]
+        assert row["observed_pairs_total"] == control["observed_pairs_total"]
+        assert row["dominant_direction"] == row["allocation_recommendation"]
+        assert row["learning_frontier"]["independent_windows"] == 6
+
 
 def test_scheduled_history_cannot_be_crowded_out_by_learning_traffic():
     scheduled = [make_run(i, i * 21600, event="schedule") for i in range(6)]
