@@ -1,0 +1,55 @@
+name: W189RF Exact Federation Sample 4 Return
+
+on:
+  pull_request:
+    paths:
+      - 'controls/QPS_W189_FEDERATION_SAMPLE4_CURRENT_v1.json'
+      - 'triage/w189/**'
+      - 'scripts/qps_w189r_validate_authoritative_return.py'
+      - 'tests/test_qps_w189r_authoritative_return.py'
+      - '.github/workflows/w189rf-federation-sample4-return-exact.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'controls/QPS_W189_FEDERATION_SAMPLE4_CURRENT_v1.json'
+      - 'triage/w189/**'
+      - 'scripts/qps_w189r_validate_authoritative_return.py'
+      - 'tests/test_qps_w189r_authoritative_return.py'
+      - '.github/workflows/w189rf-federation-sample4-return-exact.yml'
+
+jobs:
+  exact-w189r:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact consumer head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Verify five exact W189R delta blobs
+        shell: bash
+        run: |
+          verify_blob() { path="$1" expected="$2"; actual="$(git hash-object "$path")"; echo "$path expected=$expected actual=$actual"; test "$actual" = "$expected"; }
+          verify_blob controls/QPS_W189_FEDERATION_SAMPLE4_CURRENT_v1.json 31fbed31140783b91fa29d04d8ab0d04d369a274
+          verify_blob triage/w189/QPS_W189_CROSS_SURFACE_FEATURE_MATRIX_v0.1.json 399b21e51dab13d1bf62b6917b566fad7a89035d
+          verify_blob triage/w189/QPS_W189_FEDERATION_EXPANSION_RUNTIME_CONTROL_v0.1.json 0651a974bb50a2451ee3393cc552b75095620224
+          verify_blob scripts/qps_w189r_validate_authoritative_return.py f0fe044519f15bbc7f8529c14f2fade1ec12538c
+          verify_blob tests/test_qps_w189r_authoritative_return.py de4058b1db2bc2c951cb53e0f2e92647dc8494cb
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Execute authoritative-return validator
+        run: python scripts/qps_w189r_validate_authoritative_return.py
+      - name: Execute authoritative-return tests
+        run: python -m unittest discover -s tests -p 'test_qps_w189r_authoritative_return.py' -v
+      - name: Emit W189RF receipt
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path('triage/w189/W189RF_EXACT_RETURN_RECEIPT.json').write_text(json.dumps({'schema':'w189rf-exact-return/v1','source_head':'39f011016db7fbe861663e5a521d9907d795d06b','exact_delta_blobs':5,'consumer_sha':os.environ['GITHUB_SHA'],'run_id':int(os.environ['GITHUB_RUN_ID']),'result':'PASS','accepted_samples':4,'pca':'MEASURED_SMALL_N_N4_PC1_STABLE_PC2_ROTATING','bt_global':'WITHHELD','fleet_denominator':None,'child_n200_control':False,'authority_transfer':False},indent=2,sort_keys=True)+'\n')
+          PY
+      - name: Upload W189RF receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: w189rf-${{ github.event.pull_request.head.sha || github.sha }}
+          path: triage/w189/W189RF_EXACT_RETURN_RECEIPT.json
