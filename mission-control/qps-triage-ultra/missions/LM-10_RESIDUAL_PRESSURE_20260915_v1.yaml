@@ -1,0 +1,167 @@
+schema: qps.lm10.residual_pressure.v1
+mission_id: LM-10
+as_of: 2026-09-15T04:32:00+02:00
+authority_transfer: false
+source_receipt:
+  provider_repo: GBOGEB/gg_MATH
+  provider_pr: 12
+  provider_merge_sha: 91fc9e5b0d05345ca714dcfde7576880d350d2d4
+  exact_head_pr_run: 34921516555
+  exact_head_result: PASS_REFERENCE_AND_SYNTHETIC_VISUAL_CHALLENGE
+  fresh_main_run: 34921551320
+  fresh_main_result: PASS_REFERENCE_AND_SYNTHETIC_VISUAL_CHALLENGE
+  steps_gt_0: true
+  evidence_class: REFERENCE_PLUS_SYNTHETIC_CALIBRATION
+  authority_cap: A3_SYNTHETIC_ONLY
+completed_or_decay_floor:
+  - H04_FINITE_SAMPLE_SHRINKAGE_CROSSCHECK
+  - W3_PCA_RMT_PA95_LOADING_STABILITY_VISUAL_1
+hard_gate_policy:
+  rule: PCA_BT_MAY_REORDER_ELIGIBLE_WORK_BUT_CANNOT_COMPENSATE_FAILED_HARD_AND_GATE
+  global_terminal_veto: GBOGEB/cryoplant-project#923
+  global_runtime_DoV: WITHHELD_AT_PRIVATE_REPO_RUNNER_ADMISSION
+  compensation_from_public_LM10: FORBIDDEN
+allocator:
+  status: RECOMPUTED_AFTER_H04_W3_RECEIPT
+  method: RESIDUAL_PRODUCT_PROJECTION_V1
+  note: >-
+    This is a reproducible planner feature matrix and residual-pressure projection,
+    not measured-domain PCA authority. Feature values are bounded mission-planning
+    scores in [0,1]. A later measured telemetry matrix may replace them, but hard
+    eligibility gates still preempt statistical rank.
+  raw_formula: residual_variance * bd_severity * authority_gap * dependency_readiness
+  normalization: weight_i = raw_i / sum(raw_eligible_and_watch_candidates)
+  closed_decay_rule: closed slices leave the active normalization and retain only CONTROL floor
+feature_matrix:
+  - id: H05_TYPED_PEARSON_BT_PCA_BRIDGE
+    residual_variance: 0.75
+    bd_severity: 0.70
+    authority_gap: 0.75
+    dependency_readiness: 0.95
+    raw_pressure: 0.3740625
+    normalized_pressure: 0.108
+    eligibility: ELIGIBLE_SEQUENTIAL_FIRST_RED
+  - id: H06_SDE_CONVERGENCE_FOKKER_PLANCK_CHALLENGE
+    residual_variance: 0.65
+    bd_severity: 0.65
+    authority_gap: 0.70
+    dependency_readiness: 0.95
+    raw_pressure: 0.2809625
+    normalized_pressure: 0.081
+    eligibility: ELIGIBLE_PARALLEL
+  - id: H07_GRAPH_EIGENSPECTRUM_GFT_FILTERS
+    residual_variance: 0.80
+    bd_severity: 0.75
+    authority_gap: 0.80
+    dependency_readiness: 0.90
+    raw_pressure: 0.432
+    normalized_pressure: 0.125
+    eligibility: ELIGIBLE_PARALLEL
+  - id: H08_SECOND_DERIVATIVE_SMOOTHING_UNITS
+    residual_variance: 0.55
+    bd_severity: 0.55
+    authority_gap: 0.65
+    dependency_readiness: 0.95
+    raw_pressure: 0.18679375
+    normalized_pressure: 0.054
+    eligibility: ELIGIBLE_PARALLEL
+  - id: H09_REGIME_MAPS_DIMENSIONLESS_RATIOS
+    residual_variance: 0.85
+    bd_severity: 0.80
+    authority_gap: 0.85
+    dependency_readiness: 0.85
+    raw_pressure: 0.4913
+    normalized_pressure: 0.142
+    eligibility: NOT_YET_SEQUENTIAL_ELIGIBLE
+  - id: H10_TEMPORAL_DAG_CONGRUENCE_DRIFT
+    residual_variance: 0.90
+    bd_severity: 0.90
+    authority_gap: 0.90
+    dependency_readiness: 0.80
+    raw_pressure: 0.5832
+    normalized_pressure: 0.168
+    eligibility: NOT_YET_SEQUENTIAL_ELIGIBLE
+  - id: W3_GRAPH_SPECTRUM_TOPOLOGY_SENSITIVITY
+    residual_variance: 0.70
+    bd_severity: 0.65
+    authority_gap: 0.70
+    dependency_readiness: 0.80
+    raw_pressure: 0.2548
+    normalized_pressure: 0.073
+    eligibility: ELIGIBLE_PARALLEL_BY_H07_SLICE
+  - id: W3_MC_SDE_CONVERGENCE_VISUAL
+    residual_variance: 0.65
+    bd_severity: 0.60
+    authority_gap: 0.70
+    dependency_readiness: 0.80
+    raw_pressure: 0.2184
+    normalized_pressure: 0.063
+    eligibility: ELIGIBLE_PARALLEL_BY_H06_SLICE
+  - id: W4_RESOURCE_REALLOCATION
+    residual_variance: 0.90
+    bd_severity: 0.85
+    authority_gap: 0.85
+    dependency_readiness: 0.45
+    raw_pressure: 0.2926125
+    normalized_pressure: 0.084
+    eligibility: BLOCKED_BY_REPRODUCIBLE_RESOURCE_FEATURE_MATRIX_AND_W2_SPINE
+  - id: W5_MEASURED_QPS_CONSUMER
+    residual_variance: 1.00
+    bd_severity: 0.95
+    authority_gap: 1.00
+    dependency_readiness: 0.25
+    raw_pressure: 0.2375
+    normalized_pressure: 0.069
+    eligibility: BLOCKED_BY_EXACT_MEASURED_POPULATION_AND_TYPED_BINDING
+  - id: W6_REX_REPEAT_CONTROL
+    residual_variance: 0.90
+    bd_severity: 0.80
+    authority_gap: 0.80
+    dependency_readiness: 0.20
+    raw_pressure: 0.1152
+    normalized_pressure: 0.033
+    eligibility: BLOCKED_BY_MATERIAL_W2_TO_W5_RECEIPTS
+  - id: W7_H11_CONDITIONAL_ML
+    residual_variance: 1.00
+    bd_severity: 1.00
+    authority_gap: 1.00
+    dependency_readiness: 0.00
+    raw_pressure: 0.0
+    normalized_pressure: 0.0
+    eligibility: DEFER_DATA_CONTRACT_FIRST
+pressure_rank_unfiltered:
+  - H10_TEMPORAL_DAG_CONGRUENCE_DRIFT
+  - H09_REGIME_MAPS_DIMENSIONLESS_RATIOS
+  - H07_GRAPH_EIGENSPECTRUM_GFT_FILTERS
+  - H05_TYPED_PEARSON_BT_PCA_BRIDGE
+  - W4_RESOURCE_REALLOCATION
+  - H06_SDE_CONVERGENCE_FOKKER_PLANCK_CHALLENGE
+  - W3_GRAPH_SPECTRUM_TOPOLOGY_SENSITIVITY
+  - W5_MEASURED_QPS_CONSUMER
+  - W3_MC_SDE_CONVERGENCE_VISUAL
+  - H08_SECOND_DERIVATIVE_SMOOTHING_UNITS
+  - W6_REX_REPEAT_CONTROL
+  - W7_H11_CONDITIONAL_ML
+eligible_execution_rank:
+  controlling_first_red: H05_TYPED_PEARSON_BT_PCA_BRIDGE
+  parallel_ready_by_pressure:
+    - H07_GRAPH_EIGENSPECTRUM_GFT_FILTERS
+    - H06_SDE_CONVERGENCE_FOKKER_PLANCK_CHALLENGE
+    - H08_SECOND_DERIVATIVE_SMOOTHING_UNITS
+  coupled_W3_ready:
+    - W3_GRAPH_SPECTRUM_TOPOLOGY_SENSITIVITY
+    - W3_MC_SDE_CONVERGENCE_VISUAL
+  held_high_pressure:
+    - H10_TEMPORAL_DAG_CONGRUENCE_DRIFT
+    - H09_REGIME_MAPS_DIMENSIONLESS_RATIOS
+    - W4_RESOURCE_REALLOCATION
+    - W5_MEASURED_QPS_CONSUMER
+next_bounded_execution:
+  sequential: H05_TYPED_PEARSON_BT_PCA_BRIDGE
+  parallel_highest_pressure: H07_GRAPH_EIGENSPECTRUM_GFT_FILTERS
+  optional_visual_pair: W3_GRAPH_SPECTRUM_TOPOLOGY_SENSITIVITY
+  stop: FIRST_NON_COMPENSATING_RED
+  preserve:
+    - cryoplant-project#923_EXTERNAL_WATCH_ONLY
+    - W3_12_STRATEGIC_ACTIVE_UNTOUCHED
+    - cryoplant-project#1063_FEDERATION_CONTROL
