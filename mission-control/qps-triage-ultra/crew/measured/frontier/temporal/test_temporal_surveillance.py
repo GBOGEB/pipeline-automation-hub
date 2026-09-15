@@ -33,7 +33,7 @@ def test_surveillance_uses_only_genuine_scheduled_time():
         'scheduled_control_frontier': {
             'eligibility_event': 'schedule',
             'eligibility_workflow_path': '.github/workflows/crew-temporal-allocation-policy.yml',
-            'temporal_span_seconds': 90000,
+            'temporal_span_seconds': 300000,
         },
         'windows': genuine + [synthetic],
         'policies': {'long_compute_contended': {}},
@@ -41,6 +41,7 @@ def test_surveillance_uses_only_genuine_scheduled_time():
     out = attach_surveillance(receipt)['temporal_surveillance']
     row = out['classes']['long_compute_contended']
     assert out['genuine_scheduled_windows'] == 6
+    assert out['genuine_temporal_span_seconds'] == 90000
     assert out['synthetic_windows_counted'] == 0
     assert out['horizons']['H1_24H']['mature'] is True
     assert out['horizons']['H2_72H']['mature'] is False
