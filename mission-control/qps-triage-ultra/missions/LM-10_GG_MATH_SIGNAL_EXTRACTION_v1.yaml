@@ -1,0 +1,169 @@
+schema: qps.local_mission.v1
+mission_id: LM-10
+name: GG_MATH_SIGNAL_EXTRACTION
+state: BD0_STAGED_SINGLE_FRONTIER
+authority_transfer: false
+mission_shape:
+  analogy: GM-I_SINGLE_FRONTIER_SHAPE_ONLY
+  grand_mission_member: false
+  frontier_count: 1
+  frontier:
+    repo: GBOGEB/gg_MATH
+    branch: mission/v-rmt-spectral-assimilation-v1
+    role: MATH_BUNKER_HIGH_DIMENSIONAL_SIGNAL_EXTRACTION
+  consumer:
+    system: QPS_TRIAGE_ULTRA
+    role: GOVERNED_DIAGNOSTIC_CONSUMER
+  home:
+    repo: GBOGEB/pipeline-automation-hub
+    role: MISSION_CONTROL_AND_REX_FANIN
+objective: >-
+  Build and independently challenge a canonical eleven-point mathematical stack
+  for QPS TRIAGE, with explicit high-dimensional noise/signal separation via RMT,
+  covariance/PCA/ANOVA, Bradley-Terry and relational statistics, Monte Carlo/SDE,
+  spectral graph mathematics, calculus/asymptotics, temporal DAG mathematics and
+  bounded ML baselines. Return every material result and failure as REX without
+  transferring engineering, compliance, release or procurement authority.
+activation_policy:
+  strategic_WIP_non_displacement: true
+  current_global_first_red_remains: cryoplant-project#923_runner_admission
+  current_W3_strategic_gate_remains: W3_12_HEPAK_NUMERIC_RECEIPT
+  activation_rule: >-
+    LM-10 may perform source-side research and isolated public gg_MATH runtime now,
+    but may not displace the sole ACTIVE strategic QPS gate or second currently
+    ACTIVE/BD0 crew without Governor rebalance evidence.
+  promotion_to_ACTIVE_requires:
+    - named_execution_slice
+    - available_crew_or_explicit_rebalance
+    - exact_head_runtime_path
+    - no_authority_collision
+crew_plan:
+  U01_Governor:
+    role: GATE_ONLY
+    availability: CONTROL
+    use: authority_boundary_and_final_local_disposition
+  U05_Analyst:
+    role: ANALYTIC_OWNER
+    availability: CURRENTLY_BD0_RUNTIME_LANE_SCHEDULER
+    use: PCA_BT_RMT_ANOVA_metrics_after_rebalance_or_scheduler_return
+  U06_QA_Signalman:
+    role: INDEPENDENT_ATTESTATION
+    availability: CURRENTLY_ACTIVE_W3_12
+    use: exact_SHA_receipts_after_return_or_explicit_rebalance
+  U07_Cartographer_Oculars:
+    role: OBSERVABILITY_AND_VISUALS
+    availability: CONTROL
+    use: Plotly_scree_PC1_PC3_graph_spectra_temporal_views
+  U08_REX_KEB_Integrator:
+    role: REX_CURATOR_TECHNICAL_CHALLENGER
+    availability: CONTROL
+    use: academic_register_provenance_assumption_and_REX_fanin
+  S04_Scientist:
+    role: DOMAIN_VALIDATION_SPECIALIST
+    availability: CURRENTLY_ACTIVE_W3_12
+    use: model_assumption_and_validity_challenge_after_return_or_explicit_rebalance
+  S05_Engineer:
+    role: BOUNDED_IMPLEMENTER
+    availability: CURRENTLY_BD0_RUNTIME_LANE_SCHEDULER
+    use: kernels_tests_receipts_after_rebalance_or_scheduler_return
+crew_rules:
+  - do_not_fabricate_secondment
+  - preserve_current_ACTIVE_and_BD0_assignments_until_explicit_return_or_rebalance
+  - reserve_specialists_summoned_only_on_named_first_red
+  - builder_cannot_self_attest
+  - gg_MATH_runtime_PASS_is_implementation_evidence_not_QPS_authority
+resources:
+  repositories:
+    - GBOGEB/gg_MATH
+    - GBOGEB/pipeline-automation-hub
+    - GBOGEB/cryoplant-project
+    - GBOGEB/ABACUS
+    - GBOGEB/DOCX_RTM_Automation
+    - GBOGEB/Q_engineering_tools
+  compute:
+    - GitHub_Actions_public_gg_MATH
+    - deterministic_dependency_free_reference_kernels
+    - production_numpy_scipy_sklearn_statsmodels_networkx_plotly_lane_after_reference_pass
+  evidence:
+    - exact_SHA
+    - source_DOI_or_primary_URL
+    - formula_assumptions
+    - synthetic_vs_measured_flag
+    - random_seed_and_sample_count
+    - feature_schema_and_units
+    - null_model_and_aspect_ratio
+    - independent_challenge_result
+    - consumer_disposition
+math_hierarchy:
+  H01: MATRIX_CORE
+  H02: COVARIANCE_CORRELATION_ANOVA
+  H03: EIGEN_PCA_ORTHOGONAL_TRANSFORMS
+  H04: RMT_MP_BBP_TRACY_WIDOM_PARALLEL_ANALYSIS
+  H05: RELATIONAL_BT_PEARSON_ASSOCIATION_LAMBDA
+  H06: MONTE_CARLO_SDE_LANGEVIN_FOKKER_PLANCK
+  H07: SPECTRAL_GRAPH_LAPLACIAN_TOPOLOGY
+  H08: CALCULUS_INTEGRATION_DIFFERENTIATION_KINEMATICS
+  H09: ASYMPTOTICS_REGIME_MAPS_DIMENSIONLESS_RATIOS
+  H10: TEMPORAL_DAG_LINEAGE_RECURSION
+  H11: ML_BASELINES_MODEL_MIXING_AND_CROSS_LEG_FUSION
+canonical_pipeline:
+  - SOURCE_AND_ASSUMPTIONS
+  - REFERENCE_FORMULA
+  - DETERMINISTIC_KERNEL
+  - INDEPENDENT_CHALLENGE
+  - EXACT_HEAD_RUNTIME_RECEIPT
+  - SYNTHETIC_CALIBRATION
+  - MEASURED_QPS_DIAGNOSTIC
+  - QPS_CONSUMER_DISPOSITION
+  - REX_FANIN
+  - FRESH_HEAD_REPEAT
+  - CONTROL_OR_DEFER
+authority_ladder:
+  A0_REFERENCE: literature_or_formula_only
+  A1_IMPLEMENTED: code_exists_not_yet_challenged
+  A2_VERIFIED_KERNEL: independent_challenge_passed
+  A3_SYNTHETIC_CALIBRATED: bounded_fixture_only
+  A4_MEASURED_DIAGNOSTIC: real_QPS_data_but_no_decision_authority
+  A5_GOVERNED_CONSUMER: QPS_consumed_with_source_and_gate_receipt
+  A6_DOMAIN_AUTHORITY: external_to_gg_MATH_requires_existing_TM_QA_Governor_contract
+forbidden_promotions:
+  - MP_BULK_OUTLIER_is_not_automatically_signal
+  - PCA_loading_is_not_Bradley_Terry_evidence
+  - synthetic_rows_do_not_promote_PCA_or_BT
+  - Monte_Carlo_precision_does_not_create_input_validity
+  - ML_accuracy_does_not_override_hard_dependencies_or_authority
+  - graph_smoothness_does_not_prove_causality
+  - correlation_does_not_prove_causality
+  - gg_MATH_does_not_issue_engineering_compliance_negotiation_acceptance_or_release_status
+victory_conditions:
+  source_side:
+    - full_academic_register_with_post_2000_bridge
+    - eleven_point_machine_readable_assimilation_register
+    - executable_reference_kernels_for_each_mathematical_family_or_explicit_DEFER
+    - independent_test_for_every_executable_kernel
+    - authority_and_lambda_namespace_canon
+  runtime:
+    - exact_head_steps_gt_0
+    - all_reference_challenges_pass_or_first_red_retained
+    - receipt_binds_repo_branch_SHA_schema_seed_and_digest
+  consumer:
+    - QPS_TRIAGE_consumes_at_least_one_measured_math_receipt_without_authority_leakage
+  rex:
+    - at_least_one_new_REX_from_heterogeneous_math_frontier
+    - REX_classified_reusable_for_future_multi_frontier_missions
+stop_rules:
+  - stop_on_first_non_compensating_red_per_execution_slice
+  - do_not_patch_application_math_when_runtime_steps_equal_zero
+  - do_not_activate_DNN_CNN_before_baseline_data_contract_and_leakage_test
+  - do_not_use_MP_or_BBP_without_recording_null_model_p_n_sigma_and_preprocessing
+  - do_not_call_a_lambda_metric_without_namespace
+future_mission_value:
+  hypothesis: >-
+    A deliberately heterogeneous mathematical single-frontier mission increases
+    REX diversity before larger fleet expansion, exposing assumption, numerical,
+    data-shape, graph-topology, stochastic and authority failure modes cheaply.
+  transfer_targets:
+    - GM_IV_later_frontiers
+    - held_GM_V_future_activation
+    - candidate_81_repo_31_integration_expansion_objective
+  note: candidate expansion targets are not canonical Grand Mission authority.
