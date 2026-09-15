@@ -3,13 +3,12 @@
 
 The engine keeps aggregate learning evidence and scheduled-only CONTROL evidence
 separate. This facade makes CONTROL rows self-consistent for downstream
-enforcement: when CONTROL is emitted, the row's exposed gate/direction metrics
-are exactly the scheduled metrics that justified promotion. Aggregate metrics
-remain preserved under ``learning_frontier`` for audit.
+enforcement and attaches non-promotional H1-H4 surveillance observations.
 """
 
 import temporal_policy_engine as engine
 from temporal_policy_engine import *  # noqa: F401,F403
+from temporal_surveillance import attach_surveillance
 
 _ENGINE_BUILD_POLICY = engine.build_policy
 
@@ -52,7 +51,7 @@ def build_policy(windows):
         row['window_evidence'] = [r for r in learning_evidence if r['window_id'] in control_ids]
         assert row['dominant_direction'] == row['allocation_recommendation']
 
-    return receipt
+    return attach_surveillance(receipt)
 
 
 engine.build_policy = build_policy
