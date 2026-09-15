@@ -6,6 +6,7 @@ It derives robustness observations from genuine scheduled windows already presen
 the temporal policy receipt. Synthetic fixtures are excluded from operational time.
 """
 from collections import Counter
+from datetime import datetime
 
 
 def _genuine_scheduled_windows(receipt):
@@ -20,6 +21,14 @@ def _genuine_scheduled_windows(receipt):
             continue
         rows.append(w)
     return sorted(rows, key=lambda w: (w.get('created_at', ''), int(w.get('window_id', 0))))
+
+
+def _genuine_span_seconds(windows):
+    if len(windows) < 2:
+        return 0.0
+    first = datetime.fromisoformat(windows[0]['created_at'].replace('Z', '+00:00'))
+    last = datetime.fromisoformat(windows[-1]['created_at'].replace('Z', '+00:00'))
+    return max(0.0, (last - first).total_seconds())
 
 
 def _class_stats(windows, task_class):
@@ -94,7 +103,7 @@ def _concentration(windows):
 
 def attach_surveillance(receipt):
     windows = _genuine_scheduled_windows(receipt)
-    span = receipt.get('scheduled_control_frontier', {}).get('temporal_span_seconds', 0.0) if windows else 0.0
+    span = _genuine_span_seconds(windows)
     horizons = {'H1_24H': 86400, 'H2_72H': 259200, 'H3_7D': 604800, 'H4_30D': 2592000}
     classes = {}
     for task_class in receipt.get('policies', {}):
