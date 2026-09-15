@@ -1,0 +1,131 @@
+schema: qps.lm10.bd_queue.v1
+mission_id: LM-10
+queue_scope: NARROW_MISSION
+as_of: 2026-09-15
+authority_transfer: false
+source_state:
+  mission_brief_merge: a6af492e85bf0a1f508250348616d6ae337030bb
+  mission_control_pr_130: MERGED
+  provider_pr_9: MERGED
+  provider_merge: b0d26359884a6d4c2fb57943930badae4e3ebe2a
+  provider_reference_receipt:
+    sha: 11d8779cbaca17350e52d9de2917dcbc1ba17a75
+    run: 34917694096
+    result: PASS_REFERENCE_CHALLENGE
+    authority_cap: A2
+queue_policy:
+  lifecycle: [TODO, ACTIVE, DONE, CONTROL]
+  first_red_preempts_rank: true
+  sequential_spine_preserved: true
+  parallel_nonblocking_allowed: true
+  closed_work_decay_to_control_floor: true
+  H11_rule: DEFER_DATA_CONTRACT_FIRST
+  builder_cannot_self_attest: true
+  public_CI_does_not_equal_human_secondment: true
+queues:
+  DONE:
+    - id: LM10-BD-000
+      target: W0_MISSION_ACTIVATION_AND_BASELINE
+      disposition: DONE
+      evidence:
+        - pipeline-automation-hub#128_merged
+        - pipeline-automation-hub#130_merged
+      authority: CONTROL_METADATA
+      next: CONTROL_WATCH_ONLY
+    - id: LM10-BD-001
+      target: INITIAL_H04_H06_H07_H08_REFERENCE_SLICE
+      disposition: DONE
+      evidence:
+        - gg_MATH#9_merged
+        - run_34917694096
+        - sha_11d8779cbaca17350e52d9de2917dcbc1ba17a75
+      authority: A2_VERIFIED_KERNEL_BOUNDED_SLICE
+      next: retain_as_reference_and_expand_without_overclaim
+  ACTIVE_SOURCE_SIDE:
+    - id: LM10-BD-002
+      target: W2_H01_H10_COMPLETION
+      state: ACTIVE_SOURCE_SIDE_NONBLOCKING
+      repo: GBOGEB/gg_MATH
+      crew_debit: PUBLIC_CI_ONLY_UNTIL_REBALANCE
+      first_red: H01_H03_H02_PRODUCTION_REFERENCE_GAPS_BEFORE_CROSS_LEG_PROMOTION
+      work_order:
+        - H01_SVD_PSEUDOINVERSE_CONDITION_PROJECTION
+        - H02_ANOVA_EFFECT_SIZE_MULTIPLICITY
+        - H03_RUNTIME_PCA_PA_LOADING_STABILITY
+        - H04_FINITE_SAMPLE_SHRINKAGE_CROSSCHECK
+        - H05_PEARSON_UNCERTAINTY_TYPED_BT_PCA_BRIDGE
+        - H06_SDE_CONVERGENCE_FOKKER_PLANCK_CHALLENGE
+        - H07_GRAPH_EIGENSPECTRUM_GFT_FILTERS
+        - H08_SECOND_DERIVATIVE_SMOOTHING_UNITS
+        - H09_REGIME_MAPS_DIMENSIONLESS_RATIOS
+        - H10_TEMPORAL_DAG_CONGRUENCE_DRIFT
+      victory: each_H01_H10_has_kernel_or_explicit_DEFER_plus_independent_challenge
+      stop: first_non_compensating_red_per_slice
+  BD0:
+    - id: LM10-BD-003
+      target: W3_SYNTHETIC_CALIBRATION_AND_VISUALS
+      state: BD0_READY_BY_SLICE
+      activation_requires:
+        - relevant_W2_kernel_A2
+        - declared_fixture_population
+        - seed_and_schema
+      outputs:
+        - PCA_RMT_PA95_stability
+        - graph_spectrum_topology_sensitivity
+        - MC_SDE_convergence
+        - Plotly_visual_receipts
+      authority_cap: A3
+  BD1:
+    - id: LM10-BD-004
+      target: W4_PCA_RESOURCE_REALLOCATION
+      state: BD1_ONE_NAMED_BLOCKER
+      blocker: ELIGIBLE_REPRODUCIBLE_RESOURCE_FEATURE_MATRIX
+      victory: replayable_weights_change_one_real_eligible_priority_without_overriding_first_red
+    - id: LM10-BD-005
+      target: W5_MEASURED_QPS_CONSUMER
+      state: BD1_ONE_NAMED_BLOCKER
+      repo: GBOGEB/ABACUS
+      consumer_anchor: ABACUS#1164
+      blocker: EXACT_MEASURED_POPULATION_AND_TYPED_PROVIDER_CONSUMER_BINDING
+      victory: ACCEPT_REJECT_DEFER_with_A4_or_A5_lineage
+    - id: LM10-BD-006
+      target: W6_REX_REPEAT_CONTROL
+      state: BD1_DEPENDENT
+      blocker: MATERIAL_W2_TO_W5_RECEIPTS_EXIST
+      victory: REX_fanin_plus_distinct_source_repeat_for_recurrent_CONTROL
+  DEFER:
+    - id: LM10-BD-007
+      target: W7_H11_CONDITIONAL_ML
+      state: DEFER_DATA_CONTRACT_FIRST
+      blockers:
+        - immutable_feature_target_contract
+        - leakage_tests
+        - temporal_or_group_split_policy
+        - baseline_models
+        - sample_geometry_justification
+        - ablation_and_OOD_plan
+      forbidden: DNN_CNN_instantiation_as_maturity_credit
+  CONTROL:
+    - id: LM10-CONTROL-001
+      target: A0_A6_AUTHORITY_GUARD
+      watch_for: authority_leakage
+      allocation: MINIMAL
+    - id: LM10-CONTROL-002
+      target: RMT_LAMBDA_NAMESPACE_AND_MP_BBP_SEPARATION
+      watch_for: semantic_regression
+      allocation: MINIMAL
+    - id: LM10-CONTROL-003
+      target: INITIAL_REFERENCE_STACK_IMPORT_PATH_REX
+      watch_for: direct_script_root_import_regression
+      allocation: MINIMAL
+rank_now:
+  1: LM10-BD-002
+  2: LM10-BD-003
+  3: LM10-BD-004
+  4: LM10-BD-005
+  5: LM10-BD-006
+  6: LM10-BD-007
+next_activation_rule: >-
+  Continue LM10-BD-002 in public gg_MATH without taking human ACTIVE/BD0 crew.
+  Promote only a ready W3 slice in parallel. Human U05/S05/U06/S04 activation
+  requires return from current assignments or explicit Governor rebalance.

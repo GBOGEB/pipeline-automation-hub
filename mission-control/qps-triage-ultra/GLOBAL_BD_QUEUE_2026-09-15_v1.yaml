@@ -1,0 +1,203 @@
+schema: qps.mission_control.global_bd_queue.v1
+as_of: 2026-09-15
+authority_transfer: false
+home: GBOGEB/pipeline-automation-hub
+principles:
+  - one_ACTIVE_strategic_WIP_unless_Governor_rebalances
+  - non_compensating_AND_gates_never_average_out
+  - external_owner_action_can_remain_RED_without_consuming_internal_execution_capacity
+  - public_or_parent_success_does_not_compensate_child_runtime_admission
+  - first_attainable_non_compensating_red_wins_within_each_execution_lane
+  - CONTROL_gets_minimal_regression_allocation
+  - BD0_is_fully_prepared_next_activation
+  - BD1_has_one_named_blocker
+  - zero_step_is_NOT_EXECUTED_not_application_FAIL
+  - measured_PCA_BT_may_rank_pressure_but_cannot_override_hard_gates
+canonical_global_veto:
+  id: GLOBAL-BD-923
+  repo: GBOGEB/cryoplant-project
+  issue: 923
+  state: NON_COMPENSATING_HOLD_EXTERNAL_OWNER_ACTION
+  terminal_runtime_DoV: WITHHELD
+  cause_family: PRIVATE_REPO_ACTIONS_USAGE_OR_BUDGET_HARD_STOP
+  victory_chain:
+    - runner_id_nonzero
+    - steps_gt_0
+    - unchanged_validator_executes
+    - exact_SHA_receipt
+    - child_ACCEPT_REJECT_DEFER
+    - fresh_head_repeat
+    - runtime_CONTROL_candidate
+  forbidden:
+    - application_repair_while_zero_step
+    - parent_or_public_repo_compensation
+    - Zod_or_static_PASS_as_runtime_proof
+  allocation: OWNER_WATCH_CELL_ONLY
+
+ACTIVE:
+  - id: GLOBAL-ACTIVE-001
+    target: W3_12_LICENSED_HEPAK_NUMERIC_RECEIPT
+    class: SOLE_STRATEGIC_EXECUTION_GATE
+    state: ACTIVE_EXTERNAL_LOCAL
+    crew:
+      - Technical_Manager_KEB
+      - Scientist
+      - QA
+      - Licensed_Local_Runtime_Operator
+    victory: GOVERNED_8_ROW_HEPAK_RECEIPT_PASS_then_adapter_consumer_close
+    non_compensation: true
+  - id: GLOBAL-ACTIVE-002
+    target: MC1_MC2_FEDERATION_CONTROL_SPINE
+    repo: GBOGEB/cryoplant-project
+    issue: 1063
+    class: PROGRAM_CONTROL_ACTIVE_LEDGER
+    mode: COORDINATION_NOT_ENGINEERING_AUTHORITY
+    lanes:
+      MC1: hard_gate_closure_or_external_bounding
+      MC2: measured_N200_N300_N400_plus_semantic_runtime_telemetry
+    rule: does_not_replace_923_or_child_authority
+
+BD0:
+  - id: GLOBAL-BD0-001
+    target: RUNTIME_LANE_SCHEDULER
+    repo: GBOGEB/pipeline-automation-hub
+    state: BD0_READY
+    crew: [U03_Project_Manager_DOW, U05_Analyst, S05_Engineer]
+    victory: deterministic_replayable_scheduler_receipt_changes_one_real_dispatch
+  - id: GLOBAL-BD0-002
+    target: LM10_W2_SOURCE_SIDE_CONTINUATION
+    mission: LM-10
+    repo: GBOGEB/gg_MATH
+    state: BD0_NONBLOCKING_PUBLIC_EXECUTION
+    crew_debit: PUBLIC_CI_ONLY_UNTIL_REBALANCE
+    victory: H01_H10_coverage_progress_with_exact_SHA_receipts
+    non_compensation: does_not_change_923_or_W3_12
+
+BD1:
+  - id: GLOBAL-BD1-001
+    target: M01_PRIVATE_QPS_RUNNER
+    repo: GBOGEB/cryoplant-project
+    issue: 923
+    state: BD1_EXTERNAL_BLOCK_SINGLE_CELL
+    crew: [Dockmaster]
+    blocker: OWNER_ACTION_PRIVATE_RUNNER_ADMISSION
+  - id: GLOBAL-BD1-002
+    target: LM10_W3_SYNTHETIC_VISUAL_CALIBRATION
+    mission: LM-10
+    blocker: RELEVANT_W2_A2_SLICE_AND_FIXTURE_CONTRACT
+  - id: GLOBAL-BD1-003
+    target: LM10_W4_PCA_REALLOCATION
+    mission: LM-10
+    blocker: ELIGIBLE_RESOURCE_FEATURE_MATRIX
+  - id: GLOBAL-BD1-004
+    target: LM10_W5_MEASURED_CONSUMER
+    mission: LM-10
+    repo: GBOGEB/ABACUS
+    issue: 1164
+    blocker: EXACT_MEASURED_POPULATION_AND_PROVIDER_BINDING
+  - id: GLOBAL-BD1-005
+    target: QPS_RELIABILITY_COST_G6_PARITY
+    repo: GBOGEB/cryoplant-project
+    issue: 996
+    blocker: G2_TO_G5_SOURCE_AND_GENERATOR_CHAIN_PRECEDES_G6
+    note: independent_internal_first_red_not_compensating_923
+
+EXTERNAL_OR_SOURCE_WITHHELD:
+  - id: GLOBAL-EXT-001
+    target: COST_PED_SOURCE_RETURN
+    source: cryoplant-project#1063_MC1
+    state: WITHHELD_SOURCE
+    needs:
+      - Stage_II_III_bidder_child_decompositions
+      - selected_design_PED_relief_4_of_4
+      - resource_NoBo_owner_third_party_evidence
+      - W145_supersession_mapping
+  - id: GLOBAL-EXT-002
+    target: RELIABILITY_SOURCE_VALUES
+    source: cryoplant-project#1063_MC1
+    state: WITHHELD_SOURCE_VALUES
+    anchors: [cryoplant-project#974, cryoplant-project#981]
+  - id: GLOBAL-EXT-003
+    target: LKT_INVCOP_SAT_SOURCE_RETURN
+    repo: GBOGEB/cryoplant-project
+    issue: 1021
+    state: EXTERNAL_EVIDENCE
+    formal_credit: 0_until_executed_source_bound_receipt
+  - id: GLOBAL-EXT-004
+    target: RAMS_BIDDER_OWNER_RETURN_FAMILY
+    repo: GBOGEB/cryoplant-project
+    anchors: [75,79,82,85,87,72]
+    state: EXTERNAL_AUTHORITY_OR_SOURCE_RETURN
+
+CONTROL:
+  - id: GLOBAL-CONTROL-001
+    target: VISUAL_N100
+    state: CONTROL
+    next: N200_balanced_50_per_format_then_N300_then_N400
+  - id: GLOBAL-CONTROL-002
+    target: DEBUGGER_MCP_FABRIC
+    state: CONTROL
+    rule: do_not_reopen_without_regression
+  - id: GLOBAL-CONTROL-003
+    target: M09_M05_M07_M08_EXISTING_CONTROLS
+    state: CONTROL
+    allocation: MINIMAL
+  - id: GLOBAL-CONTROL-004
+    target: LM10_W0_MISSION_BINDING
+    state: DONE_TO_CONTROL
+    evidence: pipeline-automation-hub#130_merge_a6af492e85bf0a1f508250348616d6ae337030bb
+
+PARK:
+  - id: GLOBAL-PARK-001
+    target: M06_TELEGRAF_EXPANSION
+    trigger_to_reenter: real_observer_need
+  - id: GLOBAL-PARK-002
+    target: H11_DNN_CNN_MODEL_MIXING
+    mission: LM-10
+    trigger_to_reenter: data_contract_leakage_baselines_and_OOD_gates_PASS
+
+GLOBAL_RANKING_NOW:
+  terminal_veto:
+    - GLOBAL-BD-923
+  executable_strategic:
+    - GLOBAL-ACTIVE-001
+  executable_program_control:
+    - GLOBAL-ACTIVE-002
+  next_prepared_internal:
+    - GLOBAL-BD0-001
+    - GLOBAL-BD0-002
+  one_blocker_horizon:
+    - GLOBAL-BD1-002
+    - GLOBAL-BD1-003
+    - GLOBAL-BD1-004
+    - GLOBAL-BD1-005
+  external_watch_and_returns:
+    - GLOBAL-BD1-001
+    - GLOBAL-EXT-001
+    - GLOBAL-EXT-002
+    - GLOBAL-EXT-003
+    - GLOBAL-EXT-004
+
+LM10_projection:
+  canonical_order:
+    - W0_CLOSED
+    - W2_ACTIVE_SOURCE_SIDE
+    - W3_BD0_BY_READY_SLICE
+    - W4_BD1_FEATURE_MATRIX
+    - W5_BD1_MEASURED_BINDING
+    - W6_DEPENDENT_REX_REPEAT_CONTROL
+    - W7_DEFER_DATA_CONTRACT_FIRST
+  global_rule: >-
+    LM-10 can progress through public/nonblocking source-side and synthetic work while
+    GLOBAL-BD-923 stays red, but no LM-10 success can change global runtime DoV or
+    consume crew assigned to the sole strategic W3_12 gate without Governor rebalance.
+
+reallocation_policy:
+  measured_or_explicitly_synthetic_PCA_only: true
+  hard_gate_override: true
+  formula: residual_variance_times_bd_severity_times_authority_gap_times_dependency_readiness
+  closure_decay: max_control_floor_times_decay_then_renormalize
+  scheduler_activation_gate: >-
+    autonomous allocation remains withheld until relevant hard gates are PASS or
+    BOUNDED_EXTERNAL, telemetry is exact-source and reproducible, and PCA/BT stability
+    is sufficient to rank pressure with owner, repo, crew, victory and return path.

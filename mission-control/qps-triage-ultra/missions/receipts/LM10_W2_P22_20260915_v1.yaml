@@ -1,0 +1,50 @@
+schema: qps.lm10.consumer_receipt.v1
+mission_id: LM-10
+wave: W2
+pulse: P2.2
+provider: GBOGEB/gg_MATH
+provider_pr: 11
+provider_pr_head_sha: 8fd4ada94d5ae4c6c9c5033c7fc4603ecc81a63a
+provider_merge_sha: 3d3d137d17bedfc47a32a7b67e5da56d6b7eb0ca
+provider_branch_run:
+  id: 34920350853
+  sha: 8fd4ada94d5ae4c6c9c5033c7fc4603ecc81a63a
+  steps_gt_0: true
+  result: PASS
+provider_fresh_main_run:
+  id: 34920373180
+  sha: 3d3d137d17bedfc47a32a7b67e5da56d6b7eb0ca
+  runner_id: 1000287405
+  steps_gt_0: true
+  result: PASS
+new_diagnostics:
+  - PA95_PERMUTATION
+  - SIGN_INVARIANT_LOADING_CONGRUENCE
+  - BOOTSTRAP_LOADING_STABILITY
+synthetic_fixture:
+  class: ONE_DOMINANT_FACTOR_PLUS_INDEPENDENT_NOISE
+  PA95_expected_retained_candidates: 1
+  challenge_result: PASS
+evidence_class: A3_SYNTHETIC_CALIBRATION
+authority_transfer: false
+consumer_disposition: ACCEPT_BOUNDED_A3_SYNTHETIC
+non_compensation:
+  cryoplant_project_923: UNCHANGED_TERMINAL_DOV_VETO
+  W3_12: UNCHANGED_STRATEGIC_ACTIVE
+re_rank:
+  completed_decay:
+    - H03_PA95_REFERENCE
+    - H03_LOADING_STABILITY_REFERENCE
+  active_W2_first_red: H04_FINITE_SAMPLE_SHRINKAGE_CROSSCHECK
+  parallel_promote_to_BD0_ACTIVE_READY:
+    - W3_PCA_RMT_VISUAL_RECEIPT
+  subsequent_W2:
+    - H06_H08_COMPLETION
+    - H07_GFT_FILTERS
+    - H09_H10_REGIME_AND_TEMPORAL_LINEAGE
+  W4: WAIT_FOR_REPRODUCIBLE_RESOURCE_FEATURE_MATRIX
+  W5: WAIT_FOR_EXACT_MEASURED_POPULATION
+  H11: DEFER_DATA_CONTRACT_FIRST
+control_note: >-
+  Branch and fresh-main execution establish repeatable synthetic calibration only.
+  Measured QPS, governed consumer and domain authority remain unearned.
