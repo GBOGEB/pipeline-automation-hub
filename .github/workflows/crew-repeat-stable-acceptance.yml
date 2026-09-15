@@ -8,7 +8,9 @@ on:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/validate_repeat_stable_acceptance.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/build_temporal_policy.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_policy_engine.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_surveillance.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_scheduled_control_frontier.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_temporal_surveillance.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json'
       - '.github/workflows/crew-repeat-stable-acceptance.yml'
   push:
@@ -18,7 +20,9 @@ on:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/validate_repeat_stable_acceptance.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/build_temporal_policy.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_policy_engine.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_surveillance.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_scheduled_control_frontier.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_temporal_surveillance.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json'
       - '.github/workflows/crew-repeat-stable-acceptance.yml'
   workflow_dispatch:
@@ -52,3 +56,6 @@ jobs:
       - name: Prove scheduled-only CONTROL frontier
         run: >-
           python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_scheduled_control_frontier.py
+      - name: Prove non-promotional H2 surveillance semantics
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_temporal_surveillance.py
