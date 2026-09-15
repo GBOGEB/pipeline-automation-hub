@@ -1,0 +1,51 @@
+schema: qps.lm10.consumer_receipt.v1
+mission_id: LM-10
+wave: W2
+pulse: P2.1
+provider: GBOGEB/gg_MATH
+provider_pr: 10
+provider_pr_head_sha: 9df755c3fdc0dc50324121f730e64f985233756a
+provider_merge_sha: d3c57a7e4ced95ec21faeae0fe4c2e2f49c49482
+provider_branch_run:
+  id: 34920205143
+  sha: 9df755c3fdc0dc50324121f730e64f985233756a
+  runner_id: 1000287380
+  steps_gt_0: true
+  result: PASS
+provider_fresh_main_run:
+  id: 34920234207
+  sha: d3c57a7e4ced95ec21faeae0fe4c2e2f49c49482
+  runner_id: 1000287385
+  steps_gt_0: true
+  result: PASS
+covered:
+  H01: [svd_reference, pseudoinverse, condition_number, orthogonal_projection]
+  H02: [covariance_matrix, one_way_anova_F, eta_squared, bonferroni_alpha]
+  H03: [runtime_reference_PCA, scores, loadings, explained_variance_ratio]
+  H05: [pearson_correlation, fisher_z_interval]
+evidence_class: REFERENCE_CHALLENGE
+authority_class: A2
+authority_transfer: false
+consumer_disposition: ACCEPT_BOUNDED_A2
+non_compensation:
+  cryoplant_project_923: UNCHANGED_TERMINAL_DOV_VETO
+  W3_12: UNCHANGED_STRATEGIC_ACTIVE
+re_rank:
+  completed_decay:
+    - H01_REFERENCE_CORE
+    - H02_REFERENCE_DECOMPOSITION
+    - H03_RUNTIME_REFERENCE_PCA_BASE
+    - H05_PEARSON_REFERENCE
+  next_first_red: H03_PARALLEL_ANALYSIS_AND_LOADING_STABILITY
+  parallel_ready:
+    - W3_SYNTHETIC_PCA_RMT_VISUAL_CALIBRATION
+  subsequent:
+    - H04_FINITE_SAMPLE_SHRINKAGE_CROSSCHECK
+    - H06_H08_COMPLETION
+    - H07_GFT_FILTERS
+    - H09_H10_REGIME_AND_TEMPORAL_LINEAGE
+  H11: DEFER_DATA_CONTRACT_FIRST
+control_note: >-
+  Fresh-main repeat proves this bounded provider slice is reproducibly executable.
+  It does not establish A4 measured diagnostics, A5 governed consumer adoption,
+  A6 domain authority, or compensate any failed hard AND-gate.
