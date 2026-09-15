@@ -1,0 +1,505 @@
+schema: qps.mission_control.mission_brief.v2
+mission_id: LM-10
+mission_name: GG_MATH_SIGNAL_EXTRACTION
+mission_class: LOCAL_SINGLE_FRONTIER_HETEROGENEOUS_MATH
+mission_control_node: QPS_TRIAGE_ULTRA
+home_repo: GBOGEB/pipeline-automation-hub
+frontier_repo: GBOGEB/gg_MATH
+consumer_repos:
+  - GBOGEB/ABACUS
+  - GBOGEB/cryoplant-project
+state: BD0_STAGED_WITH_NONBLOCKING_SOURCE_EXECUTION
+authority_transfer: false
+parent_protocol:
+  operational_primitive: MISSION_WAVE_PULSE_RECEIPT_REALLOCATE_RECURSE
+  execution_method: THREE_PULSE_MIP_WITH_FIRST_RED_RECURSION
+  source_protocols:
+    - mission-control/qps-triage-ultra/README.md
+    - mission-control/qps-triage-ultra/architecture.yaml
+    - mission-control/qps-triage-ultra/crew/CREW_REGISTRY_v1.json
+    - mission-control/qps-triage-ultra/HANDOVER_SESSION_2026-09-12_RUNNER_CREW.yaml
+    - mission-control/qps-triage-ultra/missions/LM-10_GG_MATH_SIGNAL_EXTRACTION_v1.yaml
+
+mission_brief:
+  purpose: >-
+    Build, challenge, execute, calibrate and govern an eleven-point mathematical
+    signal-extraction stack for QPS TRIAGE using a single heterogeneous frontier.
+    The mission must produce reusable mathematical kernels, explicit assumptions,
+    exact-SHA runtime receipts, PCA-directed diminishing resource allocation,
+    governed measured diagnostics and REX suitable for later multi-frontier missions.
+    It must not convert mathematical plausibility into engineering, compliance,
+    procurement, negotiation, acceptance or release authority.
+  end_state: >-
+    H01-H10 have executable reference or production implementations with explicit
+    authority class, challenge evidence and receipt lineage; at least one measured
+    QPS consumer has ACCEPT/REJECT/DEFER-dispositioned a typed math receipt; REX is
+    returned to HOME; a later distinct-source repeat demonstrates no regression.
+    H11 remains gated until its data-contract, leakage and baseline prerequisites pass.
+  mission_shape:
+    frontier_count: 1
+    frontier: GBOGEB/gg_MATH
+    home: GBOGEB/pipeline-automation-hub
+    primary_measured_consumer: GBOGEB/ABACUS
+    domain_authority_consumer: GBOGEB/cryoplant-project
+    grand_mission_member: false
+    analogy: GM-I_SINGLE_FRONTIER_SHAPE_ONLY
+
+strategic_context:
+  non_displacement: true
+  global_non_compensating_first_red: GBOGEB/cryoplant-project#923
+  global_runtime_DoV: WITHHELD_AT_PRIVATE_RUNNER_ADMISSION
+  existing_sole_strategic_gate: W3_12_LICENSED_HEPAK_NUMERIC_RECEIPT
+  rule: >-
+    Public gg_MATH, Mission Control or ABACUS success does not compensate private
+    cryoplant runner admission, licensed HEPAK evidence, or any domain acceptance gate.
+
+primary_objectives:
+  P1:
+    name: COMPLETE_H01_H10_STACK
+    definition: >-
+      Implement or explicitly DEFER every H01-H10 mathematical family with canonical
+      source, assumptions, formula namespace, executable kernel, independent challenge,
+      exact-SHA receipt and authority class.
+  P2:
+    name: PCA_DIRECTED_RESOURCE_ALLOCATION
+    definition: >-
+      Use PCA and measured residual work structure to weight eligible nonblocking legs,
+      with diminishing allocation after evidence-backed closure and a small CONTROL floor.
+  P3:
+    name: GOVERNED_MEASURED_QPS_CONSUMPTION
+    definition: >-
+      Feed typed mathematical receipts into the existing ABACUS/QPS measured consumer
+      path and obtain explicit ACCEPT/REJECT/DEFER without authority leakage.
+  P4:
+    name: REX_AND_REPEAT_CONTROL
+    definition: >-
+      Convert first-reds, repairs, assumption failures and successful controls into REX,
+      then prove a later distinct-source repeat before recurrent CONTROL.
+
+secondary_objectives:
+  S1: produce Plotly visual receipts for scree/MP/PA95, PC1-PC3 loadings, graph spectrum, SDE/MC paths, regime maps and temporal DAG.
+  S2: maintain a post-2000 academic register with primary-source provenance and explicit model-domain caveats.
+  S3: establish typed bridges among PCA, RMT, BT/Pearson, ANOVA, Monte Carlo/SDE, graph and temporal analyses without conflating evidence classes.
+  S4: create reusable resource-allocation and authority patterns for GM-IV later frontiers and possible future GM-V activation.
+  S5: preserve visual/source screenshots or page images as explanatory audit evidence where useful, without treating them as mathematical proof.
+
+out_of_scope:
+  - engineering_design_acceptance
+  - compliance_acceptance
+  - procurement_or_bidder_decision
+  - negotiation_authority
+  - QPS_release_authority
+  - Grand_Mission_registry_mutation
+  - fabrication_of_measured_data
+  - DNN_or_CNN_maturity_before_H11_gate
+  - repairing_cryoplant_application_code_while_issue_923_is_zero_step
+
+authority:
+  ladder:
+    A0_REFERENCE: literature_or_formula_only
+    A1_IMPLEMENTED: code_exists_not_independently_challenged
+    A2_VERIFIED_KERNEL: independent_challenge_passed
+    A3_SYNTHETIC_CALIBRATED: bounded_synthetic_fixture_only
+    A4_MEASURED_DIAGNOSTIC: real_QPS_data_no_decision_authority
+    A5_GOVERNED_CONSUMER: QPS_consumed_with_source_gate_and_disposition
+    A6_DOMAIN_AUTHORITY: external_TM_QA_Governor_domain_contract_only
+  promotion_owner:
+    A0_to_A1: bounded_builder_plus_source_provenance
+    A1_to_A2: independent_verification_receipt
+    A2_to_A3: synthetic_calibration_receipt
+    A3_to_A4: measured_consumer_with_real_data_identity
+    A4_to_A5: governed_QPS_disposition
+    A5_to_A6: Technical_Manager_QA_Governor_only
+  hard_rule: >-
+    paper_exists_to_python_runs_to_graph_plausible_to_QPS_ACCEPT is forbidden.
+  mandatory_lineage:
+    - source
+    - assumptions
+    - formula
+    - implementation
+    - independent_challenge
+    - runtime_receipt
+    - synthetic_or_measured_class
+    - QPS_disposition
+    - authority_class
+    - REX
+
+bd_lifecycle:
+  states: [TODO, ACTIVE, DONE, CONTROL]
+  rules:
+    TODO: named_work_not_started_or_not_ready
+    ACTIVE: currently_executed_named_first_red_or_slice
+    DONE: implemented_and_exact_source_proven_once
+    CONTROL: prevention_or_detection_control_plus_later_distinct_source_repeat
+  orthogonal_to_authority: true
+
+mathematical_canon:
+  H01: MATRIX_CORE_SVD_PSEUDOINVERSE_CONDITION_PROJECTION
+  H02: COVARIANCE_CORRELATION_ANOVA_EFFECT_SIZE_MULTIPLICITY
+  H03: PCA_PARALLEL_ANALYSIS_LOADING_STABILITY_ORTHOGONAL_TRANSFORMS
+  H04: RMT_MP_BBP_FINITE_SAMPLE_SHRINKAGE
+  H05: BRADLEY_TERRY_PEARSON_TYPED_RELATIONAL_BRIDGE
+  H06: MONTE_CARLO_SDE_LANGEVIN_FOKKER_PLANCK_REFERENCE
+  H07: SPECTRAL_GRAPH_LAPLACIAN_GFT_FILTERS_TOPOLOGY_VALIDATION
+  H08: CALCULUS_INTEGRATION_DIFFERENTIATION_SECOND_DERIVATIVE_SMOOTHING
+  H09: ASYMPTOTICS_REGIME_MAPS_DIMENSIONLESS_RATIOS
+  H10: TEMPORAL_DAG_LINEAGE_CONGRUENCE_DRIFT
+  H11: ML_BASELINES_MODEL_MIXING_DNN_CNN_CONDITIONAL
+  H11_gate:
+    state: DEFER_DATA_CONTRACT_FIRST
+    prerequisites:
+      - immutable_feature_target_contract
+      - explicit_units_and_schema
+      - leakage_tests
+      - temporal_or_group_split_policy
+      - simple_baseline_models
+      - sample_size_and_geometry_justification
+      - ablation_plan
+      - OOD_or_drift_plan
+    forbidden_credit: neural_network_instantiation_is_not_maturity
+  lambda_namespace:
+    unqualified_lambda_forbidden: true
+    allowed_examples:
+      - lambda_eig_i
+      - lambda_MP_plus
+      - lambda_failure
+      - lambda_Laplacian_i
+      - lambda_regularization
+  rmt_guard:
+    mp_white_null: lambda_MP_plus_equals_sigma2_times_1_plus_sqrt_p_over_n_squared
+    bbp_population_threshold_is_separate: true
+    above_mp_classification: OUTLIER_CANDIDATE
+    automatic_true_signal: false
+    required_context: [null_model, p, n, sigma2, preprocessing, finite_sample_check, stability, provenance]
+
+crew_groups:
+  G0_COMMAND_AND_AUTHORITY:
+    purpose: mission_state_gate_scope_and_authority_boundary
+    members:
+      - {id: U01, role: Mission_Commander_Governor, current_load: CONTROL_AND_GATE, activation: ALWAYS_GATE_ONLY}
+      - {id: U02, role: Chief_Architect_Architecture_Hat, current_load: CONTROL, activation: ARCHITECTURE_REVIEW}
+      - {id: U03, role: Project_Manager_DOW, current_load: BD0_RUNTIME_LANE_SCHEDULER, activation: AFTER_RETURN_OR_EXPLICIT_REBALANCE}
+      - {id: U04, role: Fleet_Orchestrator, current_load: ACTIVE_CONTROL_MIX, activation: ROUTING_ONLY_WITHOUT_AUTHORITY}
+  G1_MATH_ANALYSIS:
+    purpose: PCA_RMT_BT_ANOVA_resource_weighting_and_convergence
+    members:
+      - {id: U05, role: Analyst_DMAIC_PCA_BT, current_load: BD0_RUNTIME_LANE_SCHEDULER, activation: AFTER_RETURN_OR_EXPLICIT_REBALANCE}
+      - {id: S04, role: Scientist_Domain_Validation, current_load: ACTIVE_W3_12, activation: AFTER_RETURN_OR_EXPLICIT_REBALANCE}
+    interim_execution: PUBLIC_GG_MATH_CI_AND_EXISTING_REFERENCE_KERNELS
+  G2_BUILD_AND_RUNTIME:
+    purpose: bounded_kernel_implementation_tests_receipts_and_visual_runtime
+    members:
+      - {id: S05, role: Engineer_Bounded_Implementer, current_load: BD0_RUNTIME_LANE_SCHEDULER, activation: AFTER_RETURN_OR_EXPLICIT_REBALANCE}
+      - {id: U04, role: Fleet_Orchestrator, current_load: ACTIVE_CONTROL_MIX, activation: DISPATCH_ONLY}
+    interim_execution: PUBLIC_GG_MATH_ACTIONS
+  G3_VERIFICATION_AND_ATTESTATION:
+    purpose: exact_SHA_independent_challenge_receipt_and_message_HOME
+    members:
+      - {id: U06, role: QA_Signalman_Verifier, current_load: ACTIVE_W3_12, activation: AFTER_RETURN_OR_EXPLICIT_REBALANCE}
+    constraint: BUILDER_CANNOT_SELF_ATTEST
+    conceptual_roles_not_assignable: [C08_Independent_Verifier]
+  G4_OBSERVABILITY_AND_VISUALS:
+    purpose: topology_lineage_plotly_temporal_graphs_and_dashboard_projection
+    members:
+      - {id: U07, role: Cartographer_Oculars, current_load: CONTROL, activation: LOW_COST_CONTROL_SUPPORT}
+  G5_REX_KEB_CHALLENGE:
+    purpose: academic_provenance_assumption_challenge_recurrence_and_doctrine_return
+    members:
+      - {id: U08, role: REX_KEB_Integrator, current_load: CONTROL, activation: LOW_COST_CONTROL_SUPPORT}
+  G6_DOMAIN_ACCEPTANCE_EXTERNAL:
+    purpose: A6_domain_authority_only
+    members:
+      - {role: Technical_Manager_KEB, activation: EXISTING_DOMAIN_GATE_ONLY}
+      - {role: QA, activation: EXISTING_DOMAIN_GATE_ONLY}
+      - {role: Governor, activation: EXISTING_DOMAIN_GATE_ONLY}
+    note: not_a_gg_MATH_promotion_surface
+
+crew_rules:
+  - do_not_fabricate_secondment
+  - one_ACTIVE_strategic_WIP_unless_Governor_rebalances
+  - BD0_recommended_limit_two
+  - reserve_specialists_only_on_named_first_red
+  - CONTROL_allocation_minimal
+  - RETURN_when_zero_current_marginal_value
+  - competence_requires_evidence_not_title
+  - public_repo_CI_execution_does_not_imply_human_crew_secondment
+  - builder_cannot_self_attest
+
+resource_weighting:
+  name: PCA_DIMINISHING_RESIDUAL_PRESSURE
+  eligibility: nonblocking_legs_only
+  raw_weight_formula: residual_variance_times_BD_severity_times_authority_gap_times_dependency_readiness
+  normalized_weight_formula: raw_i_div_sum_raw_eligible
+  decay_after_evidence_backed_closure: raw_next_equals_max_control_floor_raw_times_decay
+  rules:
+    - re_normalize_after_every_material_receipt
+    - closed_CONTROL_leg_gets_small_watch_floor_not_equal_share
+    - blocked_dependency_gets_zero_execution_share_but_retains_watch_state
+    - synthetic_PCA_weights_must_be_labelled_SYNTHETIC
+    - measured_PCA_weights_require_exact_population_and_schema_identity
+    - first_non_compensating_attainable_red_overrides_weight_rank
+
+mission_stages:
+  ST0_REFRESH:
+    action: refresh_repo_PR_issue_workflow_crew_and_authority_state
+    exit_receipt: MISSION_REFRESH_RECEIPT
+  ST1_DEFINE:
+    action: name_BG_target_CG_assumptions_scope_DoV_and_first_red
+    exit_receipt: DEFINE_RECEIPT
+  ST2_IMPLEMENT:
+    action: bounded_change_on_first_attainable_red_or_planned_nonblocking_slice
+    exit_receipt: IMPLEMENTATION_RECEIPT
+  ST3_CHALLENGE:
+    action: independent_test_counterexample_assumption_and_numerical_challenge
+    exit_receipt: CHALLENGE_RECEIPT
+  ST4_RUNTIME:
+    action: exact_head_steps_gt_0_and_machine_readable_receipt
+    exit_receipt: RUNTIME_RECEIPT
+  ST5_CLASSIFY:
+    action: classify_REFERENCE_SYNTHETIC_MEASURED_and_assign_A_level_BD_state
+    exit_receipt: CLASSIFICATION_RECEIPT
+  ST6_CONSUME:
+    action: downstream_ACCEPT_REJECT_DEFER_without_authority_leakage
+    exit_receipt: CONSUMER_DISPOSITION_RECEIPT
+  ST7_REX:
+    action: return_lessons_failures_controls_and_reusable_patterns_HOME
+    exit_receipt: REX_RECEIPT
+  ST8_REALLOCATE_RECURSE:
+    action: recompute_PCA_residual_weights_rank_next_first_red_and_repeat
+    exit_receipt: REALLOCATION_RECEIPT
+
+waves:
+  W0_MISSION_ACTIVATION_AND_BASELINE:
+    state: ACTIVE_CONTROL_PREP
+    objective: freeze_scope_authority_current_heads_DoV_and_crew_availability
+    crew_groups: [G0_COMMAND_AND_AUTHORITY, G5_REX_KEB_CHALLENGE]
+    pulses:
+      P0_1_REFRESH: {stages: [ST0_REFRESH], output: live_state_snapshot}
+      P0_2_FREEZE: {stages: [ST1_DEFINE], output: mission_brief_and_DoV_contract}
+      P0_3_AUTHORIZE: {stages: [ST5_CLASSIFY], output: BD0_or_ACTIVE_disposition}
+    exit_gate: mission_brief_exact_source_and_no_authority_collision
+
+  W1_CANON_ACADEMIC_AND_NAMESPACE:
+    state: PARTIAL_DONE
+    objective: close_sources_assumptions_formula_namespaces_and_authority_guards
+    crew_groups: [G1_MATH_ANALYSIS, G5_REX_KEB_CHALLENGE]
+    parallel_allowed: true
+    pulses:
+      P1_1_H01_H05_CANON: {stages: [ST1_DEFINE, ST3_CHALLENGE], scope: H01_to_H05}
+      P1_2_H06_H10_CANON: {stages: [ST1_DEFINE, ST3_CHALLENGE], scope: H06_to_H10}
+      P1_3_H11_GATE: {stages: [ST1_DEFINE, ST5_CLASSIFY], expected: DEFER_DATA_CONTRACT_FIRST}
+    exit_gate: every_H_point_has_source_assumption_namespace_and_authority_rule
+
+  W2_REFERENCE_AND_PRODUCTION_KERNELS:
+    state: ACTIVE_SOURCE_SIDE_NONBLOCKING
+    objective: complete_H01_H10_executable_stack_or_explicit_DEFER
+    crew_groups: [G1_MATH_ANALYSIS, G2_BUILD_AND_RUNTIME]
+    parallel_allowed: true_for_dependency_independent_legs
+    dependency_spine:
+      - H01_matrix_core
+      - H02_covariance_correlation
+      - H03_PCA_PA
+      - H04_RMT
+      - H05_relational
+      - H06_MC_SDE
+      - H07_graph
+      - H08_calculus
+      - H09_regime_maps
+      - H10_temporal
+    pulses:
+      P2_1_CORE: {stages: [ST2_IMPLEMENT, ST3_CHALLENGE, ST4_RUNTIME], scope: [H01, H02, H03, H04]}
+      P2_2_RELATIONAL_STOCHASTIC: {stages: [ST2_IMPLEMENT, ST3_CHALLENGE, ST4_RUNTIME], scope: [H05, H06]}
+      P2_3_GRAPH_CALCULUS_REGIME: {stages: [ST2_IMPLEMENT, ST3_CHALLENGE, ST4_RUNTIME], scope: [H07, H08, H09]}
+      P2_4_TEMPORAL: {stages: [ST2_IMPLEMENT, ST3_CHALLENGE, ST4_RUNTIME], scope: [H10]}
+    first_receipt_already_observed:
+      repo: GBOGEB/gg_MATH
+      sha: 11d8779cbaca17350e52d9de2917dcbc1ba17a75
+      run: 34917694096
+      result: PASS_REFERENCE_CHALLENGE
+      authority_cap: A2
+    exit_gate: all_H01_H10_reference_challenges_PASS_or_each_first_red_retained
+
+  W3_SYNTHETIC_CALIBRATION_AND_VISUALS:
+    state: PLANNED_AFTER_W2_SLICE_READINESS
+    objective: test_finite_sample_stability_cross_leg_behavior_and_visual_contract
+    crew_groups: [G1_MATH_ANALYSIS, G3_VERIFICATION_AND_ATTESTATION, G4_OBSERVABILITY_AND_VISUALS]
+    pulses:
+      P3_1_PCA_RMT_CALIBRATION: {stages: [ST3_CHALLENGE, ST4_RUNTIME, ST5_CLASSIFY], outputs: [PA95, bootstrap_loading_stability, MP_BBP_overlay, shrinkage_baseline]}
+      P3_2_MC_SDE_GRAPH_CALIBRATION: {stages: [ST3_CHALLENGE, ST4_RUNTIME, ST5_CLASSIFY], outputs: [convergence, density_paths, graph_spectrum, topology_sensitivity]}
+      P3_3_VISUAL_RECEIPTS: {stages: [ST4_RUNTIME, ST5_CLASSIFY], outputs: [scree_MP_PA95, PC1_PC3_loadings, graph_energy, regime_map, temporal_DAG]}
+    authority_cap: A3
+    exit_gate: calibrated_synthetic_receipts_with_seed_population_and_digest
+
+  W4_PCA_RESOURCE_REALLOCATION:
+    state: PLANNED_PARALLEL_AFTER_MINIMUM_FEATURE_MATRIX
+    objective: turn_measured_or_explicitly_synthetic_residual_structure_into_diminishing_resource_weights
+    crew_groups: [G1_MATH_ANALYSIS, G0_COMMAND_AND_AUTHORITY]
+    pulses:
+      P4_1_FEATURE_MATRIX: {stages: [ST1_DEFINE, ST4_RUNTIME], output: resource_feature_matrix}
+      P4_2_PCA_ALLOCATE: {stages: [ST3_CHALLENGE, ST5_CLASSIFY], output: normalized_leg_weights}
+      P4_3_REALLOCATE: {stages: [ST8_REALLOCATE_RECURSE], output: crew_and_compute_recommendation}
+    exit_gate: weights_reproducible_and_first_red_override_proven
+
+  W5_MEASURED_QPS_CONSUMER:
+    state: PLANNED_CONDITIONAL
+    prerequisites:
+      - at_least_one_A2_or_A3_provider_receipt
+      - exact_measured_population_identity
+      - consumer_feature_schema
+      - no_synthetic_row_promotion
+    repo: GBOGEB/ABACUS
+    consumer_anchor: issue_1164
+    crew_groups: [G1_MATH_ANALYSIS, G3_VERIFICATION_AND_ATTESTATION, G0_COMMAND_AND_AUTHORITY]
+    pulses:
+      P5_1_INGEST: {stages: [ST0_REFRESH, ST1_DEFINE], output: typed_provider_consumer_binding}
+      P5_2_MEASURE: {stages: [ST4_RUNTIME, ST5_CLASSIFY], output: A4_measured_diagnostic_candidate}
+      P5_3_DISPOSITION: {stages: [ST6_CONSUME], output: ACCEPT_REJECT_DEFER}
+    exit_gate: explicit_governed_consumer_disposition_with_authority_transfer_false
+
+  W6_REX_FANIN_REPEAT_AND_CONTROL:
+    state: PLANNED
+    crew_groups: [G5_REX_KEB_CHALLENGE, G3_VERIFICATION_AND_ATTESTATION, G0_COMMAND_AND_AUTHORITY]
+    pulses:
+      P6_1_REX_FANIN: {stages: [ST7_REX], output: reusable_REX_entries}
+      P6_2_DISTINCT_HEAD_REPEAT: {stages: [ST0_REFRESH, ST3_CHALLENGE, ST4_RUNTIME], output: fresh_head_repeat_receipt}
+      P6_3_CONTROL_DISPOSITION: {stages: [ST5_CLASSIFY, ST6_CONSUME, ST8_REALLOCATE_RECURSE], output: DONE_CONTROL_DEFER_or_RETURN}
+    exit_gate: recurrent_roots_have_control_plus_distinct_source_repeat
+
+  W7_H11_CONDITIONAL_ML:
+    state: DEFER_DATA_CONTRACT_FIRST
+    activation: all_H11_prerequisites_pass
+    objective: baseline_first_then_only_justified_DNN_CNN_or_model_mixing
+    crew_groups: [G1_MATH_ANALYSIS, G2_BUILD_AND_RUNTIME, G3_VERIFICATION_AND_ATTESTATION]
+    pulses:
+      P7_1_DATA_CONTRACT: {stages: [ST1_DEFINE, ST3_CHALLENGE], output: immutable_feature_target_contract}
+      P7_2_BASELINES: {stages: [ST2_IMPLEMENT, ST3_CHALLENGE, ST4_RUNTIME], output: baseline_receipts}
+      P7_3_NEURAL_GATE: {stages: [ST5_CLASSIFY], output: ACTIVATE_or_DEFER_neural_models}
+      P7_4_MODEL_MIXING: {stages: [ST2_IMPLEMENT, ST3_CHALLENGE, ST4_RUNTIME], condition: neural_gate_ACTIVATE}
+    authority_cap_before_measured_consumer: A3
+
+mission_DoV:
+  DOV0_MISSION_CONTROL_BINDING:
+    criterion: mission_brief_is_versioned_in_HOME_and_crosslinked_to_frontier_and_consumer
+    evidence_class: CONTROL_METADATA
+  DOV1_PROVIDER_RUNTIME:
+    criterion: exact_head_gt0_step_reference_challenge_receipt
+    current_status: PASS_AT_11d8779cbaca17350e52d9de2917dcbc1ba17a75
+    current_run: 34917694096
+  DOV2_H01_H10_COVERAGE:
+    criterion: each_H01_H10_has_executable_kernel_or_explicit_DEFER_plus_independent_test
+    current_status: OPEN
+  DOV3_SYNTHETIC_CALIBRATION:
+    criterion: bounded_finite_sample_stability_and_visual_receipts_with_seed_and_population
+    current_status: OPEN
+  DOV4_RESOURCE_ALLOCATION:
+    criterion: PCA_residual_weighting_is_replayable_and_changes_one_real_eligible_dispatch_or_priority_without_overriding_first_red
+    current_status: OPEN
+  DOV5_MEASURED_CONSUMER:
+    criterion: real_QPS_population_consumed_and_dispositioned_ACCEPT_REJECT_DEFER_with_A4_or_A5_lineage
+    current_status: OPEN
+  DOV6_REX_REPEAT_CONTROL:
+    criterion: REX_returned_HOME_and_later_distinct_source_repeat_passes_for_recurrent_control
+    current_status: OPEN
+  terminal_mission_DoV:
+    rule: DOV0_through_DOV6_required_except_explicit_Governor_DEFER
+    excludes: A6_domain_authority
+
+stop_conditions:
+  per_pulse:
+    - first_non_compensating_red_observed
+    - exact_source_identity_missing
+    - assumptions_or_units_undefined_for_required_formula
+    - independent_challenge_fails
+    - runtime_steps_equal_zero
+    - receipt_digest_or_SHA_binding_missing
+    - synthetic_measured_class_ambiguous
+    - downstream_authority_collision
+  mission_level:
+    - crew_collision_with_existing_ACTIVE_strategic_gate_without_Governor_rebalance
+    - attempt_to_promote_math_to_engineering_or_compliance_truth
+    - attempt_to_activate_H11_before_data_contract_leakage_and_baseline_gates
+    - repeated_unbounded_scope_growth_without_named_DoV_unlock
+    - loss_of_provenance_or_inability_to_reproduce_required_receipt
+  stop_action:
+    - retain_first_red_evidence
+    - mark_slice_REJECT_or_DEFER_not_PASS
+    - return_nonessential_crew
+    - message_HOME
+    - re_rank_after_blocker_classification
+
+abort_conditions:
+  hard_abort:
+    - fabricated_measured_data_or_fabricated_secondment_detected
+    - authority_transfer_true_without_explicit_domain_contract
+    - destructive_or_irreversible_repo_action_outside_authorized_scope
+    - confidential_or_restricted_source_exfiltration_to_public_repo
+    - mathematical_test_or_visual_is_represented_as_A6_domain_acceptance
+  abort_action:
+    - stop_all_LM10_execution
+    - preserve_receipts_and_logs
+    - Governor_HOLD
+    - QA_and_REX_independent_review
+    - resume_only_with_explicit_reauthorization
+
+hold_and_defer_conditions:
+  HOLD:
+    - named_external_dependency_blocks_all_attainable_slices
+    - no_eligible_crew_and_no_safe_public_CI_slice
+  DEFER:
+    - method_requires_data_contract_not_yet_available
+    - model_assumptions_not_supported_by_current_population
+    - finite_sample_power_or_identifiability_insufficient
+  PARK:
+    - low_DoV_unlock_and_no_current_pressure_after_PCA_reallocation
+
+receipt_contract:
+  required_fields:
+    - mission_id
+    - wave_id
+    - pulse_id
+    - repo
+    - branch_or_PR
+    - exact_SHA
+    - executed_steps_gt_0_or_not_applicable
+    - source_or_formula_refs
+    - assumptions
+    - data_class_REFERENCE_SYNTHETIC_MEASURED
+    - schema_and_units
+    - seed_and_sample_count_where_applicable
+    - null_model_where_applicable
+    - result
+    - digest
+    - authority_class
+    - authority_transfer_false
+    - downstream_disposition_or_pending
+    - REX_links
+
+three_pulse_roundtrip:
+  pulse_1_PROVIDER:
+    repo: GBOGEB/gg_MATH
+    current_PR: 9
+    role: implement_challenge_emit_provider_receipt
+  pulse_2_MISSION_CONTROL:
+    repo: GBOGEB/pipeline-automation-hub
+    current_mission: LM-10
+    coordination_issue: 129
+    role: attest_classify_allocate_route_and_REX_fanin
+  pulse_3_CONSUMER:
+    repo: GBOGEB/ABACUS
+    current_issue: 1164
+    role: measured_consume_disposition_return_feedback
+  return_path: ABACUS_to_QPS_TRIAGE_HOME_to_gg_MATH_or_domain_child_as_typed_REX_or_action
+
+execution_priority_now:
+  first: complete_W0_mission_brief_binding
+  second: continue_W2_public_gg_MATH_nonblocking_H01_H10_completion
+  third: prepare_W3_visual_and_synthetic_challenge_without_claiming_measured_maturity
+  fourth: activate_W4_resource_weighting_when_feature_matrix_is_eligible
+  fifth: activate_W5_only_on_real_measured_consumer_contract
+  sixth: W6_REX_and_distinct_head_repeat
+  conditional_last: W7_H11_only_after_gate
+
+control_statement: >-
+  LM-10 succeeds by producing reproducible, typed and correctly bounded mathematical
+  evidence and reusable mission REX. It does not succeed merely because code runs,
+  plots look plausible, a PR merges, or a model reports high accuracy.
