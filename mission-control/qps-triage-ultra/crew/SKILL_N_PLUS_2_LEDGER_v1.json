@@ -1,23 +1,37 @@
 {
   "schema": "missioncontrol.crew.skill_n_plus_2_ledger.v1",
-  "as_of": "2026-09-16T22:04:00+02:00",
-  "clock": {"kind": "pulse", "spacing": "ordinal"},
+  "as_of": "2026-09-16T22:37:16+02:00",
+  "clock": {
+    "kind": "pulse",
+    "spacing": "ordinal"
+  },
   "policy": {
     "freeze_predictions_before_actual": true,
     "historical_predictions_immutable": true,
     "roll_horizon_after_scoring": true,
     "minimum_scored_history_before_calibrated_probability": 5
   },
-  "history": [],
-  "pending": [
+  "history": [
     {
       "issued_at_pulse": "SKILL_P0",
       "target_pulse": "SKILL_P1",
       "metric": "skill_bundles_resolvable",
       "prediction": 3,
       "basis": "three validated bundles are defined in the canonical skills PR",
-      "actual": null
-    },
+      "actual": 3,
+      "absolute_error": 0,
+      "observed_source_ref": "24396d33b827e14b23d0ef3b711df990947e7a52",
+      "skills_ref": "905a12596412afacd3cd7f3c3f6891ac026abf8f",
+      "resolution_mode": "hosted_pr_matrix",
+      "receipt_skills": [
+        "math",
+        "math-plots",
+        "plots"
+      ],
+      "status": "SCORED_EXACT_HIT"
+    }
+  ],
+  "pending": [
     {
       "issued_at_pulse": "SKILL_P0",
       "target_pulse": "SKILL_P2",
@@ -25,8 +39,21 @@
       "prediction": 2,
       "basis": "manual workflow_dispatch plus mission-worker invocation are the first two planned modes",
       "actual": null
+    },
+    {
+      "issued_at_pulse": "SKILL_P1",
+      "target_pulse": "SKILL_P3",
+      "metric": "exact_pinned_consumer_receipts",
+      "prediction": 3,
+      "basis": "SKILL_P1 observed all three canonical bundles resolving at one exact skills SHA; next control forecasts three exact-pinned consumer receipts",
+      "actual": null
     }
   ],
-  "calibration": {"state": "WARM_START_INSUFFICIENT_SCORED_HISTORY", "n_scored": 0},
+  "calibration": {
+    "state": "WARM_START_INSUFFICIENT_SCORED_HISTORY",
+    "n_scored": 1,
+    "last_absolute_error": 0,
+    "probability_calibration_applied": false
+  },
   "authority_transfer": false
 }
