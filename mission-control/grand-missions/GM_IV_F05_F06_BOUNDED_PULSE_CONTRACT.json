@@ -1,0 +1,46 @@
+{
+  "schema": "qps.gm_iv_f05_f06_bounded_pulse.v1",
+  "wave": "GM-FLEET-03-F05-F06-PULSE",
+  "mission_id": "GM-IV",
+  "purpose": "advance_two_named_frontiers_without_promoting_canonical_recon4_state",
+  "from_state": "STAGED_ACTIVE_RECON_4_OF_8",
+  "canonical_state_must_remain": "STAGED_ACTIVE_RECON_4_OF_8",
+  "authority_transfer": false,
+  "children_bound": false,
+  "promotion_allowed_by_this_pulse": false,
+  "frontiers": [
+    {
+      "slot": "GM-IV-F05",
+      "repository": "GBOGEB/ABACUS",
+      "target_sha": "15acb02f7f191d4f3c251ab747ef9f41487da7ce",
+      "evidence_class": "OBSERVED_CANDIDATE_RECON",
+      "observed_surface": "DMAIC_delivery_work_execution_and_federated_MIP_consumption",
+      "probe_basis": "repository_root_observed_nonempty_at_exact_sha",
+      "return_path": "MissionControl/GM-IV/F05/receipt",
+      "required_disposition": ["ADAPT", "EXTRACT", "REFERENCE", "PARK"]
+    },
+    {
+      "slot": "GM-IV-F06",
+      "repository": "GBOGEB/CODEX",
+      "target_sha": "df60e22fc57a6f36ac3e949d4c161442ff050ee4",
+      "evidence_class": "OBSERVED_CANDIDATE_RECON",
+      "observed_surface": "semantic_manifest_provenance_and_MIP_self_index_control",
+      "probe_basis": "repository_root_observed_nonempty_at_exact_sha",
+      "return_path": "MissionControl/GM-IV/F06/receipt",
+      "required_disposition": ["ADAPT", "EXTRACT", "REFERENCE", "PARK"]
+    }
+  ],
+  "admission_predicates": [
+    "canonical_GM_IV_state_is_STAGED_ACTIVE_RECON_4_OF_8",
+    "F05_and_F06_repository_identities_are_observed_not_fabricated",
+    "exact_target_SHAs_are_fetchable",
+    "each_exact_target_has_nonzero_repository_surface",
+    "bounded_probe_receipt_required_before_any_frontier_disposition",
+    "no_child_binding",
+    "no_engineering_authority_transfer",
+    "GM_V_remains_HELD"
+  ],
+  "success_semantics": "READY_TO_RETURN_F05_F06_BOUNDED_RECEIPTS_TO_GOVERNOR;_NOT_READY_FOR_ACTIVE8_PROMOTION",
+  "next_after_success": "run_a_separate_F07_F08_pulse_or_submit_accumulated_F05_F08_evidence_to_the_existing_ACTIVE8_Governor_gate",
+  "formal_credit_delta": 0
+}

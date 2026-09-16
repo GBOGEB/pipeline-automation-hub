@@ -18,7 +18,33 @@
       "children": ["GBOGEB/CoolProp"],
       "crew_posture": "CONTRACTED_DOCKMASTER_WATCH",
       "observed": true,
-      "promotion_boundary": "NO_GOVERNING_LOW_TEMPERATURE_AUTHORITY_WITHOUT_REQUIRED_EXTERNAL_REFERENCE"
+      "variants": [
+        {
+          "id": "GM-I-A",
+          "name": "COOLPROP_DARKLAND",
+          "repository": "GBOGEB/CoolProp",
+          "state": "HOLD_EXTERNAL_OR_HABITAT_GATE",
+          "role": "foreign_land_reconnaissance_adapt_and_return"
+        },
+        {
+          "id": "GM-I-B",
+          "name": "TEMPORAL_PCA_FEDERATION",
+          "repository": "GBOGEB/gg_MATH",
+          "state": "KEB_CLOSURE_IN_PROGRESS",
+          "role": "native_provider_reuse_bind_integrate_prune",
+          "provider_pr": 18,
+          "provider_merge_sha": "e9afd4131bde2071d184d0e3c5326b82f5756faa",
+          "exact_federation_head_sha": "a5f32ef2b65caa9b49270d7fe8134acd6f1e71d8",
+          "federation_run_id": 35139956561,
+          "federation_artifact_id": 10464776497,
+          "federation_artifact_digest": "sha256:2c7cbcddffc6c3830ab02a212563ef390e7fe189ce24214f4313e6e5bccd2921",
+          "original_provider_receipt_digest": "sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405",
+          "target_posture": "CONTROL_SENTINEL_RECEIPT_REGRESSION",
+          "authority_transfer": false,
+          "formal_credit_delta": 0
+        }
+      ],
+      "promotion_boundary": "NO_GOVERNING_LOW_TEMPERATURE_AUTHORITY_WITHOUT_REQUIRED_EXTERNAL_REFERENCE;_GM_I_B_REMAINS_A_SIBLING_VARIANT_AND_MUST_NOT_RENUMBER_OR_MUTATE_GM_II_TO_GM_V"
     },
     {
       "id": "GM-II",

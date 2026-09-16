@@ -1,0 +1,65 @@
+name: GM-I-B Fleet Sync and Launch Control
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - 'mission-control/grand-missions/GM_FLEET_IMMINENT_LAUNCH_CONTROL_v1.json'
+      - 'mission-control/grand-missions/GM_IV_F05_F06_BOUNDED_PULSE_CONTRACT.json'
+      - 'mission-control/grand-missions/validate_gm_i_b_and_launch_control.py'
+      - '.github/workflows/gm-i-b-fleet-sync.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Preserve canonical fleet baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 mission-control/grand-missions/validate_gm_fleet.py \
+            --out mission-control/grand-missions/runtime/gm_i_b_fleet_baseline_receipt.json
+      - name: Validate I-B sync and imminent launch control
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 mission-control/grand-missions/validate_gm_i_b_and_launch_control.py \
+            --out mission-control/grand-missions/runtime/gm_i_b_launch_control_receipt.json
+      - name: Enforce no top-level renumbering and no GM-IV promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('mission-control/grand-missions')
+          r = json.loads((root/'GRAND_MISSION_REGISTRY.json').read_text())
+          ids = [m['id'] for m in r['grand_missions']]
+          assert ids == ['GM-I','GM-II','GM-III','GM-IV','GM-V']
+          gm = {m['id']:m for m in r['grand_missions']}
+          assert gm['GM-IV']['state'] == 'STAGED_ACTIVE_RECON_4_OF_8'
+          assert gm['GM-V']['state'] == 'HELD'
+          assert r['authority_transfer'] is False
+          print('PASS_GM_I_B_FLEET_GUARDS')
+          PY
+      - name: Upload control receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-i-b-fleet-sync-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            mission-control/grand-missions/runtime/gm_i_b_fleet_baseline_receipt.json
+            mission-control/grand-missions/runtime/gm_i_b_launch_control_receipt.json
+          if-no-files-found: error
