@@ -1,0 +1,44 @@
+{
+  "schema": "missioncontrol.crew.skill_resolution_pulse_score.v1",
+  "global_pulse": "MP_P3_SECOND_RESOLUTION_MODE",
+  "pulse": "SKILL_P2",
+  "metric": "distinct_runner_resolution_modes_exercised",
+  "prediction": 2,
+  "actual": 2,
+  "absolute_error": 0,
+  "forecast_status": "SCORED_EXACT_HIT",
+  "observed_modes": [
+    {
+      "mode": "hosted_pr_matrix",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "workflow_run": 35147541915,
+      "source_ref": "24396d33b827e14b23d0ef3b711df990947e7a52",
+      "skills_ref": "905a12596412afacd3cd7f3c3f6891ac026abf8f"
+    },
+    {
+      "mode": "mission_worker_consumer",
+      "repo": "GBOGEB/gg_MATH",
+      "workflow_run": 35148680693,
+      "workflow_job": 104971138041,
+      "source_ref": "df7e004e0779f2b20b64ef4cc493be4c19a4f172",
+      "skills_ref": "905a12596412afacd3cd7f3c3f6891ac026abf8f",
+      "skill": "math-plots",
+      "entrypoint_sha256": "634de353163630d4e3989dd76fc50a11d908057c663d3a2170fb1cc9b4d1dced",
+      "artifact_id": 10468121877,
+      "artifact_digest": "sha256:51de9bf9a4a8de4c18c58c6bc10040c92ddc8c4c16eef788cb03423382cc97b4"
+    }
+  ],
+  "private_qps_mp_p1": {
+    "hosted_seven_file_actual": "UNOBSERVED",
+    "compensation_from_this_pulse": false
+  },
+  "SKILL_P3_prediction_state": "FROZEN_PENDING_NEXT_PULSE",
+  "calibration": {
+    "n_scored_after": 2,
+    "last_absolute_error": 0,
+    "probability_calibration_applied": false,
+    "state": "WARM_START_INSUFFICIENT_SCORED_HISTORY"
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
