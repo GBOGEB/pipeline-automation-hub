@@ -7,18 +7,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 
-# Only stages with a complete shape contract may be accepted by the generic
-# fleet validator. Forward stages remain fail-closed until their separate
-# Governor defines and proves the full stage-specific invariants.
 SUPPORTED_GM_IV_STATES = {
     "HELD",
     "STAGED_ACTIVE_RECON_2_OF_8",
     "STAGED_ACTIVE_PILOT_2_OF_8",
     "STAGED_ACTIVE_RECON_4_OF_8",
-}
-FORWARD_GM_IV_STATES_REQUIRING_GOVERNOR = {
     "ACTIVE_8_OF_8",
 }
+FORWARD_GM_IV_STATES_REQUIRING_GOVERNOR = set()
 
 
 def load(name):
@@ -55,6 +51,18 @@ def valid_recon4_evidence(item):
     )
 
 
+def valid_active8_evidence(item):
+    return (
+        isinstance(item, dict)
+        and item.get("source_sha") == "3943ae33eea2a4af6171b97517c19b79ed986fe8"
+        and item.get("workflow_run_id") == 35145656795
+        and item.get("artifact_id") == 10467671042
+        and item.get("artifact_digest") == "sha256:97d37b98334acbab0e1fec9bae56163e20fd5b9c2751be2495c52642bc6dd4cb"
+        and item.get("decision") == "READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR"
+        and item.get("result") == "PASS"
+    )
+
+
 def gm_iv_supported_shape(gm_iv):
     state = gm_iv.get("state")
     if state not in SUPPORTED_GM_IV_STATES:
@@ -71,21 +79,38 @@ def gm_iv_supported_shape(gm_iv):
             ]
         )
     common_four = (
-        gm_iv.get("candidate_frontiers") == [
-            "GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"
-        ]
-        and gm_iv.get("controlled_pilot_frontiers") == ["GM-IV-F01", "GM-IV-F03"]
+        gm_iv.get("controlled_pilot_frontiers") == ["GM-IV-F01", "GM-IV-F03"]
         and gm_iv.get("reference_frontiers") == ["GM-IV-F02", "GM-IV-F04"]
-        and gm_iv.get("unfilled_frontier_slots") == [
-            "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"
-        ]
     )
     if state == "STAGED_ACTIVE_PILOT_2_OF_8":
-        return gm_iv.get("activation_stage") == "PILOT_2_OF_8" and common_four
+        return (
+            gm_iv.get("activation_stage") == "PILOT_2_OF_8"
+            and common_four
+            and gm_iv.get("candidate_frontiers") == ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"]
+            and gm_iv.get("unfilled_frontier_slots") == ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"]
+        )
+    if state == "STAGED_ACTIVE_RECON_4_OF_8":
+        return (
+            gm_iv.get("activation_stage") == "RECON_4_OF_8"
+            and common_four
+            and gm_iv.get("candidate_frontiers") == ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"]
+            and gm_iv.get("unfilled_frontier_slots") == ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"]
+            and valid_recon4_evidence(gm_iv.get("recon_4_of_8_evidence"))
+        )
     return (
-        gm_iv.get("activation_stage") == "RECON_4_OF_8"
+        gm_iv.get("activation_stage") == "ACTIVE_8_OF_8"
         and common_four
+        and gm_iv.get("candidate_frontiers") == [
+            "GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04",
+            "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08",
+        ]
+        and gm_iv.get("new_candidate_recon_frontiers") == [
+            "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08",
+        ]
+        and gm_iv.get("unfilled_frontier_slots") == []
+        and gm_iv.get("children") == []
         and valid_recon4_evidence(gm_iv.get("recon_4_of_8_evidence"))
+        and valid_active8_evidence(gm_iv.get("active_8_of_8_evidence"))
     )
 
 
@@ -141,7 +166,7 @@ def main():
 
     gm_iv = gm["GM-IV"]
     ok(
-        "08_gm_iv_8_no_fabrication_or_ungoverned_promotion",
+        "08_gm_iv_8_exact_governed_shape_no_child_binding",
         gm_iv_supported_shape(gm_iv)
         and gm_iv["frontier_count"] == 8
         and gm_iv["children"] == [],
