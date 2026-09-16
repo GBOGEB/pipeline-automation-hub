@@ -1,0 +1,94 @@
+name: MissionControl Temporal Effect Diagnostics
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/**'
+      - '.github/workflows/crew-temporal-effect-diagnostics.yml'
+  workflow_run:
+    workflows: ['MissionControl Temporal Allocation Policy']
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  unit-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Assert exact PR head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+      - name: Run temporal effect and PCA alignment tests
+        working-directory: mission-control/qps-triage-ultra/crew/measured/frontier/temporal
+        run: python -m unittest -v test_temporal_effect_and_pca.py
+
+  diagnose-genuine-scheduled-pulse:
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact scheduled source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Assert exact scheduled source head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.workflow_run.head_sha }}"
+      - name: Download governed temporal policy artifact from triggering schedule run
+        uses: actions/download-artifact@v4
+        with:
+          name: crew-temporal-pc3-${{ github.event.workflow_run.head_sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/trigger-artifact
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Build signed-effect temporal diagnostics
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_effect_diagnostics.py
+          --policy mission-control/qps-triage-ultra/crew/measured/frontier/temporal/trigger-artifact/TEMPORAL_ALLOCATION_POLICY_RECEIPT.json
+          --config mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_EFFECT_DIAGNOSTICS.json
+      - name: Enforce diagnostic governance invariants
+        env:
+          EXPECTED_SHA: ${{ github.event.workflow_run.head_sha }}
+          EXPECTED_RUN_ID: ${{ github.event.workflow_run.id }}
+        shell: python
+        run: |
+          import json, os
+          from pathlib import Path
+          root=Path('mission-control/qps-triage-ultra/crew/measured/frontier/temporal')
+          d=json.loads((root/'TEMPORAL_EFFECT_DIAGNOSTICS.json').read_text())
+          assert d['source_sha']==os.environ['EXPECTED_SHA']
+          assert str(d['source_window_id'])==os.environ['EXPECTED_RUN_ID']
+          assert d['source_window_event']=='schedule'
+          assert d['synthetic_or_noop_clock_evidence_admitted'] is False
+          assert d['control_policy_thresholds_unchanged'] is True
+          assert d['competency_promotions']==0
+          assert d['authority_transfer'] is False
+          for name in ('short_compute','long_compute_contended'):
+              row=d['diagnostics'][name]
+              assert row['governed_clock_source']=='GENUINE_SCHEDULED_CONTROL_FRONTIER_ONLY'
+              assert row['pca_policy_relation']['pca_polarity_enters_control_gate'] is False
+          print(json.dumps({
+              'status':'PASS_TEMPORAL_EFFECT_DIAGNOSTICS',
+              'run_id':d['source_window_id'],
+              'source_sha':d['source_sha'],
+              'short_compute':d['diagnostics']['short_compute']['latest_cumulative_transition'],
+              'long_compute_contended':d['diagnostics']['long_compute_contended']['latest_cumulative_transition'],
+              'competency_promotions':0,
+              'authority_transfer':False,
+          },sort_keys=True))
+      - name: Upload temporal effect diagnostic receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: temporal-effect-diagnostics-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.head_sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_EFFECT_DIAGNOSTICS.json
