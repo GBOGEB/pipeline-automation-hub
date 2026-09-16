@@ -1,0 +1,73 @@
+name: GM-I-B Cycle3 3P3 Propagation Proof
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/validate_gm_i_b_cycle3_propagation_proof.py'
+      - '.github/workflows/gm-i-b-cycle3-propagation-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  aggregate-proof:
+    runs-on: ubuntu-latest
+    env:
+      EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Checkout literal MissionControl proof head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.EXACT_HEAD }}
+      - name: Verify literal proof head
+        run: test "$(git rev-parse HEAD)" = "$EXACT_HEAD"
+      - name: Fetch immutable Cycle3 evidence chain
+        run: |
+          mkdir -p mission-control/grand-missions/generated/input
+          curl --fail --location https://raw.githubusercontent.com/GBOGEB/pipeline-automation-hub/3348189fd52883befb24f5c5b6bb3953cd8725ab/mission-control/grand-missions/GM_I_B_CYCLE3_PROPAGATION_CONTRACT_v1.json --output mission-control/grand-missions/generated/input/contract.json
+          curl --fail --location https://raw.githubusercontent.com/GBOGEB/CODEX/bd1fb697e6aa86ebc077b92015201ad512728a13/ssot/bridge_rows/gg_math_temporal_pca_w4_p31_knowledge_atom.json --output mission-control/grand-missions/generated/input/atom.json
+          curl --fail --location https://raw.githubusercontent.com/GBOGEB/CoolProp/0c645ac28ac73e1873268a3f6f505aaeffb41a8d/qps/recon/GM_I_B_CYCLE3_TEMPORAL_PCA_6D_ADAPTER_RECEIPT_v1.json --output mission-control/grand-missions/generated/input/coolprop.json
+          curl --fail --location https://raw.githubusercontent.com/GBOGEB/cryoplant-project/29a3a619b17b37eca5accfa2fd747401a2387c7b/triage/w264/QPS_W264_3P3_TEMPORAL_PCA_PROPAGATION_CHILD_RECEIPT_v1.json --output mission-control/grand-missions/generated/input/qps.json
+      - name: Recompute full Cycle3 exit predicate
+        run: |
+          python mission-control/grand-missions/validate_gm_i_b_cycle3_propagation_proof.py \
+            --contract mission-control/grand-missions/generated/input/contract.json \
+            --atom mission-control/grand-missions/generated/input/atom.json \
+            --coolprop mission-control/grand-missions/generated/input/coolprop.json \
+            --qps mission-control/grand-missions/generated/input/qps.json \
+            --out mission-control/grand-missions/generated/GM_I_B_CYCLE3_PROPAGATION_PROOF_v1.json
+      - name: Enforce frozen Cycle3 KPI vector
+        run: |
+          python - <<'PY'
+          import json, os
+          r=json.load(open('mission-control/grand-missions/generated/GM_I_B_CYCLE3_PROPAGATION_PROOF_v1.json'))
+          assert r['status']=='PASS_3P3_PROPAGATION_PROOF'
+          assert r['cycle3_state_candidate']=='CONTROL'
+          assert r['source_head']==os.environ['EXACT_HEAD']
+          k=r['kpi']
+          assert k['propagation_coverage']['numerator']==3 and k['propagation_coverage']['denominator']==3 and k['propagation_coverage']['value']==1.0
+          assert k['semantic_parity']['numerator']==18 and k['semantic_parity']['denominator']==18 and k['semantic_parity']['value']==1.0
+          assert k['reuse_ratio']['numerator']==3 and k['reuse_ratio']['denominator']==3 and k['reuse_ratio']['value']==1.0
+          assert k['duplicate_implementation_count']['value']==0
+          assert k['child_disposition_coverage']['numerator']==2 and k['child_disposition_coverage']['denominator']==2 and k['child_disposition_coverage']['value']==1.0
+          assert k['propagation_depth']['value']>=2
+          assert k['authority_inversion_count']['value']==0
+          assert r['3p3']['Preserve_or_Pin']=='PASS'
+          assert r['3p3']['Propagate_or_Penetrate']=='PASS'
+          assert r['3p3']['Prove_or_Promote']=='PASS_KNOWLEDGE_DIAGNOSTIC_CONTROL_ONLY'
+          assert r['authority_transfer'] is False
+          assert r['formal_credit_delta']==0
+          print('PASS_GM_I_B_CYCLE3_3P3_PROPAGATION_PROOF')
+          PY
+      - name: Upload Cycle3 propagation proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-i-b-cycle3-3p3-proof-${{ env.EXACT_HEAD }}
+          path: |
+            mission-control/grand-missions/generated/GM_I_B_CYCLE3_PROPAGATION_PROOF_v1.json
+            mission-control/grand-missions/generated/input/contract.json
+            mission-control/grand-missions/generated/input/atom.json
+            mission-control/grand-missions/generated/input/coolprop.json
+            mission-control/grand-missions/generated/input/qps.json
+          if-no-files-found: error
