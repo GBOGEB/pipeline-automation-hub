@@ -1,5 +1,5 @@
 schema: missioncontrol.official_mission_register.v1
-as_of: '2026-09-16T22:48:00+02:00'
+as_of: '2026-09-16T22:55:00+02:00'
 authority_transfer: false
 purpose: >-
   Official Mission Control index across canonical Grand Missions, governed variants,
@@ -45,8 +45,18 @@ local_missions:
     provider: GBOGEB/gg_MATH
     primary_consumers: [GBOGEB/ABACUS, GBOGEB/cryoplant-project]
     state: ACTIVE_DEVELOPMENT_WITH_GOVERNED_CONSUMER_BOUNDARY
-    current_completed_slice: TEMPORAL_PCA_SUBSPACE_MULTICLOCK_FEDERATION_TO_REAL_KEB_ATOM
-    next_sequential_slice: H05_TYPED_PEARSON_BT_PCA_BRIDGE
+    completed_slices:
+      - TEMPORAL_PCA_SUBSPACE_MULTICLOCK_FEDERATION_TO_REAL_KEB_ATOM
+      - H05_TYPED_PEARSON_BT_PCA_BRIDGE_REFERENCE
+    h05_evidence:
+      provider_pr: 25
+      provider_merge_sha: e43de0d57ab996b9697c7da560ea0da02fca96b7
+      exact_head_sha: 5a1972e3a3caf6725d42cbc59af79812a73787b7
+      workflow_run_id: 35149039885
+      evidence_class: A3_SYNTHETIC_ONLY
+      authority_transfer: false
+    next_sequential_slice: H05_OBSERVED_ONLY_CONSUMER_POPULATION
+    parallel_high_pressure_slice: H07_GRAPH_EIGENSPECTRUM_GFT_FILTERS
     official_control: mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml
     crew_allocation: mission-control/qps-triage-ultra/missions/LM-10_CREW_ALLOCATION_v3.yaml
 invariants:
