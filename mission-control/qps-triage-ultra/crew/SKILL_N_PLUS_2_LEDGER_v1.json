@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.crew.skill_n_plus_2_ledger.v1",
-  "as_of": "2026-09-16T22:37:16+02:00",
+  "as_of": "2026-09-16T22:48:00+02:00",
   "clock": {
     "kind": "pulse",
     "spacing": "ordinal"
@@ -29,17 +29,38 @@
         "plots"
       ],
       "status": "SCORED_EXACT_HIT"
-    }
-  ],
-  "pending": [
+    },
     {
       "issued_at_pulse": "SKILL_P0",
       "target_pulse": "SKILL_P2",
       "metric": "distinct_runner_resolution_modes_exercised",
       "prediction": 2,
       "basis": "manual workflow_dispatch plus mission-worker invocation are the first two planned modes",
-      "actual": null
-    },
+      "actual": 2,
+      "absolute_error": 0,
+      "observed_modes": [
+        "hosted_pr_matrix",
+        "mission_worker_consumer"
+      ],
+      "observed_evidence": [
+        {
+          "repo": "GBOGEB/pipeline-automation-hub",
+          "workflow_run": 35147541915,
+          "source_ref": "24396d33b827e14b23d0ef3b711df990947e7a52"
+        },
+        {
+          "repo": "GBOGEB/gg_MATH",
+          "workflow_run": 35148680693,
+          "source_ref": "df7e004e0779f2b20b64ef4cc493be4c19a4f172",
+          "artifact_id": 10468121877,
+          "artifact_digest": "sha256:51de9bf9a4a8de4c18c58c6bc10040c92ddc8c4c16eef788cb03423382cc97b4"
+        }
+      ],
+      "skills_ref": "905a12596412afacd3cd7f3c3f6891ac026abf8f",
+      "status": "SCORED_EXACT_HIT"
+    }
+  ],
+  "pending": [
     {
       "issued_at_pulse": "SKILL_P1",
       "target_pulse": "SKILL_P3",
@@ -47,13 +68,25 @@
       "prediction": 3,
       "basis": "SKILL_P1 observed all three canonical bundles resolving at one exact skills SHA; next control forecasts three exact-pinned consumer receipts",
       "actual": null
+    },
+    {
+      "issued_at_pulse": "SKILL_P2",
+      "target_pulse": "SKILL_P4",
+      "metric": "exact_pinned_consumer_receipts_with_entrypoint_digest",
+      "prediction": 3,
+      "basis": "MP_P3 established the consumer-owned receipt path with exact skill pin and entrypoint digest; next horizon forecasts all three canonical consumer receipts retaining that evidence",
+      "actual": null
     }
   ],
   "calibration": {
     "state": "WARM_START_INSUFFICIENT_SCORED_HISTORY",
-    "n_scored": 1,
+    "n_scored": 2,
     "last_absolute_error": 0,
     "probability_calibration_applied": false
+  },
+  "private_qps_mp_p1": {
+    "hosted_seven_file_actual": "UNOBSERVED",
+    "compensation_allowed": false
   },
   "authority_transfer": false
 }
