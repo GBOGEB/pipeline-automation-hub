@@ -1,0 +1,88 @@
+{
+  "schema": "missioncontrol.crew.skill_federated_pulse_receipt.v1",
+  "as_of": "2026-09-16T22:37:16+02:00",
+  "pulse": "MP_P2_FIRST_FEDERATED_USE",
+  "local_skill_pulse": "SKILL_P1",
+  "status": "PASS_THREE_OF_THREE_EXACT_PINNED_AND_FORECAST_SCORED",
+  "source": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "pr": 139,
+    "pr_head": "24396d33b827e14b23d0ef3b711df990947e7a52",
+    "merge_commit": "b731b70a80d2b572e3dcc235f8a2d5fbca41b7e5",
+    "workflow_run": 35147541915,
+    "workflow_run_number": 2
+  },
+  "canonical_skills": {
+    "repo": "GBOGEB/skills",
+    "exact_sha": "905a12596412afacd3cd7f3c3f6891ac026abf8f"
+  },
+  "individual_receipts": [
+    {
+      "skill": "math",
+      "status": "PASS_SKILL_BUNDLE_RESOLUTION",
+      "entrypoint_sha256": "53858823bbbcd94adec2e0fba36db4f98b83cfb603ce1460e1d93d7cf7d830f8",
+      "artifact_id": 10467414363,
+      "artifact_digest": "sha256:f119729617b6e972b4862ed93605eaefe8b7a1e0ceea9d167b9b157df3a9cdb7"
+    },
+    {
+      "skill": "plots",
+      "status": "PASS_SKILL_BUNDLE_RESOLUTION",
+      "entrypoint_sha256": "084f838e7bd6d566bf34e108be2abd74513f0931074f09deb6e9bfcbd2cb3c1b",
+      "artifact_id": 10467319992,
+      "artifact_digest": "sha256:b4659857a1d73d4c856e47675a65b65535696d2c8adeb1d45e7d857064f62e7f"
+    },
+    {
+      "skill": "math-plots",
+      "status": "PASS_SKILL_BUNDLE_RESOLUTION",
+      "entrypoint_sha256": "634de353163630d4e3989dd76fc50a11d908057c663d3a2170fb1cc9b4d1dced",
+      "artifact_id": 10467688733,
+      "artifact_digest": "sha256:9643f30810321e10fc7fd46aa5183bf0e3b6b254f09ec3c8935ca6a384dd9502"
+    }
+  ],
+  "aggregate_artifact": {
+    "artifact_id": 10468100035,
+    "artifact_digest": "sha256:98b791da41eb998395309dd9601e81a6a77cf428bcc4f611e7194ea4ae7476ac",
+    "contains": [
+      "SKILL_P1_SCORE.json",
+      "SKILL_N_PLUS_2_LEDGER_ROLLED_v2.json"
+    ]
+  },
+  "forecast_score": {
+    "metric": "skill_bundles_resolvable",
+    "prediction": 3,
+    "actual": 3,
+    "absolute_error": 0,
+    "status": "SCORED_EXACT_HIT"
+  },
+  "learning": {
+    "n_scored": 1,
+    "calibration_state": "WARM_START_INSUFFICIENT_SCORED_HISTORY",
+    "probability_calibration_applied": false,
+    "historical_predictions_rewritten": false
+  },
+  "rolled_horizon": {
+    "SKILL_P2": {
+      "metric": "distinct_runner_resolution_modes_exercised",
+      "prediction": 2,
+      "state": "FROZEN_PENDING_NOT_DUE",
+      "observed_modes_so_far": [
+        "hosted_pr_matrix"
+      ]
+    },
+    "SKILL_P3": {
+      "metric": "exact_pinned_consumer_receipts",
+      "prediction": 3,
+      "state": "FROZEN_NEW_PREDICTION"
+    }
+  },
+  "non_scoring_diagnostic_attempt": {
+    "workflow_run": 35147474092,
+    "classification": "RECEIPT_ARGUMENT_EXPANSION_DEFECT",
+    "canonical_skill_checkout": "PASS",
+    "counted_as_actual": false,
+    "forecast_effect": "NONE",
+    "correction": "expand SKILLS_SHA in shell before passing --skills-ref"
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
