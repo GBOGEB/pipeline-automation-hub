@@ -49,7 +49,7 @@ jobs:
             --task-id 'MP_P2-${{ matrix.skill }}' \
             --source-repo '${{ github.repository }}' \
             --source-ref '${{ github.event.pull_request.head.sha }}' \
-            --skills-ref '${SKILLS_SHA}' \
+            --skills-ref "${SKILLS_SHA}" \
             --resolution-mode hosted_pr_matrix \
             --out 'pulse-receipts/${{ matrix.skill }}.json'
           python - <<'PY'
@@ -89,7 +89,7 @@ jobs:
             --receipts pulse-receipts \
             --score-out pulse-output/SKILL_P1_SCORE.json \
             --rolled-ledger-out pulse-output/SKILL_N_PLUS_2_LEDGER_ROLLED_v2.json \
-            --skills-ref '${SKILLS_SHA}' \
+            --skills-ref "${SKILLS_SHA}" \
             --source-ref '${{ github.event.pull_request.head.sha }}'
           python -m json.tool pulse-output/SKILL_P1_SCORE.json > /dev/null
           python -m json.tool pulse-output/SKILL_N_PLUS_2_LEDGER_ROLLED_v2.json > /dev/null
