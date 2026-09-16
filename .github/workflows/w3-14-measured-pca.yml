@@ -19,6 +19,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 2
       - name: Assert exact source head
         shell: bash
         run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
@@ -46,8 +47,70 @@ jobs:
           assert r['authority_transfer'] is False
           print(json.dumps({'PC1':r['components'][0],'PC2':r['components'][1],'navigation':r['pc1_flattening_interpretation'],'ranking':r['next_action_ranking']}, sort_keys=True))
           PY
+      - name: Resolve reference fit source
+        id: reference
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "pull_request" ] && [ -n "${PR_BASE_SHA:-}" ]; then
+            ref="$PR_BASE_SHA"
+          elif [ "$EVENT_NAME" = "push" ] && [ -n "${PUSH_BEFORE_SHA:-}" ] && [ "$PUSH_BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
+            ref="$PUSH_BEFORE_SHA"
+          else
+            ref="$(git rev-parse HEAD^)"
+          fi
+          git fetch --no-tags --depth=1 origin "$ref"
+          echo "sha=$ref" >> "$GITHUB_OUTPUT"
+          echo "reference_sha=$ref"
+      - name: Recompute reference PCA fit on reference measured rows
+        env:
+          REFERENCE_SHA: ${{ steps.reference.outputs.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p mission-control/qps-triage-ultra/receipts/reference
+          git show "$REFERENCE_SHA:mission-control/qps-triage-ultra/analytics/W3_13_MEASURED_PULSES.json" \
+            > mission-control/qps-triage-ultra/receipts/reference/W3_13_MEASURED_PULSES.json
+          python mission-control/qps-triage-ultra/analytics/w3_14_measured_pca.py \
+            --input mission-control/qps-triage-ultra/receipts/reference/W3_13_MEASURED_PULSES.json \
+            --out mission-control/qps-triage-ultra/receipts/reference/W3_14_MEASURED_PCA.json \
+            --source-sha "$REFERENCE_SHA"
+      - name: Align components and check congruence plus eigengap
+        shell: bash
+        run: |
+          python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_pca_alignment.py \
+            --reference mission-control/qps-triage-ultra/receipts/reference/W3_14_MEASURED_PCA.json \
+            --candidate mission-control/qps-triage-ultra/receipts/W3_14_MEASURED_PCA.json \
+            --out mission-control/qps-triage-ultra/receipts/W3_14_TEMPORAL_PCA_ALIGNMENT.json
+      - name: Validate temporal PCA comparison doctrine
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+          r=json.loads(Path('mission-control/qps-triage-ultra/receipts/W3_14_TEMPORAL_PCA_ALIGNMENT.json').read_text())
+          assert r['diagnostic_only'] is True
+          assert r['governing_control_policy_changed'] is False
+          assert r['authority_transfer'] is False
+          assert r['doctrine']['raw_loading_sign_is_not_temporal_direction'] is True
+          assert r['doctrine']['sign_alignment_required_before_loading_comparison'] is True
+          assert r['doctrine']['component_matching_required_before_loading_comparison'] is True
+          assert r['doctrine']['small_eigengap_makes_individual_component_identity_ambiguous'] is True
+          assert r['component_alignment']
+          print(json.dumps({
+              'status':'PASS_TEMPORAL_PCA_ALIGNMENT',
+              'reference_source_sha':r['reference_source_sha'],
+              'candidate_source_sha':r['candidate_source_sha'],
+              'all_component_identities_reliable':r['all_component_identities_reliable'],
+              'components':r['component_alignment'],
+          }, sort_keys=True))
       - name: Upload W3-14 receipt
         uses: actions/upload-artifact@v4
         with:
           name: W3-14-measured-PCA-${{ github.event.pull_request.head.sha || github.sha }}
-          path: mission-control/qps-triage-ultra/receipts/W3_14_MEASURED_PCA.json
+          path: |
+            mission-control/qps-triage-ultra/receipts/W3_14_MEASURED_PCA.json
+            mission-control/qps-triage-ultra/receipts/W3_14_TEMPORAL_PCA_ALIGNMENT.json
