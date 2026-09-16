@@ -1,0 +1,63 @@
+{
+  "schema": "missioncontrol.lm11.qps_wave_graph.v1",
+  "mission_id": "LM-11",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "provider": "GBOGEB/cryoplant-project",
+  "identity": {
+    "wave_key": ["namespace", "wave_label"],
+    "transaction_key": ["canonical_id", "github_pr", "head_or_merge_sha"],
+    "bare_pulse_id_local_only": true
+  },
+  "node_schema": {
+    "required": ["node_id", "node_type", "observed_state", "provenance"],
+    "fields": [
+      "namespace", "wave_label", "wave_number", "update_type", "update_index", "p3r_cycle",
+      "semantic_family", "group_id", "current", "status", "evidence_class", "authority_state",
+      "repo", "paths", "github_prs", "commits", "runs", "artifact_class", "entry_kind", "exit_kind"
+    ]
+  },
+  "edge_schema": {
+    "required": ["edge_id", "from", "to", "edge_type", "evidence"],
+    "edge_types": [
+      "PRECEDES", "PARENT_OF", "DEPENDS_ON", "PRODUCES", "CONSUMES", "EVIDENCED_BY",
+      "SUPERSEDES", "CORRECTS", "REVISITS", "ALIASES", "BRIDGES", "FEDERATES_TO",
+      "RETURNED_AS", "REENTERS", "FORKS", "JOINS", "PARALLEL_NONCOMPENSATING",
+      "PROMOTES_TO_CURRENT"
+    ],
+    "guards": {
+      "chronological_precedence_implies_parentage": false,
+      "hash_change_implies_authority_change": false,
+      "merge_implies_perpetuation": false,
+      "parent_pass_implies_child_accept": false
+    }
+  },
+  "group_schema": {
+    "required": ["group_id", "name", "membership_basis", "members"],
+    "membership_basis_enum": [
+      "SEMANTIC_FAMILY", "VICTORY_SCOPE", "AUTHORITY_CHAIN", "PIPELINE_STAGE", "TEMPORAL_CLUSTER", "SIDE_LOAD", "PARALLEL_NONCOMPENSATING"
+    ]
+  },
+  "artifact_classes": {
+    "HUMAN_OUTPUT": ["docx", "pdf", "xlsx", "pptx", "html"],
+    "HYBRID_CONTROL": ["yaml", "yml", "md"],
+    "MACHINE_STATE": ["json"],
+    "CODE_CORE": ["py", "ts", "zod.ts", "sh", "ps1"]
+  },
+  "entry_kinds": [
+    "USER_ROOT_INPUT", "SOURCE_RETURN", "PARENT_RECEIPT", "RESTART_ROOT", "CURRENT_POINTER",
+    "CANONICAL_SSOT", "SIDE_LOAD_PROVIDER", "HISTORICAL_REENTRY"
+  ],
+  "exit_kinds": [
+    "ACCEPT", "REJECT", "DEFER", "PROMOTED_STATE", "CONTROL", "CURRENT_POINTER_UPDATE",
+    "RECEIPT", "BINARY_VIEW", "FEDERATION_RETURN", "NEXT_WAVE_OR_PULSE"
+  ],
+  "bounded_dag_rule": "lineage and one execution transaction must be acyclic",
+  "global_graph_rule": "recursive control, re-entry, DMAIC and federation feedback may form cycles across bounded DAG transactions",
+  "projection_rules": {
+    "current_only_default": true,
+    "superseded_hidden_by_default": true,
+    "provenance_always_reachable": true,
+    "destructive_delete": false
+  }
+}
