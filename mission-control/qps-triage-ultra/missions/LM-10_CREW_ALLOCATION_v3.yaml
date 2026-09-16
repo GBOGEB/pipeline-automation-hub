@@ -1,0 +1,88 @@
+schema: qps.lm10.crew_allocation.v3
+mission_id: LM-10
+as_of: '2026-09-16T22:05:00+02:00'
+authority_transfer: false
+source_registry: mission-control/qps-triage-ultra/crew/CREW_REGISTRY_v1.json
+registry_census:
+  UNIVERSAL_CORE_U:
+    count: 8
+    ids: [U01,U02,U03,U04,U05,U06,U07,U08]
+    status: OBSERVED_NAMED_CREW
+  SPECIALIST_S:
+    count: 7
+    ids: [S01,S02,S03,S04,S05,S06,S07]
+    status: OBSERVED_OR_PARTIAL_NAMED_SPECIALISTS
+  CONCEPTUAL_PROFILE_C:
+    count: 8
+    ids: [C01,C02,C03,C04,C05,C06,C07,C08]
+    status: NONASSIGNABLE_TARGET_PROFILES
+  observed_named_crew_total: 15
+  registry_entry_total_including_conceptual_profiles: 23
+operational_posture:
+  CONTROL_OR_LOW_COST_WATCH:
+    count: 5
+    ids: [U01,U02,U04,U07,U08]
+  BD0_ACTIVATION_GATED:
+    count: 3
+    ids: [U03,U05,S05]
+  ACTIVE_ELSEWHERE_DO_NOT_DISPLACE:
+    count: 4
+    ids: [U06,S04,S06,S07]
+  RETURNED_RESERVE:
+    count: 2
+    ids: [S01,S02]
+  EXTERNAL_RUNTIME_GATE_WATCH:
+    count: 1
+    ids: [S03]
+functional_cells:
+  MC0_COMMAND_ARCHITECTURE:
+    members: [U01,U02,U04]
+    types: [GOVERNOR, CHIEF_ARCHITECT, ORCHESTRATOR]
+    seat_count: 3
+  MC1_MATH_ANALYSIS:
+    members: [U05,S04]
+    types: [ANALYST, SCIENTIST]
+    seat_count: 2
+    activation: GATED_BY_CURRENT_LOAD
+  MC2_BUILD_RUNTIME:
+    members: [S05]
+    types: [ENGINEER]
+    seat_count: 1
+    activation: GATED_BY_CURRENT_LOAD
+  MC3_VERIFICATION:
+    members: [U06]
+    types: [QA_SIGNALMAN]
+    seat_count: 1
+    activation: GATED_BY_CURRENT_LOAD
+  MC4_OBSERVABILITY:
+    members: [U07]
+    types: [CARTOGRAPHER_OCULARS]
+    seat_count: 1
+  MC5_REX_KEB:
+    members: [U08,S06]
+    types: [REX_KEB_INTEGRATOR, TECHNICAL_MANAGER]
+    seat_count: 2
+    activation: S06_GATED_BY_CURRENT_LOAD
+  MC6_DOW_FEDERATION:
+    members: [U03,S01]
+    types: [PM_DOW, AMBASSADOR]
+    seat_count: 2
+    activation: CALL_UP_ONLY
+  MC7_RUNTIME_HABITAT:
+    members: [S03,S07]
+    types: [DOCKMASTER, LICENSED_RUNTIME_OPERATOR]
+    seat_count: 2
+    activation: EXTERNAL_RUNTIME_ONLY
+worker_types:
+  - {id: WKR_MATH_EXEC, type: EXECUTION_WORKER, instances: ELASTIC_0_TO_N, authority: NONE}
+  - {id: WKR_VERIFY, type: TEST_VERIFICATION_WORKER, instances: ELASTIC_0_TO_N, authority: NONE}
+  - {id: WKR_VISUAL, type: RENDER_VISUAL_WORKER, instances: ELASTIC_0_TO_N, authority: NONE}
+  - {id: WKR_FEDERATION, type: BRIDGE_RECEIPT_WORKER, instances: ELASTIC_0_TO_N, authority: NONE}
+worker_rule: workers_are_runtime_capacity_not_crew_identity_and_never_gain_promotion_authority
+crew_rules:
+  - no_fabricated_secondment
+  - no_displacement_of_ACTIVE_elsewhere_without_Governor_rebalance
+  - conceptual_C_profiles_do_not_count_as_available_crew
+  - functional_cell_membership_may_overlap_but_unique_roster_counts_do_not
+  - builder_cannot_self_attest
+  - federation_worker_cannot_create_authority

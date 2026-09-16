@@ -1,0 +1,91 @@
+schema: qps.mission_control.lm10.v3
+mission_id: LM-10
+mission_number: 10
+mission_type: LOCAL_SINGLE_FRONTIER_DEVELOPMENT_AND_FEDERATION
+mission_name: GG_MATH_SIGNAL_EXTRACTION_AND_METHOD_DEEP_DIVES
+state: ACTIVE_DEVELOPMENT_WITH_GOVERNED_CONSUMER_BOUNDARY
+authority_transfer: false
+formal_credit_delta: 0
+home: GBOGEB/pipeline-automation-hub
+provider: GBOGEB/gg_MATH
+consumers: [GBOGEB/ABACUS, GBOGEB/cryoplant-project]
+official_register: mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml
+crew_allocation: mission-control/qps-triage-ultra/missions/LM-10_CREW_ALLOCATION_v3.yaml
+provider_surfaces:
+  development_plane: mission/LM10/DEVELOPMENT_PLANE_TOPIC_DEEP_DIVES_v1.yaml
+  method_cards: research/MATH_METHOD_INFO_CARDS_v1.yaml
+  dependency_graph: research/MATH_METHOD_DEPENDENCY_GRAPH_v1.yaml
+transaction_model:
+  hierarchy: [Mission, Cycle, Pulse, Plane, Leg, Node, Atom]
+  atom: smallest mathematical operation_assumption_metric_or_threshold
+  node: method_card_or_project_operation_composed_from_atoms
+  edge_types: [REQUIRES, FEEDS, CHALLENGES, CALIBRATES, VALIDATES, GOVERNS, FEDERATES, DOES_NOT_IMPLY]
+  global_graph_may_cycle: true
+  bounded_execution_DAG_must_be_acyclic: true
+three_pulse_three_plane:
+  P1:
+    plane: METHOD_MATH
+    operator: 3PR
+    verbs: [Refresh, Probe, Rank]
+    owner_cells: [MC1_MATH_ANALYSIS, MC0_COMMAND_ARCHITECTURE]
+    inputs: [method_card, assumptions, dependency_slice, existing_kernel_receipts]
+    output: METHOD_FIRST_RED_AND_RANKED_EXECUTABLE_SLICE
+    required_KPI: [formula_identity, dependency_completeness, threshold_kind, numerical_residual]
+  P2:
+    plane: PROJECT_MATH_QPS
+    operator: MIP
+    verbs: [Modernize, Innovate, Perpetuate]
+    owner_cells: [MC1_MATH_ANALYSIS, MC4_OBSERVABILITY, MC5_REX_KEB]
+    inputs: [P1_method_receipt, project_population, evidence_class, QPS_object]
+    output: PROJECT_MATH_MAPPING_WITH_DMAIC_KPI_AND_VALIDITY_DOMAIN
+    required_KPI: [population_identity, uncertainty, effect_size, calibration, validity_domain]
+  P3:
+    plane: TRIAGE_GOVERNANCE
+    operator: 3PC
+    verbs: [Prepare, Prove, Commit]
+    owner_cells: [MC0_COMMAND_ARCHITECTURE, MC3_VERIFICATION, MC6_DOW_FEDERATION]
+    inputs: [P2_project_math_receipt, authority_state, first_red, consumer_gate]
+    output: AUTHORITY_BOUND_ACCEPT_REJECT_DEFER_AND_CONTROL_RECEIPT
+    required_KPI: [exact_SHA, steps_gt_zero_when_runtime_claimed, consumer_disposition, regression_state]
+optional_fourth_pulse_plane:
+  P4:
+    plane: FEDERATION_ORCHESTRATION
+    operator: 3P3
+    verbs: [Preserve_Pin, Propagate_Penetrate, Prove_Promote]
+    activation: ONLY_WHEN_RESULT_CROSSES_REPO_OR_AUTHORITY_BOUNDARY
+    owner_cells: [MC5_REX_KEB, MC6_DOW_FEDERATION, MC0_COMMAND_ARCHITECTURE]
+    route: gg_MATH_to_MissionControl_to_CODEX_KEB_to_ABACUS_DOW_to_QPS
+    required_binding: [source_repo, source_PR, source_SHA, source_locator, artifact_digest, schema, evidence_class, threshold_kind]
+    output: FEDERATED_ROUNDTRIP_RECEIPT
+    guards:
+      - federation_does_not_change_method_math
+      - threshold_kind_survives_roundtrip
+      - PROJECT_GOVERNED_threshold_is_read_only_to_provider
+      - DEEP_DIVE_or_STRETCH_does_not_become_consumer_authority_by_propagation
+pulse_interpretation:
+  three_pulse_meaning: >-
+    The default 3P transaction is both sequential and planar: P1 resolves the mathematical
+    method frontier, P2 resolves its project/QPS meaning, and P3 resolves governance and
+    disposition. These are not three repetitions of the same work.
+  fourth_plane_meaning: >-
+    P4 is an optional federation/orchestration transaction, not a mandatory fourth local
+    analysis pulse. It is used only where exact evidence must cross repositories or authority domains.
+DMAIC_coupling:
+  P1: [Define, Measure, Analyse]
+  P2: [Analyse, Improve]
+  P3: [Improve, Control]
+  P4: [Control, recursive_Define_for_next_cycle]
+  rule: full_DMAIC_escalation_follows_QPS_3P_RAL_governance
+crew_summary:
+  observed_named_crew: 15
+  universal_core: 8
+  observed_specialists: 7
+  conceptual_profiles_nonassignable: 8
+  runtime_worker_types: 4
+  rule: active_seats_are_load_gated_not_equal_to_registry_count
+stop_rules:
+  - no_method_threshold_is_invented_to_force_project_acceptance
+  - no_PCA_loading_sign_is_policy_direction_before_alignment
+  - no_single_math_card_compensates_failed_QPS_AND_gate
+  - no_federation_pulse_for_repo_local_research_only
+  - no_secondment_or_authority_is_fabricated
