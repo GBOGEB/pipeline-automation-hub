@@ -88,17 +88,18 @@
       "name": "EIGHT_FRONTIER_EXPANSION",
       "frontier_count": 8,
       "objective": "scale_controlled_reconnaissance_to_eight_frontiers_without_receipt_or_authority_degradation",
-      "state": "STAGED_ACTIVE_RECON_4_OF_8",
+      "state": "ACTIVE_8_OF_8",
       "children": [],
-      "crew_posture": "FOUR_NAMED_FRONTIERS_UNDER_CONTROLLED_RECON_WITH_TWO_CONTROLLED_PILOTS",
-      "observed": false,
+      "crew_posture": "EIGHT_NAMED_FRONTIERS_UNDER_CONTROLLED_ACTIVE8_WITH_TWO_CONTROLLED_PILOTS_FOUR_NEW_CANDIDATE_RECON_FRONTIERS",
+      "observed": true,
       "activation_observed": true,
-      "activation_stage": "RECON_4_OF_8",
-      "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"],
+      "activation_stage": "ACTIVE_8_OF_8",
+      "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04", "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
       "controlled_pilot_frontiers": ["GM-IV-F01", "GM-IV-F03"],
       "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
-      "unfilled_frontier_slots": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
-      "launch_gate": "GM_FLEET_03_FIRST_EXACT_SHA_RUNTIME_GATE_PASS",
+      "new_candidate_recon_frontiers": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+      "unfilled_frontier_slots": [],
+      "launch_gate": "GM_IV_ACTIVE8_SEPARATE_GOVERNOR_PROMOTION",
       "activation_evidence": {
         "source_sha": "12d54ba2d6e08ff8c816d2fbc9ed44c3f167fef1",
         "workflow_run_id": 34767440206,
@@ -143,7 +144,15 @@
         "decision": "READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR",
         "canonical_state_after_gate": "STAGED_ACTIVE_RECON_4_OF_8"
       },
-      "promotion_boundary": "RECON_4_OF_8_BINDS_FOUR_NAMED_FRONTIER_IDENTITIES_TO_CONTROLLED_RECONNAISSANCE_WHILE_RETAINING_F01_F03_AS_CONTROLLED_PILOTS_AND_F02_F04_AS_REFERENCES;_ACTIVE_8_READINESS_IS_PASS_BUT_REQUIRES_A_SEPARATE_PROMOTION_TRANSACTION"
+      "active_8_of_8_evidence": {
+        "source_sha": "3943ae33eea2a4af6171b97517c19b79ed986fe8",
+        "workflow_run_id": 35145656795,
+        "artifact_id": 10467671042,
+        "artifact_digest": "sha256:97d37b98334acbab0e1fec9bae56163e20fd5b9c2751be2495c52642bc6dd4cb",
+        "decision": "READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR",
+        "result": "PASS"
+      },
+      "promotion_boundary": "ACTIVE_8_OF_8_BINDS_EIGHT_NAMED_FRONTIER_IDENTITIES_WITHOUT_CANONICAL_CHILD_BINDING_OR_AUTHORITY_TRANSFER;_GM_V_REMAINS_HELD_PENDING_POST_PROMOTION_REPEAT_CONTROL_MEASURED_CAPACITY_AND_SEPARATE_GOVERNOR_LAUNCH"
     },
     {
       "id": "GM-V",
@@ -154,7 +163,7 @@
       "children": [],
       "crew_posture": "UNALLOCATED",
       "observed": false,
-      "launch_gate": "GM_IV_CONTROL_PLUS_MEASURED_CAPACITY_AND_NO_CONTROL_DEGRADATION"
+      "launch_gate": "GM_IV_POST_ACTIVE8_REPEAT_CONTROL_PLUS_MEASURED_CAPACITY_AND_NO_CONTROL_DEGRADATION"
     }
   ],
   "scaling_invariant": [1, 2, 4, 8, 16],
@@ -165,6 +174,6 @@
     "NO_CREW_SURGE_WITHOUT_NAMED_FRONTIER_AND_RETURN_PATH",
     "GM_IV_FRONTIER_DISPOSITION_IS_NOT_CHILD_ACCEPTANCE",
     "GM_IV_STAGE_PROMOTION_REQUIRES_EXPLICIT_GOVERNOR_GATE",
-    "GM_V_REMAINS_HELD_UNTIL_GM_IV_REPEAT_CONTROL"
+    "GM_V_REMAINS_HELD_UNTIL_GM_IV_POST_ACTIVE8_REPEAT_CONTROL"
   ]
 }

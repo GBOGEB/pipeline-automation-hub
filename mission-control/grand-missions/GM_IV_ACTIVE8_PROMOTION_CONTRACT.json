@@ -1,0 +1,43 @@
+{
+  "schema": "qps.gm_iv_active8_promotion_contract.v1",
+  "wave": "GM-FLEET-03-PROMOTE-ACTIVE8",
+  "mission_id": "GM-IV",
+  "from_state": "STAGED_ACTIVE_RECON_4_OF_8",
+  "to_state": "ACTIVE_8_OF_8",
+  "to_activation_stage": "ACTIVE_8_OF_8",
+  "readiness_source_sha": "3943ae33eea2a4af6171b97517c19b79ed986fe8",
+  "accepted_readiness_evidence": {
+    "source_sha": "3943ae33eea2a4af6171b97517c19b79ed986fe8",
+    "workflow_run_id": 35145656795,
+    "artifact_id": 10467671042,
+    "artifact_digest": "sha256:97d37b98334acbab0e1fec9bae56163e20fd5b9c2751be2495c52642bc6dd4cb",
+    "decision": "READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR",
+    "result": "PASS"
+  },
+  "required_shape": {
+    "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04", "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+    "controlled_pilot_frontiers": ["GM-IV-F01", "GM-IV-F03"],
+    "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
+    "new_candidate_recon_frontiers": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+    "unfilled_frontier_slots": [],
+    "children": []
+  },
+  "allowed_mutations": [
+    "GM-IV canonical state and activation stage to ACTIVE_8_OF_8",
+    "bind exact accepted ACTIVE_8 readiness evidence",
+    "fill candidate frontier identities F05 through F08 without child binding",
+    "synchronize Mission City GM-IV state and ACTIVE_8 command edges",
+    "admit only the exact ACTIVE_8 shape into the generic fleet validator",
+    "synchronize Evidence Economics fleet-stage semantics"
+  ],
+  "forbidden_mutations": [
+    "bind any GM-IV canonical child",
+    "transfer engineering authority",
+    "change F01/F03 controlled-pilot dispositions",
+    "change F02/F04 reference dispositions",
+    "promote GM-V from HELD",
+    "claim GM-V readiness from ACTIVE_8 promotion alone",
+    "promote PCA or BT from synthetic or locally insufficient evidence"
+  ],
+  "post_promotion_boundary": "ACTIVE_8_OF_8_IS_THE_CANONICAL_EIGHT_FRONTIER_CONTROL_SHAPE_WITH_ZERO_CHILD_BINDING_AND_ZERO_AUTHORITY_TRANSFER. GM_V_REMAINS_HELD_UNTIL_POST_PROMOTION_REPEAT_CONTROL_MEASURED_CAPACITY_NO_DEGRADATION_AND_A_SEPARATE_GOVERNOR_LAUNCH."
+}

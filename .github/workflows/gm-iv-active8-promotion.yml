@@ -1,0 +1,78 @@
+name: GM-IV ACTIVE_8 Promotion Control
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/GM_IV_ACTIVE8_PROMOTION_CONTRACT.json'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - 'mission-control/grand-missions/MISSION_CITY_GRAPH.json'
+      - 'mission-control/grand-missions/GM_IV_EVIDENCE_ECONOMICS.json'
+      - 'mission-control/grand-missions/validate_gm_fleet.py'
+      - 'mission-control/grand-missions/validate_gm_iv_active8_promotion.py'
+      - '.github/workflows/gm-iv-active8-promotion.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  active8-promotion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          printf '%s\n' "$actual" > gm_iv_active8_promotion_head.txt
+
+      - name: Validate exact ACTIVE8 promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd mission-control/grand-missions
+          python validate_gm_iv_active8_promotion.py \
+            --source-sha "${{ github.event.pull_request.head.sha || github.sha }}" \
+            --out ../../gm_iv_active8_promotion_receipt.json
+
+      - name: Validate canonical fleet after promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd mission-control/grand-missions
+          SOURCE_SHA='${{ github.event.pull_request.head.sha || github.sha }}' \
+            python validate_gm_fleet.py --out ../../gm_fleet_after_active8_receipt.json
+
+      - name: Enforce GM-V remains held
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          p=json.load(open('gm_iv_active8_promotion_receipt.json',encoding='utf-8'))
+          assert p['result']=='PASS_GM_IV_ACTIVE8_PROMOTION'
+          assert p['current_state']=='ACTIVE_8_OF_8'
+          assert p['children_bound'] is False
+          assert p['authority_transfer'] is False
+          assert p['gm_v_state']=='HELD'
+          assert p['gm_v_launch_authorized'] is False
+          f=json.load(open('gm_fleet_after_active8_receipt.json',encoding='utf-8'))
+          assert f['authority_transfer'] is False
+          PY
+
+      - name: Upload ACTIVE8 promotion receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-active8-promotion-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            gm_iv_active8_promotion_head.txt
+            gm_iv_active8_promotion_receipt.json
+            gm_fleet_after_active8_receipt.json
+          if-no-files-found: error

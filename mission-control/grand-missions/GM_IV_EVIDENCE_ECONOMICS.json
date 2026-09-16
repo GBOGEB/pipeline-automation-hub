@@ -8,17 +8,18 @@
     "rule": "LOCAL_ECONOMICS_DEFER_DOES_NOT_REVOKE_OR_REPLACE_SEPARATE_GLOBAL_MODEL_RESULTS"
   },
   "fleet_invariant": {
-    "mission_stage": "RECON_4_OF_8",
+    "mission_stage": "ACTIVE_8_OF_8",
     "canonical_children_bound": 0,
-    "named_recon_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"],
+    "named_recon_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04", "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
     "controlled_pilot_frontiers": ["GM-IV-F01", "GM-IV-F03"],
     "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
-    "unfilled_frontier_slots": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+    "new_candidate_recon_frontiers": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+    "unfilled_frontier_slots": [],
     "f03_child_bound": false,
     "f04_child_bound": false,
     "pilot_frontier_labels_do_not_imply_children": true,
     "gm_v_state": "HELD",
-    "rule": "RECON_FRONTIER_AND_PILOT_REFERENCE_LABELS_DO_NOT_CREATE_CANONICAL_CHILD_BINDING_OR_AUTHORITY_TRANSFER"
+    "rule": "ACTIVE8_FRONTIER_PILOT_REFERENCE_AND_CANDIDATE_LABELS_DO_NOT_CREATE_CANONICAL_CHILD_BINDING_OR_AUTHORITY_TRANSFER"
   },
   "metric_contract": {
     "queue_seconds": "MEASURED_FROM_JOB_CREATED_AT_TO_STARTED_AT",
