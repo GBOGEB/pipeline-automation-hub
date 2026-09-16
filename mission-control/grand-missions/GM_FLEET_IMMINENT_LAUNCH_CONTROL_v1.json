@@ -1,6 +1,6 @@
 {
   "schema": "qps.gm_fleet_imminent_launch_control.v1",
-  "as_of": "2026-09-16T22:48:00+02:00",
+  "as_of": "2026-09-16T22:54:00+02:00",
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "ordering_invariant": "execute_in_order_when_predecessor_gate_is_required; otherwise preserve independent holds and sentinels",
@@ -10,18 +10,8 @@
       "id": "GM-I-B-KEB-CLOSURE",
       "state": "DONE_CONTROL",
       "dmaic_phase": "CONTROL",
-      "dod": [
-        "exact_provider_sha_and_digest_bound",
-        "independent_DOW_exact_live_challenge_executes",
-        "KEB_validation_result_PASS",
-        "real_KEB_KNOWLEDGE_ATOM_materialized"
-      ],
-      "dov": [
-        "provider_sha=a99d7cacd03ed3a392c063a1b3f8dbffdba0d060",
-        "provider_digest=sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405",
-        "ABACUS_PR_1252_exact_head_runtime_PASS_run_35145377318",
-        "CODEX_PR_750_KEB_ITEM_0002_KEB_KNOWLEDGE_ATOM_merged"
-      ],
+      "dod": ["exact_provider_sha_and_digest_bound", "independent_DOW_exact_live_challenge_executes", "KEB_validation_result_PASS", "real_KEB_KNOWLEDGE_ATOM_materialized"],
+      "dov": ["provider_sha=a99d7cacd03ed3a392c063a1b3f8dbffdba0d060", "provider_digest=sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405", "ABACUS_PR_1252_exact_head_runtime_PASS_run_35145377318", "CODEX_PR_750_KEB_ITEM_0002_KEB_KNOWLEDGE_ATOM_merged"],
       "current_first_red": null
     },
     {
@@ -29,18 +19,8 @@
       "id": "GM-I-B-FLEET-SYNC",
       "state": "DONE_CONTROL",
       "dmaic_phase": "CONTROL",
-      "dod": [
-        "GM-I-B_registered_inside_GM-I",
-        "top_level_mission_ids_remain_GM-I_to_GM-V",
-        "II_to_V_numbering_semantically_unchanged",
-        "fleet_validator_PASS"
-      ],
-      "dov": [
-        "pipeline_automation_hub_PR_137_merged",
-        "registry_variant_id=GM-I-B",
-        "scaling_sequence=1-2-4-8-16",
-        "exact_head_MissionControl_workflow_PASS"
-      ],
+      "dod": ["GM-I-B_registered_inside_GM-I", "top_level_mission_ids_remain_GM-I_to_GM-V", "II_to_V_numbering_semantically_unchanged", "fleet_validator_PASS"],
+      "dov": ["pipeline_automation_hub_PR_137_merged", "registry_variant_id=GM-I-B", "scaling_sequence=1-2-4-8-16", "exact_head_MissionControl_workflow_PASS"],
       "current_first_red": null
     },
     {
@@ -49,66 +29,31 @@
       "state": "ACTIVE_SENTINEL",
       "dmaic_phase": "CONTROL",
       "target_posture": "CONTROL_SENTINEL_RECEIPT_REGRESSION",
-      "dod": [
-        "KEB_atom_closed",
-        "fleet_sync_merged",
-        "crew_contracted_to_sentinel",
-        "reactivation_triggers_bound"
-      ],
-      "dov": [
-        "no_active_implementation_workers_without_trigger",
-        "sentinel_checks_receipt_digest_and_provider_regression",
-        "new_governed_requirement_or_regression_reopens_short_pulse"
-      ],
-      "reactivation_triggers": [
-        "provider_receipt_digest_drift",
-        "KEB_atom_regression",
-        "consumer_reproduction_failure",
-        "new_governed_temporal_PCA_requirement"
-      ]
+      "dod": ["KEB_atom_closed", "fleet_sync_merged", "crew_contracted_to_sentinel", "reactivation_triggers_bound"],
+      "dov": ["no_active_implementation_workers_without_trigger", "sentinel_checks_receipt_digest_and_provider_regression", "new_governed_requirement_or_regression_reopens_short_pulse"],
+      "reactivation_triggers": ["provider_receipt_digest_drift", "KEB_atom_regression", "consumer_reproduction_failure", "new_governed_temporal_PCA_requirement"]
     },
     {
       "order": 4,
       "id": "GM-IV-F05-F06-PULSE",
-      "state": "DONE_EVIDENCE_ACCUMULATION",
-      "dmaic_phase": "MEASURE_ANALYSE",
-      "canonical_state": "STAGED_ACTIVE_RECON_4_OF_8",
+      "state": "DONE_HISTORICAL_EVIDENCE",
+      "dmaic_phase": "CONTROL_HISTORY",
+      "historical_canonical_state": "STAGED_ACTIVE_RECON_4_OF_8",
       "next_frontiers": ["GM-IV-F05", "GM-IV-F06"],
-      "dod": [
-        "F05_exact_SHA_probe_receipt",
-        "F06_exact_SHA_probe_receipt",
-        "explicit_dispositions",
-        "Governor_accepts_or_withholds_next_step"
-      ],
-      "dov": [
-        "pipeline_automation_hub_PR_138_merged",
-        "bounded_runtime_probe_run_35145656942_PASS",
-        "canonical_GM-IV_remains_4_of_8_until_separate_governor_transaction",
-        "no_child_binding",
-        "no_authority_transfer"
-      ]
+      "dov": ["pipeline_automation_hub_PR_138_merged", "bounded_runtime_probe_run_35145656942_PASS", "evidence_retained_after_ACTIVE8_promotion", "no_child_binding", "no_authority_transfer"]
     },
     {
       "order": 5,
       "id": "GM-IV-ACTIVE8-PROMOTION",
-      "state": "READY_FOR_SEPARATE_PROMOTION_TRANSACTION",
-      "dmaic_phase": "IMPROVE_CONTROL_GATE",
+      "state": "DONE_CONTROL_PENDING_REPEAT",
+      "dmaic_phase": "CONTROL",
       "predecessor_state": "STAGED_ACTIVE_RECON_4_OF_8",
-      "target_state": "ACTIVE_8_OF_8",
-      "readiness_dov": [
-        "GM-IV_ACTIVE_8_Governor_Readiness_run_35145656795_PASS",
-        "decision=READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR",
-        "capacity_gate_PASS",
-        "canonical_state_was_not_mutated_by_readiness_gate"
-      ],
-      "guards": [
-        "promotion_must_be_separate_PR",
-        "F01_F03_controlled_pilot_dispositions_retained",
-        "F02_F04_reference_dispositions_retained",
-        "F05_F08_bound_as_candidate_frontiers_not_children",
-        "authority_transfer=false",
-        "GM-V_remains_HELD"
-      ]
+      "current_state": "ACTIVE_8_OF_8",
+      "promotion_pr": 144,
+      "promotion_merge_sha": "612dd40421b645bd389e36d2e4849a41b64c716f",
+      "readiness_dov": ["GM-IV_ACTIVE_8_Governor_Readiness_run_35145656795_PASS", "decision=READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR", "capacity_gate_PASS", "ACTIVE8_promotion_control_run_35148896043_PASS"],
+      "post_promotion_dod": ["repeat_CONTROL_on_ACTIVE8_master", "measured_capacity_no_degradation", "legacy_stage_controls_retained_as_historical_regressions", "GM-V_remains_HELD"],
+      "guards": ["F01_F03_controlled_pilot_dispositions_retained", "F02_F04_reference_dispositions_retained", "F05_F08_candidate_recon_not_children", "authority_transfer=false", "GM-V_remains_HELD"]
     },
     {
       "order": 6,
@@ -118,30 +63,16 @@
       "policy": "continuous_control_presence_discontinuous_mission_execution",
       "GM-II": "CONTROL_SMALL_RECURRENCE",
       "GM-III": "RECON_CONTROL_SPECIALISTS_RESERVE",
-      "reactivation_triggers": [
-        "provider_or_consumer_regression",
-        "new_named_frontier_or_requirement",
-        "receipt_drift",
-        "Governor_directed_recon"
-      ]
+      "reactivation_triggers": ["provider_or_consumer_regression", "new_named_frontier_or_requirement", "receipt_drift", "Governor_directed_recon"]
     },
     {
       "order": 7,
       "id": "GM-V-HOLD",
       "state": "HELD",
       "dmaic_phase": "CONTROL_HOLD",
-      "launch_gate": "GM_IV_CONTROL_PLUS_MEASURED_CAPACITY_AND_NO_CONTROL_DEGRADATION",
-      "dod": [
-        "GM-IV_repeat_CONTROL_after_ACTIVE8_if_promoted",
-        "measured_capacity_evidence",
-        "no_control_degradation",
-        "explicit_GM-V_Governor_launch"
-      ],
-      "dov": [
-        "GM-V_state_HELD",
-        "children_empty",
-        "crew_unallocated_until_gate"
-      ]
+      "launch_gate": "GM_IV_POST_ACTIVE8_REPEAT_CONTROL_PLUS_MEASURED_CAPACITY_AND_NO_CONTROL_DEGRADATION_PLUS_SEPARATE_GOVERNOR_LAUNCH",
+      "dod": ["GM-IV_post_ACTIVE8_repeat_CONTROL_PASS", "measured_capacity_evidence", "no_control_degradation", "explicit_GM-V_Governor_launch"],
+      "dov": ["GM-V_state_HELD", "children_empty", "crew_unallocated_until_gate"]
     }
   ]
 }
