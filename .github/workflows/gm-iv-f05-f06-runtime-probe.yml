@@ -1,0 +1,77 @@
+name: GM-IV F05 F06 Bounded Runtime Probe
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/GM_IV_F05_F06_BOUNDED_PULSE_CONTRACT.json'
+      - 'mission-control/grand-missions/probe_gm_iv_f05_f06.py'
+      - '.github/workflows/gm-iv-f05-f06-runtime-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout MissionControl exact head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: control
+      - name: Assert MissionControl exact head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C control rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Checkout F05 ABACUS exact target
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/ABACUS
+          ref: 15acb02f7f191d4f3c251ab747ef9f41487da7ce
+          path: f05
+      - name: Checkout F06 CODEX exact target
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/CODEX
+          ref: df60e22fc57a6f36ac3e949d4c161442ff050ee4
+          path: f06
+      - name: Execute bounded F05 F06 probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 control/mission-control/grand-missions/probe_gm_iv_f05_f06.py \
+            --f05 f05 \
+            --f06 f06 \
+            --source-sha '${{ github.event.pull_request.head.sha || github.sha }}' \
+            --out control/mission-control/grand-missions/runtime/gm_iv_f05_f06_runtime_probe_receipt.json \
+            | tee gm_iv_f05_f06_runtime_probe.out
+          grep -q PASS_F05_F06_BOUNDED_RUNTIME_PROBE gm_iv_f05_f06_runtime_probe.out
+      - name: Reassert no promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('control/mission-control/grand-missions/runtime/gm_iv_f05_f06_runtime_probe_receipt.json')
+          r = json.loads(p.read_text())
+          assert r['result'] == 'PASS_F05_F06_BOUNDED_RUNTIME_PROBE'
+          assert r['canonical_state_before'] == 'STAGED_ACTIVE_RECON_4_OF_8'
+          assert r['canonical_state_after'] == 'STAGED_ACTIVE_RECON_4_OF_8'
+          assert r['promotion_requested'] is False
+          assert r['promotion_allowed'] is False
+          assert r['children_bound'] is False
+          assert r['authority_transfer'] is False
+          assert r['formal_credit_delta'] == 0
+          print('PASS_GM_IV_F05_F06_NONPROMOTION_GUARD')
+          PY
+      - name: Upload F05 F06 receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-f05-f06-bounded-probe-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            gm_iv_f05_f06_runtime_probe.out
+            control/mission-control/grand-missions/runtime/gm_iv_f05_f06_runtime_probe_receipt.json
+          if-no-files-found: error
