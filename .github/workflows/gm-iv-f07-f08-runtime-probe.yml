@@ -1,0 +1,86 @@
+name: GM-IV F07 F08 Bounded Runtime Probe
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/GM_IV_F07_F08_BOUNDED_PULSE_CONTRACT.json'
+      - 'mission-control/grand-missions/probe_gm_iv_f07_f08.py'
+      - '.github/workflows/gm-iv-f07-f08-runtime-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout MissionControl exact head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: control
+
+      - name: Assert MissionControl exact head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C control rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+
+      - name: Checkout F07 cryo leak dashboard exact target
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/cryo_leak_rate_dashboard
+          ref: 6f6ce5fe1042e4ff59be06909b248a6444136e92
+          path: f07
+
+      - name: Checkout F08 document system exact target
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/document-organization-system
+          ref: 3729f3864c3f6019c4b0a4e2bbe0c1ad419bff68
+          path: f08
+
+      - name: Execute bounded F07 F08 probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 control/mission-control/grand-missions/probe_gm_iv_f07_f08.py \
+            --f07 f07 \
+            --f08 f08 \
+            --source-sha '${{ github.event.pull_request.head.sha || github.sha }}' \
+            --out control/mission-control/grand-missions/runtime/gm_iv_f07_f08_runtime_probe_receipt.json \
+            | tee gm_iv_f07_f08_runtime_probe.out
+          grep -q PASS_F07_F08_BOUNDED_RUNTIME_PROBE gm_iv_f07_f08_runtime_probe.out
+
+      - name: Reassert no promotion and GM-V hold
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('control/mission-control/grand-missions/runtime/gm_iv_f07_f08_runtime_probe_receipt.json')
+          r = json.loads(p.read_text())
+          assert r['result'] == 'PASS_F07_F08_BOUNDED_RUNTIME_PROBE'
+          assert r['canonical_state_before'] == 'STAGED_ACTIVE_RECON_4_OF_8'
+          assert r['canonical_state_after'] == 'STAGED_ACTIVE_RECON_4_OF_8'
+          assert r['active8_readiness_result'] == 'PASS'
+          assert r['active8_readiness_decision'] == 'READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR'
+          assert r['promotion_requested'] is False
+          assert r['promotion_allowed'] is False
+          assert r['children_bound'] is False
+          assert r['authority_transfer'] is False
+          assert r['formal_credit_delta'] == 0
+          assert r['gm_v_state_before'] == r['gm_v_state_after'] == 'HELD'
+          print('PASS_GM_IV_F07_F08_NONPROMOTION_GUARD')
+          PY
+
+      - name: Upload F07 F08 receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-f07-f08-bounded-probe-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            gm_iv_f07_f08_runtime_probe.out
+            control/mission-control/grand-missions/runtime/gm_iv_f07_f08_runtime_probe_receipt.json
+          if-no-files-found: error
