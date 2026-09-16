@@ -1,0 +1,111 @@
+{
+  "schema": "missioncontrol.gm_i_b.3p_ral_cycle3_propagation_contract.v1",
+  "mission": "GM-I-B",
+  "cycle": 3,
+  "cycle_ordinal": "3P#3",
+  "moniker": "PROPAGATION_GENERALISATION",
+  "state": "CONTRACT_FROZEN_CHILDREN_PENDING",
+  "objective": "Propagate the proven temporal-PCA knowledge atom through orchestration, a typed thermophysical domain adapter, and the bounded QPS consumer without duplicating the mathematical implementation or inverting authority.",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "hard_gate_compensation_allowed": false,
+  "source_atom": {
+    "repo": "GBOGEB/CODEX",
+    "merge_sha": "bd1fb697e6aa86ebc077b92015201ad512728a13",
+    "path": "ssot/bridge_rows/gg_math_temporal_pca_w4_p31_knowledge_atom.json",
+    "git_blob_sha1": "000592495e7c347ff890cf4b6c7186d4f9e25844",
+    "keb_item_id": "KEB-ITEM-0002",
+    "source_digest": "sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405",
+    "authority_cap": "A3_SYNTHETIC_ONLY",
+    "cycle2_independent_receipt_sha256": "4011256f1e3b17270924705b04d3a2c3d33336ac597b5d2c45243ae78bfea72f"
+  },
+  "semantic_invariants": {
+    "component_assignment_precedes_sign_alignment": true,
+    "raw_pca_loading_sign_is_not_physical_direction": true,
+    "attenuation_toward_parity_is_distinct_from_direction_reversal": true,
+    "small_eigengap_requires_subspace_context": true,
+    "temporal_state_adjacency_does_not_require_equal_wall_time_or_exposure_age_steps": true,
+    "named_clocks": ["k", "t", "a", "wave", "pulse", "pr", "run", "release"]
+  },
+  "generalisation_rules": {
+    "consumer_may_add_domain_feature_schema": true,
+    "consumer_may_change_mathematical_semantics": false,
+    "consumer_may_implement_duplicate_pca_kernel": false,
+    "feature_dimension_is_not_display_dimension": true,
+    "feature_order_must_be_explicit": true,
+    "units_must_be_explicit": true,
+    "missing_values_must_remain_explicit_unless_a_separate_imputation_contract_exists": true,
+    "schema_mapping_alone_is_not_a_pca_result": true
+  },
+  "propagation_targets": [
+    {
+      "id": "T1_MISSIONCONTROL",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "role": "ORCHESTRATION_AND_CONFORMANCE_CONTROLLER",
+      "new_independent_math_implementation_allowed": false,
+      "required_disposition": "PASS_CONTRACT_SELF_CHECK"
+    },
+    {
+      "id": "T2_COOLPROP",
+      "repo": "GBOGEB/CoolProp",
+      "role": "TYPED_THERMOPHYSICAL_DOMAIN_FEATURE_ADAPTER",
+      "required_feature_dimension": 6,
+      "required_feature_schema": [
+        {"name": "T_K", "unit": "K"},
+        {"name": "p_Pa", "unit": "Pa"},
+        {"name": "h_J_kg", "unit": "J/kg"},
+        {"name": "s_J_kgK", "unit": "J/(kg*K)"},
+        {"name": "rho_kg_m3", "unit": "kg/m^3"},
+        {"name": "cp_J_kgK", "unit": "J/(kg*K)"}
+      ],
+      "required_receipt_path": "qps/recon/GM_I_B_CYCLE3_TEMPORAL_PCA_6D_ADAPTER_RECEIPT_v1.json",
+      "new_independent_math_implementation_allowed": false,
+      "required_disposition": "ACCEPT_SCHEMA_ADAPTER_ONLY"
+    },
+    {
+      "id": "T3_QPS_TRIAGE",
+      "repo": "GBOGEB/cryoplant-project",
+      "role": "BOUNDED_PROJECT_CONSUMER_AND_GOVERNOR",
+      "required_receipt_path": "triage/w264/QPS_W264_3P3_TEMPORAL_PCA_PROPAGATION_CHILD_RECEIPT_v1.json",
+      "new_independent_math_implementation_allowed": false,
+      "required_disposition": "ACCEPT_DIAGNOSTIC_PROPAGATION_ONLY"
+    }
+  ],
+  "kpi_contract": {
+    "propagation_targets_total": 3,
+    "propagation_targets_reached_target": 3,
+    "propagation_coverage_target": 1.0,
+    "semantic_invariants_total": 6,
+    "semantic_parity_target": 1.0,
+    "reuse_ratio_target": 1.0,
+    "duplicate_implementation_count_target": 0,
+    "child_targets_total": 2,
+    "child_disposition_coverage_target": 1.0,
+    "authority_inversion_count_target": 0,
+    "propagation_depth_target": 2
+  },
+  "operator_stack": {
+    "3PR": {
+      "Refresh": "pin live KEB-ITEM-0002 and current target repository heads",
+      "Probe": "find the smallest genuinely distinct orchestration/domain/project propagation boundaries",
+      "Rank": "freeze MissionControl, CoolProp 6D adapter, and QPS TRIAGE as the bounded target set"
+    },
+    "MIP": {
+      "Modernize": "replace ad-hoc consumer assumptions with one machine-readable propagation contract",
+      "Innovate": "generalise the consumer boundary to an explicit six-dimensional thermophysical feature schema while preserving generic PCA semantics",
+      "Perpetuate": "require immutable child receipts and a final hosted aggregate proof"
+    },
+    "3PC": {
+      "Prepare": "publish and prove this contract, then create child receipts against its exact merge",
+      "Prove": "validate child receipts independently from MissionControl against immutable repository revisions",
+      "Commit": "merge only unchanged proven heads and bind exact merge identities"
+    },
+    "3P3": {
+      "Preserve_or_Pin": "pin KEB-ITEM-0002, its source digest, Cycle-2 independent receipt and the exact Cycle-3 contract merge",
+      "Propagate_or_Penetrate": "reach both external child repositories without copying gg_MATH or ABACUS PCA implementations",
+      "Prove_or_Promote": "aggregate semantic parity, child dispositions, reuse, depth and authority metrics in hosted MissionControl; promotion is knowledge/control only"
+    }
+  },
+  "stop_rule": "Cycle 3 reaches CONTROL only after exact immutable CoolProp and QPS child receipts are independently fetched and validated by a hosted MissionControl aggregate proof with 3/3 propagation coverage, 6/6 semantic parity at every target, 2/2 child disposition coverage, reuse_ratio=1.0, duplicate_implementation_count=0, authority_inversion_count=0 and propagation_depth>=2. Otherwise stop at the first observed propagation defect.",
+  "next_action": "PROVE_CONTRACT_SELF_CHECK_THEN_PROPAGATE_TO_COOLPROP"
+}
