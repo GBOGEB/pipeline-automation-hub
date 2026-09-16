@@ -1,0 +1,47 @@
+schema: missioncontrol.official_mission_register.v1
+as_of: '2026-09-16T22:05:00+02:00'
+authority_transfer: false
+purpose: >-
+  Official Mission Control index across canonical Grand Missions, governed variants,
+  and local missions without changing the canonical GM-I..GM-V numbering invariant.
+canonical_grand_mission_source: mission-control/grand-missions/GRAND_MISSION_REGISTRY.json
+namespace:
+  GM: canonical_grand_mission
+  GM_VARIANT: governed_variant_that_does_not_consume_a_new_GM_number
+  HM: horizontal_mission
+  LM: local_mission
+canonical_grand_missions:
+  - {id: GM-I, number: 1, type: GRAND_MISSION, frontier_count: 1, source: GRAND_MISSION_REGISTRY.json}
+  - {id: GM-II, number: 2, type: GRAND_MISSION, frontier_count: 2, source: GRAND_MISSION_REGISTRY.json}
+  - {id: GM-III, number: 3, type: GRAND_MISSION, frontier_count: 4, source: GRAND_MISSION_REGISTRY.json}
+  - {id: GM-IV, number: 4, type: GRAND_MISSION, frontier_count: 8, source: GRAND_MISSION_REGISTRY.json}
+  - {id: GM-V, number: 5, type: GRAND_MISSION, frontier_count: 16, source: GRAND_MISSION_REGISTRY.json}
+variants:
+  - id: GM-I-B
+    number: 1-B
+    type: GRAND_MISSION_VARIANT
+    parent: GM-I
+    name: TEMPORAL_PCA_MULTI_CLOCK_FEDERATION
+    provider_frontier_count: 1
+    provider: GBOGEB/gg_MATH
+    planes: [METHOD_MATH, PROJECT_MATH_QPS, TRIAGE_GOVERNANCE, FEDERATION_ORCHESTRATION]
+    integration_variant: REFRESH_DIFF_REUSE_CHALLENGE_BIND_INTEGRATE_PRUNE_ATTEST_RECURSE
+    state: CONTROL_PROVIDER_BOUND
+    rule: DOES_NOT_RENUMBER_OR_REPLACE_GM_II_TO_GM_V
+local_missions:
+  - id: LM-10
+    number: 10
+    type: LOCAL_SINGLE_FRONTIER_DEVELOPMENT_AND_FEDERATION
+    name: GG_MATH_SIGNAL_EXTRACTION_AND_METHOD_DEEP_DIVES
+    home: GBOGEB/pipeline-automation-hub
+    provider: GBOGEB/gg_MATH
+    primary_consumers: [GBOGEB/ABACUS, GBOGEB/cryoplant-project]
+    state: ACTIVE_DEVELOPMENT_WITH_GOVERNED_CONSUMER_BOUNDARY
+    official_control: mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml
+    crew_allocation: mission-control/qps-triage-ultra/missions/LM-10_CREW_ALLOCATION_v3.yaml
+invariants:
+  - canonical_GM_ids_remain_exactly_GM_I_to_GM_V
+  - GM_I_B_is_variant_not_GM_VI_or_GM_II
+  - LM_10_does_not_become_Grand_Mission_by_activity_or_scope_growth
+  - authority_transfer_false_unless_separately_governed
+  - mission_registration_does_not_create_engineering_or_release_credit
