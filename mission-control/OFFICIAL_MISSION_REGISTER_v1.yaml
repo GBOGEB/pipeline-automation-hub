@@ -1,5 +1,5 @@
 schema: missioncontrol.official_mission_register.v1
-as_of: '2026-09-16T22:05:00+02:00'
+as_of: '2026-09-16T22:48:00+02:00'
 authority_transfer: false
 purpose: >-
   Official Mission Control index across canonical Grand Missions, governed variants,
@@ -26,7 +26,15 @@ variants:
     provider: GBOGEB/gg_MATH
     planes: [METHOD_MATH, PROJECT_MATH_QPS, TRIAGE_GOVERNANCE, FEDERATION_ORCHESTRATION]
     integration_variant: REFRESH_DIFF_REUSE_CHALLENGE_BIND_INTEGRATE_PRUNE_ATTEST_RECURSE
-    state: CONTROL_PROVIDER_BOUND
+    state: CONTROL_SENTINEL_RECEIPT_REGRESSION
+    closure_evidence:
+      provider_pr: 18
+      provider_runtime_digest: sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405
+      abacus_dow_pr: 1252
+      abacus_dow_run: 35145377318
+      codex_keb_pr: 750
+      codex_atom: KEB-ITEM-0002
+      codex_object_type: KEB_KNOWLEDGE_ATOM
     rule: DOES_NOT_RENUMBER_OR_REPLACE_GM_II_TO_GM_V
 local_missions:
   - id: LM-10
@@ -37,6 +45,8 @@ local_missions:
     provider: GBOGEB/gg_MATH
     primary_consumers: [GBOGEB/ABACUS, GBOGEB/cryoplant-project]
     state: ACTIVE_DEVELOPMENT_WITH_GOVERNED_CONSUMER_BOUNDARY
+    current_completed_slice: TEMPORAL_PCA_SUBSPACE_MULTICLOCK_FEDERATION_TO_REAL_KEB_ATOM
+    next_sequential_slice: H05_TYPED_PEARSON_BT_PCA_BRIDGE
     official_control: mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml
     crew_allocation: mission-control/qps-triage-ultra/missions/LM-10_CREW_ALLOCATION_v3.yaml
 invariants:

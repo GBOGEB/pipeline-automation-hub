@@ -30,7 +30,7 @@
           "id": "GM-I-B",
           "name": "TEMPORAL_PCA_FEDERATION",
           "repository": "GBOGEB/gg_MATH",
-          "state": "KEB_CLOSURE_IN_PROGRESS",
+          "state": "CONTROL_SENTINEL_RECEIPT_REGRESSION",
           "role": "native_provider_reuse_bind_integrate_prune",
           "provider_pr": 18,
           "provider_merge_sha": "e9afd4131bde2071d184d0e3c5326b82f5756faa",
@@ -39,6 +39,16 @@
           "federation_artifact_id": 10464776497,
           "federation_artifact_digest": "sha256:2c7cbcddffc6c3830ab02a212563ef390e7fe189ce24214f4313e6e5bccd2921",
           "original_provider_receipt_digest": "sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405",
+          "keb_closure": {
+            "abacus_pr": 1252,
+            "abacus_head_sha": "ff7f3b4b5c8c830a2b956c7f04462a9341559f35",
+            "abacus_merge_sha": "835c6f36c93c736336b5f87d5963d43e37bf3684",
+            "abacus_exact_dow_run_id": 35145377318,
+            "codex_pr": 750,
+            "codex_atom_id": "KEB-ITEM-0002",
+            "codex_object_type": "KEB_KNOWLEDGE_ATOM",
+            "state": "CLOSED_REAL_ATOM"
+          },
           "target_posture": "CONTROL_SENTINEL_RECEIPT_REGRESSION",
           "authority_transfer": false,
           "formal_credit_delta": 0
@@ -126,7 +136,14 @@
         "post_merge_workflow_success_count": 14,
         "post_merge_workflow_total": 14
       },
-      "promotion_boundary": "RECON_4_OF_8_BINDS_FOUR_NAMED_FRONTIER_IDENTITIES_TO_CONTROLLED_RECONNAISSANCE_WHILE_RETAINING_F01_F03_AS_CONTROLLED_PILOTS_AND_F02_F04_AS_REFERENCES;_NO_CANONICAL_CHILD_OR_ENGINEERING_AUTHORITY_IS_BOUND;_ACTIVE_8_REQUIRES_A_SEPARATE_GOVERNOR_GATE"
+      "active8_readiness": {
+        "evaluated_head_sha": "3943ae33eea2a4af6171b97517c19b79ed986fe8",
+        "workflow_run_id": 35145656795,
+        "result": "PASS",
+        "decision": "READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR",
+        "canonical_state_after_gate": "STAGED_ACTIVE_RECON_4_OF_8"
+      },
+      "promotion_boundary": "RECON_4_OF_8_BINDS_FOUR_NAMED_FRONTIER_IDENTITIES_TO_CONTROLLED_RECONNAISSANCE_WHILE_RETAINING_F01_F03_AS_CONTROLLED_PILOTS_AND_F02_F04_AS_REFERENCES;_ACTIVE_8_READINESS_IS_PASS_BUT_REQUIRES_A_SEPARATE_PROMOTION_TRANSACTION"
     },
     {
       "id": "GM-V",
