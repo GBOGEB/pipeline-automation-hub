@@ -1,0 +1,32 @@
+schema: missioncontrol.crew.skill_capability_registry.v1
+as_of: '2026-09-16T22:04:00+02:00'
+state: ACTIVE_PROPOSED
+skill_ssot:
+  repo: GBOGEB/skills
+  registry: skills/gbogeb-skill-registry.yaml
+  pull_request: 1
+provider:
+  math: GBOGEB/gg_MATH
+  plots: renderer_environment
+  math-plots: GBOGEB/gg_MATH
+skills:
+  math:
+    path: skills/math/SKILL.md
+    crew_use: derive_verify_diagnose_explain
+  plots:
+    path: skills/plots/SKILL.md
+    crew_use: select_render_review_QA
+  math-plots:
+    path: skills/math-plots/SKILL.md
+    crew_use: mathematical_analysis_plus_method_specific_visualization
+runner_contract:
+  may: [checkout_exact_skill_ref, resolve, validate, pin, execute_deterministic_skill_scripts, emit_resolution_receipt]
+  requires_agent_for: [semantic_reasoning, open_ended_mathematical_judgment, plot_interpretation]
+  may_not_claim: [agent_reasoning_executed_when_not_executed, engineering_acceptance, QPS_authority_transfer]
+forecast_learning:
+  mode: rolling_N_plus_2
+  ledger: mission-control/qps-triage-ultra/crew/SKILL_N_PLUS_2_LEDGER_v1.json
+  immutable_predictions: true
+  score_later_actuals: true
+authority_transfer: false
+formal_credit_delta: 0

@@ -1,0 +1,73 @@
+name: MissionControl Crew Skill Resolution
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/SKILL_CAPABILITY_REGISTRY_v1.yaml'
+      - 'mission-control/qps-triage-ultra/crew/SKILL_N_PLUS_2_LEDGER_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/resolve_crew_skill.py'
+      - '.github/workflows/crew-skill-resolution.yml'
+  workflow_dispatch:
+    inputs:
+      skill:
+        description: Skill bundle to resolve
+        required: true
+        type: choice
+        options: [math, plots, math-plots]
+      skills_ref:
+        description: Exact GBOGEB/skills ref or SHA
+        required: true
+        default: main
+        type: string
+      task_id:
+        description: Mission task identifier
+        required: true
+        default: manual-skill-resolution
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate-local-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Validate JSON and resolver syntax
+        run: |
+          python -m json.tool mission-control/qps-triage-ultra/crew/SKILL_N_PLUS_2_LEDGER_v1.json > /dev/null
+          python -m py_compile mission-control/qps-triage-ultra/crew/resolve_crew_skill.py
+          grep -q 'authority_transfer: false' mission-control/qps-triage-ultra/crew/SKILL_CAPABILITY_REGISTRY_v1.yaml
+          grep -q 'rolling_N_plus_2' mission-control/qps-triage-ultra/crew/SKILL_CAPABILITY_REGISTRY_v1.yaml
+
+  resolve-dispatched-skill:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout orchestrator exact head
+        uses: actions/checkout@v4
+      - name: Checkout canonical skills ref
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/skills
+          ref: ${{ inputs.skills_ref }}
+          path: .skill-provider
+      - name: Resolve skill bundle
+        run: |
+          python mission-control/qps-triage-ultra/crew/resolve_crew_skill.py \
+            --skills-root .skill-provider \
+            --skill '${{ inputs.skill }}' \
+            --task-id '${{ inputs.task_id }}' \
+            --source-repo '${{ github.repository }}' \
+            --source-ref '${{ github.sha }}' \
+            --out mission-control/qps-triage-ultra/crew/SKILL_RESOLUTION_RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crew-skill-resolution-${{ inputs.skill }}-${{ github.sha }}
+          path: mission-control/qps-triage-ultra/crew/SKILL_RESOLUTION_RECEIPT.json
