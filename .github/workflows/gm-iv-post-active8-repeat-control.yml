@@ -1,0 +1,128 @@
+name: GM-IV Post-ACTIVE8 Repeat CONTROL
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/GM_IV_POST_ACTIVE8_REPEAT_CONTROL_CONTRACT.json'
+      - 'mission-control/grand-missions/validate_gm_iv_post_active8_repeat_control.py'
+      - '.github/workflows/gm-iv-post-active8-repeat-control.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repeat-control:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact control head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact head and ACTIVE8 promotion ancestry
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          test "$(git rev-parse HEAD)" = "$expected"
+          git merge-base --is-ancestor 612dd40421b645bd389e36d2e4849a41b64c716f HEAD
+
+      - name: Re-run canonical fleet validator
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/validate_gm_fleet.py \
+            --out gm_fleet_post_active8_repeat.json
+
+      - name: Re-run structural capacity gate
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/assess_gm_fleet_03.py \
+            --out gm_fleet_post_active8_capacity.json
+
+      - name: Re-run evidence economics control
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/validate_gm_iv_evidence_economics.py
+
+      - name: Probe all eight exact frontier identities after promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p post-active8-probes
+          while read -r fid repo sha; do
+            d="post-active8-probes/$fid"
+            mkdir -p "$d/repo"
+            git -C "$d/repo" init -q
+            git -C "$d/repo" remote add origin "https://github.com/${repo}.git"
+            git -C "$d/repo" fetch -q --depth=1 origin "$sha"
+            git -C "$d/repo" checkout -q --detach FETCH_HEAD
+            observed="$(git -C "$d/repo" rev-parse HEAD)"
+            count="$(find "$d/repo" -mindepth 1 -not -path '*/.git/*' -not -name '.git' | wc -l | tr -d ' ')"
+            test "$observed" = "$sha"
+            test "$count" -gt 0
+            printf '%s\n' "$observed" > "$d/HEAD_SHA"
+            printf '%s\n' "$count" > "$d/ENTRY_COUNT"
+            rm -rf "$d/repo"
+          done < <(python - <<'PY'
+          import json
+          d=json.load(open('mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json',encoding='utf-8'))
+          for i in range(1,9):
+              fid=f'GM-IV-F{i:02d}'
+              x=d['frontier_evidence'][fid]
+              print(fid, x['repository'], x['target_sha'])
+          PY
+          )
+
+      - name: Validate post-ACTIVE8 repeat CONTROL
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/validate_gm_iv_post_active8_repeat_control.py \
+            --source-sha '${{ github.event.pull_request.head.sha || github.sha }}' \
+            --fleet-receipt gm_fleet_post_active8_repeat.json \
+            --capacity-receipt gm_fleet_post_active8_capacity.json \
+            --probe-root post-active8-probes \
+            --out gm_iv_post_active8_repeat_control.json \
+            | tee gm_iv_post_active8_repeat_control.out
+          grep -q PASS_GM_IV_POST_ACTIVE8_REPEAT_CONTROL gm_iv_post_active8_repeat_control.out
+          grep -q DEFER_GM_V_MEASURED_CAPACITY gm_iv_post_active8_repeat_control.out
+
+      - name: Enforce no false measured-capacity promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          r=json.load(open('gm_iv_post_active8_repeat_control.json',encoding='utf-8'))
+          assert r['repeat_control_result']=='PASS_POST_ACTIVE8_REPEAT_CONTROL'
+          assert r['canonical_state']=='ACTIVE_8_OF_8'
+          assert r['frontier_runtime_probe_coverage']['ratio']==1.0
+          assert r['structural_capacity_result']=='PASS'
+          assert r['measured_capacity_result']=='DEFER_RUNTIME_CAPABILITY_MEASUREMENT_REQUIRED'
+          assert r['gm_v_state']=='HELD'
+          assert r['gm_v_launch_authorized'] is False
+          assert r['authority_transfer'] is False
+          assert r['formal_credit_delta']==0
+          assert r['hard_gate_compensation_allowed'] is False
+          print('PASS_POST_ACTIVE8_NONCOMPENSATION')
+          PY
+
+      - name: Upload post-ACTIVE8 CONTROL evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-post-active8-repeat-control-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            gm_fleet_post_active8_repeat.json
+            gm_fleet_post_active8_capacity.json
+            gm_iv_post_active8_repeat_control.json
+            gm_iv_post_active8_repeat_control.out
+            post-active8-probes/
+          if-no-files-found: error

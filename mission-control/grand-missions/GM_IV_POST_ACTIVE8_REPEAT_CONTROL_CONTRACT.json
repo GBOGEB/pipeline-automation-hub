@@ -1,0 +1,44 @@
+{
+  "schema": "qps.gm_iv_post_active8_repeat_control_contract.v1",
+  "wave": "GM-FLEET-03-POST-ACTIVE8-CONTROL",
+  "mission_id": "GM-IV",
+  "promotion_merge_sha": "612dd40421b645bd389e36d2e4849a41b64c716f",
+  "required_state": "ACTIVE_8_OF_8",
+  "required_activation_stage": "ACTIVE_8_OF_8",
+  "repeat_control_goal": "prove_canonical_ACTIVE8_shape_exact_frontier_identity_receipt_quality_and_no_control_degradation_after_promotion",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "gm_v_required_state": "HELD",
+  "required_repeat_control_checks": [
+    "promotion_merge_is_ancestor_of_exact_test_head",
+    "generic_fleet_validator_passes_current_ACTIVE8_shape",
+    "all_eight_named_frontier_exact_SHAs_are_fetchable",
+    "all_eight_named_frontier_exact_SHAs_have_nonzero_repository_surfaces",
+    "fleet_structural_capacity_gate_passes",
+    "evidence_economics_control_passes",
+    "GM_III_remains_RECON_CONTROL",
+    "GM_V_remains_HELD_with_zero_children",
+    "GM_IV_children_remain_empty",
+    "authority_transfer_remains_false"
+  ],
+  "measured_capacity_boundary": {
+    "structural_capacity_is_not_measured_runtime_capacity": true,
+    "frontier_exact_SHA_probe_coverage_is_not_crew_capability_capacity": true,
+    "required_class_for_GM_V_admission": "RUNTIME_PROVEN_OR_OPERATIONALLY_AVAILABLE_CAPABILITY_CAPACITY",
+    "current_expected_disposition": "DEFER_UNTIL_CAPABILITY_RUNTIME_RECEIPTS_EXIST"
+  },
+  "success_semantics": {
+    "repeat_control": "PASS_POST_ACTIVE8_REPEAT_CONTROL",
+    "measured_capacity": "DEFER_RUNTIME_CAPABILITY_MEASUREMENT_REQUIRED",
+    "gm_v": "HELD"
+  },
+  "next_after_success": "measure_required_activation_capability_hosts_with_exact_SHA_runtime_receipts_then_reassess_GM_V_gate",
+  "forbidden": [
+    "claim_measured_capacity_from_registered_crew_count",
+    "claim_measured_capacity_from_structural_host_coverage_only",
+    "launch_GM_V",
+    "bind_GM_IV_children",
+    "transfer_engineering_authority",
+    "grant_formal_credit"
+  ]
+}
