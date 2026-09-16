@@ -1,0 +1,47 @@
+{
+  "schema": "qps.gm_iv_f07_f08_bounded_pulse.v1",
+  "wave": "GM-FLEET-03-F07-F08-PULSE",
+  "mission_id": "GM-IV",
+  "purpose": "advance_final_two_named_frontiers_without_promoting_canonical_recon4_state",
+  "from_state": "STAGED_ACTIVE_RECON_4_OF_8",
+  "canonical_state_must_remain": "STAGED_ACTIVE_RECON_4_OF_8",
+  "authority_transfer": false,
+  "children_bound": false,
+  "promotion_allowed_by_this_pulse": false,
+  "frontiers": [
+    {
+      "slot": "GM-IV-F07",
+      "repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "target_sha": "6f6ce5fe1042e4ff59be06909b248a6444136e92",
+      "evidence_class": "OBSERVED_CANDIDATE_RECON",
+      "observed_surface": "independent_cryo_leak_kernel_dashboard_with_authority_quarantine",
+      "probe_basis": "repository_root_observed_nonempty_at_exact_sha",
+      "return_path": "MissionControl/GM-IV/F07/receipt",
+      "required_disposition": ["ADAPT", "EXTRACT", "REFERENCE", "PARK"]
+    },
+    {
+      "slot": "GM-IV-F08",
+      "repository": "GBOGEB/document-organization-system",
+      "target_sha": "3729f3864c3f6019c4b0a4e2bbe0c1ad419bff68",
+      "evidence_class": "OBSERVED_CANDIDATE_RECON",
+      "observed_surface": "document_topology_causal_attribution_and_bounded_routing",
+      "probe_basis": "repository_root_observed_nonempty_at_exact_sha",
+      "return_path": "MissionControl/GM-IV/F08/receipt",
+      "required_disposition": ["ADAPT", "EXTRACT", "REFERENCE", "PARK"]
+    }
+  ],
+  "admission_predicates": [
+    "canonical_GM_IV_state_is_STAGED_ACTIVE_RECON_4_OF_8",
+    "F07_and_F08_repository_identities_are_observed_not_fabricated",
+    "exact_target_SHAs_are_fetchable",
+    "each_exact_target_has_nonzero_repository_surface",
+    "bounded_probe_receipt_required_before_any_frontier_disposition",
+    "ACTIVE8_readiness_is_already_PASS_but_this_pulse_does_not_promote",
+    "no_child_binding",
+    "no_engineering_authority_transfer",
+    "GM_V_remains_HELD"
+  ],
+  "success_semantics": "READY_TO_RETURN_F07_F08_BOUNDED_RECEIPTS_TO_GOVERNOR;_ACTIVE8_PROMOTION_STILL_REQUIRES_SEPARATE_TRANSACTION",
+  "next_after_success": "submit_accumulated_F05_F08_exact_receipts_to_separate_ACTIVE8_promotion_transaction",
+  "formal_credit_delta": 0
+}
