@@ -1,0 +1,32 @@
+{
+  "schema": "missioncontrol.crew.skill_n_plus_2_ledger.v1",
+  "as_of": "2026-09-16T22:04:00+02:00",
+  "clock": {"kind": "pulse", "spacing": "ordinal"},
+  "policy": {
+    "freeze_predictions_before_actual": true,
+    "historical_predictions_immutable": true,
+    "roll_horizon_after_scoring": true,
+    "minimum_scored_history_before_calibrated_probability": 5
+  },
+  "history": [],
+  "pending": [
+    {
+      "issued_at_pulse": "SKILL_P0",
+      "target_pulse": "SKILL_P1",
+      "metric": "skill_bundles_resolvable",
+      "prediction": 3,
+      "basis": "three validated bundles are defined in the canonical skills PR",
+      "actual": null
+    },
+    {
+      "issued_at_pulse": "SKILL_P0",
+      "target_pulse": "SKILL_P2",
+      "metric": "distinct_runner_resolution_modes_exercised",
+      "prediction": 2,
+      "basis": "manual workflow_dispatch plus mission-worker invocation are the first two planned modes",
+      "actual": null
+    }
+  ],
+  "calibration": {"state": "WARM_START_INSUFFICIENT_SCORED_HISTORY", "n_scored": 0},
+  "authority_transfer": false
+}
