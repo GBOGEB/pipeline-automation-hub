@@ -30,7 +30,7 @@
           "id": "GM-I-B",
           "name": "TEMPORAL_PCA_FEDERATION",
           "repository": "GBOGEB/gg_MATH",
-          "state": "KEB_CLOSURE_IN_PROGRESS",
+          "state": "CONTROL_SENTINEL_RECEIPT_REGRESSION",
           "role": "native_provider_reuse_bind_integrate_prune",
           "provider_pr": 18,
           "provider_merge_sha": "e9afd4131bde2071d184d0e3c5326b82f5756faa",
@@ -39,7 +39,20 @@
           "federation_artifact_id": 10464776497,
           "federation_artifact_digest": "sha256:2c7cbcddffc6c3830ab02a212563ef390e7fe189ce24214f4313e6e5bccd2921",
           "original_provider_receipt_digest": "sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405",
-          "target_posture": "CONTROL_SENTINEL_RECEIPT_REGRESSION",
+          "qps_cycle2_control_pr": 1372,
+          "qps_cycle2_control_merge_sha": "4c9dc1d36c23770fc780e72f311a7fad1c7ffc4c",
+          "keb_atom_id": "KEB-ITEM-0002",
+          "keb_atom_pr": 750,
+          "keb_atom_merge_sha": "bd1fb697e6aa86ebc077b92015201ad512728a13",
+          "fleet_sync_pr": 137,
+          "fleet_sync_merge_sha": "3463d88313fa0f9373eba19d434b11828f50f451",
+          "control_transition_pr": 21,
+          "control_transition_merge_sha": "b919beb722db0b38de53b3360cab5c35c14e5e29",
+          "crew_posture": "RECEIPT_REGRESSION_SENTINELS_PLUS_GOVERNOR",
+          "continuous_presence": true,
+          "full_mission_relaunch": false,
+          "cycle3_state": "ADMITTED_NOT_STARTED",
+          "cycle3_launch_gate": "NAMED_PROPAGATION_OR_GENERALISATION_BOUNDARY_OR_REGRESSION_WAKE_TRIGGER",
           "authority_transfer": false,
           "formal_credit_delta": 0
         }
@@ -55,6 +68,8 @@
       "children": ["GBOGEB/Q_engineering_tools", "GBOGEB/gg_MATH"],
       "monikers": ["ENGINEERING_OUTPOST", "MATH_BUNKER"],
       "crew_posture": "SMALL_RECURRENCE_CELLS",
+      "presence_mode": "CONTINUOUS_LOW_COST_SENTINEL",
+      "full_relaunch_policy": "EVENT_DRIVEN_ONLY",
       "observed": true
     },
     {
@@ -71,6 +86,8 @@
       ],
       "dispositions": ["ADAPT", "EXTRACT", "REFERENCE", "PARK"],
       "crew_posture": "BROAD_CREW_RETURNED_SPECIALISTS_RESERVE",
+      "presence_mode": "CONTINUOUS_RESERVE_SENTINEL",
+      "full_relaunch_policy": "NAMED_RECON_NEED_ONLY",
       "observed": true
     },
     {
@@ -80,14 +97,15 @@
       "objective": "scale_controlled_reconnaissance_to_eight_frontiers_without_receipt_or_authority_degradation",
       "state": "STAGED_ACTIVE_RECON_4_OF_8",
       "children": [],
-      "crew_posture": "FOUR_NAMED_FRONTIERS_UNDER_CONTROLLED_RECON_WITH_TWO_CONTROLLED_PILOTS",
+      "crew_posture": "FOUR_CONTROLLED_RECON_FRONTIERS_PLUS_TWO_PREPROMOTION_PROBES",
       "observed": false,
       "activation_observed": true,
       "activation_stage": "RECON_4_OF_8",
       "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"],
       "controlled_pilot_frontiers": ["GM-IV-F01", "GM-IV-F03"],
       "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
-      "unfilled_frontier_slots": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+      "prepromotion_probe_frontiers": ["GM-IV-F05", "GM-IV-F06"],
+      "unfilled_frontier_slots": ["GM-IV-F07", "GM-IV-F08"],
       "launch_gate": "GM_FLEET_03_FIRST_EXACT_SHA_RUNTIME_GATE_PASS",
       "activation_evidence": {
         "source_sha": "12d54ba2d6e08ff8c816d2fbc9ed44c3f167fef1",
@@ -126,7 +144,31 @@
         "post_merge_workflow_success_count": 14,
         "post_merge_workflow_total": 14
       },
-      "promotion_boundary": "RECON_4_OF_8_BINDS_FOUR_NAMED_FRONTIER_IDENTITIES_TO_CONTROLLED_RECONNAISSANCE_WHILE_RETAINING_F01_F03_AS_CONTROLLED_PILOTS_AND_F02_F04_AS_REFERENCES;_NO_CANONICAL_CHILD_OR_ENGINEERING_AUTHORITY_IS_BOUND;_ACTIVE_8_REQUIRES_A_SEPARATE_GOVERNOR_GATE"
+      "f05_f06_bounded_probe_evidence": {
+        "pr": 138,
+        "merge_sha": "1dff41545405ded4ef2dd072da93df11d33aebb5",
+        "exact_probe_head_sha": "3943ae33eea2a4af6171b97517c19b79ed986fe8",
+        "workflow_run_id": 35145656942,
+        "artifact_id": 10467606422,
+        "artifact_digest": "sha256:6d799acc6f4f856564441cb7abd91fed3b144abbaefe93789e1f28c4d793ca88",
+        "result": "PASS_BOUNDED_EXACT_SHA_PREPROMOTION_PROBE",
+        "canonical_state_before": "STAGED_ACTIVE_RECON_4_OF_8",
+        "canonical_state_after": "STAGED_ACTIVE_RECON_4_OF_8",
+        "promotion_requested": false,
+        "promotion_allowed": false,
+        "frontiers": {
+          "GM-IV-F05": {
+            "repository": "GBOGEB/ABACUS",
+            "target_sha": "15acb02f7f191d4f3c251ab747ef9f41487da7ce"
+          },
+          "GM-IV-F06": {
+            "repository": "GBOGEB/CODEX",
+            "target_sha": "df60e22fc57a6f36ac3e949d4c161442ff050ee4"
+          }
+        }
+      },
+      "next_gate": "GOVERNOR_DISPOSITION_ON_F05_F06_BEFORE_ANY_PROMOTION_OR_F07_F08_LAUNCH",
+      "promotion_boundary": "RECON_4_OF_8_REMAINS_CANONICAL;_F05_F06_ARE_PREPROMOTION_EVIDENCE_ONLY;_NO_CANONICAL_CHILD_OR_ENGINEERING_AUTHORITY_IS_BOUND;_ACTIVE_8_REQUIRES_A_SEPARATE_GOVERNOR_GATE"
     },
     {
       "id": "GM-V",
@@ -137,6 +179,8 @@
       "children": [],
       "crew_posture": "UNALLOCATED",
       "observed": false,
+      "repeat_control_observed": false,
+      "measured_capacity_gate": "NOT_SATISFIED",
       "launch_gate": "GM_IV_CONTROL_PLUS_MEASURED_CAPACITY_AND_NO_CONTROL_DEGRADATION"
     }
   ],
