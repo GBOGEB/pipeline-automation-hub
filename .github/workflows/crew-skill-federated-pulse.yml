@@ -1,0 +1,104 @@
+name: MissionControl Crew Skill Federated Pulse
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/pulses/MP_P2_FIRST_FEDERATED_USE_v1.yaml'
+      - 'mission-control/qps-triage-ultra/crew/score_skill_resolution_pulse.py'
+      - 'mission-control/qps-triage-ultra/crew/resolve_crew_skill.py'
+      - '.github/workflows/crew-skill-federated-pulse.yml'
+
+permissions:
+  contents: read
+
+env:
+  SKILLS_SHA: 905a12596412afacd3cd7f3c3f6891ac026abf8f
+
+jobs:
+  resolve-three-skills:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: [math, plots, math-plots]
+    steps:
+      - name: Checkout orchestrator exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Assert orchestrator exact head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+      - name: Checkout canonical skills exact SHA
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/skills
+          ref: ${{ env.SKILLS_SHA }}
+          path: .skill-provider
+      - name: Assert canonical skills exact SHA
+        shell: bash
+        run: test "$(git -C .skill-provider rev-parse HEAD)" = "${SKILLS_SHA}"
+      - name: Resolve ${{ matrix.skill }}
+        shell: bash
+        run: |
+          mkdir -p pulse-receipts
+          python mission-control/qps-triage-ultra/crew/resolve_crew_skill.py \
+            --skills-root .skill-provider \
+            --skill '${{ matrix.skill }}' \
+            --task-id 'MP_P2-${{ matrix.skill }}' \
+            --source-repo '${{ github.repository }}' \
+            --source-ref '${{ github.event.pull_request.head.sha }}' \
+            --skills-ref "${SKILLS_SHA}" \
+            --resolution-mode hosted_pr_matrix \
+            --out 'pulse-receipts/${{ matrix.skill }}.json'
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('pulse-receipts/${{ matrix.skill }}.json')
+          r = json.loads(p.read_text())
+          assert r['status'] == 'PASS_SKILL_BUNDLE_RESOLUTION'
+          assert r['skills_ref'] == '${{ env.SKILLS_SHA }}'
+          assert r['authority_transfer'] is False
+          PY
+      - name: Upload individual worker-resolution receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-skill-pulse-${{ matrix.skill }}
+          path: pulse-receipts/${{ matrix.skill }}.json
+
+  score-and-roll:
+    needs: resolve-three-skills
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout orchestrator exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Download all individual receipts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: crew-skill-pulse-*
+          path: pulse-receipts
+          merge-multiple: true
+      - name: Score frozen SKILL_P1 forecast and roll horizon
+        shell: bash
+        run: |
+          python mission-control/qps-triage-ultra/crew/score_skill_resolution_pulse.py \
+            --ledger mission-control/qps-triage-ultra/crew/SKILL_N_PLUS_2_LEDGER_v1.json \
+            --receipts pulse-receipts \
+            --score-out pulse-output/SKILL_P1_SCORE.json \
+            --rolled-ledger-out pulse-output/SKILL_N_PLUS_2_LEDGER_ROLLED_v2.json \
+            --skills-ref "${SKILLS_SHA}" \
+            --source-ref '${{ github.event.pull_request.head.sha }}'
+          python -m json.tool pulse-output/SKILL_P1_SCORE.json > /dev/null
+          python -m json.tool pulse-output/SKILL_N_PLUS_2_LEDGER_ROLLED_v2.json > /dev/null
+          grep -q '"absolute_error": 0' pulse-output/SKILL_P1_SCORE.json
+          grep -q '"SKILL_P2_prediction_state": "FROZEN_PENDING_NOT_DUE"' pulse-output/SKILL_P1_SCORE.json
+      - name: Upload aggregate pulse evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: crew-skill-federated-pulse-score
+          path: |
+            pulse-output/SKILL_P1_SCORE.json
+            pulse-output/SKILL_N_PLUS_2_LEDGER_ROLLED_v2.json

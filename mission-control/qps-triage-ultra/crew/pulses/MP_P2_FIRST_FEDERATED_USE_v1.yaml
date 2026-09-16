@@ -1,0 +1,41 @@
+schema: missioncontrol.crew.skill_federated_pulse.v1
+as_of: '2026-09-16T22:20:00+02:00'
+state: EXECUTE_HOSTED_PR_MATRIX
+local_skill_pulse: SKILL_P1
+global_alignment: MP_P2_FIRST_FEDERATED_USE
+canonical_skill_source:
+  repo: GBOGEB/skills
+  exact_sha: 905a12596412afacd3cd7f3c3f6891ac026abf8f
+  immutable_for_this_pulse: true
+missioncontrol:
+  repo: GBOGEB/pipeline-automation-hub
+  base_head_at_plan: 3463d88313fa0f9373eba19d434b11828f50f451
+skills_to_exercise:
+  - math
+  - plots
+  - math-plots
+resolution_mode: hosted_pr_matrix
+outputs:
+  individual_receipts: 3
+  aggregate_score_receipt: 1
+  rolled_ledger_candidate: 1
+forecast_governance:
+  due_prediction:
+    target_pulse: SKILL_P1
+    metric: skill_bundles_resolvable
+    frozen_prediction: 3
+  future_prediction:
+    target_pulse: SKILL_P2
+    metric: distinct_runner_resolution_modes_exercised
+    frozen_prediction: 2
+    disposition: DO_NOT_SCORE_THIS_PULSE_NOT_DUE
+  roll_after_scoring:
+    new_target_pulse: SKILL_P3
+    metric: exact_pinned_consumer_receipts
+    prediction_basis: observed_SKILL_P1_actual
+learning:
+  score_only_observed_actuals: true
+  rewrite_historical_predictions: false
+  probability_calibration_before_5_scored_points: false
+authority_transfer: false
+formal_credit_delta: 0

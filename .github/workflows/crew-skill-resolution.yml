@@ -66,6 +66,8 @@ jobs:
             --task-id '${{ inputs.task_id }}' \
             --source-repo '${{ github.repository }}' \
             --source-ref '${{ github.sha }}' \
+            --skills-ref '${{ inputs.skills_ref }}' \
+            --resolution-mode workflow_dispatch \
             --out mission-control/qps-triage-ultra/crew/SKILL_RESOLUTION_RECEIPT.json
       - uses: actions/upload-artifact@v4
         with:
