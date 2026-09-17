@@ -1,9 +1,9 @@
 schema: missioncontrol.horizontal_mission.v1
 id: HM-01
 name: QPS_V6_RELEASE_TRAIN
-as_of: '2026-09-17T03:16:00+02:00'
+as_of: '2026-09-17T03:18:00+02:00'
 type: HORIZONTAL_MULTI_REPO_RELEASE_MISSION
-state: R0_FREEZE_R1_CONTRACT_ACTIVE
+state: R0_CONTROL_R1_QPS_MERGED_R2_R3_OPEN
 authority_transfer: false
 formal_credit_delta: 0
 parent_issue: GBOGEB/cryoplant-project#1379
@@ -17,7 +17,7 @@ namespace_guard:
   prefix: HM-
   allocated_id: HM-01
   evidence:
-    official_register_namespace: HM: horizontal_mission
+    official_register_namespace: 'HM: horizontal_mission'
     grand_registry_prefix: HM-
     existing_concrete_HM_search: NONE_OBSERVED_AT_ALLOCATION
   invariants:
@@ -26,12 +26,14 @@ namespace_guard:
     - DOES_NOT_RENUMBER_OR_REPLACE_LM_10
     - GRAND_HORIZONTAL_LOCAL_IDENTIFIERS_MUST_NOT_COLLIDE
 freeze:
-  observed_at: '2026-09-17T03:16:00+02:00'
+  observed_at: '2026-09-17T03:18:00+02:00'
   repositories:
     QPS:
       repo: GBOGEB/cryoplant-project
       branch: main
-      sha: 29a3a619b17b37eca5accfa2fd747401a2387c7b
+      sha: d631428507dd94154e8af58b60908c57e99d8a35
+      prior_scout_sha: 29a3a619b17b37eca5accfa2fd747401a2387c7b
+      r1_merge_pr: 1381
       role: DOMAIN_SSOT_AND_RELEASE_ASSEMBLY
       branch_protected: false
       current_release_parent: GBOGEB/cryoplant-project#1379
@@ -72,15 +74,18 @@ release_pointer_reconciliation:
     issue: GBOGEB/cryoplant-project#1379
     title: 'QPS v6 release train: publish, Pages, binaries, provenance'
     state: OPEN
-  repair_required_in_qps_current_controls: true
+  quarantine_control_merged: controls/QPS_RELEASE_IDENTITY_CURRENT_v0.1.yaml
+  qps_merge_pr: 1381
+  qps_merge_sha: d631428507dd94154e8af58b60908c57e99d8a35
+  qtg_global_bd_in_place_cleanup_required: true
 work_orders:
   R0_SCOUT_FREEZE: {owner: MissionControl, state: PASS_EXACT_HEADS_FROZEN_AFTER_REBASE}
-  R0_POINTER_REPAIR: {owner: QPS, state: ACTIVE_PR_1381}
-  R1_RELEASE_CONTRACT: {owner: QPS, state: ACTIVE_PR_1381}
+  R0_POINTER_REPAIR: {owner: QPS, state: QUARANTINE_CONTROL_MERGED_PR_1381_SYNC_EDIT_REMAINS}
+  R1_RELEASE_CONTRACT: {owner: QPS, state: MERGED_PR_1381}
   R2_PAGES_PUBLICATION: {owner: CODEX, state: OPEN_ISSUE_753}
   R3_LOCAL_BINARY_FACTORY: {owner: QPS, state: PLANNED}
   RUNTIME_SUPPORT_PIN: {owner: ABACUS, state: OPEN_ISSUE_1256}
-  R4_RC_PROOF: {owner: MissionControl, state: WAIT_R1_R2_R3}
+  R4_RC_PROOF: {owner: MissionControl, state: WAIT_R2_R3_SUPPORT_RECEIPTS}
   R5_STABLE_ATTESTATION: {owner: MissionControl, state: WAIT_RC}
 noncompensating_gates:
   - {id: GBOGEB/cryoplant-project#923, state: RED_OWNER_ACTION, effect: RUNTIME_GOLD_WITHHELD}
