@@ -1,6 +1,6 @@
 {
   "schema": "qps.gm_fleet_imminent_launch_control.v1",
-  "as_of": "2026-09-16T22:54:00+02:00",
+  "as_of": "2026-09-17T03:51:00+02:00",
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "ordering_invariant": "execute_in_order_when_predecessor_gate_is_required; otherwise preserve independent holds and sentinels",
@@ -45,15 +45,29 @@
     {
       "order": 5,
       "id": "GM-IV-ACTIVE8-PROMOTION",
-      "state": "DONE_CONTROL_PENDING_REPEAT",
+      "state": "DONE_POST_ACTIVE8_REPEAT_AND_RUNTIME_CAPABILITY_CONTROL",
       "dmaic_phase": "CONTROL",
       "predecessor_state": "STAGED_ACTIVE_RECON_4_OF_8",
       "current_state": "ACTIVE_8_OF_8",
       "promotion_pr": 144,
       "promotion_merge_sha": "612dd40421b645bd389e36d2e4849a41b64c716f",
       "readiness_dov": ["GM-IV_ACTIVE_8_Governor_Readiness_run_35145656795_PASS", "decision=READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR", "capacity_gate_PASS", "ACTIVE8_promotion_control_run_35148896043_PASS"],
-      "post_promotion_dod": ["repeat_CONTROL_on_ACTIVE8_master", "measured_capacity_no_degradation", "legacy_stage_controls_retained_as_historical_regressions", "GM-V_remains_HELD"],
-      "guards": ["F01_F03_controlled_pilot_dispositions_retained", "F02_F04_reference_dispositions_retained", "F05_F08_candidate_recon_not_children", "authority_transfer=false", "GM-V_remains_HELD"]
+      "post_promotion_dod": ["repeat_CONTROL_on_ACTIVE8_master", "runtime_proven_capability_capacity_8_of_8", "legacy_stage_controls_retained_as_historical_regressions", "GM-V_remains_HELD"],
+      "post_promotion_dov": [
+        "repeat_CONTROL_merge=7af02c89ca640c180b20341e0016c5f82096da26",
+        "repeat_CONTROL_run=35150330651",
+        "runtime_capacity_PR=173",
+        "runtime_capacity_head=9cdb8fe35e15b675f3fe1b2492c16f9785fc3115",
+        "runtime_capacity_run=35171901674",
+        "runtime_capacity_job=105045151537",
+        "runtime_capacity_artifact=10476967287",
+        "runtime_capacity_artifact_digest=sha256:7a5a0910db8639b642d8e63b4e37169d636ee3e6b7fc2ba0da93789ad183fc68",
+        "runtime_capacity_result=PASS_RUNTIME_PROVEN_CAPABILITY_CAPACITY",
+        "runtime_capacity_scope=CAPABILITY_COVERAGE_NOT_CONCURRENCY_CAPACITY"
+      ],
+      "operational_availability": "DEFER_EXTERNAL_NONCOMPENSATING_GATE",
+      "current_first_red": "GBOGEB/cryoplant-project#923",
+      "guards": ["F01_F03_controlled_pilot_dispositions_retained", "F02_F04_reference_dispositions_retained", "F05_F08_candidate_recon_not_children", "authority_transfer=false", "concurrency_capacity_not_claimed", "GM-V_remains_HELD"]
     },
     {
       "order": 6,
@@ -70,9 +84,10 @@
       "id": "GM-V-HOLD",
       "state": "HELD",
       "dmaic_phase": "CONTROL_HOLD",
-      "launch_gate": "GM_IV_POST_ACTIVE8_REPEAT_CONTROL_PLUS_MEASURED_CAPACITY_AND_NO_CONTROL_DEGRADATION_PLUS_SEPARATE_GOVERNOR_LAUNCH",
-      "dod": ["GM-IV_post_ACTIVE8_repeat_CONTROL_PASS", "measured_capacity_evidence", "no_control_degradation", "explicit_GM-V_Governor_launch"],
-      "dov": ["GM-V_state_HELD", "children_empty", "crew_unallocated_until_gate"]
+      "launch_gate": "GM_IV_POST_ACTIVE8_REPEAT_CONTROL_PLUS_RUNTIME_PROVEN_CAPABILITY_CAPACITY_PLUS_NO_UNRESOLVED_NONCOMPENSATING_VETO_PLUS_NO_CONTROL_DEGRADATION_PLUS_SEPARATE_GOVERNOR_LAUNCH",
+      "dod": ["GM-IV_post_ACTIVE8_repeat_CONTROL_PASS", "runtime_proven_capability_capacity_evidence", "no_unresolved_noncompensating_veto", "no_control_degradation", "explicit_GM-V_Governor_launch"],
+      "dov": ["GM-IV_runtime_capability_8_of_8_PASS", "QPS_923_still_OPEN_and_noncompensating", "GM-V_state_HELD", "children_empty", "crew_unallocated_until_gate"],
+      "current_first_red": "GBOGEB/cryoplant-project#923"
     }
   ]
 }
