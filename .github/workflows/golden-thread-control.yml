@@ -27,6 +27,7 @@ jobs:
           python -m py_compile \
             mission-control/golden-thread/golden_thread.py \
             mission-control/golden-thread/checkpoint_replay.py \
+            mission-control/golden-thread/checkpoint_registry.py \
             mission-control/golden-thread/rendition_family.py \
             mission-control/golden-thread/side_effect_receipts.py \
             mission-control/golden-thread/office_semantic_carrier.py \
@@ -149,4 +150,55 @@ jobs:
           assert r['authority_transfer'] is False
           assert len(r['blob_shas'])==7
           print(json.dumps(r, sort_keys=True))
+          PY
+
+      - name: Prove checkpoint registry cadence selection and replay compatibility
+        working-directory: mission-control/golden-thread
+        run: |
+          python - <<'PY'
+          import json
+          import checkpoint_registry as cr
+          import checkpoint_replay as cpr
+
+          ledger=json.load(open('fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json'))
+          policy=cr.cadence_policy(every_n_events=4)
+          registry=cr.empty_registry(ledger, policy)
+
+          d0=cr.cadence_decision(registry, ledger, policy, boundary='GT-0008')
+          assert d0['status']=='DUE' and d0['reason']=='GENESIS_NO_CHECKPOINT'
+          cp8=cpr.create_checkpoint(ledger,'GT-0008','CP-P3-0008',created_at='2026-09-17T02:08:00Z')
+          registry,_=cr.register_checkpoint(registry,ledger,policy,cp8,trigger=d0['reason'],checkpoint_ref='CP-P3-0008.json')
+
+          d1=cr.cadence_decision(registry,ledger,policy,boundary='GT-0011')
+          assert d1['status']=='NOT_DUE'
+          d2=cr.cadence_decision(registry,ledger,policy,boundary='GT-0012')
+          assert d2['status']=='DUE' and d2['reason']=='EVENT_INTERVAL'
+          cp12=cpr.create_checkpoint(ledger,'GT-0012','CP-P3-0012',created_at='2026-09-17T02:12:00Z')
+          registry,_=cr.register_checkpoint(registry,ledger,policy,cp12,trigger=d2['reason'],checkpoint_ref='CP-P3-0012.json')
+
+          dm=cr.cadence_decision(registry,ledger,policy,boundary='GT-0014',trigger='RELEASE_BOUNDARY')
+          assert dm['status']=='DUE' and dm['reason']=='MILESTONE:RELEASE_BOUNDARY'
+          cp14=cpr.create_checkpoint(ledger,'GT-0014','CP-P3-0014',created_at='2026-09-17T02:14:00Z')
+          registry,_=cr.register_checkpoint(registry,ledger,policy,cp14,trigger='RELEASE_BOUNDARY',checkpoint_ref='CP-P3-0014.json')
+
+          cr.verify_registry(registry,ledger,policy)
+          s10=cr.select_checkpoint(registry,ledger,policy,boundary='GT-0010')
+          scur=cr.select_checkpoint(registry,ledger,policy)
+          assert s10['checkpoint']['checkpoint_id']=='CP-P3-0008'
+          assert scur['checkpoint']['checkpoint_id']=='CP-P3-0014'
+          assert cpr.verify_replay_equivalence(ledger,cp8,'GT-0010')['status']=='PASS'
+          assert cpr.verify_replay_equivalence(ledger,cp14)['status']=='PASS'
+          repeat=cr.cadence_decision(registry,ledger,policy,boundary='GT-0014',trigger='RELEASE_BOUNDARY')
+          assert repeat['status']=='NOT_DUE' and repeat['reason']=='ALREADY_CHECKPOINTED'
+          print(json.dumps({
+            'status':'PASS',
+            'checkpoint_count':len(registry['entries']),
+            'registry_digest':registry['registry_digest'],
+            'selected_as_of_GT_0010':s10['checkpoint']['checkpoint_id'],
+            'selected_current':scur['checkpoint']['checkpoint_id'],
+            'duplicate_boundary_suppressed':True,
+            'wall_clock_cadence_authoritative':False,
+            'visual_fidelity_credit':False,
+            'authority_transfer':False,
+          },sort_keys=True))
           PY
