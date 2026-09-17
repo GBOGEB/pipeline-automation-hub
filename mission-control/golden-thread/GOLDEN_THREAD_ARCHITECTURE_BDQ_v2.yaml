@@ -1,0 +1,167 @@
+schema: missioncontrol.golden_thread_architecture_bdq.v2
+as_of: '2026-09-17T03:36:00+02:00'
+authority_transfer: false
+parent_frontier: GBOGEB/pipeline-automation-hub#153
+canonical_bd_lifecycle_authority: GBOGEB/pipeline-automation-hub#85
+historian_authority: GBOGEB/pipeline-automation-hub#76
+architecture_frontend: mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md
+architecture_history_companion: mission-control/golden-thread/FEDERATION_GOLDEN_THREAD_ARCHITECTURE_HISTORY_v2.md
+lifecycle:
+  canonical_states: [TODO, ACTIVE, DONE, CONTROL, SUPERSEDED, INVALIDATED, UNKNOWN_NEEDS_READER]
+  child_gate_dispositions: [ACCEPT, REJECT, DEFER]
+  rule: ACCEPT_REJECT_DEFER_are_child_transaction_dispositions_not_generic_BD_states
+maturity_scale:
+  M0: concept_only
+  M1: prototype_or_schema_not_integrated
+  M2: documented_normative_partial_implementation
+  M3: integrated_executing_governed_path
+  M4: representative_fleet_scale_failure_hardened_multi_consumer
+items:
+  - id: GT-BD-001
+    title: fleet checkpoint cadence storage retention policy
+    bd_state: TODO
+    routing_disposition: EXECUTE_NOW
+    maturity: M3
+    implemented_baseline:
+      - temporal_checkpoint_construction
+      - checkpoint_digest_binding
+      - genesis_equals_checkpoint_replay_equivalence
+    evidence_refs:
+      - GBOGEB/pipeline-automation-hub#159
+      - GBOGEB/pipeline-automation-hub#161
+    gap: bounded_checkpoint_semantics_done_but_fleet_operating_policy_missing
+    next_bounded_action: define cadence triggers retention budget storage tier and replay-cost thresholds without truncating ledger history
+    victory_predicate: repeat on distinct corpora proves bounded replay cost while genesis replay remains possible and digest-equivalent
+
+  - id: GT-BD-002
+    title: downstream invalidation runtime and granularity
+    bd_state: TODO
+    routing_disposition: EXECUTE_NOW
+    maturity: M0-M1
+    gap: no current executable downstream-cone invalidation implementation recovered in the verification pass
+    next_bounded_action: implement invalidation receipt with NODE DMAIC_CLUSTER DESCENDANT_CONE RENDITION_ONLY FULL_REPLAY scopes
+    victory_predicate: complete affected-set receipt plus recomputation leaves zero stale survivors and preserves all non-compensating gates
+
+  - id: GT-BD-003
+    title: permissive and latched-inhibit executable gate semantics
+    bd_state: TODO
+    routing_disposition: EXECUTE_NOW
+    maturity: M1-M2
+    evidence_refs:
+      - mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md
+    gap: doctrine exists but executable latch propagation reset and authority tests are not yet bound
+    next_bounded_action: implement explicit gate-state machine and receipts for bottom-up permissive propagation inhibit latch and governed reset
+    victory_predicate: tests prove inhibit persists until governed reset and parent PASS cannot compensate a child gate
+
+  - id: GT-BD-004
+    title: historical GitHub connector absence
+    bd_state: SUPERSEDED
+    routing_disposition: CONTROL_WATCH
+    maturity: M3
+    gap: none_as_current_blocker
+    evidence: connected GitHub read-write surface is available in the current execution environment
+    next_bounded_action: retain only as historical environment constraint in narrative provenance
+    victory_predicate: current workflows continue to produce exact repository reads writes and receipts without fallback claims
+
+  - id: GT-BD-005
+    title: reflexive DAG behavior under wave resequencing and replay
+    bd_state: TODO
+    routing_disposition: EXECUTE_NOW
+    maturity: M1
+    gap: named historical concept lacks current executable semantics
+    next_bounded_action: define reflexive-node contract including read-set write-set cycle guard resequencing rule and replay identity
+    victory_predicate: bounded DAG fixture resequences without cycle creation authority inversion or replay-digest drift
+
+  - id: GT-BD-006
+    title: live GitHub occurrence importer with idempotency keys
+    bd_state: TODO
+    routing_disposition: EXECUTE_NOW
+    maturity: M1
+    evidence_refs:
+      - GBOGEB/pipeline-automation-hub#154
+      - GBOGEB/pipeline-automation-hub#159
+    gap: bounded cold-tail fixture exists but no live fleet importer is canonical
+    next_bounded_action: import one live issue-PR-receipt family with source SHA digest injection key and idempotency key
+    victory_predicate: repeated import produces zero duplicate obligations and exact same thread projection
+
+  - id: GT-BD-007
+    title: Word PPT Excel semantic extractors and zero-delta tests
+    bd_state: TODO
+    routing_disposition: EXECUTE_NOW
+    maturity: M1-M2
+    evidence_refs:
+      - GBOGEB/pipeline-automation-hub#161
+    gap: Office semantic credit explicitly withheld
+    next_bounded_action: bind governed extractor contract for one Office format then expand to remaining family
+    victory_predicate: canonical extract rendered_binary equals canonical truth for repeat generation with metadata exclusions explicitly declared
+
+  - id: GT-BD-008
+    title: real provider consumer return round-trip receipt I5
+    bd_state: TODO
+    routing_disposition: EXECUTE_NOW
+    maturity: M1-M2
+    gap: local deterministic proof exists but external side-effect round-trip is not yet proven end-to-end
+    next_bounded_action: execute one exact provider to consumer to return transaction using idempotency and child receipt contracts
+    victory_predicate: source and returned semantic digests are identical or expected delta is declared and exact with no duplicate side effects
+
+  - id: GT-BD-009
+    title: mechanism-ladder provenance authority
+    bd_state: TODO
+    routing_disposition: UNKNOWN_NEEDS_READER
+    maturity: M2
+    evidence_refs:
+      - mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md
+    gap: DEP_REG_SUB_ADAPTER_LAB_FORK is normative but current CODEX ADR-0001 is runtime-debug governance not verified ladder origin
+    next_bounded_action: locate or create the canonical provenance-binding ADR/registry for the mechanism ladder
+    victory_predicate: one exact source path and SHA is declared canonical and all downstream references resolve to it
+
+  - id: GT-BD-010
+    title: canonical federation reference registry and exact repo census
+    bd_state: UNKNOWN_NEEDS_READER
+    routing_disposition: UNKNOWN_NEEDS_READER
+    maturity: UNKNOWN
+    gap: approximately_40_repo claim not independently verified; root ABACUS registry points to a Line-S-specific registry
+    next_bounded_action: locate all candidate federation registries and produce an exact unique repository census with authority classification
+    victory_predicate: canonical registry selected exact count reproduced zero duplicate repository identities
+
+  - id: GT-BD-011
+    title: fleet-wide historical bootstrap
+    bd_state: TODO
+    routing_disposition: DEFERRED_BY_DEPENDENCY
+    maturity: M1
+    dependencies: [GT-BD-006, GT-BD-008]
+    gap: only bounded cold-tail bootstrap is proven
+    next_bounded_action: after live importer and I5 proof remain lossless expand bootstrap by bounded repo batches
+    victory_predicate: each batch retains 100 percent lineage and zero authority inversion with deterministic replay
+
+  - id: GT-BD-012
+    title: optional Merkle block proof layer
+    bd_state: TODO
+    routing_disposition: DEFERRED_BY_EVIDENCE
+    maturity: M0
+    gap: no demonstrated scale need beyond current linear hash chain
+    next_bounded_action: collect replay verification cost and ledger-size telemetry before design work
+    victory_predicate: implement only if measured fleet cost justifies block proofs without introducing a second authority
+priority_order:
+  - GT-BD-006
+  - GT-BD-008
+  - GT-BD-002
+  - GT-BD-003
+  - GT-BD-007
+  - GT-BD-001
+  - GT-BD-005
+  - GT-BD-009
+  - GT-BD-010
+  - GT-BD-011
+  - GT-BD-012
+controls:
+  - ONE_LOGICAL_FACT_ONE_AUTHORITY
+  - SOURCE_HISTORY_IMMUTABLE
+  - CHECKPOINT_IS_CACHE_NOT_AUTHORITY
+  - PARENT_PASS_NE_CHILD_ACCEPT
+  - UNKNOWN_NE_ZERO
+  - AUTHORITY_TRANSFER_FALSE_UNLESS_SEPARATELY_GOVERNED
+  - ACCEPT_WITH_AUTHORITATIVE_DELTA_IS_ONLY_CHILD_PATH_THAT_ADVANCES_K
+  - CONTROL_HISTORY_MAY_ADVANCE_E_WITHOUT_ADVANCING_K
+  - GENERATED_RENDITION_NE_SSOT
+  - FLEET_M4_WITHHELD_UNTIL_DISTINCT_MULTI_REPO_REPEAT
