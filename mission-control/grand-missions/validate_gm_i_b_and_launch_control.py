@@ -31,7 +31,7 @@ def main():
     gm = {m["id"]: m for m in missions}
 
     variants = {v["id"]: v for v in gm["GM-I"].get("variants", [])}
-    require(set(variants) == {"GM-I-A", "GM-I-B"}, f"GM-I variants invalid: {sorted(variants)}")
+    require(set(variants) == {"GM-I-A", "GM-I-B", "GM-I-C"}, f"GM-I variants invalid: {sorted(variants)}")
     ib = variants["GM-I-B"]
     require(ib["repository"] == "GBOGEB/gg_MATH", "I-B provider repo drift")
     require(ib["state"] == "CONTROL_SENTINEL_RECEIPT_REGRESSION", "I-B CONTROL posture drift")
@@ -44,8 +44,14 @@ def main():
     require(closure.get("state") == "CLOSED_REAL_ATOM", "I-B KEB closure drift")
     require(ib["authority_transfer"] is False and ib["formal_credit_delta"] == 0, "I-B authority guard failed")
 
+    ic = variants["GM-I-C"]
+    require(ic.get("repository") == "GBOGEB/GEMINI", "I-C provider repo drift")
+    require(ic.get("state") == "REGISTERED_BUILD_EXTERNAL_AUTH_PROOF_PENDING", "I-C pre-proof state drift")
+    require(ic.get("authority_transfer") is False and ic.get("formal_credit_delta") == 0, "I-C authority guard failed")
+
     require(gm["GM-II"]["state"] == "CONTROL", "GM-II sentinel state drift")
     require(gm["GM-III"]["state"] == "RECON_CONTROL", "GM-III state drift")
+    require("GBOGEB/GEMINI" in gm["GM-III"].get("children", []), "GM-III GEMINI frontier history was rewritten")
 
     gm4 = gm["GM-IV"]
     require(gm4["state"] == "ACTIVE_8_OF_8" and gm4["activation_stage"] == "ACTIVE_8_OF_8", "GM-IV ACTIVE8 state drift")
@@ -69,6 +75,8 @@ def main():
     checks = {
         "canonical_five_missions_preserved": True,
         "gm_i_b_control_sentinel_and_real_keb_atom": True,
+        "gm_i_c_registered_without_i_b_mutation": True,
+        "gm_iii_gemini_frontier_history_preserved": True,
         "gm_ii_iii_sentinels_preserved": True,
         "gm_iv_active8_exact_shape": True,
         "historical_f05_f06_evidence_retained": True,
