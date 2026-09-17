@@ -1,5 +1,5 @@
 schema: missioncontrol.official_mission_register.v1
-as_of: '2026-09-17T03:29:00+02:00'
+as_of: '2026-09-17T03:31:00+02:00'
 authority_transfer: false
 purpose: >-
   Official Mission Control index across canonical Grand Missions, governed variants,
@@ -83,7 +83,7 @@ local_missions:
     name: QPS_WAVE_LINEAGE_DEPENDENCY_RECONSTRUCTION
     home: GBOGEB/pipeline-automation-hub
     subject_repo: GBOGEB/cryoplant-project
-    state: ACTIVE_IMPLEMENTATION_MERGED_RUNTIME_DOV_WITHHELD_REPRODUCED
+    state: CONTROL_PLANE_REGISTERED_QPS_RUNTIME_DOV_WITHHELD_REPRODUCED
     objectives:
       - COMPLETE_WAVE_PULSE_PR_ARTIFACT_CROSSWALK
       - TYPED_QPS_TRIAGE_NODE_EDGE_GRAPH
@@ -101,10 +101,14 @@ local_missions:
       runtime_gate: GBOGEB/cryoplant-project#923
       qps_runner_control_pr: 1385
       qps_runner_control_merge: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b
+      missioncontrol_registration_pr: 166
+      missioncontrol_registration_merge: 2aca61e8a4585c51b55adedff356a9d06a3a31e2
+      missioncontrol_checks: PASS_6_OF_6
     first_red: LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN
     authority_transfer: false
     formal_credit_delta: 0
-    official_control: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v2.yaml
+    official_control: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v3.yaml
+    postmerge_receipt: mission-control/qps-triage-ultra/missions/LM-11_POSTMERGE_REGISTRATION_RECEIPT_v1.yaml
 invariants:
   - canonical_GM_ids_remain_exactly_GM_I_to_GM_V
   - GM_I_B_is_variant_not_GM_VI_or_GM_II
