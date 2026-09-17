@@ -104,3 +104,9 @@ jobs:
               "authority_transfer": False,
           }))
           PY
+
+      - name: Prove live GitHub receipt exact replay suppression
+        working-directory: mission-control/golden-thread
+        run: |
+          python -m unittest -v \
+            test_live_side_effect_receipt.LiveSideEffectReceiptTests.test_live_github_receipt_replays_without_duplicate_emission
