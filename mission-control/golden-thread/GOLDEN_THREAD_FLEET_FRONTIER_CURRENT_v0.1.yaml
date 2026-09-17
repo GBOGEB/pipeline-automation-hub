@@ -1,47 +1,102 @@
-schema: missioncontrol.golden_thread.fleet_frontier_current.v0.2
+schema: missioncontrol.golden_thread.fleet_frontier_current.v0.3
 as_of: '2026-09-17'
-state: HOSTED_PASS_FLEET_FRONTIER_ACTIVE_NONCOMPENSATING
+state: HOSTED_PASS_P2_P3_P4_ACTIVE_NONCOMPENSATING
 authority_transfer: false
 formal_credit_delta: 0
 parent_architecture_crosswalk:
   pr: 172
   merge_sha: 5abc6cc1db186ef9b2281c56fca4904a460ab544
 current_master_observation:
-  sha: 9e8d08ca1f3297a3864369c73b5f0f9a01f38838
-  concurrent_merge_pr: 177
-  concurrent_scope: SEVEN_FORMAT_GITHUB_GIT_OBJECT_ROUNDTRIP_ZERO_DELTA
+  sha: 720dbd61f0ab9de0bab8bad711aed3a68f4452f9
+  latest_merge_pr: 180
+  latest_scope: CONTROLLED_LIVE_MULTI_REPO_GITHUB_IMPORT_P4
+  preceding_merge_pr: 178
+  preceding_scope: FLEET_FRONTIER_BOUNDED_PROTOTYPES
 
 scope_rule: >-
   This control advances federation-only Golden Thread architecture gaps while
   preserving QPS canonical GT_BDQ_0 through GT_BDQ_9 ordering. No fleet PASS
   may compensate QPS runner admission, runtime GOLD, engineering, source,
-  bidder, negotiation, release, or safety authority.
+  bidder, negotiation, release, safety, or visual-fidelity authority.
 
 implementation:
-  runtime: mission-control/golden-thread/federation_frontier.py
-  tests: mission-control/golden-thread/test_federation_frontier.py
+  federation_frontier_runtime: mission-control/golden-thread/federation_frontier.py
+  federation_frontier_tests: mission-control/golden-thread/test_federation_frontier.py
   live_fixture: mission-control/golden-thread/fixtures/LIVE_GITHUB_OCCURRENCE_FAMILY_20260917.json
   provenance_census: mission-control/golden-thread/GOLDEN_THREAD_PROVENANCE_CENSUS_CURRENT_v0.1.yaml
+  p2_roundtrip_runtime: mission-control/golden-thread/github_roundtrip.py
+  p3_checkpoint_registry_runtime: mission-control/golden-thread/checkpoint_registry.py
+  p4_live_import_runtime: mission-control/golden-thread/fleet_importer.py
+  p4_live_import_scope: mission-control/golden-thread/fixtures/FLEET_IMPORT_SCOPE_v1.json
 
 hosted_proof:
-  exact_head: c8070c5e4ade9dc3db7f896cde0044a54be3ede9
-  pr: 178
-  golden_thread_replay_run: 35173258171
-  golden_thread_replay_job: 105049279344
-  replay_steps: PASS_ALL_16_OBSERVED_JOB_STEPS
-  unit_test_step: PASS
-  golden_thread_control_run: 35173258169
-  qps_triage_ultra_run: 35173258199
-  observed_workflow_family_result: PASS_8_OF_8
+  fleet_frontier_pr: 178
+  fleet_frontier_exact_head: c8070c5e4ade9dc3db7f896cde0044a54be3ede9
+  fleet_frontier_golden_thread_replay_run: 35173258171
+  fleet_frontier_golden_thread_replay_job: 105049279344
+  fleet_frontier_replay_steps: PASS_ALL_16_OBSERVED_JOB_STEPS
+  fleet_frontier_unit_test_step: PASS
+  fleet_frontier_golden_thread_control_run: 35173258169
+  fleet_frontier_qps_triage_ultra_run: 35173258199
+  fleet_frontier_observed_workflow_family_result: PASS_8_OF_8
+  p2:
+    pr: 177
+    merge_sha: 9e8d08ca1f3297a3864369c73b5f0f9a01f38838
+    exact_head: a14c51f49c50c6507e9e9b5208a74fe3a9cf0de3
+    golden_thread_control_run: 35173116890
+    golden_thread_control_job: 105048833238
+    unit_tests: PASS_46
+    source_tree_sha: 1b7cb6563e2d6505e3b98652f17bb093c4c49f17
+    roundtrip_commit_sha: c691587cce34f8ed1fc9267484b15b8eafe08ae6
+    roundtrip_tree_sha: 544111118ec416d2a2a31a0d18ab5d96855f7465
+    canonical_truth_digest: sha256:08a06680c4e0029188c69681144f742a93b538109782860ae5559ec10f8394a5
+    rendition_count: 7
+    semantic_delta: 0
+    unexplained_semantic_delta: 0
+    ref_updated: false
+  p3:
+    pr: 179
+    merge_sha: 8e0cad2727a7bdad00258cba258de4d4ba05546d
+    exact_head: 826db4bbffc6b7870d138b340d16959624d331da
+    golden_thread_control_run: 35173260324
+    cadence_and_registry_step: PASS
+    deterministic_selection: PASS
+    duplicate_boundary_suppression: PASS
+    checkpoint_replay_equivalence: PASS
+    wall_clock_cadence_authoritative: false
+  p4:
+    pr: 180
+    merge_sha: 720dbd61f0ab9de0bab8bad711aed3a68f4452f9
+    exact_head: 95493339e68d8355565b2bf9bf2676bc66b13a9d
+    merge_test_sha: bcbea0e3a0ecf3f9d5d493b905554823caa86bb2
+    fleet_import_run: 35173489973
+    fleet_import_job: 105049997622
+    proof_artifact_id: 10477144335
+    live_source_count: 5
+    first_import_added_events: 5
+    exact_replay_added_events: 0
+    exact_replay_suppressed: 5
+    changed_snapshot_added_events: 1
+    changed_snapshot_successor_lineage: true
+    post_import_event_count: 19
+    checkpoint_due: DUE
+    checkpoint_due_reason: EVENT_INTERVAL
+    events_since_checkpoint: 5
+    selected_checkpoint: CP-P4-BASE-0014
+    selected_checkpoint_tail_events: 5
+    checkpoint_replay_equivalence: PASS
+    import_registry_digest: sha256:61571723885b9f88d40da9bafed43ac5ee860a96c4bf71867f45eeda0a736583
+    first_import_receipt_digest: sha256:8cd6c8a222eb6bfc37b0de8bfdebef647cce785414193a7cde467731a83b3a27
+    source_write_count: 0
   note: >-
-    This exact-head PASS proves the bounded fleet prototype under hosted CI. It
-    does not imply QPS GT_BDQ_0 PASS because QPS executes in a separate repo and
-    remains runner-admission blocked.
+    These hosted PASS receipts prove bounded MissionControl federation controls.
+    They do not imply QPS GT_BDQ_0 PASS because QPS executes in a separate repo
+    and remains runner-admission blocked.
 
 frontier:
   GT-BD-006:
     title: live GitHub occurrence importer with idempotency keys
-    state: ACTIVE_HOSTED_PASS_BOUNDED_LIVE_CAPTURE
+    state: ACTIVE_HOSTED_PASS_DIRECT_LIVE_MULTI_REPO_IMPORT
     maturity: M3_BOUNDED
     implemented:
       - deterministic_source_identity
@@ -51,13 +106,40 @@ frontier:
       - conflict_fail_closed
       - connector_captured_QPS_issue_1390_and_PR_1407_fixture
       - repeated_import_same_projection_digest
+      - direct_live_github_issue_reader
+      - explicit_bounded_multi_repo_scope
+      - p0_transaction_and_obligation_identity_reuse
+      - exact_snapshot_replay_zero_new_events
+      - changed_snapshot_successor_transaction_lineage
+      - append_only_golden_thread_observation_events
+      - read_only_source_write_count_zero
+      - durable_registry_schema_and_digest_controls
+      - p3_checkpoint_cadence_integration
+    live_scope:
+      - GBOGEB/ABACUS#581
+      - GBOGEB/ABACUS#583
+      - GBOGEB/ABACUS#585
+      - GBOGEB/CODEX#237
+      - GBOGEB/pipeline-automation-hub#153
+    evidence:
+      pr: 180
+      merge_sha: 720dbd61f0ab9de0bab8bad711aed3a68f4452f9
+      hosted_run: 35173489973
+      proof_artifact_id: 10477144335
+      first_import_added_events: 5
+      exact_replay_added_events: 0
+      exact_replay_suppressed: 5
+      changed_snapshot_added_events: 1
+      source_write_count: 0
+      classification_credit: 0
     remaining:
-      - direct_connector_to_importer_adapter
-      - multi_repo_streaming_or_batch_intake
-      - durable_import_receipt_registry
+      - persist_import_registry_between_independent_runs
+      - repeat_on_second_independent_bounded_scope
+      - measured_scaling_policy_before_fleet_wide_intake
     victory_next: >-
-      ingest a second independent live occurrence family through a connector
-      adapter and reproduce zero duplicate obligations and identical projection.
+      persist the import registry across a fresh independent run and ingest a
+      second bounded scope while preserving zero duplicate obligations and
+      exact successor lineage for changed source state.
 
   GT-BD-002:
     title: downstream invalidation runtime and granularity
@@ -107,15 +189,27 @@ frontier:
 
   GT-BD-001:
     title: fleet checkpoint cadence storage retention policy
-    state: ACTIVE_HOSTED_PASS_POLICY_RUNTIME
+    state: ACTIVE_HOSTED_PASS_POLICY_AND_REGISTRY
     maturity: M3_BOUNDED
     implemented_triggers: [EVENT_COUNT, REPLAY_COST, AGE, STORAGE_TIER]
+    p3_registry:
+      merge_sha: 8e0cad2727a7bdad00258cba258de4d4ba05546d
+      append_only_descriptor_registry: PASS
+      lineage_anchor_binding: PASS
+      projection_schema_binding: PASS
+      deterministic_latest_compatible_selection: PASS
+      event_interval_cadence: PASS
+      explicit_milestone_cadence: PASS
+      duplicate_boundary_suppression: PASS
+      selected_checkpoint_replay_equivalence: PASS
+      wall_clock_cadence_authoritative: false
     invariants:
       history_truncation_allowed: false
       checkpoint_is_authority: false
     remaining:
       - measured_thresholds_from_fleet_telemetry
       - repeat_on_distinct_corpora
+      - persistent_checkpoint_registry_storage_policy
       - storage_tier_cost_policy
 
   GT-BD-007:
@@ -126,6 +220,8 @@ frontier:
       office_carrier_merge: 6e802cfb09db3ecaae3994583eeb4cfd05905ced
       github_roundtrip_pr: 177
       github_roundtrip_merge: 9e8d08ca1f3297a3864369c73b5f0f9a01f38838
+      roundtrip_commit_sha: c691587cce34f8ed1fc9267484b15b8eafe08ae6
+      roundtrip_tree_sha: 544111118ec416d2a2a31a0d18ab5d96855f7465
       rendition_count: 7
       semantic_delta: 0
       unexplained_semantic_delta: 0
@@ -140,16 +236,20 @@ frontier:
 
   GT-BD-008:
     title: external side-effect and artifact roundtrip control
-    state: ACTIVE_ARTIFACT_ROUNDTRIP_PASS_OPERATIONAL_MUTATION_IDEMPOTENCY_OPEN
-    maturity: M3_PARTIAL
+    state: ACTIVE_HOSTED_PASS_BOUNDED_OPERATIONAL_IDEMPOTENCY
+    maturity: M3_BOUNDED
     evidence:
+      side_effect_idempotency_pr: 174
+      side_effect_idempotency_merge: 07730e40f2eadc17840c702d54fed927a137d004
+      live_github_comment_receipt_id: 5707195219
+      exact_replay_emit_side_effect: false
       github_roundtrip_pr: 177
       github_roundtrip_merge: 9e8d08ca1f3297a3864369c73b5f0f9a01f38838
       git_object_roundtrip: PASS
       seven_format_retrieval_and_reextract: PASS
       ref_updated: false
     remaining:
-      - repeated_real_mutating_side_effect_transaction_with_no_duplicate_effect
+      - repeat_operational_idempotency_on_second_external_provider_or_action_family
     qps_credit: false
 
   GT-BD-009:
@@ -166,6 +266,19 @@ frontier:
     second_page_count: 0
     canonical_federation_registry: UNKNOWN_NEEDS_READER
     note: ACCOUNT_UNIVERSE_NE_FEDERATION_MEMBERSHIP
+
+p5_visual_fidelity_boundary:
+  state: WITHHELD_NOT_EXECUTED
+  non_compensating: true
+  semantic_pass_implies_visual_pass: false
+  office_semantic_pass_credit: 0
+  github_roundtrip_semantic_pass_credit: 0
+  checkpoint_pass_credit: 0
+  fleet_import_pass_credit: 0
+  required_future_proof: >-
+    Visual/layout fidelity requires its own governed renderer-specific evidence,
+    comparison tolerances, page/slide/sheet inspection rules, and exact receipt.
+    No P0-P4 result may promote P5 by implication.
 
 qps_boundary:
   repository: GBOGEB/cryoplant-project
@@ -185,19 +298,25 @@ qps_boundary:
 
 DoV:
   hosted_exact_head: PASS
+  p2_seven_format_roundtrip: PASS
+  p3_checkpoint_registry_cadence: PASS
+  p4_controlled_live_multi_repo_import: PASS
   fleet_M4: WITHHELD
   promotion_rule: >-
-    Hosted PASS promotes only the bounded MissionControl implementation. Fleet
-    M4 requires repeat on independent corpora/consumers. QPS remains governed by
-    its own exact-head proof chain.
+    Hosted PASS promotes only bounded MissionControl implementations. Fleet M4
+    requires repeats on independent corpora/consumers and persistent operating
+    evidence. QPS remains governed by its own exact-head proof chain. P5 visual
+    fidelity remains independently WITHHELD.
 
 stop_rules:
   - MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS
   - QPS_ZERO_STEP_NE_APPLICATION_FAIL
   - FLEET_PROTOTYPE_NE_QPS_ENGINEERING_CREDIT
   - OFFICE_SEMANTIC_PASS_NE_VISUAL_FIDELITY_PASS
+  - P2_P3_P4_PASS_NE_P5_VISUAL_FIDELITY_PASS
   - ACCOUNT_REPO_COUNT_NE_FEDERATION_MEMBER_COUNT
   - CHECKPOINT_NE_AUTHORITY
   - GENERATED_PROJECTION_NE_SSOT
+  - IMPORT_OBSERVATION_NE_CLASSIFICATION
   - UNKNOWN_NE_ZERO
   - AUTHORITY_TRANSFER_FALSE
