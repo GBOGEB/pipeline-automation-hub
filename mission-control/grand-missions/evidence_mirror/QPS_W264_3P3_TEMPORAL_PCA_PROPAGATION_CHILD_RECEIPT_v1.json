@@ -1,0 +1,104 @@
+{
+  "schema": "qps.gm_i_b.3p_ral_cycle3_propagation_child_receipt.v1",
+  "status": "ACCEPT_DIAGNOSTIC_PROPAGATION_ONLY",
+  "wave": "W264",
+  "mission": "GM-I-B",
+  "cycle": 3,
+  "cycle_ordinal": "3P#3",
+  "child_target": "T3_QPS_TRIAGE",
+  "consumer": "GBOGEB/cryoplant-project/QPS_TRIAGE",
+  "source_base_main": "10edbcfa0eb5be1505d55908fabd3071e62a1359",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "hard_gate_compensation_allowed": false,
+  "runtime_gold_credit_delta": 0,
+  "engineering_acceptance_created": false,
+  "source_atom": {
+    "keb_item_id": "KEB-ITEM-0002",
+    "repo": "GBOGEB/CODEX",
+    "merge_sha": "bd1fb697e6aa86ebc077b92015201ad512728a13",
+    "path": "ssot/bridge_rows/gg_math_temporal_pca_w4_p31_knowledge_atom.json",
+    "source_digest": "sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405",
+    "authority_cap": "A3_SYNTHETIC_ONLY"
+  },
+  "missioncontrol_contract": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "merge_sha": "3348189fd52883befb24f5c5b6bb3953cd8725ab",
+    "path": "mission-control/grand-missions/GM_I_B_CYCLE3_PROPAGATION_CONTRACT_v1.json"
+  },
+  "coolprop_child": {
+    "repo": "GBOGEB/CoolProp",
+    "implementation_merge_sha": "6f4905a95ed90dafe72f2b237df91896f540b7f4",
+    "attestation_merge_sha": "0c645ac28ac73e1873268a3f6f505aaeffb41a8d",
+    "attestation_path": "qps/recon/GM_I_B_CYCLE3_TEMPORAL_PCA_6D_ADAPTER_RECEIPT_v1.json",
+    "attestation_git_blob_sha1": "9bd52a696471974e390fa1268264a55d978108c2",
+    "tested_exact_head": "b2f6fc4e8760c3d6fe608f6673e4a4155e116233",
+    "workflow_run": 35154983524,
+    "workflow_job": 104992179225,
+    "runtime_receipt_sha256": "713e4ba99bd1aff7240e4f1e02956d45073ace20ac09c05d7cd9af310a4796b8",
+    "artifact_id": 10471025052,
+    "artifact_sha256": "05d3f026408a079038612b23191efcee14e2f2db03481dc3012f00d835b13a07",
+    "disposition": "ACCEPT_SCHEMA_ADAPTER_ONLY"
+  },
+  "feature_contract": {
+    "dimension": 6,
+    "state_order": ["A", "B", "D", "E", "W"],
+    "schema": [
+      {"name": "T_K", "unit": "K"},
+      {"name": "p_Pa", "unit": "Pa"},
+      {"name": "h_J_kg", "unit": "J/kg"},
+      {"name": "s_J_kgK", "unit": "J/(kg*K)"},
+      {"name": "rho_kg_m3", "unit": "kg/m^3"},
+      {"name": "cp_J_kgK", "unit": "J/(kg*K)"}
+    ],
+    "schema_canonical_sha256": "24b193bb17ce6f9cb717e8f7a31b54eb2e8f451edf7b83869dd9854ea95f8a93",
+    "feature_matrix_canonical_sha256": "ae21df40120eaba36a84140e2b6dc9e305ee3b6d1784b60d0686666516dabef5",
+    "missing_value_imputation_allowed_without_separate_contract": false,
+    "schema_mapping_is_pca_result": false
+  },
+  "semantic_invariants": {
+    "component_assignment_precedes_sign_alignment": true,
+    "raw_pca_loading_sign_is_not_physical_direction": true,
+    "attenuation_toward_parity_is_distinct_from_direction_reversal": true,
+    "small_eigengap_requires_subspace_context": true,
+    "temporal_state_adjacency_does_not_require_equal_wall_time_or_exposure_age_steps": true,
+    "named_clocks": ["k", "t", "a", "wave", "pulse", "pr", "run", "release"]
+  },
+  "qps_consumption_guards": {
+    "computes_pca": false,
+    "duplicates_gg_MATH_kernel": false,
+    "duplicates_ABACUS_independent_challenge": false,
+    "feature_dimension_is_display_dimension": false,
+    "feature_matrix_is_engineering_acceptance_evidence": false,
+    "coolprop_attestation_is_qps_engineering_authority": false,
+    "loading_sign_is_policy_or_physical_direction": false,
+    "attenuation_equals_direction_reversal": false,
+    "issue_923_compensation_allowed": false
+  },
+  "child_dispositions": {
+    "T2_COOLPROP": "ACCEPT_SCHEMA_ADAPTER_ONLY",
+    "T3_QPS_TRIAGE": "ACCEPT_DIAGNOSTIC_PROPAGATION_ONLY"
+  },
+  "kpi": {
+    "propagation_targets_total": 3,
+    "propagation_targets_reached": 3,
+    "propagation_coverage": 1.0,
+    "semantic_invariants_total": 6,
+    "semantic_invariants_preserved": 6,
+    "semantic_parity": 1.0,
+    "reuse_ratio": 1.0,
+    "duplicate_implementation_count": 0,
+    "child_targets_total": 2,
+    "child_dispositions_observed": 2,
+    "child_disposition_coverage": 1.0,
+    "propagation_depth_from_keb_atom": 2,
+    "authority_inversion_count": 0
+  },
+  "3p3": {
+    "Preserve_or_Pin": "PASS_EXACT_KEB_CONTRACT_AND_COOLPROP_ATTESTATION_PINNED",
+    "Propagate_or_Penetrate": "PASS_T3_QPS_BOUNDARY_REACHED_WITHOUT_MATH_DUPLICATION",
+    "Prove_or_Promote": "PENDING_INDEPENDENT_MISSIONCONTROL_AGGREGATE",
+    "promotion_scope": "KNOWLEDGE_AND_DIAGNOSTIC_CONTROL_ONLY"
+  },
+  "next_action": "RUN_FINAL_MISSIONCONTROL_3P3_AGGREGATE_PROOF"
+}
