@@ -1,0 +1,113 @@
+schema: missioncontrol.golden_thread.session_close/v2
+as_of: '2026-09-17T22:13:00+02:00'
+session: GOLDEN_THREAD_3PR_MIP_3PC_PREPARE_20260917
+state: CLOSE_OK_WITH_EXTERNAL_CHILD_RUNTIME_BLOCKER
+canonical: true
+supersedes: mission-control/golden-thread/handover/SESSION_CLOSE_CURRENT_v1.yaml
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+qps_credit_delta: 0
+chat_only_todo_count: 0
+
+handover:
+  lossless: mission-control/golden-thread/handover/SC_2026-09-17_GOLDEN_THREAD_LOSSLESS_HANDOVER_v2.md
+  restart_dropin: mission-control/golden-thread/handover/RESTART_DROPIN_2026-09-17_GT_BD_003_3PC_PROVE_v2.md
+  prepublication_snapshot: mission-control/golden-thread/handover/SC_2026-09-17_GOLDEN_THREAD_LOSSLESS_HANDOVER_v1.md
+  current_frontier: mission-control/golden-thread/GOLDEN_THREAD_FRONTIER_CURRENT_v1.yaml
+  method_receipt: mission-control/golden-thread/GOLDEN_THREAD_3PR_MIP_M_20260917_v1.yaml
+  gt_bd_003_prepare: mission-control/golden-thread/GT_BD_003_3PC_PREPARE_W250_v1.json
+
+missioncontrol_lineage:
+  repo: GBOGEB/pipeline-automation-hub
+  session_execution_close_anchor:
+    sha: 94ef9de83a40f114179d128d12d4835279beebab
+    meaning: GT_BD_003_3PC_PREPARE_PR_197_MERGE
+  publication_base_observed:
+    sha: 48357037c9c22ad79660ba275100693d9d5962de
+    meaning: ORTHOGONAL_GM_I_C_PR_195_MERGE_AFTER_SESSION_ANCHOR
+    compensates_global_golden_thread: false
+  refresh_required_on_restart: true
+
+qps_close_observation:
+  repo: GBOGEB/cryoplant-project
+  branch: main
+  observed_sha: b972f87275738c3dfac6f980d9228795a385170b
+  refresh_required_on_restart: true
+
+burned_sequence:
+  - {id: GT-BD-006, state: DONE_CONTROL_WATCH, pr: 186, exact_head: 801e56855e3cb24c286b7c62469d765d4cffe413}
+  - {id: GT-BD-011_BATCH001, state: PASS_MERGED_PARENT_ACTIVE, pr: 190, exact_head: f989223626599d00cd3fed65a54816f5cbd99d78, merge: f6a9c67df2e508df85b7c4441f36b2aae50309f8}
+  - {id: GT-BD-002, state: DONE_CONTROL_WATCH, pr: 191, exact_head: 98c90114dee0abeeb252e319387fb94b97df4bda, merge: 39e64d72c778e0894eba884fc9e349b92ed681e4}
+  - id: 3PR_MIP_M
+    state: PASS_MERGED
+    pr: 194
+    exact_head: fae367b78d9727e4b6cbc4aebdda129b17437b21
+    merge: 3a65e884abe321347bd771b1b094d44e1e08cdd2
+    hosted_family: PASS_8_OF_8
+    replay_run: 35242622674
+    replay_job: 105274644838
+    replay_tests: 75
+    artifact_id: 10505394651
+    artifact_sha256: 7538d471c9b87bceb346b15be035df4723df816ac854f18b70304da6880baba9
+  - id: GT-BD-003_3PC_PREPARE
+    state: PASS_PROVE_WITHHELD_COMMIT_HOLD
+    pr: 197
+    exact_head: 8a3addb2c6e305b7f586bd664269483810b54876
+    merge: 94ef9de83a40f114179d128d12d4835279beebab
+    prepare_run: 35244200714
+    prepare_job: 105280065735
+    artifact_id: 10507125081
+    artifact_sha256: 02aabfd3ccc9c22a1fc43ef79151ff6bc8ac8ddffdda66f86830849ca656156a
+
+first_red:
+  architecture: GT-BD-003_3PC_PROVE_CHILD_HOSTED_EXECUTION
+  child_repo: GBOGEB/cryoplant-project
+  child_pr: 1438
+  prepared_child_head: 0c88a8efe09ccf7cb0b11ecc19632a1191621524
+  child_disposition: DEFER
+  child_reset_authority: QPS_CHILD_ONLY
+  child_run: 35244036243
+  child_job: 105279499163
+  child_steps: null
+  classification: INFRA_PREEXECUTION_ZERO_STEP
+  release_condition: CHILD_HOSTED_STEPS_GT_0_AND_AUTHORITY_VALIDATOR_PASS
+
+qps_global_boundary:
+  canonical_control: controls/QPS_GOLDEN_THREAD_CURRENT_v0.1.yaml
+  current_first_red: GT_BDQ_0_EXACT_HEAD_HOSTED_REPLAY_PROOF
+  state: WITHHELD_INFRA_PREEXECUTION
+  issue: 923
+  issue_state: OPEN_OWNER_ACTION
+  compensation_allowed: false
+  gt_bdq_1_admitted: false
+
+next_action:
+  method: 3PC_PROVE
+  action: >-
+    After a real >0-step hosted QPS child validator PASS on PR 1438 prepared head or a governed successor,
+    bind exact proof identity and execute MissionControl GT-BD-003 latch/inhibit/reset/repropagation Prove.
+  if_zero_step: STOP_PRESERVE_INFRA_WITHHELD_NO_APPLICATION_REPAIR
+  commit_only_if: ALL_PROVE_PREDICATES_PASS_AND_CHILD_AUTHORITY_PRESERVED
+
+concurrent_noncompensating:
+  - {ref: GBOGEB/pipeline-automation-hub#195, state: MERGED_AT_48357037c9c22ad79660ba275100693d9d5962de, scope: GM_I_C_IC3_LOCAL_SPECIALISATION}
+  - {ref: GBOGEB/pipeline-automation-hub#196, state: MERGED, scope: TEMPORAL_POLICY_CONTROL_DIAGNOSTIC}
+  - {ref: QPS_HM_01_R3_LOCAL_CONTROLS, state: INDEPENDENT, scope: QPS_LOCAL}
+
+controls:
+  - ONE_LOGICAL_FACT_ONE_AUTHORITY
+  - SOURCE_HISTORY_IMMUTABLE
+  - CURRENT_OVERLAY_NE_HISTORICAL_REWRITE
+  - PARENT_PASS_NE_CHILD_ACCEPT
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - RESET_NE_ENGINEERING_ACCEPT
+  - MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS
+  - AUTHORITY_TRANSFER_FALSE
+  - UNKNOWN_NE_ZERO
+
+restart_rule: >-
+  Fresh-fetch current heads and PR states first. Preserve 94ef9de as the session execution anchor and the later
+  48357037 merge as an orthogonal publication-lineage event. Resume at GT-BD-003 3PC Prove only after the child
+  hosted gate genuinely executes; otherwise remain held on QPS runner admission / issue 923. Do not repeat burned
+  predicates or advance QPS GT_BDQ_1.
