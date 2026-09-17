@@ -1,0 +1,35 @@
+{
+  "schema": "missioncontrol.gm_i_b.cycle3.content_address_relay.v1",
+  "mission": "GM-I-B",
+  "cycle": 3,
+  "purpose": "Relay an immutable private-QPS child receipt into MissionControl without changing bytes or authority, so hosted aggregation can prove the already-frozen Cycle-3 predicate without unauthenticated private-repository fetches.",
+  "source": {
+    "repo": "GBOGEB/cryoplant-project",
+    "commit": "29a3a619b17b37eca5accfa2fd747401a2387c7b",
+    "path": "triage/w264/QPS_W264_3P3_TEMPORAL_PCA_PROPAGATION_CHILD_RECEIPT_v1.json",
+    "git_blob_sha1": "7be807efcd8c737addfc25cc45b50565d691d9b1",
+    "visibility_boundary": "PRIVATE_QPS_RAW_FETCH_NOT_AVAILABLE_TO_UNAUTHENTICATED_HOSTED_RUNNER"
+  },
+  "relay": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "branch_at_creation": "mission/gm-i-b-cycle3-content-address-relay",
+    "path": "mission-control/grand-missions/evidence_mirror/QPS_W264_3P3_TEMPORAL_PCA_PROPAGATION_CHILD_RECEIPT_v1.json",
+    "git_blob_sha1": "7be807efcd8c737addfc25cc45b50565d691d9b1",
+    "byte_identity": "PASS_SAME_GIT_BLOB"
+  },
+  "proof_rule": {
+    "required_git_blob_sha1": "7be807efcd8c737addfc25cc45b50565d691d9b1",
+    "runtime_check": "git hash-object relay_path == required_git_blob_sha1",
+    "semantic_validation": "reuse existing validate_gm_i_b_cycle3_propagation_proof.py",
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "hard_gate_compensation_allowed": false
+  },
+  "guards": [
+    "relay_is_not_a_new_QPS_authoritative_source",
+    "relay_does_not_replace_original_QPS_commit_identity",
+    "same_blob_identity_is_required_before_aggregate_validation",
+    "no_issue_923_compensation",
+    "promotion_scope_is_knowledge_and_diagnostic_control_only"
+  ]
+}
