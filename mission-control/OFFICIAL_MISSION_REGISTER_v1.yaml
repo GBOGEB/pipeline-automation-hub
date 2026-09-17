@@ -1,5 +1,5 @@
 schema: missioncontrol.official_mission_register.v1
-as_of: '2026-09-17T03:31:00+02:00'
+as_of: '2026-09-17T15:30:00+02:00'
 authority_transfer: false
 purpose: >-
   Official Mission Control index across canonical Grand Missions, governed variants,
@@ -37,6 +37,21 @@ variants:
       codex_atom: KEB-ITEM-0002
       codex_object_type: KEB_KNOWLEDGE_ATOM
     rule: DOES_NOT_RENUMBER_OR_REPLACE_GM_II_TO_GM_V
+  - id: GM-I-C
+    number: 1-C
+    type: GRAND_MISSION_VARIANT
+    parent: GM-I
+    name: CROSS_AGENT_DRIVE_FEDERATION_BRIDGEHEAD
+    provider_frontier_count: 1
+    integration_variant: SOURCE_AGENT_PERSIST_DRIVE_EXTERNAL_CLIENT_BIND_GIT_CONSUMER
+    state: REGISTERED_WAIT_EXTERNAL_INGRESS
+    registration_issue: GBOGEB/pipeline-automation-hub#188
+    current_support_target: GBOGEB/cryoplant-project#1398
+    official_control: mission-control/grand-missions/GM_I_C_VARIANT_REGISTRATION_v1.yaml
+    trace_telemetry: mission-control/grand-missions/TYPE_I_MISSION_TRACE_TELEMETRY_v1.yaml
+    authority_transfer: false
+    formal_credit_delta: 0
+    rule: DOES_NOT_RENUMBER_OR_REPLACE_GM_II_TO_GM_V_AND_DOES_NOT_RECLASSIFY_HM_01
 horizontal_missions:
   - id: HM-01
     number: 1
@@ -53,7 +68,7 @@ horizontal_missions:
     crew_allocation: mission-control/qps-triage-ultra/missions/HM-01_CREW_ALLOCATION_v0.1.yaml
     authority_transfer: false
     formal_credit_delta: 0
-    rule: DOES_NOT_RENUMBER_OR_REPLACE_GM_I_TO_GM_V_GM_I_B_OR_LM_10
+    rule: DOES_NOT_RENUMBER_OR_REPLACE_GM_I_TO_GM_V_GM_I_B_GM_I_C_OR_LM_10
 local_missions:
   - id: LM-10
     number: 10
@@ -112,6 +127,7 @@ local_missions:
 invariants:
   - canonical_GM_ids_remain_exactly_GM_I_to_GM_V
   - GM_I_B_is_variant_not_GM_VI_or_GM_II
+  - GM_I_C_is_variant_not_GM_VI_or_GM_II
   - HM_01_is_horizontal_and_does_not_consume_a_GM_or_LM_number
   - LM_10_does_not_become_Grand_Mission_by_activity_or_scope_growth
   - LM_11_is_local_navigation_lineage_mission_not_global_QPS_wave
