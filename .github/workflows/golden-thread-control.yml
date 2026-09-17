@@ -27,7 +27,8 @@ jobs:
           python -m py_compile \
             mission-control/golden-thread/golden_thread.py \
             mission-control/golden-thread/checkpoint_replay.py \
-            mission-control/golden-thread/rendition_family.py
+            mission-control/golden-thread/rendition_family.py \
+            mission-control/golden-thread/side_effect_receipts.py
 
       - name: Run Golden Thread unit tests
         run: |
@@ -64,3 +65,42 @@ jobs:
           python rendition_family.py verify \
             /tmp/golden-thread-truth.json \
             /tmp/golden-thread-renditions
+
+      - name: Prove side-effect replay suppression and successor lineage
+        working-directory: mission-control/golden-thread
+        run: |
+          python - <<'PY'
+          import side_effect_receipts as sr
+
+          intent = {
+              "authority_domain": "GBOGEB/pipeline-automation-hub",
+              "action": "GITHUB_ISSUE_COMMENT_CREATE",
+              "target": "GBOGEB/pipeline-automation-hub#153",
+              "mechanism": "REG",
+              "source_state_digest": sr.digest({"projection": "k42"}),
+              "payload_digest": sr.digest({"comment": "golden thread receipt"}),
+              "schema_version": "github.issue_comment.v1",
+              "expected_semantic_delta": "NONE_CONTROL_RECEIPT_ONLY",
+          }
+          registry = sr.empty_registry()
+          first = sr.plan(registry, intent)
+          assert first["emit_side_effect"] is True
+          registry = sr.register_planned(registry, intent)
+          replay = sr.plan(registry, intent)
+          assert replay["decision"] == "REPLAY_EXISTING"
+          assert replay["emit_side_effect"] is False
+
+          changed = dict(intent)
+          changed["payload_digest"] = sr.digest({"comment": "changed payload"})
+          successor = sr.plan(registry, changed)
+          assert successor["decision"] == "NEW_TRANSACTION"
+          assert successor["changed_from_parent"] is True
+          assert successor["parent_transaction_id"] == first["transaction_id"]
+          print(sr.canonical_json({
+              "status": "PASS",
+              "first_transaction_id": first["transaction_id"],
+              "replay_emit_side_effect": replay["emit_side_effect"],
+              "successor_transaction_id": successor["transaction_id"],
+              "authority_transfer": False,
+          }))
+          PY
