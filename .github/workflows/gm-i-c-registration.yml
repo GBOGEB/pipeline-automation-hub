@@ -1,0 +1,52 @@
+name: GM-I-C Registration Control
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - 'mission-control/grand-missions/GM-I-C_CROSS_AGENT_DRIVE_FEDERATION_CONTROL_v0.1.yaml'
+      - 'mission-control/grand-missions/GM-I-C_CREW_ALLOCATION_v0.1.yaml'
+      - 'mission-control/grand-missions/validate_gm_i_c_registration.py'
+      - 'mission-control/grand-missions/validate_gm_i_b_and_launch_control.py'
+      - '.github/workflows/gm-i-c-registration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-gm-i-c-registration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact source head
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install validator dependency
+        run: python -m pip install --disable-pip-version-check PyYAML
+
+      - name: Validate GM-I-C registration and evidence bindings
+        run: python mission-control/grand-missions/validate_gm_i_c_registration.py
+
+      - name: Preserve sibling/fleet launch invariants
+        run: |
+          mkdir -p mission-control/grand-missions/runtime
+          python mission-control/grand-missions/validate_gm_i_b_and_launch_control.py \
+            --out mission-control/grand-missions/runtime/gm_i_c_sibling_launch_guard.json
+
+      - name: Upload registration guard receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-i-c-registration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/grand-missions/runtime/gm_i_c_sibling_launch_guard.json
+          if-no-files-found: error
