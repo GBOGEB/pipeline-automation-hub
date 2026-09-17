@@ -52,9 +52,26 @@
           "target_posture": "CONTROL_SENTINEL_RECEIPT_REGRESSION",
           "authority_transfer": false,
           "formal_credit_delta": 0
+        },
+        {
+          "id": "GM-I-C",
+          "name": "CROSS_AGENT_DRIVE_FEDERATION",
+          "repository": "GBOGEB/GEMINI",
+          "state": "REGISTERED_BUILD_EXTERNAL_AUTH_PROOF_PENDING",
+          "role": "cross_agent_persistent_bridge_authenticated_consumption_and_replay",
+          "provider_pr": 9,
+          "provider_merge_sha": "f9ea9f45942ce50b5f2fcad626ba8b59fa97ac71",
+          "drive_ingress_pr": 10,
+          "drive_ingress_exact_head_sha": "1d831a66a258bcd1b13d432805e8c60b52f6c7ad",
+          "first_red": "IC3_AUTH_REAL_HOSTED_GT0_STEP_DRIVE_INGRESS_PASS",
+          "official_control": "mission-control/grand-missions/GM-I-C_CROSS_AGENT_DRIVE_FEDERATION_CONTROL_v0.1.yaml",
+          "crew_allocation": "mission-control/grand-missions/GM-I-C_CREW_ALLOCATION_v0.1.yaml",
+          "target_posture": "CONTROL_SENTINEL_RECEIPT_REGRESSION_AFTER_IC9",
+          "authority_transfer": false,
+          "formal_credit_delta": 0
         }
       ],
-      "promotion_boundary": "NO_GOVERNING_LOW_TEMPERATURE_AUTHORITY_WITHOUT_REQUIRED_EXTERNAL_REFERENCE;_GM_I_B_REMAINS_A_SIBLING_VARIANT_AND_MUST_NOT_RENUMBER_OR_MUTATE_GM_II_TO_GM_V"
+      "promotion_boundary": "NO_GOVERNING_LOW_TEMPERATURE_AUTHORITY_WITHOUT_REQUIRED_EXTERNAL_REFERENCE;_GM_I_B_AND_GM_I_C_REMAIN_SIBLING_VARIANTS_AND_MUST_NOT_RENUMBER_OR_MUTATE_GM_II_TO_GM_V;_GM_I_C_MUST_NOT_REWRITE_GM_III_GEMINI_FRONTIER_HISTORY"
     },
     {
       "id": "GM-II",
@@ -172,6 +189,8 @@
     "NO_AUTHORITY_TRANSFER_FROM_FLEET_CONTROL",
     "NO_PCA_OR_BT_PROMOTION_FROM_SYNTHETIC_ROWS",
     "NO_CREW_SURGE_WITHOUT_NAMED_FRONTIER_AND_RETURN_PATH",
+    "GM_I_C_DOES_NOT_REWRITE_GM_III_GEMINI_FRONTIER_HISTORY",
+    "GM_I_C_REGISTRATION_DOES_NOT_EQUAL_HOSTED_DRIVE_RUNTIME_PASS",
     "GM_IV_FRONTIER_DISPOSITION_IS_NOT_CHILD_ACCEPTANCE",
     "GM_IV_STAGE_PROMOTION_REQUIRES_EXPLICIT_GOVERNOR_GATE",
     "GM_V_REMAINS_HELD_UNTIL_GM_IV_POST_ACTIVE8_REPEAT_CONTROL"
