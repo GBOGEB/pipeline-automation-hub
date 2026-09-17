@@ -1,0 +1,47 @@
+{
+  "schema": "missioncontrol.golden_thread_import_receipt_registry.v1",
+  "as_of": "2026-09-17T02:24:00Z",
+  "authority_transfer": false,
+  "families": [
+    {
+      "family_id": "QPS_1390_1407",
+      "repository": "GBOGEB/cryoplant-project",
+      "fixture": "mission-control/golden-thread/fixtures/LIVE_GITHUB_OCCURRENCE_FAMILY_20260917.json",
+      "source_count": 2,
+      "projection_digest": "sha256:3eaa81d8fe6b590c6a3d78310ec3f1b568a9dbe0fdf29fa2c9662c8e90974980",
+      "idempotency_keys": [
+        "sha256:26d58b1c3af10db55b60a6d3f20518cef0750b3d533319932cc6bd59b408a1c8",
+        "sha256:646cbd002ddc10670c398ab3c197be4588a07aa7d04b919e63bd2b742cc7ec4b"
+      ],
+      "reimport_expected": {
+        "imported_count": 0,
+        "duplicate_count": 2,
+        "projection_digest_unchanged": true
+      }
+    },
+    {
+      "family_id": "CODEX_753_754",
+      "repository": "GBOGEB/CODEX",
+      "fixture": "mission-control/golden-thread/fixtures/LIVE_GITHUB_OCCURRENCE_FAMILY_CODEX_20260917.json",
+      "source_count": 2,
+      "projection_digest": "sha256:067ff7c7af94afdcef1c7931ccb0067995687a6b5c9c6e504d2bb73960219f65",
+      "idempotency_keys": [
+        "sha256:b614791fdb1f31ddadabaa54a742d5870d591a89b94e99ba37dbfd03660fe580",
+        "sha256:cb82789f2e52f40ea8dbc67900c07ff3676bea313428953b695a514c30f7c15c"
+      ],
+      "reimport_expected": {
+        "imported_count": 0,
+        "duplicate_count": 2,
+        "projection_digest_unchanged": true
+      }
+    }
+  ],
+  "controls": {
+    "family_count": 2,
+    "repository_count": 2,
+    "duplicate_obligation_on_reimport": 0,
+    "authority_transfer": false,
+    "qps_gt_bdq_credit": false,
+    "fleet_m4_credit": false
+  }
+}
