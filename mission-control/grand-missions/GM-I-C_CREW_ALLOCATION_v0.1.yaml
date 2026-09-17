@@ -1,0 +1,161 @@
+schema: missioncontrol.grand_mission_variant.crew_allocation.v1
+mission_id: GM-I-C
+parent: GM-I
+name: CROSS_AGENT_DRIVE_FEDERATION
+as_of: '2026-09-17T07:55:00+02:00'
+authority_transfer: false
+posture: SMALL_BOUNDED_ACTIVE_CELL_WITH_RESERVE
+
+active_crew:
+  - crew_id: U01
+    role: MISSION_COMMANDER_GOVERNOR
+    mission_duty: [PROMOTION_BOUNDARY, AUTHORITY_GUARD, HOLD_GO_RETURN]
+    activation: ACTIVE
+    return_trigger: IC9_CONTROL_OR_MISSION_HOLD
+  - crew_id: U02
+    role: CHIEF_ARCHITECT
+    mission_duty: [BRIDGE_TOPOLOGY, AUTHORITY_FLOW_SEPARATION, LINEAGE_CONTRACT]
+    activation: ACTIVE
+    return_trigger: IC7_ROUNDTRIP_BOUND
+  - crew_id: U04
+    role: FLEET_ORCHESTRATOR
+    mission_duty: [DISPATCH, FANOUT_FANIN, RECEIPT_CORRELATION]
+    activation: ACTIVE
+    return_trigger: IC9_CONTROL
+  - crew_id: U06
+    role: QA_SIGNALMAN
+    mission_duty: [EXACT_SHA_RECEIPTS, INDEPENDENT_ATTESTATION, MESSAGE_HOME]
+    activation: ACTIVE
+    return_trigger: IC9_CONTROL
+  - crew_id: U08
+    role: REX_KEB_INTEGRATOR
+    mission_duty: [REX_ASSIMILATION, PROVENANCE_CHALLENGE, DOCTRINE_UPDATE]
+    activation: ACTIVE
+    return_trigger: IC9_CONTROL
+  - crew_id: S03
+    role: DOCKMASTER
+    mission_duty: [RUNNER_ADMISSION, GITHUB_ACTIONS, WIF_RUNTIME_GATE, GT0_STEP_PROOF]
+    activation: ACTIVE_FIRST_RED_OWNER
+    return_trigger: IC3_AUTH_PASS_AND_STABLE_REPEAT
+  - crew_id: S06
+    role: TECHNICAL_MANAGER_KEB
+    mission_duty: [AUTH_SEMANTICS, SOURCE_IDENTITY, VALIDITY_DOMAIN, CLAIM_BOUNDARY]
+    activation: ACTIVE
+    return_trigger: IC6_PARITY_PASS
+  - crew_id: S01
+    role: AMBASSADOR
+    mission_duty: [CROSS_AGENT_HANDSHAKE, CLAIM_BOUNDARY_RECONCILIATION, NO_AUTHORITY_TRANSFER]
+    activation: ACTIVE
+    return_trigger: IC6_PARITY_PASS
+
+reserve_crew:
+  - crew_id: U03
+    role: PROJECT_MANAGER_DOW
+    wake_on: [DEPENDENCY_BLOCK, CROSS_REPO_DELIVERY_SEQUENCE]
+  - crew_id: U05
+    role: ANALYST
+    wake_on: [COMPARABLE_MULTI_RUN_TELEMETRY, RESOURCE_ECONOMICS, PARITY_METRICS]
+  - crew_id: U07
+    role: CARTOGRAPHER_OCULARS
+    wake_on: [MULTI_AGENT_DAG_VISUALIZATION, LINEAGE_HMI]
+  - crew_id: S05
+    role: ENGINEER
+    wake_on: [GT0_STEP_APPLICATION_DEFECT, BOUNDED_IMPLEMENTATION_CHANGE]
+  - crew_id: S02
+    role: DOCTOR
+    wake_on: [GT0_STEP_CONFIRMED_APPLICATION_FAILURE]
+  - crew_id: S04
+    role: SCIENTIST_DOMAIN_VALIDATION_SPECIALIST
+    wake_on: [DOMAIN_SPECIFIC_HANDOVER_VALIDATION]
+  - crew_id: S07
+    role: LICENSED_LOCAL_RUNTIME_OPERATOR
+    wake_on: [SPECIAL_LOCAL_HABITAT_REQUIRED]
+
+scout_reader_policy:
+  conceptual_roles:
+    - crew_id: C01
+      role: SCOUT
+      maturity: CONCEPTUAL
+      control_eligible: false
+      allowed_use: SHADOW_TRIAL_ONLY
+    - crew_id: C02
+      role: READER
+      maturity: CONCEPTUAL
+      control_eligible: false
+      allowed_use: SHADOW_TRIAL_ONLY
+  observed_equivalent_functions:
+    breadth_census: [U02_CHIEF_ARCHITECT, S01_AMBASSADOR]
+    deep_read_and_source_challenge: [S06_TECHNICAL_MANAGER_KEB, U08_REX_KEB_INTEGRATOR]
+  rex_rule: SEARCH_SATURATION_RETURNS_BROAD_SCOUT_CREW
+
+runtime_workers:
+  - id: GEMINI_CLI_WORKER
+    class: AGENT_PROVIDER_RUNTIME
+    authority: PROVIDER_OUTPUT_ONLY
+    current_state: IMPLEMENTED_NATIVE_HOOKS
+    source: GBOGEB/GEMINI
+  - id: GOOGLE_WIF_PRINCIPAL
+    class: AUTHENTICATION_IDENTITY
+    authority: GOOGLE_IAM_AND_SHARED_DRIVE_ACL_ONLY
+    current_state: CONFIGURATION_REQUIRED_FOR_HOSTED_PASS
+    is_crew: false
+  - id: GOOGLE_DRIVE_BRIDGE
+    class: PERSISTENCE_TRANSPORT
+    authority: NONE
+    current_state: REAL_MANUAL_CONNECTOR_PATH_OBSERVED
+    is_crew: false
+  - id: GITHUB_HOSTED_RUNNER
+    class: EXECUTION_HABITAT
+    authority: RUNTIME_TRUTH_ONLY
+    current_state: IC3_AUTH_TARGET
+    is_crew: false
+  - id: CHATGPT_DRIVE_CONSUMER
+    class: EXTERNAL_INDEPENDENT_CONSUMER
+    authority: CONSUMPTION_AND_RECONCILIATION_ONLY
+    current_state: PARTIAL_MANUAL_OBSERVATION
+    is_crew: false
+  - id: SECOND_EXTERNAL_CONSUMER
+    class: EXTERNAL_INDEPENDENT_CONSUMER
+    authority: NONE_UNTIL_INSTANTIATED
+    current_state: NOT_STARTED
+    is_crew: false
+
+first_red_routing:
+  zero_step_or_no_runner:
+    owner: S03
+    disposition: HABITAT
+    forbidden_initial_roles: [S02, S05]
+  gt0_application_failure:
+    owner: S05
+    support: [S02, U06]
+    disposition: BOUNDED_REPAIR
+  auth_or_acl_failure:
+    owner: S03
+    support: [S06, U06]
+    disposition: IDENTITY_OR_RESOURCE_ACCESS
+  semantic_or_claim_boundary_failure:
+    owner: S06
+    support: [U08, S01, U06]
+    disposition: CHALLENGE_AND_RECONCILE
+
+crew_contraction_at_control:
+  active_roles: [RECEIPT_SENTINEL, REGRESSION_SENTINEL, GOVERNOR]
+  source_roles: [U06, S03, U01]
+  reserve_return: [U02, U04, U08, S06, S01, U03, U05, U07, S05, S02, S04, S07]
+  full_relaunch_requires_named_wake_trigger: true
+
+wake_triggers_after_control:
+  - DRIVE_SOURCE_REVISION_OR_DIGEST_DRIFT
+  - PROVIDER_SHA_OR_HOOK_CONTRACT_DRIFT
+  - GOOGLE_WIF_OR_ACL_REGRESSION
+  - CONSUMER_SCHEMA_OR_RECEIPT_REGRESSION
+  - NEW_NAMED_EXTERNAL_CONSUMER
+  - ROUNDTRIP_OR_REBUILD_AS_OF_FAILURE
+  - AUTHORITY_BOUNDARY_REGRESSION
+
+stop_rules:
+  - NO_CREW_SURGE_WITHOUT_NAMED_GATE_AND_RETURN_TRIGGER
+  - CONCEPTUAL_SCOUT_AND_READER_CANNOT_RECEIVE_CONTROL_AUTHORITY
+  - IDENTITY_PRINCIPALS_AND_RUNNERS_ARE_NOT_CREW
+  - EXTERNAL_AGENT_CONSUMERS_DO_NOT_INHERIT_SOURCE_AUTHORITY
+  - ZERO_STEP_REMAINS_DOCKMASTER_HABITAT_SCOPE
