@@ -1,0 +1,34 @@
+name: LM-11 QPS Wave Federation Proof
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml'
+      - 'mission-control/qps-triage-ultra/missions/LM-11_*'
+      - 'scripts/validate_lm11_qps_wave_federation.py'
+      - '.github/workflows/lm11-qps-wave-federation.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  lm11-federation-static:
+    runs-on: ${{ fromJSON(vars.CRYO_RECEIPT_RUNNER || '["ubuntu-latest"]') }}
+    timeout-minutes: 10
+    steps:
+      - name: Runner admission observed
+        shell: bash
+        run: |
+          echo "lm11_missioncontrol_runner_started=true"
+          echo "sha=${GITHUB_SHA}"
+          echo "ref=${GITHUB_REF}"
+      - name: Checkout exact head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Bind literal checked-out head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+      - name: Validate LM-11 MissionControl federation
+        run: python scripts/validate_lm11_qps_wave_federation.py
