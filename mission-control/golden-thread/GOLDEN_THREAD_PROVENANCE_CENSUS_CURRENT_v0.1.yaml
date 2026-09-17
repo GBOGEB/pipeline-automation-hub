@@ -1,0 +1,86 @@
+schema: missioncontrol.golden_thread.provenance_census.v0.2
+as_of: '2026-09-17'
+authority_transfer: false
+purpose: >-
+  Record directly observed provenance candidates for the federation mechanism
+  ladder and reference-registry claim without inventing an authority or governed
+  federation membership count that has not been verified.
+
+mechanism_ladder:
+  vocabulary: [DEP, REG, SUB, ADAPTER, LAB, FORK]
+  normative_current_surface:
+    repository: GBOGEB/pipeline-automation-hub
+    path: mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md
+    observed_master_sha: 9e8d08ca1f3297a3864369c73b5f0f9a01f38838
+    state: NORMATIVE_CURRENT_NOT_PROVEN_ORIGIN
+  historical_narrative_surface:
+    repository: GBOGEB/pipeline-automation-hub
+    path: mission-control/golden-thread/FEDERATION_GOLDEN_THREAD_PROCESS_NARRATIVE_v1.md
+    state: NARRATIVE_REFERENCE_NOT_CANONICAL_ORIGIN
+  rejected_origin_candidate:
+    repository: GBOGEB/CODEX
+    path: governance/adr/ADR-0001-runtime-debug-governance.md
+    blob_sha: 26737531d3b8574e285877bb3a95b96bede29fb7
+    classification: NOT_MECHANISM_LADDER_ADR
+    reason: ADR_0001_is_Runtime_Debug_Governance_Policy
+  provenance_state: UNKNOWN_NEEDS_READER
+  next_bounded_action: >-
+    locate the first authoritative ADR/registry declaration of
+    DEP_REG_SUB_ADAPTER_LAB_FORK or create a governed provenance-binding ADR
+    that explicitly distinguishes adoption from historical origin.
+  victory_predicate: >-
+    one canonical source path and exact SHA is declared, downstream references
+    resolve to it, and no unrelated ADR is cited as its origin.
+
+repository_universe_census:
+  method: GitHub_connector_list_repositories_owner_GBOGEB
+  observed_accessible_repository_count: 83
+  page_size: 100
+  first_page_count: 83
+  second_page_offset: 100
+  second_page_count: 0
+  exact_count_state: PASS_ACCOUNT_LEVEL_UNIVERSE
+  interpretation: >-
+    This is the complete repository universe visible to the linked GitHub
+    connection for owner GBOGEB at observation time. It is NOT a declaration
+    that all 83 repositories are members of the governed federation.
+  historical_approximately_40_claim: SUPERSEDED_AS_ACCOUNT_REPOSITORY_COUNT
+  federation_membership_subset: UNKNOWN_NEEDS_READER
+
+reference_registry_census:
+  canonical_federation_registry: UNKNOWN_NEEDS_READER
+  candidates_observed:
+    - repository: GBOGEB/ABACUS
+      path: reference-registry.yaml
+      classification: DEPRECATED_POINTER_ONLY
+      target: docs/qps_line_s_recovery/reference-registry.yaml
+      note: not_a_federation_wide_registry
+    - repository: GBOGEB/ABACUS
+      path: docs/qps_line_s_recovery/reference-registry.yaml
+      blob_sha: 482ea235e36e3efba7607c8bfa7be106cea94181
+      classification: QPS_LINE_S_PROPERTY_ORACLE_REGISTRY
+      scope: [CoolProp, HEPAK, REFPROP_exclusion]
+      note: domain_specific_not_federation_wide
+    - repository: GBOGEB/CODEX
+      path: reference-registry.yaml
+      classification: NOT_FOUND_IN_CURRENT_CODE_SEARCH
+    - repository: GBOGEB/pipeline-automation-hub
+      path: reference-registry.yaml
+      classification: NOT_FOUND_IN_CURRENT_CODE_SEARCH
+  census_state: ACTIVE_KNOWN_UNIVERSE_UNKNOWN_GOVERNED_SUBSET
+  next_bounded_action: >-
+    classify the 83-repository observable universe by federation membership,
+    mechanism, authority role and registry evidence; locate any hidden or
+    differently named canonical registry/index before selecting one authority.
+  victory_predicate: >-
+    canonical registry selected; exact governed subset count reproducible; zero
+    duplicate repository identities; every admitted federation member has
+    mechanism and authority classification.
+
+controls:
+  - UNKNOWN_NE_ZERO
+  - ABSENCE_OF_SEARCH_HIT_NE_PROOF_OF_NONEXISTENCE
+  - DOMAIN_REGISTRY_NE_FEDERATION_REGISTRY
+  - ACCOUNT_REPOSITORY_UNIVERSE_NE_FEDERATION_MEMBERSHIP
+  - NORMATIVE_CURRENT_SURFACE_NE_HISTORICAL_ORIGIN
+  - NO_AUTHORITY_TRANSFER
