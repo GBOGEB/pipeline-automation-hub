@@ -1,4 +1,4 @@
-schema: missioncontrol.golden_thread.provenance_census.v0.3
+schema: missioncontrol.golden_thread.provenance_census.v0.4
 as_of: '2026-09-17'
 authority_transfer: false
 purpose: >-
@@ -11,11 +11,11 @@ mechanism_ladder:
   current_adoption_authority:
     repository: GBOGEB/pipeline-automation-hub
     path: mission-control/golden-thread/MECHANISM_LADDER_PROVENANCE_BINDING_v1.md
-    state: BOUND_ON_CURRENT_PR
+    state: BOUND_ON_PR_181_PENDING_ADMISSION
   normative_vocabulary_source:
     repository: GBOGEB/pipeline-automation-hub
     path: mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md
-    observed_master_sha: c13df02d6568e335aa31b53e420c1dfaa0f1d564
+    observed_master_sha: 58175a2415995f2f6629fe049acdabd9e58647ca
   historical_origin: UNKNOWN_NEEDS_READER
   historical_narrative_surface:
     repository: GBOGEB/pipeline-automation-hub
@@ -28,11 +28,11 @@ mechanism_ladder:
     federation_id: GG-ADR-0001
     classification: NOT_MECHANISM_LADDER_ADR
     reason: ADR_0001_is_Runtime_Debug_Governance_Policy
-  current_provenance_state: PASS_ADOPTION_AUTHORITY_BOUND_HISTORICAL_ORIGIN_UNKNOWN
+  current_provenance_state: PASS_ADOPTION_AUTHORITY_STAGED_HISTORICAL_ORIGIN_UNKNOWN
   rule: >-
     Future federation controls may cite the provenance binding as current
-    adoption authority, but shall not rewrite UNKNOWN historical origin as a
-    recovered historical fact.
+    adoption authority only after PR admission. They shall not rewrite UNKNOWN
+    historical origin as a recovered historical fact.
 
 repository_universe_census:
   method: GitHub_connector_list_repositories_owner_GBOGEB
@@ -85,4 +85,5 @@ controls:
   - DOMAIN_REGISTRY_NE_FEDERATION_REGISTRY
   - ACCOUNT_REPOSITORY_UNIVERSE_NE_FEDERATION_MEMBERSHIP
   - CURRENT_ADOPTION_AUTHORITY_NE_HISTORICAL_ORIGIN
+  - PR_STAGED_AUTHORITY_NE_ADMITTED_AUTHORITY
   - NO_AUTHORITY_TRANSFER
