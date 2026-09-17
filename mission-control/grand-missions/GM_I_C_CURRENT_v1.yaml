@@ -1,8 +1,15 @@
 schema: missioncontrol.gm_i_c.current.v1
 mission_id: GM-I-C
-as_of: '2026-09-17T17:43:00+02:00'
+as_of: '2026-09-17T17:50:06+02:00'
 authority_transfer: false
 formal_credit_delta: 0
+
+global_method_parent:
+  method: 3PR_MIP_M
+  pr: 194
+  merge_sha: 3a65e884abe321347bd771b1b094d44e1e08cdd2
+  exact_proven_head_sha: fae367b78d9727e4b6cbc4aebdda129b17437b21
+  relationship: LOCAL_SPECIALISATION_NO_DUPLICATE_AUTHORITY
 
 historical_control:
   path: mission-control/grand-missions/GM-I-C_CROSS_AGENT_DRIVE_FEDERATION_CONTROL_v0.1.yaml
