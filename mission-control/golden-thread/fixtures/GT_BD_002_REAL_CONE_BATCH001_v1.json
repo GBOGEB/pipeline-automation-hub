@@ -1,0 +1,51 @@
+{
+  "schema": "missioncontrol.golden_thread.real_dependency_cone.v1",
+  "cone_id": "GT-BD-002-BATCH001-REAL-CONE",
+  "as_of": "2026-09-17",
+  "authority_transfer": false,
+  "root_nodes": ["BOOTSTRAP_FIXTURE"],
+  "nodes": [
+    {
+      "id": "BOOTSTRAP_FIXTURE",
+      "kind": "SOURCE_FILE",
+      "path": "mission-control/golden-thread/fixtures/GT_BD_011_BOOTSTRAP_BATCH001_20260917.json"
+    },
+    {
+      "id": "NORMALIZED_OCCURRENCE_PROJECTION",
+      "kind": "NORMALIZED_OCCURRENCES"
+    },
+    {
+      "id": "BOOTSTRAP_SUMMARY",
+      "kind": "BOOTSTRAP_SUMMARY"
+    }
+  ],
+  "edges": [
+    ["BOOTSTRAP_FIXTURE", "NORMALIZED_OCCURRENCE_PROJECTION"],
+    ["NORMALIZED_OCCURRENCE_PROJECTION", "BOOTSTRAP_SUMMARY"]
+  ],
+  "renditions": {
+    "NORMALIZED_OCCURRENCE_PROJECTION": ["normalized-occurrence-projection.json"],
+    "BOOTSTRAP_SUMMARY": ["bootstrap-summary.json"]
+  },
+  "trigger": {
+    "type": "GOVERNED_SOURCE_CHANGE",
+    "source": "GT-BD-011-BATCH-001",
+    "reason": "prove descendant-cone invalidation and real deterministic recompute"
+  },
+  "expected": {
+    "scope": "DESCENDANT_CONE",
+    "affected_nodes": [
+      "BOOTSTRAP_FIXTURE",
+      "NORMALIZED_OCCURRENCE_PROJECTION",
+      "BOOTSTRAP_SUMMARY"
+    ],
+    "affected_renditions": [
+      "bootstrap-summary.json",
+      "normalized-occurrence-projection.json"
+    ],
+    "stale_survivor_count": 0,
+    "stale_rendition_count": 0,
+    "status": "PASS",
+    "authority_transfer": false
+  }
+}
