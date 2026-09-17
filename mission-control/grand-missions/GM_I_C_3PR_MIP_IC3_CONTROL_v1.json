@@ -2,16 +2,23 @@
   "schema": "missioncontrol.gm_i_c.3pr_mip.ic3_control.v1",
   "mission": "GM-I-C",
   "moniker": "BRIDGEHEAD",
-  "as_of": "2026-09-17T17:43:00+02:00",
+  "as_of": "2026-09-17T17:50:06+02:00",
   "state": "3PR_MIP_COMPLETE_IC3_EXTERNAL_AUTH_STILL_RED",
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "hard_gate_compensation_allowed": false,
   "scope": "IC3_AUTH_ONLY",
+  "parent_method_control": {
+    "method": "GLOBAL_3PR_MIP_M",
+    "pr": 194,
+    "merge_sha": "3a65e884abe321347bd771b1b094d44e1e08cdd2",
+    "exact_proven_head_sha": "fae367b78d9727e4b6cbc4aebdda129b17437b21",
+    "relationship": "LOCAL_SPECIALISATION_NO_DUPLICATE_AUTHORITY"
+  },
   "live_refresh": {
     "missioncontrol_repo": "GBOGEB/pipeline-automation-hub",
     "missioncontrol_branch": "master",
-    "missioncontrol_sha": "39e64d72c778e0894eba884fc9e349b92ed681e4",
+    "missioncontrol_sha": "3a65e884abe321347bd771b1b094d44e1e08cdd2",
     "provider_repo": "GBOGEB/GEMINI",
     "provider_branch": "main",
     "provider_sha": "cd68e0c68d882d4fe37417f7a1c1ca45dff0a3ab",
@@ -30,7 +37,7 @@
     "Refresh": {
       "result": "PASS",
       "observations": [
-        "MissionControl master refreshed to 39e64d72c778e0894eba884fc9e349b92ed681e4",
+        "MissionControl global 3PR/MIP-M parent admitted at 3a65e884abe321347bd771b1b094d44e1e08cdd2",
         "GEMINI main refreshed to merged PR11 implementation cd68e0c68d882d4fe37417f7a1c1ca45dff0a3ab",
         "Drive root manually observed with one governed child 00_CONTROL",
         "GEMINI issue 12 remains open and owns the external WIF/Drive authorization boundary"
@@ -96,30 +103,12 @@
       "result": "PASS_CONTROL_DESIGN",
       "change": "Generalise IC3 into a reusable external-auth proof contract that separates execution habitat, identity federation, resource authorization, positive work, and receipt binding.",
       "proof_layers": [
-        {
-          "layer": "L0_CONFIG",
-          "pass": "Required repository variables are present without long-lived credentials"
-        },
-        {
-          "layer": "L1_IDENTITY",
-          "pass": "GitHub OIDC exchanges through a repository-scoped Google WIF provider"
-        },
-        {
-          "layer": "L2_RESOURCE_AUTH",
-          "pass": "Dedicated service account receives Drive readonly and target-folder Viewer access"
-        },
-        {
-          "layer": "L3_RESOURCE_IDENTITY",
-          "pass": "Configured root ID resolves to explicit non-trashed folder identity"
-        },
-        {
-          "layer": "L4_GT0_WORK",
-          "pass": "Recursive census contains at least one item"
-        },
-        {
-          "layer": "L5_RECEIPT",
-          "pass": "One hosted artifact family binds exact SHA, run/job, executed steps, census_sha256 and PASS classification"
-        }
+        {"layer": "L0_CONFIG", "pass": "Required repository variables are present without long-lived credentials"},
+        {"layer": "L1_IDENTITY", "pass": "GitHub OIDC exchanges through a repository-scoped Google WIF provider"},
+        {"layer": "L2_RESOURCE_AUTH", "pass": "Dedicated service account receives Drive readonly and target-folder Viewer access"},
+        {"layer": "L3_RESOURCE_IDENTITY", "pass": "Configured root ID resolves to explicit non-trashed folder identity"},
+        {"layer": "L4_GT0_WORK", "pass": "Recursive census contains at least one item"},
+        {"layer": "L5_RECEIPT", "pass": "One hosted artifact family binds exact SHA, run/job, executed steps, census_sha256 and PASS classification"}
       ]
     },
     "Perpetuate": {
