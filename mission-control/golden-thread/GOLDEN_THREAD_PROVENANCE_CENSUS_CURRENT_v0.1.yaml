@@ -1,18 +1,22 @@
-schema: missioncontrol.golden_thread.provenance_census.v0.2
+schema: missioncontrol.golden_thread.provenance_census.v0.3
 as_of: '2026-09-17'
 authority_transfer: false
 purpose: >-
-  Record directly observed provenance candidates for the federation mechanism
-  ladder and reference-registry claim without inventing an authority or governed
-  federation membership count that has not been verified.
+  Record directly observed provenance for the federation mechanism ladder and
+  reference-registry census without inventing a historical origin or federation
+  membership count that has not been verified.
 
 mechanism_ladder:
   vocabulary: [DEP, REG, SUB, ADAPTER, LAB, FORK]
-  normative_current_surface:
+  current_adoption_authority:
+    repository: GBOGEB/pipeline-automation-hub
+    path: mission-control/golden-thread/MECHANISM_LADDER_PROVENANCE_BINDING_v1.md
+    state: BOUND_ON_CURRENT_PR
+  normative_vocabulary_source:
     repository: GBOGEB/pipeline-automation-hub
     path: mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md
-    observed_master_sha: 9e8d08ca1f3297a3864369c73b5f0f9a01f38838
-    state: NORMATIVE_CURRENT_NOT_PROVEN_ORIGIN
+    observed_master_sha: c13df02d6568e335aa31b53e420c1dfaa0f1d564
+  historical_origin: UNKNOWN_NEEDS_READER
   historical_narrative_surface:
     repository: GBOGEB/pipeline-automation-hub
     path: mission-control/golden-thread/FEDERATION_GOLDEN_THREAD_PROCESS_NARRATIVE_v1.md
@@ -21,16 +25,14 @@ mechanism_ladder:
     repository: GBOGEB/CODEX
     path: governance/adr/ADR-0001-runtime-debug-governance.md
     blob_sha: 26737531d3b8574e285877bb3a95b96bede29fb7
+    federation_id: GG-ADR-0001
     classification: NOT_MECHANISM_LADDER_ADR
     reason: ADR_0001_is_Runtime_Debug_Governance_Policy
-  provenance_state: UNKNOWN_NEEDS_READER
-  next_bounded_action: >-
-    locate the first authoritative ADR/registry declaration of
-    DEP_REG_SUB_ADAPTER_LAB_FORK or create a governed provenance-binding ADR
-    that explicitly distinguishes adoption from historical origin.
-  victory_predicate: >-
-    one canonical source path and exact SHA is declared, downstream references
-    resolve to it, and no unrelated ADR is cited as its origin.
+  current_provenance_state: PASS_ADOPTION_AUTHORITY_BOUND_HISTORICAL_ORIGIN_UNKNOWN
+  rule: >-
+    Future federation controls may cite the provenance binding as current
+    adoption authority, but shall not rewrite UNKNOWN historical origin as a
+    recovered historical fact.
 
 repository_universe_census:
   method: GitHub_connector_list_repositories_owner_GBOGEB
@@ -82,5 +84,5 @@ controls:
   - ABSENCE_OF_SEARCH_HIT_NE_PROOF_OF_NONEXISTENCE
   - DOMAIN_REGISTRY_NE_FEDERATION_REGISTRY
   - ACCOUNT_REPOSITORY_UNIVERSE_NE_FEDERATION_MEMBERSHIP
-  - NORMATIVE_CURRENT_SURFACE_NE_HISTORICAL_ORIGIN
+  - CURRENT_ADOPTION_AUTHORITY_NE_HISTORICAL_ORIGIN
   - NO_AUTHORITY_TRANSFER
