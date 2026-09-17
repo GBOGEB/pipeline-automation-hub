@@ -13,9 +13,12 @@ CREW = ROOT / "GM-I-C_CREW_ALLOCATION_v0.1.yaml"
 OFFICIAL = ROOT.parent / "OFFICIAL_MISSION_REGISTER_v1.yaml"
 CANONICAL = ROOT / "GRAND_MISSION_REGISTRY.json"
 CANONICAL_GM_IDS = ["GM-I", "GM-II", "GM-III", "GM-IV", "GM-V"]
+PR9_MERGE = "f9ea9f45942ce50b5f2fcad626ba8b59fa97ac71"
 PR10_HEAD = "1d831a66a258bcd1b13d432805e8c60b52f6c7ad"
 PR10_MERGE = "2d3b82443ae90b00971e3c71433a9c8ad47072a8"
 PR11_HEAD = "8b6d0db501db93fdf42a4c06a7ba9e7094470b21"
+EXPECTED_CONTROL = "mission-control/grand-missions/GM-I-C_CROSS_AGENT_DRIVE_FEDERATION_CONTROL_v0.1.yaml"
+EXPECTED_CREW = "mission-control/grand-missions/GM-I-C_CREW_ALLOCATION_v0.1.yaml"
 
 
 def load_yaml(path: Path):
@@ -55,28 +58,38 @@ def main() -> None:
     require(gm_ic["parent"] == "GM-I", "GM-I-C parent must remain GM-I")
     require(gm_ic["number"] == "1-C", "GM-I-C number must remain 1-C")
     require(gm_ic["type"] == "GRAND_MISSION_VARIANT", "GM-I-C must remain a governed variant")
+    require(gm_ic["provider"] == "GBOGEB/GEMINI", "official provider drift")
     require(gm_ic["authority_transfer"] is False, "GM-I-C authority transfer must remain false")
     require(gm_ic["formal_credit_delta"] == 0, "GM-I-C formal credit delta must remain zero")
+    require(gm_ic["official_control"] == EXPECTED_CONTROL, "official control path drift")
+    require(gm_ic["crew_allocation"] == EXPECTED_CREW, "official crew path drift")
     require("WITHHELD" in gm_ic["implementation_evidence"]["hosted_drive_pass"], "hosted Drive PASS must remain withheld until observed")
     require(gm_ic["first_red"] == "IC3_AUTH_REAL_HOSTED_GT0_STEP_DRIVE_INGRESS_PASS", "unexpected first red")
 
     evidence = gm_ic["implementation_evidence"]
+    require(evidence["gemini_hooks_pr"] == 9, "Gemini hooks PR binding drift")
+    require(evidence["gemini_hooks_merge_sha"] == PR9_MERGE, "Gemini hooks merge drift")
     require(evidence["drive_ingress_pr"] == 10, "Drive ingress PR binding drift")
     require(evidence["drive_ingress_head_sha"] == PR10_HEAD, "Drive ingress PR10 head drift")
     require(evidence["drive_ingress_merge_sha"] == PR10_MERGE, "Drive ingress PR10 merge drift")
     require(evidence["drive_ingress_hardening_pr"] == 11, "IC3 hardening PR binding drift")
     require(evidence["drive_ingress_hardening_head_sha"] == PR11_HEAD, "IC3 hardening head drift")
 
-    require(canonical_ic["repository"] == "GBOGEB/GEMINI", "canonical GM-I-C provider drift")
+    require(canonical_ic["repository"] == gm_ic["provider"], "official/canonical provider mismatch")
     require(canonical_ic["state"] == gm_ic["state"], "official/canonical GM-I-C state mismatch")
+    require(canonical_ic["provider_pr"] == evidence["gemini_hooks_pr"], "canonical provider PR mismatch")
+    require(canonical_ic["provider_merge_sha"] == evidence["gemini_hooks_merge_sha"], "canonical provider merge mismatch")
+    require(canonical_ic["drive_ingress_pr"] == evidence["drive_ingress_pr"], "canonical PR10 number mismatch")
+    require(canonical_ic["drive_ingress_exact_head_sha"] == evidence["drive_ingress_head_sha"], "canonical PR10 head mismatch")
+    require(canonical_ic["drive_ingress_merge_sha"] == evidence["drive_ingress_merge_sha"], "canonical PR10 merge mismatch")
+    require(canonical_ic["drive_ingress_hardening_pr"] == evidence["drive_ingress_hardening_pr"], "canonical PR11 number mismatch")
+    require(canonical_ic["drive_ingress_hardening_exact_head_sha"] == evidence["drive_ingress_hardening_head_sha"], "canonical PR11 head mismatch")
+    require(canonical_ic["hosted_drive_pass"] == evidence["hosted_drive_pass"], "canonical hosted-pass state mismatch")
+    require(canonical_ic["official_control"] == gm_ic["official_control"] == EXPECTED_CONTROL, "canonical control path mismatch")
+    require(canonical_ic["crew_allocation"] == gm_ic["crew_allocation"] == EXPECTED_CREW, "canonical crew path mismatch")
     require(canonical_ic["authority_transfer"] is False, "canonical GM-I-C authority transfer weakened")
     require(canonical_ic["formal_credit_delta"] == 0, "canonical GM-I-C formal credit weakened")
     require(canonical_ic["first_red"] == gm_ic["first_red"], "official/canonical GM-I-C first-red mismatch")
-    require(canonical_ic["drive_ingress_exact_head_sha"] == PR10_HEAD, "canonical PR10 head drift")
-    require(canonical_ic["drive_ingress_merge_sha"] == PR10_MERGE, "canonical PR10 merge drift")
-    require(canonical_ic["drive_ingress_hardening_pr"] == 11, "canonical PR11 binding drift")
-    require(canonical_ic["drive_ingress_hardening_exact_head_sha"] == PR11_HEAD, "canonical PR11 head drift")
-    require("WITHHELD" in canonical_ic["hosted_drive_pass"], "canonical hosted Drive PASS must remain withheld")
 
     gm_iii = next(row for row in canonical_registry["grand_missions"] if row["id"] == "GM-III")
     require("GBOGEB/GEMINI" in gm_iii.get("children", []), "GM-III GEMINI frontier history must remain preserved")
@@ -87,9 +100,15 @@ def main() -> None:
     require(control["formal_credit_delta"] == 0, "control formal credit weakened")
     require(control["first_red"]["gate"] == "IC3_AUTH", "control first-red gate mismatch")
     require(control["first_red"]["owner"] == "S03_DOCKMASTER", "IC3 owner must remain Dockmaster")
-    require(control["provider_evidence"]["drive_ingress_pr"]["merge_sha"] == PR10_MERGE, "control PR10 merge binding drift")
-    require(control["provider_evidence"]["drive_ingress_hardening_pr"]["pr"] == 11, "control PR11 binding drift")
-    require(control["provider_evidence"]["drive_ingress_hardening_pr"]["exact_head_sha"] == PR11_HEAD, "control PR11 head drift")
+
+    cp = control["provider_evidence"]
+    require(cp["gemini_hooks_pr"]["pr"] == evidence["gemini_hooks_pr"], "control PR9 number mismatch")
+    require(cp["gemini_hooks_pr"]["merge_sha"] == evidence["gemini_hooks_merge_sha"], "control PR9 merge mismatch")
+    require(cp["drive_ingress_pr"]["pr"] == evidence["drive_ingress_pr"], "control PR10 number mismatch")
+    require(cp["drive_ingress_pr"]["exact_head_sha"] == evidence["drive_ingress_head_sha"], "control PR10 head mismatch")
+    require(cp["drive_ingress_pr"]["merge_sha"] == evidence["drive_ingress_merge_sha"], "control PR10 merge mismatch")
+    require(cp["drive_ingress_hardening_pr"]["pr"] == evidence["drive_ingress_hardening_pr"], "control PR11 number mismatch")
+    require(cp["drive_ingress_hardening_pr"]["exact_head_sha"] == evidence["drive_ingress_hardening_head_sha"], "control PR11 head mismatch")
 
     gates = {row["id"]: row for row in control["mission_gates"]}
     require(list(gates) == [f"IC{i}_{name}" for i, name in enumerate([
@@ -119,13 +138,14 @@ def main() -> None:
         "canonical_grand_missions": canonical,
         "variant": "GM-I-C",
         "canonical_registry_bound": True,
+        "exact_evidence_and_paths_bound": True,
         "gm_iii_gemini_history_preserved": True,
         "drive_ingress_pr10_merge_bound": PR10_MERGE,
         "ic3_hardening_pr11_head_bound": PR11_HEAD,
         "gate_count": len(gates),
         "active_crew_count": len(active_ids),
         "first_red": gm_ic["first_red"],
-        "hosted_drive_pass": gm_ic["implementation_evidence"]["hosted_drive_pass"],
+        "hosted_drive_pass": evidence["hosted_drive_pass"],
         "authority_transfer": False,
         "formal_credit_delta": 0,
     }
