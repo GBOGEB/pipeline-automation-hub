@@ -1,0 +1,231 @@
+schema: qps.mission_control.local_mission_current.v2
+mission_id: LM-11
+mission_name: QPS_WAVE_LINEAGE_DEPENDENCY_RECONSTRUCTION
+supersedes: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_v1.yaml
+as_of: '2026-09-17T03:25:00+02:00'
+state: ACTIVE_IMPLEMENTATION_MERGED_RUNTIME_DOV_WITHHELD
+authority_transfer: false
+formal_credit_delta: 0
+navigation_credit_delta: 0
+grand_mission_member: false
+grand_mission_analogy: GM_STYLE_SATELLITE_PROFILE_ONLY
+
+purpose: >-
+  Reconstruct the complete QPS Wave estate into one governed navigation graph spanning canonical and historical
+  Wave labels, P/C/R/P3R updates, PRs, commits, artifacts, dependencies, bounded DAGs, human-out products,
+  hybrid controls and code/runtime paths. LM-11 is an indexing/orchestration mission, not a new global QPS Wave.
+
+qps_implementation:
+  repo: GBOGEB/cryoplant-project
+  implementation_pr: 1382
+  implementation_head: b3a0dc0b8d1ae74ee168bfa5a7cadcdd0d2d8652
+  implementation_merge: f6eb1f6344e9953c095cd4dfadcf89991499f791
+  base_at_pr: 29a3a619b17b37eca5accfa2fd747401a2387c7b
+  products:
+    graph_extractor: tools/triage/qps_wave_lineage_graph.py
+    hmi_generator: tools/triage/qps_wave_lineage_html.py
+    start_here: docs/QPS_WAVE_LINEAGE_START_HERE.md
+    proof_workflow: .github/workflows/qps-lm11-wave-lineage.yml
+  merged: true
+  authority_transfer: false
+  formal_credit_delta: 0
+
+hosted_proof_attempt:
+  workflow: QPS LM-11 Wave Lineage Proof
+  run: 35169896138
+  job: 105039094004
+  exact_head: b3a0dc0b8d1ae74ee168bfa5a7cadcdd0d2d8652
+  conclusion: failure
+  observed_steps: 0
+  job_log_available: false
+  annotation_count: 1
+  classification: INFRA_PREEXECUTION_ZERO_STEP
+  application_failure_claimed: false
+  measured_graph_claimed: false
+  artifact_claimed: false
+
+qps_runtime_boundary:
+  issue: 923
+  state: OPEN_RED_OWNER_ACTION
+  gate: PRIVATE_REPO_ACTIONS_ADMISSION
+  noncompensating: true
+  victory_prefix: [runner_id_nonzero, steps_greater_than_zero, exact_current_sha_execution]
+  zero_step_rule: ZERO_STEP_NE_APPLICATION_FAIL
+
+qps_followup:
+  pr: 1385
+  base_sha: 7f6fdf8bf434bc3ea3dc5d7084f4878966d4a5b7
+  head_sha: 329d6e3946700052cd02bf851accb46706904d15
+  purpose: BIND_HOSTED_ZERO_STEP_DOV_BOUNDARY_AND_CONFIGURABLE_RUNNER
+  receipt: triage/lm11/QPS_LM11_HOSTED_DOV_BOUNDARY_v1.yaml
+  runner_selector: fromJSON(vars.CRYO_RECEIPT_RUNNER || '["ubuntu-latest"]')
+  state: OPEN_AT_REGISTRATION
+
+current_qps_context:
+  observed_main: 7f6fdf8bf434bc3ea3dc5d7084f4878966d4a5b7
+  latest_observed_wave_label: W265
+  current_global_qtg_wave: W248
+  current_global_first_red: ISSUE_923
+  invariant: HIGHEST_WAVE_LABEL_NE_GLOBAL_PROJECT_STATE
+  interpretation: >-
+    QPS has parallel and non-compensating Wave lanes. W265 is later provenance but does not displace the W248
+    global QTG execution state or #923 runtime first-red. LM-11 must expose both dimensions simultaneously.
+
+mission_graph:
+  hierarchy: [MISSION, FAMILY, WAVE, UPDATE, PR, COMMIT, NODE, ARTIFACT, ATOM]
+  update_types: [PULSE, CORRECTION, REVISIT, P3R_CYCLE]
+  node_types:
+    - MISSION
+    - FAMILY
+    - WAVE
+    - PULSE
+    - CORRECTION
+    - REVISIT
+    - P3R_CYCLE
+    - PR
+    - COMMIT
+    - ISSUE
+    - CONTROL_SURFACE
+    - WORKFLOW
+    - RUNTIME_RECEIPT
+    - ARTIFACT
+    - BINARY_HUMAN_OUT
+    - HYBRID_CONTROL
+    - CODE_CORE
+    - ENTRY_POINT
+    - EXIT_POINT
+    - EXTERNAL_REPO
+  edge_types:
+    - CONTAINS
+    - PRECEDES
+    - SUPERSEDES
+    - CORRECTS
+    - REVISITS
+    - IMPLEMENTED_BY
+    - MERGED_BY
+    - REFERENCES
+    - READS_FROM
+    - WRITES_TO
+    - BLOCKED_BY
+    - REQUIRES
+    - FEEDS
+    - VALIDATES
+    - GOVERNS
+    - FEDERATES_TO
+    - REENTERS
+    - PRODUCES
+    - CONSUMES
+    - DOES_NOT_IMPLY
+
+bounded_dag_contract:
+  global_graph_may_cycle: true
+  bounded_execution_dag_must_be_acyclic: true
+  lineage_dag_must_be_acyclic: true
+  temporal_history: APPEND_ONLY
+  reentry: NEW_EVENT_NODE_NOT_BACK_EDGE_INSIDE_BOUNDED_DAG
+
+execution_planes:
+  P1_PROVENANCE_CENSUS:
+    state: STATIC_IMPLEMENTATION_MERGED_RUNTIME_PENDING
+    outputs: [tracked_population, immutable_PR_SHA_identity, wave_update_population]
+  P2_LINEAGE_RESOLUTION:
+    state: STATIC_IMPLEMENTATION_MERGED_RUNTIME_PENDING
+    inputs:
+      - controls/QPS_WAVE_LINEAGE_NORMALIZATION_v0.1.yaml
+      - controls/QPS_CANONICAL_LINEAGE_RESOLVER_v1.json
+    outputs: [canonical_identity, supersession_edges, unresolved_edges]
+  P3_DEPENDENCY_DAG:
+    state: STATIC_IMPLEMENTATION_MERGED_RUNTIME_PENDING
+    outputs: [typed_nodes, typed_edges, bounded_DAG, supersession_DAG]
+  P4_ARTIFACT_RUNTIME:
+    state: STATIC_IMPLEMENTATION_MERGED_RUNTIME_PENDING
+    classes: [BINARY_HUMAN_OUT, HYBRID_CONTROL, CODE_CORE, WORKFLOW]
+  P5_NAVIGATION_HMI:
+    state: STATIC_IMPLEMENTATION_MERGED_RUNTIME_PENDING
+    outputs: [Markdown_navigator, HTML_explorer]
+  P6_FEDERATION_SATELLITE:
+    state: CONTRACT_DEFINED_RUNTIME_PENDING
+    external_nodes: [MissionControl, CODEX_KEB, ABACUS_DOW, gg_MATH, CoolProp]
+    authority_import: FORBIDDEN
+
+crew_profile:
+  G0_COMMAND:
+    roles: [Mission_Commander_Governor, Fleet_Orchestrator]
+    task: scope_gate_authority_and_first_red
+  G1_LINEAGE_CARTOGRAPHY:
+    roles: [Lineage_Resolver, Cartographer_Oculars]
+    task: wave_update_PR_artifact_identity_and_navigation
+  G2_GRAPH_RUNTIME:
+    roles: [Bounded_Implementer, Runtime_Verifier]
+    task: extractor_DAG_validation_and_exact_head_receipt
+  G3_QA_CHALLENGE:
+    roles: [Independent_Verifier, REX_KEB_Integrator]
+    task: acyclicity_provenance_unresolved_edge_and_authority_challenge
+  G4_HMI_DOCUMENTATION:
+    roles: [HMI_Integrator, Documentation_Navigator]
+    task: read_only_explorer_start_here_and_cross_navigation
+  rule: BUILDER_CANNOT_SELF_ATTEST_RUNTIME_DOV
+
+required_views:
+  - V00_RESTART_SPINE
+  - V01_ALL_WAVES_CANONICAL
+  - V02_HISTORICAL_TO_CANONICAL_SUPERSESSION
+  - V03_WAVE_PR_CROSSWALK
+  - V04_WAVE_PULSE_UPDATE_TREE
+  - V05_QPS_TRIAGE_NODE_EDGE_GRAPH
+  - V06_BOUNDED_EXECUTION_DAG
+  - V07_SIDELOAD_REENTRY_DAG
+  - V08_HUMAN_OUT_BINARY_PIPELINE
+  - V09_HYBRID_CONTROL_PIPELINE
+  - V10_CODE_RUNTIME_PIPELINE
+  - V11_EXTERNAL_FEDERATION_SATELLITE
+  - V12_CURRENT_GATE_VS_HIGHEST_WAVE
+
+DoD:
+  mission_contract_created: PASS
+  QPS_implementation_merged: PASS
+  graph_extractor_checked_in: PASS
+  hmi_generator_checked_in: PASS
+  start_here_navigation_checked_in: PASS
+  proof_workflow_checked_in: PASS
+  hosted_zero_step_classified: PASS
+  runner_selector_followup: ACTIVE_PR_1385
+  exact_head_graph_population: NOT_EXECUTED
+  measured_PR_crosswalk_coverage: NOT_EXECUTED
+  bounded_DAG_runtime_proof: NOT_EXECUTED
+  HMI_generated_artifact: NOT_EXECUTED
+
+DoV:
+  missioncontrol_registration: PENDING_THIS_PR
+  qps_static_implementation: PASS_MERGED_PR_1382
+  qps_hosted_execution: WITHHELD_ISSUE_923_ZERO_STEP
+  qps_graph_population: WITHHELD_NOT_EXECUTED
+  qps_pr_lineage_coverage: WITHHELD_NOT_EXECUTED
+  qps_dag_runtime: WITHHELD_NOT_EXECUTED
+  qps_hmi_artifact: WITHHELD_NOT_EXECUTED
+  engineering_credit: ZERO
+  negotiation_credit: ZERO
+  release_credit: ZERO
+
+next_first_red:
+  id: LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN
+  sequence:
+    - restore_or_bypass_private_repo_runner_admission
+    - obtain_runner_id_nonzero
+    - obtain_steps_greater_than_zero
+    - execute_unchanged_graph_extractor_at_exact_head
+    - validate_bounded_and_lineage_DAGs
+    - emit_measured_wave_PR_artifact_coverage_and_unresolved_edges
+    - publish_JSON_MD_HTML_artifact
+    - bind_measured_receipt_back_into_MissionControl
+
+stop_rules:
+  - DO_NOT_SORT_WAVE_NUMBERS_AND_CALL_THAT_LINEAGE
+  - DO_NOT_TREAT_HIGHEST_WAVE_AS_CURRENT_GLOBAL_GATE
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - DO_NOT_FABRICATE_MEASURED_GRAPH_METRICS
+  - DO_NOT_RENUMBER_HISTORICAL_PRS_OR_WAVE_LABELS
+  - DO_NOT_DUPLICATE_EXISTING_CENSUS_OR_RESOLVER
+  - DO_NOT_HIDE_UNRESOLVED_LINKS
+  - DO_NOT_CREATE_GM_VI
+  - LM11_DOES_NOT_COMPENSATE_ISSUE_923
