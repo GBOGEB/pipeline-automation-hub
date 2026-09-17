@@ -1,0 +1,176 @@
+{
+  "schema": "missioncontrol.gm_i_c.3pr_mip.ic3_control.v1",
+  "mission": "GM-I-C",
+  "moniker": "BRIDGEHEAD",
+  "as_of": "2026-09-17T17:43:00+02:00",
+  "state": "3PR_MIP_COMPLETE_IC3_EXTERNAL_AUTH_STILL_RED",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "hard_gate_compensation_allowed": false,
+  "scope": "IC3_AUTH_ONLY",
+  "live_refresh": {
+    "missioncontrol_repo": "GBOGEB/pipeline-automation-hub",
+    "missioncontrol_branch": "master",
+    "missioncontrol_sha": "39e64d72c778e0894eba884fc9e349b92ed681e4",
+    "provider_repo": "GBOGEB/GEMINI",
+    "provider_branch": "main",
+    "provider_sha": "cd68e0c68d882d4fe37417f7a1c1ca45dff0a3ab",
+    "provider_hardening_pr": 11,
+    "provider_hardening_state": "MERGED",
+    "provider_hardening_head_sha": "a862125217201a12c5608d8544fbf17c7033d6f0",
+    "drive_root_id": "1FnbajqBiIjL6Y4-_7tE1D515fNWvHsu3",
+    "drive_root_title": "GEMINI_QPS_HANDOVER_2026-09-17",
+    "drive_manual_connector_direct_children": 1,
+    "drive_manual_connector_child_titles": ["00_CONTROL"],
+    "drive_manual_connector_evidence_class": "MANUAL_CONNECTOR_OBSERVATION_NOT_HOSTED_IC3_PROOF",
+    "external_auth_issue": "GBOGEB/GEMINI#12",
+    "external_auth_issue_state": "OPEN"
+  },
+  "three_pr": {
+    "Refresh": {
+      "result": "PASS",
+      "observations": [
+        "MissionControl master refreshed to 39e64d72c778e0894eba884fc9e349b92ed681e4",
+        "GEMINI main refreshed to merged PR11 implementation cd68e0c68d882d4fe37417f7a1c1ca45dff0a3ab",
+        "Drive root manually observed with one governed child 00_CONTROL",
+        "GEMINI issue 12 remains open and owns the external WIF/Drive authorization boundary"
+      ]
+    },
+    "Probe": {
+      "result": "PASS",
+      "tested_boundaries": [
+        "APPLICATION_CODE",
+        "HOSTED_RUNNER_ADMISSION",
+        "GITHUB_OIDC_TO_GOOGLE_WIF",
+        "GOOGLE_DRIVE_API_AUTHORIZATION",
+        "DRIVE_ROOT_ACL_AND_READABILITY",
+        "POSITIVE_RECURSIVE_CENSUS",
+        "RECEIPT_BINDING"
+      ],
+      "structural_gap": "The code-side ingress contract is merged and locally hosted-tested, but no real hosted GitHub OIDC -> Google WIF -> Drive readonly run has produced the required positive census/status receipt family."
+    },
+    "Rank": {
+      "result": "PASS",
+      "ranked_next_predicates": [
+        {
+          "rank": 1,
+          "id": "IC3_EXTERNAL_IDENTITY_CONFIGURATION",
+          "owner": "S03_DOCKMASTER",
+          "why": "This is the narrowest live first-red; application hardening is already merged."
+        },
+        {
+          "rank": 2,
+          "id": "IC3_HOSTED_GT0_WIF_DRIVE_READONLY_RUN",
+          "owner": "S03_DOCKMASTER",
+          "why": "Must execute only after repository variables, WIF principal, Drive API and folder Viewer ACL are configured."
+        },
+        {
+          "rank": 3,
+          "id": "IC3_RECEIPT_BINDING",
+          "owner": "S06_QA_SENTINEL",
+          "why": "Bind run ID, job ID, exact SHA, >0 steps, census digest and ic3_status only after the real hosted run."
+        }
+      ],
+      "application_repair_rank": "NOT_SELECTED_NO_APPLICATION_DEFECT_EVIDENCE"
+    }
+  },
+  "mip": {
+    "Modernize": {
+      "result": "PASS_CONTROL_DESIGN",
+      "change": "Replace ad-hoc auth troubleshooting with one typed IC3 failure taxonomy and one external-configuration work order.",
+      "failure_classes": [
+        "CONFIG_MISSING",
+        "OIDC_WIF_AUTH_FAILED",
+        "GOOGLE_ACCESS_TOKEN_REJECTED",
+        "DRIVE_API_FORBIDDEN",
+        "DRIVE_API_UNAVAILABLE",
+        "ROOT_INACCESSIBLE_OR_MISSING",
+        "ROOT_TRASHED",
+        "ROOT_TRASHED_STATE_UNPROVEN",
+        "ROOT_NOT_FOLDER",
+        "ROOT_ID_MISMATCH",
+        "CENSUS_ZERO_ITEMS"
+      ]
+    },
+    "Innovate": {
+      "result": "PASS_CONTROL_DESIGN",
+      "change": "Generalise IC3 into a reusable external-auth proof contract that separates execution habitat, identity federation, resource authorization, positive work, and receipt binding.",
+      "proof_layers": [
+        {
+          "layer": "L0_CONFIG",
+          "pass": "Required repository variables are present without long-lived credentials"
+        },
+        {
+          "layer": "L1_IDENTITY",
+          "pass": "GitHub OIDC exchanges through a repository-scoped Google WIF provider"
+        },
+        {
+          "layer": "L2_RESOURCE_AUTH",
+          "pass": "Dedicated service account receives Drive readonly and target-folder Viewer access"
+        },
+        {
+          "layer": "L3_RESOURCE_IDENTITY",
+          "pass": "Configured root ID resolves to explicit non-trashed folder identity"
+        },
+        {
+          "layer": "L4_GT0_WORK",
+          "pass": "Recursive census contains at least one item"
+        },
+        {
+          "layer": "L5_RECEIPT",
+          "pass": "One hosted artifact family binds exact SHA, run/job, executed steps, census_sha256 and PASS classification"
+        }
+      ]
+    },
+    "Perpetuate": {
+      "result": "PASS_CONTROL_DESIGN",
+      "recurrence_controls": [
+        "ZERO_STEP_NE_APPLICATION_FAIL",
+        "MANUAL_CONNECTOR_READ_NE_HOSTED_IC3_PASS",
+        "UNIT_TEST_PASS_NE_EXTERNAL_AUTH_PASS",
+        "MERGE_NE_IC3_CREDIT",
+        "READABLE_EMPTY_ROOT_NE_GT0_PROOF",
+        "403_NE_AUTOMATIC_ACL_CLASSIFICATION",
+        "LONG_LIVED_GOOGLE_KEYS_FORBIDDEN",
+        "AUTHORITY_TRANSFER_FALSE"
+      ],
+      "restart_card": {
+        "first_action": "Read GBOGEB/GEMINI#12 and verify external WIF/service-account/Drive-ACL setup before any application-code change.",
+        "execute": "Run .github/workflows/drive_ingress.yml on the verified post-merge GEMINI main or an exact governed successor.",
+        "pass_only_if": [
+          "steps_executed_gt_0",
+          "root_verified",
+          "total_items_gt_0",
+          "classification_eq_IC3_DRIVE_READONLY_GT0_STEP_PASS",
+          "census_sha256_bound",
+          "run_job_sha_bound"
+        ],
+        "stop_on": [
+          "CONFIG_MISSING",
+          "OIDC_WIF_AUTH_FAILED",
+          "DRIVE_API_FORBIDDEN",
+          "ROOT_INACCESSIBLE_OR_MISSING",
+          "CENSUS_ZERO_ITEMS",
+          "ZERO_STEP_OR_NO_RUNNER"
+        ]
+      }
+    }
+  },
+  "kpi_baseline": {
+    "application_hardening_merged": true,
+    "manual_drive_root_positive_enumeration": true,
+    "external_auth_issue_open": true,
+    "hosted_ic3_pass_observed": false,
+    "ic3_credit": 0,
+    "authority_inversion_count": 0,
+    "duplicate_auth_implementation_count": 0
+  },
+  "explicitly_not_executed": [
+    "3PC_EXTERNAL_AUTH_TRANSACTION",
+    "3P3_CROSS_AGENT_PROPAGATION_PROOF",
+    "IC4_CONSUMER_A_PROMOTION",
+    "IC5_SECOND_CONSUMER",
+    "IC9_CONTROL"
+  ],
+  "next_action": "COMPLETE_EXTERNAL_WIF_SERVICE_ACCOUNT_DRIVE_API_FOLDER_VIEWER_AND_REPOSITORY_VARIABLE_SETUP_IN_GEMINI_ISSUE_12_THEN_EXECUTE_ONE_REAL_HOSTED_GT0_IC3_RUN"
+}
