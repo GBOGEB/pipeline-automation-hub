@@ -1,0 +1,128 @@
+schema: missioncontrol.lm11.qps_wave_federation_receipt/v1
+mission_id: LM-11
+as_of: '2026-09-17T03:34:00+02:00'
+state: CHILD_IMPLEMENTATION_BOUND_RUNTIME_DOV_DEFERRED
+
+authority_transfer: false
+formal_credit_delta: 0
+navigation_credit_delta: 0
+
+missioncontrol:
+  registration_merge: 2aca61e8a4585c51b55adedff356a9d06a3a31e2
+  current_control: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v2.yaml
+  graph_contract: mission-control/qps-triage-ultra/missions/LM-11_QPS_WAVE_GRAPH_CONTRACT_v2.json
+  atlas: mission-control/qps-triage-ultra/missions/LM-11_QPS_WAVE_ATLAS_CURRENT_v2.md
+
+qps_child:
+  repository: GBOGEB/cryoplant-project
+  observed_main: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b
+  implementation:
+    pr: 1382
+    head: b3a0dc0b8d1ae74ee168bfa5a7cadcdd0d2d8652
+    merge: f6eb1f6344e9953c095cd4dfadcf89991499f791
+    products:
+      - tools/triage/qps_wave_lineage_graph.py
+      - tools/triage/qps_wave_lineage_html.py
+      - docs/QPS_WAVE_LINEAGE_START_HERE.md
+      - .github/workflows/qps-lm11-wave-lineage.yml
+  runner_control:
+    pr: 1385
+    final_head: 43c6585e227b50843a4110fd61edc377906b6d71
+    merge: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b
+    boundary_receipt: triage/lm11/QPS_LM11_HOSTED_DOV_BOUNDARY_v1.yaml
+    boundary_receipt_blob: f0e64cbab387e8d46a4198d2f40cc2230c9bf22e
+
+hosted_attempts:
+  - run: 35169896138
+    job: 105039094004
+    exact_head: b3a0dc0b8d1ae74ee168bfa5a7cadcdd0d2d8652
+    conclusion: failure
+    observed_steps: 0
+    classification: INFRA_PREEXECUTION_ZERO_STEP
+  - run: 35170208998
+    job: 105040059555
+    exact_head: 329d6e3946700052cd02bf851accb46706904d15
+    conclusion: failure
+    observed_steps: null
+    classification: INFRA_PREEXECUTION_ZERO_STEP_REPRODUCED
+  interpretation:
+    application_failure_claimed: false
+    graph_execution_claimed: false
+    measured_graph_metrics_claimed: false
+    generated_graph_artifact_claimed: false
+
+launch_projection:
+  evidence_class: OBSERVED_DIRECTORY_PROJECTION_NOT_FULL_GRAPH
+  observed_qps_head: 29a3a619b17b37eca5accfa2fd747401a2387c7b
+  triage_wave_directory_count_W103_to_W264: 137
+  numeric_gap_count_W103_to_W264: 25
+  numeric_gaps:
+    - W105
+    - W113
+    - W118
+    - W141
+    - W152
+    - W156
+    - W157
+    - W193
+    - W194
+    - W195
+    - W207
+    - W208
+    - W209
+    - W210
+    - W211
+    - W212
+    - W213
+    - W214
+    - W215
+    - W218
+    - W232
+    - W233
+    - W237
+    - W241
+    - W255
+  guard: MISSING_DIRECTORY_NE_MISSING_WAVE_LINEAGE
+  current_measurement_status: SUPERSEDED_AS_LAUNCH_PROJECTION_RUNTIME_CENSUS_PENDING
+
+lineage_resolution:
+  PR110_PR111:
+    historical_interpretation: PR110_W03_AND_PR111_W02_DISTINCT_SUCCESSOR_CONTEXTS
+    current_navigation: PR111_CURRENT_PR110_SUPERSEDED_PLANNING_SIDECAR
+    disposition: RESOLVED_BY_CURRENT_CANONICAL_RESOLVER_WITH_HISTORY_PRESERVED
+    destructive_rewrite: false
+  PR362_PR363:
+    historical_interpretation: PR362_W41_LABEL_FIRST_INTAKE
+    current_navigation: PR363_W40_CORRECTION_CURRENT
+    disposition: FORWARD_CORRECTION_HISTORY_PRESERVED
+    destructive_rewrite: false
+
+current_state:
+  highest_later_wave_label_observed: W265
+  current_global_qtg_wave_reported_by_child: W248
+  current_global_first_red: ISSUE_923
+  highest_wave_label_is_global_state: false
+  runtime_gate: PRIVATE_REPO_ACTIONS_ADMISSION
+  lm11_first_red: LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN
+
+required_next_proof:
+  - runner_id_nonzero
+  - steps_greater_than_zero
+  - exact_current_sha_execution
+  - unchanged_graph_extractor_executes
+  - bounded_execution_dag_pass
+  - supersession_lineage_dag_pass
+  - measured_wave_pr_artifact_coverage
+  - explicit_unresolved_links
+  - JSON_MD_HTML_proof_artifact
+  - independent_MissionControl_receipt
+
+guards:
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - HIGHEST_WAVE_LABEL_NE_GLOBAL_PROJECT_STATE
+  - GLOBAL_GRAPH_MAY_CYCLE_BOUNDED_DAGS_MUST_NOT
+  - PR_AND_COMMIT_PROVENANCE_IMMUTABLE
+  - MISSING_DIRECTORY_NE_MISSING_WAVE_LINEAGE
+  - UNRESOLVED_NE_FALSE_OR_ZERO
+  - LM11_DOES_NOT_COMPENSATE_ISSUE_923
+  - NAVIGATION_DOES_NOT_CREATE_ENGINEERING_CREDIT
