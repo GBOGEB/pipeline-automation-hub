@@ -1,0 +1,215 @@
+schema: missioncontrol.type_i_mission_trace_telemetry.v1
+as_of: '2026-09-17T15:30:00+02:00'
+authority_transfer: false
+formal_credit_delta: 0
+scope:
+  parent: GM-I
+  variants: [GM-I-A, GM-I-B, GM-I-C]
+  rule: >-
+    Preserve observed facts, reconstructed historical role phases, and unavailable telemetry as
+    distinct evidence classes. Do not coerce unavailable values into the fleet MEASURED schema.
+
+parent_baseline:
+  mission_id: GM-I
+  name: COOLPROP_DARKLAND
+  frontier_count: 1
+  objective: governed_independent_helium_property_reference_and_validation
+  state: HOLD_EXTERNAL_OR_HABITAT_GATE
+  crew_posture: CONTRACTED_DOCKMASTER_WATCH
+  source: mission-control/grand-missions/GRAND_MISSION_REGISTRY.json
+
+missions:
+  GM-I-A:
+    mission_trace:
+      name: COOLPROP_DARKLAND
+      repository: GBOGEB/CoolProp
+      role: foreign_land_reconnaissance_adapt_and_return
+      current_state: HOLD_EXTERNAL_OR_HABITAT_GATE
+      evidence_class: OBSERVED_PLUS_RECONSTRUCTED_ROLE_PHASES
+      first_red:
+        class: HABITAT
+        runner_id: 0
+        executed_steps: 0
+      observed_returned_workers: [Scout_1, Scout_2, Scout_3, Reader_1, Reader_2]
+      retained_or_watch_roles: [Dockmaster, PM, TM, QA, Orchestrator]
+      repair_owner: Dockmaster
+      forbidden_repair: DOCTOR_OR_ENGINEER_PATCH_BEFORE_GT0_STEPS
+      rex:
+        - ZERO_STEP_IS_HABITAT_NOT_APPLICATION
+        - SEARCH_SATURATION_RETURNS_SCOUTS
+        - PRESERVE_EXTERNAL_REFERENCE_BOUNDARY
+    telemetry:
+      fleet_schema_admission: WITHHELD_INCOMPLETE_MEASURED_ROW
+      observed:
+        executed_steps: 0
+        frontier_count: 1
+      unavailable:
+        - source_sha_for_original_zero_step_pulse
+        - queue_seconds
+        - execute_seconds
+        - active_crew_units_as_measured_runtime_value
+        - accepted_receipts
+        - rejected_receipts
+        - deferred_receipts
+      reason: HISTORICAL_EVIDENCE_DOES_NOT_CONTAIN_COMPLETE_MEASURED_FLEET_ROW
+
+  GM-I-B:
+    mission_trace:
+      name: TEMPORAL_PCA_MULTI_CLOCK_FEDERATION
+      repository: GBOGEB/gg_MATH
+      role: native_provider_reuse_bind_integrate_prune
+      current_state: CONTROL_SENTINEL_RECEIPT_REGRESSION
+      provider_pr: 18
+      provider_merge_sha: e9afd4131bde2071d184d0e3c5326b82f5756faa
+      exact_federation_head_sha: a5f32ef2b65caa9b49270d7fe8134acd6f1e71d8
+      federation_run_id: 35139956561
+      federation_job_id: 104941705809
+      runner_id: 1000296008
+      runner_name: GitHub Actions 1000296008
+      federation_artifact_id: 10464776497
+      federation_artifact_digest: sha256:2c7cbcddffc6c3830ab02a212563ef390e7fe189ce24214f4313e6e5bccd2921
+      original_provider_receipt_digest: sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405
+      runtime_window_utc:
+        created_at: '2026-09-16T19:20:24Z'
+        started_at: '2026-09-16T19:20:27Z'
+        completed_at: '2026-09-16T19:20:34Z'
+      executed_step_summaries: 11
+      exact_workflow_steps:
+        - Set up job
+        - Checkout exact source head
+        - Assert exact source head and I-B namespace
+        - Re-run provider C01-C07 challenge
+        - Execute I-B federation tests
+        - Generate exact-head federation receipt and compendium
+        - Emit workflow envelope
+        - Upload I-B exact-head evidence
+        - Enforce I-B outcome
+        - Post Checkout exact source head
+        - Complete job
+      downstream_closure:
+        abacus_pr: 1252
+        abacus_merge_sha: 835c6f36c93c736336b5f87d5963d43e37bf3684
+        abacus_exact_dow_run_id: 35145377318
+        codex_pr: 750
+        codex_atom: KEB-ITEM-0002
+        codex_object_type: KEB_KNOWLEDGE_ATOM
+        state: CLOSED_REAL_ATOM
+      rex:
+        - REFRESH_DIFF_REUSE_CHALLENGE_BIND_INTEGRATE_PRUNE_ATTEST_RECURSE
+        - REAL_PROVIDER_RECEIPT_TO_DOW_TO_KEB_ATOM
+        - CONTRACT_TO_SENTINEL_AFTER_CONTROL
+        - AUTHORITY_INVERSION_ZERO
+    telemetry:
+      evidence_class: MEASURED_PARTIAL
+      observed_or_directly_derived:
+        source_sha: a5f32ef2b65caa9b49270d7fe8134acd6f1e71d8
+        queue_seconds: 3
+        execute_seconds: 7
+        executed_steps: 11
+        frontier_count: 1
+        workflow_conclusion: success
+      fleet_schema_admission: WITHHELD_INCOMPLETE_MEASURED_ROW
+      unavailable_as_measured_runtime_values:
+        - active_crew_units
+        - accepted_receipts
+        - rejected_receipts
+        - deferred_receipts
+      note: >-
+        Timing is directly derived from GitHub job created/started/completed timestamps. No missing
+        fleet-schema values are inferred from role registries or receipt topology.
+
+  GM-I-C:
+    mission_trace:
+      name: CROSS_AGENT_DRIVE_FEDERATION_BRIDGEHEAD
+      registration_issue: GBOGEB/pipeline-automation-hub#188
+      parent: GM-I
+      type: GRAND_MISSION_VARIANT
+      frontier_count: 1
+      state: REGISTERED_WAIT_EXTERNAL_INGRESS
+      integration_path:
+        - GEMINI_OR_SOURCE_AGENT
+        - GOOGLE_DRIVE_PERSISTENT_BRIDGE
+        - EXTERNAL_CLIENT_OR_AGENT
+        - GITHUB_OR_GOVERNED_CONSUMER
+      current_support_target:
+        mission: HM-01
+        issue: GBOGEB/cryoplant-project#1398
+        frozen_qps_commit: 70964e5f1577231512f4104b26f5f6649ad8cb39
+      first_red:
+        class: HABITAT_BOUNDARY
+        id: EXTERNAL_EXECUTION_ENVIRONMENT_INGRESS_GIT_OBJECT_HANDOFF
+      crew_now: [PM, TM, ORCHESTRATOR, DOCKMASTER, AMBASSADOR]
+      crew_after_ingress: [READER, QA, SMOKER]
+      conditional_crew:
+        DOCTOR: ONLY_AFTER_OBSERVED_APPLICATION_RED_AND_STEPS_GT_0
+        ENGINEER: ONLY_AFTER_NAMED_BUILDABLE_REPAIR_APPROVED
+      rex_inherited_from: [GM-I-A, GM-I-B]
+    telemetry:
+      evidence_class: CONTROL_AND_OBSERVATION_ONLY
+      observed:
+        frontier_count: 1
+        github_exact_commit_visible: true
+        github_exact_tree_visible: true
+        genuine_git_worktree_in_execution_runtime: false
+        git_bundle_in_execution_runtime: false
+        direct_container_github_clone: BLOCKED_DNS_NETWORK
+      fleet_schema_admission: NOT_YET_EXECUTED
+      unavailable_until_real_ingress_runtime:
+        - source_sha_of_executed_pulse
+        - queue_seconds
+        - execute_seconds
+        - executed_steps
+        - active_crew_units
+        - accepted_receipts
+        - rejected_receipts
+        - deferred_receipts
+      next_measurement_event: FIRST_REAL_GIT_OBJECT_INGRESS_AND_EXACT_WORKTREE_EXECUTION
+
+comparison:
+  - dimension: first_red_layer
+    GM-I-A: HABITAT
+    GM-I-B: NONE_CONTROLLED_RUNTIME_PASS
+    GM-I-C: HABITAT_BOUNDARY_EXTERNAL_INGRESS
+  - dimension: runtime_proof
+    GM-I-A: ZERO_STEP_HISTORICAL
+    GM-I-B: EXACT_HEAD_GT0_SUCCESS
+    GM-I-C: NOT_YET_EXECUTED
+  - dimension: current_posture
+    GM-I-A: CONTRACTED_DOCKMASTER_WATCH
+    GM-I-B: CONTROL_SENTINEL_RECEIPT_REGRESSION
+    GM-I-C: REGISTERED_WAIT_EXTERNAL_INGRESS
+  - dimension: principal_rex
+    GM-I-A: ROUTE_ZERO_STEP_TO_HABITAT_OWNER
+    GM-I-B: EXACT_IDENTITY_FEDERATE_ATTEST_PRUNE_RECURSE
+    GM-I-C: CROSS_AGENT_PERSISTENT_BRIDGE_WITH_REAL_GIT_OBJECT_HANDOFF
+
+telemetry_policy:
+  source_schema: mission-control/grand-missions/FLEET_TELEMETRY_SCHEMA.json
+  measured_row_requirements:
+    - mission_id
+    - pulse_id
+    - evidence_class
+    - source_sha
+    - queue_seconds
+    - execute_seconds
+    - executed_steps
+    - frontier_count
+    - active_crew_units
+    - accepted_receipts
+    - rejected_receipts
+    - deferred_receipts
+  current_type_i_rows_admitted_to_strict_fleet_schema: 0
+  reason: >-
+    GM-I-A lacks complete historical measured fields; GM-I-B has measured runtime timing and steps
+    but lacks measured crew-unit and receipt-disposition counts; GM-I-C has not executed. This file
+    intentionally preserves those gaps instead of filling them synthetically.
+  pca_bt_use: WITHHELD_NO_COMPLETE_COMPARABLE_MEASURED_ROWS
+
+guards:
+  - NO_SYNTHETIC_TELEMETRY_FILL
+  - ROW_COUNT_ALONE_IS_NOT_SAMPLE_ADEQUACY
+  - EXPERT_SEEDED_NE_MEASURED
+  - REGISTRATION_NE_EXECUTION
+  - EXECUTION_NE_ACCEPTANCE
+  - GM_I_VARIANTS_DO_NOT_RENUMBER_CANONICAL_GM_FLEET
+  - AUTHORITY_TRANSFER_FALSE
