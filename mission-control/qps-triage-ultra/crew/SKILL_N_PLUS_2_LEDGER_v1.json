@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.crew.skill_n_plus_2_ledger.v1",
-  "as_of": "2026-09-17T03:14:00+02:00",
+  "as_of": "2026-09-17T03:20:00+02:00",
   "clock": {
     "kind": "pulse",
     "spacing": "ordinal"
@@ -96,17 +96,48 @@
         ]
       },
       "status": "SCORED_EXACT_HIT"
-    }
-  ],
-  "pending": [
+    },
     {
       "issued_at_pulse": "SKILL_P2",
       "target_pulse": "SKILL_P4",
       "metric": "exact_pinned_consumer_receipts_with_entrypoint_digest",
       "prediction": 3,
       "basis": "MP_P3 established the consumer-owned receipt path with exact skill pin and entrypoint digest; next horizon forecasts all three canonical consumer receipts retaining that evidence",
-      "actual": null
-    },
+      "actual": 3,
+      "absolute_error": 0,
+      "observed_evidence": {
+        "repo": "GBOGEB/gg_MATH",
+        "pull_request": 26,
+        "consumer_head": "e6f30e7aa5773009397ceeb939eb02f13a772031",
+        "merge_commit": "48c2b6fa387721c530c7109345820bdcac425c69",
+        "workflow_run": 35169919587,
+        "workflow_conclusion": "success",
+        "missioncontrol_resolver_ref": "f31d58250ee54565d8ff28779c9a02ba033db595",
+        "skills_ref": "905a12596412afacd3cd7f3c3f6891ac026abf8f",
+        "resolution_mode": "mission_worker_consumer",
+        "fresh_actual_not_reused_from_run": 35148994670,
+        "receipts": [
+          {
+            "skill": "math",
+            "artifact_id": 10476078949,
+            "artifact_digest": "sha256:99adddf971ac8794086410eefbb04da6032b736a9ed2759c2120431152ff11ac"
+          },
+          {
+            "skill": "plots",
+            "artifact_id": 10476610206,
+            "artifact_digest": "sha256:db86441359f9487b6319368a178f047652988162092ee51ea4734609f025cc28"
+          },
+          {
+            "skill": "math-plots",
+            "artifact_id": 10476452968,
+            "artifact_digest": "sha256:d61d3dd16549fe48c2135925308685e8684049311a87c940ed0bc4d94af13968"
+          }
+        ]
+      },
+      "status": "SCORED_EXACT_HIT"
+    }
+  ],
+  "pending": [
     {
       "issued_at_pulse": "SKILL_P3",
       "target_pulse": "SKILL_P5",
@@ -114,11 +145,19 @@
       "prediction": 2,
       "basis": "SKILL_P3 proved a complete three-skill receipt set in one consumer; the next maturity step forecasts exact-pinned receipt portability across two independently governed consumer repositories without copying skill bodies or transferring authority",
       "actual": null
+    },
+    {
+      "issued_at_pulse": "SKILL_P4",
+      "target_pulse": "SKILL_P6",
+      "metric": "independent_consumer_repositories_with_exact_pinned_receipts_and_entrypoint_digest",
+      "prediction": 2,
+      "basis": "SKILL_P4 repeated the full digest-bearing three-skill receipt contract in one consumer at a fresh exact head; the next N+2 maturity step forecasts portability of that stronger contract across two independently governed consumer repositories",
+      "actual": null
     }
   ],
   "calibration": {
     "state": "WARM_START_INSUFFICIENT_SCORED_HISTORY",
-    "n_scored": 3,
+    "n_scored": 4,
     "last_absolute_error": 0,
     "probability_calibration_applied": false
   },
