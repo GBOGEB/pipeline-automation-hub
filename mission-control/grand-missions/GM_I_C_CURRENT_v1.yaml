@@ -1,0 +1,64 @@
+schema: missioncontrol.gm_i_c.current.v1
+mission_id: GM-I-C
+as_of: '2026-09-17T17:50:06+02:00'
+authority_transfer: false
+formal_credit_delta: 0
+
+global_method_parent:
+  method: 3PR_MIP_M
+  pr: 194
+  merge_sha: 3a65e884abe321347bd771b1b094d44e1e08cdd2
+  exact_proven_head_sha: fae367b78d9727e4b6cbc4aebdda129b17437b21
+  relationship: LOCAL_SPECIALISATION_NO_DUPLICATE_AUTHORITY
+
+historical_control:
+  path: mission-control/grand-missions/GM-I-C_CROSS_AGENT_DRIVE_FEDERATION_CONTROL_v0.1.yaml
+  treatment: HISTORICAL_REGISTERED_BASELINE_DO_NOT_REWRITE
+
+current_method_control:
+  path: mission-control/grand-missions/GM_I_C_3PR_MIP_IC3_CONTROL_v1.json
+  method_state: 3PR_MIP_COMPLETE
+  scope: IC3_AUTH_ONLY
+
+provider_current:
+  repo: GBOGEB/GEMINI
+  branch: main
+  sha: cd68e0c68d882d4fe37417f7a1c1ca45dff0a3ab
+  hardening_pr: 11
+  hardening_pr_state: MERGED
+  exact_hardening_head_sha: a862125217201a12c5608d8544fbf17c7033d6f0
+
+bridge_current:
+  drive_root_id: 1FnbajqBiIjL6Y4-_7tE1D515fNWvHsu3
+  drive_root_title: GEMINI_QPS_HANDOVER_2026-09-17
+  manual_connector_direct_children: 1
+  observed_child: 00_CONTROL
+  evidence_class: MANUAL_CONNECTOR_OBSERVATION_NOT_HOSTED_IC3_PROOF
+
+first_red:
+  gate: IC3_AUTH
+  state: WITHHELD_EXTERNAL_AUTH_CONFIGURATION_AND_HOSTED_PROOF
+  owner: S03_DOCKMASTER
+  issue: GBOGEB/GEMINI#12
+  pass_requires:
+    - HOSTED_RUN_GT0_STEPS
+    - EXACT_GEMINI_POSTMERGE_SHA_OR_GOVERNED_SUCCESSOR
+    - GITHUB_OIDC_TO_GOOGLE_WIF_PASS
+    - DRIVE_READONLY_PASS
+    - ROOT_VERIFIED
+    - TOTAL_ITEMS_GT_0
+    - CENSUS_SHA256_BOUND
+    - IC3_STATUS_PASS_CLASSIFICATION
+    - RUN_JOB_SHA_BOUND
+
+explicit_nonclaims:
+  - THREE_PR_PASS_NE_IC3_PASS
+  - MIP_PASS_NE_IC3_PASS
+  - UNIT_TEST_PASS_NE_IC3_PASS
+  - MANUAL_DRIVE_CONNECTOR_READ_NE_IC3_PASS
+  - MERGED_PR11_NE_IC3_PASS
+  - NO_3PC_CREDIT
+  - NO_3P3_CREDIT
+  - NO_ENGINEERING_RELEASE_OR_QPS_AUTHORITY
+
+next_action: COMPLETE_GEMINI_ISSUE_12_EXTERNAL_WIF_AND_DRIVE_AUTH_CONFIGURATION_THEN_EXECUTE_ONE_REAL_HOSTED_IC3_RUN
