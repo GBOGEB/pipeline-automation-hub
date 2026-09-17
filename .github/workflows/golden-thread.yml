@@ -43,13 +43,13 @@ jobs:
             mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
             > golden-thread-ledger-verification.json
 
-      - name: Rebuild current projection
+      - name: Rebuild cold-tail current projection
         run: |
           python mission-control/golden-thread/golden_thread.py rebuild-current \
             mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
             --out golden-thread-current-projection.json
 
-      - name: Build temporal k/e checkpoint
+      - name: Build cold-tail temporal k/e checkpoint
         run: |
           python mission-control/golden-thread/temporal_checkpoint.py build \
             mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
@@ -59,12 +59,41 @@ jobs:
             --milestone GT-M0-COLDTAIL \
             --out golden-thread-temporal-checkpoint.json
 
-      - name: Verify temporal checkpoint replay
+      - name: Verify cold-tail temporal checkpoint replay
         run: |
           python mission-control/golden-thread/temporal_checkpoint.py verify \
             mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
             golden-thread-temporal-checkpoint.json \
             > golden-thread-temporal-verification.json
+
+      - name: Verify observed QPS W57 DEFER ledger
+        run: |
+          python mission-control/golden-thread/golden_thread.py verify \
+            mission-control/golden-thread/fixtures/QPS_W57_P02_PVPS_DEFER_LEDGER_v1.json \
+            > golden-thread-w57-ledger-verification.json
+
+      - name: Rebuild observed QPS W57 DEFER projection
+        run: |
+          python mission-control/golden-thread/golden_thread.py rebuild-current \
+            mission-control/golden-thread/fixtures/QPS_W57_P02_PVPS_DEFER_LEDGER_v1.json \
+            --out golden-thread-w57-current-projection.json
+
+      - name: Build observed QPS W57 DEFER temporal checkpoint
+        run: |
+          python mission-control/golden-thread/temporal_checkpoint.py build \
+            mission-control/golden-thread/fixtures/QPS_W57_P02_PVPS_DEFER_LEDGER_v1.json \
+            --base-k 0 \
+            --git-repo "$GITHUB_REPOSITORY" \
+            --git-commit-sha "$GITHUB_SHA" \
+            --milestone GT-M1-QPS-W57-P02-DEFER \
+            --out golden-thread-w57-temporal-checkpoint.json
+
+      - name: Verify observed QPS W57 DEFER temporal checkpoint replay
+        run: |
+          python mission-control/golden-thread/temporal_checkpoint.py verify \
+            mission-control/golden-thread/fixtures/QPS_W57_P02_PVPS_DEFER_LEDGER_v1.json \
+            golden-thread-w57-temporal-checkpoint.json \
+            > golden-thread-w57-temporal-verification.json
 
       - name: Show receipts
         if: always()
@@ -84,5 +113,9 @@ jobs:
             golden-thread-current-projection.json
             golden-thread-temporal-checkpoint.json
             golden-thread-temporal-verification.json
+            golden-thread-w57-ledger-verification.json
+            golden-thread-w57-current-projection.json
+            golden-thread-w57-temporal-checkpoint.json
+            golden-thread-w57-temporal-verification.json
           if-no-files-found: error
           retention-days: 30
