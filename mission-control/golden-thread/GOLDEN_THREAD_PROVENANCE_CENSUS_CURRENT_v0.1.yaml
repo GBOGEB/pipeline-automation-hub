@@ -1,0 +1,72 @@
+schema: missioncontrol.golden_thread.provenance_census.v0.1
+as_of: '2026-09-17'
+authority_transfer: false
+purpose: >-
+  Record directly observed provenance candidates for the federation mechanism
+  ladder and reference-registry claim without inventing an authority or repo
+  count that has not been verified.
+
+mechanism_ladder:
+  vocabulary: [DEP, REG, SUB, ADAPTER, LAB, FORK]
+  normative_current_surface:
+    repository: GBOGEB/pipeline-automation-hub
+    path: mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md
+    observed_master_sha: 6e802cfb09db3ecaae3994583eeb4cfd05905ced
+    state: NORMATIVE_CURRENT_NOT_PROVEN_ORIGIN
+  historical_narrative_surface:
+    repository: GBOGEB/pipeline-automation-hub
+    path: mission-control/golden-thread/FEDERATION_GOLDEN_THREAD_PROCESS_NARRATIVE_v1.md
+    state: NARRATIVE_REFERENCE_NOT_CANONICAL_ORIGIN
+  rejected_origin_candidate:
+    repository: GBOGEB/CODEX
+    path: governance/adr/ADR-0001-runtime-debug-governance.md
+    blob_sha: 26737531d3b8574e285877bb3a95b96bede29fb7
+    classification: NOT_MECHANISM_LADDER_ADR
+    reason: ADR_0001_is_Runtime_Debug_Governance_Policy
+  provenance_state: UNKNOWN_NEEDS_READER
+  next_bounded_action: >-
+    locate the first authoritative ADR/registry declaration of
+    DEP_REG_SUB_ADAPTER_LAB_FORK or create a governed provenance-binding ADR
+    that explicitly distinguishes adoption from historical origin.
+  victory_predicate: >-
+    one canonical source path and exact SHA is declared, downstream references
+    resolve to it, and no unrelated ADR is cited as its origin.
+
+reference_registry_census:
+  canonical_federation_registry: UNKNOWN_NEEDS_READER
+  claimed_external_repo_count: UNVERIFIED_APPROXIMATELY_40
+  candidates_observed:
+    - repository: GBOGEB/ABACUS
+      path: reference-registry.yaml
+      classification: DEPRECATED_POINTER_ONLY
+      target: docs/qps_line_s_recovery/reference-registry.yaml
+      note: not_a_federation_wide_registry
+    - repository: GBOGEB/ABACUS
+      path: docs/qps_line_s_recovery/reference-registry.yaml
+      blob_sha: 482ea235e36e3efba7607c8bfa7be106cea94181
+      classification: QPS_LINE_S_PROPERTY_ORACLE_REGISTRY
+      scope: [CoolProp, HEPAK, REFPROP_exclusion]
+      note: domain_specific_not_federation_wide
+    - repository: GBOGEB/CODEX
+      path: reference-registry.yaml
+      classification: NOT_FOUND_IN_CURRENT_CODE_SEARCH
+    - repository: GBOGEB/pipeline-automation-hub
+      path: reference-registry.yaml
+      classification: NOT_FOUND_IN_CURRENT_CODE_SEARCH
+  census_state: UNKNOWN_NEEDS_READER
+  next_bounded_action: >-
+    search all candidate federation registry/index surfaces, normalize unique
+    repository identities, bind exact SHAs and authority classes, then report an
+    exact count. Do not promote the historical approximately-40 claim before
+    this completes.
+  victory_predicate: >-
+    canonical registry selected; exact unique repository count reproducible;
+    zero duplicate repository identities; each entry has mechanism and authority
+    classification.
+
+controls:
+  - UNKNOWN_NE_ZERO
+  - ABSENCE_OF_SEARCH_HIT_NE_PROOF_OF_NONEXISTENCE
+  - DOMAIN_REGISTRY_NE_FEDERATION_REGISTRY
+  - NORMATIVE_CURRENT_SURFACE_NE_HISTORICAL_ORIGIN
+  - NO_AUTHORITY_TRANSFER
