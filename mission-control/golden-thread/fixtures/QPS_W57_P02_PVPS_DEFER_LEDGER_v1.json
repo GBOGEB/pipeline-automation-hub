@@ -1,0 +1,267 @@
+{
+  "authority_transfer": false,
+  "events": [
+    {
+      "actor": "MissionControl.Historian",
+      "authority_domain": "GBOGEB/cryoplant-project",
+      "event_id": "GT-W57-0001",
+      "event_type": "BOOTSTRAP_RECONSTRUCTED",
+      "evidence_class": "OBSERVED_GITHUB_CHILD_SOURCE",
+      "evidence_refs": [
+        "GBOGEB/cryoplant-project#604",
+        "triage/w111/QPS_W111_LKT_HP_PVPS_POWER_SOURCE_LINEAGE_v0.1.yaml"
+      ],
+      "non_compensating_preserved": true,
+      "observed_source_timestamp": "2026-09-06T19:08:57Z",
+      "occurred_at": "2026-09-06T19:08:57Z",
+      "payload": {
+        "current_qps_main_sha": "7f6fdf8bf434bc3ea3dc5d7084f4878966d4a5b7",
+        "object_type": "occurrence",
+        "source_object": "SRC-LKT-PVPS-W57-CURRENT",
+        "source_sha256": "d92af4666cc10ec6a4f8ac6cfe57aef477bca116f72a12f9156a680ce7e1e35e",
+        "source_ssot_git_blob_sha": "fbdf22025fc2b18ffb6faf7c7c9b13f1d76eb615",
+        "source_ssot_path": "ocd-adr/20_canonical/control/QPS_W111_POWER_UTILITY_SOURCE_SSOT_v1.json",
+        "title": "W57-P02 current LKT PVPS 83-kW source contradiction"
+      },
+      "previous_event_digest": "GENESIS",
+      "projection_schema_version": 1,
+      "reconstruction_method": "github_lineage_replay_plus_current_qps_reader",
+      "reconstruction_timestamp": "2026-09-17T01:21:43Z",
+      "recorded_at": "2026-09-17T01:21:43Z",
+      "seq": 1,
+      "source_sha": "d6757844f26c91e8a5390aaa57519d12252fb420",
+      "source_snapshot_digest": "sha256:d92af4666cc10ec6a4f8ac6cfe57aef477bca116f72a12f9156a680ce7e1e35e",
+      "subject_ref": "GBOGEB/cryoplant-project#604",
+      "this_event_digest": "sha256:fe2dae18fb39af5000758a6a9a3fe663b5bdd07b42e1e6b424dcffcde37ca3f8"
+    },
+    {
+      "actor": "MissionControl.Historian",
+      "authority_domain": "GBOGEB/cryoplant-project",
+      "event_id": "GT-W57-0002",
+      "event_type": "ROOT_CREATED",
+      "evidence_class": "OBSERVED_RECONSTRUCTED_SEMANTIC_ROOT",
+      "evidence_refs": ["GBOGEB/cryoplant-project#604"],
+      "non_compensating_preserved": true,
+      "occurred_at": "2026-09-06T19:08:57Z",
+      "payload": {
+        "canonical_bd_root": null,
+        "root_authority": "QPS_CHILD_AUTHORITY",
+        "title": "QPS W57-P02 PVPS 83-kW same-point package boundary"
+      },
+      "previous_event_digest": "sha256:fe2dae18fb39af5000758a6a9a3fe663b5bdd07b42e1e6b424dcffcde37ca3f8",
+      "projection_schema_version": 1,
+      "recorded_at": "2026-09-17T01:21:43Z",
+      "seq": 2,
+      "subject_ref": "ROOT-QPS-W57-P02-PVPS-83KW",
+      "this_event_digest": "sha256:ccde6afc772bb41d2d160083a6bf279971a492e1d2d8c4ba755e63567fa09efc"
+    },
+    {
+      "actor": "MissionControl.Historian",
+      "authority_domain": "FEDERATED_PROJECTION_ONLY",
+      "event_id": "GT-W57-0003",
+      "event_type": "ATTACHED_TO_ROOT",
+      "evidence_class": "OBSERVED_RECONSTRUCTED_LINEAGE",
+      "evidence_refs": ["GBOGEB/cryoplant-project#604"],
+      "from_ref": "GBOGEB/cryoplant-project#604",
+      "non_compensating_preserved": true,
+      "occurred_at": "2026-09-06T19:08:57Z",
+      "payload": {},
+      "previous_event_digest": "sha256:ccde6afc772bb41d2d160083a6bf279971a492e1d2d8c4ba755e63567fa09efc",
+      "projection_schema_version": 1,
+      "recorded_at": "2026-09-17T01:21:43Z",
+      "seq": 3,
+      "subject_ref": "GBOGEB/cryoplant-project#604",
+      "this_event_digest": "sha256:04578973b0da05b7c11f8c6f39a7ba7035c2aaf2727945024c59d3e5d17c2231",
+      "to_ref": "ROOT-QPS-W57-P02-PVPS-83KW"
+    },
+    {
+      "actor": "MissionControl.Federation",
+      "authority_domain": "GBOGEB/cryoplant-project",
+      "event_id": "GT-W57-0004",
+      "event_type": "WORK_ORDER_CREATED",
+      "evidence_class": "OBSERVED_CHILD_FEDERATION_ROUTE",
+      "evidence_refs": ["GBOGEB/cryoplant-project#604"],
+      "from_ref": "GBOGEB/cryoplant-project#604",
+      "non_compensating_preserved": true,
+      "occurred_at": "2026-09-06T19:08:57Z",
+      "payload": {
+        "child_injection": {
+          "child_repo": "GBOGEB/cryoplant-project",
+          "idempotency_key": "sha256:67806f3b3c71dda43c2a186da5ecd7a3916f1ab5a0549e2d4b77cdec162c76c0",
+          "injection_key": "QPS-W57-P02-PVPS-83KW",
+          "source_digest": "sha256:d92af4666cc10ec6a4f8ac6cfe57aef477bca116f72a12f9156a680ce7e1e35e"
+        },
+        "route": [
+          "GBOGEB/CODEX#414",
+          "GBOGEB/ABACUS#916",
+          "CHILD_REENTRY",
+          "CHILD_ACCEPT_REJECT_DEFER"
+        ],
+        "status": "PARENT_CHALLENGE_RETURN_REQUIRED"
+      },
+      "previous_event_digest": "sha256:04578973b0da05b7c11f8c6f39a7ba7035c2aaf2727945024c59d3e5d17c2231",
+      "projection_schema_version": 1,
+      "recorded_at": "2026-09-17T01:21:43Z",
+      "seq": 4,
+      "subject_ref": "WO-QPS-W57-P02-PVPS-FEDERATION",
+      "this_event_digest": "sha256:04ff256cc1bed96e7614388164b7382b77b1cfed9fada38a0de21bafabef973b",
+      "to_ref": "ROOT-QPS-W57-P02-PVPS-83KW"
+    },
+    {
+      "actor": "MissionControl.KEB",
+      "authority_domain": "GBOGEB/CODEX",
+      "event_id": "GT-W57-0005",
+      "event_type": "EVIDENCE_ADDED",
+      "evidence_class": "KEB_PARENT_ADVISORY",
+      "evidence_refs": ["GBOGEB/CODEX#414", "GBOGEB/cryoplant-project#604"],
+      "from_ref": "GBOGEB/CODEX#414",
+      "non_compensating_preserved": true,
+      "occurred_at": "2026-09-06T19:09:17Z",
+      "payload": {
+        "evidence": {
+          "engineering_credit_delta": 0,
+          "finding": "83-kW boundary unresolved; 74-kW motor sum, printed 78-kW arithmetic error, 9-kW undefined excess boundary",
+          "title": "KEB semantic/provenance challenge"
+        }
+      },
+      "previous_event_digest": "sha256:04ff256cc1bed96e7614388164b7382b77b1cfed9fada38a0de21bafabef973b",
+      "projection_schema_version": 1,
+      "recorded_at": "2026-09-17T01:21:43Z",
+      "seq": 5,
+      "subject_ref": "GBOGEB/CODEX#414",
+      "this_event_digest": "sha256:1057f6a91a055c17b6f6585a4387c321e02806188de639e44548ed9f15b5c552",
+      "to_ref": "ROOT-QPS-W57-P02-PVPS-83KW"
+    },
+    {
+      "actor": "MissionControl.DOW",
+      "authority_domain": "GBOGEB/ABACUS",
+      "event_id": "GT-W57-0006",
+      "event_type": "EVIDENCE_ADDED",
+      "evidence_class": "DOW_PARENT_ADVISORY",
+      "evidence_refs": ["GBOGEB/ABACUS#916", "GBOGEB/CODEX#414", "GBOGEB/cryoplant-project#604"],
+      "from_ref": "GBOGEB/ABACUS#916",
+      "non_compensating_preserved": true,
+      "occurred_at": "2026-09-06T19:09:41Z",
+      "payload": {
+        "evidence": {
+          "engineering_credit_delta": 0,
+          "finding": "83-kW same-point package boundary is not independently reproducible",
+          "recommendation": "DEFER",
+          "title": "DOW independent physical challenge"
+        }
+      },
+      "previous_event_digest": "sha256:1057f6a91a055c17b6f6585a4387c321e02806188de639e44548ed9f15b5c552",
+      "projection_schema_version": 1,
+      "recorded_at": "2026-09-17T01:21:43Z",
+      "seq": 6,
+      "subject_ref": "GBOGEB/ABACUS#916",
+      "this_event_digest": "sha256:977b8e395d22a2eb9d173e85c2b6eef193e696e5b09f2c8e73a01f688e940eb3",
+      "to_ref": "ROOT-QPS-W57-P02-PVPS-83KW"
+    },
+    {
+      "actor": "MissionControl.Historian",
+      "authority_domain": "GBOGEB/cryoplant-project",
+      "event_id": "GT-W57-0007",
+      "event_type": "CLASSIFIED",
+      "evidence_class": "CHILD_REENTRY_DISPOSITION",
+      "evidence_refs": ["GBOGEB/cryoplant-project#604", "GBOGEB/CODEX#414", "GBOGEB/ABACUS#916", "triage/w111/QPS_W111_LKT_HP_PVPS_POWER_SOURCE_LINEAGE_v0.1.yaml"],
+      "non_compensating_preserved": true,
+      "occurred_at": "2026-09-06T19:12:27Z",
+      "payload": {
+        "bd_state": "ACTIVE",
+        "canonical_root": "ROOT-QPS-W57-P02-PVPS-83KW",
+        "historian_state": "STILL_BD",
+        "routing_disposition": "EXTERNAL_WAIT"
+      },
+      "previous_event_digest": "sha256:977b8e395d22a2eb9d173e85c2b6eef193e696e5b09f2c8e73a01f688e940eb3",
+      "projection_schema_version": 1,
+      "recorded_at": "2026-09-17T01:21:43Z",
+      "seq": 7,
+      "subject_ref": "GBOGEB/cryoplant-project#604",
+      "this_event_digest": "sha256:f730f6e567fb7a552d4fedde228b901242c3e2c37cc44941de53a0e2686d0e91"
+    },
+    {
+      "actor": "MissionControl.QPS",
+      "authority_domain": "GBOGEB/cryoplant-project",
+      "event_id": "GT-W57-0008",
+      "event_type": "NON_COMPENSATING_GATE_SET",
+      "evidence_class": "CURRENT_QPS_CONTROL",
+      "evidence_refs": ["triage/w111/QPS_W111_LKT_HP_PVPS_POWER_SOURCE_LINEAGE_v0.1.yaml"],
+      "non_compensating_preserved": true,
+      "occurred_at": "2026-09-06T19:12:27Z",
+      "payload": {
+        "blocking_inputs": [
+          "actual_2KOP_running_pump_count",
+          "commanded_VFD_frequency_or_load_fraction_by_pump",
+          "same_point_PVPS_helium_mass_flow",
+          "same_point_suction_pressure_and_temperature",
+          "same_point_discharge_pressure",
+          "explicit_motor_VFD_auxiliary_package_boundary"
+        ],
+        "blocking_predicate": "same-point PVPS package boundary remains unresolved",
+        "reentry_trigger": "source-bound return supplies exact running count, commanded VFD/load, same-point helium flow, suction pressure/temperature, discharge pressure, and motor/VFD/auxiliary package boundary"
+      },
+      "previous_event_digest": "sha256:f730f6e567fb7a552d4fedde228b901242c3e2c37cc44941de53a0e2686d0e91",
+      "projection_schema_version": 1,
+      "recorded_at": "2026-09-17T01:21:43Z",
+      "seq": 8,
+      "subject_ref": "ROOT-QPS-W57-P02-PVPS-83KW",
+      "this_event_digest": "sha256:5a3bc0b80eb6c2c1417ee228100d9e6a4fb0a0007543b13d9532999983882356"
+    },
+    {
+      "actor": "MissionControl.QPS",
+      "authority_domain": "GBOGEB/cryoplant-project",
+      "event_id": "GT-W57-0009",
+      "event_type": "STATE_CHANGED",
+      "evidence_class": "OBSERVED_CHILD_DISPOSITION",
+      "evidence_refs": ["GBOGEB/cryoplant-project#604", "GBOGEB/CODEX#414", "GBOGEB/ABACUS#916", "triage/w111/QPS_W111_LKT_HP_PVPS_POWER_SOURCE_LINEAGE_v0.1.yaml"],
+      "non_compensating_preserved": true,
+      "occurred_at": "2026-09-06T19:12:27Z",
+      "payload": {
+        "child_disposition": {
+          "authoritative_delta_applied": false,
+          "disposition": "DEFER",
+          "injection_key": "QPS-W57-P02-PVPS-83KW",
+          "owner": "GBOGEB/cryoplant-project",
+          "reentry_trigger": "same-point bidder/OEM package-boundary return satisfies all six W111 blocking inputs"
+        },
+        "commercial_credit_delta": 0,
+        "engineering_credit_delta": 0,
+        "state": "DEFERRED"
+      },
+      "previous_event_digest": "sha256:5a3bc0b80eb6c2c1417ee228100d9e6a4fb0a0007543b13d9532999983882356",
+      "projection_schema_version": 1,
+      "recorded_at": "2026-09-17T01:21:43Z",
+      "seq": 9,
+      "subject_ref": "WO-QPS-W57-P02-PVPS-FEDERATION",
+      "this_event_digest": "sha256:396aa2ee598fdf50473f06c0690f02adae566a57b1eeb76dc990542b86d0f4ff"
+    },
+    {
+      "actor": "MissionControl.QPS",
+      "authority_domain": "GBOGEB/cryoplant-project",
+      "event_id": "GT-W57-0010",
+      "event_type": "AUTHORITY_BOUNDARY_ASSERTED",
+      "evidence_class": "CURRENT_QPS_MAIN_READER",
+      "evidence_refs": ["triage/w111/QPS_W111_LKT_HP_PVPS_POWER_SOURCE_LINEAGE_v0.1.yaml", "ocd-adr/20_canonical/control/QPS_W111_POWER_UTILITY_SOURCE_SSOT_v1.json"],
+      "non_compensating_preserved": true,
+      "occurred_at": "2026-09-17T01:19:38Z",
+      "payload": {
+        "authority_domain": "GBOGEB/cryoplant-project",
+        "current_disposition": "DEFER_PENDING_SAME_POINT_PACKAGE_BOUNDARY",
+        "parent_credit_authority": false,
+        "source_ssot_git_blob_sha": "fbdf22025fc2b18ffb6faf7c7c9b13f1d76eb615"
+      },
+      "previous_event_digest": "sha256:396aa2ee598fdf50473f06c0690f02adae566a57b1eeb76dc990542b86d0f4ff",
+      "projection_schema_version": 1,
+      "recorded_at": "2026-09-17T01:21:43Z",
+      "seq": 10,
+      "source_sha": "7f6fdf8bf434bc3ea3dc5d7084f4878966d4a5b7",
+      "subject_ref": "ROOT-QPS-W57-P02-PVPS-83KW",
+      "this_event_digest": "sha256:0a1598dee6498c42b550dc16deaf0a5cbdada77610d9a81ab21b463d3c72d571"
+    }
+  ],
+  "head_event_digest": "sha256:0a1598dee6498c42b550dc16deaf0a5cbdada77610d9a81ab21b463d3c72d571",
+  "projection_schema_version": 1,
+  "schema": "missioncontrol.golden_thread_ledger.v1",
+  "semantic_scope": "GBOGEB/cryoplant-project:QPS_W111_POWER_UTILITY_SOURCE_SSOT:PVPS_W57_P02_BOUNDARY"
+}
