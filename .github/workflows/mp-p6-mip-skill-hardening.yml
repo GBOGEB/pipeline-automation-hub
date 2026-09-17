@@ -1,0 +1,164 @@
+name: MP_P6 MIP Skill Portability Hardening
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - '.github/workflows/mp-p6-mip-skill-hardening.yml'
+      - 'mission-control/qps-triage-ultra/crew/MIP_SKILL_PORTABILITY_HARDENING_v1.yaml'
+      - 'mission-control/qps-triage-ultra/crew/validate_skill_receipt_set.py'
+      - 'mission-control/qps-triage-ultra/crew/resolve_crew_skill.py'
+
+permissions:
+  contents: read
+
+env:
+  SKILLS_SHA: 905a12596412afacd3cd7f3c3f6891ac026abf8f
+
+jobs:
+  mip-hardening-self-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Assert exact PR head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+
+      - name: Checkout canonical skills exact SHA
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/skills
+          ref: ${{ env.SKILLS_SHA }}
+          path: .skills
+
+      - name: Assert canonical skills exact SHA
+        shell: bash
+        run: test "$(git -C .skills rev-parse HEAD)" = "${SKILLS_SHA}"
+
+      - name: Generate three exact-pinned reference receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          for skill in math plots math-plots; do
+            python mission-control/qps-triage-ultra/crew/resolve_crew_skill.py \
+              --skills-root .skills \
+              --skill "$skill" \
+              --task-id "MP_P6_MIP_SELFTEST_${skill}" \
+              --source-repo "${GITHUB_REPOSITORY}" \
+              --source-ref '${{ github.event.pull_request.head.sha }}' \
+              --skills-ref "${SKILLS_SHA}" \
+              --resolution-mode mip_hardened_selftest \
+              --out "receipts/${skill}.json"
+          done
+
+      - name: Prove deterministic aggregate and replay idempotency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/qps-triage-ultra/crew/validate_skill_receipt_set.py \
+            --receipts-dir receipts \
+            --expected-source-repo "${GITHUB_REPOSITORY}" \
+            --expected-source-ref '${{ github.event.pull_request.head.sha }}' \
+            --skills-ref "${SKILLS_SHA}" \
+            --out proof-a.json
+          python mission-control/qps-triage-ultra/crew/validate_skill_receipt_set.py \
+            --receipts-dir receipts \
+            --expected-source-repo "${GITHUB_REPOSITORY}" \
+            --expected-source-ref '${{ github.event.pull_request.head.sha }}' \
+            --skills-ref "${SKILLS_SHA}" \
+            --out proof-b.json
+          cmp proof-a.json proof-b.json
+          sha256sum proof-a.json proof-b.json
+
+      - name: Negative control authority inversion fails closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -R receipts bad-authority
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('bad-authority/math.json')
+          r = json.loads(p.read_text())
+          r['authority_transfer'] = True
+          p.write_text(json.dumps(r, indent=2, sort_keys=True) + '\n')
+          PY
+          if python mission-control/qps-triage-ultra/crew/validate_skill_receipt_set.py \
+            --receipts-dir bad-authority \
+            --expected-source-repo "${GITHUB_REPOSITORY}" \
+            --expected-source-ref '${{ github.event.pull_request.head.sha }}' \
+            --skills-ref "${SKILLS_SHA}"; then
+            echo 'authority inversion unexpectedly passed'
+            exit 1
+          fi
+
+      - name: Negative control source-ref mutation fails closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -R receipts bad-ref
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('bad-ref/plots.json')
+          r = json.loads(p.read_text())
+          r['source_ref'] = '0000000000000000000000000000000000000000'
+          p.write_text(json.dumps(r, indent=2, sort_keys=True) + '\n')
+          PY
+          if python mission-control/qps-triage-ultra/crew/validate_skill_receipt_set.py \
+            --receipts-dir bad-ref \
+            --expected-source-repo "${GITHUB_REPOSITORY}" \
+            --expected-source-ref '${{ github.event.pull_request.head.sha }}' \
+            --skills-ref "${SKILLS_SHA}"; then
+            echo 'mutated source ref unexpectedly passed'
+            exit 1
+          fi
+
+      - name: Negative control duplicate skill fails closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -R receipts bad-duplicate
+          cp bad-duplicate/math.json bad-duplicate/math-copy.json
+          if python mission-control/qps-triage-ultra/crew/validate_skill_receipt_set.py \
+            --receipts-dir bad-duplicate \
+            --expected-source-repo "${GITHUB_REPOSITORY}" \
+            --expected-source-ref '${{ github.event.pull_request.head.sha }}' \
+            --skills-ref "${SKILLS_SHA}" \
+            --expected-count 4; then
+            echo 'duplicate skill unexpectedly passed'
+            exit 1
+          fi
+
+      - name: Negative control missing digest fails closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -R receipts bad-digest
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('bad-digest/math-plots.json')
+          r = json.loads(p.read_text())
+          r.pop('entrypoint_sha256', None)
+          p.write_text(json.dumps(r, indent=2, sort_keys=True) + '\n')
+          PY
+          if python mission-control/qps-triage-ultra/crew/validate_skill_receipt_set.py \
+            --receipts-dir bad-digest \
+            --expected-source-repo "${GITHUB_REPOSITORY}" \
+            --expected-source-ref '${{ github.event.pull_request.head.sha }}' \
+            --skills-ref "${SKILLS_SHA}"; then
+            echo 'missing digest unexpectedly passed'
+            exit 1
+          fi
+
+      - name: Upload MIP hardened self-test proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: mp-p6-mip-hardening-self-test-proof
+          path: proof-a.json
