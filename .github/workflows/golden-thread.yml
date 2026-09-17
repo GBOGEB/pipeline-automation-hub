@@ -1,0 +1,87 @@
+name: Golden Thread Replay
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/golden-thread/**'
+      - '.github/workflows/golden-thread.yml'
+  push:
+    branches:
+      - master
+    paths:
+      - 'mission-control/golden-thread/**'
+      - '.github/workflows/golden-thread.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact source state
+        uses: actions/checkout@v4
+
+      - name: Compile Golden Thread runtimes
+        run: |
+          python -m py_compile mission-control/golden-thread/golden_thread.py
+          python -m py_compile mission-control/golden-thread/temporal_checkpoint.py
+
+      - name: Run Golden Thread unit tests
+        run: |
+          python -m unittest discover \
+            -s mission-control/golden-thread \
+            -p 'test_*.py' \
+            -v
+
+      - name: Verify sealed cold-tail ledger
+        run: |
+          python mission-control/golden-thread/golden_thread.py verify \
+            mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+            > golden-thread-ledger-verification.json
+
+      - name: Rebuild current projection
+        run: |
+          python mission-control/golden-thread/golden_thread.py rebuild-current \
+            mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+            --out golden-thread-current-projection.json
+
+      - name: Build temporal k/e checkpoint
+        run: |
+          python mission-control/golden-thread/temporal_checkpoint.py build \
+            mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+            --base-k 0 \
+            --git-repo "$GITHUB_REPOSITORY" \
+            --git-commit-sha "$GITHUB_SHA" \
+            --milestone GT-M0-COLDTAIL \
+            --out golden-thread-temporal-checkpoint.json
+
+      - name: Verify temporal checkpoint replay
+        run: |
+          python mission-control/golden-thread/temporal_checkpoint.py verify \
+            mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+            golden-thread-temporal-checkpoint.json \
+            > golden-thread-temporal-verification.json
+
+      - name: Show receipts
+        if: always()
+        run: |
+          for f in golden-thread-*.json; do
+            echo "===== $f ====="
+            cat "$f" || true
+          done
+
+      - name: Upload Golden Thread receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-thread-replay-receipts
+          path: |
+            golden-thread-ledger-verification.json
+            golden-thread-current-projection.json
+            golden-thread-temporal-checkpoint.json
+            golden-thread-temporal-verification.json
+          if-no-files-found: error
+          retention-days: 30
