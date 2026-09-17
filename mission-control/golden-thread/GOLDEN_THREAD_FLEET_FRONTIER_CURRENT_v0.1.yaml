@@ -1,0 +1,141 @@
+schema: missioncontrol.golden_thread.fleet_frontier_current.v0.1
+as_of: '2026-09-17'
+state: ACTIVE_PROTOTYPE_HOSTED_DOV_PENDING
+authority_transfer: false
+formal_credit_delta: 0
+parent_architecture_crosswalk:
+  pr: 172
+  merge_sha: 5abc6cc1db186ef9b2281c56fca4904a460ab544
+baseline_master_sha: 6e802cfb09db3ecaae3994583eeb4cfd05905ced
+
+scope_rule: >-
+  This control advances federation-only Golden Thread architecture gaps while
+  preserving QPS canonical GT_BDQ_0 through GT_BDQ_9 ordering. No fleet PASS
+  may compensate QPS runner admission, runtime GOLD, engineering, source,
+  bidder, negotiation, release, or safety authority.
+
+implementation:
+  runtime: mission-control/golden-thread/federation_frontier.py
+  tests: mission-control/golden-thread/test_federation_frontier.py
+  live_fixture: mission-control/golden-thread/fixtures/LIVE_GITHUB_OCCURRENCE_FAMILY_20260917.json
+  provenance_census: mission-control/golden-thread/GOLDEN_THREAD_PROVENANCE_CENSUS_CURRENT_v0.1.yaml
+
+frontier:
+  GT-BD-006:
+    title: live GitHub occurrence importer with idempotency keys
+    state: ACTIVE_PROTOTYPE_HOSTED_DOV_PENDING
+    implemented:
+      - deterministic_source_identity
+      - payload_digest
+      - idempotency_key
+      - duplicate_reimport_no_new_obligation
+      - conflict_fail_closed
+      - live_QPS_issue_PR_fixture
+    victory_pending:
+      - hosted_exact_head_test_PASS
+      - one_connector_captured_occurrence_family_reimported_twice_with_same_projection_digest
+
+  GT-BD-002:
+    title: downstream invalidation runtime and granularity
+    state: ACTIVE_PROTOTYPE_HOSTED_DOV_PENDING
+    implemented_scopes: [NODE, DMAIC_CLUSTER, DESCENDANT_CONE, RENDITION_ONLY, FULL_REPLAY]
+    receipt_fields:
+      - root_nodes
+      - affected_nodes
+      - affected_renditions
+      - non_compensating_gates_preserved
+      - invalidation_digest
+      - stale_survivor_count
+      - stale_rendition_count
+    victory_pending:
+      - hosted_exact_head_test_PASS
+      - representative_live_dependency_cone_receipt
+
+  GT-BD-003:
+    title: permissive and latched-inhibit executable gate semantics
+    state: ACTIVE_PROTOTYPE_HOSTED_DOV_PENDING
+    implemented:
+      - bottom_up_child_permissives
+      - inhibit_latches
+      - permissive_cannot_compensate_latched_inhibit
+      - authorized_reset_requires_reason
+      - reset_clears_permissives_to_prevent_silent_reopen
+    qps_relation: GT_BDQ_8_CHILD_GATE_ADVERSARIAL_PROOF
+    boundary: FLEET_PROTOTYPE_NE_QPS_CHILD_GATE_DOV
+
+  GT-BD-005:
+    title: reflexive DAG behavior under wave resequencing and replay
+    state: ACTIVE_PROTOTYPE_HOSTED_DOV_PENDING
+    implemented:
+      - declared_self_reflexive_edge_only
+      - dependency_order_validation
+      - complete_unique_node_order
+      - semantic_graph_digest_invariant_across_valid_resequence
+    victory_pending:
+      - hosted_exact_head_test_PASS
+      - integration_with_real_wave_scheduler_or_reader
+
+  GT-BD-001:
+    title: fleet checkpoint cadence storage retention policy
+    state: ACTIVE_POLICY_RUNTIME_HOSTED_DOV_PENDING
+    implemented_triggers: [EVENT_COUNT, REPLAY_COST, AGE, STORAGE_TIER]
+    invariants:
+      history_truncation_allowed: false
+      checkpoint_is_authority: false
+    victory_pending:
+      - hosted_exact_head_test_PASS
+      - measured_thresholds_from_fleet_telemetry
+      - repeat_on_distinct_corpora
+
+  GT-BD-009:
+    title: mechanism-ladder provenance authority
+    state: UNKNOWN_NEEDS_READER
+    control: mission-control/golden-thread/GOLDEN_THREAD_PROVENANCE_CENSUS_CURRENT_v0.1.yaml
+    note: DEP_REG_SUB_ADAPTER_LAB_FORK_is_normative_but_origin_not_proven
+
+  GT-BD-010:
+    title: canonical federation reference registry and exact repo census
+    state: UNKNOWN_NEEDS_READER
+    control: mission-control/golden-thread/GOLDEN_THREAD_PROVENANCE_CENSUS_CURRENT_v0.1.yaml
+    note: historical_approximately_40_repo_claim_remains_unverified
+
+concurrent_evidence_consumed:
+  office_semantic_carriers:
+    master_commit: 6e802cfb09db3ecaae3994583eeb4cfd05905ced
+    runtime: mission-control/golden-thread/office_semantic_carrier.py
+    classification: SEMANTIC_ZERO_DELTA_CARRIER_BASELINE
+    visual_fidelity_credit: false
+    qps_GT_BDQ_4_5_7_credit: false
+    architecture_GT_BD_007_update_required_after_hosted_review: true
+
+qps_boundary:
+  repository: GBOGEB/cryoplant-project
+  canonical_queue: GT_BDQ_0_THROUGH_GT_BDQ_9
+  current_first_red: GT_BDQ_0_EXACT_HEAD_HOSTED_REPLAY_PROOF
+  successor_head: 6cd9ba59d8b064e613d06b598c4444cac3a0953c
+  successor_run: 35172801693
+  successor_attempts: 2
+  successor_attempt_1_job: 105047869395
+  successor_attempt_2_job: 105048443279
+  successor_steps: ZERO_BOTH_ATTEMPTS
+  classification: INFRASTRUCTURE_PREEXECUTION_RUNNER_ADMISSION
+  rule: ZERO_STEP_NE_APPLICATION_FAIL
+  fleet_work_may_advance: true
+  qps_GT_BDQ_may_advance: false
+
+DoV:
+  local_static: CODE_PRESENT_TESTS_PRESENT_NOT_EXECUTED_IN_THIS_CONTROL
+  hosted: WITHHELD_PENDING_PR_EXACT_HEAD
+  promotion_rule: >-
+    Promote an individual fleet item only when the exact branch head executes
+    its corresponding tests under hosted CI and the evidence is bound. Do not
+    infer QPS advancement from MissionControl PASS.
+
+stop_rules:
+  - MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS
+  - QPS_ZERO_STEP_NE_APPLICATION_FAIL
+  - FLEET_PROTOTYPE_NE_QPS_ENGINEERING_CREDIT
+  - CHECKPOINT_NE_AUTHORITY
+  - GENERATED_PROJECTION_NE_SSOT
+  - UNKNOWN_NE_ZERO
+  - AUTHORITY_TRANSFER_FALSE
