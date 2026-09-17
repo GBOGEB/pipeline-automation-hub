@@ -1,0 +1,180 @@
+name: GM-IV Runtime Capability Capacity Proof v2
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_IV_RUNTIME_CAPACITY_MEASUREMENT_CONTRACT.json'
+      - 'mission-control/grand-missions/measure_gm_iv_runtime_capacity.py'
+      - 'mission-control/grand-missions/probe_gm_iv_runtime_capability.py'
+      - '.github/workflows/gm-iv-runtime-capacity-proof-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gm-iv-runtime-capacity-proof-v2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Freeze immutable event base and exact head
+        shell: bash
+        run: |
+          set -euo pipefail
+          head='${{ github.event.pull_request.head.sha || github.sha }}'
+          if [ '${{ github.event_name }}' = 'pull_request' ]; then
+            base='${{ github.event.pull_request.base.sha }}'
+          else
+            git fetch -q origin master
+            base="$(git rev-parse origin/master)"
+          fi
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$head"
+          test "${#base}" -eq 40
+          git cat-file -e "$base^{commit}"
+          git merge-base --is-ancestor "$base" "$head"
+          echo "MC_HEAD_SHA=$head" >> "$GITHUB_ENV"
+          echo "MC_BASE_SHA=$base" >> "$GITHUB_ENV"
+          printf '{"base_sha":"%s","head_sha":"%s","event":"%s"}\n' "$base" "$head" '${{ github.event_name }}' > gm_iv_capacity_event_identity.json
+
+      - name: Re-run canonical fleet validator at capacity head
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/validate_gm_fleet.py \
+            --out gm_fleet_capacity_head.json
+
+      - name: Re-run structural capacity gate at capacity head
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/assess_gm_fleet_03.py \
+            --out gm_fleet_capacity_structure.json
+
+      - name: Re-run evidence economics control
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/validate_gm_iv_evidence_economics.py
+
+      - name: Probe all eight exact frontier identities at capacity head
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf gm-iv-capacity-frontier-probes
+          mkdir -p gm-iv-capacity-frontier-probes
+          while read -r fid repo sha; do
+            d="gm-iv-capacity-frontier-probes/$fid"
+            mkdir -p "$d/repo"
+            git -C "$d/repo" init -q
+            git -C "$d/repo" remote add origin "https://github.com/${repo}.git"
+            git -C "$d/repo" fetch -q --depth=1 origin "$sha"
+            git -C "$d/repo" checkout -q --detach FETCH_HEAD
+            observed="$(git -C "$d/repo" rev-parse HEAD)"
+            count="$(find "$d/repo" -mindepth 1 -not -path '*/.git/*' -not -name '.git' | wc -l | tr -d ' ')"
+            test "$observed" = "$sha"
+            test "$count" -gt 0
+            printf '%s\n' "$observed" > "$d/HEAD_SHA"
+            printf '%s\n' "$count" > "$d/ENTRY_COUNT"
+            rm -rf "$d/repo"
+          done < <(python - <<'PY'
+          import json
+          d=json.load(open('mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json',encoding='utf-8'))
+          for i in range(1,9):
+              fid=f'GM-IV-F{i:02d}'
+              x=d['frontier_evidence'][fid]
+              print(fid, x['repository'], x['target_sha'])
+          PY
+          )
+
+      - name: Re-prove post-ACTIVE8 repeat CONTROL at exact capacity head
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/validate_gm_iv_post_active8_repeat_control.py \
+            --source-sha "$MC_HEAD_SHA" \
+            --fleet-receipt gm_fleet_capacity_head.json \
+            --capacity-receipt gm_fleet_capacity_structure.json \
+            --probe-root gm-iv-capacity-frontier-probes \
+            --out gm_iv_capacity_head_repeat_control.json \
+            | tee gm_iv_capacity_head_repeat_control.out
+          grep -q PASS_GM_IV_POST_ACTIVE8_REPEAT_CONTROL gm_iv_capacity_head_repeat_control.out
+          grep -q DEFER_GM_V_MEASURED_CAPACITY gm_iv_capacity_head_repeat_control.out
+
+      - name: Execute eight predeclared runtime capability probes
+        shell: bash
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          rm -rf mission-control/grand-missions/runtime-capacity-receipts
+          python mission-control/grand-missions/measure_gm_iv_runtime_capacity.py \
+            --source-sha "$MC_HEAD_SHA" \
+            --base-sha "$MC_BASE_SHA" \
+            --out-dir mission-control/grand-missions/runtime-capacity-receipts \
+            | tee gm_iv_runtime_capacity.out
+          grep -q PASS_GM_IV_RUNTIME_CAPACITY_8_OF_8 gm_iv_runtime_capacity.out
+          grep -q DEFER_GM_V_OPERATIONAL_AVAILABILITY_EXTERNAL_GATES gm_iv_runtime_capacity.out
+
+      - name: Enforce aggregate non-compensating semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('mission-control/grand-missions/runtime-capacity-receipts/GM_IV_RUNTIME_CAPACITY_MEASUREMENT_RECEIPT.json').read_text())
+          assert r['base_sha'] == __import__('os').environ['MC_BASE_SHA']
+          assert r['source_sha'] == __import__('os').environ['MC_HEAD_SHA']
+          assert r['canonical_state'] == 'ACTIVE_8_OF_8'
+          assert r['gm_v_state'] == 'HELD'
+          assert r['measurement_scope'] == 'CAPABILITY_COVERAGE_NOT_CONCURRENCY_CAPACITY'
+          assert r['concurrency_capacity_claimed'] is False
+          assert r['required_capability_count'] == 8
+          assert r['measured_capability_count'] == 8
+          assert r['runtime_proven_capability_count'] == 8
+          assert r['runtime_proven_ratio'] == 1.0
+          assert r['distinct_predeclared_hosts'] == 8
+          assert r['measured_capacity_result'] == 'PASS_RUNTIME_PROVEN_CAPABILITY_CAPACITY'
+          assert r['capacity_class'] == 'RUNTIME_PROVEN'
+          assert r['operational_availability'] == 'DEFER_EXTERNAL_NONCOMPENSATING_GATES_NOT_EVALUATED'
+          assert r['gm_v_launch_authorized'] is False
+          assert r['competency_promotions'] == 0
+          assert r['authority_transfer'] is False
+          assert r['formal_credit_delta'] == 0
+          assert r['hard_gate_compensation_allowed'] is False
+          rows={x['capability']:x for x in r['capability_receipts']}
+          assert set(rows)=={'COMMAND','TECHNICAL_BOUNDARY','RECON','ANALYSIS','RUNTIME','QA','BUILD_REPAIR_RESERVE','GOVERNANCE'}
+          assert rows['BUILD_REPAIR_RESERVE']['crew_id']=='S02'
+          assert all(x['steps_executed'] > 0 for x in rows.values())
+          assert all(x['capacity_class'] == 'RUNTIME_PROVEN' for x in rows.values())
+          assert all(x['disposition'] == 'ACCEPT' for x in rows.values())
+          print('PASS_GM_IV_RUNTIME_PROVEN_CAPABILITY_CAPACITY_8_OF_8')
+          print('DEFER_OPERATIONAL_AVAILABILITY_AND_GM_V')
+          PY
+
+      - name: Upload immutable capacity proof family
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-runtime-capacity-v2-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            gm_iv_capacity_event_identity.json
+            gm_fleet_capacity_head.json
+            gm_fleet_capacity_structure.json
+            gm_iv_capacity_head_repeat_control.json
+            gm_iv_capacity_head_repeat_control.out
+            gm_iv_runtime_capacity.out
+            gm-iv-capacity-frontier-probes/
+            mission-control/grand-missions/runtime-capacity-receipts/*.json
+          if-no-files-found: error
+          retention-days: 30
