@@ -1,5 +1,5 @@
 schema: missioncontrol.official_mission_register.v1
-as_of: '2026-09-16T22:55:00+02:00'
+as_of: '2026-09-17T03:12:00+02:00'
 authority_transfer: false
 purpose: >-
   Official Mission Control index across canonical Grand Missions, governed variants,
@@ -59,9 +59,28 @@ local_missions:
     parallel_high_pressure_slice: H07_GRAPH_EIGENSPECTRUM_GFT_FILTERS
     official_control: mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml
     crew_allocation: mission-control/qps-triage-ultra/missions/LM-10_CREW_ALLOCATION_v3.yaml
+  - id: LM-11
+    number: 11
+    type: LOCAL_REPOSITORY_LINEAGE_AND_TRIAGE
+    name: QPS_WAVE_LINEAGE_DEPENDENCY_RECONSTRUCTION
+    home: GBOGEB/pipeline-automation-hub
+    subject_repo: GBOGEB/cryoplant-project
+    state: REQUESTED_STAGED_FOR_GOVERNED_EXECUTION
+    objectives:
+      - COMPLETE_WAVE_PULSE_PR_ARTIFACT_CROSSWALK
+      - TYPED_QPS_TRIAGE_NODE_EDGE_GRAPH
+      - BOUNDED_ACYCLIC_DAG_PROJECTIONS
+      - HUMAN_NAVIGATION_AND_READ_ONLY_HMI
+      - GM_STYLE_SATELLITE_VIEW_WITHOUT_GM_RENUMBERING
+    first_red: COMPLETE_EXACT_HEAD_WAVE_PR_CROSSWALK
+    authority_transfer: false
+    formal_credit_delta: 0
+    official_control: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_v1.yaml
 invariants:
   - canonical_GM_ids_remain_exactly_GM_I_to_GM_V
   - GM_I_B_is_variant_not_GM_VI_or_GM_II
   - LM_10_does_not_become_Grand_Mission_by_activity_or_scope_growth
+  - LM_11_is_local_navigation_lineage_mission_not_global_QPS_wave
+  - LM_11_does_not_allocate_or_imply_GM_VI
   - authority_transfer_false_unless_separately_governed
   - mission_registration_does_not_create_engineering_or_release_credit
