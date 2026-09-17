@@ -1,0 +1,99 @@
+schema: missioncontrol.lm11.refresh_child_receipt/v1
+mission_id: LM-11
+as_of: '2026-09-17T03:30:00+02:00'
+state: QPS_IMPLEMENTATION_MERGED_HOSTED_DOV_WITHHELD
+
+authority_transfer: false
+formal_credit_delta: 0
+navigation_credit_delta: 0
+
+missioncontrol_rehome:
+  original_branch: lm11-qps-wave-lineage-cartography
+  original_merge_base: 3348189fd52883befb24f5c5b6bb3953cd8725ab
+  refresh_issue: 165
+  rehome_branch: mission/lm-11-qps-wave-federation-20260917
+  rehome_base_master: f16286b66fd573376ea9265ffe7e9b5ef0d8296f
+  preservation_rule: OLD_BRANCH_REMAINS_TEMPORAL_PROVENANCE_NO_FORCE_REWRITE
+
+qps_child:
+  repository: GBOGEB/cryoplant-project
+  observed_main: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b
+  implementation_pr: 1382
+  implementation_head: b3a0dc0b8d1ae74ee168bfa5a7cadcdd0d2d8652
+  implementation_merge: f6eb1f6344e9953c095cd4dfadcf89991499f791
+  implementation_state: MERGED
+  implementation_products:
+    - tools/triage/qps_wave_lineage_graph.py
+    - tools/triage/qps_wave_lineage_html.py
+    - docs/QPS_WAVE_LINEAGE_START_HERE.md
+    - .github/workflows/qps-lm11-wave-lineage.yml
+  boundary_receipt:
+    path: triage/lm11/QPS_LM11_HOSTED_DOV_BOUNDARY_v1.yaml
+    git_blob_sha: f0e64cbab387e8d46a4198d2f40cc2230c9bf22e
+    state: IMPLEMENTATION_MERGED_HOSTED_DOV_WITHHELD_INFRA_PREEXECUTION_REPRODUCED
+
+hosted_evidence:
+  - run: 35169896138
+    job: 105039094004
+    exact_head: b3a0dc0b8d1ae74ee168bfa5a7cadcdd0d2d8652
+    observed_steps: 0
+    classification: INFRA_PREEXECUTION_ZERO_STEP
+  - run: 35170208998
+    job: 105040059555
+    exact_head: 329d6e3946700052cd02bf851accb46706904d15
+    observed_steps: null
+    classification: INFRA_PREEXECUTION_ZERO_STEP_REPRODUCED
+  disposition:
+    application_failure_claimed: false
+    graph_runtime_claimed: false
+    graph_metrics_claimed: false
+    generated_artifact_claimed: false
+
+lineage_reconciliation:
+  first_red_at_launch: LINEAGE_AUTHORITY_POINTER_DRIFT_110_111
+  disposition: RESOLVED_BY_CURRENT_RESOLVER_PRECEDENCE_WITH_HISTORY_PRESERVED
+  evidence:
+    historical_normalization:
+      path: controls/QPS_WAVE_LINEAGE_NORMALIZATION_v0.1.yaml
+      interpretation: PR110_W03_AND_PR111_W02_DISTINCT_SUCCESSOR_CONTEXTS
+      temporal_role: HISTORICAL_NORMALIZATION_EVIDENCE
+    current_resolver:
+      path: controls/QPS_CANONICAL_LINEAGE_RESOLVER_v1.json
+      interpretation: PR111_CURRENT_PR110_SUPERSEDED_PLANNING_SIDECAR
+      authority_role: CURRENT_CANONICAL_LINEAGE_RESOLVER
+    current_navigation:
+      path: ocd-adr/40_implementation/QPS_LINEAGE_NAVIGATION_REGISTRY_v1.json
+      interpretation: PR111_CURRENT_SUPERSEDES_PR110
+      authority_role: READ_ONLY_CURRENT_PROJECTION
+  destructive_rewrite: false
+  historical_pr_110_reachable: true
+  current_pr_111: true
+
+current_temporal_state:
+  child_reports_current_global_qtg_wave: W248
+  child_reports_later_parallel_wave_label: W265
+  highest_wave_label_is_global_state: false
+  global_first_red: ISSUE_923
+  lm11_first_red: LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN
+  required_victory_prefix:
+    - runner_id_nonzero
+    - steps_greater_than_zero
+    - exact_current_sha_execution
+    - graph_extractor_executes
+    - bounded_execution_dag_passes
+    - supersession_lineage_dag_passes
+    - measured_wave_pr_coverage_reported
+    - JSON_MD_HTML_artifact_published
+
+missioncontrol_disposition:
+  qps_implementation: ACCEPT_MERGED_IMPLEMENTATION
+  qps_hosted_runtime_proof: DEFER_INFRA_PREEXECUTION
+  missioncontrol_registration: READY_FOR_PR
+  engineering_credit: NONE
+  release_credit: NONE
+  issue_923_compensation: FORBIDDEN
+
+next_action: >-
+  Register LM-11 officially in MissionControl and validate this receipt plus the graph contract.
+  Do not alter QPS graph code merely to compensate for zero-step hosted infrastructure. The next
+  earned runtime proof is the unchanged child workflow executing at exact current SHA with more than zero steps.
