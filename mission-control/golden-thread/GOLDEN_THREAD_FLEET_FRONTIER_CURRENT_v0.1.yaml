@@ -1,12 +1,15 @@
-schema: missioncontrol.golden_thread.fleet_frontier_current.v0.1
+schema: missioncontrol.golden_thread.fleet_frontier_current.v0.2
 as_of: '2026-09-17'
-state: ACTIVE_PROTOTYPE_HOSTED_DOV_PENDING
+state: HOSTED_PASS_FLEET_FRONTIER_ACTIVE_NONCOMPENSATING
 authority_transfer: false
 formal_credit_delta: 0
 parent_architecture_crosswalk:
   pr: 172
   merge_sha: 5abc6cc1db186ef9b2281c56fca4904a460ab544
-baseline_master_sha: 6e802cfb09db3ecaae3994583eeb4cfd05905ced
+current_master_observation:
+  sha: 9e8d08ca1f3297a3864369c73b5f0f9a01f38838
+  concurrent_merge_pr: 177
+  concurrent_scope: SEVEN_FORMAT_GITHUB_GIT_OBJECT_ROUNDTRIP_ZERO_DELTA
 
 scope_rule: >-
   This control advances federation-only Golden Thread architecture gaps while
@@ -20,24 +23,46 @@ implementation:
   live_fixture: mission-control/golden-thread/fixtures/LIVE_GITHUB_OCCURRENCE_FAMILY_20260917.json
   provenance_census: mission-control/golden-thread/GOLDEN_THREAD_PROVENANCE_CENSUS_CURRENT_v0.1.yaml
 
+hosted_proof:
+  exact_head: c8070c5e4ade9dc3db7f896cde0044a54be3ede9
+  pr: 178
+  golden_thread_replay_run: 35173258171
+  golden_thread_replay_job: 105049279344
+  replay_steps: PASS_ALL_16_OBSERVED_JOB_STEPS
+  unit_test_step: PASS
+  golden_thread_control_run: 35173258169
+  qps_triage_ultra_run: 35173258199
+  observed_workflow_family_result: PASS_8_OF_8
+  note: >-
+    This exact-head PASS proves the bounded fleet prototype under hosted CI. It
+    does not imply QPS GT_BDQ_0 PASS because QPS executes in a separate repo and
+    remains runner-admission blocked.
+
 frontier:
   GT-BD-006:
     title: live GitHub occurrence importer with idempotency keys
-    state: ACTIVE_PROTOTYPE_HOSTED_DOV_PENDING
+    state: ACTIVE_HOSTED_PASS_BOUNDED_LIVE_CAPTURE
+    maturity: M3_BOUNDED
     implemented:
       - deterministic_source_identity
       - payload_digest
       - idempotency_key
       - duplicate_reimport_no_new_obligation
       - conflict_fail_closed
-      - live_QPS_issue_PR_fixture
-    victory_pending:
-      - hosted_exact_head_test_PASS
-      - one_connector_captured_occurrence_family_reimported_twice_with_same_projection_digest
+      - connector_captured_QPS_issue_1390_and_PR_1407_fixture
+      - repeated_import_same_projection_digest
+    remaining:
+      - direct_connector_to_importer_adapter
+      - multi_repo_streaming_or_batch_intake
+      - durable_import_receipt_registry
+    victory_next: >-
+      ingest a second independent live occurrence family through a connector
+      adapter and reproduce zero duplicate obligations and identical projection.
 
   GT-BD-002:
     title: downstream invalidation runtime and granularity
-    state: ACTIVE_PROTOTYPE_HOSTED_DOV_PENDING
+    state: ACTIVE_HOSTED_PASS_PROTOTYPE
+    maturity: M2_M3
     implemented_scopes: [NODE, DMAIC_CLUSTER, DESCENDANT_CONE, RENDITION_ONLY, FULL_REPLAY]
     receipt_fields:
       - root_nodes
@@ -47,45 +72,85 @@ frontier:
       - invalidation_digest
       - stale_survivor_count
       - stale_rendition_count
-    victory_pending:
-      - hosted_exact_head_test_PASS
+    remaining:
       - representative_live_dependency_cone_receipt
+      - bind_to_real_recompute_executor
+    victory_next: complete_one_real_cone_recompute_with_zero_stale_survivors
 
   GT-BD-003:
     title: permissive and latched-inhibit executable gate semantics
-    state: ACTIVE_PROTOTYPE_HOSTED_DOV_PENDING
+    state: ACTIVE_HOSTED_PASS_PROTOTYPE
+    maturity: M3_BOUNDED
     implemented:
       - bottom_up_child_permissives
       - inhibit_latches
       - permissive_cannot_compensate_latched_inhibit
+      - unauthorized_reset_fails_closed
       - authorized_reset_requires_reason
       - reset_clears_permissives_to_prevent_silent_reopen
     qps_relation: GT_BDQ_8_CHILD_GATE_ADVERSARIAL_PROOF
     boundary: FLEET_PROTOTYPE_NE_QPS_CHILD_GATE_DOV
+    remaining: bind_to_real_child_authority_gate_and_reset_receipt
 
   GT-BD-005:
     title: reflexive DAG behavior under wave resequencing and replay
-    state: ACTIVE_PROTOTYPE_HOSTED_DOV_PENDING
+    state: ACTIVE_HOSTED_PASS_PROTOTYPE
+    maturity: M2_M3
     implemented:
       - declared_self_reflexive_edge_only
       - dependency_order_validation
       - complete_unique_node_order
       - semantic_graph_digest_invariant_across_valid_resequence
-    victory_pending:
-      - hosted_exact_head_test_PASS
+    remaining:
       - integration_with_real_wave_scheduler_or_reader
+      - replay_receipt_across_actual_resequence
 
   GT-BD-001:
     title: fleet checkpoint cadence storage retention policy
-    state: ACTIVE_POLICY_RUNTIME_HOSTED_DOV_PENDING
+    state: ACTIVE_HOSTED_PASS_POLICY_RUNTIME
+    maturity: M3_BOUNDED
     implemented_triggers: [EVENT_COUNT, REPLAY_COST, AGE, STORAGE_TIER]
     invariants:
       history_truncation_allowed: false
       checkpoint_is_authority: false
-    victory_pending:
-      - hosted_exact_head_test_PASS
+    remaining:
       - measured_thresholds_from_fleet_telemetry
       - repeat_on_distinct_corpora
+      - storage_tier_cost_policy
+
+  GT-BD-007:
+    title: Office and rendition-family semantic extraction and zero-delta proof
+    state: DONE_MISSIONCONTROL_SEMANTIC_BASELINE_CONTROL_WATCH
+    maturity: M3
+    evidence:
+      office_carrier_merge: 6e802cfb09db3ecaae3994583eeb4cfd05905ced
+      github_roundtrip_pr: 177
+      github_roundtrip_merge: 9e8d08ca1f3297a3864369c73b5f0f9a01f38838
+      rendition_count: 7
+      semantic_delta: 0
+      unexplained_semantic_delta: 0
+      ref_updated: false
+      visual_fidelity_credit: false
+      authority_transfer: false
+    qps_credit: false
+    note: >-
+      MissionControl semantic-carrier/roundtrip baseline is proven. QPS retains
+      its own GT_BDQ_4, GT_BDQ_5 and GT_BDQ_7 sequence and receives no automatic
+      PASS from this fleet evidence.
+
+  GT-BD-008:
+    title: external side-effect and artifact roundtrip control
+    state: ACTIVE_ARTIFACT_ROUNDTRIP_PASS_OPERATIONAL_MUTATION_IDEMPOTENCY_OPEN
+    maturity: M3_PARTIAL
+    evidence:
+      github_roundtrip_pr: 177
+      github_roundtrip_merge: 9e8d08ca1f3297a3864369c73b5f0f9a01f38838
+      git_object_roundtrip: PASS
+      seven_format_retrieval_and_reextract: PASS
+      ref_updated: false
+    remaining:
+      - repeated_real_mutating_side_effect_transaction_with_no_duplicate_effect
+    qps_credit: false
 
   GT-BD-009:
     title: mechanism-ladder provenance authority
@@ -95,18 +160,12 @@ frontier:
 
   GT-BD-010:
     title: canonical federation reference registry and exact repo census
-    state: UNKNOWN_NEEDS_READER
+    state: ACTIVE_KNOWN_83_REPO_UNIVERSE_UNKNOWN_FEDERATION_SUBSET
     control: mission-control/golden-thread/GOLDEN_THREAD_PROVENANCE_CENSUS_CURRENT_v0.1.yaml
-    note: historical_approximately_40_repo_claim_remains_unverified
-
-concurrent_evidence_consumed:
-  office_semantic_carriers:
-    master_commit: 6e802cfb09db3ecaae3994583eeb4cfd05905ced
-    runtime: mission-control/golden-thread/office_semantic_carrier.py
-    classification: SEMANTIC_ZERO_DELTA_CARRIER_BASELINE
-    visual_fidelity_credit: false
-    qps_GT_BDQ_4_5_7_credit: false
-    architecture_GT_BD_007_update_required_after_hosted_review: true
+    observed_accessible_repository_count: 83
+    second_page_count: 0
+    canonical_federation_registry: UNKNOWN_NEEDS_READER
+    note: ACCOUNT_UNIVERSE_NE_FEDERATION_MEMBERSHIP
 
 qps_boundary:
   repository: GBOGEB/cryoplant-project
@@ -120,21 +179,24 @@ qps_boundary:
   successor_steps: ZERO_BOTH_ATTEMPTS
   classification: INFRASTRUCTURE_PREEXECUTION_RUNNER_ADMISSION
   rule: ZERO_STEP_NE_APPLICATION_FAIL
+  retry_disposition_this_pulse: STOP_REPEATED_RETRY_RETAIN_IMMUTABLE_NEGATIVE_EVIDENCE
   fleet_work_may_advance: true
   qps_GT_BDQ_may_advance: false
 
 DoV:
-  local_static: CODE_PRESENT_TESTS_PRESENT_NOT_EXECUTED_IN_THIS_CONTROL
-  hosted: WITHHELD_PENDING_PR_EXACT_HEAD
+  hosted_exact_head: PASS
+  fleet_M4: WITHHELD
   promotion_rule: >-
-    Promote an individual fleet item only when the exact branch head executes
-    its corresponding tests under hosted CI and the evidence is bound. Do not
-    infer QPS advancement from MissionControl PASS.
+    Hosted PASS promotes only the bounded MissionControl implementation. Fleet
+    M4 requires repeat on independent corpora/consumers. QPS remains governed by
+    its own exact-head proof chain.
 
 stop_rules:
   - MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS
   - QPS_ZERO_STEP_NE_APPLICATION_FAIL
   - FLEET_PROTOTYPE_NE_QPS_ENGINEERING_CREDIT
+  - OFFICE_SEMANTIC_PASS_NE_VISUAL_FIDELITY_PASS
+  - ACCOUNT_REPO_COUNT_NE_FEDERATION_MEMBER_COUNT
   - CHECKPOINT_NE_AUTHORITY
   - GENERATED_PROJECTION_NE_SSOT
   - UNKNOWN_NE_ZERO
