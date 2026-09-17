@@ -1,6 +1,6 @@
 schema: missioncontrol.lm11.qps_wave_federation_receipt/v1
 mission_id: LM-11
-as_of: '2026-09-17T03:34:00+02:00'
+as_of: '2026-09-17T03:36:00+02:00'
 state: CHILD_IMPLEMENTATION_BOUND_RUNTIME_DOV_DEFERRED
 
 authority_transfer: false
@@ -8,8 +8,12 @@ formal_credit_delta: 0
 navigation_credit_delta: 0
 
 missioncontrol:
+  registration_pr: 166
+  registration_exact_tested_head: 149eeb9d2ae2740f95d18e7e40a81211e667bac3
   registration_merge: 2aca61e8a4585c51b55adedff356a9d06a3a31e2
-  current_control: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v2.yaml
+  registration_public_checks: PASS_6_OF_6
+  current_control: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v3.yaml
+  postmerge_receipt: mission-control/qps-triage-ultra/missions/LM-11_POSTMERGE_REGISTRATION_RECEIPT_v1.yaml
   graph_contract: mission-control/qps-triage-ultra/missions/LM-11_QPS_WAVE_GRAPH_CONTRACT_v2.json
   atlas: mission-control/qps-triage-ultra/missions/LM-11_QPS_WAVE_ATLAS_CURRENT_v2.md
 
