@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MISSIONS = ROOT / "mission-control" / "qps-triage-ultra" / "missions"
-CURRENT = MISSIONS / "LM-11_MISSION_CONTROL_CURRENT_v2.yaml"
+CURRENT = MISSIONS / "LM-11_MISSION_CONTROL_CURRENT_v3.yaml"
 CONTRACT = MISSIONS / "LM-11_QPS_WAVE_GRAPH_CONTRACT_v2.json"
 ATLAS = MISSIONS / "LM-11_QPS_WAVE_ATLAS_CURRENT_v2.md"
 RECEIPT = MISSIONS / "receipts" / "LM11_QPS_WAVE_FEDERATION_20260917_v1.yaml"
@@ -70,15 +70,23 @@ def main() -> None:
     assert contract["bounded_dags"]["supersession"]["acyclic_required"] is True
     assert contract["bounded_dags"]["global_recursive_graph"]["cycles_allowed"] is True
 
-    # Current MissionControl is the governing mission surface; v1 remains provenance only.
+    # v3 is the current MissionControl surface; v2 and v1 remain temporal provenance.
     for needle in (
+        "schema: qps.mission_control.local_mission_current.v3",
         "mission_id: LM-11",
-        "supersedes: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_v1.yaml",
+        "supersedes: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v2.yaml",
+        "missioncontrol_registration:",
+        "pr: 166",
+        "exact_tested_head: 149eeb9d2ae2740f95d18e7e40a81211e667bac3",
+        "merge_sha: 2aca61e8a4585c51b55adedff356a9d06a3a31e2",
+        "public_checks: PASS_6_OF_6",
         "implementation_pr: 1382",
-        "pr: 1385",
-        "latest_observed_wave_label: W265",
-        "current_global_qtg_wave: W248",
-        "current_global_first_red: ISSUE_923",
+        "implementation_merge: f6eb1f6344e9953c095cd4dfadcf89991499f791",
+        "runner_control_pr: 1385",
+        "runner_control_merge: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b",
+        "global_qtg_wave: W248",
+        "later_observed_wave_label: W265",
+        "issue: 923",
         "P1_PROVENANCE_CENSUS:",
         "P2_LINEAGE_RESOLUTION:",
         "P3_DEPENDENCY_DAG:",
@@ -86,24 +94,35 @@ def main() -> None:
         "P5_NAVIGATION_HMI:",
         "P6_FEDERATION_SATELLITE:",
         "LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN",
-        "DO_NOT_SORT_WAVE_NUMBERS_AND_CALL_THAT_LINEAGE",
+        "DO_NOT_TREAT_HIGHEST_WAVE_AS_CURRENT_GLOBAL_GATE",
         "DO_NOT_FABRICATE_MEASURED_GRAPH_METRICS",
     ):
         require(current, needle, "current mission control")
 
-    # Official registration must remain local and zero-credit.
+    # Official registration must remain local and zero-credit, and point to v3.
     for needle in (
         "id: LM-11",
         "type: LOCAL_REPOSITORY_LINEAGE_AND_TRIAGE",
-        "official_control: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v2.yaml",
+        "state: CONTROL_PLANE_REGISTERED_QPS_RUNTIME_DOV_WITHHELD_REPRODUCED",
+        "missioncontrol_registration_pr: 166",
+        "missioncontrol_registration_merge: 2aca61e8a4585c51b55adedff356a9d06a3a31e2",
+        "missioncontrol_checks: PASS_6_OF_6",
+        "official_control: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v3.yaml",
         "proof_state: INFRA_PREEXECUTION_ZERO_STEP_REPRODUCED",
         "LM_11_is_local_navigation_lineage_mission_not_global_QPS_wave",
         "LM_11_does_not_allocate_or_imply_GM_VI",
+        "LM_11_highest_wave_label_does_not_imply_global_QTG_state",
+        "LM_11_zero_step_does_not_equal_application_failure",
     ):
         require(register, needle, "official register")
 
-    # Exact child evidence and zero-step semantics.
+    # Exact child evidence and zero-step semantics, now rebound to current v3 control.
     for needle in (
+        "registration_pr: 166",
+        "registration_exact_tested_head: 149eeb9d2ae2740f95d18e7e40a81211e667bac3",
+        "registration_merge: 2aca61e8a4585c51b55adedff356a9d06a3a31e2",
+        "registration_public_checks: PASS_6_OF_6",
+        "current_control: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v3.yaml",
         "observed_main: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b",
         "pr: 1382",
         "merge: f6eb1f6344e9953c095cd4dfadcf89991499f791",
@@ -146,6 +165,8 @@ def main() -> None:
     result = {
         "status": "PASS_LM11_MISSIONCONTROL_FEDERATION_STATIC",
         "mission": "LM-11",
+        "missioncontrol_current": "v3",
+        "missioncontrol_registration_pr": 166,
         "qps_implementation_pr": 1382,
         "qps_runner_control_pr": 1385,
         "launch_wave_directory_projection": 137,
