@@ -11,11 +11,16 @@ ROOT = Path(__file__).resolve().parent
 MISSION_CONTROL = ROOT / "GM-I-C_CROSS_AGENT_DRIVE_FEDERATION_CONTROL_v0.1.yaml"
 CREW = ROOT / "GM-I-C_CREW_ALLOCATION_v0.1.yaml"
 OFFICIAL = ROOT.parent / "OFFICIAL_MISSION_REGISTER_v1.yaml"
+CANONICAL = ROOT / "GRAND_MISSION_REGISTRY.json"
 CANONICAL_GM_IDS = ["GM-I", "GM-II", "GM-III", "GM-IV", "GM-V"]
 
 
 def load_yaml(path: Path):
     return yaml.safe_load(path.read_text(encoding="utf-8"))
+
+
+def load_json(path: Path):
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def require(condition: bool, message: str) -> None:
@@ -27,14 +32,23 @@ def main() -> None:
     control = load_yaml(MISSION_CONTROL)
     crew = load_yaml(CREW)
     official = load_yaml(OFFICIAL)
+    canonical_registry = load_json(CANONICAL)
 
     canonical = [row["id"] for row in official["canonical_grand_missions"]]
     require(canonical == CANONICAL_GM_IDS, f"canonical GM namespace changed: {canonical}")
+    canonical_ids = [row["id"] for row in canonical_registry["grand_missions"]]
+    require(canonical_ids == CANONICAL_GM_IDS, f"canonical JSON GM namespace changed: {canonical_ids}")
 
     variants = {row["id"]: row for row in official.get("variants", [])}
     require("GM-I-B" in variants, "GM-I-B disappeared")
     require("GM-I-C" in variants, "GM-I-C is not registered")
     gm_ic = variants["GM-I-C"]
+
+    gm_i = next(row for row in canonical_registry["grand_missions"] if row["id"] == "GM-I")
+    canonical_variants = {row["id"]: row for row in gm_i.get("variants", [])}
+    require(set(canonical_variants) == {"GM-I-A", "GM-I-B", "GM-I-C"}, f"canonical GM-I variants invalid: {sorted(canonical_variants)}")
+    require("GM-I-C" in canonical_variants, "GM-I-C missing from canonical grand-mission registry")
+    canonical_ic = canonical_variants["GM-I-C"]
 
     require(gm_ic["parent"] == "GM-I", "GM-I-C parent must remain GM-I")
     require(gm_ic["number"] == "1-C", "GM-I-C number must remain 1-C")
@@ -43,6 +57,15 @@ def main() -> None:
     require(gm_ic["formal_credit_delta"] == 0, "GM-I-C formal credit delta must remain zero")
     require("WITHHELD" in gm_ic["implementation_evidence"]["hosted_drive_pass"], "hosted Drive PASS must remain withheld until observed")
     require(gm_ic["first_red"] == "IC3_AUTH_REAL_HOSTED_GT0_STEP_DRIVE_INGRESS_PASS", "unexpected first red")
+
+    require(canonical_ic["repository"] == "GBOGEB/GEMINI", "canonical GM-I-C provider drift")
+    require(canonical_ic["state"] == gm_ic["state"], "official/canonical GM-I-C state mismatch")
+    require(canonical_ic["authority_transfer"] is False, "canonical GM-I-C authority transfer weakened")
+    require(canonical_ic["formal_credit_delta"] == 0, "canonical GM-I-C formal credit weakened")
+    require(canonical_ic["first_red"] == gm_ic["first_red"], "official/canonical GM-I-C first-red mismatch")
+
+    gm_iii = next(row for row in canonical_registry["grand_missions"] if row["id"] == "GM-III")
+    require("GBOGEB/GEMINI" in gm_iii.get("children", []), "GM-III GEMINI frontier history must remain preserved")
 
     require(control["mission_id"] == "GM-I-C", "control mission ID mismatch")
     require(control["parent"] == "GM-I", "control parent mismatch")
@@ -78,6 +101,8 @@ def main() -> None:
         "result": "PASS_GM_I_C_REGISTRATION",
         "canonical_grand_missions": canonical,
         "variant": "GM-I-C",
+        "canonical_registry_bound": True,
+        "gm_iii_gemini_history_preserved": True,
         "gate_count": len(gates),
         "active_crew_count": len(active_ids),
         "first_red": gm_ic["first_red"],
