@@ -1,11 +1,27 @@
 schema: missioncontrol.golden_thread_architecture_bdq.v2
-as_of: '2026-09-17T03:36:00+02:00'
+as_of: '2026-09-17T03:47:00+02:00'
 authority_transfer: false
 parent_frontier: GBOGEB/pipeline-automation-hub#153
 canonical_bd_lifecycle_authority: GBOGEB/pipeline-automation-hub#85
 historian_authority: GBOGEB/pipeline-automation-hub#76
 architecture_frontend: mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md
 architecture_history_companion: mission-control/golden-thread/FEDERATION_GOLDEN_THREAD_ARCHITECTURE_HISTORY_v2.md
+qps_reconciliation:
+  evidence_wave: W266_IMMUTABLE_TEMPORAL_GOLDEN_THREAD
+  closure: GBOGEB/cryoplant-project/triage/w266/QPS_W266_GOLDEN_THREAD_ROUNDTRIP_CLOSURE_v1.yaml
+  qps_provider_pr: 1386
+  qps_provider_merge: 11cdea5ef74389340c5f13ed7c866dd30cceef64
+  abacus_consumer_pr: 1258
+  abacus_consumer_merge: c86f9e4793062b5fab54291beefa74d6dfc6167e
+  codex_consumer_pr: 755
+  codex_consumer_merge: 4a8f5fcda38923a742b43f8425f0a5fa44ce0ec3
+  semantic_result:
+    qps_truth_delta: 0
+    unexplained_delta: 0
+    authority_transfer: false
+    engineering_credit_delta: 0
+  next_qps_wave: W267_GOLDEN_THREAD_P7_P9_ZERO_DELTA_CLOSURE
+  next_authoritative_horizon: W269_FIRST_OBSERVED_AUTHORITATIVE_ACCEPT_K_PLUS_1
 lifecycle:
   canonical_states: [TODO, ACTIVE, DONE, CONTROL, SUPERSEDED, INVALIDATED, UNKNOWN_NEEDS_READER]
   child_gate_dispositions: [ACCEPT, REJECT, DEFER]
@@ -29,6 +45,7 @@ items:
     evidence_refs:
       - GBOGEB/pipeline-automation-hub#159
       - GBOGEB/pipeline-automation-hub#161
+      - GBOGEB/cryoplant-project/triage/w266/QPS_W266_GOLDEN_THREAD_ROUNDTRIP_CLOSURE_v1.yaml
     gap: bounded_checkpoint_semantics_done_but_fleet_operating_policy_missing
     next_bounded_action: define cadence triggers retention budget storage tier and replay-cost thresholds without truncating ledger history
     victory_predicate: repeat on distinct corpora proves bounded replay cost while genesis replay remains possible and digest-equivalent
@@ -49,7 +66,8 @@ items:
     maturity: M1-M2
     evidence_refs:
       - mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md
-    gap: doctrine exists but executable latch propagation reset and authority tests are not yet bound
+      - GBOGEB/cryoplant-project/triage/w266/QPS_W266_GOLDEN_THREAD_ROUNDTRIP_CLOSURE_v1.yaml
+    gap: gate-spine contract is bound but executable latch propagation reset and authority tests are not yet independently closed
     next_bounded_action: implement explicit gate-state machine and receipts for bottom-up permissive propagation inhibit latch and governed reset
     victory_predicate: tests prove inhibit persists until governed reset and parent PASS cannot compensate a child gate
 
@@ -76,33 +94,46 @@ items:
     title: live GitHub occurrence importer with idempotency keys
     bd_state: TODO
     routing_disposition: EXECUTE_NOW
-    maturity: M1
+    maturity: M1-M2
     evidence_refs:
       - GBOGEB/pipeline-automation-hub#154
       - GBOGEB/pipeline-automation-hub#159
-    gap: bounded cold-tail fixture exists but no live fleet importer is canonical
+      - GBOGEB/cryoplant-project/triage/w266/QPS_W266_GOLDEN_THREAD_ROUNDTRIP_CLOSURE_v1.yaml
+    gap: cross-repo exact receipts exist but a canonical fleet live-occurrence importer is not yet bound
     next_bounded_action: import one live issue-PR-receipt family with source SHA digest injection key and idempotency key
     victory_predicate: repeated import produces zero duplicate obligations and exact same thread projection
 
   - id: GT-BD-007
     title: Word PPT Excel semantic extractors and zero-delta tests
-    bd_state: TODO
-    routing_disposition: EXECUTE_NOW
-    maturity: M1-M2
+    bd_state: ACTIVE
+    routing_disposition: WORK_ORDER_CHILD
+    maturity: M2
     evidence_refs:
       - GBOGEB/pipeline-automation-hub#161
-    gap: Office semantic credit explicitly withheld
-    next_bounded_action: bind governed extractor contract for one Office format then expand to remaining family
+      - GBOGEB/cryoplant-project#1388
+    current_qps_lane: W267_GOLDEN_THREAD_P7_P9_ZERO_DELTA_CLOSURE
+    gap: QPS has launched HTML DOCX PPTX XLSX JSON YAML rendition-family proof but hosted and post-merge P7-P9 closure is not yet evidenced here
+    next_bounded_action: consume W267 closure receipts and promote only formats with governed semantic extractors and repeated zero-delta proof
     victory_predicate: canonical extract rendered_binary equals canonical truth for repeat generation with metadata exclusions explicitly declared
 
   - id: GT-BD-008
-    title: real provider consumer return round-trip receipt I5
-    bd_state: TODO
-    routing_disposition: EXECUTE_NOW
-    maturity: M1-M2
-    gap: local deterministic proof exists but external side-effect round-trip is not yet proven end-to-end
-    next_bounded_action: execute one exact provider to consumer to return transaction using idempotency and child receipt contracts
-    victory_predicate: source and returned semantic digests are identical or expected delta is declared and exact with no duplicate side effects
+    title: real provider consumer governance provider zero-delta round-trip I5
+    bd_state: DONE
+    routing_disposition: CONTROL_WATCH
+    maturity: M3
+    evidence_refs:
+      - GBOGEB/cryoplant-project/triage/w266/QPS_W266_GOLDEN_THREAD_ROUNDTRIP_CLOSURE_v1.yaml
+      - GBOGEB/cryoplant-project#1386
+      - GBOGEB/ABACUS#1258
+      - GBOGEB/CODEX#755
+    result:
+      qps_truth_delta: 0
+      unexplained_delta: 0
+      authority_transfer: false
+      engineering_credit_delta: 0
+    gap: distinct-source repeat is still required before CONTROL promotion and this proof does not exercise an authoritative semantic delta
+    next_bounded_action: repeat on a distinct governed source state while preserving exact receipt and idempotency semantics
+    victory_predicate: second independent provider-consumer-governance-provider transaction reproduces zero unexplained delta and zero authority inversion
 
   - id: GT-BD-009
     title: mechanism-ladder provenance authority
@@ -128,11 +159,11 @@ items:
     title: fleet-wide historical bootstrap
     bd_state: TODO
     routing_disposition: DEFERRED_BY_DEPENDENCY
-    maturity: M1
-    dependencies: [GT-BD-006, GT-BD-008]
-    gap: only bounded cold-tail bootstrap is proven
-    next_bounded_action: after live importer and I5 proof remain lossless expand bootstrap by bounded repo batches
-    victory_predicate: each batch retains 100 percent lineage and zero authority inversion with deterministic replay
+    maturity: M1-M2
+    dependencies: [GT-BD-006]
+    gap: bounded cold-tail bootstrap and one QPS federation roundtrip are proven but no fleet live importer is canonical
+    next_bounded_action: after live importer remains lossless expand bootstrap by bounded repo batches
+    victory_predicate: each batch retains 100_percent_lineage and zero authority inversion with deterministic replay
 
   - id: GT-BD-012
     title: optional Merkle block proof layer
@@ -142,9 +173,22 @@ items:
     gap: no demonstrated scale need beyond current linear hash chain
     next_bounded_action: collect replay verification cost and ledger-size telemetry before design work
     victory_predicate: implement only if measured fleet cost justifies block proofs without introducing a second authority
+
+  - id: GT-BD-013
+    title: first observed authoritative child ACCEPT advances semantic generation k
+    bd_state: TODO
+    routing_disposition: EXECUTE_NOW
+    maturity: M1-M2
+    evidence_refs:
+      - mission-control/golden-thread/GOLDEN_THREAD_TEMPORAL_CONTRACT_v1_1.json
+      - GBOGEB/cryoplant-project#1388
+    qps_horizon: W269_FIRST_OBSERVED_AUTHORITATIVE_ACCEPT_K_PLUS_1
+    gap: child ACCEPT contract is executable in tests but no real accepted authoritative QPS delta is yet bound as the first observed k_to_k_plus_1 transition
+    next_bounded_action: locate one real child-owned ACCEPT with accepted delta digest resulting SSOT digest exact Git anchor and replayable patch lineage
+    victory_predicate: real child authority ACCEPT advances k exactly once while e advances normally and genesis/checkpoint replay reconstructs the identical resulting SSOT digest
 priority_order:
   - GT-BD-006
-  - GT-BD-008
+  - GT-BD-013
   - GT-BD-002
   - GT-BD-003
   - GT-BD-007
@@ -154,6 +198,7 @@ priority_order:
   - GT-BD-010
   - GT-BD-011
   - GT-BD-012
+  - GT-BD-008_CONTROL_WATCH
 controls:
   - ONE_LOGICAL_FACT_ONE_AUTHORITY
   - SOURCE_HISTORY_IMMUTABLE
@@ -164,4 +209,5 @@ controls:
   - ACCEPT_WITH_AUTHORITATIVE_DELTA_IS_ONLY_CHILD_PATH_THAT_ADVANCES_K
   - CONTROL_HISTORY_MAY_ADVANCE_E_WITHOUT_ADVANCING_K
   - GENERATED_RENDITION_NE_SSOT
+  - NONAUTHORITATIVE_ZERO_DELTA_ROUNDTRIP_NE_AUTHORITATIVE_ACCEPT
   - FLEET_M4_WITHHELD_UNTIL_DISTINCT_MULTI_REPO_REPEAT
