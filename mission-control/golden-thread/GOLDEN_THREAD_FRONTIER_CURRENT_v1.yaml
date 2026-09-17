@@ -1,0 +1,107 @@
+schema: missioncontrol.golden_thread.frontier_current/v1
+as_of: '2026-09-17T17:43:00+02:00'
+authority_transfer: false
+formal_credit_delta: 0
+base_architecture_bdq:
+  path: mission-control/golden-thread/GOLDEN_THREAD_ARCHITECTURE_BDQ_v2.yaml
+  state: HISTORICAL_BASE_PRESERVED
+  observed_gap: STALE_RELATIVE_TO_PRS_186_190_191
+current_refresh_receipt: mission-control/golden-thread/GOLDEN_THREAD_3PR_MIP_M_20260917_v1.yaml
+
+qps_boundary:
+  repository: GBOGEB/cryoplant-project
+  observed_main_sha: 42605383a41ded2400fcb76631e6e54faab34952
+  canonical_control: controls/QPS_GOLDEN_THREAD_CURRENT_v0.1.yaml
+  current_first_red: GT_BDQ_0_EXACT_HEAD_HOSTED_REPLAY_PROOF
+  state: WITHHELD_INFRA_PREEXECUTION_4_ATTEMPTS_ZERO_STEPS
+  compensation_allowed: false
+
+frontier:
+  GT-BD-006:
+    state: DONE
+    routing_disposition: CONTROL_WATCH
+    maturity: M3
+    closure_evidence:
+      pr: 186
+      exact_head: 801e56855e3cb24c286b7c62469d765d4cffe413
+      hosted_workflows: PASS_8_OF_8
+      replay_tests: 69
+    nonclaims: [fleet_M4_false, qps_credit_false]
+
+  GT-BD-011:
+    state: ACTIVE
+    routing_disposition: EXECUTE_BOUNDED_BATCHES
+    maturity: M2-M3
+    batch001:
+      pr: 190
+      exact_head: f989223626599d00cd3fed65a54816f5cbd99d78
+      merge_sha: f6a9c67df2e508df85b7c4441f36b2aae50309f8
+      replay_run: 35229457547
+      replay_job: 105229427346
+      replay_tests: 70
+      artifact_id: 10500357116
+      artifact_zip_sha256: 082545f330e1ae754050a03b01b6685225b7f1cb90820529387168064fa76e7e
+      repository_count: 4
+      lineage_coverage: 1.0
+      duplicate_obligations_on_reimport: 0
+      authority_transfer: false
+    fleet_wide_completion: false
+
+  GT-BD-002:
+    state: DONE
+    routing_disposition: CONTROL_WATCH
+    maturity: M3
+    closure_evidence:
+      pr: 191
+      exact_head: 98c90114dee0abeeb252e319387fb94b97df4bda
+      merge_sha: 39e64d72c778e0894eba884fc9e349b92ed681e4
+      replay_run: 35229777316
+      replay_job: 105230529829
+      replay_tests: 72
+      artifact_id: 10500039423
+      artifact_zip_sha256: f18fb71211a7336b8e01016e788e545c165245f219dcd21329d87e344d2a87c6
+      real_dependency_cone: PASS
+      stale_survivor_count: 0
+      stale_rendition_count: 0
+      negative_incomplete_recompute: WITHHELD_AS_EXPECTED
+    qps_credit: false
+
+  GT-BD-003:
+    state: ACTIVE
+    routing_disposition: EXECUTE_NOW
+    maturity: M3_BOUNDED_PROTOTYPE
+    gap: REAL_CHILD_OWNED_AUTHORITY_GATE_RESET_RECEIPT_NOT_YET_BOUND
+    next_action: >-
+      Bind one real child gate; exercise permissive, latched inhibit,
+      unauthorized reset rejection, authorized reasoned reset, and full
+      repropagation. Parent PASS must not compensate a child inhibit.
+    victory_predicate: >-
+      Exact receipt proves inhibit remains latched until governed reset,
+      reset clears permissives before repropagation, and the child-owned
+      authority boundary is preserved.
+    recommended_method: 3PC
+    qps_relation: GT_BDQ_8_FLEET_EVIDENCE_ONLY_NOT_AUTOMATIC_CREDIT
+
+priority_order:
+  - GT-BD-003
+  - GT-BD-013
+  - GT-BD-008
+  - GT-BD-001
+  - GT-BD-005
+  - GT-BD-010
+  - GT-BD-011
+  - GT-BD-012
+  - GT-BD-009
+  - GT-BD-007
+  - GT-BD-006
+  - GT-BD-002
+
+controls:
+  - ONE_LOGICAL_FACT_ONE_AUTHORITY
+  - SOURCE_HISTORY_IMMUTABLE
+  - CURRENT_OVERLAY_NE_HISTORICAL_REWRITE
+  - PARENT_PASS_NE_CHILD_ACCEPT
+  - MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS
+  - QPS_ZERO_STEP_NE_APPLICATION_FAIL
+  - AUTHORITY_TRANSFER_FALSE
+  - FLEET_M4_WITHHELD
