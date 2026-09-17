@@ -2,8 +2,8 @@ schema: qps.mission_control.local_mission_current.v2
 mission_id: LM-11
 mission_name: QPS_WAVE_LINEAGE_DEPENDENCY_RECONSTRUCTION
 supersedes: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_v1.yaml
-as_of: '2026-09-17T03:25:00+02:00'
-state: ACTIVE_IMPLEMENTATION_MERGED_RUNTIME_DOV_WITHHELD
+as_of: '2026-09-17T03:28:00+02:00'
+state: ACTIVE_IMPLEMENTATION_MERGED_RUNTIME_DOV_WITHHELD_REPRODUCED
 authority_transfer: false
 formal_credit_delta: 0
 navigation_credit_delta: 0
@@ -30,19 +30,28 @@ qps_implementation:
   authority_transfer: false
   formal_credit_delta: 0
 
-hosted_proof_attempt:
-  workflow: QPS LM-11 Wave Lineage Proof
-  run: 35169896138
-  job: 105039094004
-  exact_head: b3a0dc0b8d1ae74ee168bfa5a7cadcdd0d2d8652
-  conclusion: failure
-  observed_steps: 0
-  job_log_available: false
-  annotation_count: 1
-  classification: INFRA_PREEXECUTION_ZERO_STEP
-  application_failure_claimed: false
-  measured_graph_claimed: false
-  artifact_claimed: false
+hosted_proof_attempts:
+  initial:
+    run: 35169896138
+    job: 105039094004
+    exact_head: b3a0dc0b8d1ae74ee168bfa5a7cadcdd0d2d8652
+    conclusion: failure
+    observed_steps: 0
+    job_log_available: false
+    annotation_count: 1
+    classification: INFRA_PREEXECUTION_ZERO_STEP
+  selector_hardened_repeat:
+    run: 35170208998
+    job: 105040059555
+    exact_head: 329d6e3946700052cd02bf851accb46706904d15
+    conclusion: failure
+    steps_population: null
+    classification: INFRA_PREEXECUTION_ZERO_STEP_REPRODUCED
+  disposition:
+    application_failure_claimed: false
+    measured_graph_claimed: false
+    artifact_claimed: false
+    reproduced_boundary: true
 
 qps_runtime_boundary:
   issue: 923
@@ -55,14 +64,15 @@ qps_runtime_boundary:
 qps_followup:
   pr: 1385
   base_sha: 7f6fdf8bf434bc3ea3dc5d7084f4878966d4a5b7
-  head_sha: 329d6e3946700052cd02bf851accb46706904d15
+  final_head_sha: 43c6585e227b50843a4110fd61edc377906b6d71
+  merge_sha: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b
   purpose: BIND_HOSTED_ZERO_STEP_DOV_BOUNDARY_AND_CONFIGURABLE_RUNNER
   receipt: triage/lm11/QPS_LM11_HOSTED_DOV_BOUNDARY_v1.yaml
   runner_selector: fromJSON(vars.CRYO_RECEIPT_RUNNER || '["ubuntu-latest"]')
-  state: OPEN_AT_REGISTRATION
+  state: MERGED_CONTROL_REPAIR_ZERO_CREDIT
 
 current_qps_context:
-  observed_main: 7f6fdf8bf434bc3ea3dc5d7084f4878966d4a5b7
+  observed_pre_followup_main: 7f6fdf8bf434bc3ea3dc5d7084f4878966d4a5b7
   latest_observed_wave_label: W265
   current_global_qtg_wave: W248
   current_global_first_red: ISSUE_923
@@ -189,7 +199,8 @@ DoD:
   start_here_navigation_checked_in: PASS
   proof_workflow_checked_in: PASS
   hosted_zero_step_classified: PASS
-  runner_selector_followup: ACTIVE_PR_1385
+  hosted_zero_step_reproduced: PASS
+  runner_selector_followup: PASS_MERGED_PR_1385
   exact_head_graph_population: NOT_EXECUTED
   measured_PR_crosswalk_coverage: NOT_EXECUTED
   bounded_DAG_runtime_proof: NOT_EXECUTED
@@ -198,7 +209,8 @@ DoD:
 DoV:
   missioncontrol_registration: PENDING_THIS_PR
   qps_static_implementation: PASS_MERGED_PR_1382
-  qps_hosted_execution: WITHHELD_ISSUE_923_ZERO_STEP
+  qps_runner_control_repair: PASS_MERGED_PR_1385
+  qps_hosted_execution: WITHHELD_ISSUE_923_ZERO_STEP_REPRODUCED
   qps_graph_population: WITHHELD_NOT_EXECUTED
   qps_pr_lineage_coverage: WITHHELD_NOT_EXECUTED
   qps_dag_runtime: WITHHELD_NOT_EXECUTED
