@@ -1,35 +1,24 @@
 schema: missioncontrol.golden_thread_architecture_bdq.v2
-as_of: '2026-09-17T03:53:00+02:00'
+as_of: '2026-09-17T04:14:00+02:00'
 authority_transfer: false
 parent_frontier: GBOGEB/pipeline-automation-hub#153
 canonical_bd_lifecycle_authority: GBOGEB/pipeline-automation-hub#85
 historian_authority: GBOGEB/pipeline-automation-hub#76
 architecture_frontend: mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md
 architecture_history_companion: mission-control/golden-thread/FEDERATION_GOLDEN_THREAD_ARCHITECTURE_HISTORY_v2.md
+fleet_frontier_control: mission-control/golden-thread/GOLDEN_THREAD_FLEET_FRONTIER_CURRENT_v0.1.yaml
+provenance_census: mission-control/golden-thread/GOLDEN_THREAD_PROVENANCE_CENSUS_CURRENT_v0.1.yaml
 qps_reconciliation:
   canonical_control: GBOGEB/cryoplant-project/controls/QPS_GOLDEN_THREAD_CURRENT_v0.1.yaml
   canonical_extension: GBOGEB/cryoplant-project/handover/qps_recursive/QTG_CURRENT_EXTENSIONS.yaml
-  evidence_wave: W266_IMMUTABLE_TEMPORAL_GOLDEN_THREAD
-  roundtrip_closure: GBOGEB/cryoplant-project/triage/w266/QPS_W266_GOLDEN_THREAD_ROUNDTRIP_CLOSURE_v1.yaml
   current_qps_wave: W267
   current_qps_first_red: GT_BDQ_0_EXACT_HEAD_HOSTED_REPLAY_PROOF
-  hosted_attempt_wave: W269
-  hosted_attempt_receipt: GBOGEB/cryoplant-project/triage/w269/QPS_W269_GOLDEN_THREAD_HOSTED_PROOF_ATTEMPT_v1.yaml
-  hosted_attempt_state: WITHHELD_INFRA_PREEXECUTION_ZERO_STEPS
+  current_successor_head: 6cd9ba59d8b064e613d06b598c4444cac3a0953c
+  current_successor_run: 35172801693
+  current_successor_attempts: 2
+  current_successor_jobs: [105047869395, 105048443279]
+  current_successor_state: WITHHELD_INFRA_PREEXECUTION_ZERO_STEPS
   hosted_attempt_rule: ZERO_STEP_NE_APPLICATION_FAIL
-  qps_provider_pr: 1386
-  qps_provider_merge: 11cdea5ef74389340c5f13ed7c866dd30cceef64
-  abacus_consumer_pr: 1258
-  abacus_consumer_merge: c86f9e4793062b5fab54291beefa74d6dfc6167e
-  codex_consumer_pr: 755
-  codex_consumer_merge: 4a8f5fcda38923a742b43f8425f0a5fa44ce0ec3
-  qps_reentry_pr: 1387
-  qps_reentry_merge: 158bad8f945a61a7c2f23c9fa103c1b9ac61c392
-  semantic_result:
-    qps_truth_delta: 0
-    unexplained_delta: 0
-    authority_transfer: false
-    engineering_credit_delta: 0
   reconciliation_rule: >-
     QPS owns its canonical Golden Thread DoV queue. MissionControl architecture
     BDQ may map to it but shall not renumber, reorder, compensate, or replace
@@ -38,12 +27,12 @@ qps_gt_bdq_crosswalk:
   GT_BDQ_0: {qps_item: EXACT_HEAD_HOSTED_REPLAY_PROOF, architecture_relation: HOSTED_EXECUTION_EVIDENCE, current_state: WITHHELD_INFRA_PREEXECUTION_ZERO_STEPS}
   GT_BDQ_1: {qps_item: REAL_TEMPORAL_MILESTONE_REBUILD_AS_OF, architecture_relation: GT-BD-013_CANDIDATE_TEMPORAL_TRANSITION_NOT_AUTOMATIC_CHILD_ACCEPT}
   GT_BDQ_2: {qps_item: REAL_CHECKPOINT_EQUIVALENCE, architecture_relation: GT-BD-001_CHECKPOINT_POLICY_EVIDENCE}
-  GT_BDQ_3: {qps_item: OPERATIONAL_SIDE_EFFECT_IDEMPOTENCY, architecture_relation: GT-BD-008_FULL_CONTROL_GAP}
-  GT_BDQ_4: {qps_item: P7_RENDITION_FAMILY, architecture_relation: GT-BD-007}
-  GT_BDQ_5: {qps_item: REVERSE_EXTRACTION_CANONICALISATION, architecture_relation: GT-BD-007}
-  GT_BDQ_6: {qps_item: P8_GITHUB_ARTIFACT_ROUNDTRIP, architecture_relation: GT-BD-008_FULL_CONTROL_GAP}
-  GT_BDQ_7: {qps_item: P9_FRESH_REGENERATION_ZERO_DELTA, architecture_relation: GT-BD-007_AND_GT-BD-008}
-  GT_BDQ_8: {qps_item: CHILD_GATE_ADVERSARIAL_PROOF, architecture_relation: GT-BD-003}
+  GT_BDQ_3: {qps_item: OPERATIONAL_SIDE_EFFECT_IDEMPOTENCY, architecture_relation: GT-BD-008_OPERATIONAL_MUTATION_GAP}
+  GT_BDQ_4: {qps_item: P7_RENDITION_FAMILY, architecture_relation: GT-BD-007_MISSIONCONTROL_BASELINE_ONLY}
+  GT_BDQ_5: {qps_item: REVERSE_EXTRACTION_CANONICALISATION, architecture_relation: GT-BD-007_MISSIONCONTROL_BASELINE_ONLY}
+  GT_BDQ_6: {qps_item: P8_GITHUB_ARTIFACT_ROUNDTRIP, architecture_relation: GT-BD-008_MISSIONCONTROL_BASELINE_ONLY}
+  GT_BDQ_7: {qps_item: P9_FRESH_REGENERATION_ZERO_DELTA, architecture_relation: GT-BD-007_AND_GT-BD-008_MISSIONCONTROL_BASELINE_ONLY}
+  GT_BDQ_8: {qps_item: CHILD_GATE_ADVERSARIAL_PROOF, architecture_relation: GT-BD-003_FLEET_PROTOTYPE_ONLY}
   GT_BDQ_9: {qps_item: FULL_CONTROL_CLOSURE, architecture_relation: FLEET_M4_INPUT_NOT_AUTOMATIC_PROMOTION}
 lifecycle:
   canonical_states: [TODO, ACTIVE, DONE, CONTROL, SUPERSEDED, INVALIDATED, UNKNOWN_NEEDS_READER]
@@ -55,38 +44,64 @@ maturity_scale:
   M2: documented_normative_partial_implementation
   M3: integrated_executing_governed_path
   M4: representative_fleet_scale_failure_hardened_multi_consumer
+hosted_frontier_evidence:
+  implementation_pr: 178
+  implementation_merge: c13df02d6568e335aa31b53e420c1dfaa0f1d564
+  exact_tested_head: c8070c5e4ade9dc3db7f896cde0044a54be3ede9
+  golden_thread_replay_run: 35173258171
+  golden_thread_replay_job: 105049279344
+  golden_thread_control_run: 35173258169
+  qps_triage_ultra_run: 35173258199
+  observed_workflows: 8
+  observed_pass: 8
+  fleet_M4: WITHHELD
 items:
   - id: GT-BD-001
     title: fleet checkpoint cadence storage retention policy
-    bd_state: TODO
+    bd_state: ACTIVE
     routing_disposition: EXECUTE_NOW
     maturity: M3
-    implemented_baseline: [temporal_checkpoint_construction, checkpoint_digest_binding, genesis_equals_checkpoint_replay_equivalence]
-    evidence_refs: [GBOGEB/pipeline-automation-hub#159, GBOGEB/pipeline-automation-hub#161]
+    implemented_baseline:
+      - temporal_checkpoint_construction
+      - checkpoint_digest_binding
+      - genesis_equals_checkpoint_replay_equivalence
+      - policy_triggers_EVENT_COUNT_REPLAY_COST_AGE_STORAGE_TIER
+      - history_truncation_forbidden
+      - checkpoint_ne_authority
+    evidence_refs: [GBOGEB/pipeline-automation-hub#159, GBOGEB/pipeline-automation-hub#161, GBOGEB/pipeline-automation-hub#178]
     qps_relation: GT_BDQ_2_REAL_CHECKPOINT_EQUIVALENCE
-    gap: bounded_checkpoint_semantics_done_but_fleet_operating_policy_missing
-    next_bounded_action: define cadence triggers retention budget storage tier and replay-cost thresholds without truncating ledger history
+    gap: measured fleet thresholds retention budget and storage economics remain unbound
+    next_bounded_action: bind measured fleet telemetry to cadence and storage-tier thresholds and repeat on distinct corpora
     victory_predicate: repeat on distinct corpora proves bounded replay cost while genesis replay remains possible and digest-equivalent
 
   - id: GT-BD-002
     title: downstream invalidation runtime and granularity
-    bd_state: TODO
+    bd_state: ACTIVE
     routing_disposition: EXECUTE_NOW
-    maturity: M0-M1
-    gap: no current executable downstream-cone invalidation implementation recovered in the verification pass
-    next_bounded_action: implement invalidation receipt with NODE DMAIC_CLUSTER DESCENDANT_CONE RENDITION_ONLY FULL_REPLAY scopes
+    maturity: M2-M3
+    evidence_refs: [GBOGEB/pipeline-automation-hub#178]
+    implemented_scopes: [NODE, DMAIC_CLUSTER, DESCENDANT_CONE, RENDITION_ONLY, FULL_REPLAY]
+    gap: hosted prototype passes but no representative live dependency cone has yet been recomputed by a real executor
+    next_bounded_action: bind one real dependency cone to recompute execution and close with zero stale survivors
     victory_predicate: complete affected-set receipt plus recomputation leaves zero stale survivors and preserves all non-compensating gates
 
   - id: GT-BD-003
     title: permissive and latched-inhibit executable gate semantics
-    bd_state: TODO
+    bd_state: ACTIVE
     routing_disposition: EXECUTE_NOW
-    maturity: M1-M2
-    evidence_refs: [mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md]
+    maturity: M3
+    evidence_refs: [mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md, GBOGEB/pipeline-automation-hub#178]
     qps_relation: GT_BDQ_8_CHILD_GATE_ADVERSARIAL_PROOF
-    gap: gate-spine contract exists but executable latch propagation reset and adversarial authority tests are not yet closed
-    next_bounded_action: implement explicit gate-state machine and receipts for bottom-up permissive propagation inhibit latch and governed reset
-    victory_predicate: tests prove inhibit persists until governed reset and parent PASS cannot compensate a child gate
+    implemented:
+      - bottom_up_child_permissives
+      - inhibit_latches
+      - permissive_cannot_compensate_latched_inhibit
+      - unauthorized_reset_fails_closed
+      - authorized_reset_requires_reason
+      - reset_clears_permissives_before_repropagation
+    gap: fleet state machine is hosted-proven but not yet bound to a real child-owned authority gate/reset receipt
+    next_bounded_action: bind one real child gate and exercise permissive inhibit authorized reset and repropagation
+    victory_predicate: real receipt proves inhibit persists until governed reset and parent PASS cannot compensate a child gate
 
   - id: GT-BD-004
     title: historical GitHub connector absence
@@ -100,81 +115,117 @@ items:
 
   - id: GT-BD-005
     title: reflexive DAG behavior under wave resequencing and replay
-    bd_state: TODO
+    bd_state: ACTIVE
     routing_disposition: EXECUTE_NOW
-    maturity: M1
-    gap: named historical concept lacks current executable semantics
-    next_bounded_action: define reflexive-node contract including read-set write-set cycle guard resequencing rule and replay identity
-    victory_predicate: bounded DAG fixture resequences without cycle creation authority inversion or replay-digest drift
+    maturity: M2-M3
+    evidence_refs: [GBOGEB/pipeline-automation-hub#178]
+    implemented:
+      - declared_reflexive_self_edge_only
+      - complete_unique_node_order
+      - dependency_order_validation
+      - semantic_graph_digest_invariant_across_valid_resequence
+    gap: hosted bounded semantics exist but real wave scheduler/replay integration is not yet bound
+    next_bounded_action: exercise one actual wave resequence with exact before-after semantic graph and replay receipts
+    victory_predicate: governed wave resequence creates no cycle authority inversion or semantic graph digest drift
 
   - id: GT-BD-006
     title: live GitHub occurrence importer with idempotency keys
-    bd_state: TODO
+    bd_state: ACTIVE
     routing_disposition: EXECUTE_NOW
-    maturity: M1-M2
-    evidence_refs: [GBOGEB/pipeline-automation-hub#154, GBOGEB/pipeline-automation-hub#159]
-    gap: cross-repo exact receipts exist but a canonical fleet live-occurrence importer is not yet bound
-    next_bounded_action: import one live issue-PR-receipt family with source SHA digest injection key and idempotency key
-    victory_predicate: repeated import produces zero duplicate obligations and exact same thread projection
+    maturity: M3
+    evidence_refs: [GBOGEB/pipeline-automation-hub#154, GBOGEB/pipeline-automation-hub#159, GBOGEB/pipeline-automation-hub#178]
+    implemented:
+      - connector_captured_QPS_issue_1390_and_PR_1407_family
+      - deterministic_source_identity
+      - payload_digest
+      - idempotency_key
+      - repeated_import_zero_duplicate_obligations
+      - repeated_import_identical_projection_digest
+      - idempotency_conflict_fail_closed
+    gap: bounded live-capture fixture is hosted-proven but direct connector adapter durable import registry and multi-repo intake remain open
+    next_bounded_action: ingest a second independent live occurrence family through a connector adapter and persist the import receipt
+    victory_predicate: second family repeat produces zero duplicate obligations and exact same projection with durable receipt identity
 
   - id: GT-BD-007
     title: Office and rendition-family semantic extraction and zero-delta proof
-    bd_state: TODO
-    routing_disposition: DEFERRED_BY_DEPENDENCY
-    maturity: M1-M2
+    bd_state: DONE
+    routing_disposition: CONTROL_WATCH
+    maturity: M3
+    evidence_refs:
+      - GBOGEB/pipeline-automation-hub@6e802cfb09db3ecaae3994583eeb4cfd05905ced
+      - GBOGEB/pipeline-automation-hub#177
+      - GBOGEB/pipeline-automation-hub@9e8d08ca1f3297a3864369c73b5f0f9a01f38838
+    implemented:
+      - JSON_YAML_MD_HTML_DOCX_XLSX_PPTX_semantic_family
+      - governed_OOXML_semantic_carrier_and_extractor
+      - semantic_delta_0
+      - unexplained_semantic_delta_0
+      - deterministic_bundle_identity
+      - GitHub_fetch_and_reextract
+    explicit_nonclaims: [visual_fidelity_credit_false, qps_GT_BDQ_4_5_7_credit_false]
     qps_relations: [GT_BDQ_4_P7_RENDITION_FAMILY, GT_BDQ_5_REVERSE_EXTRACTION_CANONICALISATION, GT_BDQ_7_P9_FRESH_REGENERATION_ZERO_DELTA]
-    dependencies_qps: [GT_BDQ_0, GT_BDQ_1, GT_BDQ_2, GT_BDQ_3]
-    gap: QPS canonical queue keeps P7 and reverse extraction open after the hosted temporal/idempotency proofs
-    next_bounded_action: consume QPS GT_BDQ_4 and GT_BDQ_5 receipts once their predecessors close
-    victory_predicate: canonical extract of each admitted rendition equals canonical truth with metadata exclusions explicitly declared and repeat regeneration proves zero unexplained delta
+    next_bounded_action: CONTROL watch and consume only if a new format requirement or regression appears
+    victory_predicate: preserve semantic zero-delta and no authority inversion on governed changes
 
   - id: GT-BD-008
     title: external side-effect and artifact roundtrip control
     bd_state: ACTIVE
-    routing_disposition: WORK_ORDER_CHILD
-    maturity: M2-M3
+    routing_disposition: EXECUTE_NOW
+    maturity: M3
     implemented_baseline:
       - QPS_ABACUS_CODEX_QPS_static_receipt_loop
-      - qps_truth_delta_0
-      - unexplained_delta_0
-      - authority_transfer_false
+      - seven_format_Git_object_roundtrip
+      - exact_blob_tree_commit_identity
+      - GitHub_fetch_reextract_zero_semantic_delta
+      - no_ref_update
     evidence_refs:
       - GBOGEB/cryoplant-project/triage/w266/QPS_W266_GOLDEN_THREAD_ROUNDTRIP_CLOSURE_v1.yaml
-      - GBOGEB/cryoplant-project#1386
-      - GBOGEB/ABACUS#1258
-      - GBOGEB/CODEX#755
+      - GBOGEB/pipeline-automation-hub#177
+      - GBOGEB/pipeline-automation-hub@9e8d08ca1f3297a3864369c73b5f0f9a01f38838
     qps_open_relations: [GT_BDQ_3_OPERATIONAL_SIDE_EFFECT_IDEMPOTENCY, GT_BDQ_6_P8_GITHUB_ARTIFACT_ROUNDTRIP, GT_BDQ_7_P9_FRESH_REGENERATION_ZERO_DELTA]
-    gap: static cross-repo receipt loop is proven but operational idempotency consumer execution and artifact retrieve-regenerate proof remain open
-    next_bounded_action: close the corresponding canonical QPS GT_BDQ_3_6_7 receipts without reclassifying the W266 static loop as full runtime control
-    victory_predicate: identical external transaction creates no duplicate side effect and bounded artifacts survive publish-retrieve-regenerate with zero unexplained semantic delta
+    gap: artifact roundtrip is proven in MissionControl but a repeated real mutating external transaction with no duplicate effect remains open
+    next_bounded_action: execute one bounded reversible or naturally idempotent real mutation twice under the same idempotency key and bind exact side-effect receipt
+    victory_predicate: repeated identical external transaction creates no duplicate effect and re-entry remains zero unexplained semantic delta
 
   - id: GT-BD-009
     title: mechanism-ladder provenance authority
-    bd_state: TODO
-    routing_disposition: UNKNOWN_NEEDS_READER
-    maturity: M2
-    evidence_refs: [mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md]
-    gap: DEP_REG_SUB_ADAPTER_LAB_FORK is normative but current CODEX ADR-0001 is runtime-debug governance not verified ladder origin
-    next_bounded_action: locate or create the canonical provenance-binding ADR or registry for the mechanism ladder
-    victory_predicate: one exact source path and SHA is declared canonical and all downstream references resolve to it
+    bd_state: DONE
+    routing_disposition: CONTROL_WATCH
+    maturity: M3
+    evidence_refs:
+      - mission-control/golden-thread/FEDERATION_NATIVE_GOLDEN_THREAD_v1.md
+      - mission-control/golden-thread/MECHANISM_LADDER_PROVENANCE_BINDING_v1.md
+      - mission-control/golden-thread/GOLDEN_THREAD_PROVENANCE_CENSUS_CURRENT_v0.1.yaml
+    current_adoption_authority: mission-control/golden-thread/MECHANISM_LADDER_PROVENANCE_BINDING_v1.md
+    historical_origin: UNKNOWN_NEEDS_READER
+    rejected_origin: GBOGEB/CODEX/governance/adr/ADR-0001-runtime-debug-governance.md
+    note: DONE_means_current_adoption_provenance_is_bound_not_historical_origin_recovered
+    next_bounded_action: CONTROL watch; amend only on recovered earlier provenance or governed mechanism change
+    victory_predicate: current references resolve to one adoption authority and historical-origin uncertainty remains explicit
 
   - id: GT-BD-010
     title: canonical federation reference registry and exact repo census
-    bd_state: UNKNOWN_NEEDS_READER
+    bd_state: ACTIVE
     routing_disposition: UNKNOWN_NEEDS_READER
-    maturity: UNKNOWN
-    gap: approximately_40_repo claim not independently verified and root ABACUS registry points to a Line-S-specific registry
-    next_bounded_action: locate all candidate federation registries and produce an exact unique repository census with authority classification
-    victory_predicate: canonical registry selected exact count reproduced zero duplicate repository identities
+    maturity: M2
+    evidence_refs: [mission-control/golden-thread/GOLDEN_THREAD_PROVENANCE_CENSUS_CURRENT_v0.1.yaml]
+    observed_account_repository_universe_count: 83
+    observed_second_page_count: 0
+    historical_approximately_40_account_count: SUPERSEDED
+    canonical_federation_registry: UNKNOWN_NEEDS_READER
+    governed_federation_subset_count: UNKNOWN_NEEDS_READER
+    gap: exact account universe is known but federation membership subset and canonical registry are not
+    next_bounded_action: classify the 83-repository universe by federation membership mechanism authority role and registry evidence
+    victory_predicate: canonical registry selected exact governed subset count reproduced zero duplicate repository identities
 
   - id: GT-BD-011
     title: fleet-wide historical bootstrap
     bd_state: TODO
     routing_disposition: DEFERRED_BY_DEPENDENCY
     maturity: M1-M2
-    dependencies: [GT-BD-006]
-    gap: bounded cold-tail bootstrap and one static QPS federation receipt loop are proven but no fleet live importer is canonical
-    next_bounded_action: after live importer remains lossless expand bootstrap by bounded repo batches
+    dependencies: [GT-BD-006_SECOND_FAMILY_AND_DURABLE_REGISTRY]
+    gap: bounded cold-tail bootstrap static QPS federation receipt loop and one live occurrence-family importer are proven but fleet intake durability is not
+    next_bounded_action: after second-family durable importer proof expand bootstrap by bounded repo batches
     victory_predicate: each batch retains 100_percent_lineage and zero authority inversion with deterministic replay
 
   - id: GT-BD-012
@@ -194,25 +245,25 @@ items:
     evidence_refs: [mission-control/golden-thread/GOLDEN_THREAD_TEMPORAL_CONTRACT_v1_1.json]
     qps_relation: >-
       QPS GT_BDQ_1 may provide a real temporal k-to-k-plus-1 transition, but it
-      shall count for this architecture item only if the transition is caused by
-      a real child-owned ACCEPT with accepted authoritative delta and resulting
-      SSOT digest. No QPS wave identifier is preallocated here.
+      shall count for this architecture item only if caused by a real child-owned
+      ACCEPT with accepted authoritative delta and resulting SSOT digest. No QPS
+      wave identifier is preallocated here.
     gap: contract behavior is executable in tests but no real accepted authoritative child delta is yet bound
     next_bounded_action: locate one real child-owned ACCEPT with accepted delta digest resulting SSOT digest exact Git anchor and replayable patch lineage
-    victory_predicate: child authority ACCEPT advances k exactly once while e advances normally and genesis/checkpoint replay reconstructs the identical resulting SSOT digest
+    victory_predicate: child authority ACCEPT advances k exactly once while e advances normally and genesis/checkpoint replay reconstructs identical resulting SSOT digest
 priority_order:
   - GT-BD-006
   - GT-BD-002
   - GT-BD-003
   - GT-BD-013
   - GT-BD-008
-  - GT-BD-007
   - GT-BD-001
   - GT-BD-005
-  - GT-BD-009
   - GT-BD-010
   - GT-BD-011
   - GT-BD-012
+  - GT-BD-009
+  - GT-BD-007
 controls:
   - ONE_LOGICAL_FACT_ONE_AUTHORITY
   - SOURCE_HISTORY_IMMUTABLE
@@ -223,7 +274,11 @@ controls:
   - ACCEPT_WITH_AUTHORITATIVE_DELTA_IS_ONLY_CHILD_PATH_THAT_ADVANCES_K
   - CONTROL_HISTORY_MAY_ADVANCE_E_WITHOUT_ADVANCING_K
   - GENERATED_RENDITION_NE_SSOT
-  - STATIC_CROSS_REPO_RECEIPT_LOOP_NE_OPERATIONAL_IDEMPOTENCY
+  - MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS
+  - QPS_ZERO_STEP_NE_APPLICATION_FAIL
+  - OFFICE_SEMANTIC_PASS_NE_VISUAL_FIDELITY_PASS
+  - ACCOUNT_REPOSITORY_UNIVERSE_NE_FEDERATION_MEMBERSHIP
+  - CURRENT_ADOPTION_AUTHORITY_NE_HISTORICAL_ORIGIN
   - NONAUTHORITATIVE_ZERO_DELTA_ROUNDTRIP_NE_AUTHORITATIVE_ACCEPT
   - QPS_GT_BDQ_0_9_AUTHORITY_REMAINS_QPS
   - FLEET_M4_WITHHELD_UNTIL_DISTINCT_MULTI_REPO_REPEAT
