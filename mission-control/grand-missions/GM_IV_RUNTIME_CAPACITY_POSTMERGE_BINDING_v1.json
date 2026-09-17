@@ -1,0 +1,63 @@
+{
+  "schema": "qps.gm_iv_runtime_capacity_postmerge_binding.v1",
+  "mission_id": "GM-IV",
+  "state": "RUNTIME_PROVEN_CAPABILITY_CAPACITY",
+  "measurement_scope": "CAPABILITY_COVERAGE_NOT_CONCURRENCY_CAPACITY",
+  "capacity_class": "RUNTIME_PROVEN",
+  "required_coverage": "8_OF_8",
+  "runtime_proven_capability_count": 8,
+  "runtime_proven_ratio": 1.0,
+  "distinct_predeclared_hosts": 8,
+  "proof": {
+    "pull_request": 173,
+    "event_base_sha": "f422f4e85efb64c997696f38d356f4939d1bf9e3",
+    "exact_head_sha": "9cdb8fe35e15b675f3fe1b2492c16f9785fc3115",
+    "workflow_run_id": 35171901674,
+    "job_id": 105045151537,
+    "runner_id": 1000299999,
+    "runner_name": "GitHub Actions 1000299999",
+    "artifact_id": 10476967287,
+    "artifact_name": "gm-iv-runtime-capacity-v2-9cdb8fe35e15b675f3fe1b2492c16f9785fc3115",
+    "artifact_digest": "sha256:7a5a0910db8639b642d8e63b4e37169d636ee3e6b7fc2ba0da93789ad183fc68",
+    "merge_sha": "ea7a9818a57d5078bc26e35ed2d1f15d79657338",
+    "postmerge_observed_master_sha": "07730e40f2eadc17840c702d54fed927a137d004"
+  },
+  "same_head_control_evidence": {
+    "repeat_control_result": "PASS_POST_ACTIVE8_REPEAT_CONTROL",
+    "repeat_control_check_count": 26,
+    "frontier_runtime_probe_coverage_ratio": 1.0,
+    "structural_capacity_result": "PASS"
+  },
+  "capability_hosts": {
+    "COMMAND": "U03",
+    "TECHNICAL_BOUNDARY": "U08",
+    "RECON": "U07",
+    "ANALYSIS": "U05",
+    "RUNTIME": "U04",
+    "QA": "U06",
+    "BUILD_REPAIR_RESERVE": "S02",
+    "GOVERNANCE": "U01"
+  },
+  "negative_evidence_retained": {
+    "pull_request": 158,
+    "reviewed_head_sha": "20754788f2a95887f3156e1cc16d91559fb64871",
+    "disposition": "CLOSED_UNMERGED_NEGATIVE_EVIDENCE",
+    "not_compensated": true
+  },
+  "operational_availability": "DEFER_EXTERNAL_NONCOMPENSATING_GATE",
+  "operational_availability_blocker": "GBOGEB/cryoplant-project#923",
+  "gm_iv_canonical_state": "ACTIVE_8_OF_8",
+  "gm_v_state": "HELD",
+  "gm_v_launch_authorized": false,
+  "concurrency_capacity_claimed": false,
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "hard_gate_compensation_allowed": false,
+  "invariants": [
+    "SERIAL_8_OF_8_CAPABILITY_COVERAGE_IS_NOT_CONCURRENCY_CAPACITY",
+    "RUNTIME_PROVEN_IS_NOT_OPERATIONALLY_AVAILABLE_WHILE_NONCOMPENSATING_VETO_EXISTS",
+    "PUBLIC_MISSIONCONTROL_PASS_DOES_NOT_COMPENSATE_PRIVATE_QPS_923",
+    "GM_V_REQUIRES_SEPARATE_GOVERNOR_LAUNCH",
+    "PR_158_NEGATIVE_EVIDENCE_REMAINS_IN_LINEAGE"
+  ]
+}
