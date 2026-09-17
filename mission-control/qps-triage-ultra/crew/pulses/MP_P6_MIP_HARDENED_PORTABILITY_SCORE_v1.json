@@ -1,0 +1,83 @@
+{
+  "schema": "missioncontrol.crew.mp_p6_mip_hardened_portability_score.v1",
+  "pulse": "MP_P6_TWO_CONSUMER_PORTABILITY",
+  "classification": "PASS_MIP_HARDENED_TWO_CONSUMER_PORTABILITY",
+  "mip": {
+    "Modernize": {
+      "result": "PASS",
+      "change": "replaced ad-hoc receipt assertions with one reusable fail-closed receipt-set validator",
+      "validator_ref": "aa3db4cad72472fce18bb8e489f5bb7b39af4c01"
+    },
+    "Innovate": {
+      "result": "PASS",
+      "change": "added canonical semantic receipt-set hashing plus adversarial authority/ref/duplicate/digest controls",
+      "self_test_run": 35174230403,
+      "self_test_artifact_id": 10478365447,
+      "self_test_artifact_digest": "sha256:3187246b07d9360691e3ec8c61a20b4e0693d7a70b587de4693797ee203235bd"
+    },
+    "Perpetuate": {
+      "result": "PASS_FOR_NEW_CONSUMER_PATH",
+      "change": "CoolProp consumed the merged validator unchanged and emitted individual plus aggregate immutable receipts",
+      "consumer_run": 35174335635,
+      "aggregate_artifact_id": 10477852655,
+      "aggregate_artifact_digest": "sha256:335b6d7fde82e250c6b63e14b14b7ec536a23af27a4abe283534094fc332b6f7",
+      "limitation": "gg_MATH historical receipts predate MIP hardening and are not retroactively relabeled as hardened"
+    }
+  },
+  "score": {
+    "target_skill_clock": "SKILL_P5",
+    "metric": "independent_consumer_repositories_with_exact_pinned_receipts",
+    "prediction": 2,
+    "actual": 2,
+    "absolute_error": 0,
+    "status": "SCORED_EXACT_HIT",
+    "consumers": ["GBOGEB/gg_MATH", "GBOGEB/CoolProp"]
+  },
+  "hardening_kpis": {
+    "independent_consumer_repositories": 2,
+    "canonical_skills_resolved_in_new_consumer": 3,
+    "new_consumer_receipt_count": 3,
+    "new_consumer_aggregate_receipt_count": 1,
+    "deterministic_replay_equal": true,
+    "negative_controls_defined": 4,
+    "negative_controls_fail_closed": 4,
+    "copied_skill_body_count": 0,
+    "authority_inversion_count": 0,
+    "historical_actuals_relabelled_as_hardened": 0
+  },
+  "dmaic": {
+    "Define": "portability and recurrence hardening, not another same-repository repetition",
+    "Measure": "two independent consumer repositories; new consumer resolves 3/3 skills; four hardening negative controls fail closed",
+    "Analyze": "the prior structural gap was duplicated assertion logic and lack of a reusable deterministic aggregate proof",
+    "Improve": "one validator plus canonical aggregate digest is now consumed unchanged by a second repository",
+    "Control": "historical predictions remain immutable; hardening is prospective; calibration eligibility is separated from probability-model activation"
+  },
+  "calibration_gate": {
+    "n_scored_after_this_pulse": 5,
+    "minimum_history_reached": true,
+    "probability_calibration_applied": false,
+    "next_requirement": "freeze and validate a governed calibration model before emitting calibrated probability"
+  },
+  "governor_carryover": {
+    "private_qps_gt_bdq_0": "RED_BLOCKED_ON_923",
+    "private_qps_hosted_seven_file_actual": "UNOBSERVED",
+    "watch_923_authorized": false,
+    "zero_step_is_code_evidence": false,
+    "cross_lineage_compensation_allowed": false,
+    "cross_clock_compensation_allowed": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0
+  },
+  "next_frozen_horizon": {
+    "SKILL_P6": {
+      "metric": "independent_consumer_repositories_with_exact_pinned_receipts_and_entrypoint_digest",
+      "prediction": 2,
+      "state": "FROZEN_UNOBSERVED"
+    },
+    "SKILL_P7": {
+      "metric": "independent_consumer_repositories_passing_fresh_mip_hardened_receipt_validation",
+      "prediction": 2,
+      "state": "FROZEN_UNOBSERVED"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.crew.skill_n_plus_2_ledger.v1",
-  "as_of": "2026-09-17T03:20:00+02:00",
+  "as_of": "2026-09-17T04:28:00+02:00",
   "clock": {
     "kind": "pulse",
     "spacing": "ordinal"
@@ -135,17 +135,77 @@
         ]
       },
       "status": "SCORED_EXACT_HIT"
-    }
-  ],
-  "pending": [
+    },
     {
       "issued_at_pulse": "SKILL_P3",
       "target_pulse": "SKILL_P5",
       "metric": "independent_consumer_repositories_with_exact_pinned_receipts",
       "prediction": 2,
       "basis": "SKILL_P3 proved a complete three-skill receipt set in one consumer; the next maturity step forecasts exact-pinned receipt portability across two independently governed consumer repositories without copying skill bodies or transferring authority",
-      "actual": null
-    },
+      "actual": 2,
+      "absolute_error": 0,
+      "observed_evidence": {
+        "mip_hardening": {
+          "repo": "GBOGEB/pipeline-automation-hub",
+          "pull_request": 184,
+          "head": "bc0abc588f460d40b747a07c7d5bb3aa9c678e41",
+          "merge_commit": "aa3db4cad72472fce18bb8e489f5bb7b39af4c01",
+          "workflow_run": 35174230403,
+          "workflow_conclusion": "success",
+          "proof_artifact_id": 10478365447,
+          "proof_artifact_digest": "sha256:3187246b07d9360691e3ec8c61a20b4e0693d7a70b587de4693797ee203235bd"
+        },
+        "consumers": [
+          {
+            "repo": "GBOGEB/gg_MATH",
+            "pull_request": 26,
+            "consumer_head": "e6f30e7aa5773009397ceeb939eb02f13a772031",
+            "merge_commit": "48c2b6fa387721c530c7109345820bdcac425c69",
+            "workflow_run": 35169919587,
+            "skills_ref": "905a12596412afacd3cd7f3c3f6891ac026abf8f",
+            "receipt_count": 3,
+            "historical_receipts_predate_mip_hardening": true
+          },
+          {
+            "repo": "GBOGEB/CoolProp",
+            "pull_request": 14,
+            "consumer_head": "b7e13733a4e4b65fb3851fbd8b14b2626f7cc264",
+            "merge_commit": "36ebf996cb5e0a93d77029e372d931ca916f70ff",
+            "workflow_run": 35174335635,
+            "workflow_conclusion": "success",
+            "missioncontrol_hardening_ref": "aa3db4cad72472fce18bb8e489f5bb7b39af4c01",
+            "skills_ref": "905a12596412afacd3cd7f3c3f6891ac026abf8f",
+            "resolution_mode": "mip_hardened_consumer",
+            "receipt_count": 3,
+            "aggregate_artifact_id": 10477852655,
+            "aggregate_artifact_digest": "sha256:335b6d7fde82e250c6b63e14b14b7ec536a23af27a4abe283534094fc332b6f7",
+            "receipt_artifacts": [
+              {
+                "skill": "math",
+                "artifact_id": 10477892551,
+                "artifact_digest": "sha256:c680922c469a5fa54bac4b7274394882a7f90c28970e5814dddc1541a4553899"
+              },
+              {
+                "skill": "plots",
+                "artifact_id": 10478430352,
+                "artifact_digest": "sha256:eca4c646fc2a9d276eed324b771f0fee3df6d94834b58eb7b1b8dd2a9ba1483f"
+              },
+              {
+                "skill": "math-plots",
+                "artifact_id": 10477479805,
+                "artifact_digest": "sha256:2321296c42711326391086ba2d57f6a11a985e5c48cba2f04a5a5749c26f7b50"
+              }
+            ]
+          }
+        ],
+        "independent_consumer_repository_count": 2,
+        "copied_skill_body_count": 0,
+        "authority_inversion_count": 0
+      },
+      "status": "SCORED_EXACT_HIT"
+    }
+  ],
+  "pending": [
     {
       "issued_at_pulse": "SKILL_P4",
       "target_pulse": "SKILL_P6",
@@ -153,17 +213,30 @@
       "prediction": 2,
       "basis": "SKILL_P4 repeated the full digest-bearing three-skill receipt contract in one consumer at a fresh exact head; the next N+2 maturity step forecasts portability of that stronger contract across two independently governed consumer repositories",
       "actual": null
+    },
+    {
+      "issued_at_pulse": "SKILL_P5",
+      "target_pulse": "SKILL_P7",
+      "metric": "independent_consumer_repositories_passing_fresh_mip_hardened_receipt_validation",
+      "prediction": 2,
+      "basis": "SKILL_P5 proved two-repository portability, but only the new CoolProp actual was produced after MIP hardening; the next maturity step forecasts fresh hardened receipt-set validation in both independent consumers without retroactively relabeling historical gg_MATH receipts",
+      "actual": null
     }
   ],
   "calibration": {
-    "state": "WARM_START_INSUFFICIENT_SCORED_HISTORY",
-    "n_scored": 4,
+    "state": "MINIMUM_HISTORY_REACHED_CALIBRATION_MODEL_NOT_APPLIED",
+    "n_scored": 5,
     "last_absolute_error": 0,
-    "probability_calibration_applied": false
+    "minimum_history_reached": true,
+    "probability_calibration_applied": false,
+    "reason_not_applied": "minimum sample count permits a calibration step but no governed probability model has yet been frozen and validated"
   },
   "private_qps_mp_p1": {
     "hosted_seven_file_actual": "UNOBSERVED",
-    "compensation_allowed": false
+    "compensation_allowed": false,
+    "gt_bdq_0": "RED_BLOCKED_ON_923",
+    "watch_923_authorized": false,
+    "zero_step_is_code_evidence": false
   },
   "authority_transfer": false
 }
