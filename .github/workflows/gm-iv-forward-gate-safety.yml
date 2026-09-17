@@ -40,7 +40,7 @@ jobs:
           test "$actual" = "$expected"
           echo "PASS_EXACT_SOURCE_HEAD=$actual"
 
-      - name: Execute stage-aware forward-gate safety proof
+      - name: Execute lifecycle-aware forward-gate safety proof
         shell: bash
         run: |
           python3 mission-control/grand-missions/test_gm_iv_forward_gate_safety.py \
@@ -76,22 +76,31 @@ jobs:
           assert gm4['state'] in {
               'STAGED_ACTIVE_PILOT_2_OF_8',
               'STAGED_ACTIVE_RECON_4_OF_8',
+              'ACTIVE_8_OF_8',
           }
           assert gm4['children'] == []
           assert gm4['controlled_pilot_frontiers'] == ['GM-IV-F01', 'GM-IV-F03']
           assert gm4['reference_frontiers'] == ['GM-IV-F02', 'GM-IV-F04']
-          assert gm4['unfilled_frontier_slots'] == [
-              'GM-IV-F05', 'GM-IV-F06', 'GM-IV-F07', 'GM-IV-F08'
-          ]
-          if gm4['state'] == 'STAGED_ACTIVE_RECON_4_OF_8':
-              assert gm4['activation_stage'] == 'RECON_4_OF_8'
-              assert gm4['recon_4_of_8_evidence']['decision'] == \
-                  'READY_FOR_SEPARATE_RECON_4_PROMOTION_PR'
+          if gm4['state'] == 'ACTIVE_8_OF_8':
+              assert gm4['activation_stage'] == 'ACTIVE_8_OF_8'
+              assert gm4['candidate_frontiers'] == [f'GM-IV-F{i:02d}' for i in range(1, 9)]
+              assert gm4['unfilled_frontier_slots'] == []
+              assert gm4['active_8_of_8_evidence']['result'] == 'PASS'
+              assert gm4['active_8_of_8_evidence']['decision'] == 'READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR'
+              print('PASS_CURRENT_GM_IV_POST_ACTIVE8_CONTROLLED_BOUNDARY')
           else:
-              assert gm4['activation_stage'] == 'PILOT_2_OF_8'
+              assert gm4['unfilled_frontier_slots'] == [
+                  'GM-IV-F05', 'GM-IV-F06', 'GM-IV-F07', 'GM-IV-F08'
+              ]
+              if gm4['state'] == 'STAGED_ACTIVE_RECON_4_OF_8':
+                  assert gm4['activation_stage'] == 'RECON_4_OF_8'
+                  assert gm4['recon_4_of_8_evidence']['decision'] == \
+                      'READY_FOR_SEPARATE_RECON_4_PROMOTION_PR'
+              else:
+                  assert gm4['activation_stage'] == 'PILOT_2_OF_8'
+              print('PASS_CURRENT_GM_IV_PRE_ACTIVE8_CONTROLLED_BOUNDARY')
           assert gm5['state'] == 'HELD'
           assert gm5['children'] == []
-          print('PASS_CURRENT_GM_IV_CONTROLLED_BOUNDARY')
           PY
 
       - name: Upload exact-SHA safety proof
