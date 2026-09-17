@@ -28,7 +28,8 @@ jobs:
             mission-control/golden-thread/golden_thread.py \
             mission-control/golden-thread/checkpoint_replay.py \
             mission-control/golden-thread/rendition_family.py \
-            mission-control/golden-thread/side_effect_receipts.py
+            mission-control/golden-thread/side_effect_receipts.py \
+            mission-control/golden-thread/office_semantic_carrier.py
 
       - name: Run Golden Thread unit tests
         run: |
@@ -110,3 +111,12 @@ jobs:
         run: |
           python -m unittest -v \
             test_live_side_effect_receipt.LiveSideEffectReceiptTests.test_live_github_receipt_replays_without_duplicate_emission
+
+      - name: Prove DOCX XLSX PPTX semantic carrier zero delta
+        working-directory: mission-control/golden-thread
+        run: |
+          python -m unittest -v \
+            test_office_semantic_carrier.OfficeSemanticCarrierTests.test_docx_xlsx_pptx_extract_same_canonical_truth \
+            test_office_semantic_carrier.OfficeSemanticCarrierTests.test_unrelated_office_metadata_does_not_change_semantic_identity \
+            test_office_semantic_carrier.OfficeSemanticCarrierTests.test_identical_reinjection_is_byte_preserving_replay \
+            test_office_semantic_carrier.OfficeSemanticCarrierTests.test_truth_tamper_fails_closed
