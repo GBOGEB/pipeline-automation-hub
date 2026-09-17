@@ -1,0 +1,135 @@
+{
+  "schema": "missioncontrol.lm11.qps_wave_graph_contract.v2",
+  "mission_id": "LM-11",
+  "status": "CURRENT_CONTRACT_RUNTIME_MEASUREMENT_WITHHELD",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "provider": {
+    "repo": "GBOGEB/cryoplant-project",
+    "graph_engine": "tools/triage/qps_wave_lineage_graph.py",
+    "hmi_generator": "tools/triage/qps_wave_lineage_html.py",
+    "start_here": "docs/QPS_WAVE_LINEAGE_START_HERE.md",
+    "proof_workflow": ".github/workflows/qps-lm11-wave-lineage.yml",
+    "implementation_pr": 1382,
+    "implementation_merge": "f6eb1f6344e9953c095cd4dfadcf89991499f791",
+    "runner_control_pr": 1385,
+    "runner_control_merge": "cbf09012b31c997cc0dcd245bb7f8c3e56bd601b"
+  },
+  "authority_model": {
+    "missioncontrol_role": "MISSION_IDENTITY_ORCHESTRATION_AND_INDEPENDENT_RECEIPT_VALIDATION",
+    "qps_role": "CHILD_GRAPH_EXECUTION_AND_ENGINEERING_AUTHORITY",
+    "generated_graph_role": "DIAGNOSTIC_NAVIGATION_VIEW",
+    "generated_hmi_role": "READ_ONLY_PROJECTION",
+    "hash_change_promotes_truth": false,
+    "merge_promotes_engineering_truth": false,
+    "parent_pass_implies_child_accept": false
+  },
+  "identity": {
+    "mission_key": ["mission_id"],
+    "wave_key": ["namespace", "wave_label"],
+    "update_key": ["wave_label", "update_type", "update_index"],
+    "transaction_key": ["github_pr", "head_or_merge_sha"],
+    "temporal_coordinates": ["event_sequence", "wave", "pulse", "pr", "run", "release"],
+    "ancestry_coordinates": ["previous_event", "previous_in_lane", "causal_parent", "semantic_predecessor", "prior_current", "source_base_sha"],
+    "guard": "PREVIOUS_EVENT_NE_CAUSAL_PARENT_NE_SEMANTIC_PREDECESSOR_NE_PRIOR_CURRENT"
+  },
+  "graph_layers": {
+    "chronicle": {
+      "purpose": "append_only_temporal_events",
+      "typical_edges": ["PRECEDES"]
+    },
+    "semantic_lineage": {
+      "purpose": "current_historical_correction_supersession_alias_relationships",
+      "typical_edges": ["SUPERSEDES", "CORRECTS", "REVISITS", "ALIASES"]
+    },
+    "active_wireframe": {
+      "purpose": "current_accepted_navigation_projection",
+      "historical_provenance_reachable": true,
+      "destructive_delete": false
+    }
+  },
+  "node_types": [
+    "MISSION", "FAMILY", "WAVE", "PULSE", "CORRECTION", "REVISIT", "P3R_CYCLE",
+    "PR", "COMMIT", "ISSUE", "CONTROL_SURFACE", "WORKFLOW", "RUNTIME_RECEIPT",
+    "ARTIFACT", "BINARY_HUMAN_OUT", "HYBRID_CONTROL", "MACHINE_STATE", "CODE_CORE",
+    "ENTRY_POINT", "EXIT_POINT", "EXTERNAL_REPO"
+  ],
+  "edge_types": [
+    "CONTAINS", "PRECEDES", "PARENT_OF", "DEPENDS_ON", "SUPERSEDES", "CORRECTS",
+    "REVISITS", "ALIASES", "IMPLEMENTED_BY", "MERGED_AS", "REFERENCES", "READS_FROM",
+    "WRITES_TO", "BLOCKED_BY", "REQUIRES", "FEEDS", "VALIDATES", "GOVERNS",
+    "FEDERATES_TO", "RETURNED_AS", "REENTERS", "PRODUCES", "CONSUMES",
+    "PARALLEL_NONCOMPENSATING", "PROMOTES_TO_CURRENT", "DOES_NOT_IMPLY"
+  ],
+  "artifact_classes": {
+    "BINARY_HUMAN_OUT": ["docx", "pdf", "xlsx", "pptx", "html"],
+    "HYBRID_CONTROL": ["yaml", "yml", "md", "csv", "tsv"],
+    "MACHINE_STATE": ["json"],
+    "CODE_CORE": ["py", "ts", "js", "mjs", "cjs", "sh", "ps1"],
+    "WORKFLOW": ["github_actions_yaml"]
+  },
+  "entry_points": [
+    "handover/qps_recursive/GLOB.yaml",
+    "handover/qps_recursive/QTG_CURRENT.yaml",
+    "controls/QPS_TRIAGE_CONTROL_PLANE_v1.yaml",
+    "controls/QPS_WAVE_LINEAGE_NORMALIZATION_v0.1.yaml",
+    "controls/QPS_CANONICAL_LINEAGE_RESOLVER_v1.json",
+    "controlled_source_return",
+    "external_federation_receipt",
+    "historical_reentry"
+  ],
+  "exit_points": [
+    "ACCEPT", "REJECT", "DEFER", "PROMOTED_STATE", "CONTROL", "CURRENT_POINTER_UPDATE",
+    "RUNTIME_RECEIPT", "BINARY_VIEW", "FEDERATION_RETURN", "NEXT_PULSE_OR_WAVE"
+  ],
+  "bounded_dags": {
+    "execution": {
+      "acyclic_required": true,
+      "canonical_shape": ["WAVE", "UPDATE_OR_PR", "COMMIT_OR_ARTIFACT", "RUNTIME_RECEIPT", "CHILD_DISPOSITION"]
+    },
+    "supersession": {
+      "acyclic_required": true,
+      "canonical_shape": ["HISTORICAL_NODE", "CORRECTION_OR_SUCCESSOR", "CURRENT_NODE"]
+    },
+    "global_recursive_graph": {
+      "cycles_allowed": true,
+      "reason": "reentry_DMAIC_federation_and_next_transaction_feedback_are_cross_transaction_cycles"
+    }
+  },
+  "known_lineage_resolutions": [
+    {
+      "id": "PR110_PR111",
+      "historical": "PR110_W03_planning_context",
+      "current": "PR111_QPS_FED_W02_current",
+      "edge": "SUPERSEDES",
+      "rule": "PRESERVE_PR110_AS_REACHABLE_HISTORICAL_PROVENANCE"
+    },
+    {
+      "id": "PR362_PR363",
+      "historical": "PR362_W41_label_first_intake",
+      "current": "PR363_QPS_REV_W40_P01",
+      "edge": "CORRECTS",
+      "rule": "PRESERVE_HISTORICAL_TITLE_AND_PR_ID"
+    }
+  ],
+  "runtime_boundary": {
+    "state": "WITHHELD_INFRA_PREEXECUTION_ZERO_STEP_REPRODUCED",
+    "issue": "GBOGEB/cryoplant-project#923",
+    "measured_graph_metrics_available": false,
+    "application_failure_claimed": false,
+    "first_red": "LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN",
+    "victory_prefix": [
+      "runner_id_nonzero", "steps_greater_than_zero", "exact_current_sha_execution",
+      "graph_extractor_executes", "execution_dag_passes", "supersession_dag_passes",
+      "measured_wave_pr_coverage_emitted", "JSON_MD_HTML_artifact_published"
+    ]
+  },
+  "projection_rules": {
+    "current_only_default": true,
+    "superseded_hidden_by_default": true,
+    "provenance_always_reachable": true,
+    "unresolved_is_explicit_unknown_not_zero": true,
+    "highest_wave_label_is_not_global_project_state": true,
+    "destructive_delete": false
+  }
+}

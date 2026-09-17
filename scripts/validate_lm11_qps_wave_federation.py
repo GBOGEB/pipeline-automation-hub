@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+"""Static independent validation of the LM-11 MissionControl/QPS federation contract.
+
+This validator intentionally does not reimplement the QPS graph extractor. It checks
+MissionControl identity, authority boundaries, child receipts, launch-baseline integrity,
+and the declared current first-red. Current semantic invariants are validated rather than
+requiring historical YAML field layout to remain byte/shape-identical.
+"""
+from __future__ import annotations
+
+import json
+import re
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+MISSIONS = ROOT / "mission-control" / "qps-triage-ultra" / "missions"
+CURRENT = MISSIONS / "LM-11_MISSION_CONTROL_CURRENT_v3.yaml"
+CONTRACT = MISSIONS / "LM-11_QPS_WAVE_GRAPH_CONTRACT_v2.json"
+ATLAS = MISSIONS / "LM-11_QPS_WAVE_ATLAS_CURRENT_v2.md"
+RECEIPT = MISSIONS / "receipts" / "LM11_QPS_WAVE_FEDERATION_20260917_v1.yaml"
+REGISTER = ROOT / "mission-control" / "OFFICIAL_MISSION_REGISTER_v1.yaml"
+
+EXPECTED_GAPS = {
+    105, 113, 118, 141, 152, 156, 157, 193, 194, 195,
+    207, 208, 209, 210, 211, 212, 213, 214, 215, 218,
+    232, 233, 237, 241, 255,
+}
+
+
+def read(path: Path) -> str:
+    if not path.exists():
+        raise AssertionError(f"missing required surface: {path.relative_to(ROOT)}")
+    return path.read_text(encoding="utf-8")
+
+
+def require(blob: str, needle: str, label: str) -> None:
+    if needle not in blob:
+        raise AssertionError(f"{label}: missing {needle!r}")
+
+
+def extract_launch_gaps(receipt: str) -> set[int]:
+    match = re.search(
+        r"numeric_gaps:\n(?P<body>(?:\s+- W\d+\n)+)\s+guard:",
+        receipt,
+        flags=re.M,
+    )
+    if not match:
+        raise AssertionError("receipt: numeric_gaps block not found")
+    return {int(x) for x in re.findall(r"W(\d+)", match.group("body"))}
+
+
+def main() -> None:
+    current = read(CURRENT)
+    atlas = read(ATLAS)
+    receipt = read(RECEIPT)
+    register = read(REGISTER)
+    contract = json.loads(read(CONTRACT))
+
+    # Contract / authority invariants.
+    assert contract["mission_id"] == "LM-11"
+    assert contract["authority_transfer"] is False
+    assert contract["formal_credit_delta"] == 0
+    assert contract["provider"]["implementation_pr"] == 1382
+    assert contract["provider"]["runner_control_pr"] == 1385
+    assert contract["projection_rules"]["destructive_delete"] is False
+    assert contract["projection_rules"]["provenance_always_reachable"] is True
+    assert contract["projection_rules"]["highest_wave_label_is_not_global_project_state"] is True
+    assert contract["runtime_boundary"]["measured_graph_metrics_available"] is False
+    assert contract["runtime_boundary"]["first_red"] == "LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN"
+    assert contract["bounded_dags"]["execution"]["acyclic_required"] is True
+    assert contract["bounded_dags"]["supersession"]["acyclic_required"] is True
+    assert contract["bounded_dags"]["global_recursive_graph"]["cycles_allowed"] is True
+
+    # v3 is the current MissionControl surface; validate semantic content, not v2 layout.
+    for needle in (
+        "schema: qps.mission_control.local_mission_current.v3",
+        "mission_id: LM-11",
+        "supersedes: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v2.yaml",
+        "state: CONTROL_PLANE_REGISTERED_QPS_RUNTIME_DOV_WITHHELD_REPRODUCED",
+        "missioncontrol_registration:",
+        "pr: 166",
+        "exact_tested_head: 149eeb9d2ae2740f95d18e7e40a81211e667bac3",
+        "merge_sha: 2aca61e8a4585c51b55adedff356a9d06a3a31e2",
+        "public_checks: PASS_6_OF_6",
+        "implementation_pr: 1382",
+        "implementation_merge: f6eb1f6344e9953c095cd4dfadcf89991499f791",
+        "runner_control_pr: 1385",
+        "runner_control_merge: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b",
+        "global_qtg_wave: W248",
+        "later_observed_wave_label: W265",
+        "issue: 923",
+        "mission_graph_contract:",
+        "global_graph_may_cycle: true",
+        "bounded_execution_dag_must_be_acyclic: true",
+        "lineage_dag_must_be_acyclic: true",
+        "artifact_classes: [BINARY_HUMAN_OUT, HYBRID_CONTROL, CODE_CORE, WORKFLOW]",
+        "V00_RESTART_SPINE",
+        "V03_WAVE_PR_CROSSWALK",
+        "V06_BOUNDED_EXECUTION_DAG",
+        "V11_EXTERNAL_FEDERATION_SATELLITE",
+        "V12_CURRENT_GATE_VS_HIGHEST_WAVE",
+        "exact_head_graph_population: NOT_EXECUTED",
+        "measured_pr_crosswalk_coverage: NOT_EXECUTED",
+        "bounded_dag_runtime_proof: NOT_EXECUTED",
+        "generated_hmi_artifact: NOT_EXECUTED",
+        "LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN",
+        "DO_NOT_TREAT_HIGHEST_WAVE_AS_CURRENT_GLOBAL_GATE",
+        "DO_NOT_FABRICATE_MEASURED_GRAPH_METRICS",
+    ):
+        require(current, needle, "current mission control")
+
+    # Official registration must remain local and zero-credit, and point to v3.
+    for needle in (
+        "id: LM-11",
+        "type: LOCAL_REPOSITORY_LINEAGE_AND_TRIAGE",
+        "state: CONTROL_PLANE_REGISTERED_QPS_RUNTIME_DOV_WITHHELD_REPRODUCED",
+        "missioncontrol_registration_pr: 166",
+        "missioncontrol_registration_merge: 2aca61e8a4585c51b55adedff356a9d06a3a31e2",
+        "missioncontrol_checks: PASS_6_OF_6",
+        "official_control: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v3.yaml",
+        "proof_state: INFRA_PREEXECUTION_ZERO_STEP_REPRODUCED",
+        "LM_11_is_local_navigation_lineage_mission_not_global_QPS_wave",
+        "LM_11_does_not_allocate_or_imply_GM_VI",
+        "LM_11_highest_wave_label_does_not_imply_global_QTG_state",
+        "LM_11_zero_step_does_not_equal_application_failure",
+    ):
+        require(register, needle, "official register")
+
+    # Exact child evidence and zero-step semantics, rebound to current v3 control.
+    for needle in (
+        "registration_pr: 166",
+        "registration_exact_tested_head: 149eeb9d2ae2740f95d18e7e40a81211e667bac3",
+        "registration_merge: 2aca61e8a4585c51b55adedff356a9d06a3a31e2",
+        "registration_public_checks: PASS_6_OF_6",
+        "current_control: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v3.yaml",
+        "observed_main: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b",
+        "pr: 1382",
+        "merge: f6eb1f6344e9953c095cd4dfadcf89991499f791",
+        "pr: 1385",
+        "merge: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b",
+        "INFRA_PREEXECUTION_ZERO_STEP",
+        "INFRA_PREEXECUTION_ZERO_STEP_REPRODUCED",
+        "application_failure_claimed: false",
+        "graph_execution_claimed: false",
+        "measured_graph_metrics_claimed: false",
+        "RESOLVED_BY_CURRENT_CANONICAL_RESOLVER_WITH_HISTORY_PRESERVED",
+        "current_global_qtg_wave_reported_by_child: W248",
+        "highest_later_wave_label_observed: W265",
+        "LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN",
+    ):
+        require(receipt, needle, "child federation receipt")
+
+    gaps = extract_launch_gaps(receipt)
+    if gaps != EXPECTED_GAPS:
+        raise AssertionError(f"launch gap set drift: expected {sorted(EXPECTED_GAPS)}, got {sorted(gaps)}")
+    require(receipt, "triage_wave_directory_count_W103_to_W264: 137", "launch projection")
+    require(receipt, "numeric_gap_count_W103_to_W264: 25", "launch projection")
+    require(receipt, "MISSING_DIRECTORY_NE_MISSING_WAVE_LINEAGE", "launch projection")
+
+    # Atlas completeness is structural, not a runtime-success claim.
+    for needle in (
+        "## 5. Full pipeline wireframe",
+        "## 6. Sectional DAG catalogue",
+        "## 7. Entry and exit points",
+        "## 8. Artifact and executable classes",
+        "## 9. Satellite / federation node view",
+        "## 10. HMI and navigation views",
+        "V00 Restart Spine",
+        "V12 Current Gate vs Highest Wave",
+        "exact-head graph population: **NOT_EXECUTED**",
+        "measured Wave↔PR coverage: **NOT_EXECUTED**",
+    ):
+        require(atlas, needle, "atlas")
+
+    result = {
+        "status": "PASS_LM11_MISSIONCONTROL_FEDERATION_STATIC",
+        "mission": "LM-11",
+        "missioncontrol_current": "v3",
+        "missioncontrol_registration_pr": 166,
+        "qps_implementation_pr": 1382,
+        "qps_runner_control_pr": 1385,
+        "launch_wave_directory_projection": 137,
+        "launch_numeric_gap_count": 25,
+        "current_global_qtg_wave": "W248",
+        "later_parallel_wave_label": "W265",
+        "qps_runtime_proof": "WITHHELD_ZERO_STEP_REPRODUCED",
+        "measured_graph_metrics_claimed": False,
+        "authority_transfer": False,
+        "formal_credit_delta": 0,
+        "first_red": "LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN",
+    }
+    print(json.dumps(result, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
