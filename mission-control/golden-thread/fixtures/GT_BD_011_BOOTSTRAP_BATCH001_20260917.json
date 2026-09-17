@@ -1,0 +1,80 @@
+{
+  "schema": "missioncontrol.golden_thread.bootstrap_batch.v1",
+  "batch_id": "GT-BD-011-BATCH-001",
+  "as_of": "2026-09-17",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "scope": "CONTROL_PLANE_OCCURRENCES_ONLY",
+  "records": [
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "object_type": "pull_request",
+      "anchor_sha": "801e56855e3cb24c286b7c62469d765d4cffe413",
+      "snapshot": {
+        "number": 186,
+        "title": "Golden Thread: close second-family importer and durable receipt predicate",
+        "state": "closed",
+        "merged": true,
+        "base": {"sha": "b9b990708be2b935282aa9051cb7f62b2615f245"},
+        "head": {"sha": "801e56855e3cb24c286b7c62469d765d4cffe413"},
+        "merge_commit_sha": "283cdd84828cc81c21ad12b27a52a944f832ecee"
+      }
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "object_type": "pull_request",
+      "anchor_sha": "6cd9ba59d8b064e613d06b598c4444cac3a0953c",
+      "snapshot": {
+        "number": 1407,
+        "title": "W269: bounded GT_BDQ_0 successor trigger from current main",
+        "state": "closed",
+        "merged": true,
+        "base": {"sha": "96e11c2330ee4a4f238af02b46ed803ceeb6b862"},
+        "head": {"sha": "6cd9ba59d8b064e613d06b598c4444cac3a0953c"},
+        "merge_commit_sha": "0d41a6908bb385abc8901c24c3f3c767e628abc1"
+      }
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "object_type": "pull_request",
+      "anchor_sha": "6778c6d19dd70e3d1ef38fcfd21bb84d1aa5d8eb",
+      "snapshot": {
+        "number": 754,
+        "title": "QPS v6: bind canonical CODEX Pages publication lane",
+        "state": "closed",
+        "merged": true,
+        "base": {"sha": "5a89655c6273e63f0828f36ca4b35b0e88b5701a"},
+        "head": {"sha": "6778c6d19dd70e3d1ef38fcfd21bb84d1aa5d8eb"},
+        "merge_commit_sha": "6f83ddb088aba4ec6188392073ff52b5d8b0bf05"
+      }
+    },
+    {
+      "repository": "GBOGEB/ABACUS",
+      "object_type": "pull_request",
+      "anchor_sha": "8738d88e40df2b87b99c542fc22b2d5c374a1eb4",
+      "snapshot": {
+        "number": 1258,
+        "title": "W266: consume QPS Golden Thread replay receipt",
+        "state": "closed",
+        "merged": true,
+        "base": {"sha": "f869ab56f4898e54b9db8bb8d334a3133e5a3e4a"},
+        "head": {"sha": "8738d88e40df2b87b99c542fc22b2d5c374a1eb4"},
+        "merge_commit_sha": "c86f9e4793062b5fab54291beefa74d6dfc6167e"
+      }
+    }
+  ],
+  "expected": {
+    "repository_count": 4,
+    "occurrence_count": 4,
+    "lineage_coverage": 1.0,
+    "reimport_imported_count": 0,
+    "reimport_duplicate_count": 4,
+    "authority_transfer": false
+  },
+  "nonclaims": {
+    "fleet_M4": false,
+    "qps_gt_bdq_credit": false,
+    "engineering_credit": false,
+    "source_authority_transfer": false
+  }
+}
