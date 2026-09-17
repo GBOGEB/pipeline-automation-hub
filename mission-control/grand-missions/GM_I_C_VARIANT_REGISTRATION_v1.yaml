@@ -1,0 +1,91 @@
+schema: missioncontrol.gm_i_variant_registration.v1
+as_of: '2026-09-17T15:30:00+02:00'
+authority_transfer: false
+formal_credit_delta: 0
+mission:
+  id: GM-I-C
+  number: 1-C
+  type: GRAND_MISSION_VARIANT
+  parent: GM-I
+  name: CROSS_AGENT_DRIVE_FEDERATION_BRIDGEHEAD
+  frontier_count: 1
+  state: REGISTERED_WAIT_EXTERNAL_INGRESS
+  registration_issue: GBOGEB/pipeline-automation-hub#188
+  objective: >-
+    Prove one bounded cross-agent handoff frontier in which a source agent can persist a
+    governed handoff through Google Drive and an external client can consume or relay that
+    handoff into GitHub/governed consumers without copying authority.
+  integration_path:
+    - GEMINI_OR_SOURCE_AGENT
+    - GOOGLE_DRIVE_PERSISTENT_BRIDGE
+    - EXTERNAL_CLIENT_OR_AGENT
+    - GITHUB_OR_GOVERNED_CONSUMER
+  current_support_target:
+    mission: HM-01
+    issue: GBOGEB/cryoplant-project#1398
+    purpose: R3_FINAL_LOCAL_EXACT_WORKTREE_INGRESS
+    required_git_object: 70964e5f1577231512f4104b26f5f6649ad8cb39
+    relationship: SUPPORTING_INGRESS_ONLY_NO_RECLASSIFICATION
+inherited_rex:
+  gm_i_a:
+    - ZERO_STEP_OR_ENVIRONMENT_RED_ROUTES_TO_DOCKMASTER
+    - DOCTOR_ENGINEER_PATCH_FORBIDDEN_BEFORE_OBSERVED_APPLICATION_STEPS_GT_0
+    - SCOUT_READER_RETURN_AFTER_SEARCH_AND_MEANING_SATURATION
+  gm_i_b:
+    - REFRESH_DIFF_REUSE_CHALLENGE_BIND_INTEGRATE_PRUNE_ATTEST_RECURSE
+    - EXACT_IDENTITY_AND_RECEIPT_BINDING
+    - INDEPENDENT_CONSUMER_DISPOSITION
+    - CONTRACT_TO_LOW_COST_SENTINEL_AFTER_CONTROL
+crew_allocation:
+  mission_control:
+    - PM
+    - TM
+    - ORCHESTRATOR
+  active_first_red:
+    - DOCKMASTER
+    - AMBASSADOR
+  activate_after_ingress:
+    - READER
+    - QA
+    - SMOKER
+  conditional_only:
+    DOCTOR: OBSERVED_APPLICATION_RED_AND_STEPS_GT_0
+    ENGINEER: NAMED_BUILDABLE_APPLICATION_REPAIR_APPROVED
+  return_rules:
+    DOCKMASTER: HABITAT_STABLE
+    AMBASSADOR: BOUNDARY_CONTRACT_STABLE
+    READER: MEANING_AND_SOURCE_BOUND
+    SMOKER: OBSERVED_RESULT_BOUND
+    QA: CONTROL_MINIMAL_RECURRENCE_ONLY
+first_red:
+  id: EXTERNAL_EXECUTION_ENVIRONMENT_INGRESS_GIT_OBJECT_HANDOFF
+  layer: HABITAT_BOUNDARY
+  current_evidence:
+    github_commit_visible: true
+    github_tree_visible: true
+    genuine_git_worktree_in_execution_runtime: false
+    git_bundle_in_execution_runtime: false
+    direct_container_github_clone: BLOCKED_DNS_NETWORK
+  minimum_return: >-
+    One genuine Git-object-bearing handoff containing commit
+    70964e5f1577231512f4104b26f5f6649ad8cb39, preferably a verified git bundle.
+acceptance_sequence:
+  - INGEST_GIT_OBJECT_HANDOFF
+  - VERIFY_COMMIT_EXISTS
+  - MATERIALIZE_CLEAN_EXACT_WORKTREE
+  - ASSERT_HEAD_70964E5F
+  - EXECUTE_UNCHANGED_R3_GENERATOR_AND_QA
+  - BIND_PRODUCTS_RECEIPTS_AND_HASHES
+  - INDEPENDENT_DISPOSITION
+  - CONTRACT_TO_SENTINEL_OR_CLOSE
+guards:
+  - GM_I_C_IS_VARIANT_NOT_NEW_CANONICAL_GM_NUMBER
+  - GM_I_C_NE_HM_01
+  - DOES_NOT_RENUMBER_OR_REPLACE_GM_II_TO_GM_V
+  - NO_FAKE_EXACT_CHECKOUT_OR_HASH
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - NO_DOCTOR_BEFORE_STEPS_GT_0
+  - REGISTRATION_NE_EXECUTION
+  - EXECUTION_NE_ACCEPTANCE
+  - GENERATED_VIEW_NE_SSOT
+  - AUTHORITY_TRANSFER_FALSE
