@@ -6,7 +6,7 @@ parent: GM-I
 name: CROSS_AGENT_DRIVE_FEDERATION
 moniker: BRIDGEHEAD
 display_aliases: [Grand Mission I-C, MG Type 1C, GM Type 1C]
-as_of: '2026-09-17T07:55:00+02:00'
+as_of: '2026-09-17T11:19:00+02:00'
 state: REGISTERED_BUILD_EXTERNAL_AUTH_PROOF_PENDING
 authority_transfer: false
 formal_credit_delta: 0
@@ -38,10 +38,22 @@ provider_evidence:
   drive_ingress_pr:
     repo: GBOGEB/GEMINI
     pr: 10
-    state: OPEN
+    state: MERGED
     exact_head_sha: 1d831a66a258bcd1b13d432805e8c60b52f6c7ad
-    evidence_class: IMPLEMENTED_NOT_YET_HOSTED_DRIVE_PASS
+    merge_sha: 2d3b82443ae90b00971e3c71433a9c8ad47072a8
+    evidence_class: IMPLEMENTED_MERGED_HOSTED_DRIVE_PASS_WITHHELD
     contract: GITHUB_OIDC_TO_GOOGLE_WIF_TO_DRIVE_READONLY_TO_DETERMINISTIC_CENSUS
+  drive_ingress_hardening_pr:
+    repo: GBOGEB/GEMINI
+    pr: 11
+    state: OPEN
+    exact_head_sha: 8b6d0db501db93fdf42a4c06a7ba9e7094470b21
+    evidence_class: FAIL_CLOSED_ROOT_AUTH_CLASSIFICATION_IMPLEMENTED_UNMERGED
+    improvements:
+      - VERIFY_ROOT_RESOURCE_BEFORE_CHILD_ENUMERATION
+      - CLASSIFY_CONFIG_OIDC_WIF_DRIVE_ACL_AND_DRIVE_API_FAILURES
+      - ALWAYS_EMIT_IC3_STATUS_RECEIPT
+      - PASS_ONLY_ON_ROOT_VERIFIED_DRIVE_READONLY_GT0_STEP_RECEIPT
   connector_bridge_observation:
     state: OBSERVED_MANUAL_CONNECTOR_PATH
     evidence_class: PARTIAL
@@ -110,10 +122,12 @@ mission_gates:
     first_red: REAL_HOSTED_GT0_STEP_DRIVE_INGRESS_PASS
     dov:
       - HOSTED_RUN_GT0_STEPS
-      - EXACT_HEAD_SHA_BOUND
+      - EXACT_HEAD_SHA_BOUND_TO_PR11_OR_POSTMERGE_EQUIVALENT
       - GOOGLE_WIF_AUTH_SUCCEEDS
+      - DRIVE_ROOT_RESOURCE_VERIFIED
       - DRIVE_READONLY_SUCCEEDS
       - CENSUS_RECEIPT_ARTIFACT_BOUND
+      - IC3_STATUS_CLASSIFICATION_EQUALS_IC3_DRIVE_READONLY_GT0_STEP_PASS
   - id: IC4_CONSUMER_A
     objective: CHATGPT_INDEPENDENTLY_CONSUMES_BOUND_DRIVE_PACKAGE
     current: PARTIAL_MANUAL_OBSERVATION
@@ -147,9 +161,10 @@ first_red:
   gate: IC3_AUTH
   owner: S03_DOCKMASTER
   statement: >-
-    Obtain a real hosted >0-step GitHub Actions run at the exact GBOGEB/GEMINI Drive-ingress head that authenticates through
-    Google Workload Identity Federation, reads the shared handover folder with drive.readonly, and emits the deterministic
-    census receipt. Zero-step or admission failure remains habitat evidence and shall not trigger application repair.
+    Obtain a real hosted >0-step GitHub Actions run at the exact hardened GBOGEB/GEMINI Drive-ingress head, or a verified
+    post-merge equivalent, that authenticates through Google Workload Identity Federation, proves the configured Drive root
+    resource is readable, reads the handover folder with drive.readonly, and emits both deterministic census and IC3 status
+    receipts. Zero-step or admission failure remains habitat evidence and shall not trigger application repair.
 
 crew_control:
   allocation: mission-control/grand-missions/GM-I-C_CREW_ALLOCATION_v0.1.yaml
@@ -175,4 +190,4 @@ stop_rules:
   - DO_NOT_CLAIM_SECOND_CONSUMER_BEFORE_AN_INDEPENDENT_RECEIPT_EXISTS
   - DO_NOT_TRANSFER_ENGINEERING_RELEASE_OR_QPS_AUTHORITY
 
-next_action: EXECUTE_IC3_AUTH_HOSTED_WIF_DRIVE_READONLY_PROOF_AT_EXACT_GEMINI_PR10_HEAD
+next_action: EXECUTE_IC3_AUTH_HOSTED_WIF_DRIVE_READONLY_PROOF_AT_EXACT_GEMINI_PR11_HEAD_OR_VERIFIED_POSTMERGE_EQUIVALENT
