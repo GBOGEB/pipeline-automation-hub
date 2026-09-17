@@ -9,6 +9,8 @@ import yaml
 ROOT = Path(__file__).resolve().parent
 PACKET = ROOT / "GM_I_C_3PR_MIP_IC3_CONTROL_v1.json"
 CURRENT = ROOT / "GM_I_C_CURRENT_v1.yaml"
+EXPECTED_PARENT_MERGE = "3a65e884abe321347bd771b1b094d44e1e08cdd2"
+EXPECTED_PARENT_HEAD = "fae367b78d9727e4b6cbc4aebdda129b17437b21"
 
 
 def require(condition: bool, message: str) -> None:
@@ -25,6 +27,14 @@ def main() -> int:
     require(packet["authority_transfer"] is False, "authority transfer must remain false")
     require(packet["formal_credit_delta"] == 0, "formal credit delta must remain zero")
     require(packet["hard_gate_compensation_allowed"] is False, "hard-gate compensation must remain forbidden")
+
+    parent = packet["parent_method_control"]
+    require(parent["method"] == "GLOBAL_3PR_MIP_M", "global method parent mismatch")
+    require(parent["pr"] == 194, "global parent PR mismatch")
+    require(parent["merge_sha"] == EXPECTED_PARENT_MERGE, "global parent merge mismatch")
+    require(parent["exact_proven_head_sha"] == EXPECTED_PARENT_HEAD, "global parent head mismatch")
+    require(parent["relationship"] == "LOCAL_SPECIALISATION_NO_DUPLICATE_AUTHORITY", "local/global authority relationship drift")
+    require(packet["live_refresh"]["missioncontrol_sha"] == EXPECTED_PARENT_MERGE, "live MissionControl SHA is not the admitted parent")
 
     refresh = packet["three_pr"]["Refresh"]
     probe = packet["three_pr"]["Probe"]
@@ -58,6 +68,11 @@ def main() -> int:
     require(current["mission_id"] == "GM-I-C", "current pointer mission mismatch")
     require(current["authority_transfer"] is False, "current pointer authority transfer weakened")
     require(current["formal_credit_delta"] == 0, "current pointer formal credit weakened")
+    current_parent = current["global_method_parent"]
+    require(current_parent["pr"] == 194, "current pointer parent PR mismatch")
+    require(current_parent["merge_sha"] == EXPECTED_PARENT_MERGE, "current pointer parent merge mismatch")
+    require(current_parent["exact_proven_head_sha"] == EXPECTED_PARENT_HEAD, "current pointer parent head mismatch")
+    require(current_parent["relationship"] == "LOCAL_SPECIALISATION_NO_DUPLICATE_AUTHORITY", "current pointer relationship drift")
     require(current["provider_current"]["sha"] == packet["live_refresh"]["provider_sha"], "provider SHA mismatch")
     require(current["provider_current"]["hardening_pr_state"] == "MERGED", "PR11 must be recorded merged")
     require(current["bridge_current"]["drive_root_id"] == packet["live_refresh"]["drive_root_id"], "Drive root mismatch")
@@ -69,6 +84,8 @@ def main() -> int:
     receipt = {
         "result": "PASS_GM_I_C_3PR_MIP_CONTROL",
         "mission": "GM-I-C",
+        "global_parent_pr": 194,
+        "global_parent_merge_sha": EXPECTED_PARENT_MERGE,
         "three_pr": "PASS",
         "mip": "PASS_CONTROL_DESIGN",
         "ic3": "WITHHELD_EXTERNAL_AUTH_CONFIGURATION_AND_HOSTED_PROOF",
