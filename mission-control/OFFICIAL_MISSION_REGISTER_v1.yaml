@@ -1,9 +1,10 @@
 schema: missioncontrol.official_mission_register.v1
-as_of: '2026-09-16T22:55:00+02:00'
+as_of: '2026-09-17T03:16:00+02:00'
 authority_transfer: false
 purpose: >-
   Official Mission Control index across canonical Grand Missions, governed variants,
-  and local missions without changing the canonical GM-I..GM-V numbering invariant.
+  horizontal missions, and local missions without changing the canonical GM-I..GM-V
+  numbering invariant.
 canonical_grand_mission_source: mission-control/grand-missions/GRAND_MISSION_REGISTRY.json
 namespace:
   GM: canonical_grand_mission
@@ -36,6 +37,23 @@ variants:
       codex_atom: KEB-ITEM-0002
       codex_object_type: KEB_KNOWLEDGE_ATOM
     rule: DOES_NOT_RENUMBER_OR_REPLACE_GM_II_TO_GM_V
+horizontal_missions:
+  - id: HM-01
+    number: 1
+    type: HORIZONTAL_MULTI_REPO_RELEASE_MISSION
+    name: QPS_V6_RELEASE_TRAIN
+    home: GBOGEB/pipeline-automation-hub
+    parent_issue: GBOGEB/cryoplant-project#1379
+    orchestration_issue: GBOGEB/pipeline-automation-hub#149
+    repositories: [GBOGEB/cryoplant-project, GBOGEB/CODEX, GBOGEB/ABACUS, GBOGEB/pipeline-automation-hub]
+    state: R0_FREEZE_R1_CONTRACT_ACTIVE
+    release_target: v6.0.0
+    release_candidate: v6.0.0-rc.1
+    official_control: mission-control/qps-triage-ultra/missions/HM-01_QPS_V6_RELEASE_TRAIN_CONTROL_v0.1.yaml
+    crew_allocation: mission-control/qps-triage-ultra/missions/HM-01_CREW_ALLOCATION_v0.1.yaml
+    authority_transfer: false
+    formal_credit_delta: 0
+    rule: DOES_NOT_RENUMBER_OR_REPLACE_GM_I_TO_GM_V_GM_I_B_OR_LM_10
 local_missions:
   - id: LM-10
     number: 10
@@ -62,6 +80,7 @@ local_missions:
 invariants:
   - canonical_GM_ids_remain_exactly_GM_I_to_GM_V
   - GM_I_B_is_variant_not_GM_VI_or_GM_II
+  - HM_01_is_horizontal_and_does_not_consume_a_GM_or_LM_number
   - LM_10_does_not_become_Grand_Mission_by_activity_or_scope_growth
   - authority_transfer_false_unless_separately_governed
   - mission_registration_does_not_create_engineering_or_release_credit
