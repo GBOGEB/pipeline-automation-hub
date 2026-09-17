@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   golden-thread-control:
@@ -29,7 +29,8 @@ jobs:
             mission-control/golden-thread/checkpoint_replay.py \
             mission-control/golden-thread/rendition_family.py \
             mission-control/golden-thread/side_effect_receipts.py \
-            mission-control/golden-thread/office_semantic_carrier.py
+            mission-control/golden-thread/office_semantic_carrier.py \
+            mission-control/golden-thread/github_roundtrip.py
 
       - name: Run Golden Thread unit tests
         run: |
@@ -120,3 +121,32 @@ jobs:
             test_office_semantic_carrier.OfficeSemanticCarrierTests.test_unrelated_office_metadata_does_not_change_semantic_identity \
             test_office_semantic_carrier.OfficeSemanticCarrierTests.test_identical_reinjection_is_byte_preserving_replay \
             test_office_semantic_carrier.OfficeSemanticCarrierTests.test_truth_tamper_fails_closed
+
+      - name: Prove real GitHub commit tree blob seven-format round-trip
+        working-directory: mission-control/golden-thread
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python golden_thread.py rebuild-current \
+            fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+            --out /tmp/golden-thread-p2-truth.json
+          python github_roundtrip.py roundtrip \
+            /tmp/golden-thread-p2-truth.json \
+            --repo "${{ github.repository }}" \
+            --source-sha "$SOURCE_SHA" \
+            --timestamp "2026-09-17T02:05:00Z" \
+            --out /tmp/golden-thread-p2-roundtrip-receipt.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/golden-thread-p2-roundtrip-receipt.json'))
+          assert r['status']=='PASS'
+          assert r['rendition_count']==7
+          assert r['semantic_delta']==0
+          assert r['unexplained_semantic_delta']==0
+          assert r['ref_updated'] is False
+          assert r['visual_fidelity_credit'] is False
+          assert r['authority_transfer'] is False
+          assert len(r['blob_shas'])==7
+          print(json.dumps(r, sort_keys=True))
+          PY
