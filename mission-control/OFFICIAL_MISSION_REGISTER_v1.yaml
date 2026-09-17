@@ -1,5 +1,5 @@
 schema: missioncontrol.official_mission_register.v1
-as_of: '2026-09-17T07:55:00+02:00'
+as_of: '2026-09-17T11:19:00+02:00'
 authority_transfer: false
 purpose: >-
   Official Mission Control index across canonical Grand Missions, governed variants,
@@ -53,6 +53,9 @@ variants:
       gemini_hooks_merge_sha: f9ea9f45942ce50b5f2fcad626ba8b59fa97ac71
       drive_ingress_pr: 10
       drive_ingress_head_sha: 1d831a66a258bcd1b13d432805e8c60b52f6c7ad
+      drive_ingress_merge_sha: 2d3b82443ae90b00971e3c71433a9c8ad47072a8
+      drive_ingress_hardening_pr: 11
+      drive_ingress_hardening_head_sha: 8b6d0db501db93fdf42a4c06a7ba9e7094470b21
       hosted_drive_pass: WITHHELD_PENDING_REAL_WIF_DRIVE_READONLY_GT0_STEP_RECEIPT
     first_red: IC3_AUTH_REAL_HOSTED_GT0_STEP_DRIVE_INGRESS_PASS
     official_control: mission-control/grand-missions/GM-I-C_CROSS_AGENT_DRIVE_FEDERATION_CONTROL_v0.1.yaml
