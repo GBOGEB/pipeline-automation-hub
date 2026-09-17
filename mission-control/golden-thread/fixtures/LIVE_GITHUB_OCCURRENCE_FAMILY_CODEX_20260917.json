@@ -1,0 +1,39 @@
+{
+  "schema": "missioncontrol.golden_thread_live_occurrence_connector_fixture.v1",
+  "captured_at": "2026-09-17T02:24:00Z",
+  "authority_transfer": false,
+  "repository": "GBOGEB/CODEX",
+  "observation_anchor_sha": "4a767ceb5da89a86aad6c502618e9c84fb675719",
+  "connector_snapshots": [
+    {
+      "object_type": "issue",
+      "anchor_sha": "4a767ceb5da89a86aad6c502618e9c84fb675719",
+      "snapshot": {
+        "number": 753,
+        "title": "QPS v6 publication lane: consolidate Pages and release provenance",
+        "state": "open",
+        "updated_at": "2026-09-17T01:21:35Z"
+      }
+    },
+    {
+      "object_type": "pull_request",
+      "anchor_sha": "6778c6d19dd70e3d1ef38fcfd21bb84d1aa5d8eb",
+      "snapshot": {
+        "number": 754,
+        "title": "QPS v6: bind canonical CODEX Pages publication lane",
+        "state": "closed",
+        "merged": true,
+        "base": {"sha": "5a89655c6273e63f0828f36ca4b35b0e88b5701a"},
+        "head": {"sha": "6778c6d19dd70e3d1ef38fcfd21bb84d1aa5d8eb"},
+        "merge_commit_sha": "6f83ddb088aba4ec6188392073ff52b5d8b0bf05"
+      }
+    }
+  ],
+  "expected": {
+    "occurrence_count": 2,
+    "first_projection_digest": "sha256:067ff7c7af94afdcef1c7931ccb0067995687a6b5c9c6e504d2bb73960219f65",
+    "reimport_imported_count": 0,
+    "reimport_duplicate_count": 2,
+    "reimport_projection_digest": "sha256:067ff7c7af94afdcef1c7931ccb0067995687a6b5c9c6e504d2bb73960219f65"
+  }
+}
