@@ -3,7 +3,8 @@
 
 This validator intentionally does not reimplement the QPS graph extractor. It checks
 MissionControl identity, authority boundaries, child receipts, launch-baseline integrity,
-and the declared current first-red.
+and the declared current first-red. Current semantic invariants are validated rather than
+requiring historical YAML field layout to remain byte/shape-identical.
 """
 from __future__ import annotations
 
@@ -70,11 +71,12 @@ def main() -> None:
     assert contract["bounded_dags"]["supersession"]["acyclic_required"] is True
     assert contract["bounded_dags"]["global_recursive_graph"]["cycles_allowed"] is True
 
-    # v3 is the current MissionControl surface; v2 and v1 remain temporal provenance.
+    # v3 is the current MissionControl surface; validate semantic content, not v2 layout.
     for needle in (
         "schema: qps.mission_control.local_mission_current.v3",
         "mission_id: LM-11",
         "supersedes: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v2.yaml",
+        "state: CONTROL_PLANE_REGISTERED_QPS_RUNTIME_DOV_WITHHELD_REPRODUCED",
         "missioncontrol_registration:",
         "pr: 166",
         "exact_tested_head: 149eeb9d2ae2740f95d18e7e40a81211e667bac3",
@@ -87,12 +89,20 @@ def main() -> None:
         "global_qtg_wave: W248",
         "later_observed_wave_label: W265",
         "issue: 923",
-        "P1_PROVENANCE_CENSUS:",
-        "P2_LINEAGE_RESOLUTION:",
-        "P3_DEPENDENCY_DAG:",
-        "P4_ARTIFACT_RUNTIME:",
-        "P5_NAVIGATION_HMI:",
-        "P6_FEDERATION_SATELLITE:",
+        "mission_graph_contract:",
+        "global_graph_may_cycle: true",
+        "bounded_execution_dag_must_be_acyclic: true",
+        "lineage_dag_must_be_acyclic: true",
+        "artifact_classes: [BINARY_HUMAN_OUT, HYBRID_CONTROL, CODE_CORE, WORKFLOW]",
+        "V00_RESTART_SPINE",
+        "V03_WAVE_PR_CROSSWALK",
+        "V06_BOUNDED_EXECUTION_DAG",
+        "V11_EXTERNAL_FEDERATION_SATELLITE",
+        "V12_CURRENT_GATE_VS_HIGHEST_WAVE",
+        "exact_head_graph_population: NOT_EXECUTED",
+        "measured_pr_crosswalk_coverage: NOT_EXECUTED",
+        "bounded_dag_runtime_proof: NOT_EXECUTED",
+        "generated_hmi_artifact: NOT_EXECUTED",
         "LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN",
         "DO_NOT_TREAT_HIGHEST_WAVE_AS_CURRENT_GLOBAL_GATE",
         "DO_NOT_FABRICATE_MEASURED_GRAPH_METRICS",
@@ -116,7 +126,7 @@ def main() -> None:
     ):
         require(register, needle, "official register")
 
-    # Exact child evidence and zero-step semantics, now rebound to current v3 control.
+    # Exact child evidence and zero-step semantics, rebound to current v3 control.
     for needle in (
         "registration_pr: 166",
         "registration_exact_tested_head: 149eeb9d2ae2740f95d18e7e40a81211e667bac3",
