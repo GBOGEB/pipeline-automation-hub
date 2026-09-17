@@ -1,0 +1,170 @@
+schema: qps.mission_control.lm11.v1
+mission_id: LM-11
+mission_number: 11
+mission_type: LOCAL_MULTI_SURFACE_LINEAGE_CARTOGRAPHY
+mission_name: QPS_WAVE_LINEAGE_DEPENDENCY_CARTOGRAPHY
+state: RECON_ACTIVE_INDEX_BUILD
+authority_transfer: false
+formal_credit_delta: 0
+home: GBOGEB/pipeline-automation-hub
+provider: GBOGEB/cryoplant-project
+issue: 152
+official_register: mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml
+
+observed_boundary:
+  observed_utc: '2026-09-16T23:30:00Z'
+  missioncontrol_master: 3348189fd52883befb24f5c5b6bb3953cd8725ab
+  qps_main: 29a3a619b17b37eca5accfa2fd747401a2387c7b
+  qps_root_tree: b98c65e6a41603a2f2c58b40597592659dca5d0c
+  qps_triage_tree: f3ecdd6555406701392cb1ab4b10a5183f3ca567
+  latest_observed_wave_label: W264
+
+provider_authority_surfaces:
+  repo_census: triage/REPO_CENSUS.yaml
+  wave_normalization: controls/QPS_WAVE_LINEAGE_NORMALIZATION_v0.1.yaml
+  canonical_lineage_resolver: controls/QPS_CANONICAL_LINEAGE_RESOLVER_v1.json
+  lineage_navigation: ocd-adr/40_implementation/QPS_LINEAGE_NAVIGATION_REGISTRY_v1.json
+  lineage_ssot_view: handover/qps_recursive/QPS_LINEAGE_SSOT_VIEW_v1.json
+  recursive_root: handover/qps_recursive/GLOB.yaml
+  current_pointer: handover/qps_recursive/QTG_CURRENT.yaml
+  repo_deep_handoff: handover/qps_recursive/QPS_TRIAGE_REPO_DEEP.md
+  pipeline_registry: triage/PIPELINE_REGISTRY.yaml
+  graph_registry: triage/GRAPH_REGISTRY.yaml
+  binary_registry: triage/BINARY_PRODUCT_REGISTRY.yaml
+
+mission_objectives:
+  primary:
+    - recover_full_wave_and_pulse_sequence_with_PR_commit_lineage
+    - resolve_causal_semantic_and_temporal_dependencies
+    - identify_wave_families_mainline_parallel_side_load_correction_revisit_and_historical_only_lanes
+  secondary:
+    - reconstruct_QPS_TRIAGE_nodes_edges_and_cross_repo_satellites
+    - emit_full_and_sectional_DAGs_with_entry_exit_points
+    - classify_human_outputs_hybrid_control_machine_state_and_code_core
+    - preserve_federation_reentry_and_recursive_temporal_feedback
+  tertiary:
+    - refresh_numbered_reading_navigation_material_with_concise_TOC_and_cross_NAV
+    - provide_read_only_HMI_GUI_views_when_they_improve_navigation
+  final:
+    - comprehensive_QPS_TRIAGE_and_satellite_node_atlas_in_GM_I_to_GM_V_style_without_consuming_a_GM_number
+
+identity_model:
+  hierarchy: [Mission, WaveFamily, Wave, Cycle, Pulse, PR, Run, Artifact, Atom]
+  temporal_fields: [global_seq, mission_seq, wave_seq, pulse_seq, event_time, observed_time, release_time]
+  ancestry_fields: [previous_event, previous_in_lane, causal_parent, semantic_predecessor, prior_current, source_base_sha]
+  rule: chronological_predecessor_NE_causal_parent_NE_semantic_predecessor_NE_prior_current
+
+node_types:
+  - WAVE
+  - PULSE
+  - CORRECTION
+  - REVISIT
+  - P3R_CYCLE
+  - PR
+  - COMMIT
+  - RUN
+  - SOURCE
+  - CANONICAL_OBJECT
+  - RECEIPT
+  - ARTIFACT
+  - CURRENT_POINTER
+  - SATELLITE_REPO
+
+edge_types:
+  - PRECEDES
+  - PARENT_OF
+  - DEPENDS_ON
+  - PRODUCES
+  - CONSUMES
+  - EVIDENCED_BY
+  - SUPERSEDES
+  - CORRECTS
+  - REVISITS
+  - ALIASES
+  - BRIDGES
+  - FEDERATES_TO
+  - RETURNED_AS
+  - REENTERS
+  - FORKS
+  - JOINS
+  - PARALLEL_NONCOMPENSATING
+  - PROMOTES_TO_CURRENT
+
+artifact_classes:
+  HUMAN_OUTPUT:
+    observed_formats: [DOCX, PDF, XLSX, PPTX, HTML]
+    authority: GENERATED_VIEW_NOT_GOVERNING_SOURCE
+  HYBRID_CONTROL:
+    observed_formats: [YAML, YML, MD]
+    examples: [mission_contract, control_plane, handover, burndown, navigation_report]
+  MACHINE_STATE:
+    observed_formats: [JSON]
+    examples: [receipt, manifest, canonical_object, lineage_projection, hash_manifest]
+  CODE_CORE:
+    observed_formats: [PYTHON, TYPESCRIPT_ZOD, SHELL, POWERSHELL]
+    rule: additional_languages_are_census_observations_not_assumptions
+
+wave_semantics:
+  wave: bounded_victory_scope
+  pulse: additive_same_scope_work
+  correction: incorrect_or_incomplete_prior_assertion_repaired
+  revisit: same_scope_reopened_by_new_evidence
+  p3r: recursive_cycle_inside_wave
+  new_wave_gate: method_population_authority_chain_release_mechanism_or_workstream_materially_changes
+  directory_rule: absence_of_triage_wNNN_directory_does_not_prove_absence_of_wave_history
+
+truth_guards:
+  - repository_authority_over_chat_memory
+  - append_only_temporal_history_no_destructive_lineage_rewrite
+  - github_PR_number_commit_SHA_and_historical_title_are_immutable_provenance
+  - hash_difference_detects_change_but_does_not_promote_truth
+  - MERGED_NE_PERPETUATED
+  - PARENT_PASS_NE_CHILD_ACCEPT
+  - ZOD_PASS_NE_CHILD_ACCEPT
+  - UNKNOWN_OR_DEFER_NE_ZERO
+  - no_new_wave_for_narrow_repair_rerun_binary_refresh_visualization_or_source_hunt
+  - no_engineering_compliance_negotiation_or_release_credit_from_cartography
+
+first_red:
+  id: LINEAGE_AUTHORITY_POINTER_DRIFT_110_111
+  state: OPEN_RECONCILE_WITHOUT_HISTORY_REWRITE
+  observation: >-
+    QPS_WAVE_LINEAGE_NORMALIZATION_v0.1 and QPS_DOUBLE_3PR_LINEAGE_CLOSURE preserve PR110/W03 and PR111/W02 as distinct successor nodes,
+    while QPS_CANONICAL_LINEAGE_RESOLVER_v1 and its current navigation projection treat PR110 as a superseded planning sidecar under PR111.
+    The mission shall determine resolver revision/authority precedence and preserve both historical interpretations as temporal evidence.
+
+execution_phases:
+  - id: L0
+    name: FREEZE_AND_CENSUS
+    output: exact_repo_PR_path_wave_token_inventory
+  - id: L1
+    name: NORMALIZE_IDENTITIES
+    output: canonical_wave_pulse_PR_nodes_plus_collision_receipts
+  - id: L2
+    name: BUILD_DEPENDENCY_GRAPH
+    output: temporal_semantic_execution_and_federation_edges
+  - id: L3
+    name: GROUP_AND_SECTION
+    output: wave_families_mainline_parallel_side_load_entry_exit_sections
+  - id: L4
+    name: RENDER_ATLAS
+    output: markdown_ASCII_graph_JSON_graph_and_read_only_HMI_projection
+  - id: L5
+    name: VERIFY_RECURSE
+    output: independent_exact_head_validation_and_next_delta_baseline
+
+DoD:
+  - every_observed_W_token_has_a_disposition
+  - every_PR_link_is_evidence_backed_or_explicitly_UNKNOWN
+  - every_current_semantic_family_has_at_most_one_current_node
+  - all_superseded_nodes_remain_provenance_reachable
+  - full_graph_and_sectional_DAGs_have_entry_exit_contracts
+  - artifact_class_and_runtime_boundary_is_explicit
+  - navigation_has_numbered_TOC_and_cross_links
+DoV:
+  - exact_head_repeat_on_fresh_QPS_state
+  - graph_validator_reports_no_cycle_inside_bounded_lineage_or_execution_DAGs
+  - global_recursive_feedback_cycles_are_explicitly_outside_bounded_DAGs
+  - QPS_child_authority_and_zero_formal_credit_are_preserved
+
+next_action: COMPLETE_FULL_REPOSITORY_WAVE_TOKEN_AND_PR_CENSUS_THEN_RECONCILE_FIRST_RED
