@@ -1,0 +1,67 @@
+schema: missioncontrol.golden_thread.bd_transition/v1
+as_of: '2026-09-17'
+authority_transfer: false
+formal_credit_delta: 0
+
+from_item:
+  id: GT-BD-006
+  prior_state: ACTIVE
+  promoted_state: DONE
+  routing_disposition: CONTROL_WATCH
+  maturity: M3
+  victory_predicate: second_family_repeat_zero_duplicate_obligations_same_projection_durable_receipt
+  evidence:
+    pr: 186
+    exact_head: 801e56855e3cb24c286b7c62469d765d4cffe413
+    merge_commit: 283cdd84828cc81c21ad12b27a52a944f832ecee
+    hosted_workflow_family: PASS_8_OF_8
+    golden_thread_replay_run: 35174481075
+    golden_thread_replay_job: 105053043572
+    replay_job_steps: 16
+    unit_tests: 69
+    required_adapter_tests:
+      - test_adapter_fails_closed_on_missing_pr_sha
+      - test_adapter_rejects_unsupported_object_type
+      - test_second_independent_family_is_idempotent_and_registry_bound
+    required_adapter_tests_result: PASS_3_OF_3
+    artifact:
+      name: golden-thread-replay-receipts
+      id: 10478466581
+      zip_sha256: d7f03b8771a676e6cbafe7bba1d2c9533453b52f15b7124994f27eb94213003d
+    durable_registry: mission-control/golden-thread/GOLDEN_THREAD_IMPORT_RECEIPT_REGISTRY_v1.json
+    second_family_fixture: mission-control/golden-thread/fixtures/LIVE_GITHUB_OCCURRENCE_FAMILY_CODEX_20260917.json
+  closure_rule: >-
+    The bounded GT-BD-006 predicate is closed because the independent CODEX
+    family was normalized through the connector adapter, re-imported with zero
+    new obligations and identical projection digest, and bound to a durable
+    registry under hosted exact-head execution.
+
+released_item:
+  id: GT-BD-011
+  prior_state: TODO
+  promoted_state: ACTIVE
+  routing_disposition: EXECUTE_NOW
+  dependency_released: GT-BD-006_SECOND_FAMILY_AND_DURABLE_REGISTRY
+  first_batch:
+    batch_id: GT-BD-011-BATCH-001
+    fixture: mission-control/golden-thread/fixtures/GT_BD_011_BOOTSTRAP_BATCH001_20260917.json
+    test: mission-control/golden-thread/test_gt_bd_011_bootstrap_batch.py
+    repository_count: 4
+    occurrence_count: 4
+    repositories:
+      - GBOGEB/pipeline-automation-hub
+      - GBOGEB/cryoplant-project
+      - GBOGEB/CODEX
+      - GBOGEB/ABACUS
+    required_lineage_coverage: 1.0
+    required_reimport_new_obligations: 0
+    required_authority_transfer: false
+  victory_predicate: each_batch_retains_100_percent_lineage_zero_authority_inversion_deterministic_replay
+
+noncompensation:
+  - GT_BD_006_DONE_NE_FLEET_M4
+  - GT_BD_011_BATCH001_NE_FLEET_WIDE_COMPLETION
+  - MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS
+  - QPS_GT_BDQ_0_REMAINS_QPS_AUTHORITY
+  - ENGINEERING_CREDIT_DELTA_0
+  - SOURCE_AUTHORITY_TRANSFER_FALSE
