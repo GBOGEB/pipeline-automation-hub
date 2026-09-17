@@ -1,5 +1,5 @@
 schema: missioncontrol.official_mission_register.v1
-as_of: '2026-09-17T03:16:00+02:00'
+as_of: '2026-09-17T03:32:00+02:00'
 authority_transfer: false
 purpose: >-
   Official Mission Control index across canonical Grand Missions, governed variants,
@@ -77,10 +77,35 @@ local_missions:
     parallel_high_pressure_slice: H07_GRAPH_EIGENSPECTRUM_GFT_FILTERS
     official_control: mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml
     crew_allocation: mission-control/qps-triage-ultra/missions/LM-10_CREW_ALLOCATION_v3.yaml
+  - id: LM-11
+    number: 11
+    type: LOCAL_MULTI_SURFACE_LINEAGE_CARTOGRAPHY
+    name: QPS_WAVE_LINEAGE_DEPENDENCY_CARTOGRAPHY
+    home: GBOGEB/pipeline-automation-hub
+    provider: GBOGEB/cryoplant-project
+    orchestration_issue: GBOGEB/pipeline-automation-hub#152
+    refresh_issue: GBOGEB/pipeline-automation-hub#165
+    state: QPS_IMPLEMENTATION_MERGED_HOSTED_DOV_WITHHELD
+    official_control: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_v1.yaml
+    graph_contract: mission-control/qps-triage-ultra/missions/LM-11_QPS_WAVE_GRAPH_CONTRACT_v1.json
+    atlas: mission-control/qps-triage-ultra/missions/LM-11_QPS_WAVE_ATLAS_v1.md
+    current_receipt: mission-control/qps-triage-ultra/missions/LM-11_REFRESH_AND_CHILD_RECEIPT_2026-09-17_v1.yaml
+    qps_evidence:
+      implementation_pr: 1382
+      implementation_merge_sha: f6eb1f6344e9953c095cd4dfadcf89991499f791
+      observed_main_sha: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b
+      hosted_dov_boundary: triage/lm11/QPS_LM11_HOSTED_DOV_BOUNDARY_v1.yaml
+      hosted_state: INFRA_PREEXECUTION_ZERO_STEP_REPRODUCED
+    current_first_red: LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN
+    authority_transfer: false
+    formal_credit_delta: 0
+    rule: DOES_NOT_RENUMBER_GM_HM_OR_QPS_WAVES_AND_DOES_NOT_COMPENSATE_ISSUE_923
 invariants:
   - canonical_GM_ids_remain_exactly_GM_I_to_GM_V
   - GM_I_B_is_variant_not_GM_VI_or_GM_II
   - HM_01_is_horizontal_and_does_not_consume_a_GM_or_LM_number
   - LM_10_does_not_become_Grand_Mission_by_activity_or_scope_growth
+  - LM_11_is_local_cartography_and_does_not_consume_or_renumber_a_Grand_Mission
+  - LM_11_navigation_does_not_mutate_QPS_child_authority_or_compensate_runtime_GOLD
   - authority_transfer_false_unless_separately_governed
   - mission_registration_does_not_create_engineering_or_release_credit
