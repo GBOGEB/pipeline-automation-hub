@@ -1,0 +1,240 @@
+schema: qps.mission_control.local_mission.v1
+mission_id: LM-11
+mission_name: QPS_WAVE_LINEAGE_DEPENDENCY_RECONSTRUCTION
+mission_class: LOCAL_REPOSITORY_LINEAGE_AND_TRIAGE
+mission_control_node: QPS_TRIAGE_ULTRA
+home_repo: GBOGEB/pipeline-automation-hub
+subject_repo: GBOGEB/cryoplant-project
+state: REQUESTED_STAGED_FOR_GOVERNED_EXECUTION
+authority_transfer: false
+formal_credit_delta: 0
+grand_mission_member: false
+grand_mission_analogy: GM_STYLE_SATELLITE_PROFILE_ONLY
+
+request:
+  origin: USER_REQUEST_2026_09_17
+  intent: >-
+    Reconstruct the complete QPS wave estate as a governed lineage and dependency graph,
+    including wave/pulse/correction/revisit topology, linked pull requests, artifacts,
+    control surfaces, runtime/code nodes and bounded execution DAGs. Preserve existing QPS
+    SSOT and immutable GitHub provenance; do not allocate a new QPS global wave merely for
+    this indexing/navigation mission.
+
+primary_objectives:
+  P1_FULL_SEQUENCE_AND_LINEAGE:
+    - enumerate every canonical and historical wave-labelled object discoverable at exact QPS head
+    - resolve W, P, C, R and P3R identities through existing normalization/resolver surfaces
+    - cross-reference each discovered transaction to GitHub PR, commit SHA and material artifacts where available
+    - preserve unresolved or ambiguous links explicitly rather than guessing
+  P2_MAIN_GROUPS:
+    - derive main wave families from governed namespace, path, dependency and semantic evidence
+    - distinguish global execution spine, parallel non-compensating lanes, local revisits and federation/runtime side lanes
+
+secondary_objectives:
+  S1_GRAPH:
+    - emit typed QPS TRIAGE nodes and edges
+    - retain global recursive graph while requiring every bounded execution and lineage DAG projection to be acyclic
+  S2_PIPELINE_WIREFRAME:
+    - publish full-system ASCII workflow and information-flow wireframe
+    - publish sectional DAGs, side-load/re-entry DAGs and entry/exit-point tables
+  S3_ARTIFACT_CLASSES:
+    human_out: [pdf, docx, pptx, xlsx, html]
+    hybrid_control: [yaml, yml, json, csv, tsv, md]
+    code_core: [py, ts, js, mjs, cjs, sh, ps1, github_actions_yaml]
+
+tertiary_objectives:
+  T1_HMI_GUI:
+    - provide read-only lineage explorer/navigation projection suitable for HTML or GitHub Pages
+    - support filters for wave, pulse/update type, PR, family, edge type, artifact class, state and authority
+  T2_READING_NAVIGATION:
+    - update or add Markdown front-door documentation with numbered outline, concise TOC and cross-navigation
+    - point to existing QPS restart/control surfaces instead of replacing them
+
+icing_on_cake:
+  objective: FULL_COMPREHENSIVE_QPS_TRIAGE_PLUS_GM_STYLE_SATELLITE_NODE
+  rule: >-
+    The satellite presentation may use GM-I..GM-V visual/type conventions, but LM-11 remains
+    a local mission and must not consume GM-VI, renumber GM-I..GM-V, or create authority transfer.
+
+existing_qps_authority_surfaces:
+  restart_root: handover/qps_recursive/GLOB.yaml
+  current_pointer: handover/qps_recursive/QTG_CURRENT.yaml
+  control_plane: controls/QPS_TRIAGE_CONTROL_PLANE_v1.yaml
+  child_contract: controls/QPS_TRIAGE_CHILD_CONTRACT_v1.json
+  repo_deep_map: controls/QPS_TRIAGE_REPO_DEEP_MAP.yaml
+  repo_deep_handoff: handover/qps_recursive/QPS_TRIAGE_REPO_DEEP.md
+  wave_normalization: controls/QPS_WAVE_LINEAGE_NORMALIZATION_v0.1.yaml
+  canonical_lineage_resolver: controls/QPS_CANONICAL_LINEAGE_RESOLVER_v1.json
+  navigation_registry: ocd-adr/40_implementation/QPS_LINEAGE_NAVIGATION_REGISTRY_v1.json
+  total_repo_census: tools/triage/total_repo_census.py
+
+transaction_hierarchy:
+  - Mission
+  - Family
+  - Wave
+  - Pulse_or_Update
+  - Pull_Request
+  - Node
+  - Artifact
+  - Atom
+
+node_types:
+  - MISSION
+  - FAMILY
+  - WAVE
+  - PULSE
+  - CORRECTION
+  - REVISIT
+  - P3R_CYCLE
+  - PR
+  - COMMIT
+  - ISSUE
+  - CONTROL_SURFACE
+  - WORKFLOW
+  - RUNTIME_RECEIPT
+  - ARTIFACT
+  - BINARY_HUMAN_OUT
+  - HYBRID_CONTROL
+  - CODE_CORE
+  - ENTRY_POINT
+  - EXIT_POINT
+  - EXTERNAL_REPO
+
+edge_types:
+  - CONTAINS
+  - PRECEDES
+  - SUPERSEDES
+  - CORRECTS
+  - REVISITS
+  - IMPLEMENTED_BY
+  - MERGED_BY
+  - REFERENCES
+  - READS_FROM
+  - WRITES_TO
+  - BLOCKED_BY
+  - REQUIRES
+  - FEEDS
+  - VALIDATES
+  - GOVERNS
+  - FEDERATES_TO
+  - REENTERS
+  - PRODUCES
+  - CONSUMES
+  - DOES_NOT_IMPLY
+
+identity_and_normalization:
+  immutable_provenance: [github_pr_number, commit_sha, historical_pr_title]
+  canonical_topology: [namespace, wave, update_type, update_index, p3r_cycle_if_applicable]
+  no_renumber_history: true
+  no_destructive_prune: true
+  ambiguity_policy: EXPLICIT_UNRESOLVED_EDGE
+  highest_wave_number_is_not_global_project_state: true
+  later_parallel_wave_does_not_compensate_global_first_red: true
+
+mission_planes:
+  PLANE_1_PROVENANCE_CENSUS:
+    objective: exact-head population and immutable identities
+  PLANE_2_LINEAGE_RESOLUTION:
+    objective: canonical W/P/C/R/P3R and supersession topology
+  PLANE_3_DEPENDENCY_GRAPH:
+    objective: typed node/edge graph with bounded acyclic DAG projections
+  PLANE_4_ARTIFACT_RUNTIME_CLASSIFICATION:
+    objective: human-out, hybrid-control, code-core and workflow/runtime boundaries
+  PLANE_5_NAVIGATION_HMI:
+    objective: human-readable report plus read-only explorer projection
+  PLANE_6_FEDERATION_SATELLITE:
+    objective: show external MissionControl/CODEX/KEB/ABACUS/DOW/gg_MATH/CoolProp edges without importing their authority
+
+bounded_dag_contract:
+  global_graph_may_cycle: true
+  lineage_dag_must_be_acyclic: true
+  bounded_execution_dag_must_be_acyclic: true
+  temporal_history: APPEND_ONLY
+  reentry_representation: NEW_EVENT_NODE_AND_EDGE_NOT_BACK_EDGE_INSIDE_BOUNDED_DAG
+
+required_views:
+  - V00_RESTART_SPINE
+  - V01_ALL_WAVES_CANONICAL
+  - V02_HISTORICAL_TO_CANONICAL_SUPERSESSION
+  - V03_WAVE_PR_CROSSWALK
+  - V04_WAVE_PULSE_UPDATE_TREE
+  - V05_QPS_TRIAGE_NODE_EDGE_GRAPH
+  - V06_BOUNDED_EXECUTION_DAG
+  - V07_SIDELOAD_REENTRY_DAG
+  - V08_HUMAN_OUT_BINARY_PIPELINE
+  - V09_HYBRID_CONTROL_PIPELINE
+  - V10_CODE_RUNTIME_PIPELINE
+  - V11_EXTERNAL_FEDERATION_SATELLITE
+  - V12_CURRENT_GATE_VS_HIGHEST_WAVE
+
+initial_family_hypotheses:
+  note: DERIVED_SEEDS_TO_BE_REPLACED_OR_CONFIRMED_BY_CENSUS
+  families:
+    - FOUNDATION_OCD_ADR_RTM_AND_LKT_LINEAGE
+    - REVIEW_NEGOTIATION_SOURCE_CONVERGENCE
+    - GRAPH_FEDERATION_INTERFACES_AND_TRIAGE
+    - THERMODYNAMIC_NUMERICAL_AND_PROPERTY_RUNTIME
+    - COST_RELIABILITY_WHM_WPS
+    - RUNTIME_FEDERATION_AND_MISSION_CONTROL
+    - SOURCE_AUTHORITY_INTERFACE_AND_ENERGY
+    - SEMANTIC_INTAKE_VISUAL_ROOT_AND_MACHINE_CONTROL
+    - TEMPORAL_PCA_AND_PROPAGATION
+
+execution_protocol:
+  method: THREE_PULSE_PLUS_MIP_PLUS_3PC
+  cycle:
+    P1_3PR:
+      - REFRESH exact QPS main, open PRs, current control/lineage surfaces
+      - PROBE complete wave/PR/artifact population and naming collisions
+      - RANK unresolved dependencies and highest-value navigation gaps
+    P2_MIP:
+      - MODERNIZE reuse existing census/resolver instead of parallel framework
+      - INNOVATE only missing graph/DAG/navigation projections
+      - PERPETUATE exact-head receipts, regression tests and restart pointers
+    P3_3PC:
+      - PREPARE generated graph and bounded DAGs
+      - PROVE schema/acyclicity/provenance coverage
+      - COMMIT child-side navigation with zero authority leakage
+    P4_3P3_OPTIONAL:
+      - PRESERVE_OR_PIN exact producer identities
+      - PROPAGATE_OR_PENETRATE governed satellite edges
+      - PROVE_OR_PROMOTE diagnostic/navigation state only
+
+first_red:
+  id: COMPLETE_EXACT_HEAD_WAVE_PR_CROSSWALK
+  condition: >-
+    Existing normalization and navigation surfaces resolve selected collisions/families but do not yet expose
+    one complete current exact-head graph spanning every discoverable QPS wave/update/PR/artifact dependency.
+  victory: >-
+    Machine output enumerates the exact-head wave/update population, reports coverage and unresolved edges,
+    binds PRs and SHAs where observable, validates bounded DAG acyclicity, and generates human navigation.
+
+DoD:
+  - LM11 mission request is registered by PR without changing GM numbering
+  - exact QPS head is pinned in an execution receipt
+  - full discovered wave/update population is enumerated
+  - PR cross-reference coverage is measured, not assumed
+  - typed nodes and edges are emitted
+  - bounded DAG projections pass cycle detection
+  - artifact classes and entry/exit points are reported
+  - Markdown navigation front door exists
+  - HMI/read-only view has a governed source graph
+
+DoV:
+  mission_registration: MERGED_MISSIONCONTROL_PR_REQUIRED
+  qps_graph_population: EXACT_HEAD_GENERATED_RECEIPT_REQUIRED
+  pr_lineage: COVERAGE_METRIC_AND_UNRESOLVED_LIST_REQUIRED
+  dag: ACYCLICITY_TEST_REQUIRED
+  navigation: HUMAN_AND_MACHINE_CROSS_NAV_REQUIRED
+  engineering_credit: ZERO
+  negotiation_credit: ZERO
+  release_credit: ZERO
+
+stop_rules:
+  - do_not_sort_wave_numbers_and_call_that_lineage
+  - do_not_treat_highest_wave_as_current_global_gate
+  - do_not_convert_parallel_diagnostic_success_into_engineering_credit
+  - do_not_renumber_historical_PRs_or_wave_labels
+  - do_not_duplicate_existing_QPS_census_or_lineage_resolver
+  - do_not_hide_unresolved_links
+  - do_not_create_GM_VI
