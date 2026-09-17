@@ -85,39 +85,64 @@ def main() -> int:
     gm_iv = next(item for item in registry["grand_missions"] if item["id"] == "GM-IV")
 
     require(
-        gm_iv["state"] in {"STAGED_ACTIVE_PILOT_2_OF_8", "STAGED_ACTIVE_RECON_4_OF_8"},
+        gm_iv["state"] in {
+            "STAGED_ACTIVE_PILOT_2_OF_8",
+            "STAGED_ACTIVE_RECON_4_OF_8",
+            "ACTIVE_8_OF_8",
+        },
         f"unexpected controlled baseline: {gm_iv['state']}",
     )
     require(fleet.gm_iv_supported_shape(gm_iv), "current governed GM-IV shape must be accepted")
 
-    recon4 = copy.deepcopy(gm_iv)
-    recon4.update(contract["proposed_shape"])
-    recon4["frontier_count"] = 8
-    if gm_iv["state"] == "STAGED_ACTIVE_RECON_4_OF_8":
-        recon4["recon_4_of_8_evidence"] = contract["accepted_gate_evidence"]
-        require(fleet.gm_iv_supported_shape(recon4), "governed RECON_4 shape must be accepted after promotion")
-    else:
-        recon4.pop("recon_4_of_8_evidence", None)
+    if gm_iv["state"] == "ACTIVE_8_OF_8":
         require(
-            not fleet.gm_iv_supported_shape(recon4),
-            "RECON_4 must fail closed before separate promotion binds accepted evidence",
+            fleet.valid_recon4_evidence(gm_iv.get("recon_4_of_8_evidence")),
+            "ACTIVE8 must retain accepted RECON4 evidence",
         )
+        require(
+            fleet.valid_active8_evidence(gm_iv.get("active_8_of_8_evidence")),
+            "ACTIVE8 must retain accepted promotion evidence",
+        )
+        # The negative control moves with the lifecycle: accepted ACTIVE8 is now
+        # canonical, so fail closed on a superficially ACTIVE8 shape with its
+        # accepted promotion evidence removed.
+        malformed_active8 = copy.deepcopy(gm_iv)
+        malformed_active8.pop("active_8_of_8_evidence", None)
+        require(
+            not fleet.gm_iv_supported_shape(malformed_active8),
+            "ACTIVE8 without accepted promotion evidence must fail closed",
+        )
+        recon4_authorized = True
+        active8_authorized = True
+        lifecycle_mode = "POST_ACTIVE8_CONTROL_REGRESSION"
+    else:
+        recon4 = copy.deepcopy(gm_iv)
+        recon4.update(contract["proposed_shape"])
+        recon4["frontier_count"] = 8
+        if gm_iv["state"] == "STAGED_ACTIVE_RECON_4_OF_8":
+            recon4["recon_4_of_8_evidence"] = contract["accepted_gate_evidence"]
+            require(fleet.gm_iv_supported_shape(recon4), "governed RECON_4 shape must be accepted after promotion")
+            recon4_authorized = True
+        else:
+            recon4.pop("recon_4_of_8_evidence", None)
+            require(
+                not fleet.gm_iv_supported_shape(recon4),
+                "RECON_4 must fail closed before separate promotion binds accepted evidence",
+            )
+            recon4_authorized = False
 
-    active8 = copy.deepcopy(recon4)
-    active8["state"] = "ACTIVE_8_OF_8"
-    active8["activation_stage"] = "ACTIVE_8_OF_8"
-    require(
-        not fleet.gm_iv_supported_shape(active8),
-        "ACTIVE_8 must fail closed until its separate Governor defines the complete shape",
-    )
-    require(
-        "ACTIVE_8_OF_8" in fleet.FORWARD_GM_IV_STATES_REQUIRING_GOVERNOR,
-        "ACTIVE_8 must remain explicitly Governor-gated",
-    )
-    require(
-        fleet.FORWARD_GM_IV_STATES_REQUIRING_GOVERNOR.isdisjoint(fleet.SUPPORTED_GM_IV_STATES),
-        "unsupported forward stages must not leak into generic supported-state set",
-    )
+        malformed_active8 = copy.deepcopy(recon4)
+        malformed_active8["state"] = "ACTIVE_8_OF_8"
+        malformed_active8["activation_stage"] = "ACTIVE_8_OF_8"
+        malformed_active8["candidate_frontiers"] = [f"GM-IV-F{i:02d}" for i in range(1, 9)]
+        malformed_active8["unfilled_frontier_slots"] = []
+        malformed_active8.pop("active_8_of_8_evidence", None)
+        require(
+            not fleet.gm_iv_supported_shape(malformed_active8),
+            "unevidenced ACTIVE_8 must fail closed before accepted promotion evidence",
+        )
+        active8_authorized = False
+        lifecycle_mode = "PRE_ACTIVE8_FORWARD_GATE"
 
     for good in ("run-1", " job://1 ", "runner://1"):
         require(exposure.nonempty_string(good), f"valid provenance rejected: {good!r}")
@@ -148,8 +173,10 @@ def main() -> int:
     print(json.dumps({
         "result": "PASS_GM_IV_FORWARD_GATE_SAFETY",
         "current_state": gm_iv["state"],
-        "recon_4_authorized": gm_iv["state"] == "STAGED_ACTIVE_RECON_4_OF_8",
-        "active_8_authorized": False,
+        "lifecycle_mode": lifecycle_mode,
+        "recon_4_authorized": recon4_authorized,
+        "active_8_authorized": active8_authorized,
+        "negative_control": "ACTIVE8_WITHOUT_ACCEPTED_PROMOTION_EVIDENCE_REJECTED",
         "provenance_negative_controls": 15,
         "authority_transfer": False,
         "child_binding": False,
