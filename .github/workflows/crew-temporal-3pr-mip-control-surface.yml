@@ -1,0 +1,89 @@
+name: MissionControl Temporal 3PR MIP Control Surface
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_3pr_mip_control_surface.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_temporal_3pr_mip_control_surface.py'
+      - '.github/workflows/crew-temporal-3pr-mip-control-surface.yml'
+  workflow_run:
+    workflows: ['MissionControl Temporal Allocation Policy']
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  unit-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Assert exact PR head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+      - name: Run 3PR MIP control-surface tests
+        working-directory: mission-control/qps-triage-ultra/crew/measured/frontier/temporal
+        run: python -m unittest -v test_temporal_3pr_mip_control_surface.py
+
+  genuine-scheduled-control-surface:
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact scheduled source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Assert exact scheduled source head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.workflow_run.head_sha }}"
+      - name: Download governed temporal policy receipt
+        uses: actions/download-artifact@v4
+        with:
+          name: crew-temporal-pc3-${{ github.event.workflow_run.head_sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/trigger-artifact
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Build 3PR MIP control surface
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_3pr_mip_control_surface.py
+          --policy mission-control/qps-triage-ultra/crew/measured/frontier/temporal/trigger-artifact/TEMPORAL_ALLOCATION_POLICY_RECEIPT.json
+          --config mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PR_MIP_CONTROL_SURFACE.json
+      - name: Enforce governance invariants
+        env:
+          EXPECTED_RUN_ID: ${{ github.event.workflow_run.id }}
+        shell: python
+        run: |
+          import json, os
+          from pathlib import Path
+          p=Path('mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PR_MIP_CONTROL_SURFACE.json')
+          d=json.loads(p.read_text())
+          assert d['governed_clock_source']=='GENUINE_SCHEDULED_CONTROL_FRONTIER_ONLY'
+          assert d['control_policy_thresholds_unchanged'] is True
+          assert d['synthetic_or_noop_clock_evidence_admitted'] is False
+          assert d['competency_promotions']==0
+          assert d['authority_transfer'] is False
+          assert str(d['source_frontier']['window_ids'][-1])==os.environ['EXPECTED_RUN_ID']
+          print(json.dumps({
+              'status':'PASS_TEMPORAL_3PR_MIP_CONTROL_SURFACE',
+              'run_id':os.environ['EXPECTED_RUN_ID'],
+              'short_first_red':d['focal_classes']['short_compute']['first_red_gate'],
+              'long_first_red':d['focal_classes']['long_compute_contended']['first_red_gate'],
+              'full_control':d['full_control_policy']['independently_satisfied'],
+              'competency_promotions':0,
+              'authority_transfer':False,
+          }, sort_keys=True))
+      - name: Upload 3PR MIP control-surface receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: temporal-3pr-mip-control-surface-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.head_sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PR_MIP_CONTROL_SURFACE.json
