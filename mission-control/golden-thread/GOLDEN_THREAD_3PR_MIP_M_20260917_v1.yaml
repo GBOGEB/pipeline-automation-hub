@@ -1,0 +1,127 @@
+schema: missioncontrol.golden_thread.3pr_mip_m/v1
+as_of: '2026-09-17T17:43:00+02:00'
+mission: IMMUTABLE_TEMPORAL_GOLDEN_THREAD
+method_sequence: [3PR, MIP_M]
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+
+trigger:
+  material_state_change: true
+  reason: >-
+    MissionControl GT-BD-011 Batch 001 and GT-BD-002 real dependency-cone
+    recompute have both become hosted-proven and merged since the previous
+    architecture BDQ snapshot.
+  missioncontrol_master_sha: 39e64d72c778e0894eba884fc9e349b92ed681e4
+
+three_pulse_refresh:
+  P1_H1_QPS:
+    role: CHILD_AUTHORITY_AND_REENTRY
+    repository: GBOGEB/cryoplant-project
+    observed_main_sha: 42605383a41ded2400fcb76631e6e54faab34952
+    canonical_control: controls/QPS_GOLDEN_THREAD_CURRENT_v0.1.yaml
+    observed_control_state: P0_P6_IMPLEMENTED_MERGED_ROUNDTRIP_CLOSED_GT_BDQ_0_WITHHELD_INFRA_PREEXECUTION_4_ATTEMPTS
+    first_red: GT_BDQ_0_EXACT_HEAD_HOSTED_REPLAY_PROOF
+    classification: RUNNER_ADMISSION_PREEXECUTION
+    application_failure_claimed: false
+    qps_gt_bdq_credit_from_missioncontrol: false
+    bounded_next_action: >-
+      Preserve GT_BDQ_0 until a QPS-hosted exact-head replay executes real
+      steps and binds the full proof bundle. Do not repair application code
+      from zero-step evidence.
+    disposition: DEFER_QPS_ADVANCE
+
+  P2_H2_KEB:
+    role: SEMANTICS_PROVENANCE_ANTI_OVERCLAIM
+    repository: GBOGEB/CODEX
+    observed_main_sha: 64a8f8b7cb721c7ebf8b35ad4c5e8ef7705df0e0
+    findings:
+      - ONE_LOGICAL_FACT_ONE_AUTHORITY remains controlling
+      - MissionControl projection state does not promote QPS child state
+      - ACCEPT_REJECT_DEFER remain child transaction dispositions not generic BD lifecycle states
+      - DONE_CONTROL states may be earned in MissionControl without creating QPS engineering credit
+    new_semantic_framework_required: false
+    bounded_next_action: reuse_existing_golden_thread_vocabulary
+    disposition: ACCEPT_SEMANTIC_BASELINE
+
+  P3_H3_DOW:
+    role: INDEPENDENT_RUNTIME_AND_DELIVERY_PROOF
+    repository: GBOGEB/ABACUS
+    observed_main_sha: 388258e1f2ed74489bf5d8ef7be4aaa1ec646f08
+    missioncontrol_runtime_evidence:
+      gt_bd_006_pr: 186
+      gt_bd_006_exact_head: 801e56855e3cb24c286b7c62469d765d4cffe413
+      gt_bd_006_workflows: PASS_8_OF_8
+      gt_bd_006_replay_tests: 69
+      gt_bd_011_pr: 190
+      gt_bd_011_exact_head: f989223626599d00cd3fed65a54816f5cbd99d78
+      gt_bd_011_merge_sha: f6a9c67df2e508df85b7c4441f36b2aae50309f8
+      gt_bd_011_replay_run: 35229457547
+      gt_bd_011_replay_job: 105229427346
+      gt_bd_011_replay_tests: 70
+      gt_bd_011_artifact_id: 10500357116
+      gt_bd_011_artifact_zip_sha256: 082545f330e1ae754050a03b01b6685225b7f1cb90820529387168064fa76e7e
+      gt_bd_002_pr: 191
+      gt_bd_002_exact_head: 98c90114dee0abeeb252e319387fb94b97df4bda
+      gt_bd_002_merge_sha: 39e64d72c778e0894eba884fc9e349b92ed681e4
+      gt_bd_002_replay_run: 35229777316
+      gt_bd_002_replay_job: 105230529829
+      gt_bd_002_replay_tests: 72
+      gt_bd_002_artifact_id: 10500039423
+      gt_bd_002_artifact_zip_sha256: f18fb71211a7336b8e01016e788e545c165245f219dcd21329d87e344d2a87c6
+    measured_result:
+      hosted_execution: true
+      quality_gate: PASS
+      durable_receipts_bound: true
+      gt_bd_011_repo_lineage_coverage: 1.0
+      gt_bd_002_stale_survivor_count: 0
+      gt_bd_002_stale_rendition_count: 0
+    disposition: ACCEPT_MISSIONCONTROL_RUNTIME_EVIDENCE
+
+metrics:
+  CG: GT_BD_006_AND_GT_BD_002_CLOSED_GT_BD_011_BATCH001_PROVEN_GT_BD_003_NEXT
+  BG: CANONICAL_BDQ_SNAPSHOT_STALE_RELATIVE_TO_MERGED_HOSTED_EVIDENCE
+  EX: PASS_GT_BD_011_AND_GT_BD_002
+  QH: PASS
+  KR: EXACT_SHA_AND_ARTIFACT_RECEIPTS_BOUND
+  DR: READY_FOR_GT_BD_003
+  SR: MIP_M_REQUIRED_FOR_CURRENT_FRONTIER_SELECTOR
+  WD: CONTINUE_BOUNDED
+  PB: ZERO_QPS_PROMOTION_CREDIT
+
+mip_m:
+  justified_by_observed_gap: true
+  measured_gap: >-
+    GOLDEN_THREAD_ARCHITECTURE_BDQ_v2.yaml predates PRs 186, 190 and 191 and
+    therefore still marks GT-BD-006 and GT-BD-002 ACTIVE and GT-BD-011
+    dependency-held. That snapshot is retained as history but must not be used
+    as the current execution selector without a governed delta.
+  modernization:
+    artifact: mission-control/golden-thread/GOLDEN_THREAD_FRONTIER_CURRENT_v1.yaml
+    strategy: APPEND_ONLY_CURRENT_OVERLAY
+    base_bdq_preserved: true
+    current_transitions:
+      GT-BD-006: DONE_CONTROL_WATCH
+      GT-BD-011: ACTIVE_BATCH001_HOSTED_PASS_MERGED
+      GT-BD-002: DONE_CONTROL_WATCH
+      GT-BD-003: ACTIVE_EXECUTE_NOW
+    innovation: >-
+      Introduce a small current-frontier overlay that binds exact merged proof
+      receipts while preserving the historical architecture BDQ unchanged.
+      This avoids destructive state rewriting and keeps reconstruction possible.
+    perpetuation:
+      recurrence_rule: rerun_3PR_only_on_material_repo_or_evidence_change
+      mip_rule: rerun_MIP_only_on_measured_structural_or_recurrence_gap
+      next_method_if_gate_transaction_required: 3PC
+  forbidden:
+    - QPS_GT_BDQ_0_advance
+    - QPS_engineering_credit
+    - authority_transfer
+    - fleet_M4_claim
+    - rewrite_historical_BDQ_without_lineage
+
+wave_disposition: ACCEPT_3PR_MIP_M_BOUNDED
+next_first_red: GT-BD-003_REAL_CHILD_GATE_RESET_RECEIPT
+stop_rule: >-
+  Do not repeat 3PR ceremonially. Proceed to GT-BD-003 as a bounded gate
+  transaction; use 3PC there if prepare/prove/commit semantics are required.
