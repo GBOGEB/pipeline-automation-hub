@@ -1,0 +1,157 @@
+name: Golden Thread P4 Fleet Import
+
+on:
+  pull_request:
+    paths:
+      - "mission-control/golden-thread/fleet_importer.py"
+      - "mission-control/golden-thread/test_fleet_importer.py"
+      - "mission-control/golden-thread/fixtures/FLEET_IMPORT_SCOPE_v1.json"
+      - ".github/workflows/golden-thread-p4-fleet-import.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  controlled-fleet-import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile importer
+        run: |
+          python -m py_compile mission-control/golden-thread/fleet_importer.py
+
+      - name: Run importer unit tests
+        working-directory: mission-control/golden-thread
+        run: |
+          python -m unittest -v test_fleet_importer
+
+      - name: Fetch bounded live GitHub scope once
+        working-directory: mission-control/golden-thread
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python fleet_importer.py fetch \
+            fixtures/FLEET_IMPORT_SCOPE_v1.json \
+            --out /tmp/golden-thread-p4-live-snapshots.json
+
+      - name: Prove live import idempotency successor lineage and P3 cadence
+        working-directory: mission-control/golden-thread
+        run: |
+          python - <<'PY'
+          import copy
+          import json
+          from pathlib import Path
+
+          import checkpoint_registry as cr
+          import checkpoint_replay as cpr
+          import fleet_importer as fi
+          import golden_thread as gt
+
+          ledger=json.load(open('fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json'))
+          scope=json.load(open('fixtures/FLEET_IMPORT_SCOPE_v1.json'))
+          live=json.load(open('/tmp/golden-thread-p4-live-snapshots.json'))
+          snapshots=live['snapshots']
+          assert len(snapshots)==5
+
+          import_registry=fi.empty_registry(scope)
+          ledger1, registry1, receipt1=fi.import_snapshots(
+              ledger,import_registry,scope,snapshots,
+              recorded_at='2026-09-17T02:20:00Z')
+          assert receipt1['status']=='PASS'
+          assert receipt1['added_event_count']==5
+          assert receipt1['replayed_snapshot_count']==0
+          assert receipt1['source_write_count']==0
+          assert receipt1['classification_credit']==0
+          assert receipt1['engineering_credit']==0
+          assert receipt1['compliance_credit']==0
+          assert receipt1['release_credit']==0
+          assert receipt1['visual_fidelity_credit'] is False
+          assert receipt1['authority_transfer'] is False
+          assert len(ledger1['events'])==19
+          assert fi.verify_registry(registry1,scope)['status']=='PASS'
+
+          ledger2, registry2, receipt2=fi.import_snapshots(
+              ledger1,registry1,scope,snapshots,
+              recorded_at='2026-09-17T02:21:00Z')
+          assert receipt2['added_event_count']==0
+          assert receipt2['replayed_snapshot_count']==5
+          assert ledger2==ledger1
+          assert registry2==registry1
+
+          policy=cr.cadence_policy(every_n_events=4)
+          checkpoint_registry=cr.empty_registry(ledger,policy)
+          cp14=cpr.create_checkpoint(
+              ledger,'GT-0014','CP-P4-BASE-0014',
+              created_at='2026-09-17T02:14:00Z')
+          checkpoint_registry,_=cr.register_checkpoint(
+              checkpoint_registry,ledger,policy,cp14,
+              trigger='RELEASE_BOUNDARY',checkpoint_ref='CP-P4-BASE-0014.json')
+          due=cr.cadence_decision(checkpoint_registry,ledger1,policy)
+          assert due['status']=='DUE'
+          assert due['reason']=='EVENT_INTERVAL'
+          assert due['events_since_latest']==5
+          selected=cr.select_checkpoint(checkpoint_registry,ledger1,policy)
+          assert selected['checkpoint']['checkpoint_id']=='CP-P4-BASE-0014'
+          assert selected['tail_event_count']==5
+          assert cpr.verify_replay_equivalence(ledger1,cp14)['status']=='PASS'
+
+          changed=copy.deepcopy(snapshots[0])
+          changed['title']=changed['title']+' [controlled mutation]'
+          changed['updated_at']='2026-09-17T02:22:00Z'
+          changed['source_snapshot_digest']=gt.digest({k:v for k,v in changed.items() if k!='source_snapshot_digest'})
+          ledger3, registry3, receipt3=fi.import_snapshots(
+              ledger1,registry1,scope,[changed],
+              recorded_at='2026-09-17T02:23:00Z')
+          assert receipt3['added_event_count']==1
+          key=changed['source_key']
+          history=registry3['sources'][key]['history']
+          assert len(history)==2
+          assert history[-1]['parent_transaction_id']==history[-2]['transaction_id']
+          assert history[-1]['transaction_id']!=history[-2]['transaction_id']
+
+          proof={
+              'schema':'missioncontrol.golden_thread_p4_live_import_proof.v1',
+              'status':'PASS',
+              'live_source_count':len(snapshots),
+              'first_import_added_events':receipt1['added_event_count'],
+              'exact_replay_added_events':receipt2['added_event_count'],
+              'exact_replay_suppressed':receipt2['replayed_snapshot_count'],
+              'changed_snapshot_added_events':receipt3['added_event_count'],
+              'changed_snapshot_successor_lineage':True,
+              'post_import_event_count':len(ledger1['events']),
+              'checkpoint_due':due['status'],
+              'checkpoint_due_reason':due['reason'],
+              'events_since_checkpoint':due['events_since_latest'],
+              'selected_checkpoint':selected['checkpoint']['checkpoint_id'],
+              'selected_checkpoint_tail_events':selected['tail_event_count'],
+              'checkpoint_replay_equivalence':'PASS',
+              'import_registry_digest':registry1['registry_digest'],
+              'first_import_receipt_digest':receipt1['receipt_digest'],
+              'source_write_count':0,
+              'classification_credit':0,
+              'engineering_credit':0,
+              'compliance_credit':0,
+              'release_credit':0,
+              'visual_fidelity_credit':False,
+              'authority_transfer':False,
+          }
+          Path('/tmp/golden-thread-p4-proof.json').write_text(
+              json.dumps(proof,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          print(json.dumps(proof,sort_keys=True))
+          PY
+
+      - name: Upload P4 proof receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-thread-p4-fleet-import-proof
+          path: /tmp/golden-thread-p4-proof.json
+          if-no-files-found: error
