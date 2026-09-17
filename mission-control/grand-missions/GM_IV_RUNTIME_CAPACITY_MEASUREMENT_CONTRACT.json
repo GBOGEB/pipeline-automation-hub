@@ -1,0 +1,55 @@
+{
+  "schema": "qps.gm_iv_runtime_capacity_measurement_contract.v1",
+  "wave": "GM-FLEET-03-POST-ACTIVE8-CAPACITY",
+  "mission_id": "GM-IV",
+  "required_state": "ACTIVE_8_OF_8",
+  "repeat_control_predecessor": {
+    "merge_sha": "7af02c89ca640c180b20341e0016c5f82096da26",
+    "exact_head_sha": "5d86dca5cb794200998c6fbc93dc1669b05ae089",
+    "workflow_run_id": 35150330651,
+    "artifact_id": 10469090485,
+    "artifact_digest": "sha256:d4b6c50228969135b2c98554d3b8d2876ffb0d03daa7d191465cf89670e64d24",
+    "result": "PASS_POST_ACTIVE8_REPEAT_CONTROL"
+  },
+  "capacity_contract": "GM_FLEET_03_CAPACITY_CONTRACT.json",
+  "evidence_class": "MEASURED_RUNTIME_CAPABILITY",
+  "measurement_scope": "CAPABILITY_COVERAGE_NOT_CONCURRENCY_CAPACITY",
+  "concurrency_capacity_claimed": false,
+  "attribution_basis": "PREDECLARED_CAPABILITY_HOST",
+  "assignment_rule": "Each required activation capability is assigned before runtime to one observed host already permitted by GM_FLEET_03_CAPACITY_CONTRACT.json. Post-hoc host substitution is forbidden.",
+  "assignments": [
+    {"capability":"COMMAND","crew_id":"U03","task_id":"CAP-COMMAND-U03","task_type":"CONTROL_SEQUENCE_VERIFY","command":["python","mission-control/grand-missions/probe_gm_iv_runtime_capability.py","--capability","COMMAND"],"accept_marker":"PASS_GM_IV_RUNTIME_CAPABILITY_COMMAND"},
+    {"capability":"TECHNICAL_BOUNDARY","crew_id":"U08","task_id":"CAP-TECHNICAL-BOUNDARY-U08","task_type":"BOUNDARY_VERIFY","command":["python","mission-control/grand-missions/probe_gm_iv_runtime_capability.py","--capability","TECHNICAL_BOUNDARY"],"accept_marker":"PASS_GM_IV_RUNTIME_CAPABILITY_TECHNICAL_BOUNDARY"},
+    {"capability":"RECON","crew_id":"U07","task_id":"CAP-RECON-U07","task_type":"FRONTIER_RECON_VERIFY","command":["python","mission-control/grand-missions/probe_gm_iv_runtime_capability.py","--capability","RECON"],"accept_marker":"PASS_GM_IV_RUNTIME_CAPABILITY_RECON"},
+    {"capability":"ANALYSIS","crew_id":"U05","task_id":"CAP-ANALYSIS-U05","task_type":"EVIDENCE_ANALYSIS","command":["python","mission-control/grand-missions/probe_gm_iv_runtime_capability.py","--capability","ANALYSIS"],"accept_marker":"PASS_GM_IV_RUNTIME_CAPABILITY_ANALYSIS"},
+    {"capability":"RUNTIME","crew_id":"U04","task_id":"CAP-RUNTIME-U04","task_type":"EXACT_SHA_RUNTIME_VERIFY","command":["python","mission-control/grand-missions/probe_gm_iv_runtime_capability.py","--capability","RUNTIME"],"accept_marker":"PASS_GM_IV_RUNTIME_CAPABILITY_RUNTIME"},
+    {"capability":"QA","crew_id":"U06","task_id":"CAP-QA-U06","task_type":"QA_ATTEST","command":["python","mission-control/grand-missions/probe_gm_iv_runtime_capability.py","--capability","QA"],"accept_marker":"PASS_GM_IV_RUNTIME_CAPABILITY_QA"},
+    {"capability":"BUILD_REPAIR_RESERVE","crew_id":"S05","task_id":"CAP-BUILD-REPAIR-S05","task_type":"BUILD_REPAIR_SMOKE","command":["python","mission-control/grand-missions/probe_gm_iv_runtime_capability.py","--capability","BUILD_REPAIR_RESERVE"],"accept_marker":"PASS_GM_IV_RUNTIME_CAPABILITY_BUILD_REPAIR_RESERVE"},
+    {"capability":"GOVERNANCE","crew_id":"U01","task_id":"CAP-GOVERNANCE-U01","task_type":"GOVERNANCE_HOLD_VERIFY","command":["python","mission-control/grand-missions/probe_gm_iv_runtime_capability.py","--capability","GOVERNANCE"],"accept_marker":"PASS_GM_IV_RUNTIME_CAPABILITY_GOVERNANCE"}
+  ],
+  "success_semantics": {
+    "required_capability_runtime_class": "RUNTIME_PROVEN",
+    "required_coverage": "8_OF_8",
+    "measured_capacity": "PASS_RUNTIME_PROVEN_CAPABILITY_CAPACITY",
+    "operational_availability": "DEFER_EXTERNAL_NONCOMPENSATING_GATES_NOT_EVALUATED",
+    "gm_v": "HELD"
+  },
+  "global_noncompensating_watch": {
+    "issue": "GBOGEB/cryoplant-project#923",
+    "rule": "Runtime-capacity proof in public MissionControl cannot compensate or close the private-QPS GOLD runner-admission veto. Refresh the issue before any OPERATIONALLY_AVAILABLE or GM-V launch claim."
+  },
+  "forbidden": [
+    "post_hoc_capability_host_substitution",
+    "claim_concurrency_capacity_from_serial_capability_probes",
+    "claim_operational_availability_from_this_measurement_alone",
+    "launch_GM_V",
+    "bind_GM_IV_children",
+    "transfer_engineering_authority",
+    "promote_competency_from_single_capacity_run",
+    "grant_formal_credit",
+    "compensate_private_QPS_issue_923"
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "hard_gate_compensation_allowed": false
+}
