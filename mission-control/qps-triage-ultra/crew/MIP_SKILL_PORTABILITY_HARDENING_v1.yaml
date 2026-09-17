@@ -1,0 +1,72 @@
+schema: missioncontrol.crew.mip_skill_portability_hardening.v1
+state: FROZEN_PRE_PORTABILITY_PROOF
+objective: >-
+  Consolidate MP_P3 through MP_P5 skill-consumer learning into one reusable,
+  fail-closed portability contract before scoring SKILL_P5 across a second
+  independently governed consumer repository.
+operator:
+  MIP:
+    Modernize:
+      - replace per-workflow ad-hoc receipt assertions with one reusable validator
+      - canonicalize receipt-set ordering before aggregate hashing
+      - make source repo, source ref, skills ref and skill set explicit inputs
+    Innovate:
+      - bind deterministic receipt-set digest over semantic receipt content
+      - require exact SHA syntax and 64-hex entrypoint digests
+      - add adversarial fail-closed controls for authority inversion, ref mutation, duplicate skill and missing digest
+    Perpetuate:
+      - require hosted self-test before portability execution
+      - use the same validator in every new consumer portability proof
+      - preserve immutable historical MP/SKILL observations; never backfill hardened status onto older runs
+hardening_gates:
+  receipt_schema_exact: missioncontrol.crew.skill_resolution_receipt.v1
+  allowed_skills: [math, plots, math-plots]
+  required_skill_set: [math, plots, math-plots]
+  exact_sha_length: 40
+  entrypoint_sha256_length: 64
+  authority_transfer_must_be_false: true
+  duplicate_skill_forbidden: true
+  duplicate_receipt_semantic_payload_forbidden: true
+  source_repo_must_match_execution_context: true
+  source_ref_must_match_exact_consumer_head: true
+  skills_repo_must_equal: GBOGEB/skills
+  skills_ref_must_match_exact_pin: true
+  deterministic_aggregate_required: true
+  negative_controls_required:
+    - authority_transfer_true_fails
+    - mutated_source_ref_fails
+    - duplicate_skill_fails
+    - missing_entrypoint_digest_fails
+portability_target:
+  target_skill_clock: SKILL_P5
+  metric: independent_consumer_repositories_with_exact_pinned_receipts
+  frozen_prediction: 2
+  already_observed_consumer:
+    repo: GBOGEB/gg_MATH
+    hosted_run: 35169919587
+    consumer_head: e6f30e7aa5773009397ceeb939eb02f13a772031
+  second_consumer_candidate:
+    repo: GBOGEB/CoolProp
+    state: NOT_YET_EXECUTED_UNDER_THIS_CONTRACT
+non_compensation:
+  private_qps_gt_bdq_0: RED_BLOCKED_ON_923
+  private_qps_hosted_seven_file_actual: UNOBSERVED
+  qps_zero_step_is_code_evidence: false
+  qps_watch_923_authorized: false
+  lineage_i_proofs_burn_lineage_ii_gates: false
+  formal_credit_delta: 0
+  authority_transfer: false
+control_invariants:
+  - HISTORICAL_PREDICTIONS_IMMUTABLE
+  - NO_CROSS_CLOCK_COMPENSATION
+  - NO_CROSS_LINEAGE_COMPENSATION
+  - NO_REUSE_OF_PRIOR_MP_ACTUAL_AS_LATER_SKILL_ACTUAL
+  - NO_SKILL_BODY_COPY_INTO_CONSUMERS
+  - MERGED_DOES_NOT_EQUAL_PERPETUATED
+  - PARENT_PASS_DOES_NOT_EQUAL_CHILD_ACCEPT
+stop_rule: >-
+  Stop at the first hardening or portability defect. A successful hosted job is
+  insufficient unless exact consumer head, exact skills ref, all three receipt
+  semantics, deterministic aggregate digest and authority_transfer=false are
+  jointly proven. QPS/GT gates remain unchanged and non-compensating.
+next_action: HOSTED_MIP_HARDENING_SELF_TEST
