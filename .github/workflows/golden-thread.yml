@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - master
+      - 'mission/**'
     paths:
       - 'mission-control/golden-thread/**'
       - '.github/workflows/golden-thread.yml'
