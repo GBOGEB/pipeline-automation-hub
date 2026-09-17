@@ -1,0 +1,65 @@
+schema: missioncontrol.gm_i_c_ingress_adapter_control.v1
+as_of: '2026-09-17T16:06:00+02:00'
+mission: GM-I-C
+parent: GM-I
+registration_issue: GBOGEB/pipeline-automation-hub#188
+support_target:
+  mission: HM-01
+  qps_issue: GBOGEB/cryoplant-project#1398
+  environment_issue: GBOGEB/cryoplant-project#1426
+frozen_release_source_sha: 70964e5f1577231512f4104b26f5f6649ad8cb39
+adapter: mission-control/grand-missions/gm_i_c_ingress_adapter.py
+state: ADAPTER_READY_WAIT_REAL_GIT_OBJECT
+purpose: >-
+  Convert the next genuine Git-object-bearing handoff into a deterministic, fail-closed
+  GM-I-C ingress receipt and, when explicitly requested, dispatch the already-governed
+  QPS R3 local executor from a real QPS control checkout.
+transaction:
+  input:
+    required:
+      - REAL_GIT_BUNDLE
+      - REAL_QPS_CONTROL_GIT_CHECKOUT
+    preferred_bundle_ref: refs/heads/r3-exact-70964e5f
+  checks:
+    - BUNDLE_FILE_EXISTS
+    - GIT_BUNDLE_VERIFY_PASS
+    - EXPECTED_SHA_ADVERTISED
+    - QPS_CONTROL_CHECKOUT_IS_GIT_WORKTREE
+    - QPS_CONTROL_CHECKOUT_CLEAN
+    - OFFLINE_BUNDLE_FETCH_PASS
+    - EXPECTED_COMMIT_EXISTS_AFTER_IMPORT
+    - RESOLVED_SHA_EQUALS_FROZEN_RELEASE_SOURCE_SHA
+  optional_dispatch:
+    flag: --execute-r3
+    governed_qps_runner: scripts/run_r3_final_local_exact_worktree_v2.sh
+  output:
+    receipt: GM_I_C_INGRESS_RECEIPT.json
+    timing_fields:
+      - ingress_verify_seconds
+      - r3_execute_seconds_if_dispatched
+    timing_semantics: MEASURED_LOCAL_WALL_CLOCK_ONLY_NOT_GITHUB_QUEUE_TELEMETRY
+fail_closed:
+  - BUNDLE_NOT_FOUND
+  - QPS_CONTROL_CHECKOUT_NOT_GIT_WORKTREE
+  - BUNDLE_VERIFY_FAIL
+  - BUNDLE_LIST_HEADS_FAIL
+  - EXPECTED_SHA_NOT_ADVERTISED_BY_BUNDLE
+  - QPS_CONTROL_CHECKOUT_DIRTY
+  - BUNDLE_IMPORT_FAIL
+  - EXPECTED_COMMIT_NOT_PRESENT_AFTER_IMPORT
+  - SOURCE_SHA_MISMATCH
+  - GOVERNED_R3_RUNNER_MISSING
+  - R3_EXECUTOR_RETURNED_NONZERO
+telemetry_policy:
+  fleet_schema_row: WITHHELD_UNTIL_ALL_REQUIRED_MEASURED_FIELDS_EXIST
+  synthesize_missing_fields: false
+  registration_is_execution: false
+  ingress_pass_is_r3_acceptance: false
+  r3_pass_is_runtime_gold: false
+noncompensating:
+  issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  canonical_gt_credit_from_r3: NONE
+authority_transfer: false
+formal_credit_delta: 0
+next_predicate: REAL_GIT_BUNDLE_ARRIVES_AND_ADAPTER_EXECUTES
