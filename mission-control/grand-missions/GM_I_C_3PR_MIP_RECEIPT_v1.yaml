@@ -1,0 +1,130 @@
+schema: missioncontrol.gm_i_c.3pr_mip_receipt.v1
+as_of: '2026-09-17T17:36:00+02:00'
+mission: GM-I-C
+method_selector: 3PR_PLUS_MIP
+method_authority: mission-control/qps-triage-ultra/methods/QPS_TRIAGE_GLOBAL_METHOD_PROFILE_v1.md
+authority_transfer: false
+formal_credit_delta: 0
+
+p1_3pr:
+  operator: 3PR
+  verbs: [Refresh, Probe, Rank]
+  refresh:
+    missioncontrol_head: 39e64d72c778e0894eba884fc9e349b92ed681e4
+    qps_head: 42605383a41ded2400fcb76631e6e54faab34952
+    gm_i_c_adapter_merge: bcad93065c380fdce6829e114d1a35c8e7754584
+    frozen_r3_source: 70964e5f1577231512f4104b26f5f6649ad8cb39
+    drive_folder_id: 128QqSOwjHakXgf3UAbDIWjErJt5YiefF
+    drive_observed_item_count: 1
+    qualifying_payload_count: 0
+  probe:
+    github_commit_and_tree_visibility: PASS
+    missioncontrol_ingress_adapter: READY
+    drive_landing_zone: READY
+    handoff_request: READY
+    genuine_git_object_payload: ABSENT
+    r3_application_execution: NOT_STARTED
+    runner_or_application_repair_indicated: false
+  rank:
+    first_red:
+      rank: 1
+      id: EXTERNAL_EXECUTION_ENVIRONMENT_INGRESS_GIT_OBJECT_HANDOFF
+      owner_plane: EXTERNAL_HABITAT_INGRESS
+      bounded_next_action: supply_real_git_object_payload
+      victory_predicate: genuine_payload_contains_70964e5f_and_ingress_adapter_emits_PASS_receipt
+    ranked_non_compensating:
+      - rank: 2
+        id: R3_FINAL_LOCAL_EXACT_WORKTREE
+        state: WAIT_AFTER_INGRESS
+      - rank: 3
+        id: R4_COLD_START_REGENERATION_PARITY
+        state: WAIT_AFTER_R3_ACCEPTANCE
+    external_independent_reds:
+      - GBOGEB/cryoplant-project#923
+      - GT_BDQ_0
+  disposition: DEFER_EXECUTION_WAIT_EXTERNAL_PAYLOAD
+
+observed_structural_gap:
+  exists: true
+  id: DRIVE_BRIDGE_MACHINE_READABLE_INGRESS_CONTRACT_AND_RECURRENCE_HOOK_MISSING
+  evidence:
+    - landing_zone_previously_contained_only_human_handoff_document
+    - exact_required_filename_commit_and_acceptance_fields_not_bound_in_one_machine_readable_manifest
+    - recurrence_trigger_for_new_drive_payload_not_bound_to_3PR_and_adapter_execution
+  scope: ORCHESTRATION_AND_PROVENANCE_ONLY
+  does_not_change_qps_source: true
+
+p2_mip:
+  operator: MIP
+  verbs: [Modernize, Innovate, Perpetuate]
+  modernize:
+    action: add_machine_readable_drive_ingress_manifest
+    artifact: mission-control/grand-missions/GM_I_C_DRIVE_INGRESS_MANIFEST_v1.yaml
+    effect: bind_exact_drive_folder_payload_classes_required_commit_adapter_and_acceptance_sequence
+  innovate:
+    action: add_measured_only_ingress_telemetry_contract
+    fields:
+      - payload_sha256
+      - payload_bytes
+      - git_bundle_verify_result
+      - advertised_refs
+      - required_commit_present
+      - import_result
+      - control_checkout_head
+      - control_checkout_clean
+      - adapter_exit_code
+      - r3_dispatch_attempted
+      - r3_exit_code
+    guard: UNKNOWN_IS_NOT_ZERO_AND_NO_SYNTHETIC_TIMING
+  perpetuate:
+    action: bind_recurrence_trigger
+    trigger:
+      - landing_zone_content_changed
+      - active_chat_candidate_payload_arrived
+      - frozen_source_or_governor_superseded
+    response:
+      - rerun_3PR
+      - execute_ingress_adapter_if_candidate_exists
+      - rerun_MIP_only_on_new_structural_or_recurrence_gap
+    no_ceremonial_repeat: true
+  disposition: MIP_CONTROL_HOOK_ADDED_FIRST_RED_UNCHANGED
+
+kpi:
+  before:
+    drive_landing_zone_ready: 1
+    human_handoff_document: 1
+    machine_readable_ingress_manifest: 0
+    qualifying_git_payload: 0
+    ingress_adapter_ready: 1
+  observed:
+    drive_landing_zone_ready: 1
+    human_handoff_document: 1
+    machine_readable_ingress_manifest: 1
+    qualifying_git_payload: 0
+    ingress_adapter_ready: 1
+  delta:
+    machine_readable_ingress_manifest: +1
+    qualifying_git_payload: 0
+  remaining_gap:
+    qualifying_git_payload: 1
+    r3_execution: 1
+    r3_acceptance: 1
+    r4_cold_start_proof: 1
+
+stop_gate:
+  3pr_completed: true
+  mip_justified_by_observed_gap: true
+  bounded_transaction_can_execute_now: false
+  run_3pc_now: false
+  reason: REQUIRED_GIT_OBJECT_PAYLOAD_ABSENT
+  run_3p3_now: false
+  reason_3p3: LOCAL_R3_DOV_NOT_SATISFIED
+  next_trigger: REAL_GIT_OBJECT_PAYLOAD_ARRIVAL
+
+non_compensation:
+  issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  r3_canonical_gt_credit: NONE
+  generated_view_ne_ssot: true
+  authority_transfer: false
+  formal_credit_delta: 0

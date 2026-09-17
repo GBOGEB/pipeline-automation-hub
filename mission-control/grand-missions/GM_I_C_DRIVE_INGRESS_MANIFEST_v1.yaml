@@ -1,0 +1,96 @@
+schema: missioncontrol.gm_i_c.drive_ingress_manifest.v1
+as_of: '2026-09-17T17:36:00+02:00'
+authority_transfer: false
+formal_credit_delta: 0
+mission:
+  id: GM-I-C
+  parent: GM-I
+  state: WAIT_REAL_GIT_OBJECT
+  support_target: GBOGEB/cryoplant-project#1398
+  environment_gate: GBOGEB/cryoplant-project#1426
+source_contract:
+  repository: GBOGEB/cryoplant-project
+  frozen_release_source: 70964e5f1577231512f4104b26f5f6649ad8cb39
+  accepted_payloads:
+    - kind: git_bundle
+      preferred_filename: QPS_R3_70964e5f.bundle
+      must_contain_commit: 70964e5f1577231512f4104b26f5f6649ad8cb39
+    - kind: clean_clone_archive
+      must_include_git_directory: true
+      must_contain_commit: 70964e5f1577231512f4104b26f5f6649ad8cb39
+  rejected_payload_classes:
+    - source_tree_without_git_objects
+    - release_pack_without_git_objects
+    - connector_reconstructed_pseudo_checkout
+    - mismatched_commit_bundle
+bridge:
+  provider: GOOGLE_DRIVE
+  folder_id: 128QqSOwjHakXgf3UAbDIWjErJt5YiefF
+  folder_url: https://drive.google.com/drive/folders/128QqSOwjHakXgf3UAbDIWjErJt5YiefF
+  folder_name: GM-I-C_R3_INGRESS_70964e5f
+  handoff_request_document_id: 18wpmM3muEq_nCSzgX2TObNRlX_BSkVvmLH_uVlIJfkA
+  observed_folder_contents:
+    - GM-I-C — QPS R3 Git Bundle Handoff Request — 70964e5f
+  qualifying_git_object_payload_observed: false
+consumer:
+  missioncontrol_adapter: mission-control/grand-missions/gm_i_c_ingress_adapter.py
+  adapter_control: mission-control/grand-missions/GM_I_C_INGRESS_ADAPTER_CONTROL_v1.yaml
+  adapter_merge: bcad93065c380fdce6829e114d1a35c8e7754584
+  qps_executor: scripts/run_r3_final_local_exact_worktree_v2.sh
+acceptance:
+  sequence:
+    - DISCOVER_PAYLOAD_IN_LANDING_ZONE_OR_ACTIVE_CHAT
+    - VERIFY_GIT_BUNDLE_OR_CLEAN_CLONE_ARCHIVE
+    - VERIFY_COMMIT_70964E5F_EXISTS
+    - IMPORT_GIT_OBJECT_OFFLINE
+    - VERIFY_CLEAN_CONTROL_CHECKOUT
+    - EMIT_GM_I_C_INGRESS_RECEIPT
+    - DISPATCH_GOVERNED_R3_EXECUTOR
+    - BIND_FIVE_PRODUCTS_AND_REQUIRED_RECEIPTS
+    - VISUAL_AND_PROJECTION_AWARE_PARITY_DISPOSITION
+    - R3_ACCEPT_REJECT_DEFER
+  ingress_pass_does_not_imply:
+    - R3_ACCEPTANCE
+    - RUNTIME_GOLD
+    - GT_BDQ_4_7_BURN
+    - ENGINEERING_AUTHORITY
+telemetry_contract:
+  measured_only: true
+  ingress_event_fields:
+    - observed_at
+    - source_surface
+    - payload_name
+    - payload_bytes
+    - payload_sha256
+    - git_bundle_verify_result
+    - advertised_refs
+    - required_commit_present
+    - import_result
+    - control_checkout_head
+    - control_checkout_clean
+    - adapter_exit_code
+    - r3_dispatch_attempted
+    - r3_exit_code
+  unknown_is_not_zero: true
+recurrence_control:
+  trigger:
+    - LANDING_ZONE_CONTENT_CHANGED
+    - ACTIVE_CHAT_RECEIVES_CANDIDATE_PAYLOAD
+    - FROZEN_SOURCE_OR_GOVERNOR_SUPERSEDED
+  no_trigger:
+    - CEREMONIAL_POLL_WITH_NO_STATE_CHANGE
+    - REPEAT_HOSTED_ZERO_STEP_RETRY
+  response:
+    - RUN_3PR_REFRESH_PROBE_RANK
+    - RUN_INGRESS_ADAPTER_IF_CANDIDATE_EXISTS
+    - RUN_MIP_ONLY_IF_NEW_STRUCTURAL_OR_RECURRENCE_GAP_IS_OBSERVED
+first_red:
+  id: EXTERNAL_EXECUTION_ENVIRONMENT_INGRESS_GIT_OBJECT_HANDOFF
+  state: OPEN
+  minimum_return: QPS_R3_70964e5f.bundle_OR_equivalent_clean_clone_archive
+non_compensation:
+  issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  r3_canonical_gt_credit: NONE
+  authority_transfer: false
+  formal_credit_delta: 0
