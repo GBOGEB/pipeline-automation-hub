@@ -1,0 +1,16 @@
+{
+  "schema": "missioncontrol.golden_thread_live_side_effect_fixture.v1",
+  "authority_transfer": false,
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "pull_request": 174,
+  "source_head": "c7bc8e1f16c75290d9c01bcdf8340f65519d86cb",
+  "target": "GBOGEB/pipeline-automation-hub#153",
+  "action": "GITHUB_ISSUE_COMMENT_CREATE",
+  "mechanism": "REG",
+  "schema_version": "github.issue_comment.v1",
+  "expected_semantic_delta": "NONE_CONTROL_RECEIPT_ONLY",
+  "provider": "github",
+  "comment_id": 5707195219,
+  "external_ref": "issue-comment:5707195219",
+  "comment_body": "### Golden Thread P0 — live side-effect idempotency receipt\n\nThis is the **single live provider-side write** for PR #174 external side-effect idempotency proof.\n\nGoverned intent:\n- action: `GITHUB_ISSUE_COMMENT_CREATE`\n- target: `GBOGEB/pipeline-automation-hub#153`\n- mechanism: `REG`\n- source head: `c7bc8e1f16c75290d9c01bcdf8340f65519d86cb`\n- semantic delta: `NONE_CONTROL_RECEIPT_ONLY`\n- authority transfer: `false`\n\nControl requirement: an exact replay of this governed intent shall return this existing GitHub receipt and shall **not** emit a duplicate comment. A changed source-state digest or changed payload digest shall create a successor transaction instead of reusing this transaction identity."
+}
