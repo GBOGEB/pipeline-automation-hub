@@ -1,0 +1,50 @@
+{
+  "schema": "missioncontrol.crew.skill_score_receipt.v1",
+  "pulse": "MP_P4_REPEAT_EXACT_PINNED_CONSUMER_USE",
+  "skill_target": "SKILL_P3",
+  "metric": "exact_pinned_consumer_receipts",
+  "prediction": 3,
+  "actual": 3,
+  "absolute_error": 0,
+  "status": "SCORED_EXACT_HIT",
+  "evidence": {
+    "consumer_repo": "GBOGEB/gg_MATH",
+    "pull_request": 24,
+    "consumer_head": "3af816a78b582f7123efc72056d8a7aa86467ca8",
+    "merge_commit": "86be83a2302d10408a984594133ed1eec2fc75d0",
+    "workflow_run": 35148994670,
+    "workflow_conclusion": "success",
+    "missioncontrol_resolver_ref": "95f8ebcf9b6d99d4809717466245d867ffbe0dc8",
+    "skills_ref": "905a12596412afacd3cd7f3c3f6891ac026abf8f",
+    "resolution_mode": "mission_worker_consumer",
+    "artifacts": [
+      {
+        "skill": "math",
+        "artifact_id": 10468786428,
+        "digest": "sha256:7932fea35c4e37e88bf62c2051408a696117262cad9af36531d126701fd81083"
+      },
+      {
+        "skill": "plots",
+        "artifact_id": 10468142455,
+        "digest": "sha256:5189f2e3ffd324d9362c56ef1bd6421eb718c02f4119e44188fb03f60e9a0913"
+      },
+      {
+        "skill": "math-plots",
+        "artifact_id": 10467917982,
+        "digest": "sha256:b7f0f6ed710e3d4619b958c584ae592a25ba4f1fcaef69d27e7944b63963e4bc"
+      }
+    ]
+  },
+  "horizon_roll": {
+    "preserved_frozen_target": "SKILL_P4",
+    "new_target": "SKILL_P5",
+    "new_metric": "independent_consumer_repositories_with_exact_pinned_receipts",
+    "new_prediction": 2
+  },
+  "guards": {
+    "historical_predictions_immutable": true,
+    "private_qps_mp_p1_compensation": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0
+  }
+}
