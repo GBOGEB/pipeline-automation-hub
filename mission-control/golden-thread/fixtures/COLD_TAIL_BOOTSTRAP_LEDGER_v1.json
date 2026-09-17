@@ -1,0 +1,73 @@
+{
+  "authority_transfer": false,
+  "events": [
+    {
+      "actor": "MissionControl.Reader",
+      "authority_domain": "GBOGEB/ABACUS",
+      "event_id": "GT-0001",
+      "event_type": "BOOTSTRAP_RECONSTRUCTED",
+      "evidence_class": "OBSERVED_RECONSTRUCTED",
+      "evidence_refs": ["ABACUS#581"],
+      "non_compensating_preserved": true,
+      "observed_source_timestamp": "2026-06-19T15:58:39Z",
+      "occurred_at": "2026-06-19T15:58:39Z",
+      "payload": {"object_type": "occurrence", "title": "Track QPS Line S transient recovery model from D2.1 SSOT"},
+      "previous_event_digest": "GENESIS",
+      "projection_schema_version": 1,
+      "reconstruction_method": "github_lineage_replay",
+      "reconstruction_timestamp": "2026-09-17T00:56:00Z",
+      "recorded_at": "2026-09-17T00:56:00Z",
+      "seq": 1,
+      "subject_ref": "GBOGEB/ABACUS#581",
+      "this_event_digest": "sha256:fdd21ad67c16b4f92cb217f3e13cca35416e14012a6cb11f9ef1d9419db12dba"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "FEDERATED_PROJECTION_ONLY", "event_id": "GT-0002", "event_type": "ROOT_CREATED", "evidence_class": "CURRENT_STATE_READER", "evidence_refs": ["hub#153"], "non_compensating_preserved": true, "occurred_at": "2026-09-17T00:40:21Z", "payload": {"canonical_bd_root": null, "root_authority": "PROJECTION_ONLY", "title": "QPS Line-S recovery semantic root"}, "previous_event_digest": "sha256:fdd21ad67c16b4f92cb217f3e13cca35416e14012a6cb11f9ef1d9419db12dba", "projection_schema_version": 1, "recorded_at": "2026-09-17T00:56:01Z", "seq": 2, "subject_ref": "ROOT-LS", "this_event_digest": "sha256:3098b748cbd3a58c7f9f91a070a9345b4941b683d4e616e923d0db795e8b8ac1"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "FEDERATED_PROJECTION_ONLY", "event_id": "GT-0003", "event_type": "ATTACHED_TO_ROOT", "evidence_class": "CURRENT_STATE_READER", "evidence_refs": ["hub#153"], "from_ref": "GBOGEB/ABACUS#581", "non_compensating_preserved": true, "occurred_at": "2026-09-17T00:40:21Z", "previous_event_digest": "sha256:3098b748cbd3a58c7f9f91a070a9345b4941b683d4e616e923d0db795e8b8ac1", "projection_schema_version": 1, "recorded_at": "2026-09-17T00:56:02Z", "seq": 3, "subject_ref": "GBOGEB/ABACUS#581", "this_event_digest": "sha256:c17057ae1e0615fc08d37d124898daa38d35255363b12824230ec08ca2161d58", "to_ref": "ROOT-LS"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "GBOGEB/ABACUS", "event_id": "GT-0004", "event_type": "CLASSIFIED", "evidence_class": "CURRENT_STATE_READER", "evidence_refs": ["hub#153"], "non_compensating_preserved": true, "occurred_at": "2026-09-17T00:40:21Z", "payload": {"canonical_root": "ROOT-LS", "historian_state": "STILL_BD", "routing_disposition": "ROOT_EXISTING"}, "previous_event_digest": "sha256:c17057ae1e0615fc08d37d124898daa38d35255363b12824230ec08ca2161d58", "projection_schema_version": 1, "recorded_at": "2026-09-17T00:56:03Z", "seq": 4, "subject_ref": "GBOGEB/ABACUS#581", "this_event_digest": "sha256:8d9dd7646e0178308c61c92683f202dcbc28da49947798ff77dfd4bb279bbbc8"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "GBOGEB/ABACUS", "event_id": "GT-0005", "event_type": "BOOTSTRAP_RECONSTRUCTED", "evidence_class": "OBSERVED_RECONSTRUCTED", "evidence_refs": ["ABACUS#583"], "non_compensating_preserved": true, "observed_source_timestamp": "2026-06-19T16:13:31Z", "occurred_at": "2026-06-19T16:13:31Z", "payload": {"object_type": "occurrence", "title": "Agent A scenario matrix/progress index"}, "previous_event_digest": "sha256:8d9dd7646e0178308c61c92683f202dcbc28da49947798ff77dfd4bb279bbbc8", "projection_schema_version": 1, "reconstruction_method": "github_lineage_replay", "reconstruction_timestamp": "2026-09-17T00:56:04Z", "recorded_at": "2026-09-17T00:56:04Z", "seq": 5, "subject_ref": "GBOGEB/ABACUS#583", "this_event_digest": "sha256:15136325eab85765a045ec37928312eecf04ead4b3d52c6f49148ec693e0ed74"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "FEDERATED_PROJECTION_ONLY", "event_id": "GT-0006", "event_type": "ATTACHED_TO_ROOT", "evidence_class": "CURRENT_STATE_READER", "evidence_refs": ["hub#153"], "from_ref": "GBOGEB/ABACUS#583", "non_compensating_preserved": true, "occurred_at": "2026-09-17T00:40:21Z", "previous_event_digest": "sha256:15136325eab85765a045ec37928312eecf04ead4b3d52c6f49148ec693e0ed74", "projection_schema_version": 1, "recorded_at": "2026-09-17T00:56:05Z", "seq": 6, "subject_ref": "GBOGEB/ABACUS#583", "this_event_digest": "sha256:ff421458cc79fb69eb4a0e9884171947f56065fd0a41dad8b95dd70728e8dab1", "to_ref": "ROOT-LS"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "GBOGEB/ABACUS", "event_id": "GT-0007", "event_type": "CLASSIFIED", "evidence_class": "CURRENT_STATE_READER", "evidence_refs": ["hub#153"], "non_compensating_preserved": true, "occurred_at": "2026-09-17T00:40:21Z", "payload": {"canonical_root": "ROOT-LS", "historian_state": "UNKNOWN_NEEDS_READER", "routing_disposition": "WORK_ORDER_CHILD"}, "previous_event_digest": "sha256:ff421458cc79fb69eb4a0e9884171947f56065fd0a41dad8b95dd70728e8dab1", "projection_schema_version": 1, "recorded_at": "2026-09-17T00:56:06Z", "seq": 7, "subject_ref": "GBOGEB/ABACUS#583", "this_event_digest": "sha256:43997afff8d458b9f838a7c2cc2504353e97b79531150e50748a03e8a2c5b739"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "GBOGEB/ABACUS", "event_id": "GT-0008", "event_type": "WORK_ORDER_CREATED", "evidence_class": "OBSERVED_RECONSTRUCTED", "evidence_refs": ["ABACUS#583"], "from_ref": "GBOGEB/ABACUS#583", "non_compensating_preserved": true, "occurred_at": "2026-09-17T00:40:21Z", "payload": {"status": "RECONCILE_DOD_BEFORE_RETIREMENT"}, "previous_event_digest": "sha256:43997afff8d458b9f838a7c2cc2504353e97b79531150e50748a03e8a2c5b739", "projection_schema_version": 1, "recorded_at": "2026-09-17T00:56:07Z", "seq": 8, "subject_ref": "WO-LS-583", "this_event_digest": "sha256:370af3e939c4df11ecc6ef961b4f4a270c6195b54090099f7fcb369ed60b02f8"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "GBOGEB/ABACUS", "event_id": "GT-0009", "event_type": "BOOTSTRAP_RECONSTRUCTED", "evidence_class": "OBSERVED_RECONSTRUCTED", "evidence_refs": ["ABACUS#585"], "non_compensating_preserved": true, "observed_source_timestamp": "2026-06-19T19:26:16Z", "occurred_at": "2026-06-19T19:26:16Z", "payload": {"object_type": "occurrence", "title": "CI failure test_runtime_enforce_exits_when_gates_open"}, "previous_event_digest": "sha256:370af3e939c4df11ecc6ef961b4f4a270c6195b54090099f7fcb369ed60b02f8", "projection_schema_version": 1, "reconstruction_method": "github_lineage_replay", "reconstruction_timestamp": "2026-09-17T00:56:08Z", "recorded_at": "2026-09-17T00:56:08Z", "seq": 9, "subject_ref": "GBOGEB/ABACUS#585", "this_event_digest": "sha256:bbcfbd62dcd40fc4aa5b3dfa8df52b322d99a7e5ab09328ef62955a74b5733f4"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "FEDERATED_PROJECTION_ONLY", "event_id": "GT-0010", "event_type": "ATTACHED_TO_ROOT", "evidence_class": "CURRENT_STATE_READER", "evidence_refs": ["hub#153"], "from_ref": "GBOGEB/ABACUS#585", "non_compensating_preserved": true, "occurred_at": "2026-09-17T00:40:21Z", "previous_event_digest": "sha256:bbcfbd62dcd40fc4aa5b3dfa8df52b322d99a7e5ab09328ef62955a74b5733f4", "projection_schema_version": 1, "recorded_at": "2026-09-17T00:56:09Z", "seq": 10, "subject_ref": "GBOGEB/ABACUS#585", "this_event_digest": "sha256:f0caa81b6fdc6c5d4248e6e7beac1383150caf26a7ad912f38126024d450e737", "to_ref": "ROOT-LS"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "GBOGEB/ABACUS", "event_id": "GT-0011", "event_type": "CLASSIFIED", "evidence_class": "CURRENT_STATE_READER", "evidence_refs": ["hub#153"], "non_compensating_preserved": true, "occurred_at": "2026-09-17T00:40:21Z", "payload": {"candidate_route": "CLOSE_CANDIDATE", "canonical_root": "ROOT-LS", "historian_state": "UNKNOWN_NEEDS_READER", "routing_disposition": "EVIDENCE_ONLY"}, "previous_event_digest": "sha256:f0caa81b6fdc6c5d4248e6e7beac1383150caf26a7ad912f38126024d450e737", "projection_schema_version": 1, "recorded_at": "2026-09-17T00:56:10Z", "seq": 11, "subject_ref": "GBOGEB/ABACUS#585", "this_event_digest": "sha256:d0b54e5ac4819d05791c4f0bc5ac638b17bfd95a68f5cae04b2992503248acbb"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "GBOGEB/ABACUS", "event_id": "GT-0012", "event_type": "RETIREMENT_CANDIDATE", "evidence_class": "CURRENT_STATE_READER", "evidence_refs": ["hub#153"], "non_compensating_preserved": true, "occurred_at": "2026-09-17T00:40:21Z", "payload": {"victory_predicate": "current runtime/CI proves repaired path", "withheld": true}, "previous_event_digest": "sha256:d0b54e5ac4819d05791c4f0bc5ac638b17bfd95a68f5cae04b2992503248acbb", "projection_schema_version": 1, "recorded_at": "2026-09-17T00:56:11Z", "seq": 12, "subject_ref": "GBOGEB/ABACUS#585", "this_event_digest": "sha256:57a9934b38fd2b87cda484905e608f7d665a394ba662d687efea699067b48535"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "GBOGEB/CODEX", "event_id": "GT-0013", "event_type": "BOOTSTRAP_RECONSTRUCTED", "evidence_class": "OBSERVED_RECONSTRUCTED", "evidence_refs": ["CODEX#237"], "non_compensating_preserved": true, "observed_source_timestamp": "2026-06-19T16:16:36Z", "occurred_at": "2026-06-19T16:16:36Z", "payload": {"object_type": "occurrence", "title": "Reusable helper index/glossary workflow"}, "previous_event_digest": "sha256:57a9934b38fd2b87cda484905e608f7d665a394ba662d687efea699067b48535", "projection_schema_version": 1, "reconstruction_method": "github_lineage_replay", "reconstruction_timestamp": "2026-09-17T00:56:12Z", "recorded_at": "2026-09-17T00:56:12Z", "seq": 13, "subject_ref": "GBOGEB/CODEX#237", "this_event_digest": "sha256:75a2d45e27dd1259b780cfda3e3fbb8810d537cfad91e511cf0ea67186a840e8"
+    },
+    {
+      "actor": "MissionControl.Reader", "authority_domain": "GBOGEB/CODEX", "event_id": "GT-0014", "event_type": "CLASSIFIED", "evidence_class": "CURRENT_STATE_READER", "evidence_refs": ["hub#153"], "non_compensating_preserved": true, "occurred_at": "2026-09-17T00:40:21Z", "payload": {"bd_state": "UNKNOWN_NEEDS_READER", "candidate_route": "SUPERSEDE_CANDIDATE", "historian_state": "UNKNOWN_NEEDS_READER", "routing_disposition": "UNKNOWN_NEEDS_READER"}, "previous_event_digest": "sha256:75a2d45e27dd1259b780cfda3e3fbb8810d537cfad91e511cf0ea67186a840e8", "projection_schema_version": 1, "recorded_at": "2026-09-17T00:56:13Z", "seq": 14, "subject_ref": "GBOGEB/CODEX#237", "this_event_digest": "sha256:a7a1ffdc66a46426e2cf162d8b78859642cf28eb7a424eefb4e48b7a8245a0b9"
+    }
+  ],
+  "head_event_digest": "sha256:a7a1ffdc66a46426e2cf162d8b78859642cf28eb7a424eefb4e48b7a8245a0b9",
+  "projection_schema_version": 1,
+  "schema": "missioncontrol.golden_thread_ledger.v1",
+  "source_control": {
+    "bd_authority": "GBOGEB/pipeline-automation-hub#85",
+    "classification": "BOUNDED_BOOTSTRAP_FIXTURE_NOT_CANONICAL_BD_ALLOCATION",
+    "frontier": "GBOGEB/pipeline-automation-hub#153",
+    "historian_authority": "GBOGEB/pipeline-automation-hub#76"
+  }
+}
