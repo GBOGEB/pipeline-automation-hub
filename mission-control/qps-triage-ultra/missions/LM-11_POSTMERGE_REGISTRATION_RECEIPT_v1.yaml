@@ -1,0 +1,50 @@
+schema: qps.mission_control.local_mission_postmerge_receipt.v1
+mission_id: LM-11
+as_of: '2026-09-17T03:31:00+02:00'
+state: PASS_MISSIONCONTROL_REGISTRATION
+registration:
+  pr: 166
+  exact_tested_head: 149eeb9d2ae2740f95d18e7e40a81211e667bac3
+  merge_sha: 2aca61e8a4585c51b55adedff356a9d06a3a31e2
+  merged: true
+  preserved_horizontal_mission: HM-01
+  canonical_grand_missions_preserved: [GM-I, GM-II, GM-III, GM-IV, GM-V]
+missioncontrol_checks:
+  - {run: 35170465629, name: W3-16_M03_W0_Recon, result: PASS}
+  - {run: 35170465643, name: QPS_TRIAGE_ULTRA_Federation_Control, result: PASS}
+  - {run: 35170465648, name: W3-13_Measured_Fleet_Telemetry, result: PASS}
+  - {run: 35170465620, name: W3-14_Measured_PCA, result: PASS}
+  - {run: 35170465669, name: W3-11_Non-Origin_Math_Consumer, result: PASS}
+  - {run: 35170465644, name: MissionControl_Crew_Telemetry_Role_Gap, result: PASS}
+qps_evidence:
+  implementation_pr: 1382
+  implementation_merge: f6eb1f6344e9953c095cd4dfadcf89991499f791
+  runner_control_pr: 1385
+  runner_control_merge: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b
+  proof_runs:
+    - {run: 35169896138, job: 105039094004, result: INFRA_PREEXECUTION_ZERO_STEP}
+    - {run: 35170208998, job: 105040059555, result: INFRA_PREEXECUTION_ZERO_STEP_REPRODUCED}
+  runtime_gate: GBOGEB/cryoplant-project#923
+current_topology:
+  global_qtg_wave: W248
+  later_observed_wave_label: W265
+  highest_wave_label_is_global_state: false
+DoV:
+  missioncontrol_registration: PASS
+  missioncontrol_public_repo_checks: PASS_6_OF_6
+  qps_static_implementation: PASS
+  qps_runner_control_repair: PASS
+  qps_private_repo_graph_execution: WITHHELD_ISSUE_923
+  measured_wave_pr_coverage: NOT_EXECUTED
+  bounded_dag_runtime: NOT_EXECUTED
+  generated_hmi_artifact: NOT_EXECUTED
+  engineering_credit: ZERO
+  negotiation_credit: ZERO
+  release_credit: ZERO
+next_first_red: LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN
+guards:
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - HIGHEST_WAVE_LABEL_NE_GLOBAL_PROJECT_STATE
+  - LM11_IS_LOCAL_MISSION_NOT_GLOBAL_QPS_WAVE
+  - LM11_DOES_NOT_COMPENSATE_ISSUE_923
+  - AUTHORITY_TRANSFER_FALSE
