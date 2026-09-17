@@ -1,0 +1,96 @@
+schema: qps.mission_control.local_mission_current.v3
+mission_id: LM-11
+mission_name: QPS_WAVE_LINEAGE_DEPENDENCY_RECONSTRUCTION
+supersedes: mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v2.yaml
+as_of: '2026-09-17T03:31:00+02:00'
+state: CONTROL_PLANE_REGISTERED_QPS_RUNTIME_DOV_WITHHELD_REPRODUCED
+authority_transfer: false
+formal_credit_delta: 0
+navigation_credit_delta: 0
+grand_mission_member: false
+missioncontrol_registration:
+  state: PASS
+  pr: 166
+  exact_tested_head: 149eeb9d2ae2740f95d18e7e40a81211e667bac3
+  merge_sha: 2aca61e8a4585c51b55adedff356a9d06a3a31e2
+  postmerge_receipt: mission-control/qps-triage-ultra/missions/LM-11_POSTMERGE_REGISTRATION_RECEIPT_v1.yaml
+  public_checks: PASS_6_OF_6
+qps_implementation:
+  implementation_pr: 1382
+  implementation_merge: f6eb1f6344e9953c095cd4dfadcf89991499f791
+  runner_control_pr: 1385
+  runner_control_merge: cbf09012b31c997cc0dcd245bb7f8c3e56bd601b
+  graph_extractor: tools/triage/qps_wave_lineage_graph.py
+  hmi_generator: tools/triage/qps_wave_lineage_html.py
+  start_here: docs/QPS_WAVE_LINEAGE_START_HERE.md
+  proof_workflow: .github/workflows/qps-lm11-wave-lineage.yml
+qps_runtime_boundary:
+  issue: 923
+  state: OPEN_RED_OWNER_ACTION
+  attempts:
+    - {run: 35169896138, job: 105039094004, result: INFRA_PREEXECUTION_ZERO_STEP}
+    - {run: 35170208998, job: 105040059555, result: INFRA_PREEXECUTION_ZERO_STEP_REPRODUCED}
+  measured_graph_claimed: false
+  artifact_claimed: false
+current_topology:
+  global_qtg_wave: W248
+  later_observed_wave_label: W265
+  invariant: HIGHEST_WAVE_LABEL_NE_GLOBAL_PROJECT_STATE
+mission_graph_contract:
+  hierarchy: [MISSION, FAMILY, WAVE, UPDATE, PR, COMMIT, NODE, ARTIFACT, ATOM]
+  update_types: [PULSE, CORRECTION, REVISIT, P3R_CYCLE]
+  global_graph_may_cycle: true
+  bounded_execution_dag_must_be_acyclic: true
+  lineage_dag_must_be_acyclic: true
+  artifact_classes: [BINARY_HUMAN_OUT, HYBRID_CONTROL, CODE_CORE, WORKFLOW]
+required_views:
+  - V00_RESTART_SPINE
+  - V01_ALL_WAVES_CANONICAL
+  - V02_HISTORICAL_TO_CANONICAL_SUPERSESSION
+  - V03_WAVE_PR_CROSSWALK
+  - V04_WAVE_PULSE_UPDATE_TREE
+  - V05_QPS_TRIAGE_NODE_EDGE_GRAPH
+  - V06_BOUNDED_EXECUTION_DAG
+  - V07_SIDELOAD_REENTRY_DAG
+  - V08_HUMAN_OUT_BINARY_PIPELINE
+  - V09_HYBRID_CONTROL_PIPELINE
+  - V10_CODE_RUNTIME_PIPELINE
+  - V11_EXTERNAL_FEDERATION_SATELLITE
+  - V12_CURRENT_GATE_VS_HIGHEST_WAVE
+DoD:
+  missioncontrol_registration: PASS
+  qps_static_implementation: PASS
+  qps_runner_control_repair: PASS
+  public_missioncontrol_checks: PASS_6_OF_6
+  exact_head_graph_population: NOT_EXECUTED
+  measured_pr_crosswalk_coverage: NOT_EXECUTED
+  bounded_dag_runtime_proof: NOT_EXECUTED
+  generated_hmi_artifact: NOT_EXECUTED
+DoV:
+  control_plane: PASS
+  qps_private_repo_execution: WITHHELD_ISSUE_923_ZERO_STEP_REPRODUCED
+  qps_graph_population: WITHHELD_NOT_EXECUTED
+  qps_pr_lineage_coverage: WITHHELD_NOT_EXECUTED
+  qps_dag_runtime: WITHHELD_NOT_EXECUTED
+  qps_hmi_artifact: WITHHELD_NOT_EXECUTED
+  engineering_credit: ZERO
+  negotiation_credit: ZERO
+  release_credit: ZERO
+next_first_red:
+  id: LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN
+  sequence:
+    - restore_or_bypass_private_repo_runner_admission
+    - obtain_runner_id_nonzero
+    - obtain_steps_greater_than_zero
+    - execute_unchanged_graph_extractor_at_exact_head
+    - validate_bounded_and_lineage_dags
+    - emit_measured_wave_pr_artifact_coverage_and_unresolved_edges
+    - publish_json_markdown_html_artifact
+    - bind_measured_receipt_back_into_missioncontrol
+stop_rules:
+  - DO_NOT_TREAT_HIGHEST_WAVE_AS_CURRENT_GLOBAL_GATE
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - DO_NOT_FABRICATE_MEASURED_GRAPH_METRICS
+  - DO_NOT_RENUMBER_HISTORICAL_PRS_OR_WAVE_LABELS
+  - DO_NOT_CREATE_GM_VI
+  - LM11_DOES_NOT_COMPENSATE_ISSUE_923
