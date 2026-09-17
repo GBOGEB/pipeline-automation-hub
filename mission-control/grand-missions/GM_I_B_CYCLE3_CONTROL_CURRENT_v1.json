@@ -1,0 +1,94 @@
+{
+  "schema": "missioncontrol.gm_i_b.cycle3.control_current.v1",
+  "as_of": "2026-09-17T03:16:00+02:00",
+  "mission": "GM-I-B",
+  "cycle": 3,
+  "cycle_ordinal": "3P#3",
+  "state": "CONTROL_3P3_KNOWLEDGE_DIAGNOSTIC_ONLY",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "hard_gate_compensation_allowed": false,
+  "scope": "Temporal-PCA propagation/generalisation knowledge and diagnostic control only; no engineering, compliance, negotiation, release, runtime-GOLD, or issue-923 credit.",
+  "immutable_lineage": {
+    "cycle3_contract": {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "merge_sha": "3348189fd52883befb24f5c5b6bb3953cd8725ab"
+    },
+    "keb_atom": {
+      "repo": "GBOGEB/CODEX",
+      "merge_sha": "bd1fb697e6aa86ebc077b92015201ad512728a13",
+      "source_digest": "sha256:876c55c759de33392985f693f1735cdc0d38dda7d7b7a6c80ee80aee33fd8405"
+    },
+    "coolprop_child": {
+      "repo": "GBOGEB/CoolProp",
+      "attestation_merge_sha": "0c645ac28ac73e1873268a3f6f505aaeffb41a8d",
+      "attestation_git_blob_sha1": "9bd52a696471974e390fa1268264a55d978108c2"
+    },
+    "qps_child": {
+      "repo": "GBOGEB/cryoplant-project",
+      "commit": "29a3a619b17b37eca5accfa2fd747401a2387c7b",
+      "path": "triage/w264/QPS_W264_3P3_TEMPORAL_PCA_PROPAGATION_CHILD_RECEIPT_v1.json",
+      "git_blob_sha1": "7be807efcd8c737addfc25cc45b50565d691d9b1"
+    }
+  },
+  "predecessor_red": {
+    "pr": 151,
+    "proof_head": "e1ff3f40cacd5179871e2d2a87559ec5949db95f",
+    "merge_sha": "5dd38c03f6b366b38309910ae42358ea969105bd",
+    "workflow_run": 35156207297,
+    "workflow_job": 104996121028,
+    "classification": "PRIVATE_QPS_RAW_FETCH_404_BEFORE_KPI_RECOMPUTATION",
+    "application_math_failure": false
+  },
+  "content_address_repair": {
+    "pr": 157,
+    "exact_proven_head": "cfba71ae43f6a2e41f1c054c0f12d01c73662d7f",
+    "merge_sha": "7f7f6b6437fb974fa216e690d3feb3376b2c7d9a",
+    "relay_manifest": "mission-control/grand-missions/GM_I_B_CYCLE3_QPS_CONTENT_ADDRESS_RELAY_v1.json",
+    "relay_path": "mission-control/grand-missions/evidence_mirror/QPS_W264_3P3_TEMPORAL_PCA_PROPAGATION_CHILD_RECEIPT_v1.json",
+    "source_git_blob_sha1": "7be807efcd8c737addfc25cc45b50565d691d9b1",
+    "relay_git_blob_sha1": "7be807efcd8c737addfc25cc45b50565d691d9b1",
+    "byte_identity": "PASS_SAME_GIT_BLOB"
+  },
+  "hosted_proof": {
+    "workflow": "GM-I-B Cycle3 3P3 Content-Address Relay Proof",
+    "run": 35169825431,
+    "job": 105038874622,
+    "job_conclusion": "success",
+    "all_executable_steps_passed": true,
+    "artifact_id": 10476127345,
+    "artifact_sha256": "54a6c95b4970813820f1274a4672b556ce51b58408d9a7b13bf6ad053c142186",
+    "aggregate_proof_file_sha256": "ac66440c6eede2c609e843ed4a6087d63d6ef51f21e2a1d835d59ba3b460f480",
+    "validator_embedded_proof_sha256": "0a064181e991c788979b3091a1b2b09550d30d6f5a780c3102f4308b819e3ca5",
+    "relay_runtime_receipt_sha256": "7bbf305efea20d82f71311d69690fede5fec19568df4e3c6ef9182bb4a3bdfa9",
+    "result": "PASS_3P3_PROPAGATION_PROOF"
+  },
+  "frozen_kpi": {
+    "propagation_coverage": {"numerator": 3, "denominator": 3, "value": 1.0},
+    "semantic_parity": {"numerator": 18, "denominator": 18, "value": 1.0},
+    "reuse_ratio": {"numerator": 3, "denominator": 3, "value": 1.0},
+    "duplicate_implementation_count": 0,
+    "child_disposition_coverage": {"numerator": 2, "denominator": 2, "value": 1.0},
+    "propagation_depth": 2,
+    "authority_inversion_count": 0
+  },
+  "three_p3": {
+    "Preserve_or_Pin": "PASS",
+    "Propagate_or_Penetrate": "PASS",
+    "Prove_or_Promote": "PASS_KNOWLEDGE_DIAGNOSTIC_CONTROL_ONLY"
+  },
+  "semantic_invariants": {
+    "component_assignment_precedes_sign_alignment": true,
+    "raw_pca_loading_sign_is_not_physical_direction": true,
+    "attenuation_toward_parity_is_distinct_from_direction_reversal": true,
+    "small_eigengap_requires_subspace_context": true,
+    "temporal_state_adjacency_does_not_require_equal_wall_time_or_exposure_age_steps": true,
+    "named_clocks": ["k", "t", "a", "wave", "pulse", "pr", "run", "release"]
+  },
+  "remaining_independent_boundaries": {
+    "qps_runtime_gold_issue_923": "WITHHELD_INDEPENDENT",
+    "qps_w262_montage_runtime": "WITHHELD_INFRA_PREEXECUTION",
+    "engineering_or_bidder_acceptance": "NOT_CREATED"
+  },
+  "restart_rule": "Treat Cycle-3 3P3 propagation/generalisation as CONTROL. Do not rerun or expand PCA math unless a new governed requirement exists. Next bounded action is QPS recursive/current-pointer binding; thereafter return to the global QPS BD queue."
+}
