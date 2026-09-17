@@ -1,0 +1,53 @@
+name: GT-BD-003 3PC Prepare
+
+on:
+  pull_request:
+    paths:
+      - "mission-control/golden-thread/GT_BD_003_3PC_PREPARE_W250_v1.json"
+      - "mission-control/golden-thread/validate_gt_bd_003_3pc_prepare.py"
+      - ".github/workflows/gt-bd-003-3pc-prepare.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact source head
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate 3PC Prepare only
+        run: python mission-control/golden-thread/validate_gt_bd_003_3pc_prepare.py | tee /tmp/gt-bd-003-3pc-prepare.json
+
+      - name: Enforce HOLD boundary
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/gt-bd-003-3pc-prepare.json'))
+          assert r['status']=='PASS_GT_BD_003_3PC_PREPARE_ONLY'
+          assert r['prepare']=='PASS'
+          assert r['prove']=='WITHHELD_CHILD_ZERO_STEP'
+          assert r['commit_or_hold']=='HOLD'
+          assert r['child_disposition']=='DEFER'
+          assert r['authority_transfer'] is False
+          assert r['qps_credit_delta']==0
+          PY
+
+      - name: Upload Prepare receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gt-bd-003-3pc-prepare-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/gt-bd-003-3pc-prepare.json
+          if-no-files-found: error

@@ -1,0 +1,84 @@
+{
+  "schema": "missioncontrol.golden_thread.gt_bd_003.3pc_prepare.v1",
+  "as_of": "2026-09-17T18:03:00+02:00",
+  "bd_item": "GT-BD-003",
+  "method": "3PC",
+  "state": "PREPARE_PASS_PROVE_HELD_CHILD_HOSTED_ZERO_STEP",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "qps_credit_delta": 0,
+  "parent_method_authority": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "global_3pr_mip_merge": "3a65e884abe321347bd771b1b094d44e1e08cdd2",
+    "current_master_at_prepare": "4f25677a5a0b4e0562109b7f20653f709dba8bbe",
+    "frontier_path": "mission-control/golden-thread/GOLDEN_THREAD_FRONTIER_CURRENT_v1.yaml",
+    "required_next": "GT-BD-003_REAL_CHILD_GATE_RESET_RECEIPT"
+  },
+  "real_child_target": {
+    "repo": "GBOGEB/cryoplant-project",
+    "pr": 1438,
+    "base_sha": "2337fc8ba678a22fcf86ca270c81996c2bcc72c9",
+    "exact_head_sha": "0c88a8efe09ccf7cb0b11ecc19632a1191621524",
+    "receipt_path": "triage/w250/QPS_W250_GT_BD_003_CHILD_GATE_AUTHORITY_RECEIPT_v1.json",
+    "source_gate_path": "controls/W93_R5_PVPS_TERMINAL_CHILD_GATE_v0.1.yaml",
+    "source_gate_blob_sha1": "d3584cd900c583d918683eb2b02c94a08c66e84c",
+    "source_gate_document_id": "W93_R5_PVPS_TERMINAL_CHILD_GATE",
+    "child_disposition": "DEFER",
+    "child_reset_authority": "QPS_CHILD_ONLY"
+  },
+  "child_hosted_attempt": {
+    "run_id": 35244036243,
+    "job_id": 105279499163,
+    "conclusion": "failure",
+    "steps": null,
+    "classification": "INFRA_PREEXECUTION_ZERO_STEP",
+    "application_defect_evidence": false,
+    "repair_authorized_from_attempt": false
+  },
+  "three_pc": {
+    "Prepare": {
+      "status": "PASS",
+      "proof": [
+        "Exact QPS child repository and PR head are frozen",
+        "Exact child authority receipt path is frozen",
+        "Exact pre-existing W93 gate blob is frozen",
+        "Child disposition is DEFER",
+        "QPS remains sole child reset/disposition authority",
+        "Zero-step hosted attempt retained as infrastructure evidence"
+      ]
+    },
+    "Prove": {
+      "status": "WITHHELD",
+      "release_conditions": [
+        "QPS_PR_1438_HOSTED_RUN_STEPS_GT_0",
+        "CHILD_AUTHORITY_VALIDATOR_PASS",
+        "CHILD_RECEIPT_EXACT_HEAD_OR_MERGE_IDENTITY_BOUND",
+        "MISSIONCONTROL_GENERIC_GATE_PROOF_EXECUTED",
+        "PERMISSIVE_CANNOT_COMPENSATE_LATCHED_INHIBIT",
+        "UNAUTHORIZED_RESET_REJECTED",
+        "AUTHORIZED_REASONED_RESET_CLEARS_LATCH_AND_PERMISSIVES",
+        "CURRENT_SOURCE_INHIBIT_REASSERTS_AFTER_REPROPAGATION",
+        "FINAL_CHILD_DISPOSITION_REMAINS_DEFER"
+      ]
+    },
+    "Commit_or_HOLD": {
+      "status": "HOLD",
+      "commit_only_if": [
+        "PROVE_PASS",
+        "AUTHORITY_TRANSFER_FALSE",
+        "QPS_CREDIT_DELTA_ZERO",
+        "PARENT_PASS_NE_CHILD_ACCEPT",
+        "QPS_GT_BDQ_0_UNCHANGED"
+      ]
+    }
+  },
+  "non_compensation": [
+    "ZERO_STEP_NE_APPLICATION_FAIL",
+    "PARENT_PASS_NE_CHILD_ACCEPT",
+    "RESET_NE_ENGINEERING_ACCEPT",
+    "MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS",
+    "QPS_GT_BDQ_0_UNCHANGED",
+    "AUTHORITY_TRANSFER_FALSE"
+  ],
+  "next_action": "WAIT_FOR_OR_OBTAIN_GT0_STEP_CHILD_HOSTED_PROOF_ON_QPS_PR_1438_EXACT_HEAD_OR_GOVERNED_SUCCESSOR_THEN_EXECUTE_3PC_PROVE_IN_MISSIONCONTROL"
+}
