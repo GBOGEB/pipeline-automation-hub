@@ -1,0 +1,66 @@
+name: Golden Thread Control
+
+on:
+  pull_request:
+    paths:
+      - "mission-control/golden-thread/**"
+      - ".github/workflows/golden-thread-control.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  golden-thread-control:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile Golden Thread modules
+        run: |
+          python -m py_compile \
+            mission-control/golden-thread/golden_thread.py \
+            mission-control/golden-thread/checkpoint_replay.py \
+            mission-control/golden-thread/rendition_family.py
+
+      - name: Run Golden Thread unit tests
+        run: |
+          python -m unittest discover \
+            -s mission-control/golden-thread \
+            -p 'test_*.py' \
+            -v
+
+      - name: Prove checkpoint replay equivalence
+        working-directory: mission-control/golden-thread
+        run: |
+          python checkpoint_replay.py create \
+            fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+            GT-0012 \
+            CP-COLD-TAIL-0012 \
+            --created-at 2026-09-17T02:00:00Z \
+            --out /tmp/golden-thread-checkpoint.json
+          python checkpoint_replay.py verify \
+            fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+            /tmp/golden-thread-checkpoint.json
+          python checkpoint_replay.py verify-equivalence \
+            fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+            /tmp/golden-thread-checkpoint.json
+
+      - name: Prove rendition-family zero delta
+        working-directory: mission-control/golden-thread
+        run: |
+          python golden_thread.py rebuild-current \
+            fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+            --out /tmp/golden-thread-truth.json
+          python rendition_family.py render \
+            /tmp/golden-thread-truth.json \
+            /tmp/golden-thread-renditions
+          python rendition_family.py verify \
+            /tmp/golden-thread-truth.json \
+            /tmp/golden-thread-renditions
