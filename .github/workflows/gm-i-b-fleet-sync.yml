@@ -38,7 +38,7 @@ jobs:
           set -euo pipefail
           python3 mission-control/grand-missions/validate_gm_i_b_and_launch_control.py \
             --out mission-control/grand-missions/runtime/gm_i_b_launch_control_receipt.json
-      - name: Enforce no top-level renumbering and no GM-IV promotion
+      - name: Enforce canonical numbering and current GM-IV control state
         shell: bash
         run: |
           set -euo pipefail
@@ -50,10 +50,16 @@ jobs:
           ids = [m['id'] for m in r['grand_missions']]
           assert ids == ['GM-I','GM-II','GM-III','GM-IV','GM-V']
           gm = {m['id']:m for m in r['grand_missions']}
-          assert gm['GM-IV']['state'] == 'STAGED_ACTIVE_RECON_4_OF_8'
+          gm4 = gm['GM-IV']
+          assert gm4['state'] == 'ACTIVE_8_OF_8'
+          assert gm4['activation_stage'] == 'ACTIVE_8_OF_8'
+          assert gm4['candidate_frontiers'] == [f'GM-IV-F{i:02d}' for i in range(1, 9)]
+          assert gm4['unfilled_frontier_slots'] == []
+          assert gm4['children'] == []
           assert gm['GM-V']['state'] == 'HELD'
+          assert gm['GM-V']['children'] == []
           assert r['authority_transfer'] is False
-          print('PASS_GM_I_B_FLEET_GUARDS')
+          print('PASS_GM_I_B_FLEET_GUARDS_ACTIVE8')
           PY
       - name: Upload control receipts
         uses: actions/upload-artifact@v4
