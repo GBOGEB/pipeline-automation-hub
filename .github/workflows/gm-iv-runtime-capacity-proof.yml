@@ -1,0 +1,97 @@
+name: GM-IV Runtime Capability Capacity Proof
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_IV_RUNTIME_CAPACITY_MEASUREMENT_CONTRACT.json'
+      - 'mission-control/grand-missions/measure_gm_iv_runtime_capacity.py'
+      - 'mission-control/grand-missions/probe_gm_iv_runtime_capability.py'
+      - '.github/workflows/gm-iv-runtime-capacity-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gm-iv-runtime-capacity-proof:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Assert exact source head and master ancestry
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          git rev-parse --verify origin/master
+          git merge-base --is-ancestor origin/master "$actual"
+
+      - name: Validate current fleet controls
+        run: |
+          python mission-control/grand-missions/validate_gm_fleet.py
+          python mission-control/grand-missions/validate_gm_iv_post_active8_repeat_control.py
+          python mission-control/grand-missions/validate_gm_iv_evidence_economics.py
+
+      - name: Execute eight predeclared runtime capability probes
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          rm -rf mission-control/grand-missions/runtime-capacity-receipts
+          python mission-control/grand-missions/measure_gm_iv_runtime_capacity.py \
+            --source-sha "${MC_SOURCE_SHA}" \
+            --out-dir mission-control/grand-missions/runtime-capacity-receipts
+
+      - name: Enforce aggregate non-compensating semantics
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+          p=Path('mission-control/grand-missions/runtime-capacity-receipts/GM_IV_RUNTIME_CAPACITY_MEASUREMENT_RECEIPT.json')
+          r=json.loads(p.read_text())
+          actual=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
+          assert r['source_sha'] == actual
+          assert r['canonical_state'] == 'ACTIVE_8_OF_8'
+          assert r['gm_v_state'] == 'HELD'
+          assert r['measurement_scope'] == 'CAPABILITY_COVERAGE_NOT_CONCURRENCY_CAPACITY'
+          assert r['concurrency_capacity_claimed'] is False
+          assert r['required_capability_count'] == 8
+          assert r['measured_capability_count'] == 8
+          assert r['runtime_proven_capability_count'] == 8
+          assert r['runtime_proven_ratio'] == 1.0
+          assert r['distinct_predeclared_hosts'] == 8
+          assert r['measured_capacity_result'] == 'PASS_RUNTIME_PROVEN_CAPABILITY_CAPACITY'
+          assert r['capacity_class'] == 'RUNTIME_PROVEN'
+          assert r['operational_availability'] == 'DEFER_EXTERNAL_NONCOMPENSATING_GATES_NOT_EVALUATED'
+          assert r['gm_v_launch_authorized'] is False
+          assert r['competency_promotions'] == 0
+          assert r['authority_transfer'] is False
+          assert r['formal_credit_delta'] == 0
+          assert r['hard_gate_compensation_allowed'] is False
+          assert all(x['steps_executed'] > 0 for x in r['capability_receipts'])
+          assert all(x['capacity_class'] == 'RUNTIME_PROVEN' for x in r['capability_receipts'])
+          assert all(x['disposition'] == 'ACCEPT' for x in r['capability_receipts'])
+          print(json.dumps({
+            'status':'PASS_GM_IV_RUNTIME_PROVEN_CAPABILITY_CAPACITY_8_OF_8',
+            'source_sha':actual,
+            'measurement_scope':r['measurement_scope'],
+            'capacity_class':r['capacity_class'],
+            'operational_availability':r['operational_availability'],
+            'gm_v_launch_authorized':False
+          }, sort_keys=True))
+          PY
+
+      - name: Upload immutable capacity receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-runtime-capacity-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/grand-missions/runtime-capacity-receipts/*.json
+          if-no-files-found: error
