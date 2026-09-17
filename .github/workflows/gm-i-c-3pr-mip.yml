@@ -1,0 +1,74 @@
+name: GM-I-C 3PR MIP IC3 Control
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/GM_I_C_3PR_MIP_IC3_CONTROL_v1.json'
+      - 'mission-control/grand-missions/GM_I_C_CURRENT_v1.yaml'
+      - 'mission-control/grand-missions/validate_gm_i_c_3pr_mip.py'
+      - '.github/workflows/gm-i-c-3pr-mip.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          echo "PASS_EXACT_SOURCE_HEAD=$actual"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install bounded dependency
+        run: python -m pip install 'PyYAML>=6,<7'
+
+      - name: Validate 3PR MIP control packet
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p mission-control/grand-missions/generated
+          python mission-control/grand-missions/validate_gm_i_c_3pr_mip.py \
+            | tee mission-control/grand-missions/generated/GM_I_C_3PR_MIP_RECEIPT_v1.json
+          grep -q 'PASS_GM_I_C_3PR_MIP_CONTROL' \
+            mission-control/grand-missions/generated/GM_I_C_3PR_MIP_RECEIPT_v1.json
+
+      - name: Enforce non-compensating boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          p='mission-control/grand-missions/generated/GM_I_C_3PR_MIP_RECEIPT_v1.json'
+          r=json.load(open(p, encoding='utf-8'))
+          assert r['three_pr']=='PASS'
+          assert r['mip']=='PASS_CONTROL_DESIGN'
+          assert r['ic3']=='WITHHELD_EXTERNAL_AUTH_CONFIGURATION_AND_HOSTED_PROOF'
+          assert r['three_pc_credit']==0
+          assert r['three_p3_credit']==0
+          assert r['authority_transfer'] is False
+          assert r['formal_credit_delta']==0
+          print('PASS_3PR_MIP_NE_IC3_PASS')
+          PY
+
+      - name: Upload bounded receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-i-c-3pr-mip-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/grand-missions/generated/GM_I_C_3PR_MIP_RECEIPT_v1.json
+          if-no-files-found: error
