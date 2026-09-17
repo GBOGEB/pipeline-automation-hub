@@ -1,0 +1,81 @@
+{
+  "schema": "missioncontrol.golden_thread_temporal_contract.v1.1",
+  "status": "ADDITIVE_EXTENSION_OVER_GOLDEN_THREAD_V1",
+  "authority_transfer": false,
+  "parent_issue": "GBOGEB/pipeline-automation-hub#153",
+  "base_contract": {
+    "ledger_schema": "missioncontrol.golden_thread_ledger.v1",
+    "event_schema": "mission-control/golden-thread/GOLDEN_THREAD_EVENT_SCHEMA_v1.json",
+    "runtime": "mission-control/golden-thread/golden_thread.py"
+  },
+  "coordinates": {
+    "semantic_generation_k": "Authoritative SSOT generation. Increment only when an accepted child return or other governed event applies an authoritative delta to the governed SSOT.",
+    "event_sequence_e": "Ordered Golden Thread event count at the checkpoint boundary. Any accepted/rejected/deferred/control/history event may advance e without advancing k."
+  },
+  "dual_identity": {
+    "ssot_digest": "Digest of accepted authoritative SSOT payload. May remain unchanged while thread/projection history advances. Control-only checkpoints may use null when engineering_ssot_changed=false.",
+    "thread_digest": "Exact Golden Thread head_event_digest at the checkpoint boundary.",
+    "projection_digest": "Deterministic materialized-view digest from golden_thread.py rebuild.",
+    "checkpoint_digest": "sha256 canonical JSON digest of the temporal checkpoint excluding checkpoint_digest itself.",
+    "git_anchor": "Exact repository + commit SHA for the control-plane state that generated the checkpoint."
+  },
+  "child_transaction_payloads": {
+    "injection": {
+      "container": "event.payload.child_injection",
+      "required": ["injection_key", "child_repo", "source_digest", "idempotency_key"],
+      "rule": "Each injection_key and idempotency_key shall be unique within a ledger projection; identical input shall not create a second child obligation."
+    },
+    "disposition": {
+      "container": "event.payload.child_disposition",
+      "required": ["injection_key", "disposition"],
+      "allowed": ["ACCEPT", "REJECT", "DEFER"],
+      "accept_requires": ["child_receipt_ref"],
+      "authoritative_accept_requires_when_delta_applied": ["accepted_authoritative_delta_digest"],
+      "reject_requires": ["rejection_reason"],
+      "defer_requires": ["owner", "reentry_trigger"],
+      "rule": "A child disposition changes the Golden Thread. Only ACCEPT with authoritative_delta_applied=true may advance semantic_generation_k."
+    }
+  },
+  "transition_rules": [
+    "REJECT advances event_sequence_e but shall not advance semantic_generation_k.",
+    "DEFER advances event_sequence_e but shall not advance semantic_generation_k.",
+    "ACCEPT without authoritative_delta_applied advances event_sequence_e but shall not advance semantic_generation_k.",
+    "ACCEPT with authoritative_delta_applied=true advances semantic_generation_k by one per distinct accepted authoritative delta.",
+    "An authoritative delta requires an accepted_authoritative_delta_digest and a non-null resulting ssot_digest.",
+    "Parent orchestration PASS shall not compensate child authority or a non-compensating child gate.",
+    "Negative/rejected evidence and deferred re-entry contracts remain in the immutable thread after later acceptance or supersession.",
+    "Historic checkpoints are immutable projections; later development creates successor checkpoints rather than editing prior milestone identity."
+  ],
+  "progressive_idempotency": {
+    "I0_input": "same idempotency_key => no duplicate child obligation",
+    "I1_replay": "same sealed ledger => same thread_digest and projection_digest",
+    "I2_transition": "same base k + same ordered accepted authoritative delta set + same resulting SSOT => same successor k and ssot_digest",
+    "I3_recursive": "same ledger boundary => same expand-root/trace subtree and checkpoint digest",
+    "I4_temporal": "same sealed historic ledger boundary + same control schema => same milestone checkpoint"
+  },
+  "checkpoint_required_fields": [
+    "schema",
+    "semantic_generation_k",
+    "event_sequence_e",
+    "engineering_ssot_changed",
+    "ssot_digest",
+    "thread_digest",
+    "projection_digest",
+    "git_anchor",
+    "child_transaction_summary",
+    "authority_transfer"
+  ],
+  "dov": [
+    "base Golden Thread ledger verifies before checkpoint generation",
+    "checkpoint event_sequence_e equals events applied",
+    "checkpoint thread_digest equals ledger head_event_digest",
+    "checkpoint projection_digest equals deterministic rebuild digest",
+    "duplicate child injection keys and duplicate idempotency keys fail closed",
+    "duplicate child dispositions fail closed",
+    "DEFER without owner/reentry_trigger fails closed",
+    "REJECT without rejection_reason fails closed",
+    "authoritative ACCEPT without accepted delta digest or result SSOT digest fails closed",
+    "rebuilding the same checkpoint twice yields the same checkpoint_digest",
+    "authority_transfer remains false"
+  ]
+}
