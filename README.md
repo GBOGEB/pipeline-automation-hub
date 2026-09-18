@@ -119,3 +119,21 @@ The existing Next.js application can still be started from `app/` using its proj
 - QPS TRIAGE ULTRA control plane: active/current mission-control surface.
 - Legacy PPTX processor: bounded metadata-only utility under M09 rehabilitation.
 - Full PowerPoint semantic extraction pipeline: **not claimed by this README**.
+
+
+## Excel schedule/data table engine
+
+A governed Excel ingress/export lane now lives under `excel_schedule_engine/`. It is designed for planning and scheduling workbooks feeding the MAIN pipeline.
+
+For every defined Excel Table, and for non-empty worksheet used ranges where no Excel Table exists, the engine emits **separate CSV and XLSX files**, plus SHA-256-bound table metadata and human schedule indexes. Schedule detection is conservative discovery metadata only; exported renditions do not acquire source authority.
+
+```text
+ActiveDocs/MASTER.xlsx
+  -> excel_schedule_engine
+  -> Outputs/excel/tables_csv/*.csv
+  -> Outputs/excel/tables_xlsx/*.xlsx
+  -> Outputs/excel/table_manifest.json
+  -> Reports/schedule_index.{csv,md}
+```
+
+See [`excel_schedule_engine/README.md`](excel_schedule_engine/README.md).
