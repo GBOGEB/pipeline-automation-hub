@@ -113,10 +113,18 @@ def main() -> int:
     )
     repo_root = ROOT.parent.parent
     required_outputs = control["mip"]["Perpetuate"]["required_outputs"]
-    checks["15_perpetuate_outputs_exist"] = (
-        len(required_outputs) == 8
-        and len(set(required_outputs)) == 8
-        and all((repo_root / p).is_file() for p in required_outputs)
+    expected_outputs = {
+        "mission-control/grand-missions/GM_V_CURRENT_v1.json",
+        "mission-control/grand-missions/GM_V_3PSTAR_MIP_CONTROL_v1.json",
+        "mission-control/grand-missions/validate_gm_v_3pstar_mip_control.py",
+        "mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md",
+        "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v1.md",
+        ".github/workflows/gm-v-3pstar-mip-control.yml",
+    }
+    checks["15_perpetuate_outputs_exact_and_exist"] = (
+        set(required_outputs) == expected_outputs
+        and len(required_outputs) == len(expected_outputs)
+        and all((repo_root / p).is_file() for p in expected_outputs)
     )
     jobs = obs["release_runner_probe"]["jobs"]
     checks["16_latest_qps_observation_exact"] = (
