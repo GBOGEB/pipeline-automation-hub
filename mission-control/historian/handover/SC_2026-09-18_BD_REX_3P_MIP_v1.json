@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.historian.bd_rex_3pstar_mip_handover.v1",
   "status": "CONTROLLED_CONTINUE_HOSTED_DOV_WITHHELD",
-  "as_of": "2026-09-18T15:45:00+02:00",
+  "as_of": "2026-09-18T15:50:00+02:00",
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "repository_authority": {
@@ -24,8 +24,11 @@
       "final_policy_digest": "6a975e6a9a4aefbe08111375be872915efb9dc0c6969ea51311ef20370be5d19",
       "workflow_denominator": 142,
       "classified_target": 142,
-      "post_fix_governance_run": 35351825106,
-      "post_fix_governance_state_at_handover": "QUEUED"
+      "post_fix_governance_run": 35352120094,
+      "post_fix_governance_state_at_handover": "QUEUED_FINAL_REPROVE",
+      "prior_post_fix_governance_run": 35351825106,
+      "prior_post_fix_result": "POLICY_PASS_INVENTORY_FAIL_ONE_GENERATED_REPEATED_COMMAND_LINE",
+      "final_generated_delta_commit": "621c9ca2ab6848d524f3c8ddb831524e756c159f"
     },
     "qps_runner_gate": {
       "repo": "GBOGEB/cryoplant-project",
@@ -39,8 +42,8 @@
     "probe": "PASS_CM003_004_REPEAT_PLUS_BD018_RECURRENCE_OBSERVED",
     "rank": "PASS_FIRST_RED_BD018_MERGE_ADMISSION_NOT_DETECTOR",
     "prepare": "PASS_REPAIR_AND_RESTART_CHAIN_MATERIALIZED",
-    "prove": "LOCAL_DETERMINISTIC_PASS_HOSTED_ABACUS_GOVERNANCE_QUEUED",
-    "commit": "WITHHELD_UNTIL_HOSTED_GOVERNANCE_GT_ZERO_STEPS_PASS_FOR_82F6"
+    "prove": "LOCAL_DETERMINISTIC_PASS_HOSTED_FINAL_REPROVE_QUEUED",
+    "commit": "WITHHELD_UNTIL_RUN_35352120094_GT_ZERO_STEPS_PASS"
   },
   "mip": {
     "modernize": "PASS_POLICY_SSOT_142_OF_142_CONTENT_STATE",
@@ -96,7 +99,13 @@
       "exact_policy_rules": 4,
       "report_workflows": 142,
       "report_classified": 142,
-      "policy_digest": "6a975e6a9a4aefbe08111375be872915efb9dc0c6969ea51311ef20370be5d19"
+      "policy_digest": "6a975e6a9a4aefbe08111375be872915efb9dc0c6969ea51311ef20370be5d19",
+      "final_generated_delta_commit": "621c9ca2ab6848d524f3c8ddb831524e756c159f",
+      "prior_hosted_run": {
+        "run": 35351825106,
+        "policy_outcome": "PASS",
+        "inventory_outcome": "FAIL_ONE_DERIVED_COMMAND_LINE"
+      }
     }
   },
   "living_state": {
@@ -132,7 +141,7 @@
     "Negative and failed governance evidence remains retained."
   ],
   "next_executable": [
-    "Re-read ABACUS post-fix governance run 35351825106. If >0 steps and PASS, move HIST-BD-018 repair state from ACTIVE to DONE; do not promote REX-CM-005.",
+    "Re-read ABACUS final governance run 35352120094. If >0 steps and PASS, move HIST-BD-018 repair state from ACTIVE to DONE; do not promote REX-CM-005.",
     "Bind ABACUS merge admission/ruleset to CI Workflow Governance; prove red unclassified change non-mergeable, then prove classified later-SHA change green and mergeable.",
     "Continue HIST-BD-001 requested-vs-observed REX semantics.",
     "Continue HIST-BD-009 negative/rejected runtime evidence retention.",
