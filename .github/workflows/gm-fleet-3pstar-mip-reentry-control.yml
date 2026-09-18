@@ -1,0 +1,65 @@
+name: GM Fleet 3Pstar MIP External Reentry Control
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_V_EXTERNAL_REENTRY_CONTROL_v1.yaml'
+      - 'mission-control/grand-missions/validate_gm_v_external_reentry.py'
+      - 'mission-control/grand-missions/handover/**'
+      - '.github/workflows/gm-fleet-3pstar-mip-reentry-control.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_V_EXTERNAL_REENTRY_CONTROL_v1.yaml'
+      - 'mission-control/grand-missions/validate_gm_v_external_reentry.py'
+      - 'mission-control/grand-missions/handover/**'
+      - '.github/workflows/gm-fleet-3pstar-mip-reentry-control.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Bind exact source SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          s="$(git rev-parse HEAD)"
+          test "$s" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          echo "SOURCE_SHA=$s" >> "$GITHUB_ENV"
+      - name: Install bounded dependency
+        run: python -m pip install --disable-pip-version-check -q pyyaml
+      - name: Compile validator
+        run: python -m py_compile mission-control/grand-missions/validate_gm_v_external_reentry.py
+      - name: Validate lossless reentry control
+        shell: bash
+        run: |
+          python mission-control/grand-missions/validate_gm_v_external_reentry.py             --source-sha "$SOURCE_SHA"             --out gm_v_external_reentry_control_receipt.json
+      - name: Enforce fail-closed semantics
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('gm_v_external_reentry_control_receipt.json'))
+          assert d['result']=='PASS'
+          assert d['reentry_authorized_now'] is False
+          assert d['gm_v_launch_authorized'] is False
+          assert d['first_red']=='GBOGEB/cryoplant-project#923'
+          assert d['authority_transfer'] is False
+          assert d['formal_credit_delta']==0
+          print('PASS_GM_FLEET_3PSTAR_MIP_FAIL_CLOSED')
+          PY
+      - name: Upload exact-head control receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-fleet-3pstar-mip-reentry-control-${{ github.event.pull_request.head.sha || github.sha }}
+          path: gm_v_external_reentry_control_receipt.json
+          if-no-files-found: error
