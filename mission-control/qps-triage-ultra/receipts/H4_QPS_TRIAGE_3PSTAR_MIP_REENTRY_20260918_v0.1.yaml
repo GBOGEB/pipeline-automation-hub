@@ -1,0 +1,77 @@
+schema: qps-triage-ultra/h4-3pstar-mip-reentry-parent/0.1
+as_of: '2026-09-18'
+mission: H4_QPS_TRIAGE
+parent_repo: GBOGEB/pipeline-automation-hub
+child_repo: GBOGEB/cryoplant-project
+authority_transfer: false
+
+child_transaction:
+  fresh_head_pr: 1500
+  superseded_pr: 1499
+  child_base_sha: 2571a520e2d765cf4089a8cd375ca3dd290def58
+  child_head_sha: b57368e7d18d860dfcbda3e25204fed58774db5d
+  child_merge_sha: 67768b9628a0c698c8a2d9808d0ab66712ed6a15
+  status: MERGED_REENTRY_CONTROL
+  controls:
+    - triage/h4/QPS_H4_3PSTAR_MIP_REENTRY_CONTROL_20260918_v0.1.yaml
+    - handover/session/SC_2026-09-18_H4_QPS_TRIAGE_3PSTAR_MIP_REENTRY_v1.md
+
+sequential_result:
+  three_pr:
+    refresh: PASS
+    probe: PASS_BLOCKER_IDENTIFIED
+    rank: PASS_RUNNER_ADMISSION_FIRST_RED
+  mip:
+    modernize: PASS_NO_APPLICATION_MUTATION
+    innovate: HOLD_NOT_ADMITTED
+    perpetuate: PASS_REPOSITORY_NATIVE_REENTRY
+  p1_exact_head_runtime_kr: WITHHELD
+  w2_3pc_mip_i: HOLD_NOT_ADMITTED
+  fresh_head_repeat: NOT_REACHED
+  w3_3p3_mip_p: NOT_ADMITTED
+
+runtime_gate:
+  issue: GBOGEB/cryoplant-project#923
+  required_predicate: runner_id != 0 AND steps > 0
+  latest_bound_run: 35360184752
+  latest_bound_job: 105649242616
+  observed_steps: 0
+  observation_state: QUEUED_WITH_NO_STEPS_AT_BIND
+  classification: INFRA_PREEXECUTION_ZERO_STEP_OR_UNASSIGNED
+
+canonical_reliability_boundary:
+  child_prs: [1121, 1120]
+  require_1120_open: false
+  unchanged_validator: .github/workflows/qps-triage-reliability-applicability.yml
+
+w2_after_p1_pass:
+  preferred_atom: COLD_COMPRESSOR_TRAIN
+  fallback_atom: ALAT_HP_COMPRESSOR
+  innovation_scope: SHARED_OPERATING_STATE_LEDGER_ADAPTER_TO_EXISTING_NUMERICAL_COST_SSOT
+  required_result: DETERMINISTIC_RELIABILITY_AND_PROVENANCE
+  commit_disposition: [ACCEPT_ANALYTICAL_CONSUMER, DEFER, HOLD, REJECT]
+  fresh_head_repeat_required_before_control_gold: true
+
+w3_after_w2_local_dov:
+  method: ONE_3P3_PLUS_MIP_P
+  execute_once_then_stop: true
+
+formal_credit_delta:
+  engineering: 0
+  compliance: 0
+  negotiation: 0
+  acceptance: 0
+  release: 0
+  table10_rate_per_year: 0.0
+
+non_compensation:
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - PARENT_PASS_NE_CHILD_ACCEPT
+  - MISSIONCONTROL_PASS_NE_PRIVATE_QPS_RUNTIME_KR
+  - HISTORICAL_W2_PASS_NE_CURRENT_P1_RUNTIME_PASS
+  - COMPONENT_ANALYTICS_NE_SYSTEM_EVENT_CREDIT
+  - UNKNOWN_NE_ZERO
+
+next_legal_transition: >-
+  Owner-side Actions admission materially changes; then one unchanged current-child probe
+  must prove runner_id != 0 and steps > 0 before P1 exact-head validator/KR execution.
