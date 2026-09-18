@@ -1,0 +1,119 @@
+schema: missioncontrol.qps_leg5_w249_3pstar_mip_followup_receiver/v2
+as_of: '2026-09-18T13:18:00+02:00'
+repo: GBOGEB/pipeline-automation-hub
+role: PARENT_CONTROL_RECEIVER_FOLLOWUP
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+negotiation_credit_delta: 0
+release_credit_delta: 0
+qps_runtime_credit_delta: 0
+
+history:
+  prior_receiver: mission-control/qps-triage-ultra/leg5/QPS_LEG5_W249_3PSTAR_MIP_RECEIVER_v1.yaml
+  prior_dependency_graph: mission-control/qps-triage-ultra/leg5/QPS_LEG5_W249_DEPENDENCY_GRAPH_v1.json
+  prior_receiver_pr: 200
+  prior_receiver_final_head: 67e2a34167869b6ce6868a83877941c539ac5a0c
+  prior_receiver_merge: 073db34f68ff6a7763ac334371e3d67f7f9c3567
+  prior_exact_head_proof:
+    workflow: QPS_TRIAGE_ULTRA_Federation_Control
+    run: 35338302494
+    job: 105578180795
+    result: SUCCESS_REAL_STEPS
+
+child:
+  repo: GBOGEB/cryoplant-project
+  source_authority: true
+  prior_control_pr:
+    pr: 1450
+    merge: 83d4d5eb8c920672f6c550ede20ce390e528bf27
+  recursive_followup_pr:
+    pr: 1456
+    proof_head: 20fbe0af279342129fbb63a0a22a4ee63b42a496
+    merge: bfa80d4fa9756f03dd4aaa4c6dedff92b53760d6
+  current_main: bfa80d4fa9756f03dd4aaa4c6dedff92b53760d6
+  followup_control: triage/w249/QPS_W249_LEG5_3PSTAR_MIP_FOLLOWUP_v0.2.yaml
+  lossless_handover: handover/session/SC_2026-09-18_W249_LEG5_3PSTAR_MIP_LOSSLESS_HANDOVER_v2.md
+  restart_dropin: handover/session/RESTART_DROPIN_2026-09-18_W249_LEG5_v2.md
+  state: 7_OF_9_CLOSED_CONTROL_PUBLICATION_COMPLETE_RUNTIME_ROUTES_WITHHELD
+
+three_pulse_star:
+  P1_REFRESH_PROBE_RANK:
+    state: PASS
+    observations:
+      - QPS_PR1450_MERGED
+      - QPS_PR1456_MERGED
+      - PARENT_PR200_MERGED_WITH_FINAL_EXACT_HEAD_PROOF
+      - QPS_MAIN_BINDS_R3_PARALLEL_PROGRESS_AND_LEG5_FOLLOWUP
+      - PRIVATE_QPS_ROUTE_WORKFLOWS_REMAIN_INFRA_PREEXECUTION
+    rank:
+      - bind_final_child_main_and_recursive_history
+      - preserve_parent_proof_domain
+      - preserve_child_runtime_gate
+      - expose_compact_dependency_chain_for_restart
+  P2_MIP:
+    state: PASS
+    modernize:
+      - advance_parent_pointer_from_child_PR1450_head_to_child_main_after_PR1456_merge
+      - retain_prior_receiver_as_immutable_history
+    innovate:
+      - bind_validator_runner_selector_compatibility_as_child_runtime_precondition
+      - distinguish_parent_control_proof_from_child_route_proof
+    perpetuate:
+      - followup_receiver_v2
+      - dependency_graph_v2
+      - restart_dropin_v2
+  P3_PREPARE_PROVE_COMMIT:
+    prepare: PASS
+    prior_parent_prove: PASS
+    current_parent_followup_prove: PENDING_THIS_PR
+    child_runtime_prove: WITHHELD_QPS_923
+    child_route_commits: WITHHELD
+    final_9_of_9: WITHHELD
+
+child_runtime_observation:
+  same_head_route_proofs:
+    presentation_numeric_drift:
+      run: 35338752787
+      job: 105579587038
+      steps: null
+    cnl73_hold:
+      run: 35338752776
+      job: 105579586730
+      steps: null
+    release_runner_probe:
+      run: 35338752796
+      jobs: [105579586789, 105579586944, 105579586997]
+      steps: null
+  classification: INFRA_PREEXECUTION_ZERO_STEP
+  application_repair_authorized: false
+
+dependencies:
+  external_gate:
+    issue: GBOGEB/cryoplant-project#923
+    predicate:
+      - runner_id_nonzero
+      - steps_gt_0
+      - validator_runner_selector_compatible
+  serial_child_actions:
+    - execute_current_main_1266_validator_unchanged
+    - bind_exact_receipt
+    - close_1266_on_PASS_and_publish_8_of_9
+    - execute_current_main_1357_validator_unchanged
+    - bind_exact_receipt
+    - close_1357_on_PASS_as_noncompensating_hold_and_publish_9_of_9
+    - verify_zero_undeclared_routes_and_zero_authority_promotions
+    - evaluate_1258_closure
+
+guards:
+  - PARENT_CONTROL_PROOF_NE_CHILD_RUNTIME_PROOF
+  - CHILD_CONTROL_MERGE_NE_ROUTE_CLOSURE
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - R3_PARALLEL_PROGRESS_NE_LEG5_CREDIT
+  - LEG5_PROGRESS_NE_R3_RELEASE_CREDIT
+  - AUTHORITY_TRANSFER_FALSE
+
+next_predicate:
+  child: QPS_RUNNER_ADMISSION
+  issue: GBOGEB/cryoplant-project#923
+  require: [runner_id_nonzero, steps_gt_0, validator_runner_selector_compatible]

@@ -1,0 +1,52 @@
+{
+  "schema": "missioncontrol.qps_leg5_w249_dependency_graph/v2",
+  "as_of": "2026-09-18T13:18:00+02:00",
+  "child_repo": "GBOGEB/cryoplant-project",
+  "child_current_main": "bfa80d4fa9756f03dd4aaa4c6dedff92b53760d6",
+  "history": {
+    "qps_control_pr_1450_merge": "83d4d5eb8c920672f6c550ede20ce390e528bf27",
+    "qps_followup_pr_1456_merge": "bfa80d4fa9756f03dd4aaa4c6dedff92b53760d6",
+    "missioncontrol_receiver_pr_200_merge": "073db34f68ff6a7763ac334371e3d67f7f9c3567",
+    "missioncontrol_prior_final_exact_head": "67e2a34167869b6ce6868a83877941c539ac5a0c",
+    "missioncontrol_prior_proof_run": 35338302494,
+    "missioncontrol_prior_proof_job": 105578180795
+  },
+  "nodes": [
+    {"id":"LEG5","type":"MISSION","state":"7_OF_9_CLOSED"},
+    {"id":"QPS_MAIN","type":"CHILD_AUTHORITY","state":"CONTROL_PUBLICATION_COMPLETE","sha":"bfa80d4fa9756f03dd4aaa4c6dedff92b53760d6"},
+    {"id":"QPS#1258","type":"CONTROL_ISSUE","state":"OPEN"},
+    {"id":"QPS#923","type":"RUNTIME_GATE","state":"OPEN_OWNER_ACTION"},
+    {"id":"QPS#1266","type":"ROUTE","state":"STATIC_CONTROL_PRESENT_RUNTIME_PROOF_WITHHELD"},
+    {"id":"QPS#1357","type":"ROUTE","state":"HOLD_CONTROL_PRESENT_RUNTIME_PROOF_WITHHELD"},
+    {"id":"MC_PR200","type":"PARENT_RECEIVER_HISTORY","state":"MERGED_PROVED"},
+    {"id":"MC_FOLLOWUP","type":"PARENT_RECEIVER","state":"THIS_TRANSACTION"},
+    {"id":"R3_PARALLEL","type":"INDEPENDENT_LANE","state":"NONCOMPENSATING"}
+  ],
+  "edges": [
+    {"from":"MC_FOLLOWUP","to":"QPS_MAIN","type":"BINDS_FINAL_CHILD_AUTHORITY_POINTER"},
+    {"from":"MC_FOLLOWUP","to":"MC_PR200","type":"EXTENDS_IMMUTABLE_PARENT_HISTORY"},
+    {"from":"LEG5","to":"QPS#1258","type":"GOVERNED_BY"},
+    {"from":"QPS#1258","to":"QPS#1266","type":"TRACKS"},
+    {"from":"QPS#1258","to":"QPS#1357","type":"TRACKS"},
+    {"from":"QPS#1266","to":"QPS#923","type":"BLOCKED_BY_VALIDATOR_COMPATIBLE_RUNNER"},
+    {"from":"QPS#1357","to":"QPS#923","type":"BLOCKED_BY_VALIDATOR_COMPATIBLE_RUNNER"},
+    {"from":"MC_FOLLOWUP","to":"QPS#923","type":"DOES_NOT_COMPENSATE"},
+    {"from":"R3_PARALLEL","to":"LEG5","type":"DOES_NOT_COMPENSATE"}
+  ],
+  "bounded_execution_dag": {
+    "acyclic": true,
+    "sequence": [
+      "QPS_VALIDATOR_COMPATIBLE_RUNNER_ADMISSION",
+      "QPS_1266_VALIDATOR_UNCHANGED",
+      "QPS_1266_EXACT_RECEIPT",
+      "QPS_1266_CLOSE_ON_PASS_8_OF_9",
+      "QPS_1357_VALIDATOR_UNCHANGED",
+      "QPS_1357_EXACT_RECEIPT",
+      "QPS_1357_CLOSE_ON_PASS_9_OF_9",
+      "VERIFY_ZERO_UNDECLARED_ROUTES_AND_ZERO_AUTHORITY_PROMOTIONS",
+      "QPS_1258_CLOSURE_EVALUATION"
+    ]
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
