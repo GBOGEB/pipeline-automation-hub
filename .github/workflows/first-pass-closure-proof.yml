@@ -11,6 +11,11 @@ on:
       - ".github/workflows/first-pass-closure-gate.yml"
       - "docs/W305_FIRST_PASS_CLOSURE_GATE.md"
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number (gate workflow only)
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -20,6 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Compile gate
         run: python -m py_compile scripts/first_pass_closure_gate.py
       - name: Canonical self-test and mutation/fault matrix
