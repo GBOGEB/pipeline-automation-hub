@@ -1,0 +1,61 @@
+{
+  "schema": "missioncontrol.golden_thread.gt_bd_003.owner_action_reentry/v1",
+  "as_of": "2026-09-18T16:54:00+02:00",
+  "authority_transfer": false,
+  "qps_credit_delta": 0,
+  "gate": {
+    "issue": "GBOGEB/cryoplant-project#923",
+    "class": "EXTERNAL_OWNER_ACTION",
+    "current_observation": "INFRA_PREEXECUTION_ZERO_STEP"
+  },
+  "admitted_transitions": [
+    {
+      "id": "HOSTED_ACTIONS_ADMISSION_RESTORED",
+      "owner": "GITHUB_ACCOUNT_REPOSITORY_OWNER",
+      "evidence_required": [
+        "owner_control_plane_condition_materially_changed",
+        "unchanged_release_runner_probe",
+        "runner_id_nonzero",
+        "executed_steps_gt_0"
+      ]
+    },
+    {
+      "id": "TRUSTED_SELF_HOSTED_RUNNER_ATTACHED",
+      "owner": "GITHUB_ACCOUNT_REPOSITORY_OWNER",
+      "evidence_required": [
+        "trusted_linux_runner_registered",
+        "CRYO_RECEIPT_RUNNER_bound_to_actual_labels",
+        "unchanged_release_runner_probe",
+        "runner_id_nonzero",
+        "executed_steps_gt_0"
+      ]
+    }
+  ],
+  "connector_capability": {
+    "billing_usage_budget_admin": false,
+    "self_hosted_runner_registration": false,
+    "repository_runner_variable_admin": false
+  },
+  "on_success": {
+    "next_method": "3PC_PROVE",
+    "bd_item": "GT-BD-003",
+    "repeat_prepare": false,
+    "repeat_3pr": false,
+    "bind_exact": [
+      "repo",
+      "pr_or_branch",
+      "head",
+      "run",
+      "job",
+      "artifact",
+      "digest",
+      "result"
+    ]
+  },
+  "on_zero_step": {
+    "classification": "INFRA_PREEXECUTION_ZERO_STEP",
+    "application_repair_authorized": false,
+    "commit_authorized": false,
+    "qps_gt_bdq_1_admitted": false
+  }
+}
