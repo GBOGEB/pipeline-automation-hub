@@ -11,7 +11,7 @@ class TestPremerge(unittest.TestCase):
 
     def test_clean_contract_and_protected_files(self):
         self.assertEqual(v.validate(self.doc),[])
-        self.assertEqual(v.validate_actual_controls(ROOT),[])
+        self.assertEqual(v.latest_w275_receipt(ROOT).name,"HM01_R3_W275_3PSTAR_MIP_FEDERATION_20260918_v5.yaml")\n        self.assertEqual(v.validate_actual_controls(ROOT),[])
         receipt=v.proof(self.doc,ROOT)
         self.assertEqual(receipt["kpi"]["synthetic_fault_detection_rate"],1.0)
         self.assertEqual(receipt["kpi"]["false_accept_count"],0)

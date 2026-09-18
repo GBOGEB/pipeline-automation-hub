@@ -1,0 +1,80 @@
+schema: missioncontrol.hm01.r3.w275_federation_receipt.v0.5
+as_of: '2026-09-18T17:01:00+02:00'
+mission: HM-01
+state: DMAIC_PROTECTED_CONTROL_REPAIRED_WAIT_PHYSICAL_SUCCESSOR_BUNDLE
+authority_transfer: false
+formal_credit_delta: 0
+
+history:
+  predecessor_receipt: mission-control/qps-triage-ultra/missions/receipts/HM01_R3_W275_3PSTAR_MIP_FEDERATION_20260918_v4.yaml
+  predecessor_treatment: IMMUTABLE_HISTORY_FIX_FORWARD
+  predecessor_schema_binding_defect: DOT_SPELLED_CAPSULE_SCHEMA_IN_FEDERATION_RECEIPT
+  qps_modernize_pr: GBOGEB/cryoplant-project#1494
+  qps_modernize_head: 4cf5dd60980ff9eef45d542fb0a2f1afd25b1c20
+  qps_modernize_merge: 2571a520e2d765cf4089a8cd375ca3dd290def58
+  qps_modernize_retry1_pr: GBOGEB/cryoplant-project#1508
+  qps_modernize_retry1_merge: 80b177e2b738eabe9285bd8381c88733508c8141
+  qps_dmaic_consumer_blob: ad02b2ac0dadf84c7ac4d44d55a64f77cefe00cb
+  qps_dmaic_validator_blob: 860342271da0b9a4363ac41c88e14b800d8e8c09
+  qps_dmaic_tests_blob: f56daab03c536e70dc249447685a3871b1155c96
+  qps_numeric_type_repair_blob: ac768aa888aebddc4e780f5fb43bf4856c48af0d
+  qps_exact_env_validator_blob: a683201464240ec48d927225e6a52e284b7077cf
+
+current_qps_restart:
+  active_successor: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  historical_predecessor: 70964e5f1577231512f4104b26f5f6649ad8cb39
+  first_red: PHYSICAL_SUCCESSOR_GIT_BUNDLE_RETURN_1248290C
+  r3_release_production_dov: WITHHELD
+  r4: BLOCKED_NOT_NEXT
+
+exact_environment:
+  state: PASS_CAPSULE_V2
+  manifest: gmi.r3_successor.exact_env_capsule.v2
+  launcher: r3-python/run-python
+  producer_repo: GBOGEB/GEMINI
+  producer_merge: 8b8e72400bb6860789b11b1fca3b809fc8ca6524
+  validator_hygiene_merge: 9faeb10cd57395538eb163791c7c56ba90be711b
+  qps_contract_validator_fix_merge: 80b177e2b738eabe9285bd8381c88733508c8141
+
+successor_git_object_producer:
+  state: PASS_MERGED
+  repo: GBOGEB/GEMINI
+  pr: 20
+  merge: 439838866e77784334ef76d231f9a9e0aa4f5e5c
+  operator: scripts/build_qps_r3_successor_handoff.ps1
+
+physical_return:
+  state: WAIT_RETURN
+  first_red: PHYSICAL_SUCCESSOR_GIT_BUNDLE_RETURN_1248290C
+  latest_connected_drive_scan:
+    qualifying_bundle_found: false
+
+dmaic:
+  three_pr_pr: GBOGEB/pipeline-automation-hub#260
+  three_pr_merge: 9bee27a1ef6a6fa9fed30c82d73fd931cf21b58b
+  mip_modernize_pr: GBOGEB/cryoplant-project#1494
+  mip_modernize_merge: 2571a520e2d765cf4089a8cd375ca3dd290def58
+  mip_innovate: DIRECT_PROTECTED_SOURCE_VALIDATION
+  mip_perpetuate: V5_FEDERATION_PLUS_STRICT_CURRENT_CONTROL
+  ranked_defects_total: 5
+  ranked_defects_closed: 5
+  ranked_defects_open: 0
+
+three_pstar:
+  three_pr: PASS_EXACT_HEAD
+  mip_modernize: PASS_MERGED_QPS
+  mip_innovate: THIS_PR
+  mip_perpetuate: THIS_PR
+  three_pc_prepare: PASS
+  three_pc_prove: PENDING_EXACT_HEAD_PUBLIC_WORKFLOW
+  three_pc_commit: HOLD_WAIT_PROVE
+  three_p3_authorized: false
+  r4: BLOCKED_NOT_NEXT
+
+non_compensation:
+  issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  runtime_gold: WITHHELD
+  canonical_gt_credit: NONE
+  authority_transfer: false
+  formal_credit_delta: 0

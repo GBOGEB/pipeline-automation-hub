@@ -17,14 +17,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate W281 rebaselined control card
+      - name: Validate W285 MIP-I/P and 3PC control
         run: |
           mkdir -p output/r3-dmaic
-          python mission-control/grand-missions/validate_r3_dmaic_control.py             --control mission-control/grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json             --self-test --out output/r3-dmaic/R3_DMAIC_CONTROL_RECEIPT_v2.json
+          python mission-control/grand-missions/validate_r3_dmaic_control.py             --control mission-control/grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json             --self-test --out output/r3-dmaic/R3_DMAIC_CONTROL_RECEIPT_v3.json
       - name: Upload control receipt
         uses: actions/upload-artifact@v4
         with:
           name: hm01-r3-dmaic-control
-          path: output/r3-dmaic/R3_DMAIC_CONTROL_RECEIPT_v2.json
+          path: output/r3-dmaic/R3_DMAIC_CONTROL_RECEIPT_v3.json
           if-no-files-found: error
           retention-days: 30
