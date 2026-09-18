@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.temporal_frontier_current.v1",
-  "as_of": "2026-09-18T15:36:00+02:00",
+  "as_of": "2026-09-18T15:50:00+02:00",
   "canonical_navigation": true,
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -16,7 +16,7 @@
     "lossless": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/SC_2026-09-18_TEMPORAL_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md",
     "restart_dropin": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/RESTART_DROPIN_2026-09-18_TEMPORAL_FRONTIER_v1.md"
   },
-  "state": "CONTROLLED_WAIT_POSTMERGE_EXACT_HEAD_PROOF_3_OF_5_CONTROL",
+  "state": "CONTROLLED_REX005_REPAIRED_3_OF_5_CONTROL_TWO_CLASS_FRONTIER_ACTIVE",
   "control_classes": [
     "cache_artifact_reuse",
     "short_compute",
@@ -49,16 +49,20 @@
     "postmerge_recurrence": {
       "run_id": "35352260069",
       "job_id": "105622958891",
-      "state": "QUEUED_ZERO_STEPS_AT_HANDOVER"
-    }
+      "merge_sha": "243337e7170029ccfbcf1588ce951356fd1d22a7",
+      "state": "PASS",
+      "steps_executed": true,
+      "tests": "3_OF_3_PASS",
+      "success_marker": "PASS_TEMPORAL_3PSTAR_MIP_PROOF_REBIND_CONTROL"
+    },
+    "rex_005_state": "CONTROLLED"
   },
   "next_order": [
     "refresh live master and current temporal authority files",
-    "resolve run 35352260069 job 105622958891 without blind rerun while queued",
-    "if PASS bind postmerge recurrence and close this REX-005 occurrence",
-    "if FAIL repair only first failing step",
-    "continue P0 long_compute signed-effect decomposition by runner/lane/temporal half",
-    "continue P1 wait-proxy genuine-schedule surveillance with proxy claim boundary",
+    "confirm proof-rebind run 35352260069 job 105622958891 remains successful history",
+    "P0 decompose long_compute_contended signed effect by runner/lane/temporal half",
+    "P1 continue human_dependency_wait_proxy genuine-schedule stability measurement with controlled-wait proxy claim boundary",
+    "continue surveillance of cache_artifact_reuse short_compute validation_bundle and reopen only on governed regression",
     "evaluate H3 7-day surveillance only when genuine scheduled span reaches 604800 seconds"
   ]
 }
