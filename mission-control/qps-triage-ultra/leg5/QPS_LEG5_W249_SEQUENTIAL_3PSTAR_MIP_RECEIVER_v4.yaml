@@ -1,0 +1,87 @@
+schema: missioncontrol.qps_leg5_w249_sequential_3pstar_mip_receiver/v4
+as_of: '2026-09-18T16:56:00+02:00'
+repo: GBOGEB/pipeline-automation-hub
+role: PARENT_CONTROL_RECEIVER
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+negotiation_credit_delta: 0
+release_credit_delta: 0
+qps_runtime_credit_delta: 0
+
+child:
+  repo: GBOGEB/cryoplant-project
+  pr: 1486
+  exact_control_head: 47afba73f55a21ded45af0142f4511aa23686fbf
+  merge_commit: 604f282ab0ca249f660507bf9567da26b7579d09
+  state: 7_OF_9_CLOSED_RUNTIME_PROVE_WITHHELD
+  controls:
+    - triage/w249/QPS_W249_LEG5_3PSTAR_SEQUENTIAL_EXECUTION_v0.4.yaml
+    - triage/w249/QPS_W249_LEG5_RUNNER_RETRY_EXHAUSTION_RECEIPT_v0.3.yaml
+    - triage/w249/QPS_W249_LEG5_MIP_SEQUENTIAL_EXECUTION_v0.4.yaml
+    - handover/session/RESTART_DROPIN_2026-09-18_W249_LEG5_v4.md
+
+three_pulse_star_result:
+  refresh_probe_rank: PASS_WITH_EXTERNAL_BLOCK
+  prepare: PASS
+  prove: WITHHELD_EXTERNAL_RUNNER_ADMISSION
+  commit: HOLD
+  three_p3: NOT_AUTHORIZED
+
+retry_evidence:
+  workflow: Release Runner Probe
+  run: 35352181453
+  manual_retry_budget: 2
+  manual_retries_executed: 2
+  retry_1_attempt_2:
+    jobs: [105644181216,105644181570,105644181608]
+    steps: null
+    result: failure
+  retry_2_attempt_3:
+    jobs: [105644256331,105644256828,105644257629]
+    steps: null
+    result: failure
+  classification: INFRA_PREEXECUTION_ZERO_STEP
+  retry_budget_exhausted: true
+
+fresh_child_exact_head_observation:
+  pr: 1486
+  head: 2b005b77f598034b9cb1cbded4cc1e588c26dba2
+  workflow: Release Runner Probe
+  run: 35358917304
+  jobs:
+    - {id: 105645028499, lane: ubuntu-22.04, steps: null}
+    - {id: 105645028655, lane: configured, steps: null}
+    - {id: 105645028800, lane: ubuntu-latest, steps: null}
+  classification: INFRA_PREEXECUTION_ZERO_STEP
+  note: automatic_PR_observation_not_manual_retry
+
+MIP:
+  modernize: PASS
+  innovate: PASS
+  perpetuate:
+    state: PASS_PARENT_CONTROL_PENDING_PROOF
+    child_merge_bound: true
+    parent_receiver_repo_native: true
+    route_runtime_perpetuation: WITHHELD_923
+
+runtime_gate:
+  issue: GBOGEB/cryoplant-project#923
+  require:
+    - material_owner_side_actions_admission_change
+    - unchanged_probe_runner_id_nonzero
+    - steps_gt_zero
+    - validator_runner_selector_compatible
+  compensation_allowed: false
+  further_blind_retry_authorized: false
+
+open_routes:
+  - {issue: 1266, state: OPEN_RUNTIME_PROOF_WITHHELD}
+  - {issue: 1357, state: OPEN_RUNTIME_PROOF_WITHHELD}
+
+guards:
+  - PARENT_CONTROL_PASS_NE_CHILD_RUNTIME_PASS
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - RETRY_EXHAUSTION_NE_ROUTE_FAILURE
+  - NO_VALIDATOR_REPAIR_FROM_PREEXECUTION
+  - AUTHORITY_TRANSFER_FALSE
