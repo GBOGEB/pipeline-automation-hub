@@ -39,4 +39,4 @@ jobs:
         run: python -m py_compile scripts/Recursive_Build_Master.py scripts/recursive_build.py scripts/run_processing.py excel_schedule_engine/src/excel_schedule_engine.py
       - name: Unit tests
         run: |
-          python -m unittest -v             tests.test_recursive_build_master             tests.test_run_processing_recursive_integration
+          python -m unittest -v tests.test_recursive_build_master tests.test_run_processing_recursive_integration tests.test_main_pipeline_e2e
