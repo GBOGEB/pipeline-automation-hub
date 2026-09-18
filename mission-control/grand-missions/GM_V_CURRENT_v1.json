@@ -1,0 +1,78 @@
+{
+  "schema": "missioncontrol.gm_v.current.v1",
+  "as_of": "2026-09-18T15:20:00+02:00",
+  "canonical": true,
+  "mission": "GM-V",
+  "state": "HELD_EXTERNAL_OPERATIONAL_AVAILABILITY",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "missioncontrol": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "refreshed_master": "3df37a0485874f968f0dffa02bc474c5f4645fba",
+    "control": "mission-control/grand-missions/GM_V_3PSTAR_MIP_CONTROL_v1.json",
+    "governor_contract": "mission-control/grand-missions/GM_V_GOVERNOR_READINESS_CONTRACT.json",
+    "handover": "mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md",
+    "restart": "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v1.md"
+  },
+  "gm_iv": {
+    "state": "ACTIVE_8_OF_8",
+    "runtime_capacity_class": "RUNTIME_PROVEN",
+    "capability_coverage": "8_OF_8",
+    "concurrency_capacity_claimed": false,
+    "historical_control_fixforward_merge": "3df37a0485874f968f0dffa02bc474c5f4645fba"
+  },
+  "gm_v": {
+    "state": "HELD",
+    "frontier_count": 16,
+    "children": [],
+    "crew_posture": "UNALLOCATED",
+    "launch_authorized": false,
+    "latest_governor_decision": "WITHHOLD_GM_V_LAUNCH_EXTERNAL_OPERATIONAL_AVAILABILITY"
+  },
+  "child_runtime_gate": {
+    "repository": "GBOGEB/cryoplant-project",
+    "refreshed_main": "039e1fa84a6b32bcdb89e65807613377d50b4bb7",
+    "issue": 923,
+    "issue_state": "OPEN",
+    "classification": "INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION",
+    "compensation_allowed": false,
+    "next_legal_trigger": "OWNER_SIDE_ACTIONS_ADMISSION_CHANGE",
+    "reentry_predicate": [
+      "UNCHANGED_RELEASE_RUNNER_PROBE",
+      "RUNNER_ID_NONZERO",
+      "STEPS_GT_0",
+      "EXACT_CURRENT_QPS_SHA",
+      "UNCHANGED_SELECTED_VALIDATOR"
+    ]
+  },
+  "progression": {
+    "three_pr": "PASS",
+    "mip_modernize": "PASS",
+    "mip_innovate": "PASS",
+    "mip_perpetuate": "THIS_TRANSACTION",
+    "three_pc_prepare": "PASS_CONTROL_PREPARED",
+    "three_pc_prove": "WITHHELD_EXTERNAL",
+    "three_pc_commit": "HOLD_WAIT_PROVE",
+    "three_p3": "NOT_AUTHORIZED"
+  },
+  "next_order": [
+    "REFRESH_MISSIONCONTROL_MASTER_AND_QPS_MAIN",
+    "CHECK_FOR_REPOSITORY_VISIBLE_HOSTED_ADMISSION_RESTORED_OR_SELF_HOSTED_ATTACHED",
+    "IF_NO_MATERIAL_ADMISSION_CHANGE_STOP_WITHOUT_RERUN",
+    "IF_ADMISSION_CHANGED_RUN_UNCHANGED_RELEASE_RUNNER_PROBE_ON_EXACT_CURRENT_QPS_SHA",
+    "REQUIRE_RUNNER_ID_NONZERO_AND_STEPS_GT_0",
+    "RUN_UNCHANGED_SELECTED_CHILD_VALIDATOR_AND_BIND_EXACT_RECEIPT",
+    "REPEAT_ON_DISTINCT_FRESH_HEAD",
+    "REEVALUATE_GM_V_GOVERNOR",
+    "ONLY_IF_READY_OPEN_SEPARATE_GM_V_LAUNCH_TRANSACTION"
+  ],
+  "chat_only_todo_count": 0,
+  "chat_only_decision_count": 0,
+  "publication": {
+    "pr": 232,
+    "branch": "mission/gm-v-3pstar-mip-handover-20260918",
+    "prepublication_head": "44392c068e62561f8e69678a928bc5cfe4c991e6",
+    "base_master_at_pr_open": "f226e6e61bc84482d4856f056b292ca9322e22f8",
+    "merge_state": "OPEN_PENDING_EXACT_HEAD_DOV"
+  }
+}

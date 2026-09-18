@@ -1,0 +1,179 @@
+{
+  "schema": "missioncontrol.gm_v.3pstar_mip_control.v1",
+  "as_of": "2026-09-18T15:20:00+02:00",
+  "canonical_lane": "GM_V_GOVERNOR_READINESS_AND_OPERATIONAL_AVAILABILITY",
+  "mission": "GM-V",
+  "method": "3PSTAR_PLUS_MIP",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "source_authority": {
+    "missioncontrol_repo": "GBOGEB/pipeline-automation-hub",
+    "missioncontrol_master_at_refresh": "3df37a0485874f968f0dffa02bc474c5f4645fba",
+    "qps_repo": "GBOGEB/cryoplant-project",
+    "qps_main_at_refresh": "039e1fa84a6b32bcdb89e65807613377d50b4bb7",
+    "qps_runtime_gate_issue": "GBOGEB/cryoplant-project#923",
+    "qps_runtime_gate_state": "OPEN",
+    "refresh_first": true
+  },
+  "lineage": {
+    "active8_readiness": {
+      "head_sha": "3943ae33eea2a4af6171b97517c19b79ed986fe8",
+      "run_id": 35145656795,
+      "artifact_id": 10467671042,
+      "artifact_digest": "sha256:97d37b98334acbab0e1fec9bae56163e20fd5b9c2751be2495c52642bc6dd4cb",
+      "decision": "READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR"
+    },
+    "active8_promotion": {
+      "pr": 144,
+      "state": "MERGED_HISTORICAL"
+    },
+    "post_active8_repeat_control": {
+      "merge_sha": "7af02c89ca640c180b20341e0016c5f82096da26",
+      "exact_head_sha": "5d86dca5cb794200998c6fbc93dc1669b05ae089",
+      "run_id": 35150330651,
+      "artifact_id": 10469090485,
+      "artifact_digest": "sha256:d4b6c50228969135b2c98554d3b8d2876ffb0d03daa7d191465cf89670e64d24"
+    },
+    "runtime_capability_capacity": {
+      "pr": 173,
+      "exact_head_sha": "9cdb8fe35e15b675f3fe1b2492c16f9785fc3115",
+      "merge_sha": "ea7a9818a57d5078bc26e35ed2d1f15d79657338",
+      "run_id": 35171901674,
+      "job_id": 105045151537,
+      "artifact_id": 10476967287,
+      "artifact_digest": "sha256:7a5a0910db8639b642d8e63b4e37169d636ee3e6b7fc2ba0da93789ad183fc68",
+      "result": "PASS_RUNTIME_PROVEN_CAPABILITY_CAPACITY",
+      "measurement_scope": "CAPABILITY_COVERAGE_NOT_CONCURRENCY_CAPACITY",
+      "runtime_proven_capability_count": 8,
+      "distinct_predeclared_hosts": 8
+    },
+    "gm_v_readiness": {
+      "pr": 221,
+      "merge_sha": "0d3b66ee8c2566ed1e5f8b83c2932e4a9160bcbb",
+      "postmerge_run_id": 35343419829,
+      "postmerge_artifact_id": 10546460986,
+      "postmerge_artifact_digest": "sha256:d1d252e6635c79baca4af4c03a89732cad2a004c96f55e0ce650f98d818090ba",
+      "result": "WITHHOLD",
+      "decision": "WITHHOLD_GM_V_LAUNCH_EXTERNAL_OPERATIONAL_AVAILABILITY"
+    },
+    "historical_control_fixforward": {
+      "pr": 223,
+      "merge_sha": "3df37a0485874f968f0dffa02bc474c5f4645fba",
+      "repaired_controls": [
+        "GM-IV PILOT_2_OF_8 Final Recensus",
+        "GM-IV RECON_4 Promotion Control"
+      ],
+      "master_postmerge_runs": {
+        "pilot2_final_recensus": 35343914428,
+        "recon4_promotion_control": 35343914458
+      },
+      "result": "PASS"
+    }
+  },
+  "three_pr": {
+    "Refresh": {
+      "result": "PASS",
+      "missioncontrol_master": "3df37a0485874f968f0dffa02bc474c5f4645fba",
+      "qps_main": "039e1fa84a6b32bcdb89e65807613377d50b4bb7",
+      "qps_issue_923": "OPEN",
+      "rule": "LIVE_HEADS_REFRESHED_BEFORE_CURRENT_STATE_CLAIMS"
+    },
+    "Probe": {
+      "result": "PASS",
+      "gm_iv_state": "ACTIVE_8_OF_8",
+      "gm_v_state": "HELD",
+      "gm_v_children": [],
+      "gm_v_crew_posture": "UNALLOCATED",
+      "gm_iv_runtime_capacity": "RUNTIME_PROVEN",
+      "operational_availability": "WITHHOLD_EXTERNAL_NONCOMPENSATING_RUNNER_ADMISSION",
+      "child_runtime_latest_classification": "INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION",
+      "child_application_repair_authorized": false
+    },
+    "Rank": {
+      "result": "PASS",
+      "first_red": "QPS_PRIVATE_RUNTIME_RUNNER_ADMISSION",
+      "blocking_surface": "GBOGEB/cryoplant-project#923",
+      "next_legal_trigger": "HOSTED_ADMISSION_RESTORED_OR_TRUSTED_SELF_HOSTED_ATTACHED",
+      "next_child_predicate": "UNCHANGED_RELEASE_RUNNER_PROBE_WITH_RUNNER_ID_NONZERO_AND_STEPS_GT0",
+      "no_blind_rerun": true
+    }
+  },
+  "mip": {
+    "Modernize": {
+      "result": "PASS",
+      "outputs": [
+        "PR221_STAGE_AWARE_ACTIVE8_HISTORICAL_CONTROL",
+        "PR223_PILOT2_AND_RECON4_HISTORICAL_RETENTION_UNDER_ACTIVE8",
+        "PR223_PREMERGE_TRIGGER_FOR_PREVIOUSLY_PUSH_ONLY_RECENSUS"
+      ]
+    },
+    "Innovate": {
+      "result": "PASS",
+      "outputs": [
+        "CONTROLLED_WITHHOLD_IS_VALID_GOVERNOR_RESULT",
+        "RUNTIME_CAPABILITY_COVERAGE_SEPARATED_FROM_CONCURRENCY_CAPACITY",
+        "RUNTIME_PROVEN_SEPARATED_FROM_OPERATIONAL_AVAILABILITY",
+        "EXTERNAL_NONCOMPENSATING_GATE_BOUND_EXPLICITLY"
+      ]
+    },
+    "Perpetuate": {
+      "result": "THIS_TRANSACTION",
+      "required_outputs": [
+        "GM_V_CURRENT_v1.json",
+        "GM_V_3PSTAR_MIP_CONTROL_v1.json",
+        "validate_gm_v_3pstar_mip_control.py",
+        "GM_V_LOSSLESS_HANDOVER_v1.md",
+        "GM_V_RESTART_DROPIN_v1.md",
+        "gm-v-3pstar-mip-control.yml"
+      ],
+      "chat_only_todo_target": 0,
+      "chat_only_decision_target": 0
+    }
+  },
+  "three_pc": {
+    "Prepare": {
+      "result": "PASS_CONTROL_PREPARED",
+      "transaction": "GM_V_OPERATIONAL_AVAILABILITY_REENTRY",
+      "required_inputs": [
+        "OWNER_SIDE_ACTIONS_ADMISSION_CHANGE",
+        "UNCHANGED_QPS_RELEASE_RUNNER_PROBE",
+        "RUNNER_ID_NONZERO",
+        "STEPS_GT_0",
+        "EXACT_CURRENT_QPS_SHA",
+        "UNCHANGED_SELECTED_CHILD_VALIDATOR"
+      ]
+    },
+    "Prove": {
+      "result": "WITHHELD_EXTERNAL",
+      "reason": "QPS_923_RUNNER_ADMISSION_NOT_RECOVERED"
+    },
+    "Commit": {
+      "result": "HOLD_WAIT_PROVE",
+      "gm_v_launch_authorized": false
+    }
+  },
+  "three_p3": {
+    "authorized": false,
+    "reason": "OPERATIONAL_AVAILABILITY_NOT_PROVEN",
+    "next_after_prove": "SEPARATE_GM_V_LAUNCH_TRANSACTION_ONLY_IF_GOVERNOR_RETURNS_READY"
+  },
+  "invariants": [
+    "PARENT_PASS_NE_CHILD_ACCEPT",
+    "ZERO_STEP_NE_APPLICATION_FAIL",
+    "RUNTIME_PROVEN_CAPABILITY_NE_CONCURRENCY_CAPACITY",
+    "RUNTIME_PROVEN_CAPABILITY_NE_OPERATIONAL_AVAILABILITY",
+    "GM_IV_PASS_NE_GM_V_LAUNCH_AUTHORITY",
+    "PUBLIC_MISSIONCONTROL_PASS_NE_QPS_923_CLOSURE",
+    "AUTHORITY_TRANSFER_FALSE",
+    "UNKNOWN_NE_ZERO"
+  ],
+  "stop_rules": [
+    "DO_NOT_BLIND_RERUN_QPS_923",
+    "DO_NOT_REPAIR_CHILD_APPLICATION_FROM_ZERO_STEP",
+    "DO_NOT_ALLOCATE_GM_V_CREW_WHILE_HELD",
+    "DO_NOT_BIND_GM_V_CHILDREN_WHILE_HELD",
+    "DO_NOT_ADVANCE_3P3_BEFORE_OPERATIONAL_AVAILABILITY_PROVE",
+    "REFRESH_LIVE_HEADS_BEFORE_REENTRY"
+  ]
+}
