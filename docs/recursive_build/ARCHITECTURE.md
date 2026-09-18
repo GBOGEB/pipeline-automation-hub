@@ -62,3 +62,20 @@ All generated records declare:
 `METADATA_ONLY_NOT_DOCUMENT_TRUTH`
 
 Filename-derived or metadata-derived references remain candidates. No score, hash, index, successful CI job, or polished outward view creates engineering or acceptance credit.
+
+
+## MAIN runner integration — v2
+
+The canonical engine is now a required second phase of `scripts/run_processing.py`.
+
+```text
+ppt_processor.py
+  -> processing_summary.json
+  -> Recursive_Build_Master.py
+  -> recursive_build/build_receipt.json
+  -> pipeline_run_receipt.json
+```
+
+The runner is fail-closed between phases: recursive indexing is not executed when the metadata summary is red.
+
+`pipeline_run_receipt.json` binds `processing_summary.json` and `recursive_build/build_receipt.json` by SHA-256 and carries the same `METADATA_ONLY_NOT_DOCUMENT_TRUTH` guardrail. It is a provenance/control receipt, not a source SSOT.
