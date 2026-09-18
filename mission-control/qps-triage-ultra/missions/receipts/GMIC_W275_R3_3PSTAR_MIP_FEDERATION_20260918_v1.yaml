@@ -1,0 +1,140 @@
+schema: missioncontrol.gmi_c.w275_r3_3pstar_mip_federation_receipt.v0.1
+as_of: '2026-09-18T13:28:00+02:00'
+mission: GM-I-C
+plane: MISSION_CONTROL_ORCHESTRATION
+state: QPS_W275_RECURSIVE_CONTROL_FEDERATED_PROVE_WAIT_SUCCESSOR_GIT_OBJECT
+authority_transfer: false
+formal_credit_delta: 0
+
+refresh:
+  missioncontrol_master_at_binding: 41eb9ccbe76d65e4a4217cf022d843d3cb2c342e
+  qps_main_at_binding: 8c295d1985505bde31b7c0c1d5c7c55ffd4e39e3
+
+qps_authority:
+  repo: GBOGEB/cryoplant-project
+  owns:
+    - R3_SOURCE_AND_PRODUCT_AUTHORITY
+    - R3_CHILD_ACCEPTANCE
+    - R3_RELEASE_PRODUCTION_DOV
+  missioncontrol_may_override: false
+
+canonical_qps_lineage:
+  - {role: P1_EXACT_ENVIRONMENT_CONTRACT, pr: 1451, merge: 8d307e0cb67e303903345194b9a538219b4ee66f}
+  - {role: P2_PORTABLE_ADMISSION, pr: 1452, merge: 65a0973c16f5e2ad9ad313439b7e9720b58695ec}
+  - {role: SUCCESSOR_CONSUMER_ACCEPTANCE_PATH, pr: 1453, merge: 49455cac76a2ffb617ec687e6eb79142c8d73f03}
+  - {role: P2R_INTERPRETER_PROFILE_RECONCILIATION, pr: 1459, merge: 24073a0385e3fc08dbe0c719aa1005e09a4da643}
+  - {role: P3_RECURSIVE_HANDOVER, pr: 1460, merge: 34d21db38a0cfc2a07c4d59039e002bdb89578fa}
+  - {role: SESSION_POINTER_REBIND, pr: 1463, merge: 8c295d1985505bde31b7c0c1d5c7c55ffd4e39e3}
+
+superseded_qps_working_prs:
+  - {pr: 1454, disposition: CLOSED_UNMERGED_SUPERSEDED}
+  - {pr: 1455, disposition: CLOSED_UNMERGED_SUPERSEDED}
+  - {pr: 1457, disposition: CLOSED_UNMERGED_CONFLICTED_SUPERSEDED}
+
+missioncontrol_lineage:
+  control_pr: 199
+  merge: 9e14f8ba76b0d0515df9bd367eff4f941b2fb9d4
+  role: THREE_PR_MIP_THREE_PC_PREPARE_DEPENDENCY_CONTRACT
+
+gemini_producer:
+  repo: GBOGEB/GEMINI
+  issue: 16
+  pr: 17
+  merge: 9017051d39b75c78f1cf082c0ed009e2351d3320
+  exact_environment:
+    state: PASS_PRODUCED
+    run: 35338333168
+    job: 105578279671
+    artifact_id: 10543767484
+    artifact_name: qps-r3-py312-exact-env-linux-x86_64
+    artifact_digest: sha256:9a961d69becd02bac3c2c16146f29ced1a9185204cce2e1f381eddfb6465aaa5
+    relocated_self_test: PASS
+    python: 3.12.14
+  successor_git_object:
+    state: WAIT_GENUINE_PRIVATE_QPS_HANDOFF
+    required_sha: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+
+exact_environment_contract:
+  authority: GBOGEB/cryoplant-project/controls/QPS_HM01_R3_EXACT_ENVIRONMENT_CONTRACT_v0.1.json
+  reconciliation_pr: 1459
+  profiles:
+    local_or_offline_wheelhouse: PYTHON_3_11
+    portable_capsule: PYTHON_3_12
+  exact_package_lock_shared: true
+  competing_environment_authority_created: false
+
+three_pstar_resolution:
+  wildcard_executable_by_itself: false
+  current_concrete_stack:
+    - 3PR_REFRESH_PROBE_RANK
+    - MIP_MODERNIZE_INNOVATE_PERPETUATE
+    - 3PC_PREPARE
+  three_pc:
+    Prepare: PASS
+    Prove: HOLD_WAIT_SUCCESSOR_GIT_OBJECT
+    Commit: HOLD_WAIT_PROVE
+  three_p3:
+    authorized: false
+    reason: R3_RELEASE_PRODUCTION_DOV_NOT_YET_PASS
+
+r3_lineage:
+  historical_predecessor: 70964e5f1577231512f4104b26f5f6649ad8cb39
+  active_successor: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  source_ssot_sha256: c70e32af4a83ed46d457d529c6c8976dd9d4f9b44c2b5e637771ebb1cf9285cc
+  application_evidence: PASS
+  portable_environment: PASS
+  successor_git_object_handoff: WAIT_PHYSICAL_RETURN
+  final_r3_dov: WITHHELD
+  r4: BLOCKED_NOT_NEXT
+
+restart_chain:
+  stable_root: handover/qps_recursive/GLOB.yaml
+  session_pointer: handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml
+  global_authorities_before_lane:
+    - handover/qps_recursive/QTG_CURRENT.yaml
+    - controls/QPS_GLOBAL_BD_CURRENT_v0.1.yaml
+    - controls/QPS_TRIAGE_BT_PRESSURE_CURRENT_v1.yaml
+    - controls/QPS_TRIAGE_CHILD_CONTRACT_v1.json
+  qps_w275:
+    receipt: handover/qps_recursive/QPS_W275_SESSION_POINTER_REBIND_RECEIPT_v0.1.yaml
+    control: triage/w275/QPS_W275_R3_3PSTAR_MIP_RECURSIVE_CONTROL_v0.1.yaml
+    handover: handover/session/SC_2026-09-18_W275_R3_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md
+    dropin: handover/session/RESTART_DROPIN_2026-09-18_W275_R3_v1.md
+
+dependency_dag:
+  - GENUINE_SUCCESSOR_GIT_OBJECT_1248290C
+  - VERIFY_GIT_OBJECT_AND_EXACT_COMMIT
+  - PAIR_WITH_ALREADY_PASS_PORTABLE_ENVIRONMENT
+  - RUN_QPS_PORTABLE_CAPSULE_CONSUMER
+  - EXACT_DETACHED_WORKTREE_1248290C
+  - FIVE_PRODUCT_REGENERATION
+  - STRUCTURAL_QA
+  - PROJECTION_AWARE_PARITY
+  - RENDER_EVIDENCE
+  - HASH_BOUND_HUMAN_VISUAL_INSPECTION
+  - SUCCESSOR_ACCEPTANCE_VALIDATOR
+  - PASS_R3_RELEASE_PRODUCTION_DOV
+  - R4_FRESH_CLONE_COLD_START_PARITY
+
+non_compensation:
+  qps_issue_923: RED_OWNER_ACTION
+  qps_gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  runtime_gold: WITHHELD
+  canonical_gt_credit: NONE
+  engineering_credit_delta: 0
+  negotiation_credit_delta: 0
+  formal_credit_delta: 0
+  authority_transfer: false
+
+federation_disposition:
+  qps_state_mutated_by_missioncontrol: false
+  source_authority_transferred: false
+  exact_qps_history_referenced: true
+  unexplained_semantic_delta: 0
+  next_action_owned_by: QPS_PHYSICAL_INGRESS_AND_CHILD_ACCEPTANCE
+
+single_next_action: >-
+  QPS obtains and verifies a genuine Git-object-bearing handoff containing exact successor
+  1248290ca0a9d55ec83d0efa0235ed1a45a88eeb. It then pairs that object with the
+  already-PASS GEMINI portable environment and executes the existing QPS consumer/acceptance
+  path. MissionControl consumes the returned receipt but cannot self-promote QPS R3 DoV.
