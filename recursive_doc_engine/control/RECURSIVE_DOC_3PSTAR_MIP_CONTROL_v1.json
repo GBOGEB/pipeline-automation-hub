@@ -1,0 +1,100 @@
+{
+  "schema": "recursive_doc_engine.3pstar_mip_control.v1",
+  "issue": "GBOGEB/pipeline-automation-hub#268",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "sequence": [
+    {
+      "phase": "3PR_REFRESH",
+      "status": "PASS",
+      "evidence": [
+        "fresh master consumed before branch"
+      ]
+    },
+    {
+      "phase": "3PR_PROBE",
+      "status": "PASS",
+      "evidence": [
+        "existing scripts/recursive_build.py inspected",
+        "document-organization-system Gloob 3PR/MIP precedent inspected"
+      ]
+    },
+    {
+      "phase": "3PR_RANK",
+      "status": "PASS",
+      "first_red": "DETERMINISTIC_MASTER_KE_BLOCK_CANDIDATE_ROUNDTRIP_WITH_FAIL_CLOSED_CD_GATE"
+    },
+    {
+      "phase": "MIP_MODERNIZE",
+      "status": "PASS",
+      "delivered": [
+        "stdlib executable kernel",
+        "explicit non-GAN boundary"
+      ]
+    },
+    {
+      "phase": "MIP_INNOVATE",
+      "status": "PASS",
+      "delivered": [
+        "per-block SHA-256",
+        "nurturing fidelity feedback",
+        "tamper-detecting CD gate"
+      ]
+    },
+    {
+      "phase": "MIP_PERPETUATE",
+      "status": "PASS_WITH_REPOSITORY_CI_ADMISSION_BLOCKER",
+      "delivered": [
+        "tests",
+        "README",
+        "CI workflow",
+        "handover"
+      ]
+    },
+    {
+      "phase": "3PC_PREPARE",
+      "status": "PASS"
+    },
+    {
+      "phase": "3PC_PROVE",
+      "status": "LOCAL_PASS_REMOTE_ZERO_STEP_QUEUED"
+    },
+    {
+      "phase": "3PC_COMMIT",
+      "status": "PR_OPEN_HOLD_REMOTE_PROOF"
+    }
+  ],
+  "local_proof": {
+    "command": "python -m unittest recursive_doc_engine.tests.test_roundtrip -v",
+    "tests": 3,
+    "result": "PASS"
+  },
+  "guards": [
+    "no QPS engineering authority transfer",
+    "no claim of trained adversarial GAN",
+    "promotion requires fail-closed gate"
+  ],
+  "remote_proof": {
+    "pr": "GBOGEB/pipeline-automation-hub#271",
+    "workflow": "recursive-doc-ke-gate",
+    "attempts": [
+      {
+        "run_id": 35360192569,
+        "job_id": 105649269753,
+        "status": "queued",
+        "steps": null
+      },
+      {
+        "run_id": 35360256537,
+        "job_id": 105649472509,
+        "status": "queued",
+        "steps": null
+      }
+    ],
+    "retry_policy": "2 attempts exhausted",
+    "classification": "INFRASTRUCTURE_PREEXECUTION_RUNNER_ADMISSION",
+    "code_evidence": "NONE_FROM_ZERO_STEP",
+    "reentry_predicate": "runner starts and workflow records steps > 0 on unchanged proof"
+  },
+  "first_red": "REMOTE_RUNNER_ADMISSION_THEN_SAME_UNCHANGED_PROOF"
+}
