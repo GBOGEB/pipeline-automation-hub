@@ -1,0 +1,141 @@
+schema: missioncontrol.hm01.r3.w275_federation_receipt.v0.2
+as_of: '2026-09-18T13:36:00+02:00'
+mission: HM-01
+state: FEDERATION_FIX_FORWARD_R3_PROVE_STILL_HELD
+authority_transfer: false
+formal_credit_delta: 0
+
+history:
+  predecessor_receipt: >-
+    mission-control/qps-triage-ultra/missions/receipts/HM01_R3_W275_3PSTAR_MIP_FEDERATION_20260918_v1.yaml
+  predecessor_pr: GBOGEB/pipeline-automation-hub#204
+  predecessor_merge: 70840fb944dd7cc2a6d2593a58e6d7d33fe56230
+  predecessor_review_finding: >-
+    Do not describe the ABACUS validated support SHA as floating/current main.
+  correction_policy: FIX_FORWARD_PRESERVE_PREDECESSOR
+
+refresh_observations:
+  qps_main: d1ba9a6d122dfa03a22018a6ccbbc295431c04a0
+  codex_main: 76cfaf7be9776140ff8064f63b406d35b4fd3099
+  abacus_main: a0de73a9a60071665f27bf2fecb6e17e24172a93
+  missioncontrol_base: 70840fb944dd7cc2a6d2593a58e6d7d33fe56230
+  rule: >-
+    These are timestamped navigation observations only. No proof PASS floats
+    to a later repository head without an exact receipt.
+
+qps_r3:
+  p1_pr: GBOGEB/cryoplant-project#1451
+  p1_merge: 8d307e0cb67e303903345194b9a538219b4ee66f
+  p2_pr: GBOGEB/cryoplant-project#1452
+  p2_merge: 65a0973c16f5e2ad9ad313439b7e9720b58695ec
+  consumer_pr: GBOGEB/cryoplant-project#1453
+  consumer_merge: 49455cac76a2ffb617ec687e6eb79142c8d73f03
+  recursive_handover_pr: GBOGEB/cryoplant-project#1460
+  recursive_handover_merge: 34d21db38a0cfc2a07c4d59039e002bdb89578fa
+  historical_predecessor_source: >-
+    70964e5f1577231512f4104b26f5f6649ad8cb39
+  active_production_successor: >-
+    1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  application_evidence: PASS
+  release_production_dov: WITHHELD
+  r4: BLOCKED_NOT_NEXT
+
+three_pstar:
+  selector_pr: GBOGEB/pipeline-automation-hub#199
+  selector_merge: 9e14f8ba76b0d0515df9bd367eff4f941b2fb9d4
+  mip_modernize: PASS_MERGED_QPS_1451
+  mip_innovate: PASS_MERGED_QPS_1452_AND_GEMINI_ENV_CAPSULE
+  mip_perpetuate: PASS_MERGED_QPS_1453_AND_QPS_1460
+  three_pc_prepare: PASS
+  three_pc_prove: HOLD_WAIT_SUCCESSOR_GIT_OBJECT
+  three_pc_commit: HOLD_WAIT_PROVE
+  three_p3_authorized: false
+
+gemini:
+  issue: GBOGEB/GEMINI#16
+  producer_pr: GBOGEB/GEMINI#17
+  producer_merge: 9017051d39b75c78f1cf082c0ed009e2351d3320
+  exact_environment:
+    run: 35338333168
+    job: 105578279671
+    status: PASS_EXACT_ENV_CAPSULE
+    artifact_id: 10543767484
+    artifact_bytes: 115301806
+    artifact_digest: >-
+      sha256:9a961d69becd02bac3c2c16146f29ced1a9185204cce2e1f381eddfb6465aaa5
+    python: 3.12.14
+    relocated_self_test: PASS
+  successor_git_object:
+    required_sha: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+    state: WAIT_EXTERNAL
+
+codex:
+  authority_repair_pr: GBOGEB/CODEX#756
+  authority_repair_merge: 4b9d4176de0f94b855e82e2669e9840c2bf76c10
+  state: PUBLICATION_AUTHORITY_REPAIRED_PUBLICATION_PROOF_SEPARATE
+
+abacus:
+  issue: GBOGEB/ABACUS#1256
+  exact_validated_release_support_sha: >-
+    f55876e4d7985dd672304ff6e3945f24de9b9194
+  proof_run: 35272680285
+  proof_is_floating_current: false
+  target_jobs_pass: 5
+  pytest:
+    collected: 415
+    passed: 402
+    failed: 0
+    skipped: 10
+    xpassed: 3
+    warnings: 2
+    seconds: 6.90
+  artifact:
+    id: 10518602763
+    sha256: >-
+      2904d3cc2ef3f359b98db0b75bd2613436b94395b975ccf807c08a8c1d793b7f
+  v0_2_pr: GBOGEB/ABACUS#1263
+  v0_2_merge: 20d4d063a19b54ec1eeb7016494fdf5d447457f1
+  race_provenance_pr: GBOGEB/ABACUS#1265
+  fix_forward_pr: GBOGEB/ABACUS#1267
+  fix_forward_state: OPEN_AT_THIS_RECEIPT
+  floating_current_inherits_pass: false
+  deploy_artifacts_debt: SEPARATE_ABACUS_CI_GOVERNANCE_DRIFT
+
+dependency_cone:
+  burned:
+    - R3_EXACT_ENVIRONMENT_CONTRACT
+    - PORTABLE_EXACT_ENVIRONMENT_ADMISSION
+    - QPS_SUCCESSOR_CAPSULE_CONSUMER
+    - QPS_SUCCESSOR_ACCEPTANCE_VALIDATOR
+    - GEMINI_EXACT_ENVIRONMENT_CAPSULE
+    - CODEX_PUBLICATION_AUTHORITY_REPAIR
+    - ABACUS_EXACT_SHA_BOUNDED_SUPPORT_EVIDENCE
+  first_missing_physical_dependency:
+    id: QPS_SUCCESSOR_GIT_OBJECT_HANDOFF_1248290C
+    state: WAIT_EXTERNAL
+  after_arrival:
+    - VERIFY_GIT_OBJECT_AND_CAPSULE
+    - QPS_PORTABLE_CAPSULE_CONSUMER_PROVE
+    - EXACT_DETACHED_WORKTREE_1248290C
+    - FIVE_PRODUCT_REGENERATION
+    - STRUCTURAL_QA
+    - PROJECTION_AWARE_PARITY
+    - HASH_BOUND_HUMAN_VISUAL_INSPECTION
+    - SUCCESSOR_ACCEPTANCE_VALIDATOR
+    - PASS_R3_RELEASE_PRODUCTION_DOV
+    - R4_COLD_START_PARITY
+
+non_compensation:
+  issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  runtime_gold: WITHHELD
+  canonical_gt_bdq_4_7_credit: NONE
+  engineering_credit_delta: 0
+  negotiation_credit_delta: 0
+  formal_credit_delta: 0
+  authority_transfer: false
+
+single_next_action: >-
+  Obtain and verify genuine Git objects for exact successor 1248290c..., then
+  execute the already-merged QPS portable-capsule consumer and acceptance path.
+  Do not advance R4 before PASS_R3_RELEASE_PRODUCTION_DOV.
