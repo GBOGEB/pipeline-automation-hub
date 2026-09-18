@@ -5,7 +5,9 @@ on:
     paths:
       - "scripts/Recursive_Build_Master.py"
       - "scripts/recursive_build.py"
+      - "scripts/run_processing.py"
       - "tests/test_recursive_build_master.py"
+      - "tests/test_run_processing_recursive_integration.py"
       - ".github/workflows/recursive-build.yml"
       - "docs/recursive_build/**"
       - ".vscode/tasks.json"
@@ -14,7 +16,9 @@ on:
     paths:
       - "scripts/Recursive_Build_Master.py"
       - "scripts/recursive_build.py"
+      - "scripts/run_processing.py"
       - "tests/test_recursive_build_master.py"
+      - "tests/test_run_processing_recursive_integration.py"
 
 permissions:
   contents: read
@@ -28,6 +32,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Compile
-        run: python -m py_compile scripts/Recursive_Build_Master.py scripts/recursive_build.py
+        run: python -m py_compile scripts/Recursive_Build_Master.py scripts/recursive_build.py scripts/run_processing.py
       - name: Unit tests
-        run: python -m unittest -v tests.test_recursive_build_master
+        run: |
+          python -m unittest -v             tests.test_recursive_build_master             tests.test_run_processing_recursive_integration
