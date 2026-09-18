@@ -52,11 +52,33 @@ def latest_w275_receipt(root: Path) -> Path:
         raise SystemExit("R3_DMAIC_PREMERGE_FAIL: no W275 federation receipt")
     return max(rows)[1]
 
+def top_section(text: str, name: str) -> list[str]:
+    lines=text.splitlines()
+    target=name+":"
+    for i,line in enumerate(lines):
+        if line == target:
+            out=[]
+            for row in lines[i+1:]:
+                if row and not row.startswith((" ","\t")):
+                    break
+                out.append(row)
+            return out
+    return []
+
+def section_has_scalar(lines: list[str], indent: int, key: str, value: str) -> bool:
+    prefix=" " * indent + key + ":"
+    for line in lines:
+        if line.startswith(prefix) and line[len(prefix):].strip() == value:
+            return True
+    return False
+
 def validate_actual_controls(root: Path) -> list[str]:
     errs=[]
     control=(root/"mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_3PSTAR_MIP_CONTROL_v1.yaml").read_text()
     ingress=(root/"mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_INGRESS_MANIFEST_v2.yaml").read_text()
-    receipt=latest_w275_receipt(root).read_text()
+    receipt_path=latest_w275_receipt(root)
+    receipt=receipt_path.read_text()
+
     required_control=[
       f"active_r3_production_source: {ACTIVE}",
       f"predecessor_source: {PREDECESSOR}",
@@ -65,10 +87,10 @@ def validate_actual_controls(root: Path) -> list[str]:
     ]
     if any(x not in control for x in required_control) or "PASS_R3_RELEASE_PRODUCTION_DOV_EVALUATION" in control:
         errs.append("DAG_DOV_NODE_IDENTITY")
-    m=re.search(r"(?ms)^three_p3:\\s*$\\n(?P<body>(?:^[ \\t]+.*(?:\\n|$))*)",control)
-    body=m.group("body") if m else ""
-    if not re.search(r"(?m)^  authorized:\\s*false\\s*$",body):
+    three_p3=top_section(control,"three_p3")
+    if not section_has_scalar(three_p3,2,"authorized","false"):
         errs.append("GATE_OR_AUTHORITY_OVERCLAIM")
+
     required_ingress=[
       f"historical_predecessor: {PREDECESSOR}",
       f"active_production_successor: {ACTIVE}",
@@ -77,15 +99,23 @@ def validate_actual_controls(root: Path) -> list[str]:
     ]
     if any(x not in ingress for x in required_ingress):
         errs.append("PREDECESSOR_PROMOTED_AS_CURRENT")
-    required_receipt=[
-      f"historical_predecessor: {PREDECESSOR}",
-      f"active_successor: {ACTIVE}",
-      "manifest: gmi.r3.successor.exact_env_capsule.v2",
-      "three_p3_authorized: false",
-      "id: SUCCESSOR_GIT_OBJECT_HANDOFF_1248290C",
-    ]
-    if any(x not in receipt for x in required_receipt):
+
+    current_restart=top_section(receipt,"current_qps_restart")
+    exact_env=top_section(receipt,"exact_environment")
+    physical=top_section(receipt,"physical_return")
+    three_pstar=top_section(receipt,"three_pstar")
+    if not section_has_scalar(current_restart,2,"active_successor",ACTIVE):
         errs.append("PROTECTED_CONTROL_DERIVATION_DRIFT")
+    if not section_has_scalar(exact_env,2,"manifest","gmi.r3_successor.exact_env_capsule.v2"):
+        errs.append("CAPSULE_SCHEMA_IDENTITY")
+    if not section_has_scalar(physical,2,"first_red","PHYSICAL_SUCCESSOR_GIT_BUNDLE_RETURN_1248290C"):
+        errs.append("PROTECTED_CONTROL_DERIVATION_DRIFT")
+    if not section_has_scalar(three_pstar,2,"three_p3_authorized","false"):
+        errs.append("GATE_OR_AUTHORITY_OVERCLAIM")
+    if not section_has_scalar(three_pstar,2,"r4","BLOCKED_NOT_NEXT"):
+        errs.append("GATE_OR_AUTHORITY_OVERCLAIM")
+    if receipt_path.name != "HM01_R3_W275_3PSTAR_MIP_FEDERATION_20260918_v4.yaml":
+        errs.append("PROTECTED_CURRENT_W275_VERSION_DRIFT")
     return sorted(set(errs))
 
 def inject(doc: dict, fault: str) -> dict:
