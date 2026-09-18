@@ -1,0 +1,152 @@
+{
+  "schema": "missioncontrol.historian.bd_rex_3pstar_mip_handover.v1",
+  "status": "CONTROLLED_CONTINUE_HOSTED_DOV_WITHHELD",
+  "as_of": "2026-09-18T15:50:00+02:00",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "repository_authority": {
+    "missioncontrol": {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "base_sha": "a691d8bc66521236d4a7f3da3bea1013d12aa1d0",
+      "branch": "historian/3pstar-mip-lossless-20260918"
+    },
+    "abacus": {
+      "repo": "GBOGEB/ABACUS",
+      "control_repeat_pr": 1271,
+      "control_repeat_merge": "f739bca8804a526bb433235de5ff3f2a34de77da",
+      "repeat_head": "a4d3c196aa4d6617acd810734ce525df23ca3e17",
+      "bd018_policy_pr": 1277,
+      "bd018_policy_merge": "b3f7e3fda68430c7d16fc925f9e336a9faacce12",
+      "bd018_report_pr": 1280,
+      "bd018_report_merge": "053a542ed235813b80ace9c8b234f1bf10783b0f",
+      "final_policy_commit": "c17124160b82e0b3ff94eebb98608118296f45cf",
+      "final_report_commit": "82f6edaea6a60f948dc51b6038fbad944977d676",
+      "final_policy_digest": "6a975e6a9a4aefbe08111375be872915efb9dc0c6969ea51311ef20370be5d19",
+      "workflow_denominator": 142,
+      "classified_target": 142,
+      "post_fix_governance_run": 35352120094,
+      "post_fix_governance_state_at_handover": "QUEUED_FINAL_REPROVE",
+      "prior_post_fix_governance_run": 35351825106,
+      "prior_post_fix_result": "POLICY_PASS_INVENTORY_FAIL_ONE_GENERATED_REPEATED_COMMAND_LINE",
+      "final_generated_delta_commit": "621c9ca2ab6848d524f3c8ddb831524e756c159f"
+    },
+    "qps_runner_gate": {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue": 923,
+      "state": "OPEN",
+      "compensation_allowed": false
+    }
+  },
+  "three_p_star": {
+    "refresh": "PASS_FRESH_REPOSITORY_AUTHORITY",
+    "probe": "PASS_CM003_004_REPEAT_PLUS_BD018_RECURRENCE_OBSERVED",
+    "rank": "PASS_FIRST_RED_BD018_MERGE_ADMISSION_NOT_DETECTOR",
+    "prepare": "PASS_REPAIR_AND_RESTART_CHAIN_MATERIALIZED",
+    "prove": "LOCAL_DETERMINISTIC_PASS_HOSTED_FINAL_REPROVE_QUEUED",
+    "commit": "WITHHELD_UNTIL_RUN_35352120094_GT_ZERO_STEPS_PASS"
+  },
+  "mip": {
+    "modernize": "PASS_POLICY_SSOT_142_OF_142_CONTENT_STATE",
+    "innovate": "PASS_DETECTION_SEPARATED_FROM_PREVENTION_REX_CM_005",
+    "perpetuate": "PASS_REPOSITORY_NATIVE_REGISTER_CREW_HANDOVER_AND_DROPIN"
+  },
+  "rex_controls": {
+    "REX-CM-003": {
+      "state": "CONTROL",
+      "evidence": [
+        "ABACUS#1271",
+        "run35349719045 validator immutable_pins=true",
+        "run35349719151 W74 PASS"
+      ]
+    },
+    "REX-CM-004": {
+      "state": "CONTROL",
+      "evidence": [
+        "ABACUS#1271",
+        "run35349719151 W74 exact-head PASS",
+        "run35349719044 W169 source_sha exact-head PASS"
+      ]
+    },
+    "REX-CM-005": {
+      "state": "ACTIVE_PREVENTION_WITHHELD",
+      "root": "HIST-BD-018",
+      "issue": "GBOGEB/ABACUS#1278",
+      "detection": "PASS",
+      "repair_content": "PRESENT_ON_MAIN",
+      "hosted_post_fix_proof": "QUEUED",
+      "merge_prevention": "NOT_BOUND",
+      "evidence": [
+        "PR#1277 merged before governance proof",
+        "PR#1280 merged while governance red",
+        "ABACUS main protected=false"
+      ]
+    }
+  },
+  "bd018": {
+    "state": "ACTIVE",
+    "occurrence_count": 7,
+    "recurrence_episode_count": 2,
+    "durable_root_reused": true,
+    "new_root_created": false,
+    "four_recurrence_workflows": [
+      "cycle2-temporal-pca-independent-consumer.yml",
+      "gg-math-temporal-pca-exact-live-dow.yml",
+      "leg5-federation-dashboard-proof.yml",
+      "w259-p4-method-cards-independent-dow.yml"
+    ],
+    "content_repair": {
+      "policy_schema": "1.0.4",
+      "exact_policy_rules": 4,
+      "report_workflows": 142,
+      "report_classified": 142,
+      "policy_digest": "6a975e6a9a4aefbe08111375be872915efb9dc0c6969ea51311ef20370be5d19",
+      "final_generated_delta_commit": "621c9ca2ab6848d524f3c8ddb831524e756c159f",
+      "prior_hosted_run": {
+        "run": 35351825106,
+        "policy_outcome": "PASS",
+        "inventory_outcome": "FAIL_ONE_DERIVED_COMMAND_LINE"
+      }
+    }
+  },
+  "living_state": {
+    "durable_roots_total": 18,
+    "open_roots": 3,
+    "recurring_root_families": 5,
+    "recurring_open_families": 1,
+    "controlled_recurring_families": 4,
+    "open_priority": [
+      "HIST-BD-018",
+      "HIST-BD-001",
+      "HIST-BD-009"
+    ]
+  },
+  "specialist_state": {
+    "returned_control_reserve": [
+      "Doctor.Analytics",
+      "Doctor.SupplyChain",
+      "Debug Surgeon"
+    ],
+    "active": [
+      "Doctor.REX",
+      "Doctor.Contracts",
+      "Doctor.Runtime",
+      "Historian"
+    ]
+  },
+  "invariants": [
+    "Do not compensate cryoplant-project#923 with ABACUS/CODEX/public-repo success.",
+    "Do not call REX-CM-005 CONTROL until governance red is merge-blocking and negative/positive admission repeats exist.",
+    "Do not create a new HIST-BD root for the current inventory drift; it is recurrence episode 2 of HIST-BD-018.",
+    "Do not infer fleet denominators from the bounded Historian sample.",
+    "Negative and failed governance evidence remains retained."
+  ],
+  "next_executable": [
+    "Re-read ABACUS final governance run 35352120094. If >0 steps and PASS, move HIST-BD-018 repair state from ACTIVE to DONE; do not promote REX-CM-005.",
+    "Bind ABACUS merge admission/ruleset to CI Workflow Governance; prove red unclassified change non-mergeable, then prove classified later-SHA change green and mergeable.",
+    "Continue HIST-BD-001 requested-vs-observed REX semantics.",
+    "Continue HIST-BD-009 negative/rejected runtime evidence retention.",
+    "Then continue next repository deep-dive at GBOGEB/Q_engineering_tools."
+  ],
+  "chat_only_todos": 0,
+  "chat_only_decisions": 0
+}

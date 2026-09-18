@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-14",
+  "as_of": "2026-09-18",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -9,19 +9,27 @@
   "historian_parent_issue": 76,
   "runner_economics_issue": 79,
   "bounded_sample": {
-    "audited_prs_minimum": 17,
-    "review_finding_occurrences_observed_cumulative": 32,
+    "audited_prs_minimum": 19,
+    "review_finding_occurrences_observed_cumulative": 36,
     "durable_bd_roots_total": 18,
-    "current_open_bd_roots": 4,
+    "current_open_bd_roots": 3,
     "current_unresolved_occurrences_minimum": 6,
-    "done_or_control_roots": 14,
-    "recurring_root_families_total": 4,
-    "recurring_open_families": 2,
-    "controlled_recurring_families": 2,
+    "done_or_control_roots": 15,
+    "recurring_root_families_total": 5,
+    "recurring_open_families": 1,
+    "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
     "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit."
   },
-  "lifecycle": ["TODO", "ACTIVE", "DONE", "CONTROL", "SUPERSEDED", "INVALIDATED", "UNKNOWN_NEEDS_READER"],
+  "lifecycle": [
+    "TODO",
+    "ACTIVE",
+    "DONE",
+    "CONTROL",
+    "SUPERSEDED",
+    "INVALIDATED",
+    "UNKNOWN_NEEDS_READER"
+  ],
   "rules": [
     "Historical findings become durable BD only after current-code confirmation.",
     "Semantically identical causes share one stable root ID across PRs/repos.",
@@ -33,40 +41,582 @@
     "Cryoplant #923 remains a non-compensating repo-local runner-admission gate."
   ],
   "roots": [
-    {"bd_id":"HIST-BD-001","title":"Derive observed REX verbs from completed dispositions, not requested actions","class":"REX_SEMANTICS","severity":"P1","state":"TODO","occurrence_count":1,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[41],"rex_control_id":null,"crew_owner":["Doctor.REX","QA_SIGNALMAN"],"done_when":"ASSIMILATE/PRUNE/BRIDGE observed counts derive only from completed accepted dispositions"},
-    {"bd_id":"HIST-BD-002","title":"Enforce CREW_REX declared required fields including timestamp","class":"CONTRACT_VALIDATION","severity":"P2","state":"DONE","occurrence_count":1,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[41,104,105],"rex_control_id":null,"crew_owner":["Doctor.Contracts","QA_SIGNALMAN"],"proof_refs":["PR#104@e897d2767028b4f79988ed089f13bb7998fcba9a","PR#105@8ea7faf4ec51fdb1a97816c25c38abd173841b00","merge@58b7098b4eba22b6282706f45fe6a43967334509"],"done_when":"SATISFIED"},
-    {"bd_id":"HIST-BD-003","title":"Require exact L0-L6 competency scale","class":"COMPETENCY_CONTRACT","severity":"P2","state":"DONE","occurrence_count":1,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[42,104,105],"rex_control_id":null,"crew_owner":["Doctor.Contracts","QA_SIGNALMAN"],"proof_refs":["PR#105 exact-head 11/11 green"],"done_when":"SATISFIED"},
-    {"bd_id":"HIST-BD-004","title":"Validate every telemetry event_required field","class":"TELEMETRY_CONTRACT","severity":"P2","state":"DONE","occurrence_count":1,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[46,104,105],"rex_control_id":null,"crew_owner":["Doctor.Contracts","QA_SIGNALMAN"],"proof_refs":["run34776815505","merge@58b7098b4eba22b6282706f45fe6a43967334509"],"done_when":"SATISFIED"},
-    {"bd_id":"HIST-BD-005","title":"Align role trial records with policy trial requirements","class":"TRIAL_CONTRACT","severity":"P2","state":"DONE","occurrence_count":1,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[46,104,105],"rex_control_id":null,"crew_owner":["Doctor.Contracts","QA_SIGNALMAN"],"proof_refs":["PR#105 exact-head 11/11 green"],"done_when":"SATISFIED"},
-    {"bd_id":"HIST-BD-006","title":"Evaluate applicable REX before workload execution/acceptance","class":"REX_PREFLIGHT","severity":"P1","state":"CONTROL","occurrence_count":2,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[47,53,93,94],"rex_control_id":"REX-CM-001","crew_owner":["Doctor.REX","RUNNER","QA_SIGNALMAN"],"proof_refs":["run34774328258","run34774493436"],"done_when":"SATISFIED_CONTROL"},
-    {"bd_id":"HIST-BD-007","title":"Classify repeated REX from retained history rather than always NEW","class":"REX_RECURRENCE","severity":"P1","state":"DONE","occurrence_count":1,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[47,93,94],"rex_control_id":"REX-CM-001","crew_owner":["Doctor.REX","HISTORIAN"],"proof_refs":["distinct-source regression repeat"],"done_when":"SATISFIED"},
-    {"bd_id":"HIST-BD-008","title":"Compute PCA readiness variance from eligible measured rows only","class":"PCA_GATE","severity":"P1","state":"DONE","occurrence_count":1,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[47,93,94],"rex_control_id":"REX-CM-002","crew_owner":["Doctor.Analytics","QA_SIGNALMAN"],"done_when":"SATISFIED"},
-    {"bd_id":"HIST-BD-009","title":"Retain validated rejected runtime evidence in canonical history","class":"NEGATIVE_EVIDENCE_RETENTION","severity":"P1","state":"TODO","occurrence_count":1,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[49],"rex_control_id":null,"crew_owner":["HISTORIAN","Doctor.Contracts","QA_SIGNALMAN"],"done_when":"validated negative observations survive canonically without promotion and affect history/eligibility"},
-    {"bd_id":"HIST-BD-010","title":"Counterbalance paired allocation execution order","class":"EXPERIMENT_DESIGN","severity":"P1","state":"CONTROL","occurrence_count":1,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[53,97,100],"rex_control_id":"REX-CM-002","crew_owner":["Doctor.Analytics","PERFORMANCE_SPECIALIST","QA_SIGNALMAN"],"proof_refs":["run34775932604","merge@3a67d3b20f7ced8010e722dfcf0529ebf6379c70"],"done_when":"SATISFIED_CONTROL"},
-    {"bd_id":"HIST-BD-011","title":"Fit Bradley-Terry abilities on correct two-node log-odds scale","class":"BT_MODEL","severity":"P1","state":"CONTROL","occurrence_count":3,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[53,56,97,100],"rex_control_id":"REX-CM-002","crew_owner":["Doctor.Analytics","PERFORMANCE_SPECIALIST","QA_SIGNALMAN"],"proof_refs":["run34774328258","run34774493436","run34775932604"],"done_when":"SATISFIED_CONTROL"},
-    {"bd_id":"HIST-BD-012","title":"Derive pair winner/gap from raw recorded timings","class":"BT_EVIDENCE_DERIVATION","severity":"P2","state":"DONE","occurrence_count":1,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[56,93,94],"rex_control_id":"REX-CM-002","crew_owner":["Doctor.Analytics","QA_SIGNALMAN"],"done_when":"SATISFIED"},
-    {"bd_id":"HIST-BD-013","title":"Bind MissionControl exact SHA inside Ring2 scout receipt","class":"PROVENANCE_BINDING","severity":"P2","state":"DONE","occurrence_count":1,"repos":["GBOGEB/pipeline-automation-hub"],"source_prs":[62,104,105],"rex_control_id":null,"crew_owner":["Doctor.Contracts","QA_SIGNALMAN"],"proof_refs":["GM-FLEET-04 Ring2 Scout A exact-head PASS on PR#104","PR#105 regression green"],"done_when":"SATISFIED"},
-    {"bd_id":"HIST-BD-014","title":"Do not use optimizable Python assert for lldb-mcp runtime pipe invariants","class":"RUNTIME_FAIL_CLOSED","severity":"P2","state":"DONE","occurrence_count":1,"repos":["GBOGEB/CODEX"],"source_prs":[668,676],"rex_control_id":null,"crew_owner":["Doctor.Runtime","QA_SIGNALMAN"],"proof_refs":["CODEX#676 merged","current main explicit terminate/kill + structured REJECT/WITHHELD"],"done_when":"SATISFIED"},
-    {"bd_id":"HIST-BD-015","title":"Pin governed GitHub Action dependencies to immutable commit SHAs","class":"SUPPLY_CHAIN_CONTROL","severity":"P1","state":"ACTIVE","occurrence_count":2,"repos":["GBOGEB/ABACUS"],"source_prs":[1178,1184,1189],"rex_control_id":"REX-CM-003","crew_owner":["Doctor.SupplyChain","Doctor.Contracts","QA_SIGNALMAN"],"proof_refs":["ABACUS#1189","run34776328022 step4 PASS"],"done_when":"distinct-later-SHA repeat proves immutable-action validator and governed workflows remain pinned"},
-    {"bd_id":"HIST-BD-016","title":"Bind PR runtime receipts to the evaluated PR head rather than synthetic merge ref","class":"PROVENANCE_BINDING","severity":"P1","state":"ACTIVE","occurrence_count":2,"repos":["GBOGEB/ABACUS"],"source_prs":[1178,1184,1189],"rex_control_id":"REX-CM-004","crew_owner":["Doctor.Contracts","QA_SIGNALMAN"],"proof_refs":["ABACUS#1189","W74 run34776328044 exact-head PASS","W169 run34776328041 exact-head assertion PASS"],"done_when":"distinct-later-SHA W74/W169 exact-head repeat with source_sha==PR head"},
-    {"bd_id":"HIST-BD-017","title":"Provide bounded writable authentication state under hardened read-only rootfs","class":"RUNTIME_STORAGE_CONTRACT","severity":"P1","state":"DONE","occurrence_count":1,"repos":["GBOGEB/ABACUS"],"source_prs":[1189,1194],"rex_control_id":null,"crew_owner":["Doctor.Runtime","Doctor.Contracts","QA_SIGNALMAN"],"proof_refs":["run34776722408","artifact10323656903","ABACUS#1194 merged"],"observed_improvement":{"prior_rollout_failure_seconds_approx":195,"repaired_rollout_seconds":29.077,"restart_count":0,"request_p50_ms":5.72,"request_p95_ms":8.17},"done_when":"SATISFIED; production persistence/shared auth-state architecture remains separate"},
-    {"bd_id":"HIST-BD-018","title":"Keep CI-governance SSOT classification synchronized with live workflows","class":"GOVERNANCE_INVENTORY_DRIFT","severity":"P1","state":"DONE","occurrence_count":3,"recurrence_episode_count":1,"repos":["GBOGEB/ABACUS"],"source_prs":[1196,1199],"rex_control_id":null,"crew_owner":["Doctor.Contracts","HISTORIAN","QA_SIGNALMAN"],"proof_refs":["run34776850851 diagnostic","run34777151715 PASS","ABACUS#1199 merged"],"done_when":"SATISFIED: 132/132 classified, 15/15 governance tests, zero unclassified/multiple/missing-canonical"}
+    {
+      "bd_id": "HIST-BD-001",
+      "title": "Derive observed REX verbs from completed dispositions, not requested actions",
+      "class": "REX_SEMANTICS",
+      "severity": "P1",
+      "state": "TODO",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        41
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.REX",
+        "QA_SIGNALMAN"
+      ],
+      "done_when": "ASSIMILATE/PRUNE/BRIDGE observed counts derive only from completed accepted dispositions"
+    },
+    {
+      "bd_id": "HIST-BD-002",
+      "title": "Enforce CREW_REX declared required fields including timestamp",
+      "class": "CONTRACT_VALIDATION",
+      "severity": "P2",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        41,
+        104,
+        105
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "PR#104@e897d2767028b4f79988ed089f13bb7998fcba9a",
+        "PR#105@8ea7faf4ec51fdb1a97816c25c38abd173841b00",
+        "merge@58b7098b4eba22b6282706f45fe6a43967334509"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-003",
+      "title": "Require exact L0-L6 competency scale",
+      "class": "COMPETENCY_CONTRACT",
+      "severity": "P2",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        42,
+        104,
+        105
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "PR#105 exact-head 11/11 green"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-004",
+      "title": "Validate every telemetry event_required field",
+      "class": "TELEMETRY_CONTRACT",
+      "severity": "P2",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        46,
+        104,
+        105
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "run34776815505",
+        "merge@58b7098b4eba22b6282706f45fe6a43967334509"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-005",
+      "title": "Align role trial records with policy trial requirements",
+      "class": "TRIAL_CONTRACT",
+      "severity": "P2",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        46,
+        104,
+        105
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "PR#105 exact-head 11/11 green"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-006",
+      "title": "Evaluate applicable REX before workload execution/acceptance",
+      "class": "REX_PREFLIGHT",
+      "severity": "P1",
+      "state": "CONTROL",
+      "occurrence_count": 2,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        47,
+        53,
+        93,
+        94
+      ],
+      "rex_control_id": "REX-CM-001",
+      "crew_owner": [
+        "Doctor.REX",
+        "RUNNER",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "run34774328258",
+        "run34774493436"
+      ],
+      "done_when": "SATISFIED_CONTROL"
+    },
+    {
+      "bd_id": "HIST-BD-007",
+      "title": "Classify repeated REX from retained history rather than always NEW",
+      "class": "REX_RECURRENCE",
+      "severity": "P1",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        47,
+        93,
+        94
+      ],
+      "rex_control_id": "REX-CM-001",
+      "crew_owner": [
+        "Doctor.REX",
+        "HISTORIAN"
+      ],
+      "proof_refs": [
+        "distinct-source regression repeat"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-008",
+      "title": "Compute PCA readiness variance from eligible measured rows only",
+      "class": "PCA_GATE",
+      "severity": "P1",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        47,
+        93,
+        94
+      ],
+      "rex_control_id": "REX-CM-002",
+      "crew_owner": [
+        "Doctor.Analytics",
+        "QA_SIGNALMAN"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-009",
+      "title": "Retain validated rejected runtime evidence in canonical history",
+      "class": "NEGATIVE_EVIDENCE_RETENTION",
+      "severity": "P1",
+      "state": "TODO",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        49
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "HISTORIAN",
+        "Doctor.Contracts",
+        "QA_SIGNALMAN"
+      ],
+      "done_when": "validated negative observations survive canonically without promotion and affect history/eligibility"
+    },
+    {
+      "bd_id": "HIST-BD-010",
+      "title": "Counterbalance paired allocation execution order",
+      "class": "EXPERIMENT_DESIGN",
+      "severity": "P1",
+      "state": "CONTROL",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        53,
+        97,
+        100
+      ],
+      "rex_control_id": "REX-CM-002",
+      "crew_owner": [
+        "Doctor.Analytics",
+        "PERFORMANCE_SPECIALIST",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "run34775932604",
+        "merge@3a67d3b20f7ced8010e722dfcf0529ebf6379c70"
+      ],
+      "done_when": "SATISFIED_CONTROL"
+    },
+    {
+      "bd_id": "HIST-BD-011",
+      "title": "Fit Bradley-Terry abilities on correct two-node log-odds scale",
+      "class": "BT_MODEL",
+      "severity": "P1",
+      "state": "CONTROL",
+      "occurrence_count": 3,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        53,
+        56,
+        97,
+        100
+      ],
+      "rex_control_id": "REX-CM-002",
+      "crew_owner": [
+        "Doctor.Analytics",
+        "PERFORMANCE_SPECIALIST",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "run34774328258",
+        "run34774493436",
+        "run34775932604"
+      ],
+      "done_when": "SATISFIED_CONTROL"
+    },
+    {
+      "bd_id": "HIST-BD-012",
+      "title": "Derive pair winner/gap from raw recorded timings",
+      "class": "BT_EVIDENCE_DERIVATION",
+      "severity": "P2",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        56,
+        93,
+        94
+      ],
+      "rex_control_id": "REX-CM-002",
+      "crew_owner": [
+        "Doctor.Analytics",
+        "QA_SIGNALMAN"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-013",
+      "title": "Bind MissionControl exact SHA inside Ring2 scout receipt",
+      "class": "PROVENANCE_BINDING",
+      "severity": "P2",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "source_prs": [
+        62,
+        104,
+        105
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "GM-FLEET-04 Ring2 Scout A exact-head PASS on PR#104",
+        "PR#105 regression green"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-014",
+      "title": "Do not use optimizable Python assert for lldb-mcp runtime pipe invariants",
+      "class": "RUNTIME_FAIL_CLOSED",
+      "severity": "P2",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "source_prs": [
+        668,
+        676
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Runtime",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "CODEX#676 merged",
+        "current main explicit terminate/kill + structured REJECT/WITHHELD"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-015",
+      "title": "Pin governed GitHub Action dependencies to immutable commit SHAs",
+      "class": "SUPPLY_CHAIN_CONTROL",
+      "severity": "P1",
+      "state": "CONTROL",
+      "occurrence_count": 2,
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "source_prs": [
+        1178,
+        1184,
+        1189,
+        1271
+      ],
+      "rex_control_id": "REX-CM-003",
+      "crew_owner": [
+        "Doctor.SupplyChain",
+        "Doctor.Contracts",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "ABACUS#1189",
+        "run34776328022 step4 PASS",
+        "ABACUS#1271@a4d3c196aa4d6617acd810734ce525df23ca3e17",
+        "CI governance run35349719045 step4 PASS immutable_pins=true",
+        "W74 run35349719151 PASS"
+      ],
+      "done_when": "SATISFIED_CONTROL"
+    },
+    {
+      "bd_id": "HIST-BD-016",
+      "title": "Bind PR runtime receipts to the evaluated PR head rather than synthetic merge ref",
+      "class": "PROVENANCE_BINDING",
+      "severity": "P1",
+      "state": "CONTROL",
+      "occurrence_count": 2,
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "source_prs": [
+        1178,
+        1184,
+        1189,
+        1271
+      ],
+      "rex_control_id": "REX-CM-004",
+      "crew_owner": [
+        "Doctor.Contracts",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "ABACUS#1189",
+        "W74 run34776328044 exact-head PASS",
+        "W169 run34776328041 exact-head assertion PASS",
+        "W74 run35349719151 exact-head/bound receipt PASS",
+        "W169 run35349719044 source_sha=a4d3c196aa4d6617acd810734ce525df23ca3e17 rollout/health PASS"
+      ],
+      "done_when": "SATISFIED_CONTROL"
+    },
+    {
+      "bd_id": "HIST-BD-017",
+      "title": "Provide bounded writable authentication state under hardened read-only rootfs",
+      "class": "RUNTIME_STORAGE_CONTRACT",
+      "severity": "P1",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "source_prs": [
+        1189,
+        1194
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Runtime",
+        "Doctor.Contracts",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "run34776722408",
+        "artifact10323656903",
+        "ABACUS#1194 merged"
+      ],
+      "observed_improvement": {
+        "prior_rollout_failure_seconds_approx": 195,
+        "repaired_rollout_seconds": 29.077,
+        "restart_count": 0,
+        "request_p50_ms": 5.72,
+        "request_p95_ms": 8.17
+      },
+      "done_when": "SATISFIED; production persistence/shared auth-state architecture remains separate"
+    },
+    {
+      "bd_id": "HIST-BD-018",
+      "title": "Keep CI-governance SSOT classification synchronized with live workflows",
+      "class": "GOVERNANCE_INVENTORY_DRIFT",
+      "severity": "P1",
+      "state": "ACTIVE",
+      "occurrence_count": 7,
+      "recurrence_episode_count": 2,
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "source_prs": [
+        1196,
+        1199,
+        1271,
+        1277,
+        1280
+      ],
+      "rex_control_id": "REX-CM-005",
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "run34776850851 diagnostic",
+        "run34777151715 PASS",
+        "ABACUS#1199 merged",
+        "run35349719045 detected 4 unclassified workflows",
+        "ABACUS#1277 auto-merged while governance queued",
+        "ABACUS#1280 auto-merged while governance red",
+        "main@82f6edaea6a60f948dc51b6038fbad944977d676 content-consistent 142/142; post-fix governance run35351825106 queued",
+        "run35351825106 policy PASS; inventory FAIL one repeated-command derived line",
+        "main@621c9ca2ab6848d524f3c8ddb831524e756c159f exact generated delta applied",
+        "run35352120094 final hosted governance re-proof queued"
+      ],
+      "done_when": "Final hosted run35352120094 must execute >0 steps and PASS; CONTROL additionally requires merge admission bound to governance and negative/positive admission repeat"
+    }
   ],
   "control_measures": [
-    {"control_id":"REX-CM-001","state":"CONTROL","root_ids":["HIST-BD-006","HIST-BD-007"],"gate":"fail-closed preflight + retained-history recurrence + distinct-source regression"},
-    {"control_id":"REX-CM-002","state":"CONTROL","root_ids":["HIST-BD-008","HIST-BD-010","HIST-BD-011","HIST-BD-012"],"gate":"eligible-only PCA + raw timing derivation + corrected BT scale + counterbalanced order + repeat"},
-    {"control_id":"REX-CM-003","state":"FIRST_PROOF_REPEAT_REQUIRED","root_ids":["HIST-BD-015"],"gate":"governed external actions use immutable 40-char SHAs; later distinct-source repeat required"},
-    {"control_id":"REX-CM-004","state":"FIRST_PROOF_REPEAT_REQUIRED","root_ids":["HIST-BD-016"],"gate":"PR workflows checkout/assert evaluated PR head and bind that SHA into receipts; later distinct-source repeat required"}
+    {
+      "control_id": "REX-CM-001",
+      "state": "CONTROL",
+      "root_ids": [
+        "HIST-BD-006",
+        "HIST-BD-007"
+      ],
+      "gate": "fail-closed preflight + retained-history recurrence + distinct-source regression"
+    },
+    {
+      "control_id": "REX-CM-002",
+      "state": "CONTROL",
+      "root_ids": [
+        "HIST-BD-008",
+        "HIST-BD-010",
+        "HIST-BD-011",
+        "HIST-BD-012"
+      ],
+      "gate": "eligible-only PCA + raw timing derivation + corrected BT scale + counterbalanced order + repeat"
+    },
+    {
+      "control_id": "REX-CM-003",
+      "state": "CONTROL",
+      "root_ids": [
+        "HIST-BD-015"
+      ],
+      "gate": "governed external actions use immutable 40-char SHAs; later distinct-source repeat required",
+      "repeat_refs": [
+        "ABACUS#1271@a4d3c196aa4d6617acd810734ce525df23ca3e17",
+        "run35349719045 validator step PASS",
+        "run35349719151 W74 PASS"
+      ]
+    },
+    {
+      "control_id": "REX-CM-004",
+      "state": "CONTROL",
+      "root_ids": [
+        "HIST-BD-016"
+      ],
+      "gate": "PR workflows checkout/assert evaluated PR head and bind that SHA into receipts; later distinct-source repeat required",
+      "repeat_refs": [
+        "ABACUS#1271@a4d3c196aa4d6617acd810734ce525df23ca3e17",
+        "run35349719151 W74 exact-head PASS",
+        "run35349719044 W169 exact-head receipt PASS"
+      ]
+    },
+    {
+      "control_id": "REX-CM-005",
+      "state": "ACTIVE_PREVENTION_WITHHELD",
+      "root_ids": [
+        "HIST-BD-018"
+      ],
+      "gate": "CI governance already detects unclassified/stale inventory; CONTROL withheld until red governance is merge-blocking and later negative/positive admission repeats are retained",
+      "evidence": [
+        "ABACUS#1278",
+        "ABACUS main protected=false",
+        "PR#1277 merged before proof",
+        "PR#1280 merged while governance red",
+        "run35351825106 detector policy PASS / inventory stale-one-line FAIL",
+        "main@621c9ca2 exact generated fix",
+        "run35352120094 queued final re-proof"
+      ]
+    }
   ],
   "open_priority": [
-    {"rank":1,"bd_id":"HIST-BD-015","reason":"recurring supply-chain control awaits repeat"},
-    {"rank":2,"bd_id":"HIST-BD-016","reason":"recurring provenance control awaits repeat"},
-    {"rank":3,"bd_id":"HIST-BD-001","reason":"P1 REX semantics still misclassifies requested action as observed outcome"},
-    {"rank":4,"bd_id":"HIST-BD-009","reason":"P1 negative-evidence retention still incomplete"}
+    {
+      "rank": 1,
+      "bd_id": "HIST-BD-018",
+      "reason": "recurrent inventory drift repaired in content; hosted proof queued and merge-prevention binding withheld"
+    },
+    {
+      "rank": 2,
+      "bd_id": "HIST-BD-001",
+      "reason": "P1 REX semantics still misclassifies requested action as observed outcome"
+    },
+    {
+      "rank": 3,
+      "bd_id": "HIST-BD-009",
+      "reason": "P1 negative-evidence retention still incomplete"
+    }
   ],
   "external_non_compensating_gates": [
-    {"repo":"GBOGEB/cryoplant-project","issue":923,"state":"OPEN","rule":"runner_id>0 and steps>0 must be proven repo-locally; other repos cannot compensate"}
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue": 923,
+      "state": "OPEN",
+      "rule": "runner_id>0 and steps>0 must be proven repo-locally; other repos cannot compensate"
+    }
   ],
-  "next_deep_dive_order": ["GBOGEB/ABACUS", "GBOGEB/Q_engineering_tools", "GBOGEB/CODEX"],
+  "next_deep_dive_order": [
+    "GBOGEB/ABACUS (close REX-CM-005 admission binding)",
+    "GBOGEB/Q_engineering_tools",
+    "GBOGEB/CODEX"
+  ],
   "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE"
 }

@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.specialist_repair_crew_registry.v2",
   "status": "ACTIVE",
-  "as_of": "2026-09-14",
+  "as_of": "2026-09-18",
   "authority_transfer": false,
   "supersedes_current_view": "SPECIALIST_REPAIR_CREW_REGISTRY_v1.json",
   "activation_rule": "recurrence || P0/P1 severity || cross_repo_centrality || repeated_failed_repair || active_control_repeat",
@@ -11,63 +11,180 @@
       "crew_id": "DOCTOR_REX",
       "display_name": "Doctor.REX",
       "state": "ACTIVE_BOUNDED",
-      "triggered_by_roots": ["HIST-BD-001", "HIST-BD-006", "HIST-BD-007"],
-      "active_scope": ["HIST-BD-001"],
-      "controlled_scope": ["HIST-BD-006"],
-      "done_scope": ["HIST-BD-007"],
+      "triggered_by_roots": [
+        "HIST-BD-001",
+        "HIST-BD-006",
+        "HIST-BD-007"
+      ],
+      "active_scope": [
+        "HIST-BD-001"
+      ],
+      "controlled_scope": [
+        "HIST-BD-006"
+      ],
+      "done_scope": [
+        "HIST-BD-007"
+      ],
       "current_mission": "REX_SEMANTICS_BD001",
-      "secondment": ["H2_KEB", "H3_DOW", "H4_QPS_TRIAGE"],
-      "primary_competencies": ["REX semantics", "fail-closed preflight", "recurrence classification", "completed-disposition evidence"],
+      "secondment": [
+        "H2_KEB",
+        "H3_DOW",
+        "H4_QPS_TRIAGE"
+      ],
+      "primary_competencies": [
+        "REX semantics",
+        "fail-closed preflight",
+        "recurrence classification",
+        "completed-disposition evidence"
+      ],
       "victory_condition": "BD001 runtime report derives observed verbs from completed accepted disposition evidence; no requested-action false positive"
     },
     {
       "crew_id": "DOCTOR_ANALYTICS",
       "display_name": "Doctor.Analytics",
       "state": "RETURNED_CONTROL_RESERVE",
-      "triggered_by_roots": ["HIST-BD-008", "HIST-BD-010", "HIST-BD-011", "HIST-BD-012"],
+      "triggered_by_roots": [
+        "HIST-BD-008",
+        "HIST-BD-010",
+        "HIST-BD-011",
+        "HIST-BD-012"
+      ],
       "active_scope": [],
-      "controlled_scope": ["HIST-BD-010", "HIST-BD-011"],
-      "done_scope": ["HIST-BD-008", "HIST-BD-012"],
+      "controlled_scope": [
+        "HIST-BD-010",
+        "HIST-BD-011"
+      ],
+      "done_scope": [
+        "HIST-BD-008",
+        "HIST-BD-012"
+      ],
       "current_mission": null,
-      "secondment": ["H4_QPS_TRIAGE", "QA_SIGNALMAN"],
-      "primary_competencies": ["PCA eligibility", "Bradley-Terry", "experimental design", "analytic fixtures", "timing evidence"],
-      "return_evidence": ["run34775932604", "merge@3a67d3b20f7ced8010e722dfcf0529ebf6379c70"],
+      "secondment": [
+        "H4_QPS_TRIAGE",
+        "QA_SIGNALMAN"
+      ],
+      "primary_competencies": [
+        "PCA eligibility",
+        "Bradley-Terry",
+        "experimental design",
+        "analytic fixtures",
+        "timing evidence"
+      ],
+      "return_evidence": [
+        "run34775932604",
+        "merge@3a67d3b20f7ced8010e722dfcf0529ebf6379c70"
+      ],
       "victory_condition": "reactivate only on analytics control escape or new measured pressure root"
     },
     {
       "crew_id": "DOCTOR_CONTRACTS",
       "display_name": "Doctor.Contracts",
       "state": "ACTIVE_BOUNDED",
-      "triggered_by_roots": ["HIST-BD-002", "HIST-BD-003", "HIST-BD-004", "HIST-BD-005", "HIST-BD-009", "HIST-BD-013", "HIST-BD-016", "HIST-BD-017", "HIST-BD-018"],
-      "active_scope": ["HIST-BD-009", "HIST-BD-016"],
-      "done_scope": ["HIST-BD-002", "HIST-BD-003", "HIST-BD-004", "HIST-BD-005", "HIST-BD-013", "HIST-BD-017", "HIST-BD-018"],
-      "current_mission": "REX_CM_004_REPEAT_PLUS_NEGATIVE_EVIDENCE",
-      "secondment": ["H2_KEB", "HISTORIAN", "QA_SIGNALMAN"],
-      "primary_competencies": ["schema", "required-field enforcement", "provenance binding", "negative evidence contract", "contract drift"],
-      "victory_condition": "REX-CM-004 reaches CONTROL on later distinct SHA; BD009 preserves validated rejected evidence without promotion"
+      "triggered_by_roots": [
+        "HIST-BD-002",
+        "HIST-BD-003",
+        "HIST-BD-004",
+        "HIST-BD-005",
+        "HIST-BD-009",
+        "HIST-BD-013",
+        "HIST-BD-016",
+        "HIST-BD-017",
+        "HIST-BD-018"
+      ],
+      "active_scope": [
+        "HIST-BD-009",
+        "HIST-BD-018"
+      ],
+      "done_scope": [
+        "HIST-BD-002",
+        "HIST-BD-003",
+        "HIST-BD-004",
+        "HIST-BD-005",
+        "HIST-BD-013",
+        "HIST-BD-017",
+        "HIST-BD-018"
+      ],
+      "current_mission": "REX_CM_005_ADMISSION_BINDING_PLUS_NEGATIVE_EVIDENCE",
+      "secondment": [
+        "H2_KEB",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "primary_competencies": [
+        "schema",
+        "required-field enforcement",
+        "provenance binding",
+        "negative evidence contract",
+        "contract drift"
+      ],
+      "victory_condition": "BD018 hosted repair proof passes and merge admission is bound fail-closed; BD009 retains validated negative evidence without promotion",
+      "controlled_scope": [
+        "HIST-BD-016"
+      ]
     },
     {
       "crew_id": "DOCTOR_SUPPLY_CHAIN",
       "display_name": "Doctor.SupplyChain",
-      "state": "ACTIVE_TEMPORARY",
-      "triggered_by_roots": ["HIST-BD-015"],
-      "active_scope": ["HIST-BD-015"],
-      "current_mission": "REX_CM_003_DISTINCT_SHA_REPEAT",
-      "secondment": ["GBOGEB/ABACUS", "H2_KEB", "QA_SIGNALMAN"],
-      "primary_competencies": ["immutable action identity", "workflow supply-chain policy", "dependency review", "governance regression"],
-      "first_proof": ["ABACUS#1189", "run34776328022"],
-      "victory_condition": "later exact-source repeat proves governed external action refs remain immutable and no mutable-tag escape exists"
+      "state": "RETURNED_CONTROL_RESERVE",
+      "triggered_by_roots": [
+        "HIST-BD-015"
+      ],
+      "active_scope": [],
+      "current_mission": null,
+      "secondment": [
+        "GBOGEB/ABACUS",
+        "H2_KEB",
+        "QA_SIGNALMAN"
+      ],
+      "primary_competencies": [
+        "immutable action identity",
+        "workflow supply-chain policy",
+        "dependency review",
+        "governance regression"
+      ],
+      "first_proof": [
+        "ABACUS#1189",
+        "run34776328022"
+      ],
+      "victory_condition": "SATISFIED: REX-CM-003 CONTROL; reactivate only on immutable-pin escape/regression",
+      "controlled_scope": [
+        "HIST-BD-015"
+      ],
+      "return_evidence": [
+        "ABACUS#1271@a4d3c196aa4d6617acd810734ce525df23ca3e17",
+        "run35349719045 step4 immutable_pins=true"
+      ]
     },
     {
       "crew_id": "DOCTOR_RUNTIME",
       "display_name": "Doctor.Runtime",
       "state": "ACTIVE_EXTERNAL_GATE_AND_ECONOMICS",
-      "triggered_by_roots": ["RUNNER-ECONOMICS-79", "CRYOPLANT-923", "HIST-BD-014", "HIST-BD-017"],
-      "active_scope": ["RUNNER-ECONOMICS-79", "CRYOPLANT-923"],
-      "done_scope": ["HIST-BD-014", "HIST-BD-017"],
+      "triggered_by_roots": [
+        "RUNNER-ECONOMICS-79",
+        "CRYOPLANT-923",
+        "HIST-BD-014",
+        "HIST-BD-017"
+      ],
+      "active_scope": [
+        "RUNNER-ECONOMICS-79",
+        "CRYOPLANT-923"
+      ],
+      "done_scope": [
+        "HIST-BD-014",
+        "HIST-BD-017"
+      ],
       "current_mission": "RUNNER_ADMISSION_SEPARATION_AND_ECONOMICS",
-      "secondment": ["H1_QPS", "H4_QPS_TRIAGE"],
-      "primary_competencies": ["runner admission", "queue vs execute", "Docker habitat", "cache/prebuild", "runtime first-red isolation"],
+      "secondment": [
+        "H1_QPS",
+        "H4_QPS_TRIAGE"
+      ],
+      "primary_competencies": [
+        "runner admission",
+        "queue vs execute",
+        "Docker habitat",
+        "cache/prebuild",
+        "runtime first-red isolation"
+      ],
       "boundary": "cryoplant #923 remains non-compensating; ABACUS/CODEX green cannot clear it",
       "victory_condition": "repo-local admission is proven independently and at least one measured economics intervention reduces pressure without semantic change"
     },
@@ -75,11 +192,29 @@
       "crew_id": "HISTORIAN",
       "display_name": "Historian",
       "state": "ACTIVE_FLEET_SERVICE",
-      "triggered_by_roots": ["HIST-BD-009", "HIST-BD-018"],
-      "active_scope": ["HIST-BD-009", "fleet deep-dive expansion"],
-      "current_mission": "TEMPORAL_LINEAGE_AND_NEGATIVE_EVIDENCE_RETENTION",
-      "secondment": ["H1_QPS", "H2_KEB", "H3_DOW", "H4_QPS_TRIAGE"],
-      "primary_competencies": ["commit/PR/workflow genealogy", "first-red sequence", "negative evidence retention", "recurrence detection", "repair survival"],
+      "triggered_by_roots": [
+        "HIST-BD-009",
+        "HIST-BD-018"
+      ],
+      "active_scope": [
+        "HIST-BD-009",
+        "HIST-BD-018",
+        "fleet deep-dive expansion"
+      ],
+      "current_mission": "BD018_CONTROL_ESCAPE_AND_TEMPORAL_LINEAGE",
+      "secondment": [
+        "H1_QPS",
+        "H2_KEB",
+        "H3_DOW",
+        "H4_QPS_TRIAGE"
+      ],
+      "primary_competencies": [
+        "commit/PR/workflow genealogy",
+        "first-red sequence",
+        "negative evidence retention",
+        "recurrence detection",
+        "repair survival"
+      ],
       "victory_condition": "every new historical finding is current-code-checked, deduplicated to stable root, and returned to H4/H3 with proof or explicit rejection"
     },
     {
@@ -89,15 +224,39 @@
       "triggered_by_roots": [],
       "active_scope": [],
       "current_mission": null,
-      "secondment": ["CODEX", "Q_engineering_tools"],
-      "primary_competencies": ["LLDB", "DAP", "debugpy", "js-debug", "MCP", "deep first-red isolation"],
+      "secondment": [
+        "CODEX",
+        "Q_engineering_tools"
+      ],
+      "primary_competencies": [
+        "LLDB",
+        "DAP",
+        "debugpy",
+        "js-debug",
+        "MCP",
+        "deep first-red isolation"
+      ],
       "victory_condition": "reactivate only on measured debugger/control regression; do not reopen solved capability for ordinary repo debt"
     }
   ],
   "allocation_summary": {
-    "active_specialists": ["DOCTOR_REX", "DOCTOR_CONTRACTS", "DOCTOR_SUPPLY_CHAIN", "DOCTOR_RUNTIME", "HISTORIAN"],
-    "returned_control_reserve": ["DOCTOR_ANALYTICS", "DEBUG_SURGEON"],
-    "priority_sequence": ["REX-CM-003 repeat", "REX-CM-004 repeat", "HIST-BD-001", "HIST-BD-009", "next repo deep-dive"],
+    "active_specialists": [
+      "DOCTOR_REX",
+      "DOCTOR_CONTRACTS",
+      "DOCTOR_RUNTIME",
+      "HISTORIAN"
+    ],
+    "returned_control_reserve": [
+      "DOCTOR_ANALYTICS",
+      "DOCTOR_SUPPLY_CHAIN",
+      "DEBUG_SURGEON"
+    ],
+    "priority_sequence": [
+      "REX-CM-005 hosted proof + merge admission binding",
+      "HIST-BD-001",
+      "HIST-BD-009",
+      "next repo deep-dive"
+    ],
     "anti_proliferation": "specialists are temporary pressure cells; return/merge competencies after bounded victory unless recurrent independent workload justifies persistence"
   }
 }
