@@ -1,0 +1,33 @@
+name: HM-01 R3 DMAIC KPI
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - "mission-control/grand-missions/R3_DMAIC_KPI_CONTRACT_v1.json"
+      - "mission-control/grand-missions/measure_r3_dmaic_kpis.py"
+      - "mission-control/grand-missions/tests/test_r3_dmaic_kpis.py"
+      - ".github/workflows/hm01-r3-dmaic-kpi.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  measured-kpi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate measured KPI contract
+        run: |
+          mkdir -p output/r3-dmaic
+          python mission-control/grand-missions/measure_r3_dmaic_kpis.py             --contract mission-control/grand-missions/R3_DMAIC_KPI_CONTRACT_v1.json             --self-test             --out output/r3-dmaic/R3_DMAIC_KPI_RECEIPT_v1.json
+      - name: Run KPI regression tests
+        run: python -m unittest mission-control/grand-missions/tests/test_r3_dmaic_kpis.py
+      - name: Upload KPI receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: hm01-r3-dmaic-kpi
+          path: output/r3-dmaic/R3_DMAIC_KPI_RECEIPT_v1.json
+          if-no-files-found: error
+          retention-days: 30
