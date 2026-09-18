@@ -1,0 +1,118 @@
+schema: missioncontrol.qps_leg5_w249_postmerge_reconciliation/v3
+as_of: '2026-09-18T13:24:00+02:00'
+repo: GBOGEB/pipeline-automation-hub
+role: PARENT_CONTROL_POSTMERGE_RECONCILIATION
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+negotiation_credit_delta: 0
+release_credit_delta: 0
+qps_runtime_credit_delta: 0
+
+publication_basis:
+  missioncontrol_master_observed: 41eb9ccbe76d65e4a4217cf022d843d3cb2c342e
+  qps_main_observed: 34d21db38a0cfc2a07c4d59039e002bdb89578fa
+  refresh_required_on_restart: true
+
+history:
+  qps_control_pr_1450:
+    merge: 83d4d5eb8c920672f6c550ede20ce390e528bf27
+    disposition: MERGED_CONTROL_ONLY
+  qps_followup_pr_1456:
+    head: 20fbe0af279342129fbb63a0a22a4ee63b42a496
+    merge: bfa80d4fa9756f03dd4aaa4c6dedff92b53760d6
+    disposition: MERGED_RUNNER_COMPATIBILITY_HARDENING
+  missioncontrol_pr_200:
+    head: 67e2a34167869b6ce6868a83877941c539ac5a0c
+    merge: 073db34f68ff6a7763ac334371e3d67f7f9c3567
+    final_head_run: 35338302494
+    final_head_job: 105578180795
+    final_head_result: PASS_REAL_STEPS
+  missioncontrol_pr_202:
+    head: ed334e916fd7d910465264895eb7c97d3909db67
+    merge: 41eb9ccbe76d65e4a4217cf022d843d3cb2c342e
+    historical_v2_receipt: mission-control/qps-triage-ultra/leg5/QPS_LEG5_W249_RUNNER_COMPAT_EXECUTION_RECEIPT_v2.yaml
+    historical_v2_receipt_state: FINAL_HEAD_PROOF_PENDING_AT_FILE_CREATION
+    final_head_run: 35339035224
+    final_head_job: 105580477742
+    final_head_result: PASS_REAL_STEPS
+  missioncontrol_pr_203:
+    head: 43f37af2b2cc3403eefd0129042d077d5aa5d72a
+    merge: 05d4a61dfbf676a9d6a49d4090666d30ebe4bd77
+    historical_v2_receipt: mission-control/qps-triage-ultra/leg5/QPS_LEG5_W249_3PSTAR_MIP_FOLLOWUP_EXECUTION_RECEIPT_v2.yaml
+    historical_v2_receipt_state: FINAL_HEAD_REPROOF_REQUIRED_AT_FILE_CREATION
+    final_head_run: 35339059967
+    final_head_job: 105580551843
+    final_head_result: PASS_REAL_STEPS
+
+merge_order_integrity:
+  observation: >-
+    PR #202 and #203 merged within one second. Current master is the #202 merge,
+    but compare(05d4a61d..,41eb9ccb..) reports merge base 05d4a61d and
+    41eb9ccb ahead by five commits. Therefore #203 is contained in current master;
+    no merge-race tail loss is present.
+  pr203_merge_is_ancestor_of_current_master: true
+  merge_race_tail_loss: false
+
+review_debt_reconciliation:
+  qps_pr_1450_runner_compatibility:
+    original_thread: PRRT_kwDOO6eBo86jt5i_
+    successor_pr: 1456
+    repair: BOTH_LEG5_VALIDATORS_USE_CRYO_RECEIPT_RUNNER
+    resolved: true
+  missioncontrol_pr_200_refresh_first:
+    original_thread: PRRT_kwDOPtsMrc6jt69J
+    successor_pr: 203
+    repair: RESTART_DROPIN_REFRESHES_LIVE_QPS_AND_MISSIONCONTROL_STATE_BEFORE_HISTORICAL_ANCHORS
+    resolved: true
+
+child_current_state:
+  repo: GBOGEB/cryoplant-project
+  current_main_observed: 34d21db38a0cfc2a07c4d59039e002bdb89578fa
+  leg5_followup_merge: bfa80d4fa9756f03dd4aaa4c6dedff92b53760d6
+  commits_after_leg5_followup: 10
+  leg5_surfaces_changed_after_1456: false
+  later_changes_scope: INDEPENDENT_R3_HM01_ONLY
+  leg5_state: 7_OF_9_CLOSED
+  control_issue: 1258
+  runtime_gate_issue: 923
+  open_routes: [1266, 1357]
+  runtime_proof: WITHHELD_INFRA_PREEXECUTION
+
+parent_state:
+  final_head_proofs:
+    pr_202: PASS_REAL_STEPS
+    pr_203: PASS_REAL_STEPS
+  parent_control_publication: COMPLETE
+  parent_runtime_substitution_allowed: false
+
+historical_receipt_rule:
+  mutate_v2_receipts: false
+  interpretation: >-
+    v2 receipts remain immutable snapshots of the state at file creation. This v3
+    reconciliation supplies the later final-head proof facts and merge-order proof.
+  v3_is_append_only_successor: true
+
+next_predicate:
+  child: QPS_RUNNER_ADMISSION
+  issue: GBOGEB/cryoplant-project#923
+  require:
+    - runner_id_nonzero
+    - steps_gt_0
+    - validator_runner_selector_compatible
+  then:
+    - execute_current_main_1266_validator_unchanged
+    - bind_exact_receipt_and_close_1266_on_PASS
+    - publish_8_of_9
+    - execute_current_main_1357_validator_unchanged
+    - bind_exact_receipt_and_close_1357_on_PASS_as_governed_hold
+    - publish_9_of_9
+    - verify_zero_undeclared_routes_and_zero_authority_promotions
+    - evaluate_1258_closure
+
+guards:
+  - PARENT_FINAL_HEAD_PASS_NE_CHILD_RUNTIME_PASS
+  - CONTROL_PUBLICATION_NE_ROUTE_CLOSURE
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - R3_PARALLEL_PROGRESS_NE_LEG5_CREDIT
+  - AUTHORITY_TRANSFER_FALSE
