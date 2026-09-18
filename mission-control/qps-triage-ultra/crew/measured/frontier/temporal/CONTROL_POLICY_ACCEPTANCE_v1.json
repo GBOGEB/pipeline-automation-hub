@@ -1,0 +1,152 @@
+{
+  "schema": "missioncontrol.temporal_control_policy_acceptance.v1",
+  "mission_id": "MC-CREW-FRONTIER-004",
+  "status": "CONTROL_SPLIT_ACCEPTED_BOUNDED",
+  "purpose": "Persist the first post-24h genuine-schedule CONTROL disposition without converting nonqualifying classes or competency into CONTROL.",
+  "predecessor_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/REPEAT_STABLE_ACCEPTANCE_v1.json",
+  "basis": {
+    "source_sha": "4d538cd9ae3348f35dd9c17e54e6981afa0f3d8b",
+    "workflow_run_id": "35171284135",
+    "analyzer_job_id": "105043442554",
+    "workflow_event": "schedule",
+    "workflow_conclusion": "success",
+    "artifact_id": "10476976317",
+    "artifact_name": "crew-temporal-pc3-4d538cd9ae3348f35dd9c17e54e6981afa0f3d8b",
+    "artifact_digest": "sha256:e8188c589511aeb6c1211da5fc8f19bb47a71b7211000126b6f73a6749c83f8b",
+    "scheduled_control_frontier": {
+      "independent_windows": 14,
+      "distinct_source_shas": 8,
+      "temporal_span_seconds": 281718,
+      "hosted_runner_classes": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "lanes": [
+        "baseline",
+        "held"
+      ],
+      "rex_veto": false,
+      "window_ids": [
+        "34777489874",
+        "34796773101",
+        "34818972954",
+        "34849592029",
+        "34886709919",
+        "34918148317",
+        "34942181858",
+        "34975300718",
+        "35013457019",
+        "35044786093",
+        "35069009407",
+        "35102159593",
+        "35140384394",
+        "35171284135"
+      ]
+    },
+    "constrained_runner_extension": "DEFERRED_NO_DECLARED_CONSTRAINED_RUNNER",
+    "historical_collection_errors": 0
+  },
+  "frozen_control_gate": {
+    "min_independent_windows": 6,
+    "min_distinct_source_shas": 3,
+    "min_temporal_span_seconds": 86400,
+    "min_directional_windows": 5,
+    "min_direction_consistency": 0.8,
+    "min_pooled_winner_strength": 0.7,
+    "latest_two_directional_windows_must_agree": true,
+    "min_hosted_runner_classes": 3,
+    "requires_baseline_and_held_lanes": true
+  },
+  "surveillance": {
+    "medium_72h_target_seconds": 259200,
+    "observed_span_seconds": 281718,
+    "medium_72h_reached": true,
+    "role": "robustness_surveillance_not_additional_promotion_gate"
+  },
+  "authority_transfer": false,
+  "competency_promotions": 0,
+  "control_classes": [
+    {
+      "task_class": "cache_artifact_reuse",
+      "policy_status": "CONTROL_POLICY",
+      "allocation_recommendation": "ALLOC_SINGLE_CELL",
+      "allocation_policy_promotion": true,
+      "directional_windows": 14,
+      "direction_consistency": 1,
+      "pooled_winner_strength": 0.9895927601809954,
+      "latest_two_directional_windows_agree": true,
+      "first_red_gate": null
+    },
+    {
+      "task_class": "validation_bundle",
+      "policy_status": "CONTROL_POLICY",
+      "allocation_recommendation": "ALLOC_PAIRED_CELL",
+      "allocation_policy_promotion": true,
+      "directional_windows": 14,
+      "direction_consistency": 1,
+      "pooled_winner_strength": 0.9941176470588236,
+      "latest_two_directional_windows_agree": true,
+      "first_red_gate": null
+    }
+  ],
+  "noncontrol_classes": [
+    {
+      "task_class": "short_compute",
+      "policy_status": "RECOMMEND_REPEAT_STABLE",
+      "allocation_recommendation": "ALLOC_SINGLE_CELL",
+      "allocation_policy_promotion": false,
+      "directional_windows": 12,
+      "direction_consistency": 0.9166666666666666,
+      "pooled_winner_strength": 0.6989199739752765,
+      "latest_two_directional_windows_agree": true,
+      "first_red_gate": "pooled_winner_strength",
+      "failed_control_gates": [
+        "pooled_winner_strength"
+      ]
+    },
+    {
+      "task_class": "human_dependency_wait_proxy",
+      "policy_status": "LEARNING",
+      "allocation_recommendation": "NO_POLICY",
+      "allocation_policy_promotion": false,
+      "directional_windows": 11,
+      "direction_consistency": 0.8181818181818182,
+      "pooled_winner_strength": 0.6575827918875873,
+      "latest_two_directional_windows_agree": false,
+      "first_red_gate": "pooled_winner_strength",
+      "failed_control_gates": [
+        "pooled_winner_strength",
+        "latest_two_directional_windows_agree"
+      ]
+    },
+    {
+      "task_class": "long_compute_contended",
+      "policy_status": "LEARNING_DIRECTION_UNSTABLE",
+      "allocation_recommendation": "NO_POLICY",
+      "allocation_policy_promotion": false,
+      "directional_windows": 11,
+      "direction_consistency": 0.7272727272727273,
+      "pooled_winner_strength": 0.6391246684350133,
+      "latest_two_directional_windows_agree": true,
+      "first_red_gate": "direction_consistency",
+      "failed_control_gates": [
+        "direction_consistency",
+        "pooled_winner_strength"
+      ]
+    }
+  ],
+  "full_control_policy": {
+    "independently_satisfied": false,
+    "control_class_count": 2,
+    "task_class_count": 5,
+    "noncontrol_class_count": 3,
+    "rule": "Full-fleet CONTROL is false until every task class independently satisfies every frozen CONTROL gate; class-level CONTROL remains valid for qualifying classes."
+  },
+  "guards": {
+    "synthetic_or_noop_clock_evidence_admitted": false,
+    "manual_window_credit": false,
+    "thresholds_changed": false,
+    "persistent_or_regression_rex_veto_remains_authoritative": true
+  }
+}
