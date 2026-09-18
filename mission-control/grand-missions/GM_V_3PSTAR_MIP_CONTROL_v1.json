@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.gm_v.3pstar_mip_control.v1",
-  "as_of": "2026-09-18T15:20:00+02:00",
+  "as_of": "2026-09-18T15:27:00+02:00",
   "canonical_lane": "GM_V_GOVERNOR_READINESS_AND_OPERATIONAL_AVAILABILITY",
   "mission": "GM-V",
   "method": "3PSTAR_PLUS_MIP",
@@ -9,9 +9,9 @@
   "engineering_credit_delta": 0,
   "source_authority": {
     "missioncontrol_repo": "GBOGEB/pipeline-automation-hub",
-    "missioncontrol_master_at_refresh": "3df37a0485874f968f0dffa02bc474c5f4645fba",
+    "missioncontrol_master_at_refresh": "b19f4e46a72b0a324c74e4f4d513feb3e38e62c7",
     "qps_repo": "GBOGEB/cryoplant-project",
-    "qps_main_at_refresh": "039e1fa84a6b32bcdb89e65807613377d50b4bb7",
+    "qps_main_at_refresh": "eeac2b60fc16e5b2131d4054f95da0b0c663cc40",
     "qps_runtime_gate_issue": "GBOGEB/cryoplant-project#923",
     "qps_runtime_gate_state": "OPEN",
     "refresh_first": true
@@ -69,13 +69,45 @@
         "recon4_promotion_control": 35343914458
       },
       "result": "PASS"
+    },
+    "latest_qps_runtime_observation": {
+      "qps_pr": 1476,
+      "qps_head_sha": "458dae93993a970d94c5a8c85c2d04e40390e454",
+      "qps_merge_sha": "eeac2b60fc16e5b2131d4054f95da0b0c663cc40",
+      "release_runner_probe": {
+        "run_id": 35350233629,
+        "jobs": [
+          {
+            "job_id": 105616352192,
+            "runner_class": "configured-runner",
+            "executed_steps": 0
+          },
+          {
+            "job_id": 105616352310,
+            "runner_class": "ubuntu-latest",
+            "executed_steps": 0
+          },
+          {
+            "job_id": 105616352482,
+            "runner_class": "ubuntu-22.04",
+            "executed_steps": 0
+          }
+        ]
+      },
+      "independent_validator": {
+        "workflow": "verify-ssot",
+        "run_id": 35350233647,
+        "job_id": 105616351882,
+        "executed_steps": 0
+      },
+      "classification": "INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION"
     }
   },
   "three_pr": {
     "Refresh": {
       "result": "PASS",
-      "missioncontrol_master": "3df37a0485874f968f0dffa02bc474c5f4645fba",
-      "qps_main": "039e1fa84a6b32bcdb89e65807613377d50b4bb7",
+      "missioncontrol_master": "b19f4e46a72b0a324c74e4f4d513feb3e38e62c7",
+      "qps_main": "eeac2b60fc16e5b2131d4054f95da0b0c663cc40",
       "qps_issue_923": "OPEN",
       "rule": "LIVE_HEADS_REFRESHED_BEFORE_CURRENT_STATE_CLAIMS"
     },
@@ -125,10 +157,13 @@
         "mission-control/grand-missions/validate_gm_v_3pstar_mip_control.py",
         "mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md",
         "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v1.md",
-        ".github/workflows/gm-v-3pstar-mip-control.yml"
+        ".github/workflows/gm-v-3pstar-mip-control.yml",
+        "mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v2.md",
+        "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v2.md"
       ],
       "chat_only_todo_target": 0,
-      "chat_only_decision_target": 0
+      "chat_only_decision_target": 0,
+      "latest_rebind": "GM_V_3PSTAR_MIP_W281_REBIND_AFTER_PR239_20260918"
     }
   },
   "three_pc": {
@@ -175,5 +210,26 @@
     "DO_NOT_BIND_GM_V_CHILDREN_WHILE_HELD",
     "DO_NOT_ADVANCE_3P3_BEFORE_OPERATIONAL_AVAILABILITY_PROVE",
     "REFRESH_LIVE_HEADS_BEFORE_REENTRY"
-  ]
+  ],
+  "latest_iteration": {
+    "id": "GM_V_3PSTAR_MIP_W281_REBIND_AFTER_PR239_20260918",
+    "result": "PREPARED_PENDING_EXACT_HEAD_DOV",
+    "predecessor_control_merge": "b19f4e46a72b0a324c74e4f4d513feb3e38e62c7",
+    "three_pr": {
+      "Refresh": "PASS",
+      "Probe": "PASS_BLOCK_CONFIRMED_FROM_EXISTING_RUNS_NO_RERUN",
+      "Rank": "PASS_FIRST_RED_QPS_923"
+    },
+    "mip": {
+      "Modernize": "PASS_BIND_W281_QPS_CURRENT_AND_EXACT_ZERO_STEP_RECEIPT",
+      "Innovate": "PASS_VALIDATE_LATEST_OBSERVATION_AGAINST_CANONICAL_CURRENT",
+      "Perpetuate": "PASS_HANDOVER_V2_ZERO_CHAT_ONLY_STATE"
+    },
+    "three_pc": {
+      "Prepare": "PASS",
+      "Prove": "PENDING_PUBLIC_EXACT_HEAD_CONTROL_WORKFLOW",
+      "Commit": "HOLD_UNTIL_PROVE_PASS"
+    },
+    "qps_probe_was_retriggered": false
+  }
 }
