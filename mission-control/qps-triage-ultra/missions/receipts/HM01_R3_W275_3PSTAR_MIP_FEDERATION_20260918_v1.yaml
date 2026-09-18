@@ -1,0 +1,130 @@
+schema: missioncontrol.hm01.r3.w275_federation_receipt.v0.1
+as_of: '2026-09-18T13:11:00+02:00'
+mission: HM-01
+state: FEDERATION_PROGRESS_BOUND_R3_PROVE_STILL_HELD
+authority_transfer: false
+formal_credit_delta: 0
+
+refresh:
+  qps_main_after_w275_p3: 34d21db38a0cfc2a07c4d59039e002bdb89578fa
+  codex_main: f1a8ee8bb8ffb49c7278bc323790e4327f99a8ae
+  abacus_main_at_slice_start: 160b6045f0edc921b2eacc979735ecbd28aefe24
+  missioncontrol_base: 41eb9ccbe76d65e4a4217cf022d843d3cb2c342e
+
+qps:
+  parent_issue: GBOGEB/cryoplant-project#1398
+  release_parent: GBOGEB/cryoplant-project#1379
+  p1:
+    pr: GBOGEB/cryoplant-project#1451
+    merge: 8d307e0cb67e303903345194b9a538219b4ee66f
+  p2:
+    pr: GBOGEB/cryoplant-project#1452
+    merge: 65a0973c16f5e2ad9ad313439b7e9720b58695ec
+  consumer:
+    pr: GBOGEB/cryoplant-project#1453
+    merge: 49455cac76a2ffb617ec687e6eb79142c8d73f03
+  p3_handover:
+    pr: GBOGEB/cryoplant-project#1460
+    merge: 34d21db38a0cfc2a07c4d59039e002bdb89578fa
+  predecessor_source: 70964e5f1577231512f4104b26f5f6649ad8cb39
+  active_successor_source: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  application_evidence: PASS
+  r3_release_production_dov: WITHHELD
+  r4: BLOCKED_NOT_NEXT
+
+missioncontrol_history:
+  selector_contract_pr: GBOGEB/pipeline-automation-hub#199
+  selector_contract_merge: 9e14f8ba76b0d0515df9bd367eff4f941b2fb9d4
+  three_pc_prepare: PASS
+  three_pc_prove: HOLD_WAIT_SUCCESSOR_GIT_OBJECT
+  three_pc_commit: HOLD_WAIT_PROVE
+  three_p3_authorized: false
+
+gemini:
+  active_issue: GBOGEB/GEMINI#16
+  producer_pr: GBOGEB/GEMINI#17
+  producer_merge: 9017051d39b75c78f1cf082c0ed009e2351d3320
+  exact_environment:
+    run: 35338333168
+    job: 105578279671
+    status: PASS
+    artifact_id: 10543767484
+    artifact_name: qps-r3-py312-exact-env-linux-x86_64
+    artifact_bytes: 115301806
+    artifact_digest: >-
+      sha256:9a961d69becd02bac3c2c16146f29ced1a9185204cce2e1f381eddfb6465aaa5
+    relocated_self_test: PASS
+    python: 3.12.14
+  git_object_lane:
+    required_sha: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+    state: WAIT_GENUINE_PRIVATE_QPS_GIT_OBJECT_HANDOFF
+
+codex:
+  issue: GBOGEB/CODEX#753
+  authority_repair_pr: GBOGEB/CODEX#756
+  authority_repair_merge: 4b9d4176de0f94b855e82e2669e9840c2bf76c10
+  state: PUBLICATION_AUTHORITY_REPAIRED_PROOF_SEPARATE
+
+abacus:
+  issue: GBOGEB/ABACUS#1256
+  predecessor_pr: GBOGEB/ABACUS#1259
+  successor_pr: GBOGEB/ABACUS#1263
+  validated_support_pin: f55876e4d7985dd672304ff6e3945f24de9b9194
+  workflow_run: 35272680285
+  qps_target_jobs_pass: 5
+  pytest:
+    collected: 415
+    passed: 402
+    failed: 0
+    skipped: 10
+    xpassed: 3
+    warnings: 2
+    seconds: 6.90
+  artifact:
+    id: 10518602763
+    digest: >-
+      sha256:2904d3cc2ef3f359b98db0b75bd2613436b94395b975ccf807c08a8c1d793b7f
+  deploy_artifacts:
+    state: FAIL_LEGACY_PACKAGING_PATH
+    disposition: SEPARATE_ABACUS_CI_GOVERNANCE_DRIFT
+  support_disposition: >-
+    PASS_BOUNDED_SUPPORT_REPROOF_PENDING_SUCCESSOR_PR_MERGE
+
+dependency_cone:
+  already_burned:
+    - R3_EXACT_ENVIRONMENT_CONTRACT
+    - PORTABLE_EXACT_ENVIRONMENT_ADMISSION
+    - QPS_SUCCESSOR_CAPSULE_CONSUMER
+    - QPS_SUCCESSOR_ACCEPTANCE_VALIDATOR
+    - GEMINI_EXACT_ENVIRONMENT_CAPSULE
+    - CODEX_PUBLICATION_AUTHORITY_REPAIR
+    - ABACUS_BOUNDED_CURRENT_PIN_RUNTIME_EVIDENCE
+  first_missing_physical_dependency:
+    id: QPS_SUCCESSOR_GIT_OBJECT_HANDOFF_1248290C
+    state: WAIT_EXTERNAL
+  downstream_after_arrival:
+    - QPS_PORTABLE_CAPSULE_CONSUMER_PROVE
+    - EXACT_DETACHED_WORKTREE_1248290C
+    - FIVE_PRODUCT_REGENERATION
+    - STRUCTURAL_QA
+    - PROJECTION_AWARE_PARITY
+    - HASH_BOUND_VISUAL_INSPECTION
+    - SUCCESSOR_ACCEPTANCE_VALIDATOR
+    - PASS_R3_RELEASE_PRODUCTION_DOV
+    - R4_COLD_START_PARITY
+
+non_compensation:
+  issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  runtime_gold: WITHHELD
+  canonical_gt_bdq_4_7_credit: NONE
+  engineering_credit_delta: 0
+  negotiation_credit_delta: 0
+  formal_credit_delta: 0
+  authority_transfer: false
+
+single_next_action: >-
+  Obtain and verify one genuine Git-object-bearing handoff for exact QPS
+  successor 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb, then execute the already
+  merged QPS portable-environment consumer and acceptance path. Do not advance
+  R4 until PASS_R3_RELEASE_PRODUCTION_DOV is actually emitted.
