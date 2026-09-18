@@ -1,0 +1,38 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Recursive Build: deterministic",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "scripts/Recursive_Build_Master.py",
+        "--outputs-dir",
+        "app/public/outputs"
+      ],
+      "options": {
+        "env": {
+          "SOURCE_DATE_EPOCH": "1790262000"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Recursive Build: tests",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "unittest", "-v", "tests.test_recursive_build_master"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Recursive Build: Ariana if installed",
+      "type": "shell",
+      "command": "sh",
+      "args": [
+        "-c",
+        "if command -v ariana >/dev/null 2>&1; then ariana python scripts/Recursive_Build_Master.py --outputs-dir app/public/outputs; else python scripts/Recursive_Build_Master.py --outputs-dir app/public/outputs; fi"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}
