@@ -1,174 +1,96 @@
-# MC-CREW-FRONTIER-004 — Temporal 3PSTAR + MIP Lossless Handover v1
+# MC-CREW-FRONTIER-004 — Temporal 3PSTAR + MIP Lossless Handover v2
 
 ## Canonical restart
 
-Continue from repository authority only. Do not reconstruct this lane from chat memory.
+Continue from repository authority only. The earlier 3/5 text in v1 is superseded by governed post-CONTROL regression evidence.
 
-Fresh-fetch `GBOGEB/pipeline-automation-hub master` before using any SHA below. Historical SHAs are anchors, not reset targets.
-
-Read in this order:
-
-1. `mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_FRONTIER_CURRENT_v1.json`
-2. `mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json`
-3. `mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONTROL_POLICY_ACCEPTANCE_v1.json`
-4. `mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v3.json`
-5. `mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_frontier_burndown.py`
-6. `mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_temporal_frontier_burndown.py`
-7. `.github/workflows/crew-temporal-3pstar-mip-burndown.yml`
-8. this handover
-9. `mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/RESTART_DROPIN_2026-09-18_TEMPORAL_FRONTIER_v1.md`.
+Read first:
+1. `TEMPORAL_FRONTIER_CURRENT_v1.json`
+2. `TEMPORAL_3PSTAR_MIP_ITERATION_v3.json`
+3. `TEMPORAL_CONTROL_REGRESSION_v1.json`
+4. `TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json`
+5. `TEMPORAL_POLICY_CONFIG_v1.json`
+6. this handover
+7. restart drop-in.
 
 ## Current governed state
 
-The temporal allocation lane is **3 of 5 CONTROL**.
+Effective temporal CONTROL is **2 of 5**, not 3 of 5.
 
-CONTROL classes:
-- `cache_artifact_reuse` -> `CONTROL_POLICY / ALLOC_SINGLE_CELL`
-- `short_compute` -> `CONTROL_POLICY / ALLOC_SINGLE_CELL`
-- `validation_bundle` -> `CONTROL_POLICY / ALLOC_PAIRED_CELL`.
+CONTROL:
+- `cache_artifact_reuse`
+- `validation_bundle`
 
-Non-CONTROL frontier:
-- P0 `long_compute_contended`
-- P1 `human_dependency_wait_proxy`.
+Revoked / re-earn required:
+- P0 `short_compute`
 
-Full-set CONTROL is false.
+Other active frontier:
+- P1 `long_compute_contended`
+- P2 `human_dependency_wait_proxy`
 
-Frozen CONTROL thresholds are unchanged. No synthetic, PR, push or manual event is allowed to create governed CONTROL clock time. Competency promotions remain zero. `authority_transfer=false`. Formal credit delta is zero.
+Full-set CONTROL remains false.
 
-## Genuine scheduled authority
+## Why short_compute regressed
 
-The current accepted class disposition remains bound to genuine schedule-event run `35319784958`:
+Genuine scheduled authority:
+- run `35350275999`
+- exact source SHA `f226e6e61bc84482d4856f056b292ca9322e22f8`
+- artifact `10549864368`
+- digest `sha256:6d1ee0018358fff48a83d006322ba1e0b504b32a1cf68e8b4c3e98d0001713c3`
+- 20 scheduled windows
+- 12 distinct source SHAs
+- span 410,680 s.
 
-- exact source SHA `9e7e698c1cf40b594244aba01e1ea704ef76d203`
-- artifact `10536637698`
-- artifact digest `sha256:d72bc6ec77c07821ef1a4191796dd0c0e008b9f05a95a46d4c913f3062648ce9`
-- genuine scheduled windows: 19
-- distinct scheduled source SHAs: 11
-- genuine scheduled span: 389,315 s
-- Linux / macOS / Windows present
-- baseline + held lanes present
-- REX veto: false.
+`short_compute` pooled winner strength fell from 0.7008026573 to 0.6907625244, below the frozen 0.70 gate. CONTROL is therefore revoked.
 
-72 h surveillance is mature. The 7 d surveillance horizon is not mature.
+The latest genuine scheduled window was globally neutral: 3 SINGLE wins vs 3 PAIRED wins. It is not uniform neutrality:
+- Linux: indeterminate
+- macOS: SINGLE
+- Windows: PAIRED
+- baseline lane: SINGLE
+- held lane: PAIRED.
 
-## 3P* execution history
+Classification: `HABITAT_AND_LANE_HETEROGENEITY_OBSERVED`.
 
-### 3PR — Refresh / Probe / Rank
+## Re-earn contract
 
-Refresh PASS:
-- 3/5 CONTROL bound to genuine scheduled evidence.
+`short_compute` may re-enter CONTROL only when a **later genuine schedule-event** Temporal Allocation Policy receipt satisfies every frozen gate again, including:
+- independent windows >= 6
+- distinct source SHAs >= 3
+- temporal span >= 86,400 s
+- directional windows >= 5
+- direction consistency >= 0.80
+- pooled winner strength >= 0.70
+- latest two directional windows agree
+- >=3 hosted runner classes
+- baseline + held lanes
+- no persistent/regression REX veto.
 
-Probe PASS:
-- the two remaining classes do not share the same failure mechanism.
+No PR, push, manual, synthetic or challenge evidence can restore CONTROL.
 
-Rank PASS:
+## Proof / REX chain
 
-P0 — `long_compute_contended`
-- dominant scheduled direction: PAIRED
-- scheduled directional counts: PAIRED 9 / SINGLE 5
-- consistency: 0.6428571429 < 0.80
-- pooled winner strength: 0.5987602960 < 0.70
-- latest-two directional windows disagree
-- early direction: PAIRED
-- late direction: SINGLE
-- classification: `REGIME_REVERSAL_OBSERVED`
-- minimum clean dominant-direction windows required merely to reach 0.80 consistency: 11
-- next action: `DECOMPOSE_SIGNED_EFFECT_BY_RUNNER_LANE_AND_TEMPORAL_HALF`.
+REX-005 remains CONTROLLED:
+- implementation #246 late exact-head proof: run `35351860027`, job `105621646115`, PASS.
+- proof repair #252 post-merge recurrence: run `35352260069`, job `105622958891`, PASS.
 
-P1 — `human_dependency_wait_proxy`
-- dominant scheduled direction: SINGLE
-- scheduled directional counts: SINGLE 11 / PAIRED 4
-- consistency: 0.7333333333 < 0.80
-- pooled winner strength: 0.6212672162 < 0.70
-- latest-two directional windows disagree
-- direction flips: 7
-- indeterminate fraction: 0.2105263158
-- early direction: SINGLE
-- late direction: SINGLE
-- classification: `WEAK_OR_NOISY_DIRECTION`
-- minimum clean dominant-direction windows required merely to reach 0.80 consistency: 5
-- claim boundary: this is a controlled wait proxy, not evidence of real human intervention.
+That proof controls the sequencing defect; it does not compensate the later short_compute policy regression.
 
-### 3PC — Prepare / Prove / Commit
+## 3P* / MIP current position
 
-Prepare PASS:
-- deterministic burndown engine
-- unit tests
-- genuine-schedule downstream consumer
-- exact-head PR/push recurrence.
+- Refresh: PASS_WITH_GOVERNED_POST_CONTROL_REGRESSION
+- Probe: PASS_THREE_DISTINCT_FAILURE_MODES
+- Rank: P0 short_compute regression; P1 long_compute regime reversal; P2 human wait proxy weak/noisy
+- Prepare: PASS
+- Prove: PASS for temporal control machinery
+- Perpetuate: PASS for the machinery and restart chain; policy state remains surveillance-driven.
 
-Implementation PR #246 merged at `a56e94ee92077b912a5a3480ae73a1c13b775eba`.
+## Guards
 
-Its dedicated Prove job was still queued at merge time. This is retained as **REX-005 / unbound promotion-proof gate** rather than hidden.
-
-The original exact PR-head proof later executed successfully:
-- run `35351860027`
-- job `105621646115`
-- exact head `1b62b2d254b70e47b654df31d40ddfd6fabdc11c`
-- 3/3 unit tests PASS
-- `PASS_TEMPORAL_3PSTAR_MIP_ITERATION_CONTROL`.
-
-Therefore implementation correctness is proven, but the original merge-before-Prove sequence nonconformity remains historical.
-
-Proof-gate repair PR #252 merged at `243337e7170029ccfbcf1588ce951356fd1d22a7`.
-
-That repair adds merged-master recurrence. Its exact post-merge proof has now executed successfully:
-- merge SHA `243337e7170029ccfbcf1588ce951356fd1d22a7`
-- run `35352260069`
-- job `105622958891`
-- exact merge-SHA checkout PASS
-- real steps executed
-- 3/3 unit tests PASS
-- `PASS_TEMPORAL_3PSTAR_MIP_PROOF_REBIND_CONTROL`.
-
-The original #246 merge-before-Prove ordering remains preserved as negative history, but the REX-005 occurrence is now **CONTROLLED** by the proof-rebind merge plus post-merge recurrence.
-
-3PC Prove = PASS.
-3PC Commit = PASS_FIX_FORWARD_SEQUENCE_CONTROLLED.
-3P3 handover propagation = AUTHORIZED.
-
-## MIP iteration
-
-Modernize — PASS:
-- replaced one generic "unstable" bucket with explicit `REGIME_REVERSAL_OBSERVED` and `WEAK_OR_NOISY_DIRECTION` mechanisms.
-
-Innovate — PASS:
-- added deterministic first-red
-- consistency deficit
-- pooled winner-strength deficit
-- minimum clean dominant-window pressure
-- surveillance regime classification.
-
-Perpetuate — PASS:
-- each genuine scheduled Temporal Allocation Policy return can generate a governed burndown artifact;
-- PR-head exact proof is retained;
-- merged-master recurrence executed successfully;
-- the current handover and restart chain are repository-native.
-
-## Exact next predicate
-
-P0 is now the active executable frontier:
-
-`long_compute_contended -> DECOMPOSE_SIGNED_EFFECT_BY_RUNNER_LANE_AND_TEMPORAL_HALF`.
-
-Purpose:
-1. determine whether the observed early PAIRED -> late SINGLE reversal is runner-specific, lane-specific or a broader temporal regime shift;
-2. preserve the frozen CONTROL gate while separating mixed-regime evidence rather than averaging it away;
-3. emit a new first-red only from measured evidence.
-
-In parallel:
-- continue genuine-schedule stability measurement for `human_dependency_wait_proxy`;
-- retain the controlled-wait proxy claim boundary;
-- continue surveillance of the three CONTROL classes;
-- reopen a CONTROL class only on governed regression;
-- evaluate the 7 d surveillance horizon only once genuine scheduled span reaches 604,800 s.
-
-## Non-compensation
-
-- No threshold lowering.
-- No synthetic/manual/push/PR CONTROL clock credit.
-- No competency promotion.
-- No authority transfer.
-- No real-human claim from `human_dependency_wait_proxy`.
-- No full-set CONTROL claim.
-- No re-opening of the three accepted CONTROL classes without governed regression evidence.
+- frozen thresholds unchanged
+- genuine schedule only for CONTROL clock
+- historical 3/5 acceptance retained as history, not current truth
+- no competency promotion
+- no authority transfer
+- formal credit delta 0
+- human wait proxy is not real-human evidence.
