@@ -1,8 +1,8 @@
 schema: missioncontrol.gmi_c.w284_postmerge_close.v1
-as_of: '2026-09-18T15:45:00+02:00'
+as_of: '2026-09-18T15:46:00+02:00'
 wave: W284
 mission: GM-I-C
-status: MERGED_CONTROLLED_SAFE_CONTINUE_SELF_REPROOF_QUEUED
+status: MERGED_CONTROLLED_SAFE_CONTINUE_SELF_REPROOF_PASS
 authority_transfer: false
 formal_credit_delta: 0
 
@@ -32,16 +32,26 @@ missioncontrol_self_reproof:
   run_id: 35351911591
   job_id: 105621812291
   exact_head: 866e85365ab93508dd790696cafebef5e5305a13
-  state_at_close: QUEUED
-  executed_steps: null
-  credit: NONE
-  rule: QUEUED_NE_PASS_AND_QUEUED_NE_FAIL
+  conclusion: success
+  executed_steps_gt_zero: true
+  observed_steps: 11
+  key_steps:
+    - Checkout exact source head
+    - Assert exact source head
+    - Execute HOME self-validation
+    - Emit current-head HOME fleet receipt
+    - Validate child inbox plus current HOME receipt
+    - Upload HOME receipt and gate result
+    - Enforce HOME self-validation
+    - Enforce Mission-II federation DoV gate
+  credit: PASS_EXACT_HEAD_FEDERATION_CONTROL
 
 postmerge_workflows:
   merge_sha: f38bb5035008a22a9a7ab366c69509aa87e14195
   observed_at_close: 0
   state: WITHHELD_NO_POSTMERGE_WORKFLOW_ATTACHED
   broader_postmerge_dov: NOT_CLAIMED
+  rule: EXACT_HEAD_PASS_NE_POSTMERGE_RUN
 
 published_artifacts:
   current: mission-control/grand-missions/GM_I_C_W282_VISUAL_CURRENT_v1.yaml
@@ -66,23 +76,29 @@ terminal_state:
     raw_exports: ABSENT
 
 reentry:
-  w284_self_reproof:
-    trigger: RUN_35351911591_LEAVES_QUEUE
-    on_success: BIND_EXACT_JOB_STEPS_AND_CLOSE_SELF_REPROOF
-    on_failure: CLASSIFY_ONLY_OBSERVED_FIRST_RED
   w282_visual:
     triggers:
       - GOVERNED_VISUAL_METHOD_CHANGE
       - GOVERNED_VISUAL_POPULATION_CHANGE
       - OBSERVED_REGRESSION
+  qps_global:
+    trigger: RUNNER_ASSIGNED_AND_STEPS_GT_ZERO
+  r3_w275:
+    trigger: EXACT_SUCCESSOR_BUNDLE_RETURNED
+  ic3:
+    trigger: WIF_SERVICE_ACCOUNT_ACL_AND_HOSTED_RUN
+  temporal:
+    trigger: NEXT_GENUINE_SCHEDULE_EVENT
+  drive_raw:
+    trigger: ACTUAL_RAW_EXPORT_BYTES
 
 non_compensation:
-  SOURCE_PROOF_PASS_NE_MISSIONCONTROL_SELF_REPROOF_PASS: true
+  EXACT_HEAD_SELF_REPROOF_PASS_NE_POSTMERGE_DOV: true
   W284_MERGE_NE_PROJECT_GLOBAL_DOV: true
   W282_PROVE_PASS_NE_N300_CONTROL: true
   W282_PROVE_PASS_NE_PROJECT_GLOBAL_PCA: true
   W282_PROVE_PASS_NE_BRADLEY_TERRY: true
   W282_PROVE_PASS_NE_QPS_RUNTIME_GOLD: true
-  QUEUED_NE_ZERO: true
+  MISSIONCONTROL_PASS_NE_QPS_AUTHORITY_TRANSFER: true
   authority_transfer: false
   formal_credit_delta: 0
