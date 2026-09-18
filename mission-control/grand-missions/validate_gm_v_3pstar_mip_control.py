@@ -73,6 +73,7 @@ def main() -> int:
         control["three_pc"]["Prepare"]["result"] == "PASS_CONTROL_PREPARED"
         and control["three_pc"]["Prove"]["result"] == "WITHHELD_EXTERNAL"
         and control["three_pc"]["Commit"]["result"] == "HOLD_WAIT_PROVE"
+        and control["three_pc"]["Commit"]["gm_v_launch_authorized"] is False
     )
     checks["09_three_p3_not_authorized"] = control["three_p3"]["authorized"] is False
     checks["10_qps_gate_bound"] = (
@@ -145,7 +146,7 @@ def main() -> int:
         "checks": checks,
         "gm_iv_state": gm4["state"],
         "gm_v_state": gm5["state"],
-        "gm_v_launch_authorized": False,
+        "gm_v_launch_authorized": control["three_pc"]["Commit"]["gm_v_launch_authorized"],
         "three_pc_prove": control["three_pc"]["Prove"]["result"],
         "three_p3_authorized": control["three_p3"]["authorized"],
         "qps_runtime_gate": current["child_runtime_gate"]["classification"],
