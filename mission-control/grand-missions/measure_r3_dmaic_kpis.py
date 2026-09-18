@@ -15,11 +15,15 @@ def compute(doc: dict) -> dict:
     primary = [x for x in prs if x["role"] == "PRIMARY"]
     repairs_needed = [x for x in primary if x["required_recursive_repair"]]
     defects = doc["observed_defect_classes"]
+    for row in defects:
+        if type(row.get("closed")) is not bool:
+            fail(f"defect {row.get('id')} closed must be JSON boolean")
     before = doc["outcome_before"]
     current = doc["outcome_current"]
     def reduction(key: str) -> float:
         b, c = before[key], current[key]
         return 0.0 if b == 0 else (b-c)/b
+    closed_count = sum(row["closed"] is True for row in defects)
     return {
         "pr_count": len(prs),
         "mean_merge_lead_seconds": statistics.mean(lead),
@@ -28,8 +32,8 @@ def compute(doc: dict) -> dict:
         "primary_prs_requiring_recursive_repair": len(repairs_needed),
         "historical_first_pass_closure_rate": 1.0 - len(repairs_needed)/len(primary),
         "defect_classes_observed": len(defects),
-        "defect_classes_closed": sum(bool(x["closed"]) for x in defects),
-        "repair_closure_yield": sum(bool(x["closed"]) for x in defects)/len(defects),
+        "defect_classes_closed": closed_count,
+        "repair_closure_yield": closed_count/len(defects),
         "physical_prerequisite_reduction_fraction": reduction("physical_r3_prerequisites_open"),
         "first_red_reduction_fraction": reduction("first_red_cardinality"),
         "exact_environment_admission_delta": current["exact_environment_capsule_admitted"]-before["exact_environment_capsule_admitted"],
@@ -55,6 +59,10 @@ def validate(doc: dict) -> dict:
         fail(f"guard drift: {guards}")
     got = compute(doc)
     exp = doc["expected_kpis"]
+    if set(exp) != set(got):
+        missing=sorted(set(got)-set(exp))
+        extra=sorted(set(exp)-set(got))
+        fail(f"expected_kpis key-set mismatch missing={missing} extra={extra}")
     for key, wanted in exp.items():
         actual = got[key]
         if isinstance(wanted, float):
@@ -65,22 +73,17 @@ def validate(doc: dict) -> dict:
     return got
 
 def self_test(doc: dict) -> None:
-    bad = copy.deepcopy(doc)
-    bad["population"]["prs"][0]["merge_lead_seconds"] += 1
-    try:
-        validate(bad)
-    except SystemExit:
-        pass
-    else:
-        fail("self-test failed to reject KPI drift")
-    bad = copy.deepcopy(doc)
-    bad["guards"]["r4"] = "PASS"
-    try:
-        validate(bad)
-    except SystemExit:
-        pass
-    else:
-        fail("self-test failed to reject authority/gate drift")
+    cases=[]
+    d=copy.deepcopy(doc); d["population"]["prs"][0]["merge_lead_seconds"] += 1; cases.append(("KPI drift",d))
+    d=copy.deepcopy(doc); d["guards"]["r4"]="PASS"; cases.append(("gate drift",d))
+    d=copy.deepcopy(doc); d["expected_kpis"].pop("current_successor_binding_delta"); cases.append(("missing KPI key",d))
+    d=copy.deepcopy(doc); d["observed_defect_classes"][0]["closed"]="false"; cases.append(("non-boolean closed",d))
+    for label,bad in cases:
+        try:
+            validate(bad)
+        except SystemExit:
+            continue
+        fail(f"self-test failed to reject {label}")
 
 def main() -> int:
     ap=argparse.ArgumentParser()
@@ -104,8 +107,7 @@ def main() -> int:
         "next":"W278_MIP_I_PREMERGE_INVARIANT_DETECTION",
     }
     payload=json.dumps(receipt,indent=2,sort_keys=True)+"\n"
-    if a.out:
-        Path(a.out).write_text(payload,encoding="utf-8")
+    if a.out: Path(a.out).write_text(payload,encoding="utf-8")
     print(payload,end="")
     return 0
 
