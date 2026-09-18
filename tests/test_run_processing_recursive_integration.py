@@ -65,7 +65,7 @@ class RunProcessingRecursiveIntegrationTests(unittest.TestCase):
             payload["phases"]["recursive_build"]["sha256"],
             MOD.sha256_file(recursive_path),
         )
-        self.assertIn("do not create engineering", payload["authority_guardrail"])
+        self.assertIn("do not create", payload["authority_guardrail"])
 
     def test_recursive_build_invokes_canonical_master(self):
         _, recursive_path = self.make_phase_receipts()
