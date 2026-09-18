@@ -577,7 +577,7 @@
     },
     {
       "control_id": "REX-CM-005",
-      "state": "ACTIVE_PREVENTION_WITHHELD",
+      "state": "ACTIVE_PREVENTION_WITHHELD_OWNER_ADMIN_GATE",
       "root_ids": [
         "HIST-BD-018"
       ],
@@ -592,8 +592,25 @@
         "run35352120094 queued final re-proof",
         "run35352120094 PASS policy+inventory 142 workflows",
         "HIST-BD-018 repair DONE",
-        "merge-admission prevention still unbound"
-      ]
+        "merge-admission prevention still unbound",
+        "GET /repos/GBOGEB/ABACUS/rulesets -> []",
+        "main branch observed protected=false",
+        "branch protection endpoint -> 403 Resource not accessible by integration",
+        "check-run policy-and-inventory job105622495352 PASS"
+      ],
+      "execution_boundary": {
+        "classification": "REPOSITORY_ADMIN_MERGE_ADMISSION",
+        "abacus_rulesets_observed": 0,
+        "main_protected_observed": false,
+        "branch_protection_read": "FORBIDDEN_TO_INTEGRATION_403",
+        "required_check_candidate": {
+          "workflow": "CI Workflow Governance",
+          "job": "policy-and-inventory",
+          "proof_run": 35352120094,
+          "proof_job": 105622495352
+        },
+        "session_write_capability": "NO_RULESET_OR_BRANCH_PROTECTION_WRITE_TOOL_EXPOSED"
+      }
     }
   ],
   "open_priority": [
