@@ -1,0 +1,75 @@
+{
+  "schema": "missioncontrol.hm01.r3.dmaic_w285_3pr_refresh.v1",
+  "as_of": "2026-09-18T16:49:00+02:00",
+  "issue": "GBOGEB/pipeline-automation-hub#209",
+  "method": "3PR",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "refresh": {
+    "pipeline_automation_hub": {
+      "branch": "master",
+      "head": "8d0e2ecba2c318527eb99c8b504994995deb660e"
+    },
+    "cryoplant_project": {
+      "branch": "main",
+      "head": "41998c71cf187e3640cf273f7be9b5b96539aab1"
+    },
+    "gemini": {
+      "branch": "main",
+      "head": "439838866e77784334ef76d231f9a9e0aa4f5e5c"
+    }
+  },
+  "probe": {
+    "r3_release_issue": "GBOGEB/cryoplant-project#1398",
+    "environment_issue": "GBOGEB/cryoplant-project#1426",
+    "dmaic_issue": "GBOGEB/pipeline-automation-hub#209",
+    "active_successor": "1248290ca0a9d55ec83d0efa0235ed1a45a88eeb",
+    "exact_capsule_schema_authoritative": "gmi.r3_successor.exact_env_capsule.v2",
+    "producer_repo": "GBOGEB/GEMINI",
+    "producer_state": "PASS_MERGED",
+    "physical_bundle_state": "WAIT_RETURN",
+    "first_red": "PHYSICAL_SUCCESSOR_GIT_BUNDLE_RETURN_1248290C",
+    "r3_release_production_dov": "WITHHELD",
+    "r4": "BLOCKED_NOT_NEXT"
+  },
+  "rank": [
+    {
+      "order": 1,
+      "id": "QPS_EXACT_ENV_VALIDATOR_SCHEMA_DRIFT",
+      "severity": "P1",
+      "action": "MIP_MODERNIZE_QPS_VALIDATOR_TO_AUTHORITATIVE_UNDERSCORE_SCHEMA"
+    },
+    {
+      "order": 2,
+      "id": "MC_PROTECTED_RECEIPT_SCHEMA_BINDING_DRIFT",
+      "severity": "P1",
+      "action": "MIP_INNOVATE_FEDERATION_V5_FROM_CANONICAL_QPS_AND_GEMINI_SCHEMA"
+    },
+    {
+      "order": 3,
+      "id": "MC_PRODUCER_READINESS_UNVALIDATED",
+      "severity": "P2",
+      "action": "MIP_INNOVATE_VALIDATE_SUCCESSOR_GIT_OBJECT_PRODUCER_STATE"
+    },
+    {
+      "order": 4,
+      "id": "MC_PHYSICAL_ABSENCE_UNVALIDATED",
+      "severity": "P2",
+      "action": "MIP_INNOVATE_VALIDATE_WAIT_RETURN_AND_QUALIFYING_BUNDLE_FALSE"
+    },
+    {
+      "order": 5,
+      "id": "QPS_DMAIC_CONSUMER_FAIL_OPEN",
+      "severity": "P2",
+      "action": "MIP_MODERNIZE_VALIDATE_ALL_PROPAGATED_KPI_AND_REMEASUREMENT_TRIGGERS"
+    }
+  ],
+  "guards": {
+    "issue_923": "RED_OWNER_ACTION",
+    "gt_bdq_0": "RED_BLOCKED_ON_923_INFRA_PREEXECUTION",
+    "runtime_gold": "WITHHELD",
+    "canonical_gt_credit": "NONE",
+    "r3_release_3p3_authorized": false
+  },
+  "next": "MIP_MODERNIZE_QPS_EXACT_ENV_AND_DMAIC_CONSUMER"
+}
