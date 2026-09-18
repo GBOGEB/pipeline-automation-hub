@@ -12,8 +12,12 @@ history:
   qps_modernize_pr: GBOGEB/cryoplant-project#1494
   qps_modernize_head: 4cf5dd60980ff9eef45d542fb0a2f1afd25b1c20
   qps_modernize_merge: 2571a520e2d765cf4089a8cd375ca3dd290def58
+  qps_modernize_retry1_pr: GBOGEB/cryoplant-project#1508
+  qps_modernize_retry1_merge: 80b177e2b738eabe9285bd8381c88733508c8141
   qps_dmaic_consumer_blob: ad02b2ac0dadf84c7ac4d44d55a64f77cefe00cb
-  qps_dmaic_validator_blob: 79e82e4a5b3e5c176aa76998f681e9ccef5222d9
+  qps_dmaic_validator_blob: 860342271da0b9a4363ac41c88e14b800d8e8c09
+  qps_dmaic_tests_blob: f56daab03c536e70dc249447685a3871b1155c96
+  qps_numeric_type_repair_blob: ac768aa888aebddc4e780f5fb43bf4856c48af0d
   qps_exact_env_validator_blob: a683201464240ec48d927225e6a52e284b7077cf
 
 current_qps_restart:
@@ -30,7 +34,7 @@ exact_environment:
   producer_repo: GBOGEB/GEMINI
   producer_merge: 8b8e72400bb6860789b11b1fca3b809fc8ca6524
   validator_hygiene_merge: 9faeb10cd57395538eb163791c7c56ba90be711b
-  qps_contract_validator_fix_merge: 2571a520e2d765cf4089a8cd375ca3dd290def58
+  qps_contract_validator_fix_merge: 80b177e2b738eabe9285bd8381c88733508c8141
 
 successor_git_object_producer:
   state: PASS_MERGED
