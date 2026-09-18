@@ -1,0 +1,21 @@
+schema: missioncontrol.hm01.r3.dmaic_w280_review_repair.v1
+as_of: '2026-09-18T13:51:00+02:00'
+issue: GBOGEB/pipeline-automation-hub#209
+parents:
+  - PR210
+  - PR211
+review_findings:
+  total: 5
+  p1: 2
+  p2: 3
+repairs:
+  expected_kpi_keyset_exact: true
+  closure_flag_json_boolean_strict: true
+  protected_control_paths_trigger_premerge: true
+  protected_control_content_validated_directly: true
+  active_source_hash_validated_against_predecessor: true
+  fault_class_set_exact_unique: true
+status: REPAIR_IMPLEMENTED_WAIT_EXACT_HEAD_PROOF
+authority_transfer: false
+formal_credit_delta: 0
+r3_release_state_unchanged: true
