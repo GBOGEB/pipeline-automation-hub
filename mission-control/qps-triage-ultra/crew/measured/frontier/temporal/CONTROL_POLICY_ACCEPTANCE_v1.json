@@ -2,21 +2,25 @@
   "schema": "missioncontrol.temporal_control_policy_acceptance.v1",
   "mission_id": "MC-CREW-FRONTIER-004",
   "status": "CONTROL_SPLIT_ACCEPTED_BOUNDED",
-  "purpose": "Persist the first post-24h genuine-schedule CONTROL disposition without converting nonqualifying classes or competency into CONTROL.",
-  "predecessor_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/REPEAT_STABLE_ACCEPTANCE_v1.json",
+  "purpose": "Supersede the earlier 2/5 CONTROL snapshot with the latest exact genuine-schedule frontier; promote only classes independently satisfying every frozen CONTROL gate.",
+  "predecessor_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONTROL_POLICY_ACCEPTANCE_v1.json@db73064e3b2ffe6f4e63e55c66443194d62a0305",
+  "supersedes_control_snapshot": {
+    "merge_sha": "db73064e3b2ffe6f4e63e55c66443194d62a0305",
+    "prior_control_class_count": 2,
+    "reason": "Later genuine schedule-event history already existed and independently moved short_compute across the frozen pooled-winner threshold."
+  },
   "basis": {
-    "source_sha": "4d538cd9ae3348f35dd9c17e54e6981afa0f3d8b",
-    "workflow_run_id": "35171284135",
-    "analyzer_job_id": "105043442554",
+    "source_sha": "9e7e698c1cf40b594244aba01e1ea704ef76d203",
+    "workflow_run_id": "35319784958",
     "workflow_event": "schedule",
     "workflow_conclusion": "success",
-    "artifact_id": "10476976317",
-    "artifact_name": "crew-temporal-pc3-4d538cd9ae3348f35dd9c17e54e6981afa0f3d8b",
-    "artifact_digest": "sha256:e8188c589511aeb6c1211da5fc8f19bb47a71b7211000126b6f73a6749c83f8b",
+    "artifact_id": "10536637698",
+    "artifact_name": "crew-temporal-pc3-9e7e698c1cf40b594244aba01e1ea704ef76d203",
+    "artifact_digest": "sha256:d72bc6ec77c07821ef1a4191796dd0c0e008b9f05a95a46d4c913f3062648ce9",
     "scheduled_control_frontier": {
-      "independent_windows": 14,
-      "distinct_source_shas": 8,
-      "temporal_span_seconds": 281718,
+      "independent_windows": 19,
+      "distinct_source_shas": 11,
+      "temporal_span_seconds": 389315,
       "hosted_runner_classes": [
         "linux",
         "macos",
@@ -27,6 +31,7 @@
         "held"
       ],
       "rex_veto": false,
+      "observed_pairs_total_per_class": 114,
       "window_ids": [
         "34777489874",
         "34796773101",
@@ -41,11 +46,15 @@
         "35069009407",
         "35102159593",
         "35140384394",
-        "35171284135"
+        "35171284135",
+        "35195061938",
+        "35227281688",
+        "35264728950",
+        "35296016444",
+        "35319784958"
       ]
     },
-    "constrained_runner_extension": "DEFERRED_NO_DECLARED_CONSTRAINED_RUNNER",
-    "historical_collection_errors": 0
+    "constrained_runner_extension": "DEFERRED_NO_DECLARED_CONSTRAINED_RUNNER"
   },
   "frozen_control_gate": {
     "min_independent_windows": 6,
@@ -60,8 +69,10 @@
   },
   "surveillance": {
     "medium_72h_target_seconds": 259200,
-    "observed_span_seconds": 281718,
     "medium_72h_reached": true,
+    "medium_7d_target_seconds": 604800,
+    "medium_7d_reached": false,
+    "observed_span_seconds": 389315,
     "role": "robustness_surveillance_not_additional_promotion_gate"
   },
   "authority_transfer": false,
@@ -72,19 +83,41 @@
       "policy_status": "CONTROL_POLICY",
       "allocation_recommendation": "ALLOC_SINGLE_CELL",
       "allocation_policy_promotion": true,
-      "directional_windows": 14,
+      "directional_windows": 19,
       "direction_consistency": 1,
-      "pooled_winner_strength": 0.9895927601809954,
+      "direction_counts": {
+        "ALLOC_SINGLE_CELL": 19
+      },
+      "pooled_winner_strength": 0.990783519885687,
       "latest_two_directional_windows_agree": true,
       "first_red_gate": null
+    },
+    {
+      "task_class": "short_compute",
+      "policy_status": "CONTROL_POLICY",
+      "allocation_recommendation": "ALLOC_SINGLE_CELL",
+      "allocation_policy_promotion": true,
+      "directional_windows": 16,
+      "direction_consistency": 0.9375,
+      "direction_counts": {
+        "ALLOC_SINGLE_CELL": 15,
+        "ALLOC_PAIRED_CELL": 1
+      },
+      "pooled_winner_strength": 0.7008026572612402,
+      "latest_two_directional_windows_agree": true,
+      "first_red_gate": null,
+      "note": "Newly crosses the frozen >=0.70 pooled-winner CONTROL threshold on genuine scheduled evidence; margin is narrow and remains surveillance-sensitive."
     },
     {
       "task_class": "validation_bundle",
       "policy_status": "CONTROL_POLICY",
       "allocation_recommendation": "ALLOC_PAIRED_CELL",
       "allocation_policy_promotion": true,
-      "directional_windows": 14,
+      "directional_windows": 19,
       "direction_consistency": 1,
+      "direction_counts": {
+        "ALLOC_PAIRED_CELL": 19
+      },
       "pooled_winner_strength": 0.9941176470588236,
       "latest_two_directional_windows_agree": true,
       "first_red_gate": null
@@ -92,61 +125,59 @@
   ],
   "noncontrol_classes": [
     {
-      "task_class": "short_compute",
-      "policy_status": "RECOMMEND_REPEAT_STABLE",
-      "allocation_recommendation": "ALLOC_SINGLE_CELL",
-      "allocation_policy_promotion": false,
-      "directional_windows": 12,
-      "direction_consistency": 0.9166666666666666,
-      "pooled_winner_strength": 0.6989199739752765,
-      "latest_two_directional_windows_agree": true,
-      "first_red_gate": "pooled_winner_strength",
-      "failed_control_gates": [
-        "pooled_winner_strength"
-      ]
-    },
-    {
       "task_class": "human_dependency_wait_proxy",
-      "policy_status": "LEARNING",
+      "policy_status": "LEARNING_DIRECTION_UNSTABLE",
       "allocation_recommendation": "NO_POLICY",
       "allocation_policy_promotion": false,
-      "directional_windows": 11,
-      "direction_consistency": 0.8181818181818182,
-      "pooled_winner_strength": 0.6575827918875873,
+      "directional_windows": 15,
+      "direction_consistency": 0.7333333333333333,
+      "direction_counts": {
+        "ALLOC_SINGLE_CELL": 11,
+        "ALLOC_PAIRED_CELL": 4
+      },
+      "pooled_winner_strength": 0.6212672162393283,
       "latest_two_directional_windows_agree": false,
-      "first_red_gate": "pooled_winner_strength",
+      "first_red_gate": "direction_consistency",
       "failed_control_gates": [
+        "direction_consistency",
         "pooled_winner_strength",
         "latest_two_directional_windows_agree"
-      ]
+      ],
+      "note": "This remains a controlled wait proxy, not evidence about real human intervention."
     },
     {
       "task_class": "long_compute_contended",
       "policy_status": "LEARNING_DIRECTION_UNSTABLE",
       "allocation_recommendation": "NO_POLICY",
       "allocation_policy_promotion": false,
-      "directional_windows": 11,
-      "direction_consistency": 0.7272727272727273,
-      "pooled_winner_strength": 0.6391246684350133,
-      "latest_two_directional_windows_agree": true,
+      "directional_windows": 14,
+      "direction_consistency": 0.6428571428571429,
+      "direction_counts": {
+        "ALLOC_PAIRED_CELL": 9,
+        "ALLOC_SINGLE_CELL": 5
+      },
+      "pooled_winner_strength": 0.5987602959653776,
+      "latest_two_directional_windows_agree": false,
       "first_red_gate": "direction_consistency",
       "failed_control_gates": [
         "direction_consistency",
-        "pooled_winner_strength"
+        "pooled_winner_strength",
+        "latest_two_directional_windows_agree"
       ]
     }
   ],
   "full_control_policy": {
     "independently_satisfied": false,
-    "control_class_count": 2,
+    "control_class_count": 3,
     "task_class_count": 5,
-    "noncontrol_class_count": 3,
-    "rule": "Full-fleet CONTROL is false until every task class independently satisfies every frozen CONTROL gate; class-level CONTROL remains valid for qualifying classes."
+    "noncontrol_class_count": 2,
+    "rule": "Full-set CONTROL remains false until every task class independently satisfies every frozen CONTROL gate. Existing class-level CONTROL is revocable by later governed surveillance evidence."
   },
   "guards": {
     "synthetic_or_noop_clock_evidence_admitted": false,
     "manual_window_credit": false,
     "thresholds_changed": false,
+    "push_event_used_as_control_clock": false,
     "persistent_or_regression_rex_veto_remains_authoritative": true
   }
 }
