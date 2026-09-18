@@ -1,0 +1,65 @@
+name: W280RF Exact Federation Sample 5 Return
+
+on:
+  pull_request:
+    paths:
+      - federation/w280r/**
+      - .github/workflows/w280rf-federation-sample5-return.yml
+  push:
+    branches: [master]
+    paths:
+      - federation/w280r/**
+      - .github/workflows/w280rf-federation-sample5-return.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  exact-w280r:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: federation/w280r/payload
+    steps:
+      - name: Checkout exact consumer head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Verify eight exact W280R delta blobs
+        shell: bash
+        run: |
+          test "$(git hash-object controls/QPS_W280_FEDERATION_SAMPLE5_CURRENT_v0.1.json)" = "ac5983580fcdde44e558537383ca1413fcd2d979"
+          test "$(git hash-object triage/w280/QPS_W280_SAMPLE5_FEATURE_MATRIX_ACCEPTED_v0.2.json)" = "9ea57d5a321d93176986015e4e9768a508726a3c"
+          test "$(git hash-object triage/w280/QPS_W280_FEDERATION_RUNTIME_CONTROL_v0.2.json)" = "f025c774207792472246ab21da88794e03e7b3f1"
+          test "$(git hash-object triage/w280/QPS_W280_BT_COUNTEROUTCOME_SEARCH_v0.2.json)" = "ad3f9709f6478b8018161e9aadc86b56ccf7587e"
+          test "$(git hash-object triage/w280/QPS_W280_GOVERNED_SURFACE_CENSUS_v0.2.json)" = "967205bb52ce9c7c43771b63641df6d714d7ca07"
+          test "$(git hash-object scripts/qps_w280_validate_federation_sample5.py)" = "c399020c57d27e059a0675d39808fd80eff4cce6"
+          test "$(git hash-object tests/test_qps_w280_federation_sample5.py)" = "e3750cd1bf6e2a47b05069063c72094a6f39a854"
+          test "$(git hash-object .github/workflows/qps-w280-federation-sample5.yml)" = "d2b599a9e684e339d6fede0c5051db5cc2ceb15b"
+
+      - name: Execute W280R validator
+        run: python scripts/qps_w280_validate_federation_sample5.py --out w280rf-validation-receipt.json
+
+      - name: Execute W280R tests
+        run: python -m unittest tests/test_qps_w280_federation_sample5.py -v
+
+      - name: Upload W280RF receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: w280rf-${{ github.event.pull_request.head.sha || github.sha }}
+          path: federation/w280r/payload/w280rf-validation-receipt.json
+
+      - name: Publish observable W280RF master repeat
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh issue create \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "W280RF MASTER REPEAT PASS ${GITHUB_RUN_ID}" \
+            --body "Exact W280R 8/8 delta, authoritative-return validator, tests, and artifact upload passed on master. run_id=${GITHUB_RUN_ID}; sha=${GITHUB_SHA}; source_qps_pr=1473; source_qps_head=bfba1a993ba409b6d614047160d72ced0a999bb0; authority_transfer=false."

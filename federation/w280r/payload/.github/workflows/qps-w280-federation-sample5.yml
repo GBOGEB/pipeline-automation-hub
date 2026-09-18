@@ -1,0 +1,40 @@
+name: QPS W280R Federation Sample 5 Return
+
+on:
+  pull_request:
+    paths:
+      - controls/QPS_W280_FEDERATION_SAMPLE5_CURRENT_v0.1.json
+      - triage/w280/**
+      - scripts/qps_w280_validate_federation_sample5.py
+      - tests/test_qps_w280_federation_sample5.py
+      - .github/workflows/qps-w280-federation-sample5.yml
+  push:
+    branches: [main]
+    paths:
+      - controls/QPS_W280_FEDERATION_SAMPLE5_CURRENT_v0.1.json
+      - triage/w280/**
+      - scripts/qps_w280_validate_federation_sample5.py
+      - tests/test_qps_w280_federation_sample5.py
+      - .github/workflows/qps-w280-federation-sample5.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prove-w280r:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact return head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Validate W280R authoritative return
+        run: python scripts/qps_w280_validate_federation_sample5.py --out w280r-validation-receipt.json
+      - name: Execute W280R regression tests
+        run: python -m unittest tests/test_qps_w280_federation_sample5.py -v
+      - name: Upload W280R receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-w280r-${{ github.event.pull_request.head.sha || github.sha }}
+          path: w280r-validation-receipt.json
