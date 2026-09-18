@@ -1,0 +1,46 @@
+schema: missioncontrol.qps_requirements_table3.postmerge_receipt/v0.1
+as_of: '2026-09-18T18:35:00+02:00'
+mission: QPS_REQUIREMENTS_TABLE3_GOVERNANCE
+state: CHILD_POSTMERGE_CLOSE_RECEIVED
+authority_transfer: false
+formal_credit_delta: 0
+
+closed_child_lineage:
+  governance_pr:
+    repo: GBOGEB/cryoplant-project
+    pr: 1538
+    head: 18577d06d29e5ee8ecce6806e3bfcc289b16b868
+    merge: d2e495fca88752ed5efff82bd2466432ce5a8e35
+  prior_missioncontrol_receipt:
+    pr: 280
+    head: 3ce50d77d91b15964299ad467307b973d785bcb8
+    merge: e263034a391ed792a2fc57850493a3a385d56ea4
+
+child_postmerge_close_candidate:
+  repo: GBOGEB/cryoplant-project
+  pr: 1539
+  head: 7c15610d1b4d5b77a88566a7db8ff8682bcde19a
+  receipt: triage/w287/QPS_W287_POSTMERGE_PERPETUATE_CLOSE_v0.1.yaml
+  handover: handover/session/SC_2026-09-18_W287_REQUIREMENTS_TABLE3_POSTMERGE_v2.md
+
+perpetuated_semantics:
+  table3_parent_requirements: 23
+  stakeholder_authority: SECTION_4_8_ONLY
+  deliverable_authority: SECTION_4_9_ONLY
+  local_parallel_deliverable_namespace: FORBIDDEN
+  missing_mapping_state: EXPLICIT_GAP
+  partial_mapping_state: NOT_FULL_FULFILMENT
+
+next_bounded_objective:
+  id: W287_DREQ_GAP_CLOSURE
+  class: CANDIDATE_SECTION_4_9_AMENDMENTS
+  authority_rule: >-
+    Candidate amendments remain derived/document-control proposals until integrated
+    into the controlled source document. MissionControl does not promote them to
+    engineering, compliance, negotiation, acceptance or source authority.
+
+non_compensation:
+  - POSTMERGE_RECEIPT_NE_SOURCE_AUTHORITY_CHANGE
+  - MAPPING_NE_DELIVERABLE_COMPLETION
+  - CANDIDATE_NE_ACCEPTED_DELIVERABLE_REQUIREMENT
+  - AUTHORITY_TRANSFER_FALSE
