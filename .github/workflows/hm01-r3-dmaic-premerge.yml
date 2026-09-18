@@ -5,6 +5,9 @@ on:
     branches: [master]
     paths:
       - "mission-control/grand-missions/R3_DMAIC_PREMERGE_CONTRACT_v1.json"
+      - "mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_3PSTAR_MIP_CONTROL_v1.yaml"
+      - "mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_INGRESS_MANIFEST_v2.yaml"
+      - "mission-control/qps-triage-ultra/missions/receipts/HM01_R3_W275_3PSTAR_MIP_FEDERATION_20260918_v*.yaml"
       - "mission-control/grand-missions/validate_r3_dmaic_premerge.py"
       - "mission-control/grand-missions/tests/test_r3_dmaic_premerge.py"
       - ".github/workflows/hm01-r3-dmaic-premerge.yml"
@@ -18,16 +21,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Prove five observed recurrence classes fail closed
+      - name: Prove recurrence classes and protected controls fail closed
         run: |
           mkdir -p output/r3-dmaic
-          python mission-control/grand-missions/validate_r3_dmaic_premerge.py             --contract mission-control/grand-missions/R3_DMAIC_PREMERGE_CONTRACT_v1.json             --out output/r3-dmaic/R3_DMAIC_PREMERGE_RECEIPT_v1.json
-      - name: Run premerge fault-injection tests
+          python mission-control/grand-missions/validate_r3_dmaic_premerge.py             --repo-root .             --contract mission-control/grand-missions/R3_DMAIC_PREMERGE_CONTRACT_v1.json             --out output/r3-dmaic/R3_DMAIC_PREMERGE_RECEIPT_v2.json
+      - name: Run premerge fault-injection and protected-control tests
         run: python -m unittest mission-control/grand-missions/tests/test_r3_dmaic_premerge.py
       - name: Upload premerge proof
         uses: actions/upload-artifact@v4
         with:
           name: hm01-r3-dmaic-premerge
-          path: output/r3-dmaic/R3_DMAIC_PREMERGE_RECEIPT_v1.json
+          path: output/r3-dmaic/R3_DMAIC_PREMERGE_RECEIPT_v2.json
           if-no-files-found: error
           retention-days: 30
