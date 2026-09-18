@@ -1,0 +1,32 @@
+schema: missioncontrol.qps_leg5_w249_3pstar_mip_followup_execution_receipt/v2
+as_of: '2026-09-18T13:20:00+02:00'
+repo: GBOGEB/pipeline-automation-hub
+pr: 203
+proof_source_head: c60e4d6ee4a589a67e1b186a55feb1a48774392f
+workflow: QPS_TRIAGE_ULTRA_Federation_Control
+run: 35339006530
+job: 105580385281
+result: PASS
+steps_gt_zero: true
+proof_scope:
+  - exact_source_head_assertion
+  - HOME_self_validation
+  - current_head_HOME_fleet_receipt
+  - child_inbox_validation
+  - artifact_upload
+  - Mission_II_federation_DoV_gate
+child:
+  repo: GBOGEB/cryoplant-project
+  main: bfa80d4fa9756f03dd4aaa4c6dedff92b53760d6
+  leg5_state: 7_OF_9_CLOSED
+  runtime_gate: 923
+  routes_withheld: [1266, 1357]
+classification: PARENT_CONTROL_PROOF_PASS_NONCOMPENSATING
+authority_transfer: false
+formal_credit_delta: 0
+qps_runtime_credit_delta: 0
+guards:
+  - THIS_PASS_DOES_NOT_CLOSE_QPS_1266_OR_1357
+  - THIS_PASS_DOES_NOT_SATISFY_QPS_923
+  - THIS_PASS_DOES_NOT_CREATE_ENGINEERING_NEGOTIATION_RELEASE_OR_GOLD_CREDIT
+final_head_reproof_required: true
