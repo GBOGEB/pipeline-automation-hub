@@ -1,0 +1,68 @@
+{
+  "schema": "missioncontrol.first_pass_closure_policy.v1",
+  "as_of": "2026-09-18T22:16:00+02:00",
+  "issue": "GBOGEB/pipeline-automation-hub#304",
+  "objective": "MAKE_MERGE_THE_LAST_EVENT_AFTER_EXACT_HEAD_PROOF_AND_REVIEW_CLEAN",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "historical_baseline": {
+    "first_pass_closure_rate": 0.25,
+    "primary_pr_population": 4,
+    "mean_merge_lead_seconds": 210,
+    "median_merge_lead_seconds": 169,
+    "immutable": true
+  },
+  "prospective_cohort": {
+    "size": 8,
+    "minimum_clean_first_pass": 7,
+    "minimum_rate": 0.875,
+    "stretch_clean_first_pass": 8,
+    "stretch_rate": 1,
+    "max_postmerge_p1_p2_findings": 0,
+    "max_repair_prs": 1
+  },
+  "merge_allowed_expression": [
+    "PR_HEAD_EXACT",
+    "CANONICAL_SELF_TEST_PROOF_PASS",
+    "MUTATION_OR_FAULT_PROOF_PASS",
+    "EXACT_HEAD_CI_PROOF_PASS",
+    "CODEX_REVIEW_COMPLETED_ON_EXACT_HEAD",
+    "CODEX_FINDING_REVIEW_COUNT_ON_EXACT_HEAD_EQUALS_ZERO"
+  ],
+  "pr_body_receipt": {
+    "marker": "FPC_RECEIPT_V1",
+    "schema": "first_pass_closure/v1",
+    "required_fields": [
+      "schema",
+      "head_sha",
+      "required_runs"
+    ],
+    "required_proof_purposes": [
+      "canonical_self_test",
+      "mutation_test",
+      "exact_head_ci"
+    ]
+  },
+  "codex_contract": {
+    "summary_marker": "<!-- codex-pull-request-review-summary -->",
+    "reviewer_login": "chatgpt-codex-connector",
+    "clean_rule": "SUMMARY_COMPLETED_FOR_EXACT_HEAD_AND_NO_COMMENTED_CODEX_REVIEW_BOUND_TO_EXACT_HEAD"
+  },
+  "fail_closed_on": [
+    "MISSING_RECEIPT",
+    "STALE_HEAD",
+    "MISSING_REQUIRED_PROOF_PURPOSE",
+    "RUN_NOT_SUCCESS",
+    "RUN_HEAD_MISMATCH",
+    "CODEX_REVIEW_NOT_COMPLETED",
+    "CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD"
+  ],
+  "non_compensation": {
+    "r3_release_credit": "NONE",
+    "runtime_gold": "UNCHANGED",
+    "canonical_gt_credit": "NONE",
+    "engineering_credit_delta": 0,
+    "formal_credit_delta": 0,
+    "authority_transfer": false
+  }
+}

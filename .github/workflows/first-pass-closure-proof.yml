@@ -1,0 +1,46 @@
+name: First-Pass Closure Proof
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - "mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json"
+      - "scripts/first_pass_closure_gate.py"
+      - "scripts/tests/test_first_pass_closure_gate.py"
+      - ".github/workflows/first-pass-closure-proof.yml"
+      - ".github/workflows/first-pass-closure-gate.yml"
+      - "docs/W305_FIRST_PASS_CLOSURE_GATE.md"
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number (gate workflow only)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  canonical-self-test-and-mutation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Compile gate
+        run: python -m py_compile scripts/first_pass_closure_gate.py
+      - name: Canonical self-test and mutation/fault matrix
+        run: python -m unittest scripts/tests/test_first_pass_closure_gate.py
+      - name: Policy sanity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path("mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json").read_text())
+          assert p["historical_baseline"]["immutable"] is True
+          assert p["prospective_cohort"]["minimum_rate"] == 0.875
+          assert p["prospective_cohort"]["stretch_rate"] == 1.0
+          assert p["non_compensation"]["authority_transfer"] is False
+          assert p["non_compensation"]["formal_credit_delta"] == 0
+          print("FPC_POLICY_SANITY=PASS")
+          PY
