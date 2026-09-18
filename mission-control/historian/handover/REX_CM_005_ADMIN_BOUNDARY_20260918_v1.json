@@ -1,0 +1,48 @@
+{
+  "schema": "missioncontrol.rex_cm_005.admin_boundary.v1",
+  "status": "OWNER_ADMIN_ACTION_REQUIRED",
+  "as_of": "2026-09-18T16:05:00+02:00",
+  "control_id": "REX-CM-005",
+  "root_id": "HIST-BD-018",
+  "repair_state": "DONE",
+  "prevention_state": "WITHHELD",
+  "repository": "GBOGEB/ABACUS",
+  "observations": {
+    "rulesets": [],
+    "main_protected": false,
+    "branch_protection_read": {
+      "result": "FORBIDDEN",
+      "status": 403,
+      "message": "Resource not accessible by integration"
+    },
+    "required_check_evidence": {
+      "workflow": "CI Workflow Governance",
+      "job_name": "policy-and-inventory",
+      "run_id": 35352120094,
+      "job_id": 105622495352,
+      "result": "PASS",
+      "workflow_count": 142,
+      "policy_outcome": "success",
+      "inventory_outcome": "success"
+    }
+  },
+  "current_session_capability": {
+    "ruleset_write": false,
+    "branch_protection_write": false,
+    "reason": "connected GitHub toolset exposes ruleset/branch-protection reads only; no administration write operation is available"
+  },
+  "owner_admin_action": [
+    "Create or update ABACUS main branch ruleset/branch protection so policy-and-inventory is a required merge check.",
+    "Ensure bypass/auto-merge behavior cannot merge a PR while that required check is queued or red, except any explicitly governed emergency bypass.",
+    "Run a negative admission probe: an intentionally unclassified workflow change must remain non-mergeable while policy-and-inventory is red.",
+    "Run a later positive probe: classify the workflow on a distinct source SHA; policy-and-inventory must pass and merge must then be admitted.",
+    "Retain both admission receipts and only then promote REX-CM-005 to CONTROL."
+  ],
+  "prohibited_compensation": [
+    "Do not patch application/runtime code to compensate for this repository-settings gate.",
+    "Do not count post-merge green CI as proof of merge prevention.",
+    "Do not use cryoplant-project#923 or other repository successes to compensate this gate."
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
