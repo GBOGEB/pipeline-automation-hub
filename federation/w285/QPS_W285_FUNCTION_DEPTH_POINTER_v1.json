@@ -1,0 +1,54 @@
+{
+  "schema": "mission-control-w285-federation-depth-pointer/v0.1",
+  "state": "CANDIDATE_WAIT_CROSS_REPO_PROOFS",
+  "source_authority": {
+    "topology_path": "mission-control/qps-triage-ultra/topology/QPS_REPO_FUNCTION_TOPOLOGY_v1.yaml",
+    "topology_blob": "df0ee845697578cd644691b81eafb2465249d772",
+    "authority": "MISSION_CONTROL_ROUTING_TOPOLOGY_ONLY"
+  },
+  "qps_candidate": {
+    "repo": "GBOGEB/cryoplant-project",
+    "pr": 1490,
+    "head": "23abb271c2747b63fa2a2c4c71a484ccdc339700",
+    "depth_blob": "691680cdf11289142b402a0ae02c95d46a246473",
+    "state": "RETEST_EXTERNAL_PROOF_ATTEMPT_2"
+  },
+  "proof_lanes": {
+    "exact_executor": {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "pr": 58,
+      "state": "WAIT_ATTEMPT_2"
+    },
+    "semantic_review": {
+      "repo": "GBOGEB/CODEX",
+      "pr": 770,
+      "state": "WAIT_HOSTED_PROOF"
+    },
+    "independent_recompute": {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 1282,
+      "state": "WAIT_HOSTED_PROOF"
+    }
+  },
+  "candidate_measurement": {
+    "function_breadth": {
+      "numerator": 4,
+      "denominator": 12,
+      "value": 0.3333333333333333
+    },
+    "function_depth": 0.6,
+    "global_fleet_penetration": 0.2,
+    "formula": "PEN=B*D"
+  },
+  "guards": [
+    "POINTER_ONLY_NO_TOPOLOGY_MUTATION",
+    "FUNCTION_DEPTH_CURRENT_USE_ATOMS_ONLY",
+    "UNOBSERVED_FUNCTION_NE_ZERO_DEPTH",
+    "QPS_REPO_LOCAL_RUNNER_923_NON_COMPENSATING",
+    "W275_PHYSICAL_BUNDLE_NON_COMPENSATING",
+    "FORMAL_CREDIT_DELTA_ZERO"
+  ],
+  "formal_credit_delta": 0,
+  "authority_transfer": false,
+  "activation": "UPDATE_TO_CONTROL_ONLY_AFTER_QTOOLS_EXACT_PR_HEAD_PLUS_MAIN_REPEAT_CODEX_SEMANTIC_PASS_ABACUS_RECOMPUTE_PASS_AND_QPS_AUTHORITATIVE_RETURN"
+}
