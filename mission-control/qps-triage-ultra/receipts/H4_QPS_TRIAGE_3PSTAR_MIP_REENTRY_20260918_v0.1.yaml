@@ -9,7 +9,7 @@ child_transaction:
   fresh_head_pr: 1500
   superseded_pr: 1499
   child_base_sha: 2571a520e2d765cf4089a8cd375ca3dd290def58
-  child_head_sha: 190554550462aaa251ef7cd8b81ecb22a006c7ee
+  child_head_sha: b57368e7d18d860dfcbda3e25204fed58774db5d
   status: OPEN_REENTRY_CONTROL
   controls:
     - triage/h4/QPS_H4_3PSTAR_MIP_REENTRY_CONTROL_20260918_v0.1.yaml
@@ -32,8 +32,8 @@ sequential_result:
 runtime_gate:
   issue: GBOGEB/cryoplant-project#923
   required_predicate: runner_id != 0 AND steps > 0
-  latest_bound_run: 35359227263
-  latest_bound_job: 105646041761
+  latest_bound_run: 35359591164
+  latest_bound_job: 105647283067
   observed_steps: 0
   classification: INFRA_PREEXECUTION_ZERO_STEP_OR_UNASSIGNED
 
@@ -47,7 +47,7 @@ w2_after_p1_pass:
   fallback_atom: ALAT_HP_COMPRESSOR
   innovation_scope: SHARED_OPERATING_STATE_LEDGER_ADAPTER_TO_EXISTING_NUMERICAL_COST_SSOT
   required_result: DETERMINISTIC_RELIABILITY_AND_PROVENANCE
-  commit_disposition: [ACCEPT, HOLD, DEFER]
+  commit_disposition: [ACCEPT_ANALYTICAL_CONSUMER, DEFER, HOLD, REJECT]
   fresh_head_repeat_required_before_control_gold: true
 
 w3_after_w2_local_dov:
