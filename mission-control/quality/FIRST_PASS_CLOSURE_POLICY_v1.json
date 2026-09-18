@@ -41,12 +41,20 @@
       "canonical_self_test",
       "mutation_test",
       "exact_head_ci"
+    ],
+    "required_run_fields": [
+      "repo",
+      "run_id"
     ]
   },
   "codex_contract": {
     "summary_marker": "<!-- codex-pull-request-review-summary -->",
     "reviewer_login": "chatgpt-codex-connector",
-    "clean_rule": "SUMMARY_COMPLETED_FOR_EXACT_HEAD_AND_NO_COMMENTED_CODEX_REVIEW_BOUND_TO_EXACT_HEAD"
+    "clean_rule": "SUMMARY_COMPLETED_FOR_EXACT_HEAD_AND_NO_COMMENTED_CODEX_REVIEW_BOUND_TO_EXACT_HEAD",
+    "summary_author_login": "chatgpt-codex-connector",
+    "recheck_on": [
+      "pull_request_review"
+    ]
   },
   "fail_closed_on": [
     "MISSING_RECEIPT",
@@ -55,7 +63,9 @@
     "RUN_NOT_SUCCESS",
     "RUN_HEAD_MISMATCH",
     "CODEX_REVIEW_NOT_COMPLETED",
-    "CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD"
+    "CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD",
+    "UNTRUSTED_PROOF_WORKFLOW_IDENTITY",
+    "CODEX_SUMMARY_AUTHOR_MISMATCH"
   ],
   "non_compensation": {
     "r3_release_credit": "NONE",
@@ -64,5 +74,33 @@
     "engineering_credit_delta": 0,
     "formal_credit_delta": 0,
     "authority_transfer": false
+  },
+  "proof_identity_allowlist": {
+    "canonical_self_test": [
+      {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "workflow_name": "First-Pass Closure Proof",
+        "workflow_path": ".github/workflows/first-pass-closure-proof.yml"
+      }
+    ],
+    "mutation_test": [
+      {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "workflow_name": "First-Pass Closure Proof",
+        "workflow_path": ".github/workflows/first-pass-closure-proof.yml"
+      }
+    ],
+    "exact_head_ci": [
+      {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "workflow_name": "First-Pass Closure Proof",
+        "workflow_path": ".github/workflows/first-pass-closure-proof.yml"
+      }
+    ]
+  },
+  "merge_enforcement": {
+    "mode": "DISABLE_AUTO_MERGE_WHILE_GATE_RED",
+    "owner_branch_rule_recommended": true,
+    "required_status_name": "First-Pass Closure Gate / first-pass-closure"
   }
 }
