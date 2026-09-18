@@ -1,0 +1,83 @@
+schema: missioncontrol.hm01.r3.w275_sequential_3pstar_mip_receiver.v0.2
+as_of: '2026-09-18T17:13:00+02:00'
+mission: HM-01
+wave: W275
+role: NON_AUTHORITATIVE_CHILD_SEQUENTIAL_CLOSE_RECEIVER
+state: RECEIVED_SEQUENTIAL_CLOSE_BLOCKED_EXTERNAL_PHYSICAL_INGRESS
+authority_transfer: false
+formal_credit_delta: 0
+
+predecessor_receiver:
+  pr: GBOGEB/pipeline-automation-hub#265
+  merge: b3a7df1f7aa24765c243eb282dca58d3c9ea3668
+  treatment: IMMUTABLE_PREDECESSOR
+
+qps_canonical_close:
+  pr: GBOGEB/cryoplant-project#1503
+  merge: 10f004d9ea3842e5b7a05798e11ede14a2566378
+  state: BLOCKED_EXTERNAL_PHYSICAL_INGRESS
+  three_pr:
+    pr: 1489
+    merge: bb38faab791388498331ac4fee8df51242122244
+    state: PASS
+  mip_modernize:
+    pr: 1491
+    merge: 5f325217c6ff5381e77be36a7aae5203c26e7546
+    state: PASS
+  mip_innovate:
+    pr: 1492
+    merge: 43e23f40976279088018fcf6365be99e9888526c
+    state: PASS
+  mip_perpetuate:
+    pr: 1495
+    merge: 7af4d140c38444c2b467da7144eabcfecb2598ae
+    state: PASS
+  three_pc_prove_receipt:
+    pr: 1497
+    merge: 31a2e7bce6409d496fe6e04755cbc3315b5880d3
+    state: HOLD_WAIT_PHYSICAL_SUCCESSOR_GIT_BUNDLE
+    retry_attempts: 2
+    retries_exhausted: true
+  gemini_sync:
+    pr: GBOGEB/GEMINI#21
+    merge: 86c9dd0c3681d395258c77da4434b97bd5736215
+    state: PASS
+
+physical_boundary:
+  first_red: PHYSICAL_SUCCESSOR_GIT_BUNDLE_RETURN_1248290C
+  active_successor: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  command: 'powershell -ExecutionPolicy Bypass -File .\scripts\build_qps_r3_successor_handoff.ps1'
+  required_outputs:
+    - QPS_R3_1248290c.bundle
+    - QPS_R3_1248290c.bundle.sha256
+    - QPS_R3_1248290c.bundle.receipt.json
+  discovery_attempts:
+    - DIRECT_HANDOVER_BUNDLE_QPLANT_FOLDER_LIST_NOT_FOUND
+    - GLOBAL_DRIVE_EXACT_NAME_SEARCH_NOT_FOUND
+  classification: BLOCKED_EXTERNAL_PHYSICAL_RETURN
+
+method:
+  three_pstar: PASS_COMPLETE
+  mip_modernize: PASS
+  mip_innovate: PASS
+  mip_perpetuate: PASS
+  three_pc_prepare: PASS
+  three_pc_prove: HOLD_WAIT_PHYSICAL_SUCCESSOR_GIT_BUNDLE
+  three_pc_commit: HOLD_WAIT_PROVE
+  three_p3_authorized: false
+  r4: BLOCKED_NOT_NEXT
+
+protected_parent_boundary:
+  canonical_w275_dmaic_federation_version: 4
+  rewritten_by_this_receiver: false
+  qps_authority_transfer: false
+
+non_compensation:
+  qps_issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  runtime_gold: WITHHELD
+  canonical_gt_credit: NONE
+  engineering_credit_delta: 0
+  negotiation_credit_delta: 0
+  formal_credit_delta: 0
+  authority_transfer: false
