@@ -93,3 +93,22 @@ python -m unittest -v test_excel_schedule_engine.py
 ```
 
 The repair is bounded to rendition correctness and does not transfer authority.
+
+
+---
+
+## MAIN Runner Binding Iteration — 2026-09-18
+
+### 3PR — Refresh / Probe / Rank
+
+Refresh confirmed the engine and P1 hardening were merged and hosted-green. The next ranked first-red was `EXCEL_MAIN_RUNNER_BINDING`: the parser existed, but the canonical `scripts/run_processing.py` did not invoke it or bind its manifest into the MAIN receipt.
+
+### MIP — Modernize / Innovate / Perpetuate
+
+- Modernize: add explicit `--excel-input`, output-root, cell-mode and tables-only controls to the canonical MAIN runner while preserving the existing default path.
+- Innovate: upgrade the joined pipeline receipt to v2 and SHA-bind the Excel table manifest with table/schedule counts and authority-transfer guardrail.
+- Perpetuate: add real-subprocess integration coverage, backward-compatibility coverage, fail-closed Excel coverage, CI dependency installation and architecture/README updates.
+
+### 3PC target
+
+Victory requires hosted CI to prove both the recursive-build suite and a real Excel schedule-engine subprocess from the MAIN runner before merge. No engineering/document authority is transferred.
