@@ -1,0 +1,68 @@
+schema: missioncontrol.qps_leg5_w249_runner_compat_execution_receipt/v2
+as_of: '2026-09-18T13:20:00+02:00'
+repo: GBOGEB/pipeline-automation-hub
+parent_pr: 202
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+qps_runtime_credit_delta: 0
+
+child_binding:
+  repo: GBOGEB/cryoplant-project
+  pr: 1456
+  exact_head: 20fbe0af279342129fbb63a0a22a4ee63b42a496
+  merge: bfa80d4fa9756f03dd4aaa4c6dedff92b53760d6
+  leg5_state: 7_OF_9_CLOSED
+  runtime_gate: GBOGEB/cryoplant-project#923
+  runtime_predicate: runner_id_nonzero_and_steps_gt_0_and_validator_runner_selector_compatible
+
+parent_execution:
+  proof_source_head: 094791120faefe305a108be7612ac384116464c3
+  workflow: QPS TRIAGE ULTRA Federation Control
+  run: 35338975299
+  job: 105580285206
+  conclusion: SUCCESS
+  steps_gt_zero: true
+  observed_steps:
+    - Set_up_job
+    - Checkout_exact_source_head
+    - Assert_exact_source_head
+    - Execute_HOME_self_validation
+    - Emit_current_head_HOME_fleet_receipt
+    - Validate_child_inbox_plus_current_HOME_receipt
+    - Upload_HOME_receipt_and_gate_result
+    - Enforce_HOME_self_validation
+    - Enforce_Mission_II_federation_DoV_gate
+  proof_scope: MISSIONCONTROL_CONTROL_AND_FEDERATION_ONLY
+
+child_execution_observation:
+  exact_head: 20fbe0af279342129fbb63a0a22a4ee63b42a496
+  presentation_validator: {run: 35338752787, job: 105579587038, steps: []}
+  cnl73_validator: {run: 35338752776, job: 105579586730, steps: []}
+  release_runner_probe:
+    run: 35338752796
+    jobs:
+      - {id: 105579586789, lane: configured, steps: []}
+      - {id: 105579586944, lane: ubuntu-latest, steps: []}
+      - {id: 105579586997, lane: ubuntu-22.04, steps: []}
+  classification: INFRA_PREEXECUTION_ZERO_STEP
+  application_execution: false
+
+three_pc_disposition:
+  prepare: PASS
+  prove_parent_control: PASS_ON_PRE_RECEIPT_HEAD
+  prove_parent_final_receipt_head: PENDING_FINAL_EXACT_HEAD_RUN
+  prove_child_runtime: WITHHELD
+  commit_parent_control: WITHHELD_UNTIL_FINAL_EXACT_HEAD_PASS
+  commit_child_routes: WITHHELD
+  final_leg5_9_of_9: WITHHELD
+
+non_compensation:
+  parent_PASS_ne_child_runtime_PASS: true
+  qps_issue_923_remains_open_gate: true
+  qps_1266_close_credit: false
+  qps_1357_close_credit: false
+  runtime_gold_credit: false
+
+next_parent_predicate:
+  require: FINAL_RECEIPT_BEARING_HEAD_FEDERATION_CONTROL_PASS

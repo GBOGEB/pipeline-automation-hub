@@ -1,0 +1,42 @@
+{
+  "schema": "missioncontrol.qps_leg5_w249_runner_compat_dependency_graph/v2",
+  "as_of": "2026-09-18T13:18:00+02:00",
+  "nodes": [
+    {"id":"QPS#1450","type":"HISTORICAL_CHILD_CONTROL","state":"MERGED"},
+    {"id":"MC#200","type":"HISTORICAL_PARENT_RECEIVER","state":"MERGED_PARENT_CONTROL_PASS"},
+    {"id":"QPS#1456","type":"CHILD_CONTROL_SUCCESSOR","state":"MERGED","head":"20fbe0af279342129fbb63a0a22a4ee63b42a496","merge":"bfa80d4fa9756f03dd4aaa4c6dedff92b53760d6"},
+    {"id":"QPS#923","type":"RUNTIME_GATE","state":"OPEN_OWNER_ACTION"},
+    {"id":"QPS#1266","type":"ROUTE","state":"STATIC_CONTROL_PRESENT_RUNTIME_WITHHELD"},
+    {"id":"QPS#1357","type":"ROUTE","state":"STATIC_HOLD_CONTROL_PRESENT_RUNTIME_WITHHELD"},
+    {"id":"MC_SUCCESSOR","type":"PARENT_RECEIVER","state":"PREPARED"}
+  ],
+  "edges": [
+    {"from":"MC#200","to":"QPS#1450","type":"HISTORICAL_EXACT_HEAD_BINDING"},
+    {"from":"QPS#1456","to":"QPS#1450","type":"APPEND_ONLY_SUCCESSOR"},
+    {"from":"MC_SUCCESSOR","to":"QPS#1456","type":"BINDS_EXACT_SUCCESSOR_HEAD_AND_MERGE"},
+    {"from":"QPS#1266","to":"QPS#923","type":"REQUIRES_VALIDATOR_COMPATIBLE_RUNNER"},
+    {"from":"QPS#1357","to":"QPS#923","type":"REQUIRES_VALIDATOR_COMPATIBLE_RUNNER"},
+    {"from":"MC_SUCCESSOR","to":"QPS#923","type":"DOES_NOT_COMPENSATE"}
+  ],
+  "runtime_unlock_contract": {
+    "selector": "CRYO_RECEIPT_RUNNER",
+    "require": ["runner_id_nonzero","steps_gt_0","validator_runner_selector_compatible"],
+    "hosted_default": ["ubuntu-latest"],
+    "self_hosted_rule": "configured probe and both validators must use the same admitted selector"
+  },
+  "bounded_execution_dag": {
+    "acyclic": true,
+    "sequence": [
+      "OWNER_RECOVERS_OR_BYPASSES_QPS_RUNNER",
+      "VALIDATOR_COMPATIBLE_QPS_GT0_PROOF",
+      "QPS_1266_VALIDATOR",
+      "QPS_1266_CLOSE_ON_PASS",
+      "QPS_1357_VALIDATOR",
+      "QPS_1357_CLOSE_ON_PASS",
+      "QPS_9_OF_9_LEDGER",
+      "QPS_1258_CLOSURE_EVALUATION"
+    ]
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
