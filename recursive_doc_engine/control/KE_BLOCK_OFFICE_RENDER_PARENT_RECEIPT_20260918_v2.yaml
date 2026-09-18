@@ -1,0 +1,107 @@
+schema: missioncontrol.ke_block_roundtrip.office_render_parent_receipt.v2
+as_of: "2026-09-18T19:44:00+02:00"
+repository: GBOGEB/pipeline-automation-hub
+base_master_sha: 658e78ca8c2bedbcc260bfd683a4913ea3710c65
+authority_transfer: false
+formal_credit_delta: 0
+
+supersedes_operationally:
+  path: recursive_doc_engine/control/KE_BLOCK_OFFICE_RENDER_PARENT_RECEIPT_20260918_v1.yaml
+  reason: corrected DOCX pagination proof and independent visual QA supersede the structurally-green but visually-defective sample
+
+producer_control:
+  repo: GBOGEB/document-organization-system
+  ke_block_pr: 62
+  ke_block_merge_sha: 167d66e963eebbe982ffae6c36d78580a2390a92
+  adapter_pr: 64
+  adapter_merge_sha: e181903236e70b7b798b56fd59fc8948cd9885c0
+  corrected_return_receipt_pr: 67
+  corrected_return_receipt_merge_sha: 7e2df8a0a9a545446a3ed3ab1937e272b8c6f490
+
+docx_consumer:
+  repo: GBOGEB/DOCX_RTM_Automation
+  pagination_issue: 64
+  pagination_fix_pr: 65
+  exact_head_sha: 332bc99e26597ab8857f5cc38f5921c293d78334
+  merge_sha: a373ded8808ff1a9dfc40fe7374eb7fcabb6d3b3
+  workflow:
+    name: Data-rich JSON DOCX consumer
+    run_id: 35375677112
+    job_id: 105699668504
+    conclusion: success
+    executable_steps_gt_zero: true
+
+render_feedback:
+  preflight:
+    split_requirements:
+      - REQ-002
+    page_breaks_added: 1
+    pdf_sha256: e90e9a8b4dba8b9bc2342e14a744da54e3148816cc327a1cf8250e54c80efd3c
+  final:
+    split_requirements: []
+    page_breaks_added: 0
+    rendered_docx_sha256: e936ffcb89eb7da13b8be8d447c8453b5b4499a4907390816846f5c8ec94a6b9
+    pdf_sha256: 654e74630861b5b398ab577d55da5f692bf4549b0af480498822428109353b02
+
+render_proof:
+  state: PASS
+  source_projection_binding: PASS
+  governed_reference_docx_build: PASS
+  pandoc_docx_render: PASS
+  heading_style_check: PASS
+  template_numbering_check: PASS
+  duplicate_numbering_check: PASS
+  requirement_pagination_structural_check: PASS
+  requirement_pagination_layout_check: PASS
+  libreoffice_pdf_render: PASS
+  png_render_evidence: PASS
+  independent_visual_qa: PASS
+  pdf_pages: 2
+  artifact:
+    id: 10560525654
+    name: data-rich-docx-render-332bc99e26597ab8857f5cc38f5921c293d78334
+    digest: sha256:ce9c806aebcce0cc9f15eaaf728c4e2bb30e4e93cb2db26b80c9e8c3ce8db8f0
+
+independent_visual_qa:
+  reviewed_pages: 2
+  clipping: NONE
+  overlap: NONE
+  orphaned_requirement_metadata: NONE
+  duplicate_heading_numbering: NONE_OBSERVED
+  result: PASS
+
+sequence:
+  - phase: 3PSTAR_REFRESH_CURRENT_AUTHORITY
+    state: PASS
+  - phase: 3PSTAR_BIND_CORRECTED_RENDER_PROOF
+    state: PASS
+  - phase: 3PSTAR_VISUAL_REVIEW
+    state: PASS_INDEPENDENT_REVIEW
+  - phase: MIP_MODERNIZE
+    state: PASS
+    change: render-feedback pagination replaces unverified pagination hints
+  - phase: MIP_INNOVATE
+    state: PASS
+    change: rendered PDF becomes a measured feedback surface for pagination repair
+  - phase: MIP_PERPETUATE
+    state: PASS_PARENT_RECEIPT
+
+promotion:
+  office_binary_build_and_render_qa: PASS
+  independent_visual_qa: PASS
+  user_visual_approval: NOT_CLAIMED
+  candidate_baseline: WITHHELD
+  remaining_requires:
+    - EXPLICIT_USER_VISUAL_APPROVAL
+
+non_compensation:
+  independent_visual_qa_ne_user_approval: true
+  generated_docx_ne_semantic_ssot: true
+  rendered_output_authoritative: false
+  engineering_credit: false
+  compliance_credit: false
+  procurement_acceptance_credit: false
+
+stop_state:
+  state: SAFE_HOLD_USER_VISUAL_GATE
+  first_red: USER_VISUAL_APPROVAL
