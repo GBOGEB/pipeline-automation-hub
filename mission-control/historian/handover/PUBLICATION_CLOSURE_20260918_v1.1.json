@@ -1,0 +1,47 @@
+{
+  "schema": "missioncontrol.historian.publication_closure.v1.1",
+  "status": "PUBLICATION_DOV_PASS_REX_CM005_WITHHELD",
+  "as_of": "2026-09-18T16:00:00+02:00",
+  "publication": {
+    "pr": 253,
+    "exact_head": "45cd8dbc22b8e29f162113858ffca15f553312f4",
+    "merge": "9e914d18850ed9154b6da7dbf7f2b4dfc5bf79a1",
+    "exact_head_checks": {
+      "passed": 6,
+      "total": 6,
+      "result": "PASS"
+    },
+    "runs": [
+      35352231756,
+      35352231579,
+      35352231632,
+      35352231529,
+      35352231557,
+      35352231723
+    ],
+    "caveat": "merge occurred while checks were queued; post-merge exact-head DoV passes but merge-admission sequencing is not proven"
+  },
+  "abacus_repair": {
+    "source_commit": "621c9ca2ab6848d524f3c8ddb831524e756c159f",
+    "governance_run": 35352120094,
+    "governance_job": 105622495352,
+    "result": "PASS_GT_ZERO_STEPS",
+    "workflow_count": 142,
+    "policy_outcome": "success",
+    "inventory_outcome": "success",
+    "bd018_repair": "DONE"
+  },
+  "control_hold": {
+    "control_id": "REX-CM-005",
+    "state": "ACTIVE_PREVENTION_WITHHELD",
+    "issue": "GBOGEB/ABACUS#1278",
+    "why": "merge admission is not fail-closed on governance red/queued states"
+  },
+  "external_non_compensating_gate": {
+    "repo": "GBOGEB/cryoplant-project",
+    "issue": 923,
+    "state": "OPEN"
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
