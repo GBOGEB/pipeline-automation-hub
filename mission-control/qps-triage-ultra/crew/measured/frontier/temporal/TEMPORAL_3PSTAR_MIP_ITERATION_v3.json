@@ -1,47 +1,61 @@
 {
   "schema": "missioncontrol.temporal_3pstar_mip_iteration.v3",
   "mission_id": "MC-CREW-FRONTIER-004",
-  "scope": "TWO_CLASS_NONCONTROL_BURNDOWN_LOSSLESS_HANDOVER",
+  "scope": "THREE_CLASS_FRONTIER_WITH_POST_CONTROL_REGRESSION_LOSSLESS_HANDOVER",
   "supersedes": [
     "TEMPORAL_3PSTAR_MIP_ITERATION_v1.json",
     "TEMPORAL_3PSTAR_MIP_ITERATION_v2.json"
   ],
-  "as_of": "2026-09-18T15:50:00+02:00",
+  "as_of": "2026-09-18T15:58:00+02:00",
   "repository": "GBOGEB/pipeline-automation-hub",
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "control_state": {
-    "status": "3_OF_5_CONTROL_TWO_CLASS_FRONTIER_ACTIVE",
-    "control_classes": [
+    "status": "2_OF_5_CONTROL_SHORT_COMPUTE_REGRESSION_THREE_CLASS_FRONTIER_ACTIVE",
+    "historical_control_classes": [
       "cache_artifact_reuse",
       "short_compute",
       "validation_bundle"
     ],
+    "control_classes": [
+      "cache_artifact_reuse",
+      "validation_bundle"
+    ],
+    "regressed_classes": [
+      "short_compute"
+    ],
     "noncontrol_classes": [
+      "short_compute",
       "long_compute_contended",
       "human_dependency_wait_proxy"
     ],
-    "full_control": false,
-    "frozen_thresholds_unchanged": true,
-    "control_class_count": 3,
+    "control_class_count": 2,
     "task_class_count": 5,
-    "noncontrol_class_count": 2
+    "noncontrol_class_count": 3,
+    "full_control": false,
+    "frozen_thresholds_unchanged": true
   },
   "genuine_schedule_authority": {
-    "run_id": "35319784958",
-    "exact_source_sha": "9e7e698c1cf40b594244aba01e1ea704ef76d203",
-    "artifact_id": "10536637698",
-    "artifact_digest": "sha256:d72bc6ec77c07821ef1a4191796dd0c0e008b9f05a95a46d4c913f3062648ce9",
-    "scheduled_windows": 19,
-    "distinct_source_shas": 11,
-    "span_seconds": 389315,
+    "run_id": "35350275999",
+    "exact_source_sha": "f226e6e61bc84482d4856f056b292ca9322e22f8",
+    "artifact_id": "10549864368",
+    "artifact_digest": "sha256:6d1ee0018358fff48a83d006322ba1e0b504b32a1cf68e8b4c3e98d0001713c3",
+    "scheduled_windows": 20,
+    "distinct_source_shas": 12,
+    "span_seconds": 410680,
     "H2_72H": "MATURE",
-    "H3_7D": "NOT_MATURE"
+    "H3_7D": "NOT_MATURE",
+    "rex_veto": false
   },
   "three_p_star": {
-    "refresh": "PASS",
-    "probe": "PASS",
-    "rank": "PASS",
+    "refresh": "PASS_WITH_GOVERNED_POST_CONTROL_REGRESSION",
+    "probe": "PASS_THREE_DISTINCT_FAILURE_MODES",
+    "rank": {
+      "status": "PASS",
+      "P0": "short_compute_CONTROL_REGRESSION",
+      "P1": "long_compute_contended_REGIME_REVERSAL",
+      "P2": "human_dependency_wait_proxy_WEAK_NOISY"
+    },
     "prepare": "PASS",
     "prove": {
       "implementation_pr_head": {
@@ -79,11 +93,11 @@
   "mip": {
     "Modernize": {
       "status": "PASS",
-      "result": "regime reversal separated from weak/noisy direction"
+      "result": "post-CONTROL regression separated from regime reversal and weak/noisy learning instability"
     },
     "Innovate": {
       "status": "PASS",
-      "result": "consistency debt, strength debt, first-red and minimum-clean-window pressure implemented"
+      "result": "regression authority transition, strength-deficit first-red, consistency pressure and restart-safe historical acceptance preservation implemented"
     },
     "Perpetuate": {
       "status": "PASS",
@@ -110,53 +124,90 @@
   "active_frontier": [
     {
       "priority": "P0",
+      "task_class": "short_compute",
+      "prior_state": "CONTROL_POLICY",
+      "current_state": "LEARNING",
+      "regression_from_control": true,
+      "first_red": "pooled_winner_strength",
+      "regime": "CONTROL_REGRESSION",
+      "dominant_direction": "ALLOC_SINGLE_CELL",
+      "direction_counts": {
+        "ALLOC_SINGLE_CELL": 15,
+        "ALLOC_PAIRED_CELL": 1
+      },
+      "consistency": 0.9375,
+      "pooled_winner_strength": 0.6907625243981782,
+      "frozen_winner_strength_threshold": 0.7,
+      "winner_strength_deficit": 0.009237475601821754,
+      "latest_two_agree": true,
+      "latest_scheduled_window": {
+        "run_id": "35350275999",
+        "direction": "INDETERMINATE",
+        "single_normalized_strength": 0.5,
+        "paired_normalized_strength": 0.5,
+        "observed_pairs": 6,
+        "bt_result": "3_SINGLE_WINS_3_PAIRED_WINS"
+      },
+      "next_action": "DECOMPOSE_CONTROL_REGRESSION_AND_REEARN_FROZEN_GATE",
+      "promotion": "REVOKED_REEARN_REQUIRED"
+    },
+    {
+      "priority": "P1",
       "task_class": "long_compute_contended",
       "first_red": "direction_consistency",
       "regime": "REGIME_REVERSAL_OBSERVED",
       "early_direction": "ALLOC_PAIRED_CELL",
-      "late_direction": "ALLOC_SINGLE_CELL",
+      "late_direction": "INDETERMINATE",
       "direction_counts": {
-        "ALLOC_PAIRED_CELL": 9,
+        "ALLOC_PAIRED_CELL": 10,
         "ALLOC_SINGLE_CELL": 5
       },
-      "consistency": 0.6428571428571429,
-      "pooled_winner_strength": 0.5987602959653776,
+      "consistency": 0.6666666666666666,
+      "pooled_winner_strength": 0.6153607427055703,
       "latest_two_agree": false,
-      "min_clean_dominant_windows_to_consistency_0_80": 11,
+      "min_clean_dominant_windows_to_consistency_0_80": 10,
       "next_action": "DECOMPOSE_SIGNED_EFFECT_BY_RUNNER_LANE_AND_TEMPORAL_HALF",
       "promotion": "WITHHELD"
     },
     {
-      "priority": "P1",
+      "priority": "P2",
       "task_class": "human_dependency_wait_proxy",
       "first_red": "direction_consistency",
       "regime": "WEAK_OR_NOISY_DIRECTION",
       "early_direction": "ALLOC_SINGLE_CELL",
       "late_direction": "ALLOC_SINGLE_CELL",
       "direction_counts": {
-        "ALLOC_SINGLE_CELL": 11,
+        "ALLOC_SINGLE_CELL": 12,
         "ALLOC_PAIRED_CELL": 4
       },
-      "consistency": 0.7333333333333333,
-      "pooled_winner_strength": 0.6212672162393283,
+      "consistency": 0.75,
+      "pooled_winner_strength": 0.6222038554273619,
       "latest_two_agree": false,
-      "min_clean_dominant_windows_to_consistency_0_80": 5,
+      "min_clean_dominant_windows_to_consistency_0_80": 4,
       "next_action": "KEEP_PROXY_CLAIM_BOUNDARY_AND_CONTINUE_GENUINE_SCHEDULED_STABILITY_MEASUREMENT",
       "claim_boundary": "CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE",
       "promotion": "WITHHELD"
     }
   ],
   "exact_next_predicate": {
-    "first": "P0 long_compute_contended regime decomposition",
-    "action": "DECOMPOSE_SIGNED_EFFECT_BY_RUNNER_LANE_AND_TEMPORAL_HALF",
+    "first": "P0 short_compute post-CONTROL strength regression",
+    "action": "DECOMPOSE_CONTROL_REGRESSION_AND_REEARN_FROZEN_GATE",
+    "decomposition": [
+      "bind latest scheduled window 35350275999 as INDETERMINATE 3-vs-3 BT evidence",
+      "quantify pooled-strength sensitivity by runner and lane",
+      "identify whether neutral window is broad or concentrated",
+      "require frozen pooled winner >=0.70 again before re-earning CONTROL"
+    ],
     "parallel": [
-      "continue P1 human_dependency_wait_proxy genuine-schedule stability measurement with proxy claim boundary",
-      "continue surveillance of the three CONTROL classes and reopen only on governed regression",
+      "P1 long_compute_contended signed-effect decomposition by runner/lane/temporal regime",
+      "P2 human_dependency_wait_proxy genuine-schedule stability measurement with proxy claim boundary",
+      "surveil cache_artifact_reuse and validation_bundle and revoke only on governed regression",
       "evaluate H3 7-day surveillance only after genuine scheduled span reaches 604800 seconds"
     ],
     "guards": [
       "do not lower or raise CONTROL thresholds",
       "do not use push/PR/manual/synthetic traffic as CONTROL clock",
+      "do not preserve short_compute CONTROL after governed regression",
       "do not convert controlled wait proxy into real-human evidence"
     ]
   },
@@ -166,6 +217,10 @@
     "competency_promotions": 0,
     "authority_transfer": false,
     "formal_credit_delta": 0,
-    "controlled_wait_proxy_is_real_human_evidence": false
-  }
+    "controlled_wait_proxy_is_real_human_evidence": false,
+    "full_control_claim": false,
+    "historical_acceptance_preserved": true,
+    "current_effective_control_class_count": 2
+  },
+  "regression_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_CONTROL_REGRESSION_v1.json"
 }
