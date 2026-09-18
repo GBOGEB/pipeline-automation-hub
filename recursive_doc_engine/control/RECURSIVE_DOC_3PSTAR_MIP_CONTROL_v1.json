@@ -43,7 +43,7 @@
     },
     {
       "phase": "MIP_PERPETUATE",
-      "status": "PASS_PENDING_REPOSITORY_CI",
+      "status": "PASS_WITH_REPOSITORY_CI_ADMISSION_BLOCKER",
       "delivered": [
         "tests",
         "README",
@@ -57,11 +57,11 @@
     },
     {
       "phase": "3PC_PROVE",
-      "status": "LOCAL_PASS_REPOSITORY_CI_PENDING"
+      "status": "LOCAL_PASS_REMOTE_ZERO_STEP_QUEUED"
     },
     {
       "phase": "3PC_COMMIT",
-      "status": "PR_PENDING"
+      "status": "PR_OPEN_HOLD_REMOTE_PROOF"
     }
   ],
   "local_proof": {
@@ -73,5 +73,17 @@
     "no QPS engineering authority transfer",
     "no claim of trained adversarial GAN",
     "promotion requires fail-closed gate"
-  ]
+  ],
+  "remote_proof": {
+    "pr": "GBOGEB/pipeline-automation-hub#271",
+    "workflow": "recursive-doc-ke-gate",
+    "run_id": 35360192569,
+    "job_id": 105649269753,
+    "observed_state": "queued",
+    "steps": null,
+    "retries_checked": 2,
+    "classification": "INFRASTRUCTURE_PREEXECUTION_RUNNER_ADMISSION",
+    "code_evidence": "NONE_FROM_ZERO_STEP"
+  },
+  "first_red": "REMOTE_RUNNER_ADMISSION_THEN_SAME_UNCHANGED_PROOF"
 }
