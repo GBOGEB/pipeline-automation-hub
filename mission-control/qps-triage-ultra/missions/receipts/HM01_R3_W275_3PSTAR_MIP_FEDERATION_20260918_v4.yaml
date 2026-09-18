@@ -36,7 +36,11 @@ history:
 current_qps_restart:
   session_close_schema: qps-session-close-pointer/1.14
   state: CONTROLLED_SAFE_CONTINUE_W275_R3_PRODUCER_READY_WAIT_PHYSICAL_BUNDLE
+  historical_predecessor: 70964e5f1577231512f4104b26f5f6649ad8cb39
   active_successor: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  protected_dependency_node:
+    id: SUCCESSOR_GIT_OBJECT_HANDOFF_1248290C
+    disposition: SATISFIED_BY_PRODUCER_CAPABILITY_WAIT_PHYSICAL_RETURN
   producer_readiness_receipt: triage/w275/QPS_W275_R3_SUCCESSOR_GIT_OBJECT_PRODUCER_READY_v0.1.yaml
   recursive_control: triage/w275/QPS_W275_R3_3PSTAR_MIP_RECURSIVE_CONTROL_v0.4.yaml
   lossless_handover: handover/session/SC_2026-09-18_W275_R3_3PSTAR_MIP_LOSSLESS_HANDOVER_v4.md
