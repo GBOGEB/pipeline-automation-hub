@@ -12,14 +12,15 @@
     "audited_prs_minimum": 19,
     "review_finding_occurrences_observed_cumulative": 36,
     "durable_bd_roots_total": 18,
-    "current_open_bd_roots": 3,
-    "current_unresolved_occurrences_minimum": 6,
-    "done_or_control_roots": 15,
+    "current_open_bd_roots": 2,
+    "current_unresolved_occurrences_minimum": 2,
+    "done_or_control_roots": 16,
     "recurring_root_families_total": 5,
-    "recurring_open_families": 1,
+    "recurring_open_families": 0,
     "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
-    "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit."
+    "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit.",
+    "active_prevention_withheld_controls": 1
   },
   "lifecycle": [
     "TODO",
@@ -489,7 +490,7 @@
       "title": "Keep CI-governance SSOT classification synchronized with live workflows",
       "class": "GOVERNANCE_INVENTORY_DRIFT",
       "severity": "P1",
-      "state": "ACTIVE",
+      "state": "DONE",
       "occurrence_count": 7,
       "recurrence_episode_count": 2,
       "repos": [
@@ -518,9 +519,13 @@
         "main@82f6edaea6a60f948dc51b6038fbad944977d676 content-consistent 142/142; post-fix governance run35351825106 queued",
         "run35351825106 policy PASS; inventory FAIL one repeated-command derived line",
         "main@621c9ca2ab6848d524f3c8ddb831524e756c159f exact generated delta applied",
-        "run35352120094 final hosted governance re-proof queued"
+        "run35352120094 final hosted governance re-proof queued",
+        "run35352120094 PASS >0 steps",
+        "workflow_count=142",
+        "POLICY_OUTCOME=success",
+        "INVENTORY_OUTCOME=success"
       ],
-      "done_when": "Final hosted run35352120094 must execute >0 steps and PASS; CONTROL additionally requires merge admission bound to governance and negative/positive admission repeat"
+      "done_when": "SATISFIED_REPAIR; recurrent prevention remains governed by REX-CM-005"
     }
   ],
   "control_measures": [
@@ -584,23 +589,21 @@
         "PR#1280 merged while governance red",
         "run35351825106 detector policy PASS / inventory stale-one-line FAIL",
         "main@621c9ca2 exact generated fix",
-        "run35352120094 queued final re-proof"
+        "run35352120094 queued final re-proof",
+        "run35352120094 PASS policy+inventory 142 workflows",
+        "HIST-BD-018 repair DONE",
+        "merge-admission prevention still unbound"
       ]
     }
   ],
   "open_priority": [
     {
       "rank": 1,
-      "bd_id": "HIST-BD-018",
-      "reason": "recurrent inventory drift repaired in content; hosted proof queued and merge-prevention binding withheld"
-    },
-    {
-      "rank": 2,
       "bd_id": "HIST-BD-001",
       "reason": "P1 REX semantics still misclassifies requested action as observed outcome"
     },
     {
-      "rank": 3,
+      "rank": 2,
       "bd_id": "HIST-BD-009",
       "reason": "P1 negative-evidence retention still incomplete"
     }
@@ -618,5 +621,17 @@
     "GBOGEB/Q_engineering_tools",
     "GBOGEB/CODEX"
   ],
-  "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE"
+  "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE",
+  "control_priority": [
+    {
+      "rank": 1,
+      "control_id": "REX-CM-005",
+      "reason": "BD018 repair is DONE but merge admission is not bound fail-closed; negative/positive admission repeat still required"
+    },
+    {
+      "rank": 2,
+      "control_id": "CRYOPLANT-923",
+      "reason": "non-compensating private-repo runner admission remains open"
+    }
+  ]
 }
