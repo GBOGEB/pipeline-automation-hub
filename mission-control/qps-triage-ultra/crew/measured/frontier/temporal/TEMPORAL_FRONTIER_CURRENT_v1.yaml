@@ -1,32 +1,46 @@
-schema: missioncontrol.temporal_frontier.current.v1
-as_of: '2026-09-18T15:53:00+02:00'
+schema: missioncontrol.temporal_frontier.current_compat.v2
+as_of: '2026-09-18T16:39:00+02:00'
 mission_id: MC-CREW-FRONTIER-004
-state: CONTROL_3_OF_5_EXACT_HEAD_PROVE_PASS_WAIT_MASTER_REPEAT
+status: SUPERSEDED_COMPATIBILITY_POINTER
+canonical_current: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_FRONTIER_CURRENT_v1.json
+canonical_iteration: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v3.json
+current_regression: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_CONTROL_REGRESSION_v1.json
+short_compute_reearn_gate: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json
+state: CONTROL_REGRESSION_ACTIVE_2_OF_5_CONTROL_THREE_CLASS_FRONTIER
 authority_transfer: false
 formal_credit_delta: 0
-proof:
-  implementation_pr: 246
-  implementation_merge: a56e94ee92077b912a5a3480ae73a1c13b775eba
-  late_implementation_run: 35351860027
-  late_implementation_job: 105621646115
-  repair_pr: 252
-  repair_merge: 243337e7170029ccfbcf1588ce951356fd1d22a7
-  exact_head: e8fc42a2afe4a8edce5d1660afaf789eb76a8f07
-  exact_head_run: 35352182020
-  exact_head_job: 105622699044
-  exact_head_steps: 7
-  exact_head_result: PASS
-merged_master_repeat:
-  state: WAIT
-  run_id: null
-  job_id: null
-control:
-  classes: 3
-  total: 5
-  full_control: false
-  thresholds_changed: false
-  synthetic_or_manual_clock_credit: false
-frontier:
-  P0: {task: long_compute_contended, regime: REGIME_REVERSAL_OBSERVED, consistency: 0.6428571428571429, min_clean_windows: 11}
-  P1: {task: human_dependency_wait_proxy, regime: WEAK_OR_NOISY_DIRECTION, consistency: 0.7333333333333333, min_clean_windows: 5}
-next: MERGE_THIS_PROOF_BINDING_THEN_BIND_PUSH_MASTER_REPEAT
+effective_control:
+  count: 2
+  classes:
+    - cache_artifact_reuse
+    - validation_bundle
+regressed:
+  - short_compute
+active_frontier:
+  P0:
+    task_class: short_compute
+    first_red: pooled_winner_strength
+    regime: CONTROL_REGRESSION
+    pooled_winner_strength: 0.6907625243981782
+    frozen_threshold: 0.7
+    disposition: CONTROL_REVOKED_REEARN_REQUIRED
+  P1:
+    task_class: long_compute_contended
+    first_red: direction_consistency
+    regime: REGIME_REVERSAL_OBSERVED
+  P2:
+    task_class: human_dependency_wait_proxy
+    first_red: direction_consistency
+    regime: WEAK_OR_NOISY_DIRECTION
+current_genuine_schedule:
+  run_id: 35350275999
+  source_sha: f226e6e61bc84482d4856f056b292ca9322e22f8
+  artifact_id: 10549864368
+  artifact_digest: sha256:6d1ee0018358fff48a83d006322ba1e0b504b32a1cf68e8b4c3e98d0001713c3
+  scheduled_windows: 20
+  distinct_source_shas: 12
+  span_seconds: 410680
+reearn_rule: >-
+  short_compute may return to CONTROL only from a later genuine schedule-event receipt
+  that satisfies every frozen CONTROL gate, including pooled winner strength >= 0.70.
+  Push, PR, manual, synthetic and challenge evidence create no CONTROL clock or promotion credit.
