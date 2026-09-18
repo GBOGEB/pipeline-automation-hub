@@ -1,0 +1,86 @@
+{
+  "schema": "missioncontrol.historian.publication_receipt.v1",
+  "status": "PUBLISHED_HOSTED_DOV_WITHHELD",
+  "as_of": "2026-09-18T15:55:00+02:00",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "publication": {
+    "pr": 253,
+    "pr_head": "45cd8dbc22b8e29f162113858ffca15f553312f4",
+    "merge_commit": "9e914d18850ed9154b6da7dbf7f2b4dfc5bf79a1",
+    "observed_merge_condition": "PR merged while draft/check workflows were queued",
+    "merge_admission_proof": false
+  },
+  "artifacts": {
+    "register": {
+      "path": "mission-control/historian/BD_REX_CONTROL_REGISTER_v2.json",
+      "blob_sha": "c843aaea942e18614ee0d1422862770612404a2e"
+    },
+    "specialist_registry": {
+      "path": "mission-control/historian/SPECIALIST_REPAIR_CREW_REGISTRY_v2.json",
+      "blob_sha": "db9209a264bdee32f6fdbdc5e9468a246d93df4f"
+    },
+    "handover": {
+      "path": "mission-control/historian/handover/SC_2026-09-18_BD_REX_3P_MIP_v1.json",
+      "blob_sha": "57e2c9ae910bbb304d1e70e941887b1e9a11742b"
+    },
+    "dropin": {
+      "path": "mission-control/historian/handover/BD_REX_3P_MIP_DROPIN_20260918.md",
+      "blob_sha": "b5a0dede87f4ea597955d6a58a7bd67cae91567c"
+    },
+    "current_pointer": {
+      "path": "mission-control/historian/handover/CURRENT.json",
+      "pre_receipt_blob_sha": "5eb8135be092e9b094ee0964b141549b5cf0937e"
+    }
+  },
+  "proof_gates": {
+    "abacus_final_governance": {
+      "repo": "GBOGEB/ABACUS",
+      "source_commit": "621c9ca2ab6848d524f3c8ddb831524e756c159f",
+      "run_id": 35352120094,
+      "observed_state": "QUEUED_NO_STEPS_AT_RECEIPT",
+      "required_for": "HIST-BD-018 repair DONE",
+      "compensation_allowed": false
+    },
+    "missioncontrol_exact_head": {
+      "source_head": "45cd8dbc22b8e29f162113858ffca15f553312f4",
+      "runs": [
+        35352231756,
+        35352231579,
+        35352231632,
+        35352231529,
+        35352231557,
+        35352231723
+      ],
+      "observed_state": "QUEUED_AT_MERGE",
+      "required_for": "hosted publication DoV",
+      "compensation_allowed": false
+    },
+    "cryoplant_runner_gate": {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue": 923,
+      "state": "OPEN",
+      "compensation_allowed": false
+    }
+  },
+  "controls": {
+    "REX-CM-003": "CONTROL",
+    "REX-CM-004": "CONTROL",
+    "REX-CM-005": "ACTIVE_PREVENTION_WITHHELD"
+  },
+  "invariants": [
+    "Publication does not convert queued or failed checks into PASS.",
+    "PR #253 merge while queued is retained as merge-admission evidence, not as hosted DoV.",
+    "HIST-BD-018 is not DONE until ABACUS run 35352120094 executes >0 steps and passes.",
+    "REX-CM-005 is not CONTROL until governance red is merge-blocking and negative/positive admission repeats are proven.",
+    "cryoplant-project#923 remains non-compensating.",
+    "No chat-only TODOs or decisions are required to restart."
+  ],
+  "next_executable": [
+    "Read ABACUS run 35352120094.",
+    "Read MissionControl PR #253 exact-head workflow runs.",
+    "If ABACUS run passes >0 steps, update HIST-BD-018 repair to DONE while keeping REX-CM-005 withheld.",
+    "Bind merge admission to CI Workflow Governance and prove negative then positive admission.",
+    "Continue HIST-BD-001 and HIST-BD-009, then Q_engineering_tools deep-dive."
+  ]
+}
