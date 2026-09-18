@@ -1,0 +1,120 @@
+schema: missioncontrol.hm01.r3.w275_federation_receipt.v0.4
+mission: HM-01
+wave: W275
+state: PRODUCER_TOOLING_PASS_WAIT_PHYSICAL_SUCCESSOR_BUNDLE
+authority_transfer: false
+formal_credit_delta: 0
+
+observation_anchor:
+  repository: GBOGEB/pipeline-automation-hub
+  master_commit: 90ca031754955be82ebf1b9936f1807e970d9736
+  master_commit_time: '2026-09-18T11:51:45Z'
+  ordering_rule: GIT_COMMIT_ANCHORED
+  note: >-
+    v0.4 intentionally orders evidence by Git object timestamps and exact merge SHAs.
+    It does not inherit the future-dated as_of metadata defect in predecessor v0.3.
+
+history:
+  predecessor_receipt: >-
+    mission-control/qps-triage-ultra/missions/receipts/HM01_R3_W275_3PSTAR_MIP_FEDERATION_20260918_v3.yaml
+  predecessor_prs:
+    - GBOGEB/pipeline-automation-hub#208
+    - GBOGEB/pipeline-automation-hub#212
+  predecessor_defect:
+    id: FUTURE_DATED_AS_OF_METADATA
+    treatment: IMMUTABLE_HISTORY_FIX_FORWARD
+  qps_capsule_v2_reconciliation:
+    pr: GBOGEB/cryoplant-project#1468
+    merge: 0a18d92d12795c920ebe1eebb47dc1ef67e928f1
+  qps_producer_readiness:
+    pr: GBOGEB/cryoplant-project#1469
+    merge: bdcc0982715ac12d072feee3f42eb4fa4d112178
+  qps_restart_rebind:
+    pr: GBOGEB/cryoplant-project#1470
+    merge: c36c623aaa8ce11f8ddaf8c97dea0326fe7733cd
+
+current_qps_restart:
+  session_close_schema: qps-session-close-pointer/1.14
+  state: CONTROLLED_SAFE_CONTINUE_W275_R3_PRODUCER_READY_WAIT_PHYSICAL_BUNDLE
+  active_successor: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  producer_readiness_receipt: triage/w275/QPS_W275_R3_SUCCESSOR_GIT_OBJECT_PRODUCER_READY_v0.1.yaml
+  recursive_control: triage/w275/QPS_W275_R3_3PSTAR_MIP_RECURSIVE_CONTROL_v0.4.yaml
+  lossless_handover: handover/session/SC_2026-09-18_W275_R3_3PSTAR_MIP_LOSSLESS_HANDOVER_v4.md
+  restart_dropin: handover/session/RESTART_DROPIN_2026-09-18_W275_R3_v4.md
+
+exact_environment:
+  state: PASS_CAPSULE_V2
+  producer_pr: GBOGEB/GEMINI#18
+  producer_merge: 8b8e72400bb6860789b11b1fca3b809fc8ca6524
+  hygiene_pr: GBOGEB/GEMINI#19
+  hygiene_merge: 9faeb10cd57395538eb163791c7c56ba90be711b
+  run: 35339129647
+  artifact_id: 10544103232
+  artifact_zip_sha256: 64c363cfeaded7fc6b156b28fe344166e3c560aac3ea43f50b2695220cffd912
+  inner_archive_sha256: c77566e6c6aa261034f86303ef1be7b033622f357333e3d474d3bde8fb3ec44e
+  manifest: gmi.r3.successor.exact_env_capsule.v2
+  python: 3.12.14
+  exact_dependency_lock: PASS
+  external_clean_ld_library_path_reproof: PASS
+
+successor_git_object_producer:
+  state: PASS_MERGED
+  repo: GBOGEB/GEMINI
+  pr: 20
+  merge: 439838866e77784334ef76d231f9a9e0aa4f5e5c
+  operator: scripts/build_qps_r3_successor_handoff.ps1
+  target_clone: 'C:\Users\gbonthuy\cryoplant-project'
+  required_outputs:
+    - QPS_R3_1248290c.bundle
+    - QPS_R3_1248290c.bundle.sha256
+    - QPS_R3_1248290c.bundle.receipt.json
+
+physical_return:
+  state: WAIT_RETURN
+  first_red: PHYSICAL_SUCCESSOR_GIT_BUNDLE_RETURN_1248290C
+  drive_folder: Handover_Bundle_QPLANT
+  drive_folder_id: 1B0i2T7hUsSFhHiyw35PPGaeQ_40E2nNr
+  latest_connected_drive_scan:
+    qualifying_bundle_found: false
+  accepted_identity:
+    required_sha: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+    require_bundle_verify: true
+    require_sha256_sidecar_match: true
+    require_machine_receipt: true
+
+three_pstar:
+  three_pr: PASS
+  mip_modernize: PRODUCER_PATH_WINDOWS_NATIVE_AND_WORKTREE_NEUTRAL
+  mip_innovate: OBJECT_DB_PROOF_WITH_FAIL_CLOSED_BUNDLE_RECEIPT
+  mip_perpetuate: QPS_1470_PLUS_MISSIONCONTROL_V4
+  three_pc_prepare: PASS
+  three_pc_prove: HOLD_WAIT_PHYSICAL_SUCCESSOR_GIT_BUNDLE
+  three_pc_commit: HOLD_WAIT_PROVE
+  three_p3_authorized: false
+  r4: BLOCKED_NOT_NEXT
+
+after_return:
+  - VERIFY_BUNDLE_SHA256_AND_SIDECAR
+  - GIT_BUNDLE_VERIFY
+  - VERIFY_EXACT_SUCCESSOR_1248290C
+  - CONSUME_CAPSULE_V2_EXACT_BYTES
+  - RUN_QPS_PORTABLE_CAPSULE_CONSUMER
+  - EXACT_DETACHED_WORKTREE_1248290C
+  - FIVE_PRODUCT_REGENERATION
+  - STRUCTURAL_QA
+  - PROJECTION_AWARE_PARITY
+  - RENDER_EVIDENCE
+  - HASH_BOUND_HUMAN_VISUAL_INSPECTION
+  - SUCCESSOR_ACCEPTANCE_VALIDATOR
+  - PASS_R3_RELEASE_PRODUCTION_DOV
+  - R4_FRESH_CLONE_COLD_START_PARITY
+
+non_compensation:
+  issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  runtime_gold: WITHHELD
+  canonical_gt_credit: NONE
+  engineering_credit_delta: 0
+  negotiation_credit_delta: 0
+  formal_credit_delta: 0
+  authority_transfer: false
