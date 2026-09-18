@@ -1,0 +1,50 @@
+name: First-Pass Closure Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+  actions: read
+
+jobs:
+  first-pass-closure:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unit-test gate logic
+        run: python -m pytest -q scripts/tests/test_first_pass_closure_gate.py
+
+      - name: Resolve PR number
+        id: pr
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+          else
+            test -n "${PR_NUMBER:-}" || { echo "PR_NUMBER required for workflow_dispatch" >&2; exit 2; }
+            echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Evaluate exact-head first-pass closure
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p output/fpc
+          python scripts/first_pass_closure_gate.py             --repo "${{ github.repository }}"             --pr "${{ steps.pr.outputs.number }}"             --out output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
+
+      - name: Upload gate receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-pass-closure-gate
+          path: output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 30
