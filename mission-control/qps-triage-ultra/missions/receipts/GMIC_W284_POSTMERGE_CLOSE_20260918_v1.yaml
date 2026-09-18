@@ -1,0 +1,88 @@
+schema: missioncontrol.gmi_c.w284_postmerge_close.v1
+as_of: '2026-09-18T15:45:00+02:00'
+wave: W284
+mission: GM-I-C
+status: MERGED_CONTROLLED_SAFE_CONTINUE_SELF_REPROOF_QUEUED
+authority_transfer: false
+formal_credit_delta: 0
+
+publication:
+  repository: GBOGEB/pipeline-automation-hub
+  pr: 249
+  exact_head: 866e85365ab93508dd790696cafebef5e5305a13
+  merge_sha: f38bb5035008a22a9a7ab366c69509aa87e14195
+  merged: true
+
+source_proof:
+  qps_merge: cf637f4c251683918eb190c21b5d91597d45ab7e
+  qps_closeout: triage/w282/QPS_W282_FEDERATED_R1_PROVE_CLOSEOUT_v0.1.yaml
+  qtools:
+    pr: 54
+    exact_head: 753f95058f886aeded020950c3150ca5018655d2
+    run_id: 35350966891
+    job_id: 105618735107
+    executed_steps: 11
+    conclusion: success
+    artifact_id: 10549519396
+    artifact_digest: sha256:7f401723af2cf964ac7ff074be461b6e522d37273e82c78aa6ad238cb2fac4c5
+  accepted: true
+
+missioncontrol_self_reproof:
+  workflow: QPS TRIAGE ULTRA Federation Control
+  run_id: 35351911591
+  job_id: 105621812291
+  exact_head: 866e85365ab93508dd790696cafebef5e5305a13
+  state_at_close: QUEUED
+  executed_steps: null
+  credit: NONE
+  rule: QUEUED_NE_PASS_AND_QUEUED_NE_FAIL
+
+postmerge_workflows:
+  merge_sha: f38bb5035008a22a9a7ab366c69509aa87e14195
+  observed_at_close: 0
+  state: WITHHELD_NO_POSTMERGE_WORKFLOW_ATTACHED
+  broader_postmerge_dov: NOT_CLAIMED
+
+published_artifacts:
+  current: mission-control/grand-missions/GM_I_C_W282_VISUAL_CURRENT_v1.yaml
+  receipt: mission-control/qps-triage-ultra/missions/receipts/GMIC_W284_W282_VISUAL_PROVE_FEDERATION_20260918_v1.yaml
+  handover: handover/session/SC_2026-09-18_GMIC_W284_W282_VISUAL_PROVE_LOSSLESS_HANDOVER_v1.md
+  dropin: handover/session/RESTART_DROPIN_2026-09-18_GMIC_W284_W282_VISUAL_PROVE_v1.md
+
+terminal_state:
+  w282_visual:
+    state: CONTROLLED_STOP_FROZEN
+    prepare: PASS
+    prove: PASS
+    three_p3: NOT_AUTHORIZED
+  qps_global:
+    issue_923: RED_OWNER_ACTION
+  r3_w275: WAIT_PHYSICAL_SUCCESSOR_GIT_BUNDLE
+  ic3: WAIT_EXTERNAL_WIF_SERVICE_ACCOUNT_DRIVE_ACL
+  temporal:
+    state: CONTROL_3_OF_5
+    latest_program_change: PR_246_TWO_CLASS_BURNDOWN_MERGED
+  drive_losslessness:
+    raw_exports: ABSENT
+
+reentry:
+  w284_self_reproof:
+    trigger: RUN_35351911591_LEAVES_QUEUE
+    on_success: BIND_EXACT_JOB_STEPS_AND_CLOSE_SELF_REPROOF
+    on_failure: CLASSIFY_ONLY_OBSERVED_FIRST_RED
+  w282_visual:
+    triggers:
+      - GOVERNED_VISUAL_METHOD_CHANGE
+      - GOVERNED_VISUAL_POPULATION_CHANGE
+      - OBSERVED_REGRESSION
+
+non_compensation:
+  SOURCE_PROOF_PASS_NE_MISSIONCONTROL_SELF_REPROOF_PASS: true
+  W284_MERGE_NE_PROJECT_GLOBAL_DOV: true
+  W282_PROVE_PASS_NE_N300_CONTROL: true
+  W282_PROVE_PASS_NE_PROJECT_GLOBAL_PCA: true
+  W282_PROVE_PASS_NE_BRADLEY_TERRY: true
+  W282_PROVE_PASS_NE_QPS_RUNTIME_GOLD: true
+  QUEUED_NE_ZERO: true
+  authority_transfer: false
+  formal_credit_delta: 0
