@@ -1,0 +1,122 @@
+name: MissionControl Temporal 3PSTAR MIP Burndown
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_frontier_burndown.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_temporal_frontier_burndown.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v1.json'
+      - '.github/workflows/crew-temporal-3pstar-mip-burndown.yml'
+  workflow_run:
+    workflows: ['MissionControl Temporal Allocation Policy']
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  unit-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Assert exact PR head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+      - name: Run burndown unit contract
+        working-directory: mission-control/qps-triage-ultra/crew/measured/frontier/temporal
+        run: python -m unittest -v test_temporal_frontier_burndown.py
+      - name: Validate 3PSTAR MIP iteration invariants
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+          p=Path('mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v1.json')
+          d=json.loads(p.read_text())
+          assert d['scope']=='TWO_CLASS_NONCONTROL_BURNDOWN'
+          assert d['three_p_star']['refresh']['status']=='PASS'
+          assert d['three_p_star']['probe']['status']=='PASS'
+          assert d['three_p_star']['rank']['status']=='PASS'
+          assert d['three_p_star']['prepare']['status']=='PASS'
+          assert d['current_control']['control_class_count']==3
+          assert d['current_control']['full_control'] is False
+          assert d['active_frontier'][0]['task_class']=='long_compute_contended'
+          assert d['active_frontier'][0]['regime']=='REGIME_REVERSAL_OBSERVED'
+          assert d['active_frontier'][0]['min_consecutive_clean_dominant_windows_to_consistency']==11
+          assert d['active_frontier'][1]['task_class']=='human_dependency_wait_proxy'
+          assert d['active_frontier'][1]['regime']=='WEAK_OR_NOISY_DIRECTION'
+          assert d['active_frontier'][1]['min_consecutive_clean_dominant_windows_to_consistency']==5
+          assert d['invariants']['thresholds_changed'] is False
+          assert d['invariants']['synthetic_or_manual_clock_credit'] is False
+          assert d['invariants']['competency_promotions']==0
+          assert d['invariants']['authority_transfer'] is False
+          print('PASS_TEMPORAL_3PSTAR_MIP_ITERATION_CONTROL')
+
+  genuine-scheduled-burndown:
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact scheduled source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Assert exact scheduled source head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.workflow_run.head_sha }}"
+      - name: Download governed temporal policy artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: crew-temporal-pc3-${{ github.event.workflow_run.head_sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/trigger-artifact
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Build governed 3PSTAR MIP burndown
+        run: >-
+          python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_frontier_burndown.py
+          --policy mission-control/qps-triage-ultra/crew/measured/frontier/temporal/trigger-artifact/TEMPORAL_ALLOCATION_POLICY_RECEIPT.json
+          --config mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json
+          --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_BURNDOWN.json
+      - name: Enforce non-compensating governance
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+          p=Path('mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_BURNDOWN.json')
+          d=json.loads(p.read_text())
+          assert d['invariants']['thresholds_changed'] is False
+          assert d['invariants']['synthetic_or_manual_clock_credit'] is False
+          assert d['invariants']['competency_promotions']==0
+          assert d['invariants']['authority_transfer'] is False
+          ranks=[row['priority_rank'] for row in d['active_frontier']]
+          assert ranks==list(range(1,len(ranks)+1))
+          for row in d['active_frontier']:
+              assert row['first_red_gate'] is not None
+              if row['task_class']=='human_dependency_wait_proxy':
+                  assert row['claim_boundary']=='CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE'
+          print(json.dumps({
+              'status':'PASS_TEMPORAL_3PSTAR_MIP_BURNDOWN_DOV',
+              'control_class_count':d['control_class_count'],
+              'active_frontier_count':len(d['active_frontier']),
+              'frontier':[{
+                  'priority':r['priority_rank'],
+                  'task_class':r['task_class'],
+                  'first_red':r['first_red_gate'],
+                  'regime':r['regime_classification'],
+                  'min_clean_windows':r['min_consecutive_clean_dominant_windows_to_consistency'],
+              } for r in d['active_frontier']],
+              'competency_promotions':0,
+              'authority_transfer':False,
+          },sort_keys=True))
+      - name: Upload governed temporal burndown
+        uses: actions/upload-artifact@v4
+        with:
+          name: temporal-3pstar-mip-burndown-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.head_sha }}
+          path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_BURNDOWN.json
