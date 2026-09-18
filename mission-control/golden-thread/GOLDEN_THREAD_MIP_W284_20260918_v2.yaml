@@ -1,0 +1,76 @@
+schema: missioncontrol.golden_thread.mip/v2
+as_of: '2026-09-18T16:54:00+02:00'
+mission: IMMUTABLE_TEMPORAL_GOLDEN_THREAD
+trigger:
+  qps_3pstar_pr: 1487
+  qps_3pstar_merge: 35f53924e3a42e9d8a9df80b0f9dac6ac0f1f2af
+  qps_control: triage/w284/QPS_W284_GOLDEN_THREAD_3PSTAR_CONTROL_v0.1.yaml
+  measured_gap: CURRENT_POINTER_AND_RESTART_SURFACE_STALENESS
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+qps_credit_delta: 0
+
+modernize:
+  status: PASS
+  strategy: APPEND_ONLY_SUCCESSOR_OVERLAY
+  historical_surfaces_preserved:
+    - mission-control/golden-thread/GOLDEN_THREAD_FRONTIER_CURRENT_v1.yaml
+    - mission-control/golden-thread/handover/SESSION_CLOSE_CURRENT_v2.yaml
+  successors:
+    frontier: mission-control/golden-thread/GOLDEN_THREAD_FRONTIER_CURRENT_v2.yaml
+    session_close: mission-control/golden-thread/handover/SESSION_CLOSE_CURRENT_v3.yaml
+  reason: >-
+    Current repository heads and QPS runner-admission evidence materially
+    advanced after the v1/v2 Golden Thread current surfaces while the semantic
+    first-red remained unchanged.
+
+innovate:
+  status: PASS_BOUNDED
+  artifact: mission-control/golden-thread/GT_BD_003_OWNER_ACTION_REENTRY_CONTRACT_v1.json
+  innovation: >-
+    Express the external owner-action gate and deterministic re-entry edge as a
+    machine-readable contract so future sessions can distinguish an actual
+    control-plane transition from another zero-step repository observation.
+  no_duplicate_authority: true
+  no_application_change: true
+
+perpetuate:
+  status: PASS_REPOSITORY_NATIVE
+  restart_dropin: mission-control/golden-thread/handover/RESTART_DROPIN_2026-09-18_GT_BD_003_OWNER_ACTION_v3.md
+  child_return_required: true
+  child_return_repo: GBOGEB/cryoplant-project
+  rule: >-
+    Bind this parent merge back into QPS without changing child disposition,
+    GT_BDQ_0, or engineering truth.
+
+current_evidence:
+  qps_repo: GBOGEB/cryoplant-project
+  qps_3pstar_merge: 35f53924e3a42e9d8a9df80b0f9dac6ac0f1f2af
+  latest_private_qps_observation:
+    source_pr: 1485
+    exact_head: 7bb7856124a93aa83c5cb677153c8cbe1e1143ae
+    release_runner_probe:
+      run: 35352181453
+      jobs:
+        - {id: 105644256331, lane: ubuntu-latest, executed_steps: 0}
+        - {id: 105644256828, lane: configured-runner, executed_steps: 0}
+        - {id: 105644257629, lane: ubuntu-22.04, executed_steps: 0}
+    classification: INFRA_PREEXECUTION_ZERO_STEP
+  missioncontrol_base: 8d0e2ecba2c318527eb99c8b504994995deb660e
+
+disposition:
+  gt_bd_003_prepare: PASS
+  gt_bd_003_prove: WITHHELD_EXTERNAL_OWNER_ACTION
+  gt_bd_003_commit: HOLD
+  qps_gt_bdq_0: WITHHELD_INFRA_PREEXECUTION
+  qps_gt_bdq_1: NOT_ADMITTED
+  global_runtime_issue: 923
+
+non_compensation:
+  - PARENT_PASS_NE_CHILD_ACCEPT
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - RESET_NE_ENGINEERING_ACCEPT
+  - MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS
+  - AUTHORITY_TRANSFER_FALSE
+  - UNKNOWN_NE_ZERO
