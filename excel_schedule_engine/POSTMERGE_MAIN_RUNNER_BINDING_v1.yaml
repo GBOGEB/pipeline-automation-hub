@@ -1,0 +1,49 @@
+schema: gbogeb.excel_schedule_engine.main_runner_postmerge_receipt.v1
+as_of: '2026-09-18T19:22:00+02:00'
+repo: GBOGEB/pipeline-automation-hub
+state: ACTIVE_MAIN_RUNNER_BOUND
+authority_transfer: false
+
+lineage:
+  implementation_pr: 275
+  implementation_merge: a1da321c18648d6df71cb9aec0563b36b40bc7c6
+  p1_hardening_pr: 293
+  p1_hardening_merge: c9088f1a075de46f06126dca8e350a0d913010f6
+  main_runner_binding_pr: 298
+  main_runner_head: 56558dc7e483866c2af4fd679bf17548c1dfe0ea
+  main_runner_merge: 17340181595b895602c1f14f5b6d3ed2c1aca55a
+
+hosted_proof:
+  excel_schedule_engine:
+    run: 35373856325
+    job: 105693848247
+    conclusion: success
+    proves:
+      - excel_engine_unit_tests
+      - main_runner_excel_integration_tests
+      - real_excel_subprocess
+  recursive_build:
+    run: 35373856209
+    job: 105693852799
+    conclusion: success
+    proves:
+      - compile
+      - recursive_build_tests
+      - main_runner_integration_tests
+
+main_contract:
+  default_without_excel: UNCHANGED_PPTX_PLUS_RECURSIVE
+  optional_excel_argument: --excel-input
+  requested_excel_failure: FAIL_CLOSED
+  pipeline_receipt_schema: pipeline_automation_hub.pipeline_run_receipt.v2
+  csv_output: Outputs/excel/tables_csv/
+  xlsx_output: Outputs/excel/tables_xlsx/
+  table_manifest: Outputs/excel/table_manifest.json
+  schedule_indexes:
+    - Reports/schedule_index.csv
+    - Reports/schedule_index.md
+
+next_permissible_slice:
+  id: PLANNING_SCHEDULE_SCHEMA_AND_DASHBOARD_BINDING
+  state: OPEN
+  objective: define canonical schedule columns, validation, KPI/dashboard projection, and human review without creating a second authority
