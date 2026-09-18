@@ -135,6 +135,10 @@ class ExcelScheduleEngineTests(unittest.TestCase):
                 out_wb["_META"]["B2"].value,
                 "ScheduleTable",
             )
+            self.assertIn(
+                "ScheduleTable",
+                out_wb["Data"].tables,
+            )
             out_wb.close()
 
     def test_manifest_and_indexes_are_generated(self):
@@ -201,6 +205,113 @@ class ExcelScheduleEngineTests(unittest.TestCase):
                 records[0].source_name,
                 "ScheduleTable",
             )
+
+    def test_fallback_starts_at_actual_used_range_origin(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            src = root / "MASTER.xlsx"
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Offset"
+            ws["B3"] = "Task"
+            ws["C3"] = "Start Date"
+            ws["B4"] = "Build"
+            ws["C4"] = "2026-09-18"
+            wb.save(src)
+
+            records = ExcelScheduleEngine(src, root).run()
+            self.assertEqual(len(records), 1)
+            record = records[0]
+            self.assertEqual(record.source_ref, "B3:C4")
+            self.assertEqual(
+                record.headers,
+                ["Task", "Start Date"],
+            )
+            self.assertEqual(record.data_rows, 1)
+            self.assertTrue(record.schedule_candidate)
+
+    def test_normalized_names_do_not_overwrite_each_other(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            src = root / "MASTER.xlsx"
+            wb = Workbook()
+            ws1 = wb.active
+            ws1.title = "Plan A"
+            ws1.append(["Task", "Status"])
+            ws1.append(["A", "Open"])
+            ws2 = wb.create_sheet("Plan_A")
+            ws2.append(["Task", "Status"])
+            ws2.append(["B", "Open"])
+            wb.save(src)
+
+            records = ExcelScheduleEngine(src, root).run()
+            self.assertEqual(len(records), 2)
+            self.assertEqual(
+                len({r.id for r in records}),
+                2,
+            )
+            self.assertEqual(
+                len({r.csv_path for r in records}),
+                2,
+            )
+            self.assertEqual(
+                len({r.xlsx_path for r in records}),
+                2,
+            )
+            for record in records:
+                self.assertTrue(
+                    (root / record.csv_path).exists()
+                )
+                self.assertTrue(
+                    (root / record.xlsx_path).exists()
+                )
+
+    def test_formula_relocation_and_table_preservation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            src = root / "MASTER.xlsx"
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Calc"
+            ws["C5"] = "Item"
+            ws["D5"] = "Qty"
+            ws["E5"] = "Price"
+            ws["F5"] = "Total"
+            ws["C6"] = "Valve"
+            ws["D6"] = 2
+            ws["E6"] = 10
+            ws["F6"] = "=D6*E6"
+            tab = Table(
+                displayName="CalcTable",
+                ref="C5:F6",
+            )
+            tab.tableStyleInfo = TableStyleInfo(
+                name="TableStyleMedium2",
+                showRowStripes=True,
+            )
+            ws.add_table(tab)
+            wb.save(src)
+
+            records = ExcelScheduleEngine(
+                src,
+                root,
+                cell_mode="formula",
+            ).run()
+            record = records[0]
+            out_wb = load_workbook(
+                root / record.xlsx_path,
+                data_only=False,
+            )
+            out_ws = out_wb["Data"]
+            self.assertEqual(
+                out_ws["D2"].value,
+                "=B2*C2",
+            )
+            self.assertIn(
+                "CalcTable",
+                out_ws.tables,
+            )
+            out_wb.close()
 
 
 if __name__ == "__main__":
