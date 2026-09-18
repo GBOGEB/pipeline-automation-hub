@@ -1,0 +1,42 @@
+{
+  "schema": "missioncontrol.qps_leg5_w249_sequential_dependency_graph/v4",
+  "as_of": "2026-09-18T16:56:00+02:00",
+  "child_repo": "GBOGEB/cryoplant-project",
+  "child_pr": 1486,
+  "child_merge": "604f282ab0ca249f660507bf9567da26b7579d09",
+  "state": "7_OF_9_CLOSED_RUNTIME_BLOCKED",
+  "nodes": [
+    {"id":"LEG5","type":"MISSION","state":"7_OF_9_CLOSED"},
+    {"id":"QPS#923","type":"EXTERNAL_RUNTIME_GATE","state":"OPEN_OWNER_ACTION"},
+    {"id":"QPS#1266","type":"ROUTE","state":"OPEN_RUNTIME_PROOF_WITHHELD"},
+    {"id":"QPS#1357","type":"ROUTE","state":"OPEN_RUNTIME_PROOF_WITHHELD"},
+    {"id":"QPS#1258","type":"CONTROL_ISSUE","state":"OPEN"},
+    {"id":"QPS_PR1486","type":"SEQUENTIAL_3PSTAR_MIP_CONTROL","state":"MERGED"},
+    {"id":"MC_RECEIVER_V4","type":"PARENT_CONTROL_RECEIVER","state":"THIS_TRANSACTION"}
+  ],
+  "edges": [
+    {"from":"MC_RECEIVER_V4","to":"QPS_PR1486","type":"BINDS_CHILD_CONTROL_MERGE"},
+    {"from":"QPS#1266","to":"QPS#923","type":"BLOCKED_BY"},
+    {"from":"QPS#1357","to":"QPS#923","type":"BLOCKED_BY"},
+    {"from":"QPS#1258","to":"QPS#1266","type":"TRACKS"},
+    {"from":"QPS#1258","to":"QPS#1357","type":"TRACKS"},
+    {"from":"MC_RECEIVER_V4","to":"QPS#923","type":"DOES_NOT_COMPENSATE"}
+  ],
+  "retry_budget": {
+    "manual_retries_authorized": 2,
+    "manual_retries_consumed": 2,
+    "further_blind_retry_authorized": false
+  },
+  "next_transition": [
+    "OWNER_SIDE_ACTIONS_ADMISSION_CHANGE",
+    "UNCHANGED_RELEASE_RUNNER_PROBE_REAL_EXECUTION",
+    "QPS_1266_VALIDATOR_UNCHANGED",
+    "QPS_1266_CLOSE_ON_PASS_8_OF_9",
+    "QPS_1357_VALIDATOR_UNCHANGED",
+    "QPS_1357_CLOSE_ON_PASS_9_OF_9",
+    "VERIFY_SCOPE_EXHAUSTION_AND_ZERO_AUTHORITY_PROMOTIONS",
+    "QPS_1258_CLOSURE_EVALUATION"
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}

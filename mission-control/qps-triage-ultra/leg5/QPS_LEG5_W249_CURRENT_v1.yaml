@@ -1,40 +1,46 @@
 schema: missioncontrol.qps_leg5_w249_current/v1
-as_of: '2026-09-18T13:24:00+02:00'
+as_of: '2026-09-18T16:56:00+02:00'
 canonical: true
 mission: QPS_LEG5_TXT_ASSIMILATION_CONSUMPTION_BURNDOWN
-state: 7_OF_9_CLOSED_PARENT_CONTROL_COMPLETE_CHILD_RUNTIME_WITHHELD
+state: 7_OF_9_CLOSED_SEQUENTIAL_3PSTAR_MIP_PUBLISHED_CHILD_RUNTIME_WITHHELD
 authority_transfer: false
 formal_credit_delta: 0
 
 current_parent:
-  reconciliation: mission-control/qps-triage-ultra/leg5/QPS_LEG5_W249_POSTMERGE_RECONCILIATION_v3.yaml
-  restart: mission-control/qps-triage-ultra/leg5/RESTART_DROPIN_2026-09-18_W249_LEG5_POSTMERGE_v3.md
-  lossless_handover: mission-control/qps-triage-ultra/leg5/SC_2026-09-18_W249_LEG5_POSTMERGE_RECONCILIATION_v3.md
+  receiver: mission-control/qps-triage-ultra/leg5/QPS_LEG5_W249_SEQUENTIAL_3PSTAR_MIP_RECEIVER_v4.yaml
+  dependency_graph: mission-control/qps-triage-ultra/leg5/QPS_LEG5_W249_SEQUENTIAL_DEPENDENCY_GRAPH_v4.json
+  restart: mission-control/qps-triage-ultra/leg5/RESTART_DROPIN_2026-09-18_W249_LEG5_SEQUENTIAL_v4.md
 
 child_authority:
   repo: GBOGEB/cryoplant-project
   refresh_first: true
-  observed_main: 34d21db38a0cfc2a07c4d59039e002bdb89578fa
-  current_leg5_handover: handover/session/SC_2026-09-18_W249_LEG5_3PSTAR_MIP_LOSSLESS_HANDOVER_v2.md
-  current_leg5_restart: handover/session/RESTART_DROPIN_2026-09-18_W249_LEG5_v2.md
-  current_leg5_control: triage/w249/QPS_W249_LEG5_3PSTAR_MIP_FOLLOWUP_v0.2.yaml
+  control_pr: 1486
+  control_merge: 604f282ab0ca249f660507bf9567da26b7579d09
+  control_head: 47afba73f55a21ded45af0142f4511aa23686fbf
+  sequential_3pstar: triage/w249/QPS_W249_LEG5_3PSTAR_SEQUENTIAL_EXECUTION_v0.4.yaml
+  retry_receipt: triage/w249/QPS_W249_LEG5_RUNNER_RETRY_EXHAUSTION_RECEIPT_v0.3.yaml
+  sequential_mip: triage/w249/QPS_W249_LEG5_MIP_SEQUENTIAL_EXECUTION_v0.4.yaml
+  restart: handover/session/RESTART_DROPIN_2026-09-18_W249_LEG5_v4.md
   routes_closed: 7
   routes_total: 9
   open_routes: [1266, 1357]
 
 runtime_gate:
   issue: GBOGEB/cryoplant-project#923
-  state: OPEN_OWNER_ACTION
+  state: OPEN_OWNER_ACTION_RETRY_BUDGET_EXHAUSTED
   required:
+    - material_owner_side_actions_admission_change
     - runner_id_nonzero
-    - steps_gt_0
+    - steps_gt_zero
     - validator_runner_selector_compatible
-  selector: CRYO_RECEIPT_RUNNER
+  manual_retries_authorized: 2
+  manual_retries_consumed: 2
   compensation_allowed: false
 
 next_order:
   - refresh_live_child_and_parent_state
-  - if_runner_predicate_false_stop_runtime_progression
+  - if_no_material_admission_change_stop_runtime_progression
+  - unchanged_release_runner_probe
   - execute_1266_validator_unchanged_after_runner_predicate
   - close_1266_only_on_PASS
   - execute_1357_validator_unchanged_after_1266_PASS
@@ -46,6 +52,8 @@ next_order:
 history_preserved:
   - QPS_PR_1450
   - QPS_PR_1456
+  - QPS_PR_1461
   - MC_PR_200
   - MC_PR_202
   - MC_PR_203
+  - MC_PR_205
