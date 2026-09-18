@@ -1,0 +1,80 @@
+{
+  "schema": "qps-triage-ultra/w285-federation-depth-3pstar-mip/1.0",
+  "wave": "W285",
+  "state": "CANDIDATE_PREPARED_WAIT_EXTERNAL_EXACT_PROOF_AND_REVIEW_MERGE",
+  "source": {
+    "prior_qps_control": "GBOGEB/cryoplant-project@41998c71cf187e3640cf273f7be9b5b96539aab1",
+    "prior_first_red": "W283_DEPTH_01",
+    "topology_blob": "df0ee845697578cd644691b81eafb2465249d772",
+    "depth_artifact_path": "mission-control/qps-triage-ultra/topology/QPS_ROUTING_FUNCTION_SUBSURFACE_DEPTH_v1.json",
+    "depth_artifact_blob": "a9ba70c2ed00e30e0153099062736c347c51cfa0"
+  },
+  "three_pr": {
+    "refresh": "PASS_CURRENT_QPS_W283RC_AND_PIPELINE_MASTER_REFRESHED",
+    "probe": "PASS_EXACT_TOPOLOGY_CURRENT_USE_ATOMS_DECOMPOSED_12_FUNCTIONS",
+    "rank": "PASS_DEPTH_DENOMINATOR_AND_SAMPLE_ATOM_MAPPING_SELECTED_AS_NEXT_NONCOMPENSATING_FRONTIER"
+  },
+  "mip": {
+    "modernize": "PASS_SPLIT_FUNCTION_BREADTH_FROM_CONDITIONAL_SUBSURFACE_DEPTH",
+    "innovate": "PASS_NONOVERLAPPING_FUNCTION_ATOM_KEYS_AND_ZERO_DENOMINATOR_GUARD",
+    "perpetuate": "WAIT_EXTERNAL_EXACT_VALIDATOR_PR_HEAD_AND_DISTINCT_REPEAT"
+  },
+  "three_pc": {
+    "prepare": "PASS_CANDIDATE_ARTIFACT_MATERIALIZED",
+    "prove": "WAIT_Q_ENGINEERING_TOOLS_EXACT_PROOF",
+    "commit": "WAIT_PIPELINE_REVIEW_MERGE"
+  },
+  "three_p3": "NOT_AUTHORIZED_BEFORE_PROVE_AND_COMMIT",
+  "measured_candidate": {
+    "all_functions_current_use_atoms": {
+      "numerator": 29,
+      "denominator": 29,
+      "value": 1
+    },
+    "breadth": {
+      "numerator": 4,
+      "denominator": 12,
+      "value": 0.3333333333333333
+    },
+    "depth_conditioned_on_breadth": {
+      "numerator_unique_covered_atoms": 5,
+      "denominator_atoms_in_breadth_covered_functions": 16,
+      "value": 0.3125,
+      "per_function": {
+        "MISSION_CONTROL_ORCHESTRATION": {
+          "numerator": 2,
+          "denominator": 5,
+          "value": 0.4
+        },
+        "DOW_RUNTIME_METRICS_PROJECTION": {
+          "numerator": 1,
+          "denominator": 4,
+          "value": 0.25
+        },
+        "KEB_SEMANTIC_PROVENANCE": {
+          "numerator": 1,
+          "denominator": 4,
+          "value": 0.25
+        },
+        "EXACT_PAYLOAD_RUNTIME_CARRIER": {
+          "numerator": 1,
+          "denominator": 3,
+          "value": 0.3333333333333333
+        }
+      }
+    },
+    "global_fleet_penetration": {
+      "formula": "B*D",
+      "value": 0.10416666666666666
+    }
+  },
+  "preserved_noncompensating": [
+    "QPS_REPO_LOCAL_RUNNER_923",
+    "W275_R3_PHYSICAL_SUCCESSOR_GIT_BUNDLE_RETURN",
+    "GT_BDQ_0",
+    "GLOBAL_BT_GRAPH_CONNECTIVITY",
+    "EXTERNAL_SOURCE_AND_AUTHORITY_GATES"
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
