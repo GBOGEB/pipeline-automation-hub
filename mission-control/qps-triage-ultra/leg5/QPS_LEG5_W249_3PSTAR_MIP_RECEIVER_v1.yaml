@@ -1,0 +1,99 @@
+schema: missioncontrol.qps_leg5_w249_3pstar_mip_receiver/v1
+as_of: '2026-09-18T13:04:00+02:00'
+repo: GBOGEB/pipeline-automation-hub
+role: PARENT_CONTROL_RECEIVER
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+qps_runtime_credit_delta: 0
+
+child:
+  repo: GBOGEB/cryoplant-project
+  pr: 1450
+  exact_head: 2b7315ab135f8245c38db00fcaf9395dbb80fe15
+  base_main_at_open: f7e881534c16510742447f065d6ed8259db4cb16
+  control_issue: 1258
+  runtime_gate_issue: 923
+  open_routes: [1266, 1357]
+  state: 7_OF_9_CLOSED_STATIC_CONTROL_INTEGRATED_RUNTIME_PROOF_WITHHELD
+
+method:
+  sequence: [P1_3PR, P2_MIP, P3_3PC]
+  classification: NONCOMPENSATING_FEDERATED_CONTROL
+  child_runtime_substitution_allowed: false
+
+P1_3PR:
+  refresh: PASS
+  probe: PASS_POSTHANDOVER_MERGE_PROOF_DIVERGENCE_IDENTIFIED
+  rank:
+    - bind_exact_child_control_head
+    - validate_no_authority_transfer
+    - preserve_issue_923_as_child_runtime_first_red
+    - perpetuate_restart_and_dependency_graph
+
+P2_MIP:
+  modernize:
+    - replace_implicit_merge_equals_progress_with_explicit_static_integration_state
+    - bind_parent_receiver_to_exact_child_head
+  innovate:
+    - add_cross_repo_dependency_edge_types_STATIC_CONTROL_PRESENT_and_RUNTIME_PROOF_WITHHELD
+    - record_public_parent_proof_as_CONTROL_ONLY
+  perpetuate:
+    - exact_child_head_pin
+    - recursive_history_chain
+    - restart_dropin
+    - parent_receiver_pr
+
+P3_3PC:
+  prepare:
+    state: PASS
+    child_pr: 1450
+    child_head: 2b7315ab135f8245c38db00fcaf9395dbb80fe15
+  prove:
+    state: CONTROL_ONLY
+    predicates:
+      exact_child_head_bound: true
+      child_7_of_9_preserved: true
+      child_923_noncompensating: true
+      parent_authority_transfer_false: true
+      parent_runtime_credit_zero: true
+  commit:
+    state: PENDING_PARENT_PR_MERGE
+    child_route_closure: WITHHELD
+    qps_runtime_gold: WITHHELD
+
+dependencies:
+  - from: MC_RECEIVER
+    to: QPS_PR_1450
+    type: BINDS_EXACT_CHILD_HEAD
+  - from: QPS_PR_1450
+    to: QPS_ISSUE_923
+    type: BLOCKED_BY_RUNTIME_ADMISSION
+  - from: QPS_ISSUE_1266
+    to: QPS_ISSUE_923
+    type: REQUIRES_REAL_RUNNER_THEN_VALIDATOR
+  - from: QPS_ISSUE_1357
+    to: QPS_ISSUE_923
+    type: REQUIRES_REAL_RUNNER_THEN_VALIDATOR
+  - from: QPS_ISSUE_1258
+    to: [QPS_ISSUE_1266, QPS_ISSUE_1357]
+    type: CLOSES_ONLY_AFTER_BOTH_TERMINAL
+
+history:
+  qps_parent_ledger: triage/w249/QPS_W249_LEG5_TXT_ASSIMILATION_CONSUMPTION_LEDGER_v0.4.yaml
+  qps_retry_receipt: triage/w249/QPS_W249_LEG5_RUNNER_RETRY_RECEIPT_v0.1.yaml
+  qps_successor_ledger: triage/w249/QPS_W249_LEG5_TXT_ASSIMILATION_CONSUMPTION_LEDGER_v0.5.yaml
+  qps_proof_debt_receipt: triage/w249/QPS_W249_LEG5_POSTMERGE_RUNTIME_PROOF_DEBT_v0.1.json
+  qps_3pstar_mip_control: triage/w249/QPS_W249_LEG5_3PSTAR_MIP_CONTROL_v0.1.yaml
+
+stop_rules:
+  - do_not_claim_8_of_9_or_9_of_9_from_parent_receiver
+  - do_not_close_1266_or_1357
+  - do_not_compensate_923
+  - do_not_infer_application_behavior_from_steps_null
+  - do_not_transfer_engineering_or_negotiation_authority
+
+next_predicate:
+  child: QPS_RUNNER_ADMISSION
+  require: [runner_id_nonzero, steps_gt_0]
+  parent_after_child_proof: bind_exact_runtime_receipts_without_reinterpreting_child_authority
