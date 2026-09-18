@@ -1,0 +1,28 @@
+name: recursive-doc-ke-gate
+
+on:
+  pull_request:
+    paths:
+      - "recursive_doc_engine/**"
+      - ".github/workflows/recursive-doc-ke-gate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unit proof
+        run: python -m unittest recursive_doc_engine.tests.test_roundtrip -v
+      - name: Real repository sample round-trip
+        run: |
+          rm -rf /tmp/recursive-doc-ke-run
+          python -m recursive_doc_engine.engine recursive_doc_engine/README.md --out /tmp/recursive-doc-ke-run
+          python -m recursive_doc_engine.cd_gate /tmp/recursive-doc-ke-run --result /tmp/recursive-doc-ke-run/cd_gate_result.json
+          cat /tmp/recursive-doc-ke-run/cd_gate_result.json
