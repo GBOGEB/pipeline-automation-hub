@@ -1,0 +1,187 @@
+{
+  "schema": "missioncontrol.temporal_3pstar_mip_iteration.v1",
+  "mission_id": "MC-CREW-FRONTIER-004",
+  "scope": "TWO_CLASS_NONCONTROL_BURNDOWN",
+  "refresh": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "branch": "master",
+    "observed_master_at_iteration_start": "f276f5c36d4e2ab0646d728e5d24032bb63545c3",
+    "refresh_first_on_restart": true,
+    "canonical_control_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONTROL_POLICY_ACCEPTANCE_v1.json",
+    "frozen_config": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json"
+  },
+  "evidence_basis": {
+    "genuine_schedule_run_id": "35319784958",
+    "exact_source_sha": "9e7e698c1cf40b594244aba01e1ea704ef76d203",
+    "artifact_id": "10536637698",
+    "artifact_digest": "sha256:d72bc6ec77c07821ef1a4191796dd0c0e008b9f05a95a46d4c913f3062648ce9",
+    "scheduled_windows": 19,
+    "distinct_scheduled_source_shas": 11,
+    "scheduled_span_seconds": 389315,
+    "hosted_runner_classes": [
+      "linux",
+      "macos",
+      "windows"
+    ],
+    "lanes": [
+      "baseline",
+      "held"
+    ],
+    "rex_veto": false
+  },
+  "three_p_star": {
+    "sequence": [
+      "3PR_REFRESH",
+      "3PR_PROBE",
+      "3PR_RANK",
+      "3PC_PREPARE",
+      "3PC_PROVE",
+      "3PC_COMMIT",
+      "3P3_PROPAGATE_PERPETUATE"
+    ],
+    "refresh": {
+      "status": "PASS",
+      "result": "3_OF_5_CONTROL_BOUND_TO_GENUINE_SCHEDULE_AUTHORITY"
+    },
+    "probe": {
+      "status": "PASS",
+      "result": "TWO_DISTINCT_FAILURE_MODES",
+      "findings": [
+        "long_compute_contended exhibits early-to-late direction reversal",
+        "human_dependency_wait_proxy retains same early/late dominant direction but weak noisy effect with frequent flips and indeterminate windows"
+      ]
+    },
+    "rank": {
+      "status": "PASS",
+      "P0": {
+        "task_class": "long_compute_contended",
+        "reason": "REGIME_REVERSAL_OBSERVED",
+        "first_red": "direction_consistency",
+        "next_action": "DECOMPOSE_SIGNED_EFFECT_BY_RUNNER_LANE_AND_TEMPORAL_HALF"
+      },
+      "P1": {
+        "task_class": "human_dependency_wait_proxy",
+        "reason": "WEAK_OR_NOISY_DIRECTION",
+        "first_red": "direction_consistency",
+        "next_action": "KEEP_PROXY_CLAIM_BOUNDARY_AND_CONTINUE_GENUINE_SCHEDULED_STABILITY_MEASUREMENT"
+      }
+    },
+    "prepare": {
+      "status": "PASS",
+      "contract": "temporal_frontier_burndown.py + exact-head unit contract + genuine-schedule workflow_run consumer"
+    },
+    "prove": {
+      "status": "REQUIRES_HOSTED_EXACT_HEAD_PASS",
+      "rule": "no merge or propagation credit until PR exact-head runtime executes >0 steps and returns PASS_TEMPORAL_3PSTAR_MIP_BURNDOWN"
+    },
+    "commit": {
+      "status": "HOLD_UNTIL_PROVE_PASS"
+    },
+    "propagate_perpetuate": {
+      "status": "POSTMERGE_REQUIRED",
+      "required": [
+        "bind exact merge SHA",
+        "emit current-frontier pointer",
+        "emit lossless handover",
+        "emit restart drop-in",
+        "repeat validator on merged master"
+      ]
+    }
+  },
+  "mip": {
+    "Modernize": {
+      "status": "PASS",
+      "change": "Replace one generic unstable queue with two explicit mechanism classes: regime reversal vs weak/noisy direction."
+    },
+    "Innovate": {
+      "status": "PASS",
+      "change": "Add consistency debt, winner-strength debt, surveillance regime classification, deterministic first-red, and minimum clean dominant-window pressure."
+    },
+    "Perpetuate": {
+      "status": "PREPARED_REQUIRES_POSTMERGE_BIND",
+      "change": "Attach burndown generation to every successful genuine scheduled temporal return; persist a repository-native restart chain after merge."
+    }
+  },
+  "current_control": {
+    "control_classes": [
+      "cache_artifact_reuse",
+      "short_compute",
+      "validation_bundle"
+    ],
+    "control_class_count": 3,
+    "task_class_count": 5,
+    "full_control": false,
+    "surveillance": {
+      "H2_72H": "MATURE",
+      "H3_7D": "NOT_MATURE",
+      "H4_30D": "NOT_MATURE"
+    }
+  },
+  "active_frontier": [
+    {
+      "priority": "P0",
+      "task_class": "long_compute_contended",
+      "dominant_direction": "ALLOC_PAIRED_CELL",
+      "direction_counts": {
+        "ALLOC_PAIRED_CELL": 9,
+        "ALLOC_SINGLE_CELL": 5
+      },
+      "directional_windows": 14,
+      "direction_consistency": 0.6428571428571429,
+      "consistency_threshold": 0.8,
+      "min_consecutive_clean_dominant_windows_to_consistency": 11,
+      "pooled_winner_strength": 0.5987602959653776,
+      "winner_strength_threshold": 0.7,
+      "latest_two_directional_windows_agree": false,
+      "direction_flip_count": 3,
+      "indeterminate_window_fraction": 0.2631578947368421,
+      "early_direction": "ALLOC_PAIRED_CELL",
+      "late_direction": "ALLOC_SINGLE_CELL",
+      "early_vs_late_direction_agreement": false,
+      "jackknife_min_pooled_winner_strength": 0.5803153551429414,
+      "regime": "REGIME_REVERSAL_OBSERVED",
+      "first_red": "direction_consistency"
+    },
+    {
+      "priority": "P1",
+      "task_class": "human_dependency_wait_proxy",
+      "dominant_direction": "ALLOC_SINGLE_CELL",
+      "direction_counts": {
+        "ALLOC_SINGLE_CELL": 11,
+        "ALLOC_PAIRED_CELL": 4
+      },
+      "directional_windows": 15,
+      "direction_consistency": 0.7333333333333333,
+      "consistency_threshold": 0.8,
+      "min_consecutive_clean_dominant_windows_to_consistency": 5,
+      "pooled_winner_strength": 0.6212672162393283,
+      "winner_strength_threshold": 0.7,
+      "latest_two_directional_windows_agree": false,
+      "direction_flip_count": 7,
+      "indeterminate_window_fraction": 0.21052631578947367,
+      "early_direction": "ALLOC_SINGLE_CELL",
+      "late_direction": "ALLOC_SINGLE_CELL",
+      "early_vs_late_direction_agreement": true,
+      "jackknife_min_pooled_winner_strength": 0.600553303416023,
+      "regime": "WEAK_OR_NOISY_DIRECTION",
+      "first_red": "direction_consistency",
+      "claim_boundary": "CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE"
+    }
+  ],
+  "non_goals": [
+    "do not lower or raise frozen CONTROL thresholds",
+    "do not fabricate scheduled clock time",
+    "do not relabel push or PR traffic as CONTROL evidence",
+    "do not claim real human dependency behavior from controlled wait proxy",
+    "do not promote competency",
+    "do not transfer authority",
+    "do not reopen the three accepted CONTROL classes except through governed surveillance regression"
+  ],
+  "invariants": {
+    "thresholds_changed": false,
+    "synthetic_or_manual_clock_credit": false,
+    "competency_promotions": 0,
+    "authority_transfer": false,
+    "formal_credit_delta": 0
+  }
+}
