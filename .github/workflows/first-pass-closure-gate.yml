@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Unit-test gate logic
-        run: python -m pytest -q scripts/tests/test_first_pass_closure_gate.py
+        run: python -m unittest scripts/tests/test_first_pass_closure_gate.py
 
       - name: Resolve PR number
         id: pr
