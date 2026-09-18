@@ -93,7 +93,7 @@
       ],
       "active_scope": [
         "HIST-BD-009",
-        "HIST-BD-018"
+        "REX-CM-005"
       ],
       "done_scope": [
         "HIST-BD-002",
@@ -104,7 +104,7 @@
         "HIST-BD-017",
         "HIST-BD-018"
       ],
-      "current_mission": "REX_CM_005_ADMISSION_BINDING_PLUS_NEGATIVE_EVIDENCE",
+      "current_mission": "REX_CM_005_MERGE_ADMISSION_PLUS_NEGATIVE_EVIDENCE",
       "secondment": [
         "H2_KEB",
         "HISTORIAN",
@@ -117,7 +117,7 @@
         "negative evidence contract",
         "contract drift"
       ],
-      "victory_condition": "BD018 hosted repair proof passes and merge admission is bound fail-closed; BD009 retains validated negative evidence without promotion",
+      "victory_condition": "Bind merge admission fail-closed to governance and prove negative/positive admission; retain BD009 validated negative evidence without promotion",
       "controlled_scope": [
         "HIST-BD-016"
       ]
@@ -197,11 +197,11 @@
         "HIST-BD-018"
       ],
       "active_scope": [
+        "REX-CM-005",
         "HIST-BD-009",
-        "HIST-BD-018",
         "fleet deep-dive expansion"
       ],
-      "current_mission": "BD018_CONTROL_ESCAPE_AND_TEMPORAL_LINEAGE",
+      "current_mission": "MERGE_ADMISSION_CONTROL_ESCAPE_AND_TEMPORAL_LINEAGE",
       "secondment": [
         "H1_QPS",
         "H2_KEB",
@@ -252,9 +252,10 @@
       "DEBUG_SURGEON"
     ],
     "priority_sequence": [
-      "REX-CM-005 hosted proof + merge admission binding",
+      "REX-CM-005 merge admission binding + negative/positive proof",
       "HIST-BD-001",
       "HIST-BD-009",
+      "cryoplant-project#923 remains separate non-compensating runtime gate",
       "next repo deep-dive"
     ],
     "anti_proliferation": "specialists are temporary pressure cells; return/merge competencies after bounded victory unless recurrent independent workload justifies persistence"
