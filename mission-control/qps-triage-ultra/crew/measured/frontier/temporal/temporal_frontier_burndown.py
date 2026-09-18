@@ -65,7 +65,9 @@ def _regime_class(surveillance: dict) -> str:
     return "MARGIN_OR_SAMPLE_DEFICIT"
 
 
-def _next_action(regime: str, task_class: str) -> str:
+def _next_action(regime: str, task_class: str, regression_from_control: bool = False) -> str:
+    if regression_from_control:
+        return "DECOMPOSE_CONTROL_REGRESSION_AND_REEARN_FROZEN_GATE"
     if regime == "REGIME_REVERSAL_OBSERVED":
         return "DECOMPOSE_SIGNED_EFFECT_BY_RUNNER_LANE_AND_TEMPORAL_HALF"
     if task_class == "human_dependency_wait_proxy":
@@ -75,7 +77,7 @@ def _next_action(regime: str, task_class: str) -> str:
     return "CONTINUE_GENUINE_SCHEDULED_SURVEILLANCE"
 
 
-def build_burndown(receipt: dict, config: dict) -> dict:
+def build_burndown(receipt: dict, config: dict, prior_acceptance: dict | None = None) -> dict:
     if receipt.get("authority_transfer") is not False:
         raise ValueError("authority_transfer must remain false")
     if receipt.get("competency_promotions") != 0:
@@ -84,6 +86,11 @@ def build_burndown(receipt: dict, config: dict) -> dict:
     gate = config["control_policy_gate"]
     surveillance = receipt.get("temporal_surveillance", {}).get("classes", {})
     policies = receipt["policies"]
+    prior_control_classes = {
+        row["task_class"]
+        for row in (prior_acceptance or {}).get("control_classes", [])
+        if row.get("policy_status") == "CONTROL_POLICY"
+    }
 
     control_classes = sorted(
         name for name, policy in policies.items()
@@ -98,7 +105,8 @@ def build_burndown(receipt: dict, config: dict) -> dict:
         dominant = control.get("dominant_direction", "INDETERMINATE")
         failed = _failed_gates(policy, gate)
         surv = surveillance.get(name, {})
-        regime = _regime_class(surv)
+        regression_from_control = name in prior_control_classes
+        regime = "CONTROL_REGRESSION" if regression_from_control else _regime_class(surv)
         consistency = float(control.get("direction_consistency", 0.0))
         strength = float(control.get("pooled_winner_strength", 0.0))
         row = {
@@ -129,7 +137,8 @@ def build_burndown(receipt: dict, config: dict) -> dict:
                 "jackknife_direction_preservation_fraction": (surv.get("jackknife") or {}).get("direction_preservation_fraction"),
             },
             "regime_classification": regime,
-            "next_action": _next_action(regime, name),
+            "regression_from_control": regression_from_control,
+            "next_action": _next_action(regime, name, regression_from_control),
             "claim_boundary": (
                 "CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE"
                 if name == "human_dependency_wait_proxy" else None
@@ -139,7 +148,7 @@ def build_burndown(receipt: dict, config: dict) -> dict:
 
     frontier.sort(
         key=lambda row: (
-            0 if row["regime_classification"] == "REGIME_REVERSAL_OBSERVED" else 1,
+            0 if row["regression_from_control"] else 1 if row["regime_classification"] == "REGIME_REVERSAL_OBSERVED" else 2,
             -int(row["min_consecutive_clean_dominant_windows_to_consistency"] or 0),
             -float(row["winner_strength_deficit"]),
             row["task_class"],
@@ -172,6 +181,7 @@ def build_burndown(receipt: dict, config: dict) -> dict:
         },
         "control_classes": control_classes,
         "control_class_count": len(control_classes),
+        "regression_classes": sorted(row["task_class"] for row in frontier if row["regression_from_control"]),
         "task_class_count": len(policies),
         "full_control_policy": len(control_classes) == len(policies),
         "active_frontier": frontier,
@@ -191,17 +201,23 @@ def main() -> int:
     ap.add_argument("--policy", required=True)
     ap.add_argument("--config", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--prior-acceptance")
     args = ap.parse_args()
 
     receipt = json.loads(Path(args.policy).read_text(encoding="utf-8"))
     config = json.loads(Path(args.config).read_text(encoding="utf-8"))
-    result = build_burndown(receipt, config)
+    prior_acceptance = (
+        json.loads(Path(args.prior_acceptance).read_text(encoding="utf-8"))
+        if args.prior_acceptance else None
+    )
+    result = build_burndown(receipt, config, prior_acceptance)
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({
         "status": "PASS_TEMPORAL_3PSTAR_MIP_BURNDOWN",
         "control_classes": result["control_classes"],
+        "regression_classes": result["regression_classes"],
         "frontier": [
             {
                 "priority": row["priority_rank"],

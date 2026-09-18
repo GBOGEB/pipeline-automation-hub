@@ -8,6 +8,9 @@ on:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_temporal_frontier_burndown.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v2.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v3.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_FRONTIER_CURRENT_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/**'
       - '.github/workflows/crew-temporal-3pstar-mip-burndown.yml'
   push:
     branches: [master]
@@ -16,6 +19,9 @@ on:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_temporal_frontier_burndown.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v2.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v3.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_FRONTIER_CURRENT_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/**'
       - '.github/workflows/crew-temporal-3pstar-mip-burndown.yml'
   workflow_run:
     workflows: ['MissionControl Temporal Allocation Policy']
@@ -42,34 +48,47 @@ jobs:
       - name: Run burndown unit contract
         working-directory: mission-control/qps-triage-ultra/crew/measured/frontier/temporal
         run: python -m unittest -v test_temporal_frontier_burndown.py
-      - name: Validate 3PSTAR MIP iteration invariants
+      - name: Validate lossless 3PSTAR MIP control chain
         shell: python
         run: |
           import json
           from pathlib import Path
           root=Path('mission-control/qps-triage-ultra/crew/measured/frontier/temporal')
-          p=root/'TEMPORAL_3PSTAR_MIP_ITERATION_v2.json'
-          d=json.loads(p.read_text())
-          assert d['schema']=='missioncontrol.temporal_3pstar_mip_iteration.v2'
-          assert d['supersedes']=='TEMPORAL_3PSTAR_MIP_ITERATION_v1.json'
-          assert d['proof_rebind']['rex_classification']=='REX-005_UNBOUND_PROMOTION_PROOF_GATE'
-          assert d['proof_rebind']['merge_without_exact_head_proof_observed'] is True
-          assert d['proof_rebind']['merge_itself_counts_as_proof'] is False
-          assert d['current_control']['control_class_count']==3
-          assert d['current_control']['full_control'] is False
-          assert d['active_frontier'][0]['task_class']=='long_compute_contended'
-          assert d['active_frontier'][0]['min_consecutive_clean_dominant_windows_to_consistency']==11
-          assert d['active_frontier'][1]['task_class']=='human_dependency_wait_proxy'
-          assert d['active_frontier'][1]['min_consecutive_clean_dominant_windows_to_consistency']==5
-          assert d['invariants']['thresholds_changed'] is False
-          assert d['invariants']['synthetic_or_manual_clock_credit'] is False
-          assert d['invariants']['competency_promotions']==0
-          assert d['invariants']['authority_transfer'] is False
+          v3=json.loads((root/'TEMPORAL_3PSTAR_MIP_ITERATION_v3.json').read_text())
+          cur=json.loads((root/'TEMPORAL_FRONTIER_CURRENT_v1.json').read_text())
+          assert v3['schema']=='missioncontrol.temporal_3pstar_mip_iteration.v3'
+          assert v3['control_state']['control_class_count']==3
+          assert v3['control_state']['full_control'] is False
+          assert v3['three_p_star']['prove']['implementation_pr_head']['status']=='PASS_LATE_AFTER_MERGE'
+          assert v3['rex']['id']=='REX-005'
+          assert v3['rex']['repair_pr']==252
+          assert v3['rex']['repair_merge']=='243337e7170029ccfbcf1588ce951356fd1d22a7'
+          assert v3['active_frontier'][0]['task_class']=='long_compute_contended'
+          assert v3['active_frontier'][0]['min_clean_dominant_windows_to_consistency_0_80']==11
+          assert v3['active_frontier'][1]['task_class']=='human_dependency_wait_proxy'
+          assert v3['active_frontier'][1]['min_clean_dominant_windows_to_consistency_0_80']==5
+          assert v3['invariants']['thresholds_changed'] is False
+          assert v3['invariants']['synthetic_or_manual_clock_credit'] is False
+          assert v3['invariants']['competency_promotions']==0
+          assert v3['invariants']['authority_transfer'] is False
+          assert cur['schema']=='missioncontrol.temporal_frontier_current.v1'
+          assert cur['refresh_first'] is True
+          assert cur['control_classes']==['cache_artifact_reuse','short_compute','validation_bundle']
+          assert cur['proof_chain']['postmerge_recurrence']['run_id']=='35352260069'
+          assert cur['proof_chain']['postmerge_recurrence']['job_id']=='105622958891'
+          for rel in (
+              'handover/SC_2026-09-18_TEMPORAL_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md',
+              'handover/RESTART_DROPIN_2026-09-18_TEMPORAL_FRONTIER_v1.md',
+          ):
+              assert (root/rel).is_file(), rel
           print(json.dumps({
-              'status':'PASS_TEMPORAL_3PSTAR_MIP_PROOF_REBIND_CONTROL',
-              'event':'push' if not d['proof_rebind'].get('final_exact_head_proof') else 'historical',
+              'status':'PASS_TEMPORAL_3PSTAR_MIP_LOSSLESS_HANDOVER_CONTRACT',
+              'control_class_count':3,
+              'active_frontier_count':2,
+              'postmerge_run':'35352260069',
+              'postmerge_job':'105622958891',
               'authority_transfer':False,
-              'competency_promotions':0
+              'competency_promotions':0,
           },sort_keys=True))
 
   genuine-scheduled-burndown:
