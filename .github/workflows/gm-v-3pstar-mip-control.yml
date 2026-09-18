@@ -1,0 +1,125 @@
+name: GM-V 3PSTAR MIP Control
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_V_3PSTAR_MIP_CONTROL_v1.json'
+      - 'mission-control/grand-missions/GM_V_CURRENT_v1.json'
+      - 'mission-control/grand-missions/GM_V_GOVERNOR_READINESS_CONTRACT.json'
+      - 'mission-control/grand-missions/validate_gm_v_3pstar_mip_control.py'
+      - 'mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md'
+      - 'mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v1.md'
+      - '.github/workflows/gm-v-3pstar-mip-control.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_V_3PSTAR_MIP_CONTROL_v1.json'
+      - 'mission-control/grand-missions/GM_V_CURRENT_v1.json'
+      - 'mission-control/grand-missions/GM_V_GOVERNOR_READINESS_CONTRACT.json'
+      - 'mission-control/grand-missions/validate_gm_v_3pstar_mip_control.py'
+      - 'mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md'
+      - 'mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v1.md'
+      - '.github/workflows/gm-v-3pstar-mip-control.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gm-v-3pstar-mip-control:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Assert exact head and predecessor ancestry
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          git merge-base --is-ancestor 0d3b66ee8c2566ed1e5f8b83c2932e4a9160bcbb HEAD
+          git merge-base --is-ancestor 3df37a0485874f968f0dffa02bc474c5f4645fba HEAD
+          echo "SOURCE_SHA=$actual" >> "$GITHUB_ENV"
+
+      - name: Compile and run deterministic 3PSTAR MIP validator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile mission-control/grand-missions/validate_gm_v_3pstar_mip_control.py
+          python mission-control/grand-missions/validate_gm_v_3pstar_mip_control.py             --source-sha "$SOURCE_SHA"             --out /tmp/gm-v-3pstar-mip-1.json
+          python mission-control/grand-missions/validate_gm_v_3pstar_mip_control.py             --source-sha "$SOURCE_SHA"             --out /tmp/gm-v-3pstar-mip-2.json
+          cmp /tmp/gm-v-3pstar-mip-1.json /tmp/gm-v-3pstar-mip-2.json
+          grep -q 'PASS_GM_V_3PSTAR_MIP_CONTROL' /tmp/gm-v-3pstar-mip-1.json
+
+      - name: Reverify exact predecessor runtime artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          api="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json"             "$api/actions/runs/35171901674" > /tmp/capacity-run.json
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json"             "$api/actions/artifacts/10476967287" > /tmp/capacity-artifact.json
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json"             "$api/actions/runs/35343419829" > /tmp/gmv-run.json
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json"             "$api/actions/artifacts/10546460986" > /tmp/gmv-artifact.json
+          python - <<'PY'
+          import json
+          cap=json.load(open('/tmp/capacity-run.json'))
+          capa=json.load(open('/tmp/capacity-artifact.json'))
+          gmv=json.load(open('/tmp/gmv-run.json'))
+          gmva=json.load(open('/tmp/gmv-artifact.json'))
+          assert cap['head_sha']=='9cdb8fe35e15b675f3fe1b2492c16f9785fc3115'
+          assert cap['status']=='completed' and cap['conclusion']=='success'
+          assert capa['id']==10476967287
+          assert capa['digest']=='sha256:7a5a0910db8639b642d8e63b4e37169d636ee3e6b7fc2ba0da93789ad183fc68'
+          assert capa['expired'] is False
+          assert gmv['head_sha']=='0d3b66ee8c2566ed1e5f8b83c2932e4a9160bcbb'
+          assert gmv['status']=='completed' and gmv['conclusion']=='success'
+          assert gmva['id']==10546460986
+          assert gmva['digest']=='sha256:d1d252e6635c79baca4af4c03a89732cad2a004c96f55e0ce650f98d818090ba'
+          assert gmva['expired'] is False
+          print('PASS_EXACT_PREDECESSOR_RUNTIME_ARTIFACTS')
+          PY
+
+      - name: Enforce terminal handover boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/gm-v-3pstar-mip-1.json'))
+          assert r['gm_iv_state']=='ACTIVE_8_OF_8'
+          assert r['gm_v_state']=='HELD'
+          assert r['gm_v_launch_authorized'] is False
+          assert r['three_pc_prove']=='WITHHELD_EXTERNAL'
+          assert r['three_p3_authorized'] is False
+          assert r['qps_runtime_gate']=='INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION'
+          assert r['authority_transfer'] is False
+          assert r['formal_credit_delta']==0
+          print('PASS_GM_V_TERMINAL_WITHHOLD_BOUNDARY')
+          PY
+
+      - name: Upload exact-SHA 3PSTAR MIP handover receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-v-3pstar-mip-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/gm-v-3pstar-mip-1.json
+            /tmp/gm-v-3pstar-mip-2.json
+            /tmp/capacity-run.json
+            /tmp/capacity-artifact.json
+            /tmp/gmv-run.json
+            /tmp/gmv-artifact.json
+            mission-control/grand-missions/GM_V_3PSTAR_MIP_CONTROL_v1.json
+            mission-control/grand-missions/GM_V_CURRENT_v1.json
+            mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md
+            mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v1.md
+          if-no-files-found: error
+          retention-days: 30
