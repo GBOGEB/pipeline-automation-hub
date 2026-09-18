@@ -68,9 +68,16 @@ def main():
     require(order[0]["state"] == "DONE_CONTROL" and order[1]["state"] == "DONE_CONTROL", "I-B closure/sync drift")
     require(order[2]["id"] == "GM-I-B-CONTROL" and order[2]["state"] == "ACTIVE_SENTINEL", "I-B sentinel drift")
     require(order[3]["id"] == "GM-IV-F05-F06-PULSE" and order[3]["state"] == "DONE_HISTORICAL_EVIDENCE", "GM-IV historical pulse drift")
-    require(order[4]["id"] == "GM-IV-ACTIVE8-PROMOTION" and order[4]["state"] == "DONE_CONTROL_PENDING_REPEAT", "ACTIVE8 post-control state drift")
+    require(order[4]["id"] == "GM-IV-ACTIVE8-PROMOTION" and order[4]["state"] == "DONE_REPEAT_CONTROL_AND_RUNTIME_CAPABILITY_CAPACITY", "ACTIVE8 post-control state drift")
+    post = order[4].get("post_promotion_dov", {})
+    require(post.get("repeat_control", {}).get("result") == "PASS_POST_ACTIVE8_REPEAT_CONTROL", "ACTIVE8 repeat CONTROL evidence drift")
+    require(post.get("runtime_capability_capacity", {}).get("result") == "PASS_RUNTIME_PROVEN_CAPABILITY_CAPACITY", "ACTIVE8 runtime capability capacity drift")
+    require(post.get("runtime_capability_capacity", {}).get("scope") == "CAPABILITY_COVERAGE_NOT_CONCURRENCY_CAPACITY", "capacity scope drift")
+    require(post.get("operational_availability") == "WITHHELD_EXTERNAL_NONCOMPENSATING_QPS_923", "operational availability gate drift")
+    require(post.get("gm_v_launch_authorized") is False, "GM-V launch must remain unauthorized")
     require(order[5]["policy"] == "continuous_control_presence_discontinuous_mission_execution", "sentinel policy drift")
-    require(order[6]["state"] == "HELD", "GM-V launch-order hold drift")
+    require(order[6]["state"] == "HELD_EXTERNAL_OPERATIONAL_AVAILABILITY_GATE", "GM-V launch-order hold drift")
+    require(order[6].get("current_first_red") == "GBOGEB/cryoplant-project#923_PRIVATE_REPO_ACTIONS_RUNNER_ADMISSION", "GM-V first red drift")
 
     checks = {
         "canonical_five_missions_preserved": True,
@@ -79,6 +86,9 @@ def main():
         "gm_iii_gemini_frontier_history_preserved": True,
         "gm_ii_iii_sentinels_preserved": True,
         "gm_iv_active8_exact_shape": True,
+        "gm_iv_post_active8_repeat_control": True,
+        "gm_iv_runtime_capability_capacity_8_of_8": True,
+        "gm_v_external_operational_availability_withhold": True,
         "historical_f05_f06_evidence_retained": True,
         "gm_v_held": True,
         "authority_transfer": False,
