@@ -112,14 +112,20 @@ Therefore implementation correctness is proven, but the original merge-before-Pr
 
 Proof-gate repair PR #252 merged at `243337e7170029ccfbcf1588ce951356fd1d22a7`.
 
-That repair adds merged-master recurrence. Its exact post-merge proof is:
+That repair adds merged-master recurrence. Its exact post-merge proof has now executed successfully:
+- merge SHA `243337e7170029ccfbcf1588ce951356fd1d22a7`
 - run `35352260069`
 - job `105622958891`
-- state at this handover: **QUEUED / zero executed steps observed**.
+- exact merge-SHA checkout PASS
+- real steps executed
+- 3/3 unit tests PASS
+- `PASS_TEMPORAL_3PSTAR_MIP_PROOF_REBIND_CONTROL`.
 
-Do not treat the repair merge itself as Prove.
+The original #246 merge-before-Prove ordering remains preserved as negative history, but the REX-005 occurrence is now **CONTROLLED** by the proof-rebind merge plus post-merge recurrence.
 
-3PC Commit / 3P3 closure credit for the repair remains WITHHELD until that exact merged-master job executes successfully.
+3PC Prove = PASS.
+3PC Commit = PASS_FIX_FORWARD_SEQUENCE_CONTROLLED.
+3P3 handover propagation = AUTHORIZED.
 
 ## MIP iteration
 
@@ -133,37 +139,29 @@ Innovate — PASS:
 - minimum clean dominant-window pressure
 - surveillance regime classification.
 
-Perpetuate — IMPLEMENTED / WAIT RUNTIME CONFIRMATION:
+Perpetuate — PASS:
 - each genuine scheduled Temporal Allocation Policy return can generate a governed burndown artifact;
 - PR-head exact proof is retained;
-- merged-master recurrence is wired;
+- merged-master recurrence executed successfully;
 - the current handover and restart chain are repository-native.
 
 ## Exact next predicate
 
-First resolve:
+P0 is now the active executable frontier:
 
-`run 35352260069 / job 105622958891`.
+`long_compute_contended -> DECOMPOSE_SIGNED_EFFECT_BY_RUNNER_LANE_AND_TEMPORAL_HALF`.
 
-If it is still queued:
-- do not blind-rerun;
-- do not call it failure;
-- do not claim REX-005 closure.
+Purpose:
+1. determine whether the observed early PAIRED -> late SINGLE reversal is runner-specific, lane-specific or a broader temporal regime shift;
+2. preserve the frozen CONTROL gate while separating mixed-regime evidence rather than averaging it away;
+3. emit a new first-red only from measured evidence.
 
-If it executes and PASSes:
-1. bind exact run/job/merge identity in a successor reconciliation;
-2. mark this REX-005 occurrence CONTROLLED for the temporal lane;
-3. keep the 3/5 CONTROL split;
-4. continue P0 long-compute regime decomposition;
-5. continue P1 wait-proxy genuine-schedule surveillance;
-6. do not reopen accepted CONTROL classes absent governed regression.
-
-If it executes and FAILs:
-1. identify the first failing step;
-2. classify application vs infrastructure;
-3. repair only that first red;
-4. preserve all thresholds and class authority;
-5. keep propagation/closure credit withheld.
+In parallel:
+- continue genuine-schedule stability measurement for `human_dependency_wait_proxy`;
+- retain the controlled-wait proxy claim boundary;
+- continue surveillance of the three CONTROL classes;
+- reopen a CONTROL class only on governed regression;
+- evaluate the 7 d surveillance horizon only once genuine scheduled span reaches 604,800 s.
 
 ## Non-compensation
 
