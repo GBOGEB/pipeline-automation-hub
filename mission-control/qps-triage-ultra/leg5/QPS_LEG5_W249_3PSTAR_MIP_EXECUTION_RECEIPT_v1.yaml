@@ -1,0 +1,68 @@
+schema: missioncontrol.qps_leg5_w249_3pstar_mip_execution_receipt/v1
+as_of: '2026-09-18T13:10:00+02:00'
+repo: GBOGEB/pipeline-automation-hub
+parent_pr: 200
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+qps_runtime_credit_delta: 0
+
+child_binding:
+  repo: GBOGEB/cryoplant-project
+  pr: 1450
+  exact_head: 2b7315ab135f8245c38db00fcaf9395dbb80fe15
+  leg5_state: 7_OF_9_CLOSED
+  runtime_gate: GBOGEB/cryoplant-project#923
+
+parent_execution:
+  workflow: QPS TRIAGE ULTRA Federation Control
+  run: 35338210743
+  job: 105577890486
+  conclusion: SUCCESS
+  steps_gt_zero: true
+  observed_steps:
+    - Set_up_job
+    - Checkout_exact_source_head
+    - Assert_exact_source_head
+    - Execute_HOME_self_validation
+    - Emit_current_head_HOME_fleet_receipt
+    - Validate_child_inbox_plus_current_HOME_receipt
+    - Upload_HOME_receipt_and_gate_result
+    - Enforce_HOME_self_validation
+    - Enforce_Mission_II_federation_DoV_gate
+  proof_scope: MISSIONCONTROL_CONTROL_AND_FEDERATION_ONLY
+
+child_execution_observation:
+  workflow: Release Runner Probe
+  run: 35338139161
+  exact_head: 2b7315ab135f8245c38db00fcaf9395dbb80fe15
+  jobs:
+    - {id: 105577654105, name: configured-runner-probe, conclusion: failure, steps: null}
+    - {id: 105577654229, name: hosted-runner-probe-ubuntu-22.04, conclusion: failure, steps: null}
+    - {id: 105577654325, name: hosted-runner-probe-ubuntu-latest, conclusion: failure, steps: null}
+  classification: INFRA_PREEXECUTION_ZERO_STEP
+  application_execution: false
+
+3pc_disposition:
+  prepare: PASS
+  prove_parent_control: PASS
+  prove_child_runtime: WITHHELD
+  commit_parent_control: READY_SUBJECT_TO_PR_REVIEW
+  commit_child_routes: WITHHELD
+  final_leg5_9_of_9: WITHHELD
+
+mip_disposition:
+  modernize: PASS
+  innovate: PASS
+  perpetuate: PASS_PARENT_RECEIPT_PUBLISHED
+
+non_compensation:
+  parent_PASS_ne_child_runtime_PASS: true
+  qps_issue_923_remains_open_gate: true
+  qps_1266_close_credit: false
+  qps_1357_close_credit: false
+  runtime_gold_credit: false
+
+next_predicate:
+  id: QPS_RUNNER_ADMISSION
+  require: [runner_id_nonzero, steps_gt_0]
