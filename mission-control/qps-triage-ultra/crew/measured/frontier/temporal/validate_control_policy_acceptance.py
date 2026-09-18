@@ -5,18 +5,6 @@ import argparse
 import json
 from pathlib import Path
 
-GATE_ORDER = (
-    "independent_windows",
-    "distinct_source_shas",
-    "temporal_span_seconds",
-    "directional_windows",
-    "direction_consistency",
-    "pooled_winner_strength",
-    "latest_two_directional_windows_agree",
-    "hosted_runner_classes",
-    "baseline_and_held_lanes",
-)
-
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--receipt", required=True)
@@ -35,6 +23,8 @@ def main() -> int:
     assert r["guards"]["synthetic_or_noop_clock_evidence_admitted"] is False
     assert r["guards"]["manual_window_credit"] is False
     assert r["guards"]["thresholds_changed"] is False
+    assert r["guards"]["push_event_used_as_control_clock"] is False
+    assert r["basis"]["workflow_event"] == c["window_contract"]["control_eligible_event"]
     assert f["rex_veto"] is False
     assert f["independent_windows"] >= g["min_independent_windows"]
     assert f["distinct_source_shas"] >= g["min_distinct_source_shas"]
@@ -42,8 +32,11 @@ def main() -> int:
     assert len(f["hosted_runner_classes"]) >= g["min_hosted_runner_classes"]
     assert {"baseline", "held"}.issubset(set(f["lanes"]))
     assert len(f["window_ids"]) == f["independent_windows"]
+
     assert r["surveillance"]["medium_72h_reached"] is True
     assert r["surveillance"]["observed_span_seconds"] >= r["surveillance"]["medium_72h_target_seconds"]
+    assert r["surveillance"]["medium_7d_reached"] is False
+    assert r["surveillance"]["observed_span_seconds"] < r["surveillance"]["medium_7d_target_seconds"]
 
     def failed_gates(p: dict) -> list[str]:
         failed = []
@@ -69,8 +62,8 @@ def main() -> int:
 
     control = {p["task_class"]: p for p in r["control_classes"]}
     noncontrol = {p["task_class"]: p for p in r["noncontrol_classes"]}
-    assert set(control) == {"cache_artifact_reuse", "validation_bundle"}
-    assert set(noncontrol) == {"short_compute", "human_dependency_wait_proxy", "long_compute_contended"}
+    assert set(control) == {"cache_artifact_reuse", "short_compute", "validation_bundle"}
+    assert set(noncontrol) == {"human_dependency_wait_proxy", "long_compute_contended"}
 
     for p in control.values():
         assert p["policy_status"] == "CONTROL_POLICY"
@@ -86,13 +79,13 @@ def main() -> int:
         assert p["failed_control_gates"] == failed
         assert p["first_red_gate"] == failed[0]
 
-    assert noncontrol["short_compute"]["first_red_gate"] == "pooled_winner_strength"
-    assert noncontrol["human_dependency_wait_proxy"]["first_red_gate"] == "pooled_winner_strength"
+    assert control["short_compute"]["pooled_winner_strength"] >= g["min_pooled_winner_strength"]
+    assert noncontrol["human_dependency_wait_proxy"]["first_red_gate"] == "direction_consistency"
     assert noncontrol["long_compute_contended"]["first_red_gate"] == "direction_consistency"
     assert r["full_control_policy"]["independently_satisfied"] is False
-    assert r["full_control_policy"]["control_class_count"] == 2
+    assert r["full_control_policy"]["control_class_count"] == 3
     assert r["full_control_policy"]["task_class_count"] == 5
-    assert r["full_control_policy"]["noncontrol_class_count"] == 3
+    assert r["full_control_policy"]["noncontrol_class_count"] == 2
 
     print(json.dumps({
         "status": "PASS_TEMPORAL_CONTROL_POLICY_ACCEPTANCE",
@@ -103,6 +96,7 @@ def main() -> int:
         "control_classes": sorted(control),
         "noncontrol_first_red": {k: v["first_red_gate"] for k, v in sorted(noncontrol.items())},
         "medium_72h_reached": r["surveillance"]["medium_72h_reached"],
+        "medium_7d_reached": r["surveillance"]["medium_7d_reached"],
         "competency_promotions": 0,
         "authority_transfer": False,
     }, sort_keys=True))
