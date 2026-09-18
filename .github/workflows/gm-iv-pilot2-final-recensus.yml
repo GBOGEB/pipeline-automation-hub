@@ -41,7 +41,7 @@ jobs:
           PY
           )"
           case "$stage" in
-            STAGED_ACTIVE_PILOT_2_OF_8|STAGED_ACTIVE_RECON_4_OF_8) ;;
+            STAGED_ACTIVE_PILOT_2_OF_8|STAGED_ACTIVE_RECON_4_OF_8|ACTIVE_8_OF_8) ;;
             *) echo "Unsupported GM-IV stage for PILOT_2 recensus control: $stage"; exit 1 ;;
           esac
           echo "GM_IV_STAGE=$stage" >> "$GITHUB_ENV"
@@ -111,8 +111,8 @@ jobs:
           print('PASS_GM_IV_PILOT2_FINAL_RECENSUS_BOUNDARY')
           PY
 
-      - name: Prove historical PILOT_2 evidence retention after RECON_4
-        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_RECON_4_OF_8'
+      - name: Prove historical PILOT_2 evidence retention after promotion
+        if: env.GM_IV_STAGE != 'STAGED_ACTIVE_PILOT_2_OF_8'
         shell: bash
         run: |
           mkdir -p "$RUNNER_TEMP/gm-iv-pilot2-history"
@@ -128,13 +128,23 @@ jobs:
           registry=json.loads((root/'GRAND_MISSION_REGISTRY.json').read_text())
           pilot=json.loads((root/'GM_IV_PILOT2_GOVERNOR_CONTRACT.json').read_text())
           recon=json.loads((root/'GM_IV_RECON4_GOVERNOR_CONTRACT.json').read_text())
+          active=json.loads((root/'GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json').read_text())
           gm={m['id']:m for m in registry['grand_missions']}
           gm4=gm['GM-IV']; gm5=gm['GM-V']
-          assert gm4['state']=='STAGED_ACTIVE_RECON_4_OF_8'
-          assert gm4['activation_stage']=='RECON_4_OF_8'
+          assert gm4['state'] in {'STAGED_ACTIVE_RECON_4_OF_8','ACTIVE_8_OF_8'}
+          assert gm4['activation_stage'] in {'RECON_4_OF_8','ACTIVE_8_OF_8'}
           assert gm4['pilot_2_of_8_evidence']['F01']==pilot['controlled_pilots']['GM-IV-F01']
           assert gm4['pilot_2_of_8_evidence']['F03']==pilot['controlled_pilots']['GM-IV-F03']
           assert gm4['recon_4_of_8_evidence']==recon['accepted_gate_evidence']
+          if gm4['state']=='ACTIVE_8_OF_8':
+              accepted=active['accepted_readiness_evidence']
+              actual=gm4['active_8_of_8_evidence']
+              assert actual['source_sha']==accepted['evaluated_head_sha']
+              assert actual['workflow_run_id']==accepted['workflow_run_id']
+              assert actual['artifact_id']==accepted['artifact_id']
+              assert actual['artifact_digest']==accepted['artifact_digest']
+              assert actual['decision']==accepted['decision']
+              assert actual['result']==accepted['result']
           assert gm4['children']==[]
           assert registry['authority_transfer'] is False
           assert gm5['state']=='HELD' and gm5['children']==[]
@@ -142,9 +152,10 @@ jobs:
             'schema':'qps.gm_iv_pilot2_final_historical_retention.v1',
             'source_sha':os.environ['SOURCE_SHA'],
             'historical_stage':'STAGED_ACTIVE_PILOT_2_OF_8',
-            'current_stage':'STAGED_ACTIVE_RECON_4_OF_8',
+            'current_stage':gm4['state'],
             'pilot_evidence_retained':True,
             'recon4_gate_evidence_bound':True,
+            'active8_gate_evidence_bound': gm4['state']=='ACTIVE_8_OF_8',
             'children_bound':False,
             'authority_transfer':False,
             'gm_v_state':'HELD',
@@ -166,7 +177,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload historical PILOT_2 retention control
-        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_RECON_4_OF_8'
+        if: env.GM_IV_STAGE != 'STAGED_ACTIVE_PILOT_2_OF_8'
         uses: actions/upload-artifact@v4
         with:
           name: gm-iv-pilot2-historical-retention-${{ github.sha }}
