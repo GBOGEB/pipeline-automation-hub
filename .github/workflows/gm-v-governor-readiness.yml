@@ -1,0 +1,124 @@
+name: GM-V Governor Readiness
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/**'
+      - '.github/workflows/gm-v-governor-readiness.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/**'
+      - '.github/workflows/gm-v-governor-readiness.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gm-v-governor-readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact event SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Freeze exact head and lifecycle ancestry
+        shell: bash
+        run: |
+          set -euo pipefail
+          head='${{ github.event.pull_request.head.sha || github.sha }}'
+          test "$(git rev-parse HEAD)" = "$head"
+          git merge-base --is-ancestor ea7a9818a57d5078bc26e35ed2d1f15d79657338 HEAD
+          printf '%s\n' "$head" > GM_V_GOVERNOR_SOURCE_SHA.txt
+
+      - name: Compile control surfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile             mission-control/grand-missions/assess_gm_v_governor_readiness.py             mission-control/grand-missions/assess_gm_iv_active8_governor.py             mission-control/grand-missions/validate_gm_fleet.py
+
+      - name: Re-run canonical fleet control
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/validate_gm_fleet.py --out gm_v_fleet_control.json
+
+      - name: Verify exact GM-IV runtime capacity run and artifact identity
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          api='https://api.github.com/repos/GBOGEB/pipeline-automation-hub'
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json'             "$api/actions/runs/35171901674" > gm_iv_capacity_run.json
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json'             "$api/actions/runs/35171901674/artifacts" > gm_iv_capacity_artifacts.json
+          python - <<'PY'
+          import json
+          run=json.load(open('gm_iv_capacity_run.json'))
+          arts=json.load(open('gm_iv_capacity_artifacts.json'))['artifacts']
+          assert run['head_sha']=='9cdb8fe35e15b675f3fe1b2492c16f9785fc3115'
+          assert run['status']=='completed' and run['conclusion']=='success'
+          a=next(x for x in arts if x['id']==10476967287)
+          assert a['expired'] is False
+          assert a['digest']=='sha256:7a5a0910db8639b642d8e63b4e37169d636ee3e6b7fc2ba0da93789ad183fc68'
+          print('PASS_EXACT_GM_IV_RUNTIME_CAPACITY_EVIDENCE')
+          PY
+
+      - name: Evaluate GM-V Governor readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/assess_gm_v_governor_readiness.py             --source-sha '${{ github.event.pull_request.head.sha || github.sha }}'             --out gm_v_governor_readiness.json
+          python - <<'PY'
+          import json
+          r=json.load(open('gm_v_governor_readiness.json'))
+          assert r['result']=='WITHHOLD'
+          assert r['decision']=='WITHHOLD_GM_V_LAUNCH_EXTERNAL_OPERATIONAL_AVAILABILITY'
+          assert r['gm_iv_state']=='ACTIVE_8_OF_8'
+          assert r['gm_v_state']=='HELD'
+          assert r['gm_v_launch_authorized'] is False
+          assert r['runtime_capacity_class']=='RUNTIME_PROVEN'
+          assert r['operational_availability']=='WITHHOLD_EXTERNAL_NONCOMPENSATING_RUNNER_ADMISSION'
+          assert r['children_bound'] is False
+          assert r['authority_transfer'] is False
+          print('PASS_CONTROLLED_GM_V_WITHHOLD')
+          PY
+
+      - name: Enforce non-compensation boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          c=json.load(open('mission-control/grand-missions/GM_V_GOVERNOR_READINESS_CONTRACT.json'))
+          op=c['prerequisites']['operational_availability']
+          assert op['blocking_surface']=='GBOGEB/cryoplant-project#923'
+          assert op['compensation_allowed'] is False
+          assert c['canonical_state_must_remain']=='HELD'
+          assert c['children_bound'] is False
+          assert c['authority_transfer'] is False
+          assert c['prerequisites']['runtime_capability_capacity']['measurement_scope']=='CAPABILITY_COVERAGE_NOT_CONCURRENCY_CAPACITY'
+          assert c['prerequisites']['runtime_capability_capacity']['concurrency_capacity_claimed'] is False
+          print('PASS_NONCOMPENSATING_EXTERNAL_HOLD')
+          PY
+
+      - name: Upload exact-SHA Governor hold receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-v-governor-readiness-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            GM_V_GOVERNOR_SOURCE_SHA.txt
+            gm_v_governor_readiness.json
+            gm_v_fleet_control.json
+            gm_iv_capacity_run.json
+            gm_iv_capacity_artifacts.json
+            mission-control/grand-missions/GM_V_GOVERNOR_READINESS_CONTRACT.json
+          if-no-files-found: error
+          retention-days: 30
