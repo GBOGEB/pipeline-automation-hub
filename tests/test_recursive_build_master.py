@@ -2,15 +2,16 @@ from __future__ import annotations
 
 import importlib.util
 import json
-import os
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "Recursive_Build_Master.py"
 SPEC = importlib.util.spec_from_file_location("recursive_build_master", MODULE_PATH)
-MOD = importlib.util.module_from_spec(SPEC)
 assert SPEC and SPEC.loader
+MOD = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = MOD
 SPEC.loader.exec_module(MOD)
 
 
