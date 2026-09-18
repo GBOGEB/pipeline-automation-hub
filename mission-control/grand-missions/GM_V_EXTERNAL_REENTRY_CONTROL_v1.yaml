@@ -1,0 +1,100 @@
+schema: qps.gm_v_external_reentry_control.v1
+wave: GM-FLEET-3PSTAR-MIP-20260918
+mission_id: GM-V
+authority_transfer: false
+formal_credit_delta: 0
+classification: INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION
+decision: WITHHOLD_GM_V_LAUNCH_EXTERNAL_OPERATIONAL_AVAILABILITY
+
+three_p_star:
+  refresh:
+    result: PASS
+    missioncontrol_master_observed: f226e6e61bc84482d4856f056b292ca9322e22f8
+    qps_main_observed: eeac2b60fc16e5b2131d4054f95da0b0c663cc40
+    gm_iv_required_state: ACTIVE_8_OF_8
+    gm_v_required_state: HELD
+    blocking_surface: GBOGEB/cryoplant-project#923
+    parallel_transaction:
+      repository: GBOGEB/pipeline-automation-hub
+      pull_request: 233
+      state_observed: OPEN
+      head_sha: 83dffd1f368e701225ed0e2a6fc5c6a9d56c204e
+      scope: GM-I-C_W282
+      compensation_allowed: false
+  probe:
+    result: PASS_BLOCK_CONFIRMED
+    mode: INSPECT_EXISTING_RUNS_ONLY_NO_RERUN
+    qps_pull_request: 1476
+    qps_head_sha: 458dae93993a970d94c5a8c85c2d04e40390e454
+    qps_merge_sha: eeac2b60fc16e5b2131d4054f95da0b0c663cc40
+    release_runner_probe:
+      run_id: 35350233629
+      jobs:
+        - job_id: 105616352192
+          runner_class: configured-runner
+          status: completed
+          conclusion: failure
+          executed_steps: 0
+        - job_id: 105616352310
+          runner_class: ubuntu-latest
+          status: completed
+          conclusion: failure
+          executed_steps: 0
+        - job_id: 105616352482
+          runner_class: ubuntu-22.04
+          status: completed
+          conclusion: failure
+          executed_steps: 0
+    independent_validator:
+      workflow: verify-ssot
+      run_id: 35350233647
+      job_id: 105616351882
+      status: completed
+      conclusion: failure
+      executed_steps: 0
+  rank:
+    result: PASS
+    first_red: GBOGEB/cryoplant-project#923
+    first_red_class: INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION
+    next_legal_transition: OWNER_SIDE_ACTIONS_ADMISSION_CHANGE
+    forbidden:
+      - BLIND_RERUN
+      - APPLICATION_REPAIR_FROM_ZERO_STEP
+      - GM_V_LAUNCH
+      - CHILD_BINDING
+      - AUTHORITY_TRANSFER
+      - PUBLIC_PARENT_PASS_AS_QPS_COMPENSATION
+
+mip:
+  modernize:
+    result: PASS
+    change: BIND_LATEST_W281_QPS_ZERO_STEP_OBSERVATION_IN_MACHINE_READABLE_CONTROL
+  innovate:
+    result: PASS
+    change: FAIL_CLOSED_REENTRY_PREDICATE_WITH_EXPLICIT_POSITIVE_WITNESS_REQUIREMENTS
+  perpetuate:
+    result: PASS
+    change: RECURSIVE_SESSION_CLOSE_AND_DROPIN_HANDOVER_WITH_ZERO_CHAT_ONLY_DECISIONS
+
+reentry_predicate:
+  required_all:
+    - owner_side_actions_admission_materially_changed
+    - unchanged_private_qps_release_runner_probe
+    - runner_id_nonzero
+    - executed_steps_gt_zero
+    - exact_current_qps_sha_bound
+  after_predicate:
+    - resume_GT_BD_003_3PC_PROVE
+    - re_evaluate_GM_V_governor_readiness
+  before_predicate:
+    gm_v_state: HELD
+    children: []
+    authority_transfer: false
+    formal_credit_delta: 0
+
+noncompensation:
+  public_missioncontrol_runtime: NOT_SUFFICIENT
+  gm_iv_active8: NOT_SUFFICIENT
+  gm_iv_runtime_capability_8_of_8: NOT_SUFFICIENT
+  qps_static_or_local_preflight: NOT_SUFFICIENT
+  issue_or_pr_closure: NOT_SUFFICIENT
