@@ -18,8 +18,11 @@ from pathlib import Path
 from typing import List, Sequence, Tuple
 
 from openpyxl import Workbook, load_workbook
+from openpyxl.formula.translate import Translator, TranslatorError
 from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.utils import get_column_letter
 from openpyxl.utils.cell import range_boundaries
+from openpyxl.worksheet.table import Table, TableStyleInfo
 
 
 SCHEDULE_HEADER_GROUPS = {
@@ -49,6 +52,12 @@ def safe_name(value: str) -> str:
     return value or "table"
 
 
+def logical_export_id(sheet: str, source_kind: str, source_name: str, source_ref: str) -> str:
+    identity = "\x1f".join([sheet, source_kind, source_name, source_ref])
+    digest = hashlib.sha256(identity.encode("utf-8")).hexdigest()[:12]
+    return f"{safe_name(f'{sheet}__{source_name}')}__{digest}"
+
+
 def jsonable(value):
     if isinstance(value, (datetime, date)):
         return value.isoformat()
@@ -76,13 +85,11 @@ def rows_from_ref(ws, ref: str) -> List[List[object]]:
     ]
 
 
-def used_range_rows(ws) -> List[List[object]]:
-    if ws.max_row == 1 and ws.max_column == 1 and ws["A1"].value is None:
-        return []
-    return [
-        [ws.cell(row=r, column=c).value for c in range(1, ws.max_column + 1)]
-        for r in range(1, ws.max_row + 1)
-    ]
+def used_range_rows(ws) -> Tuple[List[List[object]], str]:
+    ref = ws.calculate_dimension()
+    if ref == "A1:A1" and ws["A1"].value is None:
+        return [], ref
+    return rows_from_ref(ws, ref), ref
 
 
 def has_payload(rows: Sequence[Sequence[object]]) -> bool:
@@ -141,6 +148,7 @@ class ExcelScheduleEngine:
         self.report_dir = output_root / "Reports"
         self.schedule_index_md = self.report_dir / "schedule_index.md"
         self.schedule_index_csv = self.report_dir / "schedule_index.csv"
+        self._export_ids = set()
 
     def _prepare_dirs(self) -> None:
         self.csv_dir.mkdir(parents=True, exist_ok=True)
@@ -162,17 +170,48 @@ class ExcelScheduleEngine:
             writer = csv.writer(f)
             writer.writerows([[jsonable(v) for v in row] for row in rows])
 
+    def _translate_formula(
+        self,
+        value,
+        source_row: int,
+        source_col: int,
+        dest_row: int,
+        dest_col: int,
+    ):
+        if self.cell_mode != "formula" or not isinstance(value, str) or not value.startswith("="):
+            return value
+        source_coord = f"{get_column_letter(source_col)}{source_row}"
+        dest_coord = f"{get_column_letter(dest_col)}{dest_row}"
+        try:
+            return Translator(value, origin=source_coord).translate_formula(dest_coord)
+        except TranslatorError:
+            return value
+
     def _write_xlsx(
         self,
         path: Path,
         rows: Sequence[Sequence[object]],
         title: str,
+        source_kind: str,
+        source_ref: str,
     ) -> None:
         wb = Workbook()
         ws = wb.active
         ws.title = "Data"
-        for row in rows:
-            ws.append(list(row))
+        source_min_col, source_min_row, _, _ = range_boundaries(source_ref)
+
+        for dest_row, row in enumerate(rows, start=1):
+            for dest_col, value in enumerate(row, start=1):
+                source_row = source_min_row + dest_row - 1
+                source_col = source_min_col + dest_col - 1
+                ws.cell(row=dest_row, column=dest_col).value = self._translate_formula(
+                    value,
+                    source_row,
+                    source_col,
+                    dest_row,
+                    dest_col,
+                )
+
         if rows:
             for cell in ws[1]:
                 cell.font = Font(bold=True)
@@ -194,6 +233,18 @@ class ExcelScheduleEngine:
                 )
                 ws.column_dimensions[letter].width = width
 
+            if source_kind == "excel_table":
+                last_col = get_column_letter(max(len(r) for r in rows))
+                table = Table(displayName=title, ref=f"A1:{last_col}{len(rows)}")
+                table.tableStyleInfo = TableStyleInfo(
+                    name="TableStyleMedium2",
+                    showFirstColumn=False,
+                    showLastColumn=False,
+                    showRowStripes=True,
+                    showColumnStripes=False,
+                )
+                ws.add_table(table)
+
         meta = wb.create_sheet("_META")
         meta.sheet_state = "hidden"
         meta["A1"] = "source_workbook"
@@ -202,6 +253,8 @@ class ExcelScheduleEngine:
         meta["B2"] = title
         meta["A3"] = "cell_mode"
         meta["B3"] = self.cell_mode
+        meta["A4"] = "source_ref"
+        meta["B4"] = source_ref
         wb.save(path)
 
     def _export(
@@ -218,12 +271,15 @@ class ExcelScheduleEngine:
 
         headers = [text_header(v) for v in rows[0]]
         score, reasons = schedule_signature(headers)
-        base = safe_name(f"{ws.title}__{source_name}")
+        base = logical_export_id(ws.title, source_kind, source_name, source_ref)
+        if base in self._export_ids:
+            raise RuntimeError(f"logical export id collision: {base}")
+        self._export_ids.add(base)
         csv_path = self.csv_dir / f"{base}.csv"
         xlsx_path = self.xlsx_dir / f"{base}.xlsx"
 
         self._write_csv(csv_path, rows)
-        self._write_xlsx(xlsx_path, rows, source_name)
+        self._write_xlsx(xlsx_path, rows, source_name, source_kind, source_ref)
 
         return ExportRecord(
             id=base,
@@ -280,9 +336,8 @@ class ExcelScheduleEngine:
                         )
 
                 if self.include_sheet_ranges and not ws.tables:
-                    rows = used_range_rows(ws)
+                    rows, ref = used_range_rows(ws)
                     if rows and has_payload(rows):
-                        ref = ws.calculate_dimension()
                         try:
                             records.append(
                                 self._export(
