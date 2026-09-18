@@ -10,7 +10,17 @@
   "authority_transfer": false,
   "children_bound": false,
   "gm_v_required_state": "HELD",
-  "crew": ["GOVERNOR", "GEOGRAPHER", "GEOLOGIST", "HISTORIAN", "NEURONS", "QA", "SCOUT", "READER", "AMBASSADOR"],
+  "crew": [
+    "GOVERNOR",
+    "GEOGRAPHER",
+    "GEOLOGIST",
+    "HISTORIAN",
+    "NEURONS",
+    "QA",
+    "SCOUT",
+    "READER",
+    "AMBASSADOR"
+  ],
   "capacity_requirement": {
     "contract": "GM_FLEET_03_CAPACITY_CONTRACT.json",
     "stage": "ACTIVE_8_OF_8",
@@ -20,29 +30,101 @@
   "current_control_shape": {
     "state": "STAGED_ACTIVE_RECON_4_OF_8",
     "activation_stage": "RECON_4_OF_8",
-    "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04"],
-    "controlled_pilot_frontiers": ["GM-IV-F01", "GM-IV-F03"],
-    "reference_frontiers": ["GM-IV-F02", "GM-IV-F04"],
-    "unfilled_frontier_slots": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+    "candidate_frontiers": [
+      "GM-IV-F01",
+      "GM-IV-F02",
+      "GM-IV-F03",
+      "GM-IV-F04"
+    ],
+    "controlled_pilot_frontiers": [
+      "GM-IV-F01",
+      "GM-IV-F03"
+    ],
+    "reference_frontiers": [
+      "GM-IV-F02",
+      "GM-IV-F04"
+    ],
+    "unfilled_frontier_slots": [
+      "GM-IV-F05",
+      "GM-IV-F06",
+      "GM-IV-F07",
+      "GM-IV-F08"
+    ],
     "children": []
   },
   "proposed_eight_frontier_shape": {
-    "candidate_frontiers": ["GM-IV-F01", "GM-IV-F02", "GM-IV-F03", "GM-IV-F04", "GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
-    "controlled_pilot_frontiers_retained": ["GM-IV-F01", "GM-IV-F03"],
-    "reference_frontiers_retained": ["GM-IV-F02", "GM-IV-F04"],
-    "new_candidate_recon_frontiers": ["GM-IV-F05", "GM-IV-F06", "GM-IV-F07", "GM-IV-F08"],
+    "candidate_frontiers": [
+      "GM-IV-F01",
+      "GM-IV-F02",
+      "GM-IV-F03",
+      "GM-IV-F04",
+      "GM-IV-F05",
+      "GM-IV-F06",
+      "GM-IV-F07",
+      "GM-IV-F08"
+    ],
+    "controlled_pilot_frontiers_retained": [
+      "GM-IV-F01",
+      "GM-IV-F03"
+    ],
+    "reference_frontiers_retained": [
+      "GM-IV-F02",
+      "GM-IV-F04"
+    ],
+    "new_candidate_recon_frontiers": [
+      "GM-IV-F05",
+      "GM-IV-F06",
+      "GM-IV-F07",
+      "GM-IV-F08"
+    ],
     "unfilled_frontier_slots": [],
     "children": []
   },
   "frontier_evidence": {
-    "GM-IV-F01": {"repository": "GBOGEB/DOCX_RTM_Automation", "target_sha": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96", "class": "CONTROLLED_PILOT_RETAINED"},
-    "GM-IV-F02": {"repository": "GBOGEB/attest-build-provenance", "target_sha": "10334b5f1e684784025c3fc0a277c88c19089275", "class": "REFERENCE_RETAINED"},
-    "GM-IV-F03": {"repository": "GBOGEB/codespaces-jupyter", "target_sha": "1eba2240a86d1fd2bd6375e2fac481caf645cdde", "class": "CONTROLLED_PILOT_RETAINED"},
-    "GM-IV-F04": {"repository": "GBOGEB/yaml-reference-parser", "target_sha": "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99", "class": "REFERENCE_RETAINED"},
-    "GM-IV-F05": {"repository": "GBOGEB/ABACUS", "target_sha": "cb1f29a8c598b5b8bc196554abff9c16f488db63", "class": "OBSERVED_CANDIDATE_RECON", "observed_surface": "DMAIC_delivery_work_execution_and_federated_MIP_consumption"},
-    "GM-IV-F06": {"repository": "GBOGEB/CODEX", "target_sha": "b4fff9852b27412f35a22439d09c427dc364158a", "class": "OBSERVED_CANDIDATE_RECON", "observed_surface": "semantic_manifest_provenance_and_MIP_self_index_control"},
-    "GM-IV-F07": {"repository": "GBOGEB/cryo_leak_rate_dashboard", "target_sha": "6f6ce5fe1042e4ff59be06909b248a6444136e92", "class": "OBSERVED_CANDIDATE_RECON", "observed_surface": "independent_cryo_leak_kernel_dashboard_with_authority_quarantine"},
-    "GM-IV-F08": {"repository": "GBOGEB/document-organization-system", "target_sha": "3729f3864c3f6019c4b0a4e2bbe0c1ad419bff68", "class": "OBSERVED_CANDIDATE_RECON", "observed_surface": "document_topology_causal_attribution_and_bounded_routing"}
+    "GM-IV-F01": {
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "target_sha": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96",
+      "class": "CONTROLLED_PILOT_RETAINED"
+    },
+    "GM-IV-F02": {
+      "repository": "GBOGEB/attest-build-provenance",
+      "target_sha": "10334b5f1e684784025c3fc0a277c88c19089275",
+      "class": "REFERENCE_RETAINED"
+    },
+    "GM-IV-F03": {
+      "repository": "GBOGEB/codespaces-jupyter",
+      "target_sha": "1eba2240a86d1fd2bd6375e2fac481caf645cdde",
+      "class": "CONTROLLED_PILOT_RETAINED"
+    },
+    "GM-IV-F04": {
+      "repository": "GBOGEB/yaml-reference-parser",
+      "target_sha": "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99",
+      "class": "REFERENCE_RETAINED"
+    },
+    "GM-IV-F05": {
+      "repository": "GBOGEB/ABACUS",
+      "target_sha": "cb1f29a8c598b5b8bc196554abff9c16f488db63",
+      "class": "OBSERVED_CANDIDATE_RECON",
+      "observed_surface": "DMAIC_delivery_work_execution_and_federated_MIP_consumption"
+    },
+    "GM-IV-F06": {
+      "repository": "GBOGEB/CODEX",
+      "target_sha": "b4fff9852b27412f35a22439d09c427dc364158a",
+      "class": "OBSERVED_CANDIDATE_RECON",
+      "observed_surface": "semantic_manifest_provenance_and_MIP_self_index_control"
+    },
+    "GM-IV-F07": {
+      "repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "target_sha": "6f6ce5fe1042e4ff59be06909b248a6444136e92",
+      "class": "OBSERVED_CANDIDATE_RECON",
+      "observed_surface": "independent_cryo_leak_kernel_dashboard_with_authority_quarantine"
+    },
+    "GM-IV-F08": {
+      "repository": "GBOGEB/document-organization-system",
+      "target_sha": "3729f3864c3f6019c4b0a4e2bbe0c1ad419bff68",
+      "class": "OBSERVED_CANDIDATE_RECON",
+      "observed_surface": "document_topology_causal_attribution_and_bounded_routing"
+    }
   },
   "admission_predicates": [
     "current canonical GM-IV remains RECON_4 while readiness is evaluated",
@@ -59,7 +141,17 @@
   ],
   "decision_semantics": {
     "READY": "READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR",
-    "WITHHOLD": "WITHHOLD_ACTIVE_8_PROMOTION"
+    "WITHHOLD": "WITHHOLD_ACTIVE_8_PROMOTION",
+    "CONTROL": "CONTROL_ACTIVE_8_OF_8_HISTORICAL_READINESS_RETAINED"
   },
-  "promotion_boundary": "THIS_GATE_MAY_ADMIT_A_SEPARATE_ACTIVE_8_PROMOTION_TRANSACTION_BUT_DOES_NOT_MUTATE_THE_CANONICAL_RECON_4_STATE,_CREATE_CHILDREN,_TRANSFER_AUTHORITY,_OR_PROMOTE_GM_V."
+  "promotion_boundary": "THIS_GATE_MAY_ADMIT_A_SEPARATE_ACTIVE_8_PROMOTION_TRANSACTION_BUT_DOES_NOT_MUTATE_THE_CANONICAL_RECON_4_STATE,_CREATE_CHILDREN,_TRANSFER_AUTHORITY,_OR_PROMOTE_GM_V.",
+  "accepted_readiness_evidence": {
+    "evaluated_head_sha": "3943ae33eea2a4af6171b97517c19b79ed986fe8",
+    "workflow_run_id": 35145656795,
+    "artifact_id": 10467671042,
+    "artifact_digest": "sha256:97d37b98334acbab0e1fec9bae56163e20fd5b9c2751be2495c52642bc6dd4cb",
+    "decision": "READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR",
+    "result": "PASS"
+  },
+  "control_mode_boundary": "AFTER_ACTIVE_8_PROMOTION_THIS_CONTRACT_IS_HISTORICAL_READINESS_EVIDENCE;_CONTROL_MODE_MUST_ACCEPT_THE_EXACT_GOVERNED_ACTIVE8_SHAPE,_RETAIN_THE_ACCEPTED_READINESS_EVIDENCE,_KEEP_CHILDREN_EMPTY,_KEEP_AUTHORITY_TRANSFER_FALSE,_AND_KEEP_GM_V_HELD."
 }
