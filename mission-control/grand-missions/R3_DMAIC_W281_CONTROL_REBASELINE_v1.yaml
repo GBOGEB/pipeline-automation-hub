@@ -1,0 +1,45 @@
+schema: missioncontrol.hm01.r3.dmaic_w281_control_rebaseline.v1
+as_of: '2026-09-18T13:59:00+02:00'
+issue: GBOGEB/pipeline-automation-hub#209
+state: IMPLEMENTED_WAIT_EXACT_HEAD_PROOFS
+authority_transfer: false
+formal_credit_delta: 0
+
+consumes:
+  w277_measurement: GBOGEB/pipeline-automation-hub#210
+  w278_provisional_prevention: GBOGEB/pipeline-automation-hub#211
+  w279_provisional_control: GBOGEB/pipeline-automation-hub#213
+  w280_first_red: GBOGEB/pipeline-automation-hub#214
+  w280_r1_current_prevention: GBOGEB/pipeline-automation-hub#215
+
+review_findings_consumed:
+  pr213:
+    count: 3
+    repairs:
+      - exact_parent_proof_identity_and_digest_binding
+      - frozen_historical_and_current_KPI_binding
+      - complete_tooling_3p3_and_guard_mapping_validation
+  pr214:
+    remaining_count: 1
+    repair:
+      - exact_three_p3_authorized_field_scope_validation
+
+kpi_rebaseline:
+  historical_r3_first_pass_closure_rate: 0.25
+  historical_r3_merge_lead_mean_s: 210
+  historical_r3_merge_lead_median_s: 169
+  original_recurrence_synthetic_detection: 1.0
+  protected_control_surfaces_validated: 3
+  protected_control_surfaces_total: 3
+  dmaic_proof_workflow_first_pass_yield_through_w280_r1: 0.8
+  dmaic_review_clean_rate_through_w280_r1: 0.2
+  material_review_findings_total_before_w281: 10
+  material_review_findings_closed_before_w281: 6
+  material_review_findings_target_after_w281: 10
+  qps_consumer_findings_open: 2
+
+next:
+  - exact_head_premerge_proof
+  - exact_head_control_proof
+  - consume_review_feedback
+  - QPS_W282_CONSUMER_FIX_FORWARD
