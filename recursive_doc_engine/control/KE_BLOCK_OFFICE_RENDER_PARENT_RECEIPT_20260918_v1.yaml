@@ -1,0 +1,79 @@
+schema: missioncontrol.ke_block_roundtrip.office_render_parent_receipt.v1
+as_of: "2026-09-18T18:31:00+02:00"
+repository: GBOGEB/pipeline-automation-hub
+base_master_sha: f253b5990f2e7d6c5e1fd4e7b34b8f43f7ec0a53
+authority_transfer: false
+formal_credit_delta: 0
+
+previous_parent_receipt:
+  path: recursive_doc_engine/control/KE_BLOCK_ROUNDTRIP_3PSTAR_MIP_PARENT_RECEIPT_20260918_v1.yaml
+  first_red: OFFICE_BINARY_BUILD_AND_RENDER_QA
+
+producer_control:
+  repo: GBOGEB/document-organization-system
+  ke_block_pr: 62
+  ke_block_merge_sha: 167d66e963eebbe982ffae6c36d78580a2390a92
+  adapter_pr: 64
+  adapter_merge_sha: e181903236e70b7b798b56fd59fc8948cd9885c0
+  return_receipt_pr: 65
+  return_receipt_merge_sha: 5fb5672bc6eb493f11fb5e459a066a938f632ea1
+
+docx_consumer:
+  repo: GBOGEB/DOCX_RTM_Automation
+  pr: 62
+  exact_head_sha: 08d9fa4d5e0d2d1684490b3480f7dd5b44bd6926
+  merge_sha: fd897b83b2ba1de2766afb7280ad3b851a04e2f0
+  workflow:
+    name: Data-rich JSON DOCX consumer
+    run_id: 35367734640
+    job_id: 105674143274
+    conclusion: success
+    executable_steps_gt_zero: true
+
+render_proof:
+  state: PASS
+  source_projection_binding: PASS
+  governed_reference_docx_build: PASS
+  pandoc_docx_render: PASS
+  heading_style_check: PASS
+  template_numbering_check: PASS
+  duplicate_numbering_check: PASS
+  libreoffice_pdf_render: PASS
+  png_render_evidence: PASS
+  pdf_pages: 2
+  pdf_page_size: LETTER_612x792_PT
+  artifact:
+    id: 10556508305
+    name: data-rich-docx-render-08d9fa4d5e0d2d1684490b3480f7dd5b44bd6926
+    digest: sha256:5834b664708de31107fa272e4f69438ba36c537e0971474b834e91bc30860fc5
+
+sequence:
+  - phase: 3PSTAR_REFRESH_CURRENT_AUTHORITY
+    state: PASS
+  - phase: 3PSTAR_BIND_OFFICE_RENDER_PROOF
+    state: PASS
+  - phase: MIP_MODERNIZE
+    state: PASS
+  - phase: MIP_INNOVATE
+    state: PASS
+  - phase: MIP_PERPETUATE
+    state: PASS_PARENT_RECEIPT
+
+promotion:
+  office_binary_build_and_render_qa: PASS
+  human_visual_approval: NOT_CLAIMED
+  candidate_baseline: WITHHELD
+  remaining_requires:
+    - USER_VISUAL_APPROVAL
+
+non_compensation:
+  structural_render_pass_ne_human_visual_approval: true
+  generated_docx_ne_semantic_ssot: true
+  rendered_output_authoritative: false
+  engineering_credit: false
+  compliance_credit: false
+  procurement_acceptance_credit: false
+
+stop_state:
+  state: SAFE_HOLD_HUMAN_VISUAL_GATE
+  first_red: USER_VISUAL_APPROVAL
