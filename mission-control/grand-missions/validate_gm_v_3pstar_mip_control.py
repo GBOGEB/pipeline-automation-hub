@@ -120,6 +120,8 @@ def main() -> int:
         "mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md",
         "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v1.md",
         ".github/workflows/gm-v-3pstar-mip-control.yml",
+        "mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v2.md",
+        "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v2.md",
     }
     checks["15_perpetuate_outputs_exact_and_exist"] = (
         set(required_outputs) == expected_outputs
