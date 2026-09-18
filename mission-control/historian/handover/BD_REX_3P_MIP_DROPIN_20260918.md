@@ -40,12 +40,14 @@ Continue from repository authority only. Do not reconstruct this lane from chat 
 - ABACUS `main` was observed unprotected.
 - Control issue: ABACUS #1278.
 - Final policy commit: `c17124160b82e0b3ff94eebb98608118296f45cf`.
-- Final report commit: `82f6edaea6a60f948dc51b6038fbad944977d676`.
-- Post-fix governance run at handover: `35351825106`, QUEUED.
+- Policy-digest/report commit: `82f6edaea6a60f948dc51b6038fbad944977d676`.
+- Hosted run `35351825106`: policy PASS; inventory failed on one generated repeated-command line.
+- Exact generated-delta commit: `621c9ca2ab6848d524f3c8ddb831524e756c159f`.
+- Final governance re-proof at handover: `35352120094`, QUEUED.
 
 ## Next executable transition
 
-1. Re-read run `35351825106`.
+1. Re-read run `35352120094`.
 2. If it executes >0 steps and PASSes, mark HIST-BD-018 repair DONE, but keep REX-CM-005 withheld.
 3. Bind merge admission to CI Workflow Governance using a branch rule/ruleset or equivalent fail-closed admission.
 4. Prove a deliberately unclassified workflow change is non-mergeable.
