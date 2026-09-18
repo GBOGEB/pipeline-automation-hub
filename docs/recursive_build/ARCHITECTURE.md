@@ -101,3 +101,16 @@ ppt_processor.py
 The joined receipt SHA-binds the Excel table manifest when the phase is requested, including table counts, schedule-candidate counts, error count and `authority_transfer=false`. Excel failure is fail-closed for an explicitly requested Excel phase; omission of `--excel-input` preserves the historical two-phase path.
 
 This binding is orchestration/provenance only. The workbook remains SOURCE input and the CSV/XLSX exports remain derived renditions.
+
+
+## MAIN real E2E proof — v4
+
+The CI control now includes a real subprocess proof of the documented MAIN command, not only mocked orchestration.
+
+Three branches are exercised with disposable fixtures:
+
+1. minimally valid PPTX -> metadata -> recursive build -> joined receipt = PASS;
+2. deliberately invalid bytes renamed to `.pptx` -> fail-closed before recursive/joined receipt;
+3. valid PPTX + real XLSX -> metadata -> recursive build -> Excel schedule export -> joined v2 receipt = PASS.
+
+The E2E proof checks the SHA-256 links recorded in `pipeline_run_receipt.json` and preserves the metadata-only/derived-rendition authority boundaries.
