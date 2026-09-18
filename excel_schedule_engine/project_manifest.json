@@ -1,8 +1,8 @@
 {
   "schema": "gbogeb.excel_schedule_engine.project_manifest.v1",
-  "version": "v0.2.0",
-  "as_of": "2026-09-18T19:18:00+02:00",
-  "state": "MAIN_RUNNER_BINDING_CANDIDATE",
+  "version": "v0.2.1",
+  "as_of": "2026-09-18T19:22:00+02:00",
+  "state": "ACTIVE_MAIN_RUNNER_BOUND",
   "purpose": "Excel parser/engine for planning and scheduling tables feeding the MAIN pipeline.",
   "authority": {
     "input_source": "ActiveDocs/MASTER.xlsx",
@@ -60,7 +60,29 @@
     "main_runner_mode": "OPTIONAL_EXPLICIT_EXCEL_PHASE",
     "pipeline_receipt_schema": "pipeline_automation_hub.pipeline_run_receipt.v2",
     "fail_closed_when_excel_requested": true,
-    "default_behavior_without_excel": "UNCHANGED"
+    "default_behavior_without_excel": "UNCHANGED",
+    "main_runner_pr": 298,
+    "main_runner_head": "56558dc7e483866c2af4fd679bf17548c1dfe0ea",
+    "main_runner_merge": "17340181595b895602c1f14f5b6d3ed2c1aca55a",
+    "hosted_proof": {
+      "excel_schedule_engine": {
+        "run": 35373856325,
+        "job": 105693848247,
+        "conclusion": "success"
+      },
+      "recursive_build": {
+        "run": 35373856209,
+        "job": 105693852799,
+        "conclusion": "success"
+      }
+    },
+    "proof_scope": [
+      "real_excel_engine_subprocess_from_main_runner",
+      "dual_csv_xlsx_generation",
+      "manifest_sha_binding_into_pipeline_receipt_v2",
+      "backward_compatibility_without_excel",
+      "fail_closed_when_excel_requested"
+    ]
   },
   "p1_hotfix": {
     "source": "post-merge Codex review on pipeline-automation-hub#275",
@@ -70,5 +92,6 @@
       "read tableless fallback from the actual calculated used-range origin"
     ],
     "local_tests": "6/6 PASS"
-  }
+  },
+  "next_objective": "PLANNING_SCHEDULE_SCHEMA_AND_DASHBOARD_BINDING"
 }
