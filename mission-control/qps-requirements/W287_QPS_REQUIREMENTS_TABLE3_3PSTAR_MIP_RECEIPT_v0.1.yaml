@@ -1,0 +1,56 @@
+schema: missioncontrol.qps_requirements_table3_receipt/v0.1
+as_of: '2026-09-18T18:06:00+02:00'
+mission: QPS_REQUIREMENTS_TABLE3_GOVERNANCE
+source_repo: GBOGEB/cryoplant-project
+source_pr: 1538
+source_head: 18577d06d29e5ee8ecce6806e3bfcc289b16b868
+source_branch: w287-requirements-deliverables-table3-3pstar-mip-20260918
+source_control: triage/w287/QPS_W287_REQUIREMENTS_TABLE3_3PSTAR_MIP_CONTROL_v0.1.yaml
+source_table: triage/w287/QPS_W287_REQUIREMENTS_TABLE3_EXTENSION_v0.1.md
+source_handover: handover/session/SC_2026-09-18_W287_REQUIREMENTS_TABLE3_3PSTAR_MIP_v1.md
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+compliance_credit_delta: 0
+negotiation_credit_delta: 0
+
+method:
+  selector: 3PSTAR_THEN_MIP
+  refresh: PASS
+  probe: PASS
+  rank: PASS
+  prepare: PASS
+  prove: PASS_STATIC_SEMANTIC_REVIEW
+  commit: PASS_BRANCH_COMMIT
+  propagate: NOT_AUTHORIZED_BEYOND_REQUIREMENTS_DOCUMENT_CONTROL
+  MIP:
+    modernize: PASS
+    innovate: PASS
+    perpetuate: PASS_ON_PR_PUBLICATION
+
+governed_semantics:
+  requirement_parent_authority: TABLE_3_REQ_1_TO_23
+  stakeholder_mapping_authority: SECTION_4_8_ONLY
+  deliverable_mapping_authority: SECTION_4_9_ONLY
+  missing_deliverable_mapping: NOT_ASSIGNED_SECTION_4_9_GAP
+  partial_mapping_ne_full_fulfilment: true
+  invented_local_deliverable_ids_allowed: false
+
+source_gap:
+  id: REF_REGISTER_ISO31000_VS_11_ISO9927
+  state: OPEN_SOURCE_REGISTER_MISMATCH
+  note: >-
+    Supplied section 4.9 Deliverable Req.5 cites ISO 31000 while supplied
+    section 4.9.1 reference [11] names ISO 9927. No silent repair was made.
+
+non_compensation:
+  - DOCUMENT_NORMALIZATION_NE_ENGINEERING_ACCEPTANCE
+  - DELIVERABLE_MAPPING_NE_DELIVERABLE_COMPLETION
+  - REFERENCE_LISTING_NE_STANDARDS_COMPLIANCE
+  - UNASSIGNED_NE_ZERO
+  - AUTHORITY_TRANSFER_FALSE
+
+restart_rule: >-
+  Consume the QPS PR as the child authority for this lane. Any new or amended
+  deliverable requirement required to close a Table 3b mapping gap must be
+  authored in QPS section 4.9 authority first, then referenced back into Table 3.
