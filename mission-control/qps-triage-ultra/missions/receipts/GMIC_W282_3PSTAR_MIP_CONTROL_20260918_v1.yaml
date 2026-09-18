@@ -1,0 +1,224 @@
+schema: missioncontrol.gmi_c.w282_3pstar_mip_control.v1
+as_of: '2026-09-18T15:22:00+02:00'
+wave: W282
+mission: GM-I-C
+plane: MISSION_CONTROL_ORCHESTRATION
+method:
+  three_pstar_sequence:
+    - 3PR_REFRESH_PROBE_RANK
+    - MIP_MODERNIZE
+    - MIP_INNOVATE
+    - MIP_PERPETUATE
+    - 3PC_WHERE_ALREADY_ADMITTED
+  three_p3_release_authorized: false
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+negotiation_credit_delta: 0
+competency_promotions: 0
+
+refresh:
+  missioncontrol:
+    repo: GBOGEB/pipeline-automation-hub
+    master: f226e6e61bc84482d4856f056b292ca9322e22f8
+  qps:
+    repo: GBOGEB/cryoplant-project
+    main: 039e1fa84a6b32bcdb89e65807613377d50b4bb7
+    current_merge_pr: 1475
+    current_pr_head: 722b4382b1600ac783f77bd1c4aa5c8ba3400d0a
+  gemini:
+    repo: GBOGEB/GEMINI
+    main: 439838866e77784334ef76d231f9a9e0aa4f5e5c
+  drive:
+    ic3_root_id: 1FnbajqBiIjL6Y4-_7tE1D515fNWvHsu3
+    r3_landing_zone_id: 1B0i2T7hUsSFhHiyw35PPGaeQ_40E2nNr
+    doceng_root_id: 1bIPFEEe9XtmOB56B_4LIcX1FdSIxY4mZ
+
+three_pr:
+  Refresh:
+    result: PASS
+    rule: LIVE_REPOSITORY_AND_DRIVE_AUTHORITY_OVER_CHAT_MEMORY
+  Probe:
+    result: PASS
+    observations:
+      - id: QPS_RUNTIME_923
+        classification: INFRA_PREEXECUTION_ZERO_STEP_RUNNER_ADMISSION
+        issue: GBOGEB/cryoplant-project#923
+        latest_exact_head_observed: 722b4382b1600ac783f77bd1c4aa5c8ba3400d0a
+        release_runner_probe:
+          run_id: 35349267160
+          jobs:
+            - {id: 105613195979, lane: configured-runner-probe, steps: 0, result: failure}
+            - {id: 105613196252, lane: hosted-runner-probe_ubuntu-latest, steps: 0, result: failure}
+            - {id: 105613196361, lane: hosted-runner-probe_ubuntu-22.04, steps: 0, result: failure}
+        application_repair_authorized: false
+      - id: R3_W275_SUCCESSOR
+        application_evidence: PASS
+        exact_environment_capsule_v2: PASS_EXTERNALLY_REPROVEN
+        producer_tooling: PASS_MERGED
+        physical_successor_git_bundle: WAIT_RETURN
+        required_successor: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+      - id: IC3_DRIVE_AUTH
+        issue: GBOGEB/GEMINI#12
+        state: WITHHELD_EXTERNAL_CONFIGURATION
+        root_shared: false
+        observed_permissions: OWNER_ONLY
+        service_account_viewer_acl: ABSENT
+      - id: TEMPORAL_CONTROL
+        state: CONTROL_3_OF_5
+        source_merge: 4866869771cf6a1176165c815256598c3db69a59
+        latest_published_genuine_schedule_run: 35319784958
+        independent_windows: 19
+        temporal_span_seconds: 389315
+        control_classes: 3
+        total_classes: 5
+        remaining_below_control:
+          - human_dependency_wait_proxy
+          - long_compute_contended
+        thresholds_changed: false
+      - id: DRIVE_LOSSLESSNESS
+        doceng_raw_folder: EMPTY
+        w274_source_byte_proofs: PRESENT
+        normalized_payload_checksum_ledger:
+          payload_files_hashed: 13
+          local_ledger_sha256: bca51dc9307c63c5ba1c727afd48d0cc3b36b348224f00bb233df471e69fecee
+          drive_publication: NOT_CLAIMED
+  Rank:
+    result: PASS
+    distinction: GLOBAL_PRIORITY_NE_LANE_PRIORITY
+    global_first_red:
+      id: QPS_ISSUE_923
+      state: RED_OWNER_ACTION
+      authority: GBOGEB/cryoplant-project/handover/qps_recursive/QTG_CURRENT.yaml
+    ranked_fronts:
+      - rank: 1
+        id: QPS_RUNTIME_923
+        disposition: EXTERNAL_OWNER_ACTION
+        next: HOSTED_ACTIONS_ADMISSION_RECOVERY_OR_TRUSTED_SELF_HOSTED_RUNNER
+      - rank: 2
+        id: R3_PHYSICAL_SUCCESSOR_GIT_BUNDLE
+        disposition: PHYSICAL_RETURN
+        next: RUN_MERGED_WINDOWS_PRODUCER_ON_AUTHENTIC_QPS_CLONE
+      - rank: 3
+        id: IC3_EXTERNAL_WIF_SERVICE_ACCOUNT_ACL
+        disposition: EXTERNAL_CONFIGURATION
+        next: INSTALL_WIF_IDENTITY_AND_TARGET_FOLDER_VIEWER_ACL_THEN_RUN_HOSTED_INGRESS
+      - rank: 4
+        id: TEMPORAL_CONTROL_3_OF_5
+        disposition: NATURAL_SCHEDULE_WATCH
+        next: CONSUME_NEXT_GENUINE_SCHEDULE_ONLY
+      - rank: 5
+        id: DRIVE_RAW_SOURCE_EXPORTS
+        disposition: EXTERNAL_SOURCE_WAIT
+        next: MATERIALIZE_ONLY_REAL_PRESERVED_EXPORTS_IF_THEY_EXIST
+
+mip:
+  Modernize:
+    state: EXECUTED_THIS_WAVE
+    actions:
+      - REBIND_STALE_GM_I_C_R3_CURRENT_TO_CAPSULE_V2_AND_PRODUCER_READY_STATE
+      - EXPLICITLY_SEPARATE_QTG_GLOBAL_FIRST_RED_FROM_W275_R3_LANE_FIRST_RED
+      - BIND_CURRENT_ZERO_STEP_QPS_HEAD_WITHOUT_APPLICATION_REPAIR
+      - BIND_CURRENT_TEMPORAL_3_OF_5_GENUINE_SCHEDULE_FRONTIER
+  Innovate:
+    state: EXECUTED_AS_CONTROL_LOGIC
+    control_selector:
+      QPS_RUNTIME_923:
+        trigger_to_resume: RUNNER_ID_NONZERO_AND_STEPS_GT_ZERO
+        forbidden_before_trigger:
+          - APPLICATION_REPAIR
+          - BLIND_RERUN
+          - GT_BDQ_1_ADVANCE
+      R3_W275:
+        trigger_to_resume: PHYSICAL_VERIFIED_BUNDLE_FOR_1248290C_RETURNED
+        forbidden_before_trigger:
+          - REBUILD_CAPSULE_V2
+          - REBUILD_PRODUCER_TOOLING
+          - R4_ADVANCE
+      IC3:
+        trigger_to_resume: SERVICE_ACCOUNT_VIEWER_ACL_PRESENT_AND_REAL_HOSTED_DRIVE_RUN
+        forbidden_before_trigger:
+          - IC3_CREDIT_FROM_DOCUMENTATION
+          - IC3_CREDIT_FROM_MANUAL_CONNECTOR_READ
+      TEMPORAL:
+        trigger_to_resume: NEXT_GENUINE_SCHEDULE_EVENT
+        forbidden_before_trigger:
+          - MANUAL_CONTROL_WINDOW
+          - THRESHOLD_LOWERING
+          - COMPETENCY_PROMOTION
+      DRIVE_LOSSLESSNESS:
+        trigger_to_resume: ACTUAL_RAW_EXPORT_BYTES_AVAILABLE
+        forbidden_before_trigger:
+          - SYNTHETIC_RAW_RECONSTRUCTION
+  Perpetuate:
+    state: EXECUTED_THIS_WAVE
+    outputs:
+      receipt: mission-control/qps-triage-ultra/missions/receipts/GMIC_W282_3PSTAR_MIP_CONTROL_20260918_v1.yaml
+      handover: handover/session/SC_2026-09-18_GMIC_W282_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md
+      dropin: handover/session/RESTART_DROPIN_2026-09-18_GMIC_W282_v1.md
+      r3_current_pointer: mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_CURRENT_v1.yaml
+    recurse_on:
+      - QPS_RUNNER_ADMISSION_CHANGED
+      - R3_PHYSICAL_BUNDLE_RETURNED
+      - IC3_WIF_OR_ACL_CHANGED
+      - NEW_GENUINE_TEMPORAL_SCHEDULE_RECEIPT
+      - REAL_RAW_EXPORTS_MATERIALIZED
+    no_ceremonial_poll: true
+
+three_pc:
+  global_gt_bd_003:
+    Prepare: PASS
+    Prove: WITHHELD_QPS_RUNNER_ADMISSION
+    Commit: HOLD
+  r3_w275:
+    Prepare: PASS
+    Prove: HOLD_WAIT_PHYSICAL_SUCCESSOR_GIT_BUNDLE
+    Commit: HOLD_WAIT_PROVE
+  ic3:
+    Prepare: IMPLEMENTED_CODE_AND_RUNBOOK
+    Prove: WITHHELD_EXTERNAL_IDENTITY_AND_RESOURCE_AUTH
+    Commit: HOLD
+  temporal:
+    current_control: CONTROL_3_OF_5
+    full_control: WITHHELD_2_CLASSES
+    commit_full_control: NOT_AUTHORIZED
+
+r3_exact_environment_v2:
+  producer_merge: 8b8e72400bb6860789b11b1fca3b809fc8ca6524
+  exact_head: 1192e030d76bc88dbfb6c735f0f11d02528a7b4e
+  run: 35339129647
+  artifact: 10544103232
+  artifact_zip_sha256: 64c363cfeaded7fc6b156b28fe344166e3c560aac3ea43f50b2695220cffd912
+  inner_archive_sha256: c77566e6c6aa261034f86303ef1be7b033622f357333e3d474d3bde8fb3ec44e
+  validator_hygiene_merge: 9faeb10cd57395538eb163791c7c56ba90be711b
+  relocated_clean_environment: PASS
+  producer_windows_tooling_merge: 439838866e77784334ef76d231f9a9e0aa4f5e5c
+
+r3_physical_return:
+  state: WAIT_RETURN
+  producer_command: 'powershell -ExecutionPolicy Bypass -File .\scripts\build_qps_r3_successor_handoff.ps1 -QpsClone "C:\Users\gbonthuy\cryoplant-project" -OutDir ".\output\r3_successor_handoff"'
+  required_outputs:
+    - QPS_R3_1248290c.bundle
+    - QPS_R3_1248290c.bundle.sha256
+    - machine_readable_v2_receipt
+  drive_landing_zone_id: 1B0i2T7hUsSFhHiyw35PPGaeQ_40E2nNr
+  current_drive_bundle_present: false
+
+non_compensation:
+  ZERO_STEP_NE_APPLICATION_FAIL: true
+  PARENT_PASS_NE_CHILD_ACCEPT: true
+  RESET_NE_ENGINEERING_ACCEPT: true
+  MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS: true
+  MANUAL_DRIVE_READ_NE_IC3_PASS: true
+  TEMPORAL_PARTIAL_CONTROL_NE_GLOBAL_CONTROL: true
+  SESSION_CLOSE_NE_ENGINEERING_OR_RUNTIME_DOV: true
+  authority_transfer: false
+  formal_credit_delta: 0
+
+stop_state:
+  global: WAIT_OWNER_QPS_RUNNER_ADMISSION
+  r3: WAIT_PHYSICAL_SUCCESSOR_GIT_BUNDLE
+  ic3: WAIT_EXTERNAL_WIF_SERVICE_ACCOUNT_ACL
+  temporal: CONTROL_3_OF_5_WAIT_NATURAL_SCHEDULE
+  drive_losslessness: WAIT_REAL_RAW_EXPORTS
+  safe_continue: true
