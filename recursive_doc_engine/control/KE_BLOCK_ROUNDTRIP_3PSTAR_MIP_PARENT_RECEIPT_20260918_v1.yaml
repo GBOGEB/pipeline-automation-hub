@@ -1,0 +1,54 @@
+schema: missioncontrol.ke_block_roundtrip.3pstar_mip_parent_receipt.v1
+as_of: "2026-09-18T18:04:00+02:00"
+repository: GBOGEB/pipeline-automation-hub
+base_master_sha: 021c7173ae19608000d8f67803c69f2f01266467
+authority_transfer: false
+formal_credit_delta: 0
+
+child:
+  repo: GBOGEB/document-organization-system
+  pr: 62
+  base_main_sha: 794bb0535b8f1f497023b3ab8e949e79d3a740d8
+  exact_head_sha: 075dfd3b52282c8d165d536e0b4642b388ad68b0
+  workflow:
+    name: Gloob Book Contract
+    run_id: 35366388321
+    conclusion: success
+    executable_steps_gt_zero: true
+
+sequence:
+  - phase: 3PSTAR_PRESERVE
+    state: PASS
+  - phase: 3PSTAR_PARSE_NORMALIZE
+    state: PASS
+  - phase: 3PSTAR_PROPAGATE
+    state: PASS
+  - phase: 3PSTAR_PROVE
+    state: PASS_EXACT_HEAD_WORKFLOW
+  - phase: 3PSTAR_PRUNE_RANK
+    state: PASS
+    first_red: OFFICE_BINARY_BUILD_AND_RENDER_QA
+  - phase: MIP_MODERNIZE
+    state: PASS
+  - phase: MIP_INNOVATE
+    state: PASS
+  - phase: MIP_PERPETUATE
+    state: PASS_PARENT_RECEIPT
+
+promotion:
+  candidate_baseline: WITHHELD
+  requires:
+    - KPI_GATES_PASS
+    - ROUNDTRIP_STRUCTURE_PASS
+    - OFFICE_BINARY_RENDER_QA_PASS
+    - USER_APPROVAL
+
+non_compensation:
+  workflow_pass_ne_office_visual_qa: true
+  candidate_ne_baseline: true
+  generated_ne_source_authority: true
+  missioncontrol_ne_child_engineering_authority: true
+
+stop_state:
+  state: SAFE_CONTINUE
+  first_red: OFFICE_BINARY_BUILD_AND_RENDER_QA
