@@ -1,13 +1,13 @@
 {
   "schema": "qps-triage-ultra/w285-federation-depth-3pstar-mip/1.0",
   "wave": "W285",
-  "state": "CANDIDATE_PREPARED_WAIT_EXTERNAL_EXACT_PROOF_AND_REVIEW_MERGE",
+  "state": "CANDIDATE_P1_WEIGHTING_REPAIRED_WAIT_EXTERNAL_REPROOF_AND_REVIEW_MERGE",
   "source": {
     "prior_qps_control": "GBOGEB/cryoplant-project@41998c71cf187e3640cf273f7be9b5b96539aab1",
     "prior_first_red": "W283_DEPTH_01",
     "topology_blob": "df0ee845697578cd644691b81eafb2465249d772",
     "depth_artifact_path": "mission-control/qps-triage-ultra/topology/QPS_ROUTING_FUNCTION_SUBSURFACE_DEPTH_v1.json",
-    "depth_artifact_blob": "a9ba70c2ed00e30e0153099062736c347c51cfa0"
+    "depth_artifact_blob": "2bf94393a7516b7f45a1a8a5e4408cfae6bd7659"
   },
   "three_pr": {
     "refresh": "PASS_CURRENT_QPS_W283RC_AND_PIPELINE_MASTER_REFRESHED",
@@ -16,12 +16,12 @@
   },
   "mip": {
     "modernize": "PASS_SPLIT_FUNCTION_BREADTH_FROM_CONDITIONAL_SUBSURFACE_DEPTH",
-    "innovate": "PASS_NONOVERLAPPING_FUNCTION_ATOM_KEYS_AND_ZERO_DENOMINATOR_GUARD",
-    "perpetuate": "WAIT_EXTERNAL_EXACT_VALIDATOR_PR_HEAD_AND_DISTINCT_REPEAT"
+    "innovate": "PASS_NONOVERLAPPING_FUNCTION_ATOM_KEYS_ZERO_DENOMINATOR_GUARD_AND_FUNCTION_WEIGHTED_DEPTH",
+    "perpetuate": "WAIT_REPAIRED_EXTERNAL_EXACT_VALIDATOR_PR_HEAD_AND_DISTINCT_REPEAT"
   },
   "three_pc": {
     "prepare": "PASS_CANDIDATE_ARTIFACT_MATERIALIZED",
-    "prove": "WAIT_Q_ENGINEERING_TOOLS_EXACT_PROOF",
+    "prove": "WAIT_REPAIRED_Q_ENGINEERING_TOOLS_EXACT_PROOF",
     "commit": "WAIT_PIPELINE_REVIEW_MERGE"
   },
   "three_p3": "NOT_AUTHORIZED_BEFORE_PROVE_AND_COMMIT",
@@ -37,9 +37,8 @@
       "value": 0.3333333333333333
     },
     "depth_conditioned_on_breadth": {
-      "numerator_unique_covered_atoms": 5,
-      "denominator_atoms_in_breadth_covered_functions": 16,
-      "value": 0.3125,
+      "method": "MACRO_AVERAGE_PER_FUNCTION",
+      "breadth_covered_functions": 4,
       "per_function": {
         "MISSION_CONTROL_ORCHESTRATION": {
           "numerator": 2,
@@ -61,11 +60,18 @@
           "denominator": 3,
           "value": 0.3333333333333333
         }
-      }
+      },
+      "value": 0.30833333333333335
     },
     "global_fleet_penetration": {
-      "formula": "B*D",
-      "value": 0.10416666666666666
+      "formula": "B*D_macro",
+      "value": 0.10277777777777777
+    },
+    "depth_micro_diagnostic": {
+      "method": "ATOM_WEIGHTED_DIAGNOSTIC_NOT_USED_IN_PEN",
+      "numerator_unique_covered_atoms": 5,
+      "denominator_atoms_in_breadth_covered_functions": 16,
+      "value": 0.3125
     }
   },
   "preserved_noncompensating": [
@@ -76,5 +82,11 @@
     "EXTERNAL_SOURCE_AND_AUTHORITY_GATES"
   ],
   "authority_transfer": false,
-  "formal_credit_delta": 0
+  "formal_credit_delta": 0,
+  "rex": {
+    "id": "W285_REX_MIXED_FUNCTION_ATOM_WEIGHTING",
+    "source": "Codex review on pipeline-automation-hub#259",
+    "disposition": "FIX_FORWARD_MACRO_AVERAGE_D_TO_MATCH_FUNCTION_WEIGHTED_B",
+    "prior_penetration": "INSUFFICIENT_AFTER_P1"
+  }
 }
