@@ -33,7 +33,14 @@ app/public/outputs/
 ├── digital_twins/          metadata/template Markdown twins
 ├── metadata/               JSON filename/hash metadata
 ├── cross_references/       filename-derived unverified reference candidates
-└── processing_summary.json
+├── recursive_build/
+│   ├── .buildlog/          per-artefact lineage receipts
+│   ├── index.json          machine-readable ranked index
+│   ├── index_top30.md      human curation view
+│   ├── master_index.md     global recursive-build index
+│   └── build_receipt.json  hash-bound recursive-build receipt
+├── processing_summary.json
+└── pipeline_run_receipt.json
 ```
 
 ### Proven capability
@@ -80,7 +87,19 @@ PIPELINE_OUTPUT_DIR
 SOURCE_DATE_EPOCH
 ```
 
-A run returns non-zero when any discovered PPTX input is rejected or processing fails.
+The documented MAIN command is now a two-phase pipeline:
+
+```text
+validated bounded PPTX metadata processing
+        -> processing_summary.json
+        -> Recursive_Build_Master.py
+        -> recursive_build/build_receipt.json
+        -> pipeline_run_receipt.json
+```
+
+The recursive phase runs only after the metadata summary passes. The joined `pipeline_run_receipt.json` SHA-binds both phase receipts and proves execution/provenance only. It does not create engineering, compliance, procurement, acceptance, or document-truth authority.
+
+A run returns non-zero when metadata processing fails, its summary fails, recursive-build indexing fails, or the joined pipeline receipt cannot be written.
 
 ## M09 evidence boundary
 
