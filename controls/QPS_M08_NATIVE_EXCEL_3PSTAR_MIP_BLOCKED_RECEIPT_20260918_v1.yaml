@@ -1,0 +1,79 @@
+schema: missioncontrol-qps-m08-native-excel-blocked-receipt/1.0
+as_of: '2026-09-18T17:18:00+02:00'
+repository: GBOGEB/pipeline-automation-hub
+role: NON_AUTHORITATIVE_PARENT_RECEIPT
+authority_transfer: false
+
+child:
+  repo: GBOGEB/cryoplant-project
+  pr: 1514
+  head_sha: 38cb2d695a3fba846a7f85583a4c6e5f50edcd19
+  merge_sha: 9fd7693fe15ac798e4269e8c850922b619325fff
+  receipt: triage/w287/QPS_W287_M08_NATIVE_EXCEL_3PSTAR_MIP_BLOCKED_v1.yaml
+  handover: handover/session/SC_2026-09-18_W287_M08_NATIVE_EXCEL_BLOCKED_3PSTAR_MIP_v1.md
+  method_pointer: controls/QPS_OFFER_EVAL_METHOD_CURRENT_v1.yaml
+
+executor:
+  repo: GBOGEB/Q_engineering_tools
+  pr: 59
+  head_sha: b57b03fcdbb659644ea69c9984c5dcf8d64d51fd
+  merge_sha: d0a9073cdbda04c517beaab1cc2fb3389aec4b0c
+  workflow_run: 35360710520
+  attempt_1:
+    runner: GitHub Actions 1000311349
+    image: win22
+    artifact_id: 10553934208
+    artifact_digest: sha256:53f1422cd0fb40627757e45577eba85ccf3072b99e7094e23853d5ed65a8b8b5
+    status: BLOCKED_NATIVE_EXCEL_COM_UNAVAILABLE
+  attempt_2:
+    runner: GitHub Actions 1000311368
+    image: win25-vs2026
+    artifact_id: 10553414104
+    artifact_digest: sha256:93b524bd43d991b76ac53a07cbd18c45677bcab8217feadb3442b6c0525970e8
+    status: BLOCKED_NATIVE_EXCEL_COM_UNAVAILABLE
+
+sequential_3pstar_mip:
+  three_pr:
+    refresh: PASS
+    probe: PASS_BLOCKER_IDENTIFIED_AFTER_2_ATTEMPTS
+    rank: PASS_EXTERNAL_NATIVE_EXCEL_RUNTIME_UNAVAILABLE
+  mip:
+    modernize: PASS_PROBE_GOVERNANCE_HARDENED
+    innovate: HOLD_NOT_ADMITTED
+    perpetuate: PASS_CHILD_REENTRY_BOUND
+  three_pc:
+    prepare: PASS_PRIOR_MIP2_CONTROL
+    prove: BLOCKED_EXTERNAL_NATIVE_EXCEL_RUNTIME_AFTER_2_ATTEMPTS
+    commit: HOLD_NATIVE_EXCEL_GATE
+  global_mip3_3p3: NOT_ADMITTED
+
+classification:
+  blocker: MICROSOFT_EXCEL_COM_CLASS_NOT_REGISTERED_ON_GITHUB_HOSTED_WINDOWS
+  retry_budget: EXHAUSTED_2_OF_2
+  workbook_defect_observed: false
+  native_excel_transaction_executed: false
+  reentry: >-
+    Materially different Windows environment with real Microsoft Excel installed, executing the same governed
+    MIP2A open-save-close-reopen transaction and emitting exact input/output hashes, Excel version/environment,
+    repair/recovery observation, timestamp and operator/runner identity.
+
+non_compensating:
+  cryoplant_issue_923: OPEN_INDEPENDENT
+  g6_release_identity_parity: PRESERVED
+  w152_external_evidence_returns: PRESERVED
+  reliability_table10: PRESERVED
+  visual_frontier: PRESERVED
+
+formal_credit_delta:
+  engineering: 0
+  compliance: 0
+  negotiation: 0
+  sck_acceptance: 0
+  release: 0
+  award: 0
+  table10_rate_per_year: 0.0
+
+parent_rule: >-
+  MissionControl records the child/executor state only. It does not substitute public/federated execution for
+  private-QPS runtime authority, does not authorize a third hosted native-Excel retry, and must not launch
+  CODEX/ABACUS MIP3/3P3 until the child native-Excel gate passes.
