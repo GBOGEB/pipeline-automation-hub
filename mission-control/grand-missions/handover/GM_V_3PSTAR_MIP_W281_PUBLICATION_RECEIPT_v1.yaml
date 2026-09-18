@@ -1,0 +1,135 @@
+schema: missioncontrol.gm_v.3pstar_mip_publication_receipt.v1
+receipt_id: GM_V_3PSTAR_MIP_W281_PUBLICATION_RECEIPT_20260918
+created_local: "2026-09-18T15:48:00+02:00"
+repository: GBOGEB/pipeline-automation-hub
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+
+canonical_state:
+  gm_iv:
+    state: ACTIVE_8_OF_8
+    runtime_capability_coverage: 8_OF_8
+    concurrency_capacity_claimed: false
+    children: []
+  gm_v:
+    state: HELD
+    children: []
+    crew_posture: UNALLOCATED
+    launch_authorized: false
+    governor_decision: WITHHOLD_GM_V_LAUNCH_EXTERNAL_OPERATIONAL_AVAILABILITY
+
+lineage:
+  canonical_parent:
+    pr: 232
+    merge_sha: 03c1eff213ca7a3211380aed17bbc5cb07023680
+  review_gap_repair:
+    pr: 239
+    merge_sha: b19f4e46a72b0a324c74e4f4d513feb3e38e62c7
+  w281_rebind:
+    pr: 242
+    exact_head_sha: 625892a12e743470454810f79ae55ba4444717bd
+    merge_sha: f276f5c36d4e2ab0646d728e5d24032bb63545c3
+  perpetuate_identity_hardening:
+    pr: 243
+    merge_sha: a9695cd69ae94f596b9568024f99aac7cf15cb09
+    postmerge_run_id: 35351611192
+    postmerge_result: FAIL_CONTROL_SCHEMA_MISMATCH
+    first_red: 15_perpetuate_outputs_exact_and_exist
+  perpetuate_v2_identity_repair:
+    pr: 247
+    exact_head_sha: 1feac806e98b4e5add6b9ef84e2f04c3c14b3c5f
+    merge_sha: a691d8bc66521236d4a7f3da3bea1013d12aa1d0
+    exact_head_proof:
+      run_id: 35351884638
+      job_id: 105621726762
+      result: SUCCESS
+      artifact_id: 10550250765
+      artifact_digest: "sha256:f421b80d3ff131e6d98beab353d67a7a0068f55174f58f2f6b2a7855584f6c93"
+  v2_push_trigger_repair:
+    pr: 250
+    exact_head_sha: 112b1cc566610d01ba9a9a5d5a24d908105ac38a
+    merge_sha: 75986e497f4e812cae01cb521f1bedb555fbaed3
+    exact_head_proof:
+      run_id: 35352043592
+      job_id: 105622250032
+      result: SUCCESS
+      artifact_id: 10550066265
+      artifact_digest: "sha256:3535a055af36bfe4ccd76f209b52601ee46fb060d42923e9c6efed5926497c0d"
+    merged_master_proof:
+      run_id: 35352089399
+      job_id: 105622395495
+      result: SUCCESS
+      artifact_id: 10550761001
+      artifact_digest: "sha256:1051f606635be8b398231cc8e009f03b7f048c95bef43364a522ffcb4485c532"
+
+three_p_star:
+  Refresh: PASS
+  Probe: PASS_BLOCK_CONFIRMED
+  Rank: PASS_FIRST_RED_QPS_923
+  Prepare: PASS
+  Prove_parent_publication: PASS
+  Commit_parent_publication: PASS
+  Prove_operational_availability: WITHHELD_EXTERNAL
+  three_p3: NOT_AUTHORIZED
+
+mip:
+  Modernize: PASS
+  Innovate: PASS
+  Perpetuate: PASS
+  note: v2 handover and restart drop-in are proved repository-native restart surfaces
+
+latest_private_qps_observation:
+  repository: GBOGEB/cryoplant-project
+  issue: 923
+  state: OPEN
+  qps_main_observed: c073662489aa3681baefe56257b28ef77bb4b822
+  pull_request: 1483
+  head_sha: 4aeeddb9cfaa9f68f8080e21273671d5ad47dcb2
+  merge_sha: c073662489aa3681baefe56257b28ef77bb4b822
+  release_runner_probe:
+    run_id: 35351329297
+    jobs:
+      - job_id: 105619914252
+        runner_class: configured-runner
+        executed_steps: 0
+      - job_id: 105619914475
+        runner_class: ubuntu-22.04
+        executed_steps: 0
+      - job_id: 105619914545
+        runner_class: ubuntu-latest
+        executed_steps: 0
+  independent_validator:
+    workflow: verify-ssot
+    run_id: 35351329312
+    job_id: 105619914380
+    executed_steps: 0
+  classification: INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION
+  probe_retriggered_by_this_transaction: false
+
+next_legal_transition:
+  trigger: OWNER_SIDE_ACTIONS_ADMISSION_CHANGE
+  sequence:
+    - REFRESH_MISSIONCONTROL_MASTER_QPS_MAIN_AND_ISSUE_923
+    - RUN_UNCHANGED_PRIVATE_QPS_RELEASE_RUNNER_PROBE
+    - REQUIRE_RUNNER_ID_NONZERO
+    - REQUIRE_EXECUTED_STEPS_GT_ZERO
+    - RUN_UNCHANGED_SELECTED_CHILD_VALIDATOR
+    - BIND_EXACT_RECEIPT
+    - REPEAT_ON_DISTINCT_FRESH_HEAD
+    - RESUME_OPERATIONAL_3PC_PROVE
+    - REEVALUATE_GM_V_GOVERNOR
+    - ONLY_IF_READY_OPEN_SEPARATE_GM_V_LAUNCH_TRANSACTION
+
+noncompensation:
+  public_parent_control_pass_closes_qps_923: false
+  gm_iv_active8_closes_qps_923: false
+  runtime_capability_8_of_8_is_operational_availability: false
+  merge_is_operational_prove: false
+
+restart:
+  handover: SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v2.md
+  dropin: RESTART_DROPIN_2026-09-18_GM_V_v2.md
+  session_close: SESSION_CLOSE_CURRENT.yaml
+  chat_only_active_todos: 0
+  chat_only_decisions: 0

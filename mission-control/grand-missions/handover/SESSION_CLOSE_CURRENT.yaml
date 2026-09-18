@@ -1,0 +1,40 @@
+schema: missioncontrol.gm_v.session_close_current.v1
+state: CONTROLLED_HOLD_EXTERNAL_OPERATIONAL_AVAILABILITY
+created_local: "2026-09-18T15:48:00+02:00"
+
+read_order:
+  - ../GM_V_CURRENT_v1.json
+  - ../GM_V_3PSTAR_MIP_CONTROL_v1.json
+  - SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v2.md
+  - RESTART_DROPIN_2026-09-18_GM_V_v2.md
+  - GM_V_3PSTAR_MIP_W281_PUBLICATION_RECEIPT_v1.yaml
+  - ../GM_V_GOVERNOR_READINESS_CONTRACT.json
+  - GBOGEB/cryoplant-project#923
+
+publication_receipt: GM_V_3PSTAR_MIP_W281_PUBLICATION_RECEIPT_v1.yaml
+canonical_handover: SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v2.md
+restart_dropin: RESTART_DROPIN_2026-09-18_GM_V_v2.md
+
+gm_iv: ACTIVE_8_OF_8
+gm_v: HELD
+gm_v_launch_authorized: false
+first_red: GBOGEB/cryoplant-project#923
+first_red_class: INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION
+
+parent_publication:
+  result: PASS
+  terminal_merge_sha: 75986e497f4e812cae01cb521f1bedb555fbaed3
+  terminal_run_id: 35352089399
+  terminal_job_id: 105622395495
+  terminal_artifact_id: 10550761001
+  terminal_artifact_digest: "sha256:1051f606635be8b398231cc8e009f03b7f048c95bef43364a522ffcb4485c532"
+
+operational_3pc_prove: WITHHELD_EXTERNAL
+three_p3: NOT_AUTHORIZED
+next_transition: OWNER_SIDE_ACTIONS_ADMISSION_CHANGE_THEN_UNCHANGED_QPS_GT0_STEP_PROBE
+
+chat_only_active_todos: 0
+chat_only_decisions: 0
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
