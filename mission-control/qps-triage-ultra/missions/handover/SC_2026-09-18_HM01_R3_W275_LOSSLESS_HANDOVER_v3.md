@@ -2,16 +2,32 @@
 
 ## Canonical restart
 
-QPS #1465 is the current W275 reconciliation authority for this lane and merged
-at `8ae7d5ca9b010b6c2978a03b7b16898e172c8918`.
+QPS #1468 is the current W275 child reconciliation authority for this lane and merged
+at `0a18d92d12795c920ebe1eebb47dc1ef67e928f1`.
 
-Read:
-1. `triage/w275/QPS_W275_R3_3PSTAR_MIP_RECURSIVE_CONTROL_v0.2.yaml`
-2. `handover/session/SC_2026-09-18_W275_R3_3PSTAR_MIP_LOSSLESS_HANDOVER_v2.md`
-3. `handover/session/RESTART_DROPIN_2026-09-18_W275_R3_v2.md`
+QPS #1465 remains immutable predecessor history. Its capsule-v2 evidence is preserved,
+while #1468 fixes forward the post-merge validator/restart inconsistencies without
+changing the physical R3 predicate.
+
+Read the child authority in this order:
+1. `handover/qps_recursive/GLOB.yaml`
+2. `handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml`
+3. `handover/qps_recursive/QTG_CURRENT.yaml`
+4. `handover/qps_recursive/QTG_CURRENT_EXTENSIONS.yaml`
+5. `controls/QPS_TRIAGE_CONTROL_PLANE_v1.yaml`
+6. `controls/QPS_GLOBAL_BD_CURRENT_v0.1.yaml`
+7. `controls/QPS_TRIAGE_BT_PRESSURE_CURRENT_v1.yaml`
+8. `controls/QPS_TRIAGE_CHILD_CONTRACT_v1.json`
+9. `controls/QPS_TRIAGE_REPO_DEEP_MAP.yaml`
+10. `handover/qps_recursive/QPS_TRIAGE_REPO_DEEP.md`
+11. `handover/qps_recursive/QPS_W275_SESSION_POINTER_REBIND_RECEIPT_v0.3.yaml`
+12. `triage/w275/QPS_W275_R3_3PSTAR_MIP_RECURSIVE_CONTROL_v0.3.yaml`
+13. `handover/session/SC_2026-09-18_W275_R3_3PSTAR_MIP_LOSSLESS_HANDOVER_v3.md`
+14. `handover/session/RESTART_DROPIN_2026-09-18_W275_R3_v3.md`.
 
 MissionControl #204 and #207 remain immutable earlier federation states. This
-v3 corrects forward to the QPS capsule-v2 evidence.
+v3 federation consumes the current child fix-forward without transferring source,
+product or acceptance authority.
 
 ## Current exact environment
 
@@ -27,12 +43,16 @@ Current accepted environment proof is GEMINI #18/#19:
   `64c363cfeaded7fc6b156b28fe344166e3c560aac3ea43f50b2695220cffd912`
 - inner archive SHA-256
   `c77566e6c6aa261034f86303ef1be7b033622f357333e3d474d3bde8fb3ec44e`
-- manifest `gmi.r3_successor.exact_env_capsule.v2`
+- manifest `gmi.r3.successor.exact_env_capsule.v2`
 - launcher `r3-python/run-python`
 - external clean-`LD_LIBRARY_PATH` relocation PASS
 - Python 3.12.14 + exact six-package lock PASS
 - #19 validator-hygiene merge
-  `9faeb10cd57395538eb163791c7c56ba90be711b`
+  `9faeb10cd57395538eb163791c7c56ba90be711b`.
+
+QPS #1468 additionally aligns the child executable validator/tests to that already
+governed v2 contract and restores the complete GLOB restart traversal. This creates
+no R3 DoV or formal credit.
 
 ## ABACUS support
 
@@ -71,5 +91,5 @@ Only `PASS_R3_RELEASE_PRODUCTION_DOV` releases R4.
 R4 = BLOCKED_NOT_NEXT.
 
 #923 and GT_BDQ_0 remain RED/non-compensating. Runtime GOLD is withheld.
-Canonical GT_BDQ_4–7 credit is NONE. Authority transfer=false; engineering,
+Canonical GT credit is NONE. Authority transfer=false; engineering,
 negotiation and formal credit deltas remain zero.
