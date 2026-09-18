@@ -1,0 +1,84 @@
+schema: qps.grand_mission_lossless_handover.v1
+handover_id: SC_2026-09-18_GM_FLEET_3PSTAR_MIP_LOSSLESS_HANDOVER_v1
+created_local: "2026-09-18T15:27:00+02:00"
+repository: GBOGEB/pipeline-automation-hub
+base_master_at_refresh: f226e6e61bc84482d4856f056b292ca9322e22f8
+authority_transfer: false
+chat_only_active_todos: 0
+chat_only_decisions: 0
+
+canonical_state:
+  GM-I:
+    state: HOLD_EXTERNAL_OR_HABITAT_GATE
+    note: variants GM-I-B CONTROL sentinel and GM-I-C external-auth proof remain separate
+  GM-II:
+    state: CONTROL
+  GM-III:
+    state: RECON_CONTROL
+  GM-IV:
+    state: ACTIVE_8_OF_8
+    children: []
+    runtime_capability_coverage: 8/8
+    post_active8_repeat_control: PASS
+  GM-V:
+    state: HELD
+    children: []
+    governor_readiness: WITHHOLD_GM_V_LAUNCH_EXTERNAL_OPERATIONAL_AVAILABILITY
+
+three_p_star:
+  refresh: PASS
+  probe: PASS_BLOCK_CONFIRMED
+  rank: PASS_FIRST_RED_QPS_923
+  prepare: PASS_REENTRY_CONTROL_AND_HANDOVER_MATERIALIZED
+  prove: PENDING_EXACT_HEAD_PUBLIC_WORKFLOW
+  commit: HOLD_UNTIL_PROVE_PASS
+
+mip:
+  modernize: PASS
+  innovate: PASS
+  perpetuate: PASS
+
+latest_private_qps_observation:
+  qps_main: eeac2b60fc16e5b2131d4054f95da0b0c663cc40
+  qps_pr: 1476
+  qps_head: 458dae93993a970d94c5a8c85c2d04e40390e454
+  release_runner_probe_run: 35350233629
+  release_runner_probe_jobs:
+    - 105616352192
+    - 105616352310
+    - 105616352482
+  release_runner_probe_executed_steps: [0, 0, 0]
+  independent_verify_run: 35350233647
+  independent_verify_job: 105616351882
+  independent_verify_executed_steps: 0
+  classification: INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION
+
+parallel_state:
+  missioncontrol_pr_233:
+    title: "GM-I-C W282: 3P* MIP lossless control refresh"
+    state_at_refresh: OPEN
+    head_sha: 83dffd1f368e701225ed0e2a6fc5c6a9d56c204e
+    relation: PARALLEL_GM_I_C_VARIANT_NOT_GM_V_COMPENSATION
+
+next_executable_transition:
+  owner: QPS_OWNER_ACTION
+  trigger: OWNER_SIDE_ACTIONS_ADMISSION_CHANGE
+  then:
+    - RUN_UNCHANGED_RELEASE_RUNNER_PROBE
+    - REQUIRE_RUNNER_ID_NONZERO
+    - REQUIRE_STEPS_GT_ZERO
+    - BIND_EXACT_CURRENT_QPS_SHA
+    - RESUME_GT_BD_003_3PC_PROVE
+    - REEVALUATE_GM_V_GOVERNOR_READINESS
+  forbidden_before_trigger:
+    - BLIND_RERUN
+    - APPLICATION_REPAIR
+    - GM_V_LAUNCH
+    - CHILD_BINDING
+    - AUTHORITY_TRANSFER
+
+pointers:
+  control: mission-control/grand-missions/GM_V_EXTERNAL_REENTRY_CONTROL_v1.yaml
+  validator: mission-control/grand-missions/validate_gm_v_external_reentry.py
+  dropin: mission-control/grand-missions/handover/GM_FLEET_DROPIN_2026-09-18.md
+  session_current: mission-control/grand-missions/handover/SESSION_CLOSE_CURRENT.yaml
