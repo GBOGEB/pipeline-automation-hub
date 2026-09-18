@@ -1,0 +1,64 @@
+schema: missioncontrol.golden_thread.frontier_current/v2
+as_of: '2026-09-18T16:54:00+02:00'
+supersedes_current_overlay: mission-control/golden-thread/GOLDEN_THREAD_FRONTIER_CURRENT_v1.yaml
+historical_base_preserved: true
+authority_transfer: false
+formal_credit_delta: 0
+
+refresh_source:
+  qps_pr: 1487
+  qps_merge: 35f53924e3a42e9d8a9df80b0f9dac6ac0f1f2af
+  method_receipt: mission-control/golden-thread/GOLDEN_THREAD_MIP_W284_20260918_v2.yaml
+
+qps_boundary:
+  repository: GBOGEB/cryoplant-project
+  current_observed_main: 35f53924e3a42e9d8a9df80b0f9dac6ac0f1f2af
+  canonical_control: controls/QPS_GOLDEN_THREAD_CURRENT_v0.1.yaml
+  first_red: GT_BDQ_0_EXACT_HEAD_HOSTED_REPLAY_PROOF
+  global_runtime_issue: 923
+  state: WITHHELD_INFRA_PREEXECUTION
+  compensation_allowed: false
+
+architecture_frontier:
+  GT-BD-006: {state: DONE, routing_disposition: CONTROL_WATCH}
+  GT-BD-011: {state: ACTIVE, routing_disposition: EXECUTE_BOUNDED_BATCHES}
+  GT-BD-002: {state: DONE, routing_disposition: CONTROL_WATCH}
+  GT-BD-003:
+    state: ACTIVE
+    prepare: PASS
+    prove: WITHHELD_EXTERNAL_OWNER_ACTION
+    commit: HOLD
+    child_repo: GBOGEB/cryoplant-project
+    child_pr: 1438
+    child_disposition: DEFER
+    child_reset_authority: QPS_CHILD_ONLY
+    latest_habitat_observation:
+      qps_pr: 1485
+      release_runner_probe: 35352181453
+      observed_steps_all_lanes: 0
+      classification: INFRA_PREEXECUTION_ZERO_STEP
+    next_transition: OWNER_SIDE_ACTIONS_ADMISSION_CHANGE
+
+priority_order:
+  - GT-BD-003
+  - GT-BD-013
+  - GT-BD-008
+  - GT-BD-001
+  - GT-BD-005
+  - GT-BD-010
+  - GT-BD-011
+  - GT-BD-012
+  - GT-BD-009
+  - GT-BD-007
+  - GT-BD-006
+  - GT-BD-002
+
+controls:
+  - ONE_LOGICAL_FACT_ONE_AUTHORITY
+  - SOURCE_HISTORY_IMMUTABLE
+  - CURRENT_OVERLAY_NE_HISTORICAL_REWRITE
+  - PARENT_PASS_NE_CHILD_ACCEPT
+  - ZERO_STEP_NE_APPLICATION_FAIL
+  - MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS
+  - AUTHORITY_TRANSFER_FALSE
+  - UNKNOWN_NE_ZERO
