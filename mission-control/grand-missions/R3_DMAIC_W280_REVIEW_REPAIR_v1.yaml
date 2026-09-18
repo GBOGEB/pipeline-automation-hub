@@ -15,7 +15,17 @@ repairs:
   protected_control_content_validated_directly: true
   active_source_hash_validated_against_predecessor: true
   fault_class_set_exact_unique: true
-status: REPAIR_IMPLEMENTED_WAIT_EXACT_HEAD_PROOF
+status: R1_REPAIR_AFTER_PROTECTED_CONTROL_FIRST_RED
+first_red_observation:
+  workflow_run: 35341618617
+  job: 105588574924
+  step: Prove recurrence classes and protected controls fail closed
+  result: FAIL
+  classification: APPLICATION_CONTROL_VALIDATOR_CANONICAL_SCHEMA_EXPECTATION_DRIFT
+  observed_error: CAPSULE_SCHEMA_IDENTITY
+  actual_canonical_schema: gmi.r3_successor.exact_env_capsule.v2
+  validator_wrong_expectation_before: gmi.r3.successor.exact_env_capsule.v2
+  treatment: PRESERVE_FAILED_RUN_AND_FIX_VALIDATOR_EXPECTATION
 authority_transfer: false
 formal_credit_delta: 0
 r3_release_state_unchanged: true
