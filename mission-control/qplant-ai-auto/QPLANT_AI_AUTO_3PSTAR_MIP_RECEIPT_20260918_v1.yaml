@@ -1,0 +1,80 @@
+schema: qplant.ai_auto.3p_mip_receipt/v1
+date: 2026-09-18
+mission: QPLANT-AI-AUTO structured document automation
+source_conversation_scope:
+  - consolidated_project_document
+  - implementation_workflow_plan
+  - visual_studio_python_setup
+  - project_doc_setup
+  - data_handling_model_input
+execution:
+  sequence:
+    - step: 3PR
+      purpose: refresh_diagnose_reentry
+      result: PASS
+      evidence:
+        - GBOGEB/DOCX_RTM_Automation current parser and RTM surfaces inspected
+        - existing OpenAI helper inspected
+        - ADR/OCD session replay and authority boundary inspected
+        - current requirements and repository MIP history inspected
+    - step: MIP_M
+      purpose: modernize
+      result: PASS_IMPLEMENTED
+      evidence:
+        - Responses API adapter added
+        - strict JSON-schema Structured Outputs added
+        - external API-key handling retained
+    - step: 3PC
+      purpose: prepare_prove_commit
+      result: PASS_COMMITTED_RUNTIME_PENDING
+      evidence:
+        - deterministic state validator added
+        - outline-level guard added
+        - immutable-content guard added
+        - diff tests added
+        - review PR opened
+    - step: MIP_I
+      purpose: innovate
+      result: PASS_IMPLEMENTED
+      evidence:
+        - complete-state RFO/ADR/OCD reconciliation
+        - explicit NEW UPDATE REFINE VERBATIM OVERRIDE BRANCH MASTER intents
+        - missing-field provenance and needs_review semantics
+        - DOCX TXT MD JSON CSV XLSX intake
+        - SHA256 input receipts
+        - JSON CSV XLSX MD DOCX outputs
+    - step: 3P3
+      purpose: bounded_propagation
+      result: PASS_TOOLING_ONLY
+      evidence:
+        - GBOGEB/DOCX_RTM_Automation pull request 61
+      guardrails:
+        - no_QPS_engineering_authority_transfer
+        - no_procurement_acceptance_credit
+        - no_compliance_promotion
+    - step: MIP_P
+      purpose: perpetuate
+      result: PASS_IMPLEMENTED
+      evidence:
+        - execution guide
+        - input-intent example
+        - versioned diagram generator
+        - append-only local input ledger
+        - repeatable versioned outputs
+github:
+  implementation_repo: GBOGEB/DOCX_RTM_Automation
+  implementation_pr: 61
+  implementation_head: e4a3e1425228ff34ae2eba34a2cb6f5858b10eb0
+  mission_control_repo: GBOGEB/pipeline-automation-hub
+runtime:
+  implementation_ci:
+    state: PENDING_AT_RECEIPT_CREATION
+    note: exact-head Python CI was queued when this receipt was created
+authority:
+  DOCX_RTM_Automation: tooling_projection_and_reconciliation
+  pipeline_automation_hub: mission_control_receipt_only
+  QPS_engineering_authority_transfer: false
+next_gate:
+  - observe exact-head CI for DOCX_RTM_Automation PR 61
+  - if red, repair only the first evidenced implementation defect and rerun
+  - if green, retain PR review as bounded tooling DoV
