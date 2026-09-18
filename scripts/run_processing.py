@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Run the bounded legacy PPTX metadata pipeline plus recursive-build indexing.
+"""Run the bounded MAIN pipeline with optional Excel schedule-table ingestion.
 
-M09 boundary: the PPTX processor validates packages and emits metadata/hash/template
-views. The recursive-build phase indexes only those bounded outputs. Neither phase
-claims slide-content extraction, semantic cross-reference truth, or engineering
-authority.
+The legacy PPTX path remains metadata-only and feeds canonical recursive-build
+indexing. When explicitly requested, the governed Excel schedule engine runs as an
+additional bounded phase and its manifest is hash-bound into the joined pipeline
+receipt. No phase transfers engineering/document authority.
 """
 from __future__ import annotations
 
@@ -21,12 +21,24 @@ CURRENT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = CURRENT_DIR.parent
 DEFAULT_INPUT_DIR = REPO_ROOT / "app" / "public" / "master_input"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "app" / "public" / "outputs"
+DEFAULT_EXCEL_OUTPUT_ROOT = REPO_ROOT
+EXCEL_ENGINE = REPO_ROOT / "excel_schedule_engine" / "src" / "excel_schedule_engine.py"
 AUTHORITY = "METADATA_ONLY_NOT_DOCUMENT_TRUTH"
+
+
+def _env_bool(name: str, default: bool = False) -> bool:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    return raw.strip().casefold() in {"1", "true", "yes", "on"}
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run bounded PPTX metadata processing plus canonical recursive-build indexing"
+        description=(
+            "Run bounded PPTX metadata processing, canonical recursive-build indexing, "
+            "and optional Excel schedule-table ingestion"
+        )
     )
     parser.add_argument(
         "--input-dir",
@@ -36,7 +48,32 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         default=os.environ.get("PIPELINE_OUTPUT_DIR", str(DEFAULT_OUTPUT_DIR)),
-        help="Output directory",
+        help="PPTX/recursive output directory",
+    )
+    parser.add_argument(
+        "--excel-input",
+        default=os.environ.get("PIPELINE_EXCEL_INPUT"),
+        help="Optional .xlsx/.xlsm planning/scheduling workbook",
+    )
+    parser.add_argument(
+        "--excel-output-root",
+        default=os.environ.get(
+            "PIPELINE_EXCEL_OUTPUT_ROOT",
+            str(DEFAULT_EXCEL_OUTPUT_ROOT),
+        ),
+        help="Root receiving Outputs/excel and Reports schedule indexes",
+    )
+    parser.add_argument(
+        "--excel-cell-mode",
+        choices=["formula", "cached"],
+        default=os.environ.get("PIPELINE_EXCEL_CELL_MODE", "formula"),
+        help="Excel schedule-engine formula/cached cell read mode",
+    )
+    parser.add_argument(
+        "--excel-tables-only",
+        action="store_true",
+        default=_env_bool("PIPELINE_EXCEL_TABLES_ONLY", False),
+        help="Export only defined Excel Tables, not tableless used ranges",
     )
     return parser.parse_args()
 
@@ -132,8 +169,79 @@ def _load_json(path: Path) -> dict[str, Any]:
     return data
 
 
-def write_pipeline_receipt(output_dir: Path, recursive_receipt_path: Path) -> Path | None:
-    """Bind the two bounded phases through hashes without creating new source authority."""
+def run_excel_schedule_engine(
+    excel_input: Path,
+    excel_output_root: Path,
+    cell_mode: str = "formula",
+    tables_only: bool = False,
+) -> Path | None:
+    """Run the governed Excel schedule engine and return its manifest on PASS."""
+    print("Phase 3: governed Excel schedule/data table engine")
+    command = [
+        sys.executable,
+        str(EXCEL_ENGINE),
+        str(excel_input),
+        "--output-root",
+        str(excel_output_root),
+        "--cell-mode",
+        cell_mode,
+    ]
+    if tables_only:
+        command.append("--tables-only")
+
+    result = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+        cwd=REPO_ROOT,
+    )
+    if result.stdout:
+        print(result.stdout.rstrip())
+    if result.returncode != 0:
+        if result.stderr:
+            print(result.stderr.rstrip(), file=sys.stderr)
+        return None
+
+    manifest_path = excel_output_root / "Outputs" / "excel" / "table_manifest.json"
+    if not manifest_path.exists():
+        print(f"Excel table manifest missing: {manifest_path}", file=sys.stderr)
+        return None
+
+    try:
+        manifest = _load_json(manifest_path)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"Cannot read Excel table manifest: {exc}", file=sys.stderr)
+        return None
+
+    summary = manifest.get("summary", {})
+    authority = manifest.get("authority", {})
+    if summary.get("errors", 0) != 0:
+        print("Excel table manifest reports export errors", file=sys.stderr)
+        return None
+    if authority.get("authority_transfer") is not False:
+        print("Excel table manifest authority guardrail failed", file=sys.stderr)
+        return None
+    return manifest_path
+
+
+def _receipt_path(path: Path, output_dir: Path) -> dict[str, str]:
+    resolved = path.resolve()
+    roots = (("output_dir", output_dir.resolve()), ("repo_root", REPO_ROOT.resolve()))
+    for label, root in roots:
+        try:
+            return {"path": str(resolved.relative_to(root)), "path_base": label}
+        except ValueError:
+            continue
+    return {"path": str(resolved), "path_base": "absolute"}
+
+
+def write_pipeline_receipt(
+    output_dir: Path,
+    recursive_receipt_path: Path,
+    excel_manifest_path: Path | None = None,
+    excel_requested: bool = False,
+) -> Path | None:
+    """Bind bounded phase receipts through hashes without creating source authority."""
     summary_path = output_dir / "processing_summary.json"
     if not summary_path.exists() or not recursive_receipt_path.exists():
         print("Cannot write pipeline receipt: required phase receipt missing", file=sys.stderr)
@@ -142,6 +250,7 @@ def write_pipeline_receipt(output_dir: Path, recursive_receipt_path: Path) -> Pa
     try:
         summary = _load_json(summary_path)
         recursive = _load_json(recursive_receipt_path)
+        excel_manifest = _load_json(excel_manifest_path) if excel_manifest_path else None
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"Cannot read phase receipt: {exc}", file=sys.stderr)
         return None
@@ -151,27 +260,55 @@ def write_pipeline_receipt(output_dir: Path, recursive_receipt_path: Path) -> Pa
     recursive_ok = recursive_status.startswith("PASS")
     generated_at = recursive.get("generated_at")
 
+    phases: dict[str, Any] = {
+        "metadata": {
+            "status": "PASS" if metadata_ok else "FAIL",
+            "path": str(summary_path.relative_to(output_dir)),
+            "sha256": sha256_file(summary_path),
+            "total_files": summary.get("total_files", 0),
+            "successful": summary.get("successful", 0),
+            "failed": summary.get("failed", 0),
+        },
+        "recursive_build": {
+            "status": recursive_status,
+            "path": str(recursive_receipt_path.relative_to(output_dir)),
+            "sha256": sha256_file(recursive_receipt_path),
+            "record_count": recursive.get("record_count", 0),
+        },
+    }
+
+    excel_ok = True
+    if excel_requested:
+        if excel_manifest_path is None or excel_manifest is None:
+            excel_ok = False
+            phases["excel_schedule"] = {"status": "FAIL", "requested": True}
+        else:
+            excel_summary = excel_manifest.get("summary", {})
+            excel_authority = excel_manifest.get("authority", {})
+            excel_ok = (
+                excel_summary.get("errors", 0) == 0
+                and excel_authority.get("authority_transfer") is False
+            )
+            phases["excel_schedule"] = {
+                "status": "PASS" if excel_ok else "FAIL",
+                "requested": True,
+                **_receipt_path(excel_manifest_path, output_dir),
+                "sha256": sha256_file(excel_manifest_path),
+                "tables_exported": excel_summary.get("tables_exported", 0),
+                "schedule_candidates": excel_summary.get("schedule_candidates", 0),
+                "errors": excel_summary.get("errors", 0),
+                "authority_transfer": excel_authority.get("authority_transfer"),
+            }
+    else:
+        phases["excel_schedule"] = {"status": "NOT_REQUESTED", "requested": False}
+
+    overall_ok = metadata_ok and recursive_ok and excel_ok
     payload = {
-        "schema": "pipeline_automation_hub.pipeline_run_receipt.v1",
+        "schema": "pipeline_automation_hub.pipeline_run_receipt.v2",
         "generated_at": generated_at,
         "authority": AUTHORITY,
-        "status": "PASS" if metadata_ok and recursive_ok else "FAIL",
-        "phases": {
-            "metadata": {
-                "status": "PASS" if metadata_ok else "FAIL",
-                "path": str(summary_path.relative_to(output_dir)),
-                "sha256": sha256_file(summary_path),
-                "total_files": summary.get("total_files", 0),
-                "successful": summary.get("successful", 0),
-                "failed": summary.get("failed", 0),
-            },
-            "recursive_build": {
-                "status": recursive_status,
-                "path": str(recursive_receipt_path.relative_to(output_dir)),
-                "sha256": sha256_file(recursive_receipt_path),
-                "record_count": recursive.get("record_count", 0),
-            },
-        },
+        "status": "PASS" if overall_ok else "FAIL",
+        "phases": phases,
         "authority_guardrail": (
             "Hashes and PASS state prove execution/provenance only; they do not create "
             "engineering, compliance, procurement, acceptance, or document-truth authority."
@@ -187,9 +324,19 @@ def main() -> int:
     args = parse_args()
     input_dir = Path(args.input_dir)
     output_dir = Path(args.output_dir)
-    print("Pipeline Automation Hub - bounded metadata + recursive-build pipeline")
+    excel_input_raw = getattr(args, "excel_input", None)
+    excel_requested = bool(excel_input_raw)
+    excel_input = Path(excel_input_raw) if excel_requested else None
+    excel_output_root = Path(getattr(args, "excel_output_root", str(DEFAULT_EXCEL_OUTPUT_ROOT)))
+    excel_cell_mode = getattr(args, "excel_cell_mode", "formula")
+    excel_tables_only = bool(getattr(args, "excel_tables_only", False))
+
+    print("Pipeline Automation Hub - bounded MAIN pipeline")
     print(f"input={input_dir.resolve()}")
     print(f"output={output_dir.resolve()}")
+    if excel_requested and excel_input is not None:
+        print(f"excel_input={excel_input.resolve()}")
+        print(f"excel_output_root={excel_output_root.resolve()}")
 
     if not run_ppt_processing(input_dir, output_dir):
         return 2
@@ -200,15 +347,32 @@ def main() -> int:
     if recursive_receipt is None:
         return 4
 
-    pipeline_receipt = write_pipeline_receipt(output_dir, recursive_receipt)
+    excel_manifest = None
+    if excel_requested and excel_input is not None:
+        excel_manifest = run_excel_schedule_engine(
+            excel_input,
+            excel_output_root,
+            cell_mode=excel_cell_mode,
+            tables_only=excel_tables_only,
+        )
+        if excel_manifest is None:
+            return 5
+
+    pipeline_receipt = write_pipeline_receipt(
+        output_dir,
+        recursive_receipt,
+        excel_manifest_path=excel_manifest,
+        excel_requested=excel_requested,
+    )
     if pipeline_receipt is None:
-        return 5
+        return 6
 
     print(
         json.dumps(
             {
                 "status": "PASS",
                 "authority": AUTHORITY,
+                "excel_requested": excel_requested,
                 "pipeline_receipt": str(pipeline_receipt.resolve()),
             },
             indent=2,

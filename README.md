@@ -156,3 +156,27 @@ ActiveDocs/MASTER.xlsx
 ```
 
 See [`excel_schedule_engine/README.md`](excel_schedule_engine/README.md).
+
+
+### MAIN runner with Excel schedule input
+
+The Excel lane is now callable through the canonical MAIN command without changing the default PPTX/recursive path:
+
+```bash
+python scripts/run_processing.py \
+  --excel-input ActiveDocs/MASTER.xlsx \
+  --excel-output-root .
+```
+
+Optional controls:
+
+```text
+--excel-cell-mode formula|cached
+--excel-tables-only
+PIPELINE_EXCEL_INPUT
+PIPELINE_EXCEL_OUTPUT_ROOT
+PIPELINE_EXCEL_CELL_MODE
+PIPELINE_EXCEL_TABLES_ONLY
+```
+
+When requested, the MAIN runner fail-closes if the Excel engine or its manifest fails. `pipeline_run_receipt.json` v2 records the Excel-manifest SHA-256 plus exported-table and schedule-candidate counts. When Excel is not requested, the legacy MAIN path remains behaviorally unchanged.

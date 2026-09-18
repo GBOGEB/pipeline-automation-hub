@@ -4,11 +4,17 @@ on:
   pull_request:
     paths:
       - "excel_schedule_engine/**"
+      - "scripts/run_processing.py"
+      - "tests/test_run_processing_recursive_integration.py"
+      - ".github/workflows/excel-schedule-engine.yml"
       - "README.md"
   push:
     branches: [master]
     paths:
       - "excel_schedule_engine/**"
+      - "scripts/run_processing.py"
+      - "tests/test_run_processing_recursive_integration.py"
+      - ".github/workflows/excel-schedule-engine.yml"
 
 permissions:
   contents: read
@@ -21,5 +27,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python -m pip install -r excel_schedule_engine/requirements.txt
-      - run: python -m unittest discover -s excel_schedule_engine/tests -v
+      - name: Install Excel schedule-engine dependency
+        run: python -m pip install -r excel_schedule_engine/requirements.txt
+      - name: Excel engine unit tests
+        run: python -m unittest discover -s excel_schedule_engine/tests -v
+      - name: MAIN runner Excel integration tests
+        run: python -m unittest -v tests.test_run_processing_recursive_integration
