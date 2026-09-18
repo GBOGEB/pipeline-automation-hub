@@ -61,3 +61,35 @@ Dedicated PR against `GBOGEB/pipeline-automation-hub:master`, plus a separate gl
 ## Current gate
 
 `READY_FOR_PR_AND_HOSTED_CI`
+
+
+---
+
+## P1 Post-Merge Review Iteration — 2026-09-18
+
+### 3PR — Refresh / Probe / Rank
+
+Refresh observed that PR #275 and the global topology PR had merged, and that the hosted Excel Schedule Engine proof completed successfully with real steps. Post-merge Codex review then identified three P1 defects in the compact XLSX rendition path.
+
+Ranked P1 defects:
+
+1. Relocated formula references could retain source coordinates and calculate incorrectly.
+2. Normalized output names could collide and overwrite prior logical-table exports.
+3. Tableless used-range fallback could start at A1 instead of the actual used-range origin.
+
+### MIP — Modernize / Innovate / Perpetuate
+
+- Modernize: formula-mode XLSX exports now translate A1 formulas from source coordinates to compact destination coordinates and recreate source Excel Table definitions so structured references retain a valid table context.
+- Innovate: logical export IDs now bind sheet, source kind, source name and source range through SHA-256 suffixes, with an in-run duplicate guard.
+- Perpetuate: used-range extraction now consumes the exact `calculate_dimension()` range, and three regression tests were added.
+
+### 3PC — Prepare / Prove / Commit
+
+Local proof after the repair:
+
+```text
+python -m unittest -v test_excel_schedule_engine.py
+6 tests -> PASS
+```
+
+The repair is bounded to rendition correctness and does not transfer authority.

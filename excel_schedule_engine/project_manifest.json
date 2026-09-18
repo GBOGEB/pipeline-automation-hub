@@ -1,8 +1,8 @@
 {
   "schema": "gbogeb.excel_schedule_engine.project_manifest.v1",
-  "version": "v0.1.0",
-  "as_of": "2026-09-18T17:00:00+02:00",
-  "state": "CANDIDATE_PR_3PSTAR_MIP",
+  "version": "v0.1.1",
+  "as_of": "2026-09-18T19:08:00+02:00",
+  "state": "P1_HOTFIX_3PSTAR_MIP",
   "purpose": "Excel parser/engine for planning and scheduling tables feeding the MAIN pipeline.",
   "authority": {
     "input_source": "ActiveDocs/MASTER.xlsx",
@@ -21,7 +21,10 @@
       "BUILD_HUMAN_SCHEDULE_INDEX"
     ]
   },
-  "inputs": ["ActiveDocs/*.xlsx", "ActiveDocs/*.xlsm"],
+  "inputs": [
+    "ActiveDocs/*.xlsx",
+    "ActiveDocs/*.xlsm"
+  ],
   "outputs": {
     "csv_tables": "Outputs/excel/tables_csv/",
     "xlsx_tables": "Outputs/excel/tables_xlsx/",
@@ -30,21 +33,35 @@
     "schedule_index_md": "Reports/schedule_index.md"
   },
   "success_criteria": {
-    "logical_tables_exported_as_csv": 1.0,
-    "logical_tables_exported_as_xlsx": 1.0,
-    "manifest_hash_coverage": 1.0,
+    "logical_tables_exported_as_csv": 1,
+    "logical_tables_exported_as_xlsx": 1,
+    "manifest_hash_coverage": 1,
     "unexplained_authority_transfer": 0,
-    "test_failures": 0
+    "test_failures": 0,
+    "formula_relocation_regressions": 0,
+    "export_id_collisions": 0,
+    "used_range_origin_errors": 0
   },
   "runtime": {
     "language": "python",
     "minimum_python": "3.10",
-    "dependencies": ["openpyxl>=3.1,<4"]
+    "dependencies": [
+      "openpyxl>=3.1,<4"
+    ]
   },
   "integration": {
     "orchestration_repo": "GBOGEB/pipeline-automation-hub",
     "global_layout_repo": "GBOGEB/GBOGEB",
     "external_excel_addin_repo": "GBOGEB/ExcelAddinInstaller",
     "excel_addin_role": "LEGACY_EXTERNAL_RUNTIME_REFERENCE_NOT_PARSER_AUTHORITY"
+  },
+  "p1_hotfix": {
+    "source": "post-merge Codex review on pipeline-automation-hub#275",
+    "fixes": [
+      "translate relocated A1 formulas and recreate Excel Table definitions",
+      "use collision-resistant logical export identifiers",
+      "read tableless fallback from the actual calculated used-range origin"
+    ],
+    "local_tests": "6/6 PASS"
   }
 }
