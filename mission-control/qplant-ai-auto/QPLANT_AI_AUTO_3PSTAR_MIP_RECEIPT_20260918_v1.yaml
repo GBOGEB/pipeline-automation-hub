@@ -64,17 +64,22 @@ execution:
 github:
   implementation_repo: GBOGEB/DOCX_RTM_Automation
   implementation_pr: 61
-  implementation_head: e4a3e1425228ff34ae2eba34a2cb6f5858b10eb0
+  implementation_head: c9fb46a826b8c27384565ddeafa14f6a92a2c549
   mission_control_repo: GBOGEB/pipeline-automation-hub
 runtime:
   implementation_ci:
-    state: PENDING_AT_RECEIPT_CREATION
-    note: exact-head Python CI was queued when this receipt was created
+    state: PASS_EXACT_HEAD
+    run_id: 35366489520
+    run_number: 215
+    job_id: 105670097930
+    focused_qplant_tests_included: true
+    recursive_alignment_lock: PASS
+    note: exact-head Python CI completed successfully after the focused QPLANT tests were added to the governed CI lane
 authority:
   DOCX_RTM_Automation: tooling_projection_and_reconciliation
   pipeline_automation_hub: mission_control_receipt_only
   QPS_engineering_authority_transfer: false
 next_gate:
-  - observe exact-head CI for DOCX_RTM_Automation PR 61
-  - if red, repair only the first evidenced implementation defect and rerun
-  - if green, retain PR review as bounded tooling DoV
+  - retain DOCX_RTM_Automation PR 61 for human/Codex review and merge decision
+  - after merge, use the execution guide for the first user-owned MASTER/API run
+  - do not promote QPS engineering authority from tooling CI
