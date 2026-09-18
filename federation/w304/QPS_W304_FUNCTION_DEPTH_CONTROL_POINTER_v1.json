@@ -1,0 +1,83 @@
+{
+  "schema": "mission-control-w304-federation-depth-pointer/v1.0",
+  "state": "CONTROL_POINTER_QPS_3PC_COMMIT_BOUND",
+  "canonical_wave": "W304",
+  "historical_wave": "W285",
+  "source_authority": {
+    "topology_path": "mission-control/qps-triage-ultra/topology/QPS_REPO_FUNCTION_TOPOLOGY_v1.yaml",
+    "topology_blob": "df0ee845697578cd644691b81eafb2465249d772",
+    "authority": "MISSION_CONTROL_ROUTING_TOPOLOGY_ONLY"
+  },
+  "namespace_reconciliation": {
+    "historical_pointer": "federation/w285/QPS_W285_FUNCTION_DEPTH_POINTER_v1.json",
+    "historical_pointer_disposition": "PRECURSOR_ONLY_NOT_CURRENT",
+    "canonical_qps_control": "controls/QPS_W304_FEDERATION_FUNCTION_DEPTH_CURRENT_v1.json",
+    "qps_pr": 1543,
+    "qps_head": "f3374bc3a1320f7152c18d73e5c6c6e7e10b790c",
+    "qps_merge": "b4ea92e66921c9071e8328d83b147f155e26c89d"
+  },
+  "proof_lanes": {
+    "exact_executor": {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "pr": 78,
+      "head": "746b972d500c301ce269d9f18c69607a96f8bbb0",
+      "merge": "0834df35bebb067f16a00c72b02812c1143981da",
+      "pr_head_run": 35372722782,
+      "main_repeat_run": 35372772433,
+      "artifact_id": 10558049426,
+      "issue": 79,
+      "state": "PASS_DISTINCT_REPEAT"
+    },
+    "semantic_review": {
+      "repo": "GBOGEB/CODEX",
+      "pr": 770,
+      "head": "e90448273f3f12223ae90a4a2a2fe335b7a43720",
+      "merge": "11bc194b0a5c756a337c1d43722dcfe9650e25fe",
+      "run": 35360845121,
+      "state": "PASS"
+    },
+    "independent_recompute": {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 1282,
+      "head": "841456b0a405336e7c13699bedfdf6b522dc10b7",
+      "merge": "ce64b1a76a4ae97b78340b6b6b651033195d9a6e",
+      "run": 35360903434,
+      "state": "PASS"
+    }
+  },
+  "measurement": {
+    "function_breadth": {
+      "numerator": 4,
+      "denominator": 12,
+      "value": 0.3333333333333333
+    },
+    "function_depth": 0.6,
+    "global_fleet_penetration": 0.2,
+    "formula": "PEN=B*D",
+    "credited_atoms": 9,
+    "covered_atom_denominator": 16,
+    "pooled_atom_ratio": 0.5625
+  },
+  "qps_three_pc": {
+    "Prepare": "PASS",
+    "Prove": "PASS",
+    "Commit": "PASS"
+  },
+  "qps_mip": {
+    "Modernize": "PASS",
+    "Innovate": "PASS",
+    "Perpetuate": "PASS"
+  },
+  "guards": [
+    "POINTER_ONLY_NO_TOPOLOGY_MUTATION",
+    "W285_PRECURSOR_RETAINED_IMMUTABLE",
+    "NO_MEASUREMENT_CHANGE",
+    "QPS_REPO_LOCAL_RUNNER_923_NON_COMPENSATING",
+    "W275_PHYSICAL_BUNDLE_NON_COMPENSATING",
+    "GLOBAL_BT_REMAINS_WITHHELD",
+    "FORMAL_CREDIT_DELTA_ZERO"
+  ],
+  "formal_credit_delta": 0,
+  "authority_transfer": false,
+  "next": "STOP_W304_UNLESS_GOVERNED_TRIGGER_OR_OBSERVED_REGRESSION"
+}
