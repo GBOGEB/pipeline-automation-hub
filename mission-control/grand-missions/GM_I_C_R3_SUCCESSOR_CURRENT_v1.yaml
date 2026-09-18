@@ -1,17 +1,23 @@
-schema: missioncontrol.gm_i_c.r3_successor.current.v1
-as_of: '2026-09-18T13:04:00+02:00'
+schema: missioncontrol.gm_i_c.r3_successor.current.v2
+as_of: '2026-09-18T15:22:00+02:00'
 mission: GM-I-C
 lane: HM01_R3_RELEASE_PRODUCTION_SUCCESSOR
 authority_transfer: false
 formal_credit_delta: 0
 
-control: mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_3PSTAR_MIP_CONTROL_v1.yaml
-ingress_manifest: mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_INGRESS_MANIFEST_v2.yaml
+control:
+  original_successor_contract: mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_3PSTAR_MIP_CONTROL_v1.yaml
+  ingress_manifest: mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_INGRESS_MANIFEST_v2.yaml
+  current_w282_receipt: mission-control/qps-triage-ultra/missions/receipts/GMIC_W282_3PSTAR_MIP_CONTROL_20260918_v1.yaml
+  current_w282_handover: handover/session/SC_2026-09-18_GMIC_W282_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md
+  current_w282_dropin: handover/session/RESTART_DROPIN_2026-09-18_GMIC_W282_v1.md
 
 live_refresh:
-  missioncontrol_head_before_transaction: 9e7e698c1cf40b594244aba01e1ea704ef76d203
-  qps_head: f7e881534c16510742447f065d6ed8259db4cb16
-  gemini_head: 159f7554ee48ce3eb36287b91d665962f8f4b9c6
+  missioncontrol_launch_head: f226e6e61bc84482d4856f056b292ca9322e22f8
+  qps_main: 039e1fa84a6b32bcdb89e65807613377d50b4bb7
+  qps_current_pr: 1475
+  qps_current_pr_head: 722b4382b1600ac783f77bd1c4aa5c8ba3400d0a
+  gemini_main: 439838866e77784334ef76d231f9a9e0aa4f5e5c
 
 source_lineage:
   historical_predecessor: 70964e5f1577231512f4104b26f5f6649ad8cb39
@@ -20,29 +26,90 @@ source_lineage:
 
 state:
   application_evidence: PASS
-  exact_environment: WITHHELD
-  r3_release_production_dov: NOT_EVALUATED
+  exact_environment_capsule_v2: PASS_EXTERNALLY_REPROVEN
+  exact_environment_validator: PASS_V2_ALIGNED
+  windows_git_object_producer_tooling: PASS_MERGED
+  physical_successor_git_bundle: WAIT_RETURN
+  r3_release_production_dov: WITHHELD
   r4: BLOCKED_NOT_NEXT
 
-first_red:
-  id: R3_SUCCESSOR_EXECUTION_INGRESS
-  prerequisites:
-    - SUCCESSOR_GIT_OBJECT_HANDOFF
-    - EXACT_ENVIRONMENT_CAPSULE
+r3_lane_first_red:
+  id: PHYSICAL_SUCCESSOR_GIT_BUNDLE_RETURN_1248290C
+  class: PHYSICAL_EXTERNAL_RETURN
+  required_sha: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  producer_repo: GBOGEB/GEMINI
+  producer_merge: 439838866e77784334ef76d231f9a9e0aa4f5e5c
+  drive_landing_zone_id: 1B0i2T7hUsSFhHiyw35PPGaeQ_40E2nNr
+  bundle_present_at_refresh: false
 
-next_actions:
-  - GBOGEB_GEMINI_PRODUCER_PR
-  - GBOGEB_CRYOPLANT_PROJECT_CONSUMER_PR
-  - EXECUTE_3PC_PROVE_ONLY_WHEN_BOTH_PREREQUISITES_ARE_PHYSICALLY_PRESENT
+global_priority_boundary:
+  authority: GBOGEB/cryoplant-project/handover/qps_recursive/QTG_CURRENT.yaml
+  first_red: GBOGEB/cryoplant-project#923
+  state: RED_OWNER_ACTION
+  latest_observed_release_runner_probe:
+    exact_qps_head: 722b4382b1600ac783f77bd1c4aa5c8ba3400d0a
+    run_id: 35349267160
+    all_jobs_zero_step: true
+    classification: INFRA_PREEXECUTION_ZERO_STEP_RUNNER_ADMISSION
+  rule: R3_LANE_FIRST_RED_DOES_NOT_OVERRIDE_GLOBAL_QTG_FIRST_RED
+
+exact_environment_v2:
+  producer_merge: 8b8e72400bb6860789b11b1fca3b809fc8ca6524
+  exact_head: 1192e030d76bc88dbfb6c735f0f11d02528a7b4e
+  run: 35339129647
+  artifact: 10544103232
+  artifact_zip_sha256: 64c363cfeaded7fc6b156b28fe344166e3c560aac3ea43f50b2695220cffd912
+  inner_archive_sha256: c77566e6c6aa261034f86303ef1be7b033622f357333e3d474d3bde8fb3ec44e
+  validator_hygiene_merge: 9faeb10cd57395538eb163791c7c56ba90be711b
+  relocated_clean_environment: PASS
+
+three_pc:
+  Prepare: PASS
+  Prove: HOLD_WAIT_PHYSICAL_SUCCESSOR_GIT_BUNDLE
+  Commit: HOLD_WAIT_PROVE
+three_p3:
+  authorized: false
+  reason: R3_RELEASE_PRODUCTION_DOV_NOT_PASS
+
+next_action:
+  owner: AUTHENTIC_QPS_CLONE_HOST
+  command: 'powershell -ExecutionPolicy Bypass -File .\scripts\build_qps_r3_successor_handoff.ps1 -QpsClone "C:\Users\gbonthuy\cryoplant-project" -OutDir ".\output\r3_successor_handoff"'
+  return:
+    - QPS_R3_1248290c.bundle
+    - QPS_R3_1248290c.bundle.sha256
+    - machine_readable_v2_receipt
+  then:
+    - VERIFY_EXACT_SUCCESSOR_GIT_OBJECT
+    - PAIR_WITH_ALREADY_PASS_CAPSULE_V2
+    - RESUME_R3_3PC_PROVE
+  forbidden_before_return:
+    - REBUILD_CAPSULE_V2
+    - REBUILD_PRODUCER_TOOLING
+    - ADVANCE_R4
+
+adjacent_noncompensating_fronts:
+  ic3:
+    issue: GBOGEB/GEMINI#12
+    state: WITHHELD_EXTERNAL_WIF_SERVICE_ACCOUNT_DRIVE_ACL
+  temporal:
+    state: CONTROL_3_OF_5
+    latest_published_schedule_run: 35319784958
+    thresholds_changed: false
+  drive_losslessness:
+    gmi_doceng_raw: EMPTY
+    raw_source_preservation_claim: WITHHELD
 
 historical_links:
   predecessor_ingress: mission-control/grand-missions/GM_I_C_DRIVE_INGRESS_MANIFEST_v1.yaml
   predecessor_3pr_mip: mission-control/grand-missions/GM_I_C_3PR_MIP_RECEIPT_v1.yaml
-  qps_successor_binding_pr: GBOGEB/cryoplant-project#1447
-  qps_exact_environment_receipt_pr: GBOGEB/cryoplant-project#1449
-  stale_predecessor_producer_issue: GBOGEB/GEMINI#15
+  qps_w275_current_session_pointer: GBOGEB/cryoplant-project/handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml
+  w275_federation_receipt: mission-control/qps-triage-ultra/missions/receipts/GMIC_W275_R3_3PSTAR_MIP_FEDERATION_20260918_v1.yaml
 
 non_compensation:
+  ZERO_STEP_NE_APPLICATION_FAIL: true
+  PARENT_PASS_NE_CHILD_ACCEPT: true
+  MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS: true
+  R3_LANE_FIRST_RED_NE_GLOBAL_QTG_OVERRIDE: true
   issue_923: RED_OWNER_ACTION
   gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
   canonical_gt_credit: NONE
