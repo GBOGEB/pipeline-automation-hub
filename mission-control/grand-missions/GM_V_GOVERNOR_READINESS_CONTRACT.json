@@ -1,0 +1,91 @@
+{
+  "schema": "qps.gm_v_governor_readiness_contract.v1",
+  "wave": "GM-FLEET-04-GOVERNOR-GMV-READINESS",
+  "mission_id": "GM-V",
+  "evaluated_from_state": "HELD",
+  "proposed_frontier_count": 16,
+  "authority_transfer": false,
+  "children_bound": false,
+  "canonical_state_must_remain": "HELD",
+  "prerequisites": {
+    "gm_iv_active8": {
+      "required_state": "ACTIVE_8_OF_8",
+      "readiness_head_sha": "3943ae33eea2a4af6171b97517c19b79ed986fe8",
+      "readiness_run_id": 35145656795,
+      "readiness_artifact_id": 10467671042,
+      "readiness_artifact_digest": "sha256:97d37b98334acbab0e1fec9bae56163e20fd5b9c2751be2495c52642bc6dd4cb"
+    },
+    "post_active8_repeat_control": {
+      "merge_sha": "7af02c89ca640c180b20341e0016c5f82096da26",
+      "exact_head_sha": "5d86dca5cb794200998c6fbc93dc1669b05ae089",
+      "run_id": 35150330651,
+      "artifact_id": 10469090485,
+      "artifact_digest": "sha256:d4b6c50228969135b2c98554d3b8d2876ffb0d03daa7d191465cf89670e64d24",
+      "result": "PASS_POST_ACTIVE8_REPEAT_CONTROL"
+    },
+    "runtime_capability_capacity": {
+      "pr": 173,
+      "exact_head_sha": "9cdb8fe35e15b675f3fe1b2492c16f9785fc3115",
+      "merge_sha": "ea7a9818a57d5078bc26e35ed2d1f15d79657338",
+      "run_id": 35171901674,
+      "job_id": 105045151537,
+      "artifact_id": 10476967287,
+      "artifact_digest": "sha256:7a5a0910db8639b642d8e63b4e37169d636ee3e6b7fc2ba0da93789ad183fc68",
+      "result": "PASS_RUNTIME_PROVEN_CAPABILITY_CAPACITY",
+      "required_capability_count": 8,
+      "runtime_proven_capability_count": 8,
+      "runtime_proven_ratio": 1,
+      "distinct_predeclared_hosts": 8,
+      "measurement_scope": "CAPABILITY_COVERAGE_NOT_CONCURRENCY_CAPACITY",
+      "concurrency_capacity_claimed": false
+    },
+    "operational_availability": {
+      "required_result": "PASS_OPERATIONALLY_AVAILABLE",
+      "current_result": "WITHHOLD_EXTERNAL_NONCOMPENSATING_RUNNER_ADMISSION",
+      "blocking_surface": "GBOGEB/cryoplant-project#923",
+      "blocking_classification": "INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION",
+      "qps_main_observed": "b0b968729fee9e8609b0463c31f30ccd49a9dd52",
+      "latest_exact_head_observation": {
+        "pull_request": 1472,
+        "head_sha": "84a44f375b2b6e55c7618c8eb590678b1e3bcdb2",
+        "validator_run_id": 35341556628,
+        "validator_job_id": 105588380398,
+        "validator_steps_executed": 0,
+        "release_runner_probe_run_id": 35341556572,
+        "release_runner_probe_jobs": [
+          {
+            "job_id": 105588380637,
+            "runner_class": "ubuntu-22.04",
+            "steps_executed": 0
+          },
+          {
+            "job_id": 105588380824,
+            "runner_class": "ubuntu-latest",
+            "steps_executed": 0
+          },
+          {
+            "job_id": 105588380942,
+            "runner_class": "configured-runner",
+            "steps_executed": 0
+          }
+        ]
+      },
+      "reentry_trigger": "OWNER_SIDE_ACTIONS_ADMISSION_CHANGE_THEN_UNCHANGED_PROBE_WITH_RUNNER_ID_NONZERO_AND_STEPS_GT0",
+      "compensation_allowed": false
+    }
+  },
+  "decision_semantics": {
+    "READY": "READY_FOR_SEPARATE_GM_V_LAUNCH_TRANSACTION",
+    "WITHHOLD": "WITHHOLD_GM_V_LAUNCH_EXTERNAL_OPERATIONAL_AVAILABILITY"
+  },
+  "guards": [
+    "GM-IV remains ACTIVE_8_OF_8",
+    "runtime-proven capability coverage is not concurrency capacity",
+    "runtime-proven capability coverage is not operational availability",
+    "public MissionControl evidence does not close private QPS issue #923",
+    "GM-V remains HELD with children empty",
+    "no GM-V crew allocation or child binding occurs in readiness evaluation",
+    "authority_transfer remains false"
+  ],
+  "readiness_boundary": "THIS_GATE_EVALUATES_GM_V_READINESS_ONLY._A_WITHHOLD_IS_A_VALID_CONTROL_RESULT._ONLY_READY_MAY_ADMIT_A_SEPARATE_GM_V_LAUNCH_TRANSACTION;_THIS_GATE_NEVER_LAUNCHES_GM_V."
+}

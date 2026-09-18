@@ -25,7 +25,7 @@ jobs:
           ref: ${{ github.sha }}
           fetch-depth: 0
 
-      - name: Prove exact-head identity and RECON_4 predecessor ancestry
+      - name: Prove exact-head identity and lifecycle ancestry
         shell: bash
         run: |
           set -euo pipefail
@@ -112,14 +112,19 @@ jobs:
           import json
           r=json.load(open('active8-governor-1.json',encoding='utf-8'))
           assert r['result']=='PASS'
-          assert r['decision']=='READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR'
-          assert r['canonical_state_after_gate']=='STAGED_ACTIVE_RECON_4_OF_8'
+          assert r['mode'] in {'READINESS','CONTROL'}
+          if r['mode']=='READINESS':
+              assert r['decision']=='READY_FOR_SEPARATE_ACTIVE_8_PROMOTION_PR'
+              assert r['canonical_state_after_gate']=='STAGED_ACTIVE_RECON_4_OF_8'
+          else:
+              assert r['decision']=='CONTROL_ACTIVE_8_OF_8_HISTORICAL_READINESS_RETAINED'
+              assert r['canonical_state_after_gate']=='ACTIVE_8_OF_8'
           assert r['children_bound'] is False
           assert r['authority_transfer'] is False
           assert r['gm_v_state']=='HELD'
           PY
 
-      - name: Negative proof - ACTIVE_8 remains unsupported by canonical fleet validator
+      - name: Enforce stage-aware fleet boundary
         shell: bash
         run: |
           set -euo pipefail
@@ -131,13 +136,18 @@ jobs:
           fleet=importlib.util.module_from_spec(spec); spec.loader.exec_module(fleet)
           d=json.load(open(root/'GRAND_MISSION_REGISTRY.json',encoding='utf-8'))
           gm4=next(x for x in d['grand_missions'] if x['id']=='GM-IV')
-          active=copy.deepcopy(gm4)
-          active['state']='ACTIVE_8_OF_8'
-          active['activation_stage']='ACTIVE_8_OF_8'
-          active['candidate_frontiers']=[f'GM-IV-F{i:02d}' for i in range(1,9)]
-          active['unfilled_frontier_slots']=[]
-          assert not fleet.gm_iv_supported_shape(active)
-          print('PASS_ACTIVE_8_FAIL_CLOSED')
+          if gm4['state']=='STAGED_ACTIVE_RECON_4_OF_8':
+              active=copy.deepcopy(gm4)
+              active['state']='ACTIVE_8_OF_8'; active['activation_stage']='ACTIVE_8_OF_8'
+              active['candidate_frontiers']=[f'GM-IV-F{i:02d}' for i in range(1,9)]
+              active['new_candidate_recon_frontiers']=[f'GM-IV-F{i:02d}' for i in range(5,9)]
+              active['unfilled_frontier_slots']=[]
+              assert not fleet.gm_iv_supported_shape(active)
+              print('PASS_ACTIVE8_READINESS_FAIL_CLOSED')
+          else:
+              assert gm4['state']=='ACTIVE_8_OF_8'
+              assert fleet.gm_iv_supported_shape(gm4)
+              print('PASS_ACTIVE8_POST_PROMOTION_CONTROL')
           PY
 
       - name: Emit exact-SHA readiness bundle

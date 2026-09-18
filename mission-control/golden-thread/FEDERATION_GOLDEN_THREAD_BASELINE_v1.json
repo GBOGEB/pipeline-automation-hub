@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.federation_golden_thread_baseline.v1",
-  "baseline_date": "2026-09-17",
+  "baseline_date": "2026-09-18",
   "baseline_repo": "GBOGEB/pipeline-automation-hub",
   "baseline_master_sha_at_reconstruction_start": "21e03256728e9a3394cbbd3e28b244280c69fa3f",
   "authority_transfer": false,
@@ -13,31 +13,106 @@
     "OPEN_FRONTIER": "Known architectural or runtime boundary deliberately unresolved."
   },
   "phases": [
-    {"phase": 0, "name": "ORIGIN_PRE_FEDERATION", "evidence_class": "RECORDED_ORIGIN", "anchors": ["DOCX_RTM_Automation", "GEMINI", "CODESPACES_jyperter"]},
-    {"phase": 1, "name": "FEDERATION_OWNERSHIP_SEPARATION", "evidence_class": "RECORDED_ORIGIN/REPOSITORY_CORROBORATED", "invariant": "ONE_LOGICAL_FACT_ONE_AUTHORITY"},
-    {"phase": 2, "name": "GOVERNANCE_HARDENING_BRANCH_PR_HYGIENE", "evidence_class": "REPOSITORY_CORROBORATED", "invariant": "RETIRE_NOISE_ONLY_AFTER_LINEAGE_AND_AUTHORITY_ARE_PRESERVED"},
-    {"phase": 3, "name": "EXECUTION_BOOTSTRAP_SSOT_PATCH_HISTORY", "evidence_class": "RECORDED_ORIGIN/REPOSITORY_CORROBORATED", "invariant": "CURRENT_TRUTH_REQUIRES_GOVERNED_MUTATION_HISTORY"},
-    {"phase": 4, "name": "VALIDATION_HARNESS_BOUNDED_WAVES", "evidence_class": "RECORDED_ORIGIN/REPOSITORY_CORROBORATED", "invariants": ["DESIGNED_NE_VERIFIED", "MERGED_NE_PROVEN", "STATIC_DOD_NE_GLOBAL_DOV"]},
-    {"phase": 5, "name": "FEDERATION_KIT_ARCHITECTURE_CONSOLIDATION", "evidence_class": "RECORDED_ORIGIN/REPOSITORY_CORROBORATED", "truth_model": ["SOURCE_MASTER_INPUT", "TRUTH_SSOT", "OUTPUT_RENDERING", "PATCHES_HISTORY"]},
-    {"phase": 6, "name": "GOLDEN_THREAD_NAMING_AND_IMPLEMENTATION", "evidence_class": "EXACT_GITHUB_ANCHORED", "anchors": ["PR154", "PR159", "PR161", "PR167_OPEN"]},
-    {"phase": 7, "name": "MISSIONCONTROL_FLEET_CONVERGENCE", "evidence_class": "EXACT_GITHUB_ANCHORED", "anchors": ["GM_I_B_CONTROL", "GM_IV_ACTIVE_8_OF_8", "GM_IV_REPEAT_CONTROL_PASS", "GM_V_HELD"]}
+    {
+      "phase": 0,
+      "name": "ORIGIN_PRE_FEDERATION",
+      "evidence_class": "RECORDED_ORIGIN",
+      "anchors": [
+        "DOCX_RTM_Automation",
+        "GEMINI",
+        "CODESPACES_jyperter"
+      ]
+    },
+    {
+      "phase": 1,
+      "name": "FEDERATION_OWNERSHIP_SEPARATION",
+      "evidence_class": "RECORDED_ORIGIN/REPOSITORY_CORROBORATED",
+      "invariant": "ONE_LOGICAL_FACT_ONE_AUTHORITY"
+    },
+    {
+      "phase": 2,
+      "name": "GOVERNANCE_HARDENING_BRANCH_PR_HYGIENE",
+      "evidence_class": "REPOSITORY_CORROBORATED",
+      "invariant": "RETIRE_NOISE_ONLY_AFTER_LINEAGE_AND_AUTHORITY_ARE_PRESERVED"
+    },
+    {
+      "phase": 3,
+      "name": "EXECUTION_BOOTSTRAP_SSOT_PATCH_HISTORY",
+      "evidence_class": "RECORDED_ORIGIN/REPOSITORY_CORROBORATED",
+      "invariant": "CURRENT_TRUTH_REQUIRES_GOVERNED_MUTATION_HISTORY"
+    },
+    {
+      "phase": 4,
+      "name": "VALIDATION_HARNESS_BOUNDED_WAVES",
+      "evidence_class": "RECORDED_ORIGIN/REPOSITORY_CORROBORATED",
+      "invariants": [
+        "DESIGNED_NE_VERIFIED",
+        "MERGED_NE_PROVEN",
+        "STATIC_DOD_NE_GLOBAL_DOV"
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "FEDERATION_KIT_ARCHITECTURE_CONSOLIDATION",
+      "evidence_class": "RECORDED_ORIGIN/REPOSITORY_CORROBORATED",
+      "truth_model": [
+        "SOURCE_MASTER_INPUT",
+        "TRUTH_SSOT",
+        "OUTPUT_RENDERING",
+        "PATCHES_HISTORY"
+      ]
+    },
+    {
+      "phase": 6,
+      "name": "GOLDEN_THREAD_NAMING_AND_IMPLEMENTATION",
+      "evidence_class": "EXACT_GITHUB_ANCHORED",
+      "anchors": [
+        "PR154",
+        "PR159",
+        "PR161",
+        "PR167_OPEN"
+      ]
+    },
+    {
+      "phase": 7,
+      "name": "MISSIONCONTROL_FLEET_CONVERGENCE",
+      "evidence_class": "EXACT_GITHUB_ANCHORED",
+      "anchors": [
+        "GM_I_B_CONTROL",
+        "GM_IV_ACTIVE_8_OF_8",
+        "GM_IV_REPEAT_CONTROL_PASS",
+        "GM_V_HELD"
+      ]
+    }
   ],
   "golden_thread": {
     "v1_merge_sha": "ccb380c0f1990eef7018c7d581f712c64149b780",
     "temporal_ke_merge_sha": "f16286b66fd573376ea9265ffe7e9b5ef0d8296f",
     "checkpoint_rendition_control_merge_sha": "aa6017b744863c5816e30a9442e18f72d1cc993d",
-    "temporal_coordinates": {"k": "authoritative semantic SSOT generation", "e": "governed event sequence"},
-    "current_machine_text_rendition_credit": ["JSON", "YAML", "Markdown", "HTML"],
+    "temporal_coordinates": {
+      "k": "authoritative semantic SSOT generation",
+      "e": "governed event sequence"
+    },
+    "current_machine_text_rendition_credit": [
+      "JSON",
+      "YAML",
+      "Markdown",
+      "HTML"
+    ],
     "office_binary_semantic_credit": "WITHHELD_PENDING_GOVERNED_EXTRACTORS",
-    "first_observed_real_child_transaction": {"pr": 167, "state": "OPEN", "expected_semantic": "DEFER_ADVANCES_E_NOT_K"}
+    "first_observed_real_child_transaction": {
+      "pr": 167,
+      "state": "OPEN",
+      "expected_semantic": "DEFER_ADVANCES_E_NOT_K"
+    }
   },
   "fleet": {
     "GM_I_B": "CONTROL_SENTINEL_PLUS_CYCLE3_PROPAGATION_CONTROL",
     "GM_II": "CONTROL_SMALL_RECURRENCE_SENTINEL",
     "GM_III": "RECON_CONTROL_SPECIALISTS_RESERVE",
     "GM_IV": "ACTIVE_8_OF_8_REPEAT_CONTROL_PASS",
-    "GM_IV_runtime_capability_capacity": "NOT_YET_PROVEN",
-    "GM_V": "HELD"
+    "GM_IV_runtime_capability_capacity": "RUNTIME_PROVEN_CAPABILITY_COVERAGE",
+    "GM_V": "HELD_EXTERNAL_OPERATIONAL_AVAILABILITY"
   },
   "gm_iv_repeat_control_evidence": {
     "merge_sha": "7af02c89ca640c180b20341e0016c5f82096da26",
@@ -59,7 +134,8 @@
   ],
   "present_state_corrections": {
     "github_connector_gap": "HISTORICAL_ONLY_NOT_CURRENT_BLOCKER",
-    "temporal_snapshot_gap": "FIRST_IMPLEMENTATION_CLOSED_GENERALISATION_REMAINS"
+    "temporal_snapshot_gap": "FIRST_IMPLEMENTATION_CLOSED_GENERALISATION_REMAINS",
+    "gm_iv_runtime_capacity": "PR173_ESTABLISHED_RUNTIME_PROVEN_CAPABILITY_COVERAGE_WITHOUT_CONCURRENCY_OR_OPERATIONAL_AVAILABILITY_CREDIT"
   },
   "non_compensating_boundaries": [
     "PARENT_PASS_DOES_NOT_IMPLY_CHILD_ACCEPT",
@@ -69,12 +145,50 @@
     "PUBLIC_MISSIONCONTROL_EVIDENCE_DOES_NOT_CLOSE_QPS_PRIVATE_RUNTIME_GOLD_ISSUE_923"
   ],
   "bd_queue": [
-    {"id": "BD0", "action": "REPAIR_AND_EXECUTE_GM_IV_RUNTIME_CAPABILITY_PROOF", "state": "NEXT_EXECUTABLE"},
-    {"id": "BD1", "action": "BIND_FIRST_OBSERVED_DEFER_TRANSACTION_PR167", "state": "OPEN"},
-    {"id": "BD2", "action": "BIND_EXTERNAL_SIDE_EFFECT_IDEMPOTENCY_RECEIPTS", "state": "OPEN"},
-    {"id": "BD3", "action": "GENERALISE_RENDITION_EXTRACTORS_TO_EXCEL_WORD_POWERPOINT", "state": "OPEN"},
-    {"id": "BD4", "action": "PRESERVE_QPS_RUNTIME_GOLD_923_AS_NONCOMPENSATING", "state": "WITHHELD"},
-    {"id": "BD5", "action": "SEPARATE_GM_V_GOVERNOR_TRANSACTION_AFTER_APPLICABLE_GATES", "state": "HELD"}
+    {
+      "id": "BD0",
+      "action": "REPAIR_AND_EXECUTE_GM_IV_RUNTIME_CAPABILITY_PROOF",
+      "state": "DONE_CONTROL",
+      "evidence": "PR173_RUN35171901674_ARTIFACT10476967287"
+    },
+    {
+      "id": "BD1",
+      "action": "BIND_FIRST_OBSERVED_DEFER_TRANSACTION_PR167",
+      "state": "OPEN"
+    },
+    {
+      "id": "BD2",
+      "action": "BIND_EXTERNAL_SIDE_EFFECT_IDEMPOTENCY_RECEIPTS",
+      "state": "OPEN"
+    },
+    {
+      "id": "BD3",
+      "action": "GENERALISE_RENDITION_EXTRACTORS_TO_EXCEL_WORD_POWERPOINT",
+      "state": "OPEN"
+    },
+    {
+      "id": "BD4",
+      "action": "PRESERVE_QPS_RUNTIME_GOLD_923_AS_NONCOMPENSATING",
+      "state": "WITHHELD"
+    },
+    {
+      "id": "BD5",
+      "action": "SEPARATE_GM_V_GOVERNOR_TRANSACTION_AFTER_APPLICABLE_GATES",
+      "state": "WITHHELD_EXTERNAL_OPERATIONAL_AVAILABILITY",
+      "blocking_surface": "GBOGEB/cryoplant-project#923"
+    }
   ],
-  "narrative_path": "mission-control/golden-thread/FEDERATION_GOLDEN_THREAD_PROCESS_NARRATIVE_v1.md"
+  "narrative_path": "mission-control/golden-thread/FEDERATION_GOLDEN_THREAD_PROCESS_NARRATIVE_v1.md",
+  "gm_iv_runtime_capacity_evidence": {
+    "pr": 173,
+    "exact_head_sha": "9cdb8fe35e15b675f3fe1b2492c16f9785fc3115",
+    "merge_sha": "ea7a9818a57d5078bc26e35ed2d1f15d79657338",
+    "run_id": "35171901674",
+    "job_id": "105045151537",
+    "artifact_id": "10476967287",
+    "artifact_sha256": "7a5a0910db8639b642d8e63b4e37169d636ee3e6b7fc2ba0da93789ad183fc68",
+    "result": "PASS_RUNTIME_PROVEN_CAPABILITY_CAPACITY",
+    "measurement_scope": "CAPABILITY_COVERAGE_NOT_CONCURRENCY_CAPACITY",
+    "operational_availability": "WITHHELD_EXTERNAL_NONCOMPENSATING_GATES_NOT_EVALUATED"
+  }
 }
