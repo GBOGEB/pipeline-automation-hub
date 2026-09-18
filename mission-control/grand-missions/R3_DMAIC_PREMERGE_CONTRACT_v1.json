@@ -1,0 +1,63 @@
+{
+  "schema": "missioncontrol.hm01.r3.premerge_invariant_contract.v1",
+  "as_of": "2026-09-18T13:41:00+02:00",
+  "issue": "GBOGEB/pipeline-automation-hub#209",
+  "wave": "W278",
+  "method": {
+    "3P*": "3PC",
+    "sequence": [
+      "Prepare",
+      "Prove",
+      "Commit",
+      "MIP-Innovate"
+    ],
+    "scope": "DMAIC_TOOLING_PREMERGE_ONLY",
+    "parent_measurement": "W277 / PR #210"
+  },
+  "canonical": {
+    "active_source": "1248290ca0a9d55ec83d0efa0235ed1a45a88eeb",
+    "historical_predecessor": "70964e5f1577231512f4104b26f5f6649ad8cb39",
+    "r3_dov_node": {
+      "producer": "PASS_R3_RELEASE_PRODUCTION_DOV",
+      "consumer": "PASS_R3_RELEASE_PRODUCTION_DOV"
+    },
+    "capsule_schema": {
+      "producer": "gmi.r3_successor.exact_env_capsule.v2",
+      "standalone_validator": "gmi.r3_successor.exact_env_capsule.v2",
+      "qps_consumer": "gmi.r3_successor.exact_env_capsule.v2"
+    },
+    "clean_environment_isolation": {
+      "producer_relocated_self_test_unsets_ld_library_path": true,
+      "standalone_validator_unsets_ld_library_path": true,
+      "qps_consumer_admission_unsets_ld_library_path": true
+    },
+    "source_authority": {
+      "current_production_target": "ACTIVE_SOURCE_ONLY",
+      "predecessor_role": "HISTORICAL_PROVENANCE_ONLY",
+      "predecessor_relabel_allowed": false
+    },
+    "gates": {
+      "r3_release_production_dov": "WITHHELD",
+      "r3_3p3_authorized": false,
+      "r4": "BLOCKED_NOT_NEXT"
+    }
+  },
+  "fault_classes": [
+    "DAG_DOV_NODE_IDENTITY",
+    "CAPSULE_SCHEMA_IDENTITY",
+    "PRODUCER_AMBIENT_LD_LIBRARY_PATH",
+    "CONSUMER_AMBIENT_LD_LIBRARY_PATH",
+    "PREDECESSOR_PROMOTED_AS_CURRENT"
+  ],
+  "expected_kpis": {
+    "observed_recurrence_classes": 5,
+    "preventive_classes_encoded": 5,
+    "preventive_defect_class_coverage": 1,
+    "synthetic_faults_injected": 5,
+    "synthetic_faults_detected": 5,
+    "synthetic_fault_detection_rate": 1,
+    "false_accept_count": 0
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
