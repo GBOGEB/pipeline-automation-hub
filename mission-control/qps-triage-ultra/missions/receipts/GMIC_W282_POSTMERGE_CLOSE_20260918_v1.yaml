@@ -1,0 +1,81 @@
+schema: missioncontrol.gmi_c.w282_postmerge_close.v1
+as_of: '2026-09-18T15:29:00+02:00'
+wave: W282
+mission: GM-I-C
+status: MERGED_CONTROLLED_SAFE_CONTINUE
+authority_transfer: false
+formal_credit_delta: 0
+
+publication:
+  repository: GBOGEB/pipeline-automation-hub
+  pr: 233
+  exact_head: 83dffd1f368e701225ed0e2a6fc5c6a9d56c204e
+  base_at_open: f226e6e61bc84482d4856f056b292ca9322e22f8
+  merge_sha: b9b74a95afb9ca79bec8df143f1fa03e67ac025c
+  merged: true
+
+premerge_dov:
+  workflow: QPS TRIAGE ULTRA Federation Control
+  run_id: 35350290179
+  job_id: 105616530621
+  job: validate-ultra-control
+  result: success
+  executed_steps_gt_zero: true
+  observed_step_count: 11
+  exact_head_bound: 83dffd1f368e701225ed0e2a6fc5c6a9d56c204e
+  key_steps:
+    - Checkout exact source head
+    - Assert exact source head
+    - Execute HOME self-validation
+    - Emit current-head HOME fleet receipt
+    - Validate child inbox plus current HOME receipt
+    - Enforce HOME self-validation
+    - Enforce Mission-II federation DoV gate
+
+postmerge_dov:
+  merge_commit_workflows_observed_at_close: 0
+  state: WITHHELD_NO_POSTMERGE_WORKFLOW_ATTACHED_YET
+  rule: PREMERGE_EXACT_HEAD_PASS_IS_NOT_RELABELED_AS_POSTMERGE_RUN
+  broader_fresh_clone_or_postmerge_dov: NOT_CLAIMED
+
+published_artifacts:
+  control: mission-control/qps-triage-ultra/missions/receipts/GMIC_W282_3PSTAR_MIP_CONTROL_20260918_v1.yaml
+  r3_current: mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_CURRENT_v1.yaml
+  handover: handover/session/SC_2026-09-18_GMIC_W282_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md
+  dropin: handover/session/RESTART_DROPIN_2026-09-18_GMIC_W282_v1.md
+
+terminal_state:
+  global_qps:
+    first_red: GBOGEB/cryoplant-project#923
+    state: WAIT_OWNER_RUNNER_ADMISSION
+  r3_w275:
+    first_red: PHYSICAL_SUCCESSOR_GIT_BUNDLE_RETURN_1248290C
+    state: WAIT_RETURN
+  ic3:
+    first_red: EXTERNAL_WIF_SERVICE_ACCOUNT_DRIVE_ACL
+    state: WAIT_EXTERNAL_CONFIGURATION
+  temporal:
+    state: CONTROL_3_OF_5
+    latest_published_genuine_schedule_run: 35319784958
+  drive_losslessness:
+    raw_exports: ABSENT
+    w274_proofs: PRESENT
+  r4: BLOCKED_NOT_NEXT
+  release_three_p3: NOT_AUTHORIZED
+
+non_compensation:
+  ZERO_STEP_NE_APPLICATION_FAIL: true
+  PREMERGE_PASS_NE_POSTMERGE_DOV: true
+  MISSIONCONTROL_PASS_NE_QPS_GT_BDQ_PASS: true
+  R3_LANE_FIRST_RED_NE_GLOBAL_QTG_OVERRIDE: true
+  MANUAL_DRIVE_READ_NE_IC3_PASS: true
+  TEMPORAL_3_OF_5_NE_FULL_CONTROL: true
+  RAW_ABSENT_NE_PRESERVED: true
+  authority_transfer: false
+  formal_credit_delta: 0
+
+restart:
+  start_with_live_refresh: true
+  primary_handover: handover/session/SC_2026-09-18_GMIC_W282_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md
+  dropin: handover/session/RESTART_DROPIN_2026-09-18_GMIC_W282_v1.md
+  recurse_only_on_material_trigger: true
