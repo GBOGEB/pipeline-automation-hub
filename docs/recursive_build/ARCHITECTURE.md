@@ -79,3 +79,25 @@ ppt_processor.py
 The runner is fail-closed between phases: recursive indexing is not executed when the metadata summary is red.
 
 `pipeline_run_receipt.json` binds `processing_summary.json` and `recursive_build/build_receipt.json` by SHA-256 and carries the same `METADATA_ONLY_NOT_DOCUMENT_TRUTH` guardrail. It is a provenance/control receipt, not a source SSOT.
+
+
+## MAIN runner Excel schedule binding — v3
+
+The MAIN runner may now add the governed Excel schedule/data table engine as an explicit optional third phase. Existing PPTX metadata + recursive-build behavior remains unchanged when no Excel workbook is requested.
+
+```text
+ppt_processor.py
+  -> processing_summary.json
+  -> Recursive_Build_Master.py
+  -> recursive_build/build_receipt.json
+  -> [optional] excel_schedule_engine.py
+       -> Outputs/excel/tables_csv/*.csv
+       -> Outputs/excel/tables_xlsx/*.xlsx
+       -> Outputs/excel/table_manifest.json
+       -> Reports/schedule_index.{csv,md}
+  -> pipeline_run_receipt.json (v2)
+```
+
+The joined receipt SHA-binds the Excel table manifest when the phase is requested, including table counts, schedule-candidate counts, error count and `authority_transfer=false`. Excel failure is fail-closed for an explicitly requested Excel phase; omission of `--excel-input` preserves the historical two-phase path.
+
+This binding is orchestration/provenance only. The workbook remains SOURCE input and the CSV/XLSX exports remain derived renditions.
