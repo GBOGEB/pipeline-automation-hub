@@ -112,3 +112,15 @@ Refresh confirmed the engine and P1 hardening were merged and hosted-green. The 
 ### 3PC target
 
 Victory requires hosted CI to prove both the recursive-build suite and a real Excel schedule-engine subprocess from the MAIN runner before merge. No engineering/document authority is transferred.
+
+
+### Hosted proof and merge closure
+
+The MAIN runner binding reached hosted PASS on both relevant workflows:
+
+- Excel Schedule Engine run `35373856325`, job `105693848247`: PASS, including Excel engine unit tests and MAIN runner Excel integration tests.
+- recursive-build run `35373856209`, job `105693852799`: PASS, including compile and integration suite.
+
+PR `#298` merged as `17340181595b895602c1f14f5b6d3ed2c1aca55a`.
+
+Current classification: `ACTIVE_MAIN_RUNNER_BOUND`. The next permissible slice is planning/schedule schema + dashboard binding; parser/rendition authority remains unchanged.
