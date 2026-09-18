@@ -20,6 +20,16 @@ Refresh snapshot used for this transaction:
 - QPS main: `039e1fa84a6b32bcdb89e65807613377d50b4bb7`
 - QPS #923: **OPEN**
 
+## Publication transaction
+
+- PR: `GBOGEB/pipeline-automation-hub#232`
+- branch: `mission/gm-v-3pstar-mip-handover-20260918`
+- pre-publication head at PR open: `44392c068e62561f8e69678a928bc5cfe4c991e6`
+- base master at PR open: `f226e6e61bc84482d4856f056b292ca9322e22f8`
+- state at this revision: `OPEN_PENDING_EXACT_HEAD_DOV`
+
+The exact final PR head, merge SHA and post-merge artifact are GitHub publication evidence and must be refreshed from repository authority after merge.
+
 ## 2. Read order
 
 1. `mission-control/grand-missions/GM_V_CURRENT_v1.json`
