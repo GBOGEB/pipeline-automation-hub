@@ -77,13 +77,24 @@
   "remote_proof": {
     "pr": "GBOGEB/pipeline-automation-hub#271",
     "workflow": "recursive-doc-ke-gate",
-    "run_id": 35360192569,
-    "job_id": 105649269753,
-    "observed_state": "queued",
-    "steps": null,
-    "retries_checked": 2,
+    "attempts": [
+      {
+        "run_id": 35360192569,
+        "job_id": 105649269753,
+        "status": "queued",
+        "steps": null
+      },
+      {
+        "run_id": 35360256537,
+        "job_id": 105649472509,
+        "status": "queued",
+        "steps": null
+      }
+    ],
+    "retry_policy": "2 attempts exhausted",
     "classification": "INFRASTRUCTURE_PREEXECUTION_RUNNER_ADMISSION",
-    "code_evidence": "NONE_FROM_ZERO_STEP"
+    "code_evidence": "NONE_FROM_ZERO_STEP",
+    "reentry_predicate": "runner starts and workflow records steps > 0 on unchanged proof"
   },
   "first_red": "REMOTE_RUNNER_ADMISSION_THEN_SAME_UNCHANGED_PROOF"
 }
