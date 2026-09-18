@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import unittest
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -39,55 +40,45 @@ def mapping(pr_body=None, review_body=None, review_state=None, run_head=HEAD, ru
       f"/repos/{REPO}/pulls/{PR}/reviews?per_page=100":reviews,
     }
 
-def test_clean_exact_head_passes():
-    r=fpc.evaluate(FakeClient(mapping()),REPO,PR)
-    assert r["status"]=="PASS_FIRST_PASS_CLOSURE_GATE"
-    assert r["merge_allowed"] is True
+class TestFirstPassClosureGate(unittest.TestCase):
+    def test_clean_exact_head_passes(self):
+        r=fpc.evaluate(FakeClient(mapping()),REPO,PR)
+        self.assertEqual(r["status"],"PASS_FIRST_PASS_CLOSURE_GATE")
+        self.assertIs(r["merge_allowed"],True)
 
-def test_missing_receipt_rejected():
-    m=mapping(pr_body="")
-    try: fpc.evaluate(FakeClient(m),REPO,PR)
-    except fpc.GateError as e: assert "MISSING_RECEIPT" in str(e)
-    else: raise AssertionError
+    def test_missing_receipt_rejected(self):
+        with self.assertRaisesRegex(fpc.GateError,"MISSING_RECEIPT"):
+            fpc.evaluate(FakeClient(mapping(pr_body="")),REPO,PR)
 
-def test_stale_head_rejected():
-    m=mapping(pr_body=body("b"*40))
-    try: fpc.evaluate(FakeClient(m),REPO,PR)
-    except fpc.GateError as e: assert "STALE_HEAD" in str(e)
-    else: raise AssertionError
+    def test_stale_head_rejected(self):
+        with self.assertRaisesRegex(fpc.GateError,"STALE_HEAD"):
+            fpc.evaluate(FakeClient(mapping(pr_body=body("b"*40))),REPO,PR)
 
-def test_missing_purpose_rejected():
-    m=mapping(pr_body=body(purposes=["canonical_self_test","exact_head_ci"]))
-    try: fpc.evaluate(FakeClient(m),REPO,PR)
-    except fpc.GateError as e: assert "MISSING_REQUIRED_PROOF_PURPOSE" in str(e)
-    else: raise AssertionError
+    def test_missing_purpose_rejected(self):
+        with self.assertRaisesRegex(fpc.GateError,"MISSING_REQUIRED_PROOF_PURPOSE"):
+            fpc.evaluate(FakeClient(mapping(pr_body=body(purposes=["canonical_self_test","exact_head_ci"]))),REPO,PR)
 
-def test_failed_run_rejected():
-    m=mapping(run_conclusion="failure")
-    try: fpc.evaluate(FakeClient(m),REPO,PR)
-    except fpc.GateError as e: assert "RUN_NOT_SUCCESS" in str(e)
-    else: raise AssertionError
+    def test_failed_run_rejected(self):
+        with self.assertRaisesRegex(fpc.GateError,"RUN_NOT_SUCCESS"):
+            fpc.evaluate(FakeClient(mapping(run_conclusion="failure")),REPO,PR)
 
-def test_wrong_run_head_rejected():
-    m=mapping(run_head="b"*40)
-    try: fpc.evaluate(FakeClient(m),REPO,PR)
-    except fpc.GateError as e: assert "RUN_HEAD_MISMATCH" in str(e)
-    else: raise AssertionError
+    def test_wrong_run_head_rejected(self):
+        with self.assertRaisesRegex(fpc.GateError,"RUN_HEAD_MISMATCH"):
+            fpc.evaluate(FakeClient(mapping(run_head="b"*40)),REPO,PR)
 
-def test_review_not_completed_rejected():
-    m=mapping(completed=False)
-    try: fpc.evaluate(FakeClient(m),REPO,PR)
-    except fpc.GateError as e: assert "CODEX_REVIEW_NOT_COMPLETED" in str(e)
-    else: raise AssertionError
+    def test_review_not_completed_rejected(self):
+        with self.assertRaisesRegex(fpc.GateError,"CODEX_REVIEW_NOT_COMPLETED"):
+            fpc.evaluate(FakeClient(mapping(completed=False)),REPO,PR)
 
-def test_exact_head_codex_finding_rejected():
-    review=f"### Codex Review\n**Reviewed commit:** `{HEAD[:10]}`"
-    m=mapping(review_body=review)
-    try: fpc.evaluate(FakeClient(m),REPO,PR)
-    except fpc.GateError as e: assert "CODEX_MATERIAL_FINDINGS" in str(e)
-    else: raise AssertionError
+    def test_exact_head_codex_finding_rejected(self):
+        review=f"### Codex Review\n**Reviewed commit:** `{HEAD[:10]}`"
+        with self.assertRaisesRegex(fpc.GateError,"CODEX_MATERIAL_FINDINGS"):
+            fpc.evaluate(FakeClient(mapping(review_body=review)),REPO,PR)
 
-def test_old_head_codex_finding_does_not_block():
-    review="### Codex Review\n**Reviewed commit:** `bbbbbbbbbb`"
-    r=fpc.evaluate(FakeClient(mapping(review_body=review)),REPO,PR)
-    assert r["merge_allowed"] is True
+    def test_old_head_codex_finding_does_not_block(self):
+        review="### Codex Review\n**Reviewed commit:** `bbbbbbbbbb`"
+        r=fpc.evaluate(FakeClient(mapping(review_body=review)),REPO,PR)
+        self.assertIs(r["merge_allowed"],True)
+
+if __name__=="__main__":
+    unittest.main()
