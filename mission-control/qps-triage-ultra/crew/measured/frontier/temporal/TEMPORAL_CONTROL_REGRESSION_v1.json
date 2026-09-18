@@ -1,0 +1,148 @@
+{
+  "schema": "missioncontrol.temporal_control_regression.v1",
+  "mission_id": "MC-CREW-FRONTIER-004",
+  "status": "POST_CONTROL_REGRESSION_BOUND",
+  "authority_transfer": false,
+  "competency_promotions": 0,
+  "formal_credit_delta": 0,
+  "historical_acceptance": {
+    "receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONTROL_POLICY_ACCEPTANCE_v1.json",
+    "source_schedule_run": "35319784958",
+    "source_sha": "9e7e698c1cf40b594244aba01e1ea704ef76d203",
+    "control_class_count": 3,
+    "control_classes": [
+      "cache_artifact_reuse",
+      "short_compute",
+      "validation_bundle"
+    ],
+    "short_compute": {
+      "policy_status": "CONTROL_POLICY",
+      "allocation_recommendation": "ALLOC_SINGLE_CELL",
+      "pooled_winner_strength": 0.7008026572612402,
+      "direction_consistency": 0.9375,
+      "latest_two_directional_windows_agree": true
+    }
+  },
+  "current_genuine_schedule": {
+    "run_id": "35350275999",
+    "exact_source_sha": "f226e6e61bc84482d4856f056b292ca9322e22f8",
+    "artifact_id": "10549864368",
+    "artifact_digest": "sha256:6d1ee0018358fff48a83d006322ba1e0b504b32a1cf68e8b4c3e98d0001713c3",
+    "workflow_event": "schedule",
+    "workflow_conclusion": "success",
+    "scheduled_windows": 20,
+    "distinct_source_shas": 12,
+    "temporal_span_seconds": 410680,
+    "hosted_runner_classes": [
+      "linux",
+      "macos",
+      "windows"
+    ],
+    "lanes": [
+      "baseline",
+      "held"
+    ],
+    "rex_veto": false
+  },
+  "effective_control": {
+    "control_class_count": 2,
+    "task_class_count": 5,
+    "full_control": false,
+    "control_classes": [
+      {
+        "task_class": "cache_artifact_reuse",
+        "policy_status": "CONTROL_POLICY",
+        "allocation_recommendation": "ALLOC_SINGLE_CELL",
+        "direction_consistency": 1,
+        "pooled_winner_strength": 0.9909502262443439,
+        "latest_two_directional_windows_agree": true
+      },
+      {
+        "task_class": "validation_bundle",
+        "policy_status": "CONTROL_POLICY",
+        "allocation_recommendation": "ALLOC_PAIRED_CELL",
+        "direction_consistency": 1,
+        "pooled_winner_strength": 0.9941176470588236,
+        "latest_two_directional_windows_agree": true
+      }
+    ]
+  },
+  "regression": {
+    "task_class": "short_compute",
+    "prior_state": "CONTROL_POLICY",
+    "current_state": "LEARNING",
+    "prior_allocation_recommendation": "ALLOC_SINGLE_CELL",
+    "current_allocation_recommendation": "NO_POLICY",
+    "first_red_gate": "pooled_winner_strength",
+    "frozen_threshold": 0.7,
+    "prior_pooled_winner_strength": 0.7008026572612402,
+    "current_pooled_winner_strength": 0.6907625243981782,
+    "strength_delta": -0.010040132863062046,
+    "threshold_deficit": 0.009237475601821754,
+    "direction_consistency": 0.9375,
+    "direction_counts": {
+      "ALLOC_SINGLE_CELL": 15,
+      "ALLOC_PAIRED_CELL": 1
+    },
+    "directional_windows": 16,
+    "latest_two_directional_windows_agree": true,
+    "latest_scheduled_window": {
+      "run_id": "35350275999",
+      "observed_pairs": 6,
+      "bt_result": "3_SINGLE_WINS_3_PAIRED_WINS",
+      "single_normalized_strength": 0.5,
+      "paired_normalized_strength": 0.5,
+      "direction": "INDETERMINATE",
+      "interpretation": "The latest genuine scheduled window did not reverse the dominant direction; its neutral 0.5 strength pulled the pooled winner below the frozen 0.70 CONTROL threshold."
+    },
+    "surveillance": {
+      "direction_flip_count": 2,
+      "indeterminate_window_fraction": 0.2,
+      "early_direction": "ALLOC_SINGLE_CELL",
+      "late_direction": "ALLOC_SINGLE_CELL",
+      "early_vs_late_direction_agreement": true,
+      "jackknife_min_pooled_winner_strength": 0.6817463959182276,
+      "jackknife_direction_preservation_fraction": 1
+    },
+    "rex_state": "REGRESSION",
+    "disposition": "CONTROL_REVOKED_REEARN_REQUIRED",
+    "next_action": "DECOMPOSE_CONTROL_REGRESSION_AND_REEARN_FROZEN_GATE"
+  },
+  "other_noncontrol_classes": [
+    {
+      "task_class": "long_compute_contended",
+      "policy_status": "LEARNING_DIRECTION_UNSTABLE",
+      "first_red_gate": "direction_consistency",
+      "direction_consistency": 0.6666666666666666,
+      "direction_counts": {
+        "ALLOC_PAIRED_CELL": 10,
+        "ALLOC_SINGLE_CELL": 5
+      },
+      "pooled_winner_strength": 0.6153607427055703,
+      "latest_two_directional_windows_agree": false,
+      "regime": "REGIME_REVERSAL_OBSERVED"
+    },
+    {
+      "task_class": "human_dependency_wait_proxy",
+      "policy_status": "LEARNING_DIRECTION_UNSTABLE",
+      "first_red_gate": "direction_consistency",
+      "direction_consistency": 0.75,
+      "direction_counts": {
+        "ALLOC_SINGLE_CELL": 12,
+        "ALLOC_PAIRED_CELL": 4
+      },
+      "pooled_winner_strength": 0.6222038554273619,
+      "latest_two_directional_windows_agree": false,
+      "regime": "WEAK_OR_NOISY_DIRECTION",
+      "claim_boundary": "CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE"
+    }
+  ],
+  "invariants": {
+    "historical_acceptance_overwritten": false,
+    "thresholds_changed": false,
+    "synthetic_or_manual_clock_credit": false,
+    "regression_revokes_control": true,
+    "competency_promotions": 0,
+    "authority_transfer": false
+  }
+}
