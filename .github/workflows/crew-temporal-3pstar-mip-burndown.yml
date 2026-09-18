@@ -7,6 +7,15 @@ on:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_frontier_burndown.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_temporal_frontier_burndown.py'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v2.json'
+      - '.github/workflows/crew-temporal-3pstar-mip-burndown.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_frontier_burndown.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_temporal_frontier_burndown.py'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v2.json'
       - '.github/workflows/crew-temporal-3pstar-mip-burndown.yml'
   workflow_run:
     workflows: ['MissionControl Temporal Allocation Policy']
@@ -18,16 +27,18 @@ permissions:
 
 jobs:
   unit-contract:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout exact PR head
+      - name: Checkout exact source head
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - name: Assert exact PR head
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
         shell: bash
-        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
       - name: Run burndown unit contract
         working-directory: mission-control/qps-triage-ultra/crew/measured/frontier/temporal
         run: python -m unittest -v test_temporal_frontier_burndown.py
@@ -36,26 +47,30 @@ jobs:
         run: |
           import json
           from pathlib import Path
-          p=Path('mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v1.json')
+          root=Path('mission-control/qps-triage-ultra/crew/measured/frontier/temporal')
+          p=root/'TEMPORAL_3PSTAR_MIP_ITERATION_v2.json'
           d=json.loads(p.read_text())
-          assert d['scope']=='TWO_CLASS_NONCONTROL_BURNDOWN'
-          assert d['three_p_star']['refresh']['status']=='PASS'
-          assert d['three_p_star']['probe']['status']=='PASS'
-          assert d['three_p_star']['rank']['status']=='PASS'
-          assert d['three_p_star']['prepare']['status']=='PASS'
+          assert d['schema']=='missioncontrol.temporal_3pstar_mip_iteration.v2'
+          assert d['supersedes']=='TEMPORAL_3PSTAR_MIP_ITERATION_v1.json'
+          assert d['proof_rebind']['rex_classification']=='REX-005_UNBOUND_PROMOTION_PROOF_GATE'
+          assert d['proof_rebind']['merge_without_exact_head_proof_observed'] is True
+          assert d['proof_rebind']['merge_itself_counts_as_proof'] is False
           assert d['current_control']['control_class_count']==3
           assert d['current_control']['full_control'] is False
           assert d['active_frontier'][0]['task_class']=='long_compute_contended'
-          assert d['active_frontier'][0]['regime']=='REGIME_REVERSAL_OBSERVED'
           assert d['active_frontier'][0]['min_consecutive_clean_dominant_windows_to_consistency']==11
           assert d['active_frontier'][1]['task_class']=='human_dependency_wait_proxy'
-          assert d['active_frontier'][1]['regime']=='WEAK_OR_NOISY_DIRECTION'
           assert d['active_frontier'][1]['min_consecutive_clean_dominant_windows_to_consistency']==5
           assert d['invariants']['thresholds_changed'] is False
           assert d['invariants']['synthetic_or_manual_clock_credit'] is False
           assert d['invariants']['competency_promotions']==0
           assert d['invariants']['authority_transfer'] is False
-          print('PASS_TEMPORAL_3PSTAR_MIP_ITERATION_CONTROL')
+          print(json.dumps({
+              'status':'PASS_TEMPORAL_3PSTAR_MIP_PROOF_REBIND_CONTROL',
+              'event':'push' if not d['proof_rebind'].get('final_exact_head_proof') else 'historical',
+              'authority_transfer':False,
+              'competency_promotions':0
+          },sort_keys=True))
 
   genuine-scheduled-burndown:
     if: >-
