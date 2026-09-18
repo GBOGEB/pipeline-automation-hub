@@ -1,0 +1,157 @@
+{
+  "schema": "missioncontrol.hm01.r3.dmaic_kpi_contract.v1",
+  "as_of": "2026-09-18T13:39:00+02:00",
+  "issue": "GBOGEB/pipeline-automation-hub#209",
+  "wave": "W277",
+  "method": {
+    "3P*": "3PR",
+    "sequence": [
+      "Refresh",
+      "Probe",
+      "Rank",
+      "MIP-Modernize"
+    ],
+    "scope": "DMAIC_PROCESS_CONTROL_ONLY"
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "population": {
+    "description": "Bounded R3 control slice immediately preceding W277",
+    "prs": [
+      {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "number": 199,
+        "role": "PRIMARY",
+        "merge_lead_seconds": 203,
+        "required_recursive_repair": true
+      },
+      {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "number": 201,
+        "role": "REPAIR",
+        "merge_lead_seconds": 193,
+        "required_recursive_repair": false
+      },
+      {
+        "repo": "GBOGEB/GEMINI",
+        "number": 17,
+        "role": "PRIMARY",
+        "merge_lead_seconds": 145,
+        "required_recursive_repair": true
+      },
+      {
+        "repo": "GBOGEB/GEMINI",
+        "number": 18,
+        "role": "REPAIR",
+        "merge_lead_seconds": 478,
+        "required_recursive_repair": false
+      },
+      {
+        "repo": "GBOGEB/GEMINI",
+        "number": 19,
+        "role": "REPAIR",
+        "merge_lead_seconds": 109,
+        "required_recursive_repair": false
+      },
+      {
+        "repo": "GBOGEB/cryoplant-project",
+        "number": 1453,
+        "role": "PRIMARY",
+        "merge_lead_seconds": 27,
+        "required_recursive_repair": true
+      },
+      {
+        "repo": "GBOGEB/cryoplant-project",
+        "number": 1458,
+        "role": "REPAIR",
+        "merge_lead_seconds": 447,
+        "required_recursive_repair": false
+      },
+      {
+        "repo": "GBOGEB/cryoplant-project",
+        "number": 1465,
+        "role": "PRIMARY",
+        "merge_lead_seconds": 78,
+        "required_recursive_repair": false
+      }
+    ]
+  },
+  "observed_defect_classes": [
+    {
+      "id": "DAG_DOV_NODE_IDENTITY",
+      "closed": true,
+      "repair": "pipeline-automation-hub#201"
+    },
+    {
+      "id": "CAPSULE_RAW_PYTHON_RELOCATION",
+      "closed": true,
+      "repair": "GEMINI#18"
+    },
+    {
+      "id": "CAPSULE_SCHEMA_IDENTITY",
+      "closed": true,
+      "repair": "GEMINI#18"
+    },
+    {
+      "id": "CONSUMER_AMBIENT_LD_LIBRARY_PATH",
+      "closed": true,
+      "repair": "cryoplant-project#1458"
+    },
+    {
+      "id": "PRODUCER_VALIDATOR_AMBIENT_LD_LIBRARY_PATH",
+      "closed": true,
+      "repair": "GEMINI#19"
+    }
+  ],
+  "outcome_before": {
+    "physical_r3_prerequisites_open": 2,
+    "exact_environment_capsule_admitted": 0,
+    "first_red_cardinality": 2,
+    "active_successor_ingress_contract_bound": 0,
+    "predecessor_only_target_active_for_current_r3": 1,
+    "current_restart_v2_bound": 0
+  },
+  "outcome_current": {
+    "physical_r3_prerequisites_open": 1,
+    "exact_environment_capsule_admitted": 1,
+    "first_red_cardinality": 1,
+    "active_successor_ingress_contract_bound": 1,
+    "predecessor_only_target_active_for_current_r3": 0,
+    "current_restart_v2_bound": 1
+  },
+  "expected_kpis": {
+    "pr_count": 8,
+    "mean_merge_lead_seconds": 210,
+    "median_merge_lead_seconds": 169,
+    "primary_pr_count": 4,
+    "primary_prs_requiring_recursive_repair": 3,
+    "historical_first_pass_closure_rate": 0.25,
+    "defect_classes_observed": 5,
+    "defect_classes_closed": 5,
+    "repair_closure_yield": 1,
+    "physical_prerequisite_reduction_fraction": 0.5,
+    "first_red_reduction_fraction": 0.5,
+    "exact_environment_admission_delta": 1,
+    "current_successor_binding_delta": 1,
+    "stale_predecessor_active_delta": -1,
+    "restart_v2_binding_delta": 1
+  },
+  "next_targets": {
+    "preventive_defect_class_coverage": 1,
+    "synthetic_fault_detection_rate": 1,
+    "false_accept_count": 0,
+    "tooling_propagation_coverage": 1,
+    "authority_inversion_count": 0,
+    "future_first_pass_closure_rate_target": 0.75,
+    "future_first_pass_min_population": 4
+  },
+  "guards": {
+    "r3_release_production_dov": "WITHHELD",
+    "r4": "BLOCKED_NOT_NEXT",
+    "issue_923": "RED_OWNER_ACTION",
+    "gt_bdq_0": "RED_BLOCKED_ON_923_INFRA_PREEXECUTION",
+    "canonical_gt_credit": "NONE",
+    "authority_transfer": false,
+    "formal_credit_delta": 0
+  }
+}
