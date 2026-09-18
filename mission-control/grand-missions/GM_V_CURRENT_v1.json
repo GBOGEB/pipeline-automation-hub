@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.gm_v.current.v1",
-  "as_of": "2026-09-18T15:20:00+02:00",
+  "as_of": "2026-09-18T15:27:00+02:00",
   "canonical": true,
   "mission": "GM-V",
   "state": "HELD_EXTERNAL_OPERATIONAL_AVAILABILITY",
@@ -8,11 +8,11 @@
   "formal_credit_delta": 0,
   "missioncontrol": {
     "repository": "GBOGEB/pipeline-automation-hub",
-    "refreshed_master": "3df37a0485874f968f0dffa02bc474c5f4645fba",
+    "refreshed_master": "16172fb946766fb9a2c708943dddb1c20edc156f",
     "control": "mission-control/grand-missions/GM_V_3PSTAR_MIP_CONTROL_v1.json",
     "governor_contract": "mission-control/grand-missions/GM_V_GOVERNOR_READINESS_CONTRACT.json",
-    "handover": "mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md",
-    "restart": "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v1.md"
+    "handover": "mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v2.md",
+    "restart": "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v2.md"
   },
   "gm_iv": {
     "state": "ACTIVE_8_OF_8",
@@ -31,7 +31,7 @@
   },
   "child_runtime_gate": {
     "repository": "GBOGEB/cryoplant-project",
-    "refreshed_main": "039e1fa84a6b32bcdb89e65807613377d50b4bb7",
+    "refreshed_main": "eeac2b60fc16e5b2131d4054f95da0b0c663cc40",
     "issue": 923,
     "issue_state": "OPEN",
     "classification": "INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION",
@@ -43,13 +43,45 @@
       "STEPS_GT_0",
       "EXACT_CURRENT_QPS_SHA",
       "UNCHANGED_SELECTED_VALIDATOR"
-    ]
+    ],
+    "latest_observation": {
+      "qps_pr": 1476,
+      "qps_head_sha": "458dae93993a970d94c5a8c85c2d04e40390e454",
+      "qps_merge_sha": "eeac2b60fc16e5b2131d4054f95da0b0c663cc40",
+      "release_runner_probe": {
+        "run_id": 35350233629,
+        "jobs": [
+          {
+            "job_id": 105616352192,
+            "runner_class": "configured-runner",
+            "executed_steps": 0
+          },
+          {
+            "job_id": 105616352310,
+            "runner_class": "ubuntu-latest",
+            "executed_steps": 0
+          },
+          {
+            "job_id": 105616352482,
+            "runner_class": "ubuntu-22.04",
+            "executed_steps": 0
+          }
+        ]
+      },
+      "independent_validator": {
+        "workflow": "verify-ssot",
+        "run_id": 35350233647,
+        "job_id": 105616351882,
+        "executed_steps": 0
+      },
+      "classification": "INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION"
+    }
   },
   "progression": {
     "three_pr": "PASS",
     "mip_modernize": "PASS",
     "mip_innovate": "PASS",
-    "mip_perpetuate": "THIS_TRANSACTION",
+    "mip_perpetuate": "PASS_W281_REBIND_HANDOVER_V2",
     "three_pc_prepare": "PASS_CONTROL_PREPARED",
     "three_pc_prove": "WITHHELD_EXTERNAL",
     "three_pc_commit": "HOLD_WAIT_PROVE",
@@ -73,6 +105,11 @@
     "branch": "mission/gm-v-3pstar-mip-handover-20260918",
     "prepublication_head": "44392c068e62561f8e69678a928bc5cfe4c991e6",
     "base_master_at_pr_open": "f226e6e61bc84482d4856f056b292ca9322e22f8",
-    "merge_state": "OPEN_PENDING_EXACT_HEAD_DOV"
+    "merge_state": "OPEN_PENDING_EXACT_HEAD_DOV",
+    "rebind": {
+      "branch": "mission/gm-v-3pstar-mip-w281-rebind-20260918",
+      "base_master_at_rebind": "16172fb946766fb9a2c708943dddb1c20edc156f",
+      "state": "PREPARED_PENDING_EXACT_HEAD_DOV"
+    }
   }
 }
