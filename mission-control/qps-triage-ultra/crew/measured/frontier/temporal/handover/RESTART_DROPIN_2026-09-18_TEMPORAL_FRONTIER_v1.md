@@ -57,33 +57,33 @@ Sequence defect:
 Repair:
 - PR #252
 - merge `243337e7170029ccfbcf1588ce951356fd1d22a7`
-- adds post-merge `push: master` exact-head recurrence.
+- adds post-merge `push: master` exact-head recurrence
+- run `35352260069`
+- job `105622958891`
+- exact merge-SHA checkout PASS
+- 3/3 tests PASS
+- `PASS_TEMPORAL_3PSTAR_MIP_PROOF_REBIND_CONTROL`.
+
+REX-005 is CONTROLLED for this temporal lane. The original #246 merge-before-Prove sequence remains preserved as negative history.
 
 ## EXACT NEXT PREDICATE
 
-Resolve:
+Proceed P0:
 
-`run 35352260069 / job 105622958891`.
+`long_compute_contended -> DECOMPOSE_SIGNED_EFFECT_BY_RUNNER_LANE_AND_TEMPORAL_HALF`.
 
-If queued:
-- stop closure;
-- do not blind-rerun;
-- do not classify application failure.
+Do not average the early PAIRED -> late SINGLE regime reversal into a false stable policy. Determine whether the reversal is driven by:
+1. runner class,
+2. baseline vs held lane,
+3. temporal half / load regime,
+4. or a combination.
 
-If PASS:
-1. bind exact merged-master PASS;
-2. close this temporal REX-005 occurrence to CONTROL;
-3. retain 3/5 CONTROL;
-4. proceed P0:
-   `DECOMPOSE_SIGNED_EFFECT_BY_RUNNER_LANE_AND_TEMPORAL_HALF`;
-5. proceed P1 only as controlled wait-proxy surveillance;
-6. at genuine scheduled span >=604800 s, evaluate 7-day surveillance without altering entry thresholds.
-
-If FAIL:
-1. bind exact failing step;
-2. repair only first red;
-3. keep 3P3/closure credit withheld;
-4. do not alter CONTROL thresholds.
+In parallel:
+- keep `human_dependency_wait_proxy` as controlled-wait proxy surveillance only;
+- continue genuine scheduled evidence accumulation;
+- preserve all three current CONTROL classes unless governed regression occurs;
+- evaluate the 7-day horizon only when genuine scheduled span >=604800 s;
+- do not alter CONTROL thresholds.
 
 ## ACTIVE FRONTIER DETAILS
 
