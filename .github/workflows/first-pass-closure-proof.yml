@@ -23,7 +23,7 @@ jobs:
       - name: Compile gate
         run: python -m py_compile scripts/first_pass_closure_gate.py
       - name: Canonical self-test and mutation/fault matrix
-        run: python -m pytest -q scripts/tests/test_first_pass_closure_gate.py
+        run: python -m unittest scripts/tests/test_first_pass_closure_gate.py
       - name: Policy sanity
         run: |
           python - <<'PY'
