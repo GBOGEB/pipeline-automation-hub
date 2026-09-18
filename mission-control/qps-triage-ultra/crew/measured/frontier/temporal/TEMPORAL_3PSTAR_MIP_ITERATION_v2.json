@@ -10,7 +10,18 @@
     "dedicated_workflow_run": "35351860027",
     "dedicated_job": "105621646115",
     "observed_job_state_at_rebind": "QUEUED_ZERO_EXECUTION_OBSERVED",
-    "implementation_files_merged": true
+    "implementation_files_merged": true,
+    "late_exact_head_proof": {
+      "run_id": "35351860027",
+      "job_id": "105621646115",
+      "exact_head": "1b62b2d254b70e47b654df31d40ddfd6fabdc11c",
+      "checkout_exact_head": true,
+      "steps_executed": true,
+      "unit_tests": "3_OF_3_PASS",
+      "iteration_control": "PASS_TEMPORAL_3PSTAR_MIP_ITERATION_CONTROL",
+      "conclusion": "success",
+      "observed_after_merge": true
+    }
   },
   "proof_rebind": {
     "rex_classification": "REX-005_UNBOUND_PROMOTION_PROOF_GATE",
@@ -23,8 +34,18 @@
       "unit_tests_must_pass": true,
       "iteration_invariants_must_pass": true
     },
-    "final_exact_head_proof": null,
-    "state": "REPAIR_ACTIVE_WAIT_EXACT_HEAD_PASS"
+    "final_exact_head_proof": {
+      "run_id": "35351860027",
+      "job_id": "105621646115",
+      "exact_head": "1b62b2d254b70e47b654df31d40ddfd6fabdc11c",
+      "checkout_exact_head": true,
+      "steps_executed": true,
+      "unit_tests": "3_OF_3_PASS",
+      "iteration_control": "PASS_TEMPORAL_3PSTAR_MIP_ITERATION_CONTROL",
+      "conclusion": "success",
+      "observed_after_merge": true
+    },
+    "state": "LATE_PR_HEAD_PROOF_PASS_POSTMERGE_RECURRENCE_REPAIR_ACTIVE"
   },
   "three_p_star": {
     "refresh": {
@@ -45,15 +66,22 @@
       "contract": "burndown engine + unit tests + recurring genuine-schedule consumer + merged-master recurrence"
     },
     "prove": {
-      "status": "HOLD_WAIT_EXACT_HEAD_RUNTIME"
+      "status": "PASS_LATE_EXACT_PR_HEAD_RUNTIME",
+      "run_id": "35351860027",
+      "job_id": "105621646115",
+      "exact_head": "1b62b2d254b70e47b654df31d40ddfd6fabdc11c",
+      "tests": "3_OF_3_PASS",
+      "note": "Proof is valid for implementation correctness but arrived after merge; sequencing defect remains separately controlled."
     },
     "commit": {
-      "status": "MERGE_OCCURRED_WITHOUT_PROOF_CREDIT",
-      "credit": "WITHHELD",
-      "rule": "a56e94ee92077b912a5a3480ae73a1c13b775eba is implementation history, not 3PC Prove evidence"
+      "status": "IMPLEMENTATION_MERGE_PRECEDED_PROVE_SEQUENCE_NONCONFORMITY_RETAINED",
+      "merge_sha": "a56e94ee92077b912a5a3480ae73a1c13b775eba",
+      "implementation_validated_after_merge": true,
+      "sequence_credit": "WITHHELD_FOR_ORIGINAL_ORDER",
+      "repair_required": "POSTMERGE_PUSH_RECURRENCE_MUST_PASS_ON_REPAIR_MERGE"
     },
     "propagate_perpetuate": {
-      "status": "HOLD_UNTIL_PROOF_REBIND",
+      "status": "HOLD_WAIT_REPAIR_MERGE_AND_POSTMERGE_PUSH_PASS",
       "after_pass": [
         "publish TEMPORAL_FRONTIER_CURRENT_v1.yaml with exact proof/merge identities",
         "publish lossless handover",
@@ -72,7 +100,7 @@
       "result": "consistency debt + minimum clean-window pressure retained"
     },
     "Perpetuate": {
-      "status": "REPAIR_ACTIVE",
+      "status": "REPAIR_PREPARED_WAIT_POSTMERGE_REPEAT",
       "result": "add post-merge push recurrence so future commits cannot be treated as proof merely by merging"
     }
   },
