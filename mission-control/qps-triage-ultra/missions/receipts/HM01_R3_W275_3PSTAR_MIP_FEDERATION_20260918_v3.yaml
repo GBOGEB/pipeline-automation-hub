@@ -1,0 +1,102 @@
+schema: missioncontrol.hm01.r3.w275_federation_receipt.v0.3
+as_of: '2026-09-18T13:43:00+02:00'
+mission: HM-01
+state: FEDERATION_CURRENT_CAPSULE_V2_PASS_ONE_PHYSICAL_RED
+authority_transfer: false
+formal_credit_delta: 0
+
+history:
+  v1_pr: GBOGEB/pipeline-automation-hub#204
+  v1_merge: 70840fb944dd7cc2a6d2593a58e6d7d33fe56230
+  v2_pr: GBOGEB/pipeline-automation-hub#207
+  v2_merge: 08159435b0bc0acc5fddaf215760f4b00e6a66e1
+  treatment: APPEND_ONLY_FIX_FORWARD
+
+qps_current_w275:
+  canonical_reconciliation_pr: GBOGEB/cryoplant-project#1465
+  canonical_reconciliation_merge: 8ae7d5ca9b010b6c2978a03b7b16898e172c8918
+  recursive_control: triage/w275/QPS_W275_R3_3PSTAR_MIP_RECURSIVE_CONTROL_v0.2.yaml
+  lossless_handover: >-
+    handover/session/SC_2026-09-18_W275_R3_3PSTAR_MIP_LOSSLESS_HANDOVER_v2.md
+  restart_dropin: handover/session/RESTART_DROPIN_2026-09-18_W275_R3_v2.md
+  historical_predecessor: 70964e5f1577231512f4104b26f5f6649ad8cb39
+  active_successor: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  application_evidence: PASS
+
+capsule_history:
+  v1:
+    producer_pr: GBOGEB/GEMINI#17
+    disposition: HISTORICAL_PASS_PRODUCER_TEST_EXTERNAL_RELOCATION_FAILED
+  v2:
+    producer_pr: GBOGEB/GEMINI#18
+    producer_merge: 8b8e72400bb6860789b11b1fca3b809fc8ca6524
+    exact_head: 1192e030d76bc88dbfb6c735f0f11d02528a7b4e
+    workflow_run: 35339129647
+    artifact_id: 10544103232
+    artifact_zip_sha256: >-
+      64c363cfeaded7fc6b156b28fe344166e3c560aac3ea43f50b2695220cffd912
+    inner_archive_sha256: >-
+      c77566e6c6aa261034f86303ef1be7b033622f357333e3d474d3bde8fb3ec44e
+    manifest: gmi.r3_successor.exact_env_capsule.v2
+    launcher: r3-python/run-python
+    external_clean_ld_library_path_reproof: PASS
+    python: 3.12.14
+    exact_dependency_lock: PASS
+  validator_hygiene:
+    pr: GBOGEB/GEMINI#19
+    merge: 9faeb10cd57395538eb163791c7c56ba90be711b
+    state: PASS_MERGED
+
+abacus:
+  exact_validated_support_sha: f55876e4d7985dd672304ff6e3945f24de9b9194
+  workflow_run: 35272680285
+  artifact_id: 10518602763
+  artifact_sha256: >-
+    2904d3cc2ef3f359b98db0b75bd2613436b94395b975ccf807c08a8c1d793b7f
+  fix_forward_pr: GBOGEB/ABACUS#1267
+  fix_forward_merge: 421d70842da08876d882bf16a9a8cfa2eb07baee
+  floating_current_inherits_pass: false
+
+three_pstar:
+  three_pr: PASS
+  mip_modernize: CAPSULE_CONTRACT_V1_TO_V2_RELOCATION_SAFE
+  mip_innovate: EXACT_HEAD_EXTERNAL_PORTABILITY_REPROOF_PASS
+  mip_perpetuate: QPS_1465_PLUS_MISSIONCONTROL_V3
+  three_pc_prepare: PASS
+  three_pc_prove: HOLD_WAIT_SUCCESSOR_GIT_OBJECT
+  three_pc_commit: HOLD_WAIT_PROVE
+  three_p3_authorized: false
+  r4: BLOCKED_NOT_NEXT
+
+first_red:
+  id: SUCCESSOR_GIT_OBJECT_HANDOFF_1248290C
+  required_sha: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  accepted_form:
+    - QPS_R3_1248290c.bundle_WITH_SHA256_SIDECAR
+    - EQUIVALENT_CLEAN_CLONE_ARCHIVE_WITH_DOT_GIT_AND_EXACT_COMMIT
+  state: WAIT_PHYSICAL_RETURN
+
+after_arrival:
+  - VERIFY_PAYLOAD_SHA256
+  - VERIFY_GIT_OBJECT_AND_EXACT_SUCCESSOR
+  - CONSUME_EXACT_CAPSULE_V2_BYTES
+  - RUN_QPS_PORTABLE_CAPSULE_CONSUMER
+  - EXACT_DETACHED_WORKTREE_1248290C
+  - FIVE_PRODUCT_REGENERATION
+  - STRUCTURAL_QA
+  - PROJECTION_AWARE_PARITY
+  - RENDER_EVIDENCE
+  - HASH_BOUND_HUMAN_VISUAL_INSPECTION
+  - SUCCESSOR_ACCEPTANCE_VALIDATOR
+  - PASS_R3_RELEASE_PRODUCTION_DOV
+  - R4_COLD_START_PARITY
+
+non_compensation:
+  issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  runtime_gold: WITHHELD
+  canonical_gt_bdq_4_7_credit: NONE
+  engineering_credit_delta: 0
+  negotiation_credit_delta: 0
+  formal_credit_delta: 0
+  authority_transfer: false
