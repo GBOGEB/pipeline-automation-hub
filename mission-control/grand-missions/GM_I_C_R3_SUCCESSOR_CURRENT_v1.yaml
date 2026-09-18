@@ -1,0 +1,50 @@
+schema: missioncontrol.gm_i_c.r3_successor.current.v1
+as_of: '2026-09-18T13:04:00+02:00'
+mission: GM-I-C
+lane: HM01_R3_RELEASE_PRODUCTION_SUCCESSOR
+authority_transfer: false
+formal_credit_delta: 0
+
+control: mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_3PSTAR_MIP_CONTROL_v1.yaml
+ingress_manifest: mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_INGRESS_MANIFEST_v2.yaml
+
+live_refresh:
+  missioncontrol_head_before_transaction: 9e7e698c1cf40b594244aba01e1ea704ef76d203
+  qps_head: f7e881534c16510742447f065d6ed8259db4cb16
+  gemini_head: 159f7554ee48ce3eb36287b91d665962f8f4b9c6
+
+source_lineage:
+  historical_predecessor: 70964e5f1577231512f4104b26f5f6649ad8cb39
+  active_successor: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  source_ssot_sha256: c70e32af4a83ed46d457d529c6c8976dd9d4f9b44c2b5e637771ebb1cf9285cc
+
+state:
+  application_evidence: PASS
+  exact_environment: WITHHELD
+  r3_release_production_dov: NOT_EVALUATED
+  r4: BLOCKED_NOT_NEXT
+
+first_red:
+  id: R3_SUCCESSOR_EXECUTION_INGRESS
+  prerequisites:
+    - SUCCESSOR_GIT_OBJECT_HANDOFF
+    - EXACT_ENVIRONMENT_CAPSULE
+
+next_actions:
+  - GBOGEB_GEMINI_PRODUCER_PR
+  - GBOGEB_CRYOPLANT_PROJECT_CONSUMER_PR
+  - EXECUTE_3PC_PROVE_ONLY_WHEN_BOTH_PREREQUISITES_ARE_PHYSICALLY_PRESENT
+
+historical_links:
+  predecessor_ingress: mission-control/grand-missions/GM_I_C_DRIVE_INGRESS_MANIFEST_v1.yaml
+  predecessor_3pr_mip: mission-control/grand-missions/GM_I_C_3PR_MIP_RECEIPT_v1.yaml
+  qps_successor_binding_pr: GBOGEB/cryoplant-project#1447
+  qps_exact_environment_receipt_pr: GBOGEB/cryoplant-project#1449
+  stale_predecessor_producer_issue: GBOGEB/GEMINI#15
+
+non_compensation:
+  issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  canonical_gt_credit: NONE
+  authority_transfer: false
+  formal_credit_delta: 0

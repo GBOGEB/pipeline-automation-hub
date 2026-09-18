@@ -1,0 +1,80 @@
+schema: missioncontrol.gm_i_c.r3_successor.ingress_manifest.v2
+as_of: '2026-09-18T13:04:00+02:00'
+mission: GM-I-C
+lane: HM01_R3_RELEASE_PRODUCTION_SUCCESSOR
+state: WAIT_PARALLEL_SUCCESSOR_GIT_AND_EXACT_ENV_INGRESS
+authority_transfer: false
+formal_credit_delta: 0
+
+supersedes_for_active_r3_production:
+  path: mission-control/grand-missions/GM_I_C_DRIVE_INGRESS_MANIFEST_v1.yaml
+  treatment: HISTORICAL_PREDECESSOR_INGRESS_ONLY_DO_NOT_REWRITE
+
+source_contract:
+  repository: GBOGEB/cryoplant-project
+  historical_predecessor: 70964e5f1577231512f4104b26f5f6649ad8cb39
+  active_production_successor: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  source_ssot_sha256: c70e32af4a83ed46d457d529c6c8976dd9d4f9b44c2b5e637771ebb1cf9285cc
+  relationship: REPAIRED_RENDERER_SUCCESSOR_GOVERNED_CONTENT_INVARIANT
+
+landing_zone:
+  provider: GOOGLE_DRIVE
+  folder_name: Handover_Bundle_QPLANT
+  folder_id: 1B0i2T7hUsSFhHiyw35PPGaeQ_40E2nNr
+
+required_payloads:
+  successor_git_object:
+    preferred_filename: QPS_R3_1248290c.bundle
+    accepted:
+      - git_bundle
+      - clean_clone_archive_with_git_directory
+    must_contain_commit: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+    verify:
+      - SHA256_SIDECAR_MATCH
+      - GIT_BUNDLE_VERIFY_PASS_OR_EQUIVALENT_CLONE_OBJECT_PROOF
+      - REQUIRED_COMMIT_PRESENT
+  exact_environment_capsule:
+    preferred_filename: QPS_R3_PY312_EXACT_ENV_LINUX_X86_64.tar.gz
+    manifest_filename: QPS_R3_PY312_EXACT_ENV_LINUX_X86_64.manifest.json
+    must_prove:
+      python_family: '3.12'
+      exact_dependencies:
+        PyYAML: 6.0.1
+        openpyxl: 3.1.5
+        python-docx: 1.2.0
+        python-pptx: 1.0.2
+        reportlab: 5.0.1
+        pypdf: 6.0.0
+      relocated_self_test: PASS
+      archive_sha256_bound: true
+
+rejected_substitutes:
+  - predecessor_70964_bundle_relabelled_as_successor
+  - source_tree_without_git_objects
+  - release_pack_without_git_objects
+  - connector_reconstructed_pseudo_checkout
+  - environment_manifest_without_runtime_bytes
+  - dependency_version_claim_without_executable_self_test
+
+consumer_contract:
+  next_repo: GBOGEB/cryoplant-project
+  next_gate: R3_SUCCESSOR_EXACT_ENVIRONMENT_REPROOF_ON_ADMITTED_QUALIFIED_EXECUTOR
+  requires_both_payload_classes: true
+  application_evidence_already_passed: true
+  r4: BLOCKED_NOT_NEXT
+
+recurrence:
+  rerun_3pr_on:
+    - SUCCESSOR_SOURCE_CHANGED
+    - LANDING_ZONE_CONTENT_CHANGED
+    - EXACT_ENV_CAPSULE_CHANGED
+    - GOVERNOR_STATE_CHANGED
+  rerun_mip_only_on_new_gap: true
+  no_ceremonial_poll: true
+
+non_compensation:
+  issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  canonical_gt_credit: NONE
+  authority_transfer: false
+  formal_credit_delta: 0

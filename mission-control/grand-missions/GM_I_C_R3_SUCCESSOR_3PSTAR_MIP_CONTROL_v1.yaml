@@ -1,0 +1,138 @@
+schema: missioncontrol.gm_i_c.r3_successor.3pstar_mip_control.v1
+as_of: '2026-09-18T13:04:00+02:00'
+mission: GM-I-C
+lane: HM01_R3_RELEASE_PRODUCTION_SUCCESSOR
+method_selector: 3PR_PLUS_MIP_PLUS_3PC_PREPARE
+method_authority: mission-control/qps-triage-ultra/methods/QPS_TRIAGE_GLOBAL_METHOD_PROFILE_v1.md
+authority_transfer: false
+formal_credit_delta: 0
+
+history:
+  historical_frozen_release_source: 70964e5f1577231512f4104b26f5f6649ad8cb39
+  historical_ingress_manifest: mission-control/grand-missions/GM_I_C_DRIVE_INGRESS_MANIFEST_v1.yaml
+  historical_external_producer_issue: GBOGEB/GEMINI#15
+  preserved_rule: HISTORICAL_RECEIPTS_IMMUTABLE_DO_NOT_REWRITE
+  renderer_repairs:
+    - GBOGEB/cryoplant-project#1444
+    - GBOGEB/cryoplant-project#1446
+  successor_binding:
+    pr: GBOGEB/cryoplant-project#1447
+    merge: 8199a4d1cfa3ad4e83cb51458dee626f684b77ea
+  exact_environment_boundary:
+    pr: GBOGEB/cryoplant-project#1449
+    merge: f7e881534c16510742447f065d6ed8259db4cb16
+
+three_pr:
+  Refresh:
+    result: PASS
+    exact_heads:
+      missioncontrol: 9e7e698c1cf40b594244aba01e1ea704ef76d203
+      qps: f7e881534c16510742447f065d6ed8259db4cb16
+      gemini: 159f7554ee48ce3eb36287b91d665962f8f4b9c6
+    qps_issue_1398: OPEN
+    qps_issue_1426: OPEN
+    gemini_issue_15: OPEN_HISTORICAL_PREDECESSOR_TARGET
+    active_r3_production_source: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+    predecessor_source: 70964e5f1577231512f4104b26f5f6649ad8cb39
+    source_ssot_sha256: c70e32af4a83ed46d457d529c6c8976dd9d4f9b44c2b5e637771ebb1cf9285cc
+  Probe:
+    result: PASS
+    r3_application_evidence: PASS
+    controlled_environment: WITHHELD
+    exact_dependency_lock: NOT_ADMITTED
+    hosted_successor_reproof:
+      run: 35309868700
+      job: 105489492909
+      steps: null
+      artifacts: []
+      classification: INFRASTRUCTURE_PREEXECUTION_RUNNER_ADMISSION
+    structural_gaps:
+      - ACTIVE_SUCCESSOR_GIT_OBJECT_INGRESS_NOT_BOUND
+      - PORTABLE_EXACT_PYTHON_DEPENDENCY_CAPSULE_NOT_BOUND
+      - PREDECESSOR_PRODUCER_ISSUE_15_STALE_FOR_ACTIVE_R3_PRODUCTION
+    application_repair_authorized: false
+  Rank:
+    result: PASS
+    first_red:
+      id: R3_SUCCESSOR_EXECUTION_INGRESS
+      shape: PARALLEL_PREREQUISITES
+      prerequisites:
+        - SUCCESSOR_GIT_OBJECT_HANDOFF
+        - EXACT_ENVIRONMENT_CAPSULE
+    ordered_after_prerequisites:
+      - R3_SUCCESSOR_EXACT_ENVIRONMENT_REPROOF_ON_ADMITTED_QUALIFIED_EXECUTOR
+      - PASS_R3_RELEASE_PRODUCTION_DOV_EVALUATION
+      - R4_FRESH_CLONE_COLD_START_REGENERATION_AND_PARITY
+
+mip:
+  Modernize:
+    state: THIS_PR
+    action: REBASE_INGRESS_CONTRACT_FROM_HISTORICAL_PREDECESSOR_TO_ACTIVE_RENDERER_REPAIRED_SUCCESSOR
+    output: mission-control/grand-missions/GM_I_C_R3_SUCCESSOR_INGRESS_MANIFEST_v2.yaml
+  Innovate:
+    state: DELEGATED_IMPLEMENTATION_PR
+    target_repo: GBOGEB/GEMINI
+    action: BUILD_PORTABLE_EXACT_PY312_ENVIRONMENT_CAPSULE_AND_SUCCESSOR_GIT_BUNDLE_OPERATOR
+    required_no_fake_checkout: true
+  Perpetuate:
+    state: CONTROL_BOUND
+    action:
+      - PRESERVE_PREDECESSOR_HISTORY
+      - BIND_DEPENDENCY_DAG
+      - REQUIRE_EXACT_HASHED_RECEIPTS
+      - PUBLISH_RESTART_DROPIN_AFTER_CONSUMER_PR
+      - RECURSE_ONLY_ON_FIRST_NONCOMPENSATING_RED
+
+three_pc_prepare:
+  transaction: R3_SUCCESSOR_EXACT_ENVIRONMENT_REPROOF
+  Prepare:
+    state: PASS_CONTROL_PREPARED
+    required_inputs:
+      - genuine_git_object_payload_containing_1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+      - portable_python_3_12_exact_dependency_capsule_with_sha256_manifest
+      - qps_successor_aware_exact_environment_runner
+    exact_dependency_lock:
+      PyYAML: 6.0.1
+      openpyxl: 3.1.5
+      python-docx: 1.2.0
+      python-pptx: 1.0.2
+      reportlab: 5.0.1
+      pypdf: 6.0.0
+  Prove:
+    state: HOLD_WAIT_REQUIRED_INPUTS
+  Commit:
+    state: HOLD_WAIT_PROVE
+  no_credit_from_prepare: true
+
+three_p3:
+  authorized: false
+  reason: LOCAL_R3_DOV_NOT_SATISFIED
+
+dependency_dag:
+  - HISTORICAL_70964E5F -> RENDERER_REPAIRS_1444_1446
+  - RENDERER_REPAIRS_1444_1446 -> ACTIVE_SUCCESSOR_1248290C
+  - ACTIVE_SUCCESSOR_1248290C -> APPLICATION_EVIDENCE_PASS
+  - ACTIVE_SUCCESSOR_1248290C -> SUCCESSOR_GIT_OBJECT_HANDOFF
+  - EXACT_ENVIRONMENT_CAPSULE -> R3_SUCCESSOR_EXACT_ENVIRONMENT_REPROOF
+  - SUCCESSOR_GIT_OBJECT_HANDOFF -> R3_SUCCESSOR_EXACT_ENVIRONMENT_REPROOF
+  - APPLICATION_EVIDENCE_PASS -> R3_SUCCESSOR_EXACT_ENVIRONMENT_REPROOF
+  - R3_SUCCESSOR_EXACT_ENVIRONMENT_REPROOF -> PASS_R3_RELEASE_PRODUCTION_DOV_EVALUATION
+  - PASS_R3_RELEASE_PRODUCTION_DOV -> R4_FRESH_CLONE_COLD_START_REGENERATION_AND_PARITY
+
+stop_rules:
+  - DO_NOT_REWRITE_70964E5F_HISTORY
+  - DO_NOT_ACCEPT_PREDECESSOR_BUNDLE_AS_SUCCESSOR_PROOF
+  - DO_NOT_REPAIR_APPLICATION_FROM_ZERO_STEP
+  - DO_NOT_ADVANCE_R4_BEFORE_R3_ACCEPTANCE
+  - DO_NOT_RUN_3P3_BEFORE_LOCAL_R3_DOV
+  - UNKNOWN_IS_NOT_ZERO
+
+non_compensation:
+  issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  runtime_gold: WITHHELD
+  canonical_gt_bdq_4_7_credit: NONE
+  engineering_credit_delta: 0
+  negotiation_credit_delta: 0
+  formal_credit_delta: 0
+  authority_transfer: false
