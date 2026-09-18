@@ -1,0 +1,160 @@
+{
+  "schema": "missioncontrol.historian.bd_rex_3pstar_mip_handover.v1.1",
+  "status": "CONTROLLED_CLOSE_REX_CM005_PREVENTION_WITHHELD",
+  "as_of": "2026-09-18T16:00:00+02:00",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "supersedes_operationally": "mission-control/historian/handover/SC_2026-09-18_BD_REX_3P_MIP_v1.json",
+  "preserves_as_history": [
+    "mission-control/historian/handover/SC_2026-09-18_BD_REX_3P_MIP_v1.json",
+    "mission-control/historian/handover/PUBLICATION_RECEIPT_20260918_v1.json"
+  ],
+  "repository_authority": {
+    "missioncontrol": {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "publication_pr": 253,
+      "publication_head": "45cd8dbc22b8e29f162113858ffca15f553312f4",
+      "publication_merge": "9e914d18850ed9154b6da7dbf7f2b4dfc5bf79a1",
+      "exact_head_runs": [
+        {
+          "id": 35352231756,
+          "name": "W3-13 Measured Fleet Telemetry",
+          "result": "PASS"
+        },
+        {
+          "id": 35352231579,
+          "name": "W3-16 M03 W0 Recon",
+          "result": "PASS"
+        },
+        {
+          "id": 35352231632,
+          "name": "QPS TRIAGE ULTRA Federation Control",
+          "result": "PASS"
+        },
+        {
+          "id": 35352231529,
+          "name": "W3-11 Non-Origin Math Consumer",
+          "result": "PASS"
+        },
+        {
+          "id": 35352231557,
+          "name": "MissionControl Crew Telemetry + Role Gap",
+          "result": "PASS"
+        },
+        {
+          "id": 35352231723,
+          "name": "W3-14 Measured PCA",
+          "result": "PASS"
+        }
+      ],
+      "publication_dov": "PASS_POSTMERGE_EXACT_HEAD",
+      "merge_admission_dov": "WITHHELD_PR_MERGED_WHILE_CHECKS_QUEUED"
+    },
+    "abacus": {
+      "repo": "GBOGEB/ABACUS",
+      "cm003_cm004_repeat_pr": 1271,
+      "repeat_head": "a4d3c196aa4d6617acd810734ce525df23ca3e17",
+      "repeat_merge": "f739bca8804a526bb433235de5ff3f2a34de77da",
+      "w74_run": 35349719151,
+      "w169_run": 35349719044,
+      "cm003_004_validator_run": 35349719045,
+      "bd018_control_issue": 1278,
+      "policy_commit": "c17124160b82e0b3ff94eebb98608118296f45cf",
+      "digest_report_commit": "82f6edaea6a60f948dc51b6038fbad944977d676",
+      "exact_generated_delta_commit": "621c9ca2ab6848d524f3c8ddb831524e756c159f",
+      "final_governance_run": 35352120094,
+      "final_governance_job": 105622495352,
+      "final_governance_result": "PASS_GT_ZERO_STEPS",
+      "workflow_count": 142,
+      "policy_outcome": "success",
+      "inventory_outcome": "success",
+      "policy_digest": "6a975e6a9a4aefbe08111375be872915efb9dc0c6969ea51311ef20370be5d19"
+    },
+    "cryoplant_runner_gate": {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue": 923,
+      "state": "OPEN",
+      "compensation_allowed": false
+    }
+  },
+  "three_p_star": {
+    "refresh": "PASS_FRESH_REPOSITORY_AUTHORITY",
+    "probe": "PASS_CM003_004_DISTINCT_SHA_PLUS_BD018_RECURRENCE",
+    "rank": "PASS_BD018_CONTENT_FIRST_RED_REPAIRED_AND_ADMISSION_GAP_SEPARATED",
+    "prepare": "PASS_REPOSITORY_NATIVE_REGISTER_CREW_HANDOVER_DROPIN_PUBLICATION_RECEIPT",
+    "prove": "PASS_ABACUS_142_OF_142_AND_MISSIONCONTROL_6_OF_6_EXACT_HEAD",
+    "commit": "PUBLISHED_PR253_MERGE_9E914D_WITH_POSTMERGE_DOV_PASS; ADMISSION_SEQUENCE_CONTROL_WITHHELD"
+  },
+  "mip": {
+    "modernize": "PASS_WORKFLOW_POLICY_SSOT_142_OF_142_AND_LIVING_BD_REGISTER",
+    "innovate": "PASS_REX_CM005_SEPARATES_DETECTION_REPAIR_AND_MERGE_PREVENTION",
+    "perpetuate": "PASS_LOSSLESS_RESTART_CHAIN_CURRENT_POINTER_AND_PUBLICATION_RECEIPT"
+  },
+  "root_state": {
+    "total_durable_roots": 18,
+    "open_roots": [
+      "HIST-BD-001",
+      "HIST-BD-009"
+    ],
+    "done_recurrent_root": "HIST-BD-018",
+    "bd018": {
+      "state": "DONE",
+      "occurrence_count": 7,
+      "recurrence_episode_count": 2,
+      "repair_proof": "ABACUS run35352120094 PASS policy+inventory workflow_count=142",
+      "prevention_control": "REX-CM-005"
+    }
+  },
+  "rex_controls": {
+    "REX-CM-001": "CONTROL",
+    "REX-CM-002": "CONTROL",
+    "REX-CM-003": "CONTROL",
+    "REX-CM-004": "CONTROL",
+    "REX-CM-005": {
+      "state": "ACTIVE_PREVENTION_WITHHELD",
+      "reason": "detector and repair are proven, but merge admission is not bound fail-closed",
+      "evidence": [
+        "ABACUS PR#1277 merged before governance proof",
+        "ABACUS PR#1280 merged while governance red",
+        "MissionControl PR#253 merged while checks queued",
+        "ABACUS main observed unprotected"
+      ],
+      "control_target": [
+        "Bind merge admission/ruleset to CI Workflow Governance or equivalent required check.",
+        "Prove deliberately unclassified workflow change remains non-mergeable while red.",
+        "Prove later distinct-source classified workflow change is green and mergeable.",
+        "Retain negative and positive admission receipts."
+      ]
+    }
+  },
+  "specialist_state": {
+    "active": [
+      "Doctor.REX -> HIST-BD-001",
+      "Doctor.Contracts -> HIST-BD-009 + REX-CM-005",
+      "Doctor.Runtime -> RUNNER-ECONOMICS-79 + cryoplant#923",
+      "Historian -> REX-CM-005 + HIST-BD-009 + fleet deep-dive"
+    ],
+    "returned_control_reserve": [
+      "Doctor.Analytics",
+      "Doctor.SupplyChain",
+      "Debug Surgeon"
+    ]
+  },
+  "invariants": [
+    "Do not reopen HIST-BD-018 content repair unless current code regresses; its repair is DONE.",
+    "Do not call REX-CM-005 CONTROL until merge admission is fail-closed and negative/positive admission repeats exist.",
+    "Do not compensate cryoplant-project#923 with success from ABACUS, MissionControl, CODEX or public repositories.",
+    "Do not synthesize fleet denominators, PCA rows or BT pairs from governance counts.",
+    "Retain PR#1277, PR#1280 and PR#253 premature-merge observations as negative evidence.",
+    "No chat-only TODOs or decisions are required for restart."
+  ],
+  "next_executable": [
+    "REX-CM-005: bind merge admission to the governance check and execute negative then positive admission proof.",
+    "HIST-BD-001: repair requested-vs-observed REX semantics with completed-disposition evidence.",
+    "HIST-BD-009: make validated rejected runtime evidence canonical without promotion.",
+    "Continue Q_engineering_tools Historian deep-dive after the bounded control work.",
+    "Continue cryoplant-project#923 only through repo-local runner admission evidence."
+  ],
+  "chat_only_todos": 0,
+  "chat_only_decisions": 0
+}
