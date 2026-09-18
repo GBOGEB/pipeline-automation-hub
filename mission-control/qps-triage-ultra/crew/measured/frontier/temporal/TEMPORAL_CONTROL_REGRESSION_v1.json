@@ -106,7 +106,50 @@
     },
     "rex_state": "REGRESSION",
     "disposition": "CONTROL_REVOKED_REEARN_REQUIRED",
-    "next_action": "DECOMPOSE_CONTROL_REGRESSION_AND_REEARN_FROZEN_GATE"
+    "next_action": "DECOMPOSE_CONTROL_REGRESSION_BY_HABITAT_AND_LANE_AND_REEARN_FROZEN_STRENGTH_GATE",
+    "weighted_history_identity": {
+      "prior_observed_pairs": 114,
+      "prior_pooled_single_strength": 0.7008026572612402,
+      "latest_observed_pairs": 6,
+      "latest_single_normalized_strength": 0.5,
+      "current_observed_pairs": 120,
+      "recomputed_current_pooled_single_strength": 0.6907625243981782,
+      "identity_verified": true
+    },
+    "latest_window_decomposition": {
+      "regime": "HABITAT_AND_LANE_HETEROGENEITY_OBSERVED",
+      "by_habitat": {
+        "linux": {
+          "single_wins": 1,
+          "paired_wins": 1,
+          "direction": "INDETERMINATE"
+        },
+        "macos": {
+          "single_wins": 2,
+          "paired_wins": 0,
+          "direction": "ALLOC_SINGLE_CELL"
+        },
+        "windows": {
+          "single_wins": 0,
+          "paired_wins": 2,
+          "direction": "ALLOC_PAIRED_CELL"
+        }
+      },
+      "by_lane": {
+        "baseline": {
+          "single_wins": 2,
+          "paired_wins": 1,
+          "direction": "ALLOC_SINGLE_CELL"
+        },
+        "held": {
+          "single_wins": 1,
+          "paired_wins": 2,
+          "direction": "ALLOC_PAIRED_CELL"
+        }
+      },
+      "interpretation": "The latest neutral global result is not uniform neutrality; runner habitat and lane split the six observations in opposing directions. Diagnostic evidence only; no CONTROL credit."
+    },
+    "diagnostic_surface": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/temporal_regression_diagnostics.py"
   },
   "other_noncontrol_classes": [
     {
