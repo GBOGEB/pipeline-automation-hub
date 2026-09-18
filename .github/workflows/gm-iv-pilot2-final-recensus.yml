@@ -1,6 +1,16 @@
 name: GM-IV PILOT_2_OF_8 Final Recensus
 
 on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/**'
+      - 'mission-control/qps-triage-ultra/crew/measured/**'
+      - '.github/workflows/gm-iv-pilot2-final-recensus.yml'
+      - '.github/workflows/gm-fleet-03-f01-pilot.yml'
+      - '.github/workflows/gm-fleet-03-f03-pilot.yml'
+      - '.github/workflows/gm-fleet-03-ring2-recon.yml'
+      - '.github/workflows/crew-exposure-instrumentation.yml'
   push:
     branches:
       - mission/gm-iv-governor-pilot2-final
