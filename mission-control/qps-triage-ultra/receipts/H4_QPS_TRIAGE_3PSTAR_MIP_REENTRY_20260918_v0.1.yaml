@@ -10,7 +10,8 @@ child_transaction:
   superseded_pr: 1499
   child_base_sha: 2571a520e2d765cf4089a8cd375ca3dd290def58
   child_head_sha: b57368e7d18d860dfcbda3e25204fed58774db5d
-  status: OPEN_REENTRY_CONTROL
+  child_merge_sha: 67768b9628a0c698c8a2d9808d0ab66712ed6a15
+  status: MERGED_REENTRY_CONTROL
   controls:
     - triage/h4/QPS_H4_3PSTAR_MIP_REENTRY_CONTROL_20260918_v0.1.yaml
     - handover/session/SC_2026-09-18_H4_QPS_TRIAGE_3PSTAR_MIP_REENTRY_v1.md
@@ -32,9 +33,10 @@ sequential_result:
 runtime_gate:
   issue: GBOGEB/cryoplant-project#923
   required_predicate: runner_id != 0 AND steps > 0
-  latest_bound_run: 35359591164
-  latest_bound_job: 105647283067
+  latest_bound_run: 35360184752
+  latest_bound_job: 105649242616
   observed_steps: 0
+  observation_state: QUEUED_WITH_NO_STEPS_AT_BIND
   classification: INFRA_PREEXECUTION_ZERO_STEP_OR_UNASSIGNED
 
 canonical_reliability_boundary:
