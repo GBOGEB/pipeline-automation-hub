@@ -21,7 +21,7 @@ def validate(doc: dict) -> list[str]:
     if c["r3_dov_node"]["producer"] != c["r3_dov_node"]["consumer"]:
         errs.append("DAG_DOV_NODE_IDENTITY")
     schemas=set(c["capsule_schema"].values())
-    if schemas != {"gmi.r3.successor.exact_env_capsule.v2"}:
+    if schemas != {"gmi.r3_successor.exact_env_capsule.v2"}:
         errs.append("CAPSULE_SCHEMA_IDENTITY")
     iso=c["clean_environment_isolation"]
     if not iso["producer_relocated_self_test_unsets_ld_library_path"] or not iso["standalone_validator_unsets_ld_library_path"]:
