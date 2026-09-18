@@ -8,6 +8,7 @@ on:
       - "scripts/run_processing.py"
       - "tests/test_recursive_build_master.py"
       - "tests/test_run_processing_recursive_integration.py"
+      - "excel_schedule_engine/**"
       - ".github/workflows/recursive-build.yml"
       - "docs/recursive_build/**"
       - ".vscode/tasks.json"
@@ -19,6 +20,7 @@ on:
       - "scripts/run_processing.py"
       - "tests/test_recursive_build_master.py"
       - "tests/test_run_processing_recursive_integration.py"
+      - "excel_schedule_engine/**"
 
 permissions:
   contents: read
@@ -31,8 +33,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Install Excel schedule-engine dependency
+        run: python -m pip install -r excel_schedule_engine/requirements.txt
       - name: Compile
-        run: python -m py_compile scripts/Recursive_Build_Master.py scripts/recursive_build.py scripts/run_processing.py
+        run: python -m py_compile scripts/Recursive_Build_Master.py scripts/recursive_build.py scripts/run_processing.py excel_schedule_engine/src/excel_schedule_engine.py
       - name: Unit tests
         run: |
           python -m unittest -v             tests.test_recursive_build_master             tests.test_run_processing_recursive_integration
