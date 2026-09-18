@@ -515,9 +515,12 @@
         "run35349719045 detected 4 unclassified workflows",
         "ABACUS#1277 auto-merged while governance queued",
         "ABACUS#1280 auto-merged while governance red",
-        "main@82f6edaea6a60f948dc51b6038fbad944977d676 content-consistent 142/142; post-fix governance run35351825106 queued"
+        "main@82f6edaea6a60f948dc51b6038fbad944977d676 content-consistent 142/142; post-fix governance run35351825106 queued",
+        "run35351825106 policy PASS; inventory FAIL one repeated-command derived line",
+        "main@621c9ca2ab6848d524f3c8ddb831524e756c159f exact generated delta applied",
+        "run35352120094 final hosted governance re-proof queued"
       ],
-      "done_when": "Repair content must pass hosted CI Workflow Governance >0 steps; CONTROL additionally requires merge admission bound to governance and negative/positive admission repeat"
+      "done_when": "Final hosted run35352120094 must execute >0 steps and PASS; CONTROL additionally requires merge admission bound to governance and negative/positive admission repeat"
     }
   ],
   "control_measures": [
@@ -578,7 +581,10 @@
         "ABACUS#1278",
         "ABACUS main protected=false",
         "PR#1277 merged before proof",
-        "PR#1280 merged while governance red"
+        "PR#1280 merged while governance red",
+        "run35351825106 detector policy PASS / inventory stale-one-line FAIL",
+        "main@621c9ca2 exact generated fix",
+        "run35352120094 queued final re-proof"
       ]
     }
   ],
