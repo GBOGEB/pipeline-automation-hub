@@ -1,0 +1,30 @@
+name: HM-01 R3 DMAIC Control
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - "mission-control/grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json"
+      - "mission-control/grand-missions/validate_r3_dmaic_control.py"
+      - ".github/workflows/hm01-r3-dmaic-control.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  control-proof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate W277-W279 control card
+        run: |
+          mkdir -p output/r3-dmaic
+          python mission-control/grand-missions/validate_r3_dmaic_control.py             --control mission-control/grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json             --out output/r3-dmaic/R3_DMAIC_CONTROL_RECEIPT_v1.json
+      - name: Upload control receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: hm01-r3-dmaic-control
+          path: output/r3-dmaic/R3_DMAIC_CONTROL_RECEIPT_v1.json
+          if-no-files-found: error
+          retention-days: 30
