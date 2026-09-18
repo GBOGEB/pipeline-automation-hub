@@ -1,14 +1,17 @@
 {
-  "schema": "missioncontrol.hm01.r3.dmaic_control.v1",
-  "as_of": "2026-09-18T13:44:00+02:00",
+  "schema": "missioncontrol.hm01.r3.dmaic_control.v2",
+  "as_of": "2026-09-18T13:57:00+02:00",
   "issue": "GBOGEB/pipeline-automation-hub#209",
-  "wave": "W279",
+  "wave": "W281",
   "method": {
-    "3P*": "3P3",
+    "3P*": "3PR_PLUS_3PC_CONTROL_REBASELINE",
     "sequence": [
-      "Preserve",
-      "Propagate",
+      "Refresh",
+      "Probe",
+      "Rank",
+      "Prepare",
       "Prove",
+      "Commit",
       "MIP-Perpetuate"
     ],
     "scope": "DMAIC_TOOLING_CONTROL_ONLY",
@@ -24,7 +27,8 @@
       "workflow_run": 35340769134,
       "artifact_id": 10545076561,
       "artifact_digest": "sha256:33449d0d8d6aa911c7822a662bf8696104c10d280dcc63c7db71b13bd978c189",
-      "result": "PASS_MEASURED_KPI_CONTRACT"
+      "result": "PASS_MEASURED_KPI_CONTRACT",
+      "treatment": "HISTORICAL_MEASUREMENT_BASELINE"
     },
     "W278": {
       "pr": 211,
@@ -34,11 +38,34 @@
       "job": 105586336403,
       "artifact_id": 10545017109,
       "artifact_digest": "sha256:b064d1fe23f20cc67c8180bd4b6f0517d77eb52bcf13acf5f08fc905fc27767f",
-      "result": "PASS_PREMERGE_INVARIANT_PROOF"
+      "result": "PASS_PREMERGE_INVARIANT_PROOF",
+      "treatment": "HISTORICAL_PROVISIONAL_SELF_CONTAINED_PROOF_SUPERSEDED_BY_W280_R1"
+    },
+    "W280_first_red": {
+      "pr": 214,
+      "head": "42279f4567fe11f99b8c5f16d616b52167408eb4",
+      "merge": "90ca031754955be82ebf1b9936f1807e970d9736",
+      "workflow_run": 35341618617,
+      "job": 105588574924,
+      "result": "FAIL_CAPSULE_SCHEMA_IDENTITY",
+      "classification": "APPLICATION_CONTROL_VALIDATOR_CANONICAL_SCHEMA_EXPECTATION_DRIFT",
+      "treatment": "IMMUTABLE_FAILED_MEASURE_ANALYSE_EVIDENCE"
+    },
+    "W280_R1": {
+      "pr": 215,
+      "head": "b8723101c2bd0559a8ef8e21aa5209e9303f1582",
+      "merge": "bd05fd5f1cb472a8ea9175aa6bbeb474faa2057d",
+      "workflow_run": 35341881590,
+      "job": 105589407653,
+      "artifact_id": 10544798850,
+      "artifact_digest": "sha256:30ee06aa8134b78743f816e4d244d742d65595f745ded74194e198ca8f2a3eda",
+      "result": "PASS_PREMERGE_INVARIANT_AND_PROTECTED_CONTROL_PROOF",
+      "codex_review": "COMPLETED_NO_NEW_FINDINGS_OBSERVED",
+      "treatment": "CURRENT_PREVENTION_PROOF"
     }
   },
   "kpi": {
-    "historical": {
+    "historical_r3_slice": {
       "pr_population": 8,
       "mean_merge_lead_seconds": 210,
       "median_merge_lead_seconds": 169,
@@ -46,30 +73,33 @@
       "primary_prs_requiring_recursive_repair": 3,
       "first_pass_closure_rate": 0.25,
       "defect_repair_closure_yield": 1,
-      "preventive_defect_class_coverage": 0,
       "physical_r3_prerequisites_open": 2,
       "exact_environment_capsule_admitted": 0,
       "first_red_cardinality": 2
     },
-    "observed_after_W278": {
-      "defect_repair_closure_yield": 1,
-      "preventive_defect_class_coverage": 1,
-      "synthetic_fault_detection_rate": 1,
-      "false_accept_count": 0,
-      "measurement_contract_exact_head_pass": 1,
-      "premerge_contract_exact_head_pass": 1,
-      "improvement_workflow_first_pass_yield": 1,
-      "improvement_workflow_population": 2,
+    "current_outcome": {
       "physical_r3_prerequisites_open": 1,
       "exact_environment_capsule_admitted": 1,
-      "first_red_cardinality": 1
+      "first_red_cardinality": 1,
+      "original_recurrence_classes_encoded": 5,
+      "original_recurrence_synthetic_detection_rate": 1,
+      "false_accept_count": 0,
+      "protected_control_surfaces_validated": 3,
+      "protected_control_surfaces_total": 3
     },
-    "delta": {
-      "preventive_defect_class_coverage": 1,
-      "physical_r3_prerequisites_open": -1,
-      "exact_environment_capsule_admitted": 1,
-      "first_red_cardinality": -1,
-      "defect_repair_closure_yield": 0
+    "dmaic_process": {
+      "pr_population_through_w280_r1": 5,
+      "proof_workflow_first_pass_pass_count": 4,
+      "proof_workflow_first_pass_yield": 0.8,
+      "review_evaluated_pr_count": 5,
+      "review_clean_pr_count": 1,
+      "review_clean_rate": 0.2,
+      "material_review_findings_observed_before_w281": 10,
+      "material_review_findings_closed_before_w281": 6,
+      "material_review_findings_target_after_w281": 10,
+      "review_finding_closure_yield_before_w281": 0.6,
+      "review_finding_closure_yield_target_after_w281": 1,
+      "qps_propagation_review_findings_open": 2
     },
     "lagging_kpis": {
       "first_pass_closure_rate": {
@@ -92,23 +122,25 @@
   },
   "control_rules": {
     "immediate_red_if": [
-      "preventive_defect_class_coverage < 1.0",
-      "synthetic_fault_detection_rate < 1.0",
+      "original_recurrence_synthetic_detection_rate < 1.0",
       "false_accept_count > 0",
+      "protected_control_surfaces_validated != protected_control_surfaces_total",
       "authority_transfer != false",
       "formal_credit_delta != 0"
     ],
     "lagging_remeasure_trigger": "AFTER_4_NEW_PRIMARY_CHANGE_PRS",
+    "qps_consumer_repair_required": true,
+    "qps_consumer_repair_scope": "VALIDATE_ALL_PROPAGATED_KPIS_AND_ALL_REMEASUREMENT_TRIGGERS",
     "no_probability_calibration_before_governed_model": true,
     "historical_predictions_immutable": true,
     "unknown_is_not_zero": true
   },
   "tooling_3p3": {
-    "local_dov": "PASS_TWO_PUBLIC_EXACT_HEAD_WORKFLOW_PROOFS",
+    "local_dov": "PASS_W280_R1_PROTECTED_CONTROL_PROOF",
     "preserve": "PASS",
     "propagate_target": "GBOGEB/cryoplant-project",
-    "propagate_required_receipt": "QPS_R3_DMAIC_CONTROL_CONSUMER_RECEIPT_v1.json",
-    "prove": "PENDING_QPS_CONSUMER",
+    "propagate_required_receipt": "QPS_R3_DMAIC_CONTROL_CONSUMER_RECEIPT_v2.json",
+    "prove": "HOLD_WAIT_QPS_CONSUMER_FIX_FORWARD",
     "r3_release_3p3_authorized": false
   },
   "guards": {

@@ -62,10 +62,13 @@ def validate_actual_controls(root: Path) -> list[str]:
       f"predecessor_source: {PREDECESSOR}",
       "R3_SUCCESSOR_EXACT_ENVIRONMENT_REPROOF -> PASS_R3_RELEASE_PRODUCTION_DOV",
       "PASS_R3_RELEASE_PRODUCTION_DOV -> R4_FRESH_CLONE_COLD_START_REGENERATION_AND_PARITY",
-      "authorized: false",
     ]
     if any(x not in control for x in required_control) or "PASS_R3_RELEASE_PRODUCTION_DOV_EVALUATION" in control:
         errs.append("DAG_DOV_NODE_IDENTITY")
+    m=re.search(r"(?ms)^three_p3:\\s*$\\n(?P<body>(?:^[ \\t]+.*(?:\\n|$))*)",control)
+    body=m.group("body") if m else ""
+    if not re.search(r"(?m)^  authorized:\\s*false\\s*$",body):
+        errs.append("GATE_OR_AUTHORITY_OVERCLAIM")
     required_ingress=[
       f"historical_predecessor: {PREDECESSOR}",
       f"active_production_successor: {ACTIVE}",
