@@ -10,6 +10,7 @@ on:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v2.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v3.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_FRONTIER_CURRENT_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/**'
       - '.github/workflows/crew-temporal-3pstar-mip-burndown.yml'
   push:
@@ -21,6 +22,7 @@ on:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v2.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v3.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_FRONTIER_CURRENT_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/**'
       - '.github/workflows/crew-temporal-3pstar-mip-burndown.yml'
   workflow_run:
@@ -57,25 +59,36 @@ jobs:
           v3=json.loads((root/'TEMPORAL_3PSTAR_MIP_ITERATION_v3.json').read_text())
           cur=json.loads((root/'TEMPORAL_FRONTIER_CURRENT_v1.json').read_text())
           assert v3['schema']=='missioncontrol.temporal_3pstar_mip_iteration.v3'
-          assert v3['control_state']['control_class_count']==3
+          gate=json.loads((root/'TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json').read_text())
+          assert v3['control_state']['control_class_count']==2
           assert v3['control_state']['full_control'] is False
           assert v3['three_p_star']['prove']['implementation_pr_head']['status']=='PASS_LATE_AFTER_MERGE'
           assert v3['rex']['id']=='REX-005'
           assert v3['rex']['repair_pr']==252
           assert v3['rex']['repair_merge']=='243337e7170029ccfbcf1588ce951356fd1d22a7'
-          assert v3['active_frontier'][0]['task_class']=='long_compute_contended'
-          assert v3['active_frontier'][0]['min_clean_dominant_windows_to_consistency_0_80']==11
-          assert v3['active_frontier'][1]['task_class']=='human_dependency_wait_proxy'
-          assert v3['active_frontier'][1]['min_clean_dominant_windows_to_consistency_0_80']==5
+          assert v3['active_frontier'][0]['task_class']=='short_compute'
+          assert v3['active_frontier'][0]['regression_from_control'] is True
+          assert v3['active_frontier'][0]['first_red']=='pooled_winner_strength'
+          assert v3['active_frontier'][1]['task_class']=='long_compute_contended'
+          assert v3['active_frontier'][2]['task_class']=='human_dependency_wait_proxy'
           assert v3['invariants']['thresholds_changed'] is False
           assert v3['invariants']['synthetic_or_manual_clock_credit'] is False
           assert v3['invariants']['competency_promotions']==0
           assert v3['invariants']['authority_transfer'] is False
           assert cur['schema']=='missioncontrol.temporal_frontier_current.v1'
           assert cur['refresh_first'] is True
-          assert cur['control_classes']==['cache_artifact_reuse','short_compute','validation_bundle']
+          assert cur['state']=='CONTROL_REGRESSION_ACTIVE_2_OF_5_CONTROL_THREE_CLASS_FRONTIER'
+          assert cur['control_classes']==['cache_artifact_reuse','validation_bundle']
+          assert cur['regressed_classes']==['short_compute']
+          assert cur['current_genuine_schedule']['run_id']=='35350275999'
           assert cur['proof_chain']['postmerge_recurrence']['run_id']=='35352260069'
           assert cur['proof_chain']['postmerge_recurrence']['job_id']=='105622958891'
+          assert gate['schema']=='missioncontrol.temporal_short_compute_reearn_gate.v1'
+          assert gate['status']=='WAIT_NEXT_GENUINE_SCHEDULE'
+          assert gate['eligible_evidence']['event']=='schedule'
+          assert gate['frozen_control_gate']['min_pooled_winner_strength']==0.7
+          assert gate['invariants']['thresholds_changed'] is False
+          assert gate['invariants']['synthetic_or_manual_clock_credit'] is False
           for rel in (
               'handover/SC_2026-09-18_TEMPORAL_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md',
               'handover/RESTART_DROPIN_2026-09-18_TEMPORAL_FRONTIER_v1.md',
@@ -83,8 +96,9 @@ jobs:
               assert (root/rel).is_file(), rel
           print(json.dumps({
               'status':'PASS_TEMPORAL_3PSTAR_MIP_LOSSLESS_HANDOVER_CONTRACT',
-              'control_class_count':3,
-              'active_frontier_count':2,
+              'control_class_count':2,
+              'active_frontier_count':3,
+              'regressed_classes':['short_compute'],
               'postmerge_run':'35352260069',
               'postmerge_job':'105622958891',
               'authority_transfer':False,
