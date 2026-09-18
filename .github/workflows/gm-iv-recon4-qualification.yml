@@ -1,0 +1,153 @@
+name: GM-IV RECON_4_OF_8 Qualification
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/**'
+      - '.github/workflows/gm-iv-recon4-qualification.yml'
+  push:
+    branches:
+      - mission/gm-iv-recon4-qualification
+      - master
+    paths:
+      - 'mission-control/grand-missions/**'
+      - '.github/workflows/gm-iv-recon4-qualification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Bind exact source SHA
+        shell: bash
+        run: |
+          SOURCE_SHA="$(git rev-parse HEAD)"
+          test "$SOURCE_SHA" = "${{ github.sha }}"
+          echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
+
+      - name: Compile qualification assessor
+        shell: bash
+        run: |
+          python -m py_compile mission-control/grand-missions/assess_gm_iv_recon4_qualification.py
+
+      - name: Fetch exact F05 and F06 targets
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/gm-iv-recon4-targets"
+          mkdir -p "$root"
+          exact_fetch() {
+            url="$1"; sha="$2"; dest="$3"
+            git -C "$root" init "$dest"
+            git -C "$root/$dest" remote add origin "$url"
+            git -C "$root/$dest" fetch --depth=1 origin "$sha"
+            git -C "$root/$dest" checkout --detach FETCH_HEAD
+            test "$(git -C "$root/$dest" rev-parse HEAD)" = "$sha"
+          }
+          exact_fetch https://github.com/GBOGEB/docker-stacks.git edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f f05
+          exact_fetch https://github.com/GBOGEB/gk-cli.git 5e5eeebf9533db5e2c6c0e849f171d5f3488dfeb f06
+
+      - name: Produce bounded reconnaissance receipts
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          root = Path(os.environ["RUNNER_TEMP"]) / "gm-iv-recon4-targets"
+          out = Path(os.environ["RUNNER_TEMP"]) / "gm-iv-recon4"
+          out.mkdir(parents=True, exist_ok=True)
+
+          def clean(repo):
+              import subprocess
+              return not subprocess.run(
+                  ["git", "-C", str(repo), "status", "--porcelain"],
+                  check=True, text=True, capture_output=True
+              ).stdout.strip()
+
+          def marker_count(repo):
+              needles = ("GBOGEB/cryoplant-project", "QPS engineering authority", "QPLANT engineering authority")
+              count = 0
+              for p in repo.rglob("*"):
+                  if not p.is_file() or ".git" in p.parts or p.stat().st_size > 1_000_000:
+                      continue
+                  try:
+                      text = p.read_text(encoding="utf-8", errors="ignore")
+                  except OSError:
+                      continue
+                  count += sum(text.count(n) for n in needles)
+              return count
+
+          f05 = root / "f05"
+          readme5 = (f05 / "README.md").read_text(encoding="utf-8", errors="ignore")
+          r5 = {
+              "schema": "qps.gm_iv_f05_recon_receipt.v1",
+              "repository": "GBOGEB/docker-stacks",
+              "target_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+              "readme_jupyter_docker_stacks": "Jupyter Docker Stacks" in readme5,
+              "dockerfile_count": sum(1 for p in f05.rglob("Dockerfile") if ".git" not in p.parts),
+              "workflow_file_count": sum(1 for p in (f05 / ".github" / "workflows").glob("*.y*ml")) if (f05 / ".github" / "workflows").exists() else 0,
+              "qps_authority_marker_count": marker_count(f05),
+              "clean_checkout": clean(f05),
+              "disposition": "RECON_ACCEPTED_HABITAT"
+          }
+          (out / "f05-recon.json").write_text(json.dumps(r5, indent=2, sort_keys=True) + "\n")
+
+          f06 = root / "f06"
+          readme6 = (f06 / "README.md").read_text(encoding="utf-8", errors="ignore")
+          suffixes = {".go", ".py", ".rs", ".js", ".ts", ".java", ".c", ".cc", ".cpp", ".sh"}
+          r6 = {
+              "schema": "qps.gm_iv_f06_recon_receipt.v1",
+              "repository": "GBOGEB/gk-cli",
+              "target_sha": "5e5eeebf9533db5e2c6c0e849f171d5f3488dfeb",
+              "readme_gitkraken_cli": "GitKraken CLI" in readme6,
+              "readme_mcp_server": "MCP server" in readme6,
+              "readme_multiple_repos": "multiple repos" in readme6,
+              "executable_source_file_count": sum(1 for p in f06.rglob("*") if p.is_file() and ".git" not in p.parts and p.suffix.lower() in suffixes),
+              "qps_authority_marker_count": marker_count(f06),
+              "clean_checkout": clean(f06),
+              "disposition": "RECON_ACCEPTED_REFERENCE_BIASED"
+          }
+          (out / "f06-recon.json").write_text(json.dumps(r6, indent=2, sort_keys=True) + "\n")
+          print(json.dumps({"F05": r5, "F06": r6}, sort_keys=True))
+          PY
+
+      - name: Assess qualification without promotion
+        shell: bash
+        run: |
+          out="$RUNNER_TEMP/gm-iv-recon4"
+          python mission-control/grand-missions/assess_gm_iv_recon4_qualification.py             --f05-receipt "$out/f05-recon.json"             --f06-receipt "$out/f06-recon.json"             --out "$out/GM_IV_RECON4_QUALIFICATION_RECEIPT.json"
+
+      - name: Enforce non-promotional boundary
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p = Path(os.environ["RUNNER_TEMP"]) / "gm-iv-recon4" / "GM_IV_RECON4_QUALIFICATION_RECEIPT.json"
+          d = json.loads(p.read_text())
+          assert d["source_sha"] == os.environ["SOURCE_SHA"]
+          assert d["result"] == "PASS"
+          assert d["mission_promotion"] == "WITHHELD_FROM_QUALIFICATION"
+          assert d["governor_readiness"] == "READY_FOR_SEPARATE_RECON_4_OF_8_GOVERNOR_GATE"
+          assert d["children_bound"] is False
+          assert d["authority_transfer"] is False
+          assert d["gm_v_state"] == "HELD"
+          print("PASS_GM_IV_RECON4_QUALIFICATION_BOUNDARY")
+          PY
+
+      - name: Upload exact-head qualification receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-iv-recon4-qualification-${{ github.sha }}
+          path: ${{ runner.temp }}/gm-iv-recon4/**
+          if-no-files-found: error
