@@ -1,0 +1,23 @@
+schema: missioncontrol.gm_i_c.r3_successor.dag_repair_receipt.v1
+as_of: '2026-09-18T13:15:00+02:00'
+parent_pr: GBOGEB/pipeline-automation-hub#199
+trigger: POST_MERGE_CODEX_REVIEW
+finding:
+  class: DEPENDENCY_DAG_NODE_IDENTITY_MISMATCH
+  producer_before: PASS_R3_RELEASE_PRODUCTION_DOV_EVALUATION
+  consumer_before: PASS_R3_RELEASE_PRODUCTION_DOV
+repair:
+  canonical_node: PASS_R3_RELEASE_PRODUCTION_DOV
+  producer_after: PASS_R3_RELEASE_PRODUCTION_DOV
+  consumer_after: PASS_R3_RELEASE_PRODUCTION_DOV
+  topology_change: LABEL_IDENTITY_ONLY
+  authority_change: NONE
+validation:
+  exact_label_path_connected: true
+  r4_still_requires_r3_pass: true
+  three_p3_authorized: false
+non_compensation:
+  issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  authority_transfer: false
+  formal_credit_delta: 0
