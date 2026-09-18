@@ -1,8 +1,8 @@
 {
   "schema": "gbogeb.excel_schedule_engine.project_manifest.v1",
-  "version": "v0.1.1",
-  "as_of": "2026-09-18T19:08:00+02:00",
-  "state": "P1_HOTFIX_3PSTAR_MIP",
+  "version": "v0.2.0",
+  "as_of": "2026-09-18T19:18:00+02:00",
+  "state": "MAIN_RUNNER_BINDING_CANDIDATE",
   "purpose": "Excel parser/engine for planning and scheduling tables feeding the MAIN pipeline.",
   "authority": {
     "input_source": "ActiveDocs/MASTER.xlsx",
@@ -40,7 +40,9 @@
     "test_failures": 0,
     "formula_relocation_regressions": 0,
     "export_id_collisions": 0,
-    "used_range_origin_errors": 0
+    "used_range_origin_errors": 0,
+    "main_runner_excel_manifest_hash_binding": 1,
+    "main_runner_backward_compatibility_regressions": 0
   },
   "runtime": {
     "language": "python",
@@ -53,7 +55,12 @@
     "orchestration_repo": "GBOGEB/pipeline-automation-hub",
     "global_layout_repo": "GBOGEB/GBOGEB",
     "external_excel_addin_repo": "GBOGEB/ExcelAddinInstaller",
-    "excel_addin_role": "LEGACY_EXTERNAL_RUNTIME_REFERENCE_NOT_PARSER_AUTHORITY"
+    "excel_addin_role": "LEGACY_EXTERNAL_RUNTIME_REFERENCE_NOT_PARSER_AUTHORITY",
+    "main_runner": "scripts/run_processing.py",
+    "main_runner_mode": "OPTIONAL_EXPLICIT_EXCEL_PHASE",
+    "pipeline_receipt_schema": "pipeline_automation_hub.pipeline_run_receipt.v2",
+    "fail_closed_when_excel_requested": true,
+    "default_behavior_without_excel": "UNCHANGED"
   },
   "p1_hotfix": {
     "source": "post-merge Codex review on pipeline-automation-hub#275",
