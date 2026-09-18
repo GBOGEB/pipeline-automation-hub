@@ -24,13 +24,13 @@ jobs:
       - name: Prove recurrence classes and protected controls fail closed
         run: |
           mkdir -p output/r3-dmaic
-          python mission-control/grand-missions/validate_r3_dmaic_premerge.py             --repo-root .             --contract mission-control/grand-missions/R3_DMAIC_PREMERGE_CONTRACT_v1.json             --out output/r3-dmaic/R3_DMAIC_PREMERGE_RECEIPT_v2.json
+          python mission-control/grand-missions/validate_r3_dmaic_premerge.py             --repo-root .             --contract mission-control/grand-missions/R3_DMAIC_PREMERGE_CONTRACT_v1.json             --out output/r3-dmaic/R3_DMAIC_PREMERGE_RECEIPT_v3.json
       - name: Run premerge fault-injection and protected-control tests
         run: python -m unittest mission-control/grand-missions/tests/test_r3_dmaic_premerge.py
       - name: Upload premerge proof
         uses: actions/upload-artifact@v4
         with:
           name: hm01-r3-dmaic-premerge
-          path: output/r3-dmaic/R3_DMAIC_PREMERGE_RECEIPT_v2.json
+          path: output/r3-dmaic/R3_DMAIC_PREMERGE_RECEIPT_v3.json
           if-no-files-found: error
           retention-days: 30
