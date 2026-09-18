@@ -6,7 +6,7 @@
     "TEMPORAL_3PSTAR_MIP_ITERATION_v1.json",
     "TEMPORAL_3PSTAR_MIP_ITERATION_v2.json"
   ],
-  "as_of": "2026-09-18T15:36:00+02:00",
+  "as_of": "2026-09-18T15:50:00+02:00",
   "repository": "GBOGEB/pipeline-automation-hub",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -50,21 +50,28 @@
         "control_marker": "PASS_TEMPORAL_3PSTAR_MIP_ITERATION_CONTROL"
       },
       "postmerge_recurrence": {
-        "status": "WAIT_RUNNER_EXECUTION",
+        "status": "PASS_EXACT_MERGED_MASTER_RUNTIME",
         "merge_sha": "243337e7170029ccfbcf1588ce951356fd1d22a7",
         "run_id": "35352260069",
         "job_id": "105622958891",
-        "observed_state": "QUEUED_ZERO_STEPS_AT_HANDOVER",
-        "required_success_marker": "PASS_TEMPORAL_3PSTAR_MIP_PROOF_REBIND_CONTROL"
+        "checkout_exact_merge_sha": true,
+        "steps_executed": true,
+        "tests": "3_OF_3_PASS",
+        "success_marker": "PASS_TEMPORAL_3PSTAR_MIP_PROOF_REBIND_CONTROL"
       }
     },
     "commit": {
       "implementation_merge": "a56e94ee92077b912a5a3480ae73a1c13b775eba",
       "proof_rebind_merge": "243337e7170029ccfbcf1588ce951356fd1d22a7",
       "original_sequence_nonconformity": "RETAINED_AS_REX_005",
-      "closure_credit": "WITHHELD_UNTIL_POSTMERGE_RECURRENCE_PASS"
+      "closure_credit": "PASS_FIX_FORWARD_SEQUENCE_CONTROLLED",
+      "repair_controlled_by": {
+        "merge_sha": "243337e7170029ccfbcf1588ce951356fd1d22a7",
+        "run_id": "35352260069",
+        "job_id": "105622958891"
+      }
     },
-    "propagate_perpetuate": "CONTROLLED_WAIT_POSTMERGE_EXACT_HEAD_PROOF"
+    "propagate_perpetuate": "PASS_AUTHORIZED_HANDOVER_PUBLICATION"
   },
   "mip": {
     "Modernize": {
@@ -76,8 +83,8 @@
       "result": "consistency debt, strength debt, first-red and minimum-clean-window pressure implemented"
     },
     "Perpetuate": {
-      "status": "IMPLEMENTED_WAIT_RUNTIME_CONFIRMATION",
-      "result": "PR-head plus merged-master recurrence and genuine-schedule downstream regeneration wired"
+      "status": "PASS",
+      "result": "PR-head proof, merged-master recurrence, genuine-schedule regeneration and repository-native restart chain all bound"
     }
   },
   "rex": {
@@ -88,7 +95,14 @@
     "infrastructure_or_sequence_control": true,
     "repair_pr": 252,
     "repair_merge": "243337e7170029ccfbcf1588ce951356fd1d22a7",
-    "closure_predicate": "POSTMERGE_UNIT_CONTRACT_STEPS_GT_0_AND_SUCCESS"
+    "closure_predicate": "POSTMERGE_UNIT_CONTRACT_STEPS_GT_0_AND_SUCCESS",
+    "state": "CONTROLLED",
+    "closure_proof": {
+      "run_id": "35352260069",
+      "job_id": "105622958891",
+      "merge_sha": "243337e7170029ccfbcf1588ce951356fd1d22a7",
+      "success_marker": "PASS_TEMPORAL_3PSTAR_MIP_PROOF_REBIND_CONTROL"
+    }
   },
   "active_frontier": [
     {
@@ -130,20 +144,17 @@
     }
   ],
   "exact_next_predicate": {
-    "first": "resolve postmerge proof run 35352260069 / job 105622958891",
-    "on_success": [
-      "mark REX-005 occurrence CONTROLLED for this temporal lane",
-      "bind exact run/job/merge in successor reconciliation",
-      "retain 3-of-5 class control",
-      "continue P0 long_compute regime decomposition",
-      "continue P1 wait-proxy surveillance",
-      "do not reopen accepted CONTROL classes absent governed regression"
+    "first": "P0 long_compute_contended regime decomposition",
+    "action": "DECOMPOSE_SIGNED_EFFECT_BY_RUNNER_LANE_AND_TEMPORAL_HALF",
+    "parallel": [
+      "continue P1 human_dependency_wait_proxy genuine-schedule stability measurement with proxy claim boundary",
+      "continue surveillance of the three CONTROL classes and reopen only on governed regression",
+      "evaluate H3 7-day surveillance only after genuine scheduled span reaches 604800 seconds"
     ],
-    "on_failure": [
-      "classify first failing step",
-      "repair only that first red",
-      "do not alter policy thresholds",
-      "do not grant 3PC Commit/3P3 closure credit"
+    "guards": [
+      "do not lower or raise CONTROL thresholds",
+      "do not use push/PR/manual/synthetic traffic as CONTROL clock",
+      "do not convert controlled wait proxy into real-human evidence"
     ]
   },
   "invariants": {
