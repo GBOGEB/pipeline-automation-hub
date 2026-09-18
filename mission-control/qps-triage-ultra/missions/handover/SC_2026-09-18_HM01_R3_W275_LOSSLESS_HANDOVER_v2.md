@@ -48,9 +48,9 @@ The proof contains five target-job PASS results, pytest 402 passed / 0 failed
 from 415 collected, and artifact `10518602763` with SHA-256
 `2904d3cc2ef3f359b98db0b75bd2613436b94395b975ccf807c08a8c1d793b7f`.
 
-#1263 merged the v0.2 receipt. #1265 is unmerged race provenance. #1267 is the
-fix-forward transaction that makes exact-proof-vs-floating-current semantics
-explicit. Legacy Deploy Artifacts failure remains separate governance debt.
+#1263 merged the v0.2 receipt. #1265 is unmerged race provenance. #1267 merged
+at `421d70842da08876d882bf16a9a8cfa2eb07baee` and makes
+exact-proof-vs-floating-current semantics explicit. Legacy Deploy Artifacts failure remains separate governance debt.
 
 ## 3P* state
 
