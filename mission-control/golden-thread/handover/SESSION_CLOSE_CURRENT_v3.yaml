@@ -1,0 +1,49 @@
+schema: missioncontrol.golden_thread.session_close/v3
+as_of: '2026-09-18T16:54:00+02:00'
+session: GOLDEN_THREAD_W284_3PSTAR_MIP
+state: CLOSE_OK_BLOCKED_EXTERNAL_OWNER_ACTION
+canonical_successor: true
+supersedes: mission-control/golden-thread/handover/SESSION_CLOSE_CURRENT_v2.yaml
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+qps_credit_delta: 0
+chat_only_todo_count: 0
+
+lineage:
+  preserved_session_execution_anchor: 94ef9de83a40f114179d128d12d4835279beebab
+  preserved_meaning: GT_BD_003_3PC_PREPARE_PR_197_MERGE
+  qps_3pstar_pr: 1487
+  qps_3pstar_merge: 35f53924e3a42e9d8a9df80b0f9dac6ac0f1f2af
+  missioncontrol_mip_base: 8d0e2ecba2c318527eb99c8b504994995deb660e
+
+handover:
+  current_frontier: mission-control/golden-thread/GOLDEN_THREAD_FRONTIER_CURRENT_v2.yaml
+  mip_receipt: mission-control/golden-thread/GOLDEN_THREAD_MIP_W284_20260918_v2.yaml
+  owner_action_contract: mission-control/golden-thread/GT_BD_003_OWNER_ACTION_REENTRY_CONTRACT_v1.json
+  restart_dropin: mission-control/golden-thread/handover/RESTART_DROPIN_2026-09-18_GT_BD_003_OWNER_ACTION_v3.md
+
+first_red:
+  architecture: GT-BD-003_3PC_PROVE_CHILD_HOSTED_EXECUTION
+  physical_gate: QPS_ISSUE_923_RUNNER_ADMISSION
+  classification: INFRA_PREEXECUTION_ZERO_STEP
+  release_condition: RUNNER_ID_NONZERO_AND_STEPS_GT_0
+
+three_pc:
+  Prepare: PASS
+  Prove: WITHHELD_EXTERNAL_OWNER_ACTION
+  Commit: HOLD
+
+qps_global_boundary:
+  GT_BDQ_0: WITHHELD_INFRA_PREEXECUTION
+  GT_BDQ_1: NOT_ADMITTED
+  issue: 923
+  compensation_allowed: false
+
+next_action: >-
+  Owner restores private-repository Actions admission or attaches the trusted
+  self-hosted runner. Then execute the unchanged Release Runner Probe once.
+  Only a real runner assignment with steps greater than zero admits direct
+  resume at GT-BD-003 / 3PC Prove.
+
+stop_if_unchanged: PRESERVE_WITHHELD_NO_APPLICATION_REPAIR
