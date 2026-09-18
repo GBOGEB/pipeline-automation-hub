@@ -1,0 +1,46 @@
+{
+  "schema": "qps-w280r-bt-counteroutcome-search/v0.2",
+  "wave": "W280R",
+  "repair_component": {
+    "source": "GBOGEB/pipeline-automation-hub#31",
+    "nodes": [
+      "SEMANTIC_BOUNDARY_GUARD_REPAIR",
+      "STATISTICAL_TOLERANCE_REPAIR",
+      "UNREPAIRED_BASELINE"
+    ],
+    "observed_pairs": 2,
+    "reverse_or_tie_or_direct_cross_repair_found": false,
+    "search_disposition": "NO_QUALIFYING_COUNTER_OUTCOME_FOUND",
+    "finite_unregularized_mle": false,
+    "state": "WITHHELD_NO_FINITE_UNREGULARIZED_MLE"
+  },
+  "separate_allocation_component": {
+    "source_repo": "GBOGEB/pipeline-automation-hub",
+    "source_pr": 56,
+    "source_merge": "0c425e8a3eb15707908e408f58a61aa01db61b88",
+    "observations_path": "mission-control/qps-triage-ultra/crew/measured/PAIRWISE_OBSERVATIONS.json",
+    "observations_blob": "e2af1e63bb5d253d625ca301de56ad6b8c48a6d6",
+    "strategies": [
+      "ALLOC_SINGLE_CELL",
+      "ALLOC_PAIRED_CELL"
+    ],
+    "observed_pairs": 12,
+    "single_cell_wins": 8,
+    "paired_cell_wins": 4,
+    "ties": 0,
+    "bidirectional_outcomes": true,
+    "finite_two_node_unregularized_mle": true,
+    "mle_strength_ratio_single_to_paired": 2,
+    "implied_pairwise_probability_single": 0.6666666666666666,
+    "state": "FINITE_LOCAL_COMPONENT_OBSERVED",
+    "bridge_to_repair_component": false
+  },
+  "conditional_extension": {
+    "source_pr": 68,
+    "source_merge": "439662bf9514039b587e19fd58e72ce7972beb6e",
+    "evidence": "30_OBSERVED_EXACT_SHA_PAIRS_PER_RUN_FIVE_TASK_CLASSES",
+    "bridge_to_repair_component": false
+  },
+  "global_state": "WITHHELD_DISCONNECTED_HETEROGENEOUS_COMPARISON_GRAPH",
+  "guard": "NO_SEMANTIC_NORMALIZATION_ACROSS_REPAIR_AND_ALLOCATION_COMPONENTS_WITHOUT_SHARED_OBSERVED_CANDIDATE_CLASSES"
+}
