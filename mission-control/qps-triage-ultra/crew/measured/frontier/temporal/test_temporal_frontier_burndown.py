@@ -149,6 +149,38 @@ class TemporalFrontierBurndownTests(unittest.TestCase):
         row = next(x for x in result["active_frontier"] if x["task_class"] == "long_compute_contended")
         self.assertEqual(row["first_red_gate"], "independent_windows")
 
+
+    def test_post_control_regression_is_ranked_first(self):
+        receipt = self.receipt()
+        receipt["policies"]["short_compute"]["policy_status"] = "LEARNING"
+        receipt["policies"]["short_compute"]["control_frontier"]["pooled_winner_strength"] = 0.6907625243981782
+        receipt["temporal_surveillance"]["classes"]["short_compute"] = {
+            "direction_flip_count": 2,
+            "indeterminate_window_fraction": 0.20,
+            "early_direction": "ALLOC_SINGLE_CELL",
+            "late_direction": "ALLOC_SINGLE_CELL",
+            "early_vs_late_direction_agreement": True,
+            "jackknife": {
+                "min_pooled_winner_strength": 0.6817463959182276,
+                "direction_preservation_fraction": 1.0,
+            },
+        }
+        prior = {
+            "control_classes": [
+                {"task_class": "cache_artifact_reuse", "policy_status": "CONTROL_POLICY"},
+                {"task_class": "short_compute", "policy_status": "CONTROL_POLICY"},
+                {"task_class": "validation_bundle", "policy_status": "CONTROL_POLICY"},
+            ]
+        }
+        result = build_burndown(receipt, self.config(), prior)
+        self.assertEqual(result["regression_classes"], ["short_compute"])
+        row = result["active_frontier"][0]
+        self.assertEqual(row["task_class"], "short_compute")
+        self.assertTrue(row["regression_from_control"])
+        self.assertEqual(row["regime_classification"], "CONTROL_REGRESSION")
+        self.assertEqual(row["first_red_gate"], "pooled_winner_strength")
+        self.assertEqual(row["next_action"], "DECOMPOSE_CONTROL_REGRESSION_AND_REEARN_FROZEN_GATE")
+
     def test_authority_transfer_fails_closed(self):
         receipt = self.receipt()
         receipt["authority_transfer"] = True
