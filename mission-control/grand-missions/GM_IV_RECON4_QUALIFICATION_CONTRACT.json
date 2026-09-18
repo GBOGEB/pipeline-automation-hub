@@ -1,0 +1,67 @@
+{
+  "schema": "qps.gm_iv_recon4_qualification_contract.v1",
+  "wave": "GM-FLEET-04-RECON4-QUALIFY",
+  "mission_id": "GM-IV",
+  "source_stage_required": "STAGED_ACTIVE_PILOT_2_OF_8",
+  "governor_target_stage": "STAGED_ACTIVE_RECON_4_OF_8",
+  "authority_transfer": false,
+  "children_bound": false,
+  "selection_basis": "observed capability diversity and bounded source reconnaissance; not PCA or BT",
+  "controlled_baseline": ["GM-IV-F01", "GM-IV-F03"],
+  "reference_baseline": ["GM-IV-F02", "GM-IV-F04"],
+  "selected_recon": {
+    "GM-IV-F05": {
+      "repository": "GBOGEB/docker-stacks",
+      "target_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "capability": "EXECUTION_HABITAT",
+      "why_frontier": "Jupyter container habitat is orthogonal to existing document, provenance, notebook-runtime, and YAML-reference frontiers",
+      "initial_crew": ["SCOUT", "READER", "AMBASSADOR"],
+      "bounded_probe": "exact-SHA source reconnaissance of Docker/Jupyter identity, Dockerfile surface, workflow surface, authority markers, and checkout cleanliness",
+      "pass_disposition": "RECON_ACCEPTED_HABITAT",
+      "return_trigger": "habitat integration boundary and pilotability classified or search saturation"
+    },
+    "GM-IV-F06": {
+      "repository": "GBOGEB/gk-cli",
+      "target_sha": "5e5eeebf9533db5e2c6c0e849f171d5f3488dfeb",
+      "capability": "OPERATOR_MULTI_REPO_INTERFACE",
+      "why_frontier": "multi-repository work-item and MCP operator surface is orthogonal to existing execution and semantic frontiers",
+      "initial_crew": ["SCOUT", "READER", "AMBASSADOR"],
+      "bounded_probe": "exact-SHA source reconnaissance of CLI, work-item, MCP, multi-repository, authority markers, and checkout cleanliness",
+      "pass_disposition": "RECON_ACCEPTED_REFERENCE_BIASED",
+      "return_trigger": "operator-interface extraction value and executable-source boundary classified or search saturation"
+    }
+  },
+  "pruned_or_deferred": [
+    {
+      "repository": "GBOGEB/yaml-grammar",
+      "disposition": "DEFER_HIGH_OVERLAP",
+      "reason": "strong immediate semantic overlap with the existing F04 yaml-reference-parser frontier"
+    },
+    {
+      "repository": "GBOGEB/telegraf",
+      "disposition": "DEFER_LOW_INCREMENTAL_VALUE",
+      "reason": "existing M06 bounded Observer control already returned DoV-1 PASS with low incremental-value disposition"
+    },
+    {
+      "repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "disposition": "EXCLUDE_QPS_AUTHORITY_RECONCILIATION",
+      "reason": "already governed by QPS M07 engineering-authority reconciliation and therefore not an independent Grand-Mission frontier candidate"
+    }
+  ],
+  "qualification_requires": [
+    "exact_target_sha_for_F05_and_F06",
+    "bounded_probe_executes_more_than_zero_workflow_steps",
+    "target_checkouts_remain_clean",
+    "no_QPS_engineering_authority_claim",
+    "F01_and_F03_control_baseline_preserved",
+    "F02_and_F04_reference_baseline_preserved",
+    "GM_V_remains_HELD",
+    "children_remain_empty",
+    "authority_transfer_remains_false"
+  ],
+  "promotion_boundary": "QUALIFICATION_PASS_IS_NOT_RECON_4_OF_8_PROMOTION; A SEPARATE GOVERNOR STAGE UPDATE AND FRESH MASTER RECURRENCE ARE REQUIRED",
+  "analytics_boundary": {
+    "fleet_pca": "DEFER_UNTIL_COMPARABLE_MEASURED_GM_ROWS_EXIST",
+    "fleet_bt": "DEFER_UNTIL_CONNECTED_OBSERVED_PAIRWISE_ALLOCATION_GRAPH_EXISTS"
+  }
+}
