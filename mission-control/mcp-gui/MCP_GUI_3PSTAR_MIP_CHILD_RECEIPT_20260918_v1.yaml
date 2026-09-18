@@ -1,0 +1,133 @@
+schema: missioncontrol.mcp_gui_candidate.3pstar_mip_receipt/v1
+as_of: "2026-09-18T19:10:00+02:00"
+repository: GBOGEB/pipeline-automation-hub
+base_master_sha: c9088f1a075de46f06126dca8e350a0d913010f6
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+compliance_credit_delta: 0
+
+mission:
+  id: MCP_GUI_HUMAN_EXECUTION_CONSOLE
+  purpose: >-
+    Register the bounded 3P* then MIP child implementation that turns the
+    existing MCP GUI prototype into a human-centric, evidence-driven execution
+    console without moving child engineering authority into Mission Control.
+  method_order:
+    - 3PSTAR
+    - MIP
+
+child:
+  repository: GBOGEB/CODESPACES_jyperter
+  base_sha: bd0c516288c27dd6ad0b1008f0ebda6540116785
+  branch: mcp-gui-human-console-3p-mip
+  head_sha: a1be1927191268b20987415d54525d37f5c24405
+  pull_request: 68
+  pull_request_url: https://github.com/GBOGEB/CODESPACES_jyperter/pull/68
+  merge_state: OPEN_NOT_PROMOTED_BY_PARENT
+
+three_p_star:
+  refresh:
+    state: COMPLETE
+    evidence:
+      - refreshed live child main before branch creation
+      - read prior merged GUI lineage including PR 33
+      - read existing repository CI and Tkinter runtime conventions
+  probe:
+    state: COMPLETE
+    first_reds:
+      - prototype referenced non-existent repository artefacts
+      - manifest writes replaced unrelated manifest fields
+      - execution status semantics were weak and colour-only in places
+      - artefact serving lacked an explicit repository-root containment contract
+      - no focused exact-slice CI proof existed
+  rank:
+    state: COMPLETE
+    priority_order:
+      - preserve evidence truth and manifest lineage
+      - bind human-readable status to a shared model
+      - prove the bounded GUI slice independently
+      - enrich GitHub CI status without making network availability authoritative
+
+mip:
+  modernize:
+    state: COMPLETE
+    outputs:
+      - gui_candidate_bundle/status_model.py
+      - gui_candidate_bundle/gui_flask.py
+      - gui_candidate_bundle/gui_launcher.py
+    controls:
+      - atomic manifest update preserving unrelated fields
+      - POST-only parser execution
+      - bounded GitHub API timeout
+      - repository-root artefact containment
+      - missing parser represented as BLOCKED
+  innovate:
+    state: COMPLETE
+    outputs:
+      - numbered S1-S5 execution cards
+      - Mermaid workflow rendered from the same status model
+      - JSON status endpoint
+      - Tkinter desktop fallback
+      - text plus colour status semantics
+  perpetuate:
+    state: COMPLETE_WITH_REPOSITORY_BASELINE_RED
+    outputs:
+      - gui_candidate_bundle/tests/test_status_model.py
+      - gui_candidate_bundle/tests/test_gui_flask.py
+      - .github/workflows/mcp-gui-candidate.yml
+      - gui_candidate_bundle/ASCII_descriptive.md
+      - gui_candidate_bundle/HANDOVER.md
+      - gui_candidate_bundle/README.md
+    bios_glob_handover: gui_candidate_bundle/HANDOVER.md
+
+proof:
+  focused_exact_head:
+    workflow: MCP GUI candidate
+    run_id: 35372615974
+    conclusion: SUCCESS
+    job: MCP GUI focused proof
+    job_steps:
+      install_focused_dependencies: SUCCESS
+      run_gui_contract_tests: SUCCESS
+      compile_candidate_entrypoints: SUCCESS
+  repository_global_ci:
+    workflow: CI
+    run_id: 35372615912
+    conclusion: FAILURE
+    failing_step: Run tests
+    command: make test
+    observed_subcommand: flake8 src tests
+    classification: REPOSITORY_BASELINE_OR_UNRELATED_GLOBAL_LINT_RED
+    rationale: >-
+      The failing command lints src and tests and emitted existing-style errors
+      across those trees; the bounded GUI files are under gui_candidate_bundle
+      and are not in that flake8 invocation. No repository-wide repair is
+      authorized by this child mission.
+  check_global_index:
+    workflow: Check Global Index
+    run_id: 35372615908
+    conclusion: SUCCESS
+
+parent_controls:
+  parent_role: ROUTE_CORRELATE_EXACT_SHA_RECEIPT_ONLY
+  may:
+    - retain exact child SHA and PR correlation
+    - record focused proof and unrelated repository-wide red
+    - route future follow-up
+  must_not:
+    - grant engineering acceptance
+    - grant compliance acceptance
+    - treat this receipt as authority transfer
+    - mask the repository-global CI failure
+
+disposition:
+  child_slice: FOCUSED_PROOF_PASS
+  parent_receipt: READY_FOR_REVIEW
+  merge_authority: CHILD_REPOSITORY_POLICY_AND_HUMAN_REVIEW
+  current_open_red: REPOSITORY_GLOBAL_CI_FLAKE8_SRC_TESTS
+  next:
+    - review child PR 68
+    - decide repository policy for pre-existing/global lint red
+    - merge child only under child repository policy
+    - after child merge, rebind parent receipt to child merge SHA if required
