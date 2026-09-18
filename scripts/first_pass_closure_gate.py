@@ -8,7 +8,6 @@ import re
 import sys
 import urllib.error
 import urllib.request
-from dataclasses import dataclass
 from typing import Any
 
 MARKER_RE = re.compile(r"<!--\s*FPC_RECEIPT_V1\s*(\{.*?\})\s*-->", re.S)
@@ -19,10 +18,10 @@ REQUIRED_PURPOSES = {"canonical_self_test", "mutation_test", "exact_head_ci"}
 class GateError(RuntimeError):
     pass
 
-@dataclass
 class ApiClient:
-    token: str
-    api_root: str = "https://api.github.com"
+    def __init__(self, token: str, api_root: str = "https://api.github.com"):
+        self.token = token
+        self.api_root = api_root
 
     def get(self, path: str) -> Any:
         req = urllib.request.Request(
