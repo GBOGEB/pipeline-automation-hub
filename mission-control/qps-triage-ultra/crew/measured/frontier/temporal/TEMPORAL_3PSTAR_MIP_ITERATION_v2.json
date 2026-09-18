@@ -1,0 +1,140 @@
+{
+  "schema": "missioncontrol.temporal_3pstar_mip_iteration.v2",
+  "mission_id": "MC-CREW-FRONTIER-004",
+  "scope": "TWO_CLASS_NONCONTROL_BURNDOWN_PROOF_REBIND",
+  "supersedes": "TEMPORAL_3PSTAR_MIP_ITERATION_v1.json",
+  "predecessor": {
+    "implementation_pr": 246,
+    "implementation_head": "1b62b2d254b70e47b654df31d40ddfd6fabdc11c",
+    "merge_sha": "a56e94ee92077b912a5a3480ae73a1c13b775eba",
+    "dedicated_workflow_run": "35351860027",
+    "dedicated_job": "105621646115",
+    "observed_job_state_at_rebind": "QUEUED_ZERO_EXECUTION_OBSERVED",
+    "implementation_files_merged": true
+  },
+  "proof_rebind": {
+    "rex_classification": "REX-005_UNBOUND_PROMOTION_PROOF_GATE",
+    "merge_without_exact_head_proof_observed": true,
+    "merge_itself_counts_as_proof": false,
+    "repair": "ADD_PULL_REQUEST_AND_PUSH_EXACT_HEAD_UNIT_CONTRACT_PLUS_POSTMERGE_RECURRENCE",
+    "required_proof": {
+      "branch_or_merge_head_must_match_checkout": true,
+      "steps_must_execute": true,
+      "unit_tests_must_pass": true,
+      "iteration_invariants_must_pass": true
+    },
+    "final_exact_head_proof": null,
+    "state": "REPAIR_ACTIVE_WAIT_EXACT_HEAD_PASS"
+  },
+  "three_p_star": {
+    "refresh": {
+      "status": "PASS",
+      "basis": "3_OF_5_CONTROL_GENUINE_SCHEDULE_AUTHORITY"
+    },
+    "probe": {
+      "status": "PASS",
+      "result": "REGIME_REVERSAL_AND_WEAK_NOISY_DIRECTION_SEPARATED"
+    },
+    "rank": {
+      "status": "PASS",
+      "P0": "long_compute_contended",
+      "P1": "human_dependency_wait_proxy"
+    },
+    "prepare": {
+      "status": "PASS",
+      "contract": "burndown engine + unit tests + recurring genuine-schedule consumer + merged-master recurrence"
+    },
+    "prove": {
+      "status": "HOLD_WAIT_EXACT_HEAD_RUNTIME"
+    },
+    "commit": {
+      "status": "MERGE_OCCURRED_WITHOUT_PROOF_CREDIT",
+      "credit": "WITHHELD",
+      "rule": "a56e94ee92077b912a5a3480ae73a1c13b775eba is implementation history, not 3PC Prove evidence"
+    },
+    "propagate_perpetuate": {
+      "status": "HOLD_UNTIL_PROOF_REBIND",
+      "after_pass": [
+        "publish TEMPORAL_FRONTIER_CURRENT_v1.yaml with exact proof/merge identities",
+        "publish lossless handover",
+        "publish restart drop-in",
+        "repeat on merged master and bind run/job"
+      ]
+    }
+  },
+  "mip": {
+    "Modernize": {
+      "status": "PASS",
+      "result": "distinct instability mechanisms retained"
+    },
+    "Innovate": {
+      "status": "PASS",
+      "result": "consistency debt + minimum clean-window pressure retained"
+    },
+    "Perpetuate": {
+      "status": "REPAIR_ACTIVE",
+      "result": "add post-merge push recurrence so future commits cannot be treated as proof merely by merging"
+    }
+  },
+  "current_control": {
+    "source_schedule_run": "35319784958",
+    "source_schedule_sha": "9e7e698c1cf40b594244aba01e1ea704ef76d203",
+    "control_classes": [
+      "cache_artifact_reuse",
+      "short_compute",
+      "validation_bundle"
+    ],
+    "control_class_count": 3,
+    "task_class_count": 5,
+    "full_control": false,
+    "scheduled_windows": 19,
+    "scheduled_span_seconds": 389315,
+    "H2_72H": "MATURE",
+    "H3_7D": "NOT_MATURE"
+  },
+  "active_frontier": [
+    {
+      "priority": "P0",
+      "task_class": "long_compute_contended",
+      "first_red": "direction_consistency",
+      "regime": "REGIME_REVERSAL_OBSERVED",
+      "early_direction": "ALLOC_PAIRED_CELL",
+      "late_direction": "ALLOC_SINGLE_CELL",
+      "direction_counts": {
+        "ALLOC_PAIRED_CELL": 9,
+        "ALLOC_SINGLE_CELL": 5
+      },
+      "direction_consistency": 0.6428571428571429,
+      "pooled_winner_strength": 0.5987602959653776,
+      "latest_two_directional_windows_agree": false,
+      "min_consecutive_clean_dominant_windows_to_consistency": 11,
+      "next_action": "DECOMPOSE_SIGNED_EFFECT_BY_RUNNER_LANE_AND_TEMPORAL_HALF"
+    },
+    {
+      "priority": "P1",
+      "task_class": "human_dependency_wait_proxy",
+      "first_red": "direction_consistency",
+      "regime": "WEAK_OR_NOISY_DIRECTION",
+      "early_direction": "ALLOC_SINGLE_CELL",
+      "late_direction": "ALLOC_SINGLE_CELL",
+      "direction_counts": {
+        "ALLOC_SINGLE_CELL": 11,
+        "ALLOC_PAIRED_CELL": 4
+      },
+      "direction_consistency": 0.7333333333333333,
+      "pooled_winner_strength": 0.6212672162393283,
+      "latest_two_directional_windows_agree": false,
+      "min_consecutive_clean_dominant_windows_to_consistency": 5,
+      "next_action": "KEEP_PROXY_CLAIM_BOUNDARY_AND_CONTINUE_GENUINE_SCHEDULED_STABILITY_MEASUREMENT",
+      "claim_boundary": "CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE"
+    }
+  ],
+  "invariants": {
+    "thresholds_changed": false,
+    "synthetic_or_manual_clock_credit": false,
+    "competency_promotions": 0,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "full_control_claim": false
+  }
+}
