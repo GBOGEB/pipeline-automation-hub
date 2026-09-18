@@ -5,6 +5,11 @@ on:
     types: [opened, synchronize, reopened, ready_for_review, edited]
     branches: [master]
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number (gate workflow only)
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -18,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Unit-test gate logic
         run: python -m unittest scripts/tests/test_first_pass_closure_gate.py
@@ -30,7 +37,8 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
           else
-            test -n "${PR_NUMBER:-}" || { echo "PR_NUMBER required for workflow_dispatch" >&2; exit 2; }
+            PR_NUMBER="${{ inputs.pr_number }}"
+            test -n "$PR_NUMBER" || { echo "pr_number input required for workflow_dispatch" >&2; exit 2; }
             echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
           fi
 
