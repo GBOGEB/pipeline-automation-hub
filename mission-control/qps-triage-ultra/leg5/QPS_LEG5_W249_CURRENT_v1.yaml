@@ -1,0 +1,51 @@
+schema: missioncontrol.qps_leg5_w249_current/v1
+as_of: '2026-09-18T13:24:00+02:00'
+canonical: true
+mission: QPS_LEG5_TXT_ASSIMILATION_CONSUMPTION_BURNDOWN
+state: 7_OF_9_CLOSED_PARENT_CONTROL_COMPLETE_CHILD_RUNTIME_WITHHELD
+authority_transfer: false
+formal_credit_delta: 0
+
+current_parent:
+  reconciliation: mission-control/qps-triage-ultra/leg5/QPS_LEG5_W249_POSTMERGE_RECONCILIATION_v3.yaml
+  restart: mission-control/qps-triage-ultra/leg5/RESTART_DROPIN_2026-09-18_W249_LEG5_POSTMERGE_v3.md
+  lossless_handover: mission-control/qps-triage-ultra/leg5/SC_2026-09-18_W249_LEG5_POSTMERGE_RECONCILIATION_v3.md
+
+child_authority:
+  repo: GBOGEB/cryoplant-project
+  refresh_first: true
+  observed_main: 34d21db38a0cfc2a07c4d59039e002bdb89578fa
+  current_leg5_handover: handover/session/SC_2026-09-18_W249_LEG5_3PSTAR_MIP_LOSSLESS_HANDOVER_v2.md
+  current_leg5_restart: handover/session/RESTART_DROPIN_2026-09-18_W249_LEG5_v2.md
+  current_leg5_control: triage/w249/QPS_W249_LEG5_3PSTAR_MIP_FOLLOWUP_v0.2.yaml
+  routes_closed: 7
+  routes_total: 9
+  open_routes: [1266, 1357]
+
+runtime_gate:
+  issue: GBOGEB/cryoplant-project#923
+  state: OPEN_OWNER_ACTION
+  required:
+    - runner_id_nonzero
+    - steps_gt_0
+    - validator_runner_selector_compatible
+  selector: CRYO_RECEIPT_RUNNER
+  compensation_allowed: false
+
+next_order:
+  - refresh_live_child_and_parent_state
+  - if_runner_predicate_false_stop_runtime_progression
+  - execute_1266_validator_unchanged_after_runner_predicate
+  - close_1266_only_on_PASS
+  - execute_1357_validator_unchanged_after_1266_PASS
+  - close_1357_only_on_PASS_as_governed_noncompensating_hold
+  - publish_9_of_9
+  - verify_zero_undeclared_routes_and_zero_authority_promotions
+  - evaluate_1258_closure
+
+history_preserved:
+  - QPS_PR_1450
+  - QPS_PR_1456
+  - MC_PR_200
+  - MC_PR_202
+  - MC_PR_203
