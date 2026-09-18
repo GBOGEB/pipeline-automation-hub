@@ -1,0 +1,33 @@
+name: recursive-build
+
+on:
+  pull_request:
+    paths:
+      - "scripts/Recursive_Build_Master.py"
+      - "scripts/recursive_build.py"
+      - "tests/test_recursive_build_master.py"
+      - ".github/workflows/recursive-build.yml"
+      - "docs/recursive_build/**"
+      - ".vscode/tasks.json"
+  push:
+    branches: [master]
+    paths:
+      - "scripts/Recursive_Build_Master.py"
+      - "scripts/recursive_build.py"
+      - "tests/test_recursive_build_master.py"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile
+        run: python -m py_compile scripts/Recursive_Build_Master.py scripts/recursive_build.py
+      - name: Unit tests
+        run: python -m unittest -v tests.test_recursive_build_master
