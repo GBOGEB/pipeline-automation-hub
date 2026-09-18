@@ -1,0 +1,156 @@
+schema: missioncontrol.gmi_c.w284_3pstar_mip_federation.v1
+as_of: '2026-09-18T15:43:00+02:00'
+wave: W284
+mission: GM-I-C
+state: QPS_W282_VISUAL_PROVE_ACCEPTED_FEDERATED_STOP_FROZEN
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+negotiation_credit_delta: 0
+competency_promotions: 0
+
+method:
+  three_pstar:
+    sequence:
+      - 3PR_REFRESH
+      - 3PR_PROBE
+      - 3PR_RANK
+      - 3PC_ACCEPT_EXISTING_PROOF
+      - MIP_MODERNIZE
+      - MIP_INNOVATE
+      - MIP_PERPETUATE
+    release_three_p3_authorized: false
+
+refresh:
+  missioncontrol_head: a9695cd69ae94f596b9568024f99aac7cf15cb09
+  qps_main: cf637f4c251683918eb190c21b5d91597d45ab7e
+  gemini_main: 439838866e77784334ef76d231f9a9e0aa4f5e5c
+  qtools_proof_head: 753f95058f886aeded020950c3150ca5018655d2
+
+three_pr:
+  Refresh:
+    result: PASS
+    observation: LIVE_AUTHORITY_REFRESHED_AFTER_W282_W283_CONCURRENT_ADVANCE
+  Probe:
+    result: PASS
+    material_trigger:
+      id: W282F_R1_PR_HEAD_PROOF_EXECUTED
+      previous: QUEUED
+      current: SUCCESS
+  Rank:
+    result: PASS
+    selected_action: CONSUME_AND_PERPETUATE_W282_PROVE_PASS
+    reason: >-
+      This proof closes a previously explicit queue-bound predicate without requiring
+      application churn or external owner action.
+
+accepted_proof:
+  qps_closeout:
+    merge: cf637f4c251683918eb190c21b5d91597d45ab7e
+    file: triage/w282/QPS_W282_FEDERATED_R1_PROVE_CLOSEOUT_v0.1.yaml
+  producer:
+    repo: GBOGEB/Q_engineering_tools
+    pr: 54
+    source_head: 753f95058f886aeded020950c3150ca5018655d2
+    merge: 179df2901f008ea4775d0fd824ba9b45bb0ff38d
+  runtime:
+    run_id: 35350966891
+    job_id: 105618735107
+    job_name: exact-w282-payload
+    conclusion: success
+    executed_steps_gt_zero: true
+    observed_steps: 11
+    exact_blob_proof: PASS
+    regression_tests: PASS
+    visual_lineage_validator: PASS
+    proof_receipt: PASS
+    artifact_upload: PASS
+    artifact:
+      id: 10549519396
+      digest: sha256:7f401723af2cf964ac7ff074be461b6e522d37273e82c78aa6ad238cb2fac4c5
+
+three_pc:
+  Prepare: PASS_IN_QPS
+  Prove: PASS_ACCEPTED_FROM_EXACT_QTOOLS_PR_HEAD
+  Commit: CLOSED_QPS_MERGE_CF637F4C
+  federation_acceptance: PASS_ZERO_AUTHORITY_TRANSFER
+three_p3:
+  authorized: false
+  reason: VISUAL_LINEAGE_PROOF_IS_CONTROL_PROOF_NOT_PROJECT_PROMOTION
+
+mip:
+  Modernize:
+    result: PASS
+    actions:
+      - ADD_LANE_LOCAL_CURRENT_POINTER
+      - REPLACE_QUEUE_WAIT_WITH_EXACT_PROOF_IDENTITY
+      - PRESERVE_GLOBAL_QTG_PRIORITY_SEPARATION
+  Innovate:
+    result: PASS
+    trigger_index:
+      visual_lane:
+        state: STOP_FROZEN
+        reenter_on:
+          - GOVERNED_VISUAL_METHOD_CHANGE
+          - GOVERNED_VISUAL_POPULATION_CHANGE
+          - OBSERVED_REGRESSION
+      qps_runtime_923:
+        state: EXTERNAL_WAIT
+        reenter_on: RUNNER_ASSIGNED_AND_STEPS_GT_ZERO
+      r3_w275:
+        state: EXTERNAL_PHYSICAL_RETURN
+        reenter_on: EXACT_SUCCESSOR_BUNDLE_RETURNED
+      ic3:
+        state: EXTERNAL_AUTH
+        reenter_on: WIF_SERVICE_ACCOUNT_ACL_AND_HOSTED_RUN
+      temporal:
+        state: CONTROL_3_OF_5
+        reenter_on: NEXT_GENUINE_SCHEDULE_EVENT
+      drive_raw:
+        state: WAIT_REAL_SOURCE
+        reenter_on: ACTUAL_RAW_EXPORT_BYTES
+  Perpetuate:
+    result: PASS_ON_MERGE
+    outputs:
+      current: mission-control/grand-missions/GM_I_C_W282_VISUAL_CURRENT_v1.yaml
+      receipt: mission-control/qps-triage-ultra/missions/receipts/GMIC_W284_W282_VISUAL_PROVE_FEDERATION_20260918_v1.yaml
+      handover: handover/session/SC_2026-09-18_GMIC_W284_W282_VISUAL_PROVE_LOSSLESS_HANDOVER_v1.md
+      dropin: handover/session/RESTART_DROPIN_2026-09-18_GMIC_W284_W282_VISUAL_PROVE_v1.md
+
+visual_disposition:
+  W162: HISTORICAL_WITHIN_N100_CONVERGENCE_CONTROL
+  W188: MEASURED_BALANCED_N200_ACCEPTED_CONTROL_WITHHELD
+  W231: UNIQUE_BALANCED_N300_DIAGNOSTIC_CONTROL_WITHHELD
+  current_predicate: STOP_FROZEN_WAIT_GOVERNED_TRIGGER
+  n300_control: WITHHELD
+  project_global_pca: WITHHELD
+  bradley_terry: WITHHELD_NO_OBSERVED_PAIRWISE_OUTCOMES
+
+independent_fronts:
+  global_qps:
+    issue: 923
+    state: RED_OWNER_ACTION
+  r3:
+    state: WAIT_PHYSICAL_SUCCESSOR_GIT_BUNDLE
+  ic3:
+    issue: GBOGEB/GEMINI#12
+    state: WAIT_EXTERNAL_WIF_SERVICE_ACCOUNT_DRIVE_ACL
+  temporal:
+    state: CONTROL_3_OF_5
+    latest_bound_schedule_run: 35319784958
+  drive_losslessness:
+    raw_exports: ABSENT
+    source_byte_proofs: PRESENT
+
+non_compensation:
+  W282_PROVE_PASS_NE_N300_CONTROL: true
+  W282_PROVE_PASS_NE_PROJECT_GLOBAL_PCA: true
+  W282_PROVE_PASS_NE_BRADLEY_TERRY: true
+  W282_PROVE_PASS_NE_QPS_RUNTIME_GOLD: true
+  MISSIONCONTROL_ACCEPT_NE_QPS_AUTHORITY_TRANSFER: true
+  authority_transfer: false
+  formal_credit_delta: 0
+
+terminal:
+  W282_visual: CONTROLLED_STOP_FROZEN
+  safe_continue_elsewhere: true

@@ -1,0 +1,59 @@
+schema: missioncontrol.gm_i_c.w282_visual.current.v1
+as_of: '2026-09-18T15:43:00+02:00'
+mission: GM-I-C
+lane: QPS_W282_VISUAL_LINEAGE
+state: CONTROLLED_PROVE_PASS_STOP_FROZEN
+authority_transfer: false
+formal_credit_delta: 0
+
+source_authority:
+  repo: GBOGEB/cryoplant-project
+  qps_merge: cf637f4c251683918eb190c21b5d91597d45ab7e
+  closeout: triage/w282/QPS_W282_FEDERATED_R1_PROVE_CLOSEOUT_v0.1.yaml
+  handover: handover/session/SC_2026-09-18_W282_VISUAL_LINEAGE_3PSTAR_MIP_LOSSLESS_HANDOVER_v3.md
+
+proof:
+  producer_repo: GBOGEB/Q_engineering_tools
+  producer_pr: 54
+  source_head: 753f95058f886aeded020950c3150ca5018655d2
+  producer_merge: 179df2901f008ea4775d0fd824ba9b45bb0ff38d
+  run_id: 35350966891
+  job_id: 105618735107
+  conclusion: success
+  executed_steps_gt_zero: true
+  observed_steps: 11
+  artifact:
+    id: 10549519396
+    digest: sha256:7f401723af2cf964ac7ff074be461b6e522d37273e82c78aa6ad238cb2fac4c5
+
+three_pc:
+  Prepare: PASS
+  Prove: PASS
+  Commit: CLOSED_WITH_SEQUENCING_DEVIATION_RECORDED
+three_p3:
+  authorized: false
+
+visual_truth:
+  W162: HISTORICAL_WITHIN_N100_CONVERGENCE_CONTROL
+  W188: MEASURED_BALANCED_N200_ACCEPTED_CONTROL_WITHHELD
+  W231: UNIQUE_BALANCED_N300_DIAGNOSTIC_CONTROL_WITHHELD
+  current_predicate: STOP_FROZEN_WAIT_GOVERNED_TRIGGER
+  n300_control: WITHHELD_POOLED_TABLE_READABILITY_MSA
+  project_global_pca: WITHHELD
+  bradley_terry: WITHHELD_NO_OBSERVED_PAIRWISE_OUTCOMES
+
+reentry_triggers:
+  - GOVERNED_VISUAL_METHOD_CHANGE
+  - GOVERNED_VISUAL_POPULATION_CHANGE
+  - OBSERVED_REGRESSION
+
+global_boundaries:
+  qps_issue_923: RED_OWNER_ACTION
+  r3_w275: WAIT_PHYSICAL_SUCCESSOR_GIT_BUNDLE
+  ic3: WAIT_EXTERNAL_WIF_SERVICE_ACCOUNT_DRIVE_ACL
+  temporal: CONTROL_3_OF_5
+  drive_raw_exports: ABSENT
+
+rule: >-
+  This pointer is lane-local. It does not override QTG_CURRENT, QPS child authority,
+  runtime GOLD, R3, IC3, temporal, or source-return gates.
