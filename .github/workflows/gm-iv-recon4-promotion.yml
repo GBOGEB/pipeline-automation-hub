@@ -57,7 +57,19 @@ jobs:
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$expected"
           echo "SOURCE_SHA=$actual" >> "$GITHUB_ENV"
-          echo "PASS_EXACT_SOURCE_HEAD=$actual"
+          stage="$(python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('mission-control/grand-missions/GRAND_MISSION_REGISTRY.json').read_text())
+          print(next(m for m in d['grand_missions'] if m['id']=='GM-IV')['state'])
+          PY
+          )"
+          case "$stage" in
+            STAGED_ACTIVE_RECON_4_OF_8|ACTIVE_8_OF_8) ;;
+            *) echo "Unsupported stage for RECON4 promotion/history control: $stage"; exit 1 ;;
+          esac
+          echo "GM_IV_STAGE=$stage" >> "$GITHUB_ENV"
+          echo "PASS_EXACT_SOURCE_HEAD=$actual STAGE=$stage"
 
       - name: Assert accepted Governor merge is ancestral
         shell: bash
@@ -111,6 +123,7 @@ jobs:
             mission-control/grand-missions/validate_gm_iv_evidence_economics.py
 
       - name: Execute promotion validator and deterministic repeat
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_RECON_4_OF_8'
         shell: bash
         run: |
           python3 mission-control/grand-missions/validate_gm_iv_recon4_promotion.py \
@@ -144,6 +157,7 @@ jobs:
           grep -q '"status": "PASS"' /tmp/gm-iv-economics-recon4-1.json
 
       - name: Repeat RECON_4 Governor in CONTROL mode
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_RECON_4_OF_8'
         shell: bash
         run: |
           python3 mission-control/grand-missions/assess_gm_iv_recon4_governor.py \
@@ -159,6 +173,7 @@ jobs:
             /tmp/gm-iv-recon4-governor-control-2.json
 
       - name: Enforce terminal promotion boundary
+        if: env.GM_IV_STAGE == 'STAGED_ACTIVE_RECON_4_OF_8'
         shell: bash
         run: |
           python3 - <<'PY'
@@ -183,6 +198,48 @@ jobs:
           print('PASS_GM_IV_RECON4_TERMINAL_PROMOTION_BOUNDARY')
           PY
 
+      - name: Prove historical RECON_4 promotion retention under ACTIVE_8
+        if: env.GM_IV_STAGE == 'ACTIVE_8_OF_8'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path('mission-control/grand-missions')
+          registry=json.loads((root/'GRAND_MISSION_REGISTRY.json').read_text())
+          recon=json.loads((root/'GM_IV_RECON4_PROMOTION_CONTRACT.json').read_text())
+          active=json.loads((root/'GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json').read_text())
+          gm={m['id']:m for m in registry['grand_missions']}
+          gm4=gm['GM-IV']; gm5=gm['GM-V']
+          assert gm4['state']=='ACTIVE_8_OF_8'
+          assert gm4['activation_stage']=='ACTIVE_8_OF_8'
+          assert gm4['recon_4_of_8_evidence']==recon['accepted_governor_evidence']
+          accepted=active['accepted_readiness_evidence']
+          actual=gm4['active_8_of_8_evidence']
+          assert actual['source_sha']==accepted['evaluated_head_sha']
+          assert actual['workflow_run_id']==accepted['workflow_run_id']
+          assert actual['artifact_id']==accepted['artifact_id']
+          assert actual['artifact_digest']==accepted['artifact_digest']
+          assert gm4['children']==[]
+          assert gm5['state']=='HELD' and gm5['children']==[]
+          assert registry['authority_transfer'] is False
+          receipt={
+            'schema':'qps.gm_iv_recon4_promotion_historical_retention.v1',
+            'source_sha':os.environ['SOURCE_SHA'],
+            'historical_stage':'STAGED_ACTIVE_RECON_4_OF_8',
+            'current_stage':'ACTIVE_8_OF_8',
+            'recon4_promotion_evidence_retained':True,
+            'active8_readiness_evidence_retained':True,
+            'children_bound':False,
+            'authority_transfer':False,
+            'gm_v_state':'HELD',
+            'result':'PASS'
+          }
+          Path('/tmp/gm-iv-recon4-historical-retention.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          print('PASS_RECON4_PROMOTION_HISTORICAL_RETENTION_UNDER_ACTIVE8')
+          PY
+
       - name: Upload exact-SHA promotion proof
         uses: actions/upload-artifact@v4
         with:
@@ -199,4 +256,5 @@ jobs:
             /tmp/gm-iv-economics-recon4-2.json
             /tmp/gm-iv-recon4-governor-control-1.json
             /tmp/gm-iv-recon4-governor-control-2.json
+            /tmp/gm-iv-recon4-historical-retention.json
           if-no-files-found: error
