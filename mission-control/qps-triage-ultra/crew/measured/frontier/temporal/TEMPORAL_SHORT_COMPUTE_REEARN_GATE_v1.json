@@ -1,0 +1,68 @@
+{
+  "schema": "missioncontrol.temporal_short_compute_reearn_gate.v1",
+  "mission_id": "MC-CREW-FRONTIER-004",
+  "status": "WAIT_NEXT_GENUINE_SCHEDULE",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "competency_promotions": 0,
+  "regression_source": {
+    "run_id": "35350275999",
+    "exact_source_sha": "f226e6e61bc84482d4856f056b292ca9322e22f8",
+    "artifact_id": "10549864368",
+    "artifact_digest": "sha256:6d1ee0018358fff48a83d006322ba1e0b504b32a1cf68e8b4c3e98d0001713c3",
+    "prior_control_strength": 0.7008026572612402,
+    "current_strength": 0.6907625243981782,
+    "frozen_min_strength": 0.7,
+    "threshold_deficit": 0.009237475601821754,
+    "disposition": "CONTROL_REVOKED_REEARN_REQUIRED"
+  },
+  "eligible_evidence": {
+    "event": "schedule",
+    "workflow_path": ".github/workflows/crew-temporal-allocation-policy.yml",
+    "manual_allowed": false,
+    "push_allowed": false,
+    "pull_request_allowed": false,
+    "synthetic_allowed": false,
+    "exact_sha_required": true
+  },
+  "frozen_control_gate": {
+    "min_independent_windows": 6,
+    "min_distinct_source_shas": 3,
+    "min_temporal_span_seconds": 86400,
+    "min_directional_windows": 5,
+    "min_direction_consistency": 0.8,
+    "min_pooled_winner_strength": 0.7,
+    "latest_two_directional_windows_must_agree": true,
+    "min_hosted_runner_classes": 3,
+    "requires_baseline_and_held_lanes": true,
+    "persistent_or_regression_rex_veto_must_be_false": true
+  },
+  "success_predicate": "NEXT_GENUINE_SCHEDULE_RECEIPT_REPORTS_SHORT_COMPUTE_CONTROL_POLICY_WITH_ALL_FROZEN_GATES_PASS",
+  "on_pass": {
+    "short_compute": "CONTROL_REEARNED",
+    "effective_control_class_count": 3,
+    "requires_current_pointer_update": true,
+    "requires_exact_schedule_run_job_artifact_digest_binding": true
+  },
+  "on_fail": {
+    "short_compute": "LEARNING",
+    "effective_control_class_count": 2,
+    "continue_surveillance": true
+  },
+  "current_decomposition": {
+    "global_latest_window": "INDETERMINATE_3_SINGLE_3_PAIRED",
+    "linux": "INDETERMINATE",
+    "macos": "ALLOC_SINGLE_CELL",
+    "windows": "ALLOC_PAIRED_CELL",
+    "baseline": "ALLOC_SINGLE_CELL",
+    "held": "ALLOC_PAIRED_CELL",
+    "interpretation": "HABITAT_AND_LANE_HETEROGENEITY_OBSERVED"
+  },
+  "invariants": {
+    "thresholds_changed": false,
+    "historical_acceptance_overwritten": false,
+    "synthetic_or_manual_clock_credit": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0
+  }
+}

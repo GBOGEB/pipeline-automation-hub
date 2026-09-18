@@ -1,16 +1,14 @@
-# Temporal 3PSTAR + MIP lossless handover — proof rebind
+# Temporal 3PSTAR + MIP session handover — supersession notice
 
-Current CONTROL remains **3/5**. Frozen thresholds are unchanged.
+This session-level handover formerly described a 3/5 state. That view is now historical.
 
-PR #246 implementation history remains merged at `a56e94ee...`; its previously queued job later completed successfully: run `35351860027`, job `105621646115`, 7 executed steps.
+Current canonical temporal authority is:
+- `mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_FRONTIER_CURRENT_v1.json`
+- `TEMPORAL_3PSTAR_MIP_ITERATION_v3.json`
+- `TEMPORAL_CONTROL_REGRESSION_v1.json`
+- `TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json`
+- temporal lossless handover v2.
 
-REX-005 repair PR #252 merged at `243337e7...`. Its exact repair head `e8fc42a...` independently passed run `35352182020`, job `105622699044`, 7 executed steps, unit contract PASS, iteration invariants PASS.
+Current effective state: **2/5 CONTROL** after governed `short_compute` regression on genuine scheduled run `35350275999`.
 
-Merge is not relabeled as proof; exact-head runs are the proof.
-
-3P*: Refresh PASS; Probe PASS; Rank PASS; Prepare PASS; Prove PASS; Perpetuate WAIT merged-master repeat.
-
-P0 long_compute_contended: regime reversal, consistency 0.642857, minimum 11 clean dominant windows.
-P1 human_dependency_wait_proxy: weak/noisy direction, consistency 0.733333, minimum 5 clean dominant windows; proxy only, not real human-intervention evidence.
-
-Next legal transition: consume the workflow's `push: master` recurrence after this proof-binding update merges. Bind its exact run/job. No threshold lowering, no manual/synthetic clock credit, no competency promotion. QPS #923 remains independent.
+Do not use this file as current policy state. It remains only as lineage for the earlier proof-rebind transaction.
