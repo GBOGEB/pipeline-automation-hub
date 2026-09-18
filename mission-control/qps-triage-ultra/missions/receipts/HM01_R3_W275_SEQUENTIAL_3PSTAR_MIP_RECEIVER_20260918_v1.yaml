@@ -1,0 +1,105 @@
+schema: missioncontrol.hm01.r3.w275_sequential_3pstar_mip_receiver.v0.1
+as_of: '2026-09-18T17:10:00+02:00'
+mission: HM-01
+wave: W275
+role: NON_AUTHORITATIVE_CHILD_EXECUTION_RECEIVER
+state: RECEIVED_SEQUENTIAL_3PSTAR_MIP_WAIT_PHYSICAL_SUCCESSOR_BUNDLE
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+negotiation_credit_delta: 0
+
+missioncontrol_anchor:
+  repo: GBOGEB/pipeline-automation-hub
+  master_at_branch: 6980c60fae211f956e4ad3068f76882fa02139a3
+  canonical_w275_protected_federation_version: 4
+  treatment: >-
+    This receiver is append-only and deliberately does not increment the protected
+    HM01_R3_W275_3PSTAR_MIP_FEDERATION version consumed by W280/W281 DMAIC controls.
+    It records newer child execution state without silently rebasing those protected proofs.
+
+qps_child:
+  repo: GBOGEB/cryoplant-project
+  three_pr:
+    pr: 1489
+    merge: bb38faab791388498331ac4fee8df51242122244
+    state: PASS_REFRESH_PROBE_RANK
+    retry_attempts: 2
+    physical_bundle_found: false
+    finding: QPS_LOCAL_OPERATOR_ENTRYPOINT_MISSING
+  mip_modernize:
+    pr: 1491
+    merge: 5f325217c6ff5381e77be36a7aae5203c26e7546
+    state: PASS
+    result: QPS_LOCAL_WINDOWS_PRODUCER_MATERIALIZED
+  mip_innovate:
+    pr: 1492
+    merge: 43e23f40976279088018fcf6365be99e9888526c
+    state: PASS
+    result: SELF_LOCATING_QPS_NATIVE_OPERATOR
+  ingress_hardening:
+    pr: 1488
+    merge: 5e9894ce6b0eddc3506b23c7d042b998e62dc77b
+    state: PASS
+    result: FAIL_CLOSED_BUNDLE_ADMISSION_PLUS_CAPSULE_CHAIN
+  mip_perpetuate:
+    pr: 1495
+    merge: 7af4d140c38444c2b467da7144eabcfecb2598ae
+    state: PASS
+    control: triage/w275/QPS_W275_R3_3PSTAR_MIP_RECURSIVE_CONTROL_v0.5.yaml
+    session_pointer: handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml
+    handover: handover/session/SC_2026-09-18_W275_R3_3PSTAR_MIP_LOSSLESS_HANDOVER_v5.md
+    restart_dropin: handover/session/RESTART_DROPIN_2026-09-18_W275_R3_v5.md
+
+source_and_environment:
+  historical_predecessor: 70964e5f1577231512f4104b26f5f6649ad8cb39
+  active_successor: 1248290ca0a9d55ec83d0efa0235ed1a45a88eeb
+  capsule_v2: PASS_EXTERNALLY_REPROVEN
+  capsule_artifact_id: 10544103232
+
+current_execution_boundary:
+  first_red: PHYSICAL_SUCCESSOR_GIT_BUNDLE_RETURN_1248290C
+  retry_budget_used_for_discovery: 2
+  retry_budget_disposition: EXHAUSTED_NO_QUALIFYING_PAYLOAD
+  execution_host: AUTHENTIC_WINDOWS_QPS_CLONE
+  command: 'powershell -ExecutionPolicy Bypass -File .\scripts\build_qps_r3_successor_handoff.ps1'
+  required_outputs:
+    - QPS_R3_1248290c.bundle
+    - QPS_R3_1248290c.bundle.sha256
+    - QPS_R3_1248290c.bundle.receipt.json
+  after_return:
+    - VERIFY_BUNDLE_SHA256_AND_SIDECAR
+    - VALIDATE_PRODUCER_RECEIPT
+    - GIT_BUNDLE_VERIFY
+    - VERIFY_EXACT_SUCCESSOR_1248290C
+    - IMPORT_WITHOUT_CONTROL_CHECKOUT_MUTATION
+    - CONSUME_CAPSULE_V2
+    - EXACT_DETACHED_WORKTREE_1248290C
+    - FIVE_PRODUCT_REGENERATION
+    - STRUCTURAL_QA
+    - PROJECTION_AWARE_PARITY
+    - RENDER_EVIDENCE
+    - HASH_BOUND_HUMAN_VISUAL_INSPECTION
+    - SUCCESSOR_ACCEPTANCE_VALIDATOR
+    - PASS_R3_RELEASE_PRODUCTION_DOV
+
+method_state:
+  three_pstar: PASS_COMPLETE_FOR_REPOSITORY_SIDE_SLICE
+  mip_modernize: PASS
+  mip_innovate: PASS
+  mip_perpetuate: PASS
+  three_pc_prepare: PASS
+  three_pc_prove: HOLD_WAIT_PHYSICAL_SUCCESSOR_GIT_BUNDLE
+  three_pc_commit: HOLD_WAIT_PROVE
+  three_p3_authorized: false
+  r4: BLOCKED_NOT_NEXT
+
+non_compensation:
+  qps_issue_923: RED_OWNER_ACTION
+  gt_bdq_0: RED_BLOCKED_ON_923_INFRA_PREEXECUTION
+  runtime_gold: WITHHELD
+  canonical_gt_credit: NONE
+  protected_w275_federation_v4_rewritten: false
+  qps_source_product_acceptance_authority_transferred: false
+  authority_transfer: false
+  formal_credit_delta: 0
