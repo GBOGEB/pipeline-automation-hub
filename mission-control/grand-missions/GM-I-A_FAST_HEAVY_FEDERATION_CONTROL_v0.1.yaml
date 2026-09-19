@@ -43,9 +43,13 @@ federation_bridges:
     exact_head_sha: 9b89aa3516209f18447f03de91e91b21b35c9304
     workflow_run_id: 35425352862
     job_id: 105850219298
-    runtime_state: QUEUED
-    runner_id: 0
-    downstream_credit: 0
+    runtime_state: PASS
+    runner_id: 1000315763
+    downstream_credit: 1
+    consumer_artifact_id: 10578679971
+    consumer_artifact_digest: sha256:ca73b87caf9be791f19937c1cab25499efbabf0f1248f8c66752067adbfd6847
+    consumer_receipt_sha256: ef6528fbe2bd7cfab6b0947c0b8b6601419811ef191d6ca84350c356d8ba69bf
+    executed_steps: 9
     compensates_other_bridge: false
   - id: GM-I-A-BRIDGE-KEB
     consumer_repo: GBOGEB/CODEX
@@ -62,17 +66,16 @@ federation_bridges:
     compensates_other_bridge: false
 fanout:
   registered_consumers: 2
-  runtime_pass_consumers: 0
-  runtime_wait_consumers: 2
+  runtime_pass_consumers: 1
+  runtime_wait_consumers: 1
   topology: PROVIDER_ATTESTATION_TO_INDEPENDENT_DOW_AND_KEB_CONSUMERS
   rule: EACH_CONSUMER_MUST_PROVE_GT0_EXECUTION_AND_OWN_RECEIPT
 current_classification:
   provider_runtime: CONTROL_CANDIDATE_PROVEN
   provider_attestation: PASS
-  downstream_fanout: REGISTERED_2_WAIT_RUNTIME
+  downstream_fanout: DOW_PASS_KEB_WAIT_RUNNER
   first_red: null
   external_gates:
-    - ABACUS_RUNNER_ADMISSION
     - CODEX_RUNNER_ADMISSION
 performance_signal:
   PC1: HEAVY_BUILD_COST
