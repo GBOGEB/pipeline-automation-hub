@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.first_pass_closure_policy.v1",
-  "as_of": "2026-09-19T08:35:00+02:00",
+  "as_of": "2026-09-19T08:45:00+02:00",
   "issue": "GBOGEB/pipeline-automation-hub#304",
   "objective": "MAKE_MERGE_THE_LAST_EVENT_AFTER_EXACT_HEAD_PROOF_AND_REVIEW_CLEAN",
   "authority_transfer": false,
@@ -53,7 +53,8 @@
     "clean_rule": "SUMMARY_COMPLETED_FOR_EXACT_HEAD_AND_NO_COMMENTED_CODEX_REVIEW_BOUND_TO_EXACT_HEAD",
     "summary_author_login": "chatgpt-codex-connector",
     "recheck_on": [
-      "pull_request_review"
+      "pull_request_review",
+      "codex_summary_issue_comment_created_or_edited"
     ]
   },
   "fail_closed_on": [
