@@ -35,6 +35,12 @@ Changes to the trusted controller itself use a bootstrap transaction:
 
 The gate disables auto-merge whenever the evaluator is not successful, including skipped/not-run evaluator paths, and malformed/missing policy input must still yield a deterministic FAIL receipt.
 
+### Head-bound required status
+
+`pull_request_target` gives the controller trusted default-branch code, but its workflow check suite is associated with the base-side event SHA rather than the proposed PR head. Therefore the controller also publishes an explicit commit status on the resolved PR head SHA using context `First-Pass Closure Gate / first-pass-closure`.
+
+The status lifecycle is `pending -> success|failure`. Branch protection must consume this **head-bound status**, not assume that the `pull_request_target` workflow check itself is head-bound. A failure, incomplete evaluator, or earlier workflow failure leaves the head status non-success and merge remains held.
+
 ## PR-body receipt
 
 The receipt binds successful exact-head workflow runs without changing Git content:
