@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.first_pass_closure_policy.v1",
-  "as_of": "2026-09-18T22:16:00+02:00",
+  "as_of": "2026-09-19T08:16:00+02:00",
   "issue": "GBOGEB/pipeline-automation-hub#304",
   "objective": "MAKE_MERGE_THE_LAST_EVENT_AFTER_EXACT_HEAD_PROOF_AND_REVIEW_CLEAN",
   "authority_transfer": false,
@@ -23,6 +23,7 @@
   },
   "merge_allowed_expression": [
     "PR_HEAD_EXACT",
+    "TRUSTED_PROOF_SURFACE_UNCHANGED_FROM_DEFAULT_BRANCH",
     "CANONICAL_SELF_TEST_PROOF_PASS",
     "MUTATION_OR_FAULT_PROOF_PASS",
     "EXACT_HEAD_CI_PROOF_PASS",
@@ -53,7 +54,9 @@
     "clean_rule": "SUMMARY_COMPLETED_FOR_EXACT_HEAD_AND_NO_COMMENTED_CODEX_REVIEW_BOUND_TO_EXACT_HEAD",
     "summary_author_login": "chatgpt-codex-connector",
     "recheck_on": [
-      "pull_request_review"
+      "pull_request_target:synchronize",
+      "pull_request_target:ready_for_review",
+      "pull_request_target:edited"
     ]
   },
   "fail_closed_on": [
@@ -65,7 +68,10 @@
     "CODEX_REVIEW_NOT_COMPLETED",
     "CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD",
     "UNTRUSTED_PROOF_WORKFLOW_IDENTITY",
-    "CODEX_SUMMARY_AUTHOR_MISMATCH"
+    "CODEX_SUMMARY_AUTHOR_MISMATCH",
+    "UNTRUSTED_PROOF_SURFACE_MUTATION",
+    "POLICY_LOAD_FAILED",
+    "EVALUATOR_NOT_SUCCESS"
   ],
   "non_compensation": {
     "r3_release_credit": "NONE",
@@ -99,8 +105,21 @@
     ]
   },
   "merge_enforcement": {
-    "mode": "DISABLE_AUTO_MERGE_WHILE_GATE_RED",
+    "mode": "TRUSTED_PULL_REQUEST_TARGET_CONTROLLER_DISABLE_AUTO_MERGE_UNLESS_EVALUATOR_SUCCESS",
+    "workflow_source": "DEFAULT_BRANCH_ONLY",
     "owner_branch_rule_recommended": true,
-    "required_status_name": "First-Pass Closure Gate / first-pass-closure"
+    "required_status_name": "First-Pass Closure Gate / first-pass-closure",
+    "bootstrap_requires_distinct_postmerge_control_proof": true
+  },
+  "trusted_proof_surface": {
+    "reference_ref": "master",
+    "paths": [
+      ".github/workflows/first-pass-closure-proof.yml",
+      "scripts/first_pass_closure_gate.py",
+      "scripts/tests/test_first_pass_closure_gate.py",
+      "mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json"
+    ],
+    "rule": "PR_HEAD_BLOBS_MUST_MATCH_DEFAULT_BRANCH_BEFORE_PROOF_RUNS_CAN_GRANT_PURPOSES",
+    "bootstrap_note": "The R5 bootstrap implementation PR is not counted as an FPC cohort success; a distinct post-bootstrap PR must prove the installed controller before consumer adoption."
   }
 }
