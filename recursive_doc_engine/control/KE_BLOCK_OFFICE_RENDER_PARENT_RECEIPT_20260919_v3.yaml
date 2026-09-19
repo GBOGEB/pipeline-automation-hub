@@ -1,0 +1,81 @@
+schema: missioncontrol.ke_block_roundtrip.office_render_parent_receipt.v3
+as_of: "2026-09-19T08:11:00+02:00"
+repository: GBOGEB/pipeline-automation-hub
+base_master_sha: 74213c4c450431f8e2da651a334a2bb485ccac20
+authority_transfer: false
+formal_credit_delta: 0
+
+previous:
+  path: recursive_doc_engine/control/KE_BLOCK_OFFICE_RENDER_PARENT_RECEIPT_20260918_v2.yaml
+  first_red: USER_VISUAL_APPROVAL
+
+user_approval:
+  state: PASS
+  source: EXPLICIT_CHAT_APPROVAL
+  quote: "Approve docx and pdf !"
+  approved_at: "2026-09-19T08:11:00+02:00"
+  approved_scope:
+    - CORRECTED_DOCX_RENDER
+    - CORRECTED_PDF_RENDER
+
+upstream_control:
+  repo: GBOGEB/document-organization-system
+  visual_baseline_pr: 69
+  visual_baseline_merge_sha: ee74cf5ce1a7354e91e6c1267433f40becef29bb
+
+approved_render:
+  consumer_repo: GBOGEB/DOCX_RTM_Automation
+  consumer_merge_sha: a373ded8808ff1a9dfc40fe7374eb7fcabb6d3b3
+  exact_head_sha: 332bc99e26597ab8857f5cc38f5921c293d78334
+  workflow_run: 35375677112
+  job_id: 105699668504
+  artifact_id: 10560525654
+  artifact_digest: sha256:ce9c806aebcce0cc9f15eaaf728c4e2bb30e4e93cb2db26b80c9e8c3ce8db8f0
+  docx_sha256: e936ffcb89eb7da13b8be8d447c8453b5b4499a4907390816846f5c8ec94a6b9
+  pdf_sha256: 654e74630861b5b398ab577d55da5f692bf4549b0af480498822428109353b02
+
+promotion:
+  office_binary_build_and_render_qa: PASS
+  independent_visual_qa: PASS
+  user_visual_approval: PASS
+  visual_regression_baseline: PROMOTED
+  baseline_is_immutable_reference: true
+  semantic_ssot: JSON
+  rendered_output_authoritative_for_semantics: false
+
+sequence:
+  - phase: 3PSTAR_REFRESH_CURRENT_AUTHORITY
+    state: PASS
+  - phase: 3PSTAR_BIND_USER_APPROVAL
+    state: PASS
+  - phase: 3PC_PROMOTE_VISUAL_BASELINE
+    state: PASS
+  - phase: MIP_MODERNIZE
+    state: PASS
+    change: approved baseline becomes explicit regression anchor
+  - phase: MIP_INNOVATE
+    state: NEXT_SLICE
+    change: governed visual style tokens and template pack
+  - phase: MIP_PERPETUATE
+    state: PASS
+
+style_next_slice:
+  status: AUTHORIZED
+  first_red: GOVERNED_STYLE_SYSTEM_CANDIDATE
+  constraints:
+    - accepted baseline must remain immutable
+    - semantic content must not change
+    - every style candidate must render to DOCX/PDF/PNG
+    - render-diff against approved baseline is required
+    - fonts, sizes, palette, numbering, captions and spacing must be tokenized
+    - user approval required before replacing visual baseline
+
+non_compensation:
+  visual_baseline_ne_semantic_ssot: true
+  visual_baseline_ne_engineering_credit: true
+  visual_baseline_ne_compliance_credit: true
+  visual_baseline_ne_procurement_acceptance: true
+
+stop_state:
+  state: BASELINE_PROMOTED_NEXT_STYLE_SLICE_OPEN
+  first_red: GOVERNED_STYLE_SYSTEM_CANDIDATE
