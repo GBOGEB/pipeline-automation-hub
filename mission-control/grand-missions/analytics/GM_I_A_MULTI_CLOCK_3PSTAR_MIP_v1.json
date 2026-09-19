@@ -21,29 +21,66 @@
       "math_provider_head": "767b3afa862643faa22cb2c98f98a0512b864601"
     },
     "Probe": {
-      "result": "PASS_SOURCE_MEASURED_HOSTED_PROVE_WAIT_RUNNER",
+      "result": "PASS_SOURCE_MEASURED_MATH_PROVIDER_PROVED_MC_HOSTED_WAIT_RUNNER",
       "missioncontrol_measurement_run": 35426485549,
       "missioncontrol_measurement_job": 105853237389,
       "math_provider_run": 35426576807,
       "math_provider_job": 105853477082,
-      "observed_hosted_state": "ZERO_STEP_RUNNER_ADMISSION",
+      "observed_hosted_state": "MATH_PROVIDER_PASS__MISSIONCONTROL_ZERO_STEP_RUNNER_ADMISSION",
       "application_first_red": null,
       "repair_authorized": false,
-      "reason": "Measured source transaction is complete; only exact-head validation/provider jobs remain at runner_id=0, steps=0."
+      "reason": "Measured source transaction is complete and gg_MATH exact-head readiness proof passed; MissionControl exact-head validation remains runner_id=0, steps=0.",
+      "math_provider": {
+        "run_id": 35426576807,
+        "job_id": 105853477082,
+        "runner_id": 1000316490,
+        "conclusion": "success",
+        "artifact_id": 10578234526,
+        "artifact_digest": "sha256:9ffc0f79a1019ecef4e0570de171463573e80f035181e8aecaabd6b930aa8802",
+        "readiness_receipt_sha256": "fd658469abe629698be82fd6f93bf773d7f2c482dd6e4c4244bf3875b0604a00",
+        "merged_sha": "23c8df3a8309016706551d0102b17dc3446115b5"
+      }
     },
     "Rank": {
       "result": "PASS_MEASURED_DESCRIPTIVE",
       "classification": "MEASURED_DURATION_ORDER_NOT_BT_FIT",
       "pressure_order_seconds": [
-        ["keb_queue_seconds", 808],
-        ["dow_queue_seconds", 632],
-        ["fast_queue_seconds", 512],
-        ["heavy_build_seconds", 203],
-        ["heavy_checkout_seconds", 37],
-        ["keb_execute_seconds", 9],
-        ["dow_execute_seconds", 8],
-        ["fast_execute_seconds", 7],
-        ["heavy_queue_seconds", 4]
+        [
+          "keb_queue_seconds",
+          808
+        ],
+        [
+          "dow_queue_seconds",
+          632
+        ],
+        [
+          "fast_queue_seconds",
+          512
+        ],
+        [
+          "heavy_build_seconds",
+          203
+        ],
+        [
+          "heavy_checkout_seconds",
+          37
+        ],
+        [
+          "keb_execute_seconds",
+          9
+        ],
+        [
+          "dow_execute_seconds",
+          8
+        ],
+        [
+          "fast_execute_seconds",
+          7
+        ],
+        [
+          "heavy_queue_seconds",
+          4
+        ]
       ],
       "queue_seconds": 1956,
       "selected_clock_seconds": 2220,
@@ -121,9 +158,10 @@
     "NO_ENGINEERING_HEPAK_QEQ_PROMOTION"
   ],
   "next": {
-    "first_red": "RUNNER_ADMISSION_FOR_EXACT_HEAD_MEASUREMENT_AND_MATH_PROVIDER_PROOF",
+    "first_red": "MISSIONCONTROL_RUNNER_ADMISSION_FOR_EXACT_HEAD_MEASUREMENT_CONTROL",
     "measurement": "CAPTURE_P002_AND_P003_FROM_NEW_EXACT_FEDERATION_TRANSACTIONS",
     "bt": "RECHECK_AFTER_P003_ONLY_IF_DIRECTION_GRAPH_BECOMES_STRONGLY_CONNECTED",
-    "pca": "ACCUMULATE_TO_P027_MINIMUM_WITH_COMPARABLE_NINE_CLOCK_SCHEMA"
+    "pca": "ACCUMULATE_TO_P027_MINIMUM_WITH_COMPARABLE_NINE_CLOCK_SCHEMA",
+    "math_provider": "PASS_MERGED_23c8df3a8309016706551d0102b17dc3446115b5"
   }
 }
