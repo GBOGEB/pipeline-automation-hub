@@ -199,7 +199,6 @@ jobs:
           GATE_OUTCOME: ${{ steps.gate.outcome }}
           RECEIPT_OUTCOME: ${{ steps.receipt.outcome }}
           ARTIFACT_OUTCOME: ${{ steps.artifact.outcome }}
-          ARTIFACT_OUTCOME: ${{ steps.artifact.outcome }}
         shell: bash
         run: |
           set -euo pipefail
@@ -230,6 +229,7 @@ jobs:
           TEST_OUTCOME: ${{ steps.trusted_tests.outcome }}
           GATE_OUTCOME: ${{ steps.gate.outcome }}
           RECEIPT_OUTCOME: ${{ steps.receipt.outcome }}
+          ARTIFACT_OUTCOME: ${{ steps.artifact.outcome }}
         run: |
           set -euo pipefail
           test "$PR_OUTCOME" = "success"
