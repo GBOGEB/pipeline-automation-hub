@@ -19,6 +19,22 @@ When the gate is red, its workflow attempts to **disable GitHub auto-merge** on 
 
 The gate also re-runs on `pull_request_review` events, so a later Codex finding on the same SHA invalidates a previously green gate.
 
+
+## Trusted-controller boundary
+
+The merge gate executes from the repository default branch using `pull_request_target` (and re-evaluates on review changes). It does **not** execute PR-supplied gate code with a write-capable token.
+
+Before a proof run can grant `canonical_self_test`, `mutation_test`, or `exact_head_ci`, the evaluator compares the PR head blobs for the governed proof surface against the default branch. The governed surface includes the gate workflow, proof workflow, evaluator, evaluator tests, and policy. A PR that mutates any of those files is therefore **not allowed to self-certify**.
+
+Changes to the trusted controller itself use a bootstrap transaction:
+1. open a bounded bootstrap PR;
+2. require exact-head tests and Codex review-clean evidence;
+3. do **not** count that bootstrap PR as a prospective FPC success;
+4. after merge, run a distinct benign proof PR under the newly installed controller;
+5. only after that post-bootstrap proof passes may consumers pin the new controller merge.
+
+The gate disables auto-merge whenever the evaluator is not successful, including skipped/not-run evaluator paths, and malformed/missing policy input must still yield a deterministic FAIL receipt.
+
 ## PR-body receipt
 
 The receipt binds successful exact-head workflow runs without changing Git content:
