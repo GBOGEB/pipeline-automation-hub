@@ -1,0 +1,16 @@
+schema: missioncontrol.w305.post_r9_fpc_canary.v1
+as_of: '2026-09-19T09:18:00+02:00'
+parent_issue: GBOGEB/pipeline-automation-hub#314
+controller_merge: 58da5fcb18e276c3bff9dd09056be39ffd19e179
+purpose: PROVE_NON_CONTROLLER_PR_REACHES_HEAD_BOUND_FPC_PASS_BEFORE_MERGE
+candidate_scope: NON_CONTROLLER_METADATA_ONLY
+expected_sequence:
+  - exact_head_proof_pass
+  - codex_review_complete_clean
+  - bind_FPC_RECEIPT_V1_in_pr_body
+  - head_bound_status_success
+  - merge_after_success_only
+count_in_8_pr_cohort: false
+reason_not_counted: CONTROL_BOOTSTRAP_CANARY_PRECEDES_COHORT_ADMISSION
+authority_transfer: false
+formal_credit_delta: 0
