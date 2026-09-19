@@ -28,14 +28,7 @@ jobs:
        github.event.pull_request.draft == false)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-
-      - name: Unit-test gate logic
-        run: python -m unittest scripts/tests/test_first_pass_closure_gate.py
-
-      - name: Resolve PR number
+      - name: Resolve PR number before any fallible proof step
         id: pr
         shell: bash
         run: |
@@ -55,17 +48,79 @@ jobs:
               ;;
           esac
 
+      - name: Checkout exact candidate head
+        id: checkout
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Unit-test gate logic
+        id: tests
+        if: steps.checkout.outcome == 'success'
+        continue-on-error: true
+        run: python -m unittest scripts/tests/test_first_pass_closure_gate.py
+
       - name: Evaluate exact-head first-pass closure
         id: gate
+        if: steps.checkout.outcome == 'success' && steps.tests.outcome == 'success'
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           mkdir -p output/fpc
-          python scripts/first_pass_closure_gate.py             --repo "${{ github.repository }}"             --pr "${{ steps.pr.outputs.number }}"             --policy mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json             --out output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
+          python scripts/first_pass_closure_gate.py \
+            --repo "${{ github.repository }}" \
+            --pr "${{ steps.pr.outputs.number }}" \
+            --policy mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json \
+            --out output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
 
-      - name: Disable auto-merge while gate is red
-        if: steps.gate.outcome == 'failure'
+      - name: Synthesize deterministic FAIL receipt for pre-evaluator failures
+        if: always()
+        shell: bash
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          PR_OUTCOME: ${{ steps.pr.outcome }}
+          CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          GATE_OUTCOME: ${{ steps.gate.outcome }}
+        run: |
+          set -euo pipefail
+          mkdir -p output/fpc
+          RECEIPT=output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
+          if [ ! -s "$RECEIPT" ]; then
+            python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          reason = (
+              "PRE_EVALUATOR_FAILURE:"
+              f"pr={os.environ.get('PR_OUTCOME','unknown')};"
+              f"checkout={os.environ.get('CHECKOUT_OUTCOME','unknown')};"
+              f"tests={os.environ.get('TEST_OUTCOME','unknown')};"
+              f"gate={os.environ.get('GATE_OUTCOME','unknown')}"
+          )
+          payload = {
+              "schema": "first_pass_closure_gate_receipt/v2",
+              "status": "FAIL_FIRST_PASS_CLOSURE_GATE",
+              "reason": reason,
+              "pr_number": os.environ.get("PR_NUMBER") or None,
+              "merge_allowed": False,
+              "authority_transfer": False,
+              "formal_credit_delta": 0,
+          }
+          Path("output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json").write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          print(json.dumps(payload, indent=2, sort_keys=True))
+          PY
+          fi
+
+      - name: Disable auto-merge unless gate is proven green
+        if: always() && steps.pr.outputs.number != '' && steps.gate.outcome != 'success'
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
@@ -76,7 +131,9 @@ jobs:
           AUTO="$(printf '%s' "$PR_JSON" | jq -r 'if .auto_merge == null then "none" else "enabled" end')"
           if [ "$AUTO" = "enabled" ]; then
             NODE_ID="$(printf '%s' "$PR_JSON" | jq -r .node_id)"
-            gh api graphql               -f query='mutation($id:ID!){disablePullRequestAutoMerge(input:{pullRequestId:$id}){pullRequest{number}}}'               -f id="$NODE_ID"
+            gh api graphql \
+              -f query='mutation($id:ID!){disablePullRequestAutoMerge(input:{pullRequestId:$id}){pullRequest{number}}}' \
+              -f id="$NODE_ID"
             echo "FPC_AUTO_MERGE_DISABLED=1"
           else
             echo "FPC_AUTO_MERGE_DISABLED=0"
@@ -91,8 +148,18 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Fail closed while gate is red
-        if: steps.gate.outcome == 'failure'
+      - name: Fail closed unless every proof stage succeeded
+        if: always()
+        shell: bash
+        env:
+          PR_OUTCOME: ${{ steps.pr.outcome }}
+          CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          GATE_OUTCOME: ${{ steps.gate.outcome }}
         run: |
-          echo "First-Pass Closure Gate is RED; merge remains held."
-          exit 1
+          set -euo pipefail
+          test "$PR_OUTCOME" = "success"
+          test "$CHECKOUT_OUTCOME" = "success"
+          test "$TEST_OUTCOME" = "success"
+          test "$GATE_OUTCOME" = "success"
+          echo "First-Pass Closure Gate PASS."

@@ -76,3 +76,14 @@ Next 8 governed primary PRs:
 Historical 25%, 210 s mean merge lead, and 169 s median remain immutable baselines.
 
 This is process-quality control only. It grants no engineering, R3, runtime-GOLD, GT, procurement, acceptance, or formal credit.
+
+
+## R5 self-protection hardening
+
+The gate now treats its proof-workflow implementation as part of proof identity. A run is not trusted solely because repository, workflow name and workflow path match the allowlist: the allowlisted workflow content at the candidate head must be byte-identical to the same workflow path at the PR base SHA. A PR therefore cannot rewrite the allowlisted proof workflow and use that rewritten workflow as its own proof.
+
+The workflow also resolves the PR number before fallible checkout/test/evaluation work. The auto-merge hold runs under `always()` whenever the gate is not proven green, including skipped/not-run evaluator states. If the evaluator never emits a receipt, the workflow synthesizes a machine-readable `FAIL_FIRST_PASS_CLOSURE_GATE` receipt before artifact upload.
+
+Policy missing/invalid JSON and unexpected admission exceptions are normalized into deterministic fail receipts rather than escaping the evidence path.
+
+These controls are process-quality protections only. Repository-owner required-status/ruleset enforcement remains the preferred independent defense-in-depth boundary.
