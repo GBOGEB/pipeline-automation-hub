@@ -1,0 +1,80 @@
+{
+  "schema": "missioncontrol.gm_fleet.3pstar_mip.v4",
+  "as_of": "2026-09-19T07:38:00+02:00",
+  "method": "3PSTAR_THEN_MIP_SEQUENTIAL",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "three_pr": {
+    "Refresh": {
+      "result": "PASS",
+      "missioncontrol_master": "361910f19a235af00c247059959dfd8bb797befc",
+      "qps_main": "c73cff96406d747493fabc650a670b4c3279d05e",
+      "qps_issue_923": "OPEN"
+    },
+    "Probe": {
+      "result": "PASS_BLOCK_CONFIRMED_NO_RERUN",
+      "observed_run_id": 35372609150,
+      "observed_attempt_jobs": [
+        105689855356,
+        105690079257,
+        105690167950
+      ],
+      "all_attempts_zero_step": true,
+      "qps_probe_was_retriggered": false,
+      "classification": "INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION"
+    },
+    "Rank": {
+      "result": "PASS",
+      "first_red": "QPS_PRIVATE_RUNTIME_RUNNER_ADMISSION",
+      "blocking_surface": "GBOGEB/cryoplant-project#923",
+      "no_blind_rerun": true
+    }
+  },
+  "mip": {
+    "Modernize": {
+      "result": "PASS",
+      "outputs": [
+        "REFRESH_DASHBOARD_TO_ACTIVE8_NOT_RECON2",
+        "SEPARATE_ANALYTICS_RECONNAISSANCE_CANONICAL_ADMISSION_GLOBAL_BD",
+        "BIND_CURRENT_QPS_MAIN_SEPARATELY_FROM_FRESHEST_RELEVANT_ZERO_STEP_OBSERVATION"
+      ]
+    },
+    "Innovate": {
+      "result": "PASS_BOUNDED",
+      "outputs": [
+        "SCOUT_C_DEPTH_BOARD_F05_TO_F08_WITHOUT_FALSE_COMPARATIVE_RANK",
+        "PCA_BT_ANALYTICS_VISIBLE_BUT_NONPROMOTIONAL",
+        "EXTERNAL_FIRST_RED_VISIBLE_AS_DISTINCT_CONTROL_PLANE"
+      ]
+    },
+    "Perpetuate": {
+      "result": "PASS_REPOSITORY_NATIVE",
+      "outputs": [
+        "mission-control/grand-missions/GM_FLEET_3PSTAR_MIP_20260919T0738_v4.json",
+        "mission-control/grand-missions/GM_FLEET_DASHBOARD_V11_DATA.json",
+        "mission-control/grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html",
+        "mission-control/grand-missions/validate_gm_fleet_3pstar_mip_v4.py",
+        ".github/workflows/gm-fleet-3pstar-mip-v4.yml",
+        "mission-control/grand-missions/handover/SC_2026-09-19_GM_FLEET_3PSTAR_MIP_v4.md",
+        "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-19_GM_FLEET_v4.md"
+      ]
+    }
+  },
+  "three_pc": {
+    "Prepare": "PASS_REUSED",
+    "Prove": "WITHHELD_EXTERNAL_OWNER_ACTION",
+    "Commit": "HOLD_WAIT_PROVE"
+  },
+  "three_p3": "NOT_AUTHORIZED",
+  "invariants": [
+    "GM_IV_ACTIVE8_WITH_ZERO_CANONICAL_CHILDREN",
+    "GM_V_HELD_WITH_ZERO_CHILDREN_AND_UNALLOCATED_CREW",
+    "ANALYTICS_NE_ADMISSION",
+    "RECON_NE_CHILD_BINDING",
+    "ZERO_STEP_NE_APPLICATION_FAIL",
+    "AUTHORITY_TRANSFER_FALSE",
+    "NO_BLIND_QPS_RERUN"
+  ],
+  "dashboard_data": "mission-control/grand-missions/GM_FLEET_DASHBOARD_V11_DATA.json"
+}
