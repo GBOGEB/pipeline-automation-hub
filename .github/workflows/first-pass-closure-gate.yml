@@ -19,6 +19,7 @@ permissions:
   pull-requests: write
   issues: read
   actions: read
+  statuses: write
 
 jobs:
   first-pass-closure:
@@ -28,6 +29,45 @@ jobs:
        github.event.pull_request.draft == false)
     runs-on: ubuntu-latest
     steps:
+      - name: Resolve PR identity
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "${{ github.event_name }}" in
+            pull_request_target|pull_request_review)
+              PR_NUMBER="${{ github.event.pull_request.number }}"
+              ;;
+            workflow_dispatch)
+              PR_NUMBER="${{ inputs.pr_number }}"
+              ;;
+            *)
+              echo "unsupported event" >&2
+              exit 2
+              ;;
+          esac
+          test -n "$PR_NUMBER" || { echo "pr_number required" >&2; exit 2; }
+          PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
+          HEAD_SHA="$(printf '%s' "$PR_JSON" | jq -r .head.sha)"
+          test "${#HEAD_SHA}" -eq 40 || { echo "PR head unavailable" >&2; exit 2; }
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "head_sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Publish head-bound pending gate status
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/statuses/${HEAD_SHA}" \
+            -f state='pending' \
+            -f context='First-Pass Closure Gate / first-pass-closure' \
+            -f description='Trusted evaluator pending' \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
       - name: Checkout trusted gate implementation from default branch
         uses: actions/checkout@v4
         with:
@@ -36,26 +76,6 @@ jobs:
       - name: Unit-test gate logic
         run: python -m unittest scripts/tests/test_first_pass_closure_gate.py
 
-      - name: Resolve PR number
-        id: pr
-        shell: bash
-        run: |
-          set -euo pipefail
-          case "${{ github.event_name }}" in
-            pull_request_target|pull_request_review)
-              echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
-              ;;
-            workflow_dispatch)
-              PR_NUMBER="${{ inputs.pr_number }}"
-              test -n "$PR_NUMBER" || { echo "pr_number input required" >&2; exit 2; }
-              echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
-              ;;
-            *)
-              echo "unsupported event" >&2
-              exit 2
-              ;;
-          esac
-
       - name: Evaluate exact-head first-pass closure
         id: gate
         continue-on-error: true
@@ -63,21 +83,28 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           mkdir -p output/fpc
-          python scripts/first_pass_closure_gate.py             --repo "${{ github.repository }}"             --pr "${{ steps.pr.outputs.number }}"             --policy mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json             --out output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
+          python scripts/first_pass_closure_gate.py \
+            --repo "${{ github.repository }}" \
+            --pr "${{ steps.pr.outputs.number }}" \
+            --policy mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json \
+            --out output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
 
       - name: Disable auto-merge unless the evaluator succeeded
         if: always() && steps.gate.outcome != 'success'
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
         shell: bash
         run: |
           set -euo pipefail
+          test -n "$PR_NUMBER" || exit 0
           PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
           AUTO="$(printf '%s' "$PR_JSON" | jq -r 'if .auto_merge == null then "none" else "enabled" end')"
           if [ "$AUTO" = "enabled" ]; then
             NODE_ID="$(printf '%s' "$PR_JSON" | jq -r .node_id)"
-            gh api graphql               -f query='mutation($id:ID!){disablePullRequestAutoMerge(input:{pullRequestId:$id}){pullRequest{number}}}'               -f id="$NODE_ID"
+            gh api graphql \
+              -f query='mutation($id:ID!){disablePullRequestAutoMerge(input:{pullRequestId:$id}){pullRequest{number}}}' \
+              -f id="$NODE_ID"
             echo "FPC_AUTO_MERGE_DISABLED=1"
           else
             echo "FPC_AUTO_MERGE_DISABLED=0"
@@ -92,8 +119,31 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+      - name: Publish final head-bound gate status
+        if: always() && steps.pr.outputs.head_sha != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+          GATE_OUTCOME: ${{ steps.gate.outcome }}
+          JOB_STATUS: ${{ job.status }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$GATE_OUTCOME" = "success" ] && [ "$JOB_STATUS" = "success" ]; then
+            STATE="success"
+            DESCRIPTION="Trusted evaluator PASS"
+          else
+            STATE="failure"
+            DESCRIPTION="Trusted evaluator FAIL or incomplete"
+          fi
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/statuses/${HEAD_SHA}" \
+            -f state="$STATE" \
+            -f context='First-Pass Closure Gate / first-pass-closure' \
+            -f description="$DESCRIPTION" \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
       - name: Fail closed unless the evaluator succeeded
-        if: always() && steps.gate.outcome != 'success'
+        if: always() && (steps.gate.outcome != 'success' || failure())
         run: |
           echo "First-Pass Closure Gate is RED; merge remains held."
           exit 1
