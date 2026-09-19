@@ -12,8 +12,12 @@
       "to": "GBOGEB/ABACUS",
       "pr": 1286,
       "run_id": 35425352862,
-      "state": "WAIT_RUNNER",
-      "credit": 0
+      "state": "PASS",
+      "credit": 1,
+      "runner_id": 1000315763,
+      "artifact_id": 10578679971,
+      "artifact_digest": "sha256:ca73b87caf9be791f19937c1cab25499efbabf0f1248f8c66752067adbfd6847",
+      "receipt_sha256": "ef6528fbe2bd7cfab6b0947c0b8b6601419811ef191d6ca84350c356d8ba69bf"
     },
     {
       "id": "KEB",
@@ -29,5 +33,11 @@
     "INDEPENDENT_CONSUMER_RECEIPTS",
     "NON_COMPENSATING_EDGES",
     "NO_ENGINEERING_AUTHORITY_TRANSFER"
-  ]
+  ],
+  "observed_runtime_summary": {
+    "registered_edges": 2,
+    "pass_edges": 1,
+    "wait_edges": 1,
+    "red_edges": 0
+  }
 }
