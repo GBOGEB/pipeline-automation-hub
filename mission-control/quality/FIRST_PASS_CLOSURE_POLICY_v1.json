@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.first_pass_closure_policy.v1",
-  "as_of": "2026-09-19T08:15:00+02:00",
+  "as_of": "2026-09-19T08:35:00+02:00",
   "issue": "GBOGEB/pipeline-automation-hub#304",
   "objective": "MAKE_MERGE_THE_LAST_EVENT_AFTER_EXACT_HEAD_PROOF_AND_REVIEW_CLEAN",
   "authority_transfer": false,
@@ -69,7 +69,13 @@
     "PROOF_WORKFLOW_MUTATED_FROM_TRUSTED_BASE",
     "POLICY_LOAD_FAILED",
     "PRE_EVALUATOR_FAILURE",
-    "PR_BASE_UNAVAILABLE"
+    "PR_BASE_UNAVAILABLE",
+    "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP",
+    "FINAL_RECEIPT_STATUS_NOT_PASS",
+    "FINAL_RECEIPT_MERGE_ALLOWED_NOT_TRUE",
+    "FINAL_RECEIPT_HEAD_MISMATCH",
+    "FINAL_RECEIPT_BASE_MISMATCH",
+    "FINAL_RECEIPT_CONTROLLER_REVISION_MISMATCH"
   ],
   "non_compensation": {
     "r3_release_credit": "NONE",
@@ -108,11 +114,35 @@
     "required_status_name": "First-Pass Closure Gate / first-pass-closure",
     "cleanup_condition": "ALWAYS_WHEN_GATE_OUTCOME_IS_NOT_SUCCESS",
     "early_failure_receipt": "DETERMINISTIC_FAIL_RECEIPT_BEFORE_ARTIFACT_UPLOAD",
-    "external_required_status_boundary": "OWNER_ADMIN_DEFENSE_IN_DEPTH"
+    "external_required_status_boundary": "OWNER_ADMIN_DEFENSE_IN_DEPTH",
+    "trusted_controller_source": "PR_BASE_SHA",
+    "final_predicate": "RECEIPT_SCHEMA_V3_AND_STATUS_PASS_AND_MERGE_ALLOWED_TRUE_AND_EXACT_HEAD_BASE_BINDING",
+    "fail_receipt_is_green": false
   },
   "proof_identity_trust": {
-    "rule": "ALLOWLIST_IDENTITY_PLUS_CANDIDATE_WORKFLOW_CONTENT_EQUALS_PR_BASE_WORKFLOW_CONTENT",
-    "candidate_mutation_result": "FAIL_CLOSED",
+    "controller_execution": "PR_BASE_SHA_ONLY_VIA_PULL_REQUEST_TARGET_OR_DEFAULT_BRANCH_EVENT",
+    "candidate_controller_execution": false,
+    "candidate_proof_role": "DATA_AND_EXACT_HEAD_RUNTIME_EVIDENCE_ONLY",
+    "proof_workflow_identity": "ALLOWLIST_PLUS_CANDIDATE_CONTENT_EQUALS_CURRENT_PR_BASE_CONTENT",
+    "protected_path_mutation": "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP",
     "cross_repo_proof_identity": "WITHHELD_UNTIL_EXPLICIT_TRUST_CONTRACT"
+  },
+  "protected_control_paths": [
+    "scripts/first_pass_closure_gate.py",
+    "scripts/tests/test_first_pass_closure_gate.py",
+    ".github/workflows/first-pass-closure-gate.yml",
+    ".github/workflows/first-pass-closure-proof.yml",
+    "mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json"
+  ],
+  "controller_maintenance": {
+    "ordinary_pr_gate": "REJECT",
+    "bootstrap_rule": "CONTROLLER_CHANGE_MUST_NOT_SELF_CERTIFY",
+    "bootstrap_acceptance": [
+      "EXACT_HEAD_INDEPENDENT_CODE_REVIEW_COMPLETE",
+      "ZERO_MATERIAL_P1_P2_FINDINGS",
+      "MERGE_AS_EXPLICIT_BOOTSTRAP_ONLY",
+      "POST_MERGE_DISTINCT_NON_CONTROLLER_CANARY_REQUIRED"
+    ],
+    "closure_rule": "DO_NOT_CLOSE_ISSUE_314_OR_RELEASE_CONSUMER_1550_UNTIL_CANARY_FPC_PASS"
   }
 }
