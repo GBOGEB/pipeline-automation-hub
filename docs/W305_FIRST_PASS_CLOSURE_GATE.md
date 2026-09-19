@@ -109,3 +109,27 @@ A synthesized FAIL receipt can therefore never satisfy the final job merely beca
 The controller cannot safely certify a PR that changes the controller itself. Such a PR is a bootstrap transaction and is deliberately rejected by the ordinary gate. It requires an independent exact-head code review with zero material findings and must be followed after merge by a distinct non-controller canary PR. The canary must obtain a full trusted-base FPC PASS before W305 #314 can close or the QPS consumer can activate.
 
 The candidate proof workflow now runs on every PR to `master`; it proves candidate behavior but never supplies promotion authority by itself.
+
+
+## R7 rename and head-status hardening
+
+R6 established trusted-base admission, but its first independent review exposed a protected-path rename escape: GitHub represents a rename with both `filename` and `previous_filename`. Admission must therefore test **both** names against the protected controller set. Moving a protected controller to an unprotected destination is still a controller mutation and requires the bootstrap path.
+
+The trusted controller also publishes the FPC outcome directly on the resolved **PR head SHA** using status context `First-Pass Closure Gate / first-pass-closure`. This is required because the `pull_request_target` workflow/check-suite identity belongs to a trusted base-side event and is not, by itself, a branch-protection proof on the candidate head.
+
+Head-status lifecycle:
+
+```
+PR resolved
+-> head status PENDING
+-> trusted base checkout/tests/evaluator
+-> bound PASS receipt validation
+-> receipt artifact upload
+-> head status SUCCESS only if all required stages succeeded
+-> otherwise head status FAILURE / no success
+-> fail-closed job
+```
+
+Controller-maintenance PRs remain deliberately non-self-certifying. R7 itself must be merged only as an explicit reviewed bootstrap with zero material P1/P2 findings, followed by a distinct non-controller canary. That canary must carry an exact-head proof receipt, clean exact-head review, trusted-base FPC PASS, and the head-bound status success **before** merge.
+
+No R7 bootstrap or canary changes QPS engineering, release, acceptance, runtime-GOLD, or formal credit.
