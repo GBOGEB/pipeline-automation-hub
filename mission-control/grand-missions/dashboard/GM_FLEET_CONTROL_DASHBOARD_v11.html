@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grand Mission Fleet Control Dashboard v11</title>
+<style>
+:root{--bg:#050a11;--p:#0d1b2b;--line:#294962;--tx:#eef8ff;--mut:#8fa9be;--b:#46b3ff;--g:#37d991;--a:#ffc95b;--r:#ff6577;--v:#9c87ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 12% -8%,#17446d,#07131f 36%,#04080d 82%);color:var(--tx);font:13px Inter,system-ui,sans-serif}
+header{position:sticky;top:0;z-index:10;background:#050a11ed;border-bottom:1px solid var(--line);padding:13px 18px;display:flex;justify-content:space-between}
+h1{margin:0;font-size:19px}.sub{font-size:10px;color:var(--mut)}.wrap{max-width:1750px;margin:auto;padding:13px}
+.panel{background:linear-gradient(#10263e,#091623);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:10px}.panel h2{margin:0 0 9px;font-size:11px;text-transform:uppercase;letter-spacing:.11em;color:#cfeaff}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}.tab{padding:7px 10px;border:1px solid #315d7d;border-radius:999px;background:#071522;color:#d9efff;cursor:pointer}.tab.on{background:#123b60;border-color:var(--b)}.view{display:none}.view.on{display:block}
+.metrics{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}@media(max-width:950px){.metrics{grid-template-columns:repeat(3,1fr)}}.m{background:#07131f;border:1px solid var(--line);border-radius:9px;padding:9px}.m b{display:block;font-size:20px}.m small{color:var(--mut);font-size:9px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:950px){.grid2{grid-template-columns:1fr}}
+.cardgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}@media(max-width:1050px){.cardgrid{grid-template-columns:1fr 1fr}}.card{background:#07131f;border:1px solid var(--line);border-radius:10px;padding:10px}.card h3{font-size:12px;margin:0 0 6px}.card p{font-size:10px;color:var(--mut);line-height:1.45}.pilot{border-color:#2b7657}.ref{border-color:#526f9f}.recon{border-color:#8b6822}.hold{border-color:#793947}
+.pill{display:inline-block;padding:4px 7px;border-radius:999px;background:#15314a;font-size:9px;font-weight:900}.good{color:var(--g)}.warn{color:var(--a)}.bad{color:var(--r)}
+.call{padding:10px;background:#12283b;border-left:3px solid var(--a);border-radius:8px;line-height:1.5}
+.rows{display:grid;gap:6px}.row{display:grid;grid-template-columns:120px 1fr 160px;gap:8px;padding:8px;background:#07131f;border:1px solid var(--line);border-radius:8px}.row small{color:var(--mut)}
+.pc{display:grid;grid-template-columns:100px 1fr 120px;gap:8px;padding:8px;background:#07131f;border:1px solid var(--line);border-radius:8px;margin-bottom:6px}.bar{height:8px;background:#12283c;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--b),var(--v))}
+.footer{text-align:center;color:#6e899f;font-size:9px;padding:14px}
+</style></head><body>
+<header><div><h1>Grand Mission Fleet — Control Dashboard v11</h1><div class="sub">analytics ≠ reconnaissance ≠ canonical admission · external BD explicit</div></div><div class="sub">3P* → MIP · 2026-09-19</div></header>
+<div class="wrap">
+<div class="tabs"><button class="tab on" data-v="overview">Overview</button><button class="tab" data-v="analytics">Analytics</button><button class="tab" data-v="scoutc">Scout-C / F05–F08</button><button class="tab" data-v="admission">Canonical Admission</button><button class="tab" data-v="bd">Global BD</button></div>
+<div class="view on" id="overview"><section class="panel"><h2>Four-plane truth model</h2><div class="metrics">
+<div class="m"><b>ACTIVE 8/8</b><small>GM-IV named reconnaissance frontiers</small></div><div class="m"><b>0</b><small>GM-IV canonical children</small></div><div class="m"><b>HELD</b><small>GM-V canonical state</small></div><div class="m"><b>0</b><small>GM-V children</small></div><div class="m"><b>#923</b><small>rank-0 external first red</small></div><div class="m"><b>NO</b><small>authority transfer</small></div>
+</div></section>
+<section class="panel"><h2>Boundary</h2><div class="call"><b>ACTIVE_8_OF_8 does not mean child admission.</b> Analytics may describe measured behavior; reconnaissance may bind frontier identities; only canonical admission may bind children or launch GM-V. GM-V remains HELD.</div></section></div>
+
+<div class="view" id="analytics"><section class="panel"><h2>Measured analytics control</h2>
+<div class="pc"><b>PC1</b><div><div class="bar"><i style="width:65.66%"></i></div><small>execution / active exposure</small></div><strong>65.66%</strong></div>
+<div class="pc"><b>PC2</b><div><div class="bar"><i style="width:20.65%"></i></div><small>waiting / queue pressure</small></div><strong>20.65%</strong></div>
+<div class="pc"><b>PC3</b><div><div class="bar"><i style="width:13.69%"></i></div><small>release / handoff overhead</small></div><strong>13.69%</strong></div>
+<div class="rows"><div class="row"><b>Crew PCA</b><span>CONTROL_READY_MEASURED_REPEAT_SMALL_N</span><small>run 34773738858 · artifact 10323136223</small></div><div class="row"><b>Frontier PCA</b><span>CONTROL_READY_MEASURED_REPEAT</span><small>non-causal control evidence</small></div><div class="row"><b>BT</b><span>READY_OBSERVED</span><small>12 pairs · single 8 / paired 4</small></div></div>
+</section></div>
+
+<div class="view" id="scoutc"><section class="panel"><h2>Scout-C depth board — F05–F08</h2><div id="scoutCards" class="cardgrid"></div>
+<div class="call" style="margin-top:9px"><b>Comparative rank is deliberately NOT COMPUTED.</b> These are four evidence-backed ACTIVE8 reconnaissance identities. A numeric or ordinal performance ranking would be false precision until comparable evidence-economics rows exist for all four.</div></section></div>
+
+<div class="view" id="admission"><section class="panel"><h2>Canonical admission plane</h2><div class="cardgrid">
+<div class="card pilot"><h3>GM-IV</h3><span class="pill">ACTIVE_8_OF_8</span><p>Eight named frontier identities. Canonical children remain empty.</p></div>
+<div class="card hold"><h3>GM-V</h3><span class="pill">HELD</span><p>Children empty. Crew UNALLOCATED. Launch authorization false.</p></div>
+<div class="card ref"><h3>Authority</h3><span class="pill">FALSE</span><p>No analytics, pilot, reference, or recon signal transfers engineering or admission authority.</p></div>
+<div class="card recon"><h3>Next legal gate</h3><span class="pill">EXTERNAL</span><p>Owner-side Actions admission must materially change before 3PC Prove.</p></div>
+</div></section></div>
+
+<div class="view" id="bd"><section class="panel"><h2>Global BD / first-red</h2><div class="rows">
+<div class="row"><b>Rank 0</b><span>GBOGEB/cryoplant-project#923</span><small>INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION</small></div>
+<div class="row"><b>Fresh probe</b><span>W286 PR #1542 · run 35372609150</span><small>3 attempts · all zero-step</small></div>
+<div class="row"><b>Application repair</b><span class="bad">NOT AUTHORIZED</span><small>zero-step is habitat/admission evidence</small></div>
+<div class="row"><b>Re-entry</b><span>owner admission → unchanged probe → runner_id != 0 → steps &gt; 0</span><small>then unchanged child validator</small></div>
+</div></section></div>
+<div class="footer">MissionControl dashboard v11 · canonical master snapshot 361910f1… · QPS main c73cff96…</div>
+</div>
+<script id="fleet-data" type="application/json">{
+  "schema": "missioncontrol.fleet_dashboard.v11.data",
+  "as_of": "2026-09-19T07:38:00+02:00",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "source_heads": {
+    "missioncontrol_master": "361910f19a235af00c247059959dfd8bb797befc",
+    "qps_main": "c73cff96406d747493fabc650a670b4c3279d05e",
+    "qps_issue_923_state": "OPEN"
+  },
+  "planes": {
+    "analytics": {
+      "crew_exposure_pca": {
+        "state": "CONTROL_READY_MEASURED_REPEAT_SMALL_N",
+        "control_repeat_run": 34773738858,
+        "artifact_id": 10323136223,
+        "artifact_digest": "sha256:e175cdcde0c6132a4431c8335282b066353f5f422eea5da514334f275cacb7cb",
+        "pc1": {
+          "explained_variance_ratio": 0.6566259018268262,
+          "meaning": "EXECUTION_ACTIVE_EXPOSURE"
+        },
+        "pc2": {
+          "explained_variance_ratio": 0.20645164159383045,
+          "meaning": "WAIT_PRESSURE"
+        },
+        "pc3": {
+          "explained_variance_ratio": 0.13692245657934335,
+          "meaning": "RELEASE_HANDOFF_OVERHEAD"
+        },
+        "sample_rank_cap": 3,
+        "causal_interpretation_allowed": false,
+        "competency_promotion_allowed": false
+      },
+      "frontier_pca": {
+        "state": "CONTROL_READY_MEASURED_REPEAT"
+      },
+      "bt": {
+        "state": "READY_OBSERVED",
+        "observed_pairs": 12,
+        "single_cell_wins": 8,
+        "paired_cell_wins": 4
+      },
+      "boundary": "ANALYTICS_DO_NOT_BIND_FRONTIER_CHILDREN_OR_ENGINEERING_AUTHORITY"
+    },
+    "reconnaissance": {
+      "gm_iv_state": "ACTIVE_8_OF_8",
+      "canonical_children": [],
+      "controlled_pilots": [
+        {
+          "frontier": "GM-IV-F01",
+          "repository": "GBOGEB/DOCX_RTM_Automation",
+          "class": "CONTROLLED_PILOT_RETAINED"
+        },
+        {
+          "frontier": "GM-IV-F03",
+          "repository": "GBOGEB/codespaces-jupyter",
+          "class": "CONTROLLED_PILOT_RETAINED"
+        }
+      ],
+      "references": [
+        {
+          "frontier": "GM-IV-F02",
+          "repository": "GBOGEB/attest-build-provenance",
+          "class": "REFERENCE_RETAINED"
+        },
+        {
+          "frontier": "GM-IV-F04",
+          "repository": "GBOGEB/yaml-reference-parser",
+          "class": "REFERENCE_RETAINED"
+        }
+      ],
+      "scout_c_depth_board": [
+        {
+          "frontier": "GM-IV-F05",
+          "repository": "GBOGEB/ABACUS",
+          "class": "OBSERVED_CANDIDATE_RECON",
+          "observed_surface": "DMAIC_delivery_work_execution_and_federated_MIP_consumption",
+          "comparative_rank": "NOT_COMPUTED"
+        },
+        {
+          "frontier": "GM-IV-F06",
+          "repository": "GBOGEB/CODEX",
+          "class": "OBSERVED_CANDIDATE_RECON",
+          "observed_surface": "semantic_manifest_provenance_and_MIP_self_index_control",
+          "comparative_rank": "NOT_COMPUTED"
+        },
+        {
+          "frontier": "GM-IV-F07",
+          "repository": "GBOGEB/cryo_leak_rate_dashboard",
+          "class": "OBSERVED_CANDIDATE_RECON",
+          "observed_surface": "independent_cryo_leak_kernel_dashboard_with_authority_quarantine",
+          "comparative_rank": "NOT_COMPUTED"
+        },
+        {
+          "frontier": "GM-IV-F08",
+          "repository": "GBOGEB/document-organization-system",
+          "class": "OBSERVED_CANDIDATE_RECON",
+          "observed_surface": "document_topology_causal_attribution_and_bounded_routing",
+          "comparative_rank": "NOT_COMPUTED"
+        }
+      ],
+      "rank_policy": "NO_COMPARATIVE_FRONTIER_RANK_UNTIL_COMPARABLE_MEASURED_EVIDENCE_ECONOMICS_EXISTS",
+      "boundary": "RECON_FRONTIER_IDENTITY_NE_CANONICAL_CHILD"
+    },
+    "canonical_admission": {
+      "gm_iv_children": [],
+      "gm_v_state": "HELD",
+      "gm_v_children": [],
+      "gm_v_crew_posture": "UNALLOCATED",
+      "gm_v_launch_authorized": false,
+      "authority_transfer": false
+    },
+    "global_bd": {
+      "rank0": "GBOGEB/cryoplant-project#923",
+      "classification": "INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION",
+      "current_qps_main": "c73cff96406d747493fabc650a670b4c3279d05e",
+      "freshest_bound_child_probe": {
+        "qps_pr": 1542,
+        "qps_head_sha": "423aa2219e30d0c42180a5f6466546c0ed5c05b1",
+        "qps_merge_sha": "c768ec647982d5099ef1a5ded65ea7d4daa7fb08",
+        "workflow_run_id": 35372609150,
+        "attempts": [
+          {
+            "job_id": 105689855356,
+            "steps": 0
+          },
+          {
+            "job_id": 105690079257,
+            "steps": 0
+          },
+          {
+            "job_id": 105690167950,
+            "steps": 0
+          }
+        ]
+      },
+      "application_repair_authorized": false,
+      "next_legal_trigger": "OWNER_SIDE_ACTIONS_ADMISSION_CHANGE",
+      "reentry": "UNCHANGED_PROBE -> RUNNER_ID_NONZERO -> STEPS_GT_0 -> UNCHANGED_CHILD_VALIDATOR -> EXACT_RECEIPT"
+    }
+  }
+}
+</script>
+<script>
+const D=JSON.parse(document.getElementById('fleet-data').textContent);
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById(b.dataset.v).classList.add('on')});
+const s=D.planes.reconnaissance.scout_c_depth_board;
+document.getElementById('scoutCards').innerHTML=s.map(x=>`<div class="card recon"><h3>${x.frontier}</h3><span class="pill">${x.class}</span><p><b>${x.repository}</b><br>${x.observed_surface}<br><br>Comparative rank: ${x.comparative_rank}</p></div>`).join('');
+</script></body></html>
