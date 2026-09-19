@@ -269,5 +269,17 @@ class TestFirstPassClosureGate(unittest.TestCase):
             fpc.validate_pass_receipt(receipt, HEAD, BASE)
 
 
+    def test_workflow_never_falls_back_to_event_ref_after_pr_resolution_failure(self):
+        workflow = (
+            ROOT.parent / ".github/workflows/first-pass-closure-gate.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "if: steps.pr.outcome == 'success' && steps.pr.outputs.base_sha != ''",
+            workflow,
+        )
+        self.assertIn("ref: ${{ steps.pr.outputs.base_sha }}", workflow)
+
+
+
 if __name__ == "__main__":
     unittest.main()
