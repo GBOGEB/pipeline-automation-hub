@@ -1,0 +1,50 @@
+name: GM-I-A Multi-Clock 3PSTAR MIP
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/analytics/GM_I_A_MULTI_CLOCK_*'
+      - 'mission-control/grand-missions/analytics/gm_i_a_multiclock_*.py'
+      - 'mission-control/grand-missions/analytics/validate_gm_i_a_multiclock_3pstar_mip.py'
+      - 'mission-control/grand-missions/handover/SC_2026-09-19_GM_I_A_MULTI_CLOCK_3PSTAR_MIP_v1.md'
+      - 'mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-19_GM_I_A_MULTI_CLOCK_v1.md'
+      - '.github/workflows/gm-i-a-multiclock-3pstar-mip.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prove-3pstar-mip:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile measurement tools
+        run: |
+          python -m py_compile             mission-control/grand-missions/analytics/gm_i_a_multiclock_analyze.py             mission-control/grand-missions/analytics/gm_i_a_multiclock_capture.py             mission-control/grand-missions/analytics/validate_gm_i_a_multiclock_3pstar_mip.py
+      - name: Recompute P001 readiness
+        run: |
+          mkdir -p /tmp/gm_i_a_3pstar_mip
+          python mission-control/grand-missions/analytics/gm_i_a_multiclock_analyze.py             --input mission-control/grand-missions/analytics/GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json             --out /tmp/gm_i_a_3pstar_mip/readiness.json             --pairs-out /tmp/gm_i_a_3pstar_mip/pairs.json             --csv-out /tmp/gm_i_a_3pstar_mip/pulses.csv
+      - name: Validate 3PSTAR then MIP control
+        run: |
+          python mission-control/grand-missions/analytics/validate_gm_i_a_multiclock_3pstar_mip.py             --readiness /tmp/gm_i_a_3pstar_mip/readiness.json             --out /tmp/gm_i_a_3pstar_mip/3pstar_mip_receipt.json
+          grep -q PASS_3PSTAR_MIP_REPOSITORY_CONTROL /tmp/gm_i_a_3pstar_mip/3pstar_mip_receipt.json
+      - name: Hash exact evidence
+        run: |
+          sha256sum /tmp/gm_i_a_3pstar_mip/* | sort > /tmp/gm_i_a_3pstar_mip/SHA256SUMS
+      - name: Upload exact-head receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-i-a-multiclock-3pstar-mip-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/gm_i_a_3pstar_mip/
+          if-no-files-found: error
