@@ -1,0 +1,15 @@
+schema: missioncontrol.w305.r8_canary.v1
+canary_id: W305_R8_CANARY_20260919
+purpose: PROVE_TRUSTED_BASE_FPC_AFTER_TRIGGER_HEAD_INVALIDATION
+source_master_sha: f2e9eaf5d17a3ed8e12af9ec1dd0e6c49ef2b193
+controller_change: false
+expected_flow:
+  - FIRST_PASS_CLOSURE_PROOF_EXACT_HEAD_PASS
+  - FPC_RECEIPT_V1_BOUND_TO_EXACT_HEAD
+  - CODEX_REVIEW_COMPLETE_ZERO_MATERIAL_FINDINGS
+  - TRUSTED_BASE_FPC_PASS
+  - HEAD_BOUND_STATUS_SUCCESS_BEFORE_MERGE
+authority_transfer: false
+formal_credit_delta: 0
+consumer_release: false
+owner_admin_required_status_boundary: PRESERVED
