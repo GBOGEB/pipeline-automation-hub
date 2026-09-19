@@ -1,0 +1,110 @@
+schema: missioncontrol.ke_block_roundtrip.office_style_candidate_parent_receipt.v1
+as_of: "2026-09-19T09:19:00+02:00"
+repository: GBOGEB/pipeline-automation-hub
+base_master_sha: 735208c6d24cbabfa4a29ec4b781265c6f276885
+authority_transfer: false
+formal_credit_delta: 0
+
+approved_visual_baseline:
+  state: USER_APPROVED_IMMUTABLE_REFERENCE
+  control_path: recursive_doc_engine/control/KE_BLOCK_OFFICE_RENDER_PARENT_RECEIPT_20260919_v3.yaml
+  docx_sha256: e936ffcb89eb7da13b8be8d447c8453b5b4499a4907390816846f5c8ec94a6b9
+  pdf_sha256: 654e74630861b5b398ab577d55da5f692bf4549b0af480498822428109353b02
+
+candidate_lineage:
+  consumer:
+    repo: GBOGEB/DOCX_RTM_Automation
+    style_candidate_pr: 71
+    merge_sha: 78de18967bae343b68f6e757c610262b2b385112
+    exact_render_head: 92468c5fb9210144901729d5385c48cc858b1099
+    workflow_run: 35428885415
+    job_id: 105859678433
+    artifact_id: 10580151437
+    artifact_digest: sha256:c7483e4253f7ff746121897b3b51383fee3b095b7ee1793c5a54cad9c70cac7e
+  producer_receipt:
+    repo: GBOGEB/document-organization-system
+    pr: 71
+    merge_sha: 5bbfb27e6875c1d4db081bedc5bffeb93a922819
+
+candidate:
+  style_id: QPS_TECH_GRAPHITE_TEAL_COPPER_V1
+  style_sha256: 9338e9634185c5ae9184533ddc77541badd7ba84ea6bf7c9fb576c5c01a02df8
+  docx_sha256: 64d3d76c71977a6a71b2bef54574f0cc3330b5f26ce984c051c9f3ea77bc8213
+  pdf_sha256: bd8d29bbc3a2429ad723e6897faf633583128d5f7482cc207f32974a1a2295f0
+  typography:
+    body_font: Aptos
+    heading_font: Aptos Display
+    word_size_granularity_pt: 0.5
+  palette:
+    body: "303538"
+    heading_primary: "0E5A5D"
+    heading_secondary: "2C7776"
+    heading_tertiary: "4A6D6C"
+    special_number: "B56A34"
+    requirement_id: "B56A34"
+    caption: "6B7174"
+  title_rule:
+    enabled: false
+    legacy_standard_blue_removed: true
+  granular_roles:
+    - title_h1_h2_h3_body_caption_requirement_metadata_sizes
+    - body_heading_special_number_requirement_caption_metadata_colors
+    - heading_number_accent
+    - requirement_id_accent
+    - metadata_label_accent
+    - caption_number_accent
+    - page_margins_and_spacing
+    - table_and_callout_tokens
+
+proof:
+  semantic_source_invariance: PASS
+  markdown_projection_invariance: PASS
+  style_contract: PASS
+  template_numbering: PASS
+  duplicate_numbering: PASS
+  requirement_pagination: PASS
+  final_split_requirements: []
+  pdf_pages: 2
+  independent_visual_qa: PASS
+  clipping: NONE
+  overlap: NONE
+  legacy_standard_blue_observed: false
+  visual_delta:
+    page_count_equal: true
+    mean_changed_pixel_ratio: 0.07894457
+    page_1_changed_pixel_ratio: 0.11515327
+    page_2_changed_pixel_ratio: 0.04273588
+
+sequence:
+  - phase: 3PSTAR_REFRESH_CURRENT_AUTHORITY
+    state: PASS
+  - phase: 3PSTAR_BIND_STYLE_CANDIDATE
+    state: PASS
+  - phase: MIP_MODERNIZE
+    state: PASS
+    change: formatting moved from hidden template defaults to named style tokens
+  - phase: MIP_INNOVATE
+    state: PASS
+    change: special numbers, requirement IDs, metadata labels and caption numbers have independent semantic visual roles
+  - phase: MIP_PERPETUATE
+    state: PASS_CANDIDATE_RECEIPT
+  - phase: USER_STYLE_REVIEW
+    state: HOLD
+
+promotion:
+  approved_visual_baseline: UNCHANGED
+  style_candidate: READY_FOR_USER_REVIEW
+  style_candidate_baseline_replacement: WITHHELD
+  remaining_requires:
+    - EXPLICIT_USER_STYLE_APPROVAL
+
+non_compensation:
+  style_candidate_ne_semantic_ssot: true
+  independent_visual_qa_ne_user_style_approval: true
+  engineering_credit: false
+  compliance_credit: false
+  procurement_acceptance_credit: false
+
+stop_state:
+  state: SAFE_HOLD_USER_STYLE_REVIEW
+  first_red: USER_STYLE_REVIEW
