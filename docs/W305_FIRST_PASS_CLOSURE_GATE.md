@@ -127,8 +127,11 @@ PR resolved
 -> receipt artifact upload
 -> head status SUCCESS only if all required stages succeeded
 -> otherwise head status FAILURE / no success
+-> final complete-predicate auto-merge hold
 -> fail-closed job
 ```
+
+Runs are serialized per PR with cancellation of an older in-progress run. This prevents a stale review/edit run from publishing SUCCESS after a newer run has already observed a new finding. The final auto-merge hold is evaluated **after** receipt artifact and head-status publication, so artifact/status failure cannot escape merely because receipt validation itself passed.
 
 Controller-maintenance PRs remain deliberately non-self-certifying. R7 itself must be merged only as an explicit reviewed bootstrap with zero material P1/P2 findings, followed by a distinct non-controller canary. That canary must carry an exact-head proof receipt, clean exact-head review, trusted-base FPC PASS, and the head-bound status success **before** merge.
 
