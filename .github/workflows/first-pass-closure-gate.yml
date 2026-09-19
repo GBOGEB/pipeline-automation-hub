@@ -19,6 +19,11 @@ permissions:
   pull-requests: write
   issues: read
   actions: read
+  statuses: write
+
+concurrency:
+  group: first-pass-closure-${{ github.event.pull_request.number || inputs.pr_number }}
+  cancel-in-progress: true
 
 jobs:
   first-pass-closure:
@@ -56,6 +61,20 @@ jobs:
           test "${#BASE_SHA}" -eq 40
           echo "head_sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
           echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Publish head-bound pending status
+        if: steps.pr.outputs.head_sha != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/statuses/${HEAD_SHA}" \
+            -f state='pending' \
+            -f context='First-Pass Closure Gate / first-pass-closure' \
+            -f description='Trusted evaluator pending' \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
       - name: Checkout trusted PR-base controller
         id: trusted_checkout
@@ -164,6 +183,7 @@ jobs:
           fi
 
       - name: Upload gate receipt
+        id: artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -171,6 +191,78 @@ jobs:
           path: output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publish head-bound final gate status
+        id: final_status
+        if: always() && steps.pr.outputs.head_sha != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+          PR_OUTCOME: ${{ steps.pr.outcome }}
+          CHECKOUT_OUTCOME: ${{ steps.trusted_checkout.outcome }}
+          TEST_OUTCOME: ${{ steps.trusted_tests.outcome }}
+          GATE_OUTCOME: ${{ steps.gate.outcome }}
+          RECEIPT_OUTCOME: ${{ steps.receipt.outcome }}
+          ARTIFACT_OUTCOME: ${{ steps.artifact.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PR_OUTCOME" = "success" ] \
+            && [ "$CHECKOUT_OUTCOME" = "success" ] \
+            && [ "$TEST_OUTCOME" = "success" ] \
+            && [ "$GATE_OUTCOME" = "success" ] \
+            && [ "$RECEIPT_OUTCOME" = "success" ] \
+            && [ "$ARTIFACT_OUTCOME" = "success" ]; then
+            STATE='success'
+            DESCRIPTION='Trusted exact-head gate PASS'
+          else
+            STATE='failure'
+            DESCRIPTION='Trusted exact-head gate FAIL'
+          fi
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/statuses/${HEAD_SHA}" \
+            -f state="$STATE" \
+            -f context='First-Pass Closure Gate / first-pass-closure' \
+            -f description="$DESCRIPTION" \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+      - name: Enforce auto-merge hold on complete final predicate
+        if: always() && steps.pr.outputs.number != ''
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          PR_OUTCOME: ${{ steps.pr.outcome }}
+          CHECKOUT_OUTCOME: ${{ steps.trusted_checkout.outcome }}
+          TEST_OUTCOME: ${{ steps.trusted_tests.outcome }}
+          GATE_OUTCOME: ${{ steps.gate.outcome }}
+          RECEIPT_OUTCOME: ${{ steps.receipt.outcome }}
+          ARTIFACT_OUTCOME: ${{ steps.artifact.outcome }}
+          STATUS_OUTCOME: ${{ steps.final_status.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PR_OUTCOME" = "success" ] \
+            && [ "$CHECKOUT_OUTCOME" = "success" ] \
+            && [ "$TEST_OUTCOME" = "success" ] \
+            && [ "$GATE_OUTCOME" = "success" ] \
+            && [ "$RECEIPT_OUTCOME" = "success" ] \
+            && [ "$ARTIFACT_OUTCOME" = "success" ] \
+            && [ "$STATUS_OUTCOME" = "success" ]; then
+            echo "FPC_FINAL_PREDICATE_PASS=1"
+            exit 0
+          fi
+
+          PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
+          AUTO="$(printf '%s' "$PR_JSON" | jq -r 'if .auto_merge == null then "none" else "enabled" end')"
+          if [ "$AUTO" = "enabled" ]; then
+            NODE_ID="$(printf '%s' "$PR_JSON" | jq -r .node_id)"
+            gh api graphql \
+              -f query='mutation($id:ID!){disablePullRequestAutoMerge(input:{pullRequestId:$id}){pullRequest{number}}}' \
+              -f id="$NODE_ID"
+            echo "FPC_FINAL_AUTO_MERGE_DISABLED=1"
+          else
+            echo "FPC_FINAL_AUTO_MERGE_DISABLED=0"
+          fi
 
       - name: Fail closed unless trusted controller emitted a bound PASS receipt
         if: always()
@@ -181,6 +273,8 @@ jobs:
           TEST_OUTCOME: ${{ steps.trusted_tests.outcome }}
           GATE_OUTCOME: ${{ steps.gate.outcome }}
           RECEIPT_OUTCOME: ${{ steps.receipt.outcome }}
+          ARTIFACT_OUTCOME: ${{ steps.artifact.outcome }}
+          STATUS_OUTCOME: ${{ steps.final_status.outcome }}
         run: |
           set -euo pipefail
           test "$PR_OUTCOME" = "success"
@@ -188,4 +282,6 @@ jobs:
           test "$TEST_OUTCOME" = "success"
           test "$GATE_OUTCOME" = "success"
           test "$RECEIPT_OUTCOME" = "success"
+          test "$ARTIFACT_OUTCOME" = "success"
+          test "$STATUS_OUTCOME" = "success"
           echo "First-Pass Closure Gate PASS_FROM_TRUSTED_BASE."

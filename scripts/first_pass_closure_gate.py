@@ -150,11 +150,16 @@ def protected_control_changes(
 ) -> list[str]:
     protected = set(policy.get("protected_control_paths") or [])
     files = client.get_all(f"/repos/{repo}/pulls/{pr_number}/files")
-    changed = {
-        item.get("filename")
-        for item in files
-        if isinstance(item, dict) and isinstance(item.get("filename"), str)
-    }
+    changed: set[str] = set()
+    for item in files:
+        if not isinstance(item, dict):
+            continue
+        filename = item.get("filename")
+        previous_filename = item.get("previous_filename")
+        if isinstance(filename, str):
+            changed.add(filename)
+        if isinstance(previous_filename, str):
+            changed.add(previous_filename)
     return sorted(protected & changed)
 
 
