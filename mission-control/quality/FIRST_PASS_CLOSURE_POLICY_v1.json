@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.first_pass_closure_policy.v1",
-  "as_of": "2026-09-19T08:50:00+02:00",
+  "as_of": "2026-09-19T08:53:00+02:00",
   "issue": "GBOGEB/pipeline-automation-hub#304",
   "objective": "MAKE_MERGE_THE_LAST_EVENT_AFTER_EXACT_HEAD_PROOF_AND_REVIEW_CLEAN",
   "authority_transfer": false,
@@ -126,7 +126,10 @@
       "failure"
     ],
     "required_status_rule": "SUCCESS_ONLY_AFTER_BOUND_PASS_RECEIPT_AND_ARTIFACT_SUCCESS",
-    "pull_request_target_check_suite_is_not_head_binding": true
+    "pull_request_target_check_suite_is_not_head_binding": true,
+    "status_concurrency": "SERIALIZE_PER_PR_CANCEL_OLDER_RUN",
+    "auto_merge_hold_final_predicate": "RECHECK_AFTER_ARTIFACT_AND_STATUS_PUBLICATION",
+    "success_cannot_be_overwritten_by_stale_older_run": true
   },
   "proof_identity_trust": {
     "controller_execution": "PR_BASE_SHA_ONLY_VIA_PULL_REQUEST_TARGET_OR_DEFAULT_BRANCH_EVENT",
