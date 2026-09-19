@@ -1,13 +1,13 @@
 # GM-I-A multi-clock — 3P* + MIP lossless handover v1
 
-Status: **REPOSITORY_CONTROL_READY / MATH_PROVIDER_PASS / MISSIONCONTROL_HOSTED_WAIT_RUNNER**
+Status: **3PSTAR_MIP_CONTROL_PROVEN / READY_FOR_P002_REPEAT**
 
 ## Method result
 
 3P* executed as **Refresh -> Probe -> Rank**.
 
 - Refresh: PASS. Exact P001 source transaction and current MissionControl / gg_MATH proof heads were re-read.
-- Probe: PASS_SOURCE_MEASURED_MATH_PROVIDER_PROVED_MC_HOSTED_WAIT_RUNNER. gg_MATH exact-head run 35426576807 passed all readiness/federation/control steps and merged at `23c8df3a8309016706551d0102b17dc3446115b5`; MissionControl validation remains zero-step runner admission, so no application repair is authorized.
+- Probe: PASS_HOSTED_AND_PROVIDER_PROVEN. MissionControl measurement run 35426923383, native 3P*/MIP run 35426923386, gg_MATH provider run 35426576807 and independent exact-current-head run 35427028270 all executed >0 steps and passed. No application defect remains.
 - Rank: PASS_MEASURED_DESCRIPTIVE. P001 pressure is KEB queue 808 s, DOW queue 632 s, FAST queue 512 s, HEAVY build 203 s, checkout 37 s, then 9/8/7/4 s. This is not a BT fit.
 
 MIP then executed sequentially:
@@ -35,3 +35,4 @@ The statistical boundary is now explicit and machine-enforced:
 6. Re-run readiness; do not force PCA/BT eligibility.
 
 Authority transfer remains false. HEPAK/Qeq/engineering promotion remains unchanged.
+\n## Closure\n\nThe 3P* + MIP iteration is complete. The next active work is measured repetition, not another framework pass. Performance BD #327 remains non-blocking and targets PR fan-out / runner-admission economics.\n
