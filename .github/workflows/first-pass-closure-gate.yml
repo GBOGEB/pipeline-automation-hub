@@ -21,6 +21,10 @@ permissions:
   actions: read
   statuses: write
 
+concurrency:
+  group: first-pass-closure-${{ github.event.pull_request.number || inputs.pr_number }}
+  cancel-in-progress: true
+
 jobs:
   first-pass-closure:
     if: >-
@@ -189,6 +193,7 @@ jobs:
           retention-days: 30
 
       - name: Publish head-bound final gate status
+        id: final_status
         if: always() && steps.pr.outputs.head_sha != ''
         env:
           GH_TOKEN: ${{ github.token }}
@@ -220,6 +225,45 @@ jobs:
             -f description="$DESCRIPTION" \
             -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
+      - name: Enforce auto-merge hold on complete final predicate
+        if: always() && steps.pr.outputs.number != ''
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          PR_OUTCOME: ${{ steps.pr.outcome }}
+          CHECKOUT_OUTCOME: ${{ steps.trusted_checkout.outcome }}
+          TEST_OUTCOME: ${{ steps.trusted_tests.outcome }}
+          GATE_OUTCOME: ${{ steps.gate.outcome }}
+          RECEIPT_OUTCOME: ${{ steps.receipt.outcome }}
+          ARTIFACT_OUTCOME: ${{ steps.artifact.outcome }}
+          STATUS_OUTCOME: ${{ steps.final_status.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PR_OUTCOME" = "success" ] \
+            && [ "$CHECKOUT_OUTCOME" = "success" ] \
+            && [ "$TEST_OUTCOME" = "success" ] \
+            && [ "$GATE_OUTCOME" = "success" ] \
+            && [ "$RECEIPT_OUTCOME" = "success" ] \
+            && [ "$ARTIFACT_OUTCOME" = "success" ] \
+            && [ "$STATUS_OUTCOME" = "success" ]; then
+            echo "FPC_FINAL_PREDICATE_PASS=1"
+            exit 0
+          fi
+
+          PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
+          AUTO="$(printf '%s' "$PR_JSON" | jq -r 'if .auto_merge == null then "none" else "enabled" end')"
+          if [ "$AUTO" = "enabled" ]; then
+            NODE_ID="$(printf '%s' "$PR_JSON" | jq -r .node_id)"
+            gh api graphql \
+              -f query='mutation($id:ID!){disablePullRequestAutoMerge(input:{pullRequestId:$id}){pullRequest{number}}}' \
+              -f id="$NODE_ID"
+            echo "FPC_FINAL_AUTO_MERGE_DISABLED=1"
+          else
+            echo "FPC_FINAL_AUTO_MERGE_DISABLED=0"
+          fi
+
       - name: Fail closed unless trusted controller emitted a bound PASS receipt
         if: always()
         shell: bash
@@ -230,6 +274,7 @@ jobs:
           GATE_OUTCOME: ${{ steps.gate.outcome }}
           RECEIPT_OUTCOME: ${{ steps.receipt.outcome }}
           ARTIFACT_OUTCOME: ${{ steps.artifact.outcome }}
+          STATUS_OUTCOME: ${{ steps.final_status.outcome }}
         run: |
           set -euo pipefail
           test "$PR_OUTCOME" = "success"
@@ -238,4 +283,5 @@ jobs:
           test "$GATE_OUTCOME" = "success"
           test "$RECEIPT_OUTCOME" = "success"
           test "$ARTIFACT_OUTCOME" = "success"
+          test "$STATUS_OUTCOME" = "success"
           echo "First-Pass Closure Gate PASS_FROM_TRUSTED_BASE."
