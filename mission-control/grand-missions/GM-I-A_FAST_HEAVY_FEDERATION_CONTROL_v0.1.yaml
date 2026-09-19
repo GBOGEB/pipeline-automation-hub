@@ -55,28 +55,31 @@ federation_bridges:
     consumer_repo: GBOGEB/CODEX
     role: KEB_SEMANTIC_RUNTIME_ECONOMICS_CONSUMER
     pr: 775
-    merged: false
+    merged: true
     merge_sha: null
     exact_head_sha: e1b599d79cc6eb591f327494cfb5ea29c02ffcaa
     workflow_run_id: 35425623741
-    job_id: null
-    runtime_state: QUEUED
-    runner_id: null
-    downstream_credit: 0
+    job_id: 105850933005
+    runtime_state: PASS
+    runner_id: 1000315985
+    downstream_credit: 1
+    consumer_artifact_id: 10578078971
+    consumer_artifact_digest: sha256:0fbc103b3d8c0e25e0d44b7044cd23d7db561fdce5ab9a64c89a360ef05c2653
+    consumer_receipt_sha256: 466caf269ecb8a6e6271aacc8c43b14acba9d8dd19a9d5582cd675f609be6962
+    executed_steps: 9
     compensates_other_bridge: false
 fanout:
   registered_consumers: 2
-  runtime_pass_consumers: 1
-  runtime_wait_consumers: 1
+  runtime_pass_consumers: 2
+  runtime_wait_consumers: 0
   topology: PROVIDER_ATTESTATION_TO_INDEPENDENT_DOW_AND_KEB_CONSUMERS
   rule: EACH_CONSUMER_MUST_PROVE_GT0_EXECUTION_AND_OWN_RECEIPT
 current_classification:
   provider_runtime: CONTROL_CANDIDATE_PROVEN
   provider_attestation: PASS
-  downstream_fanout: DOW_PASS_KEB_WAIT_RUNNER
+  downstream_fanout: DOW_PASS_KEB_PASS
   first_red: null
-  external_gates:
-    - CODEX_RUNNER_ADMISSION
+  external_gates: []
 performance_signal:
   PC1: HEAVY_BUILD_COST
   PC2: CHECKOUT_SUBMODULE_COST
