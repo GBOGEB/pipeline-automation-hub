@@ -109,3 +109,8 @@ A synthesized FAIL receipt can therefore never satisfy the final job merely beca
 The controller cannot safely certify a PR that changes the controller itself. Such a PR is a bootstrap transaction and is deliberately rejected by the ordinary gate. It requires an independent exact-head code review with zero material findings and must be followed after merge by a distinct non-controller canary PR. The canary must obtain a full trusted-base FPC PASS before W305 #314 can close or the QPS consumer can activate.
 
 The candidate proof workflow now runs on every PR to `master`; it proves candidate behavior but never supplies promotion authority by itself.
+
+
+### Review-completion trigger
+
+The trusted gate also listens to the Codex review-summary issue comment being created or edited by `chatgpt-codex-connector[bot]`. This closes the no-findings event gap where the summary can transition to **Completed** without a separate material-review submission. The event only triggers re-evaluation; candidate content is still never executed by the trusted gate.
