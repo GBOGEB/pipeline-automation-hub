@@ -21,15 +21,15 @@
       "math_provider_head": "767b3afa862643faa22cb2c98f98a0512b864601"
     },
     "Probe": {
-      "result": "PASS_SOURCE_MEASURED_MATH_PROVIDER_PROVED_MC_HOSTED_WAIT_RUNNER",
+      "result": "PASS_HOSTED_AND_PROVIDER_PROVEN",
       "missioncontrol_measurement_run": 35426485549,
       "missioncontrol_measurement_job": 105853237389,
       "math_provider_run": 35426576807,
       "math_provider_job": 105853477082,
-      "observed_hosted_state": "MATH_PROVIDER_PASS__MISSIONCONTROL_ZERO_STEP_RUNNER_ADMISSION",
+      "observed_hosted_state": "MISSIONCONTROL_MEASUREMENT_PASS__3PSTAR_MIP_PASS__MATH_PROVIDER_PASS__EXTERNAL_CURRENT_HEAD_PASS",
       "application_first_red": null,
       "repair_authorized": false,
-      "reason": "Measured source transaction is complete and gg_MATH exact-head readiness proof passed; MissionControl exact-head validation remains runner_id=0, steps=0.",
+      "reason": "All intended measurement/control/provider proof paths executed >0 steps and passed; no application defect remains.",
       "math_provider": {
         "run_id": 35426576807,
         "job_id": 105853477082,
@@ -39,6 +39,32 @@
         "artifact_digest": "sha256:9ffc0f79a1019ecef4e0570de171463573e80f035181e8aecaabd6b930aa8802",
         "readiness_receipt_sha256": "fd658469abe629698be82fd6f93bf773d7f2c482dd6e4c4244bf3875b0604a00",
         "merged_sha": "23c8df3a8309016706551d0102b17dc3446115b5"
+      },
+      "missioncontrol_measurement_latest": {
+        "run_id": 35426923383,
+        "job_id": 105854386957,
+        "runner_id": 1000316825,
+        "artifact_id": 10579626500,
+        "artifact_digest": "sha256:94a1f0a6f3c67aec6b74c7543bb7e902df188455bd9f5f4f515d881e4a0c0d5a"
+      },
+      "missioncontrol_3pstar_mip": {
+        "run_id": 35426923386,
+        "job_id": 105854386946,
+        "runner_id": 1000316812,
+        "artifact_id": 10579241855,
+        "artifact_digest": "sha256:8fbd3b0dd767f5bb77ca70711ca4e88fe98d6883a8fc9bb7771a340aa2b53412",
+        "receipt_sha256": "6afb09e3b2380feb2791d87568970e33436fce4445a65d43e7b61e5f4ede4fdf"
+      },
+      "external_current_head_proof": {
+        "source_head": "6eff267e8e4098a17f499ca5b2e696c0b961ab45",
+        "repo": "GBOGEB/gg_MATH",
+        "run_id": 35427028270,
+        "job_id": 105854655652,
+        "runner_id": 1000316927,
+        "artifact_id": 10579099195,
+        "artifact_digest": "sha256:af7213384e37a39d5af965f3a417dc5c3770f595205bc8cb103195bb18cb07c3",
+        "receipt_sha256": "6afb09e3b2380feb2791d87568970e33436fce4445a65d43e7b61e5f4ede4fdf",
+        "merge_sha": "89a534fe1b7d0b2e20e3c10b94e8540df20ed481"
       }
     },
     "Rank": {
@@ -121,7 +147,8 @@
         "mission-control/grand-missions/analytics/validate_gm_i_a_multiclock_3pstar_mip.py",
         ".github/workflows/gm-i-a-multiclock-3pstar-mip.yml",
         "mission-control/grand-missions/handover/SC_2026-09-19_GM_I_A_MULTI_CLOCK_3PSTAR_MIP_v1.md",
-        "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-19_GM_I_A_MULTI_CLOCK_v1.md"
+        "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-19_GM_I_A_MULTI_CLOCK_v1.md",
+        "mission-control/grand-missions/analytics/GM_I_A_MULTI_CLOCK_3PSTAR_MIP_CLOSURE_v1.json"
       ]
     }
   },
@@ -158,10 +185,13 @@
     "NO_ENGINEERING_HEPAK_QEQ_PROMOTION"
   ],
   "next": {
-    "first_red": "MISSIONCONTROL_RUNNER_ADMISSION_FOR_EXACT_HEAD_MEASUREMENT_CONTROL",
+    "first_red": null,
     "measurement": "CAPTURE_P002_AND_P003_FROM_NEW_EXACT_FEDERATION_TRANSACTIONS",
     "bt": "RECHECK_AFTER_P003_ONLY_IF_DIRECTION_GRAPH_BECOMES_STRONGLY_CONNECTED",
     "pca": "ACCUMULATE_TO_P027_MINIMUM_WITH_COMPARABLE_NINE_CLOCK_SCHEMA",
-    "math_provider": "PASS_MERGED_23c8df3a8309016706551d0102b17dc3446115b5"
+    "math_provider": "PASS_MERGED_23c8df3a8309016706551d0102b17dc3446115b5",
+    "blocking_gate": null,
+    "performance_bd": "GBOGEB/pipeline-automation-hub#327",
+    "state": "READY_FOR_P002_MEASURED_REPEAT"
   }
 }
