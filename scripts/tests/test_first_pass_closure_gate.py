@@ -85,6 +85,7 @@ def mapping(
     head_workflow=TRUSTED_WORKFLOW,
     base_workflow=TRUSTED_WORKFLOW,
     changed_files=None,
+    changed_file_rows=None,
 ):
     summary = f"""<!-- codex-pull-request-review-summary -->
 | Review | Status | Commit |
@@ -104,9 +105,11 @@ def mapping(
             "base": {"sha": BASE},
             "body": pr_body if pr_body is not None else body(),
         },
-        f"/repos/{REPO}/pulls/{PR}/files": [
-            {"filename": path} for path in (changed_files or ["docs/canary.md"])
-        ],
+        f"/repos/{REPO}/pulls/{PR}/files": (
+            changed_file_rows
+            if changed_file_rows is not None
+            else [{"filename": path} for path in (changed_files or ["docs/canary.md"])]
+        ),
         f"/repos/{REPO}/actions/runs/{RUN}": {
             "status": "completed",
             "conclusion": run_conclusion,
@@ -136,6 +139,27 @@ class TestFirstPassClosureGate(unittest.TestCase):
         with self.assertRaisesRegex(fpc.GateError, "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"):
             fpc.evaluate(
                 FakeClient(mapping(changed_files=["scripts/first_pass_closure_gate.py"])),
+                REPO,
+                PR,
+                POLICY,
+            )
+
+    def test_renamed_control_plane_path_rejected(self):
+        with self.assertRaisesRegex(
+            fpc.GateError, "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"
+        ):
+            fpc.evaluate(
+                FakeClient(
+                    mapping(
+                        changed_file_rows=[
+                            {
+                                "filename": "archive/first-pass-closure-gate.yml",
+                                "previous_filename": ".github/workflows/first-pass-closure-gate.yml",
+                                "status": "renamed",
+                            }
+                        ]
+                    )
+                ),
                 REPO,
                 PR,
                 POLICY,
