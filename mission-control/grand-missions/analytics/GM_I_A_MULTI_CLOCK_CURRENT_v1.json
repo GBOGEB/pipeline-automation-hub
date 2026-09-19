@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.gm_i_a.multiclock_current.v1",
   "mission": "GM-I-A",
-  "state": "MEASURED_WAVE_P001_CONTROL_ACTIVE",
+  "state": "P001_3PSTAR_MIP_CONTROL_PROVEN_READY_FOR_REPEAT",
   "authority_transfer": false,
   "dataset": "GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json",
   "control": "GM_I_A_MULTI_CLOCK_3PSTAR_MIP_v1.json",
@@ -27,14 +27,30 @@
     "measurement_job": 105853237389,
     "math_run": 35426576807,
     "math_job": 105853477082,
-    "state": "MATH_PROVIDER_PASS__MISSIONCONTROL_WAIT_RUNNER",
+    "state": "PASS_ALL_INTENDED_PROOF_PATHS",
     "math_state": "PASS",
     "math_runner_id": 1000316490,
     "math_artifact_id": 10578234526,
     "math_artifact_digest": "sha256:9ffc0f79a1019ecef4e0570de171463573e80f035181e8aecaabd6b930aa8802",
     "math_readiness_receipt_sha256": "fd658469abe629698be82fd6f93bf773d7f2c482dd6e4c4244bf3875b0604a00",
-    "measurement_state": "WAIT_RUNNER_ZERO_STEP"
+    "measurement_state": "PASS",
+    "measurement_latest_run": 35426923383,
+    "measurement_latest_job": 105854386957,
+    "measurement_latest_runner": 1000316825,
+    "measurement_latest_artifact_id": 10579626500,
+    "measurement_latest_artifact_digest": "sha256:94a1f0a6f3c67aec6b74c7543bb7e902df188455bd9f5f4f515d881e4a0c0d5a",
+    "three_pstar_mip_state": "PASS",
+    "three_pstar_mip_run": 35426923386,
+    "three_pstar_mip_job": 105854386946,
+    "three_pstar_mip_runner": 1000316812,
+    "external_exact_current_head_state": "PASS",
+    "external_exact_current_head": "6eff267e8e4098a17f499ca5b2e696c0b961ab45",
+    "external_run": 35427028270,
+    "external_runner": 1000316927,
+    "external_provider_merge": "89a534fe1b7d0b2e20e3c10b94e8540df20ed481"
   },
   "next_pulse": "GM-I-A-MCLOCK-P002",
-  "stop_rule": "DO_NOT_FIT_OR_PROMOTE_PCA_BT_BEFORE_GATES; ZERO_STEP_HOSTED_JOBS_TRIGGER_NO_CODE_REPAIR"
+  "stop_rule": "DO_NOT_FIT_OR_PROMOTE_PCA_BT_BEFORE_GATES; ZERO_STEP_HOSTED_JOBS_TRIGGER_NO_CODE_REPAIR",
+  "blocking_gate": null,
+  "performance_bd": "GBOGEB/pipeline-automation-hub#327"
 }
