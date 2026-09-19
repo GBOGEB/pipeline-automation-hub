@@ -3,7 +3,7 @@
   "skill": "math",
   "task_id": "GM-I-A-MCLOCK-PCA-BT-001",
   "source_repo": "GBOGEB/pipeline-automation-hub",
-  "source_ref": "24195ffe176658ac118f59a4c8eee26dae031b53",
+  "source_ref": "f9b9180f5572de139d5f0f3dbe632b3ee6c90b7f",
   "topic": "PCA_AND_BRADLEY_TERRY_MULTI_CLOCK_RUNTIME_PRESSURE",
   "maturity": "DEEP_DIVE",
   "inputs": {
@@ -11,7 +11,8 @@
     "features": 9,
     "measured_pulses": 1,
     "pca_gate": "n >= max(10, 3*p)",
-    "bt_gate": "minimum 3 repeat pulses plus strongly connected directed win graph"
+    "bt_gate": "minimum 3 repeat pulses plus strongly connected directed win graph",
+    "bootstrap_state": "PREPARE_MERGED_PROVE_PENDING"
   },
   "authority_transfer": false
 }
