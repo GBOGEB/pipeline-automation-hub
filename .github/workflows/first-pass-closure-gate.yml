@@ -13,6 +13,10 @@ on:
         description: Pull request number
         required: true
         type: string
+      expected_head_sha:
+        description: Exact PR head SHA to invalidate on any manual re-evaluation failure
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -33,19 +37,19 @@ jobs:
        github.event.pull_request.draft == false)
     runs-on: ubuntu-latest
     steps:
-      - name: Resolve live PR identity from GitHub
-        id: pr
+      - name: Capture trigger identity before fallible API calls
+        id: trigger
         shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           case "${{ github.event_name }}" in
             pull_request_target|pull_request_review)
               PR_NUMBER="${{ github.event.pull_request.number }}"
+              TRIGGER_HEAD_SHA="${{ github.event.pull_request.head.sha }}"
               ;;
             workflow_dispatch)
               PR_NUMBER="${{ inputs.pr_number }}"
+              TRIGGER_HEAD_SHA="${{ inputs.expected_head_sha }}"
               ;;
             *)
               echo "unsupported event" >&2
@@ -53,20 +57,15 @@ jobs:
               ;;
           esac
           test -n "$PR_NUMBER"
+          test "${#TRIGGER_HEAD_SHA}" -eq 40
           echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
-          PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
-          HEAD_SHA="$(printf '%s' "$PR_JSON" | jq -r '.head.sha')"
-          BASE_SHA="$(printf '%s' "$PR_JSON" | jq -r '.base.sha')"
-          test "${#HEAD_SHA}" -eq 40
-          test "${#BASE_SHA}" -eq 40
-          echo "head_sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
-          echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
+          echo "trigger_head_sha=$TRIGGER_HEAD_SHA" >> "$GITHUB_OUTPUT"
 
-      - name: Publish head-bound pending status
-        if: steps.pr.outputs.head_sha != ''
+      - name: Invalidate prior success immediately
+        id: pending_status
         env:
           GH_TOKEN: ${{ github.token }}
-          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+          HEAD_SHA: ${{ steps.trigger.outputs.trigger_head_sha }}
         shell: bash
         run: |
           set -euo pipefail
@@ -75,6 +74,29 @@ jobs:
             -f context='First-Pass Closure Gate / first-pass-closure' \
             -f description='Trusted evaluator pending' \
             -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+      - name: Resolve live PR identity from GitHub
+        id: pr
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.trigger.outputs.number }}
+          TRIGGER_HEAD_SHA: ${{ steps.trigger.outputs.trigger_head_sha }}
+        run: |
+          set -euo pipefail
+          PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
+          HEAD_SHA="$(printf '%s' "$PR_JSON" | jq -r '.head.sha')"
+          BASE_SHA="$(printf '%s' "$PR_JSON" | jq -r '.base.sha')"
+          test "${#HEAD_SHA}" -eq 40
+          test "${#BASE_SHA}" -eq 40
+          test "$HEAD_SHA" = "$TRIGGER_HEAD_SHA" || {
+            echo "trigger/live head mismatch: trigger=$TRIGGER_HEAD_SHA live=$HEAD_SHA" >&2
+            exit 2
+          }
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "head_sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+          echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
 
       - name: Checkout trusted PR-base controller
         id: trusted_checkout
@@ -109,7 +131,7 @@ jobs:
         if: always()
         shell: bash
         env:
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          PR_NUMBER: ${{ steps.trigger.outputs.number }}
           HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
           BASE_SHA: ${{ steps.pr.outputs.base_sha }}
           PR_OUTCOME: ${{ steps.pr.outcome }}
@@ -162,11 +184,11 @@ jobs:
             --expected-base "${{ steps.pr.outputs.base_sha }}"
 
       - name: Disable auto-merge unless bound PASS receipt is proven
-        if: always() && steps.pr.outputs.number != '' && steps.receipt.outcome != 'success'
+        if: always() && steps.trigger.outputs.number != '' && steps.receipt.outcome != 'success'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          PR_NUMBER: ${{ steps.trigger.outputs.number }}
         shell: bash
         run: |
           set -euo pipefail
@@ -194,10 +216,10 @@ jobs:
 
       - name: Publish head-bound final gate status
         id: final_status
-        if: always() && steps.pr.outputs.head_sha != ''
+        if: always() && steps.trigger.outputs.trigger_head_sha != ''
         env:
           GH_TOKEN: ${{ github.token }}
-          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+          HEAD_SHA: ${{ steps.trigger.outputs.trigger_head_sha }}
           PR_OUTCOME: ${{ steps.pr.outcome }}
           CHECKOUT_OUTCOME: ${{ steps.trusted_checkout.outcome }}
           TEST_OUTCOME: ${{ steps.trusted_tests.outcome }}
@@ -226,11 +248,11 @@ jobs:
             -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
       - name: Enforce auto-merge hold on complete final predicate
-        if: always() && steps.pr.outputs.number != ''
+        if: always() && steps.trigger.outputs.number != ''
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          PR_NUMBER: ${{ steps.trigger.outputs.number }}
           PR_OUTCOME: ${{ steps.pr.outcome }}
           CHECKOUT_OUTCOME: ${{ steps.trusted_checkout.outcome }}
           TEST_OUTCOME: ${{ steps.trusted_tests.outcome }}
