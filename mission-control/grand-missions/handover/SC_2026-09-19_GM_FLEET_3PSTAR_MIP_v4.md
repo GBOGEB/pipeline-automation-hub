@@ -1,14 +1,14 @@
 # GM Fleet 3P* + MIP — Lossless Handover v4
 
-**As of:** 2026-09-19 07:38 Europe/Brussels  
+**As of:** 2026-09-19 07:46 Europe/Brussels  
 **Sequence:** 3PR Refresh → Probe → Rank, then MIP Modernize → Innovate → Perpetuate  
 **Authority transfer:** false
 
 ## 3P*
 
 ### Refresh — PASS
-- MissionControl master: `361910f19a235af00c247059959dfd8bb797befc`
-- QPS main: `c73cff96406d747493fabc650a670b4c3279d05e`
+- MissionControl master at fix-forward branch cut: `b14906193dfbf3909eaf1094860af336dd38b1ed`
+- QPS main: `4d55d4ffd9e6ab7e507dbe6d078cc9e88051a808`
 - QPS #923: OPEN
 
 ### Probe — PASS_BLOCK_CONFIRMED_NO_RERUN
@@ -36,6 +36,9 @@ The Scout-C board is now the F05–F08 ACTIVE8 depth board. It does not invent a
 
 ### Perpetuate — PASS_REPOSITORY_NATIVE
 Machine-readable data, self-contained HTML, validator, workflow, handover and restart surfaces are committed together.
+
+### Quality fix-forward
+PR #307 merged the initial v11 surface before the CodeQL DOM finding was repaired. This bounded retry removes dynamic `.innerHTML` construction and renders Scout-C repository data only through `textContent` / `createTextNode`. The First-Pass Closure proof/review/gate must be green on the exact fix-forward head before this retry merges.
 
 ## Control state
 - GM-IV = `ACTIVE_8_OF_8`
