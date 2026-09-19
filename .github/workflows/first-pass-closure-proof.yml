@@ -3,17 +3,10 @@ name: First-Pass Closure Proof
 on:
   pull_request:
     branches: [master]
-    paths:
-      - "mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json"
-      - "scripts/first_pass_closure_gate.py"
-      - "scripts/tests/test_first_pass_closure_gate.py"
-      - ".github/workflows/first-pass-closure-proof.yml"
-      - ".github/workflows/first-pass-closure-gate.yml"
-      - "docs/W305_FIRST_PASS_CLOSURE_GATE.md"
   workflow_dispatch:
     inputs:
       pr_number:
-        description: Pull request number (gate workflow only)
+        description: Pull request number (informational)
         required: false
         type: string
 
@@ -42,5 +35,10 @@ jobs:
           assert p["prospective_cohort"]["stretch_rate"] == 1.0
           assert p["non_compensation"]["authority_transfer"] is False
           assert p["non_compensation"]["formal_credit_delta"] == 0
+          assert len(p["protected_control_paths"]) >= 5
           print("FPC_POLICY_SANITY=PASS")
           PY
+      - name: Candidate proof boundary
+        run: |
+          echo "This run proves candidate-head behavior only."
+          echo "Trust/promotion is decided separately by the base-controlled First-Pass Closure Gate."
