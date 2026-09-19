@@ -1,7 +1,7 @@
 name: First-Pass Closure Gate
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review, edited]
     branches: [master]
   pull_request_review:
@@ -24,65 +24,78 @@ jobs:
   first-pass-closure:
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      ((github.event_name == 'pull_request' || github.event_name == 'pull_request_review') &&
+      ((github.event_name == 'pull_request_target' || github.event_name == 'pull_request_review') &&
        github.event.pull_request.draft == false)
     runs-on: ubuntu-latest
     steps:
-      - name: Resolve PR number before any fallible proof step
+      - name: Resolve live PR identity from GitHub
         id: pr
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           case "${{ github.event_name }}" in
-            pull_request|pull_request_review)
-              echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+            pull_request_target|pull_request_review)
+              PR_NUMBER="${{ github.event.pull_request.number }}"
               ;;
             workflow_dispatch)
               PR_NUMBER="${{ inputs.pr_number }}"
-              test -n "$PR_NUMBER" || { echo "pr_number input required" >&2; exit 2; }
-              echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "unsupported event" >&2
               exit 2
               ;;
           esac
+          test -n "$PR_NUMBER"
+          PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
+          HEAD_SHA="$(printf '%s' "$PR_JSON" | jq -r '.head.sha')"
+          BASE_SHA="$(printf '%s' "$PR_JSON" | jq -r '.base.sha')"
+          test "${#HEAD_SHA}" -eq 40
+          test "${#BASE_SHA}" -eq 40
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "head_sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+          echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
 
-      - name: Checkout exact candidate head
-        id: checkout
+      - name: Checkout trusted PR-base controller
+        id: trusted_checkout
         continue-on-error: true
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ steps.pr.outputs.base_sha }}
+          path: trusted-fpc
+          persist-credentials: false
 
-      - name: Unit-test gate logic
-        id: tests
-        if: steps.checkout.outcome == 'success'
+      - name: Unit-test trusted controller
+        id: trusted_tests
+        if: steps.trusted_checkout.outcome == 'success'
         continue-on-error: true
-        run: python -m unittest scripts/tests/test_first_pass_closure_gate.py
+        run: python -m unittest trusted-fpc/scripts/tests/test_first_pass_closure_gate.py
 
-      - name: Evaluate exact-head first-pass closure
+      - name: Evaluate candidate using trusted controller and policy
         id: gate
-        if: steps.checkout.outcome == 'success' && steps.tests.outcome == 'success'
+        if: steps.trusted_checkout.outcome == 'success' && steps.trusted_tests.outcome == 'success'
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           mkdir -p output/fpc
-          python scripts/first_pass_closure_gate.py \
+          python trusted-fpc/scripts/first_pass_closure_gate.py \
             --repo "${{ github.repository }}" \
             --pr "${{ steps.pr.outputs.number }}" \
-            --policy mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json \
+            --policy trusted-fpc/mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json \
             --out output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
 
-      - name: Synthesize deterministic FAIL receipt for pre-evaluator failures
+      - name: Synthesize deterministic FAIL receipt if trusted evaluator did not emit one
         if: always()
         shell: bash
         env:
           PR_NUMBER: ${{ steps.pr.outputs.number }}
+          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+          BASE_SHA: ${{ steps.pr.outputs.base_sha }}
           PR_OUTCOME: ${{ steps.pr.outcome }}
-          CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
-          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          CHECKOUT_OUTCOME: ${{ steps.trusted_checkout.outcome }}
+          TEST_OUTCOME: ${{ steps.trusted_tests.outcome }}
           GATE_OUTCOME: ${{ steps.gate.outcome }}
         run: |
           set -euo pipefail
@@ -94,18 +107,19 @@ jobs:
           import os
           from pathlib import Path
 
-          reason = (
-              "PRE_EVALUATOR_FAILURE:"
-              f"pr={os.environ.get('PR_OUTCOME','unknown')};"
-              f"checkout={os.environ.get('CHECKOUT_OUTCOME','unknown')};"
-              f"tests={os.environ.get('TEST_OUTCOME','unknown')};"
-              f"gate={os.environ.get('GATE_OUTCOME','unknown')}"
-          )
           payload = {
-              "schema": "first_pass_closure_gate_receipt/v2",
+              "schema": "first_pass_closure_gate_receipt/v3",
               "status": "FAIL_FIRST_PASS_CLOSURE_GATE",
-              "reason": reason,
+              "reason": (
+                  "PRE_EVALUATOR_FAILURE:"
+                  f"pr={os.environ.get('PR_OUTCOME','unknown')};"
+                  f"checkout={os.environ.get('CHECKOUT_OUTCOME','unknown')};"
+                  f"tests={os.environ.get('TEST_OUTCOME','unknown')};"
+                  f"gate={os.environ.get('GATE_OUTCOME','unknown')}"
+              ),
               "pr_number": os.environ.get("PR_NUMBER") or None,
+              "head_sha": os.environ.get("HEAD_SHA") or None,
+              "base_sha": os.environ.get("BASE_SHA") or None,
               "merge_allowed": False,
               "authority_transfer": False,
               "formal_credit_delta": 0,
@@ -118,8 +132,18 @@ jobs:
           PY
           fi
 
-      - name: Disable auto-merge unless gate is proven green
-        if: always() && steps.pr.outputs.number != '' && steps.gate.outcome != 'success'
+      - name: Validate emitted receipt is an exact bound PASS
+        id: receipt
+        if: always() && steps.trusted_checkout.outcome == 'success'
+        continue-on-error: true
+        run: |
+          python trusted-fpc/scripts/first_pass_closure_gate.py \
+            --validate-receipt output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json \
+            --expected-head "${{ steps.pr.outputs.head_sha }}" \
+            --expected-base "${{ steps.pr.outputs.base_sha }}"
+
+      - name: Disable auto-merge unless bound PASS receipt is proven
+        if: always() && steps.pr.outputs.number != '' && steps.receipt.outcome != 'success'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
@@ -148,18 +172,20 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Fail closed unless every proof stage succeeded
+      - name: Fail closed unless trusted controller emitted a bound PASS receipt
         if: always()
         shell: bash
         env:
           PR_OUTCOME: ${{ steps.pr.outcome }}
-          CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
-          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          CHECKOUT_OUTCOME: ${{ steps.trusted_checkout.outcome }}
+          TEST_OUTCOME: ${{ steps.trusted_tests.outcome }}
           GATE_OUTCOME: ${{ steps.gate.outcome }}
+          RECEIPT_OUTCOME: ${{ steps.receipt.outcome }}
         run: |
           set -euo pipefail
           test "$PR_OUTCOME" = "success"
           test "$CHECKOUT_OUTCOME" = "success"
           test "$TEST_OUTCOME" = "success"
           test "$GATE_OUTCOME" = "success"
-          echo "First-Pass Closure Gate PASS."
+          test "$RECEIPT_OUTCOME" = "success"
+          echo "First-Pass Closure Gate PASS_FROM_TRUSTED_BASE."
