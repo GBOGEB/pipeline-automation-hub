@@ -87,3 +87,25 @@ The workflow also resolves the PR number before fallible checkout/test/evaluatio
 Policy missing/invalid JSON and unexpected admission exceptions are normalized into deterministic fail receipts rather than escaping the evidence path.
 
 These controls are process-quality protections only. Repository-owner required-status/ruleset enforcement remains the preferred independent defense-in-depth boundary.
+
+
+## R6 trusted-base controller
+
+R5 demonstrated that byte-binding only the proof workflow is insufficient when the candidate checkout can also replace the evaluator and its tests. R6 moves the promotion decision to a **trusted PR-base controller**.
+
+For ordinary governed PRs:
+
+1. `pull_request_target` resolves the live PR number, head SHA and base SHA without executing candidate content.
+2. the gate checks out the exact PR **base SHA** into a separate trusted controller directory;
+3. unit tests, policy and `first_pass_closure_gate.py` execute only from that base revision;
+4. the candidate exact-head proof run is treated as evidence data;
+5. any candidate change to a protected FPC controller path returns `CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP`;
+6. the final workflow parses the emitted JSON and requires schema v3, `PASS_FIRST_PASS_CLOSURE_GATE`, `merge_allowed=true`, exact head/base binding, zero exact-head Codex findings and zero authority transfer.
+
+A synthesized FAIL receipt can therefore never satisfy the final job merely because an evaluator process exited zero.
+
+### Controller-maintenance bootstrap
+
+The controller cannot safely certify a PR that changes the controller itself. Such a PR is a bootstrap transaction and is deliberately rejected by the ordinary gate. It requires an independent exact-head code review with zero material findings and must be followed after merge by a distinct non-controller canary PR. The canary must obtain a full trusted-base FPC PASS before W305 #314 can close or the QPS consumer can activate.
+
+The candidate proof workflow now runs on every PR to `master`; it proves candidate behavior but never supplies promotion authority by itself.

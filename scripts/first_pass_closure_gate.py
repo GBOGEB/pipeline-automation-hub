@@ -9,12 +9,15 @@ import os
 import re
 import urllib.error
 import urllib.request
+from pathlib import Path
 from typing import Any
 
 MARKER_RE = re.compile(r"<!--\s*FPC_RECEIPT_V1\s*(\{.*?\})\s*-->", re.S)
 CODEX_SUMMARY_MARKER = "<!-- codex-pull-request-review-summary -->"
-CODEX_LOGIN = "chatgpt-codex-connector"
+DEFAULT_CODEX_LOGIN = "chatgpt-codex-connector"
 REQUIRED_PURPOSES = {"canonical_self_test", "mutation_test", "exact_head_ci"}
+PASS_STATUS = "PASS_FIRST_PASS_CLOSURE_GATE"
+PASS_SCHEMA = "first_pass_closure_gate_receipt/v3"
 
 
 class GateError(RuntimeError):
@@ -33,7 +36,7 @@ class ApiClient:
                 "Authorization": f"Bearer {self.token}",
                 "Accept": "application/vnd.github+json",
                 "X-GitHub-Api-Version": "2022-11-28",
-                "User-Agent": "gbo-first-pass-closure-gate/2",
+                "User-Agent": "gbo-first-pass-closure-gate/3",
             },
         )
         try:
@@ -74,15 +77,20 @@ def load_policy(path: str) -> dict[str, Any]:
         raise GateError("POLICY_LOAD_FAILED:ROOT_NOT_OBJECT")
     if not isinstance(policy.get("proof_identity_allowlist"), dict):
         raise GateError("POLICY_LOAD_FAILED:PROOF_IDENTITY_ALLOWLIST_MISSING")
+    protected = policy.get("protected_control_paths")
+    if not isinstance(protected, list) or not protected or not all(
+        isinstance(path, str) and path for path in protected
+    ):
+        raise GateError("POLICY_LOAD_FAILED:PROTECTED_CONTROL_PATHS_MISSING")
     return policy
 
 
 def parse_receipt(body: str | None) -> dict[str, Any]:
-    m = MARKER_RE.search(body or "")
-    if not m:
+    match = MARKER_RE.search(body or "")
+    if not match:
         raise GateError("MISSING_RECEIPT")
     try:
-        receipt = json.loads(m.group(1))
+        receipt = json.loads(match.group(1))
     except json.JSONDecodeError as exc:
         raise GateError(f"INVALID_RECEIPT_JSON: {exc}") from exc
     if set(receipt) != {"schema", "head_sha", "required_runs"}:
@@ -97,34 +105,57 @@ def parse_receipt(body: str | None) -> dict[str, Any]:
     return receipt
 
 
+def login_matches(actual: str | None, expected: str) -> bool:
+    return actual in {expected, f"{expected}[bot]"}
+
+
+def codex_login(policy: dict[str, Any]) -> str:
+    contract = policy.get("codex_contract") or {}
+    value = contract.get("reviewer_login") or DEFAULT_CODEX_LOGIN
+    return str(value)
+
+
 def review_is_completed_for_head(
-    comments: list[dict[str, Any]], head_sha: str
+    comments: list[dict[str, Any]], head_sha: str, expected_login: str
 ) -> tuple[bool, int | None]:
     prefix = head_sha[:7]
     summaries = [c for c in comments if CODEX_SUMMARY_MARKER in (c.get("body") or "")]
-    for c in reversed(summaries):
-        body = c.get("body") or ""
-        login = ((c.get("user") or c.get("author") or {}).get("login"))
-        if login != CODEX_LOGIN:
+    for comment in reversed(summaries):
+        body = comment.get("body") or ""
+        login = ((comment.get("user") or comment.get("author") or {}).get("login"))
+        if not login_matches(login, expected_login):
             continue
         if f"`{prefix}`" in body and "**Completed**" in body:
-            return True, c.get("id")
+            return True, comment.get("id")
     return False, None
 
 
 def codex_finding_reviews_for_head(
-    reviews: list[dict[str, Any]], head_sha: str
+    reviews: list[dict[str, Any]], head_sha: str, expected_login: str
 ) -> list[dict[str, Any]]:
     prefixes = {head_sha[:7], head_sha[:10], head_sha[:12]}
-    out = []
+    out: list[dict[str, Any]] = []
     for review in reviews:
         login = ((review.get("user") or review.get("author") or {}).get("login"))
-        if login != CODEX_LOGIN or review.get("state") != "COMMENTED":
+        if not login_matches(login, expected_login) or review.get("state") != "COMMENTED":
             continue
         body = review.get("body") or ""
-        if any(f"`{p}`" in body for p in prefixes):
+        if any(f"`{prefix}`" in body for prefix in prefixes):
             out.append(review)
     return out
+
+
+def protected_control_changes(
+    client: Any, repo: str, pr_number: int, policy: dict[str, Any]
+) -> list[str]:
+    protected = set(policy.get("protected_control_paths") or [])
+    files = client.get_all(f"/repos/{repo}/pulls/{pr_number}/files")
+    changed = {
+        item.get("filename")
+        for item in files
+        if isinstance(item, dict) and isinstance(item.get("filename"), str)
+    }
+    return sorted(protected & changed)
 
 
 def workflow_content_sha256(client: Any, repo: str, path: str, ref: str) -> str:
@@ -174,7 +205,6 @@ def allowed_purposes(
         raise GateError(
             f"UNTRUSTED_PROOF_WORKFLOW_IDENTITY: {run_repo}:{run_name}:{run_path}"
         )
-
     if run_repo != subject_repo:
         raise GateError(
             f"UNSUPPORTED_CROSS_REPO_PROOF_IDENTITY: {run_repo} subject={subject_repo}"
@@ -244,38 +274,48 @@ def evaluate(
     if not isinstance(base_sha, str) or len(base_sha) != 40:
         raise GateError("PR_BASE_UNAVAILABLE")
 
+    protected = protected_control_changes(client, repo, pr_number, policy)
+    if protected:
+        raise GateError(
+            "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP: " + ",".join(protected)
+        )
+
     receipt = parse_receipt(pr.get("body"))
     if receipt["head_sha"] != head_sha:
         raise GateError(f"STALE_HEAD: receipt={receipt['head_sha']} current={head_sha}")
 
     proven_purposes: set[str] = set()
-    run_receipts = []
+    run_receipts: list[dict[str, Any]] = []
     for spec in receipt["required_runs"]:
-        rr = validate_run(client, spec, head_sha, repo, base_sha, policy)
-        run_receipts.append(rr)
-        proven_purposes.update(rr["purposes"])
+        run_receipt = validate_run(client, spec, head_sha, repo, base_sha, policy)
+        run_receipts.append(run_receipt)
+        proven_purposes.update(run_receipt["purposes"])
 
     missing = sorted(REQUIRED_PURPOSES - proven_purposes)
     if missing:
         raise GateError("MISSING_REQUIRED_PROOF_PURPOSE: " + ",".join(missing))
 
+    expected_login = codex_login(policy)
     comments = client.get_all(f"/repos/{repo}/issues/{pr_number}/comments")
-    completed, summary_id = review_is_completed_for_head(comments, head_sha)
+    completed, summary_id = review_is_completed_for_head(
+        comments, head_sha, expected_login
+    )
     if not completed:
         raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
 
     reviews = client.get_all(f"/repos/{repo}/pulls/{pr_number}/reviews")
-    findings = codex_finding_reviews_for_head(reviews, head_sha)
+    findings = codex_finding_reviews_for_head(reviews, head_sha, expected_login)
     if findings:
         raise GateError(f"CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD: {len(findings)}")
 
     return {
-        "schema": "first_pass_closure_gate_receipt/v2",
-        "status": "PASS_FIRST_PASS_CLOSURE_GATE",
+        "schema": PASS_SCHEMA,
+        "status": PASS_STATUS,
         "repository": repo,
         "pr_number": pr_number,
         "head_sha": head_sha,
         "base_sha": base_sha,
+        "trusted_controller_revision": base_sha,
         "codex_summary_comment_id": summary_id,
         "codex_material_finding_review_count": 0,
         "proven_purposes": sorted(proven_purposes),
@@ -288,7 +328,7 @@ def evaluate(
 
 def fail_receipt(reason: str) -> dict[str, Any]:
     return {
-        "schema": "first_pass_closure_gate_receipt/v2",
+        "schema": PASS_SCHEMA,
         "status": "FAIL_FIRST_PASS_CLOSURE_GATE",
         "reason": reason,
         "merge_allowed": False,
@@ -297,20 +337,71 @@ def fail_receipt(reason: str) -> dict[str, Any]:
     }
 
 
+def validate_pass_receipt(
+    receipt: dict[str, Any], expected_head: str, expected_base: str
+) -> None:
+    if receipt.get("schema") != PASS_SCHEMA:
+        raise GateError("FINAL_RECEIPT_SCHEMA_NOT_PASS_V3")
+    if receipt.get("status") != PASS_STATUS:
+        raise GateError("FINAL_RECEIPT_STATUS_NOT_PASS")
+    if receipt.get("merge_allowed") is not True:
+        raise GateError("FINAL_RECEIPT_MERGE_ALLOWED_NOT_TRUE")
+    if receipt.get("head_sha") != expected_head:
+        raise GateError("FINAL_RECEIPT_HEAD_MISMATCH")
+    if receipt.get("base_sha") != expected_base:
+        raise GateError("FINAL_RECEIPT_BASE_MISMATCH")
+    if receipt.get("trusted_controller_revision") != expected_base:
+        raise GateError("FINAL_RECEIPT_CONTROLLER_REVISION_MISMATCH")
+    if receipt.get("codex_material_finding_review_count") != 0:
+        raise GateError("FINAL_RECEIPT_CODEX_FINDINGS_NONZERO")
+    if receipt.get("authority_transfer") is not False:
+        raise GateError("FINAL_RECEIPT_AUTHORITY_TRANSFER_NOT_FALSE")
+    if receipt.get("formal_credit_delta") != 0:
+        raise GateError("FINAL_RECEIPT_FORMAL_CREDIT_NONZERO")
+
+
+def validate_pass_receipt_file(path: str, expected_head: str, expected_base: str) -> None:
+    try:
+        receipt = json.loads(Path(path).read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise GateError("FINAL_RECEIPT_MISSING") from exc
+    except json.JSONDecodeError as exc:
+        raise GateError("FINAL_RECEIPT_INVALID_JSON") from exc
+    if not isinstance(receipt, dict):
+        raise GateError("FINAL_RECEIPT_ROOT_NOT_OBJECT")
+    validate_pass_receipt(receipt, expected_head, expected_base)
+
+
 def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY"))
-    ap.add_argument("--pr", type=int)
-    ap.add_argument("--token", default=os.environ.get("GITHUB_TOKEN"))
-    ap.add_argument("--policy", required=True)
-    ap.add_argument("--out")
-    args = ap.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY"))
+    parser.add_argument("--pr", type=int)
+    parser.add_argument("--token", default=os.environ.get("GITHUB_TOKEN"))
+    parser.add_argument("--policy")
+    parser.add_argument("--out")
+    parser.add_argument("--validate-receipt")
+    parser.add_argument("--expected-head")
+    parser.add_argument("--expected-base")
+    args = parser.parse_args()
+
+    if args.validate_receipt:
+        try:
+            if not args.expected_head or not args.expected_base:
+                raise GateError("FINAL_RECEIPT_EXPECTED_IDENTITY_MISSING")
+            validate_pass_receipt_file(
+                args.validate_receipt, args.expected_head, args.expected_base
+            )
+            print("FPC_FINAL_RECEIPT_VALIDATION=PASS")
+            return 0
+        except GateError as exc:
+            print(f"FPC_FINAL_RECEIPT_VALIDATION=FAIL:{exc}")
+            return 2
 
     receipt: dict[str, Any]
     code: int
     try:
-        if not args.repo or not args.pr or not args.token:
-            raise GateError("ADMISSION_ARGUMENTS_MISSING: repo, pr and token are required")
+        if not args.repo or not args.pr or not args.token or not args.policy:
+            raise GateError("ADMISSION_ARGUMENTS_MISSING: repo, pr, token and policy are required")
         policy = load_policy(args.policy)
         receipt = evaluate(ApiClient(args.token), args.repo, args.pr, policy)
         code = 0
@@ -326,8 +417,7 @@ def main() -> int:
     payload = json.dumps(receipt, indent=2, sort_keys=True) + "\n"
     if args.out:
         try:
-            with open(args.out, "w", encoding="utf-8") as handle:
-                handle.write(payload)
+            Path(args.out).write_text(payload, encoding="utf-8")
         except OSError:
             code = 2
     print(payload, end="")

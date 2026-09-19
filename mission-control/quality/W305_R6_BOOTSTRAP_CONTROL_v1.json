@@ -1,0 +1,36 @@
+{
+  "schema": "missioncontrol.w305.fpc_r6_bootstrap.v1",
+  "as_of": "2026-09-19T08:35:00+02:00",
+  "issue": "GBOGEB/pipeline-automation-hub#314",
+  "predecessor_pr": 319,
+  "predecessor_merge": "ce5eae3a150df8e92bf42ce7180e132f7db6b120",
+  "predecessor_disposition": "R5_MERGED_WITH_TWO_EXACT_HEAD_P1_FINDINGS_NOT_ACCEPTED_AS_CLOSURE",
+  "repair_class": "CONTROLLER_BOOTSTRAP_NON_SELF_CERTIFYING",
+  "invariants": [
+    "EVALUATOR_POLICY_TESTS_EXECUTE_FROM_PR_BASE_SHA",
+    "CANDIDATE_CONTROLLER_PATH_MUTATION_REJECTED",
+    "CANDIDATE_PROOF_IS_EVIDENCE_NOT_AUTHORITY",
+    "FINAL_RECEIPT_CONTENT_MUST_BE_PASS",
+    "FAIL_RECEIPT_CANNOT_GREEN_FINAL_JOB",
+    "AUTO_MERGE_HOLD_ON_ANY_NON_PASS",
+    "POST_MERGE_DISTINCT_CANARY_REQUIRED"
+  ],
+  "protected_control_paths": [
+    "scripts/first_pass_closure_gate.py",
+    "scripts/tests/test_first_pass_closure_gate.py",
+    ".github/workflows/first-pass-closure-gate.yml",
+    ".github/workflows/first-pass-closure-proof.yml",
+    "mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json"
+  ],
+  "bootstrap_dov": [
+    "INDEPENDENT_CODEX_REVIEW_COMPLETE_EXACT_HEAD",
+    "ZERO_MATERIAL_P1_P2_FINDINGS",
+    "BOOTSTRAP_MERGE",
+    "DISTINCT_NON_CONTROLLER_CANARY",
+    "TRUSTED_BASE_FPC_PASS_ON_CANARY"
+  ],
+  "close_issue_314_before_canary": false,
+  "activate_cryoplant_1550_before_canary": false,
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}

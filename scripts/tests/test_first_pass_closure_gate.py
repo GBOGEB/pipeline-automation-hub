@@ -17,7 +17,16 @@ REPO = "GBOGEB/example"
 PR = 7
 RUN = 12345
 TRUSTED_WORKFLOW = "name: Trusted Proof\n"
+PROTECTED = [
+    "scripts/first_pass_closure_gate.py",
+    "scripts/tests/test_first_pass_closure_gate.py",
+    ".github/workflows/first-pass-closure-gate.yml",
+    ".github/workflows/first-pass-closure-proof.yml",
+    "mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json",
+]
 POLICY = {
+    "codex_contract": {"reviewer_login": "chatgpt-codex-connector"},
+    "protected_control_paths": PROTECTED,
     "proof_identity_allowlist": {
         "canonical_self_test": [
             {"repo": REPO, "workflow_name": "Trusted Proof", "workflow_path": ".github/workflows/trusted.yml"}
@@ -28,7 +37,7 @@ POLICY = {
         "exact_head_ci": [
             {"repo": REPO, "workflow_name": "Trusted Proof", "workflow_path": ".github/workflows/trusted.yml"}
         ],
-    }
+    },
 }
 
 
@@ -70,11 +79,12 @@ def mapping(
     run_head=HEAD,
     run_conclusion="success",
     completed=True,
-    summary_login="chatgpt-codex-connector",
+    summary_login="chatgpt-codex-connector[bot]",
     run_name="Trusted Proof",
     run_path=".github/workflows/trusted.yml",
     head_workflow=TRUSTED_WORKFLOW,
     base_workflow=TRUSTED_WORKFLOW,
+    changed_files=None,
 ):
     summary = f"""<!-- codex-pull-request-review-summary -->
 | Review | Status | Commit |
@@ -86,7 +96,7 @@ def mapping(
         reviews = [{
             "state": review_state or "COMMENTED",
             "body": review_body,
-            "user": {"login": "chatgpt-codex-connector"},
+            "user": {"login": "chatgpt-codex-connector[bot]"},
         }]
     return {
         f"/repos/{REPO}/pulls/{PR}": {
@@ -94,6 +104,9 @@ def mapping(
             "base": {"sha": BASE},
             "body": pr_body if pr_body is not None else body(),
         },
+        f"/repos/{REPO}/pulls/{PR}/files": [
+            {"filename": path} for path in (changed_files or ["docs/canary.md"])
+        ],
         f"/repos/{REPO}/actions/runs/{RUN}": {
             "status": "completed",
             "conclusion": run_conclusion,
@@ -113,15 +126,20 @@ def mapping(
 
 
 class TestFirstPassClosureGate(unittest.TestCase):
-    def test_clean_exact_head_passes(self):
-        r = fpc.evaluate(FakeClient(mapping()), REPO, PR, POLICY)
-        self.assertEqual(r["status"], "PASS_FIRST_PASS_CLOSURE_GATE")
-        self.assertEqual(set(r["proven_purposes"]), fpc.REQUIRED_PURPOSES)
-        self.assertEqual(r["base_sha"], BASE)
-        self.assertEqual(
-            r["required_runs"][0]["workflow_content_sha256"],
-            r["required_runs"][0]["trusted_base_workflow_sha256"],
-        )
+    def test_clean_exact_head_passes_from_non_controller_candidate(self):
+        receipt = fpc.evaluate(FakeClient(mapping()), REPO, PR, POLICY)
+        self.assertEqual(receipt["status"], fpc.PASS_STATUS)
+        self.assertEqual(set(receipt["proven_purposes"]), fpc.REQUIRED_PURPOSES)
+        self.assertEqual(receipt["trusted_controller_revision"], BASE)
+
+    def test_control_plane_mutation_rejected(self):
+        with self.assertRaisesRegex(fpc.GateError, "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"):
+            fpc.evaluate(
+                FakeClient(mapping(changed_files=["scripts/first_pass_closure_gate.py"])),
+                REPO,
+                PR,
+                POLICY,
+            )
 
     def test_missing_receipt_rejected(self):
         with self.assertRaisesRegex(fpc.GateError, "MISSING_RECEIPT"):
@@ -152,9 +170,13 @@ class TestFirstPassClosureGate(unittest.TestCase):
                 POLICY,
             )
 
-    def test_spoofed_summary_author_rejected(self):
-        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
-            fpc.evaluate(FakeClient(mapping(summary_login="GBOGEB")), REPO, PR, POLICY)
+    def test_bot_suffix_is_bound_to_expected_codex_identity(self):
+        self.assertTrue(
+            fpc.login_matches(
+                "chatgpt-codex-connector[bot]", "chatgpt-codex-connector"
+            )
+        )
+        self.assertFalse(fpc.login_matches("other-bot[bot]", "chatgpt-codex-connector"))
 
     def test_review_not_completed_rejected(self):
         with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
@@ -167,8 +189,8 @@ class TestFirstPassClosureGate(unittest.TestCase):
 
     def test_old_head_codex_finding_does_not_block(self):
         review = "### Codex Review\n**Reviewed commit:** `bbbbbbbbbb`"
-        r = fpc.evaluate(FakeClient(mapping(review_body=review)), REPO, PR, POLICY)
-        self.assertTrue(r["merge_allowed"])
+        receipt = fpc.evaluate(FakeClient(mapping(review_body=review)), REPO, PR, POLICY)
+        self.assertTrue(receipt["merge_allowed"])
 
     def test_missing_policy_becomes_gate_error(self):
         with self.assertRaisesRegex(fpc.GateError, "POLICY_LOAD_FAILED:MISSING"):
@@ -181,12 +203,46 @@ class TestFirstPassClosureGate(unittest.TestCase):
             with self.assertRaisesRegex(fpc.GateError, "POLICY_LOAD_FAILED:INVALID_JSON"):
                 fpc.load_policy(str(path))
 
-    def test_policy_without_allowlist_rejected(self):
+    def test_policy_without_protected_paths_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "policy.json"
-            path.write_text("{}", encoding="utf-8")
-            with self.assertRaisesRegex(fpc.GateError, "PROOF_IDENTITY_ALLOWLIST_MISSING"):
+            path.write_text(json.dumps({"proof_identity_allowlist": {}}), encoding="utf-8")
+            with self.assertRaisesRegex(fpc.GateError, "PROTECTED_CONTROL_PATHS_MISSING"):
                 fpc.load_policy(str(path))
+
+    def test_final_receipt_validator_accepts_only_bound_pass(self):
+        receipt = {
+            "schema": fpc.PASS_SCHEMA,
+            "status": fpc.PASS_STATUS,
+            "head_sha": HEAD,
+            "base_sha": BASE,
+            "trusted_controller_revision": BASE,
+            "merge_allowed": True,
+            "codex_material_finding_review_count": 0,
+            "authority_transfer": False,
+            "formal_credit_delta": 0,
+        }
+        fpc.validate_pass_receipt(receipt, HEAD, BASE)
+
+    def test_final_receipt_validator_rejects_synthesized_fail(self):
+        receipt = fpc.fail_receipt("PRE_EVALUATOR_FAILURE")
+        with self.assertRaisesRegex(fpc.GateError, "FINAL_RECEIPT_STATUS_NOT_PASS"):
+            fpc.validate_pass_receipt(receipt, HEAD, BASE)
+
+    def test_final_receipt_validator_rejects_wrong_head(self):
+        receipt = {
+            "schema": fpc.PASS_SCHEMA,
+            "status": fpc.PASS_STATUS,
+            "head_sha": "b" * 40,
+            "base_sha": BASE,
+            "trusted_controller_revision": BASE,
+            "merge_allowed": True,
+            "codex_material_finding_review_count": 0,
+            "authority_transfer": False,
+            "formal_credit_delta": 0,
+        }
+        with self.assertRaisesRegex(fpc.GateError, "FINAL_RECEIPT_HEAD_MISMATCH"):
+            fpc.validate_pass_receipt(receipt, HEAD, BASE)
 
 
 if __name__ == "__main__":
