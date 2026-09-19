@@ -1,0 +1,43 @@
+{
+  "schema": "missioncontrol.gm_i_a.multiclock_fpc_canary2.v1",
+  "mission": "GM-I-A",
+  "purpose": "PROVE_MERGE_LAST_FIRST_PASS_CLOSURE_AFTER_PREMATURE_CANARY1_MERGE",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "parent_3pstar_mip": {
+    "pr": 326,
+    "merge_sha": "506d73e012d377430a41262b052b8c7bfb7f4274",
+    "three_pstar_mip_run": 35426923386,
+    "three_pstar_mip_receipt_sha256": "6afb09e3b2380feb2791d87568970e33436fce4445a65d43e7b61e5f4ede4fdf",
+    "measurement_run": 35426923383,
+    "readiness_sha256": "0912f0debff64ec38ddde3ee15f8200d54c46da6ca034bfbf7a43ca07555246f"
+  },
+  "math_provider": {
+    "run": 35426576807,
+    "merge_sha": "23c8df3a8309016706551d0102b17dc3446115b5",
+    "readiness_receipt_sha256": "fd658469abe629698be82fd6f93bf773d7f2c482dd6e4c4244bf3875b0604a00"
+  },
+  "canary1": {
+    "pr": 331,
+    "head": "21c2ff0de8dcd6bc9e4bb29540c41f20d951ddf2",
+    "proof_run": 35428063678,
+    "proof_result": "PASS",
+    "receipt_bound": true,
+    "fpc_gate_reason_after_receipt": "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD",
+    "merge_sha": "95cbe8abbc0d29e180fb0990ef774c9ac37f770c",
+    "disposition": "INVALID_AS_MERGE_LAST_CANARY_MERGED_BEFORE_CODEX_AND_FPC_PASS"
+  },
+  "canary2_sequence": [
+    "OPEN_DRAFT",
+    "WAIT_CANONICAL_PROOF_PASS",
+    "BIND_FPC_RECEIPT_TO_EXACT_HEAD",
+    "TRIGGER_CODEX_REVIEW_WHILE_DRAFT",
+    "WAIT_CODEX_COMPLETED_ZERO_FINDINGS",
+    "MARK_READY",
+    "WAIT_TRUSTED_BASE_FPC_PASS",
+    "MERGE_LAST"
+  ],
+  "controller_paths_changed": false,
+  "merge_before_fpc_pass_forbidden": true
+}
