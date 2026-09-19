@@ -1,13 +1,13 @@
 # GM-I-A multi-clock — 3P* + MIP lossless handover v1
 
-Status: **REPOSITORY_CONTROL_READY / HOSTED_PROOF_WAIT_RUNNER**
+Status: **REPOSITORY_CONTROL_READY / MATH_PROVIDER_PASS / MISSIONCONTROL_HOSTED_WAIT_RUNNER**
 
 ## Method result
 
 3P* executed as **Refresh -> Probe -> Rank**.
 
 - Refresh: PASS. Exact P001 source transaction and current MissionControl / gg_MATH proof heads were re-read.
-- Probe: PASS_SOURCE_MEASURED_HOSTED_PROVE_WAIT_RUNNER. Both exact validation jobs are still zero-step runner admission; no application repair is authorized from that state.
+- Probe: PASS_SOURCE_MEASURED_MATH_PROVIDER_PROVED_MC_HOSTED_WAIT_RUNNER. gg_MATH exact-head run 35426576807 passed all readiness/federation/control steps and merged at `23c8df3a8309016706551d0102b17dc3446115b5`; MissionControl validation remains zero-step runner admission, so no application repair is authorized.
 - Rank: PASS_MEASURED_DESCRIPTIVE. P001 pressure is KEB queue 808 s, DOW queue 632 s, FAST queue 512 s, HEAVY build 203 s, checkout 37 s, then 9/8/7/4 s. This is not a BT fit.
 
 MIP then executed sequentially:
