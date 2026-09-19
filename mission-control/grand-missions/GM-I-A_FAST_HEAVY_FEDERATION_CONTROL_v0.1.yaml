@@ -1,4 +1,4 @@
-schema: missioncontrol.gm_i_a_fast_heavy_federation_control.v0.1
+schema: missioncontrol.gm_i_a_fast_heavy_federation_control.v0.2
 mission: GM-I-A
 parent: GM-I
 provider_repo: GBOGEB/CoolProp
@@ -33,32 +33,62 @@ attestation:
   workflow_run_id: 35425302712
   artifact_id: 10579027428
   artifact_digest: sha256:8b42c4cb740247d29daa4949aea4f4ce7b5e578aa8c8bbcf263ed716d3ae4484
-federation_bridge:
-  consumer_repo: GBOGEB/ABACUS
-  pr: 1286
-  exact_head_sha: 9b89aa3516209f18447f03de91e91b21b35c9304
-  workflow_run_id: 35425352862
-  job_id: 105850219298
-  state: QUEUED_RUNNER_ID_0_NO_DOWNSTREAM_CREDIT
+federation_bridges:
+  - id: GM-I-A-BRIDGE-DOW
+    consumer_repo: GBOGEB/ABACUS
+    role: DOW_INDEPENDENT_RUNTIME_ECONOMICS_CONSUMER
+    pr: 1286
+    merged: true
+    merge_sha: 325cbd03ee4b5879331ecdc60dc8d6f36022ce99
+    exact_head_sha: 9b89aa3516209f18447f03de91e91b21b35c9304
+    workflow_run_id: 35425352862
+    job_id: 105850219298
+    runtime_state: QUEUED
+    runner_id: 0
+    downstream_credit: 0
+    compensates_other_bridge: false
+  - id: GM-I-A-BRIDGE-KEB
+    consumer_repo: GBOGEB/CODEX
+    role: KEB_SEMANTIC_RUNTIME_ECONOMICS_CONSUMER
+    pr: 775
+    merged: false
+    merge_sha: null
+    exact_head_sha: e1b599d79cc6eb591f327494cfb5ea29c02ffcaa
+    workflow_run_id: 35425623741
+    job_id: null
+    runtime_state: QUEUED
+    runner_id: null
+    downstream_credit: 0
+    compensates_other_bridge: false
+fanout:
+  registered_consumers: 2
+  runtime_pass_consumers: 0
+  runtime_wait_consumers: 2
+  topology: PROVIDER_ATTESTATION_TO_INDEPENDENT_DOW_AND_KEB_CONSUMERS
+  rule: EACH_CONSUMER_MUST_PROVE_GT0_EXECUTION_AND_OWN_RECEIPT
 current_classification:
   provider_runtime: CONTROL_CANDIDATE_PROVEN
   provider_attestation: PASS
-  downstream_bridge: WAIT_RUNNER
+  downstream_fanout: REGISTERED_2_WAIT_RUNTIME
   first_red: null
-  external_gate: ABACUS_RUNNER_ADMISSION
+  external_gates:
+    - ABACUS_RUNNER_ADMISSION
+    - CODEX_RUNNER_ADMISSION
 performance_signal:
   PC1: HEAVY_BUILD_COST
   PC2: CHECKOUT_SUBMODULE_COST
   PC3: FAST_RUNNER_QUEUE_CONTENTION
   note: >-
-    FAST execution is now separated from source build, but the observed FAST runner queue
-    materially exceeds its execution time. Do not collapse queue and execution telemetry.
+    FAST execution is separated from source build, but observed runner contention dominates
+    wall-clock latency. Federation consumers are tracked separately so consumer queue pressure
+    cannot be mistaken for provider compute cost.
 promotion_rule: >-
-  Do not promote downstream federation closure until ABACUS workflow run 35425352862
-  executes steps > 0 and emits an exact receipt. Provider proof does not compensate a
-  zero-step or queued downstream consumer.
+  Promote each bridge independently only after its named workflow executes steps > 0,
+  concludes success and emits a digest-bound consumer receipt. One consumer PASS never
+  compensates another consumer WAIT/RED. Provider proof never compensates downstream zero-step.
 authority_guards:
   - HEPAK_AUTHORITY_UNCHANGED
   - QEQ_SAT_AUTHORITY_UNCHANGED
   - NO_ENGINEERING_PROMOTION_FROM_RUNTIME_ECONOMICS
   - NO_DOWNSTREAM_CREDIT_BEFORE_GT0_STEP_CONSUMER_PASS
+  - BRIDGE_RESULTS_ARE_NON_COMPENSATING
