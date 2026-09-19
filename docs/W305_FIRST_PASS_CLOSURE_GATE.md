@@ -87,3 +87,16 @@ The workflow also resolves the PR number before fallible checkout/test/evaluatio
 Policy missing/invalid JSON and unexpected admission exceptions are normalized into deterministic fail receipts rather than escaping the evidence path.
 
 These controls are process-quality protections only. Repository-owner required-status/ruleset enforcement remains the preferred independent defense-in-depth boundary.
+
+
+## R5 closure proof anchor — 2026-09-19
+
+The R5 self-protection implementation is present in the repository authority used by this proof transaction. PR #335 exists to bind the exact-head canonical proof, review-clean result, and closure/consumer handoff receipts without introducing a second implementation authority.
+
+A successful proof on this PR demonstrates the integrated state containing:
+- trusted-base workflow-content identity binding;
+- deterministic early-failure receipts;
+- fail-closed auto-merge cleanup for non-success/skipped evaluator states;
+- the R5 mutation and policy-load fault matrix.
+
+This proof anchor changes no engineering or release authority.
