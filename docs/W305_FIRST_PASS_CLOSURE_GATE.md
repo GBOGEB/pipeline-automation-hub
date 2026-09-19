@@ -45,6 +45,12 @@ Every run must be `completed/success` and bind the exact PR head. The allowliste
 - `mutation_test`
 - `exact_head_ci`
 
+## Consumer PR bootstrap
+
+When a governed consumer PR is the first transaction to add its own proof workflow, the First-Pass Closure Gate still requires the existing allowlisted `First-Pass Closure Proof` on that same exact head. A consumer may therefore include this documentation path in its bounded change set to trigger the already-governed proof workflow. This does **not** weaken the proof identity allowlist and does not make the consumer workflow a substitute for the canonical proof.
+
+After the allowlisted proof succeeds, bind that run in the PR-body receipt, wait for the exact-head Codex review to complete with zero material findings, then let the gate re-evaluate. Merge remains the last event.
+
 ## Review-clean test
 
 The gate requires:
