@@ -48,12 +48,12 @@ jobs:
               ;;
           esac
           test -n "$PR_NUMBER"
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
           PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
           HEAD_SHA="$(printf '%s' "$PR_JSON" | jq -r '.head.sha')"
           BASE_SHA="$(printf '%s' "$PR_JSON" | jq -r '.base.sha')"
           test "${#HEAD_SHA}" -eq 40
           test "${#BASE_SHA}" -eq 40
-          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
           echo "head_sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
           echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
 
@@ -70,7 +70,7 @@ jobs:
         id: trusted_tests
         if: steps.trusted_checkout.outcome == 'success'
         continue-on-error: true
-        run: python -m unittest trusted-fpc/scripts/tests/test_first_pass_closure_gate.py
+        run: python trusted-fpc/scripts/tests/test_first_pass_closure_gate.py
 
       - name: Evaluate candidate using trusted controller and policy
         id: gate
