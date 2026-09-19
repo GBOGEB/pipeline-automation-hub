@@ -1,0 +1,33 @@
+{
+  "schema": "missioncontrol.gm_i_a.multiclock_current.v1",
+  "mission": "GM-I-A",
+  "state": "MEASURED_WAVE_P001_CONTROL_ACTIVE",
+  "authority_transfer": false,
+  "dataset": "GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json",
+  "control": "GM_I_A_MULTI_CLOCK_3PSTAR_MIP_v1.json",
+  "analyzer": "gm_i_a_multiclock_analyze.py",
+  "capture": "gm_i_a_multiclock_capture.py",
+  "measured_pulses": 1,
+  "feature_count": 9,
+  "pca": {
+    "status": "WITHHELD_N1_OF_27",
+    "rows_remaining": 26,
+    "provider": "GBOGEB/gg_MATH",
+    "provider_pr": 28
+  },
+  "bt": {
+    "status": "WITHHELD_N1_NO_STRONG_CONNECTIVITY",
+    "minimum_repeat_pulses": 3,
+    "repeat_pulses_remaining": 2,
+    "provider": "GBOGEB/gg_MATH"
+  },
+  "hosted_proof": {
+    "measurement_run": 35426485549,
+    "measurement_job": 105853237389,
+    "math_run": 35426576807,
+    "math_job": 105853477082,
+    "state": "WAIT_RUNNER_ZERO_STEP_AT_3PSTAR_REFRESH"
+  },
+  "next_pulse": "GM-I-A-MCLOCK-P002",
+  "stop_rule": "DO_NOT_FIT_OR_PROMOTE_PCA_BT_BEFORE_GATES; ZERO_STEP_HOSTED_JOBS_TRIGGER_NO_CODE_REPAIR"
+}
