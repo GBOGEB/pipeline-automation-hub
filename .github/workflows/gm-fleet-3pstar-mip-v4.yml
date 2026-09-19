@@ -1,0 +1,47 @@
+name: GM Fleet 3PSTAR MIP v4
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/GM_FLEET_3PSTAR_MIP_20260919T0738_v4.json'
+      - 'mission-control/grand-missions/GM_FLEET_DASHBOARD_V11_DATA.json'
+      - 'mission-control/grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html'
+      - 'mission-control/grand-missions/validate_gm_fleet_3pstar_mip_v4.py'
+      - 'mission-control/grand-missions/handover/SC_2026-09-19_GM_FLEET_3PSTAR_MIP_v4.md'
+      - 'mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-19_GM_FLEET_v4.md'
+      - '.github/workflows/gm-fleet-3pstar-mip-v4.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_FLEET_3PSTAR_MIP_20260919T0738_v4.json'
+      - 'mission-control/grand-missions/GM_FLEET_DASHBOARD_V11_DATA.json'
+      - 'mission-control/grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html'
+      - 'mission-control/grand-missions/validate_gm_fleet_3pstar_mip_v4.py'
+      - 'mission-control/grand-missions/handover/SC_2026-09-19_GM_FLEET_3PSTAR_MIP_v4.md'
+      - 'mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-19_GM_FLEET_v4.md'
+      - '.github/workflows/gm-fleet-3pstar-mip-v4.yml'
+permissions:
+  contents: read
+jobs:
+  prove:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Bind exact head
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Validate sequential 3PSTAR then MIP
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/validate_gm_fleet_3pstar_mip_v4.py             --source-sha "${{ github.event.pull_request.head.sha || github.sha }}"             --out gm_fleet_3pstar_mip_v4_receipt.json | tee receipt.out
+          grep -q PASS_GM_FLEET_3PSTAR_MIP_V4 receipt.out
+      - name: Deterministic repeat
+        run: |
+          set -euo pipefail
+          cp gm_fleet_3pstar_mip_v4_receipt.json first.json
+          python mission-control/grand-missions/validate_gm_fleet_3pstar_mip_v4.py             --source-sha "${{ github.event.pull_request.head.sha || github.sha }}"             --out second.json >/dev/null
+          cmp first.json second.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gm-fleet-3pstar-mip-v4-${{ github.event.pull_request.head.sha || github.sha }}
+          path: gm_fleet_3pstar_mip_v4_receipt.json
