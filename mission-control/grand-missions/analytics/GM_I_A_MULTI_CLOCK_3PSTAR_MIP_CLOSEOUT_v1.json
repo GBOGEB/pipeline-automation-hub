@@ -1,0 +1,64 @@
+{
+  "schema": "missioncontrol.gm_i_a.multiclock_3pstar_mip_closeout.v1",
+  "mission": "GM-I-A",
+  "method": "3PSTAR_THEN_MIP_SEQUENTIAL",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "parent_transaction": {
+    "pr": 326,
+    "merge_sha": "506d73e012d377430a41262b052b8c7bfb7f4274",
+    "exact_head": "31b3adf1ad17082fa4f383e2c2cedcf9aeb42706",
+    "three_pstar_mip_run": 35426923386,
+    "three_pstar_mip_job": 105854386946,
+    "three_pstar_mip_artifact_id": 10579241855,
+    "three_pstar_mip_artifact_digest": "sha256:8fbd3b0dd767f5bb77ca70711ca4e88fe98d6883a8fc9bb7771a340aa2b53412",
+    "measurement_run": 35426923383,
+    "measurement_job": 105854386957,
+    "measurement_artifact_id": 10579626500,
+    "measurement_artifact_digest": "sha256:94a1f0a6f3c67aec6b74c7543bb7e902df188455bd9f5f4f515d881e4a0c0d5a"
+  },
+  "math_provider": {
+    "repo": "GBOGEB/gg_MATH",
+    "pr": 28,
+    "merge_sha": "23c8df3a8309016706551d0102b17dc3446115b5",
+    "exact_head": "767b3afa862643faa22cb2c98f98a0512b864601",
+    "run": 35426576807,
+    "job": 105853477082,
+    "artifact_id": 10578234526,
+    "artifact_digest": "sha256:9ffc0f79a1019ecef4e0570de171463573e80f035181e8aecaabd6b930aa8802",
+    "readiness_receipt_sha256": "fd658469abe629698be82fd6f93bf773d7f2c482dd6e4c4244bf3875b0604a00",
+    "result": "PASS_EXACT_HEAD_READINESS_WITH_PCA_BT_WITHHELD"
+  },
+  "first_pass_control": {
+    "parent_pr_gate_run": 35426923447,
+    "parent_pr_gate_job": 105854387025,
+    "parent_pr_gate_result": "FAIL_FIRST_PASS_CLOSURE_GATE",
+    "parent_pr_gate_reason": "MISSING_RECEIPT",
+    "classification": "PROCESS_CLOSURE_RECEIPT_DEFECT_NOT_MULTI_CLOCK_APPLICATION_DEFECT",
+    "repair": "DISTINCT_NON_CONTROLLER_CANARY_WITH_CANONICAL_PROOF_AND_EXACT_HEAD_RECEIPT",
+    "issue": "GBOGEB/pipeline-automation-hub#314"
+  },
+  "three_pstar": {
+    "Refresh": "PASS",
+    "Probe": "PASS_EXACT_HEAD_MULTI_CLOCK_AND_MATH_PROVIDER",
+    "Rank": "PASS_MEASURED_DESCRIPTIVE_NO_BT_FIT"
+  },
+  "mip": {
+    "Modernize": "PASS",
+    "Innovate": "PASS_BOUNDED",
+    "Perpetuate": "PASS_REPOSITORY_NATIVE_EXACT_HEAD"
+  },
+  "statistical_state": {
+    "measured_pulses": 1,
+    "feature_count": 9,
+    "queue_fraction_p001": 0.8810810810810811,
+    "pca": "WITHHELD_N1_OF_27",
+    "bt": "WITHHELD_N1_NO_STRONG_CONNECTIVITY"
+  },
+  "closeout_gate": {
+    "required": "FIRST_PASS_CLOSURE_CANARY_PASS_BEFORE_THIS_CLOSEOUT_MERGES",
+    "merge_last": true,
+    "controller_paths_changed": false
+  }
+}
