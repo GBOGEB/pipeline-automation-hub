@@ -1,0 +1,50 @@
+name: GM-V 3PSTAR MIP Refresh v3
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/GM_V_3PSTAR_MIP_REFRESH_20260918T1656_v3.json'
+      - 'mission-control/grand-missions/validate_gm_v_3pstar_mip_refresh_v3.py'
+      - 'mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v3.md'
+      - 'mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v3.md'
+      - '.github/workflows/gm-v-3pstar-mip-refresh-v3.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_V_3PSTAR_MIP_REFRESH_20260918T1656_v3.json'
+      - 'mission-control/grand-missions/validate_gm_v_3pstar_mip_refresh_v3.py'
+      - 'mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v3.md'
+      - 'mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v3.md'
+      - '.github/workflows/gm-v-3pstar-mip-refresh-v3.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  refresh-v3:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Validate 3PSTAR then MIP refresh
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/validate_gm_v_3pstar_mip_refresh_v3.py             --source-sha "${{ github.event.pull_request.head.sha || github.sha }}"             --out gm_v_3pstar_mip_refresh_v3_receipt.json | tee gm_v_3pstar_mip_refresh_v3.out
+          grep -q PASS_GM_V_3PSTAR_MIP_REFRESH_V3 gm_v_3pstar_mip_refresh_v3.out
+      - name: Deterministic repeat
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp gm_v_3pstar_mip_refresh_v3_receipt.json first.json
+          python mission-control/grand-missions/validate_gm_v_3pstar_mip_refresh_v3.py             --source-sha "${{ github.event.pull_request.head.sha || github.sha }}"             --out second.json >/dev/null
+          cmp first.json second.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gm-v-3pstar-mip-refresh-v3-${{ github.event.pull_request.head.sha || github.sha }}
+          path: gm_v_3pstar_mip_refresh_v3_receipt.json
