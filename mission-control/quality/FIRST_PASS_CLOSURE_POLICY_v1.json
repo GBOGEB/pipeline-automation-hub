@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.first_pass_closure_policy.v1",
-  "as_of": "2026-09-19T08:35:00+02:00",
+  "as_of": "2026-09-19T08:50:00+02:00",
   "issue": "GBOGEB/pipeline-automation-hub#304",
   "objective": "MAKE_MERGE_THE_LAST_EVENT_AFTER_EXACT_HEAD_PROOF_AND_REVIEW_CLEAN",
   "authority_transfer": false,
@@ -109,7 +109,7 @@
     ]
   },
   "merge_enforcement": {
-    "mode": "DISABLE_AUTO_MERGE_WHILE_GATE_RED",
+    "mode": "TRUSTED_CONTROLLER_FAIL_CLOSED_PLUS_HEAD_BOUND_STATUS",
     "owner_branch_rule_recommended": true,
     "required_status_name": "First-Pass Closure Gate / first-pass-closure",
     "cleanup_condition": "ALWAYS_WHEN_GATE_OUTCOME_IS_NOT_SUCCESS",
@@ -117,15 +117,25 @@
     "external_required_status_boundary": "OWNER_ADMIN_DEFENSE_IN_DEPTH",
     "trusted_controller_source": "PR_BASE_SHA",
     "final_predicate": "RECEIPT_SCHEMA_V3_AND_STATUS_PASS_AND_MERGE_ALLOWED_TRUE_AND_EXACT_HEAD_BASE_BINDING",
-    "fail_receipt_is_green": false
+    "fail_receipt_is_green": false,
+    "required_status_binding": "PR_HEAD_SHA",
+    "required_status_publisher": "TRUSTED_PULL_REQUEST_TARGET_CONTROLLER",
+    "required_status_states": [
+      "pending",
+      "success",
+      "failure"
+    ],
+    "required_status_rule": "SUCCESS_ONLY_AFTER_BOUND_PASS_RECEIPT_AND_ARTIFACT_SUCCESS",
+    "pull_request_target_check_suite_is_not_head_binding": true
   },
   "proof_identity_trust": {
     "controller_execution": "PR_BASE_SHA_ONLY_VIA_PULL_REQUEST_TARGET_OR_DEFAULT_BRANCH_EVENT",
     "candidate_controller_execution": false,
     "candidate_proof_role": "DATA_AND_EXACT_HEAD_RUNTIME_EVIDENCE_ONLY",
     "proof_workflow_identity": "ALLOWLIST_PLUS_CANDIDATE_CONTENT_EQUALS_CURRENT_PR_BASE_CONTENT",
-    "protected_path_mutation": "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP",
-    "cross_repo_proof_identity": "WITHHELD_UNTIL_EXPLICIT_TRUST_CONTRACT"
+    "protected_path_mutation": "FILENAME_OR_PREVIOUS_FILENAME_MATCH_REQUIRES_BOOTSTRAP",
+    "cross_repo_proof_identity": "WITHHELD_UNTIL_EXPLICIT_TRUST_CONTRACT",
+    "protected_path_rename_guard": true
   },
   "protected_control_paths": [
     "scripts/first_pass_closure_gate.py",
@@ -141,7 +151,8 @@
       "EXACT_HEAD_INDEPENDENT_CODE_REVIEW_COMPLETE",
       "ZERO_MATERIAL_P1_P2_FINDINGS",
       "MERGE_AS_EXPLICIT_BOOTSTRAP_ONLY",
-      "POST_MERGE_DISTINCT_NON_CONTROLLER_CANARY_REQUIRED"
+      "POST_MERGE_DISTINCT_NON_CONTROLLER_CANARY_REQUIRED",
+      "CANARY_HEAD_BOUND_REQUIRED_STATUS_SUCCESS"
     ],
     "closure_rule": "DO_NOT_CLOSE_ISSUE_314_OR_RELEASE_CONSUMER_1550_UNTIL_CANARY_FPC_PASS"
   }
