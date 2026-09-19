@@ -1,0 +1,142 @@
+{
+  "schema": "missioncontrol.fleet_dashboard.v11.data",
+  "as_of": "2026-09-19T07:38:00+02:00",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "source_heads": {
+    "missioncontrol_master": "361910f19a235af00c247059959dfd8bb797befc",
+    "qps_main": "c73cff96406d747493fabc650a670b4c3279d05e",
+    "qps_issue_923_state": "OPEN"
+  },
+  "planes": {
+    "analytics": {
+      "crew_exposure_pca": {
+        "state": "CONTROL_READY_MEASURED_REPEAT_SMALL_N",
+        "control_repeat_run": 34773738858,
+        "artifact_id": 10323136223,
+        "artifact_digest": "sha256:e175cdcde0c6132a4431c8335282b066353f5f422eea5da514334f275cacb7cb",
+        "pc1": {
+          "explained_variance_ratio": 0.6566259018268262,
+          "meaning": "EXECUTION_ACTIVE_EXPOSURE"
+        },
+        "pc2": {
+          "explained_variance_ratio": 0.20645164159383045,
+          "meaning": "WAIT_PRESSURE"
+        },
+        "pc3": {
+          "explained_variance_ratio": 0.13692245657934335,
+          "meaning": "RELEASE_HANDOFF_OVERHEAD"
+        },
+        "sample_rank_cap": 3,
+        "causal_interpretation_allowed": false,
+        "competency_promotion_allowed": false
+      },
+      "frontier_pca": {
+        "state": "CONTROL_READY_MEASURED_REPEAT"
+      },
+      "bt": {
+        "state": "READY_OBSERVED",
+        "observed_pairs": 12,
+        "single_cell_wins": 8,
+        "paired_cell_wins": 4
+      },
+      "boundary": "ANALYTICS_DO_NOT_BIND_FRONTIER_CHILDREN_OR_ENGINEERING_AUTHORITY"
+    },
+    "reconnaissance": {
+      "gm_iv_state": "ACTIVE_8_OF_8",
+      "canonical_children": [],
+      "controlled_pilots": [
+        {
+          "frontier": "GM-IV-F01",
+          "repository": "GBOGEB/DOCX_RTM_Automation",
+          "class": "CONTROLLED_PILOT_RETAINED"
+        },
+        {
+          "frontier": "GM-IV-F03",
+          "repository": "GBOGEB/codespaces-jupyter",
+          "class": "CONTROLLED_PILOT_RETAINED"
+        }
+      ],
+      "references": [
+        {
+          "frontier": "GM-IV-F02",
+          "repository": "GBOGEB/attest-build-provenance",
+          "class": "REFERENCE_RETAINED"
+        },
+        {
+          "frontier": "GM-IV-F04",
+          "repository": "GBOGEB/yaml-reference-parser",
+          "class": "REFERENCE_RETAINED"
+        }
+      ],
+      "scout_c_depth_board": [
+        {
+          "frontier": "GM-IV-F05",
+          "repository": "GBOGEB/ABACUS",
+          "class": "OBSERVED_CANDIDATE_RECON",
+          "observed_surface": "DMAIC_delivery_work_execution_and_federated_MIP_consumption",
+          "comparative_rank": "NOT_COMPUTED"
+        },
+        {
+          "frontier": "GM-IV-F06",
+          "repository": "GBOGEB/CODEX",
+          "class": "OBSERVED_CANDIDATE_RECON",
+          "observed_surface": "semantic_manifest_provenance_and_MIP_self_index_control",
+          "comparative_rank": "NOT_COMPUTED"
+        },
+        {
+          "frontier": "GM-IV-F07",
+          "repository": "GBOGEB/cryo_leak_rate_dashboard",
+          "class": "OBSERVED_CANDIDATE_RECON",
+          "observed_surface": "independent_cryo_leak_kernel_dashboard_with_authority_quarantine",
+          "comparative_rank": "NOT_COMPUTED"
+        },
+        {
+          "frontier": "GM-IV-F08",
+          "repository": "GBOGEB/document-organization-system",
+          "class": "OBSERVED_CANDIDATE_RECON",
+          "observed_surface": "document_topology_causal_attribution_and_bounded_routing",
+          "comparative_rank": "NOT_COMPUTED"
+        }
+      ],
+      "rank_policy": "NO_COMPARATIVE_FRONTIER_RANK_UNTIL_COMPARABLE_MEASURED_EVIDENCE_ECONOMICS_EXISTS",
+      "boundary": "RECON_FRONTIER_IDENTITY_NE_CANONICAL_CHILD"
+    },
+    "canonical_admission": {
+      "gm_iv_children": [],
+      "gm_v_state": "HELD",
+      "gm_v_children": [],
+      "gm_v_crew_posture": "UNALLOCATED",
+      "gm_v_launch_authorized": false,
+      "authority_transfer": false
+    },
+    "global_bd": {
+      "rank0": "GBOGEB/cryoplant-project#923",
+      "classification": "INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION",
+      "current_qps_main": "c73cff96406d747493fabc650a670b4c3279d05e",
+      "freshest_bound_child_probe": {
+        "qps_pr": 1542,
+        "qps_head_sha": "423aa2219e30d0c42180a5f6466546c0ed5c05b1",
+        "qps_merge_sha": "c768ec647982d5099ef1a5ded65ea7d4daa7fb08",
+        "workflow_run_id": 35372609150,
+        "attempts": [
+          {
+            "job_id": 105689855356,
+            "steps": 0
+          },
+          {
+            "job_id": 105690079257,
+            "steps": 0
+          },
+          {
+            "job_id": 105690167950,
+            "steps": 0
+          }
+        ]
+      },
+      "application_repair_authorized": false,
+      "next_legal_trigger": "OWNER_SIDE_ACTIONS_ADMISSION_CHANGE",
+      "reentry": "UNCHANGED_PROBE -> RUNNER_ID_NONZERO -> STEPS_GT_0 -> UNCHANGED_CHILD_VALIDATOR -> EXACT_RECEIPT"
+    }
+  }
+}
