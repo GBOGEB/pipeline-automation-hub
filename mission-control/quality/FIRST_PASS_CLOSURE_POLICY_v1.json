@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.first_pass_closure_policy.v1",
-  "as_of": "2026-09-19T08:16:00+02:00",
+  "as_of": "2026-09-19T08:36:00+02:00",
   "issue": "GBOGEB/pipeline-automation-hub#304",
   "objective": "MAKE_MERGE_THE_LAST_EVENT_AFTER_EXACT_HEAD_PROOF_AND_REVIEW_CLEAN",
   "authority_transfer": false,
@@ -112,7 +112,15 @@
     "workflow_source": "DEFAULT_BRANCH_ONLY",
     "owner_branch_rule_recommended": true,
     "required_status_name": "First-Pass Closure Gate / first-pass-closure",
-    "bootstrap_requires_distinct_postmerge_control_proof": true
+    "bootstrap_requires_distinct_postmerge_control_proof": true,
+    "required_status_binding": "PR_HEAD_SHA",
+    "status_publisher": "trusted_default_branch_pull_request_target_controller",
+    "status_states": [
+      "pending",
+      "success",
+      "failure"
+    ],
+    "rule": "branch protection consumes the explicit head-bound commit status; pull_request_target check-suite identity alone is not sufficient"
   },
   "trusted_proof_surface": {
     "reference_ref": "master",
