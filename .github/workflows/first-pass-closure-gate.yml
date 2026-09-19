@@ -4,22 +4,28 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, edited]
     branches: [master]
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+    branches: [master]
   workflow_dispatch:
     inputs:
       pr_number:
-        description: Pull request number (gate workflow only)
-        required: false
+        description: Pull request number
+        required: true
         type: string
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
   issues: read
   actions: read
 
 jobs:
   first-pass-closure:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      ((github.event_name == 'pull_request' || github.event_name == 'pull_request_review') &&
+       github.event.pull_request.draft == false)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,25 +40,59 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
-          else
-            PR_NUMBER="${{ inputs.pr_number }}"
-            test -n "$PR_NUMBER" || { echo "pr_number input required for workflow_dispatch" >&2; exit 2; }
-            echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
-          fi
+          case "${{ github.event_name }}" in
+            pull_request|pull_request_review)
+              echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+              ;;
+            workflow_dispatch)
+              PR_NUMBER="${{ inputs.pr_number }}"
+              test -n "$PR_NUMBER" || { echo "pr_number input required" >&2; exit 2; }
+              echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "unsupported event" >&2
+              exit 2
+              ;;
+          esac
 
       - name: Evaluate exact-head first-pass closure
+        id: gate
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           mkdir -p output/fpc
-          python scripts/first_pass_closure_gate.py             --repo "${{ github.repository }}"             --pr "${{ steps.pr.outputs.number }}"             --out output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
+          python scripts/first_pass_closure_gate.py             --repo "${{ github.repository }}"             --pr "${{ steps.pr.outputs.number }}"             --policy mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json             --out output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
+
+      - name: Disable auto-merge while gate is red
+        if: steps.gate.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
+          AUTO="$(printf '%s' "$PR_JSON" | jq -r 'if .auto_merge == null then "none" else "enabled" end')"
+          if [ "$AUTO" = "enabled" ]; then
+            NODE_ID="$(printf '%s' "$PR_JSON" | jq -r .node_id)"
+            gh api graphql               -f query='mutation($id:ID!){disablePullRequestAutoMerge(input:{pullRequestId:$id}){pullRequest{number}}}'               -f id="$NODE_ID"
+            echo "FPC_AUTO_MERGE_DISABLED=1"
+          else
+            echo "FPC_AUTO_MERGE_DISABLED=0"
+          fi
 
       - name: Upload gate receipt
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: first-pass-closure-gate
           path: output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
           if-no-files-found: error
           retention-days: 30
+
+      - name: Fail closed while gate is red
+        if: steps.gate.outcome == 'failure'
+        run: |
+          echo "First-Pass Closure Gate is RED; merge remains held."
+          exit 1
