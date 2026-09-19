@@ -1,0 +1,129 @@
+{
+  "schema": "missioncontrol.gm_i_a.multiclock_3pstar_mip.v1",
+  "as_of": "2026-09-19",
+  "mission": "GM-I-A",
+  "method": "3PSTAR_THEN_MIP_SEQUENTIAL",
+  "method_authority": "mission-control/qps-triage-ultra/methods/QPS_TRIAGE_GLOBAL_METHOD_PROFILE_v1.md",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "three_pstar": {
+    "Refresh": {
+      "result": "PASS",
+      "missioncontrol_master_at_refresh": "bf27d5feed1cb4154e65e719d7fda1c78d407ee4",
+      "measured_dataset": "mission-control/grand-missions/analytics/GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json",
+      "measured_pulses": 1,
+      "features": 9,
+      "provider_run": 35424686224,
+      "dow_run": 35425352862,
+      "keb_run": 35425623741,
+      "math_provider_pr": "GBOGEB/gg_MATH#28",
+      "math_provider_head": "767b3afa862643faa22cb2c98f98a0512b864601"
+    },
+    "Probe": {
+      "result": "PASS_SOURCE_MEASURED_HOSTED_PROVE_WAIT_RUNNER",
+      "missioncontrol_measurement_run": 35426485549,
+      "missioncontrol_measurement_job": 105853237389,
+      "math_provider_run": 35426576807,
+      "math_provider_job": 105853477082,
+      "observed_hosted_state": "ZERO_STEP_RUNNER_ADMISSION",
+      "application_first_red": null,
+      "repair_authorized": false,
+      "reason": "Measured source transaction is complete; only exact-head validation/provider jobs remain at runner_id=0, steps=0."
+    },
+    "Rank": {
+      "result": "PASS_MEASURED_DESCRIPTIVE",
+      "classification": "MEASURED_DURATION_ORDER_NOT_BT_FIT",
+      "pressure_order_seconds": [
+        ["keb_queue_seconds", 808],
+        ["dow_queue_seconds", 632],
+        ["fast_queue_seconds", 512],
+        ["heavy_build_seconds", 203],
+        ["heavy_checkout_seconds", 37],
+        ["keb_execute_seconds", 9],
+        ["dow_execute_seconds", 8],
+        ["fast_execute_seconds", 7],
+        ["heavy_queue_seconds", 4]
+      ],
+      "queue_seconds": 1956,
+      "selected_clock_seconds": 2220,
+      "queue_fraction": 0.8810810810810811,
+      "rank_boundary": "DESCRIPTIVE_RUNTIME_PRESSURE_ONLY"
+    }
+  },
+  "mip": {
+    "Modernize": {
+      "result": "PASS",
+      "outputs": [
+        "TOKEN_AWARE_GITHUB_CAPTURE",
+        "EXACT_RUN_ATTEMPT_HEAD_RUNNER_TIMING_BINDING",
+        "EXACT_ARTIFACT_LIST_AND_DIGEST_CAPTURE",
+        "EXPANDED_DATASET_SHA256_AFTER_APPEND"
+      ]
+    },
+    "Innovate": {
+      "result": "PASS_BOUNDED",
+      "outputs": [
+        "QUEUE_VS_WORK_PRESSURE_DECOMPOSITION",
+        "PRESSURE_HHI_AND_EFFECTIVE_CLOCK_COUNT",
+        "TOP4_PRESSURE_FRACTION",
+        "PCA_COVARIANCE_RANK_CEILING_AND_ROWS_REMAINING",
+        "BT_BIDIRECTIONAL_PAIR_AND_STRONG_CONNECTIVITY_GATE"
+      ],
+      "nonpromotion": [
+        "NO_PCA_FIT_AT_N1",
+        "NO_BT_FIT_AT_N1",
+        "NO_CAUSAL_CLAIM_FROM_DURATION_ORDER"
+      ]
+    },
+    "Perpetuate": {
+      "result": "PASS_REPOSITORY_NATIVE",
+      "outputs": [
+        "mission-control/grand-missions/analytics/GM_I_A_MULTI_CLOCK_CURRENT_v1.json",
+        "mission-control/grand-missions/analytics/GM_I_A_MULTI_CLOCK_3PSTAR_MIP_v1.json",
+        "mission-control/grand-missions/analytics/validate_gm_i_a_multiclock_3pstar_mip.py",
+        ".github/workflows/gm-i-a-multiclock-3pstar-mip.yml",
+        "mission-control/grand-missions/handover/SC_2026-09-19_GM_I_A_MULTI_CLOCK_3PSTAR_MIP_v1.md",
+        "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-19_GM_I_A_MULTI_CLOCK_v1.md"
+      ]
+    }
+  },
+  "improvement": {
+    "before": "One proven federation transaction with timings but no durable multi-clock identifiability/concentration control loop.",
+    "after": "Append-only exact-run multi-clock pulses with provenance, pressure decomposition, PCA/BT readiness gates and repository-native restart/control surfaces.",
+    "measured_p001": {
+      "queue_fraction": 0.8810810810810811,
+      "top4_fraction": 0.9707207207207207,
+      "pressure_hhi": 0.2753883613343073,
+      "effective_clock_count": 3.631236139044788,
+      "queue_to_nonqueue_ratio": 7.409090909090909
+    },
+    "statistical_distance": {
+      "pca_n": 1,
+      "pca_p": 9,
+      "pca_minimum_n": 27,
+      "pca_rows_remaining": 26,
+      "pca_covariance_rank_upper_bound": 0,
+      "bt_minimum_repeat_pulses": 3,
+      "bt_repeat_pulses_remaining": 2,
+      "bt_bidirectional_pair_count": 0,
+      "bt_strongly_connected": false
+    }
+  },
+  "invariants": [
+    "QUEUE_AND_EXECUTION_SEPARATE",
+    "SELECTED_CLOCK_SUM_NE_END_TO_END_WALL_TIME",
+    "PCA_WITHHELD_UNTIL_N_GE_27_AND_VARIATION",
+    "BT_WITHHELD_UNTIL_REPEAT_AND_STRONG_CONNECTIVITY",
+    "ZERO_STEP_NE_APPLICATION_RED",
+    "NO_SYNTHETIC_OR_EXPERT_SEEDED_UNLOCK",
+    "AUTHORITY_TRANSFER_FALSE",
+    "NO_ENGINEERING_HEPAK_QEQ_PROMOTION"
+  ],
+  "next": {
+    "first_red": "RUNNER_ADMISSION_FOR_EXACT_HEAD_MEASUREMENT_AND_MATH_PROVIDER_PROOF",
+    "measurement": "CAPTURE_P002_AND_P003_FROM_NEW_EXACT_FEDERATION_TRANSACTIONS",
+    "bt": "RECHECK_AFTER_P003_ONLY_IF_DIRECTION_GRAPH_BECOMES_STRONGLY_CONNECTED",
+    "pca": "ACCUMULATE_TO_P027_MINIMUM_WITH_COMPARABLE_NINE_CLOCK_SCHEMA"
+  }
+}
