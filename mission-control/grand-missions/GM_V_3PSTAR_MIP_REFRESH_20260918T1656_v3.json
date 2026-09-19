@@ -1,0 +1,189 @@
+{
+  "schema": "missioncontrol.gm_v.3pstar_mip_refresh.v3",
+  "as_of": "2026-09-18T16:56:00+02:00",
+  "mission": "GM-V",
+  "method": "3PSTAR_PLUS_MIP_SEQUENTIAL",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "source_authority": {
+    "missioncontrol_repo": "GBOGEB/pipeline-automation-hub",
+    "missioncontrol_master_at_refresh": "6980c60fae211f956e4ad3068f76882fa02139a3",
+    "qps_repo": "GBOGEB/cryoplant-project",
+    "qps_main_at_refresh": "31a2e7bce6409d496fe6e04755cbc3315b5880d3",
+    "qps_runtime_gate_issue": "GBOGEB/cryoplant-project#923",
+    "qps_runtime_gate_state": "OPEN",
+    "refresh_first": true
+  },
+  "three_pr": {
+    "Refresh": {
+      "result": "PASS",
+      "missioncontrol_master": "6980c60fae211f956e4ad3068f76882fa02139a3",
+      "qps_main": "31a2e7bce6409d496fe6e04755cbc3315b5880d3",
+      "issue_923": "OPEN",
+      "note": "QPS main advanced through unrelated W275 R3 work; this does not compensate the runner-admission gate."
+    },
+    "Probe": {
+      "result": "PASS_BLOCK_CONFIRMED_NO_RERUN",
+      "observed_release_runner_probe": {
+        "qps_pr": 1493,
+        "qps_head_sha": "d1a5742234554d2b318e5e0a9ecb571010cd9c0b",
+        "qps_merge_sha": "4901c076a4be25199a3e0c19fa897243169f1a11",
+        "run_id": 35359227263,
+        "jobs": [
+          {
+            "job_id": 105646041761,
+            "runner_class": "ubuntu-22.04",
+            "status": "completed",
+            "conclusion": "failure",
+            "runner_id": 0,
+            "executed_steps": 0
+          },
+          {
+            "job_id": 105646041988,
+            "runner_class": "configured-runner",
+            "status": "completed",
+            "conclusion": "failure",
+            "runner_id": 0,
+            "executed_steps": 0
+          },
+          {
+            "job_id": 105646042150,
+            "runner_class": "ubuntu-latest",
+            "status": "completed",
+            "conclusion": "failure",
+            "runner_id": 0,
+            "executed_steps": 0
+          }
+        ]
+      },
+      "classification": "INFRA_PREEXECUTION_ZERO_STEP / EXTERNAL_OWNER_ACTION",
+      "qps_probe_was_retriggered": false
+    },
+    "Rank": {
+      "result": "PASS",
+      "first_red": "QPS_PRIVATE_RUNTIME_RUNNER_ADMISSION",
+      "blocking_surface": "GBOGEB/cryoplant-project#923",
+      "next_legal_trigger": "OWNER_SIDE_ACTIONS_ADMISSION_CHANGE",
+      "next_child_predicate": "UNCHANGED_RELEASE_RUNNER_PROBE_WITH_RUNNER_ID_NONZERO_AND_STEPS_GT0",
+      "no_blind_rerun": true
+    }
+  },
+  "mip": {
+    "Modernize": {
+      "result": "PASS",
+      "outputs": [
+        "BIND_LATEST_QPS_MAIN_WITHOUT_TREATING_UNRELATED_ADVANCE_AS_GATE_RECOVERY",
+        "BIND_COMPLETED_1493_ZERO_STEP_PROBE_AS_FRESHEST_RUNNER_ADMISSION_OBSERVATION",
+        "SEPARATE_ACTIVE8_CAPABILITY_CONTROL_FROM_GMV_OPERATIONAL_AVAILABILITY"
+      ]
+    },
+    "Innovate": {
+      "result": "PASS_BOUNDED",
+      "outputs": [
+        "THREE_PLANE_STATE_MODEL_ANALYTICS_RECON_CANONICAL_ADMISSION",
+        "GLOBAL_BD_EXTERNAL_FIRST_RED_PLANE",
+        "NO_ANALYTICS_OR_RECON_SIGNAL_CAN_BIND_GMV_CHILDREN"
+      ]
+    },
+    "Perpetuate": {
+      "result": "PASS_REPOSITORY_NATIVE_V3",
+      "outputs": [
+        "mission-control/grand-missions/GM_V_3PSTAR_MIP_REFRESH_20260918T1656_v3.json",
+        "mission-control/grand-missions/validate_gm_v_3pstar_mip_refresh_v3.py",
+        ".github/workflows/gm-v-3pstar-mip-refresh-v3.yml",
+        "mission-control/grand-missions/handover/SC_2026-09-18_GM_V_3PSTAR_MIP_LOSSLESS_HANDOVER_v3.md",
+        "mission-control/grand-missions/handover/RESTART_DROPIN_2026-09-18_GM_V_v3.md"
+      ],
+      "chat_only_todo_target": 0,
+      "chat_only_decision_target": 0
+    }
+  },
+  "three_pc": {
+    "Prepare": {
+      "result": "PASS_REUSED_CONTROL_PREPARED"
+    },
+    "Prove": {
+      "result": "WITHHELD_EXTERNAL_OWNER_ACTION",
+      "reason": "QPS_923_RUNNER_ADMISSION_NOT_RECOVERED"
+    },
+    "Commit": {
+      "result": "HOLD_WAIT_PROVE",
+      "gm_v_launch_authorized": false
+    }
+  },
+  "three_p3": {
+    "authorized": false,
+    "reason": "OPERATIONAL_AVAILABILITY_NOT_PROVEN"
+  },
+  "state_planes": {
+    "analytics": {
+      "crew_row_pca": "READY_MEASURED_SMALL_N_CONTROL_REPEAT",
+      "crew_row_pca_merged_head_run": 34773738858,
+      "crew_row_pca_artifact_id": 10323136223,
+      "crew_row_pca_artifact_digest": "sha256:e175cdcde0c6132a4431c8335282b066353f5f422eea5da514334f275cacb7cb",
+      "frontier_pca": "CONTROL_READY_MEASURED_REPEAT",
+      "bt": "READY_OBSERVED_8_TO_4_12_PAIRS"
+    },
+    "reconnaissance": {
+      "gm_iv_state": "ACTIVE_8_OF_8",
+      "named_frontiers": [
+        "GM-IV-F01",
+        "GM-IV-F02",
+        "GM-IV-F03",
+        "GM-IV-F04",
+        "GM-IV-F05",
+        "GM-IV-F06",
+        "GM-IV-F07",
+        "GM-IV-F08"
+      ],
+      "controlled_pilots": [
+        "GM-IV-F01",
+        "GM-IV-F03"
+      ],
+      "references": [
+        "GM-IV-F02",
+        "GM-IV-F04"
+      ],
+      "new_candidate_recon": [
+        "GM-IV-F05",
+        "GM-IV-F06",
+        "GM-IV-F07",
+        "GM-IV-F08"
+      ]
+    },
+    "canonical_admission": {
+      "gm_iv_children": [],
+      "gm_v_state": "HELD",
+      "gm_v_children": [],
+      "gm_v_crew_posture": "UNALLOCATED",
+      "launch_authorized": false
+    },
+    "global_bd": {
+      "rank0": "GBOGEB/cryoplant-project#923",
+      "class": "INFRA_PREEXECUTION_ZERO_STEP / EXTERNAL_OWNER_ACTION",
+      "internal_repair_authorized": false
+    }
+  },
+  "invariants": [
+    "PARENT_PASS_NE_CHILD_ACCEPT",
+    "ZERO_STEP_NE_APPLICATION_FAIL",
+    "ANALYTICS_CONTROL_NE_FRONTIER_ADMISSION",
+    "RECON_FRONTIER_NE_CANONICAL_CHILD",
+    "ACTIVE8_NE_GMV_LAUNCH_AUTHORITY",
+    "RUNTIME_PROVEN_CAPABILITY_NE_OPERATIONAL_AVAILABILITY",
+    "AUTHORITY_TRANSFER_FALSE",
+    "NO_BLIND_QPS_RERUN"
+  ],
+  "next_legal_sequence": [
+    "OWNER_SIDE_ACTIONS_ADMISSION_CHANGE",
+    "UNCHANGED_RELEASE_RUNNER_PROBE",
+    "REQUIRE_RUNNER_ID_NONZERO_AND_STEPS_GT_0",
+    "UNCHANGED_CHILD_AUTHORITY_VALIDATOR",
+    "EXACT_PROOF_BUNDLE",
+    "3PC_PROVE",
+    "FRESH_HEAD_REPEAT",
+    "GM_V_GOVERNOR_REEVALUATION",
+    "SEPARATE_GM_V_LAUNCH_TRANSACTION_ONLY_IF_READY"
+  ]
+}
