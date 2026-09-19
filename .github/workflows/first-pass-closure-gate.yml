@@ -1,11 +1,8 @@
 name: First-Pass Closure Gate
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review, edited]
-    branches: [master]
-  pull_request_review:
-    types: [submitted, edited, dismissed]
     branches: [master]
   workflow_dispatch:
     inputs:
@@ -24,13 +21,13 @@ jobs:
   first-pass-closure:
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      ((github.event_name == 'pull_request' || github.event_name == 'pull_request_review') &&
-       github.event.pull_request.draft == false)
+      (github.event_name == 'pull_request_target' && github.event.pull_request.draft == false)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout trusted gate implementation from default branch
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.repository.default_branch }}
 
       - name: Unit-test gate logic
         run: python -m unittest scripts/tests/test_first_pass_closure_gate.py
@@ -41,7 +38,7 @@ jobs:
         run: |
           set -euo pipefail
           case "${{ github.event_name }}" in
-            pull_request|pull_request_review)
+            pull_request_target)
               echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
               ;;
             workflow_dispatch)
@@ -64,11 +61,11 @@ jobs:
           mkdir -p output/fpc
           python scripts/first_pass_closure_gate.py             --repo "${{ github.repository }}"             --pr "${{ steps.pr.outputs.number }}"             --policy mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json             --out output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
 
-      - name: Disable auto-merge while gate is red
-        if: steps.gate.outcome == 'failure'
+      - name: Disable auto-merge unless the evaluator succeeded
+        if: always() && steps.gate.outcome != 'success'
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
         shell: bash
         run: |
           set -euo pipefail
@@ -91,8 +88,8 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Fail closed while gate is red
-        if: steps.gate.outcome == 'failure'
+      - name: Fail closed unless the evaluator succeeded
+        if: always() && steps.gate.outcome != 'success'
         run: |
           echo "First-Pass Closure Gate is RED; merge remains held."
           exit 1
