@@ -197,5 +197,20 @@ h1{margin:0;font-size:19px}.sub{font-size:10px;color:var(--mut)}.wrap{max-width:
 const D=JSON.parse(document.getElementById('fleet-data').textContent);
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById(b.dataset.v).classList.add('on')});
 const s=D.planes.reconnaissance.scout_c_depth_board;
-document.getElementById('scoutCards').innerHTML=s.map(x=>`<div class="card recon"><h3>${x.frontier}</h3><span class="pill">${x.class}</span><p><b>${x.repository}</b><br>${x.observed_surface}<br><br>Comparative rank: ${x.comparative_rank}</p></div>`).join('');
+const cards=document.getElementById('scoutCards');
+for (const x of s) {
+  const card=document.createElement('div');
+  card.className='card recon';
+  const h3=document.createElement('h3');
+  h3.textContent=x.frontier;
+  const pill=document.createElement('span');
+  pill.className='pill';
+  pill.textContent=x.class;
+  const p=document.createElement('p');
+  const repo=document.createElement('b');
+  repo.textContent=x.repository;
+  p.append(repo,document.createElement('br'),document.createTextNode(x.observed_surface),document.createElement('br'),document.createElement('br'),document.createTextNode('Comparative rank: '+x.comparative_rank));
+  card.append(h3,pill,p);
+  cards.appendChild(card);
+}
 </script></body></html>
