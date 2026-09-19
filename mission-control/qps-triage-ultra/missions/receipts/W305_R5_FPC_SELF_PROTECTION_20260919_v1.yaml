@@ -1,0 +1,23 @@
+schema: missioncontrol.w305_r5.fpc_self_protection.v1
+as_of: "2026-09-19T08:09:00+02:00"
+repo: "GBOGEB/pipeline-automation-hub"
+tracking_issue: 314
+parent_issue: 304
+downstream_consumer: "GBOGEB/cryoplant-project#1550"
+classification: "P0_EXECUTE_NOW_FIRST_PASS_CLOSURE_SELF_PROTECTION"
+first_reds:
+  - "PROOF_WORKFLOW_IDENTITY_PR_MUTABLE"
+  - "AUTO_MERGE_HOLD_NOT_ALWAYS_ON_PRE_EVALUATOR_FAILURE"
+  - "POLICY_LOAD_FAILURE_ESCAPES_RECEIPT_PATH"
+repair:
+  proof_identity: "ALLOWLIST_PLUS_CANDIDATE_EQUALS_PR_BASE_WORKFLOW_CONTENT"
+  early_failure_receipt: "DETERMINISTIC_FAIL"
+  merge_hold: "ALWAYS_WHEN_GATE_NOT_SUCCESS"
+  cross_repo_proof: "WITHHELD_WITHOUT_EXPLICIT_TRUST_CONTRACT"
+exact_head_proof: "PENDING_PR_RUNTIME"
+codex_review: "PENDING_EXACT_HEAD"
+fpc_gate: "PENDING_EXACT_HEAD"
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+acceptance_credit_delta: 0
