@@ -1,0 +1,80 @@
+name: GM-I-A Multi-Clock Measurement
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/analytics/GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json'
+      - 'mission-control/grand-missions/analytics/GM_I_A_MULTI_CLOCK_MATH_WORKER_v1.json'
+      - 'mission-control/grand-missions/analytics/gm_i_a_multiclock_analyze.py'
+      - 'mission-control/grand-missions/analytics/gm_i_a_multiclock_capture.py'
+      - '.github/workflows/gm-i-a-multiclock-measurement.yml'
+  workflow_dispatch:
+    inputs:
+      pulse_id:
+        description: 'New pulse id, e.g. GM-I-A-MCLOCK-P002'
+        required: false
+        type: string
+      coolprop_run_id:
+        description: 'CoolProp HEAVY/FAST workflow run id'
+        required: false
+        type: string
+      abacus_run_id:
+        description: 'ABACUS DOW consumer workflow run id'
+        required: false
+        type: string
+      codex_run_id:
+        description: 'CODEX KEB consumer workflow run id'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate-measured-dataset:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Analyze committed measured multi-clock dataset
+        run: |
+          mkdir -p /tmp/gm_i_a_multiclock
+          python mission-control/grand-missions/analytics/gm_i_a_multiclock_analyze.py             --input mission-control/grand-missions/analytics/GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json             --out /tmp/gm_i_a_multiclock/readiness.json             --pairs-out /tmp/gm_i_a_multiclock/runtime_pressure_pairs.json             --csv-out /tmp/gm_i_a_multiclock/measured_pulses.csv
+          sha256sum /tmp/gm_i_a_multiclock/* | sort > /tmp/gm_i_a_multiclock/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gm-i-a-multiclock-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/gm_i_a_multiclock/
+          if-no-files-found: error
+
+  capture-repeat-pulse:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.pulse_id != '' &&
+      inputs.coolprop_run_id != '' &&
+      inputs.abacus_run_id != '' &&
+      inputs.codex_run_id != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Capture exact run/job clocks
+        run: |
+          mkdir -p /tmp/gm_i_a_repeat
+          python mission-control/grand-missions/analytics/gm_i_a_multiclock_capture.py             --pulse-id "${{ inputs.pulse_id }}"             --coolprop-run "${{ inputs.coolprop_run_id }}"             --abacus-run "${{ inputs.abacus_run_id }}"             --codex-run "${{ inputs.codex_run_id }}"             --out /tmp/gm_i_a_repeat/new_row.json
+      - name: Re-analyze with appended measured pulse
+        run: |
+          python mission-control/grand-missions/analytics/gm_i_a_multiclock_analyze.py             --input mission-control/grand-missions/analytics/GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json             --append-row /tmp/gm_i_a_repeat/new_row.json             --dataset-out /tmp/gm_i_a_repeat/expanded_dataset.json             --out /tmp/gm_i_a_repeat/readiness.json             --pairs-out /tmp/gm_i_a_repeat/runtime_pressure_pairs.json             --csv-out /tmp/gm_i_a_repeat/measured_pulses.csv
+          sha256sum /tmp/gm_i_a_repeat/* | sort > /tmp/gm_i_a_repeat/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gm-i-a-multiclock-repeat-${{ inputs.pulse_id }}
+          path: /tmp/gm_i_a_repeat/
+          if-no-files-found: error
