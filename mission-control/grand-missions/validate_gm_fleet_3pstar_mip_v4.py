@@ -24,8 +24,8 @@ def main():
 
     checks={}
     checks["01_refresh_exact"]=(
-        c["three_pr"]["Refresh"]["missioncontrol_master"]=="361910f19a235af00c247059959dfd8bb797befc"
-        and c["three_pr"]["Refresh"]["qps_main"]=="c73cff96406d747493fabc650a670b4c3279d05e"
+        c["three_pr"]["Refresh"]["missioncontrol_master"]=="b14906193dfbf3909eaf1094860af336dd38b1ed"
+        and c["three_pr"]["Refresh"]["qps_main"]=="4d55d4ffd9e6ab7e507dbe6d078cc9e88051a808"
         and c["three_pr"]["Refresh"]["qps_issue_923"]=="OPEN"
     )
     checks["02_probe_zero_step_no_rerun"]=(
@@ -89,8 +89,20 @@ def main():
         "Analytics","Scout-C / F05–F08","Canonical Admission","Global BD",
         "ACTIVE 8/8","GM-V","Comparative rank is deliberately NOT COMPUTED"
     ])
+    checks["13_safe_dom_rendering"]=(
+        ".innerHTML" not in html
+        and "textContent=x.frontier" in html
+        and "textContent=x.repository" in html
+        and "createTextNode(x.observed_surface)" in html
+    )
+    checks["14_quality_fixforward_bound"]=(
+        c["quality_fixforward"]["parent_pr"]==307
+        and c["quality_fixforward"]["retry_attempt"]==1
+        and c["quality_fixforward"]["reason"]=="CODEQL_DOM_TEXT_REINTERPRETED_AS_HTML"
+        and d["quality_fixforward"]["repair"]=="SAFE_DOM_TEXTCONTENT_AND_CREATE_TEXT_NODE"
+    )
     expected=set(c["mip"]["Perpetuate"]["outputs"])
-    checks["13_perpetuate_outputs"]=all((REPO/p).is_file() for p in expected)
+    checks["15_perpetuate_outputs"]=all((REPO/p).is_file() for p in expected)
 
     passed=all(checks.values())
     out={

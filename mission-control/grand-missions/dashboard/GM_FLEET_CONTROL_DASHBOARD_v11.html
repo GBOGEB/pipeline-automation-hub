@@ -48,16 +48,16 @@ h1{margin:0;font-size:19px}.sub{font-size:10px;color:var(--mut)}.wrap{max-width:
 <div class="row"><b>Application repair</b><span class="bad">NOT AUTHORIZED</span><small>zero-step is habitat/admission evidence</small></div>
 <div class="row"><b>Re-entry</b><span>owner admission → unchanged probe → runner_id != 0 → steps &gt; 0</span><small>then unchanged child validator</small></div>
 </div></section></div>
-<div class="footer">MissionControl dashboard v11 · canonical master snapshot 361910f1… · QPS main c73cff96…</div>
+<div class="footer">MissionControl dashboard v11 · canonical master snapshot b1490619… · QPS main 4d55d4ff…</div>
 </div>
 <script id="fleet-data" type="application/json">{
   "schema": "missioncontrol.fleet_dashboard.v11.data",
-  "as_of": "2026-09-19T07:38:00+02:00",
+  "as_of": "2026-09-19T07:46:00+02:00",
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "source_heads": {
-    "missioncontrol_master": "361910f19a235af00c247059959dfd8bb797befc",
-    "qps_main": "c73cff96406d747493fabc650a670b4c3279d05e",
+    "missioncontrol_master": "b14906193dfbf3909eaf1094860af336dd38b1ed",
+    "qps_main": "4d55d4ffd9e6ab7e507dbe6d078cc9e88051a808",
     "qps_issue_923_state": "OPEN"
   },
   "planes": {
@@ -165,7 +165,7 @@ h1{margin:0;font-size:19px}.sub{font-size:10px;color:var(--mut)}.wrap{max-width:
     "global_bd": {
       "rank0": "GBOGEB/cryoplant-project#923",
       "classification": "INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION",
-      "current_qps_main": "c73cff96406d747493fabc650a670b4c3279d05e",
+      "current_qps_main": "4d55d4ffd9e6ab7e507dbe6d078cc9e88051a808",
       "freshest_bound_child_probe": {
         "qps_pr": 1542,
         "qps_head_sha": "423aa2219e30d0c42180a5f6466546c0ed5c05b1",
@@ -190,6 +190,15 @@ h1{margin:0;font-size:19px}.sub{font-size:10px;color:var(--mut)}.wrap{max-width:
       "next_legal_trigger": "OWNER_SIDE_ACTIONS_ADMISSION_CHANGE",
       "reentry": "UNCHANGED_PROBE -> RUNNER_ID_NONZERO -> STEPS_GT_0 -> UNCHANGED_CHILD_VALIDATOR -> EXACT_RECEIPT"
     }
+  },
+  "quality_fixforward": {
+    "parent_pr": 307,
+    "defect": "DOM_TEXT_REINTERPRETED_AS_HTML",
+    "finding_source": "GitHub Advanced Security / CodeQL",
+    "repair": "SAFE_DOM_TEXTCONTENT_AND_CREATE_TEXT_NODE",
+    "retry_attempt": 1,
+    "authority_transfer": false,
+    "formal_credit_delta": 0
   }
 }
 </script>
@@ -197,5 +206,20 @@ h1{margin:0;font-size:19px}.sub{font-size:10px;color:var(--mut)}.wrap{max-width:
 const D=JSON.parse(document.getElementById('fleet-data').textContent);
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById(b.dataset.v).classList.add('on')});
 const s=D.planes.reconnaissance.scout_c_depth_board;
-document.getElementById('scoutCards').innerHTML=s.map(x=>`<div class="card recon"><h3>${x.frontier}</h3><span class="pill">${x.class}</span><p><b>${x.repository}</b><br>${x.observed_surface}<br><br>Comparative rank: ${x.comparative_rank}</p></div>`).join('');
+const cards=document.getElementById('scoutCards');
+for (const x of s) {
+  const card=document.createElement('div');
+  card.className='card recon';
+  const h3=document.createElement('h3');
+  h3.textContent=x.frontier;
+  const pill=document.createElement('span');
+  pill.className='pill';
+  pill.textContent=x.class;
+  const p=document.createElement('p');
+  const repo=document.createElement('b');
+  repo.textContent=x.repository;
+  p.append(repo,document.createElement('br'),document.createTextNode(x.observed_surface),document.createElement('br'),document.createElement('br'),document.createTextNode('Comparative rank: '+x.comparative_rank));
+  card.append(h3,pill,p);
+  cards.appendChild(card);
+}
 </script></body></html>

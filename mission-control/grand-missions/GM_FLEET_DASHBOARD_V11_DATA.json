@@ -1,11 +1,11 @@
 {
   "schema": "missioncontrol.fleet_dashboard.v11.data",
-  "as_of": "2026-09-19T07:38:00+02:00",
+  "as_of": "2026-09-19T07:46:00+02:00",
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "source_heads": {
-    "missioncontrol_master": "361910f19a235af00c247059959dfd8bb797befc",
-    "qps_main": "c73cff96406d747493fabc650a670b4c3279d05e",
+    "missioncontrol_master": "b14906193dfbf3909eaf1094860af336dd38b1ed",
+    "qps_main": "4d55d4ffd9e6ab7e507dbe6d078cc9e88051a808",
     "qps_issue_923_state": "OPEN"
   },
   "planes": {
@@ -113,7 +113,7 @@
     "global_bd": {
       "rank0": "GBOGEB/cryoplant-project#923",
       "classification": "INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION",
-      "current_qps_main": "c73cff96406d747493fabc650a670b4c3279d05e",
+      "current_qps_main": "4d55d4ffd9e6ab7e507dbe6d078cc9e88051a808",
       "freshest_bound_child_probe": {
         "qps_pr": 1542,
         "qps_head_sha": "423aa2219e30d0c42180a5f6466546c0ed5c05b1",
@@ -138,5 +138,14 @@
       "next_legal_trigger": "OWNER_SIDE_ACTIONS_ADMISSION_CHANGE",
       "reentry": "UNCHANGED_PROBE -> RUNNER_ID_NONZERO -> STEPS_GT_0 -> UNCHANGED_CHILD_VALIDATOR -> EXACT_RECEIPT"
     }
+  },
+  "quality_fixforward": {
+    "parent_pr": 307,
+    "defect": "DOM_TEXT_REINTERPRETED_AS_HTML",
+    "finding_source": "GitHub Advanced Security / CodeQL",
+    "repair": "SAFE_DOM_TEXTCONTENT_AND_CREATE_TEXT_NODE",
+    "retry_attempt": 1,
+    "authority_transfer": false,
+    "formal_credit_delta": 0
   }
 }

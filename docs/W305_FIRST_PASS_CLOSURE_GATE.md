@@ -51,6 +51,10 @@ When a governed consumer PR is the first transaction to add its own proof workfl
 
 After the allowlisted proof succeeds, bind that run in the PR-body receipt, wait for the exact-head Codex review to complete with zero material findings, then let the gate re-evaluate. Merge remains the last event.
 
+### Dynamic dashboard safety
+
+For HTML dashboards that render repository-controlled JSON, values must be inserted as DOM text (`textContent` / `createTextNode`) rather than interpolated into `innerHTML`. A CodeQL DOM-text-reinterpretation finding is a material pre-merge defect: repair it on a new exact head, rerun the allowlisted proof, obtain a clean exact-head review, and re-evaluate the First-Pass Closure Gate before merge.
+
 ## Review-clean test
 
 The gate requires:
