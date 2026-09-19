@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.first_pass_closure_policy.v1",
-  "as_of": "2026-09-18T22:16:00+02:00",
+  "as_of": "2026-09-19T08:15:00+02:00",
   "issue": "GBOGEB/pipeline-automation-hub#304",
   "objective": "MAKE_MERGE_THE_LAST_EVENT_AFTER_EXACT_HEAD_PROOF_AND_REVIEW_CLEAN",
   "authority_transfer": false,
@@ -65,7 +65,11 @@
     "CODEX_REVIEW_NOT_COMPLETED",
     "CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD",
     "UNTRUSTED_PROOF_WORKFLOW_IDENTITY",
-    "CODEX_SUMMARY_AUTHOR_MISMATCH"
+    "CODEX_SUMMARY_AUTHOR_MISMATCH",
+    "PROOF_WORKFLOW_MUTATED_FROM_TRUSTED_BASE",
+    "POLICY_LOAD_FAILED",
+    "PRE_EVALUATOR_FAILURE",
+    "PR_BASE_UNAVAILABLE"
   ],
   "non_compensation": {
     "r3_release_credit": "NONE",
@@ -101,6 +105,14 @@
   "merge_enforcement": {
     "mode": "DISABLE_AUTO_MERGE_WHILE_GATE_RED",
     "owner_branch_rule_recommended": true,
-    "required_status_name": "First-Pass Closure Gate / first-pass-closure"
+    "required_status_name": "First-Pass Closure Gate / first-pass-closure",
+    "cleanup_condition": "ALWAYS_WHEN_GATE_OUTCOME_IS_NOT_SUCCESS",
+    "early_failure_receipt": "DETERMINISTIC_FAIL_RECEIPT_BEFORE_ARTIFACT_UPLOAD",
+    "external_required_status_boundary": "OWNER_ADMIN_DEFENSE_IN_DEPTH"
+  },
+  "proof_identity_trust": {
+    "rule": "ALLOWLIST_IDENTITY_PLUS_CANDIDATE_WORKFLOW_CONTENT_EQUALS_PR_BASE_WORKFLOW_CONTENT",
+    "candidate_mutation_result": "FAIL_CLOSED",
+    "cross_repo_proof_identity": "WITHHELD_UNTIL_EXPLICIT_TRUST_CONTRACT"
   }
 }
