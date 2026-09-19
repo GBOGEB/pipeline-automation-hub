@@ -24,8 +24,13 @@
       "to": "GBOGEB/CODEX",
       "pr": 775,
       "run_id": 35425623741,
-      "state": "WAIT_RUNNER",
-      "credit": 0
+      "state": "PASS",
+      "credit": 1,
+      "runner_id": 1000315985,
+      "job_id": 105850933005,
+      "artifact_id": 10578078971,
+      "artifact_digest": "sha256:0fbc103b3d8c0e25e0d44b7044cd23d7db561fdce5ab9a64c89a360ef05c2653",
+      "receipt_sha256": "466caf269ecb8a6e6271aacc8c43b14acba9d8dd19a9d5582cd675f609be6962"
     }
   ],
   "invariants": [
@@ -36,8 +41,8 @@
   ],
   "observed_runtime_summary": {
     "registered_edges": 2,
-    "pass_edges": 1,
-    "wait_edges": 1,
+    "pass_edges": 2,
+    "wait_edges": 0,
     "red_edges": 0
   }
 }
