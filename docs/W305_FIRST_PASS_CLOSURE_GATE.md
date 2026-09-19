@@ -136,3 +136,29 @@ Runs are serialized per PR with cancellation of an older in-progress run. This p
 Controller-maintenance PRs remain deliberately non-self-certifying. R7 itself must be merged only as an explicit reviewed bootstrap with zero material P1/P2 findings, followed by a distinct non-controller canary. That canary must carry an exact-head proof receipt, clean exact-head review, trusted-base FPC PASS, and the head-bound status success **before** merge.
 
 No R7 bootstrap or canary changes QPS engineering, release, acceptance, runtime-GOLD, or formal credit.
+
+
+## R8 trigger-head invalidation and owner-admin boundary
+
+The R7 canary exposed two separate classes of risk.
+
+First, a re-evaluation event can arrive for an unchanged PR head and then fail during live PR lookup. If the workflow only learns the head SHA from that fallible lookup, a previously published SUCCESS can remain current even though the new evaluation did not complete. R8 therefore captures the event's PR number and **trigger head SHA before any fallible GitHub API lookup**, immediately publishes PENDING on that trigger head, and only then resolves the live PR. A trigger/live-head mismatch is fail-closed. Manual dispatch requires the caller to supply the expected head SHA for the same reason.
+
+Second, repository workflow code cannot by itself prevent a repository owner from manually merging a PR when the branch is not protected by a required status/ruleset. The workflow can publish red, disable auto-merge and preserve evidence, but it cannot make an owner-side manual merge impossible without repository administration.
+
+The hard-barrier contract is therefore split explicitly:
+
+```
+R8 repository code
+  -> trusted-base evaluation
+  -> trigger-head stale-success invalidation
+  -> exact-head PASS/FAIL status
+  -> auto-merge hold
+  -> clean post-bootstrap canary
+  -> OWNER/ADMIN REQUIRED-STATUS OR RULESET
+  -> manual-bypass-resistant merge barrier
+```
+
+The required owner/admin control should require `First-Pass Closure Gate / first-pass-closure` on the PR head and, where GitHub configuration permits, bind the required check/status to the trusted publisher application or an equivalent non-candidate identity. Until that administrative control is installed, the FPC controller is a fail-closed **process controller**, not an unbypassable repository merge lock.
+
+This distinction is non-compensating: a green controller run does not prove the admin barrier exists, and installing a branch rule does not replace exact-head proof/review evidence.
