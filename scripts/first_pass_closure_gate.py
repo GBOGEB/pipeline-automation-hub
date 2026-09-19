@@ -22,15 +22,18 @@ class GateError(RuntimeError):
 
 
 class ApiClient:
-    def __init__(self, token: str, api_root: str = "https://api.github.com"):
-        self.token = token
+    def __init__(self, api_root: str = "https://api.github.com"):
+        token = os.environ.get("GITHUB_TOKEN")
+        if not token:
+            raise GateError("GITHUB_TOKEN_UNAVAILABLE")
+        self._auth_token = token
         self.api_root = api_root
 
     def get(self, path: str) -> Any:
         req = urllib.request.Request(
             self.api_root + path,
             headers={
-                "Authorization": f"Bearer {self.token}",
+                "Authorization": f"Bearer {self._auth_token}",
                 "Accept": "application/vnd.github+json",
                 "X-GitHub-Api-Version": "2022-11-28",
                 "User-Agent": "gbo-first-pass-closure-gate/2",
@@ -277,16 +280,15 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY"))
     ap.add_argument("--pr", type=int)
-    ap.add_argument("--token", default=os.environ.get("GITHUB_TOKEN"))
     ap.add_argument("--policy", required=True)
     ap.add_argument("--out")
     args = ap.parse_args()
-    if not args.repo or not args.pr or not args.token:
-        raise SystemExit("repo, pr and token are required")
+    if not args.repo or not args.pr:
+        raise SystemExit("repo and pr are required")
 
     try:
         policy = load_policy(args.policy)
-        receipt = evaluate(ApiClient(args.token), args.repo, args.pr, policy)
+        receipt = evaluate(ApiClient(), args.repo, args.pr, policy)
         code = 0
     except GateError as exc:
         receipt = failure_receipt(str(exc))
