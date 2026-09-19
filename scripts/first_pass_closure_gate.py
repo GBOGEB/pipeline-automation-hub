@@ -281,7 +281,6 @@ def main() -> int:
     ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY"))
     ap.add_argument("--pr", type=int)
     ap.add_argument("--policy", required=True)
-    ap.add_argument("--out")
     args = ap.parse_args()
     if not args.repo or not args.pr:
         raise SystemExit("repo and pr are required")
@@ -295,8 +294,6 @@ def main() -> int:
         code = 2
 
     payload = json.dumps(receipt, indent=2, sort_keys=True) + "\n"
-    if args.out:
-        Path(args.out).write_text(payload, encoding="utf-8")
     print(payload, end="")
     return code
 
