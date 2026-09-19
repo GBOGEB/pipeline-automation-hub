@@ -87,7 +87,7 @@ jobs:
             --repo "${{ github.repository }}" \
             --pr "${{ steps.pr.outputs.number }}" \
             --policy mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json \
-            --out output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
+            > output/fpc/FIRST_PASS_CLOSURE_GATE_RECEIPT.json
 
       - name: Disable auto-merge unless the evaluator succeeded
         if: always() && steps.gate.outcome != 'success'
