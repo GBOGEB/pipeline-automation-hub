@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.first_pass_closure_policy.v1",
-  "as_of": "2026-09-19T08:53:00+02:00",
+  "as_of": "2026-09-19T09:06:00+02:00",
   "issue": "GBOGEB/pipeline-automation-hub#304",
   "objective": "MAKE_MERGE_THE_LAST_EVENT_AFTER_EXACT_HEAD_PROOF_AND_REVIEW_CLEAN",
   "authority_transfer": false,
@@ -75,7 +75,9 @@
     "FINAL_RECEIPT_MERGE_ALLOWED_NOT_TRUE",
     "FINAL_RECEIPT_HEAD_MISMATCH",
     "FINAL_RECEIPT_BASE_MISMATCH",
-    "FINAL_RECEIPT_CONTROLLER_REVISION_MISMATCH"
+    "FINAL_RECEIPT_CONTROLLER_REVISION_MISMATCH",
+    "LIVE_PR_RESOLUTION_FAILED_AFTER_TRIGGER_HEAD_CAPTURE",
+    "TRIGGER_LIVE_HEAD_MISMATCH"
   ],
   "non_compensation": {
     "r3_release_credit": "NONE",
@@ -129,7 +131,16 @@
     "pull_request_target_check_suite_is_not_head_binding": true,
     "status_concurrency": "SERIALIZE_PER_PR_CANCEL_OLDER_RUN",
     "auto_merge_hold_final_predicate": "RECHECK_AFTER_ARTIFACT_AND_STATUS_PUBLICATION",
-    "success_cannot_be_overwritten_by_stale_older_run": true
+    "success_cannot_be_overwritten_by_stale_older_run": true,
+    "trigger_identity_capture": "EVENT_HEAD_SHA_BEFORE_FALLIBLE_LIVE_PR_LOOKUP",
+    "stale_success_invalidation": "PUBLISH_PENDING_ON_TRIGGER_HEAD_BEFORE_LIVE_PR_LOOKUP",
+    "live_resolution_failure_effect": "TRIGGER_HEAD_MUST_NOT_RETAIN_PRIOR_SUCCESS",
+    "manual_dispatch_requires_expected_head_sha": true,
+    "manual_owner_merge_boundary": "NOT_ENFORCEABLE_BY_REPOSITORY_WORKFLOW_WITHOUT_REQUIRED_STATUS_BRANCH_RULE_OR_RULESET",
+    "required_owner_admin_control": "INSTALL_REQUIRED_STATUS_OR_RULESET_FOR_First-Pass Closure Gate / first-pass-closure",
+    "preferred_required_status_binding": "TRUSTED_PUBLISHER_APP_OR_EQUIVALENT_ADMIN_CONTROL",
+    "repository_ruleset_observed_at_r8": "NONE",
+    "hard_merge_barrier_state": "EXTERNAL_OWNER_ADMIN_BOUNDARY_AFTER_R8_CODE_PROOF"
   },
   "proof_identity_trust": {
     "controller_execution": "PR_BASE_SHA_ONLY_VIA_PULL_REQUEST_TARGET_OR_DEFAULT_BRANCH_EVENT",
@@ -157,6 +168,9 @@
       "POST_MERGE_DISTINCT_NON_CONTROLLER_CANARY_REQUIRED",
       "CANARY_HEAD_BOUND_REQUIRED_STATUS_SUCCESS"
     ],
-    "closure_rule": "DO_NOT_CLOSE_ISSUE_314_OR_RELEASE_CONSUMER_1550_UNTIL_CANARY_FPC_PASS"
+    "closure_rule": "DO_NOT_CLOSE_ISSUE_314_OR_RELEASE_CONSUMER_1550_UNTIL_CANARY_FPC_PASS",
+    "r8_bootstrap_reason": "R7_CANARY_MERGED_BEFORE_FROZEN_REVIEW_AND_HEAD_STATUS_ACCEPTANCE; R7_LIVE_PR_LOOKUP_COULD_LEAVE_PRIOR_SUCCESS_STALE",
+    "r8_postmerge_canary_required": true,
+    "owner_admin_gate_after_clean_canary": "REQUIRED_STATUS_OR_RULESET_REQUIRED_TO_PREVENT_MANUAL_BYPASS"
   }
 }
