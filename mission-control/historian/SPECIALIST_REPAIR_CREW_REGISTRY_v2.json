@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.specialist_repair_crew_registry.v2",
   "status": "ACTIVE",
-  "as_of": "2026-09-21T10:55:00+02:00",
+  "as_of": "2026-09-21T11:04:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "SPECIALIST_REPAIR_CREW_REGISTRY_v1.json",
   "activation_rule": "recurrence || P0/P1 severity || cross_repo_centrality || repeated_failed_repair || active_control_repeat",
@@ -99,8 +99,7 @@
         "HIST-BD-024"
       ],
       "active_scope": [
-        "REX-CM-005",
-        "HIST-BD-022"
+        "REX-CM-005"
       ],
       "done_scope": [
         "HIST-BD-002",
@@ -113,9 +112,10 @@
         "HIST-BD-009",
         "HIST-BD-020",
         "HIST-BD-023",
-        "HIST-BD-024"
+        "HIST-BD-024",
+        "HIST-BD-022"
       ],
-      "current_mission": "REX_CM_005_ADMIN_PLUS_CODEX_BD022_RUNTIME_PROOF",
+      "current_mission": "REX_CM_005_OWNER_ADMIN_BINDING",
       "secondment": [
         "H2_KEB",
         "HISTORIAN",
@@ -215,10 +215,9 @@
       ],
       "active_scope": [
         "REX-CM-005",
-        "fleet deep-dive expansion",
-        "HIST-BD-022"
+        "fleet deep-dive expansion"
       ],
-      "current_mission": "CODEX_BD022_RUNTIME_PROOF_PLUS_FLEET_REPAIR_SURVIVAL",
+      "current_mission": "F2_PRESSURE_SELECTION_AND_DEEP_DIVE",
       "secondment": [
         "H1_QPS",
         "H2_KEB",
@@ -232,7 +231,10 @@
         "recurrence detection",
         "repair survival"
       ],
-      "victory_condition": "every new historical finding is current-code-checked, deduplicated to stable root, and returned to H4/H3 with proof or explicit rejection; Qtools BD019/020 remain CONTROL_WATCH only unless regression recurs"
+      "victory_condition": "every new historical finding is current-code-checked, deduplicated to stable root, and returned to H4/H3 with proof or explicit rejection; Qtools BD019/020 remain CONTROL_WATCH only unless regression recurs",
+      "done_scope": [
+        "HIST-BD-022"
+      ]
     },
     {
       "crew_id": "DEBUG_SURGEON",
@@ -269,8 +271,7 @@
       "DEBUG_SURGEON"
     ],
     "priority_sequence": [
-      "CODEX HIST-BD-022 dedicated GM-I-A KEB bridge exact-head proof",
-      "CODEX Historian child close/return after zero local roots",
+      "F2 current mission repo selected by measured unresolved Historian pressure",
       "REX-CM-005 owner/admin binding when available",
       "cryoplant-project#923 owner runner-admission recovery"
     ],
@@ -288,7 +289,7 @@
       "formal_credit_delta": 0
     },
     "codex_historian": {
-      "state": "ACTIVE_ONE_LOCAL_ROOT",
+      "state": "DONE_CLOSE_CONTROL_WATCH",
       "durable_roots": [
         "HIST-BD-021",
         "HIST-BD-022",
@@ -297,16 +298,24 @@
       ],
       "done_roots": [
         "HIST-BD-021",
+        "HIST-BD-022",
         "HIST-BD-023",
         "HIST-BD-024"
       ],
-      "active_roots": [
-        "HIST-BD-022"
-      ],
+      "active_roots": [],
       "first_red": "CODEX#786 dedicated run35580095011/job106270722615",
-      "reenter_or_close_on": "DEDICATED_BRIDGE_PASS_OR_OBSERVED_NEW_ROOT",
+      "reenter_or_close_on": "OBSERVED_REGRESSION_OR_GOVERNED_CONTRACT_CHANGE",
       "authority_transfer": false,
-      "formal_credit_delta": 0
+      "formal_credit_delta": 0,
+      "close_evidence": [
+        "CODEX#787@cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+        "W003 run35580291171 PASS",
+        "CI run35580291195 PASS",
+        "W286 run35580291155 PASS",
+        "GM-I-A run35580291121 PASS",
+        "Validate Federation run35580291180 PASS",
+        "current-head Codex review no major issues"
+      ]
     }
   }
 }
