@@ -8,7 +8,7 @@
     "TEMPORAL_CONTROL_REGRESSION_v1.json",
     "TEMPORAL_3PSTAR_MIP_ITERATION_v3.json"
   ],
-  "as_of": "2026-09-21T10:05:00+02:00",
+  "as_of": "2026-09-21T10:36:00+02:00",
   "repository": "GBOGEB/pipeline-automation-hub",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -225,13 +225,32 @@
       "rank": "PASS_POOLED_WINNER_STRENGTH_ONLY_CURRENT_RED",
       "prepare": "PASS",
       "prove": "PASS_ARTIFACT_BOUND",
-      "commit": "PENDING_PR",
-      "propagate_perpetuate": "PENDING_PR_POSTMERGE_DOV"
+      "commit": {
+        "status": "PASS_REPOSITORY_BINDING",
+        "pr": 348,
+        "exact_head": "b15a82340cec7bae53f1066423b0df93e8091616",
+        "exact_head_proof": {
+          "run_id": "35578586769",
+          "job_id": "106265955128",
+          "conclusion": "success",
+          "steps_executed": 7
+        },
+        "merge_sha": "a5af281352fa487add2d78012b3d7eac1e74836b"
+      },
+      "propagate_perpetuate": {
+        "status": "PASS_POSTMERGE_RECURRENCE",
+        "run_id": "35578640152",
+        "job_id": "106266120639",
+        "exact_merge_sha": "a5af281352fa487add2d78012b3d7eac1e74836b",
+        "conclusion": "success",
+        "steps_executed": 7
+      }
     },
     "mip": {
       "Modernize": "PASS_CORRECTED_FIRST_RED",
       "Innovate": "PASS_RECENT_STABILITY_SEPARATED_FROM_POOLED_STRENGTH_AND_PROXY_SEMANTICS",
-      "Perpetuate": "PENDING_PR_POSTMERGE_DOV"
+      "Perpetuate": "PASS_REPOSITORY_AND_POSTMERGE_DOV"
     }
-  }
+  },
+  "p1_convergence_close_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_HUMAN_WAIT_P1_CONVERGENCE_CLOSE_20260921_v1.json"
 }

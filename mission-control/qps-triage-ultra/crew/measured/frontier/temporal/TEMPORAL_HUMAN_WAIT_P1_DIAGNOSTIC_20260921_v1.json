@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.temporal_human_wait_p1_diagnostic.v1",
   "mission_id": "MC-CREW-FRONTIER-004",
-  "as_of": "2026-09-21T10:05:00+02:00",
+  "as_of": "2026-09-21T10:36:00+02:00",
   "status": "P1_DIAGNOSTIC_BOUND_NO_CONTROL_PROMOTION",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -34,9 +34,16 @@
     "observed_pairs_total": 150,
     "independent_windows": 25,
     "distinct_source_shas": 10,
-    "temporal_span_seconds": 519001.0,
-    "hosted_runner_classes": ["linux", "macos", "windows"],
-    "lanes": ["baseline", "held"],
+    "temporal_span_seconds": 519001,
+    "hosted_runner_classes": [
+      "linux",
+      "macos",
+      "windows"
+    ],
+    "lanes": [
+      "baseline",
+      "held"
+    ],
     "rex_veto": false
   },
   "latest_window": {
@@ -51,25 +58,41 @@
     "paired_normalized_strength": 0.2358490566037736,
     "by_habitat": {
       "linux": {
-        "counts": {"ALLOC_SINGLE_CELL": 1, "ALLOC_PAIRED_CELL": 1},
+        "counts": {
+          "ALLOC_SINGLE_CELL": 1,
+          "ALLOC_PAIRED_CELL": 1
+        },
         "classification": "DIRECTION_SPLIT"
       },
       "macos": {
-        "counts": {"ALLOC_SINGLE_CELL": 1, "TIE": 1},
+        "counts": {
+          "ALLOC_SINGLE_CELL": 1,
+          "TIE": 1
+        },
         "classification": "SINGLE_WITH_TIE"
       },
       "windows": {
-        "counts": {"ALLOC_SINGLE_CELL": 1, "TIE": 1},
+        "counts": {
+          "ALLOC_SINGLE_CELL": 1,
+          "TIE": 1
+        },
         "classification": "SINGLE_WITH_TIE"
       }
     },
     "by_lane": {
       "baseline": {
-        "counts": {"ALLOC_SINGLE_CELL": 1, "ALLOC_PAIRED_CELL": 1, "TIE": 1},
+        "counts": {
+          "ALLOC_SINGLE_CELL": 1,
+          "ALLOC_PAIRED_CELL": 1,
+          "TIE": 1
+        },
         "classification": "MIXED"
       },
       "held": {
-        "counts": {"ALLOC_SINGLE_CELL": 2, "TIE": 1},
+        "counts": {
+          "ALLOC_SINGLE_CELL": 2,
+          "TIE": 1
+        },
         "classification": "SINGLE_WITH_TIE"
       }
     },
@@ -104,8 +127,26 @@
     "rank": "PASS_POOLED_WINNER_STRENGTH_IS_ONLY_CURRENT_CONTROL_RED",
     "prepare": "PASS_KEEP_PROXY_BOUNDARY_AND_FROZEN_THRESHOLDS",
     "prove": "PASS_ARTIFACT_BOUND_METRICS",
-    "commit": "REPOSITORY_PR_REQUIRED",
-    "propagate_perpetuate": "REPOSITORY_PR_AND_POSTMERGE_DOV_REQUIRED"
+    "commit": {
+      "status": "PASS_REPOSITORY_BINDING",
+      "pr": 348,
+      "exact_head": "b15a82340cec7bae53f1066423b0df93e8091616",
+      "exact_head_proof": {
+        "run_id": "35578586769",
+        "job_id": "106265955128",
+        "conclusion": "success",
+        "steps_executed": 7
+      },
+      "merge_sha": "a5af281352fa487add2d78012b3d7eac1e74836b"
+    },
+    "propagate_perpetuate": {
+      "status": "PASS_POSTMERGE_RECURRENCE",
+      "run_id": "35578640152",
+      "job_id": "106266120639",
+      "exact_merge_sha": "a5af281352fa487add2d78012b3d7eac1e74836b",
+      "conclusion": "success",
+      "steps_executed": 7
+    }
   },
   "mip": {
     "Modernize": {
@@ -117,8 +158,8 @@
       "result": "separated recent directional stability from insufficient pooled strength and preserved proxy-only semantics"
     },
     "Perpetuate": {
-      "status": "PENDING_REPOSITORY_PROOF",
-      "result": "diagnostic, current pointer, v4 frontier and validator must publish atomically"
+      "status": "PASS",
+      "result": "diagnostic, current pointer, v4 frontier, handover and validator merged through PR #348 and revalidated on exact merge SHA by push run 35578640152/job 106266120639"
     }
   },
   "next_action": "CONTINUE_GENUINE_SCHEDULED_STABILITY_MEASUREMENT_AND_REEVALUATE_POOLED_STRENGTH_WITHOUT_RELABELING_PROXY_AS_REAL_HUMAN_EVIDENCE",

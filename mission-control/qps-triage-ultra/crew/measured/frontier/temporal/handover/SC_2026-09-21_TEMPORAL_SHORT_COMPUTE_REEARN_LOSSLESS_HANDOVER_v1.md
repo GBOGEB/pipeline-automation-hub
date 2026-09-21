@@ -107,3 +107,14 @@ A bounded 3P* + MIP convergence pass on the same genuine schedule authority corr
 - claim boundary remains: `CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE`.
 
 Therefore P1 promotion remains WITHHELD. The correct current first-red is `pooled_winner_strength`, not `direction_consistency`. The diagnostic is `TEMPORAL_HUMAN_WAIT_P1_DIAGNOSTIC_20260921_v1.json`.
+
+## P1 publication proof and convergence stop
+
+P1 convergence published through PR #348:
+
+- exact head: `b15a82340cec7bae53f1066423b0df93e8091616`
+- exact-head proof: run `35578586769`, job `106265955128`, 7 executed steps, SUCCESS
+- merge SHA: `a5af281352fa487add2d78012b3d7eac1e74836b`
+- merged-master proof: run `35578640152`, job `106266120639`, 7 executed steps, SUCCESS
+
+P1 MIP Perpetuate is PASS. With P0 and P1 both diagnostically decomposed, another temporal 3P*/MIP pass on the same evidence is a controlled no-op. The next temporal execution is event-driven: a later genuine schedule, or H3 7-day maturity.
