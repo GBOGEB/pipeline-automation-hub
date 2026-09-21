@@ -1,19 +1,78 @@
 {
   "schema": "missioncontrol.historian.codex_wave_current.v1",
-  "as_of": "2026-09-21T10:55:00+02:00",
-  "status": "ACTIVE_ONE_LOCAL_ROOT",
+  "as_of": "2026-09-21T11:45:00+02:00",
+  "status": "DONE_CLOSE_CONTROL_WATCH",
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "roots": {
-    "HIST-BD-021": {"issue": 779, "state": "DONE", "repair_pr": 781, "exact_head": "526fe960b37376e535f2da25d1892356de529130", "ci_run": "35579721478", "ci_job": "106269525882"},
-    "HIST-BD-022": {"issue": 780, "state": "ACTIVE", "semantic_repair_pr": 781, "runtime_fix_pr": 786, "runtime_fix_head": "92e7728b283ffea958b7df85a4d55e283b371e7b", "first_red_run": "35580095011", "first_red_job": "106270722615"},
-    "HIST-BD-023": {"issue": 782, "state": "DONE", "repair_pr": 784, "final_head": "2ce5bb623b71dc943ef84cbf63115f2e46d69c6f", "ci_run": "35579974567", "ci_job": "106270338097"},
-    "HIST-BD-024": {"issue": 783, "state": "DONE", "repair_pr": 784, "final_head": "2ce5bb623b71dc943ef84cbf63115f2e46d69c6f", "ci_run": "35579974567", "ci_job": "106270338097"}
+    "HIST-BD-021": {
+      "issue": 779,
+      "state": "DONE",
+      "repair_pr": 781,
+      "exact_head": "526fe960b37376e535f2da25d1892356de529130",
+      "ci_run": "35579721478",
+      "ci_job": "106269525882"
+    },
+    "HIST-BD-022": {
+      "issue": 780,
+      "state": "DONE",
+      "semantic_repair_pr": 781,
+      "runtime_fix_pr": 786,
+      "closure_pr": 787,
+      "closure_head": "cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+      "merge": "954f0fd95b1360830f38a082422340a02206a4b7",
+      "proof": {
+        "w003": {
+          "run": "35580291171",
+          "job": "106271355721",
+          "result": "PASS"
+        },
+        "ci": {
+          "run": "35580291195",
+          "job": "106271357265",
+          "result": "PASS"
+        },
+        "w286": {
+          "run": "35580291155",
+          "job": "106271356609",
+          "result": "PASS"
+        },
+        "gm_i_a": {
+          "run": "35580291121",
+          "job": "106271356218",
+          "result": "PASS"
+        },
+        "federation": {
+          "run": "35580291180",
+          "job": "106271356487",
+          "result": "PASS"
+        }
+      },
+      "current_head_review": "PASS_NO_MAJOR_ISSUES",
+      "current_main_survival": "d0f4e83e66bedc512e077ac05ac2ba8f289a530f"
+    },
+    "HIST-BD-023": {
+      "issue": 782,
+      "state": "DONE",
+      "repair_pr": 784,
+      "final_head": "2ce5bb623b71dc943ef84cbf63115f2e46d69c6f",
+      "ci_run": "35579974567",
+      "ci_job": "106270338097"
+    },
+    "HIST-BD-024": {
+      "issue": 783,
+      "state": "DONE",
+      "repair_pr": 784,
+      "final_head": "2ce5bb623b71dc943ef84cbf63115f2e46d69c6f",
+      "ci_run": "35579974567",
+      "ci_job": "106270338097"
+    }
   },
-  "next": "CONSUME_CODEX_786_DEDICATED_GM_I_A_BRIDGE_PROOF",
+  "next": "F2_CURRENT_MISSION_REPO_SELECTION",
   "non_compensation": {
     "cryoplant_923": "INDEPENDENT_RED_OWNER_ACTION",
     "authority_transfer": false,
     "formal_credit_delta": 0
-  }
+  },
+  "reenter_on": "OBSERVED_REGRESSION_OR_GOVERNED_CONTRACT_CHANGE"
 }
