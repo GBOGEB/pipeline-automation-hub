@@ -1,0 +1,38 @@
+name: Fleet Open-Issue Convergence
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json'
+      - 'mission-control/historian/validate_fleet_open_issue_convergence.py'
+      - '.github/workflows/fleet-open-issue-convergence.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json'
+      - 'mission-control/historian/validate_fleet_open_issue_convergence.py'
+      - '.github/workflows/fleet-open-issue-convergence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Validate fleet compression
+        run: |
+          set -euo pipefail
+          python mission-control/historian/validate_fleet_open_issue_convergence.py | tee fleet.out
+          grep -q PASS_FLEET_OPEN_ISSUE_CONVERGENCE_94_32_2_60 fleet.out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fleet-open-issue-convergence-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            fleet.out
+            mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json
+          if-no-files-found: error

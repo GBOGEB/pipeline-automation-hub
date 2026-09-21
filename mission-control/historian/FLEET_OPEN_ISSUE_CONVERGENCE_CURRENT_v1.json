@@ -1,0 +1,349 @@
+{
+  "schema": "missioncontrol.fleet_open_issue_convergence.v1",
+  "as_of": "2026-09-21T14:20:00+02:00",
+  "owner": "GBOGEB",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "parents": {
+    "bd_lifecycle": "GBOGEB/pipeline-automation-hub#85",
+    "historian": "GBOGEB/pipeline-automation-hub#76",
+    "global_issue_register": "GBOGEB/pipeline-automation-hub#153",
+    "mip_stabilize": "GBOGEB/pipeline-automation-hub#372"
+  },
+  "classification": {
+    "CONTROL": "Open control/orchestration/watch/DONE-with-reentry surface; consumes monitoring floor, not coding WIP.",
+    "ACTIVE": "Exactly one currently executable EXECUTE_NOW or PROVE frontier for the repo; consumes normal coding/proof WIP.",
+    "BLOCKED": "RETURN, HOLD, READ, external/owner/physical/dependency gate; consumes no normal coding WIP."
+  },
+  "wip_policy": {
+    "max_active_per_repo": 1,
+    "max_parallel_prove_per_repo": 1,
+    "control_watch_floor": true,
+    "blocked_consumes_coding_wip": false,
+    "hard_gate_preempts": true
+  },
+  "repositories": {
+    "GBOGEB/cryoplant-project": {
+      "head": "7fe241da92a55c0ff6bc011a68fb9986ad0769b6",
+      "open_issues": 53,
+      "control": [
+        1063,
+        1379,
+        481,
+        248,
+        704,
+        199,
+        416,
+        207,
+        1101
+      ],
+      "active": [],
+      "blocked": [
+        923,
+        1390,
+        1550,
+        1258,
+        1266,
+        1357,
+        1132,
+        1398,
+        1426,
+        1186,
+        1284,
+        996,
+        1036,
+        6,
+        1022,
+        1021,
+        480,
+        242,
+        210,
+        553,
+        519,
+        87,
+        943,
+        1168,
+        75,
+        82,
+        79,
+        1083,
+        663,
+        947,
+        981,
+        978,
+        974,
+        548,
+        643,
+        72,
+        547,
+        540,
+        537,
+        334,
+        235,
+        238,
+        233,
+        208
+      ],
+      "blocked_breakdown": {
+        "owner_infra_hard_block": [
+          923,
+          1390,
+          1550,
+          1258,
+          1266,
+          1357,
+          1132
+        ],
+        "physical_private_local_return": [
+          1398,
+          1426,
+          1186,
+          1284,
+          996,
+          1036,
+          6
+        ],
+        "external_source_decision_return": [
+          1022,
+          1021,
+          480,
+          242,
+          210,
+          553,
+          519,
+          87,
+          943,
+          1168,
+          75,
+          82,
+          79,
+          1083,
+          663,
+          947,
+          981,
+          978,
+          974,
+          548,
+          643,
+          72,
+          547,
+          540,
+          537,
+          334,
+          235,
+          238,
+          233,
+          208
+        ]
+      },
+      "first_red": "RETURN: #923 owner-side private-repo Actions admission; no repo-local FIX_NOW defect after stale queue-pointer cleanup.",
+      "local_control": "GBOGEB/cryoplant-project#481",
+      "source": "triage/bd_queue/QPS_OPEN_ISSUE_BD_QUEUE_CURRENT_v1.yaml with closed #211/#85 removed from live projection"
+    },
+    "GBOGEB/pipeline-automation-hub": {
+      "head": "b82097e00d4cd8cf4aacccb939f49e198070eea0",
+      "open_issues": 19,
+      "control": [
+        372,
+        153,
+        85,
+        76,
+        358,
+        324,
+        308,
+        63,
+        64,
+        57,
+        61,
+        60,
+        59
+      ],
+      "active": [
+        129
+      ],
+      "blocked": [
+        336,
+        304,
+        188,
+        152,
+        149
+      ],
+      "first_red": "PROVE: #129 LM-10 / W260 BD-260.5 TRIAGE exact-head verification in PR #371.",
+      "local_control": "GBOGEB/pipeline-automation-hub#372",
+      "source": "GBOGEB/pipeline-automation-hub#358 current child selection plus #372 stabilization policy"
+    },
+    "GBOGEB/ABACUS": {
+      "head": "d00fcb026bd05b8c35e6f2f30fc3192d695dcfb6",
+      "open_issues": 13,
+      "control": [
+        633,
+        776,
+        667,
+        1164,
+        785,
+        981
+      ],
+      "active": [
+        638
+      ],
+      "blocked": [
+        1278,
+        1002,
+        635,
+        636,
+        637,
+        644
+      ],
+      "first_red": "EXECUTE_NOW bounded source-side #638 stale-reference / legacy-binary current-code scan; physical roundtrip gates remain RETURN.",
+      "local_control": "GBOGEB/ABACUS#633",
+      "source": "GOV-001 latest cold-edge classification; #776 CONTROL watch; #1164 controlled negative/evidence-blocked; #1278 OWNER_ADMIN_GATE"
+    },
+    "GBOGEB/CODEX": {
+      "head": "d6418f60b1082acb15eec14eb21df96488dce590",
+      "open_issues": 4,
+      "control": [
+        319,
+        324
+      ],
+      "active": [],
+      "blocked": [
+        500,
+        753
+      ],
+      "first_red": "RETURN: #500 real Windows QPS roundtrip receipt and #753 owner Pages source setting; no hosted workaround justified.",
+      "local_control": "GBOGEB/CODEX#319",
+      "source": "merged CODEX control PR #788 issue bindings"
+    },
+    "GBOGEB/GEMINI": {
+      "head": "844440e36bf8dc6b0a194ea6500cbb94f69931fc",
+      "open_issues": 3,
+      "control": [
+        28
+      ],
+      "active": [],
+      "blocked": [
+        16,
+        12
+      ],
+      "first_red": "RETURN: #16 physical successor bundle triplet or #12 external WIF/service-account/Drive ACL; no application coding selected.",
+      "local_control": "GBOGEB/GEMINI#28",
+      "source": "#28 Historian closure plus #16/#12 explicit external-return contracts"
+    },
+    "GBOGEB/gg_MATH": {
+      "head": "2b27f4a6d70a11324d9a7c81d9c88995888b3d74",
+      "open_issues": 1,
+      "control": [
+        27
+      ],
+      "active": [],
+      "blocked": [],
+      "nested_queue": {
+        "issue": 27,
+        "bd_total": 6,
+        "control_count": 4,
+        "active_downstream_count": 1,
+        "blocked_count": 1,
+        "active_downstream_owner": "GBOGEB/pipeline-automation-hub#129 / PR #371"
+      },
+      "first_red": "No repo-local coding frontier. W260 provider work is CONTROL; downstream BD-260.5 TRIAGE is owned by MissionControl.",
+      "local_control": "GBOGEB/gg_MATH#27",
+      "source": "LM-10 W260 provider queue and fresh-main BD-260.4 proof"
+    },
+    "GBOGEB/document-organization-system": {
+      "head": "5bbfb27e6875c1d4db081bedc5bffeb93a922819",
+      "open_issues": 1,
+      "control": [],
+      "active": [],
+      "blocked": [
+        51
+      ],
+      "first_red": "RETURN/ADMIN: publish normal GitHub Release object from immutable v0.4.9 tag; connected GitHub capability exposes no Release creation mutation.",
+      "local_control": "GBOGEB/document-organization-system#51",
+      "source": "#51 3P*+MIP receipt and capability retries"
+    }
+  },
+  "fleet": {
+    "open_issues": 94,
+    "repositories_with_open_issues": 7,
+    "control": 32,
+    "active": 2,
+    "blocked": 60,
+    "executable_frontier_width": 2,
+    "control_share": 0.3404255319,
+    "active_share": 0.0212765957,
+    "blocked_share": 0.6382978723,
+    "compression_statement": "94 open occurrences -> 32 CONTROL + 2 ACTIVE + 60 BLOCKED/RETURN/HOLD/READ",
+    "interpretation": "Only two issue surfaces currently justify normal executable/proof WIP. Open-issue count alone overstates active work by roughly 47x."
+  },
+  "active_frontiers": [
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue": 129,
+      "kind": "PROVE",
+      "victory": "BD-260.5 exact-head TRIAGE PASS + review-clean + fresh-master recurrence"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue": 638,
+      "kind": "EXECUTE_NOW",
+      "victory": "current-code stale-reference/legacy-binary scan yields bounded disposition without crossing physical-return gates"
+    }
+  ],
+  "blocked_priority": [
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue": 923,
+      "kind": "OWNER_INFRA_HARD_BLOCK"
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "issue": 16,
+      "kind": "PHYSICAL_RETURN"
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "issue": 12,
+      "kind": "EXTERNAL_IDENTITY_ACL"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "issue": 500,
+      "kind": "LOCAL_WINDOWS_RETURN"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "issue": 753,
+      "kind": "OWNER_PAGES_SETTING"
+    },
+    {
+      "repo": "GBOGEB/document-organization-system",
+      "issue": 51,
+      "kind": "RELEASE_ADMIN_MUTATION"
+    }
+  ],
+  "reduction_method": {
+    "name": "FIRST_RED_FUNNEL_WITH_CONTROL_DECAY",
+    "mip_waves": [
+      "S0_NORMALIZE",
+      "S1_PROOF_DRAIN",
+      "S2_BOUNDED_ROOT_REDUCTION",
+      "S3_REX_CONTROL_CONVERSION",
+      "S4_MEASURED_STABILIZATION"
+    ],
+    "three_pstar": "Use 3PR to refresh/probe/rank one semantic first-red, MIP to modernize/innovate/perpetuate, and 3PC to prepare/prove/commit. Optional federation only when evidence crosses repo/authority boundary.",
+    "stop_rules": [
+      "no duplicate root for retry/proof child",
+      "no coding while first-red is external/owner/physical",
+      "merge does not imply proof",
+      "CONTROL lanes reopen only on observed regression",
+      "PCA/BT never compensate a hard gate"
+    ]
+  },
+  "next": [
+    "repair cryoplant live queue pointer by removing closed #211/#85 from BDQ2",
+    "drain pipeline #129 / PR #371 BD-260.5 proof",
+    "run ABACUS #638 bounded cloud-executable scan",
+    "leave CODEX/GEMINI/document-organization-system RETURN gates at zero coding allocation",
+    "repeat fleet census after those two ACTIVE fronts resolve and recompute net_BD_delta"
+  ]
+}
