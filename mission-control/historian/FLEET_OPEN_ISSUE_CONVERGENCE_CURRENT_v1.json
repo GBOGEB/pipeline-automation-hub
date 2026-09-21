@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.fleet_open_issue_convergence.v1",
-  "as_of": "2026-09-21T16:28:00+02:00",
+  "as_of": "2026-09-21T20:00:00+02:00",
   "owner": "GBOGEB",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -24,8 +24,8 @@
   },
   "repositories": {
     "GBOGEB/cryoplant-project": {
-      "head": "d895fc51bed0c92b941e2e74c7ae733bbdd35544",
-      "open_issues": 54,
+      "head": "2e31fd6368e6211e04827253a226f705e0ee6cfd",
+      "open_issues": 55,
       "control": [
         1063,
         1379,
@@ -34,7 +34,8 @@
         704,
         416,
         207,
-        1101
+        1101,
+        1593
       ],
       "active": [],
       "blocked": [
@@ -139,12 +140,12 @@
           85
         ]
       },
-      "first_red": "RETURN: #923 owner-side private-repo Actions admission; all 54 live obligations are classified and no repo-local FIX_NOW exists.",
+      "first_red": "RETURN: #923 owner-side private-repo Actions admission; #1593 is peer-review CONTROL/REGISTER only; 55/55 live obligations are classified and no repo-local FIX_NOW exists.",
       "local_control": "GBOGEB/cryoplant-project#481",
-      "source": "triage/bd_queue/QPS_OPEN_ISSUE_BD_QUEUE_CURRENT_v1.yaml @ 2026-09-21T15:26:49+02:00; issue #199 contracted SUPERSEDED_CLOSE into #481; 54/54 classified; repo_local_fix_now=0"
+      "source": "triage/bd_queue/QPS_OPEN_ISSUE_BD_QUEUE_CURRENT_v1.yaml rebinding via cryoplant PR #1598 / 2e31fd6368e6211e04827253a226f705e0ee6cfd; 55/55 classified; #1593=BDQ3_CONTROL_PARENT_OR_REGISTER; repo_local_fix_now=0"
     },
     "GBOGEB/pipeline-automation-hub": {
-      "head": "d86c7dcaaa23928f3d67ee72e0e9c58f55dd4469",
+      "head": "0b87c88c671f9dc22d5392745a53e07214902301",
       "open_issues": 19,
       "control": [
         57,
@@ -175,7 +176,7 @@
       "source": "PR #380 merged W260 CONTROL state; post-merge Codex P1s repaired by this projection sync. #129 remains CONTROL."
     },
     "GBOGEB/ABACUS": {
-      "head": "6b0d6743907dd77d84900d61197d493a5596ac87",
+      "head": "3189e5513714401bb0a87e100e3fd47e0ef09c3c",
       "open_issues": 12,
       "control": [
         633,
@@ -184,10 +185,9 @@
         785,
         981
       ],
-      "active": [
-        776
-      ],
+      "active": [],
       "blocked": [
+        1313,
         1278,
         1002,
         635,
@@ -195,12 +195,12 @@
         637,
         644
       ],
-      "first_red": "PROVE: #776 / PR #1325 merged concurrency repair; exact-head review and fresh-main/post-merge branch-push coalescing evidence are still required before CONTROL.",
+      "first_red": "NONE repo-local: #776 concurrency root is DONE after post-control same-ref supersession proof; #1313 remains SOURCE_PENDING for authoritative Appendix 8.4 extraction; #1278 remains owner/admin RETURN.",
       "local_control": "GBOGEB/ABACUS#633",
-      "source": "ABACUS #776 MIP-STABILIZE S2 transition; PR #1325 merged 6b0d6743907dd77d84900d61197d493a5596ac87; post-merge DOW/CD/CI runs are executing."
+      "source": "ABACUS #776 closed after runs 35622333444/#1957 -> cancelled by 35623229375/#1958; #1313 source-pending successor remains open; no normal coding frontier selected."
     },
     "GBOGEB/CODEX": {
-      "head": "d6418f60b1082acb15eec14eb21df96488dce590",
+      "head": "86608bdaa41395e661c78dc001c18d03c30cc1ed",
       "open_issues": 4,
       "control": [
         319,
@@ -264,28 +264,19 @@
     }
   },
   "fleet": {
-    "open_issues": 93,
+    "open_issues": 94,
     "repositories_with_open_issues": 7,
-    "control": 30,
-    "active": 1,
-    "blocked": 62,
-    "executable_frontier_width": 1,
-    "control_share": 0.3225806451612903,
-    "active_share": 0.010752688172043012,
-    "blocked_share": 0.6666666666666666,
-    "compression_statement": "93 open occurrences -> 30 CONTROL + 1 ACTIVE + 62 BLOCKED/RETURN/HOLD/READ",
-    "interpretation": "The sole normal executable/proof root is ABACUS #776 post-merge concurrency verification. All other live issue surfaces are CONTROL or named RETURN/HOLD/BLOCKED gates."
+    "control": 31,
+    "active": 0,
+    "blocked": 63,
+    "executable_frontier_width": 0,
+    "control_share": 0.32978723404255317,
+    "active_share": 0,
+    "blocked_share": 0.6702127659574468,
+    "compression_statement": "94 open occurrences -> 31 CONTROL + 0 ACTIVE + 63 BLOCKED/RETURN/HOLD/READ",
+    "interpretation": "No normal executable/proof root is currently selected. #776 is DONE; new #1593 is CONTROL/REGISTER and #1313 is SOURCE_PENDING. Do not fabricate coding work: recensus current code before selecting the next EXECUTE_NOW root."
   },
-  "active_frontiers": [
-    {
-      "repo": "GBOGEB/ABACUS",
-      "issue": 776,
-      "kind": "PROVE",
-      "evidence_pr": 1325,
-      "merge_sha": "6b0d6743907dd77d84900d61197d493a5596ac87",
-      "victory": "exact-head review clean plus fresh-main/post-merge evidence that superseded same-ref unified-CD branch pushes coalesce while tag/schedule/manual executions remain preserved"
-    }
-  ],
+  "active_frontiers": [],
   "blocked_priority": [
     {
       "repo": "GBOGEB/cryoplant-project",
@@ -337,11 +328,11 @@
     ]
   },
   "next": [
-    "consume ABACUS #1325 exact-head Codex review and remaining CI results",
-    "measure post-merge unified-CD branch-push queue coalescing for #776 before CONTROL promotion",
+    "keep ABACUS #776 on DONE/control-watch floor; require later distinct-source repeat before CONTROL promotion",
+    "keep cryoplant #1593 as CONTROL/REGISTER and ABACUS #1313 as SOURCE_PENDING/BLOCKED",
     "keep LM-10 W260 and #129 on CONTROL watch; BD-260.6 remains dormant re-entry only",
     "keep cryoplant #923 and all owner/physical/source returns non-compensating",
-    "repeat fleet census after #776 PROVE disposition or any authoritative external return"
+    "run broader current-code Historian/BD census before selecting any next EXECUTE_NOW root"
   ],
   "census_events": [
     {
@@ -432,6 +423,35 @@
         "pr": 1325,
         "merge_sha": "6b0d6743907dd77d84900d61197d493a5596ac87"
       }
+    },
+    {
+      "event": "ABACUS_776_DONE_POST_CONTROL_COALESCING",
+      "effect": {
+        "open_issues": -1,
+        "active": -1
+      },
+      "evidence": {
+        "repair_pr": 1325,
+        "merge_sha": "6b0d6743907dd77d84900d61197d493a5596ac87",
+        "superseded_run": 35622333444,
+        "newest_run": 35623229375
+      }
+    },
+    {
+      "event": "ABACUS_1313_SOURCE_PENDING_ADDED",
+      "effect": {
+        "open_issues": 1,
+        "blocked": 1
+      },
+      "disposition": "SOURCE_PENDING_APPENDIX_8_4"
+    },
+    {
+      "event": "CRYOPLANT_1593_CONTROL_PARENT_ADDED",
+      "effect": {
+        "open_issues": 1,
+        "control": 1
+      },
+      "disposition": "BDQ3_CONTROL_PARENT_OR_REGISTER"
     }
   ],
   "proof_integrity": {
@@ -445,12 +465,11 @@
     "merge_sha": "b41de9ac10fbd8eaa76c872f1964fcd905bae1a8",
     "disposition": "FIX_FORWARD_SAME_REX_CM_005_MERGE_ADMISSION_RECURRENCE",
     "new_bd_root": false,
-    "current_pr": 380,
-    "current_merge_sha": "d86c7dcaaa23928f3d67ee72e0e9c58f55dd4469",
+    "current_pr": 384,
+    "current_merge_sha": "0b87c88c671f9dc22d5392745a53e07214902301",
     "current_review_findings": [
-      "LM-10_MISSION_CONTROL_v3 retained BD260_5_TRIAGE_ACTIVE_PROVE after W260 CONTROL promotion",
-      "gg_MATH nested W260 queue retained 4 CONTROL + 1 active + 1 blocked after BD-260.5 completion"
+      "PR #382 Codex P2: W260 parity compared derived projections instead of canonical bd_queue states"
     ],
-    "current_disposition": "FIX_FORWARD_SAME_REX_CM_005_PROJECTION_CONSISTENCY_REPAIR"
+    "current_disposition": "FIX_FORWARD_SAME_REX_CM_005_CANONICAL_BD_QUEUE_DERIVATION_MERGED_PR384"
   }
 }
