@@ -3,7 +3,7 @@ mission_id: LM-10
 mission_number: 10
 mission_type: LOCAL_SINGLE_FRONTIER_DEVELOPMENT_AND_FEDERATION
 mission_name: GG_MATH_SIGNAL_EXTRACTION_AND_METHOD_DEEP_DIVES
-state: ACTIVE_DEVELOPMENT_WITH_GOVERNED_CONSUMER_BOUNDARY
+state: W260_CONTROLLED_COMPLETE_REENTRY_GOVERNED
 authority_transfer: false
 formal_credit_delta: 0
 home: GBOGEB/pipeline-automation-hub
@@ -93,12 +93,17 @@ stop_rules:
 current_development_frontier:
   wave: W260
   provider_issue: GBOGEB/gg_MATH#27
-  state: BD260_5_TRIAGE_ACTIVE_PROVE
+  state: CONTROL_WATCH_ONLY
   convergence_control: mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml
   provider_main_sha: 2b27f4a6d70a11324d9a7c81d9c88995888b3d74
   provider_fresh_main_proof_run: 35592153194
   provider_artifact_id: 10634743904
   provider_artifact_digest: sha256:603da43f85e9709f0372b3f487e5c15c78e628adc4f6ae19232b8108af233a15
-  next: BD260_5_TRIAGE_EXACT_IDENTITY_AND_AUTHORITY_VERIFICATION
-  provider_WIP_cap: 1
+  bd260_5_final_pr: 379
+  bd260_5_reviewed_head: 1d8593b06d05b78e57840ef0852cac32763c1b13
+  bd260_5_merge_sha: a1bfe58d23a109ebfdf6e976f300b18d021ecbbb
+  bd260_5_fresh_master_run: 35602410427
+  bd260_6: NOT_REQUIRED_THIS_CYCLE_REENTER_ON_REAL_CONSUMER_NEED
+  next: REENTRY_ONLY_AFTER_EXPLICIT_DEPENDENCY_READY_SELECTION
+  provider_WIP_cap: 0
   rule: 3PSTAR_IS_TRANSACTION_SPINE_MIP_IS_REALLOCATION_LOOP_NOT_PARALLEL_MISSION
