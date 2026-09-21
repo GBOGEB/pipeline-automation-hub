@@ -28,11 +28,12 @@ def main():
     f=d["fleet"]
     assert (total,control,active,blocked)==(95,31,1,63)
     assert (f["open_issues"],f["control"],f["active"],f["blocked"])==(95,31,1,63)
-    assert f["executable_frontier_width"]==2
+    assert f["executable_frontier_width"]==1
     assert abs(f["control_share"]-31/95)<1e-10
     assert abs(f["active_share"]-1/95)<1e-10
     assert abs(f["blocked_share"]-63/95)<1e-10
     assert sum(len(row["active"]) for row in repos.values())==1
+    assert len(d["active_frontiers"])==1
     assert repos["GBOGEB/cryoplant-project"]["open_issues"]==55
     assert len(repos["GBOGEB/cryoplant-project"]["blocked_breakdown"]["external_source_decision_return"])==32
     assert repos["GBOGEB/GEMINI"]["open_issues"]==2
