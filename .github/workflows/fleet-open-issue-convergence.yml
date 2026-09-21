@@ -5,12 +5,16 @@ on:
     paths:
       - 'mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json'
       - 'mission-control/historian/validate_fleet_open_issue_convergence.py'
+      - 'mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml'
+      - 'mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml'
       - '.github/workflows/fleet-open-issue-convergence.yml'
   push:
     branches: [master]
     paths:
       - 'mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json'
       - 'mission-control/historian/validate_fleet_open_issue_convergence.py'
+      - 'mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml'
+      - 'mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml'
       - '.github/workflows/fleet-open-issue-convergence.yml'
   workflow_dispatch:
 permissions:
