@@ -851,9 +851,10 @@
         "GEMINI#30@92780d2f1a91943130f6f8f06fb54c1964830257 test-only proof repair"
       ],
       "negative_evidence": [
-        "GEMINI#29 Codex P1: PyYAML SafeLoader resolves unquoted generated_at to datetime, so tests reject before alias-cycle validation"
+        "GEMINI#29 Codex P1: PyYAML SafeLoader resolves unquoted generated_at to datetime, so tests reject before alias-cycle validation",
+        "GEMINI#30 merged@844440e36bf8dc6b0a194ea6500cbb94f69931fc while exact-head fail-closed/ingress tests were queued"
       ],
-      "prove_state": "PROVE_PENDING_RUNNER_ADMISSION",
+      "prove_state": "POSTMERGE_PROOF_PENDING_RUNNER_ADMISSION",
       "done_when": "GEMINI#30 exact-head fail-closed/package+batch ingress tests execute >0 steps and pass, current-head review stays clean, then merged/current main retains quoted fixtures and cycle detector"
     }
   ],
@@ -927,7 +928,8 @@
         "branch protection endpoint -> 403 Resource not accessible by integration",
         "check-run policy-and-inventory job105622495352 PASS",
         "CODEX#787 merged@954f0fd95b1360830f38a082422340a02206a4b7 while exact-head closure checks were queued",
-        "post-merge exact-head closure on cbd28b8c88c85789ccc4f5be3bd8942540a60f1a later PASS; post-merge green does not prove merge prevention"
+        "post-merge exact-head closure on cbd28b8c88c85789ccc4f5be3bd8942540a60f1a later PASS; post-merge green does not prove merge prevention",
+        "GEMINI#30 merged@844440e36bf8dc6b0a194ea6500cbb94f69931fc while exact-head fail-closed/ingress tests were queued"
       ],
       "execution_boundary": {
         "classification": "REPOSITORY_ADMIN_MERGE_ADMISSION",
@@ -945,7 +947,8 @@
       "cross_repo_recurrence": [
         "GBOGEB/ABACUS",
         "GBOGEB/pipeline-automation-hub",
-        "GBOGEB/CODEX"
+        "GBOGEB/CODEX",
+        "GBOGEB/GEMINI"
       ]
     }
   ],
