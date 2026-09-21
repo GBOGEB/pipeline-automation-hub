@@ -100,7 +100,9 @@ def validate_projection(d: dict) -> tuple[dict[str, int], list[str]]:
     class_counts = Counter()
     first_reds: list[str] = []
     for actual, expected in zip(cards, EXPECTED_CARDS):
-        assert actual == expected, (actual, expected)
+        actual_canonical = json.dumps(actual, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        expected_canonical = json.dumps(expected, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        assert actual_canonical == expected_canonical, (actual, expected)
         assert actual["threshold_class"] in ALLOWED_THRESHOLD_CLASSES
         class_counts[actual["threshold_class"]] += 1
         if actual["first_red"] is not None:

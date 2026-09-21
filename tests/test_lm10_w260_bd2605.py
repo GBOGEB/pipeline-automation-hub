@@ -72,10 +72,24 @@ def test_first_red_reassignment_fails():
     expect_reject(mutate)
 
 
+def test_boolean_integer_type_coercion_fails():
+    def mutate(d):
+        d["receipt"]["cards"][0]["keys_exact"] = 1
+    expect_reject(mutate)
+
+
+def test_float_integer_index_type_coercion_fails():
+    def mutate(d):
+        d["receipt"]["cards"][0]["index"] = 1.0
+    expect_reject(mutate)
+
+
 if __name__ == "__main__":
     test_validator()
     test_missing_governance_identity_card_fails()
     test_card_count_mismatch_fails()
     test_disposition_identity_mismatch_fails()
     test_first_red_reassignment_fails()
+    test_boolean_integer_type_coercion_fails()
+    test_float_integer_index_type_coercion_fails()
     print("PASS_LM10_W260_BD260_5_TEST")
