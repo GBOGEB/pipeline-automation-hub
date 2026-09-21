@@ -1,0 +1,55 @@
+{
+  "schema": "missioncontrol.temporal_human_wait_p1_convergence_close.v1",
+  "mission_id": "MC-CREW-FRONTIER-004",
+  "as_of": "2026-09-21T10:36:00+02:00",
+  "status": "PASS_P1_DIAGNOSTIC_CONVERGENCE_CLOSED",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "competency_promotions": 0,
+  "source_schedule": {
+    "run_id": "35574196822",
+    "job_id": "106252442714",
+    "artifact_id": "10626843286",
+    "artifact_digest": "sha256:5da6859bfcb0fad43c4339dc8ac7795dce052dbd177e6c90eaad04817a222020"
+  },
+  "diagnostic_result": {
+    "task_class": "human_dependency_wait_proxy",
+    "direction_consistency": 0.8,
+    "direction_consistency_threshold": 0.8,
+    "direction_consistency_gate": "PASS_AT_THRESHOLD",
+    "pooled_winner_strength": 0.6389674804100461,
+    "pooled_winner_strength_threshold": 0.7,
+    "pooled_winner_strength_gate": "FAIL",
+    "first_red": "pooled_winner_strength",
+    "promotion": "WITHHELD",
+    "claim_boundary": "CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE"
+  },
+  "publication": {
+    "pr": 348,
+    "exact_head": "b15a82340cec7bae53f1066423b0df93e8091616",
+    "merge_sha": "a5af281352fa487add2d78012b3d7eac1e74836b"
+  },
+  "premerge_dov": {
+    "run_id": "35578586769",
+    "job_id": "106265955128",
+    "conclusion": "success",
+    "executed_steps_gt_zero": true,
+    "observed_steps": 7
+  },
+  "postmerge_dov": {
+    "run_id": "35578640152",
+    "job_id": "106266120639",
+    "exact_merge_sha": "a5af281352fa487add2d78012b3d7eac1e74836b",
+    "conclusion": "success",
+    "executed_steps_gt_zero": true,
+    "observed_steps": 7
+  },
+  "terminal_disposition": {
+    "temporal_control_class_count": 3,
+    "full_control": false,
+    "P0": "long_compute_contended",
+    "P1": "human_dependency_wait_proxy",
+    "next_temporal_execution": "WAIT_NEXT_GENUINE_SCHEDULE_OR_H3_7D_MATURITY",
+    "further_same_evidence_3pstar_mip": "STOP_NO_NEW_INFORMATION"
+  }
+}
