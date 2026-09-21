@@ -8,7 +8,7 @@
     "TEMPORAL_CONTROL_REGRESSION_v1.json",
     "TEMPORAL_3PSTAR_MIP_ITERATION_v3.json"
   ],
-  "as_of": "2026-09-21T09:46:00+02:00",
+  "as_of": "2026-09-21T09:53:00+02:00",
   "repository": "GBOGEB/pipeline-automation-hub",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -19,7 +19,9 @@
       "short_compute",
       "validation_bundle"
     ],
-    "reearned_classes": ["short_compute"],
+    "reearned_classes": [
+      "short_compute"
+    ],
     "regressed_classes": [],
     "noncontrol_classes": [
       "long_compute_contended",
@@ -41,9 +43,16 @@
     "conclusion": "success",
     "scheduled_windows": 25,
     "distinct_source_shas": 10,
-    "span_seconds": 519001.0,
-    "hosted_runner_classes": ["linux", "macos", "windows"],
-    "lanes": ["baseline", "held"],
+    "span_seconds": 519001,
+    "hosted_runner_classes": [
+      "linux",
+      "macos",
+      "windows"
+    ],
+    "lanes": [
+      "baseline",
+      "held"
+    ],
     "rex_veto": false,
     "H2_72H": "MATURE",
     "H3_7D": "NOT_MATURE"
@@ -90,8 +99,26 @@
     },
     "prepare": "PASS_FROZEN_REEARN_CONTRACT",
     "prove": "PASS_GENUINE_SCHEDULE_EXACT_SHA_ARTIFACT_BOUND",
-    "commit": "PENDING_REPOSITORY_BINDING_PR",
-    "propagate_perpetuate": "PENDING_CURRENT_POINTER_HANDOVER_VALIDATOR_MERGE"
+    "commit": {
+      "status": "PASS_REPOSITORY_BINDING_AND_POSTMERGE_RECURRENCE",
+      "pr": 343,
+      "pr_head": "3512f175dc3cb695af8b2a3928848a0c18efc986",
+      "pr_head_proof": {
+        "run_id": "35574968398",
+        "job_id": "106254648195",
+        "conclusion": "success",
+        "steps_executed": 7
+      },
+      "merge_sha": "d097c8b4fbb5e0896ff16ac08cb3418f96b51a1a",
+      "postmerge_recurrence": {
+        "run_id": "35575005172",
+        "job_id": "106254759828",
+        "conclusion": "success",
+        "steps_executed": 7,
+        "exact_merge_sha": true
+      }
+    },
+    "propagate_perpetuate": "PASS_CURRENT_POINTER_HANDOVER_VALIDATOR_AND_POSTMERGE_RECURRENCE"
   },
   "mip": {
     "Modernize": {
@@ -103,8 +130,8 @@
       "result": "re-earn is bound to exact scheduled run, exact artifact digest and all frozen gate values"
     },
     "Perpetuate": {
-      "status": "PENDING_PR_MERGE",
-      "result": "v4 current pointer, re-earn receipt, validator, lossless handover and restart drop-in staged together"
+      "status": "PASS",
+      "result": "v4 current pointer, re-earn receipt, validator, lossless handover and restart drop-in merged in PR #343 and revalidated on exact merge SHA by push run 35575005172/job 106254759828"
     }
   },
   "active_frontier": [
@@ -143,5 +170,6 @@
     "full_control_claim": false,
     "historical_regression_preserved": true,
     "current_effective_control_class_count": 3
-  }
+  },
+  "postmerge_close_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_POSTMERGE_CLOSE_20260921_v1.json"
 }
