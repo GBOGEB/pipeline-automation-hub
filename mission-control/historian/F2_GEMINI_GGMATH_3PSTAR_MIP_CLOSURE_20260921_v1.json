@@ -1,0 +1,80 @@
+{
+  "schema": "missioncontrol.historian.f2_gemini_ggmath_3pstar_mip_closure.v1",
+  "status": "PASS_WITH_REX_CM005_PREVENTION_STILL_WITHHELD",
+  "as_of": "2026-09-21",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "roots": {
+    "gemini": [
+      "HIST-BD-025"
+    ],
+    "gg_math": [
+      "HIST-BD-026",
+      "HIST-BD-027",
+      "HIST-BD-028",
+      "HIST-BD-029",
+      "HIST-BD-030"
+    ],
+    "disposition": "ALL_SIX_DONE"
+  },
+  "gemini": {
+    "main": "844440e36bf8dc6b0a194ea6500cbb94f69931fc",
+    "repair_pr": 30,
+    "head": "92780d2f1a91943130f6f8f06fb54c1964830257",
+    "proof": [
+      "run35583284527/job106280757576 PASS",
+      "run35583284541/job106280757935 PASS"
+    ],
+    "negative": [
+      "first-red run35582851358/job106279418751: 33 passed 2 failed due timestamp coercion",
+      "PR#30 merged while exact-head proof queued -> REX-CM-005 recurrence"
+    ]
+  },
+  "gg_math": {
+    "main": "e5961b058f4879cffe8e2679f9ab1282a7d0b9c2",
+    "repairs": [
+      {
+        "pr": 39,
+        "head": "8604cec1a4af315c199bcdcfde1748eaaff06879",
+        "run": 35584105872,
+        "job": 106283333436,
+        "roots": [
+          "HIST-BD-026"
+        ]
+      },
+      {
+        "pr": 40,
+        "head": "dd27711a1289ea645577fc3925363472e606f564",
+        "run": 35584212029,
+        "job": 106283670691,
+        "roots": [
+          "HIST-BD-027",
+          "HIST-BD-028"
+        ]
+      },
+      {
+        "pr": 41,
+        "head": "19478aec44ed0ff037158e40761b50061d17bfb6",
+        "run": 35584294392,
+        "job": 106283929946,
+        "roots": [
+          "HIST-BD-029",
+          "HIST-BD-030"
+        ]
+      }
+    ],
+    "negative": [
+      "PR#39 prior-head receipt regression undiscoverable by unittest; corrected before final head"
+    ]
+  },
+  "mip": {
+    "modernize": "PASS: census extended to 30 durable roots with current-code survival",
+    "innovate": "PASS: reusable proof-integrity, BT tie/population, and PCA identifiability controls retained",
+    "perpetuate": "PASS: six roots returned DONE; temporary analytics repair cell returned to reserve"
+  },
+  "non_compensating": [
+    "REX-CM-005",
+    "GBOGEB/cryoplant-project#923"
+  ],
+  "next": "SELECT_NEXT_F2_BY_MEASURED_UNRESOLVED_PRESSURE"
+}
