@@ -71,13 +71,58 @@ def _classify_bd_states(states: dict[str, str]) -> dict[str, int]:
     return counts
 
 
+def _assert_w260_projection(w260_text: str, nested: dict[str, object]) -> None:
+    w260_metrics = _section(w260_text, "observed_queue_metrics:")
+    w260_states = _bd_states(w260_text)
+    w260_counts = _classify_bd_states(w260_states)
+
+    assert len(w260_states) == 6, ("canonical W260 BD population", w260_states)
+    assert set(w260_states) == {f"BD-260.{n}" for n in range(1, 7)}
+    assert nested["bd_total"] == len(w260_states)
+    assert nested["control_count"] == w260_counts["control"]
+    assert nested["active_downstream_count"] == w260_counts["active"]
+    assert nested["blocked_count"] == w260_counts["blocked"]
+    assert nested["dormant_reentry_count"] == w260_counts["dormant"]
+
+    assert int(_scalar(w260_metrics, "total_bd_items")) == len(w260_states)
+    assert int(_scalar(w260_metrics, "done_control_watch")) == w260_counts["control"]
+    assert int(_scalar(w260_metrics, "active_prove")) == w260_counts["active"]
+    assert int(_scalar(w260_metrics, "dependency_blocked")) == w260_counts["blocked"]
+    assert int(_scalar(w260_metrics, "dormant_reentry")) == w260_counts["dormant"]
+    assert int(_scalar(w260_metrics, "executable_frontier_width")) == w260_counts["active"]
+
+    assert nested["active_downstream_owner"] is None
+    assert w260_states["BD-260.5"] == "DONE_CONTROL_WATCH"
+    assert (
+        w260_states["BD-260.6"]
+        == "NOT_REQUIRED_THIS_CYCLE_REENTER_ON_REAL_CONSUMER_NEED"
+    )
+
+
+def _self_test() -> None:
+    d = json.loads(P.read_text(encoding="utf-8"))
+    nested = d["repositories"]["GBOGEB/gg_MATH"]["nested_queue"]
+    w260_text = W260.read_text(encoding="utf-8")
+    _assert_w260_projection(w260_text, nested)
+
+    mutated = w260_text.replace(
+        "  BD-260.1:\n    state: DONE_CONTROL_WATCH",
+        "  BD-260.1:\n    state: ACTIVE_PROVE",
+        1,
+    )
+    assert mutated != w260_text
+    try:
+        _assert_w260_projection(mutated, nested)
+    except AssertionError:
+        print("PASS_FLEET_W260_CANONICAL_BD_MUTATION")
+        return
+    raise AssertionError("mutation escaped canonical W260 projection validation")
+
+
 def main():
     d = json.loads(P.read_text(encoding="utf-8"))
     w260_text = W260.read_text(encoding="utf-8")
     lm10_text = LM10.read_text(encoding="utf-8")
-    w260_metrics = _section(w260_text, "observed_queue_metrics:")
-    w260_states = _bd_states(w260_text)
-    w260_counts = _classify_bd_states(w260_states)
     lm10_frontier = _section(lm10_text, "current_development_frontier:")
 
     assert d["schema"] == "missioncontrol.fleet_open_issue_convergence.v1"
@@ -130,27 +175,7 @@ def main():
     )
 
     nested = repos["GBOGEB/gg_MATH"]["nested_queue"]
-    assert len(w260_states) == 6, ("canonical W260 BD population", w260_states)
-    assert set(w260_states) == {f"BD-260.{n}" for n in range(1, 7)}
-    assert nested["bd_total"] == len(w260_states)
-    assert nested["control_count"] == w260_counts["control"]
-    assert nested["active_downstream_count"] == w260_counts["active"]
-    assert nested["blocked_count"] == w260_counts["blocked"]
-    assert nested["dormant_reentry_count"] == w260_counts["dormant"]
-
-    assert int(_scalar(w260_metrics, "total_bd_items")) == len(w260_states)
-    assert int(_scalar(w260_metrics, "done_control_watch")) == w260_counts["control"]
-    assert int(_scalar(w260_metrics, "active_prove")) == w260_counts["active"]
-    assert int(_scalar(w260_metrics, "dependency_blocked")) == w260_counts["blocked"]
-    assert int(_scalar(w260_metrics, "dormant_reentry")) == w260_counts["dormant"]
-    assert int(_scalar(w260_metrics, "executable_frontier_width")) == w260_counts["active"]
-
-    assert nested["active_downstream_owner"] is None
-    assert w260_states["BD-260.5"] == "DONE_CONTROL_WATCH"
-    assert (
-        w260_states["BD-260.6"]
-        == "NOT_REQUIRED_THIS_CYCLE_REENTER_ON_REAL_CONSUMER_NEED"
-    )
+    _assert_w260_projection(w260_text, nested)
 
     assert _top_scalar(lm10_text, "state") == "W260_CONTROLLED_COMPLETE_REENTRY_GOVERNED"
     assert _scalar(lm10_frontier, "state") == "CONTROL_WATCH_ONLY"
@@ -174,4 +199,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+
+    if "--self-test" in sys.argv:
+        _self_test()
+    else:
+        main()
