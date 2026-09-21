@@ -32,6 +32,9 @@ jobs:
           expected="${{ github.event.pull_request.head.sha || github.sha }}"
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$expected"
+      - name: Run crew validator regression tests
+        run: |
+          python -m unittest -v mission-control/qps-triage-ultra/crew/test_validate_crew_system.py
       - name: Validate Crew Registry Competency Matrix and REX Ledger
         run: |
           python mission-control/qps-triage-ultra/crew/validate_crew_system.py \
