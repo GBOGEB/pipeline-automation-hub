@@ -1,0 +1,43 @@
+name: LM-10 W260 BD-260.5 TRIAGE
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/missions/LM-10_W260_BD260_5_PROVIDER_RECEIPT_PROJECTION_v1.json'
+      - 'mission-control/qps-triage-ultra/missions/validate_lm10_w260_bd2605.py'
+      - 'tests/test_lm10_w260_bd2605.py'
+      - '.github/workflows/lm10-w260-bd2605-triage.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/missions/LM-10_W260_BD260_5_PROVIDER_RECEIPT_PROJECTION_v1.json'
+      - 'mission-control/qps-triage-ultra/missions/validate_lm10_w260_bd2605.py'
+      - 'tests/test_lm10_w260_bd2605.py'
+      - '.github/workflows/lm10-w260-bd2605-triage.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Validate TRIAGE receipt
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python tests/test_lm10_w260_bd2605.py | tee bd2605.out
+          grep -q PASS_LM10_W260_BD260_5_TEST bd2605.out
+          python -m json.tool mission-control/qps-triage-ultra/missions/LM-10_W260_BD260_5_TRIAGE_RECEIPT_v1.json >/dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lm10-w260-bd2605-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            bd2605.out
+            mission-control/qps-triage-ultra/missions/LM-10_W260_BD260_5_TRIAGE_RECEIPT_v1.json
+          if-no-files-found: error
