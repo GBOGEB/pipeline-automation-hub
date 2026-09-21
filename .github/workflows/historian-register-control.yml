@@ -1,0 +1,93 @@
+name: MissionControl Historian Register Control
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/historian/BD_REX_CONTROL_REGISTER_v2.json'
+      - 'mission-control/historian/SPECIALIST_REPAIR_CREW_REGISTRY_v2.json'
+      - 'mission-control/historian/QTOOLS_HISTORIAN_FANIN_CLOSE_20260921_v1.json'
+      - '.github/workflows/historian-register-control.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/historian/BD_REX_CONTROL_REGISTER_v2.json'
+      - 'mission-control/historian/SPECIALIST_REPAIR_CREW_REGISTRY_v2.json'
+      - 'mission-control/historian/QTOOLS_HISTORIAN_FANIN_CLOSE_20260921_v1.json'
+      - '.github/workflows/historian-register-control.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  register-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+
+      - name: Assert checkout identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "checked_out=$(git rev-parse HEAD)"
+          echo "github_sha=${GITHUB_SHA}"
+
+      - name: Validate Historian living register and Qtools fan-in
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path("mission-control/historian")
+          reg = json.loads((root / "BD_REX_CONTROL_REGISTER_v2.json").read_text())
+          crew = json.loads((root / "SPECIALIST_REPAIR_CREW_REGISTRY_v2.json").read_text())
+          close = json.loads((root / "QTOOLS_HISTORIAN_FANIN_CLOSE_20260921_v1.json").read_text())
+
+          roots = reg["roots"]
+          open_states = {"TODO", "ACTIVE", "UNKNOWN_NEEDS_READER"}
+          open_roots = [r for r in roots if r["state"] in open_states]
+          done_or_control = [r for r in roots if r["state"] in {"DONE", "CONTROL", "SUPERSEDED", "INVALIDATED"}]
+
+          assert len(roots) == reg["bounded_sample"]["durable_bd_roots_total"] == 20
+          assert len(open_roots) == reg["bounded_sample"]["current_open_bd_roots"] == 0
+          assert len(done_or_control) == reg["bounded_sample"]["done_or_control_roots"] == 20
+          assert reg["bounded_sample"]["current_unresolved_occurrences_minimum"] == 0
+          assert reg["bounded_sample"]["active_prevention_withheld_controls"] == 0
+
+          bd20 = next(r for r in roots if r["bd_id"] == "HIST-BD-020")
+          assert bd20["state"] == "DONE"
+          assert bd20["closure"]["source_head_attribution_verified"] is True
+          assert bd20["closure"]["verification_basis"] == "SOURCE_REPO_COMMITTED_ATTESTATION"
+          assert bd20["closure"]["forged_source_head_fails_closed"] is True
+          assert any("run35579391354/job106268491087 PASS" in x for x in bd20["proof_refs"])
+          assert any("run35579436057/job106268630419 PASS" in x for x in bd20["proof_refs"])
+          assert any("Q_engineering_tools#87 CLOSED_COMPLETED" in x for x in bd20["proof_refs"])
+          assert bd20["non_compensation"]["cryoplant_issue_923"] == "INDEPENDENT_RED_OWNER_ACTION"
+          assert bd20["non_compensation"]["authority_transfer"] is False
+          assert bd20["non_compensation"]["formal_credit_delta"] == 0
+
+          by_id = {c["crew_id"]: c for c in crew["crew"]}
+          assert "HIST-BD-020" not in by_id["DOCTOR_CONTRACTS"].get("active_scope", [])
+          assert "HIST-BD-020" in by_id["DOCTOR_CONTRACTS"].get("done_scope", [])
+          assert "HIST-BD-020" not in by_id["HISTORIAN"].get("active_scope", [])
+          assert close["status"] == "PASS_QTOOLS_HISTORIAN_LOCAL_ROOTS_DRAINED"
+          assert close["qtools"]["open_local_historian_roots"] == 0
+          assert close["missioncontrol_register"]["current_open_bd_roots"] == 0
+          assert close["independent_holds"]["cryoplant_923"] == "RED_OWNER_ACTION_NON_COMPENSATING"
+          assert close["authority_transfer"] is False
+          assert close["formal_credit_delta"] == 0
+
+          print(json.dumps({
+              "status": "PASS_HISTORIAN_REGISTER_CONTROL",
+              "durable_roots": len(roots),
+              "open_roots": len(open_roots),
+              "done_or_control_roots": len(done_or_control),
+              "bd020": bd20["state"],
+              "qtools_open_local_historian_roots": close["qtools"]["open_local_historian_roots"],
+              "authority_transfer": close["authority_transfer"],
+              "formal_credit_delta": close["formal_credit_delta"],
+          }, sort_keys=True))
+          PY
