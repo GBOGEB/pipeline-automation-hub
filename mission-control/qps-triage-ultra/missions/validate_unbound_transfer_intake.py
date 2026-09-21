@@ -10,6 +10,19 @@ EXPECTED_SOURCE_HEAD = "215e96f6bec22f7d4126322007029518a4f5ac23"
 EXPECTED_ISSUE = "GBOGEB/pipeline-automation-hub#127"
 EXPECTED_QPS_CONTROL = "GBOGEB/cryoplant-project#1258"
 EXPECTED_DUP_SHA = "d7be6edd34c78574ae4bc4066a1531200d27e548d250319d43ca4c0551c34f44"
+EXPECTED_REENTRY = {
+    "trigger": "DISTINCT_MATERIALIZED_EXACT_BYTE_SOURCE_ARRIVES",
+    "steps": [
+        "PRESERVE_EXACT_SOURCE_BYTES",
+        "BIND_SHA256",
+        "RUN_EXISTING_QPS_UNBOUND_ROOT_READER",
+        "REQUIRE_SAFE_SYNTAX_STATE",
+        "RUN_EXISTING_QPS_STREAK_EVALUATOR",
+        "REJECT_EXACT_SHA_DUPLICATES_WITHOUT_INCREMENT",
+        "KEEP_AUTHORITY_TRANSFER_FALSE",
+    ],
+}
+
 EXPECTED_INVARIANTS = {
     "RAW_SOURCE_CONTENT_IS_NOT_REPLICATED_IN_MISSIONCONTROL",
     "UNKNOWN_COUNTS_REMAIN_NULL_NOT_ZERO",
@@ -92,6 +105,7 @@ def validate(doc: dict) -> dict[str, bool]:
             and queue[1].get("state") == "WAIT_EXACT_BYTE_MATERIALIZATION"
             and queue[1].get("local_missioncontrol_code_action") is False
         ),
+        "reentry_contract": doc.get("reentry_contract") == EXPECTED_REENTRY,
         "invariants": set(doc.get("invariants", [])) == EXPECTED_INVARIANTS,
         "disposition": disposition == {
             "mission_control_acceptance": "PASS_RECEIVER_CONTRACT_MATERIALIZED",
@@ -126,6 +140,14 @@ def self_test(doc: dict) -> None:
 
     candidate = copy.deepcopy(doc)
     candidate["queue"][1]["class"] = "RUNNABLE_INTERNAL"
+    mutations.append(candidate)
+
+    candidate = copy.deepcopy(doc)
+    candidate["reentry_contract"]["steps"].remove("BIND_SHA256")
+    mutations.append(candidate)
+
+    candidate = copy.deepcopy(doc)
+    candidate["reentry_contract"]["trigger"] = "ANY_REFERENCE_SEEN"
     mutations.append(candidate)
 
     for candidate in mutations:
