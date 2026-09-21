@@ -1,5 +1,5 @@
 schema: missioncontrol.official_mission_register.v1
-as_of: '2026-09-21T14:40:00+02:00'
+as_of: '2026-09-21T15:43:00+02:00'
 authority_transfer: false
 purpose: >-
   Official Mission Control index across canonical Grand Missions, governed variants,
@@ -88,10 +88,11 @@ local_missions:
     home: GBOGEB/pipeline-automation-hub
     provider: GBOGEB/gg_MATH
     primary_consumers: [GBOGEB/ABACUS, GBOGEB/cryoplant-project]
-    state: ACTIVE_DEVELOPMENT_WITH_GOVERNED_CONSUMER_BOUNDARY
+    state: W260_CONTROLLED_COMPLETE_REENTRY_GOVERNED
     completed_slices:
       - TEMPORAL_PCA_SUBSPACE_MULTICLOCK_FEDERATION_TO_REAL_KEB_ATOM
       - H05_TYPED_PEARSON_BT_PCA_BRIDGE_REFERENCE
+      - W260_BD260_1_TO_5_CONTROLLED_COMPLETE
     h05_evidence:
       provider_pr: 25
       provider_merge_sha: e43de0d57ab996b9697c7da560ea0da02fca96b7
@@ -100,8 +101,8 @@ local_missions:
       evidence_class: A3_SYNTHETIC_ONLY
       authority_transfer: false
     current_wave: W260
-    current_frontier: BD-260.5_TRIAGE_REVIEW_REPAIR_ACTIVE
-    next_sequential_slice: BD-260.5_REVIEW_CLEAN_EXACT_HEAD_AND_FRESH_MASTER_PROOF_THEN_BD260_6_DISPOSITION
+    current_frontier: NONE_CONTROL_WATCH_ONLY
+    next_sequential_slice: REENTRY_ONLY_AFTER_EXPLICIT_DEPENDENCY_READY_SELECTION
     parallel_high_pressure_slice: H07_GRAPH_EIGENSPECTRUM_GFT_FILTERS_CONTROLLED_NONBLOCKING
     w260_convergence_control: mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml
     official_control: mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml

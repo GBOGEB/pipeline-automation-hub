@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.fleet_open_issue_convergence.v1",
-  "as_of": "2026-09-21T14:41:00+02:00",
+  "as_of": "2026-09-21T15:43:00+02:00",
   "owner": "GBOGEB",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -145,26 +145,25 @@
       "source": "triage/bd_queue/QPS_OPEN_ISSUE_BD_QUEUE_CURRENT_v1.yaml; #211/#85 reopened because partial-return KEEP_OPEN predicates remain unsatisfied; prevention repair PR #1569"
     },
     "GBOGEB/pipeline-automation-hub": {
-      "head": "b41de9ac10fbd8eaa76c872f1964fcd905bae1a8",
+      "head": "a1bfe58d23a109ebfdf6e976f300b18d021ecbbb",
       "open_issues": 19,
       "control": [
-        372,
-        153,
-        85,
-        76,
-        358,
-        324,
-        308,
+        57,
+        59,
+        60,
+        61,
         63,
         64,
-        57,
-        61,
-        60,
-        59
+        76,
+        85,
+        129,
+        153,
+        308,
+        324,
+        358,
+        372
       ],
-      "active": [
-        129
-      ],
+      "active": [],
       "blocked": [
         336,
         304,
@@ -172,9 +171,9 @@
         152,
         149
       ],
-      "first_red": "PROVE: #129 LM-10 / W260 BD-260.5 TRIAGE remains the single active governed convergence frontier; PR #371 is merged.",
+      "first_red": "NONE: #129 LM-10/W260 is CONTROLLED_COMPLETE after review-clean #379 and fresh-master TRIAGE PASS; no normal executable fleet root is currently selected.",
       "local_control": "GBOGEB/pipeline-automation-hub#372",
-      "source": "GBOGEB/pipeline-automation-hub#358 current child selection plus #372 stabilization policy"
+      "source": "LM-10 W260 control: PR #379 exact-head review clean; merge a1bfe58d23a109ebfdf6e976f300b18d021ecbbb; fresh-master TRIAGE run 35602410427 PASS"
     },
     "GBOGEB/ABACUS": {
       "head": "d00fcb026bd05b8c35e6f2f30fc3192d695dcfb6",
@@ -265,24 +264,17 @@
   "fleet": {
     "open_issues": 94,
     "repositories_with_open_issues": 7,
-    "control": 31,
-    "active": 1,
+    "control": 32,
+    "active": 0,
     "blocked": 62,
-    "executable_frontier_width": 1,
-    "control_share": 0.32978723404255317,
-    "active_share": 0.010638297872340425,
+    "executable_frontier_width": 0,
+    "control_share": 0.3404255319148936,
+    "active_share": 0,
     "blocked_share": 0.6595744680851063,
-    "compression_statement": "94 open occurrences -> 31 CONTROL + 1 ACTIVE + 62 BLOCKED/RETURN/HOLD/READ",
-    "interpretation": "Only one issue surface currently justifies normal executable/proof WIP. Raw open-issue count overstates active work by 94x."
+    "compression_statement": "94 open occurrences -> 32 CONTROL + 0 ACTIVE + 62 BLOCKED/RETURN/HOLD/READ",
+    "interpretation": "No issue surface currently justifies normal executable/proof WIP. New work requires an explicit governed re-entry trigger rather than issue-count pressure."
   },
-  "active_frontiers": [
-    {
-      "repo": "GBOGEB/pipeline-automation-hub",
-      "issue": 129,
-      "kind": "PROVE",
-      "victory": "LM-10/W260 current governed convergence/receipt frontier reaches its next explicit disposition"
-    }
-  ],
+  "active_frontiers": [],
   "blocked_priority": [
     {
       "repo": "GBOGEB/cryoplant-project",
@@ -334,11 +326,11 @@
     ]
   },
   "next": [
-    "consume cryoplant #1569 post-merge proof and keep #211/#85 RETURN",
-    "drain the single active pipeline #129 governed convergence frontier",
-    "hold ABACUS successor selection until fresh recensus after #638 closure",
-    "leave CODEX/GEMINI/document-organization-system RETURN gates at zero coding allocation",
-    "repeat fleet census after pipeline #129 disposition and compute consecutive-pulse net_BD_delta"
+    "hold fleet normal executable WIP at zero until a named re-entry predicate becomes true",
+    "keep cryoplant #923 and associated owner/physical/source gates non-compensating",
+    "leave ABACUS/CODEX/GEMINI/document-organization-system RETURN gates at zero coding allocation",
+    "repeat fleet census on return, regression, dependency-ready consumer need, or explicit mission selection",
+    "retain REX-CM-005 until merge-admission review ordering is prevented rather than merely detected"
   ],
   "census_events": [
     {
@@ -392,6 +384,20 @@
         "proof_debt": 1
       },
       "disposition": "REX_CM_005_RECURRENT_MERGE_ADMISSION_NEGATIVE_EVIDENCE"
+    },
+    {
+      "event": "PIPELINE_129_W260_CONTROLLED_COMPLETE",
+      "effect": {
+        "control": 1,
+        "active": -1
+      },
+      "evidence": {
+        "pr": 379,
+        "reviewed_head": "1d8593b06d05b78e57840ef0852cac32763c1b13",
+        "review": "CLEAN_NO_MAJOR_ISSUES",
+        "merge_sha": "a1bfe58d23a109ebfdf6e976f300b18d021ecbbb",
+        "fresh_master_run": 35602410427
+      }
     }
   ],
   "proof_integrity": {
