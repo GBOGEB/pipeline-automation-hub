@@ -1,0 +1,43 @@
+{
+  "schema": "missioncontrol.historian.gemini_bd025_audit.v1",
+  "status": "ACTIVE_PROVE_PENDING",
+  "as_of": "2026-09-21",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "refresh": {
+    "repo": "GBOGEB/GEMINI",
+    "main": "c170e9039e0a3abcfd78ac1e68b741e0f1743617",
+    "source_prs": [
+      27,
+      29,
+      30
+    ],
+    "source_issue": 28
+  },
+  "current_code_confirmation": {
+    "implementation_present": true,
+    "cycle_detector_blob": "dcaafc01d2a57248a5dfba09623a14cf04aedc87",
+    "merged_proof_fixture_defect": true,
+    "package_test_blob": "93ca967284276d5b4cfb89851e1c10d087fd3c30",
+    "batch_test_blob": "6d4da309237916ed5f563020664b281877cad289"
+  },
+  "root": {
+    "bd_id": "HIST-BD-025",
+    "semantic_signature": "cyclic_yaml_alias_cycle_detector_not_exercised_by_type_coerced_proof_fixture",
+    "recurrence": false,
+    "rex_promotion": false,
+    "state": "ACTIVE_PROVE_PENDING"
+  },
+  "repair": {
+    "pr": 30,
+    "head": "92780d2f1a91943130f6f8f06fb54c1964830257",
+    "scope": "test-only quote generated_at in cyclic and repeated-alias YAML fixtures",
+    "current_head_review": "PASS_NO_MAJOR_ISSUES"
+  },
+  "required_proof": [
+    "GMI Handover Fail-Closed Tests",
+    "GM-I-C Ingress and Handover Contract Tests",
+    "current-head review clean",
+    "merged/current-main survival"
+  ]
+}
