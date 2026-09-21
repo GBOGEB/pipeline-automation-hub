@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.fleet_open_issue_convergence.v1",
-  "as_of": "2026-09-21T15:43:00+02:00",
+  "as_of": "2026-09-21T16:28:00+02:00",
   "owner": "GBOGEB",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -24,15 +24,14 @@
   },
   "repositories": {
     "GBOGEB/cryoplant-project": {
-      "head": "4a2641ab414bdeecc3e67007b42c77cd41e04684",
-      "open_issues": 55,
+      "head": "d895fc51bed0c92b941e2e74c7ae733bbdd35544",
+      "open_issues": 54,
       "control": [
         1063,
         1379,
         481,
         248,
         704,
-        199,
         416,
         207,
         1101
@@ -140,12 +139,12 @@
           85
         ]
       },
-      "first_red": "RETURN: #923 owner-side private-repo Actions admission; #211/#85 are valid partial-return reentries and remain RETURN/KEEP_OPEN.",
+      "first_red": "RETURN: #923 owner-side private-repo Actions admission; all 54 live obligations are classified and no repo-local FIX_NOW exists.",
       "local_control": "GBOGEB/cryoplant-project#481",
-      "source": "triage/bd_queue/QPS_OPEN_ISSUE_BD_QUEUE_CURRENT_v1.yaml; #211/#85 reopened because partial-return KEEP_OPEN predicates remain unsatisfied; prevention repair PR #1569"
+      "source": "triage/bd_queue/QPS_OPEN_ISSUE_BD_QUEUE_CURRENT_v1.yaml @ 2026-09-21T15:26:49+02:00; issue #199 contracted SUPERSEDED_CLOSE into #481; 54/54 classified; repo_local_fix_now=0"
     },
     "GBOGEB/pipeline-automation-hub": {
-      "head": "a1bfe58d23a109ebfdf6e976f300b18d021ecbbb",
+      "head": "d86c7dcaaa23928f3d67ee72e0e9c58f55dd4469",
       "open_issues": 19,
       "control": [
         57,
@@ -171,22 +170,23 @@
         152,
         149
       ],
-      "first_red": "NONE: #129 LM-10/W260 is CONTROLLED_COMPLETE after review-clean #379 and fresh-master TRIAGE PASS; no normal executable fleet root is currently selected.",
+      "first_red": "NONE locally: #129 LM-10/W260 is CONTROLLED_COMPLETE; post-#380 projection inconsistencies are repaired in the current MissionControl sync.",
       "local_control": "GBOGEB/pipeline-automation-hub#372",
-      "source": "LM-10 W260 control: PR #379 exact-head review clean; merge a1bfe58d23a109ebfdf6e976f300b18d021ecbbb; fresh-master TRIAGE run 35602410427 PASS"
+      "source": "PR #380 merged W260 CONTROL state; post-merge Codex P1s repaired by this projection sync. #129 remains CONTROL."
     },
     "GBOGEB/ABACUS": {
-      "head": "d00fcb026bd05b8c35e6f2f30fc3192d695dcfb6",
+      "head": "6b0d6743907dd77d84900d61197d493a5596ac87",
       "open_issues": 12,
       "control": [
         633,
-        776,
         667,
         1164,
         785,
         981
       ],
-      "active": [],
+      "active": [
+        776
+      ],
       "blocked": [
         1278,
         1002,
@@ -195,9 +195,9 @@
         637,
         644
       ],
-      "first_red": "No normal repo-local coding frontier selected after #638 closure; #1278 and GOV-001 local/physical gates remain RETURN/HOLD. Re-census before successor selection.",
+      "first_red": "PROVE: #776 / PR #1325 merged concurrency repair; exact-head review and fresh-main/post-merge branch-push coalescing evidence are still required before CONTROL.",
       "local_control": "GBOGEB/ABACUS#633",
-      "source": "GOV-001 current-source S1/S2 scan: #638 source-side Phase 5 closed; #776 CONTROL watch; #1164 controlled negative/evidence-blocked; #1278 OWNER_ADMIN_GATE"
+      "source": "ABACUS #776 MIP-STABILIZE S2 transition; PR #1325 merged 6b0d6743907dd77d84900d61197d493a5596ac87; post-merge DOW/CD/CI runs are executing."
     },
     "GBOGEB/CODEX": {
       "head": "d6418f60b1082acb15eec14eb21df96488dce590",
@@ -239,12 +239,14 @@
       "nested_queue": {
         "issue": 27,
         "bd_total": 6,
-        "control_count": 4,
-        "active_downstream_count": 1,
-        "blocked_count": 1,
-        "active_downstream_owner": "GBOGEB/pipeline-automation-hub#129"
+        "control_count": 5,
+        "active_downstream_count": 0,
+        "blocked_count": 0,
+        "dormant_reentry_count": 1,
+        "dormant_reentry": "BD-260.6_OPTIONAL_FEDERATION_REENTER_ON_REAL_CONSUMER_NEED",
+        "active_downstream_owner": null
       },
-      "first_red": "No repo-local coding frontier. W260 provider work is CONTROL; downstream BD-260.5 TRIAGE is owned by MissionControl.",
+      "first_red": "No repo-local coding frontier. BD-260.1 through BD-260.5 are CONTROL; BD-260.6 is dormant re-entry only.",
       "local_control": "GBOGEB/gg_MATH#27",
       "source": "LM-10 W260 provider queue and fresh-main BD-260.4 proof"
     },
@@ -262,19 +264,28 @@
     }
   },
   "fleet": {
-    "open_issues": 94,
+    "open_issues": 93,
     "repositories_with_open_issues": 7,
-    "control": 32,
-    "active": 0,
+    "control": 30,
+    "active": 1,
     "blocked": 62,
-    "executable_frontier_width": 0,
-    "control_share": 0.3404255319148936,
-    "active_share": 0,
-    "blocked_share": 0.6595744680851063,
-    "compression_statement": "94 open occurrences -> 32 CONTROL + 0 ACTIVE + 62 BLOCKED/RETURN/HOLD/READ",
-    "interpretation": "No issue surface currently justifies normal executable/proof WIP. New work requires an explicit governed re-entry trigger rather than issue-count pressure."
+    "executable_frontier_width": 1,
+    "control_share": 0.3225806451612903,
+    "active_share": 0.010752688172043012,
+    "blocked_share": 0.6666666666666666,
+    "compression_statement": "93 open occurrences -> 30 CONTROL + 1 ACTIVE + 62 BLOCKED/RETURN/HOLD/READ",
+    "interpretation": "The sole normal executable/proof root is ABACUS #776 post-merge concurrency verification. All other live issue surfaces are CONTROL or named RETURN/HOLD/BLOCKED gates."
   },
-  "active_frontiers": [],
+  "active_frontiers": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue": 776,
+      "kind": "PROVE",
+      "evidence_pr": 1325,
+      "merge_sha": "6b0d6743907dd77d84900d61197d493a5596ac87",
+      "victory": "exact-head review clean plus fresh-main/post-merge evidence that superseded same-ref unified-CD branch pushes coalesce while tag/schedule/manual executions remain preserved"
+    }
+  ],
   "blocked_priority": [
     {
       "repo": "GBOGEB/cryoplant-project",
@@ -326,11 +337,11 @@
     ]
   },
   "next": [
-    "hold fleet normal executable WIP at zero until a named re-entry predicate becomes true",
-    "keep cryoplant #923 and associated owner/physical/source gates non-compensating",
-    "leave ABACUS/CODEX/GEMINI/document-organization-system RETURN gates at zero coding allocation",
-    "repeat fleet census on return, regression, dependency-ready consumer need, or explicit mission selection",
-    "retain REX-CM-005 until merge-admission review ordering is prevented rather than merely detected"
+    "consume ABACUS #1325 exact-head Codex review and remaining CI results",
+    "measure post-merge unified-CD branch-push queue coalescing for #776 before CONTROL promotion",
+    "keep LM-10 W260 and #129 on CONTROL watch; BD-260.6 remains dormant re-entry only",
+    "keep cryoplant #923 and all owner/physical/source returns non-compensating",
+    "repeat fleet census after #776 PROVE disposition or any authoritative external return"
   ],
   "census_events": [
     {
@@ -398,6 +409,29 @@
         "merge_sha": "a1bfe58d23a109ebfdf6e976f300b18d021ecbbb",
         "fresh_master_run": 35602410427
       }
+    },
+    {
+      "event": "CRYOPLANT_199_SUPERSEDED_CLOSE",
+      "effect": {
+        "open_issues": -1,
+        "control": -1
+      },
+      "evidence": {
+        "successor": 481,
+        "local_queue_open_issues": 54,
+        "formal_credit_delta": 0
+      }
+    },
+    {
+      "event": "ABACUS_776_REENTERED_PROVE_VIA_PR1325",
+      "effect": {
+        "control": -1,
+        "active": 1
+      },
+      "evidence": {
+        "pr": 1325,
+        "merge_sha": "6b0d6743907dd77d84900d61197d493a5596ac87"
+      }
     }
   ],
   "proof_integrity": {
@@ -410,6 +444,13 @@
     "review_finding": "recensus timestamp was newer than pipeline row head b82097e; row must bind post-#373 master",
     "merge_sha": "b41de9ac10fbd8eaa76c872f1964fcd905bae1a8",
     "disposition": "FIX_FORWARD_SAME_REX_CM_005_MERGE_ADMISSION_RECURRENCE",
-    "new_bd_root": false
+    "new_bd_root": false,
+    "current_pr": 380,
+    "current_merge_sha": "d86c7dcaaa23928f3d67ee72e0e9c58f55dd4469",
+    "current_review_findings": [
+      "LM-10_MISSION_CONTROL_v3 retained BD260_5_TRIAGE_ACTIVE_PROVE after W260 CONTROL promotion",
+      "gg_MATH nested W260 queue retained 4 CONTROL + 1 active + 1 blocked after BD-260.5 completion"
+    ],
+    "current_disposition": "FIX_FORWARD_SAME_REX_CM_005_PROJECTION_CONSISTENCY_REPAIR"
   }
 }
