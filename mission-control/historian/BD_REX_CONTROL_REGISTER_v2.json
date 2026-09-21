@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-21T11:04:00+02:00",
+  "as_of": "2026-09-21T11:02:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -9,7 +9,7 @@
   "historian_parent_issue": 76,
   "runner_economics_issue": 79,
   "bounded_sample": {
-    "audited_prs_minimum": 25,
+    "audited_prs_minimum": 34,
     "review_finding_occurrences_observed_cumulative": 44,
     "durable_bd_roots_total": 24,
     "current_open_bd_roots": 0,
@@ -640,23 +640,39 @@
       ],
       "source_prs": [
         776,
-        781
+        781,
+        787
       ],
       "source_issues": [
         779
       ],
       "rex_control_id": null,
       "crew_owner": [
+        "Doctor.Contracts",
         "HISTORIAN",
         "QA_SIGNALMAN"
       ],
-      "proof_refs": [
-        "CODEX#781 final head 526fe960b37376e535f2da25d1892356de529130",
-        "CI run35579721478/job106269525882 Run tests PASS >0 steps",
-        "merge@b8d11d831e1aa070860a01f8519f311cd71c3da7",
-        "CODEX#779 CLOSED_COMPLETED"
+      "prove_state": "PASS_EXACT_HEAD_POSTMERGE",
+      "current_code_evidence": [
+        "static.yml persist-credentials=false",
+        "artifact upload excludes .git and .git/**",
+        "test_static_candidate_artifact_scope.py"
       ],
-      "done_when": "SATISFIED"
+      "negative_evidence": [
+        "PR#781 merged before dedicated Wave-A proof suite fully closed"
+      ],
+      "done_when": "SATISFIED",
+      "proof_refs": [
+        "CODEX#787@cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+        "merge@954f0fd95b1360830f38a082422340a02206a4b7",
+        "run35580291171/job106271355721 W003 PASS",
+        "run35580291195/job106271357265 CI PASS",
+        "run35580291155/job106271356609 W286 3PC Prove PASS",
+        "run35580291121/job106271356218 GM-I-A PASS",
+        "run35580291180/job106271356487 Validate Federation PASS",
+        "Codex current-head review cbd28b8c88: no major issues",
+        "current CODEX main d0f4e83e66bedc512e077ac05ac2ba8f289a530f survival confirmed"
+      ]
     },
     {
       "bd_id": "HIST-BD-022",
@@ -671,7 +687,6 @@
       "source_prs": [
         775,
         781,
-        786,
         785,
         787
       ],
@@ -684,37 +699,45 @@
         "HISTORIAN",
         "QA_SIGNALMAN"
       ],
-      "proof_refs": [
-        "CODEX#781 semantic repair merged@b8d11d831e1aa070860a01f8519f311cd71c3da7",
-        "CI run35579721478/job106269525882 tests PASS",
-        "dedicated bridge run35579721479 failed before semantics: ModuleNotFoundError ruamel",
-        "CODEX#786 head 92e7728b283ffea958b7df85a4d55e283b371e7b installs dedicated ruamel.yaml runtime dependency",
-        "CODEX#786 dedicated run35580095011/job106270722615 QUEUED",
-        "CODEX#785 head 6e309c16bcb3184a8c4a2e441a1bf5ef08e5fe15 dedicated GM-I-A run35579949228 PASS after pinned ruamel dependency",
-        "CODEX#787 exact closure head cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
-        "run35580291121/job106271356218 GM-I-A candidate-only bridge PASS >0 steps",
-        "run35580291195/job106271357265 full CI PASS",
-        "run35580291171/job106271355721 W003 governance PASS",
-        "merge@954f0fd95b1360830f38a082422340a02206a4b7",
-        "current CODEX main d0f4e83e66bedc512e077ac05ac2ba8f289a530f survival confirmed",
-        "CODEX#780 CLOSED_COMPLETED"
+      "prove_state": "PASS_EXACT_HEAD_POSTMERGE",
+      "current_code_evidence": [
+        "bridge loaded fail-closed",
+        "KEB_KNOWLEDGE_ATOM_CANDIDATE",
+        "PASS_VALIDATED_CANDIDATE",
+        "canonical_keb_atom=false",
+        "pinned ruamel dependency in dedicated workflow"
       ],
-      "first_red": "SATISFIED",
-      "done_when": "SATISFIED"
+      "negative_evidence": [
+        "run35579721479 failed: ruamel.yaml missing",
+        "PR#785 dedicated GM-I-A run35579949228 PASS but W003 metadata red due missing SPRINT"
+      ],
+      "done_when": "SATISFIED",
+      "proof_refs": [
+        "CODEX#787@cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+        "merge@954f0fd95b1360830f38a082422340a02206a4b7",
+        "run35580291171/job106271355721 W003 PASS",
+        "run35580291195/job106271357265 CI PASS",
+        "run35580291155/job106271356609 W286 3PC Prove PASS",
+        "run35580291121/job106271356218 GM-I-A PASS",
+        "run35580291180/job106271356487 Validate Federation PASS",
+        "Codex current-head review cbd28b8c88: no major issues",
+        "current CODEX main d0f4e83e66bedc512e077ac05ac2ba8f289a530f survival confirmed"
+      ]
     },
     {
       "bd_id": "HIST-BD-023",
-      "title": "Fail closed on GLOOB/Pandoc identity and authority drift",
+      "title": "Fail closed on GLOOB/Pandoc identity, structure and named authority drift",
       "class": "FEDERATION_CONTRACT_VALIDATION",
       "severity": "P1",
       "state": "DONE",
-      "occurrence_count": 1,
+      "occurrence_count": 2,
       "repos": [
         "GBOGEB/CODEX"
       ],
       "source_prs": [
         771,
-        784
+        784,
+        787
       ],
       "source_issues": [
         782
@@ -725,13 +748,29 @@
         "HISTORIAN",
         "QA_SIGNALMAN"
       ],
-      "proof_refs": [
-        "CODEX#784 final rebased head 2ce5bb623b71dc943ef84cbf63115f2e46d69c6f",
-        "CI run35579974567/job106270338097 Run tests PASS >0 steps",
-        "merge@aed29cb389a8640af26bb3900d8bc8f2e4b15b4b",
-        "CODEX#782 CLOSED_COMPLETED"
+      "prove_state": "PASS_EXACT_HEAD_POSTMERGE",
+      "current_code_evidence": [
+        "explicit require()",
+        "lowercase 40-hex identities",
+        "exact authority ownership/prohibition sets",
+        "non-mapping consumer entries rejected",
+        "negative mutation regressions"
       ],
-      "done_when": "SATISFIED"
+      "negative_evidence": [
+        "PR#784 Codex P1 found non-object consumer escape; same semantic root, not new BD"
+      ],
+      "done_when": "SATISFIED",
+      "proof_refs": [
+        "CODEX#787@cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+        "merge@954f0fd95b1360830f38a082422340a02206a4b7",
+        "run35580291171/job106271355721 W003 PASS",
+        "run35580291195/job106271357265 CI PASS",
+        "run35580291155/job106271356609 W286 3PC Prove PASS",
+        "run35580291121/job106271356218 GM-I-A PASS",
+        "run35580291180/job106271356487 Validate Federation PASS",
+        "Codex current-head review cbd28b8c88: no major issues",
+        "current CODEX main d0f4e83e66bedc512e077ac05ac2ba8f289a530f survival confirmed"
+      ]
     },
     {
       "bd_id": "HIST-BD-024",
@@ -745,7 +784,8 @@
       ],
       "source_prs": [
         772,
-        784
+        784,
+        787
       ],
       "source_issues": [
         783
@@ -756,13 +796,24 @@
         "HISTORIAN",
         "QA_SIGNALMAN"
       ],
-      "proof_refs": [
-        "CODEX#784 final rebased head 2ce5bb623b71dc943ef84cbf63115f2e46d69c6f",
-        "CI run35579974567/job106270338097 Run tests PASS >0 steps",
-        "merge@aed29cb389a8640af26bb3900d8bc8f2e4b15b4b",
-        "CODEX#783 CLOSED_COMPLETED"
+      "prove_state": "PASS_EXACT_HEAD_POSTMERGE",
+      "current_code_evidence": [
+        "exact source repo/issue/PR/merge binding",
+        "exact corpus name/digest binding",
+        "mutation regressions"
       ],
-      "done_when": "SATISFIED"
+      "done_when": "SATISFIED",
+      "proof_refs": [
+        "CODEX#787@cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+        "merge@954f0fd95b1360830f38a082422340a02206a4b7",
+        "run35580291171/job106271355721 W003 PASS",
+        "run35580291195/job106271357265 CI PASS",
+        "run35580291155/job106271356609 W286 3PC Prove PASS",
+        "run35580291121/job106271356218 GM-I-A PASS",
+        "run35580291180/job106271356487 Validate Federation PASS",
+        "Codex current-head review cbd28b8c88: no major issues",
+        "current CODEX main d0f4e83e66bedc512e077ac05ac2ba8f289a530f survival confirmed"
+      ]
     }
   ],
   "control_measures": [
@@ -834,8 +885,8 @@
         "main branch observed protected=false",
         "branch protection endpoint -> 403 Resource not accessible by integration",
         "check-run policy-and-inventory job105622495352 PASS",
-        "CODEX#787 merged@954f0fd95b1360830f38a082422340a02206a4b7 while required closure checks were queued",
-        "CODEX#787 post-merge exact-head cbd28b8c88c85789ccc4f5be3bd8942540a60f1a later PASS; post-merge green does not prove merge prevention"
+        "CODEX#787 merged@954f0fd95b1360830f38a082422340a02206a4b7 while exact-head closure checks were queued",
+        "post-merge exact-head closure on cbd28b8c88c85789ccc4f5be3bd8942540a60f1a later PASS; post-merge green does not prove merge prevention"
       ],
       "execution_boundary": {
         "classification": "REPOSITORY_ADMIN_MERGE_ADMISSION",
