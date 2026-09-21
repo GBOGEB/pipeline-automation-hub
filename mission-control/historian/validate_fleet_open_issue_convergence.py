@@ -31,7 +31,7 @@ def main():
     assert f["executable_frontier_width"]==1
     assert abs(f["control_share"]-31/94)<1e-10
     assert abs(f["active_share"]-1/94)<1e-10
-    assert abs(f["blocked_share"]-61/94)<1e-10
+    assert abs(f["blocked_share"]-62/94)<1e-10
     assert sum(len(row["active"]) for row in repos.values())==1
     assert repos["GBOGEB/cryoplant-project"]["open_issues"]==55
     assert len(repos["GBOGEB/cryoplant-project"]["blocked_breakdown"]["external_source_decision_return"])==32
