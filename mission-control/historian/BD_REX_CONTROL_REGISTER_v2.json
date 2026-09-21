@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-21T10:46:00+02:00",
+  "as_of": "2026-09-21T10:56:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -9,11 +9,11 @@
   "historian_parent_issue": 76,
   "runner_economics_issue": 79,
   "bounded_sample": {
-    "audited_prs_minimum": 25,
-    "review_finding_occurrences_observed_cumulative": 40,
-    "durable_bd_roots_total": 20,
-    "current_open_bd_roots": 0,
-    "current_unresolved_occurrences_minimum": 0,
+    "audited_prs_minimum": 34,
+    "review_finding_occurrences_observed_cumulative": 44,
+    "durable_bd_roots_total": 24,
+    "current_open_bd_roots": 4,
+    "current_unresolved_occurrences_minimum": 4,
     "done_or_control_roots": 20,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
@@ -627,6 +627,149 @@
         "formal_credit_delta": 0,
         "authority_transfer": false
       }
+    },
+    {
+      "bd_id": "HIST-BD-021",
+      "title": "Exclude checkout metadata from static candidate artifacts",
+      "class": "ARTIFACT_SCOPE_SECURITY",
+      "severity": "P2",
+      "state": "ACTIVE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "source_prs": [
+        776,
+        781,
+        787
+      ],
+      "source_issues": [
+        779
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "prove_state": "PROVE_PENDING_RUNNER_ADMISSION",
+      "current_code_evidence": [
+        "static.yml persist-credentials=false",
+        "artifact upload excludes .git and .git/**",
+        "test_static_candidate_artifact_scope.py"
+      ],
+      "negative_evidence": [
+        "PR#781 merged before dedicated Wave-A proof suite fully closed"
+      ],
+      "done_when": "Exact-head closure CI passes >0 steps and merged/current code preserves artifact-scope controls"
+    },
+    {
+      "bd_id": "HIST-BD-022",
+      "title": "Keep GM-I-A KEB output at candidate status",
+      "class": "AUTHORITY_PROMOTION_BOUNDARY",
+      "severity": "P1",
+      "state": "ACTIVE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "source_prs": [
+        775,
+        781,
+        785,
+        787
+      ],
+      "source_issues": [
+        780
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "prove_state": "PROVE_PENDING_RUNNER_ADMISSION",
+      "current_code_evidence": [
+        "bridge loaded fail-closed",
+        "KEB_KNOWLEDGE_ATOM_CANDIDATE",
+        "PASS_VALIDATED_CANDIDATE",
+        "canonical_keb_atom=false",
+        "pinned ruamel dependency in dedicated workflow"
+      ],
+      "negative_evidence": [
+        "run35579721479 failed: ruamel.yaml missing",
+        "PR#785 dedicated GM-I-A run35579949228 PASS but W003 metadata red due missing SPRINT"
+      ],
+      "done_when": "Closure-head GM-I-A proof and CI/W003 execute >0 steps and pass; merged/current code survives"
+    },
+    {
+      "bd_id": "HIST-BD-023",
+      "title": "Fail closed on GLOOB/Pandoc identity, structure and named authority drift",
+      "class": "FEDERATION_CONTRACT_VALIDATION",
+      "severity": "P1",
+      "state": "ACTIVE",
+      "occurrence_count": 2,
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "source_prs": [
+        771,
+        784,
+        787
+      ],
+      "source_issues": [
+        782
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "prove_state": "PROVE_PENDING_RUNNER_ADMISSION",
+      "current_code_evidence": [
+        "explicit require()",
+        "lowercase 40-hex identities",
+        "exact authority ownership/prohibition sets",
+        "non-mapping consumer entries rejected",
+        "negative mutation regressions"
+      ],
+      "negative_evidence": [
+        "PR#784 Codex P1 found non-object consumer escape; same semantic root, not new BD"
+      ],
+      "done_when": "Closure-head W286/CI/W003 proof passes >0 steps and current-head Codex review is clean"
+    },
+    {
+      "bd_id": "HIST-BD-024",
+      "title": "Pin W286 visual-golden validation to declared source fixture",
+      "class": "FEDERATION_PROVENANCE_BINDING",
+      "severity": "P1",
+      "state": "ACTIVE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "source_prs": [
+        772,
+        784,
+        787
+      ],
+      "source_issues": [
+        783
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "prove_state": "PROVE_PENDING_RUNNER_ADMISSION",
+      "current_code_evidence": [
+        "exact source repo/issue/PR/merge binding",
+        "exact corpus name/digest binding",
+        "mutation regressions"
+      ],
+      "done_when": "Closure-head CI/federation proof passes >0 steps and merged/current code survives"
     }
   ],
   "control_measures": [
@@ -717,8 +860,23 @@
   "open_priority": [
     {
       "rank": 1,
-      "bd_id": "HIST-BD-020",
-      "reason": "safe attribution withholding is proven, but private source-head ownership of mirrored payload remains unverified"
+      "bd_id": "HIST-BD-022",
+      "reason": "P1 authority-promotion boundary repaired; closure proof queued without runner admission"
+    },
+    {
+      "rank": 2,
+      "bd_id": "HIST-BD-023",
+      "reason": "P1 federation fail-closed validator repaired including post-merge Codex finding; closure proof queued"
+    },
+    {
+      "rank": 3,
+      "bd_id": "HIST-BD-024",
+      "reason": "P1 source/corpus provenance binding repaired; closure proof queued"
+    },
+    {
+      "rank": 4,
+      "bd_id": "HIST-BD-021",
+      "reason": "P2 artifact-scope security repair present; closure proof queued"
     }
   ],
   "external_non_compensating_gates": [
@@ -730,9 +888,9 @@
     }
   ],
   "next_deep_dive_order": [
-    "GBOGEB/CODEX",
-    "next fleet candidate from Historian fanout",
-    "return to Q_engineering_tools when BD020 source-attestation/access predicate changes"
+    "F2 current mission repo selected from measured Historian pressure after CODEX closure",
+    "return to CODEX only on closure first-red or observed regression",
+    "cryoplant-project#923 remains separate owner runner-admission lane"
   ],
   "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE",
   "control_priority": [
