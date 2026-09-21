@@ -111,15 +111,15 @@ def main():
         assert len(a) <= 1, (repo, "active WIP cap")
 
     f = d["fleet"]
-    assert (total, control, active, blocked) == (93, 30, 1, 62)
-    assert (f["open_issues"], f["control"], f["active"], f["blocked"]) == (93, 30, 1, 62)
-    assert f["executable_frontier_width"] == 1
-    assert abs(f["control_share"] - 30 / 93) < 1e-10
-    assert abs(f["active_share"] - 1 / 93) < 1e-10
-    assert abs(f["blocked_share"] - 62 / 93) < 1e-10
-    assert sum(len(row["active"]) for row in repos.values()) == 1
+    assert (total, control, active, blocked) == (94, 31, 0, 63)
+    assert (f["open_issues"], f["control"], f["active"], f["blocked"]) == (94, 31, 0, 63)
+    assert f["executable_frontier_width"] == 0
+    assert abs(f["control_share"] - 31 / 94) < 1e-10
+    assert f["active_share"] == 0
+    assert abs(f["blocked_share"] - 63 / 94) < 1e-10
+    assert sum(len(row["active"]) for row in repos.values()) == 0
 
-    assert repos["GBOGEB/cryoplant-project"]["open_issues"] == 54
+    assert repos["GBOGEB/cryoplant-project"]["open_issues"] == 55
     assert (
         len(
             repos["GBOGEB/cryoplant-project"]["blocked_breakdown"][
@@ -160,17 +160,15 @@ def main():
         == "NOT_REQUIRED_THIS_CYCLE_REENTER_ON_REAL_CONSUMER_NEED"
     )
 
-    assert repos["GBOGEB/ABACUS"]["active"] == [776]
+    assert repos["GBOGEB/ABACUS"]["active"] == []
+    assert 1313 in repos["GBOGEB/ABACUS"]["blocked"]
+    assert 1593 in repos["GBOGEB/cryoplant-project"]["control"]
     assert d["proof_integrity"]["prior_result"] == "FAIL"
     assert d["proof_integrity"]["new_bd_root"] is False
     assert 129 in repos["GBOGEB/pipeline-automation-hub"]["control"]
-    assert len(d["active_frontiers"]) == 1
-    frontier = d["active_frontiers"][0]
-    assert frontier["repo"] == "GBOGEB/ABACUS"
-    assert frontier["issue"] == 776
-    assert frontier["kind"] == "PROVE"
+    assert d["active_frontiers"] == []
 
-    print("PASS_FLEET_OPEN_ISSUE_CONVERGENCE_93_30_1_62")
+    print("PASS_FLEET_OPEN_ISSUE_CONVERGENCE_94_31_0_63")
 
 
 if __name__ == "__main__":
