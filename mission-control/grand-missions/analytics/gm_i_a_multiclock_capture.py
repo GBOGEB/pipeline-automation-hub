@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+# RUNNER_FANOUT_AFTER_PROBE: comment-only trigger; no semantic behavior change.
+
 import argparse
 import json
 import os
