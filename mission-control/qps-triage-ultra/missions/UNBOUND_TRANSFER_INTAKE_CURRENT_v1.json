@@ -1,0 +1,136 @@
+{
+  "schema": "missioncontrol.unbound_transfer_intake_current.v1",
+  "as_of": "2026-09-21T09:44:00+02:00",
+  "mission_control_issue": "GBOGEB/pipeline-automation-hub#127",
+  "burn_down_parent": "GBOGEB/pipeline-automation-hub#358",
+  "authority_transfer": false,
+  "formal_credit_delta": {
+    "engineering": 0,
+    "compliance": 0,
+    "negotiation": 0,
+    "acceptance": 0,
+    "release": 0,
+    "runtime_gold": 0
+  },
+  "source_authority": {
+    "repo": "GBOGEB/cryoplant-project",
+    "exact_head": "215e96f6bec22f7d4126322007029518a4f5ac23",
+    "qtg_current": "handover/qps_recursive/QTG_CURRENT.yaml",
+    "global_bd_current": "controls/QPS_GLOBAL_BD_CURRENT_v0.1.yaml",
+    "root_input_contract": "controls/QPS_ROOT_UNBOUND_INPUT_LEGS6_9_v0.1.yaml",
+    "structured_selector": "triage/control/QPS_ROOT_STRUCTURED_INPUT_SELECTOR_REFRESH_20260921_v0.1.yaml",
+    "leg5_ledger": "triage/w249/QPS_W249_LEG5_TXT_ASSIMILATION_CONSUMPTION_LEDGER_v0.5.yaml",
+    "control_issue": "GBOGEB/cryoplant-project#1258"
+  },
+  "scout_reader_census": {
+    "leg5_txt_log": {
+      "state": "CONTROL_5_OF_5_REAL_PROCESS_ONLY",
+      "accessible_txt_census_observed": 214,
+      "unique_reader_objects_observed": 30,
+      "exact_sha_family_count": null,
+      "exact_sha_family_count_reason": "NOT_REPORTED_AS_A_COMPLETE_CORPUS_DENOMINATOR",
+      "duplicate_alias_count": null,
+      "duplicate_alias_count_reason": "DUPLICATE_PRESSURE_DOMINANT_BUT_COMPLETE_ALIAS_COUNT_NOT_PUBLISHED",
+      "duplicate_policy": "EXACT_DIGEST_AND_SEMANTIC_COLLAPSE_BEFORE_EVIDENCE_COUNT",
+      "known_duplicate_family_example": {
+        "sha256": "d7be6edd34c78574ae4bc4066a1531200d27e548d250319d43ca4c0551c34f44",
+        "aliases": [
+          "LKT points_nego_gbo_0409_1527.txt",
+          "LKT points_nego_gbo_0409_1527(1).txt"
+        ],
+        "credit_delta": 0
+      },
+      "quarantined_secret_risk_source_count": null,
+      "quarantined_secret_risk_source_count_reason": "POLICY_BOUND_BUT_COMPLETE_COUNT_NOT_PUBLISHED",
+      "secret_policy": "QUARANTINE_DO_NOT_PROPAGATE_RAW",
+      "tracked_owner_routes": 9,
+      "closed_routes": 7,
+      "open_routes": 2,
+      "downstream_state": "ACTIVE_BURNDOWN_7_OF_9_CLOSED",
+      "curation_disposition": "ROUTE_ATOMIC_CURATED_OBJECT_TO_OWNER_RAW_TRANSCRIPT_NOT_AUTHORITY"
+    },
+    "leg6_markdown": {
+      "extensions": [
+        ".md",
+        ".markdown"
+      ],
+      "state": "CONTROL_5_OF_5_PROCESS_ONLY",
+      "binding_state": "UNBOUND_BY_DEFAULT",
+      "authority_created": false,
+      "next": "CLOSED_UNLESS_REGRESSION"
+    },
+    "leg7_json": {
+      "extensions": [
+        ".json"
+      ],
+      "state": "IMPROVE_WAIT_EXACT_BYTES",
+      "streak": "1_OF_5",
+      "increment_this_refresh": 0,
+      "runnable_now": false
+    },
+    "leg8_yaml": {
+      "extensions": [
+        ".yaml"
+      ],
+      "state": "IMPROVE_WAIT_EXACT_BYTES",
+      "streak": "1_OF_5",
+      "increment_this_refresh": 0,
+      "runnable_now": false
+    },
+    "leg9_yml": {
+      "extensions": [
+        ".yml"
+      ],
+      "state": "IMPROVE_WAIT_EXACT_BYTES",
+      "streak": "1_OF_5",
+      "increment_this_refresh": 0,
+      "runnable_now": false
+    }
+  },
+  "queue": [
+    {
+      "rank": 1,
+      "item": "LEG5_DOWNSTREAM_OWNER_ROUTE_CLOSURE",
+      "class": "CONTROL_BURNDOWN",
+      "state": "7_OF_9_CLOSED",
+      "next": "QPS_RUNTIME_ADMISSION_THEN_UNCHANGED_OWNER_VALIDATORS",
+      "local_missioncontrol_code_action": false
+    },
+    {
+      "rank": 2,
+      "item": "ROOT_JSON_YAML_YML_INTAKE",
+      "class": "EXTERNAL_RETURN",
+      "state": "WAIT_EXACT_BYTE_MATERIALIZATION",
+      "next": "DISTINCT_MATERIALIZED_EXACT_BYTE_SOURCE_ARRIVES",
+      "local_missioncontrol_code_action": false
+    }
+  ],
+  "reentry_contract": {
+    "trigger": "DISTINCT_MATERIALIZED_EXACT_BYTE_SOURCE_ARRIVES",
+    "steps": [
+      "PRESERVE_EXACT_SOURCE_BYTES",
+      "BIND_SHA256",
+      "RUN_EXISTING_QPS_UNBOUND_ROOT_READER",
+      "REQUIRE_SAFE_SYNTAX_STATE",
+      "RUN_EXISTING_QPS_STREAK_EVALUATOR",
+      "REJECT_EXACT_SHA_DUPLICATES_WITHOUT_INCREMENT",
+      "KEEP_AUTHORITY_TRANSFER_FALSE"
+    ]
+  },
+  "invariants": [
+    "RAW_SOURCE_CONTENT_IS_NOT_REPLICATED_IN_MISSIONCONTROL",
+    "UNKNOWN_COUNTS_REMAIN_NULL_NOT_ZERO",
+    "FORMAT_OR_LOCATION_DOES_NOT_CREATE_AUTHORITY",
+    "EXACT_SHA_DEDUPE_PRECEDES_EVIDENCE_CREDIT",
+    "SECRET_RISK_INPUT_IS_QUARANTINED",
+    "CURATED_OUTPUT_ROUTES_TO_OWNING_REPOSITORY",
+    "QPS_RETAINS_INTAKE_HASH_AND_ROUTING_AUTHORITY",
+    "NO_COMPENSATION_OF_QPS_923_OR_OTHER_EXTERNAL_GATES"
+  ],
+  "disposition": {
+    "mission_control_acceptance": "PASS_RECEIVER_CONTRACT_MATERIALIZED",
+    "issue_127_after_receiver_proof": "CLOSE_COMPLETED",
+    "residual_input_pressure": "EXTERNAL_RETURN_ONLY",
+    "residual_local_coding_pressure": 0
+  }
+}
