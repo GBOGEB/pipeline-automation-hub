@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-21T11:02:00+02:00",
+  "as_of": "2026-09-21T11:45:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -10,7 +10,7 @@
   "runner_economics_issue": 79,
   "bounded_sample": {
     "audited_prs_minimum": 34,
-    "review_finding_occurrences_observed_cumulative": 44,
+    "review_finding_occurrences_observed_cumulative": 45,
     "durable_bd_roots_total": 24,
     "current_open_bd_roots": 0,
     "current_unresolved_occurrences_minimum": 0,
@@ -20,7 +20,7 @@
     "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
     "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit. Qtools and CODEX local Historian roots are drained; external controls #923 and REX-CM-005 remain independent.",
-    "active_prevention_withheld_controls": 0
+    "active_prevention_withheld_controls": 1
   },
   "lifecycle": [
     "TODO",
@@ -506,17 +506,19 @@
       "class": "GOVERNANCE_INVENTORY_DRIFT",
       "severity": "P1",
       "state": "DONE",
-      "occurrence_count": 7,
-      "recurrence_episode_count": 2,
+      "occurrence_count": 8,
+      "recurrence_episode_count": 3,
       "repos": [
-        "GBOGEB/ABACUS"
+        "GBOGEB/ABACUS",
+        "GBOGEB/CODEX"
       ],
       "source_prs": [
         1196,
         1199,
         1271,
         1277,
-        1280
+        1280,
+        787
       ],
       "rex_control_id": "REX-CM-005",
       "crew_owner": [
@@ -538,7 +540,9 @@
         "run35352120094 PASS >0 steps",
         "workflow_count=142",
         "POLICY_OUTCOME=success",
-        "INVENTORY_OUTCOME=success"
+        "INVENTORY_OUTCOME=success",
+        "CODEX#787 merge@954f0fd95b1360830f38a082422340a02206a4b7 while required closure checks queued; REX-CM-005 recurrence episode 3",
+        "CODEX#787 post-merge exact-head closure@cbd28b8c88c85789ccc4f5be3bd8942540a60f1a PASS; post-merge green does not prove merge admission"
       ],
       "done_when": "SATISFIED_REPAIR; recurrent prevention remains governed by REX-CM-005"
     },

@@ -5,6 +5,7 @@ on:
     paths:
       - 'mission-control/historian/BD_REX_CONTROL_REGISTER_v2.json'
       - 'mission-control/historian/SPECIALIST_REPAIR_CREW_REGISTRY_v2.json'
+      - 'mission-control/historian/CODEX_HISTORIAN_WAVE_CURRENT_20260921_v1.json'
       - 'mission-control/historian/QTOOLS_HISTORIAN_FANIN_CLOSE_20260921_v1.json'
       - '.github/workflows/historian-register-control.yml'
   push:
@@ -12,6 +13,7 @@ on:
     paths:
       - 'mission-control/historian/BD_REX_CONTROL_REGISTER_v2.json'
       - 'mission-control/historian/SPECIALIST_REPAIR_CREW_REGISTRY_v2.json'
+      - 'mission-control/historian/CODEX_HISTORIAN_WAVE_CURRENT_20260921_v1.json'
       - 'mission-control/historian/QTOOLS_HISTORIAN_FANIN_CLOSE_20260921_v1.json'
       - '.github/workflows/historian-register-control.yml'
   workflow_dispatch:
@@ -35,6 +37,7 @@ jobs:
           root = Path("mission-control/historian")
           reg = json.loads((root / "BD_REX_CONTROL_REGISTER_v2.json").read_text())
           crew = json.loads((root / "SPECIALIST_REPAIR_CREW_REGISTRY_v2.json").read_text())
+          codex = json.loads((root / "CODEX_HISTORIAN_WAVE_CURRENT_20260921_v1.json").read_text())
           close = json.loads((root / "QTOOLS_HISTORIAN_FANIN_CLOSE_20260921_v1.json").read_text())
           roots = reg["roots"]
           open_states = {"TODO", "ACTIVE", "UNKNOWN_NEEDS_READER"}
@@ -45,7 +48,22 @@ jobs:
           assert len(done_or_control) == reg["bounded_sample"]["done_or_control_roots"]
           assert len(roots) == len(open_roots) + len(done_or_control)
           assert reg["bounded_sample"]["current_unresolved_occurrences_minimum"] >= len(open_roots)
-          assert reg["bounded_sample"]["active_prevention_withheld_controls"] == 0
+          withheld_controls = [
+              row for row in reg.get("control_measures", [])
+              if str(row.get("state", "")).startswith("ACTIVE_PREVENTION_WITHHELD")
+          ]
+          assert reg["bounded_sample"]["active_prevention_withheld_controls"] == len(withheld_controls)
+          bd18 = next(r for r in roots if r["bd_id"] == "HIST-BD-018")
+          rex5 = next(r for r in reg["control_measures"] if r["control_id"] == "REX-CM-005")
+          assert bd18["state"] == "DONE"
+          assert bd18["occurrence_count"] >= 8
+          assert bd18["recurrence_episode_count"] >= 3
+          assert "GBOGEB/CODEX" in bd18["repos"]
+          assert 787 in bd18["source_prs"]
+          assert any("CODEX#787" in x for x in bd18["proof_refs"])
+          assert "GBOGEB/CODEX" in rex5["cross_repo_recurrence"]
+          assert rex5["state"].startswith("ACTIVE_PREVENTION_WITHHELD")
+
           bd21 = next(r for r in roots if r["bd_id"] == "HIST-BD-021")
           bd22 = next(r for r in roots if r["bd_id"] == "HIST-BD-022")
           bd23 = next(r for r in roots if r["bd_id"] == "HIST-BD-023")
@@ -56,6 +74,21 @@ jobs:
           assert bd24["state"] == "DONE"
           if bd22["state"] == "ACTIVE":
               assert bd22["first_red"] == "DEDICATED_GM_I_A_KEB_BRIDGE_RUNTIME_PROOF"
+          if bd22["state"] == "DONE":
+              by_id = {c["crew_id"]: c for c in crew["crew"]}
+              assert "HIST-BD-022" not in by_id["DOCTOR_CONTRACTS"].get("active_scope", [])
+              assert "HIST-BD-022" in by_id["DOCTOR_CONTRACTS"].get("done_scope", [])
+              assert "HIST-BD-022" not in by_id["HISTORIAN"].get("active_scope", [])
+              assert "HIST-BD-022" in by_id["HISTORIAN"].get("done_scope", [])
+              assert "HIST-BD-022" not in crew["allocation_summary"]["codex_historian"].get("active_roots", [])
+
+          assert codex["status"] == "DONE_CLOSE_CONTROL_WATCH"
+          for root_id in ("HIST-BD-021", "HIST-BD-022", "HIST-BD-023", "HIST-BD-024"):
+              live = next(r for r in roots if r["bd_id"] == root_id)
+              assert codex["roots"][root_id]["state"] == live["state"]
+          assert codex["roots"]["HIST-BD-022"]["closure_pr"] == 787
+          assert codex["roots"]["HIST-BD-022"]["current_head_review"] == "PASS_NO_MAJOR_ISSUES"
+
           bd20 = next(r for r in roots if r["bd_id"] == "HIST-BD-020")
           assert bd20["state"] == "DONE"
           assert bd20["closure"]["source_head_attribution_verified"] is True
