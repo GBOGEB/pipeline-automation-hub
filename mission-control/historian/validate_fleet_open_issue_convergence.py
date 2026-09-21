@@ -26,21 +26,28 @@ def main():
             seen_global.add(key)
         assert len(a)<=1, (repo,"active WIP cap")
     f=d["fleet"]
-    assert (total,control,active,blocked)==(94,32,0,62)
-    assert (f["open_issues"],f["control"],f["active"],f["blocked"])==(94,32,0,62)
-    assert f["executable_frontier_width"]==0
-    assert abs(f["control_share"]-32/94)<1e-10
-    assert abs(f["active_share"]-0/94)<1e-10
-    assert abs(f["blocked_share"]-62/94)<1e-10
-    assert sum(len(row["active"]) for row in repos.values())==0
-    assert repos["GBOGEB/cryoplant-project"]["open_issues"]==55
+    assert (total,control,active,blocked)==(93,30,1,62)
+    assert (f["open_issues"],f["control"],f["active"],f["blocked"])==(93,30,1,62)
+    assert f["executable_frontier_width"]==1
+    assert abs(f["control_share"]-30/93)<1e-10
+    assert abs(f["active_share"]-1/93)<1e-10
+    assert abs(f["blocked_share"]-62/93)<1e-10
+    assert sum(len(row["active"]) for row in repos.values())==1
+    assert repos["GBOGEB/cryoplant-project"]["open_issues"]==54
     assert len(repos["GBOGEB/cryoplant-project"]["blocked_breakdown"]["external_source_decision_return"])==32
     assert repos["GBOGEB/gg_MATH"]["nested_queue"]["bd_total"]==6
+    assert repos["GBOGEB/gg_MATH"]["nested_queue"]["control_count"]==5
+    assert repos["GBOGEB/gg_MATH"]["nested_queue"]["active_downstream_count"]==0
+    assert repos["GBOGEB/gg_MATH"]["nested_queue"]["blocked_count"]==0
+    assert repos["GBOGEB/gg_MATH"]["nested_queue"]["dormant_reentry_count"]==1
+    assert repos["GBOGEB/ABACUS"]["active"]==[776]
     assert d["proof_integrity"]["prior_result"]=="FAIL"
     assert d["proof_integrity"]["new_bd_root"] is False
     assert 129 in repos["GBOGEB/pipeline-automation-hub"]["control"]
-    assert len(d["active_frontiers"])==0
-    print("PASS_FLEET_OPEN_ISSUE_CONVERGENCE_94_32_0_62")
+    assert len(d["active_frontiers"])==1
+    assert d["active_frontiers"][0]["repo"]=="GBOGEB/ABACUS"
+    assert d["active_frontiers"][0]["issue"]==776
+    print("PASS_FLEET_OPEN_ISSUE_CONVERGENCE_93_30_1_62")
 
 if __name__=="__main__":
     main()
