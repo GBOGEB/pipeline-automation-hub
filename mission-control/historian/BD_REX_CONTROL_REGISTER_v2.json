@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-21T11:02:00+02:00",
+  "as_of": "2026-09-21T11:28:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -9,17 +9,17 @@
   "historian_parent_issue": 76,
   "runner_economics_issue": 79,
   "bounded_sample": {
-    "audited_prs_minimum": 34,
-    "review_finding_occurrences_observed_cumulative": 44,
-    "durable_bd_roots_total": 24,
-    "current_open_bd_roots": 0,
-    "current_unresolved_occurrences_minimum": 0,
+    "audited_prs_minimum": 36,
+    "review_finding_occurrences_observed_cumulative": 46,
+    "durable_bd_roots_total": 25,
+    "current_open_bd_roots": 1,
+    "current_unresolved_occurrences_minimum": 1,
     "done_or_control_roots": 24,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
     "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
-    "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit. Qtools and CODEX local Historian roots are drained; external controls #923 and REX-CM-005 remain independent.",
+    "note": "Bounded Historian census only. F2 GEMINI audit added HIST-BD-025: product cycle detector is present on main; proof integrity remains active because merged YAML fixtures are type-coerced before reaching the detector.",
     "active_prevention_withheld_controls": 0
   },
   "lifecycle": [
@@ -814,6 +814,47 @@
         "Codex current-head review cbd28b8c88: no major issues",
         "current CODEX main d0f4e83e66bedc512e077ac05ac2ba8f289a530f survival confirmed"
       ]
+    },
+    {
+      "bd_id": "HIST-BD-025",
+      "title": "Prove cyclic YAML aliases reach fail-closed canonical-container validation",
+      "class": "FAIL_CLOSED_PROOF_INTEGRITY",
+      "severity": "P2",
+      "state": "ACTIVE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/GEMINI"
+      ],
+      "source_prs": [
+        27,
+        29,
+        30
+      ],
+      "source_issues": [
+        28
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "semantic_signature": "cyclic_yaml_alias_cycle_detector_not_exercised_by_type_coerced_proof_fixture",
+      "current_code_evidence": [
+        "GEMINI main c170e9039e0a3abcfd78ac1e68b741e0f1743617",
+        "src/handover_package.py blob dcaafc01d2a57248a5dfba09623a14cf04aedc87 has active_container_ids cycle detector",
+        "tests/test_handover_package.py blob 93ca967284276d5b4cfb89851e1c10d087fd3c30 has unquoted ISO generated_at fixtures",
+        "tests/test_handover_batch.py blob 6d4da309237916ed5f563020664b281877cad289 has unquoted ISO generated_at fixture"
+      ],
+      "repair_refs": [
+        "GEMINI#29 implementation merged@c170e9039e0a3abcfd78ac1e68b741e0f1743617",
+        "GEMINI#30@92780d2f1a91943130f6f8f06fb54c1964830257 test-only proof repair"
+      ],
+      "negative_evidence": [
+        "GEMINI#29 Codex P1: PyYAML SafeLoader resolves unquoted generated_at to datetime, so tests reject before alias-cycle validation"
+      ],
+      "prove_state": "PROVE_PENDING_RUNNER_ADMISSION",
+      "done_when": "GEMINI#30 exact-head fail-closed/package+batch ingress tests execute >0 steps and pass, current-head review stays clean, then merged/current main retains quoted fixtures and cycle detector"
     }
   ],
   "control_measures": [
@@ -908,7 +949,13 @@
       ]
     }
   ],
-  "open_priority": [],
+  "open_priority": [
+    {
+      "rank": 1,
+      "bd_id": "HIST-BD-025",
+      "reason": "single executable F2 Historian root; implementation present, proof integrity pending exact-head hosted execution"
+    }
+  ],
   "external_non_compensating_gates": [
     {
       "repo": "GBOGEB/cryoplant-project",
@@ -918,8 +965,9 @@
     }
   ],
   "next_deep_dive_order": [
-    "F2 current mission repo selected from measured unresolved Historian pressure",
-    "REX-CM-005 owner/admin merge-admission proof when configuration becomes writable",
+    "Finish GBOGEB/GEMINI HIST-BD-025 exact-head proof",
+    "select next F2 current mission repo by measured unresolved pressure",
+    "REX-CM-005 owner/admin merge-admission proof when writable",
     "cryoplant-project#923 remains separate non-compensating runner-admission lane"
   ],
   "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE",
