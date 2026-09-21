@@ -49,10 +49,20 @@ def main():
     for event in events:
         by_mission[event["mission_id"]].append(event)
 
-    requested = Counter(e["requested_action"] for e in events)
     all_verbs = list(contract["verbs"].keys())
-    observed_verbs = sorted(v for v in all_verbs if v in requested)
-    dormant_verbs = sorted(v for v in all_verbs if v not in requested)
+    requested = Counter(e["requested_action"] for e in events)
+    completed_dispositions = [
+        e
+        for e in events
+        if e["direction"] == "MC_TO_CREW"
+        and e.get("event_type") == "MISSION_CONTROL_DISPOSITION"
+        and e.get("causal_parent")
+        and e.get("requested_action") in all_verbs
+    ]
+    completed = Counter(e["requested_action"] for e in completed_dispositions)
+    requested_verbs = sorted(v for v in all_verbs if v in requested)
+    observed_verbs = sorted(v for v in all_verbs if v in completed)
+    dormant_verbs = sorted(v for v in all_verbs if v not in completed)
 
     crew_reports = [e for e in events if e["direction"] == "CREW_TO_MC"]
     returned = {e.get("causal_parent") for e in events if e["direction"] == "MC_TO_CREW" and e.get("causal_parent")}
@@ -91,8 +101,10 @@ def main():
         "unmatched_crew_reports":unmatched,
         "mission_reports":mission_reports,
         "operation_capability":all_verbs,
+        "operations_requested_in_seed_ledger":requested_verbs,
         "operations_observed_in_seed_ledger":observed_verbs,
-        "operations_dormant_until_evidence":dormant_verbs,
+        "operations_completed_by_mc_disposition":observed_verbs,
+        "operations_dormant_until_completed_disposition":dormant_verbs,
         "lessons":lessons,
         "prune_rule":"replacement_proof_or_explicit_zero_value_required",
         "repair_rule":"observed_defect_required_and_Doctor_requires_gt0_steps",
