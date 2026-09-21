@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.specialist_repair_crew_registry.v2",
   "status": "ACTIVE",
-  "as_of": "2026-09-21T10:56:00+02:00",
+  "as_of": "2026-09-21T11:02:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "SPECIALIST_REPAIR_CREW_REGISTRY_v1.json",
   "activation_rule": "recurrence || P0/P1 severity || cross_repo_centrality || repeated_failed_repair || active_control_repeat",
@@ -83,7 +83,7 @@
     {
       "crew_id": "DOCTOR_CONTRACTS",
       "display_name": "Doctor.Contracts",
-      "state": "ACTIVE_BOUNDED",
+      "state": "ACTIVE_OWNER_ADMIN_BOUNDARY",
       "triggered_by_roots": [
         "HIST-BD-002",
         "HIST-BD-003",
@@ -100,11 +100,7 @@
         "HIST-BD-024"
       ],
       "active_scope": [
-        "REX-CM-005",
-        "HIST-BD-021",
-        "HIST-BD-022",
-        "HIST-BD-023",
-        "HIST-BD-024"
+        "REX-CM-005"
       ],
       "done_scope": [
         "HIST-BD-002",
@@ -115,9 +111,13 @@
         "HIST-BD-017",
         "HIST-BD-018",
         "HIST-BD-009",
-        "HIST-BD-020"
+        "HIST-BD-020",
+        "HIST-BD-021",
+        "HIST-BD-022",
+        "HIST-BD-023",
+        "HIST-BD-024"
       ],
-      "current_mission": "CODEX_BD021_024_CLOSURE_PROOF_PLUS_REX_CM005_ADMIN",
+      "current_mission": "REX_CM_005_OWNER_ADMIN_BINDING",
       "secondment": [
         "H2_KEB",
         "HISTORIAN",
@@ -217,13 +217,9 @@
       ],
       "active_scope": [
         "REX-CM-005",
-        "fleet deep-dive expansion",
-        "HIST-BD-021",
-        "HIST-BD-022",
-        "HIST-BD-023",
-        "HIST-BD-024"
+        "fleet deep-dive expansion"
       ],
-      "current_mission": "CODEX_CLOSURE_PROOF_AND_F2_PRESSURE_SELECTION",
+      "current_mission": "F2_PRESSURE_SELECTION_AND_DEEP_DIVE",
       "secondment": [
         "H1_QPS",
         "H2_KEB",
@@ -237,7 +233,13 @@
         "recurrence detection",
         "repair survival"
       ],
-      "victory_condition": "every new historical finding is current-code-checked, deduplicated to stable root, and returned to H4/H3 with proof or explicit rejection; Qtools BD019/020 remain CONTROL_WATCH only unless regression recurs"
+      "victory_condition": "every new historical finding is current-code-checked, deduplicated to stable root, and returned to H4/H3 with proof or explicit rejection; Qtools BD019/020 remain CONTROL_WATCH only unless regression recurs",
+      "done_scope": [
+        "HIST-BD-021",
+        "HIST-BD-022",
+        "HIST-BD-023",
+        "HIST-BD-024"
+      ]
     },
     {
       "crew_id": "DEBUG_SURGEON",
@@ -274,7 +276,6 @@
       "DEBUG_SURGEON"
     ],
     "priority_sequence": [
-      "CODEX PR#787 exact-head runner admission + closure proof",
       "F2 current mission repo selected by measured unresolved Historian pressure",
       "REX-CM-005 owner/admin binding when available",
       "cryoplant-project#923 owner runner-admission recovery"
