@@ -81,6 +81,7 @@ jobs:
               assert "HIST-BD-022" not in by_id["HISTORIAN"].get("active_scope", [])
               assert "HIST-BD-022" in by_id["HISTORIAN"].get("done_scope", [])
               assert "HIST-BD-022" not in crew["allocation_summary"]["codex_historian"].get("active_roots", [])
+              assert "HIST-BD-022" in crew["allocation_summary"]["codex_historian"].get("done_roots", [])
 
           assert codex["status"] == "DONE_CLOSE_CONTROL_WATCH"
           for root_id in ("HIST-BD-021", "HIST-BD-022", "HIST-BD-023", "HIST-BD-024"):
