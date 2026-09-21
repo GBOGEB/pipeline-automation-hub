@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.historian.codex_review_audit.v1",
-  "status": "PROVE_PENDING_CURRENT_HEAD",
+  "status": "PROVE_PENDING_RUNNER_ADMISSION",
   "as_of": "2026-09-21",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -117,7 +117,8 @@
         787
       ],
       "negative_history": [
-        "PR#784 Codex P1: non-object consumer entry silently discarded"
+        "PR#784 Codex P1: non-object consumer entry silently discarded",
+        "PR#787 merged while closure checks queued; REX-CM-005 recurrence, not BD023 recurrence"
       ],
       "preventive_control": [
         "explicit require() validation",
@@ -155,7 +156,18 @@
       "GM-I-A CoolProp FAST-HEAVY KEB Bridge",
       "current-head Codex review"
     ],
-    "disposition": "WITHHELD_UNTIL_ALL_REQUIRED_GATES_RESOLVE"
+    "disposition": "WITHHELD_UNTIL_ALL_REQUIRED_GATES_RESOLVE",
+    "merge": "954f0fd95b1360830f38a082422340a02206a4b7",
+    "current_head_review": "PASS_NO_MAJOR_ISSUES",
+    "merge_sequence": "MERGED_WHILE_REQUIRED_CHECKS_QUEUED_RETAIN_AS_REX_CM005_RECURRENCE",
+    "queued_runs": {
+      "w003": 35580291171,
+      "ci": 35580291195,
+      "w286": 35580291155,
+      "gm_i_a": 35580291121,
+      "validate_federation": 35580291180
+    },
+    "runner_admission": "QUEUED_ZERO_JOB_STEPS_AT_LAST_READ"
   },
   "unrelated_negative_tooling": [
     {
@@ -170,5 +182,11 @@
     "GBOGEB/cryoplant-project#923",
     "REX-CM-005"
   ],
-  "next_if_green": "finalize BD021-024 DONE in living register, close CODEX issues 779/780/782/783, publish MIP receipt, then select next fleet candidate from current fanout authority"
+  "next_if_green": "finalize BD021-024 DONE in living register, close CODEX issues 779/780/782/783, publish MIP receipt, then select next fleet candidate from current fanout authority",
+  "rex_recurrence": {
+    "control_id": "REX-CM-005",
+    "new_occurrence": "CODEX PR#787 merged while required closure checks queued",
+    "root_reused": true,
+    "new_root_created": false
+  }
 }
