@@ -1,0 +1,86 @@
+{
+  "schema": "missioncontrol.runner_fanout_mip_control.v1",
+  "issue": 327,
+  "parent_runner_economics_issue": 79,
+  "method": "3PSTAR_PLUS_MIP",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "baseline": {
+    "pr": 326,
+    "head_sha": "31b3adf1ad17082fa4f383e2c2cedcf9aeb42706",
+    "touched_domain": "mission-control/grand-missions/analytics/**",
+    "registered_workflow_count": 19,
+    "measured_queue_exposure_seconds": 1956,
+    "measured_total_selected_clock_seconds": 2220,
+    "queue_exposure_ratio": 0.8811
+  },
+  "three_pr": {
+    "Refresh": "PASS_LIVE_MASTER_QPS_923_AND_RUNNER_PRESSURE_SURFACES",
+    "Probe": "PASS_BASELINE_19_WORKFLOWS_AND_TRIGGER_CENSUS",
+    "Rank": "PASS_FIRST_INTERNAL_FANOUT_RED_BROAD_PR_TRIGGERS"
+  },
+  "mip": {
+    "Modernize": {
+      "result": "PASS",
+      "action": "EXCLUDE_GRAND_MISSIONS_ANALYTICS_FROM_LEGACY_FLEET_AND_GM_CONTROLS",
+      "workflow_count": 10
+    },
+    "Innovate": {
+      "result": "PASS_BOUNDED",
+      "action": "ADD_EXPLICIT_PR_PATH_FILTERS_TO_SPECIALIST_WORKFLOWS",
+      "workflow_count": 4,
+      "preserved_broad_controls": [
+        "First-Pass Closure Gate",
+        "QPS TRIAGE ULTRA Federation Control",
+        "W3-16 M03 W0 Recon"
+      ]
+    },
+    "Perpetuate": {
+      "result": "THIS_TRANSACTION",
+      "machine_validator": "mission-control/runner-economics/validate_runner_fanout_mip.py",
+      "exact_head_workflow": ".github/workflows/runner-fanout-mip-control.yml",
+      "postmerge_probe_required": true
+    }
+  },
+  "modified_workflows": {
+    "analytics_exclusion": [
+      ".github/workflows/gm-iv-pilot2-final-recensus.yml",
+      ".github/workflows/gm-iv-pilot2-governor.yml",
+      ".github/workflows/gm-v-governor-readiness.yml",
+      ".github/workflows/gm-fleet-02b.yml",
+      ".github/workflows/gm-fleet-03-f01-pilot.yml",
+      ".github/workflows/gm-fleet-03-ring1-recon.yml",
+      ".github/workflows/gm-fleet-03-ring2-recon.yml",
+      ".github/workflows/gm-fleet-03-capacity-gate.yml",
+      ".github/workflows/gm-iv-active8-governor-readiness.yml",
+      ".github/workflows/gm-fleet-03-f03-pilot.yml"
+    ],
+    "explicit_specialist_paths": [
+      ".github/workflows/w3-14-measured-pca.yml",
+      ".github/workflows/w3-13-measured-telemetry.yml",
+      ".github/workflows/w3-11-non-origin-math-consumer.yml",
+      ".github/workflows/crew-telemetry-role-gap.yml"
+    ]
+  },
+  "modeled_after_pure_gmia_analytics_change": {
+    "expected_registered_workflows": 5,
+    "expected_names": [
+      "GM-I-A Multi-Clock 3PSTAR MIP",
+      "GM-I-A Multi-Clock Measurement",
+      "First-Pass Closure Gate",
+      "QPS TRIAGE ULTRA Federation Control",
+      "W3-16 M03 W0 Recon"
+    ],
+    "modeled_reduction_count": 14,
+    "modeled_reduction_ratio": 0.7368421052631579,
+    "classification": "MODEL_PENDING_POSTMERGE_MEASURED_PROBE"
+  },
+  "guards": [
+    "DO_NOT_NARROW_FIRST_PASS_CLOSURE_GATE",
+    "DO_NOT_CLAIM_QPS_923_RECOVERY",
+    "DO_NOT_CONFLATE_QUEUE_REDUCTION_WITH_ENGINEERING_ACCEPTANCE",
+    "KEEP_QPS_FEDERATION_AND_W3_16_BROAD_UNTIL_SEPARATELY_PROVEN_SAFE_TO_NARROW",
+    "POSTMERGE_PROBE_MUST_TOUCH_ONLY_GM_I_A_ANALYTICS_DOMAIN"
+  ]
+}
