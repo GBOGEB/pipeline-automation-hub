@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, math, statistics
+import json, math, os, statistics
 from collections import defaultdict
 from pathlib import Path
 
@@ -8,7 +8,7 @@ policy=json.loads((ROOT/'MEASURED_ALLOCATION_POLICY_v1.json').read_text())
 receipts=[]
 
 # Live exact-SHA runtime receipts produced by the current job.
-receipts_dir=ROOT/'receipts'
+receipts_dir=Path(os.environ.get('MEASURED_LIVE_RECEIPTS_DIR', ROOT/'receipts'))
 if receipts_dir.exists():
     for p in sorted(receipts_dir.glob('*.json')):
         if p.name=='RUN_SUMMARY.json':
@@ -22,13 +22,16 @@ if receipts_dir.exists():
 
 # Canonical evidence returns are compact, provenance-bound references to accepted
 # workflow artifacts. validate_evidence_returns.py must pass before this builder.
-history=ROOT/'history'
+history=Path(os.environ.get('MEASURED_EVIDENCE_HISTORY', ROOT/'history'))
 if history.exists():
     for p in sorted(history.glob('RUN_RETURN_*.json')):
         doc=json.loads(p.read_text())
         if doc.get('schema')!='missioncontrol.measured_task_run_return.v1':
             continue
-        if doc.get('status')!='ACCEPTED_EXACT_SHA_RUNTIME_RETURN':
+        if doc.get('status') not in {
+            'ACCEPTED_EXACT_SHA_RUNTIME_RETURN',
+            'REJECTED_EXACT_SHA_RUNTIME_RETURN',
+        }:
             continue
         for obs in doc['task_observations']:
             receipts.append({
@@ -254,5 +257,20 @@ out={
  },
  'competency_promotions':0,'authority_transfer':False
 }
-(ROOT/'MEASURED_ALLOCATION_RECEIPT.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+out['returned_run_count']=len({str(r['run_id']) for r in receipts if r.get('evidence_return_status')})
+out['canonical_rejected_run_count']=len({
+    str(r['run_id']) for r in receipts
+    if r.get('evidence_return_status')=='REJECTED_EXACT_SHA_RUNTIME_RETURN'
+})
+out['canonical_rejected_observation_count']=sum(
+    1 for r in receipts
+    if r.get('evidence_return_status')=='REJECTED_EXACT_SHA_RUNTIME_RETURN'
+    and r.get('disposition')=='REJECT'
+)
+out['negative_evidence_promotion_credit']=0
+out['negative_evidence_pca_bt_eligible']=False
+
+out_path=Path(os.environ.get('MEASURED_ALLOCATION_OUT', ROOT/'MEASURED_ALLOCATION_RECEIPT.json'))
+out_path.parent.mkdir(parents=True, exist_ok=True)
+out_path.write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
 print(json.dumps(out,sort_keys=True))
