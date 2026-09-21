@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.temporal_frontier_current.v1",
-  "as_of": "2026-09-21T09:57:00+02:00",
+  "as_of": "2026-09-21T10:05:00+02:00",
   "canonical_navigation": true,
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -14,7 +14,8 @@
     "historical_regression": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_CONTROL_REGRESSION_v1.json",
     "short_compute_reearn_gate": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json",
     "short_compute_reearn_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_RECEIPT_20260921_v1.json",
-    "long_compute_p0_diagnostic": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_LONG_COMPUTE_P0_DIAGNOSTIC_20260921_v1.json"
+    "long_compute_p0_diagnostic": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_LONG_COMPUTE_P0_DIAGNOSTIC_20260921_v1.json",
+    "human_wait_p1_diagnostic": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_HUMAN_WAIT_P1_DIAGNOSTIC_20260921_v1.json"
   },
   "handover": {
     "lossless": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/SC_2026-09-21_TEMPORAL_SHORT_COMPUTE_REEARN_LOSSLESS_HANDOVER_v1.md",
@@ -51,8 +52,20 @@
     {
       "priority": "P1",
       "task_class": "human_dependency_wait_proxy",
-      "first_red": "direction_consistency",
-      "regime": "WEAK_OR_NOISY_DIRECTION"
+      "first_red": "pooled_winner_strength",
+      "regime": "RECENT_SINGLE_STABILITY_WITH_INSUFFICIENT_POOLED_STRENGTH",
+      "dominant_direction": "ALLOC_SINGLE_CELL",
+      "direction_consistency": 0.8,
+      "direction_consistency_threshold": 0.8,
+      "direction_consistency_gate": "PASS_AT_THRESHOLD",
+      "pooled_winner_strength": 0.6389674804100461,
+      "pooled_winner_strength_threshold": 0.7,
+      "pooled_winner_strength_deficit": 0.0610325195899539,
+      "latest_two_directional_windows_agree": true,
+      "latest_window_direction": "ALLOC_SINGLE_CELL",
+      "latest_window_directional_outcomes": "3_SINGLE_1_PAIRED_2_TIES",
+      "diagnostic": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_HUMAN_WAIT_P1_DIAGNOSTIC_20260921_v1.json",
+      "claim_boundary": "CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE"
     }
   ],
   "current_genuine_schedule": {
@@ -96,7 +109,7 @@
     "refresh live master and current temporal authority files",
     "surveil cache_artifact_reuse, short_compute and validation_bundle and revoke only on later governed regression",
     "P0 long_compute_contended: consume only genuine schedule evidence; latest window coherently favors PAIRED but aggregate consistency 0.65 and pooled strength 0.5967198839 remain below frozen CONTROL gates",
-    "P1 human_dependency_wait_proxy: continue genuine-schedule stability measurement with controlled-wait proxy claim boundary",
+    "P1 human_dependency_wait_proxy: direction consistency now passes exactly at 0.80; pooled winner strength 0.6389674804 remains below frozen 0.70 gate; continue genuine-schedule stability measurement with controlled-wait proxy claim boundary",
     "evaluate H3 7-day surveillance only when genuine scheduled span reaches 604800 seconds"
   ],
   "historical_state": {
