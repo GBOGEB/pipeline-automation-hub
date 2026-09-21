@@ -9,8 +9,10 @@ on:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v2.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v3.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v4.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_FRONTIER_CURRENT_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_RECEIPT_20260921_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/**'
       - '.github/workflows/crew-temporal-3pstar-mip-burndown.yml'
   push:
@@ -21,8 +23,10 @@ on:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v2.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v3.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v4.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_FRONTIER_CURRENT_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_RECEIPT_20260921_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/**'
       - '.github/workflows/crew-temporal-3pstar-mip-burndown.yml'
   workflow_run:
@@ -56,51 +60,61 @@ jobs:
           import json
           from pathlib import Path
           root=Path('mission-control/qps-triage-ultra/crew/measured/frontier/temporal')
-          v3=json.loads((root/'TEMPORAL_3PSTAR_MIP_ITERATION_v3.json').read_text())
+          v4=json.loads((root/'TEMPORAL_3PSTAR_MIP_ITERATION_v4.json').read_text())
           cur=json.loads((root/'TEMPORAL_FRONTIER_CURRENT_v1.json').read_text())
-          assert v3['schema']=='missioncontrol.temporal_3pstar_mip_iteration.v3'
           gate=json.loads((root/'TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json').read_text())
-          assert v3['control_state']['control_class_count']==2
-          assert v3['control_state']['full_control'] is False
-          assert v3['three_p_star']['prove']['implementation_pr_head']['status']=='PASS_LATE_AFTER_MERGE'
-          assert v3['rex']['id']=='REX-005'
-          assert v3['rex']['repair_pr']==252
-          assert v3['rex']['repair_merge']=='243337e7170029ccfbcf1588ce951356fd1d22a7'
-          assert v3['active_frontier'][0]['task_class']=='short_compute'
-          assert v3['active_frontier'][0]['regression_from_control'] is True
-          assert v3['active_frontier'][0]['first_red']=='pooled_winner_strength'
-          assert v3['active_frontier'][1]['task_class']=='long_compute_contended'
-          assert v3['active_frontier'][2]['task_class']=='human_dependency_wait_proxy'
-          assert v3['invariants']['thresholds_changed'] is False
-          assert v3['invariants']['synthetic_or_manual_clock_credit'] is False
-          assert v3['invariants']['competency_promotions']==0
-          assert v3['invariants']['authority_transfer'] is False
+          reearn=json.loads((root/'TEMPORAL_SHORT_COMPUTE_REEARN_RECEIPT_20260921_v1.json').read_text())
+          assert v4['schema']=='missioncontrol.temporal_3pstar_mip_iteration.v4'
+          assert v4['control_state']['control_class_count']==3
+          assert v4['control_state']['full_control'] is False
+          assert v4['control_state']['reearned_classes']==['short_compute']
+          assert v4['genuine_schedule_authority']['run_id']=='35574196822'
+          assert v4['genuine_schedule_authority']['artifact_id']=='10626843286'
+          assert v4['short_compute_reearn']['current_state']=='CONTROL_POLICY'
+          assert v4['short_compute_reearn']['pooled_winner_strength']>=0.7
+          assert v4['short_compute_reearn']['direction_consistency']>=0.8
+          assert v4['short_compute_reearn']['latest_two_directional_windows_agree'] is True
+          assert v4['active_frontier'][0]['task_class']=='long_compute_contended'
+          assert v4['active_frontier'][1]['task_class']=='human_dependency_wait_proxy'
+          assert v4['invariants']['thresholds_changed'] is False
+          assert v4['invariants']['synthetic_or_manual_clock_credit'] is False
+          assert v4['invariants']['competency_promotions']==0
+          assert v4['invariants']['authority_transfer'] is False
           assert cur['schema']=='missioncontrol.temporal_frontier_current.v1'
           assert cur['refresh_first'] is True
-          assert cur['state']=='CONTROL_REGRESSION_ACTIVE_2_OF_5_CONTROL_THREE_CLASS_FRONTIER'
-          assert cur['control_classes']==['cache_artifact_reuse','validation_bundle']
-          assert cur['regressed_classes']==['short_compute']
-          assert cur['current_genuine_schedule']['run_id']=='35350275999'
-          assert cur['proof_chain']['postmerge_recurrence']['run_id']=='35352260069'
-          assert cur['proof_chain']['postmerge_recurrence']['job_id']=='105622958891'
+          assert cur['state']=='CONTROL_3_OF_5_SHORT_COMPUTE_REEARNED_TWO_CLASS_FRONTIER_ACTIVE'
+          assert cur['control_classes']==['cache_artifact_reuse','short_compute','validation_bundle']
+          assert cur['reearned_classes']==['short_compute']
+          assert cur['regressed_classes']==[]
+          assert cur['current_genuine_schedule']['run_id']=='35574196822'
+          assert cur['current_genuine_schedule']['job_id']=='106252442714'
+          assert cur['current_genuine_schedule']['artifact_id']=='10626843286'
           assert gate['schema']=='missioncontrol.temporal_short_compute_reearn_gate.v1'
-          assert gate['status']=='WAIT_NEXT_GENUINE_SCHEDULE'
+          assert gate['status']=='PASS_REEARNED_CONTROL'
           assert gate['eligible_evidence']['event']=='schedule'
-          assert gate['frozen_control_gate']['min_pooled_winner_strength']==0.7
+          assert gate['reearn_evidence']['all_frozen_gates_pass'] is True
+          assert gate['reearn_evidence']['pooled_winner_strength']>=gate['frozen_control_gate']['min_pooled_winner_strength']
+          assert gate['reearn_evidence']['direction_consistency']>=gate['frozen_control_gate']['min_direction_consistency']
           assert gate['invariants']['thresholds_changed'] is False
           assert gate['invariants']['synthetic_or_manual_clock_credit'] is False
+          assert reearn['schema']=='missioncontrol.temporal_short_compute_reearn_receipt.v1'
+          assert reearn['status']=='PASS_SHORT_COMPUTE_CONTROL_REEARNED'
+          assert reearn['reearn_evidence']['run_id']=='35574196822'
+          assert reearn['reearn_evidence']['artifact_digest']=='sha256:5da6859bfcb0fad43c4339dc8ac7795dce052dbd177e6c90eaad04817a222020'
+          assert all(v['pass'] for v in reearn['gate_evaluation'].values())
           for rel in (
-              'handover/SC_2026-09-18_TEMPORAL_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md',
-              'handover/RESTART_DROPIN_2026-09-18_TEMPORAL_FRONTIER_v1.md',
+              'handover/SC_2026-09-21_TEMPORAL_SHORT_COMPUTE_REEARN_LOSSLESS_HANDOVER_v1.md',
+              'handover/RESTART_DROPIN_2026-09-21_TEMPORAL_SHORT_COMPUTE_REEARN_v1.md',
           ):
               assert (root/rel).is_file(), rel
           print(json.dumps({
-              'status':'PASS_TEMPORAL_3PSTAR_MIP_LOSSLESS_HANDOVER_CONTRACT',
-              'control_class_count':2,
-              'active_frontier_count':3,
-              'regressed_classes':['short_compute'],
-              'postmerge_run':'35352260069',
-              'postmerge_job':'105622958891',
+              'status':'PASS_TEMPORAL_SHORT_COMPUTE_REEARN_LOSSLESS_CONTRACT',
+              'control_class_count':3,
+              'active_frontier_count':2,
+              'reearned_classes':['short_compute'],
+              'reearn_run':'35574196822',
+              'reearn_job':'106252442714',
+              'reearn_artifact':'10626843286',
               'authority_transfer':False,
               'competency_promotions':0,
           },sort_keys=True))

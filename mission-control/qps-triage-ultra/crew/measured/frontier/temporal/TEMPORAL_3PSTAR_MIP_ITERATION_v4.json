@@ -1,0 +1,147 @@
+{
+  "schema": "missioncontrol.temporal_3pstar_mip_iteration.v4",
+  "mission_id": "MC-CREW-FRONTIER-004",
+  "scope": "SHORT_COMPUTE_REEARN_AFTER_GOVERNED_POST_CONTROL_REGRESSION",
+  "supersedes_current": "TEMPORAL_3PSTAR_MIP_ITERATION_v3.json",
+  "preserves_history": [
+    "CONTROL_POLICY_ACCEPTANCE_v1.json",
+    "TEMPORAL_CONTROL_REGRESSION_v1.json",
+    "TEMPORAL_3PSTAR_MIP_ITERATION_v3.json"
+  ],
+  "as_of": "2026-09-21T09:46:00+02:00",
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "control_state": {
+    "status": "3_OF_5_CONTROL_SHORT_COMPUTE_REEARNED_TWO_CLASS_FRONTIER_ACTIVE",
+    "control_classes": [
+      "cache_artifact_reuse",
+      "short_compute",
+      "validation_bundle"
+    ],
+    "reearned_classes": ["short_compute"],
+    "regressed_classes": [],
+    "noncontrol_classes": [
+      "long_compute_contended",
+      "human_dependency_wait_proxy"
+    ],
+    "control_class_count": 3,
+    "task_class_count": 5,
+    "noncontrol_class_count": 2,
+    "full_control": false,
+    "frozen_thresholds_unchanged": true
+  },
+  "genuine_schedule_authority": {
+    "run_id": "35574196822",
+    "job_id": "106252442714",
+    "exact_source_sha": "aad7c4ee3b464307365d55cb7d30999282b01838",
+    "artifact_id": "10626843286",
+    "artifact_digest": "sha256:5da6859bfcb0fad43c4339dc8ac7795dce052dbd177e6c90eaad04817a222020",
+    "event": "schedule",
+    "conclusion": "success",
+    "scheduled_windows": 25,
+    "distinct_source_shas": 10,
+    "span_seconds": 519001.0,
+    "hosted_runner_classes": ["linux", "macos", "windows"],
+    "lanes": ["baseline", "held"],
+    "rex_veto": false,
+    "H2_72H": "MATURE",
+    "H3_7D": "NOT_MATURE"
+  },
+  "short_compute_reearn": {
+    "prior_regression_run": "35350275999",
+    "prior_regressed_strength": 0.6907625243981782,
+    "frozen_strength_threshold": 0.7,
+    "current_state": "CONTROL_POLICY",
+    "allocation_recommendation": "ALLOC_SINGLE_CELL",
+    "allocation_policy_promotion": true,
+    "directional_windows": 21,
+    "direction_counts": {
+      "ALLOC_SINGLE_CELL": 20,
+      "ALLOC_PAIRED_CELL": 1
+    },
+    "direction_consistency": 0.9523809523809523,
+    "pooled_single_strength": 0.7098869125669386,
+    "pooled_winner_strength": 0.7098869125669386,
+    "latest_two_directional_windows_agree": true,
+    "observed_pairs_total": 150,
+    "gate_result": "PASS_ALL_FROZEN_CONTROL_GATES",
+    "control_reearned": true
+  },
+  "frozen_gate_evaluation": {
+    "min_independent_windows_6": "PASS_25",
+    "min_distinct_source_shas_3": "PASS_10",
+    "min_temporal_span_seconds_86400": "PASS_519001",
+    "min_directional_windows_5": "PASS_21",
+    "min_direction_consistency_0_80": "PASS_0.9523809523809523",
+    "min_pooled_winner_strength_0_70": "PASS_0.7098869125669386",
+    "latest_two_directional_windows_agree": "PASS_TRUE",
+    "min_hosted_runner_classes_3": "PASS_linux_macos_windows",
+    "requires_baseline_and_held_lanes": "PASS",
+    "persistent_or_regression_rex_veto_must_be_false": "PASS_FALSE"
+  },
+  "three_p_star": {
+    "refresh": "PASS_LATER_GENUINE_SCHEDULE_CONSUMED",
+    "probe": "PASS_SHORT_COMPUTE_REEARN_GATE_EVALUATED",
+    "rank": {
+      "status": "PASS",
+      "P0": "long_compute_contended_REGIME_REVERSAL",
+      "P1": "human_dependency_wait_proxy_WEAK_NOISY"
+    },
+    "prepare": "PASS_FROZEN_REEARN_CONTRACT",
+    "prove": "PASS_GENUINE_SCHEDULE_EXACT_SHA_ARTIFACT_BOUND",
+    "commit": "PENDING_REPOSITORY_BINDING_PR",
+    "propagate_perpetuate": "PENDING_CURRENT_POINTER_HANDOVER_VALIDATOR_MERGE"
+  },
+  "mip": {
+    "Modernize": {
+      "status": "PASS",
+      "result": "current authority advances from regression 2/5 to re-earned 3/5 without deleting regression history"
+    },
+    "Innovate": {
+      "status": "PASS",
+      "result": "re-earn is bound to exact scheduled run, exact artifact digest and all frozen gate values"
+    },
+    "Perpetuate": {
+      "status": "PENDING_PR_MERGE",
+      "result": "v4 current pointer, re-earn receipt, validator, lossless handover and restart drop-in staged together"
+    }
+  },
+  "active_frontier": [
+    {
+      "priority": "P0",
+      "task_class": "long_compute_contended",
+      "first_red": "direction_consistency",
+      "regime": "REGIME_REVERSAL_OBSERVED",
+      "promotion": "WITHHELD",
+      "next_action": "CONTINUE_GENUINE_SCHEDULED_SIGNED_EFFECT_DECOMPOSITION_BY_RUNNER_LANE_AND_TEMPORAL_REGIME"
+    },
+    {
+      "priority": "P1",
+      "task_class": "human_dependency_wait_proxy",
+      "first_red": "direction_consistency",
+      "regime": "WEAK_OR_NOISY_DIRECTION",
+      "promotion": "WITHHELD",
+      "claim_boundary": "CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE",
+      "next_action": "CONTINUE_GENUINE_SCHEDULED_STABILITY_MEASUREMENT"
+    }
+  ],
+  "surveillance": {
+    "short_compute": "CONTROL_SURVEILLANCE_REVOKE_ON_LATER_GOVERNED_REGRESSION",
+    "cache_artifact_reuse": "CONTROL_SURVEILLANCE",
+    "validation_bundle": "CONTROL_SURVEILLANCE",
+    "H3_7D": "WAIT_GENUINE_SCHEDULE_SPAN_GE_604800"
+  },
+  "invariants": {
+    "synthetic_or_manual_clock_credit": false,
+    "push_or_pr_control_credit": false,
+    "thresholds_changed": false,
+    "competency_promotions": 0,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "controlled_wait_proxy_is_real_human_evidence": false,
+    "full_control_claim": false,
+    "historical_regression_preserved": true,
+    "current_effective_control_class_count": 3
+  }
+}

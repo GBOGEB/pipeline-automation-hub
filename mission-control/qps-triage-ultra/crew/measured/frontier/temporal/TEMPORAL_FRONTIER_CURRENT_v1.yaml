@@ -1,46 +1,50 @@
-schema: missioncontrol.temporal_frontier.current_compat.v2
-as_of: '2026-09-18T16:39:00+02:00'
+schema: missioncontrol.temporal_frontier.current_compat.v3
+as_of: '2026-09-21T09:46:00+02:00'
 mission_id: MC-CREW-FRONTIER-004
-status: SUPERSEDED_COMPATIBILITY_POINTER
+status: COMPATIBILITY_POINTER_CURRENT
 canonical_current: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_FRONTIER_CURRENT_v1.json
-canonical_iteration: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v3.json
-current_regression: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_CONTROL_REGRESSION_v1.json
+canonical_iteration: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v4.json
+historical_regression: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_CONTROL_REGRESSION_v1.json
 short_compute_reearn_gate: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json
-state: CONTROL_REGRESSION_ACTIVE_2_OF_5_CONTROL_THREE_CLASS_FRONTIER
+short_compute_reearn_receipt: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_RECEIPT_20260921_v1.json
+state: CONTROL_3_OF_5_SHORT_COMPUTE_REEARNED_TWO_CLASS_FRONTIER_ACTIVE
 authority_transfer: false
 formal_credit_delta: 0
 effective_control:
-  count: 2
+  count: 3
   classes:
     - cache_artifact_reuse
+    - short_compute
     - validation_bundle
-regressed:
+reearned:
   - short_compute
 active_frontier:
   P0:
-    task_class: short_compute
-    first_red: pooled_winner_strength
-    regime: CONTROL_REGRESSION
-    pooled_winner_strength: 0.6907625243981782
-    frozen_threshold: 0.7
-    disposition: CONTROL_REVOKED_REEARN_REQUIRED
-  P1:
     task_class: long_compute_contended
     first_red: direction_consistency
     regime: REGIME_REVERSAL_OBSERVED
-  P2:
+  P1:
     task_class: human_dependency_wait_proxy
     first_red: direction_consistency
     regime: WEAK_OR_NOISY_DIRECTION
 current_genuine_schedule:
-  run_id: 35350275999
-  source_sha: f226e6e61bc84482d4856f056b292ca9322e22f8
-  artifact_id: 10549864368
-  artifact_digest: sha256:6d1ee0018358fff48a83d006322ba1e0b504b32a1cf68e8b4c3e98d0001713c3
-  scheduled_windows: 20
-  distinct_source_shas: 12
-  span_seconds: 410680
-reearn_rule: >-
-  short_compute may return to CONTROL only from a later genuine schedule-event receipt
-  that satisfies every frozen CONTROL gate, including pooled winner strength >= 0.70.
-  Push, PR, manual, synthetic and challenge evidence create no CONTROL clock or promotion credit.
+  run_id: 35574196822
+  job_id: 106252442714
+  source_sha: aad7c4ee3b464307365d55cb7d30999282b01838
+  artifact_id: 10626843286
+  artifact_digest: sha256:5da6859bfcb0fad43c4339dc8ac7795dce052dbd177e6c90eaad04817a222020
+  scheduled_windows: 25
+  distinct_source_shas: 10
+  span_seconds: 519001
+short_compute:
+  policy_status: CONTROL_POLICY
+  allocation_recommendation: ALLOC_SINGLE_CELL
+  directional_windows: 21
+  direction_consistency: 0.9523809523809523
+  pooled_winner_strength: 0.7098869125669386
+  latest_two_directional_windows_agree: true
+  control_reearned: true
+rule: >-
+  CONTROL promotion or revocation remains eligible only from genuine schedule-event
+  Temporal Allocation Policy evidence. PR, push, manual, synthetic and challenge
+  evidence do not create CONTROL clock or promotion credit.
