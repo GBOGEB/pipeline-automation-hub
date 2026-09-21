@@ -1,5 +1,5 @@
 schema: qps.lm10.w260.bd_convergence.v1
-as_of: '2026-09-21T13:06:00+02:00'
+as_of: '2026-09-21T15:43:00+02:00'
 mission_id: LM-10
 official_register: mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml
 official_control: mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml
@@ -33,7 +33,7 @@ current_provider_state:
     lm10_signal_stack: PASS
     monte_carlo: PASS
     symbolic_transform: PASS
-  current_first_red: BD260_5_REVIEW_P1_ALL_SCALAR_TYPE_EXACT_VALIDATION
+  current_first_red: null
 
 bd_queue:
   BD-260.1:
@@ -56,29 +56,37 @@ bd_queue:
     fix_forward_pr: GBOGEB/gg_MATH#43
     role: qps_common_fixture_project_math_challenge
   BD-260.5:
-    state: ACTIVE_PROVE
+    state: DONE_CONTROL_WATCH
     role: triage_verification
+    final_fix_forward_pr: GBOGEB/pipeline-automation-hub#379
+    exact_head: 1d8593b06d05b78e57840ef0852cac32763c1b13
+    exact_head_run: 35602308972
+    merge_sha: a1bfe58d23a109ebfdf6e976f300b18d021ecbbb
+    fresh_master_run: 35602410427
+    review: CLEAN_NO_MAJOR_ISSUES
   BD-260.6:
-    state: CONDITIONALLY_BLOCKED_BY_BD260_5
+    state: NOT_REQUIRED_THIS_CYCLE_REENTER_ON_REAL_CONSUMER_NEED
     role: optional_P4_federation
 
 observed_queue_metrics:
   total_bd_items: 6
-  done_control_watch: 4
-  active_prove: 1
-  dependency_blocked: 1
-  executable_frontier_width: 1
+  done_control_watch: 5
+  active_prove: 0
+  dependency_blocked: 0
+  dormant_reentry: 1
+  executable_frontier_width: 0
   provider_active_pr_count: 0
   historian_review_roots_closed: 5
   historian_review_roots_total: 5
   fractions:
-    done_control_watch: 0.6667
-    active_first_red: 0.1667
-    dependency_blocked: 0.1667
+    done_control_watch: 0.8333
+    active_first_red: 0.0000
+    dependency_blocked: 0.0000
+    dormant_reentry: 0.1667
   interpretation: >-
-    Only one provider transition is executable now. Opening BD-260.5 or W261 before
-    BD-260.4 clean merge/fresh-main proof would increase WIP without increasing
-    dependency-ready throughput.
+    W260 has zero executable frontier. BD-260.1 through BD-260.5 are DONE/CONTROL
+    and BD-260.6 is dormant until a real cross-repo consumer need appears. W261
+    must not be launched from issue-count pressure alone.
 
 queue_reduction_method:
   name: FIRST_RED_FUNNEL_WITH_CONTROL_DECAY
@@ -113,12 +121,12 @@ three_pstar_mapping:
     exit: clean_review_merge_fresh_main_exact_receipt
   P3_TRIAGE_GOVERNANCE:
     scope: [BD-260.5]
-    state: ACTIVE_PROVE
+    state: PASS_CONTROL_WATCH
     exit: evidence_card_schema_threshold_kind_first_red_authority_exact_identity_all_PASS
   P4_FEDERATION_ORCHESTRATION:
     scope: [BD-260.6]
-    state: CONDITIONAL
-    activation: only_after_BD260_5_and_only_for_real_executable_receipts
+    state: NOT_REQUIRED_THIS_CYCLE_REENTER_ON_REAL_CONSUMER_NEED
+    activation: only_on_real_cross_repo_authority_or_consumer_need
 
 mip_iteration:
   Modernize:
@@ -137,13 +145,15 @@ mip_iteration:
       - PCA_DOES_NOT_IMPLY_BT_guards
     first_red: null
   Perpetuate:
-    state: ACTIVE
-    target:
+    state: PASS_CONTROL_WATCH
+    evidence:
       - BD260_5_fail_closed_TRIAGE_validator
       - exact_SHA_fixture_digest_artifact_identity
       - first_red_retention
       - zero_authority_inversion
-      - later_distinct_source_or_consumer_repeat_before_recurrent_CONTROL
+      - type_exact_card_and_scalar_identity
+      - exact_head_review_clean
+      - fresh_master_repeat_pass
 
 bd_planning_metric_contract:
   measured_first:
@@ -167,12 +177,11 @@ bd_planning_metric_contract:
     - merged_code_called_DONE_without_required_proof_or_disposition
 
 next_sequence:
-  - execute_BD260_5_TRIAGE_verifier_on_bound_provider_receipt_projection
-  - bind_exact_SHA_fixture_digest_artifact_identity_and_threshold_classification
-  - require_zero_authority_inversion_and_first_red_retention
-  - run_3Pstar_P3_plus_MIP_Perpetuate
-  - activate_BD260_6_only_if_cross_repo_authority_boundary_is_actually_crossed
-  - launch_W261_only_after_BD260_5_exit_and_BD260_6_disposition
+  - keep_W260_on_CONTROL_watch
+  - keep_BD260_6_dormant_until_real_consumer_need
+  - recensus_fleet_before_selecting_any_new_active_root
+  - launch_W261_only_as_explicit_dependency_ready_mission_frontier
+  - retain_REX_CM_005_for_merge_before_review_recurrence
 
 non_compensating:
   - GBOGEB/cryoplant-project#923
