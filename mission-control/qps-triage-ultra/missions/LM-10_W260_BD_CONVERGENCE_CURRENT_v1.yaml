@@ -16,18 +16,24 @@ purpose: >-
   compensate a failed global QPS AND-gate.
 
 current_provider_state:
-  main_sha_before_fix_forward: ef466822aa14dfaf3799971329c008931b71efe1
-  active_fix_pr: GBOGEB/gg_MATH#43
-  active_fix_head: 65facc18631f73ff1af43ab5e8c7c9708d6ebefb
+  main_sha: 2b27f4a6d70a11324d9a7c81d9c88995888b3d74
+  fix_forward_pr: GBOGEB/gg_MATH#43
+  fix_forward_head: 65facc18631f73ff1af43ab5e8c7c9708d6ebefb
   exact_head_proof:
     run: 35591996425
+    conclusion: PASS
+  fresh_main_proof:
+    run: 35592153194
+    job: 106308723087
+    artifact_id: 10634743904
+    artifact_digest: sha256:603da43f85e9709f0372b3f487e5c15c78e628adc4f6ae19232b8108af233a15
     conclusion: PASS
   adjacent_proof:
     m02b: PASS
     lm10_signal_stack: PASS
     monte_carlo: PASS
     symbolic_transform: PASS
-  current_first_red: PR43_REVIEW_CLEAN_AND_MERGE_THEN_FRESH_MAIN_PROOF
+  current_first_red: BD260_5_TRIAGE_EXACT_IDENTITY_AND_AUTHORITY_VERIFICATION
 
 bd_queue:
   BD-260.1:
@@ -45,12 +51,12 @@ bd_queue:
     repair_pr: GBOGEB/gg_MATH#41
     role: pca_temporal_subspace_uncertainty
   BD-260.4:
-    state: PROVE_PASS_REVIEW_MERGE_PENDING
+    state: DONE_CONTROL_WATCH
     implementation_pr: GBOGEB/gg_MATH#42
     fix_forward_pr: GBOGEB/gg_MATH#43
     role: qps_common_fixture_project_math_challenge
   BD-260.5:
-    state: BLOCKED_BY_BD260_4_CLEAN_MERGE_AND_FRESH_MAIN_PROOF
+    state: ACTIVE_PROVE
     role: triage_verification
   BD-260.6:
     state: CONDITIONALLY_BLOCKED_BY_BD260_5
@@ -58,17 +64,17 @@ bd_queue:
 
 observed_queue_metrics:
   total_bd_items: 6
-  done_control_watch: 3
-  prove_green_review_or_merge_pending: 1
-  dependency_blocked: 2
+  done_control_watch: 4
+  active_prove: 1
+  dependency_blocked: 1
   executable_frontier_width: 1
-  provider_active_pr_count: 1
+  provider_active_pr_count: 0
   historian_review_roots_closed: 5
   historian_review_roots_total: 5
   fractions:
-    done_control_watch: 0.5000
+    done_control_watch: 0.6667
     active_first_red: 0.1667
-    dependency_blocked: 0.3333
+    dependency_blocked: 0.1667
   interpretation: >-
     Only one provider transition is executable now. Opening BD-260.5 or W261 before
     BD-260.4 clean merge/fresh-main proof would increase WIP without increasing
@@ -103,11 +109,11 @@ three_pstar_mapping:
     exit: verified_kernels_plus_negative_regressions
   P2_PROJECT_MATH_QPS:
     scope: [BD-260.4]
-    state: PROVE_PASS_REVIEW_MERGE_PENDING
+    state: PASS_CONTROL_WATCH
     exit: clean_review_merge_fresh_main_exact_receipt
   P3_TRIAGE_GOVERNANCE:
     scope: [BD-260.5]
-    state: BLOCKED
+    state: ACTIVE_PROVE
     exit: evidence_card_schema_threshold_kind_first_red_authority_exact_identity_all_PASS
   P4_FEDERATION_ORCHESTRATION:
     scope: [BD-260.6]
@@ -124,14 +130,14 @@ mip_iteration:
       - exact_QPS_fixture_identity_bound
       - official_LM10_control_surface_reused
   Innovate:
-    state: ACTIVE_NEAR_CLOSE
+    state: PASS
     evidence:
       - common_fixture_covariance_eigen_PCA_CI_bootstrap_ANOVA_BT_challenge
       - compact_evidence_cards
       - PCA_DOES_NOT_IMPLY_BT_guards
-    first_red: PR43_REVIEW_CLEAN_AND_MERGE_THEN_FRESH_MAIN_PROOF
+    first_red: null
   Perpetuate:
-    state: BLOCKED_BY_INNOVATE_EXIT
+    state: ACTIVE
     target:
       - BD260_5_fail_closed_TRIAGE_validator
       - exact_SHA_fixture_digest_artifact_identity
@@ -161,11 +167,9 @@ bd_planning_metric_contract:
     - merged_code_called_DONE_without_required_proof_or_disposition
 
 next_sequence:
-  - consume_GBOGEB_gg_MATH_PR43_review
-  - merge_PR43_only_if_review_clean_and_exact_head_remains_green
-  - require_fresh_main_BD260_4_proof
-  - consume_exact_BD260_4_receipt_into_MissionControl_issue_129
-  - activate_BD260_5_as_single_provider_frontier
+  - execute_BD260_5_TRIAGE_verifier_on_bound_provider_receipt_projection
+  - bind_exact_SHA_fixture_digest_artifact_identity_and_threshold_classification
+  - require_zero_authority_inversion_and_first_red_retention
   - run_3Pstar_P3_plus_MIP_Perpetuate
   - activate_BD260_6_only_if_cross_repo_authority_boundary_is_actually_crossed
   - launch_W261_only_after_BD260_5_exit_and_BD260_6_disposition
