@@ -87,7 +87,7 @@ jobs:
           assert r['qps_923_compensation'] is False
           assert r['authority_transfer'] is False
           assert r['formal_credit_delta'] == 0
-          assert r['modeled_registered_workflows_after'] == 5
+          assert r['modeled_registered_workflows_after'] == 6
           print('PASS_RUNNER_FANOUT_NONCOMPENSATION')
           PY
 
