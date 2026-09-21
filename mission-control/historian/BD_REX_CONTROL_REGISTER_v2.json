@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-21T10:56:00+02:00",
+  "as_of": "2026-09-21T11:02:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -12,9 +12,9 @@
     "audited_prs_minimum": 34,
     "review_finding_occurrences_observed_cumulative": 44,
     "durable_bd_roots_total": 24,
-    "current_open_bd_roots": 4,
-    "current_unresolved_occurrences_minimum": 4,
-    "done_or_control_roots": 20,
+    "current_open_bd_roots": 0,
+    "current_unresolved_occurrences_minimum": 0,
+    "done_or_control_roots": 24,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
     "controlled_recurring_families": 4,
@@ -633,7 +633,7 @@
       "title": "Exclude checkout metadata from static candidate artifacts",
       "class": "ARTIFACT_SCOPE_SECURITY",
       "severity": "P2",
-      "state": "ACTIVE",
+      "state": "DONE",
       "occurrence_count": 1,
       "repos": [
         "GBOGEB/CODEX"
@@ -652,7 +652,7 @@
         "HISTORIAN",
         "QA_SIGNALMAN"
       ],
-      "prove_state": "PROVE_PENDING_RUNNER_ADMISSION",
+      "prove_state": "PASS_EXACT_HEAD_POSTMERGE",
       "current_code_evidence": [
         "static.yml persist-credentials=false",
         "artifact upload excludes .git and .git/**",
@@ -661,14 +661,25 @@
       "negative_evidence": [
         "PR#781 merged before dedicated Wave-A proof suite fully closed"
       ],
-      "done_when": "Exact-head closure CI passes >0 steps and merged/current code preserves artifact-scope controls"
+      "done_when": "SATISFIED",
+      "proof_refs": [
+        "CODEX#787@cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+        "merge@954f0fd95b1360830f38a082422340a02206a4b7",
+        "run35580291171/job106271355721 W003 PASS",
+        "run35580291195/job106271357265 CI PASS",
+        "run35580291155/job106271356609 W286 3PC Prove PASS",
+        "run35580291121/job106271356218 GM-I-A PASS",
+        "run35580291180/job106271356487 Validate Federation PASS",
+        "Codex current-head review cbd28b8c88: no major issues",
+        "current CODEX main d0f4e83e66bedc512e077ac05ac2ba8f289a530f survival confirmed"
+      ]
     },
     {
       "bd_id": "HIST-BD-022",
       "title": "Keep GM-I-A KEB output at candidate status",
       "class": "AUTHORITY_PROMOTION_BOUNDARY",
       "severity": "P1",
-      "state": "ACTIVE",
+      "state": "DONE",
       "occurrence_count": 1,
       "repos": [
         "GBOGEB/CODEX"
@@ -688,7 +699,7 @@
         "HISTORIAN",
         "QA_SIGNALMAN"
       ],
-      "prove_state": "PROVE_PENDING_RUNNER_ADMISSION",
+      "prove_state": "PASS_EXACT_HEAD_POSTMERGE",
       "current_code_evidence": [
         "bridge loaded fail-closed",
         "KEB_KNOWLEDGE_ATOM_CANDIDATE",
@@ -700,14 +711,25 @@
         "run35579721479 failed: ruamel.yaml missing",
         "PR#785 dedicated GM-I-A run35579949228 PASS but W003 metadata red due missing SPRINT"
       ],
-      "done_when": "Closure-head GM-I-A proof and CI/W003 execute >0 steps and pass; merged/current code survives"
+      "done_when": "SATISFIED",
+      "proof_refs": [
+        "CODEX#787@cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+        "merge@954f0fd95b1360830f38a082422340a02206a4b7",
+        "run35580291171/job106271355721 W003 PASS",
+        "run35580291195/job106271357265 CI PASS",
+        "run35580291155/job106271356609 W286 3PC Prove PASS",
+        "run35580291121/job106271356218 GM-I-A PASS",
+        "run35580291180/job106271356487 Validate Federation PASS",
+        "Codex current-head review cbd28b8c88: no major issues",
+        "current CODEX main d0f4e83e66bedc512e077ac05ac2ba8f289a530f survival confirmed"
+      ]
     },
     {
       "bd_id": "HIST-BD-023",
       "title": "Fail closed on GLOOB/Pandoc identity, structure and named authority drift",
       "class": "FEDERATION_CONTRACT_VALIDATION",
       "severity": "P1",
-      "state": "ACTIVE",
+      "state": "DONE",
       "occurrence_count": 2,
       "repos": [
         "GBOGEB/CODEX"
@@ -726,7 +748,7 @@
         "HISTORIAN",
         "QA_SIGNALMAN"
       ],
-      "prove_state": "PROVE_PENDING_RUNNER_ADMISSION",
+      "prove_state": "PASS_EXACT_HEAD_POSTMERGE",
       "current_code_evidence": [
         "explicit require()",
         "lowercase 40-hex identities",
@@ -737,14 +759,25 @@
       "negative_evidence": [
         "PR#784 Codex P1 found non-object consumer escape; same semantic root, not new BD"
       ],
-      "done_when": "Closure-head W286/CI/W003 proof passes >0 steps and current-head Codex review is clean"
+      "done_when": "SATISFIED",
+      "proof_refs": [
+        "CODEX#787@cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+        "merge@954f0fd95b1360830f38a082422340a02206a4b7",
+        "run35580291171/job106271355721 W003 PASS",
+        "run35580291195/job106271357265 CI PASS",
+        "run35580291155/job106271356609 W286 3PC Prove PASS",
+        "run35580291121/job106271356218 GM-I-A PASS",
+        "run35580291180/job106271356487 Validate Federation PASS",
+        "Codex current-head review cbd28b8c88: no major issues",
+        "current CODEX main d0f4e83e66bedc512e077ac05ac2ba8f289a530f survival confirmed"
+      ]
     },
     {
       "bd_id": "HIST-BD-024",
       "title": "Pin W286 visual-golden validation to declared source fixture",
       "class": "FEDERATION_PROVENANCE_BINDING",
       "severity": "P1",
-      "state": "ACTIVE",
+      "state": "DONE",
       "occurrence_count": 1,
       "repos": [
         "GBOGEB/CODEX"
@@ -763,13 +796,24 @@
         "HISTORIAN",
         "QA_SIGNALMAN"
       ],
-      "prove_state": "PROVE_PENDING_RUNNER_ADMISSION",
+      "prove_state": "PASS_EXACT_HEAD_POSTMERGE",
       "current_code_evidence": [
         "exact source repo/issue/PR/merge binding",
         "exact corpus name/digest binding",
         "mutation regressions"
       ],
-      "done_when": "Closure-head CI/federation proof passes >0 steps and merged/current code survives"
+      "done_when": "SATISFIED",
+      "proof_refs": [
+        "CODEX#787@cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+        "merge@954f0fd95b1360830f38a082422340a02206a4b7",
+        "run35580291171/job106271355721 W003 PASS",
+        "run35580291195/job106271357265 CI PASS",
+        "run35580291155/job106271356609 W286 3PC Prove PASS",
+        "run35580291121/job106271356218 GM-I-A PASS",
+        "run35580291180/job106271356487 Validate Federation PASS",
+        "Codex current-head review cbd28b8c88: no major issues",
+        "current CODEX main d0f4e83e66bedc512e077ac05ac2ba8f289a530f survival confirmed"
+      ]
     }
   ],
   "control_measures": [
@@ -840,7 +884,9 @@
         "GET /repos/GBOGEB/ABACUS/rulesets -> []",
         "main branch observed protected=false",
         "branch protection endpoint -> 403 Resource not accessible by integration",
-        "check-run policy-and-inventory job105622495352 PASS"
+        "check-run policy-and-inventory job105622495352 PASS",
+        "CODEX#787 merged@954f0fd95b1360830f38a082422340a02206a4b7 while exact-head closure checks were queued",
+        "post-merge exact-head closure on cbd28b8c88c85789ccc4f5be3bd8942540a60f1a later PASS; post-merge green does not prove merge prevention"
       ],
       "execution_boundary": {
         "classification": "REPOSITORY_ADMIN_MERGE_ADMISSION",
@@ -854,31 +900,15 @@
           "proof_job": 105622495352
         },
         "session_write_capability": "NO_RULESET_OR_BRANCH_PROTECTION_WRITE_TOOL_EXPOSED"
-      }
+      },
+      "cross_repo_recurrence": [
+        "GBOGEB/ABACUS",
+        "GBOGEB/pipeline-automation-hub",
+        "GBOGEB/CODEX"
+      ]
     }
   ],
-  "open_priority": [
-    {
-      "rank": 1,
-      "bd_id": "HIST-BD-022",
-      "reason": "P1 authority-promotion boundary repaired; closure proof queued without runner admission"
-    },
-    {
-      "rank": 2,
-      "bd_id": "HIST-BD-023",
-      "reason": "P1 federation fail-closed validator repaired including post-merge Codex finding; closure proof queued"
-    },
-    {
-      "rank": 3,
-      "bd_id": "HIST-BD-024",
-      "reason": "P1 source/corpus provenance binding repaired; closure proof queued"
-    },
-    {
-      "rank": 4,
-      "bd_id": "HIST-BD-021",
-      "reason": "P2 artifact-scope security repair present; closure proof queued"
-    }
-  ],
+  "open_priority": [],
   "external_non_compensating_gates": [
     {
       "repo": "GBOGEB/cryoplant-project",
@@ -888,9 +918,9 @@
     }
   ],
   "next_deep_dive_order": [
-    "F2 current mission repo selected from measured Historian pressure after CODEX closure",
-    "return to CODEX only on closure first-red or observed regression",
-    "cryoplant-project#923 remains separate owner runner-admission lane"
+    "F2 current mission repo selected from measured unresolved Historian pressure",
+    "REX-CM-005 owner/admin merge-admission proof when configuration becomes writable",
+    "cryoplant-project#923 remains separate non-compensating runner-admission lane"
   ],
   "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE",
   "control_priority": [
