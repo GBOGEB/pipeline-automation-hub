@@ -28,7 +28,7 @@ jobs:
         run: |
           set -euo pipefail
           python mission-control/historian/validate_fleet_open_issue_convergence.py | tee fleet.out
-          grep -q PASS_FLEET_OPEN_ISSUE_CONVERGENCE_94_32_2_60 fleet.out
+          grep -q PASS_FLEET_OPEN_ISSUE_CONVERGENCE_94_31_1_62 fleet.out
       - uses: actions/upload-artifact@v4
         with:
           name: fleet-open-issue-convergence-${{ github.event.pull_request.head.sha || github.sha }}
