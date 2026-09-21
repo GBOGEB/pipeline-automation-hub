@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-18",
+  "as_of": "2026-09-21",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -9,12 +9,12 @@
   "historian_parent_issue": 76,
   "runner_economics_issue": 79,
   "bounded_sample": {
-    "audited_prs_minimum": 19,
-    "review_finding_occurrences_observed_cumulative": 36,
+    "audited_prs_minimum": 23,
+    "review_finding_occurrences_observed_cumulative": 38,
     "durable_bd_roots_total": 18,
-    "current_open_bd_roots": 2,
-    "current_unresolved_occurrences_minimum": 2,
-    "done_or_control_roots": 16,
+    "current_open_bd_roots": 0,
+    "current_unresolved_occurrences_minimum": 0,
+    "done_or_control_roots": 18,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
     "controlled_recurring_families": 4,
@@ -47,20 +47,26 @@
       "title": "Derive observed REX verbs from completed dispositions, not requested actions",
       "class": "REX_SEMANTICS",
       "severity": "P1",
-      "state": "TODO",
+      "state": "DONE",
       "occurrence_count": 1,
       "repos": [
         "GBOGEB/pipeline-automation-hub"
       ],
       "source_prs": [
-        41
+        41,
+        342
       ],
       "rex_control_id": null,
       "crew_owner": [
         "Doctor.REX",
         "QA_SIGNALMAN"
       ],
-      "done_when": "ASSIMILATE/PRUNE/BRIDGE observed counts derive only from completed accepted dispositions"
+      "done_when": "SATISFIED",
+      "proof_refs": [
+        "PR#342@84892b817a289e62a298b70e95577fca30d9e2ec",
+        "GM-FLEET-02B run35574684921 PASS including requested-vs-observed semantics regression",
+        "merge@fd768e3745d4d48af8d2ce774485bae1c0b03c61"
+      ]
     },
     {
       "bd_id": "HIST-BD-002",
@@ -245,13 +251,15 @@
       "title": "Retain validated rejected runtime evidence in canonical history",
       "class": "NEGATIVE_EVIDENCE_RETENTION",
       "severity": "P1",
-      "state": "TODO",
+      "state": "DONE",
       "occurrence_count": 1,
       "repos": [
         "GBOGEB/pipeline-automation-hub"
       ],
       "source_prs": [
-        49
+        49,
+        344,
+        346
       ],
       "rex_control_id": null,
       "crew_owner": [
@@ -259,7 +267,14 @@
         "Doctor.Contracts",
         "QA_SIGNALMAN"
       ],
-      "done_when": "validated negative observations survive canonically without promotion and affect history/eligibility"
+      "done_when": "SATISFIED",
+      "proof_refs": [
+        "PR#344 retained negative implementation/proof failure",
+        "PR#346@505febf2273074ed4c434f2a71461e6e7e9dd81e",
+        "run35575281421 PASS canonical negative-evidence retention and fail-closed post-retention gate",
+        "merge@92876db294a4f790a5a7acda60a3217ee8972922",
+        "push run35575368403 PASS same evidence-retention chain"
+      ]
     },
     {
       "bd_id": "HIST-BD-010",
@@ -613,18 +628,7 @@
       }
     }
   ],
-  "open_priority": [
-    {
-      "rank": 1,
-      "bd_id": "HIST-BD-001",
-      "reason": "P1 REX semantics still misclassifies requested action as observed outcome"
-    },
-    {
-      "rank": 2,
-      "bd_id": "HIST-BD-009",
-      "reason": "P1 negative-evidence retention still incomplete"
-    }
-  ],
+  "open_priority": [],
   "external_non_compensating_gates": [
     {
       "repo": "GBOGEB/cryoplant-project",
@@ -634,21 +638,21 @@
     }
   ],
   "next_deep_dive_order": [
-    "GBOGEB/ABACUS (close REX-CM-005 admission binding)",
     "GBOGEB/Q_engineering_tools",
-    "GBOGEB/CODEX"
+    "GBOGEB/CODEX",
+    "next fleet candidate from Historian fanout"
   ],
   "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE",
   "control_priority": [
     {
       "rank": 1,
       "control_id": "REX-CM-005",
-      "reason": "BD018 repair is DONE but merge admission is not bound fail-closed; negative/positive admission repeat still required"
+      "reason": "only remaining Historian control hold; owner/admin merge-admission binding and negative/positive admission proof required"
     },
     {
       "rank": 2,
       "control_id": "CRYOPLANT-923",
-      "reason": "non-compensating private-repo runner admission remains open"
+      "reason": "separate non-compensating private-repo runner admission remains open"
     }
   ]
 }

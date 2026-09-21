@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.specialist_repair_crew_registry.v2",
   "status": "ACTIVE",
-  "as_of": "2026-09-18",
+  "as_of": "2026-09-21",
   "authority_transfer": false,
   "supersedes_current_view": "SPECIALIST_REPAIR_CREW_REGISTRY_v1.json",
   "activation_rule": "recurrence || P0/P1 severity || cross_repo_centrality || repeated_failed_repair || active_control_repeat",
@@ -10,22 +10,21 @@
     {
       "crew_id": "DOCTOR_REX",
       "display_name": "Doctor.REX",
-      "state": "ACTIVE_BOUNDED",
+      "state": "RETURNED_CONTROL_RESERVE",
       "triggered_by_roots": [
         "HIST-BD-001",
         "HIST-BD-006",
         "HIST-BD-007"
       ],
-      "active_scope": [
-        "HIST-BD-001"
-      ],
+      "active_scope": [],
       "controlled_scope": [
         "HIST-BD-006"
       ],
       "done_scope": [
-        "HIST-BD-007"
+        "HIST-BD-007",
+        "HIST-BD-001"
       ],
-      "current_mission": "REX_SEMANTICS_BD001",
+      "current_mission": null,
       "secondment": [
         "H2_KEB",
         "H3_DOW",
@@ -37,7 +36,12 @@
         "recurrence classification",
         "completed-disposition evidence"
       ],
-      "victory_condition": "BD001 runtime report derives observed verbs from completed accepted disposition evidence; no requested-action false positive"
+      "victory_condition": "BD001 runtime report derives observed verbs from completed accepted disposition evidence; no requested-action false positive",
+      "return_evidence": [
+        "PR#342",
+        "run35574684921",
+        "merge@fd768e3745d4d48af8d2ce774485bae1c0b03c61"
+      ]
     },
     {
       "crew_id": "DOCTOR_ANALYTICS",
@@ -79,7 +83,7 @@
     {
       "crew_id": "DOCTOR_CONTRACTS",
       "display_name": "Doctor.Contracts",
-      "state": "ACTIVE_BOUNDED",
+      "state": "ACTIVE_OWNER_ADMIN_BOUNDARY",
       "triggered_by_roots": [
         "HIST-BD-002",
         "HIST-BD-003",
@@ -92,7 +96,6 @@
         "HIST-BD-018"
       ],
       "active_scope": [
-        "HIST-BD-009",
         "REX-CM-005"
       ],
       "done_scope": [
@@ -102,9 +105,10 @@
         "HIST-BD-005",
         "HIST-BD-013",
         "HIST-BD-017",
-        "HIST-BD-018"
+        "HIST-BD-018",
+        "HIST-BD-009"
       ],
-      "current_mission": "REX_CM_005_MERGE_ADMISSION_PLUS_NEGATIVE_EVIDENCE",
+      "current_mission": "REX_CM_005_MERGE_ADMISSION",
       "secondment": [
         "H2_KEB",
         "HISTORIAN",
@@ -117,7 +121,7 @@
         "negative evidence contract",
         "contract drift"
       ],
-      "victory_condition": "Bind merge admission fail-closed to governance and prove negative/positive admission; retain BD009 validated negative evidence without promotion",
+      "victory_condition": "Owner/admin binds governance check as merge requirement and proves negative red non-mergeable then distinct-SHA green mergeable",
       "controlled_scope": [
         "HIST-BD-016"
       ]
@@ -198,10 +202,9 @@
       ],
       "active_scope": [
         "REX-CM-005",
-        "HIST-BD-009",
         "fleet deep-dive expansion"
       ],
-      "current_mission": "MERGE_ADMISSION_CONTROL_ESCAPE_AND_TEMPORAL_LINEAGE",
+      "current_mission": "Q_ENGINEERING_TOOLS_DEEP_DIVE_PLUS_ADMIN_CONTROL_WATCH",
       "secondment": [
         "H1_QPS",
         "H2_KEB",
@@ -241,22 +244,21 @@
   ],
   "allocation_summary": {
     "active_specialists": [
-      "DOCTOR_REX",
       "DOCTOR_CONTRACTS",
       "DOCTOR_RUNTIME",
       "HISTORIAN"
     ],
     "returned_control_reserve": [
+      "DOCTOR_REX",
       "DOCTOR_ANALYTICS",
       "DOCTOR_SUPPLY_CHAIN",
       "DEBUG_SURGEON"
     ],
     "priority_sequence": [
-      "REX-CM-005 merge admission binding + negative/positive proof",
-      "HIST-BD-001",
-      "HIST-BD-009",
-      "cryoplant-project#923 remains separate non-compensating runtime gate",
-      "next repo deep-dive"
+      "Q_engineering_tools Historian deep-dive",
+      "REX-CM-005 owner/admin binding when available",
+      "cryoplant-project#923 owner runner-admission recovery",
+      "next fleet deep-dive"
     ],
     "anti_proliferation": "specialists are temporary pressure cells; return/merge competencies after bounded victory unless recurrent independent workload justifies persistence"
   }
