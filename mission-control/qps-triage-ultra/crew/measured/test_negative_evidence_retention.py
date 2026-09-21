@@ -13,7 +13,7 @@ accepted_names = [
     "RUN_RETURN_34767461345.json",
 ]
 
-rejected = [
+rejected = json.loads(r'''[
   {
     "schema": "missioncontrol.measured_task_run_return.v1",
     "status": "REJECTED_EXACT_SHA_RUNTIME_RETURN",
@@ -104,7 +104,7 @@ rejected = [
       "note": "synthetic regression fixture"
     }
   }
-]
+]''')
 
 with tempfile.TemporaryDirectory() as td:
     tmp = Path(td)
