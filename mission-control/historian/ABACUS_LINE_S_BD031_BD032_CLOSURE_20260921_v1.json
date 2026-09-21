@@ -1,0 +1,58 @@
+{
+  "schema": "missioncontrol.historian.abacus_line_s_bd031_bd032_closure.v1",
+  "as_of": "2026-09-21T16:32:00+02:00",
+  "status": "PASS_BD031_BD032_DONE_SOURCE_EXTRACTION_STILL_OPEN",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "roots": [
+    {
+      "bd_id": "HIST-BD-031",
+      "state": "DONE",
+      "issue": "GBOGEB/ABACUS#1326"
+    },
+    {
+      "bd_id": "HIST-BD-032",
+      "state": "DONE",
+      "issue": "GBOGEB/ABACUS#1327"
+    }
+  ],
+  "source_work_order": {
+    "issue": "GBOGEB/ABACUS#1313",
+    "state": "OPEN",
+    "reason": "Appendix 8.4 authoritative source extraction remains SOURCE_PENDING; mode/valve/recovery-path/V_eff states shall not be inferred"
+  },
+  "repair": {
+    "pr": "GBOGEB/ABACUS#1328",
+    "head": "ba9159e5464148b94897b9628883b830ad17dabd",
+    "merge": "c940fba8ad1ccac5e75d7fb5e836ae2d1fdb5acb",
+    "proof": [
+      "run35613587214 qps-line-s-validation PASS",
+      "run35613587314 changed-doc validation PASS",
+      "run35613587160 Format Check PASS",
+      "run35613587371 YAML Validation PASS",
+      "run35613587294 Ruff PASS",
+      "Codex review ba9159e546: no major issues"
+    ]
+  },
+  "derived_governance_repair": {
+    "pr": "GBOGEB/ABACUS#1329",
+    "head": "0c73a66427e83819dd486a56a3296be033427bff",
+    "merge": "5a6e560a02d45276f23208019ad6a202b3cf0964",
+    "proof": [
+      "run35614015576 CI Workflow Governance PASS",
+      "run35614015564 changed-doc validation PASS",
+      "run35614015487 Format Check PASS",
+      "run35614015512 Ruff PASS",
+      "Codex review 0c73a66427: no major issues"
+    ]
+  },
+  "rex_cm_005": {
+    "state": "ACTIVE_PREVENTION_WITHHELD",
+    "recurrence": [
+      "ABACUS#1317",
+      "ABACUS#1328"
+    ],
+    "mitigation": "draft-first exact-head proof was used successfully on ABACUS#1329",
+    "control_boundary": "draft-first is process mitigation only; repository-admin merge admission remains unbound"
+  }
+}
