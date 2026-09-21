@@ -38,11 +38,18 @@ jobs:
         run: python mission-control/qps-triage-ultra/crew/measured/test_rex_runtime_control.py
       - name: Validate canonical evidence returns
         run: python mission-control/qps-triage-ultra/crew/measured/validate_evidence_returns.py
+      - name: Prove canonical negative-evidence retention
+        run: python mission-control/qps-triage-ultra/crew/measured/test_negative_evidence_retention.py
       - name: Execute predeclared Mission Crew Task Runtime chain
+        id: task_chain
+        continue-on-error: true
         env:
           MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python mission-control/qps-triage-ultra/crew/measured/run_measured_tasks.py
       - name: Validate measured crew exposure receipts
+        id: exposure_validation
+        if: always()
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
@@ -53,10 +60,19 @@ jobs:
           done
           test "$count" -eq 4
       - name: Build measured allocation evidence
+        id: allocation_build
+        if: always()
+        continue-on-error: true
         run: python mission-control/qps-triage-ultra/crew/measured/build_measured_allocation.py
       - name: Enrich allocation with controlled exposure history and PCA
+        id: allocation_enrich
+        if: always()
+        continue-on-error: true
         run: python mission-control/qps-triage-ultra/crew/measured/enrich_allocation_with_exposure.py
       - name: Enforce exposure PCA and recurrent controls
+        id: allocation_gate
+        if: always()
+        continue-on-error: true
         shell: bash
         run: |
           python - <<'PY'
@@ -174,6 +190,7 @@ jobs:
           },sort_keys=True))
           PY
       - name: Upload measured crew receipts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: measured-crew-allocation-${{ github.event.pull_request.head.sha || github.sha }}
@@ -181,3 +198,24 @@ jobs:
             mission-control/qps-triage-ultra/crew/measured/receipts/*.json
             mission-control/qps-triage-ultra/crew/measured/receipts/exposure/*.json
             mission-control/qps-triage-ultra/crew/measured/MEASURED_ALLOCATION_RECEIPT.json
+
+      - name: Fail closed after retaining runtime evidence
+        if: always()
+        env:
+          TASK_CHAIN_OUTCOME: ${{ steps.task_chain.outcome }}
+          EXPOSURE_VALIDATION_OUTCOME: ${{ steps.exposure_validation.outcome }}
+          ALLOCATION_BUILD_OUTCOME: ${{ steps.allocation_build.outcome }}
+          ALLOCATION_ENRICH_OUTCOME: ${{ steps.allocation_enrich.outcome }}
+          ALLOCATION_GATE_OUTCOME: ${{ steps.allocation_gate.outcome }}
+        shell: bash
+        run: |
+          echo "task_chain=$TASK_CHAIN_OUTCOME"
+          echo "exposure_validation=$EXPOSURE_VALIDATION_OUTCOME"
+          echo "allocation_build=$ALLOCATION_BUILD_OUTCOME"
+          echo "allocation_enrich=$ALLOCATION_ENRICH_OUTCOME"
+          echo "allocation_gate=$ALLOCATION_GATE_OUTCOME"
+          test "$TASK_CHAIN_OUTCOME" = success
+          test "$EXPOSURE_VALIDATION_OUTCOME" = success
+          test "$ALLOCATION_BUILD_OUTCOME" = success
+          test "$ALLOCATION_ENRICH_OUTCOME" = success
+          test "$ALLOCATION_GATE_OUTCOME" = success
