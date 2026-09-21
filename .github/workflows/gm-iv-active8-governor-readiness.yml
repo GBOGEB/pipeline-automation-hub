@@ -4,11 +4,13 @@ on:
   pull_request:
     paths:
       - 'mission-control/grand-missions/**'
+      - '!mission-control/grand-missions/analytics/**'
       - '.github/workflows/gm-iv-active8-governor-readiness.yml'
   push:
     branches: [master]
     paths:
       - 'mission-control/grand-missions/**'
+      - '!mission-control/grand-missions/analytics/**'
       - '.github/workflows/gm-iv-active8-governor-readiness.yml'
   workflow_dispatch:
 
