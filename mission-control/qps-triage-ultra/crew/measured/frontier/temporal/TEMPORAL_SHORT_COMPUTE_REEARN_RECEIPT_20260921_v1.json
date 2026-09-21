@@ -1,0 +1,79 @@
+{
+  "schema": "missioncontrol.temporal_short_compute_reearn_receipt.v1",
+  "mission_id": "MC-CREW-FRONTIER-004",
+  "as_of": "2026-09-21T09:46:00+02:00",
+  "status": "PASS_SHORT_COMPUTE_CONTROL_REEARNED",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "competency_promotions": 0,
+  "historical_regression": {
+    "run_id": "35350275999",
+    "prior_state": "CONTROL_REVOKED_REEARN_REQUIRED",
+    "prior_pooled_winner_strength": 0.6907625243981782,
+    "frozen_min_pooled_winner_strength": 0.7
+  },
+  "reearn_evidence": {
+    "workflow": "MissionControl Temporal Allocation Policy",
+    "event": "schedule",
+    "run_id": "35574196822",
+    "job_id": "106252442714",
+    "job_name": "analyze-temporal-policy",
+    "exact_source_sha": "aad7c4ee3b464307365d55cb7d30999282b01838",
+    "workflow_conclusion": "success",
+    "artifact_id": "10626843286",
+    "artifact_name": "crew-temporal-pc3-aad7c4ee3b464307365d55cb7d30999282b01838",
+    "artifact_digest": "sha256:5da6859bfcb0fad43c4339dc8ac7795dce052dbd177e6c90eaad04817a222020"
+  },
+  "scheduled_control_frontier": {
+    "independent_windows": 25,
+    "distinct_source_shas": 10,
+    "temporal_span_seconds": 519001.0,
+    "hosted_runner_classes": ["linux", "macos", "windows"],
+    "lanes": ["baseline", "held"],
+    "rex_veto": false
+  },
+  "short_compute": {
+    "policy_status": "CONTROL_POLICY",
+    "allocation_recommendation": "ALLOC_SINGLE_CELL",
+    "allocation_policy_promotion": true,
+    "directional_windows": 21,
+    "direction_counts": {
+      "ALLOC_SINGLE_CELL": 20,
+      "ALLOC_PAIRED_CELL": 1
+    },
+    "direction_consistency": 0.9523809523809523,
+    "pooled_single_strength": 0.7098869125669386,
+    "pooled_winner_strength": 0.7098869125669386,
+    "latest_two_directional_windows_agree": true,
+    "observed_pairs_total": 150
+  },
+  "gate_evaluation": {
+    "independent_windows": {"threshold": 6, "observed": 25, "pass": true},
+    "distinct_source_shas": {"threshold": 3, "observed": 10, "pass": true},
+    "temporal_span_seconds": {"threshold": 86400, "observed": 519001.0, "pass": true},
+    "directional_windows": {"threshold": 5, "observed": 21, "pass": true},
+    "direction_consistency": {"threshold": 0.8, "observed": 0.9523809523809523, "pass": true},
+    "pooled_winner_strength": {"threshold": 0.7, "observed": 0.7098869125669386, "pass": true},
+    "latest_two_directional_windows_agree": {"required": true, "observed": true, "pass": true},
+    "hosted_runner_classes": {"threshold": 3, "observed": ["linux", "macos", "windows"], "pass": true},
+    "baseline_and_held_lanes": {"required": true, "observed": ["baseline", "held"], "pass": true},
+    "rex_veto": {"required": false, "observed": false, "pass": true}
+  },
+  "decision": {
+    "short_compute": "CONTROL_REEARNED",
+    "effective_control_class_count": 3,
+    "full_control": false,
+    "next_frontier": [
+      "long_compute_contended",
+      "human_dependency_wait_proxy"
+    ]
+  },
+  "non_compensation": {
+    "full_control_claim": false,
+    "project_global_promotion": false,
+    "human_proxy_relabel": false,
+    "thresholds_changed": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0
+  }
+}
