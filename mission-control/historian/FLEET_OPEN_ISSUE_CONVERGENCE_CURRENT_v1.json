@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.fleet_open_issue_convergence.v1",
-  "as_of": "2026-09-21T14:31:00+02:00",
+  "as_of": "2026-09-21T14:37:00+02:00",
   "owner": "GBOGEB",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -178,7 +178,7 @@
     },
     "GBOGEB/ABACUS": {
       "head": "d00fcb026bd05b8c35e6f2f30fc3192d695dcfb6",
-      "open_issues": 13,
+      "open_issues": 12,
       "control": [
         633,
         776,
@@ -187,9 +187,7 @@
         785,
         981
       ],
-      "active": [
-        638
-      ],
+      "active": [],
       "blocked": [
         1278,
         1002,
@@ -198,9 +196,9 @@
         637,
         644
       ],
-      "first_red": "EXECUTE_NOW bounded source-side #638 stale-reference / legacy-binary current-code scan; physical roundtrip gates remain RETURN.",
+      "first_red": "No normal repo-local coding frontier selected after #638 closure; #1278 and GOV-001 local/physical gates remain RETURN/HOLD. Re-census before successor selection.",
       "local_control": "GBOGEB/ABACUS#633",
-      "source": "GOV-001 latest cold-edge classification; #776 CONTROL watch; #1164 controlled negative/evidence-blocked; #1278 OWNER_ADMIN_GATE"
+      "source": "GOV-001 current-source S1/S2 scan: #638 source-side Phase 5 closed; #776 CONTROL watch; #1164 controlled negative/evidence-blocked; #1278 OWNER_ADMIN_GATE"
     },
     "GBOGEB/CODEX": {
       "head": "d6418f60b1082acb15eec14eb21df96488dce590",
@@ -265,30 +263,24 @@
     }
   },
   "fleet": {
-    "open_issues": 95,
+    "open_issues": 94,
     "repositories_with_open_issues": 7,
     "control": 31,
-    "active": 2,
+    "active": 1,
     "blocked": 62,
-    "executable_frontier_width": 2,
-    "control_share": 0.3263157894736842,
-    "active_share": 0.021052631578947368,
-    "blocked_share": 0.6526315789473685,
-    "compression_statement": "95 open occurrences -> 31 CONTROL + 2 ACTIVE + 62 BLOCKED/RETURN/HOLD/READ",
-    "interpretation": "Only two issue surfaces currently justify normal executable/proof WIP. Open-issue count alone overstates active work by 47.5x."
+    "executable_frontier_width": 1,
+    "control_share": 0.32978723404255317,
+    "active_share": 0.010638297872340425,
+    "blocked_share": 0.6595744680851063,
+    "compression_statement": "94 open occurrences -> 31 CONTROL + 1 ACTIVE + 62 BLOCKED/RETURN/HOLD/READ",
+    "interpretation": "Only one issue surface currently justifies normal executable/proof WIP. Raw open-issue count overstates active work by 94x."
   },
   "active_frontiers": [
     {
       "repo": "GBOGEB/pipeline-automation-hub",
       "issue": 129,
       "kind": "PROVE",
-      "victory": "BD-260.5 exact-head TRIAGE PASS + review-clean + fresh-master recurrence"
-    },
-    {
-      "repo": "GBOGEB/ABACUS",
-      "issue": 638,
-      "kind": "EXECUTE_NOW",
-      "victory": "current-code stale-reference/legacy-binary scan yields bounded disposition without crossing physical-return gates"
+      "victory": "LM-10/W260 current governed convergence/receipt frontier reaches its next explicit disposition"
     }
   ],
   "blocked_priority": [
@@ -342,11 +334,11 @@
     ]
   },
   "next": [
-    "consume cryoplant #1569 no-close-guard proof/review and keep #211/#85 RETURN",
-    "drain pipeline #129 / PR #371 BD-260.5 proof",
-    "run ABACUS #638 bounded cloud-executable scan",
+    "consume cryoplant #1569 post-merge proof and keep #211/#85 RETURN",
+    "drain the single active pipeline #129 governed convergence frontier",
+    "hold ABACUS successor selection until fresh recensus after #638 closure",
     "leave CODEX/GEMINI/document-organization-system RETURN gates at zero coding allocation",
-    "repeat fleet census after the two ACTIVE fronts resolve and recompute net_BD_delta"
+    "repeat fleet census after pipeline #129 disposition and compute consecutive-pulse net_BD_delta"
   ],
   "census_events": [
     {
@@ -375,6 +367,22 @@
       "effect": {
         "open_issues": 1,
         "control": -1,
+        "blocked": 2
+      }
+    },
+    {
+      "event": "ABACUS_638_CLOSED_SOURCE_SIDE_COMPLETE",
+      "effect": {
+        "open_issues": -1,
+        "active": -1
+      }
+    },
+    {
+      "event": "NET_FROM_INITIAL_94_SNAPSHOT_AFTER_S2",
+      "effect": {
+        "open_issues": 0,
+        "control": -1,
+        "active": -1,
         "blocked": 2
       }
     }
