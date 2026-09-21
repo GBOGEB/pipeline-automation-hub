@@ -13,6 +13,7 @@ on:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_FRONTIER_CURRENT_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_RECEIPT_20260921_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_HUMAN_WAIT_P1_DIAGNOSTIC_20260921_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/**'
       - '.github/workflows/crew-temporal-3pstar-mip-burndown.yml'
   push:
@@ -27,6 +28,7 @@ on:
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_FRONTIER_CURRENT_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_RECEIPT_20260921_v1.json'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_HUMAN_WAIT_P1_DIAGNOSTIC_20260921_v1.json'
       - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/**'
       - '.github/workflows/crew-temporal-3pstar-mip-burndown.yml'
   workflow_run:
@@ -76,6 +78,14 @@ jobs:
           assert v4['short_compute_reearn']['latest_two_directional_windows_agree'] is True
           assert v4['active_frontier'][0]['task_class']=='long_compute_contended'
           assert v4['active_frontier'][1]['task_class']=='human_dependency_wait_proxy'
+          p1=json.loads((root/'TEMPORAL_HUMAN_WAIT_P1_DIAGNOSTIC_20260921_v1.json').read_text())
+          assert v4['active_frontier'][1]['first_red']=='pooled_winner_strength'
+          assert v4['active_frontier'][1]['direction_consistency']>=0.8
+          assert v4['active_frontier'][1]['pooled_winner_strength']<0.7
+          assert p1['schema']=='missioncontrol.temporal_human_wait_p1_diagnostic.v1'
+          assert p1['aggregate_control_frontier']['direction_consistency_gate']=='PASS_AT_THRESHOLD'
+          assert p1['aggregate_control_frontier']['pooled_winner_strength']<p1['aggregate_control_frontier']['frozen_min_pooled_winner_strength']
+          assert p1['claim_boundary']=='CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE'
           assert v4['invariants']['thresholds_changed'] is False
           assert v4['invariants']['synthetic_or_manual_clock_credit'] is False
           assert v4['invariants']['competency_promotions']==0
