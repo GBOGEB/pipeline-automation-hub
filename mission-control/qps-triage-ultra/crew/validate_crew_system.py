@@ -38,6 +38,11 @@ def require(condition: bool, message: str, errors: list[str]) -> None:
         errors.append(message)
 
 
+def conceptual_control_allowed(value: object) -> bool:
+    """Accept only JSON false or the explicit future-authority marker."""
+    return value is False or value == "BOUNDED_AFTER_PROMOTION"
+
+
 def main() -> int:
     errors: list[str] = []
     registry = load(REGISTRY)
@@ -75,7 +80,7 @@ def main() -> int:
             require(authority.get("promote") is False, f"{crew_id}: conceptual role cannot promote", errors)
             conceptual_control = authority.get("control")
             require(
-                conceptual_control in {False, "BOUNDED_AFTER_PROMOTION"},
+                conceptual_control_allowed(conceptual_control),
                 f"{crew_id}: conceptual role cannot hold current CONTROL authority",
                 errors,
             )
