@@ -5,10 +5,12 @@ on:
     branches: [master]
     paths:
       - 'mission-control/grand-missions/**'
+      - '!mission-control/grand-missions/analytics/**'
       - '.github/workflows/gm-iv-pilot2-governor.yml'
   pull_request:
     paths:
       - 'mission-control/grand-missions/**'
+      - '!mission-control/grand-missions/analytics/**'
       - '.github/workflows/gm-iv-pilot2-governor.yml'
   workflow_dispatch:
 
