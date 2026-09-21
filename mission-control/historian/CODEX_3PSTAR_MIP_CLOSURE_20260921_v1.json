@@ -1,0 +1,74 @@
+{
+  "schema": "missioncontrol.historian.codex_3pstar_mip_closure.v1",
+  "status": "PASS_WITH_REX_CM005_MERGE_ADMISSION_NEGATIVE_EVIDENCE",
+  "as_of": "2026-09-21",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "refresh": {
+    "codex_initial": "4f31134f263ea21b01a453180c08481de7f0a2b1",
+    "codex_current_survival": "d0f4e83e66bedc512e077ac05ac2ba8f289a530f"
+  },
+  "review_sample_prs": [
+    770,
+    771,
+    772,
+    773,
+    774,
+    775,
+    776,
+    777,
+    778
+  ],
+  "durable_roots": [
+    "HIST-BD-021",
+    "HIST-BD-022",
+    "HIST-BD-023",
+    "HIST-BD-024"
+  ],
+  "disposition": "ALL_FOUR_DONE",
+  "closure_pr": {
+    "number": 787,
+    "head": "cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+    "merge": "954f0fd95b1360830f38a082422340a02206a4b7"
+  },
+  "proof": {
+    "w003": {
+      "run": 35580291171,
+      "job": 106271355721,
+      "result": "PASS"
+    },
+    "ci": {
+      "run": 35580291195,
+      "job": 106271357265,
+      "result": "PASS"
+    },
+    "w286": {
+      "run": 35580291155,
+      "job": 106271356609,
+      "result": "PASS"
+    },
+    "gm_i_a": {
+      "run": 35580291121,
+      "job": 106271356218,
+      "result": "PASS"
+    },
+    "validate_federation": {
+      "run": 35580291180,
+      "job": 106271356487,
+      "result": "PASS"
+    },
+    "codex_review": "NO_MAJOR_ISSUES_ON_CBD28B8C88"
+  },
+  "negative_evidence": [
+    "PR#781 dedicated GM-I-A first-red: ruamel.yaml missing",
+    "PR#781 Bandit SARIF formatter IndexError unrelated to changed-code security",
+    "PR#784 Codex P1 non-object consumer entry escape",
+    "PR#787 merged while required closure checks queued"
+  ],
+  "rex": {
+    "control_id": "REX-CM-005",
+    "disposition": "RECURRENCE_RETAINED_CONTROL_STILL_WITHHELD",
+    "reason": "post-merge green proves content, not fail-closed merge admission"
+  },
+  "next": "F2_CURRENT_MISSION_REPO_PRESSURE_SELECTION"
+}
