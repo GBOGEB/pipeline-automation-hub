@@ -7,6 +7,9 @@ on:
       - mission/w3-11-non-origin-math-consumer
   pull_request:
     branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/consumers/w3_11_math_consumer.py'
+      - '.github/workflows/w3-11-non-origin-math-consumer.yml'
   workflow_dispatch:
 
 permissions:
