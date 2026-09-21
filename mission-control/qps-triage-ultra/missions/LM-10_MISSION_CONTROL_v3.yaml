@@ -89,3 +89,14 @@ stop_rules:
   - no_single_math_card_compensates_failed_QPS_AND_gate
   - no_federation_pulse_for_repo_local_research_only
   - no_secondment_or_authority_is_fabricated
+
+current_development_frontier:
+  wave: W260
+  provider_issue: GBOGEB/gg_MATH#27
+  state: BD260_4_PROVE_PASS_REVIEW_MERGE_PENDING
+  convergence_control: mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml
+  exact_head_candidate: 65facc18631f73ff1af43ab5e8c7c9708d6ebefb
+  exact_head_proof_run: 35591996425
+  next: BD260_5_TRIAGE_VERIFICATION_AFTER_CLEAN_MERGE_AND_FRESH_MAIN_PROOF
+  provider_WIP_cap: 1
+  rule: 3PSTAR_IS_TRANSACTION_SPINE_MIP_IS_REALLOCATION_LOOP_NOT_PARALLEL_MISSION
