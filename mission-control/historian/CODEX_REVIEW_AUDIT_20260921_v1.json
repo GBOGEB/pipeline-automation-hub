@@ -1,0 +1,174 @@
+{
+  "schema": "missioncontrol.historian.codex_review_audit.v1",
+  "status": "PROVE_PENDING_CURRENT_HEAD",
+  "as_of": "2026-09-21",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "codex_refresh": {
+    "initial_main": "4f31134f263ea21b01a453180c08481de7f0a2b1",
+    "current_main_at_mip_prepare": "5f5533cea1ace7d5894f9d2a28c7247ee155f6f0",
+    "audited_pr_sample": [
+      770,
+      771,
+      772,
+      773,
+      774,
+      775,
+      776,
+      777,
+      778
+    ]
+  },
+  "burned_findings": [
+    {
+      "source_prs": [
+        776,
+        777,
+        778
+      ],
+      "finding": "Pages ownership audit canonical-path, quoted/write-all, truncated inline permissions, and broad parse-exception weaknesses",
+      "current_state": "FIXED_SURVIVES",
+      "current_evidence": [
+        "scripts/check_pages_deploy_concurrency.py uses candidate-local canonical path",
+        "ruamel YAML parse",
+        "quoted and truncated Pages-sensitive raw guards",
+        "YAMLError-only exception"
+      ]
+    },
+    {
+      "source_prs": [
+        773,
+        774
+      ],
+      "finding": "W286 proof semantic-validator path/dependency wiring",
+      "current_state": "FIXED_SURVIVES",
+      "current_evidence": [
+        "w286-gloob-pandoc-prove.yml exact-head bind",
+        "semantic_substrate validator path",
+        "pytest installation"
+      ]
+    },
+    {
+      "source_prs": [
+        770
+      ],
+      "finding": "W285 authority guards and optimizable assert validation",
+      "current_state": "FIXED_SURVIVES",
+      "current_evidence": [
+        "validate_w285_federation_depth_semantics.py explicit require()",
+        "exact EXPECTED_GUARDS set"
+      ]
+    }
+  ],
+  "durable_roots": [
+    {
+      "bd_id": "HIST-BD-021",
+      "source_pr": 776,
+      "source_issue": "CODEX#779",
+      "class": "ARTIFACT_SCOPE_SECURITY",
+      "severity": "P2",
+      "signature": "static_candidate_artifact_scope_includes_checkout_git_metadata",
+      "state": "ACTIVE_PROVE_PENDING",
+      "repair_prs": [
+        781
+      ],
+      "preventive_control": [
+        "checkout persist-credentials=false",
+        "upload excludes .git and .git/**",
+        "regression test_static_candidate_artifact_scope.py"
+      ]
+    },
+    {
+      "bd_id": "HIST-BD-022",
+      "source_pr": 775,
+      "source_issue": "CODEX#780",
+      "class": "AUTHORITY_PROMOTION_BOUNDARY",
+      "severity": "P1",
+      "signature": "candidate_keb_receipt_emitted_as_canonical_atom_without_promotion_evidence",
+      "state": "ACTIVE_PROVE_PENDING",
+      "repair_prs": [
+        781,
+        785,
+        787
+      ],
+      "negative_history": [
+        "PR#781 dedicated GM-I-A proof failed: ruamel.yaml missing",
+        "Bandit SARIF formatter crash retained unrelated"
+      ],
+      "preventive_control": [
+        "bridge contract loaded fail-closed",
+        "candidate object_type/status preserved",
+        "canonical_keb_atom=false",
+        "promotion_evidence_present=false",
+        "dedicated pinned YAML dependency",
+        "candidate-boundary regression"
+      ]
+    },
+    {
+      "bd_id": "HIST-BD-023",
+      "source_pr": 771,
+      "source_issue": "CODEX#782",
+      "class": "FEDERATION_CONTRACT_VALIDATION",
+      "severity": "P1",
+      "signature": "federation_validator_underchecks_exact_identity_and_named_authority_boundaries",
+      "state": "ACTIVE_PROVE_PENDING",
+      "repair_prs": [
+        784,
+        787
+      ],
+      "negative_history": [
+        "PR#784 Codex P1: non-object consumer entry silently discarded"
+      ],
+      "preventive_control": [
+        "explicit require() validation",
+        "lowercase 40-hex producer/consumer heads",
+        "exact authority ownership/prohibition sets",
+        "all consumer entries must be mappings",
+        "negative mutation regressions"
+      ]
+    },
+    {
+      "bd_id": "HIST-BD-024",
+      "source_pr": 772,
+      "source_issue": "CODEX#783",
+      "class": "FEDERATION_PROVENANCE_BINDING",
+      "severity": "P1",
+      "signature": "visual_golden_validator_accepts_unbound_or_substituted_source_corpus_identity",
+      "state": "ACTIVE_PROVE_PENDING",
+      "repair_prs": [
+        784
+      ],
+      "preventive_control": [
+        "exact source repo/issue/PR/merge binding",
+        "exact corpus name/digest binding",
+        "source/corpus mutation regressions"
+      ]
+    }
+  ],
+  "closure_candidate": {
+    "pr": 787,
+    "head": "cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+    "required_gates": [
+      "W003 Governance Gate",
+      "CI",
+      "W286 GLOOB Pandoc 3PC Prove",
+      "GM-I-A CoolProp FAST-HEAVY KEB Bridge",
+      "current-head Codex review"
+    ],
+    "disposition": "WITHHELD_UNTIL_ALL_REQUIRED_GATES_RESOLVE"
+  },
+  "unrelated_negative_tooling": [
+    {
+      "tool": "Bandit SARIF formatter",
+      "observed_on": "CODEX PR#781",
+      "failure": "IndexError/list index out of range while rendering SARIF",
+      "hist_root_created": false,
+      "reason": "third-party reporting failure did not identify a changed-code security defect"
+    }
+  ],
+  "non_compensating": [
+    "GBOGEB/cryoplant-project#923",
+    "REX-CM-005"
+  ],
+  "next_if_green": "finalize BD021-024 DONE in living register, close CODEX issues 779/780/782/783, publish MIP receipt, then select next fleet candidate from current fanout authority"
+}
