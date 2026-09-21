@@ -80,11 +80,11 @@ def main() -> int:
     )
 
     for path in EXCLUSION_FILES:
-        body = text(path)
+        block = pull_request_block(text(path))
         checks[f"exclude::{Path(path).name}"] = (
-            "mission-control/grand-missions/**" in body
-            and "!mission-control/grand-missions/analytics/**" in body
-            and "mission-control/grand-missions/analytics/" not in body.replace(
+            "mission-control/grand-missions/**" in block
+            and "!mission-control/grand-missions/analytics/**" in block
+            and "mission-control/grand-missions/analytics/" not in block.replace(
                 "!mission-control/grand-missions/analytics/**", ""
             )
         )
@@ -100,6 +100,10 @@ def main() -> int:
         "pull_request_target:" in fpc
         and "types: [opened, synchronize, reopened, ready_for_review, edited]" in fpc
     )
+    fpc_proof = pull_request_block(text(".github/workflows/first-pass-closure-proof.yml"))
+    checks["preserve::first_pass_closure_proof_broad"] = (
+        "pull_request:" in fpc_proof and "paths:" not in fpc_proof
+    )
     qps = pull_request_block(text(".github/workflows/qps-triage-ultra-w0.yml"))
     w316 = pull_request_block(text(".github/workflows/w3-16-m03-w0-recon.yml"))
     checks["preserve::qps_federation_broad"] = "paths:" not in qps
@@ -107,8 +111,8 @@ def main() -> int:
 
     modeled = c["modeled_after_pure_gmia_analytics_change"]
     checks["modeled_reduction_is_non_authoritative"] = (
-        modeled["expected_registered_workflows"] == 5
-        and modeled["modeled_reduction_count"] == 14
+        modeled["expected_registered_workflows"] == 6
+        and modeled["modeled_reduction_count"] == 13
         and modeled["classification"] == "MODEL_PENDING_POSTMERGE_MEASURED_PROBE"
         and c["mip"]["Perpetuate"]["postmerge_probe_required"] is True
     )
@@ -128,8 +132,8 @@ def main() -> int:
         "checks": checks,
         "check_count": len(checks),
         "baseline_registered_workflows": 19,
-        "modeled_registered_workflows_after": 5,
-        "modeled_reduction_count": 14,
+        "modeled_registered_workflows_after": 6,
+        "modeled_reduction_count": 13,
         "modeled_reduction_ratio": modeled["modeled_reduction_ratio"],
         "postmerge_measured_probe_required": True,
         "qps_923_compensation": False,
