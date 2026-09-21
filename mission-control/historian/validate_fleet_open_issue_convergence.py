@@ -40,11 +40,44 @@ def _top_scalar(text: str, key: str) -> str:
     raise AssertionError(f"missing top-level YAML scalar: {key}")
 
 
+def _bd_states(text: str) -> dict[str, str]:
+    section = _section(text, "bd_queue:")
+    states: dict[str, str] = {}
+    current: str | None = None
+    for line in section.splitlines():
+        if line.startswith("  BD-") and line.endswith(":"):
+            current = line.strip()[:-1]
+            assert current not in states, ("duplicate BD entry", current)
+            continue
+        if current is not None and line.startswith("    state:"):
+            states[current] = line.split(":", 1)[1].strip()
+            current = None
+    return states
+
+
+def _classify_bd_states(states: dict[str, str]) -> dict[str, int]:
+    counts = {"control": 0, "active": 0, "blocked": 0, "dormant": 0}
+    for bd, state in states.items():
+        if state == "DONE_CONTROL_WATCH":
+            counts["control"] += 1
+        elif state == "ACTIVE_PROVE":
+            counts["active"] += 1
+        elif "BLOCKED" in state:
+            counts["blocked"] += 1
+        elif state == "NOT_REQUIRED_THIS_CYCLE_REENTER_ON_REAL_CONSUMER_NEED":
+            counts["dormant"] += 1
+        else:
+            raise AssertionError(("unclassified W260 BD state", bd, state))
+    return counts
+
+
 def main():
     d = json.loads(P.read_text(encoding="utf-8"))
     w260_text = W260.read_text(encoding="utf-8")
     lm10_text = LM10.read_text(encoding="utf-8")
     w260_metrics = _section(w260_text, "observed_queue_metrics:")
+    w260_states = _bd_states(w260_text)
+    w260_counts = _classify_bd_states(w260_states)
     lm10_frontier = _section(lm10_text, "current_development_frontier:")
 
     assert d["schema"] == "missioncontrol.fleet_open_issue_convergence.v1"
@@ -97,15 +130,27 @@ def main():
     )
 
     nested = repos["GBOGEB/gg_MATH"]["nested_queue"]
-    assert nested["bd_total"] == int(_scalar(w260_metrics, "total_bd_items"))
-    assert nested["control_count"] == int(_scalar(w260_metrics, "done_control_watch"))
-    assert nested["active_downstream_count"] == int(_scalar(w260_metrics, "active_prove"))
-    assert nested["blocked_count"] == int(_scalar(w260_metrics, "dependency_blocked"))
-    assert nested["dormant_reentry_count"] == int(_scalar(w260_metrics, "dormant_reentry"))
+    assert len(w260_states) == 6, ("canonical W260 BD population", w260_states)
+    assert set(w260_states) == {f"BD-260.{n}" for n in range(1, 7)}
+    assert nested["bd_total"] == len(w260_states)
+    assert nested["control_count"] == w260_counts["control"]
+    assert nested["active_downstream_count"] == w260_counts["active"]
+    assert nested["blocked_count"] == w260_counts["blocked"]
+    assert nested["dormant_reentry_count"] == w260_counts["dormant"]
+
+    assert int(_scalar(w260_metrics, "total_bd_items")) == len(w260_states)
+    assert int(_scalar(w260_metrics, "done_control_watch")) == w260_counts["control"]
+    assert int(_scalar(w260_metrics, "active_prove")) == w260_counts["active"]
+    assert int(_scalar(w260_metrics, "dependency_blocked")) == w260_counts["blocked"]
+    assert int(_scalar(w260_metrics, "dormant_reentry")) == w260_counts["dormant"]
+    assert int(_scalar(w260_metrics, "executable_frontier_width")) == w260_counts["active"]
+
     assert nested["active_downstream_owner"] is None
-    assert _scalar(w260_metrics, "executable_frontier_width") == "0"
-    assert "  BD-260.5:\n    state: DONE_CONTROL_WATCH" in w260_text
-    assert "  BD-260.6:\n    state: NOT_REQUIRED_THIS_CYCLE_REENTER_ON_REAL_CONSUMER_NEED" in w260_text
+    assert w260_states["BD-260.5"] == "DONE_CONTROL_WATCH"
+    assert (
+        w260_states["BD-260.6"]
+        == "NOT_REQUIRED_THIS_CYCLE_REENTER_ON_REAL_CONSUMER_NEED"
+    )
 
     assert _top_scalar(lm10_text, "state") == "W260_CONTROLLED_COMPLETE_REENTRY_GOVERNED"
     assert _scalar(lm10_frontier, "state") == "CONTROL_WATCH_ONLY"
