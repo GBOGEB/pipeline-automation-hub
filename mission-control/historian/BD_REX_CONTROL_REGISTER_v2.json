@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-21T10:55:00+02:00",
+  "as_of": "2026-09-21T11:04:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -12,14 +12,14 @@
     "audited_prs_minimum": 25,
     "review_finding_occurrences_observed_cumulative": 44,
     "durable_bd_roots_total": 24,
-    "current_open_bd_roots": 1,
-    "current_unresolved_occurrences_minimum": 1,
-    "done_or_control_roots": 23,
+    "current_open_bd_roots": 0,
+    "current_unresolved_occurrences_minimum": 0,
+    "done_or_control_roots": 24,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
     "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
-    "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit. Qtools local Historian roots are drained; CODEX deep-dive added HIST-BD-021..024, with only HIST-BD-022 still ACTIVE pending dedicated KEB bridge runtime proof.",
+    "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit. Qtools and CODEX local Historian roots are drained; external controls #923 and REX-CM-005 remain independent.",
     "active_prevention_withheld_controls": 0
   },
   "lifecycle": [
@@ -663,7 +663,7 @@
       "title": "Keep GM-I-A KEB output at candidate status",
       "class": "AUTHORITY_PROMOTION_BOUNDARY",
       "severity": "P1",
-      "state": "ACTIVE",
+      "state": "DONE",
       "occurrence_count": 1,
       "repos": [
         "GBOGEB/CODEX"
@@ -671,7 +671,9 @@
       "source_prs": [
         775,
         781,
-        786
+        786,
+        785,
+        787
       ],
       "source_issues": [
         780
@@ -687,10 +689,18 @@
         "CI run35579721478/job106269525882 tests PASS",
         "dedicated bridge run35579721479 failed before semantics: ModuleNotFoundError ruamel",
         "CODEX#786 head 92e7728b283ffea958b7df85a4d55e283b371e7b installs dedicated ruamel.yaml runtime dependency",
-        "CODEX#786 dedicated run35580095011/job106270722615 QUEUED"
+        "CODEX#786 dedicated run35580095011/job106270722615 QUEUED",
+        "CODEX#785 head 6e309c16bcb3184a8c4a2e441a1bf5ef08e5fe15 dedicated GM-I-A run35579949228 PASS after pinned ruamel dependency",
+        "CODEX#787 exact closure head cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+        "run35580291121/job106271356218 GM-I-A candidate-only bridge PASS >0 steps",
+        "run35580291195/job106271357265 full CI PASS",
+        "run35580291171/job106271355721 W003 governance PASS",
+        "merge@954f0fd95b1360830f38a082422340a02206a4b7",
+        "current CODEX main d0f4e83e66bedc512e077ac05ac2ba8f289a530f survival confirmed",
+        "CODEX#780 CLOSED_COMPLETED"
       ],
-      "first_red": "DEDICATED_GM_I_A_KEB_BRIDGE_RUNTIME_PROOF",
-      "done_when": "Dedicated GM-I-A bridge executes >0 steps, validates candidate-only object/promotion contract, emits validated-candidate receipt, and CODEX#780 closes"
+      "first_red": "SATISFIED",
+      "done_when": "SATISFIED"
     },
     {
       "bd_id": "HIST-BD-023",
@@ -823,7 +833,9 @@
         "GET /repos/GBOGEB/ABACUS/rulesets -> []",
         "main branch observed protected=false",
         "branch protection endpoint -> 403 Resource not accessible by integration",
-        "check-run policy-and-inventory job105622495352 PASS"
+        "check-run policy-and-inventory job105622495352 PASS",
+        "CODEX#787 merged@954f0fd95b1360830f38a082422340a02206a4b7 while required closure checks were queued",
+        "CODEX#787 post-merge exact-head cbd28b8c88c85789ccc4f5be3bd8942540a60f1a later PASS; post-merge green does not prove merge prevention"
       ],
       "execution_boundary": {
         "classification": "REPOSITORY_ADMIN_MERGE_ADMISSION",
@@ -837,16 +849,15 @@
           "proof_job": 105622495352
         },
         "session_write_capability": "NO_RULESET_OR_BRANCH_PROTECTION_WRITE_TOOL_EXPOSED"
-      }
+      },
+      "cross_repo_recurrence": [
+        "GBOGEB/ABACUS",
+        "GBOGEB/pipeline-automation-hub",
+        "GBOGEB/CODEX"
+      ]
     }
   ],
-  "open_priority": [
-    {
-      "rank": 1,
-      "bd_id": "HIST-BD-022",
-      "reason": "semantic candidate-only repair is merged and broad CI passes; dedicated GM-I-A bridge remains the single local CODEX Historian runtime proof red after missing ruamel dependency"
-    }
-  ],
+  "open_priority": [],
   "external_non_compensating_gates": [
     {
       "repo": "GBOGEB/cryoplant-project",
@@ -856,9 +867,9 @@
     }
   ],
   "next_deep_dive_order": [
-    "Finish GBOGEB/CODEX HIST-BD-022 dedicated bridge proof",
-    "close/return CODEX Historian child when no local roots remain",
-    "next fleet candidate from Historian fanout"
+    "F2 current mission repo selected from measured unresolved Historian pressure",
+    "REX-CM-005 owner/admin merge-admission proof when configuration becomes writable",
+    "cryoplant-project#923 remains separate non-compensating runner-admission lane"
   ],
   "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE",
   "control_priority": [
