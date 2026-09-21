@@ -82,3 +82,14 @@ The new state is a **re-earn**, not retroactive invalidation of that regression.
 4. Evaluate H3 7-day persistence only when genuine schedule span reaches >=604800 s.
 
 No manual, PR, push, synthetic, or challenge traffic creates CONTROL clock or promotion credit.
+
+## Repository publication proof
+
+The re-earn package was published through PR #343.
+
+- PR head: `3512f175dc3cb695af8b2a3928848a0c18efc986`
+- exact-head proof: run `35574968398`, job `106254648195`, 7 executed steps, SUCCESS
+- merge SHA: `d097c8b4fbb5e0896ff16ac08cb3418f96b51a1a`
+- post-merge `push: master` proof: run `35575005172`, job `106254759828`, 7 executed steps, SUCCESS
+
+Therefore 3PC Commit/Perpetuate for this temporal re-earn publication is PASS. This does not create full-set CONTROL or any project-global promotion.
