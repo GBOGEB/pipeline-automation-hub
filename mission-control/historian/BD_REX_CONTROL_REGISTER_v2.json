@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-21T10:55:00+02:00",
+  "as_of": "2026-09-21T11:03:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -12,14 +12,14 @@
     "audited_prs_minimum": 25,
     "review_finding_occurrences_observed_cumulative": 44,
     "durable_bd_roots_total": 24,
-    "current_open_bd_roots": 1,
-    "current_unresolved_occurrences_minimum": 1,
-    "done_or_control_roots": 23,
+    "current_open_bd_roots": 0,
+    "current_unresolved_occurrences_minimum": 0,
+    "done_or_control_roots": 24,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
     "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
-    "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit. Qtools local Historian roots are drained; CODEX deep-dive added HIST-BD-021..024, with only HIST-BD-022 still ACTIVE pending dedicated KEB bridge runtime proof.",
+    "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit. Qtools and CODEX current local Historian root waves are drained: 24 durable roots total, 0 open, 24 DONE/CONTROL. Fleet deep-dive, REX-CM-005 admin binding, runner economics and cryoplant #923 remain independent.",
     "active_prevention_withheld_controls": 0
   },
   "lifecycle": [
@@ -663,7 +663,7 @@
       "title": "Keep GM-I-A KEB output at candidate status",
       "class": "AUTHORITY_PROMOTION_BOUNDARY",
       "severity": "P1",
-      "state": "ACTIVE",
+      "state": "DONE",
       "occurrence_count": 1,
       "repos": [
         "GBOGEB/CODEX"
@@ -686,11 +686,24 @@
         "CODEX#781 semantic repair merged@b8d11d831e1aa070860a01f8519f311cd71c3da7",
         "CI run35579721478/job106269525882 tests PASS",
         "dedicated bridge run35579721479 failed before semantics: ModuleNotFoundError ruamel",
-        "CODEX#786 head 92e7728b283ffea958b7df85a4d55e283b371e7b installs dedicated ruamel.yaml runtime dependency",
-        "CODEX#786 dedicated run35580095011/job106270722615 QUEUED"
+        "CODEX#786 exact head 92e7728b283ffea958b7df85a4d55e283b371e7b",
+        "dedicated bridge run35580095011/job106270722615 PASS install + immutable provider fetch + candidate-only validator + receipt + artifact upload",
+        "artifact10629739010 digest sha256:4b7d5aee392ebccb098d4a873c302c6eeba3b5efa86648ef22ec3d03c89bc092",
+        "emitted receipt sha256:95d774dfc7b4ef63c3bcd009b61e0e976c169a62ed94f8ec9d9cf9b7ad7ffcfe",
+        "receipt object_type=KEB_KNOWLEDGE_ATOM_CANDIDATE status=PASS_VALIDATED_CANDIDATE promotion_state=NON_ENGINEERING_REFERENCE_ONLY canonical_keb_atom=false",
+        "merge@5f5533cea1ace7d5894f9d2a28c7247ee155f6f0",
+        "CODEX#780 CLOSED_COMPLETED"
       ],
-      "first_red": "DEDICATED_GM_I_A_KEB_BRIDGE_RUNTIME_PROOF",
-      "done_when": "Dedicated GM-I-A bridge executes >0 steps, validates candidate-only object/promotion contract, emits validated-candidate receipt, and CODEX#780 closes"
+      "done_when": "SATISFIED",
+      "closure": {
+        "dedicated_runtime_proof": true,
+        "object_type": "KEB_KNOWLEDGE_ATOM_CANDIDATE",
+        "status": "PASS_VALIDATED_CANDIDATE",
+        "promotion_state": "NON_ENGINEERING_REFERENCE_ONLY",
+        "canonical_keb_atom": false,
+        "authority_transfer": false,
+        "formal_credit_delta": 0
+      }
     },
     {
       "bd_id": "HIST-BD-023",
@@ -840,13 +853,7 @@
       }
     }
   ],
-  "open_priority": [
-    {
-      "rank": 1,
-      "bd_id": "HIST-BD-022",
-      "reason": "semantic candidate-only repair is merged and broad CI passes; dedicated GM-I-A bridge remains the single local CODEX Historian runtime proof red after missing ruamel dependency"
-    }
-  ],
+  "open_priority": [],
   "external_non_compensating_gates": [
     {
       "repo": "GBOGEB/cryoplant-project",
@@ -856,9 +863,8 @@
     }
   ],
   "next_deep_dive_order": [
-    "Finish GBOGEB/CODEX HIST-BD-022 dedicated bridge proof",
-    "close/return CODEX Historian child when no local roots remain",
-    "next fleet candidate from Historian fanout"
+    "Select next fleet candidate from Historian fanout/current issue pressure",
+    "re-enter CODEX only on observed regression or governed contract change"
   ],
   "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE",
   "control_priority": [
