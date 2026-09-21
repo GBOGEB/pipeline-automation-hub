@@ -1,0 +1,41 @@
+name: MissionControl Unbound Transfer Intake
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - "mission-control/qps-triage-ultra/missions/UNBOUND_TRANSFER_INTAKE_CURRENT_v1.json"
+      - "mission-control/qps-triage-ultra/missions/validate_unbound_transfer_intake.py"
+      - ".github/workflows/unbound-transfer-intake-control.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  intake-receiver:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
+      - name: Validate receiver contract and mutations
+        run: |
+          mkdir -p output/unbound-transfer
+          python mission-control/qps-triage-ultra/missions/validate_unbound_transfer_intake.py \
+            --control mission-control/qps-triage-ultra/missions/UNBOUND_TRANSFER_INTAKE_CURRENT_v1.json \
+            --self-test \
+            --out output/unbound-transfer/UNBOUND_TRANSFER_INTAKE_RECEIPT_v1.json
+      - name: Upload receiver receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: unbound-transfer-intake-receipt-${{ github.event.pull_request.head.sha || github.sha }}
+          path: output/unbound-transfer/UNBOUND_TRANSFER_INTAKE_RECEIPT_v1.json
+          if-no-files-found: error
+          retention-days: 30
