@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.specialist_repair_crew_registry.v2",
   "status": "ACTIVE",
-  "as_of": "2026-09-21T12:58:00+02:00",
+  "as_of": "2026-09-21T16:32:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "SPECIALIST_REPAIR_CREW_REGISTRY_v1.json",
   "activation_rule": "recurrence || P0/P1 severity || cross_repo_centrality || repeated_failed_repair || active_control_repeat",
@@ -109,7 +109,9 @@
         "HIST-BD-023",
         "HIST-BD-024",
         "HIST-BD-025",
-        "HIST-BD-026"
+        "HIST-BD-026",
+        "HIST-BD-031",
+        "HIST-BD-032"
       ],
       "active_scope": [
         "REX-CM-005"
@@ -129,7 +131,9 @@
         "HIST-BD-023",
         "HIST-BD-024",
         "HIST-BD-025",
-        "HIST-BD-026"
+        "HIST-BD-026",
+        "HIST-BD-031",
+        "HIST-BD-032"
       ],
       "current_mission": "REX_CM_005_OWNER_ADMIN_BINDING",
       "secondment": [
@@ -233,7 +237,9 @@
         "HIST-BD-027",
         "HIST-BD-028",
         "HIST-BD-029",
-        "HIST-BD-030"
+        "HIST-BD-030",
+        "HIST-BD-031",
+        "HIST-BD-032"
       ],
       "active_scope": [
         "REX-CM-005",
@@ -264,7 +270,9 @@
         "HIST-BD-027",
         "HIST-BD-028",
         "HIST-BD-029",
-        "HIST-BD-030"
+        "HIST-BD-030",
+        "HIST-BD-031",
+        "HIST-BD-032"
       ]
     },
     {
@@ -391,6 +399,27 @@
         "current main@e5961b058f4879cffe8e2679f9ab1282a7d0b9c2"
       ],
       "reenter_on": "OBSERVED_REGRESSION_OR_GOVERNED_CONTRACT_CHANGE",
+      "authority_transfer": false,
+      "formal_credit_delta": 0
+    },
+    "abacus_line_s_historian": {
+      "state": "BD031_BD032_DONE_SOURCE_WORK_ORDER_OPEN",
+      "durable_roots": [
+        "HIST-BD-031",
+        "HIST-BD-032"
+      ],
+      "done_roots": [
+        "HIST-BD-031",
+        "HIST-BD-032"
+      ],
+      "active_bd_roots": [],
+      "source_work_order": "GBOGEB/ABACUS#1313",
+      "source_work_order_state": "OPEN_SOURCE_PENDING",
+      "repair_pr": "GBOGEB/ABACUS#1328",
+      "repair_head": "ba9159e5464148b94897b9628883b830ad17dabd",
+      "governance_fix_pr": "GBOGEB/ABACUS#1329",
+      "governance_fix_head": "0c73a66427e83819dd486a56a3296be033427bff",
+      "current_main": "5a6e560a02d45276f23208019ad6a202b3cf0964",
       "authority_transfer": false,
       "formal_credit_delta": 0
     }

@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-21T12:58:00+02:00",
+  "as_of": "2026-09-21T16:32:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -9,17 +9,17 @@
   "historian_parent_issue": 76,
   "runner_economics_issue": 79,
   "bounded_sample": {
-    "audited_prs_minimum": 42,
-    "review_finding_occurrences_observed_cumulative": 52,
-    "durable_bd_roots_total": 30,
+    "audited_prs_minimum": 45,
+    "review_finding_occurrences_observed_cumulative": 54,
+    "durable_bd_roots_total": 32,
     "current_open_bd_roots": 0,
     "current_unresolved_occurrences_minimum": 0,
-    "done_or_control_roots": 30,
+    "done_or_control_roots": 32,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
     "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
-    "note": "Bounded Historian census only; 83/83 fleet coverage does not imply 83/83 deep audit. F2 GEMINI and gg_MATH roots BD025-030 are drained; REX-CM-005 and cryoplant#923 remain independent controls.",
+    "note": "Bounded Historian census only; 83/83 fleet coverage does not imply 83/83 deep audit. ABACUS Line-S roots BD031-032 are drained. ABACUS#1313 remains an open source-evidence work order outside the BD count; REX-CM-005 and cryoplant#923 remain independent controls.",
     "active_prevention_withheld_controls": 1
   },
   "lifecycle": [
@@ -1047,6 +1047,96 @@
         "current main@e5961b058f4879cffe8e2679f9ab1282a7d0b9c2 survival confirmed"
       ],
       "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-031",
+      "title": "Reject empty Appendix 8.4 extraction completion",
+      "class": "FAIL_CLOSED_EXTRACTION_COMPLETENESS",
+      "severity": "P2",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "source_prs": [
+        1317,
+        1328
+      ],
+      "source_issues": [
+        1326,
+        1313
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "semantic_signature": "appendix_8_4_source_available_allows_extracted_status_with_zero_mode_rows",
+      "negative_evidence": [
+        "ABACUS#1317 Codex review on exact head 60ddab9b7d50c4da8178077838ee1d507ffe8fe1: source_material_available_in_repo=true plus status=EXTRACTED plus modes=[] could pass because the validation loop was skipped"
+      ],
+      "current_code_evidence": [
+        "models/qps_line_s/closure_contract.py requires a non-empty source-backed mode set before EXTRACTED can pass",
+        "per-mode and per-valve source_ref/evidence_locator checks remain fail-closed",
+        "tests/test_runtime.py contains an empty-mode regression"
+      ],
+      "proof_refs": [
+        "ABACUS#1328@ba9159e5464148b94897b9628883b830ad17dabd",
+        "run35613587214 qps-line-s-validation PASS with live closure contract step and zero-test guard",
+        "run35613587314 changed-doc validation PASS",
+        "run35613587160 Format Check PASS",
+        "run35613587371 YAML Validation PASS",
+        "run35613587294 Ruff PASS",
+        "Codex exact-head review ba9159e546: no major issues",
+        "ABACUS#1329@0c73a66427e83819dd486a56a3296be033427bff governance-derived inventory repair proved green before merge",
+        "ABACUS main@5a6e560a02d45276f23208019ad6a202b3cf0964 current-code survival confirmed",
+        "ABACUS#1326 CLOSED_COMPLETED"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-032",
+      "title": "Recompute required Line-S artifacts before closure PASS",
+      "class": "RUNTIME_RECEIPT_FRESHNESS",
+      "severity": "P2",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "source_prs": [
+        1317,
+        1328
+      ],
+      "source_issues": [
+        1327,
+        1313
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "semantic_signature": "closure_contract_trusts_stored_missing_artefacts_field_without_rechecking_required_outputs",
+      "negative_evidence": [
+        "ABACUS#1317 Codex review on exact head 60ddab9b7d50c4da8178077838ee1d507ffe8fe1: tracked runtime_status.json could say missing_artefacts=[] while ignored recovery_matrix outputs were absent on a clean checkout"
+      ],
+      "current_code_evidence": [
+        "validate_current_contract() recomputes required artifact existence from runtime.REQUIRED_ARTEFACTS against the current filesystem",
+        "missing required outputs fail closure even when the stored receipt claims none missing",
+        "qps-line-s-validation generates outputs, checks existence, then runs the live closure validator",
+        "tests/test_runtime.py contains a stale-receipt/missing-live-artifact regression"
+      ],
+      "proof_refs": [
+        "ABACUS#1328@ba9159e5464148b94897b9628883b830ad17dabd",
+        "run35613587214 qps-line-s-validation PASS after generation, output existence checks, live closure validation and zero-test guard",
+        "Codex exact-head review ba9159e546: no major issues",
+        "ABACUS main@5a6e560a02d45276f23208019ad6a202b3cf0964 current-code survival confirmed",
+        "ABACUS#1327 CLOSED_COMPLETED"
+      ],
+      "done_when": "SATISFIED"
     }
   ],
   "control_measures": [
@@ -1102,7 +1192,7 @@
       "root_ids": [
         "HIST-BD-018"
       ],
-      "gate": "CI governance already detects unclassified/stale inventory; CONTROL withheld until red governance is merge-blocking and later negative/positive admission repeats are retained",
+      "gate": "Detection/repair are present; repository-admin merge admission is still not bound. Draft-first mitigates premature merge operationally but CONTROL remains withheld until red checks are mechanically non-mergeable and a negative/positive admission repeat is retained.",
       "evidence": [
         "ABACUS#1278",
         "ABACUS main protected=false",
@@ -1121,7 +1211,13 @@
         "CODEX#787 merged@954f0fd95b1360830f38a082422340a02206a4b7 while exact-head closure checks were queued",
         "post-merge exact-head closure on cbd28b8c88c85789ccc4f5be3bd8942540a60f1a later PASS; post-merge green does not prove merge prevention",
         "GEMINI#30 merged@844440e36bf8dc6b0a194ea6500cbb94f69931fc while exact-head fail-closed/ingress tests were queued",
-        "GEMINI#30 post-merge exact-head 92780d2f1a91943130f6f8f06fb54c1964830257 later PASS; post-merge green does not prove merge prevention"
+        "GEMINI#30 post-merge exact-head 92780d2f1a91943130f6f8f06fb54c1964830257 later PASS; post-merge green does not prove merge prevention",
+        "ABACUS#1317 merged@b26bcedafb34e32f3164820f46dd58a4eb015295 while changed-doc validation was red and before two material Codex P2 findings were known",
+        "ABACUS#1317 post-merge exact-head review found HIST-BD-031 and HIST-BD-032; post-merge repair does not prove prevention",
+        "ABACUS#1328 merged@c940fba8ad1ccac5e75d7fb5e836ae2d1fdb5acb while CI Workflow Governance remained red on stale derived inventory and before current-head review completed",
+        "ABACUS#1328 exact-head ba9159e5464148b94897b9628883b830ad17dabd later PASS on Line-S/docs/format/YAML/Ruff/review; post-merge green does not prove prevention",
+        "ABACUS#1329 draft hold prevented premature merge until exact-head governance/docs/format/Ruff/review were green; merged@5a6e560a02d45276f23208019ad6a202b3cf0964 after proof",
+        "REX-CM-005 remains prevention-withheld: draft process is a bounded mitigation, not repository-admin admission control"
       ],
       "execution_boundary": {
         "classification": "REPOSITORY_ADMIN_MERGE_ADMISSION",
@@ -1154,7 +1250,8 @@
     }
   ],
   "next_deep_dive_order": [
-    "select next F2 current mission repo from measured unresolved Historian pressure",
+    "ABACUS#1313 authoritative Appendix 8.4 source extraction return; no inferred mode/valve states",
+    "next Mission Grand inward endpoint by measured unresolved pressure",
     "REX-CM-005 owner/admin merge-admission proof when configuration becomes writable",
     "cryoplant-project#923 remains separate non-compensating runner-admission lane"
   ],
