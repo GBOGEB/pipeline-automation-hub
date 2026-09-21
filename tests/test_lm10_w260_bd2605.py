@@ -84,6 +84,24 @@ def test_float_integer_index_type_coercion_fails():
     expect_reject(mutate)
 
 
+def test_workflow_run_float_coercion_fails():
+    def mutate(d):
+        d["provider"]["workflow_run"] = 35592153194.0
+    expect_reject(mutate)
+
+
+def test_card_count_float_coercion_fails():
+    def mutate(d):
+        d["receipt"]["card_count"] = 5.0
+    expect_reject(mutate)
+
+
+def test_formal_credit_false_coercion_fails():
+    def mutate(d):
+        d["receipt"]["formal_credit_delta"] = False
+    expect_reject(mutate)
+
+
 if __name__ == "__main__":
     test_validator()
     test_missing_governance_identity_card_fails()
@@ -92,4 +110,7 @@ if __name__ == "__main__":
     test_first_red_reassignment_fails()
     test_boolean_integer_type_coercion_fails()
     test_float_integer_index_type_coercion_fails()
+    test_workflow_run_float_coercion_fails()
+    test_card_count_float_coercion_fails()
+    test_formal_credit_false_coercion_fails()
     print("PASS_LM10_W260_BD260_5_TEST")
