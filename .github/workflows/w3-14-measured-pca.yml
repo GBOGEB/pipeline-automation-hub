@@ -7,6 +7,10 @@ on:
       - mission/w3-14-measured-pca
   pull_request:
     branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/analytics/**'
+      - 'mission-control/qps-triage-ultra/crew/measured/frontier/temporal/**'
+      - '.github/workflows/w3-14-measured-pca.yml'
   workflow_dispatch:
 
 permissions:

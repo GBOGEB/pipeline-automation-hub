@@ -7,6 +7,9 @@ on:
       - mission/w3-13-measured-telemetry
   pull_request:
     branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/analytics/W3_13_MEASURED_PULSES.json'
+      - '.github/workflows/w3-13-measured-telemetry.yml'
   workflow_dispatch:
 
 permissions:

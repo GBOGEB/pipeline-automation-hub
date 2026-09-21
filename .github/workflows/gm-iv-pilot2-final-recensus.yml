@@ -5,6 +5,7 @@ on:
     branches: [master]
     paths:
       - 'mission-control/grand-missions/**'
+      - '!mission-control/grand-missions/analytics/**'
       - 'mission-control/qps-triage-ultra/crew/measured/**'
       - '.github/workflows/gm-iv-pilot2-final-recensus.yml'
       - '.github/workflows/gm-fleet-03-f01-pilot.yml'
@@ -17,6 +18,7 @@ on:
       - master
     paths:
       - 'mission-control/grand-missions/**'
+      - '!mission-control/grand-missions/analytics/**'
       - 'mission-control/qps-triage-ultra/crew/measured/**'
       - '.github/workflows/gm-iv-pilot2-final-recensus.yml'
       - '.github/workflows/gm-fleet-03-f01-pilot.yml'

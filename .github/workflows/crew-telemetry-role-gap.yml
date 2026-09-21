@@ -5,6 +5,9 @@ on:
     branches:
       - master
       - mission/crew-capability-system-v1-20260913
+    paths:
+      - 'mission-control/qps-triage-ultra/crew/**'
+      - '.github/workflows/crew-telemetry-role-gap.yml'
   workflow_dispatch:
 
 permissions:

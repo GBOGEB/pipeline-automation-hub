@@ -5,11 +5,13 @@ on:
     branches: [master]
     paths:
       - 'mission-control/grand-missions/**'
+      - '!mission-control/grand-missions/analytics/**'
       - '.github/workflows/gm-v-governor-readiness.yml'
   push:
     branches: [master]
     paths:
       - 'mission-control/grand-missions/**'
+      - '!mission-control/grand-missions/analytics/**'
       - '.github/workflows/gm-v-governor-readiness.yml'
   workflow_dispatch:
 
