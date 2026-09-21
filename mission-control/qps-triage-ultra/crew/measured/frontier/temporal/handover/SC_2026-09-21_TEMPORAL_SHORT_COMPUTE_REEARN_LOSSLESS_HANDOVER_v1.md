@@ -93,3 +93,17 @@ The re-earn package was published through PR #343.
 - post-merge `push: master` proof: run `35575005172`, job `106254759828`, 7 executed steps, SUCCESS
 
 Therefore 3PC Commit/Perpetuate for this temporal re-earn publication is PASS. This does not create full-set CONTROL or any project-global promotion.
+
+## P1 convergence — human_dependency_wait_proxy
+
+A bounded 3P* + MIP convergence pass on the same genuine schedule authority corrected the P1 first-red without creating promotion credit.
+
+- direction consistency: `0.80` — **PASS at frozen threshold**
+- pooled winner strength: `0.6389674804` — **FAIL vs frozen 0.70**
+- latest two directional windows agree: true
+- direction counts: 16 SINGLE / 4 PAIRED across 20 directional windows
+- latest window: 3 SINGLE / 1 PAIRED / 2 ties
+- Linux latest cell pair is split; macOS and Windows each contain SINGLE + tie; baseline is mixed; held is SINGLE + tie
+- claim boundary remains: `CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE`.
+
+Therefore P1 promotion remains WITHHELD. The correct current first-red is `pooled_winner_strength`, not `direction_consistency`. The diagnostic is `TEMPORAL_HUMAN_WAIT_P1_DIAGNOSTIC_20260921_v1.json`.
