@@ -9,12 +9,12 @@
   "historian_parent_issue": 76,
   "runner_economics_issue": 79,
   "bounded_sample": {
-    "audited_prs_minimum": 23,
-    "review_finding_occurrences_observed_cumulative": 38,
-    "durable_bd_roots_total": 18,
-    "current_open_bd_roots": 0,
-    "current_unresolved_occurrences_minimum": 0,
-    "done_or_control_roots": 18,
+    "audited_prs_minimum": 25,
+    "review_finding_occurrences_observed_cumulative": 40,
+    "durable_bd_roots_total": 20,
+    "current_open_bd_roots": 1,
+    "current_unresolved_occurrences_minimum": 1,
+    "done_or_control_roots": 19,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
     "controlled_recurring_families": 4,
@@ -541,6 +541,79 @@
         "INVENTORY_OUTCOME=success"
       ],
       "done_when": "SATISFIED_REPAIR; recurrent prevention remains governed by REX-CM-005"
+    },
+    {
+      "bd_id": "HIST-BD-019",
+      "title": "Fail closed on unmodeled W286 fixture fields",
+      "class": "ARTIFACT_DIFF_COMPLETENESS",
+      "severity": "P2",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/Q_engineering_tools"
+      ],
+      "source_prs": [
+        82,
+        88
+      ],
+      "source_issues": [
+        86
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "Q_engineering_tools#88@cd1ac6a315bbefc4e36f4bb48f6b99066414309c",
+        "run35575714278/job106257017572 PASS 19/19 repaired regression functions",
+        "merge@3cbaecee62e212fd00785b93cd192ae4ef71803d",
+        "run35578430006/job106265460440 PASS merged-main repeat",
+        "Q_engineering_tools#86 CLOSED_COMPLETED"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-020",
+      "title": "Verify W286 external source head before receipt attribution",
+      "class": "CROSS_REPO_PROVENANCE_BINDING",
+      "severity": "P2",
+      "state": "ACTIVE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/Q_engineering_tools",
+        "GBOGEB/cryoplant-project"
+      ],
+      "source_prs": [
+        82,
+        88
+      ],
+      "source_issues": [
+        87
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "safe_withhold": {
+        "current": true,
+        "receipt_fields": [
+          "source_head_sha_claim",
+          "source_head_attribution_verified=false",
+          "source_head_attribution_status=WITHHELD_NO_SOURCE_REPO_RUNTIME_ACCESS",
+          "unverified_source_head_not_promoted=true"
+        ]
+      },
+      "proof_refs": [
+        "Q_engineering_tools#88@cd1ac6a315bbefc4e36f4bb48f6b99066414309c",
+        "run35575714278 PASS",
+        "merge@3cbaecee62e212fd00785b93cd192ae4ef71803d",
+        "run35578430006 PASS",
+        "Q_engineering_tools#87 remains OPEN"
+      ],
+      "done_when": "Independent source-repo commit/path/blob verification or provenance-bound source attestation; forged/mistyped source head fails closed; later exact-head >0-step proof"
     }
   ],
   "control_measures": [
@@ -628,7 +701,13 @@
       }
     }
   ],
-  "open_priority": [],
+  "open_priority": [
+    {
+      "rank": 1,
+      "bd_id": "HIST-BD-020",
+      "reason": "safe attribution withholding is proven, but private source-head ownership of mirrored payload remains unverified"
+    }
+  ],
   "external_non_compensating_gates": [
     {
       "repo": "GBOGEB/cryoplant-project",
@@ -638,9 +717,9 @@
     }
   ],
   "next_deep_dive_order": [
-    "GBOGEB/Q_engineering_tools",
     "GBOGEB/CODEX",
-    "next fleet candidate from Historian fanout"
+    "next fleet candidate from Historian fanout",
+    "return to Q_engineering_tools when BD020 source-attestation/access predicate changes"
   ],
   "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE",
   "control_priority": [
