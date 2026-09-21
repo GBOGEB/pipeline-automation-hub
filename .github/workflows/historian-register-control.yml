@@ -40,11 +40,22 @@ jobs:
           open_states = {"TODO", "ACTIVE", "UNKNOWN_NEEDS_READER"}
           open_roots = [r for r in roots if r["state"] in open_states]
           done_or_control = [r for r in roots if r["state"] in {"DONE", "CONTROL", "SUPERSEDED", "INVALIDATED"}]
-          assert len(roots) == reg["bounded_sample"]["durable_bd_roots_total"] == 20
-          assert len(open_roots) == reg["bounded_sample"]["current_open_bd_roots"] == 0
-          assert len(done_or_control) == reg["bounded_sample"]["done_or_control_roots"] == 20
-          assert reg["bounded_sample"]["current_unresolved_occurrences_minimum"] == 0
+          assert len(roots) == reg["bounded_sample"]["durable_bd_roots_total"]
+          assert len(open_roots) == reg["bounded_sample"]["current_open_bd_roots"]
+          assert len(done_or_control) == reg["bounded_sample"]["done_or_control_roots"]
+          assert len(roots) == len(open_roots) + len(done_or_control)
+          assert reg["bounded_sample"]["current_unresolved_occurrences_minimum"] >= len(open_roots)
           assert reg["bounded_sample"]["active_prevention_withheld_controls"] == 0
+          bd21 = next(r for r in roots if r["bd_id"] == "HIST-BD-021")
+          bd22 = next(r for r in roots if r["bd_id"] == "HIST-BD-022")
+          bd23 = next(r for r in roots if r["bd_id"] == "HIST-BD-023")
+          bd24 = next(r for r in roots if r["bd_id"] == "HIST-BD-024")
+          assert bd21["state"] == "DONE"
+          assert bd22["state"] in {"ACTIVE", "DONE"}
+          assert bd23["state"] == "DONE"
+          assert bd24["state"] == "DONE"
+          if bd22["state"] == "ACTIVE":
+              assert bd22["first_red"] == "DEDICATED_GM_I_A_KEB_BRIDGE_RUNTIME_PROOF"
           bd20 = next(r for r in roots if r["bd_id"] == "HIST-BD-020")
           assert bd20["state"] == "DONE"
           assert bd20["closure"]["source_head_attribution_verified"] is True
@@ -70,6 +81,7 @@ jobs:
               "open_roots":len(open_roots),
               "done_or_control_roots":len(done_or_control),
               "bd020":bd20["state"],
-              "qtools_open_local_historian_roots":close["qtools"]["open_local_historian_roots"]
+              "qtools_open_local_historian_roots":close["qtools"]["open_local_historian_roots"],
+              "codex_bd022":bd22["state"]
           }, sort_keys=True))
           PY

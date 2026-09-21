@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-21T10:46:00+02:00",
+  "as_of": "2026-09-21T10:55:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -10,16 +10,16 @@
   "runner_economics_issue": 79,
   "bounded_sample": {
     "audited_prs_minimum": 25,
-    "review_finding_occurrences_observed_cumulative": 40,
-    "durable_bd_roots_total": 20,
-    "current_open_bd_roots": 0,
-    "current_unresolved_occurrences_minimum": 0,
-    "done_or_control_roots": 20,
+    "review_finding_occurrences_observed_cumulative": 44,
+    "durable_bd_roots_total": 24,
+    "current_open_bd_roots": 1,
+    "current_unresolved_occurrences_minimum": 1,
+    "done_or_control_roots": 23,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
     "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
-    "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit. Current durable root register has 0 open roots after HIST-BD-020 provenance closure; living fleet deep-dive and external/non-BD holds continue independently.",
+    "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit. Qtools local Historian roots are drained; CODEX deep-dive added HIST-BD-021..024, with only HIST-BD-022 still ACTIVE pending dedicated KEB bridge runtime proof.",
     "active_prevention_withheld_controls": 0
   },
   "lifecycle": [
@@ -627,6 +627,132 @@
         "formal_credit_delta": 0,
         "authority_transfer": false
       }
+    },
+    {
+      "bd_id": "HIST-BD-021",
+      "title": "Exclude checkout metadata from static candidate artifacts",
+      "class": "ARTIFACT_SCOPE_SECURITY",
+      "severity": "P2",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "source_prs": [
+        776,
+        781
+      ],
+      "source_issues": [
+        779
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "CODEX#781 final head 526fe960b37376e535f2da25d1892356de529130",
+        "CI run35579721478/job106269525882 Run tests PASS >0 steps",
+        "merge@b8d11d831e1aa070860a01f8519f311cd71c3da7",
+        "CODEX#779 CLOSED_COMPLETED"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-022",
+      "title": "Keep GM-I-A KEB output at candidate status",
+      "class": "AUTHORITY_PROMOTION_BOUNDARY",
+      "severity": "P1",
+      "state": "ACTIVE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "source_prs": [
+        775,
+        781,
+        786
+      ],
+      "source_issues": [
+        780
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "CODEX#781 semantic repair merged@b8d11d831e1aa070860a01f8519f311cd71c3da7",
+        "CI run35579721478/job106269525882 tests PASS",
+        "dedicated bridge run35579721479 failed before semantics: ModuleNotFoundError ruamel",
+        "CODEX#786 head 92e7728b283ffea958b7df85a4d55e283b371e7b installs dedicated ruamel.yaml runtime dependency",
+        "CODEX#786 dedicated run35580095011/job106270722615 QUEUED"
+      ],
+      "first_red": "DEDICATED_GM_I_A_KEB_BRIDGE_RUNTIME_PROOF",
+      "done_when": "Dedicated GM-I-A bridge executes >0 steps, validates candidate-only object/promotion contract, emits validated-candidate receipt, and CODEX#780 closes"
+    },
+    {
+      "bd_id": "HIST-BD-023",
+      "title": "Fail closed on GLOOB/Pandoc identity and authority drift",
+      "class": "FEDERATION_CONTRACT_VALIDATION",
+      "severity": "P1",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "source_prs": [
+        771,
+        784
+      ],
+      "source_issues": [
+        782
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "CODEX#784 final rebased head 2ce5bb623b71dc943ef84cbf63115f2e46d69c6f",
+        "CI run35579974567/job106270338097 Run tests PASS >0 steps",
+        "merge@aed29cb389a8640af26bb3900d8bc8f2e4b15b4b",
+        "CODEX#782 CLOSED_COMPLETED"
+      ],
+      "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-024",
+      "title": "Pin W286 visual-golden validation to declared source fixture",
+      "class": "FEDERATION_PROVENANCE_BINDING",
+      "severity": "P1",
+      "state": "DONE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "source_prs": [
+        772,
+        784
+      ],
+      "source_issues": [
+        783
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "proof_refs": [
+        "CODEX#784 final rebased head 2ce5bb623b71dc943ef84cbf63115f2e46d69c6f",
+        "CI run35579974567/job106270338097 Run tests PASS >0 steps",
+        "merge@aed29cb389a8640af26bb3900d8bc8f2e4b15b4b",
+        "CODEX#783 CLOSED_COMPLETED"
+      ],
+      "done_when": "SATISFIED"
     }
   ],
   "control_measures": [
@@ -717,8 +843,8 @@
   "open_priority": [
     {
       "rank": 1,
-      "bd_id": "HIST-BD-020",
-      "reason": "safe attribution withholding is proven, but private source-head ownership of mirrored payload remains unverified"
+      "bd_id": "HIST-BD-022",
+      "reason": "semantic candidate-only repair is merged and broad CI passes; dedicated GM-I-A bridge remains the single local CODEX Historian runtime proof red after missing ruamel dependency"
     }
   ],
   "external_non_compensating_gates": [
@@ -730,9 +856,9 @@
     }
   ],
   "next_deep_dive_order": [
-    "GBOGEB/CODEX",
-    "next fleet candidate from Historian fanout",
-    "return to Q_engineering_tools when BD020 source-attestation/access predicate changes"
+    "Finish GBOGEB/CODEX HIST-BD-022 dedicated bridge proof",
+    "close/return CODEX Historian child when no local roots remain",
+    "next fleet candidate from Historian fanout"
   ],
   "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE",
   "control_priority": [
