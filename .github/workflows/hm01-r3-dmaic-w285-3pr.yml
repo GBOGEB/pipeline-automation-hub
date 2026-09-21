@@ -13,14 +13,22 @@ jobs:
   three-pr:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
       - name: Validate Refresh Probe Rank
         run: |
           mkdir -p output/r3-dmaic
-          python mission-control/grand-missions/validate_r3_dmaic_w285_3pr.py             --receipt mission-control/grand-missions/R3_DMAIC_W285_3PR_REFRESH_v1.json             --out output/r3-dmaic/R3_DMAIC_W285_3PR_RECEIPT_v1.json
+          python mission-control/grand-missions/validate_r3_dmaic_w285_3pr.py             --receipt mission-control/grand-missions/R3_DMAIC_W285_3PR_REFRESH_v1.json             --self-test             --out output/r3-dmaic/R3_DMAIC_W285_3PR_RECEIPT_v2.json
       - uses: actions/upload-artifact@v4
         with:
           name: hm01-r3-dmaic-w285-3pr
-          path: output/r3-dmaic/R3_DMAIC_W285_3PR_RECEIPT_v1.json
+          path: output/r3-dmaic/R3_DMAIC_W285_3PR_RECEIPT_v2.json
           if-no-files-found: error
           retention-days: 30
