@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.historian.gemini_bd025_audit.v1",
-  "status": "ACTIVE_PROVE_PENDING",
+  "status": "POSTMERGE_PROVE_PENDING_RUNNER_ADMISSION",
   "as_of": "2026-09-21",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -32,12 +32,20 @@
     "pr": 30,
     "head": "92780d2f1a91943130f6f8f06fb54c1964830257",
     "scope": "test-only quote generated_at in cyclic and repeated-alias YAML fixtures",
-    "current_head_review": "PASS_NO_MAJOR_ISSUES"
+    "current_head_review": "PASS_NO_MAJOR_ISSUES",
+    "merge": "844440e36bf8dc6b0a194ea6500cbb94f69931fc",
+    "merge_sequence": "MERGED_WHILE_REQUIRED_TESTS_QUEUED_REUSE_REX_CM005"
   },
   "required_proof": [
     "GMI Handover Fail-Closed Tests",
     "GM-I-C Ingress and Handover Contract Tests",
     "current-head review clean",
     "merged/current-main survival"
-  ]
+  ],
+  "rex_recurrence": {
+    "control_id": "REX-CM-005",
+    "new_occurrence": "GEMINI#30 merged while required exact-head tests queued",
+    "root_reused": true,
+    "new_root_created": false
+  }
 }
