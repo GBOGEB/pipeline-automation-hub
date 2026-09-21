@@ -42,6 +42,7 @@ jobs:
         run: python mission-control/qps-triage-ultra/crew/measured/test_negative_evidence_retention.py
       - name: Execute predeclared Mission Crew Task Runtime chain
         id: task_chain
+        if: always()
         continue-on-error: true
         env:
           MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
