@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.fleet_open_issue_convergence.v1",
-  "as_of": "2026-09-21T14:37:00+02:00",
+  "as_of": "2026-09-21T14:41:00+02:00",
   "owner": "GBOGEB",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -24,7 +24,7 @@
   },
   "repositories": {
     "GBOGEB/cryoplant-project": {
-      "head": "7fe241da92a55c0ff6bc011a68fb9986ad0769b6",
+      "head": "4a2641ab414bdeecc3e67007b42c77cd41e04684",
       "open_issues": 55,
       "control": [
         1063,
@@ -145,7 +145,7 @@
       "source": "triage/bd_queue/QPS_OPEN_ISSUE_BD_QUEUE_CURRENT_v1.yaml; #211/#85 reopened because partial-return KEEP_OPEN predicates remain unsatisfied; prevention repair PR #1569"
     },
     "GBOGEB/pipeline-automation-hub": {
-      "head": "b82097e00d4cd8cf4aacccb939f49e198070eea0",
+      "head": "b41de9ac10fbd8eaa76c872f1964fcd905bae1a8",
       "open_issues": 19,
       "control": [
         372,
@@ -172,7 +172,7 @@
         152,
         149
       ],
-      "first_red": "PROVE: #129 LM-10 / W260 BD-260.5 TRIAGE exact-head verification in PR #371.",
+      "first_red": "PROVE: #129 LM-10 / W260 BD-260.5 TRIAGE remains the single active governed convergence frontier; PR #371 is merged.",
       "local_control": "GBOGEB/pipeline-automation-hub#372",
       "source": "GBOGEB/pipeline-automation-hub#358 current child selection plus #372 stabilization policy"
     },
@@ -243,7 +243,7 @@
         "control_count": 4,
         "active_downstream_count": 1,
         "blocked_count": 1,
-        "active_downstream_owner": "GBOGEB/pipeline-automation-hub#129 / PR #371"
+        "active_downstream_owner": "GBOGEB/pipeline-automation-hub#129"
       },
       "first_red": "No repo-local coding frontier. W260 provider work is CONTROL; downstream BD-260.5 TRIAGE is owned by MissionControl.",
       "local_control": "GBOGEB/gg_MATH#27",
@@ -385,6 +385,25 @@
         "active": -1,
         "blocked": 2
       }
+    },
+    {
+      "event": "PIPELINE_374_MERGED_WITH_FLEET_VALIDATOR_RED",
+      "effect": {
+        "proof_debt": 1
+      },
+      "disposition": "REX_CM_005_RECURRENT_MERGE_ADMISSION_NEGATIVE_EVIDENCE"
     }
-  ]
+  ],
+  "proof_integrity": {
+    "prior_pr": 374,
+    "prior_head": "a9b70c61c8c7c3205da97cbcebf6d558ad2c7b37",
+    "prior_run": 35600642426,
+    "prior_job": 106335644287,
+    "prior_result": "FAIL",
+    "first_red": "validator retained executable_frontier_width==2 after ABACUS #638 retirement",
+    "review_finding": "recensus timestamp was newer than pipeline row head b82097e; row must bind post-#373 master",
+    "merge_sha": "b41de9ac10fbd8eaa76c872f1964fcd905bae1a8",
+    "disposition": "FIX_FORWARD_SAME_REX_CM_005_MERGE_ADMISSION_RECURRENCE",
+    "new_bd_root": false
+  }
 }

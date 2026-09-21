@@ -28,14 +28,16 @@ def main():
     f=d["fleet"]
     assert (total,control,active,blocked)==(94,31,1,62)
     assert (f["open_issues"],f["control"],f["active"],f["blocked"])==(94,31,1,62)
-    assert f["executable_frontier_width"]==2
+    assert f["executable_frontier_width"]==1
     assert abs(f["control_share"]-31/94)<1e-10
     assert abs(f["active_share"]-1/94)<1e-10
-    assert abs(f["blocked_share"]-61/94)<1e-10
+    assert abs(f["blocked_share"]-62/94)<1e-10
     assert sum(len(row["active"]) for row in repos.values())==1
     assert repos["GBOGEB/cryoplant-project"]["open_issues"]==55
     assert len(repos["GBOGEB/cryoplant-project"]["blocked_breakdown"]["external_source_decision_return"])==32
     assert repos["GBOGEB/gg_MATH"]["nested_queue"]["bd_total"]==6
+    assert d["proof_integrity"]["prior_result"]=="FAIL"
+    assert d["proof_integrity"]["new_bd_root"] is False
     print("PASS_FLEET_OPEN_ISSUE_CONVERGENCE_94_31_1_62")
 
 if __name__=="__main__":
