@@ -187,20 +187,19 @@
         785,
         981
       ],
-      "active": [
-        638
-      ],
+      "active": [],
       "blocked": [
         1278,
         1002,
         635,
         636,
         637,
-        644
+        644,
+        638
       ],
-      "first_red": "EXECUTE_NOW bounded source-side #638 stale-reference / legacy-binary current-code scan; physical roundtrip gates remain RETURN.",
+      "first_red": "RETURN/HOLD: no repo-local FIX_NOW item. #638 source-side Phase-5 hardening is complete; remaining stale-reference/release proof is physical Windows/OneDrive execution. #1278 remains OWNER_ADMIN_GATE.",
       "local_control": "GBOGEB/ABACUS#633",
-      "source": "GOV-001 latest cold-edge classification; #776 CONTROL watch; #1164 controlled negative/evidence-blocked; #1278 OWNER_ADMIN_GATE"
+      "source": "triage/ABACUS_BD_QUEUE_CURRENT.yaml local authority: 2 NEXT_RECONCILE + 1 CONTROL_WATCH + 6 EXTERNAL/LOCAL_RETURN + 4 PROGRAMME_PARENT; no EXECUTE_NOW"
     },
     "GBOGEB/CODEX": {
       "head": "d6418f60b1082acb15eec14eb21df96488dce590",
@@ -268,27 +267,21 @@
     "open_issues": 95,
     "repositories_with_open_issues": 7,
     "control": 31,
-    "active": 2,
-    "blocked": 62,
-    "executable_frontier_width": 2,
+    "active": 1,
+    "blocked": 63,
+    "executable_frontier_width": 1,
     "control_share": 0.3263157894736842,
-    "active_share": 0.021052631578947368,
-    "blocked_share": 0.6526315789473685,
-    "compression_statement": "95 open occurrences -> 31 CONTROL + 2 ACTIVE + 62 BLOCKED/RETURN/HOLD/READ",
-    "interpretation": "Only two issue surfaces currently justify normal executable/proof WIP. Raw open-issue count overstates active work by 47.5x."
+    "active_share": 0.010526315789473684,
+    "blocked_share": 0.6631578947368421,
+    "compression_statement": "95 open occurrences -> 31 CONTROL + 1 ACTIVE + 63 BLOCKED/RETURN/HOLD/READ",
+    "interpretation": "Only one issue surface currently justifies normal executable/proof WIP. Raw open-issue count overstates active work by 95x."
   },
   "active_frontiers": [
     {
       "repo": "GBOGEB/pipeline-automation-hub",
       "issue": 129,
       "kind": "PROVE",
-      "victory": "BD-260.5 exact-head TRIAGE PASS + review-clean + fresh-master recurrence"
-    },
-    {
-      "repo": "GBOGEB/ABACUS",
-      "issue": 638,
-      "kind": "EXECUTE_NOW",
-      "victory": "current-code stale-reference/legacy-binary scan yields bounded disposition without crossing physical-return gates"
+      "victory": "BD-260.5 review findings repaired + exact-head proof + review-clean + fresh-master recurrence"
     }
   ],
   "blocked_priority": [
@@ -321,6 +314,11 @@
       "repo": "GBOGEB/document-organization-system",
       "issue": 51,
       "kind": "RELEASE_ADMIN_MUTATION"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue": 638,
+      "kind": "LOCAL_WINDOWS_RELEASE_RETURN"
     }
   ],
   "reduction_method": {
@@ -343,9 +341,8 @@
   },
   "next": [
     "merge cryoplant queue-integrity sync PR #1571 and ABACUS queue-retirement sync PR #1320 after review/proof",
-    "repair LM-10 #129 / PR #371 review findings as the active PROVE first-red before any BD-260.5 closure claim",
-    "run ABACUS #638 bounded cloud-executable stale-reference/legacy-binary scan",
-    "leave CODEX/GEMINI/document-organization-system RETURN gates at zero coding allocation",
-    "repeat fleet census after the two ACTIVE fronts resolve and recompute net_BD_delta"
+    "repair LM-10 #129 via PR #376; require exact-head proof, review-clean, merge and fresh-master recurrence",
+    "leave ABACUS #638, CODEX/GEMINI/document-organization-system RETURN gates at zero coding allocation",
+    "repeat fleet census after #129 resolves and recompute net_BD_delta"
   ]
 }
