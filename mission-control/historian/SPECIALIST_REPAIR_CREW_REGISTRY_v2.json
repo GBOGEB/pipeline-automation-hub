@@ -292,6 +292,35 @@
       "reenter_on": "OBSERVED_REGRESSION_OR_GOVERNED_CONTRACT_CHANGE",
       "authority_transfer": false,
       "formal_credit_delta": 0
+    },
+    "codex_historian": {
+      "state": "DONE_CLOSE_CONTROL_WATCH",
+      "durable_roots": [
+        "HIST-BD-021",
+        "HIST-BD-022",
+        "HIST-BD-023",
+        "HIST-BD-024"
+      ],
+      "done_roots": [
+        "HIST-BD-021",
+        "HIST-BD-022",
+        "HIST-BD-023",
+        "HIST-BD-024"
+      ],
+      "active_roots": [],
+      "first_red": "CODEX#786 dedicated run35580095011/job106270722615",
+      "reenter_or_close_on": "OBSERVED_REGRESSION_OR_GOVERNED_CONTRACT_CHANGE",
+      "authority_transfer": false,
+      "formal_credit_delta": 0,
+      "close_evidence": [
+        "CODEX#787@cbd28b8c88c85789ccc4f5be3bd8942540a60f1a",
+        "W003 run35580291171 PASS",
+        "CI run35580291195 PASS",
+        "W286 run35580291155 PASS",
+        "GM-I-A run35580291121 PASS",
+        "Validate Federation run35580291180 PASS",
+        "current-head Codex review no major issues"
+      ]
     }
   }
 }
