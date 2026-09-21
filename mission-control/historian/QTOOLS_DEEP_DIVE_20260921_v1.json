@@ -1,0 +1,34 @@
+{
+  "schema": "missioncontrol.historian.qtools_deep_dive_receipt.v1",
+  "status": "BD019_DONE_BD020_ACTIVE_SAFE_WITHHOLD",
+  "as_of": "2026-09-21",
+  "qtools_main": "3cbaecee62e212fd00785b93cd192ae4ef71803d",
+  "bd019": {
+    "state": "DONE",
+    "issue": 86,
+    "pr": 88,
+    "pr_head": "cd1ac6a315bbefc4e36f4bb48f6b99066414309c",
+    "pr_run": 35575714278,
+    "pr_job": 106257017572,
+    "main_run": 35578430006,
+    "main_job": 106265460440,
+    "regression_functions": 19
+  },
+  "bd020": {
+    "state": "ACTIVE",
+    "issue": 87,
+    "mitigation": "SAFE_WITHHOLD_NO_SOURCE_HEAD_PROVENANCE_CREDIT",
+    "current_receipt_behavior": {
+      "source_head_attribution_verified": false,
+      "status": "WITHHELD_NO_SOURCE_REPO_RUNTIME_ACCESS",
+      "unverified_source_head_not_promoted": true
+    },
+    "completion_gate": "Independent source commit/path/blob verification or provenance-bound source attestation plus exact-head repeat"
+  },
+  "non_compensating": [
+    "cryoplant-project#923",
+    "REX-CM-005"
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}

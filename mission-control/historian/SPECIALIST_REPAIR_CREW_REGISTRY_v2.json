@@ -96,7 +96,8 @@
         "HIST-BD-018"
       ],
       "active_scope": [
-        "REX-CM-005"
+        "REX-CM-005",
+        "HIST-BD-020"
       ],
       "done_scope": [
         "HIST-BD-002",
@@ -108,7 +109,7 @@
         "HIST-BD-018",
         "HIST-BD-009"
       ],
-      "current_mission": "REX_CM_005_MERGE_ADMISSION",
+      "current_mission": "REX_CM_005_ADMIN_PLUS_BD020_PROVENANCE",
       "secondment": [
         "H2_KEB",
         "HISTORIAN",
@@ -121,7 +122,7 @@
         "negative evidence contract",
         "contract drift"
       ],
-      "victory_condition": "Owner/admin binds governance check as merge requirement and proves negative red non-mergeable then distinct-SHA green mergeable",
+      "victory_condition": "Bind ABACUS merge admission fail-closed and close BD020 only with independently verifiable source-head provenance",
       "controlled_scope": [
         "HIST-BD-016"
       ]
@@ -198,13 +199,16 @@
       "state": "ACTIVE_FLEET_SERVICE",
       "triggered_by_roots": [
         "HIST-BD-009",
-        "HIST-BD-018"
+        "HIST-BD-018",
+        "HIST-BD-019",
+        "HIST-BD-020"
       ],
       "active_scope": [
         "REX-CM-005",
-        "fleet deep-dive expansion"
+        "fleet deep-dive expansion",
+        "HIST-BD-020"
       ],
-      "current_mission": "Q_ENGINEERING_TOOLS_DEEP_DIVE_PLUS_ADMIN_CONTROL_WATCH",
+      "current_mission": "CODEX_DEEP_DIVE_PLUS_BD020_PROVENANCE_WATCH",
       "secondment": [
         "H1_QPS",
         "H2_KEB",
@@ -255,10 +259,10 @@
       "DEBUG_SURGEON"
     ],
     "priority_sequence": [
-      "Q_engineering_tools Historian deep-dive",
+      "CODEX Historian deep-dive",
+      "HIST-BD-020 source provenance when private-source verification becomes available",
       "REX-CM-005 owner/admin binding when available",
-      "cryoplant-project#923 owner runner-admission recovery",
-      "next fleet deep-dive"
+      "cryoplant-project#923 owner runner-admission recovery"
     ],
     "anti_proliferation": "specialists are temporary pressure cells; return/merge competencies after bounded victory unless recurrent independent workload justifies persistence"
   }
