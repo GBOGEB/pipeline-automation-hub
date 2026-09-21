@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.fleet_open_issue_convergence.v1",
-  "as_of": "2026-09-21T14:20:00+02:00",
+  "as_of": "2026-09-21T14:38:00+02:00",
   "owner": "GBOGEB",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -24,8 +24,8 @@
   },
   "repositories": {
     "GBOGEB/cryoplant-project": {
-      "head": "7fe241da92a55c0ff6bc011a68fb9986ad0769b6",
-      "open_issues": 53,
+      "head": "4a2641ab414bdeecc3e67007b42c77cd41e04684",
+      "open_issues": 55,
       "control": [
         1063,
         1379,
@@ -82,7 +82,9 @@
         235,
         238,
         233,
-        208
+        208,
+        211,
+        85
       ],
       "blocked_breakdown": {
         "owner_infra_hard_block": [
@@ -133,15 +135,17 @@
           235,
           238,
           233,
-          208
+          208,
+          211,
+          85
         ]
       },
       "first_red": "RETURN: #923 owner-side private-repo Actions admission; no repo-local FIX_NOW defect after stale queue-pointer cleanup.",
       "local_control": "GBOGEB/cryoplant-project#481",
-      "source": "triage/bd_queue/QPS_OPEN_ISSUE_BD_QUEUE_CURRENT_v1.yaml with closed #211/#85 removed from live projection"
+      "source": "triage/bd_queue/QPS_OPEN_ISSUE_BD_QUEUE_CURRENT_v1.yaml; #211/#85 reopened by C0 integrity correction because partial returns remain KEEP_OPEN"
     },
     "GBOGEB/pipeline-automation-hub": {
-      "head": "b82097e00d4cd8cf4aacccb939f49e198070eea0",
+      "head": "1f47625171eeb004fdcb01f4e3dd4a839100fddd",
       "open_issues": 19,
       "control": [
         372,
@@ -173,7 +177,7 @@
       "source": "GBOGEB/pipeline-automation-hub#358 current child selection plus #372 stabilization policy"
     },
     "GBOGEB/ABACUS": {
-      "head": "d00fcb026bd05b8c35e6f2f30fc3192d695dcfb6",
+      "head": "56d555c89f76dbe6d972fe0b2097c8066d5d51e5",
       "open_issues": 13,
       "control": [
         633,
@@ -216,18 +220,16 @@
     },
     "GBOGEB/GEMINI": {
       "head": "844440e36bf8dc6b0a194ea6500cbb94f69931fc",
-      "open_issues": 3,
-      "control": [
-        28
-      ],
+      "open_issues": 2,
+      "control": [],
       "active": [],
       "blocked": [
         16,
         12
       ],
       "first_red": "RETURN: #16 physical successor bundle triplet or #12 external WIF/service-account/Drive ACL; no application coding selected.",
-      "local_control": "GBOGEB/GEMINI#28",
-      "source": "#28 Historian closure plus #16/#12 explicit external-return contracts"
+      "local_control": "GBOGEB/pipeline-automation-hub#372",
+      "source": "#28 closed DONE after exact post-merge proof; #16/#12 retain explicit external-return contracts"
     },
     "GBOGEB/gg_MATH": {
       "head": "2b27f4a6d70a11324d9a7c81d9c88995888b3d74",
@@ -263,17 +265,17 @@
     }
   },
   "fleet": {
-    "open_issues": 94,
+    "open_issues": 95,
     "repositories_with_open_issues": 7,
-    "control": 32,
+    "control": 31,
     "active": 2,
-    "blocked": 60,
+    "blocked": 62,
     "executable_frontier_width": 2,
-    "control_share": 0.3404255319,
-    "active_share": 0.0212765957,
-    "blocked_share": 0.6382978723,
-    "compression_statement": "94 open occurrences -> 32 CONTROL + 2 ACTIVE + 60 BLOCKED/RETURN/HOLD/READ",
-    "interpretation": "Only two issue surfaces currently justify normal executable/proof WIP. Open-issue count alone overstates active work by roughly 47x."
+    "control_share": 0.3263157894736842,
+    "active_share": 0.021052631578947368,
+    "blocked_share": 0.6526315789473685,
+    "compression_statement": "95 open occurrences -> 31 CONTROL + 2 ACTIVE + 62 BLOCKED/RETURN/HOLD/READ",
+    "interpretation": "Only two issue surfaces currently justify normal executable/proof WIP. Raw open-issue count overstates active work by 47.5x."
   },
   "active_frontiers": [
     {
@@ -340,10 +342,10 @@
     ]
   },
   "next": [
-    "repair cryoplant live queue pointer by removing closed #211/#85 from BDQ2",
-    "drain pipeline #129 / PR #371 BD-260.5 proof",
-    "run ABACUS #638 bounded cloud-executable scan",
+    "merge cryoplant queue-integrity sync PR #1571 and ABACUS queue-retirement sync PR #1320 after review/proof",
+    "repair LM-10 #129 / PR #371 review findings as the active PROVE first-red before any BD-260.5 closure claim",
+    "run ABACUS #638 bounded cloud-executable stale-reference/legacy-binary scan",
     "leave CODEX/GEMINI/document-organization-system RETURN gates at zero coding allocation",
-    "repeat fleet census after those two ACTIVE fronts resolve and recompute net_BD_delta"
+    "repeat fleet census after the two ACTIVE fronts resolve and recompute net_BD_delta"
   ]
 }
