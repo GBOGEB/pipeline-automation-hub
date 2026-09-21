@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.temporal_frontier_current.v1",
-  "as_of": "2026-09-18T15:58:00+02:00",
+  "as_of": "2026-09-21T09:46:00+02:00",
   "canonical_navigation": true,
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -9,85 +9,86 @@
   "branch": "master",
   "authority_surfaces": {
     "policy_config": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_POLICY_CONFIG_v1.json",
-    "iteration_control": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v3.json",
+    "iteration_control": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v4.json",
     "control_acceptance_history": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONTROL_POLICY_ACCEPTANCE_v1.json",
-    "current_regression": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_CONTROL_REGRESSION_v1.json"
+    "historical_regression": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_CONTROL_REGRESSION_v1.json",
+    "short_compute_reearn_gate": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json",
+    "short_compute_reearn_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_RECEIPT_20260921_v1.json"
   },
   "handover": {
-    "lossless": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/SC_2026-09-18_TEMPORAL_3PSTAR_MIP_LOSSLESS_HANDOVER_v1.md",
-    "restart_dropin": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/RESTART_DROPIN_2026-09-18_TEMPORAL_FRONTIER_v1.md"
+    "lossless": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/SC_2026-09-21_TEMPORAL_SHORT_COMPUTE_REEARN_LOSSLESS_HANDOVER_v1.md",
+    "restart_dropin": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/RESTART_DROPIN_2026-09-21_TEMPORAL_SHORT_COMPUTE_REEARN_v1.md"
   },
-  "state": "CONTROL_REGRESSION_ACTIVE_2_OF_5_CONTROL_THREE_CLASS_FRONTIER",
+  "state": "CONTROL_3_OF_5_SHORT_COMPUTE_REEARNED_TWO_CLASS_FRONTIER_ACTIVE",
   "control_classes": [
     "cache_artifact_reuse",
+    "short_compute",
     "validation_bundle"
   ],
+  "reearned_classes": ["short_compute"],
+  "regressed_classes": [],
   "active_frontier": [
     {
       "priority": "P0",
-      "task_class": "short_compute",
-      "first_red": "pooled_winner_strength",
-      "regime": "CONTROL_REGRESSION"
-    },
-    {
-      "priority": "P1",
       "task_class": "long_compute_contended",
       "first_red": "direction_consistency",
       "regime": "REGIME_REVERSAL_OBSERVED"
     },
     {
-      "priority": "P2",
+      "priority": "P1",
       "task_class": "human_dependency_wait_proxy",
       "first_red": "direction_consistency",
       "regime": "WEAK_OR_NOISY_DIRECTION"
     }
   ],
+  "current_genuine_schedule": {
+    "run_id": "35574196822",
+    "job_id": "106252442714",
+    "source_sha": "aad7c4ee3b464307365d55cb7d30999282b01838",
+    "artifact_id": "10626843286",
+    "artifact_digest": "sha256:5da6859bfcb0fad43c4339dc8ac7795dce052dbd177e6c90eaad04817a222020",
+    "scheduled_windows": 25,
+    "distinct_source_shas": 10,
+    "span_seconds": 519001.0,
+    "hosted_runner_classes": ["linux", "macos", "windows"],
+    "lanes": ["baseline", "held"],
+    "rex_veto": false
+  },
+  "short_compute": {
+    "policy_status": "CONTROL_POLICY",
+    "allocation_recommendation": "ALLOC_SINGLE_CELL",
+    "directional_windows": 21,
+    "direction_consistency": 0.9523809523809523,
+    "pooled_winner_strength": 0.7098869125669386,
+    "latest_two_directional_windows_agree": true,
+    "control_reearned": true
+  },
   "proof_chain": {
-    "implementation_pr": 246,
-    "implementation_merge": "a56e94ee92077b912a5a3480ae73a1c13b775eba",
-    "late_pr_head_proof": {
-      "run_id": "35351860027",
-      "job_id": "105621646115",
-      "conclusion": "success"
-    },
-    "proof_rebind_pr": 252,
-    "proof_rebind_merge": "243337e7170029ccfbcf1588ce951356fd1d22a7",
-    "postmerge_recurrence": {
-      "run_id": "35352260069",
-      "job_id": "105622958891",
-      "merge_sha": "243337e7170029ccfbcf1588ce951356fd1d22a7",
-      "state": "PASS",
-      "steps_executed": true,
-      "tests": "3_OF_3_PASS",
-      "success_marker": "PASS_TEMPORAL_3PSTAR_MIP_PROOF_REBIND_CONTROL"
-    },
-    "rex_005_state": "CONTROLLED"
+    "rex_005_state": "CONTROLLED",
+    "regression_run": "35350275999",
+    "reearn_run": "35574196822",
+    "reearn_job": "106252442714",
+    "reearn_artifact": "10626843286",
+    "reearn_artifact_digest": "sha256:5da6859bfcb0fad43c4339dc8ac7795dce052dbd177e6c90eaad04817a222020"
   },
   "next_order": [
     "refresh live master and current temporal authority files",
-    "read historical CONTROL_POLICY_ACCEPTANCE_v1.json as history only",
-    "read TEMPORAL_CONTROL_REGRESSION_v1.json as current effective disposition",
-    "P0 decompose short_compute pooled-strength regression from scheduled run 35350275999 and require frozen >=0.70 to re-earn CONTROL",
-    "P1 decompose long_compute_contended signed effect by runner/lane/temporal regime",
-    "P2 continue human_dependency_wait_proxy genuine-schedule stability measurement with controlled-wait proxy claim boundary",
-    "surveil cache_artifact_reuse and validation_bundle and revoke only on governed regression",
+    "surveil cache_artifact_reuse, short_compute and validation_bundle and revoke only on later governed regression",
+    "P0 continue long_compute_contended genuine-schedule signed-effect decomposition",
+    "P1 continue human_dependency_wait_proxy genuine-schedule stability measurement with controlled-wait proxy claim boundary",
     "evaluate H3 7-day surveillance only when genuine scheduled span reaches 604800 seconds"
   ],
-  "historical_control_classes": [
-    "cache_artifact_reuse",
-    "short_compute",
-    "validation_bundle"
-  ],
-  "regressed_classes": [
-    "short_compute"
-  ],
-  "current_genuine_schedule": {
-    "run_id": "35350275999",
-    "source_sha": "f226e6e61bc84482d4856f056b292ca9322e22f8",
-    "artifact_id": "10549864368",
-    "artifact_digest": "sha256:6d1ee0018358fff48a83d006322ba1e0b504b32a1cf68e8b4c3e98d0001713c3",
-    "scheduled_windows": 20,
-    "distinct_source_shas": 12,
-    "span_seconds": 410680
+  "historical_state": {
+    "short_compute_regression_run": "35350275999",
+    "historical_regression_preserved": true
+  },
+  "invariants": {
+    "thresholds_changed": false,
+    "synthetic_or_manual_clock_credit": false,
+    "push_or_pr_control_credit": false,
+    "competency_promotions": 0,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "full_control": false
   }
 }
