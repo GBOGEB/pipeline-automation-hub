@@ -28,6 +28,11 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact source
         run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Prove canonical W260 mutation fails closed
+        run: |
+          set -euo pipefail
+          python mission-control/historian/validate_fleet_open_issue_convergence.py --self-test | tee fleet-mutation.out
+          grep -q PASS_FLEET_W260_CANONICAL_BD_MUTATION fleet-mutation.out
       - name: Validate fleet compression
         run: |
           set -euo pipefail
@@ -38,5 +43,6 @@ jobs:
           name: fleet-open-issue-convergence-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             fleet.out
+            fleet-mutation.out
             mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json
           if-no-files-found: error
