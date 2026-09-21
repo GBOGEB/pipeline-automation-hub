@@ -1,0 +1,103 @@
+name: Runner Fanout MIP Control
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/runner-economics/RUNNER_FANOUT_MIP_CONTROL_v1.json'
+      - 'mission-control/runner-economics/validate_runner_fanout_mip.py'
+      - '.github/workflows/runner-fanout-mip-control.yml'
+      - '.github/workflows/gm-iv-pilot2-final-recensus.yml'
+      - '.github/workflows/gm-iv-pilot2-governor.yml'
+      - '.github/workflows/gm-v-governor-readiness.yml'
+      - '.github/workflows/gm-fleet-02b.yml'
+      - '.github/workflows/gm-fleet-03-f01-pilot.yml'
+      - '.github/workflows/gm-fleet-03-ring1-recon.yml'
+      - '.github/workflows/gm-fleet-03-ring2-recon.yml'
+      - '.github/workflows/gm-fleet-03-capacity-gate.yml'
+      - '.github/workflows/gm-iv-active8-governor-readiness.yml'
+      - '.github/workflows/gm-fleet-03-f03-pilot.yml'
+      - '.github/workflows/w3-14-measured-pca.yml'
+      - '.github/workflows/w3-13-measured-telemetry.yml'
+      - '.github/workflows/w3-11-non-origin-math-consumer.yml'
+      - '.github/workflows/crew-telemetry-role-gap.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/runner-economics/RUNNER_FANOUT_MIP_CONTROL_v1.json'
+      - 'mission-control/runner-economics/validate_runner_fanout_mip.py'
+      - '.github/workflows/runner-fanout-mip-control.yml'
+      - '.github/workflows/gm-iv-pilot2-final-recensus.yml'
+      - '.github/workflows/gm-iv-pilot2-governor.yml'
+      - '.github/workflows/gm-v-governor-readiness.yml'
+      - '.github/workflows/gm-fleet-02b.yml'
+      - '.github/workflows/gm-fleet-03-f01-pilot.yml'
+      - '.github/workflows/gm-fleet-03-ring1-recon.yml'
+      - '.github/workflows/gm-fleet-03-ring2-recon.yml'
+      - '.github/workflows/gm-fleet-03-capacity-gate.yml'
+      - '.github/workflows/gm-iv-active8-governor-readiness.yml'
+      - '.github/workflows/gm-fleet-03-f03-pilot.yml'
+      - '.github/workflows/w3-14-measured-pca.yml'
+      - '.github/workflows/w3-13-measured-telemetry.yml'
+      - '.github/workflows/w3-11-non-origin-math-consumer.yml'
+      - '.github/workflows/crew-telemetry-role-gap.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-runner-fanout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Assert exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          test "$(git rev-parse HEAD)" = "$expected"
+          echo "SOURCE_SHA=$expected" >> "$GITHUB_ENV"
+
+      - name: Compile validator
+        run: python -m py_compile mission-control/runner-economics/validate_runner_fanout_mip.py
+
+      - name: Validate fan-out MIP deterministically
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/runner-economics/validate_runner_fanout_mip.py             --source-sha "$SOURCE_SHA"             --out /tmp/runner-fanout-1.json
+          python mission-control/runner-economics/validate_runner_fanout_mip.py             --source-sha "$SOURCE_SHA"             --out /tmp/runner-fanout-2.json
+          cmp /tmp/runner-fanout-1.json /tmp/runner-fanout-2.json
+          grep -q 'PASS_RUNNER_FANOUT_MIP_CONTROL' /tmp/runner-fanout-1.json
+
+      - name: Enforce non-compensation boundary
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/runner-fanout-1.json'))
+          assert r['postmerge_measured_probe_required'] is True
+          assert r['qps_923_compensation'] is False
+          assert r['authority_transfer'] is False
+          assert r['formal_credit_delta'] == 0
+          assert r['modeled_registered_workflows_after'] == 5
+          print('PASS_RUNNER_FANOUT_NONCOMPENSATION')
+          PY
+
+      - name: Upload exact-head control receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-fanout-mip-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/runner-fanout-1.json
+            /tmp/runner-fanout-2.json
+            mission-control/runner-economics/RUNNER_FANOUT_MIP_CONTROL_v1.json
+          if-no-files-found: error
+          retention-days: 30
