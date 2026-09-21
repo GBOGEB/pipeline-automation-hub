@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.fleet_open_issue_convergence.v1",
-  "as_of": "2026-09-21T14:20:00+02:00",
+  "as_of": "2026-09-21T14:31:00+02:00",
   "owner": "GBOGEB",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -25,7 +25,7 @@
   "repositories": {
     "GBOGEB/cryoplant-project": {
       "head": "7fe241da92a55c0ff6bc011a68fb9986ad0769b6",
-      "open_issues": 53,
+      "open_issues": 55,
       "control": [
         1063,
         1379,
@@ -82,7 +82,9 @@
         235,
         238,
         233,
-        208
+        208,
+        211,
+        85
       ],
       "blocked_breakdown": {
         "owner_infra_hard_block": [
@@ -133,12 +135,14 @@
           235,
           238,
           233,
-          208
+          208,
+          211,
+          85
         ]
       },
-      "first_red": "RETURN: #923 owner-side private-repo Actions admission; no repo-local FIX_NOW defect after stale queue-pointer cleanup.",
+      "first_red": "RETURN: #923 owner-side private-repo Actions admission; #211/#85 are valid partial-return reentries and remain RETURN/KEEP_OPEN.",
       "local_control": "GBOGEB/cryoplant-project#481",
-      "source": "triage/bd_queue/QPS_OPEN_ISSUE_BD_QUEUE_CURRENT_v1.yaml with closed #211/#85 removed from live projection"
+      "source": "triage/bd_queue/QPS_OPEN_ISSUE_BD_QUEUE_CURRENT_v1.yaml; #211/#85 reopened because partial-return KEEP_OPEN predicates remain unsatisfied; prevention repair PR #1569"
     },
     "GBOGEB/pipeline-automation-hub": {
       "head": "b82097e00d4cd8cf4aacccb939f49e198070eea0",
@@ -216,18 +220,16 @@
     },
     "GBOGEB/GEMINI": {
       "head": "844440e36bf8dc6b0a194ea6500cbb94f69931fc",
-      "open_issues": 3,
-      "control": [
-        28
-      ],
+      "open_issues": 2,
+      "control": [],
       "active": [],
       "blocked": [
         16,
         12
       ],
       "first_red": "RETURN: #16 physical successor bundle triplet or #12 external WIF/service-account/Drive ACL; no application coding selected.",
-      "local_control": "GBOGEB/GEMINI#28",
-      "source": "#28 Historian closure plus #16/#12 explicit external-return contracts"
+      "local_control": "GBOGEB/pipeline-automation-hub#76 / #85",
+      "source": "#28 closed completed after exact >0-step proof; #16/#12 remain explicit external-return contracts"
     },
     "GBOGEB/gg_MATH": {
       "head": "2b27f4a6d70a11324d9a7c81d9c88995888b3d74",
@@ -263,17 +265,17 @@
     }
   },
   "fleet": {
-    "open_issues": 94,
+    "open_issues": 95,
     "repositories_with_open_issues": 7,
-    "control": 32,
+    "control": 31,
     "active": 2,
-    "blocked": 60,
+    "blocked": 62,
     "executable_frontier_width": 2,
-    "control_share": 0.3404255319,
-    "active_share": 0.0212765957,
-    "blocked_share": 0.6382978723,
-    "compression_statement": "94 open occurrences -> 32 CONTROL + 2 ACTIVE + 60 BLOCKED/RETURN/HOLD/READ",
-    "interpretation": "Only two issue surfaces currently justify normal executable/proof WIP. Open-issue count alone overstates active work by roughly 47x."
+    "control_share": 0.3263157894736842,
+    "active_share": 0.021052631578947368,
+    "blocked_share": 0.6526315789473685,
+    "compression_statement": "95 open occurrences -> 31 CONTROL + 2 ACTIVE + 62 BLOCKED/RETURN/HOLD/READ",
+    "interpretation": "Only two issue surfaces currently justify normal executable/proof WIP. Open-issue count alone overstates active work by 47.5x."
   },
   "active_frontiers": [
     {
@@ -340,10 +342,41 @@
     ]
   },
   "next": [
-    "repair cryoplant live queue pointer by removing closed #211/#85 from BDQ2",
+    "consume cryoplant #1569 no-close-guard proof/review and keep #211/#85 RETURN",
     "drain pipeline #129 / PR #371 BD-260.5 proof",
     "run ABACUS #638 bounded cloud-executable scan",
     "leave CODEX/GEMINI/document-organization-system RETURN gates at zero coding allocation",
-    "repeat fleet census after those two ACTIVE fronts resolve and recompute net_BD_delta"
+    "repeat fleet census after the two ACTIVE fronts resolve and recompute net_BD_delta"
+  ],
+  "census_events": [
+    {
+      "event": "GEMINI_28_CLOSED_COMPLETED",
+      "effect": {
+        "open_issues": -1,
+        "control": -1
+      }
+    },
+    {
+      "event": "CRYOPLANT_211_REOPENED_KEEP_OPEN",
+      "effect": {
+        "open_issues": 1,
+        "blocked": 1
+      }
+    },
+    {
+      "event": "CRYOPLANT_85_REOPENED_KEEP_OPEN",
+      "effect": {
+        "open_issues": 1,
+        "blocked": 1
+      }
+    },
+    {
+      "event": "NET_FROM_INITIAL_94_SNAPSHOT",
+      "effect": {
+        "open_issues": 1,
+        "control": -1,
+        "blocked": 2
+      }
+    }
   ]
 }
