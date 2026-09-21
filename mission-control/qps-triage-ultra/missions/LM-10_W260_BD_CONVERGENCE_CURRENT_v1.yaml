@@ -1,0 +1,179 @@
+schema: qps.lm10.w260.bd_convergence.v1
+as_of: '2026-09-21T13:06:00+02:00'
+mission_id: LM-10
+official_register: mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml
+official_control: mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml
+roundtrip_issue: GBOGEB/pipeline-automation-hub#129
+provider: GBOGEB/gg_MATH
+provider_queue: GBOGEB/gg_MATH#27
+authority_transfer: false
+formal_credit_delta: 0
+
+purpose: >-
+  Collapse W260 into one executable first-red frontier while retaining solved method
+  slices as low-cost CONTROL watches. 3P* is the transaction spine; MIP is the
+  improvement/reallocation loop inside that spine. No local-mission progress may
+  compensate a failed global QPS AND-gate.
+
+current_provider_state:
+  main_sha: 2b27f4a6d70a11324d9a7c81d9c88995888b3d74
+  fix_forward_pr: GBOGEB/gg_MATH#43
+  fix_forward_head: 65facc18631f73ff1af43ab5e8c7c9708d6ebefb
+  exact_head_proof:
+    run: 35591996425
+    conclusion: PASS
+  fresh_main_proof:
+    run: 35592153194
+    job: 106308723087
+    artifact_id: 10634743904
+    artifact_digest: sha256:603da43f85e9709f0372b3f487e5c15c78e628adc4f6ae19232b8108af233a15
+    conclusion: PASS
+  adjacent_proof:
+    m02b: PASS
+    lm10_signal_stack: PASS
+    monte_carlo: PASS
+    symbolic_transform: PASS
+  current_first_red: BD260_5_TRIAGE_EXACT_IDENTITY_AND_AUTHORITY_VERIFICATION
+
+bd_queue:
+  BD-260.1:
+    state: DONE_CONTROL_WATCH
+    canonical_pr: GBOGEB/gg_MATH#30
+    role: shared_CI_resampling_runtime
+  BD-260.2:
+    state: DONE_CONTROL_WATCH
+    canonical_pr: GBOGEB/gg_MATH#32
+    repair_pr: GBOGEB/gg_MATH#40
+    role: bradley_terry_uncertainty
+  BD-260.3:
+    state: DONE_CONTROL_WATCH
+    canonical_pr: GBOGEB/gg_MATH#33
+    repair_pr: GBOGEB/gg_MATH#41
+    role: pca_temporal_subspace_uncertainty
+  BD-260.4:
+    state: DONE_CONTROL_WATCH
+    implementation_pr: GBOGEB/gg_MATH#42
+    fix_forward_pr: GBOGEB/gg_MATH#43
+    role: qps_common_fixture_project_math_challenge
+  BD-260.5:
+    state: ACTIVE_PROVE
+    role: triage_verification
+  BD-260.6:
+    state: CONDITIONALLY_BLOCKED_BY_BD260_5
+    role: optional_P4_federation
+
+observed_queue_metrics:
+  total_bd_items: 6
+  done_control_watch: 4
+  active_prove: 1
+  dependency_blocked: 1
+  executable_frontier_width: 1
+  provider_active_pr_count: 0
+  historian_review_roots_closed: 5
+  historian_review_roots_total: 5
+  fractions:
+    done_control_watch: 0.6667
+    active_first_red: 0.1667
+    dependency_blocked: 0.1667
+  interpretation: >-
+    Only one provider transition is executable now. Opening BD-260.5 or W261 before
+    BD-260.4 clean merge/fresh-main proof would increase WIP without increasing
+    dependency-ready throughput.
+
+queue_reduction_method:
+  name: FIRST_RED_FUNNEL_WITH_CONTROL_DECAY
+  rules:
+    - hard_AND_gates_and_authority_boundaries_before_statistical_ranking
+    - one_executable_provider_frontier_at_a_time_for_the_sequential_spine
+    - parallelize_only_dependency_independent_challenge_or_observability_work
+    - merge_duplicate_or_superseded_PRs_instead_of_preserving_parallel_APIs
+    - DONE_items_decay_to_CONTROL_watch_floor_and_do_not_compete_for_build_capacity
+    - recurrent_review_findings_become_one_HIST_BD_root_with_negative_regression
+    - no_downstream_BD_activation_until_upstream_exact_receipt_is_consumable
+  WIP_caps:
+    provider_implementation_or_repair_PR: 1
+    missioncontrol_control_PR: 1
+    optional_parallel_observability_jobs: ELASTIC_NO_AUTHORITY
+  selection_order:
+    - NON_COMPENSATING_HARD_GATE
+    - CURRENT_EXECUTABLE_FIRST_RED
+    - REVIEW_OR_PROOF_DEBT_ON_MERGED_STATE
+    - RECURRENT_DEFECT_PREVENTION
+    - DEPENDENCY_LEVERAGE
+    - RESIDUAL_MIP_PRESSURE
+
+three_pstar_mapping:
+  P1_METHOD_MATH:
+    scope: [BD-260.1, BD-260.2, BD-260.3]
+    state: PASS_CONTROL_WATCH
+    exit: verified_kernels_plus_negative_regressions
+  P2_PROJECT_MATH_QPS:
+    scope: [BD-260.4]
+    state: PASS_CONTROL_WATCH
+    exit: clean_review_merge_fresh_main_exact_receipt
+  P3_TRIAGE_GOVERNANCE:
+    scope: [BD-260.5]
+    state: ACTIVE_PROVE
+    exit: evidence_card_schema_threshold_kind_first_red_authority_exact_identity_all_PASS
+  P4_FEDERATION_ORCHESTRATION:
+    scope: [BD-260.6]
+    state: CONDITIONAL
+    activation: only_after_BD260_5_and_only_for_real_executable_receipts
+
+mip_iteration:
+  Modernize:
+    state: PASS
+    evidence:
+      - canonical_provider_API_selected
+      - duplicate_PR31_retired
+      - review_defects_026_to_030_repaired_and_regressed
+      - exact_QPS_fixture_identity_bound
+      - official_LM10_control_surface_reused
+  Innovate:
+    state: PASS
+    evidence:
+      - common_fixture_covariance_eigen_PCA_CI_bootstrap_ANOVA_BT_challenge
+      - compact_evidence_cards
+      - PCA_DOES_NOT_IMPLY_BT_guards
+    first_red: null
+  Perpetuate:
+    state: ACTIVE
+    target:
+      - BD260_5_fail_closed_TRIAGE_validator
+      - exact_SHA_fixture_digest_artifact_identity
+      - first_red_retention
+      - zero_authority_inversion
+      - later_distinct_source_or_consumer_repeat_before_recurrent_CONTROL
+
+bd_planning_metric_contract:
+  measured_first:
+    - open_bd_count
+    - executable_frontier_width
+    - dependency_blocked_count
+    - proof_debt_count
+    - review_finding_root_count
+    - recurrence_count
+    - repair_survival_rate
+    - exact_receipt_density
+    - consumer_disposition_count
+  derived_only_when_inputs_exist:
+    pressure_raw: residual_variance_x_bd_severity_x_authority_gap_x_dependency_readiness
+    allocation_weight: pressure_raw_div_sum_eligible_pressure_raw
+    decay_rule: max_control_floor_or_prior_pressure_x_decay_after_evidence_backed_closure
+  forbidden:
+    - synthetic_pressure_called_measured
+    - BT_without_observed_pairwise_outcomes
+    - PCA_used_to_override_non_compensating_gate
+    - merged_code_called_DONE_without_required_proof_or_disposition
+
+next_sequence:
+  - execute_BD260_5_TRIAGE_verifier_on_bound_provider_receipt_projection
+  - bind_exact_SHA_fixture_digest_artifact_identity_and_threshold_classification
+  - require_zero_authority_inversion_and_first_red_retention
+  - run_3Pstar_P3_plus_MIP_Perpetuate
+  - activate_BD260_6_only_if_cross_repo_authority_boundary_is_actually_crossed
+  - launch_W261_only_after_BD260_5_exit_and_BD260_6_disposition
+
+non_compensating:
+  - GBOGEB/cryoplant-project#923
+  - global_QPS_release_or_engineering_authority

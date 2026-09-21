@@ -1,5 +1,5 @@
 schema: missioncontrol.official_mission_register.v1
-as_of: '2026-09-17T11:19:00+02:00'
+as_of: '2026-09-21T13:06:00+02:00'
 authority_transfer: false
 purpose: >-
   Official Mission Control index across canonical Grand Missions, governed variants,
@@ -99,8 +99,11 @@ local_missions:
       workflow_run_id: 35149039885
       evidence_class: A3_SYNTHETIC_ONLY
       authority_transfer: false
-    next_sequential_slice: H05_OBSERVED_ONLY_CONSUMER_POPULATION
-    parallel_high_pressure_slice: H07_GRAPH_EIGENSPECTRUM_GFT_FILTERS
+    current_wave: W260
+    current_frontier: BD-260.4_COMMON_FIXTURE_PROVE_PASS_REVIEW_MERGE_PENDING
+    next_sequential_slice: BD-260.5_TRIAGE_VERIFICATION_AFTER_BD260_4_CLEAN_MERGE_AND_FRESH_MAIN_PROOF
+    parallel_high_pressure_slice: H07_GRAPH_EIGENSPECTRUM_GFT_FILTERS_CONTROLLED_NONBLOCKING
+    w260_convergence_control: mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml
     official_control: mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml
     crew_allocation: mission-control/qps-triage-ultra/missions/LM-10_CREW_ALLOCATION_v3.yaml
   - id: LM-11

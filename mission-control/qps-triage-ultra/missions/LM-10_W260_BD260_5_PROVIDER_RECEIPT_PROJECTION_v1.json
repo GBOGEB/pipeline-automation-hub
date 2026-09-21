@@ -1,0 +1,96 @@
+{
+  "schema": "qps.lm10.w260.bd2605.provider_receipt_projection.v1",
+  "as_of": "2026-09-21T13:10:00+02:00",
+  "provider": {
+    "repository": "GBOGEB/gg_MATH",
+    "source_sha": "2b27f4a6d70a11324d9a7c81d9c88995888b3d74",
+    "workflow_run": 35592153194,
+    "job": 106308723087,
+    "artifact_id": 10634743904,
+    "artifact_name": "w260-bd2604-2b27f4a6d70a11324d9a7c81d9c88995888b3d74",
+    "artifact_digest": "sha256:603da43f85e9709f0372b3f487e5c15c78e628adc4f6ae19232b8108af233a15"
+  },
+  "receipt": {
+    "schema": "gg_math.w260.bd2604.common_fixture_receipt.v1",
+    "status": "PASS_COMMON_FIXTURE_CHALLENGE",
+    "source_sha": "2b27f4a6d70a11324d9a7c81d9c88995888b3d74",
+    "fixture_population_id": "QPS_OCD_ADR_WAVE_TODO_COMMON_FIXTURE_20260921",
+    "fixture_sha256": "9bdb111b1365583ba4d615176d93c7a0650dc85bcd958db8567cba48214586f5",
+    "contract_sha256": "95b8a1c7b886026d491bbf880f3a6d9ab17c4b4cdac36687593a97f130f8fd63",
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_acceptance": false,
+    "qps_threshold_authority": false,
+    "explicit_defer": {
+      "confidence_sequence": "RESEARCH_TODO",
+      "grassmann_state_space": "RESEARCH_TODO",
+      "hierarchical_bayesian_bt": "RESEARCH_TODO",
+      "manova": "NOT_PROMOTED_IN_THIS_SLICE"
+    },
+    "card_count": 5,
+    "required_card_keys": [
+      "math",
+      "assumptions",
+      "value",
+      "threshold_kind",
+      "measured_result",
+      "uncertainty",
+      "first_red",
+      "validity_domain",
+      "dmaic_kpi",
+      "disposition"
+    ],
+    "cards": [
+      {
+        "index": 1,
+        "keys_exact": true,
+        "threshold_kind": "NO_UNIVERSAL_THRESHOLD",
+        "threshold_class": "NONE",
+        "disposition": "PASS_REFERENCE_PROJECT_MATH",
+        "first_red": null
+      },
+      {
+        "index": 2,
+        "keys_exact": true,
+        "threshold_kind": "DISTRIBUTION_DERIVED_AND_DATA_CALIBRATED",
+        "threshold_class": "STATISTICAL",
+        "disposition": "PASS_REFERENCE_PROJECT_MATH",
+        "first_red": null
+      },
+      {
+        "index": 3,
+        "keys_exact": true,
+        "threshold_kind": "NO_UNIVERSAL_THRESHOLD",
+        "threshold_class": "NONE",
+        "disposition": "PASS_ANOVA_DECOMPOSITION_MANOVA_DEFER",
+        "first_red": "MANOVA_RUNTIME_NOT_PROMOTED_IN_THIS_SLICE"
+      },
+      {
+        "index": 4,
+        "keys_exact": true,
+        "threshold_kind": "DATA_CALIBRATED",
+        "threshold_class": "STATISTICAL",
+        "disposition": "PASS_REGULARIZED_BT_PROJECT_MATH",
+        "first_red": "DEFER_NO_FINITE_MLE"
+      },
+      {
+        "index": 5,
+        "keys_exact": true,
+        "threshold_kind": "EXACT_IDENTITY",
+        "threshold_class": "GOVERNANCE_IDENTITY",
+        "disposition": "PASS_DOES_NOT_IMPLY_GUARD",
+        "first_red": null
+      }
+    ]
+  },
+  "extraction": {
+    "method": "GitHub Actions artifact downloaded and JSON parsed",
+    "artifact_file": "artifacts/lm10_w260/BD260_4_COMMON_FIXTURE_RECEIPT.json",
+    "output_lines": [
+      "PASS_W260_BD260_4_COMMON_FIXTURE_TESTS",
+      "PASS_W260_BD260_4_COMMON_FIXTURE"
+    ]
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
