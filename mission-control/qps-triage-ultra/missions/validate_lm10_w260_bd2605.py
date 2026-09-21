@@ -60,24 +60,34 @@ EXPECTED_CARDS = [
 ]
 
 
+def _assert_json_exact(actual, expected) -> None:
+    actual_canonical = json.dumps(
+        actual, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    )
+    expected_canonical = json.dumps(
+        expected, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    )
+    assert actual_canonical == expected_canonical, (actual, expected)
+
+
 def validate_projection(d: dict) -> tuple[dict[str, int], list[str]]:
     p = d["provider"]
     r = d["receipt"]
-    assert p["source_sha"] == EXPECTED_SOURCE
-    assert r["source_sha"] == EXPECTED_SOURCE
-    assert p["workflow_run"] == 35592153194
-    assert p["job"] == 106308723087
-    assert p["artifact_id"] == 10634743904
-    assert p["artifact_digest"] == EXPECTED_ARTIFACT_DIGEST
-    assert r["fixture_sha256"] == EXPECTED_FIXTURE
-    assert r["contract_sha256"] == EXPECTED_CONTRACT
-    assert r["status"] == "PASS_COMMON_FIXTURE_CHALLENGE"
-    assert r["authority_transfer"] is False
-    assert r["formal_credit_delta"] == 0
-    assert r["engineering_acceptance"] is False
-    assert r["qps_threshold_authority"] is False
-    assert d["authority_transfer"] is False
-    assert d["formal_credit_delta"] == 0
+    _assert_json_exact(p["source_sha"], EXPECTED_SOURCE)
+    _assert_json_exact(r["source_sha"], EXPECTED_SOURCE)
+    _assert_json_exact(p["workflow_run"], 35592153194)
+    _assert_json_exact(p["job"], 106308723087)
+    _assert_json_exact(p["artifact_id"], 10634743904)
+    _assert_json_exact(p["artifact_digest"], EXPECTED_ARTIFACT_DIGEST)
+    _assert_json_exact(r["fixture_sha256"], EXPECTED_FIXTURE)
+    _assert_json_exact(r["contract_sha256"], EXPECTED_CONTRACT)
+    _assert_json_exact(r["status"], "PASS_COMMON_FIXTURE_CHALLENGE")
+    _assert_json_exact(r["authority_transfer"], False)
+    _assert_json_exact(r["formal_credit_delta"], 0)
+    _assert_json_exact(r["engineering_acceptance"], False)
+    _assert_json_exact(r["qps_threshold_authority"], False)
+    _assert_json_exact(d["authority_transfer"], False)
+    _assert_json_exact(d["formal_credit_delta"], 0)
 
     required = set(r["required_card_keys"])
     assert required == {
@@ -94,15 +104,13 @@ def validate_projection(d: dict) -> tuple[dict[str, int], list[str]]:
     }
 
     cards = r["cards"]
-    assert r["card_count"] == len(EXPECTED_CARDS)
+    _assert_json_exact(r["card_count"], len(EXPECTED_CARDS))
     assert len(cards) == r["card_count"]
 
     class_counts = Counter()
     first_reds: list[str] = []
     for actual, expected in zip(cards, EXPECTED_CARDS):
-        actual_canonical = json.dumps(actual, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
-        expected_canonical = json.dumps(expected, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
-        assert actual_canonical == expected_canonical, (actual, expected)
+        _assert_json_exact(actual, expected)
         assert actual["threshold_class"] in ALLOWED_THRESHOLD_CLASSES
         class_counts[actual["threshold_class"]] += 1
         if actual["first_red"] is not None:
