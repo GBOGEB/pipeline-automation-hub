@@ -41,6 +41,9 @@ jobs:
           python3 mission-control/grand-missions/crew_rex_bridge.py \
             --out mission-control/grand-missions/runtime/crew_rex_report_2.json
 
+      - name: Prove requested-vs-observed REX semantics
+        run: python3 mission-control/grand-missions/test_crew_rex_bridge_semantics.py
+
       - name: Enforce deterministic repeat
         run: |
           cmp \
