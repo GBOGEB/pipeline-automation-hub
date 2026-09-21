@@ -8,7 +8,7 @@
     "TEMPORAL_CONTROL_REGRESSION_v1.json",
     "TEMPORAL_3PSTAR_MIP_ITERATION_v3.json"
   ],
-  "as_of": "2026-09-21T09:57:00+02:00",
+  "as_of": "2026-09-21T10:05:00+02:00",
   "repository": "GBOGEB/pipeline-automation-hub",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -169,11 +169,33 @@
     {
       "priority": "P1",
       "task_class": "human_dependency_wait_proxy",
-      "first_red": "direction_consistency",
-      "regime": "WEAK_OR_NOISY_DIRECTION",
+      "first_red": "pooled_winner_strength",
+      "regime": "RECENT_SINGLE_STABILITY_WITH_INSUFFICIENT_POOLED_STRENGTH",
+      "dominant_direction": "ALLOC_SINGLE_CELL",
+      "direction_counts": {
+        "ALLOC_SINGLE_CELL": 16,
+        "ALLOC_PAIRED_CELL": 4
+      },
+      "directional_windows": 20,
+      "direction_consistency": 0.8,
+      "frozen_direction_consistency_threshold": 0.8,
+      "direction_consistency_gate": "PASS_AT_THRESHOLD",
+      "pooled_winner_strength": 0.6389674804100461,
+      "frozen_pooled_winner_strength_threshold": 0.7,
+      "pooled_winner_strength_deficit": 0.0610325195899539,
+      "latest_two_directional_windows_agree": true,
+      "latest_window": {
+        "direction": "ALLOC_SINGLE_CELL",
+        "single_wins": 3,
+        "paired_wins": 1,
+        "ties": 2,
+        "single_normalized_strength": 0.7641509433962264,
+        "group_heterogeneity": "CURRENT_WINDOW_HAS_CELL_LEVEL_DIRECTION_SPLIT_AND_TIES"
+      },
       "promotion": "WITHHELD",
       "claim_boundary": "CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE",
-      "next_action": "CONTINUE_GENUINE_SCHEDULED_STABILITY_MEASUREMENT"
+      "diagnostic": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_HUMAN_WAIT_P1_DIAGNOSTIC_20260921_v1.json",
+      "next_action": "CONTINUE_GENUINE_SCHEDULED_STABILITY_MEASUREMENT_AND_REEVALUATE_POOLED_STRENGTH_WITHOUT_RELABELING_PROXY_AS_REAL_HUMAN_EVIDENCE"
     }
   ],
   "surveillance": {
@@ -194,5 +216,22 @@
     "historical_regression_preserved": true,
     "current_effective_control_class_count": 3
   },
-  "postmerge_close_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_POSTMERGE_CLOSE_20260921_v1.json"
+  "postmerge_close_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_POSTMERGE_CLOSE_20260921_v1.json",
+  "p1_convergence_iteration": {
+    "status": "PASS_DIAGNOSTIC_CONVERGENCE_NO_PROMOTION",
+    "three_p_star": {
+      "refresh": "PASS",
+      "probe": "PASS",
+      "rank": "PASS_POOLED_WINNER_STRENGTH_ONLY_CURRENT_RED",
+      "prepare": "PASS",
+      "prove": "PASS_ARTIFACT_BOUND",
+      "commit": "PENDING_PR",
+      "propagate_perpetuate": "PENDING_PR_POSTMERGE_DOV"
+    },
+    "mip": {
+      "Modernize": "PASS_CORRECTED_FIRST_RED",
+      "Innovate": "PASS_RECENT_STABILITY_SEPARATED_FROM_POOLED_STRENGTH_AND_PROXY_SEMANTICS",
+      "Perpetuate": "PENDING_PR_POSTMERGE_DOV"
+    }
+  }
 }
