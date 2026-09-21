@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.temporal_frontier_current.v1",
-  "as_of": "2026-09-21T09:46:00+02:00",
+  "as_of": "2026-09-21T09:57:00+02:00",
   "canonical_navigation": true,
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -13,7 +13,8 @@
     "control_acceptance_history": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONTROL_POLICY_ACCEPTANCE_v1.json",
     "historical_regression": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_CONTROL_REGRESSION_v1.json",
     "short_compute_reearn_gate": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_GATE_v1.json",
-    "short_compute_reearn_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_RECEIPT_20260921_v1.json"
+    "short_compute_reearn_receipt": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_SHORT_COMPUTE_REEARN_RECEIPT_20260921_v1.json",
+    "long_compute_p0_diagnostic": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_LONG_COMPUTE_P0_DIAGNOSTIC_20260921_v1.json"
   },
   "handover": {
     "lossless": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/handover/SC_2026-09-21_TEMPORAL_SHORT_COMPUTE_REEARN_LOSSLESS_HANDOVER_v1.md",
@@ -25,14 +26,27 @@
     "short_compute",
     "validation_bundle"
   ],
-  "reearned_classes": ["short_compute"],
+  "reearned_classes": [
+    "short_compute"
+  ],
   "regressed_classes": [],
   "active_frontier": [
     {
       "priority": "P0",
       "task_class": "long_compute_contended",
       "first_red": "direction_consistency",
-      "regime": "REGIME_REVERSAL_OBSERVED"
+      "second_red": "pooled_winner_strength",
+      "regime": "REGIME_REVERSAL_OBSERVED",
+      "dominant_direction": "ALLOC_PAIRED_CELL",
+      "direction_consistency": 0.65,
+      "direction_consistency_threshold": 0.8,
+      "pooled_winner_strength": 0.5967198838896952,
+      "pooled_winner_strength_threshold": 0.7,
+      "latest_two_directional_windows_agree": true,
+      "latest_window_direction": "ALLOC_PAIRED_CELL",
+      "latest_window_directional_outcomes": "4_PAIRED_0_SINGLE_2_TIES",
+      "minimum_clean_paired_directional_windows_to_consistency_0_80": 15,
+      "diagnostic": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_LONG_COMPUTE_P0_DIAGNOSTIC_20260921_v1.json"
     },
     {
       "priority": "P1",
@@ -49,9 +63,16 @@
     "artifact_digest": "sha256:5da6859bfcb0fad43c4339dc8ac7795dce052dbd177e6c90eaad04817a222020",
     "scheduled_windows": 25,
     "distinct_source_shas": 10,
-    "span_seconds": 519001.0,
-    "hosted_runner_classes": ["linux", "macos", "windows"],
-    "lanes": ["baseline", "held"],
+    "span_seconds": 519001,
+    "hosted_runner_classes": [
+      "linux",
+      "macos",
+      "windows"
+    ],
+    "lanes": [
+      "baseline",
+      "held"
+    ],
     "rex_veto": false
   },
   "short_compute": {
@@ -74,8 +95,8 @@
   "next_order": [
     "refresh live master and current temporal authority files",
     "surveil cache_artifact_reuse, short_compute and validation_bundle and revoke only on later governed regression",
-    "P0 continue long_compute_contended genuine-schedule signed-effect decomposition",
-    "P1 continue human_dependency_wait_proxy genuine-schedule stability measurement with controlled-wait proxy claim boundary",
+    "P0 long_compute_contended: consume only genuine schedule evidence; latest window coherently favors PAIRED but aggregate consistency 0.65 and pooled strength 0.5967198839 remain below frozen CONTROL gates",
+    "P1 human_dependency_wait_proxy: continue genuine-schedule stability measurement with controlled-wait proxy claim boundary",
     "evaluate H3 7-day surveillance only when genuine scheduled span reaches 604800 seconds"
   ],
   "historical_state": {

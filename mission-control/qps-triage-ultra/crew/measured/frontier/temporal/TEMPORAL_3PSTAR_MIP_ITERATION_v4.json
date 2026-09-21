@@ -8,7 +8,7 @@
     "TEMPORAL_CONTROL_REGRESSION_v1.json",
     "TEMPORAL_3PSTAR_MIP_ITERATION_v3.json"
   ],
-  "as_of": "2026-09-21T09:53:00+02:00",
+  "as_of": "2026-09-21T09:57:00+02:00",
   "repository": "GBOGEB/pipeline-automation-hub",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -139,9 +139,32 @@
       "priority": "P0",
       "task_class": "long_compute_contended",
       "first_red": "direction_consistency",
+      "second_red": "pooled_winner_strength",
       "regime": "REGIME_REVERSAL_OBSERVED",
+      "dominant_direction": "ALLOC_PAIRED_CELL",
+      "direction_counts": {
+        "ALLOC_PAIRED_CELL": 13,
+        "ALLOC_SINGLE_CELL": 7
+      },
+      "direction_consistency": 0.65,
+      "frozen_direction_consistency_threshold": 0.8,
+      "direction_consistency_deficit": 0.15,
+      "pooled_winner_strength": 0.5967198838896952,
+      "frozen_pooled_winner_strength_threshold": 0.7,
+      "pooled_winner_strength_deficit": 0.1032801161103048,
+      "latest_two_directional_windows_agree": true,
+      "latest_window": {
+        "direction": "ALLOC_PAIRED_CELL",
+        "paired_wins": 4,
+        "single_wins": 0,
+        "ties": 2,
+        "paired_normalized_strength": 0.9307692307692308,
+        "group_direction_contradiction": false
+      },
+      "minimum_clean_paired_directional_windows_to_consistency_0_80": 15,
       "promotion": "WITHHELD",
-      "next_action": "CONTINUE_GENUINE_SCHEDULED_SIGNED_EFFECT_DECOMPOSITION_BY_RUNNER_LANE_AND_TEMPORAL_REGIME"
+      "diagnostic": "mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_LONG_COMPUTE_P0_DIAGNOSTIC_20260921_v1.json",
+      "next_action": "CONTINUE_GENUINE_SCHEDULED_PAIRED_DIRECTION_SURVEILLANCE_AND_REEVALUATE_FROZEN_CONTROL_GATE"
     },
     {
       "priority": "P1",

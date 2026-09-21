@@ -1,0 +1,107 @@
+{
+  "schema": "missioncontrol.temporal_long_compute_p0_diagnostic.v1",
+  "mission_id": "MC-CREW-FRONTIER-004",
+  "as_of": "2026-09-21T09:57:00+02:00",
+  "status": "P0_DIAGNOSTIC_BOUND_NO_CONTROL_PROMOTION",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "competency_promotions": 0,
+  "source": {
+    "genuine_schedule_run": "35574196822",
+    "analysis_job": "106252442714",
+    "exact_source_sha": "aad7c4ee3b464307365d55cb7d30999282b01838",
+    "policy_artifact": "10626843286",
+    "policy_artifact_digest": "sha256:5da6859bfcb0fad43c4339dc8ac7795dce052dbd177e6c90eaad04817a222020"
+  },
+  "aggregate_control_frontier": {
+    "policy_status": "LEARNING_DIRECTION_UNSTABLE",
+    "allocation_recommendation": "NO_POLICY",
+    "dominant_direction": "ALLOC_PAIRED_CELL",
+    "directional_windows": 20,
+    "direction_counts": {
+      "ALLOC_PAIRED_CELL": 13,
+      "ALLOC_SINGLE_CELL": 7
+    },
+    "direction_consistency": 0.65,
+    "frozen_min_direction_consistency": 0.8,
+    "direction_consistency_deficit": 0.15,
+    "minimum_clean_paired_directional_windows_to_consistency_0_80": 15,
+    "pooled_single_strength": 0.4032801161103048,
+    "pooled_winner_strength": 0.5967198838896952,
+    "frozen_min_pooled_winner_strength": 0.7,
+    "pooled_winner_strength_deficit": 0.1032801161103048,
+    "latest_two_directional_windows_agree": true,
+    "observed_pairs_total": 150,
+    "independent_windows": 25,
+    "distinct_source_shas": 10,
+    "temporal_span_seconds": 519001.0,
+    "hosted_runner_classes": ["linux", "macos", "windows"],
+    "lanes": ["baseline", "held"],
+    "rex_veto": false
+  },
+  "latest_window": {
+    "observed_pairs": 6,
+    "global_counts": {
+      "ALLOC_PAIRED_CELL": 4,
+      "TIE": 2
+    },
+    "global_direction": "ALLOC_PAIRED_CELL",
+    "paired_normalized_strength": 0.9307692307692308,
+    "single_normalized_strength": 0.06923076923076922,
+    "by_habitat": {
+      "linux": {
+        "counts": {"ALLOC_PAIRED_CELL": 1, "TIE": 1},
+        "direction": "ALLOC_PAIRED_CELL"
+      },
+      "macos": {
+        "counts": {"ALLOC_PAIRED_CELL": 1, "TIE": 1},
+        "direction": "ALLOC_PAIRED_CELL"
+      },
+      "windows": {
+        "counts": {"ALLOC_PAIRED_CELL": 2},
+        "direction": "ALLOC_PAIRED_CELL"
+      }
+    },
+    "by_lane": {
+      "baseline": {
+        "counts": {"ALLOC_PAIRED_CELL": 3},
+        "direction": "ALLOC_PAIRED_CELL"
+      },
+      "held": {
+        "counts": {"ALLOC_PAIRED_CELL": 1, "TIE": 2},
+        "direction": "ALLOC_PAIRED_CELL"
+      }
+    },
+    "cell_relative_gaps": {
+      "linux-baseline": 0.06210263423636331,
+      "linux-held": 0.004950424423995941,
+      "macos-baseline": 0.1713078011010876,
+      "macos-held": 0.0031219387877002257,
+      "windows-baseline": 0.20757777209340234,
+      "windows-held": 0.3005012870884704
+    },
+    "group_heterogeneity": "NO_DIRECTIONAL_GROUP_CONTRADICTION_IN_LATEST_WINDOW",
+    "interpretation": "The newest genuine scheduled window coherently favors ALLOC_PAIRED_CELL wherever directional; two held-lane cells are ties. The CONTROL block is therefore historical consistency and pooled-strength debt rather than a current habitat/lane direction split."
+  },
+  "surveillance": {
+    "direction_flip_count": 8,
+    "indeterminate_window_fraction": 0.2,
+    "early_direction": "INDETERMINATE",
+    "late_direction": "ALLOC_PAIRED_CELL",
+    "early_vs_late_direction_agreement": false,
+    "jackknife_min_pooled_winner_strength": 0.5828011611030479,
+    "jackknife_direction_preservation_fraction": 1.0,
+    "regime": "REGIME_REVERSAL_OBSERVED"
+  },
+  "first_red_order": [
+    "direction_consistency",
+    "pooled_winner_strength"
+  ],
+  "next_action": "CONTINUE_GENUINE_SCHEDULED_PAIRED_DIRECTION_SURVEILLANCE_AND_REEVALUATE_FROZEN_CONTROL_GATE",
+  "guards": {
+    "minimum_15_clean_paired_windows_is_consistency_ONLY_not_full_CONTROL_prediction": true,
+    "no_threshold_change": true,
+    "no_manual_synthetic_pr_push_control_credit": true,
+    "no_policy_promotion_from_single_diagnostic_window": true
+  }
+}
