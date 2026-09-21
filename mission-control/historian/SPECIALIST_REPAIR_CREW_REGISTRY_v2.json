@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.specialist_repair_crew_registry.v2",
   "status": "ACTIVE",
-  "as_of": "2026-09-21",
+  "as_of": "2026-09-21T10:46:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "SPECIALIST_REPAIR_CREW_REGISTRY_v1.json",
   "activation_rule": "recurrence || P0/P1 severity || cross_repo_centrality || repeated_failed_repair || active_control_repeat",
@@ -96,8 +96,7 @@
         "HIST-BD-018"
       ],
       "active_scope": [
-        "REX-CM-005",
-        "HIST-BD-020"
+        "REX-CM-005"
       ],
       "done_scope": [
         "HIST-BD-002",
@@ -107,9 +106,10 @@
         "HIST-BD-013",
         "HIST-BD-017",
         "HIST-BD-018",
-        "HIST-BD-009"
+        "HIST-BD-009",
+        "HIST-BD-020"
       ],
-      "current_mission": "REX_CM_005_ADMIN_PLUS_BD020_PROVENANCE",
+      "current_mission": "REX_CM_005_OWNER_ADMIN_BINDING",
       "secondment": [
         "H2_KEB",
         "HISTORIAN",
@@ -122,7 +122,7 @@
         "negative evidence contract",
         "contract drift"
       ],
-      "victory_condition": "Bind ABACUS merge admission fail-closed and close BD020 only with independently verifiable source-head provenance",
+      "victory_condition": "Bind ABACUS merge admission fail-closed for REX-CM-005; BD020 provenance is complete and no longer consumes active repair scope",
       "controlled_scope": [
         "HIST-BD-016"
       ]
@@ -205,10 +205,9 @@
       ],
       "active_scope": [
         "REX-CM-005",
-        "fleet deep-dive expansion",
-        "HIST-BD-020"
+        "fleet deep-dive expansion"
       ],
-      "current_mission": "CODEX_DEEP_DIVE_PLUS_BD020_PROVENANCE_WATCH",
+      "current_mission": "CODEX_DEEP_DIVE_PLUS_FLEET_REPAIR_SURVIVAL",
       "secondment": [
         "H1_QPS",
         "H2_KEB",
@@ -222,7 +221,7 @@
         "recurrence detection",
         "repair survival"
       ],
-      "victory_condition": "every new historical finding is current-code-checked, deduplicated to stable root, and returned to H4/H3 with proof or explicit rejection"
+      "victory_condition": "every new historical finding is current-code-checked, deduplicated to stable root, and returned to H4/H3 with proof or explicit rejection; Qtools BD019/020 remain CONTROL_WATCH only unless regression recurs"
     },
     {
       "crew_id": "DEBUG_SURGEON",
@@ -260,10 +259,21 @@
     ],
     "priority_sequence": [
       "CODEX Historian deep-dive",
-      "HIST-BD-020 source provenance when private-source verification becomes available",
       "REX-CM-005 owner/admin binding when available",
       "cryoplant-project#923 owner runner-admission recovery"
     ],
-    "anti_proliferation": "specialists are temporary pressure cells; return/merge competencies after bounded victory unless recurrent independent workload justifies persistence"
+    "anti_proliferation": "specialists are temporary pressure cells; return/merge competencies after bounded victory unless recurrent independent workload justifies persistence",
+    "qtools_historian": {
+      "state": "DONE_CLOSE_CONTROL_WATCH",
+      "open_local_historian_roots": 0,
+      "closed_roots": [
+        "HIST-BD-019",
+        "HIST-BD-020"
+      ],
+      "debugger_readiness_issue": "Q_engineering_tools#83 CLOSED_COMPLETED",
+      "reenter_on": "OBSERVED_REGRESSION_OR_GOVERNED_CONTRACT_CHANGE",
+      "authority_transfer": false,
+      "formal_credit_delta": 0
+    }
   }
 }

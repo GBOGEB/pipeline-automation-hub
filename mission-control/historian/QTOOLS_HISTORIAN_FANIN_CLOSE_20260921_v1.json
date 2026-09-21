@@ -1,0 +1,56 @@
+{
+  "schema": "missioncontrol.historian.qtools_fanin_close.v1",
+  "as_of": "2026-09-21T10:46:00+02:00",
+  "status": "PASS_QTOOLS_HISTORIAN_LOCAL_ROOTS_DRAINED",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "qtools": {
+    "repo": "GBOGEB/Q_engineering_tools",
+    "current_main_after_bd020": "5213b41490108a071a708b640f9b5ae450e0f4ca",
+    "historian_child": {"issue": 32, "state": "CLOSED_COMPLETED"},
+    "roots": {
+      "HIST-BD-019": {
+        "issue": 86,
+        "state": "DONE",
+        "proof_run": "35575714278",
+        "proof_job": "106257017572"
+      },
+      "HIST-BD-020": {
+        "issue": 87,
+        "state": "DONE",
+        "source_attestation_merge": "f047257fef96edc7316fd530a8a9339ad78c9f21",
+        "source_attestation_blob": "e447e0e32c1c909df783211c3f17884d678a9045",
+        "pr_head": "05258a6dca8dc0a06d12cf5a57fc6248cb95b5df",
+        "pr_head_run": "35579391354",
+        "pr_head_job": "106268491087",
+        "pr_head_artifact": "10629781119",
+        "pr_head_artifact_digest": "sha256:5787857223b578eb7f9a92c19146cfbe0a9ef6f04045ff54d09783ee882fb577",
+        "merge": "5213b41490108a071a708b640f9b5ae450e0f4ca",
+        "main_repeat_run": "35579436057",
+        "main_repeat_job": "106268630419",
+        "main_repeat_artifact": "10628919053",
+        "main_repeat_artifact_digest": "sha256:13216fa8a41a3b16414639d29311b7a4d05c0124ac5db74f9fbb3332cb75634b"
+      },
+      "HIST-BD-083_RUNTIME_READINESS": {
+        "issue": 83,
+        "state": "CLOSED_COMPLETED_CONTROL_WATCH",
+        "proof_head": "f0b5d3d74b65bdbf6933e3f42c40d21621ac4a02",
+        "run": "35428813573",
+        "job": "105859483399"
+      }
+    },
+    "open_local_historian_roots": 0,
+    "reentry": "OBSERVED_REGRESSION_OR_GOVERNED_CONTRACT_CHANGE"
+  },
+  "missioncontrol_register": {
+    "durable_bd_roots_total": 20,
+    "current_open_bd_roots": 0,
+    "done_or_control_roots": 20,
+    "current_unresolved_occurrences_minimum": 0
+  },
+  "independent_holds": {
+    "cryoplant_923": "RED_OWNER_ACTION_NON_COMPENSATING",
+    "rex_cm_005": "OWNER_ADMIN_BINDING_CONTINUES",
+    "historian_fleet": "ACTIVE_SERVICE_DEEP_DIVE_CONTINUES"
+  }
+}

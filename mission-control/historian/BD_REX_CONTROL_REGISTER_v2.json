@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-21",
+  "as_of": "2026-09-21T10:46:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -12,15 +12,15 @@
     "audited_prs_minimum": 25,
     "review_finding_occurrences_observed_cumulative": 40,
     "durable_bd_roots_total": 20,
-    "current_open_bd_roots": 1,
-    "current_unresolved_occurrences_minimum": 1,
-    "done_or_control_roots": 19,
+    "current_open_bd_roots": 0,
+    "current_unresolved_occurrences_minimum": 0,
+    "done_or_control_roots": 20,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
     "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
-    "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit.",
-    "active_prevention_withheld_controls": 1
+    "note": "Bounded Historian census only; 83/83 fleet coverage contract does not imply 83/83 deep historical audit. Current durable root register has 0 open roots after HIST-BD-020 provenance closure; living fleet deep-dive and external/non-BD holds continue independently.",
+    "active_prevention_withheld_controls": 0
   },
   "lifecycle": [
     "TODO",
@@ -578,7 +578,7 @@
       "title": "Verify W286 external source head before receipt attribution",
       "class": "CROSS_REPO_PROVENANCE_BINDING",
       "severity": "P2",
-      "state": "ACTIVE",
+      "state": "DONE",
       "occurrence_count": 1,
       "repos": [
         "GBOGEB/Q_engineering_tools",
@@ -586,7 +586,9 @@
       ],
       "source_prs": [
         82,
-        88
+        88,
+        89,
+        1559
       ],
       "source_issues": [
         87
@@ -597,23 +599,34 @@
         "HISTORIAN",
         "QA_SIGNALMAN"
       ],
-      "safe_withhold": {
-        "current": true,
-        "receipt_fields": [
-          "source_head_sha_claim",
-          "source_head_attribution_verified=false",
-          "source_head_attribution_status=WITHHELD_NO_SOURCE_REPO_RUNTIME_ACCESS",
-          "unverified_source_head_not_promoted=true"
-        ]
-      },
       "proof_refs": [
-        "Q_engineering_tools#88@cd1ac6a315bbefc4e36f4bb48f6b99066414309c",
-        "run35575714278 PASS",
-        "merge@3cbaecee62e212fd00785b93cd192ae4ef71803d",
-        "run35578430006 PASS",
-        "Q_engineering_tools#87 remains OPEN"
+        "QPS source PR#1559 merge@f047257fef96edc7316fd530a8a9339ad78c9f21",
+        "QPS attestation triage/w286/QPS_W286_SOURCE_HEAD_ATTESTATION_e194347_v1.json blob e447e0e32c1c909df783211c3f17884d678a9045 binding source head e19434769500090fe859a2a556cc582e41b57294 to exact 8-path Git-blob set",
+        "Q_engineering_tools#89 exact head 05258a6dca8dc0a06d12cf5a57fc6248cb95b5df",
+        "PR-head run35579391354/job106268491087 PASS exact 8/8 attested blobs + forged SOURCE_HEAD fail-closed + 19/19 regressions",
+        "PR-head artifact10629781119 digest sha256:5787857223b578eb7f9a92c19146cfbe0a9ef6f04045ff54d09783ee882fb577",
+        "PR-head receipt sha256 14e2cd250ee0bd6b40d04867d219612dee8399ac8aa6ab8669265ae1aa93b2f0",
+        "Q_engineering_tools#89 merge@5213b41490108a071a708b640f9b5ae450e0f4ca",
+        "main repeat run35579436057/job106268630419 PASS same attribution/8-of-8/19-of-19 proof chain",
+        "main repeat artifact10628919053 digest sha256:13216fa8a41a3b16414639d29311b7a4d05c0124ac5db74f9fbb3332cb75634b",
+        "Q_engineering_tools#87 CLOSED_COMPLETED"
       ],
-      "done_when": "Independent source-repo commit/path/blob verification or provenance-bound source attestation; forged/mistyped source head fails closed; later exact-head >0-step proof"
+      "done_when": "SATISFIED",
+      "closure": {
+        "source_head_attribution_verified": true,
+        "verification_basis": "SOURCE_REPO_COMMITTED_ATTESTATION",
+        "private_runtime_api_access_required": false,
+        "forged_source_head_fails_closed": true,
+        "local_mirror_transport_only": true,
+        "closed_at": "2026-09-21T08:44:32Z"
+      },
+      "non_compensation": {
+        "cryoplant_issue_923": "INDEPENDENT_RED_OWNER_ACTION",
+        "visual_authority": "NONE",
+        "engineering_credit": 0,
+        "formal_credit_delta": 0,
+        "authority_transfer": false
+      }
     }
   ],
   "control_measures": [
