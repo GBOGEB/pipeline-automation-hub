@@ -1,0 +1,133 @@
+{
+  "schema": "missioncontrol.temporal_human_wait_p1_diagnostic.v1",
+  "mission_id": "MC-CREW-FRONTIER-004",
+  "as_of": "2026-09-21T10:05:00+02:00",
+  "status": "P1_DIAGNOSTIC_BOUND_NO_CONTROL_PROMOTION",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "competency_promotions": 0,
+  "claim_boundary": "CONTROLLED_WAIT_PROXY_ONLY_NOT_REAL_HUMAN_INTERVENTION_EVIDENCE",
+  "source": {
+    "genuine_schedule_run": "35574196822",
+    "analysis_job": "106252442714",
+    "exact_source_sha": "aad7c4ee3b464307365d55cb7d30999282b01838",
+    "policy_artifact": "10626843286",
+    "policy_artifact_digest": "sha256:5da6859bfcb0fad43c4339dc8ac7795dce052dbd177e6c90eaad04817a222020"
+  },
+  "aggregate_control_frontier": {
+    "policy_status": "LEARNING",
+    "allocation_recommendation": "NO_POLICY",
+    "dominant_direction": "ALLOC_SINGLE_CELL",
+    "directional_windows": 20,
+    "direction_counts": {
+      "ALLOC_SINGLE_CELL": 16,
+      "ALLOC_PAIRED_CELL": 4
+    },
+    "direction_consistency": 0.8,
+    "frozen_min_direction_consistency": 0.8,
+    "direction_consistency_gate": "PASS_AT_THRESHOLD",
+    "pooled_single_strength": 0.6389674804100461,
+    "pooled_winner_strength": 0.6389674804100461,
+    "frozen_min_pooled_winner_strength": 0.7,
+    "pooled_winner_strength_deficit": 0.0610325195899539,
+    "latest_two_directional_windows_agree": true,
+    "observed_pairs_total": 150,
+    "independent_windows": 25,
+    "distinct_source_shas": 10,
+    "temporal_span_seconds": 519001.0,
+    "hosted_runner_classes": ["linux", "macos", "windows"],
+    "lanes": ["baseline", "held"],
+    "rex_veto": false
+  },
+  "latest_window": {
+    "observed_pairs": 6,
+    "global_counts": {
+      "ALLOC_SINGLE_CELL": 3,
+      "ALLOC_PAIRED_CELL": 1,
+      "TIE": 2
+    },
+    "global_direction": "ALLOC_SINGLE_CELL",
+    "single_normalized_strength": 0.7641509433962264,
+    "paired_normalized_strength": 0.2358490566037736,
+    "by_habitat": {
+      "linux": {
+        "counts": {"ALLOC_SINGLE_CELL": 1, "ALLOC_PAIRED_CELL": 1},
+        "classification": "DIRECTION_SPLIT"
+      },
+      "macos": {
+        "counts": {"ALLOC_SINGLE_CELL": 1, "TIE": 1},
+        "classification": "SINGLE_WITH_TIE"
+      },
+      "windows": {
+        "counts": {"ALLOC_SINGLE_CELL": 1, "TIE": 1},
+        "classification": "SINGLE_WITH_TIE"
+      }
+    },
+    "by_lane": {
+      "baseline": {
+        "counts": {"ALLOC_SINGLE_CELL": 1, "ALLOC_PAIRED_CELL": 1, "TIE": 1},
+        "classification": "MIXED"
+      },
+      "held": {
+        "counts": {"ALLOC_SINGLE_CELL": 2, "TIE": 1},
+        "classification": "SINGLE_WITH_TIE"
+      }
+    },
+    "cell_relative_gaps": {
+      "linux-baseline": 0.07863643621267762,
+      "linux-held": 0.1100598006644518,
+      "macos-baseline": 0.27196551585223383,
+      "macos-held": 0.006876227897838961,
+      "windows-baseline": 0.0178805616863385,
+      "windows-held": 0.04822006472491915
+    },
+    "group_heterogeneity": "CURRENT_WINDOW_HAS_CELL_LEVEL_DIRECTION_SPLIT_AND_TIES",
+    "interpretation": "The latest genuine scheduled window favors ALLOC_SINGLE_CELL globally but is not uniformly directional across habitat/lane cells. This proxy remains unsuitable for a stronger semantic claim than controlled wait behavior."
+  },
+  "surveillance": {
+    "direction_flip_count": 7,
+    "indeterminate_window_fraction": 0.2,
+    "early_direction": "ALLOC_SINGLE_CELL",
+    "late_direction": "ALLOC_SINGLE_CELL",
+    "late_directional_windows": 11,
+    "late_directional_window_direction": "ALL_ALLOC_SINGLE_CELL",
+    "jackknife_min_pooled_winner_strength": 0.6241695567996804,
+    "jackknife_max_pooled_winner_strength": 0.662706510042516,
+    "regime": "RECENT_SINGLE_STABILITY_WITH_INSUFFICIENT_POOLED_STRENGTH"
+  },
+  "first_red_order": [
+    "pooled_winner_strength"
+  ],
+  "three_p_star": {
+    "refresh": "PASS_CURRENT_GENUINE_SCHEDULE_AUTHORITY",
+    "probe": "PASS_P1_AGGREGATE_AND_LATEST_WINDOW_DECOMPOSED",
+    "rank": "PASS_POOLED_WINNER_STRENGTH_IS_ONLY_CURRENT_CONTROL_RED",
+    "prepare": "PASS_KEEP_PROXY_BOUNDARY_AND_FROZEN_THRESHOLDS",
+    "prove": "PASS_ARTIFACT_BOUND_METRICS",
+    "commit": "REPOSITORY_PR_REQUIRED",
+    "propagate_perpetuate": "REPOSITORY_PR_AND_POSTMERGE_DOV_REQUIRED"
+  },
+  "mip": {
+    "Modernize": {
+      "status": "PASS",
+      "result": "corrected stale first-red from direction_consistency to pooled_winner_strength"
+    },
+    "Innovate": {
+      "status": "PASS",
+      "result": "separated recent directional stability from insufficient pooled strength and preserved proxy-only semantics"
+    },
+    "Perpetuate": {
+      "status": "PENDING_REPOSITORY_PROOF",
+      "result": "diagnostic, current pointer, v4 frontier and validator must publish atomically"
+    }
+  },
+  "next_action": "CONTINUE_GENUINE_SCHEDULED_STABILITY_MEASUREMENT_AND_REEVALUATE_POOLED_STRENGTH_WITHOUT_RELABELING_PROXY_AS_REAL_HUMAN_EVIDENCE",
+  "guards": {
+    "direction_consistency_equal_threshold_is_pass": true,
+    "pooled_strength_is_current_first_red": true,
+    "no_threshold_change": true,
+    "no_manual_synthetic_pr_push_control_credit": true,
+    "no_real_human_intervention_claim": true,
+    "no_policy_promotion_from_single_diagnostic_window": true
+  }
+}
