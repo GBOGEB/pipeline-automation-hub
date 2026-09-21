@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.historian.codex_review_audit.v1",
-  "status": "PROVE_PENDING_RUNNER_ADMISSION",
+  "status": "PASS_CODEX_REVIEW_AUDIT_AND_REPAIR",
   "as_of": "2026-09-21",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -68,7 +68,7 @@
       "class": "ARTIFACT_SCOPE_SECURITY",
       "severity": "P2",
       "signature": "static_candidate_artifact_scope_includes_checkout_git_metadata",
-      "state": "ACTIVE_PROVE_PENDING",
+      "state": "DONE",
       "repair_prs": [
         781
       ],
@@ -85,7 +85,7 @@
       "class": "AUTHORITY_PROMOTION_BOUNDARY",
       "severity": "P1",
       "signature": "candidate_keb_receipt_emitted_as_canonical_atom_without_promotion_evidence",
-      "state": "ACTIVE_PROVE_PENDING",
+      "state": "DONE",
       "repair_prs": [
         781,
         785,
@@ -111,7 +111,7 @@
       "class": "FEDERATION_CONTRACT_VALIDATION",
       "severity": "P1",
       "signature": "federation_validator_underchecks_exact_identity_and_named_authority_boundaries",
-      "state": "ACTIVE_PROVE_PENDING",
+      "state": "DONE",
       "repair_prs": [
         784,
         787
@@ -135,7 +135,7 @@
       "class": "FEDERATION_PROVENANCE_BINDING",
       "severity": "P1",
       "signature": "visual_golden_validator_accepts_unbound_or_substituted_source_corpus_identity",
-      "state": "ACTIVE_PROVE_PENDING",
+      "state": "DONE",
       "repair_prs": [
         784
       ],
@@ -156,7 +156,7 @@
       "GM-I-A CoolProp FAST-HEAVY KEB Bridge",
       "current-head Codex review"
     ],
-    "disposition": "WITHHELD_UNTIL_ALL_REQUIRED_GATES_RESOLVE",
+    "disposition": "PASS_POSTMERGE_EXACT_HEAD",
     "merge": "954f0fd95b1360830f38a082422340a02206a4b7",
     "current_head_review": "PASS_NO_MAJOR_ISSUES",
     "merge_sequence": "MERGED_WHILE_REQUIRED_CHECKS_QUEUED_RETAIN_AS_REX_CM005_RECURRENCE",
@@ -167,7 +167,36 @@
       "gm_i_a": 35580291121,
       "validate_federation": 35580291180
     },
-    "runner_admission": "QUEUED_ZERO_JOB_STEPS_AT_LAST_READ"
+    "runner_admission": "QUEUED_ZERO_JOB_STEPS_AT_LAST_READ",
+    "review_result": "PASS_NO_MAJOR_ISSUES",
+    "proof": {
+      "w003": {
+        "run": 35580291171,
+        "job": 106271355721,
+        "result": "PASS"
+      },
+      "ci": {
+        "run": 35580291195,
+        "job": 106271357265,
+        "result": "PASS"
+      },
+      "w286": {
+        "run": 35580291155,
+        "job": 106271356609,
+        "result": "PASS"
+      },
+      "gm_i_a": {
+        "run": 35580291121,
+        "job": 106271356218,
+        "result": "PASS"
+      },
+      "validate_federation": {
+        "run": 35580291180,
+        "job": 106271356487,
+        "result": "PASS"
+      }
+    },
+    "current_main_survival": "d0f4e83e66bedc512e077ac05ac2ba8f289a530f"
   },
   "unrelated_negative_tooling": [
     {
@@ -188,5 +217,10 @@
     "new_occurrence": "CODEX PR#787 merged while required closure checks queued",
     "root_reused": true,
     "new_root_created": false
+  },
+  "mip": {
+    "modernize": "PASS central census extended with BD021-024 and burned findings",
+    "innovate": "PASS reusable regressions/validators installed without premature REX promotion",
+    "perpetuate": "PASS exact proof + current-main survival returned to living register; next frontier F2"
   }
 }
