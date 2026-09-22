@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-22T15:06:00+02:00",
+  "as_of": "2026-09-22T15:30:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -1165,26 +1165,33 @@
       "negative_evidence": [
         "cryoplant-project#1629 merged@23162ea21df0459d5778237ce301f326fa338d06 with a repo-local ACTIVE_TRUST_ANCHOR + OWNER_SOURCE_ATTESTATION string gate that repository content could self-assert",
         "the positive contract fixture could activate the anchor with an arbitrary workbook digest ('b'*64) and convert BT0 without an independent owner-controlled value",
-        "draft #1633 was closed INVALIDATED_STALE_BRANCH after its diff showed unrelated rollback of newer BT2 population/tolerance controls"
+        "draft #1633 was closed INVALIDATED_STALE_BRANCH after its diff showed unrelated rollback of newer BT2 population/tolerance controls",
+        "cryoplant-project#1634 exact-head Codex P1: caller-settable environment variables do not authenticate owner authority; protected or signed owner channel required",
+        "cryoplant-project#1634 closed unmerged after branch advanced beyond its review surface; superseded by fresh current-base draft #1645"
       ],
       "current_repair": [
-        "cryoplant-project#1634 DRAFT",
-        "repair head 8d0a99bc7185a00ffa35d34c60df16ba570b447a",
-        "BT0 conversion requires receipt + repo-local ACTIVE anchor + owner-controlled QPS_HEPAK_OWNER_SOURCE_SHA256 and QPS_HEPAK_OWNER_SOURCE_WORKBOOK agreement",
-        "optional source_file is constrained to remain under the governed root",
-        "checked-in project anchor remains PENDING_TRUSTED_DIGEST; no digest invented"
+        "cryoplant-project#1645 DRAFT",
+        "repair head 40e75847c562d8c2074b983ca9a03167bf3bff05",
+        "HMAC-SHA256 signature covers schema/status/authority/workbook/digest/source-reference",
+        "manual-only owner-attested job binds QPS_HEPAK_OWNER_ATTESTATION_HMAC_KEY from GitHub Environment qps-hepak-owner-attestation",
+        "ordinary PR execution receives no owner secret",
+        "checked-in project anchor remains PENDING_TRUSTED_DIGEST with no digest/signature invented",
+        "optional source_file remains contained under governed root"
       ],
-      "proof_state": "PROVE_STATIC_PENDING_RUNTIME_HELD_BY_923",
+      "proof_state": "P1_REPAIRED_STATIC_REVIEW_PENDING_RUNTIME_HELD_BY_923_AND_OWNER_ENV",
       "proof_refs": [
         "cryoplant-project#1634 exact diff is BT0-only and preserves current BT2 logic",
         "verify-ssot run35732308950/job106760673654 NOT_EXECUTED steps=null",
         "Global Victory Score run35732308999/job106760675823 NOT_EXECUTED steps=null",
-        "Codex exact-head review requested on 8d0a99bc7185a00ffa35d34c60df16ba570b447a and pending at snapshot"
+        "Codex exact-head review requested on 8d0a99bc7185a00ffa35d34c60df16ba570b447a and pending at snapshot",
+        "cryoplant-project#1645 exact current-base diff: 5 files, no BT2/validate_bt2 hunks, signed HMAC + protected environment path present",
+        "cryoplant-project#1645 exact-head Codex review requested after signed/protected repair; pending at snapshot"
       ],
       "non_compensating_gates": [
-        "GBOGEB/cryoplant-project#923"
+        "GBOGEB/cryoplant-project#923",
+        "OWNER_ADMIN:qps-hepak-owner-attestation protected environment + QPS_HEPAK_OWNER_ATTESTATION_HMAC_KEY secret"
       ],
-      "done_when": "Exact-head current review clean + repair merged/current-code survival + executed regression when private Actions admission is restored or equivalent trusted execution exists. Runtime absence must not be converted to PASS.",
+      "done_when": "Exact-head review clean + owner/admin protected environment and HMAC secret configured + real source digest/signature returned + trusted >0-step execution + merge/current-code survival. Test-only HMAC fixtures do not satisfy project evidence.",
       "authority_transfer": false,
       "formal_credit_delta": 0
     }
@@ -1305,8 +1312,10 @@
     }
   ],
   "next_deep_dive_order": [
-    "consume cryoplant-project#1634 exact-head review; repair only material current-head finding",
-    "when #923 owner-side admission changes, rerun unchanged current-head W322/Release Runner Probe and require runner_id != 0 plus steps > 0",
+    "consume cryoplant-project#1645 exact-head review; repair only material current-head finding",
+    "owner/admin configure protected qps-hepak-owner-attestation environment and QPS_HEPAK_OWNER_ATTESTATION_HMAC_KEY secret; no secret value belongs in repo",
+    "obtain real HEPAK workbook digest and signed owner anchor return; do not infer from File Library ID",
+    "when #923 owner-side admission changes, rerun unchanged Release Runner Probe and require runner_id != 0 plus steps > 0",
     "bind REX-CM-005 through repository-admin merge admission; detector green alone is insufficient",
     "resume ABACUS#1313 only on real Appendix 8.4/source-evidence return",
     "after BD033 proof disposition, select next F2 Historian repo by measured unresolved pressure"
