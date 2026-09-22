@@ -184,6 +184,22 @@ class ExcelScheduleEngineTests(unittest.TestCase):
                     / "Reports/schedule_index.csv"
                 ).exists()
             )
+            schedule_manifest = (
+                root / "Outputs/excel/schedule/schedule_manifest.json"
+            )
+            self.assertTrue(schedule_manifest.exists())
+            schedule_payload = json.loads(
+                schedule_manifest.read_text(encoding="utf-8")
+            )
+            self.assertFalse(
+                schedule_payload["authority"]["authority_transfer"]
+            )
+            self.assertTrue(
+                (root / "Reports/schedule_dashboard.md").exists()
+            )
+            self.assertTrue(
+                (root / "Reports/schedule_dashboard.xlsx").exists()
+            )
 
     def test_tables_only_skips_plain_used_range(self):
         with tempfile.TemporaryDirectory() as td:
