@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.specialist_repair_crew_registry.v2",
   "status": "ACTIVE",
-  "as_of": "2026-09-21T16:32:00+02:00",
+  "as_of": "2026-09-22T15:06:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "SPECIALIST_REPAIR_CREW_REGISTRY_v1.json",
   "activation_rule": "recurrence || P0/P1 severity || cross_repo_centrality || repeated_failed_repair || active_control_repeat",
@@ -93,7 +93,7 @@
     {
       "crew_id": "DOCTOR_CONTRACTS",
       "display_name": "Doctor.Contracts",
-      "state": "ACTIVE_OWNER_ADMIN_BOUNDARY",
+      "state": "ACTIVE_OWNER_ADMIN_AND_TRUST_BOUNDARY",
       "triggered_by_roots": [
         "HIST-BD-002",
         "HIST-BD-003",
@@ -111,10 +111,12 @@
         "HIST-BD-025",
         "HIST-BD-026",
         "HIST-BD-031",
-        "HIST-BD-032"
+        "HIST-BD-032",
+        "HIST-BD-033"
       ],
       "active_scope": [
-        "REX-CM-005"
+        "REX-CM-005",
+        "HIST-BD-033"
       ],
       "done_scope": [
         "HIST-BD-002",
@@ -135,7 +137,7 @@
         "HIST-BD-031",
         "HIST-BD-032"
       ],
-      "current_mission": "REX_CM_005_OWNER_ADMIN_BINDING",
+      "current_mission": "REX_CM_005_AND_BD033_SOURCE_TRUST",
       "secondment": [
         "H2_KEB",
         "HISTORIAN",
@@ -148,7 +150,7 @@
         "negative evidence contract",
         "contract drift"
       ],
-      "victory_condition": "Bind ABACUS merge admission fail-closed for REX-CM-005; BD020 provenance is complete and no longer consumes active repair scope",
+      "victory_condition": "BD033 exact-head proof/merge survival without fabricated source digest, plus owner/admin binding for REX-CM-005 when repository settings become writable.",
       "controlled_scope": [
         "HIST-BD-016"
       ]
@@ -239,13 +241,15 @@
         "HIST-BD-029",
         "HIST-BD-030",
         "HIST-BD-031",
-        "HIST-BD-032"
+        "HIST-BD-032",
+        "HIST-BD-033"
       ],
       "active_scope": [
         "REX-CM-005",
-        "fleet deep-dive expansion"
+        "fleet deep-dive expansion",
+        "HIST-BD-033"
       ],
-      "current_mission": "F2_PRESSURE_SELECTION_AND_DEEP_DIVE",
+      "current_mission": "BD033_PROOF_THEN_F2_PRESSURE_SELECTION",
       "secondment": [
         "H1_QPS",
         "H2_KEB",
@@ -310,9 +314,11 @@
       "DEBUG_SURGEON"
     ],
     "priority_sequence": [
-      "next F2 current mission repo by measured unresolved Historian pressure",
-      "REX-CM-005 owner/admin binding when available",
-      "cryoplant-project#923 owner runner-admission recovery"
+      "HIST-BD-033 proof/review on cryoplant-project#1634",
+      "cryoplant-project#923 owner runner-admission recovery",
+      "REX-CM-005 owner/admin merge-admission binding",
+      "ABACUS#1313 Appendix 8.4/source-evidence return",
+      "next F2 repo by measured unresolved Historian pressure"
     ],
     "anti_proliferation": "specialists are temporary pressure cells; return/merge competencies after bounded victory unless recurrent independent workload justifies persistence",
     "qtools_historian": {
@@ -420,6 +426,23 @@
       "governance_fix_pr": "GBOGEB/ABACUS#1329",
       "governance_fix_head": "0c73a66427e83819dd486a56a3296be033427bff",
       "current_main": "5a6e560a02d45276f23208019ad6a202b3cf0964",
+      "authority_transfer": false,
+      "formal_credit_delta": 0
+    },
+    "cryoplant_bt0_historian": {
+      "state": "ACTIVE_PROVE_HOLD_RUNNER",
+      "durable_roots": [
+        "HIST-BD-033"
+      ],
+      "active_roots": [
+        "HIST-BD-033"
+      ],
+      "repair_pr": "GBOGEB/cryoplant-project#1634",
+      "repair_head": "8d0a99bc7185a00ffa35d34c60df16ba570b447a",
+      "invalidated_pr": "GBOGEB/cryoplant-project#1633",
+      "non_compensating_runner_gate": "GBOGEB/cryoplant-project#923",
+      "project_anchor_state": "PENDING_TRUSTED_DIGEST",
+      "runtime_credit": "WITHHELD",
       "authority_transfer": false,
       "formal_credit_delta": 0
     }

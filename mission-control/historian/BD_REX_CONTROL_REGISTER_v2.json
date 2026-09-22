@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-21T16:32:00+02:00",
+  "as_of": "2026-09-22T15:06:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -9,17 +9,17 @@
   "historian_parent_issue": 76,
   "runner_economics_issue": 79,
   "bounded_sample": {
-    "audited_prs_minimum": 45,
-    "review_finding_occurrences_observed_cumulative": 54,
-    "durable_bd_roots_total": 32,
-    "current_open_bd_roots": 0,
-    "current_unresolved_occurrences_minimum": 0,
+    "audited_prs_minimum": 47,
+    "review_finding_occurrences_observed_cumulative": 55,
+    "durable_bd_roots_total": 33,
+    "current_open_bd_roots": 1,
+    "current_unresolved_occurrences_minimum": 1,
     "done_or_control_roots": 32,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
     "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
-    "note": "Bounded Historian census only; 83/83 fleet coverage does not imply 83/83 deep audit. ABACUS Line-S roots BD031-032 are drained. ABACUS#1313 remains an open source-evidence work order outside the BD count; REX-CM-005 and cryoplant#923 remain independent controls.",
+    "note": "Bounded Historian census only; 83/83 fleet coverage does not imply 83/83 deep audit. HIST-BD-033 is the sole currently open semantic BD root. cryoplant#923, REX-CM-005 and ABACUS#1313 are independent non-coding owner/admin/source gates.",
     "active_prevention_withheld_controls": 1
   },
   "lifecycle": [
@@ -1137,6 +1137,56 @@
         "ABACUS#1327 CLOSED_COMPLETED"
       ],
       "done_when": "SATISFIED"
+    },
+    {
+      "bd_id": "HIST-BD-033",
+      "title": "Prevent repo-local self-attestation of BT0 HEPAK source trust",
+      "class": "SOURCE_TRUST_AUTHORITY_BOUNDARY",
+      "severity": "P1",
+      "state": "ACTIVE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/cryoplant-project"
+      ],
+      "source_prs": [
+        1629,
+        1634
+      ],
+      "source_issues": [
+        1635
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "semantic_signature": "repo_local_active_trust_anchor_can_self_attest_arbitrary_source_digest",
+      "negative_evidence": [
+        "cryoplant-project#1629 merged@23162ea21df0459d5778237ce301f326fa338d06 with a repo-local ACTIVE_TRUST_ANCHOR + OWNER_SOURCE_ATTESTATION string gate that repository content could self-assert",
+        "the positive contract fixture could activate the anchor with an arbitrary workbook digest ('b'*64) and convert BT0 without an independent owner-controlled value",
+        "draft #1633 was closed INVALIDATED_STALE_BRANCH after its diff showed unrelated rollback of newer BT2 population/tolerance controls"
+      ],
+      "current_repair": [
+        "cryoplant-project#1634 DRAFT",
+        "repair head 8d0a99bc7185a00ffa35d34c60df16ba570b447a",
+        "BT0 conversion requires receipt + repo-local ACTIVE anchor + owner-controlled QPS_HEPAK_OWNER_SOURCE_SHA256 and QPS_HEPAK_OWNER_SOURCE_WORKBOOK agreement",
+        "optional source_file is constrained to remain under the governed root",
+        "checked-in project anchor remains PENDING_TRUSTED_DIGEST; no digest invented"
+      ],
+      "proof_state": "PROVE_STATIC_PENDING_RUNTIME_HELD_BY_923",
+      "proof_refs": [
+        "cryoplant-project#1634 exact diff is BT0-only and preserves current BT2 logic",
+        "verify-ssot run35732308950/job106760673654 NOT_EXECUTED steps=null",
+        "Global Victory Score run35732308999/job106760675823 NOT_EXECUTED steps=null",
+        "Codex exact-head review requested on 8d0a99bc7185a00ffa35d34c60df16ba570b447a and pending at snapshot"
+      ],
+      "non_compensating_gates": [
+        "GBOGEB/cryoplant-project#923"
+      ],
+      "done_when": "Exact-head current review clean + repair merged/current-code survival + executed regression when private Actions admission is restored or equivalent trusted execution exists. Runtime absence must not be converted to PASS.",
+      "authority_transfer": false,
+      "formal_credit_delta": 0
     }
   ],
   "control_measures": [
@@ -1217,7 +1267,9 @@
         "ABACUS#1328 merged@c940fba8ad1ccac5e75d7fb5e836ae2d1fdb5acb while CI Workflow Governance remained red on stale derived inventory and before current-head review completed",
         "ABACUS#1328 exact-head ba9159e5464148b94897b9628883b830ad17dabd later PASS on Line-S/docs/format/YAML/Ruff/review; post-merge green does not prove prevention",
         "ABACUS#1329 draft hold prevented premature merge until exact-head governance/docs/format/Ruff/review were green; merged@5a6e560a02d45276f23208019ad6a202b3cf0964 after proof",
-        "REX-CM-005 remains prevention-withheld: draft process is a bounded mitigation, not repository-admin admission control"
+        "REX-CM-005 remains prevention-withheld: draft process is a bounded mitigation, not repository-admin admission control",
+        "cryoplant-project#1629 merged@23162ea21df0459d5778237ce301f326fa338d06 while exact-head Codex review was still running and private-repo runtime checks were non-executed under #923",
+        "cryoplant-project#1634 was created draft-first from current main after stale-branch contamination was detected in invalidated #1633; this is an operational mitigation, not repository-admin prevention"
       ],
       "execution_boundary": {
         "classification": "REPOSITORY_ADMIN_MERGE_ADMISSION",
@@ -1236,11 +1288,14 @@
         "GBOGEB/ABACUS",
         "GBOGEB/pipeline-automation-hub",
         "GBOGEB/CODEX",
-        "GBOGEB/GEMINI"
+        "GBOGEB/GEMINI",
+        "GBOGEB/cryoplant-project"
       ]
     }
   ],
-  "open_priority": [],
+  "open_priority": [
+    "HIST-BD-033"
+  ],
   "external_non_compensating_gates": [
     {
       "repo": "GBOGEB/cryoplant-project",
@@ -1250,10 +1305,11 @@
     }
   ],
   "next_deep_dive_order": [
-    "ABACUS#1313 authoritative Appendix 8.4 source extraction return; no inferred mode/valve states",
-    "next Mission Grand inward endpoint by measured unresolved pressure",
-    "REX-CM-005 owner/admin merge-admission proof when configuration becomes writable",
-    "cryoplant-project#923 remains separate non-compensating runner-admission lane"
+    "consume cryoplant-project#1634 exact-head review; repair only material current-head finding",
+    "when #923 owner-side admission changes, rerun unchanged current-head W322/Release Runner Probe and require runner_id != 0 plus steps > 0",
+    "bind REX-CM-005 through repository-admin merge admission; detector green alone is insufficient",
+    "resume ABACUS#1313 only on real Appendix 8.4/source-evidence return",
+    "after BD033 proof disposition, select next F2 Historian repo by measured unresolved pressure"
   ],
   "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE",
   "control_priority": [
