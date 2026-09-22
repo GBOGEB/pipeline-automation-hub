@@ -180,3 +180,10 @@ PIPELINE_EXCEL_TABLES_ONLY
 ```
 
 When requested, the MAIN runner fail-closes if the Excel engine or its manifest fails. `pipeline_run_receipt.json` v2 records the Excel-manifest SHA-256 plus exported-table and schedule-candidate counts. When Excel is not requested, the legacy MAIN path remains behaviorally unchanged.
+
+
+### Schedule validation and human dashboard
+
+The Excel lane also projects detected schedule tables into a canonical, validated planning model. It emits both CSV/XLSX schedule data plus validation/KPI artifacts and Markdown/XLSX RYG dashboards. The dashboard is decision support only and does not replace the source workbook.
+
+See `excel_schedule_engine/schema/schedule_schema_v1.json` and `Reports/schedule_dashboard.{md,xlsx}`.
