@@ -60,3 +60,54 @@ YELLOW = table discovered but schedule semantics need human review
 RED    = export/test failure; no promotion
 GRAY   = external/legacy surface; not in authority path
 ```
+
+
+## Planning/schedule schema + dashboard extension
+
+```text
+Excel schedule candidate CSVs
+        |
+        v
+[KEB: MAP_CANONICAL_SCHEDULE_SCHEMA]
+        |
+        +--> activity ID / name
+        +--> start / finish / duration
+        +--> predecessors
+        +--> owner / status / progress
+        +--> float / milestone
+        |
+        v
+[KEB: VALIDATE_SCHEDULE_SEMANTICS]
+        |
+        +--> IDs / duplicates
+        +--> dates / duration
+        +--> predecessor resolution + cycle detection
+        +--> owner / status / progress
+        +--> float / milestone semantics
+        |
+        v
+[KEB: BUILD_SCHEDULE_PROJECTION]
+        |
+        +--> canonical_schedule.csv
+        +--> canonical_schedule.xlsx
+        +--> validation_findings.csv
+        |
+        v
+[KEB: CALCULATE_PLANNING_KPIS]
+        |
+        +--> validation pass rate
+        +--> field completeness
+        +--> overdue / float / milestone / progress KPIs
+        |
+        v
+[KEB: BUILD_RYG_DASHBOARD]
+        |
+        +--> schedule_dashboard.md
+        +--> schedule_dashboard.xlsx
+        |
+        v
+[KEB: BIND_SCHEDULE_MANIFEST]
+        `--> schedule_manifest.json + SHA-256 output bindings
+```
+
+RYG is a derived planning indicator. RED/YELLOW never rewrites source workbook facts or transfers authority.
