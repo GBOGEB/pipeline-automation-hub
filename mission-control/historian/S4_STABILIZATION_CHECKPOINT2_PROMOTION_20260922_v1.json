@@ -1,0 +1,144 @@
+{
+  "schema": "missioncontrol.s4_stabilization_checkpoint.v2",
+  "as_of": "2026-09-22T15:52:00+02:00",
+  "execution_wave_type": "CONTROL",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "parents": {
+    "bd_lifecycle": "GBOGEB/pipeline-automation-hub#85",
+    "historian": "GBOGEB/pipeline-automation-hub#76",
+    "mip_stabilize": "GBOGEB/pipeline-automation-hub#372",
+    "issue_expedition": "GBOGEB/pipeline-automation-hub#324"
+  },
+  "exact_heads": {
+    "pipeline_automation_hub_master_at_refresh": "d6343fbae4eef839f92203e77673857e06e884bb",
+    "cryoplant_project_main_at_refresh": "4f7ae37982663ef343ce30b575af1fb2b7164b7d",
+    "cryoplant_bd034_latest_functional_merge": "f0ea003903976e62d24dd273a5b9f1f2f4947374",
+    "cryoplant_psv_exact_binding_merge": "eb9f4011634131217fc603b647e53f33cc9c9a4a"
+  },
+  "three_pr": {
+    "refresh": {
+      "result": "PASS",
+      "facts": [
+        "Seven issue-bearing repositories re-censused from live GitHub state.",
+        "Fleet open issue count is 98 and open PR backlog is 0.",
+        "HIST-BD-034 remains one semantic root; no duplicate root admitted.",
+        "Current cryoplant main contains the exact BT2 authority, Decimal.copy_abs(), qualified n/a locator, and labeled PSV source-binding repairs."
+      ]
+    },
+    "probe": {
+      "result": "PASS_NO_NEW_CURRENT_CODE_FIRST_RED",
+      "facts": [
+        "Current main rejects substring authority admission and uses exact source-bearing classes.",
+        "Current main uses Decimal.copy_abs() for residual magnitude.",
+        "Current main rejects bounded qualified n/a provenance locators.",
+        "Current main binds PSV tag plus labeled exact set/reseat pressures.",
+        "Legacy public exact-payload proof for superseded cryoplant #1636 executed but failed only on a stale wording assertion: expected 'trust anchor' while implementation emitted 'trusted HEPAK source anchor missing'.",
+        "That stale proof failure is proof debt and is not a current-code semantic first-red."
+      ]
+    },
+    "rank": {
+      "result": "PASS",
+      "execution_order": [
+        "NO_EXECUTE_NOW_ROOT",
+        "HIST-BD-034 -> HOLD_PROOF_EXTERNAL",
+        "cryoplant-project#923 -> RETURN_OWNER_ACTION_REQUIRED",
+        "REX-CM-005 / owner-admin merge admission -> RETURN_OWNER_ADMIN_REQUIRED",
+        "other source/physical/admin waits -> RETURN/HOLD"
+      ]
+    }
+  },
+  "mip": {
+    "modernize": {
+      "result": "PASS",
+      "changes": [
+        "Reclassified BD034 from active proof pressure to HOLD_PROOF_EXTERNAL because no repair PR remains open and current-code repairs survive.",
+        "Separated semantic-root state from raw issue count and PR mechanics.",
+        "Kept external/private runner admission out of normal coding WIP."
+      ]
+    },
+    "innovate": {
+      "result": "PASS",
+      "controls": [
+        "Queue-vs-execute telemetry is recorded separately.",
+        "Private cryoplant exact-head #1660 produced 9 failed workflows / 16 failed jobs with steps=null; execute duration remains missing, not zero.",
+        "Public proof run 35733022880 reached real execution and failed at test step 5 on a stale message assertion; it is not treated as private-runner admission evidence or as a current semantic defect.",
+        "No retry/proof child is counted as a new BD root."
+      ]
+    },
+    "perpetuate": {
+      "result": "PASS_STABILIZATION_PROMOTED_WITH_NONCOMPENSATING_HOLDS",
+      "controls": [
+        "No merged-but-unproven root is labeled CONTROL solely from merge.",
+        "BD034 remains open/HOLD until a valid current proof predicate is satisfied or explicitly waived by its governing contract.",
+        "cryoplant#923 remains non-compensating and outside normal coding WIP.",
+        "No new EXECUTE_NOW transaction is authorized without a fresh current-code semantic first-red."
+      ]
+    }
+  },
+  "fleet_census": {
+    "open_issues": 98,
+    "repositories_with_open_issues": 7,
+    "open_pr_backlog": 0,
+    "by_repo": {
+      "GBOGEB/cryoplant-project": 57,
+      "GBOGEB/pipeline-automation-hub": 19,
+      "GBOGEB/ABACUS": 12,
+      "GBOGEB/CODEX": 6,
+      "GBOGEB/GEMINI": 2,
+      "GBOGEB/gg_MATH": 1,
+      "GBOGEB/document-organization-system": 1
+    }
+  },
+  "semantic_census": {
+    "durable_historian_roots": 34,
+    "done_or_control_roots": 33,
+    "open_semantic_roots": 1,
+    "unclassified_roots": 0,
+    "execute_now_frontier": 0,
+    "active_coding_frontier": 0,
+    "open_pr_proof_frontier": 0,
+    "hold_proof_external_roots": [
+      "HIST-BD-034 / GBOGEB/cryoplant-project#1617"
+    ]
+  },
+  "queue_execute": {
+    "cryoplant_1660_private_failed_workflows": 9,
+    "cryoplant_1660_private_failed_jobs_sampled": 16,
+    "cryoplant_1660_jobs_with_steps_null": 16,
+    "cryoplant_execute_duration": "MISSING_NOT_ZERO",
+    "classification": "INFRA_PREEXECUTION_PRIVATE_REPO_ACTIONS_ADMISSION_923_FAMILY",
+    "public_proof": {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "run_id": 35733022880,
+      "job_id": 106763105783,
+      "source_head": "767834e6eedb8d136e5f6c2b13b92b5a66218ae1",
+      "executed_steps_before_failure": 5,
+      "failure_class": "STALE_ASSERTION_TEXT_NOT_CURRENT_CODE_SEMANTIC_FIRST_RED",
+      "superseded_source": true
+    }
+  },
+  "s4_scorecard": {
+    "prior_rearm_pulse_net_bd_delta": 0,
+    "new_roots_this_pulse": 0,
+    "reopened_roots_this_pulse": 0,
+    "gross_root_retirements_this_pulse": 0,
+    "net_bd_delta": 0,
+    "consecutive_nonpositive_pulses_after_rearm": 2,
+    "active_frontier": 0,
+    "proof_pr_backlog": 0,
+    "semantic_hold_backlog": 1,
+    "stabilization_promotion": "PASS_WITH_EXTERNAL_NONCOMPENSATING_HOLD",
+    "analytics_admission": "DEFER_NO_ALLOCATION_AUTHORITY"
+  },
+  "decision": {
+    "open_new_execute_now_3pstar_transaction": false,
+    "reason": "Fresh census found no genuine current-code semantic first-red.",
+    "next_legal_reentry": [
+      "If a new current-code finding is observed, open exactly one bounded EXECUTE_NOW 3P* transaction.",
+      "If cryoplant#923 owner-side admission recovers, rerun unchanged private proof and preserve queue/execute timings.",
+      "If a current exact-payload public proof is commissioned, treat it as PROVE only; do not create a new semantic root.",
+      "Keep BD034 out of CONTROL until its remaining proof contract is satisfied."
+    ]
+  }
+}
