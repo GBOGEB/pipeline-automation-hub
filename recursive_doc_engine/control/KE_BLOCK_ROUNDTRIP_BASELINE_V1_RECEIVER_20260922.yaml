@@ -1,0 +1,37 @@
+schema: missioncontrol.ke_block_roundtrip.baseline_v1_receiver.v1
+as_of: "2026-09-22T18:56:00+02:00"
+repository: GBOGEB/pipeline-automation-hub
+base_master_sha: 36b3af572d29e7a42faefc2b1cb781e1588e26f7
+authority_transfer: false
+formal_credit_delta: 0
+child:
+  repo: GBOGEB/document-organization-system
+  promotion_pr: 74
+  promotion_merge_sha: 9ee9f214cf576b1c511ccb1ea41062c334a391f7
+  baseline_id: KE_BLOCK_ROUNDTRIP_BASELINE_V1
+  baseline_zip_sha256: 179f130e442640025b67eae1d8f21cf18a92e24e47721458d4efd9506bf3afc9
+  validated_outputs:
+    docx_sha256: 27b37fd807234a24048dfee479dfad50c6293ff19d2a36913183f135f8ac9d2c
+    xlsx_sha256: 8cd51d1ac89fe21d39a1281a414659a92f5a93afcc812a30be86d29450502312
+    pptx_sha256: bac54897883d55f8d1b9df0ef7628583204697eff89fa8c6eed9568a268298e9
+    master_prime_sha256: 5eb2695b04104b0c7b082a96cab5fd7a8e09a90a44778cdac9bbf48892a643e1
+proof:
+  binary_render_qa: PASS
+  roundtrip_structure: PASS
+  contract_semantic_similarity: PASS
+  marker_coverage: PASS
+  defect_rate: PASS
+  explicit_user_approval: PASS
+state: BASELINE_V1_CONTROLLED_RECEIVED
+retest_on:
+  - NEW_INPUT
+  - BIGGER_SAMPLE
+  - NEW_TASK
+  - NEW_FUNCTION
+  - REFACTOR
+  - SCALING_CHANGE
+  - SOURCE_CHANGE
+non_compensation:
+  baseline_ne_source_master: true
+  missioncontrol_ne_child_authority: true
+  baseline_ne_qps_engineering_acceptance: true
