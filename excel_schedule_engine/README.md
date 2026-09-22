@@ -84,3 +84,49 @@ python -m unittest discover -s excel_schedule_engine/tests -v
 - SUT: `src/excel_schedule_engine.py`
 - Test System: Python `unittest` + generated temporary workbooks via `openpyxl`
 - Victory: every logical table gets both CSV and XLSX outputs, hashes are recorded, schedule candidates are indexed, empty sheets are skipped, and `authority_transfer=false` remains explicit.
+
+
+## Canonical planning/schedule projection
+
+Schedule-candidate CSV renditions are now mapped into a single canonical planning projection without writing back to the workbook.
+
+Canonical fields include activity identity/name, start/finish, duration, predecessors, owner, canonical status, progress, total float and milestone semantics. The machine contract is published in:
+
+```text
+excel_schedule_engine/schema/schedule_schema_v1.json
+```
+
+Validation covers:
+
+- missing/duplicate IDs;
+- start > finish and unparseable dates;
+- invalid/negative duration;
+- unresolved/self/cyclic predecessors;
+- missing owner/status and unknown statuses;
+- progress outside 0..100;
+- invalid total float;
+- non-zero milestone span/duration.
+
+Planning risk is separate from data validity. RYG is derived as:
+
+```text
+RED    = validation error OR overdue OR negative float OR BLOCKED
+YELLOW = validation warning OR due-soon OR zero float OR ON_HOLD
+GREEN  = no RED/YELLOW condition
+```
+
+Generated outputs:
+
+```text
+Outputs/excel/schedule/canonical_schedule.csv
+Outputs/excel/schedule/canonical_schedule.xlsx
+Outputs/excel/schedule/validation_findings.csv
+Outputs/excel/schedule/schedule_kpis.json
+Outputs/excel/schedule/schedule_manifest.json
+Reports/schedule_dashboard.md
+Reports/schedule_dashboard.xlsx
+```
+
+For deterministic comparisons, use `--schedule-as-of YYYY-MM-DD`. The default due-soon horizon is 14 calendar days and can be changed with `--schedule-due-soon-days`.
+
+The schedule manifest SHA-binds every canonical/dashboard output and retains `authority_transfer=false`.
