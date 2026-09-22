@@ -71,6 +71,25 @@ class RunProcessingRecursiveIntegrationTests(unittest.TestCase):
         }
         manifest_path = manifest_dir / "table_manifest.json"
         manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+        schedule_dir = manifest_dir / "schedule"
+        schedule_dir.mkdir()
+        schedule_manifest = {
+            "schema": "gbogeb.schedule_projection_manifest.v1",
+            "authority": {"authority_transfer": False},
+            "summary": {
+                "process_status": "PASS",
+                "activities": 5,
+                "red": 1,
+                "yellow": 2,
+                "green": 2,
+                "validation_pass_rate_pct": 80.0,
+            },
+        }
+        (schedule_dir / "schedule_manifest.json").write_text(
+            json.dumps(schedule_manifest),
+            encoding="utf-8",
+        )
         return excel_root, manifest_path
 
     def make_excel_workbook(self):
@@ -88,7 +107,7 @@ class RunProcessingRecursiveIntegrationTests(unittest.TestCase):
         target = MOD.write_pipeline_receipt(self.output_dir, recursive_path)
         self.assertIsNotNone(target)
         payload = json.loads(target.read_text(encoding="utf-8"))
-        self.assertEqual(payload["schema"], "pipeline_automation_hub.pipeline_run_receipt.v2")
+        self.assertEqual(payload["schema"], "pipeline_automation_hub.pipeline_run_receipt.v3")
         self.assertEqual(payload["status"], "PASS")
         self.assertEqual(payload["authority"], MOD.AUTHORITY)
         self.assertEqual(payload["phases"]["metadata"]["sha256"], MOD.sha256_file(summary_path))
@@ -116,6 +135,11 @@ class RunProcessingRecursiveIntegrationTests(unittest.TestCase):
         self.assertEqual(excel["tables_exported"], 3)
         self.assertEqual(excel["schedule_candidates"], 2)
         self.assertFalse(excel["authority_transfer"])
+        projection = excel["schedule_projection"]
+        self.assertEqual(projection["status"], "PASS")
+        self.assertEqual(projection["activities"], 5)
+        self.assertEqual(projection["red"], 1)
+        self.assertFalse(projection["authority_transfer"])
 
     def test_recursive_build_invokes_canonical_master(self):
         _, recursive_path = self.make_phase_receipts()
@@ -138,6 +162,11 @@ class RunProcessingRecursiveIntegrationTests(unittest.TestCase):
         self.assertFalse(payload["authority"]["authority_transfer"])
         self.assertTrue(any((excel_root / "Outputs" / "excel" / "tables_csv").glob("*.csv")))
         self.assertTrue(any((excel_root / "Outputs" / "excel" / "tables_xlsx").glob("*.xlsx")))
+        self.assertTrue(
+            (excel_root / "Outputs" / "excel" / "schedule" / "schedule_manifest.json").exists()
+        )
+        self.assertTrue((excel_root / "Reports" / "schedule_dashboard.md").exists())
+        self.assertTrue((excel_root / "Reports" / "schedule_dashboard.xlsx").exists())
 
     def test_main_runs_recursive_and_optional_excel_after_metadata_passes(self):
         _, recursive_path = self.make_phase_receipts()
@@ -151,6 +180,8 @@ class RunProcessingRecursiveIntegrationTests(unittest.TestCase):
             excel_output_root=str(excel_root),
             excel_cell_mode="cached",
             excel_tables_only=True,
+            excel_schedule_as_of="2026-09-22",
+            excel_due_soon_days=10,
         )
         pipeline_receipt = self.output_dir / "pipeline_run_receipt.json"
         pipeline_receipt.write_text("{}", encoding="utf-8")
@@ -172,6 +203,8 @@ class RunProcessingRecursiveIntegrationTests(unittest.TestCase):
             excel_root,
             cell_mode="cached",
             tables_only=True,
+            schedule_as_of="2026-09-22",
+            due_soon_days=10,
         )
         receipt.assert_called_once_with(
             self.output_dir,
@@ -220,6 +253,8 @@ class RunProcessingRecursiveIntegrationTests(unittest.TestCase):
             excel_output_root=str(self.root / "excel"),
             excel_cell_mode="formula",
             excel_tables_only=False,
+            excel_schedule_as_of=None,
+            excel_due_soon_days=14,
         )
         with (
             patch.object(MOD, "parse_args", return_value=args),
