@@ -78,3 +78,22 @@ Python unittest
 ## Current gate
 
 `CANDIDATE_AWAITING_HOSTED_PROOF`
+
+
+## Hosted proof and merge closure
+
+The first hosted recursive-build proof identified one bounded test-contract defect: an E2E assertion still expected pipeline receipt schema v2 after the intentional schedule-manifest binding advanced it to v3. The implementation path itself was green. The assertion was repaired and re-proven.
+
+Final convergence used PR merge-ref proof because unrelated high-frequency master merges repeatedly overtook exact-base replay branches.
+
+Final hosted proof on PR #408:
+
+- Excel Schedule Engine run `35758132498`, job `106848988893`: **PASS**;
+- recursive-build run `35758132496`, job `106848989090`: **PASS**;
+- review threads: **0**.
+
+PR #408 merged as `5296b400bcb543afee1a3613ff4e2cdedf2102df`.
+
+Current classification: `ACTIVE_SCHEDULE_SCHEMA_DASHBOARD_BOUND`.
+
+Next controlled slice: `REAL_WORKBOOK_SCHEDULE_PROOF_AND_BASELINE_DELTA` — prove the generic model against a real governed planning workbook and compare successive schedule baselines without transferring source authority.
