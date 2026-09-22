@@ -1,0 +1,58 @@
+schema: missioncontrol.qps_requirements.w287_dreq_gap_closure/v0.1
+as_of: '2026-09-22T19:02:00+02:00'
+mission: W287_DREQ_GAP_CLOSURE
+state: CANDIDATE_SET_RECEIVED
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+compliance_credit_delta: 0
+negotiation_credit_delta: 0
+acceptance_credit_delta: 0
+
+child:
+  repo: GBOGEB/cryoplant-project
+  pr: 1690
+  base: 8fcea84927ef58b17eff7f30c73d0223422e6948
+  head: 976e24bd341378530a1a3421bde01e8e1225539f
+  human_candidate: triage/w287/QPS_W287_DREQ_GAP_CLOSURE_CANDIDATES_v0.1.md
+  machine_candidate: triage/w287/QPS_W287_DREQ_GAP_CLOSURE_CANDIDATES_v0.1.yaml
+  control: triage/w287/QPS_W287_DREQ_GAP_CLOSURE_3PSTAR_MIP_CONTROL_v0.1.yaml
+  handover: handover/session/SC_2026-09-22_W287_DREQ_GAP_CLOSURE_CANDIDATE_HANDOVER_v1.md
+
+coverage:
+  gap_parents: 17
+  candidate_rows: 17
+  missing_mappings: 10
+  partial_mappings: 7
+  proposed_section_4_9_range: 26-42
+  duplicate_parent_count: 0
+  duplicate_proposed_number_count: 0
+
+governance:
+  parent_requirement_authority: TABLE_3_REQ_1_TO_23
+  stakeholder_mapping_authority: SECTION_4_8_ONLY
+  deliverable_authority: SECTION_4_9_ONLY
+  candidate_status: DERIVED_NON_AUTHORITATIVE
+  source_integration_required: true
+
+reference_dependency:
+  id: REF_REGISTER_ISO31000_VS_11_ISO9927
+  state: OPEN
+  resolution_rule: >-
+    Preserve the supplied [11] identity. Add or rebind ISO 31000 only through
+    controlled source-owner disposition; no silent correction.
+
+next_bounded_objective:
+  id: W287_DREQ_SOURCE_INTEGRATION_REVIEW
+  prerequisite: CONTROLLED_SOURCE_OWNER_DISPOSITION
+  allowed_dispositions: [ACCEPT, AMEND, SPLIT, MERGE, REJECT]
+  rule: >-
+    Only accepted source-integrated section 4.9 rows may change Table 3b/3c from
+    GAP/PARTIAL to an authoritative deliverable route.
+
+non_compensation:
+  - CANDIDATE_NE_SOURCE_AUTHORITY
+  - MAPPING_NE_DELIVERABLE_COMPLETION
+  - STATIC_PROOF_NE_FAT_SAT
+  - DOCUMENT_CONTROL_NE_ENGINEERING_ACCEPTANCE
+  - AUTHORITY_TRANSFER_FALSE
