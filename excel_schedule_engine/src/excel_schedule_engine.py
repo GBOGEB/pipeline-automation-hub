@@ -137,11 +137,15 @@ class ExcelScheduleEngine:
         output_root: Path,
         include_sheet_ranges: bool = True,
         cell_mode: str = "formula",
+        schedule_as_of: date | None = None,
+        schedule_due_soon_days: int = 14,
     ):
         self.source = source
         self.output_root = output_root
         self.include_sheet_ranges = include_sheet_ranges
         self.cell_mode = cell_mode
+        self.schedule_as_of = schedule_as_of
+        self.schedule_due_soon_days = schedule_due_soon_days
         self.csv_dir = output_root / "Outputs" / "excel" / "tables_csv"
         self.xlsx_dir = output_root / "Outputs" / "excel" / "tables_xlsx"
         self.manifest_path = output_root / "Outputs" / "excel" / "table_manifest.json"
@@ -366,6 +370,15 @@ class ExcelScheduleEngine:
             raise RuntimeError(
                 f"{len(errors)} table export(s) failed; see {self.manifest_path}"
             )
+
+        from schedule_projection import ScheduleProjectionEngine
+
+        ScheduleProjectionEngine(
+            output_root=self.output_root,
+            table_manifest_path=self.manifest_path,
+            as_of=self.schedule_as_of,
+            due_soon_days=self.schedule_due_soon_days,
+        ).run()
         return records
 
     def _write_manifest(
@@ -501,6 +514,18 @@ def build_parser() -> argparse.ArgumentParser:
         default="formula",
         help="Read formulas or cached calculated values",
     )
+    p.add_argument(
+        "--schedule-as-of",
+        type=date.fromisoformat,
+        default=None,
+        help="Deterministic schedule dashboard as-of date (YYYY-MM-DD)",
+    )
+    p.add_argument(
+        "--schedule-due-soon-days",
+        type=int,
+        default=14,
+        help="Yellow due-soon horizon in calendar days",
+    )
     return p
 
 
@@ -511,6 +536,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         output_root=args.output_root,
         include_sheet_ranges=not args.tables_only,
         cell_mode=args.cell_mode,
+        schedule_as_of=args.schedule_as_of,
+        schedule_due_soon_days=args.schedule_due_soon_days,
     )
     records = engine.run()
     print(
