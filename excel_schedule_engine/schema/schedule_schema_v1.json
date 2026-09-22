@@ -1,0 +1,77 @@
+{
+  "schema": "gbogeb.schedule_schema.v1",
+  "version": "1.0.0",
+  "authority": {
+    "role": "DERIVED_CANONICAL_PROJECTION_CONTRACT",
+    "source_workbook_remains_authoritative_input": true,
+    "authority_transfer": false
+  },
+  "canonical_fields": [
+    {"name": "source_table_id", "type": "string", "required": true, "role": "lineage"},
+    {"name": "source_sheet", "type": "string", "required": true, "role": "lineage"},
+    {"name": "source_row", "type": "integer", "required": true, "role": "lineage"},
+    {"name": "activity_key", "type": "string", "required": true, "role": "projection_identity"},
+    {"name": "activity_id", "type": "string", "required": true, "role": "source_or_derived_activity_identity"},
+    {"name": "id_origin", "type": "enum", "values": ["SOURCE", "DERIVED"], "required": true},
+    {"name": "activity_name", "type": "string", "required": false},
+    {"name": "start_date", "type": "date", "format": "YYYY-MM-DD", "required": false},
+    {"name": "finish_date", "type": "date", "format": "YYYY-MM-DD", "required": false},
+    {"name": "duration_days", "type": "number", "required": false},
+    {"name": "duration_origin", "type": "enum", "values": ["SOURCE", "DERIVED_CALENDAR_SPAN", ""], "required": true},
+    {"name": "predecessor_ids", "type": "semicolon_delimited_string", "required": false},
+    {"name": "owner", "type": "string", "required": false},
+    {"name": "status", "type": "enum", "values": ["NOT_STARTED", "IN_PROGRESS", "COMPLETE", "ON_HOLD", "CANCELLED", "BLOCKED", "UNKNOWN", ""], "required": false},
+    {"name": "status_raw", "type": "string", "required": false},
+    {"name": "progress_pct", "type": "number", "minimum": 0, "maximum": 100, "required": false},
+    {"name": "total_float_days", "type": "number", "required": false},
+    {"name": "milestone", "type": "boolean", "required": false},
+    {"name": "ryg", "type": "enum", "values": ["GREEN", "YELLOW", "RED"], "required": true, "role": "derived_planning_indicator"},
+    {"name": "risk_reasons", "type": "semicolon_delimited_string", "required": false}
+  ],
+  "validation_rules": {
+    "activity_id": ["missing_source_id_warn_and_derive", "duplicates_within_logical_table_error"],
+    "dates": ["unparseable_date_error", "start_after_finish_error"],
+    "duration": ["unparseable_error", "negative_error", "missing_with_dates_derives_calendar_span_info"],
+    "predecessors": ["unknown_error", "self_reference_error", "cycle_error", "resolved_within_logical_table"],
+    "owner_status": ["missing_warn", "unknown_status_warn"],
+    "progress": ["unparseable_error", "range_0_to_100_error"],
+    "float": ["unparseable_error", "negative_is_planning_red", "zero_is_planning_yellow"],
+    "milestone": ["nonzero_span_error", "nonzero_duration_error"]
+  },
+  "ryg_policy": {
+    "RED": [
+      "any_validation_error",
+      "active_activity_overdue",
+      "negative_total_float",
+      "status_blocked"
+    ],
+    "YELLOW": [
+      "any_validation_warning_without_red",
+      "active_activity_due_within_horizon",
+      "zero_total_float",
+      "status_on_hold"
+    ],
+    "GREEN": ["no_red_or_yellow_condition"]
+  },
+  "kpis": [
+    "activities_total",
+    "green_yellow_red_counts",
+    "validation_pass_rate_pct",
+    "field_completeness_pct",
+    "overdue_count",
+    "milestone_count",
+    "negative_float_count",
+    "zero_float_count",
+    "mean_progress_pct",
+    "canonical_status_counts"
+  ],
+  "outputs": {
+    "canonical_csv": "Outputs/excel/schedule/canonical_schedule.csv",
+    "canonical_xlsx": "Outputs/excel/schedule/canonical_schedule.xlsx",
+    "validation_findings_csv": "Outputs/excel/schedule/validation_findings.csv",
+    "kpis_json": "Outputs/excel/schedule/schedule_kpis.json",
+    "schedule_manifest": "Outputs/excel/schedule/schedule_manifest.json",
+    "dashboard_markdown": "Reports/schedule_dashboard.md",
+    "dashboard_xlsx": "Reports/schedule_dashboard.xlsx"
+  }
+}
