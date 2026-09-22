@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.specialist_repair_crew_registry.v2",
   "status": "ACTIVE",
-  "as_of": "2026-09-22T15:06:00+02:00",
+  "as_of": "2026-09-22T15:30:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "SPECIALIST_REPAIR_CREW_REGISTRY_v1.json",
   "activation_rule": "recurrence || P0/P1 severity || cross_repo_centrality || repeated_failed_repair || active_control_repeat",
@@ -430,17 +430,21 @@
       "formal_credit_delta": 0
     },
     "cryoplant_bt0_historian": {
-      "state": "ACTIVE_PROVE_HOLD_RUNNER",
+      "state": "ACTIVE_P1_REPAIRED_REVIEW_AND_OWNER_ENV_PENDING",
       "durable_roots": [
         "HIST-BD-033"
       ],
       "active_roots": [
         "HIST-BD-033"
       ],
-      "repair_pr": "GBOGEB/cryoplant-project#1634",
-      "repair_head": "8d0a99bc7185a00ffa35d34c60df16ba570b447a",
-      "invalidated_pr": "GBOGEB/cryoplant-project#1633",
+      "repair_pr": "GBOGEB/cryoplant-project#1645",
+      "repair_head": "40e75847c562d8c2074b983ca9a03167bf3bff05",
+      "superseded_surfaces": [
+        "#1633 INVALIDATED_STALE_BRANCH",
+        "#1634 P1_REVIEW_SURFACE_CLOSED_UNMERGED"
+      ],
       "non_compensating_runner_gate": "GBOGEB/cryoplant-project#923",
+      "owner_admin_gate": "protected GitHub Environment qps-hepak-owner-attestation + QPS_HEPAK_OWNER_ATTESTATION_HMAC_KEY secret",
       "project_anchor_state": "PENDING_TRUSTED_DIGEST",
       "runtime_credit": "WITHHELD",
       "authority_transfer": false,
