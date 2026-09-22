@@ -1,0 +1,78 @@
+schema: gbogeb.schedule_schema_dashboard.postmerge_receipt.v1
+as_of: '2026-09-22T19:03:28+02:00'
+repo: GBOGEB/pipeline-automation-hub
+state: ACTIVE_SCHEDULE_SCHEMA_DASHBOARD_BOUND
+authority_transfer: false
+formal_credit_delta: 0
+
+lineage:
+  prior_main_runner_merge: 658e78ca8c2bedbcc260bfd683a4913ea3710c65
+  initial_candidate_pr: 401
+  refreshed_candidate_pr: 404
+  final_merge_ref_pr: 408
+  final_head: 0634464ed6e0ef4c0c6ab3fae9c21be92257b0d4
+  final_merge: 5296b400bcb543afee1a3613ff4e2cdedf2102df
+
+bounded_repair:
+  observed_on_run: 35757553896
+  finding: STALE_E2E_RECEIPT_SCHEMA_EXPECTATION
+  repair: EXPECT_PIPELINE_RECEIPT_V3
+  application_defect: false
+
+hosted_proof:
+  excel_schedule_engine:
+    run: 35758132498
+    job: 106848988893
+    conclusion: success
+    proves:
+      - compile_schedule_projection
+      - schedule_projection_unit_tests
+      - excel_engine_integration
+      - main_runner_excel_integration
+  recursive_build:
+    run: 35758132496
+    job: 106848989090
+    conclusion: success
+    proves:
+      - main_runner_compile
+      - recursive_build_tests
+      - full_main_pipeline_e2e
+      - pipeline_receipt_v3_schedule_binding
+
+schedule_contract:
+  schema: excel_schedule_engine/schema/schedule_schema_v1.json
+  canonical_csv: Outputs/excel/schedule/canonical_schedule.csv
+  canonical_xlsx: Outputs/excel/schedule/canonical_schedule.xlsx
+  findings_csv: Outputs/excel/schedule/validation_findings.csv
+  kpis_json: Outputs/excel/schedule/schedule_kpis.json
+  manifest: Outputs/excel/schedule/schedule_manifest.json
+  dashboard_md: Reports/schedule_dashboard.md
+  dashboard_xlsx: Reports/schedule_dashboard.xlsx
+
+validation:
+  - ids_and_duplicates
+  - start_finish_and_duration
+  - predecessor_unknown_self_cycle
+  - owner_and_status
+  - progress_range
+  - float
+  - milestone_semantics
+
+ryg:
+  red:
+    - validation_error
+    - overdue
+    - negative_float
+    - blocked
+  yellow:
+    - validation_warning
+    - due_soon
+    - zero_float
+    - on_hold
+  green:
+    - no_red_or_yellow_condition
+
+next_permissible_slice:
+  id: REAL_WORKBOOK_SCHEDULE_PROOF_AND_BASELINE_DELTA
+  state: OPEN
+  objective: prove_against_real_governed_schedule_input_and_compare_successive_baselines_without_authority_transfer
