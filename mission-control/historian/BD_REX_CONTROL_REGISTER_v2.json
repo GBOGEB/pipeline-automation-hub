@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-22T15:06:00+02:00",
+  "as_of": "2026-09-22T17:05:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -12,14 +12,14 @@
     "audited_prs_minimum": 47,
     "review_finding_occurrences_observed_cumulative": 55,
     "durable_bd_roots_total": 34,
-    "current_open_bd_roots": 1,
-    "current_unresolved_occurrences_minimum": 3,
-    "done_or_control_roots": 32,
+    "current_open_bd_roots": 0,
+    "current_unresolved_occurrences_minimum": 0,
+    "done_or_control_roots": 34,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
     "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
-    "note": "Bounded Historian census only; 83/83 fleet coverage does not imply 83/83 deep audit. HIST-BD-033 is retained as SUPERSEDED history; HIST-BD-034 is the sole active semantic BD root. cryoplant#923, REX-CM-005 and ABACUS#1313 remain independent gates.",
+    "note": "Bounded Historian census only; 83/83 fleet coverage does not imply 83/83 deep audit. Register-control closed accounting includes DONE, CONTROL, SUPERSEDED and INVALIDATED roots. HIST-BD-033 is retained as SUPERSEDED history; HIST-BD-034 is DONE on current-code survival plus trusted exact-payload public execution. REX-CM-005, cryoplant#923 and ABACUS#1313 remain independent gates.",
     "active_prevention_withheld_controls": 1
   },
   "lifecycle": [
@@ -1199,7 +1199,7 @@
       "title": "Fail closed incomplete or non-substantive QPS source receipts",
       "class": "SOURCE_RECEIPT_SUBSTANTIVE_VALIDATION_INCOMPLETE",
       "severity": "P1",
-      "state": "ACTIVE_PROVE",
+      "state": "DONE",
       "occurrence_count": 1,
       "repos": [
         "GBOGEB/cryoplant-project"
@@ -1210,7 +1210,8 @@
         1639,
         1646,
         1651,
-        1660
+        1660,
+        1663
       ],
       "source_issues": [
         1617
@@ -1227,7 +1228,9 @@
         "current-main audit at 293e379c0ba06824fb7988b7e143cab037c5f2c7: residual magnitude used context-sensitive abs(Decimal)",
         "current-main audit at 293e379c0ba06824fb7988b7e143cab037c5f2c7: qualified n/a locator can tokenize to n+a and evade BT2 token rejection",
         "cryoplant-project#1651 post-merge Codex review retained Decimal precision and qualified N/A findings",
-        "cryoplant-project#1659 closed INVALIDATED_STALE_BRANCH after main changed both touched files"
+        "cryoplant-project#1659 closed INVALIDATED_STALE_BRANCH after main changed both touched files",
+        "Q_engineering_tools#99 run35733022880/job106763105783 executed and failed on stale trust-anchor assertion before final proof",
+        "cryoplant-project native Actions remain non-executing under #923; no native runtime PASS claimed"
       ],
       "current_repair": [
         "cryoplant-project#1660 DRAFT",
@@ -1237,17 +1240,26 @@
         "rejects qualified n/a locator tokens while preserving existing na rejection",
         "adds >28-digit Decimal and n/a regressions"
       ],
-      "proof_state": "EXACT_HEAD_REVIEW_PENDING_RUNTIME_HELD_BY_923",
+      "proof_state": "DONE_EQUIVALENT_TRUSTED_PUBLIC_EXECUTION_923_NONCOMPENSATING",
       "proof_refs": [
         "cryoplant-project#1660 exact head 52b6d811df3a0e5a02d5fe12fe560c9b1015710f",
         "Global Victory Score run35735973427/job106773185944 NOT_EXECUTED steps=null",
         "W322 HEPAK MIP Burndown run35735973394/job106773187085 NOT_EXECUTED steps=null",
-        "Codex exact-head review requested on #1660"
+        "Codex exact-head review requested on #1660",
+        "cryoplant-project#1660@52b6d811df3a0e5a02d5fe12fe560c9b1015710f exact-head review clean",
+        "cryoplant-project#1663@ffe279cf2483c94e208b37ae11264bbdca293f8e proof-harness repair review clean",
+        "Q_engineering_tools#101@8060cd53e266d6544305fe93978edb415716c29f",
+        "Q_engineering_tools run35738152179/job106780614008 exact-proof PASS >0 steps",
+        "exact-proof steps PASS: bind exact cryoplant 1663 payload; full normal suite; full python -O suite; empty-source non-compensation; emit proof receipt",
+        "current cryoplant main f6cc2833400011fe2838fbec3234e33a0b1c8279 script blob 18300af7d3b1329cb9f9087a8f319dc6b257af53",
+        "current cryoplant main f6cc2833400011fe2838fbec3234e33a0b1c8279 test blob 1fb204d15b1846c8f6a9c7bf63181e31b009c2cb",
+        "ABACUS#1357 final DOW pointer merged@877cabc47169fd78f2ae81bbc857fbab33aded02",
+        "cryoplant-project#1617 CLOSED_COMPLETED"
       ],
       "non_compensating_gates": [
         "GBOGEB/cryoplant-project#923"
       ],
-      "done_when": "Exact-head current review clean + repair merged/current-code survival + executed regression when private Actions admission is restored or equivalent trusted execution exists. Runtime absence must not be converted to PASS.",
+      "done_when": "SATISFIED_BY_CURRENT_CODE_SURVIVAL_PLUS_TRUSTED_EXACT_PAYLOAD_EXECUTION",
       "authority_transfer": false,
       "formal_credit_delta": 0
     }
@@ -1356,9 +1368,7 @@
       ]
     }
   ],
-  "open_priority": [
-    "HIST-BD-034"
-  ],
+  "open_priority": [],
   "external_non_compensating_gates": [
     {
       "repo": "GBOGEB/cryoplant-project",
@@ -1368,11 +1378,10 @@
     }
   ],
   "next_deep_dive_order": [
-    "consume cryoplant-project#1634 exact-head review; repair only material current-head finding",
-    "when #923 owner-side admission changes, rerun unchanged current-head W322/Release Runner Probe and require runner_id != 0 plus steps > 0",
-    "bind REX-CM-005 through repository-admin merge admission; detector green alone is insufficient",
-    "resume ABACUS#1313 only on real Appendix 8.4/source-evidence return",
-    "after BD033 proof disposition, select next F2 Historian repo by measured unresolved pressure"
+    "select next F2 current mission repo from measured unresolved Historian pressure",
+    "REX-CM-005 owner/admin merge-admission proof when configuration becomes writable",
+    "cryoplant-project#923 remains separate non-compensating runner-admission lane",
+    "ABACUS#1313 remains separate source-extraction/evidence lane"
   ],
   "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE",
   "control_priority": [

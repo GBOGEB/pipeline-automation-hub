@@ -1,0 +1,46 @@
+{
+  "schema": "missioncontrol.historian.hist_bd_034_closeout.v1",
+  "status": "DONE",
+  "as_of": "2026-09-22",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "root": "HIST-BD-034",
+  "semantic_signature": "source_receipt_substantive_validation_incomplete",
+  "source_repo": {
+    "repository": "GBOGEB/cryoplant-project",
+    "current_main": "f6cc2833400011fe2838fbec3234e33a0b1c8279",
+    "repair_prs": [
+      1660,
+      1663
+    ],
+    "current_script_blob": "18300af7d3b1329cb9f9087a8f319dc6b257af53",
+    "current_test_blob": "1fb204d15b1846c8f6a9c7bf63181e31b009c2cb",
+    "issue_1617": "CLOSED_COMPLETED"
+  },
+  "trusted_exact_payload_execution": {
+    "repository": "GBOGEB/Q_engineering_tools",
+    "pr": 101,
+    "head": "8060cd53e266d6544305fe93978edb415716c29f",
+    "run": 35738152179,
+    "job": 106780614008,
+    "conclusion": "PASS",
+    "passed_steps": [
+      "Bind exact cryoplant 1663 payload",
+      "Prove full normal unit suite",
+      "Prove full optimized-interpreter suite",
+      "Prove empty-source non-compensation",
+      "Emit exact proof receipt"
+    ]
+  },
+  "negative_evidence": [
+    "Q_engineering_tools#99 run35733022880/job106763105783 executed and failed before final harness correction",
+    "cryoplant-project private Actions remain non-executing under #923"
+  ],
+  "non_compensating": [
+    "GBOGEB/cryoplant-project#923",
+    "REX-CM-005"
+  ],
+  "downstream_pointer": "GBOGEB/ABACUS#1357",
+  "disposition": "DONE_NOT_CONTROL",
+  "next": "SELECT_NEXT_F2_BY_MEASURED_UNRESOLVED_PRESSURE"
+}
