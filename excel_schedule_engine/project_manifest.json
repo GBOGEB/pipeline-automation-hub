@@ -1,8 +1,8 @@
 {
   "schema": "gbogeb.excel_schedule_engine.project_manifest.v1",
-  "version": "v0.3.0",
-  "as_of": "2026-09-22T18:51:00+02:00",
-  "state": "PLANNING_SCHEDULE_SCHEMA_DASHBOARD_CANDIDATE",
+  "version": "v0.3.1",
+  "as_of": "2026-09-22T19:03:28+02:00",
+  "state": "ACTIVE_SCHEDULE_SCHEMA_DASHBOARD_BOUND",
   "purpose": "Excel parser/engine for planning and scheduling tables feeding the MAIN pipeline.",
   "authority": {
     "input_source": "ActiveDocs/MASTER.xlsx",
@@ -108,7 +108,33 @@
     "schedule_projection": "excel_schedule_engine/src/schedule_projection.py",
     "schedule_schema": "excel_schedule_engine/schema/schedule_schema_v1.json",
     "schedule_dashboard_mode": "DERIVED_DECISION_SUPPORT",
-    "schedule_runtime_failure": "FAIL_CLOSED_WHEN_EXCEL_REQUESTED"
+    "schedule_runtime_failure": "FAIL_CLOSED_WHEN_EXCEL_REQUESTED",
+    "schedule_schema_dashboard_pr": 408,
+    "schedule_schema_dashboard_head": "0634464ed6e0ef4c0c6ab3fae9c21be92257b0d4",
+    "schedule_schema_dashboard_merge": "5296b400bcb543afee1a3613ff4e2cdedf2102df",
+    "schedule_hosted_proof": {
+      "excel_schedule_engine": {
+        "run": 35758132498,
+        "job": 106848988893,
+        "conclusion": "success"
+      },
+      "recursive_build": {
+        "run": 35758132496,
+        "job": 106848989090,
+        "conclusion": "success"
+      }
+    },
+    "schedule_proof_scope": [
+      "canonical_schema_mapping",
+      "schedule_semantic_validation",
+      "predecessor_integrity_and_cycle_detection",
+      "csv_xlsx_canonical_projection",
+      "kpi_json_generation",
+      "markdown_xlsx_ryg_dashboard",
+      "schedule_manifest_sha256_binding",
+      "pipeline_receipt_v3_schedule_binding",
+      "real_excel_subprocess_from_main_runner"
+    ]
   },
   "p1_hotfix": {
     "source": "post-merge Codex review on pipeline-automation-hub#275",
@@ -119,5 +145,5 @@
     ],
     "local_tests": "6/6 PASS"
   },
-  "next_objective": "HOSTED_PROOF_THEN_GLOBAL_TOPOLOGY_PROMOTION"
+  "next_objective": "REAL_WORKBOOK_SCHEDULE_PROOF_AND_BASELINE_DELTA"
 }
