@@ -1,0 +1,106 @@
+{
+  "schema": "missioncontrol.3pstar_mip.bd033_pulse.v1",
+  "status": "PARTIAL_SUCCESS_PROOF_AND_OWNER_GATES_REMAIN",
+  "as_of": "2026-09-22T15:06:00+02:00",
+  "execution_wave_type": "PARTIAL",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "exact_heads": {
+    "pipeline_automation_hub_master": "216e13914c0fd9d559f6fdc50c0f2a3df3f42cf1",
+    "abacus_main": "a9926a4f460833fd467a12af2fc09c333079261b",
+    "cryoplant_project_main": "df84ddc293efd3c9fdb2e8cb098c745d26bdac3a",
+    "cryoplant_bd033_repair": "8d0a99bc7185a00ffa35d34c60df16ba570b447a"
+  },
+  "three_pr": {
+    "refresh": {
+      "result": "PASS",
+      "facts": [
+        "BD register already contained HIST-BD-001..032 drained",
+        "cryoplant#923 still reproduces private Actions pre-execution failures",
+        "REX-CM-005 remains prevention-withheld",
+        "ABACUS#1313 remains source-evidence pending"
+      ]
+    },
+    "probe": {
+      "result": "PASS_MATERIAL_FIRST_RED",
+      "finding": "repo-local ACTIVE trust anchor can self-attest arbitrary HEPAK workbook digest",
+      "allocated_root": "HIST-BD-033",
+      "stale_branch_guard": "draft #1633 invalidated after exact diff exposed unrelated BT2 rollback"
+    },
+    "rank": {
+      "result": "PASS",
+      "order": [
+        "HIST-BD-033 -> PROVE/HOLD_RUNNER (implementation draft #1634)",
+        "cryoplant#923 -> RETURN/OWNER_ACTION_REQUIRED",
+        "REX-CM-005 -> RETURN/OWNER_ADMIN_REQUIRED",
+        "ABACUS#1313 -> RETURN/SOURCE_EVIDENCE_REQUIRED"
+      ]
+    }
+  },
+  "mip": {
+    "modernize": {
+      "result": "PASS",
+      "changes": [
+        "durable roots 32 -> 33",
+        "open semantic roots 0 -> 1",
+        "zero-step cryoplant failures remain collapsed to #923",
+        "stale branch contamination retained as invalidated negative evidence, not a new root"
+      ]
+    },
+    "innovate": {
+      "result": "PASS_CANDIDATE",
+      "controls": [
+        "three-layer BT0 trust: receipt + repo anchor + owner-controlled environment attestation",
+        "source_file path containment under governed root",
+        "draft-first + exact diff guard for follow-up repair branches"
+      ]
+    },
+    "perpetuate": {
+      "result": "PASS_PARTIAL",
+      "actions": [
+        "BD033 registered ACTIVE",
+        "Doctor.Contracts/Historian allocated",
+        "REX-CM-005 cross-repo recurrence evidence extended to cryoplant",
+        "runtime and formal credit remain withheld"
+      ]
+    }
+  },
+  "scorecard": {
+    "prior_durable_roots": 32,
+    "new_roots": 1,
+    "reopened_roots": 0,
+    "gross_retirements": 0,
+    "net_bd_delta": 1,
+    "current_open_roots": 1,
+    "proof_backlog_roots": 1,
+    "external_or_owner_waits": [
+      "cryoplant-project#923",
+      "ABACUS#1278 / REX-CM-005",
+      "ABACUS#1313"
+    ],
+    "note": "Positive net delta is a measured discovery pulse, not a fabricated convergence claim."
+  },
+  "current_first_red": {
+    "root": "HIST-BD-033",
+    "issue": "GBOGEB/cryoplant-project#1635",
+    "repair_pr": "GBOGEB/cryoplant-project#1634",
+    "repair_head": "8d0a99bc7185a00ffa35d34c60df16ba570b447a",
+    "review_state": "PENDING_AT_SNAPSHOT",
+    "runtime_state": "WITHHELD_BY_923"
+  },
+  "owner_actions": {
+    "cryoplant_923": [
+      "Restore private-repository GitHub Actions admission/billing/usage or attach a trusted self-hosted runner.",
+      "Do not edit application/workflow semantics to work around zero-step admission.",
+      "After the owner-side change, rerun the unchanged Release Runner Probe and require runner_id != 0 and steps > 0."
+    ],
+    "rex_cm_005": [
+      "Bind the required CI/governance check to branch/ruleset merge admission.",
+      "Prove an intentionally red governed change is non-mergeable, then a later green classified change is mergeable."
+    ],
+    "bt0_source": [
+      "Provide the real HEPAK workbook SHA-256 and workbook identity through the owner-controlled execution boundary; do not invent or infer the digest."
+    ]
+  },
+  "next": "CONSUME_PR1634_REVIEW_THEN_REPAIR_OR_HOLD; DO_NOT_PROMOTE_BD033_OR_RUNTIME_GOLD_WITHOUT_REQUIRED_PROOF"
+}
