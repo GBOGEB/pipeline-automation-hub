@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.specialist_repair_crew_registry.v2",
   "status": "ACTIVE",
-  "as_of": "2026-09-22T15:06:00+02:00",
+  "as_of": "2026-09-22T15:50:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "SPECIALIST_REPAIR_CREW_REGISTRY_v1.json",
   "activation_rule": "recurrence || P0/P1 severity || cross_repo_centrality || repeated_failed_repair || active_control_repeat",
@@ -112,11 +112,12 @@
         "HIST-BD-026",
         "HIST-BD-031",
         "HIST-BD-032",
-        "HIST-BD-033"
+        "HIST-BD-033",
+        "HIST-BD-034"
       ],
       "active_scope": [
         "REX-CM-005",
-        "HIST-BD-033"
+        "HIST-BD-034"
       ],
       "done_scope": [
         "HIST-BD-002",
@@ -137,7 +138,7 @@
         "HIST-BD-031",
         "HIST-BD-032"
       ],
-      "current_mission": "REX_CM_005_AND_BD033_SOURCE_TRUST",
+      "current_mission": "REX_CM_005_AND_BD034_SOURCE_RECEIPT_TRUST",
       "secondment": [
         "H2_KEB",
         "HISTORIAN",
@@ -242,14 +243,15 @@
         "HIST-BD-030",
         "HIST-BD-031",
         "HIST-BD-032",
-        "HIST-BD-033"
+        "HIST-BD-033",
+        "HIST-BD-034"
       ],
       "active_scope": [
         "REX-CM-005",
         "fleet deep-dive expansion",
-        "HIST-BD-033"
+        "HIST-BD-034"
       ],
-      "current_mission": "BD033_PROOF_THEN_F2_PRESSURE_SELECTION",
+      "current_mission": "BD034_PROVE_THEN_F2_PRESSURE_SELECTION",
       "secondment": [
         "H1_QPS",
         "H2_KEB",
