@@ -105,7 +105,7 @@ class MainPipelineEndToEndTests(unittest.TestCase):
         self.assertTrue(recursive["status"].startswith("PASS"))
         self.assertEqual(recursive["record_count"], 1)
 
-        self.assertEqual(pipeline["schema"], "pipeline_automation_hub.pipeline_run_receipt.v2")
+        self.assertEqual(pipeline["schema"], "pipeline_automation_hub.pipeline_run_receipt.v3")
         self.assertEqual(pipeline["status"], "PASS")
         self.assertEqual(pipeline["authority"], AUTHORITY)
         self.assertEqual(pipeline["phases"]["metadata"]["sha256"], sha256_file(summary_path))
@@ -146,8 +146,12 @@ class MainPipelineEndToEndTests(unittest.TestCase):
 
         pipeline_path = self.output_dir / "pipeline_run_receipt.json"
         manifest_path = excel_root / "Outputs" / "excel" / "table_manifest.json"
+        schedule_manifest_path = (
+            excel_root / "Outputs" / "excel" / "schedule" / "schedule_manifest.json"
+        )
         self.assertTrue(pipeline_path.exists())
         self.assertTrue(manifest_path.exists())
+        self.assertTrue(schedule_manifest_path.exists())
 
         pipeline = json.loads(pipeline_path.read_text(encoding="utf-8"))
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -157,6 +161,13 @@ class MainPipelineEndToEndTests(unittest.TestCase):
         self.assertEqual(excel_phase["status"], "PASS")
         self.assertTrue(excel_phase["requested"])
         self.assertEqual(excel_phase["sha256"], sha256_file(manifest_path))
+        projection = excel_phase["schedule_projection"]
+        self.assertEqual(projection["status"], "PASS")
+        self.assertEqual(
+            projection["sha256"],
+            sha256_file(schedule_manifest_path),
+        )
+        self.assertFalse(projection["authority_transfer"])
         self.assertEqual(manifest["summary"]["errors"], 0)
         self.assertGreaterEqual(manifest["summary"]["tables_exported"], 1)
         self.assertGreaterEqual(manifest["summary"]["schedule_candidates"], 1)
