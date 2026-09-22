@@ -1,8 +1,8 @@
 {
   "schema": "gbogeb.excel_schedule_engine.project_manifest.v1",
-  "version": "v0.2.1",
-  "as_of": "2026-09-18T19:22:00+02:00",
-  "state": "ACTIVE_MAIN_RUNNER_BOUND",
+  "version": "v0.3.0",
+  "as_of": "2026-09-22T18:51:00+02:00",
+  "state": "PLANNING_SCHEDULE_SCHEMA_DASHBOARD_CANDIDATE",
   "purpose": "Excel parser/engine for planning and scheduling tables feeding the MAIN pipeline.",
   "authority": {
     "input_source": "ActiveDocs/MASTER.xlsx",
@@ -18,7 +18,13 @@
       "EXPORT_TABLE_XLSX",
       "CLASSIFY_SCHEDULE_CANDIDATES",
       "BUILD_TABLE_MANIFEST",
-      "BUILD_HUMAN_SCHEDULE_INDEX"
+      "BUILD_HUMAN_SCHEDULE_INDEX",
+      "MAP_CANONICAL_SCHEDULE_SCHEMA",
+      "VALIDATE_SCHEDULE_SEMANTICS",
+      "BUILD_SCHEDULE_PROJECTION",
+      "CALCULATE_PLANNING_KPIS",
+      "BUILD_RYG_DASHBOARD",
+      "BIND_SCHEDULE_MANIFEST"
     ]
   },
   "inputs": [
@@ -30,7 +36,15 @@
     "xlsx_tables": "Outputs/excel/tables_xlsx/",
     "table_manifest": "Outputs/excel/table_manifest.json",
     "schedule_index_csv": "Reports/schedule_index.csv",
-    "schedule_index_md": "Reports/schedule_index.md"
+    "schedule_index_md": "Reports/schedule_index.md",
+    "schedule_schema": "excel_schedule_engine/schema/schedule_schema_v1.json",
+    "canonical_schedule_csv": "Outputs/excel/schedule/canonical_schedule.csv",
+    "canonical_schedule_xlsx": "Outputs/excel/schedule/canonical_schedule.xlsx",
+    "validation_findings_csv": "Outputs/excel/schedule/validation_findings.csv",
+    "schedule_kpis": "Outputs/excel/schedule/schedule_kpis.json",
+    "schedule_manifest": "Outputs/excel/schedule/schedule_manifest.json",
+    "schedule_dashboard_md": "Reports/schedule_dashboard.md",
+    "schedule_dashboard_xlsx": "Reports/schedule_dashboard.xlsx"
   },
   "success_criteria": {
     "logical_tables_exported_as_csv": 1,
@@ -42,7 +56,15 @@
     "export_id_collisions": 0,
     "used_range_origin_errors": 0,
     "main_runner_excel_manifest_hash_binding": 1,
-    "main_runner_backward_compatibility_regressions": 0
+    "main_runner_backward_compatibility_regressions": 0,
+    "duplicate_activity_ids_unflagged": 0,
+    "start_after_finish_unflagged": 0,
+    "unresolved_predecessors_unflagged": 0,
+    "predecessor_cycles_unflagged": 0,
+    "progress_out_of_range_unflagged": 0,
+    "milestone_semantic_errors_unflagged": 0,
+    "schedule_manifest_hash_coverage": 1,
+    "dashboard_authority_transfer": 0
   },
   "runtime": {
     "language": "python",
@@ -58,7 +80,7 @@
     "excel_addin_role": "LEGACY_EXTERNAL_RUNTIME_REFERENCE_NOT_PARSER_AUTHORITY",
     "main_runner": "scripts/run_processing.py",
     "main_runner_mode": "OPTIONAL_EXPLICIT_EXCEL_PHASE",
-    "pipeline_receipt_schema": "pipeline_automation_hub.pipeline_run_receipt.v2",
+    "pipeline_receipt_schema": "pipeline_automation_hub.pipeline_run_receipt.v3",
     "fail_closed_when_excel_requested": true,
     "default_behavior_without_excel": "UNCHANGED",
     "main_runner_pr": 298,
@@ -82,7 +104,11 @@
       "manifest_sha_binding_into_pipeline_receipt_v2",
       "backward_compatibility_without_excel",
       "fail_closed_when_excel_requested"
-    ]
+    ],
+    "schedule_projection": "excel_schedule_engine/src/schedule_projection.py",
+    "schedule_schema": "excel_schedule_engine/schema/schedule_schema_v1.json",
+    "schedule_dashboard_mode": "DERIVED_DECISION_SUPPORT",
+    "schedule_runtime_failure": "FAIL_CLOSED_WHEN_EXCEL_REQUESTED"
   },
   "p1_hotfix": {
     "source": "post-merge Codex review on pipeline-automation-hub#275",
@@ -93,5 +119,5 @@
     ],
     "local_tests": "6/6 PASS"
   },
-  "next_objective": "PLANNING_SCHEDULE_SCHEMA_AND_DASHBOARD_BINDING"
+  "next_objective": "HOSTED_PROOF_THEN_GLOBAL_TOPOLOGY_PROMOTION"
 }
