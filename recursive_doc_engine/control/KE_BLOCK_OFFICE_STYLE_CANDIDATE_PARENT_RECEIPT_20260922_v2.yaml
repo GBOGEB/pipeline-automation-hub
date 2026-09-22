@@ -1,0 +1,150 @@
+schema: missioncontrol.ke_block_roundtrip.office_style_candidate_parent_receipt.v2
+as_of: "2026-09-22T15:07:00+02:00"
+repository: GBOGEB/pipeline-automation-hub
+base_master_sha: 51371fd71cad8d2a0e703c8b003848478377e2ed
+authority_transfer: false
+formal_credit_delta: 0
+
+supersedes_operationally:
+  path: recursive_doc_engine/control/KE_BLOCK_OFFICE_STYLE_CANDIDATE_PARENT_RECEIPT_20260919_v1.yaml
+  reason: style candidate gained deterministic render-host font resolution and visible token coverage proof
+
+approved_visual_baseline:
+  state: USER_APPROVED_IMMUTABLE_REFERENCE
+  docx_sha256: e936ffcb89eb7da13b8be8d447c8453b5b4499a4907390816846f5c8ec94a6b9
+  pdf_sha256: 654e74630861b5b398ab577d55da5f692bf4549b0af480498822428109353b02
+  replacement: WITHHELD
+
+style_candidate:
+  style_id: QPS_TECH_GRAPHITE_TEAL_COPPER_V1
+  source_style_sha256: 9338e9634185c5ae9184533ddc77541badd7ba84ea6bf7c9fb576c5c01a02df8
+  semantic_style_intent_changed: false
+
+consumer_lineage:
+  repo: GBOGEB/DOCX_RTM_Automation
+  mip_issue: 73
+  feature_pr: 74
+  feature_merge_sha: fbb931d28b551f33f6988882c9a983dc69dcde42
+  control_pr: 75
+  control_merge_sha: f7620c308be6fb4288b19f6dcd59e2a27df57d6a
+  functional_head_sha: 7f5cfc7fc693db13fcdebe83a84f1604279f1818
+  python_ci:
+    run_id: 35730488649
+    job_id: 106754547629
+    conclusion: success
+  render_ci:
+    run_id: 35730488674
+    job_id: 106754547718
+    conclusion: success
+    executable_steps_gt_zero: true
+  artifact:
+    id: 10694454768
+    digest: sha256:f791e91b39604f5761e316ced3ef0c4cda6fcb39ef10c71aa3edd92d74516b00
+
+producer_receipt:
+  repo: GBOGEB/document-organization-system
+  issue: 72
+  pr: 73
+  merge_sha: 3c57b9ed674f50af7650ba9aa306d6b182caee28
+  projection_ci:
+    run_id: 35731280888
+    job_id: 106757178817
+    conclusion: success
+
+font_resolution:
+  state: PASS
+  resolver: fontconfig-exact-family
+  installed_family_count: 20
+  resolved_style_sha256: 4ea6c9a2b0fe26ddc6ed4e5954832fca8cbaad4572d2c216547c11d8de2c76cf
+  roles:
+    body:
+      requested: Aptos
+      selected: Liberation Sans
+      fallback_used: true
+    heading:
+      requested: Aptos Display
+      selected: Liberation Sans
+      fallback_used: true
+    mono:
+      requested: Aptos Mono
+      selected: Liberation Mono
+      fallback_used: true
+
+visible_style_specimen:
+  state: PASS
+  docx_sha256: 2a5413ead320950e4ec7756fe6f875f3718ba419bae52f4df44f058a6bc55cdc
+  failed_checks: 0
+  table_count: 2
+  covered:
+    - title_h1_h2_h3
+    - special_heading_numbers
+    - requirement_id
+    - metadata_label
+    - caption_number
+    - table_header_and_borders
+    - callout_fill_and_accent
+  independent_visual_qa:
+    result: PASS
+    clipping: NONE
+    overlap: NONE
+
+canonical_candidate_render:
+  state: PASS
+  docx_sha256: 5f4a075d81a47fa0904bdd24b672d6c13595cc1137c9572836c3f443d525e415
+  pdf_sha256: 8b39a9959756dbc9fea92ee33d28b0fa86396f1f7b6fa58917b39a3292117d30
+  pdf_pages: 2
+  split_requirements: []
+  semantic_source_invariance: PASS
+  markdown_projection_invariance: PASS
+  independent_visual_qa: PASS
+  inherited_sparse_page_2: OBSERVED_NON_REGRESSION
+
+visual_delta_vs_approved_baseline:
+  page_count_equal: true
+  mean_changed_pixel_ratio: 0.0767814
+  page_1_changed_pixel_ratio: 0.11134631
+  page_2_changed_pixel_ratio: 0.04221649
+
+sequence:
+  - phase: 3PR_REFRESH
+    state: PASS
+  - phase: 3PR_PROBE
+    state: PASS
+  - phase: 3PR_RANK
+    state: PASS
+    first_red: STYLE_FONT_RESOLUTION_AND_VISIBLE_TOKEN_COVERAGE
+  - phase: MIP_MODERNIZE
+    state: PASS
+    change: implicit font substitution became deterministic governed resolution
+  - phase: MIP_INNOVATE
+    state: PASS
+    change: QA-only style specimen visibly exercises otherwise absent token roles
+  - phase: MIP_PERPETUATE
+    state: PASS
+    change: receipts and cross-repo lineage persisted
+  - phase: 3PC_PROVE
+    state: PASS
+  - phase: 3PC_COMMIT
+    state: PASS
+
+promotion:
+  closed_first_red: STYLE_FONT_RESOLUTION_AND_VISIBLE_TOKEN_COVERAGE
+  current_first_red: USER_STYLE_REVIEW
+  style_candidate_state: READY_FOR_USER_VISUAL_DISPOSITION
+  accepted_visual_baseline: UNCHANGED
+  candidate_baseline_replacement: WITHHELD
+  remaining_requires:
+    - EXPLICIT_USER_STYLE_APPROVAL
+
+non_compensation:
+  deterministic_font_resolution_ne_user_font_preference: true
+  independent_visual_qa_ne_user_style_approval: true
+  style_specimen_ne_semantic_content: true
+  style_candidate_ne_semantic_ssot: true
+  engineering_credit: false
+  compliance_credit: false
+  procurement_acceptance_credit: false
+
+stop_state:
+  state: SAFE_HOLD_USER_STYLE_REVIEW
+  first_red: USER_STYLE_REVIEW
