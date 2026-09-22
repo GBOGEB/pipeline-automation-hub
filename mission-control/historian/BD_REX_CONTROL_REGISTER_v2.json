@@ -11,15 +11,15 @@
   "bounded_sample": {
     "audited_prs_minimum": 47,
     "review_finding_occurrences_observed_cumulative": 55,
-    "durable_bd_roots_total": 33,
+    "durable_bd_roots_total": 34,
     "current_open_bd_roots": 1,
-    "current_unresolved_occurrences_minimum": 1,
+    "current_unresolved_occurrences_minimum": 3,
     "done_or_control_roots": 32,
     "recurring_root_families_total": 5,
     "recurring_open_families": 0,
     "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
-    "note": "Bounded Historian census only; 83/83 fleet coverage does not imply 83/83 deep audit. HIST-BD-033 is the sole currently open semantic BD root. cryoplant#923, REX-CM-005 and ABACUS#1313 are independent non-coding owner/admin/source gates.",
+    "note": "Bounded Historian census only; 83/83 fleet coverage does not imply 83/83 deep audit. HIST-BD-033 is retained as SUPERSEDED history; HIST-BD-034 is the sole active semantic BD root. cryoplant#923, REX-CM-005 and ABACUS#1313 remain independent gates.",
     "active_prevention_withheld_controls": 1
   },
   "lifecycle": [
@@ -1143,7 +1143,7 @@
       "title": "Prevent repo-local self-attestation of BT0 HEPAK source trust",
       "class": "SOURCE_TRUST_AUTHORITY_BOUNDARY",
       "severity": "P1",
-      "state": "ACTIVE",
+      "state": "SUPERSEDED",
       "occurrence_count": 1,
       "repos": [
         "GBOGEB/cryoplant-project"
@@ -1180,6 +1180,69 @@
         "verify-ssot run35732308950/job106760673654 NOT_EXECUTED steps=null",
         "Global Victory Score run35732308999/job106760675823 NOT_EXECUTED steps=null",
         "Codex exact-head review requested on 8d0a99bc7185a00ffa35d34c60df16ba570b447a and pending at snapshot"
+      ],
+      "non_compensating_gates": [
+        "GBOGEB/cryoplant-project#923"
+      ],
+      "done_when": "Exact-head current review clean + repair merged/current-code survival + executed regression when private Actions admission is restored or equivalent trusted execution exists. Runtime absence must not be converted to PASS.",
+      "authority_transfer": false,
+      "formal_credit_delta": 0,
+      "superseded_by": "HIST-BD-034",
+      "supersession_basis": [
+        "cryoplant-project#1617 remains the canonical broader semantic root SOURCE_RECEIPT_SUBSTANTIVE_VALIDATION_INCOMPLETE",
+        "BT0 source-trust boundary is retained as one manifestation under the broader source-receipt root",
+        "cryoplant-project#1646/#1651/#1660 converge the same root without deleting BD033 history"
+      ]
+    },
+    {
+      "bd_id": "HIST-BD-034",
+      "title": "Fail closed incomplete or non-substantive QPS source receipts",
+      "class": "SOURCE_RECEIPT_SUBSTANTIVE_VALIDATION_INCOMPLETE",
+      "severity": "P1",
+      "state": "ACTIVE_PROVE",
+      "occurrence_count": 1,
+      "repos": [
+        "GBOGEB/cryoplant-project"
+      ],
+      "source_prs": [
+        1608,
+        1636,
+        1639,
+        1646,
+        1651,
+        1660
+      ],
+      "source_issues": [
+        1617
+      ],
+      "rex_control_id": null,
+      "crew_owner": [
+        "Doctor.Contracts",
+        "HISTORIAN",
+        "QA_SIGNALMAN"
+      ],
+      "semantic_signature": "source_receipt_substantive_validation_incomplete",
+      "negative_evidence": [
+        "current-main audit at 293e379c0ba06824fb7988b7e143cab037c5f2c7: BT2 authority used substring admission, so OPEN_SOURCE_REQUIRED could satisfy SOURCE",
+        "current-main audit at 293e379c0ba06824fb7988b7e143cab037c5f2c7: residual magnitude used context-sensitive abs(Decimal)",
+        "current-main audit at 293e379c0ba06824fb7988b7e143cab037c5f2c7: qualified n/a locator can tokenize to n+a and evade BT2 token rejection",
+        "cryoplant-project#1651 post-merge Codex review retained Decimal precision and qualified N/A findings",
+        "cryoplant-project#1659 closed INVALIDATED_STALE_BRANCH after main changed both touched files"
+      ],
+      "current_repair": [
+        "cryoplant-project#1660 DRAFT",
+        "repair head 52b6d811df3a0e5a02d5fe12fe560c9b1015710f",
+        "restores exact #1636 BT2 source-bearing authority allowlist",
+        "uses Decimal.copy_abs() for context-independent residual magnitude",
+        "rejects qualified n/a locator tokens while preserving existing na rejection",
+        "adds >28-digit Decimal and n/a regressions"
+      ],
+      "proof_state": "EXACT_HEAD_REVIEW_PENDING_RUNTIME_HELD_BY_923",
+      "proof_refs": [
+        "cryoplant-project#1660 exact head 52b6d811df3a0e5a02d5fe12fe560c9b1015710f",
+        "Global Victory Score run35735973427/job106773185944 NOT_EXECUTED steps=null",
+        "W322 HEPAK MIP Burndown run35735973394/job106773187085 NOT_EXECUTED steps=null",
+        "Codex exact-head review requested on #1660"
       ],
       "non_compensating_gates": [
         "GBOGEB/cryoplant-project#923"
@@ -1294,7 +1357,7 @@
     }
   ],
   "open_priority": [
-    "HIST-BD-033"
+    "HIST-BD-034"
   ],
   "external_non_compensating_gates": [
     {
