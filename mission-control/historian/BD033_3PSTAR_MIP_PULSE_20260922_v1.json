@@ -1,15 +1,15 @@
 {
   "schema": "missioncontrol.3pstar_mip.bd033_pulse.v1",
-  "status": "PARTIAL_SUCCESS_PROOF_AND_OWNER_GATES_REMAIN",
-  "as_of": "2026-09-22T15:06:00+02:00",
+  "status": "PARTIAL_SUCCESS_REPAIR_ITERATION_ACTIVE",
+  "as_of": "2026-09-22T15:30:00+02:00",
   "execution_wave_type": "PARTIAL",
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "exact_heads": {
     "pipeline_automation_hub_master": "216e13914c0fd9d559f6fdc50c0f2a3df3f42cf1",
     "abacus_main": "a9926a4f460833fd467a12af2fc09c333079261b",
-    "cryoplant_project_main": "df84ddc293efd3c9fdb2e8cb098c745d26bdac3a",
-    "cryoplant_bd033_repair": "8d0a99bc7185a00ffa35d34c60df16ba570b447a"
+    "cryoplant_project_main": "0fa104517fd98c57903ddc37f3fd34958694c80c",
+    "cryoplant_bd033_repair": "40e75847c562d8c2074b983ca9a03167bf3bff05"
   },
   "three_pr": {
     "refresh": {
@@ -25,12 +25,18 @@
       "result": "PASS_MATERIAL_FIRST_RED",
       "finding": "repo-local ACTIVE trust anchor can self-attest arbitrary HEPAK workbook digest",
       "allocated_root": "HIST-BD-033",
-      "stale_branch_guard": "draft #1633 invalidated after exact diff exposed unrelated BT2 rollback"
+      "stale_branch_guard": "draft #1633 invalidated after exact diff exposed unrelated BT2 rollback",
+      "evidence": [
+        "HIST-BD-033 allocated from repo-local self-attestation defect",
+        "#1633 invalidated because stale branch rolled back BT2",
+        "#1634 review found P1: caller-settable env values are not owner authentication",
+        "#1645 current repair uses signed anchor + protected environment secret"
+      ]
     },
     "rank": {
       "result": "PASS",
       "order": [
-        "HIST-BD-033 -> PROVE/HOLD_RUNNER (implementation draft #1634)",
+        "HIST-BD-033 -> ACTIVE / REVIEW + OWNER_ENV + SOURCE + RUNNER PROOF",
         "cryoplant#923 -> RETURN/OWNER_ACTION_REQUIRED",
         "REX-CM-005 -> RETURN/OWNER_ADMIN_REQUIRED",
         "ABACUS#1313 -> RETURN/SOURCE_EVIDENCE_REQUIRED"
@@ -48,20 +54,24 @@
       ]
     },
     "innovate": {
-      "result": "PASS_CANDIDATE",
+      "result": "ACTIVE_REPAIR_SIGNED_PROTECTED_ATTESTATION",
       "controls": [
-        "three-layer BT0 trust: receipt + repo anchor + owner-controlled environment attestation",
+        "HMAC-SHA256 signed anchor canonical payload",
+        "manual-only qps-hepak-owner-attestation environment path",
+        "protected secret QPS_HEPAK_OWNER_ATTESTATION_HMAC_KEY must be owner/admin configured outside repo",
+        "public workbook/SHA env values explicitly do not establish authority",
         "source_file path containment under governed root",
-        "draft-first + exact diff guard for follow-up repair branches"
+        "current-base exact-diff guard and draft-first review surface"
       ]
     },
     "perpetuate": {
       "result": "PASS_PARTIAL",
       "actions": [
-        "BD033 registered ACTIVE",
-        "Doctor.Contracts/Historian allocated",
-        "REX-CM-005 cross-repo recurrence evidence extended to cryoplant",
-        "runtime and formal credit remain withheld"
+        "BD033 remains ACTIVE",
+        "Doctor.Contracts/Historian remain allocated",
+        "negative #1633/#1634 evidence retained",
+        "REX-CM-005 remains prevention-withheld",
+        "runtime/formal/numerical credit remains withheld"
       ]
     }
   },
@@ -83,10 +93,11 @@
   "current_first_red": {
     "root": "HIST-BD-033",
     "issue": "GBOGEB/cryoplant-project#1635",
-    "repair_pr": "GBOGEB/cryoplant-project#1634",
-    "repair_head": "8d0a99bc7185a00ffa35d34c60df16ba570b447a",
-    "review_state": "PENDING_AT_SNAPSHOT",
-    "runtime_state": "WITHHELD_BY_923"
+    "repair_pr": "GBOGEB/cryoplant-project#1645",
+    "repair_head": "40e75847c562d8c2074b983ca9a03167bf3bff05",
+    "review_state": "PENDING_AFTER_SIGNED_PROTECTED_REPAIR",
+    "runtime_state": "WITHHELD_BY_923",
+    "owner_environment_state": "NOT_VERIFIED_CONFIGURED"
   },
   "owner_actions": {
     "cryoplant_923": [
@@ -99,8 +110,12 @@
       "Prove an intentionally red governed change is non-mergeable, then a later green classified change is mergeable."
     ],
     "bt0_source": [
-      "Provide the real HEPAK workbook SHA-256 and workbook identity through the owner-controlled execution boundary; do not invent or infer the digest."
+      "Create/configure GitHub Environment qps-hepak-owner-attestation with required protection/reviewer policy.",
+      "Set environment secret QPS_HEPAK_OWNER_ATTESTATION_HMAC_KEY; never commit or paste the secret.",
+      "Provide the real HEPAK workbook SHA-256 and workbook identity through the authenticated owner return.",
+      "Create the ACTIVE anchor signature from the real canonical payload using the owner-held key; test-only signatures are not project evidence.",
+      "Dispatch the manual owner-attested job only after the real receipt/anchor exists."
     ]
   },
-  "next": "CONSUME_PR1634_REVIEW_THEN_REPAIR_OR_HOLD; DO_NOT_PROMOTE_BD033_OR_RUNTIME_GOLD_WITHOUT_REQUIRED_PROOF"
+  "next": "CONSUME_PR1645_REVIEW; REPAIR_ONLY_MATERIAL_FINDING; THEN OWNER_ENV+SOURCE+RUNNER_PROOF. DO_NOT_PROMOTE_BD033 OR RUNTIME GOLD EARLY."
 }
