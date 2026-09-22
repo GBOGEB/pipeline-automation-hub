@@ -1,0 +1,136 @@
+schema: missioncontrol.docx_style_convergence_handover/1.0.0
+as_of: "2026-09-22T15:40:00+02:00"
+repository: GBOGEB/pipeline-automation-hub
+authority_transfer: false
+formal_credit_delta: 0
+
+scope:
+  topic: DOCX_VISUAL_STYLE_CONVERGENCE
+  execution_wave_type: PARTIAL
+  source_repo: GBOGEB/DOCX_RTM_Automation
+
+approved_baseline:
+  state: USER_APPROVED_IMMUTABLE_REFERENCE
+  docx_sha256: e936ffcb89eb7da13b8be8d447c8453b5b4499a4907390816846f5c8ec94a6b9
+  pdf_sha256: 654e74630861b5b398ab577d55da5f692bf4549b0af480498822428109353b02
+  replacement: WITHHELD
+
+style_candidate:
+  style_id: QPS_TECH_GRAPHITE_TEAL_COPPER_V1
+  source_style_sha256: 9338e9634185c5ae9184533ddc77541badd7ba84ea6bf7c9fb576c5c01a02df8
+  semantic_style_intent_changed: false
+  prior_mip_feature_pr: 74
+  prior_mip_feature_merge_sha: fbb931d28b551f33f6988882c9a983dc69dcde42
+  prior_control_pr: 75
+  prior_control_merge_sha: f7620c308be6fb4288b19f6dcd59e2a27df57d6a
+  prior_render_run: 35730488674
+  prior_render_job: 106754547718
+  prior_artifact_digest: sha256:f791e91b39604f5761e316ced3ef0c4cda6fcb39ef10c71aa3edd92d74516b00
+  prior_independent_visual_qa: PASS
+
+producer_receipt:
+  repo: GBOGEB/document-organization-system
+  style_mip_pr: 73
+  style_mip_merge_sha: 3c57b9ed674f50af7650ba9aa306d6b182caee28
+
+fresh_census:
+  prior_style_control_start_sha: d295d8af67d513bd13cbbf05dd8ce11d1958dd92
+  observed_pre_convergence_main_sha: 6c6d40e32c204a496e472f88a4bf9f81c16824ff
+  commits_since_prior_style_control_start: 18
+  touched_style_proof_surfaces:
+    - .github/workflows/data-rich-document-consumer.yml
+    - tests/test_data_rich_document_consumer.py
+    - federation/DATA_RICH_DOCUMENT/consumer_contract.yaml
+    - federation/DATA_RICH_DOCUMENT/README.md
+  open_style_prs_before_pulse: 0
+  open_style_issues_before_pulse: 0
+
+convergence_transaction:
+  source_issue: GBOGEB/DOCX_RTM_Automation#77
+  source_pr: GBOGEB/DOCX_RTM_Automation#78
+  source_pr_head_sha: 067236117637c1aa2b296d76c690cf3545b88f3d
+  source_merge_sha: 429be3f276fa6d83e135a2251d793f60bffeae45
+  post_merge_hold_issue: GBOGEB/DOCX_RTM_Automation#79
+  implementation_changed: false
+  style_tokens_changed: false
+  semantic_source_changed: false
+  projection_semantics_changed: false
+
+sequence:
+  - phase: 3PR_REFRESH
+    state: PASS
+  - phase: 3PR_PROBE
+    state: PASS
+  - phase: 3PR_RANK
+    state: PASS
+    first_red: CURRENT_MAIN_STYLE_PROOF_FRESHNESS
+  - phase: MIP_MODERNIZE
+    state: NO_BEHAVIOR_CHANGE_REQUIRED
+  - phase: MIP_INNOVATE
+    state: NO_NEW_STYLE_TOKEN_REQUIRED
+  - phase: MIP_PERPETUATE
+    state: EXACT_MAIN_REPROOF_PENDING_RUNNER_ADMISSION
+  - phase: 3PC_PREPARE
+    state: PASS
+  - phase: 3PC_PROVE
+    state: HOLD_PREEXECUTION
+  - phase: 3PC_COMMIT
+    state: MERGED_BUT_NOT_PROVEN
+
+ci_evidence:
+  pr_head_attempts:
+    - head_sha: cfe9f188def66f31a60a594a01aedb060d9ac64c
+      render_run: 35734650599
+      render_job: 106768670365
+      python_run: 35734650610
+      python_job: 106768670682
+      observed_state: QUEUED_ZERO_STEP
+    - head_sha: 067236117637c1aa2b296d76c690cf3545b88f3d
+      render_run: 35734720600
+      render_job: 106768908429
+      python_run: 35734720574
+      python_job: 106768909951
+      observed_state: QUEUED_ZERO_STEP
+  exact_main_push:
+    head_sha: 429be3f276fa6d83e135a2251d793f60bffeae45
+    render_run: 35734733309
+    render_job: 106768951742
+    python_run: 35734733288
+    python_job: 106768952582
+    observed_state: QUEUED_ZERO_STEP
+  classification: INFRASTRUCTURE_PREEXECUTION_RUNNER_ADMISSION
+  code_evidence_from_queue: NONE
+
+non_compensation:
+  merged_ne_proven: true
+  zero_step_ne_code_failure: true
+  independent_visual_qa_ne_user_style_approval: true
+  style_candidate_ne_semantic_ssot: true
+  engineering_credit: false
+  compliance_credit: false
+  procurement_acceptance_credit: false
+
+reentry:
+  exact_start: >-
+    Refresh GBOGEB/DOCX_RTM_Automation main. If main still contains merge
+    429be3f276fa6d83e135a2251d793f60bffeae45 or a descendant with no newer
+    style mutation, consume exact-main push runs 35734733309 and 35734733288.
+    Require executable steps > 0 before drawing any code conclusion.
+  on_green:
+    - close CURRENT_MAIN_STYLE_PROOF_FRESHNESS
+    - close DOCX_RTM_Automation#79
+    - bind executed run/job/artifact evidence into MissionControl
+    - restore sole style first-red USER_STYLE_REVIEW
+    - do not open another repair wave
+  on_red:
+    - classify first executed failure
+    - repair only that bounded current-code first-red
+    - rerun exact proof
+  on_still_zero_step:
+    - remain HOLD_INFRASTRUCTURE_ADMISSION
+    - do not change style or code
+
+stop_state:
+  state: SAFE_HOLD_CURRENT_MAIN_STYLE_PROOF
+  first_red: CURRENT_MAIN_STYLE_PROOF_FRESHNESS
+  next_after_green: USER_STYLE_REVIEW
