@@ -1,171 +1,178 @@
 # LOSSLESS HANDOVER — 3P* + MIP / HIST-BD-033
 
-## Authority
+## Authority and state
 
-- Execution wave: **PARTIAL**
-- Authority transfer: **false**
-- Formal credit delta: **0**
-- Canonical BD lifecycle: pipeline-automation-hub#85
-- Historian parent: pipeline-automation-hub#76
+- execution_wave_type: PARTIAL
+- authority_transfer: false
+- formal_credit_delta: 0
+- central Historian: pipeline-automation-hub#76
+- living BD/REX control: pipeline-automation-hub#85
 - MIP stabilization: pipeline-automation-hub#372
+- MissionControl publication PR: pipeline-automation-hub#393 (DRAFT at handover)
 
-## Exact snapshot
+## Exact repository snapshot used by this handover
 
-- pipeline-automation-hub master: `216e13914c0fd9d559f6fdc50c0f2a3df3f42cf1`
-- ABACUS main: `a9926a4f460833fd467a12af2fc09c333079261b`
-- cryoplant-project main: `df84ddc293efd3c9fdb2e8cb098c745d26bdac3a`
-- BD033 repair PR: cryoplant-project#1634
-- BD033 repair head: `8d0a99bc7185a00ffa35d34c60df16ba570b447a`
+- pipeline-automation-hub master before publication: `216e13914c0fd9d559f6fdc50c0f2a3df3f42cf1`
+- ABACUS main observed: `a9926a4f460833fd467a12af2fc09c333079261b`
+- cryoplant-project main observed after concurrent advance: `0fa104517fd98c57903ddc37f3fd34958694c80c`
+- current BD033 repair PR: cryoplant-project#1645
+- current BD033 repair head: `40e75847c562d8c2074b983ca9a03167bf3bff05`
 - BD033 issue: cryoplant-project#1635
 
-## 3PR outcome
+## 3P* result
 
 ### Refresh — PASS
 
-The prior register had 32 durable roots, all DONE/CONTROL. Current independent
-gates remain:
+Independent non-coding gates remain:
+1. cryoplant-project#923 — private Actions runner/admission; zero-step failures are non-compensating.
+2. ABACUS#1278 / REX-CM-005 — owner/admin branch/ruleset merge-admission binding.
+3. ABACUS#1313 — Appendix 8.4/source evidence return; do not infer topology.
 
-1. cryoplant-project#923 — private GitHub Actions admission; zero-step,
-   non-compensating.
-2. ABACUS#1278 / REX-CM-005 — merge-admission prevention requires repo-admin
-   branch/ruleset binding.
-3. ABACUS#1313 — Appendix 8.4/source-evidence work order; source return required.
+### Probe — PASS / material first-red
 
-### Probe — PASS / MATERIAL FIRST-RED
+HIST-BD-033:
+`repo_local_active_trust_anchor_can_self_attest_arbitrary_source_digest`
 
-Merged cryoplant-project#1629 introduced a repo-local trust-anchor file for BT0
-HEPAK evidence. Current-code audit found that repository content could still
-self-assert the supposed owner boundary by setting:
-
-- `status=ACTIVE_TRUST_ANCHOR`
-- `authority=OWNER_SOURCE_ATTESTATION`
-- an arbitrary matching 64-char source digest in anchor and receipt.
-
-The positive unit fixture exercised exactly that path with `"b"*64`.
-
-This is a genuinely new semantic defect and is allocated as **HIST-BD-033**:
-`repo_local_active_trust_anchor_can_self_attest_arbitrary_source_digest`.
+The merged #1629 design could encode ACTIVE_TRUST_ANCHOR +
+OWNER_SOURCE_ATTESTATION and an arbitrary matching SHA in repository content.
+That is not independent owner authority.
 
 ### Rank — PASS
 
-1. HIST-BD-033 -> **PROVE / HOLD_RUNNER**
-2. cryoplant-project#923 -> **RETURN / OWNER_ACTION_REQUIRED**
-3. REX-CM-005 -> **RETURN / OWNER_ADMIN_REQUIRED**
-4. ABACUS#1313 -> **RETURN / SOURCE_EVIDENCE_REQUIRED**
+1. HIST-BD-033 — ACTIVE; repair/review + owner environment + source + runner proof.
+2. #923 — RETURN/OWNER_ACTION_REQUIRED.
+3. REX-CM-005 — RETURN/OWNER_ADMIN_REQUIRED.
+4. ABACUS#1313 — RETURN/SOURCE_EVIDENCE_REQUIRED.
 
-No unrelated application repair is justified.
-
-## Repair lineage
+## Repair genealogy — retain all negative evidence
 
 ### #1629 — merged precursor
 
-- merge: `23162ea21df0459d5778237ce301f326fa338d06`
-- result: useful first hardening, but not a true independent trust boundary.
-- runtime checks remain non-executed because of #923.
-- merge occurred while exact-head Codex review was still running; retained as
-  REX-CM-005 recurrence evidence.
+- merge `23162ea21df0459d5778237ce301f326fa338d06`
+- improved receipt/anchor binding but did not create independent owner authority
+- merged while exact-head review was still running; retained under REX-CM-005 recurrence
+- private runtime remained non-executed under #923
 
 ### #1633 — INVALIDATED_STALE_BRANCH
 
-A follow-up draft was built by copying whole files from the old #1629 branch.
-Exact PR diff exposed unrelated rollback of newer BT2 population/tolerance
-logic. #1633 was closed before merge. This is negative evidence and a process
-lesson: always diff a current-main surgical rebuild before proof.
+Whole-file carry-forward from an older branch.
+Exact diff exposed unrelated rollback of newer BT2 population/tolerance logic.
+Closed before merge. Do not reuse.
 
-### #1634 — current repair
+### #1634 — P1 review surface, closed unmerged
 
-Created **draft-first** from current main. Exact diff is BT0-only.
+A caller-settable environment candidate was reviewed.
+Codex P1: arbitrary process env values do not authenticate owner authority.
+Required protected execution or signed/secret-backed attestation.
+Branch subsequently advanced beyond that PR surface, so it was not reused as proof.
 
-Repair:
-- require repo receipt + ACTIVE repo anchor + owner-controlled environment
-  workbook/SHA agreement;
-- env keys:
-  - `QPS_HEPAK_OWNER_SOURCE_SHA256`
-  - `QPS_HEPAK_OWNER_SOURCE_WORKBOOK`
-- project anchor remains `PENDING_TRUSTED_DIGEST`;
-- optional `source_file` must remain inside the governed root;
-- no real digest was invented.
+### #1645 — CURRENT DRAFT REPAIR
 
-Proof state at snapshot:
-- exact-head Codex review: **running/pending**
-- verify-ssot run `35732308950`, job `106760673654`: failure with
-  `steps=null`
-- Global Victory Score run `35732308999`, job `106760675823`: failure with
-  `steps=null`
-- those runtime reds are #923 admission evidence, not application failure.
-- #1634 remains DRAFT and must not be merged until current-head review is
-  consumed and any material finding is repaired.
+Current exact head:
+`40e75847c562d8c2074b983ca9a03167bf3bff05`
+
+Exact current-base diff guard:
+- 5 changed files
+- no `validate_bt2` or `BT2_BFLOW` hunks
+- HMAC signed-attestation logic present
+- manual protected environment path present
+- explicit regression that public workbook/SHA env variables do not create authority
+
+Design:
+- HMAC-SHA256 canonical payload includes schema, status, authority,
+  source_workbook, source_workbook_sha256, source_reference.kind/id.
+- signature field: `owner_attestation_hmac_sha256`.
+- verification key env: `QPS_HEPAK_OWNER_ATTESTATION_HMAC_KEY`.
+- project-authoritative path is manual-only job using GitHub Environment:
+  `qps-hepak-owner-attestation`.
+- ordinary PR job receives no owner secret.
+- checked-in project anchor remains PENDING; no real digest/signature is invented.
+- test-only HMAC key/signature fixtures exercise code only and are not project evidence.
+
+At snapshot the post-P1 exact-head Codex review has been requested and is pending.
+Keep #1645 DRAFT until it is consumed.
 
 ## MIP
 
 ### Modernize — PASS
 
-- durable roots: 32 -> 33
-- current open semantic roots: 0 -> 1
-- zero-step fan-out remains deduplicated to #923
-- stale branch #1633 is INVALIDATED, not a new BD
+- prior durable roots: 32
+- new root: HIST-BD-033
+- durable roots: 33
+- open semantic roots: 1
+- zero-step private Actions fan-out remains deduplicated to #923
 
-### Innovate — PASS_CANDIDATE
+### Innovate — ACTIVE_REPAIR
 
-Reusable control pattern:
-`repo receipt + repo anchor + owner-controlled execution attestation`.
+Reusable pattern now under review:
+`repo receipt + repo anchor + HMAC signed canonical payload + protected owner secret`.
 
-Additional process control:
-`current-main rebuild -> exact diff -> draft-first -> review/proof -> merge`.
+Process control:
+`refresh main -> surgical change -> exact current-base diff -> draft-first -> review -> proof -> merge`.
 
 ### Perpetuate — PASS_PARTIAL
 
-- HIST-BD-033 entered the living register as ACTIVE
-- Doctor.Contracts + Historian own proof/closure
-- REX-CM-005 recurrence now includes cryoplant #1629
-- no runtime GOLD, engineering acceptance, numerical credit, or source digest
-  has been promoted
+- BD033 stays ACTIVE
+- Doctor.Contracts + Historian remain assigned
+- REX-CM-005 stays prevention-withheld
+- runtime GOLD, engineering/numerical acceptance and source trust remain WITHHELD
 
 Measured pulse:
-- prior roots: 32
-- new roots: 1
-- retired roots: 0
-- reopened roots: 0
-- **net_BD_delta = +1**
-- reason: genuine new current-code discovery
+- prior roots 32
+- new roots 1
+- retired 0
+- reopened 0
+- net_BD_delta = +1 (genuine new current-code discovery)
 
-## Owner/admin actions
+## Required owner/admin actions
 
-### cryoplant-project#923
+### A. cryoplant-project#923
 
-1. Restore private-repository Actions admission / billing / usage, or attach a
-   trusted self-hosted runner.
-2. Do **not** change workflow/application semantics to work around zero-step
-   admission.
-3. Rerun unchanged Release Runner Probe.
-4. Required proof: `runner_id != 0` and `steps > 0`.
+1. Restore private-repo Actions admission/billing/usage or attach a trusted self-hosted runner.
+2. Do not change product/workflow semantics to bypass zero-step admission.
+3. Rerun the unchanged Release Runner Probe.
+4. Require runner_id != 0 and steps > 0.
 5. Then rerun unchanged current validator and retain exact receipt.
-6. Repeat on a fresh later SHA before GOLD/control promotion.
+6. Repeat on a distinct later SHA before GOLD/control promotion.
 
-### REX-CM-005
+Representative zero-step evidence retained:
+- verify-ssot run35732308950/job106760673654: steps=null
+- Global Victory Score run35732308999/job106760675823: steps=null
 
-Bind required checks to branch/ruleset merge admission. CONTROL requires:
-- a deliberately red governed change that is mechanically non-mergeable; then
-- a distinct later classified/green change that is mergeable.
+### B. BT0 authenticated owner channel
 
-### BT0 HEPAK source
+1. Create/configure GitHub Environment `qps-hepak-owner-attestation`.
+2. Protect it with owner/admin review policy appropriate to the repository.
+3. Set environment secret `QPS_HEPAK_OWNER_ATTESTATION_HMAC_KEY`.
+4. Never commit or paste the HMAC key.
+5. Obtain the real HEPAK workbook SHA-256; File Library ID is not a digest.
+6. Promote/sign the anchor only from that real owner/source evidence.
+7. Dispatch the manual owner-attested job only after real receipt + signed anchor exist.
 
-Provide the **real** workbook identity and SHA-256 through the owner-controlled
-execution boundary. Do not infer a digest from file name, File Library ID, or
-repo-local receipt consistency.
+### C. REX-CM-005
+
+Bind required governance/checks to branch/ruleset merge admission.
+CONTROL requires:
+- deliberately red governed change is mechanically non-mergeable;
+- distinct later green/classified change is mergeable;
+- both receipts retained.
+
+### D. ABACUS#1313
+
+Await real Appendix 8.4/source evidence.
+Do not infer valve states, recovery path, or mode-dependent V_eff.
 
 ## Exact continuation edge
 
-1. Refresh cryoplant-project#1634 and exact head.
-2. Consume current-head Codex review.
-3. If material finding -> repair **only that finding** and re-request review.
-4. If clean -> keep implementation prepared; runtime proof remains held by
-   #923 unless a trusted >0-step execution becomes available.
-5. If #923 owner state changed -> run unchanged Release Runner Probe first.
-6. Only after required proof may HIST-BD-033 move ACTIVE -> DONE.
-7. REX-CM-005 remains prevention-withheld until admin admission proof.
-8. ABACUS#1313 remains source-return work; do not infer Appendix 8.4 states.
-9. After BD033 disposition, resume F2 Historian pressure selection.
+1. REFRESH cryoplant-project main + #1645 + #1635 + #923.
+2. CONSUME #1645 current-head Codex review.
+3. If material finding -> repair only that finding, re-diff, re-review.
+4. If review clean -> keep draft/proof hold until owner environment/source/runner prerequisites are met; do not create synthetic runtime proof.
+5. If #923 changes -> run unchanged Release Runner Probe first.
+6. Only after authenticated owner source + protected job + >0-step proof + merge/current-code survival may HIST-BD-033 become DONE.
+7. Keep REX-CM-005 ACTIVE_PREVENTION_WITHHELD.
+8. Keep ABACUS#1313 SOURCE_PENDING.
+9. Then resume next F2 Historian pressure selection.
 
 ## Stop rules
 
@@ -173,53 +180,60 @@ repo-local receipt consistency.
 - merge != proof
 - review clean != runtime GOLD
 - File Library reference != byte digest
-- repo-local authority string != independent owner attestation
-- no synthetic engineering/numerical/formal credit
-- do not reopen CONTROL lanes without observed regression
+- plain/caller-set env != owner authority
+- test HMAC key/signature != project evidence
+- repo-local authority label != authenticated owner return
+- no synthetic engineering, numerical, compliance, or acceptance credit
 
 ## Drop-in continuation
 
 ```text
 NEXT_AGENT_INSTRUCTION
 
-Execution mode: sequential, strict.
+execution_mode = sequential_strict
 EXECUTION_WAVE_TYPE = PARTIAL
 authority_transfer = false
 formal_credit_delta = 0
 
 REFRESH FIRST:
 - GBOGEB/cryoplant-project main
-- GBOGEB/cryoplant-project#1634
+- GBOGEB/cryoplant-project#1645
 - GBOGEB/cryoplant-project#1635
 - GBOGEB/cryoplant-project#923
-- GBOGEB/ABACUS#1278 (REX-CM-005)
+- GBOGEB/ABACUS#1278
 - GBOGEB/ABACUS#1313
-- GBOGEB/pipeline-automation-hub#85/#76/#372
+- GBOGEB/pipeline-automation-hub#85/#76/#372/#393
 
-CANONICAL CURRENT ROOT:
-HIST-BD-033 = repo_local_active_trust_anchor_can_self_attest_arbitrary_source_digest
+CANONICAL ACTIVE ROOT:
+HIST-BD-033 =
+repo_local_active_trust_anchor_can_self_attest_arbitrary_source_digest
 
-EXPECTED REPAIR:
-cryoplant-project#1634
+CURRENT REPAIR:
+GBOGEB/cryoplant-project#1645
 expected head at handover:
-8d0a99bc7185a00ffa35d34c60df16ba570b447a
-state at handover: DRAFT / exact-head Codex review pending
+40e75847c562d8c2074b983ca9a03167bf3bff05
+state: DRAFT
+post-P1 exact-head Codex review: PENDING at handover
 
 DO NEXT:
-1. consume #1634 exact-head review;
-2. repair only if a material finding survives current code;
-3. do not treat cryoplant runtime reds as product failures while #923 jobs have steps=null;
-4. if #923 owner-side state changed, run unchanged Release Runner Probe and require runner_id != 0 + steps > 0 before validator/GOLD;
-5. keep project HEPAK anchor PENDING_TRUSTED_DIGEST until real owner-controlled workbook identity + SHA-256 are supplied;
-6. move HIST-BD-033 to DONE only after required proof + current-code survival;
-7. keep REX-CM-005 ACTIVE_PREVENTION_WITHHELD until branch/ruleset admission blocks a deliberate red;
-8. keep ABACUS#1313 SOURCE_PENDING; do not infer Appendix 8.4 topology;
-9. then resume next F2 Historian deep-dive by measured unresolved pressure.
+1. consume #1645 exact-head review;
+2. repair only a material surviving current-head finding;
+3. keep exact diff BT0-only; reject any BT2 rollback;
+4. do not treat cryoplant runtime reds as product failures while #923 jobs have steps=null;
+5. require owner/admin protected environment qps-hepak-owner-attestation and secret QPS_HEPAK_OWNER_ATTESTATION_HMAC_KEY before project-authoritative owner-attested execution;
+6. require the real HEPAK workbook digest + signed anchor; do not infer from File Library ID;
+7. if #923 owner state changes, run unchanged Release Runner Probe and require runner_id != 0 + steps > 0;
+8. move HIST-BD-033 to DONE only after authenticated source + protected execution + >0-step proof + merge/current-code survival;
+9. keep REX-CM-005 prevention-withheld until branch/ruleset admission blocks a deliberate red;
+10. keep ABACUS#1313 source-pending;
+11. update/merge MissionControl #393 only after its artifacts match the final #1645 proof state.
 
 NEGATIVE EVIDENCE TO RETAIN:
-- #1629 merged before review completed;
-- #1633 closed INVALIDATED_STALE_BRANCH because exact diff exposed unrelated BT2 rollback;
-- #923 zero-step jobs are infrastructure pre-execution, non-compensating.
+- #1629 merged before review completion;
+- #1633 INVALIDATED_STALE_BRANCH due BT2 rollback in exact diff;
+- #1634 Codex P1: caller-set env is not authenticated owner authority;
+- #923 zero-step failures are infrastructure pre-execution.
 
-Do not fabricate source, runner, review, compliance, numerical, or acceptance evidence.
+Do not fabricate source, signature, secret, runner, review, compliance,
+numerical, engineering, or acceptance evidence.
 ```
