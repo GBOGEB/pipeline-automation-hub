@@ -1,0 +1,173 @@
+{
+  "schema": "missioncontrol.workflow_frequency.3pstar_mip.v1",
+  "as_of": "2026-09-22T08:36:00+02:00",
+  "method": "3PSTAR_THEN_MIP_SEQUENTIAL",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "scope": [
+    "GBOGEB/cryoplant-project",
+    "GBOGEB/pipeline-automation-hub",
+    "GBOGEB/CODEX",
+    "GBOGEB/ABACUS"
+  ],
+  "three_pstar": {
+    "Refresh": {
+      "result": "PASS",
+      "basis": "Latest 500 Actions runs per repo plus current control issues and exact PR heads.",
+      "telemetry_prs": {
+        "GBOGEB/cryoplant-project": "#1603",
+        "GBOGEB/pipeline-automation-hub": "#388",
+        "GBOGEB/CODEX": "#804",
+        "GBOGEB/ABACUS": "#1341"
+      }
+    },
+    "Probe": {
+      "result": "PASS_WITH_ONE_INFRA_WITHHOLD",
+      "observations": {
+        "GBOGEB/pipeline-automation-hub": {
+          "run_id": 35694828105,
+          "status": "PASS",
+          "qps_w3_federation": {
+            "invocations": 154,
+            "unique_input_ratio": 1,
+            "observable_noop_rate": 0,
+            "same_sha_repeat_rate": 0,
+            "family_sha_fanout_rate": 0.682
+          },
+          "gm_fleet": {
+            "invocations": 114,
+            "unique_input_ratio": 1,
+            "observable_noop_rate": 0,
+            "same_sha_repeat_rate": 0,
+            "family_sha_fanout_rate": 0.833
+          }
+        },
+        "GBOGEB/CODEX": {
+          "run_id": 35694835847,
+          "status": "PASS",
+          "zero_delta_registration": {
+            "invocations": 76,
+            "unique_input_ratio": 0.895,
+            "observable_noop_rate": 0,
+            "same_sha_repeat_rate": 0.105,
+            "family_sha_fanout_rate": 0.776
+          },
+          "canonical_federation": {
+            "invocations": 52,
+            "unique_input_ratio": 1,
+            "observable_noop_rate": 0,
+            "same_sha_repeat_rate": 0.346,
+            "family_sha_fanout_rate": 0.673
+          },
+          "confirmed_specific_repeats": {
+            "qps_canonicalization": "26 invocations / 17 unique SHAs / 9 repeats",
+            "validate_federation": "26 invocations / 17 unique SHAs / 9 repeats"
+          }
+        },
+        "GBOGEB/ABACUS": {
+          "run_id": 35694847895,
+          "status": "PASS",
+          "base_validation_ci": {
+            "invocations": 140,
+            "unique_input_ratio": 1,
+            "observable_noop_rate": 0,
+            "same_sha_repeat_rate": 0,
+            "family_sha_fanout_rate": 0.857
+          },
+          "dow_runtime_metrics": {
+            "invocations": 38,
+            "unique_input_ratio": 0.658,
+            "observable_noop_rate": 0,
+            "same_sha_repeat_rate": 0.342,
+            "family_sha_fanout_rate": 0.632
+          },
+          "confirmed_specific_repeats": {
+            "dow_monitoring_dashboard": "15 scheduled invocations / 2 unique SHAs / 13 repeats = 86.7%"
+          }
+        },
+        "GBOGEB/cryoplant-project": {
+          "run_id": 35694818567,
+          "status": "WITHHELD_INFRA_PREEXECUTION",
+          "jobs_steps": null,
+          "blocking_issue": "#923",
+          "rule": "zero-step / steps=null is NOT_EXECUTED, not application failure"
+        }
+      }
+    },
+    "Rank": {
+      "result": "PASS",
+      "order": [
+        "CODEX canonical/federation duplicate feature-branch push + PR execution -> bounded trigger de-duplication",
+        "ABACUS hourly same-SHA DOW dashboard churn -> change-driven plus daily liveness",
+        "pipeline-automation-hub family fan-out -> CONTROL/MEASURE; no same-workflow same-SHA duplicate proven",
+        "cryoplant-project -> RETURN/HOLD at #923 runner admission; no local workflow repair authorized"
+      ]
+    }
+  },
+  "mip": {
+    "Modernize": {
+      "result": "PASS",
+      "outputs": [
+        "Common read-only workflow-frequency telemetry installed as PRs #1603/#388/#804/#1341",
+        "Metrics explicitly distinguish unique input ratio, observable skipped/no-op, same-workflow same-SHA repeat, and family SHA fan-out"
+      ]
+    },
+    "Innovate": {
+      "result": "PASS_BOUNDED",
+      "outputs": [
+        "GBOGEB/CODEX#805 removes duplicate feature-branch push execution for qps-canonicalization and Validate Federation while preserving PR/main/manual validation",
+        "GBOGEB/ABACUS#1342 replaces hourly DOW monitoring churn with relevant-source push plus daily liveness and artifact retention",
+        "No speculative fan-in rewrite for pipeline-automation-hub until semantic equivalence/receipt reuse is proven",
+        "No cryoplant local repair while #923 remains pre-execution"
+      ]
+    },
+    "Perpetuate": {
+      "result": "PASS_REPOSITORY_NATIVE",
+      "outputs": [
+        "This current control receipt",
+        "Weekly telemetry workflow retained in each instrumentation PR",
+        "Existing #372 MIP-STABILIZE control remains parent authority",
+        "Repeated high frequency alone cannot create a new semantic BD root"
+      ],
+      "stop_rules": [
+        "Do not merge/close from frequency count alone",
+        "Do not treat family fan-out as duplication unless same-input semantic equivalence is proven",
+        "Do not treat cryoplant zero-step as application red",
+        "After fix merge, require a fresh 500-run or sufficiently populated post-change comparison before CONTROL promotion"
+      ]
+    }
+  },
+  "current_dispositions": {
+    "GBOGEB/CODEX": {
+      "fix_pr": "#805",
+      "state": "EXECUTE_NOW/PROVE",
+      "first_red": "duplicate feature-branch push plus pull_request validation"
+    },
+    "GBOGEB/ABACUS": {
+      "fix_pr": "#1342",
+      "state": "EXECUTE_NOW/PROVE",
+      "first_red": "hourly same-SHA DOW monitoring churn"
+    },
+    "GBOGEB/pipeline-automation-hub": {
+      "telemetry_pr": "#388",
+      "state": "CONTROL/MEASURE",
+      "first_red": null
+    },
+    "GBOGEB/cryoplant-project": {
+      "telemetry_pr": "#1603",
+      "state": "RETURN/HOLD",
+      "first_red": "#923 runner admission"
+    }
+  },
+  "next_pulse": {
+    "condition": "After #805 and #1342 exact-head checks are green and merged, collect a post-change sample.",
+    "acceptance": [
+      "CODEX same-workflow/same-SHA repeat rate decreases for the targeted pair",
+      "ABACUS DOW Monitoring scheduled same-SHA repeats materially decrease",
+      "No loss of required PR/main validation or DOW liveness evidence",
+      "Hub remains measure-only unless semantic duplicate fan-out is proven",
+      "Cryoplant remains gated by #923 until >0-step current-SHA execution is observed"
+    ]
+  }
+}
