@@ -75,6 +75,17 @@ def parse_args() -> argparse.Namespace:
         default=_env_bool("PIPELINE_EXCEL_TABLES_ONLY", False),
         help="Export only defined Excel Tables, not tableless used ranges",
     )
+    parser.add_argument(
+        "--excel-schedule-as-of",
+        default=os.environ.get("PIPELINE_EXCEL_SCHEDULE_AS_OF"),
+        help="Optional deterministic schedule dashboard as-of date (YYYY-MM-DD)",
+    )
+    parser.add_argument(
+        "--excel-due-soon-days",
+        type=int,
+        default=int(os.environ.get("PIPELINE_EXCEL_DUE_SOON_DAYS", "14")),
+        help="Yellow planning due-soon horizon in calendar days",
+    )
     return parser.parse_args()
 
 
@@ -174,6 +185,8 @@ def run_excel_schedule_engine(
     excel_output_root: Path,
     cell_mode: str = "formula",
     tables_only: bool = False,
+    schedule_as_of: str | None = None,
+    due_soon_days: int = 14,
 ) -> Path | None:
     """Run the governed Excel schedule engine and return its manifest on PASS."""
     print("Phase 3: governed Excel schedule/data table engine")
@@ -188,6 +201,9 @@ def run_excel_schedule_engine(
     ]
     if tables_only:
         command.append("--tables-only")
+    if schedule_as_of:
+        command.extend(["--schedule-as-of", schedule_as_of])
+    command.extend(["--schedule-due-soon-days", str(due_soon_days)])
 
     result = subprocess.run(
         command,
@@ -220,6 +236,26 @@ def run_excel_schedule_engine(
         return None
     if authority.get("authority_transfer") is not False:
         print("Excel table manifest authority guardrail failed", file=sys.stderr)
+        return None
+
+    schedule_manifest_path = (
+        excel_output_root / "Outputs" / "excel" / "schedule" / "schedule_manifest.json"
+    )
+    if not schedule_manifest_path.exists():
+        print(f"Schedule projection manifest missing: {schedule_manifest_path}", file=sys.stderr)
+        return None
+    try:
+        schedule_manifest = _load_json(schedule_manifest_path)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"Cannot read schedule projection manifest: {exc}", file=sys.stderr)
+        return None
+    schedule_authority = schedule_manifest.get("authority", {})
+    schedule_summary = schedule_manifest.get("summary", {})
+    if schedule_authority.get("authority_transfer") is not False:
+        print("Schedule projection authority guardrail failed", file=sys.stderr)
+        return None
+    if schedule_summary.get("process_status") != "PASS":
+        print("Schedule projection process status is not PASS", file=sys.stderr)
         return None
     return manifest_path
 
@@ -289,6 +325,34 @@ def write_pipeline_receipt(
                 excel_summary.get("errors", 0) == 0
                 and excel_authority.get("authority_transfer") is False
             )
+            schedule_manifest_path = (
+                excel_manifest_path.parent / "schedule" / "schedule_manifest.json"
+            )
+            schedule_projection = None
+            if schedule_manifest_path.exists():
+                schedule_manifest = _load_json(schedule_manifest_path)
+                schedule_summary = schedule_manifest.get("summary", {})
+                schedule_authority = schedule_manifest.get("authority", {})
+                schedule_projection = {
+                    "status": schedule_summary.get("process_status"),
+                    **_receipt_path(schedule_manifest_path, output_dir),
+                    "sha256": sha256_file(schedule_manifest_path),
+                    "activities": schedule_summary.get("activities", 0),
+                    "red": schedule_summary.get("red", 0),
+                    "yellow": schedule_summary.get("yellow", 0),
+                    "green": schedule_summary.get("green", 0),
+                    "validation_pass_rate_pct": schedule_summary.get(
+                        "validation_pass_rate_pct", 100.0
+                    ),
+                    "authority_transfer": schedule_authority.get("authority_transfer"),
+                }
+                excel_ok = excel_ok and (
+                    schedule_projection["status"] == "PASS"
+                    and schedule_projection["authority_transfer"] is False
+                )
+            else:
+                excel_ok = False
+
             phases["excel_schedule"] = {
                 "status": "PASS" if excel_ok else "FAIL",
                 "requested": True,
@@ -298,13 +362,14 @@ def write_pipeline_receipt(
                 "schedule_candidates": excel_summary.get("schedule_candidates", 0),
                 "errors": excel_summary.get("errors", 0),
                 "authority_transfer": excel_authority.get("authority_transfer"),
+                "schedule_projection": schedule_projection,
             }
     else:
         phases["excel_schedule"] = {"status": "NOT_REQUESTED", "requested": False}
 
     overall_ok = metadata_ok and recursive_ok and excel_ok
     payload = {
-        "schema": "pipeline_automation_hub.pipeline_run_receipt.v2",
+        "schema": "pipeline_automation_hub.pipeline_run_receipt.v3",
         "generated_at": generated_at,
         "authority": AUTHORITY,
         "status": "PASS" if overall_ok else "FAIL",
@@ -330,6 +395,8 @@ def main() -> int:
     excel_output_root = Path(getattr(args, "excel_output_root", str(DEFAULT_EXCEL_OUTPUT_ROOT)))
     excel_cell_mode = getattr(args, "excel_cell_mode", "formula")
     excel_tables_only = bool(getattr(args, "excel_tables_only", False))
+    excel_schedule_as_of = getattr(args, "excel_schedule_as_of", None)
+    excel_due_soon_days = int(getattr(args, "excel_due_soon_days", 14))
 
     print("Pipeline Automation Hub - bounded MAIN pipeline")
     print(f"input={input_dir.resolve()}")
@@ -354,6 +421,8 @@ def main() -> int:
             excel_output_root,
             cell_mode=excel_cell_mode,
             tables_only=excel_tables_only,
+            schedule_as_of=excel_schedule_as_of,
+            due_soon_days=excel_due_soon_days,
         )
         if excel_manifest is None:
             return 5
