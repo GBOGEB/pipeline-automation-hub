@@ -27,8 +27,8 @@ jobs:
           python3 tools/bd_workflow_frequency.py \
             --repo "$GITHUB_REPOSITORY" \
             --limit 500 \
-          --family 'qps_w3_federation=.github/workflows/qps-triage-ultra-w0.yml,.github/workflows/w3-16-m03-w0-recon.yml,.github/workflows/w3-11-non-origin-math-consumer.yml,.github/workflows/w3-13-measured-telemetry.yml,.github/workflows/w3-14-measured-pca.yml' \\
-          --family 'gm_fleet=.github/workflows/gm-fleet-03-capacity-gate.yml,.github/workflows/gm-fleet-02b.yml,.github/workflows/gm-fleet-03-ring1-recon.yml,.github/workflows/gm-fleet-03-f01-pilot.yml,.github/workflows/gm-fleet-03-ring2-recon.yml,.github/workflows/gm-fleet-03-f03-pilot.yml' \\
+            --family 'qps_w3_federation=.github/workflows/qps-triage-ultra-w0.yml,.github/workflows/w3-16-m03-w0-recon.yml,.github/workflows/w3-11-non-origin-math-consumer.yml,.github/workflows/w3-13-measured-telemetry.yml,.github/workflows/w3-14-measured-pca.yml' \
+            --family 'gm_fleet=.github/workflows/gm-fleet-03-capacity-gate.yml,.github/workflows/gm-fleet-02b.yml,.github/workflows/gm-fleet-03-ring1-recon.yml,.github/workflows/gm-fleet-03-f01-pilot.yml,.github/workflows/gm-fleet-03-ring2-recon.yml,.github/workflows/gm-fleet-03-f03-pilot.yml' \
             --out-json .artifacts/bd-workflow-frequency/metrics.json \
             --out-md .artifacts/bd-workflow-frequency/summary.md
           cat .artifacts/bd-workflow-frequency/summary.md >> "$GITHUB_STEP_SUMMARY"
