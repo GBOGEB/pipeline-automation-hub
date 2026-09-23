@@ -1,0 +1,49 @@
+schema: gbogeb.consolidated_devops_drive_current.v1
+as_of: '2026-09-23'
+repository: GBOGEB/pipeline-automation-hub
+canonical_task:
+  repo: GBOGEB/pipeline-automation-hub
+  issue: 410
+  title: DEVOPS drive: RUN-DELTA v0.3 + real-workbook schedule baseline
+authority_transfer: false
+formal_credit_delta: 0
+lanes:
+  run_delta_v03:
+    state: CONTROLLED_MERGED
+    producer_repo: GBOGEB/GBOGEB
+    functional_pr: 16
+    functional_merge: 47517d993d3148c261af85dd8080ee7c30997036
+    postmerge_pr: 17
+    postmerge_merge: 99bf0f61018ff6798c661d44256077c0b14297a3
+    final_run: 35842427940
+    final_job: 107120424797
+    controlled_baseline: RUN_B_V03
+    physical_files: 21
+    unique_objects: 14
+    duplicate_copies: 7
+    semantic_set_sha256: 9f32b634dc68b9cc95cf5aff426f95bf179fedf9458a9cd8f9213245e705a0e2
+    next_predicate: COMPARE_EXACT_RUN_C_AGAINST_RUN_B_V03
+  real_workbook_schedule:
+    state: OPEN
+    predecessor: PLANNING_SCHEDULE_SCHEMA_AND_DASHBOARD_BINDING
+    implementation_pr: 408
+    implementation_merge: 5296b400bcb543afee1a3613ff4e2cdedf2102df
+    postmerge_pr: 409
+    postmerge_merge: 288e44f21724efe1bd46a699af6fa47d115fbee5
+    global_promotion_pr: 15
+    global_promotion_merge: 46a8b2bebd5daa0f53a5b4a6f2e983582effcb4d
+    project_manifest_state: ACTIVE_SCHEDULE_SCHEMA_DASHBOARD_BOUND
+    next_predicate: FREEZE_ACTUAL_GOVERNED_SCHEDULE_WORKBOOK_AND_EXECUTE_T0
+restart:
+  handover: handover/session/SC_2026-09-23_CONSOLIDATED_DEVOPS_DRIVE_RUN_DELTA_SCHEDULE_v1.md
+  dropin: handover/session/RESTART_DROPIN_2026-09-23_CONSOLIDATED_DEVOPS_DRIVE_v1.md
+  first_read: ISSUE_410
+guards:
+  source_master_remains_authority: true
+  generated_view_is_not_ssot: true
+  ryg_is_decision_support_only: true
+  hash_change_is_not_semantic_change: true
+  duplicate_is_not_new_semantic_evidence: true
+  zero_step_is_not_application_defect: true
+  raw_project_chat_publication: FORBIDDEN_BY_DEFAULT
+  devops_credit_is_not_engineering_credit: true
