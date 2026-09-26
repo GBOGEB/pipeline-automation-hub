@@ -1,0 +1,129 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.control.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "parent_grand_mission": "GM-IV",
+  "fleet_wave": "GM-FLEET-03",
+  "parent_issue": "GBOGEB/pipeline-automation-hub#426",
+  "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
+  "state": "ACTIVE_CENSUS_AND_STRUCTURAL_BACKFILL",
+  "snapshot": "2026-09-26_POST_ABACUS_1404_MERGE_MC_427_DRAFT",
+  "denominator": {
+    "repositories": 90,
+    "prs": 4485,
+    "merged": 4211,
+    "closed_unmerged": 272,
+    "open": 2
+  },
+  "cells": [
+    {
+      "id": "F01-A",
+      "issue": 429,
+      "scope": "GBOGEB/cryoplant-project",
+      "prs": 1679,
+      "crew": [
+        "SCOUT",
+        "READER"
+      ],
+      "state": "OPEN"
+    },
+    {
+      "id": "F01-B",
+      "issue": 430,
+      "scope": "GBOGEB/ABACUS",
+      "prs": 1154,
+      "crew": [
+        "SCOUT",
+        "READER"
+      ],
+      "state": "OPEN"
+    },
+    {
+      "id": "F01-C",
+      "issue": 431,
+      "scope": "GBOGEB/CODEX",
+      "prs": 796,
+      "crew": [
+        "SCOUT",
+        "READER"
+      ],
+      "state": "OPEN"
+    },
+    {
+      "id": "F01-D",
+      "issue": 432,
+      "scope": [
+        "GBOGEB/pipeline-automation-hub",
+        "GBOGEB/Q_engineering_tools",
+        "GBOGEB/DOCX_RTM_Automation",
+        "GBOGEB/document-organization-system",
+        "GBOGEB/gg_MATH"
+      ],
+      "prs": 648,
+      "crew": [
+        "SCOUT",
+        "READER"
+      ],
+      "state": "OPEN"
+    },
+    {
+      "id": "F02-F08-SHARED",
+      "issue": 433,
+      "scope": "82_REPOSITORIES",
+      "prs": 208,
+      "crew": [
+        "SCOUT",
+        "SHARED_READER"
+      ],
+      "state": "OPEN"
+    }
+  ],
+  "shared_crew": [
+    {
+      "role": "DEEP_READER",
+      "policy": "exception_only",
+      "activate_on": [
+        "IDENTITY_COLLISION",
+        "SUPERSESSION_AMBIGUITY",
+        "CROSS_REPO_RETURN",
+        "CONTRADICTORY_HANDOVER"
+      ]
+    },
+    {
+      "role": "QA",
+      "policy": "validate_returned_ledgers_and_edges"
+    },
+    {
+      "role": "PM_ORCHESTRATOR",
+      "policy": "dispatch_named_cells_and_enforce_return_path"
+    }
+  ],
+  "allocation_decision": {
+    "reader_surge": "YES_F01_ONLY",
+    "deep_reader_surge": "NO",
+    "runtime_worker_surge": "NO",
+    "runner_surge": "NO",
+    "rationale": "95.4% of PR history is concentrated in F01; metadata backfill is API/read-bound."
+  },
+  "external_noncompensating_boundaries": [
+    "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
+    "GBOGEB/ABACUS#1369 EXECUTION_ADMISSION",
+    "W275_PHYSICAL_SUCCESSOR_GIT_BUNDLE",
+    "GBOGEB/cryoplant-project#1801 W287_DREQ_SOURCE_INTEGRATION"
+  ],
+  "gm_numbering": {
+    "create_new_gm": false,
+    "gm_v": "HELD",
+    "reason": "Backfill is a bounded census/backfill mission cell under GM-IV, not evidence for frontier-count promotion or concurrency capacity."
+  },
+  "stop_rules": [
+    "NO_NEW_GM_NUMBER_FROM_CENSUS_ALONE",
+    "NO_GM_V_LAUNCH",
+    "NO_CONCURRENCY_CAPACITY_CLAIM",
+    "NO_RUNNER_FANOUT_FOR_METADATA",
+    "NO_AUTHORITY_TRANSFER",
+    "NO_FORMAL_OR_ENGINEERING_CREDIT"
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
