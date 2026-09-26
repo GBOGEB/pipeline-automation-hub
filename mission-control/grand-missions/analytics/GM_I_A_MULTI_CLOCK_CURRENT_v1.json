@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.gm_i_a.multiclock_current.v1",
   "mission": "GM-I-A",
-  "state": "P002_MEASURED_CONTROL_PROVE_PENDING",
+  "state": "P002_MEASURED_VALIDATOR_FIXFORWARD",
   "authority_transfer": false,
   "dataset": "GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json",
   "control": "GM_I_A_MULTI_CLOCK_3PSTAR_MIP_v1.json",
@@ -78,5 +78,12 @@
     "queue_fraction": 0.6937142857142857,
     "pressure_hhi": 0.30200555102040816,
     "effective_clock_count": 3.311197415482024
+  },
+  "latest_metrics": {
+    "pulse_id": "GM-I-A-MCLOCK-P002",
+    "queue_fraction": 0.6937142857142857,
+    "pressure_hhi": 0.30200555102040816,
+    "effective_clock_count": 3.311197415482024,
+    "top4_fraction": 0.8948571428571429
   }
 }

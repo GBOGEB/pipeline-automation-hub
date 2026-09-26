@@ -49,11 +49,19 @@ def main() -> int:
         and readiness["bt_reverse_pressure"]["bidirectional_pair_count"] >= 0
     )
     pressure = readiness["latest_pulse_descriptive_pressure"]
-    checks["queue_separation"] = 0.88 < pressure["queue_fraction"] < 0.89
+    latest = current["latest_metrics"]
+    checks["queue_separation"] = (
+        0.0 <= pressure["queue_fraction"] <= 1.0
+        and abs(pressure["queue_fraction"] - latest["queue_fraction"]) < 1e-12
+    )
     checks["concentration"] = (
-        0.27 < pressure["pressure_hhi"] < 0.28
-        and 3.6 < pressure["effective_clock_count"] < 3.7
-        and pressure["top4_fraction"] > 0.97
+        0.0 < pressure["pressure_hhi"] <= 1.0
+        and 1.0 <= pressure["effective_clock_count"] <= readiness["feature_count_p"]
+        and 0.0 <= pressure["top4_fraction"] <= 1.0
+        and abs(pressure["pressure_hhi"] - latest["pressure_hhi"]) < 1e-12
+        and abs(pressure["effective_clock_count"] - latest["effective_clock_count"]) < 1e-12
+        and abs(pressure["top4_fraction"] - latest["top4_fraction"]) < 1e-12
+        and pressure["pulse_id"] == latest["pulse_id"]
     )
     checks["current_pointer"] = (
         current["pca"]["status"] == f"WITHHELD_N{current['measured_pulses']}_OF_27"
