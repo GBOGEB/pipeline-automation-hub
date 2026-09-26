@@ -41,15 +41,20 @@ jobs:
           close = json.loads((root / "QTOOLS_HISTORIAN_FANIN_CLOSE_20260921_v1.json").read_text())
           roots = reg["roots"]
           rex_entries = reg["rex_entries"]
+          root_index = reg["root_index"]
+          repo_applicability = reg["repo_applicability"]
           open_states = {"TODO", "ACTIVE", "UNKNOWN_NEEDS_READER"}
           open_roots = [r for r in roots if r["state"] in open_states]
           done_or_control = [r for r in roots if r["state"] in {"DONE", "CONTROL", "SUPERSEDED", "INVALIDATED"}]
           assert len(roots) == reg["bounded_sample"]["durable_bd_roots_total"]
           assert len(rex_entries) == len(roots)
+          assert len(root_index) == len(roots)
           root_ids = {r["bd_id"] for r in roots}
           rex_bd_ids = {r["bd_id"] for r in rex_entries}
           rex_ids = {r["rex_id"] for r in rex_entries}
+          index_bd_ids = {r["bd_id"] for r in root_index}
           assert rex_bd_ids == root_ids
+          assert index_bd_ids == root_ids
           assert len(rex_ids) == len(rex_entries)
           for root in roots:
               suffix = root["bd_id"].replace("HIST-BD-", "")
@@ -60,6 +65,39 @@ jobs:
               assert rex["formal_credit_delta"] == 0
               if root.get("rex_control_id"):
                   assert rex["shared_control_id"] == root["rex_control_id"]
+              idx = next(r for r in root_index if r["bd_id"] == root["bd_id"])
+              assert idx["rex_id"] == rex["rex_id"]
+              assert set(idx["repos"]) == set(root["repos"])
+              assert idx["shared_control_id"] == root.get("rex_control_id")
+          expected_repos = set()
+          for root in roots:
+              expected_repos.update(root["repos"])
+          for control in reg["control_measures"]:
+              expected_repos.update(control.get("cross_repo_recurrence", []))
+          actual_repos = {r["repo"] for r in repo_applicability}
+          assert actual_repos == expected_repos
+          for app in repo_applicability:
+              repo = app["repo"]
+              expected_root_ids = {
+                  root["bd_id"] for root in roots if repo in root["repos"]
+              }
+              assert set(app["direct_root_ids"]) == expected_root_ids
+              assert len(app["direct_root_ids"]) == len(app["rex_ids"])
+              for bd_id, rex_id in zip(app["direct_root_ids"], app["rex_ids"]):
+                  assert rex_id == f'REX-BD-{bd_id.replace("HIST-BD-", "")}'
+              expected_controls = set()
+              for control in reg["control_measures"]:
+                  linked = any(
+                      rid in expected_root_ids for rid in control.get("root_ids", [])
+                  )
+                  recurred = repo in control.get("cross_repo_recurrence", [])
+                  if linked or recurred:
+                      expected_controls.add(control["control_id"])
+              assert set(app["shared_control_ids"]) == expected_controls
+              entry_ids = {e["bd_id"] for e in app["entries"]}
+              assert entry_ids == expected_root_ids
+              assert app["authority_transfer"] is False
+              assert app["formal_credit_delta"] == 0
           assert len(open_roots) == reg["bounded_sample"]["current_open_bd_roots"]
           assert len(done_or_control) == reg["bounded_sample"]["done_or_control_roots"]
           assert len(roots) == len(open_roots) + len(done_or_control)
@@ -133,6 +171,8 @@ jobs:
               "bd020":bd20["state"],
               "qtools_open_local_historian_roots":close["qtools"]["open_local_historian_roots"],
               "codex_bd022":bd22["state"],
-              "rex_entries":len(rex_entries)
+              "rex_entries":len(rex_entries),
+              "root_index":len(root_index),
+              "repo_applicability":len(repo_applicability)
           }, sort_keys=True))
           PY
