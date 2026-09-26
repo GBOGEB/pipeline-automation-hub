@@ -88,7 +88,9 @@
       "full_dmaic_iterations_min": 1,
       "proof_debt_trend": "NON_INCREASING_TWO_PULSES",
       "unchanged_root_auto_repeat_max": 2,
-      "fail_closed_evidence": true
+      "fail_closed_evidence": true,
+      "recursive_control_handoff_min": 1,
+      "iteration_chain_integrity_required": true
     },
     "top14_to_top21": {
       "classified_min": 14,
@@ -100,7 +102,9 @@
       "recurrent_control_distinct_source_repeat_min": 1,
       "semantic_net_delta": "LE_0_TWO_CONSECUTIVE_PULSES",
       "proof_yield_trend": "NON_DEGRADING_TWO_PULSES",
-      "fail_closed_evidence": true
+      "fail_closed_evidence": true,
+      "recursive_control_handoff_min": 2,
+      "iteration_chain_integrity_required": true
     }
   },
   "current": {
