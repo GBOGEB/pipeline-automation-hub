@@ -1,0 +1,5853 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.deep_read_queue.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "cell": "F01-C",
+  "issue": "GBOGEB/pipeline-automation-hub#431",
+  "source_ledger": "GM_FLEET_03_PR_LINEAGE_BACKFILL_F01C_CODEX_LEDGER_v1.json",
+  "candidates": 494,
+  "priority_counts": {
+    "P0": 34,
+    "P1": 202,
+    "P2": 258
+  },
+  "queue": [
+    {
+      "id": "GBOGEB/CODEX::PR239",
+      "pr": 239,
+      "title": "feat(block-library): CODEX ABACUS SSOT runtime MVP",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/CODEX#238",
+        "GBOGEB/CODEX#198"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR267",
+      "pr": 267,
+      "title": "feat(qps): run W04 KEB support and safety governance lane",
+      "priority": "P0",
+      "wave_labels": [
+        "W04",
+        "W04-T10"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#141"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR281",
+      "pr": 281,
+      "title": "feat(qps): execute W04 KEB from governed snapshot fallback",
+      "priority": "P0",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#145"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR330",
+      "pr": 330,
+      "title": "feat(qps): add W08 lifecycle coverage semantic validators",
+      "priority": "P0",
+      "wave_labels": [
+        "W08",
+        "W008",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#219",
+        "GBOGEB/CODEX#323",
+        "GBOGEB/ABACUS#795"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR332",
+      "pr": 332,
+      "title": "control(qps): bind W08 KEB return receipt and peer repair lineage",
+      "priority": "P0",
+      "wave_labels": [
+        "W08"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/CODEX#330",
+        "GBOGEB/ABACUS#795",
+        "GBOGEB/ABACUS#796"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR333",
+      "pr": 333,
+      "title": "feat(qps): add W11 OFFER evidence schema",
+      "priority": "P0",
+      "wave_labels": [
+        "W11"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#228"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR334",
+      "pr": 334,
+      "title": "fix(qps): harden W11 OFFER evidence runtime schema",
+      "priority": "P0",
+      "wave_labels": [
+        "W11",
+        "W011",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#228"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR339",
+      "pr": 339,
+      "title": "feat(qps): normalize W22F agenda review semantics in KEB",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#307"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR340",
+      "pr": 340,
+      "title": "feat(qps): govern W26 SSOT view build receipts",
+      "priority": "P0",
+      "wave_labels": [
+        "W26",
+        "W026"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#315",
+        "GBOGEB/ABACUS#815"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR341",
+      "pr": 341,
+      "title": "control(qps): validate populated W26-W28 SSOT build receipts",
+      "priority": "P0",
+      "wave_labels": [
+        "W26-W28",
+        "W026-W028",
+        "W28",
+        "W26",
+        "W27"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#319"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR349",
+      "pr": 349,
+      "title": "govern(qps): validate W41 agenda-source roles and NFS review union",
+      "priority": "P0",
+      "wave_labels": [
+        "W41",
+        "W041",
+        "W39",
+        "W40"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#367"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR350",
+      "pr": 350,
+      "title": "feedback(qps): W41 NFS buildings utilities KEB request",
+      "priority": "P0",
+      "wave_labels": [
+        "W41"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#369"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR357",
+      "pr": 357,
+      "title": "federation(qps): execute W43 KEB triage lane",
+      "priority": "P0",
+      "wave_labels": [
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#383"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR359",
+      "pr": 359,
+      "title": "feedback(qps): W22.1 tri-repo KEB validation receipt",
+      "priority": "P0",
+      "wave_labels": [
+        "W22"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#389"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR368",
+      "pr": 368,
+      "title": "triage(qps): execute W45 closure-yield KEB lane",
+      "priority": "P0",
+      "wave_labels": [
+        "W45"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#399"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR416",
+      "pr": 416,
+      "title": "W56: validate QPS component utility SSOT through KEB",
+      "priority": "P0",
+      "wave_labels": [
+        "W56",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#588"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR429",
+      "pr": 429,
+      "title": "W60: validate QPS view taxonomy and propagation semantics",
+      "priority": "P0",
+      "wave_labels": [
+        "W60"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#634"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR554",
+      "pr": 554,
+      "title": "W85 KEB: repair LLDB-DAP semantic vocabulary re-entry",
+      "priority": "P0",
+      "wave_labels": [
+        "W85",
+        "W84",
+        "W69",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#1063",
+        "GBOGEB/cryoplant-project#769"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR603",
+      "pr": 603,
+      "title": "docs(qps-triage): adapt chat-to-GitHub prompt sequence",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/CODEX#239"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR617",
+      "pr": 617,
+      "title": "W111: align KEB ADR/OCD projections to QPS child authority",
+      "priority": "P0",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#882"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR676",
+      "pr": 676,
+      "title": "HIST-BD-014: make lldb-mcp stdio pipe invariant fail closed",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#76"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR715",
+      "pr": 715,
+      "title": "H4 W3 P1: bind QPS W2 component analytics into KEB",
+      "priority": "P0",
+      "wave_labels": [
+        "W3",
+        "W2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1221"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR731",
+      "pr": 731,
+      "title": "W232: consume QPS lossless handover in KEB",
+      "priority": "P0",
+      "wave_labels": [
+        "W232",
+        "W175"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1300"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR754",
+      "pr": 754,
+      "title": "QPS v6: bind canonical CODEX Pages publication lane",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1379",
+        "GBOGEB/pipeline-automation-hub#162",
+        "GBOGEB/cryoplant-project#1381"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR755",
+      "pr": 755,
+      "title": "W266: govern QPS Golden Thread receipt",
+      "priority": "P0",
+      "wave_labels": [
+        "W266"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1386",
+        "GBOGEB/ABACUS#1258"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR756",
+      "pr": 756,
+      "title": "QPS v6: repair canonical Pages authority and full writer census",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1379"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR757",
+      "pr": 757,
+      "title": "LEG5 #727: bind federation metric semantic lineage status",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/CODEX#727"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR762",
+      "pr": 762,
+      "title": "W276: consume sanitized QPS human-rendition contract",
+      "priority": "P0",
+      "wave_labels": [
+        "W276",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1462",
+        "GBOGEB/ABACUS#1264"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR772",
+      "pr": 772,
+      "title": "W286: add QPS visual-golden semantic guard",
+      "priority": "P0",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1505"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR793",
+      "pr": 793,
+      "title": "BD queue: bind #254 proof run and #500 local execution gate",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#635"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR808",
+      "pr": 808,
+      "title": "GMI-W275: bind document-core provider proof",
+      "priority": "P0",
+      "wave_labels": [
+        "W275",
+        "W274"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/DOCX_RTM_Automation#72"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR809",
+      "pr": 809,
+      "title": "W328: challenge BT2 source-tolerance semantics",
+      "priority": "P0",
+      "wave_labels": [
+        "W328"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1630"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR821",
+      "pr": 821,
+      "title": "QPS W329: bind HIST-BD-034 KEB receiver to #1646",
+      "priority": "P0",
+      "wave_labels": [
+        "W329"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1646"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR828",
+      "pr": 828,
+      "title": "W334: bind final HIST-BD-034 KEB pointer receipt",
+      "priority": "P0",
+      "wave_labels": [
+        "W334"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1663",
+        "GBOGEB/cryoplant-project#1617",
+        "GBOGEB/Q_engineering_tools#101"
+      ]
+    },
+    {
+      "id": "GBOGEB/CODEX::PR127",
+      "pr": 127,
+      "title": "Wave-6: Recursive agent runtime, orchestration metrics, and execution topology",
+      "priority": "P1",
+      "wave_labels": [
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR131",
+      "pr": 131,
+      "title": "META-WAVE-1: Recursive convergence runtime, session handover, and Wave-1000 roadmap",
+      "priority": "P1",
+      "wave_labels": [
+        "W1",
+        "W2",
+        "W3",
+        "W4",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR132",
+      "pr": 132,
+      "title": "META-WAVE-2: Recursive statistical runtime, convergence analytics, and entropy governance",
+      "priority": "P1",
+      "wave_labels": [
+        "W7",
+        "W1000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR168",
+      "pr": 168,
+      "title": "Add W000/W003+ storage maturity strategy to ROADMAP",
+      "priority": "P1",
+      "wave_labels": [
+        "W000",
+        "W003",
+        "W002"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR173",
+      "pr": 173,
+      "title": "feat(incubator): add chat tuple ingress mapping scaffold",
+      "priority": "P1",
+      "wave_labels": [
+        "W000",
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR174",
+      "pr": 174,
+      "title": "feat(W000): Bootstrap federation runtime fabric (schemas, agent directives, telemetry scaffold)",
+      "priority": "P1",
+      "wave_labels": [
+        "W000",
+        "W001",
+        "W002"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR179",
+      "pr": 179,
+      "title": "feat(W000): bootstrap federation runtime topology, schemas, drift telemetry, and bridge validation",
+      "priority": "P1",
+      "wave_labels": [
+        "W000",
+        "W000-touched"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR186",
+      "pr": 186,
+      "title": "feat(incubator): extend W000/W001 chat tuple scaffold with bridge and pipeline integration",
+      "priority": "P1",
+      "wave_labels": [
+        "W000",
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR203",
+      "pr": 203,
+      "title": "W007.2: Close SARIF remediation and resolve remaining CI/runtime/governance blockers",
+      "priority": "P1",
+      "wave_labels": [
+        "W007",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR205",
+      "pr": 205,
+      "title": "W007.1: Enforce federated release ordering and standardize machine-readable runtime/governance artifacts",
+      "priority": "P1",
+      "wave_labels": [
+        "W007",
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR213",
+      "pr": 213,
+      "title": "W000 Bootstrap – MASTER Contract Governance Workbench",
+      "priority": "P1",
+      "wave_labels": [
+        "W000",
+        "W001",
+        "W010"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR216",
+      "pr": 216,
+      "title": "W007 Runtime Foundation and Visualization",
+      "priority": "P1",
+      "wave_labels": [
+        "W007",
+        "W008"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR225",
+      "pr": 225,
+      "title": "Add ABACUS debug_spine scaffold (W000) and runtime proof (W001) with Swift runtime, renderer, and tests",
+      "priority": "P1",
+      "wave_labels": [
+        "W000",
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR226",
+      "pr": 226,
+      "title": "Add lineage & dependency trace validators, reporting, and CI integration",
+      "priority": "P1",
+      "wave_labels": [
+        "W001",
+        "W002"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR269",
+      "pr": 269,
+      "title": "test(qps): add W04 KEB receipt semantic CI fixture",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W04-T10"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR270",
+      "pr": 270,
+      "title": "test(qps): validate W04 KEB receipt fixture",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W04-T10"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR271",
+      "pr": 271,
+      "title": "feat(qps): produce W04 KEB runtime receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W04-T10"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR272",
+      "pr": 272,
+      "title": "ci(qps): wire W04 KEB receipt validator",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W04-T10"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR305",
+      "pr": 305,
+      "title": "feat(qps): normalize bidder-parallel evaluation semantics",
+      "priority": "P1",
+      "wave_labels": [
+        "W005",
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR306",
+      "pr": 306,
+      "title": "fix(control): repair CODEX ssot_style W06 failures",
+      "priority": "P1",
+      "wave_labels": [
+        "W06",
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR307",
+      "pr": 307,
+      "title": "fix(control): correct CODEX W07 lineage digests",
+      "priority": "P1",
+      "wave_labels": [
+        "W07",
+        "W06"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR308",
+      "pr": 308,
+      "title": "fix(semantic): deduplicate W05 exchange terms",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR309",
+      "pr": 309,
+      "title": "feat(qps): normalize cost-frontier semantics W06",
+      "priority": "P1",
+      "wave_labels": [
+        "W06",
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR311",
+      "pr": 311,
+      "title": "feat(qps): execute W05 bidder evaluation KEB return",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR312",
+      "pr": 312,
+      "title": "fix(qps): repair W05 KEB post-merge validation",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR313",
+      "pr": 313,
+      "title": "feat(qps): return W06 cost-frontier KEB normalization",
+      "priority": "P1",
+      "wave_labels": [
+        "W06",
+        "W06-COST"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR314",
+      "pr": 314,
+      "title": "fix(qps): preserve W05 KEB receipt before semantic gate",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005",
+        "W05-specific"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR315",
+      "pr": 315,
+      "title": "feat(qps): close W06 KEB feedback loop",
+      "priority": "P1",
+      "wave_labels": [
+        "W06",
+        "W06-COST",
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR316",
+      "pr": 316,
+      "title": "feat(qps): run W07 quantitative-binding quality KEB",
+      "priority": "P1",
+      "wave_labels": [
+        "W07",
+        "W06"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR326",
+      "pr": 326,
+      "title": "feat(qps): execute W05 bidder evaluation KEB return",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR329",
+      "pr": 329,
+      "title": "fix(qps): make W05 KEB and artifact lineage executable",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR335",
+      "pr": 335,
+      "title": "control(qps): advance W08 ABACUS peer lineage post-802",
+      "priority": "P1",
+      "wave_labels": [
+        "W08",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR336",
+      "pr": 336,
+      "title": "control(qps): emit hash-bound W08 KEB runtime return",
+      "priority": "P1",
+      "wave_labels": [
+        "W08",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR337",
+      "pr": 337,
+      "title": "fix(qps): publish W08 KEB post-upload artifact binding",
+      "priority": "P1",
+      "wave_labels": [
+        "W08",
+        "W003",
+        "W08-A2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR342",
+      "pr": 342,
+      "title": "control(qps): govern Word-to-PDF KEB bridge W28",
+      "priority": "P1",
+      "wave_labels": [
+        "W28",
+        "W028"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR351",
+      "pr": 351,
+      "title": "feedback(qps): W41/P02 reconcile NFS graph semantics",
+      "priority": "P1",
+      "wave_labels": [
+        "W41",
+        "W40"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR353",
+      "pr": 353,
+      "title": "feedback(qps): W41/P03 apply child-authority NFS correction",
+      "priority": "P1",
+      "wave_labels": [
+        "W41",
+        "W40"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR355",
+      "pr": 355,
+      "title": "triage(qps): W43 bind KEB bridge to child #383",
+      "priority": "P1",
+      "wave_labels": [
+        "W43",
+        "W42"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR356",
+      "pr": 356,
+      "title": "govern(qps): W42/P01 execute bounded KEB triage",
+      "priority": "P1",
+      "wave_labels": [
+        "W42",
+        "W40"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR358",
+      "pr": 358,
+      "title": "triage(qps): return W44 KEB findings",
+      "priority": "P1",
+      "wave_labels": [
+        "W44",
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR361",
+      "pr": 361,
+      "title": "triage(qps): W44 KEB evidence-output reverse-load",
+      "priority": "P1",
+      "wave_labels": [
+        "W44",
+        "W42"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR364",
+      "pr": 364,
+      "title": "federation(qps): emit W44 KEB execution result",
+      "priority": "P1",
+      "wave_labels": [
+        "W44",
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR366",
+      "pr": 366,
+      "title": "triage(qps): W44 validate PCA promotion semantics in KEB",
+      "priority": "P1",
+      "wave_labels": [
+        "W44",
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR376",
+      "pr": 376,
+      "title": "control(keb): map and bind cryogenic property capability graph",
+      "priority": "P1",
+      "wave_labels": [
+        "W45",
+        "W46",
+        "W49",
+        "W50",
+        "W51"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR377",
+      "pr": 377,
+      "title": "w49(qps): semantically validate first source-bound evidence chain",
+      "priority": "P1",
+      "wave_labels": [
+        "W49",
+        "W49-OFFER49"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR390",
+      "pr": 390,
+      "title": "W54-M01: type IBC LCR SFR provenance predicates",
+      "priority": "P1",
+      "wave_labels": [
+        "W54-M01",
+        "W53-P05D"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR396",
+      "pr": 396,
+      "title": "federation(qps): validate W52 hashed cost depth-gate payload",
+      "priority": "P1",
+      "wave_labels": [
+        "W52",
+        "W52-COST"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR399",
+      "pr": 399,
+      "title": "W53 P01: validate sanitized QPS cost federation envelope",
+      "priority": "P1",
+      "wave_labels": [
+        "W53",
+        "W52",
+        "W53-COST"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR403",
+      "pr": 403,
+      "title": "W54-P02 KEB: validate and route exact QPS utility payload",
+      "priority": "P1",
+      "wave_labels": [
+        "W54-P02",
+        "W54-P01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR405",
+      "pr": 405,
+      "title": "W54-P03 KEB: return DOW #906 and validate child re-entry semantics",
+      "priority": "P1",
+      "wave_labels": [
+        "W54-P03",
+        "W54"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR406",
+      "pr": 406,
+      "title": "W54-P02: validate and route exact QPS utility graph payload",
+      "priority": "P1",
+      "wave_labels": [
+        "W54-P02",
+        "W54",
+        "W54-P01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR412",
+      "pr": 412,
+      "title": "W53-P06C: repair KEB gates after #409",
+      "priority": "P1",
+      "wave_labels": [
+        "W53-P06C",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR414",
+      "pr": 414,
+      "title": "W57-P02 KEB: challenge current LKT PVPS 83-kW source contradiction",
+      "priority": "P1",
+      "wave_labels": [
+        "W57-P02",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR417",
+      "pr": 417,
+      "title": "W053-P06D: close KEB semantic/governance gates",
+      "priority": "P1",
+      "wave_labels": [
+        "W053-P06D",
+        "W053"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR418",
+      "pr": 418,
+      "title": "W56: materialize exact KEB SHA256 receipt for DOW dispatch",
+      "priority": "P1",
+      "wave_labels": [
+        "W56",
+        "W056"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR419",
+      "pr": 419,
+      "title": "W56: rerun exact KEB hash gate with pinned raw bytes",
+      "priority": "P1",
+      "wave_labels": [
+        "W56",
+        "W056"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR420",
+      "pr": 420,
+      "title": "W56: normalize DOW component utility findings for child re-entry",
+      "priority": "P1",
+      "wave_labels": [
+        "W56",
+        "W56-DOW",
+        "W056"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR425",
+      "pr": 425,
+      "title": "W58: operationalize KEB DoV governance, PCA/BT and KPI control",
+      "priority": "P1",
+      "wave_labels": [
+        "W58",
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR428",
+      "pr": 428,
+      "title": "W60: validate exact-SHA 3PR roundtrip and emit bounded KEB receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W60",
+        "W59"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR433",
+      "pr": 433,
+      "title": "W59: enforce TRIAGE KEB bridges and census CI",
+      "priority": "P1",
+      "wave_labels": [
+        "W59",
+        "W58"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR434",
+      "pr": 434,
+      "title": "W61: close KEB provenance DEFER with exact graph/evidence PASS",
+      "priority": "P1",
+      "wave_labels": [
+        "W61",
+        "W60",
+        "W58-contract"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR438",
+      "pr": 438,
+      "title": "CODEX 2.0 W01: SSOT census, version convergence and CI authority gates",
+      "priority": "P1",
+      "wave_labels": [
+        "W01",
+        "W00"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR440",
+      "pr": 440,
+      "title": "release: close R01 identity, authority tests and self-smoke gates",
+      "priority": "P1",
+      "wave_labels": [
+        "W062",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR441",
+      "pr": 441,
+      "title": "CODEX 2.0 W02: authority classification, SSOT resolver and semantic closure",
+      "priority": "P1",
+      "wave_labels": [
+        "W02",
+        "W002",
+        "W01",
+        "W003",
+        "W03"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR442",
+      "pr": 442,
+      "title": "semantic: close W062 release scale-gate vocabulary debt",
+      "priority": "P1",
+      "wave_labels": [
+        "W062",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR443",
+      "pr": 443,
+      "title": "CODEX 2.0: publish measured W00-W02 release scorecard",
+      "priority": "P1",
+      "wave_labels": [
+        "W00-W02",
+        "W002",
+        "W00",
+        "W01",
+        "W02",
+        "W003",
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR444",
+      "pr": 444,
+      "title": "CODEX 2.0 W03: turn SSOT discovery into classification census",
+      "priority": "P1",
+      "wave_labels": [
+        "W03",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR445",
+      "pr": 445,
+      "title": "CODEX 2.0 W03 P2: persist census evidence and logical-ID BT",
+      "priority": "P1",
+      "wave_labels": [
+        "W03",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR446",
+      "pr": 446,
+      "title": "CODEX 2.0 W03 P3: bind logical IDs and expose runtime competition",
+      "priority": "P1",
+      "wave_labels": [
+        "W03",
+        "W003",
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR447",
+      "pr": 447,
+      "title": "CODEX 2.0 W04: bind logical IDs and consumer paths",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W004",
+        "W03",
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR448",
+      "pr": 448,
+      "title": "CODEX 2.0 W04: converge MCP runtime authority from W03 evidence",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W03",
+        "W004"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR449",
+      "pr": 449,
+      "title": "CODEX 2.0 W05: burn down bound-ID authority deficit",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005",
+        "W03",
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR450",
+      "pr": 450,
+      "title": "CODEX 2.0 W04 P2: sharpen MCP 13-family contracts and Zod",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W004"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR451",
+      "pr": 451,
+      "title": "CODEX 2.0 W04 P3: migrate MCP donor capabilities and gate parity",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W004"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR452",
+      "pr": 452,
+      "title": "CODEX 2.0 W05 P3: execute bound-ID integrity and first expansion",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR453",
+      "pr": 453,
+      "title": "CODEX 2.0 W04 P4: complete MCP donor parity gate",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W004"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR454",
+      "pr": 454,
+      "title": "CODEX 2.0 W05 P4: converge resolver authority and penetrate consumers",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR455",
+      "pr": 455,
+      "title": "CODEX 2.0 W05 P5: close #454 CI drift and continue consumer burndown",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR456",
+      "pr": 456,
+      "title": "CODEX 2.0 W04 P4R: repair MCP parity compatibility regressions",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W004"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR457",
+      "pr": 457,
+      "title": "CODEX 2.0 W05 P6: migrate executable SSOT consumers to logical IDs",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR458",
+      "pr": 458,
+      "title": "CODEX 2.0 W04 P5: discriminate federation and agent runtime families",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W004",
+        "W03"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR459",
+      "pr": 459,
+      "title": "CODEX 2.0 W04 P6: retire duplicate MCP orchestration shell",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W004",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR461",
+      "pr": 461,
+      "title": "CODEX 2.0 W04 P7: re-enter runtime edge census after MCP facade",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W004"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR462",
+      "pr": 462,
+      "title": "CODEX 2.0 W04 P8: prove runtime import-edge discrimination",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W004"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR463",
+      "pr": 463,
+      "title": "CODEX 2.0 W04 P9: close runtime discrimination PCA BT 3P3",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W004",
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR464",
+      "pr": 464,
+      "title": "CODEX 2.0 W04 P10: probe agent orchestration entrypoint",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W004",
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR465",
+      "pr": 465,
+      "title": "CODEX 2.0 W04 P11: deepen agent CI/CD and subrepo report",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W004",
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR466",
+      "pr": 466,
+      "title": "CODEX 2.0 W05 P1: validate release-readiness consumers and mutation guards",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR467",
+      "pr": 467,
+      "title": "CODEX 2.0 W05 P2: bind governed logical IDs in canonical census",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005",
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR468",
+      "pr": 468,
+      "title": "CODEX 2.0 W05 P3: burn down release and resolver logical IDs",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR469",
+      "pr": 469,
+      "title": "CODEX 2.0 W05 P4: instrument 16x3PR ID scale experiment",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR470",
+      "pr": 470,
+      "title": "CODEX 2.0 W05 P2: validate product artifact consumers and zero-delta gaps",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR471",
+      "pr": 471,
+      "title": "CODEX 2.0 W05 P5: operationalize worker multiplier plan",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005",
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR472",
+      "pr": 472,
+      "title": "CODEX 2.0 W05 P3: create product consumer and zero-delta contracts",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR473",
+      "pr": 473,
+      "title": "CODEX 2.0 W05 P5: make worker multiplier executable for ID burndown",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR474",
+      "pr": 474,
+      "title": "CODEX 2.0 W05 P5R: repair scale control-plane gates",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR475",
+      "pr": 475,
+      "title": "CODEX 2.0 W05 P4: populate product map and define zero-delta workflow",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR476",
+      "pr": 476,
+      "title": "CODEX 2.0 W05 P6: execute 16x ID pulse on PR",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR477",
+      "pr": 477,
+      "title": "CODEX 2.0 W05 P7: add dynamic power-of-two ID scaling controller",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR478",
+      "pr": 478,
+      "title": "CODEX 2.0 W05 P5: enumerate products and add zero-delta execution harness",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR479",
+      "pr": 479,
+      "title": "CODEX 2.0 W05 P8: census once then fan out ID consumers",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR480",
+      "pr": 480,
+      "title": "CODEX 2.0 W05 P6: add QPS roundtrip regeneration zero-delta job",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR482",
+      "pr": 482,
+      "title": "CODEX 2.0 W05 P7: repair QPS regeneration workflow trigger",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR483",
+      "pr": 483,
+      "title": "CODEX 2.0 W05 P8: trigger QPS regeneration zero-delta workflow",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR488",
+      "pr": 488,
+      "title": "CODEX 2.0 W05 P11R: close semantic and governance exact-head residuals",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR490",
+      "pr": 490,
+      "title": "CODEX 2.0 W05 P9: repair QPS workflow visibility trigger",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR491",
+      "pr": 491,
+      "title": "CODEX 2.0 W05 P13: integrate work-conserving scheduler telemetry",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR494",
+      "pr": 494,
+      "title": "CODEX 2.0 W05 P10: recreate QPS zero-delta workflow for registration",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR495",
+      "pr": 495,
+      "title": "CODEX 2.0 W05 P14: tune scheduler from observed 16x runtime",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR497",
+      "pr": 497,
+      "title": "CODEX 2.0 W05 P15: measure real enqueue age",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR499",
+      "pr": 499,
+      "title": "CODEX 2.0 W05 P11: repair QPS workflow parser gate",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR501",
+      "pr": 501,
+      "title": "CODEX 2.0 C1: exact-head governance and validator portability",
+      "priority": "P1",
+      "wave_labels": [
+        "W005",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR502",
+      "pr": 502,
+      "title": "control(triage): bind CODEX publish conversion to cluster PXA",
+      "priority": "P1",
+      "wave_labels": [
+        "W005",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR503",
+      "pr": 503,
+      "title": "W62: observed KEB DoV requalification",
+      "priority": "P1",
+      "wave_labels": [
+        "W62",
+        "W61"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR504",
+      "pr": 504,
+      "title": "W63: finalize KEB governance contribution to TRIAGE control DoV",
+      "priority": "P1",
+      "wave_labels": [
+        "W63",
+        "W61"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR514",
+      "pr": 514,
+      "title": "W60: quantify observed TRIAGE KEB DoV completion",
+      "priority": "P1",
+      "wave_labels": [
+        "W60",
+        "W58",
+        "W59"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR522",
+      "pr": 522,
+      "title": "W63: semantic gate for binary receipts and zero-delta closure",
+      "priority": "P1",
+      "wave_labels": [
+        "W63",
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR523",
+      "pr": 523,
+      "title": "W63 repair: obtain exact-head KEB P7 semantic PASS",
+      "priority": "P1",
+      "wave_labels": [
+        "W63",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR524",
+      "pr": 524,
+      "title": "W063: terminal KEB P7 exact-head proof repair",
+      "priority": "P1",
+      "wave_labels": [
+        "W063",
+        "W003",
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR525",
+      "pr": 525,
+      "title": "W063 P8: clear terminal semantic vocabulary red",
+      "priority": "P1",
+      "wave_labels": [
+        "W063",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR526",
+      "pr": 526,
+      "title": "W62: route immutable TRIAGE census tuple through KEB",
+      "priority": "P1",
+      "wave_labels": [
+        "W62",
+        "W62-001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR530",
+      "pr": 530,
+      "title": "W69-B: force explicit QPS two-pass zero-delta execution",
+      "priority": "P1",
+      "wave_labels": [
+        "W69-B",
+        "W069",
+        "W68-B",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR543",
+      "pr": 543,
+      "title": "W70-B1: derive terminal publish burndown from exact-head evidence",
+      "priority": "P1",
+      "wave_labels": [
+        "W70-B1",
+        "W070",
+        "W70"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR544",
+      "pr": 544,
+      "title": "W70-B2: retain actionable zero-delta diagnostics on failure",
+      "priority": "P1",
+      "wave_labels": [
+        "W70-B2",
+        "W070",
+        "W70",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR546",
+      "pr": 546,
+      "title": "W71-2/4: trace CODEX terminal prerequisites as evidence atoms",
+      "priority": "P1",
+      "wave_labels": [
+        "W71-2",
+        "W071",
+        "W70",
+        "W71"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR547",
+      "pr": 547,
+      "title": "W72: burn down CODEX UNKNOWN/undetermined atoms recursively",
+      "priority": "P1",
+      "wave_labels": [
+        "W72",
+        "W072"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR548",
+      "pr": 548,
+      "title": "W71B: bind observed adversarial QA into strict terminal burndown",
+      "priority": "P1",
+      "wave_labels": [
+        "W071",
+        "W70"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR549",
+      "pr": 549,
+      "title": "W73: convert CODEX UNKNOWN into governed dispositions",
+      "priority": "P1",
+      "wave_labels": [
+        "W73",
+        "W073",
+        "W72"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR552",
+      "pr": 552,
+      "title": "W84 KEB: execute LLDB-DAP Swift federation normalization",
+      "priority": "P1",
+      "wave_labels": [
+        "W84",
+        "W001",
+        "W002"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR553",
+      "pr": 553,
+      "title": "W84-P2: validate source provenance and engineering eligibility",
+      "priority": "P1",
+      "wave_labels": [
+        "W84-P2",
+        "W084",
+        "W84"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR555",
+      "pr": 555,
+      "title": "W86 KEB: close semantic provenance residual for W84 re-entry",
+      "priority": "P1",
+      "wave_labels": [
+        "W86",
+        "W84",
+        "W84-introduced",
+        "W69",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR556",
+      "pr": 556,
+      "title": "W84-C1 KEB: validate redacted incremental BFLOW receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W84-C1",
+        "W084",
+        "W84"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR558",
+      "pr": 558,
+      "title": "W88 B6: execute hash/stale fail-closed KEB receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W88",
+        "W088"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR559",
+      "pr": 559,
+      "title": "W85/P1-P2: govern CENSUS_DOV_PROOF and canonical hash semantics",
+      "priority": "P1",
+      "wave_labels": [
+        "W85",
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR561",
+      "pr": 561,
+      "title": "W63: verify TRIAGE tuple survives on fresh KEB main",
+      "priority": "P1",
+      "wave_labels": [
+        "W63",
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR563",
+      "pr": 563,
+      "title": "W85/P1: clear W003 and Swift runtime residuals after #559",
+      "priority": "P1",
+      "wave_labels": [
+        "W85",
+        "W003",
+        "W085",
+        "W001",
+        "W002"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR564",
+      "pr": 564,
+      "title": "W85/P1: align semantic renderer with W002 federation events",
+      "priority": "P1",
+      "wave_labels": [
+        "W85",
+        "W002",
+        "W085",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR565",
+      "pr": 565,
+      "title": "W63R: reconcile W001 runtime tests with accepted W002 Swift spine",
+      "priority": "P1",
+      "wave_labels": [
+        "W001",
+        "W002",
+        "W63",
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR566",
+      "pr": 566,
+      "title": "W90 KEB: burn down SSOT filename ambiguity by governed role",
+      "priority": "P1",
+      "wave_labels": [
+        "W90",
+        "W89"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR567",
+      "pr": 567,
+      "title": "W85/P1: preserve W001 trace while accepting W002 events",
+      "priority": "P1",
+      "wave_labels": [
+        "W85",
+        "W001",
+        "W002",
+        "W085"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR568",
+      "pr": 568,
+      "title": "W85/P1: assert the governed Swift W002 event sequence",
+      "priority": "P1",
+      "wave_labels": [
+        "W85",
+        "W002",
+        "W085",
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR574",
+      "pr": 574,
+      "title": "W94/P2 KEB: validate CTaxonomy glossary and alias semantics",
+      "priority": "P1",
+      "wave_labels": [
+        "W94",
+        "W094",
+        "W93"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR577",
+      "pr": 577,
+      "title": "W98/MIP: prove semantic repair and bound W69 contract debt",
+      "priority": "P1",
+      "wave_labels": [
+        "W98",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR578",
+      "pr": 578,
+      "title": "W99: repair W69 first observed harness contract failure",
+      "priority": "P1",
+      "wave_labels": [
+        "W99",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR580",
+      "pr": 580,
+      "title": "W100: prove external runner admission for cryoplant #820 exact head",
+      "priority": "P1",
+      "wave_labels": [
+        "W100",
+        "W99"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR581",
+      "pr": 581,
+      "title": "W100: execute cryoplant B1 governed-input gate on healthy runner",
+      "priority": "P1",
+      "wave_labels": [
+        "W100",
+        "W42",
+        "W80",
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR582",
+      "pr": 582,
+      "title": "W101: immutable binary recovery/transport 3PC",
+      "priority": "P1",
+      "wave_labels": [
+        "W101",
+        "W21"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR583",
+      "pr": 583,
+      "title": "W93 KEB: execute mixed Python/Node Docker validator",
+      "priority": "P1",
+      "wave_labels": [
+        "W93",
+        "W92"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR584",
+      "pr": 584,
+      "title": "W102: bind 4/4 original binary recovery to runner ingress handoff",
+      "priority": "P1",
+      "wave_labels": [
+        "W102",
+        "W101",
+        "W21",
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR586",
+      "pr": 586,
+      "title": "W103: gate immutable ingress 4/4 before B1 execution",
+      "priority": "P1",
+      "wave_labels": [
+        "W103",
+        "W102",
+        "W101",
+        "W100"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR587",
+      "pr": 587,
+      "title": "W98/P2 KEB: validate QPS glossary 3PC + 3PR semantics",
+      "priority": "P1",
+      "wave_labels": [
+        "W98",
+        "W098",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR589",
+      "pr": 589,
+      "title": "W104/P3 KEB: execute CC-R01..R08 semantic receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W104",
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR590",
+      "pr": 590,
+      "title": "MIP: bind KEB into organisation federation activity census",
+      "priority": "P1",
+      "wave_labels": [
+        "W98",
+        "W003",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR593",
+      "pr": 593,
+      "title": "W105: 3PR + MIP immutable ingress convergence",
+      "priority": "P1",
+      "wave_labels": [
+        "W105",
+        "W101-W103",
+        "W100"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR602",
+      "pr": 602,
+      "title": "W103/C1 KEB: execute source identity gate and DEFER missing BOM/MTO authority",
+      "priority": "P1",
+      "wave_labels": [
+        "W103",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR607",
+      "pr": 607,
+      "title": "fix(qps): repair W69 hosted-runner zero-delta execution",
+      "priority": "P1",
+      "wave_labels": [
+        "W69",
+        "W069",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR608",
+      "pr": 608,
+      "title": "ci(qps-dow-keb): validate bridge rows in draft mode",
+      "priority": "P1",
+      "wave_labels": [
+        "W109",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR609",
+      "pr": 609,
+      "title": "QTG/KEB P3: execute real chat pair 001 receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W109",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR615",
+      "pr": 615,
+      "title": "W111: global hive census, glossary, yellow-pages dock and BT action taxonomy",
+      "priority": "P1",
+      "wave_labels": [
+        "W111",
+        "W110"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR618",
+      "pr": 618,
+      "title": "W112: bind W111 exact merge tuple and repaired DOW receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W112",
+        "W111",
+        "W003",
+        "W108",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR619",
+      "pr": 619,
+      "title": "W112: 3PC repair action/status collision and add GLOB lookup",
+      "priority": "P1",
+      "wave_labels": [
+        "W112",
+        "W108",
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR620",
+      "pr": 620,
+      "title": "W114: freeze CIS post-merge exact identity tuple",
+      "priority": "P1",
+      "wave_labels": [
+        "W114",
+        "W111",
+        "W112",
+        "W113",
+        "W003",
+        "W108"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR621",
+      "pr": 621,
+      "title": "W113: add DMAIC-Control REX taxonomy, ledger and GLOB lookup",
+      "priority": "P1",
+      "wave_labels": [
+        "W113",
+        "W112",
+        "W112-001",
+        "W112-002",
+        "W112-003",
+        "W112-004",
+        "W112-005",
+        "W112-006",
+        "W113-CODEX",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR623",
+      "pr": 623,
+      "title": "W115: KEB mesh status emitter",
+      "priority": "P1",
+      "wave_labels": [
+        "W115",
+        "W108"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR624",
+      "pr": 624,
+      "title": "W113: preserve PR621 W003 experience as repo REX return",
+      "priority": "P1",
+      "wave_labels": [
+        "W113",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR633",
+      "pr": 633,
+      "title": "W126: final CODEX point-release candidate proof",
+      "priority": "P1",
+      "wave_labels": [
+        "W126",
+        "W126-CODEX"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR634",
+      "pr": 634,
+      "title": "W126R: replay CODEX governance gate on corrected metadata",
+      "priority": "P1",
+      "wave_labels": [
+        "W126",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR635",
+      "pr": 635,
+      "title": "W126R2: complete CODEX governance metadata repair",
+      "priority": "P1",
+      "wave_labels": [
+        "W126",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR638",
+      "pr": 638,
+      "title": "W113: close W003 REX control loop",
+      "priority": "P1",
+      "wave_labels": [
+        "W113",
+        "W003",
+        "W113-CODEX"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR639",
+      "pr": 639,
+      "title": "W126R3: repair GLOB YAML question syntax",
+      "priority": "P1",
+      "wave_labels": [
+        "W126",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR650",
+      "pr": 650,
+      "title": "W113 CONTROL: exact-head W003 + Semantic Runtime + CI convergence",
+      "priority": "P1",
+      "wave_labels": [
+        "W113",
+        "W003",
+        "W113-CODEX"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR651",
+      "pr": 651,
+      "title": "SC-20260912 3PR/P3 KEB: challenge handover provenance semantics",
+      "priority": "P1",
+      "wave_labels": [
+        "W142",
+        "W104",
+        "W138"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR652",
+      "pr": 652,
+      "title": "W113 CONTROL: 3P3 + MIP deletion-safe session close",
+      "priority": "P1",
+      "wave_labels": [
+        "W113",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR679",
+      "pr": 679,
+      "title": "H2 QPS TRIAGE W1: reliability applicability semantic challenge",
+      "priority": "P1",
+      "wave_labels": [
+        "W1",
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR680",
+      "pr": 680,
+      "title": "H2 QPS TRIAGE W1: repair P2 semantic metadata key",
+      "priority": "P1",
+      "wave_labels": [
+        "W1",
+        "W001",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR682",
+      "pr": 682,
+      "title": "A8.1: repair receipt vocabulary gate and bind exact-head SHA",
+      "priority": "P1",
+      "wave_labels": [
+        "W008",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR695",
+      "pr": 695,
+      "title": "A9.2: close DEBT-007 from hosted Pages PROMOTE proof",
+      "priority": "P1",
+      "wave_labels": [
+        "W009",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR698",
+      "pr": 698,
+      "title": "A10: close snapshot_receipt with Chromium PNG evidence",
+      "priority": "P1",
+      "wave_labels": [
+        "W010",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR701",
+      "pr": 701,
+      "title": "A9.3: harden hosted Pages proof against propagation races",
+      "priority": "P1",
+      "wave_labels": [
+        "W009",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR723",
+      "pr": 723,
+      "title": "Text curation Batch 02: CODEX bootstrap, federation plan and review-wave history",
+      "priority": "P1",
+      "wave_labels": [
+        "W206",
+        "W192"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR724",
+      "pr": 724,
+      "title": "Text curation Batch 03: CODEX W007.2 workflow repair receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W007",
+        "W207"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR728",
+      "pr": 728,
+      "title": "W211: route local validation Mission Control and Windows census evidence",
+      "priority": "P1",
+      "wave_labels": [
+        "W211",
+        "W210"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR729",
+      "pr": 729,
+      "title": "MIP: bind Pages deployment ownership and A10/A9 lossless handover",
+      "priority": "P1",
+      "wave_labels": [
+        "W010",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR730",
+      "pr": 730,
+      "title": "fix(aht): bind fail-closed PR statistics and MIP control",
+      "priority": "P1",
+      "wave_labels": [
+        "W003",
+        "W104"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR733",
+      "pr": 733,
+      "title": "A9.3: bind exact-main semantic boundary vocabulary",
+      "priority": "P1",
+      "wave_labels": [
+        "W010",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR735",
+      "pr": 735,
+      "title": "W105/I: make W69 zero-delta compare identical release identity",
+      "priority": "P1",
+      "wave_labels": [
+        "W105",
+        "W69",
+        "W69-FIRST",
+        "W69-SECOND",
+        "W69-ZERO"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR738",
+      "pr": 738,
+      "title": "W233: consume expanded QPS federation handover in KEB",
+      "priority": "P1",
+      "wave_labels": [
+        "W233",
+        "W68",
+        "W69",
+        "W70"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR739",
+      "pr": 739,
+      "title": "W105/H KEB: accept child handover pointer only",
+      "priority": "P1",
+      "wave_labels": [
+        "W105",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR758",
+      "pr": 758,
+      "title": "W213: bind federation metric semantic lineage",
+      "priority": "P1",
+      "wave_labels": [
+        "W213",
+        "W008"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR761",
+      "pr": 761,
+      "title": "W274: recognize pointer-bound GMI DOCENG source identity",
+      "priority": "P1",
+      "wave_labels": [
+        "W274",
+        "W273"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR784",
+      "pr": 784,
+      "title": "HIST-BD-023/024: harden federation identity and provenance validators",
+      "priority": "P1",
+      "wave_labels": [
+        "W286",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR785",
+      "pr": 785,
+      "title": "HIST-BD-022: fix dedicated candidate-proof dependency",
+      "priority": "P1",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR787",
+      "pr": 787,
+      "title": "Historian: CODEX closure re-proof for BD021-024",
+      "priority": "P1",
+      "wave_labels": [
+        "W286",
+        "W003"
+      ],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR803",
+      "pr": 803,
+      "title": "Finalize #255 retirement after semantic CI green",
+      "priority": "P1",
+      "wave_labels": [
+        "W255",
+        "W003",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR807",
+      "pr": 807,
+      "title": "W322-R2: challenge substantive HEPAK/Line-B receipt semantics",
+      "priority": "P1",
+      "wave_labels": [
+        "W322-R2",
+        "W322"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR813",
+      "pr": 813,
+      "title": "fix(actions): repair zero-job workflow registration debt",
+      "priority": "P1",
+      "wave_labels": [
+        "W003",
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR814",
+      "pr": 814,
+      "title": "W328-R1: repair KEB semantic runtime first-red",
+      "priority": "P1",
+      "wave_labels": [
+        "W328-R1",
+        "W328",
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR824",
+      "pr": 824,
+      "title": "W329-R1: challenge final HIST-BD-034 semantic contract",
+      "priority": "P1",
+      "wave_labels": [
+        "W329-R1",
+        "W329"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR825",
+      "pr": 825,
+      "title": "W331-R2: bind canonical HIST-BD-034 child merge",
+      "priority": "P1",
+      "wave_labels": [
+        "W331-R2",
+        "W331"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR831",
+      "pr": 831,
+      "title": "W335: retire legacy hosted zero-delta wrappers behind W69",
+      "priority": "P1",
+      "wave_labels": [
+        "W335",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR832",
+      "pr": 832,
+      "title": "CONTROL: recensus BD queue after #830 closure",
+      "priority": "P1",
+      "wave_labels": [
+        "W335",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR834",
+      "pr": 834,
+      "title": "GM-I-A P002: consume fresh CoolProp attestation in KEB",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A",
+        "GM-I-A-MCLOCK-P002"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR159",
+      "pr": 159,
+      "title": "feat(runtime): bootstrap ABACUS-CODEX-FEDERATION governance scaffold",
+      "priority": "P2",
+      "wave_labels": [
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR170",
+      "pr": 170,
+      "title": "feat(runtime): bootstrap ABACUS-CODEX-FEDERATION governance scaffold with bridge orchestration, agent implementation tracking, and unified runtime manifest",
+      "priority": "P2",
+      "wave_labels": [
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR176",
+      "pr": 176,
+      "title": "[W000] Bootstrap federated semantic trace scaffolding",
+      "priority": "P2",
+      "wave_labels": [
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR177",
+      "pr": 177,
+      "title": "W000 bootstrap: federated semantic trace scaffolding",
+      "priority": "P2",
+      "wave_labels": [
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR178",
+      "pr": 178,
+      "title": "feat(W000): bootstrap federation templates and harden telemetry, governance, and bridge scaffolds",
+      "priority": "P2",
+      "wave_labels": [
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR180",
+      "pr": 180,
+      "title": "feat(W000): bootstrap semantic orchestration topology, schemas, drift monitor CLI, and governance hardening",
+      "priority": "P2",
+      "wave_labels": [
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR181",
+      "pr": 181,
+      "title": "Add ADR-0001 governance baseline and executable runtime governance gate",
+      "priority": "P2",
+      "wave_labels": [
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR183",
+      "pr": 183,
+      "title": "Add federation_runtime governance enforcement artifacts, live CI gate, and Copilot/runtime reference fixes",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR184",
+      "pr": 184,
+      "title": "Strengthen federation_runtime governance gate with root pipeline integration, schema enforcement, bridge audit, and test coverage",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR185",
+      "pr": 185,
+      "title": "[W000] Establish federated runtime bootstrap and CODEX↔ABACUS bridge alignment governance hardening",
+      "priority": "P2",
+      "wave_labels": [
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR187",
+      "pr": 187,
+      "title": "Add W000 runtime governance scaffold (ABACUS / CODEX / FEDERATION)",
+      "priority": "P2",
+      "wave_labels": [
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR188",
+      "pr": 188,
+      "title": "Add W000 runtime governance scaffold (ABACUS / CODEX / FEDERATION)",
+      "priority": "P2",
+      "wave_labels": [
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR194",
+      "pr": 194,
+      "title": "Fix cryo-dashboard README 404 and expand link validation to Markdown/YAML/CSS",
+      "priority": "P2",
+      "wave_labels": [
+        "W000-LINK"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR195",
+      "pr": 195,
+      "title": "fix: register docs/governance_w000.html and docs/runtime_map.html in MANIFEST.json",
+      "priority": "P2",
+      "wave_labels": [
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR196",
+      "pr": 196,
+      "title": "feat: W003 DMAIC dashboard + governance/render hardening and CI alignment",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR197",
+      "pr": 197,
+      "title": "fix: normalize spelling/YAML consistency + surface bridge failures + fix absolute imports",
+      "priority": "P2",
+      "wave_labels": [
+        "W002"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR199",
+      "pr": 199,
+      "title": "feat(W003.2): SVG renderer and process_flow renderer",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR200",
+      "pr": 200,
+      "title": "feat(W007.1): PR-W007.1-FEDERATION-METRICS-ROLLUP — Federation Metric Aggregation and Rollup",
+      "priority": "P2",
+      "wave_labels": [
+        "W007"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR202",
+      "pr": 202,
+      "title": "W007.2A: Harden SARIF generation/upload contract and remediate runtime/governance CI blockers",
+      "priority": "P2",
+      "wave_labels": [
+        "W007"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR204",
+      "pr": 204,
+      "title": "PR-1: CODEX governance identity, workflow lane map, artifact lineage matrix & bridge validation fixes",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR221",
+      "pr": 221,
+      "title": "fix: execute TypeScript tests in validate_ts_tests via tsx subprocess",
+      "priority": "P2",
+      "wave_labels": [
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR222",
+      "pr": 222,
+      "title": "Add SVG/XML extraction, Inkscape bridge, P&ID semantic parser, validators, viewer and tests",
+      "priority": "P2",
+      "wave_labels": [
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR223",
+      "pr": 223,
+      "title": "W001: governance validation foundation (SSOT + MASTER_input + CI)",
+      "priority": "P2",
+      "wave_labels": [
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR224",
+      "pr": 224,
+      "title": "Add QPS USER interface descriptive note and SSOT-derivative data",
+      "priority": "P2",
+      "wave_labels": [
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR227",
+      "pr": 227,
+      "title": "feat: add semantic layer and arrow direction models for P&amp;ID viewer with packaged entrypoint import fix",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR233",
+      "pr": 233,
+      "title": "Add Universal Work Report SSOT, PR lifecycle checklist, schemas, and federation/bridge scaffolds",
+      "priority": "P2",
+      "wave_labels": [
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR234",
+      "pr": 234,
+      "title": "fix: unpin setuptools, fix metrics path mismatch, broaden pytest-json-report",
+      "priority": "P2",
+      "wave_labels": [
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR244",
+      "pr": 244,
+      "title": "[SUPERSEDED by #245] feat(qps-roundtrip): semantic manifest and legacy binary audit",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR245",
+      "pr": 245,
+      "title": "feat(qps-roundtrip): hardened semantic manifest and legacy binary audit",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR246",
+      "pr": 246,
+      "title": "feat(qps-roundtrip): PC handoff evidence, semantic compare and release receipts",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR247",
+      "pr": 247,
+      "title": "chore(governance): retire Runtime Governance Ruff baseline noise",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR248",
+      "pr": 248,
+      "title": "feat(qps-roundtrip): controlled Windows build and publication orchestrator",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR250",
+      "pr": 250,
+      "title": "feat(qps-cost-master): accepted-release parity receipt and public pointer",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR251",
+      "pr": 251,
+      "title": "docs(qps-cost-master): Phase 5 binary classification and attestation policy",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR252",
+      "pr": 252,
+      "title": "chore(qplant): remove three legacy root binaries",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR259",
+      "pr": 259,
+      "title": "Run visible QPS KEB Wave 01 warm-up",
+      "priority": "P2",
+      "wave_labels": [
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR260",
+      "pr": 260,
+      "title": "Autostart QPS KEB Wave 01 after merge",
+      "priority": "P2",
+      "wave_labels": [
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR262",
+      "pr": 262,
+      "title": "Make QPS KEB warm-up receipts prove executed mechanics",
+      "priority": "P2",
+      "wave_labels": [
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR268",
+      "pr": 268,
+      "title": "qa(qps): add W04 KEB receipt and semantic QA contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR273",
+      "pr": 273,
+      "title": "fix(qps): make W04 KEB runtime evidence-bound",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR274",
+      "pr": 274,
+      "title": "feat(qps): bind SSOT style federation consumers",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR275",
+      "pr": 275,
+      "title": "ci(qps): execute W04 KEB runtime receipt in Actions",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR276",
+      "pr": 276,
+      "title": "fix(qps): authenticate and pin W04 KEB child checkout",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR277",
+      "pr": 277,
+      "title": "fix(qps): authenticate and pin W04 KEB child source",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR279",
+      "pr": 279,
+      "title": "fix(qps): harden W04 secret use and SHA verification",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR280",
+      "pr": 280,
+      "title": "fix(qps): align W04 KEB disposition contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR282",
+      "pr": 282,
+      "title": "ci: collapse duplicate agentic PR scans under queue pressure",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR283",
+      "pr": 283,
+      "title": "ci: path-scope and collapse render smoke runs",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR284",
+      "pr": 284,
+      "title": "ci: path-scope and collapse Confluence bridge runs",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR285",
+      "pr": 285,
+      "title": "ci: scope and collapse governance validation runs",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR286",
+      "pr": 286,
+      "title": "ci: stop bot-driven agentic scan loops",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR287",
+      "pr": 287,
+      "title": "ci: add tier-0 deterministic preflight receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR288",
+      "pr": 288,
+      "title": "ci: make runtime release gate path-scoped and collapsible",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR289",
+      "pr": 289,
+      "title": "ci: scope and collapse Semgrep scans",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR290",
+      "pr": 290,
+      "title": "ci: bound runtime governance queue pressure",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR291",
+      "pr": 291,
+      "title": "ci: scope semantic validation queue pressure",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR292",
+      "pr": 292,
+      "title": "ci(w04): add interim dedicated priority runner lane",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR294",
+      "pr": 294,
+      "title": "ci(w04): add runner registration and priority dispatch helpers",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR299",
+      "pr": 299,
+      "title": "feat(qps): learn from W04 child semantic disposition",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR304",
+      "pr": 304,
+      "title": "fix(qps): repair evidence verifier PowerShell parser defect",
+      "priority": "P2",
+      "wave_labels": [
+        "W002"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR310",
+      "pr": 310,
+      "title": "feat(qps): emit W05 PCA/BT observations using child taxonomy",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR317",
+      "pr": 317,
+      "title": "feat(qps): normalize W07 quantitative evidence semantics",
+      "priority": "P2",
+      "wave_labels": [
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR318",
+      "pr": 318,
+      "title": "feat(qps): consume W07 quantitative child disposition",
+      "priority": "P2",
+      "wave_labels": [
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR320",
+      "pr": 320,
+      "title": "fix(qps): normalize W07 feedback governance",
+      "priority": "P2",
+      "wave_labels": [
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR321",
+      "pr": 321,
+      "title": "feat(qps): normalize W07 quantity-to-cost semantics",
+      "priority": "P2",
+      "wave_labels": [
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR322",
+      "pr": 322,
+      "title": "control(qps): ingest W05 child KEB disposition",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR331",
+      "pr": 331,
+      "title": "fix(qps): stabilize W08 semantic return release gate",
+      "priority": "P2",
+      "wave_labels": [
+        "W08"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR338",
+      "pr": 338,
+      "title": "fix(qps): make KEB runtime self-binding two-phase",
+      "priority": "P2",
+      "wave_labels": [
+        "W08"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR345",
+      "pr": 345,
+      "title": "Add DKO reviewer assimilation metric contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W36"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR346",
+      "pr": 346,
+      "title": "W37 encode exact reviewer union and domain projection contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W37"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR347",
+      "pr": 347,
+      "title": "W39 add machine-readable P1 reviewer catch-up metrics",
+      "priority": "P2",
+      "wave_labels": [
+        "W39"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR348",
+      "pr": 348,
+      "title": "W40 encode peer-review and manual-confirmation allocation",
+      "priority": "P2",
+      "wave_labels": [
+        "W40"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR352",
+      "pr": 352,
+      "title": "federation(qps): W42 binary KEB return",
+      "priority": "P2",
+      "wave_labels": [
+        "W42"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR354",
+      "pr": 354,
+      "title": "govern(qps): W43 KEB triage convergence",
+      "priority": "P2",
+      "wave_labels": [
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR360",
+      "pr": 360,
+      "title": "triage(qps): W42 KEB execution return",
+      "priority": "P2",
+      "wave_labels": [
+        "W42"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR362",
+      "pr": 362,
+      "title": "feedback(qps): W42 tri-repo KEB triage request",
+      "priority": "P2",
+      "wave_labels": [
+        "W42"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR363",
+      "pr": 363,
+      "title": "ci(qps): run W43 KEB TRIAGE against child SHA",
+      "priority": "P2",
+      "wave_labels": [
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR365",
+      "pr": 365,
+      "title": "feedback(qps): return W41 P02 NFS semantic triage controls",
+      "priority": "P2",
+      "wave_labels": [
+        "W41"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR367",
+      "pr": 367,
+      "title": "triage(qps): W45 KEB convergence validation",
+      "priority": "P2",
+      "wave_labels": [
+        "W45"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR369",
+      "pr": 369,
+      "title": "control(qps): W47 full-comment KEB semantic roundtrip",
+      "priority": "P2",
+      "wave_labels": [
+        "W47"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR373",
+      "pr": 373,
+      "title": "control(qps): W48 shared-answer KEB semantic validation",
+      "priority": "P2",
+      "wave_labels": [
+        "W48"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR375",
+      "pr": 375,
+      "title": "control(qps): W49 answer-set human-confirmation KEB validation",
+      "priority": "P2",
+      "wave_labels": [
+        "W49"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR378",
+      "pr": 378,
+      "title": "W50: route hidden capabilities through KEB",
+      "priority": "P2",
+      "wave_labels": [
+        "W50"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR379",
+      "pr": 379,
+      "title": "control(qps): dispatch W43 KEB execution pulse P01",
+      "priority": "P2",
+      "wave_labels": [
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR380",
+      "pr": 380,
+      "title": "W45: execute KEB Line-S property roundtrip gate",
+      "priority": "P2",
+      "wave_labels": [
+        "W45"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR381",
+      "pr": 381,
+      "title": "W51: expose helium-property worker through KEB",
+      "priority": "P2",
+      "wave_labels": [
+        "W51"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR383",
+      "pr": 383,
+      "title": "FED-W044/P04: validate QPLANT and QPS:CS cost-driver returns",
+      "priority": "P2",
+      "wave_labels": [
+        "W044"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR384",
+      "pr": 384,
+      "title": "w49(qps): KEB validate fail-closed evidence and provenance fallbacks",
+      "priority": "P2",
+      "wave_labels": [
+        "W49"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR385",
+      "pr": 385,
+      "title": "W53-P05: validate VLP low-temperature federation receipts",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR386",
+      "pr": 386,
+      "title": "W53-P05A: add VLP receipt validation fixtures",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05A"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR387",
+      "pr": 387,
+      "title": "W53-P05C: validate bounded VLP diagnostic receipts",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05C"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR388",
+      "pr": 388,
+      "title": "W53-P05D: KEB gate independent B-flow evidence for residual 1/5",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05D"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR389",
+      "pr": 389,
+      "title": "W41 encode NFS review reconciliation controls",
+      "priority": "P2",
+      "wave_labels": [
+        "W41"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR391",
+      "pr": 391,
+      "title": "W54-M02: type assimilation conversion guards",
+      "priority": "P2",
+      "wave_labels": [
+        "W54-M02"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR392",
+      "pr": 392,
+      "title": "W53-P05D: validate property-bound substitution and identical retest",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05D"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR393",
+      "pr": 393,
+      "title": "W53-P05E: validate executable helium property state receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05E"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR395",
+      "pr": 395,
+      "title": "W53-P05G: gate rank-1 Line-B diameter source substitution",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05G"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR397",
+      "pr": 397,
+      "title": "W53-P05H: gate DN150 VLP hydraulic validation",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05H"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR398",
+      "pr": 398,
+      "title": "W53-P05I: gate coupled VLP thermo and Line-S validation",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05I"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR400",
+      "pr": 400,
+      "title": "W53 P01B: split QPS cost provenance from binding state",
+      "priority": "P2",
+      "wave_labels": [
+        "W53"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR401",
+      "pr": 401,
+      "title": "W53 P01C: enforce quantitative-only QPS cost binding semantics",
+      "priority": "P2",
+      "wave_labels": [
+        "W53"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR402",
+      "pr": 402,
+      "title": "W53-P05K1: validate strict TS residual independence and provenance",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05K1"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR404",
+      "pr": 404,
+      "title": "W53-P06A: KEB validate QPS OCD/ADR outward release contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P06A"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR407",
+      "pr": 407,
+      "title": "W54-P02B: return validated utility graph receipt to child",
+      "priority": "P2",
+      "wave_labels": [
+        "W54-P02B"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR408",
+      "pr": 408,
+      "title": "W54-P03: enforce cold/warm piping property routing",
+      "priority": "P2",
+      "wave_labels": [
+        "W54-P03"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR409",
+      "pr": 409,
+      "title": "W53-P06B: enforce KEB release and parent-promotion guards",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P06B"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR410",
+      "pr": 410,
+      "title": "W54-P05: validate human properties UI and SSOT receipt contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W54-P05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR411",
+      "pr": 411,
+      "title": "W55-P06: guard all-line runtime and reverse-pressure semantics",
+      "priority": "P2",
+      "wave_labels": [
+        "W55-P06"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR413",
+      "pr": 413,
+      "title": "W53-P05Q: gate recovered Line-B geometry and exact HEPAK execution",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05Q"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR415",
+      "pr": 415,
+      "title": "W56: add program-generic helium evidence triage skill core",
+      "priority": "P2",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR421",
+      "pr": 421,
+      "title": "W56: KEB challenge and return receipt for Line-B roundtrip",
+      "priority": "P2",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR422",
+      "pr": 422,
+      "title": "W54-P09: validate WSH/S-line propagation semantics",
+      "priority": "P2",
+      "wave_labels": [
+        "W54-P09"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR423",
+      "pr": 423,
+      "title": "W54-P12: enforce QPLANT HEPAK policy and exact child artifact pins",
+      "priority": "P2",
+      "wave_labels": [
+        "W54-P12"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR424",
+      "pr": 424,
+      "title": "W57: add KEB cADR/xOCD and governance architecture view",
+      "priority": "P2",
+      "wave_labels": [
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR426",
+      "pr": 426,
+      "title": "W59: add 3P3 reverse-pressure governance self-evaluation",
+      "priority": "P2",
+      "wave_labels": [
+        "W59"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR427",
+      "pr": 427,
+      "title": "W60: add KEB 5-horizon DoV and 3PR controls",
+      "priority": "P2",
+      "wave_labels": [
+        "W60"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR430",
+      "pr": 430,
+      "title": "W60.1: make KEB receipt contract-valid and emit 3P3 self-evaluation",
+      "priority": "P2",
+      "wave_labels": [
+        "W60"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR432",
+      "pr": 432,
+      "title": "W58: establish TRIAGE KEB census and semantic authority contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W58"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR436",
+      "pr": 436,
+      "title": "W59/P02: ALAT 3P3x2 KEB semantic receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W59"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR437",
+      "pr": 437,
+      "title": "CODEX 2.0 W00: authority integrity and SSOT foundation",
+      "priority": "P2",
+      "wave_labels": [
+        "W00"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR460",
+      "pr": 460,
+      "title": "CODEX 2.0: activate multi-lane 3PR major-release burndown",
+      "priority": "P2",
+      "wave_labels": [
+        "W006"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR481",
+      "pr": 481,
+      "title": "CODEX 2.0 W05 P9: balance 16x ID burn-down workers",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR484",
+      "pr": 484,
+      "title": "CODEX 2.0 W05 P10: decouple logical ID workers from runner admission",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR487",
+      "pr": 487,
+      "title": "CODEX 2.0 W05 P11: measure 32x with damped PID telemetry",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR489",
+      "pr": 489,
+      "title": "CODEX 2.0 W05 P12: work-conserving non-FIFO worker pool",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR505",
+      "pr": 505,
+      "title": "W63: close P7 KEB semantic disposition gate",
+      "priority": "P2",
+      "wave_labels": [
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR506",
+      "pr": 506,
+      "title": "W57 3PR-A2: KEB challenge source-return DoV boundary",
+      "priority": "P2",
+      "wave_labels": [
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR507",
+      "pr": 507,
+      "title": "W57 R18 3PR-A: KEB challenge physical source conversion",
+      "priority": "P2",
+      "wave_labels": [
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR508",
+      "pr": 508,
+      "title": "W58 3PR-A2: route playground evidence fail-closed through KEB",
+      "priority": "P2",
+      "wave_labels": [
+        "W58"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR509",
+      "pr": 509,
+      "title": "W57 3PR-B2: KEB bind zero-loss terminal return",
+      "priority": "P2",
+      "wave_labels": [
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR510",
+      "pr": 510,
+      "title": "W57 R19 3PR-B: KEB physical DoV pressure return",
+      "priority": "P2",
+      "wave_labels": [
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR511",
+      "pr": 511,
+      "title": "W58 3PR-B2: gate DoV on observed receipts, not merged state",
+      "priority": "P2",
+      "wave_labels": [
+        "W58"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR512",
+      "pr": 512,
+      "title": "W65: federate parallel discovery through semantic bridge",
+      "priority": "P2",
+      "wave_labels": [
+        "W65"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR513",
+      "pr": 513,
+      "title": "W66: execute CODEX terminal semantic proof burndown",
+      "priority": "P2",
+      "wave_labels": [
+        "W66"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR515",
+      "pr": 515,
+      "title": "W62 A: bind CODEX observed 3PR DoV closure state",
+      "priority": "P2",
+      "wave_labels": [
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR517",
+      "pr": 517,
+      "title": "W61: freeze TRIAGE KEB DoV convergence gates",
+      "priority": "P2",
+      "wave_labels": [
+        "W61"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR518",
+      "pr": 518,
+      "title": "W62 B: reverse-load CODEX terminal 3PR gates",
+      "priority": "P2",
+      "wave_labels": [
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR519",
+      "pr": 519,
+      "title": "TRIAGE Offer Eval DoV B2: terminal KEB semantic gates",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR520",
+      "pr": 520,
+      "title": "W62: validate observed binary DoV semantics",
+      "priority": "P2",
+      "wave_labels": [
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR521",
+      "pr": 521,
+      "title": "TRIAGE: burn down CODEX UNKNOWN census debt",
+      "priority": "P2",
+      "wave_labels": [
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR527",
+      "pr": 527,
+      "title": "W58-A: challenge exact child HEPAK receipt intake",
+      "priority": "P2",
+      "wave_labels": [
+        "W58-A"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR528",
+      "pr": 528,
+      "title": "W58-B: challenge observed DoV burndown semantics",
+      "priority": "P2",
+      "wave_labels": [
+        "W58-B"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR529",
+      "pr": 529,
+      "title": "3PR-B: burn down reproducibility via fresh zero-delta execution",
+      "priority": "P2",
+      "wave_labels": [
+        "W068"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR531",
+      "pr": 531,
+      "title": "CODEX 2.0 3PR-A1: portability probe",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR532",
+      "pr": 532,
+      "title": "CODEX 2.0 3PR-B1: reproducibility probe",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR533",
+      "pr": 533,
+      "title": "CODEX 2.0 3PR-C1: RC preflight",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR534",
+      "pr": 534,
+      "title": "CODEX 2.0 3PR-A2: clean smoke qualification",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR535",
+      "pr": 535,
+      "title": "CODEX 2.0 3PR-B2: zero-delta preflight",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR536",
+      "pr": 536,
+      "title": "CODEX 2.0 3PR-C2: immutable manifest preflight",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR537",
+      "pr": 537,
+      "title": "CODEX 2.0 3PR-A3: aggregate release smoke execution",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR538",
+      "pr": 538,
+      "title": "CODEX 2.0 3PR-B3: deterministic repeat execution",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR539",
+      "pr": 539,
+      "title": "CODEX 2.0 3PR-C3: generate RC manifest candidate",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR540",
+      "pr": 540,
+      "title": "CODEX 2.0 3PR-A4: cross-version self-smoke re-entry",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR541",
+      "pr": 541,
+      "title": "CODEX 2.0 3PR-B4: adversarial governance replay",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR542",
+      "pr": 542,
+      "title": "CODEX 2.0 3PR-C4: aggregate publish burndown receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR545",
+      "pr": 545,
+      "title": "W71: add strict/equivalent + absolute artifact census to publish burndown",
+      "priority": "P2",
+      "wave_labels": [
+        "W71"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR550",
+      "pr": 550,
+      "title": "W57-P03 KEB: return independent PVPS 83-kW DEFER to child",
+      "priority": "P2",
+      "wave_labels": [
+        "W57-P03"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR551",
+      "pr": 551,
+      "title": "W59/P03: LKT 3P3x2 KEB semantic receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W59"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR557",
+      "pr": 557,
+      "title": "W58 KEB: challenge current LKT partial RTM-595 evidence",
+      "priority": "P2",
+      "wave_labels": [
+        "W58"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR560",
+      "pr": 560,
+      "title": "W88 TRIAGE: measured CODEX census burn-down",
+      "priority": "P2",
+      "wave_labels": [
+        "W88"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR562",
+      "pr": 562,
+      "title": "W89 KEB: execute exact-head census receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W89"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR569",
+      "pr": 569,
+      "title": "W91 KEB: unify runtime collision ownership and retire false duplicates",
+      "priority": "P2",
+      "wave_labels": [
+        "W91"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR570",
+      "pr": 570,
+      "title": "W86: execute child re-entry proof via CODEX runner pool",
+      "priority": "P2",
+      "wave_labels": [
+        "W86"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR571",
+      "pr": 571,
+      "title": "W92 KEB: add canonical containerized validation runtime",
+      "priority": "P2",
+      "wave_labels": [
+        "W92"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR572",
+      "pr": 572,
+      "title": "W86R: execute exact child proof without cross-repo token",
+      "priority": "P2",
+      "wave_labels": [
+        "W86"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR573",
+      "pr": 573,
+      "title": "W93/P2 KEB: enforce PVPS R5 source eligibility",
+      "priority": "P2",
+      "wave_labels": [
+        "W93"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR576",
+      "pr": 576,
+      "title": "W97/P2 KEB: bind MIP repair and alternate-path validation",
+      "priority": "P2",
+      "wave_labels": [
+        "W97"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR579",
+      "pr": 579,
+      "title": "W99: semantic repair proof without reintroducing vocabulary debt",
+      "priority": "P2",
+      "wave_labels": [
+        "W99"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR585",
+      "pr": 585,
+      "title": "W103/P2 KEB: validate warm-helium cost evidence eligibility",
+      "priority": "P2",
+      "wave_labels": [
+        "W103"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR588",
+      "pr": 588,
+      "title": "W103/C1 KEB: prove authoritative WHM+WPS cost source identity",
+      "priority": "P2",
+      "wave_labels": [
+        "W103"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR591",
+      "pr": 591,
+      "title": "W104: scan CODEX floating KEB coverage delta",
+      "priority": "P2",
+      "wave_labels": [
+        "W104"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR592",
+      "pr": 592,
+      "title": "W104/C1 KEB: emit real eight-atom fail-closed semantic receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W104"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR594",
+      "pr": 594,
+      "title": "W104/MIP-I1: external exact-SHA QPS runner diagnostic",
+      "priority": "P2",
+      "wave_labels": [
+        "W104"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR595",
+      "pr": 595,
+      "title": "W105/KEB: execute QPS B1-B2 MIP diagnostic probe",
+      "priority": "P2",
+      "wave_labels": [
+        "W105"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR599",
+      "pr": 599,
+      "title": "W68 MIP: modernize semantic runtime and recursive proof",
+      "priority": "P2",
+      "wave_labels": [
+        "W68"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR600",
+      "pr": 600,
+      "title": "W107 KEB: propagate #1102 runtime-health roll-up",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR601",
+      "pr": 601,
+      "title": "Deepen anchor coverage: correct census blind spots and preserve recovery candidates",
+      "priority": "P2",
+      "wave_labels": [
+        "W104"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR605",
+      "pr": 605,
+      "title": "QTG/KEB: deepen QPS TRIAGE chat-to-GitHub contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR610",
+      "pr": 610,
+      "title": "W105: KEB receipt for QPLANT SBS and CIS clarification",
+      "priority": "P2",
+      "wave_labels": [
+        "W105"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR611",
+      "pr": 611,
+      "title": "W109: consume canonical QPS glossary in KEB semantic federation",
+      "priority": "P2",
+      "wave_labels": [
+        "W109"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR613",
+      "pr": 613,
+      "title": "W106: KEB bind LKT/ALAT control-system RFI wave",
+      "priority": "P2",
+      "wave_labels": [
+        "W106"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR614",
+      "pr": 614,
+      "title": "W110: expose MIP canonical SSOT registry",
+      "priority": "P2",
+      "wave_labels": [
+        "W110"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR616",
+      "pr": 616,
+      "title": "W108: formalize global mesh scheduler status contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W108"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR622",
+      "pr": 622,
+      "title": "W113: implant mesh closure controller into GLOB, scheduler and Zod",
+      "priority": "P2",
+      "wave_labels": [
+        "W113"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR625",
+      "pr": 625,
+      "title": "W113: mesh closure controller re-entry on current GLOB + REX baseline",
+      "priority": "P2",
+      "wave_labels": [
+        "W113"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR626",
+      "pr": 626,
+      "title": "W116 3PR P2: challenge QPS horizon semantics and authority",
+      "priority": "P2",
+      "wave_labels": [
+        "W116"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR628",
+      "pr": 628,
+      "title": "W111: add QPS power/utility KEB semantic-provenance bridge",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR637",
+      "pr": 637,
+      "title": "W116: run CODEX mesh emitter in CI",
+      "priority": "P2",
+      "wave_labels": [
+        "W116"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR642",
+      "pr": 642,
+      "title": "M03 CONTROL: prove exact content-read parity against local raw transport",
+      "priority": "P2",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR643",
+      "pr": 643,
+      "title": "M03 REPAIR: preserve parity first red and compare pragmatic transports",
+      "priority": "P2",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR644",
+      "pr": 644,
+      "title": "W56 REPAIR: consume returned child evidence instead of sibling fetch",
+      "priority": "P2",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR645",
+      "pr": 645,
+      "title": "W56 PRUNE: remove superseded sibling-fetch hash verifiers",
+      "priority": "P2",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR653",
+      "pr": 653,
+      "title": "W142 KEB: type corrected QPS invCOP thermodynamic semantics",
+      "priority": "P2",
+      "wave_labels": [
+        "W142"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR660",
+      "pr": 660,
+      "title": "W145 KEB: propagate QPS numerical DoV runtime-reference state",
+      "priority": "P2",
+      "wave_labels": [
+        "W145"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR661",
+      "pr": 661,
+      "title": "W147 KEB: type QPS numerical source closures without engineering promotion",
+      "priority": "P2",
+      "wave_labels": [
+        "W147"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR663",
+      "pr": 663,
+      "title": "QPS debug W2-W5: real adapters, Docker, heartbeat and terminal BD",
+      "priority": "P2",
+      "wave_labels": [
+        "W2-W5"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR673",
+      "pr": 673,
+      "title": "MIP v2 G5: emit canonical exact-SHA KEB envelope",
+      "priority": "P2",
+      "wave_labels": [
+        "W114"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR678",
+      "pr": 678,
+      "title": "A7.2: real semantic ledgers, deterministic replay, and renderer acceptance",
+      "priority": "P2",
+      "wave_labels": [
+        "W007"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR688",
+      "pr": 688,
+      "title": "QSVG CONTROL: qualify canonical MAIN after final thermal-map repair",
+      "priority": "P2",
+      "wave_labels": [
+        "W688"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR689",
+      "pr": 689,
+      "title": "QSVG CONTROL: repair qualification checker after Codex review",
+      "priority": "P2",
+      "wave_labels": [
+        "W689"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR690",
+      "pr": 690,
+      "title": "A9: receipt-governed production multi-format publication",
+      "priority": "P2",
+      "wave_labels": [
+        "W009"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR691",
+      "pr": 691,
+      "title": "A8.2: production PPTX/PDF receipts and atomic multi-format promotion",
+      "priority": "P2",
+      "wave_labels": [
+        "W691"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR694",
+      "pr": 694,
+      "title": "A9.1: prove hosted GitHub Pages before multi-format promotion",
+      "priority": "P2",
+      "wave_labels": [
+        "W009"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR699",
+      "pr": 699,
+      "title": "Generic PCA/NLPCA engine: reusable non-trading implementation",
+      "priority": "P2",
+      "wave_labels": [
+        "W699"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR703",
+      "pr": 703,
+      "title": "BD-005 PRESSURE: expose WCS LOOP transient first-reds",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR704",
+      "pr": 704,
+      "title": "BD-005 HVAC PRESSURE: bind compressor heat paths and CCB geometry",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR705",
+      "pr": 705,
+      "title": "W190: KEB receipt for repaired full 3PC MIP handover",
+      "priority": "P2",
+      "wave_labels": [
+        "W190"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR706",
+      "pr": 706,
+      "title": "W190: bind QPS lossless handover receiver in KEB",
+      "priority": "P2",
+      "wave_labels": [
+        "W190"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR707",
+      "pr": 707,
+      "title": "W190R: repair KEB receipt to final child and DOW lineage",
+      "priority": "P2",
+      "wave_labels": [
+        "W190"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR708",
+      "pr": 708,
+      "title": "W190R2: bind KEB schema to DOW execution repair",
+      "priority": "P2",
+      "wave_labels": [
+        "W190"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR709",
+      "pr": 709,
+      "title": "BD-005: preserve D2.1/D2.2 as aged active provenance anchors",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR710",
+      "pr": 710,
+      "title": "QPS v1.6.6: freeze 3PR/MIP handover and D2.1 behavioral graph lineage",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR711",
+      "pr": 711,
+      "title": "QPS v1.6.7: bind D2.1 mode-state matrix and refresh lossless handover",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR712",
+      "pr": 712,
+      "title": "QPS v1.6.8: make major prompt-reply progression lossless",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR713",
+      "pr": 713,
+      "title": "QPS v1.6.9: bind Addendum II LOOP degraded boundary",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR714",
+      "pr": 714,
+      "title": "QPS v1.6.10: bind current FSD575 LOOP evidence and sharpen first-red",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR716",
+      "pr": 716,
+      "title": "H4 W3 P1: emit KEB runtime envelope for DOW",
+      "priority": "P2",
+      "wave_labels": [
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR717",
+      "pr": 717,
+      "title": "QPS v1.6.10 control receipt: record PR714 W003 metadata exception",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR720",
+      "pr": 720,
+      "title": "QPS v1.6.11: bind U1.5 supplier-return closure route",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR721",
+      "pr": 721,
+      "title": "QPS: record U1.5 supplier-return absence check",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR722",
+      "pr": 722,
+      "title": "Text curation: route PR-000A governance reconciliation handover",
+      "priority": "P2",
+      "wave_labels": [
+        "W192"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR725",
+      "pr": 725,
+      "title": "Text curation Batch 04: recursive method, orchestration and repo-lifecycle candidates",
+      "priority": "P2",
+      "wave_labels": [
+        "W208"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR736",
+      "pr": 736,
+      "title": "W105/P2 MIP: KEB challenge contract for playground exact receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W105"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR742",
+      "pr": 742,
+      "title": "Fix dense-deck lineage paths for existing link validator",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR745",
+      "pr": 745,
+      "title": "TRIAGE 3PC+MIP: bind KEB receipt semantic vocabulary",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR746",
+      "pr": 746,
+      "title": "W232R: rebind KEB receiver to stable child restart root",
+      "priority": "P2",
+      "wave_labels": [
+        "W232"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR747",
+      "pr": 747,
+      "title": "KEB: bind gg_MATH temporal PCA exact-head receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR750",
+      "pr": 750,
+      "title": "KEB: materialize gg_MATH temporal PCA real knowledge atom",
+      "priority": "P2",
+      "wave_labels": [
+        "W257"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR751",
+      "pr": 751,
+      "title": "W259 P4: bind math method-card source receipt in KEB",
+      "priority": "P2",
+      "wave_labels": [
+        "W259"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR752",
+      "pr": 752,
+      "title": "W259 P4: promote independently challenged math-card KEB atom",
+      "priority": "P2",
+      "wave_labels": [
+        "W259"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR759",
+      "pr": 759,
+      "title": "LEG5 #726: add bounded filesystem scout receipts",
+      "priority": "P2",
+      "wave_labels": [
+        "W210"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR760",
+      "pr": 760,
+      "title": "W273: GMI DOCENG bridge integrity guard",
+      "priority": "P2",
+      "wave_labels": [
+        "W273"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR769",
+      "pr": 769,
+      "title": "W286: GLOOB/Pandoc exact-head federation 3P* producer",
+      "priority": "P2",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR770",
+      "pr": 770,
+      "title": "W285 KEB: review federation function-depth semantics",
+      "priority": "P2",
+      "wave_labels": [
+        "W285"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR771",
+      "pr": 771,
+      "title": "W286 R2: GLOOB/Pandoc exact-head federation 3P* producer",
+      "priority": "P2",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR773",
+      "pr": 773,
+      "title": "W286 R3: complete GLOOB/Pandoc 3PC Prove",
+      "priority": "P2",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR774",
+      "pr": 774,
+      "title": "W286 R4: fix bounded 3PC Prove dependency",
+      "priority": "P2",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR775",
+      "pr": 775,
+      "title": "GM-I-A: consume CoolProp FAST/HEAVY attestation in KEB",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR777",
+      "pr": 777,
+      "title": "QPS v6: fix-forward Pages ownership audit after PR #776 red merge",
+      "priority": "P2",
+      "wave_labels": [
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR781",
+      "pr": 781,
+      "title": "HIST-BD-021/022: close artifact-scope and KEB promotion gaps",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR789",
+      "pr": 789,
+      "title": "Fix #343: carry child artifact hashes in KEB lineage receipts",
+      "priority": "P2",
+      "wave_labels": [
+        "W343"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR790",
+      "pr": 790,
+      "title": "Fix #237: add reusable model-package index and glossary scaffold",
+      "priority": "P2",
+      "wave_labels": [
+        "W237"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR792",
+      "pr": 792,
+      "title": "QPS KEB: execute source-bound full exchange for #254",
+      "priority": "P2",
+      "wave_labels": [
+        "W254"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR794",
+      "pr": 794,
+      "title": "Historian #675: close CODEX debugger/MCP CONTROL debt census",
+      "priority": "P2",
+      "wave_labels": [
+        "W675"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR796",
+      "pr": 796,
+      "title": "Fix #795: validate typed KEB candidate findings and deduplicate",
+      "priority": "P2",
+      "wave_labels": [
+        "W255"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR798",
+      "pr": 798,
+      "title": "Fix #797: validate child KEB dispositions and emit closure metrics",
+      "priority": "P2",
+      "wave_labels": [
+        "W255"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR800",
+      "pr": 800,
+      "title": "Retire #255: KEB maturation eight-atom closure",
+      "priority": "P2",
+      "wave_labels": [
+        "W255"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR802",
+      "pr": 802,
+      "title": "Fix #801: govern KEB semantic change/debt vocabulary",
+      "priority": "P2",
+      "wave_labels": [
+        "W255"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR805",
+      "pr": 805,
+      "title": "BD: de-duplicate canonical/federation feature-branch runs",
+      "priority": "P2",
+      "wave_labels": [
+        "W319"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR806",
+      "pr": 806,
+      "title": "W322: challenge HEPAK MIP blocker semantics",
+      "priority": "P2",
+      "wave_labels": [
+        "W322"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR815",
+      "pr": 815,
+      "title": "fix(security): isolate Bandit scan from SARIF formatter crash",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR817",
+      "pr": 817,
+      "title": "QPS W329: bind LOOP/QCELL handover provenance pointer",
+      "priority": "P2",
+      "wave_labels": [
+        "W329"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR819",
+      "pr": 819,
+      "title": "fix(security): keep Bandit scan truth independent from SARIF conversion",
+      "priority": "P2",
+      "wave_labels": [
+        "W003"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR820",
+      "pr": 820,
+      "title": "W329-R2: challenge HIST-BD-034 exact child head",
+      "priority": "P2",
+      "wave_labels": [
+        "W329-R2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR823",
+      "pr": 823,
+      "title": "W331-R2: final HIST-BD-034 KEB exact-head challenge",
+      "priority": "P2",
+      "wave_labels": [
+        "W331-R2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR826",
+      "pr": 826,
+      "title": "W331-R3: final HIST-BD-034 KEB receiver",
+      "priority": "P2",
+      "wave_labels": [
+        "W331-R3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR827",
+      "pr": 827,
+      "title": "W331-R4: exact PSV KEB receiver",
+      "priority": "P2",
+      "wave_labels": [
+        "W331-R4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/CODEX::PR833",
+      "pr": 833,
+      "title": "GM-I-A P002: consume fresh CoolProp transaction in KEB",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    }
+  ],
+  "dispatch_policy": "P0 cross-repo/provenance first; P1 multi-label next; P2 on recursive-closure demand.",
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
