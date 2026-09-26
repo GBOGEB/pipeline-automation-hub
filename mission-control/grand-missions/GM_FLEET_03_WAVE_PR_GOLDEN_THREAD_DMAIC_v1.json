@@ -1,0 +1,151 @@
+{
+  "schema": "missioncontrol.wave_pr_golden_thread_dmaic.v1",
+  "mission_id": "GM-FLEET-03-WAVE-PR-GOLDEN-THREAD-20260926",
+  "parent_issue": "GBOGEB/pipeline-automation-hub#423",
+  "as_of": "2026-09-26",
+  "execution_wave_type": "PARTIAL_BOUNDED_GENEALOGY_CONTROL",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "define": {
+    "state": "PASS",
+    "problem": "Wave labels and PRs have accumulated across repositories, missions, repair iterations and handovers. Numeric W### order is not a reliable chronology, W### labels are reused, and some named next actions can remain in handovers without a durable successor edge.",
+    "objective": "Create one recursive Golden Thread for the canonical seven-wave analysis subset and every observed PR in its repair/supersession neighborhood, while retaining a breadth inventory of all quoted W### labels.",
+    "canonical_subset": [
+      "W277",
+      "W278",
+      "W279",
+      "W280",
+      "W281",
+      "W287",
+      "W329"
+    ],
+    "non_goals": [
+      "No engineering/compliance/negotiation promotion",
+      "No GM-VI allocation",
+      "No rewriting of historical zero-step or superseded evidence"
+    ]
+  },
+  "measure": {
+    "state": "PASS",
+    "ledger": "mission-control/grand-missions/GM_FLEET_03_WAVE_PR_RECURSIVE_GOLDEN_THREAD_v1.json",
+    "metrics": {
+      "quoted_wave_labels_inventory": 41,
+      "canonical_wave_lane_nodes": 12,
+      "recursive_pr_nodes": 29,
+      "recursive_edges": 26,
+      "dangling_edges": 0,
+      "duplicate_pr_ids": 0,
+      "duplicate_canonical_wave_lane_ids": 0,
+      "unfinished_action_classes": 5
+    },
+    "observed_temporal_facts": [
+      "W287 PR #1538 merged 2026-09-18 before the QPS RTM-hierarchy W277 PR #1588 merged 2026-09-21.",
+      "MissionControl HM-01 used W277/W278/W279 on 2026-09-18 for a different semantic family than QPS RTM hierarchy W277/W278/W279 on 2026-09-21.",
+      "W329 PR #1679 was created after #1678 but merged before #1678, so created-order and merge-order are distinct.",
+      "W281-R4 had multiple competing candidates (#1605/#1606/#1607/#1631); only #1607 became the canonical merged R4 in that candidate cluster."
+    ]
+  },
+  "analyze": {
+    "state": "PASS",
+    "root_causes": [
+      {
+        "id": "A1",
+        "cause": "Wave labels are local identifiers reused across repository/mission families.",
+        "effect": "Naive W### joins create false lineage."
+      },
+      {
+        "id": "A2",
+        "cause": "Wave number encodes a work label, not wall-clock sequence.",
+        "effect": "Numeric sorting misstates chronology."
+      },
+      {
+        "id": "A3",
+        "cause": "One wave can carry multiple lanes/updates.",
+        "effect": "repo+family+W### can still collide, as observed for W287 Table3 versus DREQ-gap."
+      },
+      {
+        "id": "A4",
+        "cause": "PR authoring and merging are concurrent.",
+        "effect": "created chronology and applied/merge chronology can diverge."
+      },
+      {
+        "id": "A5",
+        "cause": "Handover prose may name the next bounded objective without allocating a durable issue/PR.",
+        "effect": "A real continuation can be discoverable but not consumed."
+      }
+    ],
+    "classified_findings": [
+      {
+        "finding": "W281 earlier 'R1 incomplete' narrative",
+        "classification": "STALE_SUPERSEDED",
+        "current": "R1-R4 plus later authoritative source correction #1685/#1687 are merged; historical candidates remain retained."
+      },
+      {
+        "finding": "W287_DREQ_SOURCE_INTEGRATION_REVIEW",
+        "classification": "TRUE_UNCONSUMED_NEXT_OBJECTIVE",
+        "current": "Candidate rows merged in #1690; no later source-integration implementation found in the bounded search."
+      },
+      {
+        "finding": "W329 #923 runtime blocker",
+        "classification": "HISTORICAL_RESOLVED_GATE",
+        "current": "Later post-#923 records bind exact-head W329 browser/roundtrip PASS; zero-step receipts remain historical negative evidence."
+      },
+      {
+        "finding": "W275 physical successor Git bundle",
+        "classification": "EXTERNAL_HOLD",
+        "current": "3PC Prove remains HOLD_WAIT_PHYSICAL_SUCCESSOR_GIT_BUNDLE."
+      },
+      {
+        "finding": "ABACUS #1369 synchronized W62/W64/W70/W71/W85 proof",
+        "classification": "EXECUTION_ADMISSION_HOLD",
+        "current": "Seven-workflow synchronized set still requires real workflow_dispatch runs on one unchanged main SHA."
+      }
+    ]
+  },
+  "improve": {
+    "state": "PASS_IMPLEMENTED",
+    "changes": [
+      "Canonical wave identity is repository::mission_family::wave_label::lane_or_update.",
+      "PRs are independent first-class nodes, never inferred from wave numbering.",
+      "Both created_at chronology and merged_at application chronology are retained.",
+      "Superseded and closed-unmerged PRs remain in the graph instead of disappearing from the current view.",
+      "Edge vocabulary explicitly separates SEMANTIC_SUCCESSOR, CORRECTED_BY, HARDENED_BY, SUPERSEDED_BY, AUTHORITATIVE_SOURCE_CORRECTION, RESTART_SURFACE_SYNC and NAMED_NEXT_OBJECTIVE_UNCONSUMED.",
+      "Unfinished work is classified as TRUE_UNCONSUMED_NEXT_OBJECTIVE, EXTERNAL_HOLD, EXECUTION_ADMISSION_HOLD, SUPERSEDED, or HISTORICAL_RESOLVED_GATE."
+    ]
+  },
+  "control": {
+    "state": "PASS_STATIC_CONTROL_BOUND",
+    "invariants": [
+      "WAVE_LABEL_ALONE_IS_NEVER_A_GLOBAL_KEY",
+      "NO_NUMERIC_SORT_AS_CHRONOLOGY",
+      "CREATED_ORDER_NE_MERGE_ORDER_ALLOWED",
+      "SUPERSEDED_PR_REMAINS_REPLAYABLE",
+      "HISTORICAL_NEGATIVE_EVIDENCE_IS_IMMUTABLE",
+      "NO_DANGLING_EDGE_IN_CANONICAL_LEDGER",
+      "NO_AUTHORITY_TRANSFER_FROM_LINEAGE_RECONSTRUCTION",
+      "UNCONSUMED_NEXT_OBJECTIVE_MUST_REMAIN_VISIBLE_UNTIL_DISPOSITIONED"
+    ],
+    "validation": {
+      "unique_pr_nodes": "PASS_29_OF_29",
+      "unique_wave_lane_nodes": "PASS_12_OF_12",
+      "edge_references": "PASS_26_OF_26",
+      "breadth_inventory": "PASS_41_LABELS",
+      "unresolved_breadth_deep_reads": [
+        "W243",
+        "W244",
+        "W245",
+        "W284",
+        "W325",
+        "W331"
+      ]
+    },
+    "first_action_after_control": {
+      "id": "W287_DREQ_SOURCE_INTEGRATION_REVIEW",
+      "disposition": "SURFACE_AS_DURABLE_SUCCESSOR_WORK_ITEM_BEFORE_ANY_SOURCE_INTEGRATION",
+      "guard": "Do not grant engineering/compliance/formal credit from the candidate overlay itself."
+    },
+    "recurrence_rule": "On every new PR or wave handover, append PR node + wave/lane key + predecessor/successor/supersession edges; never rewrite prior nodes. If a handover names a next objective and no durable successor exists, flag TRUE_UNCONSUMED_NEXT_OBJECTIVE."
+  },
+  "result": "DMAIC_START_TO_FINISH_PASS_FOR_BOUNDED_CANONICAL_SUBSET_WITH_ONE_TRUE_UNCONSUMED_NEXT_OBJECTIVE_SURFACED"
+}
