@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-22T17:05:00+02:00",
+  "as_of": "2026-09-26T09:32:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -1344,7 +1344,10 @@
         "ABACUS#1329 draft hold prevented premature merge until exact-head governance/docs/format/Ruff/review were green; merged@5a6e560a02d45276f23208019ad6a202b3cf0964 after proof",
         "REX-CM-005 remains prevention-withheld: draft process is a bounded mitigation, not repository-admin admission control",
         "cryoplant-project#1629 merged@23162ea21df0459d5778237ce301f326fa338d06 while exact-head Codex review was still running and private-repo runtime checks were non-executed under #923",
-        "cryoplant-project#1634 was created draft-first from current main after stale-branch contamination was detected in invalidated #1633; this is an operational mitigation, not repository-admin prevention"
+        "cryoplant-project#1634 was created draft-first from current main after stale-branch contamination was detected in invalidated #1633; this is an operational mitigation, not repository-admin prevention",
+        "ABACUS#1376 created DRAFT for Appendix 8.4 source-bound extraction; repository automation marked it ready, operator converted it back to DRAFT while decisive exact-head jobs were zero-step queued",
+        "ABACUS#1376 nevertheless merged@c360b58c02570908f8b1760a6dc42f6c33df1db7 from head b815ae92edd872bcd1385da06ff27bbde8003d6a while qps-line-s/docs/YAML/Ruff/format were queued and Codex review was still running",
+        "ABACUS#1376 post-merge content proof pending; any later green may prove content only and cannot prove merge prevention"
       ],
       "execution_boundary": {
         "classification": "REPOSITORY_ADMIN_MERGE_ADMISSION",
@@ -1365,7 +1368,18 @@
         "GBOGEB/CODEX",
         "GBOGEB/GEMINI",
         "GBOGEB/cryoplant-project"
-      ]
+      ],
+      "latest_occurrence": {
+        "repo": "GBOGEB/ABACUS",
+        "pr": 1376,
+        "head": "b815ae92edd872bcd1385da06ff27bbde8003d6a",
+        "merge": "c360b58c02570908f8b1760a6dc42f6c33df1db7",
+        "classification": "MERGED_BEFORE_DECISIVE_PROOF_DESPITE_DRAFT_HOLD",
+        "content_proof": "PENDING_ZERO_STEP_AT_MERGE",
+        "prevention_credit": false,
+        "authority_transfer": false,
+        "formal_credit_delta": 0
+      }
     }
   ],
   "open_priority": [],
