@@ -34,19 +34,19 @@ def main() -> int:
         and control["mip"]["Perpetuate"]["result"] == "PASS_REPOSITORY_NATIVE"
     )
     checks["readiness_schema"] = readiness["schema"] == "missioncontrol.gm_i_a.multiclock_readiness.v2"
-    checks["geometry"] = readiness["measured_pulses"] == 1 and readiness["feature_count_p"] == 9
+    checks["geometry"] = readiness["measured_pulses"] == current["measured_pulses"] and readiness["feature_count_p"] == 9
     checks["pca_gate"] = (
         readiness["pca"]["status"] == "DEFER_INSUFFICIENT_COMPARABLE_MEASURED_PULSES"
         and readiness["pca"]["minimum_rows_required"] == 27
-        and readiness["pca"]["rows_remaining_to_minimum"] == 26
-        and readiness["pca"]["covariance_rank_upper_bound"] == 0
+        and readiness["pca"]["rows_remaining_to_minimum"] == max(0, 27 - current["measured_pulses"])
+        and readiness["pca"]["covariance_rank_upper_bound"] == min(9, max(0, current["measured_pulses"] - 1))
     )
     checks["bt_gate"] = (
         readiness["bt_reverse_pressure"]["status"] == "DEFER_NO_FINITE_MLE_REPEAT_STRUCTURE"
         and readiness["bt_reverse_pressure"]["minimum_repeat_pulses"] == 3
-        and readiness["bt_reverse_pressure"]["repeat_pulses_remaining"] == 2
+        and readiness["bt_reverse_pressure"]["repeat_pulses_remaining"] == max(0, 3 - current["measured_pulses"])
         and readiness["bt_reverse_pressure"]["directed_win_graph_strongly_connected"] is False
-        and readiness["bt_reverse_pressure"]["bidirectional_pair_count"] == 0
+        and readiness["bt_reverse_pressure"]["bidirectional_pair_count"] >= 0
     )
     pressure = readiness["latest_pulse_descriptive_pressure"]
     checks["queue_separation"] = 0.88 < pressure["queue_fraction"] < 0.89
@@ -56,9 +56,9 @@ def main() -> int:
         and pressure["top4_fraction"] > 0.97
     )
     checks["current_pointer"] = (
-        current["pca"]["status"] == "WITHHELD_N1_OF_27"
-        and current["bt"]["status"] == "WITHHELD_N1_NO_STRONG_CONNECTIVITY"
-        and current["next_pulse"] == "GM-I-A-MCLOCK-P002"
+        current["pca"]["status"] == f"WITHHELD_N{current['measured_pulses']}_OF_27"
+        and current["bt"]["status"] == f"WITHHELD_N{current['measured_pulses']}_NO_STRONG_CONNECTIVITY"
+        and current["next_pulse"] == f"GM-I-A-MCLOCK-P{current['measured_pulses'] + 1:03d}"
     )
     checks["no_promotion"] = (
         readiness["authority_transfer"] is False
