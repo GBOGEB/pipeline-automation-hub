@@ -570,7 +570,8 @@
       "state": "CLOSED_UNMERGED_SUPERSEDED",
       "superseded_by": [
         "QPS_PR1736"
-      ]
+      ],
+      "closed_at": "2026-09-24T10:16:15Z"
     },
     {
       "id": "QPS_PR1736",
@@ -717,6 +718,36 @@
       "from": "QPS_PR1690",
       "to": "QPS_ISSUE1801",
       "type": "NAMED_NEXT_OBJECTIVE_SURFACED_AS_DURABLE_ISSUE"
+    },
+    {
+      "from": "QPS_PR1641",
+      "to": "QPS_PR1678",
+      "type": "BROWSER_PROOF_SYNC_BRANCH"
+    },
+    {
+      "from": "QPS_PR1641",
+      "to": "QPS_PR1679",
+      "type": "BROWSER_PROOF_SYNC_BRANCH"
+    },
+    {
+      "from": "QPS_PR1678",
+      "to": "QPS_PR1681",
+      "type": "MATERIAL_DEFECT_SOURCE_HARDENED_BY"
+    },
+    {
+      "from": "QPS_PR1679",
+      "to": "QPS_PR1681",
+      "type": "PRE_HARDENING_SYNC_CONTEXT"
+    },
+    {
+      "from": "QPS_PR1681",
+      "to": "QPS_PR1733",
+      "type": "LATER_RUNTIME_RECOVERY_REBASE_ATTEMPT"
+    },
+    {
+      "from": "QPS_PR1681",
+      "to": "QPS_PR1736",
+      "type": "LATER_RUNTIME_RECOVERY_CLEAN_SUCCESSOR"
     }
   ],
   "chronology_policy": {
@@ -948,7 +979,8 @@
     ],
     "claim": "Complete for the bounded canonical-7 and its observed repair/supersession PRs; breadth inventory is intentionally fail-closed where deep binding is not yet performed.",
     "canonical_wave_identity_rule": "repo+family+wave+lane_or_update",
-    "durable_successor_work_items": 1
+    "durable_successor_work_items": 1,
+    "recursive_edges": 32
   },
   "successor_work_items": [
     {
@@ -960,5 +992,21 @@
       "source_objective": "W287_DREQ_SOURCE_INTEGRATION_REVIEW",
       "authority_transfer": false
     }
-  ]
+  ],
+  "postmerge_correction": {
+    "source_pr": "GBOGEB/pipeline-automation-hub#424",
+    "merged_sha": "0089e293a55e2a66cd040e9eff187b371c5abf01",
+    "codex_findings": [
+      "P2_CONNECT_EVERY_W329_PR_TO_RECURSIVE_SUBGRAPH",
+      "P2_RECORD_PR1733_CLOSURE_TIMESTAMP"
+    ],
+    "repair_branch": "gm/wave-pr-golden-thread-p2-fix-20260926",
+    "evidence": [
+      "QPS W329 workflow-integrity control names merged browser sync PR #1678 and refreshes current main after #1675/#1678/#1679/#1680.",
+      "QPS PR #1733 closed_at observed as 2026-09-24T10:16:15Z.",
+      "QPS PR #1736 explicitly consumes post-#923 W329 exact-head browser/roundtrip PASS as clean recovery rebase."
+    ],
+    "authority_transfer": false,
+    "formal_credit_delta": 0
+  }
 }
