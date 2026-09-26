@@ -1,0 +1,38 @@
+name: GM Top7 Depth3 Mission Control
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_TOP7_DEPTH3_MISSION_v1.json'
+      - 'mission-control/grand-missions/gm_top7_depth3_metrics.py'
+      - 'mission-control/grand-missions/tests/test_gm_top7_depth3.py'
+      - '.github/workflows/gm-top7-depth3.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_TOP7_DEPTH3_MISSION_v1.json'
+      - 'mission-control/grand-missions/gm_top7_depth3_metrics.py'
+      - 'mission-control/grand-missions/tests/test_gm_top7_depth3.py'
+      - '.github/workflows/gm-top7-depth3.yml'
+  workflow_dispatch:
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate mission contract and temporal metrics
+        run: |
+          python -m unittest mission-control/grand-missions/tests/test_gm_top7_depth3.py -v
+          python mission-control/grand-missions/gm_top7_depth3_metrics.py \
+            --contract mission-control/grand-missions/GM_TOP7_DEPTH3_MISSION_v1.json \
+            --out /tmp/gm-top7-depth3-metrics.json
+      - name: Upload metrics receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gm-top7-depth3-metrics-${{ github.sha }}
+          path: /tmp/gm-top7-depth3-metrics.json
