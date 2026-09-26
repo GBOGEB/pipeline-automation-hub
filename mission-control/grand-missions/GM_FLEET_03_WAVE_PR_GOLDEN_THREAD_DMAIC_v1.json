@@ -33,7 +33,7 @@
       "quoted_wave_labels_inventory": 41,
       "canonical_wave_lane_nodes": 12,
       "recursive_pr_nodes": 29,
-      "recursive_edges": 26,
+      "recursive_edges": 32,
       "dangling_edges": 0,
       "duplicate_pr_ids": 0,
       "duplicate_canonical_wave_lane_ids": 0,
@@ -100,6 +100,11 @@
         "finding": "ABACUS #1369 synchronized W62/W64/W70/W71/W85 proof",
         "classification": "EXECUTION_ADMISSION_HOLD",
         "current": "Seven-workflow synchronized set still requires real workflow_dispatch runs on one unchanged main SHA."
+      },
+      {
+        "finding": "PR #424 post-merge Codex review",
+        "classification": "POSTMERGE_P2_REPAIR_REQUIRED",
+        "current": "Two material P2s found after merge: disconnected W329 PR islands and missing closed_at on QPS PR #1733. Repaired on successor branch with 32 fully referenced edges and exact closure timestamp."
       }
     ]
   },
@@ -112,7 +117,8 @@
       "Superseded and closed-unmerged PRs remain in the graph instead of disappearing from the current view.",
       "Edge vocabulary explicitly separates SEMANTIC_SUCCESSOR, CORRECTED_BY, HARDENED_BY, SUPERSEDED_BY, AUTHORITATIVE_SOURCE_CORRECTION, RESTART_SURFACE_SYNC and NAMED_NEXT_OBJECTIVE_UNCONSUMED.",
       "Unfinished work is classified as TRUE_UNCONSUMED_NEXT_OBJECTIVE, EXTERNAL_HOLD, EXECUTION_ADMISSION_HOLD, SUPERSEDED, or HISTORICAL_RESOLVED_GATE.",
-      "The previously unconsumed W287_DREQ_SOURCE_INTEGRATION_REVIEW was allocated as durable successor issue GBOGEB/cryoplant-project#1801."
+      "The previously unconsumed W287_DREQ_SOURCE_INTEGRATION_REVIEW was allocated as durable successor issue GBOGEB/cryoplant-project#1801.",
+      "Post-merge P2 repair connects QPS PRs #1678/#1679 and the #1733/#1736 runtime-recovery pair into the W329 recursive subgraph; PR #1733 closed_at=2026-09-24T10:16:15Z."
     ]
   },
   "control": {
@@ -125,12 +131,13 @@
       "HISTORICAL_NEGATIVE_EVIDENCE_IS_IMMUTABLE",
       "NO_DANGLING_EDGE_IN_CANONICAL_LEDGER",
       "NO_AUTHORITY_TRANSFER_FROM_LINEAGE_RECONSTRUCTION",
-      "UNCONSUMED_NEXT_OBJECTIVE_MUST_REMAIN_VISIBLE_UNTIL_DISPOSITIONED"
+      "UNCONSUMED_NEXT_OBJECTIVE_MUST_REMAIN_VISIBLE_UNTIL_DISPOSITIONED",
+      "ALL_ADMITTED_CANONICAL_PR_NODES_MUST_HAVE_AT_LEAST_ONE_RECURSIVE_EDGE_UNLESS_EXPLICITLY_CLASSIFIED_ISOLATED"
     ],
     "validation": {
       "unique_pr_nodes": "PASS_29_OF_29",
       "unique_wave_lane_nodes": "PASS_12_OF_12",
-      "edge_references": "PASS_26_OF_26",
+      "edge_references": "PASS_32_OF_32",
       "breadth_inventory": "PASS_41_LABELS",
       "unresolved_breadth_deep_reads": [
         "W243",
@@ -149,5 +156,5 @@
     },
     "recurrence_rule": "On every new PR or wave handover, append PR node + wave/lane key + predecessor/successor/supersession edges; never rewrite prior nodes. If a handover names a next objective and no durable successor exists, flag TRUE_UNCONSUMED_NEXT_OBJECTIVE."
   },
-  "result": "DMAIC_START_TO_FINISH_PASS_FOR_BOUNDED_CANONICAL_SUBSET;_TRUE_UNCONSUMED_W287_OBJECTIVE_DISCOVERED_AND_SURFACED_AS_QPS_ISSUE_1801"
+  "result": "DMAIC_CONTROL_CORRECTED_POSTMERGE: canonical subset remains PASS after bounded P2 repair; 29 PR nodes, 32 edges, 0 dangling edges; W287 successor #1801 retained."
 }
