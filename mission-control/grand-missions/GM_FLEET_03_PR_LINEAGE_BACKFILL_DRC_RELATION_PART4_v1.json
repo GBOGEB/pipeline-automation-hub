@@ -1,0 +1,118 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.drc_relation_typing_part.v1",
+  "cell": "DR-C",
+  "part": 4,
+  "sources": [
+    "GBOGEB/Q_engineering_tools::PR98",
+    "GBOGEB/Q_engineering_tools::PR99",
+    "GBOGEB/document-organization-system::PR59",
+    "GBOGEB/document-organization-system::PR65",
+    "GBOGEB/document-organization-system::PR67",
+    "GBOGEB/pipeline-automation-hub::PR118",
+    "GBOGEB/pipeline-automation-hub::PR130",
+    "GBOGEB/pipeline-automation-hub::PR155"
+  ],
+  "edges": [
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR98",
+      "to": "GBOGEB/cryoplant-project#1639",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "W329: exact federated proof for cryoplant #1639 Executes the exact `GBOGEB/cryoplant-project#1639` payload at source head `d2d6beec2b62eff19c5ddb3a60f6c60f2b854b74`. The workflow pins all copied source Git blobs, runs the W322 blocker validation suite under normal Python and `python -O`, and emits a non-compensatin",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR99",
+      "to": "GBOGEB/cryoplant-project#1636",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "W329: execute exact cryoplant #1636 BT2 authority proof Public non-compensating exact-payload proof for GBOGEB/cryoplant-project#1636. ## Exact source binding Source head: `767834e6eedb8d136e5f6c2b13b92b5a66218ae1` Mirrored Git blobs: - script: `96ee50cc917df34e748ab160b489ebb0b6fa8100` - tests: `7175893ff2960cb57967ead0e4d796b994fd21e5` - W325 clo",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR99",
+      "to": "GBOGEB/cryoplant-project#923",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "CLOSES_OR_RESOLVES",
+      "context": "explicit `CURRENT_OFFER_SOURCE_BOUND` acceptance; - empty-source fail-closed/non-compensation assertions; - hash-bound proof receipt. ## Boundary This is federated semantic proof only. It does not repair or compensate GBOGEB/cryoplant-project#923. No engineering, acceptance, release, runtime-GOLD or formal credit is created. `authority_transfer=false`; `formal_credit_delta=0`.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/document-organization-system::PR59",
+      "to": "GBOGEB/pipeline-automation-hub#271",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "CLOSES_OR_RESOLVES",
+      "context": "Consume recursive DOC/KE_BLOCK 3P* + MIP handover Closes #58. Adds a non-authoritative consumer receipt for `GBOGEB/pipeline-automation-hub#271`. The receipt records: - sequential 3PR -> MIP -> 3PC disposition; - source/consumer authority boundary; - local 3/3 proof; - producer Actions pre-execution blocker (`queued`, `steps=null`) after two checks; - exact re",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/document-organization-system::PR65",
+      "to": "GBOGEB/DOCX_RTM_Automation#62",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "tory-native control state. ## Bound proof Producer: - PR #64 merged at `e181903236e70b7b798b56fd59fc8948cd9885c0` - exact producer head `37876b85c10c139be8c23f2bdf47496b92363d0b` - workflow `35367290289` Consumer: - `GBOGEB/DOCX_RTM_Automation#62` - exact consumer head `08d9fa4d5e0d2d1684490b3480f7dd5b44bd6926` - consumer merge `fd897b83b2ba1de2766afb7280ad3b851a04e2f0` - render workflow `35367734640` - job `105674143274` - render artifact digest `sha256:5834b66",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/document-organization-system::PR67",
+      "to": "GBOGEB/DOCX_RTM_Automation#65",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "CLOSES_OR_RESOLVES",
+      "context": "control(adapter): rebind corrected DOCX visual QA receipt Closes #66. Rebinds the DOCX_RTM consumer receipt to the corrected pagination proof from `GBOGEB/DOCX_RTM_Automation#65`. Bound evidence: - exact consumer head `332bc99e26597ab8857f5cc38f5921c293d78334`; - consumer merge `a373ded8808ff1a9dfc40fe7374eb7fcabb6d3b3`; - workflow `35375677112`, job `105699668504`; - artifact digest `sha256:c",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR118",
+      "to": "GBOGEB/cryoplant-project#1135",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "keep W2 HOLD ## Objective Consume the first exact-head child runtime probe after merged Mission Control roll-up #116 and record the measured first-red without reopening the H4 method lane. ## Measured probe Child PR `GBOGEB/cryoplant-project#1135`, exact head `90322dc4d7f299f737e42bf45effa36300f367fa`: - workflow `QPS TRIAGE Reliability Applicability` - run `34825502815` - job `103916589064` - conclusion `failure` - `runner_id = 0` - `steps = 0` Classification",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR130",
+      "to": "GBOGEB/ABACUS#1164",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "retained - LM-10 v1 is already merged via #128. - Provider PR: GBOGEB/gg_MATH#9. - Existing provider runtime proof: run `34917694096` on exact SHA `11d8779cbaca17350e52d9de2917dcbc1ba17a75`. - Measured consumer anchor: GBOGEB/ABACUS#1164. - Coordination surface: #129. - Global non-compensating gate remains GBOGEB/cryoplant-project#923. - H11 remains `DEFER_DATA_CONTRACT_FIRST`. ## Authority This PR changes Mission Control planning/execution doctrine on",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR130",
+      "to": "GBOGEB/cryoplant-project#923",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "ing provider runtime proof: run `34917694096` on exact SHA `11d8779cbaca17350e52d9de2917dcbc1ba17a75`. - Measured consumer anchor: GBOGEB/ABACUS#1164. - Coordination surface: #129. - Global non-compensating gate remains GBOGEB/cryoplant-project#923. - H11 remains `DEFER_DATA_CONTRACT_FIRST`. ## Authority This PR changes Mission Control planning/execution doctrine only. It grants no engineering, compliance, procurement, negotiation, release or Grand Mission author",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR130",
+      "to": "GBOGEB/gg_MATH#9",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "rt, HOLD/DEFER/PARK rules; - machine-readable receipt contract; - explicit gg_MATH -> Mission Control -> ABACUS/QPS three-pulse roundtrip. ## Current state retained - LM-10 v1 is already merged via #128. - Provider PR: GBOGEB/gg_MATH#9. - Existing provider runtime proof: run `34917694096` on exact SHA `11d8779cbaca17350e52d9de2917dcbc1ba17a75`. - Measured consumer anchor: GBOGEB/ABACUS#1164. - Coordination surface: #129. - Global non-compensating gate",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR155",
+      "to": "GBOGEB/cryoplant-project#1379",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HAS_PARENT",
+      "context": "MissionControl: register HM-01 QPS v6 release train ## Purpose Register the first governed horizontal mission for the QPS v6.0.0 release train, without consuming or renumbering GM-I..GM-V, GM-I-B, or LM-10. Parent: GBOGEB/cryoplant-project#1379 Orchestration tracker: #149 ## This PR - adds `HM-01_QPS_V6_RELEASE_TRAIN_CONTROL_v0.1.yaml`; - adds `HM-01_CREW_ALLOCATION_v0.1.yaml`; - binds HM-01 into `OFFICIAL_MISSION_REGISTER_v1.yaml`; - freezes the refreshed sc",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    }
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
