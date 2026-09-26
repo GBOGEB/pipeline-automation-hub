@@ -3109,5 +3109,1000 @@
       "authority_transfer": false,
       "formal_credit_delta": 0
     }
+  ],
+  "root_index_rule": {
+    "invariant": "root_index is the canonical compact roots list. Every root appears exactly once and carries its matching REX-BD id, direct repository applicability, lifecycle state, class/severity, and optional shared REX-CM control.",
+    "repository_applicability": "A BD/REX root applies directly to every repository named in root.repos. Shared REX-CM controls also apply to repositories reached by linked roots or by the control's cross_repo_recurrence evidence.",
+    "no_inference": "Do not infer applicability to a repository that is absent from both the root repo list and shared-control recurrence/applicability evidence.",
+    "authority_transfer": false
+  },
+  "root_index": [
+    {
+      "bd_id": "HIST-BD-001",
+      "rex_id": "REX-BD-001",
+      "title": "Derive observed REX verbs from completed dispositions, not requested actions",
+      "class": "REX_SEMANTICS",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-002",
+      "rex_id": "REX-BD-002",
+      "title": "Enforce CREW_REX declared required fields including timestamp",
+      "class": "CONTRACT_VALIDATION",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-003",
+      "rex_id": "REX-BD-003",
+      "title": "Require exact L0-L6 competency scale",
+      "class": "COMPETENCY_CONTRACT",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-004",
+      "rex_id": "REX-BD-004",
+      "title": "Validate every telemetry event_required field",
+      "class": "TELEMETRY_CONTRACT",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-005",
+      "rex_id": "REX-BD-005",
+      "title": "Align role trial records with policy trial requirements",
+      "class": "TRIAL_CONTRACT",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-006",
+      "rex_id": "REX-BD-006",
+      "title": "Evaluate applicable REX before workload execution/acceptance",
+      "class": "REX_PREFLIGHT",
+      "severity": "P1",
+      "lifecycle_state": "CONTROL",
+      "applicability_state": "CONTROLLED",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": "REX-CM-001"
+    },
+    {
+      "bd_id": "HIST-BD-007",
+      "rex_id": "REX-BD-007",
+      "title": "Classify repeated REX from retained history rather than always NEW",
+      "class": "REX_RECURRENCE",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROLLED",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": "REX-CM-001"
+    },
+    {
+      "bd_id": "HIST-BD-008",
+      "rex_id": "REX-BD-008",
+      "title": "Compute PCA readiness variance from eligible measured rows only",
+      "class": "PCA_GATE",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROLLED",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": "REX-CM-002"
+    },
+    {
+      "bd_id": "HIST-BD-009",
+      "rex_id": "REX-BD-009",
+      "title": "Retain validated rejected runtime evidence in canonical history",
+      "class": "NEGATIVE_EVIDENCE_RETENTION",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-010",
+      "rex_id": "REX-BD-010",
+      "title": "Counterbalance paired allocation execution order",
+      "class": "EXPERIMENT_DESIGN",
+      "severity": "P1",
+      "lifecycle_state": "CONTROL",
+      "applicability_state": "CONTROLLED",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": "REX-CM-002"
+    },
+    {
+      "bd_id": "HIST-BD-011",
+      "rex_id": "REX-BD-011",
+      "title": "Fit Bradley-Terry abilities on correct two-node log-odds scale",
+      "class": "BT_MODEL",
+      "severity": "P1",
+      "lifecycle_state": "CONTROL",
+      "applicability_state": "CONTROLLED",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": "REX-CM-002"
+    },
+    {
+      "bd_id": "HIST-BD-012",
+      "rex_id": "REX-BD-012",
+      "title": "Derive pair winner/gap from raw recorded timings",
+      "class": "BT_EVIDENCE_DERIVATION",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROLLED",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": "REX-CM-002"
+    },
+    {
+      "bd_id": "HIST-BD-013",
+      "rex_id": "REX-BD-013",
+      "title": "Bind MissionControl exact SHA inside Ring2 scout receipt",
+      "class": "PROVENANCE_BINDING",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-014",
+      "rex_id": "REX-BD-014",
+      "title": "Do not use optimizable Python assert for lldb-mcp runtime pipe invariants",
+      "class": "RUNTIME_FAIL_CLOSED",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-015",
+      "rex_id": "REX-BD-015",
+      "title": "Pin governed GitHub Action dependencies to immutable commit SHAs",
+      "class": "SUPPLY_CHAIN_CONTROL",
+      "severity": "P1",
+      "lifecycle_state": "CONTROL",
+      "applicability_state": "CONTROLLED",
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "shared_control_id": "REX-CM-003"
+    },
+    {
+      "bd_id": "HIST-BD-016",
+      "rex_id": "REX-BD-016",
+      "title": "Bind PR runtime receipts to the evaluated PR head rather than synthetic merge ref",
+      "class": "PROVENANCE_BINDING",
+      "severity": "P1",
+      "lifecycle_state": "CONTROL",
+      "applicability_state": "CONTROLLED",
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "shared_control_id": "REX-CM-004"
+    },
+    {
+      "bd_id": "HIST-BD-017",
+      "rex_id": "REX-BD-017",
+      "title": "Provide bounded writable authentication state under hardened read-only rootfs",
+      "class": "RUNTIME_STORAGE_CONTRACT",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-018",
+      "rex_id": "REX-BD-018",
+      "title": "Keep CI-governance SSOT classification synchronized with live workflows",
+      "class": "GOVERNANCE_INVENTORY_DRIFT",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/ABACUS",
+        "GBOGEB/CODEX"
+      ],
+      "shared_control_id": "REX-CM-005"
+    },
+    {
+      "bd_id": "HIST-BD-019",
+      "rex_id": "REX-BD-019",
+      "title": "Fail closed on unmodeled W286 fixture fields",
+      "class": "ARTIFACT_DIFF_COMPLETENESS",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/Q_engineering_tools"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-020",
+      "rex_id": "REX-BD-020",
+      "title": "Verify W286 external source head before receipt attribution",
+      "class": "CROSS_REPO_PROVENANCE_BINDING",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/Q_engineering_tools",
+        "GBOGEB/cryoplant-project"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-021",
+      "rex_id": "REX-BD-021",
+      "title": "Exclude checkout metadata from static candidate artifacts",
+      "class": "ARTIFACT_SCOPE_SECURITY",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-022",
+      "rex_id": "REX-BD-022",
+      "title": "Keep GM-I-A KEB output at candidate status",
+      "class": "AUTHORITY_PROMOTION_BOUNDARY",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-023",
+      "rex_id": "REX-BD-023",
+      "title": "Fail closed on GLOOB/Pandoc identity, structure and named authority drift",
+      "class": "FEDERATION_CONTRACT_VALIDATION",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-024",
+      "rex_id": "REX-BD-024",
+      "title": "Pin W286 visual-golden validation to declared source fixture",
+      "class": "FEDERATION_PROVENANCE_BINDING",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/CODEX"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-025",
+      "rex_id": "REX-BD-025",
+      "title": "Prove cyclic YAML aliases reach fail-closed canonical-container validation",
+      "class": "FAIL_CLOSED_PROOF_INTEGRITY",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/GEMINI"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-026",
+      "rex_id": "REX-BD-026",
+      "title": "Keep W260 exact-source receipt clean after test execution",
+      "class": "PROVENANCE_RECEIPT_INTEGRITY",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/gg_MATH"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-027",
+      "rex_id": "REX-BD-027",
+      "title": "Preserve Bradley-Terry bootstrap ties without lexical bias",
+      "class": "BT_BOOTSTRAP_RANK_SEMANTICS",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/gg_MATH"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-028",
+      "rex_id": "REX-BD-028",
+      "title": "Retain original alternative universe in BT bootstrap fits",
+      "class": "BT_BOOTSTRAP_POPULATION_INTEGRITY",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/gg_MATH"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-029",
+      "rex_id": "REX-BD-029",
+      "title": "Measure PCA bootstrap uncertainty on the actual retained top-k subspace",
+      "class": "PCA_SUBSPACE_GEOMETRY",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/gg_MATH"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-030",
+      "rex_id": "REX-BD-030",
+      "title": "Withhold PCA component summaries when retained/excluded boundary is ambiguous",
+      "class": "PCA_COMPONENT_IDENTIFIABILITY",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/gg_MATH"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-031",
+      "rex_id": "REX-BD-031",
+      "title": "Reject empty Appendix 8.4 extraction completion",
+      "class": "FAIL_CLOSED_EXTRACTION_COMPLETENESS",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-032",
+      "rex_id": "REX-BD-032",
+      "title": "Recompute required Line-S artifacts before closure PASS",
+      "class": "RUNTIME_RECEIPT_FRESHNESS",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-033",
+      "rex_id": "REX-BD-033",
+      "title": "Prevent repo-local self-attestation of BT0 HEPAK source trust",
+      "class": "SOURCE_TRUST_AUTHORITY_BOUNDARY",
+      "severity": "P1",
+      "lifecycle_state": "SUPERSEDED",
+      "applicability_state": "SUPERSEDED_WATCH",
+      "repos": [
+        "GBOGEB/cryoplant-project"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-034",
+      "rex_id": "REX-BD-034",
+      "title": "Fail closed incomplete or non-substantive QPS source receipts",
+      "class": "SOURCE_RECEIPT_SUBSTANTIVE_VALIDATION_INCOMPLETE",
+      "severity": "P1",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/cryoplant-project"
+      ],
+      "shared_control_id": null
+    },
+    {
+      "bd_id": "HIST-BD-035",
+      "rex_id": "REX-BD-035",
+      "title": "Reject incomplete STATE_COMPLETE Appendix 8.4 rows",
+      "class": "FAIL_CLOSED_STATE_COMPLETENESS",
+      "severity": "P1",
+      "lifecycle_state": "ACTIVE",
+      "applicability_state": "ACTIVE",
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "shared_control_id": "REX-CM-006"
+    },
+    {
+      "bd_id": "HIST-BD-036",
+      "rex_id": "REX-BD-036",
+      "title": "Bind Appendix extraction and source-receipt provenance exactly",
+      "class": "PROVENANCE_RECEIPT_CONSISTENCY",
+      "severity": "P2",
+      "lifecycle_state": "ACTIVE",
+      "applicability_state": "ACTIVE",
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "shared_control_id": "REX-CM-006"
+    },
+    {
+      "bd_id": "HIST-BD-037",
+      "rex_id": "REX-BD-037",
+      "title": "Reconcile Line-S progress tracker with source-bound Appendix state",
+      "class": "GOVERNANCE_STATUS_DRIFT",
+      "severity": "P2",
+      "lifecycle_state": "DONE",
+      "applicability_state": "CONTROL_WATCH",
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "shared_control_id": null
+    }
+  ],
+  "repo_applicability_rule": {
+    "direct_root": "repo is present in root.repos",
+    "rex_recipe": "every direct root contributes exactly one matching REX-BD recipe",
+    "shared_control": "REX-CM applies when linked to a direct root or when repo is present in control.cross_repo_recurrence",
+    "states": {
+      "ACTIVE": "root repair/proof is still open for this repo",
+      "CONTROLLED": "root/shared prevention is under CONTROL",
+      "CONTROL_WATCH": "root is repaired; retain REX recipe and regress on touching changes",
+      "SUPERSEDED_WATCH": "historical/superseded recipe retained for detection and migration"
+    },
+    "non_compensation": "Applicability does not transfer authority or allow one repo's proof to compensate another repo's unresolved gate.",
+    "authority_transfer": false
+  },
+  "repo_applicability": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "direct_root_ids": [
+        "HIST-BD-015",
+        "HIST-BD-016",
+        "HIST-BD-017",
+        "HIST-BD-018",
+        "HIST-BD-031",
+        "HIST-BD-032",
+        "HIST-BD-035",
+        "HIST-BD-036",
+        "HIST-BD-037"
+      ],
+      "rex_ids": [
+        "REX-BD-015",
+        "REX-BD-016",
+        "REX-BD-017",
+        "REX-BD-018",
+        "REX-BD-031",
+        "REX-BD-032",
+        "REX-BD-035",
+        "REX-BD-036",
+        "REX-BD-037"
+      ],
+      "shared_control_ids": [
+        "REX-CM-003",
+        "REX-CM-004",
+        "REX-CM-005",
+        "REX-CM-006"
+      ],
+      "active_root_ids": [
+        "HIST-BD-035",
+        "HIST-BD-036"
+      ],
+      "controlled_root_ids": [
+        "HIST-BD-015",
+        "HIST-BD-016"
+      ],
+      "control_watch_root_ids": [
+        "HIST-BD-017",
+        "HIST-BD-018",
+        "HIST-BD-031",
+        "HIST-BD-032",
+        "HIST-BD-037"
+      ],
+      "superseded_watch_root_ids": [],
+      "entries": [
+        {
+          "bd_id": "HIST-BD-015",
+          "rex_id": "REX-BD-015",
+          "state": "CONTROLLED",
+          "shared_control_id": "REX-CM-003"
+        },
+        {
+          "bd_id": "HIST-BD-016",
+          "rex_id": "REX-BD-016",
+          "state": "CONTROLLED",
+          "shared_control_id": "REX-CM-004"
+        },
+        {
+          "bd_id": "HIST-BD-017",
+          "rex_id": "REX-BD-017",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-018",
+          "rex_id": "REX-BD-018",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": "REX-CM-005"
+        },
+        {
+          "bd_id": "HIST-BD-031",
+          "rex_id": "REX-BD-031",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-032",
+          "rex_id": "REX-BD-032",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-035",
+          "rex_id": "REX-BD-035",
+          "state": "ACTIVE",
+          "shared_control_id": "REX-CM-006"
+        },
+        {
+          "bd_id": "HIST-BD-036",
+          "rex_id": "REX-BD-036",
+          "state": "ACTIVE",
+          "shared_control_id": "REX-CM-006"
+        },
+        {
+          "bd_id": "HIST-BD-037",
+          "rex_id": "REX-BD-037",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        }
+      ],
+      "authority_transfer": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "direct_root_ids": [
+        "HIST-BD-014",
+        "HIST-BD-018",
+        "HIST-BD-021",
+        "HIST-BD-022",
+        "HIST-BD-023",
+        "HIST-BD-024"
+      ],
+      "rex_ids": [
+        "REX-BD-014",
+        "REX-BD-018",
+        "REX-BD-021",
+        "REX-BD-022",
+        "REX-BD-023",
+        "REX-BD-024"
+      ],
+      "shared_control_ids": [
+        "REX-CM-005"
+      ],
+      "active_root_ids": [],
+      "controlled_root_ids": [],
+      "control_watch_root_ids": [
+        "HIST-BD-014",
+        "HIST-BD-018",
+        "HIST-BD-021",
+        "HIST-BD-022",
+        "HIST-BD-023",
+        "HIST-BD-024"
+      ],
+      "superseded_watch_root_ids": [],
+      "entries": [
+        {
+          "bd_id": "HIST-BD-014",
+          "rex_id": "REX-BD-014",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-018",
+          "rex_id": "REX-BD-018",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": "REX-CM-005"
+        },
+        {
+          "bd_id": "HIST-BD-021",
+          "rex_id": "REX-BD-021",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-022",
+          "rex_id": "REX-BD-022",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-023",
+          "rex_id": "REX-BD-023",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-024",
+          "rex_id": "REX-BD-024",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        }
+      ],
+      "authority_transfer": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "direct_root_ids": [
+        "HIST-BD-025"
+      ],
+      "rex_ids": [
+        "REX-BD-025"
+      ],
+      "shared_control_ids": [
+        "REX-CM-005"
+      ],
+      "active_root_ids": [],
+      "controlled_root_ids": [],
+      "control_watch_root_ids": [
+        "HIST-BD-025"
+      ],
+      "superseded_watch_root_ids": [],
+      "entries": [
+        {
+          "bd_id": "HIST-BD-025",
+          "rex_id": "REX-BD-025",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        }
+      ],
+      "authority_transfer": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "direct_root_ids": [
+        "HIST-BD-019",
+        "HIST-BD-020"
+      ],
+      "rex_ids": [
+        "REX-BD-019",
+        "REX-BD-020"
+      ],
+      "shared_control_ids": [],
+      "active_root_ids": [],
+      "controlled_root_ids": [],
+      "control_watch_root_ids": [
+        "HIST-BD-019",
+        "HIST-BD-020"
+      ],
+      "superseded_watch_root_ids": [],
+      "entries": [
+        {
+          "bd_id": "HIST-BD-019",
+          "rex_id": "REX-BD-019",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-020",
+          "rex_id": "REX-BD-020",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        }
+      ],
+      "authority_transfer": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "direct_root_ids": [
+        "HIST-BD-020",
+        "HIST-BD-033",
+        "HIST-BD-034"
+      ],
+      "rex_ids": [
+        "REX-BD-020",
+        "REX-BD-033",
+        "REX-BD-034"
+      ],
+      "shared_control_ids": [
+        "REX-CM-005"
+      ],
+      "active_root_ids": [],
+      "controlled_root_ids": [],
+      "control_watch_root_ids": [
+        "HIST-BD-020",
+        "HIST-BD-034"
+      ],
+      "superseded_watch_root_ids": [
+        "HIST-BD-033"
+      ],
+      "entries": [
+        {
+          "bd_id": "HIST-BD-020",
+          "rex_id": "REX-BD-020",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-033",
+          "rex_id": "REX-BD-033",
+          "state": "SUPERSEDED_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-034",
+          "rex_id": "REX-BD-034",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        }
+      ],
+      "authority_transfer": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "direct_root_ids": [
+        "HIST-BD-026",
+        "HIST-BD-027",
+        "HIST-BD-028",
+        "HIST-BD-029",
+        "HIST-BD-030"
+      ],
+      "rex_ids": [
+        "REX-BD-026",
+        "REX-BD-027",
+        "REX-BD-028",
+        "REX-BD-029",
+        "REX-BD-030"
+      ],
+      "shared_control_ids": [],
+      "active_root_ids": [],
+      "controlled_root_ids": [],
+      "control_watch_root_ids": [
+        "HIST-BD-026",
+        "HIST-BD-027",
+        "HIST-BD-028",
+        "HIST-BD-029",
+        "HIST-BD-030"
+      ],
+      "superseded_watch_root_ids": [],
+      "entries": [
+        {
+          "bd_id": "HIST-BD-026",
+          "rex_id": "REX-BD-026",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-027",
+          "rex_id": "REX-BD-027",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-028",
+          "rex_id": "REX-BD-028",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-029",
+          "rex_id": "REX-BD-029",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-030",
+          "rex_id": "REX-BD-030",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        }
+      ],
+      "authority_transfer": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "direct_root_ids": [
+        "HIST-BD-001",
+        "HIST-BD-002",
+        "HIST-BD-003",
+        "HIST-BD-004",
+        "HIST-BD-005",
+        "HIST-BD-006",
+        "HIST-BD-007",
+        "HIST-BD-008",
+        "HIST-BD-009",
+        "HIST-BD-010",
+        "HIST-BD-011",
+        "HIST-BD-012",
+        "HIST-BD-013"
+      ],
+      "rex_ids": [
+        "REX-BD-001",
+        "REX-BD-002",
+        "REX-BD-003",
+        "REX-BD-004",
+        "REX-BD-005",
+        "REX-BD-006",
+        "REX-BD-007",
+        "REX-BD-008",
+        "REX-BD-009",
+        "REX-BD-010",
+        "REX-BD-011",
+        "REX-BD-012",
+        "REX-BD-013"
+      ],
+      "shared_control_ids": [
+        "REX-CM-001",
+        "REX-CM-002",
+        "REX-CM-005"
+      ],
+      "active_root_ids": [],
+      "controlled_root_ids": [
+        "HIST-BD-006",
+        "HIST-BD-007",
+        "HIST-BD-008",
+        "HIST-BD-010",
+        "HIST-BD-011",
+        "HIST-BD-012"
+      ],
+      "control_watch_root_ids": [
+        "HIST-BD-001",
+        "HIST-BD-002",
+        "HIST-BD-003",
+        "HIST-BD-004",
+        "HIST-BD-005",
+        "HIST-BD-009",
+        "HIST-BD-013"
+      ],
+      "superseded_watch_root_ids": [],
+      "entries": [
+        {
+          "bd_id": "HIST-BD-001",
+          "rex_id": "REX-BD-001",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-002",
+          "rex_id": "REX-BD-002",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-003",
+          "rex_id": "REX-BD-003",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-004",
+          "rex_id": "REX-BD-004",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-005",
+          "rex_id": "REX-BD-005",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-006",
+          "rex_id": "REX-BD-006",
+          "state": "CONTROLLED",
+          "shared_control_id": "REX-CM-001"
+        },
+        {
+          "bd_id": "HIST-BD-007",
+          "rex_id": "REX-BD-007",
+          "state": "CONTROLLED",
+          "shared_control_id": "REX-CM-001"
+        },
+        {
+          "bd_id": "HIST-BD-008",
+          "rex_id": "REX-BD-008",
+          "state": "CONTROLLED",
+          "shared_control_id": "REX-CM-002"
+        },
+        {
+          "bd_id": "HIST-BD-009",
+          "rex_id": "REX-BD-009",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-010",
+          "rex_id": "REX-BD-010",
+          "state": "CONTROLLED",
+          "shared_control_id": "REX-CM-002"
+        },
+        {
+          "bd_id": "HIST-BD-011",
+          "rex_id": "REX-BD-011",
+          "state": "CONTROLLED",
+          "shared_control_id": "REX-CM-002"
+        },
+        {
+          "bd_id": "HIST-BD-012",
+          "rex_id": "REX-BD-012",
+          "state": "CONTROLLED",
+          "shared_control_id": "REX-CM-002"
+        },
+        {
+          "bd_id": "HIST-BD-013",
+          "rex_id": "REX-BD-013",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": null
+        }
+      ],
+      "authority_transfer": false,
+      "formal_credit_delta": 0
+    }
   ]
 }
