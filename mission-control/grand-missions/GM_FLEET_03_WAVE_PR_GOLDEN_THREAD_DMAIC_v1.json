@@ -111,7 +111,8 @@
       "Both created_at chronology and merged_at application chronology are retained.",
       "Superseded and closed-unmerged PRs remain in the graph instead of disappearing from the current view.",
       "Edge vocabulary explicitly separates SEMANTIC_SUCCESSOR, CORRECTED_BY, HARDENED_BY, SUPERSEDED_BY, AUTHORITATIVE_SOURCE_CORRECTION, RESTART_SURFACE_SYNC and NAMED_NEXT_OBJECTIVE_UNCONSUMED.",
-      "Unfinished work is classified as TRUE_UNCONSUMED_NEXT_OBJECTIVE, EXTERNAL_HOLD, EXECUTION_ADMISSION_HOLD, SUPERSEDED, or HISTORICAL_RESOLVED_GATE."
+      "Unfinished work is classified as TRUE_UNCONSUMED_NEXT_OBJECTIVE, EXTERNAL_HOLD, EXECUTION_ADMISSION_HOLD, SUPERSEDED, or HISTORICAL_RESOLVED_GATE.",
+      "The previously unconsumed W287_DREQ_SOURCE_INTEGRATION_REVIEW was allocated as durable successor issue GBOGEB/cryoplant-project#1801."
     ]
   },
   "control": {
@@ -141,11 +142,12 @@
       ]
     },
     "first_action_after_control": {
-      "id": "W287_DREQ_SOURCE_INTEGRATION_REVIEW",
-      "disposition": "SURFACE_AS_DURABLE_SUCCESSOR_WORK_ITEM_BEFORE_ANY_SOURCE_INTEGRATION",
-      "guard": "Do not grant engineering/compliance/formal credit from the candidate overlay itself."
+      "id": "GBOGEB/cryoplant-project#1801",
+      "source_objective": "W287_DREQ_SOURCE_INTEGRATION_REVIEW",
+      "disposition": "OPEN_SURFACED_UNEXECUTED_SUCCESSOR",
+      "guard": "Owner/source integration only; issue existence and candidate rows grant zero engineering/compliance/formal credit."
     },
     "recurrence_rule": "On every new PR or wave handover, append PR node + wave/lane key + predecessor/successor/supersession edges; never rewrite prior nodes. If a handover names a next objective and no durable successor exists, flag TRUE_UNCONSUMED_NEXT_OBJECTIVE."
   },
-  "result": "DMAIC_START_TO_FINISH_PASS_FOR_BOUNDED_CANONICAL_SUBSET_WITH_ONE_TRUE_UNCONSUMED_NEXT_OBJECTIVE_SURFACED"
+  "result": "DMAIC_START_TO_FINISH_PASS_FOR_BOUNDED_CANONICAL_SUBSET;_TRUE_UNCONSUMED_W287_OBJECTIVE_DISCOVERED_AND_SURFACED_AS_QPS_ISSUE_1801"
 }
