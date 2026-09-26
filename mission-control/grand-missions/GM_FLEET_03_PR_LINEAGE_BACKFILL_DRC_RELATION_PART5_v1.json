@@ -1,0 +1,154 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.drc_relation_typing_part.v1",
+  "cell": "DR-C",
+  "part": 5,
+  "sources": [
+    "GBOGEB/pipeline-automation-hub::PR162",
+    "GBOGEB/pipeline-automation-hub::PR167",
+    "GBOGEB/pipeline-automation-hub::PR175",
+    "GBOGEB/pipeline-automation-hub::PR180",
+    "GBOGEB/pipeline-automation-hub::PR186",
+    "GBOGEB/pipeline-automation-hub::PR189",
+    "GBOGEB/pipeline-automation-hub::PR192",
+    "GBOGEB/pipeline-automation-hub::PR195"
+  ],
+  "edges": [
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR162",
+      "to": "GBOGEB/cryoplant-project#1379",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "SUPERSEDES",
+      "context": "(rebased) ## Purpose Register HM-01, the horizontal QPS v6.0.0 release-train mission, on current MissionControl authority after `master` advanced concurrently. Supersedes closed stale-base PR #155. Parent QPS release: GBOGEB/cryoplant-project#1379. ## Rebased evidence - MissionControl base: `f31d58250ee54565d8ff28779c9a02ba033db595` - QPS current after R1 merge: `d631428507dd94154e8af58b60908c57e99d8a35` (PR #1381) - CODEX: `5a89655c6273e63f0828f36ca4b35b0e88b57",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR167",
+      "to": "GBOGEB/CODEX#414",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "`GBOGEB/cryoplant-project#604` - exact child source head: `d6757844f26c91e8a5390aaa57519d12252fb420` - current bidder source SHA-256: `d92af4666cc10ec6a4f8ac6cfe57aef477bca116f72a12f9156a680ce7e1e35e` - KEB challenge: `GBOGEB/CODEX#414` - DOW independent challenge: `GBOGEB/ABACUS#916` - current QPS main Reader anchor used for reconstruction: `7f6fdf8bf434bc3ea3dc5d7084f4878966d4a5b7` - W111 child SSOT Git blob: `fbdf22025fc2b18ffb6faf7c7c9b13f1d76eb61",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR167",
+      "to": "GBOGEB/ABACUS#916",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "urce head: `d6757844f26c91e8a5390aaa57519d12252fb420` - current bidder source SHA-256: `d92af4666cc10ec6a4f8ac6cfe57aef477bca116f72a12f9156a680ce7e1e35e` - KEB challenge: `GBOGEB/CODEX#414` - DOW independent challenge: `GBOGEB/ABACUS#916` - current QPS main Reader anchor used for reconstruction: `7f6fdf8bf434bc3ea3dc5d7084f4878966d4a5b7` - W111 child SSOT Git blob: `fbdf22025fc2b18ffb6faf7c7c9b13f1d76eb615` - W111 current disposition: `DEFER_PENDING_SAM",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR167",
+      "to": "GBOGEB/cryoplant-project#604",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "tory e but DEFER applies no authoritative engineering delta therefore semantic SSOT generation k remains unchanged ``` ## Observed authority/evidence bindings Child authority: `GBOGEB/cryoplant-project`. - child PR: `GBOGEB/cryoplant-project#604` - exact child source head: `d6757844f26c91e8a5390aaa57519d12252fb420` - current bidder source SHA-256: `d92af4666cc10ec6a4f8ac6cfe57aef477bca116f72a12f9156a680ce7e1e35e` - KEB challenge: `GBOGEB/CODEX#414` - DOW indepe",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR175",
+      "to": "GBOGEB/cryoplant-project#923",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "_IV_RUNTIME_CAPACITY_CURRENT_v1.json` pointer. 3. Advance `GM_FLEET_IMMINENT_LAUNCH_CONTROL_v1.json` to record repeat CONTROL + runtime-proven capability capacity as done. 4. Make the remaining GM-V first-red explicit: `GBOGEB/cryoplant-project#923`. ## Non-compensating boundary This proves runtime-capability coverage only. It does **not** prove concurrent capacity and does **not** establish `OPERATIONALLY_AVAILABLE` while QPS #923 remains open. GM-V remains `H",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR180",
+      "to": "GBOGEB/ABACUS#581",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "rrent-state snapshot -> P0 content-addressed import identity -> append observation only when new/changed -> exact replay suppression -> P3 checkpoint cadence evaluation` ## Bounded live scope Exactly five sources: - `GBOGEB/ABACUS#581` - `GBOGEB/ABACUS#583` - `GBOGEB/ABACUS#585` - `GBOGEB/CODEX#237` - `GBOGEB/pipeline-automation-hub#153` `max_items=5`, `read_only=true`, pull requests excluded. ## Control semantics P4 reuses P0 transaction identity",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR180",
+      "to": "GBOGEB/ABACUS#583",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "> P0 content-addressed import identity -> append observation only when new/changed -> exact replay suppression -> P3 checkpoint cadence evaluation` ## Bounded live scope Exactly five sources: - `GBOGEB/ABACUS#581` - `GBOGEB/ABACUS#583` - `GBOGEB/ABACUS#585` - `GBOGEB/CODEX#237` - `GBOGEB/pipeline-automation-hub#153` `max_items=5`, `read_only=true`, pull requests excluded. ## Control semantics P4 reuses P0 transaction identity rather than inventing",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR180",
+      "to": "GBOGEB/ABACUS#585",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "import identity -> append observation only when new/changed -> exact replay suppression -> P3 checkpoint cadence evaluation` ## Bounded live scope Exactly five sources: - `GBOGEB/ABACUS#581` - `GBOGEB/ABACUS#583` - `GBOGEB/ABACUS#585` - `GBOGEB/CODEX#237` - `GBOGEB/pipeline-automation-hub#153` `max_items=5`, `read_only=true`, pull requests excluded. ## Control semantics P4 reuses P0 transaction identity rather than inventing importer-local replay",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR180",
+      "to": "GBOGEB/CODEX#237",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "pend observation only when new/changed -> exact replay suppression -> P3 checkpoint cadence evaluation` ## Bounded live scope Exactly five sources: - `GBOGEB/ABACUS#581` - `GBOGEB/ABACUS#583` - `GBOGEB/ABACUS#585` - `GBOGEB/CODEX#237` - `GBOGEB/pipeline-automation-hub#153` `max_items=5`, `read_only=true`, pull requests excluded. ## Control semantics P4 reuses P0 transaction identity rather than inventing importer-local replay rules. For each nor",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR180",
+      "to": "GBOGEB/pipeline-automation-hub#153",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "when new/changed -> exact replay suppression -> P3 checkpoint cadence evaluation` ## Bounded live scope Exactly five sources: - `GBOGEB/ABACUS#581` - `GBOGEB/ABACUS#583` - `GBOGEB/ABACUS#585` - `GBOGEB/CODEX#237` - `GBOGEB/pipeline-automation-hub#153` `max_items=5`, `read_only=true`, pull requests excluded. ## Control semantics P4 reuses P0 transaction identity rather than inventing importer-local replay rules. For each normalized source snapshot: - action = `G",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR186",
+      "to": "GBOGEB/CODEX#753",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "ure BDQ pinch after #178: GT-BD-006 second independent live occurrence family + connector adapter + durable receipt registry. ## Second family Uses a real CODEX issue/PR family captured through the GitHub connector: - `GBOGEB/CODEX#753` publication-lane work order; - `GBOGEB/CODEX#754` merged publication-authority PR. Observation anchors are explicit. No authority is inferred from the capture. ## Added - `occurrence_connector_adapter.py`: bounded co",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR186",
+      "to": "GBOGEB/CODEX#754",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "dent live occurrence family + connector adapter + durable receipt registry. ## Second family Uses a real CODEX issue/PR family captured through the GitHub connector: - `GBOGEB/CODEX#753` publication-lane work order; - `GBOGEB/CODEX#754` merged publication-authority PR. Observation anchors are explicit. No authority is inferred from the capture. ## Added - `occurrence_connector_adapter.py`: bounded connector snapshot -> Golden Thread occurrence norma",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR189",
+      "to": "GBOGEB/cryoplant-project#1398",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "authority_transfer=false`; - `formal_credit_delta=0`; - registration != execution != acceptance; - no Doctor/Engineer repair on zero-step/pre-execution habitat failures. Tracks #188 and supports (without compensating) `GBOGEB/cryoplant-project#1398`.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR192",
+      "to": "GBOGEB/cryoplant-project#1398",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "- no synthetic queue/execute/receipt telemetry; - ingress PASS != R3 acceptance; - R3 PASS != runtime GOLD; - `#923` and `GT_BDQ_0` unchanged; - `authority_transfer=false`, formal credit delta 0. Tracks #188; supports `GBOGEB/cryoplant-project#1398` and #1426 without reclassifying HM-01.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR195",
+      "to": "GBOGEB/GEMINI#12",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HANDOVER_OR_RETURN_REFERENCE",
+      "context": "ned Drive ingress PR #11 is merged; exact hardened head `a862125217201a12c5608d8544fbf17c7033d6f0` - Drive handover root `1FnbajqBiIjL6Y4-_7tE1D515fNWvHsu3` is manually observable with one governed child `00_CONTROL` - `GBOGEB/GEMINI#12` remains OPEN and owns external WIF/service-account/Drive-ACL configuration Ranked local predicates: 1. external identity/configuration; 2. one real hosted >0-step WIF -> Drive readonly run; 3. immutable receipt bindin",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    }
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
