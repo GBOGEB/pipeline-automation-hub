@@ -1,0 +1,321 @@
+{
+  "schema": "missioncontrol.gm_top7_depth3.v1",
+  "mission_id": "GM-TOP7-FIRST-RED-D3-20260926",
+  "as_of": "2026-09-26T09:27:00+02:00",
+  "goal": "Burn down up to three genuine sequential first-red families per admitted repository and converge each current head to zero failed blocking checks without manufacturing reds.",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "selection": {
+    "method": "RECENT_COMMIT_PR_ACTIVITY_WORKING_SET",
+    "note": "Operational top-7 selected from observed recent GBOGEB PR/commit activity; connector search pagination/caps mean this is a mission working set, not a claim of exact lifetime ordering.",
+    "repositories": [
+      "GBOGEB/cryoplant-project",
+      "GBOGEB/ABACUS",
+      "GBOGEB/CODEX",
+      "GBOGEB/document-organization-system",
+      "GBOGEB/pipeline-automation-hub",
+      "GBOGEB/DOCX_RTM_Automation",
+      "GBOGEB/Q_engineering_tools"
+    ]
+  },
+  "rex_reuse": [
+    "GM_FLEET_03_CAPACITY_CONTRACT.json",
+    "GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json",
+    "WORKFLOW_FREQUENCY_3PSTAR_MIP_CURRENT_v1.json",
+    "temporal/TEMPORAL_3PSTAR_MIP_ITERATION_v4.json",
+    "R3_DMAIC_KPI_CONTRACT_v1.json",
+    "ABACUS:aht_statistics_bridge.py",
+    "CODEX:governance/aht_control/DMAIC_MIP.md"
+  ],
+  "crew": {
+    "governor": "U01",
+    "project_manager": "U03",
+    "fleet_orchestrator": "U04",
+    "analyst": "U05",
+    "qa_signalman": "U06",
+    "rex_integrator": "U08",
+    "repair_pool": [
+      "S02",
+      "S05"
+    ],
+    "runtime_gate": "S03",
+    "dispatch_rule": "U04 dispatches one bounded repo-local repair at a time per repository; U06 independently proves exact head; U01 alone gates mission promotion."
+  },
+  "method": {
+    "3P*": {
+      "refresh": [
+        "default_branch_exact_sha",
+        "current_head_actions_census",
+        "open_pr_collision_census",
+        "REX_preflight"
+      ],
+      "probe": [
+        "completed_blocking_failures",
+        "pending_and_zero_step_separate",
+        "repo_local_vs_owner_external",
+        "first_failing_step_and_root_family"
+      ],
+      "rank": [
+        "hard_AND_gate_first",
+        "reproducible_repo_local_before_broad_debt",
+        "one_first_red_per_repo",
+        "recensus_after_each_green"
+      ]
+    },
+    "3PC": [
+      "Prepare",
+      "Prove",
+      "Commit"
+    ],
+    "depth_policy": {
+      "target_depth": 3,
+      "admission": "UP_TO_3_GENUINE_REPRODUCIBLE_REDS",
+      "no_synthetic_reds": true,
+      "recensus_between_depths": true,
+      "stop_early_when": "CURRENT_HEAD_HAS_NO_ADMITTED_RED_AND_EXACT_HEAD_PROOF_IS_GREEN"
+    },
+    "mip": {
+      "modernize": "JUSTIFIED_FAIL_CLOSED_FLEET_CHECK_HEALTH_AND_DEPTH3_LEDGER",
+      "innovate": "DEFER_STATISTICAL_RANKING_UNTIL_COMPARABLE_MULTIWINDOW_OUTCOMES",
+      "perpetuate": "JUSTIFIED_REPOSITORY_NATIVE_CONTRACT_METRICS_TESTS_AND_HOSTED_PROOF"
+    }
+  },
+  "dov": {
+    "fleet": "ALL_7_REPOS_EXACT_HEAD_PROVEN_WITH_ZERO_BLOCKING_FAILURES_ZERO_ACTION_REQUIRED_ZERO_PENDING_ZERO_ZERO_STEP_UNKNOWN_AND_ALL_ADMITTED_DEPTH_SLOTS_PROVEN_GREEN",
+    "repo": "exact_head_proven && blockers==0 && pending==0 && zero_step_unknown==0 && all_admitted_red_slots==PROVEN_GREEN",
+    "noncompensation": [
+      "ZERO_STEP_NE_APPLICATION_FAIL",
+      "PENDING_NE_GREEN",
+      "SKIPPED_NE_GREEN",
+      "ISSUE_OR_PR_COUNT_REDUCTION_NE_ENGINEERING_ACCEPTANCE",
+      "OWNER_EXTERNAL_RED_NE_REPO_LOCAL_FIX"
+    ]
+  },
+  "qa_metrics": {
+    "check_health": [
+      "successful_checks",
+      "failed_checks",
+      "action_required_checks",
+      "pending_checks",
+      "zero_step_unknown",
+      "decisive_checks",
+      "blocker_checks",
+      "failure_rate_nullable"
+    ],
+    "burndown": [
+      "admitted_reds",
+      "implemented_or_superseded_reds",
+      "proven_green_reds",
+      "open_reds",
+      "proven_red_reduction_fraction_nullable",
+      "depth_reached"
+    ],
+    "temporal": [
+      "time_to_first_green_seconds",
+      "time_to_depth3_green_seconds",
+      "red_area_under_curve",
+      "postmerge_recurrence_count",
+      "fresh_head_repeat_pass"
+    ],
+    "workflow_economics": [
+      "unique_input_ratio",
+      "same_sha_repeat_rate",
+      "family_sha_fanout_rate",
+      "noop_rate",
+      "queue_seconds",
+      "execute_seconds",
+      "accepted_receipt_yield"
+    ],
+    "code_qa": [
+      "lint_error_count",
+      "test_failure_count",
+      "test_pass_count",
+      "coverage_pct_nullable",
+      "security_high_critical_count",
+      "flaky_rerun_rate",
+      "median_pr_merge_lead_seconds",
+      "first_pass_closure_rate"
+    ],
+    "aht_guard": "When decisive_checks == 0, failure_rate MUST be null and state UNKNOWN/PENDING; zero denominator MUST NOT become green."
+  },
+  "repositories": [
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "branch": "main",
+      "head_sha": "34d383add7ccbe99b2e36d44f6ce2e800d31ecd4",
+      "health": {
+        "successful_checks": 0,
+        "failed_checks": 0,
+        "action_required_checks": 0,
+        "pending_checks": 4,
+        "zero_step_unknown": 0,
+        "exact_head_proven": false
+      },
+      "red_slots": [],
+      "candidate_reds": [],
+      "state": "WAIT_CURRENT_HEAD_COMPLETION"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "branch": "main",
+      "head_sha": "ee6819c87407c8c364e561651de6bebddda7efef",
+      "health": {
+        "successful_checks": 0,
+        "failed_checks": 0,
+        "action_required_checks": 0,
+        "pending_checks": 19,
+        "zero_step_unknown": 0,
+        "exact_head_proven": false
+      },
+      "red_slots": [
+        {
+          "depth": 1,
+          "id": "BOOK_TEX_PACKAGE",
+          "admitted": true,
+          "status": "REPAIRED_PENDING_PROOF",
+          "evidence_run": 36224796306,
+          "repair": "texlive-xelatex -> texlive-xetex"
+        },
+        {
+          "depth": 2,
+          "id": "SESSION_TUPLE_STALE_LINT_PATH",
+          "admitted": true,
+          "status": "REPAIRED_PENDING_PROOF",
+          "evidence_run": 36224796298,
+          "repair": "lint retargeted to live rich_padding Python surface"
+        },
+        {
+          "depth": 3,
+          "id": "STALE_DOW_WORKFLOW_REMOVED_IMPLEMENTATION",
+          "admitted": true,
+          "status": "REPAIRED_PENDING_PROOF",
+          "evidence_run": 36224796296,
+          "repair": "active obsolete workflow retired; legacy copy retained"
+        }
+      ],
+      "candidate_reds": [],
+      "state": "DEPTH3_IMPLEMENTED_WAIT_EXACT_HEAD_PROOF"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "branch": "main",
+      "head_sha": "2f7f40303c99fb6eb825613719c1df8d95d520b7",
+      "health": {
+        "successful_checks": 0,
+        "failed_checks": 0,
+        "action_required_checks": 0,
+        "pending_checks": 22,
+        "zero_step_unknown": 0,
+        "exact_head_proven": false
+      },
+      "red_slots": [],
+      "candidate_reds": [
+        {
+          "id": "SEMANTIC_ROOT_GLOSSARY",
+          "basis": "predecessor failure; current-head recensus pending"
+        },
+        {
+          "id": "W331_R2_GUARD_PHRASE",
+          "basis": "predecessor failure; phrase present on later tree, proof recheck only"
+        },
+        {
+          "id": "FULL_STACK_GOVERNANCE",
+          "basis": "predecessor failure; current-head recensus pending"
+        }
+      ],
+      "state": "WAIT_CURRENT_HEAD_COMPLETION_NO_BLIND_EDIT"
+    },
+    {
+      "repo": "GBOGEB/document-organization-system",
+      "branch": "main",
+      "head_sha": "f238ebfaaa129ed13bd912fea67f6d16fed4bd6e",
+      "health": {
+        "successful_checks": 1,
+        "failed_checks": 0,
+        "action_required_checks": 0,
+        "pending_checks": 0,
+        "zero_step_unknown": 0,
+        "exact_head_proven": true
+      },
+      "red_slots": [],
+      "candidate_reds": [],
+      "state": "GREEN_CONTROL"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "branch": "master",
+      "head_sha": "e1e04ad61aaf7744a99f0bbbbf5d10e121ea09dc",
+      "health": {
+        "successful_checks": 57,
+        "failed_checks": 0,
+        "action_required_checks": 0,
+        "pending_checks": 0,
+        "zero_step_unknown": 0,
+        "exact_head_proven": true
+      },
+      "red_slots": [],
+      "candidate_reds": [],
+      "state": "GREEN_CONTROL"
+    },
+    {
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "branch": "main",
+      "head_sha": "f059782e84fd1706ea78c67c806462c6975f5d69",
+      "health": {
+        "successful_checks": 3,
+        "failed_checks": 0,
+        "action_required_checks": 0,
+        "pending_checks": 0,
+        "zero_step_unknown": 0,
+        "exact_head_proven": true
+      },
+      "red_slots": [],
+      "candidate_reds": [],
+      "state": "GREEN_CONTROL"
+    },
+    {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "branch": "main",
+      "head_sha": "593b24ff1c878924537b3ca65c40b15bb015f423",
+      "health": {
+        "successful_checks": 3,
+        "failed_checks": 1,
+        "action_required_checks": 0,
+        "pending_checks": 0,
+        "zero_step_unknown": 0,
+        "exact_head_proven": false
+      },
+      "red_slots": [
+        {
+          "depth": 1,
+          "id": "LEGACY_PAGES_SOURCE_DOCS_MISSING",
+          "admitted": true,
+          "status": "OPEN_OWNER_PLATFORM_CONFIG",
+          "evidence_run": 35757758761,
+          "first_red": "Jekyll dynamic Pages build chdir /github/workspace/docs fails while custom Actions Pages deploy succeeds"
+        }
+      ],
+      "candidate_reds": [],
+      "state": "OWNER_CONFIG_RETURN_REQUIRED"
+    }
+  ],
+  "temporal_observations": [
+    {
+      "timestamp": "2026-09-26T06:47:00Z",
+      "label": "T0_REPRODUCIBLE_BASELINE",
+      "completed_failure_families": 4,
+      "proven_green_from_those": 0,
+      "open_or_unproven": 4
+    },
+    {
+      "timestamp": "2026-09-26T07:27:00Z",
+      "label": "T1_LIVE_RECENSUS",
+      "completed_failure_families": 1,
+      "implemented_or_superseded_from_t0": 3,
+      "proven_green_from_t0": 0,
+      "open_or_unproven": 4,
+      "note": "75% drop in completed visible failures is not yet DOV credit because ABACUS exact-head runs are pending."
+    }
+  ]
+}
