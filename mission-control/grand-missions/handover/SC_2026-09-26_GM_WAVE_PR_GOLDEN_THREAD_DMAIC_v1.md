@@ -135,7 +135,7 @@ Bound the mission to recursive Wave/PR genealogy, supersession, links, unfinishe
 - quoted-wave breadth inventory: **41**
 - unique wave/lane nodes: **12**
 - recursive PR nodes: **29**
-- recursive edges: **26**
+- recursive edges: **32**
 - dangling edges: **0**
 - duplicate PR IDs: **0**
 - duplicate canonical wave/lane IDs: **0**
@@ -212,3 +212,18 @@ Next bounded genealogy action:
 `authority_transfer=false`  
 `formal_credit_delta=0`  
 `engineering_credit_delta=0`
+
+
+## 11. Post-merge Codex correction
+
+PR #424 merged as `0089e293a55e2a66cd040e9eff187b371c5abf01` before its exact-head Codex review findings were consumed. Codex then raised two material P2 findings:
+
+1. W329 PRs #1678/#1679 and the later #1733/#1736 recovery pair were not fully connected to the canonical W329 recursive subgraph.
+2. closed-unmerged PR #1733 lacked its `closed_at` timestamp despite the ledger's closure-order policy.
+
+Bounded successor repair:
+- add evidence-backed W329 edges from #1641 to #1678/#1679, from #1678/#1679 into #1681, and from #1681 into the #1733/#1736 runtime-recovery branch;
+- bind #1733 `closed_at=2026-09-24T10:16:15Z`;
+- revalidate all **29** PR nodes and **32** edges with **0 dangling edges**.
+
+No W329 content, owner decision, requirement authority, engineering credit, or formal credit is changed by this correction.
