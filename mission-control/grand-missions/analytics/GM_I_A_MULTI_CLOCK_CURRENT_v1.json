@@ -1,26 +1,28 @@
 {
   "schema": "missioncontrol.gm_i_a.multiclock_current.v1",
   "mission": "GM-I-A",
-  "state": "P001_3PSTAR_MIP_CONTROL_PROVEN_READY_FOR_REPEAT",
+  "state": "P002_MEASURED_CONTROL_PROVE_PENDING",
   "authority_transfer": false,
   "dataset": "GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json",
   "control": "GM_I_A_MULTI_CLOCK_3PSTAR_MIP_v1.json",
   "analyzer": "gm_i_a_multiclock_analyze.py",
   "capture": "gm_i_a_multiclock_capture.py",
-  "measured_pulses": 1,
+  "measured_pulses": 2,
   "feature_count": 9,
   "pca": {
-    "status": "WITHHELD_N1_OF_27",
-    "rows_remaining": 26,
+    "status": "WITHHELD_N2_OF_27",
+    "rows_remaining": 25,
     "provider": "GBOGEB/gg_MATH",
     "provider_pr": 28,
     "provider_merge_sha": "23c8df3a8309016706551d0102b17dc3446115b5"
   },
   "bt": {
-    "status": "WITHHELD_N1_NO_STRONG_CONNECTIVITY",
+    "status": "WITHHELD_N2_NO_STRONG_CONNECTIVITY",
     "minimum_repeat_pulses": 3,
-    "repeat_pulses_remaining": 2,
-    "provider": "GBOGEB/gg_MATH"
+    "repeat_pulses_remaining": 1,
+    "provider": "GBOGEB/gg_MATH",
+    "bidirectional_pair_count": 7,
+    "directed_win_graph_strongly_connected": false
   },
   "hosted_proof": {
     "measurement_run": 35426485549,
@@ -49,8 +51,32 @@
     "external_runner": 1000316927,
     "external_provider_merge": "89a534fe1b7d0b2e20e3c10b94e8540df20ed481"
   },
-  "next_pulse": "GM-I-A-MCLOCK-P002",
+  "next_pulse": "GM-I-A-MCLOCK-P003",
   "stop_rule": "DO_NOT_FIT_OR_PROMOTE_PCA_BT_BEFORE_GATES; ZERO_STEP_HOSTED_JOBS_TRIGGER_NO_CODE_REPAIR",
   "blocking_gate": null,
-  "performance_bd": "GBOGEB/pipeline-automation-hub#327"
+  "performance_bd": "GBOGEB/pipeline-automation-hub#327",
+  "p002": {
+    "provider_run": 36226071145,
+    "provider_runtime_merge": "e31433c4427be2aaad064294e6c6cab1843537df",
+    "provider_attestation_commit": "0873f07f9bc1e5eb9fdbdd3219c826d97eb148dc",
+    "provider_attestation_merge": "902733d6135562a23457563890688d1386352db2",
+    "dow_run": 36226599725,
+    "dow_merge": "2e29200f396fe6ec3d09d91da7943a01822ccb88",
+    "keb_run": 36226609453,
+    "keb_merge": "2f7f40303c99fb6eb825613719c1df8d95d520b7",
+    "measured_vector_seconds": [
+      36,
+      34,
+      211,
+      35,
+      7,
+      128,
+      8,
+      408,
+      8
+    ],
+    "queue_fraction": 0.6937142857142857,
+    "pressure_hhi": 0.30200555102040816,
+    "effective_clock_count": 3.311197415482024
+  }
 }
