@@ -1,0 +1,964 @@
+{
+  "schema": "missioncontrol.wave_pr_recursive_golden_thread.v1",
+  "mission_id": "GM-FLEET-03-WAVE-PR-GOLDEN-THREAD-20260926",
+  "parent_issue": "GBOGEB/pipeline-automation-hub#423",
+  "as_of": "2026-09-26",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "source_heads": {
+    "missioncontrol_master": "e7eb74ef2f62e2d248d74b81e123a48afe2d6963",
+    "cryoplant_observed_main": "ca40eca444ea0960517d759e6a1e4bb1db4e94df"
+  },
+  "upstream_controls": [
+    "mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v3.yaml",
+    "mission-control/qps-triage-ultra/missions/LM-11_QPS_WAVE_ATLAS_CURRENT_v2.md",
+    "mission-control/golden-thread/README.md",
+    "mission-control/grand-missions/CREW_ROLE_REGISTRY.json"
+  ],
+  "identity_rule": {
+    "finding": "W### labels are not globally unique and are not chronological identifiers.",
+    "canonical_key": "repository::mission_family::wave_label::lane_or_update",
+    "examples": [
+      "GBOGEB/pipeline-automation-hub::HM01_R3_DMAIC::W277::BASELINE",
+      "GBOGEB/cryoplant-project::RTM_HIERARCHY::W277::PARENT_CHILD",
+      "GBOGEB/cryoplant-project::REQUIREMENTS_TABLE3::W287::TABLE3",
+      "GBOGEB/cryoplant-project::REQUIREMENTS_TABLE3::W287::DREQ_GAP"
+    ],
+    "forbidden_join": "Never join nodes on W### alone, or on repo+family+W### when lane/update differs."
+  },
+  "crew": [
+    {
+      "role": "SCOUT",
+      "mode": "SHADOW_DISCOVERY",
+      "purpose": "breadth inventory of quoted W### and associated GitHub objects",
+      "control_authority": false
+    },
+    {
+      "role": "READER",
+      "mode": "SHADOW_SEMANTIC_BINDING",
+      "purpose": "bind source meaning, predecessor/successor, PR and artifact relations",
+      "control_authority": false
+    },
+    {
+      "role": "DEEP_READER",
+      "mode": "OBSERVED_EQUIVALENT_FUNCTIONS",
+      "backing": [
+        "S06_TECHNICAL_MANAGER_KEB",
+        "U08_REX_KEB_INTEGRATOR"
+      ],
+      "purpose": "deep source challenge, provenance and supersession adjudication",
+      "control_authority": false
+    }
+  ],
+  "canonical_subset": {
+    "labels": [
+      "W277",
+      "W278",
+      "W279",
+      "W280",
+      "W281",
+      "W287",
+      "W329"
+    ],
+    "selection_reason": "Requirements/hierarchy/owner-review lineage with one requirements-table branch and one review/runtime branch; chosen to exercise predecessor, supersession, correction, branch and unfinished-action semantics.",
+    "direct_dependency_spines": [
+      [
+        "QPS_RTM_W277",
+        "QPS_RTM_W278",
+        "QPS_RTM_W279",
+        "QPS_RTM_W280",
+        "QPS_RTM_W281"
+      ],
+      [
+        "QPS_RTM_W277",
+        "QPS_RTM_W278",
+        "QPS_W307_OWNER_REVIEW",
+        "QPS_W329_OWNER_REVIEW"
+      ],
+      [
+        "QPS_W287_TABLE3",
+        "QPS_W287_DREQ_GAP",
+        "W287_DREQ_SOURCE_INTEGRATION_REVIEW"
+      ]
+    ],
+    "note": "The seven labels are a canonical analysis subset, not a claim that all seven form one numeric or chronological chain."
+  },
+  "wave_nodes": [
+    {
+      "id": "QPS_W287_TABLE3",
+      "repo": "GBOGEB/cryoplant-project",
+      "family": "REQUIREMENTS_TABLE3",
+      "wave": "W287",
+      "state": "MERGED_CONTROL",
+      "primary_pr": 1538,
+      "merge_sha": "d2e495fca88752ed5efff82bd2466432ce5a8e35",
+      "lane": "TABLE3"
+    },
+    {
+      "id": "MC_HM01_W277",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "family": "HM01_R3_DMAIC",
+      "wave": "W277",
+      "state": "MERGED_CONTROL",
+      "primary_pr": 210,
+      "merge_sha": "177ad762acd4e4d2170841b217858f1ca4e41923",
+      "lane": "BASE"
+    },
+    {
+      "id": "MC_HM01_W278",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "family": "HM01_R3_DMAIC",
+      "wave": "W278",
+      "state": "MERGED_CONTROL",
+      "primary_pr": 211,
+      "merge_sha": "ccdb95047eb34a0f0d82a82618299274eb675be0",
+      "lane": "BASE"
+    },
+    {
+      "id": "MC_HM01_W279",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "family": "HM01_R3_DMAIC",
+      "wave": "W279",
+      "state": "MERGED_CONTROL",
+      "primary_pr": 213,
+      "merge_sha": "f3657b820a99a4fbd408f1735f22373e6249ac1c",
+      "lane": "BASE"
+    },
+    {
+      "id": "QPS_RTM_W277",
+      "repo": "GBOGEB/cryoplant-project",
+      "family": "RTM_HIERARCHY",
+      "wave": "W277",
+      "state": "MERGED",
+      "primary_pr": 1588,
+      "merge_sha": "c14331ac10f6095a1d0bf411210df1aaeb96b983",
+      "lane": "BASE"
+    },
+    {
+      "id": "QPS_RTM_W278",
+      "repo": "GBOGEB/cryoplant-project",
+      "family": "RTM_HIERARCHY",
+      "wave": "W278",
+      "state": "MERGED",
+      "primary_pr": 1590,
+      "merge_sha": "f15cae9e8dc009720787054cd7e45233118a197c",
+      "lane": "BASE"
+    },
+    {
+      "id": "QPS_W307_OWNER_REVIEW",
+      "repo": "GBOGEB/cryoplant-project",
+      "family": "OWNER_REVIEW",
+      "wave": "W307",
+      "state": "MERGED",
+      "primary_pr": 1595,
+      "merge_sha": "1d92adadef8823e877da86131a949d58dec88259",
+      "lane": "INTERACTIVE_OWNER_REVIEW"
+    },
+    {
+      "id": "QPS_RTM_W279",
+      "repo": "GBOGEB/cryoplant-project",
+      "family": "RTM_HIERARCHY",
+      "wave": "W279",
+      "state": "MERGED",
+      "primary_pr": 1596,
+      "merge_sha": "782f99dba79466592b9e73ed5263df7efa53029e",
+      "lane": "BASE"
+    },
+    {
+      "id": "QPS_RTM_W280",
+      "repo": "GBOGEB/cryoplant-project",
+      "family": "RTM_HIERARCHY",
+      "wave": "W280",
+      "state": "MERGED",
+      "primary_pr": 1597,
+      "merge_sha": "ce9c2afed8541838be4d64ac60227eb20a444590",
+      "lane": "BASE"
+    },
+    {
+      "id": "QPS_RTM_W281",
+      "repo": "GBOGEB/cryoplant-project",
+      "family": "RTM_HIERARCHY",
+      "wave": "W281",
+      "state": "MERGED_THEN_CORRECTED",
+      "primary_pr": 1599,
+      "merge_sha": "00deddc196d4b809ab20ccfbaf3bb386205912f3",
+      "current_correction": [
+        "PR1601",
+        "PR1602",
+        "PR1604",
+        "PR1607",
+        "PR1685",
+        "PR1687"
+      ],
+      "lane": "BASE"
+    },
+    {
+      "id": "QPS_W329_OWNER_REVIEW",
+      "repo": "GBOGEB/cryoplant-project",
+      "family": "OWNER_REVIEW",
+      "wave": "W329",
+      "state": "MERGED_AND_RUNTIME_RECOVERED_LATER",
+      "primary_pr": 1641,
+      "merge_sha": "3d02685921682d9e0d14246dbfa08bf2d3c42d8a",
+      "lane": "OWNER_REVIEW_CONTINUITY"
+    },
+    {
+      "id": "QPS_W287_DREQ_GAP",
+      "repo": "GBOGEB/cryoplant-project",
+      "family": "REQUIREMENTS_TABLE3",
+      "wave": "W287",
+      "state": "CANDIDATE_MERGED_SOURCE_INTEGRATION_PENDING",
+      "primary_pr": 1690,
+      "merge_sha": "290675c06dd26f342708ec8e7455f896e8cd7fdc",
+      "lane": "DREQ_GAP"
+    }
+  ],
+  "pr_nodes": [
+    {
+      "id": "MC_PR210",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 210,
+      "wave_uid": "MC_HM01_W277",
+      "title": "HM-01 W277: measure R3 DMAIC KPI baseline",
+      "created_at": "2026-09-18T11:40:08Z",
+      "merged_at": "2026-09-18T11:42:39Z",
+      "state": "MERGED",
+      "head_sha": "984b53641c0f8e1e820ba5986a263265ea1fcd1a",
+      "merge_sha": "177ad762acd4e4d2170841b217858f1ca4e41923"
+    },
+    {
+      "id": "MC_PR211",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 211,
+      "wave_uid": "MC_HM01_W278",
+      "title": "HM-01 W278: prevent R3 recurrence classes before merge",
+      "created_at": "2026-09-18T11:41:47Z",
+      "merged_at": "2026-09-18T11:43:30Z",
+      "state": "MERGED",
+      "head_sha": "e0946574d788769e0bce8e178d1a15934c6436b3",
+      "merge_sha": "ccdb95047eb34a0f0d82a82618299274eb675be0"
+    },
+    {
+      "id": "MC_PR213",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 213,
+      "wave_uid": "MC_HM01_W279",
+      "title": "HM-01 W279: perpetuate R3 DMAIC KPI control",
+      "created_at": "2026-09-18T11:44:40Z",
+      "merged_at": "2026-09-18T11:46:26Z",
+      "state": "MERGED",
+      "head_sha": "90a3e562188b34c4af6575f31d65691d5837b6b8",
+      "merge_sha": "f3657b820a99a4fbd408f1735f22373e6249ac1c"
+    },
+    {
+      "id": "QPS_PR1538",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1538,
+      "wave_uid": "QPS_W287_TABLE3",
+      "title": "W287: govern Table 3 requirements, measurability and traceability",
+      "created_at": "2026-09-18T16:05:09Z",
+      "merged_at": "2026-09-18T16:07:06Z",
+      "state": "MERGED",
+      "head_sha": "18577d06d29e5ee8ecce6806e3bfcc289b16b868",
+      "merge_sha": "d2e495fca88752ed5efff82bd2466432ce5a8e35"
+    },
+    {
+      "id": "QPS_PR1588",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1588,
+      "wave_uid": "QPS_RTM_W277",
+      "title": "QPS W277: introduce RTM STAR parent-child precedent hierarchy",
+      "created_at": "2026-09-21T15:35:52Z",
+      "merged_at": "2026-09-21T15:37:11Z",
+      "state": "MERGED",
+      "head_sha": "7d3524e4c2e8e9fd0ab038ddbf6d1286bbfb2497",
+      "merge_sha": "c14331ac10f6095a1d0bf411210df1aaeb96b983"
+    },
+    {
+      "id": "QPS_PR1590",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1590,
+      "wave_uid": "QPS_RTM_W278",
+      "title": "QPS W278: materialize 722-row RTM STAR hierarchy register",
+      "created_at": "2026-09-21T15:49:17Z",
+      "merged_at": "2026-09-21T15:51:17Z",
+      "state": "MERGED",
+      "head_sha": "b4c1bb8c53de7c6a91f72845fd0b07559fb6f78e",
+      "merge_sha": "f15cae9e8dc009720787054cd7e45233118a197c"
+    },
+    {
+      "id": "QPS_PR1595",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1595,
+      "wave_uid": "QPS_W307_OWNER_REVIEW",
+      "title": "W307: interactive owner first-pass RTM review",
+      "created_at": "2026-09-21T17:06:51Z",
+      "merged_at": "2026-09-21T17:07:54Z",
+      "state": "MERGED",
+      "head_sha": "91d656fb45df862adbe7a70db92f337ae1598fdd",
+      "merge_sha": "1d92adadef8823e877da86131a949d58dec88259"
+    },
+    {
+      "id": "QPS_PR1596",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1596,
+      "wave_uid": "QPS_RTM_W279",
+      "title": "QPS W279: source-reenter RTM 569-594 and 642-652 hierarchy",
+      "created_at": "2026-09-21T17:11:47Z",
+      "merged_at": "2026-09-21T17:27:29Z",
+      "state": "MERGED",
+      "head_sha": "1ea7cfc3a761afea06397b2a2a347dd4893a5234",
+      "merge_sha": "782f99dba79466592b9e73ed5263df7efa53029e"
+    },
+    {
+      "id": "QPS_PR1597",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1597,
+      "wave_uid": "QPS_RTM_W280",
+      "title": "QPS W280: bind technical SHALLs to evidence, V&V and acceptance",
+      "created_at": "2026-09-21T17:39:31Z",
+      "merged_at": "2026-09-21T17:40:37Z",
+      "state": "MERGED",
+      "head_sha": "a20b222e321028694aa9fbf61d116f267d6a53ad",
+      "merge_sha": "ce9c2afed8541838be4d64ac60227eb20a444590"
+    },
+    {
+      "id": "QPS_PR1599",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1599,
+      "wave_uid": "QPS_RTM_W281",
+      "title": "QPS W281: collapse SAT RTM 499-556 into verification precedents",
+      "created_at": "2026-09-22T05:20:09Z",
+      "merged_at": "2026-09-22T05:28:38Z",
+      "state": "MERGED_HISTORICAL_BASE",
+      "head_sha": "73222bef6bf306d8fc83af412e13137606a9faf0",
+      "merge_sha": "00deddc196d4b809ab20ccfbaf3bb386205912f3"
+    },
+    {
+      "id": "QPS_PR1601",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1601,
+      "wave_uid": "QPS_RTM_W281",
+      "update": "W281-R1",
+      "title": "W281-R1 / HIST-BD-033: restore SAT precedent source-section integrity",
+      "created_at": "2026-09-22T05:42:55Z",
+      "merged_at": "2026-09-22T05:43:44Z",
+      "state": "MERGED",
+      "head_sha": "b955014bf09ebdb2fe2d88e6e6b0d1e4f0fd25ac",
+      "merge_sha": "65d17d4c84e319203dcc65335b2567009949fb7d"
+    },
+    {
+      "id": "QPS_PR1602",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1602,
+      "wave_uid": "QPS_RTM_W281",
+      "update": "W281-R2",
+      "title": "W281-R2: make SAT precedent validator fail closed",
+      "created_at": "2026-09-22T06:07:24Z",
+      "merged_at": "2026-09-22T06:18:16Z",
+      "state": "MERGED",
+      "head_sha": "ef7a4e7cdcd6d8e494b8407682d08057592e2e19",
+      "merge_sha": "c5386581d26e308504f00b6892ec7ae2aef4e7b5"
+    },
+    {
+      "id": "QPS_PR1604",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1604,
+      "wave_uid": "QPS_RTM_W281",
+      "update": "W281-R3",
+      "title": "W281-R3: reject duplicate or shadowed SAT publication blocks",
+      "created_at": "2026-09-22T06:44:38Z",
+      "merged_at": "2026-09-22T06:47:09Z",
+      "state": "MERGED",
+      "head_sha": "587e9655e6020b7317b884cb069ac007055cc3e3",
+      "merge_sha": "c56561ab3eb61f7f394298cd981ef493644ebf36"
+    },
+    {
+      "id": "QPS_PR1605",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1605,
+      "wave_uid": "QPS_RTM_W281",
+      "update": "W281-R4",
+      "title": "W281-R4: reject YAML-equivalent duplicate SAT keys",
+      "created_at": "2026-09-22T12:31:46Z",
+      "closed_at": "2026-09-22T12:34:17Z",
+      "state": "CLOSED_UNMERGED_SUPERSEDED",
+      "head_sha": "05e2ba4c7e1c2ab31ee8ac0fc2097219d7e95eb0",
+      "superseded_by": [
+        "QPS_PR1606",
+        "QPS_PR1607"
+      ]
+    },
+    {
+      "id": "QPS_PR1606",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1606,
+      "wave_uid": "QPS_RTM_W281",
+      "update": "W281-R4",
+      "title": "W281-R4: reject YAML-semantic duplicate SAT publication keys",
+      "created_at": "2026-09-22T12:32:19Z",
+      "closed_at": "2026-09-22T12:36:07Z",
+      "state": "CLOSED_UNMERGED_SUPERSEDED",
+      "head_sha": "fe64562d272c048e52eb04a579d23977680ce42d",
+      "superseded_by": [
+        "QPS_PR1607"
+      ]
+    },
+    {
+      "id": "QPS_PR1607",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1607,
+      "wave_uid": "QPS_RTM_W281",
+      "update": "W281-R4",
+      "title": "W281-R4: reject YAML-equivalent duplicate SAT keys",
+      "created_at": "2026-09-22T12:34:20Z",
+      "merged_at": "2026-09-22T12:38:29Z",
+      "state": "MERGED_CANONICAL_R4",
+      "head_sha": "9c452274e4e71ea3b95df7026a79c866d57d0666",
+      "merge_sha": "7750937eb43fa107ae7d53767dacad3ea23eaacd",
+      "supersedes": [
+        "QPS_PR1605",
+        "QPS_PR1606"
+      ]
+    },
+    {
+      "id": "QPS_PR1631",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1631,
+      "wave_uid": "QPS_RTM_W281",
+      "update": "W281-R4",
+      "title": "W281-R4: semantic YAML duplicate-key guard for HIST-BD-033",
+      "created_at": "2026-09-22T13:09:02Z",
+      "closed_at": "2026-09-22T13:10:35Z",
+      "state": "CLOSED_UNMERGED_REDUNDANT_AFTER_CANONICAL_R4",
+      "head_sha": "d42d8de8218693e22e97ad6430200e5673fff824",
+      "superseded_by": [
+        "QPS_PR1607"
+      ]
+    },
+    {
+      "id": "QPS_PR1641",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1641,
+      "wave_uid": "QPS_W329_OWNER_REVIEW",
+      "title": "W329: full 3PR + MIP for owner RTM review continuity",
+      "created_at": "2026-09-22T13:18:12Z",
+      "merged_at": "2026-09-22T13:22:11Z",
+      "state": "MERGED",
+      "head_sha": "1c4c215a9c747599877da24fa584e75029748a93",
+      "merge_sha": "3d02685921682d9e0d14246dbfa08bf2d3c42d8a"
+    },
+    {
+      "id": "QPS_PR1670",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1670,
+      "wave_uid": "QPS_W329_OWNER_REVIEW",
+      "title": "W329: add browser DoV harness; runtime withheld on #923",
+      "created_at": "2026-09-22T15:39:57Z",
+      "closed_at": "2026-09-22T15:51:47Z",
+      "state": "CLOSED_UNMERGED_SUPERSEDED",
+      "head_sha": "d4996461019cfad964c7c7b4f93c6a731ea89e57",
+      "superseded_by": [
+        "QPS_PR1676"
+      ]
+    },
+    {
+      "id": "QPS_PR1675",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1675,
+      "wave_uid": "QPS_W329_OWNER_REVIEW",
+      "title": "W329: repair CSV owner-delta roundtrip and prove in browser",
+      "created_at": "2026-09-22T15:49:15Z",
+      "merged_at": "2026-09-22T15:53:07Z",
+      "state": "MERGED",
+      "head_sha": "98a2ffc9cd1b58be442ce6636a66d04bb66366a4",
+      "merge_sha": "75b09fe18d9c11b2f4a393d62fb5565500560474"
+    },
+    {
+      "id": "QPS_PR1676",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1676,
+      "wave_uid": "QPS_W329_OWNER_REVIEW",
+      "title": "W329: preserve exact-head browser DoV harness",
+      "created_at": "2026-09-22T15:50:50Z",
+      "merged_at": "2026-09-22T15:50:54Z",
+      "state": "MERGED_SUCCESSOR_TO_1670",
+      "head_sha": "60ba4fa4ea630400f88a72c827a5666018ff189d",
+      "merge_sha": "e2166ff20cfab82889325cde1396681b3ccd8385",
+      "supersedes": [
+        "QPS_PR1670"
+      ]
+    },
+    {
+      "id": "QPS_PR1678",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1678,
+      "wave_uid": "QPS_W329_OWNER_REVIEW",
+      "title": "W329 browser dov proof sync",
+      "created_at": "2026-09-22T15:56:34Z",
+      "merged_at": "2026-09-22T16:03:42Z",
+      "state": "MERGED",
+      "head_sha": "575a881299a0965d8f0373bd6c0291e09521233f",
+      "merge_sha": "8939ecb6bc06057d473634cff618de15ed964735"
+    },
+    {
+      "id": "QPS_PR1679",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1679,
+      "wave_uid": "QPS_W329_OWNER_REVIEW",
+      "title": "W329 browser dov proof sync2",
+      "created_at": "2026-09-22T15:56:57Z",
+      "merged_at": "2026-09-22T16:03:07Z",
+      "state": "MERGED",
+      "head_sha": "d4996461019cfad964c7c7b4f93c6a731ea89e57",
+      "merge_sha": "8fb1f56b4904e333d42fe1cf10c28297495b6fae"
+    },
+    {
+      "id": "QPS_PR1681",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1681,
+      "wave_uid": "QPS_W329_OWNER_REVIEW",
+      "title": "W329: repair exact-head browser proof workflow integrity",
+      "created_at": "2026-09-22T16:16:51Z",
+      "merged_at": "2026-09-22T16:20:31Z",
+      "state": "MERGED",
+      "head_sha": "1e0bde855927216daea8407331003ba66747aa25",
+      "merge_sha": "8e6ef42c2cf4239cf829b9086f263a7983ef68a0"
+    },
+    {
+      "id": "QPS_PR1685",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1685,
+      "wave_uid": "QPS_RTM_W281",
+      "title": "W281: rebind RTM-548/549 to authoritative §4.13.3.5",
+      "created_at": "2026-09-22T16:41:46Z",
+      "merged_at": "2026-09-22T16:45:55Z",
+      "state": "MERGED_AUTHORITATIVE_SOURCE_REENTRY",
+      "merge_sha": "339a1682236d5dc0ccae5cf6d6df26d9f510d6b8"
+    },
+    {
+      "id": "QPS_PR1687",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1687,
+      "wave_uid": "QPS_RTM_W281",
+      "title": "W281: synchronize restart surfaces after RTM-548/549 source re-entry",
+      "created_at": "2026-09-22T16:53:44Z",
+      "merged_at": "2026-09-22T16:54:33Z",
+      "state": "MERGED_RECURRENCE_CONTROL",
+      "merge_sha": "8fcea84927ef58b17eff7f30c73d0223422e6948"
+    },
+    {
+      "id": "QPS_PR1690",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1690,
+      "wave_uid": "QPS_W287_DREQ_GAP",
+      "title": "W287: add candidate section 4.9 deliverable gap closure",
+      "created_at": "2026-09-22T16:58:42Z",
+      "merged_at": "2026-09-22T17:01:34Z",
+      "state": "MERGED_CANDIDATE_NONAUTHORITATIVE",
+      "head_sha": "976e24bd341378530a1a3421bde01e8e1225539f",
+      "merge_sha": "290675c06dd26f342708ec8e7455f896e8cd7fdc"
+    },
+    {
+      "id": "QPS_PR1733",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1733,
+      "wave_uid": "QPS_W329_OWNER_REVIEW",
+      "title": "QPS TRIAGE: rebase BD queue after #923 recovery and burn GT_BDQ_0",
+      "created_at": "2026-09-24T10:09:43Z",
+      "state": "CLOSED_UNMERGED_SUPERSEDED",
+      "superseded_by": [
+        "QPS_PR1736"
+      ]
+    },
+    {
+      "id": "QPS_PR1736",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1736,
+      "wave_uid": "QPS_W329_OWNER_REVIEW",
+      "title": "QPS TRIAGE: post-#923 BD rebase on current main",
+      "created_at": "2026-09-24T10:16:12Z",
+      "merged_at": "2026-09-24T10:17:10Z",
+      "state": "MERGED_RUNTIME_RECOVERY_REBASE",
+      "merge_sha": "32504477fac259cb470cb2161f990e11da41ea54",
+      "supersedes": [
+        "QPS_PR1733"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "MC_PR210",
+      "to": "MC_PR211",
+      "type": "CHRONOLOGICAL_AND_SEMANTIC_SUCCESSOR"
+    },
+    {
+      "from": "MC_PR211",
+      "to": "MC_PR213",
+      "type": "CHRONOLOGICAL_AND_SEMANTIC_SUCCESSOR"
+    },
+    {
+      "from": "QPS_PR1588",
+      "to": "QPS_PR1590",
+      "type": "SEMANTIC_SUCCESSOR"
+    },
+    {
+      "from": "QPS_PR1590",
+      "to": "QPS_PR1596",
+      "type": "SEMANTIC_SUCCESSOR"
+    },
+    {
+      "from": "QPS_PR1596",
+      "to": "QPS_PR1597",
+      "type": "SEMANTIC_SUCCESSOR"
+    },
+    {
+      "from": "QPS_PR1597",
+      "to": "QPS_PR1599",
+      "type": "SEMANTIC_SUCCESSOR"
+    },
+    {
+      "from": "QPS_PR1599",
+      "to": "QPS_PR1601",
+      "type": "CORRECTED_BY"
+    },
+    {
+      "from": "QPS_PR1601",
+      "to": "QPS_PR1602",
+      "type": "HARDENED_BY"
+    },
+    {
+      "from": "QPS_PR1602",
+      "to": "QPS_PR1604",
+      "type": "HARDENED_BY"
+    },
+    {
+      "from": "QPS_PR1604",
+      "to": "QPS_PR1607",
+      "type": "HARDENED_BY"
+    },
+    {
+      "from": "QPS_PR1605",
+      "to": "QPS_PR1607",
+      "type": "SUPERSEDED_BY"
+    },
+    {
+      "from": "QPS_PR1606",
+      "to": "QPS_PR1607",
+      "type": "SUPERSEDED_BY"
+    },
+    {
+      "from": "QPS_PR1631",
+      "to": "QPS_PR1607",
+      "type": "SUPERSEDED_BY_CANONICAL_PRIOR_MERGE"
+    },
+    {
+      "from": "QPS_PR1607",
+      "to": "QPS_PR1685",
+      "type": "LATER_AUTHORITATIVE_SOURCE_CORRECTION"
+    },
+    {
+      "from": "QPS_PR1685",
+      "to": "QPS_PR1687",
+      "type": "RESTART_SURFACE_SYNC"
+    },
+    {
+      "from": "QPS_PR1588",
+      "to": "QPS_PR1595",
+      "type": "UPSTREAM_SOURCE_CONTROL"
+    },
+    {
+      "from": "QPS_PR1590",
+      "to": "QPS_PR1595",
+      "type": "UPSTREAM_OWNER_REVIEW_INPUT"
+    },
+    {
+      "from": "QPS_PR1595",
+      "to": "QPS_PR1641",
+      "type": "OWNER_REVIEW_PREDECESSOR"
+    },
+    {
+      "from": "QPS_PR1641",
+      "to": "QPS_PR1675",
+      "type": "POSTMERGE_DEFECT_REPAIR"
+    },
+    {
+      "from": "QPS_PR1641",
+      "to": "QPS_PR1676",
+      "type": "BROWSER_DOV_SUCCESSOR"
+    },
+    {
+      "from": "QPS_PR1670",
+      "to": "QPS_PR1676",
+      "type": "SUPERSEDED_BY"
+    },
+    {
+      "from": "QPS_PR1675",
+      "to": "QPS_PR1681",
+      "type": "PROOF_HARNESS_HARDENING"
+    },
+    {
+      "from": "QPS_PR1676",
+      "to": "QPS_PR1681",
+      "type": "PROOF_HARNESS_HARDENING"
+    },
+    {
+      "from": "QPS_PR1733",
+      "to": "QPS_PR1736",
+      "type": "SUPERSEDED_BY_CLEAN_REBASE"
+    },
+    {
+      "from": "QPS_PR1538",
+      "to": "QPS_PR1690",
+      "type": "REQUIREMENTS_TABLE3_TO_GAP_CLOSURE_CANDIDATE"
+    },
+    {
+      "from": "QPS_PR1690",
+      "to": "QPS_ISSUE1801",
+      "type": "NAMED_NEXT_OBJECTIVE_SURFACED_AS_DURABLE_ISSUE"
+    }
+  ],
+  "chronology_policy": {
+    "created_order": "Sort by created_at to show authoring concurrency.",
+    "merge_order": "Sort by merged_at for repository application order; closed-unmerged candidates remain in history at closed_at.",
+    "warning": "Created order and merge order can differ; W329 PR1679 merged before PR1678 despite being created later."
+  },
+  "breadth_inventory": [
+    {
+      "wave": "W44",
+      "status": "OBSERVED_QPS_ARTIFACTS"
+    },
+    {
+      "wave": "W45",
+      "status": "OBSERVED_QPS_ARTIFACTS"
+    },
+    {
+      "wave": "W46",
+      "status": "OBSERVED_QPS_ARTIFACTS"
+    },
+    {
+      "wave": "W47",
+      "status": "OBSERVED_QPS_ARTIFACTS"
+    },
+    {
+      "wave": "W48",
+      "status": "OBSERVED_QPS_ARTIFACTS"
+    },
+    {
+      "wave": "W49",
+      "status": "OBSERVED_QPS_ARTIFACTS"
+    },
+    {
+      "wave": "W50",
+      "status": "OBSERVED_QPS_ARTIFACTS"
+    },
+    {
+      "wave": "W51",
+      "status": "OBSERVED_QPS_ARTIFACTS"
+    },
+    {
+      "wave": "W62",
+      "status": "OBSERVED_QPS_AND_ABACUS_PROOF_FAMILY"
+    },
+    {
+      "wave": "W64",
+      "status": "OBSERVED_QPS_AND_ABACUS_PROOF_FAMILY"
+    },
+    {
+      "wave": "W70",
+      "status": "OBSERVED_QPS_AND_ABACUS_PROOF_FAMILY"
+    },
+    {
+      "wave": "W71",
+      "status": "OBSERVED_QPS_AND_ABACUS_PROOF_FAMILY"
+    },
+    {
+      "wave": "W80",
+      "status": "OBSERVED_QPS_CURATED_AGENDA"
+    },
+    {
+      "wave": "W83",
+      "status": "OBSERVED_QPS_BROWSER_RELEASE_GATE"
+    },
+    {
+      "wave": "W85",
+      "status": "OBSERVED_QPS_AND_ABACUS_PROOF_FAMILY"
+    },
+    {
+      "wave": "W243",
+      "status": "QUOTED_PRIOR_CONTROL_SCOUT_PENDING_DEEP_BIND"
+    },
+    {
+      "wave": "W244",
+      "status": "QUOTED_PRIOR_CONTROL_SCOUT_PENDING_DEEP_BIND"
+    },
+    {
+      "wave": "W245",
+      "status": "QUOTED_PRIOR_CONTROL_SCOUT_PENDING_DEEP_BIND"
+    },
+    {
+      "wave": "W249",
+      "status": "OBSERVED_QPS_LEG5"
+    },
+    {
+      "wave": "W260",
+      "status": "OBSERVED_QPS_MISSIONCONTROL"
+    },
+    {
+      "wave": "W272",
+      "status": "OBSERVED_QPS_GOLDEN_THREAD_RUNNER"
+    },
+    {
+      "wave": "W275",
+      "status": "OBSERVED_QPS_HM01_R3_EXTERNAL_PHYSICAL_HOLD"
+    },
+    {
+      "wave": "W277",
+      "status": "COLLISION_MULTIPLE_NAMESPACES_DEEP_BOUND"
+    },
+    {
+      "wave": "W278",
+      "status": "COLLISION_MULTIPLE_NAMESPACES_DEEP_BOUND"
+    },
+    {
+      "wave": "W279",
+      "status": "COLLISION_MULTIPLE_NAMESPACES_DEEP_BOUND"
+    },
+    {
+      "wave": "W280",
+      "status": "OBSERVED_QPS_RTM_HIERARCHY"
+    },
+    {
+      "wave": "W281",
+      "status": "OBSERVED_QPS_RTM_HIERARCHY_REPAIRS"
+    },
+    {
+      "wave": "W282",
+      "status": "OBSERVED_QPS_SOURCE_REENTRY"
+    },
+    {
+      "wave": "W283",
+      "status": "OBSERVED_QPS_FEDERATION_SURFACE"
+    },
+    {
+      "wave": "W284",
+      "status": "QUOTED_SCOUT_PENDING_DEEP_BIND"
+    },
+    {
+      "wave": "W285",
+      "status": "OBSERVED_HISTORICAL_FEDERATION_DEPTH_NAMESPACE"
+    },
+    {
+      "wave": "W287",
+      "status": "OBSERVED_MULTIPLE_QPS_SUBLANES"
+    },
+    {
+      "wave": "W304",
+      "status": "OBSERVED_QPS_FEDERATION_FUNCTION_DEPTH"
+    },
+    {
+      "wave": "W305",
+      "status": "OBSERVED_QPS_AND_MISSIONCONTROL_DISTINCT_SUBLANES"
+    },
+    {
+      "wave": "W306",
+      "status": "OBSERVED_QPS_CONTROLS_CYBER"
+    },
+    {
+      "wave": "W307",
+      "status": "OBSERVED_QPS_OWNER_REVIEW"
+    },
+    {
+      "wave": "W325",
+      "status": "QUOTED_CONTROL_REFERENCE_SCOUT_PENDING_DEEP_BIND"
+    },
+    {
+      "wave": "W329",
+      "status": "OBSERVED_MULTIPLE_QPS_SUBLANES"
+    },
+    {
+      "wave": "W330",
+      "status": "OBSERVED_QPS_W306_SUCCESSOR"
+    },
+    {
+      "wave": "W331",
+      "status": "QUOTED_LATER_MERGE_SCOUT_PENDING_DEEP_BIND"
+    },
+    {
+      "wave": "W336",
+      "status": "OBSERVED_POST_923_RUNTIME_RECOVERY"
+    }
+  ],
+  "unfinished_actions": [
+    {
+      "id": "UA-W287-DREQ-SOURCE-INTEGRATION",
+      "class": "SURFACED_UNEXECUTED_SUCCESSOR",
+      "source": "QPS PR #1690 / W287 DREQ control",
+      "action": "Controlled document owner disposition of proposed §4.9 rows 26-42 as ACCEPT/AMEND/SPLIT/MERGE/REJECT, then source-integrate accepted rows.",
+      "current_evidence": "Mission discovered the previously unconsumed next objective and allocated durable QPS issue #1801 on 2026-09-26.",
+      "compensable": false,
+      "durable_issue": "GBOGEB/cryoplant-project#1801"
+    },
+    {
+      "id": "UA-W275-PHYSICAL-BUNDLE",
+      "class": "EXTERNAL_HOLD",
+      "source": "W275 R3 3PC handover",
+      "action": "Provide/consume qualifying physical successor Git bundle and complete 3PC Prove before Commit.",
+      "current_evidence": "HOLD_WAIT_PHYSICAL_SUCCESSOR_GIT_BUNDLE",
+      "compensable": false
+    },
+    {
+      "id": "UA-ABACUS-1369",
+      "class": "EXECUTION_ADMISSION_HOLD",
+      "source": "GBOGEB/ABACUS#1369",
+      "action": "Dispatch W62 Self + W62 Twelve + W64 + W70 + W71 + W85 + CI Governance on one unchanged main SHA; harvest artifacts; isolate first real red.",
+      "current_evidence": "PROVE_BLOCKED_EXECUTION_ADMISSION",
+      "compensable": false
+    },
+    {
+      "id": "UA-W281-OLD-R4-CANDIDATES",
+      "class": "SUPERSEDED",
+      "source": "PRs #1605/#1606/#1631",
+      "action": "None; retain for historical lineage only.",
+      "current_evidence": "Canonical merged R4 is #1607; later authoritative source correction #1685/#1687.",
+      "compensable": false
+    },
+    {
+      "id": "UA-W329-OLD-923-BLOCK",
+      "class": "HISTORICAL_RESOLVED_GATE",
+      "source": "W329 zero-step browser receipts / #923",
+      "action": "Do not reopen historical zero-step as application defect.",
+      "current_evidence": "Later post-#923 control records W329 roundtrip/browser exact-head PASS and #923 closed/recovered.",
+      "compensable": false
+    }
+  ],
+  "completeness": {
+    "canonical_subset_wave_labels": 7,
+    "canonical_subset_direct_qps_primary_prs": 7,
+    "ledger_pr_nodes": 29,
+    "breadth_wave_labels": 41,
+    "unresolved_deep_bind_labels": [
+      "W243",
+      "W244",
+      "W245",
+      "W284",
+      "W325",
+      "W331"
+    ],
+    "claim": "Complete for the bounded canonical-7 and its observed repair/supersession PRs; breadth inventory is intentionally fail-closed where deep binding is not yet performed.",
+    "canonical_wave_identity_rule": "repo+family+wave+lane_or_update",
+    "durable_successor_work_items": 1
+  },
+  "successor_work_items": [
+    {
+      "id": "QPS_ISSUE1801",
+      "repo": "GBOGEB/cryoplant-project",
+      "issue": 1801,
+      "title": "W287 — DREQ source integration review for candidate §4.9 rows 26–42",
+      "state": "OPEN_SURFACED_UNEXECUTED",
+      "source_objective": "W287_DREQ_SOURCE_INTEGRATION_REVIEW",
+      "authority_transfer": false
+    }
+  ]
+}
