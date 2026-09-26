@@ -40,10 +40,26 @@ jobs:
           codex = json.loads((root / "CODEX_HISTORIAN_WAVE_CURRENT_20260921_v1.json").read_text())
           close = json.loads((root / "QTOOLS_HISTORIAN_FANIN_CLOSE_20260921_v1.json").read_text())
           roots = reg["roots"]
+          rex_entries = reg["rex_entries"]
           open_states = {"TODO", "ACTIVE", "UNKNOWN_NEEDS_READER"}
           open_roots = [r for r in roots if r["state"] in open_states]
           done_or_control = [r for r in roots if r["state"] in {"DONE", "CONTROL", "SUPERSEDED", "INVALIDATED"}]
           assert len(roots) == reg["bounded_sample"]["durable_bd_roots_total"]
+          assert len(rex_entries) == len(roots)
+          root_ids = {r["bd_id"] for r in roots}
+          rex_bd_ids = {r["bd_id"] for r in rex_entries}
+          rex_ids = {r["rex_id"] for r in rex_entries}
+          assert rex_bd_ids == root_ids
+          assert len(rex_ids) == len(rex_entries)
+          for root in roots:
+              suffix = root["bd_id"].replace("HIST-BD-", "")
+              rex = next(r for r in rex_entries if r["bd_id"] == root["bd_id"])
+              assert rex["rex_id"] == f"REX-BD-{suffix}"
+              assert rex["prevention"]["reuse_on_recurrence"] is True
+              assert rex["authority_transfer"] is False
+              assert rex["formal_credit_delta"] == 0
+              if root.get("rex_control_id"):
+                  assert rex["shared_control_id"] == root["rex_control_id"]
           assert len(open_roots) == reg["bounded_sample"]["current_open_bd_roots"]
           assert len(done_or_control) == reg["bounded_sample"]["done_or_control_roots"]
           assert len(roots) == len(open_roots) + len(done_or_control)
@@ -116,6 +132,7 @@ jobs:
               "done_or_control_roots":len(done_or_control),
               "bd020":bd20["state"],
               "qtools_open_local_historian_roots":close["qtools"]["open_local_historian_roots"],
-              "codex_bd022":bd22["state"]
+              "codex_bd022":bd22["state"],
+              "rex_entries":len(rex_entries)
           }, sort_keys=True))
           PY
