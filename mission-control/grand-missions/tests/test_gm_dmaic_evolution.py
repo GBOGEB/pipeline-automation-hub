@@ -28,6 +28,7 @@ def test_current_state_fails_closed_for_promotion():
     assert out["top14_promotion_ready"] is False
     assert out["top21_promotion_ready"] is False
     assert out["fail_closed"]["proof_debt_unknown_blocks_top21"] is True
+    assert out["fail_closed"]["unknown_repeat_metric_blocks_promotion"] is True
 
 def test_abacus_depth_is_serialized():
     doc = load()
@@ -35,6 +36,16 @@ def test_abacus_depth_is_serialized():
     assert a["d1"]["state"] == "ROOT_CLEARED_NEXT_RED_EXPOSED"
     assert a["d2"]["state"] == "PATCHED_WAIT_EXACT_HEAD_PROOF"
     assert a["d3"]["state"] == "HELD_UNTIL_D2_CONTROL"
+
+def test_iteration_evolution_is_recursive_and_lineage_bound():
+    doc = load()
+    evo = doc["iteration_evolution"]
+    assert evo["core_cycle"] == ["DEFINE", "MEASURE", "ANALYZE", "IMPROVE", "CONTROL"]
+    assert evo["iteration_chain_integrity"] is True
+    assert evo["complete_iteration_count"] == 0
+    assert evo["recursive_control_handoff_count"] == 0
+    assert evo["active_iteration"]["iteration_id"] == "ABACUS-I1-FIRST3"
+    assert evo["active_iteration"]["control_outcome"] == "PENDING_D3_EXACT_HEAD_PROOF"
 
 def test_noncompensation_guards_present():
     doc = load()
