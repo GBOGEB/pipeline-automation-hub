@@ -1,0 +1,145 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.crew_allocation.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "parent_issue": "GBOGEB/pipeline-automation-hub#426",
+  "as_of": "2026-09-26",
+  "posture": "SURGE_READERS_NOT_RUNNERS",
+  "allocations": [
+    {
+      "cell": "F01-A",
+      "scope": [
+        "GBOGEB/cryoplant-project"
+      ],
+      "roles": [
+        "SCOUT",
+        "READER"
+      ],
+      "reason": "1679 PRs; largest QPS authority graph"
+    },
+    {
+      "cell": "F01-B",
+      "scope": [
+        "GBOGEB/ABACUS"
+      ],
+      "roles": [
+        "SCOUT",
+        "READER"
+      ],
+      "reason": "1153 PRs; second-largest core graph"
+    },
+    {
+      "cell": "F01-C",
+      "scope": [
+        "GBOGEB/CODEX"
+      ],
+      "roles": [
+        "SCOUT",
+        "READER"
+      ],
+      "reason": "796 PRs; knowledge/provenance hub"
+    },
+    {
+      "cell": "F01-D",
+      "scope": [
+        "GBOGEB/pipeline-automation-hub",
+        "GBOGEB/Q_engineering_tools",
+        "GBOGEB/DOCX_RTM_Automation",
+        "GBOGEB/document-organization-system",
+        "GBOGEB/gg_MATH"
+      ],
+      "roles": [
+        "SCOUT",
+        "READER"
+      ],
+      "reason": "647 PRs combined; shared lower-volume core cell"
+    },
+    {
+      "cell": "F02",
+      "scope": "contract_frontier_F02",
+      "roles": [
+        "SCOUT",
+        "READER"
+      ]
+    },
+    {
+      "cell": "F03",
+      "scope": "contract_frontier_F03",
+      "roles": [
+        "SCOUT",
+        "READER"
+      ]
+    },
+    {
+      "cell": "F04",
+      "scope": "contract_frontier_F04",
+      "roles": [
+        "SCOUT",
+        "READER"
+      ]
+    },
+    {
+      "cell": "F05",
+      "scope": "contract_frontier_F05",
+      "roles": [
+        "SCOUT",
+        "READER"
+      ]
+    },
+    {
+      "cell": "F06",
+      "scope": "contract_frontier_F06",
+      "roles": [
+        "SCOUT",
+        "READER"
+      ]
+    },
+    {
+      "cell": "F07",
+      "scope": "contract_frontier_F07",
+      "roles": [
+        "SCOUT",
+        "READER"
+      ]
+    },
+    {
+      "cell": "F08",
+      "scope": "contract_frontier_F08",
+      "roles": [
+        "SCOUT",
+        "READER"
+      ]
+    }
+  ],
+  "shared": [
+    {
+      "role": "DEEP_READER",
+      "backing": "U08_REX_KEB_EQUIVALENT",
+      "policy": "exception queue only: collision, supersession ambiguity, cross-repo return, contradictory handover"
+    },
+    {
+      "role": "QA",
+      "backing": "U06_QA_EQUIVALENT",
+      "policy": "validate returned census/graph; no semantic promotion"
+    },
+    {
+      "role": "PM_ORCHESTRATOR",
+      "backing": "U03_COMMAND_EQUIVALENT",
+      "policy": "dispatch named frontier/cell and enforce return path"
+    }
+  ],
+  "prohibited_surge": [
+    "DOCTOR_without_observed_application_red",
+    "ENGINEER_without_buildable_defect",
+    "DOCKMASTER_without_runtime_habitat_red",
+    "broad_CI_runner_fanout_for_metadata_census"
+  ],
+  "runner_policy": "API retrieval first; one bounded validation workflow only after generated ledger exists.",
+  "gm_update": {
+    "current": "GM-IV ACTIVE_8_OF_8 under GM-FLEET-03",
+    "action": "NO_NEW_GM_NUMBER",
+    "gm_v": "REMAINS_HELD",
+    "rationale": "This is a bounded fleet census. Existing evidence does not prove concurrency capacity or justify mission-number promotion."
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
