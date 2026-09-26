@@ -1,0 +1,4976 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.deep_read_queue.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "cell": "F01-D",
+  "issue": "GBOGEB/pipeline-automation-hub#432",
+  "source_ledger": "GM_FLEET_03_PR_LINEAGE_BACKFILL_F01D_LEDGER_v1.json",
+  "candidates": 376,
+  "priority_counts": {
+    "P0": 54,
+    "P1": 162,
+    "P2": 160
+  },
+  "queue": [
+    {
+      "id": "GBOGEB/document-organization-system::PR59",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 59,
+      "title": "Consume recursive DOC/KE_BLOCK 3P* + MIP handover",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#271"
+      ]
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR65",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 65,
+      "title": "control(adapter): bind DOCX_RTM consumer return receipt",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/DOCX_RTM_Automation#62"
+      ]
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR67",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 67,
+      "title": "control(adapter): rebind corrected DOCX visual QA receipt",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/DOCX_RTM_Automation#65"
+      ]
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR45",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 45,
+      "title": "W111: align ADR/OCD bridge semantics and authority to QPS child",
+      "priority": "P0",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#882"
+      ]
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR58",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 58,
+      "title": "H4 QPS TRIAGE: canonical global W1 control + W2/W3 burn-in roll-up",
+      "priority": "P0",
+      "wave_labels": [
+        "W1",
+        "W2",
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1135",
+        "GBOGEB/pipeline-automation-hub#116"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR118",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 118,
+      "title": "H4 QPS TRIAGE: record repo-local first-red and keep W2 HOLD",
+      "priority": "P0",
+      "wave_labels": [
+        "W2",
+        "W1"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1135"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR130",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 130,
+      "title": "LM-10: formalize Mission Control brief, DoV, crew cells and wave/pulse execution",
+      "priority": "P0",
+      "wave_labels": [
+        "W0-W7"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/gg_MATH#9",
+        "GBOGEB/ABACUS#1164",
+        "GBOGEB/cryoplant-project#923"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR155",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 155,
+      "title": "MissionControl: register HM-01 QPS v6 release train",
+      "priority": "P0",
+      "wave_labels": [
+        "W155",
+        "W199",
+        "W191",
+        "W152"
+      ],
+      "gm_labels": [
+        "GM-I",
+        "GM-V",
+        "GM-I-B"
+      ],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1379"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR162",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 162,
+      "title": "MissionControl: register HM-01 QPS v6 release train (rebased)",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1379"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR167",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 167,
+      "title": "MissionControl: bind first observed Golden Thread DEFER transaction",
+      "priority": "P0",
+      "wave_labels": [
+        "W57-P02",
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#604",
+        "GBOGEB/CODEX#414",
+        "GBOGEB/ABACUS#916"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR175",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 175,
+      "title": "GM-IV: bind runtime-proven capacity and advance CONTROL",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#923"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR180",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 180,
+      "title": "MissionControl: ingest bounded fleet issues through Golden Thread controls",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#581",
+        "GBOGEB/ABACUS#583",
+        "GBOGEB/ABACUS#585",
+        "GBOGEB/CODEX#237",
+        "GBOGEB/pipeline-automation-hub#153"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR186",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 186,
+      "title": "Golden Thread: close second-family importer and durable receipt predicate",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/CODEX#753",
+        "GBOGEB/CODEX#754"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR189",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 189,
+      "title": "MissionControl: register GM-I-C and Type-I mission telemetry",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C",
+        "GM-I",
+        "GM-I-A",
+        "GM-I-B",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1398"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR192",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 192,
+      "title": "GM-I-C: add fail-closed Git-object ingress adapter",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1398"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR195",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 195,
+      "title": "GM-I-C: specialize admitted 3PR + MIP for IC3 auth",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/GEMINI#12"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR202",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 202,
+      "title": "MissionControl: bind QPS W249 validator-compatible successor",
+      "priority": "P0",
+      "wave_labels": [
+        "W249"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1456",
+        "GBOGEB/cryoplant-project#923",
+        "GBOGEB/cryoplant-project#1258",
+        "GBOGEB/cryoplant-project#1266",
+        "GBOGEB/cryoplant-project#1357"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR221",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 221,
+      "title": "GM-V: materialise Governor readiness hold and ACTIVE8 historical control",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-V",
+        "GM-I"
+      ],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#923"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR232",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 232,
+      "title": "GM-V: close 3PSTAR MIP parent control with lossless handover",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-V",
+        "GM-I"
+      ],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#923"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR264",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 264,
+      "title": "H4 QPS TRIAGE: bind 3P* + MIP child re-entry receipt",
+      "priority": "P0",
+      "wave_labels": [
+        "W2",
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1500"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR273",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 273,
+      "title": "Receive GBOGEB project knowledge map 3P* + MIP state",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/GBOGEB#7"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR274",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 274,
+      "title": "W286: receive IDE/MCP/Jupyter runtime candidate",
+      "priority": "P0",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/codespaces-jupyter#3"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR275",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 275,
+      "title": "Excel schedule engine: dual CSV/XLSX table exports for MAIN pipeline",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/GBOGEB#8"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR277",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 277,
+      "title": "MissionControl: receive QPS M08 native Excel 3P* + MIP blocker",
+      "priority": "P0",
+      "wave_labels": [
+        "W152"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1514",
+        "GBOGEB/Q_engineering_tools#59"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR284",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 284,
+      "title": "Recursive DOC: receive KE_BLOCK 3P* + MIP exact-head proof (fresh master r3)",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/document-organization-system#62"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR295",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 295,
+      "title": "Mission Control: register MCP GUI 3P* + MIP child receipt",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/CODESPACES_jyperter#68"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR297",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 297,
+      "title": "Receive deduplicated project conversation corpus state",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/GBOGEB#11"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR303",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 303,
+      "title": "Recursive DOC: bind corrected independent visual QA proof",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/DOCX_RTM_Automation#65"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR307",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 307,
+      "title": "[SUPERSEDED] MissionControl: execute sequential 3P* then MIP and publish dashboard v11",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#923"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR317",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 317,
+      "title": "Recursive DOC: promote user-approved visual baseline and open style slice",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/document-organization-system#69"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR335",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 335,
+      "title": "W305-R5: self-protect First-Pass Closure gate",
+      "priority": "P0",
+      "wave_labels": [
+        "W305-R5"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1550"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR340",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 340,
+      "title": "Recursive DOC: bind governed visual style candidate for user review",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/DOCX_RTM_Automation#71"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR394",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 394,
+      "title": "W329 fallback: execute exact cryoplant #1636 BT2 proof",
+      "priority": "P0",
+      "wave_labels": [
+        "W329"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1636"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR399",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 399,
+      "title": "Historian: close HIST-BD-034 on trusted exact-payload proof",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/Q_engineering_tools#101",
+        "GBOGEB/cryoplant-project#923"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR402",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 402,
+      "title": "Receive project source-class purity and BLOCK graph state",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/GBOGEB#13"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR407",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 407,
+      "title": "Recursive DOC: receive KE_BLOCK Roundtrip Baseline v1 (fresh master)",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/document-organization-system#74"
+      ]
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR415",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 415,
+      "title": "Historian: retain ABACUS #1376 REX-CM-005 recurrence",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#1376"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR42",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 42,
+      "title": "W180F: execute QPS M08 MIP-2 generation seed",
+      "priority": "P0",
+      "wave_labels": [
+        "W180",
+        "W176"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1146"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR44",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 44,
+      "title": "W184F: exact MIP2D cross-output parity proof",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1156"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR57",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 57,
+      "title": "W285: exact proof for federation function depth",
+      "priority": "P0",
+      "wave_labels": [
+        "W285",
+        "W283"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#259",
+        "GBOGEB/cryoplant-project#1485"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR61",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 61,
+      "title": "M08: native Excel clean-roundtrip gate with two Windows attempts",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/Q_engineering_tools#59",
+        "GBOGEB/cryoplant-project#1514"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR63",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 63,
+      "title": "W285F R2: bind exact crosswalk and evidence bytes",
+      "priority": "P0",
+      "wave_labels": [
+        "W285",
+        "W283",
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1490"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR66",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 66,
+      "title": "[SUPERSEDED BY W292] W288 equation-v1 exact proof",
+      "priority": "P0",
+      "wave_labels": [
+        "W292",
+        "W288",
+        "W183",
+        "W184"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1511"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR84",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 84,
+      "title": "HIST-BD #83: bound LLDB readiness race without consuming gdbserver",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#324",
+        "GBOGEB/pipeline-automation-hub#76"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR90",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 90,
+      "title": "W281-R4: exact federated proof for HIST-BD-033",
+      "priority": "P0",
+      "wave_labels": [
+        "W281-R4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1607"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR91",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 91,
+      "title": "W281-R4: exact federated proof for canonical #1607",
+      "priority": "P0",
+      "wave_labels": [
+        "W281-R4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1607"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR92",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 92,
+      "title": "W322-R2: exact federated proof for cryoplant #1614",
+      "priority": "P0",
+      "wave_labels": [
+        "W322-R2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1614"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR93",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 93,
+      "title": "W322-R2: prove merged cryoplant #1618 and measure W57 parity",
+      "priority": "P0",
+      "wave_labels": [
+        "W322-R2",
+        "W57",
+        "W57-required"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1618"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR94",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 94,
+      "title": "W322-R3: exact proof for cryoplant #1624",
+      "priority": "P0",
+      "wave_labels": [
+        "W322-R3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1624"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR95",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 95,
+      "title": "W322-R4: exact proof for cryoplant #1625",
+      "priority": "P0",
+      "wave_labels": [
+        "W322-R4",
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1625"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR96",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 96,
+      "title": "W325: exact proof for cryoplant #1622",
+      "priority": "P0",
+      "wave_labels": [
+        "W325",
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1622"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR97",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 97,
+      "title": "W326: execute exact cryoplant #1629 BT0 trust-anchor proof",
+      "priority": "P0",
+      "wave_labels": [
+        "W326"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1629"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR98",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 98,
+      "title": "W329: exact federated proof for cryoplant #1639",
+      "priority": "P0",
+      "wave_labels": [
+        "W329",
+        "W322"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1639"
+      ]
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR99",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 99,
+      "title": "W329: execute exact cryoplant #1636 BT2 authority proof",
+      "priority": "P0",
+      "wave_labels": [
+        "W329",
+        "W325"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1636",
+        "GBOGEB/cryoplant-project#923"
+      ]
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR48",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 48,
+      "title": "W119: residual burn-down pulse 2 and CONTROL hysteresis v0.8",
+      "priority": "P1",
+      "wave_labels": [
+        "W119",
+        "W118"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR19",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 19,
+      "title": "triage: add scope-aware standalone artifact census W02",
+      "priority": "P1",
+      "wave_labels": [
+        "W02",
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR24",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 24,
+      "title": "w101: source-only recursive reconciliation recovery",
+      "priority": "P1",
+      "wave_labels": [
+        "W100",
+        "W101"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR57",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 57,
+      "title": "QPS TRIAGE v0.3.1: reliability cross-cut fix",
+      "priority": "P1",
+      "wave_labels": [
+        "W1",
+        "W2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR72",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 72,
+      "title": "GMI-W275: deterministic document-core re-entry",
+      "priority": "P1",
+      "wave_labels": [
+        "W275",
+        "W274"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR76",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 76,
+      "title": "GMI-W276: requirement-local non-compensating validation",
+      "priority": "P1",
+      "wave_labels": [
+        "W276",
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR1",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 1,
+      "title": "QPS M02B W0/W1: establish Math Bunker and first executable kernel",
+      "priority": "P1",
+      "wave_labels": [
+        "W0",
+        "W1"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR6",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 6,
+      "title": "Research: promote W008-W011 recursive geometry with deterministic W011 proof checks",
+      "priority": "P1",
+      "wave_labels": [
+        "W008-W011",
+        "W011",
+        "W008",
+        "W009",
+        "W010"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR7",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 7,
+      "title": "W012: prove global arbitrary-triangle shape contraction",
+      "priority": "P1",
+      "wave_labels": [
+        "W012",
+        "W008-W011",
+        "W011",
+        "W008-W010"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR8",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 8,
+      "title": "W013: prove absolute-scale bifurcation at the Napoleon parameter",
+      "priority": "P1",
+      "wave_labels": [
+        "W013",
+        "W012",
+        "W011",
+        "W008-W010",
+        "W010"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR9",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 9,
+      "title": "LM-10: stage governed high-dimensional signal extraction stack",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR10",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 10,
+      "title": "LM-10 W2 P2.1: matrix, statistics and runtime PCA reference core",
+      "priority": "P1",
+      "wave_labels": [
+        "W2",
+        "W0",
+        "W3-12"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR11",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 11,
+      "title": "LM-10 W2 P2.2: PA95 and PCA loading stability",
+      "priority": "P1",
+      "wave_labels": [
+        "W2",
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR12",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 12,
+      "title": "LM-10 H04/W3: finite-sample shrinkage plus first visual receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W3",
+        "W2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR13",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 13,
+      "title": "Research: execute matrix, PCA, uncertainty and graph consolidation pilot",
+      "priority": "P1",
+      "wave_labels": [
+        "W008",
+        "W010"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR16",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 16,
+      "title": "W256: implement temporal PCA multi-clock runtime",
+      "priority": "P1",
+      "wave_labels": [
+        "W256",
+        "W255"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR17",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 17,
+      "title": "LM-10: add mathematical topic deep-dive development plane",
+      "priority": "P1",
+      "wave_labels": [
+        "W5",
+        "W6",
+        "W7",
+        "W8",
+        "W9"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR23",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 23,
+      "title": "LM-10 W5: temporal subspace geometry in R4 and oblique bases",
+      "priority": "P1",
+      "wave_labels": [
+        "W5",
+        "W4",
+        "W257",
+        "W256"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR28",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 28,
+      "title": "GM-I-B: consume GM-I-A measured multi-clock P001 readiness",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-B",
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR29",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 29,
+      "title": "GM-I-B: independently prove GM-I-A multi-clock 3PSTAR MIP head",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-B",
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR21",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 21,
+      "title": "QPS TRIAGE ULTRA W2: federate child receipts through fixed AND-gate burndown",
+      "priority": "P1",
+      "wave_labels": [
+        "W2",
+        "W0",
+        "W1"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR22",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 22,
+      "title": "QPS TRIAGE ULTRA control: close W2 at 12/12 and release W3 integration wave",
+      "priority": "P1",
+      "wave_labels": [
+        "W2",
+        "W3",
+        "W0",
+        "W3-04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR23",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 23,
+      "title": "QPS TRIAGE ULTRA W3 sync: align 4/16 burndown and M03 recon ring",
+      "priority": "P1",
+      "wave_labels": [
+        "W3",
+        "W2",
+        "W3-04",
+        "W3-05",
+        "W0"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR24",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 24,
+      "title": "QPS TRIAGE ULTRA W3: promote Engineering Outpost Pages slice to CONTROL at 9/16",
+      "priority": "P1",
+      "wave_labels": [
+        "W3",
+        "W3-05",
+        "W3-06",
+        "W3-07",
+        "W3-08",
+        "W3-09",
+        "W3-10",
+        "W3-12",
+        "W3-13",
+        "W3-16"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR25",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 25,
+      "title": "W3-11: consume controlled gg_MATH Monte Carlo capability from HOME",
+      "priority": "P1",
+      "wave_labels": [
+        "W3-11",
+        "W3-10"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR26",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 26,
+      "title": "W3-16: freeze and verify M03 four-frontier W0 reconnaissance",
+      "priority": "P1",
+      "wave_labels": [
+        "W3-16",
+        "W0"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR27",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 27,
+      "title": "QPS TRIAGE ULTRA W3: close measured telemetry/PCA gates at 11/16",
+      "priority": "P1",
+      "wave_labels": [
+        "W3",
+        "W3-13",
+        "W3-14",
+        "W3-15",
+        "W3-10",
+        "W3-12",
+        "W3-16"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR28",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 28,
+      "title": "W3-13: freeze six comparable measured execution pulses",
+      "priority": "P1",
+      "wave_labels": [
+        "W3-13",
+        "W3-10",
+        "W3-11",
+        "W3-14"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR29",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 29,
+      "title": "W3-14: execute PCA over measured W3 fleet pulses",
+      "priority": "P1",
+      "wave_labels": [
+        "W3-14",
+        "W3",
+        "W3-13"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR31",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 31,
+      "title": "W3-15: close observed intervention BT from measured current-wave RED→REPAIR→CONTROL",
+      "priority": "P1",
+      "wave_labels": [
+        "W3-15",
+        "W3-13",
+        "W3-10",
+        "W3-11",
+        "W3",
+        "W3-14",
+        "W3-16",
+        "W3-12"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR32",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 32,
+      "title": "QPS M09: truth-probe the legacy document processor without duplicating HOME",
+      "priority": "P1",
+      "wave_labels": [
+        "W2",
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR33",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 33,
+      "title": "W3 control: reconcile proven parallel gates to 14/16 while W3-15 waits for runner",
+      "priority": "P1",
+      "wave_labels": [
+        "W3",
+        "W3-15",
+        "W3-10",
+        "W3-11",
+        "W3-16",
+        "W0",
+        "W3-01",
+        "W3-13",
+        "W3-14",
+        "W3-12"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR35",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 35,
+      "title": "CONTROL: persist cross-mission expedition iteration ledger and fleet dashboard",
+      "priority": "P1",
+      "wave_labels": [
+        "W3-15",
+        "W3-12",
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR39",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 39,
+      "title": "HANDOVER: freeze post-M09 runner/crew elasticity and next execution plan",
+      "priority": "P1",
+      "wave_labels": [
+        "W3",
+        "W3-12"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR41",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 41,
+      "title": "GM-FLEET-02B: materialise fleet, crew lifecycle and bidirectional REX",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR48",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 48,
+      "title": "GM-FLEET-03: measured Mission City capacity and staged GM-IV activation",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR50",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 50,
+      "title": "GM-FLEET-03: execute GM-IV ring-1 recon and dispositions",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR52",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 52,
+      "title": "MissionControl: bind GM-FLEET runtime DoV into canonical burndowns",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-V",
+        "GM-I"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR54",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 54,
+      "title": "[SUPERSEDED] GM-IV F01 bounded producer-verifier pilot",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR55",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 55,
+      "title": "GM-FLEET-03: execute bounded F01 ADR/OCD pilot",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR62",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 62,
+      "title": "GM-IV Ring2: execute fail-closed Jupyter scout A",
+      "priority": "P1",
+      "wave_labels": [
+        "W69"
+      ],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR65",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 65,
+      "title": "GM-IV Ring2: prove Scout B provenance and return as reference",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR66",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 66,
+      "title": "[PRUNED] GM-IV Ring2 upstream-fork YAML full-runtime probe",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR67",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 67,
+      "title": "GM-FLEET-03: execute F03/F04 Ring2 recon",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR69",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 69,
+      "title": "GM-FLEET-03: execute bounded F03 second-pilot control",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR70",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 70,
+      "title": "GM-IV: add measured Evidence Economics and invariant gate",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR71",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 71,
+      "title": "GM-FLEET-03: Governor gate PILOT_2_OF_8",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR72",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 72,
+      "title": "GM-IV Evidence Economics: scope local models and add master control repeat",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR73",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 73,
+      "title": "Repair GM-IV: restore RECON_2_OF_8 invariant after concurrent pilot promotion",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR74",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 74,
+      "title": "[SUPERSEDED] Crew telemetry exposure canary from stale pilot-state base",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR75",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 75,
+      "title": "Crew telemetry: measured exposure canary on restored fleet invariant",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR81",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 81,
+      "title": "[WITHHELD] GM-IV Governor PILOT_2_OF_8 conflicts with current invariant",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR82",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 82,
+      "title": "Crew telemetry: third exposure pulse and measured small-N PCA",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR86",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 86,
+      "title": "Crew telemetry: freeze exposure PCA in CONTROL",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR90",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 90,
+      "title": "GM-IV Governor: unique-head PILOT_2_OF_8 control gate",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR96",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 96,
+      "title": "GM-IV Governor: integrate PILOT_2_OF_8 on current master",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR106",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 106,
+      "title": "SYNC: current master into GM-IV forward-gate safety repair",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR107",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 107,
+      "title": "GM-IV: fail-closed forward gate before RECON_4",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR108",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 108,
+      "title": "GM-IV: materialise separate RECON_4 Governor readiness gate",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR111",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 111,
+      "title": "SYNC: current master into GM-IV RECON_4 promotion",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR112",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 112,
+      "title": "GM-IV: promote governed RECON_4_OF_8 controlled reconnaissance",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR113",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 113,
+      "title": "H4 QPS TRIAGE: global 3P/MIP method roll-up and W1 execution",
+      "priority": "P1",
+      "wave_labels": [
+        "W1",
+        "W2",
+        "W3",
+        "W176",
+        "W177",
+        "W152"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR114",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 114,
+      "title": "H4 QPS TRIAGE: canonical W1 burn-in receipt v1.0",
+      "priority": "P1",
+      "wave_labels": [
+        "W1",
+        "W003",
+        "W2",
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR115",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 115,
+      "title": "H4 QPS TRIAGE: bind W2/W3 non-blocking preflight",
+      "priority": "P1",
+      "wave_labels": [
+        "W2",
+        "W3",
+        "W74"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR116",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 116,
+      "title": "H4 QPS TRIAGE: W1 control roll-up and W2 gate plan",
+      "priority": "P1",
+      "wave_labels": [
+        "W1",
+        "W2",
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR117",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 117,
+      "title": "H4 QPS TRIAGE W2: freeze CC source locator and reference period",
+      "priority": "P1",
+      "wave_labels": [
+        "W2",
+        "W2-P1",
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR119",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 119,
+      "title": "H4 QPS TRIAGE: add repo function topology and exploit routing",
+      "priority": "P1",
+      "wave_labels": [
+        "W2",
+        "W1",
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR122",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 122,
+      "title": "SYNC: current master into GM-IV ACTIVE_8 Governor readiness",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR123",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 123,
+      "title": "GM-IV: materialise ACTIVE_8 Governor readiness gate",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR128",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 128,
+      "title": "LM-10: stage single-frontier gg_MATH signal extraction mission",
+      "priority": "P1",
+      "wave_labels": [
+        "W3-12"
+      ],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR131",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 131,
+      "title": "Mission Control: materialize narrow LM-10 and global BD queues",
+      "priority": "P1",
+      "wave_labels": [
+        "W0",
+        "W2",
+        "W3",
+        "W4",
+        "W5",
+        "W6",
+        "W7"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR132",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 132,
+      "title": "LM-10: consume H04/W3 receipt and recalculate residual pressure",
+      "priority": "P1",
+      "wave_labels": [
+        "W3",
+        "W4",
+        "W5",
+        "W6",
+        "W7",
+        "W3-12"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR136",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 136,
+      "title": "MissionControl: register LM-10 planes, crew census and GM-I-B variant",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-B",
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR137",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 137,
+      "title": "MissionControl: synchronize GM-I-B and stage next launch control",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-B",
+        "GM-I",
+        "GM-V",
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR138",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 138,
+      "title": "GM-IV: execute bounded F05 F06 exact-SHA probe",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-I-B",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR141",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 141,
+      "title": "MissionControl: reconcile I-B CONTROL and ACTIVE8 readiness",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-B",
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR142",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 142,
+      "title": "MissionControl: bind I-B CONTROL and F05/F06 prepromotion evidence",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-B",
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR144",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 144,
+      "title": "GM-IV: promote exact Governor-ready shape to ACTIVE_8",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR145",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 145,
+      "title": "GM-IV: execute bounded F07 F08 exact-SHA pulse",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR146",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 146,
+      "title": "GM-IV: convert legacy gates to post-ACTIVE8 control",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-I-B",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR147",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 147,
+      "title": "GM-IV: prove post-ACTIVE8 repeat CONTROL",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR148",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 148,
+      "title": "GM-IV: fix-forward post-ACTIVE8 repeat CONTROL proof",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR151",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 151,
+      "title": "GM-I-B Cycle3: prove 3P3 propagation/generalisation CONTROL",
+      "priority": "P1",
+      "wave_labels": [
+        "W264"
+      ],
+      "gm_labels": [
+        "GM-I-B"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR154",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 154,
+      "title": "MissionControl: add immutable temporal Golden Thread replay v1",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V",
+        "GM-I-B"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR157",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 157,
+      "title": "GM-I-B Cycle3: repair aggregate proof via content-address relay",
+      "priority": "P1",
+      "wave_labels": [
+        "W264"
+      ],
+      "gm_labels": [
+        "GM-I-B"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR158",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 158,
+      "title": "GM-IV: prove 8/8 runtime capability capacity on current CONTROL",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR160",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 160,
+      "title": "GM-I-B Cycle3: freeze postmerge 3P3 CONTROL",
+      "priority": "P1",
+      "wave_labels": [
+        "W265"
+      ],
+      "gm_labels": [
+        "GM-I-B"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR166",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 166,
+      "title": "LM-11: register QPS Wave lineage mission on live registry",
+      "priority": "P1",
+      "wave_labels": [
+        "W265",
+        "W248"
+      ],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR169",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 169,
+      "title": "LM-11: bind QPS Wave atlas, graph contract and federation proof",
+      "priority": "P1",
+      "wave_labels": [
+        "W103",
+        "W264",
+        "W265-vs",
+        "W248"
+      ],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR170",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 170,
+      "title": "Golden Thread: govern inception-to-present federation baseline",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR172",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 172,
+      "title": "Golden Thread: reconcile architecture BDQ with QPS W266/W267",
+      "priority": "P1",
+      "wave_labels": [
+        "W266",
+        "W267",
+        "W269"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR173",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 173,
+      "title": "GM-IV: repair and prove 8/8 runtime capability capacity v2",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR187",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 187,
+      "title": "Register GM-I-C cross-agent Drive federation mission",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C",
+        "GM-I",
+        "GM-V",
+        "GM-I-C_CROSS_AGENT_DRIVE_FEDERATION_CONTROL_v0",
+        "GM-I-C_CREW_ALLOCATION_v0",
+        "GM-I-B"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR206",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 206,
+      "title": "GM-I-C: federate canonical QPS W275 3P* + MIP close",
+      "priority": "P1",
+      "wave_labels": [
+        "W275"
+      ],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR210",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 210,
+      "title": "HM-01 W277: measure R3 DMAIC KPI baseline",
+      "priority": "P1",
+      "wave_labels": [
+        "W277",
+        "W278"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR211",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 211,
+      "title": "HM-01 W278: prevent R3 recurrence classes before merge",
+      "priority": "P1",
+      "wave_labels": [
+        "W278",
+        "W277"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR213",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 213,
+      "title": "HM-01 W279: perpetuate R3 DMAIC KPI control",
+      "priority": "P1",
+      "wave_labels": [
+        "W279",
+        "W277",
+        "W278"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR214",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 214,
+      "title": "HM-01 W280: harden DMAIC measurement and protected-control gate",
+      "priority": "P1",
+      "wave_labels": [
+        "W280",
+        "W277",
+        "W278"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR215",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 215,
+      "title": "HM-01 W280-R1: reprove hardened DMAIC protected-control gate",
+      "priority": "P1",
+      "wave_labels": [
+        "W280-R1",
+        "W280",
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR217",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 217,
+      "title": "HM-01: restore W275 protected-control derivation compatibility",
+      "priority": "P1",
+      "wave_labels": [
+        "W275",
+        "W280"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR218",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 218,
+      "title": "HM-01 W281: rebaseline DMAIC control to protected proof",
+      "priority": "P1",
+      "wave_labels": [
+        "W281",
+        "W280-R1",
+        "W278",
+        "W282"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR219",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 219,
+      "title": "HM-01 W281-R1: reprove live-v4 DMAIC protected control",
+      "priority": "P1",
+      "wave_labels": [
+        "W281-R1",
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR223",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 223,
+      "title": "GM-IV: retain PILOT2 recensus control under ACTIVE8",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR230",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 230,
+      "title": "GM-IV: qualify F05/F06 for RECON_4_OF_8",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR233",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 233,
+      "title": "GM-I-C W282: 3P* MIP lossless control refresh",
+      "priority": "P1",
+      "wave_labels": [
+        "W282"
+      ],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR234",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 234,
+      "title": "GM-I-C W282: bind post-merge close receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W282"
+      ],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR237",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 237,
+      "title": "SYNC: latest master into repaired GM-V 3PSTAR MIP handover",
+      "priority": "P1",
+      "wave_labels": [
+        "W282"
+      ],
+      "gm_labels": [
+        "GM-V",
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR238",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 238,
+      "title": "SYNC: W283 master into GM-V 3PSTAR review fix-forward",
+      "priority": "P1",
+      "wave_labels": [
+        "W283"
+      ],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR241",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 241,
+      "title": "GM-V: rebind 3P* MIP control to W281 QPS runtime evidence",
+      "priority": "P1",
+      "wave_labels": [
+        "W281"
+      ],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR242",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 242,
+      "title": "GM-V: W281 no-loss rebind after 3PSTAR review repair",
+      "priority": "P1",
+      "wave_labels": [
+        "W281"
+      ],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR249",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 249,
+      "title": "GM-I-C W284: federate W282 visual Prove closeout",
+      "priority": "P1",
+      "wave_labels": [
+        "W284",
+        "W282"
+      ],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR251",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 251,
+      "title": "GM-I-C W284: bind post-merge close and queued self-reproof",
+      "priority": "P1",
+      "wave_labels": [
+        "W284"
+      ],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR254",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 254,
+      "title": "GM-I-C W284: persist self-reproof PASS fix-forward",
+      "priority": "P1",
+      "wave_labels": [
+        "W284"
+      ],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR255",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 255,
+      "title": "GM-V: bind lossless W281 publication receipt and session close",
+      "priority": "P1",
+      "wave_labels": [
+        "W281"
+      ],
+      "gm_labels": [
+        "GM-V",
+        "GM-I"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR259",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 259,
+      "title": "W285: govern federation function-depth denominator",
+      "priority": "P1",
+      "wave_labels": [
+        "W285",
+        "W283",
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR262",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 262,
+      "title": "MissionControl: reconcile 3P* + MIP fleet state after ACTIVE8 proofs",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR265",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 265,
+      "title": "HM-01 W275: receive sequential 3P* then MIP child state",
+      "priority": "P1",
+      "wave_labels": [
+        "W275",
+        "W275-v4",
+        "W280",
+        "W281"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR267",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 267,
+      "title": "HM-01 W275: receive canonical sequential close v2",
+      "priority": "P1",
+      "wave_labels": [
+        "W275",
+        "W275-v4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR269",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 269,
+      "title": "W285: stage QPS federation depth authority pointer",
+      "priority": "P1",
+      "wave_labels": [
+        "W285",
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR270",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 270,
+      "title": "HM-01 W275: receive v6 producer and ingress ready state",
+      "priority": "P1",
+      "wave_labels": [
+        "W275",
+        "W275-v4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR276",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 276,
+      "title": "HM-01 W275: receive final acceptance-ready child state v4",
+      "priority": "P1",
+      "wave_labels": [
+        "W275",
+        "W275-v4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR294",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 294,
+      "title": "W286/W287: bind IDE/MCP/Jupyter exact-head proof closure",
+      "priority": "P1",
+      "wave_labels": [
+        "W286",
+        "W287"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR296",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 296,
+      "title": "W304: bind canonical QPS federation depth control pointer",
+      "priority": "P1",
+      "wave_labels": [
+        "W304",
+        "W285",
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR309",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 309,
+      "title": "Fix-forward dashboard v11 CodeQL sink and close 3P*+MIP control",
+      "priority": "P1",
+      "wave_labels": [
+        "W305"
+      ],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR310",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 310,
+      "title": "GM-I-A: record proven FAST/HEAVY provider and queued ABACUS bridge",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A",
+        "GM-I"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR319",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 319,
+      "title": "W305-R5: self-protect First-Pass Closure gate",
+      "priority": "P1",
+      "wave_labels": [
+        "W305-R5",
+        "W305-R4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR352",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 352,
+      "title": "MIP: converge PR workflow fan-out and runner pressure",
+      "priority": "P1",
+      "wave_labels": [
+        "W3-14",
+        "W3-13",
+        "W3-11",
+        "W3-16",
+        "W0"
+      ],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR356",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 356,
+      "title": "Probe: measure post-MIP GM-I-A analytics workflow fan-out",
+      "priority": "P1",
+      "wave_labels": [
+        "W3-16",
+        "W0"
+      ],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR362",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 362,
+      "title": "Historian: close CODEX 3P* MIP pulse and advance F2",
+      "priority": "P1",
+      "wave_labels": [
+        "W003",
+        "W286"
+      ],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR370",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 370,
+      "title": "Historian: close F2 GEMINI and gg_MATH roots BD025-030",
+      "priority": "P1",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR397",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 397,
+      "title": "Historian: reconcile cryoplant BD033 into active BD034",
+      "priority": "P1",
+      "wave_labels": [
+        "W322",
+        "W329",
+        "W331"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR414",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 414,
+      "title": "GM-I-A P002: bind second measured multi-clock transaction",
+      "priority": "P1",
+      "wave_labels": [
+        "W305"
+      ],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR416",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 416,
+      "title": "GM-I-A P002: fix repeat-pulse validator after n=2 append",
+      "priority": "P1",
+      "wave_labels": [
+        "W305"
+      ],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR424",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 424,
+      "title": "GM-FLEET-03: recursive Wave/PR Golden Thread + canonical-7 DMAIC",
+      "priority": "P1",
+      "wave_labels": [
+        "W287",
+        "W281",
+        "W329",
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR427",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 427,
+      "title": "GM-FLEET-03: start 90-repo historical PR lineage backfill",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I",
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR5",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 5,
+      "title": "QPS M02A W0/W1: recover dashboard source lineage and prove numerical path",
+      "priority": "P1",
+      "wave_labels": [
+        "W0",
+        "W1"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR6",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 6,
+      "title": "QPS M02A W2: prove byte-identical recovered numerics and federated receipts",
+      "priority": "P1",
+      "wave_labels": [
+        "W2",
+        "W0",
+        "W1"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR7",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 7,
+      "title": "QPS M02A W3: freeze material provenance before real Pages productization",
+      "priority": "P1",
+      "wave_labels": [
+        "W3",
+        "W2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR8",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 8,
+      "title": "QPS M02A W3: replace placeholder with source-bound traceable Pages product",
+      "priority": "P1",
+      "wave_labels": [
+        "W3",
+        "W3-06",
+        "W3-07",
+        "W3-08",
+        "W3-09"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR9",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 9,
+      "title": "M02A W3 control: make exact-product Pages repeat a production-branch gate",
+      "priority": "P1",
+      "wave_labels": [
+        "W3",
+        "W3-09"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR25",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 25,
+      "title": "G6B: prove exact W161 release-receipt adapter",
+      "priority": "P1",
+      "wave_labels": [
+        "W161",
+        "W160"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR31",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 31,
+      "title": "W164F: execute exact MissionControl federation payload",
+      "priority": "P1",
+      "wave_labels": [
+        "W164"
+      ],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR33",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 33,
+      "title": "W166F: execute exact federation measurement payload",
+      "priority": "P1",
+      "wave_labels": [
+        "W166",
+        "W164",
+        "W165"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR34",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 34,
+      "title": "W168F: execute exact federation expansion sample 2 payload",
+      "priority": "P1",
+      "wave_labels": [
+        "W168",
+        "W74"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR35",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 35,
+      "title": "W168RF: consume exact W168R authoritative return payload",
+      "priority": "P1",
+      "wave_labels": [
+        "W74",
+        "W168"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR36",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 36,
+      "title": "W170F: execute exact federation sample 3 payload",
+      "priority": "P1",
+      "wave_labels": [
+        "W170",
+        "W165",
+        "W167",
+        "W169"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR39",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 39,
+      "title": "W176: federated exact-payload proof for offer-evaluation doctrine",
+      "priority": "P1",
+      "wave_labels": [
+        "W176",
+        "W177"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR45",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 45,
+      "title": "W184F: execute exact-SHA visual N200 PCA/PA95 checkpoint",
+      "priority": "P1",
+      "wave_labels": [
+        "W184",
+        "W163",
+        "W169",
+        "W170",
+        "W173-authority",
+        "W174",
+        "W176"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR47",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 47,
+      "title": "W188F: prove MIP2C one-page render and normalized OOXML identity",
+      "priority": "P1",
+      "wave_labels": [
+        "W183",
+        "W188",
+        "W152"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR51",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 51,
+      "title": "W282F: prove exact visual-lineage restart control",
+      "priority": "P1",
+      "wave_labels": [
+        "W282",
+        "W162",
+        "W188",
+        "W231"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR54",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 54,
+      "title": "W282F R1: re-prove immutable-diagnostic visual lineage payload",
+      "priority": "P1",
+      "wave_labels": [
+        "W231",
+        "W282"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR58",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 58,
+      "title": "W285F: prove exact federation function depth",
+      "priority": "P1",
+      "wave_labels": [
+        "W285",
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR59",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 59,
+      "title": "W276: two-attempt native Excel runtime probe for M08",
+      "priority": "P1",
+      "wave_labels": [
+        "W276",
+        "W183"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR67",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 67,
+      "title": "[RED PROOF; REPAIR IN QPS #1519] W292 equation-v1 parity",
+      "priority": "P1",
+      "wave_labels": [
+        "W292",
+        "W288",
+        "W184"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR68",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 68,
+      "title": "W292F: execute M08 OFFER_EVAL_EQ_v1 implementation parity",
+      "priority": "P1",
+      "wave_labels": [
+        "W288",
+        "W289",
+        "W291"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR69",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 69,
+      "title": "W295F: prove W294 equation state preservation and release identity",
+      "priority": "P1",
+      "wave_labels": [
+        "W294",
+        "W288",
+        "W289",
+        "W291"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR70",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 70,
+      "title": "[SUPERSEDED BY QPS W295/W296] W295F reproof",
+      "priority": "P1",
+      "wave_labels": [
+        "W295",
+        "W296",
+        "W294",
+        "W183",
+        "W184",
+        "W288"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR71",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 71,
+      "title": "W295F: execute post-W295 OFFER_EVAL_EQ_v1 exact proof",
+      "priority": "P1",
+      "wave_labels": [
+        "W295",
+        "W294"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR72",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 72,
+      "title": "W296F: execute exact W295 OFFER_EVAL_EQ_v1 proof",
+      "priority": "P1",
+      "wave_labels": [
+        "W295",
+        "W294",
+        "W289",
+        "W291"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR75",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 75,
+      "title": "W302F: prepare exact current M08 native-Excel owner input",
+      "priority": "P1",
+      "wave_labels": [
+        "W183",
+        "W301",
+        "W291"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR77",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 77,
+      "title": "W303F: execute W291 on self-hosted Windows with real Excel",
+      "priority": "P1",
+      "wave_labels": [
+        "W291",
+        "W302",
+        "W152"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR78",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 78,
+      "title": "W304F: reprove renamed federation depth without pytest dependency",
+      "priority": "P1",
+      "wave_labels": [
+        "W285",
+        "W304",
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR30",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 30,
+      "title": "W107: propagate #1102 runtime-health roll-up to outward-artifact worker",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR36",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 36,
+      "title": "W107: consume child ACCEPT runtime-health receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR37",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 37,
+      "title": "W107/P3: prove exact-head outward-artifact build",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR38",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 38,
+      "title": "W111: expose outward-artifact worker through global mesh dock",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR39",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 39,
+      "title": "W111: Gloob Book Manifest v0.1 + slugged multi-depth renderer",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR40",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 40,
+      "title": "W111: canonical Markdown anchors for Gloob slugs",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR41",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 41,
+      "title": "W112: 3P5 + MIP delete-safe Gloob session closure",
+      "priority": "P2",
+      "wave_labels": [
+        "W112"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR42",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 42,
+      "title": "W113: Gloob Book Registry v0.2",
+      "priority": "P2",
+      "wave_labels": [
+        "W113"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR43",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 43,
+      "title": "W114: registry-driven Gloob gateway v0.3",
+      "priority": "P2",
+      "wave_labels": [
+        "W114"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR44",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 44,
+      "title": "W115: synchronized Book Graph provenance timeline runtime views v0.4",
+      "priority": "P2",
+      "wave_labels": [
+        "W115"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR45",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 45,
+      "title": "W116",
+      "priority": "P2",
+      "wave_labels": [
+        "W116"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR46",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 46,
+      "title": "W117: recursive telemetry PCA control v0.6",
+      "priority": "P2",
+      "wave_labels": [
+        "W117"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR47",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 47,
+      "title": "W118: PC2 residual burn-down v0.7",
+      "priority": "P2",
+      "wave_labels": [
+        "W118"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR49",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 49,
+      "title": "W120: guarded control surveillance and residual-PC discovery v0.9",
+      "priority": "P2",
+      "wave_labels": [
+        "W120"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR50",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 50,
+      "title": "W121: causal attribution and cause-bound routing v1.0",
+      "priority": "P2",
+      "wave_labels": [
+        "W121"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR52",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 52,
+      "title": "W122: external causal-return closure v1.1",
+      "priority": "P2",
+      "wave_labels": [
+        "W122"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR53",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 53,
+      "title": "W123: v1.1 3PR + MIP lossless session handover",
+      "priority": "P2",
+      "wave_labels": [
+        "W123"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR54",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 54,
+      "title": "W124: federated mission dispatch v1.2",
+      "priority": "P2",
+      "wave_labels": [
+        "W124"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR56",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 56,
+      "title": "W125: close Gloob v1.2 3P* control pass",
+      "priority": "P2",
+      "wave_labels": [
+        "W125"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR57",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 57,
+      "title": "W125: close Gloob v1.2 3P* control pass (fresh-main rebased)",
+      "priority": "P2",
+      "wave_labels": [
+        "W125"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/document-organization-system::PR75",
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 75,
+      "title": "W306: route TXT-CUR-029 artifact intake control review",
+      "priority": "P2",
+      "wave_labels": [
+        "W306"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR18",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 18,
+      "title": "triage: modernize standalone RTM product and federate selectively W01",
+      "priority": "P2",
+      "wave_labels": [
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR20",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 20,
+      "title": "W03: restore direct DOCX extraction and enhanced RTM entrypoint",
+      "priority": "P2",
+      "wave_labels": [
+        "W03"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR23",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 23,
+      "title": "w100: recursive source-feature workers with lineage/idempotence controls",
+      "priority": "P2",
+      "wave_labels": [
+        "W100"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR28",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 28,
+      "title": "w102: bind W101 reconciliation into MIP control history",
+      "priority": "P2",
+      "wave_labels": [
+        "W101"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR29",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 29,
+      "title": "W69 MIP: federate DOCX to RTM requirement ingestion",
+      "priority": "P2",
+      "wave_labels": [
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR30",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 30,
+      "title": "W107: propagate #1102 runtime-health roll-up to DOCX/RTM worker",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR37",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 37,
+      "title": "W107: consume child ACCEPT runtime-health receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR40",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 40,
+      "title": "W107/P2: prove exact-head deterministic RTM reconciliation",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR44",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 44,
+      "title": "W111: expose DOCX/RTM worker through global mesh dock",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR46",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 46,
+      "title": "W111: project QPS power/utility evidence into RTM and interface cards",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR56",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 56,
+      "title": "H4 QPS TRIAGE: applicability v0.3 reliability + Mission Control",
+      "priority": "P2",
+      "wave_labels": [
+        "W1"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR59",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 59,
+      "title": "W274: prove GMI Master DOCX bytes and canonical extraction",
+      "priority": "P2",
+      "wave_labels": [
+        "W274"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR60",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 60,
+      "title": "W286: stage GLOOB/Pandoc P1 RTM worker",
+      "priority": "P2",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/DOCX_RTM_Automation::PR63",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 63,
+      "title": "W286 R2: prove GLOOB/Pandoc P1 RTM parity",
+      "priority": "P2",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR2",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 2,
+      "title": "QPS M02B W2 repair: close test-import red and preserve receipt control",
+      "priority": "P2",
+      "wave_labels": [
+        "W2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR3",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 3,
+      "title": "W3-10: add Monte Carlo uncertainty kernel and independent challenge",
+      "priority": "P2",
+      "wave_labels": [
+        "W3-10"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR14",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 14,
+      "title": "LM-10 W4: stage temporal PCA multi-clock provider mission",
+      "priority": "P2",
+      "wave_labels": [
+        "W4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR15",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 15,
+      "title": "LM-10 W4 P3.1: execute temporal PCA subspace and multi-clock diagnostics",
+      "priority": "P2",
+      "wave_labels": [
+        "W4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR30",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 30,
+      "title": "W260: repair H05 false-PASS paths and implement shared uncertainty",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR31",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 31,
+      "title": "W260 BD-260.1: shared confidence and resampling runtime",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR32",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 32,
+      "title": "W260 BD-260.2: Bradley-Terry uncertainty and rank stability",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR33",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 33,
+      "title": "W260 BD-260.3: PCA temporal and subspace uncertainty",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR39",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 39,
+      "title": "HIST-BD-026: make W260 source-cleanliness receipt side-effect safe",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR40",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 40,
+      "title": "HIST-BD-027/028: repair BT bootstrap rank semantics",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR41",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 41,
+      "title": "HIST-BD-029/030: repair PCA bootstrap geometry and identifiability",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR42",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 42,
+      "title": "W260 BD-260.4: exact QPS common-fixture project-math challenge",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR43",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 43,
+      "title": "W260 BD-260.4: fix standalone common-fixture receipt entrypoint",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR45",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 45,
+      "title": "HIST-BD-035: bind W260 receipt to exact artifact provenance",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/gg_MATH::PR46",
+      "repository": "GBOGEB/gg_MATH",
+      "pr": 46,
+      "title": "HIST-BD-035: fail close W260 authority-boundary receipts",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR8",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 8,
+      "title": "feat(qps): add bounded bidirectional satellite adapter",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR9",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 9,
+      "title": "triage: establish renegade incubator W01",
+      "priority": "P2",
+      "wave_labels": [
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR10",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 10,
+      "title": "triage: expand satellite coverage and bounded modernization W02",
+      "priority": "P2",
+      "wave_labels": [
+        "W02"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR13",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 13,
+      "title": "W107 hub: route #1102 runtime-health across 24h active repos",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR19",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 19,
+      "title": "W111: expose orchestration hub through global mesh dock",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR20",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 20,
+      "title": "QPS TRIAGE ULTRA W0: establish HOME mission-control control plane",
+      "priority": "P2",
+      "wave_labels": [
+        "W0"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR30",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 30,
+      "title": "W3-15: bind observed current-frontier intervention BT evidence",
+      "priority": "P2",
+      "wave_labels": [
+        "W3-15"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR34",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 34,
+      "title": "M09 P02: execute registered legacy processor truth probe",
+      "priority": "P2",
+      "wave_labels": [
+        "W3-15"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR40",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 40,
+      "title": "W70 MIP: federate document ingestion and source atoms",
+      "priority": "P2",
+      "wave_labels": [
+        "W70"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR77",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 77,
+      "title": "GM-IV: reconcile Evidence Economics with PILOT_2_OF_8",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR83",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 83,
+      "title": "GM-IV Governor: PILOT_2_OF_8 promotion retry after exact-red repairs",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR87",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 87,
+      "title": "GM-IV Governor: final exact-head PILOT_2_OF_8 gate",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR92",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 92,
+      "title": "SYNC: current master into GM-IV Governor final gate",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR93",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 93,
+      "title": "MissionControl: living BD/REX controls + runner economics (clean rebase)",
+      "priority": "P2",
+      "wave_labels": [
+        "W3-15"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR104",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 104,
+      "title": "Doctor.Contracts: close five current contract/provenance BD roots",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR134",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 134,
+      "title": "Temporal policy: distinguish attenuation from PCA polarity",
+      "priority": "P2",
+      "wave_labels": [
+        "W3-14"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR150",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 150,
+      "title": "GM-I-B Cycle3: freeze propagation/generalisation contract",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-B"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR163",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 163,
+      "title": "MP_P5: score SKILL_P4 and roll N+2 horizon",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-B"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR193",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 193,
+      "title": "GM-I-C: execute 3PR + MIP and bind Drive ingress recurrence",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR197",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 197,
+      "title": "GT-BD-003: execute 3PC Prepare against real QPS W250 child gate",
+      "priority": "P2",
+      "wave_labels": [
+        "W250"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR198",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 198,
+      "title": "Golden Thread: publish lossless session handover and restart drop-in",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR199",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 199,
+      "title": "GM-I-C: refresh R3 successor with 3P* + MIP control",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR200",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 200,
+      "title": "MissionControl: receive QPS W249 LEG5 3P* + MIP control",
+      "priority": "P2",
+      "wave_labels": [
+        "W249"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR201",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 201,
+      "title": "GM-I-C: repair R3 successor DoV dependency node",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR203",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 203,
+      "title": "MissionControl: bind QPS W249 LEG5 recursive follow-up v2",
+      "priority": "P2",
+      "wave_labels": [
+        "W249"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR204",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 204,
+      "title": "HM-01: federate W275 R3 3P* + MIP progress and handover",
+      "priority": "P2",
+      "wave_labels": [
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR205",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 205,
+      "title": "MissionControl: reconcile QPS W249 LEG5 final-head proof and current restart v3",
+      "priority": "P2",
+      "wave_labels": [
+        "W249"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR207",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 207,
+      "title": "HM-01: fix-forward W275 federation provenance",
+      "priority": "P2",
+      "wave_labels": [
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR208",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 208,
+      "title": "HM-01: federate current QPS W275 #1468 fix-forward",
+      "priority": "P2",
+      "wave_labels": [
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR212",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 212,
+      "title": "HM-01: fix-forward W275 federation to QPS #1468",
+      "priority": "P2",
+      "wave_labels": [
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR216",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 216,
+      "title": "HM-01: bind W275 physical successor-bundle first red",
+      "priority": "P2",
+      "wave_labels": [
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR224",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 224,
+      "title": "SYNC: current master into GM-IV recensus ACTIVE8 repair",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR227",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 227,
+      "title": "SYNC: latest master into GM-IV historical-control repair",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR231",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 231,
+      "title": "SYNC: current master into GM-V 3PSTAR MIP handover",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR236",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 236,
+      "title": "GM Fleet: 3P* MIP lossless external-reentry control",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR239",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 239,
+      "title": "GM-V: close #232 review gaps in 3PSTAR MIP control",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR243",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 243,
+      "title": "GM-V: enforce exact Perpetuate output identities",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR244",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 244,
+      "title": "W283RF2: parallel repaired federation authority proof",
+      "priority": "P2",
+      "wave_labels": [
+        "W280"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR245",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 245,
+      "title": "SYNC: W283R master into final GM-V v2 control fix",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR247",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 247,
+      "title": "GM-V: fix Perpetuate exact output set for v2 handover",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR250",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 250,
+      "title": "GM-V: trigger post-merge proof on v2 handover changes",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-V"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR260",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 260,
+      "title": "HM-01 W285 P1: 3PR refresh and rank DMAIC recurrence",
+      "priority": "P2",
+      "wave_labels": [
+        "W285"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR261",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 261,
+      "title": "Golden Thread: execute W284 MIP and publish owner-action reentry contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W284"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR263",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 263,
+      "title": "MissionControl: receive QPS W249 LEG5 sequential 3P* then MIP v4",
+      "priority": "P2",
+      "wave_labels": [
+        "W249"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR266",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 266,
+      "title": "HM-01 W285 P3: MIP Innovate/Perpetuate and 3PC Prove",
+      "priority": "P2",
+      "wave_labels": [
+        "W285"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR280",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 280,
+      "title": "MissionControl: receive W287 QPS Table 3 governance",
+      "priority": "P2",
+      "wave_labels": [
+        "W287"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR288",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 288,
+      "title": "MissionControl: bind W287 Table 3 postmerge closure",
+      "priority": "P2",
+      "wave_labels": [
+        "W287"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR305",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 305,
+      "title": "W305: add exact-head First-Pass Closure merge gate",
+      "priority": "P2",
+      "wave_labels": [
+        "W305"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR306",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 306,
+      "title": "W305-R4: harden First-Pass Closure gate and auto-merge hold",
+      "priority": "P2",
+      "wave_labels": [
+        "W305-R4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR311",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 311,
+      "title": "GM-I-A: expand FAST/HEAVY federation to DOW + KEB fanout",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR313",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 313,
+      "title": "GM-I-A: add federation credit/drift sentinel",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR318",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 318,
+      "title": "GM-I-A: promote DOW + KEB federation fanout 2/2 PASS",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR320",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 320,
+      "title": "W305-R5A bootstrap: trusted First-Pass Closure controller",
+      "priority": "P2",
+      "wave_labels": [
+        "W305-R5A"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR321",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 321,
+      "title": "GM-I-A: start measured multi-clock PCA/BT reverse-pressure dataset",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR322",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 322,
+      "title": "ISSUE-EXPEDITION W2: bind measured issue telemetry and PCA/BT readiness",
+      "priority": "P2",
+      "wave_labels": [
+        "W2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR323",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 323,
+      "title": "GM-I-A: prove exact-head multi-clock measurement wave",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR325",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 325,
+      "title": "W305-R6: execute FPC admission from trusted base and validate PASS receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W305-R6"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR326",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 326,
+      "title": "GM-I-A: complete multi-clock 3PSTAR + MIP control iteration",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR328",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 328,
+      "title": "GM-I-A: bind exact P001 concentration correction after 3PSTAR MIP merge",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR329",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 329,
+      "title": "GM-I-A: close 3PSTAR + MIP control and advance to P002 repeat",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR330",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 330,
+      "title": "W305-R7: guard controller renames and publish head-bound FPC status",
+      "priority": "P2",
+      "wave_labels": [
+        "W305-R7"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR331",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 331,
+      "title": "GM-I-A: first-pass canary closeout for 3PSTAR + MIP",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR332",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 332,
+      "title": "GM-I-A: draft merge-last FPC canary 2",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR333",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 333,
+      "title": "W305-R8: invalidate stale FPC success before live PR resolution",
+      "priority": "P2",
+      "wave_labels": [
+        "W305-R8"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR334",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 334,
+      "title": "W305-R8 canary: prove trigger-head invalidation controller",
+      "priority": "P2",
+      "wave_labels": [
+        "W305-R8"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR337",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 337,
+      "title": "W305-R9: stop before untrusted checkout after PR-resolution failure",
+      "priority": "P2",
+      "wave_labels": [
+        "W305-R9"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR338",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 338,
+      "title": "W305 canary: prove FPC PASS before merge after R9",
+      "priority": "P2",
+      "wave_labels": [
+        "W305"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR354",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 354,
+      "title": "Runner fanout: fix #352 review findings",
+      "priority": "P2",
+      "wave_labels": [
+        "W3-16"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR359",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 359,
+      "title": "Historian: reconcile CODEX BD021-024 into living register",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR365",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 365,
+      "title": "HM-01 DMAIC: close surviving W285 review debt",
+      "priority": "P2",
+      "wave_labels": [
+        "W285"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR371",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 371,
+      "title": "LM-10 W260: formalize BD convergence funnel in official MissionControl",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR373",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 373,
+      "title": "Fleet: compress 94 open issues into governed execution vectors",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR380",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 380,
+      "title": "Fleet: collapse LM-10 W260 and estate ACTIVE WIP to zero",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR381",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 381,
+      "title": "Fleet: reconcile post-380 W260 control and live 93-issue state",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR382",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 382,
+      "title": "Fleet: enforce W260 projection coherence after #381",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR384",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 384,
+      "title": "Fleet: derive W260 parity from canonical BD queue",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR385",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 385,
+      "title": "REX-CM-005: derive W260 convergence counts from canonical queue",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR386",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 386,
+      "title": "Fleet: prove canonical W260 mutation fails closed",
+      "priority": "P2",
+      "wave_labels": [
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR392",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 392,
+      "title": "QPS TRIAGE: serialize PARTIAL fleet handover for W328/HIST-BD-034",
+      "priority": "P2",
+      "wave_labels": [
+        "W328"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR403",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 403,
+      "title": "MissionControl: receive W287 deliverable gap candidate set",
+      "priority": "P2",
+      "wave_labels": [
+        "W287"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/pipeline-automation-hub::PR425",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 425,
+      "title": "GM-FLEET-03: repair post-merge Wave/PR Golden Thread P2s",
+      "priority": "P2",
+      "wave_labels": [
+        "W329"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR14",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 14,
+      "title": "W70 MIP: govern TRIAGE engineering publication portal",
+      "priority": "P2",
+      "wave_labels": [
+        "W70"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR16",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 16,
+      "title": "G2F: execute exact QPS reliability shared-state candidate",
+      "priority": "P2",
+      "wave_labels": [
+        "W149"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR17",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 17,
+      "title": "G3F: execute exact QPS reliability analytical math",
+      "priority": "P2",
+      "wave_labels": [
+        "W150"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR18",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 18,
+      "title": "G4F: execute exact QPS native-versus-beam separation",
+      "priority": "P2",
+      "wave_labels": [
+        "W151"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR23",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 23,
+      "title": "G6A: execute exact W160 release-identity validator",
+      "priority": "P2",
+      "wave_labels": [
+        "W160"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR24",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 24,
+      "title": "G6A repair: exact carrier for private W160 validator",
+      "priority": "P2",
+      "wave_labels": [
+        "W160"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR26",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 26,
+      "title": "W163F: execute exact MissionControl namespace-control payload",
+      "priority": "P2",
+      "wave_labels": [
+        "W163"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR27",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 27,
+      "title": "W163F-R1: repair exact namespace-control regression and self-scan",
+      "priority": "P2",
+      "wave_labels": [
+        "W163"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR28",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 28,
+      "title": "W163F-R2: bind repaired scanner blob and exact child head",
+      "priority": "P2",
+      "wave_labels": [
+        "W163"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR29",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 29,
+      "title": "W162F: execute exact visual convergence payload",
+      "priority": "P2",
+      "wave_labels": [
+        "W162"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR30",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 30,
+      "title": "W162F: execute exact cryoplant visual convergence payload",
+      "priority": "P2",
+      "wave_labels": [
+        "W162"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR40",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 40,
+      "title": "W178F: federated exact proof for QPS W176 offer-eval doctrine",
+      "priority": "P2",
+      "wave_labels": [
+        "W176"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR41",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 41,
+      "title": "W176 follow-up: bind executor receipt to exact PR head",
+      "priority": "P2",
+      "wave_labels": [
+        "W176"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR46",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 46,
+      "title": "W184F: self-contained exact-hash N200 carrier mirror",
+      "priority": "P2",
+      "wave_labels": [
+        "W184"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR48",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 48,
+      "title": "W280F: execute exact Federation Sample 5 candidate payload",
+      "priority": "P2",
+      "wave_labels": [
+        "W280"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR49",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 49,
+      "title": "W280FR: expose exact main-repeat runtime receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W280"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR52",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 52,
+      "title": "W283F: prove exact federation surface mapping payload",
+      "priority": "P2",
+      "wave_labels": [
+        "W283"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR55",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 55,
+      "title": "W283RF: prove repaired authority-bound federation breadth",
+      "priority": "P2",
+      "wave_labels": [
+        "W280"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR60",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 60,
+      "title": "W285F2: prove exact current QPS federation depth",
+      "priority": "P2",
+      "wave_labels": [
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR62",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 62,
+      "title": "W287 M08: native Excel 3P* + MIP gate execution",
+      "priority": "P2",
+      "wave_labels": [
+        "W287"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR64",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 64,
+      "title": "W287R: remove superseded duplicate native Excel probe",
+      "priority": "P2",
+      "wave_labels": [
+        "W287"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR73",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 73,
+      "title": "W297F: execute post-W296 OFFER_EVAL_EQ_v1 parity",
+      "priority": "P2",
+      "wave_labels": [
+        "W296"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR74",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 74,
+      "title": "W300F: exact post-W299 OFFER_EVAL_EQ_v1 reproof",
+      "priority": "P2",
+      "wave_labels": [
+        "W299"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR76",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 76,
+      "title": "W302V: prove M08 owner-native Excel re-entry contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W302"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR82",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 82,
+      "title": "W286F: prove artifact-bound four-way classifier",
+      "priority": "P2",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR88",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 88,
+      "title": "HIST-BD-019/020: reprove closed-world W286 carrier",
+      "priority": "P2",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR89",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 89,
+      "title": "HIST-BD-020: verify W286 source head via source-repo attestation",
+      "priority": "P2",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR102",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 102,
+      "title": "W334: prove cryoplant current-main exact payload after #1663",
+      "priority": "P2",
+      "wave_labels": [
+        "W334"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/Q_engineering_tools::PR103",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 103,
+      "title": "W303 P1: harden self-hosted native Excel trust boundary",
+      "priority": "P2",
+      "wave_labels": [
+        "W303"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    }
+  ],
+  "dispatch_policy": "P0 cross-repo first; P1 multi-label second; P2 only to close recursive gaps.",
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
