@@ -5,14 +5,14 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "ACTIVE_CENSUS_AND_STRUCTURAL_BACKFILL",
-  "snapshot": "2026-09-26_POST_ABACUS_1404_MERGE_MC_427_DRAFT",
+  "state": "STRUCTURAL_100_PERCENT_SEMANTIC_P0_ACTIVE",
+  "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
-    "prs": 4485,
+    "prs": 4486,
     "merged": 4211,
     "closed_unmerged": 272,
-    "open": 2
+    "open": 3
   },
   "cells": [
     {
@@ -98,11 +98,9 @@
     }
   ],
   "allocation_decision": {
-    "reader_surge": "YES_F01_ONLY",
-    "deep_reader_surge": "NO",
-    "runtime_worker_surge": "NO",
+    "deep_reader_surge": "YES_3_TARGETED_CELLS",
     "runner_surge": "NO",
-    "rationale": "95.4% of PR history is concentrated in F01; metadata backfill is API/read-bound."
+    "worker_surge": "NO_RUNTIME_WORKERS"
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -125,5 +123,41 @@
   ],
   "authority_transfer": false,
   "formal_credit_delta": 0,
-  "engineering_credit_delta": 0
+  "engineering_credit_delta": 0,
+  "structural_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_STRUCTURAL_RECEIPT_v1.json",
+  "structural_result": {
+    "coverage_pct": 100,
+    "duplicate_ids": 0,
+    "missing_head_sha": 0,
+    "missing_base_sha": 0
+  },
+  "semantic_backlog": {
+    "total": 2831,
+    "P0": 364,
+    "P1": 1079,
+    "P2": 1388
+  },
+  "deep_reader_cells": [
+    {
+      "id": "DR-A",
+      "issue": 434,
+      "queue": "ABACUS_P0",
+      "count": 219,
+      "state": "OPEN"
+    },
+    {
+      "id": "DR-B",
+      "issue": 435,
+      "queue": "CRYOPLANT_CODEX_P0",
+      "count": 83,
+      "state": "OPEN"
+    },
+    {
+      "id": "DR-C",
+      "issue": 436,
+      "queue": "MC_CORE_SATELLITE_P0",
+      "count": 62,
+      "state": "OPEN"
+    }
+  ]
 }
