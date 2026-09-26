@@ -3,15 +3,15 @@
   "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "scope": "F02_F08",
-  "snapshot": "2026-09-26_POST_ABACUS_1404_MERGE",
+  "snapshot": "FROZEN_FLEET_4486_NONF01_209",
   "repositories": 82,
   "repositories_with_pr_history": 14,
   "zero_pr_repositories": 68,
   "pr_totals": {
-    "prs": 208,
+    "prs": 209,
     "merged": 202,
     "closed_unmerged": 5,
-    "open": 1
+    "open": 2
   },
   "nonzero_rows": [
     {
@@ -19,238 +19,98 @@
       "pr_count": 70,
       "merged": 68,
       "closed_unmerged": 2,
-      "open": 0,
-      "oldest": {
-        "number": 1,
-        "created_at": "2025-09-10T04:40:37Z",
-        "title": "Add conversations manifest for Codes And Standards handover"
-      },
-      "newest": {
-        "number": 70,
-        "created_at": "2026-09-26T09:04:13Z",
-        "title": "Fix pytest src import contract"
-      }
+      "open": 0
     },
     {
       "repository": "GBOGEB/GEMINI",
       "pr_count": 25,
       "merged": 25,
       "closed_unmerged": 0,
-      "open": 0,
-      "oldest": {
-        "number": 1,
-        "created_at": "2026-06-01T00:36:46Z",
-        "title": "feat(wave-15): Automated Regression & Drift Detection"
-      },
-      "newest": {
-        "number": 32,
-        "created_at": "2026-09-26T14:12:07Z",
-        "title": "GM14: suppress repeated Drive failures until owner return"
-      }
+      "open": 0
     },
     {
       "repository": "GBOGEB/CoolProp",
       "pr_count": 20,
       "merged": 20,
       "closed_unmerged": 0,
-      "open": 0,
-      "oldest": {
-        "number": 1,
-        "created_at": "2026-09-11T11:04:22Z",
-        "title": "QPS DARKLAND RECON: CoolProp P0 reconnaissance + helium smoke proof"
-      },
-      "newest": {
-        "number": 20,
-        "created_at": "2026-09-26T07:33:59Z",
-        "title": "GM-I-A P002: publish fresh federation attestation"
-      }
+      "open": 0
     },
     {
       "repository": "GBOGEB/cryogenic-accelerator-workspace",
       "pr_count": 18,
       "merged": 18,
       "closed_unmerged": 0,
-      "open": 0,
-      "oldest": {
-        "number": 1,
-        "created_at": "2026-05-21T07:29:07Z",
-        "title": "ci: Add environment-based deployment tracking to CI/CD workflows"
-      },
-      "newest": {
-        "number": 18,
-        "created_at": "2026-09-12T17:46:25Z",
-        "title": "W70 MIP: reconcile workspace engineering authority with TRIAGE"
-      }
+      "open": 0
     },
     {
       "repository": "GBOGEB/GBOGEB",
       "pr_count": 18,
       "merged": 17,
       "closed_unmerged": 1,
-      "open": 0,
-      "oldest": {
-        "number": 1,
-        "created_at": "2026-09-16T20:05:53Z",
-        "title": "Add global Math/Plots skill topology and N+2 wave governance"
-      },
-      "newest": {
-        "number": 18,
-        "created_at": "2026-09-23T09:23:00Z",
-        "title": "RUN-DELTA v0.3: rebind merged RUN_B baseline"
-      }
+      "open": 0
     },
     {
       "repository": "GBOGEB/cryo_leak_rate_dashboard",
       "pr_count": 16,
       "merged": 16,
       "closed_unmerged": 0,
-      "open": 0,
-      "oldest": {
-        "number": 1,
-        "created_at": "2026-05-18T10:27:29Z",
-        "title": "chore(deps): bump pytest from 7.3.1 to 9.0.3 in the pip group across 1 directory"
-      },
-      "newest": {
-        "number": 16,
-        "created_at": "2026-09-12T09:32:00Z",
-        "title": "M07 CONTROL: accept leak-kernel DoV-1 and quarantine historical QPLANT inputs"
-      }
+      "open": 0
     },
     {
       "repository": "GBOGEB/github_Documents",
       "pr_count": 11,
       "merged": 11,
       "closed_unmerged": 0,
-      "open": 0,
-      "oldest": {
-        "number": 1,
-        "created_at": "2026-08-27T19:44:32Z",
-        "title": "migration(qps): private vault for all public ABACUS binaries"
-      },
-      "newest": {
-        "number": 11,
-        "created_at": "2026-09-11T07:51:25Z",
-        "title": "W111: expose private provenance vault through global mesh dock"
-      }
+      "open": 0
     },
     {
       "repository": "GBOGEB/stale",
-      "pr_count": 9,
+      "pr_count": 10,
       "merged": 6,
       "closed_unmerged": 2,
-      "open": 1,
-      "oldest": {
-        "number": 1,
-        "created_at": "2025-11-09T12:35:52Z",
-        "title": "[WIP] Investigate failure in GitHub Actions job 54893300258"
-      },
-      "newest": {
-        "number": 9,
-        "created_at": "2026-09-10T04:52:38Z",
-        "title": "MIP census: classify repo as maintenance-only"
-      }
+      "open": 2
     },
     {
       "repository": "GBOGEB/codespaces-jupyter",
       "pr_count": 7,
       "merged": 7,
       "closed_unmerged": 0,
-      "open": 0,
-      "oldest": {
-        "number": 1,
-        "created_at": "2026-09-10T18:13:17Z",
-        "title": "W69 MIP: federate Jupyter as reproducible runtime producer"
-      },
-      "newest": {
-        "number": 7,
-        "created_at": "2026-09-23T09:15:06Z",
-        "title": "W290: close strict numeric-zero guard gap for real QPS workload proof"
-      }
+      "open": 0
     },
     {
       "repository": "GBOGEB/github-mcp-server",
       "pr_count": 5,
       "merged": 5,
       "closed_unmerged": 0,
-      "open": 0,
-      "oldest": {
-        "number": 1,
-        "created_at": "2026-09-11T15:24:32Z",
-        "title": "QPS RECON: exact-upstream official Actions representation smoke proof"
-      },
-      "newest": {
-        "number": 5,
-        "created_at": "2026-09-11T16:41:28Z",
-        "title": "M03 RECON: prove official MCP standard write with branch creation"
-      }
+      "open": 0
     },
     {
       "repository": "GBOGEB/telegraf",
       "pr_count": 4,
       "merged": 4,
       "closed_unmerged": 0,
-      "open": 0,
-      "oldest": {
-        "number": 1,
-        "created_at": "2026-09-12T08:50:32Z",
-        "title": "QPS M06: seed bounded Telegraf Observer reconnaissance"
-      },
-      "newest": {
-        "number": 4,
-        "created_at": "2026-09-12T09:31:02Z",
-        "title": "M06 CONTROL: accept bounded Observer DoV-1 and return crew"
-      }
+      "open": 0
     },
     {
       "repository": "GBOGEB/GBOGEB-profile",
       "pr_count": 3,
       "merged": 3,
       "closed_unmerged": 0,
-      "open": 0,
-      "oldest": {
-        "number": 1,
-        "created_at": "2025-08-26T18:07:46Z",
-        "title": "Complete integration verification of initial commit ca3c215618190e3818ee416615853c02717a35dc"
-      },
-      "newest": {
-        "number": 4,
-        "created_at": "2025-09-01T01:22:58Z",
-        "title": "Add authentication and integration guidelines"
-      }
+      "open": 0
     },
     {
       "repository": "GBOGEB/skills",
       "pr_count": 1,
       "merged": 1,
       "closed_unmerged": 0,
-      "open": 0,
-      "oldest": {
-        "number": 1,
-        "created_at": "2026-09-16T20:02:47Z",
-        "title": "Add Math, Plots and Math x Plots custom skill stack"
-      },
-      "newest": {
-        "number": 1,
-        "created_at": "2026-09-16T20:02:47Z",
-        "title": "Add Math, Plots and Math x Plots custom skill stack"
-      }
+      "open": 0
     },
     {
       "repository": "GBOGEB/skills-introduction-to-github",
       "pr_count": 1,
       "merged": 1,
       "closed_unmerged": 0,
-      "open": 0,
-      "oldest": {
-        "number": 2,
-        "created_at": "2025-04-27T07:02:55Z",
-        "title": "Add my first file"
-      },
-      "newest": {
-        "number": 2,
-        "created_at": "2025-04-27T07:02:55Z",
-        "title": "Add my first file"
-      }
+      "open": 0
     }
   ],
   "zero_pr_repository_nodes": [
@@ -327,6 +187,9 @@
     "deep_read_policy": "Only nonzero repositories or zero-PR repositories with explicit cross-repo lineage references enter Reader/Deep-Reader.",
     "runner_required": false,
     "authority_transfer": false,
-    "formal_credit_delta": 0
+    "formal_credit_delta": 0,
+    "deep_read_candidates": 66,
+    "structural_ledger": "GM_FLEET_03_PR_LINEAGE_BACKFILL_NONF01_LEDGER_v1.json",
+    "deep_read_queue": "GM_FLEET_03_PR_LINEAGE_BACKFILL_NONF01_DEEP_READ_QUEUE_v1.json"
   }
 }
