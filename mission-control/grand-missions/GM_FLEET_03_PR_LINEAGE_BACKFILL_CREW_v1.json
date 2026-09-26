@@ -3,7 +3,7 @@
   "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "as_of": "2026-09-26",
-  "posture": "SURGE_READERS_NOT_RUNNERS",
+  "posture": "SURGE_F01_READERS_NOT_RUNNERS",
   "allocations": [
     {
       "cell": "F01-A",
@@ -25,7 +25,7 @@
         "SCOUT",
         "READER"
       ],
-      "reason": "1153 PRs; second-largest core graph"
+      "reason": "1154 PRs; second-largest core graph"
     },
     {
       "cell": "F01-C",
@@ -51,66 +51,71 @@
         "SCOUT",
         "READER"
       ],
-      "reason": "647 PRs combined; shared lower-volume core cell"
+      "reason": "648 PRs combined; shared lower-volume core cell"
     },
     {
       "cell": "F02",
       "scope": "contract_frontier_F02",
       "roles": [
-        "SCOUT",
-        "READER"
-      ]
+        "SCOUT"
+      ],
+      "reader_policy": "RETURN_ONLY_TO_SHARED_NONF01_READER_POOL"
     },
     {
       "cell": "F03",
       "scope": "contract_frontier_F03",
       "roles": [
-        "SCOUT",
-        "READER"
-      ]
+        "SCOUT"
+      ],
+      "reader_policy": "RETURN_ONLY_TO_SHARED_NONF01_READER_POOL"
     },
     {
       "cell": "F04",
       "scope": "contract_frontier_F04",
       "roles": [
-        "SCOUT",
-        "READER"
-      ]
+        "SCOUT"
+      ],
+      "reader_policy": "RETURN_ONLY_TO_SHARED_NONF01_READER_POOL"
     },
     {
       "cell": "F05",
       "scope": "contract_frontier_F05",
       "roles": [
-        "SCOUT",
-        "READER"
-      ]
+        "SCOUT"
+      ],
+      "reader_policy": "RETURN_ONLY_TO_SHARED_NONF01_READER_POOL"
     },
     {
       "cell": "F06",
       "scope": "contract_frontier_F06",
       "roles": [
-        "SCOUT",
-        "READER"
-      ]
+        "SCOUT"
+      ],
+      "reader_policy": "RETURN_ONLY_TO_SHARED_NONF01_READER_POOL"
     },
     {
       "cell": "F07",
       "scope": "contract_frontier_F07",
       "roles": [
-        "SCOUT",
-        "READER"
-      ]
+        "SCOUT"
+      ],
+      "reader_policy": "RETURN_ONLY_TO_SHARED_NONF01_READER_POOL"
     },
     {
       "cell": "F08",
       "scope": "contract_frontier_F08",
       "roles": [
-        "SCOUT",
-        "READER"
-      ]
+        "SCOUT"
+      ],
+      "reader_policy": "RETURN_ONLY_TO_SHARED_NONF01_READER_POOL"
     }
   ],
   "shared": [
+    {
+      "role": "READER_POOL_NONF01",
+      "backing": "SHARED_READER",
+      "policy": "F02-F08 exception-driven only; 82 repositories contain only 208 PRs total, so seven dedicated Readers are not justified."
+    },
     {
       "role": "DEEP_READER",
       "backing": "U08_REX_KEB_EQUIVALENT",
@@ -133,7 +138,7 @@
     "DOCKMASTER_without_runtime_habitat_red",
     "broad_CI_runner_fanout_for_metadata_census"
   ],
-  "runner_policy": "API retrieval first; one bounded validation workflow only after generated ledger exists.",
+  "runner_policy": "API retrieval only for census/backfill; no additional CI runners. One bounded validator after ledger generation.",
   "gm_update": {
     "current": "GM-IV ACTIVE_8_OF_8 under GM-FLEET-03",
     "action": "NO_NEW_GM_NUMBER",
@@ -141,5 +146,19 @@
     "rationale": "This is a bounded fleet census. Existing evidence does not prove concurrency capacity or justify mission-number promotion."
   },
   "authority_transfer": false,
-  "formal_credit_delta": 0
+  "formal_credit_delta": 0,
+  "measured_capacity": {
+    "fleet_repositories": 90,
+    "fleet_prs": 4485,
+    "fleet_merged": 4211,
+    "fleet_open": 2,
+    "fleet_closed_unmerged": 272,
+    "f01_prs": 4277,
+    "f01_share_pct": 95.3623,
+    "non_f01_repositories": 82,
+    "non_f01_prs": 208,
+    "non_f01_merged": 203,
+    "non_f01_open": 0,
+    "non_f01_closed_unmerged": 5
+  }
 }
