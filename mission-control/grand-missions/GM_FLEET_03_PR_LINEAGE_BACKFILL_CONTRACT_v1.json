@@ -16,7 +16,7 @@
     "merged_prs": 4211,
     "open_prs": 2,
     "closed_unmerged_prs": 272,
-    "source": "GitHub installed-repository census + org-wide PR search totals",
+    "source": "GitHub installed-repository census + exact org search snapshot",
     "archived_included": true
   },
   "mission_boundary": {
@@ -742,13 +742,22 @@
     "F01_CORE_QPS": {
       "repositories": 8,
       "prs": 4277,
+      "merged": 4009,
+      "open": 1,
+      "closed_unmerged": 267,
       "share_pct": 95.3623
     },
     "F02_TO_F08_COMBINED": {
       "repositories": 82,
+      "repositories_with_pr_history": 14,
+      "zero_pr_repositories": 68,
       "prs": 208,
+      "merged": 202,
+      "open": 1,
+      "closed_unmerged": 5,
       "share_pct": 4.6377
     },
-    "allocation_rule": "Surge Reader cells only in F01; F02-F08 use Scout census plus shared exception-driven Reader."
-  }
+    "allocation_rule": "Four F01 Scout+Reader cells; F02-F08 Scout census with one shared exception-driven Reader; shared Deep-Reader/QA/PM."
+  },
+  "snapshot": "2026-09-26_POST_ABACUS_1404_MERGE_MC_427_DRAFT"
 }
