@@ -28,6 +28,13 @@ def evaluate(doc: dict) -> dict:
     g714 = doc["promotion_gates"]["top7_to_top14"]
     g1421 = doc["promotion_gates"]["top14_to_top21"]
 
+    evo = doc["iteration_evolution"]
+    repeat = cur.get("max_unchanged_root_auto_repeat_after_control")
+    repeat_ok_714 = repeat is not None and repeat <= g714["unchanged_root_auto_repeat_max"]
+    repeat_ok_1421 = repeat is not None and repeat <= g1421["unchanged_root_auto_repeat_max"]
+    chain_ok = evo.get("iteration_chain_integrity") is True
+    recursive_handoffs = int(evo.get("recursive_control_handoff_count", 0))
+
     top14_ready = (
         cur.get("top7_classified_observed", 0) >= g714["classified_min"]
         and cur.get("top7_green_control_observed", 0) >= g714["green_control_min"]
@@ -35,7 +42,9 @@ def evaluate(doc: dict) -> dict:
         and cur.get("mission_era_full_dmaic_iterations", 0) >= g714["full_dmaic_iterations_min"]
         and cur.get("abacus", {}).get("d1", {}).get("state") == "CONTROL_AND_FRESH_HEAD_RECENSUS"
         and cur.get("top7_proof_debt_two_pulse_nonincreasing") is True
-        and cur.get("max_unchanged_root_auto_repeat_after_control", 999) <= g714["unchanged_root_auto_repeat_max"]
+        and repeat_ok_714
+        and chain_ok
+        and recursive_handoffs >= g714["recursive_control_handoff_min"]
     )
 
     proof_debt = cur.get("top14_proof_debt_observed")
@@ -48,7 +57,9 @@ def evaluate(doc: dict) -> dict:
         and cur.get("recurrent_controls_with_distinct_source_repeat", 0) >= g1421["recurrent_control_distinct_source_repeat_min"]
         and cur.get("top14_two_pulse_net_semantic_delta_le_zero") is True
         and cur.get("top14_two_pulse_proof_yield_nondegrading") is True
-        and cur.get("max_unchanged_root_auto_repeat_after_control", 999) <= g1421["unchanged_root_auto_repeat_max"]
+        and repeat_ok_1421
+        and chain_ok
+        and recursive_handoffs >= g1421["recursive_control_handoff_min"]
     )
     return {
         "mission_id": doc["mission_id"],
@@ -65,8 +76,16 @@ def evaluate(doc: dict) -> dict:
             "d2": cur["abacus"]["d2"]["state"],
             "d3": cur["abacus"]["d3"]["state"],
         },
+        "iteration_evolution": {
+            "current_level": evo["current_level"],
+            "complete_iteration_count": int(evo.get("complete_iteration_count", 0)),
+            "recursive_control_handoff_count": recursive_handoffs,
+            "iteration_chain_integrity": chain_ok,
+            "active_iteration": evo.get("active_iteration", {}).get("iteration_id"),
+        },
         "fail_closed": {
             "proof_debt_unknown_blocks_top21": proof_debt is None,
+            "unknown_repeat_metric_blocks_promotion": repeat is None,
             "missing_evidence_is_not_green": True,
         },
     }
