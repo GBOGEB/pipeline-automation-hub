@@ -715,8 +715,8 @@
     },
     {
       "from": "QPS_PR1690",
-      "to": "W287_DREQ_SOURCE_INTEGRATION_REVIEW",
-      "type": "NAMED_NEXT_OBJECTIVE_UNCONSUMED"
+      "to": "QPS_ISSUE1801",
+      "type": "NAMED_NEXT_OBJECTIVE_SURFACED_AS_DURABLE_ISSUE"
     }
   ],
   "chronology_policy": {
@@ -893,11 +893,12 @@
   "unfinished_actions": [
     {
       "id": "UA-W287-DREQ-SOURCE-INTEGRATION",
-      "class": "TRUE_UNCONSUMED_NEXT_OBJECTIVE",
+      "class": "SURFACED_UNEXECUTED_SUCCESSOR",
       "source": "QPS PR #1690 / W287 DREQ control",
       "action": "Controlled document owner disposition of proposed §4.9 rows 26-42 as ACCEPT/AMEND/SPLIT/MERGE/REJECT, then source-integrate accepted rows.",
-      "current_evidence": "No later DREQ source-integration implementation found in repository search.",
-      "compensable": false
+      "current_evidence": "Mission discovered the previously unconsumed next objective and allocated durable QPS issue #1801 on 2026-09-26.",
+      "compensable": false,
+      "durable_issue": "GBOGEB/cryoplant-project#1801"
     },
     {
       "id": "UA-W275-PHYSICAL-BUNDLE",
@@ -946,6 +947,18 @@
       "W331"
     ],
     "claim": "Complete for the bounded canonical-7 and its observed repair/supersession PRs; breadth inventory is intentionally fail-closed where deep binding is not yet performed.",
-    "canonical_wave_identity_rule": "repo+family+wave+lane_or_update"
-  }
+    "canonical_wave_identity_rule": "repo+family+wave+lane_or_update",
+    "durable_successor_work_items": 1
+  },
+  "successor_work_items": [
+    {
+      "id": "QPS_ISSUE1801",
+      "repo": "GBOGEB/cryoplant-project",
+      "issue": 1801,
+      "title": "W287 — DREQ source integration review for candidate §4.9 rows 26–42",
+      "state": "OPEN_SURFACED_UNEXECUTED",
+      "source_objective": "W287_DREQ_SOURCE_INTEGRATION_REVIEW",
+      "authority_transfer": false
+    }
+  ]
 }
