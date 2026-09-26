@@ -113,16 +113,18 @@
     "top21_state": "HOLD",
     "top14_green_control_observed": 9,
     "top14_proof_debt_observed": null,
-    "mission_era_full_dmaic_iterations": 0,
+    "mission_era_full_dmaic_iterations": 1,
     "mission_era_distinct_repos_full_dmaic": 0,
     "recurrent_controls_with_distinct_source_repeat": 0,
     "abacus": {
       "pr": 1386,
       "d1": {
         "root": "STALE_DMAIC_ROOT_13_CORE_SYSTEMS_DMAIC",
-        "state": "ROOT_CLEARED_NEXT_RED_EXPOSED",
+        "state": "CONTROL_AND_FRESH_HEAD_RECENSUS",
         "evidence_run": 36247844047,
-        "smoke_job": 108420241924
+        "smoke_job": 108420241924,
+        "merge_sha": "0e35017f4a0a88ad00ba870939a2740fab1ba5ea",
+        "postmerge_control_run": 36249043726
       },
       "d2": {
         "root": "STALE_DOW_CORE_TEST_TARGETS",
@@ -133,8 +135,25 @@
       },
       "d3": {
         "root": "PHASE6_9_EMPTY_MARKER_SELECTION",
-        "state": "PATCHED_WAIT_EXACT_HEAD_PROOF",
+        "state": "CONTROL",
         "repair_head": "fe51cb43f0d71980d42de1d42e6119e534939a57"
+      },
+      "i2": {
+        "pr": 1387,
+        "d1": {
+          "root": "E2E_EMPTY_MARKER_POPULATION",
+          "state": "PATCHED_WAIT_EXACT_HEAD_PROOF",
+          "repair_head": "f8c3365feac6903152b7d42bdcc3cd992ff48414",
+          "evidence_run": 36249043726,
+          "evidence_job": 108424143045,
+          "proof_run": 36249393504
+        },
+        "d2": {
+          "root": "QUALITY_COVERAGE_THRESHOLD",
+          "state": "CANDIDATE_WAIT_D1_CONTROL",
+          "observed_coverage_pct": 25.04,
+          "required_coverage_pct": 70
+        }
       }
     },
     "top7_classified_observed": 7,
@@ -247,27 +266,63 @@
         "criterion": "Top21 promotion gate passes with recurrence CONTROL and distinct-source repeat evidence."
       }
     ],
-    "current_level": "E0_OBSERVED",
-    "complete_iteration_count": 0,
-    "recursive_control_handoff_count": 0,
+    "current_level": "E1_REPEATABLE",
+    "complete_iteration_count": 1,
+    "recursive_control_handoff_count": 1,
     "iteration_chain_integrity": true,
     "active_iteration": {
-      "iteration_id": "ABACUS-I1-FIRST3",
+      "iteration_id": "ABACUS-I2-RESIDUALS",
       "repository": "GBOGEB/ABACUS",
-      "source_sha": "93e9516e967b20165e9b2ad7586029d4715bbdb1",
-      "input_control_receipt": null,
-      "define_hypothesis": "Revive the live DMAIC_V3 workflow and serially burn the first three genuine CI contract reds.",
-      "measure_snapshot": {
-        "initial_first_red": "STALE_DMAIC_ROOT_13_CORE_SYSTEMS_DMAIC",
-        "d1_run": 36247844047,
-        "d2_run": 36248809710
+      "source_sha": "82a32d6922d3f7d75302578e4d1b9652413861ec",
+      "input_control_receipt": {
+        "iteration_id": "ABACUS-I1-FIRST3",
+        "merge_sha": "0e35017f4a0a88ad00ba870939a2740fab1ba5ea",
+        "postmerge_control_run": 36249043726
       },
-      "analyze_root_family": "STALE_DMAIC_CI_CONTRACTS",
-      "improve_commit": "fe51cb43f0d71980d42de1d42e6119e534939a57",
-      "control_run": null,
+      "define_hypothesis": "Eliminate the next genuine residual red from the post-I1 DMAIC control run without widening into later residuals.",
+      "measure_snapshot": {
+        "d1_root": "E2E_EMPTY_MARKER_POPULATION",
+        "d1_job": 108424143045,
+        "d1_observation": "416 collected / 416 deselected / 0 selected; pytest exit 5",
+        "d2_candidate": "QUALITY_COVERAGE_THRESHOLD",
+        "d2_measure": "403 passed; total coverage 25.04%; configured gate 70%",
+        "other_candidates": [
+          "DOW_MAIN_STALE_TESTING_SUITE_PATH",
+          "CI_GOVERNANCE_STALE_RATIONALIZATION_AND_UNCLASSIFIED_WORKFLOW",
+          "FORMAT_SESSION_TUPLE_FAMILIES"
+        ]
+      },
+      "analyze_root_family": "E2E_EMPTY_MARKER_POPULATION",
+      "improve_commit": "f8c3365feac6903152b7d42bdcc3cd992ff48414",
+      "control_run": 36249393504,
       "control_job": null,
-      "control_outcome": "PENDING_D3_EXACT_HEAD_PROOF",
+      "control_outcome": "PENDING_EXACT_HEAD_PROOF",
       "next_iteration_seed": null
-    }
+    },
+    "completed_iterations": [
+      {
+        "iteration_id": "ABACUS-I1-FIRST3",
+        "repository": "GBOGEB/ABACUS",
+        "source_sha": "93e9516e967b20165e9b2ad7586029d4715bbdb1",
+        "merge_sha": "0e35017f4a0a88ad00ba870939a2740fab1ba5ea",
+        "current_main_after_metrics": "82a32d6922d3f7d75302578e4d1b9652413861ec",
+        "semantic_delta_after_merge": "NONE_DMAIC_CODE_WORKFLOW",
+        "controlled_roots": [
+          "STALE_DMAIC_ROOT_13_CORE_SYSTEMS_DMAIC",
+          "STALE_DOW_CORE_TEST_TARGETS",
+          "PHASE6_9_EMPTY_MARKER_SELECTION"
+        ],
+        "postmerge_control_run": 36249043726,
+        "control_jobs": {
+          "smoke": 108423507666,
+          "dow_core": 108423734221,
+          "phase0_2": 108424058206,
+          "phase3_5": 108424058254,
+          "phase6_9": 108424058221
+        },
+        "bounded_control_outcome": "CONTROLLED_WITH_RESIDUALS",
+        "next_iteration_seed": "E2E_EMPTY_MARKER_POPULATION"
+      }
+    ]
   }
 }
