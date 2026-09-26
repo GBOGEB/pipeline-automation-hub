@@ -1,0 +1,185 @@
+{
+  "schema": "missioncontrol.gm_dmaic_coverage_telemetry.v1",
+  "mission_id": "GM-DMAIC-EVOLUTION-T7-T14-T21-20260926",
+  "captured_at": "2026-09-26",
+  "semantics": {
+    "test_count": "Number of tests collected or executed in the cited proof; never a fleet-wide denominator.",
+    "statement_coverage_pct": "Coverage for the cited repository-specific measured source scope.",
+    "missing_coverage": "UNKNOWN, never coerced to 0.",
+    "comparability": "Coverage rows are comparable only when language/tool/source-scope/gate semantics are materially aligned.",
+    "authority": "Telemetry only; no engineering or promotion authority."
+  },
+  "fleet_summary": {
+    "cohort_size": 21,
+    "exact_measured_coverage_rows": 3,
+    "coverage_tooling_or_config_observed_without_current_exact_measurement": 3,
+    "remaining_not_yet_measured": 15,
+    "abacus_tests_are_fleet_denominator": false
+  },
+  "rows": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "cohort": "TOP7",
+      "state": "MEASURED_FAIL",
+      "source_sha": "282778462d0e44dcd75c58afd79ef9356e9190c4",
+      "run_id": 36249557668,
+      "job_id": 108425355774,
+      "test_result": {
+        "passed": 403,
+        "skipped": 10,
+        "xpassed": 3,
+        "failed": 0
+      },
+      "coverage": {
+        "tool": "pytest-cov/coverage.py",
+        "statements": 3103,
+        "missed": 2326,
+        "pct": 25.04,
+        "gate_pct": 70,
+        "gate_result": "FAIL"
+      },
+      "source_scope": "core as resolved from DMAIC_V3 quality job",
+      "denominator_warning": "Report includes both repository-level core/* and DMAIC_V3/core/* paths; authority classification required before exclusions.",
+      "action": "ABACUS#1391 staged recovery 25->40->55->70"
+    },
+    {
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "cohort": "TOP7",
+      "state": "MEASURED_PASS",
+      "source_sha": "f059782e84fd1706ea78c67c806462c6975f5d69",
+      "run_id": 35755152542,
+      "job_id": 106838931384,
+      "test_result": {
+        "passed": 17,
+        "skipped": 0,
+        "failed": 0
+      },
+      "coverage": {
+        "tool": "pytest-cov/coverage.py",
+        "statements": 101,
+        "missed": 12,
+        "pct": 88.12,
+        "gate_pct": 80,
+        "gate_result": "PASS"
+      },
+      "source_scope": "src/core focused lineage modules",
+      "comparability_note": "Strong focused coverage; denominator far smaller than ABACUS."
+    },
+    {
+      "repo": "GBOGEB/CODESPACES_jyperter",
+      "cohort": "TOP14_EXTENSION",
+      "state": "MEASURED_NO_GATE",
+      "source_sha": "83bfeea95956807015a86e16ef84ff129b36065e",
+      "run_id": 36231721390,
+      "job_id": 108376010578,
+      "test_result": {
+        "passed": 32,
+        "skipped": 1,
+        "failed": 0
+      },
+      "coverage": {
+        "tool": "pytest-cov/coverage.py",
+        "statements": 3182,
+        "missed": 2182,
+        "pct": 31,
+        "gate_pct": null,
+        "gate_result": "NO_MINIMUM_ENFORCED"
+      },
+      "source_scope": "src",
+      "comparability_note": "Broad source denominator similar in size to ABACUS, but no enforced floor."
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "cohort": "TOP7",
+      "state": "TOOLING_PRESENT_NO_CURRENT_MEASUREMENT",
+      "evidence": "scripts/requirements.txt contains pytest-cov; no cov-report workflow discovered in this pulse"
+    },
+    {
+      "repo": "GBOGEB/cryogenic-accelerator-workspace",
+      "cohort": "TOP14_EXTENSION",
+      "state": "CONFIG_PRESENT_NO_CURRENT_EXACT_MEASUREMENT",
+      "evidence": "docs/ci-workflows/ci-test.yml references pytest-cov; current exact head showed Pages only"
+    },
+    {
+      "repo": "GBOGEB/cryo_leak_rate_dashboard",
+      "cohort": "TOP21_EXTENSION",
+      "state": "TOOLING_PRESENT_NO_CURRENT_EXACT_MEASUREMENT",
+      "evidence": "pytest-cov/lcov-related repository material observed; current exact head showed Pages only"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "cohort": "TOP7",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "cohort": "TOP7",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "cohort": "TOP7",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/document-organization-system",
+      "cohort": "TOP7",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "cohort": "TOP14_EXTENSION",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "cohort": "TOP14_EXTENSION",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/GBOGEB",
+      "cohort": "TOP14_EXTENSION",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/CoolProp",
+      "cohort": "TOP14_EXTENSION",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/codespaces-jupyter",
+      "cohort": "TOP14_EXTENSION",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/skills",
+      "cohort": "TOP21_EXTENSION",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/telegraf",
+      "cohort": "TOP21_EXTENSION",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/github-mcp-server",
+      "cohort": "TOP21_EXTENSION",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/github_Documents",
+      "cohort": "TOP21_EXTENSION",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/stale",
+      "cohort": "TOP21_EXTENSION",
+      "state": "NOT_YET_MEASURED"
+    },
+    {
+      "repo": "GBOGEB/GBOGEB-profile",
+      "cohort": "TOP21_EXTENSION",
+      "state": "NOT_YET_MEASURED"
+    }
+  ]
+}
