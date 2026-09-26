@@ -1,0 +1,7707 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.deep_read_queue.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "cell": "F01-B",
+  "issue": "GBOGEB/pipeline-automation-hub#430",
+  "source_ledger": "GM_FLEET_03_PR_LINEAGE_BACKFILL_F01B_ABACUS_LEDGER_v1.json",
+  "candidates": 656,
+  "priority_counts": {
+    "P0": 219,
+    "P1": 142,
+    "P2": 295
+  },
+  "queue": [
+    {
+      "id": "GBOGEB/ABACUS::PR16",
+      "pr": 16,
+      "title": "[WIP] Fix bridge smoke tests for missing 'dmaic' module",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#14"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR17",
+      "pr": 17,
+      "title": "Fix flake8 AttributeError on Python 3.12",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#13"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR24",
+      "pr": 24,
+      "title": "Fix Bridge Unit Tests - Add missing dmaic module stubs",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#12"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR25",
+      "pr": 25,
+      "title": "Add missing run_deployment_test_system.py for Full Deployment Test workflow",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#10"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR26",
+      "pr": 26,
+      "title": "Fix Bridge Integration Tests - Missing dmaic module imports",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#11"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR27",
+      "pr": 27,
+      "title": "[WIP] Implement all actions identified in copilot thoughts",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#18"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR84",
+      "pr": 84,
+      "title": "Fix test_complexity_calculation KeyError: use 'complexity_score' metric",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#50"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR85",
+      "pr": 85,
+      "title": "Fix Phase4Improve.execute() return type mismatch causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#67"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR86",
+      "pr": 86,
+      "title": "[WIP] Fix CI/CD test failure in test_generate_improvements",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#63"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR87",
+      "pr": 87,
+      "title": "[WIP] Fix CI failure in test_execute_with_phase3_output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#62"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR88",
+      "pr": 88,
+      "title": "[WIP] Fix CI failure in test_multiple_iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#61"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR89",
+      "pr": 89,
+      "title": "Add missing 'phase' field to phase3_analysis.json output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#60"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR90",
+      "pr": 90,
+      "title": "[WIP] Fix CI failure in test_dual_output_locations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#66"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR91",
+      "pr": 91,
+      "title": "[WIP] Fix CI failure in test_improvement_categories",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#68"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR92",
+      "pr": 92,
+      "title": "Fix Phase3 test failures - unpack execute() tuple return",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#59"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR93",
+      "pr": 93,
+      "title": "[WIP] Fix CI test error in Phase5Control initialization",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#73"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR94",
+      "pr": 94,
+      "title": "Fix Phase4Improve.execute() returning tuple instead of dict",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#72"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR95",
+      "pr": 95,
+      "title": "[WIP] Fix CI failure in test_file_saved_correctly",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#70"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR96",
+      "pr": 96,
+      "title": "[WIP] Fix CI failure in test_execute_with_phase4_output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#74"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR97",
+      "pr": 97,
+      "title": "[WIP] Fix CI/CD test failure in test_establish_quality_gates",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#75"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR98",
+      "pr": 98,
+      "title": "[WIP] Fix CI failure in test monitoring mechanisms",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#79"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR99",
+      "pr": 99,
+      "title": "Fix Phase5Control constructor signature mismatch causing test_output_structure failure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#77"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR100",
+      "pr": 100,
+      "title": "Fix test_output_structure: unpack execute() tuple and add missing return fields",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#65"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR101",
+      "pr": 101,
+      "title": "[WIP] Fix CI failure in test_validation_checkpoints",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#76"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR102",
+      "pr": 102,
+      "title": "[WIP] Fix CI failure in test_control_metrics",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#82"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR103",
+      "pr": 103,
+      "title": "[WIP] Fix CI failure in test_multiple_iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#81"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR104",
+      "pr": 104,
+      "title": "Fix Phase5Control constructor signature mismatch causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#80"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR105",
+      "pr": 105,
+      "title": "Fix Phase5Control interface mismatch causing test_continuous_monitoring failure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#83"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR106",
+      "pr": 106,
+      "title": "Fix Phase4Improve.execute() return type mismatch causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#71"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR107",
+      "pr": 107,
+      "title": "[WIP] Fix CI failure in test_prioritize_improvements",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#64"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR108",
+      "pr": 108,
+      "title": "Fix Phase4 test failures: tuple unpacking and missing result keys",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#69"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR109",
+      "pr": 109,
+      "title": "[WIP] Fix CI failure in test_dual_output_locations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#66"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR110",
+      "pr": 110,
+      "title": "[WIP] Fix CI/CD test failure in test_improvement_categories",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#68"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR111",
+      "pr": 111,
+      "title": "[WIP] Fix CI failure in test_execute_with_phase4_output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#74"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR112",
+      "pr": 112,
+      "title": "[WIP] 🔴 CI Failure: test_missing_phase3_output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#67"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR113",
+      "pr": 113,
+      "title": "[WIP] 🔴 CI Failure: test_initialization",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#73"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR114",
+      "pr": 114,
+      "title": "[WIP] 🔴 CI Failure: test_file_saved_correctly",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#70"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR115",
+      "pr": 115,
+      "title": "[WIP] 🔴 CI Failure: test_establish_quality_gates",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#75"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR116",
+      "pr": 116,
+      "title": "[WIP] Fix CI test failure in validation checkpoints",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#76"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR117",
+      "pr": 117,
+      "title": "Fix Phase4Improve.execute() returning tuple instead of dict",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#69"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR118",
+      "pr": 118,
+      "title": "[WIP] Fix CI failure in test_multiple_iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#81"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR119",
+      "pr": 119,
+      "title": "[WIP] Fix CI failure in test output structure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#77"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR120",
+      "pr": 120,
+      "title": "Fix Phase5Control interface mismatch causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#78"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR121",
+      "pr": 121,
+      "title": "Fix Phase5Control interface mismatch causing test_continuous_monitoring failure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#83"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR144",
+      "pr": 144,
+      "title": "[WIP] Fix CI failure in test_multiple_iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#111",
+        "GBOGEB/ABACUS#126"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR145",
+      "pr": 145,
+      "title": "[WIP] Fix CI test failure in test_prioritize_improvements",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#114",
+        "GBOGEB/ABACUS#128"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR146",
+      "pr": 146,
+      "title": "[WIP] Fix CI/CD test failure in continuous monitoring test",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#111",
+        "GBOGEB/ABACUS#127"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR147",
+      "pr": 147,
+      "title": "[WIP] Fix CI failure in test_improvement_categories",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#114",
+        "GBOGEB/ABACUS#124"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR148",
+      "pr": 148,
+      "title": "[WIP] Fix CI/CD test failure for prioritize improvements",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#115",
+        "GBOGEB/ABACUS#130"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR149",
+      "pr": 149,
+      "title": "[WIP] Fix CI test failure for establish quality gates",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#111",
+        "GBOGEB/ABACUS#123"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR150",
+      "pr": 150,
+      "title": "[WIP] Fix CI test failure in phase5 control execution",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#111",
+        "GBOGEB/ABACUS#122"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR151",
+      "pr": 151,
+      "title": "[WIP] Fix CI/CD test failure for prioritize improvements",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#112",
+        "GBOGEB/ABACUS#129"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR152",
+      "pr": 152,
+      "title": "[WIP] Fix CI test failure for improvement categories",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#110",
+        "GBOGEB/ABACUS#125"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR153",
+      "pr": 153,
+      "title": "[WIP] Fix CI test failure in test_dual_output_locations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#115",
+        "GBOGEB/ABACUS#132"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR154",
+      "pr": 154,
+      "title": "[WIP] Fix KeyError in test_dual_output_locations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#112",
+        "GBOGEB/ABACUS#133"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR155",
+      "pr": 155,
+      "title": "[WIP] Fix CI failure in test for dual output locations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#114",
+        "GBOGEB/ABACUS#131"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR156",
+      "pr": 156,
+      "title": "[WIP] Fix CI failure in test_monitoring_mechanisms",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#79"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR157",
+      "pr": 157,
+      "title": "[WIP] Fix CI test failure for file saved correctly",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#115",
+        "GBOGEB/ABACUS#140"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR158",
+      "pr": 158,
+      "title": "[WIP] Fix CI failure in test output structure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#115",
+        "GBOGEB/ABACUS#137"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR159",
+      "pr": 159,
+      "title": "[WIP] Fix CI failure in test_multiple_iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#114",
+        "GBOGEB/ABACUS#134"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR160",
+      "pr": 160,
+      "title": "[WIP] Fix CI failure in test improvement tracking",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#95",
+        "GBOGEB/ABACUS#143"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR161",
+      "pr": 161,
+      "title": "[WIP] Fix CI failure in test_baselines_operations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#97",
+        "GBOGEB/ABACUS#139"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR162",
+      "pr": 162,
+      "title": "[WIP] Fix CI failure in test_control_metrics",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#113",
+        "GBOGEB/ABACUS#142"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR163",
+      "pr": 163,
+      "title": "[WIP] Fix CI test failure for output structure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#112",
+        "GBOGEB/ABACUS#138"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR164",
+      "pr": 164,
+      "title": "[WIP] Fix CI test failure for file saved correctly",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#112",
+        "GBOGEB/ABACUS#141"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR165",
+      "pr": 165,
+      "title": "[WIP] Fix CI failure in validation checkpoints test",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#115",
+        "GBOGEB/ABACUS#136"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR166",
+      "pr": 166,
+      "title": "[WIP] Fix CI test failure in test_output_structure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#112",
+        "GBOGEB/ABACUS#138"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR167",
+      "pr": 167,
+      "title": "[WIP] Fix CI/CD test failure for output structure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#115",
+        "GBOGEB/ABACUS#137"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR168",
+      "pr": 168,
+      "title": "[WIP] Fix CI test failure for file saved correctly",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#112",
+        "GBOGEB/ABACUS#141"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR169",
+      "pr": 169,
+      "title": "[WIP] Fix CI test failure for baselines operations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#97",
+        "GBOGEB/ABACUS#139"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR170",
+      "pr": 170,
+      "title": "[WIP] Fix CI failure in test_improvement_tracking",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#95",
+        "GBOGEB/ABACUS#143"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR171",
+      "pr": 171,
+      "title": "[WIP] Fix CI/CD test failure in test_multiple_iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#114",
+        "GBOGEB/ABACUS#134"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR172",
+      "pr": 172,
+      "title": "Fix Phase4Improve.execute() return type to match interface contract",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#115",
+        "GBOGEB/ABACUS#135"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR173",
+      "pr": 173,
+      "title": "[WIP] Fix CI failure for test_file_saved_correctly",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#115",
+        "GBOGEB/ABACUS#140"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR174",
+      "pr": 174,
+      "title": "[WIP] Fix CI/CD test failure in test_control_metrics",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#113",
+        "GBOGEB/ABACUS#142"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR195",
+      "pr": 195,
+      "title": "Fix Phase5Control.execute() return type mismatch causing test_output_structure failure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#97",
+        "GBOGEB/ABACUS#181"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR196",
+      "pr": 196,
+      "title": "[WIP] Fix CI failure in test improvement tracking",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#97",
+        "GBOGEB/ABACUS#179"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR197",
+      "pr": 197,
+      "title": "[WIP] Fix CI failure in test_validation_checkpoints",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#97",
+        "GBOGEB/ABACUS#180"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR198",
+      "pr": 198,
+      "title": "[WIP] Fix CI test failure for file saved check",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#96",
+        "GBOGEB/ABACUS#176"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR199",
+      "pr": 199,
+      "title": "Fix Phase5Control return type and missing validation checkpoints method",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#94",
+        "GBOGEB/ABACUS#178"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR200",
+      "pr": 200,
+      "title": "[WIP] Fix CI failure in test_baselines_operations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#116",
+        "GBOGEB/ABACUS#175"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR201",
+      "pr": 201,
+      "title": "[WIP] Fix CI failure in test_improvement_actionability",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#72"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR202",
+      "pr": 202,
+      "title": "[WIP] Fix CI/CD test failure in test_control_metrics",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#95",
+        "GBOGEB/ABACUS#177"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR203",
+      "pr": 203,
+      "title": "[WIP] Fix CI failure in test_monitoring_mechanisms",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#97",
+        "GBOGEB/ABACUS#182"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR204",
+      "pr": 204,
+      "title": "Fix Phase4Improve.execute() return type mismatch",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#96",
+        "GBOGEB/ABACUS#183"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR205",
+      "pr": 205,
+      "title": "[WIP] Fix CI failure in test_improvement_categories",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#96",
+        "GBOGEB/ABACUS#187"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR206",
+      "pr": 206,
+      "title": "[WIP] Fix CI test failure in test_file_saved_correctly",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#96",
+        "GBOGEB/ABACUS#188"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR207",
+      "pr": 207,
+      "title": "Fix Phase 4 execute() return type and add error handling",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#97",
+        "GBOGEB/ABACUS#189"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR208",
+      "pr": 208,
+      "title": "Fix Phase5Control.execute() return type mismatch causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#110",
+        "GBOGEB/ABACUS#194"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR209",
+      "pr": 209,
+      "title": "Fix Phase4Improve.execute() return type mismatch",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#96",
+        "GBOGEB/ABACUS#187"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR210",
+      "pr": 210,
+      "title": "Fix Phase5Control.execute() return type mismatch causing test_continuous_monitoring failure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#110",
+        "GBOGEB/ABACUS#194"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR211",
+      "pr": 211,
+      "title": "[WIP] Fix CI failure in test_phase5_control initialization",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#110",
+        "GBOGEB/ABACUS#190"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR212",
+      "pr": 212,
+      "title": "[WIP] Fix CI/CD test failure for file saved correctly",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#97",
+        "GBOGEB/ABACUS#189"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR213",
+      "pr": 213,
+      "title": "[WIP] Fix CI/CD test failure in test_execute_with_phase4_output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#110",
+        "GBOGEB/ABACUS#191"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR214",
+      "pr": 214,
+      "title": "[WIP] Fix CI/CD test failure in test_multiple_iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#110",
+        "GBOGEB/ABACUS#193"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR215",
+      "pr": 215,
+      "title": "[WIP] Fix CI failure in test_file_saved_correctly",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#96",
+        "GBOGEB/ABACUS#188"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR216",
+      "pr": 216,
+      "title": "[WIP] Fix CI test failure for test_establish_quality_gates",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#110",
+        "GBOGEB/ABACUS#192"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR217",
+      "pr": 217,
+      "title": "[WIP] Fix CI failure in test_dual_output_locations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#96",
+        "GBOGEB/ABACUS#184"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR218",
+      "pr": 218,
+      "title": "Fix Phase4Improve.execute() return type mismatch causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#97",
+        "GBOGEB/ABACUS#186"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR219",
+      "pr": 219,
+      "title": "Fix Phase5Control return type mismatch causing test failure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#110",
+        "GBOGEB/ABACUS#191"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR220",
+      "pr": 220,
+      "title": "Fix Phase4Improve.execute() return type mismatch",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#96",
+        "GBOGEB/ABACUS#185"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR221",
+      "pr": 221,
+      "title": "Fix Phase5Control.execute() return type mismatch causing test_multiple_iterations failure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#110",
+        "GBOGEB/ABACUS#193"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR248",
+      "pr": 248,
+      "title": "[WIP] Fix CI failure in error handling test for missing input",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#35"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR249",
+      "pr": 249,
+      "title": "[WIP] Fix CI failure in test_multiple_iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#34"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR250",
+      "pr": 250,
+      "title": "[WIP] Fix CI/CD test failure in maturity levels",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#40"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR251",
+      "pr": 251,
+      "title": "[WIP] Fix CI/CD test failure in maturity tracker",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#39"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR252",
+      "pr": 252,
+      "title": "[WIP] Fix CI test failure for scan with python files",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#42"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR253",
+      "pr": 253,
+      "title": "[WIP] Fix CI failure in test_generate_report",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#38"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR254",
+      "pr": 254,
+      "title": "Fix Phase 1-4 execute() return type mismatch causing test_idempotency failure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#36"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR255",
+      "pr": 255,
+      "title": "[WIP] Fix CI/CD test failure for output directory structure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#37"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR256",
+      "pr": 256,
+      "title": "Fix Phase1Define missing result fields causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#41"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR257",
+      "pr": 257,
+      "title": "[WIP] Fix CI/CD test failure in test_scan_with_documentation",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#43"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR258",
+      "pr": 258,
+      "title": "[WIP] Fix CI failure in test_multiple_iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#47"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR259",
+      "pr": 259,
+      "title": "Fix Phase1Define missing output fields causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#46"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR260",
+      "pr": 260,
+      "title": "Fix test_phase1_define.py failures: add missing result keys",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#44"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR261",
+      "pr": 261,
+      "title": "Fix Phase1Define missing output fields causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#45"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR262",
+      "pr": 262,
+      "title": "Fix test_file_categorization: Add missing result keys and extend file type support",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#48"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR263",
+      "pr": 263,
+      "title": "Fix Phase3Analyze.execute() to return tuple format expected by tests",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#56"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR264",
+      "pr": 264,
+      "title": "[WIP] Fix CI failure in test_issue_categorization",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#58"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR265",
+      "pr": 265,
+      "title": "[WIP] Fix CI failure in test_execute_with_phase1_output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#51"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR266",
+      "pr": 266,
+      "title": "[WIP] Fix CI test failure in identify high complexity files",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#54"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR267",
+      "pr": 267,
+      "title": "[WIP] Fix CI test failure in test_output_structure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#52"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR268",
+      "pr": 268,
+      "title": "Fix KeyError in Phase2Measure.analyze_python_file() metric keys",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#49"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR269",
+      "pr": 269,
+      "title": "Fix Phase3Analyze.execute() return type mismatch causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#55"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR270",
+      "pr": 270,
+      "title": "Fix Phase3Analyze.execute() return type mismatch",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#55"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR271",
+      "pr": 271,
+      "title": "[WIP] Fix CI test failure for file categorization",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#48"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR272",
+      "pr": 272,
+      "title": "[WIP] Fix CI failure in test_multiple_iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#47"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR273",
+      "pr": 273,
+      "title": "[WIP] Fix CI failure for missing phase2 output test",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#57"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR274",
+      "pr": 274,
+      "title": "[WIP] Fix CI test failure in test_execute_with_phase1_output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#51"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR275",
+      "pr": 275,
+      "title": "Fix Phase3Analyze.execute() return type mismatch causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#54"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR276",
+      "pr": 276,
+      "title": "Fix Phase3Analyze return type mismatch causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#58"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR277",
+      "pr": 277,
+      "title": "[WIP] Fix CI test failure in test_dual_output_locations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#222"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR278",
+      "pr": 278,
+      "title": "Fix test metric key names in test_phase2_measure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#52"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR279",
+      "pr": 279,
+      "title": "Fix Phase3Analyze.execute() return type mismatch",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#53"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR280",
+      "pr": 280,
+      "title": "[WIP] Fix CI failure in test output structure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#56"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR281",
+      "pr": 281,
+      "title": "[WIP] Fix CI test failure in analyze python file",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#49"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR282",
+      "pr": 282,
+      "title": "[WIP] Fix AttributeError in GitManager get_status method",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#30"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR283",
+      "pr": 283,
+      "title": "Populate empty GitHub Actions workflow files",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#19"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR284",
+      "pr": 284,
+      "title": "Fix Phase 5 Control crash: missing iteration parameter and method implementation",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#32"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR285",
+      "pr": 285,
+      "title": "[WIP] Fix CI failure in test_data_persistence",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#33"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR286",
+      "pr": 286,
+      "title": "[WIP] Fix CI failure in test_complete_cycle_iteration_1",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#28",
+        "GBOGEB/ABACUS#31"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR287",
+      "pr": 287,
+      "title": "[WIP] Fix CI test failure in test_improvement_actionability",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#226"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR288",
+      "pr": 288,
+      "title": "[WIP] Fix CI failure in test_improvement_tracking",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#224"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR289",
+      "pr": 289,
+      "title": "[WIP] Fix CI failure in monitoring mechanisms test",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#232"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR290",
+      "pr": 290,
+      "title": "[WIP] Fix CI/CD test failure in improvement categories",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#223"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR291",
+      "pr": 291,
+      "title": "[WIP] Fix CI/CD test failure in baselines operations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#227"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR292",
+      "pr": 292,
+      "title": "[WIP] Fix CI failure for test_establish_quality_gates",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#229"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR293",
+      "pr": 293,
+      "title": "[WIP] Fix CI failure in test output structure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#231"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR294",
+      "pr": 294,
+      "title": "[WIP] Fix CI test failure for file saved correctly",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#225"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR295",
+      "pr": 295,
+      "title": "[WIP] Fix CI test failure in phase5 control execution",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#228"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR296",
+      "pr": 296,
+      "title": "[WIP] Fix CI failure in test_validation_checkpoints",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#230"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR297",
+      "pr": 297,
+      "title": "[WIP] Fix CI test failure for multiple iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#234"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR298",
+      "pr": 298,
+      "title": "[WIP] Fix CI failure in test_continuous_monitoring",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#220",
+        "GBOGEB/ABACUS#237"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR299",
+      "pr": 299,
+      "title": "[WIP] Fix CI test failure in test_initialization",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#109",
+        "GBOGEB/ABACUS#236"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR300",
+      "pr": 300,
+      "title": "[WIP] Fix CI failure in test_complexity_calculation",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#86",
+        "GBOGEB/ABACUS#239"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR301",
+      "pr": 301,
+      "title": "[WIP] Fix CI failure in test_control_metrics",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#235"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR302",
+      "pr": 302,
+      "title": "[WIP] Fix CI test failure for test_execute_with_phase3_output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#89",
+        "GBOGEB/ABACUS#238"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR303",
+      "pr": 303,
+      "title": "[WIP] Fix CI test failure in test_file_saved_correctly",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#103",
+        "GBOGEB/ABACUS#233"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR304",
+      "pr": 304,
+      "title": "Fix Phase5Control method signature mismatches and missing implementation",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#98",
+        "GBOGEB/ABACUS#242"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR305",
+      "pr": 305,
+      "title": "[WIP] Fix CI failure in test_missing_phase3_output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#221",
+        "GBOGEB/ABACUS#241"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR306",
+      "pr": 306,
+      "title": "[WIP] Fix CI failure in test_file_saved_correctly",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#105",
+        "GBOGEB/ABACUS#243"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR307",
+      "pr": 307,
+      "title": "[WIP] Fix CI test failure for output structure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#171",
+        "GBOGEB/ABACUS#246"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR308",
+      "pr": 308,
+      "title": "[WIP] Fix CI/CD test failure for analysis recommendations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#100",
+        "GBOGEB/ABACUS#244"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR309",
+      "pr": 309,
+      "title": "[WIP] Fix CI test failure for saving file in analyze phase",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#105",
+        "GBOGEB/ABACUS#243"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR310",
+      "pr": 310,
+      "title": "[WIP] Fix CI test failure in complexity calculation",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#86",
+        "GBOGEB/ABACUS#239"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR311",
+      "pr": 311,
+      "title": "[WIP] Fix CI test failure for missing phase3 output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#221",
+        "GBOGEB/ABACUS#241"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR312",
+      "pr": 312,
+      "title": "Fix Phase4Improve return type inconsistency causing test_output_structure failure",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#171",
+        "GBOGEB/ABACUS#246"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR313",
+      "pr": 313,
+      "title": "Fix inconsistent return types in Phase4Improve causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#171",
+        "GBOGEB/ABACUS#245"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR314",
+      "pr": 314,
+      "title": "Fix Phase 5 Control execute() return type mismatch",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#220",
+        "GBOGEB/ABACUS#237"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR315",
+      "pr": 315,
+      "title": "[WIP] Fix CI failure in test_execute_with_phase3_output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#89",
+        "GBOGEB/ABACUS#238"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR316",
+      "pr": 316,
+      "title": "[WIP] Fix CI failure in test_missing_phase4_output",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#98",
+        "GBOGEB/ABACUS#242"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR317",
+      "pr": 317,
+      "title": "[WIP] Fix CI test failure for analysis recommendations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#100",
+        "GBOGEB/ABACUS#244"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR318",
+      "pr": 318,
+      "title": "[WIP] Fix CI failure in test_multiple_iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#171",
+        "GBOGEB/ABACUS#247"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR319",
+      "pr": 319,
+      "title": "[WIP] Fix CI test failure in test_multiple_iterations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#89",
+        "GBOGEB/ABACUS#240"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR357",
+      "pr": 357,
+      "title": "[WIP] Fix CI/CD test failure in test_dual_output_locations",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#254",
+        "GBOGEB/ABACUS#356"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR358",
+      "pr": 358,
+      "title": "Fix test_idempotency: remove duplicate execute() methods causing AttributeError",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#347",
+        "GBOGEB/ABACUS#251"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR359",
+      "pr": 359,
+      "title": "Fix duplicate execute method in Phase1Define causing test failures",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#254",
+        "GBOGEB/ABACUS#334"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR369",
+      "pr": 369,
+      "title": "Add GitHub Copilot instructions for repository conventions and workflows",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#368"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR421",
+      "pr": 421,
+      "title": "[WIP] Fix CI failure in test_maturity_levels due to AttributeError",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#251"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR424",
+      "pr": 424,
+      "title": "[WIP] Verify post-merge deployment of Phase 4 Pages",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#381",
+        "GBOGEB/ABACUS#387",
+        "GBOGEB/ABACUS#380",
+        "GBOGEB/ABACUS#388",
+        "GBOGEB/ABACUS#389",
+        "GBOGEB/ABACUS#390"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR425",
+      "pr": 425,
+      "title": "[WIP] Enhance documentation site search and navigation features",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#380",
+        "GBOGEB/ABACUS#381",
+        "GBOGEB/ABACUS#387",
+        "GBOGEB/ABACUS#388"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR640",
+      "pr": 640,
+      "title": "feat(qps-cost): Wave 2 clean-clone build profile",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#5"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR722",
+      "pr": 722,
+      "title": "feat(qps): run W04 DOW support and safety analysis lane",
+      "priority": "P0",
+      "wave_labels": [
+        "W04",
+        "W04-T10"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#141"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR738",
+      "pr": 738,
+      "title": "feat(qps): execute W04 DOW from governed snapshot fallback",
+      "priority": "P0",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#145"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR739",
+      "pr": 739,
+      "title": "ci(qps): emit W04 DOW sanitized snapshot receipt",
+      "priority": "P0",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#145"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR795",
+      "pr": 795,
+      "title": "feat(qps): add W08 lifecycle coverage graph propagation",
+      "priority": "P0",
+      "wave_labels": [
+        "W08",
+        "W08-ready"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#219",
+        "GBOGEB/ABACUS#784"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR802",
+      "pr": 802,
+      "title": "fix(ci): burn down W08 DOW parent CI failures",
+      "priority": "P0",
+      "wave_labels": [
+        "W08"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#795"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR804",
+      "pr": 804,
+      "title": "feat(qps): define W11 binary manifest replay contract",
+      "priority": "P0",
+      "wave_labels": [
+        "W11"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#228",
+        "GBOGEB/CODEX#333"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR806",
+      "pr": 806,
+      "title": "feat(qps): execute W11 binary manifest replay",
+      "priority": "P0",
+      "wave_labels": [
+        "W11"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#228"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR813",
+      "pr": 813,
+      "title": "feat(qps): inspect W22F agenda review graph in DOW",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#307"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR825",
+      "pr": 825,
+      "title": "feedback(qps): W41 NFS buildings utilities DOW request",
+      "priority": "P0",
+      "wave_labels": [
+        "W41"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#369"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR832",
+      "pr": 832,
+      "title": "federation(qps): execute W43 DOW triage lane",
+      "priority": "P0",
+      "wave_labels": [
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#383"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR834",
+      "pr": 834,
+      "title": "feedback(qps): W22.1 tri-repo DOW execution receipt",
+      "priority": "P0",
+      "wave_labels": [
+        "W22"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#389"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR843",
+      "pr": 843,
+      "title": "triage(qps): execute W45 closure-yield DOW lane",
+      "priority": "P0",
+      "wave_labels": [
+        "W45"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#399"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR917",
+      "pr": 917,
+      "title": "W56: unpause QPS component utility DOW lane",
+      "priority": "P0",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#588",
+        "GBOGEB/CODEX#416"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR931",
+      "pr": 931,
+      "title": "W60: validate QPS board rollup and fanout parity",
+      "priority": "P0",
+      "wave_labels": [
+        "W60"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#634"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1063",
+      "pr": 1063,
+      "title": "W84 DOW: validate LLDB-DAP Swift federation evidence",
+      "priority": "P0",
+      "wave_labels": [
+        "W84"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/CODEX#552"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1109",
+      "pr": 1109,
+      "title": "QTG/DOW: deepen QPS TRIAGE receipt-consumer governance",
+      "priority": "P0",
+      "wave_labels": [
+        "W98",
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#853",
+        "GBOGEB/CODEX#605"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1115",
+      "pr": 1115,
+      "title": "W111: DOW mesh dock and 30-cell CIS consumer",
+      "priority": "P0",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#880"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1117",
+      "pr": 1117,
+      "title": "W111: align DOW ADR/OCD projections to QPS child authority",
+      "priority": "P0",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#882"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1177",
+      "pr": 1177,
+      "title": "W74/MC-2: pair exact-SHA runtime and semantic pressure coordinates",
+      "priority": "P0",
+      "wave_labels": [
+        "W74",
+        "W72",
+        "W73"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1063",
+        "GBOGEB/ABACUS#1164"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1204",
+      "pr": 1204,
+      "title": "W79/MC-2: deterministic work PCA + PA95 diagnostic",
+      "priority": "P0",
+      "wave_labels": [
+        "W79",
+        "W78"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#923"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1206",
+      "pr": 1206,
+      "title": "W79 closeout: repair inherited CI governance drift and retain runtime receipt",
+      "priority": "P0",
+      "wave_labels": [
+        "W79",
+        "W78"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#923"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1209",
+      "pr": 1209,
+      "title": "W79 control closeout: commit exact 135/135 CI inventory",
+      "priority": "P0",
+      "wave_labels": [
+        "W79",
+        "W78"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#923"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1226",
+      "pr": 1226,
+      "title": "W232: consume QPS lossless handover in DOW",
+      "priority": "P0",
+      "wave_labels": [
+        "W232",
+        "W191",
+        "W152",
+        "W199",
+        "W175"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1300"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1257",
+      "pr": 1257,
+      "title": "QPS v6: bind bounded ABACUS runtime-support baseline",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1379",
+        "GBOGEB/pipeline-automation-hub#162",
+        "GBOGEB/cryoplant-project#1381"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1259",
+      "pr": 1259,
+      "title": "QPS v6: immutably bind baseline and stage current-pin reproof",
+      "priority": "P0",
+      "wave_labels": [
+        "W247"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1379"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1260",
+      "pr": 1260,
+      "title": "LEG5 #1224: add bounded federation-dashboard proof lane",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/ABACUS#1224"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1264",
+      "pr": 1264,
+      "title": "W276: add QPS human-rendition review UX profile",
+      "priority": "P0",
+      "wave_labels": [
+        "W276"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1462"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1268",
+      "pr": 1268,
+      "title": "W276: repair human-rendition README lint",
+      "priority": "P0",
+      "wave_labels": [
+        "W276"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1462",
+        "GBOGEB/CODEX#762"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1284",
+      "pr": 1284,
+      "title": "W286: add QPS visual-regression review profile",
+      "priority": "P0",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1505"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1325",
+      "pr": 1325,
+      "title": "MIP-STABILIZE #776: coalesce superseded unified-CD branch pushes",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#372"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1352",
+      "pr": 1352,
+      "title": "QPS W329: bind HIST-BD-034 DOW receiver to #1646",
+      "priority": "P0",
+      "wave_labels": [
+        "W329"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/cryoplant-project#1646"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1387",
+      "pr": 1387,
+      "title": "GM DMAIC I2 D1: bind live E2E test population",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#419"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1393",
+      "pr": 1393,
+      "title": "GM DMAIC: add local TestPilot pre-GitHub defect gate",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#419"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1396",
+      "pr": 1396,
+      "title": "GM DMAIC COV-P1A: cover canonical temporal metadata engine",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#419"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1398",
+      "pr": 1398,
+      "title": "GM DMAIC COV-P1B: cover canonical index contracts",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#419"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1401",
+      "pr": 1401,
+      "title": "GM DMAIC COV-P2A: cover ranking engine contracts",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#419"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1403",
+      "pr": 1403,
+      "title": "GM DMAIC COV-P3A: cover planning matrix tracker",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#419"
+      ]
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR546",
+      "pr": 546,
+      "title": "MINERVA QCELL/RFCELL P&ID subproject — W001–W005 (colour-line model, layers, geometry, XLSX register reconciliation)",
+      "priority": "P1",
+      "wave_labels": [
+        "W001",
+        "W005",
+        "W002",
+        "W003",
+        "W004"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR556",
+      "pr": 556,
+      "title": "feat(minerva-pid): W006 — design↔as-drawn cross-map + interactive viewer scaffold",
+      "priority": "P1",
+      "wave_labels": [
+        "W006",
+        "W005",
+        "W007"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR557",
+      "pr": 557,
+      "title": "W008: Interactive Viewer Enhancement (completes W006 Option B)",
+      "priority": "P1",
+      "wave_labels": [
+        "W008",
+        "W006"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR559",
+      "pr": 559,
+      "title": "W009: Commissioning — triage ingest + commissioned v1.0 register & sign-off",
+      "priority": "P1",
+      "wave_labels": [
+        "W009",
+        "W006",
+        "W008",
+        "W005",
+        "W007"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR560",
+      "pr": 560,
+      "title": "ci(minerva-pid): W007 — CI/CD pipeline (coverage.py, golden gate, reproducibility)",
+      "priority": "P1",
+      "wave_labels": [
+        "W007",
+        "W006",
+        "W003",
+        "W004",
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR582",
+      "pr": 582,
+      "title": "Add QPS Line S recovery model scaffold",
+      "priority": "P1",
+      "wave_labels": [
+        "W002",
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR586",
+      "pr": 586,
+      "title": "Add W002 lumped QPS recovery model",
+      "priority": "P1",
+      "wave_labels": [
+        "W002",
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR724",
+      "pr": 724,
+      "title": "test(qps): add W04 DOW receipt CI fixture",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W04-T10"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR725",
+      "pr": 725,
+      "title": "test(qps): validate W04 DOW receipt fixture",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W04-T10"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR726",
+      "pr": 726,
+      "title": "feat(qps): produce W04 DOW runtime receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W04-T10"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR727",
+      "pr": 727,
+      "title": "ci(qps): wire W04 DOW receipt validator",
+      "priority": "P1",
+      "wave_labels": [
+        "W04",
+        "W04-T10"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR765",
+      "pr": 765,
+      "title": "fix(ci): close ssot_style W06 Control gaps",
+      "priority": "P1",
+      "wave_labels": [
+        "W06",
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR766",
+      "pr": 766,
+      "title": "fix(control): correct W07 lineage and unmask unit tests",
+      "priority": "P1",
+      "wave_labels": [
+        "W07",
+        "W06"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR770",
+      "pr": 770,
+      "title": "fix(ci): govern QPS DOW receipt workflows",
+      "priority": "P1",
+      "wave_labels": [
+        "W05",
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR771",
+      "pr": 771,
+      "title": "feat(qps): return W06 cost-frontier DOW findings",
+      "priority": "P1",
+      "wave_labels": [
+        "W06",
+        "W06-COST"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR772",
+      "pr": 772,
+      "title": "feat(qps): close W06 DOW feedback loop",
+      "priority": "P1",
+      "wave_labels": [
+        "W06",
+        "W06-COST",
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR774",
+      "pr": 774,
+      "title": "feat(qps): run W07 quantitative-binding quality DOW",
+      "priority": "P1",
+      "wave_labels": [
+        "W07",
+        "W06"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR811",
+      "pr": 811,
+      "title": "fix(qps): publish W08 DOW post-upload artifact binding",
+      "priority": "P1",
+      "wave_labels": [
+        "W08",
+        "W08-A2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR826",
+      "pr": 826,
+      "title": "feedback(qps): W41/P02 reconcile NFS graph metrics",
+      "priority": "P1",
+      "wave_labels": [
+        "W41",
+        "W40"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR828",
+      "pr": 828,
+      "title": "feedback(qps): W41/P03 apply child-authority NFS correction",
+      "priority": "P1",
+      "wave_labels": [
+        "W41",
+        "W40"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR829",
+      "pr": 829,
+      "title": "feedback(qps): W43 DOW triage convergence",
+      "priority": "P1",
+      "wave_labels": [
+        "W43",
+        "W40"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR830",
+      "pr": 830,
+      "title": "triage(qps): W43 bind DOW bridge to child #383",
+      "priority": "P1",
+      "wave_labels": [
+        "W43",
+        "W42"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR831",
+      "pr": 831,
+      "title": "feedback(qps): W42/P01 execute bounded DOW triage",
+      "priority": "P1",
+      "wave_labels": [
+        "W42",
+        "W40"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR833",
+      "pr": 833,
+      "title": "triage(qps): return W44 DOW findings",
+      "priority": "P1",
+      "wave_labels": [
+        "W44",
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR839",
+      "pr": 839,
+      "title": "federation(qps): emit W44 DOW execution result",
+      "priority": "P1",
+      "wave_labels": [
+        "W44",
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR841",
+      "pr": 841,
+      "title": "triage(qps): W44 map PCA candidate atoms in DOW",
+      "priority": "P1",
+      "wave_labels": [
+        "W44",
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR850",
+      "pr": 850,
+      "title": "revive(cryo): promote He-4 property surface into active bridge path",
+      "priority": "P1",
+      "wave_labels": [
+        "W50",
+        "W46",
+        "W49",
+        "W51"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR851",
+      "pr": 851,
+      "title": "control(cryo): activate dormant He-4 node/edge/atom graph",
+      "priority": "P1",
+      "wave_labels": [
+        "W50",
+        "W46",
+        "W49",
+        "W51"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR853",
+      "pr": 853,
+      "title": "w49(qps): validate first source-bound evidence promotion chain",
+      "priority": "P1",
+      "wave_labels": [
+        "W49",
+        "W49-OFFER49"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR857",
+      "pr": 857,
+      "title": "W51: activate governed He-4 property engine",
+      "priority": "P1",
+      "wave_labels": [
+        "W51",
+        "W50"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR861",
+      "pr": 861,
+      "title": "W52-P2H: add WCS helium thermodynamic proof harness",
+      "priority": "P1",
+      "wave_labels": [
+        "W52-P2H",
+        "W52"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR863",
+      "pr": 863,
+      "title": "W52-P2J: execute full QPLANT mass-energy residual harness",
+      "priority": "P1",
+      "wave_labels": [
+        "W52-P2J",
+        "W52"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR872",
+      "pr": 872,
+      "title": "W54-M01: DOW provenance baseline for IBC LCR SFR",
+      "priority": "P1",
+      "wave_labels": [
+        "W54-M01",
+        "W53-P05D"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR873",
+      "pr": 873,
+      "title": "W54-M02: DOW assimilation conversion state",
+      "priority": "P1",
+      "wave_labels": [
+        "W54-M02",
+        "W53-P05D"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR877",
+      "pr": 877,
+      "title": "W52-P2M: execute governed A/B/W helium runtime receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W52-P2M",
+        "W52-P2L"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR887",
+      "pr": 887,
+      "title": "federation(qps): intake W52 hashed cost depth-gate payload",
+      "priority": "P1",
+      "wave_labels": [
+        "W52",
+        "W52-COST"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR893",
+      "pr": 893,
+      "title": "W53 P01: repair QPS cost public/private federation boundary",
+      "priority": "P1",
+      "wave_labels": [
+        "W53",
+        "W52",
+        "W53-COST"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR897",
+      "pr": 897,
+      "title": "W52-P2T: execute HP power residual against nominal 2K-OP point",
+      "priority": "P1",
+      "wave_labels": [
+        "W52-P2T",
+        "W52-P2U"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR906",
+      "pr": 906,
+      "title": "W54-P02 DOW: execute first QPS utility graph dependency/PCA receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W54-P02",
+        "W54-P01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR908",
+      "pr": 908,
+      "title": "W54-P02: execute DOW utility graph analysis on exact child hash",
+      "priority": "P1",
+      "wave_labels": [
+        "W54-P02",
+        "W54",
+        "W54-P01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR927",
+      "pr": 927,
+      "title": "W58: operationalize DOW DoV runtime, PCA/BT and KPI control",
+      "priority": "P1",
+      "wave_labels": [
+        "W58",
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR930",
+      "pr": 930,
+      "title": "W60: execute exact-SHA 3PR runtime pass and emit bounded DOW receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W60",
+        "W59"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR940",
+      "pr": 940,
+      "title": "W59: enforce TRIAGE DOW analysis boundary and census CI",
+      "priority": "P1",
+      "wave_labels": [
+        "W59",
+        "W58"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR941",
+      "pr": 941,
+      "title": "W61: close DOW runtime DEFER and prove control-plane zero-delta",
+      "priority": "P1",
+      "wave_labels": [
+        "W61",
+        "W60",
+        "W58-contract"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR946",
+      "pr": 946,
+      "title": "release(v5): execute W62 canonical entrypoint and exact-SHA self-smoke",
+      "priority": "P1",
+      "wave_labels": [
+        "W62",
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR947",
+      "pr": 947,
+      "title": "dmaic: start 3.4.0-rc1 self-evaluating engine renewal",
+      "priority": "P1",
+      "wave_labels": [
+        "W62",
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR948",
+      "pr": 948,
+      "title": "dmaic: execute W62 Twelve Cluster representative and adversarial requalification",
+      "priority": "P1",
+      "wave_labels": [
+        "W62",
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR949",
+      "pr": 949,
+      "title": "release(v5): harden W62 governance and record 0.70 gate crossing",
+      "priority": "P1",
+      "wave_labels": [
+        "W62",
+        "W63",
+        "W52",
+        "W53"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR950",
+      "pr": 950,
+      "title": "release(v5): close W62 CI governance generated-view gate",
+      "priority": "P1",
+      "wave_labels": [
+        "W62",
+        "W52",
+        "W53",
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR951",
+      "pr": 951,
+      "title": "ci: close W62 governance newline delta",
+      "priority": "P1",
+      "wave_labels": [
+        "W62",
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR952",
+      "pr": 952,
+      "title": "release(v5): W63 lane A trust and authority",
+      "priority": "P1",
+      "wave_labels": [
+        "W63",
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR959",
+      "pr": 959,
+      "title": "release(v5): harden W63 P2 authority and MCP residuals",
+      "priority": "P1",
+      "wave_labels": [
+        "W63",
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR960",
+      "pr": 960,
+      "title": "release(v5): harden W63 federation boundary proof",
+      "priority": "P1",
+      "wave_labels": [
+        "W63",
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR961",
+      "pr": 961,
+      "title": "release(v5): record W63 paired P2/P3 receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W63",
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR962",
+      "pr": 962,
+      "title": "release(v5): start W64 binaries 3P3 lane",
+      "priority": "P1",
+      "wave_labels": [
+        "W64",
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR963",
+      "pr": 963,
+      "title": "release(v5): start W64 release deployment 3P3 lane",
+      "priority": "P1",
+      "wave_labels": [
+        "W64",
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR964",
+      "pr": 964,
+      "title": "release(v5): start W64 total repo census 3P3 lane",
+      "priority": "P1",
+      "wave_labels": [
+        "W64",
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR965",
+      "pr": 965,
+      "title": "release(v5): start W64 broad regression 3P3 lane",
+      "priority": "P1",
+      "wave_labels": [
+        "W64",
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR977",
+      "pr": 977,
+      "title": "release(v5): execute W64 census P3 receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W64",
+        "W64-CENSUS"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1005",
+      "pr": 1005,
+      "title": "W62: observed DOW DoV requalification",
+      "priority": "P1",
+      "wave_labels": [
+        "W62",
+        "W61"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1007",
+      "pr": 1007,
+      "title": "W63: finalize DOW runtime contribution to TRIAGE control DoV",
+      "priority": "P1",
+      "wave_labels": [
+        "W63",
+        "W61"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1018",
+      "pr": 1018,
+      "title": "W65: continuous parallel bidirectional discovery pulses",
+      "priority": "P1",
+      "wave_labels": [
+        "W65",
+        "W65-A",
+        "W65-B",
+        "W65-C",
+        "W65-D",
+        "W65-E"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1020",
+      "pr": 1020,
+      "title": "W60: quantify observed TRIAGE DOW DoV completion",
+      "priority": "P1",
+      "wave_labels": [
+        "W60",
+        "W58",
+        "W59"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1028",
+      "pr": 1028,
+      "title": "W66: split ABACUS ID burndown into five parallel pulses",
+      "priority": "P1",
+      "wave_labels": [
+        "W66",
+        "W65"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1029",
+      "pr": 1029,
+      "title": "W63: quantitative gate for binary receipts and zero-delta closure",
+      "priority": "P1",
+      "wave_labels": [
+        "W63",
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1030",
+      "pr": 1030,
+      "title": "W67: gate PCA promotion on three measured ID pulses",
+      "priority": "P1",
+      "wave_labels": [
+        "W67",
+        "W66"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1032",
+      "pr": 1032,
+      "title": "W62: execute DOW exact-SHA return and zero-delta repeat",
+      "priority": "P1",
+      "wave_labels": [
+        "W62",
+        "W62-001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1040",
+      "pr": 1040,
+      "title": "W69-C: add second measured reverse-loading PCA pulse",
+      "priority": "P1",
+      "wave_labels": [
+        "W69-C",
+        "W68-C",
+        "W67",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1043",
+      "pr": 1043,
+      "title": "W70-C1: measure ID pulse from immutable PR head SHA",
+      "priority": "P1",
+      "wave_labels": [
+        "W70-C1",
+        "W70",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1044",
+      "pr": 1044,
+      "title": "W70-C2: retain measured pulse and expose PCA denominator",
+      "priority": "P1",
+      "wave_labels": [
+        "W70-C2",
+        "W70"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1045",
+      "pr": 1045,
+      "title": "W71: assimilate cross-repo release learning and restore W64 runtime proof",
+      "priority": "P1",
+      "wave_labels": [
+        "W71",
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1046",
+      "pr": 1046,
+      "title": "W65: add strict/equivalent terminal publish denominators",
+      "priority": "P1",
+      "wave_labels": [
+        "W65",
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1047",
+      "pr": 1047,
+      "title": "W71-3/4: measure final generated-lineage residual by count/type/bytes/hash",
+      "priority": "P1",
+      "wave_labels": [
+        "W71-3",
+        "W71"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1049",
+      "pr": 1049,
+      "title": "W72-A1: book accepted W64 execution into frozen denominator",
+      "priority": "P1",
+      "wave_labels": [
+        "W72-A1",
+        "W64",
+        "W72"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1050",
+      "pr": 1050,
+      "title": "W72-A2: bind final generated-lineage residual to deterministic source",
+      "priority": "P1",
+      "wave_labels": [
+        "W72-A2",
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1051",
+      "pr": 1051,
+      "title": "W72-B1: retain three exact-SHA numeric rows for PCA promotion",
+      "priority": "P1",
+      "wave_labels": [
+        "W72-B1",
+        "W70",
+        "W67"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1054",
+      "pr": 1054,
+      "title": "W72-A3: remove generated-name false positive and rerun W64",
+      "priority": "P1",
+      "wave_labels": [
+        "W72-A3",
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1064",
+      "pr": 1064,
+      "title": "W84-P3: measure 3P3 effectiveness and bind debug telemetry",
+      "priority": "P1",
+      "wave_labels": [
+        "W84-P3",
+        "W84"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1066",
+      "pr": 1066,
+      "title": "W84-C1 DOW: stage first measured BFLOW effectiveness cycle",
+      "priority": "P1",
+      "wave_labels": [
+        "W84-C1",
+        "W84"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1069",
+      "pr": 1069,
+      "title": "W87 DOW: bind green KEB receipt for LLDB-DAP child re-entry",
+      "priority": "P1",
+      "wave_labels": [
+        "W87",
+        "W84",
+        "W86"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1071",
+      "pr": 1071,
+      "title": "W85/P2: make DOW census proof executable and reproducible",
+      "priority": "P1",
+      "wave_labels": [
+        "W85",
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1073",
+      "pr": 1073,
+      "title": "W63: verify TRIAGE tuple survives on fresh DOW main",
+      "priority": "P1",
+      "wave_labels": [
+        "W63",
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1078",
+      "pr": 1078,
+      "title": "W90 DOW: burn down SSOT filename ambiguity by governed role",
+      "priority": "P1",
+      "wave_labels": [
+        "W90",
+        "W89"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1079",
+      "pr": 1079,
+      "title": "W91 DOW: consolidate competing runtimes behind canonical owners",
+      "priority": "P1",
+      "wave_labels": [
+        "W91",
+        "W89",
+        "W90"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1080",
+      "pr": 1080,
+      "title": "W92 DOW: consolidate Docker and deployment runtime authority",
+      "priority": "P1",
+      "wave_labels": [
+        "W92",
+        "W91"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1082",
+      "pr": 1082,
+      "title": "W94/P3 DOW: render and resolve CTaxonomy semantic support",
+      "priority": "P1",
+      "wave_labels": [
+        "W94",
+        "W93"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1088",
+      "pr": 1088,
+      "title": "W93 DOW: execute Docker and QPLANT deployment proof",
+      "priority": "P1",
+      "wave_labels": [
+        "W93",
+        "W92"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1093",
+      "pr": 1093,
+      "title": "W104/P2 DOW: execute CC-R01..R08 and emit real receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W104",
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1116",
+      "pr": 1116,
+      "title": "W109: DOW consummate mesh execution taxonomy via 3PC + MIP",
+      "priority": "P1",
+      "wave_labels": [
+        "W109",
+        "W108"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1118",
+      "pr": 1118,
+      "title": "W112: repair W111 docs lint and emit exact post-merge DOW receipt",
+      "priority": "P1",
+      "wave_labels": [
+        "W112",
+        "W111",
+        "W56",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1119",
+      "pr": 1119,
+      "title": "W112: consume GLOB action/status split in DOW",
+      "priority": "P1",
+      "wave_labels": [
+        "W112",
+        "W003",
+        "W108",
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1120",
+      "pr": 1120,
+      "title": "W113: repair DOW receipt scalar and bind #1118 merge",
+      "priority": "P1",
+      "wave_labels": [
+        "W113",
+        "W112",
+        "W111",
+        "W108"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1136",
+      "pr": 1136,
+      "title": "W117: pressure mesh runtime blocker into one P0 BT atom",
+      "priority": "P1",
+      "wave_labels": [
+        "W117",
+        "W115",
+        "W116"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1143",
+      "pr": 1143,
+      "title": "W117 CONTROL: freeze mesh runtime 3PR + MIP + 3PC handover",
+      "priority": "P1",
+      "wave_labels": [
+        "W117",
+        "W116"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1145",
+      "pr": 1145,
+      "title": "W142 DOW: supersede stale invCOP residual and expose thermodynamic diagnostics",
+      "priority": "P1",
+      "wave_labels": [
+        "W142",
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1168",
+      "pr": 1168,
+      "title": "H3/DOW: consume observed H2F KEB PASS and return bounded disposition",
+      "priority": "P1",
+      "wave_labels": [
+        "W159",
+        "W160",
+        "W161"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1173",
+      "pr": 1173,
+      "title": "MC-2: retain fifth semantic pulse and enforce variance gate",
+      "priority": "P1",
+      "wave_labels": [
+        "W70",
+        "W66"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1174",
+      "pr": 1174,
+      "title": "W72/MC-2: version semantic census and exact-SHA backfill",
+      "priority": "P1",
+      "wave_labels": [
+        "W72",
+        "W67",
+        "W72-SEMANTIC"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1176",
+      "pr": 1176,
+      "title": "W73/MC-2: measured semantic topology PC1 and federated pressure model",
+      "priority": "P1",
+      "wave_labels": [
+        "W73",
+        "W72"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1181",
+      "pr": 1181,
+      "title": "W75/MC-2: measure deconfounded runtime stability across retained repeats",
+      "priority": "P1",
+      "wave_labels": [
+        "W75",
+        "W74",
+        "W73"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1182",
+      "pr": 1182,
+      "title": "W76/MC-2: withhold unstable intrinsic runtime axis and bind W77 instrumentation contract",
+      "priority": "P1",
+      "wave_labels": [
+        "W76",
+        "W77",
+        "W75",
+        "W73"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1183",
+      "pr": 1183,
+      "title": "W168 cross-feed: isolate W74 Kubernetes regression scope",
+      "priority": "P1",
+      "wave_labels": [
+        "W168",
+        "W74",
+        "W165",
+        "W167"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1184",
+      "pr": 1184,
+      "title": "W169: execute QPLANT real Kubernetes API and runtime proof",
+      "priority": "P1",
+      "wave_labels": [
+        "W169",
+        "W74",
+        "W165",
+        "W93"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1185",
+      "pr": 1185,
+      "title": "W170: bind numeric non-root identity for QPLANT Kubernetes runtime",
+      "priority": "P1",
+      "wave_labels": [
+        "W170",
+        "W169",
+        "W165",
+        "W74"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1189",
+      "pr": 1189,
+      "title": "Historian controls: immutable Actions, exact PR-head receipts, W169 first-red diagnostics",
+      "priority": "P1",
+      "wave_labels": [
+        "W169",
+        "W74"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1192",
+      "pr": 1192,
+      "title": "W77/MC-2: measure phase-level intrinsic runtime on 5x3 exact-SHA panel",
+      "priority": "P1",
+      "wave_labels": [
+        "W77",
+        "W76",
+        "W72",
+        "W73",
+        "W74",
+        "W75"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1194",
+      "pr": 1194,
+      "title": "HIST-BD-017: keep read-only rootfs and provision bounded auth state",
+      "priority": "P1",
+      "wave_labels": [
+        "W169",
+        "W74",
+        "W165"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1197",
+      "pr": 1197,
+      "title": "W77/MC-2: close workflow governance and YAML gates",
+      "priority": "P1",
+      "wave_labels": [
+        "W77",
+        "W77-owned",
+        "W72"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1199",
+      "pr": 1199,
+      "title": "HIST-BD-018 pass 1: classify W74/W77/W169 and generate derived inventory",
+      "priority": "P1",
+      "wave_labels": [
+        "W74",
+        "W77",
+        "W169"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1200",
+      "pr": 1200,
+      "title": "W78/MC-2: census deterministic algorithmic work across 15 exact-SHA states",
+      "priority": "P1",
+      "wave_labels": [
+        "W78",
+        "W77",
+        "W72",
+        "W73",
+        "W79"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1211",
+      "pr": 1211,
+      "title": "W79/MC-2: retain deterministic complexity PC1 without reopening timing authority",
+      "priority": "P1",
+      "wave_labels": [
+        "W79",
+        "W78"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1212",
+      "pr": 1212,
+      "title": "W79/MC-2: pin governed W78 provenance identity",
+      "priority": "P1",
+      "wave_labels": [
+        "W79",
+        "W78"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1230",
+      "pr": 1230,
+      "title": "W233: consume expanded QPS federation handover in DOW",
+      "priority": "P1",
+      "wave_labels": [
+        "W233",
+        "W68",
+        "W69",
+        "W70"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1237",
+      "pr": 1237,
+      "title": "W106/M1: bind bridge version test to DMAIC version authority",
+      "priority": "P1",
+      "wave_labels": [
+        "W106",
+        "W105",
+        "W007"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1244",
+      "pr": 1244,
+      "title": "W106/M2: repair stale W007 runtime evidence locators",
+      "priority": "P1",
+      "wave_labels": [
+        "W106",
+        "W007"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1245",
+      "pr": 1245,
+      "title": "W106/M2: make W007 governance status run-generated evidence",
+      "priority": "P1",
+      "wave_labels": [
+        "W106",
+        "W007"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1249",
+      "pr": 1249,
+      "title": "W107: retire obsolete ABACUS-v032 documentation commit path",
+      "priority": "P1",
+      "wave_labels": [
+        "W107",
+        "W106"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1250",
+      "pr": 1250,
+      "title": "W108: repair independent CI-governance drift only",
+      "priority": "P1",
+      "wave_labels": [
+        "W108",
+        "W107",
+        "W105"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1262",
+      "pr": 1262,
+      "title": "W274: challenge GMI DOCENG source-pointer binding",
+      "priority": "P1",
+      "wave_labels": [
+        "W274",
+        "W273"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1266",
+      "pr": 1266,
+      "title": "W80/MC-2: validate deterministic PC1 against observed CI outcomes",
+      "priority": "P1",
+      "wave_labels": [
+        "W80",
+        "W79"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1269",
+      "pr": 1269,
+      "title": "W80/MC-2: fail closed on observed-outcome range restriction",
+      "priority": "P1",
+      "wave_labels": [
+        "W80",
+        "W79"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1271",
+      "pr": 1271,
+      "title": "Historian: distinct-SHA repeat for REX-CM-003/004",
+      "priority": "P1",
+      "wave_labels": [
+        "W74",
+        "W169"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1272",
+      "pr": 1272,
+      "title": "W80/MC-2: publish 3P* MIP lossless closeout and restart chain",
+      "priority": "P1",
+      "wave_labels": [
+        "W80",
+        "W70",
+        "W71",
+        "W80-owned"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1282",
+      "pr": 1282,
+      "title": "W285 DOW: independently recompute federation depth",
+      "priority": "P1",
+      "wave_labels": [
+        "W285",
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1286",
+      "pr": 1286,
+      "title": "GM-I-A: consume exact CoolProp FAST/HEAVY federation attestation",
+      "priority": "P1",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1287",
+      "pr": 1287,
+      "title": "GM-I-A: consume exact CoolProp FAST-HEAVY receipt in DOW",
+      "priority": "P1",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1290",
+      "pr": 1290,
+      "title": "W81: disposable exact-source repair-pair probe",
+      "priority": "P1",
+      "wave_labels": [
+        "W81",
+        "W78"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1291",
+      "pr": 1291,
+      "title": "W81: canonicalize repair-pair diagnostic and remove disposable probe",
+      "priority": "P1",
+      "wave_labels": [
+        "W81",
+        "W79"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1294",
+      "pr": 1294,
+      "title": "W82: draft-only W72 governance repair-pair probe",
+      "priority": "P1",
+      "wave_labels": [
+        "W82",
+        "W72",
+        "W78"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1295",
+      "pr": 1295,
+      "title": "W82: disposable semantic-diversity exact-source probe",
+      "priority": "P1",
+      "wave_labels": [
+        "W82",
+        "W78"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1296",
+      "pr": 1296,
+      "title": "W82: canonicalize balanced semantic-diversity outcome diagnostic",
+      "priority": "P1",
+      "wave_labels": [
+        "W82",
+        "W79"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1297",
+      "pr": 1297,
+      "title": "W83: disposable typed semantic-basis diversity probe",
+      "priority": "P1",
+      "wave_labels": [
+        "W83",
+        "W82",
+        "W79"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1318",
+      "pr": 1318,
+      "title": "W81/MC-2: measure exact-source repair outcome block",
+      "priority": "P1",
+      "wave_labels": [
+        "W81",
+        "W80",
+        "W79",
+        "W77"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1321",
+      "pr": 1321,
+      "title": "MC2 W83-NG1: exact non-governance outcome discrimination",
+      "priority": "P1",
+      "wave_labels": [
+        "W83-NG1",
+        "W83",
+        "W84",
+        "W80"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1323",
+      "pr": 1323,
+      "title": "MC2 W83-NG1: bind controlled negative and restart pointer",
+      "priority": "P1",
+      "wave_labels": [
+        "W83-NG1",
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1347",
+      "pr": 1347,
+      "title": "GMI-W275: challenge document-core re-entry proof",
+      "priority": "P1",
+      "wave_labels": [
+        "W275",
+        "W274"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1360",
+      "pr": 1360,
+      "title": "W306 Perpetuate: prove typed DOW findings on focused gate",
+      "priority": "P1",
+      "wave_labels": [
+        "W306",
+        "W306-specific"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1361",
+      "pr": 1361,
+      "title": "W306: bind focused DOW proof into CI governance",
+      "priority": "P1",
+      "wave_labels": [
+        "W306",
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1370",
+      "pr": 1370,
+      "title": "MIP-STABILIZE: move #1002 residual to proof-only #1369",
+      "priority": "P1",
+      "wave_labels": [
+        "W62",
+        "W64",
+        "W70",
+        "W71",
+        "W85"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1378",
+      "pr": 1378,
+      "title": "GM-I-A P002: consume fresh CoolProp attestation in DOW",
+      "priority": "P1",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A",
+        "GM-I-A-MCLOCK-P002"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1382",
+      "pr": 1382,
+      "title": "Fix W63 federation authority path portability",
+      "priority": "P1",
+      "wave_labels": [
+        "W63",
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1395",
+      "pr": 1395,
+      "title": "Test: align historical session checks with repository authority",
+      "priority": "P1",
+      "wave_labels": [
+        "W80",
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR377",
+      "pr": 377,
+      "title": "Fix deployment runner flake8 failures from trailing whitespace and placeholder-less f-strings",
+      "priority": "P2",
+      "wave_labels": [
+        "W293"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR520",
+      "pr": 520,
+      "title": "feat(W001.1): add qplant_presentation_engine runtime entry",
+      "priority": "P2",
+      "wave_labels": [
+        "W001"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR547",
+      "pr": 547,
+      "title": "chore(minerva-pid): add dependency manifests, Dependabot tracking & install docs (resolves snapshot warning)",
+      "priority": "P2",
+      "wave_labels": [
+        "W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR564",
+      "pr": 564,
+      "title": "Add W007 runtime foundation governance",
+      "priority": "P2",
+      "wave_labels": [
+        "W007"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR565",
+      "pr": 565,
+      "title": "Bootstrap W000 Q3/Q4/Q5 review package validation",
+      "priority": "P2",
+      "wave_labels": [
+        "W000"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR632",
+      "pr": 632,
+      "title": "feat(qps-cost): Wave 1 GitHub-local-OneDrive roundtrip bootstrap",
+      "priority": "P2",
+      "wave_labels": [
+        "W000-W005"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR675",
+      "pr": 675,
+      "title": "Run visible QPS DOW Wave 01 warm-up",
+      "priority": "P2",
+      "wave_labels": [
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR677",
+      "pr": 677,
+      "title": "Autostart QPS DOW Wave 01 after merge",
+      "priority": "P2",
+      "wave_labels": [
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR680",
+      "pr": 680,
+      "title": "Fail closed when required DOW stages are not real parent mechanics",
+      "priority": "P2",
+      "wave_labels": [
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR695",
+      "pr": 695,
+      "title": "Implement missing canonical DOW Stage 6 validator",
+      "priority": "P2",
+      "wave_labels": [
+        "W02"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR696",
+      "pr": 696,
+      "title": "fix: add missing W007 runtime evidence artifacts to unblock CI validation",
+      "priority": "P2",
+      "wave_labels": [
+        "W007"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR723",
+      "pr": 723,
+      "title": "qa(qps): add W04 DOW receipt and QA action contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR729",
+      "pr": 729,
+      "title": "fix(qps): make W04 DOW runtime evidence-bound",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR730",
+      "pr": 730,
+      "title": "feat(qps): bind SSOT style federation wave",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR732",
+      "pr": 732,
+      "title": "ci(qps): execute W04 DOW runtime receipt in Actions",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR733",
+      "pr": 733,
+      "title": "fix(qps): authenticate and pin W04 DOW child checkout",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR734",
+      "pr": 734,
+      "title": "fix(qps): authenticate and pin W04 DOW child source",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR735",
+      "pr": 735,
+      "title": "fix(qps): harden W04 secret use and SHA verification",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR736",
+      "pr": 736,
+      "title": "Retrigger QPS W04 DOW runtime receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR737",
+      "pr": 737,
+      "title": "fix(qps): align W04 DOW disposition contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR740",
+      "pr": 740,
+      "title": "ci: reduce Actions queue pressure from DOW monitoring",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR741",
+      "pr": 741,
+      "title": "ci: collapse security telemetry fan-out",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR742",
+      "pr": 742,
+      "title": "ci: stop deployment-status monitor fan-out",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR743",
+      "pr": 743,
+      "title": "ci: keep scheduled OSV scan off routine pushes",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR744",
+      "pr": 744,
+      "title": "ci: scope Semgrep queue pressure",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR745",
+      "pr": 745,
+      "title": "ci: add tier-0 deterministic preflight receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR746",
+      "pr": 746,
+      "title": "ci: move security dashboard aggregation off workflow-run fan-out",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR747",
+      "pr": 747,
+      "title": "ci: move heavy DMAIC CD off routine pushes",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR748",
+      "pr": 748,
+      "title": "ci: collapse enhanced CI fan-out",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR749",
+      "pr": 749,
+      "title": "ci: bound DOW main queue pressure",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR751",
+      "pr": 751,
+      "title": "feat(mcp): add health KPIs and adaptive capacity fit",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR755",
+      "pr": 755,
+      "title": "feat(qps): learn from W04 child disposition feedback",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR757",
+      "pr": 757,
+      "title": "fix(ci): stabilize W05 triage, repair validation and govern +8 helpers",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR764",
+      "pr": 764,
+      "title": "feat(qps): validate bidder-parallel SHE evaluation graph",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR767",
+      "pr": 767,
+      "title": "feat(qps): validate cost-frontier Stage-III graph W06",
+      "priority": "P2",
+      "wave_labels": [
+        "W06"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR768",
+      "pr": 768,
+      "title": "feat(qps): execute W05 bidder evaluation DOW return",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR769",
+      "pr": 769,
+      "title": "feat(qps): emit W05 PCA/BT observations using child taxonomy",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR773",
+      "pr": 773,
+      "title": "fix(qps): repair W06 feedback receipt lint",
+      "priority": "P2",
+      "wave_labels": [
+        "W06"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR775",
+      "pr": 775,
+      "title": "feat(qps): validate W07 quantitative binding dependencies",
+      "priority": "P2",
+      "wave_labels": [
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR777",
+      "pr": 777,
+      "title": "control(ci): cap non-essential main fan-out during QPS waves",
+      "priority": "P2",
+      "wave_labels": [
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR778",
+      "pr": 778,
+      "title": "feat(qps): consume W07 quantitative child disposition",
+      "priority": "P2",
+      "wave_labels": [
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR780",
+      "pr": 780,
+      "title": "fix(qps): normalize W07 feedback governance",
+      "priority": "P2",
+      "wave_labels": [
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR781",
+      "pr": 781,
+      "title": "feat(qps): validate W07 quantity-to-cost dependencies",
+      "priority": "P2",
+      "wave_labels": [
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR782",
+      "pr": 782,
+      "title": "control(qps): ingest W05 child DOW disposition",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR783",
+      "pr": 783,
+      "title": "fix(qps): close W07 feedback lineage review gaps",
+      "priority": "P2",
+      "wave_labels": [
+        "W07"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR787",
+      "pr": 787,
+      "title": "feat(qps): execute W05 bidder evaluation DOW return",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR790",
+      "pr": 790,
+      "title": "fix(qps): make W05 DOW execution and output control truthful",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR796",
+      "pr": 796,
+      "title": "fix(qps): stabilize W08 DOW parent return and CI",
+      "priority": "P2",
+      "wave_labels": [
+        "W08"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR803",
+      "pr": 803,
+      "title": "fix(runtime): restore missing parent test modules",
+      "priority": "P2",
+      "wave_labels": [
+        "W08"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR807",
+      "pr": 807,
+      "title": "fix(qps): fail closed on negative compliance wording",
+      "priority": "P2",
+      "wave_labels": [
+        "W11"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR808",
+      "pr": 808,
+      "title": "fix(ci): restore docker hygiene and bootstrap test deps",
+      "priority": "P2",
+      "wave_labels": [
+        "W007"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR809",
+      "pr": 809,
+      "title": "control(qps): emit hash-bound W08 DOW runtime return",
+      "priority": "P2",
+      "wave_labels": [
+        "W08"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR810",
+      "pr": 810,
+      "title": "fix(ci): govern W08 DOW return as main-bound full-tier lane",
+      "priority": "P2",
+      "wave_labels": [
+        "W08"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR815",
+      "pr": 815,
+      "title": "feat(qps): execute canonical SSOT Excel HTML render wave",
+      "priority": "P2",
+      "wave_labels": [
+        "W26"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR816",
+      "pr": 816,
+      "title": "control(qps): govern Word-to-PDF DOW bridge W28",
+      "priority": "P2",
+      "wave_labels": [
+        "W28"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR821",
+      "pr": 821,
+      "title": "Expose DKO reviewer coverage and risk metrics in evaluation layer",
+      "priority": "P2",
+      "wave_labels": [
+        "W36"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR822",
+      "pr": 822,
+      "title": "W37 expose exact reviewer union and Design & Fabrication coverage",
+      "priority": "P2",
+      "wave_labels": [
+        "W37"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR823",
+      "pr": 823,
+      "title": "W39 expose three P1 reviewer catch-up pulses",
+      "priority": "P2",
+      "wave_labels": [
+        "W39"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR824",
+      "pr": 824,
+      "title": "W40 add human review workbench and peer-review lanes",
+      "priority": "P2",
+      "wave_labels": [
+        "W40"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR827",
+      "pr": 827,
+      "title": "federation(qps): W42 binary DOW return",
+      "priority": "P2",
+      "wave_labels": [
+        "W42"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR835",
+      "pr": 835,
+      "title": "triage(qps): W42 DOW execution return",
+      "priority": "P2",
+      "wave_labels": [
+        "W42"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR836",
+      "pr": 836,
+      "title": "triage(qps): W44 DOW evidence-output reverse-load",
+      "priority": "P2",
+      "wave_labels": [
+        "W44"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR837",
+      "pr": 837,
+      "title": "feedback(qps): W42 tri-repo DOW triage request",
+      "priority": "P2",
+      "wave_labels": [
+        "W42"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR838",
+      "pr": 838,
+      "title": "ci(qps): run W43 DOW TRIAGE against child SHA",
+      "priority": "P2",
+      "wave_labels": [
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR840",
+      "pr": 840,
+      "title": "feedback(qps): return W41 P02 NFS DOW triage metrics",
+      "priority": "P2",
+      "wave_labels": [
+        "W41"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR842",
+      "pr": 842,
+      "title": "triage(qps): W45 DOW convergence execution",
+      "priority": "P2",
+      "wave_labels": [
+        "W45"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR844",
+      "pr": 844,
+      "title": "control(qps): W47 full-comment DOW parity roundtrip",
+      "priority": "P2",
+      "wave_labels": [
+        "W47"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR848",
+      "pr": 848,
+      "title": "control(qps): W48 shared-answer DOW fanout validation",
+      "priority": "P2",
+      "wave_labels": [
+        "W48"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR849",
+      "pr": 849,
+      "title": "control(qps): W49 answer-set human-confirmation DOW validation",
+      "priority": "P2",
+      "wave_labels": [
+        "W49"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR854",
+      "pr": 854,
+      "title": "W50: expose hidden DOW / HEPAK capability penetration",
+      "priority": "P2",
+      "wave_labels": [
+        "W50"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR855",
+      "pr": 855,
+      "title": "control(qps): dispatch W43 DOW execution pulse P01",
+      "priority": "P2",
+      "wave_labels": [
+        "W43"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR856",
+      "pr": 856,
+      "title": "W45: prove Line-S helium property provider contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W45"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR858",
+      "pr": 858,
+      "title": "control(w52): measure ABACUS repo coverage and bidirectional runtime",
+      "priority": "P2",
+      "wave_labels": [
+        "W52"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR859",
+      "pr": 859,
+      "title": "FED-W044/P04: derive QPLANT and QPS:CS cost drivers",
+      "priority": "P2",
+      "wave_labels": [
+        "W044"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR860",
+      "pr": 860,
+      "title": "w49(qps): DOW validate RTM-595 fail-closed fallback lanes",
+      "priority": "P2",
+      "wave_labels": [
+        "W49"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR862",
+      "pr": 862,
+      "title": "W53-P05: execute QCELL VLP and low-temperature physics",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR864",
+      "pr": 864,
+      "title": "W53-P05A: add deterministic Line-B VLP solver",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05A"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR865",
+      "pr": 865,
+      "title": "W52-P2J: full QPLANT mass/energy closure and residual score",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2J"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR866",
+      "pr": 866,
+      "title": "W53-P05C: run bounded Line-B pressure sensitivity",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05C"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR867",
+      "pr": 867,
+      "title": "W52-P2K: bind offer-backed 2K-OP residual references",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2K"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR868",
+      "pr": 868,
+      "title": "W53-P05D: DOW defer first residual until independent B-flow exists",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05D"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR869",
+      "pr": 869,
+      "title": "W52-P2L: execute B-flow checksum and A/B/W enthalpy residual",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2L"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR870",
+      "pr": 870,
+      "title": "W41 update manual review priority after NFS lift",
+      "priority": "P2",
+      "wave_labels": [
+        "W41"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR871",
+      "pr": 871,
+      "title": "W52-P2J/R1: burn down first QPLANT residual",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2J"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR874",
+      "pr": 874,
+      "title": "W53-P05D: bind VLP sensitivity execution to helium property receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05D"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR875",
+      "pr": 875,
+      "title": "W52-P2L: repair contract flow basis for residual engine",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2L"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR876",
+      "pr": 876,
+      "title": "W52-P2M: execute first independent thermal-shield residual",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2M"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR878",
+      "pr": 878,
+      "title": "W52-P2M: enforce RTM canonicalization and QSN obsolescence with Zod",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2M"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR879",
+      "pr": 879,
+      "title": "W53-P05E: close VLP helium property receipt execution residual",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05E"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR881",
+      "pr": 881,
+      "title": "W53-P05F: generate first measured VLP sensitivity receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05F"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR882",
+      "pr": 882,
+      "title": "W52-P2M-R1: quantify TS residual over source-bound HP window",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2M"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR883",
+      "pr": 883,
+      "title": "W52-P2N: bind Tables 4-9 groups and enforce 716 RTM denominator",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2N"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR884",
+      "pr": 884,
+      "title": "W52-P2M-R2: bind 8.2 kW contract TS load to LKT 5% design margin",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2M"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR885",
+      "pr": 885,
+      "title": "W52-P2N: execute thermal-shield enthalpy residual receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2N"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR886",
+      "pr": 886,
+      "title": "W53-P05G: persist measured VLP receipt and recover rank-1 diameter",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05G"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR888",
+      "pr": 888,
+      "title": "W52-P2R: execute ALAT TS strict residual with independent gate",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2R"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR889",
+      "pr": 889,
+      "title": "W53-P05H: validate DN150 Line-B pressure-drop budget",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05H"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR890",
+      "pr": 890,
+      "title": "W53-P05I: execute distributed VLP, thermo and Line-S validation pulse",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05I"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR891",
+      "pr": 891,
+      "title": "W52-P2T: execute and persist LKT TS enthalpy runtime receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2T"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR892",
+      "pr": 892,
+      "title": "W53-P05J: execute quantitative VLP thermo Line-S PCA/BT waves",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05J"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR894",
+      "pr": 894,
+      "title": "W53-P05K: execute LKT TS residual on exact OFFER-07 D/E states",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05K"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR895",
+      "pr": 895,
+      "title": "W53 P01B: remove superseded raw QPS commercial payload from public tip",
+      "priority": "P2",
+      "wave_labels": [
+        "W53"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR896",
+      "pr": 896,
+      "title": "W53-P05K.1: materialize exact LKT TS numerical receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05K"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR898",
+      "pr": 898,
+      "title": "W53-P05K1: deep TS independent residual validation wave",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05K1"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR899",
+      "pr": 899,
+      "title": "W53-P05M: execute nominal 2K-OP HP power residual gate",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05M"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR900",
+      "pr": 900,
+      "title": "W52-P2U: repair HP residual false-green and rerun fail-closed",
+      "priority": "P2",
+      "wave_labels": [
+        "W52-P2U"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR901",
+      "pr": 901,
+      "title": "W53-P05N: predict 814 kW HP point from held-out LKT modes",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05N"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR902",
+      "pr": 902,
+      "title": "W53-P05N: freeze independent low-T bracket and fail closed on exact B state",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05N"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR903",
+      "pr": 903,
+      "title": "W53-P05O: make exact HEPAK A/B receipt executable",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05O"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR904",
+      "pr": 904,
+      "title": "W53-P05S: execute QCELL A-to-31 mbar JT flash receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05S"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR905",
+      "pr": 905,
+      "title": "W53-P05T: run canonical QCELL JT flash receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05T"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR907",
+      "pr": 907,
+      "title": "W53-P06A: DOW triage for QPS OCD/ADR outward release",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P06A"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR909",
+      "pr": 909,
+      "title": "W54-P03: extend HEPAK/property execution across piping service domains",
+      "priority": "P2",
+      "wave_labels": [
+        "W54-P03"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR910",
+      "pr": 910,
+      "title": "W53-P06B: repair DOW child-disposition contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P06B"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR911",
+      "pr": 911,
+      "title": "W54-P05: quantify human properties UI runtime and evidence gaps",
+      "priority": "P2",
+      "wave_labels": [
+        "W54-P05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR912",
+      "pr": 912,
+      "title": "W55-P06: run all-line property, velocity and bidirectional pressure contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W55-P06"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR913",
+      "pr": 913,
+      "title": "W53-P06C: repair DOW docs gate after #910",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P06C"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR914",
+      "pr": 914,
+      "title": "W53-P05Q: rerun Line-B with recovered DN150 source geometry",
+      "priority": "P2",
+      "wave_labels": [
+        "W53-P05Q"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR916",
+      "pr": 916,
+      "title": "W57-P02 DOW: independently challenge LKT PVPS 83-kW boundary",
+      "priority": "P2",
+      "wave_labels": [
+        "W57-P02"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR918",
+      "pr": 918,
+      "title": "W56: stage QPS component utility DOW intake behind KEB hash gate",
+      "priority": "P2",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR919",
+      "pr": 919,
+      "title": "W56: repair DOW intake after #917 merge",
+      "priority": "P2",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR920",
+      "pr": 920,
+      "title": "W56: execute hash-bound DOW component utility analyses",
+      "priority": "P2",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR921",
+      "pr": 921,
+      "title": "W56: deepen five DOW gates and evidence burndown",
+      "priority": "P2",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR922",
+      "pr": 922,
+      "title": "W56: execute QPS component utility PCA and dependency challenge",
+      "priority": "P2",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR923",
+      "pr": 923,
+      "title": "W54-P09: quantify WSH/S-line propagation impact",
+      "priority": "P2",
+      "wave_labels": [
+        "W54-P09"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR924",
+      "pr": 924,
+      "title": "W56: DOW Line-B sensitivity PCA BT MC fan-out receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W56"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR925",
+      "pr": 925,
+      "title": "W54-P12: align QPLANT HEPAK receipt ingest and backend routing",
+      "priority": "P2",
+      "wave_labels": [
+        "W54-P12"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR926",
+      "pr": 926,
+      "title": "W57: add DOW cADR/xOCD and runtime architecture view",
+      "priority": "P2",
+      "wave_labels": [
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR928",
+      "pr": 928,
+      "title": "W59: add 3P3 reverse-pressure runtime self-evaluation",
+      "priority": "P2",
+      "wave_labels": [
+        "W59"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR929",
+      "pr": 929,
+      "title": "W60: add DOW 5-horizon DoV and runtime pulse controls",
+      "priority": "P2",
+      "wave_labels": [
+        "W60"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR937",
+      "pr": 937,
+      "title": "W60.1: reconcile DOW receipt and current canonical binary state",
+      "priority": "P2",
+      "wave_labels": [
+        "W60"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR939",
+      "pr": 939,
+      "title": "W58: establish TRIAGE DOW census and analytical authority contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W58"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR943",
+      "pr": 943,
+      "title": "W59/P02: ALAT 3P3x2 DOW QA and prioritization receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W59"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR944",
+      "pr": 944,
+      "title": "release(v5): start W62 1x3PR foundation and capability renewal",
+      "priority": "P2",
+      "wave_labels": [
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR945",
+      "pr": 945,
+      "title": "release(v5): execute W62 capability census and SSOT authority foundation",
+      "priority": "P2",
+      "wave_labels": [
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR953",
+      "pr": 953,
+      "title": "dmaic: W63 lane B 3.4 execution renewal",
+      "priority": "P2",
+      "wave_labels": [
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR954",
+      "pr": 954,
+      "title": "dmaic: execute W63 AgentManager governed-runner P1",
+      "priority": "P2",
+      "wave_labels": [
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR955",
+      "pr": 955,
+      "title": "release(v5): execute W63 SSOT authority resolver P2",
+      "priority": "P2",
+      "wave_labels": [
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR956",
+      "pr": 956,
+      "title": "dmaic: execute W63 handover and MCP execution-contract P2",
+      "priority": "P2",
+      "wave_labels": [
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR957",
+      "pr": 957,
+      "title": "release(v5): execute W63 Zod federation zero-delta P3",
+      "priority": "P2",
+      "wave_labels": [
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR958",
+      "pr": 958,
+      "title": "dmaic: execute W63 AgentManager MCP handover P3",
+      "priority": "P2",
+      "wave_labels": [
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR966",
+      "pr": 966,
+      "title": "release(v5): execute W64 total repo census P1",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR967",
+      "pr": 967,
+      "title": "release(v5): execute W64 census P2 reverse-pressure",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR968",
+      "pr": 968,
+      "title": "fix: restore Python UTC compatibility for W64 P2 CI",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR969",
+      "pr": 969,
+      "title": "fix(ci): repair W64 P2 exact-head regressions",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR970",
+      "pr": 970,
+      "title": "fix(ci): scope DMAIC component coverage correctly",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR971",
+      "pr": 971,
+      "title": "fix: apply DMAIC coverage fixture under CI module name",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR972",
+      "pr": 972,
+      "title": "fix: restore bootstrap deployment validation script",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR973",
+      "pr": 973,
+      "title": "fix: exempt bootstrap workflow legacy line lengths",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR974",
+      "pr": 974,
+      "title": "fix(w64): align P2 unknown blockers with P1 classifications",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR975",
+      "pr": 975,
+      "title": "fix(w64): bound stale markers to path components",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR976",
+      "pr": 976,
+      "title": "feat(w64): execute corrected P1-P2-P3 census receipt chain",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR978",
+      "pr": 978,
+      "title": "fix(ci): register and lint W64 P3 receipt workflow",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR979",
+      "pr": 979,
+      "title": "feat(w64): add generic 3PM/3PR burndown discriminator",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR982",
+      "pr": 982,
+      "title": "feat(w64): execute parallel 3P agent pilot and DoD",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR983",
+      "pr": 983,
+      "title": "fix: preserve DMAIC Week3 harness gates",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR990",
+      "pr": 990,
+      "title": "fix: close W64 CI final harness reds",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR997",
+      "pr": 997,
+      "title": "fix: preserve Week3 failure counts",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR998",
+      "pr": 998,
+      "title": "fix: preserve Week3 nested failure counts",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR999",
+      "pr": 999,
+      "title": "feat(w64): execute retained R01 3P performance baseline",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1001",
+      "pr": 1001,
+      "title": "fix(w64): harden R01 control-plane measurement and governance",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1006",
+      "pr": 1006,
+      "title": "fix(w64): refresh generated CI governance inventory",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1008",
+      "pr": 1008,
+      "title": "W63: close P7 DOW runtime exclusion gate",
+      "priority": "P2",
+      "wave_labels": [
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1009",
+      "pr": 1009,
+      "title": "W57 3PR-A3: DOW quantify completion and terminal blocker pressure",
+      "priority": "P2",
+      "wave_labels": [
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1010",
+      "pr": 1010,
+      "title": "W57 R18 3PR-A: DOW challenge physical source conversion",
+      "priority": "P2",
+      "wave_labels": [
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1012",
+      "pr": 1012,
+      "title": "W58 3PR-A3: define DOW Playwright QA receipt for playground",
+      "priority": "P2",
+      "wave_labels": [
+        "W58"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1013",
+      "pr": 1013,
+      "title": "W57 3PR-B3: DOW terminal DoV measurement and reverse loading",
+      "priority": "P2",
+      "wave_labels": [
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1014",
+      "pr": 1014,
+      "title": "W57 R19 3PR-B: DOW physical DoV pressure return",
+      "priority": "P2",
+      "wave_labels": [
+        "W57"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1015",
+      "pr": 1015,
+      "title": "W58 3PR-B3: measure terminal DoV receipts and reverse loading",
+      "priority": "P2",
+      "wave_labels": [
+        "W58"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1016",
+      "pr": 1016,
+      "title": "control(release): P1 census measured — reverse-pressure 34 blocker findings",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1017",
+      "pr": 1017,
+      "title": "W64 3P R02: paired-worker missing-ID discovery graph",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1019",
+      "pr": 1019,
+      "title": "W65: orchestrate tri-repo discovery funnel and reverse loading",
+      "priority": "P2",
+      "wave_labels": [
+        "W65"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1021",
+      "pr": 1021,
+      "title": "W62 A: bind ABACUS observed 3PR DoV closure state",
+      "priority": "P2",
+      "wave_labels": [
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1022",
+      "pr": 1022,
+      "title": "W61: freeze TRIAGE DOW DoV convergence gates",
+      "priority": "P2",
+      "wave_labels": [
+        "W61"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1024",
+      "pr": 1024,
+      "title": "W62 B: reverse-load ABACUS terminal 3PR gates",
+      "priority": "P2",
+      "wave_labels": [
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1026",
+      "pr": 1026,
+      "title": "TRIAGE: burn down ABACUS UNKNOWN census debt",
+      "priority": "P2",
+      "wave_labels": [
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1027",
+      "pr": 1027,
+      "title": "W62: validate observed binary DoV metrics",
+      "priority": "P2",
+      "wave_labels": [
+        "W62"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1033",
+      "pr": 1033,
+      "title": "W58-A: quantify exact child HEPAK receipt intake blockers",
+      "priority": "P2",
+      "wave_labels": [
+        "W58-A"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1034",
+      "pr": 1034,
+      "title": "W58-B: quantify blocker conversion and observed DoV pressure",
+      "priority": "P2",
+      "wave_labels": [
+        "W58-B"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1035",
+      "pr": 1035,
+      "title": "w64(3pr-a): discover scoped authority families before blocker retirement",
+      "priority": "P2",
+      "wave_labels": [
+        "W64"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1037",
+      "pr": 1037,
+      "title": "3PR-C: add measured reverse-loading PCA pulse",
+      "priority": "P2",
+      "wave_labels": [
+        "W67"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1048",
+      "pr": 1048,
+      "title": "W65 follow-up: correct full-checklist denominator from detailed rows",
+      "priority": "P2",
+      "wave_labels": [
+        "W65"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1052",
+      "pr": 1052,
+      "title": "W72-B2: prove clean-clone install entrypoint and regression",
+      "priority": "P2",
+      "wave_labels": [
+        "W72-B2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1053",
+      "pr": 1053,
+      "title": "W72-B3: execute deterministic two-pass wheel zero-delta proof",
+      "priority": "P2",
+      "wave_labels": [
+        "W72-B3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1055",
+      "pr": 1055,
+      "title": "fix(w05): import unittest mock explicitly",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1056",
+      "pr": 1056,
+      "title": "fix(ci): keep integration tests out of unit matrix",
+      "priority": "P2",
+      "wave_labels": [
+        "W05"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1060",
+      "pr": 1060,
+      "title": "fix(W57-P02): clear PVPS DOW YAML docs-lint failure",
+      "priority": "P2",
+      "wave_labels": [
+        "W57-P02"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1061",
+      "pr": 1061,
+      "title": "W59/P03: LKT 3P3x2 DOW QA and prioritization receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W59"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1067",
+      "pr": 1067,
+      "title": "W58 DOW: independently challenge RTM-595 partial bidder evidence",
+      "priority": "P2",
+      "wave_labels": [
+        "W58"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1070",
+      "pr": 1070,
+      "title": "W88 B7: execute offer-eval zero-delta DOW replay",
+      "priority": "P2",
+      "wave_labels": [
+        "W88"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1072",
+      "pr": 1072,
+      "title": "W88 TRIAGE: measured ABACUS census burn-down",
+      "priority": "P2",
+      "wave_labels": [
+        "W88"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1074",
+      "pr": 1074,
+      "title": "W63R: repair terminal DoV receipt YAML lint",
+      "priority": "P2",
+      "wave_labels": [
+        "W63"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1075",
+      "pr": 1075,
+      "title": "W89 DOW: execute exact-head census receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W89"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1076",
+      "pr": 1076,
+      "title": "W85/P2: execute DOW census proof cross-platform",
+      "priority": "P2",
+      "wave_labels": [
+        "W85"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1077",
+      "pr": 1077,
+      "title": "W85/P2: pin observed deterministic DOW digest",
+      "priority": "P2",
+      "wave_labels": [
+        "W85"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1081",
+      "pr": 1081,
+      "title": "W93/P3 DOW: challenge PVPS 83-kW same-point reconstruction",
+      "priority": "P2",
+      "wave_labels": [
+        "W93"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1085",
+      "pr": 1085,
+      "title": "W97/P3 DOW: measure MIP repair effects and perpetuation evidence",
+      "priority": "P2",
+      "wave_labels": [
+        "W97"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1089",
+      "pr": 1089,
+      "title": "W93R1 DOW: repair first observed Docker proof failures",
+      "priority": "P2",
+      "wave_labels": [
+        "W93"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1090",
+      "pr": 1090,
+      "title": "W103/P3 DOW: independently challenge warm-helium module cost estimate",
+      "priority": "P2",
+      "wave_labels": [
+        "W103"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1091",
+      "pr": 1091,
+      "title": "W98/P3 DOW: measure and render QPS glossary 3PC + 3PR",
+      "priority": "P2",
+      "wave_labels": [
+        "W98"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1092",
+      "pr": 1092,
+      "title": "W103/C2 DOW: reconcile authoritative WHM+WPS BOM row by row",
+      "priority": "P2",
+      "wave_labels": [
+        "W103"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1094",
+      "pr": 1094,
+      "title": "MIP: bind DOW into organisation federation activity census",
+      "priority": "P2",
+      "wave_labels": [
+        "W98"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1095",
+      "pr": 1095,
+      "title": "W103/C2 DOW: prepare authoritative WHM+WPS row reconciliation",
+      "priority": "P2",
+      "wave_labels": [
+        "W103"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1096",
+      "pr": 1096,
+      "title": "W104: scan ABACUS floating DOW coverage delta",
+      "priority": "P2",
+      "wave_labels": [
+        "W104"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1097",
+      "pr": 1097,
+      "title": "W104/C1 DOW: emit real eight-atom fail-closed receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W104"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1098",
+      "pr": 1098,
+      "title": "W104/MIP-I2: second external exact-SHA QPS runner diagnostic",
+      "priority": "P2",
+      "wave_labels": [
+        "W104"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1099",
+      "pr": 1099,
+      "title": "W105/DOW: execute QPS B1-B2 MIP diagnostic probe",
+      "priority": "P2",
+      "wave_labels": [
+        "W105"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1100",
+      "pr": 1100,
+      "title": "w102: receive MIP reconciliation burndown and recursive backlog",
+      "priority": "P2",
+      "wave_labels": [
+        "W102"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1104",
+      "pr": 1104,
+      "title": "W68 MIP: perpetuate measured orchestration and PCA allocation",
+      "priority": "P2",
+      "wave_labels": [
+        "W68"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1105",
+      "pr": 1105,
+      "title": "W107 DOW: persist #1102 runtime-health federation roll-up",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1106",
+      "pr": 1106,
+      "title": "Deepen anchor coverage: correct census blind spots and preserve recovery candidates",
+      "priority": "P2",
+      "wave_labels": [
+        "W104"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1107",
+      "pr": 1107,
+      "title": "W107 DOW: consume CODEX #600 green LLDB-DAP receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1108",
+      "pr": 1108,
+      "title": "W107/C1 DOW: consume exact-SHA LLDB-DAP KEB PASS",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1111",
+      "pr": 1111,
+      "title": "W105: DOW consume QPLANT SBS/CIS contract clarification",
+      "priority": "P2",
+      "wave_labels": [
+        "W105"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1112",
+      "pr": 1112,
+      "title": "W109: consume canonical QPS glossary in DOW governance federation",
+      "priority": "P2",
+      "wave_labels": [
+        "W109"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1113",
+      "pr": 1113,
+      "title": "W106: DOW consume LKT/ALAT control-system RFI",
+      "priority": "P2",
+      "wave_labels": [
+        "W106"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1114",
+      "pr": 1114,
+      "title": "W110: consume MIP canonical SSOT registry in DOW",
+      "priority": "P2",
+      "wave_labels": [
+        "W110"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1121",
+      "pr": 1121,
+      "title": "W115: DOW emitter plus contract-only blocker selector",
+      "priority": "P2",
+      "wave_labels": [
+        "W115"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1122",
+      "pr": 1122,
+      "title": "W116 3PR P2: challenge QPS horizon orchestration and WIP control",
+      "priority": "P2",
+      "wave_labels": [
+        "W116"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1124",
+      "pr": 1124,
+      "title": "W111: add QPS power/utility DOW analytical lane",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1131",
+      "pr": 1131,
+      "title": "W126: final ABACUS point-release candidate proof",
+      "priority": "P2",
+      "wave_labels": [
+        "W126"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1133",
+      "pr": 1133,
+      "title": "W116: run ABACUS mesh emitter in CI",
+      "priority": "P2",
+      "wave_labels": [
+        "W116"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1134",
+      "pr": 1134,
+      "title": "W126R: repair missing PyGithub test dependency",
+      "priority": "P2",
+      "wave_labels": [
+        "W126"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1135",
+      "pr": 1135,
+      "title": "W113: consume CODEX mesh closure controller in DOW",
+      "priority": "P2",
+      "wave_labels": [
+        "W113"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1137",
+      "pr": 1137,
+      "title": "W126R2: repair unused missing GitHub roundtrip fixture",
+      "priority": "P2",
+      "wave_labels": [
+        "W126"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1142",
+      "pr": 1142,
+      "title": "SC-20260912 3PR/P2 DOW: challenge delete-safe handover",
+      "priority": "P2",
+      "wave_labels": [
+        "W3-12"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1144",
+      "pr": 1144,
+      "title": "W117 CONTROL: commit mesh runtime session-close receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W117"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1154",
+      "pr": 1154,
+      "title": "W145 DOW: propagate numerical DoV gate matrix without authority promotion",
+      "priority": "P2",
+      "wave_labels": [
+        "W145"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1155",
+      "pr": 1155,
+      "title": "W147 DOW: project QPS numerical source closure and reverse-pressure gates",
+      "priority": "P2",
+      "wave_labels": [
+        "W147"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1171",
+      "pr": 1171,
+      "title": "W70/MC-2: recover exact semantic pulse and repair retention boundary",
+      "priority": "P2",
+      "wave_labels": [
+        "W70"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1175",
+      "pr": 1175,
+      "title": "CI governance: refresh W72 workflow inventory",
+      "priority": "P2",
+      "wave_labels": [
+        "W72"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1178",
+      "pr": 1178,
+      "title": "W74: harden QPLANT Kubernetes contract and gate edge readiness",
+      "priority": "P2",
+      "wave_labels": [
+        "W74"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1190",
+      "pr": 1190,
+      "title": "W76/MC-2: fail closed when candidate stability metrics are undefined",
+      "priority": "P2",
+      "wave_labels": [
+        "W76"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1191",
+      "pr": 1191,
+      "title": "W171: retain QPLANT Kubernetes crash diagnostics",
+      "priority": "P2",
+      "wave_labels": [
+        "W171"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1202",
+      "pr": 1202,
+      "title": "H3 QPS TRIAGE W1: reliability pilot DOW measurement",
+      "priority": "P2",
+      "wave_labels": [
+        "W1"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1210",
+      "pr": 1210,
+      "title": "W189F: execute exact federation sample 4 payload",
+      "priority": "P2",
+      "wave_labels": [
+        "W189"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1213",
+      "pr": 1213,
+      "title": "W190: consume full 3PC MIP handover in DOW",
+      "priority": "P2",
+      "wave_labels": [
+        "W190"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1215",
+      "pr": 1215,
+      "title": "W190R: repair DOW consumer to final child merge lineage",
+      "priority": "P2",
+      "wave_labels": [
+        "W190"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1216",
+      "pr": 1216,
+      "title": "W190: repair DOW final child head binding",
+      "priority": "P2",
+      "wave_labels": [
+        "W190"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1217",
+      "pr": 1217,
+      "title": "W190: bind QPS lossless handover receiver in DOW",
+      "priority": "P2",
+      "wave_labels": [
+        "W190"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1218",
+      "pr": 1218,
+      "title": "H4 W3 P2: finalize DOW receipts with consumer PR identity",
+      "priority": "P2",
+      "wave_labels": [
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1219",
+      "pr": 1219,
+      "title": "H4 W3 P2: consume OFFER-11 KEB receipt through DOW",
+      "priority": "P2",
+      "wave_labels": [
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1221",
+      "pr": 1221,
+      "title": "Text curation: route ABACUS CI runner snapshot and statistics proposal",
+      "priority": "P2",
+      "wave_labels": [
+        "W192"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1222",
+      "pr": 1222,
+      "title": "Text curation Batch 03: ABACUS DMAIC first-error and repair receipts",
+      "priority": "P2",
+      "wave_labels": [
+        "W207"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1228",
+      "pr": 1228,
+      "title": "W105/M: modernize ABACUS CI runtime dependencies and fail-closed tests",
+      "priority": "P2",
+      "wave_labels": [
+        "W105"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1229",
+      "pr": 1229,
+      "title": "W105/P3 MIP: DOW exact runtime receipt for playground QA",
+      "priority": "P2",
+      "wave_labels": [
+        "W105"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1233",
+      "pr": 1233,
+      "title": "W105/H DOW: accept child handover pointer only",
+      "priority": "P2",
+      "wave_labels": [
+        "W105"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1235",
+      "pr": 1235,
+      "title": "Session closure DOW: accept final chat handover pointer only",
+      "priority": "P2",
+      "wave_labels": [
+        "W105"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1247",
+      "pr": 1247,
+      "title": "W105/MIP: expose exact full-DMAIC pytest first-red",
+      "priority": "P2",
+      "wave_labels": [
+        "W105"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1248",
+      "pr": 1248,
+      "title": "W232R: rebind DOW receiver to stable child restart root",
+      "priority": "P2",
+      "wave_labels": [
+        "W232"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1253",
+      "pr": 1253,
+      "title": "3P#2: independently reproduce temporal PCA in DOW",
+      "priority": "P2",
+      "wave_labels": [
+        "W258"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1255",
+      "pr": 1255,
+      "title": "W259 P4: independently challenge math-card KEB binding in DOW",
+      "priority": "P2",
+      "wave_labels": [
+        "W259"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1258",
+      "pr": 1258,
+      "title": "W266: consume QPS Golden Thread replay receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W266"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1261",
+      "pr": 1261,
+      "title": "W273: register GMI DOCENG receiver/challenge contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W273"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1270",
+      "pr": 1270,
+      "title": "W80/MC-2: pin Actions producer receipt with SHA256",
+      "priority": "P2",
+      "wave_labels": [
+        "W80"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1274",
+      "pr": 1274,
+      "title": "W80/MC-2: prove lossless closeout after #1272 docs red",
+      "priority": "P2",
+      "wave_labels": [
+        "W80"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1279",
+      "pr": 1279,
+      "title": "W80/MC-2: publish final lossless closeout receipt v0.3",
+      "priority": "P2",
+      "wave_labels": [
+        "W80"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1281",
+      "pr": 1281,
+      "title": "W80/MC-2: attest exact v0.3 publication head",
+      "priority": "P2",
+      "wave_labels": [
+        "W80"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1283",
+      "pr": 1283,
+      "title": "W286: stage GLOOB/Pandoc P1 DOW receiver",
+      "priority": "P2",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1285",
+      "pr": 1285,
+      "title": "W286 R2: prove GLOOB/Pandoc P1 DOW parity",
+      "priority": "P2",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1292",
+      "pr": 1292,
+      "title": "W81: repair canonical publication lint",
+      "priority": "P2",
+      "wave_labels": [
+        "W81"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1293",
+      "pr": 1293,
+      "title": "W81: close documentation lint red without changing diagnostic semantics",
+      "priority": "P2",
+      "wave_labels": [
+        "W81"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1298",
+      "pr": 1298,
+      "title": "W83: canonicalize typed-basis negative outcome diagnostic",
+      "priority": "P2",
+      "wave_labels": [
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1300",
+      "pr": 1300,
+      "title": "ci(qps): make DOW warm-up observable on pull requests",
+      "priority": "P2",
+      "wave_labels": [
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1301",
+      "pr": 1301,
+      "title": "W82/canonical governance pair diagnostic 20260921",
+      "priority": "P2",
+      "wave_labels": [
+        "W82"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1303",
+      "pr": 1303,
+      "title": "BDQ-003: separate artifact-hash refresh from semantic DOW trigger",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1306",
+      "pr": 1306,
+      "title": "fix(dow): repair PR-head warm-up first-red",
+      "priority": "P2",
+      "wave_labels": [
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1319",
+      "pr": 1319,
+      "title": "W81: repair UTF-8 workflow rationalisation",
+      "priority": "P2",
+      "wave_labels": [
+        "W81"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1340",
+      "pr": 1340,
+      "title": "QPS: sync W307 LOOP/QCELL owner freeze into peer matrix",
+      "priority": "P2",
+      "wave_labels": [
+        "W307"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1345",
+      "pr": 1345,
+      "title": "W322: quantify HEPAK MIP blocker conversion",
+      "priority": "P2",
+      "wave_labels": [
+        "W322"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1346",
+      "pr": 1346,
+      "title": "W322-R2: quantify substantive source-receipt blocker conversion",
+      "priority": "P2",
+      "wave_labels": [
+        "W322-R2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1348",
+      "pr": 1348,
+      "title": "MC2: publish lossless QPS TRIAGE session close",
+      "priority": "P2",
+      "wave_labels": [
+        "W83-NG1"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1349",
+      "pr": 1349,
+      "title": "QPS W329: bind LOOP/QCELL lossless handover pointer",
+      "priority": "P2",
+      "wave_labels": [
+        "W329"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1350",
+      "pr": 1350,
+      "title": "MC2: finalize lossless session close after CD cancellation",
+      "priority": "P2",
+      "wave_labels": [
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1351",
+      "pr": 1351,
+      "title": "W329-R2: quantify HIST-BD-034 exact-head challenge",
+      "priority": "P2",
+      "wave_labels": [
+        "W329-R2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1353",
+      "pr": 1353,
+      "title": "W331-R2: final HIST-BD-034 DOW exact-head challenge",
+      "priority": "P2",
+      "wave_labels": [
+        "W331-R2"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1354",
+      "pr": 1354,
+      "title": "W329-R1: quantify final HIST-BD-034 DOW challenge",
+      "priority": "P2",
+      "wave_labels": [
+        "W329-R1"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1355",
+      "pr": 1355,
+      "title": "W331-R3: final HIST-BD-034 DOW receiver",
+      "priority": "P2",
+      "wave_labels": [
+        "W331-R3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1356",
+      "pr": 1356,
+      "title": "W331-R4: exact PSV DOW receiver",
+      "priority": "P2",
+      "wave_labels": [
+        "W331-R4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1357",
+      "pr": 1357,
+      "title": "W334: bind final HIST-BD-034 DOW pointer receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W334"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1358",
+      "pr": 1358,
+      "title": "CI: scope presentation-engine gates to owned tests",
+      "priority": "P2",
+      "wave_labels": [
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1359",
+      "pr": 1359,
+      "title": "W306 MIP: emit typed DOW findings and convergence telemetry",
+      "priority": "P2",
+      "wave_labels": [
+        "W306"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1362",
+      "pr": 1362,
+      "title": "Security: repair OSV v2.6 PR scan invocation",
+      "priority": "P2",
+      "wave_labels": [
+        "W306"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1368",
+      "pr": 1368,
+      "title": "CI: align DMAIC timeout fallback tests with ExecutionBackbone",
+      "priority": "P2",
+      "wave_labels": [
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1371",
+      "pr": 1371,
+      "title": "CI: run Enterprise pytest step under bash on Windows",
+      "priority": "P2",
+      "wave_labels": [
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1372",
+      "pr": 1372,
+      "title": "W306 review fix: bind focused proof to exact PR head",
+      "priority": "P2",
+      "wave_labels": [
+        "W306"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1373",
+      "pr": 1373,
+      "title": "W306 R3: assert exact evaluated source in typed-findings proof",
+      "priority": "P2",
+      "wave_labels": [
+        "W306"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1374",
+      "pr": 1374,
+      "title": "GM-I-A P002: consume fresh CoolProp transaction in DOW",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1389",
+      "pr": 1389,
+      "title": "Test: align Week 3 integration cardinality contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1390",
+      "pr": 1390,
+      "title": "Test: align live Week 3 cardinality contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1392",
+      "pr": 1392,
+      "title": "Fix Python 3.9/3.10 UTC compatibility",
+      "priority": "P2",
+      "wave_labels": [
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1397",
+      "pr": 1397,
+      "title": "Test: remove stale DOW bootstrap report import",
+      "priority": "P2",
+      "wave_labels": [
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1400",
+      "pr": 1400,
+      "title": "Test: align empty bootstrap regression contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1402",
+      "pr": 1402,
+      "title": "Test: scope MC2 zero-step lookup to runtime telemetry rows",
+      "priority": "P2",
+      "wave_labels": [
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    },
+    {
+      "id": "GBOGEB/ABACUS::PR1404",
+      "pr": 1404,
+      "title": "Test: retire untracked parallel execution config contract",
+      "priority": "P2",
+      "wave_labels": [
+        "W83"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": []
+    }
+  ],
+  "dispatch_policy": "P0 cross-repo/return first; P1 multi-label next; preserve execution-admission holds as noncompensating.",
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
