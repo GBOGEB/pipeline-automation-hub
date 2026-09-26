@@ -153,12 +153,25 @@
     "fleet_merged": 4211,
     "fleet_open": 2,
     "fleet_closed_unmerged": 272,
+    "f01_repositories": 8,
     "f01_prs": 4277,
+    "f01_merged": 4009,
+    "f01_open": 1,
+    "f01_closed_unmerged": 267,
     "f01_share_pct": 95.3623,
     "non_f01_repositories": 82,
+    "non_f01_repositories_with_prs": 14,
+    "non_f01_zero_pr_repositories": 68,
     "non_f01_prs": 208,
-    "non_f01_merged": 203,
-    "non_f01_open": 0,
+    "non_f01_merged": 202,
+    "non_f01_open": 1,
     "non_f01_closed_unmerged": 5
+  },
+  "allocation_decision": {
+    "extra_scout_reader_cells": "YES_F01_ONLY",
+    "extra_deep_readers": "NO_SHARED_EXCEPTION_QUEUE_SUFFICIENT_AT_START",
+    "extra_runtime_workers": "NO_VALUE_ADD",
+    "extra_runners": "NO_VALUE_ADD",
+    "reason": "95.4% of fleet PR history is concentrated in F01; the remaining 82 repos contain 208 PRs total. Backfill is API/read-bound, not runtime-bound."
   }
 }
