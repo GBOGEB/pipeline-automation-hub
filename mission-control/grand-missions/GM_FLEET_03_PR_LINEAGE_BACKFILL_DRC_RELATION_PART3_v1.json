@@ -1,0 +1,91 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.drc_relation_typing_part.v1",
+  "cell": "DR-C",
+  "part": 3,
+  "sources": [
+    "GBOGEB/Q_engineering_tools::PR90",
+    "GBOGEB/Q_engineering_tools::PR91",
+    "GBOGEB/Q_engineering_tools::PR92",
+    "GBOGEB/Q_engineering_tools::PR93",
+    "GBOGEB/Q_engineering_tools::PR94",
+    "GBOGEB/Q_engineering_tools::PR95",
+    "GBOGEB/Q_engineering_tools::PR96",
+    "GBOGEB/Q_engineering_tools::PR97"
+  ],
+  "edges": [
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR90",
+      "to": "GBOGEB/cryoplant-project#1607",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "nt #1606 to the narrower canonical R4 PR #1607. This carrier mirrors #1606 exact head `fe64562d...`, so continuing it would prove a superseded candidate and create a parallel proof path. Canonical child transaction: - GBOGEB/cryoplant-project#1607 - exact head `9c452274e4e71ea3b95df7026a79c866d57d0666` - issue/root #1600 / HIST-BD-033 No authority transfer or formal credit. cryoplant #923 remains independent.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR91",
+      "to": "GBOGEB/cryoplant-project#1607",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "W281-R4: exact federated proof for canonical #1607 ## Purpose Execute the exact canonical HIST-BD-033 R4 payload from `GBOGEB/cryoplant-project#1607` on a public sibling runner. Source head: `9c452274e4e71ea3b95df7026a79c866d57d0666`. The workflow pins all six source Git blobs and runs the validator plus all embedded negative controls under both normal Python and",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR92",
+      "to": "GBOGEB/cryoplant-project#1614",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "W322-R2: exact federated proof for cryoplant #1614 ## Purpose Execute the **current exact** W322-R2 payload from `GBOGEB/cryoplant-project#1614` on a public sibling runner after a parallel R1/R2 head movement. Current source head: `0cf3850589d437e02144c8996d972849a7442c36`. Pinned source blobs: - script: `4c06b53cdd309abfa5dba19789d6c53ecc537c9c` - tests: `13",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR93",
+      "to": "GBOGEB/cryoplant-project#1618",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "W322-R2: prove merged cryoplant #1618 and measure W57 parity ## Purpose Execute the exact merged W322-R2 authority from `GBOGEB/cryoplant-project#1618`. Source merge/head: `6553b13b02a03d8aadb18b20c881b894a92484b8`. Pinned blobs: - script `5d21c874c2f6d95fa08f2a86bceb5f51b613e17c` - tests `27c3549ec4d10c730d7d74fd03dacf8ebf9d41ff` - control `3127d7949be42311d108bcd6",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR94",
+      "to": "GBOGEB/cryoplant-project#1624",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "W322-R3: exact proof for cryoplant #1624 Exact federated execution of QPS W322-R3 BT2 source/provenance hardening. Source PR: GBOGEB/cryoplant-project#1624 Source head: `cda25fca9eb62ffff05ed9575ba12abe66d6f46c` Pinned blobs: - script `ce4cbe8eb04cb96de3551ce0c5a10ad420edc5b3` - tests `8392d8b38de26bc719f04d15d58089b87a5bd0e0` - control `7bc51fe6e3c157609fccc9d28af52d7a92",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR95",
+      "to": "GBOGEB/cryoplant-project#1625",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "W322-R4: exact proof for cryoplant #1625 Exact federated execution of QPS W322-R4. Source PR: GBOGEB/cryoplant-project#1625 Source head: `3242e19219773f8a913005772827159a4aea3af1` Pinned blobs: - script `e0797a5d25f713588f60bdd5b9ebca072b2a8052` - tests `46806ca525ec52a897457ffe85dd1948ed015d68` - control `0267690eeb75636f05910026888825e877",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR96",
+      "to": "GBOGEB/cryoplant-project#1622",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "W325: exact proof for cryoplant #1622 Exact public execution of the retained W325 BT2 W57 P09 closeout candidate. Source PR: GBOGEB/cryoplant-project#1622 Source head: `94cf8cbc75a9af6acbf7f96bcb54e8aa3c67335e` Pinned blobs: - controller `f313c7e35de84ce9ceb8cb1adabe219c5e47e9d9` - tests `a24fd591f8a610687341025c36db7c85d93fcbc1` - W325 closeout `d12923be5d8b92d6f3b482c0",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR97",
+      "to": "GBOGEB/cryoplant-project#1629",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "W326: execute exact cryoplant #1629 BT0 trust-anchor proof Exact-payload execution for GBOGEB/cryoplant-project#1629 head `2ac63c0b867a80810d76e2de9220e77d0bdaa1db`. Pinned source blobs: - controller `a485b5454b318f3c0cca9510c5a716de6edb74b8` - tests `8645e981b4c4cbeb247bc01ff8a56b0a15796ebb` Proof runs the full exact unit suite und",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    }
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
