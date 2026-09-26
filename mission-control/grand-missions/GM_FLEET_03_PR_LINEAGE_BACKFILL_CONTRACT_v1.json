@@ -1,0 +1,737 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "parent_issue": "GBOGEB/pipeline-automation-hub#426",
+  "seed_lineage": {
+    "mission_issue": "GBOGEB/pipeline-automation-hub#423",
+    "seed_pr": "GBOGEB/pipeline-automation-hub#424",
+    "correction_pr": "GBOGEB/pipeline-automation-hub#425",
+    "qps_successor": "GBOGEB/cryoplant-project#1801",
+    "canonical_seed_ledger": "mission-control/grand-missions/GM_FLEET_03_WAVE_PR_RECURSIVE_GOLDEN_THREAD_v1.json"
+  },
+  "as_of": "2026-09-26",
+  "fleet_denominator": {
+    "installed_repositories": 90,
+    "source": "GitHub installed repository census",
+    "archived_included": true
+  },
+  "mission_boundary": {
+    "grand_mission": "GM-IV",
+    "fleet_wave": "GM-FLEET-03",
+    "gm_v_state": "HELD",
+    "new_grand_mission_number_created": false,
+    "concurrency_capacity_claimed": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "identity": {
+    "repository": "owner/name",
+    "pr": "repository::PR<number>",
+    "wave": "repository::mission_family::W###::lane_or_update",
+    "rule": "Never join or order lineage on bare PR number or W###."
+  },
+  "phases": [
+    "A_REPOSITORY_AND_PR_CENSUS",
+    "B_STRUCTURAL_PR_BACKFILL",
+    "C_EXCEPTION_DRIVEN_DEEP_READ",
+    "D_RECURSIVE_CROSS_REPO_CONTROL"
+  ],
+  "frontiers": [
+    {
+      "id": "F01",
+      "name": "CORE_QPS",
+      "repository_count": 8,
+      "repositories": [
+        {
+          "repository": "GBOGEB/ABACUS",
+          "name": "ABACUS",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/CODEX",
+          "name": "CODEX",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/cryoplant-project",
+          "name": "cryoplant-project",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/document-organization-system",
+          "name": "document-organization-system",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/DOCX_RTM_Automation",
+          "name": "DOCX_RTM_Automation",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/gg_MATH",
+          "name": "gg_MATH",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/pipeline-automation-hub",
+          "name": "pipeline-automation-hub",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/Q_engineering_tools",
+          "name": "Q_engineering_tools",
+          "default_branch": "main",
+          "archived": false
+        }
+      ],
+      "crew": {
+        "scout": "SCOUT_F01",
+        "reader": "READER_F01",
+        "return_path": "MISSIONCONTROL_GOLDEN_THREAD_AGGREGATOR"
+      },
+      "execution_mode": "API_CENSUS_FIRST_DEEP_READ_ON_EXCEPTION"
+    },
+    {
+      "id": "F02",
+      "name": "FEDERATION_RUNTIME",
+      "repository_count": 12,
+      "repositories": [
+        {
+          "repository": "GBOGEB/CODESPACES_jyperter",
+          "name": "CODESPACES_jyperter",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/codespaces-jupyter",
+          "name": "codespaces-jupyter",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/codex-universal",
+          "name": "codex-universal",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/CoolProp",
+          "name": "CoolProp",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/cryogenic-accelerator-workspace",
+          "name": "cryogenic-accelerator-workspace",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/dmaic-recursive-pipeline",
+          "name": "dmaic-recursive-pipeline",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/dmaic-recursive-pipeline_ALL_agennts-CP-G5-GEM-ABAC-as-4-sources",
+          "name": "dmaic-recursive-pipeline_ALL_agennts-CP-G5-GEM-ABAC-as-4-sources",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/GEMINI",
+          "name": "GEMINI",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/github-mcp-server",
+          "name": "github-mcp-server",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/gpt_session_toolkit",
+          "name": "gpt_session_toolkit",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/orchestration-sandbox",
+          "name": "orchestration-sandbox",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/scientific-agent-skills",
+          "name": "scientific-agent-skills",
+          "default_branch": "main",
+          "archived": false
+        }
+      ],
+      "crew": {
+        "scout": "SCOUT_F02",
+        "reader": "READER_F02",
+        "return_path": "MISSIONCONTROL_GOLDEN_THREAD_AGGREGATOR"
+      },
+      "execution_mode": "API_CENSUS_FIRST_DEEP_READ_ON_EXCEPTION"
+    },
+    {
+      "id": "F03",
+      "name": "GENERAL_CENSUS_SHARD_A",
+      "repository_count": 12,
+      "repositories": [
+        {
+          "repository": "GBOGEB/anthropic",
+          "name": "anthropic",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/Awesome-Hacking",
+          "name": "Awesome-Hacking",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/cli",
+          "name": "cli",
+          "default_branch": "trunk",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/document-organization-system_GBOGEB",
+          "name": "document-organization-system_GBOGEB",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/ExplorerPatcher",
+          "name": "ExplorerPatcher",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/github_Documents",
+          "name": "github_Documents",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/markdownlint",
+          "name": "markdownlint",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/openai-cookbook",
+          "name": "openai-cookbook",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/python",
+          "name": "python",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/skills",
+          "name": "skills",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/the-book-of-secret-knowledge",
+          "name": "the-book-of-secret-knowledge",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/vscode-powershell",
+          "name": "vscode-powershell",
+          "default_branch": "main",
+          "archived": false
+        }
+      ],
+      "crew": {
+        "scout": "SCOUT_F03",
+        "reader": "READER_F03",
+        "return_path": "MISSIONCONTROL_GOLDEN_THREAD_AGGREGATOR"
+      },
+      "execution_mode": "API_CENSUS_FIRST_DEEP_READ_ON_EXCEPTION"
+    },
+    {
+      "id": "F04",
+      "name": "GENERAL_CENSUS_SHARD_B",
+      "repository_count": 12,
+      "repositories": [
+        {
+          "repository": "GBOGEB/ariana",
+          "name": "ariana",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/awesome-sysadmin",
+          "name": "awesome-sysadmin",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/code-prettify",
+          "name": "code-prettify",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/downloads-organization",
+          "name": "downloads-organization",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/financial-services",
+          "name": "financial-services",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/gk-cli",
+          "name": "gk-cli",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/morris.js",
+          "name": "morris.js",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/openai-node",
+          "name": "openai-node",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/python-proofreader",
+          "name": "python-proofreader",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/skills-introduction-to-github",
+          "name": "skills-introduction-to-github",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/treg",
+          "name": "treg",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/welcome-_-test",
+          "name": "welcome-_-test",
+          "default_branch": "main",
+          "archived": false
+        }
+      ],
+      "crew": {
+        "scout": "SCOUT_F04",
+        "reader": "READER_F04",
+        "return_path": "MISSIONCONTROL_GOLDEN_THREAD_AGGREGATOR"
+      },
+      "execution_mode": "API_CENSUS_FIRST_DEEP_READ_ON_EXCEPTION"
+    },
+    {
+      "id": "F05",
+      "name": "GENERAL_CENSUS_SHARD_C",
+      "repository_count": 12,
+      "repositories": [
+        {
+          "repository": "GBOGEB/ARTSTYLE-WIP",
+          "name": "ARTSTYLE-WIP",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/awesome-system-design-resources",
+          "name": "awesome-system-design-resources",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/cryo_leak_rate_dashboard",
+          "name": "cryo_leak_rate_dashboard",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/Edit_WORD_Roundtrip",
+          "name": "Edit_WORD_Roundtrip",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/GBOGEB",
+          "name": "GBOGEB",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/grid-table-editor",
+          "name": "grid-table-editor",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/node-glob",
+          "name": "node-glob",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/plotly.py",
+          "name": "plotly.py",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/python-sdk",
+          "name": "python-sdk",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/stale",
+          "name": "stale",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/univer",
+          "name": "univer",
+          "default_branch": "dev",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/yaml-grammar",
+          "name": "yaml-grammar",
+          "default_branch": "master",
+          "archived": false
+        }
+      ],
+      "crew": {
+        "scout": "SCOUT_F05",
+        "reader": "READER_F05",
+        "return_path": "MISSIONCONTROL_GOLDEN_THREAD_AGGREGATOR"
+      },
+      "execution_mode": "API_CENSUS_FIRST_DEEP_READ_ON_EXCEPTION"
+    },
+    {
+      "id": "F06",
+      "name": "GENERAL_CENSUS_SHARD_D",
+      "repository_count": 12,
+      "repositories": [
+        {
+          "repository": "GBOGEB/attest-build-provenance",
+          "name": "attest-build-provenance",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/ax",
+          "name": "ax",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/cryogenic-compliance",
+          "name": "cryogenic-compliance",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/Encode-Sans",
+          "name": "Encode-Sans",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/GBOGEB-profile",
+          "name": "GBOGEB-profile",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/haikus-for-codespaces",
+          "name": "haikus-for-codespaces",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/notebook",
+          "name": "notebook",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/prettier",
+          "name": "prettier",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/qplant-system-v0-1-1-dmaic2-temp",
+          "name": "qplant-system-v0-1-1-dmaic2-temp",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/substrate",
+          "name": "substrate",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/vscode",
+          "name": "vscode",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/yaml-reference-parser",
+          "name": "yaml-reference-parser",
+          "default_branch": "main",
+          "archived": false
+        }
+      ],
+      "crew": {
+        "scout": "SCOUT_F06",
+        "reader": "READER_F06",
+        "return_path": "MISSIONCONTROL_GOLDEN_THREAD_AGGREGATOR"
+      },
+      "execution_mode": "API_CENSUS_FIRST_DEEP_READ_ON_EXCEPTION"
+    },
+    {
+      "id": "F07",
+      "name": "GENERAL_CENSUS_SHARD_E",
+      "repository_count": 11,
+      "repositories": [
+        {
+          "repository": "GBOGEB/awesome",
+          "name": "awesome",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/camelot",
+          "name": "camelot",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/css-protips",
+          "name": "css-protips",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/eslint-config-prettier",
+          "name": "eslint-config-prettier",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/GBOGEB-PROGRAM-COOL",
+          "name": "GBOGEB-PROGRAM-COOL",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/inkscape",
+          "name": "inkscape",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/omi",
+          "name": "omi",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/prettier-eslint",
+          "name": "prettier-eslint",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/RouteLLM",
+          "name": "RouteLLM",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/telegraf",
+          "name": "telegraf",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/vscode-drawio",
+          "name": "vscode-drawio",
+          "default_branch": "main",
+          "archived": false
+        }
+      ],
+      "crew": {
+        "scout": "SCOUT_F07",
+        "reader": "READER_F07",
+        "return_path": "MISSIONCONTROL_GOLDEN_THREAD_AGGREGATOR"
+      },
+      "execution_mode": "API_CENSUS_FIRST_DEEP_READ_ON_EXCEPTION"
+    },
+    {
+      "id": "F08",
+      "name": "GENERAL_CENSUS_SHARD_F",
+      "repository_count": 11,
+      "repositories": [
+        {
+          "repository": "GBOGEB/awesome-deep-learning",
+          "name": "awesome-deep-learning",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/claude-code-templates",
+          "name": "claude-code-templates",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/docker-stacks",
+          "name": "docker-stacks",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/ExcelAddinInstaller",
+          "name": "ExcelAddinInstaller",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+          "name": "github_documentorganisatiesysteem_GBOGEB",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/kubernetes",
+          "name": "kubernetes",
+          "default_branch": "master",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/OMI_PTIT",
+          "name": "OMI_PTIT",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/prettier-vscode",
+          "name": "prettier-vscode",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/segment-anything",
+          "name": "segment-anything",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/tesseract",
+          "name": "tesseract",
+          "default_branch": "main",
+          "archived": false
+        },
+        {
+          "repository": "GBOGEB/vscode-emacs-mcx",
+          "name": "vscode-emacs-mcx",
+          "default_branch": "main",
+          "archived": false
+        }
+      ],
+      "crew": {
+        "scout": "SCOUT_F08",
+        "reader": "READER_F08",
+        "return_path": "MISSIONCONTROL_GOLDEN_THREAD_AGGREGATOR"
+      },
+      "execution_mode": "API_CENSUS_FIRST_DEEP_READ_ON_EXCEPTION"
+    }
+  ],
+  "cross_frontier_crew": [
+    {
+      "role": "DEEP_READER",
+      "backing": "U08_REX_KEB_EQUIVALENT",
+      "activate_on": [
+        "IDENTITY_COLLISION",
+        "SUPERSESSION_AMBIGUITY",
+        "CROSS_REPO_RETURN",
+        "CONTRADICTORY_HANDOVER"
+      ]
+    },
+    {
+      "role": "QA",
+      "backing": "U06_QA_EQUIVALENT",
+      "activate_on": [
+        "FRONTIER_RETURN",
+        "FINAL_LEDGER_VALIDATION"
+      ]
+    },
+    {
+      "role": "PM_ORCHESTRATOR",
+      "backing": "U03_COMMAND_EQUIVALENT",
+      "activate_on": [
+        "FRONTIER_DISPATCH",
+        "DENOMINATOR_DRIFT",
+        "RETURN_MISSING"
+      ]
+    }
+  ],
+  "runner_policy": {
+    "census_requires_runner": false,
+    "broad_runner_fanout": false,
+    "allowed_validation": "ONE_BOUNDED_POST_GENERATION_VALIDATOR_AFTER_LEDGER_EXISTS",
+    "reason": "Historical GitHub metadata retrieval is API-bound; existing GM-IV evidence proves capability coverage, not concurrent runner capacity."
+  },
+  "stop_rules": [
+    "NO_NEW_GM_NUMBER_FROM_CENSUS_ALONE",
+    "NO_GM_V_LAUNCH",
+    "NO_CONCURRENCY_CAPACITY_CLAIM",
+    "NO_DOCTOR_OR_ENGINEER_SURGE_WITHOUT_EXECUTABLE_DEFECT",
+    "NO_DEEP_READ_EQUAL_WEIGHT_FOR_ZERO_VALUE_VENDOR_HISTORY",
+    "NO_FALSE_COMPLETENESS",
+    "NO_AUTHORITY_TRANSFER"
+  ],
+  "success_predicate": {
+    "repo_census": "LIVE_DENOMINATOR_ALL_REPOSITORIES",
+    "pr_identity": "ALL_DISCOVERED_PRS_CANONICALLY_REPOSITORY_SCOPED",
+    "structural_links": "ALL_EXPLICIT_LINKS_CAPTURED_OR_TYPED_UNRESOLVED",
+    "deep_read": "EXCEPTION_DRIVEN_NOT_BLIND_FULLTEXT",
+    "seed_preservation": "CANONICAL_7_SEED_GRAPH_PRESERVED_WITHOUT_REWRITE"
+  }
+}
