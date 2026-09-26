@@ -18,12 +18,14 @@
   ],
   "identity_rule": {
     "finding": "W### labels are not globally unique and are not chronological identifiers.",
-    "canonical_key": "repository::mission_family::wave_label",
+    "canonical_key": "repository::mission_family::wave_label::lane_or_update",
     "examples": [
-      "GBOGEB/pipeline-automation-hub::HM01_R3_DMAIC::W277",
-      "GBOGEB/cryoplant-project::RTM_HIERARCHY::W277"
+      "GBOGEB/pipeline-automation-hub::HM01_R3_DMAIC::W277::BASELINE",
+      "GBOGEB/cryoplant-project::RTM_HIERARCHY::W277::PARENT_CHILD",
+      "GBOGEB/cryoplant-project::REQUIREMENTS_TABLE3::W287::TABLE3",
+      "GBOGEB/cryoplant-project::REQUIREMENTS_TABLE3::W287::DREQ_GAP"
     ],
-    "forbidden_join": "Never join nodes on W### alone."
+    "forbidden_join": "Never join nodes on W### alone, or on repo+family+W### when lane/update differs."
   },
   "crew": [
     {
@@ -90,7 +92,8 @@
       "wave": "W287",
       "state": "MERGED_CONTROL",
       "primary_pr": 1538,
-      "merge_sha": "d2e495fca88752ed5efff82bd2466432ce5a8e35"
+      "merge_sha": "d2e495fca88752ed5efff82bd2466432ce5a8e35",
+      "lane": "TABLE3"
     },
     {
       "id": "MC_HM01_W277",
@@ -99,7 +102,8 @@
       "wave": "W277",
       "state": "MERGED_CONTROL",
       "primary_pr": 210,
-      "merge_sha": "177ad762acd4e4d2170841b217858f1ca4e41923"
+      "merge_sha": "177ad762acd4e4d2170841b217858f1ca4e41923",
+      "lane": "BASE"
     },
     {
       "id": "MC_HM01_W278",
@@ -108,7 +112,8 @@
       "wave": "W278",
       "state": "MERGED_CONTROL",
       "primary_pr": 211,
-      "merge_sha": "ccdb95047eb34a0f0d82a82618299274eb675be0"
+      "merge_sha": "ccdb95047eb34a0f0d82a82618299274eb675be0",
+      "lane": "BASE"
     },
     {
       "id": "MC_HM01_W279",
@@ -117,7 +122,8 @@
       "wave": "W279",
       "state": "MERGED_CONTROL",
       "primary_pr": 213,
-      "merge_sha": "f3657b820a99a4fbd408f1735f22373e6249ac1c"
+      "merge_sha": "f3657b820a99a4fbd408f1735f22373e6249ac1c",
+      "lane": "BASE"
     },
     {
       "id": "QPS_RTM_W277",
@@ -126,7 +132,8 @@
       "wave": "W277",
       "state": "MERGED",
       "primary_pr": 1588,
-      "merge_sha": "c14331ac10f6095a1d0bf411210df1aaeb96b983"
+      "merge_sha": "c14331ac10f6095a1d0bf411210df1aaeb96b983",
+      "lane": "BASE"
     },
     {
       "id": "QPS_RTM_W278",
@@ -135,7 +142,8 @@
       "wave": "W278",
       "state": "MERGED",
       "primary_pr": 1590,
-      "merge_sha": "f15cae9e8dc009720787054cd7e45233118a197c"
+      "merge_sha": "f15cae9e8dc009720787054cd7e45233118a197c",
+      "lane": "BASE"
     },
     {
       "id": "QPS_W307_OWNER_REVIEW",
@@ -144,7 +152,8 @@
       "wave": "W307",
       "state": "MERGED",
       "primary_pr": 1595,
-      "merge_sha": "1d92adadef8823e877da86131a949d58dec88259"
+      "merge_sha": "1d92adadef8823e877da86131a949d58dec88259",
+      "lane": "INTERACTIVE_OWNER_REVIEW"
     },
     {
       "id": "QPS_RTM_W279",
@@ -153,7 +162,8 @@
       "wave": "W279",
       "state": "MERGED",
       "primary_pr": 1596,
-      "merge_sha": "782f99dba79466592b9e73ed5263df7efa53029e"
+      "merge_sha": "782f99dba79466592b9e73ed5263df7efa53029e",
+      "lane": "BASE"
     },
     {
       "id": "QPS_RTM_W280",
@@ -162,7 +172,8 @@
       "wave": "W280",
       "state": "MERGED",
       "primary_pr": 1597,
-      "merge_sha": "ce9c2afed8541838be4d64ac60227eb20a444590"
+      "merge_sha": "ce9c2afed8541838be4d64ac60227eb20a444590",
+      "lane": "BASE"
     },
     {
       "id": "QPS_RTM_W281",
@@ -179,7 +190,8 @@
         "PR1607",
         "PR1685",
         "PR1687"
-      ]
+      ],
+      "lane": "BASE"
     },
     {
       "id": "QPS_W329_OWNER_REVIEW",
@@ -188,7 +200,8 @@
       "wave": "W329",
       "state": "MERGED_AND_RUNTIME_RECOVERED_LATER",
       "primary_pr": 1641,
-      "merge_sha": "3d02685921682d9e0d14246dbfa08bf2d3c42d8a"
+      "merge_sha": "3d02685921682d9e0d14246dbfa08bf2d3c42d8a",
+      "lane": "OWNER_REVIEW_CONTINUITY"
     },
     {
       "id": "QPS_W287_DREQ_GAP",
@@ -197,7 +210,8 @@
       "wave": "W287",
       "state": "CANDIDATE_MERGED_SOURCE_INTEGRATION_PENDING",
       "primary_pr": 1690,
-      "merge_sha": "290675c06dd26f342708ec8e7455f896e8cd7fdc"
+      "merge_sha": "290675c06dd26f342708ec8e7455f896e8cd7fdc",
+      "lane": "DREQ_GAP"
     }
   ],
   "pr_nodes": [
@@ -922,7 +936,7 @@
     "canonical_subset_wave_labels": 7,
     "canonical_subset_direct_qps_primary_prs": 7,
     "ledger_pr_nodes": 29,
-    "breadth_wave_labels": 40,
+    "breadth_wave_labels": 41,
     "unresolved_deep_bind_labels": [
       "W243",
       "W244",
@@ -931,6 +945,7 @@
       "W325",
       "W331"
     ],
-    "claim": "Complete for the bounded canonical-7 and its observed repair/supersession PRs; breadth inventory is intentionally fail-closed where deep binding is not yet performed."
+    "claim": "Complete for the bounded canonical-7 and its observed repair/supersession PRs; breadth inventory is intentionally fail-closed where deep binding is not yet performed.",
+    "canonical_wave_identity_rule": "repo+family+wave+lane_or_update"
   }
 }
