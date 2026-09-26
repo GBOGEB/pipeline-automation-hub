@@ -3,7 +3,7 @@
   "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "as_of": "2026-09-26",
-  "posture": "SURGE_F01_READERS_NOT_RUNNERS",
+  "posture": "STRUCTURAL_100_PERCENT_SEMANTIC_DEEP_READ_SURGE",
   "allocations": [
     {
       "cell": "F01-A",
@@ -149,29 +149,41 @@
   "formal_credit_delta": 0,
   "measured_capacity": {
     "fleet_repositories": 90,
-    "fleet_prs": 4485,
+    "fleet_prs": 4486,
     "fleet_merged": 4211,
-    "fleet_open": 2,
+    "fleet_open": 3,
     "fleet_closed_unmerged": 272,
-    "f01_repositories": 8,
-    "f01_prs": 4277,
-    "f01_merged": 4009,
-    "f01_open": 1,
-    "f01_closed_unmerged": 267,
-    "f01_share_pct": 95.3623,
-    "non_f01_repositories": 82,
-    "non_f01_repositories_with_prs": 14,
-    "non_f01_zero_pr_repositories": 68,
-    "non_f01_prs": 208,
-    "non_f01_merged": 202,
-    "non_f01_open": 1,
-    "non_f01_closed_unmerged": 5
+    "structural_coverage_pct": 100,
+    "semantic_candidates": 2831,
+    "p0_cross_repo": 364,
+    "p1_multi_label": 1079,
+    "p2_single_label": 1388
   },
   "allocation_decision": {
-    "extra_scout_reader_cells": "YES_F01_ONLY",
-    "extra_deep_readers": "NO_SHARED_EXCEPTION_QUEUE_SUFFICIENT_AT_START",
+    "extra_scout_reader_cells": "F01_ALREADY_SPLIT",
+    "extra_deep_readers": "YES_THREE_TARGETED_P0_CELLS",
     "extra_runtime_workers": "NO_VALUE_ADD",
     "extra_runners": "NO_VALUE_ADD",
-    "reason": "95.4% of fleet PR history is concentrated in F01; the remaining 82 repos contain 208 PRs total. Backfill is API/read-bound, not runtime-bound."
-  }
+    "rationale": "Structural/API retrieval is complete. The active bottleneck is 364 cross-repository semantic/provenance bindings."
+  },
+  "deep_reader_cells": [
+    {
+      "cell": "DR-A",
+      "issue": 434,
+      "scope": "ABACUS P0",
+      "prs": 219
+    },
+    {
+      "cell": "DR-B",
+      "issue": 435,
+      "scope": "cryoplant + CODEX P0",
+      "prs": 83
+    },
+    {
+      "cell": "DR-C",
+      "issue": 436,
+      "scope": "MissionControl/core + satellites P0",
+      "prs": 62
+    }
+  ]
 }
