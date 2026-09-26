@@ -1,0 +1,901 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.deep_read_queue.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "cell": "F02-F08-SHARED",
+  "issue": "GBOGEB/pipeline-automation-hub#433",
+  "source_ledger": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_NONF01_LEDGER_v1.json",
+  "frozen_snapshot": "FLEET_4486_NONF01_209",
+  "candidates": 66,
+  "priority_counts": {
+    "P0": 8,
+    "P1": 9,
+    "P2": 49
+  },
+  "queue": [
+    {
+      "id": "GBOGEB/GBOGEB::PR8",
+      "repository": "GBOGEB/GBOGEB",
+      "pr": 8,
+      "title": "Governance: register Excel schedule engine global topology",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#275"
+      ],
+      "reason": "CROSS_REPO_REFERENCE"
+    },
+    {
+      "id": "GBOGEB/GBOGEB::PR10",
+      "repository": "GBOGEB/GBOGEB",
+      "pr": 10,
+      "title": "Governance: rebind Excel schedule engine after P1 hardening",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#275",
+        "GBOGEB/pipeline-automation-hub#293"
+      ],
+      "reason": "CROSS_REPO_REFERENCE"
+    },
+    {
+      "id": "GBOGEB/GBOGEB::PR15",
+      "repository": "GBOGEB/GBOGEB",
+      "pr": 15,
+      "title": "Governance: promote schedule schema validation and RYG dashboard",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#408",
+        "GBOGEB/pipeline-automation-hub#409"
+      ],
+      "reason": "CROSS_REPO_REFERENCE"
+    },
+    {
+      "id": "GBOGEB/GEMINI::PR26",
+      "repository": "GBOGEB/GEMINI",
+      "pr": 26,
+      "title": "HIST-BD #25: fail closed malformed GMI handover ingress",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#324",
+        "GBOGEB/pipeline-automation-hub#76"
+      ],
+      "reason": "CROSS_REPO_REFERENCE"
+    },
+    {
+      "id": "GBOGEB/GEMINI::PR27",
+      "repository": "GBOGEB/GEMINI",
+      "pr": 27,
+      "title": "HIST-BD #25: fail-closed GMI handover validation and batch ingress",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#76",
+        "GBOGEB/pipeline-automation-hub#324"
+      ],
+      "reason": "CROSS_REPO_REFERENCE"
+    },
+    {
+      "id": "GBOGEB/GEMINI::PR29",
+      "repository": "GBOGEB/GEMINI",
+      "pr": 29,
+      "title": "HIST-BD #28: reject cyclic YAML aliases fail-closed",
+      "priority": "P0",
+      "wave_labels": [
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#76",
+        "GBOGEB/pipeline-automation-hub#324"
+      ],
+      "reason": "CROSS_REPO_REFERENCE"
+    },
+    {
+      "id": "GBOGEB/GEMINI::PR30",
+      "repository": "GBOGEB/GEMINI",
+      "pr": 30,
+      "title": "HIST-BD #28: correct cyclic-YAML proof fixtures",
+      "priority": "P0",
+      "wave_labels": [
+        "W3"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#76",
+        "GBOGEB/pipeline-automation-hub#324"
+      ],
+      "reason": "CROSS_REPO_REFERENCE"
+    },
+    {
+      "id": "GBOGEB/stale::PR10",
+      "repository": "GBOGEB/stale",
+      "pr": 10,
+      "title": "GM DMAIC REX D1: repair TypeScript build contract",
+      "priority": "P0",
+      "wave_labels": [],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [
+        "GBOGEB/pipeline-automation-hub#428"
+      ],
+      "reason": "CROSS_REPO_REFERENCE"
+    },
+    {
+      "id": "GBOGEB/CODESPACES_jyperter::PR67",
+      "repository": "GBOGEB/CODESPACES_jyperter",
+      "pr": 67,
+      "title": "W111: add sanitized QPS power/utility reproducibility workbench",
+      "priority": "P1",
+      "wave_labels": [
+        "W111",
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "MULTI_LABEL_SEMANTIC_BINDING"
+    },
+    {
+      "id": "GBOGEB/codespaces-jupyter::PR2",
+      "repository": "GBOGEB/codespaces-jupyter",
+      "pr": 2,
+      "title": "W111: add Level-1 SSOT and global mesh dock for Jupyter node",
+      "priority": "P1",
+      "wave_labels": [
+        "W111",
+        "W110"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "MULTI_LABEL_SEMANTIC_BINDING"
+    },
+    {
+      "id": "GBOGEB/codespaces-jupyter::PR4",
+      "repository": "GBOGEB/codespaces-jupyter",
+      "pr": 4,
+      "title": "W287: repair exact-head notebook proof after first admitted failure",
+      "priority": "P1",
+      "wave_labels": [
+        "W287",
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "MULTI_LABEL_SEMANTIC_BINDING"
+    },
+    {
+      "id": "GBOGEB/codespaces-jupyter::PR6",
+      "repository": "GBOGEB/codespaces-jupyter",
+      "pr": 6,
+      "title": "W289: repair W288 P1 non-compensating authority guards",
+      "priority": "P1",
+      "wave_labels": [
+        "W289",
+        "W288"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "MULTI_LABEL_SEMANTIC_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR7",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 7,
+      "title": "W145: execute exact LKT 2K-OP A/B/D/E/W enthalpy crosswalk",
+      "priority": "P1",
+      "wave_labels": [
+        "W145",
+        "W142",
+        "W3-12"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "MULTI_LABEL_SEMANTIC_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR8",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 8,
+      "title": "Mission I W4: bind status to runtime evidence and measure phase loading",
+      "priority": "P1",
+      "wave_labels": [
+        "W4",
+        "W4-01",
+        "W4-02",
+        "W145"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "MULTI_LABEL_SEMANTIC_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR12",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 12,
+      "title": "GM-I-B Cycle3: propagate temporal-PCA semantics through 6D helium adapter",
+      "priority": "P1",
+      "wave_labels": [
+        "W145"
+      ],
+      "gm_labels": [
+        "GM-I-B"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "MULTI_LABEL_SEMANTIC_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR15",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 15,
+      "title": "Mission I W4: prove HEAVY build producer -> FAST artifact consumer",
+      "priority": "P1",
+      "wave_labels": [
+        "W4",
+        "W145"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "MULTI_LABEL_SEMANTIC_BINDING"
+    },
+    {
+      "id": "GBOGEB/GBOGEB::PR2",
+      "repository": "GBOGEB/GBOGEB",
+      "pr": 2,
+      "title": "Rebind global Math/Plots topology to merged QPS W259-W260 state",
+      "priority": "P1",
+      "wave_labels": [
+        "W259-W260",
+        "W259",
+        "W260"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "MULTI_LABEL_SEMANTIC_BINDING"
+    },
+    {
+      "id": "GBOGEB/CODESPACES_jyperter::PR47",
+      "repository": "GBOGEB/CODESPACES_jyperter",
+      "pr": 47,
+      "title": "triage: modernize standalone engineering workspace and federate selectively W01",
+      "priority": "P2",
+      "wave_labels": [
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CODESPACES_jyperter::PR50",
+      "repository": "GBOGEB/CODESPACES_jyperter",
+      "pr": 50,
+      "title": "modernize: make scope-aware artifact census the workspace index",
+      "priority": "P2",
+      "wave_labels": [
+        "W01"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CODESPACES_jyperter::PR52",
+      "repository": "GBOGEB/CODESPACES_jyperter",
+      "pr": 52,
+      "title": "modernize: replace placeholder pipeline with executable standalone profiles",
+      "priority": "P2",
+      "wave_labels": [
+        "W04"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CODESPACES_jyperter::PR56",
+      "repository": "GBOGEB/CODESPACES_jyperter",
+      "pr": 56,
+      "title": "W69 MIP: federate codespace artifact and preview worker",
+      "priority": "P2",
+      "wave_labels": [
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CODESPACES_jyperter::PR57",
+      "repository": "GBOGEB/CODESPACES_jyperter",
+      "pr": 57,
+      "title": "W107: propagate #1102 runtime-health roll-up to codespace/property worker",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CODESPACES_jyperter::PR64",
+      "repository": "GBOGEB/CODESPACES_jyperter",
+      "pr": 64,
+      "title": "W107: consume child ACCEPT runtime-health receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CODESPACES_jyperter::PR65",
+      "repository": "GBOGEB/CODESPACES_jyperter",
+      "pr": 65,
+      "title": "W107/P1: prove exact-head CLI runtime after inherited lint red",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CODESPACES_jyperter::PR66",
+      "repository": "GBOGEB/CODESPACES_jyperter",
+      "pr": 66,
+      "title": "W111: expose Codespaces worker through global mesh dock",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CODESPACES_jyperter::PR69",
+      "repository": "GBOGEB/CODESPACES_jyperter",
+      "pr": 69,
+      "title": "GM14 D1: rebaseline CI lint to critical errors",
+      "priority": "P2",
+      "wave_labels": [
+        "W293"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/codespaces-jupyter::PR1",
+      "repository": "GBOGEB/codespaces-jupyter",
+      "pr": 1,
+      "title": "W69 MIP: federate Jupyter as reproducible runtime producer",
+      "priority": "P2",
+      "wave_labels": [
+        "W69"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/codespaces-jupyter::PR3",
+      "repository": "GBOGEB/codespaces-jupyter",
+      "pr": 3,
+      "title": "W286: GitHub-first Jupyter / Spyder / MCP runtime control",
+      "priority": "P2",
+      "wave_labels": [
+        "W286"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/codespaces-jupyter::PR5",
+      "repository": "GBOGEB/codespaces-jupyter",
+      "pr": 5,
+      "title": "W288: prove a real QPS RTM notebook workload reproducibly",
+      "priority": "P2",
+      "wave_labels": [
+        "W288"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/codespaces-jupyter::PR7",
+      "repository": "GBOGEB/codespaces-jupyter",
+      "pr": 7,
+      "title": "W290: close strict numeric-zero guard gap for real QPS workload proof",
+      "priority": "P2",
+      "wave_labels": [
+        "W290"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR2",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 2,
+      "title": "W111: add QPS helium power/utility thermophysical adapter",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR5",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 5,
+      "title": "W3-12: enforce HEPAK 2 K authority hold and governed adapter boundary",
+      "priority": "P2",
+      "wave_labels": [
+        "W3-12"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR6",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 6,
+      "title": "W3-12 readiness: consume canonical cryoplant HEPAK CSV+manifest without authority duplication",
+      "priority": "P2",
+      "wave_labels": [
+        "W3-12"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR9",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 9,
+      "title": "Mission I W4: repair first red in docs Docker PR path",
+      "priority": "P2",
+      "wave_labels": [
+        "W4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR10",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 10,
+      "title": "Mission I W4: classify CI reds before repair",
+      "priority": "P2",
+      "wave_labels": [
+        "W4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR11",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 11,
+      "title": "Mission I W4: repair Linux wheel test compatibility across NumPy baselines",
+      "priority": "P2",
+      "wave_labels": [
+        "W4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR13",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 13,
+      "title": "GM-I-B Cycle3: bind immutable 6D child attestation",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-B"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR14",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 14,
+      "title": "MP_P6: prove MIP-hardened skill portability",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-B"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR16",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 16,
+      "title": "Mission I W4 repair: accept lowercase wheel from successful HEAVY build",
+      "priority": "P2",
+      "wave_labels": [
+        "W4"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR17",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 17,
+      "title": "GM-I-A: publish exact FAST/HEAVY federation attestation",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR18",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 18,
+      "title": "GM-I-A P002: fresh FAST/HEAVY measurement transaction",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR19",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 19,
+      "title": "GM-I-A P002: publish immutable federation attestation",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/CoolProp::PR20",
+      "repository": "GBOGEB/CoolProp",
+      "pr": 20,
+      "title": "GM-I-A P002: publish fresh federation attestation",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-A"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/cryo_leak_rate_dashboard::PR6",
+      "repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "pr": 6,
+      "title": "W107: propagate #1102 runtime-health roll-up to leak evidence worker",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/cryo_leak_rate_dashboard::PR12",
+      "repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "pr": 12,
+      "title": "W107: consume child ACCEPT runtime-health receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/cryo_leak_rate_dashboard::PR13",
+      "repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "pr": 13,
+      "title": "W107/P5: prove exact-head deterministic leak-evidence build",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/cryo_leak_rate_dashboard::PR14",
+      "repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "pr": 14,
+      "title": "W111: expose leak-physics worker through global mesh dock",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/cryo_leak_rate_dashboard::PR16",
+      "repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "pr": 16,
+      "title": "M07 CONTROL: accept leak-kernel DoV-1 and quarantine historical QPLANT inputs",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/cryogenic-accelerator-workspace::PR7",
+      "repository": "GBOGEB/cryogenic-accelerator-workspace",
+      "pr": 7,
+      "title": "W107: propagate #1102 runtime-health roll-up to accelerator bridge",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/cryogenic-accelerator-workspace::PR12",
+      "repository": "GBOGEB/cryogenic-accelerator-workspace",
+      "pr": 12,
+      "title": "W107: consume child ACCEPT runtime-health receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/cryogenic-accelerator-workspace::PR13",
+      "repository": "GBOGEB/cryogenic-accelerator-workspace",
+      "pr": 13,
+      "title": "W107/P6: prove exact-head bridge execution with source/target digests",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/cryogenic-accelerator-workspace::PR14",
+      "repository": "GBOGEB/cryogenic-accelerator-workspace",
+      "pr": 14,
+      "title": "W111: expose physics/RTM workspace through global mesh dock",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/cryogenic-accelerator-workspace::PR15",
+      "repository": "GBOGEB/cryogenic-accelerator-workspace",
+      "pr": 15,
+      "title": "W111: quarantine and federate local helium property approximation",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/cryogenic-accelerator-workspace::PR16",
+      "repository": "GBOGEB/cryogenic-accelerator-workspace",
+      "pr": 16,
+      "title": "QPS M08: close W111 quarantine escape and dimensional false-green",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/cryogenic-accelerator-workspace::PR18",
+      "repository": "GBOGEB/cryogenic-accelerator-workspace",
+      "pr": 18,
+      "title": "W70 MIP: reconcile workspace engineering authority with TRIAGE",
+      "priority": "P2",
+      "wave_labels": [
+        "W70"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/GEMINI::PR11",
+      "repository": "GBOGEB/GEMINI",
+      "pr": 11,
+      "title": "Harden GM-I-C IC3 Drive auth proof",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/GEMINI::PR13",
+      "repository": "GBOGEB/GEMINI",
+      "pr": 13,
+      "title": "Wave: census and validate Gemini Drive handovers",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/GEMINI::PR14",
+      "repository": "GBOGEB/GEMINI",
+      "pr": 14,
+      "title": "GM-I-C: add IC3 external auth operator runbook",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/GEMINI::PR17",
+      "repository": "GBOGEB/GEMINI",
+      "pr": 17,
+      "title": "GM-I-C: produce R3 successor bundle and portable exact environment",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/GEMINI::PR20",
+      "repository": "GBOGEB/GEMINI",
+      "pr": 20,
+      "title": "R3 successor: add Windows-native Git-object handoff producer",
+      "priority": "P2",
+      "wave_labels": [
+        "W275"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/GEMINI::PR22",
+      "repository": "GBOGEB/GEMINI",
+      "pr": 22,
+      "title": "Wave A: govern GMI handover package validation",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/GEMINI::PR24",
+      "repository": "GBOGEB/GEMINI",
+      "pr": 24,
+      "title": "Wave C: bind GMI content and IC3 evidence without compensation",
+      "priority": "P2",
+      "wave_labels": [],
+      "gm_labels": [
+        "GM-I-C"
+      ],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/github_Documents::PR4",
+      "repository": "GBOGEB/github_Documents",
+      "pr": 4,
+      "title": "W107: propagate #1102 runtime-health roll-up to private provenance vault",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/github_Documents::PR9",
+      "repository": "GBOGEB/github_Documents",
+      "pr": 9,
+      "title": "W107: consume child ACCEPT runtime-health receipt",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/github_Documents::PR10",
+      "repository": "GBOGEB/github_Documents",
+      "pr": 10,
+      "title": "W107/P4: prove deterministic private-vault roundtrip",
+      "priority": "P2",
+      "wave_labels": [
+        "W107"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    },
+    {
+      "id": "GBOGEB/github_Documents::PR11",
+      "repository": "GBOGEB/github_Documents",
+      "pr": 11,
+      "title": "W111: expose private provenance vault through global mesh dock",
+      "priority": "P2",
+      "wave_labels": [
+        "W111"
+      ],
+      "gm_labels": [],
+      "explicit_cross_repo_refs": [],
+      "reason": "SINGLE_WAVE_OR_GM_BINDING"
+    }
+  ],
+  "dispatch_policy": "P0 cross-repo first; then P1 multi-label; P2 only if needed for recursive closure. Shared Deep-Reader remains sufficient until measured queue growth proves otherwise.",
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}

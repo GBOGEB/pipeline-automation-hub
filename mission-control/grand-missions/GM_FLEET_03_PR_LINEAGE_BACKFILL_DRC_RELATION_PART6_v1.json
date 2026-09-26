@@ -1,0 +1,136 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.drc_relation_typing_part.v1",
+  "cell": "DR-C",
+  "part": 6,
+  "sources": [
+    "GBOGEB/pipeline-automation-hub::PR202",
+    "GBOGEB/pipeline-automation-hub::PR221",
+    "GBOGEB/pipeline-automation-hub::PR232",
+    "GBOGEB/pipeline-automation-hub::PR264",
+    "GBOGEB/pipeline-automation-hub::PR273",
+    "GBOGEB/pipeline-automation-hub::PR274",
+    "GBOGEB/pipeline-automation-hub::PR275",
+    "GBOGEB/pipeline-automation-hub::PR277"
+  ],
+  "edges": [
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR202",
+      "to": "GBOGEB/cryoplant-project#1258",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "ner action - #1266/#1357 remain route-withheld - LEG5 remains 7/9 - authority_transfer=false - QPS runtime/engineering/negotiation/release credit delta=0 Refs: GBOGEB/cryoplant-project#1456 GBOGEB/cryoplant-project#923 GBOGEB/cryoplant-project#1258 GBOGEB/cryoplant-project#1266 GBOGEB/cryoplant-project#1357",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR202",
+      "to": "GBOGEB/cryoplant-project#1266",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "n route-withheld - LEG5 remains 7/9 - authority_transfer=false - QPS runtime/engineering/negotiation/release credit delta=0 Refs: GBOGEB/cryoplant-project#1456 GBOGEB/cryoplant-project#923 GBOGEB/cryoplant-project#1258 GBOGEB/cryoplant-project#1266 GBOGEB/cryoplant-project#1357",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR202",
+      "to": "GBOGEB/cryoplant-project#1357",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "s 7/9 - authority_transfer=false - QPS runtime/engineering/negotiation/release credit delta=0 Refs: GBOGEB/cryoplant-project#1456 GBOGEB/cryoplant-project#923 GBOGEB/cryoplant-project#1258 GBOGEB/cryoplant-project#1266 GBOGEB/cryoplant-project#1357",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR202",
+      "to": "GBOGEB/cryoplant-project#1456",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "S - zero-step != application failure - #923 remains open owner action - #1266/#1357 remain route-withheld - LEG5 remains 7/9 - authority_transfer=false - QPS runtime/engineering/negotiation/release credit delta=0 Refs: GBOGEB/cryoplant-project#1456 GBOGEB/cryoplant-project#923 GBOGEB/cryoplant-project#1258 GBOGEB/cryoplant-project#1266 GBOGEB/cryoplant-project#1357",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR202",
+      "to": "GBOGEB/cryoplant-project#923",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "ailure - #923 remains open owner action - #1266/#1357 remain route-withheld - LEG5 remains 7/9 - authority_transfer=false - QPS runtime/engineering/negotiation/release credit delta=0 Refs: GBOGEB/cryoplant-project#1456 GBOGEB/cryoplant-project#923 GBOGEB/cryoplant-project#1258 GBOGEB/cryoplant-project#1266 GBOGEB/cryoplant-project#1357",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR221",
+      "to": "GBOGEB/cryoplant-project#923",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "of established 8/8 **RUNTIME_PROVEN capability coverage** with eight distinct predeclared hosts and >0 steps. It explicitly did **not** establish concurrency capacity or operational availability. ## Current first red `GBOGEB/cryoplant-project#923` remains open with fresh exact-head private-QPS observations classified `INFRA_PREEXECUTION_ZERO_STEP / RUNNER_ADMISSION`. Latest bound observation: - QPS main `b0b968729fee9e8609b0463c31f30ccd49a9dd52`; - PR #1472 hea",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR232",
+      "to": "GBOGEB/cryoplant-project#923",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HANDOVER_OR_RETURN_REFERENCE",
+      "context": "GM-V 3P* + MIP iteration from live repository authority and publish a repository-native LOSSLESS handover. ## 3P* state - 3PR Refresh / Probe / Rank: PASS. - first non-compensating red: private QPS runner admission, `GBOGEB/cryoplant-project#923`. - 3PC Prepare: PASS_CONTROL_PREPARED. - 3PC Prove: WITHHELD_EXTERNAL. - 3PC Commit for GM-V launch: HOLD_WAIT_PROVE. - 3P3: NOT_AUTHORIZED. ## MIP - Modernize: PASS — stage-aware ACTIVE8 historical controls, PILOT2/",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR264",
+      "to": "GBOGEB/cryoplant-project#1500",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "HAS_PARENT",
+      "context": "H4 QPS TRIAGE: bind 3P* + MIP child re-entry receipt Parent-side non-authoritative receipt for child PR GBOGEB/cryoplant-project#1500. Records the completed sequential 3P* + MIP control slice and preserves the runtime gate as non-compensating: - P1 exact-head runtime KR WITHHELD - W2 3PC + MIP-I HOLD_NOT_ADMITTED - fresh-head repeat NOT_REACHED - W3",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR273",
+      "to": "GBOGEB/GBOGEB#7",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "Receive GBOGEB project knowledge map 3P* + MIP state ## Receiver-only update Consumes the bounded producer state from `GBOGEB/GBOGEB#7` without duplicating the parser or altering QPS authority. - 3P* receiver Refresh/Probe/Rank/Prepare: PASS - Prove: HOLD on producer GitHub Actions runtime receipt - MIP Modernize/Innovate: PASS - MIP Perpetuate: pendi",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR274",
+      "to": "GBOGEB/codespaces-jupyter#3",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "W286: receive IDE/MCP/Jupyter runtime candidate Receive child PR GBOGEB/codespaces-jupyter#3 into MissionControl without authority promotion. - child head: `536903d8d881323e5d5f697d3f37bcb765ba8bd0` - 3P* Refresh/Probe/Rank: complete - MIP Modernize/Innovate/Perpetuate: materialized - 3PC Prepare: complete - 3",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR275",
+      "to": "GBOGEB/GBOGEB#8",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "Schedule classification is discovery metadata only. `authority_transfer=false`. ## Local proof ```text python -m unittest discover -s excel_schedule_engine/tests -v 3 tests -> PASS ``` Companion global-topology PR: `GBOGEB/GBOGEB#8`.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR277",
+      "to": "GBOGEB/Q_engineering_tools#59",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "xcel 3P* + MIP blocker Consume the exact merged QPS child/executor state after sequential 3P* + MIP. Child authority remains `GBOGEB/cryoplant-project#1514` / merge `9fd7693fe15ac798e4269e8c850922b619325fff`. Executor `GBOGEB/Q_engineering_tools#59` / merge `d0a9073cdbda04c517beaab1cc2fb3389aec4b0c`. Both governed hosted-Windows attempts generated the workbook and then stopped before native Excel workbook operations because Excel COM was not registered. Retry bud",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub::PR277",
+      "to": "GBOGEB/cryoplant-project#1514",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "MissionControl: receive QPS M08 native Excel 3P* + MIP blocker Consume the exact merged QPS child/executor state after sequential 3P* + MIP. Child authority remains `GBOGEB/cryoplant-project#1514` / merge `9fd7693fe15ac798e4269e8c850922b619325fff`. Executor `GBOGEB/Q_engineering_tools#59` / merge `d0a9073cdbda04c517beaab1cc2fb3389aec4b0c`. Both governed hosted-Windows attempts generated the workbook and then st",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    }
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}

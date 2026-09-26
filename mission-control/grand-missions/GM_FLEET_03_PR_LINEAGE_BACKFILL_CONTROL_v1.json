@@ -1,0 +1,163 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.control.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "parent_grand_mission": "GM-IV",
+  "fleet_wave": "GM-FLEET-03",
+  "parent_issue": "GBOGEB/pipeline-automation-hub#426",
+  "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
+  "state": "STRUCTURAL_100_PERCENT_SEMANTIC_P0_ACTIVE",
+  "snapshot": "FROZEN_FLEET_4486",
+  "denominator": {
+    "repositories": 90,
+    "prs": 4486,
+    "merged": 4211,
+    "closed_unmerged": 272,
+    "open": 3
+  },
+  "cells": [
+    {
+      "id": "F01-A",
+      "issue": 429,
+      "scope": "GBOGEB/cryoplant-project",
+      "prs": 1679,
+      "crew": [
+        "SCOUT",
+        "READER"
+      ],
+      "state": "OPEN"
+    },
+    {
+      "id": "F01-B",
+      "issue": 430,
+      "scope": "GBOGEB/ABACUS",
+      "prs": 1154,
+      "crew": [
+        "SCOUT",
+        "READER"
+      ],
+      "state": "OPEN"
+    },
+    {
+      "id": "F01-C",
+      "issue": 431,
+      "scope": "GBOGEB/CODEX",
+      "prs": 796,
+      "crew": [
+        "SCOUT",
+        "READER"
+      ],
+      "state": "OPEN"
+    },
+    {
+      "id": "F01-D",
+      "issue": 432,
+      "scope": [
+        "GBOGEB/pipeline-automation-hub",
+        "GBOGEB/Q_engineering_tools",
+        "GBOGEB/DOCX_RTM_Automation",
+        "GBOGEB/document-organization-system",
+        "GBOGEB/gg_MATH"
+      ],
+      "prs": 648,
+      "crew": [
+        "SCOUT",
+        "READER"
+      ],
+      "state": "OPEN"
+    },
+    {
+      "id": "F02-F08-SHARED",
+      "issue": 433,
+      "scope": "82_REPOSITORIES",
+      "prs": 208,
+      "crew": [
+        "SCOUT",
+        "SHARED_READER"
+      ],
+      "state": "OPEN"
+    }
+  ],
+  "shared_crew": [
+    {
+      "role": "DEEP_READER",
+      "policy": "exception_only",
+      "activate_on": [
+        "IDENTITY_COLLISION",
+        "SUPERSESSION_AMBIGUITY",
+        "CROSS_REPO_RETURN",
+        "CONTRADICTORY_HANDOVER"
+      ]
+    },
+    {
+      "role": "QA",
+      "policy": "validate_returned_ledgers_and_edges"
+    },
+    {
+      "role": "PM_ORCHESTRATOR",
+      "policy": "dispatch_named_cells_and_enforce_return_path"
+    }
+  ],
+  "allocation_decision": {
+    "deep_reader_surge": "YES_3_TARGETED_CELLS",
+    "runner_surge": "NO",
+    "worker_surge": "NO_RUNTIME_WORKERS"
+  },
+  "external_noncompensating_boundaries": [
+    "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
+    "GBOGEB/ABACUS#1369 EXECUTION_ADMISSION",
+    "W275_PHYSICAL_SUCCESSOR_GIT_BUNDLE",
+    "GBOGEB/cryoplant-project#1801 W287_DREQ_SOURCE_INTEGRATION"
+  ],
+  "gm_numbering": {
+    "create_new_gm": false,
+    "gm_v": "HELD",
+    "reason": "Backfill is a bounded census/backfill mission cell under GM-IV, not evidence for frontier-count promotion or concurrency capacity."
+  },
+  "stop_rules": [
+    "NO_NEW_GM_NUMBER_FROM_CENSUS_ALONE",
+    "NO_GM_V_LAUNCH",
+    "NO_CONCURRENCY_CAPACITY_CLAIM",
+    "NO_RUNNER_FANOUT_FOR_METADATA",
+    "NO_AUTHORITY_TRANSFER",
+    "NO_FORMAL_OR_ENGINEERING_CREDIT"
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "structural_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_STRUCTURAL_RECEIPT_v1.json",
+  "structural_result": {
+    "coverage_pct": 100,
+    "duplicate_ids": 0,
+    "missing_head_sha": 0,
+    "missing_base_sha": 0
+  },
+  "semantic_backlog": {
+    "total": 2831,
+    "P0": 364,
+    "P1": 1079,
+    "P2": 1388
+  },
+  "deep_reader_cells": [
+    {
+      "id": "DR-A",
+      "issue": 434,
+      "queue": "ABACUS_P0",
+      "count": 219,
+      "state": "OPEN"
+    },
+    {
+      "id": "DR-B",
+      "issue": 435,
+      "queue": "CRYOPLANT_CODEX_P0",
+      "count": 83,
+      "state": "OPEN"
+    },
+    {
+      "id": "DR-C",
+      "issue": 436,
+      "queue": "MC_CORE_SATELLITE_P0",
+      "count": 62,
+      "state": "OPEN"
+    }
+  ]
+}

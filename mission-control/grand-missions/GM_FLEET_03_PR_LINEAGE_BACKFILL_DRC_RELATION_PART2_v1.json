@@ -1,0 +1,127 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.drc_relation_typing_part.v1",
+  "cell": "DR-C",
+  "part": 2,
+  "sources": [
+    "GBOGEB/GEMINI::PR30",
+    "GBOGEB/Q_engineering_tools::PR42",
+    "GBOGEB/Q_engineering_tools::PR44",
+    "GBOGEB/Q_engineering_tools::PR57",
+    "GBOGEB/Q_engineering_tools::PR61",
+    "GBOGEB/Q_engineering_tools::PR63",
+    "GBOGEB/Q_engineering_tools::PR66",
+    "GBOGEB/Q_engineering_tools::PR84"
+  ],
+  "edges": [
+    {
+      "from": "GBOGEB/GEMINI::PR30",
+      "to": "GBOGEB/pipeline-automation-hub#324",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HAS_PARENT",
+      "context": "tch alias returns `REJECT` / `INVALID` without exception; - repeated non-cyclic alias remains `ACCEPT`; - existing handover/binding matrix remains green. Parent Historian: GBOGEB/pipeline-automation-hub#76 W3 tracking: GBOGEB/pipeline-automation-hub#324 Authority transfer: false. Formal credit delta: 0.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/GEMINI::PR30",
+      "to": "GBOGEB/pipeline-automation-hub#76",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HAS_PARENT",
+      "context": "or and returns structured `REJECT`; - cyclic batch alias returns `REJECT` / `INVALID` without exception; - repeated non-cyclic alias remains `ACCEPT`; - existing handover/binding matrix remains green. Parent Historian: GBOGEB/pipeline-automation-hub#76 W3 tracking: GBOGEB/pipeline-automation-hub#324 Authority transfer: false. Formal credit delta: 0.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR42",
+      "to": "GBOGEB/cryoplant-project#1146",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "ion. The target is generator identity/parity preparation: one governed doctrine must drive 10 downstream generation contracts (1 workbook, 1 full narrative, 8 reviewer one-pagers). ## Exact source identity Source PR: `GBOGEB/cryoplant-project#1146` Source head at payload capture: `974780a37d4beeb7cdc492d0b3f3a3d1c724d778` Exact Git blobs: - doctrine `52592fee795bd19d151f0b7612642d28f5a6a88d` - builder `c36f49a5cb72bec6e2e70d41ccc959b7c08974f9` - tests `f86dcc0",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR44",
+      "to": "GBOGEB/cryoplant-project#1156",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "W184F: exact MIP2D cross-output parity proof ## Mission Execute the QPS M08 MIP2D parity transaction on the proven independent runner lane using byte-identical source payloads from `GBOGEB/cryoplant-project#1156` plus the merged MIP2A/B/C generators. ## Exact payload contract The workflow Git-blob-verifies: - doctrine `52592fee...` - workbook control `74387b2e...` - MIP2A/B/C generators `34d3f66e...` / `09fccff8...` / `f7ad6dd",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR57",
+      "to": "GBOGEB/cryoplant-project#1485",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "ired after merge before W285 Perpetuate can be considered complete. #923 and all QPS-local runtime gates remain non-compensating. No formal credit. authority_transfer=false. Refs GBOGEB/pipeline-automation-hub#259 and GBOGEB/cryoplant-project#1485.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR57",
+      "to": "GBOGEB/pipeline-automation-hub#259",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "ng authority. Main-repeat proof is required after merge before W285 Perpetuate can be considered complete. #923 and all QPS-local runtime gates remain non-compensating. No formal credit. authority_transfer=false. Refs GBOGEB/pipeline-automation-hub#259 and GBOGEB/cryoplant-project#1485.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR61",
+      "to": "GBOGEB/Q_engineering_tools#59",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "CLOSES_OR_RESOLVES",
+      "context": "trip gate with two Windows attempts ## Disposition: SUPERSEDED / CLOSED This parallel two-attempt native-Excel probe is no longer the canonical execution surface. Repository authority now binds: - canonical executor: `GBOGEB/Q_engineering_tools#59` (merged) - exact head: `b57b03fcdbb659644ea69c9984c5dcf8d64d51fd` - workflow run: `35360710520` - Windows 2022 attempt: `BLOCKED_NATIVE_EXCEL_COM_UNAVAILABLE` - Windows 2025 attempt: `BLOCKED_NATIVE_EXCEL_COM_UNAVAILAB",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR61",
+      "to": "GBOGEB/cryoplant-project#1514",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "5360710520` - Windows 2022 attempt: `BLOCKED_NATIVE_EXCEL_COM_UNAVAILABLE` - Windows 2025 attempt: `BLOCKED_NATIVE_EXCEL_COM_UNAVAILABLE` - common blocker: `REGDB_E_CLASSNOTREG 0x80040154` - QPS child re-entry/control: `GBOGEB/cryoplant-project#1514` (merged) The two-attempt retry budget is exhausted. Do not add a third GitHub-hosted retry. Re-enter only on a materially different Windows environment with real Microsoft Excel installed. Global MIP3/3P3 remains NOT",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR63",
+      "to": "GBOGEB/cryoplant-project#1490",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "gineering/source authority, no formal credit, and does not compensate #923 or the W275 R3 physical-bundle gate. Expected governed measurement remains B=4/12, equal-function D=0.6, pooled diagnostic=9/16, PEN=0.2. Refs GBOGEB/cryoplant-project#1490 and #58.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR66",
+      "to": "GBOGEB/cryoplant-project#1511",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "SUPERSEDED_BY",
+      "context": "[SUPERSEDED BY W292] W288 equation-v1 exact proof ## Mission Independently execute the exact W288 OFFER-evaluation equation-v1 payload from `GBOGEB/cryoplant-project#1511`. This carrier does **not** replace the already-consumed two-attempt native Excel result. That gate is separately BLOCKED after two hosted Windows attempts because Microsoft Excel COM is unavailable. ## Exact proof T",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR84",
+      "to": "GBOGEB/pipeline-automation-hub#324",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HAS_PARENT",
+      "context": "HIST-BD #83: bound LLDB readiness race without consuming gdbserver Closes #83. Issue expedition: GBOGEB/pipeline-automation-hub#324 Historian parent: GBOGEB/pipeline-automation-hub#76 ## Observed defect The current W2F-R4 executor preserves the single-client rule but can attempt `gdb-remote` after only a fixed 1 s delay. Docker may report the conta",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/Q_engineering_tools::PR84",
+      "to": "GBOGEB/pipeline-automation-hub#76",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HAS_PARENT",
+      "context": "HIST-BD #83: bound LLDB readiness race without consuming gdbserver Closes #83. Issue expedition: GBOGEB/pipeline-automation-hub#324 Historian parent: GBOGEB/pipeline-automation-hub#76 ## Observed defect The current W2F-R4 executor preserves the single-client rule but can attempt `gdb-remote` after only a fixed 1 s delay. Docker may report the container running before `lldb-server` has reached its li",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    }
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}

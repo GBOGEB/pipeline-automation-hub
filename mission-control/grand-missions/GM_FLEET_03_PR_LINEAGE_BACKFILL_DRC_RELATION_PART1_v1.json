@@ -1,0 +1,145 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.drc_relation_typing_part.v1",
+  "cell": "DR-C",
+  "part": 1,
+  "sources": [
+    "GBOGEB/DOCX_RTM_Automation::PR45",
+    "GBOGEB/DOCX_RTM_Automation::PR58",
+    "GBOGEB/GBOGEB::PR10",
+    "GBOGEB/GBOGEB::PR15",
+    "GBOGEB/GBOGEB::PR8",
+    "GBOGEB/GEMINI::PR26",
+    "GBOGEB/GEMINI::PR27",
+    "GBOGEB/GEMINI::PR29"
+  ],
+  "edges": [
+    {
+      "from": "GBOGEB/DOCX_RTM_Automation::PR45",
+      "to": "GBOGEB/cryoplant-project#882",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "nd no-promotion rules ## Authority boundary DOCX_RTM_Automation remains a parser/render/validation/export tooling projection and cannot establish QPS engineering truth or disposition. ## Merge order Merge QPS child PR GBOGEB/cryoplant-project#882 first. This PR should then consume that published child authority boundary.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/DOCX_RTM_Automation::PR58",
+      "to": "GBOGEB/cryoplant-project#1135",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "GE-RELIABILITY` = non-authoritative analytical overlay only; - W1 `3PR + MIP-M` = CONTROL / bounded DoV; - W2 `3PC + MIP-I` = HOLD; - W3 `3P3 + MIP-P` = gated by W2 local DoV. ## Current first-red Child runtime probe `GBOGEB/cryoplant-project#1135`, exact head `90322dc4d7f299f737e42bf45effa36300f367fa`, reached the intended applicability workflow but failed before execution: - run `34825502815` - job `103916589064` - `runner_id=0` - `steps=0` Classification: `R",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/DOCX_RTM_Automation::PR58",
+      "to": "GBOGEB/pipeline-automation-hub#116",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "- Mission Control horizontal split; - QRT-A/B/C/D and S-H1/H2/H3/H4 session topology; - current parallel non-compensating fronts; - exact next goals and global DoD. ## Related live control - Mission Control roll-up: `GBOGEB/pipeline-automation-hub#116` - Child runtime cell: `GBOGEB/cryoplant-project#1135` No authority transfer or engineering/compliance/negotiation/acceptance/release/Table-10/Grand-Mission credit is created by this documentation update.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/GBOGEB::PR10",
+      "to": "GBOGEB/pipeline-automation-hub#275",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "Governance: rebind Excel schedule engine after P1 hardening ## Purpose Rebind the global Excel schedule-engine topology after the merged implementation and successor P1 hardening. ## Evidence - implementation PR: GBOGEB/pipeline-automation-hub#275 - implementation merge: a1da321c18648d6df71cb9aec0563b36b40bc7c6 - initial hosted proof: run 35360643306, PASS - P1 successor PR: GBOGEB/pipeline-automation-hub#293 - P1 merge: c9088f1a075de46f06126dca8e350a0d913010f6 -",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/GBOGEB::PR10",
+      "to": "GBOGEB/pipeline-automation-hub#293",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "essor P1 hardening. ## Evidence - implementation PR: GBOGEB/pipeline-automation-hub#275 - implementation merge: a1da321c18648d6df71cb9aec0563b36b40bc7c6 - initial hosted proof: run 35360643306, PASS - P1 successor PR: GBOGEB/pipeline-automation-hub#293 - P1 merge: c9088f1a075de46f06126dca8e350a0d913010f6 - P1 hosted proof: run 35372971905, job 105691037656, 6 tests PASS ## Control update State advances from candidate to `ACTIVE_MERGED_P1_HARDENED`. The topology now",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/GBOGEB::PR15",
+      "to": "GBOGEB/pipeline-automation-hub#408",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "ling topology from `ACTIVE_MAIN_RUNNER_BOUND` to `ACTIVE_SCHEDULE_SCHEMA_DASHBOARD_BOUND` after the merged schedule-schema/dashboard implementation and postmerge control. ## Bound lineage - schedule implementation PR: GBOGEB/pipeline-automation-hub#408 - implementation head: `0634464ed6e0ef4c0c6ab3fae9c21be92257b0d4` - implementation merge: `5296b400bcb543afee1a3613ff4e2cdedf2102df` - postmerge control PR: GBOGEB/pipeline-automation-hub#409 - postmerge control merge:",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/GBOGEB::PR15",
+      "to": "GBOGEB/pipeline-automation-hub#409",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "context": "schedule implementation PR: GBOGEB/pipeline-automation-hub#408 - implementation head: `0634464ed6e0ef4c0c6ab3fae9c21be92257b0d4` - implementation merge: `5296b400bcb543afee1a3613ff4e2cdedf2102df` - postmerge control PR: GBOGEB/pipeline-automation-hub#409 - postmerge control merge: `288e44f21724efe1bd46a699af6fa47d115fbee5` ## Hosted proof Final merge-ref: - Excel Schedule Engine run `35758132498`, job `106848988893`: PASS - recursive-build run `35758132496`, job `1068",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/GBOGEB::PR8",
+      "to": "GBOGEB/pipeline-automation-hub#275",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "PULL_REQUEST",
+      "relation_type": "REFERENCE_UNTYPED",
+      "context": "Governance: register Excel schedule engine global topology ## Purpose Registers the planning/scheduling Excel parser/export lane implemented in `GBOGEB/pipeline-automation-hub#275` in the global GBOGEB topology. ## Added - `governance/GLOBAL_EXCEL_SCHEDULE_ENGINE_TOPOLOGY_v1.yaml` - README discovery hook ## Authority boundary - MAIN parser authority: `GBOGEB/pipeline-automation-hub/excel_sche",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/GEMINI::PR26",
+      "to": "GBOGEB/pipeline-automation-hub#324",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HAS_PARENT",
+      "context": "HIST-BD #25: fail closed malformed GMI handover ingress Closes #25. Issue expedition: GBOGEB/pipeline-automation-hub#324 Historian parent: GBOGEB/pipeline-automation-hub#76 ## Repair bundle This PR consumes the eight current-code findings consolidated in #25. Package validation: 1. enforce supported `schema_version=1` and non-empty gove",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/GEMINI::PR26",
+      "to": "GBOGEB/pipeline-automation-hub#76",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HAS_PARENT",
+      "context": "HIST-BD #25: fail closed malformed GMI handover ingress Closes #25. Issue expedition: GBOGEB/pipeline-automation-hub#324 Historian parent: GBOGEB/pipeline-automation-hub#76 ## Repair bundle This PR consumes the eight current-code findings consolidated in #25. Package validation: 1. enforce supported `schema_version=1` and non-empty governance strings; 2. type-check evidence `status` befo",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/GEMINI::PR27",
+      "to": "GBOGEB/pipeline-automation-hub#324",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HAS_PARENT",
+      "context": "HIST-BD #25: fail-closed GMI handover validation and batch ingress Closes #25. Parent Historian: GBOGEB/pipeline-automation-hub#76 Issue expedition: GBOGEB/pipeline-automation-hub#324 ## Bounded repair Burns all eight surviving review-debt findings as one semantic root: 1. supported `schema_version` enforced; 2. required governance strings must be non-empty; 3. non-string/unhashable `status` retur",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/GEMINI::PR27",
+      "to": "GBOGEB/pipeline-automation-hub#76",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HAS_PARENT",
+      "context": "HIST-BD #25: fail-closed GMI handover validation and batch ingress Closes #25. Parent Historian: GBOGEB/pipeline-automation-hub#76 Issue expedition: GBOGEB/pipeline-automation-hub#324 ## Bounded repair Burns all eight surviving review-debt findings as one semantic root: 1. supported `schema_version` enforced; 2. required governance strings must",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/GEMINI::PR29",
+      "to": "GBOGEB/pipeline-automation-hub#324",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HAS_PARENT",
+      "context": "fixture: same malformed package -> batch `REJECT`, package `INVALID`, no exception; - existing GMI handover matrices remain authoritative for regression. Parent Historian: GBOGEB/pipeline-automation-hub#76 W3 tracking: GBOGEB/pipeline-automation-hub#324 Authority transfer: false. Formal credit delta: 0.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    },
+    {
+      "from": "GBOGEB/GEMINI::PR29",
+      "to": "GBOGEB/pipeline-automation-hub#76",
+      "type": "EXPLICIT_CROSS_REPO_REFERENCE",
+      "target_type": "ISSUE",
+      "relation_type": "HAS_PARENT",
+      "context": "sequence alias -> `REJECT`, no digest; - batch fixture: same malformed package -> batch `REJECT`, package `INVALID`, no exception; - existing GMI handover matrices remain authoritative for regression. Parent Historian: GBOGEB/pipeline-automation-hub#76 W3 tracking: GBOGEB/pipeline-automation-hub#324 Authority transfer: false. Formal credit delta: 0.",
+      "relation_evidence": "SOURCE_PR_TEXT_WINDOW"
+    }
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0
+}
