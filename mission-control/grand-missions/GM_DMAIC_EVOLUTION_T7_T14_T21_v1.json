@@ -186,7 +186,16 @@
     "distinct_source_control_repeat",
     "workflow_family_fanout",
     "zero_denominator_unknown_count",
-    "net_semantic_root_delta"
+    "net_semantic_root_delta",
+    "coverage_instrumented_repos",
+    "coverage_exact_head_measured_repos",
+    "test_population_executed",
+    "coverage_statement_denominator",
+    "statement_coverage_pct",
+    "coverage_gate_pct",
+    "coverage_gate_result",
+    "coverage_scope_comparability",
+    "pre_github_testpilot_result"
   ],
   "exact_head_baseline": {
     "GBOGEB/ABACUS": "93e9516e967b20165e9b2ad7586029d4715bbdb1",
@@ -324,5 +333,13 @@
         "next_iteration_seed": "E2E_EMPTY_MARKER_POPULATION"
       }
     ]
+  },
+  "coverage_telemetry_ref": "mission-control/grand-missions/GM_DMAIC_COVERAGE_TELEMETRY_v1.json",
+  "coverage_policy": {
+    "missing_measurement": "UNKNOWN_NOT_ZERO",
+    "test_count_is_not_coverage": true,
+    "cross_repo_test_count_denominator": false,
+    "compare_only_when_scope_is_aligned": true,
+    "lower_gate_to_green": false
   }
 }
