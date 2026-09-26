@@ -97,6 +97,95 @@
           "receipt_sha256": "466caf269ecb8a6e6271aacc8c43b14acba9d8dd19a9d5582cd675f609be6962"
         }
       }
+    },
+    {
+      "pulse_id": "GM-I-A-MCLOCK-P002",
+      "clock": "2026-09-26_federation_transaction",
+      "evidence_class": "MEASURED",
+      "provider_source_sha": "a88d6e8cc24402868afab39a71fc49fcacec08c8",
+      "provider_attestation_sha256": "af1115346ff212addbcaa855faa5f65e8989a0de01742decb6ba30e16a60affa",
+      "heavy_queue_seconds": 36,
+      "heavy_checkout_seconds": 34,
+      "heavy_build_seconds": 211,
+      "fast_queue_seconds": 35,
+      "fast_execute_seconds": 7,
+      "dow_queue_seconds": 128,
+      "dow_execute_seconds": 8,
+      "keb_queue_seconds": 408,
+      "keb_execute_seconds": 8,
+      "evidence": {
+        "heavy": {
+          "repo": "GBOGEB/CoolProp",
+          "runtime_pr": 18,
+          "source_merge_sha": "e31433c4427be2aaad064294e6c6cab1843537df",
+          "run_id": 36226071145,
+          "job_id": 108360248113,
+          "runner_id": 1000343140,
+          "created_at": "2026-09-26T07:12:28Z",
+          "started_at": "2026-09-26T07:13:04Z",
+          "completed_at": "2026-09-26T07:17:22Z",
+          "checkout_started_at": "2026-09-26T07:13:06Z",
+          "checkout_completed_at": "2026-09-26T07:13:40Z",
+          "build_started_at": "2026-09-26T07:13:45Z",
+          "build_completed_at": "2026-09-26T07:17:16Z",
+          "artifact_id": 10901116658,
+          "artifact_digest": "sha256:f65cc08c99dafdf37afaea7da124b7e36e81c6fd5fc48a24f8af1cb668ac8cf4",
+          "wheel_sha256": "d342c86635472a63af42d0999e4dc0026dc185cf9e62c35ea0ca64bb02d8a7b4"
+        },
+        "fast": {
+          "repo": "GBOGEB/CoolProp",
+          "run_id": 36226071145,
+          "job_id": 108360956408,
+          "runner_id": 1000343218,
+          "created_at": "2026-09-26T07:17:22Z",
+          "started_at": "2026-09-26T07:17:57Z",
+          "completed_at": "2026-09-26T07:18:04Z",
+          "artifact_id": 10900932108,
+          "artifact_digest": "sha256:e432ed20b8053c9d9515a1d4bf127be88d9f0eccc447231da88757e0c9e447ae",
+          "probe_elapsed_ms": 833
+        },
+        "provider_attestation": {
+          "repo": "GBOGEB/CoolProp",
+          "commit_sha": "0873f07f9bc1e5eb9fdbdd3219c826d97eb148dc",
+          "merge_sha": "902733d6135562a23457563890688d1386352db2",
+          "sha256": "af1115346ff212addbcaa855faa5f65e8989a0de01742decb6ba30e16a60affa",
+          "validation_run_id": 36226425313,
+          "validation_job_id": 108361250043,
+          "runner_id": 1000343289,
+          "artifact_id": 10900433532,
+          "artifact_digest": "sha256:150552c56f098529d55d56ea75b1befed4a85b6272615e956f0a1bc419434a66"
+        },
+        "dow": {
+          "repo": "GBOGEB/ABACUS",
+          "pr": 1374,
+          "head_sha": "c18bc611e7559a32066fe0f77f64326bad4d72aa",
+          "merge_sha": "2e29200f396fe6ec3d09d91da7943a01822ccb88",
+          "run_id": 36226599725,
+          "job_id": 108361731895,
+          "runner_id": 1000343301,
+          "created_at": "2026-09-26T07:22:52Z",
+          "started_at": "2026-09-26T07:25:00Z",
+          "completed_at": "2026-09-26T07:25:08Z",
+          "artifact_id": 10901002670,
+          "artifact_digest": "sha256:db9c89cbecba790c2fbf8364b929362514c4d261f2339e38994f9f6c0b0ae0f3",
+          "receipt_sha256": "3476e468f1b835214a65bb5c0953dc87ddd1f97d0faebd1e43c74ce1b48247f9"
+        },
+        "keb": {
+          "repo": "GBOGEB/CODEX",
+          "pr": 833,
+          "head_sha": "ac5c6a9c19cb21d42b783c55a2d75c1a92cb244b",
+          "merge_sha": "2f7f40303c99fb6eb825613719c1df8d95d520b7",
+          "run_id": 36226609453,
+          "job_id": 108361759851,
+          "runner_id": 1000343395,
+          "created_at": "2026-09-26T07:23:03Z",
+          "started_at": "2026-09-26T07:29:51Z",
+          "completed_at": "2026-09-26T07:29:59Z",
+          "artifact_id": 10901326769,
+          "artifact_digest": "sha256:4cb70124695f89cc9b3f5537442700313ab915ecf574a4e79c5c78b5594146f8",
+          "receipt_sha256": "8c75ff634a053e879205a0002536072f56b5dd905f90a829668b6f39cc32734e"
+        }
+      }
     }
   ]
 }
