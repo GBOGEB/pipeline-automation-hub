@@ -122,14 +122,26 @@
       },
       "d2": {
         "root": "STALE_DOW_CORE_TEST_TARGETS",
-        "state": "PATCHED_WAIT_EXACT_HEAD_PROOF",
-        "repair_head": "34bfe01a171fdd1fc3142d359a58ff11d59cf4f1"
+        "state": "CONTROL",
+        "repair_head": "34bfe01a171fdd1fc3142d359a58ff11d59cf4f1",
+        "control_run": 36248809710,
+        "control_job": 108422959297
       },
       "d3": {
         "root": "PHASE6_9_EMPTY_MARKER_SELECTION",
-        "state": "HELD_UNTIL_D2_CONTROL"
+        "state": "PATCHED_WAIT_EXACT_HEAD_PROOF",
+        "repair_head": "fe51cb43f0d71980d42de1d42e6119e534939a57"
       }
-    }
+    },
+    "top7_classified_observed": 7,
+    "top7_green_control_observed": 5,
+    "top7_unclassified_observed": 0,
+    "top7_proof_debt_two_pulse_nonincreasing": false,
+    "top14_classified_observed": 14,
+    "top14_unclassified_observed": 0,
+    "max_unchanged_root_auto_repeat_after_control": null,
+    "top14_two_pulse_net_semantic_delta_le_zero": false,
+    "top14_two_pulse_proof_yield_nondegrading": false
   },
   "metrics": [
     "classified_repos",
@@ -175,5 +187,83 @@
     "GBOGEB/github_Documents": "0b4193fa7052477763c829921fa7bf81206d3a37",
     "GBOGEB/stale": "67869de0acc573f1fd3e4505aa23678289cd76cf",
     "GBOGEB/GBOGEB-profile": "74ef0a36652dfe62145b3dbc1d2a023adbbaa50d"
+  },
+  "iteration_evolution": {
+    "core_cycle": [
+      "DEFINE",
+      "MEASURE",
+      "ANALYZE",
+      "IMPROVE",
+      "CONTROL"
+    ],
+    "post_control_envelope": [
+      "KNOWLEDGE",
+      "ACTION_TRACKING",
+      "TODO_MANAGEMENT",
+      "DOCUMENTATION"
+    ],
+    "invariant": "Iteration N+1 may consume only a CONTROL receipt from N, or an explicit RETURN/HOLD receipt that preserves the unresolved predicate. Green inference is forbidden.",
+    "required_iteration_record": [
+      "iteration_id",
+      "repository",
+      "source_sha",
+      "input_control_receipt",
+      "define_hypothesis",
+      "measure_snapshot",
+      "analyze_root_family",
+      "improve_commit",
+      "control_run",
+      "control_job",
+      "control_outcome",
+      "next_iteration_seed"
+    ],
+    "evolution_levels": [
+      {
+        "level": "E0_OBSERVED",
+        "criterion": "One fail-closed baseline census with exact source SHA."
+      },
+      {
+        "level": "E1_REPEATABLE",
+        "criterion": "One complete DMAIC iteration with >0-step CONTROL proof."
+      },
+      {
+        "level": "E2_RECURSIVE",
+        "criterion": "A later iteration consumes the prior CONTROL receipt and preserves lineage."
+      },
+      {
+        "level": "E3_PARALLEL_TOP7",
+        "criterion": "Multiple Top7 repositories execute independent DMAIC iterations in one pulse without within-repo depth overlap."
+      },
+      {
+        "level": "E4_PARALLEL_TOP14",
+        "criterion": "Top14 promotion gate passes and recursive iteration quality does not degrade."
+      },
+      {
+        "level": "E5_PARALLEL_TOP21",
+        "criterion": "Top21 promotion gate passes with recurrence CONTROL and distinct-source repeat evidence."
+      }
+    ],
+    "current_level": "E0_OBSERVED",
+    "complete_iteration_count": 0,
+    "recursive_control_handoff_count": 0,
+    "iteration_chain_integrity": true,
+    "active_iteration": {
+      "iteration_id": "ABACUS-I1-FIRST3",
+      "repository": "GBOGEB/ABACUS",
+      "source_sha": "93e9516e967b20165e9b2ad7586029d4715bbdb1",
+      "input_control_receipt": null,
+      "define_hypothesis": "Revive the live DMAIC_V3 workflow and serially burn the first three genuine CI contract reds.",
+      "measure_snapshot": {
+        "initial_first_red": "STALE_DMAIC_ROOT_13_CORE_SYSTEMS_DMAIC",
+        "d1_run": 36247844047,
+        "d2_run": 36248809710
+      },
+      "analyze_root_family": "STALE_DMAIC_CI_CONTRACTS",
+      "improve_commit": "fe51cb43f0d71980d42de1d42e6119e534939a57",
+      "control_run": null,
+      "control_job": null,
+      "control_outcome": "PENDING_D3_EXACT_HEAD_PROOF",
+      "next_iteration_seed": null
+    }
   }
 }
