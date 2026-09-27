@@ -39,6 +39,12 @@ def validate_bundle(bundle):
     req(g["reservations"]["COV"]["canonical_status"].startswith("DEPRECATED"), "bare COV must be deprecated")
     req(list(g["coverage_maturity"].keys()) == [f"MCOV-{i}" for i in range(6)], "MCOV levels must be exactly MCOV-0..MCOV-5")
     req(g["reservations"]["CONTROL"]["lifecycle_token"] == "CONTROLLED", "lifecycle CONTROL token must be CONTROLLED")
+    req(g["reservations"]["MIP"]["canonical_meaning"] == "MODERNIZE_INNOVATE_PERPETUATE_IN_MISSION_CONTROL", "MIP control-plane meaning drift")
+    req("CONFIDENCE_INTERVAL" in g["reservations"]["CI"]["collision"], "CI confidence-interval collision missing")
+    req("COVARIANCE" in g["reservations"]["COV"]["collision"], "COV covariance collision missing")
+    req(g["reservations"]["GM"]["canonical_meaning"] == "GRAND_MISSION_IN_MISSION_CONTROL", "GM control-plane meaning drift")
+    matrix_tokens = {row.get("token") for row in g.get("cross_domain_collision_matrix", [])}
+    req({"MC","MIP","COV","CI","PR","GM","PC1"}.issubset(matrix_tokens), "cross-domain collision matrix incomplete")
     req(g["identity_grammar"]["pull_request"] == "owner/name::PR<number>", "pull-request identity must be repository-qualified")
     req("mission_id" in g["identity_grammar"]["wave"], "wave identity must be mission-qualified")
     req("PULSE-" in g["identity_grammar"]["pulse"], "pulse identity must not rely on bare P1/P2/P3")
