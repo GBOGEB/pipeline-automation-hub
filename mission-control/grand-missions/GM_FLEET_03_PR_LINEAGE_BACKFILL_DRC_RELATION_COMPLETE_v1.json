@@ -1,0 +1,225 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.drc_relation_complete.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "cell": "DR-C",
+  "issue": "GBOGEB/pipeline-automation-hub#436",
+  "frozen_snapshot": "FLEET_4486",
+  "basis": {
+    "source_pr_candidates": 62,
+    "aggregate_explicit_edges": 88,
+    "previously_typed_edges": 44,
+    "unresolved_edges_before_overlay": 44,
+    "overlay_resolutions": 44
+  },
+  "overlay_policy": {
+    "preserve_previously_typed_relations": true,
+    "use_ambiguous_evidence_when_stronger_causal_semantics_are_not_supported": true,
+    "infer_nothing_from_pr_number_or_wave_number": true
+  },
+  "overlay_resolutions": [
+    {
+      "edge_id": "GBOGEB/DOCX_RTM_Automation::PR45=>GBOGEB/cryoplant-project#882",
+      "relation_type": "HANDOVER_OR_RETURN_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/Q_engineering_tools::PR61=>GBOGEB/cryoplant-project#1514",
+      "relation_type": "HANDOVER_OR_RETURN_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR274=>GBOGEB/codespaces-jupyter#3",
+      "relation_type": "HANDOVER_OR_RETURN_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR277=>GBOGEB/Q_engineering_tools#59",
+      "relation_type": "HANDOVER_OR_RETURN_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR277=>GBOGEB/cryoplant-project#1514",
+      "relation_type": "HANDOVER_OR_RETURN_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR295=>GBOGEB/CODESPACES_jyperter#68",
+      "relation_type": "HANDOVER_OR_RETURN_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR297=>GBOGEB/GBOGEB#11",
+      "relation_type": "HANDOVER_OR_RETURN_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR402=>GBOGEB/GBOGEB#13",
+      "relation_type": "HANDOVER_OR_RETURN_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR284=>GBOGEB/document-organization-system#62",
+      "relation_type": "HANDOVER_OR_RETURN_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR407=>GBOGEB/document-organization-system#74",
+      "relation_type": "HANDOVER_OR_RETURN_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/stale::PR10=>GBOGEB/pipeline-automation-hub#428",
+      "relation_type": "HAS_PARENT"
+    },
+    {
+      "edge_id": "GBOGEB/Q_engineering_tools::PR57=>GBOGEB/cryoplant-project#1485",
+      "relation_type": "AMBIGUOUS_EVIDENCE"
+    },
+    {
+      "edge_id": "GBOGEB/Q_engineering_tools::PR63=>GBOGEB/cryoplant-project#1490",
+      "relation_type": "AMBIGUOUS_EVIDENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR202=>GBOGEB/cryoplant-project#1258",
+      "relation_type": "AMBIGUOUS_EVIDENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR202=>GBOGEB/cryoplant-project#1266",
+      "relation_type": "AMBIGUOUS_EVIDENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR202=>GBOGEB/cryoplant-project#1357",
+      "relation_type": "AMBIGUOUS_EVIDENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR202=>GBOGEB/cryoplant-project#1456",
+      "relation_type": "AMBIGUOUS_EVIDENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR202=>GBOGEB/cryoplant-project#923",
+      "relation_type": "AMBIGUOUS_EVIDENCE"
+    },
+    {
+      "edge_id": "GBOGEB/DOCX_RTM_Automation::PR58=>GBOGEB/cryoplant-project#1135",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/DOCX_RTM_Automation::PR58=>GBOGEB/pipeline-automation-hub#116",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/GBOGEB::PR15=>GBOGEB/pipeline-automation-hub#408",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/GBOGEB::PR8=>GBOGEB/pipeline-automation-hub#275",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/Q_engineering_tools::PR42=>GBOGEB/cryoplant-project#1146",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/Q_engineering_tools::PR93=>GBOGEB/cryoplant-project#1618",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR118=>GBOGEB/cryoplant-project#1135",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR167=>GBOGEB/CODEX#414",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR167=>GBOGEB/ABACUS#916",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR175=>GBOGEB/cryoplant-project#923",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR180=>GBOGEB/ABACUS#581",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR180=>GBOGEB/ABACUS#583",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR180=>GBOGEB/ABACUS#585",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR180=>GBOGEB/CODEX#237",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR180=>GBOGEB/pipeline-automation-hub#153",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR189=>GBOGEB/cryoplant-project#1398",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR221=>GBOGEB/cryoplant-project#923",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR415=>GBOGEB/ABACUS#1376",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR303=>GBOGEB/DOCX_RTM_Automation#65",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR340=>GBOGEB/DOCX_RTM_Automation#71",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR399=>GBOGEB/Q_engineering_tools#101",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR335=>GBOGEB/cryoplant-project#1550",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR307=>GBOGEB/cryoplant-project#923",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR394=>GBOGEB/cryoplant-project#1636",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR399=>GBOGEB/cryoplant-project#923",
+      "relation_type": "EVIDENCE_REFERENCE"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR317=>GBOGEB/document-organization-system#69",
+      "relation_type": "EVIDENCE_REFERENCE"
+    }
+  ],
+  "final_relation_type_counts": {
+    "EVIDENCE_REFERENCE": 50,
+    "HAS_PARENT": 13,
+    "CLOSES_OR_RESOLVES": 4,
+    "SUPERSEDED_BY": 1,
+    "SUPERSEDES": 1,
+    "HANDOVER_OR_RETURN_REFERENCE": 12,
+    "AMBIGUOUS_EVIDENCE": 7
+  },
+  "final_control": {
+    "unique_edges": 88,
+    "unresolved_target_identity": 0,
+    "unresolved_relation_semantics": 0,
+    "duplicate_edges": 0,
+    "disposition": "RELATION_COMPLETE_CLOSE_READY"
+  },
+  "source_surfaces": [
+    "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RESOLUTION_v1.json",
+    "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_PART1_v1.json",
+    "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_PART2_v1.json",
+    "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_PART3_v1.json",
+    "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_PART4_v1.json",
+    "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_PART5_v1.json",
+    "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_PART6_v1.json"
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
