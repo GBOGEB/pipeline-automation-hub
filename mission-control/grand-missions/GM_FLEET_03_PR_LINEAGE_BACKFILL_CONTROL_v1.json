@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_100_PERCENT_SEMANTIC_P0_CLASSIFICATION_REPAIRED_DR_C_COMPLETE_DR_A_DR_B_ACTIVE",
+  "state": "STRUCTURAL_100_PERCENT_SEMANTIC_P0_DR_B_DR_C_COMPLETE_DR_A_ACTIVE",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -149,9 +149,13 @@
     {
       "id": "DR-B",
       "issue": 435,
-      "queue": "CRYOPLANT_CODEX_TRUE_CROSS_REPO_P0",
-      "count": 78,
-      "state": "OPEN_QPS_TRUE_P0_47_COMPLETE_CODEX_TRUE_P0_31_REMAIN"
+      "queue": "CRYOPLANT_CODEX_P0",
+      "count": 83,
+      "state": "COMPLETE_RELATION_TYPED",
+      "relation_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRB_RELATION_COMPLETE_v1.json",
+      "source_pr_candidates": 83,
+      "explicit_edges": 115,
+      "unresolved_relation_semantics": 0
     },
     {
       "id": "DR-C",
@@ -166,30 +170,19 @@
     }
   ],
   "semantic_progress": {
-    "corrected_P0_candidates": 176,
-    "completed_true_P0_candidates": 109,
-    "remaining_true_P0_candidates": 67,
-    "qps_true_P0_completed": 47,
-    "codex_true_P0_remaining": 31,
-    "abacus_true_P0_remaining": 36,
-    "drc_true_P0_completed": 62,
+    "frozen_P0_candidates": 364,
+    "completed_P0_candidates": 145,
+    "remaining_P0_candidates": 219,
     "active_cells": [
-      "DR-A",
-      "DR-B"
+      "DR-A"
     ],
     "completed_cells": [
+      "DR-B",
       "DR-C"
     ],
-    "correction_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P0_CLASSIFICATION_CORRECTION_v1.json",
-    "relation_complete_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v1.json"
-  },
-  "classification_correction": {
-    "status": "MATERIAL_REPAIR_2026-09-27",
-    "original_published_P0": 364,
-    "corrected_true_cross_repo_P0": 176,
-    "original_values_preserved_in_git_history": true,
-    "authority_transfer": false,
-    "formal_credit_delta": 0,
-    "engineering_credit_delta": 0
+    "relation_complete_receipts": [
+      "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRB_RELATION_COMPLETE_v1.json",
+      "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v1.json"
+    ]
   }
 }
