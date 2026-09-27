@@ -1,0 +1,53 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.drb_relation_complete.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "cell": "DR-B",
+  "issue": "GBOGEB/pipeline-automation-hub#435",
+  "frozen_snapshot": "FLEET_4486",
+  "basis": {
+    "source_pr_candidates": 83,
+    "cryoplant_source_prs": 49,
+    "codex_source_prs": 34,
+    "aggregate_explicit_edges": 115,
+    "cryoplant_edges": 68,
+    "codex_edges": 47
+  },
+  "source_read_progress": {
+    "cryoplant": "49/49",
+    "codex": "34/34",
+    "total": "83/83",
+    "unresolved_target_identity": 0
+  },
+  "final_relation_type_counts": {
+    "EVIDENCE_REFERENCE": 64,
+    "HAS_PARENT": 10,
+    "HANDOVER_OR_RETURN_REFERENCE": 41
+  },
+  "final_control": {
+    "unique_edges": 115,
+    "unresolved_target_identity": 0,
+    "unresolved_relation_semantics": 0,
+    "duplicate_edges": 0,
+    "disposition": "RELATION_COMPLETE_CLOSE_READY"
+  },
+  "evidence_policy": {
+    "infer_nothing_from_pr_number_or_wave_number": true,
+    "preserve_non_pr_issue_and_control_object_types": true,
+    "preserve_superseded_and_negative_history": true,
+    "no_authority_from_genealogy": true
+  },
+  "source_surfaces": [
+    "GBOGEB/pipeline-automation-hub#435 issue comments 5857875518,5857880984,5857891662,5857910224,5857915398,5857951464,5857962581,5857971224",
+    "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_F01A_CRYOPLANT_DEEP_READ_QUEUE_v1.json",
+    "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_F01C_CODEX_DEEP_READ_QUEUE_v1.json"
+  ],
+  "external_noncompensating_boundaries": [
+    "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
+    "GBOGEB/ABACUS#1369 EXECUTION_ADMISSION",
+    "W275_PHYSICAL_SUCCESSOR_GIT_BUNDLE",
+    "GBOGEB/cryoplant-project#1801 W287_DREQ_SOURCE_INTEGRATION"
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
