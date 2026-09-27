@@ -1,0 +1,283 @@
+{
+  "schema": "missioncontrol.v2.adoption.consumer_crosswalk.v1",
+  "as_of": "2026-09-27",
+  "sprint_id": "MC-S2",
+  "wave_id": "MC-A1_READ_ONLY_CONSUMER_CROSSWALK",
+  "control_issue": "GBOGEB/pipeline-automation-hub#443",
+  "basis": {
+    "mission_control_repo": "GBOGEB/pipeline-automation-hub",
+    "mission_control_main_sha": "8483c2e45dacb84a18cee9fd8719179009c6c95e",
+    "predecessor_control_pr": 442,
+    "predecessor_exact_head": "6b838cecc746e73d7addaa9c8f66897141925aea",
+    "predecessor_trusted_fpc_run": 36305239316,
+    "canonical_current": "mission-control/v2/MISSION_CONTROL_CURRENT_v2.json",
+    "canonical_register": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+    "canonical_telemetry": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json"
+  },
+  "mode": "READ_ONLY_CENSUS",
+  "mutation_policy": {
+    "consumer_mutation": false,
+    "historical_receipt_rewrite": false,
+    "domain_authority_transfer": false,
+    "namespace_bulk_rewrite": false,
+    "pinned_blob_rewrite": false
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "census_method": {
+    "repository_local_queries": [
+      "MISSION_CONTROL_CURRENT_v2.json",
+      "MC_MISSION_STATUS_CURRENT_v1.json",
+      "OFFICIAL_MISSION_REGISTER_v1.yaml",
+      "qps-triage-ultra/mission_registry.yaml",
+      "MCOV-",
+      "COV-"
+    ],
+    "cross_repository_queries": [
+      "GBOGEB/ABACUS :: OFFICIAL_MISSION_REGISTER_v1.yaml",
+      "GBOGEB/ABACUS :: LM-10_MISSION_CONTROL_v3.yaml",
+      "GBOGEB/ABACUS :: MISSION_CONTROL_CURRENT_v2.json",
+      "GBOGEB/cryoplant-project :: OFFICIAL_MISSION_REGISTER_v1.yaml",
+      "GBOGEB/cryoplant-project :: LM-10_MISSION_CONTROL_v3.yaml",
+      "GBOGEB/cryoplant-project :: MISSION_CONTROL_CURRENT_v2.json"
+    ],
+    "limitation": "Code-search census of explicit references only; absence of a hit is recorded as NO_DIRECT_REFERENCE_FOUND, not proof that a repository never consumes Mission Control through generated artifacts, APIs, copied data, or human workflows."
+  },
+  "summary": {
+    "direct_external_v2_consumers_found": 0,
+    "direct_v2_consumer_pattern": "Currently internal to pipeline-automation-hub",
+    "stable_bridge": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+    "explicit_cross_repo_pinned_consumers_found": 1,
+    "external_v2_adoption_state": "NOT_YET_DIRECT",
+    "disposition": "MC_A1_INVENTORIED_NO_CONSUMER_MUTATION"
+  },
+  "consumers": [
+    {
+      "id": "MC-A1-C01",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/v2/validate_mission_control_v2.py",
+      "kind": "V2_NATIVE_SEMANTIC_VALIDATOR",
+      "consumes": [
+        "MISSION_CONTROL_CURRENT_v2.json",
+        "MC_MISSION_STATUS_CURRENT_v1.json",
+        "MC_GLOSSARY_TAXONOMY_v2.json",
+        "MC_METHOD_PROFILE_REGISTRY_v1.json",
+        "MC_DMAIC_EVOLUTION_PLAN_v1.json",
+        "MC_V2_POSTMERGE_CONTROL_20260927_v1.json",
+        "OFFICIAL_MISSION_REGISTER_v1.yaml",
+        "qps-triage-ultra/mission_registry.yaml"
+      ],
+      "compatibility": "V2_NATIVE",
+      "migration_need": "NONE",
+      "risk": "LOW",
+      "next_legal_transition": "CONTROL_WATCH",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C02",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+      "kind": "IDENTITY_AUTHORITY_AND_V2_DISCOVERY_BRIDGE",
+      "consumes": [
+        "GRAND_MISSION_REGISTRY.json"
+      ],
+      "exposes": [
+        "MISSION_CONTROL_CURRENT_v2.json",
+        "MC_GLOSSARY_TAXONOMY_v2.json",
+        "MC_MISSION_STATUS_CURRENT_v1.json"
+      ],
+      "compatibility": "BRIDGE_IS_INTENTIONAL",
+      "migration_need": "NONE",
+      "risk": "HIGH_IF_REPLACED",
+      "rule": "Keep the Official Mission Register as the stable identity/index bridge; v2 governs orchestration semantics without replacing mission/domain authority.",
+      "next_legal_transition": "PRESERVE",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C03",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "scripts/validate_lm11_qps_wave_federation.py",
+      "kind": "LEGACY_IDENTITY_SEMANTIC_READER",
+      "consumes": [
+        "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml"
+      ],
+      "compatibility": "COMPATIBLE_VIA_STABLE_REGISTER",
+      "migration_need": "OPTIONAL_A2_TELEMETRY_PROJECTION",
+      "risk": "MEDIUM",
+      "rule": "Do not replace identity validation with telemetry interpretation. A2 may add a separate read-only current-state projection if useful.",
+      "next_legal_transition": "MC-A2_CANDIDATE",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C04",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/grand-missions/validate_gm_i_c_registration.py",
+      "kind": "LEGACY_IDENTITY_SEMANTIC_READER",
+      "consumes": [
+        "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+        "mission-control/grand-missions/GRAND_MISSION_REGISTRY.json"
+      ],
+      "compatibility": "COMPATIBLE_VIA_STABLE_REGISTER",
+      "migration_need": "OPTIONAL_A2_TELEMETRY_PROJECTION",
+      "risk": "MEDIUM",
+      "next_legal_transition": "MC-A2_CANDIDATE",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C05",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": ".github/workflows/gm-i-c-registration.yml",
+      "kind": "PATH_TRIGGER_CONSUMER",
+      "consumes": [
+        "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml"
+      ],
+      "compatibility": "V2_NEUTRAL",
+      "migration_need": "NONE",
+      "risk": "LOW",
+      "rule": "Path trigger is not semantic interpretation; preserve unless the source path itself changes.",
+      "next_legal_transition": "CONTROL_WATCH",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C06",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": ".github/workflows/lm11-qps-wave-federation-proof.yml",
+      "kind": "PATH_TRIGGER_CONSUMER",
+      "consumes": [
+        "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml"
+      ],
+      "compatibility": "V2_NEUTRAL",
+      "migration_need": "NONE",
+      "risk": "LOW",
+      "next_legal_transition": "CONTROL_WATCH",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C07",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml",
+      "kind": "MISSION_CONTROL_ARTIFACT_WITH_DECLARED_EXTERNAL_CONSUMERS",
+      "consumes": [
+        "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml"
+      ],
+      "declared_consumers": [
+        "GBOGEB/ABACUS",
+        "GBOGEB/cryoplant-project"
+      ],
+      "compatibility": "HISTORICAL_CURRENT_CONTROL_COMPATIBLE_VIA_REGISTER",
+      "migration_need": "BRIDGE_ONLY_NO_REWRITE",
+      "risk": "HIGH_IF_REWRITTEN",
+      "next_legal_transition": "MC-A2_PARALLEL_PROJECTION_ONLY",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C08",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml",
+      "kind": "CURRENT_LEGACY_CONTROL_REFERENCE",
+      "consumes": [
+        "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+        "mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml"
+      ],
+      "compatibility": "COMPATIBLE_VIA_REGISTER",
+      "migration_need": "OPTIONAL_A2_PARALLEL_PROJECTION",
+      "risk": "MEDIUM",
+      "next_legal_transition": "MC-A2_CANDIDATE",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C09",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/qps-triage-ultra/README.md",
+      "kind": "HUMAN_DISCOVERY_CONSUMER",
+      "consumes": [
+        "mission-control/v2/MISSION_CONTROL_CURRENT_v2.json"
+      ],
+      "compatibility": "V2_AWARE",
+      "migration_need": "NONE",
+      "risk": "LOW",
+      "next_legal_transition": "CONTROL_WATCH",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C10",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/v2/README.md",
+      "kind": "V2_NATIVE_HUMAN_DISCOVERY_CONSUMER",
+      "consumes": [
+        "MISSION_CONTROL_CURRENT_v2.json",
+        "MC_GLOSSARY_TAXONOMY_v2.json",
+        "MC_METHOD_PROFILE_REGISTRY_v1.json",
+        "MC_MISSION_TELEMETRY_CONTRACT_v1.json",
+        "MC_MISSION_STATUS_CURRENT_v1.json"
+      ],
+      "compatibility": "V2_NATIVE",
+      "migration_need": "NONE",
+      "risk": "LOW",
+      "next_legal_transition": "CONTROL_WATCH",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C11",
+      "repository": "GBOGEB/cryoplant-project",
+      "repository_ref_observed": "18ad136e5ce3153263c00382047c03b41649518f",
+      "path": "controls/QPS_MATH_METHOD_CARDS_CURRENT_v0.1.yaml",
+      "kind": "EXPLICIT_CROSS_REPOSITORY_PINNED_SOURCE_CONSUMER",
+      "consumes": [
+        "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+        "mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml",
+        "mission-control/qps-triage-ultra/missions/LM-10_CREW_ALLOCATION_v3.yaml"
+      ],
+      "pinning": "PATH_PLUS_BLOB_HASHES",
+      "direct_v2_reference_found": false,
+      "compatibility": "PRESERVE_PINNED_HISTORICAL_SOURCE",
+      "migration_need": "OPTIONAL_A2_PARALLEL_V2_PROJECTION_ONLY",
+      "risk": "HIGH_IF_IN_PLACE_REWRITE",
+      "rule": "Do not replace or rewrite pinned historical source evidence. Any v2 adoption must be additive and separately evidenced.",
+      "next_legal_transition": "MC-A2_CANDIDATE_EXTERNAL_READ_ONLY",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C12",
+      "repository": "GBOGEB/ABACUS",
+      "path": null,
+      "kind": "DECLARED_LM10_CONSUMER_NO_DIRECT_REFERENCE_FOUND",
+      "declared_by": "mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml",
+      "direct_official_register_reference_found": false,
+      "direct_lm10_control_reference_found": false,
+      "direct_v2_current_reference_found": false,
+      "compatibility": "UNKNOWN_DIRECT_CONSUMPTION_PATH",
+      "migration_need": "NO_MUTATION_UNTIL_CONCRETE_CONSUMPTION_PATH_IS_OBSERVED",
+      "risk": "UNKNOWN",
+      "next_legal_transition": "MC-A2_OR_LATER_ONLY_AFTER_SOURCE_PATH_DISCOVERY",
+      "mutate_in_mc_a1": false
+    }
+  ],
+  "legacy_collision_surfaces": [
+    {
+      "pattern": "COV-* in historical PR titles/lineage",
+      "disposition": "HISTORICAL_CONTEXT_ONLY_NO_BULK_REWRITE",
+      "rationale": "v2 aliases are read-time compatibility only; historical source text remains immutable."
+    }
+  ],
+  "mc_a2_candidates": [
+    "MC-A1-C03",
+    "MC-A1-C04",
+    "MC-A1-C08",
+    "MC-A1-C11"
+  ],
+  "excluded_from_a2_until_more_evidence": [
+    "MC-A1-C12"
+  ],
+  "exit_criteria": {
+    "consumer_inventory_serialized": true,
+    "consumer_files_modified": 0,
+    "historical_receipts_modified": 0,
+    "external_repositories_modified": 0,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "next_wave": "MC-A2_CURRENT_MISSION_PROJECTION"
+  }
+}
