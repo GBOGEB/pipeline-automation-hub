@@ -3,9 +3,12 @@
   "snapshot_at": "2026-09-27",
   "source_ref": {
     "repository": "GBOGEB/pipeline-automation-hub",
-    "base_sha": "71aed3f0a6eba83fd459fd4eb371b64ea81d9868",
+    "base_sha": "e6d0e9f4adf3108b06a12d844087eec67edbbaea",
     "official_register": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
-    "dmaic_control": "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json"
+    "dmaic_control": "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
+    "activation_pr": "GBOGEB/pipeline-automation-hub#438",
+    "activation_merge": "e6d0e9f4adf3108b06a12d844087eec67edbbaea",
+    "legacy_mission_registry": "mission-control/qps-triage-ultra/mission_registry.yaml"
   },
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -574,6 +577,312 @@
         ]
       },
       "authority_transfer": false
+    },
+    {
+      "mission_id": "M01",
+      "mission_class": "LEGACY_QPS_FRONTIER_MISSION",
+      "source_status": "HOLD_EXTERNAL_EVIDENCE",
+      "status": {
+        "execution": "WAIT_EXTERNAL"
+      },
+      "progress": {
+        "value": null,
+        "numerator": null,
+        "denominator": null,
+        "basis": "EXTERNAL_EVIDENCE_HOLD_NO_CANONICAL_TOTAL_DENOMINATOR"
+      },
+      "health": {
+        "signal": "AMBER",
+        "basis": "EXPLICIT_EXTERNAL_EVIDENCE_HOLD"
+      },
+      "coverage": {
+        "maturity": "MCOV-4",
+        "basis": "EXACT_AUTHORITY_GATE_RUNTIME_OBSERVED_WITH_EXTERNAL_EVIDENCE_PREDICATE_UNRESOLVED"
+      },
+      "metrics": {
+        "evidence_state": "PARTIAL",
+        "core": {
+          "authority_gate_result": "SUCCESS_HOLD_ENFORCED"
+        }
+      },
+      "crew": {
+        "state": "UNKNOWN",
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "items": []
+      },
+      "lifecycle": {
+        "state": "HOLD"
+      },
+      "todo": {
+        "state": "WAIT_RETURN",
+        "items": [
+          {
+            "todo_id": "M01-HEPAK",
+            "predicate": "MISSING_EXACT_LICENSED_HEPAK_NUMERIC_RECEIPT",
+            "state": "WAIT_RETURN",
+            "priority": "P1",
+            "crew_owner": null,
+            "runner_requirement": "EXTERNAL_SOURCE_RETURN",
+            "next_legal_transition": "INGEST_AND_VALIDATE_EXACT_LICENSED_RECEIPT",
+            "evidence_ref": "mission-control/qps-triage-ultra/mission_registry.yaml"
+          }
+        ]
+      },
+      "authority_transfer": false
+    },
+    {
+      "mission_id": "M02A",
+      "mission_class": "LEGACY_QPS_FRONTIER_MISSION",
+      "source_status": "CONTROLLED_PRODUCT",
+      "status": {
+        "execution": "CONTROL_WATCH"
+      },
+      "progress": {
+        "value": null,
+        "numerator": null,
+        "denominator": null,
+        "basis": "PRODUCT_CONTROL_HAS_NO_SINGLE_TOTAL_WORK_DENOMINATOR"
+      },
+      "health": {
+        "signal": "GREEN",
+        "basis": "SOURCE_STATE_CONTROLLED_PRODUCT_WITH_REPEATED_EXACT_PRODUCT_PASS"
+      },
+      "coverage": {
+        "maturity": "MCOV-5",
+        "basis": "SOURCE_AUTHORITY_PRODUCT_RUNTIME_REPEAT_AND_CONTROL_WATCH_REGISTERED"
+      },
+      "metrics": {
+        "evidence_state": "MEASURED_PARTIAL",
+        "core": {
+          "repeated_exact_product": true
+        }
+      },
+      "crew": {
+        "state": "UNKNOWN",
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "items": []
+      },
+      "lifecycle": {
+        "state": "CONTROLLED"
+      },
+      "todo": {
+        "state": "CONTROL",
+        "items": []
+      },
+      "authority_transfer": false
+    },
+    {
+      "mission_id": "M02B",
+      "mission_class": "LEGACY_QPS_FRONTIER_MISSION",
+      "source_status": "CONTROLLED_BREADTH_PRODUCER",
+      "status": {
+        "execution": "CONTROL_WATCH"
+      },
+      "progress": {
+        "value": null,
+        "numerator": null,
+        "denominator": null,
+        "basis": "BREADTH_CONTROL_HAS_NO_SINGLE_TOTAL_WORK_DENOMINATOR"
+      },
+      "health": {
+        "signal": "GREEN",
+        "basis": "SOURCE_STATE_CONTROLLED_WITH_PRODUCER_AND_NON_ORIGIN_CONSUMER_SUCCESS"
+      },
+      "coverage": {
+        "maturity": "MCOV-5",
+        "basis": "KERNEL_RUNTIME_INDEPENDENT_CHALLENGE_NON_ORIGIN_CONSUMPTION_AND_REX_REGISTERED"
+      },
+      "metrics": {
+        "evidence_state": "MEASURED_PARTIAL",
+        "core": {
+          "producer_outcome": "SUCCESS",
+          "consumer_outcome": "SUCCESS"
+        }
+      },
+      "crew": {
+        "state": "UNKNOWN",
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "items": []
+      },
+      "lifecycle": {
+        "state": "CONTROLLED"
+      },
+      "todo": {
+        "state": "CONTROL",
+        "items": []
+      },
+      "authority_transfer": false
+    },
+    {
+      "mission_id": "M03",
+      "mission_class": "LEGACY_QPS_EXPANSION_MISSION",
+      "source_status": "W0_RECON_PASS_CONTROLLED",
+      "status": {
+        "execution": "CONTROL_WATCH"
+      },
+      "progress": {
+        "value": null,
+        "numerator": null,
+        "denominator": null,
+        "basis": "RECON_DISPOSITIONS_HAVE_NO_SINGLE_TOTAL_PROGRESS_DENOMINATOR"
+      },
+      "health": {
+        "signal": "GREEN",
+        "basis": "SOURCE_STATE_W0_RECON_PASS_CONTROLLED"
+      },
+      "coverage": {
+        "maturity": "MCOV-4",
+        "basis": "FOUR_FRONTIERS_DISPOSITIONED_WITH_CONTROL_RUN"
+      },
+      "metrics": {
+        "evidence_state": "MEASURED_PARTIAL",
+        "core": {
+          "frontier_count": 4
+        }
+      },
+      "crew": {
+        "state": "UNKNOWN",
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "items": []
+      },
+      "lifecycle": {
+        "state": "CONTROLLED"
+      },
+      "todo": {
+        "state": "CONTROL",
+        "items": []
+      },
+      "authority_transfer": false
+    },
+    {
+      "mission_id": "M04",
+      "mission_class": "LEGACY_QPS_EXPANSION_MISSION",
+      "source_status": "HELD",
+      "status": {
+        "execution": "BLOCKED"
+      },
+      "progress": {
+        "value": null,
+        "numerator": null,
+        "denominator": null,
+        "basis": "HELD_NO_ADMITTED_EXECUTION_DENOMINATOR"
+      },
+      "health": {
+        "signal": "GREY",
+        "basis": "REGISTER_RECORDS_HELD_WITHOUT_CURRENT_EXECUTION_HEALTH_EVIDENCE"
+      },
+      "coverage": {
+        "maturity": "MCOV-1",
+        "basis": "MISSION_ID_AND_FRONTIER_COUNT_REGISTERED"
+      },
+      "metrics": {
+        "evidence_state": "UNKNOWN",
+        "core": {
+          "frontier_count": 8
+        }
+      },
+      "crew": {
+        "state": "UNKNOWN",
+        "members": []
+      },
+      "runners": {
+        "state": "UNKNOWN",
+        "items": []
+      },
+      "lifecycle": {
+        "state": "HOLD"
+      },
+      "todo": {
+        "state": "DEFERRED",
+        "items": []
+      },
+      "authority_transfer": false
+    },
+    {
+      "mission_id": "CLOUD16",
+      "mission_class": "LEGACY_QPS_EXPANSION_MISSION",
+      "source_status": "HELD",
+      "status": {
+        "execution": "BLOCKED"
+      },
+      "progress": {
+        "value": null,
+        "numerator": null,
+        "denominator": null,
+        "basis": "HELD_NO_ADMITTED_EXECUTION_DENOMINATOR"
+      },
+      "health": {
+        "signal": "GREY",
+        "basis": "REGISTER_RECORDS_HELD_WITHOUT_CURRENT_EXECUTION_HEALTH_EVIDENCE"
+      },
+      "coverage": {
+        "maturity": "MCOV-1",
+        "basis": "MISSION_ID_AND_FRONTIER_COUNT_REGISTERED"
+      },
+      "metrics": {
+        "evidence_state": "UNKNOWN",
+        "core": {
+          "frontier_count": 16
+        }
+      },
+      "crew": {
+        "state": "UNKNOWN",
+        "members": []
+      },
+      "runners": {
+        "state": "UNKNOWN",
+        "items": []
+      },
+      "lifecycle": {
+        "state": "HOLD"
+      },
+      "todo": {
+        "state": "DEFERRED",
+        "items": []
+      },
+      "authority_transfer": false
     }
-  ]
+  ],
+  "census_scope": {
+    "normalized_rows": 18,
+    "expected_mission_ids": [
+      "GM-I",
+      "GM-II",
+      "GM-III",
+      "GM-IV",
+      "GM-V",
+      "GM-I-B",
+      "GM-I-C",
+      "HM-01",
+      "LM-10",
+      "LM-11",
+      "GM-DMAIC-EVOLUTION-T7-T14-T21-20260926",
+      "MC-EVO-02",
+      "M01",
+      "M02A",
+      "M02B",
+      "M03",
+      "M04",
+      "CLOUD16"
+    ],
+    "sources": [
+      "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+      "mission-control/qps-triage-ultra/mission_registry.yaml",
+      "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
+      "GBOGEB/pipeline-automation-hub#437"
+    ],
+    "rule": "Every discovered mission/control-program row in these bound sources receives an independent telemetry envelope; missing measurements remain UNKNOWN."
+  }
 }
