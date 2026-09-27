@@ -1,0 +1,53 @@
+{
+  "schema": "missioncontrol.v2.adoption.a3_postmerge_trusted_control_repair.v1",
+  "as_of": "2026-09-27",
+  "sprint_id": "MC-S2",
+  "wave_id": "MC-A3_VALIDATOR_ENFORCEMENT",
+  "control_issue": "GBOGEB/pipeline-automation-hub#443",
+  "reason": "PR457_MERGED_BEFORE_TRUSTED_FPC_COMPLETED",
+  "prior_chain": {
+    "implementation_pr": 451,
+    "implementation_merge": "2026b3c66331c534818a64ad05b2fa4ee9dd27da",
+    "repair_pr": 455,
+    "repair_head": "89be5fe2b7abeade01629a083fc9285315ea9a51",
+    "repair_merge": "abae87459ff309b7069c61b2a77c0f57adcfc034",
+    "premature_closeout_pr": 457,
+    "premature_closeout_head": "a98fa15af3c6531acf195ad800ce0a3341556267",
+    "premature_closeout_merge": "7c43939e4e638d6b58e859221b6b9cad926c7c0a"
+  },
+  "repaired_head_evidence": {
+    "a3_enforcement_run": 36336535262,
+    "a3_enforcement_result": "SUCCESS",
+    "a3_artifact_id": 10937567199,
+    "a3_artifact_digest": "sha256:d1b14c1dd64c35014af7a6f99e94a97c8c475628ffbb2b24972213f3f55168db",
+    "first_pass_closure_proof_run": 36336535102,
+    "first_pass_closure_proof_result": "SUCCESS",
+    "codex_review": "COMPLETED_NO_MAJOR_ISSUES"
+  },
+  "control_repair_policy": {
+    "this_pr_is_draft_until_exact_head_candidate_proofs_complete": true,
+    "this_pr_must_run_a3_enforcement": true,
+    "this_pr_must_run_mc_v2_contract": true,
+    "this_pr_must_run_first_pass_closure_proof": true,
+    "this_pr_must_have_clean_exact_head_codex_review": true,
+    "mark_ready_only_after_candidate_proofs_and_review": true,
+    "trusted_fpc_success_required_after_ready": true,
+    "merge_only_after_trusted_fpc_success": true,
+    "a4_execution_forbidden_until_merge": true
+  },
+  "invariants": {
+    "official_mission_register_remains_identity_authority_bridge": true,
+    "legacy_validator_mutation": false,
+    "legacy_source_mutation": false,
+    "historical_receipt_rewrite": false,
+    "external_repository_mutation": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "intended_postmerge_state": {
+    "a3_state": "CONTROLLED_COMPLETE_TRUSTED_CONTROL_REPAIRED",
+    "a4_state": "ADMITTED_PENDING_IMPLEMENTATION",
+    "next_wave": "MC-A4_DASHBOARD_AND_TODO_SURFACES"
+  }
+}
