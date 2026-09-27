@@ -263,7 +263,28 @@
       "detector": "TOPOLOGY_OWNER_AWARE"
     },
     "deep_read": "NOT_STARTED",
-    "policy": "NO_BRUTE_FORCE_P1"
+    "policy": "NO_BRUTE_FORCE_P1",
+    "bounded_admission_accounting": {
+      "p1_denominator": 1079,
+      "admitted_shortlist": 120,
+      "unexpanded_population": 959,
+      "selected_first_slice": 12,
+      "selected_first_slice_id": "P1-S01",
+      "selected_first_slice_state": "SELECTED_NOT_READ",
+      "remaining_admitted_not_selected": 108,
+      "invariant": "1079 = 120 admitted shortlist + 959 unexpanded; P1-S01 selects 12 from governed bounded review population without expanding the remaining 959."
+    },
+    "exact_head_fpc_binding": {
+      "pr": 464,
+      "head_sha": "e5e4c47f1426f938ff9a34ffbc83ec0658b49d15",
+      "run_id": 36350634615,
+      "job_id": 108708509207,
+      "conclusion": "SUCCESS",
+      "steps_gt_0": true,
+      "codex_review_complete": true,
+      "codex_review_result": "NO_MAJOR_ISSUES",
+      "chronology_note": "#464 merged before this review completed; binding is current-state validation and does not rewrite that historical noncompliance."
+    }
   },
   "p1_review": {
     "subset_id": "P1-S01",
@@ -299,5 +320,14 @@
     "defect": "Later #460 merge replayed stale control values, restoring F02-F08-SHARED prs=208 and v1 clustering pointer while newer v3 and P1-S01 artifacts remained in the tree.",
     "repair": "Restore post-#463 control only; do not reselect or deep-read P1.",
     "chronology_note": "#460 merged before its final exact-head Codex review completed and is retained as historical noncompliance."
+  },
+  "post_464_review_repair": {
+    "source": "Copilot post-merge review on #464",
+    "material_findings": [
+      "Retain 120 admitted / 959 unexpanded bounded-admission accounting.",
+      "Preserve exact-head FPC/Codex current-state proof binding in current control."
+    ],
+    "repair_scope": "CONTROL_METADATA_ONLY",
+    "p1_body_deep_read_performed": false
   }
 }
