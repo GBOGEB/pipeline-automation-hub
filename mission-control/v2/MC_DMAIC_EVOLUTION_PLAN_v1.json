@@ -1,0 +1,149 @@
+{
+  "schema": "missioncontrol.dmaic_evolution_plan.v1",
+  "mission_id": "MC-EVO-02",
+  "as_of": "2026-09-27",
+  "control_issue": "GBOGEB/pipeline-automation-hub#437",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "objective": "Evolve Mission Control into a mission-oriented supervisory control plane with explicit per-mission telemetry, lifecycle, crew/runner separation, TODO governance, method profiles, and collision-safe taxonomy.",
+  "dmaic": {
+    "DEFINE": {
+      "state": "PASS",
+      "outputs": [
+        "canonical concepts",
+        "namespace decisions",
+        "authority boundary",
+        "DoV"
+      ],
+      "key_decisions": [
+        "DMAIC_IS_SUPERVISORY",
+        "3PSTAR_IS_METHOD_FAMILY_NOT_LIFECYCLE",
+        "MIP_IS_CONDITIONAL",
+        "MC_RESERVED_MISSION_CONTROL",
+        "MONTE_CARLO_USES_MONTE_CARLO_OR_MC_SIM",
+        "MCOV_REPLACES_AMBIGUOUS_COV"
+      ]
+    },
+    "MEASURE": {
+      "state": "PASS_BASELINE",
+      "observed_sources": [
+        "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+        "mission-control/qps-triage-ultra/metric_registry.yaml",
+        "mission-control/qps-triage-ultra/crew/README.md",
+        "mission-control/historian/RUNNER_ECONOMICS_CONTROL_v1.json",
+        "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
+        "mission-control/qps-triage-ultra/mission_registry.yaml"
+      ],
+      "findings": [
+        "mission/wave/pulse/receipt primitive already exists",
+        "crew evidence model already exists",
+        "runner economics already exists",
+        "DMAIC cohort telemetry exists",
+        "Monte Carlo is explicitly present as MONTE_CARLO in math missions",
+        "mission status/progress/health/coverage are not yet uniformly separated across all mission rows"
+      ]
+    },
+    "ANALYZE": {
+      "state": "PASS",
+      "root_causes": [
+        "PROCESS_AND_LIFECYCLE_CONFLATION",
+        "AGGREGATE_METRICS_WITHOUT_UNIFORM_PER_MISSION_CONTRACT",
+        "CREW_AND_EXECUTION_SUBSTRATE_CAN_BE_CONFUSED",
+        "BARE_MC_NAMESPACE_COLLISION",
+        "BARE_COV_NAMESPACE_COLLISION_WITH_CODE_COVERAGE",
+        "CONTROL_TOKEN_OVERLOAD"
+      ]
+    },
+    "IMPROVE": {
+      "state": "ACTIVE",
+      "waves": [
+        {
+          "id": "MC-E1",
+          "name": "DEFINE_TAXONOMY",
+          "pulses": [
+            "P1_NAMESPACE",
+            "P2_GLOSSARY",
+            "P3_COMPATIBILITY_ALIASES"
+          ],
+          "output": "MC_GLOSSARY_TAXONOMY_v2.json"
+        },
+        {
+          "id": "MC-E2",
+          "name": "MISSION_TELEMETRY",
+          "pulses": [
+            "P1_CONTRACT",
+            "P2_CURRENT_CENSUS",
+            "P3_UNKNOWN_FAIL_CLOSED"
+          ],
+          "output": "MC_MISSION_TELEMETRY_CONTRACT_v1.json + MC_MISSION_STATUS_CURRENT_v1.json"
+        },
+        {
+          "id": "MC-E3",
+          "name": "METHOD_PROFILES",
+          "pulses": [
+            "P1_DMAIC_SUPERVISOR",
+            "P2_3PSTAR_PROFILES",
+            "P3_MIP_ADMISSION"
+          ],
+          "output": "MC_METHOD_PROFILE_REGISTRY_v1.json"
+        },
+        {
+          "id": "MC-E4",
+          "name": "LIFECYCLE_TODO_RESOURCES",
+          "pulses": [
+            "P1_LIFECYCLE",
+            "P2_CREW_VS_RUNNER",
+            "P3_TODO_TRANSITIONS"
+          ],
+          "output": "mission telemetry contract"
+        },
+        {
+          "id": "MC-E5",
+          "name": "CONTROL_AND_MIGRATION",
+          "pulses": [
+            "P1_VALIDATOR",
+            "P2_EXACT_HEAD_PROOF",
+            "P3_CURRENT_POINTER_AND_DISCOVERY"
+          ],
+          "output": "validator + workflow + CURRENT pointer"
+        }
+      ]
+    },
+    "CONTROL": {
+      "state": "PENDING_EXACT_HEAD_PR_PROOF",
+      "required": [
+        "validator_pass",
+        "workflow_gt0_if_admitted",
+        "no_new_machine_identifier_uses_MC_for_MONTE_CARLO",
+        "no_new_machine_field_uses_bare_COV_N",
+        "all_current_mission_rows_have_required_dimensions",
+        "historical_receipts_unchanged",
+        "README_and_official_register_discovery_paths",
+        "postmerge_readback"
+      ]
+    }
+  },
+  "sprint_plan": [
+    {
+      "sprint_id": "MC-S1",
+      "objective": "Contract and namespace migration without historical rewrite",
+      "waves": [
+        "MC-E1",
+        "MC-E2",
+        "MC-E3",
+        "MC-E4",
+        "MC-E5"
+      ],
+      "wip_policy": "one taxonomy/control PR; no unrelated mission repair",
+      "exit": "exact-head validator pass then merge/postmerge control"
+    }
+  ],
+  "reentry_triggers": [
+    "new_namespace_collision",
+    "mission_row_missing_required_dimension",
+    "historical_alias_misinterpreted_as_new_canonical_token",
+    "validator_regression",
+    "new_mission_class_requires_new_method_profile"
+  ]
+}
