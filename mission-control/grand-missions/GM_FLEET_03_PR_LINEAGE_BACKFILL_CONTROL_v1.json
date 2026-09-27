@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_100_PERCENT_TRUE_P0_COMPLETE_PARENTS_DISPOSITIONED_P1_CLUSTERED",
+  "state": "STRUCTURAL_100_PERCENT_TRUE_P0_COMPLETE_PARENTS_DISPOSITIONED_P1_CLUSTERED_CORRECTED",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -69,7 +69,7 @@
       "id": "F02-F08-SHARED",
       "issue": 433,
       "scope": "82_REPOSITORIES",
-      "prs": 208,
+      "prs": 209,
       "crew": [
         "SCOUT",
         "SHARED_READER"
@@ -243,17 +243,24 @@
     "p1_selection": "CLUSTERED_BOUNDED"
   },
   "p1_clustering": {
-    "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_CLUSTERING_v1.json",
+    "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_CLUSTERING_v2.json",
+    "supersedes": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_CLUSTERING_v1.json",
     "candidates": 1079,
     "primary_cluster_counts": {
-      "NAMESPACE_COLLISION": 903,
-      "CONTRADICTORY_HANDOVER": 56,
-      "MISSING_DURABLE_SUCCESSOR": 22,
-      "CROSS_REPO_RETURN": 56,
+      "NAMESPACE_COLLISION": 908,
+      "CONTRADICTORY_HANDOVER": 73,
+      "MISSING_DURABLE_SUCCESSOR": 30,
+      "CROSS_REPO_RETURN": 26,
       "SUPERSESSION_COMPETITION": 42
     },
-    "multi_flag_candidates": 170,
+    "multi_flag_candidates": 164,
     "unassigned_candidates": 0,
+    "correction": {
+      "shared_cell_prs": "208->209",
+      "cell_pr_total": 4486,
+      "cross_repo_return": "56->26",
+      "polluted_home_domain_members_removed": 30
+    },
     "deep_read": "NOT_STARTED",
     "policy": "NO_BRUTE_FORCE_P1"
   }
