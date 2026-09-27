@@ -103,7 +103,7 @@ def main():
 
     receipt = {
         "schema": "missioncontrol.v2.validation_receipt.v1",
-        "source_sha": os.environ.get("GITHUB_SHA"),
+        "source_sha": os.environ.get("MC_SOURCE_SHA") or os.environ.get("GITHUB_SHA"),
         "result": "PASS" if not errors else "FAIL",
         "checks": {
             "namespace_MC": "PASS" if not any("MC must" in e for e in errors) else "FAIL",
