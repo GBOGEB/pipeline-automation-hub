@@ -1,0 +1,111 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.p0_semantic_recensus.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "date": "2026-09-27",
+  "frozen_snapshot": "FLEET_4486",
+  "classification_invariant": "P0_TRUE_CROSS_REPO iff any admitted edge target repository differs from the source PR repository.",
+  "classification_correction": {
+    "original_published_P0": 364,
+    "corrected_true_cross_repo_P0": 176,
+    "moved_P0_to_P2": 188,
+    "repair_merge": "c6a12517886f40d3abd16bd723e764c737c10731",
+    "regression_merge": "b2fddf1b13d539ed214731f5edc2ef0ffd54c406",
+    "historical_git_evidence_preserved": true
+  },
+  "corrected_p0": {
+    "source_pr_candidates": 176,
+    "completed_source_pr_candidates": 176,
+    "completion_pct": 100,
+    "true_cross_repo_edges": 237,
+    "typed_true_cross_repo_edges": 237,
+    "unresolved_target_identity": 0,
+    "unresolved_relation_semantics": 0,
+    "duplicate_canonical_edges": 0
+  },
+  "cells": {
+    "DR-A": {
+      "issue": "GBOGEB/pipeline-automation-hub#434",
+      "state": "COMPLETE",
+      "true_p0_sources": 36,
+      "true_cross_repo_edges": 42,
+      "relation_type_counts": {
+        "EVIDENCE_REFERENCE": 15,
+        "HAS_PARENT": 6,
+        "HANDOVER_OR_RETURN_REFERENCE": 21
+      },
+      "overread": {
+        "sources_read": 219,
+        "explicit_refs_read": 405,
+        "note": "The 183 same-repository-only source PRs were reclassified P2 by the correction. Their completed reads remain useful supplemental genealogy and are not discarded."
+      }
+    },
+    "DR-B": {
+      "issue": "GBOGEB/pipeline-automation-hub#435",
+      "state": "COMPLETE",
+      "true_p0_sources": 78,
+      "true_cross_repo_edges": 107,
+      "relation_type_counts": {
+        "EVIDENCE_REFERENCE": 58,
+        "HAS_PARENT": 8,
+        "HANDOVER_OR_RETURN_REFERENCE": 41
+      },
+      "overread": {
+        "sources_read": 83,
+        "explicit_refs_read": 115,
+        "note": "Five same-repository-only source PRs moved to P2; eight same-repository edges are excluded from the true-P0 edge denominator but retained as genealogy evidence."
+      },
+      "normalized_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRB_RELATION_COMPLETE_v1.json"
+    },
+    "DR-C": {
+      "issue": "GBOGEB/pipeline-automation-hub#436",
+      "state": "COMPLETE",
+      "true_p0_sources": 62,
+      "true_cross_repo_edges": 88,
+      "relation_type_counts": {
+        "EVIDENCE_REFERENCE": 50,
+        "HAS_PARENT": 13,
+        "CLOSES_OR_RESOLVES": 4,
+        "SUPERSEDED_BY": 1,
+        "SUPERSEDES": 1,
+        "HANDOVER_OR_RETURN_REFERENCE": 12,
+        "AMBIGUOUS_EVIDENCE": 7
+      },
+      "relation_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v1.json"
+    }
+  },
+  "global_relation_type_counts": {
+    "EVIDENCE_REFERENCE": 123,
+    "HAS_PARENT": 27,
+    "HANDOVER_OR_RETURN_REFERENCE": 74,
+    "CLOSES_OR_RESOLVES": 4,
+    "SUPERSEDED_BY": 1,
+    "SUPERSEDES": 1,
+    "AMBIGUOUS_EVIDENCE": 7,
+    "total": 237
+  },
+  "control": {
+    "p0_disposition": "SEMANTIC_RELATION_COMPLETE",
+    "parent_cells": [
+      "#429",
+      "#430",
+      "#431",
+      "#432",
+      "#433"
+    ],
+    "parent_cell_next_action": "Explicitly disposition structural cells after this receipt is merged and read back.",
+    "p1_candidates": 1079,
+    "p1_next_action": "Cluster before deep-read by reused W###, supersession/competition, multiple mission labels, named-next-objective without durable child, contradictory handovers, and cross-repo parent/return evidence.",
+    "p1_deep_read": "WITHHELD_UNTIL_PARENT_CELL_DISPOSITION",
+    "p2_candidates": 1576,
+    "no_blind_p1_read": true
+  },
+  "external_noncompensating_boundaries": [
+    "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
+    "GBOGEB/ABACUS#1369 EXECUTION_ADMISSION",
+    "W275_PHYSICAL_SUCCESSOR_GIT_BUNDLE",
+    "GBOGEB/cryoplant-project#1801 W287_DREQ_SOURCE_INTEGRATION"
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
