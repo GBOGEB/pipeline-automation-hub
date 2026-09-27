@@ -1,0 +1,364 @@
+{
+  "schema": "missioncontrol.v2.adoption.current_mission_projection.v1",
+  "as_of": "2026-09-27",
+  "sprint_id": "MC-S2",
+  "wave_id": "MC-A2_CURRENT_MISSION_PROJECTION",
+  "control_issue": "GBOGEB/pipeline-automation-hub#443",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "basis": {
+    "mission_control_master_sha": "062dc4e0f6d25f8dc860e1b52bc3df9325b527ad",
+    "a1_crosswalk": {
+      "path": "mission-control/v2/adoption/MC_S2_A1_READ_ONLY_CONSUMER_CROSSWALK_20260927_v1.json",
+      "blob": "f278ffc34d836d48eb2b18994b165a0406e9cd64"
+    },
+    "mission_status": {
+      "path": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json",
+      "blob": "1b83bb91e9a4c1710f7c88f6fb7db6bcf151e044"
+    },
+    "official_register": {
+      "path": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+      "blob": "7ea179a05056bc10fea5d0986f83e92e12ae3abf"
+    }
+  },
+  "projection_policy": {
+    "mode": "READ_ONLY_ADDITIVE",
+    "canonical_telemetry_is_projected_not_replaced": true,
+    "legacy_identity_assertions_remain_authoritative": true,
+    "historical_receipts_rewritten": false,
+    "pinned_historical_blobs_rewritten": false,
+    "external_repository_mutation": false,
+    "unknown_remains_null_or_unknown": true,
+    "merge_is_not_proof": true
+  },
+  "projections": [
+    {
+      "projection_id": "MC-A2-P01-GM-I-C",
+      "mission_id": "GM-I-C",
+      "a1_consumer_ids": [
+        "MC-A1-C04"
+      ],
+      "source_bindings": [
+        {
+          "path": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+          "blob": "7ea179a05056bc10fea5d0986f83e92e12ae3abf"
+        },
+        {
+          "path": "mission-control/grand-missions/GM-I-C_CROSS_AGENT_DRIVE_FEDERATION_CONTROL_v0.1.yaml",
+          "blob": "014fc801a83cb0e2fd5ad8b01a5f27271c135fa3"
+        },
+        {
+          "path": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json",
+          "blob": "1b83bb91e9a4c1710f7c88f6fb7db6bcf151e044"
+        }
+      ],
+      "current_telemetry": {
+        "mission_id": "GM-I-C",
+        "mission_class": "GRAND_MISSION_VARIANT",
+        "source_status": "REGISTERED_BUILD_EXTERNAL_AUTH_PROOF_PENDING",
+        "status": {
+          "execution": "WAIT_EXTERNAL"
+        },
+        "progress": {
+          "value": null,
+          "numerator": null,
+          "denominator": null,
+          "basis": "NO_CANONICAL_PROGRESS_DENOMINATOR"
+        },
+        "health": {
+          "signal": "AMBER",
+          "basis": "EXPLICIT_PENDING_REAL_HOSTED_AUTH_PROOF"
+        },
+        "coverage": {
+          "maturity": "MCOV-3",
+          "basis": "IDENTITY_DEPENDENCY_FIRST_RED_AND_AUTH_BOUNDARY_CLASSIFIED"
+        },
+        "metrics": {
+          "evidence_state": "PARTIAL",
+          "core": {
+            "work_total": null,
+            "work_done": null,
+            "work_blocked": null,
+            "open_predicates": null,
+            "proof_yield": null,
+            "first_red_count": null,
+            "reopen_count": null,
+            "accepted_receipt_yield": null,
+            "queue_seconds": null,
+            "execute_seconds": null,
+            "evidence_age_seconds": null
+          },
+          "custom": {}
+        },
+        "crew": {
+          "state": "PARTIAL",
+          "members": []
+        },
+        "runners": {
+          "state": "PARTIAL",
+          "items": []
+        },
+        "lifecycle": {
+          "state": "WAIT_RETURN"
+        },
+        "todo": {
+          "state": "WAIT_RETURN",
+          "items": [
+            {
+              "todo_id": "GM-I-C-FIRST-RED",
+              "predicate": "REAL_WIF_DRIVE_READONLY_GT0_STEP_RECEIPT",
+              "state": "WAIT_RETURN",
+              "priority": "P1",
+              "crew_owner": null,
+              "runner_requirement": "EXTERNAL_AUTHENTICATED_RUNTIME",
+              "next_legal_transition": "VALIDATE_GENUINE_RETURN",
+              "evidence_ref": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml"
+            }
+          ]
+        },
+        "authority_transfer": false
+      },
+      "preserved_assertions": [
+        "GM-I-C remains parented by GM-I",
+        "provider remains GBOGEB/GEMINI",
+        "hosted Drive PASS remains withheld until real authenticated greater-than-zero-step evidence",
+        "first red remains IC3_AUTH / REAL_WIF_DRIVE_READONLY_GT0_STEP_RECEIPT",
+        "projection does not modify registration or provider controls"
+      ],
+      "consumer_transition": "PARALLEL_CURRENT_STATE_PROJECTION_ONLY"
+    },
+    {
+      "projection_id": "MC-A2-P02-LM-10",
+      "mission_id": "LM-10",
+      "a1_consumer_ids": [
+        "MC-A1-C07",
+        "MC-A1-C08",
+        "MC-A1-C17",
+        "MC-A1-C11"
+      ],
+      "source_bindings": [
+        {
+          "path": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+          "blob": "7ea179a05056bc10fea5d0986f83e92e12ae3abf"
+        },
+        {
+          "path": "mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml",
+          "blob": "6d9578b55d1f530e17672cf7578f7d7f01fd83d5"
+        },
+        {
+          "path": "mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml",
+          "blob": "c4532aa19b04e98072468ce73519f4f9c5425aa0"
+        },
+        {
+          "path": "mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json",
+          "blob": "7739b63c6c3d564d054ecb5a255d9b7611893c45"
+        },
+        {
+          "path": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json",
+          "blob": "1b83bb91e9a4c1710f7c88f6fb7db6bcf151e044"
+        }
+      ],
+      "current_telemetry": {
+        "mission_id": "LM-10",
+        "mission_class": "LOCAL_SINGLE_FRONTIER_DEVELOPMENT_AND_FEDERATION",
+        "source_status": "W260_CONTROLLED_COMPLETE_REENTRY_GOVERNED",
+        "status": {
+          "execution": "CONTROL_WATCH"
+        },
+        "progress": {
+          "value": null,
+          "numerator": null,
+          "denominator": null,
+          "basis": "MISSION_HAS_COMPLETED_SLICES_BUT_NO_SINGLE_COMPARABLE_TOTAL_DENOMINATOR"
+        },
+        "health": {
+          "signal": "GREEN",
+          "basis": "SOURCE_STATE_EXPLICITLY_CONTROLLED_COMPLETE_REENTRY_GOVERNED"
+        },
+        "coverage": {
+          "maturity": "MCOV-5",
+          "basis": "CONTROLLED_COMPLETE_WITH_GOVERNED_REENTRY_AND_RUNTIME_RECEIPT_LINEAGE"
+        },
+        "metrics": {
+          "evidence_state": "PARTIAL",
+          "core": {
+            "work_total": null,
+            "work_done": null,
+            "work_blocked": null,
+            "open_predicates": null,
+            "proof_yield": null,
+            "first_red_count": null,
+            "reopen_count": null,
+            "accepted_receipt_yield": null,
+            "queue_seconds": null,
+            "execute_seconds": null,
+            "evidence_age_seconds": null
+          },
+          "custom": {}
+        },
+        "crew": {
+          "state": "PARTIAL",
+          "members": []
+        },
+        "runners": {
+          "state": "PARTIAL",
+          "items": []
+        },
+        "lifecycle": {
+          "state": "CONTROLLED"
+        },
+        "todo": {
+          "state": "CONTROL",
+          "items": []
+        },
+        "authority_transfer": false
+      },
+      "preserved_assertions": [
+        "LM-10 source state remains W260_CONTROLLED_COMPLETE_REENTRY_GOVERNED",
+        "current development frontier remains CONTROL_WATCH_ONLY",
+        "provider_WIP_cap remains 0",
+        "BD-260.6 remains dormant until real consumer need",
+        "existing convergence validator assertions are not removed or weakened"
+      ],
+      "external_read_only_projection": {
+        "repository": "GBOGEB/cryoplant-project",
+        "refreshed_main_sha": "f87cd797c18205d888555456b489bae30aee7951",
+        "consumer_path": "controls/QPS_MATH_METHOD_CARDS_CURRENT_v0.1.yaml",
+        "refreshed_blob": "41ca321a131b5cb4ef6746f5d2f4fdf3715b191a",
+        "a1_observed_main_sha": "9d7c36d40c14ba58a33a3bbef74a83d8ff662e72",
+        "a1_observed_blob": "41ca321a131b5cb4ef6746f5d2f4fdf3715b191a",
+        "observation": "CONSUMER_BLOB_UNCHANGED_ACROSS_A1_TO_A2_REFRESH",
+        "rule": "Historical Mission Control blobs pinned by the QPS consumer remain immutable; this current projection is additive only."
+      },
+      "consumer_transition": "PARALLEL_CURRENT_STATE_PROJECTION_ONLY"
+    },
+    {
+      "projection_id": "MC-A2-P03-LM-11",
+      "mission_id": "LM-11",
+      "a1_consumer_ids": [
+        "MC-A1-C03"
+      ],
+      "source_bindings": [
+        {
+          "path": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+          "blob": "7ea179a05056bc10fea5d0986f83e92e12ae3abf"
+        },
+        {
+          "path": "mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v3.yaml",
+          "blob": "6c967f3035d07b04b3741d4929de177120db2ee8"
+        },
+        {
+          "path": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json",
+          "blob": "1b83bb91e9a4c1710f7c88f6fb7db6bcf151e044"
+        }
+      ],
+      "current_telemetry": {
+        "mission_id": "LM-11",
+        "mission_class": "LOCAL_REPOSITORY_LINEAGE_AND_TRIAGE",
+        "source_status": "CONTROL_PLANE_REGISTERED_QPS_RUNTIME_DOV_WITHHELD_REPRODUCED",
+        "status": {
+          "execution": "BLOCKED"
+        },
+        "progress": {
+          "value": null,
+          "numerator": null,
+          "denominator": null,
+          "basis": "RUNTIME_DOV_WITHHELD_NO_CANONICAL_TOTAL_DENOMINATOR"
+        },
+        "health": {
+          "signal": "AMBER",
+          "basis": "ZERO_STEP_RUNTIME_GATE_REPRODUCED_AND_DOV_WITHHELD"
+        },
+        "coverage": {
+          "maturity": "MCOV-3",
+          "basis": "CONTROL_PLANE_GRAPH_AND_FIRST_RED_CLASSIFIED_BUT_GT0_RUNTIME_PROOF_WITHHELD"
+        },
+        "metrics": {
+          "evidence_state": "PARTIAL",
+          "core": {
+            "work_total": null,
+            "work_done": null,
+            "work_blocked": null,
+            "open_predicates": null,
+            "proof_yield": null,
+            "first_red_count": null,
+            "reopen_count": null,
+            "accepted_receipt_yield": null,
+            "queue_seconds": null,
+            "execute_seconds": null,
+            "evidence_age_seconds": null
+          },
+          "custom": {
+            "zero_step_reproduced": true
+          }
+        },
+        "crew": {
+          "state": "PARTIAL",
+          "members": []
+        },
+        "runners": {
+          "state": "PARTIAL",
+          "items": []
+        },
+        "lifecycle": {
+          "state": "HOLD"
+        },
+        "todo": {
+          "state": "BLOCKED",
+          "items": [
+            {
+              "todo_id": "LM11-FIRST-GT0",
+              "predicate": "LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN",
+              "state": "BLOCKED",
+              "priority": "P1",
+              "crew_owner": null,
+              "runner_requirement": "GITHUB_ACTIONS_GT0",
+              "next_legal_transition": "CONSUME_OWNER_RUNTIME_ADMISSION_CHANGE_OR_GENUINE_GT0_RUN",
+              "evidence_ref": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml"
+            }
+          ]
+        },
+        "authority_transfer": false
+      },
+      "preserved_assertions": [
+        "LM-11 remains a local navigation/lineage mission, not a global QPS wave",
+        "zero-step runtime evidence remains non-application failure",
+        "highest observed wave label does not define current global gate",
+        "measured graph metrics remain withheld until genuine greater-than-zero-step execution",
+        "first red remains LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN"
+      ],
+      "consumer_transition": "PARALLEL_CURRENT_STATE_PROJECTION_ONLY"
+    }
+  ],
+  "a1_candidate_coverage": {
+    "admitted_consumer_ids": [
+      "MC-A1-C03",
+      "MC-A1-C04",
+      "MC-A1-C07",
+      "MC-A1-C08",
+      "MC-A1-C11",
+      "MC-A1-C17"
+    ],
+    "projected_consumer_ids": [
+      "MC-A1-C03",
+      "MC-A1-C04",
+      "MC-A1-C07",
+      "MC-A1-C08",
+      "MC-A1-C11",
+      "MC-A1-C17"
+    ],
+    "parity": true
+  },
+  "exit_criteria": {
+    "additive_projection_serialized": true,
+    "admitted_a1_consumers_projected": "6_OF_6",
+    "legacy_consumer_files_modified": 0,
+    "external_repositories_modified": 0,
+    "historical_receipts_modified": 0,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "next_wave": "MC-A3_VALIDATOR_ENFORCEMENT"
+  }
+}
