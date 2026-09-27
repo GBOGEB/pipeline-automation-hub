@@ -37,7 +37,8 @@
         "sources_read": 219,
         "explicit_refs_read": 405,
         "note": "The 183 same-repository-only source PRs were reclassified P2 by the correction. Their completed reads remain useful supplemental genealogy and are not discarded."
-      }
+      },
+      "relation_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRA_RELATION_COMPLETE_v1.json"
     },
     "DR-B": {
       "issue": "GBOGEB/pipeline-automation-hub#435",
@@ -54,7 +55,7 @@
         "explicit_refs_read": 115,
         "note": "Five same-repository-only source PRs moved to P2; eight same-repository edges are excluded from the true-P0 edge denominator but retained as genealogy evidence."
       },
-      "normalized_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRB_RELATION_COMPLETE_v1.json"
+      "normalized_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRB_RELATION_COMPLETE_v3.json"
     },
     "DR-C": {
       "issue": "GBOGEB/pipeline-automation-hub#436",
@@ -97,7 +98,8 @@
     "p1_next_action": "Cluster before deep-read by reused W###, supersession/competition, multiple mission labels, named-next-objective without durable child, contradictory handovers, and cross-repo parent/return evidence.",
     "p1_deep_read": "WITHHELD_UNTIL_PARENT_CELL_DISPOSITION",
     "p2_candidates": 1576,
-    "no_blind_p1_read": true
+    "no_blind_p1_read": true,
+    "post_454_regression_repair": "Restores the #453 176/176 recensus after #454 regression and binds reconstructible DR-A/DR-B per-edge receipts."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
