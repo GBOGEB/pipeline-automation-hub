@@ -1,0 +1,92 @@
+name: MC-S2 A3 Validator Enforcement
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/adoption/MC_S2_A1_READ_ONLY_CONSUMER_CROSSWALK_20260927_v1.json'
+      - 'mission-control/v2/adoption/MC_S2_A2_CURRENT_MISSION_PROJECTION_20260927_v1.json'
+      - 'mission-control/v2/adoption/MC_S2_A3_VALIDATOR_ENFORCEMENT_20260927_v1.json'
+      - 'mission-control/v2/adoption/validate_mc_s2_a3_projection.py'
+      - 'mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json'
+      - 'mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml'
+      - 'mission-control/historian/validate_fleet_open_issue_convergence.py'
+      - 'mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json'
+      - 'mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml'
+      - 'mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml'
+      - 'scripts/validate_lm11_qps_wave_federation.py'
+      - 'mission-control/qps-triage-ultra/missions/LM-11_*'
+      - 'mission-control/grand-missions/validate_gm_i_c_registration.py'
+      - 'mission-control/grand-missions/GM-I-C_*'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - '.github/workflows/mc-s2-a3-validator-enforcement.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/v2/adoption/MC_S2_A1_READ_ONLY_CONSUMER_CROSSWALK_20260927_v1.json'
+      - 'mission-control/v2/adoption/MC_S2_A2_CURRENT_MISSION_PROJECTION_20260927_v1.json'
+      - 'mission-control/v2/adoption/MC_S2_A3_VALIDATOR_ENFORCEMENT_20260927_v1.json'
+      - 'mission-control/v2/adoption/validate_mc_s2_a3_projection.py'
+      - 'mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json'
+      - 'mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml'
+      - 'mission-control/historian/validate_fleet_open_issue_convergence.py'
+      - 'mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json'
+      - 'mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml'
+      - 'mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml'
+      - 'scripts/validate_lm11_qps_wave_federation.py'
+      - 'mission-control/qps-triage-ultra/missions/LM-11_*'
+      - 'mission-control/grand-missions/validate_gm_i_c_registration.py'
+      - 'mission-control/grand-missions/GM-I-C_*'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - '.github/workflows/mc-s2-a3-validator-enforcement.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  enforce:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Bind exact source
+        shell: bash
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$MC_SOURCE_SHA"
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install legacy validator dependency
+        run: python -m pip install --disable-pip-version-check PyYAML
+
+      - name: Validate additive A1/A2 projection enforcement
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python mission-control/v2/adoption/validate_mc_s2_a3_projection.py             --self-test             --emit-receipt /tmp/mc-s2-a3-validator-enforcement-receipt.json
+
+      - name: Re-prove unchanged LM-10 fail-closed semantics
+        run: |
+          python mission-control/historian/validate_fleet_open_issue_convergence.py
+          python mission-control/historian/validate_fleet_open_issue_convergence.py --self-test
+
+      - name: Re-prove unchanged LM-11 fail-closed semantics
+        run: python scripts/validate_lm11_qps_wave_federation.py
+
+      - name: Re-prove unchanged GM-I-C registration semantics
+        run: python mission-control/grand-missions/validate_gm_i_c_registration.py
+
+      - name: Upload A3 enforcement receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: mc-s2-a3-validator-enforcement-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/mc-s2-a3-validator-enforcement-receipt.json
+          if-no-files-found: error
