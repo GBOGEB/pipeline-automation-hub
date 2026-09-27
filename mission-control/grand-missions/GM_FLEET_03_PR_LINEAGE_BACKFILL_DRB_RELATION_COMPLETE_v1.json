@@ -19,16 +19,17 @@
     "unresolved_target_identity": 0
   },
   "final_relation_type_counts": {
-    "EVIDENCE_REFERENCE": 64,
-    "HAS_PARENT": 10,
+    "EVIDENCE_REFERENCE": 58,
+    "HAS_PARENT": 8,
     "HANDOVER_OR_RETURN_REFERENCE": 41
   },
   "final_control": {
-    "unique_edges": 115,
+    "source_pr_candidates": 78,
+    "unique_edges": 107,
     "unresolved_target_identity": 0,
     "unresolved_relation_semantics": 0,
     "duplicate_edges": 0,
-    "disposition": "RELATION_COMPLETE_CLOSE_READY"
+    "disposition": "TRUE_CROSS_REPO_P0_RELATION_COMPLETE"
   },
   "evidence_policy": {
     "infer_nothing_from_pr_number_or_wave_number": true,
@@ -49,5 +50,48 @@
   ],
   "authority_transfer": false,
   "formal_credit_delta": 0,
-  "engineering_credit_delta": 0
+  "engineering_credit_delta": 0,
+  "read_population": {
+    "source_pr_candidates": 83,
+    "aggregate_explicit_edges": 115,
+    "cryoplant_source_prs": 49,
+    "cryoplant_edges": 68,
+    "codex_source_prs": 34,
+    "codex_edges": 47,
+    "disposition": "OVERREAD_COMPLETE_RETAIN_AS_SUPPLEMENTAL_HISTORY"
+  },
+  "true_cross_repo_p0": {
+    "invariant": "target repository differs from source PR repository",
+    "source_pr_candidates": 78,
+    "aggregate_explicit_edges": 107,
+    "cryoplant_source_prs": 47,
+    "cryoplant_edges": 66,
+    "codex_source_prs": 31,
+    "codex_edges": 41,
+    "excluded_same_repository_source_prs": [
+      "GBOGEB/cryoplant-project::PR219",
+      "GBOGEB/cryoplant-project::PR225",
+      "GBOGEB/CODEX::PR239",
+      "GBOGEB/CODEX::PR603",
+      "GBOGEB/CODEX::PR757"
+    ],
+    "same_repository_edges_excluded_from_true_p0": 8,
+    "relation_type_counts": {
+      "EVIDENCE_REFERENCE": 58,
+      "HAS_PARENT": 8,
+      "HANDOVER_OR_RETURN_REFERENCE": 41
+    }
+  },
+  "overread_relation_type_counts": {
+    "EVIDENCE_REFERENCE": 64,
+    "HAS_PARENT": 10,
+    "HANDOVER_OR_RETURN_REFERENCE": 41
+  },
+  "classification_normalization": {
+    "correction_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P0_CLASSIFICATION_CORRECTION_v1.json",
+    "repair_merge": "c6a12517886f40d3abd16bd723e764c737c10731",
+    "regression_merge": "b2fddf1b13d539ed214731f5edc2ef0ffd54c406",
+    "policy": "Same-repository references remain retained genealogy evidence but are P2, not true cross-repo P0.",
+    "historical_source_reads_preserved": true
+  }
 }
