@@ -1,0 +1,40 @@
+{
+  "schema": "missioncontrol.v2.postmerge_control_receipt.v1",
+  "as_of": "2026-09-27",
+  "mission_id": "MC-EVO-02",
+  "parent_issue": "GBOGEB/pipeline-automation-hub#437",
+  "activation_chain": {
+    "architecture_pr": 438,
+    "architecture_merge": "e6d0e9f4adf3108b06a12d844087eec67edbbaea",
+    "census_fix_pr": 439,
+    "parser_repair_pr": 440,
+    "parser_repair_exact_head": "22c6529623f5eaa3b8121a2a27d7344ac9c297dd",
+    "parser_repair_merge": "9117f38888ae551b251d0c4dbd5b19994035035a"
+  },
+  "exact_head_proof": {
+    "mission_control_v2_contract_run": 36303880183,
+    "validation_artifact_id": 10925918436,
+    "validation_artifact_digest": "sha256:3de10ae80dfeff18fe684d7b7947a654d38639ae43693bb3a4fc63df7dd213ef",
+    "first_pass_closure_proof_run": 36303880144,
+    "codex_review": "COMPLETED_NO_MAJOR_ISSUES"
+  },
+  "postmerge_readback": {
+    "master_sha": "9117f38888ae551b251d0c4dbd5b19994035035a",
+    "source_registry_mission_count": 18,
+    "census_mission_count": 18,
+    "source_census_parity": true,
+    "parser_repair_present": true,
+    "required_core_metrics_present": true,
+    "collision_matrix_enforced": true,
+    "monte_carlo_token_policy": "MONTE_CARLO_OR_MC_SIM",
+    "mission_control_token_policy": "MC_RESERVED_FOR_MISSION_CONTROL",
+    "mission_control_coverage_policy": "MCOV_0_TO_5",
+    "unknown_policy": "UNKNOWN_OR_NULL_NEVER_COERCED_TO_ZERO"
+  },
+  "disposition": "CONTROLLED_ADOPTION_READY",
+  "next_wave": "MC-S2_ADOPTION_MIGRATION",
+  "adoption_guard": "MIGRATE_CONSUMERS_WITHOUT_REWRITING_HISTORICAL_RECEIPTS_OR_DOMAIN_AUTHORITY",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
