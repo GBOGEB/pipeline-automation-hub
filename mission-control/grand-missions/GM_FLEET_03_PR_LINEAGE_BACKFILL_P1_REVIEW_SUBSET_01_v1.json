@@ -60,7 +60,34 @@
         ],
         "foreign_domain_signals": []
       },
-      "review_state": "SELECTED_NOT_READ"
+      "review_state": "READ_MATERIAL_IDENTITY_DEFECT_REPAIRED_VERIFIED",
+      "disposition": {
+        "reviewed_pr": "GBOGEB/cryoplant-project#343",
+        "material_defect": "W25C.5 controlled handover and paired test encoded parent_wave W25C.4C while governed predecessor is W25C.4.",
+        "repair_pr": "GBOGEB/cryoplant-project#1815",
+        "repair_head": "49fb09619b7f2ec8b5adcebe129f5bf64931f4af",
+        "repair_merge": "9ce93da5a0100c15686392916e14861bc2d88890",
+        "merged_main_readback": {
+          "yaml_parent_wave": "W25C.4",
+          "test_parent_wave": "W25C.4"
+        },
+        "proof": {
+          "qps_w25d_delta_review": {
+            "run_id": 36351298957,
+            "conclusion": "SUCCESS"
+          },
+          "verify_ssot": {
+            "run_id": 36351298955,
+            "conclusion": "SUCCESS"
+          },
+          "codex": {
+            "status": "COMPLETE",
+            "result": "NO_MAJOR_ISSUES",
+            "reviewed_head": "49fb09619b7f2ec8b5adcebe129f5bf64931f4af"
+          }
+        },
+        "chronology_note": "#1815 merged before exact-head Codex review completed; later clean review is current-state validation and does not rewrite that historical chronology."
+      }
     },
     {
       "review_order": 2,
@@ -480,11 +507,11 @@
     }
   ],
   "constraints": {
-    "pr_body_deep_read_performed": false,
-    "semantic_finding_claimed": false,
+    "pr_body_deep_read_performed": true,
+    "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "Deep-read only these 12 in review_order; stop on first material semantic/identity defect and repair before continuing."
+    "next_action": "Merge/prove this order-1 disposition control. Only then deep-read review_order 2. Stop again on first material semantic/identity defect."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -494,5 +521,13 @@
   ],
   "authority_transfer": false,
   "formal_credit_delta": 0,
-  "engineering_credit_delta": 0
+  "engineering_credit_delta": 0,
+  "review_progress": {
+    "reviewed": 1,
+    "repaired": 1,
+    "clean_without_repair": 0,
+    "remaining_in_subset": 11,
+    "next_review_order": 2,
+    "next_review_state": "HELD_PENDING_ORDER1_DISPOSITION_CONTROL_MERGE"
+  }
 }
