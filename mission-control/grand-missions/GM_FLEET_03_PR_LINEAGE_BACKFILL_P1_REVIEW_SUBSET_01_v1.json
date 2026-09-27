@@ -1,0 +1,498 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.p1_review_subset.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "date": "2026-09-27",
+  "source_clustering": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_CLUSTERING_v3.json",
+  "source_cluster": "SUPERSESSION_COMPETITION",
+  "source_cluster_size": 42,
+  "subset_id": "P1-S01",
+  "subset_size": 12,
+  "selection_mode": "METADATA_ONLY_PROPORTIONAL_CELL_COVERAGE_THEN_SIGNAL_DENSITY",
+  "cell_cluster_population": {
+    "F01-A": 25,
+    "F01-B": 6,
+    "F01-C": 6,
+    "F01-D": 5
+  },
+  "cell_quota": {
+    "F01-A": 7,
+    "F01-B": 2,
+    "F01-C": 2,
+    "F01-D": 1
+  },
+  "quota_method": "Largest-remainder proportional allocation for a 12-candidate bounded slice: 25/42, 6/42, 6/42, 5/42 -> 7,2,2,1.",
+  "ranking_score": "10*secondary_flag_count + 4*foreign_domain_signal_count + 3*direction_term_count + wave_label_count; ties by canonical id.",
+  "selected_candidates": [
+    {
+      "review_order": 1,
+      "id": "GBOGEB/cryoplant-project::PR343",
+      "cell": "F01-A",
+      "repository": "GBOGEB/cryoplant-project",
+      "pr": 343,
+      "title": "control(qps): W36 session handover, KPI, DMAIC, PCA and BT consolidation",
+      "selection_score": 38,
+      "wave_labels": [
+        "W36",
+        "W35",
+        "W33",
+        "W30",
+        "W32"
+      ],
+      "secondary_flags": [
+        "NAMESPACE_COLLISION",
+        "CONTRADICTORY_HANDOVER",
+        "MISSING_DURABLE_SUCCESSOR"
+      ],
+      "signals": {
+        "wave_labels": [
+          "W36",
+          "W35",
+          "W33",
+          "W30",
+          "W32"
+        ],
+        "multi_repo_wave_labels": [],
+        "direction_terms": [
+          "handover"
+        ],
+        "detected_domain_signals": [
+          "QPS"
+        ],
+        "foreign_domain_signals": []
+      },
+      "review_state": "SELECTED_NOT_READ"
+    },
+    {
+      "review_order": 2,
+      "id": "GBOGEB/cryoplant-project::PR346",
+      "cell": "F01-A",
+      "repository": "GBOGEB/cryoplant-project",
+      "pr": 346,
+      "title": "control(qps): consolidate W36 session DMAIC PCA BT KPI handover",
+      "selection_score": 37,
+      "wave_labels": [
+        "W36",
+        "W34",
+        "W35",
+        "W07"
+      ],
+      "secondary_flags": [
+        "NAMESPACE_COLLISION",
+        "CONTRADICTORY_HANDOVER",
+        "MISSING_DURABLE_SUCCESSOR"
+      ],
+      "signals": {
+        "wave_labels": [
+          "W36",
+          "W34",
+          "W35",
+          "W07"
+        ],
+        "multi_repo_wave_labels": [
+          "W07"
+        ],
+        "direction_terms": [
+          "handover"
+        ],
+        "detected_domain_signals": [
+          "QPS"
+        ],
+        "foreign_domain_signals": []
+      },
+      "review_state": "SELECTED_NOT_READ"
+    },
+    {
+      "review_order": 3,
+      "id": "GBOGEB/cryoplant-project::PR1138",
+      "cell": "F01-A",
+      "repository": "GBOGEB/cryoplant-project",
+      "pr": 1138,
+      "title": "[SUPERSEDED BY REBASED FOLLOW-UP] W177R: harden XLSX source-bind and promotion gates after #1129",
+      "selection_score": 36,
+      "wave_labels": [
+        "W162",
+        "W162-94",
+        "W171"
+      ],
+      "secondary_flags": [
+        "NAMESPACE_COLLISION",
+        "CONTRADICTORY_HANDOVER",
+        "MISSING_DURABLE_SUCCESSOR"
+      ],
+      "signals": {
+        "wave_labels": [
+          "W162",
+          "W162-94",
+          "W171"
+        ],
+        "multi_repo_wave_labels": [
+          "W162"
+        ],
+        "direction_terms": [
+          "follow-up"
+        ],
+        "detected_domain_signals": [],
+        "foreign_domain_signals": []
+      },
+      "review_state": "SELECTED_NOT_READ"
+    },
+    {
+      "review_order": 4,
+      "id": "GBOGEB/cryoplant-project::PR1073",
+      "cell": "F01-A",
+      "repository": "GBOGEB/cryoplant-project",
+      "pr": 1073,
+      "title": "W163: canonicalize MissionControl namespaces and fail-close collisions",
+      "selection_score": 25,
+      "wave_labels": [
+        "W163",
+        "W162",
+        "W153",
+        "W152",
+        "W147",
+        "W70",
+        "W4",
+        "W153-COST",
+        "W153-G5",
+        "W152-REL",
+        "W152-RTM"
+      ],
+      "secondary_flags": [
+        "NAMESPACE_COLLISION"
+      ],
+      "signals": {
+        "wave_labels": [
+          "W163",
+          "W162",
+          "W153",
+          "W152",
+          "W147",
+          "W70",
+          "W4",
+          "W153-COST",
+          "W153-G5",
+          "W152-REL",
+          "W152-RTM"
+        ],
+        "multi_repo_wave_labels": [
+          "W163",
+          "W162",
+          "W152",
+          "W70",
+          "W4"
+        ],
+        "direction_terms": [],
+        "detected_domain_signals": [
+          "MissionControl"
+        ],
+        "foreign_domain_signals": [
+          "MissionControl"
+        ]
+      },
+      "review_state": "SELECTED_NOT_READ"
+    },
+    {
+      "review_order": 5,
+      "id": "GBOGEB/cryoplant-project::PR756",
+      "cell": "F01-A",
+      "repository": "GBOGEB/cryoplant-project",
+      "pr": 756,
+      "title": "W64-P01 follow-up (superseded before execution)",
+      "selection_score": 25,
+      "wave_labels": [
+        "W64-P01",
+        "W64"
+      ],
+      "secondary_flags": [
+        "NAMESPACE_COLLISION",
+        "MISSING_DURABLE_SUCCESSOR"
+      ],
+      "signals": {
+        "wave_labels": [
+          "W64-P01",
+          "W64"
+        ],
+        "multi_repo_wave_labels": [
+          "W64"
+        ],
+        "direction_terms": [
+          "follow-up"
+        ],
+        "detected_domain_signals": [],
+        "foreign_domain_signals": []
+      },
+      "review_state": "SELECTED_NOT_READ"
+    },
+    {
+      "review_order": 6,
+      "id": "GBOGEB/cryoplant-project::PR1170",
+      "cell": "F01-A",
+      "repository": "GBOGEB/cryoplant-project",
+      "pr": 1170,
+      "title": "W175-B: consolidate LN2 cost/BOM/method as supplemental QPS evidence",
+      "selection_score": 17,
+      "wave_labels": [
+        "W175-B",
+        "W175-A",
+        "W175-B1",
+        "W175-B2",
+        "W175-B3",
+        "W175-C",
+        "W175-D"
+      ],
+      "secondary_flags": [
+        "NAMESPACE_COLLISION"
+      ],
+      "signals": {
+        "wave_labels": [
+          "W175-B",
+          "W175-A",
+          "W175-B1",
+          "W175-B2",
+          "W175-B3",
+          "W175-C",
+          "W175-D"
+        ],
+        "multi_repo_wave_labels": [],
+        "direction_terms": [],
+        "detected_domain_signals": [
+          "QPS"
+        ],
+        "foreign_domain_signals": []
+      },
+      "review_state": "SELECTED_NOT_READ"
+    },
+    {
+      "review_order": 7,
+      "id": "GBOGEB/cryoplant-project::PR1111",
+      "cell": "F01-A",
+      "repository": "GBOGEB/cryoplant-project",
+      "pr": 1111,
+      "title": "[SUPERSEDED BY #1114] W173 restore balanced N120 after post-merge P1",
+      "selection_score": 15,
+      "wave_labels": [
+        "W173",
+        "W175",
+        "W169-PDF",
+        "W169-PPTX",
+        "W174"
+      ],
+      "secondary_flags": [
+        "NAMESPACE_COLLISION"
+      ],
+      "signals": {
+        "wave_labels": [
+          "W173",
+          "W175",
+          "W169-PDF",
+          "W169-PPTX",
+          "W174"
+        ],
+        "multi_repo_wave_labels": [
+          "W174"
+        ],
+        "direction_terms": [],
+        "detected_domain_signals": [],
+        "foreign_domain_signals": []
+      },
+      "review_state": "SELECTED_NOT_READ"
+    },
+    {
+      "review_order": 8,
+      "id": "GBOGEB/ABACUS::PR1079",
+      "cell": "F01-B",
+      "repository": "GBOGEB/ABACUS",
+      "pr": 1079,
+      "title": "W91 DOW: consolidate competing runtimes behind canonical owners",
+      "selection_score": 13,
+      "wave_labels": [
+        "W91",
+        "W89",
+        "W90"
+      ],
+      "secondary_flags": [
+        "NAMESPACE_COLLISION"
+      ],
+      "signals": {
+        "wave_labels": [
+          "W91",
+          "W89",
+          "W90"
+        ],
+        "multi_repo_wave_labels": [
+          "W89",
+          "W90"
+        ],
+        "direction_terms": [],
+        "detected_domain_signals": [
+          "DOW"
+        ],
+        "foreign_domain_signals": []
+      },
+      "review_state": "SELECTED_NOT_READ"
+    },
+    {
+      "review_order": 9,
+      "id": "GBOGEB/ABACUS::PR1080",
+      "cell": "F01-B",
+      "repository": "GBOGEB/ABACUS",
+      "pr": 1080,
+      "title": "W92 DOW: consolidate Docker and deployment runtime authority",
+      "selection_score": 12,
+      "wave_labels": [
+        "W92",
+        "W91"
+      ],
+      "secondary_flags": [
+        "NAMESPACE_COLLISION"
+      ],
+      "signals": {
+        "wave_labels": [
+          "W92",
+          "W91"
+        ],
+        "multi_repo_wave_labels": [
+          "W92"
+        ],
+        "direction_terms": [],
+        "detected_domain_signals": [
+          "DOW"
+        ],
+        "foreign_domain_signals": []
+      },
+      "review_state": "SELECTED_NOT_READ"
+    },
+    {
+      "review_order": 10,
+      "id": "GBOGEB/CODEX::PR446",
+      "cell": "F01-C",
+      "repository": "GBOGEB/CODEX",
+      "pr": 446,
+      "title": "CODEX 2.0 W03 P3: bind logical IDs and expose runtime competition",
+      "selection_score": 13,
+      "wave_labels": [
+        "W03",
+        "W003",
+        "W04"
+      ],
+      "secondary_flags": [
+        "NAMESPACE_COLLISION"
+      ],
+      "signals": {
+        "wave_labels": [
+          "W03",
+          "W003",
+          "W04"
+        ],
+        "multi_repo_wave_labels": [
+          "W03",
+          "W003",
+          "W04"
+        ],
+        "direction_terms": [],
+        "detected_domain_signals": [
+          "CODEX"
+        ],
+        "foreign_domain_signals": []
+      },
+      "review_state": "SELECTED_NOT_READ"
+    },
+    {
+      "review_order": 11,
+      "id": "GBOGEB/CODEX::PR459",
+      "cell": "F01-C",
+      "repository": "GBOGEB/CODEX",
+      "pr": 459,
+      "title": "CODEX 2.0 W04 P6: retire duplicate MCP orchestration shell",
+      "selection_score": 13,
+      "wave_labels": [
+        "W04",
+        "W004",
+        "W003"
+      ],
+      "secondary_flags": [
+        "NAMESPACE_COLLISION"
+      ],
+      "signals": {
+        "wave_labels": [
+          "W04",
+          "W004",
+          "W003"
+        ],
+        "multi_repo_wave_labels": [
+          "W04",
+          "W004",
+          "W003"
+        ],
+        "direction_terms": [],
+        "detected_domain_signals": [
+          "CODEX"
+        ],
+        "foreign_domain_signals": []
+      },
+      "review_state": "SELECTED_NOT_READ"
+    },
+    {
+      "review_order": 12,
+      "id": "GBOGEB/Q_engineering_tools::PR70",
+      "cell": "F01-D",
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 70,
+      "title": "[SUPERSEDED BY QPS W295/W296] W295F reproof",
+      "selection_score": 20,
+      "wave_labels": [
+        "W295",
+        "W296",
+        "W294",
+        "W183",
+        "W184",
+        "W288"
+      ],
+      "secondary_flags": [
+        "NAMESPACE_COLLISION"
+      ],
+      "signals": {
+        "wave_labels": [
+          "W295",
+          "W296",
+          "W294",
+          "W183",
+          "W184",
+          "W288"
+        ],
+        "multi_repo_wave_labels": [
+          "W295",
+          "W296",
+          "W294",
+          "W183",
+          "W184",
+          "W288"
+        ],
+        "direction_terms": [],
+        "detected_domain_signals": [
+          "QPS"
+        ],
+        "foreign_domain_signals": [
+          "QPS"
+        ]
+      },
+      "review_state": "SELECTED_NOT_READ"
+    }
+  ],
+  "constraints": {
+    "pr_body_deep_read_performed": false,
+    "semantic_finding_claimed": false,
+    "no_namespace_bulk_read": true,
+    "no_bruteforce_p1": true,
+    "next_action": "Deep-read only these 12 in review_order; stop on first material semantic/identity defect and repair before continuing."
+  },
+  "external_noncompensating_boundaries": [
+    "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
+    "GBOGEB/ABACUS#1369 EXECUTION_ADMISSION",
+    "W275_PHYSICAL_SUCCESSOR_GIT_BUNDLE",
+    "GBOGEB/cryoplant-project#1801 W287_DREQ_SOURCE_INTEGRATION"
+  ],
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
