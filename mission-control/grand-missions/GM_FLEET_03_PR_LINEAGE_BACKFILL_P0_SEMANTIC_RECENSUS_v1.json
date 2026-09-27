@@ -16,8 +16,8 @@
     "source_pr_candidates": 176,
     "completed_source_pr_candidates": 176,
     "completion_pct": 100,
-    "true_cross_repo_edges": 237,
-    "typed_true_cross_repo_edges": 237,
+    "true_cross_repo_edges": 235,
+    "typed_true_cross_repo_edges": 235,
     "unresolved_target_identity": 0,
     "unresolved_relation_semantics": 0,
     "duplicate_canonical_edges": 0
@@ -61,28 +61,36 @@
       "issue": "GBOGEB/pipeline-automation-hub#436",
       "state": "COMPLETE",
       "true_p0_sources": 62,
-      "true_cross_repo_edges": 88,
+      "true_cross_repo_edges": 86,
       "relation_type_counts": {
-        "EVIDENCE_REFERENCE": 50,
+        "EVIDENCE_REFERENCE": 49,
         "HAS_PARENT": 13,
-        "CLOSES_OR_RESOLVES": 4,
+        "CLOSES_OR_RESOLVES": 3,
         "SUPERSEDED_BY": 1,
         "SUPERSEDES": 1,
         "HANDOVER_OR_RETURN_REFERENCE": 12,
         "AMBIGUOUS_EVIDENCE": 7
       },
-      "relation_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v1.json"
+      "relation_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v2.json",
+      "overread": {
+        "explicit_refs_read": 88,
+        "excluded_same_repository_edges": [
+          "GBOGEB/Q_engineering_tools::PR61=>GBOGEB/Q_engineering_tools#59",
+          "GBOGEB/pipeline-automation-hub::PR180=>GBOGEB/pipeline-automation-hub#153"
+        ],
+        "note": "Historical DR-C v1 retains all 88 typed references. True-cross-repo P0 excludes the two same-repository relations."
+      }
     }
   },
   "global_relation_type_counts": {
-    "EVIDENCE_REFERENCE": 123,
+    "EVIDENCE_REFERENCE": 122,
     "HAS_PARENT": 27,
     "HANDOVER_OR_RETURN_REFERENCE": 74,
-    "CLOSES_OR_RESOLVES": 4,
+    "CLOSES_OR_RESOLVES": 3,
     "SUPERSEDED_BY": 1,
     "SUPERSEDES": 1,
     "AMBIGUOUS_EVIDENCE": 7,
-    "total": 237
+    "total": 235
   },
   "control": {
     "p0_disposition": "SEMANTIC_RELATION_COMPLETE",
@@ -99,7 +107,8 @@
     "p1_deep_read": "WITHHELD_UNTIL_PARENT_CELL_DISPOSITION",
     "p2_candidates": 1576,
     "no_blind_p1_read": true,
-    "post_454_regression_repair": "Restores the #453 176/176 recensus after #454 regression and binds reconstructible DR-A/DR-B per-edge receipts."
+    "post_454_regression_repair": "Restores the #453 176/176 recensus after #454 regression and binds reconstructible DR-A/DR-B per-edge receipts.",
+    "post_453_codex_material_finding": "DR-C normalized from 88 typed historical refs to 86 true-cross-repo P0 edges; global true-cross-repo denominator 237 -> 235."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
