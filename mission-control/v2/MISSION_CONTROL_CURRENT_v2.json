@@ -22,7 +22,8 @@
     "adoption_validator_enforcement": "mission-control/v2/adoption/MC_S2_A3_VALIDATOR_ENFORCEMENT_20260927_v1.json",
     "adoption_validator": "mission-control/v2/adoption/validate_mc_s2_a3_projection.py",
     "adoption_validator_workflow": ".github/workflows/mc-s2-a3-validator-enforcement.yml",
-    "adoption_a3_control_closeout": "mission-control/v2/adoption/MC_S2_A3_CONTROL_CLOSEOUT_20260927_v1.json"
+    "adoption_a3_control_closeout": "mission-control/v2/adoption/MC_S2_A3_CONTROL_CLOSEOUT_20260927_v1.json",
+    "adoption_a3_postmerge_trusted_control": "mission-control/v2/adoption/MC_S2_A3_POSTMERGE_TRUSTED_CONTROL_20260927_v1.json"
   },
   "precedence": [
     "domain/source authority remains in owning repositories and existing controls",
@@ -70,9 +71,11 @@
     "authority_transfer": false,
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0,
-    "active_wave": "MC-A4_DASHBOARD_AND_TODO_SURFACES",
-    "a3_state": "CONTROLLED_COMPLETE",
-    "a4_state": "ADMITTED_PENDING_IMPLEMENTATION",
-    "a3_promotion_guard": "CLOSEOUT_PR_TRUSTED_FPC_SUCCESS_REQUIRED_BEFORE_MERGE"
+    "active_wave": "MC-A3_POSTMERGE_TRUSTED_CONTROL_REPAIR",
+    "a3_state": "CONTROLLED_COMPLETE_PENDING_TRUSTED_CONTROL_REPAIR",
+    "a4_state": "ADMITTED_BLOCKED_PENDING_A3_TRUSTED_CONTROL_REPAIR",
+    "a3_promotion_guard": "POSTMERGE_TRUSTED_CONTROL_REPAIR_MUST_PASS_BEFORE_A4_EXECUTION",
+    "a3_control_repair_state": "CANDIDATE_DRAFT_WAIT_EXACT_HEAD_PROOF",
+    "a4_execution_allowed": false
   }
 }
