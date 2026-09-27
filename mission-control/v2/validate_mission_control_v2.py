@@ -217,7 +217,8 @@ def validate_bundle(bundle):
     req(p["dmaic"]["DEFINE"]["state"] == "PASS", "DMAIC DEFINE not frozen")
     req(p["dmaic"]["MEASURE"]["state"] == "PASS_BASELINE", "DMAIC MEASURE baseline missing")
     req(p["dmaic"]["ANALYZE"]["state"] == "PASS", "DMAIC ANALYZE missing")
-    req(p["dmaic"]["CONTROL"]["state"].startswith("CONTROL_LOOP_"), "DMAIC CONTROL loop state invalid")
+    control_state = p["dmaic"]["CONTROL"]["state"]
+    req(control_state.startswith("CONTROL_LOOP_") or control_state == "PASS_CONTROLLED_ADOPTION_READY", "DMAIC CONTROL state invalid")
 
     canonical = cur["canonical"]
     for key, rel in canonical.items():

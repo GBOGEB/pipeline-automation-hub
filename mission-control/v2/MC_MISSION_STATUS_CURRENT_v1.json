@@ -652,26 +652,26 @@
     {
       "mission_id": "MC-EVO-02",
       "mission_class": "MISSION_CONTROL_SYSTEM_EVOLUTION",
-      "source_status": "ISSUE_437_IMPLEMENTATION_ACTIVE",
+      "source_status": "CONTROLLED_V2_ADOPTION_READY",
       "status": {
-        "execution": "ACTIVE"
+        "execution": "CONTROL_WATCH"
       },
       "progress": {
-        "value": null,
-        "numerator": null,
-        "denominator": null,
-        "basis": "DOV_REQUIRES_POST_PR_EXACT_HEAD_PROOF"
+        "value": 1,
+        "numerator": 5,
+        "denominator": 5,
+        "basis": "MC_S1_DMAIC_PHASES_DEFINE_MEASURE_ANALYZE_IMPROVE_CONTROL_ALL_CLOSED"
       },
       "health": {
-        "signal": "AMBER",
-        "basis": "IMPLEMENTATION_ACTIVE_NOT_YET_CONTROLLED"
+        "signal": "GREEN",
+        "basis": "PR440_EXACT_HEAD_VALIDATION_AND_POSTMERGE_18_OF_18_SOURCE_CENSUS_READBACK"
       },
       "coverage": {
-        "maturity": "MCOV-3",
-        "basis": "SYSTEM_SCOPE_COLLISIONS_METHOD_AND_TELEMETRY_CONTRACT_CLASSIFIED"
+        "maturity": "MCOV-5",
+        "basis": "LONGITUDINAL_CONTROL_REENTRY_FIX_FORWARD_EXACT_HEAD_PROOF_AND_POSTMERGE_READBACK"
       },
       "metrics": {
-        "evidence_state": "PARTIAL",
+        "evidence_state": "MEASURED_PARTIAL",
         "core": {
           "work_total": null,
           "work_done": null,
@@ -685,7 +685,14 @@
           "execute_seconds": null,
           "evidence_age_seconds": null
         },
-        "custom": {}
+        "custom": {
+          "source_registry_mission_count": 18,
+          "census_mission_count": 18,
+          "source_census_parity": true,
+          "control_reentry_count": 2,
+          "exact_head_contract_run": 36303880183,
+          "first_pass_closure_proof_run": 36303880144
+        }
       },
       "crew": {
         "state": "ACTIVE",
@@ -700,35 +707,35 @@
         ]
       },
       "runners": {
-        "state": "PENDING",
+        "state": "PARTIAL",
         "items": [
           {
-            "runner_id": null,
+            "runner_id": 108576589135,
             "runner_class": "GITHUB_ACTIONS",
-            "admission_state": "PENDING_PR_PROOF",
-            "run_count": null,
-            "gt0_step_runs": null,
-            "successful_runs": null,
-            "failed_runs": null,
-            "zero_step_runs": null
+            "admission_state": "SUCCESS",
+            "run_count": 1,
+            "gt0_step_runs": 1,
+            "successful_runs": 1,
+            "failed_runs": 0,
+            "zero_step_runs": 0
           }
         ]
       },
       "lifecycle": {
-        "state": "ACTIVE"
+        "state": "CONTROLLED"
       },
       "todo": {
-        "state": "ACTIVE",
+        "state": "CONTROL",
         "items": [
           {
-            "todo_id": "MC-EVO-02-DOV",
-            "predicate": "MERGE_CANONICAL_V2_CONTROLS_AFTER_EXACT_HEAD_VALIDATION",
-            "state": "ACTIVE",
+            "todo_id": "MC-EVO-02-ADOPTION",
+            "predicate": "BEGIN_BOUNDED_MC_S2_ADOPTION_MIGRATION_WITHOUT_HISTORICAL_REWRITE",
+            "state": "CONTROL",
             "priority": "P1",
             "crew_owner": "MISSION_CONTROL_CONTROLLER",
-            "runner_requirement": "GITHUB_ACTIONS_OR_EQUIVALENT_EXACT_HEAD_VALIDATION",
-            "next_legal_transition": "PROVE_THEN_COMMIT",
-            "evidence_ref": "GBOGEB/pipeline-automation-hub#437"
+            "runner_requirement": "MISSION_CONTROL_V2_CONTRACT",
+            "next_legal_transition": "MC-A1_READ_ONLY_CONSUMER_CROSSWALK",
+            "evidence_ref": "mission-control/v2/MC_V2_POSTMERGE_CONTROL_20260927_v1.json"
           }
         ]
       },

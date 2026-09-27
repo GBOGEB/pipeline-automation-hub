@@ -2,11 +2,11 @@
   "schema": "missioncontrol.current_pointer.v2",
   "as_of": "2026-09-27",
   "control_issue": "GBOGEB/pipeline-automation-hub#437",
-  "status": "ACTIVE_V2_CONTROL_MODEL",
+  "status": "CONTROLLED_V2_ADOPTION_READY",
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "engineering_credit_delta": 0,
-  "base_sha": "e6d0e9f4adf3108b06a12d844087eec67edbbaea",
+  "base_sha": "9117f38888ae551b251d0c4dbd5b19994035035a",
   "canonical": {
     "glossary_taxonomy": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json",
     "method_profiles": "mission-control/v2/MC_METHOD_PROFILE_REGISTRY_v1.json",
@@ -15,7 +15,8 @@
     "dmaic_plan": "mission-control/v2/MC_DMAIC_EVOLUTION_PLAN_v1.json",
     "validator": "mission-control/v2/validate_mission_control_v2.py",
     "workflow": ".github/workflows/mission-control-v2-contract.yml",
-    "control_reentry_receipt": "mission-control/v2/MC_V2_CONTROL_REENTRY_20260927_v1.json"
+    "control_reentry_receipt": "mission-control/v2/MC_V2_CONTROL_REENTRY_20260927_v1.json",
+    "postmerge_control_receipt": "mission-control/v2/MC_V2_POSTMERGE_CONTROL_20260927_v1.json"
   },
   "precedence": [
     "domain/source authority remains in owning repositories and existing controls",
@@ -23,7 +24,7 @@
     "historical receipts preserve original meaning",
     "new v2 machine identifiers follow v2 glossary/taxonomy"
   ],
-  "next_legal_transition": "PROVE_FIX_FORWARD_EXACT_HEAD_THEN_MERGE_AND_POSTMERGE_READBACK",
+  "next_legal_transition": "MC_S2_ADOPTION_MIGRATION_BOUNDED_CONSUMER_WAVE",
   "activation": {
     "pr": 438,
     "exact_head": "9134a21bd64415fa0c45172d9c029acfc871dbc1",
@@ -34,10 +35,21 @@
     "first_pass_closure_proof_run": 36302730545
   },
   "control_reentry": {
-    "reason": "POSTMERGE_RECENSUS_FOUND_SIX_LEGACY_MISSION_REGISTRY_ROWS_NOT_NORMALIZED",
+    "reason": "RESOLVED_BY_PR439_AND_PR440",
     "issue": 437,
-    "action": "BOUNDED_CENSUS_FIX_FORWARD",
+    "action": "CLOSED_AFTER_SOURCE_BOUND_CENSUS_AND_REGISTRY_PARSER_PROOF",
     "authority_transfer": false,
     "formal_credit_delta": 0
+  },
+  "control_closure": {
+    "parser_repair_pr": 440,
+    "exact_head": "22c6529623f5eaa3b8121a2a27d7344ac9c297dd",
+    "merge": "9117f38888ae551b251d0c4dbd5b19994035035a",
+    "exact_head_contract_run": 36303880183,
+    "validation_artifact_id": 10925918436,
+    "validation_artifact_digest": "sha256:3de10ae80dfeff18fe684d7b7947a654d38639ae43693bb3a4fc63df7dd213ef",
+    "first_pass_closure_proof_run": 36303880144,
+    "codex_review": "COMPLETED_NO_MAJOR_ISSUES",
+    "source_census_parity": "18_OF_18"
   }
 }

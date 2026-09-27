@@ -119,7 +119,7 @@
       }
     },
     "CONTROL": {
-      "state": "CONTROL_LOOP_ACTIVE_REENTRY",
+      "state": "PASS_CONTROLLED_ADOPTION_READY",
       "purpose": "Detect scope/taxonomy/telemetry regression after activation; repair only observed control defects without widening authority.",
       "events": [
         {
@@ -145,9 +145,23 @@
           ],
           "fix_forward": "mc/v2-control-census-fix-20260927",
           "receipt": "mission-control/v2/MC_V2_CONTROL_REENTRY_20260927_v1.json"
+        },
+        {
+          "id": "MC-CONTROL-003",
+          "result": "FIX_FORWARD_PROVEN_AND_MERGED",
+          "census_fix_pr": 439,
+          "parser_repair_pr": 440,
+          "parser_repair_exact_head": "22c6529623f5eaa3b8121a2a27d7344ac9c297dd",
+          "parser_repair_merge": "9117f38888ae551b251d0c4dbd5b19994035035a",
+          "contract_run": 36303880183,
+          "validation_artifact_id": 10925918436,
+          "validation_artifact_digest": "sha256:3de10ae80dfeff18fe684d7b7947a654d38639ae43693bb3a4fc63df7dd213ef",
+          "first_pass_proof_run": 36303880144,
+          "review": "COMPLETED_NO_MAJOR_ISSUES",
+          "source_census_parity": "18_OF_18"
         }
       ],
-      "next_control_condition": "FIX_FORWARD_EXACT_HEAD_VALIDATION_AND_POSTMERGE_READBACK",
+      "next_control_condition": "ADOPTION_MIGRATION_REGRESSION_WATCH",
       "required": [
         "validator_pass",
         "exact_head_checkout_binding",
@@ -172,6 +186,20 @@
       ],
       "wip_policy": "one taxonomy/control PR; no unrelated mission repair",
       "exit": "exact-head validator pass then merge/postmerge control"
+    },
+    {
+      "sprint_id": "MC-S2",
+      "objective": "Adopt MC v2 contracts across existing mission consumers without rewriting historical receipts",
+      "waves": [
+        "MC-A1_READ_ONLY_CONSUMER_CROSSWALK",
+        "MC-A2_CURRENT_MISSION_PROJECTION",
+        "MC-A3_VALIDATOR_ENFORCEMENT",
+        "MC-A4_DASHBOARD_AND_TODO_SURFACES",
+        "MC-A5_REX_AND_REGRESSION_CONTROL"
+      ],
+      "admission": "ONLY_AFTER_MC_S1_POSTMERGE_CONTROL_RECEIPT",
+      "wip_policy": "one bounded consumer family per wave; repair only genuine semantic/control drift",
+      "authority_transfer": false
     }
   ],
   "reentry_triggers": [
