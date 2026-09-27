@@ -141,6 +141,14 @@ def validate_documents(enforcement, a1, a2, status, official, current, repair, t
         req(evidence.get("trusted_fpc_status") == "SUCCESS", "A3 trusted gate status drift")
         req(evidence.get("trusted_fpc_artifact_digest") == "sha256:ef5829c105757e652afaf45928e2abe7e0b22e17c2aef338bbbd8b67d964df57", "A3 trusted gate artifact digest drift")
         req(trusted.get("next_wave") == "MC-A4_DASHBOARD_AND_TODO_SURFACES", "A3 trusted next-wave drift")
+        trusted_inv = trusted.get("invariants", {})
+        req(trusted_inv.get("authority_transfer") is False, "A3 trusted disposition authority transfer drift")
+        req(trusted_inv.get("formal_credit_delta") == 0, "A3 trusted disposition formal credit drift")
+        req(trusted_inv.get("engineering_credit_delta") == 0, "A3 trusted disposition engineering credit drift")
+        req(trusted_inv.get("legacy_validator_mutation") is False, "A3 trusted disposition legacy-validator mutation drift")
+        req(trusted_inv.get("legacy_source_mutation") is False, "A3 trusted disposition legacy-source mutation drift")
+        req(trusted_inv.get("historical_receipt_rewrite") is False, "A3 trusted disposition historical rewrite drift")
+        req(trusted_inv.get("external_repository_mutation") is False, "A3 trusted disposition external mutation drift")
 
         trusted_fpc = repair_binding.get("trusted_fpc", {})
         req(trusted_fpc.get("run_id") == 36337930734, "A3 enforcement trusted FPC run drift")
@@ -355,6 +363,14 @@ def self_test(bundle):
 
     bad = copy.deepcopy(base)
     bad["trusted"]["evidence"]["trusted_fpc_status"] = "FAIL"
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
+
+    bad = copy.deepcopy(base)
+    bad["trusted"]["invariants"]["legacy_validator_mutation"] = True
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
+
+    bad = copy.deepcopy(base)
+    bad["trusted"]["invariants"]["legacy_source_mutation"] = True
     assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
 
     bad = copy.deepcopy(base)
