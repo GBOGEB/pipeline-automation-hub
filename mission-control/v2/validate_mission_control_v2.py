@@ -21,6 +21,19 @@ EXPLICIT_CONTROL_MISSION_IDS = {
     "GM-DMAIC-EVOLUTION-T7-T14-T21-20260926",
     "MC-EVO-02",
 }
+EXPECTED_TERMINAL_PROOF = {
+    "parser_repair_pr": 440,
+    "parser_repair_exact_head": "22c6529623f5eaa3b8121a2a27d7344ac9c297dd",
+    "parser_repair_merge": "9117f38888ae551b251d0c4dbd5b19994035035a",
+    "mission_control_v2_contract_run": 36303880183,
+    "validation_artifact_id": 10925918436,
+    "validation_artifact_digest": "sha256:3de10ae80dfeff18fe684d7b7947a654d38639ae43693bb3a4fc63df7dd213ef",
+    "first_pass_closure_proof_run": 36303880144,
+    "review": "COMPLETED_NO_MAJOR_ISSUES",
+    "source_census_parity": "18_OF_18",
+    "mission_count": 18,
+}
+
 EXPECTED_COLLISION_MATRIX = {
     "MC": {
         "control_plane": "MISSION_CONTROL",
@@ -222,13 +235,22 @@ def validate_bundle(bundle):
     control_state = p["dmaic"]["CONTROL"]["state"]
     req(control_state.startswith("CONTROL_LOOP_") or control_state == "PASS_CONTROLLED_ADOPTION_READY", "DMAIC CONTROL state invalid")
 
-    if control_state == "PASS_CONTROLLED_ADOPTION_READY":
-        req(cur.get("status") == "CONTROLLED_V2_ADOPTION_READY", "terminal CONTROL requires CURRENT adoption-ready status")
+    terminal_plan = control_state == "PASS_CONTROLLED_ADOPTION_READY"
+    terminal_current = cur.get("status") == "CONTROLLED_V2_ADOPTION_READY"
+    terminal_claimed = terminal_plan or terminal_current
+    req(terminal_plan == terminal_current, "terminal CONTROL plan/CURRENT state mismatch")
+
+    if terminal_claimed:
+        req(terminal_plan and terminal_current, "terminal CONTROL requires plan and CURRENT to agree on adoption-ready state")
         req(cur.get("authority_transfer") is False, "terminal CONTROL requires CURRENT authority_transfer=false")
         req(cur.get("formal_credit_delta") == 0, "terminal CONTROL requires CURRENT formal_credit_delta=0")
         req(cur.get("engineering_credit_delta") == 0, "terminal CONTROL requires CURRENT engineering_credit_delta=0")
         req(cur.get("next_legal_transition") == "MC_S2_ADOPTION_MIGRATION_BOUNDED_CONSUMER_WAVE", "terminal CONTROL requires MC-S2 next legal transition")
         req(cur.get("canonical", {}).get("postmerge_control_receipt") == "mission-control/v2/MC_V2_POSTMERGE_CONTROL_20260927_v1.json", "terminal CONTROL requires canonical postmerge receipt binding")
+
+        req(s.get("authority_transfer") is False, "terminal CONTROL requires status authority_transfer=false")
+        req(s.get("formal_credit_delta") == 0, "terminal CONTROL requires status formal_credit_delta=0")
+        req(s.get("engineering_credit_delta") == 0, "terminal CONTROL requires status engineering_credit_delta=0")
 
         req(closure.get("schema") == "missioncontrol.v2.postmerge_control_receipt.v1", "terminal CONTROL requires valid postmerge control receipt schema")
         req(closure.get("mission_id") == "MC-EVO-02", "terminal CONTROL receipt mission drift")
@@ -238,22 +260,86 @@ def validate_bundle(bundle):
         req(closure.get("authority_transfer") is False, "terminal CONTROL receipt requires authority_transfer=false")
         req(closure.get("formal_credit_delta") == 0, "terminal CONTROL receipt requires formal_credit_delta=0")
         req(closure.get("engineering_credit_delta") == 0, "terminal CONTROL receipt requires engineering_credit_delta=0")
+
+        activation = closure.get("activation_chain", {})
+        proof = closure.get("exact_head_proof", {})
         readback = closure.get("postmerge_readback", {})
+        current_closure = cur.get("control_closure", {})
+        expected = EXPECTED_TERMINAL_PROOF
+
+        req(activation.get("parser_repair_pr") == expected["parser_repair_pr"], "terminal CONTROL receipt parser repair PR drift")
+        req(activation.get("parser_repair_exact_head") == expected["parser_repair_exact_head"], "terminal CONTROL receipt exact-head drift")
+        req(activation.get("parser_repair_merge") == expected["parser_repair_merge"], "terminal CONTROL receipt merge drift")
+        req(proof.get("mission_control_v2_contract_run") == expected["mission_control_v2_contract_run"], "terminal CONTROL receipt contract run drift")
+        req(proof.get("validation_artifact_id") == expected["validation_artifact_id"], "terminal CONTROL receipt artifact id drift")
+        req(proof.get("validation_artifact_digest") == expected["validation_artifact_digest"], "terminal CONTROL receipt artifact digest drift")
+        req(proof.get("first_pass_closure_proof_run") == expected["first_pass_closure_proof_run"], "terminal CONTROL receipt FPC proof drift")
+        req(proof.get("codex_review") == expected["review"], "terminal CONTROL receipt review drift")
+        req(readback.get("master_sha") == expected["parser_repair_merge"], "terminal CONTROL postmerge master SHA drift")
+        req(readback.get("parser_repair_present") is True, "terminal CONTROL requires parser repair present")
         req(readback.get("source_census_parity") is True, "terminal CONTROL requires postmerge source/census parity")
-        req(readback.get("source_registry_mission_count") == len(ids), "terminal CONTROL source mission count drift")
-        req(readback.get("census_mission_count") == len(ids), "terminal CONTROL census mission count drift")
+        req(readback.get("source_registry_mission_count") == expected["mission_count"], "terminal CONTROL source mission count drift")
+        req(readback.get("census_mission_count") == expected["mission_count"], "terminal CONTROL census mission count drift")
+        req(readback.get("source_registry_mission_count") == len(ids), "terminal CONTROL source mission count no longer matches census")
+        req(readback.get("census_mission_count") == len(ids), "terminal CONTROL census mission count no longer matches census")
         req(readback.get("required_core_metrics_present") is True, "terminal CONTROL requires core metric conformance")
         req(readback.get("collision_matrix_enforced") is True, "terminal CONTROL requires collision matrix enforcement")
+
+        req(current_closure.get("parser_repair_pr") == expected["parser_repair_pr"], "terminal CONTROL CURRENT parser repair PR drift")
+        req(current_closure.get("exact_head") == expected["parser_repair_exact_head"], "terminal CONTROL CURRENT exact-head drift")
+        req(current_closure.get("merge") == expected["parser_repair_merge"], "terminal CONTROL CURRENT merge drift")
+        req(current_closure.get("exact_head_contract_run") == expected["mission_control_v2_contract_run"], "terminal CONTROL CURRENT contract run drift")
+        req(current_closure.get("validation_artifact_id") == expected["validation_artifact_id"], "terminal CONTROL CURRENT artifact id drift")
+        req(current_closure.get("validation_artifact_digest") == expected["validation_artifact_digest"], "terminal CONTROL CURRENT artifact digest drift")
+        req(current_closure.get("first_pass_closure_proof_run") == expected["first_pass_closure_proof_run"], "terminal CONTROL CURRENT FPC proof drift")
+        req(current_closure.get("codex_review") == expected["review"], "terminal CONTROL CURRENT review drift")
+        req(current_closure.get("source_census_parity") == expected["source_census_parity"], "terminal CONTROL CURRENT parity drift")
+
+        control_events = [event for event in p.get("dmaic", {}).get("CONTROL", {}).get("events", []) if event.get("id") == "MC-CONTROL-003"]
+        req(len(control_events) == 1, "terminal CONTROL requires exactly one MC-CONTROL-003 event")
+        if len(control_events) == 1:
+            event = control_events[0]
+            req(event.get("result") == "FIX_FORWARD_PROVEN_AND_MERGED", "terminal CONTROL event result drift")
+            req(event.get("parser_repair_pr") == expected["parser_repair_pr"], "terminal CONTROL event parser repair PR drift")
+            req(event.get("parser_repair_exact_head") == expected["parser_repair_exact_head"], "terminal CONTROL event exact-head drift")
+            req(event.get("parser_repair_merge") == expected["parser_repair_merge"], "terminal CONTROL event merge drift")
+            req(event.get("contract_run") == expected["mission_control_v2_contract_run"], "terminal CONTROL event contract run drift")
+            req(event.get("validation_artifact_id") == expected["validation_artifact_id"], "terminal CONTROL event artifact id drift")
+            req(event.get("validation_artifact_digest") == expected["validation_artifact_digest"], "terminal CONTROL event artifact digest drift")
+            req(event.get("first_pass_proof_run") == expected["first_pass_closure_proof_run"], "terminal CONTROL event FPC proof drift")
+            req(event.get("review") == expected["review"], "terminal CONTROL event review drift")
+            req(event.get("source_census_parity") == expected["source_census_parity"], "terminal CONTROL event parity drift")
 
         evo_rows = [row for row in s["missions"] if row.get("mission_id") == "MC-EVO-02"]
         req(len(evo_rows) == 1, "terminal CONTROL requires exactly one MC-EVO-02 row")
         if len(evo_rows) == 1:
             evo = evo_rows[0]
+            req(evo.get("source_status") == "CONTROLLED_V2_ADOPTION_READY", "terminal CONTROL requires MC-EVO-02 terminal source_status")
             req(evo.get("lifecycle", {}).get("state") == "CONTROLLED", "terminal CONTROL requires MC-EVO-02 lifecycle CONTROLLED")
             req(evo.get("coverage", {}).get("maturity") == "MCOV-5", "terminal CONTROL requires MC-EVO-02 MCOV-5")
             req(evo.get("status", {}).get("execution") == "CONTROL_WATCH", "terminal CONTROL requires MC-EVO-02 CONTROL_WATCH")
             req(evo.get("progress", {}).get("value") == 1, "terminal CONTROL requires MC-EVO-02 progress=1")
             req(evo.get("authority_transfer") is False, "terminal CONTROL requires MC-EVO-02 authority_transfer=false")
+            custom = evo.get("metrics", {}).get("custom", {})
+            req(custom.get("source_registry_mission_count") == expected["mission_count"], "terminal CONTROL MC-EVO-02 source count drift")
+            req(custom.get("census_mission_count") == expected["mission_count"], "terminal CONTROL MC-EVO-02 census count drift")
+            req(custom.get("source_census_parity") is True, "terminal CONTROL MC-EVO-02 parity drift")
+            req(custom.get("control_reentry_count") == 2, "terminal CONTROL MC-EVO-02 reentry count drift")
+            req(custom.get("exact_head_contract_run") == expected["mission_control_v2_contract_run"], "terminal CONTROL MC-EVO-02 contract run drift")
+            req(custom.get("first_pass_closure_proof_run") == expected["first_pass_closure_proof_run"], "terminal CONTROL MC-EVO-02 FPC proof drift")
+            todo = evo.get("todo", {})
+            req(todo.get("state") == "CONTROL", "terminal CONTROL MC-EVO-02 TODO state drift")
+            todo_items = todo.get("items", [])
+            req(len(todo_items) == 1, "terminal CONTROL requires exactly one MC-EVO-02 terminal TODO")
+            if len(todo_items) == 1:
+                item = todo_items[0]
+                req(item.get("todo_id") == "MC-EVO-02-ADOPTION", "terminal CONTROL MC-EVO-02 TODO id drift")
+                req(item.get("predicate") == "BEGIN_BOUNDED_MC_S2_ADOPTION_MIGRATION_WITHOUT_HISTORICAL_REWRITE", "terminal CONTROL MC-EVO-02 TODO predicate drift")
+                req(item.get("state") == "CONTROL", "terminal CONTROL MC-EVO-02 TODO item state drift")
+                req(item.get("priority") == "P1", "terminal CONTROL MC-EVO-02 TODO priority drift")
+                req(item.get("runner_requirement") == "MISSION_CONTROL_V2_CONTRACT", "terminal CONTROL MC-EVO-02 TODO runner drift")
+                req(item.get("next_legal_transition") == "MC-A1_READ_ONLY_CONSUMER_CROSSWALK", "terminal CONTROL MC-EVO-02 TODO transition drift")
+                req(item.get("evidence_ref") == "mission-control/v2/MC_V2_POSTMERGE_CONTROL_20260927_v1.json", "terminal CONTROL MC-EVO-02 TODO evidence binding drift")
 
         req(p.get("authority_transfer") is False, "terminal CONTROL requires plan authority_transfer=false")
         req(p.get("formal_credit_delta") == 0, "terminal CONTROL requires plan formal_credit_delta=0")
@@ -328,6 +414,33 @@ def self_test(bundle):
     s2 = next(s for s in bad["plan"]["sprint_plan"] if s.get("sprint_id") == "MC-S2")
     s2["authority_transfer"] = True
     assert validate_bundle(bad), "self-test failed to detect MC-S2 authority transfer"
+    bad = copy.deepcopy(bundle)
+    bad["plan"]["dmaic"]["CONTROL"]["state"] = "CONTROL_LOOP_ACTIVE_REENTRY"
+    assert validate_bundle(bad), "self-test failed to detect terminal plan/CURRENT mismatch"
+    bad = copy.deepcopy(bundle)
+    bad["closure_receipt"]["exact_head_proof"]["validation_artifact_digest"] = "sha256:deadbeef"
+    assert validate_bundle(bad), "self-test failed to detect terminal proof digest drift"
+    bad = copy.deepcopy(bundle)
+    bad["closure_receipt"]["postmerge_readback"]["master_sha"] = "deadbeef"
+    assert validate_bundle(bad), "self-test failed to detect terminal postmerge master drift"
+    bad = copy.deepcopy(bundle)
+    bad["status"]["authority_transfer"] = True
+    assert validate_bundle(bad), "self-test failed to detect status authority transfer"
+    bad = copy.deepcopy(bundle)
+    bad["status"]["formal_credit_delta"] = 1
+    assert validate_bundle(bad), "self-test failed to detect status formal credit drift"
+    bad = copy.deepcopy(bundle)
+    evo = next(row for row in bad["status"]["missions"] if row.get("mission_id") == "MC-EVO-02")
+    evo["source_status"] = "ACTIVE"
+    assert validate_bundle(bad), "self-test failed to detect MC-EVO-02 source status drift"
+    bad = copy.deepcopy(bundle)
+    evo = next(row for row in bad["status"]["missions"] if row.get("mission_id") == "MC-EVO-02")
+    evo["metrics"]["custom"]["exact_head_contract_run"] = 0
+    assert validate_bundle(bad), "self-test failed to detect MC-EVO-02 proof run drift"
+    bad = copy.deepcopy(bundle)
+    evo = next(row for row in bad["status"]["missions"] if row.get("mission_id") == "MC-EVO-02")
+    evo["todo"]["items"][0]["evidence_ref"] = "unrelated.json"
+    assert validate_bundle(bad), "self-test failed to detect MC-EVO-02 receipt binding drift"
 
 def main():
     ap = argparse.ArgumentParser()
