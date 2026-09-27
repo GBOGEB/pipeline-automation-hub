@@ -12,7 +12,8 @@
     "predecessor_trusted_fpc_run": 36305239316,
     "canonical_current": "mission-control/v2/MISSION_CONTROL_CURRENT_v2.json",
     "canonical_register": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
-    "canonical_telemetry": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json"
+    "canonical_telemetry": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json",
+    "canonical_legacy_registry": "mission-control/qps-triage-ultra/mission_registry.yaml"
   },
   "mode": "READ_ONLY_CENSUS",
   "mutation_policy": {
@@ -31,8 +32,14 @@
       "MC_MISSION_STATUS_CURRENT_v1.json",
       "OFFICIAL_MISSION_REGISTER_v1.yaml",
       "qps-triage-ultra/mission_registry.yaml",
+      "LM-10_MISSION_CONTROL_v3.yaml",
       "MCOV-",
-      "COV-"
+      "COV-",
+      "MONTE_CARLO",
+      "MC_SIM",
+      "3PR",
+      "3PC",
+      "MIP"
     ],
     "cross_repository_queries": [
       "GBOGEB/ABACUS :: OFFICIAL_MISSION_REGISTER_v1.yaml",
@@ -42,7 +49,32 @@
       "GBOGEB/cryoplant-project :: LM-10_MISSION_CONTROL_v3.yaml",
       "GBOGEB/cryoplant-project :: MISSION_CONTROL_CURRENT_v2.json"
     ],
-    "limitation": "Code-search census of explicit references only; absence of a hit is recorded as NO_DIRECT_REFERENCE_FOUND, not proof that a repository never consumes Mission Control through generated artifacts, APIs, copied data, or human workflows."
+    "limitation": "Code-search census of explicit references only; absence of a hit is recorded as NO_DIRECT_REFERENCE_FOUND, not proof that a repository never consumes Mission Control through generated artifacts, APIs, copied data, or human workflows.",
+    "cross_repository_results": [
+      {
+        "repository": "GBOGEB/cryoplant-project",
+        "observed_main_sha": "9d7c36d40c14ba58a33a3bbef74a83d8ff662e72",
+        "queries": {
+          "OFFICIAL_MISSION_REGISTER_v1.yaml": [
+            "controls/QPS_MATH_METHOD_CARDS_CURRENT_v0.1.yaml"
+          ],
+          "LM-10_MISSION_CONTROL_v3.yaml": [
+            "controls/QPS_MATH_METHOD_CARDS_CURRENT_v0.1.yaml"
+          ],
+          "MISSION_CONTROL_CURRENT_v2.json": []
+        },
+        "conclusion": "EXPLICIT_PINNED_LEGACY_MISSION_CONTROL_CONSUMER_NO_DIRECT_V2_REFERENCE"
+      },
+      {
+        "repository": "GBOGEB/ABACUS",
+        "queries": {
+          "OFFICIAL_MISSION_REGISTER_v1.yaml": [],
+          "LM-10_MISSION_CONTROL_v3.yaml": [],
+          "MISSION_CONTROL_CURRENT_v2.json": []
+        },
+        "conclusion": "DECLARED_LM10_CONSUMER_NO_DIRECT_REFERENCE_FOUND_BY_CODE_SEARCH"
+      }
+    ]
   },
   "summary": {
     "direct_external_v2_consumers_found": 0,
@@ -50,7 +82,14 @@
     "stable_bridge": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
     "explicit_cross_repo_pinned_consumers_found": 1,
     "external_v2_adoption_state": "NOT_YET_DIRECT",
-    "disposition": "MC_A1_INVENTORIED_NO_CONSUMER_MUTATION"
+    "disposition": "MC_A1_INVENTORIED_NO_CONSUMER_MUTATION",
+    "repository_local_inventory_rows": 16,
+    "external_inventory_rows": 2,
+    "total_inventory_rows": 18,
+    "native_v2_executable_consumers_found": 1,
+    "non_v2_executable_consumers_with_direct_v2_reference_found": 0,
+    "taxonomy_sensitive_surfaces_classified": 4,
+    "material_review_omission_repaired": "MC-A1-C17_PLUS_MC-A1-C18"
   },
   "consumers": [
     {
@@ -221,7 +260,7 @@
     {
       "id": "MC-A1-C11",
       "repository": "GBOGEB/cryoplant-project",
-      "repository_ref_observed": "18ad136e5ce3153263c00382047c03b41649518f",
+      "repository_ref_observed": "9d7c36d40c14ba58a33a3bbef74a83d8ff662e72",
       "path": "controls/QPS_MATH_METHOD_CARDS_CURRENT_v0.1.yaml",
       "kind": "EXPLICIT_CROSS_REPOSITORY_PINNED_SOURCE_CONSUMER",
       "consumes": [
@@ -236,7 +275,9 @@
       "risk": "HIGH_IF_IN_PLACE_REWRITE",
       "rule": "Do not replace or rewrite pinned historical source evidence. Any v2 adoption must be additive and separately evidenced.",
       "next_legal_transition": "MC-A2_CANDIDATE_EXTERNAL_READ_ONLY",
-      "mutate_in_mc_a1": false
+      "mutate_in_mc_a1": false,
+      "observed_file_blob": "41ca321a131b5cb4ef6746f5d2f4fdf3715b191a",
+      "pinned_historical_source_note": "Consumer content intentionally pins historical Mission Control source blobs; current consumer file observation is recorded separately and MUST NOT rewrite those historical pins."
     },
     {
       "id": "MC-A1-C12",
@@ -252,6 +293,110 @@
       "risk": "UNKNOWN",
       "next_legal_transition": "MC-A2_OR_LATER_ONLY_AFTER_SOURCE_PATH_DISCOVERY",
       "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C13",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/qps-triage-ultra/consumers/w3_11_math_consumer.py",
+      "kind": "LIVE_MATH_NON_ORIGIN_CONSUMER",
+      "consumes": [
+        "GBOGEB/gg_MATH::kernels/monte_carlo_uncertainty.py::propagate_triangular"
+      ],
+      "namespace_observation": "Monte Carlo is represented by the explicit monte_carlo capability path; no bare MC machine identifier is used.",
+      "compatibility": "V2_NAMESPACE_COMPLIANT",
+      "migration_need": "NONE",
+      "risk": "LOW",
+      "rule": "Preserve MONTE_CARLO/MC_SIM distinction from Mission Control MC.",
+      "next_legal_transition": "CONTROL_WATCH",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C14",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/grand-missions/GM_DMAIC_COVERAGE_TELEMETRY_v1.json",
+      "kind": "CODE_COVERAGE_TELEMETRY",
+      "consumes": [
+        "repository-specific pytest-cov/coverage.py measurements"
+      ],
+      "namespace_observation": "Uses statement/code coverage percentages and explicit UNKNOWN semantics; this is not Mission Control MCOV maturity.",
+      "compatibility": "V2_COVERAGE_NAMESPACE_COMPLIANT",
+      "migration_need": "NONE",
+      "risk": "LOW",
+      "rule": "Never relabel software coverage percentages as MCOV maturity and never use MCOV as a code-coverage denominator.",
+      "next_legal_transition": "CONTROL_WATCH",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C15",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_F01B_ABACUS_DEEP_READ_QUEUE_v1.json",
+      "kind": "CURRENT_QUEUE_IDENTITY_SURFACE",
+      "consumes": [
+        "cross-repository pull-request lineage"
+      ],
+      "identity_observation": "Uses repository-qualified IDs such as GBOGEB/ABACUS::PR16 and stores P0/P1/P2 in the priority field.",
+      "compatibility": "V2_IDENTITY_GRAMMAR_COMPLIANT",
+      "migration_need": "NONE",
+      "risk": "LOW",
+      "rule": "Preserve repository-qualified PR identity and priority-field semantics; do not reinterpret P1/P2 as pulse IDs.",
+      "next_legal_transition": "CONTROL_WATCH",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C16",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/qps-triage-ultra/analytics/EXPEDITION_FLEET_ITERATION_LEDGER_v1.json",
+      "kind": "APPEND_ONLY_HISTORICAL_TELEMETRY",
+      "consumes": [
+        "mission-specific canonical tables",
+        "qps-triage-ultra/metric_registry.yaml"
+      ],
+      "compatibility": "HISTORICAL_CONTEXT_PRESERVED",
+      "migration_need": "MC-A5_NEW_WRITES_ONLY_IF_NORMALIZED_PROJECTION_ADMITTED",
+      "risk": "HIGH_IF_BULK_REWRITTEN",
+      "rule": "Existing mission_id/pulse_id/run records are historical evidence and MUST NOT be rewritten to satisfy new v2 identity grammar; any future normalized view is additive.",
+      "next_legal_transition": "MC-A5_CANDIDATE_APPEND_ONLY_PROJECTION",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C17",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/historian/validate_fleet_open_issue_convergence.py",
+      "kind": "ACTIVE_LM10_SEMANTIC_CONSUMER",
+      "consumes": [
+        "mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml",
+        "mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml",
+        "mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json"
+      ],
+      "semantics_observed": [
+        "LM-10 state W260_CONTROLLED_COMPLETE_REENTRY_GOVERNED",
+        "current_development_frontier.state CONTROL_WATCH_ONLY",
+        "provider_WIP_cap 0",
+        "BD-260.6 dormant re-entry state"
+      ],
+      "compatibility": "COMPATIBLE_BUT_FAIL_CLOSED_ON_CURRENT_LM10_SEMANTICS",
+      "migration_need": "MC-A2_PARALLEL_PROJECTION_WITHOUT_REMOVING_EXISTING_ASSERTIONS",
+      "risk": "HIGH_IF_LM10_SOURCE_REPLACED_OR_SEMANTICS_CHANGED",
+      "rule": "Any v2 LM-10 projection must be additive and must not bypass or weaken this validator's existing semantic assertions.",
+      "next_legal_transition": "MC-A2_REQUIRED_CONSUMER",
+      "mutate_in_mc_a1": false
+    },
+    {
+      "id": "MC-A1-C18",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": ".github/workflows/fleet-open-issue-convergence.yml",
+      "kind": "ACTIVE_PATH_TRIGGER_AND_PROOF_CONSUMER",
+      "consumes": [
+        "mission-control/historian/validate_fleet_open_issue_convergence.py",
+        "mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml",
+        "mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml"
+      ],
+      "compatibility": "V2_NEUTRAL_BUT_REQUIRED_REGRESSION_PROOF",
+      "migration_need": "MC-A3_CROSS_CHECK_TRIGGER_CANDIDATE",
+      "risk": "MEDIUM",
+      "rule": "Future v2 projection/enforcement touching LM-10 must retain this exact-head fail-closed proof path.",
+      "next_legal_transition": "MC-A3_CANDIDATE",
+      "mutate_in_mc_a1": false
     }
   ],
   "legacy_collision_surfaces": [
@@ -265,7 +410,9 @@
     "MC-A1-C03",
     "MC-A1-C04",
     "MC-A1-C08",
-    "MC-A1-C11"
+    "MC-A1-C11",
+    "MC-A1-C07",
+    "MC-A1-C17"
   ],
   "excluded_from_a2_until_more_evidence": [
     "MC-A1-C12"
@@ -278,6 +425,55 @@
     "authority_transfer": false,
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0,
-    "next_wave": "MC-A2_CURRENT_MISSION_PROJECTION"
-  }
+    "next_wave": "MC-A2_CURRENT_MISSION_PROJECTION",
+    "taxonomy_sensitive_surfaces_classified": true,
+    "cross_repository_queries_verified": true,
+    "active_lm10_semantic_consumer_included": true
+  },
+  "observed_sources": {
+    "GBOGEB/pipeline-automation-hub": {
+      "main_sha": "8f21a4228db75740a3a6f22a46f16004f6d3ffe1",
+      "blobs": {
+        "scripts/validate_lm11_qps_wave_federation.py": "85a836dfdbdb5caac9a44ca816f432866a7080f4",
+        "mission-control/grand-missions/validate_gm_i_c_registration.py": "4e51c9f1a9325866750bf9a4ea3f8695bb668bfa",
+        ".github/workflows/gm-i-c-registration.yml": "cdf40d773b6a02c7bbaa44ecaed14c599ac8822e",
+        ".github/workflows/lm11-qps-wave-federation-proof.yml": "0646f85de9653ce5ac8cb8f6bbdf98feb743ac8d",
+        "mission-control/historian/validate_fleet_open_issue_convergence.py": "760a1ecda091915fc2e3094fed03273365c40fb7",
+        ".github/workflows/fleet-open-issue-convergence.yml": "150de519c67602e045324463b496f751e4ba8a6c",
+        "mission-control/qps-triage-ultra/consumers/w3_11_math_consumer.py": "c9f6496ee940f29a4f679602cf9253fc0938f5d4",
+        "mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml": "6d9578b55d1f530e17672cf7578f7d7f01fd83d5",
+        "mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml": "c4532aa19b04e98072468ce73519f4f9c5425aa0",
+        "mission-control/grand-missions/GM_DMAIC_COVERAGE_TELEMETRY_v1.json": "96d65974fc5f234ca5c0f791b0194dc829f48f12",
+        "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_F01B_ABACUS_DEEP_READ_QUEUE_v1.json": "527d8fb05ed56f36c09061e1af9223be1a80135e",
+        "mission-control/qps-triage-ultra/analytics/EXPEDITION_FLEET_ITERATION_LEDGER_v1.json": "d7f897eb3450834076c7e1c9ebac59d9864cd119",
+        "mission-control/qps-triage-ultra/README.md": "4124b399d3891a9ff4b3c0abaaa8436d0e1e3d3f",
+        "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml": "7ea179a05056bc10fea5d0986f83e92e12ae3abf",
+        "mission-control/qps-triage-ultra/mission_registry.yaml": "983069feea57054ea51e555d5ec85df6823e0dea"
+      }
+    },
+    "GBOGEB/cryoplant-project": {
+      "main_sha": "9d7c36d40c14ba58a33a3bbef74a83d8ff662e72",
+      "blobs": {
+        "controls/QPS_MATH_METHOD_CARDS_CURRENT_v0.1.yaml": "41ca321a131b5cb4ef6746f5d2f4fdf3715b191a"
+      }
+    }
+  },
+  "mc_a3_candidates": [
+    "MC-A1-C03",
+    "MC-A1-C04",
+    "MC-A1-C18"
+  ],
+  "mc_a5_candidates": [
+    "MC-A1-C16"
+  ],
+  "no_change_compliant": [
+    "MC-A1-C01",
+    "MC-A1-C05",
+    "MC-A1-C06",
+    "MC-A1-C09",
+    "MC-A1-C10",
+    "MC-A1-C13",
+    "MC-A1-C14",
+    "MC-A1-C15"
+  ]
 }
