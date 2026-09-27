@@ -154,6 +154,8 @@ def validate_documents(enforcement, a1, a2, status, official, current, repair, t
         req(trusted_fpc.get("run_id") == 36337930734, "A3 enforcement trusted FPC run drift")
         req(trusted_fpc.get("status") == "SUCCESS", "A3 enforcement trusted FPC status drift")
         req(trusted_fpc.get("head_sha") == "ff94e5239e96ecede784b34bf22c4dfc14700157", "A3 enforcement trusted FPC head drift")
+        req(trusted_fpc.get("artifact_id") == evidence.get("trusted_fpc_artifact_id"), "A3 enforcement trusted FPC artifact ID drift")
+        req(trusted_fpc.get("artifact_digest") == evidence.get("trusted_fpc_artifact_digest"), "A3 enforcement trusted FPC artifact digest drift")
         req(repair_binding.get("disposition_receipt") == TRUSTED_DISPOSITION_REL, "A3 enforcement trusted disposition binding drift")
     else:
         req(False, f"unsupported A3 repair lifecycle state: {repair_state}")
@@ -371,6 +373,14 @@ def self_test(bundle):
 
     bad = copy.deepcopy(base)
     bad["trusted"]["invariants"]["legacy_source_mutation"] = True
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
+
+    bad = copy.deepcopy(base)
+    bad["enforcement"]["postmerge_trusted_control_repair"]["trusted_fpc"]["artifact_id"] = 0
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
+
+    bad = copy.deepcopy(base)
+    bad["enforcement"]["postmerge_trusted_control_repair"]["trusted_fpc"]["artifact_digest"] = "sha256:WRONG"
     assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
 
     bad = copy.deepcopy(base)
