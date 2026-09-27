@@ -4,7 +4,7 @@
   "sprint_id": "MC-S2",
   "wave_id": "MC-A3_VALIDATOR_ENFORCEMENT",
   "control_issue": "GBOGEB/pipeline-automation-hub#443",
-  "state": "CANDIDATE_WAIT_EXACT_HEAD_PROOF",
+  "state": "CONTROLLED_COMPLETE",
   "mode": "ADDITIVE_FAIL_CLOSED_CROSS_CHECK",
   "authority_transfer": false,
   "formal_credit_delta": 0,
@@ -158,13 +158,13 @@
     "uploads_receipt": true
   },
   "exit_criteria": {
-    "exact_head_projection_validator": "PENDING",
-    "lm10_legacy_validator": "PENDING",
-    "lm10_legacy_self_test": "PENDING",
-    "lm11_legacy_validator": "PENDING",
-    "gm_i_c_legacy_validator": "PENDING",
-    "codex_review": "PENDING",
-    "trusted_fpc": "PENDING",
+    "exact_head_projection_validator": "PASS_REPAIRED_HEAD",
+    "lm10_legacy_validator": "PASS_REPAIRED_HEAD",
+    "lm10_legacy_self_test": "PASS_REPAIRED_HEAD",
+    "lm11_legacy_validator": "PASS_REPAIRED_HEAD",
+    "gm_i_c_legacy_validator": "PASS_REPAIRED_HEAD",
+    "codex_review": "PASS_REPAIRED_HEAD",
+    "trusted_fpc": "REQUIRED_ON_CLOSEOUT_PR_BEFORE_MERGE",
     "historical_receipts_modified": 0,
     "legacy_validators_modified": 0,
     "legacy_sources_modified": 0,
@@ -172,5 +172,13 @@
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0,
     "next_wave": "MC-A4_DASHBOARD_AND_TODO_SURFACES"
+  },
+  "control_closeout": {
+    "receipt": "mission-control/v2/adoption/MC_S2_A3_CONTROL_CLOSEOUT_20260927_v1.json",
+    "repaired_head": "89be5fe2b7abeade01629a083fc9285315ea9a51",
+    "repaired_a3_run": 36336535262,
+    "repaired_fpc_proof_run": 36336535102,
+    "codex_review": "COMPLETED_NO_MAJOR_ISSUES",
+    "promotion_guard": "THIS_STATE_BECOMES_CURRENT_ONLY_AFTER_CLOSEOUT_PR_TRUSTED_FPC_SUCCESS_AND_MERGE"
   }
 }

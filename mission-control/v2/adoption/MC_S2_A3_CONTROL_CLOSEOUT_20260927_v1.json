@@ -1,0 +1,56 @@
+{
+  "schema": "missioncontrol.v2.adoption.a3_control_closeout.v1",
+  "as_of": "2026-09-27",
+  "sprint_id": "MC-S2",
+  "wave_id": "MC-A3_VALIDATOR_ENFORCEMENT",
+  "control_issue": "GBOGEB/pipeline-automation-hub#443",
+  "disposition": "CONTROLLED_COMPLETE_CANDIDATE_REQUIRES_TRUSTED_FPC_BEFORE_MERGE",
+  "repair_chain": {
+    "initial_pr": 451,
+    "initial_head": "c780b2937ad5376486b7acdf77df23548127d85a",
+    "initial_merge": "2026b3c66331c534818a64ad05b2fa4ee9dd27da",
+    "p1_findings": 3,
+    "repair_pr": 455,
+    "repair_head": "89be5fe2b7abeade01629a083fc9285315ea9a51",
+    "repair_merge": "abae87459ff309b7069c61b2a77c0f57adcfc034"
+  },
+  "repaired_head_evidence": {
+    "a3_enforcement_run": 36336535262,
+    "a3_enforcement_result": "SUCCESS",
+    "a3_artifact_id": 10937567199,
+    "a3_artifact_digest": "sha256:d1b14c1dd64c35014af7a6f99e94a97c8c475628ffbb2b24972213f3f55168db",
+    "first_pass_closure_proof_run": 36336535102,
+    "first_pass_closure_proof_result": "SUCCESS",
+    "codex_review": "COMPLETED_NO_MAJOR_ISSUES",
+    "legacy_validator_results": {
+      "lm10": "PASS_WITH_SELF_TEST",
+      "lm11": "PASS",
+      "gm_i_c": "PASS"
+    }
+  },
+  "control_invariants": {
+    "official_mission_register_remains_identity_authority_bridge": true,
+    "a1_read_only": true,
+    "a2_read_only_additive": true,
+    "required_legacy_validators": "3_OF_3_EXACT_ID_MISSION_PATH_COUNT",
+    "a1_to_a2_consumer_parity": "6_OF_6_OF_6",
+    "a2_projection_source_bindings": "11_OF_11_EXACT",
+    "gm_i_c_source_and_normalized_tokens": "RELATED_NOT_IDENTICAL",
+    "historical_receipt_rewrite": false,
+    "external_repository_mutation": false,
+    "legacy_validator_mutation": false,
+    "legacy_source_mutation": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "promotion_guard": {
+    "this_closeout_pr_must_obtain_exact_head_a3_enforcement": true,
+    "this_closeout_pr_must_obtain_exact_head_mc_v2_contract": true,
+    "this_closeout_pr_must_obtain_exact_head_first_pass_closure_proof": true,
+    "this_closeout_pr_must_obtain_clean_exact_head_codex_review": true,
+    "this_closeout_pr_must_obtain_trusted_fpc_success": true,
+    "merge_is_last_event": true
+  },
+  "next_wave_after_promotion": "MC-A4_DASHBOARD_AND_TODO_SURFACES"
+}
