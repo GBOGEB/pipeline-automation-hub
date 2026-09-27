@@ -294,7 +294,8 @@
       "migration_need": "NO_MUTATION_UNTIL_CONCRETE_CONSUMPTION_PATH_IS_OBSERVED",
       "risk": "UNKNOWN",
       "next_legal_transition": "MC-A2_OR_LATER_ONLY_AFTER_SOURCE_PATH_DISCOVERY",
-      "mutate_in_mc_a1": false
+      "mutate_in_mc_a1": false,
+      "repository_ref_observed": "e0dab53bcd5269177ec45beab93aa588fde3f002"
     },
     {
       "id": "MC-A1-C13",
@@ -465,7 +466,12 @@
     },
     "GBOGEB/ABACUS": {
       "main_sha": "e0dab53bcd5269177ec45beab93aa588fde3f002",
-      "search_results_only": true
+      "code_search": {
+        "OFFICIAL_MISSION_REGISTER_v1.yaml": [],
+        "LM-10_MISSION_CONTROL_v3.yaml": [],
+        "MISSION_CONTROL_CURRENT_v2.json": []
+      },
+      "conclusion": "DECLARED_LM10_CONSUMER_NO_DIRECT_REFERENCE_FOUND_BY_CODE_SEARCH"
     }
   },
   "mc_a3_candidates": [
