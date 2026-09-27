@@ -43,6 +43,10 @@ It **does not replace domain/source authority** and does not rewrite historical 
 
 MCOV is **not** code/test coverage and is **not** a mission-success score.
 
+## Mission census scope
+
+The CURRENT mission telemetry census combines the official Mission Register, the QPS TRIAGE legacy/current mission registry, and explicitly governed Mission Control programs. Every discovered mission row in those bound sources receives its own telemetry envelope; absent measurements remain `UNKNOWN`/`null` rather than being inferred as zero or green.
+
 ## Core operating loop
 
 ```text
