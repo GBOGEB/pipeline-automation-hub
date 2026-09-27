@@ -79,8 +79,11 @@ def load(path):
     with path.open("r", encoding="utf-8") as f:
         return json.load(f)
 
+def _clean_yaml_scalar(value):
+    return value.strip().strip(",}").strip().strip("'").strip('"')
+
 def yaml_list_ids(path, sections):
-    """Extract top-level list item ids from selected dependency-free YAML sections."""
+    """Extract two-space list-item ids from selected dependency-free YAML sections."""
     ids = set()
     section = None
     for raw in path.read_text(encoding="utf-8").splitlines():
@@ -91,10 +94,17 @@ def yaml_list_ids(path, sections):
         if indent == 0:
             section = stripped[:-1] if stripped.endswith(":") else None
             continue
-        if section in sections and indent == 2 and stripped.startswith("- "):
-            match = re.search(r"\\bid:\\s*['\\\"]?([A-Za-z0-9._-]+)", stripped)
-            if match:
-                ids.add(match.group(1))
+        if section not in sections or indent != 2 or not stripped.startswith("- "):
+            continue
+        body = stripped[2:].strip()
+        if body.startswith("{"):
+            body = body[1:].lstrip()
+        if not body.startswith("id:"):
+            continue
+        value = body[3:].split(",", 1)[0]
+        mission_id = _clean_yaml_scalar(value)
+        if mission_id:
+            ids.add(mission_id)
     return ids
 
 def yaml_mapping_keys(path, sections):
@@ -109,10 +119,11 @@ def yaml_mapping_keys(path, sections):
         if indent == 0:
             section = stripped[:-1] if stripped.endswith(":") else None
             continue
-        if section in sections and indent == 2:
-            match = re.match(r"([A-Za-z0-9._-]+):(?:\\s|$)", stripped)
-            if match:
-                ids.add(match.group(1))
+        if section not in sections or indent != 2 or ":" not in stripped:
+            continue
+        key = stripped.split(":", 1)[0].strip()
+        if key and all(ch.isalnum() or ch in "._-" for ch in key):
+            ids.add(key)
     return ids
 
 def source_mission_ids():
