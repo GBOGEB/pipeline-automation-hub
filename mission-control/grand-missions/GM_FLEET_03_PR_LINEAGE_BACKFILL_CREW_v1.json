@@ -3,7 +3,7 @@
   "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "as_of": "2026-09-26",
-  "posture": "STRUCTURAL_100_PERCENT_SEMANTIC_DEEP_READ_SURGE",
+  "posture": "STRUCTURAL_100_PERCENT_SEMANTIC_DEEP_READ_SURGE_CORRECTED_P0",
   "allocations": [
     {
       "cell": "F01-A",
@@ -155,29 +155,29 @@
     "fleet_closed_unmerged": 272,
     "structural_coverage_pct": 100,
     "semantic_candidates": 2831,
-    "p0_cross_repo": 364,
+    "p0_cross_repo": 176,
     "p1_multi_label": 1079,
-    "p2_single_label": 1388
+    "p2_single_label": 1576
   },
   "allocation_decision": {
     "extra_scout_reader_cells": "F01_ALREADY_SPLIT",
     "extra_deep_readers": "YES_THREE_TARGETED_P0_CELLS",
     "extra_runtime_workers": "NO_VALUE_ADD",
     "extra_runners": "NO_VALUE_ADD",
-    "rationale": "Structural/API retrieval is complete. The active bottleneck is 364 cross-repository semantic/provenance bindings."
+    "rationale": "Structural/API retrieval is complete. Corrected true cross-repository P0 is 176; targeted Deep-Reader work remains justified only for the 67 unresolved true P0 sources after completed QPS and DR-C work."
   },
   "deep_reader_cells": [
     {
       "cell": "DR-A",
       "issue": 434,
-      "scope": "ABACUS P0",
-      "prs": 219
+      "scope": "ABACUS true cross-repo P0",
+      "prs": 36
     },
     {
       "cell": "DR-B",
       "issue": 435,
-      "scope": "cryoplant + CODEX P0",
-      "prs": 83
+      "scope": "cryoplant + CODEX true cross-repo P0",
+      "prs": 78
     },
     {
       "cell": "DR-C",
@@ -185,5 +185,11 @@
       "scope": "MissionControl/core + satellites P0",
       "prs": 62
     }
-  ]
+  ],
+  "classification_correction": {
+    "date": "2026-09-27",
+    "original_p0_cross_repo": 364,
+    "corrected_p0_cross_repo": 176,
+    "correction_receipt": "GM_FLEET_03_PR_LINEAGE_BACKFILL_P0_CLASSIFICATION_CORRECTION_v1.json"
+  }
 }

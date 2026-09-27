@@ -1,0 +1,63 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.p0_classification_correction.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "date": "2026-09-27",
+  "defect": "P0 CROSS_REPO classification accepted repository-qualified references without verifying that target repository differed from source repository.",
+  "invariant": "P0_TRUE_CROSS_REPO iff any explicit_cross_repo_refs target repository != source PR repository.",
+  "frozen_candidate_total": 2831,
+  "before": {
+    "P0": 364,
+    "P1": 1079,
+    "P2": 1388
+  },
+  "after": {
+    "P0": 176,
+    "P1": 1079,
+    "P2": 1576
+  },
+  "moved_P0_to_P2": 188,
+  "cells": {
+    "F01-A": {
+      "before_P0": 49,
+      "after_P0": 47,
+      "moved": [
+        219,
+        225
+      ]
+    },
+    "F01-B": {
+      "before_P0": 219,
+      "after_P0": 36,
+      "moved_count": 183
+    },
+    "F01-C": {
+      "before_P0": 34,
+      "after_P0": 31,
+      "moved": [
+        239,
+        603,
+        757
+      ]
+    },
+    "F01-D": {
+      "before_P0": 54,
+      "after_P0": 54,
+      "moved_count": 0
+    },
+    "F02-F08": {
+      "before_P0": 8,
+      "after_P0": 8,
+      "moved_count": 0
+    }
+  },
+  "execution_effect": {
+    "DR-A": "36 true cross-repo P0 remain, not 219",
+    "DR-B": "78 true cross-repo P0 total = cryoplant 47 + CODEX 31; cryoplant true P0 is already fully read, so CODEX 31 remain",
+    "DR-C": "62 remains complete",
+    "remaining_true_P0": "67 = DR-A 36 + CODEX 31"
+  },
+  "historical_provenance": "Original #427 publication and git history are not rewritten; current queue/control surfaces are corrected.",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
