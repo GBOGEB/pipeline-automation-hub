@@ -65,6 +65,12 @@ def validate_bundle(bundle):
         req(row.get("lifecycle", {}).get("state") in set(c["lifecycle"]["states"]), f"{row.get('mission_id')}: lifecycle invalid")
         req(row.get("authority_transfer") is False, f"{row.get('mission_id')}: unexpected authority transfer")
     req(len(ids) == len(set(ids)), "duplicate mission_id in current census")
+    scope = s.get("census_scope") or {}
+    expected_ids = scope.get("expected_mission_ids") or []
+    req(scope.get("normalized_rows") == len(ids), "census normalized_rows mismatch")
+    req(set(expected_ids) == set(ids), "census expected_mission_ids mismatch")
+    for required_id in ("M01","M02A","M02B","M03","M04","CLOUD16"):
+        req(required_id in ids, f"legacy mission missing from normalized census: {required_id}")
 
     req(p["dmaic"]["DEFINE"]["state"] == "PASS", "DMAIC DEFINE not frozen")
     req(p["dmaic"]["MEASURE"]["state"] == "PASS_BASELINE", "DMAIC MEASURE baseline missing")
