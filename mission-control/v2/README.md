@@ -28,6 +28,10 @@ It **does not replace domain/source authority** and does not rewrite historical 
 - Software coverage remains numeric, qualified fields such as `statement_coverage_pct`.
 - DMAIC uses phase `CONTROL`; lifecycle uses state `CONTROLLED`.
 - `PR` means Pull Request. `3PR` is the fixed Refresh -> Probe -> Rank method token.
+- In Mission Control, `MIP` means Modernize -> Innovate -> Perpetuate; optimization uses `MIXED_INTEGER_PROGRAMMING`, `MILP` (when linear), or `MIP_OPT`.
+- Cross-domain `CI` must be qualified: `CI_PIPELINE`/`CONTINUOUS_INTEGRATION` vs `CONFIDENCE_INTERVAL`/`CI_STAT`.
+- Bare `COV` is never new canonical shorthand: use `MCOV`, qualified code-coverage fields, or `COVARIANCE`/`COV_MAT`.
+- `GM` is Grand Mission in Mission Control; mathematical geometric mean uses `GEOMETRIC_MEAN`/`GM_STAT`.
 - `PC1` etc. are PCA components. `3PC` is Prepare -> Prove -> Commit.
 
 ## Coverage maturity
