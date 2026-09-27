@@ -264,5 +264,30 @@
     },
     "deep_read": "NOT_STARTED",
     "policy": "NO_BRUTE_FORCE_P1"
+  },
+  "p1_review": {
+    "subset_id": "P1-S01",
+    "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_REVIEW_SUBSET_01_v1.json",
+    "source_cluster": "SUPERSESSION_COMPETITION",
+    "source_cluster_size": 42,
+    "selected": 12,
+    "selection_state": "SELECTED_NOT_READ",
+    "selected_ids": [
+      "GBOGEB/cryoplant-project::PR343",
+      "GBOGEB/cryoplant-project::PR346",
+      "GBOGEB/cryoplant-project::PR1138",
+      "GBOGEB/cryoplant-project::PR1073",
+      "GBOGEB/cryoplant-project::PR756",
+      "GBOGEB/cryoplant-project::PR1170",
+      "GBOGEB/cryoplant-project::PR1111",
+      "GBOGEB/ABACUS::PR1079",
+      "GBOGEB/ABACUS::PR1080",
+      "GBOGEB/CODEX::PR446",
+      "GBOGEB/CODEX::PR459",
+      "GBOGEB/Q_engineering_tools::PR70"
+    ],
+    "deep_read": "NOT_STARTED",
+    "stop_rule": "STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT",
+    "next_cluster_after_clean_subset": "SUPERSESSION_COMPETITION_REMAINDER_BEFORE_CROSS_REPO_RETURN"
   }
 }
