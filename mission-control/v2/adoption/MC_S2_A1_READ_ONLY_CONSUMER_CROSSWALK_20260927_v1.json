@@ -72,7 +72,9 @@
           "LM-10_MISSION_CONTROL_v3.yaml": [],
           "MISSION_CONTROL_CURRENT_v2.json": []
         },
-        "conclusion": "DECLARED_LM10_CONSUMER_NO_DIRECT_REFERENCE_FOUND_BY_CODE_SEARCH"
+        "conclusion": "DECLARED_LM10_CONSUMER_NO_DIRECT_REFERENCE_FOUND_BY_CODE_SEARCH",
+        "observed_main_sha": "e0dab53bcd5269177ec45beab93aa588fde3f002",
+        "observation_note": "Empty direct-reference results are bound to this exact observed main SHA."
       }
     ]
   },
@@ -89,7 +91,7 @@
     "native_v2_executable_consumers_found": 1,
     "non_v2_executable_consumers_with_direct_v2_reference_found": 0,
     "taxonomy_sensitive_surfaces_classified": 4,
-    "material_review_omission_repaired": "MC-A1-C17_PLUS_MC-A1-C18"
+    "material_review_omission_repaired": "MC-A1-C17_PLUS_MC-A1-C18_PLUS_EXACT_ABACUS_REVISION_AND_FLEET_TELEMETRY_BINDING"
   },
   "consumers": [
     {
@@ -389,12 +391,13 @@
       "consumes": [
         "mission-control/historian/validate_fleet_open_issue_convergence.py",
         "mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml",
-        "mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml"
+        "mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml",
+        "mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json"
       ],
       "compatibility": "V2_NEUTRAL_BUT_REQUIRED_REGRESSION_PROOF",
       "migration_need": "MC-A3_CROSS_CHECK_TRIGGER_CANDIDATE",
       "risk": "MEDIUM",
-      "rule": "Future v2 projection/enforcement touching LM-10 must retain this exact-head fail-closed proof path.",
+      "rule": "Future v2 projection/enforcement touching LM-10 must retain the telemetry JSON plus this exact-head fail-closed proof path.",
       "next_legal_transition": "MC-A3_CANDIDATE",
       "mutate_in_mc_a1": false
     }
@@ -428,7 +431,9 @@
     "next_wave": "MC-A2_CURRENT_MISSION_PROJECTION",
     "taxonomy_sensitive_surfaces_classified": true,
     "cross_repository_queries_verified": true,
-    "active_lm10_semantic_consumer_included": true
+    "active_lm10_semantic_consumer_included": true,
+    "external_no_reference_results_revision_bound": true,
+    "fleet_telemetry_dependency_bound": true
   },
   "observed_sources": {
     "GBOGEB/pipeline-automation-hub": {
@@ -448,7 +453,8 @@
         "mission-control/qps-triage-ultra/analytics/EXPEDITION_FLEET_ITERATION_LEDGER_v1.json": "d7f897eb3450834076c7e1c9ebac59d9864cd119",
         "mission-control/qps-triage-ultra/README.md": "4124b399d3891a9ff4b3c0abaaa8436d0e1e3d3f",
         "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml": "7ea179a05056bc10fea5d0986f83e92e12ae3abf",
-        "mission-control/qps-triage-ultra/mission_registry.yaml": "983069feea57054ea51e555d5ec85df6823e0dea"
+        "mission-control/qps-triage-ultra/mission_registry.yaml": "983069feea57054ea51e555d5ec85df6823e0dea",
+        "mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json": "7739b63c6c3d564d054ecb5a255d9b7611893c45"
       }
     },
     "GBOGEB/cryoplant-project": {
@@ -456,6 +462,10 @@
       "blobs": {
         "controls/QPS_MATH_METHOD_CARDS_CURRENT_v0.1.yaml": "41ca321a131b5cb4ef6746f5d2f4fdf3715b191a"
       }
+    },
+    "GBOGEB/ABACUS": {
+      "main_sha": "e0dab53bcd5269177ec45beab93aa588fde3f002",
+      "search_results_only": true
     }
   },
   "mc_a3_candidates": [
