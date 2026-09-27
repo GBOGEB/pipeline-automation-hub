@@ -25,9 +25,9 @@
       "closed_unmerged": 137,
       "open": 0,
       "semantic_candidates": 1239,
-      "P0": 49,
+      "P0": 47,
       "P1": 564,
-      "P2": 626
+      "P2": 628
     },
     {
       "cell": "F01-B",
@@ -38,9 +38,9 @@
       "closed_unmerged": 64,
       "open": 0,
       "semantic_candidates": 656,
-      "P0": 219,
+      "P0": 36,
       "P1": 142,
-      "P2": 295
+      "P2": 478
     },
     {
       "cell": "F01-C",
@@ -51,9 +51,9 @@
       "closed_unmerged": 14,
       "open": 0,
       "semantic_candidates": 494,
-      "P0": 34,
+      "P0": 31,
       "P1": 202,
-      "P2": 258
+      "P2": 261
     },
     {
       "cell": "F01-D",
@@ -84,17 +84,18 @@
   ],
   "semantic_backlog": {
     "total_candidates": 2831,
-    "P0_cross_repo": 364,
+    "P0_cross_repo": 176,
     "P1_multi_label": 1079,
-    "P2_single_label": 1388,
-    "structural_only_prs": 1655
+    "P2_single_label": 1576,
+    "structural_only_prs": 1655,
+    "classification_correction": "P0 requires at least one repository-qualified explicit reference to a repository different from the source PR repository."
   },
   "capacity_decision": {
     "additional_scout_reader": "ALREADY_ALLOCATED_F01",
     "additional_deep_reader": "YES_TARGETED_3_CELL_SURGE",
     "additional_engineer_doctor_dockmaster": "NO",
     "additional_ci_runners": "NO",
-    "reason": "364 P0 cross-repo semantic bindings create a genuine provenance bottleneck; structural/API retrieval is complete and runtime execution is not the constraint."
+    "reason": "176 corrected true cross-repository P0 semantic bindings remain the provenance-priority population; 188 originally P0-classified sources contained same-repository references only and were reclassified without changing the 2,831 candidate total."
   },
   "gm_disposition": {
     "grand_mission": "GM-IV",
@@ -105,5 +106,20 @@
   },
   "authority_transfer": false,
   "formal_credit_delta": 0,
-  "engineering_credit_delta": 0
+  "engineering_credit_delta": 0,
+  "classification_correction": {
+    "date": "2026-09-27",
+    "original_published_counts": {
+      "P0": 364,
+      "P1": 1079,
+      "P2": 1388
+    },
+    "corrected_counts": {
+      "P0": 176,
+      "P1": 1079,
+      "P2": 1576
+    },
+    "moved_P0_to_P2": 188,
+    "original_snapshot_and_git_history_preserved": true
+  }
 }

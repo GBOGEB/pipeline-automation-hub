@@ -133,17 +133,18 @@
   },
   "semantic_backlog": {
     "total": 2831,
-    "P0": 364,
+    "P0": 176,
     "P1": 1079,
-    "P2": 1388
+    "P2": 1576,
+    "correction_basis": "P0 means at least one explicit reference whose repository differs from the source PR repository; same-repository #refs are not cross-repo."
   },
   "deep_reader_cells": [
     {
       "id": "DR-A",
       "issue": 434,
-      "queue": "ABACUS_P0",
-      "count": 219,
-      "state": "OPEN"
+      "queue": "ABACUS_TRUE_CROSS_REPO_P0",
+      "count": 36,
+      "state": "OPEN_CORRECTED_DENOMINATOR"
     },
     {
       "id": "DR-B",
