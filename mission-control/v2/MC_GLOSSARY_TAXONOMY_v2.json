@@ -1,0 +1,158 @@
+{
+  "schema": "missioncontrol.glossary_taxonomy.v2",
+  "version": "2.0.0",
+  "as_of": "2026-09-27",
+  "control_issue": "GBOGEB/pipeline-automation-hub#437",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "purpose": "Canonical Mission Control vocabulary, namespaces, collision policy, and compatibility aliases. Historical artifacts are not rewritten.",
+  "namespace_policy": {
+    "principle": "New machine identifiers MUST be unambiguous without relying on surrounding prose.",
+    "historical_artifacts": "IMMUTABLE_CONTEXTUAL_INTERPRETATION",
+    "new_artifacts": "CANONICAL_TOKENS_ONLY",
+    "unknown_or_ambiguous": "FAIL_CLOSED"
+  },
+  "reservations": {
+    "MC": {
+      "canonical_meaning": "MISSION_CONTROL",
+      "rule": "Bare MC is reserved for Mission Control in operational/control-plane identifiers.",
+      "monte_carlo_rule": "Monte Carlo MUST use MONTE_CARLO or MC_SIM in new machine identifiers.",
+      "historical_rule": "Historical bare MC is interpreted only from its source context and is never bulk-rewritten."
+    },
+    "MONTE_CARLO": {
+      "canonical_meaning": "MONTE_CARLO_SIMULATION_OR_METHOD",
+      "permitted_machine_tokens": [
+        "MONTE_CARLO",
+        "MC_SIM"
+      ],
+      "forbidden_new_token": "MC"
+    },
+    "PR": {
+      "canonical_meaning": "PULL_REQUEST",
+      "collision_note": "3PR is a fixed method-profile token and is not parsed as three pull requests."
+    },
+    "3PR": {
+      "canonical_meaning": "THREE_P_REFRESH_PROBE_RANK",
+      "phases": [
+        "REFRESH",
+        "PROBE",
+        "RANK"
+      ],
+      "historical_compatibility": true
+    },
+    "3PC": {
+      "canonical_meaning": "THREE_P_PREPARE_PROVE_COMMIT",
+      "phases": [
+        "PREPARE",
+        "PROVE",
+        "COMMIT"
+      ],
+      "collision_note": "PC1, PC2, ... remain PCA principal components; 3PC is a method-profile token."
+    },
+    "CONTROL": {
+      "dmaic_phase_token": "CONTROL",
+      "lifecycle_token": "CONTROLLED",
+      "evidence_field": "control_evidence",
+      "rule": "Do not use bare CONTROL as a lifecycle state in new mission telemetry."
+    },
+    "COV": {
+      "canonical_status": "DEPRECATED_AMBIGUOUS_ALIAS",
+      "replacement": "MCOV",
+      "rule": "Bare COV-N is not canonical in new machine fields because software/code coverage also uses coverage terminology."
+    },
+    "MCOV": {
+      "canonical_meaning": "MISSION_CONTROL_OBSERVABILITY_AND_CONTROL_COVERAGE_MATURITY",
+      "levels": [
+        "MCOV-0",
+        "MCOV-1",
+        "MCOV-2",
+        "MCOV-3",
+        "MCOV-4",
+        "MCOV-5"
+      ]
+    },
+    "CODE_COVERAGE": {
+      "canonical_meaning": "SOFTWARE_TEST_CODE_COVERAGE",
+      "fields": [
+        "statement_coverage_pct",
+        "branch_coverage_pct",
+        "coverage_gate_pct"
+      ],
+      "rule": "Never substitute MCOV maturity for code/test coverage percentage or vice versa."
+    },
+    "PC1": {
+      "canonical_meaning": "PCA_PRINCIPAL_COMPONENT_1",
+      "rule": "PCA component labels are numeric analysis outputs, not 3P method phases."
+    }
+  },
+  "coverage_maturity": {
+    "MCOV-0": {
+      "name": "UNREGISTERED_OR_UNMEASURED",
+      "criterion": "No governed Mission Control coverage claim beyond discovery.",
+      "does_not_mean": "failure"
+    },
+    "MCOV-1": {
+      "name": "IDENTITY_SCOPE_AUTHORITY",
+      "criterion": "Mission identity, scope/home, authority boundary, and source anchor are registered.",
+      "does_not_mean": "execution observed"
+    },
+    "MCOV-2": {
+      "name": "STRUCTURAL_INVENTORY",
+      "criterion": "Work surfaces, dependencies, TODO classes, crew/resource needs, and relevant repositories/artifacts are structurally inventoried.",
+      "does_not_mean": "semantic correctness"
+    },
+    "MCOV-3": {
+      "name": "SEMANTIC_DEPENDENCY",
+      "criterion": "Predicates, first-red/root families, dependencies, status/progress semantics, and evidence classes are semantically classified.",
+      "does_not_mean": "runtime proof"
+    },
+    "MCOV-4": {
+      "name": "EXECUTION_PROOF",
+      "criterion": "Relevant execution/proof paths have exact-source evidence and non-compensating outcome classification.",
+      "does_not_mean": "longitudinal stability or mission completion"
+    },
+    "MCOV-5": {
+      "name": "LONGITUDINAL_CONTROL",
+      "criterion": "Regression/re-entry controls, distinct-source or later-repeat evidence where applicable, durable handover, and historical continuity are governed.",
+      "does_not_mean": "engineering acceptance, authority transfer, or automatic closure"
+    }
+  },
+  "core_terms": {
+    "MISSION": "Governed objective with its own identity, lifecycle, telemetry, authority boundary, and re-entry/closure conditions.",
+    "SPRINT": "Time/capacity-bounded planning and review envelope containing one or more waves.",
+    "WAVE": "Coordinated set of related pulses toward one bounded mission outcome.",
+    "PULSE": "One bounded observation, decision, or intervention against one predicate/first-red.",
+    "RUN": "Concrete machine or human execution instance under a pulse.",
+    "CREW_MEMBER": "Logical accountable role/agent assigned responsibility or analysis work.",
+    "RUNNER": "Execution substrate or habitat such as GitHub Actions, browser, Jupyter, local host, or external owner-operated environment.",
+    "TODO": "Governed action record with predicate, state, next legal transition, and ownership; not synonymous with mission lifecycle.",
+    "STATUS": "Discrete execution/disposition state.",
+    "PROGRESS": "Measured fraction/count of an explicitly declared denominator; UNKNOWN when denominator is absent.",
+    "HEALTH": "Operational signal GREEN/AMBER/RED/GREY, separate from completion and authority.",
+    "MIP": "Modernize-Innovate-Perpetuate improvement family, admitted conditionally rather than automatically.",
+    "DMAIC": "Define-Measure-Analyze-Improve-Control supervisory improvement loop for Mission Control and suitable missions.",
+    "REX": "Return of experience / reusable learning and control feedback.",
+    "DoV": "Definition of Value/Verification as defined by the governing mission; never inferred from run success alone."
+  },
+  "non_equivalences": [
+    "CREW_ASSIGNMENT_NE_RUNNER_EXECUTION",
+    "RUN_SUCCESS_NE_PROOF",
+    "PROOF_NE_MISSION_COMPLETION",
+    "MISSION_COMPLETION_NE_AUTHORITY_TRANSFER",
+    "MCOV_NE_CODE_COVERAGE",
+    "MISSING_METRIC_NE_ZERO",
+    "ZERO_STEP_NE_APPLICATION_FAIL",
+    "MERGE_NE_PROOF",
+    "CONTROLLED_LIFECYCLE_NE_DMAIC_CONTROL_PHASE"
+  ],
+  "compatibility_aliases": {
+    "COV-0": "MCOV-0",
+    "COV-1": "MCOV-1",
+    "COV-2": "MCOV-2",
+    "COV-3": "MCOV-3",
+    "COV-4": "MCOV-4",
+    "COV-5": "MCOV-5"
+  },
+  "alias_policy": "Compatibility aliases are human/read-time mappings only. New persisted machine fields MUST use MCOV-N."
+}
