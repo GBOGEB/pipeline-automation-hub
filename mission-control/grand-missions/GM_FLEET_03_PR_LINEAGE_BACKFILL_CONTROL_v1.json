@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_BOUNDED_P1_S01_SELECTED_NOT_READ",
+  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_BOUNDED_P1_S01_ORDER1_REPAIRED_ORDER2_HELD",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -270,7 +270,7 @@
       "unexpanded_population": 959,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "SELECTED_NOT_READ",
+      "selected_first_slice_state": "ORDER_1_REPAIRED_VERIFIED_ORDER_2_HELD",
       "remaining_admitted_not_selected": 108,
       "invariant": "1079 = 120 admitted shortlist + 959 unexpanded; P1-S01 selects 12 from governed bounded review population without expanding the remaining 959."
     },
@@ -292,7 +292,7 @@
     "source_cluster": "SUPERSESSION_COMPETITION",
     "source_cluster_size": 42,
     "selected": 12,
-    "selection_state": "SELECTED_NOT_READ",
+    "selection_state": "ORDER_1_REPAIRED_VERIFIED_ORDER_2_HELD",
     "selected_ids": [
       "GBOGEB/cryoplant-project::PR343",
       "GBOGEB/cryoplant-project::PR346",
@@ -307,9 +307,40 @@
       "GBOGEB/CODEX::PR459",
       "GBOGEB/Q_engineering_tools::PR70"
     ],
-    "deep_read": "NOT_STARTED",
+    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_1",
     "stop_rule": "STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT",
-    "next_cluster_after_clean_subset": "SUPERSESSION_COMPETITION_REMAINDER_BEFORE_CROSS_REPO_RETURN"
+    "next_cluster_after_clean_subset": "SUPERSESSION_COMPETITION_REMAINDER_BEFORE_CROSS_REPO_RETURN",
+    "reviewed": 1,
+    "repaired": 1,
+    "remaining_in_subset": 11,
+    "next_review_order": 2,
+    "order_1_disposition": {
+      "reviewed_pr": "GBOGEB/cryoplant-project#343",
+      "material_defect": "W25C.5 controlled handover and paired test encoded parent_wave W25C.4C while governed predecessor is W25C.4.",
+      "repair_pr": "GBOGEB/cryoplant-project#1815",
+      "repair_head": "49fb09619b7f2ec8b5adcebe129f5bf64931f4af",
+      "repair_merge": "9ce93da5a0100c15686392916e14861bc2d88890",
+      "merged_main_readback": {
+        "yaml_parent_wave": "W25C.4",
+        "test_parent_wave": "W25C.4"
+      },
+      "proof": {
+        "qps_w25d_delta_review": {
+          "run_id": 36351298957,
+          "conclusion": "SUCCESS"
+        },
+        "verify_ssot": {
+          "run_id": 36351298955,
+          "conclusion": "SUCCESS"
+        },
+        "codex": {
+          "status": "COMPLETE",
+          "result": "NO_MAJOR_ISSUES",
+          "reviewed_head": "49fb09619b7f2ec8b5adcebe129f5bf64931f4af"
+        }
+      },
+      "chronology_note": "#1815 merged before exact-head Codex review completed; later clean review is current-state validation and does not rewrite that historical chronology."
+    }
   },
   "post_460_regression": {
     "status": "MATERIAL_CONTROL_REGRESSION_RESTORED_FORWARD",
