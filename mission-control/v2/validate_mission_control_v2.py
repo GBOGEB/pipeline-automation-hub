@@ -39,6 +39,9 @@ def validate_bundle(bundle):
     req(g["reservations"]["COV"]["canonical_status"].startswith("DEPRECATED"), "bare COV must be deprecated")
     req(list(g["coverage_maturity"].keys()) == [f"MCOV-{i}" for i in range(6)], "MCOV levels must be exactly MCOV-0..MCOV-5")
     req(g["reservations"]["CONTROL"]["lifecycle_token"] == "CONTROLLED", "lifecycle CONTROL token must be CONTROLLED")
+    req(g["identity_grammar"]["pull_request"] == "owner/name::PR<number>", "pull-request identity must be repository-qualified")
+    req("mission_id" in g["identity_grammar"]["wave"], "wave identity must be mission-qualified")
+    req("PULSE-" in g["identity_grammar"]["pulse"], "pulse identity must not rely on bare P1/P2/P3")
 
     req(m["supervisor"]["phases"] == ["DEFINE","MEASURE","ANALYZE","IMPROVE","CONTROL"], "DMAIC phase order drift")
     req(m["profiles"]["3PR"]["phases"] == ["REFRESH","PROBE","RANK"], "3PR drift")
