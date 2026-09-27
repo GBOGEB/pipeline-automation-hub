@@ -1,0 +1,3581 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.p1_bounded_clustering.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "generated_date": "2026-09-27",
+  "basis": {
+    "frozen_snapshot": "FLEET_4486",
+    "current_master_at_branch": "97a0d4a971b33008c3a048eb069ba2ee3ea550b1",
+    "p1_denominator": 1079,
+    "source_bindings": [
+      {
+        "path": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_F01A_CRYOPLANT_DEEP_READ_QUEUE_v1.json",
+        "blob_sha": "33313e756d91ccd36489af1edebe852fd111e766",
+        "cell": "F01-A",
+        "p1_count": 564
+      },
+      {
+        "path": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_F01B_ABACUS_DEEP_READ_QUEUE_v1.json",
+        "blob_sha": "42d129ae7bf34754f766a2f73e2cb2bf44f25d50",
+        "cell": "F01-B",
+        "p1_count": 142
+      },
+      {
+        "path": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_F01C_CODEX_DEEP_READ_QUEUE_v1.json",
+        "blob_sha": "4da8ba1df46ca1d285d90fd3b0b96a6a846db17c",
+        "cell": "F01-C",
+        "p1_count": 202
+      },
+      {
+        "path": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_F01D_DEEP_READ_QUEUE_v1.json",
+        "blob_sha": "cf5c09ea734381515f176f8922d2f9c7b115bd85",
+        "cell": "F01-D",
+        "p1_count": 162
+      },
+      {
+        "path": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_NONF01_DEEP_READ_QUEUE_v1.json",
+        "blob_sha": "32a14adcab2b44977348cf11322775cd9e9a0c5c",
+        "cell": "F02-F08-SHARED",
+        "p1_count": 9
+      }
+    ],
+    "true_crossrepo_edge_defects_in_p1": 0
+  },
+  "method": {
+    "mode": "METADATA_ONLY_NO_PR_BODY_DEEP_READ",
+    "fields_used": [
+      "id",
+      "repository",
+      "pr",
+      "title",
+      "wave_labels",
+      "gm_labels",
+      "explicit_cross_repo_refs"
+    ],
+    "cluster_rules": {
+      "REUSED_WAVE_LABEL": "At least one wave label occurs in >=2 P1 candidates.",
+      "COMPETING_OR_SUPERSEDED_HINT": "Title contains supersession/competition/replacement/parallel/duplicate/deprecation/rollback terminology.",
+      "MULTI_MISSION_LABEL": "gm_labels contains >=2 labels.",
+      "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT": "Title contains next/follow-up/successor/child/re-entry/return/handover/receiver/continuation terminology while explicit reference list is empty.",
+      "CONTRADICTORY_HANDOVER_CANDIDATE": "Metadata candidate only: handover/return/receiver/re-entry title shares repository+wave with >=1 other such P1 candidate. Not a contradiction finding.",
+      "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT": "Title contains parent/child/return/handover/receiver/consumer/consume/federation terminology while no durable explicit cross-repo edge is present."
+    },
+    "no_blind_deep_read": true,
+    "lexical_matchers": {
+      "COMPETING_OR_SUPERSEDED_HINT": "/(supersed|replac|parallel|compet|duplicate|alternative|deprecat|rollback|closed[- ]unmerged|abandon)/i",
+      "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT": "/(next|follow[- ]?up|successor|child|re[- ]?entry|reentry|return|handover|receiver|continuation)/i",
+      "CONTRADICTORY_HANDOVER_CANDIDATE": "/(\\bhandover\\b|\\breturn\\b|\\breceiver\\b|re[- ]?entry|reentry)/i plus same repository+wave collision cardinality >=2",
+      "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT": "/(\\bparent\\b|\\bchild\\b|\\breturn\\b|\\bhandover\\b|\\breceiver\\b|\\bconsumer\\b|\\bconsume\\b|federat)/i with explicit_cross_repo_refs.length == 0"
+    },
+    "selection_scoring": {
+      "deterministic_sort": [
+        "signal_weight DESC",
+        "repository ASC",
+        "pr ASC"
+      ],
+      "signal_weights": {
+        "CONTRADICTORY_HANDOVER_CANDIDATE": 4,
+        "COMPETING_OR_SUPERSEDED_HINT": 3,
+        "MULTI_MISSION_LABEL": 3,
+        "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT": 2,
+        "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT": 2,
+        "REUSED_WAVE_LABEL": 1
+      },
+      "high_density_wave_threshold_occurrences": 10,
+      "high_density_wave_bonus": 1,
+      "high_density_wave_bonus_rule": "Add exactly +1 when candidate has at least one wave label whose P1 frequency is >=10.",
+      "shortlist_cutoff": "Take first 120 after deterministic sort."
+    },
+    "reproducibility_note": "The published 120-item shortlist was regenerated exactly from the five bound queue blobs using the recorded lexical matchers and scoring formula."
+  },
+  "coverage": {
+    "classified_candidates": 1079,
+    "expected_candidates": 1079,
+    "denominator_parity": true,
+    "cluster_counts": {
+      "REUSED_WAVE_LABEL": 1021,
+      "COMPETING_OR_SUPERSEDED_HINT": 30,
+      "MULTI_MISSION_LABEL": 59,
+      "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT": 152,
+      "CONTRADICTORY_HANDOVER_CANDIDATE": 80,
+      "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT": 211
+    },
+    "exception_union_count": 307,
+    "routine_metadata_only_remainder": 772,
+    "shortlist_limit": 120,
+    "shortlist_count": 120,
+    "per_cell": {
+      "F01-A": {
+        "total_p1": 564,
+        "exception_union": 161,
+        "routine_remainder": 403
+      },
+      "F01-B": {
+        "total_p1": 142,
+        "exception_union": 26,
+        "routine_remainder": 116
+      },
+      "F01-C": {
+        "total_p1": 202,
+        "exception_union": 38,
+        "routine_remainder": 164
+      },
+      "F01-D": {
+        "total_p1": 162,
+        "exception_union": 81,
+        "routine_remainder": 81
+      },
+      "F02-F08-SHARED": {
+        "total_p1": 9,
+        "exception_union": 1,
+        "routine_remainder": 8
+      }
+    }
+  },
+  "density": {
+    "distinct_wave_labels": 571,
+    "top_reused_wave_labels": [
+      {
+        "label": "W152",
+        "count": 68
+      },
+      {
+        "label": "W003",
+        "count": 67
+      },
+      {
+        "label": "W05",
+        "count": 48
+      },
+      {
+        "label": "W005",
+        "count": 41
+      },
+      {
+        "label": "W191",
+        "count": 40
+      },
+      {
+        "label": "W04",
+        "count": 31
+      },
+      {
+        "label": "W63",
+        "count": 31
+      },
+      {
+        "label": "W3",
+        "count": 30
+      },
+      {
+        "label": "W69",
+        "count": 30
+      },
+      {
+        "label": "W80",
+        "count": 30
+      },
+      {
+        "label": "W275",
+        "count": 29
+      },
+      {
+        "label": "W62",
+        "count": 29
+      },
+      {
+        "label": "W2",
+        "count": 28
+      },
+      {
+        "label": "W105",
+        "count": 27
+      },
+      {
+        "label": "W199",
+        "count": 27
+      },
+      {
+        "label": "W43",
+        "count": 27
+      },
+      {
+        "label": "W111",
+        "count": 24
+      },
+      {
+        "label": "W56",
+        "count": 24
+      },
+      {
+        "label": "W155",
+        "count": 23
+      },
+      {
+        "label": "W40",
+        "count": 22
+      },
+      {
+        "label": "W162",
+        "count": 21
+      },
+      {
+        "label": "W57",
+        "count": 21
+      },
+      {
+        "label": "W145",
+        "count": 20
+      },
+      {
+        "label": "W41",
+        "count": 20
+      },
+      {
+        "label": "W42",
+        "count": 20
+      },
+      {
+        "label": "W165",
+        "count": 18
+      },
+      {
+        "label": "W231",
+        "count": 18
+      },
+      {
+        "label": "W58",
+        "count": 18
+      },
+      {
+        "label": "W83",
+        "count": 18
+      },
+      {
+        "label": "W001",
+        "count": 17
+      },
+      {
+        "label": "W06",
+        "count": 17
+      },
+      {
+        "label": "W104",
+        "count": 17
+      },
+      {
+        "label": "W176",
+        "count": 17
+      },
+      {
+        "label": "W192",
+        "count": 17
+      },
+      {
+        "label": "W64",
+        "count": 17
+      },
+      {
+        "label": "W1",
+        "count": 16
+      },
+      {
+        "label": "W113",
+        "count": 16
+      },
+      {
+        "label": "W169",
+        "count": 16
+      },
+      {
+        "label": "W61",
+        "count": 16
+      },
+      {
+        "label": "W70",
+        "count": 16
+      }
+    ],
+    "distinct_gm_labels": 9,
+    "top_gm_labels": [
+      {
+        "label": "GM-V",
+        "count": 60
+      },
+      {
+        "label": "GM-I",
+        "count": 55
+      },
+      {
+        "label": "GM-I-A",
+        "count": 15
+      },
+      {
+        "label": "GM-I-B",
+        "count": 15
+      },
+      {
+        "label": "GM-I-C",
+        "count": 9
+      },
+      {
+        "label": "GM-I-A-MCLOCK-P002",
+        "count": 2
+      },
+      {
+        "label": "GM-I-C_CREW_ALLOCATION_v0",
+        "count": 1
+      },
+      {
+        "label": "GM-I-C_CROSS_AGENT_DRIVE_FEDERATION_CONTROL_v0",
+        "count": 1
+      },
+      {
+        "label": "GM-I-C_R3_SUCCESSOR_1248290c_EXACT_ENV",
+        "count": 1
+      }
+    ],
+    "top_handover_collision_candidate_groups": [
+      {
+        "group": "GBOGEB/cryoplant-project|W191",
+        "count": 13,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1184",
+          "GBOGEB/cryoplant-project::PR1188",
+          "GBOGEB/cryoplant-project::PR1194",
+          "GBOGEB/cryoplant-project::PR1200",
+          "GBOGEB/cryoplant-project::PR1224",
+          "GBOGEB/cryoplant-project::PR1235",
+          "GBOGEB/cryoplant-project::PR1237",
+          "GBOGEB/cryoplant-project::PR1238",
+          "GBOGEB/cryoplant-project::PR1283",
+          "GBOGEB/cryoplant-project::PR1298",
+          "GBOGEB/cryoplant-project::PR1299",
+          "GBOGEB/cryoplant-project::PR1300",
+          "GBOGEB/cryoplant-project::PR1330"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W152",
+        "count": 11,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1087",
+          "GBOGEB/cryoplant-project::PR1184",
+          "GBOGEB/cryoplant-project::PR1188",
+          "GBOGEB/cryoplant-project::PR1194",
+          "GBOGEB/cryoplant-project::PR1200",
+          "GBOGEB/cryoplant-project::PR1224",
+          "GBOGEB/cryoplant-project::PR1283",
+          "GBOGEB/cryoplant-project::PR1298",
+          "GBOGEB/cryoplant-project::PR1299",
+          "GBOGEB/cryoplant-project::PR1300",
+          "GBOGEB/cryoplant-project::PR1330"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W199",
+        "count": 8,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1235",
+          "GBOGEB/cryoplant-project::PR1238",
+          "GBOGEB/cryoplant-project::PR1283",
+          "GBOGEB/cryoplant-project::PR1298",
+          "GBOGEB/cryoplant-project::PR1299",
+          "GBOGEB/cryoplant-project::PR1300",
+          "GBOGEB/cryoplant-project::PR1310",
+          "GBOGEB/cryoplant-project::PR1330"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W231",
+        "count": 6,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1298",
+          "GBOGEB/cryoplant-project::PR1299",
+          "GBOGEB/cryoplant-project::PR1300",
+          "GBOGEB/cryoplant-project::PR1303",
+          "GBOGEB/cryoplant-project::PR1316",
+          "GBOGEB/cryoplant-project::PR1478"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W232",
+        "count": 6,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1300",
+          "GBOGEB/cryoplant-project::PR1303",
+          "GBOGEB/cryoplant-project::PR1308",
+          "GBOGEB/cryoplant-project::PR1310",
+          "GBOGEB/cryoplant-project::PR1317",
+          "GBOGEB/cryoplant-project::PR1330"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W69",
+        "count": 6,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR835",
+          "GBOGEB/cryoplant-project::PR885",
+          "GBOGEB/cryoplant-project::PR887",
+          "GBOGEB/cryoplant-project::PR1305",
+          "GBOGEB/cryoplant-project::PR1308",
+          "GBOGEB/cryoplant-project::PR1312"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W113",
+        "count": 5,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR885",
+          "GBOGEB/cryoplant-project::PR887",
+          "GBOGEB/cryoplant-project::PR927",
+          "GBOGEB/cryoplant-project::PR1006",
+          "GBOGEB/cryoplant-project::PR1007"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W275",
+        "count": 5,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1455",
+          "GBOGEB/cryoplant-project::PR1485",
+          "GBOGEB/cryoplant-project::PR1543",
+          "GBOGEB/cryoplant-project::PR1580",
+          "GBOGEB/cryoplant-project::PR1621"
+        ]
+      },
+      {
+        "group": "GBOGEB/CODEX|W003",
+        "count": 4,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/CODEX::PR336",
+          "GBOGEB/CODEX::PR555",
+          "GBOGEB/CODEX::PR624",
+          "GBOGEB/CODEX::PR729"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W105",
+        "count": 4,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1305",
+          "GBOGEB/cryoplant-project::PR1312",
+          "GBOGEB/cryoplant-project::PR1316",
+          "GBOGEB/cryoplant-project::PR1317"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W145",
+        "count": 4,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1026",
+          "GBOGEB/cryoplant-project::PR1057",
+          "GBOGEB/cryoplant-project::PR1303",
+          "GBOGEB/cryoplant-project::PR1310"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W155",
+        "count": 4,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1057",
+          "GBOGEB/cryoplant-project::PR1303",
+          "GBOGEB/cryoplant-project::PR1310",
+          "GBOGEB/cryoplant-project::PR1316"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W175",
+        "count": 4,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1182",
+          "GBOGEB/cryoplant-project::PR1283",
+          "GBOGEB/cryoplant-project::PR1298",
+          "GBOGEB/cryoplant-project::PR1300"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W190",
+        "count": 4,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1184",
+          "GBOGEB/cryoplant-project::PR1188",
+          "GBOGEB/cryoplant-project::PR1194",
+          "GBOGEB/cryoplant-project::PR1200"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W192",
+        "count": 4,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1188",
+          "GBOGEB/cryoplant-project::PR1194",
+          "GBOGEB/cryoplant-project::PR1200",
+          "GBOGEB/cryoplant-project::PR1202"
+        ]
+      },
+      {
+        "group": "GBOGEB/CODEX|W69",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/CODEX::PR555",
+          "GBOGEB/CODEX::PR738",
+          "GBOGEB/CODEX::PR739"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W103",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR866",
+          "GBOGEB/cryoplant-project::PR1006",
+          "GBOGEB/cryoplant-project::PR1007"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W104",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR995",
+          "GBOGEB/cryoplant-project::PR1006",
+          "GBOGEB/cryoplant-project::PR1007"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W111",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR885",
+          "GBOGEB/cryoplant-project::PR887",
+          "GBOGEB/cryoplant-project::PR927"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W112",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR885",
+          "GBOGEB/cryoplant-project::PR886",
+          "GBOGEB/cryoplant-project::PR887"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W148",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1188",
+          "GBOGEB/cryoplant-project::PR1200",
+          "GBOGEB/cryoplant-project::PR1224"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W165",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1200",
+          "GBOGEB/cryoplant-project::PR1212",
+          "GBOGEB/cryoplant-project::PR1230"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W195",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1212",
+          "GBOGEB/cryoplant-project::PR1213",
+          "GBOGEB/cryoplant-project::PR1224"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W2",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1224",
+          "GBOGEB/cryoplant-project::PR1500",
+          "GBOGEB/cryoplant-project::PR1540"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W235",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1316",
+          "GBOGEB/cryoplant-project::PR1317",
+          "GBOGEB/cryoplant-project::PR1322"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W3",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR990",
+          "GBOGEB/cryoplant-project::PR1500",
+          "GBOGEB/cryoplant-project::PR1540"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W329",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR1638",
+          "GBOGEB/cryoplant-project::PR1643",
+          "GBOGEB/cryoplant-project::PR1653"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W49",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR417",
+          "GBOGEB/cryoplant-project::PR421",
+          "GBOGEB/cryoplant-project::PR995"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W54",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR569",
+          "GBOGEB/cryoplant-project::PR575",
+          "GBOGEB/cryoplant-project::PR1316"
+        ]
+      },
+      {
+        "group": "GBOGEB/cryoplant-project|W56",
+        "count": 3,
+        "candidate_ids_complete": true,
+        "candidate_ids_truncated": false,
+        "candidate_ids": [
+          "GBOGEB/cryoplant-project::PR611",
+          "GBOGEB/cryoplant-project::PR885",
+          "GBOGEB/cryoplant-project::PR1621"
+        ]
+      }
+    ]
+  },
+  "bounded_admission": {
+    "policy": "Admit only exception-first shortlist candidates for later deep-read; do not consume all 1,079 blindly.",
+    "shortlist_basis": "Descending deterministic signal weight; ties by repository then PR number. Weight is routing-only, not engineering or authority scoring.",
+    "shortlist": [
+      {
+        "id": "GBOGEB/CODEX::PR311",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 311,
+        "title": "feat(qps): execute W05 bidder evaluation KEB return",
+        "wave_labels": [
+          "W05",
+          "W005"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W05",
+          "W005"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/CODEX::PR326",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 326,
+        "title": "feat(qps): execute W05 bidder evaluation KEB return",
+        "wave_labels": [
+          "W05",
+          "W005"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W05",
+          "W005"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/CODEX::PR336",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 336,
+        "title": "control(qps): emit hash-bound W08 KEB runtime return",
+        "wave_labels": [
+          "W08",
+          "W003"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W003"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/CODEX::PR624",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 624,
+        "title": "W113: preserve PR621 W003 experience as repo REX return",
+        "wave_labels": [
+          "W113",
+          "W003"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W113",
+          "W003"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/CODEX::PR729",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 729,
+        "title": "MIP: bind Pages deployment ownership and A10/A9 lossless handover",
+        "wave_labels": [
+          "W010",
+          "W003"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W003"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/CODEX::PR738",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 738,
+        "title": "W233: consume expanded QPS federation handover in KEB",
+        "wave_labels": [
+          "W233",
+          "W68",
+          "W69",
+          "W70"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W69",
+          "W70"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/CODEX::PR739",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 739,
+        "title": "W105/H KEB: accept child handover pointer only",
+        "wave_labels": [
+          "W105",
+          "W69"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W105",
+          "W69"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR182",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 182,
+        "title": "fix(control): enforce W07 ssot_style return receipt",
+        "wave_labels": [
+          "W07",
+          "W06"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W07",
+          "W06"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR346",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 346,
+        "title": "control(qps): consolidate W36 session DMAIC PCA BT KPI handover",
+        "wave_labels": [
+          "W36",
+          "W34",
+          "W35",
+          "W07"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W07"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR417",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 417,
+        "title": "w49(qps): source-bound evidence promotion and child re-entry",
+        "wave_labels": [
+          "W49",
+          "W49-OFFER49"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W49"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR421",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 421,
+        "title": "w49(qps): record first canonical source-bound child re-entry",
+        "wave_labels": [
+          "W49",
+          "W49-OFFER49"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W49"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR453",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 453,
+        "title": "control(qps): W43 parent return disposition ledger",
+        "wave_labels": [
+          "W43",
+          "W42"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W43",
+          "W42"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR569",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 569,
+        "title": "W54-P03 child: enforce CC utility Zod and execute bidirectional re-entry",
+        "wave_labels": [
+          "W54-P03",
+          "W54"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W54"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR575",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 575,
+        "title": "W54-P02C: stage child re-entry and composite DoV score sheet",
+        "wave_labels": [
+          "W54-P02C",
+          "W54"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W54"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR600",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 600,
+        "title": "control(qps): capture current-session engineering handover DoV",
+        "wave_labels": [
+          "W46",
+          "W43-M07"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W46"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR602",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 602,
+        "title": "W57-P01: execute licensed HEPAK return or expose exact runtime failure",
+        "wave_labels": [
+          "W57-P01",
+          "W57"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W57"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR611",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 611,
+        "title": "W56: close component utility bidirectional child re-entry",
+        "wave_labels": [
+          "W56",
+          "W56-001",
+          "W56-002",
+          "W56-003",
+          "W56-004",
+          "W56-005",
+          "W56-006"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W56"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR654",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 654,
+        "title": "W57: start multi-3PR source-return execution stack",
+        "wave_labels": [
+          "W57",
+          "W62",
+          "W63"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W57",
+          "W62",
+          "W63"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR757",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 757,
+        "title": "W65: push reverse-loading pressure onto authoritative-return lanes",
+        "wave_labels": [
+          "W65",
+          "W64",
+          "W43-M07"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W64"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR787",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 787,
+        "title": "W85/P2-P3: execute child re-entry digest-parity validation",
+        "wave_labels": [
+          "W85",
+          "W62"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W85",
+          "W62"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR835",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 835,
+        "title": "W98 re-entry: ACCEPT glossary 3PC+3PR and bind federation activity SSOT",
+        "wave_labels": [
+          "W98",
+          "W003",
+          "W69"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W003",
+          "W69"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR866",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 866,
+        "title": "W106: promote v7.0 raw-v4 handover authority and execute C1→C2",
+        "wave_labels": [
+          "W106",
+          "W103"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W103"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR885",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 885,
+        "title": "W113: child re-entry for W111 CIS exact-merge tuple",
+        "wave_labels": [
+          "W113",
+          "W111",
+          "W112",
+          "W56",
+          "W69"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W113",
+          "W111",
+          "W112",
+          "W56",
+          "W69"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR886",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 886,
+        "title": "W112: child re-entry for GLOB action/status convergence",
+        "wave_labels": [
+          "W112",
+          "W108"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W112",
+          "W108"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR887",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 887,
+        "title": "W114: QPS child re-entry on post-merge CIS freeze",
+        "wave_labels": [
+          "W114",
+          "W111",
+          "W112",
+          "W113",
+          "W69",
+          "W108"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W111",
+          "W112",
+          "W113",
+          "W69",
+          "W108"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR990",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 990,
+        "title": "W3-12: add drop-in licensed HEPAK local execution handover",
+        "wave_labels": [
+          "W3-12",
+          "W3"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W3-12",
+          "W3"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR995",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 995,
+        "title": "SC-20260912 3PR/P1 + MIP: publish delete-safe handover capsule",
+        "wave_labels": [
+          "W104",
+          "W43",
+          "W49"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W104",
+          "W43",
+          "W49"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1006",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1006,
+        "title": "CONTROL: close W107/W104/W103 session with 3PR + MIP handover",
+        "wave_labels": [
+          "W107",
+          "W104",
+          "W103",
+          "W113"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W104",
+          "W103",
+          "W113"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1007",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1007,
+        "title": "CONTROL: close W107/W104/W103 session with 3PR + MIP handover",
+        "wave_labels": [
+          "W107",
+          "W104",
+          "W103",
+          "W113"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W104",
+          "W103",
+          "W113"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1026",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1026,
+        "title": "W145 CONTROL: close three-repo numerical DoV federation re-entry",
+        "wave_labels": [
+          "W145",
+          "W3-12"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W145",
+          "W3-12"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1057",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1057,
+        "title": "W155: harden cost/PED source-return gate before owner-risk MC",
+        "wave_labels": [
+          "W155",
+          "W145",
+          "W154"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W155",
+          "W145"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1087",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1087,
+        "title": "W152: materialize LKT L1 four-member source-return gate",
+        "wave_labels": [
+          "W152",
+          "W152-P1"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W152"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1121",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1121,
+        "title": "H1 QPS TRIAGE W1: reliability child re-entry boundary",
+        "wave_labels": [
+          "W1",
+          "W176",
+          "W177"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W1",
+          "W176"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1182",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1182,
+        "title": "W176: close W175 LN2 lane with full 3PC + MIP and lossless handover",
+        "wave_labels": [
+          "W176",
+          "W175",
+          "W175-A"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W176",
+          "W175"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1184",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1184,
+        "title": "W191: bind exact Windows Master_Input return contract",
+        "wave_labels": [
+          "W191",
+          "W189",
+          "W190",
+          "W152"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W191",
+          "W152"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1188",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1188,
+        "title": "handover: conclude LKT NEGO1 3PR/MIP and current BD queue",
+        "wave_labels": [
+          "W191",
+          "W190",
+          "W192",
+          "W152",
+          "W148"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W191",
+          "W192",
+          "W152"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1194",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1194,
+        "title": "W193: global 3PR + MIP lossless close and QPS BD handover",
+        "wave_labels": [
+          "W193",
+          "W192",
+          "W190",
+          "W191",
+          "W152"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W192",
+          "W191",
+          "W152"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1200",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1200,
+        "title": "handover: global QPS 3PR/MIP lossless session close",
+        "wave_labels": [
+          "W190",
+          "W191",
+          "W192",
+          "W165",
+          "W152",
+          "W148"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W191",
+          "W192",
+          "W165",
+          "W152"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1212",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1212,
+        "title": "Rolling handover v2: bind W195 queue and HV06 provenance recheck",
+        "wave_labels": [
+          "W195",
+          "W165"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W165"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1224",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1224,
+        "title": "handover: final QPS TRIAGE 3PR/MIP global closeout",
+        "wave_labels": [
+          "W195",
+          "W196",
+          "W163",
+          "W198",
+          "W2",
+          "W191",
+          "W152",
+          "W148"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W163",
+          "W2",
+          "W191",
+          "W152"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1230",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1230,
+        "title": "QPS rolling handover v4r: consume NEGO1 note, W191R and N209",
+        "wave_labels": [
+          "W165",
+          "W197"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W165"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1235",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1235,
+        "title": "W199: anchor NEGO1 SCK inputs and roll lossless handover v5",
+        "wave_labels": [
+          "W199",
+          "W191"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W199",
+          "W191"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1237",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1237,
+        "title": "W200: census NEGO1 peer delta and roll handover v6",
+        "wave_labels": [
+          "W200",
+          "W191"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W191"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1238",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1238,
+        "title": "QPS rolling handover v7: reconcile N212 and NEGO1 pulses",
+        "wave_labels": [
+          "W199",
+          "W200",
+          "W191"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W199",
+          "W191"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1283",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1283,
+        "title": "W229: narrow W199 return gate and N300 HTML/XLSX candidate proofs",
+        "wave_labels": [
+          "W229",
+          "W199",
+          "W175",
+          "W175-D",
+          "W228",
+          "W191",
+          "W152"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W199",
+          "W175",
+          "W191",
+          "W152"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1298",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1298,
+        "title": "Handover: W175/W199 + W231 full 3PR/MIP lossless close",
+        "wave_labels": [
+          "W175",
+          "W199",
+          "W231",
+          "W215",
+          "W198",
+          "W191",
+          "W152",
+          "W230"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W175",
+          "W199",
+          "W231",
+          "W191",
+          "W152"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1299",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1299,
+        "title": "handover(qps): 2026-09-15 full 3PR + MIP lossless session closeout",
+        "wave_labels": [
+          "W41",
+          "W42",
+          "W51",
+          "W231",
+          "W199",
+          "W191",
+          "W152"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W41",
+          "W42",
+          "W231",
+          "W199",
+          "W191",
+          "W152"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1300",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1300,
+        "title": "W232: full 3PR + MIP lossless handover",
+        "wave_labels": [
+          "W232",
+          "W231",
+          "W175",
+          "W199",
+          "W191",
+          "W152"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W231",
+          "W175",
+          "W199",
+          "W191",
+          "W152"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1303",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1303,
+        "title": "Handover: W155/W232 source-return full 3PR + MIP delta closeout",
+        "wave_labels": [
+          "W155",
+          "W232",
+          "W156",
+          "W231",
+          "W145"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W155",
+          "W231",
+          "W145"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1305",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1305,
+        "title": "W105/P: perpetuate MIP parent repairs through child re-entry",
+        "wave_labels": [
+          "W105",
+          "W69"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W105",
+          "W69"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1308",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1308,
+        "title": "W233: expanded federation full 3PR + MIP lossless handover",
+        "wave_labels": [
+          "W233",
+          "W68",
+          "W69",
+          "W70",
+          "W232"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W69",
+          "W70"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1310",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1310,
+        "title": "W233: close W155 enum typedness P1 before source-return intake",
+        "wave_labels": [
+          "W233",
+          "W155",
+          "W232",
+          "W199",
+          "W156",
+          "W145"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W155",
+          "W199",
+          "W145"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1311",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1311,
+        "title": "Session closure: W57-W63 TRIAGE DoD/DoV handover",
+        "wave_labels": [
+          "W57-W63",
+          "W57",
+          "W63",
+          "W62"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W57",
+          "W63",
+          "W62"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1312",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1312,
+        "title": "W105/H: lossless 3PR+MIP session handover",
+        "wave_labels": [
+          "W105",
+          "W69"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W105",
+          "W69"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1316",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1316,
+        "title": "Session closeout: full lossless 3PR + MIP handover and restart cards",
+        "wave_labels": [
+          "W57-W63",
+          "W105",
+          "W235",
+          "W155",
+          "W231",
+          "W54"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W105",
+          "W155",
+          "W231",
+          "W54"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1317",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1317,
+        "title": "Session closure: final 3PR + MIP lossless handover",
+        "wave_labels": [
+          "W232",
+          "W105",
+          "W235"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W105"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1330",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1330,
+        "title": "W232R: bind stable session root to merged lossless handover",
+        "wave_labels": [
+          "W232",
+          "W191",
+          "W152",
+          "W199"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W191",
+          "W152",
+          "W199"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1455",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1455,
+        "title": "W275 P3: bind recursive R3 history and lossless handover",
+        "wave_labels": [
+          "W275"
+        ],
+        "gm_labels": [
+          "GM-I-C_R3_SUCCESSOR_1248290c_EXACT_ENV"
+        ],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W275"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1478",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1478,
+        "title": "W282: reconcile visual lineage and publish lossless 3P* MIP handover",
+        "wave_labels": [
+          "W282",
+          "W162",
+          "W188",
+          "W231",
+          "W280"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W282",
+          "W162",
+          "W231",
+          "W280"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1485",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1485,
+        "title": "W283RC: commit federation breadth control and lossless handover",
+        "wave_labels": [
+          "W280",
+          "W283",
+          "W275"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W280",
+          "W275"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1543",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1543,
+        "title": "W304: authoritative federation depth return and 3PC Commit",
+        "wave_labels": [
+          "W304",
+          "W285",
+          "W275"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W275"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1580",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1580,
+        "title": "handover: close 2026-09-21 diagnostic partial wave",
+        "wave_labels": [
+          "W275",
+          "W282"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W275",
+          "W282"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1621",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1621,
+        "title": "GMI-W275: child-control document-core re-entry",
+        "wave_labels": [
+          "W275",
+          "W274",
+          "W003",
+          "W56"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W275",
+          "W003",
+          "W56"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1638",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1638,
+        "title": "QPS W329: LOOP/QCELL 3PR + MIP lossless handover",
+        "wave_labels": [
+          "W329",
+          "W307"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W329"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1643",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1643,
+        "title": "QPS W330: full 3PR + MIP controls/cyber lossless handover",
+        "wave_labels": [
+          "W330",
+          "W306",
+          "W307",
+          "W328",
+          "W329"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W329"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1653",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1653,
+        "title": "QPS W329: serialize W281 RTM hierarchy 3PR + MIP handover",
+        "wave_labels": [
+          "W329",
+          "W281",
+          "W277-W281"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W329",
+          "W281"
+        ],
+        "signal_weight": 10
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR270",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 270,
+        "title": "handover(qps): conclude W17 session and bind restart manifest",
+        "wave_labels": [
+          "W17",
+          "W13"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [],
+        "signal_weight": 9
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR289",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 289,
+        "title": "control(w24): split external T0 return gate from internal evidence burn-down",
+        "wave_labels": [
+          "W08",
+          "W13"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [],
+        "signal_weight": 9
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR343",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 343,
+        "title": "control(qps): W36 session handover, KPI, DMAIC, PCA and BT consolidation",
+        "wave_labels": [
+          "W36",
+          "W35",
+          "W33",
+          "W30",
+          "W32"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [],
+        "signal_weight": 9
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1213",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1213,
+        "title": "W196: bind N300 HTML/PDF source capacity and rolling handover v3",
+        "wave_labels": [
+          "W196",
+          "W195"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [],
+        "signal_weight": 9
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1322",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1322,
+        "title": "Handover: close W228-W235 semantic SSOT lane with refreshed 3PR/MIP",
+        "wave_labels": [
+          "W228-W235",
+          "W228",
+          "W235",
+          "W236"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [],
+        "signal_weight": 9
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1367",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1367,
+        "title": "W257: publish Grandmission I-B lossless closure handover",
+        "wave_labels": [
+          "W257",
+          "W256"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [],
+        "signal_weight": 9
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1373",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1373,
+        "title": "W261: temporal PCA geometry visual compendium handover",
+        "wave_labels": [
+          "W261",
+          "W256",
+          "W257"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [],
+        "signal_weight": 9
+      },
+      {
+        "id": "GBOGEB/pipeline-automation-hub::PR237",
+        "cell": "F01-D",
+        "repository": "GBOGEB/pipeline-automation-hub",
+        "pr": 237,
+        "title": "SYNC: latest master into repaired GM-V 3PSTAR MIP handover",
+        "wave_labels": [
+          "W282"
+        ],
+        "gm_labels": [
+          "GM-V",
+          "GM-I-C"
+        ],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "MULTI_MISSION_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W282"
+        ],
+        "signal_weight": 9
+      },
+      {
+        "id": "GBOGEB/CODEX::PR555",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 555,
+        "title": "W86 KEB: close semantic provenance residual for W84 re-entry",
+        "wave_labels": [
+          "W86",
+          "W84",
+          "W84-introduced",
+          "W69",
+          "W003"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE"
+        ],
+        "high_density_wave_labels": [
+          "W84",
+          "W69",
+          "W003"
+        ],
+        "signal_weight": 8
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR774",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 774,
+        "title": "W84-C1 re-entry: bind BFLOW cycle and launch GEO-A recovery",
+        "wave_labels": [
+          "W84-C1",
+          "W84",
+          "W66",
+          "W85"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE"
+        ],
+        "high_density_wave_labels": [
+          "W84",
+          "W85"
+        ],
+        "signal_weight": 8
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR927",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 927,
+        "title": "W114R: repair C6 and reach four-lane green for MC re-entry",
+        "wave_labels": [
+          "W113",
+          "W114",
+          "W111"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE"
+        ],
+        "high_density_wave_labels": [
+          "W113",
+          "W111"
+        ],
+        "signal_weight": 8
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1202",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1202,
+        "title": "W193: lossless session close, current BD and 3PR/MIP re-entry",
+        "wave_labels": [
+          "W193",
+          "W192"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE"
+        ],
+        "high_density_wave_labels": [
+          "W192"
+        ],
+        "signal_weight": 8
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1500",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1500,
+        "title": "H4 QPS TRIAGE: bind 3P* + MIP runner re-entry state (fresh-head)",
+        "wave_labels": [
+          "W2",
+          "W3"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE"
+        ],
+        "high_density_wave_labels": [
+          "W2",
+          "W3"
+        ],
+        "signal_weight": 8
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1540",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1540,
+        "title": "H4: fresh-head runner admission re-entry pulse",
+        "wave_labels": [
+          "W2",
+          "W3"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE"
+        ],
+        "high_density_wave_labels": [
+          "W2",
+          "W3"
+        ],
+        "signal_weight": 8
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR337",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 337,
+        "title": "control(qps): propagate PCO review into W31 canonical re-entry",
+        "wave_labels": [
+          "W31",
+          "W30"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CONTRADICTORY_HANDOVER_CANDIDATE"
+        ],
+        "high_density_wave_labels": [],
+        "signal_weight": 7
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR648",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 648,
+        "title": "Lineage: normalize duplicate/colliding waves before next pulse",
+        "wave_labels": [
+          "W0",
+          "W36",
+          "W56-W61"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "COMPETING_OR_SUPERSEDED_HINT",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W0"
+        ],
+        "signal_weight": 7
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR756",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 756,
+        "title": "W64-P01 follow-up (superseded before execution)",
+        "wave_labels": [
+          "W64-P01",
+          "W64"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "COMPETING_OR_SUPERSEDED_HINT",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W64"
+        ],
+        "signal_weight": 7
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1081",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1081,
+        "title": "W164: bind horizontal federation triage and bidirectional MissionControl",
+        "wave_labels": [
+          "W164",
+          "W163"
+        ],
+        "gm_labels": [
+          "GM-I",
+          "GM-V"
+        ],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "MULTI_MISSION_LABEL",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W163"
+        ],
+        "signal_weight": 7
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR1138",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 1138,
+        "title": "[SUPERSEDED BY REBASED FOLLOW-UP] W177R: harden XLSX source-bind and promotion gates after #1129",
+        "wave_labels": [
+          "W162",
+          "W162-94",
+          "W171"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "COMPETING_OR_SUPERSEDED_HINT",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W162"
+        ],
+        "signal_weight": 7
+      },
+      {
+        "id": "GBOGEB/pipeline-automation-hub::PR65",
+        "cell": "F01-D",
+        "repository": "GBOGEB/pipeline-automation-hub",
+        "pr": 65,
+        "title": "GM-IV Ring2: prove Scout B provenance and return as reference",
+        "wave_labels": [],
+        "gm_labels": [
+          "GM-I",
+          "GM-V"
+        ],
+        "signals": [
+          "MULTI_MISSION_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [],
+        "signal_weight": 7
+      },
+      {
+        "id": "GBOGEB/ABACUS::PR771",
+        "cell": "F01-B",
+        "repository": "GBOGEB/ABACUS",
+        "pr": 771,
+        "title": "feat(qps): return W06 cost-frontier DOW findings",
+        "wave_labels": [
+          "W06",
+          "W06-COST"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W06"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/ABACUS::PR828",
+        "cell": "F01-B",
+        "repository": "GBOGEB/ABACUS",
+        "pr": 828,
+        "title": "feedback(qps): W41/P03 apply child-authority NFS correction",
+        "wave_labels": [
+          "W41",
+          "W40"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W41",
+          "W40"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/ABACUS::PR830",
+        "cell": "F01-B",
+        "repository": "GBOGEB/ABACUS",
+        "pr": 830,
+        "title": "triage(qps): W43 bind DOW bridge to child #383",
+        "wave_labels": [
+          "W43",
+          "W42"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W43",
+          "W42"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/ABACUS::PR833",
+        "cell": "F01-B",
+        "repository": "GBOGEB/ABACUS",
+        "pr": 833,
+        "title": "triage(qps): return W44 DOW findings",
+        "wave_labels": [
+          "W44",
+          "W43"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W44",
+          "W43"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/ABACUS::PR908",
+        "cell": "F01-B",
+        "repository": "GBOGEB/ABACUS",
+        "pr": 908,
+        "title": "W54-P02: execute DOW utility graph analysis on exact child hash",
+        "wave_labels": [
+          "W54-P02",
+          "W54",
+          "W54-P01"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W54"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/ABACUS::PR1032",
+        "cell": "F01-B",
+        "repository": "GBOGEB/ABACUS",
+        "pr": 1032,
+        "title": "W62: execute DOW exact-SHA return and zero-delta repeat",
+        "wave_labels": [
+          "W62",
+          "W62-001"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W62"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/ABACUS::PR1069",
+        "cell": "F01-B",
+        "repository": "GBOGEB/ABACUS",
+        "pr": 1069,
+        "title": "W87 DOW: bind green KEB receipt for LLDB-DAP child re-entry",
+        "wave_labels": [
+          "W87",
+          "W84",
+          "W86"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W84"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/ABACUS::PR1143",
+        "cell": "F01-B",
+        "repository": "GBOGEB/ABACUS",
+        "pr": 1143,
+        "title": "W117 CONTROL: freeze mesh runtime 3PR + MIP + 3PC handover",
+        "wave_labels": [
+          "W117",
+          "W116"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W116"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/ABACUS::PR1230",
+        "cell": "F01-B",
+        "repository": "GBOGEB/ABACUS",
+        "pr": 1230,
+        "title": "W233: consume expanded QPS federation handover in DOW",
+        "wave_labels": [
+          "W233",
+          "W68",
+          "W69",
+          "W70"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W69",
+          "W70"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/CODEX::PR131",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 131,
+        "title": "META-WAVE-1: Recursive convergence runtime, session handover, and Wave-1000 roadmap",
+        "wave_labels": [
+          "W1",
+          "W2",
+          "W3",
+          "W4",
+          "W5",
+          "W6",
+          "W7"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W1",
+          "W2",
+          "W3"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/CODEX::PR313",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 313,
+        "title": "feat(qps): return W06 cost-frontier KEB normalization",
+        "wave_labels": [
+          "W06",
+          "W06-COST"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W06"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/CODEX::PR353",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 353,
+        "title": "feedback(qps): W41/P03 apply child-authority NFS correction",
+        "wave_labels": [
+          "W41",
+          "W40"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W41",
+          "W40"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/CODEX::PR355",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 355,
+        "title": "triage(qps): W43 bind KEB bridge to child #383",
+        "wave_labels": [
+          "W43",
+          "W42"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W43",
+          "W42"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/CODEX::PR358",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 358,
+        "title": "triage(qps): return W44 KEB findings",
+        "wave_labels": [
+          "W44",
+          "W43"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W44",
+          "W43"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/CODEX::PR405",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 405,
+        "title": "W54-P03 KEB: return DOW #906 and validate child re-entry semantics",
+        "wave_labels": [
+          "W54-P03",
+          "W54"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W54"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/CODEX::PR420",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 420,
+        "title": "W56: normalize DOW component utility findings for child re-entry",
+        "wave_labels": [
+          "W56",
+          "W56-DOW",
+          "W056"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W56"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/CODEX::PR651",
+        "cell": "F01-C",
+        "repository": "GBOGEB/CODEX",
+        "pr": 651,
+        "title": "SC-20260912 3PR/P3 KEB: challenge handover provenance semantics",
+        "wave_labels": [
+          "W142",
+          "W104",
+          "W138"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W104"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR146",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 146,
+        "title": "feat: bind W04 parent return artifact status",
+        "wave_labels": [
+          "W04",
+          "W04-T10"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W04",
+          "W04-T10"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR187",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 187,
+        "title": "feat(cost): disposition W06 parent returns and emit feedback",
+        "wave_labels": [
+          "W06",
+          "W06-COST"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W06"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR393",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 393,
+        "title": "triage(qps): finalize W44 parent return re-entry",
+        "wave_labels": [
+          "W44",
+          "W45"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W44",
+          "W45"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR423",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 423,
+        "title": "control(qps): W43 child disposition execution pulse P02",
+        "wave_labels": [
+          "W43",
+          "W49",
+          "W44",
+          "W45",
+          "W46",
+          "W47",
+          "W48",
+          "W50",
+          "W51"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W43",
+          "W49",
+          "W44",
+          "W45",
+          "W46"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR451",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 451,
+        "title": "w49(qps): consume parent returns and close HSE026 HSE029 loops",
+        "wave_labels": [
+          "W49",
+          "W49-OFFER49"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W49"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR567",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 567,
+        "title": "W54-P02 child: add QRB CC CW/electrical graph, ICD/cards and parent lineage",
+        "wave_labels": [
+          "W54-P02",
+          "W54"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W54"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR633",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 633,
+        "title": "W60: execute exact-SHA 3PR roundtrip, child re-entry and granular DoV/PCA",
+        "wave_labels": [
+          "W60",
+          "W59"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W60",
+          "W59"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR640",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 640,
+        "title": "W59: enforce TRIAGE child census pipeline and CI",
+        "wave_labels": [
+          "W59",
+          "W58"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W59",
+          "W58"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR641",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 641,
+        "title": "W61: close parent returns, align LKT/ALAT and bind current artifacts",
+        "wave_labels": [
+          "W61",
+          "W60",
+          "W56"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W61",
+          "W60",
+          "W56"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR681",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 681,
+        "title": "W63: close P7 child historical-candidate disposition",
+        "wave_labels": [
+          "W63",
+          "W62"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W63",
+          "W62"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR708",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 708,
+        "title": "W60: quantify observed TRIAGE child DoV completion",
+        "wave_labels": [
+          "W60",
+          "W58",
+          "W59"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W60",
+          "W58",
+          "W59"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR717",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 717,
+        "title": "W61R: restore TRIAGE child DoV convergence receipt after W60 merge",
+        "wave_labels": [
+          "W60",
+          "W61"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W60",
+          "W61"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR745",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 745,
+        "title": "W72-B2: make federation re-entry receipt-bound and fail-closed",
+        "wave_labels": [
+          "W72-B2",
+          "W72"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W72"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR792",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 792,
+        "title": "W63: verify TRIAGE tuple survives on fresh child main",
+        "wave_labels": [
+          "W63",
+          "W62",
+          "W62-001"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W63",
+          "W62"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR832",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 832,
+        "title": "W98/P1: QPS glossary 3PC+3PR + child federation activity SSOT",
+        "wave_labels": [
+          "W98",
+          "W003"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W003"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR834",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 834,
+        "title": "W104/P1: execute CC-R01..R08 child roundtrip and email provenance ingress",
+        "wave_labels": [
+          "W104",
+          "W43"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W104",
+          "W43"
+        ],
+        "signal_weight": 6
+      },
+      {
+        "id": "GBOGEB/cryoplant-project::PR881",
+        "cell": "F01-A",
+        "repository": "GBOGEB/cryoplant-project",
+        "pr": 881,
+        "title": "W109: child-bind mesh execution taxonomy via 3PC + MIP",
+        "wave_labels": [
+          "W109",
+          "W108"
+        ],
+        "gm_labels": [],
+        "signals": [
+          "REUSED_WAVE_LABEL",
+          "NAMED_NEXT_WITHOUT_DURABLE_CHILD_HINT",
+          "CROSS_REPO_PARENT_RETURN_EVIDENCE_GAP_HINT"
+        ],
+        "high_density_wave_labels": [
+          "W108"
+        ],
+        "signal_weight": 6
+      }
+    ],
+    "parked_exception_candidates": 187,
+    "parked_routine_candidates": 772
+  },
+  "guardrails": {
+    "contradictory_handover_is_candidate_signal_only": true,
+    "title_metadata_is_not_semantic_proof": true,
+    "p1_does_not_create_authority": true,
+    "historical_merge_before_proof_noncompliance_preserved": true,
+    "external_noncompensating_boundaries": [
+      "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
+      "GBOGEB/ABACUS#1369 EXECUTION_ADMISSION",
+      "W275_PHYSICAL_SUCCESSOR_GIT_BUNDLE",
+      "GBOGEB/cryoplant-project#1801 W287_DREQ_SOURCE_INTEGRATION"
+    ]
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "review_reconciliation": {
+    "codex_reviewed_head": "56260b9ee3b40441d61b3d6ef19332dd55ec5a28",
+    "findings": {
+      "P2_CONSUMMATE_FALSE_MATCH": {
+        "disposition": "NOT_REPRODUCIBLE_FROM_FROZEN_INPUTS",
+        "evidence": "Regeneration with the recorded word-bounded consume matcher reproduces the published shortlist exactly; GBOGEB/ABACUS::PR1116 has only REUSED_WAVE_LABEL and is not in the exception shortlist.",
+        "cluster_count_remains": 211,
+        "shortlist_changed": false
+      },
+      "P2_SCORING_FORMULA_UNDOCUMENTED": {
+        "disposition": "REPAIRED",
+        "repair": "Recorded complete per-signal weights, high-density threshold/bonus rule, deterministic tie-break order and 120-item cutoff."
+      },
+      "P2_W191_CANDIDATE_LIST_TRUNCATED": {
+        "disposition": "REPAIRED",
+        "repair": "All published top collision groups now include complete candidate_ids arrays plus explicit completeness metadata."
+      }
+    }
+  }
+}
