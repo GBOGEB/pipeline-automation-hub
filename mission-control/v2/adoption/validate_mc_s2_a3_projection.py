@@ -20,6 +20,21 @@ A2 = ADOPTION / "MC_S2_A2_CURRENT_MISSION_PROJECTION_20260927_v1.json"
 STATUS = V2 / "MC_MISSION_STATUS_CURRENT_v1.json"
 OFFICIAL = ROOT / "mission-control" / "OFFICIAL_MISSION_REGISTER_v1.yaml"
 
+REQUIRED_LEGACY_VALIDATORS = {
+    "LM10_FLEET_OPEN_ISSUE_CONVERGENCE": (
+        "LM-10",
+        "mission-control/historian/validate_fleet_open_issue_convergence.py",
+    ),
+    "LM11_QPS_WAVE_FEDERATION": (
+        "LM-11",
+        "scripts/validate_lm11_qps_wave_federation.py",
+    ),
+    "GM_I_C_REGISTRATION": (
+        "GM-I-C",
+        "mission-control/grand-missions/validate_gm_i_c_registration.py",
+    ),
+}
+
 
 def load_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
@@ -60,6 +75,16 @@ def validate_documents(enforcement, a1, a2, status, official):
     ):
         req(mp.get(key) is False, f"A3 mutation guard weakened: {key}")
 
+    legacy_rows = enforcement.get("legacy_validators", [])
+    legacy_by_id = {row.get("id"): row for row in legacy_rows}
+    req(len(legacy_rows) == len(REQUIRED_LEGACY_VALIDATORS), "legacy validator count drift")
+    req(set(legacy_by_id) == set(REQUIRED_LEGACY_VALIDATORS), "legacy validator required ID set drift")
+    for validator_id, (mission_id, path) in REQUIRED_LEGACY_VALIDATORS.items():
+        row = legacy_by_id.get(validator_id, {})
+        req(row.get("mission_id") == mission_id, f"legacy validator mission drift: {validator_id}")
+        req(row.get("path") == path, f"legacy validator path drift: {validator_id}")
+        req(row.get("immutable_in_mc_a3") is True, f"legacy validator immutability guard missing: {validator_id}")
+
     req(a1.get("mode") == "READ_ONLY_CENSUS", "A1 is no longer read-only census")
     req(a1.get("authority_transfer") is False, "A1 authority transfer drift")
     req(a2.get("projection_policy", {}).get("mode") == "READ_ONLY_ADDITIVE", "A2 projection mode drift")
@@ -79,9 +104,11 @@ def validate_documents(enforcement, a1, a2, status, official):
     expected_missions = enforcement["projection_contract"]["required_mission_ids"]
     req([p.get("mission_id") for p in projections] == expected_missions, "A2 projected mission set/order drift")
 
+    a1_candidates = set(a1.get("mc_a2_candidates", []))
     admitted = set(a2.get("a1_candidate_coverage", {}).get("admitted_consumer_ids", []))
     projected = set(a2.get("a1_candidate_coverage", {}).get("projected_consumer_ids", []))
-    req(admitted == projected, "A1 admitted/projected consumer parity drift")
+    req(a1_candidates == admitted, "A1 candidate/A2 admitted consumer parity drift")
+    req(admitted == projected, "A2 admitted/projected consumer parity drift")
     req(a2.get("a1_candidate_coverage", {}).get("parity") is True, "A2 parity flag drift")
 
     status_rows = {row["mission_id"]: row for row in status.get("missions", [])}
@@ -132,7 +159,35 @@ def validate_documents(enforcement, a1, a2, status, official):
     return errors
 
 
-def validate_git_bindings(enforcement):
+def validate_projection_source_bindings(a2):
+    errors = []
+    bound = []
+    for projection in a2.get("projections", []):
+        projection_id = projection.get("projection_id")
+        rows = projection.get("source_bindings", [])
+        if not rows:
+            errors.append(f"A2 projection has no source bindings: {projection_id}")
+            continue
+        for row in rows:
+            path = row.get("path")
+            expected = row.get("blob")
+            if not path or not expected:
+                errors.append(f"A2 projection source binding incomplete: {projection_id}")
+                continue
+            actual = git_blob(path)
+            bound.append({
+                "kind": "A2_PROJECTION_SOURCE_BINDING",
+                "projection_id": projection_id,
+                "path": path,
+                "expected": expected,
+                "actual": actual,
+            })
+            if actual != expected:
+                errors.append(f"A2 projection source blob drift: {projection_id}: {path}")
+    return errors, bound
+
+
+def validate_git_bindings(enforcement, a2):
     errors = []
     bound = []
     for group in ("basis",):
@@ -142,7 +197,17 @@ def validate_git_bindings(enforcement):
             bound.append({"path": row["path"], "expected": row["blob"], "actual": actual})
             if actual != row["blob"]:
                 errors.append(f"blob drift: {row['path']}")
-    for row in enforcement.get("legacy_validators", []):
+    legacy_rows = enforcement.get("legacy_validators", [])
+    legacy_by_id = {row.get("id"): row for row in legacy_rows}
+    if len(legacy_rows) != len(REQUIRED_LEGACY_VALIDATORS) or set(legacy_by_id) != set(REQUIRED_LEGACY_VALIDATORS):
+        errors.append("legacy validator binding set incomplete")
+    for validator_id, (mission_id, path) in REQUIRED_LEGACY_VALIDATORS.items():
+        row = legacy_by_id.get(validator_id)
+        if row is None:
+            continue
+        if row.get("mission_id") != mission_id or row.get("path") != path:
+            errors.append(f"legacy validator identity drift: {validator_id}")
+            continue
         actual = git_blob(row["path"])
         bound.append({"path": row["path"], "expected": row["blob"], "actual": actual})
         if actual != row["blob"]:
@@ -154,6 +219,10 @@ def validate_git_bindings(enforcement):
         bound.append({"path": row["path"], "expected": row["blob"], "actual": actual})
         if actual != row["blob"]:
             errors.append(f"source-control blob drift: {row['path']}")
+
+    projection_errors, projection_bound = validate_projection_source_bindings(a2)
+    errors.extend(projection_errors)
+    bound.extend(projection_bound)
     return errors, bound
 
 
@@ -179,6 +248,19 @@ def self_test(bundle):
     assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"])
 
     bad = copy.deepcopy(base)
+    bad["a1"]["mc_a2_candidates"].append("MC-A1-C99")
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"])
+
+    bad = copy.deepcopy(base)
+    bad["enforcement"]["legacy_validators"] = bad["enforcement"]["legacy_validators"][:-1]
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"])
+
+    bad = copy.deepcopy(base)
+    bad["a2"]["projections"][0]["source_bindings"][0]["blob"] = "0" * 40
+    projection_errors, _ = validate_projection_source_bindings(bad["a2"])
+    assert projection_errors, "self-test failed to detect A2 embedded source-binding drift"
+
+    bad = copy.deepcopy(base)
     bad["official"]["mission_control_operating_model"]["rule"] = "V2_REPLACES_SOURCE_AUTHORITY"
     assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"])
 
@@ -198,7 +280,7 @@ def main():
     }
 
     errors = validate_documents(**bundle)
-    blob_errors, bindings = validate_git_bindings(bundle["enforcement"])
+    blob_errors, bindings = validate_git_bindings(bundle["enforcement"], bundle["a2"])
     errors.extend(blob_errors)
 
     if args.self_test:
