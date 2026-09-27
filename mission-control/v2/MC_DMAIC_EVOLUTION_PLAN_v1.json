@@ -56,7 +56,7 @@
       ]
     },
     "IMPROVE": {
-      "state": "ACTIVE",
+      "state": "PASS_IMPLEMENTED_PR438_WITH_BOUNDED_CONTROL_FIX_FORWARD",
       "waves": [
         {
           "id": "MC-E1",
@@ -108,18 +108,53 @@
           ],
           "output": "validator + workflow + CURRENT pointer"
         }
-      ]
+      ],
+      "activation": {
+        "pr": 438,
+        "exact_head": "9134a21bd64415fa0c45172d9c029acfc871dbc1",
+        "merge": "e6d0e9f4adf3108b06a12d844087eec67edbbaea",
+        "exact_head_contract_run": 36302730762,
+        "validation_artifact_id": 10925743749,
+        "validation_artifact_digest": "sha256:99f763adb243342a4127d27a3de56fa0465190a17bd903762030e6739d83d77a"
+      }
     },
     "CONTROL": {
-      "state": "PENDING_EXACT_HEAD_PR_PROOF",
+      "state": "CONTROL_LOOP_ACTIVE_REENTRY",
+      "purpose": "Detect scope/taxonomy/telemetry regression after activation; repair only observed control defects without widening authority.",
+      "events": [
+        {
+          "id": "MC-CONTROL-001",
+          "result": "ACTIVATION_EXACT_HEAD_PROVEN_AND_MERGED",
+          "pr": 438,
+          "exact_head": "9134a21bd64415fa0c45172d9c029acfc871dbc1",
+          "merge": "e6d0e9f4adf3108b06a12d844087eec67edbbaea",
+          "contract_run": 36302730762,
+          "first_pass_proof_run": 36302730545
+        },
+        {
+          "id": "MC-CONTROL-002",
+          "result": "REENTRY_REQUIRED",
+          "finding": "POSTMERGE_RECENSUS_OMITTED_SIX_BOUND_LEGACY_MISSION_ROWS",
+          "omitted_ids": [
+            "M01",
+            "M02A",
+            "M02B",
+            "M03",
+            "M04",
+            "CLOUD16"
+          ],
+          "fix_forward": "mc/v2-control-census-fix-20260927",
+          "receipt": "mission-control/v2/MC_V2_CONTROL_REENTRY_20260927_v1.json"
+        }
+      ],
+      "next_control_condition": "FIX_FORWARD_EXACT_HEAD_VALIDATION_AND_POSTMERGE_READBACK",
       "required": [
         "validator_pass",
-        "workflow_gt0_if_admitted",
-        "no_new_machine_identifier_uses_MC_for_MONTE_CARLO",
-        "no_new_machine_field_uses_bare_COV_N",
-        "all_current_mission_rows_have_required_dimensions",
+        "exact_head_checkout_binding",
+        "all_bound_mission_ids_have_independent_telemetry_envelopes",
+        "unknown_metrics_remain_unknown",
+        "namespace_rules_unchanged",
         "historical_receipts_unchanged",
-        "README_and_official_register_discovery_paths",
         "postmerge_readback"
       ]
     }
