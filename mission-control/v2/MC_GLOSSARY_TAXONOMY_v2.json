@@ -30,7 +30,8 @@
     },
     "PR": {
       "canonical_meaning": "PULL_REQUEST",
-      "collision_note": "3PR is a fixed method-profile token and is not parsed as three pull requests."
+      "collision_note": "3PR is a fixed method-profile token and is not parsed as three pull requests.",
+      "precision_recall_rule": "Statistical/ML precision-recall MUST use PRECISION_RECALL or PR_CURVE in new cross-domain machine identifiers."
     },
     "3PR": {
       "canonical_meaning": "THREE_P_REFRESH_PROBE_RANK",
@@ -59,7 +60,17 @@
     "COV": {
       "canonical_status": "DEPRECATED_AMBIGUOUS_ALIAS",
       "replacement": "MCOV",
-      "rule": "Bare COV-N is not canonical in new machine fields because software/code coverage also uses coverage terminology."
+      "rule": "Bare COV-N is not canonical in new machine fields because software/code coverage also uses coverage terminology.",
+      "collision": [
+        "MISSION_CONTROL_COVERAGE",
+        "SOFTWARE_CODE_COVERAGE",
+        "COVARIANCE"
+      ],
+      "replacements": {
+        "mission_control_coverage": "MCOV",
+        "software_coverage": "CODE_COVERAGE or qualified *_coverage_pct fields",
+        "covariance": "COVARIANCE or COV_MAT"
+      }
     },
     "MCOV": {
       "canonical_meaning": "MISSION_CONTROL_OBSERVABILITY_AND_CONTROL_COVERAGE_MATURITY",
@@ -100,6 +111,22 @@
     "PR<number>": {
       "canonical_meaning": "LOCAL_PULL_REQUEST_REFERENCE",
       "rule": "Bare PR number is not globally unique. Cross-repository joins MUST qualify repository."
+    },
+    "MIP": {
+      "canonical_meaning": "MODERNIZE_INNOVATE_PERPETUATE_IN_MISSION_CONTROL",
+      "rule": "Within Mission Control method fields, MIP means Modernize-Innovate-Perpetuate. Mathematical optimization MUST use MIXED_INTEGER_PROGRAMMING, MILP where accurate, or MIP_OPT; bare MIP is forbidden for new cross-domain optimization identifiers."
+    },
+    "CI": {
+      "canonical_status": "CONTEXTUAL_LEGACY_ALIAS",
+      "collision": [
+        "CONTINUOUS_INTEGRATION",
+        "CONFIDENCE_INTERVAL"
+      ],
+      "rule": "New cross-domain machine identifiers MUST qualify CI. Use CI_PIPELINE/CONTINUOUS_INTEGRATION for DevOps and CONFIDENCE_INTERVAL/CI_STAT for statistical intervals."
+    },
+    "GM": {
+      "canonical_meaning": "GRAND_MISSION_IN_MISSION_CONTROL",
+      "rule": "Mathematical geometric mean MUST use GEOMETRIC_MEAN or GM_STAT in new cross-domain machine identifiers."
     }
   },
   "coverage_maturity": {
@@ -186,5 +213,81 @@
     "CANONICAL_V2_TOKEN",
     "HISTORICAL_SOURCE_CONTEXT",
     "OTHERWISE_UNKNOWN_FAIL_CLOSED"
+  ],
+  "cross_domain_collision_matrix": [
+    {
+      "token": "MC",
+      "control_plane": "MISSION_CONTROL",
+      "other_domain": "MONTE_CARLO",
+      "canonical_other": [
+        "MONTE_CARLO",
+        "MC_SIM"
+      ],
+      "bare_new_use": "FORBIDDEN_FOR_OTHER_DOMAIN"
+    },
+    {
+      "token": "MIP",
+      "control_plane": "MODERNIZE_INNOVATE_PERPETUATE",
+      "other_domain": "MIXED_INTEGER_PROGRAMMING",
+      "canonical_other": [
+        "MIXED_INTEGER_PROGRAMMING",
+        "MILP_IF_LINEAR",
+        "MIP_OPT"
+      ],
+      "bare_new_use": "FORBIDDEN_FOR_OTHER_DOMAIN"
+    },
+    {
+      "token": "COV",
+      "control_plane": "DEPRECATED_AMBIGUOUS",
+      "other_domain": "COVARIANCE_OR_CODE_COVERAGE",
+      "canonical_other": [
+        "MCOV",
+        "CODE_COVERAGE",
+        "COVARIANCE",
+        "COV_MAT"
+      ],
+      "bare_new_use": "FORBIDDEN"
+    },
+    {
+      "token": "CI",
+      "control_plane": "CONTEXTUAL_LEGACY",
+      "other_domain": "CONFIDENCE_INTERVAL_OR_CONTINUOUS_INTEGRATION",
+      "canonical_other": [
+        "CI_PIPELINE",
+        "CONTINUOUS_INTEGRATION",
+        "CONFIDENCE_INTERVAL",
+        "CI_STAT"
+      ],
+      "bare_new_use": "QUALIFY"
+    },
+    {
+      "token": "PR",
+      "control_plane": "PULL_REQUEST",
+      "other_domain": "PRECISION_RECALL",
+      "canonical_other": [
+        "PRECISION_RECALL",
+        "PR_CURVE"
+      ],
+      "bare_new_use": "PR_RESERVED_FOR_PULL_REQUEST_IN_CONTROL_PLANE"
+    },
+    {
+      "token": "GM",
+      "control_plane": "GRAND_MISSION",
+      "other_domain": "GEOMETRIC_MEAN",
+      "canonical_other": [
+        "GEOMETRIC_MEAN",
+        "GM_STAT"
+      ],
+      "bare_new_use": "GM_RESERVED_FOR_GRAND_MISSION_IN_CONTROL_PLANE"
+    },
+    {
+      "token": "PC1",
+      "control_plane": "PCA_PRINCIPAL_COMPONENT_1",
+      "other_domain": "3PC_METHOD_TOKEN",
+      "canonical_other": [
+        "3PC"
+      ],
+      "bare_new_use": "NO_COLLISION_WHEN_3PC_REMAINS_ATOMIC_TOKEN"
+    }
   ]
 }
