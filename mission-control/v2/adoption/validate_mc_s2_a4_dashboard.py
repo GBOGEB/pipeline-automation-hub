@@ -8,10 +8,12 @@ V2=ROOT/"mission-control"/"v2"
 SURFACE=V2/"adoption"/"MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json"
 STATUS=V2/"MC_MISSION_STATUS_CURRENT_v1.json"
 CURRENT=V2/"MISSION_CONTROL_CURRENT_v2.json"
+TRUSTED=V2/"adoption"/"MC_S2_A3_TRUSTED_CONTROL_DISPOSITION_20260927_v1.json"
+TRUSTED_REL="mission-control/v2/adoption/MC_S2_A3_TRUSTED_CONTROL_DISPOSITION_20260927_v1.json"
 
 def load(p): return json.loads(p.read_text(encoding="utf-8"))
 
-def validate(surface,status,current):
+def validate(surface,status,current,trusted):
     errors=[]
     def req(v,m):
         if not v: errors.append(m)
@@ -22,6 +24,21 @@ def validate(surface,status,current):
     req(surface.get("formal_credit_delta")==0,"A4 formal credit")
     req(surface.get("engineering_credit_delta")==0,"A4 engineering credit")
     adoption=current.get("adoption",{})
+    canonical=current.get("canonical",{})
+    req(canonical.get("adoption_a3_trusted_control_disposition")==TRUSTED_REL,"A4 trusted disposition pointer drift")
+    req(trusted.get("schema")=="missioncontrol.v2.adoption.a3_trusted_control_disposition.v1","A4 trusted disposition schema drift")
+    req(trusted.get("disposition")=="CONTROLLED_COMPLETE_TRUSTED_CONTROL_REPAIRED","A4 trusted disposition state drift")
+    req(trusted.get("exact_head")=="ff94e5239e96ecede784b34bf22c4dfc14700157","A4 trusted exact-head drift")
+    evidence=trusted.get("evidence",{})
+    req(evidence.get("trusted_fpc_run")==36337930734,"A4 trusted gate run drift")
+    req(evidence.get("trusted_fpc_status")=="SUCCESS","A4 trusted gate status drift")
+    req(evidence.get("trusted_fpc_artifact_digest")=="sha256:ef5829c105757e652afaf45928e2abe7e0b22e17c2aef338bbbd8b67d964df57","A4 trusted gate artifact digest drift")
+    inv=trusted.get("invariants",{})
+    req(inv.get("authority_transfer") is False,"A4 trusted disposition authority transfer drift")
+    req(inv.get("formal_credit_delta")==0,"A4 trusted disposition formal credit drift")
+    req(inv.get("engineering_credit_delta")==0,"A4 trusted disposition engineering credit drift")
+    req(inv.get("historical_receipt_rewrite") is False,"A4 trusted disposition historical rewrite drift")
+    req(inv.get("external_repository_mutation") is False,"A4 trusted disposition external mutation drift")
     req(adoption.get("active_wave")=="MC-A4_DASHBOARD_AND_TODO_SURFACES","A4 not active")
     req(adoption.get("a3_state")=="CONTROLLED_COMPLETE_TRUSTED_CONTROL_REPAIRED","A3 trusted disposition missing")
     req(adoption.get("a4_execution_allowed") is True,"A4 execution not governed-admitted")
@@ -80,28 +97,34 @@ def validate(surface,status,current):
         req(presentation.get(key) is True,f"A4 presentation contract weakened: {key}")
     return errors
 
-def self_test(surface,status,current):
+def self_test(surface,status,current,trusted):
     bad=copy.deepcopy(surface); bad["missions"][0]["health"]="GREEN" if bad["missions"][0]["health"]!="GREEN" else "RED"
-    assert validate(bad,status,current)
+    assert validate(bad,status,current,trusted)
     bad=copy.deepcopy(surface); bad["todos"]=bad["todos"][:-1]
-    assert validate(bad,status,current)
+    assert validate(bad,status,current,trusted)
     bad=copy.deepcopy(surface); bad["missions"][0]["mission_class"]="WRONG"
-    assert validate(bad,status,current)
+    assert validate(bad,status,current,trusted)
     bad=copy.deepcopy(surface); bad["summary"]["todo_by_state"]={}
-    assert validate(bad,status,current)
+    assert validate(bad,status,current,trusted)
     bad=copy.deepcopy(surface); bad["source"]["mission_rows"]=0
-    assert validate(bad,status,current)
+    assert validate(bad,status,current,trusted)
     bad=copy.deepcopy(surface); bad["presentation_contract"]["dashboard_is_not_authority"]=False
-    assert validate(bad,status,current)
+    assert validate(bad,status,current,trusted)
     bad=copy.deepcopy(current); bad["adoption"]["a4_execution_allowed"]=False
-    assert validate(surface,status,bad)
+    assert validate(surface,status,bad,trusted)
     bad=copy.deepcopy(surface); bad["authority_transfer"]=True
-    assert validate(bad,status,current)
+    assert validate(bad,status,current,trusted)
+    bad=copy.deepcopy(current); bad["canonical"]["adoption_a3_trusted_control_disposition"]="WRONG"
+    assert validate(surface,status,bad,trusted)
+    bad=copy.deepcopy(trusted); bad["evidence"]["trusted_fpc_status"]="FAIL"
+    assert validate(surface,status,current,bad)
+    bad=copy.deepcopy(trusted); bad["invariants"]["authority_transfer"]=True
+    assert validate(surface,status,current,bad)
 
 def main():
-    surface,status,current=load(SURFACE),load(STATUS),load(CURRENT)
-    errors=validate(surface,status,current)
-    self_test(surface,status,current)
+    surface,status,current,trusted=load(SURFACE),load(STATUS),load(CURRENT),load(TRUSTED)
+    errors=validate(surface,status,current,trusted)
+    self_test(surface,status,current,trusted)
     print(json.dumps({"schema":"missioncontrol.v2.adoption.a4_dashboard_validation_receipt.v1","result":"PASS" if not errors else "FAIL","mission_rows":len(surface.get("missions",[])),"todo_rows":len(surface.get("todos",[])),"errors":errors,"authority_transfer":False,"formal_credit_delta":0,"engineering_credit_delta":0},indent=2))
     raise SystemExit(0 if not errors else 1)
 if __name__=="__main__": main()
