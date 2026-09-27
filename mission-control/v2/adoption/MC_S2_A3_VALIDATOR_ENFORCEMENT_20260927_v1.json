@@ -1,0 +1,176 @@
+{
+  "schema": "missioncontrol.v2.adoption.validator_enforcement.v1",
+  "as_of": "2026-09-27",
+  "sprint_id": "MC-S2",
+  "wave_id": "MC-A3_VALIDATOR_ENFORCEMENT",
+  "control_issue": "GBOGEB/pipeline-automation-hub#443",
+  "state": "CANDIDATE_WAIT_EXACT_HEAD_PROOF",
+  "mode": "ADDITIVE_FAIL_CLOSED_CROSS_CHECK",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "mutation_policy": {
+    "legacy_validator_edit": false,
+    "legacy_source_edit": false,
+    "historical_receipt_rewrite": false,
+    "domain_authority_replacement": false,
+    "external_repository_mutation": false
+  },
+  "basis": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "observed_master_sha": "c6a12517886f40d3abd16bd723e764c737c10731",
+    "a1": {
+      "path": "mission-control/v2/adoption/MC_S2_A1_READ_ONLY_CONSUMER_CROSSWALK_20260927_v1.json",
+      "blob": "f278ffc34d836d48eb2b18994b165a0406e9cd64"
+    },
+    "a2": {
+      "path": "mission-control/v2/adoption/MC_S2_A2_CURRENT_MISSION_PROJECTION_20260927_v1.json",
+      "blob": "fdd91d7e0243119693d5a2d1817406c724afb9c4"
+    },
+    "telemetry": {
+      "path": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json",
+      "blob": "1b83bb91e9a4c1710f7c88f6fb7db6bcf151e044"
+    },
+    "official_register": {
+      "path": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+      "blob": "7ea179a05056bc10fea5d0986f83e92e12ae3abf"
+    }
+  },
+  "legacy_validators": [
+    {
+      "id": "LM10_FLEET_OPEN_ISSUE_CONVERGENCE",
+      "mission_id": "LM-10",
+      "path": "mission-control/historian/validate_fleet_open_issue_convergence.py",
+      "blob": "760a1ecda091915fc2e3094fed03273365c40fb7",
+      "invocation": [
+        "python",
+        "mission-control/historian/validate_fleet_open_issue_convergence.py"
+      ],
+      "self_test_invocation": [
+        "python",
+        "mission-control/historian/validate_fleet_open_issue_convergence.py",
+        "--self-test"
+      ],
+      "immutable_in_mc_a3": true
+    },
+    {
+      "id": "LM11_QPS_WAVE_FEDERATION",
+      "mission_id": "LM-11",
+      "path": "scripts/validate_lm11_qps_wave_federation.py",
+      "blob": "85a836dfdbdb5caac9a44ca816f432866a7080f4",
+      "invocation": [
+        "python",
+        "scripts/validate_lm11_qps_wave_federation.py"
+      ],
+      "immutable_in_mc_a3": true
+    },
+    {
+      "id": "GM_I_C_REGISTRATION",
+      "mission_id": "GM-I-C",
+      "path": "mission-control/grand-missions/validate_gm_i_c_registration.py",
+      "blob": "4e51c9f1a9325866750bf9a4ea3f8695bb668bfa",
+      "invocation": [
+        "python",
+        "mission-control/grand-missions/validate_gm_i_c_registration.py"
+      ],
+      "immutable_in_mc_a3": true
+    }
+  ],
+  "source_controls": [
+    {
+      "mission_id": "LM-10",
+      "path": "mission-control/qps-triage-ultra/missions/LM-10_MISSION_CONTROL_v3.yaml",
+      "blob": "6d9578b55d1f530e17672cf7578f7d7f01fd83d5"
+    },
+    {
+      "mission_id": "LM-10",
+      "path": "mission-control/qps-triage-ultra/missions/LM-10_W260_BD_CONVERGENCE_CURRENT_v1.yaml",
+      "blob": "c4532aa19b04e98072468ce73519f4f9c5425aa0"
+    },
+    {
+      "mission_id": "LM-10",
+      "path": "mission-control/historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json",
+      "blob": "7739b63c6c3d564d054ecb5a255d9b7611893c45"
+    },
+    {
+      "mission_id": "LM-11",
+      "path": "mission-control/qps-triage-ultra/missions/LM-11_MISSION_CONTROL_CURRENT_v3.yaml",
+      "blob": "6c967f3035d07b04b3741d4929de177120db2ee8"
+    },
+    {
+      "mission_id": "GM-I-C",
+      "path": "mission-control/grand-missions/GM-I-C_CROSS_AGENT_DRIVE_FEDERATION_CONTROL_v0.1.yaml",
+      "blob": "014fc801a83cb0e2fd5ad8b01a5f27271c135fa3"
+    },
+    {
+      "mission_id": "GM-I-C",
+      "path": "mission-control/grand-missions/GRAND_MISSION_REGISTRY.json",
+      "blob": "4fbd28140b403e90a0507931875f721de917af2a"
+    }
+  ],
+  "projection_contract": {
+    "required_projection_ids": [
+      "MC-A2-P01-GM-I-C",
+      "MC-A2-P02-LM-10",
+      "MC-A2-P03-LM-11"
+    ],
+    "required_mission_ids": [
+      "GM-I-C",
+      "LM-10",
+      "LM-11"
+    ],
+    "projected_telemetry_must_equal_canonical": true,
+    "a1_admitted_consumer_parity_required": true,
+    "source_bindings_must_match_git_blobs": true,
+    "official_register_remains_identity_authority_bridge": true
+  },
+  "semantic_cross_checks": {
+    "GM-I-C": {
+      "source_first_red": "IC3_AUTH_REAL_HOSTED_GT0_STEP_DRIVE_INGRESS_PASS",
+      "normalized_v2_todo_predicate": "REAL_WIF_DRIVE_READONLY_GT0_STEP_RECEIPT",
+      "relation": "RELATED_NOT_IDENTICAL",
+      "rule": "The source first-red token and normalized v2 TODO predicate describe the same unresolved auth/runtime boundary at different semantic layers and MUST NOT be collapsed into one identifier."
+    },
+    "LM-10": {
+      "source_state": "W260_CONTROLLED_COMPLETE_REENTRY_GOVERNED",
+      "normalized_lifecycle": "CONTROLLED",
+      "normalized_status": "CONTROL_WATCH",
+      "required_legacy_assertions": [
+        "current development frontier remains CONTROL_WATCH_ONLY",
+        "provider_WIP_cap remains 0",
+        "BD-260.6 remains dormant until real consumer need",
+        "existing convergence validator assertions are not removed or weakened"
+      ]
+    },
+    "LM-11": {
+      "source_state": "CONTROL_PLANE_REGISTERED_QPS_RUNTIME_DOV_WITHHELD_REPRODUCED",
+      "source_first_red": "LM11_FIRST_GREATER_THAN_ZERO_STEP_EXACT_HEAD_GRAPH_RUN",
+      "normalized_lifecycle": "HOLD",
+      "normalized_status": "BLOCKED",
+      "zero_step_application_failure": false
+    }
+  },
+  "workflow_contract": {
+    "path": ".github/workflows/mc-s2-a3-validator-enforcement.yml",
+    "exact_head_checkout_required": true,
+    "runs_new_projection_validator": true,
+    "runs_legacy_validators_unchanged": true,
+    "uploads_receipt": true
+  },
+  "exit_criteria": {
+    "exact_head_projection_validator": "PENDING",
+    "lm10_legacy_validator": "PENDING",
+    "lm10_legacy_self_test": "PENDING",
+    "lm11_legacy_validator": "PENDING",
+    "gm_i_c_legacy_validator": "PENDING",
+    "codex_review": "PENDING",
+    "trusted_fpc": "PENDING",
+    "historical_receipts_modified": 0,
+    "legacy_validators_modified": 0,
+    "legacy_sources_modified": 0,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "next_wave": "MC-A4_DASHBOARD_AND_TODO_SURFACES"
+  }
+}
