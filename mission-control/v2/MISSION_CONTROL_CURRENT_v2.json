@@ -18,7 +18,10 @@
     "control_reentry_receipt": "mission-control/v2/MC_V2_CONTROL_REENTRY_20260927_v1.json",
     "postmerge_control_receipt": "mission-control/v2/MC_V2_POSTMERGE_CONTROL_20260927_v1.json",
     "adoption_consumer_crosswalk": "mission-control/v2/adoption/MC_S2_A1_READ_ONLY_CONSUMER_CROSSWALK_20260927_v1.json",
-    "adoption_current_mission_projection": "mission-control/v2/adoption/MC_S2_A2_CURRENT_MISSION_PROJECTION_20260927_v1.json"
+    "adoption_current_mission_projection": "mission-control/v2/adoption/MC_S2_A2_CURRENT_MISSION_PROJECTION_20260927_v1.json",
+    "adoption_validator_enforcement": "mission-control/v2/adoption/MC_S2_A3_VALIDATOR_ENFORCEMENT_20260927_v1.json",
+    "adoption_validator": "mission-control/v2/adoption/validate_mc_s2_a3_projection.py",
+    "adoption_validator_workflow": ".github/workflows/mc-s2-a3-validator-enforcement.yml"
   },
   "precedence": [
     "domain/source authority remains in owning repositories and existing controls",
@@ -64,6 +67,8 @@
     "policy": "ADDITIVE_ONLY_NO_HISTORICAL_REWRITE_OR_DOMAIN_AUTHORITY_TRANSFER",
     "authority_transfer": false,
     "formal_credit_delta": 0,
-    "engineering_credit_delta": 0
+    "engineering_credit_delta": 0,
+    "active_wave": "MC-A3_VALIDATOR_ENFORCEMENT",
+    "a3_state": "CANDIDATE_WAIT_EXACT_HEAD_PROOF"
   }
 }
