@@ -1,0 +1,62 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.drc_relation_complete.v2",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "cell": "DR-C",
+  "issue": "GBOGEB/pipeline-automation-hub#436",
+  "frozen_snapshot": "FLEET_4486",
+  "supersedes_for_current_true_p0": [
+    "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v1.json"
+  ],
+  "classification_basis": {
+    "invariant": "P0_TRUE_CROSS_REPO edge iff target repository differs from source PR repository.",
+    "historical_typed_refs": 88,
+    "true_cross_repo_edges": 86,
+    "source_pr_candidates": 62
+  },
+  "excluded_same_repository_edges": [
+    {
+      "edge_id": "GBOGEB/Q_engineering_tools::PR61=>GBOGEB/Q_engineering_tools#59",
+      "relation_type": "CLOSES_OR_RESOLVES",
+      "disposition": "RETAIN_HISTORY_EXCLUDE_FROM_TRUE_P0"
+    },
+    {
+      "edge_id": "GBOGEB/pipeline-automation-hub::PR180=>GBOGEB/pipeline-automation-hub#153",
+      "relation_type": "EVIDENCE_REFERENCE",
+      "disposition": "RETAIN_HISTORY_EXCLUDE_FROM_TRUE_P0"
+    }
+  ],
+  "final_relation_type_counts": {
+    "EVIDENCE_REFERENCE": 49,
+    "HAS_PARENT": 13,
+    "CLOSES_OR_RESOLVES": 3,
+    "SUPERSEDED_BY": 1,
+    "SUPERSEDES": 1,
+    "HANDOVER_OR_RETURN_REFERENCE": 12,
+    "AMBIGUOUS_EVIDENCE": 7
+  },
+  "final_control": {
+    "source_pr_candidates": 62,
+    "unique_true_cross_repo_edges": 86,
+    "historical_typed_refs": 88,
+    "unresolved_target_identity": 0,
+    "unresolved_relation_semantics": 0,
+    "duplicate_edges": 0,
+    "disposition": "TRUE_CROSS_REPO_P0_RELATION_COMPLETE"
+  },
+  "evidence_policy": {
+    "preserve_v1_historical_relation_typing": true,
+    "exclude_same_repository_edges_from_true_p0": true,
+    "no_authority_from_genealogy": true,
+    "infer_nothing_from_pr_number_or_wave_number": true
+  },
+  "material_finding": {
+    "source": "Codex review on merged PR #453",
+    "reviewed_commit": "599a86b6c1692cd4d9c7fc0fb38eea6efe044dc3",
+    "review_comment": 4116254361,
+    "severity": "P1",
+    "repair_pr": "GBOGEB/pipeline-automation-hub#456"
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
