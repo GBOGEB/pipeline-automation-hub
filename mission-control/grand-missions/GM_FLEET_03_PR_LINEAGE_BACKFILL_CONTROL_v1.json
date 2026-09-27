@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_100_PERCENT_SEMANTIC_TRUE_P0_COMPLETE_PARENT_DISPOSITION_PENDING",
+  "state": "STRUCTURAL_100_PERCENT_SEMANTIC_TRUE_P0_DR_B_DR_C_COMPLETE_DR_A_ACTIVE",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -144,26 +144,18 @@
       "issue": 434,
       "queue": "ABACUS_TRUE_CROSS_REPO_P0",
       "count": 36,
-      "state": "COMPLETE_RELATION_TYPED",
-      "relation_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P0_SEMANTIC_RECENSUS_v1.json",
-      "source_pr_candidates": 36,
-      "explicit_edges": 42,
-      "unresolved_relation_semantics": 0,
-      "overread_source_prs": 219,
-      "overread_explicit_refs": 405
+      "state": "OPEN_CORRECTED_DENOMINATOR"
     },
     {
       "id": "DR-B",
       "issue": 435,
       "queue": "CRYOPLANT_CODEX_TRUE_CROSS_REPO_P0",
       "count": 78,
-      "state": "COMPLETE_RELATION_TYPED_NORMALIZED_TO_TRUE_CROSS_REPO",
-      "relation_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRB_RELATION_COMPLETE_v1.json",
+      "state": "COMPLETE_RELATION_TYPED_CORRECTED",
+      "relation_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRB_RELATION_COMPLETE_v2.json",
       "source_pr_candidates": 78,
-      "explicit_edges": 107,
-      "unresolved_relation_semantics": 0,
-      "overread_source_prs": 83,
-      "overread_explicit_refs": 115
+      "explicit_edges": 109,
+      "unresolved_relation_semantics": 0
     },
     {
       "id": "DR-C",
@@ -179,52 +171,34 @@
   ],
   "semantic_progress": {
     "corrected_P0_candidates": 176,
-    "completed_true_P0_candidates": 176,
-    "remaining_true_P0_candidates": 0,
-    "true_cross_repo_edges": 237,
-    "unresolved_target_identity": 0,
-    "unresolved_relation_semantics": 0,
-    "active_cells": [],
+    "historical_original_P0_candidates": 364,
+    "completed_true_P0_candidates": 140,
+    "remaining_true_P0_candidates": 36,
+    "qps_true_P0_completed": 47,
+    "codex_true_P0_completed": 31,
+    "drb_true_P0_completed": 78,
+    "drc_true_P0_completed": 62,
+    "active_cells": [
+      "DR-A"
+    ],
     "completed_cells": [
-      "DR-A",
       "DR-B",
       "DR-C"
     ],
     "correction_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P0_CLASSIFICATION_CORRECTION_v1.json",
-    "p0_semantic_recensus_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P0_SEMANTIC_RECENSUS_v1.json",
     "relation_complete_receipts": [
-      "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRB_RELATION_COMPLETE_v1.json",
-      "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v1.json",
-      "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P0_SEMANTIC_RECENSUS_v1.json"
+      "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRB_RELATION_COMPLETE_v2.json",
+      "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v1.json"
     ]
   },
   "classification_correction": {
     "status": "MATERIAL_REPAIR_2026-09-27",
     "original_published_P0": 364,
     "corrected_true_cross_repo_P0": 176,
+    "moved_P0_to_P2": 188,
     "original_values_preserved_in_git_history": true,
-    "repair_merge": "c6a12517886f40d3abd16bd723e764c737c10731",
-    "regression_merge": "b2fddf1b13d539ed214731f5edc2ef0ffd54c406",
-    "regression": "DR-B closeout merge restored stale 364/219 counters while retaining corrected semantic_backlog and DR-A=36, creating an internally inconsistent current control.",
-    "disposition": "REPAIR_CURRENT_CONTROL_WITH_TRUE_CROSS_REPO_RECENSUS",
     "authority_transfer": false,
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0
-  },
-  "p0_semantic_recensus": {
-    "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P0_SEMANTIC_RECENSUS_v1.json",
-    "sources": "176/176",
-    "true_cross_repo_edges": "237/237",
-    "relation_type_counts": {
-      "EVIDENCE_REFERENCE": 123,
-      "HAS_PARENT": 27,
-      "HANDOVER_OR_RETURN_REFERENCE": 74,
-      "CLOSES_OR_RESOLVES": 4,
-      "SUPERSEDED_BY": 1,
-      "SUPERSEDES": 1,
-      "AMBIGUOUS_EVIDENCE": 7
-    },
-    "parent_cell_disposition": "PENDING_AFTER_MERGED_READBACK",
-    "p1_selection": "WITHHELD_UNTIL_PARENT_CELL_DISPOSITION"
   }
 }
