@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_100_PERCENT_SEMANTIC_P0_ACTIVE",
+  "state": "STRUCTURAL_100_PERCENT_SEMANTIC_P0_DR_C_COMPLETE_DR_A_DR_B_ACTIVE",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -157,7 +157,24 @@
       "issue": 436,
       "queue": "MC_CORE_SATELLITE_P0",
       "count": 62,
-      "state": "OPEN"
+      "state": "COMPLETE_RELATION_TYPED",
+      "relation_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v1.json",
+      "source_pr_candidates": 62,
+      "explicit_edges": 88,
+      "unresolved_relation_semantics": 0
     }
-  ]
+  ],
+  "semantic_progress": {
+    "frozen_P0_candidates": 364,
+    "completed_P0_candidates": 62,
+    "remaining_P0_candidates": 302,
+    "active_cells": [
+      "DR-A",
+      "DR-B"
+    ],
+    "completed_cells": [
+      "DR-C"
+    ],
+    "relation_complete_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v1.json"
+  }
 }
