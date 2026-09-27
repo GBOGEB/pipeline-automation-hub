@@ -171,17 +171,18 @@
       "queue": "MC_CORE_SATELLITE_P0",
       "count": 62,
       "state": "COMPLETE_RELATION_TYPED",
-      "relation_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v1.json",
+      "relation_receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v2.json",
       "source_pr_candidates": 62,
-      "explicit_edges": 88,
-      "unresolved_relation_semantics": 0
+      "explicit_edges": 86,
+      "unresolved_relation_semantics": 0,
+      "overread_explicit_refs": 88
     }
   ],
   "semantic_progress": {
     "corrected_P0_candidates": 176,
     "completed_true_P0_candidates": 176,
     "remaining_true_P0_candidates": 0,
-    "true_cross_repo_edges": 237,
+    "true_cross_repo_edges": 235,
     "unresolved_target_identity": 0,
     "unresolved_relation_semantics": 0,
     "active_cells": [],
@@ -195,7 +196,7 @@
     "relation_complete_receipts": [
       "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRA_RELATION_COMPLETE_v1.json",
       "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRB_RELATION_COMPLETE_v3.json",
-      "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v1.json",
+      "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_DRC_RELATION_COMPLETE_v2.json",
       "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P0_SEMANTIC_RECENSUS_v1.json"
     ]
   },
@@ -212,17 +213,28 @@
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0,
     "post_454_regression_merge": "4cf87201cde3524a82e546251278c0eeee11ee7b",
-    "post_454_disposition": "RESTORED_176_OF_176_WITH_EDGE_COMPLETE_DRA_DRB_RECEIPTS"
+    "post_454_disposition": "RESTORED_176_OF_176_WITH_EDGE_COMPLETE_DRA_DRB_RECEIPTS",
+    "post_453_codex_review": {
+      "status": "MATERIAL_FINDING_REPAIRED_IN_PR_456",
+      "finding": "DR-C historical 88-edge receipt contains two same-repository relations that must be excluded from true-cross-repo P0.",
+      "excluded_edges": [
+        "GBOGEB/Q_engineering_tools::PR61=>GBOGEB/Q_engineering_tools#59",
+        "GBOGEB/pipeline-automation-hub::PR180=>GBOGEB/pipeline-automation-hub#153"
+      ],
+      "drc_true_cross_repo_edges": 86,
+      "global_true_cross_repo_edges": 235,
+      "historical_drc_v1_preserved": true
+    }
   },
   "p0_semantic_recensus": {
     "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P0_SEMANTIC_RECENSUS_v1.json",
     "sources": "176/176",
-    "true_cross_repo_edges": "237/237",
+    "true_cross_repo_edges": "235/235",
     "relation_type_counts": {
-      "EVIDENCE_REFERENCE": 123,
+      "EVIDENCE_REFERENCE": 122,
       "HAS_PARENT": 27,
       "HANDOVER_OR_RETURN_REFERENCE": 74,
-      "CLOSES_OR_RESOLVES": 4,
+      "CLOSES_OR_RESOLVES": 3,
       "SUPERSEDED_BY": 1,
       "SUPERSEDES": 1,
       "AMBIGUOUS_EVIDENCE": 7
