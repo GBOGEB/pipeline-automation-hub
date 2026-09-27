@@ -1,0 +1,112 @@
+{
+  "schema": "missioncontrol.method_profile_registry.v1",
+  "as_of": "2026-09-27",
+  "control_issue": "GBOGEB/pipeline-automation-hub#437",
+  "authority_transfer": false,
+  "principle": "Lifecycle answers WHERE a mission is. Method profile answers HOW the next bounded work is performed.",
+  "supervisor": {
+    "id": "DMAIC",
+    "role": "SUPERVISORY_IMPROVEMENT_LOOP",
+    "phases": [
+      "DEFINE",
+      "MEASURE",
+      "ANALYZE",
+      "IMPROVE",
+      "CONTROL"
+    ],
+    "optional_post_control": [
+      "RECENSUS",
+      "REX",
+      "REENTRY_OR_CLOSE"
+    ],
+    "rule": "DMAIC does not force a code change; CONTROL may legitimately conclude HOLD, RETURN, DEFER, or CLOSE."
+  },
+  "dispatcher": {
+    "id": "3P*",
+    "role": "GOVERNED_THREE_PHASE_PROFILE_FAMILY",
+    "rule": "The star denotes profile selection. 3P* is not itself a lifecycle and does not imply MIP admission."
+  },
+  "profiles": {
+    "3PR": {
+      "name": "REFRESH_PROBE_RANK",
+      "maturity": "CANONICAL_OBSERVED",
+      "phases": [
+        "REFRESH",
+        "PROBE",
+        "RANK"
+      ],
+      "use_when": [
+        "reconnaissance",
+        "current-state refresh",
+        "first-red isolation",
+        "lane selection",
+        "recensus"
+      ],
+      "output": [
+        "current_authority_snapshot",
+        "ranked_predicates",
+        "admission_disposition"
+      ]
+    },
+    "3PC": {
+      "name": "PREPARE_PROVE_COMMIT",
+      "maturity": "CANONICAL_OBSERVED",
+      "phases": [
+        "PREPARE",
+        "PROVE",
+        "COMMIT"
+      ],
+      "use_when": [
+        "bounded implementation or control change is admitted"
+      ],
+      "guards": [
+        "PREPARE_NE_PROOF",
+        "PROVE_EXACT_SOURCE_WHERE_APPLICABLE",
+        "COMMIT_AFTER_PROOF_OR_EXPLICIT_GOVERNED_EXCEPTION"
+      ]
+    }
+  },
+  "mip": {
+    "id": "MIP",
+    "phases": [
+      "MODERNIZE",
+      "INNOVATE",
+      "PERPETUATE"
+    ],
+    "admission": "CONDITIONAL",
+    "stage_rules": {
+      "MODERNIZE": "Admit only for a measured defect, friction, obsolescence, or maintainability/control gap in an existing mechanism.",
+      "INNOVATE": "Admit only when a genuinely new capability is justified by the mission objective or measured gap.",
+      "PERPETUATE": "Admit after useful behavior is proven enough to institutionalize through controls, docs, telemetry, handover, or regression protection."
+    },
+    "valid_noop": "A stage may be NONE_NOT_ADMITTED with a reason. MIP is not a mandatory three-stage mutation."
+  },
+  "compositions": {
+    "reconnaissance_only": [
+      "3PR"
+    ],
+    "delivery": [
+      "3PR",
+      "3PC"
+    ],
+    "improvement": [
+      "3PR",
+      "MIP_CONDITIONAL",
+      "3PC"
+    ],
+    "supervisory_dmaic": [
+      "DMAIC_DEFINE",
+      "DMAIC_MEASURE",
+      "DMAIC_ANALYZE",
+      "SELECT_3P_PROFILE_AND_OPTIONAL_MIP",
+      "DMAIC_IMPROVE",
+      "3PC_IF_CHANGE_ADMITTED",
+      "DMAIC_CONTROL"
+    ]
+  },
+  "historical_compatibility": {
+    "preserve_existing_3pstar_mip_receipts": true,
+    "reinterpretation": "Existing receipts retain their historical meaning. New controls treat them as method executions under the broader Mission Control operating model.",
+    "no_bulk_rewrite": true
+  }
+}

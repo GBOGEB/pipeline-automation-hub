@@ -6,6 +6,11 @@ purpose: >-
   horizontal missions, and local missions without changing the canonical GM-I..GM-V
   numbering invariant.
 canonical_grand_mission_source: mission-control/grand-missions/GRAND_MISSION_REGISTRY.json
+mission_control_operating_model:
+  current: mission-control/v2/MISSION_CONTROL_CURRENT_v2.json
+  glossary_taxonomy: mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json
+  mission_telemetry: mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json
+  rule: V2_GOVERNS_NEW_ORCHESTRATION_SEMANTICS_WITHOUT_REWRITING_HISTORICAL_MISSION_AUTHORITY
 namespace:
   GM: canonical_grand_mission
   GM_VARIANT: governed_variant_that_does_not_consume_a_new_GM_number

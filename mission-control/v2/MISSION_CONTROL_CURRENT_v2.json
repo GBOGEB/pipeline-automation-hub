@@ -1,0 +1,26 @@
+{
+  "schema": "missioncontrol.current_pointer.v2",
+  "as_of": "2026-09-27",
+  "control_issue": "GBOGEB/pipeline-automation-hub#437",
+  "status": "CANDIDATE_V2_WAIT_EXACT_HEAD_PROOF",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "base_sha": "71aed3f0a6eba83fd459fd4eb371b64ea81d9868",
+  "canonical": {
+    "glossary_taxonomy": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json",
+    "method_profiles": "mission-control/v2/MC_METHOD_PROFILE_REGISTRY_v1.json",
+    "mission_telemetry_contract": "mission-control/v2/MC_MISSION_TELEMETRY_CONTRACT_v1.json",
+    "mission_status_current": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json",
+    "dmaic_plan": "mission-control/v2/MC_DMAIC_EVOLUTION_PLAN_v1.json",
+    "validator": "mission-control/v2/validate_mission_control_v2.py",
+    "workflow": ".github/workflows/mission-control-v2-contract.yml"
+  },
+  "precedence": [
+    "domain/source authority remains in owning repositories and existing controls",
+    "this operating model governs Mission Control orchestration semantics only",
+    "historical receipts preserve original meaning",
+    "new v2 machine identifiers follow v2 glossary/taxonomy"
+  ],
+  "next_legal_transition": "EXACT_HEAD_VALIDATE_THEN_MERGE_THEN_POSTMERGE_READBACK"
+}

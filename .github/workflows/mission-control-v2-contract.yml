@@ -1,0 +1,36 @@
+name: Mission Control v2 Contract
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/**'
+      - '.github/workflows/mission-control-v2-contract.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/v2/**'
+      - '.github/workflows/mission-control-v2-contract.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Validate Mission Control v2
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$MC_SOURCE_SHA"
+          python mission-control/v2/validate_mission_control_v2.py --self-test --emit-receipt /tmp/mission-control-v2-validation-receipt.json
+      - name: Upload validation receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: mission-control-v2-validation-receipt
+          path: /tmp/mission-control-v2-validation-receipt.json

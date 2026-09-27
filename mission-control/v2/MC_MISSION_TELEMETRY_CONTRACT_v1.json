@@ -1,0 +1,201 @@
+{
+  "schema": "missioncontrol.mission_telemetry_contract.v1",
+  "as_of": "2026-09-27",
+  "control_issue": "GBOGEB/pipeline-automation-hub#437",
+  "authority_transfer": false,
+  "identity_key": [
+    "mission_id",
+    "snapshot_at",
+    "source_ref"
+  ],
+  "required_dimensions": [
+    "status",
+    "progress",
+    "health",
+    "coverage",
+    "metrics",
+    "crew",
+    "runners",
+    "lifecycle",
+    "todo"
+  ],
+  "lifecycle": {
+    "field": "lifecycle.state",
+    "states": [
+      "REGISTERED",
+      "DEFINED",
+      "ACTIVE",
+      "VALIDATING",
+      "WAIT_RETURN",
+      "HOLD",
+      "CONTROLLED",
+      "REENTRY",
+      "CLOSING",
+      "CLOSED",
+      "DEFERRED"
+    ],
+    "transition_rule": "Transitions require evidence or an explicit governed disposition; run success alone cannot advance lifecycle."
+  },
+  "status": {
+    "field": "status.execution",
+    "examples": [
+      "READY",
+      "ACTIVE",
+      "BLOCKED",
+      "WAIT_EXTERNAL",
+      "WAIT_OWNER",
+      "PROVING",
+      "CONTROL_WATCH",
+      "COMPLETE",
+      "UNKNOWN"
+    ],
+    "rule": "Status is not progress, health, lifecycle, or authority."
+  },
+  "progress": {
+    "fields": [
+      "value",
+      "numerator",
+      "denominator",
+      "basis"
+    ],
+    "range": "0_to_1_or_null",
+    "rule": "If denominator is undefined or incomparable, value MUST be null and basis MUST explain UNKNOWN."
+  },
+  "health": {
+    "field": "health.signal",
+    "enum": [
+      "GREEN",
+      "AMBER",
+      "RED",
+      "GREY"
+    ],
+    "semantics": {
+      "GREEN": "Observed operating/control condition satisfies its declared current gate; not automatic mission closure.",
+      "AMBER": "Active risk, wait, partial proof, or bounded unresolved dependency.",
+      "RED": "Observed blocking failure against the mission's current gate.",
+      "GREY": "Insufficient current evidence; unknown is not green."
+    }
+  },
+  "coverage": {
+    "field": "coverage.maturity",
+    "enum": [
+      "MCOV-0",
+      "MCOV-1",
+      "MCOV-2",
+      "MCOV-3",
+      "MCOV-4",
+      "MCOV-5"
+    ],
+    "separate_from": [
+      "statement_coverage_pct",
+      "branch_coverage_pct",
+      "test_population_executed"
+    ]
+  },
+  "metrics": {
+    "required_core": [
+      "work_total",
+      "work_done",
+      "work_blocked",
+      "open_predicates",
+      "proof_yield",
+      "first_red_count",
+      "reopen_count",
+      "accepted_receipt_yield",
+      "queue_seconds",
+      "execute_seconds",
+      "evidence_age_seconds"
+    ],
+    "unknown_policy": "Use null plus evidence_state=UNKNOWN; never coerce missing to zero.",
+    "extensibility": "Mission-specific metrics live under metrics.custom with units and denominator metadata."
+  },
+  "crew": {
+    "member_fields": [
+      "crew_id",
+      "role",
+      "assignment_state",
+      "authority_scope",
+      "evidence_class"
+    ],
+    "assignment_states": [
+      "ASSIGNED",
+      "ACTIVE",
+      "WAITING",
+      "RETURNED",
+      "BLOCKED",
+      "CONTROL_WATCH"
+    ],
+    "rule": "Crew is logical accountability/capability. It is not the runner substrate."
+  },
+  "runners": {
+    "runner_fields": [
+      "runner_id",
+      "runner_class",
+      "admission_state",
+      "run_count",
+      "gt0_step_runs",
+      "successful_runs",
+      "failed_runs",
+      "zero_step_runs"
+    ],
+    "runner_classes": [
+      "GITHUB_ACTIONS",
+      "BROWSER",
+      "JUPYTER",
+      "LOCAL_HOST",
+      "SELF_HOSTED",
+      "EXTERNAL_OWNER",
+      "HUMAN_EXECUTION",
+      "OTHER"
+    ],
+    "rule": "Runner metrics are execution telemetry; they do not create crew or authority credit."
+  },
+  "todo": {
+    "item_fields": [
+      "todo_id",
+      "predicate",
+      "state",
+      "priority",
+      "crew_owner",
+      "runner_requirement",
+      "next_legal_transition",
+      "evidence_ref"
+    ],
+    "states": [
+      "READY",
+      "ACTIVE",
+      "BLOCKED",
+      "WAIT_RETURN",
+      "WAIT_OWNER",
+      "DEFERRED",
+      "DONE",
+      "CONTROL"
+    ],
+    "rule": "DONE means the action is done; CONTROL means prevention/detection/re-entry control exists. Neither alone means the mission is CLOSED."
+  },
+  "execution_hierarchy": {
+    "order": [
+      "MISSION",
+      "SPRINT",
+      "WAVE",
+      "PULSE",
+      "RUN"
+    ],
+    "cardinality": "One mission may have many sprints; each sprint many waves; each wave many pulses; each pulse zero or many runs.",
+    "zero_run_pulse": "Allowed for planning/classification/hold decisions; it MUST NOT be represented as successful execution."
+  },
+  "authority_fields": [
+    "authority_transfer",
+    "formal_credit_delta",
+    "engineering_credit_delta"
+  ],
+  "hard_guards": [
+    "MISSING_NE_ZERO",
+    "ZERO_STEP_NE_APPLICATION_FAIL",
+    "MERGE_NE_PROOF",
+    "RETURN_NE_REPAIR",
+    "CREW_ASSIGNMENT_NE_RUNNER_EXECUTION",
+    "RUN_SUCCESS_NE_MISSION_COMPLETE",
+    "MISSION_COMPLETE_NE_AUTHORITY_TRANSFER"
+  ]
+}

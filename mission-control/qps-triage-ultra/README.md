@@ -9,6 +9,13 @@ Operational primitive:
 
 Authority boundary: this node may plan, route, schedule, measure, compare, correlate and recommend. It must not promote engineering/compliance truth or bypass KEB/DOW/child authority. `authority_transfer=false` remains mandatory.
 
+
+## Mission Control v2 operating model
+
+New Mission Control orchestration semantics are governed by `mission-control/v2/MISSION_CONTROL_CURRENT_v2.json` and its bound glossary, method-profile, telemetry, DMAIC and validator controls. Historical QPS TRIAGE / 3P* / MIP receipts retain their original meaning and are not rewritten.
+
+Key namespace rules for new machine identifiers: `MC` means Mission Control; Monte Carlo uses `MONTE_CARLO` or `MC_SIM`; mission-control coverage maturity uses `MCOV-0..MCOV-5`; software coverage remains qualified numeric coverage fields. Crew members and runners are separate resource concepts.
+
 ## Permanent competency seats
 1. U01 Mission Commander / Governor
 2. U02 Chief Architect / Architecture Hat
