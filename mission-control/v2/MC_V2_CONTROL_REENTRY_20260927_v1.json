@@ -1,0 +1,38 @@
+{
+  "schema": "missioncontrol.v2.control_reentry_receipt.v1",
+  "as_of": "2026-09-27",
+  "control_issue": "GBOGEB/pipeline-automation-hub#437",
+  "predecessor": {
+    "pr": 438,
+    "exact_head": "9134a21bd64415fa0c45172d9c029acfc871dbc1",
+    "merge": "e6d0e9f4adf3108b06a12d844087eec67edbbaea",
+    "exact_head_contract_run": 36302730762,
+    "validation_artifact_id": 10925743749,
+    "validation_artifact_digest": "sha256:99f763adb243342a4127d27a3de56fa0465190a17bd903762030e6739d83d77a",
+    "first_pass_closure_proof_run": 36302730545
+  },
+  "control_observation": {
+    "result": "REENTRY_REQUIRED",
+    "finding": "The first normalized census covered the official mission register and two control programs but omitted six mission rows still present in qps-triage-ultra/mission_registry.yaml.",
+    "omitted_ids": [
+      "M01",
+      "M02A",
+      "M02B",
+      "M03",
+      "M04",
+      "CLOUD16"
+    ],
+    "severity": "BOUNDED_CONTROL_SCOPE_GAP",
+    "historical_receipts_invalidated": false
+  },
+  "fix_forward_contract": {
+    "add_missing_rows": true,
+    "preserve_unknown_as_unknown": true,
+    "validate_expected_mission_ids": true,
+    "update_current_pointer": true,
+    "no_method_or_authority_change": true
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
