@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_100_PERCENT_SEMANTIC_TRUE_P0_COMPLETE_PARENT_DISPOSITION_PENDING",
+  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_PARENT_CELLS_CLOSED_P1_CLUSTERED_BOUNDED",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -24,7 +24,7 @@
         "SCOUT",
         "READER"
       ],
-      "state": "OPEN"
+      "state": "CLOSED_COMPLETE"
     },
     {
       "id": "F01-B",
@@ -35,7 +35,7 @@
         "SCOUT",
         "READER"
       ],
-      "state": "OPEN"
+      "state": "CLOSED_COMPLETE"
     },
     {
       "id": "F01-C",
@@ -46,7 +46,7 @@
         "SCOUT",
         "READER"
       ],
-      "state": "OPEN"
+      "state": "CLOSED_COMPLETE"
     },
     {
       "id": "F01-D",
@@ -63,7 +63,7 @@
         "SCOUT",
         "READER"
       ],
-      "state": "OPEN"
+      "state": "CLOSED_COMPLETE"
     },
     {
       "id": "F02-F08-SHARED",
@@ -74,7 +74,7 @@
         "SCOUT",
         "SHARED_READER"
       ],
-      "state": "OPEN"
+      "state": "CLOSED_COMPLETE"
     }
   ],
   "shared_crew": [
@@ -239,7 +239,28 @@
       "SUPERSEDES": 1,
       "AMBIGUOUS_EVIDENCE": 7
     },
-    "parent_cell_disposition": "PENDING_AFTER_MERGED_READBACK",
-    "p1_selection": "WITHHELD_UNTIL_PARENT_CELL_DISPOSITION"
+    "parent_cell_disposition": "COMPLETE_CLOSED_429_433",
+    "p1_selection": "BOUNDED_CLUSTERING_MATERIALIZED"
+  },
+  "p1_clustering": {
+    "receipt": "mission-control/grand-missions/GM_FLEET_03_P1_BOUNDED_CLUSTERING_v1.json",
+    "denominator": 1079,
+    "metadata_only": true,
+    "true_crossrepo_edge_defects": 0,
+    "exception_union": 307,
+    "routine_remainder": 772,
+    "shortlist": 120,
+    "deep_read_state": "WITHHELD_PENDING_BOUNDED_SHORTLIST_ADMISSION",
+    "no_blind_deep_read": true,
+    "exact_head_fpc_binding": {
+      "pr": 456,
+      "head_sha": "adaa4ac4e6a053228963bf45ae0d4addd26535ef",
+      "run_id": 36336965023,
+      "job_id": 108669548946,
+      "conclusion": "SUCCESS",
+      "steps_gt_0": true,
+      "codex_review_complete": true,
+      "chronology_note": "Current-state proof only; original #456 merge-before-proof chronology remains historical noncompliance."
+    }
   }
 }
