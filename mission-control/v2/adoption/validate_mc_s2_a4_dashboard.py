@@ -39,6 +39,8 @@ def validate(surface,status,current,trusted):
     req(inv.get("engineering_credit_delta")==0,"A4 trusted disposition engineering credit drift")
     req(inv.get("historical_receipt_rewrite") is False,"A4 trusted disposition historical rewrite drift")
     req(inv.get("external_repository_mutation") is False,"A4 trusted disposition external mutation drift")
+    req(inv.get("legacy_validator_mutation") is False,"A4 trusted disposition legacy-validator mutation drift")
+    req(inv.get("legacy_source_mutation") is False,"A4 trusted disposition legacy-source mutation drift")
     req(adoption.get("active_wave")=="MC-A4_DASHBOARD_AND_TODO_SURFACES","A4 not active")
     req(adoption.get("a3_state")=="CONTROLLED_COMPLETE_TRUSTED_CONTROL_REPAIRED","A3 trusted disposition missing")
     req(adoption.get("a4_execution_allowed") is True,"A4 execution not governed-admitted")
@@ -47,8 +49,14 @@ def validate(surface,status,current,trusted):
     req(source.get("path")=="mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json","A4 source path drift")
     req(source.get("blob")==src_blob,"A4 source blob drift")
     req(source.get("mission_rows")==len(status.get("missions",[])),"A4 source mission_rows drift")
-    rows={m["mission_id"]:m for m in status.get("missions",[])}
-    proj={m["mission_id"]:m for m in surface.get("missions",[])}
+    status_rows=status.get("missions",[])
+    surface_rows=surface.get("missions",[])
+    status_ids=[m.get("mission_id") for m in status_rows]
+    surface_ids=[m.get("mission_id") for m in surface_rows]
+    req(len(status_ids)==len(set(status_ids)),"canonical mission identity duplicate")
+    req(len(surface_ids)==len(set(surface_ids)),"A4 duplicate mission identity")
+    rows={m["mission_id"]:m for m in status_rows}
+    proj={m["mission_id"]:m for m in surface_rows}
     req(set(rows)==set(proj),"A4 mission-set drift")
     by_execution={}; by_health={}; by_mcov={}; todo_by_state={}; todos=[]
     for mid,m in rows.items():
@@ -79,8 +87,13 @@ def validate(surface,status,current,trusted):
     req(summary.get("by_mcov")==by_mcov,"A4 MCOV summary drift")
     req(summary.get("todo_total")==len(todos),"A4 TODO total drift")
     req(summary.get("todo_by_state")==todo_by_state,"A4 TODO state summary drift")
+    expected_todo_keys=[(mid,t.get("todo_id")) for mid,t in todos]
+    surface_todo_rows=surface.get("todos",[])
+    projected_todo_keys=[(t.get("mission_id"),t.get("todo_id")) for t in surface_todo_rows]
+    req(len(expected_todo_keys)==len(set(expected_todo_keys)),"canonical TODO identity duplicate")
+    req(len(projected_todo_keys)==len(set(projected_todo_keys)),"A4 duplicate TODO identity")
     expected_todos={(mid,t.get("todo_id")):t for mid,t in todos}
-    projected_todos={(t.get("mission_id"),t.get("todo_id")):t for t in surface.get("todos",[])}
+    projected_todos={(t.get("mission_id"),t.get("todo_id")):t for t in surface_todo_rows}
     req(set(expected_todos)==set(projected_todos),"A4 TODO identity-set drift")
     for key,t in expected_todos.items():
         p=projected_todos.get(key,{})
@@ -120,6 +133,14 @@ def self_test(surface,status,current,trusted):
     assert validate(surface,status,current,bad)
     bad=copy.deepcopy(trusted); bad["invariants"]["authority_transfer"]=True
     assert validate(surface,status,current,bad)
+    bad=copy.deepcopy(trusted); bad["invariants"]["legacy_validator_mutation"]=True
+    assert validate(surface,status,current,bad)
+    bad=copy.deepcopy(trusted); bad["invariants"]["legacy_source_mutation"]=True
+    assert validate(surface,status,current,bad)
+    bad=copy.deepcopy(surface); bad["missions"].append(copy.deepcopy(bad["missions"][0]))
+    assert validate(bad,status,current,trusted)
+    bad=copy.deepcopy(surface); bad["todos"].append(copy.deepcopy(bad["todos"][0]))
+    assert validate(bad,status,current,trusted)
 
 def main():
     surface,status,current,trusted=load(SURFACE),load(STATUS),load(CURRENT),load(TRUSTED)
