@@ -84,6 +84,22 @@
     "PC1": {
       "canonical_meaning": "PCA_PRINCIPAL_COMPONENT_1",
       "rule": "PCA component labels are numeric analysis outputs, not 3P method phases."
+    },
+    "MCP": {
+      "canonical_meaning": "MODEL_CONTEXT_PROTOCOL_WHEN_USED_AS_TECHNICAL_PROTOCOL_TOKEN",
+      "rule": "Do not derive Mission Control Pulse/Process from MCP. Mission Control uses MC plus explicit object names."
+    },
+    "P0_P1_P2_P3": {
+      "canonical_meaning": "PRIORITY_VALUES_WHEN_STORED_IN_PRIORITY_FIELD",
+      "rule": "Pulse identity MUST use PULSE-<id> or a fully-qualified pulse identity; never infer a pulse from bare P1/P2/P3."
+    },
+    "W###": {
+      "canonical_meaning": "HISTORICAL_OR_LOCAL_WAVE_LABEL",
+      "rule": "Bare W### is not globally unique. Cross-repository joins MUST use a fully-qualified wave identity."
+    },
+    "PR<number>": {
+      "canonical_meaning": "LOCAL_PULL_REQUEST_REFERENCE",
+      "rule": "Bare PR number is not globally unique. Cross-repository joins MUST qualify repository."
     }
   },
   "coverage_maturity": {
@@ -154,5 +170,21 @@
     "COV-4": "MCOV-4",
     "COV-5": "MCOV-5"
   },
-  "alias_policy": "Compatibility aliases are human/read-time mappings only. New persisted machine fields MUST use MCOV-N."
+  "alias_policy": "Compatibility aliases are human/read-time mappings only. New persisted machine fields MUST use MCOV-N.",
+  "identity_grammar": {
+    "repository": "owner/name",
+    "pull_request": "owner/name::PR<number>",
+    "mission": "mission_id from governed mission registry/control",
+    "wave": "owner/name::mission_id::W<label>",
+    "pulse": "owner/name::mission_id::W<label>::PULSE-<id>",
+    "run": "owner/name::RUN-<native_platform_run_id>",
+    "rule": "Never join, order, or aggregate cross-repository lineage on bare PR number, bare W###, or bare P1/P2/P3."
+  },
+  "conflict_resolution_order": [
+    "EXACT_MACHINE_FIELD_SEMANTICS",
+    "FULLY_QUALIFIED_IDENTITY",
+    "CANONICAL_V2_TOKEN",
+    "HISTORICAL_SOURCE_CONTEXT",
+    "OTHERWISE_UNKNOWN_FAIL_CLOSED"
+  ]
 }
