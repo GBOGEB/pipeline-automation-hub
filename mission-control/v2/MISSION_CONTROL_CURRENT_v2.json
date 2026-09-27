@@ -2,11 +2,11 @@
   "schema": "missioncontrol.current_pointer.v2",
   "as_of": "2026-09-27",
   "control_issue": "GBOGEB/pipeline-automation-hub#437",
-  "status": "CANDIDATE_V2_WAIT_EXACT_HEAD_PROOF",
+  "status": "ACTIVE_V2_CONTROL_MODEL",
   "authority_transfer": false,
   "formal_credit_delta": 0,
   "engineering_credit_delta": 0,
-  "base_sha": "71aed3f0a6eba83fd459fd4eb371b64ea81d9868",
+  "base_sha": "e6d0e9f4adf3108b06a12d844087eec67edbbaea",
   "canonical": {
     "glossary_taxonomy": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json",
     "method_profiles": "mission-control/v2/MC_METHOD_PROFILE_REGISTRY_v1.json",
@@ -14,7 +14,8 @@
     "mission_status_current": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json",
     "dmaic_plan": "mission-control/v2/MC_DMAIC_EVOLUTION_PLAN_v1.json",
     "validator": "mission-control/v2/validate_mission_control_v2.py",
-    "workflow": ".github/workflows/mission-control-v2-contract.yml"
+    "workflow": ".github/workflows/mission-control-v2-contract.yml",
+    "control_reentry_receipt": "mission-control/v2/MC_V2_CONTROL_REENTRY_20260927_v1.json"
   },
   "precedence": [
     "domain/source authority remains in owning repositories and existing controls",
@@ -22,5 +23,21 @@
     "historical receipts preserve original meaning",
     "new v2 machine identifiers follow v2 glossary/taxonomy"
   ],
-  "next_legal_transition": "EXACT_HEAD_VALIDATE_THEN_MERGE_THEN_POSTMERGE_READBACK"
+  "next_legal_transition": "PROVE_FIX_FORWARD_EXACT_HEAD_THEN_MERGE_AND_POSTMERGE_READBACK",
+  "activation": {
+    "pr": 438,
+    "exact_head": "9134a21bd64415fa0c45172d9c029acfc871dbc1",
+    "merge": "e6d0e9f4adf3108b06a12d844087eec67edbbaea",
+    "exact_head_contract_run": 36302730762,
+    "validation_artifact_id": 10925743749,
+    "validation_artifact_digest": "sha256:99f763adb243342a4127d27a3de56fa0465190a17bd903762030e6739d83d77a",
+    "first_pass_closure_proof_run": 36302730545
+  },
+  "control_reentry": {
+    "reason": "POSTMERGE_RECENSUS_FOUND_SIX_LEGACY_MISSION_REGISTRY_ROWS_NOT_NORMALIZED",
+    "issue": 437,
+    "action": "BOUNDED_CENSUS_FIX_FORWARD",
+    "authority_transfer": false,
+    "formal_credit_delta": 0
+  }
 }
