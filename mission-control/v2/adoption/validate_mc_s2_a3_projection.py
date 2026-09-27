@@ -22,6 +22,8 @@ OFFICIAL = ROOT / "mission-control" / "OFFICIAL_MISSION_REGISTER_v1.yaml"
 CURRENT = V2 / "MISSION_CONTROL_CURRENT_v2.json"
 POSTMERGE_REPAIR = ADOPTION / "MC_S2_A3_POSTMERGE_TRUSTED_CONTROL_20260927_v1.json"
 POSTMERGE_REPAIR_REL = "mission-control/v2/adoption/MC_S2_A3_POSTMERGE_TRUSTED_CONTROL_20260927_v1.json"
+TRUSTED_DISPOSITION = ADOPTION / "MC_S2_A3_TRUSTED_CONTROL_DISPOSITION_20260927_v1.json"
+TRUSTED_DISPOSITION_REL = "mission-control/v2/adoption/MC_S2_A3_TRUSTED_CONTROL_DISPOSITION_20260927_v1.json"
 
 REQUIRED_LEGACY_VALIDATORS = {
     "LM10_FLEET_OPEN_ISSUE_CONVERGENCE": (
@@ -55,7 +57,7 @@ def git_blob(path: str) -> str:
     ).strip()
 
 
-def validate_documents(enforcement, a1, a2, status, official, current, repair):
+def validate_documents(enforcement, a1, a2, status, official, current, repair, trusted):
     errors = []
 
     def req(ok, message):
@@ -69,22 +71,20 @@ def validate_documents(enforcement, a1, a2, status, official, current, repair):
     req(enforcement.get("engineering_credit_delta") == 0, "A3 engineering credit delta must remain zero")
 
 
-    # Post-merge trusted-control repair must be executable, not documentary.
+    # Post-merge trusted-control repair must remain executable across lifecycle transition.
     canonical = current.get("canonical", {})
     adoption = current.get("adoption", {})
+    repair_binding = enforcement.get("postmerge_trusted_control_repair", {})
+    repair_state = repair_binding.get("state")
+
     req(canonical.get("adoption_a3_postmerge_trusted_control") == POSTMERGE_REPAIR_REL, "A3 repair receipt pointer drift")
-    req("MC-A3_VALIDATOR_ENFORCEMENT" in adoption.get("completed_waves", []), "A3 missing from completed waves during control repair")
-    req(adoption.get("active_wave") == "MC-A3_POSTMERGE_TRUSTED_CONTROL_REPAIR", "A3 trusted-control repair must remain active while A4 is blocked")
+    req("MC-A3_VALIDATOR_ENFORCEMENT" in adoption.get("completed_waves", []), "A3 missing from completed waves")
     req(adoption.get("next_wave") == "MC-A4_DASHBOARD_AND_TODO_SURFACES", "A4 next-wave identity drift")
-    req(adoption.get("a3_state") == "CONTROLLED_COMPLETE_PENDING_TRUSTED_CONTROL_REPAIR", "A3 pending trusted-control state drift")
-    req(adoption.get("a3_control_repair_state") == "CANDIDATE_DRAFT_WAIT_EXACT_HEAD_PROOF", "A3 control-repair candidate state drift")
-    req(adoption.get("a4_state") == "ADMITTED_BLOCKED_PENDING_A3_TRUSTED_CONTROL_REPAIR", "A4 blocked admission state drift")
-    req(adoption.get("a4_execution_allowed") is False, "A4 execution must remain blocked until trusted-control repair merges")
-    req(adoption.get("a3_promotion_guard") == "POSTMERGE_TRUSTED_CONTROL_REPAIR_MUST_PASS_BEFORE_A4_EXECUTION", "A3 promotion guard drift")
     req(adoption.get("authority_transfer") is False, "CURRENT adoption authority transfer weakened")
     req(adoption.get("formal_credit_delta") == 0, "CURRENT adoption formal credit drift")
     req(adoption.get("engineering_credit_delta") == 0, "CURRENT adoption engineering credit drift")
 
+    # Historical repair receipt remains immutable regardless of current lifecycle phase.
     req(repair.get("schema") == "missioncontrol.v2.adoption.a3_postmerge_trusted_control_repair.v1", "A3 repair receipt schema drift")
     req(repair.get("wave_id") == "MC-A3_VALIDATOR_ENFORCEMENT", "A3 repair receipt wave drift")
     req(repair.get("reason") == "PR457_MERGED_BEFORE_TRUSTED_FPC_COMPLETED", "A3 repair reason drift")
@@ -110,12 +110,55 @@ def validate_documents(enforcement, a1, a2, status, official, current, repair):
     req(intended.get("a4_state") == "ADMITTED_PENDING_IMPLEMENTATION", "A4 intended postmerge state drift")
     req(intended.get("next_wave") == "MC-A4_DASHBOARD_AND_TODO_SURFACES", "A4 intended next wave drift")
 
-    repair_binding = enforcement.get("postmerge_trusted_control_repair", {})
     req(repair_binding.get("receipt") == POSTMERGE_REPAIR_REL, "A3 enforcement/repair receipt binding drift")
-    req(repair_binding.get("state") == "CANDIDATE_DRAFT_WAIT_EXACT_HEAD_PROOF", "A3 enforcement repair-state drift")
     req(repair_binding.get("authority_transfer") is False, "A3 enforcement repair authority transfer weakened")
     req(repair_binding.get("formal_credit_delta") == 0, "A3 enforcement repair formal credit drift")
     req(repair_binding.get("engineering_credit_delta") == 0, "A3 enforcement repair engineering credit drift")
+
+    if repair_state == "CANDIDATE_DRAFT_WAIT_EXACT_HEAD_PROOF":
+        req(adoption.get("active_wave") == "MC-A3_POSTMERGE_TRUSTED_CONTROL_REPAIR", "A3 trusted-control repair must remain active while A4 is blocked")
+        req(adoption.get("a3_state") == "CONTROLLED_COMPLETE_PENDING_TRUSTED_CONTROL_REPAIR", "A3 pending trusted-control state drift")
+        req(adoption.get("a3_control_repair_state") == "CANDIDATE_DRAFT_WAIT_EXACT_HEAD_PROOF", "A3 control-repair candidate state drift")
+        req(adoption.get("a4_state") == "ADMITTED_BLOCKED_PENDING_A3_TRUSTED_CONTROL_REPAIR", "A4 blocked admission state drift")
+        req(adoption.get("a4_execution_allowed") is False, "A4 execution must remain blocked until trusted-control repair completes")
+        req(adoption.get("a3_promotion_guard") == "POSTMERGE_TRUSTED_CONTROL_REPAIR_MUST_PASS_BEFORE_A4_EXECUTION", "A3 promotion guard drift")
+    elif repair_state == "CONTROLLED_COMPLETE_TRUSTED_CONTROL_REPAIRED":
+        req(canonical.get("adoption_a3_trusted_control_disposition") == TRUSTED_DISPOSITION_REL, "A3 trusted disposition pointer drift")
+        req(adoption.get("active_wave") == "MC-A4_DASHBOARD_AND_TODO_SURFACES", "A4 must be active after trusted A3 repair")
+        req(adoption.get("a3_state") == "CONTROLLED_COMPLETE_TRUSTED_CONTROL_REPAIRED", "A3 trusted-complete state drift")
+        req(adoption.get("a3_control_repair_state") == "CONTROLLED_COMPLETE", "A3 control-repair completion drift")
+        req(adoption.get("a4_state") == "ACTIVE_INITIAL_READ_ONLY_PROJECTION", "A4 active projection state drift")
+        req(adoption.get("a4_execution_allowed") is True, "A4 execution must be governed-admitted after trusted A3 repair")
+        req(adoption.get("a3_promotion_guard") == "SATISFIED_BY_TRUSTED_FPC_36337930734", "A3 satisfied promotion guard drift")
+
+        req(trusted.get("schema") == "missioncontrol.v2.adoption.a3_trusted_control_disposition.v1", "A3 trusted disposition schema drift")
+        req(trusted.get("disposition") == "CONTROLLED_COMPLETE_TRUSTED_CONTROL_REPAIRED", "A3 trusted disposition drift")
+        req(trusted.get("exact_head") == "ff94e5239e96ecede784b34bf22c4dfc14700157", "A3 trusted exact-head drift")
+        evidence = trusted.get("evidence", {})
+        req(evidence.get("a3_enforcement_run") == 36337747720, "A3 trusted enforcement run drift")
+        req(evidence.get("fpc_proof_run") == 36337747734, "A3 trusted FPC proof run drift")
+        req(evidence.get("trusted_fpc_run") == 36337930734, "A3 trusted gate run drift")
+        req(evidence.get("trusted_fpc_status") == "SUCCESS", "A3 trusted gate status drift")
+        req(evidence.get("trusted_fpc_artifact_digest") == "sha256:ef5829c105757e652afaf45928e2abe7e0b22e17c2aef338bbbd8b67d964df57", "A3 trusted gate artifact digest drift")
+        req(trusted.get("next_wave") == "MC-A4_DASHBOARD_AND_TODO_SURFACES", "A3 trusted next-wave drift")
+        trusted_inv = trusted.get("invariants", {})
+        req(trusted_inv.get("authority_transfer") is False, "A3 trusted disposition authority transfer drift")
+        req(trusted_inv.get("formal_credit_delta") == 0, "A3 trusted disposition formal credit drift")
+        req(trusted_inv.get("engineering_credit_delta") == 0, "A3 trusted disposition engineering credit drift")
+        req(trusted_inv.get("legacy_validator_mutation") is False, "A3 trusted disposition legacy-validator mutation drift")
+        req(trusted_inv.get("legacy_source_mutation") is False, "A3 trusted disposition legacy-source mutation drift")
+        req(trusted_inv.get("historical_receipt_rewrite") is False, "A3 trusted disposition historical rewrite drift")
+        req(trusted_inv.get("external_repository_mutation") is False, "A3 trusted disposition external mutation drift")
+
+        trusted_fpc = repair_binding.get("trusted_fpc", {})
+        req(trusted_fpc.get("run_id") == 36337930734, "A3 enforcement trusted FPC run drift")
+        req(trusted_fpc.get("status") == "SUCCESS", "A3 enforcement trusted FPC status drift")
+        req(trusted_fpc.get("head_sha") == "ff94e5239e96ecede784b34bf22c4dfc14700157", "A3 enforcement trusted FPC head drift")
+        req(trusted_fpc.get("artifact_id") == evidence.get("trusted_fpc_artifact_id"), "A3 enforcement trusted FPC artifact ID drift")
+        req(trusted_fpc.get("artifact_digest") == evidence.get("trusted_fpc_artifact_digest"), "A3 enforcement trusted FPC artifact digest drift")
+        req(repair_binding.get("disposition_receipt") == TRUSTED_DISPOSITION_REL, "A3 enforcement trusted disposition binding drift")
+    else:
+        req(False, f"unsupported A3 repair lifecycle state: {repair_state}")
 
     mp = enforcement.get("mutation_policy", {})
     for key in (
@@ -283,29 +326,29 @@ def self_test(bundle):
 
     bad = copy.deepcopy(base)
     bad["enforcement"]["authority_transfer"] = True
-    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"])
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
 
     bad = copy.deepcopy(base)
     gm = next(p for p in bad["a2"]["projections"] if p["mission_id"] == "GM-I-C")
     gm["current_telemetry"]["todo"]["items"][0]["predicate"] = "IC3_AUTH_REAL_HOSTED_GT0_STEP_DRIVE_INGRESS_PASS"
-    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"])
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
 
     bad = copy.deepcopy(base)
     lm10 = next(p for p in bad["a2"]["projections"] if p["mission_id"] == "LM-10")
     lm10["current_telemetry"]["lifecycle"]["state"] = "ACTIVE"
-    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"])
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
 
     bad = copy.deepcopy(base)
     bad["a2"]["a1_candidate_coverage"]["projected_consumer_ids"] = []
-    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"])
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
 
     bad = copy.deepcopy(base)
     bad["a1"]["mc_a2_candidates"].append("MC-A1-C99")
-    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"])
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
 
     bad = copy.deepcopy(base)
     bad["enforcement"]["legacy_validators"] = bad["enforcement"]["legacy_validators"][:-1]
-    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"])
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
 
     bad = copy.deepcopy(base)
     bad["a2"]["projections"][0]["source_bindings"][0]["blob"] = "0" * 40
@@ -313,20 +356,40 @@ def self_test(bundle):
     assert projection_errors, "self-test failed to detect A2 embedded source-binding drift"
 
     bad = copy.deepcopy(base)
-    bad["current"]["adoption"]["a4_execution_allowed"] = True
-    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"])
+    bad["current"]["adoption"]["a4_execution_allowed"] = False
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
 
     bad = copy.deepcopy(base)
-    bad["current"]["canonical"]["adoption_a3_postmerge_trusted_control"] = "mission-control/v2/adoption/WRONG.json"
-    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"])
+    bad["current"]["canonical"]["adoption_a3_trusted_control_disposition"] = "mission-control/v2/adoption/WRONG.json"
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
+
+    bad = copy.deepcopy(base)
+    bad["trusted"]["evidence"]["trusted_fpc_status"] = "FAIL"
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
+
+    bad = copy.deepcopy(base)
+    bad["trusted"]["invariants"]["legacy_validator_mutation"] = True
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
+
+    bad = copy.deepcopy(base)
+    bad["trusted"]["invariants"]["legacy_source_mutation"] = True
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
+
+    bad = copy.deepcopy(base)
+    bad["enforcement"]["postmerge_trusted_control_repair"]["trusted_fpc"]["artifact_id"] = 0
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
+
+    bad = copy.deepcopy(base)
+    bad["enforcement"]["postmerge_trusted_control_repair"]["trusted_fpc"]["artifact_digest"] = "sha256:WRONG"
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
 
     bad = copy.deepcopy(base)
     bad["repair"]["control_repair_policy"]["a4_execution_forbidden_until_merge"] = False
-    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"])
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
 
     bad = copy.deepcopy(base)
     bad["official"]["mission_control_operating_model"]["rule"] = "V2_REPLACES_SOURCE_AUTHORITY"
-    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"])
+    assert validate_documents(bad["enforcement"], bad["a1"], bad["a2"], bad["status"], bad["official"], bad["current"], bad["repair"], bad["trusted"])
 
 
 def main():
@@ -343,6 +406,7 @@ def main():
         "official": load_yaml(OFFICIAL),
         "current": load_json(CURRENT),
         "repair": load_json(POSTMERGE_REPAIR),
+        "trusted": load_json(TRUSTED_DISPOSITION),
     }
 
     errors = validate_documents(**bundle)

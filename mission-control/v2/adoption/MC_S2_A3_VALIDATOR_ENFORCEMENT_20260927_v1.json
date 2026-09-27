@@ -183,10 +183,18 @@
   },
   "postmerge_trusted_control_repair": {
     "receipt": "mission-control/v2/adoption/MC_S2_A3_POSTMERGE_TRUSTED_CONTROL_20260927_v1.json",
-    "state": "CANDIDATE_DRAFT_WAIT_EXACT_HEAD_PROOF",
+    "state": "CONTROLLED_COMPLETE_TRUSTED_CONTROL_REPAIRED",
     "reason": "PR457_MERGED_BEFORE_TRUSTED_FPC",
     "authority_transfer": false,
     "formal_credit_delta": 0,
-    "engineering_credit_delta": 0
+    "engineering_credit_delta": 0,
+    "trusted_fpc": {
+      "run_id": 36337930734,
+      "status": "SUCCESS",
+      "head_sha": "ff94e5239e96ecede784b34bf22c4dfc14700157",
+      "artifact_id": 10938062519,
+      "artifact_digest": "sha256:ef5829c105757e652afaf45928e2abe7e0b22e17c2aef338bbbd8b67d964df57"
+    },
+    "disposition_receipt": "mission-control/v2/adoption/MC_S2_A3_TRUSTED_CONTROL_DISPOSITION_20260927_v1.json"
   }
 }

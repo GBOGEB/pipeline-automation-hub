@@ -1,0 +1,33 @@
+{
+  "schema": "missioncontrol.v2.adoption.a3_trusted_control_disposition.v1",
+  "as_of": "2026-09-27",
+  "sprint_id": "MC-S2",
+  "wave_id": "MC-A3_VALIDATOR_ENFORCEMENT",
+  "control_issue": "GBOGEB/pipeline-automation-hub#443",
+  "disposition": "CONTROLLED_COMPLETE_TRUSTED_CONTROL_REPAIRED",
+  "exact_head": "ff94e5239e96ecede784b34bf22c4dfc14700157",
+  "evidence": {
+    "a3_enforcement_run": 36337747720,
+    "a3_artifact_id": 10938251733,
+    "a3_artifact_digest": "sha256:35e108e9175e0c8d9d25dcdd618eb92dc20b43a8f4af1dfa5e721ae7fee84162",
+    "mc_v2_contract_run": 36337747598,
+    "fpc_proof_run": 36337747734,
+    "qps_federation_run": 36337747529,
+    "w3_recon_run": 36337747526,
+    "codex_review": "COMPLETED_NO_MAJOR_ISSUES",
+    "trusted_fpc_run": 36337930734,
+    "trusted_fpc_status": "SUCCESS",
+    "trusted_fpc_artifact_id": 10938062519,
+    "trusted_fpc_artifact_digest": "sha256:ef5829c105757e652afaf45928e2abe7e0b22e17c2aef338bbbd8b67d964df57"
+  },
+  "invariants": {
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "legacy_validator_mutation": false,
+    "legacy_source_mutation": false,
+    "historical_receipt_rewrite": false,
+    "external_repository_mutation": false
+  },
+  "next_wave": "MC-A4_DASHBOARD_AND_TODO_SURFACES"
+}

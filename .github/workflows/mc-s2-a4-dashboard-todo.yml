@@ -1,0 +1,48 @@
+name: MC-S2 A4 Dashboard TODO Surface
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json'
+      - 'mission-control/v2/MISSION_CONTROL_CURRENT_v2.json'
+      - 'mission-control/v2/adoption/MC_S2_A3_TRUSTED_CONTROL_DISPOSITION_20260927_v1.json'
+      - 'mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json'
+      - 'mission-control/v2/adoption/validate_mc_s2_a4_dashboard.py'
+      - '.github/workflows/mc-s2-a4-dashboard-todo.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json'
+      - 'mission-control/v2/MISSION_CONTROL_CURRENT_v2.json'
+      - 'mission-control/v2/adoption/MC_S2_A3_TRUSTED_CONTROL_DISPOSITION_20260927_v1.json'
+      - 'mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json'
+      - 'mission-control/v2/adoption/validate_mc_s2_a4_dashboard.py'
+      - '.github/workflows/mc-s2-a4-dashboard-todo.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Bind exact source
+        shell: bash
+        env:
+          MC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$MC_SOURCE_SHA"
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Validate dashboard and TODO parity
+        run: python mission-control/v2/adoption/validate_mc_s2_a4_dashboard.py
