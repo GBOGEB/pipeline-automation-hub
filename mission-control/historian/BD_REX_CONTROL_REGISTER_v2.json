@@ -1509,7 +1509,8 @@
         "ABACUS#1376 nevertheless merged@c360b58c02570908f8b1760a6dc42f6c33df1db7 from head b815ae92edd872bcd1385da06ff27bbde8003d6a while qps-line-s/docs/YAML/Ruff/format were queued and Codex review was still running",
         "ABACUS#1376 post-merge content proof pending; any later green may prove content only and cannot prove merge prevention",
         "pipeline-automation-hub#495 merge@9be039a99eecd631c43bc85b816ba2cc91014d7b crossed before material review findings were repaired; branch later contained a731275e9cb6aac893039b06c2ee20082a40d683 consistency fixes, proving prevention remains unbound",
-        "pipeline-automation-hub#499 merged@c7f470ecb585ed8e792a17e4e9b34c06f774abd7 from head 6465c9c0eaba94a0b2ac33074ac8112fb53fdb57 while exact-head MissionControl controls were queued and Codex review was running; draft was repeatedly auto-marked ready, so draft-first again provided no mechanical merge prevention"
+        "pipeline-automation-hub#499 merged@c7f470ecb585ed8e792a17e4e9b34c06f774abd7 from head 6465c9c0eaba94a0b2ac33074ac8112fb53fdb57 while exact-head MissionControl controls were queued and Codex review was running; draft was repeatedly auto-marked ready, so draft-first again provided no mechanical merge prevention",
+        "pipeline-automation-hub#499 post-merge review found stale hosted-proof-pending metadata after root proof had completed; current-main direct reconciliation removes that contradiction without changing root/control credit"
       ],
       "execution_boundary": {
         "classification": "REPOSITORY_ADMIN_MERGE_ADMISSION",
@@ -3021,7 +3022,6 @@
         "run36227448096 Format PASS",
         "run36227448115 Ruff PASS",
         "ABACUS#1384 final reviewed proof head 5e71bc79e35054b008834a024fb9dcaf37ffc360: Codex no major issues",
-        "ABACUS#1385@17d22b8e3dac3755c308f223b1ee104f842d2189 DRAFT exact-main publication: hosted proof pending",
         "ABACUS#1385@17d22b8e3dac3755c308f223b1ee104f842d2189",
         "run36229268231/job108369181741 qps-line-s-validation PASS >0 steps including live closure contract and zero-test guard",
         "run36229268203 changed-doc PASS",
@@ -3081,7 +3081,6 @@
         "ABACUS#1383@22de260f660161cac647af195703cc0fef156661",
         "run36227448093/job108364075554 qps-line-s-validation PASS >0 steps",
         "ABACUS#1384 final reviewed proof head 5e71bc79e35054b008834a024fb9dcaf37ffc360: Codex no major issues",
-        "ABACUS#1385@17d22b8e3dac3755c308f223b1ee104f842d2189 DRAFT exact-main publication: hosted proof pending",
         "ABACUS#1385@17d22b8e3dac3755c308f223b1ee104f842d2189",
         "run36229268231/job108369181741 qps-line-s-validation PASS >0 steps including live closure contract and zero-test guard",
         "run36229268203 changed-doc PASS",
