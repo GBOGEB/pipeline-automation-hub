@@ -1,0 +1,78 @@
+schema: qps-missioncontrol-session-close/1.0
+as_of: '2026-09-28'
+status: CONTROLLED_PARTIAL_HANDOVER
+execution_wave_type: PARTIAL
+execution_mode: sequential
+strict_mode: true
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+global_project_DoV: WITHHELD
+runtime_GOLD: WITHHELD
+base_master: 49471d43285776ba4df24e644c5c756ab2221c8f
+live_census:
+  open_issues: 99
+  repositories_with_open_issues: 8
+  open_prs: 1
+  issue_counts:
+    GBOGEB/cryoplant-project: 50
+    GBOGEB/pipeline-automation-hub: 26
+    GBOGEB/ABACUS: 14
+    GBOGEB/CODEX: 4
+    GBOGEB/GEMINI: 2
+    GBOGEB/Q_engineering_tools: 1
+    GBOGEB/gg_MATH: 1
+    GBOGEB/document-organization-system: 1
+  open_prs_list:
+    - GBOGEB/stale#8
+qps_authority:
+  root: GBOGEB/cryoplant-project::handover/qps_recursive/GLOB.yaml
+  session_close: GBOGEB/cryoplant-project::handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml
+  current_triage: GBOGEB/cryoplant-project::handover/qps_recursive/QTG_CURRENT.yaml
+  controller: GBOGEB/pipeline-automation-hub#426
+  current_global_first_red: ISSUE_943_AND_SELECTED_SAFETY_SOURCE_SET
+  current_global_first_red_state: HOLD_NONCOMPENSATING_SOURCE_AUTHORITY
+  runtime_923: CLOSED_COMPLETED_RUNNER_ADMISSION_RECOVERED
+  golden_thread: PASS_GT_BDQ_0_THROUGH_9_CLOSED
+missioncontrol:
+  current_master: 49471d43285776ba4df24e644c5c756ab2221c8f
+  predecessor_handover_pr: 502
+  historian_reconciliation_pr: 499
+  superseded_pr: 498
+  current_head_workflows:
+    pass:
+      qps_federation: 36453292998
+      capacity: 36453292919
+      ring1: 36453292221
+      ring2: 36453292456
+      f01: 36453292309
+      historian: 36453292654
+      gm_fleet_02b: 36453292479
+      w3_11: 36453292787
+      w3_13: 36453292434
+      w3_14: 36453292378
+      w3_16: 36453292072
+      pages: 36453288048
+    running:
+      f03: 36453292486
+      push_on_master: 36453287823
+  rexs:
+    REX_CM_005: RETAIN_MERGE_ADMISSION_RECURRENCE
+    REX_CM_006: REFRESH_CURRENT_HISTORIAN_STATE_BEFORE_NEW_ROOT
+abacus:
+  recent_active_ci_head: a0d153cd08a30ce5777301ec5f54a815f5a780d6
+  latest_head_observed: e4f7164e34b050589bd6cf0d9bca052c2ee6376b
+  semantic_disposition: NO_CONCLUSION_FROM_RUNNER_ACTIVITY_ALONE
+next_agent_instruction: mission-control/qps-triage-ultra/handover/RESTART_DROPIN_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_v5.md
+lossless_handover: mission-control/qps-triage-ultra/handover/SC_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_LOSSLESS_HANDOVER_v5.md
+exact_starting_line: >-
+  START HERE: Refresh GBOGEB/cryoplant-project main, GBOGEB/pipeline-automation-hub master and
+  GBOGEB/ABACUS main; recensus owner-wide open issues, open PRs and live Actions; read
+  cryoplant-project handover/qps_recursive/GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml
+  before any MissionControl lane; preserve #923 CLOSED_COMPLETED_RUNNER_ADMISSION_RECOVERED and
+  GT_BDQ_0..9 PASS/CLOSED unless contradictory executed evidence appears; preserve global first-red
+  #943 + SELECTED_SAFETY_SOURCE_SET and all higher-priority source/safety/release returns as
+  non-compensating; refresh MissionControl Historian/REX state at current master, then consume only
+  the chronologically first material executed red; do not promote GM-FLEET order 7 / QPS#1111 while
+  canonical QTG preemption remains actionable; keep execution PARTIAL and sequential with
+  authority_transfer=false, formal_credit_delta=0, engineering_credit_delta=0.
