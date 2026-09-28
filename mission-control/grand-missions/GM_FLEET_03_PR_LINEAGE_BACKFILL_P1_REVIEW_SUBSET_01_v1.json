@@ -738,7 +738,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "Deep-read only P1-S01 review order 3 (GBOGEB/cryoplant-project#1138). Stop immediately on the first material semantic/identity defect before reading order 4."
+    "next_action": "HOLD order 5 (GBOGEB/cryoplant-project#756) unread until the order-4 ledger/projection synchronization fix-forward is proven, reviewed, merged and read back; then deep-read only order 5 and stop on the first material semantic/identity defect."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -798,7 +798,16 @@
       "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW"
     },
     "order_3_read": true,
-    "order_4_read": true
+    "order_4_read": true,
+    "lifecycle_counts": {
+      "REVIEWED": 4,
+      "SELECTED_NOT_READ": 8,
+      "ADMITTED_NOT_SELECTED": 116,
+      "UNEXPANDED": 951
+    },
+    "accounting_invariant": "1079 = 4 REVIEWED + 8 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED",
+    "order_5_read": false,
+    "progress_sync": "PENDING_FIX_FORWARD_PROOF"
   },
   "post_476_release": {
     "publication_pr": "GBOGEB/pipeline-automation-hub#476",
