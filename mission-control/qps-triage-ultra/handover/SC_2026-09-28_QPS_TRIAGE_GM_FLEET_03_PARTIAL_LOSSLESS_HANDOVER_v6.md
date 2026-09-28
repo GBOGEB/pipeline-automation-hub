@@ -26,13 +26,14 @@ Live owner-wide census at v6 serialization:
 
 Open PRs:
 - **pipeline-automation-hub #506** — bounded post-#505 premature-release fix-forward.
+- **pipeline-automation-hub #507** — DRAFT lossless-handover carrier only; not execution authority.
 - **stale #8** — unrelated Dependabot lodash maintenance.
 
 Active/recent execution relevant to handover:
-- #506 exact head `4a8062574723f371ac41785a129add864e306da7`.
-- First-Pass Closure Proof `36462082282` / job `109062896379`: SUCCESS / >0 steps.
+- #506 prior proved head `4a8062574723f371ac41785a129add864e306da7` had First-Pass Closure Proof `36462082282` / job `109062896379`: SUCCESS / >0 steps.
+- #506 current head is now `3929fa29661cfe5f97d0a84b42df8f40ab7073df`; current-head FPC `36463022382` and trusted FPC gate `36463021326` are queued at terminal serialization.
 - QPS Federation, F01, F03, Ring1, Ring2, Capacity, GM-FLEET-02B, W3-16 and GM-IV governor controls on that head: SUCCESS.
-- #506 Codex review: RUNNING at serialization.
+- Prior-head Codex review completed on `4a80625747`; its historical-target P2 is outdated by subsequent repair. One live Copilot P2 remains on current lineage: `discussion_r4125483127`, requiring `admitted_for_read=false` on the authoritative `GBOGEB/cryoplant-project::PR1111` candidate record.
 - ABACUS generic DOW + Recursive DMAIC CD run `36455859700` remains queued on merge SHA `f6da6b33...`; it is not HIST-BD-038 proof debt.
 
 ## 3P* / MIP decision
@@ -90,15 +91,17 @@ After v5:
 - Therefore #505 must not be interpreted as a clean order-7 authorization.
 
 Current repair is #506:
-- exact head `4a8062574723f371ac41785a129add864e306da7`
-- FPC `36462082282` PASS / >0 steps
+- prior proved head `4a8062574723f371ac41785a129add864e306da7`
+- prior FPC `36462082282` PASS / >0 steps
+- current head `3929fa29661cfe5f97d0a84b42df8f40ab7073df`
+- current-head FPC `36463022382` QUEUED at terminal serialization
 - restores all live order-7 state to HELD
 - PR1111 remains `SELECTED_NOT_READ`
 - `admitted_for_read=false`
 - accounting remains 1,079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED
 - admitted=128
 - silent_evictions=0
-- review still RUNNING at serialization
+- current declared review/trusted-gate sequence is NOT terminal; one live Copilot P2 remains on the authoritative candidate record
 
 Do not merge #506 until its declared review/trusted-gate sequence is terminal. After merge require fresh-master readback before any separate order-7 authorization edge.
 
@@ -136,8 +139,8 @@ No fabricated numeric HTTP status is permitted.
 
 ## Uncompleted / next-session queue
 
-1. Consume #506 current-head Codex review.
-2. Keep #506 draft/held until declared review and trusted exact-head gate sequence is terminal.
+1. Repair only live #506 Copilot P2 `discussion_r4125483127`: authoritative PR1111 candidate record must expose `admitted_for_read=false` (or schema/reader must derive it) with mirrors consistent.
+2. Consume current-head FPC/trusted runs for `3929fa29661cfe5f97d0a84b42df8f40ab7073df`, then keep #506 draft/held until draft Codex, ready-state Codex, Copilot, and trusted exact-head gate are terminal clean/PASS.
 3. Merge exact proven #506 head only when all declared gates pass.
 4. Require fresh-master readback of 6/6/116/951, admitted=128, silent_evictions=0, order7 unread.
 5. Only after that may a separate governed order-7 authorization edge be created; QPS QTG still preempts if #943/source/safety remains actionable.
@@ -149,4 +152,18 @@ No fabricated numeric HTTP status is permitted.
 
 ## Exact starting line
 
-START HERE: Refresh GBOGEB/cryoplant-project main, GBOGEB/pipeline-automation-hub master, GBOGEB/ABACUS main, owner-wide open issues/PRs and live Actions; read cryoplant-project GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml -> QTG_CURRENT_EXTENSIONS.yaml before any MissionControl lane; preserve #923 CLOSED_COMPLETED_RUNNER_ADMISSION_RECOVERED and GT_BDQ_0..9 PASS/CLOSED; preserve global first-red #943 + SELECTED_SAFETY_SOURCE_SET as HOLD_NONCOMPENSATING_SOURCE_AUTHORITY; then consume only PR #506 exact-head control gates, keeping cryoplant PR1111 SELECTED_NOT_READ and admitted_for_read=false until #506 is review-clean, trusted-gate PASS, merged on the exact proven head and fresh-master read back; ABACUS HIST-BD-038 is CLOSED/DONE via #1466 and #1464/#1465 are superseded/closed; classify unrelated ABACUS CI reds separately by chronological first executed red; keep execution PARTIAL and sequential with authority_transfer=false, formal_credit_delta=0, engineering_credit_delta=0.
+START HERE: Refresh GBOGEB/cryoplant-project main, GBOGEB/pipeline-automation-hub master, GBOGEB/ABACUS main, owner-wide open issues/PRs and live Actions; read cryoplant-project GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml -> QTG_CURRENT_EXTENSIONS.yaml before any MissionControl lane; preserve #923 CLOSED_COMPLETED_RUNNER_ADMISSION_RECOVERED and GT_BDQ_0..9 PASS/CLOSED; preserve global first-red #943 + SELECTED_SAFETY_SOURCE_SET as HOLD_NONCOMPENSATING_SOURCE_AUTHORITY; then repair only PR #506 live Copilot P2 discussion_r4125483127 and keep cryoplant PR1111 authoritative candidate record SELECTED_NOT_READ with admitted_for_read=false; consume current-head exact FPC/review/trusted gates before any exact-head merge and fresh-master readback; ABACUS HIST-BD-038 is CLOSED/DONE via #1466 and #1464/#1465 are superseded/closed; classify unrelated ABACUS CI reds separately by chronological first executed red; keep execution PARTIAL and sequential with authority_transfer=false, formal_credit_delta=0, engineering_credit_delta=0.
+
+
+## Terminal closure delta — current head
+
+- Owner-wide live issue census: **98 across 8 repositories**.
+- Open PR census: **3** — MissionControl #506 active bounded repair, MissionControl #507 draft handover carrier, unrelated stale#8 Dependabot.
+- MissionControl master remains `7bf52f56a68d2931493f2c244f8627c6f42bef54`; #506 has not merged.
+- #506 current head: `3929fa29661cfe5f97d0a84b42df8f40ab7073df`.
+- Current-head Actions are still queued/in-progress; specifically FPC `36463022382` and trusted FPC gate `36463021326` are not yet terminal.
+- Prior-head Codex review on `4a80625747` completed. Its P2 about preserving the original #505 target is now outdated after branch repair.
+- Live material review debt is Copilot `discussion_r4125483127`: authoritative PR1111 candidate record must carry/derive `admitted_for_read=false`.
+- Do not merge #506 from prior-head proof. Re-prove the current head after the bounded repair, then complete the declared draft/ready/Copilot/trusted sequence.
+- QPS #923 remains closed after true >0-step runner recovery. QPS #943 remains the source/authority HOLD; its remaining gate is formal owner/contract authority or explicit owner adoption of HCC.Bypass 3.3.3.1, not more internal parsing.
+- #507 stays DRAFT and is handover-only.
