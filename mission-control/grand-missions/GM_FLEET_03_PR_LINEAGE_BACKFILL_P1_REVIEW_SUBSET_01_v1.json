@@ -187,7 +187,12 @@
           "immutable_pr346_merge": "aff9d6cb8310372103dbd09da35ddf762f512d45",
           "immutable_pr343_head": "2ad1353fb870b5c85bdadaf9d377b544b60ddd33",
           "immutable_pr343_merge": "3fa05e529e86dbe65a72632671319ac300cb7091",
-          "current_restart_authority": "handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml",
+          "current_restart_authority": {
+            "restart_root": "GBOGEB/cryoplant-project::handover/qps_recursive/GLOB.yaml",
+            "session_close_pointer": "GBOGEB/cryoplant-project::handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml",
+            "current_state": "GBOGEB/cryoplant-project::handover/qps_recursive/QTG_CURRENT.yaml",
+            "missioncontrol_controller": "GBOGEB/pipeline-automation-hub#426"
+          },
           "current_restart_wave": "W362",
           "current_receipt": "triage/session/QPS_TRIAGE_SESSION_CLOSE_20260927_W362_v1.yaml",
           "current_handover": "handover/session/SC_2026-09-27_W362_POST923_PARTIAL_LOSSLESS_v1.md",
@@ -880,7 +885,7 @@
     "clean_without_repair": 1,
     "remaining_in_subset": 6,
     "next_review_order": 7,
-    "next_review_state": "ORDER_6_REPAIRED_VERIFIED_ORDER_7_HELD"
+    "next_review_state": "ORDER_6_REPAIRED_ORDER_7_HELD_CONTROL_FIX_FORWARD"
   },
   "finalization": {
     "source_pr": "GBOGEB/pipeline-automation-hub#481",
@@ -1065,6 +1070,16 @@
     "accounting_invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED",
     "admitted_population": 128,
     "silent_evictions": 0,
+    "order_7_read": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "post_491_review_fix": {
+    "historical_pr": "GBOGEB/pipeline-automation-hub#491",
+    "historical_merge": "c9c4533ed789cf34aee2320cd4642d4fc7b8bf66",
+    "reviewed_repair_source_head": "8c52105f8824d59a212f6ac94a88765c8a7dc2fa",
+    "current_publication": "GBOGEB/pipeline-automation-hub#494",
     "order_7_read": false,
     "authority_transfer": false,
     "formal_credit_delta": 0,
