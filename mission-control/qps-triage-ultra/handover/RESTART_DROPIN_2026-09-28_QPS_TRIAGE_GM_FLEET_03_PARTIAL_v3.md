@@ -62,7 +62,15 @@ HISTORICAL PUBLICATION:
 - chronology remains NONCOMPLIANT_MERGE_BEFORE_REVIEW_CURRENT_STATE_VALIDATED
 - fresh-master QPS TRIAGE Federation Control 36449029760 PASS
 
-NEXT CANDIDATE:
+CANONICAL QPS GLOBAL PRIORITY:
+- read cryoplant GLOB -> SESSION_CLOSE_CURRENT -> QTG_CURRENT first
+- QTG_CURRENT global first red = ISSUE_943_AND_SELECTED_SAFETY_SOURCE_SET
+- state = HOLD_NONCOMPENSATING_SOURCE_AUTHORITY
+- #923 = CLOSED_COMPLETED_RUNNER_ADMISSION_RECOVERED
+- Golden Thread GT_BDQ_0..9 = CLOSED/PASS
+- newly arrived source/safety/owner/physical returns preempt lower semantic work without compensation
+
+MISSIONCONTROL NEXT CANDIDATE:
 - order 7 = GBOGEB/cryoplant-project#1111
 - state SELECTED_NOT_READ / UNREAD / HELD
 - order 8 must remain unread
@@ -104,4 +112,4 @@ CANONICAL RESTART AUTHORITY:
 - execution remains sequential
 
 EXACT STARTING LINE:
-START HERE: Read the canonical cryoplant restart chain handover/qps_recursive/GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml, then refresh GBOGEB/pipeline-automation-hub@c9c4533ed789cf34aee2320cd4642d4fc7b8bf66; verify current P1-S01 readback remains REVIEWED=6 / SELECTED_NOT_READ=6 / ADMITTED_NOT_SELECTED=116 / UNEXPANDED=951 with admitted union=128, silent_evictions=0 and order_7_read=false; then admit/deep-read only order 7 GBOGEB/cryoplant-project#1111, repair iff a material semantic/identity defect survives current-main lineage, publish/prove/review before merge, fresh-main readback, and STOP before order 8.
+START HERE: Read the canonical cryoplant restart chain handover/qps_recursive/GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml and refresh live repos/Actions; preserve QTG_CURRENT #943 + SELECTED_SAFETY_SOURCE_SET and any arrived source/safety/owner/physical return as non-compensating preemption; then refresh GBOGEB/pipeline-automation-hub@c9c4533ed789cf34aee2320cd4642d4fc7b8bf66 and verify 6/6/116/951 + admitted=128 + silent_evictions=0 + order_7_read=false; if no higher-priority QTG return is actionable, admit/deep-read only GM-FLEET order 7 GBOGEB/cryoplant-project#1111, repair iff material, prove/review/trusted-gate before merge, fresh-main readback, and STOP before order 8.
