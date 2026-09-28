@@ -1,0 +1,39 @@
+{
+  "schema": "missioncontrol.v2.adoption.a4_trusted_control_disposition.v1",
+  "as_of": "2026-09-28",
+  "sprint_id": "MC-S2",
+  "wave_id": "MC-A4_DASHBOARD_AND_TODO_SURFACES",
+  "control_issue": "GBOGEB/pipeline-automation-hub#443",
+  "disposition": "TRUSTED_INITIAL_SLICE",
+  "exact_head": "b93be36c505a202bc2b1036deb328e997f62cedc",
+  "merge": "0220d866e822452cf28f8b092335f64dcbd616e0",
+  "evidence": {
+    "a4_dashboard_run": 36383313818,
+    "mc_v2_contract_run": 36383313893,
+    "first_pass_closure_proof_run": 36383313909,
+    "qps_federation_run": 36383313896,
+    "w3_recon_run": 36383313859,
+    "codex_review": "COMPLETED_NO_MAJOR_ISSUES",
+    "trusted_fpc_rerun_origin": 36383356208,
+    "trusted_fpc_status_run": 36383416265,
+    "trusted_fpc_status": "SUCCESS",
+    "trusted_fpc_artifact_id": 10953123505,
+    "trusted_fpc_artifact_digest": "sha256:6288f3cd40d67fb6cf450d3aa582dea280cee8c0789b02c4eca09b7a444fb020"
+  },
+  "controlled_surface": {
+    "mission_rows": 18,
+    "todo_rows": 4,
+    "mode": "READ_ONLY_DERIVED_SURFACE",
+    "source": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json"
+  },
+  "next_bounded_slice": "CREW_RUNNER_VISIBILITY",
+  "invariants": {
+    "dashboard_is_not_authority": true,
+    "historical_receipt_rewrite": false,
+    "external_repository_mutation": false,
+    "legacy_source_mutation": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  }
+}
