@@ -1,56 +1,51 @@
 schema: qps.triage.session_close_current.v1
-created_local: "2026-09-28T17:30:00+02:00"
-state: HANDOVER_PREPARED_PENDING_REMOTE_MERGE
+created_local: "2026-09-28T18:11:00+02:00"
+state: SESSION_CLOSED_SYNCED_ON_PUBLICATION
 execution_wave_type: PARTIAL
 
-canonical_handover: SC_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_LOSSLESS_HANDOVER_v1.md
-restart_dropin: RESTART_DROPIN_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_v1.md
+canonical_handover: SC_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_LOSSLESS_HANDOVER_v2.md
+restart_dropin: RESTART_DROPIN_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_v2.md
 
 read_order:
-  - SC_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_LOSSLESS_HANDOVER_v1.md
-  - RESTART_DROPIN_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_v1.md
-  - ../../historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json
-  - GBOGEB/pipeline-automation-hub#483
-  - GBOGEB/ABACUS#1447
-  - GBOGEB/pipeline-automation-hub#418
-  - GBOGEB/Q_engineering_tools#104
-  - GBOGEB/CODEX#753
-  - GBOGEB/cryoplant-project#923
+  - SC_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_LOSSLESS_HANDOVER_v2.md
+  - RESTART_DROPIN_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_v2.md
+  - GBOGEB/pipeline-automation-hub#426
+  - GBOGEB/pipeline-automation-hub#372
+  - GBOGEB/pipeline-automation-hub#153
+  - GBOGEB/pipeline-automation-hub#490
 
 live_census:
   open_issues: 98
   issue_bearing_repositories: 8
   open_prs_ownerwide: 1
   open_prs_qps_operational: 0
-
-first_red:
-  class: POSTMERGE_CONTROL_INTEGRITY
-  repository: GBOGEB/pipeline-automation-hub
-  source_pr: 483
-  merge_sha: cc19351780f17cc3c1219ffe53e293b44995e0fe
-  material_findings: 2
-  next: FIX_FORWARD_MIRRORED_STATE_AND_ADMISSION_INVARIANT
-
-parallel_observation:
-  repository: GBOGEB/ABACUS
-  source_sha: d371d7971ed0653171a9eee65d77cf80219df28d
-  unified_cd_run: 36441522024
-  queued_jobs:
-    - 108993624142
-    - 108993624623
-  current_red_runs:
-    - 36441522270
-    - 36441522222
-  dashboard_issue: 1447
+  active_missioncontrol_workflows: 0
 
 gm_fleet_03:
-  reviewed: 5
-  selected_not_read: 7
+  structural_repositories: 90
+  structural_prs: 4486
+  p1_denominator: 1079
+  reviewed: 6
+  selected_not_read: 6
   admitted_not_selected: 116
   unexpanded: 951
-  denominator: 1079
   admitted_population: 128
-  order_6: UNREAD_HELD
+  silent_evictions: 0
+  order_6_read: true
+  order_7_read: false
+  next_candidate: GBOGEB/cryoplant-project#1111
+
+current_master:
+  sha: 181ceabd0f207434b97a86ffba8ab7058a8b6ea0
+  qps_triage_federation_run: 36449029760
+  status: GREEN_CURRENT_STATE
+
+publication_490:
+  head: 1e3ed51ae15110b1c0971ff087bd053c8f03c9ae
+  fpc_run: 36448774023
+  merge: 181ceabd0f207434b97a86ffba8ab7058a8b6ea0
+  codex_review: COMPLETE_AFTER_MERGE_NO_THREADS
+  chronology: NONCOMPLIANT_MERGE_BEFORE_REVIEW_CURRENT_STATE_VALIDATED
 
 authority_transfer: false
 formal_credit_delta: 0
