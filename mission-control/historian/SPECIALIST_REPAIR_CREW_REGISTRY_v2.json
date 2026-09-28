@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.specialist_repair_crew_registry.v2",
   "status": "ACTIVE",
-  "as_of": "2026-09-26T10:14:00+02:00",
+  "as_of": "2026-09-28T18:23:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "SPECIALIST_REPAIR_CREW_REGISTRY_v1.json",
   "activation_rule": "recurrence || P0/P1 severity || cross_repo_centrality || repeated_failed_repair || active_control_repeat",
@@ -93,7 +93,7 @@
     {
       "crew_id": "DOCTOR_CONTRACTS",
       "display_name": "Doctor.Contracts",
-      "state": "ACTIVE_BOUNDED_PLUS_OWNER_ADMIN",
+      "state": "ACTIVE_CONTROL_WATCH_PLUS_OWNER_ADMIN",
       "triggered_by_roots": [
         "HIST-BD-002",
         "HIST-BD-003",
@@ -120,8 +120,6 @@
       ],
       "active_scope": [
         "REX-CM-005",
-        "HIST-BD-035",
-        "HIST-BD-036",
         "REX-CM-006"
       ],
       "done_scope": [
@@ -143,9 +141,11 @@
         "HIST-BD-031",
         "HIST-BD-032",
         "HIST-BD-034",
-        "HIST-BD-037"
+        "HIST-BD-037",
+        "HIST-BD-035",
+        "HIST-BD-036"
       ],
-      "current_mission": "LINE_S_BD035_BD036_REX_CM006_PROOF_PLUS_REX_CM005_OWNER_ADMIN",
+      "current_mission": "REX_CM006_DISTINCT_REPEAT_PLUS_REX_CM005_OWNER_ADMIN",
       "secondment": [
         "H2_KEB",
         "HISTORIAN",
@@ -163,7 +163,9 @@
         "HIST-BD-016"
       ],
       "return_evidence": [
-        "Q_engineering_tools#101 run35738152179/job106780614008 PASS exact-payload BD034 proof"
+        "Q_engineering_tools#101 run35738152179/job106780614008 PASS exact-payload BD034 proof",
+        "ABACUS#1385 run36229268231/job108369181741 PASS",
+        "ABACUS current main 6e603f3e8854538578de2c1bdc36b84dafb9f163 exact proof blobs survive"
       ]
     },
     {
@@ -262,11 +264,9 @@
       "active_scope": [
         "REX-CM-005",
         "fleet deep-dive expansion",
-        "HIST-BD-035",
-        "HIST-BD-036",
         "REX-CM-006"
       ],
-      "current_mission": "LINE_S_REX_CATALOG_AND_BD035_BD036_EXACT_MAIN_PROOF",
+      "current_mission": "ABACUS_1313_SOURCE_TRANSCRIPTION_PLUS_REX_CM006_REPEAT",
       "secondment": [
         "H1_QPS",
         "H2_KEB",
@@ -295,7 +295,9 @@
         "HIST-BD-031",
         "HIST-BD-032",
         "HIST-BD-034",
-        "HIST-BD-037"
+        "HIST-BD-037",
+        "HIST-BD-035",
+        "HIST-BD-036"
       ]
     },
     {
@@ -333,7 +335,6 @@
       "DEBUG_SURGEON"
     ],
     "priority_sequence": [
-      "ABACUS#1385 exact-main proof for HIST-BD-035/036 / REX-BD-035/036",
       "ABACUS#1313 remaining source-bound Appendix extraction",
       "REX-CM-006 later distinct-source repeat",
       "REX-CM-005 owner/admin binding when available",
@@ -488,6 +489,37 @@
       "authority_transfer": false,
       "formal_credit_delta": 0
     },
-    "rex_catalog_invariant": "Every HIST-BD root is mirrored by one REX-BD reusable repair/prevention entry; shared recurrence prevention is additionally represented by REX-CM controls."
+    "rex_catalog_invariant": "Every HIST-BD root is mirrored by one REX-BD reusable repair/prevention entry; shared recurrence prevention is additionally represented by REX-CM controls.",
+    "abacus_line_s_rex_cm006": {
+      "state": "ROOTS_DONE_CONTROL_REPEAT_PENDING",
+      "durable_roots": [
+        "HIST-BD-035",
+        "HIST-BD-036",
+        "HIST-BD-037"
+      ],
+      "done_roots": [
+        "HIST-BD-035",
+        "HIST-BD-036",
+        "HIST-BD-037"
+      ],
+      "active_roots": [],
+      "shared_control": "REX-CM-006",
+      "control_state": "ACTIVE_FIRST_PROOF",
+      "exact_proof": {
+        "pr": "GBOGEB/ABACUS#1385",
+        "head": "17d22b8e3dac3755c308f223b1ee104f842d2189",
+        "run": 36229268231,
+        "job": 108369181741,
+        "merge": "46aa7dc9359ad0c218506dee806ee67154e27739",
+        "current_main": "6e603f3e8854538578de2c1bdc36b84dafb9f163",
+        "closure_contract_blob": "bf2cb6495e53e93eddb7857cd416418192710647",
+        "tests_blob": "cd5e131d66f83dad0b95775e293977ff1405ef2b"
+      },
+      "source_work_order": "GBOGEB/ABACUS#1313",
+      "source_work_order_state": "OPEN_PARTIAL_EXTRACTED",
+      "next_control_predicate": "later distinct-source recurrence-free repeat",
+      "authority_transfer": false,
+      "formal_credit_delta": 0
+    }
   }
 }

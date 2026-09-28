@@ -1,0 +1,39 @@
+{
+  "schema": "missioncontrol.historian.abacus_bd035_bd036_closure.v1",
+  "status": "PASS_ROOTS_DONE_CONTROL_REPEAT_PENDING",
+  "as_of": "2026-09-28",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "roots": [
+    "HIST-BD-035",
+    "HIST-BD-036"
+  ],
+  "repair": {
+    "pr": 1385,
+    "head": "17d22b8e3dac3755c308f223b1ee104f842d2189",
+    "merge": "46aa7dc9359ad0c218506dee806ee67154e27739"
+  },
+  "proof": {
+    "qps_line_s_run": 36229268231,
+    "qps_line_s_job": 108369181741,
+    "changed_docs_run": 36229268203,
+    "yaml_run": 36229268196,
+    "format_run": 36229268210,
+    "ruff_run": 36229268202,
+    "codex_review": "PASS_NO_MAJOR_ISSUES"
+  },
+  "current_main_survival": {
+    "sha": "6e603f3e8854538578de2c1bdc36b84dafb9f163",
+    "closure_contract_blob": "bf2cb6495e53e93eddb7857cd416418192710647",
+    "tests_blob": "cd5e131d66f83dad0b95775e293977ff1405ef2b"
+  },
+  "rex_cm_006": {
+    "state": "ACTIVE_FIRST_PROOF",
+    "promotion_requires": "later distinct-source recurrence-free repeat"
+  },
+  "non_compensating": [
+    "GBOGEB/ABACUS#1313 remains OPEN/PARTIAL_EXTRACTED",
+    "REX-CM-005 remains prevention-withheld",
+    "GBOGEB/cryoplant-project#923 remains separate owner runner-admission gate"
+  ]
+}
