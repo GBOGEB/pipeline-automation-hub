@@ -36,7 +36,18 @@
       "WAIT_RETURN": 2,
       "BLOCKED": 1,
       "CONTROL": 1
-    }
+    },
+    "by_crew_state": {
+      "UNKNOWN": 12,
+      "PARTIAL": 5,
+      "ACTIVE": 1
+    },
+    "by_runner_state": {
+      "UNKNOWN": 8,
+      "PARTIAL": 10
+    },
+    "crew_member_total": 1,
+    "runner_item_total": 1
   },
   "missions": [
     {
@@ -54,7 +65,17 @@
       "lifecycle": "REGISTERED",
       "todo_state": "UNKNOWN",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "UNKNOWN",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "UNKNOWN",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "GM-II",
@@ -71,7 +92,17 @@
       "lifecycle": "REGISTERED",
       "todo_state": "UNKNOWN",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "UNKNOWN",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "UNKNOWN",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "GM-III",
@@ -88,7 +119,17 @@
       "lifecycle": "REGISTERED",
       "todo_state": "UNKNOWN",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "UNKNOWN",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "UNKNOWN",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "GM-IV",
@@ -105,7 +146,17 @@
       "lifecycle": "REGISTERED",
       "todo_state": "UNKNOWN",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "UNKNOWN",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "UNKNOWN",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "GM-V",
@@ -122,7 +173,17 @@
       "lifecycle": "REGISTERED",
       "todo_state": "UNKNOWN",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "UNKNOWN",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "UNKNOWN",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "GM-I-B",
@@ -139,7 +200,17 @@
       "lifecycle": "CONTROLLED",
       "todo_state": "CONTROL",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "UNKNOWN",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "GM-I-C",
@@ -156,7 +227,17 @@
       "lifecycle": "WAIT_RETURN",
       "todo_state": "WAIT_RETURN",
       "todo_count": 1,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "PARTIAL",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "HM-01",
@@ -173,7 +254,17 @@
       "lifecycle": "ACTIVE",
       "todo_state": "ACTIVE",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "PARTIAL",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "UNKNOWN",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "LM-10",
@@ -190,7 +281,17 @@
       "lifecycle": "CONTROLLED",
       "todo_state": "CONTROL",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "PARTIAL",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "LM-11",
@@ -207,7 +308,17 @@
       "lifecycle": "HOLD",
       "todo_state": "BLOCKED",
       "todo_count": 1,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "PARTIAL",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "GM-DMAIC-EVOLUTION-T7-T14-T21-20260926",
@@ -224,7 +335,17 @@
       "lifecycle": "ACTIVE",
       "todo_state": "ACTIVE",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "PARTIAL",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "MC-EVO-02",
@@ -241,7 +362,36 @@
       "lifecycle": "CONTROLLED",
       "todo_state": "CONTROL",
       "todo_count": 1,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "ACTIVE",
+        "member_count": 1,
+        "members": [
+          {
+            "crew_id": "MISSION_CONTROL_CONTROLLER",
+            "role": "Architecture_and_governance",
+            "assignment_state": "ACTIVE",
+            "authority_scope": "MISSION_CONTROL_DEVOPS_GOVERNANCE_ONLY",
+            "evidence_class": "OBSERVED"
+          }
+        ]
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "item_count": 1,
+        "items": [
+          {
+            "runner_id": 108576589135,
+            "runner_class": "GITHUB_ACTIONS",
+            "admission_state": "SUCCESS",
+            "run_count": 1,
+            "gt0_step_runs": 1,
+            "successful_runs": 1,
+            "failed_runs": 0,
+            "zero_step_runs": 0
+          }
+        ]
+      }
     },
     {
       "mission_id": "M01",
@@ -258,7 +408,17 @@
       "lifecycle": "HOLD",
       "todo_state": "WAIT_RETURN",
       "todo_count": 1,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "UNKNOWN",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "M02A",
@@ -275,7 +435,17 @@
       "lifecycle": "CONTROLLED",
       "todo_state": "CONTROL",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "UNKNOWN",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "M02B",
@@ -292,7 +462,17 @@
       "lifecycle": "CONTROLLED",
       "todo_state": "CONTROL",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "UNKNOWN",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "M03",
@@ -309,7 +489,17 @@
       "lifecycle": "CONTROLLED",
       "todo_state": "CONTROL",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "UNKNOWN",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "PARTIAL",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "M04",
@@ -326,7 +516,17 @@
       "lifecycle": "HOLD",
       "todo_state": "DEFERRED",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "UNKNOWN",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "UNKNOWN",
+        "item_count": 0,
+        "items": []
+      }
     },
     {
       "mission_id": "CLOUD16",
@@ -343,7 +543,17 @@
       "lifecycle": "HOLD",
       "todo_state": "DEFERRED",
       "todo_count": 0,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "crew": {
+        "state": "UNKNOWN",
+        "member_count": 0,
+        "members": []
+      },
+      "runners": {
+        "state": "UNKNOWN",
+        "item_count": 0,
+        "items": []
+      }
     }
   ],
   "todos": [
@@ -397,7 +607,11 @@
     "mcov_not_code_coverage": true,
     "unknown_never_coerced_to_zero": true,
     "todo_predicates_preserved_verbatim": true,
-    "dashboard_is_not_authority": true
+    "dashboard_is_not_authority": true,
+    "crew_envelope_preserved_verbatim": true,
+    "runner_envelope_preserved_verbatim": true,
+    "crew_member_count_derived_from_members": true,
+    "runner_item_count_derived_from_items": true
   },
   "authority_transfer": false,
   "formal_credit_delta": 0,
