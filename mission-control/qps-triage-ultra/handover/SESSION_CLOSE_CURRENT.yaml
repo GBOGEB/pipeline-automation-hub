@@ -17,7 +17,7 @@ snapshot:
   pipeline_master: c9c4533ed789cf34aee2320cd4642d4fc7b8bf66
   open_issues: 98
   issue_bearing_repositories: 8
-  operational_open_prs: 0
+  operational_open_prs: 2
   active_missioncontrol_workflows: 0
 
 gm_fleet_03:
@@ -51,9 +51,15 @@ fix_forward_491:
   head: 24fa1e71f05e41f31c0223c26311a0108192af0f
   fpc_run: 36449725960
   trusted_gate_run: 36449961020
-  codex_review: COMPLETE_NO_THREADS
   merge: c9c4533ed789cf34aee2320cd4642d4fc7b8bf66
-  status: CURRENT_STATE_GREEN
+  final_review: POSTMERGE_MATERIAL_FINDINGS
+  status: NONCOMPLIANT_MERGE_BEFORE_FINAL_REVIEW_CURRENT_STATE_REPAIR_REQUIRED
+
+current_fix_forward_494:
+  source_repair_head: 8c52105f8824d59a212f6ac94a88765c8a7dc2fa
+  scope: RESTART_AUTHORITY_AND_REVIEW_STATE_PLUS_LOSSLESS_CLOSE
+  order_7_read: false
+  status: PENDING_EXACT_HEAD_PROOF_REVIEW_TRUSTED_GATE_MERGE_READBACK
 
 canonical_restart_authority:
   repository: GBOGEB/cryoplant-project
