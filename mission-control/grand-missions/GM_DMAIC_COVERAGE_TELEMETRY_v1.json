@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.gm_dmaic_coverage_telemetry.v1",
   "mission_id": "GM-DMAIC-EVOLUTION-T7-T14-T21-20260926",
-  "captured_at": "2026-09-26",
+  "captured_at": "2026-09-28",
   "semantics": {
     "test_count": "Number of tests collected or executed in the cited proof; never a fleet-wide denominator.",
     "statement_coverage_pct": "Coverage for the cited repository-specific measured source scope.",
@@ -20,27 +20,29 @@
     {
       "repo": "GBOGEB/ABACUS",
       "cohort": "TOP7",
-      "state": "MEASURED_FAIL",
-      "source_sha": "282778462d0e44dcd75c58afd79ef9356e9190c4",
-      "run_id": 36249557668,
-      "job_id": 108425355774,
+      "state": "MEASURED_PASS",
+      "source_sha": "2d29cb81937b11dced88b128256ae138050b706b",
+      "run_id": 36336861952,
+      "job_id": 108675180909,
       "test_result": {
-        "passed": 403,
+        "passed": 477,
         "skipped": 10,
         "xpassed": 3,
         "failed": 0
       },
       "coverage": {
         "tool": "pytest-cov/coverage.py",
-        "statements": 3103,
-        "missed": 2326,
-        "pct": 25.04,
-        "gate_pct": 70,
-        "gate_result": "FAIL"
+        "statements": 3155,
+        "missed": 753,
+        "pct": 76.13,
+        "gate_pct": 75,
+        "gate_result": "PASS"
       },
       "source_scope": "core as resolved from DMAIC_V3 quality job",
-      "denominator_warning": "Report includes both repository-level core/* and DMAIC_V3/core/* paths; authority classification required before exclusions.",
-      "action": "ABACUS#1391 staged recovery 25->40->55->70"
+      "denominator_warning": "Repository-specific denominator only; not a fleet denominator. Current measured recurrence used 3155 statements and no omit/no-cover or denominator pruning.",
+      "action": "G75 HARD GREEN_CONTROL; pipeline-automation-hub#428",
+      "current_head": "6e603f3e8854538578de2c1bdc36b84dafb9f163",
+      "current_head_evidence": "Current DMAIC workflow retains --cov-fail-under=75; no DMAIC core/test scope drift from measured semantic proof to current head."
     },
     {
       "repo": "GBOGEB/DOCX_RTM_Automation",
@@ -63,7 +65,9 @@
         "gate_result": "PASS"
       },
       "source_scope": "src/core focused lineage modules",
-      "comparability_note": "Strong focused coverage; denominator far smaller than ABACUS."
+      "comparability_note": "Strong focused coverage; denominator far smaller than ABACUS.",
+      "current_head": "f059782e84fd1706ea78c67c806462c6975f5d69",
+      "current_head_evidence": "Exact measured head remains current default head; Python CI and repository integrity are GREEN."
     },
     {
       "repo": "GBOGEB/CODESPACES_jyperter",
@@ -92,7 +96,8 @@
       "repo": "GBOGEB/pipeline-automation-hub",
       "cohort": "TOP7",
       "state": "TOOLING_PRESENT_NO_CURRENT_MEASUREMENT",
-      "evidence": "scripts/requirements.txt contains pytest-cov; no cov-report workflow discovered in this pulse"
+      "evidence": "scripts/requirements.txt contains pytest-cov; current default head has multiple GREEN MissionControl workflows, but no exact repository coverage measurement in this census.",
+      "current_head": "c9c4533ed789cf34aee2320cd4642d4fc7b8bf66"
     },
     {
       "repo": "GBOGEB/cryogenic-accelerator-workspace",
@@ -109,22 +114,30 @@
     {
       "repo": "GBOGEB/CODEX",
       "cohort": "TOP7",
-      "state": "NOT_YET_MEASURED"
+      "state": "NOT_YET_MEASURED",
+      "current_head": "645f836eb8b49be746a154bfe4f0987be7e50b43",
+      "evidence": "Current default head is a metrics [skip ci] commit; Pages is GREEN, but no exact current repository coverage measurement is bound."
     },
     {
       "repo": "GBOGEB/cryoplant-project",
       "cohort": "TOP7",
-      "state": "NOT_YET_MEASURED"
+      "state": "NOT_YET_MEASURED",
+      "current_head": "bec4a5bb7b9b23bf94a2b56cf589b352dc385c69",
+      "evidence": "Current default head TRIAGE Repository Census, QPS PR binary refresh and qps-canonicalization are GREEN; no exact current repository coverage measurement is bound."
     },
     {
       "repo": "GBOGEB/Q_engineering_tools",
       "cohort": "TOP7",
-      "state": "NOT_YET_MEASURED"
+      "state": "NOT_YET_MEASURED",
+      "current_head": "593b24ff1c878924537b3ca65c40b15bb015f423",
+      "evidence": "Current default head has GREEN source/material and visual executor workflows; dynamic Pages remains RED, and no exact repository coverage measurement is bound."
     },
     {
       "repo": "GBOGEB/document-organization-system",
       "cohort": "TOP7",
-      "state": "NOT_YET_MEASURED"
+      "state": "NOT_YET_MEASURED",
+      "current_head": "f238ebfaaa129ed13bd912fea67f6d16fed4bd6e",
+      "evidence": "Current default head has Pages GREEN; no exact repository coverage measurement is bound."
     },
     {
       "repo": "GBOGEB/gg_MATH",
