@@ -1,5 +1,9 @@
 # QPS TRIAGE / Fleet Session Lossless Handover — 2026-09-28
 
+## Authority-chain correction
+
+This file is retained as historical evidence only. Canonical restart authority remains in `GBOGEB/cryoplant-project` at `handover/qps_recursive/GLOB.yaml` → `handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml` → `handover/qps_recursive/QTG_CURRENT.yaml`, with GM-FLEET-03 controlled by `GBOGEB/pipeline-automation-hub#426`. Execution is sequential; this file shall not create a second restart root.
+
 ## Session closure contract
 
 - directive_type: agent_instruction
@@ -295,7 +299,7 @@ Preserve without exception:
 
 ## 8. Exact next-session starting line
 
-**START HERE: Refresh pipeline-automation-hub master `cc19351780f17cc3c1219ffe53e293b44995e0fe` and repair only the two unresolved post-merge #483 control findings while keeping GM-FLEET-03 order 6 / cryoplant#1170 unread; in parallel consume ABACUS unified-CD run `36441522024` and classify the current integration/Black/package reds plus #1447, then recensus the live 98-issue / 8-repo fleet before selecting any new EXECUTE_NOW root.**
+**START HERE: Refresh canonical QPS restart authority in `GBOGEB/cryoplant-project` (`handover/qps_recursive/GLOB.yaml` → `SESSION_CLOSE_CURRENT.yaml` → `QTG_CURRENT.yaml`) and current MissionControl master/#426 first. Preserve the 6/6/116/951 order-6 state, repair and fully prove/review/trusted-gate/merge/read back the post-#490 control-integrity fix-forward while order 7 / cryoplant#1111 remains unread. Only after that sequential transition may ABACUS observations be consumed, followed by fleet recensus before selecting a new EXECUTE_NOW root. This file is historical evidence, not standalone restart authority.**
 
 ## 9. Closure marker
 
