@@ -1222,7 +1222,7 @@
     },
     "predecessor_chronology": "NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED",
     "successor_pr": "GBOGEB/pipeline-automation-hub#505",
-    "target_state_on_compliant_merge": "SUPERSEDED_BY_POST505_FIX_FORWARD",
+    "target_state_on_compliant_merge": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
     "accounting": {
       "REVIEWED": 6,
       "SELECTED_NOT_READ": 6,
@@ -1286,6 +1286,11 @@
     },
     "authority_transfer": false,
     "formal_credit_delta": 0,
-    "engineering_credit_delta": 0
+    "engineering_credit_delta": 0,
+    "supersession": {
+      "historical_target_preserved": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
+      "current_release_authority": false,
+      "superseded_by": "POST505_CONTROL_FIX_FORWARD"
+    }
   }
 }
