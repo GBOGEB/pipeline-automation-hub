@@ -505,7 +505,7 @@
         }
       }
     },
-    "next_action": "STOP. Order 7 / cryoplant-project PR1111 remains unread until the post-#505 control fix-forward is exact-head proven, review-clean, trusted-gate PASS, merged, and fresh-master read back.",
+    "next_action": "STOP. Order 7 remains unread on this candidate branch. Authorization becomes effective only after the post-#506 authorization PR is exact-head proven, review-clean, trusted-gate PASS, merged, and fresh-master read back.",
     "clean_without_repair": 1,
     "order_3_disposition": {
       "reviewed_pr": "GBOGEB/cryoplant-project#1138",
@@ -1292,5 +1292,21 @@
       "current_release_authority": false,
       "superseded_by": "POST505_CONTROL_FIX_FORWARD"
     }
+  },
+  "post_506_order7_authorization_candidate": {
+    "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ORDER7_AUTHORIZATION_v1.json",
+    "predecessor_pr": "GBOGEB/pipeline-automation-hub#506",
+    "predecessor_merge": "bcce3cbbf303a8e8bf28b9d90513fa5217581061",
+    "candidate": "GBOGEB/cryoplant-project::PR1111",
+    "branch_live_state": "SELECTED_NOT_READ",
+    "admitted_for_read": false,
+    "order_7_read": false,
+    "authorization_effect": "EFFECTIVE_ONLY_AFTER_THIS_AUTHORIZATION_PR_EXACT_HEAD_PROVEN_REVIEW_CLEAN_TRUSTED_GATE_PASS_MERGED_AND_FRESH_MASTER_READBACK",
+    "target_state_after_condition": "AUTHORIZED_FOR_ORDER7_BODY_READ_ONLY",
+    "accounting_unchanged": true,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "state": "ORDER_7_AUTHORIZATION_CANDIDATE_POST506_HELD_UNTIL_OWN_MERGE_READBACK"
   }
 }
