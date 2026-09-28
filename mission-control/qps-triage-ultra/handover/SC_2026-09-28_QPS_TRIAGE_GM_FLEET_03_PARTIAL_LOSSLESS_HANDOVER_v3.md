@@ -104,17 +104,15 @@ Durable repair:
 - qps-canonicalization `36432956166` SUCCESS
 - Codex exact-head COMPLETE / NO_MAJOR_ISSUES before merge
 
-MissionControl publication:
-- PR #490 exact head `1e3ed51ae15110b1c0971ff087bd053c8f03c9ae`
-- exact-head FPC run `36448774023` SUCCESS
-- all exact-head GM-FLEET/QPS controls green
-- merge `c9c4533ed789cf34aee2320cd4642d4fc7b8bf66`
-- merged at 2026-09-28T16:09:48Z
+Historical MissionControl publication #490:
+- exact head `1e3ed51ae15110b1c0971ff087bd053c8f03c9ae`
+- ordinary FPC run `36448774023` SUCCESS
+- trusted First-Pass Closure Gate `36448959151` FAILURE
+- merge `181ceabd0f207434b97a86ffba8ab7058a8b6ea0`
+- merged at 2026-09-28T16:09:48Z while Codex was not complete
 - Codex completed after merge at 2026-09-28T16:12:13Z
-- review threads: 0
-- Copilot findings: none
-- chronology classification: **NONCOMPLIANT_MERGE_BEFORE_REVIEW_CURRENT_STATE_VALIDATED**
-- current-state validation does not rewrite historical admission noncompliance
+- chronology classification: **NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED**
+- later current-state validation/repair is #491 and does not rewrite #490 history
 
 ### Canonical QPS restart authority / global preemption
 
@@ -221,8 +219,8 @@ Restart authority correction:
 ### Required 3P* / MIP level
 
 3PR Refresh:
-1. refresh current master `181ceabd...`;
-2. confirm #490 current-state readback remains 6/6/116/951 and admitted=128/silent_evictions=0;
+1. refresh current master `c9c4533ed789cf34aee2320cd4642d4fc7b8bf66`;
+2. confirm #491 current-state fix-forward remains 6/6/116/951 and admitted=128/silent_evictions=0;
 3. confirm order_7_read=false;
 4. refresh order-7 source PR #1111 and current-main successor/repair lineage only when admitted.
 
