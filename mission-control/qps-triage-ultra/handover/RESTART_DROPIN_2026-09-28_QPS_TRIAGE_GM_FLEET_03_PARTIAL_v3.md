@@ -56,11 +56,12 @@ MISSIONCONTROL CURRENT-STATE CHAIN:
 
 HISTORICAL PUBLICATION:
 - #490 exact head 1e3ed51ae15110b1c0971ff087bd053c8f03c9ae
-- FPC 36448774023 PASS
-- merged as c9c4533ed789cf34aee2320cd4642d4fc7b8bf66
-- Codex completed after merge, no threads
-- chronology remains NONCOMPLIANT_MERGE_BEFORE_REVIEW_CURRENT_STATE_VALIDATED
-- fresh-master QPS TRIAGE Federation Control 36449029760 PASS
+- ordinary FPC 36448774023 PASS
+- trusted gate 36448959151 FAIL
+- merged as 181ceabd0f207434b97a86ffba8ab7058a8b6ea0 while Codex was incomplete
+- Codex completed only after merge
+- chronology remains NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED
+- later green push controls do not compensate that chronology; #491 is the current-state fix-forward
 
 CANONICAL QPS GLOBAL PRIORITY:
 - read cryoplant GLOB -> SESSION_CLOSE_CURRENT -> QTG_CURRENT first
