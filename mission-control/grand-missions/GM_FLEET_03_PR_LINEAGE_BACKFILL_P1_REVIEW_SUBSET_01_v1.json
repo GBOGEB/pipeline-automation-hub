@@ -657,7 +657,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "Prove/merge this finalized order-2 disposition control. Review order 3 remains unread and must not be admitted without explicit continuation."
+    "next_action": "STOP. P1-S01 review order 3 remains unread/held until explicit continuation. Remaining unexpanded P1 population remains 959."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -674,6 +674,16 @@
     "clean_without_repair": 0,
     "remaining_in_subset": 10,
     "next_review_order": 3,
-    "next_review_state": "HELD_AFTER_ORDER2_SUCCESSOR_REPAIR_FINALIZATION_PENDING_CONTROL_MERGE"
+    "next_review_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD"
+  },
+  "finalization": {
+    "source_pr": "GBOGEB/pipeline-automation-hub#472",
+    "source_head": "6d7f75190d645ee5d3d3621e00fdfa0cd5bf223e",
+    "source_merge": "9268faa10cfff73ad3ee282684dbe492e3ec8271",
+    "source_merged_at_utc": "2026-09-28T05:56:27Z",
+    "source_codex_completed_at_utc": "2026-09-28T05:57:39Z",
+    "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
+    "current_state_validation": "CODEX_COMPLETE_NO_MAJOR_ISSUES_AFTER_MERGE",
+    "stable_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD"
   }
 }

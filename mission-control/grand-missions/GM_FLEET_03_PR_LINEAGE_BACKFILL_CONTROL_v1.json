@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_BOUNDED_P1_S01_ORDER2_FINALIZED_ORDER3_HELD",
+  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_BOUNDED_P1_S01_ORDER2_REPAIRED_VERIFIED_VIA_1821_ORDER3_HELD",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -270,7 +270,7 @@
       "unexpanded_population": 959,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD_PENDING_CONTROL_MERGE",
+      "selected_first_slice_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD",
       "remaining_admitted_not_selected": 108,
       "invariant": "1079 = 120 admitted shortlist + 959 unexpanded; P1-S01 selects 12 from governed bounded review population without expanding the remaining 959.",
       "authoritative_state_field": "p1_review.selection_state"
@@ -293,7 +293,7 @@
     "source_cluster": "SUPERSESSION_COMPETITION",
     "source_cluster_size": 42,
     "selected": 12,
-    "selection_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD_PENDING_CONTROL_MERGE",
+    "selection_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD",
     "selected_ids": [
       "GBOGEB/cryoplant-project::PR343",
       "GBOGEB/cryoplant-project::PR346",
@@ -488,7 +488,7 @@
         }
       }
     },
-    "next_action": "HOLD_ORDER_3_UNREAD_UNTIL_EXPLICIT_CONTINUATION"
+    "next_action": "STOP_ORDER_3_UNREAD_UNTIL_EXPLICIT_CONTINUATION"
   },
   "post_460_regression": {
     "status": "MATERIAL_CONTROL_REGRESSION_RESTORED_FORWARD",
@@ -532,6 +532,17 @@
       "Correct #1818 chronology/proof and bind compliant successor #1821."
     ],
     "repair_scope": "CONTROL_METADATA_ONLY",
+    "p1_s01_order_3_read": false
+  },
+  "post_472_finalization": {
+    "publication_pr": "GBOGEB/pipeline-automation-hub#472",
+    "publication_head": "6d7f75190d645ee5d3d3621e00fdfa0cd5bf223e",
+    "publication_merge": "9268faa10cfff73ad3ee282684dbe492e3ec8271",
+    "merged_at_utc": "2026-09-28T05:56:27Z",
+    "codex_completed_at_utc": "2026-09-28T05:57:39Z",
+    "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
+    "codex_result": "NO_MAJOR_ISSUES_CURRENT_STATE_VALIDATION_ONLY",
+    "normalization": "PENDING_CONTROL_MERGE -> STABLE_ORDER_3_HELD",
     "p1_s01_order_3_read": false
   }
 }
