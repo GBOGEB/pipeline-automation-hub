@@ -1,0 +1,57 @@
+schema: qps.triage.session_close_current.v1
+created_local: "2026-09-28T17:30:00+02:00"
+state: HANDOVER_PREPARED_PENDING_REMOTE_MERGE
+execution_wave_type: PARTIAL
+
+canonical_handover: SC_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_LOSSLESS_HANDOVER_v1.md
+restart_dropin: RESTART_DROPIN_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_v1.md
+
+read_order:
+  - SC_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_LOSSLESS_HANDOVER_v1.md
+  - RESTART_DROPIN_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_v1.md
+  - ../../historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json
+  - GBOGEB/pipeline-automation-hub#483
+  - GBOGEB/ABACUS#1447
+  - GBOGEB/pipeline-automation-hub#418
+  - GBOGEB/Q_engineering_tools#104
+  - GBOGEB/CODEX#753
+  - GBOGEB/cryoplant-project#923
+
+live_census:
+  open_issues: 98
+  issue_bearing_repositories: 8
+  open_prs_ownerwide: 1
+  open_prs_qps_operational: 0
+
+first_red:
+  class: POSTMERGE_CONTROL_INTEGRITY
+  repository: GBOGEB/pipeline-automation-hub
+  source_pr: 483
+  merge_sha: cc19351780f17cc3c1219ffe53e293b44995e0fe
+  material_findings: 2
+  next: FIX_FORWARD_MIRRORED_STATE_AND_ADMISSION_INVARIANT
+
+parallel_observation:
+  repository: GBOGEB/ABACUS
+  source_sha: d371d7971ed0653171a9eee65d77cf80219df28d
+  unified_cd_run: 36441522024
+  queued_jobs:
+    - 108993624142
+    - 108993624623
+  current_red_runs:
+    - 36441522270
+    - 36441522222
+  dashboard_issue: 1447
+
+gm_fleet_03:
+  reviewed: 5
+  selected_not_read: 7
+  admitted_not_selected: 116
+  unexpanded: 951
+  denominator: 1079
+  admitted_population: 128
+  order_6: UNREAD_HELD
+
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
