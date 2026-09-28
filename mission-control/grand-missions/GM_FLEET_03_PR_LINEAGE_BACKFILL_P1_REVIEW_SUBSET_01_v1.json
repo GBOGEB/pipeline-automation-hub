@@ -956,7 +956,7 @@
     "broader_expansion": false
   },
   "order_6_publication": {
-    "state": "PENDING_EXACT_HEAD_PROOF_REVIEW_MERGE_READBACK",
+    "state": "MERGED_NONCOMPLIANT_REVIEW_COMPLETION_PENDING_FIX_FORWARD_ORDER_7_HELD",
     "disposition": {
       "reviewed_pr": "GBOGEB/cryoplant-project#1170",
       "classification": "P1_W175B_COST_METHOD_DEFECTS_CONFIRMED_AND_REPAIRED",
@@ -1017,6 +1017,16 @@
       "formal_credit_delta": 0,
       "engineering_credit_delta": 0
     },
-    "order_7_read": false
+    "order_7_read": false,
+    "merge_readback": {
+      "source_pr": "GBOGEB/pipeline-automation-hub#490",
+      "source_head": "1e3ed51ae15110b1c0971ff087bd053c8f03c9ae",
+      "source_merge": "181ceabd0f207434b97a86ffba8ab7058a8b6ea0",
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_READY_TRIGGERED_CODEX_AND_TRUSTED_GATE_COMPLETION",
+      "merged_main_accounting": "6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED = 1079",
+      "admitted_population": 128,
+      "silent_evictions": 0,
+      "order_7_read": false
+    }
   }
 }
