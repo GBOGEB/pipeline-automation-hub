@@ -157,7 +157,7 @@
         ],
         "foreign_domain_signals": []
       },
-      "review_state": "READ_MATERIAL_SUPERSESSION_DEFECT_REPAIRED_VERIFIED",
+      "review_state": "READ_MATERIAL_SUPERSESSION_DEFECT_REPAIRED_VERIFIED_VIA_SUCCESSOR_1821",
       "disposition": {
         "reviewed_pr": "GBOGEB/cryoplant-project#346",
         "classification": "P1_SUPERSESSION_COMPETITION_CONFIRMED / MATERIAL_W36_CONTROL_IDENTITY_AMBIGUITY",
@@ -167,10 +167,13 @@
           "pr343_merged_at_utc": "2026-09-03T20:09:12Z",
           "later_interpretation": "PR343"
         },
-        "repair_pr": "GBOGEB/cryoplant-project#1818",
-        "repair_head": "b9011026c58ee18346aead97c43ffee4023bd63e",
-        "repair_merge": "06ff9215b1da6e3808d07195a16681fcf977b61c",
-        "relation_receipt": "ocd-adr/40_implementation/QPS_W36_CONTROL_IDENTITY_RELATION_20260927_v0.1.yaml",
+        "repair_pr": "GBOGEB/cryoplant-project#1821",
+        "repair_head": "802bac2e0c484ba5fd97a97f58136958645749f2",
+        "repair_merge": "583898c996dbdc47c1da1654ad7fb63e1364e237",
+        "relation_receipt": {
+          "repository": "GBOGEB/cryoplant-project",
+          "path": "ocd-adr/40_implementation/QPS_W36_CONTROL_IDENTITY_RELATION_20260927_v0.1.yaml"
+        },
         "relation": {
           "type": "SUPERSEDES_FOR_HISTORICAL_W36_CONTROL_IDENTITY",
           "subject": "GBOGEB/cryoplant-project#343",
@@ -178,37 +181,97 @@
           "scope": "historical W36 session-control identity and DMAIC current-state interpretation only"
         },
         "merged_main_readback": {
-          "main_sha": "06ff9215b1da6e3808d07195a16681fcf977b61c",
+          "main_sha": "583898c996dbdc47c1da1654ad7fb63e1364e237",
           "relation_status": "HISTORICAL_W36_CONTROL_IDENTITY_RESOLVED_NO_CURRENT_AUTHORITY",
+          "immutable_pr346_head": "db2c537f65e47fd831f20dba3c2da478f1de6be7",
+          "immutable_pr346_merge": "aff9d6cb8310372103dbd09da35ddf762f512d45",
+          "immutable_pr343_head": "2ad1353fb870b5c85bdadaf9d377b544b60ddd33",
+          "immutable_pr343_merge": "3fa05e529e86dbe65a72632671319ac300cb7091",
           "current_restart_authority": "handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml",
           "current_restart_wave": "W362",
+          "current_receipt": "triage/session/QPS_TRIAGE_SESSION_CLOSE_20260927_W362_v1.yaml",
+          "current_handover": "handover/session/SC_2026-09-27_W362_POST923_PARTIAL_LOSSLESS_v1.md",
+          "current_dropin": "handover/session/RESTART_DROPIN_2026-09-27_W362_POST923_PARTIAL_v1.md",
           "historical_artifacts_preserved": true
         },
         "proof": {
           "verify_ssot": {
-            "run_id": 36382274042,
-            "head_sha": "b9011026c58ee18346aead97c43ffee4023bd63e",
-            "job_id": 108800315462,
+            "run_id": 36383229771,
+            "head_sha": "802bac2e0c484ba5fd97a97f58136958645749f2",
+            "job_id": 108803128206,
             "conclusion": "SUCCESS",
             "executed_steps_gt_0": true,
-            "w36_identity_step": "SUCCESS"
+            "w36_session_handover_step": "SUCCESS"
           },
           "qps_canonicalization": {
-            "run_id": 36382273972,
-            "head_sha": "b9011026c58ee18346aead97c43ffee4023bd63e",
-            "conclusion": "SUCCESS"
+            "run_id": 36383229802,
+            "head_sha": "802bac2e0c484ba5fd97a97f58136958645749f2",
+            "job_id": 108803128427,
+            "conclusion": "SUCCESS",
+            "executed_steps_gt_0": true
           },
           "codex": {
             "status": "COMPLETE",
             "result": "NO_MAJOR_ISSUES",
-            "reviewed_head": "b9011026c58ee18346aead97c43ffee4023bd63e",
-            "completed_at_utc": "2026-09-28T05:34:54Z"
+            "reviewed_head": "802bac2e0c484ba5fd97a97f58136958645749f2",
+            "completed_at_utc": "2026-09-28T05:46:51Z"
+          },
+          "copilot": {
+            "status": "CLEAN_NO_FINDINGS"
           }
         },
-        "chronology_classification": "COMPLIANT_PROOF_AND_REVIEW_BEFORE_MERGE",
+        "chronology_classification": "INITIAL_1818_NONCOMPLIANT_SUCCESSOR_1821_COMPLIANT",
         "authority_transfer": false,
         "formal_credit_delta": 0,
-        "engineering_credit_delta": 0
+        "engineering_credit_delta": 0,
+        "initial_repair": {
+          "pr": "GBOGEB/cryoplant-project#1818",
+          "head_sha": "b9011026c58ee18346aead97c43ffee4023bd63e",
+          "merge_commit_sha": "06ff9215b1da6e3808d07195a16681fcf977b61c",
+          "merged_at_utc": "2026-09-28T05:35:25Z",
+          "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
+          "codex_completed_at_utc": "2026-09-28T05:36:49Z",
+          "note": "Later clean Codex review is current-state validation only; post-merge Copilot found material proof/identity gaps."
+        },
+        "successor_repair": {
+          "pr": "GBOGEB/cryoplant-project#1821",
+          "head_sha": "802bac2e0c484ba5fd97a97f58136958645749f2",
+          "merge_commit_sha": "583898c996dbdc47c1da1654ad7fb63e1364e237",
+          "merged_at_utc": "2026-09-28T05:48:58Z",
+          "chronology_classification": "COMPLIANT_PROOF_AND_REVIEW_BEFORE_MERGE",
+          "repairs": [
+            "Bind PR346 historical object to immutable head and merge SHAs.",
+            "Bind PR343 historical object to immutable head and merge SHAs.",
+            "Bind exact W362 current_receipt/current_handover/current_dropin paths.",
+            "Assert parsed W362 current pointers directly."
+          ],
+          "proof": {
+            "verify_ssot": {
+              "run_id": 36383229771,
+              "head_sha": "802bac2e0c484ba5fd97a97f58136958645749f2",
+              "job_id": 108803128206,
+              "conclusion": "SUCCESS",
+              "executed_steps_gt_0": true,
+              "w36_session_handover_step": "SUCCESS"
+            },
+            "qps_canonicalization": {
+              "run_id": 36383229802,
+              "head_sha": "802bac2e0c484ba5fd97a97f58136958645749f2",
+              "job_id": 108803128427,
+              "conclusion": "SUCCESS",
+              "executed_steps_gt_0": true
+            },
+            "codex": {
+              "status": "COMPLETE",
+              "result": "NO_MAJOR_ISSUES",
+              "reviewed_head": "802bac2e0c484ba5fd97a97f58136958645749f2",
+              "completed_at_utc": "2026-09-28T05:46:51Z"
+            },
+            "copilot": {
+              "status": "CLEAN_NO_FINDINGS"
+            }
+          }
+        }
       }
     },
     {
@@ -594,7 +657,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "Order 2 is repaired/proven. Hold review_order 3 unread until a new explicit continuation; on continuation deep-read only order 3 and stop on the first material semantic/identity defect."
+    "next_action": "Prove/merge this finalized order-2 disposition control. Review order 3 remains unread and must not be admitted without explicit continuation."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -611,6 +674,6 @@
     "clean_without_repair": 0,
     "remaining_in_subset": 10,
     "next_review_order": 3,
-    "next_review_state": "HELD_AFTER_ORDER2_MATERIAL_FINDING_REPAIRED_VERIFIED"
+    "next_review_state": "HELD_AFTER_ORDER2_SUCCESSOR_REPAIR_FINALIZATION_PENDING_CONTROL_MERGE"
   }
 }
