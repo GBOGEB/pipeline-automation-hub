@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_S01_ORDER5_REPAIRED_VERIFIED_ORDER6_HELD_PENDING_FIX_FORWARD",
+  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_S01_ORDER5_REPAIRED_VERIFIED_ORDER6_HELD",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -275,10 +275,17 @@
       "unexpanded_population": 951,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "ORDER_5_MATERIAL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED_ORDER_6_HELD",
+      "selected_first_slice_state": "ORDER_5_REPAIRED_VERIFIED_ORDER_6_HELD",
       "remaining_admitted_not_selected": 116,
-      "invariant": "1079 = 5 REVIEWED + 7 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population remains 128.",
-      "authoritative_state_field": "p1_admission_ledger.state"
+      "invariant": "1079 = 5 REVIEWED + 7 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population = union(legacy_v1_shortlist, P1-S01 selected IDs) = 128; silent_evictions = 0.",
+      "authoritative_state_field": "p1_admission_ledger.state",
+      "no_silent_eviction": true,
+      "admission_union": {
+        "legacy_v1_shortlist": 120,
+        "p1_s01_selected": 12,
+        "overlap": 4,
+        "current_admitted_population": 128
+      }
     },
     "exact_head_fpc_binding": {
       "pr": 464,
@@ -298,7 +305,7 @@
     "source_cluster": "SUPERSESSION_COMPETITION",
     "source_cluster_size": 42,
     "selected": 12,
-    "selection_state": "ORDER_5_MATERIAL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED_ORDER_6_HELD",
+    "selection_state": "ORDER_5_REPAIRED_VERIFIED_ORDER_6_HELD",
     "selected_ids": [
       "GBOGEB/cryoplant-project::PR343",
       "GBOGEB/cryoplant-project::PR346",
@@ -493,7 +500,7 @@
         }
       }
     },
-    "next_action": "STOP_ORDER_6_UNREAD_UNTIL_THIS_FIX_FORWARD_IS_PROVEN_REVIEWED_MERGED_READBACK",
+    "next_action": "STOP_ORDER_6_UNREAD_UNTIL_NEW_EXPLICIT_CONTINUATION",
     "clean_without_repair": 1,
     "order_3_disposition": {
       "reviewed_pr": "GBOGEB/cryoplant-project#1138",
@@ -816,5 +823,24 @@
       "UNEXPANDED": 951
     },
     "p1_s01_order_6_read": false
+  },
+  "post_483_review_repair": {
+    "publication_pr": "GBOGEB/pipeline-automation-hub#483",
+    "publication_head": "ec71c8cded6c2313325d2343587a4fb78db082df",
+    "publication_merge": "cc19351780f17cc3c1219ffe53e293b44995e0fe",
+    "merged_at_utc": "2026-09-28T15:08:47Z",
+    "codex_completed_at_utc": "2026-09-28T15:10:43Z",
+    "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_AND_TRUSTED_GATE",
+    "trusted_gate": {
+      "run_id": 36441239012,
+      "job_id": 108991950563,
+      "conclusion": "FAILURE",
+      "reason": "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD"
+    },
+    "material_findings": [
+      "Synchronize mirrored selected_first_slice_state and p1_review.selection_state to ORDER_5_REPAIRED_VERIFIED_ORDER_6_HELD.",
+      "Restore explicit fail-closed admission union and no-silent-eviction invariant."
+    ],
+    "order_6_read": false
   }
 }
