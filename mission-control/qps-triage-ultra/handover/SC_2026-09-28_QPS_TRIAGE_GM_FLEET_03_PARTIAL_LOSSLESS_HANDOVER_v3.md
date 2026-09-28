@@ -31,9 +31,9 @@ Owner-wide live issue census at close:
 - document-organization-system: 1
 
 Owner-wide open PR census:
-- exactly one open PR: `GBOGEB/stale#8`
-- unrelated Dependabot lodash update
-- **open operational QPS/MissionControl PRs: 0**
+- open MissionControl PRs at this publication edge include #492 (independent MC-S2 A4 control) and #494 (this GM-FLEET close/fix-forward)
+- unrelated owner-wide PRs may also exist and do not alter this lane
+- **#494 is CONTROL/publication work and does not admit order 7 before its own proof/readback**
 
 MissionControl workflow state:
 - active/queued workflows on current master: **0**
@@ -180,22 +180,23 @@ ABACUS #1447:
 - trusted gate `36448959151` FAILURE
 - Codex was not complete at merge
 
-Current-state repair:
-- PR #491 final head `24fa1e71f05e41f31c0223c26311a0108192af0f`
+Historical #491 publication:
+- PR #491 merged head `24fa1e71f05e41f31c0223c26311a0108192af0f`
 - ordinary FPC `36449725960` / job `109021052054` SUCCESS, >0 steps
-- Codex exact-head COMPLETE with no review threads
 - trusted exact-head First-Pass Closure Gate `36449961020` SUCCESS
-- merge/current master `c9c4533ed789cf34aee2320cd4642d4fc7b8bf66`
-- fresh-master GM-FLEET-03 F01 Pilot / Ring1 / Ring2 / Capacity Gate / QPS TRIAGE Federation Control all SUCCESS
-- canonical counts remain 6/6/116/951, admitted=128, silent_evictions=0
-- order 7 remains unread/held
+- merge/current-master snapshot `c9c4533ed789cf34aee2320cd4642d4fc7b8bf66`
+- canonical counts remained 6/6/116/951, admitted=128, silent_evictions=0
+- post-merge Copilot review then found three material control inconsistencies: two bare MissionControl-local restart pointers plus a stale subset next-review state
+- therefore #491 is **NONCOMPLIANT_MERGE_BEFORE_FINAL_REVIEW_CURRENT_STATE_REPAIR_REQUIRED**; later review does not rewrite merge chronology
 
-Restart authority correction:
-- MissionControl-local `SESSION_CLOSE_CURRENT.yaml` is historical evidence only
-- canonical restart authority remains `GBOGEB/cryoplant-project`:
-  `handover/qps_recursive/GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml`
-- MissionControl controller remains #426
-- execution is sequential; ABACUS observation is deferred and cannot bypass order 7
+Current fix-forward / #494:
+- reviewed repair source head `8c52105f8824d59a212f6ac94a88765c8a7dc2fa` supplied the exact restart/state corrections
+- #494 now carries those corrections on top of current master plus the lossless close artifacts
+- canonical restart authority is owner/repository/path-qualified:
+  `GBOGEB/cryoplant-project::handover/qps_recursive/GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml`
+- MissionControl controller remains `GBOGEB/pipeline-automation-hub#426`
+- subset next-review state is `ORDER_6_REPAIRED_ORDER_7_HELD_CONTROL_FIX_FORWARD`
+- execution remains sequential; order 7 stays unread until #494 is proven/reviewed/merged/read back
 
 ## 2. DECISION_MATRIX_EVALUATION
 
@@ -205,7 +206,7 @@ Restart authority correction:
 
 - structural 90-repo / 4,486-PR census is complete
 - current master has zero active/queued workflows
-- no operational MissionControl PR is open
+- #494 is the bounded GM-FLEET control/publication PR; #492 is an independent MC-S2 A4 control PR
 - next work is one bounded semantic deep-read, not a fleet implementation surge
 - historical/return/control lanes must not consume coding WIP
 
