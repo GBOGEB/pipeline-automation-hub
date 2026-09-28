@@ -1,0 +1,47 @@
+schema: qps-missioncontrol-session-close/1.0
+as_of: '2026-09-28'
+status: CONTROLLED_PARTIAL_HANDOVER
+execution_wave_type: PARTIAL
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+global_project_DoV: WITHHELD
+base_master: ad62afa6df7f0c99e3b2fd52f1d846762f3d82c7
+live_census:
+  open_issues: 99
+  repositories_with_open_issues: 8
+  open_prs: 4
+qps_authority:
+  root: GBOGEB/cryoplant-project::handover/qps_recursive/GLOB.yaml
+  session_close: GBOGEB/cryoplant-project::handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml
+  current_triage: GBOGEB/cryoplant-project::handover/qps_recursive/QTG_CURRENT.yaml
+  controller: GBOGEB/pipeline-automation-hub#426
+missioncontrol:
+  merged_fixforward:
+    pr: 496
+    merge_sha: ad62afa6df7f0c99e3b2fd52f1d846762f3d82c7
+    ordinary_fpc_run: 36451009080
+    exact_head_review: CLEAN
+    trusted_gate_run: 36452066215
+    trusted_gate_conclusion: FAILURE
+  fresh_master:
+    capacity: 36451977297
+    f01: 36451977415
+    f03: 36451977270
+    ring1: 36451977262
+    ring2: 36451977425
+    qps_federation: 36451977345
+  superseded_pr: 498
+  active_draft: 499
+abacus:
+  active_draft: 1460
+next_agent_instruction: mission-control/qps-triage-ultra/handover/RESTART_DROPIN_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_v4.md
+lossless_handover: mission-control/qps-triage-ultra/handover/SC_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_LOSSLESS_HANDOVER_v4.md
+exact_starting_line: >-
+  START HERE: Refresh cryoplant-project main, pipeline-automation-hub master, ABACUS main,
+  live open issues/PRs and current-head Actions; read GLOB -> SESSION_CLOSE_CURRENT -> QTG_CURRENT first;
+  preserve #923 CLOSED and GT_BDQ_0..9 PASS unless contradictory executed evidence appears;
+  treat #496 semantic repair as merged/fresh-master-green but merge-admission trusted-gate-noncompliant,
+  consume draft #499 and ABACUS#1460 only as bounded control lanes, keep order 7 / QPS #1111 unread/held
+  while #943 or any higher canonical QPS safety/source/release return is actionable, and execute PARTIAL
+  only with authority_transfer=false, formal_credit_delta=0, engineering_credit_delta=0.
