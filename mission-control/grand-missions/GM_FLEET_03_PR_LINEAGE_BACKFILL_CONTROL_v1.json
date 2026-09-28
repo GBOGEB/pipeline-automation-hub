@@ -270,9 +270,10 @@
       "unexpanded_population": 959,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "ORDER_1_REPAIRED_VERIFIED_ORDER_2_HELD",
+      "selected_first_slice_state": "ORDER_1_REPAIRED_VERIFIED_ORDER_2_HELD_PENDING_CONTROL_REPAIR",
       "remaining_admitted_not_selected": 108,
-      "invariant": "1079 = 120 admitted shortlist + 959 unexpanded; P1-S01 selects 12 from governed bounded review population without expanding the remaining 959."
+      "invariant": "1079 = 120 admitted shortlist + 959 unexpanded; P1-S01 selects 12 from governed bounded review population without expanding the remaining 959.",
+      "authoritative_state_field": "p1_review.selection_state"
     },
     "exact_head_fpc_binding": {
       "pr": 464,
