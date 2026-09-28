@@ -414,7 +414,12 @@
         "immutable_pr346_merge": "aff9d6cb8310372103dbd09da35ddf762f512d45",
         "immutable_pr343_head": "2ad1353fb870b5c85bdadaf9d377b544b60ddd33",
         "immutable_pr343_merge": "3fa05e529e86dbe65a72632671319ac300cb7091",
-        "current_restart_authority": "handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml",
+        "current_restart_authority": {
+          "restart_root": "GBOGEB/cryoplant-project::handover/qps_recursive/GLOB.yaml",
+          "session_close_pointer": "GBOGEB/cryoplant-project::handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml",
+          "current_state": "GBOGEB/cryoplant-project::handover/qps_recursive/QTG_CURRENT.yaml",
+          "missioncontrol_controller": "GBOGEB/pipeline-automation-hub#426"
+        },
         "current_restart_wave": "W362",
         "current_receipt": "triage/session/QPS_TRIAGE_SESSION_CLOSE_20260927_W362_v1.yaml",
         "current_handover": "handover/session/SC_2026-09-27_W362_POST923_PARTIAL_LOSSLESS_v1.md",
