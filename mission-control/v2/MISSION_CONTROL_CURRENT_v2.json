@@ -28,7 +28,8 @@
     "adoption_a4_dashboard_todo_surface": "mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json",
     "adoption_a4_dashboard_validator": "mission-control/v2/adoption/validate_mc_s2_a4_dashboard.py",
     "adoption_a4_dashboard_workflow": ".github/workflows/mc-s2-a4-dashboard-todo.yml",
-    "adoption_a4_trusted_control_disposition": "mission-control/v2/adoption/MC_S2_A4_TRUSTED_CONTROL_DISPOSITION_20260928_v1.json"
+    "adoption_a4_trusted_control_disposition": "mission-control/v2/adoption/MC_S2_A4_TRUSTED_CONTROL_DISPOSITION_20260928_v1.json",
+    "adoption_a4_crew_runner_trusted_control": "mission-control/v2/adoption/MC_S2_A4_CREW_RUNNER_TRUSTED_CONTROL_20260928_v1.json"
   },
   "precedence": [
     "domain/source authority remains in owning repositories and existing controls",
@@ -82,7 +83,7 @@
     "a3_promotion_guard": "SATISFIED_BY_TRUSTED_FPC_36337930734",
     "a3_control_repair_state": "CONTROLLED_COMPLETE",
     "a4_execution_allowed": true,
-    "a4_trusted_control_state": "TRUSTED_INITIAL_SLICE",
-    "a4_active_slice": "CREW_RUNNER_VISIBILITY"
+    "a4_trusted_control_state": "TRUSTED_CREW_RUNNER_SLICE",
+    "a4_active_slice": "METRICS_STATS_VISIBILITY"
   }
 }
