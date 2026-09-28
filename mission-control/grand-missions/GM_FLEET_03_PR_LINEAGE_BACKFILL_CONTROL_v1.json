@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_S01_ORDER5_REPAIRED_ORDER6_HELD",
+  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_S01_ORDER5_REPAIRED_VERIFIED_ORDER6_HELD_PENDING_FIX_FORWARD",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -277,7 +277,7 @@
       "selected_first_slice_id": "P1-S01",
       "selected_first_slice_state": "ORDER_5_MATERIAL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED_ORDER_6_HELD",
       "remaining_admitted_not_selected": 116,
-      "invariant": "1079 = 5 REVIEWED + 7 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population remains the fail-closed union of legacy v1 shortlist and v3 P1-S01 selection.",
+      "invariant": "1079 = 5 REVIEWED + 7 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population remains 128.",
       "authoritative_state_field": "p1_admission_ledger.state"
     },
     "exact_head_fpc_binding": {
@@ -493,7 +493,7 @@
         }
       }
     },
-    "next_action": "AFTER_THIS_ORDER5_CONTROL_PUBLICATION_IS_PROVEN_REVIEWED_MERGED_AND_READ_BACK_RESUME_ONLY_ORDER_6_UNDER_STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT",
+    "next_action": "STOP_ORDER_6_UNREAD_UNTIL_THIS_FIX_FORWARD_IS_PROVEN_REVIEWED_MERGED_READBACK",
     "clean_without_repair": 1,
     "order_3_disposition": {
       "reviewed_pr": "GBOGEB/cryoplant-project#1138",
@@ -801,5 +801,20 @@
     "authority_transfer": false,
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0
+  },
+  "post_481_review_repair": {
+    "source_pr": "GBOGEB/pipeline-automation-hub#481",
+    "source_head": "32bbc2c90d743e11f409dcdb4ed17c46f4f272c6",
+    "source_merge": "699b5bf5679519a5bbbbc8040af969932292e5ee",
+    "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_AND_TRUSTED_GATE",
+    "material_finding": "Authoritative ledger current_review_progress.next_review_state still said HELD_PENDING_ORDER5_CONTROL_PUBLICATION_MERGE after publication had merged.",
+    "repair_scope": "CONTROL_METADATA_ONLY",
+    "lifecycle_counts": {
+      "REVIEWED": 5,
+      "SELECTED_NOT_READ": 7,
+      "ADMITTED_NOT_SELECTED": 116,
+      "UNEXPANDED": 951
+    },
+    "p1_s01_order_6_read": false
   }
 }

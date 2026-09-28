@@ -803,7 +803,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "Order 5 is dispositioned. Hold P1-S01 review order 6 unread until this order-5 control publication is proven, reviewed, merged, and read back. Then deep-read only order 6 under STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT."
+    "next_action": "STOP. P1-S01 review order 6 remains unread until this order-5 control fix-forward is exact-head proven, reviewed, merged, and read back."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -820,18 +820,18 @@
     "clean_without_repair": 1,
     "remaining_in_subset": 7,
     "next_review_order": 6,
-    "next_review_state": "ORDER_5_MATERIAL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED_ORDER_6_HELD_PENDING_CONTROL_PUBLICATION"
+    "next_review_state": "ORDER_5_REPAIRED_VERIFIED_ORDER_6_HELD"
   },
   "finalization": {
-    "source_pr": "GBOGEB/pipeline-automation-hub#472",
-    "source_head": "6d7f75190d645ee5d3d3621e00fdfa0cd5bf223e",
-    "source_merge": "9268faa10cfff73ad3ee282684dbe492e3ec8271",
-    "source_merged_at_utc": "2026-09-28T05:56:27Z",
-    "source_codex_completed_at_utc": "2026-09-28T05:57:39Z",
-    "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
-    "current_state_validation": "CODEX_COMPLETE_NO_MAJOR_ISSUES_AFTER_MERGE",
-    "stable_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD",
-    "next_action": "After this order-3/4 control publication is proven, reviewed, merged and read back, resume only P1-S01 review order 5 under STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT."
+    "source_pr": "GBOGEB/pipeline-automation-hub#481",
+    "source_head": "32bbc2c90d743e11f409dcdb4ed17c46f4f272c6",
+    "source_merge": "699b5bf5679519a5bbbbc8040af969932292e5ee",
+    "source_merged_at_utc": "2026-09-28T14:59:25Z",
+    "source_codex_completed_at_utc": "2026-09-28T15:00:17.795699Z",
+    "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_AND_TRUSTED_GATE",
+    "current_state_validation": "CODEX_COMPLETE_AFTER_MERGE; TRUSTED_GATE_ON_SOURCE_HEAD_FAILED_PENDING_REVIEW_AT_TRIGGER",
+    "stable_state": "ORDER_5_REPAIRED_VERIFIED_ORDER_6_HELD",
+    "next_action": "STOP_ORDER_6_UNREAD_UNTIL_THIS_FIX_FORWARD_IS_PROVEN_REVIEWED_MERGED_READBACK"
   },
   "admission_reconciliation": {
     "ledger": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
