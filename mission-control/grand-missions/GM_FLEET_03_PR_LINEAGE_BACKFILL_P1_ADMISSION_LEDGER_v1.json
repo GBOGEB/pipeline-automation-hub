@@ -4427,7 +4427,8 @@
       "admission_sources": [
         "P1-S01_V3_SELECTION"
       ],
-      "p1_s01_review_order": 7
+      "p1_s01_review_order": 7,
+      "admitted_for_read": false
     },
     {
       "id": "GBOGEB/cryoplant-project::PR1112",
@@ -11806,7 +11807,7 @@
     "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ORDER7_RELEASE_v1.json",
     "predecessor_pr": "GBOGEB/pipeline-automation-hub#504",
     "successor_pr": "GBOGEB/pipeline-automation-hub#505",
-    "target_state_on_compliant_merge": "SUPERSEDED_BY_POST505_FIX_FORWARD",
+    "target_state_on_compliant_merge": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
     "accounting_unchanged": true,
     "authority_transfer": false,
     "formal_credit_delta": 0,
@@ -11855,6 +11856,11 @@
     },
     "authority_transfer": false,
     "formal_credit_delta": 0,
-    "engineering_credit_delta": 0
+    "engineering_credit_delta": 0,
+    "supersession": {
+      "historical_target_preserved": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
+      "current_release_authority": false,
+      "superseded_by": "POST505_CONTROL_FIX_FORWARD"
+    }
   }
 }
