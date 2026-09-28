@@ -11550,8 +11550,8 @@
     "clean_without_repair": 1,
     "remaining_in_subset": 6,
     "next_review_order": 7,
-    "next_review_state": "ORDER_6_REPAIRED_ORDER_7_HELD_CONTROL_FIX_FORWARD",
-    "next_action": "STOP. P1-S01 review order 7 remains unread until the post-#490 control-integrity fix-forward is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged, and read back."
+    "next_review_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST491_CONTROL_FIX_FORWARD",
+    "next_action": "STOP. P1-S01 review order 7 remains unread until the post-#491 control-integrity fix-forward is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged, and read back."
   },
   "order_5_sync": {
     "reviewed_pr": "GBOGEB/cryoplant-project#756",
@@ -11647,6 +11647,53 @@
       "codex_at_merge": "RUNNING_NOT_COMPLETE",
       "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED",
       "current_state_rule": "DO_NOT_REWRITE_HISTORY; FIX_FORWARD_CURRENT_STATE; ORDER_7_REMAINS_UNREAD"
+    },
+    "accounting_invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED",
+    "admitted_population": 128,
+    "silent_evictions": 0,
+    "order_7_read": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "post_491_control_integrity_fix_forward": {
+    "historical_publication": {
+      "pr": "GBOGEB/pipeline-automation-hub#491",
+      "head": "24fa1e71f05e41f31c0223c26311a0108192af0f",
+      "merge": "c9c4533ed789cf34aee2320cd4642d4fc7b8bf66",
+      "merged_at_utc": "2026-09-28T16:17:48Z",
+      "ordinary_fpc": {
+        "run_id": 36449725960,
+        "job_id": 109021052054,
+        "conclusion": "SUCCESS",
+        "executed_steps_gt_0": true
+      },
+      "codex": {
+        "at_merge": "RUNNING_NOT_COMPLETE",
+        "completed_at_utc": "2026-09-28T16:18:50.860419Z",
+        "result_after_merge": "COMPLETE_NO_FINDINGS_POST_MERGE"
+      },
+      "trusted_gate": {
+        "run_id": 36449961020,
+        "at_merge": "NOT_TERMINAL_PASS",
+        "first_terminal_result": "FAILURE_WHILE_CODEX_RUNNING",
+        "post_merge_rerun_job_id": 109022569708,
+        "post_merge_rerun_result": "SUCCESS"
+      },
+      "copilot": {
+        "submitted_at_utc": "2026-09-28T16:20:54Z",
+        "result": "CHANGES_RECOMMENDED_POST_MERGE",
+        "high_findings": 2,
+        "medium_findings": 1,
+        "discussions": [
+          "discussion_r4124529825",
+          "discussion_r4124529903",
+          "discussion_r4124529971"
+        ],
+        "repair_was_only_on_old_branch_head": "8c52105f8824d59a212f6ac94a88765c8a7dc2fa"
+      },
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_BEFORE_TRUSTED_GATE_TERMINAL_PASS_WITH_POST_MERGE_COPILOT_FINDINGS",
+      "current_state_rule": "DO_NOT_REWRITE_HISTORY; PORT_FINDINGS_TO_CURRENT_MASTER; ORDER_7_REMAINS_UNREAD"
     },
     "accounting_invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED",
     "admitted_population": 128,
