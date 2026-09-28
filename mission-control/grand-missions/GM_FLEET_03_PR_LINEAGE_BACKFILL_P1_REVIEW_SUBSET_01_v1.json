@@ -95,7 +95,29 @@
           }
         },
         "chronology_note": "#1815 merged before exact-head Codex review completed; later clean review is current-state validation only and does not rewrite that historical noncompliance.",
-        "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW"
+        "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
+        "successor_completion_chain": {
+          "purpose": "Complete the full PR343 finding beyond the initial parent-wave repair while preserving #1815 chronology.",
+          "prs": [
+            {
+              "pr": "GBOGEB/cryoplant-project#1815",
+              "merge": "9ce93da5a0100c15686392916e14861bc2d88890",
+              "scope": "parent-wave identity + stale test assertion"
+            },
+            {
+              "pr": "GBOGEB/cryoplant-project#1816",
+              "merge": "aa85202e941d2c1a6e2b2931a7cc35088938ebdb",
+              "scope": "complete PR341/PR342/PR340 chronology correction"
+            },
+            {
+              "pr": "GBOGEB/cryoplant-project#1817",
+              "merge": "151737e9a40a12fca335ae98af01b6e9648b529b",
+              "scope": "bind exact PR343 lineage provenance in regression test"
+            }
+          ],
+          "current_main_readback_after_chain": "151737e9a40a12fca335ae98af01b6e9648b529b",
+          "note": "#1814 was superseded/unmerged; the merged #1815->#1816->#1817 chain is the durable repair."
+        }
       }
     },
     {
@@ -135,7 +157,59 @@
         ],
         "foreign_domain_signals": []
       },
-      "review_state": "SELECTED_NOT_READ"
+      "review_state": "READ_MATERIAL_SUPERSESSION_DEFECT_REPAIRED_VERIFIED",
+      "disposition": {
+        "reviewed_pr": "GBOGEB/cryoplant-project#346",
+        "classification": "P1_SUPERSESSION_COMPETITION_CONFIRMED / MATERIAL_W36_CONTROL_IDENTITY_AMBIGUITY",
+        "material_defect": "PR346 and later PR343 both published historical W36 current/active control surfaces with incompatible DMAIC treatment and no explicit supersession relation.",
+        "chronology": {
+          "pr346_merged_at_utc": "2026-09-03T20:08:22Z",
+          "pr343_merged_at_utc": "2026-09-03T20:09:12Z",
+          "later_interpretation": "PR343"
+        },
+        "repair_pr": "GBOGEB/cryoplant-project#1818",
+        "repair_head": "b9011026c58ee18346aead97c43ffee4023bd63e",
+        "repair_merge": "06ff9215b1da6e3808d07195a16681fcf977b61c",
+        "relation_receipt": "ocd-adr/40_implementation/QPS_W36_CONTROL_IDENTITY_RELATION_20260927_v0.1.yaml",
+        "relation": {
+          "type": "SUPERSEDES_FOR_HISTORICAL_W36_CONTROL_IDENTITY",
+          "subject": "GBOGEB/cryoplant-project#343",
+          "object": "GBOGEB/cryoplant-project#346",
+          "scope": "historical W36 session-control identity and DMAIC current-state interpretation only"
+        },
+        "merged_main_readback": {
+          "main_sha": "06ff9215b1da6e3808d07195a16681fcf977b61c",
+          "relation_status": "HISTORICAL_W36_CONTROL_IDENTITY_RESOLVED_NO_CURRENT_AUTHORITY",
+          "current_restart_authority": "handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml",
+          "current_restart_wave": "W362",
+          "historical_artifacts_preserved": true
+        },
+        "proof": {
+          "verify_ssot": {
+            "run_id": 36382274042,
+            "head_sha": "b9011026c58ee18346aead97c43ffee4023bd63e",
+            "job_id": 108800315462,
+            "conclusion": "SUCCESS",
+            "executed_steps_gt_0": true,
+            "w36_identity_step": "SUCCESS"
+          },
+          "qps_canonicalization": {
+            "run_id": 36382273972,
+            "head_sha": "b9011026c58ee18346aead97c43ffee4023bd63e",
+            "conclusion": "SUCCESS"
+          },
+          "codex": {
+            "status": "COMPLETE",
+            "result": "NO_MAJOR_ISSUES",
+            "reviewed_head": "b9011026c58ee18346aead97c43ffee4023bd63e",
+            "completed_at_utc": "2026-09-28T05:34:54Z"
+          }
+        },
+        "chronology_classification": "COMPLIANT_PROOF_AND_REVIEW_BEFORE_MERGE",
+        "authority_transfer": false,
+        "formal_credit_delta": 0,
+        "engineering_credit_delta": 0
+      }
     },
     {
       "review_order": 3,
@@ -520,7 +594,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "Prove/merge this order-1 proof/control repair. Only then deep-read review_order 2. Stop again on first material semantic/identity defect."
+    "next_action": "Order 2 is repaired/proven. Hold review_order 3 unread until a new explicit continuation; on continuation deep-read only order 3 and stop on the first material semantic/identity defect."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -532,11 +606,11 @@
   "formal_credit_delta": 0,
   "engineering_credit_delta": 0,
   "review_progress": {
-    "reviewed": 1,
-    "repaired": 1,
+    "reviewed": 2,
+    "repaired": 2,
     "clean_without_repair": 0,
-    "remaining_in_subset": 11,
-    "next_review_order": 2,
-    "next_review_state": "HELD_PENDING_ORDER1_PROOF_CONTROL_REPAIR_MERGE"
+    "remaining_in_subset": 10,
+    "next_review_order": 3,
+    "next_review_state": "HELD_AFTER_ORDER2_MATERIAL_FINDING_REPAIRED_VERIFIED"
   }
 }
