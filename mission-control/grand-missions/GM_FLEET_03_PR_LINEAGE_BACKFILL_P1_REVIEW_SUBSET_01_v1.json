@@ -475,7 +475,79 @@
         "detected_domain_signals": [],
         "foreign_domain_signals": []
       },
-      "review_state": "SELECTED_NOT_READ"
+      "review_state": "READ_MATERIAL_MISSING_DURABLE_SUCCESSOR_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED",
+      "disposition": {
+        "reviewed_pr": "GBOGEB/cryoplant-project#756",
+        "classification": "P1_MISSING_DURABLE_SUCCESSOR_DEFECT_CONFIRMED_REPAIRED",
+        "historical_state": "CLOSED_UNMERGED_SUPERSEDED_PREEXECUTION_DRAFT",
+        "material_defect": "PR756 explicitly declared itself superseded before execution and directed continuation from current main, but did not identify a durable successor.",
+        "durable_successor": "GBOGEB/cryoplant-project#757",
+        "successor_relation": {
+          "type": "DURABLE_SUCCESSOR_FOR_SUPERSEDED_PREEXECUTION_DRAFT",
+          "subject": "GBOGEB/cryoplant-project#757",
+          "object": "GBOGEB/cryoplant-project#756",
+          "shared_base_sha": "7f0876700940ab5359772e62541a3d9b1aefbfff",
+          "successor_head": "d146d70da3022a5caf5a77bc13c23c0a4ac3e467",
+          "successor_merge": "59e019f0eea5a155535ef3c67984e82e1c6b18df"
+        },
+        "relation_receipt": {
+          "repository": "GBOGEB/cryoplant-project",
+          "path": "ocd-adr/40_implementation/QPS_W64_P01_SUCCESSOR_RELATION_20260928_v0.1.yaml",
+          "current_blob": "c335a9ab3b6c659d858be9fef352cefc1b0121d6"
+        },
+        "repair_chain": [
+          {
+            "pr": "GBOGEB/cryoplant-project#1822",
+            "head_sha": "f1182f13d6d9fd84f66e7b4016c33d3e2441c07c",
+            "merge_commit_sha": "9ee7d2bd9ed26391b9d5a5216c97cc014611517b",
+            "merged_at_utc": "2026-09-28T05:57:16Z",
+            "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
+            "finding_after_merge": "Regression did not assert explicit declared_next / declared_intent continuation fields."
+          },
+          {
+            "pr": "GBOGEB/cryoplant-project#1823",
+            "head_sha": "9948600368cbab4778057739332164a0323d28c2",
+            "merge_commit_sha": "30e52de722190bc6bd89a31408ee401596df0c9a",
+            "merged_at_utc": "2026-09-28T13:53:35Z",
+            "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_CURRENT_STATE_CLEAN",
+            "repair": "Assert explicit PR756 disposition/next and PR757 continuation intent/zero-credit boundary.",
+            "proof": {
+              "verify_ssot": {
+                "run_id": 36431644281,
+                "job_id": 108959042681,
+                "conclusion": "SUCCESS",
+                "executed_steps_gt_0": true,
+                "w64_successor_relation_step": "SUCCESS"
+              },
+              "qps_canonicalization": {
+                "run_id": 36431644267,
+                "conclusion": "SUCCESS"
+              },
+              "codex": {
+                "status": "COMPLETE",
+                "result": "NO_MAJOR_ISSUES",
+                "reviewed_head": "9948600368cbab4778057739332164a0323d28c2",
+                "completed_at_utc": "2026-09-28T13:53:43.645710Z"
+              },
+              "copilot": {
+                "status": "CLEAN_NO_FINDINGS"
+              }
+            }
+          }
+        ],
+        "current_main_readback": {
+          "repository": "GBOGEB/cryoplant-project",
+          "main_sha": "b8fcfc19f9b0a399951573faac36ec848d6acdf1",
+          "relation_blob": "c335a9ab3b6c659d858be9fef352cefc1b0121d6",
+          "regression_blob": "9ef675df120ab09588a9a87a9176150d38938203",
+          "pr756_credit": "NONE",
+          "pr756_execution": "NOT_EXECUTED",
+          "successor_flag": "RESOLVED_BY_EXPLICIT_RELATION_RECEIPT"
+        },
+        "authority_transfer": false,
+        "formal_credit_delta": 0,
+        "engineering_credit_delta": 0
+      }
     },
     {
       "review_order": 6,
@@ -738,7 +810,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "Order 3 and 4 are dispositioned. Hold P1-S01 review order 5 unread until this control publication is proven, reviewed, merged, and read back. Then resume order 5 under STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT."
+    "next_action": "Hold P1-S01 review order 6 unread until this order-5 control publication is exact-head proven, reviewed, merged and read back. Then resume order 6 under STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -750,23 +822,24 @@
   "formal_credit_delta": 0,
   "engineering_credit_delta": 0,
   "review_progress": {
-    "reviewed": 4,
-    "repaired": 3,
+    "reviewed": 5,
+    "repaired": 4,
     "clean_without_repair": 1,
-    "remaining_in_subset": 8,
-    "next_review_order": 5,
-    "next_review_state": "ORDER_4_MATERIAL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED_ORDER_5_HELD_PENDING_CONTROL_PUBLICATION"
+    "remaining_in_subset": 7,
+    "next_review_order": 6,
+    "next_review_state": "ORDER_5_MATERIAL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED_ORDER_6_HELD_PENDING_CONTROL_PUBLICATION"
   },
   "finalization": {
-    "source_pr": "GBOGEB/pipeline-automation-hub#472",
-    "source_head": "6d7f75190d645ee5d3d3621e00fdfa0cd5bf223e",
-    "source_merge": "9268faa10cfff73ad3ee282684dbe492e3ec8271",
-    "source_merged_at_utc": "2026-09-28T05:56:27Z",
-    "source_codex_completed_at_utc": "2026-09-28T05:57:39Z",
-    "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
-    "current_state_validation": "CODEX_COMPLETE_NO_MAJOR_ISSUES_AFTER_MERGE",
-    "stable_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD",
-    "next_action": "After this order-3/4 control publication is proven, reviewed, merged and read back, resume only P1-S01 review order 5 under STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT."
+    "source_pr": "GBOGEB/pipeline-automation-hub#479",
+    "source_head": "ceb9603f29d7be518bbdb2042ea6b2ec9928c77f",
+    "source_merge": "e29d11e9886e0425fcee2c0cb66f94294465596e",
+    "source_merged_at_utc": "2026-09-28T14:46:22Z",
+    "source_codex_completed_at_utc": "2026-09-28T14:48:13.071903Z",
+    "source_trusted_gate_pass_at_utc": "2026-09-28T14:49:59Z",
+    "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_AND_TRUSTED_GATE",
+    "current_state_validation": "CODEX_COMPLETE_AND_TRUSTED_EXACT_HEAD_GATE_PASS_AFTER_MERGE",
+    "stable_state": "ORDER_4_REPAIRED_ORDER_5_ADMITTED_AND_DISPOSITIONED_ORDER_6_HELD",
+    "next_action": "Hold P1-S01 review order 6 unread until this order-5 control publication is exact-head proven, reviewed, merged and read back. Then resume order 6 under STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT."
   },
   "admission_reconciliation": {
     "ledger": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
