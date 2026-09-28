@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_ADMISSION_LEDGER_128_951_PENDING_PROOF_ORDER3_HELD",
+  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_ADMISSION_LEDGER_128_951_PROVEN_ORDER3_HELD_PENDING_CONTROL_REPAIR",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -275,10 +275,10 @@
       "unexpanded_population": 951,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD_PENDING_ADMISSION_LEDGER_PROOF",
+      "selected_first_slice_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD_PENDING_LEDGER_CONTROL_REPAIR",
       "remaining_admitted_not_selected": 116,
       "invariant": "1079 = 2 REVIEWED + 10 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population is the fail-closed union of legacy v1 shortlist and v3 P1-S01 selection.",
-      "authoritative_state_field": "p1_admission_ledger"
+      "authoritative_state_field": "p1_admission_ledger.state"
     },
     "exact_head_fpc_binding": {
       "pr": 464,
@@ -298,7 +298,7 @@
     "source_cluster": "SUPERSESSION_COMPETITION",
     "source_cluster_size": 42,
     "selected": 12,
-    "selection_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD_PENDING_ADMISSION_LEDGER_PROOF",
+    "selection_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD_PENDING_LEDGER_CONTROL_REPAIR",
     "selected_ids": [
       "GBOGEB/cryoplant-project::PR343",
       "GBOGEB/cryoplant-project::PR346",
@@ -493,7 +493,7 @@
         }
       }
     },
-    "next_action": "HOLD_ORDER_3_UNREAD_UNTIL_ADMISSION_LEDGER_MERGED_MAIN_READBACK"
+    "next_action": "RESUME_ORDER_3_ONLY_AFTER_THIS_CONTROL_REPAIR_MERGED_MAIN_READBACK"
   },
   "post_460_regression": {
     "status": "MATERIAL_CONTROL_REGRESSION_RESTORED_FORWARD",
@@ -552,7 +552,7 @@
   },
   "p1_admission_ledger": {
     "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
-    "state": "PENDING_PROOF_AND_MERGE",
+    "state": "PROVEN_MERGED_READBACK",
     "denominator": 1079,
     "lifecycle_counts": {
       "UNEXPANDED": 951,
@@ -563,6 +563,45 @@
     "current_admitted_population": 128,
     "unexpanded_population": 951,
     "reconciliation_policy": "FAIL_CLOSED_UNION_NO_SILENT_EVICTION",
+    "order_3_read": false,
+    "proof": {
+      "source_pr": "GBOGEB/pipeline-automation-hub#475",
+      "source_head": "9ae548c803bf84ae776c8ea44ebc35168eb950d9",
+      "source_merge": "9318ad8b1e91934b5cbd267e1c195750c3d54db5",
+      "merged_at_utc": "2026-09-28T13:57:38Z",
+      "fpc": {
+        "run_id": 36432101858,
+        "job_id": 108960590504,
+        "conclusion": "SUCCESS",
+        "executed_steps_gt_0": true
+      },
+      "codex": {
+        "status": "COMPLETE",
+        "result": "NO_MAJOR_ISSUES",
+        "reviewed_head": "9ae548c803bf84ae776c8ea44ebc35168eb950d9",
+        "completed_at_utc": "2026-09-28T13:58:35Z"
+      },
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW"
+    },
+    "identity_parity": {
+      "entries": 1079,
+      "unique_ids": 1079,
+      "lifecycle_sum": 1079,
+      "admitted_population": 128,
+      "unexpanded_population": 951,
+      "silent_evictions": 0
+    }
+  },
+  "post_475_review_repair": {
+    "publication_pr": "GBOGEB/pipeline-automation-hub#475",
+    "publication_head": "9ae548c803bf84ae776c8ea44ebc35168eb950d9",
+    "publication_merge": "9318ad8b1e91934b5cbd267e1c195750c3d54db5",
+    "merged_at_utc": "2026-09-28T13:57:38Z",
+    "codex_completed_at_utc": "2026-09-28T13:58:35Z",
+    "copilot_reviewed_at_utc": "2026-09-28T13:58:52Z",
+    "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
+    "material_finding": "authoritative_state_field pointed to p1_admission_ledger object instead of nested p1_admission_ledger.state",
+    "repair_scope": "CONTROL_METADATA_ONLY",
     "order_3_read": false
   }
 }
