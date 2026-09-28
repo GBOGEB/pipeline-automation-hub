@@ -71,6 +71,11 @@ def validate(surface,status,current,trusted,a4_trusted):
     req(a4e.get("trusted_fpc_status")=="SUCCESS","A4 trusted gate status drift")
     req(a4e.get("trusted_fpc_artifact_id")==10953123505,"A4 trusted gate artifact ID drift")
     req(a4e.get("trusted_fpc_artifact_digest")=="sha256:6288f3cd40d67fb6cf450d3aa582dea280cee8c0789b02c4eca09b7a444fb020","A4 trusted gate artifact digest drift")
+    controlled=a4_trusted.get("controlled_surface",{})
+    req(controlled.get("mission_rows")==len(surface.get("missions",[])),"A4 trusted controlled_surface mission_rows drift")
+    req(controlled.get("todo_rows")==len(surface.get("todos",[])),"A4 trusted controlled_surface todo_rows drift")
+    req(controlled.get("mode")==surface.get("mode"),"A4 trusted controlled_surface mode drift")
+    req(controlled.get("source")==surface.get("source",{}).get("path"),"A4 trusted controlled_surface source drift")
     req(a4_trusted.get("next_bounded_slice")=="CREW_RUNNER_VISIBILITY","A4 trusted next slice drift")
     a4inv=a4_trusted.get("invariants",{})
     req(a4inv.get("dashboard_is_not_authority") is True,"A4 trusted dashboard-authority guard drift")
@@ -230,8 +235,20 @@ def self_test(surface,status,current,trusted,a4_trusted):
     assert validate(bad,status,current,trusted,a4_trusted)
     bad=copy.deepcopy(surface); bad["missions"][0]["runners"]["state"]="ACTIVE"
     assert validate(bad,status,current,trusted,a4_trusted)
+    bad=copy.deepcopy(surface); bad["missions"][0]["runners"]["items"]=[{"runner_id":"FAKE"}]
+    assert validate(bad,status,current,trusted,a4_trusted)
+    bad=copy.deepcopy(surface); bad["missions"][0]["runners"]["item_count"]=999
+    assert validate(bad,status,current,trusted,a4_trusted)
     bad=copy.deepcopy(surface); bad["summary"]["by_crew_state"]={}
     assert validate(bad,status,current,trusted,a4_trusted)
+    bad=copy.deepcopy(surface); bad["summary"]["by_runner_state"]={}
+    assert validate(bad,status,current,trusted,a4_trusted)
+    bad=copy.deepcopy(surface); bad["summary"]["crew_member_total"]=-1
+    assert validate(bad,status,current,trusted,a4_trusted)
+    bad=copy.deepcopy(surface); bad["summary"]["runner_item_total"]=-1
+    assert validate(bad,status,current,trusted,a4_trusted)
+    bad=copy.deepcopy(a4_trusted); bad["controlled_surface"]["mission_rows"]=999
+    assert validate(surface,status,current,trusted,bad)
     bad=copy.deepcopy(current); bad["canonical"]["adoption_a4_trusted_control_disposition"]="WRONG"
     assert validate(surface,status,bad,trusted,a4_trusted)
     bad=copy.deepcopy(current); bad["adoption"]["a4_active_slice"]="WRONG"
