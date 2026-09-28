@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_BOUNDED_P1_S01_ORDER2_REPAIRED_ORDER3_HELD",
+  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_BOUNDED_P1_S01_ORDER2_FINALIZED_ORDER3_HELD",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -270,7 +270,7 @@
       "unexpanded_population": 959,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "ORDER_2_REPAIRED_VERIFIED_ORDER_3_HELD",
+      "selected_first_slice_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD_PENDING_CONTROL_MERGE",
       "remaining_admitted_not_selected": 108,
       "invariant": "1079 = 120 admitted shortlist + 959 unexpanded; P1-S01 selects 12 from governed bounded review population without expanding the remaining 959.",
       "authoritative_state_field": "p1_review.selection_state"
@@ -293,7 +293,7 @@
     "source_cluster": "SUPERSESSION_COMPETITION",
     "source_cluster_size": 42,
     "selected": 12,
-    "selection_state": "ORDER_2_REPAIRED_VERIFIED_ORDER_3_HELD",
+    "selection_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD_PENDING_CONTROL_MERGE",
     "selected_ids": [
       "GBOGEB/cryoplant-project::PR343",
       "GBOGEB/cryoplant-project::PR346",
@@ -382,10 +382,13 @@
         "pr343_merged_at_utc": "2026-09-03T20:09:12Z",
         "later_interpretation": "PR343"
       },
-      "repair_pr": "GBOGEB/cryoplant-project#1818",
-      "repair_head": "b9011026c58ee18346aead97c43ffee4023bd63e",
-      "repair_merge": "06ff9215b1da6e3808d07195a16681fcf977b61c",
-      "relation_receipt": "ocd-adr/40_implementation/QPS_W36_CONTROL_IDENTITY_RELATION_20260927_v0.1.yaml",
+      "repair_pr": "GBOGEB/cryoplant-project#1821",
+      "repair_head": "802bac2e0c484ba5fd97a97f58136958645749f2",
+      "repair_merge": "583898c996dbdc47c1da1654ad7fb63e1364e237",
+      "relation_receipt": {
+        "repository": "GBOGEB/cryoplant-project",
+        "path": "ocd-adr/40_implementation/QPS_W36_CONTROL_IDENTITY_RELATION_20260927_v0.1.yaml"
+      },
       "relation": {
         "type": "SUPERSEDES_FOR_HISTORICAL_W36_CONTROL_IDENTITY",
         "subject": "GBOGEB/cryoplant-project#343",
@@ -393,37 +396,97 @@
         "scope": "historical W36 session-control identity and DMAIC current-state interpretation only"
       },
       "merged_main_readback": {
-        "main_sha": "06ff9215b1da6e3808d07195a16681fcf977b61c",
+        "main_sha": "583898c996dbdc47c1da1654ad7fb63e1364e237",
         "relation_status": "HISTORICAL_W36_CONTROL_IDENTITY_RESOLVED_NO_CURRENT_AUTHORITY",
+        "immutable_pr346_head": "db2c537f65e47fd831f20dba3c2da478f1de6be7",
+        "immutable_pr346_merge": "aff9d6cb8310372103dbd09da35ddf762f512d45",
+        "immutable_pr343_head": "2ad1353fb870b5c85bdadaf9d377b544b60ddd33",
+        "immutable_pr343_merge": "3fa05e529e86dbe65a72632671319ac300cb7091",
         "current_restart_authority": "handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml",
         "current_restart_wave": "W362",
+        "current_receipt": "triage/session/QPS_TRIAGE_SESSION_CLOSE_20260927_W362_v1.yaml",
+        "current_handover": "handover/session/SC_2026-09-27_W362_POST923_PARTIAL_LOSSLESS_v1.md",
+        "current_dropin": "handover/session/RESTART_DROPIN_2026-09-27_W362_POST923_PARTIAL_v1.md",
         "historical_artifacts_preserved": true
       },
       "proof": {
         "verify_ssot": {
-          "run_id": 36382274042,
-          "head_sha": "b9011026c58ee18346aead97c43ffee4023bd63e",
-          "job_id": 108800315462,
+          "run_id": 36383229771,
+          "head_sha": "802bac2e0c484ba5fd97a97f58136958645749f2",
+          "job_id": 108803128206,
           "conclusion": "SUCCESS",
           "executed_steps_gt_0": true,
-          "w36_identity_step": "SUCCESS"
+          "w36_session_handover_step": "SUCCESS"
         },
         "qps_canonicalization": {
-          "run_id": 36382273972,
-          "head_sha": "b9011026c58ee18346aead97c43ffee4023bd63e",
-          "conclusion": "SUCCESS"
+          "run_id": 36383229802,
+          "head_sha": "802bac2e0c484ba5fd97a97f58136958645749f2",
+          "job_id": 108803128427,
+          "conclusion": "SUCCESS",
+          "executed_steps_gt_0": true
         },
         "codex": {
           "status": "COMPLETE",
           "result": "NO_MAJOR_ISSUES",
-          "reviewed_head": "b9011026c58ee18346aead97c43ffee4023bd63e",
-          "completed_at_utc": "2026-09-28T05:34:54Z"
+          "reviewed_head": "802bac2e0c484ba5fd97a97f58136958645749f2",
+          "completed_at_utc": "2026-09-28T05:46:51Z"
+        },
+        "copilot": {
+          "status": "CLEAN_NO_FINDINGS"
         }
       },
-      "chronology_classification": "COMPLIANT_PROOF_AND_REVIEW_BEFORE_MERGE",
+      "chronology_classification": "INITIAL_1818_NONCOMPLIANT_SUCCESSOR_1821_COMPLIANT",
       "authority_transfer": false,
       "formal_credit_delta": 0,
-      "engineering_credit_delta": 0
+      "engineering_credit_delta": 0,
+      "initial_repair": {
+        "pr": "GBOGEB/cryoplant-project#1818",
+        "head_sha": "b9011026c58ee18346aead97c43ffee4023bd63e",
+        "merge_commit_sha": "06ff9215b1da6e3808d07195a16681fcf977b61c",
+        "merged_at_utc": "2026-09-28T05:35:25Z",
+        "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
+        "codex_completed_at_utc": "2026-09-28T05:36:49Z",
+        "note": "Later clean Codex review is current-state validation only; post-merge Copilot found material proof/identity gaps."
+      },
+      "successor_repair": {
+        "pr": "GBOGEB/cryoplant-project#1821",
+        "head_sha": "802bac2e0c484ba5fd97a97f58136958645749f2",
+        "merge_commit_sha": "583898c996dbdc47c1da1654ad7fb63e1364e237",
+        "merged_at_utc": "2026-09-28T05:48:58Z",
+        "chronology_classification": "COMPLIANT_PROOF_AND_REVIEW_BEFORE_MERGE",
+        "repairs": [
+          "Bind PR346 historical object to immutable head and merge SHAs.",
+          "Bind PR343 historical object to immutable head and merge SHAs.",
+          "Bind exact W362 current_receipt/current_handover/current_dropin paths.",
+          "Assert parsed W362 current pointers directly."
+        ],
+        "proof": {
+          "verify_ssot": {
+            "run_id": 36383229771,
+            "head_sha": "802bac2e0c484ba5fd97a97f58136958645749f2",
+            "job_id": 108803128206,
+            "conclusion": "SUCCESS",
+            "executed_steps_gt_0": true,
+            "w36_session_handover_step": "SUCCESS"
+          },
+          "qps_canonicalization": {
+            "run_id": 36383229802,
+            "head_sha": "802bac2e0c484ba5fd97a97f58136958645749f2",
+            "job_id": 108803128427,
+            "conclusion": "SUCCESS",
+            "executed_steps_gt_0": true
+          },
+          "codex": {
+            "status": "COMPLETE",
+            "result": "NO_MAJOR_ISSUES",
+            "reviewed_head": "802bac2e0c484ba5fd97a97f58136958645749f2",
+            "completed_at_utc": "2026-09-28T05:46:51Z"
+          },
+          "copilot": {
+            "status": "CLEAN_NO_FINDINGS"
+          }
+        }
+      }
     },
     "next_action": "HOLD_ORDER_3_UNREAD_UNTIL_EXPLICIT_CONTINUATION"
   },
@@ -455,5 +518,20 @@
     ],
     "repair_scope": "CONTROL_METADATA_ONLY",
     "p1_s01_order_2_read": false
+  },
+  "post_468_review_repair": {
+    "publication_pr": "GBOGEB/pipeline-automation-hub#468",
+    "publication_head": "d2f2ccde866f9499425c2d4bf698691158d19123",
+    "publication_merge": "8ffc224552746714d8e2c70e37f6c81af0e26367",
+    "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
+    "merged_at_utc": "2026-09-28T05:42:46Z",
+    "codex_completed_at_utc": "2026-09-28T05:44:09Z",
+    "material_findings": [
+      "Qualify external W36 relation receipt path with owning repository in subset receipt.",
+      "Qualify external W36 relation receipt path with owning repository in control.",
+      "Correct #1818 chronology/proof and bind compliant successor #1821."
+    ],
+    "repair_scope": "CONTROL_METADATA_ONLY",
+    "p1_s01_order_3_read": false
   }
 }
