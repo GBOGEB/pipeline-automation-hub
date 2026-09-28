@@ -15,10 +15,12 @@ VALIDATOR_REL="mission-control/v2/adoption/validate_mc_s2_a4_dashboard.py"
 WORKFLOW_REL=".github/workflows/mc-s2-a4-dashboard-todo.yml"
 A4_TRUSTED=V2/"adoption"/"MC_S2_A4_TRUSTED_CONTROL_DISPOSITION_20260928_v1.json"
 A4_TRUSTED_REL="mission-control/v2/adoption/MC_S2_A4_TRUSTED_CONTROL_DISPOSITION_20260928_v1.json"
+CREW_TRUSTED=V2/"adoption"/"MC_S2_A4_CREW_RUNNER_TRUSTED_CONTROL_20260928_v1.json"
+CREW_TRUSTED_REL="mission-control/v2/adoption/MC_S2_A4_CREW_RUNNER_TRUSTED_CONTROL_20260928_v1.json"
 
 def load(p): return json.loads(p.read_text(encoding="utf-8"))
 
-def validate(surface,status,current,trusted,a4_trusted):
+def validate(surface,status,current,trusted,a4_trusted,crew_trusted):
     errors=[]
     def req(v,m):
         if not v: errors.append(m)
@@ -35,6 +37,7 @@ def validate(surface,status,current,trusted,a4_trusted):
     req(canonical.get("adoption_a4_dashboard_validator")==VALIDATOR_REL,"A4 canonical validator pointer drift")
     req(canonical.get("adoption_a4_dashboard_workflow")==WORKFLOW_REL,"A4 canonical workflow pointer drift")
     req(canonical.get("adoption_a4_trusted_control_disposition")==A4_TRUSTED_REL,"A4 trusted-control disposition pointer drift")
+    req(canonical.get("adoption_a4_crew_runner_trusted_control")==CREW_TRUSTED_REL,"A4 crew-runner trusted-control pointer drift")
     req(trusted.get("schema")=="missioncontrol.v2.adoption.a3_trusted_control_disposition.v1","A4 trusted disposition schema drift")
     req(trusted.get("disposition")=="CONTROLLED_COMPLETE_TRUSTED_CONTROL_REPAIRED","A4 trusted disposition state drift")
     req(trusted.get("exact_head")=="ff94e5239e96ecede784b34bf22c4dfc14700157","A4 trusted exact-head drift")
@@ -57,8 +60,8 @@ def validate(surface,status,current,trusted,a4_trusted):
     req(adoption.get("a4_state")=="ACTIVE_INITIAL_READ_ONLY_PROJECTION","A4 lifecycle state drift")
     req(adoption.get("a3_promotion_guard")=="SATISFIED_BY_TRUSTED_FPC_36337930734","A3 promotion guard drift")
     req(adoption.get("a4_execution_allowed") is True,"A4 execution not governed-admitted")
-    req(adoption.get("a4_trusted_control_state")=="TRUSTED_INITIAL_SLICE","A4 trusted-control state drift")
-    req(adoption.get("a4_active_slice")=="CREW_RUNNER_VISIBILITY","A4 active slice drift")
+    req(adoption.get("a4_trusted_control_state")=="TRUSTED_CREW_RUNNER_SLICE","A4 trusted-control state drift")
+    req(adoption.get("a4_active_slice")=="METRICS_STATS_VISIBILITY","A4 active slice drift")
 
     req(a4_trusted.get("schema")=="missioncontrol.v2.adoption.a4_trusted_control_disposition.v1","A4 trusted-control receipt schema drift")
     req(a4_trusted.get("disposition")=="TRUSTED_INITIAL_SLICE","A4 trusted-control disposition drift")
@@ -85,6 +88,38 @@ def validate(surface,status,current,trusted,a4_trusted):
     req(a4inv.get("authority_transfer") is False,"A4 trusted authority transfer drift")
     req(a4inv.get("formal_credit_delta")==0,"A4 trusted formal credit drift")
     req(a4inv.get("engineering_credit_delta")==0,"A4 trusted engineering credit drift")
+    req(crew_trusted.get("schema")=="missioncontrol.v2.adoption.a4_crew_runner_trusted_control_disposition.v1","A4 crew-runner trusted receipt schema drift")
+    req(crew_trusted.get("disposition")=="TRUSTED_CREW_RUNNER_SLICE","A4 crew-runner trusted disposition drift")
+    req(crew_trusted.get("exact_head")=="9be2701561d7d64b2e62628f6c5ebc66c91515ab","A4 crew-runner exact-head drift")
+    req(crew_trusted.get("merge")=="4a3da830b9b299509e2f43fb52e86aa83460bdb0","A4 crew-runner merge drift")
+    cre=crew_trusted.get("evidence",{})
+    req(cre.get("a3_enforcement_run")==36385095483,"A4 crew-runner A3 run drift")
+    req(cre.get("a4_dashboard_run")==36385095455,"A4 crew-runner dashboard run drift")
+    req(cre.get("mc_v2_contract_run")==36385095397,"A4 crew-runner MC v2 run drift")
+    req(cre.get("first_pass_closure_proof_run")==36385095423,"A4 crew-runner FPC proof run drift")
+    req(cre.get("trusted_fpc_run")==36385164680,"A4 crew-runner trusted FPC run drift")
+    req(cre.get("trusted_fpc_status")=="SUCCESS","A4 crew-runner trusted FPC status drift")
+    req(cre.get("trusted_fpc_artifact_id")==10953679777,"A4 crew-runner trusted artifact ID drift")
+    req(cre.get("trusted_fpc_artifact_digest")=="sha256:881f9f78eabd2f3d8d777b945f8f244613eba2e7651dd23f05ce918b6bf536ed","A4 crew-runner trusted artifact digest drift")
+    crs=crew_trusted.get("controlled_surface",{})
+    req(crs.get("mission_rows")==len(surface.get("missions",[])),"A4 crew-runner controlled mission_rows drift")
+    req(crs.get("todo_rows")==len(surface.get("todos",[])),"A4 crew-runner controlled todo_rows drift")
+    req(crs.get("mode")==surface.get("mode"),"A4 crew-runner controlled mode drift")
+    req(crs.get("source")==surface.get("source",{}).get("path"),"A4 crew-runner controlled source drift")
+    summary_now=surface.get("summary",{})
+    req(crs.get("by_crew_state")==summary_now.get("by_crew_state"),"A4 crew-runner controlled crew-state drift")
+    req(crs.get("by_runner_state")==summary_now.get("by_runner_state"),"A4 crew-runner controlled runner-state drift")
+    req(crs.get("crew_member_total")==summary_now.get("crew_member_total"),"A4 crew-runner controlled crew total drift")
+    req(crs.get("runner_item_total")==summary_now.get("runner_item_total"),"A4 crew-runner controlled runner total drift")
+    req(crew_trusted.get("next_bounded_slice")=="METRICS_STATS_VISIBILITY","A4 crew-runner next slice drift")
+    crinv=crew_trusted.get("invariants",{})
+    req(crinv.get("dashboard_is_not_authority") is True,"A4 crew-runner dashboard authority guard drift")
+    req(crinv.get("historical_receipt_rewrite") is False,"A4 crew-runner historical rewrite drift")
+    req(crinv.get("external_repository_mutation") is False,"A4 crew-runner external mutation drift")
+    req(crinv.get("legacy_source_mutation") is False,"A4 crew-runner legacy source mutation drift")
+    req(crinv.get("authority_transfer") is False,"A4 crew-runner authority transfer drift")
+    req(crinv.get("formal_credit_delta")==0,"A4 crew-runner formal credit drift")
+    req(crinv.get("engineering_credit_delta")==0,"A4 crew-runner engineering credit drift")
     src_blob=subprocess.check_output(["git","hash-object",str(STATUS.relative_to(ROOT))],cwd=ROOT,text=True).strip()
     source=surface.get("source",{})
     req(source.get("path")=="mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json","A4 source path drift")
@@ -99,7 +134,7 @@ def validate(surface,status,current,trusted,a4_trusted):
     rows={m["mission_id"]:m for m in status_rows}
     proj={m["mission_id"]:m for m in surface_rows}
     req(set(rows)==set(proj),"A4 mission-set drift")
-    by_execution={}; by_health={}; by_mcov={}; by_crew={}; by_runner={}; todo_by_state={}; todos=[]; crew_member_total=0; runner_item_total=0
+    by_execution={}; by_health={}; by_mcov={}; by_crew={}; by_runner={}; by_metrics_evidence={}; todo_by_state={}; todos=[]; crew_member_total=0; runner_item_total=0; metrics_custom_nonempty=[]; metrics_core_non_null_value_count=0
     for mid,m in rows.items():
         p=proj.get(mid,{})
         ex=m.get("status",{}).get("execution","UNKNOWN")
@@ -117,6 +152,16 @@ def validate(surface,status,current,trusted,a4_trusted):
         req(p.get("todo_state")==m.get("todo",{}).get("state","UNKNOWN"),f"{mid} TODO state drift")
         req(p.get("todo_count")==len(m.get("todo",{}).get("items",[])),f"{mid} TODO count drift")
         req(p.get("authority_transfer") is False,f"{mid} authority transfer")
+        metrics=m.get("metrics",{}) or {}
+        pmetrics=p.get("metrics",{}) or {}
+        req(pmetrics==metrics,f"{mid} metrics envelope drift")
+        evidence_state=metrics.get("evidence_state","UNKNOWN")
+        by_metrics_evidence[evidence_state]=by_metrics_evidence.get(evidence_state,0)+1
+        if metrics.get("custom",{}):
+            metrics_custom_nonempty.append(mid)
+        for value in (metrics.get("core",{}) or {}).values():
+            if value is not None:
+                metrics_core_non_null_value_count+=1
         crew=m.get("crew",{}) or {}
         crew_members=crew.get("members",[]) or []
         pcrew=p.get("crew",{}) or {}
@@ -148,6 +193,10 @@ def validate(surface,status,current,trusted,a4_trusted):
     req(summary.get("by_runner_state")==by_runner,"A4 runner-state summary drift")
     req(summary.get("crew_member_total")==crew_member_total,"A4 crew-member total drift")
     req(summary.get("runner_item_total")==runner_item_total,"A4 runner-item total drift")
+    req(summary.get("by_metrics_evidence_state")==by_metrics_evidence,"A4 metrics evidence-state summary drift")
+    req(summary.get("metrics_custom_nonempty_mission_count")==len(metrics_custom_nonempty),"A4 metrics custom mission-count drift")
+    req(summary.get("metrics_custom_nonempty_missions")==metrics_custom_nonempty,"A4 metrics custom mission-list drift")
+    req(summary.get("metrics_core_non_null_value_count")==metrics_core_non_null_value_count,"A4 metrics core non-null count drift")
     req(summary.get("todo_total")==len(todos),"A4 TODO total drift")
     req(summary.get("todo_by_state")==todo_by_state,"A4 TODO state summary drift")
     expected_todo_keys=[(mid,t.get("todo_id")) for mid,t in todos]
@@ -174,92 +223,116 @@ def validate(surface,status,current,trusted,a4_trusted):
         "runner_envelope_preserved_verbatim",
         "crew_member_count_derived_from_members",
         "runner_item_count_derived_from_items",
+        "metrics_envelope_preserved_verbatim",
+        "metrics_unknown_never_coerced_to_zero",
+        "metrics_stats_are_derived_aggregates",
     ):
         req(presentation.get(key) is True,f"A4 presentation contract weakened: {key}")
     return errors
 
-def self_test(surface,status,current,trusted,a4_trusted):
+def self_test(surface,status,current,trusted,a4_trusted,crew_trusted):
     bad=copy.deepcopy(surface); bad["missions"][0]["health"]="GREEN" if bad["missions"][0]["health"]!="GREEN" else "RED"
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["todos"]=bad["todos"][:-1]
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["missions"][0]["mission_class"]="WRONG"
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["summary"]["todo_by_state"]={}
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["source"]["mission_rows"]=0
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["presentation_contract"]["dashboard_is_not_authority"]=False
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(current); bad["adoption"]["a4_execution_allowed"]=False
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["authority_transfer"]=True
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(current); bad["canonical"]["adoption_a3_trusted_control_disposition"]="WRONG"
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(current); bad["canonical"]["adoption_a4_dashboard_todo_surface"]="WRONG"
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(current); bad["canonical"]["adoption_a4_dashboard_validator"]="WRONG"
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(current); bad["canonical"]["adoption_a4_dashboard_workflow"]="WRONG"
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(current); bad["adoption"]["active_wave"]="MC-A3_POSTMERGE_TRUSTED_CONTROL_REPAIR"
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(current); bad["adoption"]["next_wave"]="MC-A5_REX_AND_REGRESSION_CONTROL"
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(current); bad["adoption"]["a3_state"]="CONTROLLED_COMPLETE_PENDING_TRUSTED_CONTROL_REPAIR"
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(current); bad["adoption"]["a4_state"]="ADMITTED_BLOCKED_PENDING_A3_TRUSTED_CONTROL_REPAIR"
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(current); bad["adoption"]["a3_control_repair_state"]="CANDIDATE_DRAFT_WAIT_EXACT_HEAD_PROOF"
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(current); bad["adoption"]["a3_promotion_guard"]="UNSATISFIED"
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["todos"][0].pop("crew_owner",None)
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(trusted); bad["evidence"]["trusted_fpc_status"]="FAIL"
-    assert validate(surface,status,current,bad,a4_trusted)
+    assert validate(surface,status,current,bad,a4_trusted,crew_trusted)
     bad=copy.deepcopy(trusted); bad["invariants"]["authority_transfer"]=True
-    assert validate(surface,status,current,bad,a4_trusted)
+    assert validate(surface,status,current,bad,a4_trusted,crew_trusted)
     bad=copy.deepcopy(trusted); bad["invariants"]["legacy_validator_mutation"]=True
-    assert validate(surface,status,current,bad,a4_trusted)
+    assert validate(surface,status,current,bad,a4_trusted,crew_trusted)
     bad=copy.deepcopy(trusted); bad["invariants"]["legacy_source_mutation"]=True
-    assert validate(surface,status,current,bad,a4_trusted)
+    assert validate(surface,status,current,bad,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["missions"].append(copy.deepcopy(bad["missions"][0]))
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["todos"].append(copy.deepcopy(bad["todos"][0]))
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["missions"][0]["crew"]["state"]="ACTIVE"
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["missions"][0]["crew"]["members"]=[{"crew_id":"FAKE"}]
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["missions"][0]["runners"]["state"]="ACTIVE"
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["missions"][0]["runners"]["items"]=[{"runner_id":"FAKE"}]
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["missions"][0]["runners"]["item_count"]=999
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["summary"]["by_crew_state"]={}
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["summary"]["by_runner_state"]={}
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["summary"]["crew_member_total"]=-1
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(surface); bad["summary"]["runner_item_total"]=-1
-    assert validate(bad,status,current,trusted,a4_trusted)
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(a4_trusted); bad["controlled_surface"]["mission_rows"]=999
-    assert validate(surface,status,current,trusted,bad)
+    assert validate(surface,status,current,trusted,bad,crew_trusted)
     bad=copy.deepcopy(current); bad["canonical"]["adoption_a4_trusted_control_disposition"]="WRONG"
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(current); bad["adoption"]["a4_active_slice"]="WRONG"
-    assert validate(surface,status,bad,trusted,a4_trusted)
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
     bad=copy.deepcopy(a4_trusted); bad["evidence"]["trusted_fpc_status"]="FAIL"
-    assert validate(surface,status,current,trusted,bad)
+    assert validate(surface,status,current,trusted,bad,crew_trusted)
+
+    bad=copy.deepcopy(surface); bad["missions"][0]["metrics"]["evidence_state"]="MEASURED_PARTIAL"
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
+    bad=copy.deepcopy(surface); bad["missions"][0]["metrics"]["custom"]={"fake":1}
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
+    bad=copy.deepcopy(surface); bad["missions"][0]["metrics"]["core"]["work_total"]=0
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
+    bad=copy.deepcopy(surface); bad["summary"]["by_metrics_evidence_state"]={}
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
+    bad=copy.deepcopy(surface); bad["summary"]["metrics_custom_nonempty_missions"]=[]
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
+    bad=copy.deepcopy(surface); bad["summary"]["metrics_core_non_null_value_count"]=99
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
+    bad=copy.deepcopy(surface); bad["presentation_contract"]["metrics_unknown_never_coerced_to_zero"]=False
+    assert validate(bad,status,current,trusted,a4_trusted,crew_trusted)
+    bad=copy.deepcopy(current); bad["canonical"]["adoption_a4_crew_runner_trusted_control"]="WRONG"
+    assert validate(surface,status,bad,trusted,a4_trusted,crew_trusted)
+    bad=copy.deepcopy(crew_trusted); bad["evidence"]["trusted_fpc_status"]="FAIL"
+    assert validate(surface,status,current,trusted,a4_trusted,bad)
+    bad=copy.deepcopy(crew_trusted); bad["controlled_surface"]["runner_item_total"]=999
+    assert validate(surface,status,current,trusted,a4_trusted,bad)
 
 def main():
-    surface,status,current,trusted,a4_trusted=load(SURFACE),load(STATUS),load(CURRENT),load(TRUSTED),load(A4_TRUSTED)
-    errors=validate(surface,status,current,trusted,a4_trusted)
-    self_test(surface,status,current,trusted,a4_trusted)
+    surface,status,current,trusted,a4_trusted,crew_trusted=load(SURFACE),load(STATUS),load(CURRENT),load(TRUSTED),load(A4_TRUSTED),load(CREW_TRUSTED)
+    errors=validate(surface,status,current,trusted,a4_trusted,crew_trusted)
+    self_test(surface,status,current,trusted,a4_trusted,crew_trusted)
     print(json.dumps({"schema":"missioncontrol.v2.adoption.a4_dashboard_validation_receipt.v1","result":"PASS" if not errors else "FAIL","mission_rows":len(surface.get("missions",[])),"todo_rows":len(surface.get("todos",[])),"errors":errors,"authority_transfer":False,"formal_credit_delta":0,"engineering_credit_delta":0},indent=2))
     raise SystemExit(0 if not errors else 1)
 if __name__=="__main__": main()
