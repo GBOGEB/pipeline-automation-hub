@@ -28,7 +28,7 @@
   "release_candidate": {
     "pr": "GBOGEB/pipeline-automation-hub#505",
     "branch": "mc/gm-fleet-03-order7-release-post500-20260928",
-    "target_state_on_compliant_merge": "SUPERSEDED_BY_POST505_FIX_FORWARD",
+    "target_state_on_compliant_merge": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
     "required_before_merge": [
       "exact-head First-Pass Closure Proof SUCCESS with >0 steps",
       "bind FPC_RECEIPT_V1 to the exact head",
@@ -98,6 +98,11 @@
     "current_order_7_state": "SELECTED_NOT_READ",
     "authority_transfer": false,
     "formal_credit_delta": 0,
-    "engineering_credit_delta": 0
+    "engineering_credit_delta": 0,
+    "supersession": {
+      "historical_target_preserved": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
+      "current_release_authority": false,
+      "superseded_by": "POST505_CONTROL_FIX_FORWARD"
+    }
   }
 }
