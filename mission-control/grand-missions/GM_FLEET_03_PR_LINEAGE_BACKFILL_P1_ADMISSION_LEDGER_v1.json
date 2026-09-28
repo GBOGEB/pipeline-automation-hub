@@ -11550,7 +11550,7 @@
     "clean_without_repair": 1,
     "remaining_in_subset": 6,
     "next_review_order": 7,
-    "next_review_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST491_CONTROL_FIX_FORWARD",
+    "next_review_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST500_CONTROL_FIX_FORWARD",
     "next_action": "STOP. P1-S01 review order 7 remains unread until the post-#496 mirror fix-forward is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged, and read back."
   },
   "order_5_sync": {
@@ -11743,6 +11743,61 @@
     "admitted_population": 128,
     "silent_evictions": 0,
     "order_7_read": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "post_500_control_integrity_fix_forward": {
+    "historical_publication": {
+      "pr": "GBOGEB/pipeline-automation-hub#500",
+      "head": "707ad0d8439d8c73fc4904e494f2484e64898285",
+      "merge": "10d45d4272b5689429d3faf37eb065e36f6bdc99",
+      "merged_at_utc": "2026-09-28T16:41:44Z",
+      "ordinary_fpc": {
+        "run_id": 36452374042,
+        "conclusion": "SUCCESS",
+        "executed_steps_gt_0": true
+      },
+      "codex": {
+        "draft_review_first_attempt": "TRANSIENT_UNKNOWN_ERROR",
+        "ready_trigger_review_at_merge": "RUNNING_NOT_COMPLETE",
+        "ready_trigger_review_completed_at_utc": "2026-09-28T16:43:08Z",
+        "ready_trigger_review_result": "NO_MAJOR_ISSUES"
+      },
+      "copilot": {
+        "completed_at_utc": "2026-09-28T16:42:54Z",
+        "result": "NO_FINDINGS_NEEDS_HUMAN_REVIEW"
+      },
+      "trusted_gate": {
+        "run_id": 36452764023,
+        "conclusion": "FAILURE",
+        "reason": "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD",
+        "terminal_pass_before_merge": false,
+        "later_review_triggered_run": {
+          "run_id": 36453028180,
+          "conclusion": "ACTION_REQUIRED",
+          "executed_jobs": 0,
+          "classification": "GITHUB_ACTOR_APPROVAL_ARTIFACT_NOT_GATE_PASS"
+        }
+      },
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_READY_STATE_REVIEW_COMPLETE_AND_WITHOUT_TRUSTED_GATE_PASS",
+      "current_state_rule": "DO_NOT_REWRITE_HISTORY; CURRENT SEMANTIC STATE IS REPAIRED; ORDER_7 REMAINS UNREAD UNTIL THIS SUCCESSOR IS COMPLIANTLY PROVEN_MERGED_READ_BACK"
+    },
+    "canonical_counts": {
+      "REVIEWED": 6,
+      "SELECTED_NOT_READ": 6,
+      "ADMITTED_NOT_SELECTED": 116,
+      "UNEXPANDED": 951,
+      "denominator": 1079,
+      "admitted_population": 128,
+      "silent_evictions": 0
+    },
+    "mirror_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST491_CONTROL_FIX_FORWARD",
+    "order_7": {
+      "id": "GBOGEB/cryoplant-project::PR1111",
+      "review_state": "SELECTED_NOT_READ",
+      "admitted_for_read": false
+    },
     "authority_transfer": false,
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0
