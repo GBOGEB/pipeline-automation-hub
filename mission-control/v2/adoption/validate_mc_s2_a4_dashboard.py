@@ -10,6 +10,9 @@ STATUS=V2/"MC_MISSION_STATUS_CURRENT_v1.json"
 CURRENT=V2/"MISSION_CONTROL_CURRENT_v2.json"
 TRUSTED=V2/"adoption"/"MC_S2_A3_TRUSTED_CONTROL_DISPOSITION_20260927_v1.json"
 TRUSTED_REL="mission-control/v2/adoption/MC_S2_A3_TRUSTED_CONTROL_DISPOSITION_20260927_v1.json"
+SURFACE_REL="mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json"
+VALIDATOR_REL="mission-control/v2/adoption/validate_mc_s2_a4_dashboard.py"
+WORKFLOW_REL=".github/workflows/mc-s2-a4-dashboard-todo.yml"
 
 def load(p): return json.loads(p.read_text(encoding="utf-8"))
 
@@ -26,6 +29,9 @@ def validate(surface,status,current,trusted):
     adoption=current.get("adoption",{})
     canonical=current.get("canonical",{})
     req(canonical.get("adoption_a3_trusted_control_disposition")==TRUSTED_REL,"A4 trusted disposition pointer drift")
+    req(canonical.get("adoption_a4_dashboard_todo_surface")==SURFACE_REL,"A4 canonical surface pointer drift")
+    req(canonical.get("adoption_a4_dashboard_validator")==VALIDATOR_REL,"A4 canonical validator pointer drift")
+    req(canonical.get("adoption_a4_dashboard_workflow")==WORKFLOW_REL,"A4 canonical workflow pointer drift")
     req(trusted.get("schema")=="missioncontrol.v2.adoption.a3_trusted_control_disposition.v1","A4 trusted disposition schema drift")
     req(trusted.get("disposition")=="CONTROLLED_COMPLETE_TRUSTED_CONTROL_REPAIRED","A4 trusted disposition state drift")
     req(trusted.get("exact_head")=="ff94e5239e96ecede784b34bf22c4dfc14700157","A4 trusted exact-head drift")
@@ -42,7 +48,11 @@ def validate(surface,status,current,trusted):
     req(inv.get("legacy_validator_mutation") is False,"A4 trusted disposition legacy-validator mutation drift")
     req(inv.get("legacy_source_mutation") is False,"A4 trusted disposition legacy-source mutation drift")
     req(adoption.get("active_wave")=="MC-A4_DASHBOARD_AND_TODO_SURFACES","A4 not active")
+    req(adoption.get("next_wave")=="MC-A4_DASHBOARD_AND_TODO_SURFACES","A4 next-wave drift")
     req(adoption.get("a3_state")=="CONTROLLED_COMPLETE_TRUSTED_CONTROL_REPAIRED","A3 trusted disposition missing")
+    req(adoption.get("a3_control_repair_state")=="CONTROLLED_COMPLETE","A3 control-repair state drift")
+    req(adoption.get("a4_state")=="ACTIVE_INITIAL_READ_ONLY_PROJECTION","A4 lifecycle state drift")
+    req(adoption.get("a3_promotion_guard")=="SATISFIED_BY_TRUSTED_FPC_36337930734","A3 promotion guard drift")
     req(adoption.get("a4_execution_allowed") is True,"A4 execution not governed-admitted")
     src_blob=subprocess.check_output(["git","hash-object",str(STATUS.relative_to(ROOT))],cwd=ROOT,text=True).strip()
     source=surface.get("source",{})
@@ -98,6 +108,7 @@ def validate(surface,status,current,trusted):
     for key,t in expected_todos.items():
         p=projected_todos.get(key,{})
         for fld in ("predicate","state","priority","crew_owner","runner_requirement","next_legal_transition","evidence_ref"):
+            req(fld in p,f"A4 TODO field missing {key} {fld}")
             req(p.get(fld)==t.get(fld),f"A4 TODO field drift {key} {fld}")
     presentation=surface.get("presentation_contract",{})
     for key in (
@@ -129,6 +140,20 @@ def self_test(surface,status,current,trusted):
     assert validate(bad,status,current,trusted)
     bad=copy.deepcopy(current); bad["canonical"]["adoption_a3_trusted_control_disposition"]="WRONG"
     assert validate(surface,status,bad,trusted)
+    bad=copy.deepcopy(current); bad["canonical"]["adoption_a4_dashboard_todo_surface"]="WRONG"
+    assert validate(surface,status,bad,trusted)
+    bad=copy.deepcopy(current); bad["canonical"]["adoption_a4_dashboard_validator"]="WRONG"
+    assert validate(surface,status,bad,trusted)
+    bad=copy.deepcopy(current); bad["canonical"]["adoption_a4_dashboard_workflow"]="WRONG"
+    assert validate(surface,status,bad,trusted)
+    bad=copy.deepcopy(current); bad["adoption"]["a4_state"]="ADMITTED_BLOCKED_PENDING_A3_TRUSTED_CONTROL_REPAIR"
+    assert validate(surface,status,bad,trusted)
+    bad=copy.deepcopy(current); bad["adoption"]["a3_control_repair_state"]="CANDIDATE_DRAFT_WAIT_EXACT_HEAD_PROOF"
+    assert validate(surface,status,bad,trusted)
+    bad=copy.deepcopy(current); bad["adoption"]["a3_promotion_guard"]="UNSATISFIED"
+    assert validate(surface,status,bad,trusted)
+    bad=copy.deepcopy(surface); bad["todos"][0].pop("crew_owner",None)
+    assert validate(bad,status,current,trusted)
     bad=copy.deepcopy(trusted); bad["evidence"]["trusted_fpc_status"]="FAIL"
     assert validate(surface,status,current,bad)
     bad=copy.deepcopy(trusted); bad["invariants"]["authority_transfer"]=True
