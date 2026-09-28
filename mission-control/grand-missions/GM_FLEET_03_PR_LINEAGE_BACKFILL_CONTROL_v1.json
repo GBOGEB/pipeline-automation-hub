@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_BOUNDED_P1_S01_ORDER2_REPAIRED_VERIFIED_VIA_1821_ORDER3_HELD",
+  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_ADMISSION_LEDGER_128_951_PENDING_PROOF_ORDER3_HELD",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -266,14 +266,19 @@
     "policy": "NO_BRUTE_FORCE_P1",
     "bounded_admission_accounting": {
       "p1_denominator": 1079,
-      "admitted_shortlist": 120,
-      "unexpanded_population": 959,
+      "admitted_shortlist": 128,
+      "legacy_v1_shortlist": 120,
+      "p1_s01_selected": 12,
+      "p1_s01_overlap_with_legacy": 4,
+      "p1_s01_new_admissions": 8,
+      "silent_evictions": 0,
+      "unexpanded_population": 951,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD",
-      "remaining_admitted_not_selected": 108,
-      "invariant": "1079 = 120 admitted shortlist + 959 unexpanded; P1-S01 selects 12 from governed bounded review population without expanding the remaining 959.",
-      "authoritative_state_field": "p1_review.selection_state"
+      "selected_first_slice_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD_PENDING_ADMISSION_LEDGER_PROOF",
+      "remaining_admitted_not_selected": 116,
+      "invariant": "1079 = 2 REVIEWED + 10 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population is the fail-closed union of legacy v1 shortlist and v3 P1-S01 selection.",
+      "authoritative_state_field": "p1_admission_ledger"
     },
     "exact_head_fpc_binding": {
       "pr": 464,
@@ -293,7 +298,7 @@
     "source_cluster": "SUPERSESSION_COMPETITION",
     "source_cluster_size": 42,
     "selected": 12,
-    "selection_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD",
+    "selection_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD_PENDING_ADMISSION_LEDGER_PROOF",
     "selected_ids": [
       "GBOGEB/cryoplant-project::PR343",
       "GBOGEB/cryoplant-project::PR346",
@@ -488,7 +493,7 @@
         }
       }
     },
-    "next_action": "STOP_ORDER_3_UNREAD_UNTIL_EXPLICIT_CONTINUATION"
+    "next_action": "HOLD_ORDER_3_UNREAD_UNTIL_ADMISSION_LEDGER_MERGED_MAIN_READBACK"
   },
   "post_460_regression": {
     "status": "MATERIAL_CONTROL_REGRESSION_RESTORED_FORWARD",
@@ -544,5 +549,20 @@
     "codex_result": "NO_MAJOR_ISSUES_CURRENT_STATE_VALIDATION_ONLY",
     "normalization": "PENDING_CONTROL_MERGE -> STABLE_ORDER_3_HELD",
     "p1_s01_order_3_read": false
+  },
+  "p1_admission_ledger": {
+    "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
+    "state": "PENDING_PROOF_AND_MERGE",
+    "denominator": 1079,
+    "lifecycle_counts": {
+      "UNEXPANDED": 951,
+      "ADMITTED_NOT_SELECTED": 116,
+      "SELECTED_NOT_READ": 10,
+      "REVIEWED": 2
+    },
+    "current_admitted_population": 128,
+    "unexpanded_population": 951,
+    "reconciliation_policy": "FAIL_CLOSED_UNION_NO_SILENT_EVICTION",
+    "order_3_read": false
   }
 }
