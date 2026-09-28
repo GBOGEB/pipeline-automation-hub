@@ -1,60 +1,50 @@
 schema: qps.triage.session_close_current.v1
-created_local: "2026-09-28T17:30:00+02:00"
+created_local: "2026-09-28T18:20:00+02:00"
 state: HISTORICAL_EVIDENCE_NON_AUTHORITATIVE
 execution_wave_type: PARTIAL
 
-canonical_handover: SC_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_LOSSLESS_HANDOVER_v1.md
-restart_dropin: RESTART_DROPIN_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_v1.md
+latest_missioncontrol_handover: SC_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_LOSSLESS_HANDOVER_v3.md
+latest_missioncontrol_dropin: RESTART_DROPIN_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_v3.md
 
 read_order:
-  - SC_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_LOSSLESS_HANDOVER_v1.md
-  - RESTART_DROPIN_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_v1.md
-  - ../../historian/FLEET_OPEN_ISSUE_CONVERGENCE_CURRENT_v1.json
-  - GBOGEB/pipeline-automation-hub#483
-  - GBOGEB/ABACUS#1447
-  - GBOGEB/pipeline-automation-hub#418
-  - GBOGEB/Q_engineering_tools#104
-  - GBOGEB/CODEX#753
-  - GBOGEB/cryoplant-project#923
+  - SC_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_LOSSLESS_HANDOVER_v3.md
+  - RESTART_DROPIN_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_v3.md
+  - GBOGEB/pipeline-automation-hub#426
+  - GBOGEB/pipeline-automation-hub#491
+  - GBOGEB/pipeline-automation-hub#490
 
-live_census:
+snapshot:
+  pipeline_master: c9c4533ed789cf34aee2320cd4642d4fc7b8bf66
   open_issues: 98
   issue_bearing_repositories: 8
-  open_prs_ownerwide: 1
-  open_prs_qps_operational: 0
-
-first_red:
-  class: POSTMERGE_CONTROL_INTEGRITY
-  repository: GBOGEB/pipeline-automation-hub
-  source_pr: 483
-  merge_sha: cc19351780f17cc3c1219ffe53e293b44995e0fe
-  material_findings: 2
-  next: FIX_FORWARD_MIRRORED_STATE_AND_ADMISSION_INVARIANT
-
-deferred_sequential_observation:
-  repository: GBOGEB/ABACUS
-  source_sha: d371d7971ed0653171a9eee65d77cf80219df28d
-  unified_cd_run: 36441522024
-  queued_jobs:
-    - 108993624142
-    - 108993624623
-  current_red_runs:
-    - 36441522270
-    - 36441522222
-  dashboard_issue: 1447
+  operational_open_prs: 0
+  active_missioncontrol_workflows: 0
 
 gm_fleet_03:
-  reviewed: 5
-  selected_not_read: 7
+  structural_repositories: 90
+  structural_prs: 4486
+  p1_denominator: 1079
+  reviewed: 6
+  selected_not_read: 6
   admitted_not_selected: 116
   unexpanded: 951
-  denominator: 1079
   admitted_population: 128
-  order_6: UNREAD_HELD
+  silent_evictions: 0
+  order_6_read: true
+  order_7_read: false
+  next_candidate: GBOGEB/cryoplant-project#1111
 
-authority_transfer: false
-formal_credit_delta: 0
-engineering_credit_delta: 0
+publication_490:
+  chronology: NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED
+  merge: 181ceabd0f207434b97a86ffba8ab7058a8b6ea0
+
+fix_forward_491:
+  head: 24fa1e71f05e41f31c0223c26311a0108192af0f
+  fpc_run: 36449725960
+  trusted_gate_run: 36449961020
+  codex_review: COMPLETE_NO_THREADS
+  merge: c9c4533ed789cf34aee2320cd4642d4fc7b8bf66
+  status: CURRENT_STATE_GREEN
 
 canonical_restart_authority:
   repository: GBOGEB/cryoplant-project
@@ -65,3 +55,7 @@ canonical_restart_authority:
   rule: DO_NOT_USE_THIS_MISSIONCONTROL_POINTER_AS_STANDALONE_RESTART_AUTHORITY
   execution_mode: sequential
   historical_snapshot_only: true
+
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
