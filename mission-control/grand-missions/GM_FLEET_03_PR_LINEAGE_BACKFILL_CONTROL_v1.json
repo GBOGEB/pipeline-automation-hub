@@ -275,7 +275,7 @@
       "unexpanded_population": 951,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD_PENDING_LEDGER_CONTROL_REPAIR",
+      "selected_first_slice_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_ADMITTED",
       "remaining_admitted_not_selected": 116,
       "invariant": "1079 = 2 REVIEWED + 10 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population is the fail-closed union of legacy v1 shortlist and v3 P1-S01 selection.",
       "authoritative_state_field": "p1_admission_ledger.state"
@@ -687,8 +687,29 @@
     "repair_scope": "CONTROL_METADATA_ONLY",
     "order_3_read": false
   },
+  "post_476_release": {
+    "publication_pr": "GBOGEB/pipeline-automation-hub#476",
+    "publication_head": "ce89d90aa8549c9f5e15cc83c04ca32f5b4681cc",
+    "publication_merge": "e1bb2b5e5b6047e806b5108887517123140b0345",
+    "merged_at_utc": "2026-09-28T14:10:21Z",
+    "codex_completed_at_utc": "2026-09-28T14:11:34Z",
+    "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
+    "codex_result": "NO_MAJOR_ISSUES_CURRENT_STATE_VALIDATION_ONLY",
+    "ledger_state": "PROVEN_MERGED_READBACK",
+    "identity_parity": {
+      "entries": 1079,
+      "unique_ids": 1079,
+      "lifecycle_sum": 1079,
+      "admitted_population": 128,
+      "unexpanded_population": 951,
+      "silent_evictions": 0
+    },
+    "released_review_order": 3,
+    "broader_expansion": false
+  },
   "post_476_order_3_4_read": {
     "source_control_repair": "GBOGEB/pipeline-automation-hub#476",
+    "source_release": "GBOGEB/pipeline-automation-hub#477",
     "control_repair_merge": "e1bb2b5e5b6047e806b5108887517123140b0345",
     "order_3": "CLEAN_DURABLE_SUCCESSOR_1144_CURRENT_MAIN_IDENTICAL",
     "order_4": "MATERIAL_NAMESPACE_CONTROL_DEFECT_REPAIRED_BY_QPS_1820_CURRENT_STATE_VERIFIED",
