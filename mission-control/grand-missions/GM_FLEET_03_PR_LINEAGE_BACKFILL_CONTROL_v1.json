@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_BOUNDED_P1_S01_ORDER1_REPAIRED_ORDER2_HELD",
+  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_BOUNDED_P1_S01_ORDER2_REPAIRED_ORDER3_HELD",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -262,7 +262,7 @@
       "v2_codex_added_candidate": "GBOGEB/pipeline-automation-hub::PR25",
       "detector": "TOPOLOGY_OWNER_AWARE"
     },
-    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_1",
+    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_2",
     "policy": "NO_BRUTE_FORCE_P1",
     "bounded_admission_accounting": {
       "p1_denominator": 1079,
@@ -270,7 +270,7 @@
       "unexpanded_population": 959,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "ORDER_1_REPAIRED_VERIFIED_ORDER_2_HELD_PENDING_CONTROL_REPAIR",
+      "selected_first_slice_state": "ORDER_2_REPAIRED_VERIFIED_ORDER_3_HELD",
       "remaining_admitted_not_selected": 108,
       "invariant": "1079 = 120 admitted shortlist + 959 unexpanded; P1-S01 selects 12 from governed bounded review population without expanding the remaining 959.",
       "authoritative_state_field": "p1_review.selection_state"
@@ -293,7 +293,7 @@
     "source_cluster": "SUPERSESSION_COMPETITION",
     "source_cluster_size": 42,
     "selected": 12,
-    "selection_state": "ORDER_1_REPAIRED_VERIFIED_ORDER_2_HELD_PENDING_CONTROL_REPAIR",
+    "selection_state": "ORDER_2_REPAIRED_VERIFIED_ORDER_3_HELD",
     "selected_ids": [
       "GBOGEB/cryoplant-project::PR343",
       "GBOGEB/cryoplant-project::PR346",
@@ -308,13 +308,13 @@
       "GBOGEB/CODEX::PR459",
       "GBOGEB/Q_engineering_tools::PR70"
     ],
-    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_1",
+    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_2",
     "stop_rule": "STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT",
     "next_cluster_after_clean_subset": "SUPERSESSION_COMPETITION_REMAINDER_BEFORE_CROSS_REPO_RETURN",
-    "reviewed": 1,
-    "repaired": 1,
-    "remaining_in_subset": 11,
-    "next_review_order": 2,
+    "reviewed": 2,
+    "repaired": 2,
+    "remaining_in_subset": 10,
+    "next_review_order": 3,
     "order_1_disposition": {
       "reviewed_pr": "GBOGEB/cryoplant-project#343",
       "material_defect": "W25C.5 controlled handover and paired test encoded parent_wave W25C.4C while governed predecessor is W25C.4.",
@@ -349,8 +349,83 @@
         }
       },
       "chronology_note": "#1815 merged before exact-head Codex review completed; later clean review is current-state validation only and does not rewrite that historical noncompliance.",
-      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW"
-    }
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
+      "successor_completion_chain": {
+        "purpose": "Complete the full PR343 finding beyond the initial parent-wave repair while preserving #1815 chronology.",
+        "prs": [
+          {
+            "pr": "GBOGEB/cryoplant-project#1815",
+            "merge": "9ce93da5a0100c15686392916e14861bc2d88890",
+            "scope": "parent-wave identity + stale test assertion"
+          },
+          {
+            "pr": "GBOGEB/cryoplant-project#1816",
+            "merge": "aa85202e941d2c1a6e2b2931a7cc35088938ebdb",
+            "scope": "complete PR341/PR342/PR340 chronology correction"
+          },
+          {
+            "pr": "GBOGEB/cryoplant-project#1817",
+            "merge": "151737e9a40a12fca335ae98af01b6e9648b529b",
+            "scope": "bind exact PR343 lineage provenance in regression test"
+          }
+        ],
+        "current_main_readback_after_chain": "151737e9a40a12fca335ae98af01b6e9648b529b",
+        "note": "#1814 was superseded/unmerged; the merged #1815->#1816->#1817 chain is the durable repair."
+      }
+    },
+    "order_2_disposition": {
+      "reviewed_pr": "GBOGEB/cryoplant-project#346",
+      "classification": "P1_SUPERSESSION_COMPETITION_CONFIRMED / MATERIAL_W36_CONTROL_IDENTITY_AMBIGUITY",
+      "material_defect": "PR346 and later PR343 both published historical W36 current/active control surfaces with incompatible DMAIC treatment and no explicit supersession relation.",
+      "chronology": {
+        "pr346_merged_at_utc": "2026-09-03T20:08:22Z",
+        "pr343_merged_at_utc": "2026-09-03T20:09:12Z",
+        "later_interpretation": "PR343"
+      },
+      "repair_pr": "GBOGEB/cryoplant-project#1818",
+      "repair_head": "b9011026c58ee18346aead97c43ffee4023bd63e",
+      "repair_merge": "06ff9215b1da6e3808d07195a16681fcf977b61c",
+      "relation_receipt": "ocd-adr/40_implementation/QPS_W36_CONTROL_IDENTITY_RELATION_20260927_v0.1.yaml",
+      "relation": {
+        "type": "SUPERSEDES_FOR_HISTORICAL_W36_CONTROL_IDENTITY",
+        "subject": "GBOGEB/cryoplant-project#343",
+        "object": "GBOGEB/cryoplant-project#346",
+        "scope": "historical W36 session-control identity and DMAIC current-state interpretation only"
+      },
+      "merged_main_readback": {
+        "main_sha": "06ff9215b1da6e3808d07195a16681fcf977b61c",
+        "relation_status": "HISTORICAL_W36_CONTROL_IDENTITY_RESOLVED_NO_CURRENT_AUTHORITY",
+        "current_restart_authority": "handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml",
+        "current_restart_wave": "W362",
+        "historical_artifacts_preserved": true
+      },
+      "proof": {
+        "verify_ssot": {
+          "run_id": 36382274042,
+          "head_sha": "b9011026c58ee18346aead97c43ffee4023bd63e",
+          "job_id": 108800315462,
+          "conclusion": "SUCCESS",
+          "executed_steps_gt_0": true,
+          "w36_identity_step": "SUCCESS"
+        },
+        "qps_canonicalization": {
+          "run_id": 36382273972,
+          "head_sha": "b9011026c58ee18346aead97c43ffee4023bd63e",
+          "conclusion": "SUCCESS"
+        },
+        "codex": {
+          "status": "COMPLETE",
+          "result": "NO_MAJOR_ISSUES",
+          "reviewed_head": "b9011026c58ee18346aead97c43ffee4023bd63e",
+          "completed_at_utc": "2026-09-28T05:34:54Z"
+        }
+      },
+      "chronology_classification": "COMPLIANT_PROOF_AND_REVIEW_BEFORE_MERGE",
+      "authority_transfer": false,
+      "formal_credit_delta": 0,
+      "engineering_credit_delta": 0
+    },
+    "next_action": "HOLD_ORDER_3_UNREAD_UNTIL_EXPLICIT_CONTINUATION"
   },
   "post_460_regression": {
     "status": "MATERIAL_CONTROL_REGRESSION_RESTORED_FORWARD",
