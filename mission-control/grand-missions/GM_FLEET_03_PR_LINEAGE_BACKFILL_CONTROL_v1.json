@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_S01_ORDER6_REPAIRED_ORDER7_HELD_POST500_CONTROL_FIX_FORWARD",
+  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_S01_ORDER7_RELEASE_CANDIDATE_POST504",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -262,7 +262,7 @@
       "v2_codex_added_candidate": "GBOGEB/pipeline-automation-hub::PR25",
       "detector": "TOPOLOGY_OWNER_AWARE"
     },
-    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_6_MATERIAL_DEFECT",
+    "deep_read": "ORDER_7_RELEASE_CANDIDATE_NOT_YET_READ",
     "policy": "NO_BRUTE_FORCE_P1",
     "bounded_admission_accounting": {
       "p1_denominator": 1079,
@@ -275,7 +275,7 @@
       "unexpanded_population": 951,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST500_CONTROL_FIX_FORWARD",
+      "selected_first_slice_state": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
       "remaining_admitted_not_selected": 116,
       "invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population = union(legacy_v1_shortlist, P1-S01 selected IDs) = 128; silent_evictions = 0.",
       "authoritative_state_field": "p1_admission_ledger.state",
@@ -305,7 +305,7 @@
     "source_cluster": "SUPERSESSION_COMPETITION",
     "source_cluster_size": 42,
     "selected": 12,
-    "selection_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST500_CONTROL_FIX_FORWARD",
+    "selection_state": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
     "selected_ids": [
       "GBOGEB/cryoplant-project::PR343",
       "GBOGEB/cryoplant-project::PR346",
@@ -320,7 +320,7 @@
       "GBOGEB/CODEX::PR459",
       "GBOGEB/Q_engineering_tools::PR70"
     ],
-    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_6_MATERIAL_DEFECT",
+    "deep_read": "ORDER_7_RELEASE_CANDIDATE_NOT_YET_READ",
     "stop_rule": "STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT",
     "next_cluster_after_clean_subset": "SUPERSESSION_COMPETITION_REMAINDER_BEFORE_CROSS_REPO_RETURN",
     "reviewed": 6,
@@ -505,7 +505,7 @@
         }
       }
     },
-    "next_action": "STOP. P1-S01 review order 7 remains unread until the post-#496 mirror fix-forward is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged, and read back.",
+    "next_action": "AFTER_COMPLIANT_PR505_MERGE_READ_ORDER_7_ONLY_STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT",
     "clean_without_repair": 1,
     "order_3_disposition": {
       "reviewed_pr": "GBOGEB/cryoplant-project#1138",
@@ -771,7 +771,7 @@
   },
   "p1_admission_ledger": {
     "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
-    "state": "ORDER_6_MERGED_POST496_MIRROR_FIX_FORWARD_REQUIRED",
+    "state": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
     "denominator": 1079,
     "lifecycle_counts": {
       "UNEXPANDED": 951,
@@ -1197,6 +1197,42 @@
       "review_state": "SELECTED_NOT_READ",
       "admitted_for_read": false
     },
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "post_504_order7_release_candidate": {
+    "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ORDER7_RELEASE_v1.json",
+    "predecessor_pr": "GBOGEB/pipeline-automation-hub#504",
+    "predecessor_head": "64f16a22ccef3087a9533594224442a931f15e1a",
+    "predecessor_merge": "b7d6f850b0265522b9b97ded3fe2ea1846a7460c",
+    "predecessor_proof": {
+      "ordinary_fpc": {
+        "run_id": 36453891534,
+        "conclusion": "SUCCESS",
+        "executed_steps_gt_0": true
+      },
+      "codex": {
+        "status": "COMPLETE_AFTER_MERGE"
+      },
+      "trusted_gate": {
+        "run_id": 36453965686,
+        "conclusion": "FAILURE"
+      }
+    },
+    "predecessor_chronology": "NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED",
+    "successor_pr": "GBOGEB/pipeline-automation-hub#505",
+    "target_state_on_compliant_merge": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
+    "accounting": {
+      "REVIEWED": 6,
+      "SELECTED_NOT_READ": 6,
+      "ADMITTED_NOT_SELECTED": 116,
+      "UNEXPANDED": 951,
+      "denominator": 1079,
+      "admitted_population": 128,
+      "silent_evictions": 0
+    },
+    "order_7": "RELEASED_TO_READ_NOT_YET_READ_ON_COMPLIANT_MERGE",
     "authority_transfer": false,
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0

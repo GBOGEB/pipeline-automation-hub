@@ -1,0 +1,64 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_pr_lineage_backfill.p1_order7_release.v1",
+  "mission_id": "GM-FLEET-03-PR-LINEAGE-BACKFILL-20260926",
+  "date": "2026-09-28",
+  "predecessor_control": {
+    "pr": "GBOGEB/pipeline-automation-hub#504",
+    "head": "64f16a22ccef3087a9533594224442a931f15e1a",
+    "merge": "b7d6f850b0265522b9b97ded3fe2ea1846a7460c",
+    "merged_at_utc": "2026-09-28T16:51:32Z",
+    "ordinary_fpc": {
+      "run_id": 36453891534,
+      "conclusion": "SUCCESS",
+      "executed_steps_gt_0": true
+    },
+    "codex": {
+      "status": "COMPLETE",
+      "completed_after_merge": true,
+      "reviewed_head": "64f16a22ccef3087a9533594224442a931f15e1a"
+    },
+    "trusted_gate": {
+      "run_id": 36453965686,
+      "conclusion": "FAILURE",
+      "terminal_pass_before_merge": false
+    },
+    "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED",
+    "rule": "Preserve #504 chronology; do not treat later current-state evidence as retroactive pre-merge compliance."
+  },
+  "release_candidate": {
+    "pr": "GBOGEB/pipeline-automation-hub#505",
+    "branch": "mc/gm-fleet-03-order7-release-post500-20260928",
+    "target_state_on_compliant_merge": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
+    "required_before_merge": [
+      "exact-head First-Pass Closure Proof SUCCESS with >0 steps",
+      "bind FPC_RECEIPT_V1 to the exact head",
+      "Codex review COMPLETE / clean on the exact head while draft",
+      "mark ready only after draft review is terminal",
+      "ready-state Codex terminal clean",
+      "Copilot no material finding",
+      "trusted First-Pass Closure Gate PASS on the exact head",
+      "merge the exact proven head only",
+      "fresh-master readback"
+    ]
+  },
+  "accounting": {
+    "REVIEWED": 6,
+    "SELECTED_NOT_READ": 6,
+    "ADMITTED_NOT_SELECTED": 116,
+    "UNEXPANDED": 951,
+    "denominator": 1079,
+    "admitted_population": 128,
+    "unexpanded_population": 951,
+    "silent_evictions": 0
+  },
+  "release": {
+    "subset_id": "P1-S01",
+    "review_order": 7,
+    "candidate": "GBOGEB/cryoplant-project::PR1111",
+    "state": "RELEASED_TO_READ_NOT_YET_READ_ON_COMPLIANT_MERGE",
+    "next_action": "After compliant #505 merge/readback, deep-read order 7 only and stop immediately on the first material semantic or identity defect."
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0
+}
