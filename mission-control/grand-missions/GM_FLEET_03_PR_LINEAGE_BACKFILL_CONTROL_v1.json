@@ -275,9 +275,9 @@
       "unexpanded_population": 951,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "ORDER_5_MATERIAL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED_ORDER_6_HELD",
+      "selected_first_slice_state": "ORDER_5_REPAIRED_VERIFIED_ORDER_6_HELD",
       "remaining_admitted_not_selected": 116,
-      "invariant": "1079 = 5 REVIEWED + 7 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population remains 128.",
+      "invariant": "1079 = 5 REVIEWED + 7 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current_admitted_population = union(legacy_v1_shortlist, P1-S01 selected IDs) = 128; silent_evictions = 0.",
       "authoritative_state_field": "p1_admission_ledger.state"
     },
     "exact_head_fpc_binding": {
@@ -298,7 +298,7 @@
     "source_cluster": "SUPERSESSION_COMPETITION",
     "source_cluster_size": 42,
     "selected": 12,
-    "selection_state": "ORDER_5_MATERIAL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED_ORDER_6_HELD",
+    "selection_state": "ORDER_5_REPAIRED_VERIFIED_ORDER_6_HELD",
     "selected_ids": [
       "GBOGEB/cryoplant-project::PR343",
       "GBOGEB/cryoplant-project::PR346",
@@ -816,5 +816,20 @@
       "UNEXPANDED": 951
     },
     "p1_s01_order_6_read": false
+  },
+  "post_483_review_fix": {
+    "source_pr": "GBOGEB/pipeline-automation-hub#483",
+    "source_head": "ec71c8cded6c2313325d2343587a4fb78db082df",
+    "source_merge": "cc19351780f17cc3c1219ffe53e293b44995e0fe",
+    "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_CODEX_AND_COPILOT_REVIEW_COMPLETION",
+    "material_review_findings": [
+      "Synchronize p1_clustering.bounded_admission_accounting.selected_first_slice_state and p1_review.selection_state with normalized ORDER_5_REPAIRED_VERIFIED_ORDER_6_HELD.",
+      "Restore explicit fail-closed admitted-population union identity and no-silent-eviction condition instead of count-only invariant."
+    ],
+    "repair_scope": "CONTROL_METADATA_ONLY",
+    "order_6_read": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
   }
 }
