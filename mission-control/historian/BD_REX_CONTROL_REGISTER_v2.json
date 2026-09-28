@@ -1510,7 +1510,9 @@
         "ABACUS#1376 post-merge content proof pending; any later green may prove content only and cannot prove merge prevention",
         "pipeline-automation-hub#495 merge@9be039a99eecd631c43bc85b816ba2cc91014d7b crossed before material review findings were repaired; branch later contained a731275e9cb6aac893039b06c2ee20082a40d683 consistency fixes, proving prevention remains unbound",
         "pipeline-automation-hub#499 merged@c7f470ecb585ed8e792a17e4e9b34c06f774abd7 from head 6465c9c0eaba94a0b2ac33074ac8112fb53fdb57 while exact-head MissionControl controls were queued and Codex review was running; draft was repeatedly auto-marked ready, so draft-first again provided no mechanical merge prevention",
-        "pipeline-automation-hub#499 post-merge review found stale hosted-proof-pending metadata after root proof had completed; current-main direct reconciliation removes that contradiction without changing root/control credit"
+        "pipeline-automation-hub#499 post-merge review found stale hosted-proof-pending metadata after root proof had completed; current-main direct reconciliation removes that contradiction without changing root/control credit",
+        "pipeline-automation-hub#499 head 6465c9c0eaba94a0b2ac33074ac8112fb53fdb57 later PASS: Historian Register Control run36452909312, First-Pass run36452909218, QPS TRIAGE run36452909173, W3-16 run36452909384; post-merge green proves content only, not prevention",
+        "pipeline-automation-hub current-main reconciliation 1dd79bdb32c04800277ff44ef78454690189e715 removes superseded hosted-proof-pending markers after post-merge review"
       ],
       "execution_boundary": {
         "classification": "REPOSITORY_ADMIN_MERGE_ADMISSION",
@@ -1538,7 +1540,7 @@
         "head": "6465c9c0eaba94a0b2ac33074ac8112fb53fdb57",
         "merge": "c7f470ecb585ed8e792a17e4e9b34c06f774abd7",
         "classification": "MERGED_BEFORE_EXACT_HEAD_PROOF_AND_REVIEW_COMPLETE",
-        "content_proof": "PENDING_AT_MERGE__POST_MERGE_READBACK_REQUIRED",
+        "content_proof": "POST_MERGE_EXACT_HEAD_4_OF_4_NATIVE_CONTROLS_PASS__POST_MERGE_REVIEW_METADATA_FINDING_FIXED_ON_MAIN",
         "prevention_credit": false,
         "authority_transfer": false,
         "formal_credit_delta": 0
