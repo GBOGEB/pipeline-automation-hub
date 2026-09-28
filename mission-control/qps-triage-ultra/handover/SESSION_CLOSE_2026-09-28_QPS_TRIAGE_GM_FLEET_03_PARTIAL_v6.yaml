@@ -1,0 +1,174 @@
+schema: qps-missioncontrol-session-close/1.0
+as_of: '2026-09-28'
+status: CONTROLLED_PARTIAL_HANDOVER
+execution_wave_type: PARTIAL
+execution_mode: sequential
+strict_mode: true
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+global_project_DoV: WITHHELD
+runtime_GOLD: WITHHELD
+
+base_master: 7bf52f56a68d2931493f2c244f8627c6f42bef54
+predecessor_handover_pr: 503
+predecessor_handover_version: v5
+
+diagnostic_analysis:
+  open_issues: 98
+  repositories_with_open_issues: 8
+  issue_counts:
+    GBOGEB/cryoplant-project: 50
+    GBOGEB/pipeline-automation-hub: 26
+    GBOGEB/ABACUS: 13
+    GBOGEB/CODEX: 4
+    GBOGEB/GEMINI: 2
+    GBOGEB/Q_engineering_tools: 1
+    GBOGEB/gg_MATH: 1
+    GBOGEB/document-organization-system: 1
+  open_prs:
+    - repo: GBOGEB/pipeline-automation-hub
+      pr: 506
+      role: GM_FLEET_03_POST_505_PREMATURE_RELEASE_FIX_FORWARD
+      exact_head: 4a8062574723f371ac41785a129add864e306da7
+      state: OPEN_REVIEW_RUNNING
+    - repo: GBOGEB/stale
+      pr: 8
+      role: UNRELATED_DEPENDABOT_MAINTENANCE
+      state: OPEN
+  active_ci:
+    missioncontrol:
+      - {run: 36462082282, name: First-Pass Closure Proof, conclusion: SUCCESS, exact_head: 4a8062574723f371ac41785a129add864e306da7}
+      - {name: Codex review, state: RUNNING, exact_head: 4a8062574723f371ac41785a129add864e306da7}
+    abacus:
+      - {run: 36455859700, name: DOW + Recursive DMAIC - Unified CD Pipeline, state: QUEUED, sha: f6da6b33f49e361fe970caf8728896ac9d43f6c7, classification: GENERIC_CI_SEPARATE_FROM_CLOSED_HIST_BD_038}
+  completed_current_head_controls:
+    - QPS_TRIAGE_ULTRA_Federation_Control
+    - GM_FLEET_03_F01
+    - GM_FLEET_03_F03
+    - GM_FLEET_03_Ring1
+    - GM_FLEET_03_Ring2
+    - GM_FLEET_03_Capacity_Gate
+    - GM_FLEET_02B_Closeout
+    - W3_16_M03_W0_Recon
+    - GM_IV_governor_controls
+
+decision_matrix:
+  execution_wave_type: PARTIAL
+  justification:
+    - canonical_QPS_runtime_admission_923_is_closed
+    - canonical_Golden_Thread_GT_BDQ_0_9_is_closed_PASS
+    - QPS_repo_local_fix_pressure_is_empty
+    - canonical_global_first_red_is_external_noncompensating_source_safety_authority
+    - ABACUS_HIST_BD_038_semantic_root_is_closed_and_proved
+    - MissionControl_PR506_is_a_bounded_control_fix_forward_not_a_full_semantic_wave
+    - raw_issue_count_does_not_trigger_FULL
+  three_p_star:
+    Prepare: PASS_LIVE_CENSUS_CANONICAL_CHAIN_AND_CURRENT_PR_CI_REFRESHED
+    Prove: PARTIAL_PASS_PR506_EXACT_HEAD_FPC_GREEN_REVIEW_RUNNING
+    Perpetuate: PARTIAL_CONTROL_HANDOVER_AND_REX_RETENTION
+  MIP:
+    Modernize: NONE_REQUIRED_EXCEPT_BOUNDED_POST_505_CONTROL_REPAIR
+    Innovate: NONE_REQUIRED_THIS_CLOSE
+    Perpetuate: ACTIVE_CONTROL_ONLY
+
+qps_authority:
+  root: GBOGEB/cryoplant-project::handover/qps_recursive/GLOB.yaml
+  session_close: GBOGEB/cryoplant-project::handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml
+  current_triage: GBOGEB/cryoplant-project::handover/qps_recursive/QTG_CURRENT.yaml
+  extensions: GBOGEB/cryoplant-project::handover/qps_recursive/QTG_CURRENT_EXTENSIONS.yaml
+  runtime_923: CLOSED_COMPLETED_RUNNER_ADMISSION_RECOVERED
+  golden_thread: PASS_GT_BDQ_0_THROUGH_9_CLOSED
+  qps_repo_local_fix_pressure: EMPTY
+  current_global_first_red: ISSUE_943_AND_SELECTED_SAFETY_SOURCE_SET
+  current_global_first_red_state: HOLD_NONCOMPENSATING_SOURCE_AUTHORITY
+  next: ISSUE_943_PLUS_SELECTED_SAFETY_SOURCE_SET_THEN_SOURCE_PREEMPTION_AND_RELEASE
+
+missioncontrol:
+  current_master: 7bf52f56a68d2931493f2c244f8627c6f42bef54
+  pr_503: MERGED_V5_HANDOVER
+  pr_504: HISTORICAL_NONCOMPLIANT_CONTROL_FIX_FORWARD
+  pr_505:
+    state: MERGED_WITH_POST_MERGE_MATERIAL_REVIEW_FINDINGS
+    exact_head: c4ad2d97252abc06487fea24d5d88f1d6da981e4
+    merge: 7bf52f56a68d2931493f2c244f8627c6f42bef54
+    fpc_run: 36454391652
+    copilot_material_findings: 3
+    disposition: DO_NOT_TREAT_ORDER7_RELEASE_AS_CLEAN
+  pr_506:
+    state: OPEN_BOUNDED_FIX_FORWARD
+    exact_head: 4a8062574723f371ac41785a129add864e306da7
+    fpc_run: 36462082282
+    fpc_job: 109062896379
+    fpc: PASS_GT_ZERO
+    codex_review: RUNNING
+    target_state: ORDER_6_REPAIRED_ORDER_7_HELD_POST505_CONTROL_FIX_FORWARD
+    pr1111: SELECTED_NOT_READ
+    admitted_for_read: false
+    required_before_merge:
+      - draft_codex_terminal_clean
+      - ready_state_codex_terminal_clean
+      - copilot_no_material_finding
+      - trusted_exact_head_gate_pass
+      - merge_exact_head_only
+      - fresh_master_readback
+  REX_CM_005: RETAIN_MERGE_BEFORE_TERMINAL_REVIEW_RECURRENCE
+  REX_CM_006: REFRESH_CURRENT_HISTORIAN_STATE_BEFORE_NEW_ROOT
+
+abacus:
+  HIST_BD_038:
+    issue: 1459
+    state: CLOSED_DONE
+    final_pr: 1466
+    final_exact_head: 0034d2e58422cacffa0ce9f9bf72ae435e4e9807
+    proof_run: 36455515574
+    proof_job: 109040743778
+    proof: PASS
+    merge: f6da6b33f49e361fe970caf8728896ac9d43f6c7
+    current_main_observed: a197ac589b88e4bcd7f3fd47ae5429284cd1609f
+    superseded_prs_closed: [1464, 1465]
+    substantive_source_completion_parent: 1313
+  generic_ci_rule: CLASSIFY_SEPARATELY_BY_CHRONOLOGICAL_FIRST_EXECUTED_RED
+
+noncompensating:
+  - QPS_ISSUE_943_AND_SELECTED_SAFETY_SOURCE_SET
+  - source_safety_release_returns
+  - owner_admin_gates
+  - physical_private_returns
+  - provider_or_federation_PASS
+  - MissionControl_PR506_progress
+  - ABACUS_HIST_BD_038_closure
+  - stale_repo_dependency_maintenance
+
+github_roundtrip:
+  connector_write_success_required: true
+  exact_readback_required: true
+  raw_http_status_exposed_by_connector: false
+  numeric_200_201_claim: NOT_AVAILABLE_FROM_CONNECTOR_DO_NOT_FABRICATE
+
+uncompleted:
+  - consume_PR506_current_head_Codex_review
+  - require_PR506_ready_state_review_and_trusted_gate_before_merge
+  - after_PR506_merge_require_fresh_master_readback_preserving_6_6_116_951_admitted128_silent_evictions0_and_PR1111_unread
+  - do_not_deep_read_PR1111_until_separate_governed_authorization_edge_and_canonical_QTG_allows
+  - preserve_QPS_global_first_red_943_plus_selected_source_safety_set
+  - classify_ABACUS_generic_CI_reds_separately_if_they_execute_materially
+  - keep_ABACUS_1313_open_for_substantive_Appendix_8_4_source_state_completion
+  - recensus_owner_wide_issues_PRs_Actions_before_each_pulse
+  - do_not_launch_FULL_from_issue_count_growth
+
+next_agent_instruction: mission-control/qps-triage-ultra/handover/RESTART_DROPIN_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_v6.md
+lossless_handover: mission-control/qps-triage-ultra/handover/SC_2026-09-28_QPS_TRIAGE_GM_FLEET_03_PARTIAL_LOSSLESS_HANDOVER_v6.md
+
+exact_starting_line: >-
+  START HERE: Refresh GBOGEB/cryoplant-project main, GBOGEB/pipeline-automation-hub master,
+  GBOGEB/ABACUS main, owner-wide open issues/PRs and live Actions; read cryoplant-project
+  GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml -> QTG_CURRENT_EXTENSIONS.yaml
+  before any MissionControl lane; preserve #923 CLOSED_COMPLETED_RUNNER_ADMISSION_RECOVERED and
+  GT_BDQ_0..9 PASS/CLOSED; preserve global first-red #943 + SELECTED_SAFETY_SOURCE_SET as
+  HOLD_NONCOMPENSATING_SOURCE_AUTHORITY; then consume only PR #506 exact-head control gates,
+  keeping cryoplant PR1111 SELECTED_NOT_READ and admitted_for_read=false until #506 is review-clean,
+  trusted-gate PASS, merged on the exact proven head and fresh-master read back; ABACUS HIST-BD-038
+  is CLOSED/DONE via #1466 and #1464/#1465 are superseded/closed; classify unrelated ABACUS CI reds
+  separately by chronological first executed red; keep execution PARTIAL and sequential with
+  authority_transfer=false, formal_credit_delta=0, engineering_credit_delta=0.
