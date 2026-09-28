@@ -146,6 +146,12 @@ def self_test(surface,status,current,trusted):
     assert validate(surface,status,bad,trusted)
     bad=copy.deepcopy(current); bad["canonical"]["adoption_a4_dashboard_workflow"]="WRONG"
     assert validate(surface,status,bad,trusted)
+    bad=copy.deepcopy(current); bad["adoption"]["active_wave"]="MC-A3_POSTMERGE_TRUSTED_CONTROL_REPAIR"
+    assert validate(surface,status,bad,trusted)
+    bad=copy.deepcopy(current); bad["adoption"]["next_wave"]="MC-A5_REX_AND_REGRESSION_CONTROL"
+    assert validate(surface,status,bad,trusted)
+    bad=copy.deepcopy(current); bad["adoption"]["a3_state"]="CONTROLLED_COMPLETE_PENDING_TRUSTED_CONTROL_REPAIR"
+    assert validate(surface,status,bad,trusted)
     bad=copy.deepcopy(current); bad["adoption"]["a4_state"]="ADMITTED_BLOCKED_PENDING_A3_TRUSTED_CONTROL_REPAIR"
     assert validate(surface,status,bad,trusted)
     bad=copy.deepcopy(current); bad["adoption"]["a3_control_repair_state"]="CANDIDATE_DRAFT_WAIT_EXACT_HEAD_PROOF"
