@@ -14,7 +14,7 @@
     "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_REVIEW_SUBSET_01_v1.json",
     "subset_id": "P1-S01",
     "selected_count": 12,
-    "reviewed_count": 4
+    "reviewed_count": 5
   },
   "reconciliation": {
     "policy": "FAIL_CLOSED_UNION_NO_SILENT_EVICTION",
@@ -53,8 +53,8 @@
     "by_lifecycle_state": {
       "UNEXPANDED": 951,
       "ADMITTED_NOT_SELECTED": 116,
-      "SELECTED_NOT_READ": 8,
-      "REVIEWED": 4
+      "SELECTED_NOT_READ": 7,
+      "REVIEWED": 5
     },
     "unexpanded_by_primary_cluster": {
       "NAMESPACE_COLLISION": 883,
@@ -77,7 +77,9 @@
     "no_silent_eviction": true,
     "p1_s01_order_3_read": true,
     "p1_s01_order_4_read": true,
-    "lifecycle_state_sum": "4 REVIEWED + 8 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED = 1079"
+    "lifecycle_state_sum": "5 REVIEWED + 7 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED = 1079",
+    "p1_s01_order_5_read": true,
+    "p1_s01_order_6_read": false
   },
   "entries": [
     {
@@ -8910,7 +8912,7 @@
         "NAMESPACE_COLLISION",
         "MISSING_DURABLE_SUCCESSOR"
       ],
-      "lifecycle_state": "SELECTED_NOT_READ",
+      "lifecycle_state": "REVIEWED",
       "admission_sources": [
         "LEGACY_V1_SHORTLIST",
         "P1-S01_V3_SELECTION"
@@ -11542,11 +11544,24 @@
   "engineering_credit_delta": 0,
   "current_review_progress": {
     "subset_id": "P1-S01",
-    "reviewed": 4,
-    "repaired": 3,
+    "reviewed": 5,
+    "repaired": 4,
     "clean_without_repair": 1,
-    "remaining_in_subset": 8,
-    "next_review_order": 5,
-    "next_review_state": "HELD_PENDING_ORDER3_4_CONTROL_PUBLICATION_MERGE"
+    "remaining_in_subset": 7,
+    "next_review_order": 6,
+    "next_review_state": "HELD_PENDING_ORDER5_CONTROL_PUBLICATION_MERGE"
+  },
+  "order_5_sync": {
+    "reviewed_pr": "GBOGEB/cryoplant-project#756",
+    "disposition": "MATERIAL_MISSING_DURABLE_SUCCESSOR_REPAIRED_CURRENT_STATE_VERIFIED",
+    "repair_chain": [
+      "GBOGEB/cryoplant-project#1822",
+      "GBOGEB/cryoplant-project#1823"
+    ],
+    "durable_successor": "GBOGEB/cryoplant-project#757",
+    "order_6_read": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
   }
 }
