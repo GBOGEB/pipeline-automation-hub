@@ -679,7 +679,8 @@
         "detected_domain_signals": [],
         "foreign_domain_signals": []
       },
-      "review_state": "SELECTED_NOT_READ"
+      "review_state": "SELECTED_NOT_READ",
+      "admitted_for_read": false
     },
     {
       "review_order": 8,
@@ -868,7 +869,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "STOP. P1-S01 review order 7 remains unread until the post-#496 mirror fix-forward is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged, and read back."
+    "next_action": "STOP. Order 7 / cryoplant-project PR1111 remains unread until the post-#505 control fix-forward is exact-head proven, review-clean, trusted-gate PASS, merged, and fresh-master read back."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -885,7 +886,7 @@
     "clean_without_repair": 1,
     "remaining_in_subset": 6,
     "next_review_order": 7,
-    "next_review_state": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR"
+    "next_review_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST505_CONTROL_FIX_FORWARD"
   },
   "finalization": {
     "source_pr": "GBOGEB/pipeline-automation-hub#481",
@@ -894,9 +895,9 @@
     "source_merged_at_utc": "2026-09-28T14:59:25Z",
     "source_codex_completed_at_utc": "2026-09-28T15:00:17.795699Z",
     "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_AND_TRUSTED_GATE",
-    "current_state_validation": "POST504_COMPLIANT_SUCCESSOR_RELEASE_CANDIDATE",
-    "stable_state": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
-    "next_action": "AFTER_COMPLIANT_PR505_MERGE_READ_ORDER_7_ONLY_STOP_ON_FIRST_MATERIAL_DEFECT"
+    "current_state_validation": "POST505_PREMATURE_RELEASE_RETRACTED_CURRENT_MASTER_FIX_FORWARD_REQUIRED",
+    "stable_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST505_CONTROL_FIX_FORWARD",
+    "next_action": "STOP_ORDER_7_UNREAD_UNTIL_POST_505_FIX_FORWARD_PROVEN_REVIEW_CLEAN_TRUSTED_GATE_PASS_MERGED_READBACK"
   },
   "admission_reconciliation": {
     "ledger": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
@@ -1239,5 +1240,55 @@
     "authority_transfer": false,
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0
+  },
+  "post_505_control_integrity_fix_forward": {
+    "historical_publication": {
+      "pr": "GBOGEB/pipeline-automation-hub#505",
+      "head": "c4ad2d97252abc06487fea24d5d88f1d6da981e4",
+      "merge": "7bf52f56a68d2931493f2c244f8627c6f42bef54",
+      "merged_at_utc": "2026-09-28T16:56:20Z",
+      "ordinary_fpc": {
+        "run_id": 36454391652,
+        "conclusion": "SUCCESS",
+        "executed_steps_gt_0": true
+      },
+      "ready_state_codex": {
+        "completed_at_utc": "2026-09-28T16:57:03.318375Z",
+        "relation_to_merge": "AFTER_MERGE"
+      },
+      "trusted_gate": {
+        "run_id": 36454562053,
+        "current_conclusion": "SUCCESS",
+        "timing_note": "Does not cure merge-before-terminal-ready-review chronology."
+      },
+      "copilot": {
+        "submitted_at_utc": "2026-09-28T17:01:30Z",
+        "result": "CHANGES_RECOMMENDED_POST_MERGE",
+        "findings": [
+          "discussion_r4124902906",
+          "discussion_r4124902969",
+          "discussion_r4124903054"
+        ]
+      },
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_READY_STATE_CODEX_TERMINAL_AND_BEFORE_COPILOT_REVIEW; PREMATURE_RELEASE_STATE",
+      "current_state_rule": "DO_NOT_REWRITE_HISTORY; RESTORE ORDER_7 HELD; REQUIRE FRESH COMPLIANT AUTHORIZATION BEFORE BODY READ"
+    },
+    "restored_live_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST505_CONTROL_FIX_FORWARD",
+    "accounting_invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED",
+    "admitted_population": 128,
+    "silent_evictions": 0,
+    "order_7": {
+      "id": "GBOGEB/cryoplant-project::PR1111",
+      "review_state": "SELECTED_NOT_READ",
+      "admitted_for_read": false
+    },
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "supersession": {
+      "historical_target_preserved": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
+      "current_release_authority": false,
+      "superseded_by": "POST505_CONTROL_FIX_FORWARD"
+    }
   }
 }
