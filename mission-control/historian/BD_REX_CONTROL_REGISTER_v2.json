@@ -1508,7 +1508,8 @@
         "ABACUS#1376 created DRAFT for Appendix 8.4 source-bound extraction; repository automation marked it ready, operator converted it back to DRAFT while decisive exact-head jobs were zero-step queued",
         "ABACUS#1376 nevertheless merged@c360b58c02570908f8b1760a6dc42f6c33df1db7 from head b815ae92edd872bcd1385da06ff27bbde8003d6a while qps-line-s/docs/YAML/Ruff/format were queued and Codex review was still running",
         "ABACUS#1376 post-merge content proof pending; any later green may prove content only and cannot prove merge prevention",
-        "pipeline-automation-hub#495 merge@9be039a99eecd631c43bc85b816ba2cc91014d7b crossed before material review findings were repaired; branch later contained a731275e9cb6aac893039b06c2ee20082a40d683 consistency fixes, proving prevention remains unbound"
+        "pipeline-automation-hub#495 merge@9be039a99eecd631c43bc85b816ba2cc91014d7b crossed before material review findings were repaired; branch later contained a731275e9cb6aac893039b06c2ee20082a40d683 consistency fixes, proving prevention remains unbound",
+        "pipeline-automation-hub#499 merged@c7f470ecb585ed8e792a17e4e9b34c06f774abd7 from head 6465c9c0eaba94a0b2ac33074ac8112fb53fdb57 while exact-head MissionControl controls were queued and Codex review was running; draft was repeatedly auto-marked ready, so draft-first again provided no mechanical merge prevention"
       ],
       "execution_boundary": {
         "classification": "REPOSITORY_ADMIN_MERGE_ADMISSION",
@@ -1532,11 +1533,11 @@
       ],
       "latest_occurrence": {
         "repo": "GBOGEB/pipeline-automation-hub",
-        "pr": 495,
-        "head": "696f4e5bad16729ca14881b7f3422d21c8e0bb62",
-        "merge": "9be039a99eecd631c43bc85b816ba2cc91014d7b",
-        "classification": "MERGED_WITH_MATERIAL_REVIEW_FINDINGS_UNREPAIRED",
-        "content_proof": "MISSIONCONTROL_NATIVE_CONTROLS_PASS_BUT_REVIEW_FINDINGS_UNREPAIRED_AT_MERGE",
+        "pr": 499,
+        "head": "6465c9c0eaba94a0b2ac33074ac8112fb53fdb57",
+        "merge": "c7f470ecb585ed8e792a17e4e9b34c06f774abd7",
+        "classification": "MERGED_BEFORE_EXACT_HEAD_PROOF_AND_REVIEW_COMPLETE",
+        "content_proof": "PENDING_AT_MERGE__POST_MERGE_READBACK_REQUIRED",
         "prevention_credit": false,
         "authority_transfer": false,
         "formal_credit_delta": 0
