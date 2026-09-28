@@ -869,7 +869,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "STOP. Order 7 / cryoplant-project PR1111 remains unread until the post-#505 control fix-forward is exact-head proven, review-clean, trusted-gate PASS, merged, and fresh-master read back."
+    "next_action": "STOP. Order 7 remains unread on this candidate branch. Authorization becomes effective only after the post-#506 authorization PR is exact-head proven, review-clean, trusted-gate PASS, merged, and fresh-master read back."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -897,7 +897,7 @@
     "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_AND_TRUSTED_GATE",
     "current_state_validation": "POST505_PREMATURE_RELEASE_RETRACTED_CURRENT_MASTER_FIX_FORWARD_REQUIRED",
     "stable_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST505_CONTROL_FIX_FORWARD",
-    "next_action": "STOP_ORDER_7_UNREAD_UNTIL_POST_505_FIX_FORWARD_PROVEN_REVIEW_CLEAN_TRUSTED_GATE_PASS_MERGED_READBACK"
+    "next_action": "STOP_ORDER_7_UNREAD_UNTIL_POST_506_AUTHORIZATION_PR_PROVEN_REVIEW_CLEAN_TRUSTED_GATE_PASS_MERGED_READBACK"
   },
   "admission_reconciliation": {
     "ledger": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
@@ -1290,5 +1290,21 @@
       "current_release_authority": false,
       "superseded_by": "POST505_CONTROL_FIX_FORWARD"
     }
+  },
+  "post_506_order7_authorization_candidate": {
+    "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ORDER7_AUTHORIZATION_v1.json",
+    "predecessor_pr": "GBOGEB/pipeline-automation-hub#506",
+    "predecessor_merge": "bcce3cbbf303a8e8bf28b9d90513fa5217581061",
+    "candidate": "GBOGEB/cryoplant-project::PR1111",
+    "branch_live_state": "SELECTED_NOT_READ",
+    "admitted_for_read": false,
+    "order_7_read": false,
+    "authorization_effect": "EFFECTIVE_ONLY_AFTER_THIS_AUTHORIZATION_PR_EXACT_HEAD_PROVEN_REVIEW_CLEAN_TRUSTED_GATE_PASS_MERGED_AND_FRESH_MASTER_READBACK",
+    "target_state_after_condition": "AUTHORIZED_FOR_ORDER7_BODY_READ_ONLY",
+    "accounting_unchanged": true,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "state": "ORDER_7_AUTHORIZATION_CANDIDATE_POST506_HELD_UNTIL_OWN_MERGE_READBACK"
   }
 }
