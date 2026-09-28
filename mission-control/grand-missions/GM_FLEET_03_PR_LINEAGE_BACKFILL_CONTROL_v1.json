@@ -262,7 +262,7 @@
       "v2_codex_added_candidate": "GBOGEB/pipeline-automation-hub::PR25",
       "detector": "TOPOLOGY_OWNER_AWARE"
     },
-    "deep_read": "NOT_STARTED",
+    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_1",
     "policy": "NO_BRUTE_FORCE_P1",
     "bounded_admission_accounting": {
       "p1_denominator": 1079,
@@ -292,7 +292,7 @@
     "source_cluster": "SUPERSESSION_COMPETITION",
     "source_cluster_size": 42,
     "selected": 12,
-    "selection_state": "ORDER_1_REPAIRED_VERIFIED_ORDER_2_HELD",
+    "selection_state": "ORDER_1_REPAIRED_VERIFIED_ORDER_2_HELD_PENDING_CONTROL_REPAIR",
     "selected_ids": [
       "GBOGEB/cryoplant-project::PR343",
       "GBOGEB/cryoplant-project::PR346",
@@ -327,11 +327,19 @@
       "proof": {
         "qps_w25d_delta_review": {
           "run_id": 36351298957,
-          "conclusion": "SUCCESS"
+          "head_sha": "49fb09619b7f2ec8b5adcebe129f5bf64931f4af",
+          "job_id": 108710363557,
+          "conclusion": "SUCCESS",
+          "executed_steps_gt_0": true,
+          "successful_step_count": 21
         },
         "verify_ssot": {
           "run_id": 36351298955,
-          "conclusion": "SUCCESS"
+          "head_sha": "49fb09619b7f2ec8b5adcebe129f5bf64931f4af",
+          "job_id": 108710363860,
+          "conclusion": "SUCCESS",
+          "executed_steps_gt_0": true,
+          "successful_step_count": 35
         },
         "codex": {
           "status": "COMPLETE",
@@ -339,7 +347,8 @@
           "reviewed_head": "49fb09619b7f2ec8b5adcebe129f5bf64931f4af"
         }
       },
-      "chronology_note": "#1815 merged before exact-head Codex review completed; later clean review is current-state validation and does not rewrite that historical chronology."
+      "chronology_note": "#1815 merged before exact-head Codex review completed; later clean review is current-state validation only and does not rewrite that historical noncompliance.",
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW"
     }
   },
   "post_460_regression": {
@@ -360,5 +369,15 @@
     ],
     "repair_scope": "CONTROL_METADATA_ONLY",
     "p1_body_deep_read_performed": false
+  },
+  "post_466_review_repair": {
+    "source": "Codex + Copilot review on #466",
+    "material_findings": [
+      "Bind #1815 proof runs to exact repair head, job IDs, and nonzero executed steps.",
+      "Classify #1815 merge-before-review chronology explicitly as NONCOMPLIANT.",
+      "Align top-level p1_clustering.deep_read with p1_review.deep_read."
+    ],
+    "repair_scope": "CONTROL_METADATA_ONLY",
+    "p1_s01_order_2_read": false
   }
 }
