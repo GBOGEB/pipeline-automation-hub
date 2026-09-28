@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_S01_ORDER5_REPAIRED_VERIFIED_ORDER6_HELD",
+  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_S01_ORDER6_REPAIRED_VERIFIED_ORDER7_HELD_PENDING_CONTROL_PUBLICATION",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -262,7 +262,7 @@
       "v2_codex_added_candidate": "GBOGEB/pipeline-automation-hub::PR25",
       "detector": "TOPOLOGY_OWNER_AWARE"
     },
-    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_5_MATERIAL_DEFECT",
+    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_6_MATERIAL_DEFECT",
     "policy": "NO_BRUTE_FORCE_P1",
     "bounded_admission_accounting": {
       "p1_denominator": 1079,
@@ -275,9 +275,9 @@
       "unexpanded_population": 951,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "ORDER_5_REPAIRED_VERIFIED_ORDER_6_HELD",
+      "selected_first_slice_state": "ORDER_6_REPAIRED_VERIFIED_ORDER_7_HELD",
       "remaining_admitted_not_selected": 116,
-      "invariant": "1079 = 5 REVIEWED + 7 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population = union(legacy_v1_shortlist, P1-S01 selected IDs) = 128; silent_evictions = 0.",
+      "invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population = union(legacy_v1_shortlist, P1-S01 selected IDs) = 128; silent_evictions = 0.",
       "authoritative_state_field": "p1_admission_ledger.state",
       "no_silent_eviction": true,
       "admission_union": {
@@ -305,7 +305,7 @@
     "source_cluster": "SUPERSESSION_COMPETITION",
     "source_cluster_size": 42,
     "selected": 12,
-    "selection_state": "ORDER_5_REPAIRED_VERIFIED_ORDER_6_HELD",
+    "selection_state": "ORDER_6_REPAIRED_VERIFIED_ORDER_7_HELD",
     "selected_ids": [
       "GBOGEB/cryoplant-project::PR343",
       "GBOGEB/cryoplant-project::PR346",
@@ -320,13 +320,13 @@
       "GBOGEB/CODEX::PR459",
       "GBOGEB/Q_engineering_tools::PR70"
     ],
-    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_5_MATERIAL_DEFECT",
+    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_6_MATERIAL_DEFECT",
     "stop_rule": "STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT",
     "next_cluster_after_clean_subset": "SUPERSESSION_COMPETITION_REMAINDER_BEFORE_CROSS_REPO_RETURN",
-    "reviewed": 5,
-    "repaired": 4,
-    "remaining_in_subset": 7,
-    "next_review_order": 6,
+    "reviewed": 6,
+    "repaired": 5,
+    "remaining_in_subset": 6,
+    "next_review_order": 7,
     "order_1_disposition": {
       "reviewed_pr": "GBOGEB/cryoplant-project#343",
       "material_defect": "W25C.5 controlled handover and paired test encoded parent_wave W25C.4C while governed predecessor is W25C.4.",
@@ -500,7 +500,7 @@
         }
       }
     },
-    "next_action": "STOP. P1-S01 review order 6 remains unread until this order-5 control fix-forward is exact-head proven, reviewed, merged, and read back.",
+    "next_action": "STOP. P1-S01 review order 7 remains unread until this order-6 control publication is exact-head proven, reviewed, merged, and read back.",
     "clean_without_repair": 1,
     "order_3_disposition": {
       "reviewed_pr": "GBOGEB/cryoplant-project#1138",
@@ -647,6 +647,66 @@
       "authority_transfer": false,
       "formal_credit_delta": 0,
       "engineering_credit_delta": 0
+    },
+    "order_6_disposition": {
+      "reviewed_pr": "GBOGEB/cryoplant-project#1170",
+      "classification": "P1_W175B_COST_METHOD_DEFECTS_CONFIRMED_AND_REPAIRED",
+      "primary_first_red": "Lifecycle roll-up double-counted outage cost by adding NPV_downtime_cost after expected corrective cost already included MDT * downtime_cost_rate.",
+      "companion_material_finding": "M2 inherited the complete M1 BOM, importing merchant-only supply/fill and tanker-fill infrastructure into the onsite-generation alternative.",
+      "source_review": {
+        "codex_reviewed_head": "b4784f0eb9a813d4e66a62a2f9c7e2666726421c",
+        "downtime_finding": "discussion_r4007473095",
+        "m2_boundary_finding": "discussion_r4007473106"
+      },
+      "repair_pr": "GBOGEB/cryoplant-project#1824",
+      "repair_head": "ef83a69ce44dd5d61b30f3b2bab87808831bd941",
+      "repair_merge": "ae23418e726d80ecb63b73f8d82eb85767e974ff",
+      "repair_semantics": [
+        "M2 uses an explicit shared downstream storage/transfer/HX/control/support/conformity/test/spares boundary rather than inheriting all M1 merchant rows.",
+        "M2 excludes the merchant supply/fill interface and tanker-fill station unless backup merchant supply is separately scoped.",
+        "Reliability-adjusted lifecycle cost counts downtime once inside expected corrective cost; standalone NPV_downtime_cost is removed from the roll-up.",
+        "Human narrative is aligned with the YAML boundary and focused regression asserts both contracts."
+      ],
+      "proof": {
+        "verify_ssot": {
+          "run_id": 36432956109,
+          "job_id": 108963538058,
+          "conclusion": "SUCCESS",
+          "executed_steps_gt_0": true,
+          "focused_step": "Test W175-B method contract",
+          "focused_step_conclusion": "SUCCESS"
+        },
+        "qps_canonicalization": {
+          "run_id": 36432956166,
+          "conclusion": "SUCCESS"
+        },
+        "codex": {
+          "status": "COMPLETE",
+          "result": "NO_MAJOR_ISSUES",
+          "reviewed_head": "ef83a69ce44dd5d61b30f3b2bab87808831bd941",
+          "completed_at_utc": "2026-09-28T14:04:50Z"
+        },
+        "copilot": {
+          "initial_finding": "Human narrative still implied M2 inherited merchant supply/tanker scope.",
+          "addressed_on_head": "ef83a69ce44dd5d61b30f3b2bab87808831bd941"
+        }
+      },
+      "chronology_classification": "COMPLIANT_FINAL_HEAD_REVIEW_BEFORE_MERGE",
+      "current_main_readback": {
+        "repository": "GBOGEB/cryoplant-project",
+        "main_sha": "b8fcfc19f9b0a399951573faac36ec848d6acdf1",
+        "yaml_path": "triage/w175/QPS_W175B_LN2_COST_BOM_METHOD_SUPPLEMENT_v0.1.yaml",
+        "yaml_blob": "29bddbd8f2ff6aed45fcc5de27523f2186454636",
+        "docs_path": "docs/QPS_W175B_LN2_COST_BOM_METHOD_SUPPLEMENT.md",
+        "docs_blob": "006d3159e6186d4ff47d4b75faad023a73d056c6",
+        "test_path": "tests/test_qps_w175b_method_contract.py",
+        "test_blob": "765e066d85e8dbbb233e5539b7331f0b03c63406",
+        "repair_semantic_files_byte_identical_to_1824_head": true,
+        "current_verify_ssot_still_executes_focused_regression": true
+      },
+      "authority_transfer": false,
+      "formal_credit_delta": 0,
+      "engineering_credit_delta": 0
     }
   },
   "post_460_regression": {
@@ -711,8 +771,8 @@
     "lifecycle_counts": {
       "UNEXPANDED": 951,
       "ADMITTED_NOT_SELECTED": 116,
-      "SELECTED_NOT_READ": 7,
-      "REVIEWED": 5
+      "SELECTED_NOT_READ": 6,
+      "REVIEWED": 6
     },
     "current_admitted_population": 128,
     "unexpanded_population": 951,
@@ -747,7 +807,8 @@
     },
     "order_4_read": true,
     "order_5_read": true,
-    "order_6_read": false
+    "order_6_read": true,
+    "order_7_read": false
   },
   "post_475_review_repair": {
     "publication_pr": "GBOGEB/pipeline-automation-hub#475",
@@ -842,5 +903,87 @@
       "Restore explicit fail-closed admission union and no-silent-eviction invariant."
     ],
     "order_6_read": false
+  },
+  "post_488_order_6_read": {
+    "order_5_control_release": {
+      "pr": "GBOGEB/pipeline-automation-hub#488",
+      "head": "228d28ff2302fafd6d168515f150f7498e4d0382",
+      "merge": "b21deac61db5350e9365f50ecd03cbbf5da2f506",
+      "ordinary_fpc": {
+        "run_id": 36446964306,
+        "job_id": 109011653582,
+        "conclusion": "SUCCESS"
+      },
+      "trusted_gate": {
+        "run_id": 36447836731,
+        "attempt": 2,
+        "conclusion": "SUCCESS"
+      },
+      "codex_ready_review": "COMPLETE_NO_MAJOR_ISSUES"
+    },
+    "order_6": {
+      "reviewed_pr": "GBOGEB/cryoplant-project#1170",
+      "classification": "P1_W175B_COST_METHOD_DEFECTS_CONFIRMED_AND_REPAIRED",
+      "primary_first_red": "Lifecycle roll-up double-counted outage cost by adding NPV_downtime_cost after expected corrective cost already included MDT * downtime_cost_rate.",
+      "companion_material_finding": "M2 inherited the complete M1 BOM, importing merchant-only supply/fill and tanker-fill infrastructure into the onsite-generation alternative.",
+      "source_review": {
+        "codex_reviewed_head": "b4784f0eb9a813d4e66a62a2f9c7e2666726421c",
+        "downtime_finding": "discussion_r4007473095",
+        "m2_boundary_finding": "discussion_r4007473106"
+      },
+      "repair_pr": "GBOGEB/cryoplant-project#1824",
+      "repair_head": "ef83a69ce44dd5d61b30f3b2bab87808831bd941",
+      "repair_merge": "ae23418e726d80ecb63b73f8d82eb85767e974ff",
+      "repair_semantics": [
+        "M2 uses an explicit shared downstream storage/transfer/HX/control/support/conformity/test/spares boundary rather than inheriting all M1 merchant rows.",
+        "M2 excludes the merchant supply/fill interface and tanker-fill station unless backup merchant supply is separately scoped.",
+        "Reliability-adjusted lifecycle cost counts downtime once inside expected corrective cost; standalone NPV_downtime_cost is removed from the roll-up.",
+        "Human narrative is aligned with the YAML boundary and focused regression asserts both contracts."
+      ],
+      "proof": {
+        "verify_ssot": {
+          "run_id": 36432956109,
+          "job_id": 108963538058,
+          "conclusion": "SUCCESS",
+          "executed_steps_gt_0": true,
+          "focused_step": "Test W175-B method contract",
+          "focused_step_conclusion": "SUCCESS"
+        },
+        "qps_canonicalization": {
+          "run_id": 36432956166,
+          "conclusion": "SUCCESS"
+        },
+        "codex": {
+          "status": "COMPLETE",
+          "result": "NO_MAJOR_ISSUES",
+          "reviewed_head": "ef83a69ce44dd5d61b30f3b2bab87808831bd941",
+          "completed_at_utc": "2026-09-28T14:04:50Z"
+        },
+        "copilot": {
+          "initial_finding": "Human narrative still implied M2 inherited merchant supply/tanker scope.",
+          "addressed_on_head": "ef83a69ce44dd5d61b30f3b2bab87808831bd941"
+        }
+      },
+      "chronology_classification": "COMPLIANT_FINAL_HEAD_REVIEW_BEFORE_MERGE",
+      "current_main_readback": {
+        "repository": "GBOGEB/cryoplant-project",
+        "main_sha": "b8fcfc19f9b0a399951573faac36ec848d6acdf1",
+        "yaml_path": "triage/w175/QPS_W175B_LN2_COST_BOM_METHOD_SUPPLEMENT_v0.1.yaml",
+        "yaml_blob": "29bddbd8f2ff6aed45fcc5de27523f2186454636",
+        "docs_path": "docs/QPS_W175B_LN2_COST_BOM_METHOD_SUPPLEMENT.md",
+        "docs_blob": "006d3159e6186d4ff47d4b75faad023a73d056c6",
+        "test_path": "tests/test_qps_w175b_method_contract.py",
+        "test_blob": "765e066d85e8dbbb233e5539b7331f0b03c63406",
+        "repair_semantic_files_byte_identical_to_1824_head": true,
+        "current_verify_ssot_still_executes_focused_regression": true
+      },
+      "authority_transfer": false,
+      "formal_credit_delta": 0,
+      "engineering_credit_delta": 0
+    },
+    "order_7_read": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
   }
 }
