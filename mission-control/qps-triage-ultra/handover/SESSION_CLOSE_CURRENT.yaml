@@ -33,6 +33,15 @@ gm_fleet_03:
   order_6_read: true
   order_7_read: false
   next_candidate: GBOGEB/cryoplant-project#1111
+  next_candidate_scope: MISSIONCONTROL_SEMANTIC_LANE_SUBJECT_TO_QTG_GLOBAL_PREEMPTION
+
+canonical_qps_global_priority:
+  repository: GBOGEB/cryoplant-project
+  qtg_global_first_red: ISSUE_943_AND_SELECTED_SAFETY_SOURCE_SET
+  qtg_global_state: HOLD_NONCOMPENSATING_SOURCE_AUTHORITY
+  runtime_923: CLOSED_COMPLETED_RUNNER_ADMISSION_RECOVERED
+  golden_thread: PASS_GT_BDQ_0_THROUGH_9_CLOSED
+  rule: SOURCE_SAFETY_OWNER_PHYSICAL_RETURN_PREEMPTS_LOWER_MISSIONCONTROL_SEMANTIC_WORK
 
 publication_490:
   chronology: NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED
