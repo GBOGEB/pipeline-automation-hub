@@ -8,6 +8,15 @@ Repository / mission scope:
 
 EXECUTION_WAVE_TYPE = PARTIAL
 
+CURRENT CLOSURE FIRST-RED:
+- #491 post-merge review found 2 High + 1 Medium control defects not present on master
+- fresh current-master fix-forward = pipeline-automation-hub#498
+- #498 exact head = 69096e82388e00b7194a575e59e82905d97e6678
+- #498 FPC = 36451359861 / job 109026649426 PASS >0-step
+- #498 Codex exact-head review = RUNNING at session close
+- #498 state = DRAFT / HOLD / DO_NOT_MERGE
+- handover PR #494 = DRAFT / HOLD until #498 merge + fresh-master readback
+
 LIVE STATE:
 - current master: c9c4533ed789cf34aee2320cd4642d4fc7b8bf66
 - 98 open issues / 8 issue-bearing repos
@@ -112,4 +121,4 @@ CANONICAL RESTART AUTHORITY:
 - execution remains sequential
 
 EXACT STARTING LINE:
-START HERE: Read the canonical cryoplant restart chain handover/qps_recursive/GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml and refresh live repos/Actions; preserve QTG_CURRENT #943 + SELECTED_SAFETY_SOURCE_SET and any arrived source/safety/owner/physical return as non-compensating preemption; then refresh GBOGEB/pipeline-automation-hub@c9c4533ed789cf34aee2320cd4642d4fc7b8bf66 and verify 6/6/116/951 + admitted=128 + silent_evictions=0 + order_7_read=false; if no higher-priority QTG return is actionable, admit/deep-read only GM-FLEET order 7 GBOGEB/cryoplant-project#1111, repair iff material, prove/review/trusted-gate before merge, fresh-main readback, and STOP before order 8.
+START HERE: Refresh pipeline-automation-hub PR #498 at exact head 69096e82388e00b7194a575e59e82905d97e6678; if Codex exact-head review is still RUNNING, HOLD and do not merge; when review is COMPLETE/clean require trusted First-Pass Closure Gate PASS, merge exact head and fresh-master read back qualified cryoplant restart authority plus 6/6/116/951, admitted=128, silent_evictions=0 and order_7_read=false; then rebase/revalidate handover PR #494 and merge only after exact-head proof/review/trusted-gate; after final closure publication read cryoplant GLOB -> SESSION_CLOSE_CURRENT -> QTG_CURRENT, preserve global #943 + selected safety/source preemption, and only if no higher-priority QTG return is actionable admit/deep-read GM-FLEET order 7 cryoplant-project#1111; STOP before order 8.
