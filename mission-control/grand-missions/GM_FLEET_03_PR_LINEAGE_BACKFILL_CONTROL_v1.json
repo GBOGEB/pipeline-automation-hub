@@ -5,7 +5,7 @@
   "fleet_wave": "GM-FLEET-03",
   "parent_issue": "GBOGEB/pipeline-automation-hub#426",
   "implementation_pr": "GBOGEB/pipeline-automation-hub#427",
-  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_S01_ORDER4_REPAIRED_ORDER5_HELD",
+  "state": "STRUCTURAL_COMPLETE_P0_COMPLETE_P1_CLUSTERED_P1_S01_ORDER4_LEDGER_SYNC_PENDING_PROOF_ORDER5_HELD",
   "snapshot": "FROZEN_FLEET_4486",
   "denominator": {
     "repositories": 90,
@@ -262,7 +262,7 @@
       "v2_codex_added_candidate": "GBOGEB/pipeline-automation-hub::PR25",
       "detector": "TOPOLOGY_OWNER_AWARE"
     },
-    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_2",
+    "deep_read": "IN_PROGRESS_STOPPED_AFTER_ORDER_4_MATERIAL_DEFECT",
     "policy": "NO_BRUTE_FORCE_P1",
     "bounded_admission_accounting": {
       "p1_denominator": 1079,
@@ -275,9 +275,9 @@
       "unexpanded_population": 951,
       "selected_first_slice": 12,
       "selected_first_slice_id": "P1-S01",
-      "selected_first_slice_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_ADMITTED",
+      "selected_first_slice_state": "ORDER_4_MATERIAL_DEFECT_REPAIRED_LEDGER_SYNC_PENDING_PROOF_ORDER_5_HELD",
       "remaining_admitted_not_selected": 116,
-      "invariant": "1079 = 2 REVIEWED + 10 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population is the fail-closed union of legacy v1 shortlist and v3 P1-S01 selection.",
+      "invariant": "1079 = 4 REVIEWED + 8 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED; current admitted population remains the fail-closed union of legacy v1 shortlist and v3 P1-S01 selection.",
       "authoritative_state_field": "p1_admission_ledger.state"
     },
     "exact_head_fpc_binding": {
@@ -298,7 +298,7 @@
     "source_cluster": "SUPERSESSION_COMPETITION",
     "source_cluster_size": 42,
     "selected": 12,
-    "selection_state": "ORDER_4_MATERIAL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED_ORDER_5_HELD",
+    "selection_state": "ORDER_4_REPAIRED_LEDGER_SYNC_PENDING_PROOF_ORDER_5_HELD",
     "selected_ids": [
       "GBOGEB/cryoplant-project::PR343",
       "GBOGEB/cryoplant-project::PR346",
@@ -493,7 +493,7 @@
         }
       }
     },
-    "next_action": "AFTER_THIS_CONTROL_PUBLICATION_IS_PROVEN_MERGED_AND_READ_BACK_RESUME_ORDER_5_UNDER_STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT",
+    "next_action": "HOLD_ORDER_5_UNREAD_UNTIL_LEDGER_SYNC_FIX_FORWARD_PROVEN_REVIEWED_MERGED_AND_READ_BACK",
     "clean_without_repair": 1,
     "order_3_disposition": {
       "reviewed_pr": "GBOGEB/cryoplant-project#1138",
@@ -639,8 +639,8 @@
     "lifecycle_counts": {
       "UNEXPANDED": 951,
       "ADMITTED_NOT_SELECTED": 116,
-      "SELECTED_NOT_READ": 10,
-      "REVIEWED": 2
+      "SELECTED_NOT_READ": 8,
+      "REVIEWED": 4
     },
     "current_admitted_population": 128,
     "unexpanded_population": 951,
@@ -673,7 +673,9 @@
       "unexpanded_population": 951,
       "silent_evictions": 0
     },
-    "order_4_read": true
+    "order_4_read": true,
+    "order_5_read": false,
+    "progress_sync": "PENDING_FIX_FORWARD_PROOF"
   },
   "post_475_review_repair": {
     "publication_pr": "GBOGEB/pipeline-automation-hub#475",
@@ -714,6 +716,29 @@
     "order_3": "CLEAN_DURABLE_SUCCESSOR_1144_CURRENT_MAIN_IDENTICAL",
     "order_4": "MATERIAL_NAMESPACE_CONTROL_DEFECT_REPAIRED_BY_QPS_1820_CURRENT_STATE_VERIFIED",
     "order_5_read": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "post_478_sync_repair": {
+    "source_pr": "GBOGEB/pipeline-automation-hub#478",
+    "source_head": "fd9a27300d6f9a3b1cbf5f2a09915126e13aba33",
+    "source_merge": "7037041b95424b14ee815fc2bb5c6f9aa68e50f8",
+    "material_findings": [
+      "p1_clustering deep-read/accounting projection remained at order 2 while p1_review advanced to order 4",
+      "authoritative admission ledger retained REVIEWED=2 / SELECTED_NOT_READ=10 and left PR1138/PR1073 SELECTED_NOT_READ",
+      "subset constraints.next_action still instructed order 3"
+    ],
+    "repair_scope": "CONTROL_METADATA_AND_LEDGER_LIFECYCLE_SYNCHRONIZATION_ONLY",
+    "target_accounting": {
+      "REVIEWED": 4,
+      "SELECTED_NOT_READ": 8,
+      "ADMITTED_NOT_SELECTED": 116,
+      "UNEXPANDED": 951,
+      "total": 1079
+    },
+    "order_5_read": false,
+    "chronology_classification": "FIX_FORWARD_REQUIRED_AFTER_NONCOMPLIANT_478_MERGE",
     "authority_transfer": false,
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0
