@@ -738,7 +738,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "After this ledger-control repair is proven, merged, and read back, resume P1-S01 review order 3 under STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT."
+    "next_action": "Deep-read only P1-S01 review order 3 (GBOGEB/cryoplant-project#1138). Stop immediately on the first material semantic/identity defect before reading order 4."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -765,7 +765,8 @@
     "source_codex_completed_at_utc": "2026-09-28T05:57:39Z",
     "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
     "current_state_validation": "CODEX_COMPLETE_NO_MAJOR_ISSUES_AFTER_MERGE",
-    "stable_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD"
+    "stable_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD",
+    "next_action": "After this order-3/4 control publication is proven, reviewed, merged and read back, resume only P1-S01 review order 5 under STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT."
   },
   "admission_reconciliation": {
     "ledger": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
@@ -798,5 +799,25 @@
     },
     "order_3_read": true,
     "order_4_read": true
+  },
+  "post_476_release": {
+    "publication_pr": "GBOGEB/pipeline-automation-hub#476",
+    "publication_head": "ce89d90aa8549c9f5e15cc83c04ca32f5b4681cc",
+    "publication_merge": "e1bb2b5e5b6047e806b5108887517123140b0345",
+    "merged_at_utc": "2026-09-28T14:10:21Z",
+    "codex_completed_at_utc": "2026-09-28T14:11:34Z",
+    "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
+    "codex_result": "NO_MAJOR_ISSUES_CURRENT_STATE_VALIDATION_ONLY",
+    "ledger_state": "PROVEN_MERGED_READBACK",
+    "identity_parity": {
+      "entries": 1079,
+      "unique_ids": 1079,
+      "lifecycle_sum": 1079,
+      "admitted_population": 128,
+      "unexpanded_population": 951,
+      "silent_evictions": 0
+    },
+    "released_review_order": 3,
+    "broader_expansion": false
   }
 }
