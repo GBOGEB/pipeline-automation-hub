@@ -1,3 +1,6 @@
+AUTHORITY-CHAIN CORRECTION
+This drop-in is historical evidence only. Canonical restart authority is `GBOGEB/cryoplant-project` `handover/qps_recursive/GLOB.yaml` -> `SESSION_CLOSE_CURRENT.yaml` -> `QTG_CURRENT.yaml` plus current GM-FLEET-03 controller `GBOGEB/pipeline-automation-hub#426`. `execution_mode=sequential`. Do not use this file as a standalone restart root.
+
 NEXT_AGENT_INSTRUCTION
 
 Repository / mission scope:
@@ -103,4 +106,4 @@ NON-COMPENSATING:
 - issue-count pressure
 
 EXACT STARTING LINE:
-START HERE: Refresh pipeline-automation-hub master cc19351780f17cc3c1219ffe53e293b44995e0fe and repair only the two unresolved post-merge #483 control findings while keeping GM-FLEET-03 order 6 / cryoplant#1170 unread; in parallel consume ABACUS unified-CD run 36441522024 and classify the current integration/Black/package reds plus #1447, then recensus the live 98-issue / 8-repo fleet before selecting any new EXECUTE_NOW root.
+START HERE: Refresh canonical QPS restart authority in GBOGEB/cryoplant-project (handover/qps_recursive/GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml), then current pipeline-automation-hub master and GM-FLEET-03 controller #426. Preserve 6/6/116/951 and keep order 7 / cryoplant#1111 unread while the post-#490 control-integrity fix-forward is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged and read back. Only then, sequentially, consume ABACUS observations and recensus before selecting any new EXECUTE_NOW root.

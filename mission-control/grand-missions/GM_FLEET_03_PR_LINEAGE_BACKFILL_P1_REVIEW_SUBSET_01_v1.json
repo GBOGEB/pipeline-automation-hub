@@ -863,7 +863,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "STOP. P1-S01 review order 7 remains unread until this order-6 control publication is exact-head proven, reviewed, merged, and read back."
+    "next_action": "STOP. P1-S01 review order 7 remains unread until the post-#490 control-integrity fix-forward is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged, and read back."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -889,9 +889,9 @@
     "source_merged_at_utc": "2026-09-28T14:59:25Z",
     "source_codex_completed_at_utc": "2026-09-28T15:00:17.795699Z",
     "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_AND_TRUSTED_GATE",
-    "current_state_validation": "CODEX_COMPLETE_AFTER_MERGE; TRUSTED_GATE_ON_SOURCE_HEAD_FAILED_PENDING_REVIEW_AT_TRIGGER",
-    "stable_state": "ORDER_5_REPAIRED_VERIFIED_ORDER_6_HELD",
-    "next_action": "STOP_ORDER_6_UNREAD_UNTIL_THIS_FIX_FORWARD_IS_PROVEN_REVIEWED_MERGED_READBACK"
+    "current_state_validation": "ORDER_6_MERGED_WITH_TRUSTED_GATE_RED_AND_CODEX_INCOMPLETE_AT_MERGE; CURRENT_STATE_FIX_FORWARD_REQUIRED",
+    "stable_state": "ORDER_6_REPAIRED_ORDER_7_HELD_CONTROL_FIX_FORWARD",
+    "next_action": "STOP_ORDER_7_UNREAD_UNTIL_POST_490_FIX_FORWARD_PROVEN_REVIEWED_TRUSTED_GATE_PASS_MERGED_READBACK"
   },
   "admission_reconciliation": {
     "ledger": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
@@ -956,7 +956,7 @@
     "broader_expansion": false
   },
   "order_6_publication": {
-    "state": "PENDING_EXACT_HEAD_PROOF_REVIEW_MERGE_READBACK",
+    "state": "MERGED_NONCOMPLIANT_CURRENT_STATE_FIX_FORWARD_REQUIRED",
     "disposition": {
       "reviewed_pr": "GBOGEB/cryoplant-project#1170",
       "classification": "P1_W175B_COST_METHOD_DEFECTS_CONFIRMED_AND_REPAIRED",
@@ -1017,6 +1017,57 @@
       "formal_credit_delta": 0,
       "engineering_credit_delta": 0
     },
-    "order_7_read": false
+    "order_7_read": false,
+    "historical_publication": {
+      "pr": "GBOGEB/pipeline-automation-hub#490",
+      "head": "1e3ed51ae15110b1c0971ff087bd053c8f03c9ae",
+      "merge": "181ceabd0f207434b97a86ffba8ab7058a8b6ea0",
+      "merged_at_utc": "2026-09-28T16:09:48Z",
+      "ordinary_fpc": {
+        "run_id": 36448774023,
+        "job_id": 109017803379,
+        "conclusion": "SUCCESS",
+        "executed_steps_gt_0": true
+      },
+      "trusted_gate": {
+        "run_id": 36448959151,
+        "job_id": 109018441568,
+        "conclusion": "FAILURE",
+        "final_fail_step": "Fail closed unless trusted controller emitted a bound PASS receipt"
+      },
+      "codex_at_merge": "RUNNING_NOT_COMPLETE",
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED",
+      "current_state_rule": "DO_NOT_REWRITE_HISTORY; FIX_FORWARD_CURRENT_STATE; ORDER_7_REMAINS_UNREAD"
+    }
+  },
+  "post_490_control_integrity_fix_forward": {
+    "historical_publication": {
+      "pr": "GBOGEB/pipeline-automation-hub#490",
+      "head": "1e3ed51ae15110b1c0971ff087bd053c8f03c9ae",
+      "merge": "181ceabd0f207434b97a86ffba8ab7058a8b6ea0",
+      "merged_at_utc": "2026-09-28T16:09:48Z",
+      "ordinary_fpc": {
+        "run_id": 36448774023,
+        "job_id": 109017803379,
+        "conclusion": "SUCCESS",
+        "executed_steps_gt_0": true
+      },
+      "trusted_gate": {
+        "run_id": 36448959151,
+        "job_id": 109018441568,
+        "conclusion": "FAILURE",
+        "final_fail_step": "Fail closed unless trusted controller emitted a bound PASS receipt"
+      },
+      "codex_at_merge": "RUNNING_NOT_COMPLETE",
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED",
+      "current_state_rule": "DO_NOT_REWRITE_HISTORY; FIX_FORWARD_CURRENT_STATE; ORDER_7_REMAINS_UNREAD"
+    },
+    "accounting_invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED",
+    "admitted_population": 128,
+    "silent_evictions": 0,
+    "order_7_read": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
   }
 }

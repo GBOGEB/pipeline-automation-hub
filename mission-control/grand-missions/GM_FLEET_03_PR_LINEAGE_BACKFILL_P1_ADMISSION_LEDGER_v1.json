@@ -11550,8 +11550,8 @@
     "clean_without_repair": 1,
     "remaining_in_subset": 6,
     "next_review_order": 7,
-    "next_review_state": "ORDER_6_REPAIRED_VERIFIED_ORDER_7_HELD",
-    "next_action": "STOP. P1-S01 review order 7 remains unread until this order-6 control publication is exact-head proven, reviewed, merged, and read back."
+    "next_review_state": "ORDER_6_REPAIRED_ORDER_7_HELD_CONTROL_FIX_FORWARD",
+    "next_action": "STOP. P1-S01 review order 7 remains unread until the post-#490 control-integrity fix-forward is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged, and read back."
   },
   "order_5_sync": {
     "reviewed_pr": "GBOGEB/cryoplant-project#756",
@@ -11622,6 +11622,36 @@
       "repair_semantic_files_byte_identical_to_1824_head": true,
       "current_verify_ssot_still_executes_focused_regression": true
     },
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "order_6_publication_control": {
+    "historical_publication": {
+      "pr": "GBOGEB/pipeline-automation-hub#490",
+      "head": "1e3ed51ae15110b1c0971ff087bd053c8f03c9ae",
+      "merge": "181ceabd0f207434b97a86ffba8ab7058a8b6ea0",
+      "merged_at_utc": "2026-09-28T16:09:48Z",
+      "ordinary_fpc": {
+        "run_id": 36448774023,
+        "job_id": 109017803379,
+        "conclusion": "SUCCESS",
+        "executed_steps_gt_0": true
+      },
+      "trusted_gate": {
+        "run_id": 36448959151,
+        "job_id": 109018441568,
+        "conclusion": "FAILURE",
+        "final_fail_step": "Fail closed unless trusted controller emitted a bound PASS receipt"
+      },
+      "codex_at_merge": "RUNNING_NOT_COMPLETE",
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED",
+      "current_state_rule": "DO_NOT_REWRITE_HISTORY; FIX_FORWARD_CURRENT_STATE; ORDER_7_REMAINS_UNREAD"
+    },
+    "accounting_invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED",
+    "admitted_population": 128,
+    "silent_evictions": 0,
+    "order_7_read": false,
     "authority_transfer": false,
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0
