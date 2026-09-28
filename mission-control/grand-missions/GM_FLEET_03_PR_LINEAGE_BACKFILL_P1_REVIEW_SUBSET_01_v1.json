@@ -307,7 +307,34 @@
         "detected_domain_signals": [],
         "foreign_domain_signals": []
       },
-      "review_state": "SELECTED_NOT_READ"
+      "review_state": "READ_CLEAN_DURABLE_SUCCESSOR_CURRENT_MAIN_IDENTICAL",
+      "disposition": {
+        "reviewed_pr": "GBOGEB/cryoplant-project#1138",
+        "classification": "P1_SUPERSESSION_COMPETITION_RESOLVED_BY_DURABLE_REBASED_SUCCESSOR",
+        "historical_state": "CLOSED_UNMERGED",
+        "successor_pr": "GBOGEB/cryoplant-project#1144",
+        "successor_head": "4f2f0cf898d6756accc75a3d45fb440497732d3f",
+        "successor_merge": "b3b7dc70d87fc512c0c81fa1b37ea68ad461bf58",
+        "successor_relation": "EXPLICIT_NO_LOSS_REBASED_REPLACEMENT_FOR_1138",
+        "current_main_readback": {
+          "repository": "GBOGEB/cryoplant-project",
+          "main_sha": "ae23418e726d80ecb63b73f8d82eb85767e974ff",
+          "path": "controls/QPS_VISUAL_N200_XLSX_CURRENT_v0.1.yaml",
+          "current_blob": "960753a966399a295af5acdb0405e769763e9b28",
+          "successor_blob": "960753a966399a295af5acdb0405e769763e9b28",
+          "byte_identical": true,
+          "observed_sha_equality_required": true,
+          "reviewer_or_validator_required": true,
+          "review_timestamp_required": true,
+          "full_parent_W162_provenance_tuple_required": true,
+          "no_partial_promotion": true
+        },
+        "material_semantic_or_identity_defect": false,
+        "chronology_classification": "SUCCESSOR_1144_NONCOMPLIANT_MERGE_BEFORE_REVIEW_CURRENT_STATE_CLEAN",
+        "authority_transfer": false,
+        "formal_credit_delta": 0,
+        "engineering_credit_delta": 0
+      }
     },
     {
       "review_order": 4,
@@ -362,7 +389,61 @@
           "MissionControl"
         ]
       },
-      "review_state": "SELECTED_NOT_READ"
+      "review_state": "READ_MATERIAL_NAMESPACE_CONTROL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED",
+      "disposition": {
+        "reviewed_pr": "GBOGEB/cryoplant-project#1073",
+        "classification": "P1_NAMESPACE_COLLISION_CONTROL_DEFECT_CONFIRMED",
+        "material_defect": "The advertised fail-closed future namespace control scanned only a frozen recent-PR census and could miss the triggering PR title/body; a new duplicate wave/navigation/mission identifier could escape unless the census was manually updated.",
+        "source_review_finding": "GBOGEB/cryoplant-project#1073 discussion_r4000103264",
+        "repair_pr": "GBOGEB/cryoplant-project#1820",
+        "repair_head": "de137d70256d492baa4e3ab2af3ed7c8913514fb",
+        "repair_merge": "384f2d13b40af933899b154b37058e76c6983207",
+        "repair_semantics": [
+          "trusted GITHUB_EVENT_PATH pull-request metadata is merged into the bound census by repository+number",
+          "stale same-identity census rows are replaced by event title/body",
+          "non-PR events do not invent a triggering PR",
+          "dedicated W163 pull-request workflow checks out the actual PR head SHA",
+          "receipt binds checked-out head to event PR head and triggering PR identity",
+          "qps-canonicalization passes GITHUB_EVENT_PATH; --skip-live-pr-scan skips only API census refresh, not triggering-event merge"
+        ],
+        "proof": {
+          "w163_namespace_control": {
+            "run_id": 36382983777,
+            "job_id": 108802403633,
+            "conclusion": "SUCCESS",
+            "executed_steps_gt_0": true
+          },
+          "qps_canonicalization": {
+            "run_id": 36382983715,
+            "conclusion": "SUCCESS"
+          },
+          "verify_ssot": {
+            "run_id": 36382983690,
+            "conclusion": "SUCCESS"
+          },
+          "codex": {
+            "status": "COMPLETE",
+            "result": "NO_MAJOR_ISSUES",
+            "reviewed_head": "de137d70256d492baa4e3ab2af3ed7c8913514fb",
+            "completed_after_merge": true
+          }
+        },
+        "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_CURRENT_STATE_VERIFIED",
+        "current_main_readback": {
+          "repository": "GBOGEB/cryoplant-project",
+          "main_sha": "ae23418e726d80ecb63b73f8d82eb85767e974ff",
+          "repair_files_byte_identical_to_head": true,
+          "blobs": {
+            ".github/workflows/qps-w163-namespace-control.yml": "0d64498816cd32eeb60c981bb83b89f9edaefb3e",
+            ".github/workflows/qps-canonicalization.yml": "45c561e7d196f340dcc3d7826c18148c70ccc01f",
+            "scripts/qps_w163_validate_namespace_collisions.py": "d80649126d54038e471791f821030af8c3fd4fe2",
+            "tests/test_qps_w163_namespace_collisions.py": "aee79be0ffd18286cfc5d3f93d5cd2b02a990ffd"
+          }
+        },
+        "authority_transfer": false,
+        "formal_credit_delta": 0,
+        "engineering_credit_delta": 0
+      }
     },
     {
       "review_order": 5,
@@ -669,12 +750,12 @@
   "formal_credit_delta": 0,
   "engineering_credit_delta": 0,
   "review_progress": {
-    "reviewed": 2,
-    "repaired": 2,
-    "clean_without_repair": 0,
-    "remaining_in_subset": 10,
-    "next_review_order": 3,
-    "next_review_state": "ORDER_3_ADMITTED_READY_FOR_SINGLE_DEEP_READ"
+    "reviewed": 4,
+    "repaired": 3,
+    "clean_without_repair": 1,
+    "remaining_in_subset": 8,
+    "next_review_order": 5,
+    "next_review_state": "ORDER_4_MATERIAL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED_ORDER_5_HELD_PENDING_CONTROL_PUBLICATION"
   },
   "finalization": {
     "source_pr": "GBOGEB/pipeline-automation-hub#472",
@@ -684,7 +765,8 @@
     "source_codex_completed_at_utc": "2026-09-28T05:57:39Z",
     "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW",
     "current_state_validation": "CODEX_COMPLETE_NO_MAJOR_ISSUES_AFTER_MERGE",
-    "stable_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD"
+    "stable_state": "ORDER_2_REPAIRED_VERIFIED_VIA_1821_ORDER_3_HELD",
+    "next_action": "After this order-3/4 control publication is proven, reviewed, merged and read back, resume only P1-S01 review order 5 under STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT."
   },
   "admission_reconciliation": {
     "ledger": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
@@ -714,7 +796,9 @@
         "completed_at_utc": "2026-09-28T13:58:35Z"
       },
       "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW"
-    }
+    },
+    "order_3_read": true,
+    "order_4_read": true
   },
   "post_476_release": {
     "publication_pr": "GBOGEB/pipeline-automation-hub#476",
