@@ -1,0 +1,47 @@
+schema: qps.triage.related_lossless_todo.v1
+created_local: "2026-09-28T17:54:00+02:00"
+classification: HISTORICAL_RELATED_HANDOVER
+status: REGISTERED_NO_EXECUTION_AUTHORITY
+
+source:
+  repository: GBOGEB/pipeline-automation-hub
+  pr: 400
+  merge: ee1e9471e0b9b834598959d9e827f8c41838584b
+  handover: mission-control/qps-triage-ultra/handover/SC_2026-09-22_QPS_TRIAGE_FULL_3PR_MIP_FINAL_LOSSLESS_HANDOVER_v2.md
+  restart_dropin: mission-control/qps-triage-ultra/handover/RESTART_DROPIN_2026-09-22_QPS_TRIAGE_FULL_3PR_MIP_FINAL_v2.md
+
+serialized_predecessor_state:
+  execution_wave_type: PARTIAL
+  final_control_state: LOCAL_ZERO_ROOT_EXTERNAL_RETURN_FRONTIER
+  fleet_open_issues: 94
+  fleet_open_prs: 0
+  cryoplant_queue: 55
+  cryoplant_classified: 55
+  cryoplant_bdq4: 0
+  runtime_gold: WITHHELD_ISSUE_923
+
+registration_rule:
+  authority: HISTORICAL_LINEAGE_ONLY
+  live_repository_authority_prevails: true
+  do_not_replay_serialized_counts_or_frontiers: true
+  do_not_reopen_closed_or_superseded_roots_from_this_record: true
+  reentry_requires_live_refresh: true
+
+todo:
+  - "Preserve PR #400 and its lossless handover as a related predecessor checkpoint."
+  - Before consuming any predicate from it, refresh current MissionControl and all live issue-bearing repositories.
+  - Admit only predicates still open on live repository authority.
+  - Keep current-session execution sequencing independent from this historical registration.
+
+guards:
+  - HISTORICAL_HANDOVER_NE_CURRENT_AUTHORITY
+  - SERIALIZED_CENSUS_NE_LIVE_CENSUS
+  - PUBLIC_SIBLING_PROOF_NE_RUNTIME_GOLD
+  - ISSUE_COUNT_REDUCTION_NE_FORMAL_CREDIT
+  - AUTHORITY_TRANSFER_FALSE
+  - FORMAL_CREDIT_DELTA_ZERO
+
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+physical_conversion_credit: 0
