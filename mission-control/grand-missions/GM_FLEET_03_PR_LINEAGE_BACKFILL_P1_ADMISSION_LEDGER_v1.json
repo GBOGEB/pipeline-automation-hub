@@ -11550,8 +11550,8 @@
     "clean_without_repair": 1,
     "remaining_in_subset": 6,
     "next_review_order": 7,
-    "next_review_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST500_CONTROL_FIX_FORWARD",
-    "next_action": "STOP. P1-S01 review order 7 remains unread until the post-#500 control-integrity successor is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged, and read back."
+    "next_review_state": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
+    "next_action": "After compliant #505 merge/readback, READ P1-S01 order 7 only and stop on the first material semantic or identity defect."
   },
   "order_5_sync": {
     "reviewed_pr": "GBOGEB/cryoplant-project#756",
@@ -11798,6 +11798,16 @@
       "review_state": "SELECTED_NOT_READ",
       "admitted_for_read": false
     },
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "post_504_order7_release_candidate": {
+    "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ORDER7_RELEASE_v1.json",
+    "predecessor_pr": "GBOGEB/pipeline-automation-hub#504",
+    "successor_pr": "GBOGEB/pipeline-automation-hub#505",
+    "target_state_on_compliant_merge": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
+    "accounting_unchanged": true,
     "authority_transfer": false,
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0

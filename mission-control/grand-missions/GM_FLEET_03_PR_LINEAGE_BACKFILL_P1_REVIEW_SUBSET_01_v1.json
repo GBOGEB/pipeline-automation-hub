@@ -885,7 +885,7 @@
     "clean_without_repair": 1,
     "remaining_in_subset": 6,
     "next_review_order": 7,
-    "next_review_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST500_CONTROL_FIX_FORWARD"
+    "next_review_state": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR"
   },
   "finalization": {
     "source_pr": "GBOGEB/pipeline-automation-hub#481",
@@ -894,9 +894,9 @@
     "source_merged_at_utc": "2026-09-28T14:59:25Z",
     "source_codex_completed_at_utc": "2026-09-28T15:00:17.795699Z",
     "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_AND_TRUSTED_GATE",
-    "current_state_validation": "ORDER_6_CURRENT_STATE_HAS_POST496_MIRROR_FINDING; CURRENT_MASTER_FIX_FORWARD_REQUIRED",
-    "stable_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST491_CONTROL_FIX_FORWARD",
-    "next_action": "STOP_ORDER_7_UNREAD_UNTIL_POST_496_MIRROR_FIX_FORWARD_PROVEN_CODEX_COPILOT_CLEAN_TRUSTED_GATE_PASS_MERGED_READBACK"
+    "current_state_validation": "POST504_COMPLIANT_SUCCESSOR_RELEASE_CANDIDATE",
+    "stable_state": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
+    "next_action": "AFTER_COMPLIANT_PR505_MERGE_READ_ORDER_7_ONLY_STOP_ON_FIRST_MATERIAL_DEFECT"
   },
   "admission_reconciliation": {
     "ledger": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
@@ -1223,6 +1223,19 @@
       "review_state": "SELECTED_NOT_READ",
       "admitted_for_read": false
     },
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "post_504_order7_release_candidate": {
+    "receipt": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ORDER7_RELEASE_v1.json",
+    "predecessor_pr": "GBOGEB/pipeline-automation-hub#504",
+    "predecessor_chronology": "NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED",
+    "successor_pr": "GBOGEB/pipeline-automation-hub#505",
+    "target_state_on_compliant_merge": "ORDER_7_RELEASED_TO_READ_POST504_COMPLIANT_SUCCESSOR",
+    "order_7": "GBOGEB/cryoplant-project#1111",
+    "review_state": "SELECTED_NOT_READ",
+    "accounting_unchanged": true,
     "authority_transfer": false,
     "formal_credit_delta": 0,
     "engineering_credit_delta": 0
