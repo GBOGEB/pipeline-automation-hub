@@ -1,6 +1,6 @@
 schema: qps.triage.session_close_current.v1
 created_local: "2026-09-28T17:30:00+02:00"
-state: HANDOVER_PREPARED_PENDING_REMOTE_MERGE
+state: HISTORICAL_EVIDENCE_NON_AUTHORITATIVE
 execution_wave_type: PARTIAL
 
 canonical_handover: SC_2026-09-28_QPS_TRIAGE_FLEET_PARTIAL_LOSSLESS_HANDOVER_v1.md
@@ -31,7 +31,7 @@ first_red:
   material_findings: 2
   next: FIX_FORWARD_MIRRORED_STATE_AND_ADMISSION_INVARIANT
 
-parallel_observation:
+deferred_sequential_observation:
   repository: GBOGEB/ABACUS
   source_sha: d371d7971ed0653171a9eee65d77cf80219df28d
   unified_cd_run: 36441522024
@@ -55,3 +55,13 @@ gm_fleet_03:
 authority_transfer: false
 formal_credit_delta: 0
 engineering_credit_delta: 0
+
+canonical_restart_authority:
+  repository: GBOGEB/cryoplant-project
+  restart_root: handover/qps_recursive/GLOB.yaml
+  session_close_pointer: handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml
+  current_state: handover/qps_recursive/QTG_CURRENT.yaml
+  missioncontrol_controller: GBOGEB/pipeline-automation-hub#426
+  rule: DO_NOT_USE_THIS_MISSIONCONTROL_POINTER_AS_STANDALONE_RESTART_AUTHORITY
+  execution_mode: sequential
+  historical_snapshot_only: true
