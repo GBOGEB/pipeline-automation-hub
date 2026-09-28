@@ -53,8 +53,8 @@
     "by_lifecycle_state": {
       "UNEXPANDED": 951,
       "ADMITTED_NOT_SELECTED": 116,
-      "SELECTED_NOT_READ": 10,
-      "REVIEWED": 2
+      "SELECTED_NOT_READ": 8,
+      "REVIEWED": 4
     },
     "unexpanded_by_primary_cluster": {
       "NAMESPACE_COLLISION": 883,
@@ -75,7 +75,9 @@
     "denominator": "REVIEWED + SELECTED_NOT_READ + ADMITTED_NOT_SELECTED + UNEXPANDED = 1079",
     "admission": "current_admitted_population = union(legacy_v1_shortlist, P1-S01 selected IDs)",
     "no_silent_eviction": true,
-    "p1_s01_order_3_read": false
+    "p1_s01_order_3_read": true,
+    "p1_s01_order_4_read": true,
+    "lifecycle_state_sum": "4 REVIEWED + 8 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED = 1079"
   },
   "entries": [
     {
@@ -4134,7 +4136,7 @@
       "secondary_flags": [
         "NAMESPACE_COLLISION"
       ],
-      "lifecycle_state": "SELECTED_NOT_READ",
+      "lifecycle_state": "REVIEWED",
       "admission_sources": [
         "P1-S01_V3_SELECTION"
       ],
@@ -4580,7 +4582,7 @@
         "CONTRADICTORY_HANDOVER",
         "MISSING_DURABLE_SUCCESSOR"
       ],
-      "lifecycle_state": "SELECTED_NOT_READ",
+      "lifecycle_state": "REVIEWED",
       "admission_sources": [
         "LEGACY_V1_SHORTLIST",
         "P1-S01_V3_SELECTION"
@@ -11537,5 +11539,14 @@
   ],
   "authority_transfer": false,
   "formal_credit_delta": 0,
-  "engineering_credit_delta": 0
+  "engineering_credit_delta": 0,
+  "current_review_progress": {
+    "subset_id": "P1-S01",
+    "reviewed": 4,
+    "repaired": 3,
+    "clean_without_repair": 1,
+    "remaining_in_subset": 8,
+    "next_review_order": 5,
+    "next_review_state": "HELD_PENDING_ORDER3_4_CONTROL_PUBLICATION_MERGE"
+  }
 }
