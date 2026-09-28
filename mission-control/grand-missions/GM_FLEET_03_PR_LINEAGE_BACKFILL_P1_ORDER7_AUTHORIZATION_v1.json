@@ -1,0 +1,86 @@
+{
+  "schema": "gm_fleet_03_p1_order7_authorization/v1",
+  "mission_id": "GM-FLEET-03",
+  "date": "2026-09-28",
+  "predecessor_control": {
+    "pr": "GBOGEB/pipeline-automation-hub#506",
+    "head": "3929fa29661cfe5f97d0a84b42df8f40ab7073df",
+    "merge": "bcce3cbbf303a8e8bf28b9d90513fa5217581061",
+    "ordinary_fpc": {
+      "run_id": 36463022382,
+      "job_id": 109066059157,
+      "conclusion": "SUCCESS",
+      "executed_steps_gt_0": true
+    },
+    "draft_codex": {
+      "status": "COMPLETE",
+      "result": "NO_MAJOR_ISSUES",
+      "reviewed_head": "3929fa29661cfe5f97d0a84b42df8f40ab7073df"
+    },
+    "ready_codex": {
+      "status": "COMPLETE",
+      "result": "NO_MAJOR_ISSUES",
+      "reviewed_head": "3929fa29661cfe5f97d0a84b42df8f40ab7073df",
+      "completed_at_utc": "2026-09-28T18:14:35.501361Z"
+    },
+    "copilot": {
+      "status": "COMPLETE",
+      "findings": "NONE",
+      "submitted_at_utc": "2026-09-28T18:18:59Z"
+    },
+    "trusted_gate": {
+      "run_id": 36463479277,
+      "job_id": 109070647104,
+      "conclusion": "SUCCESS",
+      "post_copilot_rerun": true
+    },
+    "fresh_master_readback": {
+      "master": "bcce3cbbf303a8e8bf28b9d90513fa5217581061",
+      "accounting": {
+        "REVIEWED": 6,
+        "SELECTED_NOT_READ": 6,
+        "ADMITTED_NOT_SELECTED": 116,
+        "UNEXPANDED": 951,
+        "denominator": 1079,
+        "admitted_population": 128,
+        "silent_evictions": 0
+      },
+      "order_7": {
+        "candidate": "GBOGEB/cryoplant-project::PR1111",
+        "review_state": "SELECTED_NOT_READ",
+        "admitted_for_read": false,
+        "order_7_read": false
+      },
+      "mirror_equality": true
+    }
+  },
+  "authorization_candidate": {
+    "subset_id": "P1-S01",
+    "review_order": 7,
+    "candidate": "GBOGEB/cryoplant-project::PR1111",
+    "branch_state": "HELD_SELECTED_NOT_READ",
+    "authorization_effect": "EFFECTIVE_ONLY_AFTER_THIS_AUTHORIZATION_PR_EXACT_HEAD_PROVEN_REVIEW_CLEAN_TRUSTED_GATE_PASS_MERGED_AND_FRESH_MASTER_READBACK",
+    "target_state_after_condition": "AUTHORIZED_FOR_ORDER7_BODY_READ_ONLY",
+    "stop_rule": "STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT",
+    "no_order8_admission": true
+  },
+  "accounting": {
+    "REVIEWED": 6,
+    "SELECTED_NOT_READ": 6,
+    "ADMITTED_NOT_SELECTED": 116,
+    "UNEXPANDED": 951,
+    "denominator": 1079,
+    "admitted_population": 128,
+    "silent_evictions": 0
+  },
+  "live_state_on_candidate_branch": {
+    "review_state": "SELECTED_NOT_READ",
+    "admitted_for_read": false,
+    "order_7_read": false,
+    "deep_read": "HELD"
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "runtime_GOLD": "WITHHELD"
+}
