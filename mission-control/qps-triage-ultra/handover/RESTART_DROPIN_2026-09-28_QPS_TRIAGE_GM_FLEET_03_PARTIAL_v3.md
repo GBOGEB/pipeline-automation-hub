@@ -11,8 +11,8 @@ EXECUTION_WAVE_TYPE = PARTIAL
 LIVE STATE:
 - current master: c9c4533ed789cf34aee2320cd4642d4fc7b8bf66
 - 98 open issues / 8 issue-bearing repos
-- owner-wide open PRs: only unrelated GBOGEB/stale#8
-- operational MissionControl open PRs: 0
+- MissionControl control PRs at this edge: #492 (independent MC-S2 A4) and #494 (this GM-FLEET publication)
+- #494 is CONTROL/publication work; it does not admit order 7 before proof/readback
 - active/queued MissionControl workflows: 0
 - fresh-master GM-FLEET/QPS controls: GREEN
 
@@ -47,12 +47,11 @@ ORDER 6:
 
 MISSIONCONTROL CURRENT-STATE CHAIN:
 - #490 remains historical NONCOMPLIANT_MERGE_BEFORE_REVIEW_AND_TRUSTED_GATE
-- #491 final head 24fa1e71f05e41f31c0223c26311a0108192af0f
-- #491 FPC 36449725960 PASS >0-step
-- #491 Codex exact-head COMPLETE / no threads
-- #491 trusted gate 36449961020 PASS
-- #491 merge/current master c9c4533ed789cf34aee2320cd4642d4fc7b8bf66
-- fresh-master QPS TRIAGE Federation Control + GM-FLEET F01/Ring1/Ring2/Capacity controls PASS
+- #491 merged head 24fa1e71f05e41f31c0223c26311a0108192af0f with FPC/trusted-gate PASS, but final Copilot review completed after merge with three material control findings
+- #491 chronology therefore remains NONCOMPLIANT_MERGE_BEFORE_FINAL_REVIEW_CURRENT_STATE_REPAIR_REQUIRED
+- #494 is the current GM-FLEET control/publication fix-forward from master c9c4533ed789cf34aee2320cd4642d4fc7b8bf66
+- #494 carries owner-qualified restart authority plus normalized order-7 hold state
+- order 7 remains unread until #494 exact-head proof/review/trusted-gate/merge/readback
 
 HISTORICAL PUBLICATION:
 - #490 exact head 1e3ed51ae15110b1c0971ff087bd053c8f03c9ae
