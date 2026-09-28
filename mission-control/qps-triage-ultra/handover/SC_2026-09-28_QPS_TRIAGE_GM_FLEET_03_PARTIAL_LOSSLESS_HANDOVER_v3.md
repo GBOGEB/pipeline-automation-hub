@@ -116,6 +116,21 @@ MissionControl publication:
 - chronology classification: **NONCOMPLIANT_MERGE_BEFORE_REVIEW_CURRENT_STATE_VALIDATED**
 - current-state validation does not rewrite historical admission noncompliance
 
+### Canonical QPS restart authority / global preemption
+
+Canonical cryoplant readback:
+- GLOB status: CONTROLLED_STABLE_RESTART_ROOT
+- canonical chain: `handover/qps_recursive/GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml`
+- current cryoplant session pointer: `SESSION_CURRENT_20260928_QPS_TRIAGE_PARTIAL_POST923_POST_GT`
+- QTG_CURRENT global first red: `ISSUE_943_AND_SELECTED_SAFETY_SOURCE_SET`
+- state: `HOLD_NONCOMPENSATING_SOURCE_AUTHORITY`
+- QTG local runnable: NONE_REPO_LOCAL_CODE_FIX
+- #923: CLOSED_COMPLETED_RUNNER_ADMISSION_RECOVERED
+- Golden Thread GT_BDQ_0..9: CLOSED/PASS
+- source/safety/owner/physical returns remain globally non-compensating and may preempt MissionControl semantic reading on arrival
+
+Therefore GM-FLEET order 7 is the next bounded **MissionControl semantic lane**, not a replacement for QTG_CURRENT global execution priority.
+
 ### Next P1-S01 gate
 
 - order 7 candidate: `GBOGEB/cryoplant-project#1111`
@@ -291,7 +306,7 @@ Preserve:
 
 ## 6. Exact next-session starting line
 
-**START HERE: Read the canonical cryoplant restart chain `handover/qps_recursive/GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml`, then refresh `GBOGEB/pipeline-automation-hub@c9c4533ed789cf34aee2320cd4642d4fc7b8bf66`; verify P1-S01 remains REVIEWED=6 / SELECTED_NOT_READ=6 / ADMITTED_NOT_SELECTED=116 / UNEXPANDED=951 with admitted union=128, silent_evictions=0 and order_7_read=false; then admit/deep-read only order 7 `GBOGEB/cryoplant-project#1111`, repair iff a material semantic/identity defect survives current-main lineage, publish/prove/review before merge, fresh-main readback, and STOP before order 8.**
+**START HERE: Read the canonical cryoplant restart chain `handover/qps_recursive/GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml` and refresh live repos/Actions. Preserve QTG_CURRENT global priority `#943 + SELECTED_SAFETY_SOURCE_SET` and any newly arrived source/safety/owner/physical return as non-compensating preemption. Then refresh `GBOGEB/pipeline-automation-hub@c9c4533ed789cf34aee2320cd4642d4fc7b8bf66`; verify P1-S01 remains REVIEWED=6 / SELECTED_NOT_READ=6 / ADMITTED_NOT_SELECTED=116 / UNEXPANDED=951 with admitted union=128, silent_evictions=0 and order_7_read=false. If no higher-priority QTG return is actionable, admit/deep-read only GM-FLEET order 7 `GBOGEB/cryoplant-project#1111`; repair iff a material semantic/identity defect survives current-main lineage; publish/prove/review before merge, fresh-main readback, and STOP before order 8.**
 
 ## 7. Closure
 
