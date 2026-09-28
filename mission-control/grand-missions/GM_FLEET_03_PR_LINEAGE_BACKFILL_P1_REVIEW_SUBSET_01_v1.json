@@ -187,7 +187,12 @@
           "immutable_pr346_merge": "aff9d6cb8310372103dbd09da35ddf762f512d45",
           "immutable_pr343_head": "2ad1353fb870b5c85bdadaf9d377b544b60ddd33",
           "immutable_pr343_merge": "3fa05e529e86dbe65a72632671319ac300cb7091",
-          "current_restart_authority": "handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml",
+          "current_restart_authority": {
+            "restart_root": "GBOGEB/cryoplant-project::handover/qps_recursive/GLOB.yaml",
+            "session_close_pointer": "GBOGEB/cryoplant-project::handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml",
+            "current_state": "GBOGEB/cryoplant-project::handover/qps_recursive/QTG_CURRENT.yaml",
+            "missioncontrol_controller": "GBOGEB/pipeline-automation-hub#426"
+          },
           "current_restart_wave": "W362",
           "current_receipt": "triage/session/QPS_TRIAGE_SESSION_CLOSE_20260927_W362_v1.yaml",
           "current_handover": "handover/session/SC_2026-09-27_W362_POST923_PARTIAL_LOSSLESS_v1.md",
@@ -863,7 +868,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "STOP. P1-S01 review order 7 remains unread until the post-#490 control-integrity fix-forward is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged, and read back."
+    "next_action": "STOP. P1-S01 review order 7 remains unread until the post-#491 control-integrity fix-forward is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged, and read back."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -880,7 +885,7 @@
     "clean_without_repair": 1,
     "remaining_in_subset": 6,
     "next_review_order": 7,
-    "next_review_state": "ORDER_6_REPAIRED_VERIFIED_ORDER_7_HELD"
+    "next_review_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST491_CONTROL_FIX_FORWARD"
   },
   "finalization": {
     "source_pr": "GBOGEB/pipeline-automation-hub#481",
@@ -889,9 +894,9 @@
     "source_merged_at_utc": "2026-09-28T14:59:25Z",
     "source_codex_completed_at_utc": "2026-09-28T15:00:17.795699Z",
     "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_AND_TRUSTED_GATE",
-    "current_state_validation": "ORDER_6_MERGED_WITH_TRUSTED_GATE_RED_AND_CODEX_INCOMPLETE_AT_MERGE; CURRENT_STATE_FIX_FORWARD_REQUIRED",
-    "stable_state": "ORDER_6_REPAIRED_ORDER_7_HELD_CONTROL_FIX_FORWARD",
-    "next_action": "STOP_ORDER_7_UNREAD_UNTIL_POST_490_FIX_FORWARD_PROVEN_REVIEWED_TRUSTED_GATE_PASS_MERGED_READBACK"
+    "current_state_validation": "ORDER_6_MERGED_VIA_491_BEFORE_CODEX_COMPLETE_AND_BEFORE_TRUSTED_GATE_TERMINAL_PASS; POST_MERGE_COPILOT_FINDINGS_REQUIRE_CURRENT_MASTER_FIX_FORWARD",
+    "stable_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST491_CONTROL_FIX_FORWARD",
+    "next_action": "STOP_ORDER_7_UNREAD_UNTIL_POST_491_FIX_FORWARD_PROVEN_CODEX_COPILOT_CLEAN_TRUSTED_GATE_PASS_MERGED_READBACK"
   },
   "admission_reconciliation": {
     "ledger": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
@@ -956,7 +961,7 @@
     "broader_expansion": false
   },
   "order_6_publication": {
-    "state": "MERGED_NONCOMPLIANT_CURRENT_STATE_FIX_FORWARD_REQUIRED",
+    "state": "MERGED_NONCOMPLIANT_POST491_CURRENT_MASTER_FIX_FORWARD_REQUIRED",
     "disposition": {
       "reviewed_pr": "GBOGEB/cryoplant-project#1170",
       "classification": "P1_W175B_COST_METHOD_DEFECTS_CONFIRMED_AND_REPAIRED",
@@ -1061,6 +1066,59 @@
       "codex_at_merge": "RUNNING_NOT_COMPLETE",
       "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_WITH_TRUSTED_GATE_RED",
       "current_state_rule": "DO_NOT_REWRITE_HISTORY; FIX_FORWARD_CURRENT_STATE; ORDER_7_REMAINS_UNREAD"
+    },
+    "accounting_invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED",
+    "admitted_population": 128,
+    "silent_evictions": 0,
+    "order_7_read": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "post_491_control_integrity_fix_forward": {
+    "historical_publication": {
+      "pr": "GBOGEB/pipeline-automation-hub#491",
+      "head": "24fa1e71f05e41f31c0223c26311a0108192af0f",
+      "merge": "c9c4533ed789cf34aee2320cd4642d4fc7b8bf66",
+      "merged_at_utc": "2026-09-28T16:17:48Z",
+      "ordinary_fpc": {
+        "run_id": 36449725960,
+        "job_id": 109021052054,
+        "conclusion": "SUCCESS",
+        "executed_steps_gt_0": true
+      },
+      "codex": {
+        "at_merge": "RUNNING_NOT_COMPLETE",
+        "completed_at_utc": "2026-09-28T16:18:50.860419Z",
+        "result_after_merge": "COMPLETE_NO_FINDINGS_POST_MERGE"
+      },
+      "trusted_gate": {
+        "run_id": 36449961020,
+        "at_merge": "NOT_TERMINAL_PASS",
+        "first_terminal_result": "FAILURE_WHILE_CODEX_RUNNING",
+        "post_merge_rerun_job_id": 109022569708,
+        "post_merge_rerun_result": "SUCCESS"
+      },
+      "copilot": {
+        "submitted_at_utc": "2026-09-28T16:20:54Z",
+        "result": "CHANGES_RECOMMENDED_POST_MERGE",
+        "high_findings": 2,
+        "medium_findings": 1,
+        "discussions": [
+          "discussion_r4124529825",
+          "discussion_r4124529903",
+          "discussion_r4124529971"
+        ],
+        "repair_was_only_on_old_branch_head": "8c52105f8824d59a212f6ac94a88765c8a7dc2fa"
+      },
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_CODEX_COMPLETE_AND_BEFORE_TRUSTED_GATE_TERMINAL_PASS_WITH_POST_MERGE_COPILOT_FINDINGS",
+      "current_state_rule": "DO_NOT_REWRITE_HISTORY; PORT_FINDINGS_TO_CURRENT_MASTER; ORDER_7_REMAINS_UNREAD"
+    },
+    "canonical_restart_authority": {
+      "restart_root": "GBOGEB/cryoplant-project::handover/qps_recursive/GLOB.yaml",
+      "session_close_pointer": "GBOGEB/cryoplant-project::handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml",
+      "current_state": "GBOGEB/cryoplant-project::handover/qps_recursive/QTG_CURRENT.yaml",
+      "missioncontrol_controller": "GBOGEB/pipeline-automation-hub#426"
     },
     "accounting_invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED",
     "admitted_population": 128,
