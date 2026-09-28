@@ -657,7 +657,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "Prove/merge the P1 admission-ledger reconciliation. P1-S01 review order 3 remains unread/held until merged-main readback. Then resume order 3 under the existing stop-on-first-material-defect rule."
+    "next_action": "After this ledger-control repair is proven, merged, and read back, resume P1-S01 review order 3 under STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -694,6 +694,26 @@
     "p1_s01_new_admissions": 8,
     "current_admitted_population": 128,
     "unexpanded_population": 951,
-    "policy": "FAIL_CLOSED_UNION_NO_SILENT_EVICTION"
+    "policy": "FAIL_CLOSED_UNION_NO_SILENT_EVICTION",
+    "state": "PROVEN_MERGED_READBACK",
+    "proof": {
+      "source_pr": "GBOGEB/pipeline-automation-hub#475",
+      "source_head": "9ae548c803bf84ae776c8ea44ebc35168eb950d9",
+      "source_merge": "9318ad8b1e91934b5cbd267e1c195750c3d54db5",
+      "merged_at_utc": "2026-09-28T13:57:38Z",
+      "fpc": {
+        "run_id": 36432101858,
+        "job_id": 108960590504,
+        "conclusion": "SUCCESS",
+        "executed_steps_gt_0": true
+      },
+      "codex": {
+        "status": "COMPLETE",
+        "result": "NO_MAJOR_ISSUES",
+        "reviewed_head": "9ae548c803bf84ae776c8ea44ebc35168eb950d9",
+        "completed_at_utc": "2026-09-28T13:58:35Z"
+      },
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW"
+    }
   }
 }
