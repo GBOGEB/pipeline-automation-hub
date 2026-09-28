@@ -11561,10 +11561,12 @@
       "GBOGEB/cryoplant-project#1823"
     ],
     "durable_successor": "GBOGEB/cryoplant-project#757",
-    "order_6_read": false,
+    "order_6_read": true,
     "authority_transfer": false,
     "formal_credit_delta": 0,
-    "engineering_credit_delta": 0
+    "engineering_credit_delta": 0,
+    "order_6_read_at_order_5_sync": false,
+    "current_state_note": "Historical order-5 snapshot preserved separately: order 6 was unread at order-5 sync; current authoritative state after #490 is order_6_read=true."
   },
   "order_6_disposition": {
     "reviewed_pr": "GBOGEB/cryoplant-project#1170",
@@ -11621,6 +11623,25 @@
       "test_blob": "765e066d85e8dbbb233e5539b7331f0b03c63406",
       "repair_semantic_files_byte_identical_to_1824_head": true,
       "current_verify_ssot_still_executes_focused_regression": true
+    },
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "order_6_postmerge_sync": {
+    "source_pr": "GBOGEB/pipeline-automation-hub#490",
+    "source_head": "1e3ed51ae15110b1c0971ff087bd053c8f03c9ae",
+    "source_merge": "181ceabd0f207434b97a86ffba8ab7058a8b6ea0",
+    "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_READY_TRIGGERED_CODEX_AND_TRUSTED_GATE_COMPLETION",
+    "current_state": {
+      "REVIEWED": 6,
+      "SELECTED_NOT_READ": 6,
+      "ADMITTED_NOT_SELECTED": 116,
+      "UNEXPANDED": 951,
+      "admitted_population": 128,
+      "silent_evictions": 0,
+      "order_6_read": true,
+      "order_7_read": false
     },
     "authority_transfer": false,
     "formal_credit_delta": 0,
