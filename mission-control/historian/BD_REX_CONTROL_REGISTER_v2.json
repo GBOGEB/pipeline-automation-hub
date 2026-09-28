@@ -1507,7 +1507,8 @@
         "cryoplant-project#1634 was created draft-first from current main after stale-branch contamination was detected in invalidated #1633; this is an operational mitigation, not repository-admin prevention",
         "ABACUS#1376 created DRAFT for Appendix 8.4 source-bound extraction; repository automation marked it ready, operator converted it back to DRAFT while decisive exact-head jobs were zero-step queued",
         "ABACUS#1376 nevertheless merged@c360b58c02570908f8b1760a6dc42f6c33df1db7 from head b815ae92edd872bcd1385da06ff27bbde8003d6a while qps-line-s/docs/YAML/Ruff/format were queued and Codex review was still running",
-        "ABACUS#1376 post-merge content proof pending; any later green may prove content only and cannot prove merge prevention"
+        "ABACUS#1376 post-merge content proof pending; any later green may prove content only and cannot prove merge prevention",
+        "pipeline-automation-hub#495 merge@9be039a99eecd631c43bc85b816ba2cc91014d7b crossed before material review findings were repaired; branch later contained a731275e9cb6aac893039b06c2ee20082a40d683 consistency fixes, proving prevention remains unbound"
       ],
       "execution_boundary": {
         "classification": "REPOSITORY_ADMIN_MERGE_ADMISSION",
@@ -1530,12 +1531,12 @@
         "GBOGEB/cryoplant-project"
       ],
       "latest_occurrence": {
-        "repo": "GBOGEB/ABACUS",
-        "pr": 1376,
-        "head": "b815ae92edd872bcd1385da06ff27bbde8003d6a",
-        "merge": "c360b58c02570908f8b1760a6dc42f6c33df1db7",
-        "classification": "MERGED_BEFORE_DECISIVE_PROOF_DESPITE_DRAFT_HOLD",
-        "content_proof": "PENDING_ZERO_STEP_AT_MERGE",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "pr": 495,
+        "head": "696f4e5bad16729ca14881b7f3422d21c8e0bb62",
+        "merge": "9be039a99eecd631c43bc85b816ba2cc91014d7b",
+        "classification": "MERGED_WITH_MATERIAL_REVIEW_FINDINGS_UNREPAIRED",
+        "content_proof": "MISSIONCONTROL_NATIVE_CONTROLS_PASS_BUT_REVIEW_FINDINGS_UNREPAIRED_AT_MERGE",
         "prevention_credit": false,
         "authority_transfer": false,
         "formal_credit_delta": 0
@@ -1575,20 +1576,7 @@
       "formal_credit_delta": 0
     }
   ],
-  "open_priority": [
-    {
-      "rank": 1,
-      "bd_id": "HIST-BD-035",
-      "rex_id": "REX-BD-035",
-      "reason": "P1 recurring Appendix completeness escape; exact-main draft #1385 proof pending under REX-CM-006"
-    },
-    {
-      "rank": 2,
-      "bd_id": "HIST-BD-036",
-      "rex_id": "REX-BD-036",
-      "reason": "Recurring source-receipt/governance binding escape; exact-main draft #1385 proof pending under REX-CM-006"
-    }
-  ],
+  "open_priority": [],
   "external_non_compensating_gates": [
     {
       "repo": "GBOGEB/cryoplant-project",
@@ -2993,16 +2981,16 @@
       "title": "Reject incomplete STATE_COMPLETE Appendix 8.4 rows",
       "class": "FAIL_CLOSED_STATE_COMPLETENESS",
       "severity": "P1",
-      "state": "ACTIVE",
+      "state": "CONTROL_WATCH",
       "detection_signature": "appendix_state_complete_or_extracted_can_mask_unresolved_recovery_veff_or_completion_blockers",
       "shared_control_id": "REX-CM-006",
       "repair_recipe": {
         "current_fix_patterns": [
-          "ABACUS main f63dd3184e4bb550ffbe1af2dc395ca4f317ae0e contains first completeness repair from #1383",
-          "draft #1385 carries exact reviewed recurrence-fix contract blob bf2cb6495e53e93eddb7857cd416418192710647",
-          "EXTRACTED recurrence fix requires typed unresolved rows plus presence/resolution of three extraction blockers"
+          "ABACUS current main 6e603f3e8854538578de2c1bdc36b84dafb9f163 retains exact reviewed #1385 repair blobs",
+          "closure contract fail-closes unresolved container type, mandatory completion blockers, source/figure receipt drift, governance flag drift, and bool/int credit ambiguity",
+          "negative mutation regressions survive in tests blob cd5e131d66f83dad0b95775e293977ff1405ef2b"
         ],
-        "proof_contract": "Draft #1385 executes qps-line-s-validation >0 steps PASS, current-head review is clean, exact proven blobs merge to current main, then current-main survival is confirmed.",
+        "proof_contract": "SATISFIED for root repair/current-main survival. Reenter this REX-BD recipe only on observed regression or governed contract change. Shared REX-CM-006 remains ACTIVE_FIRST_PROOF until a later distinct-source recurrence-free repeat.",
         "negative_regression_seeds": [
           "ABACUS#1376 review on b815ae92edd872bcd1385da06ff27bbde8003d6a: STATE_COMPLETE labels could coexist with UNKNOWN recovery/V_eff/valve placeholders",
           "ABACUS#1383 review on 22de260f660161cac647af195703cc0fef156661: EXTRACTED could coexist with open completion/recovery/V_eff blockers",
@@ -3032,7 +3020,16 @@
         "run36227448096 Format PASS",
         "run36227448115 Ruff PASS",
         "ABACUS#1384 final reviewed proof head 5e71bc79e35054b008834a024fb9dcaf37ffc360: Codex no major issues",
-        "ABACUS#1385@17d22b8e3dac3755c308f223b1ee104f842d2189 DRAFT exact-main publication: hosted proof pending"
+        "ABACUS#1385@17d22b8e3dac3755c308f223b1ee104f842d2189 DRAFT exact-main publication: hosted proof pending",
+        "ABACUS#1385@17d22b8e3dac3755c308f223b1ee104f842d2189",
+        "run36229268231/job108369181741 qps-line-s-validation PASS >0 steps including live closure contract and zero-test guard",
+        "run36229268203 changed-doc PASS",
+        "run36229268196 YAML PASS",
+        "run36229268210 Format PASS",
+        "run36229268202 Ruff PASS",
+        "ABACUS#1385 current-head Codex review completed with no major issues",
+        "merge@46aa7dc9359ad0c218506dee806ee67154e27739",
+        "current ABACUS main 6e603f3e8854538578de2c1bdc36b84dafb9f163 retains closure_contract blob bf2cb6495e53e93eddb7857cd416418192710647 and tests blob cd5e131d66f83dad0b95775e293977ff1405ef2b"
       ],
       "occurrence_count": 3,
       "recurrence_episode_count": 2,
@@ -3045,16 +3042,16 @@
       "title": "Bind Appendix extraction and source-receipt provenance exactly",
       "class": "PROVENANCE_RECEIPT_CONSISTENCY",
       "severity": "P2",
-      "state": "ACTIVE",
+      "state": "CONTROL_WATCH",
       "detection_signature": "appendix_extraction_source_receipt_or_governance_fields_can_diverge_without_fail_closed_rejection",
       "shared_control_id": "REX-CM-006",
       "repair_recipe": {
         "current_fix_patterns": [
-          "ABACUS main f63dd3184e4bb550ffbe1af2dc395ca4f317ae0e contains exact source/figure/count binding from #1383",
-          "draft #1385 carries reviewed governance-field recurrence fix requiring authority_transfer=false and strict integer-zero formal_credit_delta",
-          "closure summary returns validated receipt governance fields rather than hardcoded values"
+          "ABACUS current main 6e603f3e8854538578de2c1bdc36b84dafb9f163 retains exact reviewed #1385 repair blobs",
+          "closure contract fail-closes unresolved container type, mandatory completion blockers, source/figure receipt drift, governance flag drift, and bool/int credit ambiguity",
+          "negative mutation regressions survive in tests blob cd5e131d66f83dad0b95775e293977ff1405ef2b"
         ],
-        "proof_contract": "Draft #1385 exact-main hosted proof PASS + clean review + merged/current-main survival.",
+        "proof_contract": "SATISFIED for root repair/current-main survival. Reenter this REX-BD recipe only on observed regression or governed contract change. Shared REX-CM-006 remains ACTIVE_FIRST_PROOF until a later distinct-source recurrence-free repeat.",
         "negative_regression_seeds": [
           "ABACUS#1376 review on b815ae92edd872bcd1385da06ff27bbde8003d6a: YAML accepted receipt-divergent source/figure digests",
           "ABACUS#1383 review on 22de260f660161cac647af195703cc0fef156661: receipt authority_transfer/formal_credit_delta were not validated and closure summary hardcoded false/zero",
@@ -3083,7 +3080,16 @@
         "ABACUS#1383@22de260f660161cac647af195703cc0fef156661",
         "run36227448093/job108364075554 qps-line-s-validation PASS >0 steps",
         "ABACUS#1384 final reviewed proof head 5e71bc79e35054b008834a024fb9dcaf37ffc360: Codex no major issues",
-        "ABACUS#1385@17d22b8e3dac3755c308f223b1ee104f842d2189 DRAFT exact-main publication: hosted proof pending"
+        "ABACUS#1385@17d22b8e3dac3755c308f223b1ee104f842d2189 DRAFT exact-main publication: hosted proof pending",
+        "ABACUS#1385@17d22b8e3dac3755c308f223b1ee104f842d2189",
+        "run36229268231/job108369181741 qps-line-s-validation PASS >0 steps including live closure contract and zero-test guard",
+        "run36229268203 changed-doc PASS",
+        "run36229268196 YAML PASS",
+        "run36229268210 Format PASS",
+        "run36229268202 Ruff PASS",
+        "ABACUS#1385 current-head Codex review completed with no major issues",
+        "merge@46aa7dc9359ad0c218506dee806ee67154e27739",
+        "current ABACUS main 6e603f3e8854538578de2c1bdc36b84dafb9f163 retains closure_contract blob bf2cb6495e53e93eddb7857cd416418192710647 and tests blob cd5e131d66f83dad0b95775e293977ff1405ef2b"
       ],
       "occurrence_count": 3,
       "recurrence_episode_count": 2,
