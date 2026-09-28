@@ -74,11 +74,19 @@
         "proof": {
           "qps_w25d_delta_review": {
             "run_id": 36351298957,
-            "conclusion": "SUCCESS"
+            "head_sha": "49fb09619b7f2ec8b5adcebe129f5bf64931f4af",
+            "job_id": 108710363557,
+            "conclusion": "SUCCESS",
+            "executed_steps_gt_0": true,
+            "successful_step_count": 21
           },
           "verify_ssot": {
             "run_id": 36351298955,
-            "conclusion": "SUCCESS"
+            "head_sha": "49fb09619b7f2ec8b5adcebe129f5bf64931f4af",
+            "job_id": 108710363860,
+            "conclusion": "SUCCESS",
+            "executed_steps_gt_0": true,
+            "successful_step_count": 35
           },
           "codex": {
             "status": "COMPLETE",
@@ -86,7 +94,8 @@
             "reviewed_head": "49fb09619b7f2ec8b5adcebe129f5bf64931f4af"
           }
         },
-        "chronology_note": "#1815 merged before exact-head Codex review completed; later clean review is current-state validation and does not rewrite that historical chronology."
+        "chronology_note": "#1815 merged before exact-head Codex review completed; later clean review is current-state validation only and does not rewrite that historical noncompliance.",
+        "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW"
       }
     },
     {
@@ -511,7 +520,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "Merge/prove this order-1 disposition control. Only then deep-read review_order 2. Stop again on first material semantic/identity defect."
+    "next_action": "Prove/merge this order-1 proof/control repair. Only then deep-read review_order 2. Stop again on first material semantic/identity defect."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -528,6 +537,6 @@
     "clean_without_repair": 0,
     "remaining_in_subset": 11,
     "next_review_order": 2,
-    "next_review_state": "HELD_PENDING_ORDER1_DISPOSITION_CONTROL_MERGE"
+    "next_review_state": "HELD_PENDING_ORDER1_PROOF_CONTROL_REPAIR_MERGE"
   }
 }
