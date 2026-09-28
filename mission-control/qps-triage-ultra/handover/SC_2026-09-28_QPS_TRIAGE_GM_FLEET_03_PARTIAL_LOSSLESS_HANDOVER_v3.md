@@ -198,6 +198,34 @@ Current fix-forward / #494:
 - subset next-review state is `ORDER_6_REPAIRED_ORDER_7_HELD_CONTROL_FIX_FORWARD`
 - execution remains sequential; order 7 stays unread until #494 is proven/reviewed/merged/read back
 
+### Closure-time control delta after diagnostic snapshot
+
+A later #491 post-merge Copilot review exposed three material control defects that are not present on current master `c9c4533ed789cf34aee2320cd4642d4fc7b8bf66`:
+1. control mirror used an unqualified restart pointer instead of the owner/repository/path-qualified cryoplant canonical chain;
+2. subset mirror had the same restart-authority defect;
+3. subset `review_progress.next_review_state` remained stale.
+
+Those corrections existed only on the old #491 branch head `8c52105f8824d59a212f6ac94a88765c8a7dc2fa`.
+
+Fresh current-master fix-forward:
+- PR #498 — `GM-FLEET-03: carry #491 review fixes onto current master`
+- exact head: `69096e82388e00b7194a575e59e82905d97e6678`
+- changed files: exactly 2
+- exact-head FPC: run `36451359861` / job `109026649426` SUCCESS, >0 steps
+- GM-FLEET / QPS exact-head controls observed green
+- Codex exact-head review: **RUNNING at session close**
+- PR state: **DRAFT / DO NOT MERGE UNTIL REVIEW COMPLETE + TRUSTED GATE PASS**
+- order 7 remains unread/held
+
+Handover publication:
+- PR #494 remains DRAFT / HOLD
+- its branch contains this v3 handover, v3 drop-in and a MissionControl-local historical/non-authoritative pointer
+- #494 must not merge before #498 is merged and fresh-master read back
+- after #498 current-state repair, rebase/revalidate #494 before admission
+
+This is the current first red at session termination:
+`#498 CODEX_EXACT_HEAD_REVIEW_COMPLETION -> TRUSTED_GATE_PASS -> MERGE -> FRESH_MASTER_READBACK`.
+
 ## 2. DECISION_MATRIX_EVALUATION
 
 `EXECUTION_WAVE_TYPE = PARTIAL`
@@ -291,21 +319,26 @@ Preserve:
 
 ## 5. Uncompleted sub-tasks
 
-1. Admit and deep-read only P1-S01 order 7 = cryoplant-project#1111.
-2. Repair only if a material semantic/identity defect survives current-main lineage.
-3. Publish order-7 disposition with:
+1. Finish #498 exact-head Codex review on `69096e82388e00b7194a575e59e82905d97e6678`; do not merge while review is running.
+2. If review is clean, mark #498 ready, require trusted First-Pass Closure Gate PASS, merge exact head, and verify fresh-master 6/6/116/951 + admitted=128 + silent_evictions=0 + qualified canonical restart authority + order7 unread.
+3. Rebase/revalidate #494 against the repaired master; exact-head proof/review/trusted-gate before merge.
+4. Publish final merged handover receipt to #426/#372/#153 and read back.
+5. Only after those closure controls are complete, return to canonical QPS restart chain and global QTG priority.
+6. If no higher-priority QTG source/safety/owner/physical return is actionable, admit and deep-read only P1-S01 order 7 = cryoplant-project#1111.
+7. Repair order 7 only if a material semantic/identity defect survives current-main lineage.
+8. Publish order-7 disposition with:
    - exact-head FPC >0-step PASS
    - exact-head Codex COMPLETE before merge
    - trusted gate PASS
    - fresh-master lifecycle/admission readback
-4. Stop before order 8.
-5. After P1-S01 finishes, continue governed P1 burn-down by existing cluster order; do not expand arbitrarily.
-6. Independently retain ABACUS #1447 and historical Session Tuple/v032 failures for local-root recensus; they are not silently promoted by this handover.
-7. Keep stale#8 unrelated.
+9. Stop before order 8.
+10. After P1-S01 finishes, continue governed P1 burn-down by existing cluster order; do not expand arbitrarily.
+11. Independently retain ABACUS #1447 and historical Session Tuple/v032 failures for local-root recensus; they are not silently promoted by this handover.
+12. Keep stale#8 unrelated.
 
 ## 6. Exact next-session starting line
 
-**START HERE: Read the canonical cryoplant restart chain `handover/qps_recursive/GLOB.yaml -> SESSION_CLOSE_CURRENT.yaml -> QTG_CURRENT.yaml` and refresh live repos/Actions. Preserve QTG_CURRENT global priority `#943 + SELECTED_SAFETY_SOURCE_SET` and any newly arrived source/safety/owner/physical return as non-compensating preemption. Then refresh `GBOGEB/pipeline-automation-hub@c9c4533ed789cf34aee2320cd4642d4fc7b8bf66`; verify P1-S01 remains REVIEWED=6 / SELECTED_NOT_READ=6 / ADMITTED_NOT_SELECTED=116 / UNEXPANDED=951 with admitted union=128, silent_evictions=0 and order_7_read=false. If no higher-priority QTG return is actionable, admit/deep-read only GM-FLEET order 7 `GBOGEB/cryoplant-project#1111`; repair iff a material semantic/identity defect survives current-main lineage; publish/prove/review before merge, fresh-main readback, and STOP before order 8.**
+**START HERE: Refresh PR #498 at exact head `69096e82388e00b7194a575e59e82905d97e6678`. If its Codex review is still RUNNING, HOLD and do not merge. When Codex is COMPLETE/clean, require the trusted First-Pass Closure Gate PASS, merge exact head, and fresh-master read back the qualified cryoplant restart authority plus 6/6/116/951, admitted=128, silent_evictions=0 and order_7_read=false. Then rebase/revalidate handover PR #494 and merge it only after exact-head proof/review/trusted-gate. After closure publication, read the canonical cryoplant GLOB -> SESSION_CLOSE_CURRENT -> QTG_CURRENT chain, preserve QTG global #943 + selected safety/source preemption, and only if no higher-priority return is actionable admit/deep-read GM-FLEET order 7 cryoplant-project#1111. STOP before order 8.**
 
 ## 7. Closure
 
