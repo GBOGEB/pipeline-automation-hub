@@ -868,7 +868,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "STOP. P1-S01 review order 7 remains unread until the post-#491 control-integrity fix-forward is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged, and read back."
+    "next_action": "STOP. P1-S01 review order 7 remains unread until the post-#496 mirror fix-forward is exact-head proven, Codex/Copilot clean, trusted-gate PASS, merged, and read back."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -894,9 +894,9 @@
     "source_merged_at_utc": "2026-09-28T14:59:25Z",
     "source_codex_completed_at_utc": "2026-09-28T15:00:17.795699Z",
     "source_chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_AND_TRUSTED_GATE",
-    "current_state_validation": "ORDER_6_MERGED_VIA_491_BEFORE_CODEX_COMPLETE_AND_BEFORE_TRUSTED_GATE_TERMINAL_PASS; POST_MERGE_COPILOT_FINDINGS_REQUIRE_CURRENT_MASTER_FIX_FORWARD",
+    "current_state_validation": "ORDER_6_CURRENT_STATE_HAS_POST496_MIRROR_FINDING; CURRENT_MASTER_FIX_FORWARD_REQUIRED",
     "stable_state": "ORDER_6_REPAIRED_ORDER_7_HELD_POST491_CONTROL_FIX_FORWARD",
-    "next_action": "STOP_ORDER_7_UNREAD_UNTIL_POST_491_FIX_FORWARD_PROVEN_CODEX_COPILOT_CLEAN_TRUSTED_GATE_PASS_MERGED_READBACK"
+    "next_action": "STOP_ORDER_7_UNREAD_UNTIL_POST_496_MIRROR_FIX_FORWARD_PROVEN_CODEX_COPILOT_CLEAN_TRUSTED_GATE_PASS_MERGED_READBACK"
   },
   "admission_reconciliation": {
     "ledger": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_P1_ADMISSION_LEDGER_v1.json",
@@ -961,7 +961,7 @@
     "broader_expansion": false
   },
   "order_6_publication": {
-    "state": "MERGED_NONCOMPLIANT_POST491_CURRENT_MASTER_FIX_FORWARD_REQUIRED",
+    "state": "MERGED_NONCOMPLIANT_POST496_MIRROR_FIX_FORWARD_REQUIRED",
     "disposition": {
       "reviewed_pr": "GBOGEB/cryoplant-project#1170",
       "classification": "P1_W175B_COST_METHOD_DEFECTS_CONFIRMED_AND_REPAIRED",
@@ -1119,6 +1119,50 @@
       "session_close_pointer": "GBOGEB/cryoplant-project::handover/qps_recursive/SESSION_CLOSE_CURRENT.yaml",
       "current_state": "GBOGEB/cryoplant-project::handover/qps_recursive/QTG_CURRENT.yaml",
       "missioncontrol_controller": "GBOGEB/pipeline-automation-hub#426"
+    },
+    "accounting_invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED",
+    "admitted_population": 128,
+    "silent_evictions": 0,
+    "order_7_read": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "post_496_control_integrity_fix_forward": {
+    "historical_publication": {
+      "pr": "GBOGEB/pipeline-automation-hub#496",
+      "head": "775f79ae5ab7687704a7ef5e999de70ce3e83240",
+      "merge": "ad62afa6df7f0c99e3b2fd52f1d846762f3d82c7",
+      "merged_at_utc": "2026-09-28T16:34:05Z",
+      "ordinary_fpc": {
+        "run_id": 36451009080,
+        "job_id": 109025451736,
+        "conclusion": "SUCCESS",
+        "executed_steps_gt_0": true
+      },
+      "codex": {
+        "manual_review_completed_before_merge": true,
+        "manual_review_completed_at_utc": "2026-09-28T16:31:16.767816Z",
+        "ready_trigger_review_at_merge": "RUNNING_NOT_COMPLETE",
+        "post_merge_finding": "discussion_r4124669310",
+        "post_merge_finding_severity": "P2"
+      },
+      "trusted_gate": {
+        "run_id": 36451667184,
+        "job_id": 109027682839,
+        "conclusion": "FAILURE",
+        "final_fail_step": "Fail closed unless trusted controller emitted a bound PASS receipt",
+        "terminal_pass_before_merge": false
+      },
+      "copilot": {
+        "submitted_at_utc": "2026-09-28T16:34:34Z",
+        "result": "CHANGES_RECOMMENDED_POST_MERGE",
+        "finding": "discussion_r4124667055",
+        "severity": "MEDIUM",
+        "defect": "p1_clustering.bounded_admission_accounting.selected_first_slice_state remained pre-POST491 while p1_review.selection_state was POST491"
+      },
+      "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_READY_TRIGGER_REVIEW_COMPLETE_AND_WITH_TRUSTED_GATE_RED_PLUS_POST_MERGE_MIRROR_FINDING",
+      "current_state_rule": "DO_NOT_REWRITE_HISTORY; REPAIR_ONLY_STALE_STATE_MIRROR_ON_CURRENT_MASTER; ORDER_7_REMAINS_UNREAD"
     },
     "accounting_invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED",
     "admitted_population": 128,
