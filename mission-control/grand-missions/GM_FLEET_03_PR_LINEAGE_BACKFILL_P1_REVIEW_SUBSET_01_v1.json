@@ -475,7 +475,72 @@
         "detected_domain_signals": [],
         "foreign_domain_signals": []
       },
-      "review_state": "SELECTED_NOT_READ"
+      "review_state": "READ_MATERIAL_MISSING_SUCCESSOR_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED",
+      "disposition": {
+        "reviewed_pr": "GBOGEB/cryoplant-project#756",
+        "classification": "P1_MISSING_DURABLE_SUCCESSOR_CONFIRMED_AND_REPAIRED",
+        "material_defect": "PR756 was explicitly superseded before execution and directed continuation from current main, but no durable successor edge was recorded.",
+        "historical_state": "CLOSED_UNMERGED_DRAFT_ZERO_CREDIT",
+        "recovered_successor": "GBOGEB/cryoplant-project#757",
+        "successor_basis": [
+          "PR756 declared superseded immediately / stale pre-W64 branch / no engineering or control credit.",
+          "PR756 declared next = continue on fresh branch from current main.",
+          "PR757 explicitly declares intent to continue the accepted W64 burndown from current main.",
+          "PR756 and PR757 share base 7f0876700940ab5359772e62541a3d9b1aefbfff.",
+          "PR757 merged as 59e019f0eea5a155535ef3c67984e82e1c6b18df."
+        ],
+        "initial_repair": {
+          "pr": "GBOGEB/cryoplant-project#1822",
+          "head": "f1182f13d6d9fd84f66e7b4016c33d3e2441c07c",
+          "merge": "9ee7d2bd9ed26391b9d5a5216c97cc014611517b",
+          "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_CODEX_MATERIAL_FINDING",
+          "codex_material_finding": "Focused regression did not assert the explicit PR756 declared_next / PR757 declared_intent continuation evidence."
+        },
+        "proof_fix_forward": {
+          "pr": "GBOGEB/cryoplant-project#1823",
+          "head": "9948600368cbab4778057739332164a0323d28c2",
+          "merge": "30e52de722190bc6bd89a31408ee401596df0c9a",
+          "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW_CURRENT_STATE_VERIFIED",
+          "proof": {
+            "verify_ssot": {
+              "run_id": 36431644281,
+              "conclusion": "SUCCESS"
+            },
+            "qps_canonicalization": {
+              "run_id": 36431644267,
+              "conclusion": "SUCCESS"
+            },
+            "codex": {
+              "status": "COMPLETE",
+              "result": "NO_MAJOR_ISSUES",
+              "reviewed_head": "9948600368cbab4778057739332164a0323d28c2",
+              "completed_after_merge": true
+            },
+            "copilot": {
+              "status": "APPROVAL_RECOMMENDED",
+              "findings": "NONE"
+            }
+          }
+        },
+        "current_main_readback": {
+          "repository": "GBOGEB/cryoplant-project",
+          "main_sha": "b8fcfc19f9b0a399951573faac36ec848d6acdf1",
+          "relation_receipt_path": "ocd-adr/40_implementation/QPS_W64_P01_SUCCESSOR_RELATION_20260928_v0.1.yaml",
+          "relation_receipt_blob": "c335a9ab3b6c659d858be9fef352cefc1b0121d6",
+          "strengthened_test_path": "tests/test_qps_w64_p01_successor_relation.py",
+          "strengthened_test_blob": "9ef675df120ab09588a9a87a9176150d38938203",
+          "relation_and_test_byte_identical_to_1823_head": true,
+          "verify_ssot_still_runs_focused_regression": true
+        },
+        "relation": {
+          "type": "DURABLE_SUCCESSOR_FOR_SUPERSEDED_PREEXECUTION_DRAFT",
+          "subject": "GBOGEB/cryoplant-project#757",
+          "object": "GBOGEB/cryoplant-project#756"
+        },
+        "authority_transfer": false,
+        "formal_credit_delta": 0,
+        "engineering_credit_delta": 0
+      }
     },
     {
       "review_order": 6,
@@ -738,7 +803,7 @@
     "semantic_finding_claimed": true,
     "no_namespace_bulk_read": true,
     "no_bruteforce_p1": true,
-    "next_action": "Order 3 and 4 are dispositioned. Hold P1-S01 review order 5 unread until this control publication is proven, reviewed, merged, and read back. Then resume order 5 under STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT."
+    "next_action": "Order 5 is dispositioned. Hold P1-S01 review order 6 unread until this order-5 control publication is proven, reviewed, merged, and read back. Then deep-read only order 6 under STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT."
   },
   "external_noncompensating_boundaries": [
     "GBOGEB/pipeline-automation-hub#336 OWNER_ADMIN_REQUIRED_STATUS",
@@ -750,12 +815,12 @@
   "formal_credit_delta": 0,
   "engineering_credit_delta": 0,
   "review_progress": {
-    "reviewed": 4,
-    "repaired": 3,
+    "reviewed": 5,
+    "repaired": 4,
     "clean_without_repair": 1,
-    "remaining_in_subset": 8,
-    "next_review_order": 5,
-    "next_review_state": "ORDER_4_MATERIAL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED_ORDER_5_HELD_PENDING_CONTROL_PUBLICATION"
+    "remaining_in_subset": 7,
+    "next_review_order": 6,
+    "next_review_state": "ORDER_5_MATERIAL_DEFECT_REPAIRED_CURRENT_STATE_VERIFIED_ORDER_6_HELD_PENDING_CONTROL_PUBLICATION"
   },
   "finalization": {
     "source_pr": "GBOGEB/pipeline-automation-hub#472",
@@ -798,7 +863,16 @@
       "chronology_classification": "NONCOMPLIANT_MERGE_BEFORE_REVIEW"
     },
     "order_3_read": true,
-    "order_4_read": true
+    "order_4_read": true,
+    "lifecycle_counts": {
+      "REVIEWED": 5,
+      "SELECTED_NOT_READ": 7,
+      "ADMITTED_NOT_SELECTED": 116,
+      "UNEXPANDED": 951
+    },
+    "accounting_invariant": "1079 = 5 REVIEWED + 7 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED",
+    "order_5_read": true,
+    "order_6_read": false
   },
   "post_476_release": {
     "publication_pr": "GBOGEB/pipeline-automation-hub#476",
