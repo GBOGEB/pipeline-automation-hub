@@ -1,0 +1,127 @@
+schema: qps-missioncontrol-session-close/1.0
+as_of: '2026-09-29'
+status: CONTROLLED_PARTIAL_HANDOVER
+execution_wave_type: PARTIAL
+execution_mode: sequential
+strict_mode: true
+authority_transfer: false
+formal_credit_delta: 0
+engineering_credit_delta: 0
+
+base_master: 7452d40c82c03280c8e0eace96d6bd9a92d044e2
+predecessor_handover_pr: 507
+predecessor_handover_version: v6
+
+diagnostic_analysis:
+  open_issues: 100
+  repositories_with_open_issues: 8
+  issue_counts:
+    GBOGEB/cryoplant-project: 50
+    GBOGEB/pipeline-automation-hub: 26
+    GBOGEB/ABACUS: 15
+    GBOGEB/CODEX: 4
+    GBOGEB/GEMINI: 2
+    GBOGEB/Q_engineering_tools: 1
+    GBOGEB/gg_MATH: 1
+    GBOGEB/document-organization-system: 1
+  open_prs:
+    - repo: GBOGEB/ABACUS
+      pr: 1473
+      role: ACTIVE_BOUNDED_GM14_DOCKER_NETWORK_TEST_ISOLATION
+      head: a974ea733be4fd43e3fa393840ff7ee1a064db02
+      state: OPEN_REVIEW_AND_CI_RUNNING
+    - repo: GBOGEB/pipeline-automation-hub
+      pr: 508
+      role: LOSSLESS_HANDOVER_CARRIER_V7
+      head: 35249ccceddc7af9ed1f013ab0f45b0550457ce0
+      state: OPEN_DRAFT
+    - repo: GBOGEB/stale
+      pr: 8
+      role: UNRELATED_DEPENDABOT_MAINTENANCE
+      state: OPEN
+  active_ci:
+    - repo: GBOGEB/ABACUS
+      run: 36539442396
+      name: DOW + Recursive DMAIC - Unified CD Pipeline
+      sha: a5b40b04a992f8aa98bfcb63e15b9610944e4edf
+      state: PARTIAL_EXECUTION
+      passed: [Lint_and_Validate, CI_Ubuntu]
+      queued: [CI_RHEL_8, CI_RHEL_9]
+  fresh_issue:
+    repo: GBOGEB/ABACUS
+    issue: 1469
+    source_run: 36531590731
+    missing_dashboards: 0
+    broken_internal_links: 16
+    state: OPEN_UNCLASSIFIED_BEYOND_OBSERVED_HEALTH_FAILURE
+
+decision_matrix:
+  execution_wave_type: PARTIAL
+  justification:
+    - raw_issue_count_100_does_not_trigger_FULL
+    - one_open_normal_work_PR_exists_ABACUS_1473
+    - ABACUS_1473_is_bounded_exact_head_repair_for_1472
+    - one_older_ABACUS_execution_surface_remains_partially_queued
+    - ABACUS_1469_is_bounded_fresh_material_candidate
+    - QPS_943_remains_noncompensating_source_authority_gate
+    - QPS_923_remains_closed_completed
+    - GM_FLEET_03_is_census_control_not_runner_surge_authority
+  three_p_star:
+    Prepare: PASS
+    Prove: PARTIAL_WAIT_1473_REVIEW_CI_THEN_RHEL_AND_1469_CLASSIFICATION
+    Perpetuate: PASS_FOR_HANDOVER
+  MIP:
+    Modernize: NONE_REQUIRED
+    Innovate: NONE_REQUIRED
+    Perpetuate: ACTIVE_BOUNDED_ABACUS_1473_FIRST
+
+qps_authority:
+  issue_923: CLOSED_COMPLETED
+  issue_943: OPEN_HOLD_NONCOMPENSATING_SOURCE_AUTHORITY
+  issue_943_closure_requires:
+    - source_bound_selected_architecture
+    - explicit_QPS_child_disposition
+    - testable_FAT_L5_SAT_route
+
+gm_fleet_03:
+  issue: GBOGEB/pipeline-automation-hub#426
+  state: OPEN_CENSUS_CONTROL
+  no_new_GM_V_or_GM_VI_from_census_alone: true
+  no_runner_surge_from_historical_census: true
+
+github_roundtrip:
+  connector_write_success_required: true
+  exact_readback_required: true
+  raw_http_status_exposed_by_connector: false
+  numeric_200_201_claim: NOT_AVAILABLE_FROM_CONNECTOR_DO_NOT_FABRICATE
+
+uncompleted:
+  - consume_ABACUS_PR_1473_exact_head_a974ea733be4fd43e3fa393840ff7ee1a064db02_review_and_CI
+  - repair_1473_only_if_material_current_head_finding_appears
+  - recensus_after_1473_before_admitting_next_root
+  - consume_ABACUS_run_36539442396_to_terminal
+  - inspect_ABACUS_1469_and_enumerate_16_broken_internal_links
+  - repair_only_if_material_and_repo_local
+  - recensus_before_selecting_next_ACTIVE_root
+  - preserve_QPS_943_noncompensating_priority
+  - preserve_QPS_923_closed_state
+  - preserve_PARTIAL_sequential_authority_false_credit_zero
+
+next_agent_instruction: mission-control/qps-triage-ultra/handover/RESTART_DROPIN_2026-09-29_QPS_TRIAGE_FLEET_PARTIAL_v7.md
+lossless_handover: mission-control/qps-triage-ultra/handover/SC_2026-09-29_QPS_TRIAGE_FLEET_PARTIAL_LOSSLESS_HANDOVER_v7.md
+
+exact_starting_line: >-
+  START HERE: Refresh GBOGEB/ABACUS main, GBOGEB/cryoplant-project main,
+  GBOGEB/pipeline-automation-hub master, owner-wide open issues/PRs and live Actions;
+  preserve cryoplant #923 CLOSED_COMPLETED and #943 OPEN/HOLD_NONCOMPENSATING_SOURCE_AUTHORITY;
+  first consume ABACUS PR #1473 exact head a974ea733be4fd43e3fa393840ff7ee1a064db02:
+  exact-head Codex review plus CI - ABACUS Matrix run 36540867220 and CI/CD Test Suite
+  run 36540867229; repair only a material current-head first red, otherwise merge/readback
+  only under its stated DoV; recensus before any new admission. Then consume older ABACUS
+  DOW + Recursive DMAIC run 36539442396 on SHA a5b40b04a992f8aa98bfcb63e15b9610944e4edf
+  to terminal state, then inspect ABACUS#1469 run 36531590731 and enumerate the 16 broken
+  internal links; repair
+  only if material + repo-local, otherwise classify/close with evidence; keep
+  GM-FLEET-03#426 census-only unless a named executable defect emerges; execution
+  remains PARTIAL, sequential, authority_transfer=false, formal_credit_delta=0,
+  engineering_credit_delta=0.
