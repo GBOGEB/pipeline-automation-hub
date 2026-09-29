@@ -1,0 +1,199 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_h1_p1_recursive_coverage.v1",
+  "mission_id": "GM-FLEET-03-H1-P1-1079-RECURSIVE-COVERAGE",
+  "parent_issue": "GBOGEB/pipeline-automation-hub#509",
+  "parent_fleet_issue": "GBOGEB/pipeline-automation-hub#426",
+  "process_precedent": "GBOGEB/pipeline-automation-hub#423",
+  "date": "2026-09-29",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "denominator": {
+    "p1_total": 1079,
+    "REVIEWED": 6,
+    "SELECTED_NOT_READ": 6,
+    "ADMITTED_NOT_SELECTED": 116,
+    "UNEXPANDED": 951,
+    "admitted_union": 128,
+    "silent_evictions": 0,
+    "invariant": "1079 = 6 REVIEWED + 6 SELECTED_NOT_READ + 116 ADMITTED_NOT_SELECTED + 951 UNEXPANDED"
+  },
+  "admission_union": {
+    "legacy_v1_shortlist": 120,
+    "p1_s01_selected": 12,
+    "overlap": 4,
+    "net_new_from_p1_s01": 8,
+    "current_admitted_union": 128
+  },
+  "order_ledger": [
+    {
+      "order": 1,
+      "id": "GBOGEB/cryoplant-project::PR343",
+      "state": "REVIEWED",
+      "result": "MATERIAL_REPAIRED",
+      "repair_chain": [
+        "#1815",
+        "#1816",
+        "#1817"
+      ]
+    },
+    {
+      "order": 2,
+      "id": "GBOGEB/cryoplant-project::PR346",
+      "state": "REVIEWED",
+      "result": "MATERIAL_REPAIRED",
+      "repair_chain": [
+        "#1821"
+      ]
+    },
+    {
+      "order": 3,
+      "id": "GBOGEB/cryoplant-project::PR1138",
+      "state": "REVIEWED",
+      "result": "CLEAN_SUCCESSOR_RECOVERED",
+      "successor": "#1144"
+    },
+    {
+      "order": 4,
+      "id": "GBOGEB/cryoplant-project::PR1073",
+      "state": "REVIEWED",
+      "result": "MATERIAL_REPAIRED",
+      "repair_chain": [
+        "#1820"
+      ]
+    },
+    {
+      "order": 5,
+      "id": "GBOGEB/cryoplant-project::PR756",
+      "state": "REVIEWED",
+      "result": "MATERIAL_REPAIRED",
+      "successor": "#757",
+      "repair_chain": [
+        "#1822",
+        "#1823"
+      ]
+    },
+    {
+      "order": 6,
+      "id": "GBOGEB/cryoplant-project::PR1170",
+      "state": "REVIEWED",
+      "result": "MATERIAL_REPAIRED",
+      "repair_chain": [
+        "#1824"
+      ]
+    },
+    {
+      "order": 7,
+      "id": "GBOGEB/cryoplant-project::PR1111",
+      "state": "SELECTED_NOT_READ",
+      "admitted_for_read": false,
+      "gate": "TRUSTED_FPC_FAIL_36463021326"
+    },
+    {
+      "order": 8,
+      "id": "GBOGEB/ABACUS::PR1079",
+      "state": "SELECTED_NOT_READ"
+    },
+    {
+      "order": 9,
+      "id": "GBOGEB/ABACUS::PR1080",
+      "state": "SELECTED_NOT_READ"
+    },
+    {
+      "order": 10,
+      "id": "GBOGEB/CODEX::PR446",
+      "state": "SELECTED_NOT_READ"
+    },
+    {
+      "order": 11,
+      "id": "GBOGEB/CODEX::PR459",
+      "state": "SELECTED_NOT_READ"
+    },
+    {
+      "order": 12,
+      "id": "GBOGEB/Q_engineering_tools::PR70",
+      "state": "SELECTED_NOT_READ"
+    }
+  ],
+  "current_completion": {
+    "reviewed_orders": 6,
+    "total_orders": 12,
+    "pct": 50,
+    "next_order": 7
+  },
+  "order7_gate": {
+    "candidate": "GBOGEB/cryoplant-project::PR1111",
+    "admitted_for_read": false,
+    "ordinary_fpc": {
+      "run_id": 36463022382,
+      "conclusion": "SUCCESS",
+      "steps_gt_0": true
+    },
+    "codex": "TERMINAL_CLEAN",
+    "copilot": "NO_REMAINING_FINDINGS_AFTER_REPAIR",
+    "trusted_gate": {
+      "run_id": 36463021326,
+      "conclusion": "FAILURE",
+      "classification": "NON_COMPENSATING"
+    },
+    "owner_admin_root": "GBOGEB/pipeline-automation-hub#336"
+  },
+  "recursive_process": [
+    "SCOUT_CANONICAL_IDENTITY_AND_METADATA",
+    "READER_CURRENT_ADMITTED_ORDER_ONLY",
+    "FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_RED",
+    "REX_DEDUPLICATION_AND_CLASSIFICATION",
+    "BOUNDED_REPAIR_OR_CLEAN_DISPOSITION",
+    "EXACT_HEAD_GT0_PROOF_AND_REVIEW",
+    "FRESH_MAIN_READBACK_AND_REPAIR_SURVIVAL",
+    "LEDGER_UPDATE_AND_NEXT_ORDER_ADMISSION"
+  ],
+  "crew": {
+    "always_active": [
+      "PM_ORCHESTRATOR",
+      "SCOUT",
+      "READER",
+      "DEEP_READER",
+      "HISTORIAN",
+      "QA_SIGNALMAN",
+      "DOCTOR_CONTRACTS"
+    ],
+    "deep_reader_backing": [
+      "S06_TECHNICAL_MANAGER_KEB",
+      "U08_REX_KEB_INTEGRATOR"
+    ],
+    "reserve_triggered": [
+      "DOCTOR_REX",
+      "DOCTOR_RUNTIME",
+      "DOCTOR_ANALYTICS",
+      "DOCTOR_SUPPLY_CHAIN",
+      "DEBUG_SURGEON"
+    ],
+    "anti_proliferation": "Do not activate a specialist merely because backlog size is large."
+  },
+  "scale_plan": [
+    {
+      "stage": "A",
+      "target": "P1-S01 12/12 REVIEWED",
+      "semantic_mode": "SEQUENTIAL_FAIL_CLOSED"
+    },
+    {
+      "stage": "B",
+      "target": "128 admitted union exhausted",
+      "remaining_after_stage_A": 116,
+      "batch_policy": "BOUNDED_MICROBATCH_INITIAL_12"
+    },
+    {
+      "stage": "C",
+      "target": "951 UNEXPANDED explicitly admitted and dispositioned",
+      "policy": "CLUSTERED_EXPLICIT_LIFECYCLE_TRANSITIONS_NO_BRUTE_FORCE"
+    }
+  ],
+  "lifecycle_transition": "UNEXPANDED -> ADMITTED_NOT_SELECTED -> SELECTED_NOT_READ -> REVIEWED",
+  "immediate_edge": [
+    "Keep order 7 HELD while trusted admission predicate is red.",
+    "Run metadata-only SCOUT for orders 7-12 and admitted remainder; no semantic leapfrog.",
+    "Refresh REX-CM-005 and REX-CM-006 before each new semantic admission.",
+    "When order-7 authorization is clean, read order 7 only; stop on first material defect."
+  ]
+}
