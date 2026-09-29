@@ -1,0 +1,53 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_h1.owner_admin_required_status_return.v1",
+  "mission_id": "GM-FLEET-03-H1-P1-1079-RECURSIVE-COVERAGE",
+  "blocker": "GBOGEB/pipeline-automation-hub#336",
+  "date": "2026-09-29",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "live_observation": {
+    "repository_rulesets": [],
+    "ruleset_mutation_available_to_current_agent": false,
+    "branch_protection_admin_read_available_to_current_agent": false,
+    "github_cli_available": false,
+    "runtime_github_token_available": false
+  },
+  "required_owner_admin_control": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "target_branch": "master",
+    "enforcement": "ACTIVE",
+    "required_status_context": "First-Pass Closure Gate / first-pass-closure",
+    "require_success_before_merge": true,
+    "missing_pending_failure_block_merge": true,
+    "bypass_policy": "NO_OWNER_OR_ADMIN_MANUAL_BYPASS_FOR_THIS_REQUIRED_STATUS",
+    "preferred_status_publisher_binding": "TRUSTED_PUBLISHER_APP_OR_EQUIVALENT_ADMIN_CONTROL_WHERE_SUPPORTED",
+    "source_contract": "docs/W305_FIRST_PASS_CLOSURE_GATE.md"
+  },
+  "verification_transaction": {
+    "carrier_pr": "THIS_PR",
+    "purpose": "USEFUL_CONTROL_AND_SCOUT_PRESTAGE_NOT_THROWAWAY_CANARY",
+    "phase_red_blocked": [
+      "OWNER_INSTALLS_REQUIRED_STATUS_RULESET",
+      "MARK_THIS_PR_READY",
+      "READY_TRANSITION_INVALIDATES_OR_SETS_REQUIRED_STATUS_PENDING_UNTIL_TRUSTED_GATE_REEVALUATES",
+      "ATTEMPT_MERGE_WHILE_REQUIRED_STATUS_IS_MISSING_PENDING_OR_FAILURE",
+      "REQUIRE_GITHUB_TO_REJECT_MERGE_BECAUSE_REQUIRED_STATUS_IS_NOT_SUCCESS"
+    ],
+    "phase_green_admissible": [
+      "WAIT_FOR_EXACT_HEAD_FPC_PROOF_SUCCESS",
+      "WAIT_FOR_READY_STATE_CODEX_COMPLETED_CLEAN_ON_EXACT_HEAD",
+      "WAIT_FOR_TRUSTED_FIRST_PASS_CLOSURE_GATE_SUCCESS_ON_EXACT_HEAD",
+      "READ_BACK_HEAD_STATUS_CONTEXT_AS_SUCCESS",
+      "MERGE_SAME_EXACT_HEAD",
+      "REQUIRE_GITHUB_TO_ACCEPT_MERGE"
+    ],
+    "no_new_semantic_canary": true,
+    "no_order7_body_read": true
+  },
+  "post_verification_authorization": [
+    "CLOSE_OR_CONTROL #336 ONLY_AFTER_RED_BLOCKED_AND_GREEN_ADMISSIBLE_ARE_OBSERVED",
+    "ISSUE_CLEAN_ORDER_7_AUTHORIZATION",
+    "READ_ORDER_7_PR1111_ONLY"
+  ]
+}

@@ -1,0 +1,199 @@
+{
+  "schema": "missioncontrol.gm_fleet_03_h1.scout_prestage.v1",
+  "mission_id": "GM-FLEET-03-H1-P1-1079-RECURSIVE-COVERAGE",
+  "date": "2026-09-29",
+  "mode": "METADATA_ONLY_NO_SEMANTIC_BODY_READ",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "denominator": {
+    "total": 1079,
+    "REVIEWED": 6,
+    "SELECTED_NOT_READ": 6,
+    "ADMITTED_NOT_SELECTED": 116,
+    "UNEXPANDED": 951,
+    "admitted_union": 128,
+    "silent_evictions": 0
+  },
+  "p1_s01_orders": [
+    {
+      "order": 7,
+      "id": "GBOGEB/cryoplant-project::PR1111",
+      "title": "[SUPERSEDED BY #1114] W173 restore balanced N120 after post-merge P1",
+      "state": "SELECTED_NOT_READ",
+      "admitted_for_read": false
+    },
+    {
+      "order": 8,
+      "id": "GBOGEB/ABACUS::PR1079",
+      "title": "W91 DOW: consolidate competing runtimes behind canonical owners",
+      "state": "SELECTED_NOT_READ"
+    },
+    {
+      "order": 9,
+      "id": "GBOGEB/ABACUS::PR1080",
+      "title": "W92 DOW: consolidate Docker and deployment runtime authority",
+      "state": "SELECTED_NOT_READ"
+    },
+    {
+      "order": 10,
+      "id": "GBOGEB/CODEX::PR446",
+      "title": "CODEX 2.0 W03 P3: bind logical IDs and expose runtime competition",
+      "state": "SELECTED_NOT_READ"
+    },
+    {
+      "order": 11,
+      "id": "GBOGEB/CODEX::PR459",
+      "title": "CODEX 2.0 W04 P6: retire duplicate MCP orchestration shell",
+      "state": "SELECTED_NOT_READ"
+    },
+    {
+      "order": 12,
+      "id": "GBOGEB/Q_engineering_tools::PR70",
+      "title": "[SUPERSEDED BY QPS W295/W296] W295F reproof",
+      "state": "SELECTED_NOT_READ"
+    }
+  ],
+  "stage_b_first_metadata_batch": [
+    {
+      "scout_slot": 1,
+      "id": "GBOGEB/ABACUS::PR1032",
+      "cluster": "MISSING_DURABLE_SUCCESSOR",
+      "lifecycle_state": "ADMITTED_NOT_SELECTED",
+      "title": "W62: execute DOW exact-SHA return and zero-delta repeat"
+    },
+    {
+      "scout_slot": 2,
+      "id": "GBOGEB/ABACUS::PR1069",
+      "cluster": "CROSS_REPO_RETURN",
+      "lifecycle_state": "ADMITTED_NOT_SELECTED",
+      "title": "W87 DOW: bind green KEB receipt for LLDB-DAP child re-entry"
+    },
+    {
+      "scout_slot": 3,
+      "id": "GBOGEB/ABACUS::PR1143",
+      "cluster": "MISSING_DURABLE_SUCCESSOR",
+      "lifecycle_state": "ADMITTED_NOT_SELECTED",
+      "title": "W117 CONTROL: freeze mesh runtime 3PR + MIP + 3PC handover"
+    },
+    {
+      "scout_slot": 4,
+      "id": "GBOGEB/ABACUS::PR1230",
+      "cluster": "CROSS_REPO_RETURN",
+      "lifecycle_state": "ADMITTED_NOT_SELECTED",
+      "title": "W233: consume expanded QPS federation handover in DOW"
+    },
+    {
+      "scout_slot": 5,
+      "id": "GBOGEB/ABACUS::PR771",
+      "cluster": "CROSS_REPO_RETURN",
+      "lifecycle_state": "ADMITTED_NOT_SELECTED",
+      "title": "feat(qps): return W06 cost-frontier DOW findings"
+    },
+    {
+      "scout_slot": 6,
+      "id": "GBOGEB/ABACUS::PR828",
+      "cluster": "CROSS_REPO_RETURN",
+      "lifecycle_state": "ADMITTED_NOT_SELECTED",
+      "title": "feedback(qps): W41/P03 apply child-authority NFS correction"
+    },
+    {
+      "scout_slot": 7,
+      "id": "GBOGEB/ABACUS::PR830",
+      "cluster": "CROSS_REPO_RETURN",
+      "lifecycle_state": "ADMITTED_NOT_SELECTED",
+      "title": "triage(qps): W43 bind DOW bridge to child #383"
+    },
+    {
+      "scout_slot": 8,
+      "id": "GBOGEB/ABACUS::PR833",
+      "cluster": "CROSS_REPO_RETURN",
+      "lifecycle_state": "ADMITTED_NOT_SELECTED",
+      "title": "triage(qps): return W44 DOW findings"
+    },
+    {
+      "scout_slot": 9,
+      "id": "GBOGEB/ABACUS::PR908",
+      "cluster": "CONTRADICTORY_HANDOVER",
+      "lifecycle_state": "ADMITTED_NOT_SELECTED",
+      "title": "W54-P02: execute DOW utility graph analysis on exact child hash"
+    },
+    {
+      "scout_slot": 10,
+      "id": "GBOGEB/CODEX::PR131",
+      "cluster": "CONTRADICTORY_HANDOVER",
+      "lifecycle_state": "ADMITTED_NOT_SELECTED",
+      "title": "META-WAVE-1: Recursive convergence runtime, session handover, and Wave-1000 roadmap"
+    },
+    {
+      "scout_slot": 11,
+      "id": "GBOGEB/CODEX::PR311",
+      "cluster": "CROSS_REPO_RETURN",
+      "lifecycle_state": "ADMITTED_NOT_SELECTED",
+      "title": "feat(qps): execute W05 bidder evaluation KEB return"
+    },
+    {
+      "scout_slot": 12,
+      "id": "GBOGEB/CODEX::PR313",
+      "cluster": "CROSS_REPO_RETURN",
+      "lifecycle_state": "ADMITTED_NOT_SELECTED",
+      "title": "feat(qps): return W06 cost-frontier KEB normalization"
+    }
+  ],
+  "stage_b_remainder_topology": {
+    "total": 116,
+    "by_repo": {
+      "GBOGEB/cryoplant-project": 89,
+      "GBOGEB/CODEX": 16,
+      "GBOGEB/ABACUS": 9,
+      "GBOGEB/pipeline-automation-hub": 2
+    },
+    "by_cluster": {
+      "CONTRADICTORY_HANDOVER": 51,
+      "NAMESPACE_COLLISION": 24,
+      "MISSING_DURABLE_SUCCESSOR": 23,
+      "CROSS_REPO_RETURN": 17,
+      "SUPERSESSION_COMPETITION": 1
+    }
+  },
+  "stage_c_unexpanded_topology": {
+    "total": 951,
+    "by_repo": {
+      "GBOGEB/cryoplant-project": 468,
+      "GBOGEB/CODEX": 184,
+      "GBOGEB/ABACUS": 131,
+      "GBOGEB/pipeline-automation-hub": 113,
+      "GBOGEB/Q_engineering_tools": 26,
+      "GBOGEB/gg_MATH": 14,
+      "GBOGEB/DOCX_RTM_Automation": 5,
+      "GBOGEB/CoolProp": 4,
+      "GBOGEB/codespaces-jupyter": 3,
+      "GBOGEB/CODESPACES_jyperter": 1,
+      "GBOGEB/document-organization-system": 1,
+      "GBOGEB/GBOGEB": 1
+    },
+    "by_cluster": {
+      "NAMESPACE_COLLISION": 883,
+      "SUPERSESSION_COMPETITION": 29,
+      "CONTRADICTORY_HANDOVER": 22,
+      "CROSS_REPO_RETURN": 10,
+      "MISSING_DURABLE_SUCCESSOR": 7
+    },
+    "by_cell": {
+      "F01-A": 468,
+      "F01-C": 184,
+      "F01-D": 159,
+      "F01-B": 131,
+      "F02-F08-SHARED": 9
+    }
+  },
+  "guards": [
+    "NO_LIFECYCLE_PROMOTION_FROM_THIS_SCOUT_ARTIFACT",
+    "NO_SEMANTIC_BODY_READ_BEFORE_GOVERNED_ADMISSION",
+    "STAGE_B_METADATA_BATCHING_ONLY",
+    "SEMANTIC_READS_STRICTLY_SEQUENTIAL",
+    "STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT",
+    "GM_V_HELD",
+    "GM_VI_FORBIDDEN"
+  ]
+}
