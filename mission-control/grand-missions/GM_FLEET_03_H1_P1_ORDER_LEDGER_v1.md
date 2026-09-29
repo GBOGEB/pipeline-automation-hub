@@ -42,10 +42,12 @@ Orders 1-6 are the worked process exemplars.
 ## Scale gates
 
 1. **Stage A:** 6/12 -> 12/12.
-2. **Stage B:** process the remaining **116** admitted items. Initial semantic micro-batch size 12; metadata scouting may parallelize.
+2. **Stage B:** process the remaining **116** admitted items. Metadata scouting may run in bounded micro-batches (initially 12), but semantic body reads remain **strictly sequential, one admitted item at a time**, with `STOP_ON_FIRST_MATERIAL_SEMANTIC_OR_IDENTITY_DEFECT` and no next body read until the current item is dispositioned.
 3. **Stage C:** expand the **951** only through explicit lifecycle transitions, clustered by existing P1 metadata.
 
 The historical legacy shortlist of 120 is an input cohort; it is not 120 remaining after the 12 selected orders because the admitted union is 128.
+
+**Launch prohibition:** no Stage A/B/C completion, scale, throughput, coverage, backlog reduction, or proof receipt from this mission may authorize or imply GM-V launch; GM-V remains HELD. GM-VI launch/allocation remains FORBIDDEN.
 
 ## Immediate stop
 
