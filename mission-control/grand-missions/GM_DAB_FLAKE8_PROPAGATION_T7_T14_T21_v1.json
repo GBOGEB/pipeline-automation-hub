@@ -1,0 +1,170 @@
+{
+  "schema": "missioncontrol.gm_dab_flake8_propagation.v1",
+  "mission_id": "GM-DAB-FLAKE8-T7-T14-T21-20260930",
+  "parent_mission": "GM-DMAIC-EVOLUTION-T7-T14-T21-20260926",
+  "controller_issues": {
+    "top7_runtime": 419,
+    "rex_propagation": 428,
+    "abacus_hard_lane": "GBOGEB/ABACUS#1488"
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "purpose": "Propagate the measured ABACUS DAB mechanical/semantic lint burn-down method across the governed Top7/Top14/Top21 cohorts without bypassing breadth promotion gates.",
+  "seed_evidence": {
+    "repository": "GBOGEB/ABACUS",
+    "mechanical": {
+      "slice4_pr": 1487,
+      "merge_sha": "f16b4d5936c735611df4084c9702c21330b27dea",
+      "postmerge_run": 36689297800,
+      "postmerge_job": 109802429562,
+      "pre_total": 12680,
+      "post_total": 12286,
+      "pre_w293": 4833,
+      "post_w293": 4439,
+      "measured_delta_total": -394,
+      "measured_delta_w293": -394,
+      "result": "PASS_EXACT_YIELD"
+    },
+    "hard": {
+      "tracking_issue": 1488,
+      "repair_pr": 1489,
+      "merge_sha": "900d61d5961d92f161480f311cc69051e475cbca",
+      "target_family": "E999",
+      "reconstructable_repairs": 5,
+      "source_bound_hold": "qplant/w52_p2m_ts_pressure_sensitivity.py",
+      "postmerge_exact_census": "PENDING_BIND"
+    }
+  },
+  "operating_model": {
+    "dab_mech": {
+      "rule": "Scale homogeneous mechanical lint families only after an exact before/after yield receipt. No whole-repository autoformat.",
+      "batch_target_findings": {
+        "min": 800,
+        "max": 1200
+      },
+      "selection": [
+        "same lint family",
+        "dependency-safe paths",
+        "zero selected hard-family findings in source census",
+        "mechanical transform only"
+      ]
+    },
+    "dab_hard": {
+      "rule": "Inspect source context -> classify defect/legacy/generated/source-bound -> identify consumer/test -> bounded repo-local repair iff material and testable -> exact-head proof -> merge/readback -> recensus.",
+      "families_priority": [
+        "E999",
+        "F821",
+        "F601",
+        "F811",
+        "E722",
+        "F841",
+        "E741",
+        "E731"
+      ],
+      "bulk_semantic_autofix": false
+    }
+  },
+  "breadth_control": {
+    "top7": {
+      "mode": "ACTIVE_CENSUS_AND_REPAIR",
+      "repair_admission": true,
+      "rule": "Each repository may carry at most one repo-local repair root and one prove root. Serialize depth inside each repository."
+    },
+    "top14": {
+      "mode": "SHADOW_MEASURE_AND_CLASSIFY",
+      "repair_admission": false,
+      "rule": "Propagate census/classification and readiness telemetry only until the existing Top7->Top14 promotion gate passes. Existing explicit REX pilots remain non-promoting."
+    },
+    "top21": {
+      "mode": "HOLD_TELEMETRY_ONLY",
+      "repair_admission": false,
+      "rule": "No DAB repair admission until the existing Top14->Top21 promotion gate passes. Existing explicit REX pilots remain non-promoting."
+    }
+  },
+  "cohorts": {
+    "top7": [
+      "GBOGEB/ABACUS",
+      "GBOGEB/CODEX",
+      "GBOGEB/cryoplant-project",
+      "GBOGEB/pipeline-automation-hub",
+      "GBOGEB/Q_engineering_tools",
+      "GBOGEB/document-organization-system",
+      "GBOGEB/DOCX_RTM_Automation"
+    ],
+    "top14_extension": [
+      "GBOGEB/gg_MATH",
+      "GBOGEB/GEMINI",
+      "GBOGEB/CODESPACES_jyperter",
+      "GBOGEB/GBOGEB",
+      "GBOGEB/CoolProp",
+      "GBOGEB/codespaces-jupyter",
+      "GBOGEB/cryogenic-accelerator-workspace"
+    ],
+    "top21_extension": [
+      "GBOGEB/skills",
+      "GBOGEB/cryo_leak_rate_dashboard",
+      "GBOGEB/telegraf",
+      "GBOGEB/github-mcp-server",
+      "GBOGEB/github_Documents",
+      "GBOGEB/stale",
+      "GBOGEB/GBOGEB-profile"
+    ]
+  },
+  "per_repo_pulse": [
+    "REFRESH_DEFAULT_HEAD",
+    "DISCOVER_LINT_SURFACE",
+    "CENSUS_BY_RULE_AND_PATH",
+    "CLASSIFY_MECH_VS_HARD",
+    "RANK",
+    "ADMIT_IF_COHORT_MODE_ALLOWS",
+    "PROVE_EXACT_HEAD",
+    "MERGE_READBACK_IF_ADMISSIBLE",
+    "RECENSUS",
+    "ROLL_UP_TO_MISSION_CONTROL"
+  ],
+  "fleet_rollup": {
+    "required_metrics": [
+      "repo",
+      "cohort",
+      "source_sha",
+      "lint_tool_and_command",
+      "total_findings",
+      "mechanical_findings",
+      "hard_findings",
+      "top_rule_counts",
+      "admitted_repair",
+      "proof_run",
+      "proof_job",
+      "measured_delta",
+      "residual_first_hard_family",
+      "state"
+    ],
+    "missing_measurement": "UNKNOWN_NOT_ZERO",
+    "cross_repo_raw_count_comparison": false
+  },
+  "noncompensation": [
+    "ZERO_STEP_NE_APPLICATION_FAIL",
+    "PENDING_NE_GREEN",
+    "SKIPPED_NE_GREEN",
+    "MISSING_EVIDENCE_NE_GREEN",
+    "MERGE_NE_PROOF",
+    "RETURN_NE_REPAIR",
+    "RAW_FAILURE_REDUCTION_NE_DMAIC_MATURITY",
+    "DAB_CENSUS_NE_COHORT_PROMOTION",
+    "TOP14_SHADOW_NE_REPAIR_ADMISSION",
+    "TOP21_TELEMETRY_NE_REPAIR_ADMISSION"
+  ],
+  "next_execution": {
+    "abacus": [
+      "bind #1489 postmerge E999 census",
+      "finish slice5 871-W293 test-only batch from current-main branch",
+      "exact-head proof",
+      "merge/readback iff admissible",
+      "recensus"
+    ],
+    "top7": "Refresh all six non-ABACUS default heads and produce first DAB census/classification receipts; admit repo-local repair only after each repo is independently ranked.",
+    "top14": "Refresh seven extension heads and collect shadow DAB census/classification; no repair admission from this contract.",
+    "top21": "Refresh seven extension heads and collect telemetry only; preserve HOLD."
+  }
+}
