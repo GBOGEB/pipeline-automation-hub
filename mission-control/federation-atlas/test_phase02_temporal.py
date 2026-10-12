@@ -31,6 +31,7 @@ class TemporalTests(unittest.TestCase):
     def test_svg_no_fabrication(self):
         self.assertEqual(t.graph(self.data["red_events"]).count("<circle"),1)
         self.assertEqual(t.graph([]).count("<circle"),0)
+        self.assertIn("cumulative=1",t.graph(self.data["red_events"]))
         self.assertIn("log1p",t.graph([]))
         with self.assertRaises(ValueError):t.graph([],"log")
     def test_control(self):
@@ -55,6 +56,9 @@ class TemporalTests(unittest.TestCase):
             self.assertIn("Toggle light/dark",html)
             self.assertIn("24h",html)
             self.assertIn("11 passed / 1 failed",html)
-            self.assertIn("DATA",r["schema"].upper() if False else "DATA") # explicit fixture no synthetic history
+            self.assertIn("SCOPED_OBSERVED_PARTIAL",html)
+            self.assertIn("MISSING_RECEIPT",html)
+            self.assertIn("First red and last observed pass",html)
+            self.assertTrue((Path(tmp)/"phase02-lineage.svg").exists())
             self.assertTrue((Path(tmp)/"phase02-first-red.svg").exists())
 if __name__=="__main__":unittest.main()
