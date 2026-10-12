@@ -1,0 +1,24 @@
+schema: missioncontrol.federation_atlas.graph.v1
+authority_transfer: false
+layout: left-to-right
+nodes:
+  - {id: MC, label: "Mission Control", x: 78, y: 194, class: control}
+  - {id: QPS, label: "QPS TRIAGE", x: 335, y: 45, class: child}
+  - {id: KEB, label: "CODEX / KEB", x: 335, y: 120, class: semantic}
+  - {id: DOW, label: "ABACUS / DOW", x: 335, y: 194, class: runtime}
+  - {id: AUX, label: "Helper repos", x: 335, y: 269, class: helper}
+  - {id: INF, label: "Docker / MCP / K8s", x: 335, y: 344, class: infra}
+  - {id: JOIN, label: "SHA evidence join", x: 615, y: 194, class: evidence}
+  - {id: GATE, label: "Admission / HOLD", x: 850, y: 194, class: hold}
+edges:
+  - {from: MC, to: QPS, type: dispatch}
+  - {from: MC, to: KEB, type: dispatch}
+  - {from: MC, to: DOW, type: dispatch}
+  - {from: MC, to: AUX, type: dispatch}
+  - {from: MC, to: INF, type: dispatch}
+  - {from: QPS, to: JOIN, type: evidence}
+  - {from: KEB, to: JOIN, type: evidence}
+  - {from: DOW, to: JOIN, type: evidence}
+  - {from: AUX, to: JOIN, type: evidence}
+  - {from: INF, to: JOIN, type: evidence}
+  - {from: JOIN, to: GATE, type: admission}

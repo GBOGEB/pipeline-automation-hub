@@ -1,0 +1,65 @@
+name: CODE PURPLE Method Atlas (read-only)
+on:
+  pull_request:
+    paths:
+      - 'mission-control/federation-atlas/**'
+      - '.github/workflows/code-purple-method-atlas.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/federation-atlas/**'
+      - 'mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json'
+      - 'mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json'
+      - '.github/workflows/code-purple-method-atlas.yml'
+  workflow_dispatch:
+    inputs:
+      method:
+        type: choice
+        description: "Observed method pulse, not automatic promotion"
+        options: [ALL, SIPOC, DAG, DMAIC, '3P*', MIP, PCA, BT, LDAB]
+        default: ALL
+      stage:
+        type: string
+        description: "Registered method stage (optional)"
+        required: false
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert checkout identity
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+      - name: Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install pinned YAML parser
+        run: python -m pip install pyyaml==6.0.3
+      - name: Contract and Doctor routing tests
+        run: python -m unittest discover -s mission-control/federation-atlas -p "test_*.py" -v
+      - name: Build method-aware read-only dashboard
+        env:
+          SELECTED_METHOD: ${{ inputs.method || 'ALL' }}
+          SELECTED_STAGE: ${{ inputs.stage || '' }}
+          GITHUB_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          if [ "$SELECTED_METHOD" = "ALL" ]; then
+            python mission-control/federation-atlas/build_atlas.py --out /tmp/code-purple-atlas
+          elif [ -z "$SELECTED_STAGE" ]; then
+            python mission-control/federation-atlas/build_atlas.py --method "$SELECTED_METHOD" --out /tmp/code-purple-atlas
+          else
+            python mission-control/federation-atlas/build_atlas.py --method "$SELECTED_METHOD" --stage "$SELECTED_STAGE" --out /tmp/code-purple-atlas
+          fi
+      - name: Upload identity-bound HTML SVG and metrics
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-purple-method-atlas-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/code-purple-atlas/
+          if-no-files-found: error

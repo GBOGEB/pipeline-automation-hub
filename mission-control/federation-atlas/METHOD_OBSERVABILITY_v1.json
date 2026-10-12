@@ -1,0 +1,208 @@
+{
+  "schema": "missioncontrol.federation_atlas.method_events.v1",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "sources": {
+    "canonical_mc": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json",
+    "method_registry": "mission-control/v2/MC_METHOD_PROFILE_REGISTRY_v1.json",
+    "fleet_contract": "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
+    "telemetry_contract": "mission-control/v2/MC_MISSION_TELEMETRY_CONTRACT_v1.json",
+    "crew_registry": "mission-control/grand-missions/CREW_ROLE_REGISTRY.json",
+    "graph": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+    "kpi_taxonomy": "mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json",
+    "glossary": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json"
+  },
+  "methods": [
+    {
+      "id": "SIPOC",
+      "role": "SOURCE_PROCESS_PROJECTION",
+      "stages": [
+        "SUPPLIER",
+        "INPUT",
+        "PROCESS",
+        "OUTPUT",
+        "CUSTOMER"
+      ],
+      "metric": "source_anchor_completion",
+      "trigger": "SOURCE_OR_INTERFACE_CHANGE",
+      "authority": "VIEW_ONLY"
+    },
+    {
+      "id": "DAG",
+      "role": "DEPENDENCY_EXECUTION_PROJECTION",
+      "stages": [
+        "DISCOVER",
+        "TOPO_SORT",
+        "RUN_ADMITTED",
+        "JOIN_RECEIPTS"
+      ],
+      "metric": "blocked_dependency_count",
+      "trigger": "NEW_ADMITTED_WORK_OR_RECEIPT",
+      "authority": "VIEW_ONLY"
+    },
+    {
+      "id": "DMAIC",
+      "role": "SUPERVISOR",
+      "stages": [
+        "DEFINE",
+        "MEASURE",
+        "ANALYZE",
+        "IMPROVE",
+        "CONTROL",
+        "RECENSUS"
+      ],
+      "metric": "exact_head_control_yield",
+      "trigger": "CONTROLLED_MISSION_PULSE",
+      "authority": "MC_REGISTRY"
+    },
+    {
+      "id": "3P*",
+      "role": "METHOD_SELECTOR",
+      "stages": [
+        "3PR_REFRESH",
+        "3PR_PROBE",
+        "3PR_RANK",
+        "3PC_PREPARE",
+        "3PC_PROVE",
+        "3PC_COMMIT"
+      ],
+      "metric": "first_red_latency_seconds",
+      "trigger": "RECON_OR_ADMITTED_CHANGE",
+      "authority": "MC_REGISTRY"
+    },
+    {
+      "id": "MIP",
+      "role": "CONDITIONAL_IMPROVEMENT",
+      "stages": [
+        "MODERNIZE",
+        "INNOVATE",
+        "PERPETUATE"
+      ],
+      "metric": "recurrence_count",
+      "trigger": "JUSTIFIED_MEASURED_GAP",
+      "authority": "MC_REGISTRY"
+    },
+    {
+      "id": "PCA",
+      "role": "ADVISORY_ANALYSIS",
+      "stages": [
+        "DATA_READINESS",
+        "FIT",
+        "DIAGNOSTIC",
+        "HOLD_OR_USE"
+      ],
+      "metric": "explained_variance_nullable",
+      "trigger": "COMPARABLE_MEASURED_ROWS",
+      "authority": "ANALYST_ONLY"
+    },
+    {
+      "id": "BT",
+      "role": "ADVISORY_BRADLEY_TERRY_RANKING",
+      "stages": [
+        "DATA_READINESS",
+        "OBSERVED_PAIRS",
+        "FIT_RANKING",
+        "RANK_OR_DEFER"
+      ],
+      "metric": "pairwise_comparisons_observed",
+      "trigger": "OBSERVED_WINNER_LOSER_COMPARISONS",
+      "authority": "ANALYST_ONLY"
+    },
+    {
+      "id": "LDAB",
+      "role": "DIAGNOSTIC_OBSERVABILITY",
+      "stages": [
+        "LOG",
+        "DEBUG",
+        "ANALYZE",
+        "BREAKPOINT",
+        "RETEST"
+      ],
+      "metric": "diagnostic_receipt_completeness",
+      "trigger": "NAMED_DIAGNOSTIC_DEFECT",
+      "authority": "ANALYST_ONLY"
+    }
+  ],
+  "doctor": {
+    "predicate": "observed_application_red == true AND executed_steps > 0 AND source_sha != null",
+    "route": "DOCTOR",
+    "else_zero_step": "DOCKMASTER",
+    "else_owner_external": "RETURN_OWNER",
+    "duties": [
+      "REX_LOOKUP_BY_ROOT_FAMILY",
+      "CHECK_PRIOR_FIX_AND_SOURCE_SCOPE",
+      "PROPOSE_BOUNDED_REPAIR",
+      "EXACT_HEAD_IMPACTED_RETEST",
+      "UPDATE_REX_ONLY_AFTER_CONTROL"
+    ],
+    "automatic_merge": false
+  },
+  "cohorts": {
+    "top7": "ACTIVE",
+    "top14": "SHADOW_MEASURE",
+    "top21": "HOLD_TELEMETRY"
+  },
+  "links": [
+    {
+      "id": "mission-control",
+      "label": "Mission Control source",
+      "kind": "SOURCE",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/tree/master/mission-control"
+    },
+    {
+      "id": "fleet-dashboard",
+      "label": "Existing Fleet dashboard HTML",
+      "kind": "SOURCE",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html"
+    },
+    {
+      "id": "qps",
+      "label": "QPS TRIAGE engineering",
+      "kind": "SOURCE",
+      "url": "https://github.com/GBOGEB/cryoplant-project"
+    },
+    {
+      "id": "keb",
+      "label": "CODEX / KEB",
+      "kind": "SOURCE",
+      "url": "https://github.com/GBOGEB/CODEX"
+    },
+    {
+      "id": "dow",
+      "label": "ABACUS / DOW",
+      "kind": "SOURCE",
+      "url": "https://github.com/GBOGEB/ABACUS"
+    },
+    {
+      "id": "triage-web",
+      "label": "QPS TRIAGE web build",
+      "kind": "SOURCE",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/tree/master/mission-control/qps-triage-ultra/site"
+    },
+    {
+      "id": "abacus-pages",
+      "label": "ABACUS Pages landing (readback required)",
+      "kind": "HOSTED_CANDIDATE",
+      "url": "https://gbogeb.github.io/ABACUS/"
+    },
+    {
+      "id": "codex-pages",
+      "label": "CODEX Pages landing (readback required)",
+      "kind": "HOSTED_CANDIDATE",
+      "url": "https://gbogeb.github.io/CODEX/"
+    },
+    {
+      "id": "qps-pages",
+      "label": "Cryoplant Pages landing (readback required)",
+      "kind": "HOSTED_CANDIDATE",
+      "url": "https://gbogeb.github.io/cryoplant-project/"
+    },
+    {
+      "id": "pipeline-pages",
+      "label": "Mission Control Pages landing (readback required)",
+      "kind": "HOSTED_CANDIDATE",
+      "url": "https://gbogeb.github.io/pipeline-automation-hub/"
+    }
+  ]
+}
