@@ -1,0 +1,92 @@
+{
+  "schema": "missioncontrol.phase02.observation_snapshot.v1",
+  "owner": "GBOGEB/pipeline-automation-hub",
+  "pr": 519,
+  "head_sha": "4073f0922a0cccf1f901256044b3701a45d4caaa",
+  "main_sha": "8839d367e76ce9d877b92b60a8b4faf6e102394c",
+  "observed_date": "2026-10-12",
+  "population": "PR519_BOUND_SCOPED_HISTORICAL",
+  "fleet_population_complete": false,
+  "checks": {
+    "passed": 11,
+    "failed": 1,
+    "skipped": 1,
+    "terminal": 13
+  },
+  "postmerge": {
+    "successful_workflows": 16,
+    "terminal_workflows": 16,
+    "head_sha": "8839d367e76ce9d877b92b60a8b4faf6e102394c"
+  },
+  "red_events": [
+    {
+      "id": "PR519::GOVERNANCE::MISSING_RECEIPT",
+      "time": "2026-10-12T13:14:22Z",
+      "class": "GOVERNANCE_GATE_RED",
+      "application_red": false,
+      "reason": "MISSING_RECEIPT",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38254267546"
+    }
+  ],
+  "queue_jobs": [
+    {
+      "id": 114827537836,
+      "run": 38254093836,
+      "name": "render",
+      "created": "2026-10-12T13:12:39Z",
+      "started": "2026-10-12T13:12:45Z"
+    },
+    {
+      "id": 114827536351,
+      "run": 38254093710,
+      "name": "validate",
+      "created": "2026-10-12T13:12:39Z",
+      "started": "2026-10-12T13:12:45Z"
+    },
+    {
+      "id": 114827528724,
+      "run": 38254089255,
+      "name": "Analyze (python)",
+      "created": "2026-10-12T13:12:37Z",
+      "started": "2026-10-12T13:12:40Z"
+    },
+    {
+      "id": 114827528939,
+      "run": 38254089255,
+      "name": "Analyze (actions)",
+      "created": "2026-10-12T13:12:37Z",
+      "started": "2026-10-12T13:12:40Z"
+    },
+    {
+      "id": 114827529161,
+      "run": 38254089255,
+      "name": "Analyze (ruby)",
+      "created": "2026-10-12T13:12:38Z",
+      "started": "2026-10-12T13:12:40Z"
+    },
+    {
+      "id": 114827529352,
+      "run": 38254089255,
+      "name": "Analyze (javascript-typescript)",
+      "created": "2026-10-12T13:12:38Z",
+      "started": "2026-10-12T13:12:40Z"
+    },
+    {
+      "id": 114828156024,
+      "run": 38254267546,
+      "name": "first-pass-closure",
+      "created": "2026-10-12T13:14:09Z",
+      "started": "2026-10-12T13:14:11Z"
+    }
+  ],
+  "source_links": {
+    "pr": "https://github.com/GBOGEB/pipeline-automation-hub/pull/519",
+    "first_red": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38254267546",
+    "main": "https://github.com/GBOGEB/pipeline-automation-hub/commit/8839d367e76ce9d877b92b60a8b4faf6e102394c"
+  },
+  "evidence_warnings": [
+    "PR_SAMPLE_NOT_FULL_FLEET",
+    "SINGLE_RED_NO_CONVERGENCE_CLAIM",
+    "POSTMERGE_PASS_NOT_EXACT_HEAD_ADMISSION"
+  ]
+}

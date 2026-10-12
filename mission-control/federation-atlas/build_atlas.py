@@ -119,6 +119,8 @@ def build(out, method=None, stage=None, event=None):
     out=Path(out);out.mkdir(parents=True,exist_ok=True)
     svg=draw(graph)
     (out/"federation.svg").write_text(svg,encoding="utf-8")
+    import phase02_temporal
+    phase02_temporal.build(out)
     (out/"metrics.json").write_text(json.dumps(metrics,indent=2)+"\n",encoding="utf-8")
     if receipt:
         (out/"method-pulse.json").write_text(json.dumps(receipt,indent=2)+"\n",encoding="utf-8")
@@ -150,7 +152,7 @@ def build(out, method=None, stage=None, event=None):
 <article class="tile"><h3>TOP7</h3><div class="metric">7</div><p>Active repair admission by governed scope</p></article>
 <article class="tile"><h3>TOP14 / TOP21</h3><div class="metric">14 / 21</div><p>Shadow measurement / telemetry HOLD</p></article></div></section>
 <section><h2>Federation execution backbone</h2><p class="sub">YAML-driven SVG: dispatch → independent lanes → exact-SHA join → admission/HOLD.</p>{svg}</section>
-<section><h2>Phase 02 · six evidence KPIs</h2><p class="sub">Definitions updated {safe(kpi_contract["as_of"])} · mission census snapshot {safe(text_or_unknown(snapshot))}. UNBOUND values are not zero and mockups are not live telemetry. <a href="https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json">Source contract (pending merge)</a></p><div class="grid">{{kpi_cards}}</div></section>
+<section><h2>Measured Phase 02 CONTROL (scoped)</h2><a class="link" href="phase02-temporal.html">Open measured/UNBOUND temporal KPI cards, log SVG, evidence and lane matrix</a></section><section><h2>Phase 02 · six evidence KPIs</h2><p class="sub">Definitions updated {safe(kpi_contract["as_of"])} · mission census snapshot {safe(text_or_unknown(snapshot))}. UNBOUND values are not zero and mockups are not live telemetry. <a href="https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json">Source contract (pending merge)</a></p><div class="grid">{{kpi_cards}}</div></section>
 <section><h2>Method execution catalogue</h2><label for="method">Filter method: </label><select id="method"><option value="ALL">All methods</option>{''.join('<option value="'+safe(k)+'">'+safe(k)+'</option>' for k in ids)}</select>
 <div id="method-grid" class="grid" style="margin-top:15px">{method_cards}</div></section>
 <section><h2>Live task / Doctor + REX decision</h2><article class="tile"><p>Doctor is conditionally admissible only on an observed application failure with executed steps &gt; 0 and valid exact source SHA. Zero-step red → Dockmaster. Owner-external → return to owner. REX lookup searches source-bound prior resolution before a repair proposal.</p>
