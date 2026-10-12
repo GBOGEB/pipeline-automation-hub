@@ -40,7 +40,7 @@ def queue_samples(observation):
 
 def optional_test_decision(test, policy):
     deny = policy["optional_skip"]
-    if test.get("required") is not False or test.get("lane") in deny["non_skippable"]:
+    if test.get("required") is not False or test.get("lane") not in ("PYTHON_TRIAGE_SHORT","USER_CICD_LONG") or test.get("lane") in deny["non_skippable"]:
         return "EXECUTE_REQUIRED"
     hist = test.get("distinct_head_history")
     if not isinstance(hist,list) or len(hist) < deny["min_distinct_head_passes"]:
@@ -95,15 +95,40 @@ def graph(events,method="log1p"):
     parts=['<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="First-red events, observed only" viewBox="0 0 720 185">',
       '<rect width="720" height="185" fill="#171a2c" rx="14"/>',
       '<path d="M55 18V154H680" fill="none" stroke="#9ea6c9"/>']
+    n=max(1,len(events))
     for i,e in enumerate(sorted(events,key=lambda x:parse_utc(x["time"]))):
-        y=58 if method=="log1p" else 60
+        cumulative=i+1
+        fraction=(math.log1p(cumulative)/math.log1p(n)) if method=="log1p" else cumulative/n
+        y=150-105*fraction
         x=360 if len(events)==1 else 90+500*i/max(1,len(events)-1)
-        parts.append('<circle cx="'+str(round(x,1))+'" cy="'+str(y)+'" r="7" fill="#fa637b"><title>'+
-                     html.escape(e["reason"]+" "+e["time"])+'</title></circle>')
+        parts.append('<circle cx="'+str(round(x,1))+'" cy="'+str(round(y,1))+'" r="7" fill="#fa637b"><title>'+
+                     html.escape(e["reason"]+" "+e["time"]+" cumulative="+str(cumulative))+'</title></circle>')
     if not events:
         parts.append('<text x="110" y="85" fill="#dde2fb">UNKNOWN / no observations</text>')
     parts.append('<text x="65" y="175" fill="#bfc5db" font-size="12">'+method+' scale · observed points only · no inferred trend</text></svg>')
     return "".join(parts)
+
+def control_lineage(result):
+    """Direction-correct two-edge record, never implying that merge clears a red."""
+    red=result["first_red_events"][0] if result["first_red_events"] else None
+    title=html.escape(red["reason"]) if red else "UNKNOWN"
+    main=html.escape(result["main_sha"][:12])
+    return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-label="First red and last pass evidence edges">'
+      '<defs><marker id="tip" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">'
+      '<path d="M0 0 L9 4.5 L0 9Z" fill="#bbc4f2"/></marker></defs>'
+      '<rect width="800" height="200" rx="14" fill="#16192d"/>'
+      '<rect x="16" y="66" width="190" height="68" rx="10" fill="#332457" stroke="#bda0ff"/>'
+      '<text x="111" y="93" text-anchor="middle" fill="#fff" font-size="14">PR #519 / source</text>'
+      '<text x="111" y="112" text-anchor="middle" fill="#bfc7ee" font-size="11">4073f0922a0c</text>'
+      '<path d="M206 88 C276 88 275 42 352 42" stroke="#ff7084" fill="none" stroke-width="2.5" marker-end="url(#tip)"/>'
+      '<path d="M206 112 C276 112 275 153 352 153" stroke="#54dcae" fill="none" stroke-width="2.5" marker-end="url(#tip)"/>'
+      '<rect x="354" y="14" width="425" height="59" rx="10" fill="#442436" stroke="#ff7084"/>'
+      '<rect x="354" y="125" width="425" height="59" rx="10" fill="#1b453d" stroke="#54dcae"/>'
+      '<text x="372" y="38" fill="#fff" font-size="14">FIRST RED: '+title+'</text>'
+      '<text x="372" y="57" fill="#f6ced5" font-size="12">PR-head gate not admitted</text>'
+      '<text x="372" y="148" fill="#fff" font-size="14">LAST OBSERVED PASS: main '+main+'</text>'
+      '<text x="372" y="166" fill="#c1f9e9" font-size="12">16/16 postmerge workflows, not gate proof</text>'
+      '</svg>')
 
 def render(result):
     metrics=result["kpis"]
@@ -135,7 +160,7 @@ svg{width:100%;height:auto}a{color:#759aee}p{max-width:980px}dialog{max-width:63
 <div class="box"><h2>Two edges · one source lineage</h2><p><b style="color:#ed6c82">First red</b> → missing exact-head closure receipt (<a href="https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38254267546">run</a>)</p>
 <p><b style="color:#48cc9c">Last observed pass</b> → 16/16 successful main workflows (<a href="https://github.com/GBOGEB/pipeline-automation-hub/commit/8839d367e76ce9d877b92b60a8b4faf6e102394c">main SHA</a>)</p>
 <p><strong>DMAIC CONTROL:</strong> HOLD, not baseline promoted. Require root closure, two distinct exact-head CONTROL repetitions, independent proof and owner review.</p></div></section>
-<section id="laneMatrix" class="box"><h2>Task and test execution matrix</h2><div class="grid"><div><h3>Short Python triage</h3><p>Fast smoke/unit/diagnostic, run on change and first-red; isolate impacted tests.</p></div>
+<section class="box"><h2>First red and last observed pass · two-edge lineage</h2><div id="lineage">@@LINEAGE@@</div></section><section id="laneMatrix" class="box"><h2>Task and test execution matrix</h2><div class="grid"><div><h3>Short Python triage</h3><p>Fast smoke/unit/diagnostic, run on change and first-red; isolate impacted tests.</p></div>
 <div><h3>User CI/CD long</h3><p>Dedicated long-run lane and queue; security, integration, release and performance. Never blanket skip.</p></div>
 <div><h3>Governance / admission</h3><p>Non-waivable exact-head closure, review, source identity; no skip based on historical greens.</p></div></div>
 <p class="sub">Task states: HOLD · BLOCKED · ACTIVE · LINKED · SPLIT · PARALLEL · CONTROL. Optional test deferral needs 10 distinct source-head green receipts, impact isolation, canary and 7-day full sweep; no workflow is actually skipped by this view.</p></section>
@@ -157,6 +182,7 @@ document.getElementById("scale").onchange=e=>{document.getElementById("plot").in
 </script></body></html>"""
     return (page.replace("@@CARDS@@","".join(buttons))
       .replace("@@PLOT@@",graph(result["first_red_events"]))
+      .replace("@@LINEAGE@@",control_lineage(result))
       .replace("@@DATA@@",payload)
       .replace("@@LINEAR@@",json.dumps(graph(result["first_red_events"],"linear")))
       .replace("@@LOG@@",json.dumps(graph(result["first_red_events"],"log1p"))))
@@ -167,6 +193,7 @@ def build(out):
     dest=Path(out);dest.mkdir(parents=True,exist_ok=True)
     (dest/"phase02-temporal.html").write_text(render(result),encoding="utf-8")
     (dest/"phase02-first-red.svg").write_text(graph(result["first_red_events"]),encoding="utf-8")
+    (dest/"phase02-lineage.svg").write_text(control_lineage(result),encoding="utf-8")
     (dest/"phase02-temporal.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
     return result
 
