@@ -1,0 +1,30 @@
+name: GM DAB Flake8 Propagation Control
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_DAB_FLAKE8_PROPAGATION_T7_T14_T21_v1.json'
+      - 'mission-control/grand-missions/tests/test_gm_dab_flake8_propagation.py'
+      - '.github/workflows/gm-dab-flake8-propagation.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/grand-missions/GM_DAB_FLAKE8_PROPAGATION_T7_T14_T21_v1.json'
+      - 'mission-control/grand-missions/tests/test_gm_dab_flake8_propagation.py'
+      - '.github/workflows/gm-dab-flake8-propagation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prove flake8 propagation cohort contract
+        run: python -m unittest mission-control/grand-missions/tests/test_gm_dab_flake8_propagation.py -v

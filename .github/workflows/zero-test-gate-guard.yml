@@ -1,0 +1,42 @@
+name: Zero-Test Gate Guard
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - '.github/workflows/**'
+      - '**/test_*.py'
+      - 'scripts/zero_test_gate_audit.py'
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/**'
+      - '**/test_*.py'
+      - 'scripts/zero_test_gate_audit.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --disable-pip-version-check 'PyYAML>=6,<7'
+      - name: Audit self-tests
+        run: python -m unittest scripts/tests/test_zero_test_gate_audit.py -v
+      - name: Every unittest gate collects at least one test
+        run: |
+          set -euo pipefail
+          python scripts/zero_test_gate_audit.py --strict --out zero-test-gate-audit.json
+      - name: Upload audit receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zero-test-gate-audit-${{ github.sha }}
+          path: zero-test-gate-audit.json
+          if-no-files-found: ignore
