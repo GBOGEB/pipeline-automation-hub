@@ -1,0 +1,51 @@
+{
+  "schema": "missioncontrol.v2.adoption.a4_crew_runner_trusted_control_disposition.v1",
+  "as_of": "2026-09-28",
+  "sprint_id": "MC-S2",
+  "wave_id": "MC-A4_DASHBOARD_AND_TODO_SURFACES",
+  "slice_id": "CREW_RUNNER_VISIBILITY",
+  "control_issue": "GBOGEB/pipeline-automation-hub#443",
+  "disposition": "TRUSTED_CREW_RUNNER_SLICE",
+  "exact_head": "9be2701561d7d64b2e62628f6c5ebc66c91515ab",
+  "merge": "4a3da830b9b299509e2f43fb52e86aa83460bdb0",
+  "evidence": {
+    "a3_enforcement_run": 36385095483,
+    "a4_dashboard_run": 36385095455,
+    "mc_v2_contract_run": 36385095397,
+    "first_pass_closure_proof_run": 36385095423,
+    "qps_federation_run": 36385095375,
+    "w3_recon_run": 36385095420,
+    "codex_review": "COMPLETED_NO_MAJOR_ISSUES",
+    "trusted_fpc_run": 36385164680,
+    "trusted_fpc_status": "SUCCESS",
+    "trusted_fpc_artifact_id": 10953679777,
+    "trusted_fpc_artifact_digest": "sha256:881f9f78eabd2f3d8d777b945f8f244613eba2e7651dd23f05ce918b6bf536ed"
+  },
+  "controlled_surface": {
+    "mission_rows": 18,
+    "todo_rows": 4,
+    "mode": "READ_ONLY_DERIVED_SURFACE",
+    "source": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json",
+    "by_crew_state": {
+      "UNKNOWN": 12,
+      "PARTIAL": 5,
+      "ACTIVE": 1
+    },
+    "by_runner_state": {
+      "UNKNOWN": 8,
+      "PARTIAL": 10
+    },
+    "crew_member_total": 1,
+    "runner_item_total": 1
+  },
+  "next_bounded_slice": "METRICS_STATS_VISIBILITY",
+  "invariants": {
+    "dashboard_is_not_authority": true,
+    "historical_receipt_rewrite": false,
+    "external_repository_mutation": false,
+    "legacy_source_mutation": false,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0
+  }
+}
