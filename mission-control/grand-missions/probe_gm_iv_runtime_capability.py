@@ -8,6 +8,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 CREW = ROOT.parent / "qps-triage-ultra" / "crew"
+# Exact launch-order states that mean "GM-V not launched". "HELD" is the
+# pre-0f04fcb form; 0f04fcb (2026-09-18) refined it to the external
+# operational-availability hold that validate_gm_i_b_and_launch_control.py
+# requires. Any other state (e.g. a launch) must fail the probe.
+GM_V_LAUNCH_HOLD_STATES = frozenset({
+    "HELD",
+    "HELD_EXTERNAL_OPERATIONAL_AVAILABILITY_GATE",
+})
 
 
 def load(path: Path):
@@ -125,7 +133,7 @@ def probe_governance():
     require("NO_UNRESOLVED_NONCOMPENSATING_VETO" in capacity["release_invariants"], "noncompensating veto release invariant missing")
     require(gm["GM-V"]["state"] == "HELD" and gm["GM-V"]["children"] == [], "GM-V governance hold broken")
     gm_v_entry = next(x for x in launch["launch_order"] if x["id"] == "GM-V-HOLD")
-    require(gm_v_entry["state"] == "HELD", "launch-control GM-V hold broken")
+    require(gm_v_entry["state"] in GM_V_LAUNCH_HOLD_STATES, f"launch-control GM-V hold broken: {gm_v_entry['state']}")
     require("SEPARATE_GOVERNOR_LAUNCH" in gm_v_entry["launch_gate"], "separate Governor launch gate missing")
     return {"gm_v_state": "HELD", "noncompensating_veto_guard": True, "separate_governor_launch": True}
 
