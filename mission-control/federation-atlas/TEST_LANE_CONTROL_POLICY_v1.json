@@ -1,0 +1,50 @@
+{
+  "schema": "missioncontrol.phase02.test_lane_policy.v1",
+  "mode": "ADVISORY_ONLY_NO_WORKFLOW_SKIPS",
+  "lanes": [
+    {
+      "id": "PYTHON_TRIAGE_SHORT",
+      "purpose": "scoped unit, smoke, debugpy, LDAB",
+      "queue": "short"
+    },
+    {
+      "id": "USER_CICD_LONG",
+      "purpose": "user long tests, security, integration, Pages, code scans",
+      "queue": "long"
+    },
+    {
+      "id": "GOVERNANCE_ADMISSION",
+      "purpose": "exact-head closure, review and source identity",
+      "queue": "non_waivable"
+    }
+  ],
+  "optional_skip": {
+    "min_distinct_head_passes": 10,
+    "max_age_full_sweep_days": 7,
+    "canary_required": true,
+    "impact_map_required": true,
+    "non_skippable": [
+      "GOVERNANCE_ADMISSION",
+      "SECURITY",
+      "RELEASE",
+      "CANARY",
+      "UNKNOWN"
+    ]
+  },
+  "control": {
+    "distinct_heads_min": 2,
+    "independent_pulses_min": 2,
+    "require_closed_root": true,
+    "require_exact_head_admission": true,
+    "automatic_baseline_mutation": false
+  },
+  "taxonomy": [
+    "HOLD",
+    "BLOCKED",
+    "ACTIVE",
+    "LINKED",
+    "SPLIT",
+    "PARALLEL",
+    "CONTROL"
+  ]
+}
