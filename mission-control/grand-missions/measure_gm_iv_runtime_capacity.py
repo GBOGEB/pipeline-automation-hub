@@ -13,6 +13,24 @@ DEFAULT_MANIFEST = ROOT / "GM_IV_RUNTIME_CAPACITY_MEASUREMENT_CONTRACT.json"
 CAPACITY_CONTRACT = ROOT / "GM_FLEET_03_CAPACITY_CONTRACT.json"
 REGISTRY = ROOT / "GRAND_MISSION_REGISTRY.json"
 CREW_REGISTRY = CREW_ROOT / "CREW_REGISTRY_v1.json"
+PROBE_SCRIPT = "mission-control/grand-missions/probe_gm_iv_runtime_capability.py"
+CAPABILITIES = (
+    "COMMAND",
+    "TECHNICAL_BOUNDARY",
+    "RECON",
+    "ANALYSIS",
+    "RUNTIME",
+    "QA",
+    "BUILD_REPAIR_RESERVE",
+    "GOVERNANCE",
+)
+CANONICAL_PROBES = {
+    capability: {
+        "command": ["python", PROBE_SCRIPT, "--capability", capability],
+        "accept_marker": f"PASS_GM_IV_RUNTIME_CAPABILITY_{capability}",
+    }
+    for capability in CAPABILITIES
+}
 
 
 def load(path: Path):
@@ -72,10 +90,19 @@ def main():
     capabilities = [a["capability"] for a in assignments]
     crew_ids = [a["crew_id"] for a in assignments]
     task_ids = [a["task_id"] for a in assignments]
+    require(set(required) == set(CANONICAL_PROBES), "capacity contract and trusted probe map must have identical capability sets")
     require(set(capabilities) == set(required), f"capability set mismatch required={sorted(required)} actual={sorted(capabilities)}")
     require(len(capabilities) == len(set(capabilities)) == 8, "capabilities must be exactly 8 unique rows")
     require(len(crew_ids) == len(set(crew_ids)) == 8, "capacity measurement requires eight distinct predeclared hosts")
     require(len(task_ids) == len(set(task_ids)) == 8, "task IDs must be unique")
+
+    # The manifest may predeclare host/task attribution, but it may not define its
+    # own executable proof. Command + marker are anchored in this trusted runner.
+    for assignment in assignments:
+        capability = assignment["capability"]
+        canonical = CANONICAL_PROBES[capability]
+        require(assignment.get("command") == canonical["command"], f"{capability}: manifest command diverges from trusted canonical probe")
+        require(assignment.get("accept_marker") == canonical["accept_marker"], f"{capability}: manifest marker diverges from trusted canonical marker")
 
     crew_by_id = {r["crew_id"]: r for r in crew_registry["crew"]}
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -93,7 +120,9 @@ def main():
         crew = crew_by_id[crew_id]
         require(str(crew.get("maturity", "")).startswith("OBSERVED"), f"{crew_id} is not observed maturity")
 
-        command = [str(x) for x in assignment["command"]]
+        canonical = CANONICAL_PROBES[capability]
+        command = list(canonical["command"])
+        accept_marker = canonical["accept_marker"]
         command_raw = json.dumps(command, separators=(",", ":"))
         env = os.environ.copy()
         env["MC_SOURCE_SHA"] = args.source_sha
@@ -103,10 +132,10 @@ def main():
         elapsed = round(time.monotonic() - started, 6)
         stdout = proc.stdout or ""
         stderr = proc.stderr or ""
-        accepted = proc.returncode == 0 and assignment["accept_marker"] in stdout
+        accepted = proc.returncode == 0 and accept_marker in stdout
         disposition = "ACCEPT" if accepted else "REJECT"
         receipt = {
-            "schema": "qps.gm_iv_runtime_capability_receipt.v2",
+            "schema": "qps.gm_iv_runtime_capability_receipt.v3",
             "mission_id": "GM-IV",
             "capability": capability,
             "task_id": task_id,
@@ -128,7 +157,9 @@ def main():
             "exit_code": proc.returncode,
             "disposition": disposition,
             "capacity_class": "RUNTIME_PROVEN" if accepted else "NOT_PROVEN",
-            "accept_marker": assignment["accept_marker"],
+            "accept_marker": accept_marker,
+            "command_source": "TRUSTED_RUNNER_CANONICAL_MAP",
+            "manifest_probe_mapping_verified": True,
             "command_sha256": hashlib.sha256(command_raw.encode()).hexdigest(),
             "stdout_sha256": hashlib.sha256(stdout.encode()).hexdigest(),
             "stderr_sha256": hashlib.sha256(stderr.encode()).hexdigest(),
@@ -145,7 +176,7 @@ def main():
 
     accepted = [r for r in receipts if r["disposition"] == "ACCEPT"]
     aggregate = {
-        "schema": "qps.gm_iv_runtime_capacity_measurement_receipt.v2",
+        "schema": "qps.gm_iv_runtime_capacity_measurement_receipt.v3",
         "wave": manifest["wave"],
         "mission_id": "GM-IV",
         "base_sha": args.base_sha,
@@ -157,6 +188,8 @@ def main():
         "gm_v_state": missions["GM-V"]["state"],
         "measurement_scope": "CAPABILITY_COVERAGE_NOT_CONCURRENCY_CAPACITY",
         "concurrency_capacity_claimed": False,
+        "probe_authority": "TRUSTED_RUNNER_CANONICAL_MAP",
+        "manifest_probe_mapping_verified": True,
         "required_capability_count": len(required),
         "measured_capability_count": len(receipts),
         "runtime_proven_capability_count": len(accepted),
@@ -178,6 +211,7 @@ def main():
             "capacity_contract_sha256": sha256_file(CAPACITY_CONTRACT),
             "crew_registry_sha256": sha256_file(CREW_REGISTRY),
             "grand_mission_registry_sha256": sha256_file(REGISTRY),
+            "trusted_runner_sha256": sha256_file(Path(__file__)),
         },
         "capability_receipts": [
             {
@@ -187,6 +221,7 @@ def main():
                 "capacity_class": r["capacity_class"],
                 "steps_executed": r["steps_executed"],
                 "disposition": r["disposition"],
+                "command_source": r["command_source"],
             }
             for r in receipts
         ],
