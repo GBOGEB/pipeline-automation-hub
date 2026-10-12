@@ -25,3 +25,9 @@ Future connector: bind actual GitHub PR/check events, workflow run evidence, exa
 `python mission-control/federation-atlas/build_atlas.py --out /tmp/code-purple-atlas --method DMAIC --stage MEASURE`
 
 Admission requires exact PR-head CI and reviews, then governed merge and exact-main readback. Artifact generation is not publication.
+
+## Phase 02 KPI and glossary extension (2026-10-12)
+
+Six and only six ID-bound KPI families are defined in `PHASE02_KPI_TAXONOMY_v1.json`: queue p95, exact-head proof yield, first-red count, accepted receipt yield, forecast-vs-actual, and runner health. Each requires source SHA, observed time, window, owner, population, unit, denominator and evidence class; all current numerical values remain null/UNBOUND until exact-source telemetry is ingested. The glossary extension lives in `mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json` with its own date, not a forged refreshed date for the 2026-09-27 snapshot.
+
+BT is Bradley-Terry pairwise ranking (not backtesting). Forecast scoring uses `FORECAST_BACKTEST` and must be prediction-before-observation. LDAB/AHT remain contextual labels pending authoritative expansion. Doctor zero-step is reserved to Dockmaster, not application Doctor. Run `python -m unittest discover -s mission-control/federation-atlas -p 'test_*.py' -v` and the existing Mission Control v2 validator on exact head.

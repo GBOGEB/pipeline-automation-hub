@@ -95,6 +95,11 @@ def build(out, method=None, stage=None, event=None):
     if event is not None and (method is None or stage is None):
         raise ValueError("Method + stage required for observed event")
     receipt = event_receipt(method,stage,event) if event is not None else None
+    kpi_contract=load("mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json")
+    if kpi_contract["schema"] != "missioncontrol.phase02_kpi_taxonomy.v1" or len(kpi_contract["kpis"]) != 6:
+        raise ValueError("Phase 02 KPI taxonomy mismatch")
+    if "BRADLEY_TERRY" not in next(m["role"] for m in cat["methods"] if m["id"]=="BT"):
+        raise ValueError("BT taxonomy must mean Bradley-Terry")
     snapshot=mission.get("snapshot_at")
     missions=mission.get("missions",[])
     known=sum(m.get("metrics",{}).get("evidence_state") not in (None,"UNKNOWN") for m in missions)
@@ -107,6 +112,7 @@ def build(out, method=None, stage=None, event=None):
       "top7_repositories":len(evolution["cohorts"]["top7"]),
       "top14_repositories":len(evolution["cohorts"]["top7"])+len(evolution["cohorts"]["top14_extension"]),
       "top21_repositories":sum(len(evolution["cohorts"][k]) for k in ("top7","top14_extension","top21_extension")),
+      "phase02_kpis":kpi_contract["kpis"],
       "active_method":method,"active_stage":stage,
       "advisory_receipt":receipt,"authority_transfer":False
     }
@@ -123,6 +129,11 @@ def build(out, method=None, stage=None, event=None):
         '<a class="link" href="'+safe(v["url"])+'" rel="noopener noreferrer" target="_blank">'+safe(v["label"])+
         '<small>'+("Hosted candidate · readback UNKNOWN" if v["kind"]=="HOSTED_CANDIDATE" else "Authoritative source navigation")+'</small></a>'
         for v in cat["links"])
+    kpi_cards="".join(
+        '<article class="tile"><h3>'+safe(k["label"])+'</h3><div class="metric">UNKNOWN</div>'
+        '<p>'+safe(k["definition"])+'</p><p><strong>Owner:</strong> '+safe(k["source_owner"])+
+        '</p><p><strong>State:</strong> UNBOUND · no exact-current receipt</p></article>'
+        for k in kpi_contract["kpis"])
     repo_items="".join(
         '<a class="chip" href="https://github.com/'+safe(r)+'" target="_blank" rel="noopener noreferrer">'+safe(r.split("/")[-1])+'</a>'
         for r in evolution["cohorts"]["top7"])
@@ -139,6 +150,7 @@ def build(out, method=None, stage=None, event=None):
 <article class="tile"><h3>TOP7</h3><div class="metric">7</div><p>Active repair admission by governed scope</p></article>
 <article class="tile"><h3>TOP14 / TOP21</h3><div class="metric">14 / 21</div><p>Shadow measurement / telemetry HOLD</p></article></div></section>
 <section><h2>Federation execution backbone</h2><p class="sub">YAML-driven SVG: dispatch → independent lanes → exact-SHA join → admission/HOLD.</p>{svg}</section>
+<section><h2>Phase 02 · six evidence KPIs</h2><p class="sub">Definitions updated {safe(kpi_contract["as_of"])} · mission census snapshot {safe(text_or_unknown(snapshot))}. UNBOUND values are not zero and mockups are not live telemetry. <a href="https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json">Source contract (pending merge)</a></p><div class="grid">{{kpi_cards}}</div></section>
 <section><h2>Method execution catalogue</h2><label for="method">Filter method: </label><select id="method"><option value="ALL">All methods</option>{''.join('<option value="'+safe(k)+'">'+safe(k)+'</option>' for k in ids)}</select>
 <div id="method-grid" class="grid" style="margin-top:15px">{method_cards}</div></section>
 <section><h2>Live task / Doctor + REX decision</h2><article class="tile"><p>Doctor is conditionally admissible only on an observed application failure with executed steps &gt; 0 and valid exact source SHA. Zero-step red → Dockmaster. Owner-external → return to owner. REX lookup searches source-bound prior resolution before a repair proposal.</p>

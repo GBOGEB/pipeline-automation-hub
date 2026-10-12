@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.glossary_taxonomy.v2",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "as_of": "2026-09-27",
   "control_issue": "GBOGEB/pipeline-automation-hub#437",
   "authority_transfer": false,
@@ -176,7 +176,12 @@
     "MIP": "Modernize-Innovate-Perpetuate improvement family, admitted conditionally rather than automatically.",
     "DMAIC": "Define-Measure-Analyze-Improve-Control supervisory improvement loop for Mission Control and suitable missions.",
     "REX": "Return of experience / reusable learning and control feedback.",
-    "DoV": "Definition of Value/Verification as defined by the governing mission; never inferred from run success alone."
+    "DoV": "Definition of Value/Verification as defined by the governing mission; never inferred from run success alone.",
+    "BT": "Bradley-Terry pairwise ranking diagnostic using real observed winner/loser pairs; not an alias for backtesting.",
+    "PCA": "Principal Component Analysis, a measured multivariate advisory diagnostic requiring comparable observed rows.",
+    "SIPOC": "Suppliers-Inputs-Process-Outputs-Customers flow model; governed feedback may seed a subsequent pulse.",
+    "DAG": "Directed Acyclic Graph of declared execution/evidence dependencies.",
+    "KPI": "Key Performance Indicator with explicit owner, denominator, time window, units and evidence status."
   },
   "non_equivalences": [
     "CREW_ASSIGNMENT_NE_RUNNER_EXECUTION",
@@ -289,5 +294,103 @@
       ],
       "bare_new_use": "NO_COLLISION_WHEN_3PC_REMAINS_ATOMIC_TOKEN"
     }
-  ]
+  ],
+  "operational_extension": {
+    "version": "1.0.0",
+    "as_of": "2026-10-12",
+    "scope": "CODE_PURPLE_PHASE02",
+    "baseline_as_of": "2026-09-27",
+    "source_baseline_sha": "3399a1bc445e409c504befeee7165961463ce666",
+    "term_definitions_current": "PROPOSED_ON_BRANCH",
+    "runtime_metrics_current": false,
+    "kpi_contract": "mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json",
+    "terms": {
+      "KPI": {
+        "meaning": "KEY_PERFORMANCE_INDICATOR",
+        "status": "CANONICAL_PHASE02_EXTENSION"
+      },
+      "SIPOC": {
+        "meaning": "SUPPLIERS_INPUTS_PROCESS_OUTPUTS_CUSTOMERS",
+        "status": "DEFINED"
+      },
+      "DAG": {
+        "meaning": "DIRECTED_ACYCLIC_GRAPH",
+        "status": "DEFINED"
+      },
+      "BT": {
+        "meaning": "BRADLEY_TERRY_PAIRWISE_RANKING",
+        "rule": "Not backtesting. Compare observed winner/loser pairs; no observed comparisons means DEFER.",
+        "status": "VERIFIED_EXISTING_LEVEL1"
+      },
+      "PCA": {
+        "meaning": "PRINCIPAL_COMPONENT_ANALYSIS",
+        "rule": "Use observed comparable numeric rows; not acceptance authority.",
+        "status": "VERIFIED_EXISTING_LEVEL1"
+      },
+      "SSOT": {
+        "meaning": "SINGLE_SOURCE_OF_TRUTH",
+        "rule": "Link to canonical owner; projection is not a competing SSOT.",
+        "status": "DEFINED"
+      },
+      "p95": {
+        "meaning": "NINETY_FIFTH_PERCENTILE",
+        "rule": "Report sample population, window, unit and observed timestamps.",
+        "status": "DEFINED"
+      },
+      "SHA": {
+        "meaning": "SOURCE_COMMIT_OBJECT_IDENTITY",
+        "rule": "Exact source identity; unqualified or stale SHA cannot support current-head admission.",
+        "status": "DEFINED"
+      },
+      "EXACT_HEAD": {
+        "meaning": "EVIDENCE_BOUND_TO_THE_ACTUAL_PR_HEAD_SHA",
+        "status": "DEFINED"
+      },
+      "AHT": {
+        "meaning": "AHT_STATISTICS_AND_CHECK_CONTROL_FAMILY",
+        "status": "CONTEXTUAL_EXTERNAL",
+        "rule": "Expansion is context-qualified; CODEX AHT control and ABACUS statistics bridge are source owners. Do not expand to an unsupported universal phrase."
+      },
+      "LDAB": {
+        "meaning": "LOG_DEBUG_ANALYSIS_BREAKPOINT_OBSERVABILITY_FAMILY",
+        "status": "CONTEXTUAL_EXTERNAL",
+        "rule": "Diagnostic label from repo self-assessment; do not assert a separately authoritative LDAB release or undocumented expansion."
+      },
+      "debugpy": {
+        "meaning": "PYTHON_DEBUG_ADAPTER_TOOL",
+        "status": "TOOL_LABEL"
+      },
+      "DOCKMASTER": {
+        "meaning": "RUNNER_HABITAT_AND_ZERO_STEP_DIAGNOSTIC_ROLE",
+        "rule": "A zero-step startup/environment red routes here, not Doctor.",
+        "status": "VERIFIED_CREW_REGISTRY"
+      },
+      "DOCTOR": {
+        "meaning": "OBSERVED_APPLICATION_DEFECT_DIAGNOSTIC_ROLE",
+        "rule": "Activate only after observed application red with executed steps >0 and exact source binding.",
+        "status": "VERIFIED_CREW_REGISTRY"
+      },
+      "REX": {
+        "meaning": "RETURN_OF_EXPERIENCE",
+        "status": "EXISTING_CANONICAL"
+      },
+      "FORECAST_BACKTEST": {
+        "meaning": "OUT_OF_SAMPLE_PREDICTION_VERSUS_OBSERVED_OUTCOME",
+        "rule": "Use distinct token; never alias bare BT to backtesting.",
+        "status": "DEFINED"
+      },
+      "MCP": {
+        "meaning": "MODEL_CONTEXT_PROTOCOL",
+        "rule": "Not Mission Control Process/Pulse.",
+        "status": "EXISTING_CANONICAL"
+      }
+    },
+    "restrictions": [
+      "DEFINITION_FRESHNESS_NE_RUNTIME_FRESHNESS",
+      "BT_IS_BRADLEY_TERRY_NOT_BACKTEST",
+      "AHT_AND_LDAB_ARE_CONTEXTUAL_NOT_IMAGINED_EXPANSIONS",
+      "NO_UNBOUND_VALUE_AS_LIVE",
+      "AUTHORITY_TRANSFER_FALSE"
+    ]
+  }
 }

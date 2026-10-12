@@ -20,6 +20,8 @@ class AtlasTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             m=build_atlas.build(d)
             self.assertEqual(m["evidence_state"],"HISTORICAL_SOURCE_SNAPSHOT_NOT_LIVE")
+            self.assertEqual(len(m["phase02_kpis"]),6)
+            self.assertTrue(all(x["current_value"] is None and x["evidence_state"]=="UNBOUND" for x in m["phase02_kpis"]))
             self.assertEqual([m["top7_repositories"],m["top14_repositories"],m["top21_repositories"]],[7,14,21])
             self.assertIsNone(m["active_method"])
             p=Path(d)/"index.html"

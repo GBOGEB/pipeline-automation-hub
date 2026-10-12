@@ -9,7 +9,9 @@
     "fleet_contract": "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
     "telemetry_contract": "mission-control/v2/MC_MISSION_TELEMETRY_CONTRACT_v1.json",
     "crew_registry": "mission-control/grand-missions/CREW_ROLE_REGISTRY.json",
-    "graph": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml"
+    "graph": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+    "kpi_taxonomy": "mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json",
+    "glossary": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json"
   },
   "methods": [
     {
@@ -96,15 +98,15 @@
     },
     {
       "id": "BT",
-      "role": "ADVISORY_BACKTEST",
+      "role": "ADVISORY_BRADLEY_TERRY_RANKING",
       "stages": [
-        "TRAIN_WINDOW",
-        "PREDICT_PRE_OUTCOME",
-        "OBSERVE",
-        "SCORE"
+        "DATA_READINESS",
+        "OBSERVED_PAIRS",
+        "FIT_RANKING",
+        "RANK_OR_DEFER"
       ],
-      "metric": "prediction_mae_nullable",
-      "trigger": "OUT_OF_SAMPLE_OBSERVED_OUTCOME",
+      "metric": "pairwise_comparisons_observed",
+      "trigger": "OBSERVED_WINNER_LOSER_COMPARISONS",
       "authority": "ANALYST_ONLY"
     },
     {
