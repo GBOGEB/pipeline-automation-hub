@@ -1,0 +1,72 @@
+{
+  "schema": "missioncontrol.ldab_security_crosswalk.v1",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "source_queue": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+  "source_ldab": "GBOGEB/CODEX:federation/mesh/CODE_PURPLE_CH15_LDAB_DOCK_OVERTIME_CENSUS_20261012.yaml",
+  "observation": {
+    "repository": "GBOGEB/ABACUS",
+    "source_sha": "8ad55977d2b638abc3a7237e1232d8550b97fe9f",
+    "job_id": 115553078596,
+    "artifact_id": 11853085052,
+    "artifact_sha256": "632d56e6bb42e322e88c85356954447b953267020de8128a4d4ea1b52ba33b06",
+    "junit_passed": 32,
+    "changed_covered": 183,
+    "changed_eligible": 200,
+    "changed_percent": 91.5,
+    "missing_source_files": [],
+    "bandit_touched_counts": {
+      "B101": 59,
+      "B105": 1,
+      "B404": 1,
+      "B603": 1
+    },
+    "baseline_B101": 46,
+    "new_B101_count_delta": 13,
+    "scope": "TOUCHED_TEST_FILES",
+    "security_admission": "HOLD",
+    "independent_disposition": null
+  },
+  "ldab": {
+    "status": "DECLARED_NOT_LIVE",
+    "container_id": null,
+    "image_digest": null,
+    "observed_port": null,
+    "lldb_session": null,
+    "steps": null,
+    "exact_sha": null,
+    "receipt_sha256": null
+  },
+  "linked_findings": [
+    {
+      "fingerprint_family": "ABACUS/BANDIT/B101/TOUCHED_TEST_ASSERTIONS",
+      "state": "ACTIVE",
+      "count": 59,
+      "baseline": 46,
+      "delta": 13,
+      "reference": "https://github.com/GBOGEB/ABACUS/issues/1860",
+      "ldab_diagnostic_needed": false
+    },
+    {
+      "fingerprint_family": "GLOBAL/LDAB/DEBUG_DOCK_NOT_PROVEN",
+      "state": "UNKNOWN_NEEDS_READER",
+      "count": null,
+      "reference": "https://github.com/GBOGEB/CODEX/blob/main/federation/mesh/CODE_PURPLE_CH15_LDAB_DOCK_OVERTIME_CENSUS_20261012.yaml",
+      "ldab_diagnostic_needed": true
+    },
+    {
+      "fingerprint_family": "GLOBAL/BRANCH_PROTECTION/FOUR_DEFAULT_BRANCHES",
+      "state": "RETURN_OWNER",
+      "count": 4,
+      "reference": "https://github.com/GBOGEB/pipeline-automation-hub/pull/524",
+      "ldab_diagnostic_needed": false
+    }
+  ],
+  "non_compensation": [
+    "SCOPED_BANDIT_NE_FULL_SECURITY",
+    "NO_DEBUG_SESSION_NE_NO_FINDINGS",
+    "DRAFT_PR_NE_ADMISSION",
+    "UNKNOWN_NE_ZERO"
+  ]
+}
