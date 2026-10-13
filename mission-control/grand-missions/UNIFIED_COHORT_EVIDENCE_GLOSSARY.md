@@ -42,6 +42,6 @@ Apply **the same schema, formula, file-path normalisation, unique-line counting,
 
 ## Current dated observations
 
-See `CROSS_REPO_COVERAGE_ROLLUP_20261013.json`; these are dated immutable *branch receipts*, not an always-current fleet state. QPS 169/176 = 96.02%, CODEX 165/174 = 94.83%, ABACUS percent null because three changed tests were not instrumented at the last closed receipt. Subsequent commits do not inherit earlier native green status.
+See `CROSS_REPO_COVERAGE_ROLLUP_20261013.json`; these are dated immutable *branch receipts*, not an always-current fleet state. QPS 169/176 = 96.02%, CODEX 165/174 = 94.83%, ABACUS 150/160 = 93.75% at the newer native exact-head receipt; its bounded Bandit ratchet still fails (B101=59 against a 46-finding allowance). Subsequent commits do not inherit earlier native green status.
 
 **No main merges, ruleset overrides, scanner suppression or authority transfer.**
