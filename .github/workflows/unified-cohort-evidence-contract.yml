@@ -1,0 +1,38 @@
+name: Unified cohort evidence contract testflight
+on:
+  push:
+    branches: [feat/top7-14-21-unified-evidence-contract-20261013]
+    paths:
+      - 'mission-control/grand-missions/CROSS_REPO_COVERAGE_ROLLUP_20261013.json'
+      - 'mission-control/grand-missions/UNIFIED_COHORT_EVIDENCE_GLOSSARY.md'
+      - 'mission-control/grand-missions/validate_cross_repo_coverage.py'
+      - 'mission-control/grand-missions/tests/test_cross_repo_coverage_contract.py'
+      - '.github/workflows/unified-cohort-evidence-contract.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pytest
+      - name: Validate exact source and schema
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python mission-control/grand-missions/validate_cross_repo_coverage.py
+      - name: Run fail-closed contract regressions
+        run: |
+          mkdir -p outputs/cohort
+          python -m pytest -q mission-control/grand-missions/tests/test_cross_repo_coverage_contract.py --junitxml=outputs/cohort/junit.xml
+      - name: Upload native evidence
+        uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: unified-cohort-evidence
+          path: outputs/cohort/
+          if-no-files-found: warn

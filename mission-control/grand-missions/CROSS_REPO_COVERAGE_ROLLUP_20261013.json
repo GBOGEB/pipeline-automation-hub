@@ -1,0 +1,65 @@
+{
+  "schema": "missioncontrol.cross_repo_coverage_rollup.v1",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "cohort_authority": "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
+  "policy": {
+    "required_metric": "changed_executable_line_coverage",
+    "minimum_percent": 80,
+    "source_sha_required": true,
+    "base_sha_required": true,
+    "missing_source_files_must_be_empty": true,
+    "nullable_unknowns": true,
+    "independent_security_required": true,
+    "effective_branch_protection_required": true,
+    "cohort_promotion_by_coverage_alone": false
+  },
+  "observations": [
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "cohort": "top7",
+      "source_sha": "6c44c962e9ddc89a2a4d1aba1d7d1a907ad33ed8",
+      "base_sha": "5b5393b232a21ab794c53a511fa266c4c93e8296",
+      "eligible_lines": 176,
+      "covered_lines": 169,
+      "percent": 96.02,
+      "status": "MEASURED",
+      "missing_source_files": [],
+      "artifact_id": 11836291992,
+      "artifact_sha256": "3ecb894a420b2e820f777ed3e4a746160c9266523b8162edf1d1d2ddc2ebd996",
+      "security_clearance": null,
+      "effective_main_protection": false
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "cohort": "top7",
+      "source_sha": "77e7cba63348e2d966b392226a9dfc2fa286f352",
+      "base_sha": "17709bd5ba9ce9a74469183e71f4068f8cefbf69",
+      "eligible_lines": 174,
+      "covered_lines": 165,
+      "percent": 94.83,
+      "status": "MEASURED",
+      "missing_source_files": [],
+      "artifact_id": 11837586010,
+      "artifact_sha256": "85af6d92b234d5c74e299070a1bdf5007aade7edae17e4f1b7e76d6febd0e26f",
+      "security_clearance": null,
+      "effective_main_protection": false
+    },
+    {
+      "repository": "GBOGEB/ABACUS",
+      "cohort": "top7",
+      "source_sha": "b7c9a96741c24583c49d364488c3eec2bd43989f",
+      "base_sha": "b2b4ef7b64d3a047182b5b61e758b526155fd3d5",
+      "eligible_lines": 160,
+      "covered_lines": 150,
+      "percent": 93.75,
+      "status": "MEASURED",
+      "missing_source_files": [],
+      "artifact_id": 11851301955,
+      "artifact_sha256": "baa5038c3ea13e9fe110425b732b1c716e3f4da77117591ed2515aa44de6521a",
+      "security_clearance": null,
+      "effective_main_protection": false
+    }
+  ]
+}
