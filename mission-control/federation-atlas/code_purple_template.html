@@ -1,0 +1,304 @@
+<title>CODE PURPLE Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: control console. Now/next strip -> beams DAG + beam cards -> Top# progress -> ordinal series -> gate ledger -> queue -> triggers/contracts. Dark-first. */
+:root{
+  --bg:#0f0c16;--surface:#17131f;--raised:#201a2c;--line:#2f2840;--fg:#ece9f3;--muted:#a49cb6;
+  --accent:#b597ff;--accent-ink:#1a1029;--pass:#41cf8f;--fail:#ff6f7d;--unk:#8d889a;--warn:#f2b84b;--info:#7fb8ff;
+  --display:"Saira Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:Aptos,"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f6f4f9;--surface:#fff;--raised:#efebf6;--line:#dcd5e8;--fg:#1b1626;--muted:#5d5670;--accent:#6a3fd1;--accent-ink:#fff;--pass:#12804e;--fail:#c42739;--unk:#6b6779;--warn:#9a6400;--info:#1f5fae;color-scheme:light}}
+:root[data-theme="light"]{--bg:#f6f4f9;--surface:#fff;--raised:#efebf6;--line:#dcd5e8;--fg:#1b1626;--muted:#5d5670;--accent:#6a3fd1;--accent-ink:#fff;--pass:#12804e;--fail:#c42739;--unk:#6b6779;--warn:#9a6400;--info:#1f5fae;color-scheme:light}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--body);margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:18px;padding-block:24px 64px;display:grid;gap:30px}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:.02em;text-wrap:balance;margin:0}
+h1{font-size:clamp(30px,5vw,44px);line-height:1}h2{font-size:23px}h3{font-size:18px}
+p{margin:0}a{color:var(--accent)}
+.eyebrow{font:500 11px/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--mono);font-size:12.5px}.num{font-variant-numeric:tabular-nums}
+.lede{color:var(--muted);max-width:76ch}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+section{display:grid;gap:14px;scroll-margin-top:12px}
+.sechead{display:grid;gap:6px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+.scroll{overflow-x:auto}
+.prov{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted)}.prov b{color:var(--fg);font-weight:500}
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 11px/1 var(--mono);letter-spacing:.05em;padding:4px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.s-pass{color:var(--pass)}.s-fail{color:var(--fail)}.s-unk{color:var(--unk)}.s-warn{color:var(--warn)}.s-acc{color:var(--accent)}.s-info{color:var(--info)}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.now{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media(max-width:980px){.now{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.now{grid-template-columns:1fr}}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:8px;align-content:start;min-width:0}
+.tile .big{font-family:var(--display);font-size:30px;line-height:1}
+.tile ul{margin:0;padding-left:18px;display:grid;gap:5px;font-size:13.5px;overflow-wrap:anywhere}
+.bar{height:8px;border-radius:99px;background:var(--raised);overflow:hidden;display:flex}.bar i{display:block;height:100%}
+.beams{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;align-items:start}
+.beam{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px;align-content:start;min-width:0}
+.beam.crit{border-color:var(--warn)}
+.beam .hd{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:13px}
+.kv dt{color:var(--muted);font:500 10.5px/1.8 var(--mono);letter-spacing:.06em;text-transform:uppercase}.kv dd{margin:0;overflow-wrap:anywhere}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 12px var(--mono);background:var(--raised);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:4px 8px;text-decoration:none;cursor:pointer}
+button.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 10.5px/1.2 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+td.m{font-family:var(--mono);font-size:12px;overflow-wrap:anywhere}
+tr:target td{background:var(--raised)}
+.mark{display:inline-block;width:10px;height:10px;border-radius:2px;background:currentColor;margin-right:6px;vertical-align:-1px}.mark.unk{background:transparent;border:2px dashed currentColor}
+.gates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:900px){.gates{grid-template-columns:1fr}}
+.multiples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}@media(max-width:900px){.multiples{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.multiples{grid-template-columns:1fr}}
+.mult{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0;display:grid;gap:4px}
+.mult .v{font-family:var(--display);font-size:24px}
+svg text{font-family:var(--mono)}
+.cands{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;align-items:start}
+.cbox{display:grid;gap:8px}
+.cbox textarea{width:100%;min-height:70px;font:13px var(--body);background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px}
+.cbtn{font:500 11.5px var(--mono);background:transparent;color:var(--accent);border:1px solid var(--line);border-radius:6px;padding:3px 8px;cursor:pointer}
+.cbtn[data-n]:not([data-n="0"])::after{content:" · " attr(data-n)}
+.drawer{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:5}
+.drawer>button{font:600 12px var(--mono);background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:9px 14px;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.35)}
+.drawer .pane{position:absolute;right:0;bottom:46px;width:min(420px,calc(100vw - 32px));max-height:60vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:10px}
+pre.drop{white-space:pre-wrap;font:12px var(--mono);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px;margin:0;max-height:220px;overflow:auto}
+.toast{font:12px var(--mono);color:var(--pass)}
+.foot{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px;display:grid;gap:6px}
+.tip{position:fixed;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font:12px var(--mono);color:var(--fg);z-index:9;max-width:260px}
+</style>
+
+<div class="wrap" id="top">
+  <header style="display:grid;gap:12px">
+    <span class="eyebrow">CODE PURPLE · Mission Control · read-only control page</span>
+    <h1>CODE PURPLE Control</h1>
+    <p class="lede">Built from repository files at build time. Every state is read from the contract, the BD queue, the census pulses and the ordinal metric series. Predictions are labelled FORECAST and never close an item.</p>
+    <div class="prov mono" id="prov"></div>
+  </header>
+
+  <section id="now" aria-label="Current, next gate, critical path, startable now"><div class="now" id="nowgrid"></div></section>
+
+  <section id="beams-sec">
+    <div class="sechead"><span class="eyebrow">Beams · DAG with entry, exit, feedforward and feedback</span><h2>Workstreams and critical path</h2>
+      <p class="lede">Solid arrows are feedforward receipts inside a pulse. Dashed arrows are feedback into the next pulse, so the graph unrolled by pulse stays acyclic. Amber outline marks the critical path to the Top14 gate.</p></div>
+    <div class="panel scroll"><svg id="dag" role="img" aria-label="Beam dependency graph"></svg></div>
+    <div class="beams" id="beams"></div>
+  </section>
+
+  <section id="top-sec">
+    <div class="sechead"><span class="eyebrow">Top# progress · 21 repositories</span><h2>Cohort progress</h2>
+      <p class="lede">Grey means not observed. Unknown is never counted as green.</p></div>
+    <div class="now" id="cohorts" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))"></div>
+    <div class="panel scroll" style="padding:0"><table><thead><tr><th>Repository</th><th>Cohort</th><th>Pulse 1 class</th><th>Coverage</th><th>Baseline head</th><th>BD</th></tr></thead><tbody id="repos"></tbody></table></div>
+  </section>
+
+  <section id="series-sec">
+    <div class="sechead"><span class="eyebrow">Iteration series · indexed by W.C.I.S ordinal, not time</span><h2>Metrics per closed iteration</h2>
+      <p class="lede">One entry per closed wave, cycle, iteration or sub-iteration, hash-chained. CI fails if the tree's metrics differ from the latest entry.</p></div>
+    <div class="multiples" id="mults"></div>
+    <details class="panel"><summary class="eyebrow" style="cursor:pointer">Table view · all metrics</summary><div class="scroll" style="margin-top:10px"><table id="stable"></table></div></details>
+  </section>
+
+  <section id="gates-sec">
+    <div class="sechead"><span class="eyebrow">Promotion gates · page evaluator vs gm_dmaic_evolution_metrics.py</span><h2>Next gate</h2></div>
+    <div class="gates" id="gates"></div>
+  </section>
+
+  <section id="cand-sec">
+    <div class="sechead"><span class="eyebrow">SIPOC + DMAIC candidates · small iterations that expand the metrics</span><h2>Candidates</h2>
+      <p class="lede">Each forecast was issued at its series key before the outcome. It is scored when the next entry lands.</p></div>
+    <div class="cands" id="cands"></div>
+  </section>
+
+  <section id="queue-sec">
+    <div class="sechead"><span class="eyebrow">BD queue · lifecycle × flow</span><h2>Open actions</h2></div>
+    <div class="chips" id="qfilter" role="group" aria-label="Filter queue"></div>
+    <div class="panel scroll" style="padding:0"><table><thead><tr><th>ID</th><th>Item</th><th>Beam</th><th>State</th><th>Flow</th><th>Done when</th><th></th></tr></thead><tbody id="queue"></tbody></table></div>
+  </section>
+
+  <section id="trig-sec">
+    <div class="sechead"><span class="eyebrow">Triggers · what counts as an action push</span><h2>Events that move the pipeline</h2></div>
+    <div class="panel scroll" style="padding:0"><table><thead><tr><th>Event</th><th>Fires</th><th>Advances</th><th>Auto</th></tr></thead><tbody id="trig"></tbody></table></div>
+  </section>
+
+  <section id="contract-sec">
+    <div class="sechead"><span class="eyebrow">Contracts · one source per shape</span><h2>Schema hierarchy</h2></div>
+    <div class="panel" style="display:grid;gap:8px;font-size:14px">
+      <p><b>Source:</b> JSON Schema 2020-12 files in <span class="mono">mission-control/federation-atlas/schemas/</span> and the existing Mission Control schemas (<span class="mono">FLEET_TELEMETRY_SCHEMA.json</span>, <span class="mono">MC_MISSION_TELEMETRY_CONTRACT_v1.json</span>).</p>
+      <p><b>Executed by:</b> Python validators in CI (<span class="mono">code_purple_series.validate</span>), REX exit codes 0 / 1 / 2.</p>
+      <p><b>Derived, if ever needed:</b> TypeScript types or zod schemas generated from the JSON Schema. <span class="mono">app/package.json</span> declares zod but no hub source imports it, so there is no second contract today. A hand-written zod schema would compete with the source; a generated one complements it.</p>
+      <p><b>Config formats:</b> the hub has no <span class="mono">.toml</span>, <span class="mono">.ini</span> or <span class="mono">pyproject</span> files. YAML is used for the atlas graph and federation records.</p>
+    </div>
+    <div class="panel scroll" style="padding:0"><table><thead><tr><th>Source</th><th>Path</th><th>As of</th><th>Age</th></tr></thead><tbody id="sources"></tbody></table></div>
+  </section>
+
+  <footer class="foot"><p>Authority: none. This page cannot mark a gate green, grant credit or authorize a merge. Comments are stored only in this browser and are copied to chat with the drop-in buttons.</p></footer>
+</div>
+
+<div class="drawer"><button type="button" id="dbtn" aria-expanded="false">Comments · 0</button><div class="pane" id="dpane" hidden></div></div>
+<div class="tip" id="tip" hidden></div>
+
+<script id="payload" type="application/json">/*__PAYLOAD__*/</script>
+<script>
+(function(){
+const D=JSON.parse(document.getElementById('payload').textContent);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sh=s=>s?String(s).slice(0,7):'—';
+const SC={TODO:'s-warn',ACTIVE:'s-info',DONE:'s-pass',CONTROL:'s-pass',SUPERSEDED:'s-unk',INVALIDATED:'s-unk',UNKNOWN_NEEDS_READER:'s-unk'};
+const FC={READY:'s-acc',IN_PR:'s-info',BLOCKED:'s-fail',HOLD:'s-unk',RETURN_OWNER:'s-warn',LINKED:'s-info',NONE:'s-unk'};
+const pill=(t,c)=>'<span class="pill '+c+'">'+esc(t)+'</span>';
+const itemById={};D.queue.items.forEach(i=>itemById[i.id]=i);
+const beamById={};D.beams.forEach(b=>beamById[b.id]=b);
+const latest=D.series[D.series.length-1];
+
+/* ---------- comments (per-viewer, localStorage) ---------- */
+const store={get(k){try{return localStorage.getItem('cp:'+k)||''}catch(e){return ''}},set(k,v){try{v?localStorage.setItem('cp:'+k,v):localStorage.removeItem('cp:'+k)}catch(e){}},all(){const o=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('cp:')&&localStorage.getItem(k))o.push([k.slice(3),localStorage.getItem(k)])}}catch(e){}return o.sort()}};
+function cardRef(id){
+  const it=itemById[id],b=beamById[id];
+  const lines=['[CODE PURPLE ref] '+id];
+  if(it){lines.push('item: '+it.title,'beam: '+it.beam+' · state '+it.now.state+' / '+it.now.flow+(it.critical_path?' · CRITICAL':''),'source: mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json#'+id,'done when: '+it.done_when);}
+  else if(b){const m=D.beam_metrics[id];lines.push('beam: '+b.title,'progress: '+(m.progress.num==null?'n/a':m.progress.num+'/'+m.progress.den+' '+m.progress.basis),'items: '+(m.items.join(', ')||'none'),'source: mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json#'+id);}
+  else{lines.push('source: mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json#'+id);}
+  lines.push('page: code-purple.html#'+id+' · series '+D.series_key+' · build '+sh(D.build_sha));
+  return lines.join('\n');
+}
+function dropIn(id){const c=store.get(id);return cardRef(id).replace('[CODE PURPLE ref]','[CODE PURPLE comment]')+(c?'\ncomment: '+c:'');}
+async function copy(text,el){try{await navigator.clipboard.writeText(text);flash(el,'Copied')}catch(e){const p=document.createElement('pre');p.className='drop';p.textContent=text;el.insertAdjacentElement('afterend',p);const r=document.createRange();r.selectNodeContents(p);const s=getSelection();s.removeAllRanges();s.addRange(r);flash(el,'Selected, press Ctrl+C')}}
+function flash(el,t){const s=document.createElement('span');s.className='toast';s.textContent=' '+t;el.after(s);setTimeout(()=>s.remove(),1800)}
+function commentUI(id){return '<div class="badges"><button type="button" class="cbtn" data-c="'+id+'" data-n="'+(store.get(id)?1:0)+'">Comment</button><button type="button" class="cbtn" data-r="'+id+'">Copy ref</button></div>';}
+document.addEventListener('click',e=>{
+  const c=e.target.closest('[data-c]'),r=e.target.closest('[data-r]'),dc=e.target.closest('[data-dc]');
+  if(r){copy(cardRef(r.dataset.r),r)}
+  if(dc){copy(dropIn(dc.dataset.dc),dc)}
+  if(c){const id=c.dataset.c;let box=document.querySelector('.cbox[data-for="'+id+'"]');
+    if(box){box.remove();return}
+    box=document.createElement('div');box.className='cbox';box.dataset.for=id;
+    box.innerHTML='<label class="eyebrow" for="ta-'+id+'">Comment on '+esc(id)+' · stays in this browser</label><textarea id="ta-'+id+'">'+esc(store.get(id))+'</textarea><div class="badges"><button type="button" class="cbtn" data-dc="'+id+'">Copy drop-in for chat</button></div>';
+    c.parentElement.after(box);const ta=box.querySelector('textarea');ta.focus();
+    ta.addEventListener('input',()=>{store.set(id,ta.value.trim());c.dataset.n=ta.value.trim()?1:0;drawer()});}
+});
+function drawer(){const all=store.all();$('dbtn').textContent='Comments · '+all.length;
+  $('dpane').innerHTML='<span class="eyebrow">Comments in this browser</span>'+(all.length?all.map(([k,v])=>'<div><b class="mono">'+esc(k)+'</b><p style="font-size:13px">'+esc(v)+'</p></div>').join('')+'<button type="button" class="cbtn" id="copyall">Copy all as one drop-in</button>':'<p class="lede" style="font-size:13px">No comments yet. Use Comment on any beam, queue row or candidate.</p>');
+  const ca=$('copyall');if(ca)ca.onclick=()=>copy(all.map(([k])=>dropIn(k)).join('\n\n'),ca);}
+$('dbtn').onclick=()=>{const p=$('dpane');p.hidden=!p.hidden;$('dbtn').setAttribute('aria-expanded',!p.hidden);drawer()};
+
+/* ---------- provenance ---------- */
+const today=new Date();
+const age=d=>d?Math.floor((today-new Date(d+'T00:00:00Z'))/864e5):null;
+$('prov').innerHTML='<span>build <b>'+sh(D.build_sha)+'</b></span><span>series <b>'+esc(D.series_key)+'</b> ('+esc(latest.closes)+', '+esc(latest.evidence_class)+')</span><span>Top7 <b>'+esc(D.cohort_states.top7)+'</b> · Top14 <b>'+esc(D.cohort_states.top14)+'</b> · Top21 <b>'+esc(D.cohort_states.top21)+'</b></span><span>DMAIC <b>'+esc(D.evolution.level)+'</b> · active '+esc(D.evolution.active)+' '+esc(D.evolution.active_outcome)+'</span>';
+$('sources').innerHTML=D.sources.map(s=>{const a=age(s.as_of);return '<tr><td>'+esc(s.name)+'</td><td class="m">'+esc(s.path)+'</td><td class="m">'+esc(s.as_of||s.as_of_basis)+'</td><td class="m '+(a!=null&&a>7?'s-warn':'')+'">'+(a==null?'—':a+' d'+(a>7?' · stale':''))+'</td></tr>'}).join('');
+
+/* ---------- now strip ---------- */
+const g14=D.ledger.top7_to_top14, blockers=g14.filter(r=>r.state!=='PASS');
+const crit=D.critical_path.items.map(id=>itemById[id]).filter(Boolean);
+const ready=D.queue.items.filter(i=>i.now.flow==='READY');
+const m=latest.metrics;
+$('nowgrid').innerHTML=
+ '<div class="tile"><span class="eyebrow">Current</span><span class="big">'+esc(D.series_key)+'</span><div class="badges">'+pill(D.cohort_states.top7,'s-acc')+pill(D.evolution.level,'s-info')+'</div><p class="mono">'+m.bd_open+' open · '+m.bd_complete+' complete · '+m.bd_in_pr+' in PR</p></div>'+
+ '<div class="tile"><span class="eyebrow">Next gate · Top7 → Top14</span><span class="big num">'+g14.filter(r=>r.state==='PASS').length+' / '+g14.length+'</span><ul>'+blockers.map(r=>'<li><span class="'+(r.state==='FAIL'?'s-fail':'s-unk')+'">'+r.state+'</span> '+esc(r.label)+'</li>').join('')+'</ul></div>'+
+ '<div class="tile"><span class="eyebrow">Critical path</span><ul>'+crit.map(i=>'<li><a href="#'+i.id+'" class="mono">'+i.id+'</a> '+esc(i.title.slice(0,64))+(i.title.length>64?'…':'')+' '+pill(i.now.state,SC[i.now.state])+'</li>').join('')+'</ul></div>'+
+ '<div class="tile"><span class="eyebrow">Startable now · READY</span><span class="big num">'+ready.length+'</span><ul>'+ready.map(i=>'<li><a href="#'+i.id+'" class="mono">'+i.id+'</a> '+esc(i.title.slice(0,58))+(i.title.length>58?'…':'')+'</li>').join('')+'</ul></div>';
+
+/* ---------- DAG ---------- */
+(function(){
+ const NS='http://www.w3.org/2000/svg',svg=$('dag');const W=184,H=96,GX=60,GY=26;
+ const cols={};D.beams.forEach(b=>{const l=D.lanes[b.id];(cols[l]=cols[l]||[]).push(b.id)});
+ const nl=Object.keys(cols).length,maxr=Math.max(...Object.values(cols).map(c=>c.length));
+ const vw=nl*(W+GX)+40,vh=maxr*(H+GY)+90;svg.setAttribute('viewBox','0 0 '+vw+' '+vh);svg.setAttribute('width',vw);svg.style.maxWidth='none';
+ const pos={};Object.entries(cols).forEach(([l,ids])=>ids.forEach((id,r)=>{pos[id]={x:20+l*(W+GX),y:30+r*(H+GY)+(maxr-ids.length)*(H+GY)/2}}));
+ const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e};
+ const defs=el('defs',{});[['ff','var(--muted)'],['fb','var(--warn)']].forEach(([id,c])=>{const mk=el('marker',{id:'ar-'+id,markerWidth:8,markerHeight:8,refX:7,refY:4,orient:'auto'},defs);el('path',{d:'M0 0L8 4L0 8Z',fill:c},mk)});
+ const cp=new Set(D.critical_path.path);
+ D.edges.forEach(e=>{const a=pos[e.from],b=pos[e.to];if(!a||!b)return;let d;
+   if(e.type==='FEEDFORWARD'){const x1=a.x+W,y1=a.y+H/2,x2=b.x-6,y2=b.y+H/2,c=(x1+x2)/2;d='M'+x1+' '+y1+' C'+c+' '+y1+' '+c+' '+y2+' '+x2+' '+y2}
+   else{const x1=a.x+W/2,y1=a.y+H,x2=b.x+W/2,y2=b.y+H+4,low=vh-12;d='M'+x1+' '+y1+' C'+x1+' '+low+' '+x2+' '+low+' '+x2+' '+y2}
+   const crit=e.type==='FEEDFORWARD'&&cp.has(e.from)&&cp.has(e.to);
+   const p=el('path',{d,fill:'none',stroke:e.type==='FEEDBACK'?'var(--warn)':(crit?'var(--warn)':'var(--muted)'),'stroke-width':crit?2.5:1.5,'stroke-dasharray':e.type==='FEEDBACK'?'6 5':'0','marker-end':'url(#ar-'+(e.type==='FEEDBACK'?'fb':'ff')+')',opacity:.9});
+   p.addEventListener('mousemove',ev=>tip(ev,e.from+' → '+e.to+' · '+e.type+'\n'+e.carries));p.addEventListener('mouseleave',untip)});
+ D.beams.forEach(b=>{const p=pos[b.id],bm=D.beam_metrics[b.id];const g=el('g',{tabindex:0,role:'link','aria-label':b.id+' '+b.title,style:'cursor:pointer'});
+   el('rect',{x:p.x,y:p.y,width:W,height:H,rx:9,fill:'var(--surface)',stroke:bm.critical&&cp.has(b.id)?'var(--warn)':'var(--line)','stroke-width':bm.critical&&cp.has(b.id)?2:1},g);
+   el('text',{x:p.x+10,y:p.y+19,'font-size':11,fill:'var(--muted)'},g).textContent=b.id+' · '+b.kind;
+   const t=el('text',{x:p.x+10,y:p.y+38,'font-size':13,'font-weight':600,fill:'var(--fg)'},g);t.textContent=b.title.length>22?b.title.slice(0,21)+'…':b.title;
+   const pr=bm.progress,frac=pr.num==null?0:pr.num/pr.den;
+   el('rect',{x:p.x+10,y:p.y+50,width:W-20,height:7,rx:3.5,fill:'var(--raised)'},g);
+   if(frac>0)el('rect',{x:p.x+10,y:p.y+50,width:Math.max(4,(W-20)*frac),height:7,rx:3.5,fill:'var(--pass)'},g);
+   el('text',{x:p.x+10,y:p.y+76,'font-size':11,fill:'var(--fg)'},g).textContent=(pr.num==null?'n/a':pr.num+'/'+pr.den)+' · '+bm.ready+' ready · '+bm.blocked+' held';
+   el('text',{x:p.x+10,y:p.y+90,'font-size':10.5,fill:'var(--muted)'},g).textContent=(bm.items.join(' ')||'gate').slice(0,30);
+   const go=()=>{location.hash=b.id};g.addEventListener('click',go);g.addEventListener('keydown',ev=>{if(ev.key==='Enter')go()})});
+ el('text',{x:20,y:vh-4,'font-size':11,fill:'var(--warn)'}).textContent='dashed = feedback into next pulse';
+})();
+function tip(ev,t){const d=$('tip');d.hidden=false;d.textContent=t;d.style.whiteSpace='pre-line';d.style.left=(ev.clientX+12)+'px';d.style.top=(ev.clientY+12)+'px'}
+function untip(){$('tip').hidden=true}
+
+/* ---------- beam cards ---------- */
+$('beams').innerHTML=D.beams.map(b=>{const bm=D.beam_metrics[b.id],pr=bm.progress;
+ const inE=D.edges.filter(e=>e.to===b.id),outE=D.edges.filter(e=>e.from===b.id);
+ const pct=pr.num==null?null:Math.round(100*pr.num/pr.den);
+ return '<article class="beam'+(bm.critical&&D.critical_path.path.includes(b.id)?' crit':'')+'" id="'+b.id+'"><div class="hd"><h3>'+b.id+' · '+esc(b.title)+'</h3>'+(pct==null?pill('NO ITEMS','s-unk'):pill(pct+'%',pct===100?'s-pass':'s-acc'))+'</div>'+
+ '<div class="bar" title="'+esc(pr.basis)+'"><i style="width:'+(pct||0)+'%;background:var(--pass)"></i></div>'+
+ '<div class="badges">'+(bm.done?pill(bm.done+' done','s-pass'):'')+(bm.active?pill(bm.active+' active','s-info'):'')+(bm.todo?pill(bm.todo+' todo','s-warn'):'')+(bm.reader?pill(bm.reader+' reader','s-unk'):'')+(bm.ready?pill(bm.ready+' ready','s-acc'):'')+(bm.in_pr?pill(bm.in_pr+' in PR','s-info'):'')+(bm.blocked?pill(bm.blocked+' blocked/held','s-fail'):'')+(bm.linked?pill(bm.linked+' linked','s-info'):'')+(D.critical_path.path.includes(b.id)?pill('critical path','s-warn'):'')+'</div>'+
+ '<dl class="kv"><dt>Entry</dt><dd>'+esc(b.entry)+'</dd><dt>Exit</dt><dd>'+esc(b.exit)+'</dd><dt>Trigger</dt><dd class="mono">'+esc(b.trigger)+'</dd>'+
+ '<dt>Feed in</dt><dd>'+(inE.map(e=>'<span class="mono">'+e.from+'</span> '+(e.type==='FEEDBACK'?'↺ ':'→ ')+esc(e.carries)).join('<br>')||'—')+'</dd>'+
+ '<dt>Feed out</dt><dd>'+(outE.map(e=>'<span class="mono">'+e.to+'</span> '+(e.type==='FEEDBACK'?'↺ ':'→ ')+esc(e.carries)).join('<br>')||'—')+'</dd>'+
+ '<dt>BD</dt><dd class="chips">'+(bm.items.map(id=>'<a class="chip" href="#'+id+'">'+id+' '+esc(itemById[id].now.state)+'</a>').join('')||'—')+'</dd>'+
+ (bm.links.length?'<dt>Linked</dt><dd class="chips">'+bm.links.map(l=>'<a class="chip" href="'+esc(l)+'" target="_blank" rel="noopener">#'+esc(l.split('/').pop())+'</a>').join('')+'</dd>':'')+
+ '</dl>'+commentUI(b.id)+'</article>'}).join('');
+
+/* ---------- cohorts + repos ---------- */
+const R=D.repos,tierSet={TOP7:['TOP7'],TOP14:['TOP7','TOP14'],TOP21:['TOP7','TOP14','TOP21']};
+const seg=(n,t,c)=>'<i style="width:'+(100*n/t)+'%;background:'+c+'"></i>';
+$('cohorts').innerHTML=Object.entries(tierSet).map(([k,tiers])=>{const rows=R.filter(r=>tiers.includes(r.tier)),n=rows.length;
+  const green=rows.filter(r=>r.pulse_class==='GREEN_CONTROL').length,other=rows.filter(r=>r.pulse_class&&r.pulse_class!=='GREEN_CONTROL').length;
+  const cov=rows.filter(r=>(r.coverage_state||'').startsWith('MEASURED')).length,covTool=rows.filter(r=>/TOOLING|CONFIG/.test(r.coverage_state||'')).length;
+  const agg=k==='TOP14'?D.ledger.top14_to_top21.find(x=>x.label==='TOP14 green CONTROL').observed:null;
+  return '<div class="tile"><div class="hd" style="display:flex;justify-content:space-between"><span class="big">'+k+'</span>'+pill(D.cohort_states[k.toLowerCase()],k==='TOP7'?'s-acc':k==='TOP14'?'s-warn':'s-unk')+'</div>'+
+  '<span class="eyebrow">Pulse classification · per repo</span><div class="bar">'+seg(green,n,'var(--pass)')+seg(other,n,'var(--warn)')+'</div><p class="mono num">'+green+' green · '+other+' not green · '+(n-green-other)+' not in pulse'+(agg!=null?' · contract aggregate '+agg+'/14 green':'')+'</p>'+
+  '<span class="eyebrow">Exact coverage measurement</span><div class="bar">'+seg(cov,n,'var(--pass)')+seg(covTool,n,'var(--unk)')+'</div><p class="mono num">'+cov+' measured · '+covTool+' tooling only · '+(n-cov-covTool)+' none</p></div>'}).join('');
+$('repos').innerHTML=R.map(r=>'<tr><td><a href="https://github.com/'+esc(r.repo)+'" target="_blank" rel="noopener">'+esc(r.repo.split('/')[1])+'</a></td><td class="m">'+r.tier+'</td><td>'+(r.pulse_class?pill(r.pulse_class,r.pulse_class==='GREEN_CONTROL'?'s-pass':'s-warn')+'<div class="mono" style="color:var(--muted)">'+esc(r.pulse_head)+' · '+esc(r.pulse_note)+'</div>':pill('NOT IN PULSE','s-unk'))+'</td><td class="m">'+(r.coverage_pct!=null?r.coverage_pct+'%'+(r.coverage_gate!=null?' vs '+r.coverage_gate+'% gate':' (no gate)'):esc(r.coverage_state||'—'))+'</td><td class="m">'+sh(r.baseline_sha)+'</td><td class="m">'+(r.bd_items.map(i=>'<a href="#'+i+'">'+i+'</a>').join(' ')||'—')+'</td></tr>').join('');
+
+/* ---------- series small multiples ---------- */
+const MS=[['bd_open','Open BD items'],['bd_complete','Complete BD items'],['top14_gate_pass','Top14 predicates passing'],['zero_test_gates','Zero-test CI gates'],['dmaic_complete_iterations','Complete DMAIC iterations'],['coverage_rows_measured','Coverage rows measured']];
+$('mults').innerHTML=MS.map(([k,l])=>{const pts=D.series.map(e=>({key:e.key,v:e.metrics[k]}));const vals=pts.map(p=>p.v).filter(v=>v!=null);
+ const w=300,h=110,pl=30,pr=10,pt=10,pb=24,mx=Math.max(1,...vals),mn=Math.min(0,...vals);
+ const X=i=>pl+i*(w-pl-pr)/Math.max(1,pts.length-1),Y=v=>pt+(h-pt-pb)*(1-(v-mn)/(mx-mn||1));
+ let d='',started=false;pts.forEach((p,i)=>{if(p.v==null){started=false;return}if(!started){d+='M'+X(i)+' '+Y(p.v);started=true}else{d+=' H'+X(i)+' V'+Y(p.v)}});
+ const last=pts[pts.length-1],prev=pts[pts.length-2];const dl=last&&prev&&last.v!=null&&prev.v!=null?last.v-prev.v:null;
+ return '<div class="mult"><span class="eyebrow">'+esc(l)+'</span><span class="v num">'+(last.v==null?'—':last.v)+(dl?' <span class="mono" style="font-size:13px;color:var(--muted)">'+(dl>0?'+':'')+dl+'</span>':'')+'</span>'+
+ '<svg viewBox="0 0 '+w+' '+h+'" width="100%" role="img" aria-label="'+esc(l)+' by series key"><line x1="'+pl+'" x2="'+(w-pr)+'" y1="'+Y(mn)+'" y2="'+Y(mn)+'" stroke="var(--line)"/><text x="'+(pl-6)+'" y="'+(Y(mx)+4)+'" text-anchor="end" font-size="10" fill="var(--muted)">'+mx+'</text><text x="'+(pl-6)+'" y="'+(Y(mn)+4)+'" text-anchor="end" font-size="10" fill="var(--muted)">'+mn+'</text>'+
+ '<path d="'+d+'" fill="none" stroke="var(--accent)" stroke-width="2"/>'+pts.map((p,i)=>p.v==null?'':'<circle cx="'+X(i)+'" cy="'+Y(p.v)+'" r="'+(i===pts.length-1?5:4)+'" fill="var(--accent)" stroke="var(--surface)" stroke-width="2" data-t="'+esc(p.key+': '+p.v)+'"/>').join('')+
+ pts.map((p,i)=>'<text x="'+X(i)+'" y="'+(h-6)+'" text-anchor="'+(i===0?'start':i===pts.length-1?'end':'middle')+'" font-size="9" fill="var(--muted)">'+esc(p.key.replace('W1.C1.',''))+'</text>').join('')+'</svg></div>'}).join('');
+document.querySelectorAll('#mults circle').forEach(c=>{c.addEventListener('mousemove',ev=>tip(ev,c.dataset.t));c.addEventListener('mouseleave',untip)});
+const keys=Object.keys(latest.metrics);
+$('stable').innerHTML='<thead><tr><th>Metric</th>'+D.series.map(e=>'<th title="'+esc(e.label)+'">'+esc(e.key)+'<br>'+esc(e.closes)+'</th>').join('')+'</tr></thead><tbody>'+keys.map(k=>'<tr><td class="m">'+k+'</td>'+D.series.map(e=>{const dv=e.delta[k];return '<td class="m num">'+(e.metrics[k]==null?'—':e.metrics[k])+(dv!=null?' <span style="color:var(--muted)">('+(typeof dv==='number'&&dv>0?'+':'')+dv+')</span>':'')+'</td>'}).join('')+'</tr>').join('')+'<tr><td class="m">tree</td>'+D.series.map(e=>'<td class="m">'+(e.tree==='PR_HEAD'?'PR head':sh(e.tree))+'</td>').join('')+'</tr></tbody>';
+
+/* ---------- gates ---------- */
+const gateCard=(t,rows,par)=>'<div class="panel" style="padding:0"><div style="display:flex;justify-content:space-between;gap:8px;padding:12px 14px;flex-wrap:wrap"><h3>'+t+'</h3>'+pill(par.page?'READY':'NOT READY',par.page?'s-pass':'s-fail')+'</div><div class="scroll"><table><thead><tr><th>Predicate</th><th>Observed</th><th>Gate</th><th>State</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+esc(r.label)+'</td><td class="m">'+esc(r.observed==null?'null':r.observed)+'</td><td class="m">'+esc(r.gate)+'</td><td class="m '+(r.state==='PASS'?'s-pass':r.state==='FAIL'?'s-fail':'s-unk')+'"><span class="mark '+(r.state==='UNKNOWN'?'unk':'')+'"></span>'+r.state+'</td></tr>').join('')+'</tbody></table></div><p class="mono" style="padding:10px 14px;color:var(--muted)">repo evaluator: '+par.repo+' · '+(par.page===par.repo?'<span class="s-pass">page agrees</span>':'<span class="s-fail">disagrees, trust the repo evaluator</span>')+'</p></div>';
+$('gates').innerHTML=gateCard('Top7 → Top14',D.ledger.top7_to_top14,D.parity.top14)+gateCard('Top14 → Top21',D.ledger.top14_to_top21,D.parity.top21);
+
+/* ---------- candidates ---------- */
+$('cands').innerHTML=D.candidates.map(c=>{const f=c.forecast,s=c.sipoc,dm=c.dmaic;return '<article class="beam" id="'+c.id+'"><div class="hd"><h3>'+c.id+' · '+esc(c.title)+'</h3>'+pill('FORECAST','s-unk')+'</div>'+
+ '<div class="chips"><a class="chip" href="#'+c.beam+'">'+c.beam+'</a><a class="chip" href="#'+c.item+'">'+c.item+'</a></div>'+
+ '<dl class="kv"><dt>S</dt><dd>'+esc(s.supplier)+'</dd><dt>I</dt><dd>'+esc(s.input)+'</dd><dt>P</dt><dd>'+esc(s.process)+'</dd><dt>O</dt><dd>'+esc(s.output)+'</dd><dt>C</dt><dd>'+esc(s.customer)+'</dd></dl>'+
+ '<p class="mono" style="color:var(--muted)">D '+esc(dm.define)+' · M '+esc(dm.measure)+' · A '+esc(dm.analyze)+' · I '+esc(dm.improve)+' · C '+esc(dm.control)+'</p>'+
+ '<p class="mono"><b>'+esc(f.metric)+'</b> '+esc(f.from)+' → '+(f.expected==null?'not forecast':esc(f.expected))+' · issued '+esc(f.issued_at)+' · '+esc(f.method)+(f.note?'<br>'+esc(f.note):'')+'</p>'+commentUI(c.id)+'</article>'}).join('');
+
+/* ---------- queue ---------- */
+const filters=[['all','All'],['open','Open'],['READY','Ready'],['IN_PR','In PR'],['crit','Critical'],['done','Complete']];let qf='open';
+function renderQ(){const rows=D.queue.items.filter(i=>qf==='all'||(qf==='open'&&D.queue.open_states.includes(i.now.state))||(qf==='crit'&&i.critical_path)||(qf==='done'&&['DONE','CONTROL','SUPERSEDED','INVALIDATED'].includes(i.now.state))||i.now.flow===qf);
+ $('queue').innerHTML=rows.map(i=>'<tr id="'+i.id+'"><td class="m">'+i.id+'<br><span style="color:var(--muted)">'+i.finding+' · '+i.severity+'</span></td><td style="min-width:260px">'+esc(i.title)+(i.critical_path?' '+pill('critical','s-warn'):'')+'<div class="mono" style="color:var(--muted);margin-top:4px">'+esc(i.now.evidence)+'</div>'+(i.depends_on.length?'<div class="mono">depends on '+i.depends_on.map(d=>'<a href="#'+d+'">'+d+'</a>').join(' ')+'</div>':'')+'<div class="chips" style="margin-top:4px">'+i.links.map(l=>'<a class="chip" href="'+esc(l)+'" target="_blank" rel="noopener">'+esc(l.replace('https://github.com/GBOGEB/','').slice(0,44))+'</a>').join('')+'</div></td><td class="m"><a href="#'+i.beam+'">'+i.beam+'</a></td><td>'+pill(i.now.state,SC[i.now.state])+'<div class="mono" style="color:var(--muted)">'+i.history.map(h=>h.at.replace('W1.C1.','')+' '+h.state).join(' → ')+'</div></td><td>'+pill(i.now.flow,FC[i.now.flow])+'</td><td style="min-width:200px">'+esc(i.done_when)+'</td><td>'+commentUI(i.id)+'</td></tr>').join('')||'<tr><td colspan="7">No items in this filter.</td></tr>'}
+$('qfilter').innerHTML=filters.map(([k,l])=>'<button type="button" class="chip" aria-pressed="'+(k===qf)+'" data-f="'+k+'">'+l+'</button>').join('');
+$('qfilter').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;qf=b.dataset.f;[...$('qfilter').children].forEach(c=>c.setAttribute('aria-pressed',c===b));renderQ()});
+renderQ();
+if(location.hash){const id=location.hash.slice(1);if(itemById[id]&&!D.queue.open_states.includes(itemById[id].now.state)){qf='all';renderQ()}const t=document.getElementById(id);if(t)t.scrollIntoView()}
+
+/* ---------- triggers ---------- */
+$('trig').innerHTML=D.triggers.map(t=>'<tr><td>'+esc(t.event)+'</td><td class="m">'+esc(t.fires)+'</td><td>'+esc(t.advances)+'</td><td>'+pill(t.automatic?'auto':'manual / none',t.automatic?'s-pass':'s-unk')+'</td></tr>').join('');
+drawer();
+})();
+</script>

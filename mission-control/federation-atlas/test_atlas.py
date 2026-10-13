@@ -33,6 +33,8 @@ class AtlasTests(unittest.TestCase):
             self.assertNotIn("Automatically merged",s)
             svg=(Path(d)/"federation.svg").read_text()
             self.assertEqual(svg.count('marker-end="url(#arrow)"'),11)
+            self.assertEqual(svg.count('data-binding="DECLARED"'),8)
+            self.assertEqual(svg.count('stroke-dasharray="6 5"'),8)
     def test_invalid_phase(self):
         with tempfile.TemporaryDirectory() as d:
             with self.assertRaises(ValueError):

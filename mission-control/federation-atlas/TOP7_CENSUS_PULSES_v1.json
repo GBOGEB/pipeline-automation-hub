@@ -1,0 +1,33 @@
+{
+  "schema": "missioncontrol.code_purple.top7_census_pulses.v1",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "rule": "Each pulse classifies all seven Top7 repositories on their then-current default heads. Pulse rows are transcribed from the governed record named in source; values are never interpolated between pulses.",
+  "classes": ["GREEN_CONTROL", "RETURN_OWNER_CONFIG", "PROVE_UNKNOWN", "RED_APPLICATION", "WAIT"],
+  "pulses": [
+    {
+      "pulse": 1,
+      "series_key": "W1.C1.I0.S0",
+      "observed_on": "2026-09-28",
+      "evidence_class": "OBSERVED_HISTORICAL",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/issues/419#issuecomment-5871686889",
+      "rows": [
+        {"repo": "GBOGEB/ABACUS", "head": "d9b261f", "class": "GREEN_CONTROL", "note": "5 exact-head runs success; DMAIC G75 76.13% (run 36420226456)"},
+        {"repo": "GBOGEB/CODEX", "head": "c472d40", "class": "GREEN_CONTROL", "note": "exact-head set success; 2 skipped trigger outcomes are not reds"},
+        {"repo": "GBOGEB/cryoplant-project", "head": "ae23418", "class": "GREEN_CONTROL", "note": "4/4 exact-head push workflows success"},
+        {"repo": "GBOGEB/pipeline-automation-hub", "head": "9318ad8", "class": "GREEN_CONTROL", "note": "17 exact-head runs success"},
+        {"repo": "GBOGEB/Q_engineering_tools", "head": "593b24f", "class": "RETURN_OWNER_CONFIG", "note": "native Pages build failure; issue #104 needs owner Settings -> Pages -> Source = GitHub Actions"},
+        {"repo": "GBOGEB/document-organization-system", "head": "f238ebf", "class": "PROVE_UNKNOWN", "note": "0 exact-head Actions runs"},
+        {"repo": "GBOGEB/DOCX_RTM_Automation", "head": "f059782", "class": "GREEN_CONTROL", "note": "integrity, Python CI, Pages success"}
+      ],
+      "summary": {"classified": 7, "green_control": 5, "return": 1, "prove_unknown": 1, "proof_debt": 2}
+    }
+  ],
+  "next_pulse": {
+    "pulse": 2,
+    "state": "TODO",
+    "queue_item": "CPQ-011",
+    "proof_debt_definition": "Count of Top7 rows not GREEN_CONTROL on the pulse heads (RETURN, PROVE_UNKNOWN, RED_APPLICATION, WAIT). The Top14 predicate needs pulse 2 <= pulse 1."
+  }
+}

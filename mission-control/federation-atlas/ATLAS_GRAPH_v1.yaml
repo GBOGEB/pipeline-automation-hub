@@ -1,6 +1,7 @@
 schema: missioncontrol.federation_atlas.graph.v1
 authority_transfer: false
 layout: left-to-right
+binding_rule: "RECEIPT edges cite a run-bound receipt; DECLARED edges are intended paths with no mechanism or receipt yet (no cross-repo dispatch workflow exists). DECLARED renders dashed."
 nodes:
   - {id: MC, label: "Mission Control", x: 78, y: 194, class: control}
   - {id: QPS, label: "QPS TRIAGE", x: 335, y: 45, class: child}
@@ -11,14 +12,14 @@ nodes:
   - {id: JOIN, label: "SHA evidence join", x: 615, y: 194, class: evidence}
   - {id: GATE, label: "Admission / HOLD", x: 850, y: 194, class: hold}
 edges:
-  - {from: MC, to: QPS, type: dispatch}
-  - {from: MC, to: KEB, type: dispatch}
-  - {from: MC, to: DOW, type: dispatch}
-  - {from: MC, to: AUX, type: dispatch}
-  - {from: MC, to: INF, type: dispatch}
-  - {from: QPS, to: JOIN, type: evidence}
-  - {from: KEB, to: JOIN, type: evidence}
-  - {from: DOW, to: JOIN, type: evidence}
-  - {from: AUX, to: JOIN, type: evidence}
-  - {from: INF, to: JOIN, type: evidence}
-  - {from: JOIN, to: GATE, type: admission}
+  - {from: MC, to: QPS, type: dispatch, binding: DECLARED}
+  - {from: MC, to: KEB, type: dispatch, binding: DECLARED}
+  - {from: MC, to: DOW, type: dispatch, binding: DECLARED}
+  - {from: MC, to: AUX, type: dispatch, binding: DECLARED}
+  - {from: MC, to: INF, type: dispatch, binding: DECLARED}
+  - {from: QPS, to: JOIN, type: evidence, binding: DECLARED}
+  - {from: KEB, to: JOIN, type: evidence, binding: RECEIPT, source: "GM-I-A KEB edge receipt (CODEX PR 775, run 35425623741)"}
+  - {from: DOW, to: JOIN, type: evidence, binding: RECEIPT, source: "GM-I-A DOW edge receipt (ABACUS PR 1286, run 35425352862)"}
+  - {from: AUX, to: JOIN, type: evidence, binding: DECLARED}
+  - {from: INF, to: JOIN, type: evidence, binding: DECLARED}
+  - {from: JOIN, to: GATE, type: admission, binding: RECEIPT, source: "gm-dmaic-evolution.yml promotion receipt artifact"}

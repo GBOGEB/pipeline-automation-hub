@@ -31,3 +31,23 @@ Admission requires exact PR-head CI and reviews, then governed merge and exact-m
 Six and only six ID-bound KPI families are defined in `PHASE02_KPI_TAXONOMY_v1.json`: queue p95, exact-head proof yield, first-red count, accepted receipt yield, forecast-vs-actual, and runner health. Each requires source SHA, observed time, window, owner, population, unit, denominator and evidence class; all current numerical values remain null/UNBOUND until exact-source telemetry is ingested. The glossary extension lives in `mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json` with its own date, not a forged refreshed date for the 2026-09-27 snapshot.
 
 BT is Bradley-Terry pairwise ranking (not backtesting). Forecast scoring uses `FORECAST_BACKTEST` and must be prediction-before-observation. LDAB/AHT remain contextual labels pending authoritative expansion. Doctor zero-step is reserved to Dockmaster, not application Doctor. Run `python -m unittest discover -s mission-control/federation-atlas -p 'test_*.py' -v` and the existing Mission Control v2 validator on exact head.
+
+## CODE PURPLE control page, BD queue and ordinal series (2026-10-13)
+
+| File | Role |
+|---|---|
+| `CODE_PURPLE_BD_QUEUE_v1.json` | Review findings and follow-ups as BD items (`CPQ-NNN`). Lifecycle reuses the BD/REX register (`TODO -> ACTIVE -> DONE -> CONTROL`); `flow` says whether an item can start now (READY), is in review (IN_PR), or waits (BLOCKED, HOLD, RETURN_OWNER, LINKED). Every state change is a history row keyed by series ordinal. |
+| `CODE_PURPLE_ITERATION_SERIES_v1.json` | Append-only metric series keyed `W<wave>.C<cycle>.I<iteration>.S<sub>`, not by time. Each entry stores metrics recomputed from repo files, the delta to the previous entry and the SHA-256 of the previous entry. |
+| `CODE_PURPLE_BEAMS_DAG_v1.json` | Ten beams (workstreams) with entry/exit criteria, triggers, feedforward and feedback edges, the critical path to the Top14 gate, SIPOC+DMAIC candidates with forecasts issued before outcomes, and the trigger table. |
+| `TOP7_CENSUS_PULSES_v1.json` | Top7 recensus pulses transcribed from their governed record; proof debt per pulse. |
+| `schemas/*.schema.json` | JSON Schema 2020-12 source for the queue and series. Python executes it in CI; any TypeScript/zod type must be generated from it. |
+| `code_purple_series.py` | `check` (CI), `append`, `show`. Exit 0 PASS / 1 FAIL / 2 INCOMPLETE. |
+| `build_code_purple.py` | Renders `code-purple.html` and `code-purple.json` (`--fragment` for hosts that add the document skeleton). |
+
+Rule: when a change moves any computed metric (contract, coverage telemetry, topology, queue states, zero-test audit), the same PR appends a series entry:
+
+```
+python mission-control/federation-atlas/code_purple_series.py append --key W1.C1.I2.S1 --closes SUB --label "what closed"
+```
+
+`ATLAS_GRAPH_v1.yaml` edges now carry `binding: RECEIPT | DECLARED`; declared edges render dashed because no cross-repo dispatch workflow exists yet (CPQ-015).

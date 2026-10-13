@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "missioncontrol.code_purple.bd_queue.v1",
+  "title": "CODE PURPLE BD queue",
+  "description": "Source of truth for the queue shape. Python validates with code_purple_series.validate(); a TypeScript/zod consumer must be generated from this file, never hand-written.",
+  "type": "object",
+  "required": ["schema", "authority_transfer", "formal_credit_delta", "engineering_credit_delta", "lifecycle", "open_states", "flows", "items"],
+  "properties": {
+    "schema": {"const": "missioncontrol.code_purple.bd_queue.v1"},
+    "authority_transfer": {"const": false},
+    "formal_credit_delta": {"const": 0},
+    "engineering_credit_delta": {"const": 0},
+    "lifecycle": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "open_states": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "flows": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "items": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/item"}}
+  },
+  "$defs": {
+    "item": {
+      "type": "object",
+      "required": ["id", "finding", "title", "severity", "beam", "critical_path", "repos", "links", "depends_on", "done_when", "control_when", "history"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^CPQ-[0-9]{3}$"},
+        "finding": {"type": "string", "pattern": "^(F[0-9]+|NEW)$"},
+        "title": {"type": "string", "minLength": 8},
+        "severity": {"enum": ["P1", "P2", "P3"]},
+        "beam": {"type": "string", "pattern": "^B[0-9]+$"},
+        "critical_path": {"type": "boolean"},
+        "repos": {"type": "array", "items": {"type": "string", "pattern": "^GBOGEB/[A-Za-z0-9_.-]+$"}, "minItems": 1},
+        "links": {"type": "array", "items": {"type": "string", "pattern": "^https://github\\.com/GBOGEB/"}},
+        "depends_on": {"type": "array", "items": {"type": "string", "pattern": "^CPQ-[0-9]{3}$"}},
+        "done_when": {"type": "string", "minLength": 8},
+        "control_when": {"type": "string", "minLength": 3},
+        "history": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/history_row"}}
+      }
+    },
+    "history_row": {
+      "type": "object",
+      "required": ["at", "state", "flow", "evidence"],
+      "additionalProperties": false,
+      "properties": {
+        "at": {"type": "string", "pattern": "^W[0-9]+\\.C[0-9]+\\.I[0-9]+\\.S[0-9]+$"},
+        "state": {"enum": ["TODO", "ACTIVE", "DONE", "CONTROL", "SUPERSEDED", "INVALIDATED", "UNKNOWN_NEEDS_READER"]},
+        "flow": {"enum": ["READY", "IN_PR", "BLOCKED", "HOLD", "RETURN_OWNER", "LINKED", "NONE"]},
+        "evidence": {"type": "string", "minLength": 8}
+      }
+    }
+  }
+}

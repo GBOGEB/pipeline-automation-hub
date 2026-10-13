@@ -55,11 +55,14 @@ def draw(graph):
     parts = ['<svg viewBox="0 0 1000 400" role="img" aria-label="Typed federation execution: parallel lanes joined by evidence" xmlns="http://www.w3.org/2000/svg">',
       '<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#9aaad9"/></marker></defs>']
     for edge in graph["edges"]:
+        if edge.get("binding") not in ("RECEIPT", "DECLARED"):
+            raise ValueError(f"edge {edge['from']}->{edge['to']} needs binding RECEIPT or DECLARED")
         a,b = nodes[edge["from"]],nodes[edge["to"]]
         x1,y1 = float(a["x"])+96,float(a["y"])+24
         x2,y2 = float(b["x"])-8,float(b["y"])+24
         c = x1+(x2-x1)*.5
-        parts.append(f'<path d="M{x1:g} {y1:g} C{c:g} {y1:g} {c:g} {y2:g} {x2:g} {y2:g}" fill="none" stroke="#7b8ab8" stroke-width="2" marker-end="url(#arrow)" opacity=".82"/>')
+        dash = ' stroke-dasharray="6 5"' if edge["binding"] == "DECLARED" else ""
+        parts.append(f'<path d="M{x1:g} {y1:g} C{c:g} {y1:g} {c:g} {y2:g} {x2:g} {y2:g}" fill="none" stroke="#7b8ab8" stroke-width="2"{dash} marker-end="url(#arrow)" opacity=".82" data-binding="{edge["binding"]}"/>')
     for n in graph["nodes"]:
         x,y=float(n["x"])-8,float(n["y"])
         clr=colors[n["class"]]
