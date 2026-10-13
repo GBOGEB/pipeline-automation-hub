@@ -1,0 +1,148 @@
+{
+  "schema": "missioncontrol.ci_failure_triage.v1",
+  "as_of": "2026-10-13",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "source": "GitHub PR metadata and user-provided CI screenshots; job root causes not yet verified",
+  "records": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 1902,
+      "pr_state": "merged",
+      "head_at_read": "unknown",
+      "engineering": {
+        "failures_observed": [
+          "docs lint",
+          "code quality",
+          "coverage"
+        ],
+        "regression_tests": "unknown",
+        "coverage": {
+          "covered": null,
+          "eligible": null
+        },
+        "runtime_outputs": "unknown"
+      },
+      "security": {
+        "scan_result": "failed in screenshot",
+        "introduced_count": null,
+        "existing_count": null,
+        "severity": "unknown",
+        "independent_disposition": "pending"
+      },
+      "governance": {
+        "feedback_gate": "failed in screenshot",
+        "review_state": "unknown",
+        "branch_protection": "unverified",
+        "merge_eligibility": "historical only; PR merged"
+      },
+      "execution": {
+        "queue_seconds": null,
+        "active_workers": null,
+        "failed_job_retry_rate": null,
+        "time_to_green_seconds": null
+      }
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 1907,
+      "pr_state": "open",
+      "head_at_read": "21a92fddd0bf9bd54fd7f3a4472ae17f0add57db",
+      "engineering": {
+        "failures_observed": [
+          "coverage",
+          "two unidentified checks"
+        ],
+        "regression_tests": "unknown",
+        "coverage": {
+          "covered": null,
+          "eligible": null
+        },
+        "runtime_outputs": "unknown",
+        "docker_fix_commit": "21a92fddd0bf9bd54fd7f3a4472ae17f0add57db",
+        "docker_failure_root": "pytest-xdist scheduling allowed network test before test-app image build",
+        "docker_fix_verification": "pending terminal CI/CD and DOW suite"
+      },
+      "security": {
+        "introduced_count": null,
+        "existing_count": null,
+        "severity": "unknown",
+        "independent_disposition": "pending"
+      },
+      "governance": {
+        "feedback_gate": "success on repair head",
+        "review_state": "unknown",
+        "branch_protection": "unverified",
+        "merge_eligibility": "hold pending terminal exact-head gates"
+      },
+      "execution": {
+        "queue_seconds": null,
+        "active_workers": null,
+        "failed_job_retry_rate": null,
+        "time_to_green_seconds": null,
+        "workflow_census": {
+          "successful": 18,
+          "in_progress": 8,
+          "failed": 0,
+          "scope": "26 pull-request workflow runs on repair SHA; point-in-time"
+        }
+      }
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 523,
+      "pr_state": "open",
+      "head_at_read": "e259b8bf5451c3c9b05d34e3d3e334d3c6cdcdc5",
+      "engineering": {
+        "failures_observed": [],
+        "regression_tests": "unknown",
+        "coverage": {
+          "covered": null,
+          "eligible": null
+        },
+        "runtime_outputs": "unknown"
+      },
+      "security": {
+        "scan_result": "CodeQL failure on tracking head; 10 high alerts on prior head",
+        "reported_new_high_alerts": 10,
+        "introduced_count": null,
+        "existing_count": null,
+        "independent_disposition": "pending; alert annotations inaccessible through current GitHub connection"
+      },
+      "governance": {
+        "feedback_gate": "not established",
+        "review_state": "unknown",
+        "branch_protection": "unverified",
+        "merge_eligibility": "hold pending security disposition"
+      },
+      "execution": {
+        "queue_seconds": null,
+        "active_workers": null,
+        "failed_job_retry_rate": null,
+        "time_to_green_seconds": null
+      }
+    }
+  ],
+  "acceptance": {
+    "engineering": "exact-head tests and coverage numerator/denominator with runtime artifact hashes",
+    "security": "alert identifiers, baseline comparison, independent disposition",
+    "governance": "terminal feedback gate and verified protection",
+    "execution": "job timestamps, authenticated worker receipts, retries and first terminal green"
+  },
+  "action_triggers": {
+    "DMAIC": {
+      "define": "classify distinct red roots",
+      "measure": "capture exact SHA, job, denominator and timestamps",
+      "analyze": "baseline versus introduced and cause",
+      "improve": "isolated fix with regression",
+      "control": "repeat on later distinct head"
+    },
+    "PCA": "trigger when 2 comparable measured pulses exist; otherwise UNKNOWN",
+    "BT": "trigger when paired outcomes and sufficient sample size exist; otherwise UNKNOWN",
+    "reverse_pressure": "prioritize high-severity blockers weighted by critical-path downstream dependencies; do not substitute forecast for evidence",
+    "MIP_3Pstar": "require producer, independent proof, consumer receipt and no authority transfer",
+    "LDAB": "dispatch only with authenticated worker/session/port and output receipt",
+    "RHEL": "require RHEL8 and RHEL9 runner evidence; do not infer from Ubuntu or Docker"
+  }
+}

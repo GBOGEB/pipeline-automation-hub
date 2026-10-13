@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "missioncontrol.code_purple.iteration_series.v1",
+  "title": "CODE PURPLE iteration series",
+  "description": "Append-only metric series indexed by ordinal key W(ave).C(ycle).I(teration).S(ub), not by time. Each entry carries the SHA-256 of the previous entry.",
+  "type": "object",
+  "required": ["schema", "index", "authority_transfer", "entries"],
+  "properties": {
+    "schema": {"const": "missioncontrol.code_purple.iteration_series.v1"},
+    "index": {"const": "WAVE.CYCLE.ITERATION.SUB"},
+    "authority_transfer": {"const": false},
+    "entries": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/entry"}}
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": ["key", "closes", "label", "tree", "evidence_class", "metrics", "delta", "prev_digest"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {"type": "string", "pattern": "^W[0-9]+\\.C[0-9]+\\.I[0-9]+\\.S[0-9]+$"},
+        "closes": {"enum": ["OPEN", "SUB", "ITERATION", "CYCLE", "WAVE"]},
+        "label": {"type": "string", "minLength": 8},
+        "tree": {"type": "string", "pattern": "^([0-9a-f]{40}|PR_HEAD)$"},
+        "evidence_class": {"enum": ["MEASURED", "PROVISIONAL_PR_HEAD"]},
+        "refs": {"type": "array", "items": {"type": "string"}},
+        "metrics": {"type": "object"},
+        "delta": {"type": "object"},
+        "prev_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}
