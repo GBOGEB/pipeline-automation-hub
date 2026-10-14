@@ -141,6 +141,21 @@ class PageTests(unittest.TestCase):
         self.assertTrue(html.startswith("<title>"))
         self.assertNotIn("<body>", html)
 
+    def test_payload_is_js_literal_and_cannot_break_out(self):
+        """Regression for CodeQL js/xss-through-dom on #523 (10 alerts): no DOM-text source,
+        and hostile data cannot close the script element or inject markup."""
+        tpl = bcp.TEMPLATE.read_text(encoding="utf-8")
+        self.assertNotIn("JSON.parse(document.getElementById", tpl)
+        self.assertNotIn('type="application/json"', tpl)
+        self.assertNotRegex(tpl, r"'\+[A-Za-z_][\w.]*\+'")  # every interpolation goes through a helper
+        hostile = {"x": "</script><img src=x onerror=alert(1)><!-- &  "}
+        html = bcp.render(hostile, fragment=True)
+        self.assertNotIn("</script><img", html)
+        self.assertNotIn("<img src=x", html)
+        self.assertEqual(html.count("</script>"), tpl.count("</script>"))
+        literal = html.split("const D=", 1)[1].split(";\n", 1)[0]
+        self.assertEqual(json.loads(literal), hostile)
+
     def test_graph_edges_all_bound(self):
         import yaml
         graph = yaml.safe_load((HERE / "ATLAS_GRAPH_v1.yaml").read_text(encoding="utf-8"))
