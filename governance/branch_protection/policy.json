@@ -1,0 +1,74 @@
+{
+  "schema": "missioncontrol.branch_protection.v1",
+  "owner": "GBOGEB/pipeline-automation-hub",
+  "intent": "controlled owner-admin rollout; a GitHub PR does not activate rulesets",
+  "common": {
+    "required_approving_review_count": 1,
+    "dismiss_stale_reviews_on_push": true,
+    "require_last_push_approval": true,
+    "required_review_thread_resolution": true,
+    "require_code_owner_review": false,
+    "allowed_merge_methods": [
+      "merge",
+      "squash",
+      "rebase"
+    ],
+    "strict_required_status_checks_policy": true,
+    "bypass_actors": [],
+    "forbid_force_push": true,
+    "forbid_deletion": true
+  },
+  "repositories": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "default_branch": "main",
+      "ruleset_name": "ABACUS Main Hard Gate",
+      "existing_ruleset_id": 24494381,
+      "required_checks": [
+        "PR Feedback Gate",
+        "ABACUS compatibility gate"
+      ],
+      "context_state": "CANDIDATE_UNVERIFIED",
+      "notes": "Retain and repair existing ruleset #24494381; confirm custom head-status name and full-matrix exact-PR proof; review dashboard writer."
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "default_branch": "main",
+      "ruleset_name": "CODEX Main Hard Gate",
+      "existing_ruleset_id": null,
+      "required_checks": [
+        "governance-gate",
+        "test"
+      ],
+      "context_state": "CANDIDATE_UNVERIFIED",
+      "notes": "Existing ci.yml and governance-gate.yml are PR-triggered; check context collision and green recency. CODEX main received direct github-actions[bot] metrics push at 2400e09; migrate its publisher to PR or artifacts first."
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "default_branch": "main",
+      "ruleset_name": "QPS Main Hard Gate",
+      "existing_ruleset_id": null,
+      "required_checks": [],
+      "context_state": "NO_UNIVERSAL_CONTEXT_PROVEN",
+      "notes": "Private repository: entitlement and independent reviewer must be validated. Do not require path-filtered golden-thread or manually triggered triage runs. Engineering owner retains SSOT acceptance."
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "default_branch": "master",
+      "ruleset_name": "Mission Control Master Hard Gate",
+      "existing_ruleset_id": null,
+      "required_checks": [
+        "First-Pass Closure Gate / first-pass-closure"
+      ],
+      "context_state": "CANDIDATE_UNVERIFIED",
+      "notes": "Existing trusted first-pass-closure-gate publishes custom status on exact PR HEAD; verify terminal proof, source identity and eligible review before requiring it."
+    }
+  ],
+  "cohort_policy": {
+    "top7": "ACTIVE_PILOT_ONLY",
+    "top14": "SHADOW_ONLY",
+    "top21": "HOLD",
+    "authority_transfer": false,
+    "engineering_credit_delta": 0
+  }
+}
