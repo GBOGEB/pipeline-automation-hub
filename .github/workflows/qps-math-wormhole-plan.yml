@@ -26,6 +26,6 @@ jobs:
       - name: Produce deterministic plan-only receipt
         run: |
           python mission-control/qps-triage-ultra/federation/qps_math_wormhole_plan.py \
-            --provider-sha aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
-            --artifact-sha256 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb \
+            --provider-sha 2f84623180bafbd582f90febb542381ed9ce679e \
+            --artifact-sha256 114e9fa0ded6adc8d1020bef1826c45bb63417a851efac9f2ed35aef7e501759 \
             --out /tmp/qps-math-wormhole-plan.json
