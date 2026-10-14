@@ -1,0 +1,31 @@
+name: QPS gg_MATH P4 Orchestration Plan
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/federation/qps_math_wormhole_plan.py'
+      - 'mission-control/qps-triage-ultra/federation/test_qps_math_wormhole_plan.py'
+      - 'mission-control/qps-triage-ultra/federation/QPS_MATH_WORMHOLE_CONTROL.md'
+      - '.github/workflows/qps-math-wormhole-plan.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  plan-only:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Verify plan and hostile negative controls
+        run: python -m unittest discover -s mission-control/qps-triage-ultra/federation -p test_qps_math_wormhole_plan.py -v
+      - name: Produce deterministic plan-only receipt
+        run: |
+          python mission-control/qps-triage-ultra/federation/qps_math_wormhole_plan.py \
+            --provider-sha 2f84623180bafbd582f90febb542381ed9ce679e \
+            --artifact-sha256 114e9fa0ded6adc8d1020bef1826c45bb63417a851efac9f2ed35aef7e501759 \
+            --out /tmp/qps-math-wormhole-plan.json
