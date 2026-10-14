@@ -6,7 +6,7 @@ import importlib.util
 from pathlib import Path
 from unittest import TestCase
 
-MODULE = Path(__file__).resolve().parents[1] / "qps_math_wormhole_plan.py"
+MODULE = Path(__file__).resolve().parent / "qps_math_wormhole_plan.py"
 spec = importlib.util.spec_from_file_location("qps_math_wormhole_plan", MODULE)
 assert spec and spec.loader
 m = importlib.util.module_from_spec(spec)
