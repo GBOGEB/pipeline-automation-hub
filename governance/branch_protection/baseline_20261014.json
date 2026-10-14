@@ -1,0 +1,44 @@
+{
+  "schema": "missioncontrol.branch_protection_baseline.v1",
+  "observed_date": "2026-10-14",
+  "collection": "live connected GitHub GET /branches/default, GET /rulesets and ABACUS GET /rulesets/24494381",
+  "repositories": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "branch": "main",
+      "sha": "5ede8c97db4aba99fdcc44109e7230db69a3fd6b",
+      "protected": false,
+      "ruleset_count": 1,
+      "abacus_ruleset_id": 24494381,
+      "abacus_rules": [],
+      "finding": "ACTIVE_EMPTY"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "branch": "main",
+      "sha": "2400e09ea2559c8473f8791bda25d827f4bb16eb",
+      "protected": false,
+      "ruleset_count": 0,
+      "finding": "ABSENT"
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "branch": "main",
+      "sha": "8629bcbde11d72f1d4801a0d06e6f9809834a894",
+      "protected": false,
+      "ruleset_count": 0,
+      "finding": "ABSENT"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "branch": "master",
+      "sha": "b9bf91b1c303f83b90bdc74f8f59aaff397dc452",
+      "protected": false,
+      "ruleset_count": 0,
+      "finding": "ABSENT"
+    }
+  ],
+  "effective_protected_count": 0,
+  "denominator": 4,
+  "caveat": "Dated observation, not an admission token; re-read after owner deployment."
+}
