@@ -163,8 +163,13 @@ def build_payload() -> dict:
 
 def render(payload: dict, fragment: bool) -> str:
     body = TEMPLATE.read_text(encoding="utf-8")
-    data = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
-    body = body.replace("/*__PAYLOAD__*/", data)
+    # Embedded as a JS literal (not DOM text), with HTML-significant sequences escaped so the
+    # data can never close the script element. ensure_ascii also escapes U+2028/U+2029.
+    data = (json.dumps(payload, separators=(",", ":"), ensure_ascii=True)
+            .replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026"))
+    if body.count("/*__PAYLOAD__*/null") != 1:
+        raise ValueError("template must contain exactly one /*__PAYLOAD__*/null placeholder")
+    body = body.replace("/*__PAYLOAD__*/null", data)
     if fragment:
         return body
     return ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
