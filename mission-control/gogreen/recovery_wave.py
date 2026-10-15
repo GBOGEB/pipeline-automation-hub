@@ -41,6 +41,7 @@ def _validate(record):
             raise ValueError("exact 40-character source SHA required")
         if i and observations[i - 1]["head_sha"] == wave["head_sha"]:
             raise ValueError("repeated SHA is not an independent revision")
+        _positive_int(wave.get("pr_number"), "PR number")
         counts = wave.get("workflow_counts")
         if not isinstance(counts, dict) or set(counts) != set(COUNT_FIELDS):
             raise ValueError("workflow count contract")
@@ -52,6 +53,10 @@ def _validate(record):
         if not isinstance(roots, dict) or set(roots) != set(fingerprints):
             raise ValueError("fixed root population changed")
         for key, detail in roots.items():
+            if not isinstance(detail.get("predicate"), str) or not detail["predicate"].strip():
+                raise ValueError("missing exact failing job predicate")
+            if i and detail["predicate"] != observations[0]["root_observations"][key]["predicate"]:
+                raise ValueError("root predicate drift")
             if detail.get("state") not in STATES:
                 raise ValueError("invalid root state")
             if detail.get("fingerprint") != key:
@@ -62,6 +67,9 @@ def _validate(record):
             else:
                 _positive_int(detail.get("run_id"), "run ID")
                 _positive_int(detail.get("job_id"), "job ID")
+                _positive_int(detail.get("run_attempt"), "run attempt")
+                if detail.get("source_sha") != wave["head_sha"]:
+                    raise ValueError("root receipt source SHA mismatch")
                 if detail.get("evidence_class") != "GITHUB_NATIVE_JOB_STATUS":
                     raise ValueError("root outcome requires native job status evidence")
                 if detail.get("archive_bytes_verified") is not False:
