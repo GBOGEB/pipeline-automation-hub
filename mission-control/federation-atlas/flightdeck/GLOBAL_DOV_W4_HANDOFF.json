@@ -20,20 +20,22 @@
       "role": "QPS_ENGINEERING_OWNER",
       "repo": "GBOGEB/cryoplant-project",
       "pr": 1928,
-      "head": "6c94e68f59479f222ecad27c2519c9e7626465d5",
+      "head": "7e1c79f25a36406c16f497dbc690c90692f263a0",
       "path": "controls/GLOBAL_DOV_QPS_CHILD_OWNERSHIP_V1.json",
       "source_state": "PR_CANDIDATE",
-      "native_test_gate": "UNVERIFIED_DEDICATED",
-      "decision": "DEFER"
+      "native_test_gate": "EXACT_HEAD_GUARDS_VERIFIED",
+      "decision": "DEFER",
+      "verified_run_id": 38745307764,
+      "review_comments_resolved": 7
     },
     {
       "role": "KEB_SEMANTIC_OWNER",
       "repo": "GBOGEB/CODEX",
       "pr": 1048,
-      "head": "8391eec1cb3bd5e4366ec701fc676fceb5f29596",
+      "head": "d3720c1789d15144266dfa8cdba94180ae8280bf",
       "path": "docs/ci/GLOBAL_DOV_KEB_OWNER_V1.json",
       "source_state": "PR_CANDIDATE",
-      "native_test_gate": "UNVERIFIED_DEDICATED",
+      "native_test_gate": "TERMINAL_PENDING_LATEST_HEAD",
       "decision": "NO_AUTHORITY"
     },
     {
@@ -43,7 +45,7 @@
       "head": "62b97c28ac902640677ee8d77a50a2845ff64a27",
       "path": "docs/ci/GLOBAL_DOV_DOW_OWNER_V1.json",
       "source_state": "PR_CANDIDATE",
-      "native_test_gate": "UNVERIFIED_DEDICATED",
+      "native_test_gate": "TERMINAL_PENDING",
       "decision": "NO_AUTHORITY"
     }
   ],
@@ -79,9 +81,11 @@
   ],
   "metrics": {
     "moved_owned_contracts": 3,
-    "independently_native_verified_children": 0,
+    "independently_native_verified_children": 1,
     "legacy_fields_purged": 0,
-    "formal_engineering_credit": 0
+    "formal_engineering_credit": 0,
+    "review_comments_resolved": 7,
+    "owner_engineering_accepted": 0
   },
   "hard_gates": {
     "merge_authority_not_delegated": true,
