@@ -31,6 +31,7 @@ t("untrusted external evidence link rejected",()=>{let q=clone(input);q.m2_actio
 t("current snapshot protection promoted rejected",()=>{let q=clone(input);q.repos[0].required_checks="ON";reject(q);});
 t("stale M2 source blob rejected",()=>{let r=Object.assign({},raw,{m2:Buffer.concat([raw.m2,Buffer.from(" ")] )});reject(input,m2,r);});
 t("stale M2 reconciliation blob rejected",()=>{let r=Object.assign({},raw,{overlay:Buffer.concat([raw.overlay,Buffer.from(" ")] )});reject(input,m2,r);});
+t("non-compensating release-gate promotion rejected",()=>{let m=clone(m2);m.release_gates[0].status="PASS";reject(input,m);});
 t("preregistered forecast remains unscored",()=>{let q=clone(input);q.forecast_pre_registered.actual="PASS";reject(q);});
 t("source root changed rejected",()=>{let q=clone(input);q.parent_intent="OTHER";reject(q);});
 t("source output exact SHA must be 40-hex",()=>assert.throws(()=>x.build(input,m2,raw,"short"),/M3_FAIL_CLOSED/));
@@ -48,6 +49,13 @@ t("HTML source gets escaped and search bound",()=>{
  const r=x.build(q,m2,raw,SHA),h=x.html(r);
  assert(!h.includes('<img onerror="alert(1)">'));assert(h.includes("&lt;img"));
  assert(h.includes('id="search"'));assert(h.includes("viewport"));
+});
+t("mobile owner cards have labels, wrapped content and hidden-filter rule",()=>{
+ const h=x.html(base);
+ assert(h.includes('class="action-table"'));
+ assert(h.includes('data-label="Owner"'));
+ assert(h.includes('@media(max-width:640px)'));
+ assert(h.includes('tr[data-search][hidden]'));
 });
 t("Markdown contains every action and user intent",()=>{
  const md=x.fullMd(base);
