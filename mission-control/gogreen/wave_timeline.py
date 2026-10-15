@@ -6,6 +6,7 @@ from a successful GitHub workflow or treat unknown measurements as zero.
 """
 from __future__ import annotations
 
+from datetime import datetime, timezone
 import argparse
 import hashlib
 import html
@@ -59,7 +60,20 @@ def validate(data, previous=None):
     waves = data.get("waves")
     if not isinstance(waves, list) or len(waves) < 2:
         raise ValueError("at least two observed waves required")
+    prev_time = None
     for i, wave in enumerate(waves):
+        try:
+            stamp = wave["observed_at_utc"]
+            if not isinstance(stamp, str) or not stamp.endswith("Z"):
+                raise ValueError("missing UTC Z timestamp")
+            when = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+            if when.utcoffset() != timezone.utc.utcoffset(None):
+                raise ValueError("non-UTC observation")
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError("invalid UTC wave evidence timestamp") from exc
+        if prev_time is not None and when < prev_time:
+            raise ValueError("wave clock chronology reversed")
+        prev_time = when
         if wave.get("wave") != f"G{i}" or wave.get("ordinal") != i:
             raise ValueError("wave ordering/regression")
         if wave.get("repository") != FULL_REPO or not SHA.fullmatch(wave.get("source_sha", "")):
@@ -158,7 +172,7 @@ def build(data, *, source_sha):
         fleet = wave["fleet"]
         tests = wave["tests"]
         row = {
-            "wave": wave["wave"], "kind": wave["kind"],
+            "wave": wave["wave"], "kind": wave["kind"], "observed_at_utc": wave["observed_at_utc"],
             "source_sha": wave["source_sha"], "run_id": wave["run_id"],
             "job_id": wave["job_id"], "run_attempt": wave["run_attempt"],
             "workflow_url": wave["workflow_url"],
@@ -288,7 +302,7 @@ def render_html(report):
         stmt = "UNKNOWN" if focused is None else f"{focused['statements']['covered']}/{focused['statements']['eligible']}"
         br = "UNKNOWN" if focused is None else f"{focused['branches']['covered']}/{focused['branches']['eligible']}"
         rows.append(
-            f'<tr><th scope="row"><a href="{url}">{label}</a></th>'
+            f'<tr><th scope="row"><a href="{url}">{label}</a><div class="small">{esc(w["observed_at_utc"])}</div><div class="small">{esc(w["scope_notes"])}</div></th>'
             f'<td>{w["observed_cells"]}/{max_cells}</td>'
             f'<td>{esc(d)}</td><td>{esc(tests)}</td>'
             f'<td>{esc(new_tests)}</td><td>{esc(stmt)}</td><td>{esc(br)}</td>'
@@ -299,7 +313,7 @@ def render_html(report):
     for title, value, sub in (
         ("Fleet evidence breadth", f"{newest['observed_cells']}/{max_cells}", f"{newest['evidence_breadth_pct']:.2f}% observed"),
         ("Native regression tests", _num(newest["regression_tests_pass"]), f"Δ {_num(newest['delta']['native_tests'], signed=True)}"),
-        ("Focused statement coverage", "93/93" if newest["focused"] is not None and newest["focused"]["statements"] == {"covered":93,"eligible":93} else "Scope-specific", "Not whole-repository"),
+        ("Focused statement coverage", (f"{newest['focused']['statements']['covered']}/{newest['focused']['statements']['eligible']}" if newest["focused"] is not None else "UNKNOWN"), "Not whole-repository"),
         ("Source first-reds recovered", _num(newest["recovered_first_red_fingerprints"]), "Not global causal-root closure"),
     ):
         cards.append(
