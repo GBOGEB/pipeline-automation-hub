@@ -125,8 +125,8 @@ jobs:
           import os,re
           from pathlib import Path
           raw=(Path(os.environ["RUNNER_TEMP"])/"gogreen-g5"/"g1_consumer_tests.log").read_text()
-          hits=re.findall(r"Ran (\\d+) tests? in", raw)
-          if hits!=["10"] or "\\nOK" not in raw:
+          hits=re.findall(r"Ran (\d+) tests? in", raw)
+          if hits!=["10"] or "\nOK" not in raw:
               raise SystemExit("G1 consumer negative controls incomplete")
           PY
       - name: Independently download immutable G1 producer archive
@@ -175,7 +175,7 @@ jobs:
                  "same_repo_consumer_replay":True,
                  "cross_repo_acceptance":False,"qps_acceptance":False,
                  "authority_transfer":False,"merge_authorized":False}
-          (root/"g1_consumer_bound.json").write_text(json.dumps(bound,sort_keys=True,indent=2)+"\\n")
+          (root/"g1_consumer_bound.json").write_text(json.dumps(bound,sort_keys=True,indent=2)+"\n")
           PY
       - name: Upload read-only evidence
         if: always()
