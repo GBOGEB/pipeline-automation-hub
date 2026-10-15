@@ -40,7 +40,7 @@ class EvolutionaryTimelineTests(unittest.TestCase):
 
     def test_future_wave_absent_not_zero(self):
         r = m.build(self.data(), source_sha=CURRENT)
-        self.assertEqual(r["future"]["next_wave"], "G3")
+        self.assertEqual(r["future"]["next_wave"], f"G{len(self.data()['waves'])}")
         self.assertEqual(r["future"]["status"], "WAIT_FOR_NATIVE_EVIDENCE")
         self.assertIsNone(r["improvement_claims"]["global_root_closures"])
         self.assertIsNone(r["improvement_claims"]["real_worker_launches"])
@@ -124,9 +124,9 @@ class EvolutionaryTimelineTests(unittest.TestCase):
     def test_next_wave_extensible_without_fake_measurement(self):
         d = self.data()
         future = copy.deepcopy(d["waves"][-1])
-        future["wave"] = "G3"
-        future["ordinal"] = 3
-        future["observed_at_utc"] = "2026-10-15T09:06:08Z"
+        future["wave"] = f"G{len(d['waves'])}"
+        future["ordinal"] = len(d["waves"])
+        future["observed_at_utc"] = "2026-10-15T09:27:11Z"
         future["source_sha"] = "d" * 40
         future["run_id"] = 40000000000
         future["job_id"] = 110000000000
@@ -137,7 +137,7 @@ class EvolutionaryTimelineTests(unittest.TestCase):
         future["root_predicates_recovered"] = None
         d["waves"].append(future)
         r = m.build(d, source_sha=CURRENT)
-        self.assertEqual(r["future"]["next_wave"], "G4")
+        self.assertEqual(r["future"]["next_wave"], f"G{len(d['waves'])}")
         self.assertEqual(r["waves"][-1]["delta"]["native_tests"], 0)
 
     def test_wave_chronology_reversed_is_rejected(self):
@@ -182,8 +182,8 @@ class EvolutionaryTimelineTests(unittest.TestCase):
                 check=True, timeout=10,
             )
             payload = json.loads(result.stdout)
-            self.assertEqual(payload["latest"], "G2")
-            self.assertEqual(payload["next"], "G3")
+            self.assertEqual(payload["latest"], f"G{len(self.data()['waves'])-1}")
+            self.assertEqual(payload["next"], f"G{len(self.data()['waves'])}")
             self.assertFalse(payload["merge_authorized"])
             stored = json.loads((Path(temp) / "wave_timeline.json").read_text())
             self.assertEqual(stored["admission"], "HOLD")
