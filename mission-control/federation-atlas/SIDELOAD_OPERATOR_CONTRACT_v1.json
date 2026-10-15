@@ -1,0 +1,149 @@
+{
+  "schema": "missioncontrol.code-purple.sideload-operator.v1",
+  "role": "READ_ONLY_FEDERATION_PROJECTION",
+  "source_snapshot": "2026-10-15",
+  "owner": "GBOGEB/pipeline-automation-hub",
+  "authority_transfer": false,
+  "engineering_credit_delta": 0,
+  "formal_credit_delta": 0,
+  "source_contract": {
+    "repo": "GBOGEB/CODEX",
+    "path": "federation/sideload/CONTRACT_V1.json",
+    "schema": "qps.federation.sideload.envelope.v1",
+    "pr": 1049,
+    "merged": true
+  },
+  "lanes": [
+    {
+      "id": "QPS",
+      "label": "Engineering owner",
+      "repo": "GBOGEB/cryoplant-project",
+      "ref": "triage/code_purple/evolutionary_v1/SIDELOAD_CHILD_BOUNDARY_V1.json",
+      "pr": 1930,
+      "observed": "CHILD_BOUNDARY_DECLARED",
+      "status": "HOLD",
+      "action": "Validate exact W165 parent evidence and A2/A3; child decision only"
+    },
+    {
+      "id": "KEB",
+      "label": "Semantic transport",
+      "repo": "GBOGEB/CODEX",
+      "ref": "scripts/qps_sideload_v1.py",
+      "pr": 1049,
+      "observed": "TRANSPORT_MERGED",
+      "status": "CANDIDATE",
+      "action": "Replay sanitized envelope and byte hashes on exact source; independent native verification"
+    },
+    {
+      "id": "DOW",
+      "label": "Kubernetes runtime",
+      "repo": "GBOGEB/ABACUS",
+      "ref": "qplant/deployment/k8s",
+      "pr": 2025,
+      "observed": "PARENT_PR_OPEN",
+      "status": "HOLD",
+      "action": "Separate W74 static from W169 K8S API/workload and artifact bytes"
+    },
+    {
+      "id": "MC",
+      "label": "Read-only operator",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "ref": "mission-control/federation-atlas/PROCESS_LANES_v1.json",
+      "pr": 533,
+      "observed": "ATLAS_MERGED",
+      "status": "OBSERVATION_ONLY",
+      "action": "Display proof depth, side-load state, blockers and exact source; never accept child claims"
+    }
+  ],
+  "kinds": [
+    "GITHUB_RUN",
+    "K8S_STATIC",
+    "K8S_API",
+    "K8S_WORKLOAD",
+    "EDGE_CANDIDATE",
+    "DOCKER_COMPOSE",
+    "SECURITY_SCAN",
+    "SANITIZED_LOG",
+    "LOCAL_EVIDENCE"
+  ],
+  "trust_levels": [
+    "DECLARED",
+    "LOCAL_HASH_MATCH_ONLY",
+    "NATIVE_METADATA_UNAUTHENTICATED",
+    "K8S_API_UNVERIFIED",
+    "WORKLOAD_UNVERIFIED"
+  ],
+  "promotion_gates": [
+    {
+      "id": "S0",
+      "name": "Static contract",
+      "proof": "Pinned manifests, schema and CI on exact SHA"
+    },
+    {
+      "id": "S1",
+      "name": "Authenticated source",
+      "proof": "Independent run, job, attempt, steps and archive byte SHA256"
+    },
+    {
+      "id": "S2",
+      "name": "Kubernetes API",
+      "proof": "Server-side validation from real API, namespace and deployment identity"
+    },
+    {
+      "id": "S3",
+      "name": "Workload",
+      "proof": "Pod readiness, image digest, restart and latency/CPU/memory observations"
+    },
+    {
+      "id": "S4",
+      "name": "Edge",
+      "proof": "Independent ARM/node/network/replay and rollback envelope"
+    },
+    {
+      "id": "S5",
+      "name": "QPS owner disposition",
+      "proof": "QPS child ACCEPT/REJECT/DEFER, never inherited from parent"
+    }
+  ],
+  "metrics": [
+    "source_sha",
+    "run_id",
+    "job_id",
+    "attempt",
+    "executed_steps",
+    "artifact_sha256",
+    "namespace",
+    "image_digest",
+    "pod_ready",
+    "p95_latency_ms",
+    "cpu_peak_millicores",
+    "memory_peak_mib",
+    "restart_count",
+    "rollback_verified"
+  ],
+  "safe_defaults": {
+    "cluster_api_proven": null,
+    "workload_proven": null,
+    "edge_qualified": null,
+    "authenticated_hops": null,
+    "matched_coverage_gain": null,
+    "engineering_disposition": "DEFER",
+    "release": "HOLD"
+  },
+  "stop_rules": [
+    "NO_PRIVATE_BIDDER_BYTES_IN_GIT",
+    "NO_KUBECONFIG_SECRETS_TOKENS_RAW_LOGS",
+    "ZERO_STEP_NOT_APPLICATION_FAILURE",
+    "STATIC_PASS_NOT_CLUSTER_RUNTIME",
+    "CLOUD_K8S_NOT_EDGE_PROOF",
+    "PARENT_PASS_NOT_CHILD_ACCEPT",
+    "MERGE_NOT_RELEASE",
+    "UNKNOWN_NOT_ZERO"
+  ],
+  "links": {
+    "qps_issue": "https://github.com/GBOGEB/cryoplant-project/issues/1929",
+    "dow_pr": "https://github.com/GBOGEB/ABACUS/pull/2025",
+    "keb_pr": "https://github.com/GBOGEB/CODEX/pull/1049",
+    "atlas": "https://github.com/GBOGEB/pipeline-automation-hub/pull/533"
+  }
+}
