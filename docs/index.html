@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>MissionControl | CODE PURPLE evidence portal</title>
+<meta name="description" content="Read-only MissionControl CODE PURPLE source and evidence navigation.">
+<style>
+:root{color-scheme:dark;--bg:#0c1525;--panel:#192a44;--line:#465d78;--ink:#ebf3fb;--muted:#bad0e2;--accent:#9ee6ef}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(150deg,#0c1525,#12233a);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:1150px;margin:auto;padding:32px 20px 72px}
+nav{display:flex;gap:16px;flex-wrap:wrap}a{color:var(--accent)}a:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+h1{font-size:clamp(2.05rem,5vw,3.5rem);line-height:1.13;margin:.5em 0}h2{margin:1.8em 0 .7em}
+p{color:var(--muted)}.eyebrow{letter-spacing:.13em;color:#ace0ec;text-transform:uppercase;font-size:.82rem;font-weight:700}
+.notice{border-left:4px solid #9ee6ef;background:var(--panel);padding:16px 22px;margin:24px 0;border-radius:4px}.notice p{margin:.35em 0}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.card{display:block;padding:19px;border-radius:13px;background:var(--panel);border:1px solid var(--line);color:var(--ink);text-decoration:none}.card:hover,.card:focus-visible{border-color:var(--accent);box-shadow:0 0 0 2px #9ee6ef33}.card strong{display:block;font-size:1.08rem}.card span{display:block;color:var(--muted);font-size:.92rem}
+.diagram{border-radius:12px;padding:18px;background:#eef4fa;color:#17314f;overflow-x:auto}
+code{font:0.9rem ui-monospace,Consolas,monospace;overflow-wrap:anywhere}
+.small{font-size:.89rem}.footer{margin-top:35px;padding-top:20px;border-top:1px solid var(--line)}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:550px){.grid{grid-template-columns:1fr}main{padding:20px 14px}}
+</style></head>
+<body><main>
+<nav aria-label="Primary navigation"><a href="#views">Review views</a><a href="#process">Process DAG</a><a href="#release">Publishing status</a><a href="https://github.com/GBOGEB/pipeline-automation-hub">GitHub source</a></nav>
+<header><p class="eyebrow">MissionControl · CODE PURPLE · public review</p>
+<h1>Evidence and engineering workflows, connected.</h1>
+<p>This page is the stable navigation entrypoint served by the repository's existing <code>docs/</code> GitHub Pages pipeline. It does not replace governed GitHub sources, native CI receipts, or child-owned engineering decisions.</p></header>
+<section class="notice" role="note"><strong>Static fallback, not the generated Atlas deployment.</strong>
+<p>The automated Method Atlas/Flight Deck producer is separately available as a GitHub Actions artifact. GitHub Pages source configuration must use a single approved publisher before that generated portal can become authoritative as a published view.</p>
+<p>Engineering acceptance, independent security review, and source-to-consumer federation proof remain separate from website availability.</p></section>
+<section id="views"><h2>Open an evidence view</h2><div class="grid">
+<a class="card" href="mission-control/m2/index.html"><strong>MissionControl M2 overview ↗</strong><span>Controlled workstreams and source-bound handover</span></a>
+<a class="card" href="mission-control/m2/federation.html"><strong>Federation ↗</strong><span>gg_MATH, CODEX, ABACUS, QPS and supporting lanes</span></a>
+<a class="card" href="mission-control/m2/pipeline.html"><strong>Pipeline ↗</strong><span>Execution model, dependencies and stage navigation</span></a>
+<a class="card" href="mission-control/m2/burndown.html"><strong>Burndown ↗</strong><span>Owned actions, blockers and evidence gaps</span></a>
+<a class="card" href="mission-control/m2/runtime.html"><strong>Runtime ↗</strong><span>Read-only operational telemetry and environment</span></a>
+<a class="card" href="mission-control/m2/handover.html"><strong>Handover ↗</strong><span>Traceable continuation and checkpoint contracts</span></a>
+<a class="card" href="https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38766869098"><strong>Generated Method Atlas ↗</strong><span>Previously successful exact-main producer; downloadable artifact</span></a>
+<a class="card" href="https://github.com/GBOGEB/pipeline-automation-hub/tree/master/mission-control/federation-atlas"><strong>Current Atlas source ↗</strong><span>Canonical renderer, diagrams, evidence and tests</span></a>
+<a class="card" href="https://github.com/GBOGEB/pipeline-automation-hub/pull/547"><strong>Native pulse and Pages lineage ↗</strong><span>Merged source PR and publication history</span></a>
+</div></section>
+<section id="process"><h2>Governed source-to-view process</h2>
+<p>Mermaid view supports zooming through your browser. The raw diagram remains legible if the Mermaid dependency is unavailable.</p>
+<pre class="mermaid diagram">flowchart TD
+  A["GitHub SSOT / exact source SHA"] --> B["Native CI census and tests"]
+  B --> C["Evidence root / artifact hashes"]
+  C --> D["Method Atlas and Flight Deck"]
+  D --> E{"Publish through ONE Pages source"}
+  E -->|"Static docs source"| F["Static review navigation"]
+  E -->|"Actions source configured"| G["Generated full portal"]
+  F --> H{"Independent QA and owner gate"}
+  G --> H
+  H -->|"HOLD"| I["BD queue / next iteration"]
+  H -->|"Eligible"| J["Governed release candidate"]
+</pre>
+<details><summary>View Mermaid source text</summary>
+<pre><code>flowchart TD
+  A["GitHub SSOT / exact source SHA"] --> B["Native CI census and tests"]
+  B --> C["Evidence root / artifact hashes"]
+  C --> D["Method Atlas and Flight Deck"]
+  D --> E{"Publish through ONE Pages source"}
+  E -->|"Static docs source"| F["Static review navigation"]
+  E -->|"Actions source configured"| G["Generated full portal"]
+  F --> H{"Independent QA and owner gate"}
+  G --> H
+  H -->|"HOLD"| I["BD queue / next iteration"]
+  H -->|"Eligible"| J["Governed release candidate"]</code></pre></details>
+</section>
+<section id="release"><h2>Publication identity and next gate</h2>
+<p>Site entrypoint source: <code>docs/index.html</code>. The current browser view is not a live GitHub census. Refer to the <a href="https://github.com/GBOGEB/pipeline-automation-hub/actions">native GitHub workflow runs</a> for run IDs, terminal checks and updated source SHAs.</p>
+<p>To publish the generated Atlas instead of this static fallback, the repository owner should choose <strong>Settings → Pages → Build and deployment → Source → GitHub Actions</strong>. Do not enable a second independent publisher. The <a href="https://github.com/GBOGEB/pipeline-automation-hub/blob/master/.github/workflows/code-purple-method-atlas.yml">existing Method Atlas workflow</a> owns that generated deployment.</p>
+</section><p class="footer small">Evidence-class: DERIVED_STATIC_NAVIGATION. No QPS owner acceptance, independent merge approval, artifact-byte proof or security waiver is implied.</p></main>
+<script type="module">try{const m=await import("https://cdn.jsdelivr.net/npm/mermaid@11.11.0/dist/mermaid.esm.min.mjs");m.default.initialize({startOnLoad:true,securityLevel:"strict",theme:"neutral"})}catch(e){document.querySelectorAll(".mermaid").forEach(el=>el.setAttribute("aria-label","Unrendered Mermaid diagram text; dependency unavailable"))}</script>
+</body></html>
