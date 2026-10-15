@@ -115,6 +115,68 @@ jobs:
                    'merge_authorized':False,'qps_disposition':'DEFER'}
           (folder/'native_provenance.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n')
           PY
+      - name: Strict G1 consumer replay regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/gogreen/g5/consumer_tests -v \
+            2>&1 | tee "$RUNNER_TEMP/gogreen-g5/g1_consumer_tests.log"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          raw=(Path(os.environ["RUNNER_TEMP"])/"gogreen-g5"/"g1_consumer_tests.log").read_text()
+          hits=re.findall(r"Ran (\\d+) tests? in", raw)
+          if hits!=["10"] or "\\nOK" not in raw:
+              raise SystemExit("G1 consumer negative controls incomplete")
+          PY
+      - name: Independently download immutable G1 producer archive
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --max-time 75 --retry 2 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -o "$RUNNER_TEMP/gogreen-g5/g1_producer.zip" \
+            "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/artifacts/11968217957/zip"
+          test -s "$RUNNER_TEMP/gogreen-g5/g1_producer.zip"
+      - name: Bind G1 ZIP bytes to consumer receipt
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/gogreen-g5"
+          python mission-control/gogreen/g5/consumer_g1.py \
+            --zip "$OUT/g1_producer.zip" \
+            --archive-sha256 f926b86d377f989cfb380c587ce5cbf2843a3e7e152d0df3c4d8a3a914ba2117 \
+            --source-sha 63d1ac9618b2612d0ec3ceb32faad3841413b79d \
+            --run-id 38726158685 --job-id 116392416193 --out "$OUT"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])/"gogreen-g5"
+          evidence=(root/"g1_consumer_receipt.json").read_bytes()
+          result=json.loads(evidence)
+          assert hashlib.sha256(evidence).hexdigest()==(root/"g1_consumer_receipt.sha256").read_text().strip()
+          assert result["verified_producer_to_consumer_links"]==1
+          assert result["cross_repository_federation_links"]==0
+          assert result["qps_recipient_accepted_links"]==0
+          assert result["qps_disposition"]=="DEFER" and result["merge_authorized"] is False
+          bound={"schema":"gogreen.g5.g1-consumer-bound.v1",
+                 "consumer_repository":os.environ["GITHUB_REPOSITORY"],
+                 "consumer_sha":os.environ["EXPECTED_SHA"],
+                 "consumer_run_id":int(os.environ["RUN_ID"]),
+                 "consumer_run_attempt":int(os.environ["RUN_ATTEMPT"]),
+                 "producer_receipt_sha256":hashlib.sha256(evidence).hexdigest(),
+                 "same_repo_consumer_replay":True,
+                 "cross_repo_acceptance":False,"qps_acceptance":False,
+                 "authority_transfer":False,"merge_authorized":False}
+          (root/"g1_consumer_bound.json").write_text(json.dumps(bound,sort_keys=True,indent=2)+"\\n")
+          PY
       - name: Upload read-only evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
