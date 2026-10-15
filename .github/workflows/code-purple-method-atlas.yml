@@ -79,7 +79,8 @@ jobs:
           SRC=mission-control/federation-atlas
           OUT=/tmp/code-purple-atlas
           python "$SRC/sideload_k8s.py" --out "$OUT"
-          python "$SRC/build_sideload_operator.py" --out "$OUT"
+          python "$SRC/sideload_telemetry.py" --out "$OUT"
+          python "$SRC/build_sideload_operator.py" --out "$OUT" --telemetry "$OUT/sideload-telemetry.json"
           python - <<'PY'
           import hashlib, json, os
           from pathlib import Path
@@ -89,6 +90,8 @@ jobs:
           inv=json.loads((out/"sideload-k8s.json").read_text())
           manifest=json.loads((out/"sideload-k8s.sha256.json").read_text())
           proof=json.loads((out/"sideload-operator-receipt.json").read_text())
+          telemetry=json.loads((out/"sideload-telemetry.json").read_text())
+          telehash=json.loads((out/"sideload-telemetry.sha256.json").read_text())
           operator=json.loads((source/"SIDELOAD_OPERATOR_CONTRACT_v1.json").read_text())
           src=json.loads((source/"SIDELOAD_K8S_SOURCE_v1.json").read_text())
           assert inv["repo_owners"]==3 and inv["source_surfaces"]==8
@@ -98,6 +101,13 @@ jobs:
           assert inv["authority_transfer"] is proof["authority_transfer"] is False
           assert inv["authenticated_runtime"] is None
           assert proof["native_cluster_receipt"] is None
+          assert telemetry["source_run_id"]==38774568289 and telemetry["source_sha"]=="4d8240082f532c13d5cfb240747b04caed13e5bf"
+          assert telemetry["metrics"]["restart_count"]==0
+          assert telemetry["unbound"]["queue_p95_seconds"] is None
+          assert telemetry["unbound"]["cpu_peak_millicores"] is None
+          assert telemetry["qps_disposition"]==telehash["qps_disposition"]=="DEFER"
+          assert telemetry["release"]==telehash["admission"]=="HOLD"
+          assert hashlib.sha256((out/"sideload-telemetry.json").read_bytes()).hexdigest()==telehash["projection_sha256"]
           for name, digest in manifest["files"].items():
               assert hashlib.sha256((out/name).read_bytes()).hexdigest()==digest
           assert hashlib.sha256((out/"sideload-operator.html").read_bytes()).hexdigest()==proof["html_sha256"]
