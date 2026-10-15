@@ -114,11 +114,9 @@ def validate(intake):
         if edge.get("level") not in EVIDENCE:
             raise ValueError("unrecognized evidence level")
         if edge["level"] != "DECLARED":
-            receipt = edge.get("receipt")
-            if not isinstance(receipt, dict) or not receipt.get("sha256") or not receipt.get("run_id"):
-                raise ValueError("native federation edge requires real receipt")
             if edge["level"] == "RECIPIENT_ACCEPTED":
                 raise ValueError("QPS owner authority cannot be imported by Mission Control")
+            raise ValueError("native federation edge requires real receipt and independent byte verifier (G5 unsupported)")
         elif edge.get("receipt") is not None:
             raise ValueError("declared edge cannot carry a fake receipt")
     from collections import defaultdict
