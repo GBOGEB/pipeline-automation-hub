@@ -1,0 +1,81 @@
+name: GOGREEN G4 MissionControl-Wide Bounded Census
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/**'
+      - '.github/workflows/gogreen-g4-fleet.yml'
+  workflow_dispatch:
+    inputs:
+      live_scan:
+        description: "GET-only pinned six-repo status sample; default branch only"
+        type: boolean
+        default: false
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: gogreen-g4-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  fleet-rollup:
+    name: G4 offline proof and optional passive fleet scout
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Exact-source regression and fail-closed offline pulse
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          mkdir -p "$RUNNER_TEMP/gogreen-g4"
+          python -m unittest discover -s mission-control/gogreen/tests -q \
+            2>&1 | tee "$RUNNER_TEMP/gogreen-g4/unittest.log"
+          python - <<'PYCODE'
+          import json,os
+          from pathlib import Path
+          src=Path('mission-control/gogreen/samples/fleet_g4_20261015.json')
+          cat=json.loads(src.read_text())
+          obj={'schema':'gogreen.readonly-scout.v1','mode':'PASSIVE_GET_ONLY',
+               'requested_runs_per_repo':2,'requested_jobs_per_run':3,
+               'repositories':[{'repository':x['repository'],'source_sha':x['head_sha'],
+                   'runs_considered':0,'successful_jobs_seen':0,'truncated':None,
+                   'fetch_state':'UNKNOWN'} for x in cat['repositories']],
+               'unattributed_non_green':[],'collection_errors':[],
+               'external_authority_transfer':False,'security_waiver':False,
+               'worker_dispatches':0,'complete_fleet_census':False,
+               'source_class':'OFFLINE_NON_OBSERVATION_FIXTURE'}
+          p=Path(os.environ['RUNNER_TEMP'])/'gogreen-g4'/'offline_scout.json'
+          p.write_text(json.dumps(obj,indent=2,sort_keys=True)+'\n')
+          PYCODE
+          python mission-control/gogreen/fleet_wave.py \
+            --intake mission-control/gogreen/samples/fleet_g4_20261015.json \
+            --scout "$RUNNER_TEMP/gogreen-g4/offline_scout.json" \
+            --pulse G4-P0 --out "$RUNNER_TEMP/gogreen-g4/offline_rollup.json"
+      - name: Optional manual, bounded READ ONLY native fleet collection
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.live_scan == true && github.ref_name == github.event.repository.default_branch }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/collect_readonly.py \
+            --catalog mission-control/gogreen/samples/fleet_g4_20261015.json \
+            --out "$RUNNER_TEMP/gogreen-g4/live" --max-runs 2 --max-jobs 3
+          python mission-control/gogreen/fleet_wave.py \
+            --intake "$RUNNER_TEMP/gogreen-g4/live/live_intake.json" \
+            --scout "$RUNNER_TEMP/gogreen-g4/live/live_scanner_metadata.json" \
+            --pulse G4-P1 --out "$RUNNER_TEMP/gogreen-g4/live/fleet_rollup.json"
+      - name: Upload SHA-bound evidence; no write-class actions
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gogreen-g4-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/gogreen-g4/
+          if-no-files-found: warn
+          retention-days: 30

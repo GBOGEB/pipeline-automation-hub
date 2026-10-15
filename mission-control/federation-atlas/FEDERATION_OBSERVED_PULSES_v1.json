@@ -1,0 +1,266 @@
+{
+  "schema": "missioncontrol.federation.observed_pulses/v1",
+  "observed_date": "2026-10-15",
+  "classification": "HISTORICAL_EXACT_SOURCE_SNAPSHOT_NOT_LIVE",
+  "repositories": [
+    "GBOGEB/gg_MATH",
+    "GBOGEB/CODEX",
+    "GBOGEB/ABACUS",
+    "GBOGEB/cryoplant-project",
+    "GBOGEB/pipeline-automation-hub"
+  ],
+  "method_receipts": {
+    "dmaic_controlled_iterations": null,
+    "mip_verified_repairs": null,
+    "rex_controlled_root_ids": null,
+    "ldab_diagnostic_root_ids": null,
+    "lldb_debug_sessions": null,
+    "unique_confirmed_roots": null,
+    "pca_complete_rows": null,
+    "pca_feature_count": 6,
+    "bt_terminal_pairs": null,
+    "bt_positive_outcomes": null,
+    "runner_queue_wait_seconds": null,
+    "runner_execution_seconds": null,
+    "crew_dispatch_receipts": null
+  },
+  "observations": [
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "wave": "QPS_WORMHOLE_COVERAGE",
+      "pulse": 0,
+      "head_sha": "34f2ff2f38775b9746f429013ebd6db71d6ef882",
+      "run_id": 38705702993,
+      "run_attempt": 1,
+      "python": "3.11",
+      "status": "TERMINAL_RED",
+      "tests_passed": 38,
+      "tests_executed": 38,
+      "line": {
+        "covered": 93,
+        "eligible": 135
+      },
+      "branch": {
+        "covered": 36,
+        "eligible": 48
+      },
+      "selection": "qps-wormhole-reentry-plus-join+coverage-contract",
+      "scope": [
+        {
+          "path": "scripts/qps_math_wormhole_candidate_join.py",
+          "sha256": "263e63be189644c33fe93af3b380ca7bae5d810b636edeefbfb124a0e3f391cc"
+        },
+        {
+          "path": "scripts/qps_math_wormhole_reentry.py",
+          "sha256": "9045cde7ffc5519021b4f19f77291813a692cf0072fee7911def801c59a10fda"
+        }
+      ],
+      "artifact_id": 11958506512,
+      "receipt_sha256": "630691ed7d81b851e5d5dafa7844f29c7073184491a0670c8e2b3c5762c86c7d",
+      "evidence_class": "INSPECTED_ARTIFACT",
+      "native_replay_authenticated": null,
+      "engineering_acceptance": false
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "wave": "QPS_WORMHOLE_COVERAGE",
+      "pulse": 0,
+      "head_sha": "34f2ff2f38775b9746f429013ebd6db71d6ef882",
+      "run_id": 38705702993,
+      "run_attempt": 1,
+      "python": "3.12",
+      "status": "TERMINAL_RED",
+      "tests_passed": 38,
+      "tests_executed": 38,
+      "line": {
+        "covered": 93,
+        "eligible": 135
+      },
+      "branch": {
+        "covered": 36,
+        "eligible": 48
+      },
+      "selection": "qps-wormhole-reentry-plus-join+coverage-contract",
+      "scope": [
+        {
+          "path": "scripts/qps_math_wormhole_candidate_join.py",
+          "sha256": "263e63be189644c33fe93af3b380ca7bae5d810b636edeefbfb124a0e3f391cc"
+        },
+        {
+          "path": "scripts/qps_math_wormhole_reentry.py",
+          "sha256": "9045cde7ffc5519021b4f19f77291813a692cf0072fee7911def801c59a10fda"
+        }
+      ],
+      "artifact_id": 11958780891,
+      "receipt_sha256": "420a1f47d313470f991f6925f6ed56fca3295c4e35999dc4673ed3331a98673a",
+      "evidence_class": "INSPECTED_ARTIFACT",
+      "native_replay_authenticated": null,
+      "engineering_acceptance": false
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "wave": "QPS_WORMHOLE_COVERAGE",
+      "pulse": 1,
+      "head_sha": "25b84d9864f5e20ee0d669310d5b05940bd94b3e",
+      "run_id": 38706275711,
+      "run_attempt": 1,
+      "python": "3.11",
+      "status": "TERMINAL_PASS",
+      "tests_passed": 48,
+      "tests_executed": 48,
+      "line": {
+        "covered": 132,
+        "eligible": 135
+      },
+      "branch": {
+        "covered": 45,
+        "eligible": 48
+      },
+      "selection": "qps-wormhole-reentry+join+coverage-contract+cli-paths",
+      "scope": [
+        {
+          "path": "scripts/qps_math_wormhole_candidate_join.py",
+          "sha256": "263e63be189644c33fe93af3b380ca7bae5d810b636edeefbfb124a0e3f391cc"
+        },
+        {
+          "path": "scripts/qps_math_wormhole_reentry.py",
+          "sha256": "9045cde7ffc5519021b4f19f77291813a692cf0072fee7911def801c59a10fda"
+        }
+      ],
+      "artifact_id": 11959400478,
+      "receipt_sha256": "32c60a50f773201cf01c8b09c848be23d166c7d3a652fdb2647ab5a5957757c1",
+      "evidence_class": "INSPECTED_ARTIFACT",
+      "native_replay_authenticated": null,
+      "engineering_acceptance": false
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "wave": "QPS_WORMHOLE_COVERAGE",
+      "pulse": 1,
+      "head_sha": "25b84d9864f5e20ee0d669310d5b05940bd94b3e",
+      "run_id": 38706275711,
+      "run_attempt": 1,
+      "python": "3.12",
+      "status": "TERMINAL_PASS",
+      "tests_passed": 48,
+      "tests_executed": 48,
+      "line": {
+        "covered": 132,
+        "eligible": 135
+      },
+      "branch": {
+        "covered": 45,
+        "eligible": 48
+      },
+      "selection": "qps-wormhole-reentry+join+coverage-contract+cli-paths",
+      "scope": [
+        {
+          "path": "scripts/qps_math_wormhole_candidate_join.py",
+          "sha256": "263e63be189644c33fe93af3b380ca7bae5d810b636edeefbfb124a0e3f391cc"
+        },
+        {
+          "path": "scripts/qps_math_wormhole_reentry.py",
+          "sha256": "9045cde7ffc5519021b4f19f77291813a692cf0072fee7911def801c59a10fda"
+        }
+      ],
+      "artifact_id": 11958178333,
+      "receipt_sha256": "69a3df8ec5c1b0a1c9221b536450ffb08306525e673bfb12873918549049b92c",
+      "evidence_class": "INSPECTED_ARTIFACT",
+      "native_replay_authenticated": null,
+      "engineering_acceptance": false
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "wave": "QPS_WORMHOLE_COVERAGE",
+      "pulse": 2,
+      "head_sha": "f0518a22d9d12ca55d27e599bd53659cef4fa2f6",
+      "run_id": 38707522432,
+      "run_attempt": 1,
+      "python": "3.11",
+      "status": "TERMINAL_PASS",
+      "tests_passed": 51,
+      "tests_executed": 51,
+      "line": {
+        "covered": 135,
+        "eligible": 135
+      },
+      "branch": {
+        "covered": 48,
+        "eligible": 48
+      },
+      "selection": "qps-wormhole-reentry+join+coverage-contract+cli-paths",
+      "scope": [
+        {
+          "path": "scripts/qps_math_wormhole_candidate_join.py",
+          "sha256": "263e63be189644c33fe93af3b380ca7bae5d810b636edeefbfb124a0e3f391cc"
+        },
+        {
+          "path": "scripts/qps_math_wormhole_reentry.py",
+          "sha256": "9045cde7ffc5519021b4f19f77291813a692cf0072fee7911def801c59a10fda"
+        }
+      ],
+      "artifact_id": 11959296178,
+      "receipt_sha256": "b0f4152839ba85d34e29846f2e282b057f3c02c183e72ea9826934b42a665103",
+      "evidence_class": "INSPECTED_ARTIFACT",
+      "native_replay_authenticated": null,
+      "engineering_acceptance": false
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "wave": "QPS_WORMHOLE_COVERAGE",
+      "pulse": 2,
+      "head_sha": "f0518a22d9d12ca55d27e599bd53659cef4fa2f6",
+      "run_id": 38707522432,
+      "run_attempt": 1,
+      "python": "3.12",
+      "status": "TERMINAL_PASS",
+      "tests_passed": 51,
+      "tests_executed": 51,
+      "line": {
+        "covered": 135,
+        "eligible": 135
+      },
+      "branch": {
+        "covered": 48,
+        "eligible": 48
+      },
+      "selection": "qps-wormhole-reentry+join+coverage-contract+cli-paths",
+      "scope": [
+        {
+          "path": "scripts/qps_math_wormhole_candidate_join.py",
+          "sha256": "263e63be189644c33fe93af3b380ca7bae5d810b636edeefbfb124a0e3f391cc"
+        },
+        {
+          "path": "scripts/qps_math_wormhole_reentry.py",
+          "sha256": "9045cde7ffc5519021b4f19f77291813a692cf0072fee7911def801c59a10fda"
+        }
+      ],
+      "artifact_id": 11959625233,
+      "receipt_sha256": "69b15e0462ff799a0728ce242436c1f8d4641a4496983b5374ff9974892d516f",
+      "evidence_class": "INSPECTED_ARTIFACT",
+      "native_replay_authenticated": null,
+      "engineering_acceptance": false
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "wave": "W70_ID_METRICS",
+      "pulse": 0,
+      "head_sha": "e021fb05a08e684eee073250c4ff367d728aa0ae",
+      "run_id": 38707957236,
+      "run_attempt": 1,
+      "python": "3.12",
+      "status": "QUEUED",
+      "tests_passed": null,
+      "tests_executed": null,
+      "line": null,
+      "branch": null,
+      "selection": "w70-focused-coverage",
+      "scope": null,
+      "artifact_id": null,
+      "receipt_sha256": null,
+      "evidence_class": "RUN_QUEUED",
+      "native_replay_authenticated": null,
+      "engineering_acceptance": false
+    }
+  ]
+}
