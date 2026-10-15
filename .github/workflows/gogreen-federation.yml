@@ -44,11 +44,11 @@ jobs:
           out=Path(os.environ['RUNNER_TEMP'])/'gogreen-g5'
           raw=(out/'unit-tests.log').read_text()
           n=re.findall(r'Ran (\d+) tests? in',raw)
-          if n!=['38'] or '\nOK' not in raw:
+          if n!=['44'] or '\nOK' not in raw:
               raise SystemExit('G5 native regression denominator incomplete')
           data={'schema':'gogreen.g5.native-test-counts.v1',
                 'source_sha':os.environ['EXPECTED_SHA'],
-                'executed':38,'passed':38,'failed':0,'skipped':0,
+                'executed':44,'passed':44,'failed':0,'skipped':0,
                 'source':'NATIVE_UNITTEST_NOT_SYNTHETIC'}
           (out/'test_counts.json').write_text(json.dumps(data,sort_keys=True,indent=2)+'\n')
           PY
@@ -111,7 +111,7 @@ jobs:
                    'repository':os.environ['REPO_ID'],'head_sha':sha,
                    'run_id':int(os.environ['RUN_ID']),
                    'run_attempt':int(os.environ['RUN_ATTEMPT']),
-                   'census_sha256':digest,'incremental_sha256':incremental_sha,'native_tests_passed':38,
+                   'census_sha256':digest,'incremental_sha256':incremental_sha,'native_tests_passed':44,
                    'merge_authorized':False,'qps_disposition':'DEFER'}
           (folder/'native_provenance.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n')
           PY
