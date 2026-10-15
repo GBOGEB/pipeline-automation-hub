@@ -310,11 +310,15 @@ def render_html(report):
         )
     cards = []
     newest = report["waves"][-1]
+    last_root_wave = next(
+        (w for w in reversed(report["waves"])
+         if w["recovered_first_red_fingerprints"] is not None), None
+    )
     for title, value, sub in (
         ("Fleet evidence breadth", f"{newest['observed_cells']}/{max_cells}", f"{newest['evidence_breadth_pct']:.2f}% observed"),
         ("Native regression tests", _num(newest["regression_tests_pass"]), f"Δ {_num(newest['delta']['native_tests'], signed=True)}"),
         ("Focused statement coverage", (f"{newest['focused']['statements']['covered']}/{newest['focused']['statements']['eligible']}" if newest["focused"] is not None else "UNKNOWN"), "Not whole-repository"),
-        ("Source first-reds recovered", _num(newest["recovered_first_red_fingerprints"]), "Not global causal-root closure"),
+        ("Last evidenced first-red recovery", (_num(last_root_wave["recovered_first_red_fingerprints"]) if last_root_wave is not None else "UNKNOWN"), (f"{last_root_wave['wave']} scope; not current-wave or global root closure" if last_root_wave is not None else "No comparable causal evidence")),
     ):
         cards.append(
             f'<section class="card"><p class="small">{esc(title)}</p><div class="number">{esc(value)}</div>'
@@ -322,7 +326,7 @@ def render_html(report):
         )
     return """<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="dark light"><title>MissionControl | Evolutionary G0→G1→G2 Waves</title>
+<meta name="color-scheme" content="dark light"><title>MissionControl | Rolling Evolutionary G-Waves</title>
 <style>
 :root{color-scheme:dark;--bg:#0e0e0e;--fg:#fafafa;--muted:#b5b5b5;--line:#363636;--track:#2b2b2b}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,Segoe UI,sans-serif}
