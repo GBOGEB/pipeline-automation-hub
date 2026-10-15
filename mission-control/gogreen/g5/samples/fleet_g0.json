@@ -1,0 +1,41 @@
+{
+  "schema": "gogreen.fleet.intake.v1",
+  "repositories": [
+    {"repository": "GBOGEB/ABACUS", "head_sha": "b50c64b02e2b85c7f6f12388011c7778299fb1c0", "ref_kind": "PR_HEAD", "target_families": ["ci_contract", "security", "coverage", "runtime", "artifact", "federation", "qps_triage", "math_model"], "authority_transfer": false},
+    {"repository": "GBOGEB/CODEX", "head_sha": "3872c2cf44ac274c7f3f9e420e9b81a8eb1a7062", "ref_kind": "MAIN", "target_families": ["ci_contract", "security", "coverage", "runtime", "artifact", "federation", "qps_triage", "math_model"], "authority_transfer": false},
+    {"repository": "GBOGEB/pipeline-automation-hub", "head_sha": "87ec869eaf427c7ceed62eed1c61b05b77c5969d", "ref_kind": "MAIN", "target_families": ["ci_contract", "security", "coverage", "runtime", "artifact", "federation", "qps_triage", "math_model"], "authority_transfer": false},
+    {"repository": "GBOGEB/DOCX_RTM_Automation", "head_sha": "252a6845821ac3981d680730f22beb0b0cae8440", "ref_kind": "MAIN", "target_families": ["ci_contract", "security", "coverage", "artifact", "federation", "qps_triage"], "authority_transfer": false},
+    {"repository": "GBOGEB/cryoplant-project", "head_sha": "c7c1344c3ed289ac8e74b8425d219fae696cdb7d", "ref_kind": "MAIN", "target_families": ["ci_contract", "security", "coverage", "artifact", "federation", "qps_triage", "math_model"], "authority_transfer": false},
+    {"repository": "GBOGEB/gg_MATH", "head_sha": "c5cd3e30a8e241111fc9f15367f3b92ba0393ea7", "ref_kind": "MAIN", "target_families": ["ci_contract", "security", "coverage", "federation", "math_model"], "authority_transfer": false}
+  ],
+  "observations": [
+    {
+      "repository": "GBOGEB/ABACUS",
+      "source_sha": "b50c64b02e2b85c7f6f12388011c7778299fb1c0",
+      "base_sha": "5ede8c97db4aba99fdcc44109e7230db69a3fd6b",
+      "family": "ci_contract",
+      "suite_id": "DOW bounded first-red Ruff and CLI contracts",
+      "run_id": 38601239666,
+      "run_number": 8,
+      "run_attempt": 1,
+      "job_id": 115980730837,
+      "run_url": "https://github.com/GBOGEB/ABACUS/actions/runs/38601239666",
+      "workflow_status": "completed",
+      "workflow_conclusion": "success",
+      "job_status": "completed",
+      "job_conclusion": "success",
+      "evidence_class": "GITHUB_NATIVE_METADATA",
+      "config_identity": "Ruff==0.17.0; exact-base-vs-exact-head; four Python paths",
+      "test_counts": null,
+      "scoped_burndown": {
+        "scope_id": "scripts/preview_diff.py|scripts/recursive_build.py|tests/test_dmaic_measurement_receipts.py|tests/test_loop_transient.py",
+        "tool_version": "Ruff 0.17.0", "before": 11, "after": 0, "resolved": 11, "introduced": 0
+      },
+      "artifact": {
+        "id": 11912899138,
+        "archive_sha256": "21aeff84f238d7d678d00c3194998ce874e2322de7c9e9ac46095089140e8d01",
+        "bytes_verified": false
+      }
+    }
+  ]
+}
