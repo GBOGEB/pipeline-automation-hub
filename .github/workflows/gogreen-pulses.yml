@@ -170,11 +170,14 @@ jobs:
           assert recovery['merge_authorized'] is False and recovery['global_root_closure'] is None
           assert hashlib.sha256(history_bytes).hexdigest()==(out/'wave_timeline.sha256').read_text().strip()
           assert history['producer_source_sha']==sha and history['merge_authorized'] is False
-          assert [w['wave'] for w in history['waves']]==['G0','G1','G2']
-          assert history['future']=={'next_wave':'G3','status':'WAIT_FOR_NATIVE_EVIDENCE'}
-          assert history['waves'][-1]['delta']['native_tests']==16
-          assert history['waves'][-1]['delta']['observed_cells']==0
-          assert history['waves'][-1]['delta']['focused_statement_coverage_pp']==0
+          wave_labels=[w['wave'] for w in history['waves']]
+          assert len(wave_labels)>=3
+          assert wave_labels==[f'G{i}' for i in range(len(wave_labels))]
+          assert history['future']=={'next_wave':f'G{len(wave_labels)}',
+                                      'status':'WAIT_FOR_NATIVE_EVIDENCE'}
+          assert history['waves'][2]['delta']['native_tests']==16
+          assert history['waves'][2]['delta']['observed_cells']==0
+          assert history['waves'][2]['delta']['focused_statement_coverage_pp']==0
           assert (out/'wave_timeline.html').stat().st_size>1000
           assert (out/'wave_timeline.md').stat().st_size>200
           receipt={'schema':'gogreen.g4.native-provenance.v1',
