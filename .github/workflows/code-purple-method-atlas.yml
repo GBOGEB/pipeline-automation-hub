@@ -154,6 +154,16 @@ jobs:
                   + "/5 (NOT full fleet coverage)\\n"
               )
           PY
+      - name: M2 recursive session handover / HTML source parity
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          node mission-control/federation-atlas/m2_session/test_m2_portal.js
+          node mission-control/federation-atlas/m2_session/m2_portal.js --check
+          node mission-control/federation-atlas/m2_session/m2_portal.js --out /tmp/code-purple-atlas/session-m2 --source-sha "$EXACT_SHA"
+          test -s /tmp/code-purple-atlas/session-m2/M2_RECEIPT.json
       - name: Upload identity-bound HTML SVG and metrics
         uses: actions/upload-artifact@v4
         with:
