@@ -32,3 +32,7 @@ GitHub source (frozen exact SHA)
 
 **No proof credited for archive download, current-main ancestry, publication,
 corporate document release, or QPS engineering ACCEPT from a green HTML page.**
+
+## Adjacent owner DoV implementation
+
+The post-W1/W2 MissionControl main added `mission-control/federation-atlas/flightdeck/global_dov_runner.py` and `global_dov_owner_control_v1.json` via PR #539. This W3 integration **consumes and links** that distinct Global DoV authority; it does not duplicate, promote or replace the owner-action runner. The Atlas Flight Deck remains a read-only evidence projection; Global DoV admission remains governed separately.

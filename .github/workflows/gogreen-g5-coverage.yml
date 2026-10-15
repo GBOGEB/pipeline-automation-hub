@@ -1,0 +1,101 @@
+name: GOGREEN G5 Matched Coverage
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/g5/**'
+      - '.github/workflows/gogreen-g5-coverage.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  coverage:
+    name: G5 matched 38-to-44 test coverage
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact immutable head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Pin Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Matched native statement and branch coverage
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          REPO_ID: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          mkdir -p "$RUNNER_TEMP/gogreen-g5-coverage"
+          export PYTHONPATH="mission-control/gogreen/g5:mission-control/gogreen"
+          OUT="$RUNNER_TEMP/gogreen-g5-coverage"
+          INCLUDE="*/mission-control/gogreen/g5/federation.py,*/mission-control/gogreen/g5/incremental.py"
+          COVERAGE_FILE="$OUT/.before" python -m coverage run --branch --include="$INCLUDE" \
+            -m unittest discover -s mission-control/gogreen/g5/tests -p test_federation.py -q \
+            2>&1 | tee "$OUT/before_federation.log"
+          COVERAGE_FILE="$OUT/.before" python -m coverage run -a --branch --include="$INCLUDE" \
+            -m unittest discover -s mission-control/gogreen/g5/tests -p test_incremental.py -q \
+            2>&1 | tee "$OUT/before_incremental.log"
+          COVERAGE_FILE="$OUT/.before" python -m coverage json -o "$OUT/before.json" -q
+          COVERAGE_FILE="$OUT/.after" python -m coverage run --branch --include="$INCLUDE" \
+            -m unittest discover -s mission-control/gogreen/g5/tests -q \
+            2>&1 | tee "$OUT/after.log"
+          COVERAGE_FILE="$OUT/.after" python -m coverage json -o "$OUT/after.json" -q
+          python - <<'PY'
+          import hashlib,json,os,re
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'gogreen-g5-coverage'
+          logs=[(out/n).read_text() for n in ('before_federation.log','before_incremental.log','after.log')]
+          counts=[]
+          for log in logs:
+              hits=re.findall(r'Ran (\d+) tests? in',log)
+              if len(hits)!=1 or '\nOK' not in log: raise SystemExit('invalid native test selection')
+              counts.append(int(hits[0]))
+          if counts != [25,13,44]: raise SystemExit(f'wrong test denominators: {counts}')
+          before=json.loads((out/'before.json').read_text())
+          after=json.loads((out/'after.json').read_text())
+          paths=['mission-control/gogreen/g5/federation.py',
+                 'mission-control/gogreen/g5/incremental.py']
+          if before['meta']['version']!='7.13.3' or after['meta']['version']!='7.13.3':
+              raise SystemExit('coverage tool version mismatch')
+          if sorted(before['files'])!=sorted(paths) or sorted(after['files'])!=sorted(paths):
+              raise SystemExit('coverage source population drift')
+          measurements={}
+          for path in paths:
+              a=before['files'][path]['summary'];b=after['files'][path]['summary']
+              fields={}
+              for label,covered,eligible in [('statements','covered_lines','num_statements'),
+                                             ('branches','covered_branches','num_branches')]:
+                  if a[eligible]!=b[eligible] or a[eligible]<=0 or not(0<=a[covered]<=a[eligible] and 0<=b[covered]<=b[eligible]):
+                      raise SystemExit('non-comparable scope')
+                  fields[label]={'before':a[covered],'after':b[covered],
+                    'eligible':a[eligible],'gain_pp':round(100*(b[covered]-a[covered])/a[eligible],4)}
+              fields['source_file_sha256']=hashlib.sha256(Path(path).read_bytes()).hexdigest()
+              measurements[path]=fields
+          receipt={'schema':'gogreen.g5.native-matched-coverage.v1',
+            'repository':os.environ['REPO_ID'],'source_sha':os.environ['EXPECTED_SHA'],
+            'run_id':int(os.environ['RUN_ID']),'attempt':int(os.environ['RUN_ATTEMPT']),
+            'tool':'coverage.py==7.13.3','test_denominators':counts,
+            'scope':'G5_TWO_PRODUCTION_FILES_SAME_SHA','measurements':measurements,
+            'broad_fleet_coverage_gain':None,'merge_authorized':False,'authority_transfer':False}
+          raw=(json.dumps(receipt,sort_keys=True,indent=2)+'\n').encode()
+          (out/'matched_coverage.json').write_bytes(raw)
+          (out/'matched_coverage.sha256').write_text(hashlib.sha256(raw).hexdigest()+'\n')
+          print(json.dumps(receipt,sort_keys=True))
+          PY
+      - name: Upload exact-head evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gogreen-g5-coverage-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/gogreen-g5-coverage/
+          retention-days: 30
+          if-no-files-found: warn

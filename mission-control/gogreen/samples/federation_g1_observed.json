@@ -1,0 +1,417 @@
+{
+  "authority_transfer": false,
+  "merge_authorized": false,
+  "observed_at_utc": "2026-10-15T09:03:00Z",
+  "pulse_id": "GOGREEN-FEDERATION-G1-SNAPSHOT-20261015",
+  "repositories": [
+    {
+      "branch_protected": true,
+      "queue": {
+        "in_progress": 12,
+        "observed_at_utc": "2026-10-15T09:01:00Z",
+        "queued": 1283,
+        "state": "OBSERVED"
+      },
+      "repository": "GBOGEB/ABACUS",
+      "sha": "85dad8fbdab530d40e6ccf2f664c455f89454aad",
+      "surfaces": {
+        "3PSTAR": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "CENSUS": {
+          "path": "tools/everred_v3/src/joined_census.py",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "DMAIC": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "GOGREEN": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "LDAB": {
+          "path": "tools/everred_v3/src/ldab_adapter.py",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "LLDB": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "MIP": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "MISSION_CONTROL": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "PCA": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "QPS_TRIAGE": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "REX": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "branch_protected": false,
+      "queue": {
+        "in_progress": 0,
+        "observed_at_utc": "2026-10-15T09:01:00Z",
+        "queued": 4,
+        "state": "OBSERVED"
+      },
+      "repository": "GBOGEB/CODEX",
+      "sha": "9606b61365f4639c9df24961f2cf4ef598cb5d81",
+      "surfaces": {
+        "3PSTAR": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "CENSUS": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "DMAIC": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "GOGREEN": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "LDAB": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "LLDB": {
+          "path": "scripts/lldb_dap_runtime_probe.py",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "MIP": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "MISSION_CONTROL": {
+          "path": "mission_control/mycelium/README.md",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "PCA": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "QPS_TRIAGE": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "REX": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "branch_protected": false,
+      "queue": {
+        "in_progress": 0,
+        "observed_at_utc": "2026-10-15T09:01:00Z",
+        "queued": 53,
+        "state": "OBSERVED"
+      },
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "sha": "b8f5dab5b63d4f51d803505bc87e58139b32fb44",
+      "surfaces": {
+        "3PSTAR": {
+          "path": ".github/workflows/crew-temporal-3pstar-mip-burndown.yml",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "CENSUS": {
+          "path": ".github/workflows/bd-workflow-frequency-telemetry.yml",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "DMAIC": {
+          "path": ".github/workflows/gm-dmaic-evolution.yml",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "GOGREEN": {
+          "path": ".github/workflows/gogreen-g0.yml",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "LDAB": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "LLDB": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "MIP": {
+          "path": ".github/workflows/level1-mip.yml",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "MISSION_CONTROL": {
+          "path": "mission-control/gogreen/spine.py",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "PCA": {
+          "path": ".github/workflows/crew-exposure-pca-control.yml",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "QPS_TRIAGE": {
+          "path": ".github/workflows/qps-triage-ultra-w0.yml",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "REX": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "branch_protected": false,
+      "queue": {
+        "in_progress": 0,
+        "observed_at_utc": "2026-10-15T09:01:00Z",
+        "queued": 1,
+        "state": "OBSERVED"
+      },
+      "repository": "GBOGEB/cryoplant-project",
+      "sha": "803969d8ba8d0884dcbb4e89293693f8580b3fb0",
+      "surfaces": {
+        "3PSTAR": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "CENSUS": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "DMAIC": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "GOGREEN": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "LDAB": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "LLDB": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "MIP": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "MISSION_CONTROL": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "PCA": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "QPS_TRIAGE": {
+          "path": "triage/QPS_TRIAGE_ZOD_ALIGNMENT_v1.md",
+          "receipt": null,
+          "state": "SOURCE_DISCOVERED"
+        },
+        "REX": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "branch_protected": false,
+      "queue": {
+        "in_progress": 0,
+        "observed_at_utc": "2026-10-15T09:01:00Z",
+        "queued": 0,
+        "state": "OBSERVED"
+      },
+      "repository": "GBOGEB/gg_MATH",
+      "sha": "c5cd3e30a8e241111fc9f15367f3b92ba0393ea7",
+      "surfaces": {
+        "3PSTAR": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "CENSUS": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "DMAIC": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "GOGREEN": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "LDAB": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "LLDB": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "MIP": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "MISSION_CONTROL": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "PCA": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "QPS_TRIAGE": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "REX": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        }
+      }
+    },
+    {
+      "branch_protected": false,
+      "queue": {
+        "in_progress": 0,
+        "observed_at_utc": "2026-10-15T09:01:00Z",
+        "queued": 0,
+        "state": "OBSERVED"
+      },
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "surfaces": {
+        "3PSTAR": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "CENSUS": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "DMAIC": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "GOGREEN": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "LDAB": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "LLDB": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "MIP": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "MISSION_CONTROL": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "PCA": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "QPS_TRIAGE": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        },
+        "REX": {
+          "path": null,
+          "receipt": null,
+          "state": "UNKNOWN"
+        }
+      }
+    }
+  ],
+  "schema": "gogreen.federation.pulse.v1"
+}

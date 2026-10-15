@@ -1,0 +1,171 @@
+{
+  "schema": "missioncontrol.global_dov.owner_control.v1",
+  "snapshot_date": "2026-10-15",
+  "parent": "mission-control/federation-atlas/flightdeck/flightdeck_contract.json",
+  "execution_authority": "READ_ONLY_PROPOSAL",
+  "source_precedence": [
+    "LIVE_EXACT_SOURCE_RECEIPT",
+    "CONTROLLED_QPS_TODO",
+    "HISTORICAL_G4_SNAPSHOT",
+    "INFERRED_NON_AUTHORITY"
+  ],
+  "global_outcomes": [
+    {
+      "id": "PRODUCT",
+      "description": "Owner-usable OCD, ADR and quantitative evidence",
+      "metric": "accepted_product_obligations",
+      "numerator": 70,
+      "denominator": 90,
+      "evidence_class": "HISTORICAL_QPS_WAVE_AF",
+      "next": "owner release acceptance + external engineering evidence"
+    },
+    {
+      "id": "BREADTH",
+      "description": "QPS product breadth, not fleet",
+      "metric": "source_breadth",
+      "numerator": 36,
+      "denominator": 45,
+      "evidence_class": "HISTORICAL_QPS_WAVE_AF"
+    },
+    {
+      "id": "DEPTH",
+      "description": "QPS product verification depth, not fleet",
+      "metric": "verified_depth",
+      "numerator": 34,
+      "denominator": 45,
+      "evidence_class": "HISTORICAL_QPS_WAVE_AF"
+    },
+    {
+      "id": "OBSERVABILITY",
+      "description": "MissionControl GOGREEN six repo evidence cells",
+      "metric": "observed_typed_cells",
+      "numerator": 6,
+      "denominator": 42,
+      "evidence_class": "HISTORICAL_G4",
+      "unknown_cells": 36
+    },
+    {
+      "id": "FEDERATION",
+      "description": "New four-hop exact-source native replay",
+      "metric": "qualified_hops",
+      "numerator": null,
+      "denominator": 4,
+      "evidence_class": "UNKNOWN",
+      "status": "DEFER"
+    },
+    {
+      "id": "PUBLICATION",
+      "description": "Owner-controlled five-format release",
+      "metric": "owner_accepted_release",
+      "numerator": null,
+      "denominator": 1,
+      "evidence_class": "UNKNOWN",
+      "status": "HOLD"
+    }
+  ],
+  "source_conflicts": [
+    {
+      "id": "SOURCE-QPS-REMAINING",
+      "historical_remaining": 20,
+      "detailed_cards_remaining": 19,
+      "disposition": "HOLD",
+      "next": "reconcile controlled absolute obligations; no invented credit"
+    },
+    {
+      "id": "STALE-TODO-CANDIDATES",
+      "reason": "aggregate TODO-001/002 status differs from detailed retired cards",
+      "disposition": "HOLD",
+      "next": "source owner confirms active ranking"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "DOV-001",
+      "priority": "P0",
+      "state": "READY_OWNER",
+      "owner": "QPS owner / Windows reviewer",
+      "outcome": "Reviewable five-format OCD/ADR product",
+      "action": "Complete TODO-011's four local acceptance gates",
+      "proof": "Accepted pixel QA, clean-main SHA+manifest binding, review receipt, OneDrive raw-SHA parity",
+      "source": "https://github.com/GBOGEB/cryoplant-project/blob/main/ocd-adr/metrics/todo/TODO-011.md"
+    },
+    {
+      "id": "DOV-002",
+      "priority": "P0",
+      "state": "READY_READONLY",
+      "owner": "MissionControl census steward",
+      "outcome": "Current reliable decision queue",
+      "action": "Recensus six repo heads; reconcile QPS 20-vs-19 and retired TODOs",
+      "proof": "dated SHA-bound and noncompensating delta with explicit UNKNOWN",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/tree/master/mission-control/federation-atlas/flightdeck"
+    },
+    {
+      "id": "DOV-003",
+      "priority": "P1",
+      "state": "BLOCKED_EXTERNAL",
+      "owner": "QPS + bidder reviewers",
+      "outcome": "Acceptable cold-compressor common-cause basis",
+      "action": "RFI #75 ALAT/LKT independent responses and Table-10 gate",
+      "proof": "source-qualified nonoverlap and bidder-specific consequence/rate disposition",
+      "source": "https://github.com/GBOGEB/cryoplant-project/issues/75"
+    },
+    {
+      "id": "DOV-004",
+      "priority": "P1",
+      "state": "BLOCKED_EXTERNAL",
+      "owner": "QPS modeling + bidders",
+      "outcome": "Quantified design recovery envelopes",
+      "action": "Obtain #72/#87 PSV, inventory and recovery; run HEPAK/CoolProp bidder-specific tests",
+      "proof": "source-bound property/mass/pressure trajectories and worst-case margins",
+      "source": "https://github.com/GBOGEB/cryoplant-project/issues/87"
+    },
+    {
+      "id": "DOV-005",
+      "priority": "P1",
+      "state": "BLOCKED_DEPENDENCY",
+      "owner": "QPS reliability",
+      "outcome": "Non-overlapping Table-10 availability budget",
+      "action": "Resolve #75 #79 #82 #85 #87 and rerun contributor promotion bridge",
+      "proof": "accepted A/B/C service-event allocation and reserve, without double-counting",
+      "source": "https://github.com/GBOGEB/cryoplant-project/blob/main/ocd-adr/metrics/todo/TODO-009.md"
+    },
+    {
+      "id": "DOV-006",
+      "priority": "P2",
+      "state": "READY_READONLY",
+      "owner": "MissionControl + six repo owners",
+      "outcome": "New native evidence census breadth",
+      "action": "Scout missing 36 typed cells in disjoint lanes; never call typed inventory native proof",
+      "proof": "run/job/sha/artifact ID and independently verified bytes where needed",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/gogreen/samples/fleet_g1.json"
+    },
+    {
+      "id": "DOV-007",
+      "priority": "P2",
+      "state": "HELD_GOVERNANCE",
+      "owner": "gg_MATH/CODEX/ABACUS/QPS",
+      "outcome": "Native source-matched math reentry",
+      "action": "Resolve provider SHA and independently replay KEB and DOW into QPS",
+      "proof": "4 hop receipts + owner decision; source-bound native and synthetic separated",
+      "source": "https://github.com/GBOGEB/ABACUS/pull/1993"
+    },
+    {
+      "id": "DOV-008",
+      "priority": "P3",
+      "state": "HELD_GOVERNANCE",
+      "owner": "MissionControl repo owner",
+      "outcome": "Protected, refreshable review portal",
+      "action": "Verify governed CI, then owner-approved Pages with hash readback",
+      "proof": "exact-main Pages content+manifest hash, required checks, eligible review",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/flightdeck/OWNER_PUBLISH_GATE.md"
+    }
+  ],
+  "hard_gates": {
+    "qps_engineering_acceptance": "DEFER",
+    "native_cross_repo_federation": "UNKNOWN",
+    "merge_admission": "HOLD",
+    "authority_transfer": false,
+    "formal_credit_delta": 0
+  },
+  "interpretation": "Explicit P0/P1 sorting is a nonstatistical owner-priority route. Historical PCA and BT do not grant ranking confidence for these heterogeneous current outcomes. No financial ROI inferred."
+}

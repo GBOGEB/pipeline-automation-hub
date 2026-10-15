@@ -1,0 +1,188 @@
+name: GOGREEN G5 Federation Census
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/g5/**'
+      - '.github/workflows/gogreen-federation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: gogreen-g5-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  evidence-contract:
+    name: G5 source-bound federation receipt
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Pin Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Exact-head preflight and negative tests
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          test -f mission-control/gogreen/spine.py
+          mkdir -p "$RUNNER_TEMP/gogreen-g5"
+          python -m compileall -q mission-control/gogreen/g5
+          python -m unittest discover -s mission-control/gogreen/g5/tests -v \
+            2>&1 | tee "$RUNNER_TEMP/gogreen-g5/unit-tests.log"
+          python - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'gogreen-g5'
+          raw=(out/'unit-tests.log').read_text()
+          n=re.findall(r'Ran (\d+) tests? in',raw)
+          if n!=['44'] or '\nOK' not in raw:
+              raise SystemExit('G5 native regression denominator incomplete')
+          data={'schema':'gogreen.g5.native-test-counts.v1',
+                'source_sha':os.environ['EXPECTED_SHA'],
+                'executed':44,'passed':44,'failed':0,'skipped':0,
+                'source':'NATIVE_UNITTEST_NOT_SYNTHETIC'}
+          (out/'test_counts.json').write_text(json.dumps(data,sort_keys=True,indent=2)+'\n')
+          PY
+      - name: Deterministic federation pulse
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/g5/federation.py \
+            --g0 mission-control/gogreen/g5/samples/fleet_g0.json \
+            --g1 mission-control/gogreen/g5/samples/fleet_g1_snapshot.json \
+            --snapshot mission-control/gogreen/g5/samples/federation_g5.json \
+            --out "$RUNNER_TEMP/gogreen-g5" \
+            --max-parallel 2 --max-packets 12
+      - name: G2 append-only native scan-status pulse
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/g5/incremental.py \
+            --g0 mission-control/gogreen/g5/samples/fleet_g0.json \
+            --g1 mission-control/gogreen/g5/samples/fleet_g1_snapshot.json \
+            --g2 mission-control/gogreen/g5/samples/fleet_g2_snapshot.json \
+            --out "$RUNNER_TEMP/gogreen-g5"
+      - name: Validate SHA and negative-authority controls
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          REPO_ID: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          folder=Path(os.environ['RUNNER_TEMP'])/'gogreen-g5'
+          digest=hashlib.sha256((folder/'federation_census.json').read_bytes()).hexdigest()
+          if digest != (folder/'federation_census.sha256').read_text().strip():
+              raise SystemExit('census internal hash mismatch')
+          report=json.loads((folder/'federation_census.json').read_text())
+          counts=json.loads((folder/'test_counts.json').read_text())
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          if sha != os.environ['EXPECTED_SHA'] or sha != counts['source_sha']:
+              raise SystemExit('stale evidence head')
+          if report['depth']['native_executed_edges']!=0 or report['depth']['recipient_accepted_edges']!=0:
+              raise SystemExit('G5 illegally accepted an unauthenticated federation link')
+          if report['population']['target_cells']!=42 or report['population']['G1_observed']!=6:
+              raise SystemExit('scope denominator unexpectedly shifted')
+          if report['authority_transfer'] or report['dispatch_authorized'] or report['merge_authorized']:
+              raise SystemExit('authority boundary breach')
+          incremental_bytes=(folder/'incremental_pulses.json').read_bytes()
+          incremental_sha=hashlib.sha256(incremental_bytes).hexdigest()
+          if incremental_sha!=(folder/'incremental_pulses.sha256').read_text().strip():
+              raise SystemExit('G2 hash mismatch')
+          delta=json.loads(incremental_bytes)
+          if [p['observed_cells'] for p in delta['pulses']]!=[1,6,8]:
+              raise SystemExit('G2 observed scope mismatch')
+          if delta['merge_authorized'] or delta['authority_transfer'] or delta['dispatch_authorized']:
+              raise SystemExit('G2 authority breach')
+          receipt={'schema':'gogreen.g5.execution-provenance.v1',
+                   'repository':os.environ['REPO_ID'],'head_sha':sha,
+                   'run_id':int(os.environ['RUN_ID']),
+                   'run_attempt':int(os.environ['RUN_ATTEMPT']),
+                   'census_sha256':digest,'incremental_sha256':incremental_sha,'native_tests_passed':44,
+                   'merge_authorized':False,'qps_disposition':'DEFER'}
+          (folder/'native_provenance.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n')
+          PY
+      - name: Strict G1 consumer replay regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/gogreen/g5/consumer_tests -v \
+            2>&1 | tee "$RUNNER_TEMP/gogreen-g5/g1_consumer_tests.log"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          raw=(Path(os.environ["RUNNER_TEMP"])/"gogreen-g5"/"g1_consumer_tests.log").read_text()
+          hits=re.findall(r"Ran (\d+) tests? in", raw)
+          if hits!=["10"] or "\nOK" not in raw:
+              raise SystemExit("G1 consumer negative controls incomplete")
+          PY
+      - name: Independently download immutable G1 producer archive
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --max-time 75 --retry 2 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -o "$RUNNER_TEMP/gogreen-g5/g1_producer.zip" \
+            "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/artifacts/11968217957/zip"
+          test -s "$RUNNER_TEMP/gogreen-g5/g1_producer.zip"
+      - name: Bind G1 ZIP bytes to consumer receipt
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/gogreen-g5"
+          python mission-control/gogreen/g5/consumer_g1.py \
+            --zip "$OUT/g1_producer.zip" \
+            --archive-sha256 f926b86d377f989cfb380c587ce5cbf2843a3e7e152d0df3c4d8a3a914ba2117 \
+            --source-sha 63d1ac9618b2612d0ec3ceb32faad3841413b79d \
+            --run-id 38726158685 --job-id 116392416193 --out "$OUT"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])/"gogreen-g5"
+          evidence=(root/"g1_consumer_receipt.json").read_bytes()
+          result=json.loads(evidence)
+          assert hashlib.sha256(evidence).hexdigest()==(root/"g1_consumer_receipt.sha256").read_text().strip()
+          assert result["verified_producer_to_consumer_links"]==1
+          assert result["cross_repository_federation_links"]==0
+          assert result["qps_recipient_accepted_links"]==0
+          assert result["qps_disposition"]=="DEFER" and result["merge_authorized"] is False
+          bound={"schema":"gogreen.g5.g1-consumer-bound.v1",
+                 "consumer_repository":os.environ["GITHUB_REPOSITORY"],
+                 "consumer_sha":os.environ["EXPECTED_SHA"],
+                 "consumer_run_id":int(os.environ["RUN_ID"]),
+                 "consumer_run_attempt":int(os.environ["RUN_ATTEMPT"]),
+                 "producer_receipt_sha256":hashlib.sha256(evidence).hexdigest(),
+                 "same_repo_consumer_replay":True,
+                 "cross_repo_acceptance":False,"qps_acceptance":False,
+                 "authority_transfer":False,"merge_authorized":False}
+          (root/"g1_consumer_bound.json").write_text(json.dumps(bound,sort_keys=True,indent=2)+"\n")
+          PY
+      - name: Upload read-only evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gogreen-g5-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/gogreen-g5/
+          if-no-files-found: warn
+          retention-days: 30
