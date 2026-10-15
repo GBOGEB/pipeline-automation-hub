@@ -1,0 +1,1018 @@
+{
+  "schema": "missioncontrol.session_m2_portal.v1",
+  "milestone": "M2",
+  "observed_date_utc": "2026-10-15",
+  "time_precision": "DATE_ONLY",
+  "subject": "CODE PURPLE / MissionControl / QPS federation",
+  "session_alias": "CODE_PURPLE_SESSION_20261015_RECONSTRUCTED",
+  "parent_milestone": "CP-SESSION-20261015-002",
+  "privacy_boundary": "SANITIZED_INTENT_SUMMARIES_ONLY",
+  "complete_transcript_available": false,
+  "claim": "SOURCE_BOUND_READONLY_NAVIGATION_CANDIDATE",
+  "authority_transfer": false,
+  "merge_authorized": false,
+  "qps_decision": "DEFER",
+  "full_release": "HOLD",
+  "no_generated_binary_commit": true,
+  "source_class": "MIXED_LIVE_GITHUB_PR_READBACK_AND_USER_PROVIDED_HISTORICAL_REPORT",
+  "sources": {
+    "baseline_sha": "GBOGEB/pipeline-automation-hub@f931e443cafae8b286b149ae4331a0326298730a",
+    "existing_main_atlas": "mission-control/federation-atlas/flightdeck/flightdeck_contract.json",
+    "existing_hook": "mission-control/golden-thread/session_hook/session_hook.py",
+    "existing_root": "README.md",
+    "qps_ssot": "GBOGEB/cryoplant-project#1926"
+  },
+  "snapshot": {
+    "missioncontrol_main": "f931e443cafae8b286b149ae4331a0326298730a",
+    "qps_main": "8582a9e1da8aaa67e85ecd2da7aee98ffbbced50",
+    "codex_main": "9606b61365f4639c9df24961f2cf4ef598cb5d81",
+    "abacus_main": "85dad8fbdab530d40e6ccf2f664c455f89454aad",
+    "historical": {
+      "codex_1043": "28/32 terminal PR-head successful including one cancelled",
+      "codex_1044": "30/34 terminal PR-head successful with N-vector 21/21 pass",
+      "codex_1045": "34/34 terminal PR-head successful before merge; CODEX Ruff 1221 found by continue-on-error",
+      "g1_discovered": "13/66 SOURCE_DISCOVERED historical pilot",
+      "g1_authenticated": "0/66 verified recipient cells in frozen census",
+      "g5_producer": "44/44 native tests and 10/10 consumer negatives, 1 verified same-repo G1→G5 archived replay",
+      "qps_formal": "70/90 obligations",
+      "qps_breadth": "36/45",
+      "qps_depth": "34/45",
+      "qps_tree": "33 nodes, 44 edges, 21 source pins, 13/13 PR-head workflows",
+      "physical_evidence": "8/8 original byte-size checks outstanding"
+    }
+  },
+  "repos": [
+    {
+      "slug": "missioncontrol",
+      "name": "GBOGEB/pipeline-automation-hub",
+      "branch": "master",
+      "sha": "f931e443cafae8b286b149ae4331a0326298730a",
+      "role": "Orchestration, methods, cross-repository observation and read-only presentation",
+      "authority": "PROJECTION_ONLY",
+      "protected": false,
+      "required_checks": false,
+      "capabilities": [
+        [
+          "Golden Thread replay",
+          "mission-control/golden-thread/golden_thread.py"
+        ],
+        [
+          "Existing Federation Flight Deck",
+          "mission-control/federation-atlas/flightdeck/flightdeck.py"
+        ],
+        [
+          "Native Atlas",
+          "mission-control/federation-atlas/build_atlas.py"
+        ],
+        [
+          "Crew and skill registry",
+          "mission-control/qps-triage-ultra/crew/SKILL_CAPABILITY_REGISTRY_v1.yaml"
+        ],
+        [
+          "Runner economics",
+          "mission-control/runner-economics/RUNNER_FANOUT_MIP_CONTROL_v1.json"
+        ],
+        [
+          "Session M1 adapter",
+          "mission-control/golden-thread/session_hook/session_hook.py"
+        ]
+      ],
+      "gate": "No enforced required statuses; do not infer approved release from merges"
+    },
+    {
+      "slug": "codex",
+      "name": "GBOGEB/CODEX",
+      "branch": "main",
+      "sha": "9606b61365f4639c9df24961f2cf4ef598cb5d81",
+      "role": "KEB semantic/provenance exchange, governance, Mycelium, debug/MCP interface",
+      "authority": "SEMANTIC_PROVENANCE_PARENT_NOT_QPS_ENGINEERING",
+      "protected": false,
+      "required_checks": false,
+      "capabilities": [
+        [
+          "KEB/GitHub governance",
+          "GOVERNANCE.md"
+        ],
+        [
+          "Chat-to-GitHub handover",
+          "docs/handover/chat_to_github_prompt_sequence.md"
+        ],
+        [
+          "Session tuple contract",
+          "incubator/session_tuple_schema.yml"
+        ],
+        [
+          "MCP agent conventions",
+          "agents/codex/MCP_INSTRUCTION.md"
+        ],
+        [
+          "Devcontainer definition",
+          ".devcontainer/devcontainer.json"
+        ],
+        [
+          "CODE PURPLE recovery",
+          "docs/code_purple_convergence.html"
+        ]
+      ],
+      "gate": "Merged #1045 targeted repair does not close retained Ruff 1,221 historical findings or restore admission"
+    },
+    {
+      "slug": "abacus",
+      "name": "GBOGEB/ABACUS",
+      "branch": "main",
+      "sha": "85dad8fbdab530d40e6ccf2f664c455f89454aad",
+      "role": "DOW analytics, LDAB root diagnosis, test/security census and first-red repair",
+      "authority": "ANALYTICAL_RUNTIME_NOT_QPS_ENGINEERING",
+      "protected": true,
+      "required_checks": false,
+      "capabilities": [
+        [
+          "DOW runtime and clusters",
+          "DMAIC_V3/core/twelve_cluster_orchestrator.py"
+        ],
+        [
+          "MCP compatibility orchestrator",
+          "local_mcp/agent_orchestrator_v3.0.py"
+        ],
+        [
+          "BD/LDAB evidence crosswalk",
+          "docs/qps_line_s_recovery/critical_lineage_scan.md"
+        ],
+        [
+          "CI rationalization",
+          "docs/ci/WORKFLOW_RATIONALIZATION.md"
+        ],
+        [
+          "Governance deferred-review policy",
+          "governance/ABACUS_DEFERRED_REVIEW_POLICY.md"
+        ]
+      ],
+      "gate": "Security, Safety, formatting and governance first-red families remain independent; main protected flag alone not enough"
+    },
+    {
+      "slug": "qps",
+      "name": "GBOGEB/cryoplant-project",
+      "branch": "main",
+      "sha": "8582a9e1da8aaa67e85ecd2da7aee98ffbbced50",
+      "role": "Controlled engineering source, OCD/ADR product, physical evidence and sole QPS disposition",
+      "authority": "QPS_CHILD_ENGINEERING",
+      "protected": false,
+      "required_checks": false,
+      "capabilities": [
+        [
+          "Current QPS landing contract",
+          "README.md"
+        ],
+        [
+          "Recursive GLOB",
+          "handover/qps_recursive/GLOB.yaml"
+        ],
+        [
+          "Current QTG priority",
+          "handover/qps_recursive/QTG_CURRENT.yaml"
+        ],
+        [
+          "Typed evolutionary SSOT tree",
+          "triage/code_purple/evolutionary_v1/SSOT_TREE.json"
+        ],
+        [
+          "Sanitized intent events",
+          "triage/code_purple/evolutionary_v1/INTENT_EVENTS.json"
+        ],
+        [
+          "Release identity",
+          "controls/QPS_RELEASE_IDENTITY_CURRENT_v0.1.yaml"
+        ],
+        [
+          "DOW/KEB execution contract",
+          "ocd-adr/40_implementation/QPS_DOW_KEB_EXECUTION_ARCHITECTURE_SSOT_v0.1.md"
+        ]
+      ],
+      "gate": "Eight physical evidence objects, authorized engineering decision and governed binary release remain distinct HOLD predicates"
+    },
+    {
+      "slug": "math",
+      "name": "GBOGEB/gg_MATH",
+      "branch": "main",
+      "sha": "c5cd3e30a8e241111fc9f15367f3b92ba0393ea7",
+      "role": "Typed model assumptions, reproducible mathematical dependencies and numerical challenge",
+      "authority": "MODEL_SOURCE_NOT_QPS_ACCEPTANCE",
+      "protected": false,
+      "required_checks": false,
+      "capabilities": [
+        [
+          "Reproducible model dependency graph",
+          "research/MATH_METHOD_DEPENDENCY_GRAPH_v1.yaml"
+        ]
+      ],
+      "gate": "Numerical reproducibility does not imply safety or engineering acceptance"
+    },
+    {
+      "slug": "documents",
+      "name": "GBOGEB/DOCX_RTM_Automation",
+      "branch": "main",
+      "sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "role": "RTM, Office rendition and controlled-document QA adapters",
+      "authority": "DERIVED_DOCUMENTS_NOT_CONTROLLED_ORIGINALS",
+      "protected": false,
+      "required_checks": false,
+      "capabilities": [
+        [
+          "Document automation entrypoint",
+          "README.md"
+        ],
+        [
+          "Agent runbook",
+          "AGENT_ENTRYPOINT.md"
+        ],
+        [
+          "Execution guide",
+          "EXECUTION_GUIDE.md"
+        ],
+        [
+          "MIP implementation",
+          "MIP"
+        ]
+      ],
+      "gate": "Generated DOCX/XLSX/PPTX/PDF/HTML do not modify user input binaries or become corporate originals"
+    }
+  ],
+  "pr_readback": [
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "number": 534,
+      "state": "MERGED"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "number": 535,
+      "state": "MERGED"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "number": 536,
+      "state": "MERGED"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "number": 537,
+      "state": "MERGED"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "number": 538,
+      "state": "MERGED"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "number": 540,
+      "state": "MERGED_UNGOVERNED"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "number": 1043,
+      "state": "MERGED"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "number": 1044,
+      "state": "MERGED"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "number": 1045,
+      "state": "MERGED"
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "number": 1926,
+      "state": "MERGED"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "number": 1993,
+      "state": "OPEN"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "number": 2003,
+      "state": "OPEN"
+    }
+  ],
+  "metrics": [
+    {
+      "value": "1",
+      "unit": "same-repo consumer replay",
+      "denominator": null,
+      "scope": "G1→G5 historical N+2",
+      "kind": "NATIVE_PREVIOUS_PULSE"
+    },
+    {
+      "value": "0",
+      "unit": "authenticated cross-repo hops",
+      "denominator": null,
+      "scope": "Full CODEX→ABACUS→QPS",
+      "kind": "LAST_REPORTED_NOT_LIVE"
+    },
+    {
+      "value": "0",
+      "unit": "QPS accepted links",
+      "denominator": null,
+      "scope": "QPS native recipient",
+      "kind": "LAST_REPORTED_NOT_LIVE"
+    },
+    {
+      "value": "1221",
+      "unit": "Ruff diagnostic findings",
+      "denominator": null,
+      "scope": "CODEX #1045 General CI nonblocking step",
+      "kind": "HISTORICAL_NOT_ROOTS"
+    },
+    {
+      "value": "8",
+      "unit": "physical source objects awaiting bytes",
+      "denominator": 8,
+      "scope": "QPS COST physical source root",
+      "kind": "DOCUMENTED_CONTROL"
+    },
+    {
+      "value": "6",
+      "unit": "federated repository profiles",
+      "denominator": 6,
+      "scope": "Method Flight Deck source catalog",
+      "kind": "SOURCE_CENSUS"
+    }
+  ],
+  "federation_flow": [
+    {
+      "id": "QPS",
+      "owner": "GBOGEB/cryoplant-project",
+      "purpose": "Engineering L1 source and user ACCEPT/REJECT/DEFER",
+      "release_role": "Sole child engineering authority"
+    },
+    {
+      "id": "KEB",
+      "owner": "GBOGEB/CODEX",
+      "purpose": "Semantic/provenance challenge and governed exchange",
+      "release_role": "Provide compatibility/lineage receipt; no QPS signature"
+    },
+    {
+      "id": "DOW",
+      "owner": "GBOGEB/ABACUS",
+      "purpose": "Diagnosis and native analytic/LDAB verification",
+      "release_role": "Provider/consumer proof and root attribution; no QPS signature"
+    },
+    {
+      "id": "MC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "purpose": "Fan-out/in, eligibility, Golden Thread and HTML/GUI projection",
+      "release_role": "Observe, notify and sequence without releasing child"
+    }
+  ],
+  "runtime": [
+    {
+      "type": "Crew/agents",
+      "where": "mission-control/qps-triage-ultra/crew/CREW_REGISTRY_v1.json",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "status": "REGISTERED_ROLES_ONLY",
+      "proof": "Observe independent assignment and runtime receipt for each worker",
+      "note": "Static roster is not a concurrency count."
+    },
+    {
+      "type": "Skills",
+      "where": "mission-control/qps-triage-ultra/crew/SKILL_CAPABILITY_REGISTRY_v1.yaml",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "status": "ACTIVE_PROPOSED_AT_2026_09_16",
+      "proof": "Resolve exact GBOGEB/skills source and execute pinned deterministic skill proof",
+      "note": "Declared math/plots/math-plots skills, not evidence they ran."
+    },
+    {
+      "type": "MCP",
+      "where": "agents/codex/MCP_INSTRUCTION.md",
+      "repo": "GBOGEB/CODEX",
+      "status": "CONFIG_OBSERVED",
+      "proof": "Authenticated MCP capability/session/permission receipt",
+      "note": "Connector access here does not prove local daemon availability."
+    },
+    {
+      "type": "Devcontainer",
+      "where": ".devcontainer/devcontainer.json",
+      "repo": "GBOGEB/CODEX",
+      "status": "CONFIG_OBSERVED",
+      "proof": "Image digest, container ID, ports, mounted paths and health check",
+      "note": "No Docker process/port count measured."
+    },
+    {
+      "type": "Runners",
+      "where": "mission-control/runner-economics/RUNNER_FANOUT_MIP_CONTROL_v1.json",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "status": "CONTROL_CONTRACT_ONLY",
+      "proof": "Actual job start/end/attempt/queue elapsed and worker-hours",
+      "note": "Parallel role slots ≠ running worker count."
+    },
+    {
+      "type": "LLDB/debug",
+      "where": "docs/handover/chat_to_github_prompt_sequence.md",
+      "repo": "GBOGEB/CODEX",
+      "status": "NATIVE_SESSION_NOT_CURRENTLY_BOUND",
+      "proof": "Exact debugger session receipt with host/target/process/test outcome",
+      "note": "Previous example is not live debugger telemetry."
+    },
+    {
+      "type": "LDAB/BD",
+      "where": "docs/qps_line_s_recovery/critical_lineage_scan.md",
+      "repo": "GBOGEB/ABACUS",
+      "status": "HISTORICAL_REFS_ONLY",
+      "proof": "Join root/fingerprint → first-red → commit → run/job → disposition",
+      "note": "Findings and issue counts are not unique root counts."
+    },
+    {
+      "type": "RHEL/UBI",
+      "where": "agents/mcp",
+      "repo": "GBOGEB/CODEX",
+      "status": "RUNTIME_NOT_MEASURED",
+      "proof": "RHEL/UBI image digest plus reproducible native testflight",
+      "note": "No RHEL runtime, port or Docker image is asserted active."
+    }
+  ],
+  "pipeline": [
+    {
+      "id": "P00",
+      "name": "Preflight source",
+      "role": "Owner",
+      "kind": "SAFE_READ_ONLY",
+      "command": "python mission-control/federation-atlas/flightdeck/flightdeck.py preflight --fleet mission-control/gogreen/samples/fleet_g1.json --snapshot mission-control/federation-atlas/flightdeck/head_snapshot.json --contract mission-control/federation-atlas/flightdeck/flightdeck_contract.json",
+      "gate": "Historical source snapshot; fetch main before using as current"
+    },
+    {
+      "id": "P10",
+      "name": "Census build",
+      "role": "MissionControl",
+      "kind": "LOCAL_BUILD",
+      "command": "python mission-control/federation-atlas/flightdeck/flightdeck.py build --fleet mission-control/gogreen/samples/fleet_g1.json --snapshot mission-control/federation-atlas/flightdeck/head_snapshot.json --contract mission-control/federation-atlas/flightdeck/flightdeck_contract.json --out out/flightdeck",
+      "gate": "Generated census is projection-only"
+    },
+    {
+      "id": "P20",
+      "name": "EVERRED/LDAB",
+      "role": "DOW",
+      "kind": "OWNER_GATE",
+      "command": null,
+      "gate": "Select observed first-red and root, do not invent a universal repair CLI"
+    },
+    {
+      "id": "P30",
+      "name": "HTML/Graph build",
+      "role": "MissionControl",
+      "kind": "LOCAL_BUILD",
+      "command": "python mission-control/federation-atlas/build_atlas.py --out out/method-atlas",
+      "gate": "Presentation never changes owner SSOT"
+    },
+    {
+      "id": "P40",
+      "name": "Office / PDF projections",
+      "role": "Documents",
+      "kind": "OPTIONAL_BINARY",
+      "command": "python mission-control/federation-atlas/flightdeck/office_export.py --input out/flightdeck/census.json --out out/flightdeck",
+      "gate": "Generated binaries must not overwrite user inputs"
+    },
+    {
+      "id": "P50",
+      "name": "Testflight / exact-head DoV",
+      "role": "QA",
+      "kind": "SAFE_READ_ONLY",
+      "command": "python -m unittest discover -s mission-control/federation-atlas -p 'test_*.py' -v",
+      "gate": "Local PASS does not equal GitHub native exact-head PASS"
+    },
+    {
+      "id": "P60",
+      "name": "Governed admission",
+      "role": "Owner",
+      "kind": "OWNER_GATE",
+      "command": null,
+      "gate": "Required status checks + eligible review + exact-main postflight"
+    },
+    {
+      "id": "P70",
+      "name": "Control / DMAIC / REX",
+      "role": "MissionControl",
+      "kind": "OWNER_GATE",
+      "command": null,
+      "gate": "Append only truly comparable observations"
+    }
+  ],
+  "intents": [
+    {
+      "id": "CP-M2-I01",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Global narrative, minimal clean metrics/tables/graphs with explicit provenance",
+      "actions": [
+        "M2-A14"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I02",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Treat CODEX #1043/#1044/#1045 native history and EVERRED distinctions as source-derived carryover",
+      "actions": [
+        "M2-A04"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I03",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Use this follow-up as recursive Milestone 2, preserving earlier chat intent and actions",
+      "actions": [
+        "M2-A13",
+        "M2-A18",
+        "M2-A20"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I04",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Supersede stale MissionControl #536 merge-first instructions after live readback",
+      "actions": [
+        "M2-A01",
+        "M2-A02",
+        "M2-A03"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I05",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Preserve G1/G5 test, coverage, same-repo replay and still-missing authenticated cross-repo joins",
+      "actions": [
+        "M2-A06",
+        "M2-A09",
+        "M2-A10",
+        "M2-A12"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I06",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Provide clean sanitized semantically lossless handover, TODO carryover, and copyable drop-in",
+      "actions": [
+        "M2-A13",
+        "M2-A18"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I07",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Prefer GitHub .json/.md/.py/.js/.html links; avoid handover ZIP and tar.gz",
+      "actions": [
+        "M2-A13",
+        "M2-A14"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I08",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Template to stop/restart when message length or chat drift threatens accuracy",
+      "actions": [
+        "M2-A18"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I09",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Explain distinct and joint QPS TRIAGE, CODEX/KEB, ABACUS/DOW knowledge and execution",
+      "actions": [
+        "M2-A08",
+        "M2-A09",
+        "M2-A10",
+        "M2-A11"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I10",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "HTML for MissionControl main and federation/agents/MCP/runners/Docker/LLDB/LDAB/telemetry",
+      "actions": [
+        "M2-A14",
+        "M2-A16"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I11",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "HTML for each fleet repo showing functions, skills, owner contracts, source links and gaps",
+      "actions": [
+        "M2-A14",
+        "M2-A16"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I12",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Update root landing README with new HTML paths and current release caveats",
+      "actions": [
+        "M2-A14",
+        "M2-A19"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I13",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Release-oriented burndown with measurable predicates and honest expected outcomes",
+      "actions": [
+        "M2-A05",
+        "M2-A07",
+        "M2-A11",
+        "M2-A17"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I14",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Owner-facing I/O control surface for preflight, testflight, sections and specialist workflows",
+      "actions": [
+        "M2-A15"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "CP-M2-I15",
+      "parent": "CP-SESSION-20261015-002",
+      "source_class": "USER_PROVIDED_CURRENT_TURN_SUMMARIZED_NO_RAW_TRANSCRIPT",
+      "summary": "Do not erase security/quality debt or manufacture statistical/receipt/approval credit",
+      "actions": [
+        "M2-A02",
+        "M2-A04",
+        "M2-A05",
+        "M2-A06",
+        "M2-A20"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    }
+  ],
+  "actions": [
+    {
+      "id": "M2-A01",
+      "priority": "P0",
+      "owner": "MissionControl",
+      "summary": "Refresh exact repo heads/PR statuses; supersede old #536-first instruction",
+      "state": "OBSERVED_CENSUS",
+      "done_when": "New exact heads saved; old merged branches not queued again",
+      "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/pull/536",
+      "guard": "Never equate MERGED with ADMITTED",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A02",
+      "priority": "P0",
+      "owner": "MissionControl owner",
+      "summary": "Restore required statuses, protected-main, correct 1-person eligible reviewer model",
+      "state": "BLOCKED_OWNER",
+      "done_when": "Verified ruleset enforcement + eligible human review + main check contexts",
+      "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/issues/153",
+      "guard": "No automation-authored approval",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A03",
+      "priority": "P0",
+      "owner": "MissionControl Golden Thread",
+      "summary": "Repair #540 session-hook HTML assertion and obtain uploaded exact-head receipt",
+      "state": "OPEN_FIRST_RED",
+      "done_when": "Correct HTML assertion, 19 tests, canonical GT tests and source-bound archive bytes",
+      "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/pull/540",
+      "guard": "Merged history remains ungoverned",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A04",
+      "priority": "P0",
+      "owner": "CODEX KEB",
+      "summary": "Re-census CODEX #1045 post-merge main and attribute Ruff 1,221 historical findings",
+      "state": "CARRIED_OPEN",
+      "done_when": "Exact-main CI + bounded attributable DAB/Ruff root census with original denominators",
+      "evidence": "https://github.com/GBOGEB/CODEX/pull/1045",
+      "guard": "Do not treat continue-on-error as clean",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A05",
+      "priority": "P0",
+      "owner": "ABACUS DOW",
+      "summary": "Investigate #1993 formatting/isort, Bandit, Safety and governance first-reds separately",
+      "state": "CARRIED_OPEN",
+      "done_when": "Native exact-head source-specific proofs + independent A10/security disposition",
+      "evidence": "https://github.com/GBOGEB/ABACUS/pull/1993",
+      "guard": "Diagnostic tests != repaired roots",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A06",
+      "priority": "P1",
+      "owner": "ABACUS DOW",
+      "summary": "Qualify #2003 LDAB/DOW federation producer and join root IDs to run/job/attempt",
+      "state": "CARRIED_OPEN",
+      "done_when": "Native producer + separately downloaded artifact bytes + root signature linkage",
+      "evidence": "https://github.com/GBOGEB/ABACUS/pull/2003",
+      "guard": "Mirrored status-only artifact != consumer proof",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A07",
+      "priority": "P0",
+      "owner": "QPS child owner",
+      "summary": "Locate and hash all 8 physical COST/engineering source objects",
+      "state": "BLOCKED_EXTERNAL",
+      "done_when": "8/8 original bytes + sizes + recorded SHA-256 matched and authorized disposition",
+      "evidence": "https://github.com/GBOGEB/cryoplant-project/issues/1379",
+      "guard": "Never regenerate original corporate/user inputs",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A08",
+      "priority": "P0",
+      "owner": "QPS child owner",
+      "summary": "Review safety deviation and cold-compressor common-cause evidence",
+      "state": "BLOCKED_EXTERNAL",
+      "done_when": "Authorized child engineering ACCEPT/REJECT/DEFER after native source checks",
+      "evidence": "https://github.com/GBOGEB/cryoplant-project/issues/943",
+      "guard": "No analytics output may waive physical source",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A09",
+      "priority": "P1",
+      "owner": "CODEX KEB",
+      "summary": "Generate source-bound exact QPS glossary/semantic/provenance challenge receipt",
+      "state": "CARRIED_OPEN",
+      "done_when": "KEB native consumer rejects wrong glossary, changed bytes, missing QPS source",
+      "evidence": "https://github.com/GBOGEB/CODEX/issues/1037",
+      "guard": "QPS terms owned by child, bridge not authoritative",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A10",
+      "priority": "P1",
+      "owner": "ABACUS DOW",
+      "summary": "Run independent CODEX→ABACUS consumer replay with real bytes and causal LDAB root IDs",
+      "state": "CARRIED_OPEN",
+      "done_when": "Distinct provider SHA, consumer SHA, native run/job/attempt + member hashes",
+      "evidence": "https://github.com/GBOGEB/ABACUS/issues/1929",
+      "guard": "Same-repo G1→G5 evidence does not count as cross-repo",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A11",
+      "priority": "P0",
+      "owner": "QPS child owner",
+      "summary": "Obtain final QPS recipient engineering verdict and release identity",
+      "state": "BLOCKED_EXTERNAL",
+      "done_when": "Native full QPS→KEB→DOW→QPS evidence chain and explicit child verdict",
+      "evidence": "https://github.com/GBOGEB/cryoplant-project/pull/1926",
+      "guard": "No upstream owner may self-accept for QPS",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A12",
+      "priority": "P1",
+      "owner": "MissionControl",
+      "summary": "Append only new comparable G4 observation wave to frozen G0–G3",
+      "state": "CARRIED_OPEN",
+      "done_when": "Cohort/denominator/time/source matched; distinguish observed/byte-verified/accepted",
+      "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/pull/534",
+      "guard": "Historical 6/42 or 8/42 not overwritten",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A13",
+      "priority": "P1",
+      "owner": "MissionControl",
+      "summary": "Produce readable lossless sanitized Milestone-2 intent/action handover and drop-in",
+      "state": "IMPLEMENTATION_CANDIDATE",
+      "done_when": "Every enumerated intent mapped to owner, action, blocker, next exact-read",
+      "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/issues/153",
+      "guard": "Semantic losslessness within provided source, not raw ChatGPT transcript",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A14",
+      "priority": "P1",
+      "owner": "MissionControl",
+      "summary": "Produce HTML landing, federation, runtime, pipeline and six repo profile views",
+      "state": "IMPLEMENTATION_CANDIDATE",
+      "done_when": "Deterministic text source, static rendered pages, SHA parity and keyboard navigation",
+      "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/pull/537",
+      "guard": "Read-only projection; no competing atlas/page writer",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A15",
+      "priority": "P1",
+      "owner": "MissionControl / CODEX",
+      "summary": "Give owner safe local preflight, testflight, output inspection and repo refresh controls",
+      "state": "IMPLEMENTATION_CANDIDATE",
+      "done_when": "Copy-only commands, browser-local file hash, clear offline vs CI trust",
+      "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/pull/537",
+      "guard": "HTML must not claim it can execute CLI/docker/CI",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A16",
+      "priority": "P1",
+      "owner": "MissionControl",
+      "summary": "Audit crew, skills, agent, MCP, runner, Docker, LLDB, LDAB, RHEL observability",
+      "state": "CARRIED_OPEN",
+      "done_when": "Named actual host/session receipt or explicit UNKNOWN; skills pin/source identity",
+      "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/tree/master/mission-control/qps-triage-ultra/crew",
+      "guard": "Configured worker roster != running workers",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A17",
+      "priority": "P0",
+      "owner": "QPS release owner",
+      "summary": "Produce OCD/ADR and governed binary renditions from frozen QPS source",
+      "state": "BLOCKED_EXTERNAL",
+      "done_when": "L0 evidence→L1 semantics→L2 policy→L3 QA, physical source + release DoV",
+      "evidence": "https://github.com/GBOGEB/cryoplant-project/issues/1398",
+      "guard": "Review HTML and CI are not physical release",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A18",
+      "priority": "P1",
+      "owner": "MissionControl",
+      "summary": "Introduce bounded response/session health checkpoint and new-chat recovery template",
+      "state": "IMPLEMENTATION_CANDIDATE",
+      "done_when": "Checkpoint every 3–5 major pulses or authority drift, 2-stage rollover without losing actions",
+      "evidence": "https://github.com/GBOGEB/cryoplant-project/blob/main/controls/QPS_CHAT_SESSION_HEALTH_POLICY_v0.2.yaml",
+      "guard": "Never claim precise ChatGPT tokens/latency",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A19",
+      "priority": "P1",
+      "owner": "MissionControl",
+      "summary": "Publish HTML through existing owner Pages lane only after exact-source admission",
+      "state": "BLOCKED_OWNER",
+      "done_when": "Source SHA + Pages URL + fetched deployed page/source parity",
+      "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/pull/537",
+      "guard": "GitHub-tracked .html does not alone prove Pages live",
+      "verified_native_receipt": null
+    },
+    {
+      "id": "M2-A20",
+      "priority": "P1",
+      "owner": "MissionControl",
+      "summary": "Persist a separate N+1 forecast and later scored actual without history rewriting",
+      "state": "IMPLEMENTATION_CANDIDATE",
+      "done_when": "Precommitted prediction and separately observed outcome",
+      "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/tree/master/mission-control/golden-thread",
+      "guard": "No retroactive scoring or statistical calibration claim",
+      "verified_native_receipt": null
+    }
+  ],
+  "handover_policy": {
+    "transcript_claim": "SEMANTICALLY_LOSSLESS_FOR_ENUMERATED_USER_DIRECTIVES_ONLY",
+    "raw_export": false,
+    "preferred": [
+      "GitHub JSON",
+      "GitHub Markdown",
+      "GitHub JavaScript/Python",
+      "GitHub HTML"
+    ],
+    "excluded": [
+      "handover.zip",
+      "handover.tar.gz"
+    ],
+    "pause_if": "response too long to present accurately OR unresolved authority drift OR major tool/source conflict",
+    "checkpoint_every_substantial_pulses": "3_to_5",
+    "restart_rule": "Read previous snapshot → fresh exact GitHub census → correct stale TODO → continue first satisfiable P0 gate",
+    "chat_session_automatic_hook": false
+  },
+  "forecast_pre_registered": {
+    "id": "CP-M2-FC-20261015",
+    "prediction_created_before_native_m2_portal_flight": true,
+    "expected": "PORTAL_STATIC_PARITY_PASS",
+    "expected_repo_pages": 6,
+    "expected_intent_count": 15,
+    "expected_release_decision": "HOLD",
+    "expected_cross_repo_authentication": "UNPROVEN",
+    "actual": null,
+    "score": "PENDING_NATIVE"
+  },
+  "release_gates": [
+    {
+      "priority": "P0",
+      "name": "Protected-main required-check admission",
+      "status": "HOLD",
+      "owner": "Repository admins across fleet",
+      "due": "OWNER_CONFIG_NOT_DATE",
+      "proof": "Effective rulesets, verified required contexts, eligible human review"
+    },
+    {
+      "priority": "P0",
+      "name": "Historical ungoverned merge reconciliation",
+      "status": "HOLD",
+      "owner": "CODE PURPLE / repository owners",
+      "due": "NEXT_OWNER_PULSE",
+      "proof": "PR #540, #1043/#1044, #1045 and G1/G5 admissions classified without rewriting history"
+    },
+    {
+      "priority": "P0",
+      "name": "ABACUS attributable CI/security roots",
+      "status": "HOLD",
+      "owner": "ABACUS DOW",
+      "due": "FIRST_RED_DEPENDENT",
+      "proof": "Black/isort, Bandit, Safety and governance native independent resolutions"
+    },
+    {
+      "priority": "P0",
+      "name": "QPS physical controlled source bytes",
+      "status": "HOLD",
+      "owner": "QPS child owner",
+      "due": "EXTERNAL_EVIDENCE",
+      "proof": "All eight required files available and SHA256/size verified"
+    },
+    {
+      "priority": "P0",
+      "name": "QPS safety and canonical source disposition",
+      "status": "DEFER",
+      "owner": "QPS child",
+      "due": "EXTERNAL_EVIDENCE",
+      "proof": "#75/#943 authorized safety-owner decision"
+    },
+    {
+      "priority": "P1",
+      "name": "KEB→DOW recipient-native bytes",
+      "status": "DEFER",
+      "owner": "CODEX + ABACUS",
+      "due": "N_PLUS_1_CANDIDATE",
+      "proof": "QPS source pinned, native run/job/attempt, producer+consumer SHA256"
+    },
+    {
+      "priority": "P1",
+      "name": "QPS four-hop accepted chain",
+      "status": "DEFER",
+      "owner": "QPS child",
+      "due": "AFTER_KEB_DOW",
+      "proof": "QPS recipient native verdict with full provenance"
+    },
+    {
+      "priority": "P1",
+      "name": "Comparable rolling census and metrics",
+      "status": "HOLD",
+      "owner": "MissionControl",
+      "due": "AFTER_NEW_NATIVE_SAMPLE",
+      "proof": "Same cohort, same denominator, per-pulse independent outcome"
+    },
+    {
+      "priority": "P0",
+      "name": "OCD/ADR + binary/Pages outward release",
+      "status": "HOLD",
+      "owner": "QPS/release owners",
+      "due": "AFTER_SOURCES_GATES",
+      "proof": "Same frozen L1→L3 source identity, semantic, visual and hosted page QA"
+    }
+  ]
+}

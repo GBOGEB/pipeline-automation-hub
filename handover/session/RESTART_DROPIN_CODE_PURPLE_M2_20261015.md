@@ -1,0 +1,9 @@
+# CODE PURPLE M2 — copy/paste restart drop-in
+
+Continue MissionControl #153 with the existing Flight Deck and Golden Thread; do not invent a new SSOT. Start by reading in GitHub: `mission-control/federation-atlas/m2_session/M2_STATE.json`, `handover/session/LOSSLESS_HANDOVER_CODE_PURPLE_M2_20261015.md`, and `handover/session/SESSION_M2_CHECKPOINT_TEMPLATE.md`; then refresh the exact default HEAD, PR status, CI run/job/attempt and effective branch protection before making any changes.
+
+Retain all 15 intent atoms CP-M2-I01..I15 and all 20 actions M2-A01..A20, owners, dispositions and stop rules, and the M1 parent CP-SESSION-20261015-002. The earlier proposed sequence #536→#534→#535 is historical: all three, #537/#538/#540, CODEX #1045 and Cryoplant #1926 are merged as of the captured 15-Oct GitHub readback, but merged != governed. ABACUS #1993 and #2003 were open. Treat dated source outputs as stale until re-censused.
+
+Highest satisfiable P0: owner-side required checks and eligible review; repair distinct #540 HTML-assertion first-red; CODEX post-#1045 actual Ruff roots (1,221 nonblocking historical findings != 1,221 roots); ABACUS format/Bandit/Safety/governance; verify QPS eight physical evidence bytes and #75/#943 safety; then join CODEX/KEB→ABACUS/DOW→QPS real native producer/consumer receipts and obtain explicit QPS decision. Current recipient release DEFER / full outward release HOLD.
+
+Produce user-centric minimal narrative, few source-matched metrics and one process DAG. HTML source and read-only functionality should remain under existing Method Atlas and GitHub; no ZIP/tar.gz, no original-user-binary overwrites, no synthetic live local agents/ports/Docker/LLDB counts. Do not merge or waive security. At message-length/session health risk, checkpoint ALL actions in GitHub, supply a fresh copyable drop-in, then stop or request a new chat.
