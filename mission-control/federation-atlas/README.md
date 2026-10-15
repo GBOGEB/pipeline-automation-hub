@@ -122,3 +122,7 @@ unnecessary GitHub Actions consumption, initial implementation is a
 non-PR staging branch pending owner-controlled flight budget.
 
 **W3 derivative parity:** because the Flight Deck HTML includes links to XLSX, DOCX, PPTX and PDF, the existing Atlas job also renders and tests nonempty versions of those four files *before* hashing/upload. Optional dependencies are pinned; no second workflow is introduced. They remain generated review copies, not corporate-approved documents.
+
+## MIP side-load and Kubernetes leaf (2026-10-15)
+
+The existing Atlas producer renders side-load/k8s HTML, JSON, Mermaid and SHA256 in the SAME source-bound Actions artifact, no new workflow/Pages publisher. Frozen three-repository eight-surface historical observation; DOW W74 static, W169 possible kind runtime; KEB transport and Docker/Compose, Kubernetes deferred; QPS W165/edge child remains DEFER. Filter by repo/evidence kind/search. The uniform transport PRs are CODEX #1049, ABACUS #2025 and QPS #1931, all draft candidates in this source snapshot. Native run/job/attempt, cluster sessions, QPS private original bytes and matched-scope coverage remain UNKNOWN until independently verified. Test the existing Atlas unittest discovery on exact SHA. HTML offers no write/deploy action.

@@ -1,0 +1,170 @@
+{
+  "schema": "missioncontrol.sideload_k8s.source.v1",
+  "snapshot_date": "2026-10-15",
+  "snapshot_class": "HISTORICAL_SOURCE_ONLY_NOT_LIVE",
+  "observer": "GBOGEB/pipeline-automation-hub",
+  "transport": {
+    "repo": "GBOGEB/CODEX",
+    "pr": 1049,
+    "head_sha": "b70811774e7cd97e624c3ec16d5239d7244932df",
+    "contract_blob": "0ba7799e4470b25125227e56eeb11b366afaf0dd",
+    "state": "DRAFT_NOT_ADMITTED"
+  },
+  "adapters": [
+    {
+      "role": "DOW",
+      "pr": 2025,
+      "head_sha": "fac09298a28d8055cbe1ac50ae737fdbb6b658f0",
+      "state": "DRAFT"
+    },
+    {
+      "role": "KEB",
+      "pr": 1049,
+      "head_sha": "b70811774e7cd97e624c3ec16d5239d7244932df",
+      "state": "DRAFT"
+    },
+    {
+      "role": "QPS",
+      "pr": 1931,
+      "head_sha": "a4e6734bfec20066c6aa8851cd49c27de118a4a9",
+      "state": "DRAFT"
+    }
+  ],
+  "rows": [
+    {
+      "id": "DOW-01",
+      "role": "DOW",
+      "kind": "K8S_STATIC",
+      "title": "W74 QPLANT hardened static contract",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "source_path": "triage/W74_K8S_EDGE_READINESS.yaml",
+      "source_url": "https://github.com/GBOGEB/ABACUS/blob/54da377cf82a358ac97903ecde0270c975b8fcc1/triage/W74_K8S_EDGE_READINESS.yaml",
+      "state": "SOURCE_ONLY",
+      "next": "Re-run exact native validator and obtain hash receipt",
+      "native_authenticated": null,
+      "cluster_api_verified": null,
+      "workload_verified": null
+    },
+    {
+      "id": "DOW-02",
+      "role": "DOW",
+      "kind": "K8S_API",
+      "title": "W169 temporary kind API",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "source_path": ".github/workflows/w169-qplant-k8s-runtime.yml",
+      "source_url": "https://github.com/GBOGEB/ABACUS/blob/54da377cf82a358ac97903ecde0270c975b8fcc1/.github/workflows/w169-qplant-k8s-runtime.yml",
+      "state": "NATIVE_RECEIPT_UNKNOWN",
+      "next": "Verify native run/job/attempt and server-side dry-run result",
+      "native_authenticated": null,
+      "cluster_api_verified": null,
+      "workload_verified": null
+    },
+    {
+      "id": "DOW-03",
+      "role": "DOW",
+      "kind": "K8S_WORKLOAD",
+      "title": "W169 rollout and health",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "source_path": ".github/workflows/w169-qplant-k8s-runtime.yml",
+      "source_url": "https://github.com/GBOGEB/ABACUS/blob/54da377cf82a358ac97903ecde0270c975b8fcc1/.github/workflows/w169-qplant-k8s-runtime.yml",
+      "state": "WORKLOAD_RECEIPT_UNKNOWN",
+      "next": "Verify real pods, image digest, probe p95, restarts and bytes",
+      "native_authenticated": null,
+      "cluster_api_verified": null,
+      "workload_verified": null
+    },
+    {
+      "id": "DOW-04",
+      "role": "DOW",
+      "kind": "DOCKER_COMPOSE",
+      "title": "Canonical ABACUS and qplant Docker products",
+      "source_repo": "GBOGEB/ABACUS",
+      "source_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "source_path": "triage/DEPLOYMENT_RUNTIME_REGISTRY_W92.yaml",
+      "source_url": "https://github.com/GBOGEB/ABACUS/blob/54da377cf82a358ac97903ecde0270c975b8fcc1/triage/DEPLOYMENT_RUNTIME_REGISTRY_W92.yaml",
+      "state": "ROLE_SEPARATED_SOURCE",
+      "next": "Keep Compose products distinct from Kubernetes",
+      "native_authenticated": null,
+      "cluster_api_verified": null,
+      "workload_verified": null
+    },
+    {
+      "id": "KEB-05",
+      "role": "KEB",
+      "kind": "LOCAL_EVIDENCE",
+      "title": "KEB sanitized side-load transport PR #1049",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "408d128b3def7396f0b77c79b31c5a0e5182fd01",
+      "source_path": "GOVERNANCE.md",
+      "source_url": "https://github.com/GBOGEB/CODEX/blob/408d128b3def7396f0b77c79b31c5a0e5182fd01/GOVERNANCE.md",
+      "state": "DRAFT_CANDIDATE",
+      "next": "Validate new envelope code on exact PR head; no Kubernetes deployment",
+      "native_authenticated": null,
+      "cluster_api_verified": null,
+      "workload_verified": null
+    },
+    {
+      "id": "KEB-06",
+      "role": "KEB",
+      "kind": "DOCKER_COMPOSE",
+      "title": "CODEX validation runtime",
+      "source_repo": "GBOGEB/CODEX",
+      "source_sha": "408d128b3def7396f0b77c79b31c5a0e5182fd01",
+      "source_path": "compose.yaml",
+      "source_url": "https://github.com/GBOGEB/CODEX/blob/408d128b3def7396f0b77c79b31c5a0e5182fd01/compose.yaml",
+      "state": "KUBERNETES_DEFERRED",
+      "next": "Preserve canonical validator; prove need before adding K8s",
+      "native_authenticated": null,
+      "cluster_api_verified": null,
+      "workload_verified": null
+    },
+    {
+      "id": "QPS-07",
+      "role": "QPS",
+      "kind": "K8S_STATIC",
+      "title": "W165 historical Kubernetes parent pin",
+      "source_repo": "GBOGEB/cryoplant-project",
+      "source_sha": "aadf42bcc6212f1b470c72f911d380148c31de11",
+      "source_path": "triage/w165/QPS_W165_EDGE_K8S_ADOPTION_v0.1.yaml",
+      "source_url": "https://github.com/GBOGEB/cryoplant-project/blob/aadf42bcc6212f1b470c72f911d380148c31de11/triage/w165/QPS_W165_EDGE_K8S_ADOPTION_v0.1.yaml",
+      "state": "HISTORICAL_PIN_CHILD_DEFER",
+      "next": "Consume true W169 receipt and separately qualify child",
+      "native_authenticated": null,
+      "cluster_api_verified": null,
+      "workload_verified": null
+    },
+    {
+      "id": "QPS-08",
+      "role": "QPS",
+      "kind": "LOCAL_EVIDENCE",
+      "title": "A2/A3 original QPS evidence root",
+      "source_repo": "GBOGEB/cryoplant-project",
+      "source_sha": "aadf42bcc6212f1b470c72f911d380148c31de11",
+      "source_path": "handover/qps_recursive/BINARY_EVIDENCE.yaml",
+      "source_url": "https://github.com/GBOGEB/cryoplant-project/blob/aadf42bcc6212f1b470c72f911d380148c31de11/handover/qps_recursive/BINARY_EVIDENCE.yaml",
+      "state": "PRIVATE_BYTES_UNVERIFIED",
+      "next": "Verify eight original private files outside Git",
+      "native_authenticated": null,
+      "cluster_api_verified": null,
+      "workload_verified": null
+    }
+  ],
+  "measurements": {
+    "authenticated_four_hop_receipts": null,
+    "real_k8s_runtime_sessions": null,
+    "matched_coverage_delta": null,
+    "root_closures_credited": 0
+  },
+  "gates": {
+    "child": "DEFER",
+    "release": "HOLD",
+    "admission": "HOLD",
+    "edge_parent": "UNBOUND",
+    "authority_transfer": false,
+    "engineering_credit_delta": 0,
+    "formal_credit_delta": 0
+  }
+}
