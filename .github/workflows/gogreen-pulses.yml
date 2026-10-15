@@ -62,6 +62,79 @@ jobs:
             --out "$RUNNER_TEMP/gogreen-pulses" \
             --source-sha "$EXPECTED_SHA" \
             --workers 2 --per-repo 1 --packet-budget 12
+      - name: G4 comparable focused module coverage
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          OUT="$RUNNER_TEMP/gogreen-pulses"
+          export PYTHONPATH="mission-control/gogreen/tests:mission-control/gogreen"
+          COVERAGE_FILE="$OUT/.baseline" python -m coverage run --branch \
+            --include='*/mission-control/gogreen/pulse_rollup.py' -m unittest \
+            test_pulse_rollup.PulseTests.test_fixed_catalog_and_growth \
+            test_pulse_rollup.PulseTests.test_source_catalog_drift_rejected \
+            test_pulse_rollup.PulseTests.test_baseline_deletion_rejected \
+            test_pulse_rollup.PulseTests.test_baseline_rewrite_rejected \
+            test_pulse_rollup.PulseTests.test_invalid_sha_rejected \
+            test_pulse_rollup.PulseTests.test_no_self_asserted_bytes \
+            test_pulse_rollup.PulseTests.test_capped_disjoint_plan \
+            test_pulse_rollup.PulseTests.test_low_cap_and_negative_budget \
+            test_pulse_rollup.PulseTests.test_output_deterministic \
+            test_pulse_rollup.PulseTests.test_no_authority_transfer \
+            > "$OUT/g4_baseline_tests.log" 2>&1
+          COVERAGE_FILE="$OUT/.baseline" python -m coverage json \
+            -o "$OUT/g4_baseline_coverage.json" -q
+          COVERAGE_FILE="$OUT/.expanded" python -m coverage run --branch \
+            --include='*/mission-control/gogreen/pulse_rollup.py' \
+            -m unittest discover -s mission-control/gogreen/tests -q \
+            > "$OUT/g4_expanded_tests.log" 2>&1
+          COVERAGE_FILE="$OUT/.expanded" python -m coverage json \
+            -o "$OUT/g4_expanded_coverage.json" -q
+          python - <<'PY'
+          import hashlib,json,os,re
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'gogreen-pulses'
+          key='mission-control/gogreen/pulse_rollup.py'
+          reports=[json.loads((out/name).read_text()) for name in
+            ('g4_baseline_coverage.json','g4_expanded_coverage.json')]
+          if any(x['meta'].get('version')!='7.13.3' or list(x.get('files',{})) != [key] for x in reports):
+              raise SystemExit('Tool version, source scope or coverage producer mismatch')
+          summaries=[x['files'][key]['summary'] for x in reports]
+          result={}
+          for dimension,numerator,denominator in (
+                ('statements','covered_lines','num_statements'),
+                ('branches','covered_branches','num_branches')):
+              before,after=summaries
+              b,e=before[numerator],before[denominator]
+              a,f=after[numerator],after[denominator]
+              if not all(type(v) is int and v>=0 for v in (a,b,e,f)) or e!=f or e==0 or a>e or b>e:
+                  raise SystemExit('Coverage denominator drift or invalid fraction')
+              result[dimension]={'before_covered':b,'after_covered':a,'eligible':e,
+                'gain_pp':round(100*(a-b)/e,4)}
+          counts=[]
+          for file in ('g4_baseline_tests.log','g4_expanded_tests.log'):
+              log=(out/file).read_text()
+              hits=re.findall(r'Ran (\d+) tests? in',log)
+              if len(hits)!=1 or '\nOK' not in log: raise SystemExit('No real passing test denominator')
+              counts.append(int(hits[0]))
+          if counts[0]!=10 or counts[1]<39:
+              raise SystemExit('Unexpected native coverage test selection')
+          source=Path(key).read_bytes()
+          receipt={'schema':'gogreen.g4.scope-comparable-coverage.v1',
+            'source_git_sha':os.environ['EXPECTED_SHA'],
+            'source_file_sha256':hashlib.sha256(source).hexdigest(),
+            'coverage_tool_version':'7.13.3',
+            'scope':'FOCUSED_G4_MODULE_SAME_SOURCE_BYTES',
+            'tests_baseline':counts[0],'tests_candidate':counts[1],
+            'coverage':result,'broad_fleet_coverage_gain':None,
+            'merge_authorized':False,'authority_transfer':False}
+          raw=(json.dumps(receipt,sort_keys=True,indent=2)+'\n').encode()
+          (out/'g4_focused_coverage.json').write_bytes(raw)
+          (out/'g4_focused_coverage.sha256').write_text(hashlib.sha256(raw).hexdigest()+'\n')
+          print(json.dumps(receipt,sort_keys=True))
+          PY
       - name: Verify exact-head artifact bytes and HOLD boundary
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
