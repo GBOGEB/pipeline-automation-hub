@@ -62,6 +62,9 @@ jobs:
             --out "$RUNNER_TEMP/gogreen-pulses" \
             --source-sha "$EXPECTED_SHA" \
             --workers 2 --per-repo 1 --packet-budget 12
+          python mission-control/gogreen/recovery_wave.py \
+            --input mission-control/gogreen/samples/code_purple_recovery.json \
+            --out "$RUNNER_TEMP/gogreen-pulses"
       - name: G4 comparable focused module coverage
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -148,17 +151,23 @@ jobs:
           out=Path(os.environ['RUNNER_TEMP'])/'gogreen-pulses'
           sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
           report_bytes=(out/'pulse_rollup.json').read_bytes()
+          recovery_bytes=(out/'recovery_wave.json').read_bytes()
+          recovery=json.loads(recovery_bytes)
           report=json.loads(report_bytes)
           assert sha==os.environ['EXPECTED_SHA']==report['source_git_sha']
           assert report['merge_authorized'] is False and report['authority_transfer'] is False
           assert report['scale_plan']['dispatch_authorized'] is False
           assert len(report['waves'])==2 and report['waves'][1]['observed_cells']==6
           assert hashlib.sha256(report_bytes).hexdigest()==(out/'pulse_rollup.sha256').read_text().strip()
+          assert hashlib.sha256(recovery_bytes).hexdigest()==(out/'recovery_wave.sha256').read_text().strip()
+          assert recovery['last_comparison']['repaired_first_reds_on_pr_head']==2
+          assert recovery['merge_authorized'] is False and recovery['global_root_closure'] is None
           receipt={'schema':'gogreen.g4.native-provenance.v1',
                    'repository':os.environ['REPOSITORY'],'checked_out_sha':sha,
                    'run_id':int(os.environ['RUN_ID']),
                    'run_attempt':int(os.environ['RUN_ATTEMPT']),
                    'pulse_rollup_sha256':hashlib.sha256(report_bytes).hexdigest(),
+                   'code_purple_recovery_sha256':hashlib.sha256(recovery_bytes).hexdigest(),
                    'admission':'HOLD','authority_transfer':False}
           (out/'native_provenance.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n')
           PY
