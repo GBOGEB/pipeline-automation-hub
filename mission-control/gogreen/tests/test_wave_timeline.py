@@ -89,7 +89,7 @@ class EvolutionaryTimelineTests(unittest.TestCase):
 
     def test_negative_measured_cell_regression_rejected(self):
         d = self.data()
-        d["waves"][2]["fleet"]["observed_cells"] = 1
+        d["waves"][2]["fleet"]["observed_cells"] = 5
         with self.assertRaisesRegex(ValueError, "observation regression"):
             m.validate(d)
 
@@ -126,6 +126,7 @@ class EvolutionaryTimelineTests(unittest.TestCase):
         future = copy.deepcopy(d["waves"][-1])
         future["wave"] = "G3"
         future["ordinal"] = 3
+        future["observed_at_utc"] = "2026-10-15T09:06:08Z"
         future["source_sha"] = "d" * 40
         future["run_id"] = 40000000000
         future["job_id"] = 110000000000
@@ -139,12 +140,19 @@ class EvolutionaryTimelineTests(unittest.TestCase):
         self.assertEqual(r["future"]["next_wave"], "G4")
         self.assertEqual(r["waves"][-1]["delta"]["native_tests"], 0)
 
+    def test_wave_chronology_reversed_is_rejected(self):
+        d = self.data()
+        d["waves"][2]["observed_at_utc"] = "2026-10-15T08:00:00Z"
+        with self.assertRaisesRegex(ValueError, "chronology reversed"):
+            m.validate(d)
+
     def test_html_escapes_untrusted_scope_notes(self):
         d = self.data()
         d["waves"][-1]["scope_notes"] = '<img src=x onerror="alert(1)">'
         r = m.build(d, source_sha=CURRENT)
         markup = m.render_html(r)
         self.assertNotIn('<img src=x onerror="alert(1)">', markup)
+        self.assertIn("&lt;img src=x onerror=", markup)
         self.assertIn("wave scorecard", markup)
 
     def test_markdown_links_native_runs_and_notes_unknown(self):
