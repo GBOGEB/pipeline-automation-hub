@@ -40,7 +40,89 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/m3"
           node mission-control/federation-atlas/m2_session/continuation/test_m3_handover.js 2>&1 | tee "$RUNNER_TEMP/m3/m3_testflight.log"
-          grep -q '^Ran 35 M3 tests: PASS$' "$RUNNER_TEMP/m3/m3_testflight.log"
+          grep -q '^Ran 36 M3 tests: PASS "$RUNNER_TEMP/m3/m3_testflight.log"
+      - name: Existing canonical M2 portal regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          node mission-control/federation-atlas/m2_session/test_m2_portal.js 2>&1 | tee "$RUNNER_TEMP/m3/m2_testflight.log"
+          node mission-control/federation-atlas/m2_session/m2_portal.js --check
+          grep -q '^Ran 12 M2 source-bound HTML tests: PASS$' "$RUNNER_TEMP/m3/m2_testflight.log"
+      - name: Generate and replay deterministic source-bound full handover
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          NATIVE_RUN: ${{ github.run_id }}
+          NATIVE_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          SCRIPT=mission-control/federation-atlas/m2_session/continuation/m3_handover.js
+          OUT="$RUNNER_TEMP/m3"
+          node "$SCRIPT" --out "$OUT" --source-sha "$HEAD_SHA"
+          node "$SCRIPT" --check --out "$OUT" --source-sha "$HEAD_SHA"
+          node - <<'JS'
+          const fs=require('fs'),path=require('path'),crypto=require('crypto');
+          const dir=path.join(process.env.RUNNER_TEMP,'m3');
+          const index=JSON.parse(fs.readFileSync(path.join(dir,'M3_INDEX.json')));
+          const man=JSON.parse(fs.readFileSync(path.join(dir,'M3_MANIFEST.json')));
+          if(index.source_sha!==process.env.HEAD_SHA||man.source_sha!==process.env.HEAD_SHA)
+            throw Error('exact-source SHA mismatch');
+          if(index.counts.actions!==31||index.counts.intents!==16||
+             index.release!=='HOLD'||index.qps!=='DEFER'||index.merge_authorized!==false)
+            throw Error('authority/denominator drift');
+          for(const [name,p] of Object.entries(man.items)){
+            const raw=fs.readFileSync(path.join(dir,name));
+            if(crypto.createHash('sha256').update(raw).digest('hex')!==p.sha256||
+               raw.length!==p.bytes)throw Error('manifest mismatch '+name);
+          }
+          const receipt={schema:'missioncontrol.m3_native_receipt.v1',
+            source_sha:process.env.HEAD_SHA,run_id:Number(process.env.NATIVE_RUN),
+            attempt:Number(process.env.NATIVE_ATTEMPT),
+            checks:{m3_native_negative_tests:36,m2_existing_tests:12,
+                    source_pins:'PASS',exact_head:'PASS',hash_parity:'PASS',
+                    browser_visual_qa:'DEFER',crossrepo_recipient:'DEFER'},
+            qps:'DEFER',release:'HOLD',merge_authorized:false};
+          fs.writeFileSync(path.join(dir,'M3_NATIVE_RECEIPT.json'),JSON.stringify(receipt,null,2)+'\n');
+          console.log(JSON.stringify(receipt));
+          JS
+      - name: Upload source-bound M3 text receipt
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: m3-lossless-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/m3/
+          if-no-files-found: error
+          retention-days: 14
+  inherited-golden-thread:
+    name: Existing M1 recursive session Golden Thread regression
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Canonical hash-chain and session adapter negative regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/golden-thread -p test_golden_thread.py -v
+          python -m unittest discover -s mission-control/golden-thread/session_hook -p test_session_hook.py -v
+      - name: Existing native session projection builds on exact source
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/session-check"
+          python mission-control/golden-thread/session_hook/session_hook.py \
+            --input mission-control/golden-thread/session_hook/SESSION_INTAKE_V1.json \
+            --source-sha "$HEAD_SHA" --out "$RUNNER_TEMP/session-check"
+          python mission-control/golden-thread/golden_thread.py verify \
+            "$RUNNER_TEMP/session-check/session_ledger.json"
+ "$RUNNER_TEMP/m3/m3_testflight.log"
       - name: Existing canonical M2 portal regressions
         shell: bash
         run: |
