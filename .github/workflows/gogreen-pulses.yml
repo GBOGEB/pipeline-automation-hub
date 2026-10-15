@@ -43,7 +43,7 @@ jobs:
           out = Path(os.environ['RUNNER_TEMP'])/'gogreen-pulses'
           log = (out/'unit_tests.log').read_text()
           found = re.findall(r'Ran (\d+) tests? in', log)
-          if len(found)!=1 or int(found[0]) < 74 or '\nOK' not in log:
+          if len(found)!=1 or int(found[0]) < 75 or '\nOK' not in log:
               raise SystemExit('Missing or zero native regression-test receipt')
           (out/'native_test_counts.json').write_text(
               json.dumps({'schema':'gogreen.native-test-counts.v1',
