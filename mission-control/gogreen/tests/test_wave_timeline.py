@@ -113,7 +113,7 @@ class EvolutionaryTimelineTests(unittest.TestCase):
         self.assertTrue(m.validate(d, previous=previous))
         bad = self.data()
         bad["waves"][0]["fleet"]["observed_cells"] = 2
-        with self.assertRaisesRegex(ValueError, "historical.*tampered"):
+        with self.assertRaisesRegex(ValueError, "wave evidence tampered"):
             m.validate(bad, previous=previous)
 
     def test_history_without_appended_wave_rejected(self):
