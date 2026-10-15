@@ -134,6 +134,9 @@ def build(out, method=None, stage=None, event=None):
         '<a class="link" href="'+safe(v["url"])+'" rel="noopener noreferrer" target="_blank">'+safe(v["label"])+
         '<small>'+("Hosted candidate · readback UNKNOWN" if v["kind"]=="HOSTED_CANDIDATE" else "Authoritative source navigation")+'</small></a>'
         for v in cat["links"])
+    refs += ('<a class="link" href="federation-wave.html">'
+             'Measured federation pulses · historical source-bound coverage'
+             '<small>Not a live status or admission view</small></a>')
     kpi_cards="".join(
         '<article class="tile"><h3>'+safe(k["label"])+'</h3><div class="metric">UNKNOWN</div>'
         '<p>'+safe(k["definition"])+'</p><p><strong>Owner:</strong> '+safe(k["source_owner"])+
