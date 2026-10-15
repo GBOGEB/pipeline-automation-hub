@@ -174,9 +174,62 @@ jobs:
           assert (Path("/tmp/code-purple-atlas/federation-latest.html")
                   .stat().st_size > 1000)
           PY
+      - name: Build public review projection
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python mission-control/federation-atlas/pages_portal.py --atlas /tmp/code-purple-atlas --out /tmp/code-purple-atlas/pages --sha "$EXACT_SHA"
+          test -s /tmp/code-purple-atlas/pages/site-manifest.json
       - name: Upload identity-bound HTML SVG and metrics
         uses: actions/upload-artifact@v4
         with:
           name: code-purple-method-atlas-${{ github.event.pull_request.head.sha || github.sha }}
           path: /tmp/code-purple-atlas/
           if-no-files-found: error
+
+  publish-pages:
+    name: Publish CODE PURPLE review site
+    needs: render
+    if: github.ref == 'refs/heads/master' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    concurrency:
+      group: missioncontrol-pages-publication
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download exact-run Atlas artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: code-purple-method-atlas-${{ github.sha }}
+          path: ./atlas-artifact
+      - name: Verify public hashes and checkout
+        env:
+          EXACT_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path("atlas-artifact/pages").resolve()
+          r=json.loads((root/"site-manifest.json").read_text())
+          assert r["source_git_sha"]==os.environ["EXACT_SHA"]
+          assert r["merge_authorized"] is False and r["qps_owner_decision"]=="DEFER"
+          for rel,expected in r["public_files_sha256"].items():
+              p=(root/rel).resolve()
+              assert p.is_file() and root in p.parents
+              assert hashlib.sha256(p.read_bytes()).hexdigest()==expected
+          PY
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload sanitized Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./atlas-artifact/pages
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
