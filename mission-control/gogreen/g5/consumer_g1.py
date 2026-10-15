@@ -116,6 +116,36 @@ def emit(result, directory: Path):
         "Cross-repository consumer hops: **0**. "
         "QPS ACCEPT: **0**. Admission: **HOLD**.\n\n"
         "SHA-256: " + digest + "\n", encoding="utf-8")
+    prod = result["producer"]
+    # All interpolated identifiers are validated immutable integers/hex strings.
+    page = ("""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light"><title>CODE PURPLE — G1 to G5 consumer evidence</title>
+<style>
+:root{color-scheme:dark;--bg:#0c0c0c;--fg:#fafafa;--dim:#b6b6b6;--line:#414141}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--fg);margin:0;font:15px/1.5 system-ui,sans-serif}
+main{max-width:1050px;margin:auto;padding:28px 20px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.card{padding:16px;border:1px solid var(--line);border-radius:9px}.big{font-size:1.9rem;font-weight:800}
+.dim{color:var(--dim);font-size:.87rem}h1{font-size:1.55rem}a{color:inherit;overflow-wrap:anywhere}
+footer{border-top:1px solid var(--line);margin-top:26px;padding-top:18px;overflow-wrap:anywhere}
+@media(prefers-color-scheme:light){:root{--bg:white;--fg:#171717;--dim:#555;--line:#ccc}}
+</style></head><body><main><h1>G1 → G5 · independently replayed producer bytes</h1>
+<p>One pinned, same-repository producer archive passed strict consumer-side byte and manifest checks.
+This does not establish any cross-repository KEB/DOW/QPS ACCEPT.</p>
+<div class="grid"><section class="card"><div class="dim">Same-repository consumer proof</div><div class="big">1</div>
+</section><section class="card"><div class="dim">Cross-repository authenticated hops</div><div class="big">0</div>
+</section><section class="card"><div class="dim">QPS accepted links</div><div class="big">0</div></section></div>
+<h2>Provenance</h2>
+<p>Producer SHA: <code>""" + prod["head_sha"] + """</code></p>
+<p>Run: <a href="https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/""" +
+str(prod["run_id"]) + """">""" + str(prod["run_id"]) + """</a>; job """ + str(prod["job_id"]) + """</p>
+<p>Downloaded ZIP SHA-256: <code>""" + prod["archive_sha256"] + """</code></p>
+<p>JSON source SHA-256: <code>""" + prod["rollup_sha256"] + """</code></p>
+<p>HTML source SHA-256: <code>""" + prod["html_sha256"] + """</code></p>
+<footer>Admission: HOLD · QPS: DEFER · authority transfer: false · consumer proof SHA-256:
+<code>""" + digest + """</code><p>Review derivative only — the SSOT stays at its owner.</p></footer>
+</main></body></html>""")
+    (directory / "g1_consumer_receipt.html").write_text(page, encoding="utf-8")
     return digest
 
 
