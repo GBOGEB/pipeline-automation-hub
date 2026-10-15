@@ -124,7 +124,7 @@ def emit(result, directory: Path):
 <style>
 :root{color-scheme:dark;--bg:#0c0c0c;--fg:#fafafa;--dim:#b6b6b6;--line:#414141}
 *{box-sizing:border-box}body{background:var(--bg);color:var(--fg);margin:0;font:15px/1.5 system-ui,sans-serif}
-main{max-width:1050px;margin:auto;padding:28px 20px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+main{max-width:1050px;margin:auto;padding:28px 20px;overflow-wrap:anywhere}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .card{padding:16px;border:1px solid var(--line);border-radius:9px}.big{font-size:1.9rem;font-weight:800}
 .dim{color:var(--dim);font-size:.87rem}h1{font-size:1.55rem}a{color:inherit;overflow-wrap:anywhere}
 footer{border-top:1px solid var(--line);margin-top:26px;padding-top:18px;overflow-wrap:anywhere}
