@@ -1,0 +1,66 @@
+{
+  "schema": "missioncontrol.federation.latest_status/v1",
+  "snapshot_kind": "HISTORICAL_READBACK_NOT_LIVE",
+  "program_pulse": "N+2",
+  "observed_date": "2026-10-15",
+  "w70": {
+    "run_id": 38707957236,
+    "head_sha": "e021fb05a08e684eee073250c4ff367d728aa0ae",
+    "state": "TERMINAL_FAIL",
+    "tests_passed": 21,
+    "tests_executed": 21,
+    "line": null,
+    "branch": null,
+    "first_red": "coverage must include exactly one owned source file",
+    "open_manifestations": 31,
+    "closed_manifestations": 45,
+    "manifestation_population": 76
+  },
+  "atlas": {
+    "pr": 532,
+    "state": "PASS_MERGED",
+    "run_id": 38709281980,
+    "tests_passed": 58,
+    "tests_executed": 58,
+    "artifact_id": 11962140692
+  },
+  "census": {
+    "core_repos": 5,
+    "branches": 613,
+    "open_prs": 38,
+    "open_issues": 146,
+    "measured_coverage_repos": 1
+  },
+  "timeline": [
+    {
+      "program_pulse": "N",
+      "w70": "QUEUED",
+      "atlas": "QUEUED",
+      "open_prs": null,
+      "branches": null
+    },
+    {
+      "program_pulse": "N+1",
+      "w70": "FAILED",
+      "atlas": "PASS_MERGED",
+      "open_prs": 39,
+      "branches": 612
+    },
+    {
+      "program_pulse": "N+2",
+      "w70": "FAILED",
+      "atlas": "PASS_MERGED",
+      "open_prs": 38,
+      "branches": 613
+    }
+  ],
+  "source_tuple_reconciled": false,
+  "qps_accepted": false,
+  "main_sha": {
+    "gg_MATH": "c5cd3e30a8e241111fc9f15367f3b92ba0393ea7",
+    "CODEX": "9606b61365f4639c9df24961f2cf4ef598cb5d81",
+    "ABACUS": "85dad8fbdab530d40e6ccf2f664c455f89454aad",
+    "cryoplant-project": "5f67fda65b421e5082b44c95deee98753f40c487",
+    "pipeline-automation-hub": "1455dc101c45e1af2159b837b54faf73078851fa"
+  }
+}
