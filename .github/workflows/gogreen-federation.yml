@@ -44,11 +44,11 @@ jobs:
           out=Path(os.environ['RUNNER_TEMP'])/'gogreen-g5'
           raw=(out/'unit-tests.log').read_text()
           n=re.findall(r'Ran (\d+) tests? in',raw)
-          if n!=['25'] or '\nOK' not in raw:
+          if n!=['38'] or '\nOK' not in raw:
               raise SystemExit('G5 native regression denominator incomplete')
           data={'schema':'gogreen.g5.native-test-counts.v1',
                 'source_sha':os.environ['EXPECTED_SHA'],
-                'executed':25,'passed':25,'failed':0,'skipped':0,
+                'executed':38,'passed':38,'failed':0,'skipped':0,
                 'source':'NATIVE_UNITTEST_NOT_SYNTHETIC'}
           (out/'test_counts.json').write_text(json.dumps(data,sort_keys=True,indent=2)+'\n')
           PY
@@ -62,6 +62,15 @@ jobs:
             --snapshot mission-control/gogreen/g5/samples/federation_g5.json \
             --out "$RUNNER_TEMP/gogreen-g5" \
             --max-parallel 2 --max-packets 12
+      - name: G2 append-only native scan-status pulse
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/g5/incremental.py \
+            --g0 mission-control/gogreen/g5/samples/fleet_g0.json \
+            --g1 mission-control/gogreen/g5/samples/fleet_g1_snapshot.json \
+            --g2 mission-control/gogreen/g5/samples/fleet_g2_snapshot.json \
+            --out "$RUNNER_TEMP/gogreen-g5"
       - name: Validate SHA and negative-authority controls
         shell: bash
         env:
@@ -89,11 +98,20 @@ jobs:
               raise SystemExit('scope denominator unexpectedly shifted')
           if report['authority_transfer'] or report['dispatch_authorized'] or report['merge_authorized']:
               raise SystemExit('authority boundary breach')
+          incremental_bytes=(folder/'incremental_pulses.json').read_bytes()
+          incremental_sha=hashlib.sha256(incremental_bytes).hexdigest()
+          if incremental_sha!=(folder/'incremental_pulses.sha256').read_text().strip():
+              raise SystemExit('G2 hash mismatch')
+          delta=json.loads(incremental_bytes)
+          if [p['observed_cells'] for p in delta['pulses']]!=[1,6,8]:
+              raise SystemExit('G2 observed scope mismatch')
+          if delta['merge_authorized'] or delta['authority_transfer'] or delta['dispatch_authorized']:
+              raise SystemExit('G2 authority breach')
           receipt={'schema':'gogreen.g5.execution-provenance.v1',
                    'repository':os.environ['REPO_ID'],'head_sha':sha,
                    'run_id':int(os.environ['RUN_ID']),
                    'run_attempt':int(os.environ['RUN_ATTEMPT']),
-                   'census_sha256':digest,'native_tests_passed':25,
+                   'census_sha256':digest,'incremental_sha256':incremental_sha,'native_tests_passed':38,
                    'merge_authorized':False,'qps_disposition':'DEFER'}
           (folder/'native_provenance.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n')
           PY
