@@ -81,7 +81,12 @@ class LatestPulseTests(unittest.TestCase):
         self.assertIn("P2", page)
         self.assertIn("N+2", page)
         self.assertIn("TERMINAL RED", page)
-        self.assertNotIn("QPS P3", page)
+        # Assert the semantic rendered pulse row, not explanatory prose
+        # stating that an artificial QPS P3 must never be invented.
+        self.assertNotIn('<b>P3</b>', page)
+        self.assertEqual(page.count('class="pulse"'), 3)
+        self.assertEqual([p["pulse"] for p in overlay.validate(o, h)["qps_pulses"]], [0, 1, 2])
+        self.assertIn("not an artificial QPS P3", page)
         self.assertIn("38 / 613", page)
 
     def test_later_sample_cannot_be_silent_n2(self):

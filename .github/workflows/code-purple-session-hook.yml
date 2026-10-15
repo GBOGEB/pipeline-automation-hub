@@ -91,7 +91,8 @@ jobs:
               if 'sha256:'+hashlib.sha256(raw).hexdigest()!=proof['sha256']:
                   raise SystemExit('generated file digest mismatch: '+name)
           html=(out/'session_review.html').read_text()
-          assert 'Session intent' in html and 'viewport' in html and 'id="filter"' in html
+          assert '<h1>CODE PURPLE — Recursive session intent ledger</h1>' in html
+          assert 'viewport' in html and 'id="filter"' in html
           runtime={'schema':'missioncontrol.chat_session_native_producer.v1',
                    'source_sha':os.environ['EXPECTED_SHA'],
                    'run_id':int(os.environ['NATIVE_RUN_ID']),

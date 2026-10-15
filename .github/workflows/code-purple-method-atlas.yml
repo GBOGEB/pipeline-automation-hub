@@ -154,6 +154,26 @@ jobs:
                   + "/5 (NOT full fleet coverage)\\n"
               )
           PY
+      - name: Add latest source-bound federation pulse on top of frozen history
+        run: |
+          python mission-control/federation-atlas/federation_latest_overlay.py \
+            --status mission-control/federation-atlas/FEDERATION_STATUS_N2_v1.json \
+            --history mission-control/federation-atlas/FEDERATION_OBSERVED_PULSES_v1.json \
+            --out /tmp/code-purple-atlas
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("/tmp/code-purple-atlas/federation-latest.json")
+          result=json.loads(p.read_text(encoding="utf-8"))
+          assert result["w70"]["state"] == "TERMINAL_FAIL"
+          assert result["w70"]["line"] is None
+          assert result["w70"]["branch"] is None
+          assert result["qps_source_pulse"] == "P2"
+          assert result["qps_engineering_decision"] == "DEFER"
+          assert result["native_cross_repo_chain_verified"] is None
+          assert (Path("/tmp/code-purple-atlas/federation-latest.html")
+                  .stat().st_size > 1000)
+          PY
       - name: Upload identity-bound HTML SVG and metrics
         uses: actions/upload-artifact@v4
         with:
