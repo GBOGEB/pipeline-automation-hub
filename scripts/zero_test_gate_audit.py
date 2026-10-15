@@ -112,11 +112,13 @@ def _tokens(arg_text: str) -> list[str] | None:
 def resolve_invocation(repo: Path, wd_rel: str, arg_text: str) -> dict:
     wd = (repo / wd_rel).resolve()
     rec: dict = {"working_directory": wd_rel, "args": arg_text.strip()}
-    if "$" in arg_text:
-        return {**rec, "state": "UNRESOLVED", "reason": "shell or expression variable in arguments"}
     toks = _tokens(arg_text)
     if toks is None:
         return {**rec, "state": "UNRESOLVED", "reason": "unparseable arguments"}
+    # Shell variables in downstream pipes/redirections are log transport,
+    # not unittest selectors. Still reject variables inside selector tokens.
+    if any("$" in token for token in toks):
+        return {**rec, "state": "UNRESOLVED", "reason": "shell or expression variable in arguments"}
     files: list[Path] = []
     if toks and toks[0] == "discover":
         start, pattern, pos = ".", "test*.py", []

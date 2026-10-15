@@ -1,0 +1,494 @@
+{
+  "schema": "missioncontrol.federation_atlas.process_lanes.v1",
+  "registry": "METHOD_OBSERVABILITY_v1.json",
+  "observer_authority": "READ_ONLY",
+  "canonical_methods": [
+    "DMAIC",
+    "3P*",
+    "MIP",
+    "LDAB"
+  ],
+  "projection_overlays": [
+    "SUPPLY",
+    "TRUST",
+    "CENSUS",
+    "STAT",
+    "REX",
+    "GATE"
+  ],
+  "sipoc": [
+    {
+      "key": "S",
+      "name": "SUPPLIERS",
+      "detail": "ABACUS, CODEX, cryoplant-project QPS, gg_MATH, helpers and runners",
+      "constraint": "Exact source ownership; no cross-repo authority"
+    },
+    {
+      "key": "I",
+      "name": "INPUTS",
+      "detail": "SHA, run/job/attempt, checks, JUnit, coverage/scanner, BD/LDAB/LLDB receipts, ZIP bytes",
+      "constraint": "Missing or stale observations remain UNKNOWN"
+    },
+    {
+      "key": "P",
+      "name": "PROCESS",
+      "detail": "Verify → census → DMAIC → 3P* → MIP/REX → M1/M2/M3 → admission → recensus",
+      "constraint": "Separate stage readiness and security authority"
+    },
+    {
+      "key": "O",
+      "name": "OUTPUTS",
+      "detail": "Source-bound pulse.json, error census, coverage scope, method proofs, HTML/Mermaid, hold reasons",
+      "constraint": "No synthetic measured gains or fabricated root closure"
+    },
+    {
+      "key": "C",
+      "name": "CUSTOMERS",
+      "detail": "Repository owner, Mission Control, engineer/reviewer, next wave, published observability page",
+      "constraint": "QPS owner acceptance and branch admission separate"
+    }
+  ],
+  "lanes": [
+    {
+      "id": "SUPPLY",
+      "label": "Federated producers",
+      "owner": "CODEX · ABACUS · QPS · gg_MATH · helpers",
+      "kind": "overlay",
+      "stages": [
+        [
+          "DISCOVER",
+          "Find canonical root/run/source",
+          "Producer repo + exact SHA",
+          "Candidate run/job inventory",
+          "source_repos_seen",
+          "Unverified repos → UNKNOWN"
+        ],
+        [
+          "COLLECT",
+          "Fetch read-only receipts",
+          "Run, job, attempt, artifact identifiers",
+          "Run-bound metadata",
+          "source_cells_observed",
+          "Status-only cannot imply bytes"
+        ]
+      ]
+    },
+    {
+      "id": "TRUST",
+      "label": "Evidence admission (read-only)",
+      "owner": "Mission Control G1/G4",
+      "kind": "overlay",
+      "stages": [
+        [
+          "PIN",
+          "Pin producer/consumer identity",
+          "Exact checkout SHA, run ID, artifact ID",
+          "Bound source graph",
+          "identity_match",
+          "Missing id → HOLD"
+        ],
+        [
+          "VERIFY_ZIP",
+          "Validate ZIP bytes and member digests",
+          "Downloaded bytes and declared digests",
+          "BYTE_VERIFIED or UNKNOWN",
+          "verified_archive_bytes",
+          "Upload log ≠ downloaded ZIP verification"
+        ]
+      ]
+    },
+    {
+      "id": "CENSUS",
+      "label": "Census + LDAB spine",
+      "owner": "ABACUS #1994 + Mission Control #531",
+      "kind": "projection",
+      "stages": [
+        [
+          "ENUMERATE",
+          "Count eligible scope",
+          "Repo × KPI family, source files",
+          "Population and UNKNOWN cells",
+          "observed_cells/eligible_cells",
+          "Do not count unscanned population"
+        ],
+        [
+          "FINGERPRINT",
+          "Join signature to causal root",
+          "BD / CI / LDAB / REX IDs",
+          "Roots, manifestations, recurring fingerprints",
+          "root_count_vs_occurrence_count",
+          "Manifestations ≠ distinct roots"
+        ]
+      ]
+    },
+    {
+      "id": "DMAIC",
+      "label": "DMAIC / process supervisor",
+      "owner": "Mission Control registry + ABACUS #1990",
+      "kind": "canonical",
+      "stages": [
+        [
+          "DEFINE",
+          "Name cause, owner, path lease",
+          "Problem statement, DoV",
+          "Owned root and baseline",
+          "ownership_completion",
+          "No root owner → HOLD"
+        ],
+        [
+          "MEASURE",
+          "Record matched scope and telemetry",
+          "SHA, tests, coverage denominator",
+          "Measurement receipt (M1)",
+          "measurement_validity",
+          "Stale/unmatched denominator → UNKNOWN"
+        ],
+        [
+          "ANALYZE",
+          "Compare matched wave cohorts",
+          "Fingerprints, historical failure signatures",
+          "First-red causal classification",
+          "distinct_first_red_roots",
+          "Do not subtract raw scanner counts"
+        ],
+        [
+          "IMPROVE",
+          "Disjoint source repair + tests",
+          "Path lease, verified fix",
+          "New exact-head CI receipt",
+          "source_repair_yield",
+          "Synthetic green ≠ operational proof"
+        ],
+        [
+          "CONTROL",
+          "Observe recurrence after repair",
+          "Exact-main + repeat CI",
+          "REX control candidate",
+          "recurrence_count",
+          "One clean run ≠ process stability"
+        ],
+        [
+          "RECENSUS",
+          "Re-measure the fleet denominator",
+          "Same-schema pulse history",
+          "Next-wave metrics and exceptions",
+          "closed_roots_verified",
+          "Disappeared root ≠ resolved"
+        ]
+      ]
+    },
+    {
+      "id": "3P*",
+      "label": "3P* / method transaction",
+      "owner": "Mission Control canonical method selector",
+      "kind": "canonical",
+      "stages": [
+        [
+          "3PR_REFRESH",
+          "Refresh current state",
+          "Source SHA + first-red queue",
+          "Candidate method shortlist",
+          "freshness_age",
+          "Stale evidence blocks rank"
+        ],
+        [
+          "3PR_PROBE",
+          "Probe source hypothesis",
+          "Native diagnostic testflight",
+          "Diagnostic proof",
+          "probe_yield",
+          "Zero-step red → Dockmaster"
+        ],
+        [
+          "3PR_RANK",
+          "Rank defensible alternatives",
+          "Measured costs/risks; no speculative BT",
+          "Disjoint repair order",
+          "first_red_latency_seconds",
+          "Rank is advisory"
+        ],
+        [
+          "3PC_PREPARE",
+          "Prepare bounded transaction",
+          "Owner, lease, rollback plan",
+          "Ready action receipt",
+          "transaction_completeness",
+          "No owner → HOLD"
+        ],
+        [
+          "3PC_PROVE",
+          "Execute native exact-head checks",
+          "Test + security + governance",
+          "Pass/fail proof",
+          "exact_head_proof_yield",
+          "Do not reuse invalid green"
+        ],
+        [
+          "3PC_COMMIT",
+          "Governed integration only",
+          "Reviewer + effective required checks",
+          "Admission or HOLD",
+          "required_gate_completeness",
+          "Method rank ≠ merge authorization"
+        ]
+      ]
+    },
+    {
+      "id": "MIP",
+      "label": "MIP / conditional improvement",
+      "owner": "ABACUS #1990/#1998",
+      "kind": "canonical",
+      "stages": [
+        [
+          "MODERNIZE",
+          "Eliminate inherited debt",
+          "Recurring first-red/root signals",
+          "Source-corrected repair",
+          "recurrence_drop",
+          "No matched baseline → unknown"
+        ],
+        [
+          "INNOVATE",
+          "Introduce a verified method",
+          "Isolated negative controls",
+          "Native method qualification",
+          "new_verified_methods",
+          "Synthetic tests ≠ fleet rollout"
+        ],
+        [
+          "PERPETUATE",
+          "Check recurrence on exact main",
+          "Control windows + root set",
+          "Reusable REX pattern",
+          "reopened_root_rate",
+          "Only credit after control receipt"
+        ]
+      ]
+    },
+    {
+      "id": "LDAB",
+      "label": "LDAB / LLDB diagnostic path",
+      "owner": "ABACUS LDAB, CODEX debugger, Dockmaster",
+      "kind": "canonical",
+      "stages": [
+        [
+          "LOG",
+          "Bind error log to source",
+          "Run, step, job, SHA",
+          "Log evidence",
+          "log_receipt_completeness",
+          "Unbound logs → UNKNOWN"
+        ],
+        [
+          "DEBUG",
+          "Attach real session",
+          "LLDB/Docker/port session",
+          "Debugger receipt",
+          "debugger_sessions_verified",
+          "No fabricated runtime"
+        ],
+        [
+          "ANALYZE",
+          "Classify causal root",
+          "Repro steps + signature",
+          "Root candidate",
+          "diagnostic_root_match",
+          "Same symptom may have distinct causes"
+        ],
+        [
+          "BREAKPOINT",
+          "Reproduce and isolate",
+          "Session trace and breakpoint",
+          "Executable diagnostic proof",
+          "breakpoint_hit_ratio",
+          "No execution → not proven"
+        ],
+        [
+          "RETEST",
+          "Execute repaired source",
+          "Exact-head impacted tests",
+          "Proof receipt to REX",
+          "retest_pass_rate",
+          "Zero-step tests excluded"
+        ]
+      ]
+    },
+    {
+      "id": "STAT",
+      "label": "M1–M3 / PCA / BT",
+      "owner": "ABACUS #1989 statistical readiness",
+      "kind": "advisory",
+      "stages": [
+        [
+          "M1",
+          "Validate measurement system",
+          "Independent comparable source vectors",
+          "Eligible matrix",
+          "eligible_observations",
+          "Population/config mismatch → HOLD"
+        ],
+        [
+          "M2",
+          "Assess statistical control",
+          "Independent temporal runs",
+          "Control chart / special-cause tests",
+          "out_of_control_signals",
+          "Too few runs → HOLD"
+        ],
+        [
+          "M3",
+          "Assess process capability",
+          "Stable process + justified limits",
+          "Capability estimate",
+          "capability_index_nullable",
+          "M2 unstable → M3 HOLD"
+        ],
+        [
+          "PCA",
+          "Explore co-variation",
+          "Matched numeric multivariate rows",
+          "Explained variance, uncertainty",
+          "explained_variance_nullable",
+          "Correlations do not transfer authority"
+        ],
+        [
+          "BT",
+          "Compare real outcomes",
+          "Connected pairwise winner-loser graph",
+          "Skill/rank intervals",
+          "pairwise_comparisons_observed",
+          "No observed pairs → NO RANK"
+        ]
+      ]
+    },
+    {
+      "id": "REX",
+      "label": "REX / recurring error control",
+      "owner": "Mission Control historian + root owner",
+      "kind": "projection",
+      "stages": [
+        [
+          "LOOKUP",
+          "Find prior proven resolution",
+          "Root family + source scope",
+          "Reused fix candidate",
+          "rex_reuse_eligible",
+          "Keyword match alone insufficient"
+        ],
+        [
+          "VERIFY",
+          "Re-test fix for this head",
+          "Regression + impact tests",
+          "Source-bound proof",
+          "verified_rex_reuse",
+          "Cannot claim closure from producer pass"
+        ],
+        [
+          "CONTROL",
+          "Observe non-recurrence",
+          "Distinct post-main observations",
+          "Root closure candidate",
+          "reopen_rate",
+          "Formal closure requires independent admission"
+        ]
+      ]
+    },
+    {
+      "id": "GATE",
+      "label": "Governance + federation fan-out",
+      "owner": "Repository owners + independent reviewer",
+      "kind": "overlay",
+      "stages": [
+        [
+          "P5",
+          "ABACUS exact-head producer",
+          "1998 testflight + coverage",
+          "Qualified consumer receipt",
+          "p5_eligible",
+          "Native final check pending"
+        ],
+        [
+          "P6",
+          "Mission Control byte validation",
+          "530 ZIP verifier + 531 roll-up",
+          "Authenticated fleet receipt",
+          "p6_byte_verified",
+          "Status-only not accepted"
+        ],
+        [
+          "P7",
+          "Bounded disjoint scout expansion",
+          "6 packages / 2 concurrency / 1 per repo",
+          "Six separately classified returns",
+          "p7_qualified_packets",
+          "Planning capacity ≠ executed"
+        ],
+        [
+          "P8",
+          "M2/M3 process proof",
+          "Matched independent history",
+          "Stable/capable or HOLD",
+          "p8_statistical_readiness",
+          "PCA/BT advisory"
+        ],
+        [
+          "P9",
+          "Exact-main REX control",
+          "Native control + independent approval",
+          "Recurrent-safe closure or HOLD",
+          "p9_root_closure",
+          "Protected branch alone insufficient"
+        ]
+      ]
+    }
+  ],
+  "gates": [
+    "P5",
+    "P6",
+    "P7",
+    "P8",
+    "P9"
+  ],
+  "observation": {
+    "source": "GOGREEN G4 native #531, date 2026-10-15",
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "head_sha": "fd67b5905894cc714406605b74dedd717f051e8c",
+    "run_id": 38707835880,
+    "job_id": 116331559228,
+    "artifact_id": 11959316498,
+    "upload_zip_sha256": "d64b946367de1ea4db571f4001b571dd9fdc82187b644fb5456e581881f4c938",
+    "archive_bytes_independently_verified": false,
+    "classification": "NATIVE_JOB_PASSED_ARTIFACT_UPLOAD_LOG_ONLY",
+    "g0_observed_cells": 1,
+    "g1_observed_cells": 6,
+    "eligible_cells": 42,
+    "focused_module": "mission-control/gogreen/pulse_rollup.py",
+    "focused_source_sha256": "7044c23c7d0e84ee1122dae85df683abb12677c4d4da60b621fce9cef8202555",
+    "coverage_py": "7.13.3",
+    "statements": {
+      "before": 78,
+      "after": 93,
+      "eligible": 93
+    },
+    "branches": {
+      "before": 23,
+      "after": 26,
+      "eligible": 26
+    },
+    "tests": {
+      "baseline": 10,
+      "candidate": 39,
+      "passed_candidate": 39
+    },
+    "scaled_scouts_planned": 6,
+    "scout_concurrency_max": 2,
+    "packets_per_repo_max": 1,
+    "scouts_executed_authenticated": null,
+    "worker_hours": null,
+    "root_closure_credited": 0,
+    "security_waiver": false,
+    "authority_transfer": false,
+    "merge_admission": "HOLD",
+    "published_at": null
+  }
+}

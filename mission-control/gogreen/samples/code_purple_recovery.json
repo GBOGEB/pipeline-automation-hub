@@ -1,0 +1,136 @@
+{
+  "schema": "codepurple.recovery-pulse-input.v1",
+  "authority_transfer": false,
+  "cohort": "CODEX #1043 #1044 #1045 source-bound PR-head first-red technical recovery",
+  "fingerprints": [
+    "MYCELIUM_GENERATED_VALUE_PARITY",
+    "PUBLISHED_HTML_STALE_MANIFEST"
+  ],
+  "comparability": {
+    "same_fingerprints": true,
+    "same_job_predicates": true
+  },
+  "observations": [
+    {
+      "revision": 0,
+      "label": "N-1",
+      "source_repo": "GBOGEB/CODEX",
+      "head_sha": "617b92255455ddd8a9e90140342148cb92b43b2a",
+      "pr_number": 1043,
+      "workflow_counts": {
+        "success": 28,
+        "failure": 3,
+        "cancelled": 1,
+        "pending": 0
+      },
+      "root_observations": {
+        "MYCELIUM_GENERATED_VALUE_PARITY": {
+          "fingerprint": "MYCELIUM_GENERATED_VALUE_PARITY",
+          "predicate": "MissionControl Mycelium CI / Preflight generated-value parity before expensive tests",
+          "state": "UNKNOWN",
+          "run_id": null,
+          "run_attempt": null,
+          "job_id": null,
+          "source_sha": null,
+          "evidence_class": null,
+          "archive_bytes_verified": false
+        },
+        "PUBLISHED_HTML_STALE_MANIFEST": {
+          "fingerprint": "PUBLISHED_HTML_STALE_MANIFEST",
+          "predicate": "CI / Check stale artifacts / scripts/check_stale.py",
+          "state": "FAIL",
+          "run_id": 38599920491,
+          "run_attempt": 1,
+          "job_id": 115976214787,
+          "source_sha": "617b92255455ddd8a9e90140342148cb92b43b2a",
+          "evidence_class": "GITHUB_NATIVE_JOB_STATUS",
+          "archive_bytes_verified": false
+        }
+      }
+    },
+    {
+      "revision": 1,
+      "label": "N",
+      "source_repo": "GBOGEB/CODEX",
+      "head_sha": "463f365bf5ee4c89d8c0af8e6ed42c3240b418e7",
+      "pr_number": 1044,
+      "workflow_counts": {
+        "success": 30,
+        "failure": 4,
+        "cancelled": 0,
+        "pending": 0
+      },
+      "root_observations": {
+        "MYCELIUM_GENERATED_VALUE_PARITY": {
+          "fingerprint": "MYCELIUM_GENERATED_VALUE_PARITY",
+          "predicate": "MissionControl Mycelium CI / Preflight generated-value parity before expensive tests",
+          "state": "FAIL",
+          "run_id": 38602263500,
+          "run_attempt": 1,
+          "job_id": 115984187322,
+          "source_sha": "463f365bf5ee4c89d8c0af8e6ed42c3240b418e7",
+          "evidence_class": "GITHUB_NATIVE_JOB_STATUS",
+          "archive_bytes_verified": false
+        },
+        "PUBLISHED_HTML_STALE_MANIFEST": {
+          "fingerprint": "PUBLISHED_HTML_STALE_MANIFEST",
+          "predicate": "CI / Check stale artifacts / scripts/check_stale.py",
+          "state": "FAIL",
+          "run_id": 38602262557,
+          "run_attempt": 1,
+          "job_id": 115984184053,
+          "source_sha": "463f365bf5ee4c89d8c0af8e6ed42c3240b418e7",
+          "evidence_class": "GITHUB_NATIVE_JOB_STATUS",
+          "archive_bytes_verified": false
+        }
+      }
+    },
+    {
+      "revision": 2,
+      "label": "N+1",
+      "source_repo": "GBOGEB/CODEX",
+      "head_sha": "5721d52e7bc72eb6f1a775f851ed38535678e1d4",
+      "pr_number": 1045,
+      "workflow_counts": {
+        "success": 35,
+        "failure": 0,
+        "cancelled": 0,
+        "pending": 0
+      },
+      "root_observations": {
+        "MYCELIUM_GENERATED_VALUE_PARITY": {
+          "fingerprint": "MYCELIUM_GENERATED_VALUE_PARITY",
+          "predicate": "MissionControl Mycelium CI / Preflight generated-value parity before expensive tests",
+          "state": "PASS",
+          "run_id": 38698148559,
+          "run_attempt": 1,
+          "job_id": 116299535541,
+          "source_sha": "5721d52e7bc72eb6f1a775f851ed38535678e1d4",
+          "evidence_class": "GITHUB_NATIVE_JOB_STATUS",
+          "archive_bytes_verified": false
+        },
+        "PUBLISHED_HTML_STALE_MANIFEST": {
+          "fingerprint": "PUBLISHED_HTML_STALE_MANIFEST",
+          "predicate": "CI / Check stale artifacts / scripts/check_stale.py",
+          "state": "PASS",
+          "run_id": 38698148664,
+          "run_attempt": 1,
+          "job_id": 116299536586,
+          "source_sha": "5721d52e7bc72eb6f1a775f851ed38535678e1d4",
+          "evidence_class": "GITHUB_NATIVE_JOB_STATUS",
+          "archive_bytes_verified": false
+        }
+      }
+    }
+  ],
+  "admission": "HOLD",
+  "qps_disposition": "DEFER",
+  "provenance_notes": [
+    "PR #1043 Mycelium condition UNKNOWN: do not infer a missing workflow as failure",
+    "PR #1044 completed native failing Mycelium and stale-public-entrypoint job logs retain first-red source",
+    "PR #1045 completed native Mycelium parity and CI stale check on exact head",
+    "CODEX #1043/#1044/#1045 merges are historical events; no inferred independent approval or effective branch protection",
+    "Workflow populations 32/34/35 are not comparable denominators",
+    "These are PR-head first-red predicates, not global resolved root IDs or fleet code coverage"
+  ]
+}
