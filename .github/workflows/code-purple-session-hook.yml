@@ -1,0 +1,113 @@
+name: CODE PURPLE Session Intent Golden Thread
+on:
+  pull_request:
+    paths:
+      - 'mission-control/golden-thread/session_hook/**'
+      - 'mission-control/golden-thread/golden_thread.py'
+      - '.github/workflows/code-purple-session-hook.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: code-purple-session-hook-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  manual-intent-replay:
+    name: Exact-head intent lineage, replay, and privacy controls
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout immutable PR SHA
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Source identity and bytecode preflight
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          python -m py_compile mission-control/golden-thread/golden_thread.py \
+            mission-control/golden-thread/session_hook/session_hook.py \
+            mission-control/golden-thread/session_hook/test_session_hook.py
+      - name: Existing canonical Golden Thread regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/golden-thread \
+            -p 'test_golden_thread.py' -v
+      - name: Session hook 19 fail-closed native regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/code-purple-session-hook"
+          python -m unittest discover -s mission-control/golden-thread/session_hook \
+            -p 'test_session_hook.py' -v \
+            2>&1 | tee "$RUNNER_TEMP/code-purple-session-hook/testflight.log"
+          python - <<'PY'
+          from pathlib import Path
+          import os,re
+          p=Path(os.environ['RUNNER_TEMP'])/'code-purple-session-hook/testflight.log'
+          content=p.read_text()
+          found=re.findall(r'Ran (\d+) tests? in',content)
+          if found!=['19'] or '\nOK' not in content:
+              raise SystemExit('session-hook test denominator or success proof missing')
+          PY
+      - name: Build source-bound JSON, Mermaid and HTML receipts
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          NATIVE_RUN_ID: ${{ github.run_id }}
+          NATIVE_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/code-purple-session-hook"
+          python mission-control/golden-thread/session_hook/session_hook.py \
+            --input mission-control/golden-thread/session_hook/SESSION_INTAKE_V1.json \
+            --source-sha "$EXPECTED_SHA" --out "$OUT"
+          python mission-control/golden-thread/golden_thread.py verify \
+            "$OUT/session_ledger.json" > "$OUT/native_chain_verify.json"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'code-purple-session-hook'
+          m=json.loads((out/'session_receipt.json').read_text())
+          v=json.loads((out/'session_projection.json').read_text())
+          ledger=json.loads((out/'session_ledger.json').read_text())
+          assert m['producer_source_sha']==os.environ['EXPECTED_SHA']
+          assert v['producer_source_sha']==os.environ['EXPECTED_SHA']
+          assert (v['intent_count'],v['work_order_count'],v['source_turns_unbound'])==(2,2,2)
+          assert v['native_verified_actions']==0 and v['raw_chat_exported'] is False
+          assert m['merge_authorized'] is False and m['qps_disposition']=='DEFER'
+          assert all(e['non_compensating_preserved'] is True for e in ledger['events'])
+          for name,proof in m['files'].items():
+              raw=(out/name).read_bytes()
+              if 'sha256:'+hashlib.sha256(raw).hexdigest()!=proof['sha256']:
+                  raise SystemExit('generated file digest mismatch: '+name)
+          html=(out/'session_review.html').read_text()
+          assert 'Session intent' in html and 'viewport' in html and 'id="filter"' in html
+          runtime={'schema':'missioncontrol.chat_session_native_producer.v1',
+                   'source_sha':os.environ['EXPECTED_SHA'],
+                   'run_id':int(os.environ['NATIVE_RUN_ID']),
+                   'run_attempt':int(os.environ['NATIVE_ATTEMPT']),
+                   'ledger_head_digest':ledger['head_event_digest'],
+                   'report_digest':'sha256:'+hashlib.sha256((out/'session_projection.json').read_bytes()).hexdigest(),
+                   'executed_tests':19,'passed_tests':19,'failed_tests':0,
+                   'raw_chat_transcript_exported':False,'owner_accepted':False,
+                   'authority_transfer':False,'merge_authorized':False}
+          (out/'native_producer_receipt.json').write_text(json.dumps(runtime,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(runtime,sort_keys=True))
+          PY
+      - name: Upload source-bound session receipt
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: code-purple-session-hook-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/code-purple-session-hook/
+          if-no-files-found: error
+          retention-days: 14
