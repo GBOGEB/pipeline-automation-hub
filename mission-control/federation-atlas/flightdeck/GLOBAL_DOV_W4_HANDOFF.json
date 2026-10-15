@@ -1,0 +1,93 @@
+{
+  "schema": "missioncontrol.global_dov.child_handoff.v1",
+  "snapshot": "2026-10-15",
+  "owner": "GBOGEB/pipeline-automation-hub",
+  "source_control": "f931e443cafae8b286b149ae4331a0326298730a",
+  "mission_control_scope": [
+    "Read-only six-repo census",
+    "Cross-repository orchestration and work order",
+    "Statistical evidence observability",
+    "Links to current native receipts; no owner-side verdicts"
+  ],
+  "global_dov_parent": {
+    "pr": 539,
+    "merged": true,
+    "source_path": "mission-control/federation-atlas/flightdeck/global_dov_owner_control_v1.json",
+    "disposition": "FROZEN_COMPATIBILITY_SOURCE_PENDING_CHILD_CUTOVER"
+  },
+  "children": [
+    {
+      "role": "QPS_ENGINEERING_OWNER",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1928,
+      "head": "a4ff04066f5400e4688d24062245952e0b9020cf",
+      "path": "controls/GLOBAL_DOV_QPS_CHILD_OWNERSHIP_V1.json",
+      "source_state": "PR_CANDIDATE",
+      "native_test_gate": "UNVERIFIED_DEDICATED",
+      "decision": "DEFER"
+    },
+    {
+      "role": "KEB_SEMANTIC_OWNER",
+      "repo": "GBOGEB/CODEX",
+      "pr": 1048,
+      "head": "5a7a37d20eb7005f25cf26a1faafdc2b0399e8b1",
+      "path": "docs/ci/GLOBAL_DOV_KEB_OWNER_V1.json",
+      "source_state": "PR_CANDIDATE",
+      "native_test_gate": "UNVERIFIED_DEDICATED",
+      "decision": "NO_AUTHORITY"
+    },
+    {
+      "role": "DOW_DIAGNOSTIC_OWNER",
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2009,
+      "head": "62b97c28ac902640677ee8d77a50a2845ff64a27",
+      "path": "docs/ci/GLOBAL_DOV_DOW_OWNER_V1.json",
+      "source_state": "PR_CANDIDATE",
+      "native_test_gate": "UNVERIFIED_DEDICATED",
+      "decision": "NO_AUTHORITY"
+    }
+  ],
+  "retained_external_owners": [
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "owner": "model and dependency reference; independent source provenance"
+    },
+    {
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "owner": "QPS-approved document/trace projection, not engineering source"
+    }
+  ],
+  "legacy_actions": [
+    {
+      "id": "COMPATIBILITY_KEEP",
+      "location": "mission-control/federation-atlas/flightdeck/global_dov_owner_control_v1.json",
+      "state": "KEEP_READONLY"
+    },
+    {
+      "id": "FUTURE_PURGE",
+      "location": "duplicate child-owned field values in MC projection only",
+      "state": "DO_NOT_EXECUTE_YET"
+    }
+  ],
+  "purge_admission_requires": [
+    "all three child PRs governed-merged and exact-main test receipts verified",
+    "schema+unit+source-id parity against legacy MC fields",
+    "MissionControl consumer reads exact child-produced accepted exports",
+    "no private QPS data copied into public parent",
+    "git history and immutable last-known-good export retained",
+    "explicit repository owner approval and rollback receipt"
+  ],
+  "metrics": {
+    "moved_owned_contracts": 3,
+    "independently_native_verified_children": 0,
+    "legacy_fields_purged": 0,
+    "formal_engineering_credit": 0
+  },
+  "hard_gates": {
+    "merge_authority_not_delegated": true,
+    "qps": "DEFER",
+    "native_four_hop": "UNKNOWN",
+    "security_waiver": false,
+    "auto_approval": false
+  }
+}
