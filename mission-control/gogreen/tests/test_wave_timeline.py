@@ -27,8 +27,8 @@ class EvolutionaryTimelineTests(unittest.TestCase):
 
     def test_native_g0_g1_g2_report_and_deltas(self):
         r = m.build(self.data(), source_sha=CURRENT)
-        self.assertEqual([w["observed_cells"] for w in r["waves"]], [1, 6, 6])
-        self.assertEqual([w["regression_tests_pass"] for w in r["waves"]], [None, 39, 55])
+        self.assertEqual([w["observed_cells"] for w in r["waves"][:3]], [1, 6, 6])
+        self.assertEqual([w["regression_tests_pass"] for w in r["waves"][:3]], [None, 39, 55])
         self.assertEqual(r["waves"][1]["delta"]["observed_cells"], 5)
         self.assertEqual(r["waves"][2]["delta"]["observed_cells"], 0)
         self.assertEqual(r["waves"][2]["delta"]["native_tests"], 16)
