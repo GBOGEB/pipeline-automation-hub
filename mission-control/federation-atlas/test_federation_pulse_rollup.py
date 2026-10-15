@@ -6,6 +6,7 @@ import json
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -184,13 +185,13 @@ class FederationMeasuredWaveTests(unittest.TestCase):
         page = m.render(m.rollup(records()))
         self.assertIn("38707522432", page)
         self.assertIn("UNKNOWN", page)
-        self.assertIn("DEFER", page) if "DEFER" in page else self.assertIn("admission", page.lower())
+        self.assertIn("admission", page.lower())
         self.assertNotIn("<script>", page)
 
     def test_cli_writes_machine_and_human_receipts(self):
         with tempfile.TemporaryDirectory() as directory:
             out = Path(directory)
-            with unittest.mock.patch.object(sys, "argv", [
+            with mock.patch.object(sys, "argv", [
                 "rollup", "--input", str(FIXTURE), "--out", str(out)
             ]):
                 self.assertEqual(0, m.main())
