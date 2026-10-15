@@ -43,7 +43,7 @@ jobs:
           out = Path(os.environ['RUNNER_TEMP'])/'gogreen-pulses'
           log = (out/'unit_tests.log').read_text()
           found = re.findall(r'Ran (\d+) tests? in', log)
-          if len(found)!=1 or int(found[0]) < 35 or '\nOK' not in log:
+          if len(found)!=1 or int(found[0]) < 74 or '\nOK' not in log:
               raise SystemExit('Missing or zero native regression-test receipt')
           (out/'native_test_counts.json').write_text(
               json.dumps({'schema':'gogreen.native-test-counts.v1',
@@ -65,6 +65,10 @@ jobs:
           python mission-control/gogreen/recovery_wave.py \
             --input mission-control/gogreen/samples/code_purple_recovery.json \
             --out "$RUNNER_TEMP/gogreen-pulses"
+          python mission-control/gogreen/wave_timeline.py \
+            --input mission-control/gogreen/samples/wave_timeline.json \
+            --out "$RUNNER_TEMP/gogreen-pulses" \
+            --source-sha "$EXPECTED_SHA"
       - name: G4 comparable focused module coverage
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -152,6 +156,8 @@ jobs:
           sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
           report_bytes=(out/'pulse_rollup.json').read_bytes()
           recovery_bytes=(out/'recovery_wave.json').read_bytes()
+          history_bytes=(out/'wave_timeline.json').read_bytes()
+          history=json.loads(history_bytes)
           recovery=json.loads(recovery_bytes)
           report=json.loads(report_bytes)
           assert sha==os.environ['EXPECTED_SHA']==report['source_git_sha']
@@ -162,12 +168,22 @@ jobs:
           assert hashlib.sha256(recovery_bytes).hexdigest()==(out/'recovery_wave.sha256').read_text().strip()
           assert recovery['last_comparison']['repaired_first_reds_on_pr_head']==2
           assert recovery['merge_authorized'] is False and recovery['global_root_closure'] is None
+          assert hashlib.sha256(history_bytes).hexdigest()==(out/'wave_timeline.sha256').read_text().strip()
+          assert history['producer_source_sha']==sha and history['merge_authorized'] is False
+          assert [w['wave'] for w in history['waves']]==['G0','G1','G2']
+          assert history['future']=={'next_wave':'G3','status':'WAIT_FOR_NATIVE_EVIDENCE'}
+          assert history['waves'][-1]['delta']['native_tests']==16
+          assert history['waves'][-1]['delta']['observed_cells']==0
+          assert history['waves'][-1]['delta']['focused_statement_coverage_pp']==0
+          assert (out/'wave_timeline.html').stat().st_size>1000
+          assert (out/'wave_timeline.md').stat().st_size>200
           receipt={'schema':'gogreen.g4.native-provenance.v1',
                    'repository':os.environ['REPOSITORY'],'checked_out_sha':sha,
                    'run_id':int(os.environ['RUN_ID']),
                    'run_attempt':int(os.environ['RUN_ATTEMPT']),
                    'pulse_rollup_sha256':hashlib.sha256(report_bytes).hexdigest(),
                    'code_purple_recovery_sha256':hashlib.sha256(recovery_bytes).hexdigest(),
+                   'rolling_wave_timeline_sha256':hashlib.sha256(history_bytes).hexdigest(),
                    'admission':'HOLD','authority_transfer':False}
           (out/'native_provenance.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n')
           PY
