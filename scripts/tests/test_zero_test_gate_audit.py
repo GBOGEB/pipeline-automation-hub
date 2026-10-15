@@ -76,5 +76,38 @@ class ZeroTestGateAuditTests(unittest.TestCase):
         self.assertEqual(ztga.audit(repo)["rows"][0]["state"], "UNRESOLVED")
 
 
+    def test_tee_log_variable_does_not_poison_unittest_discover(self):
+        repo = self.repo({
+            "t/test_case.py": CASE,
+            ".github/workflows/w.yml": workflow(
+                'python -m unittest discover -s t -q 2>&1 | tee "$RUNNER_TEMP/test.log"'
+            ),
+        })
+        result = ztga.audit(repo)
+        self.assertEqual(result["summary"]["unresolved_gates"], 0)
+        self.assertEqual(result["rows"][0]["state"], "OK")
+        self.assertGreater(result["rows"][0]["tests_collectable"], 0)
+        self.assertEqual(ztga.main(["--repo", str(repo), "--strict"]), 0)
+
+    def test_unittest_selector_variable_is_still_unresolved(self):
+        repo = self.repo({
+            "t/test_case.py": CASE,
+            ".github/workflows/w.yml": workflow(
+                'python -m unittest discover -s "$TEST_ROOT" -q 2>&1 | tee "$RUNNER_TEMP/test.log"'
+            ),
+        })
+        self.assertEqual(ztga.audit(repo)["rows"][0]["state"], "UNRESOLVED")
+        self.assertEqual(ztga.main(["--repo", str(repo), "--strict"]), 2)
+
+    def test_zero_test_suite_still_fails_with_tee(self):
+        repo = self.repo({
+            "t/test_bare.py": BARE,
+            ".github/workflows/w.yml": workflow(
+                'python -m unittest t/test_bare.py -q 2>&1 | tee "$RUNNER_TEMP/test.log"'
+            ),
+        })
+        self.assertEqual(ztga.audit(repo)["rows"][0]["state"], "ZERO_TESTS")
+        self.assertEqual(ztga.main(["--repo", str(repo), "--strict"]), 1)
+
 if __name__ == "__main__":
     unittest.main()
