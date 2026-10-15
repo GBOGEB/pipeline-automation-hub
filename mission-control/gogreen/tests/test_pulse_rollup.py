@@ -72,6 +72,53 @@ class PulseTests(unittest.TestCase):
             self.assertEqual(len(a),64)
             self.assertIn('G1', (p / 'pulse_rollup.md').read_text())
 
+    def test_counterfactual_denominator_change_rejected(self):
+        from unittest.mock import patch
+        real = m._extract(self.g0)[0]
+        bad = copy.deepcopy(real)
+        bad['breadth']['catalog_repo_family_cells'] += 1
+        with patch.object(m, '_extract', side_effect=[(real, {}), (bad, {})]):
+            with self.assertRaisesRegex(ValueError, 'denominator drift'):
+                m.rollup(self.g0, self.g1)
+
+    def test_counterfactual_observed_regression_rejected(self):
+        from unittest.mock import patch
+        real = m._extract(self.g0)[0]
+        bad = copy.deepcopy(real)
+        bad['breadth']['observed_cells'] = 0
+        with patch.object(m, '_extract', side_effect=[(real, {}), (bad, {})]):
+            with self.assertRaisesRegex(ValueError, 'observation regression'):
+                m.rollup(self.g0, self.g1)
+
+    def test_native_entrypoint_generates_receipts(self):
+        import subprocess
+        import tempfile
+        with tempfile.TemporaryDirectory() as temp:
+            out = Path(temp)
+            cmd = [sys.executable, str(ROOT / 'pulse_rollup.py'),
+                   '--g0', str(ROOT / 'samples' / 'fleet_g0.json'),
+                   '--g1', str(ROOT / 'samples' / 'fleet_g1.json'),
+                   '--source-sha', 'a' * 40, '--out', str(out)]
+            proc = subprocess.run(cmd, capture_output=True, text=True,
+                                  check=True, timeout=10)
+            self.assertEqual(json.loads(proc.stdout)['scale_plan_count'], 6)
+            self.assertEqual(json.loads((out / 'pulse_rollup.json').read_text())['source_git_sha'], 'a' * 40)
+
+    def test_python_main_guard_executes(self):
+        import contextlib
+        import io
+        import runpy
+        import tempfile
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as temp:
+            args = [str(ROOT / 'pulse_rollup.py'),
+                    '--g0', str(ROOT / 'samples' / 'fleet_g0.json'),
+                    '--g1', str(ROOT / 'samples' / 'fleet_g1.json'),
+                    '--out', temp]
+            with patch.object(sys, 'argv', args), contextlib.redirect_stdout(io.StringIO()):
+                runpy.run_path(str(ROOT / 'pulse_rollup.py'), run_name='__main__')
+            self.assertTrue((Path(temp) / 'pulse_rollup.sha256').exists())
+
     def test_no_authority_transfer(self):
         report = m.rollup(self.g0, self.g1)
         self.assertEqual(report['qps_disposition'],'DEFER')
