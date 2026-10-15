@@ -70,6 +70,58 @@ jobs:
           else
             python mission-control/federation-atlas/build_atlas.py --method "$SELECTED_METHOD" --stage "$SELECTED_STAGE" --out /tmp/code-purple-atlas
           fi
+      - name: Flight Deck source-matched producer (single Atlas artifact, no Pages)
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/flightdeck
+          FLEET=mission-control/gogreen/samples/fleet_g1.json
+          OUT=/tmp/code-purple-atlas/flightdeck
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          python -m coverage run --branch --source=flightdeck -m unittest discover \
+            -s "$SRC" -p test_flightdeck.py -v > "$RUNNER_TEMP/flightdeck-tests.log" 2>&1
+          cat "$RUNNER_TEMP/flightdeck-tests.log"
+          python -m coverage json -o "$RUNNER_TEMP/flightdeck-coverage.json" -q
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          log=(Path(os.environ["RUNNER_TEMP"])/"flightdeck-tests.log").read_text()
+          found=[int(x) for x in re.findall(r"Ran (\\d+) tests? in",log)]
+          if len(found)!=1 or found[0]<42 or "\\nOK" not in log:
+              raise SystemExit("FLIGHTDECK_ZERO_OR_FAILED_TESTS")
+          c=json.loads((Path(os.environ["RUNNER_TEMP"])/"flightdeck-coverage.json").read_text())
+          t=c["totals"]
+          if c["meta"].get("version")!="7.13.3" or len(c["files"])!=1:
+              raise SystemExit("FLIGHTDECK_SCOPE_OR_TOOL_DRIFT")
+          if t["percent_statements_covered"]<95 or t["percent_branches_covered"]<90:
+              raise SystemExit("FLIGHTDECK_FOCUSED_COVERAGE_BELOW_FLOOR")
+          print(json.dumps({"status":"PASS","executed":found[0],"lines_pct":t["percent_statements_covered"],"branches_pct":t["percent_branches_covered"],"scope":"FOCUSED_FLIGHTDECK_MODULE","fleet_coverage_claim":False},sort_keys=True))
+          PY
+          python "$SRC/flightdeck.py" preflight --fleet "$FLEET" \
+            --snapshot "$SRC/head_snapshot.json" --contract "$SRC/flightdeck_contract.json"
+          python "$SRC/flightdeck.py" build --fleet "$FLEET" \
+            --snapshot "$SRC/head_snapshot.json" --contract "$SRC/flightdeck_contract.json" \
+            --out "$OUT" --exact-git-sha "$EXACT_SHA"
+          python "$SRC/flightdeck.py" seal --out "$OUT"
+          python "$SRC/flightdeck.py" verify --out "$OUT"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path("/tmp/code-purple-atlas/flightdeck")
+          c=json.loads((p/"census.json").read_text())
+          m=json.loads((p/"manifest.json").read_text())
+          assert c["exact_checkout_sha"]==m["exact_checkout_sha"]==os.environ["EXACT_SHA"]
+          assert c["metrics"]["eligible_cells"]==42
+          assert c["metrics"]["unobserved_cells"]==36
+          assert c["merge_authorized"] is False
+          for n in ("index.html","flightdeck.svg","bd_leaves.json","anchors.json","GUIDE.md"):
+              assert (p/n).is_file() and (p/n).stat().st_size>0
+          print("FLIGHTDECK_EXACT_SHA_ARTIFACT_INTEGRITY=PASS")
+          PY
+          cp "$RUNNER_TEMP/flightdeck-coverage.json" /tmp/code-purple-atlas/flightdeck-coverage.json
+          cp "$RUNNER_TEMP/flightdeck-tests.log" /tmp/code-purple-atlas/flightdeck-tests.log
       - name: Roll up historical federation waves and method eligibility
         run: |
           python mission-control/federation-atlas/federation_pulse_rollup.py \
