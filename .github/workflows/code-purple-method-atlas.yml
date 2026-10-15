@@ -70,6 +70,28 @@ jobs:
           else
             python mission-control/federation-atlas/build_atlas.py --method "$SELECTED_METHOD" --stage "$SELECTED_STAGE" --out /tmp/code-purple-atlas
           fi
+      - name: Roll up historical federation waves and method eligibility
+        run: |
+          python mission-control/federation-atlas/federation_pulse_rollup.py \
+            --input mission-control/federation-atlas/FEDERATION_OBSERVED_PULSES_v1.json \
+            --out /tmp/code-purple-atlas
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("/tmp/code-purple-atlas/federation-wave-metrics.json")
+          data=json.loads(p.read_text(encoding="utf-8"))
+          assert data["qps_owner_decision"] == "DEFER"
+          assert data["native_cross_repo_chain_verified"] is None
+          assert data["measured_coverage_breadth"]["eligible"] == 5
+          with Path("/tmp/code-purple-atlas/federation-wave-summary.md").open(
+                  "w", encoding="utf-8") as stream:
+              stream.write("# Federation source-bound observation pulse\\n")
+              stream.write(
+                  "Measured coverage repositories: "
+                  + str(data["measured_coverage_breadth"]["observed"])
+                  + "/5 (NOT full fleet coverage)\\n"
+              )
+          PY
       - name: Upload identity-bound HTML SVG and metrics
         uses: actions/upload-artifact@v4
         with:
