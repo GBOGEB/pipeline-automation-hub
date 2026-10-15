@@ -40,7 +40,7 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/m3"
           node mission-control/federation-atlas/m2_session/continuation/test_m3_handover.js 2>&1 | tee "$RUNNER_TEMP/m3/m3_testflight.log"
-          grep -q '^Ran 36 M3 tests: PASS "$RUNNER_TEMP/m3/m3_testflight.log"
+          grep -q '^Ran 36 M3 tests: PASS
       - name: Existing canonical M2 portal regressions
         shell: bash
         run: |
@@ -160,7 +160,7 @@ jobs:
           const receipt={schema:'missioncontrol.m3_native_receipt.v1',
             source_sha:process.env.HEAD_SHA,run_id:Number(process.env.NATIVE_RUN),
             attempt:Number(process.env.NATIVE_ATTEMPT),
-            checks:{m3_native_negative_tests:35,m2_existing_tests:12,
+            checks:{m3_native_negative_tests:36,m2_existing_tests:12,
                     source_pins:'PASS',exact_head:'PASS',hash_parity:'PASS',
                     browser_visual_qa:'DEFER',crossrepo_recipient:'DEFER'},
             qps:'DEFER',release:'HOLD',merge_authorized:false};
