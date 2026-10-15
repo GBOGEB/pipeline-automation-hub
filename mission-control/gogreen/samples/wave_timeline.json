@@ -1,0 +1,217 @@
+{
+  "schema": "gogreen.rolling-wave-ledger.v1",
+  "cohort": "SIX_REPO_FIXED_42_CELLS",
+  "catalog": [
+    {
+      "repository": "GBOGEB/ABACUS",
+      "sha": "b50c64b02e2b85c7f6f12388011c7778299fb1c0",
+      "target_family_cells": 8
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "sha": "3872c2cf44ac274c7f3f9e420e9b81a8eb1a7062",
+      "target_family_cells": 8
+    },
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "sha": "87ec869eaf427c7ceed62eed1c61b05b77c5969d",
+      "target_family_cells": 8
+    },
+    {
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "target_family_cells": 6
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "sha": "c7c1344c3ed289ac8e74b8425d219fae696cdb7d",
+      "target_family_cells": 7
+    },
+    {
+      "repository": "GBOGEB/gg_MATH",
+      "sha": "c5cd3e30a8e241111fc9f15367f3b92ba0393ea7",
+      "target_family_cells": 5
+    }
+  ],
+  "authority_transfer": false,
+  "merge_authorized": false,
+  "qps_disposition": "DEFER",
+  "wave_clock": "LOGICAL_WAVE_NOT_INDEPENDENT_GIT_REVISION",
+  "waves": [
+    {
+      "wave": "G0",
+      "ordinal": 0,
+      "kind": "HISTORICAL_CENSUS_RECONSTRUCTED",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "source_sha": "fd67b5905894cc714406605b74dedd717f051e8c",
+      "run_id": 38707835880,
+      "job_id": 116331559228,
+      "run_attempt": 1,
+      "workflow_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38707835880",
+      "run_conclusion": "success",
+      "archive_artifact_id": 11959316498,
+      "archive_sha256": "sha256:d64b946367de1ea4db571f4001b571dd9fdc82187b644fb5456e581881f4c938",
+      "archive_bytes_independently_verified": false,
+      "fleet": {
+        "observed_cells": 1,
+        "catalog_cells": 42,
+        "status_only_cells": 0,
+        "verified_source_archive_bytes": 0
+      },
+      "tests": {
+        "suite_id": "GOGREEN_G4_NATIVE_UNITTTEST_DISCOVERY",
+        "executed": null,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      },
+      "focused": null,
+      "root_predicates_recovered": null,
+      "scope_notes": "G0 historical census reconstructed and emitted by G1 run; native regression counts not measured for G0",
+      "observed_at_utc": "2026-10-15T08:45:13Z"
+    },
+    {
+      "wave": "G1",
+      "ordinal": 1,
+      "kind": "BREADTH_EXPANSION",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "source_sha": "fd67b5905894cc714406605b74dedd717f051e8c",
+      "run_id": 38707835880,
+      "job_id": 116331559228,
+      "run_attempt": 1,
+      "workflow_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38707835880",
+      "run_conclusion": "success",
+      "archive_artifact_id": 11959316498,
+      "archive_sha256": "sha256:d64b946367de1ea4db571f4001b571dd9fdc82187b644fb5456e581881f4c938",
+      "archive_bytes_independently_verified": false,
+      "fleet": {
+        "observed_cells": 6,
+        "catalog_cells": 42,
+        "status_only_cells": 5,
+        "verified_source_archive_bytes": 0
+      },
+      "tests": {
+        "suite_id": "GOGREEN_G4_NATIVE_UNITTTEST_DISCOVERY",
+        "executed": 39,
+        "passed": 39,
+        "failed": 0,
+        "skipped": 0
+      },
+      "focused": {
+        "tool": "coverage.py",
+        "tool_version": "7.13.3",
+        "source_file": "mission-control/gogreen/pulse_rollup.py",
+        "source_file_sha256": "7044c23c7d0e84ee1122dae85df683abb12677c4d4da60b621fce9cef8202555",
+        "statements": {
+          "covered": 93,
+          "eligible": 93
+        },
+        "branches": {
+          "covered": 26,
+          "eligible": 26
+        }
+      },
+      "root_predicates_recovered": null,
+      "scope_notes": "Five new GitHub-native status-only observations; artifact content verification not established",
+      "observed_at_utc": "2026-10-15T08:45:13Z"
+    },
+    {
+      "wave": "G2",
+      "ordinal": 2,
+      "kind": "ROOT_DEPTH_AND_TEST_EXPANSION",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "source_sha": "2ef1e03c234c2d74aaa90ca193d42307e60c61e2",
+      "run_id": 38709078403,
+      "job_id": 116335723230,
+      "run_attempt": 1,
+      "workflow_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38709078403",
+      "run_conclusion": "success",
+      "archive_artifact_id": 11959587500,
+      "archive_sha256": "sha256:e74054b6c3eb63b06ad670348e14b95b40145399bd1831aba8a90cbc3f8cfc3e",
+      "archive_bytes_independently_verified": false,
+      "fleet": {
+        "observed_cells": 6,
+        "catalog_cells": 42,
+        "status_only_cells": 5,
+        "verified_source_archive_bytes": 0
+      },
+      "tests": {
+        "suite_id": "GOGREEN_G4_NATIVE_UNITTTEST_DISCOVERY",
+        "executed": 55,
+        "passed": 55,
+        "failed": 0,
+        "skipped": 0
+      },
+      "focused": {
+        "tool": "coverage.py",
+        "tool_version": "7.13.3",
+        "source_file": "mission-control/gogreen/pulse_rollup.py",
+        "source_file_sha256": "7044c23c7d0e84ee1122dae85df683abb12677c4d4da60b621fce9cef8202555",
+        "statements": {
+          "covered": 93,
+          "eligible": 93
+        },
+        "branches": {
+          "covered": 26,
+          "eligible": 26
+        }
+      },
+      "root_predicates_recovered": 2,
+      "scope_notes": "Recovery fingerprints refer to source-bounded CODEX #1044→#1045 native run/job transitions, not global root closure",
+      "observed_at_utc": "2026-10-15T08:56:08Z"
+    },
+    {
+      "wave": "G3",
+      "ordinal": 3,
+      "kind": "ROLLING_MONOCHROME_DASHBOARD_AND_NEGATIVE_TEST_EXPANSION",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "source_sha": "8c122e4db05f204a52f3c66cf00da5a05d03625b",
+      "run_id": 38711768920,
+      "job_id": 116344608477,
+      "run_attempt": 1,
+      "workflow_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38711768920",
+      "run_conclusion": "success",
+      "archive_artifact_id": 11960982893,
+      "archive_sha256": "sha256:8064608bd5dd9b4cac573049b6698771b4c6ded7da5e7736f0f4c5192937b1ee",
+      "archive_bytes_independently_verified": false,
+      "fleet": {
+        "observed_cells": 6,
+        "catalog_cells": 42,
+        "status_only_cells": 5,
+        "verified_source_archive_bytes": 0
+      },
+      "tests": {
+        "suite_id": "GOGREEN_G4_NATIVE_UNITTTEST_DISCOVERY",
+        "executed": 75,
+        "passed": 75,
+        "failed": 0,
+        "skipped": 0
+      },
+      "focused": {
+        "tool": "coverage.py",
+        "tool_version": "7.13.3",
+        "source_file": "mission-control/gogreen/pulse_rollup.py",
+        "source_file_sha256": "7044c23c7d0e84ee1122dae85df683abb12677c4d4da60b621fce9cef8202555",
+        "statements": {
+          "covered": 93,
+          "eligible": 93
+        },
+        "branches": {
+          "covered": 26,
+          "eligible": 26
+        }
+      },
+      "root_predicates_recovered": null,
+      "scope_notes": "Native source-bound rolling-wave dashboard verified with 75/75 regression tests; 20 additional checks over G2. No fresh repair root or fleet-cell gain claimed.",
+      "observed_at_utc": "2026-10-15T09:17:11Z"
+    }
+  ],
+  "measurement_rules": {
+    "unknown_not_zero": true,
+    "test_counts_not_code_coverage": true,
+    "root_recovery_not_global_closure": true,
+    "uploaded_archive_digest_not_verified_bytes": true,
+    "coverage_comparability_requires_source_digest_and_tool": true
+  },
+  "future_wave_status": "PENDING_EVIDENCE_NOT_A_DATA_ROW"
+}

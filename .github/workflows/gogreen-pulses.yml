@@ -1,0 +1,200 @@
+name: GOGREEN G4 Wave Metrics
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/**'
+      - '.github/workflows/gogreen-pulses.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: gogreen-g4-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  governed-pulse:
+    name: G4 source-bound wave rollup
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - name: Checkout immutable exact head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Execute real GOGREEN regression and negative tests
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          mkdir -p "$RUNNER_TEMP/gogreen-pulses"
+          python -m compileall -q mission-control/gogreen
+          python -m unittest discover -s mission-control/gogreen/tests -q \
+            2>&1 | tee "$RUNNER_TEMP/gogreen-pulses/unit_tests.log"
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          out = Path(os.environ['RUNNER_TEMP'])/'gogreen-pulses'
+          log = (out/'unit_tests.log').read_text()
+          found = re.findall(r'Ran (\d+) tests? in', log)
+          if len(found)!=1 or int(found[0]) < 75 or '\nOK' not in log:
+              raise SystemExit('Missing or zero native regression-test receipt')
+          (out/'native_test_counts.json').write_text(
+              json.dumps({'schema':'gogreen.native-test-counts.v1',
+                'executed':int(found[0]), 'passed':int(found[0]),
+                'failed':0, 'skipped':0,
+                'source_sha':os.environ['EXPECTED_SHA'],
+                'measurement':'NATIVE_GITHUB_UNIT_TESTS_ONLY'},sort_keys=True,indent=2)+'\n')
+          PY
+      - name: Generate bounded per-wave metrics
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python mission-control/gogreen/pulse_rollup.py \
+            --g0 mission-control/gogreen/samples/fleet_g0.json \
+            --g1 mission-control/gogreen/samples/fleet_g1.json \
+            --out "$RUNNER_TEMP/gogreen-pulses" \
+            --source-sha "$EXPECTED_SHA" \
+            --workers 2 --per-repo 1 --packet-budget 12
+          python mission-control/gogreen/recovery_wave.py \
+            --input mission-control/gogreen/samples/code_purple_recovery.json \
+            --out "$RUNNER_TEMP/gogreen-pulses"
+          python mission-control/gogreen/wave_timeline.py \
+            --input mission-control/gogreen/samples/wave_timeline.json \
+            --out "$RUNNER_TEMP/gogreen-pulses" \
+            --source-sha "$EXPECTED_SHA"
+      - name: G4 comparable focused module coverage
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          OUT="$RUNNER_TEMP/gogreen-pulses"
+          export PYTHONPATH="mission-control/gogreen/tests:mission-control/gogreen"
+          COVERAGE_FILE="$OUT/.baseline" python -m coverage run --branch \
+            --include='*/mission-control/gogreen/pulse_rollup.py' -m unittest \
+            test_pulse_rollup.PulseTests.test_fixed_catalog_and_growth \
+            test_pulse_rollup.PulseTests.test_source_catalog_drift_rejected \
+            test_pulse_rollup.PulseTests.test_baseline_deletion_rejected \
+            test_pulse_rollup.PulseTests.test_baseline_rewrite_rejected \
+            test_pulse_rollup.PulseTests.test_invalid_sha_rejected \
+            test_pulse_rollup.PulseTests.test_no_self_asserted_bytes \
+            test_pulse_rollup.PulseTests.test_capped_disjoint_plan \
+            test_pulse_rollup.PulseTests.test_low_cap_and_negative_budget \
+            test_pulse_rollup.PulseTests.test_output_deterministic \
+            test_pulse_rollup.PulseTests.test_no_authority_transfer \
+            > "$OUT/g4_baseline_tests.log" 2>&1
+          COVERAGE_FILE="$OUT/.baseline" python -m coverage json \
+            -o "$OUT/g4_baseline_coverage.json" -q
+          COVERAGE_FILE="$OUT/.expanded" python -m coverage run --branch \
+            --include='*/mission-control/gogreen/pulse_rollup.py' \
+            -m unittest discover -s mission-control/gogreen/tests -q \
+            > "$OUT/g4_expanded_tests.log" 2>&1
+          COVERAGE_FILE="$OUT/.expanded" python -m coverage json \
+            -o "$OUT/g4_expanded_coverage.json" -q
+          python - <<'PY'
+          import hashlib,json,os,re
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'gogreen-pulses'
+          key='mission-control/gogreen/pulse_rollup.py'
+          reports=[json.loads((out/name).read_text()) for name in
+            ('g4_baseline_coverage.json','g4_expanded_coverage.json')]
+          if any(x['meta'].get('version')!='7.13.3' or list(x.get('files',{})) != [key] for x in reports):
+              raise SystemExit('Tool version, source scope or coverage producer mismatch')
+          summaries=[x['files'][key]['summary'] for x in reports]
+          result={}
+          for dimension,numerator,denominator in (
+                ('statements','covered_lines','num_statements'),
+                ('branches','covered_branches','num_branches')):
+              before,after=summaries
+              b,e=before[numerator],before[denominator]
+              a,f=after[numerator],after[denominator]
+              if not all(type(v) is int and v>=0 for v in (a,b,e,f)) or e!=f or e==0 or a>e or b>e:
+                  raise SystemExit('Coverage denominator drift or invalid fraction')
+              result[dimension]={'before_covered':b,'after_covered':a,'eligible':e,
+                'gain_pp':round(100*(a-b)/e,4)}
+          counts=[]
+          for file in ('g4_baseline_tests.log','g4_expanded_tests.log'):
+              log=(out/file).read_text()
+              hits=re.findall(r'Ran (\d+) tests? in',log)
+              if len(hits)!=1 or '\nOK' not in log: raise SystemExit('No real passing test denominator')
+              counts.append(int(hits[0]))
+          if counts[0]!=10 or counts[1]<39:
+              raise SystemExit('Unexpected native coverage test selection')
+          source=Path(key).read_bytes()
+          receipt={'schema':'gogreen.g4.scope-comparable-coverage.v1',
+            'source_git_sha':os.environ['EXPECTED_SHA'],
+            'source_file_sha256':hashlib.sha256(source).hexdigest(),
+            'coverage_tool_version':'7.13.3',
+            'scope':'FOCUSED_G4_MODULE_SAME_SOURCE_BYTES',
+            'tests_baseline':counts[0],'tests_candidate':counts[1],
+            'coverage':result,'broad_fleet_coverage_gain':None,
+            'merge_authorized':False,'authority_transfer':False}
+          raw=(json.dumps(receipt,sort_keys=True,indent=2)+'\n').encode()
+          (out/'g4_focused_coverage.json').write_bytes(raw)
+          (out/'g4_focused_coverage.sha256').write_text(hashlib.sha256(raw).hexdigest()+'\n')
+          print(json.dumps(receipt,sort_keys=True))
+          PY
+      - name: Verify exact-head artifact bytes and HOLD boundary
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'gogreen-pulses'
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          report_bytes=(out/'pulse_rollup.json').read_bytes()
+          recovery_bytes=(out/'recovery_wave.json').read_bytes()
+          history_bytes=(out/'wave_timeline.json').read_bytes()
+          history=json.loads(history_bytes)
+          recovery=json.loads(recovery_bytes)
+          report=json.loads(report_bytes)
+          assert sha==os.environ['EXPECTED_SHA']==report['source_git_sha']
+          assert report['merge_authorized'] is False and report['authority_transfer'] is False
+          assert report['scale_plan']['dispatch_authorized'] is False
+          assert len(report['waves'])==2 and report['waves'][1]['observed_cells']==6
+          assert hashlib.sha256(report_bytes).hexdigest()==(out/'pulse_rollup.sha256').read_text().strip()
+          assert hashlib.sha256(recovery_bytes).hexdigest()==(out/'recovery_wave.sha256').read_text().strip()
+          assert recovery['last_comparison']['repaired_first_reds_on_pr_head']==2
+          assert recovery['merge_authorized'] is False and recovery['global_root_closure'] is None
+          assert hashlib.sha256(history_bytes).hexdigest()==(out/'wave_timeline.sha256').read_text().strip()
+          assert history['producer_source_sha']==sha and history['merge_authorized'] is False
+          wave_labels=[w['wave'] for w in history['waves']]
+          assert len(wave_labels)>=3
+          assert wave_labels==[f'G{i}' for i in range(len(wave_labels))]
+          assert history['future']=={'next_wave':f'G{len(wave_labels)}',
+                                      'status':'WAIT_FOR_NATIVE_EVIDENCE'}
+          assert history['waves'][2]['delta']['native_tests']==16
+          assert history['waves'][2]['delta']['observed_cells']==0
+          assert history['waves'][2]['delta']['focused_statement_coverage_pp']==0
+          assert (out/'wave_timeline.html').stat().st_size>1000
+          assert (out/'wave_timeline.md').stat().st_size>200
+          receipt={'schema':'gogreen.g4.native-provenance.v1',
+                   'repository':os.environ['REPOSITORY'],'checked_out_sha':sha,
+                   'run_id':int(os.environ['RUN_ID']),
+                   'run_attempt':int(os.environ['RUN_ATTEMPT']),
+                   'pulse_rollup_sha256':hashlib.sha256(report_bytes).hexdigest(),
+                   'code_purple_recovery_sha256':hashlib.sha256(recovery_bytes).hexdigest(),
+                   'rolling_wave_timeline_sha256':hashlib.sha256(history_bytes).hexdigest(),
+                   'admission':'HOLD','authority_transfer':False}
+          (out/'native_provenance.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n')
+          PY
+      - name: Upload evidence without mutation
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gogreen-g4-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/gogreen-pulses/
+          if-no-files-found: warn
+          retention-days: 30
