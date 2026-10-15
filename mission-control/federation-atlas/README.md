@@ -92,3 +92,33 @@ and signed run/artifact-byte provenance need separate evidence and authority.
 When a future authenticated G4 pulse changes the measured population, update
 the source-bound observations in the same PR and re-run the exact native
 renderer. Do not rewrite the old historical observation into a new claim.
+
+## W3 convergence — use the existing single Atlas artifact producer
+
+The Atlas workflow may generate the W1/W2 Flight Deck from the **canonical**
+`mission-control/gogreen/samples/fleet_g1.json` and controlled
+`mission-control/federation-atlas/flightdeck` JSON sources after completing
+the 42+ native regression tests, exact-checkout binding, 95% line and 90%
+branch **focused Flight Deck module** coverage floors, and a SHA-bound
+manifest verification. The generated `flightdeck/index.html` and JSON/SVG
+are included under the **same** `code-purple-method-atlas-<SHA>` Actions
+artifact. The Atlas landing page links to its Flight Deck leaf.
+
+**Cost control:** this is one extra stage in the existing Atlas job, **not**
+a new workflow or Pages job. The controls fail closed if zero tests execute,
+if the source file/coverage tool changes, if any SHA/manifest claim diverges,
+or if the required six-repository 42-cell historical census fails.
+
+**Evidence boundary:** passing the Atlas workflow is an exact-head artifact
+producer proof only. Historical G4 observations remain 6/42 with 36 UNKNOWN;
+original archived ZIP-byte trust, refreshed current-head observation and
+corporate/QPS acceptance require independent receipts. A pre-existing Jekyll
+Pages deploy does not publish this Actions artifact by itself. Do not
+claim HOSTED_VERIFIED before a site URL and hosted-content digest readback.
+
+**Owner admission:** master protection/ruleset is a separate P0 control.
+Do not merge this branch without authorized gate/review process. To avoid
+unnecessary GitHub Actions consumption, initial implementation is a
+non-PR staging branch pending owner-controlled flight budget.
+
+**W3 derivative parity:** because the Flight Deck HTML includes links to XLSX, DOCX, PPTX and PDF, the existing Atlas job also renders and tests nonempty versions of those four files *before* hashing/upload. Optional dependencies are pinned; no second workflow is introduced. They remain generated review copies, not corporate-approved documents.

@@ -136,9 +136,6 @@ def build(out, method=None, stage=None, event=None):
         '<a class="link" href="'+safe(v["url"])+'" rel="noopener noreferrer" target="_blank">'+safe(v["label"])+
         '<small>'+("Hosted candidate · readback UNKNOWN" if v["kind"]=="HOSTED_CANDIDATE" else "Authoritative source navigation")+'</small></a>'
         for v in cat["links"])
-    refs += ('<a class="link" href="federation-latest.html">'
-             'Latest observed N+2 pulse: W70 terminal red, Atlas merged'
-             '<small>Frozen exact-run observation; historical chart remains separate</small></a>')
     refs += ('<a class="link" href="federation-wave.html">'
              'Measured federation pulses · historical source-bound coverage'
              '<small>Not a live status or admission view</small></a>')
@@ -164,6 +161,7 @@ def build(out, method=None, stage=None, event=None):
 <article class="tile"><h3>TOP14 / TOP21</h3><div class="metric">14 / 21</div><p>Shadow measurement / telemetry HOLD</p></article></div></section>
 <section><h2>Federation execution backbone</h2><p class="sub">YAML-driven SVG: dispatch → independent lanes → exact-SHA join → admission/HOLD.</p>{svg}</section>
 <section><h2>Granular SIPOC + federation control lanes</h2><a class="link" href="lane-process.html">Open 39-node swimlanes, method stage pressure cards, guarded P5–P9 process gates and verified G4 sample KPIs</a><p class="sub">Companion Mermaid source: <a href="lane-process.mmd">lane-process.mmd</a> · <a href="lane-process.json">machine-readable receipt</a>. This read-only view does not change the canonical method lifecycle or confer admission.</p></section>
+<section><h2>Federation Flight Deck · W3 source-bound navigation</h2><a class="link" href="flightdeck/index.html">Open six-repository / 42-cell evidence census, all 36 UNKNOWN work leaves and five historical anchor checks</a><p class="sub">Deterministic source-generated read-only view, with JSON/Markdown/SVG and SHA-bound manifest. No new Pages publisher, corporate acceptance or merge authority. <a href="flightdeck/manifest.json">Manifest</a> · <a href="flightdeck/GUIDE.md">Operator guide</a>.</p></section>
 <section><h2>Measured Phase 02 CONTROL (scoped)</h2><a class="link" href="phase02-temporal.html">Open measured/UNBOUND temporal KPI cards, log SVG, evidence and lane matrix</a></section><section><h2>Phase 02 · six evidence KPIs</h2><p class="sub">Definitions updated {safe(kpi_contract["as_of"])} · mission census snapshot {safe(text_or_unknown(snapshot))}. UNBOUND values are not zero and mockups are not live telemetry. <a href="https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json">Source contract (pending merge)</a></p><div class="grid">{{kpi_cards}}</div></section>
 <section><h2>Method execution catalogue</h2><label for="method">Filter method: </label><select id="method"><option value="ALL">All methods</option>{''.join('<option value="'+safe(k)+'">'+safe(k)+'</option>' for k in ids)}</select>
 <div id="method-grid" class="grid" style="margin-top:15px">{method_cards}</div></section>
