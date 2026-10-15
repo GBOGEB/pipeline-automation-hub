@@ -70,6 +70,42 @@ jobs:
           else
             python mission-control/federation-atlas/build_atlas.py --method "$SELECTED_METHOD" --stage "$SELECTED_STAGE" --out /tmp/code-purple-atlas
           fi
+      - name: Produce source-owned side-load inventory and Kubernetes proof ladder
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas
+          OUT=/tmp/code-purple-atlas
+          python "$SRC/sideload_k8s.py" --out "$OUT"
+          python "$SRC/build_sideload_operator.py" --out "$OUT"
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          out=Path("/tmp/code-purple-atlas")
+          source=Path("mission-control/federation-atlas")
+          assert len(os.environ["EXACT_SHA"])==40
+          inv=json.loads((out/"sideload-k8s.json").read_text())
+          manifest=json.loads((out/"sideload-k8s.sha256.json").read_text())
+          proof=json.loads((out/"sideload-operator-receipt.json").read_text())
+          operator=json.loads((source/"SIDELOAD_OPERATOR_CONTRACT_v1.json").read_text())
+          src=json.loads((source/"SIDELOAD_K8S_SOURCE_v1.json").read_text())
+          assert inv["repo_owners"]==3 and inv["source_surfaces"]==8
+          assert {x["role"] for x in src["adapters"]}=={"QPS","KEB","DOW"}
+          assert {x["id"] for x in operator["lanes"]}=={"QPS","KEB","DOW","MC"}
+          assert inv["merge_admission"]==proof["admission"]=="HOLD"
+          assert inv["authority_transfer"] is proof["authority_transfer"] is False
+          assert inv["authenticated_runtime"] is None
+          assert proof["native_cluster_receipt"] is None
+          for name, digest in manifest["files"].items():
+              assert hashlib.sha256((out/name).read_bytes()).hexdigest()==digest
+          assert hashlib.sha256((out/"sideload-operator.html").read_bytes()).hexdigest()==proof["html_sha256"]
+          assert hashlib.sha256((source/"SIDELOAD_OPERATOR_CONTRACT_v1.json").read_bytes()).hexdigest()==proof["source_sha256"]
+          assert (out/"sideload-k8s.html").stat().st_size>1000
+          assert (out/"sideload-operator.html").stat().st_size>1000
+          print(json.dumps({"operator_status":"EXACT_HEAD_GENERATION_PASS","checkout_sha":os.environ["EXACT_SHA"],"source_rows":8,"repos":3,"admission":"HOLD","html_sha256":proof["html_sha256"]},sort_keys=True))
+          PY
       - name: Flight Deck source-matched producer (single Atlas artifact, no Pages)
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
