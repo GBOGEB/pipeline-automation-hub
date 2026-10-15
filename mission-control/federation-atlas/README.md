@@ -126,3 +126,47 @@ non-PR staging branch pending owner-controlled flight budget.
 ## MIP side-load and Kubernetes leaf (2026-10-15)
 
 The existing Atlas producer renders side-load/k8s HTML, JSON, Mermaid and SHA256 in the SAME source-bound Actions artifact, no new workflow/Pages publisher. Frozen three-repository eight-surface historical observation; DOW W74 static, W169 possible kind runtime; KEB transport and Docker/Compose, Kubernetes deferred; QPS W165/edge child remains DEFER. Filter by repo/evidence kind/search. The uniform transport PRs are CODEX #1049, ABACUS #2025 and QPS #1931, all draft candidates in this source snapshot. Native run/job/attempt, cluster sessions, QPS private original bytes and matched-scope coverage remain UNKNOWN until independently verified. Test the existing Atlas unittest discovery on exact SHA. HTML offers no write/deploy action.
+
+## C3 unified side-loading operator — existing Atlas workflow only (2026-10-15)
+
+The pre-existing `sideload_k8s.py` (merged PR #550) remains the primary
+three-owner/eight-asset **historical source inventory**. Its exact-source records
+are not replaced by the supplementary `SIDELOAD_OPERATOR_CONTRACT_v1.json`
+(proof-stage vocabulary and frozen owner observations), rendered by
+`build_sideload_operator.py`. The two views are siblings within the **same**
+`code-purple-method-atlas.yml` artifact and its existing Pages allowlist:
+`sideload-k8s.html` and `sideload-operator.html`. No second publisher,
+controller or K8S worker is created.
+
+Regenerate locally with:
+
+```sh
+python -m unittest discover -s mission-control/federation-atlas -p 'test_*.py' -v
+python mission-control/federation-atlas/sideload_k8s.py --out /tmp/code-purple-atlas
+python mission-control/federation-atlas/build_sideload_operator.py --out /tmp/code-purple-atlas
+```
+
+CI verifies SHA256 receipts, owner sets, 8 static assets, explicit UNKNOWN
+runtime and HOLD admission before upload. Historical KEB/DOW/QPS source
+snapshots are **not live statuses**; the source snapshots must be re-censused
+before operator action. Native browser QA and exact-archive byte inspection
+must be separately credited; successful generation is not an authenticated
+K8S API/edge session. Cross-repo receipts are independently challengeable
+through CODEX, ABACUS and QPS owner contracts.
+
+### MIP-5 observed W169 telemetry overlay (historical, 2026-10-15)
+
+`sideload_telemetry.py` consumes a **verbatim sanitized public Actions JSON receipt**
+from ABACUS W169 run 38774568289 / job 116558746360 / attempt 1, artifact
+11993466494; the original ZIP SHA-256 and receipt SHA-256 are pinned in
+`evidence/W169_NATIVE_PIN_v1.json`. Exact byte reproduction is guarded, and
+CI generates `sideload-telemetry.json` plus SHA256 sidecar. The existing
+operator page displays one native W169 execution sample (API/workload success,
+request p95 and cold start p95, observed restarts); its state is SOURCE-BYTES
+VERIFIED ON HISTORICAL EXACT SHA, **not live Kubernetes monitoring**.
+
+Existing `PHASE02_KPI_TAXONOMY_v1.json` remains the sole six-family KPI
+registry. Across-fleet queue p95/proof yield, memory/CPU peaks, side-load
+rejections and first-red propagation remain null until native normalized
+population receipts exist. Do not extrapolate one W169 sample to a population,
+fill nulls as zeros, infer edge readiness or override QPS child DEFER.

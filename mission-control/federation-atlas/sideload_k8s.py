@@ -81,7 +81,7 @@ article,.panel{background:#1b2031;border:1px solid #45536c;padding:15px;border-r
 section{margin:28px 0}.bar{display:flex;gap:10px;flex-wrap:wrap}label{display:block}
 input,select{padding:10px;background:#242b3f;border:1px solid #71839d;color:#fff;border-radius:7px}
 code{overflow-wrap:anywhere}article h3{margin:5px 0}.pill{font-size:12px;color:#cae6ff}
-[hidden]{display:none!important}@media(max-width:650px){body{padding:12px}.bar>label{width:100%}}
+footer small{display:block;overflow-wrap:anywhere;word-break:break-word}\n[hidden]{display:none!important}@media(max-width:650px){body{padding:12px}.bar>label{width:100%}}
 """
 HTML = Template("""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
