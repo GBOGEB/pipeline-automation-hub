@@ -115,6 +115,10 @@ document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click'
         '<a rel="noopener noreferrer" target="_blank" href="'+label(telemetry["source_url"])+'">W169 original native artifact</a>'
         '</section>'
     )
+    page = page.replace(
+        "Cluster API, workload, edge and artifact byte proof remain UNKNOWN unless linked native receipts are independently authenticated.",
+        "One historical W169 kind API/workload run is byte-verified; fleet-wide readiness, edge and QPS child acceptance remain UNKNOWN / HOLD."
+    )
     return page.replace("<h2>Observability fields</h2>",section+"<h2>Observability fields</h2>")
 
 
