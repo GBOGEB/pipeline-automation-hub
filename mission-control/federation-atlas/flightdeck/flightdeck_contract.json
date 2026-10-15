@@ -1,0 +1,67 @@
+{
+  "schema": "missioncontrol.federation-flightdeck.v1",
+  "name": "Mission Control · Federation Flight Deck",
+  "tagline": "Build the evidence. Trace every decision. Ship only what is proven.",
+  "version": "W2.0 / 2026-10-15",
+  "authority": "SOURCE_CONTROLLED_INPUT; HUMAN_AND_REPOSITORY_GATES_SEPARATE",
+  "source_control": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "branch": "master",
+    "fleet": "mission-control/gogreen/samples/fleet_g1.json",
+    "method_registry": "mission-control/federation-atlas/METHOD_OBSERVABILITY_v1.json",
+    "method_atlas": "mission-control/federation-atlas/build_atlas.py",
+    "qps_web_tokens": "mission-control/qps-triage-ultra/web/QPS_UI_TOKENS_v1.2.json",
+    "primary_issue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/529",
+    "dashboard_publisher": "UNCONFIRMED_OWNER_ACTIVATION_REQUIRED"
+  },
+  "presentation": {
+    "status": "PROJECT_IDENTITY; NOT_CORPORATE_BRAND_APPROVAL",
+    "document_system_examples": ["ALX", "SCK CEN"],
+    "corporate_document_number": null,
+    "corporate_approval": null,
+    "palette": {"ink":"#0a1424","surface":"#15263c","cyan":"#74d7e8","violet":"#aa91e8","text":"#ecf3fb","muted":"#a8bbce"}
+  },
+  "repositories": [
+    {"name":"GBOGEB/pipeline-automation-hub","short":"Mission Control","role":"Orchestrate the mission; publish method and evidence projections","inputs":"Root ownership, repo catalog, GitHub actions and SSOT references","outputs":"Wave scorecards, dashboards, GOGREEN scout plans and atlas receipts","surface":"mission-control/federation-atlas/build_atlas.py","methods":"SIPOC · DMAIC · MIP · 3P* · PCA/BT eligibility","boundaries":"Read-only federation projection; owner controls external"},
+    {"name":"GBOGEB/ABACUS","short":"ABACUS / DOW","role":"Detect first-reds, measure attributed debt, test runtime and admission","inputs":"CI event IDs, BD/LDAB signatures, tests, Security and coverage","outputs":"Root-linked CI receipts, census and DOW compatibility evidence","surface":"GitHub Actions / DOW / MIP B0","methods":"EVERRED · CODE PURPLE · LDAB","boundaries":"A10, protected ruleset and eligible review remain independent"},
+    {"name":"GBOGEB/CODEX","short":"CODEX / KEB","role":"Semantic execution, debugger bridges and source-bound consumer contracts","inputs":"Provider graph, manifests, runtime and LLDB/Docker proof","outputs":"KEB compatibility evidence, debugger receipts and lineage probes","surface":"GitHub workflows / Mycelium / KEB","methods":"MCP · REX · LLDB · 3P*","boundaries":"A fixture is not an authenticated cross-repository replay"},
+    {"name":"GBOGEB/cryoplant-project","short":"QPS TRIAGE","role":"Engineering recipient; decide ACCEPT, REJECT or DEFER","inputs":"Controlled engineering source, producer proposals and corporate document pointers","outputs":"QPS acceptance gate, engineering render and adapter test evidence","surface":"QPS TRIAGE workflows and adapter","methods":"MIP · engineering SSOT · DoV","boundaries":"No engineering acceptance without recipient owner authority"},
+    {"name":"GBOGEB/gg_MATH","short":"gg_MATH","role":"Mathematical source/model dependency supplier","inputs":"Named models, assumptions, source hashes and numerical test baselines","outputs":"Provider model graph and reproducible calculation receipts","surface":"research/MATH_METHOD_DEPENDENCY_GRAPH_v1.yaml","methods":"Model testing · reliability statistics","boundaries":"Model truth and engineering signoff are not implied by CI status"},
+    {"name":"GBOGEB/DOCX_RTM_Automation","short":"Document automation","role":"Requirement traceability and controlled document projections","inputs":"Controlled data, RTM and corporate document-control references","outputs":"DOCX / XLSX traceability views and QA receipts","surface":"Python CI / document generation","methods":"SSOT · document controls · REX","boundaries":"Generated Office files are not corporate approved originals"}
+  ],
+  "families": {
+    "ci_contract":{"label":"CI contract","next":"Select a terminal exact-head run/job; bind required contexts, test population and first-red","owner":"Repo CI steward","proof":"Terminal run + job + exact SHA + selected check context"},
+    "security":{"label":"Security","next":"Locate native scan/report with scanner configuration and fail-closed classification","owner":"Repo security owner","proof":"Named scanner, policy/config, exact SHA and eligible review"},
+    "coverage":{"label":"Coverage","next":"Acquire matched line/branch JSON, source digest, tool version and executed tests","owner":"Repo test pilot","proof":"Native numerator, denominator and identical source scope"},
+    "runtime":{"label":"Runtime / debug","next":"Find native Docker, RHEL, LLDB or MCP session receipt; record ports/image/tools","owner":"Repo runtime owner","proof":"Real session ID and execution outcome, not planned probe"},
+    "artifact":{"label":"Artifact bytes","next":"Download producer ZIP, compare upload SHA256, verify member manifest and pinned source","owner":"Golden Thread","proof":"Independent bytes + artifact ID + run/job SHA"},
+    "federation":{"label":"Federation","next":"Join provider and consumer receipts by source identity; separate fixture from native","owner":"Mission Control observer","proof":"Cross-hop verified identity and eligible recipient disposition"},
+    "qps_triage":{"label":"QPS TRIAGE","next":"Route candidate into recipient-controlled ACCEPT/REJECT/DEFER with engineering source","owner":"QPS recipient owner","proof":"Authenticated native child evidence and explicit engineering signoff"},
+    "math_model":{"label":"Math/model","next":"Check numerical source graph, baseline tests and assumptions before adaptation","owner":"gg_MATH/model owner","proof":"Pinned source model and reproducible test results"}
+  },
+  "pipeline": [
+    {"id":"P00","group":"OWNER INPUT","name":"Choose controlled source","trigger":"CLI --fleet / explicit user selection","command":"python flightdeck.py preflight --fleet <fleet> --snapshot <snapshot>","inputs":"GOGREEN fleet_g1.json + exact repo-head snapshot","outputs":"Validated 42-cell cohort and source SHA256","gate":"Reject drift, missing source and duplicate repo/family"},
+    {"id":"P10","group":"GOGREEN","name":"Build evidence census","trigger":"PR, GitHub workflow_dispatch or owner CLI","command":"python flightdeck.py build --fleet <fleet> --snapshot <snapshot> --out <dir>","inputs":"6 repository profiles + native metadata observations","outputs":"census.json · BD leaf register · anchor details","gate":"36 UNKNOWN remain UNKNOWN; null is not 0"},
+    {"id":"P20","group":"EVERRED / LDAB","name":"Join and triage first-reds","trigger":"Confirmed job RED and root fingerprint","command":"Consume read-only census + repo-local root receipts","inputs":"CI failure signature, Bandit/DAB findings, LLDB session","outputs":"BD links, accountable next test, root ID if proven","gate":"No issue count as proof of root closure"},
+    {"id":"P30","group":"METHOD ATLAS","name":"Compose user navigation","trigger":"On controlled census change","command":"python flightdeck.py build --out <dir>","inputs":"Validated census, method registry and stages","outputs":"index.html · flightdeck.svg · guide.md","gate":"HTML projection never writes source/acceptance"},
+    {"id":"P40","group":"DOCUMENT PROJECTIONS","name":"Render Office / PDF","trigger":"After source validation, optional binary toolchain","command":"python office_export.py --input <dir>/census.json --out <dir>","inputs":"Current SSOT census + corporate reference placeholders","outputs":"XLSX, DOCX, PPTX, linked PDF","gate":"No invented ALX/SCK CEN doc number or corporate approval"},
+    {"id":"P50","group":"QA / DoV","name":"Compare files and testflight","trigger":"Every build and PR head","command":"python -m unittest test_flightdeck.py; python flightdeck.py verify --out <dir>","inputs":"Files, same-source digest, counts, browser checks","outputs":"QA receipt / hashes / HOLD reasons","gate":"Exact-head native CI separate from local reproducibility"},
+    {"id":"P60","group":"GOVERNANCE","name":"Publish only on admitted main","trigger":"Owner-approved merge + exact-main CI","command":"GitHub Actions deploy artifact after required status and review","inputs":"Verified committed SHA, no critical RED, legal review","outputs":"Versioned hosted GitHub Pages read-only site","gate":"Owner Pages enabling; branch protection; no PR-write token"},
+    {"id":"P70","group":"DMAIC / MIP","name":"Review next wave and recensus","trigger":"New native evidence, dependency change or recertification time","command":"Append observed pulse and regenerate projections","inputs":"Exact-main terminal runs, roots, deltas, receipts","outputs":"M1/M2/M3 states, control charts only with comparable data","gate":"PCA/BT HOLD if samples/pairs insufficient"}
+  ],
+  "wave_definitions": [
+    {"wave":"W1","name":"Traceable source inventory","victory":"42/42 typed leaves, 36 explicit unknown work orders, 5/5 current-main anchors classified, all 6 repo identities linked","state":"LOCAL_IMPLEMENTED"},
+    {"wave":"W2","name":"User flight deck and deterministic artifacts","victory":"CLI preflight/build/verify; filterable HTML, SVG, JSON, Markdown and optional Office/PDF with parity checks","state":"LOCAL_IMPLEMENTED"},
+    {"wave":"W3","name":"Native protected publication","victory":"Exact-head tests, guarded integration, exact-main artifact and Pages readback with matching source hash","state":"HOLD"}
+  ],
+  "controls": [
+    {"id":"CTRL-01","name":"Source scope lock","threshold":"42/42 typed cells and 6 unique repository identities","response":"FAIL build on schema, duplicates, denominator drift"},
+    {"id":"CTRL-02","name":"Missing evidence transparency","threshold":"36/36 UNKNOWN with unique leaf IDs and BD links","response":"Never turn UNKNOWN into FAIL or PASS"},
+    {"id":"CTRL-03","name":"Preflight and tests","threshold":"100% deterministic validations pass, no zero-test accepted","response":"Stop at first invalid source or orphan link"},
+    {"id":"CTRL-04","name":"Coverage ramp","threshold":"Local focused generator target ≥85% lines and ≥75% branches; never compare unmatched files","response":"HOLD native coverage credit pending actual producer receipt"},
+    {"id":"CTRL-05","name":"Output parity","threshold":"HTML/JSON/MD/XLSX/PPTX/DOCX/PDF carry same source SHA and 6/42 census","response":"Regenerate all projections; no direct binary source editing"},
+    {"id":"CTRL-06","name":"Admission and privacy","threshold":"No critical red; eligible review; required statuses and confidentiality approval","response":"HOLD/DEFER, never force merge from renderer"},
+    {"id":"CTRL-07","name":"Publication confidence","threshold":"Source PR merged, main exact-head native success, Pages URL content hash readback","response":"Mark hosted state UNKNOWN until verified"},
+    {"id":"CTRL-08","name":"Statistical eligibility","threshold":"M1 source/denom valid; M2 repeated independent time observations; M3 capability limits; PCA numeric vectors; BT observed pairs","response":"Modeling HOLD; no invented confidence intervals"}
+  ]
+}

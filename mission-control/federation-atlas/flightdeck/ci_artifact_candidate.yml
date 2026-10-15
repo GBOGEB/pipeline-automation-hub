@@ -1,0 +1,102 @@
+# DROP-IN CANDIDATE; NOT CURRENTLY INSTALLED OR REQUIRED IN GITHUB.
+# Install under repo .github/workflows ONLY AFTER owner integration review.
+name: MissionControl Federation Flight Deck Artifact CI
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/federation-atlas/flightdeck/**'
+      - 'mission-control/gogreen/samples/fleet_g1.json'
+      - '.github/workflows/flightdeck-artifact-ci.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/federation-atlas/flightdeck/**'
+      - 'mission-control/gogreen/samples/fleet_g1.json'
+      - '.github/workflows/flightdeck-artifact-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: flightdeck-artifact-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Verify exact checkout and env
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Run positive and fail-closed tests (no zero-test gate)
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          export PYTHONPATH=mission-control/federation-atlas/flightdeck
+          python -m coverage run --branch --source=flightdeck -m unittest discover \
+            -s mission-control/federation-atlas/flightdeck -p test_flightdeck.py -v 2>&1 | tee "$RUNNER_TEMP/flightdeck-tests.log"
+          python -m coverage json -o "$RUNNER_TEMP/flightdeck-coverage.json"
+          python - <<'PY'
+          from pathlib import Path
+          import json,re,os
+          log=(Path(os.environ['RUNNER_TEMP'])/'flightdeck-tests.log').read_text()
+          n=[int(x) for x in re.findall(r'Ran (\d+) tests? in', log)]
+          if len(n)!=1 or n[0]<42 or '\nOK' not in log:raise SystemExit('No executed passing tests')
+          c=json.loads((Path(os.environ['RUNNER_TEMP'])/'flightdeck-coverage.json').read_text())['totals']
+          if c['percent_statements_covered'] < 85 or c['percent_branches_covered'] < 75:
+              raise SystemExit('Matched generator coverage below source-specific target')
+          print('FLIGHTDECK_TESTS',n[0],'LINES',c['percent_statements_covered'],'BRANCHES',c['percent_branches_covered'])
+          PY
+      - name: Generate source-bound artifact projections
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/flightdeck
+          FLEET=mission-control/gogreen/samples/fleet_g1.json
+          OUT="$RUNNER_TEMP/federation-flightdeck"
+          mkdir -p "$OUT"
+          python "$SRC/flightdeck.py" preflight --fleet "$FLEET" \
+             --snapshot "$SRC/head_snapshot.json" --contract "$SRC/flightdeck_contract.json"
+          python "$SRC/flightdeck.py" build --fleet "$FLEET" \
+             --snapshot "$SRC/head_snapshot.json" --contract "$SRC/flightdeck_contract.json" \
+             --out "$OUT" --exact-git-sha "$EXPECTED_SHA"
+          echo "OUT=$OUT" >> "$GITHUB_ENV"
+      - name: Build optional presentation/document binaries
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check python-docx==1.2.0 openpyxl==3.1.5 reportlab==4.4.3
+          npm install --no-save --no-package-lock --prefix "$RUNNER_TEMP/flightdeck-npm" 'pptxgenjs@3.12.0'
+          export NODE_PATH="$RUNNER_TEMP/flightdeck-npm/node_modules"
+          python mission-control/federation-atlas/flightdeck/office_export.py \
+            --input "$OUT/census.json" --out "$OUT"
+      - name: Seal and fail closed on any missing output or hash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/flightdeck
+          python "$SRC/flightdeck.py" seal --out "$OUT"
+          python "$SRC/flightdeck.py" verify --out "$OUT"
+          test -s "$OUT/index.html"
+          test -s "$OUT/evidence_register.xlsx"
+          test -s "$OUT/linked_evidence_book.pdf"
+          test -s "$OUT/federation_report.docx"
+          test -s "$OUT/mission_brief.pptx"
+      - name: Upload read-only artifact only; NEVER auto-publish Pages
+        uses: actions/upload-artifact@v4
+        with:
+          name: flightdeck-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ env.OUT }}/
+          if-no-files-found: error
+          retention-days: 30
