@@ -129,6 +129,11 @@ class ConsumerReplayTests(unittest.TestCase):
             self.assertEqual(first, m.emit(receipt, out))
             self.assertEqual(first, hashlib.sha256((out / "g1_consumer_receipt.json").read_bytes()).hexdigest())
             self.assertIn("QPS ACCEPT: **0**", (out / "g1_consumer_receipt.md").read_text())
+            html=(out / "g1_consumer_receipt.html").read_text()
+            self.assertIn("Same-repository consumer proof", html)
+            self.assertIn("QPS accepted links", html)
+            self.assertIn("viewport", html)
+            self.assertIn(SOURCE, html)
 
 
 if __name__ == "__main__":
