@@ -1,0 +1,20 @@
+flowchart TD
+  U["New user intent / explicit priorities"] --> H["Golden Thread: sanitized source + existing parent ledger"]
+  H --> C["Recensus GitHub exact SHA + immutable W1/W2/W3 ZIPs"]
+  C --> D["BD dedup: 14 workstreams + 36 typed UNKNOWN leaves"]
+  D --> E{First-red root?}
+  E -->|"Atlas"| F1["W4-BD-001: semantic pulse assertion"]
+  E -->|"Session"| F2["W4-BD-002: HTML title contract"]
+  E -->|"Integration"| F3["W4-BD-003: N+2 overlay preservation"]
+  F1 --> V["Disjoint new-head native test receipts"]
+  F2 --> V
+  F3 --> V
+  V --> A["W3 Flight Deck 42+ tests / 95% lines / 90% branches / 10 outputs"]
+  A --> Q{"Effective ruleset + authorized reviews + source SHA?"}
+  Q -->|NO| HOLD["HOLD root and next-pulse forecast"]
+  Q -->|YES| M["Governed integration; exact-main recensus"]
+  M --> P["ONE Pages publisher; hosted hash readback"]
+  P --> K{"QPS child engineering acceptance?"}
+  K -->|DEFER| HOLD
+  K -->|ACCEPT with proof| OUT["Owner-controlled outward product"]
+  HOLD -.->|"NEXT PULSE ONLY"| U

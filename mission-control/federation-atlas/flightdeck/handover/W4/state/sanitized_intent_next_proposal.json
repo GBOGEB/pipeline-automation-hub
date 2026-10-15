@@ -1,0 +1,25 @@
+{
+  "append_instructions": "Check out exact current source; obtain verified prior session_ledger.json; use existing session_hook.py --previous-ledger with schema-compatible sanitized batch; verify digest prefix; NEVER fabricate actual platform turn IDs.",
+  "canonical_hook_source": "https://github.com/GBOGEB/pipeline-automation-hub/blob/f931e443cafae8b286b149ae4331a0326298730a/mission-control/golden-thread/session_hook/session_hook.py",
+  "capture_mode": "MANUAL_SANITIZED_INTENT",
+  "capture_utc": "2026-10-15T13:28:28+00:00",
+  "merge_authorized": false,
+  "original_chat_message_id": null,
+  "original_message_time": null,
+  "owner_issue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/153",
+  "previous_intent_id": "CP-SESSION-20261015-002",
+  "proposed_action": {
+    "action_id": "CP-ACTION-20261015-003",
+    "bd_owner_issue": 529,
+    "native_verified_receipt": null,
+    "owner_repo": "GBOGEB/pipeline-automation-hub",
+    "status": "HANDOVER_GENERATED_PENDING_CANONICAL_APPEND"
+  },
+  "proposed_intent_id": "CP-SESSION-20261015-003",
+  "qps_engineering_credit": 0,
+  "raw_transcript_included": false,
+  "relation": "REFINES_WITHOUT_SUPERSEDING",
+  "reuse_session_alias": "CODE_PURPLE_SESSION_20261015_RECONSTRUCTED",
+  "sanitized_summary": "Preserve W1/W2/W3 lineage byte-for-byte and produce a lossless W4 handover, explicit BD queue, schema/diagrams/HTML, drop-in and recursive next pulse with existing Golden Thread authority.",
+  "schema": "missioncontrol.chat_session_next_intent_proposal.v1"
+}

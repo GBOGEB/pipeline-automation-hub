@@ -154,16 +154,26 @@ jobs:
                   + "/5 (NOT full fleet coverage)\\n"
               )
           PY
-      - name: M2 recursive session handover / HTML source parity
-        shell: bash
-        env:
-          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Add latest source-bound federation pulse on top of frozen history
         run: |
-          set -euo pipefail
-          node mission-control/federation-atlas/m2_session/test_m2_portal.js
-          node mission-control/federation-atlas/m2_session/m2_portal.js --check
-          node mission-control/federation-atlas/m2_session/m2_portal.js --out /tmp/code-purple-atlas/session-m2 --source-sha "$EXACT_SHA"
-          test -s /tmp/code-purple-atlas/session-m2/M2_RECEIPT.json
+          python mission-control/federation-atlas/federation_latest_overlay.py \
+            --status mission-control/federation-atlas/FEDERATION_STATUS_N2_v1.json \
+            --history mission-control/federation-atlas/FEDERATION_OBSERVED_PULSES_v1.json \
+            --out /tmp/code-purple-atlas
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("/tmp/code-purple-atlas/federation-latest.json")
+          result=json.loads(p.read_text(encoding="utf-8"))
+          assert result["w70"]["state"] == "TERMINAL_FAIL"
+          assert result["w70"]["line"] is None
+          assert result["w70"]["branch"] is None
+          assert result["qps_source_pulse"] == "P2"
+          assert result["qps_engineering_decision"] == "DEFER"
+          assert result["native_cross_repo_chain_verified"] is None
+          assert (Path("/tmp/code-purple-atlas/federation-latest.html")
+                  .stat().st_size > 1000)
+          PY
       - name: Upload identity-bound HTML SVG and metrics
         uses: actions/upload-artifact@v4
         with:

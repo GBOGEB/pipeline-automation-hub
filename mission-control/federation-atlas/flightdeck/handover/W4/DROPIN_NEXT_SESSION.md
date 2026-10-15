@@ -1,0 +1,21 @@
+# CODE PURPLE — W4 DROP-IN / RECURSIVE CONTINUATION
+
+**Mission:** Resume MissionControl federation Flight Deck and Golden Thread without reinterpreting historical runs. This text is an operator handover, not a workflow invocation or owner approval.
+
+**Exact Git anchors:** `GBOGEB/pipeline-automation-hub` `master=f931e443cafae8b286b149ae4331a0326298730a`; staged branch `code-purple/w4-everred-lossless-20261015` at `d2ec6e0df8f5edf178a1225b79c687072479d3eb`. Recheck live SHA before doing anything. Source repairs are on the branch **without a PR**. Legacy W3 PR #541 merged at an older head and is CI RED.
+
+**Already merged:** PR #537 (W1/W2 source), #539 (Global DoV), #540 (manual sanitized recursive Golden Thread hook), #541 (W3 single Atlas integration, but RED). Do not fabricate green checks for a merged PR. Keep two workflow producers distinct: Atlas and Session Hook, each under existing authority.
+
+**Root first-reds:** W4-BD-001 Atlas runs 38739254875/38739428503 failed 1/87 because an assertion excluded the literal `QPS P3` while the HTML legitimately states `not an artificial QPS P3`. W4-BD-002 Session Hook run 38739313365 passed 19 tests then failed checking wrong-case HTML title. W4-BD-003 W3 merge lost the previously authored N+2 overlay stage and navigation; repaired on W4 branch. All three fixes are IMPLEMENTED/STAGED but **NOT NATIVE VERIFIED**.
+
+**P0 gating:** W4-BD-004 effective protected `master` ruleset absent; W4-BD-005 full W3 Flight Deck native 42-test/95%-line/90%-branch + SHA/hash ZIP qualification not reached; W4-BD-006 authenticated session hook append and hash-chain replay not terminal; W4-BD-007 durable handover custody.
+
+**Preserve exactly:** W1/W2/W3 ZIP ancestry, 6/42 historical status observations, 36 UNKNOWN typed leaves (not 36 causal roots), G4 2/5 historical anchor matches, separate current six-head recensus, 42/42 W3 local tests, 99.6337% focused statements and 98.3051% branches, ten original W3 hashed outputs, QPS `DEFER`, four-hop native chain `UNKNOWN`, no root closure credited. Do not convert a GitHub Pages Jekyll PASS into Flight Deck hosted-byte PASS.
+
+**Full recursive hook:** Reuse `mission-control/golden-thread/session_hook/session_hook.py` and `mission-control/golden-thread/golden_thread.py` from PR #540. The prior fixture contains **two reconstructed intents only**; `state/sanitized_intent_next_proposal.json` is an additional proposed W4 intent (parent `CP-SESSION-20261015-002`). Verify previous session_ledger.json first, then compile an accepted schema-compatible manual intake, append once, verify all old digest prefixes and emitted artifact bytes. Raw chat platform turn IDs/times remain NULL. Canonical work owners are MissionControl issues #153/#529; never create a competing SSOT.
+
+**Next exact execution sequence:** (1) recensus current GitHub heads/branch compare; (2) run local negative tests for W4-BD-001/002; (3) owner-authorize ONE draft PR/CI wave considering Actions budget; (4) require native 87+ Atlas, 19 Hook, 42+ Flight Deck tests with 95/90 scope-matched coverage; (5) download/verify both workflow ZIP bytes and internal SHA; (6) apply effective owner-approved admission controls (a GitHub bot review is not independent human approval); (7) governed merge -> exact-main recensus -> one Pages publisher -> served HTML/manifest hash readback; (8) update the same BD roots and forecast actuals, not overwrite earlier observations.
+
+**Continuation discipline:** On each pulse write `N+1` inputs, run, first-red root IDs, SHA/run/job/attempt, tests, scope, artifact SHA, owner, disposition and measured delta. Re-run source census; then hand off this exact package+append-only successor. MIP Modernize/Innovate/Perpetuate, DMAIC Define/Measure/Analyze/Improve/Control, 3PR/3PC, REX and LDAB are controls and evidence joins; M2/M3/PCA/BT remain HOLD without independent valid data.
+
+**Re-entry:** Execute the highest-priority eligible disjoint BD leaf, preserve any blocker as HOLD with evidence, then produce a new `state`, `BD queue`, `DAG`, `HTML` and `manifest`, retaining the entire current ZIP as immutable parent. No merge/security waiver/corporate acceptance may be inferred from this handover.
