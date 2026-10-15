@@ -51,3 +51,44 @@ python mission-control/federation-atlas/code_purple_series.py append --key W1.C1
 ```
 
 `ATLAS_GRAPH_v1.yaml` edges now carry `binding: RECEIPT | DECLARED`; declared edges render dashed because no cross-repo dispatch workflow exists yet (CPQ-015).
+
+## Granular SIPOC / method-lane projection (15 October 2026)
+
+The **same** `code-purple-method-atlas.yml` workflow now builds
+`lane-process.html`, `lane-process.mmd`, and `lane-process.json` by
+calling `lane_process.build()` from `build_atlas.py`. This is a companion
+view within the existing artifact and publisher, **not** a second workflow,
+Pages release, method registry or acceptance authority.
+
+- Canonical input: `PROCESS_LANES_v1.json` (10 lanes, 39 executable-stage
+  descriptions, SIPOC input/output, KPI pressure and explicit stop rule).
+- Canonical method-stage names for DMAIC, 3P*, MIP, LDAB are checked against
+  `METHOD_OBSERVABILITY_v1.json`. REX/Census and M1/M2/M3 are overlays, not
+  new canonical method admission.
+- Output JSON measures a **historical, exact-PR-head G4** native run
+  (#38707835880) and focused G4 same-source test expansion. It distinguishes
+  1/42 -> 6/42 observed source/status cells from missing archived-byte proof.
+  The only measured code coverage shown is 78/93 -> 93/93 statements and
+  23/26 -> 26/26 branches on the same focused module.
+- M2, M3, PCA, BT, worker-hours and authentic LLDB/runtime telemetry remain
+  HOLD/UNKNOWN. Six scouts, two concurrent and one packet/repo are **planned
+  upper bounds**, not claimed active worker count.
+- Mermaid includes the same-wave feedforward nodes and marks feedback
+  explicitly as belonging to the **next** pulse. HTML includes accessible
+  filterable lane leaves; each shows input, output, KPI and stop reason.
+- SIPOC and stage cards have no GitHub write actions. Gate P5–P9 display
+  independent governance, byte-verification, stability and recurrence needs.
+
+Execute focused checks (the existing atlas test discovery picks these up):
+
+```bash
+python -m pip install pyyaml==6.0.3
+python -m unittest discover -s mission-control/federation-atlas -p 'test_*.py' -v
+python mission-control/federation-atlas/build_atlas.py --out /tmp/code-purple-atlas
+```
+
+The rendered HTML is an **offline artifact**; GitHub Pages publication
+and signed run/artifact-byte provenance need separate evidence and authority.
+When a future authenticated G4 pulse changes the measured population, update
+the source-bound observations in the same PR and re-run the exact native
+renderer. Do not rewrite the old historical observation into a new claim.
