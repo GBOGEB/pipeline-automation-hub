@@ -2,6 +2,9 @@
 
 ## CODE PURPLE — M2 MissionControl user landing
 
+**Latest M2 GitHub reconciliation (dated 15 Oct):** [Current SHA drift, M2-A21..A27, QPS/KEB/DOW boundaries and next release gate](handover/session/CODE_PURPLE_M2_LIVE_RECONCILIATION_20261015.md). This overlay preserves the existing 15 intent / 20 action records, records later observations separately, and keeps original ChatGPT turn metadata UNKNOWN.
+
+
 [Main HTML](docs/mission-control/m2/index.html) · [Federation](docs/mission-control/m2/federation.html) · [Runtime/MCP/skills](docs/mission-control/m2/runtime.html) · [Pipeline I/O](docs/mission-control/m2/pipeline.html) · [Burndown](docs/mission-control/m2/burndown.html) · [Handover](docs/mission-control/m2/handover.html). Each page is a **read-only dated static view**, not current GitHub state or automatically hosted Pages.
 
 **GitHub-only lossless pickup:** [M2 source](mission-control/federation-atlas/m2_session/M2_STATE.json) · [Full 15-intent/20-action handover](handover/session/LOSSLESS_HANDOVER_CODE_PURPLE_M2_20261015.md) · [Drop-in](handover/session/RESTART_DROPIN_CODE_PURPLE_M2_20261015.md) · [Checkpoint template](handover/session/SESSION_M2_CHECKPOINT_TEMPLATE.md). No ZIP/tar.gz or generated user-input binary commit. Technical CI, eligible human review, effective required checks, QPS engineering ACCEPT and governed release remain independent.
