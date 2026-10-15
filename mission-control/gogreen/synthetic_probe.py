@@ -8,6 +8,7 @@ import argparse
 import asyncio
 import hashlib
 import json
+import time
 from pathlib import Path
 
 
@@ -16,9 +17,16 @@ def require_int(n, low, high, name):
         raise ValueError(f"{name} outside safe synthetic test envelope [{low},{high}]")
 
 
+def percentile_ns(values, percentile):
+    if not values:
+        return None
+    return sorted(values)[min(len(values)-1, (len(values)*percentile + 99)//100 - 1)]
+
+
 async def one_cycle(total: int, queue_depth: int, workers: int, inject_failure: int | None):
     queue = asyncio.Queue(maxsize=queue_depth)
-    done, errors = [], []
+    done, errors, wait_ns = [], [], []
+    started = time.perf_counter_ns()
     peak_queue, peak_active, active, producer_blocked = 0, 0, 0, 0
 
     async def producer():
@@ -26,7 +34,7 @@ async def one_cycle(total: int, queue_depth: int, workers: int, inject_failure: 
         for item in range(total):
             if queue.full():
                 producer_blocked += 1
-            await queue.put(item)
+            await queue.put((item, time.perf_counter_ns()))
             peak_queue = max(peak_queue, queue.qsize())
         for _ in range(workers):
             await queue.put(None)
@@ -34,10 +42,12 @@ async def one_cycle(total: int, queue_depth: int, workers: int, inject_failure: 
     async def worker():
         nonlocal active, peak_active
         while True:
-            item = await queue.get()
-            if item is None:
+            row = await queue.get()
+            if row is None:
                 queue.task_done()
                 return
+            item, enqueued_at_ns = row
+            wait_ns.append(max(0, time.perf_counter_ns() - enqueued_at_ns))
             active += 1
             peak_active = max(active, peak_active)
             try:
@@ -51,11 +61,15 @@ async def one_cycle(total: int, queue_depth: int, workers: int, inject_failure: 
                 queue.task_done()
 
     await asyncio.gather(producer(), *(worker() for _ in range(workers)))
-    if len(done) + len(errors) != total:
+    if len(done) + len(errors) != total or len(wait_ns) != total:
         raise AssertionError("lost or duplicated queue items")
+    elapsed = max(time.perf_counter_ns() - started, 1)
     return {"processed": len(done), "faults": len(errors), "max_queue": peak_queue,
             "peak_in_flight": peak_active, "producer_block_observations": producer_blocked,
-            "processed_digest": hashlib.sha256(",".join(map(str, sorted(done))).encode()).hexdigest()}
+            "processed_digest": hashlib.sha256(",".join(map(str, sorted(done))).encode()).hexdigest(),
+            "elapsed_ns": elapsed, "queue_wait_p50_ns": percentile_ns(wait_ns, 50),
+            "queue_wait_p95_ns": percentile_ns(wait_ns, 95),
+            "synthetic_throughput_tasks_per_s": round(total*1e9/elapsed, 2)}
 
 
 def run(total=32, queue_depth=4, workers=2, cycles=2, inject_failure=None) -> dict:
