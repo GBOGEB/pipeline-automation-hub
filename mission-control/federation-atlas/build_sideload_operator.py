@@ -42,7 +42,7 @@ def validate(obj):
         raise ValueError("KEB contract identity changed")
     return True
 
-def render(obj):
+def render(obj, telemetry=None):
     validate(obj)
     payload = json.dumps(obj, ensure_ascii=True).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
     label = lambda s: html.escape(str(s), quote=True)
@@ -53,7 +53,7 @@ def render(obj):
         '<p>'+label(x["action"])+'</p><a rel="noopener noreferrer" target="_blank" href="https://github.com/'+label(x["repo"])+'/blob/HEAD/'+label(x["ref"])+'">Owner source</a></article>'
         for x in obj["lanes"])
     stages = "".join('<tr><td>'+label(g["id"])+'</td><td>'+label(g["name"])+'</td><td>'+label(g["proof"])+'</td><td>UNKNOWN / HOLD</td></tr>' for g in obj["promotion_gates"])
-    return """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    page = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CODE PURPLE | Sideload Operator</title><style>
 :root{color-scheme:dark;font-family:system-ui,Segoe UI,sans-serif;background:#101214;color:#f1f3f5}
 body{max-width:1240px;margin:auto;padding:28px}h1{font-size:2rem;letter-spacing:-.03em}
@@ -87,9 +87,41 @@ document.getElementById('search').addEventListener('input',filter);
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{selected=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));filter()}));
 </script></body></html>"""
 
-def build(out, src=SOURCE):
+    if telemetry is None:
+        return page
+    if telemetry.get("schema") != "missioncontrol.sideload.w169.telemetry-projection.v1":
+        raise ValueError("unsupported runtime telemetry schema")
+    if telemetry.get("source_class") != "HISTORICAL_EXACT_SHA_NATIVE_ARTIFACT_LOCALLY_HASH_VERIFIED":
+        raise ValueError("untrusted W169 runtime class")
+    if telemetry.get("qps_disposition") != "DEFER" or telemetry.get("release") != "HOLD" or telemetry.get("authority_transfer") is not False:
+        raise ValueError("runtime cannot grant engineering approval")
+    row=telemetry.get("metrics", {})
+    for field in ("request_p95_ms", "cold_start_p95_seconds", "restart_count"):
+        if isinstance(row.get(field), bool) or not isinstance(row.get(field), (int, float)):
+            raise ValueError("unverified runtime metric")
+    if any(v is not None for v in telemetry.get("unbound", {}).values()):
+        raise ValueError("unknown metric falsely promoted")
+    section=(
+        '<section aria-label="Native W169 observed telemetry" class="notice">'
+        '<h2>W169 real Kubernetes: one exact-head run</h2>'
+        '<p>Source: '+label(telemetry["source_sha"])+' · run '
+        +label(telemetry["source_run_id"])+' / job '+label(telemetry["source_job_id"])
+        +' / attempt '+label(telemetry["attempt"])+'</p>'
+        '<p>Cluster API and workload: native success on this run, not QPS ACCEPT or edge deployment.</p>'
+        '<p>Request p95: '+label(round(row["request_p95_ms"],2))+' ms · Cold-start p95: '
+        +label(round(row["cold_start_p95_seconds"],2))+' s · Restarts: '+label(row["restart_count"])+'</p>'
+        '<p>Fleet proof yield, queue p95, CPU/memory peaks, side-load rejection rate, '
+        'first-red propagation and edge qualification: UNKNOWN (unbound evidence).</p>'
+        '<a rel="noopener noreferrer" target="_blank" href="'+label(telemetry["source_url"])+'">W169 original native artifact</a>'
+        '</section>'
+    )
+    return page.replace("<h2>Observability fields</h2>",section+"<h2>Observability fields</h2>")
+
+
+def build(out, src=SOURCE, telemetry_path=None):
     obj=json.loads(Path(src).read_text(encoding="utf-8"))
-    page=render(obj).encode("utf-8")
+    telemetry=json.loads(Path(telemetry_path).read_text(encoding="utf-8")) if telemetry_path else None
+    page=render(obj, telemetry).encode("utf-8")
     out=Path(out);out.mkdir(parents=True, exist_ok=True)
     (out/"sideload-operator.html").write_bytes(page)
     sha=hashlib.sha256(page).hexdigest()
@@ -99,6 +131,6 @@ def build(out, src=SOURCE):
 
 if __name__=="__main__":
     p=argparse.ArgumentParser()
-    p.add_argument("--out",required=True);p.add_argument("--source",default=str(SOURCE))
+    p.add_argument("--out",required=True);p.add_argument("--source",default=str(SOURCE));p.add_argument("--telemetry")
     a=p.parse_args()
-    print(json.dumps(build(a.out,a.source),sort_keys=True))
+    print(json.dumps(build(a.out,a.source,a.telemetry),sort_keys=True))
