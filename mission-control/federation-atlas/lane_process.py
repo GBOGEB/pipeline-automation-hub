@@ -86,7 +86,10 @@ def verify(doc, registry):
         if not 0 <= item["before"] <= item["eligible"] or not 0 <= item["after"] <= item["eligible"]:
             raise ValueError("Coverage numerator outside population")
     t = o["tests"]
-    if not (0 < t["baseline"] <= t["candidate"] and t["passed_candidate"] <= t["candidate"]):
+    if not all(type(t[k]) is int for k in ("baseline", "candidate", "passed_candidate")):
+        raise ValueError("Test counts must be nonnegative integers")
+    if not (0 < t["baseline"] <= t["candidate"] and
+            0 <= t["passed_candidate"] <= t["candidate"]):
         raise ValueError("Invalid tests")
     for item in doc["sipoc"]:
         if not all(isinstance(item.get(k), str) and item[k] for k in ("name", "detail", "constraint")):
@@ -305,7 +308,8 @@ never inherited green statuses.</p><div class="scroll">{svg(doc)}</div>
 <section class="call"><h2>Pressure and statistical constraints</h2>
 <p><b>Depth</b>: same source SHA, tool version and eligible statements/branches;
 not comparable with full-repository coverage.
-<b>Breadth</b>: 42 eligible repo-family cells, 6 status/metadata observations; 36 UNKNOWN.
+<b>Breadth</b>: {esc(kpi["eligible"])} eligible repo-family cells,
+{esc(kpi["after"])} status/metadata observations; {esc(kpi["unobserved"])} UNKNOWN.
 <b>Convergence</b>: root transitions and repeated fingerprint pairs, not raw-count subtraction.
 <b>Throughput</b>: actual worker-hours and queue timestamps required; both currently UNKNOWN.
 <b>M2/M3</b>: independent control windows and defensible limits before stability/capability claims.

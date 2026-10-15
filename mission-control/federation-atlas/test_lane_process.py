@@ -143,5 +143,37 @@ class LaneProcessTests(unittest.TestCase):
             self.assertNotIn("<script>alert(1)</script>", markup)
 
 
+    def test_test_population_rejects_negative_fractional_boolean_and_overflow(self):
+        for key, value in (
+            ("passed_candidate", -1),
+            ("passed_candidate", 1.5),
+            ("passed_candidate", True),
+            ("candidate", 3.2),
+            ("candidate", False),
+            ("baseline", -1),
+            ("baseline", True),
+            ("baseline", 0),
+            ("passed_candidate", 999),
+        ):
+            with self.subTest(field=key, value=value):
+                doc = self.contract_copy()
+                doc["observation"]["tests"][key] = value
+                with self.assertRaisesRegex(ValueError, "Test counts|Invalid tests"):
+                    lane_process.verify(doc, self.registry)
+
+    def test_breadth_prose_derived_from_same_metrics_as_cards(self):
+        doc = self.contract_copy()
+        doc["observation"]["eligible_cells"] = 50
+        doc["observation"]["g1_observed_cells"] = 7
+        with tempfile.TemporaryDirectory() as temp:
+            target = Path(temp) / "contract.json"
+            target.write_text(json.dumps(doc), encoding="utf-8")
+            lane_process.build(temp, contract_path=target)
+            markup = (Path(temp) / "lane-process.html").read_text(encoding="utf-8")
+            self.assertIn("50 eligible repo-family cells", markup)
+            self.assertIn("7 status/metadata observations", markup)
+            self.assertIn("43 UNKNOWN", markup)
+            self.assertNotIn("42 eligible repo-family cells, 6 status", markup)
+
 if __name__ == "__main__":
     unittest.main()
