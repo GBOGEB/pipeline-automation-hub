@@ -1,0 +1,73 @@
+{
+  "schema": "missioncontrol.w6.native_pulse.v1",
+  "source_authority": "existing_w4_handover_and_flightdeck",
+  "source_master_observed": "d9e9d05173a8fa898197de7a069d1fcfbd906de5",
+  "native_source_sha": "6be34434568df474eab28751a098caf57f8cc6bd",
+  "run": {
+    "id": 38747222991,
+    "attempt": 1,
+    "job_id": 116463927229,
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "original_artifact": {
+    "id": 11981899904,
+    "bytes": 187463,
+    "sha256": "7b2bf26385797ced5171a6696b0a927ec97db34874cc9707f7a26754c3293590",
+    "zip_members": 30,
+    "internal_manifest_sha256": "f59754a663659c611e4fb6577be498ef9212390e718826a12c099ad58ff6cdd9",
+    "manifest_members_checked": 10,
+    "checksum_status": "PASS"
+  },
+  "tests": {
+    "executed": 42,
+    "passed": 42
+  },
+  "coverage": {
+    "statements": {
+      "covered": 272,
+      "eligible": 273,
+      "percent": 99.63
+    },
+    "branches": {
+      "covered": 116,
+      "eligible": 118,
+      "percent": 98.31
+    },
+    "scope": "flightdeck.py_ONLY"
+  },
+  "ancestry": {
+    "w5_sha256": "325b077f5a56a6640ed57ba948273084328ba93a675602acfc0ae0815ebd6cd5",
+    "w1w2_sha256": "29ffa8f6c7c1d10325a909b61a55fc325fcadbd81653f6bbe2ace0cc17db94af",
+    "w3_sha256": "ddfb75891c1b870b9900d0d135ffd2acb3cdc898adcdfffe13345b48bdbaf534"
+  },
+  "current_main_native_atlas": "UNVERIFIED",
+  "master_protected": false,
+  "repo_rulesets": [],
+  "open_pr_before_this_branch": 0,
+  "pages_current": "DEPLOY_SUCCESS_HOSTED_BYTES_UNVERIFIED",
+  "release": "HOLD",
+  "qps_engineering": "DEFER",
+  "four_hop": "UNKNOWN",
+  "merge_authorized": false,
+  "security_waiver": false,
+  "authority_transfer": false,
+  "control_credit": false,
+  "id_transitions": [
+    {
+      "id": "MC-W5-001",
+      "from": "WAIT_TERMINAL",
+      "to": "VERIFIED_HISTORICAL_MAIN_SHA"
+    },
+    {
+      "id": "MC-W5-003",
+      "from": "WAIT_TERMINAL",
+      "to": "VERIFIED_IN_NATIVE_ATLAS_ZIP"
+    },
+    {
+      "id": "MC-W5-005",
+      "from": "WAIT_TERMINAL",
+      "to": "BYTE_VERIFIED_HISTORICAL_NATIVE"
+    }
+  ]
+}
