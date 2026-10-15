@@ -69,7 +69,7 @@ def render(report, source_sha, rollup_sha256):
     rows = []
     for name, row in sorted(report["surfaces"].items()):
         rows.append(f'<tr><th scope="row">{escape(name)}</th><td>{row["source_discovered"]}/6</td><td>{row["native_status_verified"]}/6</td><td>{row["artifact_bytes_verified"]}/6</td><td>{row["unknown"]}/6</td></tr>')
-    return """<!doctype html>
+    return ("""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark light"><title>MissionControl — G1 federation evidence</title>
 <style>:root{color-scheme:dark;--bg:#0c0c0c;--fg:#fafafa;--dim:#b9b9b9;--edge:#484848;--track:#292929}
@@ -88,7 +88,7 @@ footer{border-top:1px solid var(--edge);padding-top:14px;overflow-wrap:anywhere}
 <h2>Decision</h2><p>HOLD — source discoveries are not authenticated runs; a producer artifact is not a consumer acceptance or an independent reviewer.</p>
 <footer>Source pulse: """ + escape(report["pulse_id"]) + """ · Report observed UTC: """ + escape(report["observed_at_utc"]) +
 """<p>Producer exact SHA: <code>""" + escape(source_sha) + """</code> · Canonical rollup SHA-256: <code>""" + escape(rollup_sha256) + """</code></p>
-<p>QPS disposition: DEFER · Worker launch: 0 · Authority transfer: false</p></footer></main></body></html>"""
+<p>QPS disposition: DEFER · Worker launch: 0 · Authority transfer: false</p></footer></main></body></html>""")
 
 
 def main():
