@@ -1,0 +1,93 @@
+{
+  "schema": "missioncontrol.chat_session_intake.v1",
+  "session_alias": "CODE_PURPLE_SESSION_20261015_RECONSTRUCTED",
+  "session_alias_not_platform_id": true,
+  "capture_mode": "MANUAL_SANITIZED_INTENT",
+  "capture_checkpoint_utc": "2026-10-15T12:43:00Z",
+  "original_turn_ids_accessible": false,
+  "raw_transcript_exported": false,
+  "privacy_boundary": "SANITIZED_SUMMARY_ONLY",
+  "transcript_completeness": "BOUNDED_TWO_TURN_SAMPLE_NOT_FULL_CHAT",
+  "authority_transfer": false,
+  "merge_authorized": false,
+  "engineering_credit": 0,
+  "qps_disposition": "DEFER",
+  "existing_source_refs": [
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "path": "triage/code_purple/evolutionary_v1/INTENT_EVENTS.json",
+      "blob_sha": "42f538e367d7e49b1170b631c372634913afa3f2",
+      "classification": "QPS_OWNED_INTENT_SNAPSHOT"
+    },
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/golden-thread/golden_thread.py",
+      "blob_sha": "880cc12b99d86e0c54d369757e2a27fa8d7b9060",
+      "classification": "REUSED_CANONICAL_HASH_CHAIN"
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "path": "docs/handover/chat_to_github_prompt_sequence.md",
+      "blob_sha": "11e331975bd280f7e6caa16ac8dd923787d6795a",
+      "classification": "REUSED_EXISTING_HANDOVER_PROCESS"
+    }
+  ],
+  "intent_events": [
+    {
+      "intent_id": "CP-SESSION-20261015-001",
+      "logical_index": 1,
+      "parent_intent_id": null,
+      "source_class": "CURRENT_CONVERSATION_RECONSTRUCTED_USER_INTENT",
+      "original_turn_id": null,
+      "original_message_time_utc": null,
+      "source_time_verification": "UNKNOWN",
+      "capture_checkpoint_utc": "2026-10-15T12:43:00Z",
+      "summary": "Continue the N+2 nine-track CODE PURPLE work with explicit next gates for protected integration, G1/G5 evidence and KEB/DOW/QPS federation.",
+      "owner_issue": "GBOGEB/pipeline-automation-hub#153",
+      "action": {
+        "action_id": "CP-ACTION-20261015-001",
+        "owner_repo": "GBOGEB/pipeline-automation-hub",
+        "owner_issue": 153,
+        "existing_pr": 534,
+        "summary": "Preserve canonical G5 evidence and unresolved admission/federation work without claiming QPS acceptance.",
+        "status": "REFERENCED_PENDING_OWNER_GATE",
+        "verified_native_receipt": null
+      }
+    },
+    {
+      "intent_id": "CP-SESSION-20261015-002",
+      "logical_index": 2,
+      "parent_intent_id": "CP-SESSION-20261015-001",
+      "relation_to_parent": "REFINES_WITHOUT_SUPERSEDING",
+      "source_class": "CURRENT_CONVERSATION_RECONSTRUCTED_USER_INTENT",
+      "original_turn_id": null,
+      "original_message_time_utc": null,
+      "source_time_verification": "UNKNOWN",
+      "capture_checkpoint_utc": "2026-10-15T12:43:00Z",
+      "summary": "Design and implement a recursive, traceable hook from each chat/session user intent to an existing owner, next action, implementation, native evidence and next iteration.",
+      "owner_issue": "GBOGEB/pipeline-automation-hub#153",
+      "action": {
+        "action_id": "CP-ACTION-20261015-002",
+        "owner_repo": "GBOGEB/pipeline-automation-hub",
+        "owner_issue": 153,
+        "existing_pr": null,
+        "summary": "Build a read-only session-intent adapter using canonical Golden Thread events, a source-bound HTML review and fail-closed native tests.",
+        "status": "PLANNED_BEFORE_IMPLEMENTATION",
+        "verified_native_receipt": null
+      }
+    }
+  ],
+  "forecast_pre_registered": {
+    "forecast_id": "CP-SESSION-NPLUS1-20261015-001",
+    "forecast_clock": "FROZEN_BEFORE_ADAPTER_CODE",
+    "predicted_native_adapter_result": "PASS",
+    "predicted_occurrences": 2,
+    "predicted_work_orders": 2,
+    "predicted_session_root": "PROJECTION_ONLY",
+    "predicted_unbound_original_chat_turns": 2,
+    "predicted_raw_transcripts_exported": 0,
+    "predicted_engineering_acceptances": 0,
+    "actual_native_adapter_result": null,
+    "score": "PENDING_NATIVE_EXACT_HEAD"
+  }
+}
