@@ -31,6 +31,7 @@ t("untrusted external evidence link rejected",()=>{let q=clone(input);q.m2_actio
 t("current snapshot protection promoted rejected",()=>{let q=clone(input);q.repos[0].required_checks="ON";reject(q);});
 t("stale M2 source blob rejected",()=>{let r=Object.assign({},raw,{m2:Buffer.concat([raw.m2,Buffer.from(" ")] )});reject(input,m2,r);});
 t("stale M2 reconciliation blob rejected",()=>{let r=Object.assign({},raw,{overlay:Buffer.concat([raw.overlay,Buffer.from(" ")] )});reject(input,m2,r);});
+t("non-compensating release-gate promotion rejected",()=>{let m=clone(m2);m.release_gates[0].status="PASS";reject(input,m);});
 t("preregistered forecast remains unscored",()=>{let q=clone(input);q.forecast_pre_registered.actual="PASS";reject(q);});
 t("source root changed rejected",()=>{let q=clone(input);q.parent_intent="OTHER";reject(q);});
 t("source output exact SHA must be 40-hex",()=>assert.throws(()=>x.build(input,m2,raw,"short"),/M3_FAIL_CLOSED/));
