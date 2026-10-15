@@ -136,6 +136,9 @@ def build(out, method=None, stage=None, event=None):
         '<a class="link" href="'+safe(v["url"])+'" rel="noopener noreferrer" target="_blank">'+safe(v["label"])+
         '<small>'+("Hosted candidate · readback UNKNOWN" if v["kind"]=="HOSTED_CANDIDATE" else "Authoritative source navigation")+'</small></a>'
         for v in cat["links"])
+    refs += ('<a class="link" href="federation-latest.html">'
+             'Latest observed N+2 pulse: W70 terminal red, Atlas merged'
+             '<small>Frozen exact-run observation; historical chart remains separate</small></a>')
     refs += ('<a class="link" href="federation-wave.html">'
              'Measured federation pulses · historical source-bound coverage'
              '<small>Not a live status or admission view</small></a>')
