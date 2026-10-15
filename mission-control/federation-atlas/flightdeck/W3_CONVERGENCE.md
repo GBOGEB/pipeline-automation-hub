@@ -5,7 +5,7 @@
 - New source: use exact PR/commit SHA, once flight is explicitly authorized.
 - One existing `CODE PURPLE Method Atlas (read-only)` workflow; one uploaded artifact; no new trigger, worker launcher, Pages publisher or write token.
 - Inputs: canonical `mission-control/gogreen/samples/fleet_g1.json` (historical six repos and 42 eligible cells) + `flightdeck_contract.json` + historical `head_snapshot.json`.
-- Generated paths: `/tmp/code-purple-atlas/index.html`, `/tmp/code-purple-atlas/flightdeck/index.html`, `flightdeck/census.json`, `flightdeck/anchors.json`, `flightdeck/bd_leaves.json`, `flightdeck/manifest.json`, `flightdeck-coverage.json`, `flightdeck-tests.log`.
+- The same single Atlas producer generates all four linked Office/PDF files before sealing.\n- Generated paths: `/tmp/code-purple-atlas/index.html`, `/tmp/code-purple-atlas/flightdeck/index.html`, `flightdeck/census.json`, `flightdeck/anchors.json`, `flightdeck/bd_leaves.json`, `flightdeck/manifest.json`, `flightdeck-coverage.json`, `flightdeck-tests.log`.
 - Focused floors (not fleet-wide coverage): >=42 actual tests; >=95% line and >=90% branch, coverage 7.13.3, exactly 1 measured module.
 - SHA binding: GitHub checkout HEAD == source in census/manifest.
 - Fail-close: every source, test, SHA, count, output and digest error produces a failed CI step.

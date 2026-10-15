@@ -120,3 +120,5 @@ claim HOSTED_VERIFIED before a site URL and hosted-content digest readback.
 Do not merge this branch without authorized gate/review process. To avoid
 unnecessary GitHub Actions consumption, initial implementation is a
 non-PR staging branch pending owner-controlled flight budget.
+
+**W3 derivative parity:** because the Flight Deck HTML includes links to XLSX, DOCX, PPTX and PDF, the existing Atlas job also renders and tests nonempty versions of those four files *before* hashing/upload. Optional dependencies are pinned; no second workflow is introduced. They remain generated review copies, not corporate-approved documents.
