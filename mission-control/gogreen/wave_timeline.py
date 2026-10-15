@@ -116,8 +116,8 @@ def validate(data, previous=None):
         roots = wave.get("root_predicates_recovered")
         if roots is not None:
             _integer(roots, "recovered first-red fingerprints")
-            if i == 0 or wave.get("wave") != "G2":
-                raise ValueError("root receipt must match its observed historical wave")
+            if i == 0:
+                raise ValueError("historical first-red recovery requires a subsequent wave")
         if not isinstance(wave.get("scope_notes"), str) or not wave["scope_notes"].strip():
             raise ValueError("missing scope statement")
     if previous is not None:
