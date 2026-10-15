@@ -1,0 +1,329 @@
+{
+  "schema": "gogreen.g5.federation-intake.v1",
+  "snapshot_at": "2026-10-15T08:58:18Z",
+  "authority_transfer": false,
+  "dispatch_authorized": false,
+  "merge_authorized": false,
+  "security_waiver": false,
+  "qps_disposition": "DEFER",
+  "repos": [
+    {
+      "repository": "GBOGEB/ABACUS",
+      "catalog_sha": "b50c64b02e2b85c7f6f12388011c7778299fb1c0",
+      "source_kind": "PR_HEAD_SNAPSHOT",
+      "target_families": [
+        "ci_contract",
+        "security",
+        "coverage",
+        "runtime",
+        "artifact",
+        "federation",
+        "qps_triage",
+        "math_model"
+      ]
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "catalog_sha": "3872c2cf44ac274c7f3f9e420e9b81a8eb1a7062",
+      "source_kind": "MAIN_SNAPSHOT",
+      "target_families": [
+        "ci_contract",
+        "security",
+        "coverage",
+        "runtime",
+        "artifact",
+        "federation",
+        "qps_triage",
+        "math_model"
+      ]
+    },
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "catalog_sha": "87ec869eaf427c7ceed62eed1c61b05b77c5969d",
+      "source_kind": "MAIN_SNAPSHOT",
+      "target_families": [
+        "ci_contract",
+        "security",
+        "coverage",
+        "runtime",
+        "artifact",
+        "federation",
+        "qps_triage",
+        "math_model"
+      ]
+    },
+    {
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "catalog_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "source_kind": "MAIN_SNAPSHOT",
+      "target_families": [
+        "ci_contract",
+        "security",
+        "coverage",
+        "artifact",
+        "federation",
+        "qps_triage"
+      ]
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "catalog_sha": "c7c1344c3ed289ac8e74b8425d219fae696cdb7d",
+      "source_kind": "MAIN_SNAPSHOT",
+      "target_families": [
+        "ci_contract",
+        "security",
+        "coverage",
+        "artifact",
+        "federation",
+        "qps_triage",
+        "math_model"
+      ]
+    },
+    {
+      "repository": "GBOGEB/gg_MATH",
+      "catalog_sha": "c5cd3e30a8e241111fc9f15367f3b92ba0393ea7",
+      "source_kind": "MAIN_SNAPSHOT",
+      "target_families": [
+        "ci_contract",
+        "security",
+        "coverage",
+        "federation",
+        "math_model"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "hub_mission",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "role": "MISSION_CONTROL",
+      "source_sha": "87ec869eaf427c7ceed62eed1c61b05b77c5969d"
+    },
+    {
+      "id": "hub_3p",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "role": "3PSTAR",
+      "source_sha": "87ec869eaf427c7ceed62eed1c61b05b77c5969d"
+    },
+    {
+      "id": "hub_thread",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "role": "GOLDEN_THREAD",
+      "source_sha": "87ec869eaf427c7ceed62eed1c61b05b77c5969d"
+    },
+    {
+      "id": "math_pca",
+      "repository": "GBOGEB/gg_MATH",
+      "role": "PCA",
+      "source_sha": "c5cd3e30a8e241111fc9f15367f3b92ba0393ea7"
+    },
+    {
+      "id": "codex_mycelium",
+      "repository": "GBOGEB/CODEX",
+      "role": "MYCELIUM",
+      "source_sha": "3872c2cf44ac274c7f3f9e420e9b81a8eb1a7062"
+    },
+    {
+      "id": "codex_rex",
+      "repository": "GBOGEB/CODEX",
+      "role": "REX",
+      "source_sha": "3872c2cf44ac274c7f3f9e420e9b81a8eb1a7062"
+    },
+    {
+      "id": "codex_ldab",
+      "repository": "GBOGEB/CODEX",
+      "role": "LDAB",
+      "source_sha": "3872c2cf44ac274c7f3f9e420e9b81a8eb1a7062"
+    },
+    {
+      "id": "codex_lldb",
+      "repository": "GBOGEB/CODEX",
+      "role": "LLDB",
+      "source_sha": "3872c2cf44ac274c7f3f9e420e9b81a8eb1a7062"
+    },
+    {
+      "id": "abacus_mip",
+      "repository": "GBOGEB/ABACUS",
+      "role": "MIP",
+      "source_sha": "b50c64b02e2b85c7f6f12388011c7778299fb1c0"
+    },
+    {
+      "id": "abacus_dmaic",
+      "repository": "GBOGEB/ABACUS",
+      "role": "DMAIC",
+      "source_sha": "b50c64b02e2b85c7f6f12388011c7778299fb1c0"
+    },
+    {
+      "id": "abacus_census",
+      "repository": "GBOGEB/ABACUS",
+      "role": "CENSUS",
+      "source_sha": "b50c64b02e2b85c7f6f12388011c7778299fb1c0"
+    },
+    {
+      "id": "qps_triage",
+      "repository": "GBOGEB/cryoplant-project",
+      "role": "QPS_TRIAGE",
+      "source_sha": "c7c1344c3ed289ac8e74b8425d219fae696cdb7d"
+    },
+    {
+      "id": "docx_thread",
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "role": "GOLDEN_THREAD",
+      "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440"
+    }
+  ],
+  "edges": [
+    {
+      "source": "hub_mission",
+      "target": "codex_mycelium",
+      "level": "DECLARED",
+      "receipt": null
+    },
+    {
+      "source": "hub_mission",
+      "target": "abacus_census",
+      "level": "DECLARED",
+      "receipt": null
+    },
+    {
+      "source": "hub_mission",
+      "target": "hub_3p",
+      "level": "DECLARED",
+      "receipt": null
+    },
+    {
+      "source": "hub_thread",
+      "target": "docx_thread",
+      "level": "DECLARED",
+      "receipt": null
+    },
+    {
+      "source": "math_pca",
+      "target": "codex_mycelium",
+      "level": "DECLARED",
+      "receipt": null
+    },
+    {
+      "source": "codex_mycelium",
+      "target": "abacus_mip",
+      "level": "DECLARED",
+      "receipt": null
+    },
+    {
+      "source": "codex_rex",
+      "target": "abacus_dmaic",
+      "level": "DECLARED",
+      "receipt": null
+    },
+    {
+      "source": "codex_ldab",
+      "target": "codex_lldb",
+      "level": "DECLARED",
+      "receipt": null
+    },
+    {
+      "source": "codex_lldb",
+      "target": "abacus_census",
+      "level": "DECLARED",
+      "receipt": null
+    },
+    {
+      "source": "abacus_mip",
+      "target": "abacus_dmaic",
+      "level": "DECLARED",
+      "receipt": null
+    },
+    {
+      "source": "abacus_dmaic",
+      "target": "qps_triage",
+      "level": "DECLARED",
+      "receipt": null
+    },
+    {
+      "source": "hub_3p",
+      "target": "qps_triage",
+      "level": "DECLARED",
+      "receipt": null
+    },
+    {
+      "source": "docx_thread",
+      "target": "qps_triage",
+      "level": "DECLARED",
+      "receipt": null
+    }
+  ],
+  "pr_observations": [
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 531,
+      "status": "OPEN_DRAFT",
+      "head_sha": "2ef1e03c234c2d74aaa90ca193d42307e60c61e2",
+      "workflow_sample_size": 6,
+      "workflow_conclusions": {
+        "success": 2,
+        "failure": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "nonterminal": 4
+      },
+      "observed_head_is_current": false,
+      "accepted_rex_return": false,
+      "qps_accepted": false,
+      "observation_class": "HISTORICAL_NATIVE_GITHUB_STATUS_SNAPSHOT"
+    },
+    {
+      "repository": "GBOGEB/ABACUS",
+      "pr": 1993,
+      "status": "OPEN_DRAFT",
+      "head_sha": "3bd744a6e057e4df4d26edb2149f987f54678f7e",
+      "workflow_sample_size": 23,
+      "workflow_conclusions": {
+        "success": 3,
+        "failure": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "nonterminal": 20
+      },
+      "observed_head_is_current": false,
+      "accepted_rex_return": false,
+      "qps_accepted": false,
+      "observation_class": "HISTORICAL_NATIVE_GITHUB_STATUS_SNAPSHOT"
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "pr": 1046,
+      "status": "MERGED",
+      "head_sha": "450f35daffcb3c6e6eab360bf27abe5dba4a6bb9",
+      "workflow_sample_size": 34,
+      "workflow_conclusions": {
+        "success": 31,
+        "failure": 3,
+        "cancelled": 0,
+        "skipped": 0,
+        "nonterminal": 0
+      },
+      "observed_head_is_current": false,
+      "accepted_rex_return": false,
+      "qps_accepted": false,
+      "observation_class": "HISTORICAL_NATIVE_GITHUB_STATUS_SNAPSHOT"
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "pr": 1923,
+      "status": "MERGED",
+      "head_sha": "2cd3a02f0d48dcf5d4d0b321571fa808a12db396",
+      "workflow_sample_size": 12,
+      "workflow_conclusions": {
+        "success": 12,
+        "failure": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "nonterminal": 0
+      },
+      "observed_head_is_current": false,
+      "accepted_rex_return": false,
+      "qps_accepted": false,
+      "observation_class": "HISTORICAL_NATIVE_GITHUB_STATUS_SNAPSHOT"
+    }
+  ]
+}
