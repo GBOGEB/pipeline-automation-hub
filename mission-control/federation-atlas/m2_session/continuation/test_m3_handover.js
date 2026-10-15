@@ -50,6 +50,13 @@ t("HTML source gets escaped and search bound",()=>{
  assert(!h.includes('<img onerror="alert(1)">'));assert(h.includes("&lt;img"));
  assert(h.includes('id="search"'));assert(h.includes("viewport"));
 });
+t("mobile owner cards have labels, wrapped content and hidden-filter rule",()=>{
+ const h=x.html(base);
+ assert(h.includes('class="action-table"'));
+ assert(h.includes('data-label="Owner"'));
+ assert(h.includes('@media(max-width:640px)'));
+ assert(h.includes('tr[data-search][hidden]'));
+});
 t("Markdown contains every action and user intent",()=>{
  const md=x.fullMd(base);
  for(const a of base.actions)assert(md.includes(a.id));
