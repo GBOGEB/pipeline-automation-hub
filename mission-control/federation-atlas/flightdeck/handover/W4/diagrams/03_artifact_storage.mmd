@@ -1,0 +1,16 @@
+flowchart TD
+  S["Controlled SSOT JSON/YAML + .py + .mmd + schemas in PR"] --> G["Pinned Python / Node generator, source SHA"]
+  G --> H["HTML / SVG / JSON / MD projection"]
+  G --> O["XLSX / DOCX / PPTX / PDF derived binary"]
+  H --> C["Cross-format QA + hash manifest"]
+  O --> C
+  C --> T["GitHub Actions artifact ZIP: retention-limited"]
+  C --> L["Durable W1/W2/W3/W4 release archive by SHA"]
+  T --> A{"Native exact SHA and protected main admission?"}
+  A -->|"yes"| P["Existing authorized Pages publisher"]
+  A -->|"no"| X["HOLD, no live publication"]
+  P --> R{"Hosted bytes equal manifest?"}
+  R -->|"yes"| U["USER read-only portal + review note export"]
+  R -->|"no"| X
+  CO["External ALX / SCK CEN originals"] -.->|"IDs, raw hashes only"| S
+  U -.->|"approved change request in NEXT pulse"| S

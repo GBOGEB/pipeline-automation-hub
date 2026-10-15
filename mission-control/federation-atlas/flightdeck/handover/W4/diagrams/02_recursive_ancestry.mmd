@@ -1,0 +1,12 @@
+flowchart LR
+  W1["W1 original ZIP + SHA"] --> P["W1/W2 combined ZIP (immutable)"]
+  W2["W2 original ZIP + SHA"] --> P
+  P --> W3["W3 original ZIP + SHA + ten local outputs"]
+  W3 --> W4["W4 state, BD, schema, DAG, HTML + manifest"]
+  B["GitHub PR #537 W1/W2 merged"] -.-> W4
+  C["GitHub PR #539 Global DoV merged"] -.-> W4
+  D["GitHub PR #540 manual session hook merged (native RED)"] -.-> W4
+  E["GitHub PR #541 Atlas merged (native RED)"] -.-> W4
+  F["W4 source branch d2ec6e0d, unmerged"] -.-> W4
+  W4 --> N["Next W4+1 archive: W4 ZIP remains byte-identical parent"]
+  N -.->|"next authorized session checkpoint"| W4

@@ -1,0 +1,46 @@
+{
+  "issued_before_next_W4_native_run": true,
+  "predictions": [
+    {
+      "actual": null,
+      "condition": "Native clean PR head uses test+N2 overlay patch; schema/other source remains unchanged",
+      "expected": "ATLAS_FIRST_RED_CLEARS",
+      "id": "PRED-W4-001",
+      "root": "W4-BD-001",
+      "score": "PENDING"
+    },
+    {
+      "actual": null,
+      "condition": "Native clean PR head uses exact known heading; not evidence of user transcript completeness",
+      "expected": "SESSION_HOOK_GENERATED_HTML_RECEIPT_PASSES",
+      "id": "PRED-W4-002",
+      "root": "W4-BD-002",
+      "score": "PENDING"
+    },
+    {
+      "actual": null,
+      "condition": "Full FlightDeck 42+/95/90 and ten-file ZIP not previously reached by red Atlas",
+      "expected": "UNKNOWN_UNTIL_NATIVE",
+      "id": "PRED-W4-003",
+      "root": "W4-BD-005",
+      "score": "PENDING"
+    },
+    {
+      "actual": null,
+      "condition": "No authorized Pages promotion or independent served content comparison yet",
+      "expected": "HOSTED_FLIGHTDECK_UNKNOWN",
+      "id": "PRED-W4-004",
+      "root": "W4-BD-008",
+      "score": "PENDING"
+    }
+  ],
+  "recorded_utc": "2026-10-15T13:28:28+00:00",
+  "schema": "missioncontrol.preregistered_next_pulse.v1",
+  "statistical_status": {
+    "BRADLEY_TERRY": "NOT_FIT",
+    "M1": "SUPPORTED_FOR_LOCAL_W3_FOCUSED_SCOPE",
+    "M2": "HOLD",
+    "M3": "HOLD",
+    "PCA": "NOT_FIT"
+  }
+}

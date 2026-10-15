@@ -1,0 +1,135 @@
+{
+  "$id": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/flightdeck/handover/W4_HANDOVER.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "admission": {
+      "properties": {
+        "four_hop_native": {
+          "const": "UNKNOWN"
+        },
+        "merge_authorized": {
+          "const": false
+        },
+        "qps_engineering": {
+          "const": "DEFER"
+        },
+        "security_waiver": {
+          "const": false
+        }
+      },
+      "required": [
+        "security_waiver",
+        "merge_authorized",
+        "qps_engineering",
+        "four_hop_native"
+      ],
+      "type": "object"
+    },
+    "exact_source": {
+      "properties": {
+        "main_sha": {
+          "pattern": "^[a-f0-9]{40}$",
+          "type": "string"
+        },
+        "w4_candidate_sha": {
+          "pattern": "^[a-f0-9]{40}$",
+          "type": "string"
+        },
+        "w4_merged": {
+          "const": false
+        },
+        "w4_pr_number": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "main_sha",
+        "w4_candidate_sha",
+        "w4_pr_number",
+        "w4_merged"
+      ],
+      "type": "object"
+    },
+    "historical_g4": {
+      "properties": {
+        "anchor_matches": {
+          "const": 2
+        },
+        "anchor_total": {
+          "const": 5
+        },
+        "eligible_cells": {
+          "const": 42
+        },
+        "observed_status_cells": {
+          "const": 6
+        },
+        "unobserved_cells": {
+          "const": 36
+        }
+      },
+      "required": [
+        "eligible_cells",
+        "observed_status_cells",
+        "unobserved_cells",
+        "anchor_matches",
+        "anchor_total"
+      ],
+      "type": "object"
+    },
+    "native_first_reds": {
+      "items": {
+        "properties": {
+          "native_fix_verified": {
+            "const": false
+          }
+        },
+        "required": [
+          "root_id",
+          "run_ids",
+          "native_fix_verified"
+        ],
+        "type": "object"
+      },
+      "minItems": 2,
+      "type": "array"
+    },
+    "prior_parent_archives": {
+      "items": {
+        "properties": {
+          "bytes": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "sha256": {
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "level",
+          "sha256",
+          "path",
+          "bytes"
+        ],
+        "type": "object"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "type": "array"
+    },
+    "schema": {
+      "const": "missioncontrol.lossless_handover_state.v1"
+    }
+  },
+  "required": [
+    "schema",
+    "exact_source",
+    "historical_g4",
+    "admission",
+    "prior_parent_archives",
+    "native_first_reds"
+  ],
+  "title": "MissionControl Lossless W4 handover state schema",
+  "type": "object"
+}
