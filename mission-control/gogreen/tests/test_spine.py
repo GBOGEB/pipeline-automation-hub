@@ -1,5 +1,6 @@
 """G0 tests: negative controls must refuse forged evidence and admission."""
 import copy
+import hashlib
 import importlib.util
 import json
 import tempfile
@@ -115,6 +116,21 @@ class GreenSpineTests(unittest.TestCase):
                 h.write(b"\nFORGED")
             with self.assertRaisesRegex(ValueError, "mismatch"):
                 spine.verify_output(a)
+
+    def test_rehashed_forged_child_acceptance_still_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d)
+            spine.emit(fixture(), path)
+            hook_path = path / "federation_hooks.json"
+            hooks = json.loads(hook_path.read_text(encoding="utf-8"))
+            hooks["child_acceptance"] = "ACCEPT"
+            hook_path.write_text(json.dumps(hooks, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            manifest_path = path / "manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["sha256"]["federation_hooks.json"] = hashlib.sha256(hook_path.read_bytes()).hexdigest()
+            manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "admission boundary"):
+                spine.verify_output(path)
 
     def test_untrusted_remote_authority_rejected(self):
         f = fixture(); f["repositories"][0]["authority_transfer"] = True

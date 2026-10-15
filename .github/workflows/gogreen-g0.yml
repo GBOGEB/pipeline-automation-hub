@@ -5,8 +5,14 @@ on:
       - 'mission-control/gogreen/**'
       - '.github/workflows/gogreen-g0.yml'
   workflow_dispatch:
+    inputs:
+      live_scan:
+        description: "Read-only six-repo sample (manual dispatch only; no stress)"
+        type: boolean
+        default: false
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: gogreen-g0-${{ github.ref }}
   cancel-in-progress: false
@@ -38,6 +44,42 @@ jobs:
             --out "$RUNNER_TEMP/gogreen-g0"
           python mission-control/gogreen/spine.py \
             --out "$RUNNER_TEMP/gogreen-g0" --verify
+      - name: Bind producer output to exact checked-out PR head
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_CONTEXT_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          SOURCE_REPO: ${{ github.repository }}
+        run: |
+          python - <<'PYCODE'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+          checked = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+          assert checked == os.environ["EXPECTED_HEAD"]
+          out = Path(os.environ["RUNNER_TEMP"]) / "gogreen-g0"
+          manifest = out / "manifest.json"
+          receipt = {"schema": "gogreen.execution-provenance.v1",
+                     "repository": os.environ["SOURCE_REPO"],
+                     "checked_out_sha": checked,
+                     "run_context_sha": os.environ["RUN_CONTEXT_SHA"],
+                     "run_id": int(os.environ["RUN_ID"]),
+                     "run_attempt": int(os.environ["RUN_ATTEMPT"]),
+                     "manifest_file_sha256": hashlib.sha256(manifest.read_bytes()).hexdigest(),
+                     "execution_proof": "EXACT_CHECKOUT_CONFIRMED",
+                     "source_claims_not_admission": True, "authority_transfer": False}
+          (out / "execution_provenance.json").write_text(
+              json.dumps(receipt, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+          print(json.dumps(receipt, sort_keys=True))
+          PYCODE
+      - name: Optional bounded read-only live fleet scout
+        if: github.event_name == 'workflow_dispatch' && inputs.live_scan == true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python mission-control/gogreen/collect_readonly.py \
+            --catalog mission-control/gogreen/samples/fleet_g0.json \
+            --out "$RUNNER_TEMP/gogreen-g0/live" --max-runs 2 --max-jobs 3
       - name: Test bounded local asyncio queue and injected negative control
         run: |
           python mission-control/gogreen/synthetic_probe.py \
@@ -50,7 +92,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: gogreen-g0-${{ github.sha }}-${{ github.run_id }}
+          name: gogreen-g0-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
           path: ${{ runner.temp }}/gogreen-g0/
           if-no-files-found: warn
           retention-days: 30

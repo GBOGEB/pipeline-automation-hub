@@ -76,3 +76,11 @@ Role_PLATERS are *role definitions*, not authenticated Crew launches. Distinct r
 ## Next native testflight
 
 `.github/workflows/gogreen-g0.yml` runs only on changed GOGREEN files or explicit manual dispatch. Verify tests, proof output and negative controls, synthetic probe, and upload the exact-head evidence bundle. Native GitHub Actions is required before claiming implementation DoV. The next implementation slices must reconcile actual producer bytes and allow native `repo+sha+run+job` read-only importer receipts; avoid high-frequency workflow fan-out before baseline cost metrics exist.
+
+### G0.1 passive wide scout (new, opt-in)
+
+`collect_readonly.py` uses GitHub's **GET-only** Actions run and job APIs to sample up to two runs and three jobs per run on each of the six source-pinned repositories. It records native terminal success/failure, the exact SHA/run/attempt/job, workflow-name *heuristics* for candidate category routing, incomplete samples and per-repo API errors. A source-bound successful job with unknown effective test/config version is labeled `NATIVE_PASS_STATUS_ONLY`, **not** `NATIVE_PASS_METADATA`, byte-verified, or a qualified test.
+
+The local workflow runs all 24 negative/unit tests, but real remote scanning is intentionally **manual opt-in** (`workflow_dispatch.live_scan=true`), and becomes available once the workflow is admitted to the default branch. The PR run does not fan out or read other repositories. Every optional live scan remains a sampled, read-only observation rather than a complete fleet census. Non-green workflow results are sent to an unassigned first-red candidate register, not automatically given an EVERRED root ID.
+
+The execution receipt distinguishes **checked-out PR head** from GitHub's synthetic PR-merge context SHA and binds the internal manifest digest to `run_id` and `run_attempt`. The upload artifact name uses the actual checked-out source SHA, not the synthetic merge SHA.

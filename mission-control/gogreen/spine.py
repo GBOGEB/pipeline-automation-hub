@@ -73,7 +73,8 @@ def _check_observation(row: dict, catalog: dict[str, dict]) -> dict:
     if repo not in catalog or family not in catalog[repo]["target_families"]:
         raise ValueError("observation outside declared repo/family census")
     sha = _sha(row.get("source_sha"), "observation source")
-    _sha(row.get("base_sha"), "observation baseline")
+    if row.get("base_sha") is not None:
+        _sha(row.get("base_sha"), "observation baseline")
     if sha != catalog[repo]["head_sha"]:
         raise ValueError("observation not matched to declared exact head")
     if not isinstance(row.get("suite_id"), str) or not row["suite_id"]:
@@ -117,6 +118,8 @@ def _check_observation(row: dict, catalog: dict[str, dict]) -> dict:
             raise ValueError("test denominator does not reconcile")
     burndown = row.get("scoped_burndown")
     if burndown is not None:
+        if row.get("base_sha") is None:
+            raise ValueError("burndown requires observed exact baseline")
         if not isinstance(burndown, dict):
             raise ValueError("invalid burndown")
         for key in ("before", "after", "resolved", "introduced"):
@@ -134,13 +137,16 @@ def _check_observation(row: dict, catalog: dict[str, dict]) -> dict:
         run_pass = False
     return {
         "repository": repo, "source_sha": sha, "family": family,
-        "suite_id": row["suite_id"], "run_id": row["run_id"],
+        "suite_id": row["suite_id"], "workflow_name": row.get("workflow_name"),
+        "discovery_basis": row.get("discovery_basis"), "config_identity": row["config_identity"],
+        "run_attempt_independent": None, "run_id": row["run_id"],
         "run_number": row["run_number"], "run_attempt": row["run_attempt"],
         "job_id": row["job_id"], "run_url": row.get("run_url"),
         "test_counts": counts, "scoped_burndown": burndown,
         "artifact_id": artifact["id"] if artifact else None,
         "status": "NATIVE_PASS_BYTES_VERIFIED" if run_pass and bytes_verified else (
-            "NATIVE_PASS_METADATA" if run_pass else "NON_GREEN_OR_NONTERMINAL"),
+            "NATIVE_PASS_STATUS_ONLY" if run_pass and row["config_identity"] == "UNKNOWN" else (
+            "NATIVE_PASS_METADATA" if run_pass else "NON_GREEN_OR_NONTERMINAL")),
         "artifact_bytes_verified": bytes_verified,
         "stress_limits_observed": None, "coverage_delta": None,
         "independent_trial_count": None, "merge_admitted": False,
@@ -167,6 +173,7 @@ def build(intake: dict) -> tuple[dict, dict, dict]:
     normalized.sort(key=lambda r: (r["repository"], r["run_id"], r["run_attempt"], r["job_id"]))
     cells = {(repo, f) for repo, entry in catalog.items() for f in entry["target_families"]}
     observed_cells = {(r["repository"], r["family"]) for r in normalized}
+    status_only = [r for r in normalized if r["status"] == "NATIVE_PASS_STATUS_ONLY"]
     native_metadata = [r for r in normalized if r["status"] == "NATIVE_PASS_METADATA"]
     verified_bytes = [r for r in normalized if r["status"] == "NATIVE_PASS_BYTES_VERIFIED"]
     qualified_cells = {(r["repository"], r["family"]) for r in native_metadata + verified_bytes}
@@ -192,6 +199,8 @@ def build(intake: dict) -> tuple[dict, dict, dict]:
             "observed_repositories": len(tested_repos),
             "observed_families": len(tested_families),
             "observed_cells": len(observed_cells),
+            "native_green_status_only_observations": len(status_only),
+            "native_green_status_only_cells": len({(r["repository"], r["family"]) for r in status_only}),
             "native_green_metadata_observations": len(native_metadata),
             "native_green_bytes_verified_observations": len(verified_bytes),
             "native_green_cells": len(qualified_cells),
@@ -257,7 +266,7 @@ def emit(intake: dict, output: Path) -> dict:
     summary = (
         "# GOGREEN G0 — Wide-first positive evidence census\n\n"
         f"- Target repositories: **{b['catalog_repositories']}**; repo-family cells: **{b['catalog_repo_family_cells']}**.\n"
-        f"- Observed cells: **{b['observed_cells']}**; native metadata-PASS observations: **{b['native_green_metadata_observations']}**.\n"
+        f"- Observed cells: **{b['observed_cells']}**; status-only candidates: **{b['native_green_status_only_observations']}**; native metadata-PASS observations: **{b['native_green_metadata_observations']}**.\n"
         f"- Independently artifact-byte verified PASS: **{b['native_green_bytes_verified_observations']}**.\n"
         f"- Not yet observed cells: **{b['not_observed_cells']}** (UNKNOWN, not failed).\n"
         "- Comparable coverage gain, stress capacity and independent trial quality: **UNKNOWN**.\n"
@@ -288,6 +297,12 @@ def verify_output(output: Path) -> dict:
     if evidence.get("merge_authorized") is not False or evidence.get("authority_transfer") is not False:
         raise ValueError("unauthorized promotion")
     plan = json.loads((output / "scout_packets.json").read_text(encoding="utf-8"))
+    hooks = json.loads((output / "federation_hooks.json").read_text(encoding="utf-8"))
+    if (hooks.get("authority_transfer") is not False or
+        hooks.get("child_acceptance") != "DEFER" or
+        hooks.get("qps_triage", {}).get("suggested_disposition") != "DEFER" or
+        hooks.get("qps_triage", {}).get("admission_evidence") is not False):
+        raise ValueError("federation consumer admission boundary invalid")
     if plan.get("execution_authorized") is not False or any(p["dispatch_authorized"] for p in plan["packets"]):
         raise ValueError("unauthorized dispatch")
     return manifest
