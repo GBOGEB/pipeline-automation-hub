@@ -97,7 +97,7 @@ def render(result):
                    str(p["open_prs"] if p["open_prs"] is not None else "UNKNOWN") + "</td><td>" +
                    str(p["branches"] if p["branches"] is not None else "UNKNOWN") + "</td></tr>"
                    for p in r["stages"])
-    return """<!doctype html><html lang="en"><head><meta charset="utf-8">
+    return ("""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MissionControl — latest federation pulse N+2</title>
 <style>
@@ -136,7 +136,7 @@ Actual module line/branch coverage: UNKNOWN.</p>
 <p>Four-hop provider source SHA differs from consumer synthetic fixtures. Authenticated native chain:
 UNKNOWN. QPS engineering decision: DEFER. Merge security controls: HOLD.</p></section>
 <p class="muted">No GitHub Pages deployment, job dispatch, merge, security waiver, or issue closure.
-Regenerate only from an independently verified later N+3 observation.</p></body></html>"""
+Regenerate only from an independently verified later N+3 observation.</p></body></html>""")
 
 
 def main():
