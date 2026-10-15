@@ -88,8 +88,8 @@ jobs:
           import json, os, re
           from pathlib import Path
           log=(Path(os.environ["RUNNER_TEMP"])/"flightdeck-tests.log").read_text()
-          found=[int(x) for x in re.findall(r"Ran (\\d+) tests? in",log)]
-          if len(found)!=1 or found[0]<42 or "\\nOK" not in log:
+          found=[int(x) for x in re.findall(r"Ran (\d+) tests? in",log)]
+          if len(found)!=1 or found[0]<42 or "\nOK" not in log:
               raise SystemExit("FLIGHTDECK_ZERO_OR_FAILED_TESTS")
           c=json.loads((Path(os.environ["RUNNER_TEMP"])/"flightdeck-coverage.json").read_text())
           t=c["totals"]
