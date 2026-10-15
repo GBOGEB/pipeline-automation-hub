@@ -148,17 +148,17 @@ def mermaid(doc):
                      '["' + lane["label"].replace('"', "'") + '"]')
         stages = lane["stages"]
         for row in stages:
-            key = re.sub(r"\W", "_", lane["id"] + "_" + row[0])
+            key = "N_" + re.sub(r"\W", "_", lane["id"] + "_" + row[0])
             title = (row[0] + " · " + row[1]).replace('"', "'")
             parts.append('    ' + key + '["' + title + '"]')
         parts.append("  end")
         for left, right in zip(stages, stages[1:]):
-            a = re.sub(r"\W", "_", lane["id"] + "_" + left[0])
-            b = re.sub(r"\W", "_", lane["id"] + "_" + right[0])
+            a = "N_" + re.sub(r"\W", "_", lane["id"] + "_" + left[0])
+            b = "N_" + re.sub(r"\W", "_", lane["id"] + "_" + right[0])
             parts.append("  " + a + " --> " + b)
     lane_order = ("SUPPLY", "TRUST", "CENSUS", "DMAIC", "3P*", "MIP", "LDAB", "STAT", "REX", "GATE")
-    first = lambda lid: re.sub(r"\W", "_", lid + "_" + next(l["stages"][0][0] for l in doc["lanes"] if l["id"] == lid))
-    last = lambda lid: re.sub(r"\W", "_", lid + "_" + next(l["stages"][-1][0] for l in doc["lanes"] if l["id"] == lid))
+    first = lambda lid: "N_" + re.sub(r"\W", "_", lid + "_" + next(l["stages"][0][0] for l in doc["lanes"] if l["id"] == lid))
+    last = lambda lid: "N_" + re.sub(r"\W", "_", lid + "_" + next(l["stages"][-1][0] for l in doc["lanes"] if l["id"] == lid))
     parts.append("  START --> " + first("SUPPLY"))
     for a, b in zip(lane_order, lane_order[1:]):
         parts.append("  " + last(a) + " --> " + first(b))
@@ -209,9 +209,9 @@ def build(out, contract_path=None, registry_path=None):
     cards = [
         ("Observed breadth", f'{kpi["after"]}/{kpi["eligible"]}', f'{kpi["after_pct"]}% · +{kpi["gain_pp"]} pp over G0'),
         ("Still UNKNOWN", str(kpi["unobserved"]), "Eligible repo × KPI-family cells"),
-        ("Focused statements", f'{doc["observation"]["statements"]["after"]}/93',
+        ("Focused statements", f'{doc["observation"]["statements"]["after"]}/{doc["observation"]["statements"]["eligible"]}',
          f'+{metrics["focused_depth"]["statements"]["delta_pp"]:.2f} pp; same source'),
-        ("Focused branches", f'{doc["observation"]["branches"]["after"]}/26',
+        ("Focused branches", f'{doc["observation"]["branches"]["after"]}/{doc["observation"]["branches"]["eligible"]}',
          f'+{metrics["focused_depth"]["branches"]["delta_pp"]:.2f} pp; same source'),
         ("Expanded native tests", str(metrics["tests"]["passed_candidate"]) + "/" + str(metrics["tests"]["candidate"]),
          "Narrow G4 only · no fleet coverage claim"),
