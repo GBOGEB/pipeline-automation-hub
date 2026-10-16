@@ -91,7 +91,7 @@ jobs:
               "authority_transfer": False,
           }
           Path("out/mip-consumer/math_reference.json").write_text(
-              json.dumps(report, sort_keys=True, indent=2) + "\\n"
+              json.dumps(report, sort_keys=True, indent=2) + "\n"
           )
           print("verified pinned gg_MATH reference only")
           PY
