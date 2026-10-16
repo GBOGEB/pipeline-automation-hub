@@ -34,7 +34,16 @@ These scores use the existing bounded dependency graph, not all 65 open ABACUS P
 
 The source-bound eight-PR P2 readback contains 193 workflow observations: 39 success, nine failure, two cancelled and 143 nonterminal. Terminal = 50/193 (25.91%); nonterminal = 143/193 (74.09%). These are a **bounded mixed-PR status snapshot**, not comparable Bernoulli trials, worker-hours, a CI stability time series, unique defects or global CI performance. The first-page-only query does not prove completeness beyond these retrieved workflow records.
 
-Near-term pressure is proof-drain and reuse of existing native receipts, not launching four mutating workers. Keep the #561 concurrency ceiling at two **proposed read-only scouts** until same-source checks and artifact members are qualified. C2/C3/C4/C5 source behavioral tests are already expanding in ABACUS #2046/#2051/#2054/#2055/#2057, and must use their canonical owners rather than duplicate source changes here.
+Near-term pressure is proof-drain and reuse of existing native receipts, not launching four mutating workers. **This #562 extension proposes a conservative two-read-only-scout ceiling** until same-source checks and artifact members are qualified. The existing #561 sample independently declares three planned concurrent packets; those are not launched workers and shall not be silently overwritten by this advisory. C2/C3/C4/C5 source behavioral tests are already expanding in ABACUS #2046/#2051/#2054/#2055/#2057, and must use their canonical owners rather than duplicate source changes here.
+
+
+### Dual backlog ranking — no conflation
+
+The pressure scorer now publishes two separate, source-bound queues: (1) policy-tier and direct-root-link reverse pressure and (2) **proof-drain** PRs ranked by exact-head nonterminal workflow counts. The second queue is not a causal-root ranking or a duration/queue-p95 estimate.
+
+The eight sampled PR heads contained 193 retrieved workflow records: 39 successes, nine failures, two cancellations, 136 queued and seven pending. The source-bound candidate proof-drain leaders are ABACUS #1988 (31 nonterminal), #2046 (29), #2045 (27), #2051 (25) and #2052 (22) in that specific snapshot. These values can change after any rerun or source edit. Only exact-source refreshes may supersede them. For #2046, C2 had already changed its head during this pulse, making older comparisons ineligible.
+
+The two declared candidate read-only waves are **PRESSURE_OWNER_SCOUT** (policy/governance and security source owners) followed by **PROOF_DRAIN_SCOUT** (the two highest nonterminal source heads). These are proposals to [#561](https://github.com/GBOGEB/pipeline-automation-hub/pull/561), not actual worker starts. Owner decisions, A10 and Safety remain noncompensating.
 
 ## MIP / DMAIC / 3P* and REX
 
