@@ -46,6 +46,32 @@ same ordered ledger
 = same projection digest
 ```
 
+## P5 functional improvement — knowledge-time Golden Thread
+
+**Why it exists:** a backdated occurrence is not the same as information available to an engineer at that time. The original `rebuild-as-of` queries **event occurrence time**. The additive P5 `rebuild-known-at` filters **recorded knowledge time**, optionally also the occurrence cutoff, without modifying, truncating or resealing the original ledger.
+
+```bash
+python mission-control/golden-thread/golden_thread.py rebuild-known-at \
+  mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+  2026-09-17T00:56:11Z --out /tmp/known-before.json
+
+python mission-control/golden-thread/golden_thread.py rebuild-known-at \
+  mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+  2026-09-17T00:56:13Z --occurred-by 2026-09-17T00:40:21Z \
+  --out /tmp/known-after.json
+
+python mission-control/golden-thread/golden_thread.py diff-known-at \
+  mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+  2026-09-17T00:56:11Z 2026-09-17T00:56:13Z \
+  --out /tmp/known-delta.json
+```
+
+The fixture's June occurrence records were first reconstructed in September. A June *event-time* projection may show them, but an August *known-time* projection must not. This matters for root recurrence, DMAIC before/after, forecasts, trial denominators, admission decisions and retroactive auditability.
+
+**Outputs:** `missioncontrol.golden_thread_projection.v1` with an additive `temporal_selection` receipt, plus `missioncontrol.golden_thread_known_diff.v1`. Every view carries the verified complete ledger head digest; sparse selections are explicitly flagged as *not* a continuous chain prefix. The full source chain is always verified first. No source write or child action occurs; root-closure credit remains UNKNOWN.
+
+**Status:** implementation is a governed PR candidate. Local tests, native exact-PR-head CI, review and an admitted main merge are distinct proof levels. A green artifact does not authorize QPS engineering acceptance.
+
 ## 2. Why this is not merely "event sourcing"
 
 The supplied architecture Read is directionally correct but needs four controls to remain safe in MissionControl:

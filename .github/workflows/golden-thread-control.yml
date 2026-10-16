@@ -14,8 +14,15 @@ jobs:
   golden-thread-control:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout verified PR source
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert checkout exactly matches source head
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
 
       - name: Set up Python
         uses: actions/setup-python@v5

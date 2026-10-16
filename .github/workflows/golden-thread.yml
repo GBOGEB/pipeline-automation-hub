@@ -24,6 +24,13 @@ jobs:
     steps:
       - name: Checkout exact source state
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact checkout head
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
 
       - name: Compile Golden Thread runtimes
         run: |
@@ -48,6 +55,45 @@ jobs:
           python mission-control/golden-thread/golden_thread.py rebuild-current \
             mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
             --out golden-thread-current-projection.json
+
+      - name: Prove knowledge-time hindsight exclusion and N-1 to N delta
+        run: |
+          python mission-control/golden-thread/golden_thread.py rebuild-known-at \
+            mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+            2026-09-17T00:56:11Z \
+            --out golden-thread-known-before.json
+          python mission-control/golden-thread/golden_thread.py rebuild-known-at \
+            mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+            2026-09-17T00:56:13Z \
+            --out golden-thread-known-after.json
+          python mission-control/golden-thread/golden_thread.py diff-known-at \
+            mission-control/golden-thread/fixtures/COLD_TAIL_BOOTSTRAP_LEDGER_v1.json \
+            2026-09-17T00:56:11Z 2026-09-17T00:56:13Z \
+            --out golden-thread-known-diff.json
+          python - <<'PY'
+          import json
+          before=json.load(open("golden-thread-known-before.json"))
+          after=json.load(open("golden-thread-known-after.json"))
+          delta=json.load(open("golden-thread-known-diff.json"))
+          assert before["metrics"]["event_count"]==12
+          assert after["metrics"]["event_count"]==14
+          assert delta["metric_delta"]["event_count"]==2
+          assert delta["formal_root_closure_credit"] is None
+          assert before["temporal_selection"]["full_ledger_verified"] is True
+          assert after["authority_transfer"] is False
+          print("GOLDEN_THREAD_BITEMPORAL_SOURCE_BOUND=PASS")
+          PY
+
+      - name: Render and verify four knowledge-time formats
+        run: |
+          python mission-control/golden-thread/rendition_family.py render \
+            golden-thread-known-after.json golden-thread-known-renditions \
+            --stem GOLDEN_THREAD_KNOWN_AFTER
+          python mission-control/golden-thread/rendition_family.py verify \
+            golden-thread-known-after.json golden-thread-known-renditions \
+            --manifest GOLDEN_THREAD_KNOWN_AFTER_RENDITION_MANIFEST.json
+          test -s golden-thread-known-renditions/GOLDEN_THREAD_KNOWN_AFTER.html
+          test -s golden-thread-known-renditions/GOLDEN_THREAD_KNOWN_AFTER.yaml
 
       - name: Build cold-tail temporal k/e checkpoint
         run: |
@@ -111,6 +157,10 @@ jobs:
           path: |
             golden-thread-ledger-verification.json
             golden-thread-current-projection.json
+            golden-thread-known-before.json
+            golden-thread-known-after.json
+            golden-thread-known-diff.json
+            golden-thread-known-renditions/
             golden-thread-temporal-checkpoint.json
             golden-thread-temporal-verification.json
             golden-thread-w57-ledger-verification.json
