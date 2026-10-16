@@ -156,10 +156,11 @@
       "key": "W1.C1.I2.S0",
       "closes": "OPEN",
       "label": "This PR: BD queue, beams DAG, ordinal series; CPQ-010..018 filed",
-      "tree": "PR_HEAD",
-      "evidence_class": "PROVISIONAL_PR_HEAD",
+      "tree": "e5bfef4b9aa06805846099e7a715a32797b06ee5",
+      "evidence_class": "MEASURED",
       "refs": [
-        "https://github.com/GBOGEB/pipeline-automation-hub/issues/419"
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/419",
+        "https://github.com/GBOGEB/pipeline-automation-hub/commit/e5bfef4b9aa06805846099e7a715a32797b06ee5"
       ],
       "metrics": {
         "top14_gate_pass": 7,
@@ -207,6 +208,62 @@
         "bd_state_unknown_needs_reader": 2
       },
       "prev_digest": "d91aa18dc5666c65e3458c4c07ad27b2d80f41e779cebc8a5285f9d5593d27d9"
+    },
+    {
+      "key": "W1.C1.I2.S1",
+      "closes": "SUB",
+      "label": "CPQ N4 five source-proved DONE, Top7 7-repo recensus, QPS native evidence edge",
+      "tree": "PR_HEAD",
+      "evidence_class": "PROVISIONAL_PR_HEAD",
+      "refs": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/419#issuecomment-6220384217",
+        "https://github.com/GBOGEB/document-organization-system/actions/runs/38218661281",
+        "https://github.com/GBOGEB/cryoplant-project/actions/runs/38930253268"
+      ],
+      "metrics": {
+        "top14_gate_pass": 7,
+        "top14_gate_fail": 1,
+        "top14_gate_unknown": 1,
+        "top21_gate_pass": 3,
+        "top21_gate_fail": 6,
+        "top21_gate_unknown": 2,
+        "top7_green_control": 5,
+        "top14_green_control": 9,
+        "dmaic_complete_iterations": 1,
+        "dmaic_evolution_level": 1,
+        "coverage_rows_measured": 3,
+        "coverage_rows_total": 21,
+        "receipt_edges": 2,
+        "graph_edges_receipt": 4,
+        "graph_edges_declared": 7,
+        "zero_test_gates": 0,
+        "bd_total": 18,
+        "bd_open": 9,
+        "bd_complete": 9,
+        "bd_critical_open": 3,
+        "bd_ready": 2,
+        "bd_in_pr": 1,
+        "bd_blocked_or_held": 4,
+        "bd_state_todo": 5,
+        "bd_state_active": 2,
+        "bd_state_done": 9,
+        "bd_state_control": 0,
+        "bd_state_superseded": 0,
+        "bd_state_invalidated": 0,
+        "bd_state_unknown_needs_reader": 2
+      },
+      "delta": {
+        "graph_edges_receipt": 1,
+        "graph_edges_declared": -1,
+        "bd_open": -5,
+        "bd_complete": 5,
+        "bd_ready": -2,
+        "bd_in_pr": -3,
+        "bd_state_todo": -2,
+        "bd_state_active": -3,
+        "bd_state_done": 5
+      },
+      "prev_digest": "e425acdd1168246c8d1a59320b56ccab6c02c48ff241bed4ec8e71d5f011663e"
     }
   ]
 }

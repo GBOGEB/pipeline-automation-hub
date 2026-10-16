@@ -17,7 +17,7 @@ edges:
   - {from: MC, to: DOW, type: dispatch, binding: DECLARED}
   - {from: MC, to: AUX, type: dispatch, binding: DECLARED}
   - {from: MC, to: INF, type: dispatch, binding: DECLARED}
-  - {from: QPS, to: JOIN, type: evidence, binding: DECLARED}
+  - {from: QPS, to: JOIN, type: evidence, binding: RECEIPT, source: "QPS main 577353ed5f9cb1d3c19cb2a0967ea13e14fc683e; run 38930253268 attempt 1; job 117072106782; 7 successful steps, READ_ONLY_NOT_ENGINEERING_ADMISSION"}
   - {from: KEB, to: JOIN, type: evidence, binding: RECEIPT, source: "GM-I-A KEB edge receipt (CODEX PR 775, run 35425623741)"}
   - {from: DOW, to: JOIN, type: evidence, binding: RECEIPT, source: "GM-I-A DOW edge receipt (ABACUS PR 1286, run 35425352862)"}
   - {from: AUX, to: JOIN, type: evidence, binding: DECLARED}
