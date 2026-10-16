@@ -1,0 +1,85 @@
+name: CODE PURPLE ABACUS MIP Readonly Consumer
+on:
+  pull_request:
+    paths:
+      - 'mission-control/federation-atlas/flightdeck/pulses/abacus_mip_*.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/test_abacus_mip_*.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/ABACUS_MIP_READONLY_CONSUMER.md'
+      - '.github/workflows/code-purple-abacus-mip-readonly.yml'
+  workflow_dispatch:
+    inputs:
+      abacus_sha:
+        description: Exact 40-character ABACUS source SHA (no branch/latest)
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.11'
+      - name: Read-only bridge and native acquisition negative controls
+        run: >-
+          python -m unittest discover -v
+          -s mission-control/federation-atlas/flightdeck/pulses
+          -p 'test_abacus_mip_*.py'
+  ingest:
+    if: github.event_name == 'workflow_dispatch'
+    needs: contract
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: control
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: GBOGEB/ABACUS
+          ref: ${{ inputs.abacus_sha }}
+          path: native-abacus
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.11'
+      - name: Acquire complete exact-SHA native runs and use canonical producer
+        env:
+          ABACUS_SHA: ${{ inputs.abacus_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os, re
+          if not re.fullmatch(r'[a-f0-9]{40}', os.environ['ABACUS_SHA']):
+              raise ValueError('invalid exact ABACUS source identity')
+          PY
+          test "$(git -C native-abacus rev-parse HEAD)" = "$ABACUS_SHA"
+          mkdir -p out
+          python control/mission-control/federation-atlas/flightdeck/pulses/abacus_mip_collect.py \
+            --source-sha "$ABACUS_SHA" --output out/native_input.json
+          env -u GITHUB_TOKEN -u GH_TOKEN python \
+            native-abacus/tools/mip_ci_wave_telemetry.py \
+            out/native_input.json > out/canonical_abacus_projection.json
+          python control/mission-control/federation-atlas/flightdeck/pulses/abacus_mip_bridge.py \
+            --projection out/canonical_abacus_projection.json \
+            --source-sha "$ABACUS_SHA" \
+            --output out/mission_control_supporting.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('out/mission_control_supporting.json').read_text())
+          if (report['merge_admission'] != 'HOLD' or report['authority_transfer'] or
+                  report['qps_acceptance'] != 'DEFER' or
+                  any(v is not None for v in report['statistics']['intervals_90_95_99'].values())):
+              raise ValueError('promotion of unqualified measurement')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: abacus-mip-supporting-${{ github.run_id }}
+          path: out/
+          if-no-files-found: error
