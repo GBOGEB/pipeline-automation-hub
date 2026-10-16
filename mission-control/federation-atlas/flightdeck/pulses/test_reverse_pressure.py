@@ -172,3 +172,27 @@ class ReversePressureTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ProofDrainTests(unittest.TestCase):
+    def test_sorted_nonterminal_burden_and_no_forged_latency(self):
+        p, c = data()
+        one, two = c["all_observations"][:2]
+        delta = ReversePressureTests.make_delta([one, two])
+        delta["rows"][0]["counts"] = dict(success=0, failure=0, cancelled=0,
+                                             pending=2, queued=3, in_progress=0, other=0)
+        delta["rows"][0]["observed_workflow_runs"] = 5
+        result = isolated(p, c, delta)
+        q = result["proof_drain"]
+        self.assertEqual(f'{one["repository"]}#{one["pr"]}', q[0]["pr"])
+        self.assertEqual(5, q[0]["nonterminal_run_observations"])
+        self.assertIsNone(result["metrics"]["queue_p95_seconds"])
+        self.assertEqual(2, len(result["worker_proposals"]["proposed_readonly_waves"]))
+        self.assertFalse(result["worker_proposals"]["dispatch_authorized"])
+
+    def test_no_delta_means_no_fake_queue(self):
+        p, c = data()
+        result = isolated(p, c)
+        self.assertEqual([], result["proof_drain"])
+        self.assertEqual(0, result["metrics"]["delta_workflow_observations"])
+        self.assertIsNone(result["metrics"]["delta_terminal_fraction_descriptive"])
