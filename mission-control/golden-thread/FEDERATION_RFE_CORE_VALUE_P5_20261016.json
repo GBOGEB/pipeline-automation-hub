@@ -1,0 +1,149 @@
+{
+  "schema": "codepurple.federation-rfe-projection.v1",
+  "observation_date_utc": "2026-10-16",
+  "evidence_grade": "README_AND_CODE_SOURCE_DERIVED_ARCHITECTURE_NOT_OPERATIONAL_ACCEPTANCE",
+  "authority": {
+    "canonical_repository_truth_remains_with_child_owners": true,
+    "authority_transfer": false,
+    "merge_admission": "HOLD",
+    "accepted_roots_closed": null,
+    "accepted_rex": null,
+    "security_waiver": false
+  },
+  "golden_thread_source": "mission-control/golden-thread/golden_thread.py",
+  "reason_for_federation": "Reduce duplicate diagnostics and competing truths while preserving every source event, exact causal chain, independent gate and cross-repo provenance",
+  "repos": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "head": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "lane": "DOW",
+      "rfe": "Convert source failures into attributable, independently retested repairs",
+      "inputs": [
+        "source SHAs",
+        "CI job and scanner logs",
+        "test/coverage configurations"
+      ],
+      "core": [
+        "source-level first-red diagnosis",
+        "controlled fixes",
+        "positive and negative regression verification"
+      ],
+      "outputs": [
+        "source diffs and PRs",
+        "run/job/attempt receipts",
+        "scope-bound measured coverage",
+        "security findings"
+      ],
+      "proof": "exact-head native tests plus independent governance and A10/security; never replace engineering acceptance"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "head": "e06b166fa5247e33ac6e09c71c1a5207dbe56369",
+      "lane": "KEB",
+      "rfe": "Preserve semantic identity, exchange contracts and provenance across repository boundaries",
+      "inputs": [
+        "source/consumer schema contracts",
+        "semantic mappings",
+        "signed source identities"
+      ],
+      "core": [
+        "canonical semantic lineage",
+        "bounded adapters",
+        "contract and identity checking"
+      ],
+      "outputs": [
+        "cross-repository provenance edges",
+        "typed exchange receipts",
+        "semantic contract results"
+      ],
+      "proof": "source-bound schema/semantic return and child-specific acceptance, not workflow green alone"
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "head": "577353ed5f9cb1d3c19cb2a0967ea13e14fc683e",
+      "lane": "QPS",
+      "rfe": "Own and publish governed cryoplant engineering truth and release decisions",
+      "inputs": [
+        "controlled source and decisions",
+        "OFFER/RTM engineering evidence",
+        "accepted patches"
+      ],
+      "core": [
+        "engineering canonicalization and traceability",
+        "OCD/ADR validation",
+        "owner release gate"
+      ],
+      "outputs": [
+        "OCD",
+        "ADR",
+        "controlled RTM",
+        "version-bound engineering artifacts"
+      ],
+      "proof": "QPS owner disposition with independently controlled runtime/release GOLD"
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "head": "8f8542494b36c1476127a02a280b279ec2cf02f9",
+      "lane": "MATH",
+      "rfe": "Provide reproducible estimators and uncertainty-qualified decisions, not untested chart conviction",
+      "inputs": [
+        "matched trial populations",
+        "exact source/metric scope",
+        "assumption registry"
+      ],
+      "core": [
+        "PCA/ANOVA/Bradley-Terry and uncertainty kernels",
+        "rolling N+2 scoring"
+      ],
+      "outputs": [
+        "model diagnostics and test receipts",
+        "effect sizes and confidence",
+        "Plotly and static figures"
+      ],
+      "proof": "qualified statistical assumptions, independent denominators, reproducible numeric receipts"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "head": "1897023c052c4d28a3a3d9e4f9c50408125b38ab",
+      "lane": "MISSIONCONTROL",
+      "rfe": "Connect exact source events to governed decisions without copying child authority",
+      "inputs": [
+        "normalized child receipts",
+        "GitHub run/job/attempt IDs",
+        "canonical BD ownership",
+        "append-only event patches"
+      ],
+      "core": [
+        "Golden Thread lossless replay",
+        "bitemporal knowledge-time queries",
+        "bounded SIPOC/DAG and invalidation",
+        "federated orchestration planning"
+      ],
+      "outputs": [
+        "trace projections",
+        "temporal N−1/N/N+1 deltas",
+        "source-bound dashboards",
+        "versioned audit receipts"
+      ],
+      "proof": "complete ledger hash verification, exact native runtime and gate-preserving child re-entry; main admission independent"
+    }
+  ],
+  "value_flow": [
+    "ABACUS/DOW diagnostic first-red receipts",
+    "CODEX/KEB semantic exchange and provenance",
+    "cryoplant-project/QPS engineering owner disposition",
+    "gg_MATH statistical qualification",
+    "MissionControl deterministic integration, temporal replay and audience projections"
+  ],
+  "proposed_functional_uplift": {
+    "new_runtime_contract": "rebuild-known-at and diff-known-at",
+    "source_mutation": false,
+    "fixture_observed_events": 14,
+    "temporal_before_known_events": 12,
+    "temporal_after_known_events": 14,
+    "delta_events": 2,
+    "formal_accepted_root_closures": null,
+    "independent_trials": null,
+    "main_admission": "HOLD"
+  }
+}
