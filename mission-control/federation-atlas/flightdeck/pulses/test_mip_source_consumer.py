@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from mip_source_consumer import consume, main
+from mip_source_consumer import consume, first_red_digest, main
 
 
 SHA = "a" * 40
@@ -19,6 +19,12 @@ def inputs():
     outcome = {x: 0 for x in OUTCOMES}
     outcome["success"] = 17
     outcome["failure"] = 3
+    job_outcome = dict(outcome)
+    semantic = {
+        "workflow_path": "ci.yml", "job_name": "suite",
+        "step_name": "pytest", "step_number": 3,
+    }
+    fingerprint = first_red_digest(semantic)
     return ({
         "schema": "code-purple.mip-input-binding.v1",
         "repository": "GBOGEB/ABACUS",
@@ -33,6 +39,9 @@ def inputs():
         "source_sha": SHA,
         "workflow_terminal_by_outcome": outcome,
         "workflow_records_observed": 20,
+        "terminal_by_outcome": job_outcome,
+        "jobs_observed": 20,
+        "nonterminal": 0,
         "workflow_nonterminal": 0,
         "workflow_unclassified": 0,
         "queue_source_counts": {
@@ -44,12 +53,11 @@ def inputs():
         "first_red_unique_signatures": 1,
         "first_red_repeated_signatures": 0,
         "first_red_manifestations": [{
-            "fingerprint": "c" * 64, "job_id": 7,
+            "fingerprint": fingerprint,
+            "run_id": 21, "run_attempt": 1, "job_id": 7, **semantic,
         }],
         "first_red_signatures": [{
-            "fingerprint": "c" * 64, "manifestations": 1,
-            "workflow_path": "ci.yml", "job_name": "suite",
-            "step_name": "pytest", "step_number": 3,
+            "fingerprint": fingerprint, "manifestations": 1, **semantic,
         }],
         "red_jobs_without_attributed_first_step": 2,
         "first_red_causal_roots_verified": None,
@@ -68,6 +76,11 @@ class ConsumerTests(unittest.TestCase):
         self.assertEqual(result["observed"]["workflow_total_n"], 20)
         self.assertEqual(result["observed"]["workflow_success_fraction_descriptive"], .85)
         self.assertEqual(result["observed"]["queue_fallback_n"], 1)
+        self.assertEqual(result["observed"]["queue_native_fraction"], 0.95)
+        self.assertEqual(result["observed"]["red_jobs_total"], 3)
+        self.assertAlmostEqual(
+            result["observed"]["first_red_attribution_fraction"], 1 / 3
+        )
         self.assertIsNone(result["observed"]["queue_cross_wave_comparable"])
         self.assertEqual(set(result["confidence_intervals"]), {"90", "95", "99"})
         self.assertTrue(all(x["estimate"] is None for x in
