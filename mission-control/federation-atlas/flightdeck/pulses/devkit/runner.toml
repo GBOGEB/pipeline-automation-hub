@@ -1,0 +1,32 @@
+[code_purple]
+schema = "code-purple.local-runner.v1"
+mode = "READ_ONLY_COLD"
+root_manifest = "worker_plan.json"
+source_observation = "../data/source_observation.json"
+max_local_workers = 2
+scale_candidate_workers = 4
+publish_authority = false
+mutation_enabled = false
+allow_remote_dispatch = false
+shell_timeout_seconds = 30
+
+[detect]
+python = true
+git = true
+file_extensions = [".py", ".toml", ".json", ".yaml", ".yml", ".ps1", ".sh", ".md", ".ipynb"]
+cli_candidates = ["codex", "claude", "gemini", "aider", "opencode", "gh"]
+cli_authentication = "NOT_TESTED"
+
+[workflow]
+manual_only = true
+scheduled_refresh = false
+# Requests to schedule checks require a separately approved GitHub Actions change.
+strategy = "TOPOLOGICAL_PATH_LEASES"
+required_proof = ["EXACT_HEAD_NATIVE", "INDEPENDENT_REVIEW", "SECURITY_A10"]
+
+[outputs]
+local_dir = "out"
+write_to_repository = false
+emit_json = true
+emit_html = false
+save_secrets = false
