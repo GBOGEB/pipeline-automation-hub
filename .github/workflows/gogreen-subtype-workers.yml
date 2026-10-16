@@ -6,6 +6,13 @@ on:
       - "mission-control/gogreen/subtype_orchestrator.py"
       - "mission-control/gogreen/tests/test_subtype_orchestrator.py"
       - "mission-control/gogreen/samples/cbd_abacus_20261016.json"
+      - "mission-control/gogreen/rerun_triage.py"
+      - "mission-control/gogreen/tests/test_rerun_triage.py"
+      - "mission-control/gogreen/samples/cbd_rerun_20261016.json"
+      - "mission-control/gogreen/sipoc_instances.py"
+      - "mission-control/gogreen/tests/test_sipoc_instances.py"
+      - "mission-control/gogreen/samples/sipoc_instance_wave_20261016.json"
+      - "mission-control/gogreen/SIPOC_INSTANCE_DAG.md"
       - ".github/workflows/gogreen-subtype-workers.yml"
   workflow_dispatch:
 
@@ -35,6 +42,45 @@ jobs:
         run: |
           python -m pip install coverage==7.16.2
           python -m coverage run --branch --source=mission-control/gogreen -m unittest discover -s mission-control/gogreen/tests -p test_subtype_orchestrator.py -v
+      - name: Exact-head rerun and SIPOC instance regression Testflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest mission-control/gogreen/tests/test_rerun_triage.py -v
+          python -m unittest mission-control/gogreen/tests/test_sipoc_instances.py -v
+          python mission-control/gogreen/rerun_triage.py \
+            --input mission-control/gogreen/samples/cbd_rerun_20261016.json \
+            --out "$RUNNER_TEMP/cbd-rerun"
+          python mission-control/gogreen/sipoc_instances.py \
+            --input mission-control/gogreen/samples/sipoc_instance_wave_20261016.json \
+            --atlas mission-control/federation-atlas/PROCESS_LANES_v1.json \
+            --out "$RUNNER_TEMP/cbd-sipoc" --synthetic-replay
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"])
+          rerun = json.loads((root/"cbd-rerun/rerun_receipt.json").read_text())
+          sipoc_raw = (root/"cbd-sipoc/sipoc_instance_receipt.json").read_bytes()
+          sipoc = json.loads(sipoc_raw)
+          synthetic = json.loads((root/"cbd-sipoc/asyncio_synthetic_only.json").read_text())
+          digest = (root/"cbd-sipoc/sipoc_instance_receipt.sha256").read_text().strip()
+          atlas = Path("mission-control/federation-atlas/PROCESS_LANES_v1.json")
+          assert hashlib.sha256(sipoc_raw).hexdigest() == digest
+          assert hashlib.sha256(atlas.read_bytes()).hexdigest() == sipoc["canonical_atlas_sha256"]
+          assert rerun["kpi"]["prs"] == 9
+          assert rerun["kpi"]["retries_recommended"] == 0
+          assert rerun["dispatch_authorized"] is False
+          assert rerun["merge_authorized"] is False
+          assert sipoc["kpi"]["instances_declared"] == 8
+          assert sipoc["kpi"]["incarnations_by_role"]["P"] == 4
+          assert sipoc["kpi"]["waves_planned"] == 5
+          assert sipoc["kpi"]["actual_worker_runs"] is None
+          assert sipoc["dispatch_authorized"] is False
+          assert sipoc["merge_authorized"] is False
+          assert synthetic["result"] == "SYNTHETIC_ONLY_PASS"
+          assert synthetic["native_proof"] is False
+          print("SIPOC AND RERUN EXACT-SHA TESTFLIGHT: PASS")
+          PY
       - name: Emit source-bound subtype receipt
         run: |
           python mission-control/gogreen/subtype_orchestrator.py \
@@ -61,6 +107,16 @@ jobs:
           PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: cbd-subtype-receipt-${{ github.sha }}
+          name: cbd-subtype-receipt-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/cbd-subtype/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cbd-rerun-triage-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/cbd-rerun/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cbd-sipoc-instance-dag-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/cbd-sipoc/
           if-no-files-found: error
