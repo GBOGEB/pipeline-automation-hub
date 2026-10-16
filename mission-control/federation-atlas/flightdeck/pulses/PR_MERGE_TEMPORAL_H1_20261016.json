@@ -1,0 +1,1042 @@
+{
+  "schema": "code-purple.pr-merge-temporal.v1",
+  "pulse": "2026-10-16-H1",
+  "observed_date_utc": "2026-10-16",
+  "data_grade": "GITHUB_CONNECTOR_PR_TRIGGERED_FIRST_PAGE_PLUS_NATIVE_JOB_LOG_CLOCKS",
+  "collection_limitations": [
+    "PR-triggered first page only; push event workflows are not enumerated.",
+    "Run created_at, run_started_at and run_attempt not exposed by this connector surface and stay null.",
+    "Job first/last log timestamps are not workflow created/queued timestamps.",
+    "PR-head-associated runs may execute after PR merge; classify by job timestamps, never SHA alone.",
+    "Root acceptance and REX are independent of PR integration."
+  ],
+  "authority": {
+    "merge_admission": "HOLD",
+    "security_waiver": false,
+    "authority_transfer": false,
+    "dispatch": "STAGED_NOT_LAUNCHED",
+    "accepted_rex": null,
+    "accepted_root_closures": null,
+    "current_main_coverage": null
+  },
+  "main_heads": {
+    "hub": "4b0a3255c8f194d840da8a38664d8920679338c9",
+    "abacus": "54da377cf82a358ac97903ecde0270c975b8fcc1"
+  },
+  "prs": [
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 562,
+      "head_sha": "68db897a626e2b62b919554844ba77ff176185b1",
+      "merge_commit_sha": "4b0a3255c8f194d840da8a38664d8920679338c9",
+      "merged_at_utc": "2026-10-16T09:08:29Z",
+      "base_branch": "master",
+      "base_relation": "IDENTICAL_CURRENT_DEFAULT",
+      "destination_pr": null,
+      "phases": [
+        {
+          "role": "PR_HEAD_ASSOCIATED",
+          "sha": "68db897a626e2b62b919554844ba77ff176185b1",
+          "pagination": "FIRST_PAGE_ONLY_PR_TRIGGERED_RUNS",
+          "workflows": [
+            {
+              "run_id": 38877881210,
+              "workflow": "CODE PURPLE CBQ CH-BD Readonly Pulse",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38877881210"
+            },
+            {
+              "run_id": 38877881278,
+              "workflow": "First-Pass Closure Proof",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38877881278"
+            },
+            {
+              "run_id": 38877881285,
+              "workflow": "CODE PURPLE Method Atlas (read-only)",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38877881285"
+            },
+            {
+              "run_id": 38877881291,
+              "workflow": "W3-16 M03 W0 Recon",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38877881291"
+            },
+            {
+              "run_id": 38877881308,
+              "workflow": "Zero-Test Gate Guard",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38877881308"
+            },
+            {
+              "run_id": 38877881363,
+              "workflow": "QPS TRIAGE ULTRA Federation Control",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38877881363"
+            }
+          ]
+        },
+        {
+          "role": "MERGE_COMMIT_ASSOCIATED",
+          "sha": "4b0a3255c8f194d840da8a38664d8920679338c9",
+          "pagination": "FIRST_PAGE_ONLY_PR_TRIGGERED_RUNS",
+          "workflows": []
+        }
+      ],
+      "job_log_clocks": [
+        {
+          "run_id": 38877881285,
+          "job_id": 116897220334,
+          "first_utc": "2026-10-16T10:06:34.2566347Z",
+          "last_utc": "2026-10-16T10:06:57.7805244Z",
+          "source": "NATIVE_JOB_LOG_LINE_TIMESTAMPS"
+        }
+      ],
+      "admission": "MERGED_TO_DEFAULT_BRANCH_NO_QPS_CREDIT"
+    },
+    {
+      "repository": "GBOGEB/ABACUS",
+      "pr": 2060,
+      "head_sha": "256034886917d2056d2cd0e17212d514b4649e00",
+      "merge_commit_sha": "3ff3072471404fc35b3b07de9776b03ddade593e",
+      "merged_at_utc": "2026-10-16T11:13:24Z",
+      "base_branch": "test/dmaic-control-c5-20261016",
+      "base_relation": "IDENTICAL_TARGET_HEAD",
+      "destination_pr": 2057,
+      "phases": [
+        {
+          "role": "PR_HEAD_ASSOCIATED",
+          "sha": "256034886917d2056d2cd0e17212d514b4649e00",
+          "pagination": "FIRST_PAGE_ONLY_PR_TRIGGERED_RUNS",
+          "workflows": [
+            {
+              "run_id": 38887286186,
+              "workflow": "qps-canonicalization",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286186"
+            },
+            {
+              "run_id": 38887286188,
+              "workflow": "W71 Residual Generated-Lineage Census",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286188"
+            },
+            {
+              "run_id": 38887286191,
+              "workflow": "W70 Exact-SHA Measured ID Pulse",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286191"
+            },
+            {
+              "run_id": 38887286221,
+              "workflow": "MIP B0 Test Admission and Coverage Evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286221"
+            },
+            {
+              "run_id": 38887286223,
+              "workflow": "DELTA_1 CodeQL",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286223"
+            },
+            {
+              "run_id": 38887286230,
+              "workflow": "smoke-test",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286230"
+            },
+            {
+              "run_id": 38887286233,
+              "workflow": "DELTA_1 Dependency Review",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286233"
+            },
+            {
+              "run_id": 38887286237,
+              "workflow": "V5 W62 Self Smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286237"
+            },
+            {
+              "run_id": 38887286251,
+              "workflow": "YAML Validation",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286251"
+            },
+            {
+              "run_id": 38887286259,
+              "workflow": "W72 Zero Delta Wheel",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286259"
+            },
+            {
+              "run_id": 38887286260,
+              "workflow": "a10-guard",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286260"
+            },
+            {
+              "run_id": 38887286305,
+              "workflow": "CReq Federation CI",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286305"
+            },
+            {
+              "run_id": 38887286310,
+              "workflow": "DAB Flake8 Census",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887286310"
+            },
+            {
+              "run_id": 38892352899,
+              "workflow": "Post-Merge PR Summary",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892352899"
+            }
+          ]
+        },
+        {
+          "role": "MERGE_COMMIT_ASSOCIATED",
+          "sha": "3ff3072471404fc35b3b07de9776b03ddade593e",
+          "pagination": "FIRST_PAGE_ONLY_PR_TRIGGERED_RUNS",
+          "workflows": [
+            {
+              "run_id": 38892361900,
+              "workflow": "DELTA_1 Dependency Review",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892361900"
+            },
+            {
+              "run_id": 38892361908,
+              "workflow": "V5 W62 Self Smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892361908"
+            },
+            {
+              "run_id": 38892361911,
+              "workflow": "Validate Docs (Markdown/YAML/JSON)",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892361911"
+            },
+            {
+              "run_id": 38892361932,
+              "workflow": "smoke-test",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892361932"
+            },
+            {
+              "run_id": 38892361934,
+              "workflow": "ABACUS v032 - CI/CD Pipeline",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892361934"
+            },
+            {
+              "run_id": 38892361947,
+              "workflow": "DOW + Recursive DMAIC - Enhanced CI",
+              "status": "completed",
+              "conclusion": "failure",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892361947"
+            },
+            {
+              "run_id": 38892361950,
+              "workflow": "a10-guard",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892361950"
+            },
+            {
+              "run_id": 38892362000,
+              "workflow": "Format Check",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362000"
+            },
+            {
+              "run_id": 38892362004,
+              "workflow": "W72 Zero Delta Wheel",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362004"
+            },
+            {
+              "run_id": 38892362005,
+              "workflow": "W70 Exact-SHA Measured ID Pulse",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362005"
+            },
+            {
+              "run_id": 38892362008,
+              "workflow": "DAB Flake8 Census",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362008"
+            },
+            {
+              "run_id": 38892362044,
+              "workflow": "DMAIC V3 Test Suite - Continuous Integration",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362044"
+            },
+            {
+              "run_id": 38892362053,
+              "workflow": "CI - ABACUS Matrix",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362053"
+            },
+            {
+              "run_id": 38892362059,
+              "workflow": "W71 Residual Generated-Lineage Census",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362059"
+            },
+            {
+              "run_id": 38892362062,
+              "workflow": "DMAIC V3 Enterprise CI",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362062"
+            },
+            {
+              "run_id": 38892362065,
+              "workflow": "YAML Validation",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362065"
+            },
+            {
+              "run_id": 38892362066,
+              "workflow": "CI/CD Test Suite",
+              "status": "completed",
+              "conclusion": "failure",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362066"
+            },
+            {
+              "run_id": 38892362071,
+              "workflow": "qps-canonicalization",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362071"
+            },
+            {
+              "run_id": 38892362073,
+              "workflow": "Security Scan — Ruff",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362073"
+            },
+            {
+              "run_id": 38892362089,
+              "workflow": "Semgrep",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362089"
+            },
+            {
+              "run_id": 38892362102,
+              "workflow": "PR Feedback Gate Evaluator",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362102"
+            },
+            {
+              "run_id": 38892362108,
+              "workflow": "MIP B0 Test Admission and Coverage Evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362108"
+            },
+            {
+              "run_id": 38892362124,
+              "workflow": "CReq Federation CI",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362124"
+            },
+            {
+              "run_id": 38892362142,
+              "workflow": "DELTA_1 CodeQL",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362142"
+            },
+            {
+              "run_id": 38892362381,
+              "workflow": "OSV-Scanner",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892362381"
+            }
+          ]
+        }
+      ],
+      "job_log_clocks": [
+        {
+          "run_id": 38887286221,
+          "job_id": 116928004149,
+          "first_utc": "2026-10-16T10:26:57.8298861Z",
+          "last_utc": "2026-10-16T10:27:50.6778461Z",
+          "source": "NATIVE_JOB_LOG_LINE_TIMESTAMPS"
+        }
+      ],
+      "admission": "MERGED_TO_FEATURE_BRANCH_NOT_DEFAULT"
+    },
+    {
+      "repository": "GBOGEB/ABACUS",
+      "pr": 2061,
+      "head_sha": "28cd47bd2a27325b860628ddd17cff9216ce5108",
+      "merge_commit_sha": "9b0b70684c821d3a1bff9ea6394aacf6ae216524",
+      "merged_at_utc": "2026-10-16T11:13:10Z",
+      "base_branch": "feat/mip-ci-worker-telemetry-20261015",
+      "base_relation": "ANCESTOR_OF_TARGET_HEAD_2_COMMITS",
+      "destination_pr": 2033,
+      "phases": [
+        {
+          "role": "PR_HEAD_ASSOCIATED",
+          "sha": "28cd47bd2a27325b860628ddd17cff9216ce5108",
+          "pagination": "FIRST_PAGE_ONLY_PR_TRIGGERED_RUNS",
+          "workflows": [
+            {
+              "run_id": 38891201294,
+              "workflow": "DELTA_1 CodeQL",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38891201294"
+            },
+            {
+              "run_id": 38891201316,
+              "workflow": "Pytest Config Validation",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38891201316"
+            },
+            {
+              "run_id": 38891201323,
+              "workflow": "W70 Exact-SHA Measured ID Pulse",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38891201323"
+            },
+            {
+              "run_id": 38891201332,
+              "workflow": "YAML Validation",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38891201332"
+            },
+            {
+              "run_id": 38891201346,
+              "workflow": "W71 Residual Generated-Lineage Census",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38891201346"
+            },
+            {
+              "run_id": 38891201364,
+              "workflow": "DAB Flake8 Census",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38891201364"
+            },
+            {
+              "run_id": 38891201369,
+              "workflow": "Review Artifact Validation",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38891201369"
+            },
+            {
+              "run_id": 38891201379,
+              "workflow": "smoke-test",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38891201379"
+            },
+            {
+              "run_id": 38891201389,
+              "workflow": "DELTA_1 Dependency Review",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38891201389"
+            },
+            {
+              "run_id": 38891201400,
+              "workflow": "qps-canonicalization",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38891201400"
+            },
+            {
+              "run_id": 38891201421,
+              "workflow": "MIP B0 Test Admission and Coverage Evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38891201421"
+            },
+            {
+              "run_id": 38891201433,
+              "workflow": "a10-guard",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38891201433"
+            },
+            {
+              "run_id": 38892325261,
+              "workflow": "Post-Merge PR Summary",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892325261"
+            }
+          ]
+        },
+        {
+          "role": "MERGE_COMMIT_ASSOCIATED",
+          "sha": "9b0b70684c821d3a1bff9ea6394aacf6ae216524",
+          "pagination": "FIRST_PAGE_ONLY_PR_TRIGGERED_RUNS",
+          "workflows": [
+            {
+              "run_id": 38892330992,
+              "workflow": "CI/CD Test Suite",
+              "status": "completed",
+              "conclusion": "failure",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892330992"
+            },
+            {
+              "run_id": 38892331000,
+              "workflow": "W70 Exact-SHA Measured ID Pulse",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331000"
+            },
+            {
+              "run_id": 38892331021,
+              "workflow": "DAB Flake8 Census",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331021"
+            },
+            {
+              "run_id": 38892331028,
+              "workflow": "smoke-test",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331028"
+            },
+            {
+              "run_id": 38892331044,
+              "workflow": "Format Check",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331044"
+            },
+            {
+              "run_id": 38892331079,
+              "workflow": "Pytest Config Validation",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331079"
+            },
+            {
+              "run_id": 38892331107,
+              "workflow": "Validate Docs (Markdown/YAML/JSON)",
+              "status": "completed",
+              "conclusion": "failure",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331107"
+            },
+            {
+              "run_id": 38892331108,
+              "workflow": "W71 Residual Generated-Lineage Census",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331108"
+            },
+            {
+              "run_id": 38892331109,
+              "workflow": "CI - ABACUS Matrix",
+              "status": "completed",
+              "conclusion": "cancelled",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331109"
+            },
+            {
+              "run_id": 38892331114,
+              "workflow": "Review Artifact Validation",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331114"
+            },
+            {
+              "run_id": 38892331115,
+              "workflow": "YAML Validation",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331115"
+            },
+            {
+              "run_id": 38892331121,
+              "workflow": "DELTA_1 CodeQL",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331121"
+            },
+            {
+              "run_id": 38892331129,
+              "workflow": "DELTA_1 Dependency Review",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331129"
+            },
+            {
+              "run_id": 38892331132,
+              "workflow": "MIP B0 Test Admission and Coverage Evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331132"
+            },
+            {
+              "run_id": 38892331146,
+              "workflow": "qps-canonicalization",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331146"
+            },
+            {
+              "run_id": 38892331149,
+              "workflow": "Security Scan — Ruff",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331149"
+            },
+            {
+              "run_id": 38892331189,
+              "workflow": "PR Feedback Gate Evaluator",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331189"
+            },
+            {
+              "run_id": 38892331190,
+              "workflow": "Semgrep",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331190"
+            },
+            {
+              "run_id": 38892331200,
+              "workflow": "a10-guard",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331200"
+            },
+            {
+              "run_id": 38892331243,
+              "workflow": "ABACUS v032 - CI/CD Pipeline",
+              "status": "completed",
+              "conclusion": "failure",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331243"
+            },
+            {
+              "run_id": 38892331587,
+              "workflow": "OSV-Scanner",
+              "status": "completed",
+              "conclusion": "success",
+              "attempt": null,
+              "created_at": null,
+              "started_at": null,
+              "completed_at": null,
+              "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892331587"
+            }
+          ]
+        }
+      ],
+      "job_log_clocks": [
+        {
+          "run_id": 38891201421,
+          "job_id": 116940858850,
+          "first_utc": "2026-10-16T11:03:00.4531049Z",
+          "last_utc": "2026-10-16T11:03:05.5302392Z",
+          "source": "NATIVE_JOB_LOG_LINE_TIMESTAMPS"
+        },
+        {
+          "run_id": 38892331107,
+          "job_id": 116944563086,
+          "first_utc": "2026-10-16T11:16:10.9969523Z",
+          "last_utc": "2026-10-16T11:16:24.7229493Z",
+          "source": "NATIVE_JOB_LOG_LINE_TIMESTAMPS"
+        }
+      ],
+      "admission": "MERGED_TO_FEATURE_BRANCH_NOT_DEFAULT"
+    }
+  ],
+  "edges": [
+    {
+      "from": "GBOGEB/ABACUS#2060",
+      "to": "GBOGEB/ABACUS#2057",
+      "kind": "MERGED_INTO_FEATURE_PR",
+      "proof": "MERGE_COMMIT_IDENTICAL_TO_TARGET_HEAD"
+    },
+    {
+      "from": "GBOGEB/ABACUS#2061",
+      "to": "GBOGEB/ABACUS#2033",
+      "kind": "MERGED_INTO_FEATURE_PR",
+      "proof": "MERGE_COMMIT_ANCESTOR_2_COMMITS_BEHIND"
+    },
+    {
+      "from": "GBOGEB/pipeline-automation-hub#562",
+      "to": "GBOGEB/pipeline-automation-hub@master",
+      "kind": "MERGED_TO_DEFAULT",
+      "proof": "EXACT_MERGE_EQUALS_DEFAULT_SHA"
+    }
+  ],
+  "recursive_contract": {
+    "max_depth": 5,
+    "cycle_behavior": "VISITED_SET_SKIP",
+    "unverified_edges": "NOT_TRAVERSED",
+    "on_event": [
+      "pull_request",
+      "push_master",
+      "workflow_dispatch"
+    ],
+    "collector": "READ_ONLY_OPTIONAL_NO_DISPATCH"
+  }
+}
