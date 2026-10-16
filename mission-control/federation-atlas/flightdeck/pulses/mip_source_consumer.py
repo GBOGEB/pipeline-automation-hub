@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import re
 from pathlib import Path
 
@@ -28,6 +29,22 @@ def require(ok, message):
 
 def number(value):
     return type(value) is int and value >= 0
+
+
+def first_red_digest(row):
+    """Match the canonical ABACUS workflow/job/step source signature."""
+    keys = ("workflow_path", "job_name", "step_name")
+    require(isinstance(row, dict)
+            and all(isinstance(row.get(k), str) and row[k].strip()
+                    for k in keys)
+            and type(row.get("step_number")) is int
+            and row["step_number"] > 0,
+            "invalid native first-red semantic identity")
+    semantic = {k: row[k] for k in keys}
+    semantic["step_number"] = row["step_number"]
+    return hashlib.sha256(json.dumps(
+        semantic, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")).hexdigest()
 
 
 def consume(envelope, producer):
@@ -74,6 +91,11 @@ def consume(envelope, producer):
             and number(producer.get("queue_samples"))
             and sum(queue.values()) == producer["queue_samples"],
             "queue provenance denominator inconsistent")
+    samples = producer["queue_samples"]
+    p95 = producer.get("queue_seconds_p95")
+    require((p95 is None if samples == 0 else
+             type(p95) in (int, float) and math.isfinite(p95) and p95 >= 0),
+            "queue p95 must match nonempty measured sample basis")
     signatures = producer.get("first_red_signatures")
     require(isinstance(signatures, list), "missing first-red signatures")
     require(number(producer.get("first_red_unique_signatures"))
@@ -87,15 +109,47 @@ def consume(envelope, producer):
                 and isinstance(row.get("fingerprint"), str)
                 and SHA64.fullmatch(row["fingerprint"])
                 and row["fingerprint"] not in seen
+                and row["fingerprint"] == first_red_digest(row)
                 and number(row.get("manifestations"))
                 and row["manifestations"] > 0,
                 "invalid or duplicated first-red group")
         seen.add(row["fingerprint"])
         manifested += row["manifestations"]
         repeated += row["manifestations"] > 1
-    require(repeated == producer.get("first_red_repeated_signatures")
-            and manifested == len(producer.get("first_red_manifestations", [])),
+    events = producer.get("first_red_manifestations")
+    require(isinstance(events, list) and manifested == len(events),
             "first-red manifestation count mismatch")
+    identities = set()
+    event_counts = {key: 0 for key in seen}
+    for event in events:
+        require(isinstance(event, dict)
+                and event.get("fingerprint") in seen
+                and event["fingerprint"] == first_red_digest(event)
+                and all(type(event.get(k)) is int and event[k] > 0
+                        for k in ("run_id", "run_attempt", "job_id")),
+                "first-red manifestation source identity invalid")
+        identity = (event["run_id"], event["run_attempt"], event["job_id"])
+        require(identity not in identities, "duplicate native first-red job")
+        identities.add(identity)
+        event_counts[event["fingerprint"]] += 1
+    require(all(event_counts[row["fingerprint"]] == row["manifestations"]
+                for row in signatures)
+            and repeated == producer.get("first_red_repeated_signatures"),
+            "first-red signature/event totals inconsistent")
+
+    job_outcomes = producer.get("terminal_by_outcome")
+    require(isinstance(job_outcomes, dict)
+            and set(job_outcomes) == set(OUTCOMES)
+            and all(number(v) for v in job_outcomes.values())
+            and number(producer.get("jobs_observed"))
+            and number(producer.get("nonterminal"))
+            and sum(job_outcomes.values()) + producer["nonterminal"]
+            == producer["jobs_observed"], "native job denominator inconsistent")
+    red_jobs = sum(job_outcomes[key] for key in (
+        "failure", "timed_out", "startup_failure"))
+    unattributed = producer.get("red_jobs_without_attributed_first_step")
+    require(number(unattributed) and red_jobs == manifested + unattributed,
+            "red job first-step attribution denominator inconsistent")
     require(producer.get("first_red_causal_roots_verified") is None
             and producer.get("independent_process_observations") is None,
             "causal/independent claims cannot be imported")
@@ -112,11 +166,21 @@ def consume(envelope, producer):
         "first_red_unique_signatures": len(signatures),
         "first_red_repeated_signatures": repeated,
         "first_red_manifestations": manifested,
-        "red_jobs_unattributed": producer.get(
-            "red_jobs_without_attributed_first_step"),
+        "red_jobs_total": red_jobs,
+        "red_jobs_unattributed": unattributed,
+        "first_red_attribution_fraction": (
+            round(manifested / red_jobs, 9) if red_jobs else None
+        ),
+        "first_red_signature_compression_fraction": (
+            round(1 - len(signatures) / manifested, 9) if manifested else None
+        ),
+        "job_total_n": producer["jobs_observed"],
         "queue_samples": producer["queue_samples"],
         "queue_native_n": queue["job_created_at"],
         "queue_fallback_n": queue["workflow_run_created_at_fallback"],
+        "queue_native_fraction": (
+            round(queue["job_created_at"] / samples, 9) if samples else None
+        ),
         "queue_p95_seconds_source_reported": producer.get("queue_seconds_p95"),
         "queue_cross_wave_comparable": None,
     }
