@@ -12,6 +12,10 @@ on:
         description: Exact 40-character ABACUS source SHA (no branch/latest)
         required: true
         type: string
+      previous_abacus_sha:
+        description: Optional earlier exact source SHA for descriptive matched N/N+1 comparison
+        required: false
+        type: string
 permissions:
   contents: read
 jobs:
@@ -50,6 +54,7 @@ jobs:
       - name: Acquire complete exact-SHA native runs and use canonical producer
         env:
           ABACUS_SHA: ${{ inputs.abacus_sha }}
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
@@ -77,6 +82,28 @@ jobs:
                   report['qps_acceptance'] != 'DEFER' or
                   any(v is not None for v in report['statistics']['intervals_90_95_99'].values())):
               raise ValueError('promotion of unqualified measurement')
+          PY
+      - name: Optional source-name matched temporal convergence
+        if: inputs.previous_abacus_sha != ''
+        env:
+          PREVIOUS_ABACUS_SHA: ${{ inputs.previous_abacus_sha }}
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python control/mission-control/federation-atlas/flightdeck/pulses/abacus_mip_collect.py \
+            --source-sha "$PREVIOUS_ABACUS_SHA" --output out/native_input_before.json
+          python control/mission-control/federation-atlas/flightdeck/pulses/abacus_mip_transition.py \
+            --before out/native_input_before.json \
+            --after out/native_input.json \
+            --output out/mission_control_matched_transition.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('out/mission_control_matched_transition.json').read_text())
+          if (report['merge_admission']!='HOLD' or report['authority_transfer'] or
+                  any(v is not None for v in report['inferential']['confidence_intervals_90_95_99'].values())):
+              raise ValueError('unqualified temporal promotion')
           PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
