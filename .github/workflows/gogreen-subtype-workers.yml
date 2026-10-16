@@ -1,0 +1,50 @@
+name: CBD Subtype Worker Orchestrator
+
+on:
+  pull_request:
+    paths:
+      - "mission-control/gogreen/subtype_orchestrator.py"
+      - "mission-control/gogreen/tests/test_subtype_orchestrator.py"
+      - "mission-control/gogreen/samples/cbd_abacus_20261016.json"
+      - ".github/workflows/gogreen-subtype-workers.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  subtype-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run subtype planner tests
+        run: python -m unittest mission-control/gogreen/tests/test_subtype_orchestrator.py -v
+      - name: Emit source-bound subtype receipt
+        run: |
+          python mission-control/gogreen/subtype_orchestrator.py \
+            --input mission-control/gogreen/samples/cbd_abacus_20261016.json \
+            --out "$RUNNER_TEMP/cbd-subtype"
+          cat "$RUNNER_TEMP/cbd-subtype/subtype_receipt.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Validate authority and KPI boundaries
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p = Path(os.environ["RUNNER_TEMP"]) / "cbd-subtype" / "subtype_receipt.json"
+          d = json.loads(p.read_text())
+          assert d["dispatch_authorized"] is False
+          assert d["merge_authorized"] is False
+          assert d["security_waiver"] is False
+          assert d["kpi"]["independently_accepted_root_closures"] == 0
+          assert d["kpi"]["packets_total"] == 8
+          assert d["kpi"]["ready_now"] == 5
+          assert d["kpi"]["blocked"] == 3
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cbd-subtype-receipt-${{ github.sha }}
+          path: ${{ runner.temp }}/cbd-subtype/
+          if-no-files-found: error
