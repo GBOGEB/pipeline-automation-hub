@@ -18,20 +18,25 @@ URL='https://github.com/GBOGEB/ABACUS/actions/runs/999'
 
 
 def fixture():
+    root_id=M.canonical_group_id('BANDIT',repository='GBOGEB/ABACUS',
+        configuration='full-default-v1',root={'fingerprint':'d'*64})
     a=dict(repository='GBOGEB/ABACUS',source_sha=SHA,run_id=999,job_id=5,
-           evidence_url=URL,source='bandit_disjoint')
+           evidence_url=URL,source='bandit_disjoint',scan_configuration='full-default-v1')
     d=dict(repository='GBOGEB/CODEX',source_sha='c'*40,run_id=888,job_id=1,
            evidence_url='https://github.com/GBOGEB/CODEX/actions/runs/888',
            source='debug_receipt',proof_level='REPORTED_UNVERIFIED',
            session_id='reported-not-authenticated',real_probe_steps=10)
     return {'schema':'bd.ldab.joined.census.v1',
             'scope':{'repository':'GBOGEB/ABACUS','head_sha':SHA,
-                     'scan_configuration':'full-default-v1'},
+                     'scan_configuration':'full-default-v1','run_id':999,'job_id':5,
+                     'evidence_url':URL},
             'metrics':{'full_bandit_unique':1,'ci_observations':0,
-                       'debug_receipts':1,'debug_reported_sessions':1,
+                       'debug_receipts':1,'debug_reported_sessions':1,'assigned_files':1,
+                       'duplicate_file_owners':0,
                        'comparable_delta':None,'changed_line_coverage':None,
                        'active_workers':None},
-            'roots':[{'root_id':'BD-root001','category':'BANDIT',
+            'roots':[{'root_id':root_id,'category':'BANDIT','fingerprint':'d'*64,
+                      'line':7,
                       'disposition':'OPEN_UNREVIEWED','source_path':'scripts/a.py',
                       'owner_lane':'B3-subprocess','observations':[a]}],
             'unlinked_debug_receipts':[d],
@@ -76,8 +81,18 @@ class ConsumerTests(unittest.TestCase):
             lambda x:x.update(formal_credit_delta=1),
             lambda x:x.update(engineering_credit_delta=1),
             lambda x:x['scope'].update(head_sha=OLD),
+            lambda x:x['scope'].update(run_id=111),
+            lambda x:x['scope'].update(job_id=111),
+            lambda x:x['roots'][0].update(root_id='BD-forged'),
+            lambda x:x['roots'][0].update(fingerprint='e'*64),
+            lambda x:x['roots'][0].update(line=0),
+            lambda x:x['roots'][0].update(owner_lane='unrecognized'),
+            lambda x:x['metrics'].update(assigned_files=2),
+            lambda x:x['metrics'].update(duplicate_file_owners=1),
             lambda x:x['scope'].update(scan_configuration=''),
             lambda x:x['metrics'].update(full_bandit_unique=0),
+            lambda x:x['roots'][0]['observations'][0].update(scan_configuration='other'),
+            lambda x:x['roots'][0]['observations'][0].update(job_id=999),
             lambda x:x['metrics'].update(ci_observations=1),
             lambda x:x['metrics'].update(debug_receipts=0),
             lambda x:x['metrics'].update(debug_reported_sessions=0),
@@ -94,6 +109,11 @@ class ConsumerTests(unittest.TestCase):
             x=fixture(); fn(x)
             with self.subTest(fn=fn):
                 with self.assertRaises(ValueError):read(x)
+
+    def test_CI_group_forged_signature_and_reused_bandit_link_fail(self):
+        x=fixture();x['roots'][0]['observations'][0]['source']='ci_failure'
+        x['metrics']['ci_observations']=1
+        with self.assertRaises(ValueError): read(x)
 
     def test_duplicate_root_and_evidence_fails(self):
         x=fixture();x['roots'].append(copy.deepcopy(x['roots'][0]));x['metrics']['full_bandit_unique']=2
@@ -123,7 +143,7 @@ class ConsumerTests(unittest.TestCase):
                 M.main(['--joined',str(src),'--expected-sha',OLD,'--out',str(dest)])
 
     def test_invalid_empty_and_schema(self):
-        x=fixture();x['roots']=[];x['metrics']['full_bandit_unique']=0
+        x=fixture();x['roots']=[];x['metrics']['full_bandit_unique']=0;x['metrics']['assigned_files']=0
         self.assertEqual(read(x)['metrics']['roots_observed'],0)
         x['schema']='unknown'
         with self.assertRaises(ValueError):read(x)
