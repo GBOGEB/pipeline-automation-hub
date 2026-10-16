@@ -1,0 +1,71 @@
+name: CODE PURPLE CBQ CH-BD Readonly Pulse
+on:
+  pull_request:
+    paths:
+      - 'mission-control/federation-atlas/flightdeck/pulses/**'
+      - '.github/workflows/code-purple-cbq-ch-bd-pulse.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  queue-proof:
+    name: Source-hashed CBQ and CH-BD projection
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.11'
+      - name: Native readonly negative-controls (12 tests)
+        run: >-
+          python -m unittest discover
+          -s mission-control/federation-atlas/flightdeck/pulses
+          -p test_cbq_ch_bd_render.py -v
+      - name: Build sealed read-only pulse projection
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/flightdeck/pulses/cbq_ch_bd_render.py \
+            --source mission-control/federation-atlas/flightdeck/pulses/CBQ_CH_BD_20261016.json \
+            --out out/cbq-ch-bd
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          out = Path("out/cbq-ch-bd")
+          report = json.loads((out / "projection.json").read_text())
+          manifest = json.loads((out / "manifest.json").read_text())
+          assert manifest["evidence_level"] == "LOCAL_REPRODUCIBILITY"
+          assert report["verified_root_closures"] == 0
+          assert report["authority"]["qps_decision"] == "DEFER"
+          assert report["authority"]["native_four_hop"] == "UNKNOWN"
+          for name, digest in manifest["artifacts"].items():
+              if hashlib.sha256((out / name).read_bytes()).hexdigest() != digest:
+                  raise ValueError("projection member digest mismatch")
+          receipt = {
+              "schema": "code-purple.cbq_ch_bd.gha_projection_receipt.v1",
+              "github_sha": os.environ["GITHUB_SHA"],
+              "run_id": os.environ["GITHUB_RUN_ID"],
+              "run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "job": os.environ["GITHUB_JOB"],
+              "source_digest": manifest["source_sha256"],
+              "grade": "EXACT_SHA_PROJECTOR_NOT_FEDERATION",
+              "native_cross_repository": False,
+              "qps_acceptance": "DEFER",
+              "root_closures": 0,
+          }
+          (out / "workflow_receipt.json").write_text(
+              json.dumps(receipt, indent=2, sort_keys=True) + "\n"
+          )
+          PY
+      - name: Upload diagnostic projections only
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cbq-ch-bd-pulse-${{ github.run_id }}
+          path: out/cbq-ch-bd/
+          if-no-files-found: error
