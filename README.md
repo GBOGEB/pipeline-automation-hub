@@ -1,24 +1,6 @@
 # Pipeline Automation Hub
 
-## Start here — CODE PURPLE federation W0 (source candidate)
-
-The [W0 federation landing PR](https://github.com/GBOGEB/pipeline-automation-hub/pull/579)
-adds local graph-neighborhood exploration, 10-lane/39-stage SIPOC and 10-beam/13-edge
-temporal DAGs. Its [planning and release TODO](mission-control/federation-atlas/landing/LANDING_WAVE_PLAN_20261016.md)
-is deliberately evolutionary and non-authoritative.
-
-| Navigate | Verified boundary |
-|---|---|
-| [Native CI](https://github.com/GBOGEB/pipeline-automation-hub/actions) | Exact-head status, not a dashboard inference |
-| [W0 source renderer](mission-control/federation-atlas/landing/build_landing.py) | Read-only process, graph and historical-wave projection |
-| [Method Atlas Pages producer](.github/workflows/code-purple-method-atlas.yml) | Existing single publisher; hosted digest readback separate |
-| [SIPOC source](mission-control/federation-atlas/PROCESS_LANES_v1.json) | Canonical stages and owners |
-| [Beams DAG](mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json) | FEEDFORWARD in N; FEEDBACK only into N+1 |
-
-`merge_admission=HOLD`; `security_waiver=false`; 
-`authority_transfer=false`; `dispatch=STAGED_NOT_LAUNCHED`.
-The historical M2 and W+1 records below are preserved by version.
-
+> **Federation navigation pilot — 16 Oct 2026:** [P4 Recursive SIPOC explorer](mission-control/federation-atlas/flightdeck/pulses/federation_landing_p4.html) · [P4 design/DoV](mission-control/federation-atlas/flightdeck/pulses/FEDERATION_LANDING_SIPOC_P4_20261016.md) · [Existing MissionControl Pages portal](mission-control/federation-atlas/pages_portal.py). This is a frozen, read-only source snapshot, **not live deployment, engineering acceptance, or release admission**. Existing M2 materials below remain historical.
 
 ## CODE PURPLE — M2 MissionControl user landing
 
