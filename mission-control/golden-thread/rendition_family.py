@@ -49,25 +49,98 @@ def render_markdown(truth):
 
 
 def render_html(truth):
-    digest = canonical_truth_digest(truth)
+    """Accessible review of canonical truth; embedded payload remains authoritative.
+
+    Cards, labels and event samples are projections of the same canonical JSON.
+    This adds visual comprehension, not new data or a separate HTML SSOT.
+    """
+    value_digest = canonical_truth_digest(truth)
     payload = _json_payload(truth)
     safe_payload = (
         payload.replace("&", "\\u0026")
         .replace("<", "\\u003c")
         .replace(">", "\\u003e")
     )
-    return (
-        "<!doctype html>\n"
-        '<html><head><meta charset="utf-8">'
-        f'<meta name="golden-thread-truth-digest" content="{html.escape(digest)}">'
-        "<title>Golden Thread Truth</title></head><body>"
-        "<h1>Golden Thread Canonical Truth Rendition</h1>"
-        f"<p>Canonical truth digest: <code>{html.escape(digest)}</code></p>"
-        '<script id="golden-thread-canonical-truth" type="application/json">'
-        f"{safe_payload}</script>"
-        "</body></html>\n"
+    esc = lambda value: html.escape(str(value), quote=True)
+    metrics = truth.get("metrics") if isinstance(truth.get("metrics"), dict) else {}
+    selection = (
+        truth.get("temporal_selection")
+        if isinstance(truth.get("temporal_selection"), dict)
+        else {}
     )
-
+    names = (
+        ("Events", "event_count"),
+        ("Occurrences", "occurrence_count"),
+        ("Root objects", "root_count"),
+        ("Lineage edges", "lineage_edge_count"),
+        ("Unknown-reader items", "unknown_needs_reader_count"),
+    )
+    cards = "".join(
+        '<div class="card"><small>' + esc(label) + '</small><strong>'
+        + esc(metrics.get(key, "UNKNOWN")) + "</strong></div>"
+        for label, key in names
+    )
+    timeline = (
+        '<p><b>Known at:</b> ' + esc(selection.get("known_at_utc", "UNKNOWN"))
+        + ' · <b>Occurred by:</b> '
+        + esc(selection.get("occurred_by_utc") or "unbounded")
+        + ' · <b>Complete source chain verified:</b> '
+        + esc(selection.get("full_ledger_verified", "UNKNOWN"))
+        + ' · <b>Selected chain prefix:</b> '
+        + esc(selection.get("chain_prefix", "UNKNOWN"))
+        + "</p>"
+        if selection else
+        "<p>Current or historical event-boundary projection. "
+        "No separate recorded-knowledge cutoff is asserted.</p>"
+    )
+    selected = selection.get("selected_event_ids") if selection else None
+    events = selected if isinstance(selected, list) else truth.get("events_applied")
+    events = events if isinstance(events, list) else []
+    chips = "".join('<li><code>' + esc(x) + '</code></li>' for x in events[:32])
+    if len(events) > 32:
+        chips += '<li>… ' + str(len(events) - 32) + " more in source payload</li>"
+    stylesheet = """<style>
+:root{color-scheme:light;--ink:#192c42;--muted:#566b7d;--edge:#d7e1e9;--mint:#087d73}
+*{box-sizing:border-box}body{font:15px/1.55 system-ui,-apple-system,sans-serif;color:var(--ink);background:#f5f8fb;margin:0}
+main{max-width:1140px;margin:auto;padding:28px}h1{font-size:clamp(26px,4vw,42px);line-height:1.15}
+small{color:var(--muted)}.eyebrow{font-size:12px;letter-spacing:.14em;font-weight:750;color:var(--mint)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.card,section{background:white;border:1px solid var(--edge);border-radius:13px;padding:18px}
+.card strong{font-size:30px;display:block;line-height:1.3}.card small{display:block}
+section{margin:15px 0}code{overflow-wrap:anywhere;font:12px ui-monospace,SFMono-Regular,Consolas,monospace}
+ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;list-style:none;padding:0}
+li{padding:7px;border-radius:7px;background:#e9f2f5}p{overflow-wrap:anywhere}
+.warning{color:#8a541f}details{max-width:100%}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}
+@media(max-width:500px){main{padding:12px}.card{padding:10px}.card strong{font-size:24px}}
+</style>"""
+    title = "Golden Thread Canonical Truth Rendition"
+    return (
+        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        '<meta name="referrer" content="no-referrer">'
+        '<meta name="golden-thread-truth-digest" content="'
+        + esc(value_digest) + '"><title>Golden Thread Truth</title>'
+        + stylesheet + "</head><body><main>"
+        '<p class="eyebrow">MISSION CONTROL / GOLDEN THREAD / EVIDENCE REVIEW</p>'
+        "<h1>" + title + "</h1>"
+        '<p><b>Immutable semantic identity:</b> <code>'
+        + esc(value_digest) + "</code></p>"
+        '<p class="warning">Read-only rendition. Projection is not root '
+        'closure, child acceptance, release admission or a new SSOT.</p>'
+        '<div class="grid">' + cards + "</div>"
+        '<section><h2>Historical perspective</h2>' + timeline
+        + '<p><b>Boundary:</b> ' + esc(truth.get("boundary", "UNKNOWN"))
+        + ' · <b>Authority transfer:</b> '
+        + esc(truth.get("authority_transfer", "UNKNOWN")) + "</p></section>"
+        '<section><h2>Applied event identities</h2>'
+        '<p>Sample of the first 32 events. Full source identity remains embedded below.</p>'
+        "<ul>" + chips + "</ul></section>"
+        '<details><summary>Machine-readable canonical payload</summary><pre>'
+        + esc(json.dumps(truth, indent=2, sort_keys=True, ensure_ascii=False))
+        + "</pre></details>"
+        '<script id="golden-thread-canonical-truth" type="application/json">'
+        + safe_payload + "</script></main></body></html>\n"
+    )
 
 def render_family(truth):
     digest = canonical_truth_digest(truth)
