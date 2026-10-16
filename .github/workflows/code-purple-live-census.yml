@@ -39,6 +39,45 @@ jobs:
           cd mission-control/federation-atlas/live-census
           python source/live_census.py --seed data/observed_fixture.json --out out
           python source/live_census.py --verify out
+      - name: Bind artifact to verified checkout/event/run/attempt identity
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python - <<'PYRECEIPT'
+          import hashlib
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+          actual = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          expected = os.environ['EXPECTED_SHA']
+          if actual != expected or len(actual) != 40:
+              raise SystemExit('source mismatch')
+          out = Path('mission-control/federation-atlas/live-census/out')
+          manifest_raw = (out / 'manifest.json').read_bytes()
+          manifest = json.loads(manifest_raw)
+          receipt = {
+              'schema': 'codepurple.live.exact_checkout_receipt.v1',
+              'checkout_sha': actual,
+              'event_sha': os.environ['GITHUB_SHA'],
+              'event_name': os.environ['GITHUB_EVENT_NAME'],
+              'workflow_run_id': int(os.environ['GITHUB_RUN_ID']),
+              'run_attempt': int(os.environ['GITHUB_RUN_ATTEMPT']),
+              'manifest_sha256': hashlib.sha256(manifest_raw).hexdigest(),
+              'snapshot_source_digest': manifest['source_digest'],
+              'qualification': 'NATIVE_EXACT_CHECKOUT_CONTRACT_NOT_GOVERNED_ADMISSION',
+              'accepted_causal_root_closures': None,
+              'merge_authorized': False,
+              'security_waiver': False,
+              'crew_dispatch': 'STAGED_NOT_LAUNCHED',
+              'qps_owner_decision': 'DEFER',
+          }
+          (out / 'native_workflow_receipt.json').write_text(
+              json.dumps(receipt, indent=2, sort_keys=True) + '\n'
+          )
+          PYRECEIPT
       - name: Upload diagnostic artifact only, no Pages publish or source mutation
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
