@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.cbd-subtype-plan.v1",
   "cohort": "ABACUS-CBD-20261016-B",
-  "observed_at": "2026-10-16T08:09:00Z",
+  "observed_at": "2026-10-16T08:15:00Z",
   "authority_transfer": false,
   "max_parallel": 3,
   "packets": [
@@ -346,6 +346,26 @@
       "independent_approval": false,
       "accepted_root_ids": [],
       "state": "READY"
+    },
+    {
+      "id": "COVERAGE-DMAIC-C3",
+      "category": "COVERAGE",
+      "subtype": "HANDOVER_ORCHESTRATION_STABILITY_C3",
+      "priority": "P1",
+      "phase": "PROVE",
+      "mode": "NATIVE_PROVE",
+      "repo": "GBOGEB/ABACUS",
+      "source_sha": "760dd0b5dbbfcb7db9264f81f1ef359e9461f917",
+      "owner_issue": 1991,
+      "mutation_paths": [],
+      "blockers": [],
+      "success_predicate": "Prove phase+input idempotency root repair and behavioral coverage gains for handover, full pipeline and stability monitor on one exact head with the same native coverage denominator.",
+      "occurrence_count": 2,
+      "fingerprint_count": 2,
+      "proof": null,
+      "independent_approval": false,
+      "accepted_root_ids": [],
+      "state": "PROOF_PENDING"
     }
   ]
 }
