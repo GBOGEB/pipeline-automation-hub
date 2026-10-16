@@ -13,6 +13,9 @@ on:
       - "mission-control/gogreen/tests/test_sipoc_instances.py"
       - "mission-control/gogreen/samples/sipoc_instance_wave_20261016.json"
       - "mission-control/gogreen/SIPOC_INSTANCE_DAG.md"
+      - "mission-control/golden-thread/dependency_recompute.py"
+      - "mission-control/golden-thread/fixtures/GT_BD_002_REAL_CONE_BATCH001_v1.json"
+      - "mission-control/golden-thread/fixtures/GT_BD_011_BOOTSTRAP_BATCH001_20260917.json"
       - ".github/workflows/gogreen-subtype-workers.yml"
   workflow_dispatch:
 
@@ -81,6 +84,44 @@ jobs:
           assert synthetic["native_proof"] is False
           print("SIPOC AND RERUN EXACT-SHA TESTFLIGHT: PASS")
           PY
+      - name: Execute real Golden Thread dependency cone (source-bound)
+        env:
+          EVALUATED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, importlib.util, json, os
+          from pathlib import Path
+          root=Path.cwd()
+          script=root/'mission-control/golden-thread/dependency_recompute.py'
+          source=root/'mission-control/golden-thread/fixtures/GT_BD_002_REAL_CONE_BATCH001_v1.json'
+          raw=source.read_bytes(); manifest=json.loads(raw)
+          spec=importlib.util.spec_from_file_location('real_cone',script)
+          engine=importlib.util.module_from_spec(spec); spec.loader.exec_module(engine)
+          out=Path(os.environ['RUNNER_TEMP'])/'cbd-realcone'
+          result=engine.execute_cone(manifest,out)
+          closure=result['closure']; expected=manifest['expected']
+          assert closure['status']==expected['status']=='PASS'
+          assert closure['stale_survivor_count']==closure['stale_rendition_count']==0
+          assert result['summary']['occurrence_count']==4 and result['summary']['repository_count']==4
+          assert result['authority_transfer'] is False
+          files={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(out.glob('*.json'))}
+          receipt={'schema':'codepurple.real-task-run.v1','source_sha':os.environ['EVALUATED_SHA'],
+           'workflow_run_id':os.environ['RUN_ID'],'attempt':os.environ['RUN_ATTEMPT'],
+           'operation':'GOLDEN_THREAD_REAL_DEPENDENCY_RECOMPUTE','synthetic':False,
+           'input_sha256':hashlib.sha256(raw).hexdigest(),'files':files,
+           'occurrences':result['summary']['occurrence_count'],'repositories':result['summary']['repository_count'],
+           'native_execution':True,'dispatch_authorized':False,'merge_authorized':False,
+           'engineering_root_closures':0}
+          encoded=(json.dumps(receipt,sort_keys=True,indent=2)+'\n').encode()
+          (out/'real_task_receipt.json').write_bytes(encoded)
+          (out/'real_task_receipt.sha256').write_text(hashlib.sha256(encoded).hexdigest()+'\n')
+          print(json.dumps({'status':'ACTUAL_EXECUTION_PASS','files':sorted(files),
+           'observed_occurrences':receipt['occurrences'],'exact_sha':receipt['source_sha']},sort_keys=True))
+          PY
       - name: Emit source-bound subtype receipt
         run: |
           python mission-control/gogreen/subtype_orchestrator.py \
@@ -119,4 +160,9 @@ jobs:
         with:
           name: cbd-sipoc-instance-dag-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/cbd-sipoc/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cbd-real-cone-execution-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/cbd-realcone/
           if-no-files-found: error
