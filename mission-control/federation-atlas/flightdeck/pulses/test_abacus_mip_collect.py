@@ -33,6 +33,25 @@ def fake(replace=None):
     return getter
 
 class NativeTests(unittest.TestCase):
+    def test_gh_api_fixed_endpoint_and_no_shell(self):
+        import os
+        from secrets import token_hex
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from abacus_mip_collect import gh_api
+        token = token_hex(16)
+        with patch.dict(os.environ, {'GH_TOKEN': token}):
+            with patch('abacus_mip_collect.subprocess.run',
+                       return_value=SimpleNamespace(returncode=0, stdout='{"ok":true}')) as runner:
+                self.assertEqual(gh_api('GBOGEB/ABACUS','/actions/runs/123'), {'ok':True})
+                args,kwargs=runner.call_args
+                self.assertEqual(args[0],['gh','api','--method','GET',
+                                          '/repos/GBOGEB/ABACUS/actions/runs/123'])
+                self.assertEqual(kwargs['env']['GH_TOKEN'],token)
+                self.assertNotIn('shell',kwargs)
+            with self.assertRaisesRegex(ValueError, 'unsupported native GitHub endpoint'):
+                gh_api('GBOGEB/ABACUS','/actions/runs/123/../../secrets')
+
     def test_complete_exact_source_native_run(self):
         r=acquire(SHA,fake())
         self.assertEqual(r['run_attempts_observed'],1)
