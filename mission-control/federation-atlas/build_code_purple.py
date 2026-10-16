@@ -22,6 +22,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 import code_purple_series as cps
+import source_freshness
 
 TEMPLATE = HERE / "code_purple_template.html"
 COMPLETE = cps.COMPLETE
@@ -185,6 +186,10 @@ def main(argv=None) -> int:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     payload = build_payload()
+    # No implicit wall-clock. CI can opt in by providing explicit UTC observation date.
+    # Missing/ambiguous source date retains UNKNOWN and never becomes proof by age alone.
+    payload["source_freshness"] = source_freshness.annotate(
+        payload["sources"], observed_on=os.environ.get("CODE_PURPLE_OBSERVED_ON"), ttl_days=14)
     (out / "code-purple.html").write_text(render(payload, args.fragment), encoding="utf-8")
     (out / "code-purple.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     print(f"CODE_PURPLE_PAGE written={out / 'code-purple.html'} series={payload['series_key']} items={len(payload['queue']['items'])}")
