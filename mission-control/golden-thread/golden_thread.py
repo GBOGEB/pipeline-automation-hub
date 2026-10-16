@@ -135,8 +135,8 @@ def select(ledger,boundary=None):
         return ev[:max(ix)+1]
     cut=ts(boundary); return [e for e in ev if ts(e['occurred_at'])<=cut]
 
-def rebuild(ledger,boundary=None):
-    verify(ledger); p=projection(); ev=select(ledger,boundary)
+def _rebuild_events(ledger,ev,boundary):
+    p=projection()
     for e in ev: apply(p,e)
     for k in ('occurrences','roots','work_orders','campaigns','evidence'): p[k]=dict(sorted(p[k].items()))
     p['lineage_edges']=sorted(p['lineage_edges'],key=lambda x:(x['seq'],x['event_id']))
@@ -145,6 +145,75 @@ def rebuild(ledger,boundary=None):
     unknown=[r for r,o in p['occurrences'].items() if 'UNKNOWN_NEEDS_READER' in (o.get('historian_state'),o.get('bd_state'))]
     p['metrics']={'event_count':len(ev),'occurrence_count':len(p['occurrences']),'root_count':len(p['roots']),'work_order_count':len(p['work_orders']),'campaign_count':len(p['campaigns']),'evidence_count':len(p['evidence']),'lineage_edge_count':len(p['lineage_edges']),'orphan_occurrence_count':len(orphan),'orphan_occurrences':orphan,'unknown_needs_reader_count':len(unknown),'unknown_needs_reader':unknown,'lineage_retention_coverage':1.0 if not p['occurrences'] else round((len(p['occurrences'])-len(orphan))/len(p['occurrences']),6)}
     p['boundary']=boundary or 'CURRENT'; p['head_event_digest']=ev[-1]['this_event_digest'] if ev else GENESIS; p['projection_digest']=digest(p); return p
+
+
+def rebuild(ledger,boundary=None):
+    """Verify full source chain and rebuild an existing v1 boundary unchanged."""
+    verify(ledger)
+    return _rebuild_events(ledger,select(ledger,boundary),boundary)
+
+def _utc(v):
+    """Normalize a governed instant without using host-local timezone."""
+    return ts(v).isoformat().replace('+00:00','Z')
+
+def rebuild_known_at(ledger,known_at,occurred_by=None):
+    """Bitemporal read: what was knowable by K about events through O?
+
+    Unlike rebuild-as-of (event occurrence time), this explicitly excludes
+    evidence recorded AFTER K even if its observed source time was earlier.
+    The complete sealed ledger is verified first, and sparse projections
+    remain marked as selections rather than an independently sealed chain.
+    """
+    verify(ledger)
+    known=ts(known_at)
+    occurred=ts(occurred_by) if occurred_by is not None else None
+    events=[e for e in ledger['events']
+            if ts(e['recorded_at'])<=known
+            and (occurred is None or ts(e['occurred_at'])<=occurred)]
+    p=_rebuild_events(ledger,events,'BITEMPORAL_READ_ONLY')
+    seqs=[e['seq'] for e in events]
+    p['temporal_selection']={
+        'kind':'RECORDED_KNOWLEDGE_AND_OBSERVED_EVENT_WINDOW',
+        'known_at_utc':_utc(known_at),
+        'occurred_by_utc':_utc(occurred_by) if occurred_by is not None else None,
+        'selected_event_ids':[e['event_id'] for e in events],
+        'selected_event_count':len(events),
+        'excluded_event_count':len(ledger['events'])-len(events),
+        'chain_prefix':seqs==list(range(1,len(seqs)+1)),
+        'full_ledger_verified':True,
+        'full_ledger_head_event_digest':ledger['head_event_digest'],
+        'partial_selection_is_new_authority':False,
+    }
+    p.pop('projection_digest',None)
+    p['projection_digest']=digest(p)
+    return p
+
+def diff_known_at(ledger,before_known_at,after_known_at,occurred_by=None):
+    """Immutable N-1 -> N knowledge delta; no inferred causal root closure."""
+    if ts(before_known_at)>ts(after_known_at):
+        raise GoldenThreadError('known-at windows must be chronological')
+    a=rebuild_known_at(ledger,before_known_at,occurred_by)
+    b=rebuild_known_at(ledger,after_known_at,occurred_by)
+    seen=set(a['events_applied'])
+    added=set(b['events_applied'])-seen
+    keys=('event_count','occurrence_count','root_count','work_order_count',
+          'campaign_count','evidence_count','lineage_edge_count',
+          'orphan_occurrence_count','unknown_needs_reader_count')
+    return {
+        'schema':'missioncontrol.golden_thread_known_diff.v1',
+        'before_known_at_utc':a['temporal_selection']['known_at_utc'],
+        'after_known_at_utc':b['temporal_selection']['known_at_utc'],
+        'occurred_by_utc':b['temporal_selection']['occurred_by_utc'],
+        'source_ledger_head_digest':ledger['head_event_digest'],
+        'before_projection_digest':a['projection_digest'],
+        'after_projection_digest':b['projection_digest'],
+        'events_added':[{'seq':e['seq'],'event_id':e['event_id'],
+                         'event_type':e['event_type'],'subject_ref':e['subject_ref']}
+                        for e in ledger['events'] if e['event_id'] in added],
+        'metric_delta':{k:b['metrics'][k]-a['metrics'][k] for k in keys},
+        'formal_root_closure_credit':None,
+        'authority_transfer':False,
+    }
 
 def expand_root(ledger,root,boundary=None):
     p=rebuild(ledger,boundary)
@@ -172,6 +241,8 @@ def main(argv=None):
     p=sp.add_parser('rebuild-as-of'); p.add_argument('ledger'); p.add_argument('boundary'); p.add_argument('--out')
     p=sp.add_parser('expand-root'); p.add_argument('ledger'); p.add_argument('root'); p.add_argument('--as-of'); p.add_argument('--out')
     p=sp.add_parser('diff'); p.add_argument('ledger'); p.add_argument('a'); p.add_argument('b'); p.add_argument('--out')
+    p=sp.add_parser('rebuild-known-at'); p.add_argument('ledger'); p.add_argument('known_at'); p.add_argument('--occurred-by'); p.add_argument('--out')
+    p=sp.add_parser('diff-known-at'); p.add_argument('ledger'); p.add_argument('before_known_at'); p.add_argument('after_known_at'); p.add_argument('--occurred-by'); p.add_argument('--out')
     a=ap.parse_args(argv)
     try:
         l=load(a.ledger)
@@ -180,6 +251,8 @@ def main(argv=None):
         elif a.cmd=='rebuild-current': v=rebuild(l)
         elif a.cmd=='rebuild-as-of': v=rebuild(l,a.boundary)
         elif a.cmd=='expand-root': v=expand_root(l,a.root,a.as_of)
+        elif a.cmd=='rebuild-known-at': v=rebuild_known_at(l,a.known_at,a.occurred_by)
+        elif a.cmd=='diff-known-at': v=diff_known_at(l,a.before_known_at,a.after_known_at,a.occurred_by)
         else: v=diff(l,a.a,a.b)
         dump(v,a.out); return 0
     except GoldenThreadError as exc: print('FAIL:',exc,file=sys.stderr); return 2
