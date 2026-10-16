@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "active": false,
+  "global": {
+    "security_block": [
+      "P0",
+      "P1",
+      "UNKNOWN"
+    ],
+    "security_defer_candidate": [
+      "P2",
+      "P3"
+    ],
+    "required": [
+      "exact_head",
+      "effective_required_checks",
+      "required_reviews",
+      "source_receipt"
+    ]
+  },
+  "clusters": {
+    "runtime": [
+      "ABACUS",
+      "pipeline-automation-hub"
+    ],
+    "development": [
+      "CODEX"
+    ],
+    "engineering": [
+      "cryoplant-project"
+    ],
+    "research": [
+      "gg_MATH"
+    ]
+  },
+  "dag": [
+    "census",
+    "effective_rules",
+    "policy_resolve",
+    "first_red",
+    "root_attribution",
+    "source_repair",
+    "exact_head_retest",
+    "admission",
+    "merge",
+    "post_merge_control"
+  ],
+  "telemetry": [
+    "observed_pr_denominator",
+    "proven_root_leverage",
+    "unknown_root_prs",
+    "actual_merges",
+    "ci_latency",
+    "security_debt_age"
+  ],
+  "sipoc": {
+    "supplier": "repository and CI owners",
+    "input": "SHA, rules, jobs, findings",
+    "process": "source-bound attribution and controlled admission",
+    "output": "receipts, policy diff, root matrix",
+    "customer": "maintainers and Mission Control"
+  },
+  "safety": "proposal-only; never relax effective rules or infer approval"
+}
