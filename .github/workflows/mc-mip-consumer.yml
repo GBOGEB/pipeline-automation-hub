@@ -5,6 +5,8 @@ on:
       - 'mission-control/federation-atlas/flightdeck/pulses/mip_source_consumer.py'
       - 'mission-control/federation-atlas/flightdeck/pulses/test_mip_source_consumer*.py'
       - 'mission-control/federation-atlas/flightdeck/pulses/test_gg_math_provider_contract.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/mip_statistical_qualification.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/test_mip_statistical_qualification.py'
       - 'mission-control/federation-atlas/flightdeck/pulses/MIP_NATIVE_CONSUMER_MATH_ADMISSION.md'
       - '.github/workflows/mc-mip-consumer.yml'
   workflow_dispatch:
@@ -31,6 +33,11 @@ jobs:
           python -m coverage report -m
           mkdir -p out/mip-consumer
           python -m coverage json -o out/mip-consumer/coverage.json
+      - name: Statistical geometry qualification and invalid-design negatives
+        run: |
+          python -m unittest discover \
+            -s mission-control/federation-atlas/flightdeck/pulses \
+            -p test_mip_statistical_qualification.py -v
       - name: Validate measured line and branch denominators
         run: |
           python - <<'PY'
