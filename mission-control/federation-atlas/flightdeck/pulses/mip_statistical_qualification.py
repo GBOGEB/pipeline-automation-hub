@@ -52,7 +52,8 @@ def qualify(plan):
     binomial = all((independence, complete, same_scope, approved_design,
                     success is not None, n >= 2))
     pca = all((independence, same_scope, same_units, eigengap,
-               p >= 2, n > p, covrank is not None, covrank >= p))
+               p >= 2, n > p, covrank is not None,
+               covrank is not None and covrank >= p))
     bt = all((independence, same_scope, connected, finite_bt, pairs >= 1,
               len(groups) >= 2))
     anova = all((independence, same_scope, residual, len(groups) >= 2,
