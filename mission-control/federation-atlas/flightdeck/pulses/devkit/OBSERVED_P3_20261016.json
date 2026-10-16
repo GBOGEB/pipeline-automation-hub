@@ -1,0 +1,29 @@
+{
+  "schema": "code-purple.scale.source-observation.v1",
+  "date_utc": "2026-10-16",
+  "evidence_grade": "NATIVE_GITHUB_CONNECTOR_READBACK_SELECTED_PR_COHORT_NOT_COMPLETE_FLEET",
+  "canonical_lineage": "GBOGEB/pipeline-automation-hub/mission-control/federation-atlas/flightdeck/pulses/PR_MERGE_TEMPORAL_H1_20261016.json",
+  "canonical_bd": "https://github.com/GBOGEB/ABACUS/issues/1929",
+  "source_heads": {
+    "GBOGEB/ABACUS/main": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+    "GBOGEB/pipeline-automation-hub/master": "5db3ee70a6ad89465fa34fa73ac144021fe554e5"
+  },
+  "prs": [
+    {"repo":"GBOGEB/ABACUS","number":2060,"state":"MERGED_FEATURE","base":"test/dmaic-control-c5-20261016","merge_sha":"3ff3072471404fc35b3b07de9776b03ddade593e","head_sha":"256034886917d2056d2cd0e17212d514b4649e00","merged_at":"2026-10-16T11:13:24Z","success":14,"failure":0,"cancelled":0,"pending":0,"source":"https://github.com/GBOGEB/ABACUS/pull/2060"},
+    {"repo":"GBOGEB/ABACUS","number":2061,"state":"MERGED_FEATURE","base":"feat/mip-ci-worker-telemetry-20261015","merge_sha":"9b0b70684c821d3a1bff9ea6394aacf6ae216524","head_sha":"28cd47bd2a27325b860628ddd17cff9216ce5108","merged_at":"2026-10-16T11:13:10Z","success":13,"failure":0,"cancelled":0,"pending":0,"source":"https://github.com/GBOGEB/ABACUS/pull/2061"},
+    {"repo":"GBOGEB/pipeline-automation-hub","number":562,"state":"MERGED_MAIN","base":"master","merge_sha":"4b0a3255c8f194d840da8a38664d8920679338c9","head_sha":"68db897a626e2b62b919554844ba77ff176185b1","merged_at":"2026-10-16T09:08:29Z","success":6,"failure":0,"cancelled":0,"pending":0,"source":"https://github.com/GBOGEB/pipeline-automation-hub/pull/562"},
+    {"repo":"GBOGEB/pipeline-automation-hub","number":567,"state":"MERGED_MAIN","base":"master","merge_sha":"40e3c128ccdc27d737f16fbd8e8fbcf852b32945","head_sha":"e83c5708372cfd8c81b5e2fe66a125a6090d5c2c","merged_at":"2026-10-16T12:26:17Z","success":6,"failure":0,"cancelled":0,"pending":0,"source":"https://github.com/GBOGEB/pipeline-automation-hub/pull/567"},
+    {"repo":"GBOGEB/pipeline-automation-hub","number":573,"state":"OPEN_DRAFT","base":"master","merge_sha":null,"head_sha":"2ecf95c46e3e0096379d4d0732f205a2a66d294d","merged_at":null,"success":6,"failure":0,"cancelled":0,"pending":0,"source":"https://github.com/GBOGEB/pipeline-automation-hub/pull/573"}
+  ],
+  "observed_transition": {
+    "root": "ZERO_TEST_STATIC_SELECTOR",
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "pr":567,
+    "before": {"run_id":38895919063,"conclusion":"failure"},
+    "after": {"run_id":38896325200,"conclusion":"success"},
+    "kind":"EXACT_HEAD_NATIVE_CI_FIRST_RED_CHANGE_NOT_ENGINEERING_ROOT_ACCEPTANCE"
+  },
+  "statistics": {"historical_pr_c2_matched_statements_before":5278,"historical_pr_c2_matched_statements_after":5458,"historical_pr_c2_denominator":12054,"current_main_coverage":null,"current_diff_coverage":null,"queue_p50_seconds":null,"queue_p95_seconds":null,"attempt_independent_n":null,"pca_admission":"HOLD","bradley_terry_admission":"HOLD","forecast_n2":"UNISSUED"},
+  "authority": {"merge_admission":"HOLD","security_waiver":false,"authority_transfer":false,"dispatch":"STAGED_NOT_LAUNCHED","accepted_crew":null,"accepted_rex":null,"root_open":null,"root_closed":null,"root_reopened":null,"pages_live_verified":null,"qps_decision":"DEFER"},
+  "limits": ["PR-associated first-page workflow lists not full CI census", "Workflow success is not native Crew launch", "Feature-branch merge differs from protected-main merge", "No post-merge push-run proof from PR-triggered connector", "No hosted Pages response independently verified", "Source bytes for historical H1 remain canonical in GitHub"]
+}
