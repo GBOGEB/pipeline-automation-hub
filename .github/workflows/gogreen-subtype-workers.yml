@@ -1,0 +1,66 @@
+name: CBD Subtype Worker Orchestrator
+
+on:
+  pull_request:
+    paths:
+      - "mission-control/gogreen/subtype_orchestrator.py"
+      - "mission-control/gogreen/tests/test_subtype_orchestrator.py"
+      - "mission-control/gogreen/samples/cbd_abacus_20261016.json"
+      - ".github/workflows/gogreen-subtype-workers.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  subtype-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify exact PR source SHA
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$EXPECTED_SHA"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - name: Native subtype branch-aware regression coverage
+        run: |
+          python -m pip install coverage==7.16.2
+          python -m coverage run --branch --source=mission-control/gogreen -m unittest discover -s mission-control/gogreen/tests -p test_subtype_orchestrator.py -v
+      - name: Emit source-bound subtype receipt
+        run: |
+          python mission-control/gogreen/subtype_orchestrator.py \
+            --input mission-control/gogreen/samples/cbd_abacus_20261016.json \
+            --out "$RUNNER_TEMP/cbd-subtype"
+          python -m coverage json -o "$RUNNER_TEMP/cbd-subtype/coverage.json"
+          cat "$RUNNER_TEMP/cbd-subtype/subtype_receipt.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Validate authority and KPI boundaries
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p = Path(os.environ["RUNNER_TEMP"]) / "cbd-subtype" / "subtype_receipt.json"
+          d = json.loads(p.read_text())
+          assert d["dispatch_authorized"] is False
+          assert d["merge_authorized"] is False
+          assert d["security_waiver"] is False
+          assert d["kpi"]["independently_accepted_root_closures"] == 0
+          assert d["kpi"]["packets_total"] == 18
+          assert d["kpi"]["ready_now"] == 7
+          assert d["kpi"]["blocked"] == 3
+          assert d["kpi"]["proof_pending"] == 8
+          assert d["schedule"]["waves_planned"] == 3
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cbd-subtype-receipt-${{ github.sha }}
+          path: ${{ runner.temp }}/cbd-subtype/
+          if-no-files-found: error
