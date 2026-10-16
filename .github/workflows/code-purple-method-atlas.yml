@@ -220,6 +220,14 @@ jobs:
           assert (Path("/tmp/code-purple-atlas/federation-latest.html")
                   .stat().st_size > 1000)
           PY
+      - name: Build read-only BD CHAR temporal pulse viewer
+        run: |
+          SRC=mission-control/federation-atlas/flightdeck/pulses
+          python -m unittest discover -s "$SRC" -p "test_bd_char_viewer.py" -v
+          python "$SRC/bd_char_viewer.py" --source "$SRC/BD_CHAR_SFED_20261016_P2.json" --out /tmp/code-purple-atlas/bd-char
+          test -s /tmp/code-purple-atlas/bd-char/index.html
+          test -s /tmp/code-purple-atlas/bd-char/snapshot.json
+          test -s /tmp/code-purple-atlas/bd-char/manifest.json
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
