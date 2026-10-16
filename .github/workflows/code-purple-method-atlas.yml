@@ -313,7 +313,7 @@ jobs:
         run: |
           set -euo pipefail
           SRC=mission-control/federation-atlas/landing
-          python -m unittest discover -s "$SRC" -p 'test_build_landing.py' -v
+          python -m unittest discover -s mission-control/federation-atlas/landing -p 'test_build_landing.py' -v
           python "$SRC/build_landing.py" --out /tmp/code-purple-atlas/federation-home --sha "$EXACT_SHA"
           test -s /tmp/code-purple-atlas/federation-home/index.html
           test -s /tmp/code-purple-atlas/federation-home/snapshot.json
