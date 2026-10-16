@@ -1,5 +1,7 @@
 # Pipeline Automation Hub
 
+> **Federation navigation pilot — 16 Oct 2026:** [P4 Recursive SIPOC explorer](mission-control/federation-atlas/flightdeck/pulses/federation_landing_p4.html) · [P4 design/DoV](mission-control/federation-atlas/flightdeck/pulses/FEDERATION_LANDING_SIPOC_P4_20261016.md) · [Existing MissionControl Pages portal](mission-control/federation-atlas/pages_portal.py). This is a frozen, read-only source snapshot, **not live deployment, engineering acceptance, or release admission**. Existing M2 materials below remain historical.
+
 ## CODE PURPLE — M2 MissionControl user landing
 
 **Latest M2 GitHub reconciliation (dated 15 Oct):** [Current SHA drift, M2-A21..A27, QPS/KEB/DOW boundaries and next release gate](handover/session/CODE_PURPLE_M2_LIVE_RECONCILIATION_20261015.md). This overlay preserves the existing 15 intent / 20 action records, records later observations separately, and keeps original ChatGPT turn metadata UNKNOWN.
