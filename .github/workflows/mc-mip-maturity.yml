@@ -1,0 +1,100 @@
+name: CODE PURPLE MIP Statistical Maturity
+on:
+  pull_request:
+    paths:
+      - 'mission-control/federation-atlas/flightdeck/pulses/mip_maturity_series.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/test_mip_maturity_series.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/mip_provider_execution.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/test_mip_provider_execution.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/mip_statistical_qualification.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/MIP_EVIDENCE_MATURITY_SPEC.md'
+      - '.github/workflows/mc-mip-maturity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mip-maturity-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  temporal-and-forecast:
+    name: Exact-head temporal maturity and N+2 negative tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.11'
+      - run: python -m pip install coverage==7.13.3
+      - name: Run matched cohort and immutable forecast proofs with branch coverage
+        run: |
+          python -m coverage run --branch --source=mip_maturity_series \
+            -m unittest discover -s mission-control/federation-atlas/flightdeck/pulses \
+            -p 'test_mip_maturity_series.py' -v
+          mkdir -p out/mip-maturity
+          python -m coverage json -o out/mip-maturity/temporal-coverage.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          stats = json.loads(Path("out/mip-maturity/temporal-coverage.json").read_text())["totals"]
+          for name in ("num_statements", "covered_lines", "num_branches", "covered_branches"):
+              if type(stats.get(name)) is not int or stats[name] <= 0:
+                  raise ValueError("missing measured temporal line/branch denominator " + name)
+          print("temporal coverage:", stats["covered_lines"], "/", stats["num_statements"],
+                "branches", stats["covered_branches"], "/", stats["num_branches"])
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: mip-maturity-temporal-${{ github.run_id }}
+          path: out/mip-maturity/
+          retention-days: 7
+          if-no-files-found: error
+  canonical-math:
+    name: Pinned gg_MATH provider and method geometry proofs
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.11'
+      - name: Install scientific and branch-coverage dependencies
+        run: python -m pip install numpy==2.3.4 scipy==1.16.2 coverage==7.13.3
+      - name: Checkout exact canonical math provider
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: GBOGEB/gg_MATH
+          ref: 3a6417bff30a5894ea775b2a489d0076d16c1f3b
+          path: providers/gg_MATH
+          persist-credentials: false
+      - name: Verify provider source identity and execute negative/reference tests
+        env:
+          MIP_PROVIDER_ROOT: providers/gg_MATH
+          MIP_PROVIDER_SHA: 3a6417bff30a5894ea775b2a489d0076d16c1f3b
+        run: |
+          test "$(git -C providers/gg_MATH rev-parse HEAD)" = "$MIP_PROVIDER_SHA"
+          python -m unittest discover -s mission-control/federation-atlas/flightdeck/pulses \
+            -p 'test_mip_statistical_qualification.py' -v
+          python -m coverage run --branch --source=mip_provider_execution \
+            -m unittest discover -s mission-control/federation-atlas/flightdeck/pulses \
+            -p 'test_mip_provider_execution.py' -v
+          mkdir -p out/mip-maturity
+          python -m coverage json -o out/mip-maturity/provider-coverage.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          stats = json.loads(Path("out/mip-maturity/provider-coverage.json").read_text())["totals"]
+          for name in ("num_statements", "covered_lines", "num_branches", "covered_branches"):
+              if type(stats.get(name)) is not int or stats[name] <= 0:
+                  raise ValueError("missing measured math line/branch denominator " + name)
+          print("math coverage:", stats["covered_lines"], "/", stats["num_statements"],
+                "branches", stats["covered_branches"], "/", stats["num_branches"])
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: mip-maturity-provider-${{ github.run_id }}
+          path: out/mip-maturity/
+          retention-days: 7
+          if-no-files-found: error

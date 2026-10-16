@@ -1,0 +1,98 @@
+name: CODE PURPLE MIP Native ABACUS Bridge
+on:
+  pull_request:
+    paths:
+      - 'mission-control/federation-atlas/flightdeck/pulses/mip_native_bridge.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/test_mip_native_bridge.py'
+      - '.github/workflows/mc-mip-native-bridge.yml'
+      - 'mission-control/federation-atlas/flightdeck/pulses/MIP_NATIVE_CENSUS_CONTRACT.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mip-native-bridge-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  native-bridge:
+    name: Exact ABACUS source/job identities through canonical MIP
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.11'
+      - run: python -m pip install coverage==7.13.3
+      - name: Checkout exact ABACUS producer commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: GBOGEB/ABACUS
+          ref: 22c90e0412d0ecc8384917df5e7e19a3195ce86b
+          path: providers/ABACUS
+          persist-credentials: false
+      - name: Verify source and execute negative native selection tests
+        env:
+          MIP_ABACUS_ROOT: providers/ABACUS
+          MIP_ABACUS_SHA: 22c90e0412d0ecc8384917df5e7e19a3195ce86b
+        run: |
+          test "$(git -C providers/ABACUS rev-parse HEAD)" = "$MIP_ABACUS_SHA"
+          python -m coverage run --branch --source=mip_native_bridge \
+            -m unittest discover -s mission-control/federation-atlas/flightdeck/pulses \
+            -p test_mip_native_bridge.py -v
+          mkdir -p out/mip-native
+          python -m coverage json -o out/mip-native/coverage.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          c = json.loads(Path("out/mip-native/coverage.json").read_text())["totals"]
+          for key in ("num_statements", "covered_lines", "num_branches", "covered_branches"):
+              if type(c.get(key)) is not int or c[key] <= 0:
+                  raise ValueError("native bridge coverage denominator absent: " + key)
+          print("native bridge coverage", c["covered_lines"], c["num_statements"],
+                c["covered_branches"], c["num_branches"])
+          PY
+      - name: Observe five explicit native workflows without source mutation
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python mission-control/federation-atlas/flightdeck/pulses/mip_native_bridge.py \
+            --sha 22c90e0412d0ecc8384917df5e7e19a3195ce86b \
+            --abacus-checkout providers/ABACUS \
+            --producer-sha 22c90e0412d0ecc8384917df5e7e19a3195ce86b \
+            --run 38919464770:1 \
+            --run 38919464837:1 \
+            --run 38919464522:1 \
+            --run 38919464722:1 \
+            --run 38919464606:1 \
+            --out out/mip-native/source-exact-selection.json
+      - name: Reject unintended statistical or engineering promotion
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d = json.loads(Path("out/mip-native/source-exact-selection.json").read_text())
+          if d["selected_workflow_count"] != 5:
+              raise ValueError("five-workflow source contract was not observed")
+          if d["native_artifact_zip_bytes_authenticated"]:
+              raise ValueError("unsupported original artifact authentication")
+          if d["source_selection_full_repository_population"] is not None:
+              raise ValueError("convenience sample promoted to complete cohort")
+          if (d["merge_authorized"] or d["authority_transfer"]
+                  or d["admission"] != "HOLD"
+                  or d["qps_acceptance"] != "DEFER"
+                  or d["formal_root_closures"] is not None):
+              raise ValueError("source observations promoted to authority")
+          stats = d["observed"]
+          print("selected workflows", stats["workflow_total_n"],
+                "successes", stats["workflow_success_n"],
+                "red jobs", stats["red_jobs_total"],
+                "attributed", stats["first_red_manifestations"],
+                "unattributed", stats["red_jobs_unattributed"])
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: mip-native-source-bound-${{ github.run_id }}
+          path: out/mip-native/
+          retention-days: 7
+          if-no-files-found: error
