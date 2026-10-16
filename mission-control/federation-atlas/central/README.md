@@ -170,6 +170,12 @@ It runs these tests and emits `code-health.html`, `code-health-dag.mmd`,
 publisher picks up the same source-bound artifact only on the governed
 `master` workflow. A passing PR artifact is not live Pages publication.
 
+## Observed native time cohort and Windows pilot
+
+Exact ABACUS run [38869180768](https://github.com/GBOGEB/ABACUS/actions/runs/38869180768) (SHA `a752d15cab03dc6671fffce8df2048b93c0787ee`) provides 18 time-complete successful jobs: historical queue p50 19.5 s, queue p95 100 s, runtime p95 182 s, runtime sum 1386 s, and observed peak 11 simultaneous jobs. These are single-run job statistics, **not free runner slots, Crew dispatch, REX or fleet-wide process capability**. All 18 job clock records are preserved in the snapshot.
+
+Windows cold pilot: `central/Invoke-CodeHealthColdPilot.ps1` inspects local HEAD and worktree in dry-run mode unless explicitly invoked with the `-Execute` switch. Optional Visual Basic source fingerprinting never executes files or Office macros. Its receipt remains local-only; `C:\\repos` was not accessed by the assistant. No merge, remote mutation or native CI admission is implied.
+
 ## SIPOC and next work
 
 | SIPOC | Content |

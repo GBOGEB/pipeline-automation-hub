@@ -157,6 +157,12 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
       <article class="card"><h3>Capacity and back-pressure</h3><p class="muted">Native eligible runner slots/queue depth are UNKNOWN until bounded pool evidence exists. Policy can suggest local cold tests first, or schedule an owner-approved next pulse; it cannot claim available Copilot/GitHub runners or automatically weaken required checks.</p></article>
     </div>
   </section>
+  <section id="native-runtime">
+    <div class="section-head"><h2>Native GitHub clock cohort — actual job timing</h2><span class="section-note">Historical exact-run observation, not current fleet queue or free runner inventory</span></div>
+    <p class="narrative">__NATIVE_RUNTIME_SUMMARY__</p>
+    <div class="scroll"><table><thead><tr><th>Native job (deep link)</th><th>Queue seconds</th><th>Runtime seconds</th><th>Started UTC</th><th>Result</th></tr></thead><tbody>__NATIVE_RUNTIME_ROWS__</tbody></table></div>
+    <p class="section-note">Only native job.created_at → started_at → completed_at are scored. This finite 18-job sample has its own 2026-10-16 source SHA and cannot measure available slots today, accept REX, or qualify independent M2/PCA observations.</p>
+  </section>
   <section id="forecast">
     <h2>N+1 pre-outcome forecast versus actual</h2>
     <div class="scroll"><table><thead><tr><th>ID</th><th>Metric</th><th>Baseline N</th><th>Predicted N+1</th><th>Desired target</th><th>Actual N+1</th><th>Forecast basis</th></tr></thead><tbody>__FORECASTS__</tbody></table></div>

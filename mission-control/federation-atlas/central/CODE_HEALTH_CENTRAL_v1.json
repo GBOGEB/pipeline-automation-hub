@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.code_health_frontier.v1",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "census_date": "2026-10-16",
   "observed_at_utc": null,
   "authority": {
@@ -1142,5 +1142,217 @@
       "QPS_engineer",
       "next_pulse"
     ]
-  }
+  },
+  "runtime_cohorts": [
+    {
+      "id": "ABACUS_ECI_PY39_REPAIRED_20261016",
+      "repository": "GBOGEB/ABACUS",
+      "source_sha": "a752d15cab03dc6671fffce8df2048b93c0787ee",
+      "run_id": 38869180768,
+      "run_attempt": 1,
+      "workflow_name": "DMAIC V3 Enterprise CI",
+      "workflow_status": "completed",
+      "workflow_conclusion": "success",
+      "run_url": "https://github.com/GBOGEB/ABACUS/actions/runs/38869180768",
+      "observed_at_utc": "2026-10-16T07:48:49Z",
+      "scope": "ONE_NATIVE_RUN_NOT_FLEET_CAPACITY",
+      "evidence_grade": "NATIVE_GITHUB_REST_RUN_AND_ATTEMPT_JOBS",
+      "job_population": 18,
+      "observed_jobs": 18,
+      "successful_jobs": 18,
+      "queue_sample_count": 18,
+      "queue_p50_seconds": 19.5,
+      "queue_p95_seconds": 100,
+      "runtime_sample_count": 18,
+      "runtime_p95_seconds": 182,
+      "runtime_sum_seconds": 1386,
+      "observed_peak_parallel_jobs": 11,
+      "runner_available_slots": null,
+      "all_crew_launches_authenticated": null,
+      "accepted_rex": null,
+      "admission": "PR_SIDE_CI_PASS_NOT_MAIN_ADMISSION",
+      "jobs": [
+        {
+          "job_id": 116868962792,
+          "name": "Security Scan",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:45:06Z",
+          "completed_at_utc": "2026-10-16T07:45:51Z",
+          "queue_seconds": 10,
+          "runtime_seconds": 45,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963082,
+          "name": "Code Quality Checks",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:46:24Z",
+          "completed_at_utc": "2026-10-16T07:46:50Z",
+          "queue_seconds": 88,
+          "runtime_seconds": 26,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963088,
+          "name": "Test Python 3.12 on macos-latest",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:46:36Z",
+          "completed_at_utc": "2026-10-16T07:47:57Z",
+          "queue_seconds": 100,
+          "runtime_seconds": 81,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963116,
+          "name": "Test Python 3.9 on macos-latest",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:45:18Z",
+          "completed_at_utc": "2026-10-16T07:47:33Z",
+          "queue_seconds": 22,
+          "runtime_seconds": 135,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963144,
+          "name": "Test Python 3.10 on ubuntu-latest",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:45:13Z",
+          "completed_at_utc": "2026-10-16T07:46:32Z",
+          "queue_seconds": 17,
+          "runtime_seconds": 79,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963157,
+          "name": "Test Python 3.9 on windows-latest",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:44:59Z",
+          "completed_at_utc": "2026-10-16T07:48:01Z",
+          "queue_seconds": 3,
+          "runtime_seconds": 182,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963201,
+          "name": "Build Documentation",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:45:38Z",
+          "completed_at_utc": "2026-10-16T07:45:52Z",
+          "queue_seconds": 42,
+          "runtime_seconds": 14,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963233,
+          "name": "Test Python 3.10 on macos-latest",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:45:20Z",
+          "completed_at_utc": "2026-10-16T07:46:58Z",
+          "queue_seconds": 24,
+          "runtime_seconds": 98,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963254,
+          "name": "Test Python 3.11 on windows-latest",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:44:58Z",
+          "completed_at_utc": "2026-10-16T07:46:48Z",
+          "queue_seconds": 2,
+          "runtime_seconds": 110,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963300,
+          "name": "Test Python 3.9 on ubuntu-latest",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:45:25Z",
+          "completed_at_utc": "2026-10-16T07:46:54Z",
+          "queue_seconds": 29,
+          "runtime_seconds": 89,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963311,
+          "name": "Test Python 3.11 on macos-latest",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:45:18Z",
+          "completed_at_utc": "2026-10-16T07:46:12Z",
+          "queue_seconds": 22,
+          "runtime_seconds": 54,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963321,
+          "name": "Test Python 3.12 on ubuntu-latest",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:46:29Z",
+          "completed_at_utc": "2026-10-16T07:47:39Z",
+          "queue_seconds": 93,
+          "runtime_seconds": 70,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963345,
+          "name": "Test Python 3.10 on windows-latest",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:44:59Z",
+          "completed_at_utc": "2026-10-16T07:47:27Z",
+          "queue_seconds": 3,
+          "runtime_seconds": 148,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963359,
+          "name": "Test Python 3.11 on ubuntu-latest",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:45:53Z",
+          "completed_at_utc": "2026-10-16T07:46:58Z",
+          "queue_seconds": 57,
+          "runtime_seconds": 65,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116868963438,
+          "name": "Test Python 3.12 on windows-latest",
+          "created_at_utc": "2026-10-16T07:44:56Z",
+          "started_at_utc": "2026-10-16T07:45:07Z",
+          "completed_at_utc": "2026-10-16T07:47:19Z",
+          "queue_seconds": 11,
+          "runtime_seconds": 132,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116869997657,
+          "name": "Integration Tests",
+          "created_at_utc": "2026-10-16T07:48:01Z",
+          "started_at_utc": "2026-10-16T07:48:04Z",
+          "completed_at_utc": "2026-10-16T07:48:42Z",
+          "queue_seconds": 3,
+          "runtime_seconds": 38,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116869997700,
+          "name": "Build Package",
+          "created_at_utc": "2026-10-16T07:48:01Z",
+          "started_at_utc": "2026-10-16T07:48:04Z",
+          "completed_at_utc": "2026-10-16T07:48:19Z",
+          "queue_seconds": 3,
+          "runtime_seconds": 15,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 116870220255,
+          "name": "CI Summary",
+          "created_at_utc": "2026-10-16T07:48:42Z",
+          "started_at_utc": "2026-10-16T07:48:44Z",
+          "completed_at_utc": "2026-10-16T07:48:49Z",
+          "queue_seconds": 2,
+          "runtime_seconds": 5,
+          "conclusion": "success"
+        }
+      ]
+    }
+  ]
 }

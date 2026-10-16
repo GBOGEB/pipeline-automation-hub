@@ -95,6 +95,10 @@ jobs:
           assert (report["lane_count"],report["stage_count"])==(10,39)
           assert (report["graph_nodes"],report["graph_edges"])==(26,29)
           assert report["open_issues"]==143 and report["open_prs"]==68
+          assert report["historical_runtime_cohorts"]==1
+          assert report["historical_queue_job_samples"]==18
+          # Historical native jobs are not currently free runner slots.
+          assert report["runner_capacity_slots"] is None
           for name,digest in m["files_sha256"].items():
               assert hashlib.sha256((out/name).read_bytes()).hexdigest()==digest
           assert (out/"code-health.html").stat().st_size > 10000

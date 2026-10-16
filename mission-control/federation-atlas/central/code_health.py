@@ -154,6 +154,56 @@ def validate(source, *, process_path=PROCESS):
                 "predicted N+1 is not an observed future outcome")
         require(forecast["credit_to_engineering_roots"] is False,
                 "forecast cannot close an engineering root")
+    # Historical time cohort is run-bound, not a measurement of free fleet
+    # runner slots. Reject truncated/duplicate job populations and synthetic
+    # duration/p95 metrics, preserving UNKNOWN for available capacity.
+    cohorts = source.get("runtime_cohorts", [])
+    require(isinstance(cohorts, list) and len(cohorts) <= 4,
+            "bounded native runtime cohorts required")
+    for cohort in cohorts:
+        require(cohort["scope"] == "ONE_NATIVE_RUN_NOT_FLEET_CAPACITY",
+                "historical runtime scope promotion")
+        require(cohort["runner_available_slots"] is None and
+                cohort["all_crew_launches_authenticated"] is None and
+                cohort["accepted_rex"] is None,
+                "native job metadata cannot authenticate Crew or capacity")
+        require(bool(SHA.fullmatch(cohort["source_sha"])) and
+                type(cohort["run_id"]) is int and cohort["run_id"] > 0 and
+                type(cohort["run_attempt"]) is int and cohort["run_attempt"] > 0,
+                "bad native runtime identity")
+        require(cohort["run_url"] ==
+                "https://github.com/" + cohort["repository"] +
+                "/actions/runs/" + str(cohort["run_id"]),
+                "native runtime URL mismatch")
+        rows = cohort["jobs"]
+        require(isinstance(rows, list) and len(rows) ==
+                cohort["observed_jobs"] == cohort["job_population"] and
+                len(rows) > 0, "truncated native time census")
+        ids = [r["job_id"] for r in rows]
+        require(len(set(ids)) == len(ids), "duplicate native timed job")
+        qs, runtimes = [], []
+        for row in rows:
+            queue = duration_seconds(row["created_at_utc"],
+                                     row["started_at_utc"])
+            runtime = duration_seconds(row["started_at_utc"],
+                                       row["completed_at_utc"])
+            require(queue is not None and runtime is not None,
+                    "missing native clock endpoint")
+            require(row["queue_seconds"] == queue and
+                    row["runtime_seconds"] == runtime,
+                    "tampered native time arithmetic")
+            qs.append(queue)
+            runtimes.append(runtime)
+        require(cohort["queue_sample_count"] == len(qs) and
+                cohort["runtime_sample_count"] == len(runtimes) and
+                cohort["queue_p95_seconds"] == native_p95(qs) and
+                cohort["runtime_p95_seconds"] == native_p95(runtimes) and
+                cohort["runtime_sum_seconds"] == sum(runtimes),
+                "native timing aggregates mismatch")
+        require(cohort["workflow_status"] == "completed" and
+                cohort["workflow_conclusion"] == "success" and
+                cohort["admission"] == "PR_SIDE_CI_PASS_NOT_MAIN_ADMISSION",
+                "historical run promoted into repository admission")
     return {
         "schema": "missioncontrol.code_health.validation.v1",
         "repositories": len(repos),
@@ -167,6 +217,10 @@ def validate(source, *, process_path=PROCESS):
         "graph_edges": len(graph["edges"]),
         "work_items": len(work),
         "cohort_types": len(source["cohort_taxonomy"]),
+        "historical_runtime_cohorts": len(cohorts),
+        "historical_queue_job_samples": sum(
+            x["queue_sample_count"] for x in cohorts
+        ),
         "verified_crew_launches": None,
         "canonical_root_closures": None,
         "admission": "HOLD",
@@ -415,6 +469,30 @@ def render(source, metrics, routes, *, checkout_sha):
         ("P0 admission", "HOLD", "A10, governance, security, review independent"),
     ]
     telemetry = "".join(row_cells(*line) for line in columns)
+    cohort_rows = []
+    timing_summary = []
+    for cohort in source.get("runtime_cohorts", []):
+        timing_summary.append(
+            safe(cohort["repository"]) + " / " +
+            '<a href="' + safe(cohort["run_url"]) + '">run #' +
+            safe(cohort["run_id"]) + "</a> · " +
+            safe(cohort["job_population"]) + " complete jobs · " +
+            "queue p95 " + safe(cohort["queue_p95_seconds"]) +
+            " s · runtime p95 " + safe(cohort["runtime_p95_seconds"]) +
+            " s · observed peak parallel " +
+            safe(cohort["observed_peak_parallel_jobs"]) +
+            " · available runner slots UNKNOWN"
+        )
+        for job in cohort["jobs"]:
+            link = (cohort["run_url"] + "/job/" + str(job["job_id"]))
+            cohort_rows.append(
+                '<tr><td><a href="' + safe(link) + '">' +
+                safe(job["name"]) + "</a></td><td>" +
+                safe(job["queue_seconds"]) + "</td><td>" +
+                safe(job["runtime_seconds"]) + "</td><td>" +
+                safe(job["started_at_utc"]) + "</td><td>" +
+                safe(job["conclusion"]) + "</td></tr>"
+            )
     replacements = {
         "__SOURCE_CHECKOUT_SHA__": safe(checkout_sha),
         "__SNAPSHOT_SHA__": safe(source["authority"]["source_sha"]),
@@ -426,6 +504,8 @@ def render(source, metrics, routes, *, checkout_sha):
         "__SIPOC__": sipoc_cards,
         "__FORECASTS__": forecast,
         "__TELEMETRY__": telemetry,
+        "__NATIVE_RUNTIME_ROWS__": "".join(cohort_rows),
+        "__NATIVE_RUNTIME_SUMMARY__": " | ".join(timing_summary),
         "__GRAPH__": graph_svg(source),
         "__WORK_COUNT__": str(len(source["work"])),
         "__NODE_COUNT__": str(len(source["graph"]["nodes"])),
