@@ -201,9 +201,11 @@ class NativeBridgeTests(unittest.TestCase):
                 return io.BytesIO(b'{"id":401}').read(size)
 
         class Connection:
+            default_status = 302
+
             def __init__(self, host, timeout):
                 self.host, self.timeout = host, timeout
-                self.status = 302
+                self.status = self.default_status
                 self.closed = False
                 connections.append(self)
 
@@ -224,7 +226,7 @@ class NativeBridgeTests(unittest.TestCase):
             self.assertEqual(connections[0].headers["Authorization"],
                              "Bearer synthetic-test-token")
             self.assertTrue(connections[0].closed)
-            connections[0].status = 200
+            Connection.default_status = 200
             self.assertEqual(https_get(path)["id"], 401)
             self.assertTrue(connections[-1].closed)
 
