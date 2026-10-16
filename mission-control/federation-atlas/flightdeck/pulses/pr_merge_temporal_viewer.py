@@ -220,6 +220,10 @@ nav{display:flex;flex-wrap:wrap;gap:15px;align-items:center;margin:12px 0}.hold{
 <label for="phase">Phase</label><select id="phase"><option value="">All</option><option value="PR_HEAD_ASSOCIATED">PR head</option><option value="MERGE_COMMIT_ASSOCIATED">Merge commit</option></select>
 <label for="search">Search</label><input id="search" type="search" placeholder="Workflow / run / status"><span id="count">%s</span></nav>
 <div class="scroll"><table><thead><tr><th>PR</th><th>Source relationship</th><th>Native run</th><th>Workflow</th><th>Conclusion</th><th>Run clock / attempt</th></tr></thead><tbody id="rows">%s</tbody></table></div></section>
+<section><h2>Optional GitHub API recensus</h2>
+<p>Existing Method Atlas event hooks rebuild this view on source PRs and master pushes. A native timestamp/attempt backfill runs on authorized master push or opt-in workflow_dispatch. Other repository merges require a deliberate recensus; no remote dispatch is implied.</p>
+<p><a href="native-refresh.json">Read bounded historical recensus receipt</a></p>
+<pre id="refreshStatus" class="mono">API backfill: UNKNOWN / not loaded</pre></section>
 <section><h2>Provenance and limits</h2>
 <p class="mono">Source SHA256: %s</p>
 <p>PR-triggered first-page listing excludes other events, may omit pagination, and does not authenticate checkout identity. The merged timestamp is the PR event clock. Job log windows are individual job clocks. A passing historical job is not independent A10, Safety, REX or main admission.</p>
@@ -228,6 +232,12 @@ nav{display:flex;flex-wrap:wrap;gap:15px;align-items:center;margin:12px 0}.hold{
 'use strict';const rows=[...document.querySelectorAll('#rows tr')],pr=document.getElementById('filter'),phase=document.getElementById('phase'),search=document.getElementById('search');
 function filter(){let n=0;for(const r of rows){let show=(!pr.value||r.dataset.pr===pr.value)&&(!phase.value||r.dataset.role===phase.value)&&r.textContent.toLowerCase().includes(search.value.trim().toLowerCase());r.hidden=!show;if(show)n++}document.getElementById('count').textContent=n+' / '+rows.length}
 pr.addEventListener('change',filter);phase.addEventListener('change',filter);search.addEventListener('input',filter);
+fetch('native-refresh.json').then(r=>{if(!r.ok)throw Error('unavailable');return r.json()}).then(d=>{
+  const rows=Array.isArray(d.rows)?d.rows:[];
+  const verified=rows.filter(x=>x.state==='MERGED').length;
+  document.getElementById('refreshStatus').textContent='Mode: '+d.mode+'; observed at: '+(d.observed_at_utc||'UNKNOWN')+'; recensus rows: '+rows.length+'; merge states: '+verified+'; authority: HOLD';
+}).catch(()=>{document.getElementById('refreshStatus').textContent='API backfill unavailable; no zero or admission inferred'});
+
 </script></main></body></html>""" % (sha256,"".join(cards),counts["success"],counts["failure"],counts["cancelled"],counts["nonterminal"],counts["skipped"],total,timeline,"".join(relations),d["recursive_contract"]["max_depth"],total,"".join(rows),sha256)
 
 def produce(source,out):
@@ -238,6 +248,14 @@ def produce(source,out):
     digest=hashlib.sha256(raw).hexdigest()
     (out/"index.html").write_text(render(d,digest),encoding="utf-8")
     (out/"snapshot.json").write_bytes(raw)
+    stub={"schema":"code-purple.pr-history.native-refresh.v1",
+          "mode":"NOT_REQUESTED","observed_at_utc":None,
+          "qualification":"NOT_REQUESTED_NOT_ZERO",
+          "rows":[],"authority_transfer":False,
+          "security_waiver":False,"merge_admission":"HOLD"}
+    (out/"native-refresh.json").write_text(
+        json.dumps(stub,sort_keys=True,indent=2)+"\n")
+
     manifest={"schema":"code-purple.pr-history.view-receipt.v1","source_sha256":digest,
               "artifact_sha256":{n:hashlib.sha256((out/n).read_bytes()).hexdigest()
                         for n in ("index.html","snapshot.json")},
