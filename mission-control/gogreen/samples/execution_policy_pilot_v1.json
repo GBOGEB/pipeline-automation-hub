@@ -1,0 +1,28 @@
+{
+  "allowed_operations": [
+    "SOURCE_DIGEST",
+    "JSON_INDEX",
+    "JSON_CANONICAL",
+    "GOLDEN_THREAD_CONE",
+    "OUTPUT_FANIN",
+    "AUDIT_GATE"
+  ],
+  "approval_state": "OWNER_REVIEW_REQUIRED_FOR_PRODUCTION",
+  "credential_usage": "NONE",
+  "external_network": "NOT_USED_BY_ADAPTER_NOT_NETWORK_SANDBOXED",
+  "github_write": false,
+  "local_scratch_only": true,
+  "max_attempts": 2,
+  "max_parallel": 2,
+  "owner_issue": 529,
+  "pilot_enabled": true,
+  "production_authorized": false,
+  "remote_dispatch": false,
+  "schema": "missioncontrol.gogreen.local-pilot-policy.v1",
+  "scope": "LOCAL_PILOT_ONLY",
+  "source_allowlist": [
+    "mission-control/golden-thread/fixtures/GT_BD_002_REAL_CONE_BATCH001_v1.json",
+    "mission-control/golden-thread/fixtures/GT_BD_011_BOOTSTRAP_BATCH001_20260917.json"
+  ],
+  "timeout_seconds": 20
+}
