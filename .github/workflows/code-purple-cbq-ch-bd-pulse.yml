@@ -24,6 +24,20 @@ jobs:
           python -m unittest discover
           -s mission-control/federation-atlas/flightdeck/pulses
           -p test_cbq_ch_bd_render.py -v
+      - name: Native matched-cohort impact controls (12 tests)
+        run: >-
+          python -m unittest discover
+          -s mission-control/federation-atlas/flightdeck/pulses
+          -p test_cbq_impact_census.py -v
+      - name: Produce second source-bound N+1 impact census
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd mission-control/federation-atlas/flightdeck/pulses
+          python cbq_impact_census.py \
+            --parent CBQ_CH_BD_20261016.json \
+            --source RE_CENSUS_IMPACT_20261016.json \
+            --out "$GITHUB_WORKSPACE/out/cbq-ch-bd/impact"
       - name: Build sealed read-only pulse projection
         shell: bash
         run: |
