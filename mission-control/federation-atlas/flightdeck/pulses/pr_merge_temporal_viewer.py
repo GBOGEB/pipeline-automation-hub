@@ -177,7 +177,7 @@ def render(d,sha256):
         link=(" · <a href='https://github.com/"+esc(reference.split("#")[0])+
              "/actions/runs/"+str(run)+"/job/"+str(job)+
              "' target='_blank' rel='noopener noreferrer'>Run "+str(run)+" / job "+str(job)+" ↗</a>") if run else ""
-        timeline+="<li><time>"+esc(utc)+"</time><span><b>"+esc(reference)+
+        timeline+=("<li><time>"+esc(utc)+"</time><span><b>"+esc(reference)+
            "</b> <em>"+esc(kind.replace("_"," "))+"</em>"+link+
            "<p>"+esc(detail)+"</p></span></li>")
     for edge in d["edges"]:
