@@ -31,6 +31,7 @@ jobs:
           python mission-control/federation-atlas/flightdeck/pulses/cbq_ch_bd_render.py \
             --source mission-control/federation-atlas/flightdeck/pulses/CBQ_CH_BD_20261016.json \
             --out out/cbq-ch-bd
+          export CHECKED_OUT_SHA="$(git rev-parse HEAD)"
           python - <<'PY'
           import hashlib
           import json
@@ -40,16 +41,21 @@ jobs:
           out = Path("out/cbq-ch-bd")
           report = json.loads((out / "projection.json").read_text())
           manifest = json.loads((out / "manifest.json").read_text())
-          assert manifest["evidence_level"] == "LOCAL_REPRODUCIBILITY"
-          assert report["verified_root_closures"] == 0
-          assert report["authority"]["qps_decision"] == "DEFER"
-          assert report["authority"]["native_four_hop"] == "UNKNOWN"
+          if manifest["evidence_level"] != "LOCAL_REPRODUCIBILITY":
+              raise ValueError("projection grade mismatch")
+          if report["verified_root_closures"] != 0:
+              raise ValueError("forged root closure")
+          if report["authority"]["qps_decision"] != "DEFER":
+              raise ValueError("forged QPS acceptance")
+          if report["authority"]["native_four_hop"] != "UNKNOWN":
+              raise ValueError("forged peer execution")
           for name, digest in manifest["artifacts"].items():
               if hashlib.sha256((out / name).read_bytes()).hexdigest() != digest:
                   raise ValueError("projection member digest mismatch")
           receipt = {
               "schema": "code-purple.cbq_ch_bd.gha_projection_receipt.v1",
-              "github_sha": os.environ["GITHUB_SHA"],
+              "checked_out_sha": os.environ["CHECKED_OUT_SHA"],
+              "event_sha": os.environ["GITHUB_SHA"],
               "run_id": os.environ["GITHUB_RUN_ID"],
               "run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
               "job": os.environ["GITHUB_JOB"],
