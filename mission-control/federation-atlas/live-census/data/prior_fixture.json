@@ -1,0 +1,234 @@
+{
+  "mode": "CONNECTOR_READBACK",
+  "observed_at_utc": "2026-10-16",
+  "prs": [
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "head": "feat/handover-v2-evidence-pulse-20261015",
+      "head_sha": "abdf3d80e3cb4d581d7ef2f61d0dd4bb873d7d34",
+      "merged": false,
+      "native_runs": [
+        {
+          "conclusion": "failure",
+          "id": 38825923773,
+          "name": "CI - ABACUS Matrix"
+        },
+        {
+          "conclusion": "failure",
+          "id": 38825923810,
+          "name": "CI Workflow Governance"
+        }
+      ],
+      "number": 2006,
+      "runs": {
+        "cancelled": 1,
+        "failure": 6,
+        "success": 14
+      },
+      "state": "open",
+      "title": "Handover V2 capsule and measured wave"
+    },
+    {
+      "base": "feat/handover-v2-evidence-pulse-20261015",
+      "base_sha": "abdf3d80e3cb4d581d7ef2f61d0dd4bb873d7d34",
+      "head": "code-purple/v2-symlink-replay-scale-20261016",
+      "head_sha": "a652646dac046df2bf555f8e0a3e5167bbc1c1c2",
+      "merged": false,
+      "native_runs": [
+        {
+          "conclusion": "failure",
+          "id": 38892411957,
+          "name": "ABACUS v032 - CI/CD Pipeline"
+        },
+        {
+          "conclusion": "failure",
+          "id": 38892412100,
+          "name": "CI/CD Test Suite"
+        }
+      ],
+      "number": 2059,
+      "runs": {
+        "failure": 2,
+        "success": 17
+      },
+      "state": "open",
+      "title": "Fail-closed symlink and replay"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "head": "test/dmaic-runtime-coverage-c2-20261016",
+      "head_sha": "67ad1b653370d0245aacebe9c95364a8327fd977",
+      "merged": false,
+      "native_runs": [],
+      "number": 2046,
+      "runs": {
+        "cancelled": 1,
+        "failure": 2,
+        "success": 26
+      },
+      "state": "open",
+      "title": "C2 runtime and W72 Windows regression"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "head": "fix/ci-governance-two-code-purple-workflows-20261016",
+      "head_sha": "60d2a5640c997fc916285580b6de8a3d86c27c38",
+      "merged": false,
+      "native_runs": [],
+      "number": 2041,
+      "runs": {},
+      "state": "open",
+      "title": "Canonical workflow inventory and classification"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "head": "feat/mip-ci-worker-telemetry-20261015",
+      "head_sha": "b5faefb3bcb7b29ba4108f91450cb668e374db13",
+      "merged": false,
+      "native_runs": [],
+      "number": 2033,
+      "runs": {},
+      "state": "open",
+      "title": "Exact-SHA worker telemetry"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "head": "code-maroon/review-security-ledger-20261016",
+      "head_sha": "eecfe8f9e69f32865120ebb153374d1ba29de908",
+      "merged": false,
+      "native_runs": [],
+      "number": 2052,
+      "runs": {},
+      "state": "open",
+      "title": "CODE_MAROON scanner/review ledger"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "head": "docs/cbd-github-first-dropin-20261016",
+      "head_sha": "c55a1611cfbcfb6b3382541c00c67d2f26c18d10",
+      "merged": false,
+      "native_runs": [],
+      "number": 2058,
+      "runs": {},
+      "state": "open",
+      "title": "GitHub-first lossless drop-in binder"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "head": "fix/enterprise-py39-combined-verification-20261016",
+      "head_sha": "4488618e5d8899033c173df4c95e819aa527abcb",
+      "merged": false,
+      "native_runs": [],
+      "number": 2045,
+      "runs": {},
+      "state": "open",
+      "title": "Python 3.9 and Enterprise CI compatibility"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "head": "fix/py310-matplotlib-native-firstred-20261015",
+      "head_sha": "ad08d0fb43e055b963fc496d83d7e8063cf09fc9",
+      "merged": false,
+      "native_runs": [],
+      "number": 2029,
+      "runs": {},
+      "state": "open",
+      "title": "Python 3.10 compatibility alternate"
+    },
+    {
+      "base": "test/dmaic-runtime-coverage-c2-20261016",
+      "base_sha": "67ad1b653370d0245aacebe9c95364a8327fd977",
+      "head": "test/dmaic-runtime-coverage-c3-handover-20261016",
+      "head_sha": "5762aabd75fedb3d2403361f2fa8840a5b933e64",
+      "merged": false,
+      "native_runs": [],
+      "number": 2051,
+      "runs": {},
+      "state": "open",
+      "title": "C3 DMAIC orchestration provenance"
+    },
+    {
+      "base": "test/dmaic-runtime-coverage-c3-handover-20261016",
+      "base_sha": "19c92d74a489805f06476857bfecb91dd22cef77",
+      "head": "test/dmaic-convergence-c4-20261016",
+      "head_sha": "1aaf35eb0ca739325ec5a381f24718119dbff55e",
+      "merged": false,
+      "native_runs": [],
+      "number": 2054,
+      "runs": {},
+      "state": "open",
+      "title": "C4 convergence control contracts"
+    },
+    {
+      "base": "test/dmaic-convergence-c4-20261016",
+      "base_sha": "8e1a39cdb56cc8ad7e019408b6870279f07fcd40",
+      "head": "test/dmaic-control-c5-20261016",
+      "head_sha": "9a51bf50286398ea1f704ae9be42ed136ef3e535",
+      "merged": false,
+      "native_runs": [],
+      "number": 2057,
+      "runs": {},
+      "state": "open",
+      "title": "C5 Git and pipeline fail-closed control"
+    },
+    {
+      "base": "test/dmaic-control-c5-20261016",
+      "base_sha": "9a51bf50286398ea1f704ae9be42ed136ef3e535",
+      "head": "code-purple/cbd-wave5-c2-c5-integrated-20261016",
+      "head_sha": "256034886917d2056d2cd0e17212d514b4649e00",
+      "merged": false,
+      "native_runs": [],
+      "number": 2060,
+      "runs": {},
+      "state": "open",
+      "title": "C2\u2192C5 intermediate fan-in"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "head": "fix/everred-code-purple-workflow-census-20261015",
+      "head_sha": "f4fd2cfa54f6ab11ec30a6f848d048a6656ead2a",
+      "merged": false,
+      "native_runs": [],
+      "number": 1995,
+      "runs": {},
+      "state": "open",
+      "title": "Governance inventory exact regeneration"
+    }
+  ],
+  "repositories": [
+    {
+      "branch": "main",
+      "name": "ABACUS",
+      "sha": "54da377cf82a358ac97903ecde0270c975b8fcc1"
+    },
+    {
+      "branch": "main",
+      "name": "CODEX",
+      "sha": "ee5a06e6e2873dbfd4bf40f23e367a849d7650e1"
+    },
+    {
+      "branch": "master",
+      "name": "pipeline-automation-hub",
+      "sha": "4b0a3255c8f194d840da8a38664d8920679338c9"
+    },
+    {
+      "branch": "main",
+      "name": "cryoplant-project",
+      "sha": "bd7d0156eb581f7803b73fe7158b6b49148d5229"
+    },
+    {
+      "branch": "main",
+      "name": "gg_MATH",
+      "sha": "c5cd3e30a8e241111fc9f15367f3b92ba0393ea7"
+    }
+  ]
+}

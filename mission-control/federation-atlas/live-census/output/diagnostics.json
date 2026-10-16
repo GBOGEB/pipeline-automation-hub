@@ -1,0 +1,38 @@
+{
+  "authority": {
+    "admission": "HOLD",
+    "crew_dispatch": "STAGED_NOT_LAUNCHED",
+    "merge_authorized": false,
+    "qps_decision": "DEFER",
+    "root_closures_verified": null,
+    "security_waiver": false
+  },
+  "metrics": {
+    "accepted_closed_roots": null,
+    "bt_eligible": false,
+    "candidate_roots": 7,
+    "coverage_b9_historical": {
+      "covered": 253,
+      "eligible": 625,
+      "evidence_level": "HISTORICAL_DIFFERENT_CHECKOUT",
+      "threshold_percent": 80
+    },
+    "last_native_main_coverage": null,
+    "native_run_leaves": 4,
+    "pca_eligible": false,
+    "pr_observed": 14,
+    "pr_status_unmeasured": 9,
+    "queue_p50_seconds": null,
+    "queue_p95_seconds": null,
+    "repos_observed": 5,
+    "run_associations_by_status": {
+      "cancelled": 3,
+      "failure": 13,
+      "in_progress": 4,
+      "queued": 2,
+      "success": 90
+    }
+  },
+  "observed_at_utc": "2026-10-16T13:15:00Z",
+  "schema": "codepurple.live.diagnostics.v1"
+}

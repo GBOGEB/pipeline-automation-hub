@@ -1,0 +1,948 @@
+{
+  "authority": {
+    "admission": "HOLD",
+    "crew_dispatch": "STAGED_NOT_LAUNCHED",
+    "merge_authorized": false,
+    "qps_decision": "DEFER",
+    "root_closures_verified": null,
+    "security_waiver": false
+  },
+  "edges": [
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "issue:ABACUS:1860",
+      "type": "OWNS_ISSUE"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "issue:ABACUS:1929",
+      "type": "OWNS_ISSUE"
+    },
+    {
+      "admitted": false,
+      "from": "repo:CODEX",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "issue:CODEX:977",
+      "type": "OWNS_ISSUE"
+    },
+    {
+      "admitted": false,
+      "from": "issue:ABACUS:1929",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "root:GOV_WORKFLOW",
+      "type": "TRACKS_CANDIDATE"
+    },
+    {
+      "admitted": false,
+      "from": "issue:ABACUS:1929",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "root:PYTHON_COMPAT",
+      "type": "TRACKS_CANDIDATE"
+    },
+    {
+      "admitted": false,
+      "from": "issue:ABACUS:1929",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "root:B9_CHANGED_LINE",
+      "type": "TRACKS_CANDIDATE"
+    },
+    {
+      "admitted": false,
+      "from": "issue:ABACUS:1929",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "root:HANDOVER_SYMLINK",
+      "type": "TRACKS_CANDIDATE"
+    },
+    {
+      "admitted": false,
+      "from": "issue:ABACUS:1929",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "root:W72_RECEIPT_SHA",
+      "type": "TRACKS_CANDIDATE"
+    },
+    {
+      "admitted": false,
+      "from": "issue:ABACUS:1929",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "root:SECURITY_SEPARATE",
+      "type": "TRACKS_CANDIDATE"
+    },
+    {
+      "admitted": false,
+      "from": "issue:CODEX:977",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "root:CREW_REX_AUTHORITY",
+      "type": "TRACKS_CANDIDATE"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2006",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "root:B9_CHANGED_LINE",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2006",
+      "type": "CANDIDATE_MANIFESTATION"
+    },
+    {
+      "admitted": false,
+      "from": "pr:ABACUS:2006",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "run:ABACUS:38825923773",
+      "type": "RUN_ASSOCIATED"
+    },
+    {
+      "admitted": false,
+      "from": "pr:ABACUS:2006",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "run:ABACUS:38825923810",
+      "type": "RUN_ASSOCIATED"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2059",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "pr:ABACUS:2006",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2059",
+      "type": "STACKED_PARENT"
+    },
+    {
+      "admitted": false,
+      "from": "root:PYTHON_COMPAT",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2059",
+      "type": "CANDIDATE_MANIFESTATION"
+    },
+    {
+      "admitted": false,
+      "from": "root:HANDOVER_SYMLINK",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2059",
+      "type": "CANDIDATE_MANIFESTATION"
+    },
+    {
+      "admitted": false,
+      "from": "pr:ABACUS:2059",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "run:ABACUS:38892411957",
+      "type": "RUN_ASSOCIATED"
+    },
+    {
+      "admitted": false,
+      "from": "pr:ABACUS:2059",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "run:ABACUS:38892412100",
+      "type": "RUN_ASSOCIATED"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2046",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "root:W72_RECEIPT_SHA",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2046",
+      "type": "CANDIDATE_MANIFESTATION"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2041",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "root:GOV_WORKFLOW",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2041",
+      "type": "CANDIDATE_MANIFESTATION"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2033",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "root:PYTHON_COMPAT",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2033",
+      "type": "CANDIDATE_MANIFESTATION"
+    },
+    {
+      "admitted": false,
+      "from": "root:W72_RECEIPT_SHA",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2033",
+      "type": "CANDIDATE_MANIFESTATION"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2052",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "root:SECURITY_SEPARATE",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2052",
+      "type": "CANDIDATE_MANIFESTATION"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2058",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2045",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "root:PYTHON_COMPAT",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2045",
+      "type": "CANDIDATE_MANIFESTATION"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2029",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "root:PYTHON_COMPAT",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2029",
+      "type": "CANDIDATE_MANIFESTATION"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2051",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "pr:ABACUS:2046",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2051",
+      "type": "STACKED_PARENT"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2054",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "pr:ABACUS:2051",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2054",
+      "type": "STACKED_PARENT"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2057",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "pr:ABACUS:2054",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2057",
+      "type": "STACKED_PARENT"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2060",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "pr:ABACUS:2057",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:2060",
+      "type": "STACKED_PARENT"
+    },
+    {
+      "admitted": false,
+      "from": "repo:ABACUS",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:1995",
+      "type": "CONTAINS_PR"
+    },
+    {
+      "admitted": false,
+      "from": "root:GOV_WORKFLOW",
+      "proof": "DECLARED_NOT_ACCEPTED",
+      "to": "pr:ABACUS:1995",
+      "type": "CANDIDATE_MANIFESTATION"
+    }
+  ],
+  "events": [
+    {
+      "after": "ec45f56b32c9973f28113469519e23716775392d",
+      "before": "ee5a06e6e2873dbfd4bf40f23e367a849d7650e1",
+      "id": "CODEX",
+      "invalidation": "REVERIFY_DEPENDENTS",
+      "kind": "REPO_HEAD_CHANGED"
+    },
+    {
+      "after": "5db3ee70a6ad89465fa34fa73ac144021fe554e5",
+      "before": "4b0a3255c8f194d840da8a38664d8920679338c9",
+      "id": "pipeline-automation-hub",
+      "invalidation": "REVERIFY_DEPENDENTS",
+      "kind": "REPO_HEAD_CHANGED"
+    },
+    {
+      "after": "d44b8e26818e4af9bbb02ec0d8369e57af3699bd",
+      "before": "c5cd3e30a8e241111fc9f15367f3b92ba0393ea7",
+      "id": "gg_MATH",
+      "invalidation": "REVERIFY_DEPENDENTS",
+      "kind": "REPO_HEAD_CHANGED"
+    },
+    {
+      "after": "a06e2462a1b0caa4364c522c7745befface98a41",
+      "before": "b5faefb3bcb7b29ba4108f91450cb668e374db13",
+      "id": 2033,
+      "invalidation": "PRIOR_GREENS_STALE",
+      "kind": "PR_SOURCE_CHANGED"
+    },
+    {
+      "after": "82f36e6c06c9d70cc933b0d45a3e17ee685dddc2",
+      "before": "eecfe8f9e69f32865120ebb153374d1ba29de908",
+      "id": 2052,
+      "invalidation": "PRIOR_GREENS_STALE",
+      "kind": "PR_SOURCE_CHANGED"
+    },
+    {
+      "after": "19c92d74a489805f06476857bfecb91dd22cef77",
+      "before": "5762aabd75fedb3d2403361f2fa8840a5b933e64",
+      "id": 2051,
+      "invalidation": "PRIOR_GREENS_STALE",
+      "kind": "PR_SOURCE_CHANGED"
+    },
+    {
+      "after": "8e1a39cdb56cc8ad7e019408b6870279f07fcd40",
+      "before": "1aaf35eb0ca739325ec5a381f24718119dbff55e",
+      "id": 2054,
+      "invalidation": "PRIOR_GREENS_STALE",
+      "kind": "PR_SOURCE_CHANGED"
+    },
+    {
+      "after": "db894cfc5a2cc780b91eb1f5abcc5e52481f5b6a",
+      "before": "9a51bf50286398ea1f704ae9be42ed136ef3e535",
+      "id": 2057,
+      "invalidation": "PRIOR_GREENS_STALE",
+      "kind": "PR_SOURCE_CHANGED"
+    },
+    {
+      "after": "MERGED_INTERMEDIATE_NOT_MAIN",
+      "before": "OPEN",
+      "id": 2060,
+      "invalidation": "NO_ROOT_CLOSURE_INFERRED",
+      "kind": "PR_DISPOSITION_CHANGED"
+    }
+  ],
+  "metrics": {
+    "accepted_closed_roots": null,
+    "bt_eligible": false,
+    "candidate_roots": 7,
+    "coverage_b9_historical": {
+      "covered": 253,
+      "eligible": 625,
+      "evidence_level": "HISTORICAL_DIFFERENT_CHECKOUT",
+      "threshold_percent": 80
+    },
+    "last_native_main_coverage": null,
+    "native_run_leaves": 4,
+    "pca_eligible": false,
+    "pr_observed": 14,
+    "pr_status_unmeasured": 9,
+    "queue_p50_seconds": null,
+    "queue_p95_seconds": null,
+    "repos_observed": 5,
+    "run_associations_by_status": {
+      "cancelled": 3,
+      "failure": 13,
+      "in_progress": 4,
+      "queued": 2,
+      "success": 90
+    }
+  },
+  "nodes": [
+    {
+      "id": "repo:ABACUS",
+      "kind": "REPOSITORY",
+      "label": "ABACUS",
+      "sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "url": "https://github.com/GBOGEB/ABACUS"
+    },
+    {
+      "id": "repo:CODEX",
+      "kind": "REPOSITORY",
+      "label": "CODEX",
+      "sha": "ec45f56b32c9973f28113469519e23716775392d",
+      "url": "https://github.com/GBOGEB/CODEX"
+    },
+    {
+      "id": "repo:pipeline-automation-hub",
+      "kind": "REPOSITORY",
+      "label": "pipeline-automation-hub",
+      "sha": "5db3ee70a6ad89465fa34fa73ac144021fe554e5",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "repo:cryoplant-project",
+      "kind": "REPOSITORY",
+      "label": "cryoplant-project",
+      "sha": "bd7d0156eb581f7803b73fe7158b6b49148d5229",
+      "url": "https://github.com/GBOGEB/cryoplant-project"
+    },
+    {
+      "id": "repo:gg_MATH",
+      "kind": "REPOSITORY",
+      "label": "gg_MATH",
+      "sha": "d44b8e26818e4af9bbb02ec0d8369e57af3699bd",
+      "url": "https://github.com/GBOGEB/gg_MATH"
+    },
+    {
+      "disposition": "OPEN_NOT_CLOSURE",
+      "id": "issue:ABACUS:1860",
+      "kind": "GOVERNANCE_ISSUE",
+      "label": "Main admission",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "disposition": "OPEN_NOT_CLOSURE",
+      "id": "issue:ABACUS:1929",
+      "kind": "GOVERNANCE_ISSUE",
+      "label": "Root and evidence spine",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1929"
+    },
+    {
+      "disposition": "OPEN_NOT_CLOSURE",
+      "id": "issue:CODEX:977",
+      "kind": "GOVERNANCE_ISSUE",
+      "label": "Crew dispatch permission",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "disposition": "UNKNOWN",
+      "id": "root:GOV_WORKFLOW",
+      "kind": "ROOT_CANDIDATE",
+      "label": "GOV_WORKFLOW",
+      "owner": "ABACUS #2041 / #1995"
+    },
+    {
+      "disposition": "UNKNOWN",
+      "id": "root:PYTHON_COMPAT",
+      "kind": "ROOT_CANDIDATE",
+      "label": "PYTHON_COMPAT",
+      "owner": "ABACUS #2029 / #2045"
+    },
+    {
+      "disposition": "UNKNOWN",
+      "id": "root:B9_CHANGED_LINE",
+      "kind": "ROOT_CANDIDATE",
+      "label": "B9_CHANGED_LINE",
+      "owner": "ABACUS #2006"
+    },
+    {
+      "disposition": "UNKNOWN",
+      "id": "root:HANDOVER_SYMLINK",
+      "kind": "ROOT_CANDIDATE",
+      "label": "HANDOVER_SYMLINK",
+      "owner": "ABACUS #2059"
+    },
+    {
+      "disposition": "UNKNOWN",
+      "id": "root:W72_RECEIPT_SHA",
+      "kind": "ROOT_CANDIDATE",
+      "label": "W72_RECEIPT_SHA",
+      "owner": "ABACUS #2046 / #2033"
+    },
+    {
+      "disposition": "UNKNOWN",
+      "id": "root:SECURITY_SEPARATE",
+      "kind": "ROOT_CANDIDATE",
+      "label": "SECURITY_SEPARATE",
+      "owner": "ABACUS #2027 / #2052"
+    },
+    {
+      "disposition": "UNKNOWN",
+      "id": "root:CREW_REX_AUTHORITY",
+      "kind": "ROOT_CANDIDATE",
+      "label": "CREW_REX_AUTHORITY",
+      "owner": "CODEX #977"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:2006",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2006",
+      "sha": "abdf3d80e3cb4d581d7ef2f61d0dd4bb873d7d34",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2006"
+    },
+    {
+      "conclusion": "failure",
+      "id": "run:ABACUS:38825923773",
+      "kind": "WORKFLOW_RUN",
+      "label": "CI - ABACUS Matrix",
+      "sha": "abdf3d80e3cb4d581d7ef2f61d0dd4bb873d7d34",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38825923773"
+    },
+    {
+      "conclusion": "failure",
+      "id": "run:ABACUS:38825923810",
+      "kind": "WORKFLOW_RUN",
+      "label": "CI Workflow Governance",
+      "sha": "abdf3d80e3cb4d581d7ef2f61d0dd4bb873d7d34",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38825923810"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:2059",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2059",
+      "sha": "a652646dac046df2bf555f8e0a3e5167bbc1c1c2",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2059"
+    },
+    {
+      "conclusion": "failure",
+      "id": "run:ABACUS:38892411957",
+      "kind": "WORKFLOW_RUN",
+      "label": "ABACUS v032 - CI/CD Pipeline",
+      "sha": "a652646dac046df2bf555f8e0a3e5167bbc1c1c2",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892411957"
+    },
+    {
+      "conclusion": "failure",
+      "id": "run:ABACUS:38892412100",
+      "kind": "WORKFLOW_RUN",
+      "label": "CI/CD Test Suite",
+      "sha": "a652646dac046df2bf555f8e0a3e5167bbc1c1c2",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38892412100"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:2046",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2046",
+      "sha": "67ad1b653370d0245aacebe9c95364a8327fd977",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2046"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:2041",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2041",
+      "sha": "60d2a5640c997fc916285580b6de8a3d86c27c38",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2041"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:2033",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2033",
+      "sha": "a06e2462a1b0caa4364c522c7745befface98a41",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2033"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:2052",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2052",
+      "sha": "82f36e6c06c9d70cc933b0d45a3e17ee685dddc2",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2052"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:2058",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2058",
+      "sha": "c55a1611cfbcfb6b3382541c00c67d2f26c18d10",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2058"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:2045",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2045",
+      "sha": "4488618e5d8899033c173df4c95e819aa527abcb",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2045"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:2029",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2029",
+      "sha": "ad08d0fb43e055b963fc496d83d7e8063cf09fc9",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2029"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:2051",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2051",
+      "sha": "19c92d74a489805f06476857bfecb91dd22cef77",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2051"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:2054",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2054",
+      "sha": "8e1a39cdb56cc8ad7e019408b6870279f07fcd40",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2054"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:2057",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2057",
+      "sha": "db894cfc5a2cc780b91eb1f5abcc5e52481f5b6a",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2057"
+    },
+    {
+      "disposition": "MERGED_INTERMEDIATE_NOT_MAIN",
+      "id": "pr:ABACUS:2060",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #2060",
+      "sha": "256034886917d2056d2cd0e17212d514b4649e00",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2060"
+    },
+    {
+      "disposition": "OPEN",
+      "id": "pr:ABACUS:1995",
+      "kind": "PULL_REQUEST",
+      "label": "ABACUS #1995",
+      "sha": "f4fd2cfa54f6ab11ec30a6f848d048a6656ead2a",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1995"
+    }
+  ],
+  "observation_quality": "CONNECTOR_READBACK_NOT_ARTIFACT_VERIFIED",
+  "observed_at_utc": "2026-10-16T13:15:00Z",
+  "origin": "CONNECTOR_READBACK",
+  "predecessor_digest": "2092eac44eb48378c686f0c3ef2eaec1eb58e5c560f432762d4aa7428af29b21",
+  "prs": [
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "disposition": "OPEN",
+      "domain": "HANDOVER_V2_B9",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "feat/handover-v2-evidence-pulse-20261015",
+      "head_sha": "abdf3d80e3cb4d581d7ef2f61d0dd4bb873d7d34",
+      "merged": false,
+      "number": 2006,
+      "run_summary": "FAIL",
+      "runs": {
+        "cancelled": 1,
+        "failure": 6,
+        "success": 14
+      },
+      "state": "open",
+      "title": "Handover V2 capsule and measured wave",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2006"
+    },
+    {
+      "base": "feat/handover-v2-evidence-pulse-20261015",
+      "base_sha": "abdf3d80e3cb4d581d7ef2f61d0dd4bb873d7d34",
+      "disposition": "OPEN",
+      "domain": "HANDOVER_V2_SYMLINK",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "code-purple/v2-symlink-replay-scale-20261016",
+      "head_sha": "a652646dac046df2bf555f8e0a3e5167bbc1c1c2",
+      "merged": false,
+      "number": 2059,
+      "run_summary": "FAIL",
+      "runs": {
+        "failure": 2,
+        "success": 17
+      },
+      "state": "open",
+      "title": "Fail-closed symlink and replay",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2059"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "disposition": "OPEN",
+      "domain": "DMAIC_C2_W72",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "test/dmaic-runtime-coverage-c2-20261016",
+      "head_sha": "67ad1b653370d0245aacebe9c95364a8327fd977",
+      "merged": false,
+      "number": 2046,
+      "run_summary": "FAIL",
+      "runs": {
+        "cancelled": 1,
+        "failure": 2,
+        "success": 26
+      },
+      "state": "open",
+      "title": "C2 runtime and W72 Windows regression",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2046"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "disposition": "OPEN",
+      "domain": "GOV_WORKFLOW",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "fix/ci-governance-two-code-purple-workflows-20261016",
+      "head_sha": "60d2a5640c997fc916285580b6de8a3d86c27c38",
+      "merged": false,
+      "number": 2041,
+      "run_summary": "UNKNOWN",
+      "runs": {},
+      "state": "open",
+      "title": "Canonical workflow inventory and classification",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2041"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "disposition": "OPEN",
+      "domain": "CI_WORKER_TELEMETRY",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "feat/mip-ci-worker-telemetry-20261015",
+      "head_sha": "a06e2462a1b0caa4364c522c7745befface98a41",
+      "merged": false,
+      "number": 2033,
+      "run_summary": "FAIL",
+      "runs": {
+        "cancelled": 1,
+        "failure": 1,
+        "in_progress": 2,
+        "queued": 1,
+        "success": 16
+      },
+      "state": "open",
+      "title": "Exact-SHA worker telemetry",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2033"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "disposition": "OPEN",
+      "domain": "SECURITY_REVIEW",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "code-maroon/review-security-ledger-20261016",
+      "head_sha": "82f36e6c06c9d70cc933b0d45a3e17ee685dddc2",
+      "merged": false,
+      "number": 2052,
+      "run_summary": "FAIL",
+      "runs": {
+        "failure": 2,
+        "in_progress": 2,
+        "queued": 1,
+        "success": 17
+      },
+      "state": "open",
+      "title": "CODE_MAROON scanner/review ledger",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2052"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "disposition": "OPEN",
+      "domain": "LOSSLESS_BINDER",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "docs/cbd-github-first-dropin-20261016",
+      "head_sha": "c55a1611cfbcfb6b3382541c00c67d2f26c18d10",
+      "merged": false,
+      "number": 2058,
+      "run_summary": "UNKNOWN",
+      "runs": {},
+      "state": "open",
+      "title": "GitHub-first lossless drop-in binder",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2058"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "disposition": "OPEN",
+      "domain": "PYTHON_COMPAT",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "fix/enterprise-py39-combined-verification-20261016",
+      "head_sha": "4488618e5d8899033c173df4c95e819aa527abcb",
+      "merged": false,
+      "number": 2045,
+      "run_summary": "UNKNOWN",
+      "runs": {},
+      "state": "open",
+      "title": "Python 3.9 and Enterprise CI compatibility",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2045"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "disposition": "OPEN",
+      "domain": "PYTHON_COMPAT",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "fix/py310-matplotlib-native-firstred-20261015",
+      "head_sha": "ad08d0fb43e055b963fc496d83d7e8063cf09fc9",
+      "merged": false,
+      "number": 2029,
+      "run_summary": "UNKNOWN",
+      "runs": {},
+      "state": "open",
+      "title": "Python 3.10 compatibility alternate",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2029"
+    },
+    {
+      "base": "test/dmaic-runtime-coverage-c2-20261016",
+      "base_sha": "67ad1b653370d0245aacebe9c95364a8327fd977",
+      "disposition": "OPEN",
+      "domain": "DMAIC_C3",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "test/dmaic-runtime-coverage-c3-handover-20261016",
+      "head_sha": "19c92d74a489805f06476857bfecb91dd22cef77",
+      "merged": false,
+      "number": 2051,
+      "run_summary": "UNKNOWN",
+      "runs": {},
+      "state": "open",
+      "title": "C3 DMAIC orchestration provenance",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2051"
+    },
+    {
+      "base": "test/dmaic-runtime-coverage-c3-handover-20261016",
+      "base_sha": "19c92d74a489805f06476857bfecb91dd22cef77",
+      "disposition": "OPEN",
+      "domain": "DMAIC_C4",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "test/dmaic-convergence-c4-20261016",
+      "head_sha": "8e1a39cdb56cc8ad7e019408b6870279f07fcd40",
+      "merged": false,
+      "number": 2054,
+      "run_summary": "UNKNOWN",
+      "runs": {},
+      "state": "open",
+      "title": "C4 convergence control contracts",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2054"
+    },
+    {
+      "base": "test/dmaic-convergence-c4-20261016",
+      "base_sha": "8e1a39cdb56cc8ad7e019408b6870279f07fcd40",
+      "disposition": "OPEN",
+      "domain": "DMAIC_C5",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "test/dmaic-control-c5-20261016",
+      "head_sha": "db894cfc5a2cc780b91eb1f5abcc5e52481f5b6a",
+      "merged": false,
+      "number": 2057,
+      "run_summary": "UNKNOWN",
+      "runs": {},
+      "state": "open",
+      "title": "C5 Git and pipeline fail-closed control",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2057"
+    },
+    {
+      "base": "test/dmaic-control-c5-20261016",
+      "base_sha": "9a51bf50286398ea1f704ae9be42ed136ef3e535",
+      "disposition": "MERGED_INTERMEDIATE_NOT_MAIN",
+      "domain": "DMAIC_FANIN",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "code-purple/cbd-wave5-c2-c5-integrated-20261016",
+      "head_sha": "256034886917d2056d2cd0e17212d514b4649e00",
+      "merged": true,
+      "number": 2060,
+      "run_summary": "UNKNOWN",
+      "runs": {},
+      "state": "closed",
+      "title": "C2→C5 intermediate fan-in",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2060"
+    },
+    {
+      "base": "main",
+      "base_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "disposition": "OPEN",
+      "domain": "GOV_WORKFLOW",
+      "evidence_level": "PR_ASSOCIATED_NOT_CHECKOUT_ATTESTED",
+      "head": "fix/everred-code-purple-workflow-census-20261015",
+      "head_sha": "f4fd2cfa54f6ab11ec30a6f848d048a6656ead2a",
+      "merged": false,
+      "number": 1995,
+      "run_summary": "UNKNOWN",
+      "runs": {},
+      "state": "open",
+      "title": "Governance inventory exact regeneration",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1995"
+    }
+  ],
+  "repositories": [
+    {
+      "branch": "main",
+      "name": "ABACUS",
+      "sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "url": "https://github.com/GBOGEB/ABACUS"
+    },
+    {
+      "branch": "main",
+      "name": "CODEX",
+      "sha": "ec45f56b32c9973f28113469519e23716775392d",
+      "url": "https://github.com/GBOGEB/CODEX"
+    },
+    {
+      "branch": "master",
+      "name": "pipeline-automation-hub",
+      "sha": "5db3ee70a6ad89465fa34fa73ac144021fe554e5",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "branch": "main",
+      "name": "cryoplant-project",
+      "sha": "bd7d0156eb581f7803b73fe7158b6b49148d5229",
+      "url": "https://github.com/GBOGEB/cryoplant-project"
+    },
+    {
+      "branch": "main",
+      "name": "gg_MATH",
+      "sha": "d44b8e26818e4af9bbb02ec0d8369e57af3699bd",
+      "url": "https://github.com/GBOGEB/gg_MATH"
+    }
+  ],
+  "schema": "codepurple.disjoint_live_census.v1",
+  "source_digest": "1daf43bf1ec1a7e9f6371adcf7e3ccef23c8c14d818554a8a5907c7c311bf071"
+}

@@ -1,0 +1,15 @@
+services:
+  census-view:
+    build: .
+    ports: ["127.0.0.1:8765:8765"]
+    user: "10001:10001"
+    volumes:
+      - ./output:/srv/output:ro
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=8m
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 64
+    mem_limit: 256m
+    restart: unless-stopped
