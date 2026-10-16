@@ -39,5 +39,41 @@ class AtlasTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             with self.assertRaises(ValueError):
                 build_atlas.build(d,"MIP","APPROVE")
+
+    def test_svg_adversarial_label_escaped_and_xml_well_formed(self):
+        """CPQ-003: a hostile source label cannot inject an SVG event handler."""
+        import copy
+        import xml.etree.ElementTree as ET
+        import yaml
+        graph=yaml.safe_load((Path(__file__).resolve().parent/"ATLAS_GRAPH_v1.yaml").read_text())
+        hostile=copy.deepcopy(graph)
+        hostile["nodes"][0]["label"]='</text><script>alert(1)</script><text onload="alert(1)">'
+        svg=build_atlas.draw(hostile)
+        ET.fromstring(svg)
+        self.assertNotIn("<script>",svg)
+        self.assertNotIn('onload="alert(1)"',svg)
+        self.assertIn("&lt;/text&gt;",svg)
+
+    def test_svg_fail_closed_missing_edge_binding(self):
+        import copy
+        import yaml
+        graph=yaml.safe_load((Path(__file__).resolve().parent/"ATLAS_GRAPH_v1.yaml").read_text())
+        hostile=copy.deepcopy(graph)
+        hostile["edges"][0].pop("binding")
+        with self.assertRaises(ValueError):
+            build_atlas.draw(hostile)
+
+    def test_svg_declared_receipt_mutation_changes_binding_and_dashes(self):
+        import copy
+        import yaml
+        graph=yaml.safe_load((Path(__file__).resolve().parent/"ATLAS_GRAPH_v1.yaml").read_text())
+        original=build_atlas.draw(graph)
+        changed=copy.deepcopy(graph)
+        edge=next(e for e in changed["edges"] if e["binding"]=="RECEIPT")
+        edge["binding"]="DECLARED"
+        mutated=build_atlas.draw(changed)
+        self.assertEqual(mutated.count('data-binding="DECLARED"'),original.count('data-binding="DECLARED"')+1)
+        self.assertEqual(mutated.count('stroke-dasharray="6 5"'),original.count('stroke-dasharray="6 5"')+1)
+
 if __name__=="__main__":
     unittest.main()
