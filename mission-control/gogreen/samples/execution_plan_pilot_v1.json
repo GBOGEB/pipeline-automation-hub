@@ -1,0 +1,124 @@
+{
+  "authority_transfer": false,
+  "cohort": "GOGREEN_REAL_LOCAL_EXECUTION_PILOT_V1",
+  "dispatch_authorized": false,
+  "instances": [
+    {
+      "blockers": [],
+      "depends_on": [],
+      "execution": "SYNC",
+      "id": "S-READ",
+      "incarnation": "pilot-s-read",
+      "mode": "OBSERVE",
+      "mutation_paths": [],
+      "owner_issue": 529,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "root_id": null,
+      "sipoc_role": "S",
+      "source_sha": "__EVALUATED_SHA__",
+      "stage_ref": "SUPPLY:DISCOVER",
+      "state": "READY",
+      "success_predicate": "Return SHA-bound local output bytes; independent admission withheld"
+    },
+    {
+      "blockers": [],
+      "depends_on": [
+        "S-READ"
+      ],
+      "execution": "SYNC",
+      "id": "I-PARSE",
+      "incarnation": "pilot-i-parse",
+      "mode": "OBSERVE",
+      "mutation_paths": [],
+      "owner_issue": 529,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "root_id": null,
+      "sipoc_role": "I",
+      "source_sha": "__EVALUATED_SHA__",
+      "stage_ref": "TRUST:PIN",
+      "state": "READY",
+      "success_predicate": "Return SHA-bound local output bytes; independent admission withheld"
+    },
+    {
+      "blockers": [],
+      "depends_on": [
+        "I-PARSE"
+      ],
+      "execution": "ASYNCIO",
+      "id": "P-CANON",
+      "incarnation": "pilot-p-canon",
+      "mode": "NATIVE_PROVE",
+      "mutation_paths": [],
+      "owner_issue": 529,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "root_id": null,
+      "sipoc_role": "P",
+      "source_sha": "__EVALUATED_SHA__",
+      "stage_ref": "DMAIC:ANALYZE",
+      "state": "READY",
+      "success_predicate": "Return SHA-bound local output bytes; independent admission withheld"
+    },
+    {
+      "blockers": [],
+      "depends_on": [
+        "I-PARSE"
+      ],
+      "execution": "ASYNCIO",
+      "id": "P-CONE",
+      "incarnation": "pilot-p-cone",
+      "mode": "NATIVE_PROVE",
+      "mutation_paths": [],
+      "owner_issue": 529,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "root_id": null,
+      "sipoc_role": "P",
+      "source_sha": "__EVALUATED_SHA__",
+      "stage_ref": "DMAIC:ANALYZE",
+      "state": "READY",
+      "success_predicate": "Return SHA-bound local output bytes; independent admission withheld"
+    },
+    {
+      "blockers": [],
+      "depends_on": [
+        "P-CANON",
+        "P-CONE"
+      ],
+      "execution": "SYNC",
+      "id": "O-JOIN",
+      "incarnation": "pilot-o-join",
+      "mode": "OBSERVE",
+      "mutation_paths": [],
+      "owner_issue": 529,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "root_id": null,
+      "sipoc_role": "O",
+      "source_sha": "__EVALUATED_SHA__",
+      "stage_ref": "CENSUS:ENUMERATE",
+      "state": "READY",
+      "success_predicate": "Return SHA-bound local output bytes; independent admission withheld"
+    },
+    {
+      "blockers": [],
+      "depends_on": [
+        "O-JOIN"
+      ],
+      "execution": "SYNC",
+      "id": "C-RECEIPT",
+      "incarnation": "pilot-c-receipt",
+      "mode": "OBSERVE",
+      "mutation_paths": [],
+      "owner_issue": 529,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "root_id": null,
+      "sipoc_role": "C",
+      "source_sha": "__EVALUATED_SHA__",
+      "stage_ref": "GATE:P5",
+      "state": "READY",
+      "success_predicate": "Return SHA-bound local output bytes; independent admission withheld"
+    }
+  ],
+  "max_parallel": 2,
+  "max_parallel_per_repo": 2,
+  "next_pulse_feedback": [],
+  "schema": "missioncontrol.sipoc-process-instances.v1"
+}

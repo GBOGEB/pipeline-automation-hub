@@ -1,0 +1,56 @@
+{
+  "authority_transfer": false,
+  "owner_issue": 529,
+  "schema": "missioncontrol.gogreen.task-execution.v1",
+  "tasks": {
+    "C-RECEIPT": {
+      "inputs": [
+        "o/projection_index.json"
+      ],
+      "operation": "AUDIT_GATE",
+      "outputs": [
+        "c/non-admission_receipt.json"
+      ]
+    },
+    "I-PARSE": {
+      "input": "mission-control/golden-thread/fixtures/GT_BD_011_BOOTSTRAP_BATCH001_20260917.json",
+      "operation": "JSON_INDEX",
+      "outputs": [
+        "i/source_index.json"
+      ]
+    },
+    "O-JOIN": {
+      "inputs": [
+        "p-canon/canonical.json",
+        "p-cone/bootstrap-summary.json",
+        "p-cone/normalized-occurrence-projection.json"
+      ],
+      "operation": "OUTPUT_FANIN",
+      "outputs": [
+        "o/projection_index.json"
+      ]
+    },
+    "P-CANON": {
+      "input": "mission-control/golden-thread/fixtures/GT_BD_011_BOOTSTRAP_BATCH001_20260917.json",
+      "operation": "JSON_CANONICAL",
+      "outputs": [
+        "p-canon/canonical.json"
+      ]
+    },
+    "P-CONE": {
+      "input": "mission-control/golden-thread/fixtures/GT_BD_002_REAL_CONE_BATCH001_v1.json",
+      "operation": "GOLDEN_THREAD_CONE",
+      "outputs": [
+        "p-cone/bootstrap-summary.json",
+        "p-cone/normalized-occurrence-projection.json"
+      ]
+    },
+    "S-READ": {
+      "input": "mission-control/golden-thread/fixtures/GT_BD_011_BOOTSTRAP_BATCH001_20260917.json",
+      "operation": "SOURCE_DIGEST",
+      "outputs": [
+        "s/source_digest.json"
+      ]
+    }
+  }
+}

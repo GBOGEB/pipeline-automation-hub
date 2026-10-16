@@ -1,0 +1,86 @@
+name: GoGREEN Governed Local Executor Testflight
+on:
+  pull_request:
+    paths:
+      - "mission-control/gogreen/execution_adapter.py"
+      - "mission-control/gogreen/tests/test_execution_adapter.py"
+      - "mission-control/gogreen/samples/execution_*_pilot_v1.json"
+      - "mission-control/gogreen/samples/task_bindings_pilot_v1.json"
+      - "mission-control/gogreen/EXECUTION_ADAPTER.md"
+      - ".github/workflows/gogreen-governed-executor.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  execute-local-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact evaluated head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify source checkout
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED"
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - name: Install pinned cryptography
+        run: python -m pip install cryptography==46.0.4
+      - name: Native executor regression suite
+        run: python -m unittest discover -s mission-control/gogreen/tests -p test_execution_adapter.py -v
+      - name: Execute six actual file-I/O tasks and idempotent replay
+        env:
+          REPO: ${{ github.workspace }}
+          OUT: ${{ runner.temp }}/go-green-execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/execution_adapter.py \
+            --repo "$REPO" \
+            --plan mission-control/gogreen/samples/execution_plan_pilot_v1.json \
+            --atlas mission-control/federation-atlas/PROCESS_LANES_v1.json \
+            --tasks mission-control/gogreen/samples/task_bindings_pilot_v1.json \
+            --policy mission-control/gogreen/samples/execution_policy_pilot_v1.json \
+            --source-sha "$(git rev-parse HEAD)" --out "$OUT" --allow-local-pilot
+          cp "$OUT/execution_receipt.json" "$OUT/first_execution_receipt.json"
+          python mission-control/gogreen/execution_adapter.py \
+            --repo "$REPO" \
+            --plan mission-control/gogreen/samples/execution_plan_pilot_v1.json \
+            --atlas mission-control/federation-atlas/PROCESS_LANES_v1.json \
+            --tasks mission-control/gogreen/samples/task_bindings_pilot_v1.json \
+            --policy mission-control/gogreen/samples/execution_policy_pilot_v1.json \
+            --source-sha "$(git rev-parse HEAD)" --out "$OUT" --allow-local-pilot
+          python mission-control/gogreen/execution_adapter.py \
+            --repo "$REPO" \
+            --plan mission-control/gogreen/samples/execution_plan_pilot_v1.json \
+            --atlas mission-control/federation-atlas/PROCESS_LANES_v1.json \
+            --tasks mission-control/gogreen/samples/task_bindings_pilot_v1.json \
+            --policy mission-control/gogreen/samples/execution_policy_pilot_v1.json \
+            --source-sha "$(git rev-parse HEAD)" --out "$OUT" --verify-receipt
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          out=Path(os.environ["OUT"])
+          before=json.loads((out/"first_execution_receipt.json").read_bytes())
+          after=json.loads((out/"execution_receipt.json").read_bytes())
+          assert before["execution"]["tasks_executed"]==6
+          assert after["execution"]["tasks_reused"]==6
+          assert after["execution"]["tasks_executed"]==0
+          assert before["source_sha"]==after["source_sha"]
+          assert not after["independently_approved"]
+          assert not after["remote_dispatch_authorized"]
+          assert hashlib.sha256((out/"execution_receipt.json").read_bytes()).hexdigest()==(out/"execution_receipt.sha256").read_text().strip()
+          print("NATIVE_REAL_EXECUTION_AND_REPLAY_PASS")
+          PY
+      - name: Upload real local-pilot output receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gogreen-governed-executor-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/go-green-execution/
+          if-no-files-found: warn
