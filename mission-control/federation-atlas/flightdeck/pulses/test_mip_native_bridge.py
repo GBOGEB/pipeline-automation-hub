@@ -1,10 +1,16 @@
 """Bounded native GitHub REST intake tests using the real pinned ABACUS producer."""
 import copy
+import io
+import json
 import os
+import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
-from mip_native_bridge import collect, canonical_producer, https_get, project
+from mip_native_bridge import (
+    collect, canonical_producer, https_get, main, project, validate_manifest,
+)
 
 SHA = "a" * 40
 PROVIDER = Path(os.environ.get("MIP_ABACUS_ROOT", "providers/ABACUS"))
@@ -183,6 +189,118 @@ class NativeBridgeTests(unittest.TestCase):
                 q[key] = value
                 with self.assertRaises(ValueError):
                     validate_manifest(q, getter=lambda url: {})
+
+    def test_http_non_200_never_redirects_with_token(self):
+        connections = []
+
+        class Response:
+            def __init__(self, status):
+                self.status = status
+
+            def read(self, size=-1):
+                return io.BytesIO(b'{"id":401}').read(size)
+
+        class Connection:
+            def __init__(self, host, timeout):
+                self.host, self.timeout = host, timeout
+                self.status = 302
+                self.closed = False
+                connections.append(self)
+
+            def request(self, method, path, headers):
+                self.method, self.path, self.headers = method, path, headers
+
+            def getresponse(self):
+                return Response(self.status)
+
+            def close(self):
+                self.closed = True
+
+        with patch("mip_native_bridge.HTTPSConnection", Connection):
+            path = "/repos/GBOGEB/ABACUS/actions/runs/401"
+            with self.assertRaisesRegex(ValueError, "HTTP 302"):
+                https_get(path, token="synthetic-test-token")
+            self.assertEqual(connections[0].host, "api.github.com")
+            self.assertEqual(connections[0].headers["Authorization"],
+                             "Bearer synthetic-test-token")
+            self.assertTrue(connections[0].closed)
+            connections[0].status = 200
+            self.assertEqual(https_get(path)["id"], 401)
+            self.assertTrue(connections[-1].closed)
+
+    def test_101_native_jobs_paginate_without_duplicate_credit(self):
+        getter, runs, _ = getter_factory()
+        observed = [job(i + 1000, 401, "success") for i in range(101)]
+
+        def paged(path):
+            if "/jobs?" in path:
+                page = int(path.split("page=")[-1])
+                return {"total_count": 101,
+                        "jobs": copy.deepcopy(observed[(page-1)*100:page*100])}
+            return getter(path)
+
+        result = collect(SHA, [[401, 1]], paged)
+        self.assertEqual(len(result["jobs"]), 101)
+        self.assertEqual(len({x["id"] for x in result["jobs"]}), 101)
+        observed[-1]["id"] = observed[0]["id"]
+        with self.assertRaisesRegex(ValueError, "native job"):
+            collect(SHA, [[401, 1]], paged)
+
+    def test_main_manifest_source_binding_and_atomic_replay(self):
+        if not (PROVIDER / "tools" / "mip_ci_wave_telemetry.py").is_file():
+            self.skipTest("pinned producer checkout absent")
+        getter, runs, _ = getter_factory()
+
+        def api(path, token=None):
+            if "event=pull_request" in path:
+                return {"total_count": 2, "workflow_runs": [
+                    {**copy.deepcopy(run), "event": "pull_request"}
+                    for run in runs.values()
+                ]}
+            return getter(path)
+
+        manifest = {
+            "schema": "code-purple.mip.native-pr-census.v1",
+            "repository": "GBOGEB/ABACUS", "event": "pull_request",
+            "head_sha": SHA, "expected_total": 2,
+            "run_attempts": [[401, 1], [402, 1]],
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            manifest_path = root / "manifest.json"
+            output_path = root / "native.json"
+            manifest_path.write_text(json.dumps(manifest))
+            command = ["--sha", SHA, "--abacus-checkout", str(PROVIDER),
+                       "--producer-sha", PIN, "--manifest",
+                       str(manifest_path), "--out", str(output_path)]
+            with patch("mip_native_bridge.https_get", side_effect=api):
+                self.assertEqual(main(command), 0)
+                expected = output_path.read_bytes()
+                result = json.loads(expected)
+                self.assertTrue(result["pull_request_event_head_cohort_verified"])
+                self.assertEqual(result["observed"]["workflow_total_n"], 2)
+                self.assertIsNone(result["formal_root_closures"])
+                self.assertEqual(main(command), 0)
+                self.assertEqual(output_path.read_bytes(), expected)
+                with self.assertRaisesRegex(ValueError, "use exact"):
+                    main(command + ["--run", "401:1"])
+                with self.assertRaisesRegex(ValueError, "CLI source head"):
+                    main(["--sha", "b" * 40] + command[2:])
+            self.assertEqual(json.loads(output_path.read_text())["admission"],
+                             "HOLD")
+
+    def test_invalid_native_step_list_and_oversized_job_denominator(self):
+        getter, runs, jobs = getter_factory()
+        jobs[401][0]["steps"] = "untrusted"
+        with self.assertRaisesRegex(ValueError, "step list"):
+            collect(SHA, [[401, 1]], getter)
+        jobs[401][0]["steps"] = []
+        def huge(path):
+            if "/jobs?" in path:
+                return {"total_count": 1201, "jobs": []}
+            return getter(path)
+        with self.assertRaisesRegex(ValueError, "jobs page"):
+            collect(SHA, [[401, 1]], huge)
 
     def test_provider_sha_mismatch_fails_without_source_fallback(self):
         if not PROVIDER.is_dir():
