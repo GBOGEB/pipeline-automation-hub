@@ -70,6 +70,8 @@ def _validate_item(item, observed):
         _positive(run.get("id"), "run_id")
         _positive(run.get("attempt"), "run_attempt")
         _sha(run.get("head_sha"), "run_head_sha")
+        if run.get("status") == "completed" or run.get("job_id") is not None:
+            _positive(run.get("job_id"), "job_id")
         status = run.get("status")
         if status not in RUNNING | {"completed"}:
             raise ValueError("invalid run status")
@@ -142,10 +144,11 @@ def plan(snapshot):
         decision, reason = _decide(item)
         root = item.get("root_id")
         if decision == "RERUN_FAILED_JOBS_CANDIDATE" and root:
-            if root in retry_roots:
+            cohort_key = (root, item["head_sha"])
+            if cohort_key in retry_roots:
                 decision = "DUPLICATE_ROOT_WAIT"
-                reason = "A matching root already has a diagnostic candidate"
-            retry_roots.add(root)
+                reason = "Same root and source already have a diagnostic candidate"
+            retry_roots.add(cohort_key)
         hours = round((observed - created).total_seconds() / 3600, 2)
         rows.append({
             "pr": item["pr"],
@@ -154,6 +157,7 @@ def plan(snapshot):
             "age_hours": hours,
             "older_than_24h": hours >= 24,
             "run_id": item["run"]["id"] if item["run"] else None,
+            "job_id": item["run"].get("job_id") if item["run"] else None,
             "run_attempt": item["run"]["attempt"] if item["run"] else None,
             "run_head_sha": item["run"]["head_sha"] if item["run"] else None,
             "root_id": root,
