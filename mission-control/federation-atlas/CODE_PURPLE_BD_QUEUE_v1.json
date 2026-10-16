@@ -15,9 +15,29 @@
     "Flow is orthogonal to lifecycle: READY can start now, IN_PR is under review, BLOCKED waits on another item, HOLD waits on a re-entry predicate, RETURN_OWNER waits on an owner or admin action, LINKED is driven by another issue.",
     "A queue item may be closed only by evidence. Forecasts never close items."
   ],
-  "lifecycle": ["TODO", "ACTIVE", "DONE", "CONTROL", "SUPERSEDED", "INVALIDATED", "UNKNOWN_NEEDS_READER"],
-  "open_states": ["TODO", "ACTIVE", "UNKNOWN_NEEDS_READER"],
-  "flows": ["READY", "IN_PR", "BLOCKED", "HOLD", "RETURN_OWNER", "LINKED", "NONE"],
+  "lifecycle": [
+    "TODO",
+    "ACTIVE",
+    "DONE",
+    "CONTROL",
+    "SUPERSEDED",
+    "INVALIDATED",
+    "UNKNOWN_NEEDS_READER"
+  ],
+  "open_states": [
+    "TODO",
+    "ACTIVE",
+    "UNKNOWN_NEEDS_READER"
+  ],
+  "flows": [
+    "READY",
+    "IN_PR",
+    "BLOCKED",
+    "HOLD",
+    "RETURN_OWNER",
+    "LINKED",
+    "NONE"
+  ],
   "items": [
     {
       "id": "CPQ-001",
@@ -26,15 +46,29 @@
       "severity": "P1",
       "beam": "B1",
       "critical_path": false,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/pull/518"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/518"
+      ],
       "depends_on": [],
       "done_when": "Every python -m unittest gate collects >0 tests on master and the zero-test guard runs on every workflow or test change.",
       "control_when": "A later, distinct-source workflow or test change passes the guard on master without a manual fix.",
       "recurrence_family": "TESTS_INVISIBLE_TO_UNITTEST (prior negative: gg_MATH PR#39 'prior-head receipt regression undiscoverable by unittest', F2_GEMINI_GGMATH_3PSTAR_MIP_CLOSURE_20260921_v1.json)",
       "history": [
-        {"at": "W1.C1.I0.S0", "state": "TODO", "flow": "READY", "evidence": "Local repro at 251d1ce: py3.11 'Ran 0 tests ... OK' rc=0; py3.12 rc=5; pytest 5 passed."},
-        {"at": "W1.C1.I1.S0", "state": "DONE", "flow": "NONE", "evidence": "PR #518 merged 3399a1bc445e409c504befeee7165961463ce666. Head 57eba3b: GM DMAIC Evolution Control prove job 114810592615 (run 38249143719) success; Zero-Test Gate Guard audit job 114810590021 (run 38249142859) success. Audit on master 0f48ce7: 24 gates, 0 zero-test. Job log text was not readable from the reviewing session, so the CI test count rests on the local repro."}
+        {
+          "at": "W1.C1.I0.S0",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "Local repro at 251d1ce: py3.11 'Ran 0 tests ... OK' rc=0; py3.12 rc=5; pytest 5 passed."
+        },
+        {
+          "at": "W1.C1.I1.S0",
+          "state": "DONE",
+          "flow": "NONE",
+          "evidence": "PR #518 merged 3399a1bc445e409c504befeee7165961463ce666. Head 57eba3b: GM DMAIC Evolution Control prove job 114810592615 (run 38249143719) success; Zero-Test Gate Guard audit job 114810590021 (run 38249142859) success. Audit on master 0f48ce7: 24 gates, 0 zero-test. Job log text was not readable from the reviewing session, so the CI test count rests on the local repro."
+        }
       ]
     },
     {
@@ -44,14 +78,28 @@
       "severity": "P2",
       "beam": "B1",
       "critical_path": false,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/pull/518"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/518"
+      ],
       "depends_on": [],
       "done_when": "test_gm_dab_flake8_propagation.py runs >0 tests in a workflow.",
       "control_when": "The workflow stays green on a later contract change.",
       "history": [
-        {"at": "W1.C1.I0.S0", "state": "TODO", "flow": "READY", "evidence": "grep over .github/workflows at 251d1ce: 0 references."},
-        {"at": "W1.C1.I1.S0", "state": "DONE", "flow": "NONE", "evidence": "PR #518: gm-dab-flake8-propagation.yml; job 114810589710 (run 38249142864) success on 57eba3b."}
+        {
+          "at": "W1.C1.I0.S0",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "grep over .github/workflows at 251d1ce: 0 references."
+        },
+        {
+          "at": "W1.C1.I1.S0",
+          "state": "DONE",
+          "flow": "NONE",
+          "evidence": "PR #518: gm-dab-flake8-propagation.yml; job 114810589710 (run 38249142864) success on 57eba3b."
+        }
       ]
     },
     {
@@ -61,14 +109,35 @@
       "severity": "P1",
       "beam": "B8",
       "critical_path": false,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/pull/519", "https://github.com/GBOGEB/pipeline-automation-hub/issues/520"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/519",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/520"
+      ],
       "depends_on": [],
       "done_when": "Atlas source, unit tests and a browser-level (Playwright or equivalent) render check run in hub CI on the exact head.",
       "control_when": "The render check catches a seeded layout or script regression.",
       "history": [
-        {"at": "W1.C1.I0.S0", "state": "TODO", "flow": "READY", "evidence": "Search of hub @251d1ce for atlas / CODE PURPLE: 0 hits."},
-        {"at": "W1.C1.I1.S1", "state": "ACTIVE", "flow": "LINKED", "evidence": "PR #519 landed source + unit tests + code-purple-method-atlas.yml render job. Browser-level QA is still absent; tracked by #520 DoD 'Independent Playwright/SVG tests'."}
+        {
+          "at": "W1.C1.I0.S0",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "Search of hub @251d1ce for atlas / CODE PURPLE: 0 hits."
+        },
+        {
+          "at": "W1.C1.I1.S1",
+          "state": "ACTIVE",
+          "flow": "LINKED",
+          "evidence": "PR #519 landed source + unit tests + code-purple-method-atlas.yml render job. Browser-level QA is still absent; tracked by #520 DoD 'Independent Playwright/SVG tests'."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "ACTIVE",
+          "flow": "LINKED",
+          "evidence": "Atlas source build/CI pass on 38932665934; seeded negative native Playwright/SVG regression still not verified; #520 acceptance HOLD."
+        }
       ]
     },
     {
@@ -78,14 +147,32 @@
       "severity": "P1",
       "beam": "B8",
       "critical_path": false,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
       "links": [],
       "depends_on": [],
       "done_when": "The atlas evaluates every promotion predicate, shows UNKNOWN for null observations and agrees with gm_dmaic_evolution_metrics.py.",
       "control_when": "A parity test fails when the page evaluator and the repo evaluator disagree.",
       "history": [
-        {"at": "W1.C1.I0.S0", "state": "TODO", "flow": "READY", "evidence": "v0.1 displayed ACTIVE / SHADOW / HOLD without predicates."},
-        {"at": "W1.C1.I2.S0", "state": "ACTIVE", "flow": "IN_PR", "evidence": "code_purple_series.py gate ledger + parity test against gm_dmaic_evolution_metrics.evaluate."}
+        {
+          "at": "W1.C1.I0.S0",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "v0.1 displayed ACTIVE / SHADOW / HOLD without predicates."
+        },
+        {
+          "at": "W1.C1.I2.S0",
+          "state": "ACTIVE",
+          "flow": "IN_PR",
+          "evidence": "code_purple_series.py gate ledger + parity test against gm_dmaic_evolution_metrics.evaluate."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "DONE",
+          "flow": "NONE",
+          "evidence": "CODE PURPLE gate_ledger PASS/FAIL/UNKNOWN, native exact-run 38932665934 parity tests PASS. No Top14 admission inferred."
+        }
       ]
     },
     {
@@ -95,14 +182,32 @@
       "severity": "P2",
       "beam": "B8",
       "critical_path": false,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
       "links": [],
       "depends_on": [],
       "done_when": "Each source shows its as-of date and age; stale sources are flagged.",
       "control_when": "Stale flag verified on a later render.",
       "history": [
-        {"at": "W1.C1.I0.S0", "state": "TODO", "flow": "READY", "evidence": "Contract as_of 2026-09-26 not shown in v0.1."},
-        {"at": "W1.C1.I2.S0", "state": "ACTIVE", "flow": "IN_PR", "evidence": "code-purple.html source table with as-of and evidence age per source."}
+        {
+          "at": "W1.C1.I0.S0",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "Contract as_of 2026-09-26 not shown in v0.1."
+        },
+        {
+          "at": "W1.C1.I2.S0",
+          "state": "ACTIVE",
+          "flow": "IN_PR",
+          "evidence": "code-purple.html source table with as-of and evidence age per source."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "ACTIVE",
+          "flow": "IN_PR",
+          "evidence": "as_of/as_of_basis visible in build_code_purple; explicit TTL/stale-flag and later render not yet proven."
+        }
       ]
     },
     {
@@ -112,14 +217,28 @@
       "severity": "P2",
       "beam": "B8",
       "critical_path": false,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/pull/519"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/519"
+      ],
       "depends_on": [],
       "done_when": "No parallel contract family in the hub; the atlas cites existing Mission Control schemas and links the v11 dashboard.",
       "control_when": "Schema hierarchy documented: JSON Schema is the source; any TS/zod is generated from it.",
       "history": [
-        {"at": "W1.C1.I0.S0", "state": "TODO", "flow": "READY", "evidence": "v0.1 bundle introduced TypeScript forecast contracts."},
-        {"at": "W1.C1.I1.S1", "state": "DONE", "flow": "NONE", "evidence": "PR #519 committed no .ts contracts; METHOD_OBSERVABILITY_v1.json sources point at MC_MISSION_TELEMETRY_CONTRACT_v1 and the v11 dashboard. app/package.json declares zod 3.23.8 but no source file imports it."}
+        {
+          "at": "W1.C1.I0.S0",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "v0.1 bundle introduced TypeScript forecast contracts."
+        },
+        {
+          "at": "W1.C1.I1.S1",
+          "state": "DONE",
+          "flow": "NONE",
+          "evidence": "PR #519 committed no .ts contracts; METHOD_OBSERVABILITY_v1.json sources point at MC_MISSION_TELEMETRY_CONTRACT_v1 and the v11 dashboard. app/package.json declares zod 3.23.8 but no source file imports it."
+        }
       ]
     },
     {
@@ -129,14 +248,34 @@
       "severity": "P2",
       "beam": "B8",
       "critical_path": false,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/pull/519"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/519"
+      ],
       "depends_on": [],
       "done_when": "Every edge in ATLAS_GRAPH_v1.yaml carries binding DECLARED or RECEIPT and DECLARED edges render dashed.",
       "control_when": "A test fails if an edge lacks a binding.",
       "history": [
-        {"at": "W1.C1.I0.S0", "state": "TODO", "flow": "READY", "evidence": "v0.1 drew 14 edges at equal weight; GM-I-A topology has 2 receipt edges."},
-        {"at": "W1.C1.I2.S0", "state": "ACTIVE", "flow": "IN_PR", "evidence": "ATLAS_GRAPH_v1.yaml at 0f48ce7 still types 5 MC edges as 'dispatch' with no dispatch mechanism in .github/workflows. This PR adds binding and dashed rendering."}
+        {
+          "at": "W1.C1.I0.S0",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "v0.1 drew 14 edges at equal weight; GM-I-A topology has 2 receipt edges."
+        },
+        {
+          "at": "W1.C1.I2.S0",
+          "state": "ACTIVE",
+          "flow": "IN_PR",
+          "evidence": "ATLAS_GRAPH_v1.yaml at 0f48ce7 still types 5 MC edges as 'dispatch' with no dispatch mechanism in .github/workflows. This PR adds binding and dashed rendering."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "DONE",
+          "flow": "NONE",
+          "evidence": "Graph binding RECEIPT vs DECLARED and dashed-edge negative tests in test_atlas.py; native 38932665934 PASS. QPS receipt added, MC->QPS dispatch remains DECLARED."
+        }
       ]
     },
     {
@@ -146,14 +285,28 @@
       "severity": "P3",
       "beam": "B8",
       "critical_path": false,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/pull/519"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/519"
+      ],
       "depends_on": [],
       "done_when": "Glossary defines MCP and BT canonically.",
       "control_when": "Glossary restriction list enforced by the atlas build.",
       "history": [
-        {"at": "W1.C1.I0.S0", "state": "TODO", "flow": "READY", "evidence": "v0.1 text compared MCP with TCP."},
-        {"at": "W1.C1.I1.S1", "state": "DONE", "flow": "NONE", "evidence": "PR #519 glossary: MCP = MODEL_CONTEXT_PROTOCOL; BT_IS_BRADLEY_TERRY_NOT_BACKTEST; build_atlas.py asserts BT role."}
+        {
+          "at": "W1.C1.I0.S0",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "v0.1 text compared MCP with TCP."
+        },
+        {
+          "at": "W1.C1.I1.S1",
+          "state": "DONE",
+          "flow": "NONE",
+          "evidence": "PR #519 glossary: MCP = MODEL_CONTEXT_PROTOCOL; BT_IS_BRADLEY_TERRY_NOT_BACKTEST; build_atlas.py asserts BT role."
+        }
       ]
     },
     {
@@ -163,14 +316,29 @@
       "severity": "P3",
       "beam": "B9",
       "critical_path": false,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/issues/520"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/520"
+      ],
       "depends_on": [],
       "done_when": "Re-entry predicate met: >=3 MEASURED comparable rows across >=2 missions (FLEET_TELEMETRY_SCHEMA pca_gate) and a named runner telemetry source.",
       "control_when": "n/a while HOLD.",
       "review_on": "2026-11-02",
       "history": [
-        {"at": "W1.C1.I0.S0", "state": "TODO", "flow": "HOLD", "evidence": "No runner or container telemetry bound anywhere in the hub."}
+        {
+          "at": "W1.C1.I0.S0",
+          "state": "TODO",
+          "flow": "HOLD",
+          "evidence": "No runner or container telemetry bound anywhere in the hub."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "TODO",
+          "flow": "HOLD",
+          "evidence": "Three matched independent runner/container observations over two missions unavailable; keep telemetry UNKNOWN."
+        }
       ]
     },
     {
@@ -180,13 +348,32 @@
       "severity": "P1",
       "beam": "B3",
       "critical_path": true,
-      "repos": ["GBOGEB/ABACUS", "GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/issues/419", "https://github.com/GBOGEB/pipeline-automation-hub/issues/428", "https://github.com/GBOGEB/ABACUS/pull/1387", "https://github.com/GBOGEB/ABACUS/actions/runs/36249393504"],
+      "repos": [
+        "GBOGEB/ABACUS",
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/419",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/428",
+        "https://github.com/GBOGEB/ABACUS/pull/1387",
+        "https://github.com/GBOGEB/ABACUS/actions/runs/36249393504"
+      ],
       "depends_on": [],
       "done_when": "GM_DMAIC_EVOLUTION contract binds I2 D1 and D2 to exact-head job ids and moves I2 to completed_iterations with CONTROL lineage.",
       "control_when": "I3 consumes the I2 CONTROL receipt.",
       "history": [
-        {"at": "W1.C1.I2.S0", "state": "TODO", "flow": "READY", "evidence": "ABACUS run 36249393504 @f8c3365: End-to-End job 108424874248 success (9 steps) = D1 exact-head proof; Quality Gates job 108424874250 failure = D2 coverage. Post-merge run 36336861952 @2d29cb8: E2E 108675180974 and Quality Gates 108675180909 success (76.13% >= G75). Distinct-source repeat run 36420226456 @d9b261f (schedule): E2E 108921685585, Quality Gates 108921685543 success. Contract still records control_job null, PENDING_EXACT_HEAD_PROOF, D2 25.04% vs 70%."}
+        {
+          "at": "W1.C1.I2.S0",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "ABACUS run 36249393504 @f8c3365: End-to-End job 108424874248 success (9 steps) = D1 exact-head proof; Quality Gates job 108424874250 failure = D2 coverage. Post-merge run 36336861952 @2d29cb8: E2E 108675180974 and Quality Gates 108675180909 success (76.13% >= G75). Distinct-source repeat run 36420226456 @d9b261f (schedule): E2E 108921685585, Quality Gates 108921685543 success. Contract still records control_job null, PENDING_EXACT_HEAD_PROOF, D2 25.04% vs 70%."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "I2 D1/D2 owner GM contract/control_job has no accepted source-bound CONTROL handoff yet; historical run 36336861952 cannot be silently promoted."
+        }
       ]
     },
     {
@@ -196,13 +383,28 @@
       "severity": "P1",
       "beam": "B4",
       "critical_path": true,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/issues/419#issuecomment-5871686889"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/419#issuecomment-5871686889"
+      ],
       "depends_on": [],
       "done_when": "Pulse 2 recorded in TOP7_CENSUS_PULSES_v1.json with exact head SHAs and run ids for all 7 repos, and top7_proof_debt_two_pulse_nonincreasing set from pulse 1 vs pulse 2.",
       "control_when": "A third pulse repeats the classification without regression.",
       "history": [
-        {"at": "W1.C1.I2.S0", "state": "TODO", "flow": "READY", "evidence": "Pulse 1 (2026-09-28, #419) classified 7/7, 5/7 GREEN_CONTROL. The comment names pulse 2 as the next bounded Top7 edge before evaluating Top7 -> Top14."}
+        {
+          "at": "W1.C1.I2.S0",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "Pulse 1 (2026-09-28, #419) classified 7/7, 5/7 GREEN_CONTROL. The comment names pulse 2 as the next bounded Top7 edge before evaluating Top7 -> Top14."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "Seven native exact-head Top7 observations recorded in pulse2 and owner receipt #419 comment 6220384217; source-match comparability remains UNKNOWN, no Top14 promotion."
+        }
       ]
     },
     {
@@ -212,13 +414,28 @@
       "severity": "P2",
       "beam": "B4",
       "critical_path": false,
-      "repos": ["GBOGEB/document-organization-system"],
-      "links": ["https://github.com/GBOGEB/document-organization-system/actions"],
+      "repos": [
+        "GBOGEB/document-organization-system"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/document-organization-system/actions"
+      ],
       "depends_on": [],
       "done_when": "At least one workflow with >0 executed steps completes on the current main head and the row is reclassified.",
       "control_when": "Pulse 3 keeps the row GREEN_CONTROL.",
       "history": [
-        {"at": "W1.C1.I2.S0", "state": "TODO", "flow": "READY", "evidence": "Pulse 1 @f238ebf: 0 exact-head Actions runs (PROVE/UNKNOWN). Head is now 6b4529c (PR #78, 2026-10-12). Repo has 7 workflows; data-rich-document-contract.yml and docx-rtm-adapter.yml accept workflow_dispatch, so a proof can be requested without a code change."}
+        {
+          "at": "W1.C1.I2.S0",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "Pulse 1 @f238ebf: 0 exact-head Actions runs (PROVE/UNKNOWN). Head is now 6b4529c (PR #78, 2026-10-12). Repo has 7 workflows; data-rich-document-contract.yml and docx-rtm-adapter.yml accept workflow_dispatch, so a proof can be requested without a code change."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "DONE",
+          "flow": "NONE",
+          "evidence": "document-organization-system/main 6b4529cc746bb1cbdd938d564cc7b01ff719e0c2 run 38218661281 job 114709316495 SUCCESS with seven successful steps. Repeat CONTROL pending."
+        }
       ]
     },
     {
@@ -228,13 +445,31 @@
       "severity": "P1",
       "beam": "B4",
       "critical_path": true,
-      "repos": ["GBOGEB/ABACUS", "GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/issues/428"],
-      "depends_on": ["CPQ-010"],
+      "repos": [
+        "GBOGEB/ABACUS",
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/428"
+      ],
+      "depends_on": [
+        "CPQ-010"
+      ],
       "done_when": "The metric has a written denominator (controlled roots x subsequent exact-head runs of the owning job) and a value bound to run ids.",
       "control_when": "Value re-measured in pulse 3.",
       "history": [
-        {"at": "W1.C1.I2.S0", "state": "TODO", "flow": "BLOCKED", "evidence": "Candidate population: ABACUS DMAIC V3 Test Suite on main, runs after CONTROL 36336861952, 36420226456 and 38326787962, 38355538014, 38368902483, 38395466892 (all success on 2026-10-13). Waits on CPQ-010 so the controlled-root set is fixed first."}
+        {
+          "at": "W1.C1.I2.S0",
+          "state": "TODO",
+          "flow": "BLOCKED",
+          "evidence": "Candidate population: ABACUS DMAIC V3 Test Suite on main, runs after CONTROL 36336861952, 36420226456 and 38326787962, 38355538014, 38368902483, 38395466892 (all success on 2026-10-13). Waits on CPQ-010 so the controlled-root set is fixed first."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "TODO",
+          "flow": "BLOCKED",
+          "evidence": "Depends on CPQ-010 accepted root/CONTROL handoff; unchanged-root denominator and autorepeat value cannot yet be qualified."
+        }
       ]
     },
     {
@@ -244,13 +479,30 @@
       "severity": "P2",
       "beam": "B6",
       "critical_path": false,
-      "repos": ["GBOGEB/cryoplant-project", "GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/issues/419#issuecomment-5871686889", "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"],
+      "repos": [
+        "GBOGEB/cryoplant-project",
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/419#issuecomment-5871686889",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"
+      ],
       "depends_on": [],
       "done_when": "One existing exact-head cryoplant workflow run (run id, head SHA, job id, >0 steps) is bound read-only as the QPS edge receipt.",
       "control_when": "A second, distinct-head receipt is bound.",
       "history": [
-        {"at": "W1.C1.I2.S0", "state": "TODO", "flow": "READY", "evidence": "Pulse 1: cryoplant @ae23418 4/4 exact-head push workflows success. Binding an existing run does not need cryoplant#923 (Actions admission), which only blocks dispatching new work. cryoplant-project is private to this session: binding needs the owner or an attached session."}
+        {
+          "at": "W1.C1.I2.S0",
+          "state": "TODO",
+          "flow": "READY",
+          "evidence": "Pulse 1: cryoplant @ae23418 4/4 exact-head push workflows success. Binding an existing run does not need cryoplant#923 (Actions admission), which only blocks dispatching new work. cryoplant-project is private to this session: binding needs the owner or an attached session."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "DONE",
+          "flow": "NONE",
+          "evidence": "QPS main 577353ed5f9cb1d3c19cb2a0967ea13e14fc683e, native run 38930253268 job 117072106782 SUCCESS with 7 steps. Read-only QPS->JOIN receipt; separate qps-canonicalization 38926132761 FAIL."
+        }
       ]
     },
     {
@@ -260,13 +512,29 @@
       "severity": "P2",
       "beam": "B7",
       "critical_path": false,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/issues/63", "https://github.com/GBOGEB/pipeline-automation-hub/issues/188"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/63",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/188"
+      ],
       "depends_on": [],
       "done_when": "One bounded satellite task is dispatched from the hub and returns exact source, head and output digests (MIP/FEDERATION_ACTIVITY.yaml next_victory).",
       "control_when": "A second dispatch to a different repo returns a valid receipt.",
       "history": [
-        {"at": "W1.C1.I2.S0", "state": "TODO", "flow": "RETURN_OWNER", "evidence": "Hub workflow census at 0f48ce7: 90 workflows; triggers pull_request 89, workflow_dispatch 76, push 55, workflow_run 3 (intra-hub), schedule 2, repository_dispatch 0. A cross-repo trigger needs an owner-granted token or GitHub App."}
+        {
+          "at": "W1.C1.I2.S0",
+          "state": "TODO",
+          "flow": "RETURN_OWNER",
+          "evidence": "Hub workflow census at 0f48ce7: 90 workflows; triggers pull_request 89, workflow_dispatch 76, push 55, workflow_run 3 (intra-hub), schedule 2, repository_dispatch 0. A cross-repo trigger needs an owner-granted token or GitHub App."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "TODO",
+          "flow": "RETURN_OWNER",
+          "evidence": "No authenticated cross-repo allowlisted dispatch with path lease/idempotency and signed return; owner approval remains required."
+        }
       ]
     },
     {
@@ -276,13 +544,30 @@
       "severity": "P1",
       "beam": "B2",
       "critical_path": false,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/issues/336", "https://github.com/GBOGEB/pipeline-automation-hub/issues/304", "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38250379852"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/336",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/304",
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38250379852"
+      ],
       "depends_on": [],
       "done_when": "Owner/admin ruleset makes first-pass-closure a required status (#336) and a red check provably blocks merge.",
       "control_when": "Negative and positive admission repeat retained (REX-CM-005 control rule).",
       "history": [
-        {"at": "W1.C1.I2.S0", "state": "UNKNOWN_NEEDS_READER", "flow": "RETURN_OWNER", "evidence": "#518: FPC job 114814826336 started 12:39:24Z, PR merged 12:39:27Z, job failed 12:39:38Z (exit 1 and 2). #519: FPC red MISSING_RECEIPT (OBSERVED_PR519_20261012.json) and merged. Exact failing step for #518 unread: log storage is not reachable from the reviewing session. Also ABACUS #1387 merged 14:44:57Z while its proof run 36249393504 was running."}
+        {
+          "at": "W1.C1.I2.S0",
+          "state": "UNKNOWN_NEEDS_READER",
+          "flow": "RETURN_OWNER",
+          "evidence": "#518: FPC job 114814826336 started 12:39:24Z, PR merged 12:39:27Z, job failed 12:39:38Z (exit 1 and 2). #519: FPC red MISSING_RECEIPT (OBSERVED_PR519_20261012.json) and merged. Exact failing step for #518 unread: log storage is not reachable from the reviewing session. Also ABACUS #1387 merged 14:44:57Z while its proof run 36249393504 was running."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "UNKNOWN_NEEDS_READER",
+          "flow": "RETURN_OWNER",
+          "evidence": "Hub master protected=false at 4136710496894daa7ffd4c920f64a38b9dfd401b; owner/admin #336 red-block/green-admit required-status canary unproved."
+        }
       ]
     },
     {
@@ -292,13 +577,28 @@
       "severity": "P2",
       "beam": "B8",
       "critical_path": false,
-      "repos": ["GBOGEB/pipeline-automation-hub"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/issues/520"],
+      "repos": [
+        "GBOGEB/pipeline-automation-hub"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/520"
+      ],
       "depends_on": [],
       "done_when": "CI fails when computed metrics differ from the latest series entry, and the series is hash-chained.",
       "control_when": "A later contract change appends its own entry and passes.",
       "history": [
-        {"at": "W1.C1.I2.S0", "state": "ACTIVE", "flow": "IN_PR", "evidence": "code_purple_series.py check, wired into code-purple-method-atlas.yml."}
+        {
+          "at": "W1.C1.I2.S0",
+          "state": "ACTIVE",
+          "flow": "IN_PR",
+          "evidence": "code_purple_series.py check, wired into code-purple-method-atlas.yml."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "DONE",
+          "flow": "NONE",
+          "evidence": "Native Method Atlas 38932665934 passed source metrics and hash-chain test; new ordinal series entry appended, formal CONTROL distinct-head repeat pending."
+        }
       ]
     },
     {
@@ -308,13 +608,30 @@
       "severity": "P3",
       "beam": "B10",
       "critical_path": false,
-      "repos": ["GBOGEB/gg_MATH", "GBOGEB/pipeline-automation-hub", "GBOGEB/ABACUS"],
-      "links": ["https://github.com/GBOGEB/pipeline-automation-hub/issues/129"],
+      "repos": [
+        "GBOGEB/gg_MATH",
+        "GBOGEB/pipeline-automation-hub",
+        "GBOGEB/ABACUS"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/129"
+      ],
       "depends_on": [],
       "done_when": "Pulse 3 consumer (ABACUS #1164) state read back and recorded; 3P* pulse states bound to run ids.",
       "control_when": "Second roundtrip repeats pulse 1-3 on a new gg_MATH head.",
       "history": [
-        {"at": "W1.C1.I2.S0", "state": "UNKNOWN_NEEDS_READER", "flow": "LINKED", "evidence": "#129: pulse 1 gg_MATH run 34917694096 success @11d8779; pulse 2 hub #128; pulse 3 ABACUS #1164. Last comment 2026-09-21 (BD-260.5 narrowed, #379). gg_MATH is a TOP14 extension repo."}
+        {
+          "at": "W1.C1.I2.S0",
+          "state": "UNKNOWN_NEEDS_READER",
+          "flow": "LINKED",
+          "evidence": "#129: pulse 1 gg_MATH run 34917694096 success @11d8779; pulse 2 hub #128; pulse 3 ABACUS #1164. Last comment 2026-09-21 (BD-260.5 narrowed, #379). gg_MATH is a TOP14 extension repo."
+        },
+        {
+          "at": "W1.C1.I2.S1",
+          "state": "UNKNOWN_NEEDS_READER",
+          "flow": "LINKED",
+          "evidence": "gg_MATH main 54b7a806e398f0a0bcb76372dd2f53e41ec219ae five native successful runs; ABACUS #1164 real third-hop/3P* receipt not yet matched."
+        }
       ]
     }
   ]

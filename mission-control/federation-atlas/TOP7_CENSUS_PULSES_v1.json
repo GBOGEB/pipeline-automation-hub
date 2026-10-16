@@ -4,7 +4,13 @@
   "formal_credit_delta": 0,
   "engineering_credit_delta": 0,
   "rule": "Each pulse classifies all seven Top7 repositories on their then-current default heads. Pulse rows are transcribed from the governed record named in source; values are never interpolated between pulses.",
-  "classes": ["GREEN_CONTROL", "RETURN_OWNER_CONFIG", "PROVE_UNKNOWN", "RED_APPLICATION", "WAIT"],
+  "classes": [
+    "GREEN_CONTROL",
+    "RETURN_OWNER_CONFIG",
+    "PROVE_UNKNOWN",
+    "RED_APPLICATION",
+    "WAIT"
+  ],
   "pulses": [
     {
       "pulse": 1,
@@ -13,21 +19,156 @@
       "evidence_class": "OBSERVED_HISTORICAL",
       "source": "https://github.com/GBOGEB/pipeline-automation-hub/issues/419#issuecomment-5871686889",
       "rows": [
-        {"repo": "GBOGEB/ABACUS", "head": "d9b261f", "class": "GREEN_CONTROL", "note": "5 exact-head runs success; DMAIC G75 76.13% (run 36420226456)"},
-        {"repo": "GBOGEB/CODEX", "head": "c472d40", "class": "GREEN_CONTROL", "note": "exact-head set success; 2 skipped trigger outcomes are not reds"},
-        {"repo": "GBOGEB/cryoplant-project", "head": "ae23418", "class": "GREEN_CONTROL", "note": "4/4 exact-head push workflows success"},
-        {"repo": "GBOGEB/pipeline-automation-hub", "head": "9318ad8", "class": "GREEN_CONTROL", "note": "17 exact-head runs success"},
-        {"repo": "GBOGEB/Q_engineering_tools", "head": "593b24f", "class": "RETURN_OWNER_CONFIG", "note": "native Pages build failure; issue #104 needs owner Settings -> Pages -> Source = GitHub Actions"},
-        {"repo": "GBOGEB/document-organization-system", "head": "f238ebf", "class": "PROVE_UNKNOWN", "note": "0 exact-head Actions runs"},
-        {"repo": "GBOGEB/DOCX_RTM_Automation", "head": "f059782", "class": "GREEN_CONTROL", "note": "integrity, Python CI, Pages success"}
+        {
+          "repo": "GBOGEB/ABACUS",
+          "head": "d9b261f",
+          "class": "GREEN_CONTROL",
+          "note": "5 exact-head runs success; DMAIC G75 76.13% (run 36420226456)"
+        },
+        {
+          "repo": "GBOGEB/CODEX",
+          "head": "c472d40",
+          "class": "GREEN_CONTROL",
+          "note": "exact-head set success; 2 skipped trigger outcomes are not reds"
+        },
+        {
+          "repo": "GBOGEB/cryoplant-project",
+          "head": "ae23418",
+          "class": "GREEN_CONTROL",
+          "note": "4/4 exact-head push workflows success"
+        },
+        {
+          "repo": "GBOGEB/pipeline-automation-hub",
+          "head": "9318ad8",
+          "class": "GREEN_CONTROL",
+          "note": "17 exact-head runs success"
+        },
+        {
+          "repo": "GBOGEB/Q_engineering_tools",
+          "head": "593b24f",
+          "class": "RETURN_OWNER_CONFIG",
+          "note": "native Pages build failure; issue #104 needs owner Settings -> Pages -> Source = GitHub Actions"
+        },
+        {
+          "repo": "GBOGEB/document-organization-system",
+          "head": "f238ebf",
+          "class": "PROVE_UNKNOWN",
+          "note": "0 exact-head Actions runs"
+        },
+        {
+          "repo": "GBOGEB/DOCX_RTM_Automation",
+          "head": "f059782",
+          "class": "GREEN_CONTROL",
+          "note": "integrity, Python CI, Pages success"
+        }
       ],
-      "summary": {"classified": 7, "green_control": 5, "return": 1, "prove_unknown": 1, "proof_debt": 2}
+      "summary": {
+        "classified": 7,
+        "green_control": 5,
+        "return": 1,
+        "prove_unknown": 1,
+        "proof_debt": 2
+      }
+    },
+    {
+      "pulse": 2,
+      "series_key": "W1.C1.I2.S1",
+      "observed_on": "2026-10-16",
+      "evidence_class": "OBSERVED_NATIVE_NOT_MATCHED_FOR_PROMOTION",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/issues/419#issuecomment-6220384217",
+      "rows": [
+        {
+          "repo": "GBOGEB/ABACUS",
+          "head": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+          "class": "PROVE_UNKNOWN",
+          "run_id": 38934070453,
+          "job_id": 117085009200,
+          "attempt": 1,
+          "run_url": "https://github.com/GBOGEB/ABACUS/actions/runs/38934070453",
+          "note": "W70 retain 10 success steps; independent admission unresolved"
+        },
+        {
+          "repo": "GBOGEB/CODEX",
+          "head": "e06b166fa5247e33ac6e09c71c1a5207dbe56369",
+          "class": "PROVE_UNKNOWN",
+          "run_id": 38926203549,
+          "job_id": 117058278926,
+          "attempt": 1,
+          "run_url": "https://github.com/GBOGEB/CODEX/actions/runs/38926203549",
+          "note": "Pages-only 7 successful steps, not Crew/REX evidence"
+        },
+        {
+          "repo": "GBOGEB/cryoplant-project",
+          "head": "577353ed5f9cb1d3c19cb2a0967ea13e14fc683e",
+          "class": "PROVE_UNKNOWN",
+          "run_id": 38930253268,
+          "job_id": 117072106782,
+          "attempt": 1,
+          "run_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/38930253268",
+          "note": "7-step guard successful, independent canonicalization run 38926132761 FAIL"
+        },
+        {
+          "repo": "GBOGEB/pipeline-automation-hub",
+          "head": "4136710496894daa7ffd4c920f64a38b9dfd401b",
+          "class": "GREEN_CONTROL",
+          "run_id": 38932710893,
+          "job_id": 117080426703,
+          "attempt": 1,
+          "run_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38932710893",
+          "note": "10-step repeated scoped zero-test guard, admin FPC independent HOLD"
+        },
+        {
+          "repo": "GBOGEB/Q_engineering_tools",
+          "head": "911e0058045e4edd125ad2b67b412275b3329e8f",
+          "class": "RETURN_OWNER_CONFIG",
+          "run_id": 38218875254,
+          "job_id": 114710023075,
+          "attempt": 1,
+          "run_url": "https://github.com/GBOGEB/Q_engineering_tools/actions/runs/38218875254",
+          "note": "Pages build failed; other repo checks succeed"
+        },
+        {
+          "repo": "GBOGEB/document-organization-system",
+          "head": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+          "class": "PROVE_UNKNOWN",
+          "run_id": 38218661281,
+          "job_id": 114709316495,
+          "attempt": 1,
+          "run_url": "https://github.com/GBOGEB/document-organization-system/actions/runs/38218661281",
+          "note": "Seven successful audit steps, no distinct-head repeat CONTROL"
+        },
+        {
+          "repo": "GBOGEB/DOCX_RTM_Automation",
+          "head": "252a6845821ac3981d680730f22beb0b0cae8440",
+          "class": "RETURN_OWNER_CONFIG",
+          "run_id": 38177507900,
+          "job_id": 114582897286,
+          "attempt": 1,
+          "run_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38177507900",
+          "note": "Admission policy FAIL independently of green Python/integrity"
+        }
+      ],
+      "summary": {
+        "classified": 7,
+        "green_control": 1,
+        "return": 2,
+        "prove_unknown": 4,
+        "proof_debt": 6
+      },
+      "comparison": {
+        "with_pulse": 1,
+        "raw_prior_proof_debt": 2,
+        "raw_current_proof_debt": 6,
+        "comparable": false,
+        "matched_nonincreasing": null,
+        "reason": "Run family/control eligibility differs; raw count is not a governed comparable Top7 promotion measure"
+      }
     }
   ],
   "next_pulse": {
-    "pulse": 2,
-    "state": "TODO",
+    "pulse": 3,
+    "state": "COMPARABLE_CONTROL_PENDING",
     "queue_item": "CPQ-011",
-    "proof_debt_definition": "Count of Top7 rows not GREEN_CONTROL on the pulse heads (RETURN, PROVE_UNKNOWN, RED_APPLICATION, WAIT). The Top14 predicate needs pulse 2 <= pulse 1."
+    "proof_debt_definition": "Only matched run eligibility and control semantics can form non-increasing Top7 comparator. Preserve null until qualified."
   }
 }
