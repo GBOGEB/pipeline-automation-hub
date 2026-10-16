@@ -76,7 +76,7 @@ def validate_manifest(manifest, getter=https_get):
                     and all(integer(v) for v in x) for x in selections)
             and len({x[0] for x in selections}) == count,
             "incomplete or duplicate native PR manifest")
-    url = ("/repos/GBOGEB/ABACUS/actions/runs\?head_sha=" + head
+    url = ("/repos/GBOGEB/ABACUS/actions/runs?head_sha=" + head
            + "&event=pull_request&per_page=100")
     api = getter(url)
     require(isinstance(api, dict) and api.get("total_count") == count
@@ -128,7 +128,7 @@ def collect(source_sha, selections, getter=https_get):
         received = []
         for page in range(1, MAX_PAGES + 1):
             result = getter(ROOT + str(run_id) + "/attempts/" + str(attempt) +
-                            "/jobs\?per_page=100&page=" + str(page))
+                            "/jobs?per_page=100&page=" + str(page))
             require(isinstance(result, dict)
                     and type(result.get("total_count")) is int
                     and 0 <= result["total_count"] <= MAX_PAGES * 100
