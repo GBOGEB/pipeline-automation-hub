@@ -70,6 +70,39 @@ jobs:
           else
             python mission-control/federation-atlas/build_atlas.py --method "$SELECTED_METHOD" --stage "$SELECTED_STAGE" --out /tmp/code-purple-atlas
           fi
+      - name: Build CODE-HEALTH Central with exact-checkout and fail-closed corpus
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/central/code_health.py \
+            --exact-git-sha "$EXACT_SHA" --out /tmp/code-purple-atlas
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          out=Path("/tmp/code-purple-atlas")
+          source=Path("mission-control/federation-atlas/central/CODE_HEALTH_CENTRAL_v1.json")
+          m=json.loads((out/"code-health-manifest.json").read_text())
+          report=json.loads((out/"code-health.json").read_text())
+          assert m["checkout_sha"]==report["checkout_sha"]==os.environ["EXACT_SHA"]
+          assert m["source_sha256"]==hashlib.sha256(source.read_bytes()).hexdigest()
+          assert m["admission"]==report["admission"]=="HOLD"
+          assert m["merge_authorized"] is report["merge_authorized"] is False
+          assert report["canonical_root_closures"] is None
+          assert report["crew_auth_launches"] is None
+          assert report["runner_capacity_slots"] is None
+          assert (report["lane_count"],report["stage_count"])==(10,39)
+          assert (report["graph_nodes"],report["graph_edges"])==(26,29)
+          assert report["open_issues"]==143 and report["open_prs"]==68
+          for name,digest in m["files_sha256"].items():
+              assert hashlib.sha256((out/name).read_bytes()).hexdigest()==digest
+          assert (out/"code-health.html").stat().st_size > 10000
+          print(json.dumps({"checkout_sha":os.environ["EXACT_SHA"],
+                            "code_health":"SOURCE_MATCHED_ARTIFACT",
+                            "mode":"READ_ONLY","admission":"HOLD",
+                            "authenticated_crew_launches":None},sort_keys=True))
+          PY
       - name: Produce source-owned side-load inventory and Kubernetes proof ladder
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}

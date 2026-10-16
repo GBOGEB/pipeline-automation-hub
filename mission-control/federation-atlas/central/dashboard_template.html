@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="dark light">
+<title>CODE-HEALTH — Mission Control Central</title>
+<style>
+:root{--bg:#0a1523;--surface:#112237;--surface2:#162a40;--line:#28445e;--text:#e9f2fb;--muted:#9fb7ca;--a:#63c4d6;--warn:#e3bb7b;--red:#f0a69b;--green:#9cdeb5;--blue:#96b5f6;--shadow:0 10px 28px #0003}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);margin:0;font:14px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+a{color:var(--a)}
+a:hover,a:focus-visible{text-decoration:underline}
+button,select,input{font:inherit}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--a);outline-offset:3px}
+.top{border-bottom:1px solid var(--line);background:linear-gradient(115deg,#0d263e,#0a1523);position:relative}
+.wrap{max-width:1440px;margin:0 auto;padding:0 30px}
+.top .wrap{padding-top:30px;padding-bottom:28px}
+.breadcrumb{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.hero{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-end;margin:17px 0 8px}
+h1{font-size:clamp(1.8rem,3.4vw,3.1rem);line-height:1.09;letter-spacing:-.04em;margin:0}
+h2{font-size:1.25rem;letter-spacing:-.015em;margin:0 0 13px}
+h3{font-size:1rem;margin:0 0 8px}
+.sub{max-width:820px;color:var(--muted);font-size:14px}
+.alias{font-size:12px;border:1px solid var(--line);border-radius:100px;padding:5px 11px;color:var(--muted);display:inline-flex;gap:7px;align-items:center}
+.alias b{color:var(--a)}
+.mark{border:1px solid #896d49;background:#33291d;color:#ffe2aa;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:650}
+.meta{font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:18px;margin-top:14px}
+code,.mono{font:12px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}
+.nav{display:flex;gap:6px;overflow:auto;padding:0 30px;border-top:1px solid var(--line);max-width:1440px;margin:0 auto}
+.nav a{white-space:nowrap;padding:13px 13px;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent}
+.nav a:hover,.nav a:focus-visible{color:var(--text);border-color:var(--a)}
+main{max-width:1440px;margin:auto;padding:28px 30px 90px}
+section{margin:0 0 32px}
+.section-head{display:flex;gap:13px;flex-wrap:wrap;align-items:baseline;justify-content:space-between}
+.section-note{color:var(--muted);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin:17px 0}
+.card{border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--surface);box-shadow:var(--shadow)}
+.kpi{min-height:116px}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.kpi strong{display:block;font-size:clamp(1.4rem,2vw,2rem);font-weight:700;margin:5px 0}
+.kpi small,.card small{display:block;color:var(--muted)}
+.pillars{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.pillar{min-height:160px;border-top:3px solid var(--a)}
+.pillar:nth-child(2){border-color:var(--warn)}
+.muted{color:var(--muted)}
+.pairs{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.chip{display:inline-block;background:var(--surface2);border:1px solid var(--line);border-radius:7px;padding:4px 8px;font-size:11px;color:var(--muted)}
+.chip.warn{color:var(--warn)}.chip.red{color:var(--red)}.chip.good{color:var(--green)}
+.triad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.cycle{border-top:3px solid #96b5f6}
+.cycle:nth-child(2){border-color:var(--a)}.cycle:nth-child(3){border-color:var(--warn)}
+dl{margin:12px 0 0}dl div{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding:7px 0}dt{color:var(--muted);font-size:12px}dd{margin:0;font:12px ui-monospace,Consolas,monospace;text-align:right}
+.scroll{overflow:auto;max-width:100%;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:690px;font-size:12px}
+th,td{padding:11px 13px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#1a3047;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#d7eaf8;position:sticky;top:0}
+td small{color:var(--muted);display:block}
+tr:last-child td{border-bottom:0}
+tr:hover td{background:#ffffff08}
+.count{font-size:11px;color:var(--muted)}
+.board-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:13px 0}
+select,input{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:7px;padding:9px 11px}
+input[type=search]{min-width:280px;flex:1}
+#work-table tr[hidden]{display:none}
+.graph{overflow:auto;background:#0d1a2a;border:1px solid var(--line);border-radius:12px;padding:10px;max-height:650px}
+.graph svg{display:block;min-width:950px;width:100%;max-width:1250px;height:auto}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:10px 0}
+.edge{width:30px;height:0;border-top:2px solid #8da2b6;display:inline-block;vertical-align:middle;margin-right:4px}
+.edge.dashed{border-top-style:dashed}
+.sipoc{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.sipoc p{font-size:12px;color:var(--muted);margin:0}
+.narrative{border-left:3px solid var(--a);padding:12px 17px;background:#0d2941;border-radius:0 8px 8px 0}
+.narrative strong{color:var(--text)}
+.narrative p{margin:6px 0;color:var(--muted)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.codebox{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#0a1828;border:1px solid var(--line);border-radius:9px;padding:12px}
+footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:12px}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}.sipoc{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:720px){.wrap{padding:0 17px}.top .wrap{padding:24px 17px}.nav{padding:0 10px}main{padding:20px 17px 60px}.cards{grid-template-columns:repeat(2,1fr)}.triad,.pillars,.two-col{grid-template-columns:1fr}.sipoc{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-color-scheme:light){:root{--bg:#f4f7fa;--surface:#fff;--surface2:#eaf1f6;--line:#bfcbd8;--text:#172b3e;--muted:#52697e;--a:#006d84;--warn:#806129;--red:#a73b3b;--green:#22784e;--blue:#275bad;--shadow:0 6px 20px #112d4810}.top{background:#e8f1f7}.mark{background:#ffeed0;color:#764d00;border-color:#deb47c}th{background:#dce8f1;color:#24354a}.narrative{background:#e5f2f8}.graph{background:#112034}.codebox{background:#f2f6f9}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="breadcrumb">CODE PURPLE / Mission Control / CODE-HEALTH FRONTIER</div>
+    <div class="hero">
+      <div>
+        <div class="alias">Proposed naming alias <b>__ALIAS__</b> · existing repository retained</div>
+        <h1>Mission Control Central</h1>
+        <p class="sub">A source-bound control plane for the two execution pillars, six-repository issue/PR census, causal roots, temporal DAG, queue and runner pressure, N−1 / N / N+1, and Golden Thread evidence.</p>
+      </div>
+      <div class="mark" role="status">OBSERVATIONAL · ADMISSION HOLD</div>
+    </div>
+    <div class="meta">
+      <span>Snapshot date: <strong>__CENSUS_DATE__</strong> (day-level, not a live clock)</span>
+      <span>Hub checkout: <code>__SOURCE_CHECKOUT_SHA__</code></span>
+      <span>Observed hub master: <code>__SNAPSHOT_SHA__</code></span>
+      <span>Worker launches / accepted REX: <strong>UNKNOWN</strong></span>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Sections">
+    <a href="#cycles">N−1/N/N+1</a><a href="#pillars">Two pillars</a>
+    <a href="#register">Repo register</a><a href="#work">Root/BD queue</a>
+    <a href="#network">Mycelium DAG</a><a href="#telemetry">Telemetry</a>
+    <a href="#sipoc">SIPOC</a><a href="#forecast">Forecast</a><a href="#controls">Controls</a>
+  </nav>
+</header>
+<main>
+  <section aria-label="Scope indicators">
+    <div class="cards">__CARDS__</div>
+    <p class="section-note">These counts are GitHub record totals for six named repositories, not 90-repository federation totals or accepted engineering root closures.</p>
+  </section>
+  <section id="cycles">
+    <div class="section-head"><h2>Past → Present → Next</h2><span class="section-note">Every user review carries all three, preserving inherited obligations</span></div>
+    <div class="triad">__CYCLES__</div>
+    <div class="narrative">
+      <strong>History is append-only at the evidence boundary.</strong>
+      <p>N−1 retains the previous checked observation. N critiques and expands it without assuming silent approval changes source authority. N+1 is a timestamped proposal before its result exists: predicted, target and actual must be separate fields. UNKNOWN stays null.</p>
+    </div>
+  </section>
+  <section id="pillars">
+    <h2>Two interoperating execution pillars</h2>
+    <div class="pillars">
+      <article class="card pillar"><div class="eyebrow">Pillar L · Developer local / cold</div><h3>Isolated PC / clean clone</h3><p class="muted">Proposed <code>C:\repos</code> pilot: preconfig → preflight → precommit → cold static → testflight → local evidence. Python, JSON/YAML/TOML, lint, PowerShell and optional Visual Basic/VBA probes. No observed local execution yet.</p><div class="pairs"><span class="chip warn">LOCAL UNVERIFIED</span><span class="chip">Never auto-upload secrets</span><span class="chip">No untrusted macro execution</span></div></article>
+      <article class="card pillar"><div class="eyebrow">Pillar R · Native GitHub / Federation</div><h3>PR → queue → runner → artifact</h3><p class="muted">Native run/job/attempt evidence, real JUnit/coverage/scans, governed source contracts, independent P0 gates and owner review. CODEX proposal jobs do not become ABACUS Crew launches; no cross-repo mutation authority is inferred.</p><div class="pairs"><span class="chip warn">CAPACITY UNKNOWN</span><span class="chip red">P0 ADMISSION HOLD</span><span class="chip">Source SHA required</span></div></article>
+    </div>
+  </section>
+  <section id="register">
+    <div class="section-head"><h2>Six-repository GitHub Issue_Register</h2><span class="section-note">Pinned branch + exact head; closed PRs include merged and closed-unmerged</span></div>
+    <div class="scroll"><table><thead><tr><th>Repository</th><th>Default branch / head</th><th>Issues open</th><th>Issues closed</th><th>PRs open</th><th>PRs closed</th></tr></thead><tbody>__REPOS__</tbody></table></div>
+  </section>
+  <section id="work">
+    <div class="section-head"><h2>Root / BD work queue <span class="count">__WORK_COUNT__ explicitly represented work items</span></h2><span class="section-note">Routing is advisory; lease conflicts and missing runtime capacity mean WAIT, not dispatch</span></div>
+    <div class="board-controls">
+      <label for="query">Find owner, root or repository</label><input id="query" type="search" placeholder="e.g., A10, handover, CODEX, C2">
+      <label for="priority">Priority</label>
+      <select id="priority"><option value="ALL">All</option><option>P0</option><option>P1</option><option>P2</option><option>P3</option></select>
+      <span class="chip" id="visible-count" aria-live="polite">__WORK_COUNT__ items</span>
+    </div>
+    <div class="scroll"><table id="work-table"><thead><tr><th>Atom</th><th>Root family / issue or PR</th><th>Canonical owner</th><th>Source state</th><th>Next route</th><th>Dependency</th></tr></thead><tbody>__WORK__</tbody></table></div>
+  </section>
+  <section id="network">
+    <div class="section-head"><h2>Mycelium / Golden Thread — typed execution graph</h2><span class="section-note">__NODE_COUNT__ nodes · __EDGE_COUNT__ edges; not all are native executions</span></div>
+    <div class="legend"><span><i class="edge dashed"></i>DECLARED design relationship</span><span><i class="edge"></i>historically source-linked observation</span><span>Core join: SHA → run/attempt → job/step → artifact → root → owner → consumer</span></div>
+    <figure class="graph">__GRAPH__</figure>
+    <p class="section-note">A successful native GitHub job proves that job only. Neither DAB proposal jobs nor a CODEX staging PR can authenticate an ABACUS Crew launch or REX acceptance.</p>
+  </section>
+  <section id="telemetry">
+    <h2>What the telemetry proves — and does not</h2>
+    <div class="scroll"><table><thead><tr><th>Measurement cohort</th><th>Evidence state</th><th>Reason / next proof</th></tr></thead><tbody>__TELEMETRY__</tbody></table></div>
+    <div class="two-col" style="margin-top:14px">
+      <article class="card"><h3>Clock and execution time</h3><p class="muted">Store native UTC <code>job.created_at</code>, <code>started_at</code> and <code>completed_at</code>. Queue = start minus created; runtime = complete minus start. Local preflight clock requires a local receipt. A missing timestamp never becomes zero.</p></article>
+      <article class="card"><h3>Capacity and back-pressure</h3><p class="muted">Native eligible runner slots/queue depth are UNKNOWN until bounded pool evidence exists. Policy can suggest local cold tests first, or schedule an owner-approved next pulse; it cannot claim available Copilot/GitHub runners or automatically weaken required checks.</p></article>
+    </div>
+  </section>
+  <section id="forecast">
+    <h2>N+1 pre-outcome forecast versus actual</h2>
+    <div class="scroll"><table><thead><tr><th>ID</th><th>Metric</th><th>Baseline N</th><th>Predicted N+1</th><th>Desired target</th><th>Actual N+1</th><th>Forecast basis</th></tr></thead><tbody>__FORECASTS__</tbody></table></div>
+    <p class="section-note">Predictions are conservative scenario assumptions, not MIP, PCA or Bradley–Terry admission. Accuracy is not scored before a matched actual observation arrives.</p>
+  </section>
+  <section id="sipoc">
+    <h2>SIPOC · one source, many valid observers</h2><div class="sipoc">__SIPOC__</div>
+  </section>
+  <section id="controls">
+    <h2>Admission and architecture boundary</h2>
+    <div class="two-col">
+      <article class="card"><h3>Independent P0 planes</h3><p class="muted">Enterprise coverage, governance policy/inventory, A10 confidentiality, Bandit, Safety, eligible independent review and product-owner acceptance are non-compensating. Green on one cannot clear another. No automatic merge or accepted root closure.</p></article>
+      <article class="card"><h3>Co-development and source leases</h3><p class="muted">Before any code wave: recensus current PR heads/changed paths, join canonical owners, detect overlapping leases, queue only disjoint patches, verify combined exact parent tree, and preserve inherited defects. Islands become connected by explicit evidence edges, not implicit trust.</p></article>
+    </div>
+    <p class="section-note">Canonical sources: <a href="https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/PROCESS_LANES_v1.json">Process lanes</a> · <a href="https://github.com/GBOGEB/pipeline-automation-hub/issues/153">Fleet issue register</a> · <a href="https://github.com/GBOGEB/CODEX/issues/977">Crew execution promotion</a> · <a href="https://github.com/GBOGEB/ABACUS/issues/1860">ABACUS admission</a>.</p>
+  </section>
+</main>
+<footer class="wrap">CODE-HEALTH is a read-only generated projection, not a competing SSOT. No user-PC connection, authenticated Crew launch, native runner reservation, independent review, QPS engineering acceptance or main merge is implied by this dashboard. Evidence/status provenance must be re-pinned on subsequent pulses.</footer>
+<script>
+(function(){
+  "use strict";
+  const q=document.getElementById("query");
+  const p=document.getElementById("priority");
+  const rows=Array.from(document.querySelectorAll("#work-table tbody tr"));
+  const count=document.getElementById("visible-count");
+  function filter(){
+    const needle=q.value.trim().toLowerCase();
+    let shown=0;
+    rows.forEach(row=>{
+      const ok=(p.value==="ALL"||row.dataset.priority===p.value)&&
+        row.textContent.toLowerCase().includes(needle);
+      row.hidden=!ok;
+      if(ok)shown++;
+    });
+    count.textContent=shown+" / "+rows.length+" items";
+  }
+  q.addEventListener("input",filter);
+  p.addEventListener("change",filter);
+  filter();
+})();
+</script>
+</body>
+</html>

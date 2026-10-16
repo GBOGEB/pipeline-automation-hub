@@ -1,0 +1,1146 @@
+{
+  "schema": "missioncontrol.code_health_frontier.v1",
+  "version": "1.0.0",
+  "census_date": "2026-10-16",
+  "observed_at_utc": null,
+  "authority": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "branch": "master",
+    "source_sha": "4b0a3255c8f194d840da8a38664d8920679338c9",
+    "mode": "READ_ONLY_CANDIDATE",
+    "authority_transfer": false,
+    "mutation_enabled": false,
+    "merge_authorized": false,
+    "engineering_root_credit": 0,
+    "alias_candidate": "gg_mCC",
+    "proposed_long_name": "gg_MCrtlCentral",
+    "rename_authorized": false
+  },
+  "source_contract": {
+    "canonical_process": "mission-control/federation-atlas/PROCESS_LANES_v1.json",
+    "canonical_method_registry": "mission-control/v2/MC_METHOD_PROFILE_REGISTRY_v1.json",
+    "canonical_kpis": "mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json",
+    "canonical_beams": "mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json",
+    "owner_issues": [
+      "https://github.com/GBOGEB/pipeline-automation-hub/issues/153",
+      "https://github.com/GBOGEB/pipeline-automation-hub/issues/520",
+      "https://github.com/GBOGEB/pipeline-automation-hub/issues/63",
+      "https://github.com/GBOGEB/ABACUS/issues/1860",
+      "https://github.com/GBOGEB/CODEX/issues/977"
+    ]
+  },
+  "pillars": [
+    {
+      "id": "L",
+      "name": "LOCAL_COLD",
+      "status": "UNVERIFIED",
+      "source_kind": "LOCAL_PROPOSED",
+      "root_path_windows": "C:\\repos",
+      "machine_accessed": false,
+      "lanes": [
+        "PREFLIGHT",
+        "PRECONFIG",
+        "PRECOMMIT",
+        "COLD_STATIC",
+        "TESTFLIGHT",
+        "LOCAL_PROOF"
+      ],
+      "diagnostics": [
+        "git_status",
+        "sha256",
+        "python_compile",
+        "pytest",
+        "ruff",
+        "black",
+        "isort",
+        "flake8",
+        "markdownlint",
+        "yaml_json_toml",
+        "PowerShell",
+        "Visual_Basic_opt_in"
+      ],
+      "runtime_receipts": null,
+      "security": "ISOLATED_SANDBOX_NO_UNTRUSTED_MACROS"
+    },
+    {
+      "id": "R",
+      "name": "NATIVE_GITHUB_FEDERATED",
+      "status": "OBSERVED_PARTIAL",
+      "source_kind": "GITHUB",
+      "root_path_windows": null,
+      "machine_accessed": null,
+      "lanes": [
+        "ISSUE_INGRESS",
+        "PR",
+        "WORKFLOW",
+        "QUEUE",
+        "JOB",
+        "STEP",
+        "ARTIFACT",
+        "GOVERNANCE",
+        "REVIEW",
+        "REX"
+      ],
+      "diagnostics": [
+        "GitHub_Actions",
+        "CodeQL",
+        "Semgrep",
+        "Bandit",
+        "Safety",
+        "coverage_xml",
+        "JUnit",
+        "audit_ci_workflows"
+      ],
+      "runtime_receipts": "SOURCE_BOUND_WHEN_SPECIFIC_RUN_IDS_SUPPLIED",
+      "security": "INDEPENDENT_NON_COMPENSATING_GATES"
+    }
+  ],
+  "cohort_taxonomy": [
+    {
+      "id": "LOCAL_COLD",
+      "definition": "One checkout + exact source SHA + toolchain + config + OS plus bounded local test set.",
+      "admission": "PREPARE_ONLY"
+    },
+    {
+      "id": "NATIVE_MATRIX",
+      "definition": "One native GitHub workflow run and attempt on a single exact SHA, with OS/Python axes, jobs and steps.",
+      "admission": "PR_SIDE_EVIDENCE_ONLY"
+    },
+    {
+      "id": "MATCHED_COVERAGE",
+      "definition": "Same repository, scope, source selection and eligible line/branch denominators on before/after SHAs.",
+      "admission": "DELTA_DIAGNOSTIC_NOT_MERGE"
+    },
+    {
+      "id": "RUNNER_CAPACITY",
+      "definition": "Same runner pool, observed UTC window and queue/job timestamps; no fallback to free-slot count without native inventory.",
+      "admission": "OBSERVATIONAL"
+    },
+    {
+      "id": "N_MINUS_1_TO_N",
+      "definition": "Two immutable date/identity-bound states; a changed population requires rebaseline not arithmetic credit.",
+      "admission": "HISTORICAL_COMPARISON"
+    }
+  ],
+  "temporal_states": [
+    "INPUT_REQUEST",
+    "PRECONFIG",
+    "PRECOMMIT",
+    "COLD_STATIC",
+    "TESTFLIGHT",
+    "PR_CREATED",
+    "WORKFLOW_QUEUED",
+    "JOB_STARTED",
+    "JOB_COMPLETED",
+    "ARTIFACT_CAPTURED",
+    "NATIVE_PROOF",
+    "P0_ADMISSION",
+    "MAIN_RECENSUS"
+  ],
+  "temporal_rules": {
+    "event_fields": [
+      "source_sha",
+      "run_id",
+      "run_attempt",
+      "job_id",
+      "step_id",
+      "queued_at_utc",
+      "started_at_utc",
+      "completed_at_utc",
+      "evidence_url"
+    ],
+    "timestamps_default": null,
+    "queue_seconds": "JOB_STARTED_MINUS_NATIVE_JOB_CREATED",
+    "runtime_seconds": "JOB_COMPLETED_MINUS_JOB_STARTED",
+    "preflight_seconds": "LOCAL_END_MINUS_LOCAL_START_IF_RECEIPT",
+    "wait_age_seconds": "AS_OF_MINUS_QUEUED_AT_IF_SAME_CLOCK",
+    "p95_min_samples": 1,
+    "unknown_when_no_samples": true
+  },
+  "runner_capacity": {
+    "native_available_slots": null,
+    "native_active_jobs": null,
+    "native_queued_jobs": null,
+    "local_available_slots": null,
+    "measured_runner_pool": null,
+    "measurement_window_utc": null,
+    "policy_remote_max_heavy": 2,
+    "policy_local_max_cold": 3,
+    "policy_mode": "ADVISORY_ONLY_NO_AUTO_DISPATCH",
+    "when_unmeasured": "WAIT_CAPACITY_NO_ASSERTED_LAUNCH"
+  },
+  "stage_rules": {
+    "transitions": [
+      "MAY_START",
+      "MUST_START",
+      "WAIT_INPUT",
+      "WAIT_CAPACITY",
+      "WAIT_OWNER",
+      "BLOCKED_P0",
+      "READY_FOR_NATIVE",
+      "PROOF_PENDING",
+      "CONTROL"
+    ],
+    "never_skip": [
+      "A10",
+      "SECURITY",
+      "GOVERNANCE",
+      "INDEPENDENT_REVIEW",
+      "QPS_OWNER_ACCEPTANCE"
+    ],
+    "disjointness": "ONE_OWNER_LEASE_PER_SOURCE_PATH_CONFLICT",
+    "intervening_pr_rule": "RE_CENSUS_HEAD_AND_CHANGED_PATHS_BEFORE_REPAIR"
+  },
+  "census": {
+    "scope": "SIX_NAMED_REPOSITORIES_NOT_ALL_FLEET",
+    "source_type": "GITHUB_SEARCH_ISSUES_AND_REPO_COMMITS",
+    "population_complete_for_six": true,
+    "population_complete_for_fleet": false,
+    "repositories": [
+      {
+        "id": "GBOGEB/pipeline-automation-hub",
+        "default_branch": "master",
+        "source_sha": "4b0a3255c8f194d840da8a38664d8920679338c9",
+        "role": "MISSIONCONTROL",
+        "issue_register": {
+          "open": 29,
+          "closed": 37
+        },
+        "pull_request_register": {
+          "open": 2,
+          "closed": 495
+        },
+        "github_api": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub",
+        "readback_class": "DATE_BOUNDED_GITHUB_API",
+        "root_open": null,
+        "root_closed": null,
+        "native_runner_slots": null
+      },
+      {
+        "id": "GBOGEB/ABACUS",
+        "default_branch": "main",
+        "source_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+        "role": "DOW_SECURITY_TESTS",
+        "issue_register": {
+          "open": 48,
+          "closed": 252
+        },
+        "pull_request_register": {
+          "open": 66,
+          "closed": 1690
+        },
+        "github_api": "https://api.github.com/repos/GBOGEB/ABACUS",
+        "readback_class": "DATE_BOUNDED_GITHUB_API",
+        "root_open": null,
+        "root_closed": null,
+        "native_runner_slots": null
+      },
+      {
+        "id": "GBOGEB/CODEX",
+        "default_branch": "main",
+        "source_sha": "ee5a06e6e2873dbfd4bf40f23e367a849d7650e1",
+        "role": "KEB_CREW_STAGING",
+        "issue_register": {
+          "open": 9,
+          "closed": 34
+        },
+        "pull_request_register": {
+          "open": 0,
+          "closed": 1010
+        },
+        "github_api": "https://api.github.com/repos/GBOGEB/CODEX",
+        "readback_class": "DATE_BOUNDED_GITHUB_API",
+        "root_open": null,
+        "root_closed": null,
+        "native_runner_slots": null
+      },
+      {
+        "id": "GBOGEB/cryoplant-project",
+        "default_branch": "main",
+        "source_sha": "bd7d0156eb581f7803b73fe7158b6b49148d5229",
+        "role": "QPS_OWNER_ENGINEERING",
+        "issue_register": {
+          "open": 55,
+          "closed": 72
+        },
+        "pull_request_register": {
+          "open": 0,
+          "closed": 1806
+        },
+        "github_api": "https://api.github.com/repos/GBOGEB/cryoplant-project",
+        "readback_class": "DATE_BOUNDED_GITHUB_API",
+        "root_open": null,
+        "root_closed": null,
+        "native_runner_slots": null
+      },
+      {
+        "id": "GBOGEB/gg_MATH",
+        "default_branch": "main",
+        "source_sha": "c5cd3e30a8e241111fc9f15367f3b92ba0393ea7",
+        "role": "MATH_VALIDATION",
+        "issue_register": {
+          "open": 1,
+          "closed": 7
+        },
+        "pull_request_register": {
+          "open": 0,
+          "closed": 45
+        },
+        "github_api": "https://api.github.com/repos/GBOGEB/gg_MATH",
+        "readback_class": "DATE_BOUNDED_GITHUB_API",
+        "root_open": null,
+        "root_closed": null,
+        "native_runner_slots": null
+      },
+      {
+        "id": "GBOGEB/DOCX_RTM_Automation",
+        "default_branch": "main",
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "role": "DOCS_RENDER_QA",
+        "issue_register": {
+          "open": 1,
+          "closed": 10
+        },
+        "pull_request_register": {
+          "open": 0,
+          "closed": 80
+        },
+        "github_api": "https://api.github.com/repos/GBOGEB/DOCX_RTM_Automation",
+        "readback_class": "DATE_BOUNDED_GITHUB_API",
+        "root_open": null,
+        "root_closed": null,
+        "native_runner_slots": null
+      }
+    ],
+    "totals": {
+      "open_issues": 143,
+      "closed_issues": 412,
+      "open_prs": 68,
+      "closed_prs": 5126
+    },
+    "global_other_repositories": null,
+    "global_issue_counts": null
+  },
+  "graph": {
+    "nodes": [
+      {
+        "id": "R1",
+        "kind": "REPOSITORY",
+        "label": "pipeline-automation-hub",
+        "repo": "GBOGEB/pipeline-automation-hub"
+      },
+      {
+        "id": "R2",
+        "kind": "REPOSITORY",
+        "label": "ABACUS",
+        "repo": "GBOGEB/ABACUS"
+      },
+      {
+        "id": "R3",
+        "kind": "REPOSITORY",
+        "label": "CODEX",
+        "repo": "GBOGEB/CODEX"
+      },
+      {
+        "id": "R4",
+        "kind": "REPOSITORY",
+        "label": "cryoplant-project",
+        "repo": "GBOGEB/cryoplant-project"
+      },
+      {
+        "id": "R5",
+        "kind": "REPOSITORY",
+        "label": "gg_MATH",
+        "repo": "GBOGEB/gg_MATH"
+      },
+      {
+        "id": "R6",
+        "kind": "REPOSITORY",
+        "label": "DOCX_RTM_Automation",
+        "repo": "GBOGEB/DOCX_RTM_Automation"
+      },
+      {
+        "id": "LOCAL",
+        "kind": "PILLAR",
+        "label": "L - Local / Cold"
+      },
+      {
+        "id": "NATIVE",
+        "kind": "PILLAR",
+        "label": "R - GitHub / Federation"
+      },
+      {
+        "id": "L_SUPPLY",
+        "kind": "LANE",
+        "label": "SUPPLY"
+      },
+      {
+        "id": "L_TRUST",
+        "kind": "LANE",
+        "label": "TRUST"
+      },
+      {
+        "id": "L_CENSUS",
+        "kind": "LANE",
+        "label": "CENSUS"
+      },
+      {
+        "id": "L_DMAIC",
+        "kind": "LANE",
+        "label": "DMAIC"
+      },
+      {
+        "id": "L_3PSTAR",
+        "kind": "LANE",
+        "label": "3P*"
+      },
+      {
+        "id": "L_MIP",
+        "kind": "LANE",
+        "label": "MIP"
+      },
+      {
+        "id": "L_LDAB",
+        "kind": "LANE",
+        "label": "LDAB"
+      },
+      {
+        "id": "L_STAT",
+        "kind": "LANE",
+        "label": "STAT"
+      },
+      {
+        "id": "L_REX",
+        "kind": "LANE",
+        "label": "REX"
+      },
+      {
+        "id": "L_GATE",
+        "kind": "LANE",
+        "label": "GATE"
+      },
+      {
+        "id": "CI",
+        "kind": "ROOT",
+        "label": "Enterprise CI"
+      },
+      {
+        "id": "GOV",
+        "kind": "ROOT",
+        "label": "Policy + Inventory"
+      },
+      {
+        "id": "A10",
+        "kind": "ROOT",
+        "label": "A10 Confidentiality"
+      },
+      {
+        "id": "SECURITY",
+        "kind": "ROOT",
+        "label": "Bandit / Safety"
+      },
+      {
+        "id": "REVIEW",
+        "kind": "ROOT",
+        "label": "Independent Review"
+      },
+      {
+        "id": "MC_GATE",
+        "kind": "CONTROL",
+        "label": "P0 Admission HOLD"
+      },
+      {
+        "id": "CREW",
+        "kind": "CONTROL",
+        "label": "Crew REX - UNKNOWN"
+      },
+      {
+        "id": "LOCAL_COLD",
+        "kind": "CONTROL",
+        "label": "Cold preflight - UNKNOWN"
+      }
+    ],
+    "edges": [
+      {
+        "id": "E01",
+        "from": "LOCAL",
+        "to": "LOCAL_COLD",
+        "type": "PREFLIGHT",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E02",
+        "from": "LOCAL_COLD",
+        "to": "L_TRUST",
+        "type": "CANDIDATE_PROOF",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E03",
+        "from": "NATIVE",
+        "to": "L_SUPPLY",
+        "type": "OBSERVE",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E04",
+        "from": "L_SUPPLY",
+        "to": "L_TRUST",
+        "type": "SOURCE_BOUND",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E05",
+        "from": "L_TRUST",
+        "to": "L_CENSUS",
+        "type": "ELIGIBLE_INPUT",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E06",
+        "from": "L_CENSUS",
+        "to": "L_DMAIC",
+        "type": "ROOT_CLUSTER",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E07",
+        "from": "L_DMAIC",
+        "to": "L_3PSTAR",
+        "type": "IMPROVEMENT_METHOD",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E08",
+        "from": "L_3PSTAR",
+        "to": "L_MIP",
+        "type": "ITERATION",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E09",
+        "from": "L_MIP",
+        "to": "L_LDAB",
+        "type": "DEBUG",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E10",
+        "from": "L_LDAB",
+        "to": "L_STAT",
+        "type": "RECEIPT",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E11",
+        "from": "L_STAT",
+        "to": "L_REX",
+        "type": "CONTROL",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E12",
+        "from": "L_REX",
+        "to": "L_GATE",
+        "type": "GOVERNANCE",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E13",
+        "from": "R1",
+        "to": "L_SUPPLY",
+        "type": "REPO_SOURCE",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E14",
+        "from": "R2",
+        "to": "L_SUPPLY",
+        "type": "REPO_SOURCE",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E15",
+        "from": "R3",
+        "to": "L_SUPPLY",
+        "type": "REPO_SOURCE",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E16",
+        "from": "R4",
+        "to": "L_SUPPLY",
+        "type": "REPO_SOURCE",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E17",
+        "from": "R5",
+        "to": "L_SUPPLY",
+        "type": "REPO_SOURCE",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E18",
+        "from": "R6",
+        "to": "L_SUPPLY",
+        "type": "REPO_SOURCE",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E19",
+        "from": "R2",
+        "to": "CI",
+        "type": "OWNS",
+        "binding": "OBSERVED_HISTORICAL",
+        "evidence": "https://github.com/GBOGEB/ABACUS/actions/runs/38869180768"
+      },
+      {
+        "id": "E20",
+        "from": "R2",
+        "to": "GOV",
+        "type": "OWNS",
+        "binding": "OBSERVED_HISTORICAL",
+        "evidence": "https://github.com/GBOGEB/ABACUS/actions/runs/38869180608"
+      },
+      {
+        "id": "E21",
+        "from": "R3",
+        "to": "CREW",
+        "type": "DISPATCH_CANDIDATE",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E22",
+        "from": "CREW",
+        "to": "L_REX",
+        "type": "RECEIPT_REQUIRED",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E23",
+        "from": "CI",
+        "to": "MC_GATE",
+        "type": "NON_COMPENSATING",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E24",
+        "from": "GOV",
+        "to": "MC_GATE",
+        "type": "NON_COMPENSATING",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E25",
+        "from": "A10",
+        "to": "MC_GATE",
+        "type": "NON_COMPENSATING",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E26",
+        "from": "SECURITY",
+        "to": "MC_GATE",
+        "type": "NON_COMPENSATING",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E27",
+        "from": "REVIEW",
+        "to": "MC_GATE",
+        "type": "NON_COMPENSATING",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E28",
+        "from": "L_GATE",
+        "to": "MC_GATE",
+        "type": "OWNER_ADMISSION",
+        "binding": "DECLARED",
+        "evidence": null
+      },
+      {
+        "id": "E29",
+        "from": "MC_GATE",
+        "to": "R2",
+        "type": "CONTROL_FEEDBACK",
+        "binding": "DECLARED",
+        "evidence": null
+      }
+    ],
+    "edge_rule": "DECLARED_HAS_NO_EXECUTION_AUTHORITY;OBSERVED_HISTORICAL_NOT_CURRENT_PROOF"
+  },
+  "work": [
+    {
+      "id": "W01",
+      "repo": "GBOGEB/CODEX",
+      "ref_type": "issue",
+      "number": 977,
+      "root_family": "AUTHENTICATED_CREW_DISPATCH",
+      "owner": "CODEX_GATEWAY_AND_ABACUS_EXECUTOR",
+      "status": "STAGED_NOT_LAUNCHED",
+      "priority": "P0",
+      "lease": [
+        "mission_control/mycelium/**"
+      ],
+      "depends": [
+        "OWNER_EXECUTOR_ARCHITECTURE",
+        "ABACUS_AUTHORITY"
+      ],
+      "native_receipt": null,
+      "can_start_condition": "OWNER_APPROVED_ABACUS_LOCAL_EXECUTOR",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "id": "W02",
+      "repo": "GBOGEB/ABACUS",
+      "ref_type": "issue",
+      "number": 1860,
+      "root_family": "INDEPENDENT_MAIN_ADMISSION",
+      "owner": "ABACUS_REPOSITORY_OWNER",
+      "status": "HOLD",
+      "priority": "P0",
+      "lease": [
+        ".github/workflows/**",
+        "ci/governance/**"
+      ],
+      "depends": [
+        "W03",
+        "W04",
+        "W05",
+        "W06"
+      ],
+      "native_receipt": null,
+      "can_start_condition": "ALL_P0_GATES_AND_ELIGIBLE_REVIEW",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "id": "W03",
+      "repo": "GBOGEB/ABACUS",
+      "ref_type": "pr",
+      "number": 2045,
+      "root_family": "ENTERPRISE_PY39_COVERAGE",
+      "owner": "ABACUS_CI_OWNER",
+      "status": "PROOF_PENDING",
+      "priority": "P0",
+      "lease": [
+        ".github/workflows/dmaic-enterprise-ci.yml",
+        "DMAIC_V3/requirements.txt"
+      ],
+      "depends": [],
+      "native_receipt": null,
+      "can_start_condition": "EXACT_HEAD_RUN",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2045"
+    },
+    {
+      "id": "W04",
+      "repo": "GBOGEB/ABACUS",
+      "ref_type": "pr",
+      "number": 2041,
+      "root_family": "WORKFLOW_INVENTORY_GOVERNANCE",
+      "owner": "ABACUS_GOVERNANCE_OWNER",
+      "status": "P0_REVIEW_PENDING",
+      "priority": "P0",
+      "lease": [
+        "ci/governance/workflow_policy.json",
+        "docs/ci/WORKFLOW_RATIONALIZATION.md"
+      ],
+      "depends": [],
+      "native_receipt": null,
+      "can_start_condition": "A10_AUTHORIZED_DISPOSITION",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2041"
+    },
+    {
+      "id": "W05",
+      "repo": "GBOGEB/ABACUS",
+      "ref_type": "pr",
+      "number": 2033,
+      "root_family": "INDEPENDENT_GATE_TELEMETRY",
+      "owner": "ABACUS_TELEMETRY_OWNER",
+      "status": "PROOF_PENDING",
+      "priority": "P0",
+      "lease": [
+        "tools/mip_ci_wave_telemetry.py",
+        "tests/test_mip_ci_independent_gates.py"
+      ],
+      "depends": [],
+      "native_receipt": null,
+      "can_start_condition": "SOURCE_TESTS_AND_NATIVE_CI",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2033"
+    },
+    {
+      "id": "W06",
+      "repo": "GBOGEB/ABACUS",
+      "ref_type": "issue",
+      "number": 1996,
+      "root_family": "A10_CONFIDENTIALITY",
+      "owner": "AUTHORIZED_HUMAN_SECURITY_REVIEW",
+      "status": "HOLD",
+      "priority": "P0",
+      "lease": [
+        "ci/governance/workflow_policy.json"
+      ],
+      "depends": [],
+      "native_receipt": null,
+      "can_start_condition": "INDEPENDENT_OWNER_REVIEW",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1996"
+    },
+    {
+      "id": "W07",
+      "repo": "GBOGEB/ABACUS",
+      "ref_type": "pr",
+      "number": 2046,
+      "root_family": "C2_COVERAGE_AND_BACKUP",
+      "owner": "ABACUS_C2_OWNER",
+      "status": "PROOF_PENDING",
+      "priority": "P1",
+      "lease": [
+        "DMAIC_V3/core/utils.py",
+        "DMAIC_V3/convergence/background_change_detector.py"
+      ],
+      "depends": [
+        "W03"
+      ],
+      "native_receipt": null,
+      "can_start_condition": "EXACT_HEAD_CI",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2046"
+    },
+    {
+      "id": "W08",
+      "repo": "GBOGEB/ABACUS",
+      "ref_type": "pr",
+      "number": 2055,
+      "root_family": "C4B_TEST_SYSTEM_FALSE_GREEN",
+      "owner": "ABACUS_C4B_OWNER",
+      "status": "DRAFT_PROOF_PENDING",
+      "priority": "P1",
+      "lease": [
+        "DMAIC_V3/core/test_system_bridge.py"
+      ],
+      "depends": [
+        "W07"
+      ],
+      "native_receipt": null,
+      "can_start_condition": "STACKED_ANCESTRY_AND_TESTS",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2055"
+    },
+    {
+      "id": "W09",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "ref_type": "issue",
+      "number": 520,
+      "root_family": "PHASE02_TEMPORAL_KPI",
+      "owner": "MC_METRIC_OWNER",
+      "status": "BACKLOG",
+      "priority": "P1",
+      "lease": [
+        "mission-control/federation-atlas/PHASE02*"
+      ],
+      "depends": [
+        "W05"
+      ],
+      "native_receipt": null,
+      "can_start_condition": "EXACT_METRIC_ARTIFACT",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/520"
+    },
+    {
+      "id": "W10",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "ref_type": "issue",
+      "number": 153,
+      "root_family": "GLOBAL_ISSUE_REGISTER",
+      "owner": "MC_BD_OWNER",
+      "status": "BACKLOG",
+      "priority": "P1",
+      "lease": [
+        "mission-control/federation-atlas/central/**"
+      ],
+      "depends": [],
+      "native_receipt": null,
+      "can_start_condition": "SNAPSHOT_AND_ROOT_IDENTITY",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/153"
+    },
+    {
+      "id": "W11",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "ref_type": "pr",
+      "number": 561,
+      "root_family": "GOGREEN_WORKER_SUBTYPE",
+      "owner": "GOGREEN_OWNER",
+      "status": "ONGOING_CO_DEVELOPMENT",
+      "priority": "P1",
+      "lease": [
+        "mission-control/gogreen/**"
+      ],
+      "depends": [],
+      "native_receipt": null,
+      "can_start_condition": "OWNER_HEAD_REBASE",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/561"
+    },
+    {
+      "id": "W12",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "ref_type": "pr",
+      "number": 563,
+      "root_family": "GOGREEN_RERUN_TRIAGE",
+      "owner": "GOGREEN_OWNER",
+      "status": "ONGOING_CO_DEVELOPMENT",
+      "priority": "P1",
+      "lease": [
+        "mission-control/gogreen/**"
+      ],
+      "depends": [
+        "W11"
+      ],
+      "native_receipt": null,
+      "can_start_condition": "PARENT_PR_TERMINAL",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/563"
+    },
+    {
+      "id": "W13",
+      "repo": "GBOGEB/cryoplant-project",
+      "ref_type": "repo",
+      "number": null,
+      "root_family": "ENGINEERING_OWNER_ACCEPTANCE",
+      "owner": "QPS_ENGINEERING_OWNER",
+      "status": "DEFER",
+      "priority": "P0",
+      "lease": [
+        "qps-controlled/**"
+      ],
+      "depends": [],
+      "native_receipt": null,
+      "can_start_condition": "CONTROLLED_QPS_SOURCE_AND_APPROVAL",
+      "url": "https://github.com/GBOGEB/cryoplant-project"
+    },
+    {
+      "id": "W14",
+      "repo": "GBOGEB/gg_MATH",
+      "ref_type": "repo",
+      "number": null,
+      "root_family": "NUMERICAL_INDEPENDENT_COHORT",
+      "owner": "MATH_OWNER",
+      "status": "UNKNOWN",
+      "priority": "P2",
+      "lease": [
+        "math/**"
+      ],
+      "depends": [],
+      "native_receipt": null,
+      "can_start_condition": "MATCHED_NUMERICAL_EVIDENCE",
+      "url": "https://github.com/GBOGEB/gg_MATH"
+    },
+    {
+      "id": "W15",
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "ref_type": "repo",
+      "number": null,
+      "root_family": "OFFICE_RENDER_COLD_PILOT",
+      "owner": "DOCS_OWNER",
+      "status": "UNKNOWN",
+      "priority": "P2",
+      "lease": [
+        "office/**"
+      ],
+      "depends": [],
+      "native_receipt": null,
+      "can_start_condition": "LOCAL_COLD_RECEIPT",
+      "url": "https://github.com/GBOGEB/DOCX_RTM_Automation"
+    }
+  ],
+  "crew": {
+    "dab_proposal_jobs_passed_historical": 8,
+    "dab_evidence_class": "USER_REPORTED_HISTORICAL_NOT_RECHECKED",
+    "authenticated_launch_count": null,
+    "accepted_rex_count": null,
+    "code_x_manifest_mutation_enabled": false,
+    "code_x_manifest_sha": "ee5a06e6e2873dbfd4bf40f23e367a849d7650e1",
+    "code_x_control_issue": "https://github.com/GBOGEB/CODEX/issues/977",
+    "crew_status": "STAGED_NOT_LAUNCHED",
+    "remote_mutation_permission": false
+  },
+  "root_ledger": {
+    "canonical_open": null,
+    "canonical_closed": null,
+    "canonical_reopened": null,
+    "github_issue_closures_are_roots": false,
+    "root_closure_condition": "CONTROLLED_MAIN_SHA_PLUS_NATIVE_ROOT_FINGERPRINT_ABSENT_PLUS_OWNER_ADMISSION"
+  },
+  "cycles": [
+    {
+      "id": "N-1",
+      "label": "PREVIOUS_FROZEN",
+      "source_kind": "PAST_CONVERSATION_VERIFIED_ANCHOR",
+      "observed_at_utc": null,
+      "metrics": {
+        "abacus_issues_open": 47,
+        "abacus_issues_closed": 252,
+        "abacus_open_prs": 65
+      },
+      "unresolved_inherited": [
+        "P0_A10",
+        "GOVERNANCE",
+        "CREW_RECEIPTS",
+        "BD_ROOTS"
+      ],
+      "immutable": true
+    },
+    {
+      "id": "N",
+      "label": "CURRENT_GITHUB_CENSUS",
+      "source_kind": "GITHUB_API_DATE_BOUNDED",
+      "observed_at_utc": null,
+      "metrics": {
+        "open_issues": 143,
+        "closed_issues": 412,
+        "open_prs": 68,
+        "closed_prs": 5126,
+        "abacus_issues_open": 48,
+        "abacus_issues_closed": 252,
+        "abacus_open_prs": 66,
+        "crew_launch_count": null,
+        "accepted_rex_count": null,
+        "canonical_bd_roots_open": null,
+        "queue_p95_seconds": null
+      },
+      "unresolved_inherited": [
+        "P0_A10",
+        "GOVERNANCE",
+        "CREW_RECEIPTS",
+        "BD_ROOTS"
+      ],
+      "immutable": true
+    },
+    {
+      "id": "N+1",
+      "label": "FORECAST_BEFORE_OUTCOME",
+      "source_kind": "SCENARIO_POSTULATED_NOT_OBSERVED",
+      "observed_at_utc": null,
+      "metrics": {
+        "open_issues": null,
+        "closed_issues": null,
+        "open_prs": null,
+        "closed_prs": null
+      },
+      "unresolved_inherited": [
+        "P0_A10",
+        "GOVERNANCE",
+        "CREW_RECEIPTS",
+        "BD_ROOTS"
+      ],
+      "immutable": false
+    }
+  ],
+  "forecasts": [
+    {
+      "id": "F01",
+      "metric": "six_repo_open_issues",
+      "baseline": 143,
+      "predicted_next": 143,
+      "target_next": 142,
+      "actual_next": null,
+      "units": "issues",
+      "condition": "NO_GITHUB_ISSUE_CHANGE_UNTIL_PROVEN",
+      "basis": "NO_TIME_SERIES_CAPACITY_FORECAST_AVAILABLE",
+      "confidence": null,
+      "credit_to_engineering_roots": false
+    },
+    {
+      "id": "F02",
+      "metric": "independent_gate_domains_observed_on_historical_ABACUS_SHA",
+      "baseline": 2,
+      "predicted_next": 2,
+      "target_next": 3,
+      "actual_next": null,
+      "denominator": 6,
+      "units": "domains",
+      "condition": "A10_CURRENT_EXACT_SHA_AND_NATIVE_PROOF_IF_GOAL_REACHED",
+      "basis": "CONSERVATIVE_CARRY_FORWARD_UNTIL_3RD_PROOF",
+      "confidence": null,
+      "credit_to_engineering_roots": false
+    },
+    {
+      "id": "F03",
+      "metric": "six_repo_authenticated_crew_launches",
+      "baseline": null,
+      "predicted_next": null,
+      "target_next": 1,
+      "actual_next": null,
+      "units": "native_launches",
+      "condition": "AUTHORIZED_ABACUS_LOCAL_EXECUTOR_AND_REX_ACCEPTANCE",
+      "basis": "NO_AUTHENTICATED_LAUNCH_RECEIPT",
+      "confidence": null,
+      "credit_to_engineering_roots": false
+    }
+  ],
+  "sipoc": {
+    "suppliers": [
+      "repo_owner",
+      "local_engineer",
+      "native_GitHub",
+      "CODEX_stage_only",
+      "QPS_owner",
+      "reviewer"
+    ],
+    "inputs": [
+      "exact_sha",
+      "run_attempt",
+      "issue_PR",
+      "runner_receipt",
+      "coverage",
+      "root_fingerprint",
+      "timing"
+    ],
+    "process": [
+      "PREFLIGHT",
+      "PIN",
+      "CENSUS",
+      "DISJOINT_FANOUT",
+      "NATIVE_JOIN",
+      "P0_GATE",
+      "REX_CONTROL",
+      "RECENSUS"
+    ],
+    "outputs": [
+      "N-1|N|N+1",
+      "repo_issue_PR_register",
+      "CODE_HEALTH_dashboard",
+      "golden_thread",
+      "BD_queue",
+      "native_evidence"
+    ],
+    "customers": [
+      "owner",
+      "reviewer",
+      "MissionControl",
+      "QPS_engineer",
+      "next_pulse"
+    ]
+  }
+}
