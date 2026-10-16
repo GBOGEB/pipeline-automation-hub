@@ -132,6 +132,58 @@ class NativeBridgeTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "exact native"):
                     https_get(path)
 
+    def test_verified_pr_census_exact_event_population(self):
+        from mip_native_bridge import validate_manifest
+        manifest = {
+            "schema": "code-purple.mip.native-pr-census.v1",
+            "repository": "GBOGEB/ABACUS", "event": "pull_request",
+            "head_sha": SHA, "expected_total": 2,
+            "run_attempts": [[401, 1], [402, 1]],
+        }
+        getter, native_runs, _ = getter_factory()
+        def census_get(path):
+            if "event=pull_request" in path:
+                return {"total_count": 2, "workflow_runs": [
+                    {**copy.deepcopy(run), "event": "pull_request"}
+                    for run in native_runs.values()
+                ]}
+            return getter(path)
+        source, ids = validate_manifest(manifest, census_get)
+        self.assertEqual(source, SHA)
+        self.assertEqual(ids, [[401, 1], [402, 1]])
+        changed = copy.deepcopy(manifest)
+        changed["run_attempts"][0][1] = 2
+        with self.assertRaisesRegex(ValueError, "not equal to full"):
+            validate_manifest(changed, census_get)
+        changed = copy.deepcopy(manifest)
+        changed["expected_total"] = 3
+        with self.assertRaisesRegex(ValueError, "incomplete"):
+            validate_manifest(changed, census_get)
+        def new_native_run(path):
+            if "event=pull_request" in path:
+                return {"total_count": 3, "workflow_runs": []}
+            return getter(path)
+        with self.assertRaisesRegex(ValueError, "population changed"):
+            validate_manifest(manifest, new_native_run)
+
+    def test_manifest_malformed_source_and_authority_rejected(self):
+        from mip_native_bridge import validate_manifest
+        base = {
+            "schema": "code-purple.mip.native-pr-census.v1",
+            "repository": "GBOGEB/ABACUS", "event": "pull_request",
+            "head_sha": SHA, "expected_total": 2,
+            "run_attempts": [[401, 1], [402, 1]],
+        }
+        for key, value in (("head_sha", "not-sha"),
+                           ("repository", "GBOGEB/other"),
+                           ("event", "workflow_dispatch"),
+                           ("expected_total", True)):
+            with self.subTest(key=key):
+                q = copy.deepcopy(base)
+                q[key] = value
+                with self.assertRaises(ValueError):
+                    validate_manifest(q, getter=lambda url: {})
+
     def test_provider_sha_mismatch_fails_without_source_fallback(self):
         if not PROVIDER.is_dir():
             self.skipTest("no local ABACUS checkout")
