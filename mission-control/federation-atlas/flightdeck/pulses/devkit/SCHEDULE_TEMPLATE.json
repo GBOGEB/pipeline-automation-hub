@@ -1,0 +1,11 @@
+{
+  "schema":"code-purple.local-scheduler-proposal.v1",
+  "default":"MANUAL_ONLY",
+  "requested_recurring_jobs":[],
+  "suggested_nonblocking_stages":["git status","cold env scout","ruff check .","black --check .","pytest --collect-only -q","python -m compileall -q"],
+  "command_execution":"NOT_AUTOMATIC",
+  "owner_authorized_schedule":null,
+  "credential_scope":"LOCAL_ONLY_NO_GITHUB_WRITE",
+  "schedule_preconditions":["repo clean or isolated worktree", "pinned local commit", "explicit CLI/venv installed", "no path overlap with mutating workers"],
+  "promotion":"LOCAL_PROOF_CANNOT_REPLACE_EXACT_SHA_CI"
+}

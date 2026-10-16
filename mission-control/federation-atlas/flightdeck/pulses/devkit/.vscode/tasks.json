@@ -1,0 +1,8 @@
+{
+  "version":"2.0.0",
+  "tasks":[
+    {"label":"CODE PURPLE: cold probe (read-only)","type":"process","command":"python","args":["${workspaceFolder}/mission-control/federation-atlas/flightdeck/pulses/devkit/worker_devkit.py","--repo","${workspaceFolder}","--out","${workspaceFolder}/.local-code-purple/devkit-receipt.json"],"group":"test","problemMatcher":[],"presentation":{"reveal":"always","panel":"dedicated"}},
+    {"label":"CODE PURPLE: contract tests","type":"process","command":"python","args":["-m","unittest","discover","-s","mission-control/federation-atlas/flightdeck/pulses/devkit","-p","test_worker_devkit.py","-v"],"options":{"cwd":"${workspaceFolder}"},"group":"test","problemMatcher":[]},
+    {"label":"CODE PURPLE: Git status only","type":"process","command":"git","args":["status","--short","--branch"],"options":{"cwd":"${workspaceFolder}"},"problemMatcher":[]}
+  ]
+}

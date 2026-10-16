@@ -1,0 +1,7 @@
+{
+  "version":"0.2.0",
+  "configurations":[
+    {"name":"CODE PURPLE cold scout","type":"debugpy","request":"launch","program":"${workspaceFolder}/mission-control/federation-atlas/flightdeck/pulses/devkit/worker_devkit.py","args":["--repo","${workspaceFolder}"],"console":"integratedTerminal","justMyCode":true,"cwd":"${workspaceFolder}","env":{"PYTHONDONTWRITEBYTECODE":"1","CODE_PURPLE_MODE":"READ_ONLY_COLD"}},
+    {"name":"CODE PURPLE devkit unit tests","type":"debugpy","request":"launch","module":"unittest","args":["discover","-s","mission-control/federation-atlas/flightdeck/pulses/devkit","-p","test_worker_devkit.py","-v"],"cwd":"${workspaceFolder}","console":"integratedTerminal"}
+  ]
+}

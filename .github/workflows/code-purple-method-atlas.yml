@@ -296,12 +296,16 @@ jobs:
           fi
           python "$SRC/pr_run_history_collect.py" --source "$SRC/PR_MERGE_TEMPORAL_H1_20261016.json" --out /tmp/code-purple-atlas/pr-history/native-refresh.json "${options[@]}"
           test -s /tmp/code-purple-atlas/pr-history/native-refresh.json
-      - name: Build merged PR temporal view with recursive hooks
+      - name: Build P3 typed worker and IDE review (no dispatch)
+        shell: bash
         run: |
-          SRC=mission-control/federation-atlas/flightdeck/pulses
-          python -m unittest discover -s mission-control/federation-atlas/flightdeck/pulses -p "test_merged_pr_temporal.py" -v
-          python "$SRC/merged_pr_temporal.py" --source "$SRC/MERGED_PR_TEMPORAL_20261016.json" --out /tmp/code-purple-atlas/merged-pr
-          test -s /tmp/code-purple-atlas/merged-pr/index.html
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/flightdeck/pulses/devkit
+          python -m unittest discover -s mission-control/federation-atlas/flightdeck/pulses/devkit -p "test_worker_devkit.py" -v
+          python -m unittest discover -s mission-control/federation-atlas/flightdeck/pulses/devkit -p "test_worker_viewer.py" -v
+          python "$SRC/worker_viewer.py" --plan "$SRC/worker_plan.json" --observed "$SRC/OBSERVED_P3_20261016.json" --out /tmp/code-purple-atlas/worker-devkit
+          test -s /tmp/code-purple-atlas/worker-devkit/index.html
+          test -s /tmp/code-purple-atlas/worker-devkit/manifest.json
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
