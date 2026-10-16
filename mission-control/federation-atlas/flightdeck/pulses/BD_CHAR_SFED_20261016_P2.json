@@ -1,0 +1,324 @@
+{
+  "schema": "code-purple.bd-char.sfed-pulse.v1",
+  "pulse": "2026-10-16-P2",
+  "observation_date_utc": "2026-10-16",
+  "source_kind": "READ_ONLY_GITHUB_CONNECTOR_PR_ASSOCIATED_FIRST_PAGE_WORKFLOW_METADATA",
+  "upstream_canonical": "mission-control/federation-atlas/flightdeck/pulses/CBQ_CH_BD_20261016.json",
+  "authority": {
+    "merge_admission": "HOLD",
+    "security_waiver": false,
+    "authority_transfer": false,
+    "dispatch": "STAGED_NOT_LAUNCHED",
+    "qps_decision": "DEFER",
+    "accepted_root_open": null,
+    "accepted_root_closed": null,
+    "accepted_root_reopened": null,
+    "accepted_rex": null,
+    "hosted_publication_verified": null
+  },
+  "main_heads": {
+    "ABACUS": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+    "CODEX": "ee5a06e6e2873dbfd4bf40f23e367a849d7650e1",
+    "MissionControl": "4b0a3255c8f194d840da8a38664d8920679338c9"
+  },
+  "matched_historical_coverage": {
+    "scope": "HISTORICAL_C2_PR_UBUNTU_SAME_CONFIG_NOT_MAIN",
+    "before": {
+      "covered": 5278,
+      "eligible": 12054
+    },
+    "after": {
+      "covered": 5458,
+      "eligible": 12054
+    },
+    "current_main": null,
+    "current_pr_diff": null
+  },
+  "same_head_pulse": {
+    "pr": 2063,
+    "source_sha": "be23e0377926b2243630dc379eacea4667397b29",
+    "run_ids": [
+      38894513988,
+      38894513989,
+      38894514000,
+      38894514008,
+      38894514054,
+      38894514068,
+      38894514087,
+      38894514110
+    ],
+    "before": {
+      "success": 0,
+      "failure": 0,
+      "cancelled": 0,
+      "nonterminal": 8
+    },
+    "after": {
+      "success": 8,
+      "failure": 0,
+      "cancelled": 0,
+      "nonterminal": 0
+    },
+    "meaning": "EIGHT_PR_ASSOCIATED_RUNS_BECAME_TERMINAL_SUCCESS_NOT_CAUSAL_CLOSURES_OR_DOC_LINT_PROOF"
+  },
+  "pr_rows": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2063,
+      "head_sha": "be23e0377926b2243630dc379eacea4667397b29",
+      "base": "docs/cbd-github-first-dropin-20261016",
+      "scope": "PR_HEAD_ASSOCIATED_NOT_CHECKOUT_VERIFIED",
+      "status": "OPEN",
+      "lane": "BD_CHAR_DOCS",
+      "first_red": "NEW_SOURCE_NO_DOC_LINT_TRIGGER",
+      "counts": {
+        "success": 8,
+        "failure": 0,
+        "cancelled": 0,
+        "nonterminal": 0
+      },
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2063"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2058,
+      "head_sha": "c55a1611cfbcfb6b3382541c00c67d2f26c18d10",
+      "base": "main",
+      "scope": "PR_HEAD_ASSOCIATED_NOT_CHECKOUT_VERIFIED",
+      "status": "OPEN",
+      "lane": "BD_CHAR_DOCS",
+      "first_red": "DOC_LINT_PY310_TOOLING_AND_PROOF_RED",
+      "counts": {
+        "success": 13,
+        "failure": 4,
+        "cancelled": 1,
+        "nonterminal": 0
+      },
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2058"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2033,
+      "head_sha": "ec9d619971bcaf8c63a9e951e18a9c34d5702e32",
+      "base": "main",
+      "scope": "PR_HEAD_ASSOCIATED_NOT_CHECKOUT_VERIFIED",
+      "status": "OPEN",
+      "lane": "MIP_TELEMETRY",
+      "first_red": "TEST_SUITE_FIRST_REDS",
+      "counts": {
+        "success": 18,
+        "failure": 2,
+        "cancelled": 1,
+        "nonterminal": 0
+      },
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2033"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2046,
+      "head_sha": "67ad1b653370d0245aacebe9c95364a8327fd977",
+      "base": "main",
+      "scope": "PR_HEAD_ASSOCIATED_NOT_CHECKOUT_VERIFIED",
+      "status": "OPEN",
+      "lane": "C2_W72",
+      "first_red": "GOVERNANCE_AND_SECURITY_TEST_SUITE_RED",
+      "counts": {
+        "success": 26,
+        "failure": 2,
+        "cancelled": 1,
+        "nonterminal": 0
+      },
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2046"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2041,
+      "head_sha": "60d2a5640c997fc916285580b6de8a3d86c27c38",
+      "base": "main",
+      "scope": "PR_HEAD_ASSOCIATED_NOT_CHECKOUT_VERIFIED",
+      "status": "OPEN",
+      "lane": "GOVERNANCE_A10",
+      "first_red": "A10_AND_TEST_SUITE_RED",
+      "counts": {
+        "success": 20,
+        "failure": 3,
+        "cancelled": 1,
+        "nonterminal": 0
+      },
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2041"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2045,
+      "head_sha": "4488618e5d8899033c173df4c95e819aa527abcb",
+      "base": "main",
+      "scope": "PR_HEAD_ASSOCIATED_NOT_CHECKOUT_VERIFIED",
+      "status": "OPEN",
+      "lane": "PYTHON_COMPAT",
+      "first_red": "GOVERNANCE_AND_TEST_SUITE_RED",
+      "counts": {
+        "success": 25,
+        "failure": 2,
+        "cancelled": 1,
+        "nonterminal": 0
+      },
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2045"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2052,
+      "head_sha": "eecfe8f9e69f32865120ebb153374d1ba29de908",
+      "base": "main",
+      "scope": "PR_HEAD_ASSOCIATED_NOT_CHECKOUT_VERIFIED",
+      "status": "OPEN",
+      "lane": "CODE_MAROON",
+      "first_red": "MAROON_SNAPSHOT_AND_UPSTREAM_REDS",
+      "counts": {
+        "success": 15,
+        "failure": 6,
+        "cancelled": 1,
+        "nonterminal": 0
+      },
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2052"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2057,
+      "head_sha": "3ff3072471404fc35b3b07de9776b03ddade593e",
+      "base": "test/dmaic-convergence-c4-20261016",
+      "scope": "PR_HEAD_ASSOCIATED_NOT_CHECKOUT_VERIFIED",
+      "status": "OPEN",
+      "lane": "C5_CONTROL",
+      "first_red": "DOW_AND_TEST_SUITE_RED",
+      "counts": {
+        "success": 23,
+        "failure": 2,
+        "cancelled": 0,
+        "nonterminal": 0
+      },
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2057"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2055,
+      "head_sha": "9bae9fd6bf244797f4c1b83fd458b6ea763d6639",
+      "base": "main",
+      "scope": "PR_HEAD_ASSOCIATED_NOT_CHECKOUT_VERIFIED",
+      "status": "OPEN",
+      "lane": "C4B_TEST_BRIDGE",
+      "first_red": "BRIDGE_AND_GOVERNANCE_RED",
+      "counts": {
+        "success": 26,
+        "failure": 3,
+        "cancelled": 1,
+        "nonterminal": 0
+      },
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2055"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2060,
+      "head_sha": "256034886917d2056d2cd0e17212d514b4649e00",
+      "base": "test/dmaic-control-c5-20261016",
+      "scope": "PR_HEAD_ASSOCIATED_NOT_CHECKOUT_VERIFIED",
+      "status": "MERGED_FEATURE_ONLY",
+      "lane": "C2_C5_FANIN",
+      "first_red": "FEATURE_BRANCH_MERGE_ONLY",
+      "counts": {
+        "success": 14,
+        "failure": 0,
+        "cancelled": 0,
+        "nonterminal": 0
+      },
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2060"
+    }
+  ],
+  "candidate_families": [
+    {
+      "id": "GOV_WORKFLOW_CLASSIFICATION",
+      "priority": "P0",
+      "owner": "GBOGEB/ABACUS#2041",
+      "proof": "NATIVE_GOVERNANCE_AND_SINGLE_POLICY_OWNER",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38875239702",
+      "accepted_closure": null,
+      "qualification": "CANDIDATE_NOT_ADMITTED"
+    },
+    {
+      "id": "A10_RESTRICTED_REVIEW",
+      "priority": "P0",
+      "owner": "GBOGEB/ABACUS#1996",
+      "proof": "AUTHORIZED_HUMAN_REVIEW_AT_EXACT_HEAD",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38824989937",
+      "accepted_closure": null,
+      "qualification": "CANDIDATE_NOT_ADMITTED"
+    },
+    {
+      "id": "SAFETY_BANDIT",
+      "priority": "P0",
+      "owner": "GBOGEB/ABACUS#2027",
+      "proof": "INDEPENDENT_SECURITY_DISPOSITION_NO_WAIVER",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2027",
+      "accepted_closure": null,
+      "qualification": "CANDIDATE_NOT_ADMITTED"
+    },
+    {
+      "id": "DOCS_MARKDOWN",
+      "priority": "P1",
+      "owner": "GBOGEB/ABACUS#2063",
+      "proof": "TRIGGER_DOC_LINT_ON_NEW_HEAD_AND_PROVE_ORIGINAL_RED_ABSENT",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38889032958",
+      "accepted_closure": null,
+      "qualification": "CANDIDATE_NOT_ADMITTED"
+    },
+    {
+      "id": "PY310_HANDOVER_TOOLING",
+      "priority": "P1",
+      "owner": "GBOGEB/ABACUS#2058",
+      "proof": "REPAIR_NATIVE_PY310_INSTALL_AND_PROOF_COMPLETENESS",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38889032920",
+      "accepted_closure": null,
+      "qualification": "CANDIDATE_NOT_ADMITTED"
+    },
+    {
+      "id": "MAROON_LEDGER",
+      "priority": "P1",
+      "owner": "GBOGEB/ABACUS#2052",
+      "proof": "RECONCILE_CONFLICTED_ROOT_SNAPSHOTS_AND_GENERATE_ARTIFACT",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/38887060452",
+      "accepted_closure": null,
+      "qualification": "CANDIDATE_NOT_ADMITTED"
+    },
+    {
+      "id": "MIP_TELEMETRY",
+      "priority": "P1",
+      "owner": "GBOGEB/ABACUS#2033",
+      "proof": "RECONCILE_TEST_SUITE_FAILURES_AND_NATIVE_PROOF",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2033",
+      "accepted_closure": null,
+      "qualification": "CANDIDATE_NOT_ADMITTED"
+    },
+    {
+      "id": "DMAIC_C4_C5",
+      "priority": "P1",
+      "owner": "GBOGEB/ABACUS#2057",
+      "proof": "VERIFY_C2_C5_STACKED_SOURCE_AND_NATIVE_TESTS",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2060",
+      "accepted_closure": null,
+      "qualification": "CANDIDATE_NOT_ADMITTED"
+    }
+  ],
+  "statistical_admission": {
+    "independent_observations": null,
+    "process_stability": "HOLD",
+    "pca": "NOT_QUALIFIED",
+    "bradley_terry": "NOT_QUALIFIED",
+    "aggregation_rule": "WORKFLOWS_ON_DIFFERENT_PRS_ARE_NOT_INDEPENDENT_TRIALS"
+  },
+  "next_actions": [
+    "Re-run native changed-docs lint on #2063 exact head; its existing 8/8 triggered workflows are not that lint.",
+    "Repair #2058 Python 3.10 tooling and proof completeness at the canonical owner.",
+    "Select one workflow classification inventory semantics (#2041/#1995/#2037) with authorized A10 review.",
+    "Reconcile #2052 37 manifestations / 28 candidate roots with exact fingerprint source and artifact bytes.",
+    "Keep independent Bandit/Safety, effective required checks and independent review as admission gates."
+  ]
+}
