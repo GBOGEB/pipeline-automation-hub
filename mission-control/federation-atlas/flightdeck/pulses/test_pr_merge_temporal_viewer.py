@@ -53,6 +53,8 @@ class TemporalLineageTests(unittest.TestCase):
             html=(folder/"index.html").read_bytes()
             self.assertEqual(receipt,MODULE.produce(INPUT,folder))
             self.assertEqual(html,(folder/"index.html").read_bytes())
+            self.assertIn(b"width:100%;",html)
+            self.assertNotIn(b"width:100%%;",html)
             self.assertIn(b"POST MERGE JOB",html)
             self.assertIn(b"PRE MERGE JOB",html)
             for name,sha in receipt["artifact_sha256"].items():
