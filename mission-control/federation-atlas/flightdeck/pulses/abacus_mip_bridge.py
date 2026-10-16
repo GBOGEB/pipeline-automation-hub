@@ -159,7 +159,8 @@ def project(projection, expected_sha, *, input_sha256):
             'queue_native_timestamp_share_pct': percent(
                 stats['queue_native'], stats['queue_samples']),
             'queue_p95_seconds_observed': stats['queue_p95'],
-            'queue_p95_cross_wave_eligible': queue_eligible,
+            'queue_p95_native_clock_and_sample_gate': queue_eligible,
+            'queue_p95_cross_wave_comparison_admitted': False,
         },
         'first_red_signatures_readonly': sorted(
             stats['first_red'], key=lambda row: (-row['manifestations'], row['fingerprint'])),
