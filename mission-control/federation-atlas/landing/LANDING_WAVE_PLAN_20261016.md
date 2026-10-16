@@ -19,12 +19,12 @@ Observation: 2026-10-16. This is an evolving execution TODO, not an independent 
 - [x] Single publication owner *per repo*. No multi-repo token, forked Pages workflow, cross-repo mutation or generated-HTML authority.
 
 ## C. Execution (this W0 slice)
-- [ ] Commit hub deterministic derived federation-home renderer + tests and integrate existing exact-SHA Method Atlas artifact + Pages portal, no second publishing workflow.
-- [ ] Build hub-native HTML and local browser checks (desktop/laptop/mobile, navigation, zero errors, zero overflow, 1-hop controls).
-- [ ] Create separate root-home source-owned PRs for ABACUS, CODEX and cryoplant-project. Keep existing domain SSOT and Pages pipelines; do not fake live deployment.
-- [ ] Add supporting gg_MATH navigation pointer on its own PR.
-- [ ] Native check all exact heads and classify first-reds; preserve branch ownership.
-- [ ] Publish a read-only multi-repo census with per-page source URL, candidate URL, deploy state, verification state and next owner action.
+- [x] Commit hub derived federation-home renderer + source-identity tests, integrate exact-SHA Method Atlas artifact and existing Pages portal; draft PR #579, no second publisher.
+- [x] Build hub-native HTML and local browser QA on the first source head: 45/45 Pages files matched the source manifest; desktop/laptop/mobile, no JS errors or overflow, 1/3-hop controls valid. The latest head requires a fresh exact-head receipt.
+- [x] Create root-home PRs ABACUS #2071, CODEX #1055, QPS #1934. Keep domain SSOT, generated triage and publisher identity unchanged.
+- [x] Add gg_MATH README navigation pointer: draft PR #56, no release promotion.
+- [ ] Native exact-head closure: hub initial 7/7 PASS before later method-view edit, QPS #1934 11/11 PASS, gg_MATH #56 5/5 PASS; ABACUS #2071 markdownlint MD012 was source-fixed, Python-3.10 matplotlib resolver remains independent; CODEX #1055 added exact schema-compliant W003 PR header, FullStack/CI/Semantic failures remain independent. Re-read latest heads before qualifying.
+- [ ] Publish a read-only per-repo source/Pages census with exact source SHA and branch, deployment UNKNOWN until independent HTTP+digest verification. This plan is not a live site.
 
 ## D. Deferred / gated
 - [ ] Native source-matched repeated wave cohorts, job queue p50/p95, first-red recurrence and MIP improvement estimates.
