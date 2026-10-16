@@ -1,0 +1,260 @@
+{
+  "schema": "code-purple.cbq_ch_bd.pulse.v1",
+  "semantic_names": {
+    "CBQ": "USER_LABEL_PENDING_CANONICAL_GLOSSARY",
+    "CH-BD": "USER_LABEL_PENDING_CANONICAL_GLOSSARY"
+  },
+  "pulse": "2026-10-16-P1",
+  "snapshot_date_utc": "2026-10-16",
+  "data_class": "READ_ONLY_CROSS_REPOSITORY_GITHUB_OBSERVATIONS",
+  "authority": {
+    "engineering": "QPS_OWNER_ONLY",
+    "security": "INDEPENDENT_A10_AND_SAFETY",
+    "merge": "REPOSITORY_PROTECTION_AND_APPROVAL",
+    "synthetic_promotion": false,
+    "root_closure_credit": 0,
+    "qps_decision": "DEFER",
+    "native_four_hop": "UNKNOWN"
+  },
+  "snapshots": [
+    {
+      "repository": "GBOGEB/ABACUS",
+      "pr": 1993,
+      "head_sha": "7cbbdd009fa58065a6c3e3a54fe77804b948d04c",
+      "success": 35,
+      "failed": 2,
+      "cancelled": 0,
+      "nonterminal": 0,
+      "admission": "HOLD",
+      "evidence": "LIVE_GITHUB_WORKFLOW_METADATA"
+    },
+    {
+      "repository": "GBOGEB/ABACUS",
+      "pr": 2003,
+      "head_sha": "688e0e9aaa743878209e80a497e64c56dabcb2d4",
+      "success": 16,
+      "failed": 4,
+      "cancelled": 1,
+      "nonterminal": 0,
+      "admission": "HOLD",
+      "evidence": "LIVE_GITHUB_WORKFLOW_METADATA"
+    },
+    {
+      "repository": "GBOGEB/ABACUS",
+      "pr": 1973,
+      "head_sha": "ca013b7df632d592544b204be009bfa0a66edd54",
+      "success": 21,
+      "failed": 2,
+      "cancelled": 1,
+      "nonterminal": 0,
+      "admission": "HOLD",
+      "evidence": "LIVE_GITHUB_WORKFLOW_METADATA"
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "pr": 1930,
+      "head_sha": "25436366c9fa38316bbfe7dcab40854a45bb1688",
+      "success": 13,
+      "failed": 0,
+      "cancelled": 0,
+      "nonterminal": 0,
+      "admission": "MERGED_NOT_ENGINEERING_ACCEPT",
+      "evidence": "LIVE_GITHUB_WORKFLOW_METADATA"
+    },
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 539,
+      "head_sha": "eb98259fb977329ec8f2115324a306d00ebc66c8",
+      "success": 5,
+      "failed": 0,
+      "cancelled": 0,
+      "nonterminal": 0,
+      "admission": "MERGED_SUPPORTING",
+      "evidence": "LIVE_GITHUB_WORKFLOW_METADATA"
+    }
+  ],
+  "families": [
+    {
+      "id": "A10_CONFIDENTIALITY",
+      "priority": "P0",
+      "owner": "AUTHORIZED_A10_OWNER",
+      "state": "BLOCKED_OWNER",
+      "links": [
+        "GBOGEB/ABACUS#1993",
+        "GBOGEB/ABACUS#2003",
+        "GBOGEB/ABACUS#1973"
+      ],
+      "pr_specific": true,
+      "proof": "Authorized file-level disposition plus exact-head native guard",
+      "proposed_workers": 0,
+      "verified_closed": false
+    },
+    {
+      "id": "DOW_BLACK_ISORT",
+      "priority": "P1",
+      "owner": "ABACUS_1993_SOURCE",
+      "state": "ROOT_PRESENT",
+      "links": [
+        "GBOGEB/ABACUS#1993"
+      ],
+      "proof": "Repository-configured Black/isort and new-debt ratchet PASS",
+      "proposed_workers": 1,
+      "verified_closed": false
+    },
+    {
+      "id": "DOW_BANDIT_SAFETY",
+      "priority": "P0",
+      "owner": "ABACUS_SECURITY",
+      "state": "ROOT_PRESENT",
+      "links": [
+        "GBOGEB/ABACUS#1993"
+      ],
+      "proof": "Bandit root comparison and native Safety report; no waiver",
+      "proposed_workers": 0,
+      "verified_closed": false
+    },
+    {
+      "id": "MCW_NATIVE_RATCHETS",
+      "priority": "P1",
+      "owner": "ABACUS_2003_SOURCE",
+      "state": "ROOT_PRESENT",
+      "links": [
+        "GBOGEB/ABACUS#2003"
+      ],
+      "proof": "Changed-source Black/isort, Bandit/Safety on exact head; negative tests",
+      "proposed_workers": 1,
+      "verified_closed": false
+    },
+    {
+      "id": "GOVERNANCE_CANONICAL",
+      "priority": "P0",
+      "owner": "ABACUS_1973_CANONICAL",
+      "state": "INDEPENDENT_OWNER",
+      "links": [
+        "GBOGEB/ABACUS#1973"
+      ],
+      "proof": "Canonical inventory regenerate and native policy PASS",
+      "proposed_workers": 0,
+      "verified_closed": false
+    },
+    {
+      "id": "PY310_DEPENDENCY",
+      "priority": "P1",
+      "owner": "ABACUS_DEPENDENCY_OWNER",
+      "state": "ROOT_PRESENT",
+      "links": [
+        "GBOGEB/ABACUS#1993",
+        "GBOGEB/ABACUS#2003"
+      ],
+      "proof": "Native Python-3.10 install+test, source-owned compatible constraints",
+      "proposed_workers": 0,
+      "verified_closed": false
+    },
+    {
+      "id": "C2_CUSTODY",
+      "priority": "P0",
+      "owner": "QPS_ARTIFACT_CUSTODIAN",
+      "state": "ORIGINAL_ZIP_VERIFIED",
+      "links": [
+        "GBOGEB/cryoplant-project#1930"
+      ],
+      "proof": "Original GitHub artifact 11989266359, CRC and seven internal SHA-256 matches",
+      "proposed_workers": 0,
+      "verified_closed": false
+    },
+    {
+      "id": "FOUR_HOP",
+      "priority": "P0",
+      "owner": "GG_MATH_KEB_DOW_QPS",
+      "state": "UNKNOWN",
+      "links": [
+        "GBOGEB/ABACUS#1993"
+      ],
+      "proof": "Identical native provider SHA and artifact bytes, independent KEB/DOW run/job/attempt and QPS owner disposition",
+      "proposed_workers": 0,
+      "verified_closed": false
+    },
+    {
+      "id": "OWNER_VALUE",
+      "priority": "P0",
+      "owner": "QPS_PRIVATE_OWNER",
+      "state": "EXTERNAL_DEPENDENCY",
+      "links": [
+        "GBOGEB/cryoplant-project#1930"
+      ],
+      "proof": "Controlled five-format deliverable and authorized accepted decision; current 70/90 is historical",
+      "proposed_workers": 0,
+      "verified_closed": false
+    }
+  ],
+  "chain": [
+    {
+      "id": "L1",
+      "from": "GBOGEB/gg_MATH",
+      "to": "GBOGEB/CODEX",
+      "obligation": "Native method artifact + exact provider SHA",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "L2",
+      "from": "GBOGEB/CODEX",
+      "to": "GBOGEB/ABACUS",
+      "obligation": "Independent semantic KEB to DOW replay and verified bytes",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "L3",
+      "from": "GBOGEB/ABACUS",
+      "to": "GBOGEB/cryoplant-project",
+      "obligation": "Native DOW receipt and independent QPS private source binding",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "L4",
+      "from": "GBOGEB/cryoplant-project",
+      "to": "QPS authorized owner",
+      "obligation": "Population/threshold/units plus explicit release decision",
+      "status": "DEFER"
+    }
+  ],
+  "baseline": {
+    "historical_QPS_product_closure": {
+      "numerator": 70,
+      "denominator": 90
+    },
+    "historical_GOGREEN_cells": {
+      "numerator": 6,
+      "denominator": 42,
+      "unknown": 36
+    },
+    "independent_verified_closures": 0,
+    "generated_C2_archive": {
+      "artifact_id": 11989266359,
+      "archive_sha256": "6fbbfd488570181e3bacc078d900705b8e14bf44e3c482ef5532061274a1fba2",
+      "members_matched": 7,
+      "members_total": 7,
+      "scope": "ORIGINAL_ZIP_BYTE_VERIFICATION_NOT_ENGINEERING_RELEASE"
+    }
+  },
+  "scale": {
+    "candidate_disjoint_source_workers": 2,
+    "scale_to": 4,
+    "scale_if": [
+      "no overlapping path ownership",
+      "terminal exact-source native verification",
+      "no security or A10 waiver",
+      "nonincreasing queue p95 on comparable run cohort",
+      "new eligible root-closure or DoV outcome"
+    ],
+    "actual_live_worker_count": null,
+    "queue_p95_seconds": null,
+    "worked_hours": null
+  },
+  "next_target": {
+    "cbq_first_red_families_reduced": "PROPOSED_1",
+    "new_accepted_GOGREEN_cells": "PROPOSED_1",
+    "accepted_QPS_obligations": "UNVERIFIED",
+    "native_QPS_acceptance": "DEFER"
+  },
+  "note": "CBQ/CH-BD are user labels; no unsupported expansion is made. Data is a dated snapshot, not a live webhook feed. No automated approval, merge, or engineering inference."
+}
