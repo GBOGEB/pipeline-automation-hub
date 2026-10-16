@@ -31,3 +31,15 @@ remain false.
 
 The seeded 16 October slice covers Security B3/B4/B5 and Safety, Governance A10
 and workflow classification, Python compatibility, and native ZIP evidence.
+
+
+## Coverage treatment rule
+
+**Grow coverage through behavior, not by excluding difficult lines.**
+
+Coverage workers shall prefer executable behavioral tests, negative controls,
+failure propagation and state-transition proofs over excludes, omit pragmas,
+denominator shrinkage or test-only source rewrites. A reported uplift is valid
+only when the measurement scope and denominator remain comparable to its
+baseline. Difficult lines may remain uncovered and visible until a safe
+behavioral harness exists; they shall not be hidden to improve a KPI.
