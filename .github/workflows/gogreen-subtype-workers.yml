@@ -39,9 +39,9 @@ jobs:
           assert d["merge_authorized"] is False
           assert d["security_waiver"] is False
           assert d["kpi"]["independently_accepted_root_closures"] == 0
-          assert d["kpi"]["packets_total"] == 15
+          assert d["kpi"]["packets_total"] == 16
           assert d["kpi"]["ready_now"] == 7
-          assert d["kpi"]["blocked"] == 3\n          assert d["kpi"]["proof_pending"] == 5\n          assert d["schedule"]["waves_planned"] == 3
+          assert d["kpi"]["blocked"] == 3\n          assert d["kpi"]["proof_pending"] == 6\n          assert d["schedule"]["waves_planned"] == 3
           PY
       - uses: actions/upload-artifact@v4
         with:
