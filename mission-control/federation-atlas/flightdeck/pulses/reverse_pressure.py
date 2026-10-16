@@ -152,10 +152,30 @@ def analyze(pulse, recensus, delta=None):
     terminal_count = sum(sum(r["counts"][s] for s in
                              ("success", "failure", "cancelled")) for r in observed)
     distinct_open = {key for row in roots for key in row["referenced_open_prs"]}
+    proof_drain = []
+    for key, entry in latest.items():
+        c = entry["counts"]
+        terminal = c["success"] + c["failure"] + c["cancelled"]
+        nonterminal = c["pending"] + c["queued"] + c["in_progress"] + c["other"]
+        proof_drain.append({
+            "pr": key,
+            "source_sha": entry["head_sha"],
+            "nonterminal_run_observations": nonterminal,
+            "terminal_run_observations": terminal,
+            "terminal_fraction_descriptive": round(terminal / entry["observed_workflow_runs"], 6),
+            "run_cohort": "FIRST_PAGE_HEAD_ASSOCIATED_METADATA_NOT_QUEUE_P95",
+            "verified_artifact_bytes": False,
+            "source_root_closed": False,
+        })
+    proof_drain.sort(key=lambda r: (-r["nonterminal_run_observations"], r["pr"]))
+    run_tallies = {state: sum(x["counts"][state] for x in observed)
+                   for state in ("success", "failure", "cancelled",
+                                 "pending", "queued", "in_progress", "other")}
     return {
         "schema": SCHEMA,
         "snapshot_grade": "DATED_SUPPORTING_CENSUS_NOT_LIVE_AUTHORITY",
         "root_owners": roots,
+        "proof_drain": proof_drain,
         "metrics": {
             "owner_clusters": len(roots),
             "canonical_owner_overlap_clusters": sum(
@@ -166,6 +186,10 @@ def analyze(pulse, recensus, delta=None):
             "delta_workflow_observations": observed_count,
             "delta_terminal_workflow_observations": terminal_count,
             "delta_nonterminal_workflow_observations": observed_count - terminal_count,
+            "delta_workflow_status_counts": run_tallies,
+            "delta_terminal_fraction_descriptive": (
+                round(terminal_count / observed_count, 6) if observed_count else None),
+            "queue_p95_seconds": None,
             "native_worker_hours": None,
             "native_worker_concurrency": None,
             "accepted_engineering_roots_closed": 0,
@@ -189,6 +213,10 @@ def analyze(pulse, recensus, delta=None):
         "worker_proposals": {
             "max_parallel_readonly": 2,
             "candidate_root_ids": [x["root_id"] for x in roots[:2]],
+            "proposed_readonly_waves": [
+                {"wave": "PRESSURE_OWNER_SCOUT", "root_ids": [x["root_id"] for x in roots[:2]]},
+                {"wave": "PROOF_DRAIN_SCOUT", "pr_ids": [x["pr"] for x in proof_drain[:2]]},
+            ],
             "dispatch_authorized": False,
             "path_lease_verified": False,
             "mutation_authorized": False,
@@ -244,6 +272,13 @@ def produce(pulse_path, recensus_path, delta_path, out_path):
         lines.append(f'| {r["rank_within_policy_tiers"]} | {r["root_id"]} | '
                      f'{r["priority"]} | {r["reverse_reach"]} | '
                      f'{r["pressure_score"]} | {fresh} |')
+    lines.extend(["", "## Proof-drain queue (not queue latency)", "",
+                  "| PR | Nonterminal runs | Terminal runs | Terminal fraction |",
+                  "|---|---:|---:|---:|"])
+    for row in value["proof_drain"]:
+        lines.append(f'| {row["pr"]} | {row["nonterminal_run_observations"]} | '
+                     f'{row["terminal_run_observations"]} | '
+                     f'{row["terminal_fraction_descriptive"]:.2%} |')
     lines.extend(["", "## Boundaries", "",
                   "PCA and Bradley-Terry withheld: no eligible multivariate/paired trials.",
                   "Source metadata does not attribute failures to a specific root.",
