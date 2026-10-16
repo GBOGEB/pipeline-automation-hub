@@ -10,7 +10,9 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import re
+import tempfile
 from pathlib import Path
 
 SOURCE_SCHEMA = "abacus.mip.ci-wave-telemetry.v2"
@@ -231,14 +233,28 @@ def main(argv=None):
     require(args.out.resolve() not in (
         args.binding.resolve(), args.producer.resolve()),
         "output aliases input")
+    require(not args.out.is_symlink(), "symlinked output is not permitted")
+    if args.out.exists():
+        require(args.out.is_file() and not any(
+            os.path.samefile(args.out, original)
+            for original in (args.binding, args.producer)
+        ), "output aliases input")
     raw = args.producer.read_bytes()
     binding = json.loads(args.binding.read_text(encoding="utf-8"))
     require(hashlib.sha256(raw).hexdigest() == binding.get("producer_sha256"),
             "producer bytes do not match binding digest")
     projected = consume(binding, json.loads(raw))
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(projected, indent=2, sort_keys=True) + "\n",
-                        encoding="utf-8")
+    descriptor, temporary = tempfile.mkstemp(
+        prefix="." + args.out.name + ".", suffix=".tmp", dir=args.out.parent
+    )
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+            stream.write(json.dumps(projected, indent=2, sort_keys=True) + "\n")
+        os.replace(temporary, args.out)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
     return 0
 
 
