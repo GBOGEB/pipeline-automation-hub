@@ -1,5 +1,25 @@
 # Pipeline Automation Hub
 
+## Start here — CODE PURPLE federation W0 (source candidate)
+
+The [W0 federation landing PR](https://github.com/GBOGEB/pipeline-automation-hub/pull/579)
+adds local graph-neighborhood exploration, 10-lane/39-stage SIPOC and 10-beam/13-edge
+temporal DAGs. Its [planning and release TODO](mission-control/federation-atlas/landing/LANDING_WAVE_PLAN_20261016.md)
+is deliberately evolutionary and non-authoritative.
+
+| Navigate | Verified boundary |
+|---|---|
+| [Native CI](https://github.com/GBOGEB/pipeline-automation-hub/actions) | Exact-head status, not a dashboard inference |
+| [W0 source renderer](mission-control/federation-atlas/landing/build_landing.py) | Read-only process, graph and historical-wave projection |
+| [Method Atlas Pages producer](.github/workflows/code-purple-method-atlas.yml) | Existing single publisher; hosted digest readback separate |
+| [SIPOC source](mission-control/federation-atlas/PROCESS_LANES_v1.json) | Canonical stages and owners |
+| [Beams DAG](mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json) | FEEDFORWARD in N; FEEDBACK only into N+1 |
+
+`merge_admission=HOLD`; `security_waiver=false`; 
+`authority_transfer=false`; `dispatch=STAGED_NOT_LAUNCHED`.
+The historical M2 and W+1 records below are preserved by version.
+
+
 ## CODE PURPLE — M2 MissionControl user landing
 
 **Latest M2 GitHub reconciliation (dated 15 Oct):** [Current SHA drift, M2-A21..A27, QPS/KEB/DOW boundaries and next release gate](handover/session/CODE_PURPLE_M2_LIVE_RECONCILIATION_20261015.md). This overlay preserves the existing 15 intent / 20 action records, records later observations separately, and keeps original ChatGPT turn metadata UNKNOWN.
