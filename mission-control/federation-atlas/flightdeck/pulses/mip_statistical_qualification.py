@@ -58,7 +58,8 @@ def qualify(plan):
               len(groups) >= 2))
     anova = all((independence, same_scope, residual, len(groups) >= 2,
                  min(groups, default=0) >= 2, sum(groups) == n))
-    manova = all((anova, p >= 2, covrank is not None, covrank >= p,
+    manova = all((anova, p >= 2, covrank is not None,
+                  covrank is not None and covrank >= p,
                   n > (len(groups) + p)))
     ready = {"wilson_90": binomial, "wilson_95": binomial,
              "wilson_99": binomial, "pca": pca, "bradley_terry": bt,
