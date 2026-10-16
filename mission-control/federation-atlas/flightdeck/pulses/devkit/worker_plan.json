@@ -1,0 +1,22 @@
+{
+ "schema":"code-purple.worker-proposal.v1", "snapshot_label":"2026-10-16-P3",
+ "authority":{"mutation_enabled":false,"dispatch":"STAGED_NOT_LAUNCHED","security_waiver":false,"authority_transfer":false,"merge_admission":"HOLD"},
+ "limits":{"initial_concurrency":2,"proposed_scale_to":4,"actual_live_workers":null,"queue_p95_seconds":null},
+ "agents":{"codex":{"discovery_only":true,"auth_verified":null},"claude":{"discovery_only":true,"auth_verified":null},"gemini":{"discovery_only":true,"auth_verified":null},"aider":{"discovery_only":true,"auth_verified":null},"opencode":{"discovery_only":true,"auth_verified":null}},
+ "worker_types":{
+   "cold-static":{"skills":["python","lint","json","yaml","powershell","bash"],"exec_mode":"READ_ONLY_LOCAL"},
+   "source-repair":{"skills":["python","test","debug"],"exec_mode":"PR_ONLY_OWNER_APPROVAL_REQUIRED"},
+   "metrics":{"skills":["statistics","telemetry","gg_MATH"],"exec_mode":"READ_ONLY"},
+   "docs":{"skills":["markdown","html","reporting"],"exec_mode":"PR_ONLY_OWNER_APPROVAL_REQUIRED"},
+   "security":{"skills":["bandit","safety","semgrep"],"exec_mode":"INDEPENDENT_REVIEW"},
+   "orchestrator":{"skills":["dag","leases","github-actions"],"exec_mode":"STAGE_ONLY"}
+ },
+ "tasks":[
+   {"id":"P3-01","type":"cold-static","priority":"P0","depends_on":[],"path_leases":["devkit/"],"read_only":true,"repo":"GBOGEB/pipeline-automation-hub","source_sha":"5db3ee70a6ad89465fa34fa73ac144021fe554e5","proof":"LOCAL_DIAGNOSTIC_ONLY"},
+   {"id":"P3-02","type":"metrics","priority":"P0","depends_on":["P3-01"],"path_leases":["flightdeck/pulses/"],"read_only":true,"repo":"GBOGEB/pipeline-automation-hub","source_sha":"5db3ee70a6ad89465fa34fa73ac144021fe554e5","proof":"NATIVE_RUN_JOB_ATTEMPT_TEMPORAL"},
+   {"id":"P3-03","type":"docs","priority":"P1","depends_on":["P3-01"],"path_leases":["flightdeck/views/"],"read_only":true,"repo":"GBOGEB/pipeline-automation-hub","source_sha":"5db3ee70a6ad89465fa34fa73ac144021fe554e5","proof":"STATIC_HTML_QA"},
+   {"id":"P3-04","type":"source-repair","priority":"P0","depends_on":["P3-02"],"path_leases":["tests/test_mip_ci_"],"read_only":false,"repo":"GBOGEB/ABACUS","source_sha":"54da377cf82a358ac97903ecde0270c975b8fcc1","proof":"EXACT_HEAD_NATIVE_CI"},
+   {"id":"P3-05","type":"security","priority":"P0","depends_on":[],"path_leases":[".github/workflows/security"],"read_only":true,"repo":"GBOGEB/ABACUS","source_sha":"54da377cf82a358ac97903ecde0270c975b8fcc1","proof":"INDEPENDENT_OWNER_DISPOSITION"},
+   {"id":"P3-06","type":"orchestrator","priority":"P1","depends_on":["P3-02","P3-03"],"path_leases":["mission-control/schedules/"],"read_only":true,"repo":"GBOGEB/pipeline-automation-hub","source_sha":"5db3ee70a6ad89465fa34fa73ac144021fe554e5","proof":"STAGE_ONLY_DISPATCH_FALSE"}
+ ]
+}
