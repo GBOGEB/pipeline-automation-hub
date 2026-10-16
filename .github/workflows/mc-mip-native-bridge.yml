@@ -6,6 +6,7 @@ on:
       - 'mission-control/federation-atlas/flightdeck/pulses/test_mip_native_bridge.py'
       - '.github/workflows/mc-mip-native-bridge.yml'
       - 'mission-control/federation-atlas/flightdeck/pulses/MIP_NATIVE_CENSUS_CONTRACT.md'
+      - 'mission-control/federation-atlas/flightdeck/pulses/ABACUS_2033_NATIVE_PR_CENSUS.json'
   workflow_dispatch:
 permissions:
   contents: read
@@ -52,7 +53,7 @@ jobs:
           print("native bridge coverage", c["covered_lines"], c["num_statements"],
                 c["covered_branches"], c["num_branches"])
           PY
-      - name: Observe five explicit native workflows without source mutation
+      - name: Observe the revalidated 30-workflow native PR event cohort
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -60,11 +61,7 @@ jobs:
             --sha 22c90e0412d0ecc8384917df5e7e19a3195ce86b \
             --abacus-checkout providers/ABACUS \
             --producer-sha 22c90e0412d0ecc8384917df5e7e19a3195ce86b \
-            --run 38919464770:1 \
-            --run 38919464837:1 \
-            --run 38919464522:1 \
-            --run 38919464722:1 \
-            --run 38919464606:1 \
+            --manifest mission-control/federation-atlas/flightdeck/pulses/ABACUS_2033_NATIVE_PR_CENSUS.json \
             --out out/mip-native/source-exact-selection.json
       - name: Reject unintended statistical or engineering promotion
         run: |
@@ -72,8 +69,10 @@ jobs:
           import json
           from pathlib import Path
           d = json.loads(Path("out/mip-native/source-exact-selection.json").read_text())
-          if d["selected_workflow_count"] != 5:
-              raise ValueError("five-workflow source contract was not observed")
+          if d["selected_workflow_count"] != 30:
+              raise ValueError("complete 30-workflow PR source contract was not observed")
+          if d["pull_request_event_head_cohort_verified"] is not True:
+              raise ValueError("PR event source cohort not revalidated")
           if d["native_artifact_zip_bytes_authenticated"]:
               raise ValueError("unsupported original artifact authentication")
           if d["source_selection_full_repository_population"] is not None:
