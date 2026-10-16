@@ -1,0 +1,113 @@
+name: Mission Control MIP Source Consumer
+on:
+  pull_request:
+    paths:
+      - 'mission-control/federation-atlas/flightdeck/pulses/mip_source_consumer.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/test_mip_source_consumer*.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/test_gg_math_provider_contract.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/mip_statistical_qualification.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/test_mip_statistical_qualification.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/MIP_NATIVE_CONSUMER_MATH_ADMISSION.md'
+      - '.github/workflows/mc-mip-consumer.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.11'
+      - name: Install pinned branch-coverage instrument
+        run: python -m pip install coverage==7.13.3
+      - name: Positive, adversarial, metamorphic and stress controls
+        run: |
+          python -m coverage run --branch --source=mip_source_consumer \
+            -m unittest discover \
+            -s mission-control/federation-atlas/flightdeck/pulses \
+            -p 'test_mip_source_consumer*.py' -v
+          python -m coverage report -m
+          mkdir -p out/mip-consumer
+          python -m coverage json -o out/mip-consumer/coverage.json
+      - name: Statistical geometry qualification and invalid-design negatives
+        run: |
+          python -m unittest discover \
+            -s mission-control/federation-atlas/flightdeck/pulses \
+            -p test_mip_statistical_qualification.py -v
+      - name: Validate measured line and branch denominators
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('out/mip-consumer/coverage.json').read_text())
+          total = report['totals']
+          for key in ('num_statements', 'covered_lines', 'num_branches',
+                      'covered_branches'):
+              if type(total.get(key)) is not int or total[key] <= 0:
+                  raise ValueError('missing native coverage measurement: ' + key)
+          if total['covered_lines'] > total['num_statements']:
+              raise ValueError('invalid line coverage denominator')
+          if total['covered_branches'] > total['num_branches']:
+              raise ValueError('invalid branch coverage denominator')
+          print(json.dumps({
+              'schema': 'code-purple.mip.consumer.test-measurement.v1',
+              'lines': [total['covered_lines'], total['num_statements']],
+              'branches': [total['covered_branches'], total['num_branches']],
+              'source': 'mip_source_consumer', 'authority_transfer': False,
+          }, sort_keys=True))
+          PY
+      - name: Checkout canonical gg_MATH provider at fixed source commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: GBOGEB/gg_MATH
+          ref: 40ab86f2c821f50a85ace1556f656197b317e795
+          path: providers/gg_MATH
+          persist-credentials: false
+      - name: Prove pinned provider and exercise 90/95/99 reference methods
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C providers/gg_MATH rev-parse HEAD)" = \
+            "40ab86f2c821f50a85ace1556f656197b317e795"
+          python -m unittest discover \
+            -s mission-control/federation-atlas/flightdeck/pulses \
+            -p test_gg_math_provider_contract.py -v
+          python - <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+          provider = Path("providers/gg_MATH")
+          sys.path.insert(0, str(provider.resolve()))
+          from kernels.stats_core import wilson_proportion_interval
+          bands = {str(int(level * 100)): wilson_proportion_interval(
+              5, 10, level=level) for level in (.90, .95, .99)}
+          if any(result["independence_authenticated"] is not None
+                 or result["authority_transfer"] for result in bands.values()):
+              raise ValueError("unverified design promoted to inference")
+          report = {
+              "schema": "code-purple.mip.math-provider-reference.v1",
+              "repository": "GBOGEB/gg_MATH",
+              "provider_sha": "40ab86f2c821f50a85ace1556f656197b317e795",
+              "class": "SYNTHETIC_REFERENCE_ONLY",
+              "independent_abacus_trials_authenticated": False,
+              "ci_process_intervals_admitted": False,
+              "fixed_horizon_wilson": bands,
+              "qps_acceptance": "DEFER",
+              "authority_transfer": False,
+          }
+          Path("out/mip-consumer/math_reference.json").write_text(
+              json.dumps(report, sort_keys=True, indent=2) + "\n"
+          )
+          print("verified pinned gg_MATH reference only")
+          PY
+      - name: Retain native tests and coverage evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: mc-mip-consumer-coverage-${{ github.run_id }}
+          path: out/mip-consumer/
+          if-no-files-found: error
+          retention-days: 7
