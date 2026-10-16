@@ -38,7 +38,7 @@ def fixture():
             "finite_bt_fit_conditions": True,
         },
         "reference_data": {
-            "pca_rows": rows, "pca_reference_rows": rows,
+            "pca_rows": rows, "pca_reference_rows": [row[:] for row in rows],
             "anova_groups": [[j + 0.1 * k for j in range(i*12, i*12 + 12)]
                              for i in range(3) for k in ()],
             "winner_loser_pairs": paired,
