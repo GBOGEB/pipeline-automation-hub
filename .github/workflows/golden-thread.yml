@@ -84,6 +84,17 @@ jobs:
           print("GOLDEN_THREAD_BITEMPORAL_SOURCE_BOUND=PASS")
           PY
 
+      - name: Render and verify four knowledge-time formats
+        run: |
+          python mission-control/golden-thread/rendition_family.py render \
+            golden-thread-known-after.json golden-thread-known-renditions \
+            --stem GOLDEN_THREAD_KNOWN_AFTER
+          python mission-control/golden-thread/rendition_family.py verify \
+            golden-thread-known-after.json golden-thread-known-renditions \
+            --manifest GOLDEN_THREAD_KNOWN_AFTER_RENDITION_MANIFEST.json
+          test -s golden-thread-known-renditions/GOLDEN_THREAD_KNOWN_AFTER.html
+          test -s golden-thread-known-renditions/GOLDEN_THREAD_KNOWN_AFTER.yaml
+
       - name: Build cold-tail temporal k/e checkpoint
         run: |
           python mission-control/golden-thread/temporal_checkpoint.py build \
@@ -149,6 +160,7 @@ jobs:
             golden-thread-known-before.json
             golden-thread-known-after.json
             golden-thread-known-diff.json
+            golden-thread-known-renditions/
             golden-thread-temporal-checkpoint.json
             golden-thread-temporal-verification.json
             golden-thread-w57-ledger-verification.json
