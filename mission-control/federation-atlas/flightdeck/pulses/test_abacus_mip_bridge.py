@@ -56,7 +56,8 @@ class ConsumerTests(unittest.TestCase):
         self.assertEqual(result['metrics']['workflow_success'], 16)
         self.assertEqual(result['metrics']['success_share_of_observed_pct'], 76.19)
         self.assertEqual(result['metrics']['queue_native_timestamp_share_pct'], 100)
-        self.assertTrue(result['metrics']['queue_p95_cross_wave_eligible'])
+        self.assertTrue(result['metrics']['queue_p95_native_clock_and_sample_gate'])
+        self.assertFalse(result['metrics']['queue_p95_cross_wave_comparison_admitted'])
         self.assertEqual(result['first_red_signatures_readonly'][0]['manifestations'], 1)
         for stat in ('pca','bradley_terry','anova','manova'):
             self.assertEqual(result['statistics'][stat]['status'], 'HOLD')
@@ -70,7 +71,7 @@ class ConsumerTests(unittest.TestCase):
         d['queue_source_counts'] = {'job_created_at': 20,
                                     'workflow_run_created_at_fallback': 2}
         out = read(d)['metrics']
-        self.assertFalse(out['queue_p95_cross_wave_eligible'])
+        self.assertFalse(out['queue_p95_native_clock_and_sample_gate'])
         self.assertEqual(out['queue_native_timestamp_share_pct'], 90.909)
 
     def test_unresolved_workflow_keeps_interval_unestimated(self):
@@ -78,7 +79,7 @@ class ConsumerTests(unittest.TestCase):
         d['workflow_terminal_by_outcome']['success'] -= 1
         d['workflow_nonterminal'] = 1
         out = read(d)
-        self.assertFalse(out['metrics']['queue_p95_cross_wave_eligible'])
+        self.assertFalse(out['metrics']['queue_p95_native_clock_and_sample_gate'])
         self.assertIsNone(out['statistics']['intervals_90_95_99']['95'])
 
     def test_fail_closed_bad_identity_and_promotions(self):
