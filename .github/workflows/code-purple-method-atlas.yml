@@ -306,6 +306,18 @@ jobs:
           python "$SRC/worker_viewer.py" --plan "$SRC/worker_plan.json" --observed "$SRC/OBSERVED_P3_20261016.json" --out /tmp/code-purple-atlas/worker-devkit
           test -s /tmp/code-purple-atlas/worker-devkit/index.html
           test -s /tmp/code-purple-atlas/worker-devkit/manifest.json
+      - name: Build recursive SIPOC federation home from canonical source
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/landing
+          python -m unittest discover -s mission-control/federation-atlas/landing -p 'test_build_landing.py' -v
+          python "$SRC/build_landing.py" --out /tmp/code-purple-atlas/federation-home --sha "$EXACT_SHA"
+          test -s /tmp/code-purple-atlas/federation-home/index.html
+          test -s /tmp/code-purple-atlas/federation-home/snapshot.json
+          test -s /tmp/code-purple-atlas/federation-home/manifest.json
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
