@@ -27,6 +27,7 @@ def item(pr=101, head=SHA_A, *, behind=0, created="2026-10-14T08:00:00Z"):
         "root_id": "ROOT-SAME",
         "run": {
             "id": 38873572319,
+            "job_id": 116800012345,
             "attempt": 1,
             "head_sha": head,
             "status": "completed",
@@ -194,6 +195,32 @@ class RerunTriageTests(unittest.TestCase):
         self.assertEqual(receipt["kpi"]["counts"]["WAIT_CURRENT_RUN"], 1)
         self.assertFalse(receipt["merge_authorized"])
         self.assertEqual(receipt["independent_root_closures"], 0)
+
+
+    def test_completed_without_job_id_fails_closed(self):
+        rec = item()
+        rec["run"].pop("job_id")
+        with self.assertRaises(ValueError):
+            TRIAGE.plan(census([rec]))
+
+    def test_queued_can_have_unknown_job_id(self):
+        rec = item()
+        rec["run"].update(status="queued", conclusion=None, job_id=None)
+        self.assertEqual(self.decide(rec), "WAIT_CURRENT_RUN")
+
+    def test_forged_boolean_job_id_is_rejected(self):
+        rec = item()
+        rec["run"]["job_id"] = True
+        with self.assertRaises(ValueError):
+            TRIAGE.plan(census([rec]))
+
+    def test_same_root_at_different_source_shas_is_not_reused(self):
+        a, b = item(pr=1, head=SHA_A), item(pr=2, head=SHA_B)
+        a["run"].update(failure_kind="TRANSIENT", cause="runner_lost")
+        b["run"].update(failure_kind="TRANSIENT", cause="runner_lost")
+        result = TRIAGE.plan(census([a, b]))
+        self.assertEqual(result["kpi"]["retries_recommended"], 2)
+        self.assertEqual(result["kpi"]["duplicate_root_retries_suppressed"], 0)
 
     def test_receipt_output_is_byte_hash_verified(self):
         receipt = TRIAGE.plan(census())
