@@ -8,13 +8,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
+import subprocess
 from pathlib import Path
-
-try:
-    from pr_run_history_collect import read_api
-except ImportError:
-    read_api = None
 
 REPOSITORY = 'GBOGEB/ABACUS'
 HEX40 = re.compile(r'[0-9a-f]{40}\Z')
@@ -25,6 +22,34 @@ MAX_JOB_PAGES = 10
 def require(value, message):
     if not value:
         raise ValueError(message)
+
+
+def gh_api(repo, path):
+    """Use GitHub's authenticated API client, never a shell or arbitrary host."""
+    require(repo == REPOSITORY and isinstance(path, str),
+            'unexpected native GitHub repository')
+    allowed = (
+        r'/actions/runs\?head_sha=[0-9a-f]{40}&event=pull_request&per_page=100&page=1',
+        r'/actions/runs/[1-9][0-9]*',
+        r'/actions/runs/[1-9][0-9]*/attempts/[1-9][0-9]*/jobs\?per_page=100&page=[1-9][0-9]*'
+    )
+    require(any(re.fullmatch(pattern, path) for pattern in allowed),
+            'unsupported native GitHub endpoint')
+    token = os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN')
+    require(bool(token), 'read-only GitHub Actions token required')
+    env = dict(os.environ, GH_TOKEN=token)
+    command = ['gh', 'api', '--method', 'GET', '/repos/'+REPOSITORY+path]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True,
+                                timeout=30, env=env, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise ValueError('native GitHub API unavailable') from exc
+    require(result.returncode == 0 and 0 < len(result.stdout) <= 8_000_000,
+            'native GitHub response unavailable or oversized')
+    try:
+        return json.loads(result.stdout)
+    except json.JSONDecodeError as exc:
+        raise ValueError('native GitHub response is not JSON') from exc
 
 
 def acquire(sha, getter):
@@ -107,8 +132,7 @@ def main(argv=None):
     parser.add_argument('--source-sha', required=True)
     parser.add_argument('--output', required=True, type=Path)
     args = parser.parse_args(argv)
-    require(read_api is not None, 'canonical Mission Control API reader missing')
-    result = acquire(args.source_sha, read_api)
+    result = acquire(args.source_sha, gh_api)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True)+'\n',
                            encoding='utf-8')
