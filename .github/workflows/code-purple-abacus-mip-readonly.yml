@@ -105,6 +105,50 @@ jobs:
                   any(v is not None for v in report['inferential']['confidence_intervals_90_95_99'].values())):
               raise ValueError('unqualified temporal promotion')
           PY
+      - name: Record canonical code blob and input/output hashes
+        env:
+          ABACUS_SHA: ${{ inputs.abacus_sha }}
+          MISSION_CONTROL_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+          def source_git(*args):
+              return subprocess.check_output(
+                  ['git', '-C', 'native-abacus', *args], text=True
+              ).strip()
+          if source_git('rev-parse', 'HEAD') != os.environ['ABACUS_SHA']:
+              raise ValueError('canonical binary source SHA drift')
+          source_blob = source_git('hash-object', 'tools/mip_ci_wave_telemetry.py')
+          names = ('native_input.json','canonical_abacus_projection.json',
+                   'mission_control_supporting.json','native_input_before.json',
+                   'mission_control_matched_transition.json')
+          hashes = {
+              name: hashlib.sha256((Path('out')/name).read_bytes()).hexdigest()
+              for name in names if (Path('out')/name).is_file()
+          }
+          record = {
+              'schema': 'code-purple.mc.mip-lineage.v1',
+              'source_repository': 'GBOGEB/ABACUS',
+              'source_sha': os.environ['ABACUS_SHA'],
+              'canonical_producer_path': 'tools/mip_ci_wave_telemetry.py',
+              'canonical_producer_git_blob_sha': source_blob,
+              'mission_control_execution_sha': os.environ['MISSION_CONTROL_SHA'],
+              'github_run_id': int(os.environ['GITHUB_RUN_ID']),
+              'github_run_attempt': int(os.environ['GITHUB_RUN_ATTEMPT']),
+              'job_key': os.environ['GITHUB_JOB'],
+              'native_numeric_job_id': None,
+              'member_sha256': hashes,
+              'original_artifact_custody_verified': None,
+              'merge_admission': 'HOLD',
+              'accepted_rex': None,
+              'authority_transfer': False,
+              'qps_acceptance': 'DEFER'
+          }
+          Path('out/source_binding.json').write_text(
+              json.dumps(record, sort_keys=True, indent=2)+'\n', encoding='utf-8'
+          )
+          PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: abacus-mip-supporting-${{ github.run_id }}
