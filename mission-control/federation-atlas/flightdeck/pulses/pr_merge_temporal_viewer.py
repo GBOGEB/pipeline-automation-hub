@@ -198,7 +198,7 @@ article h3{font-size:16px;margin:0 0 8px}.mono{font:12px/1.6 ui-monospace,monosp
 .num{font-size:25px;color:var(--mint);font-weight:750}strong{color:var(--mint)}.muted{color:var(--muted)}
 ul.timeline{list-style:none;padding:0}ul.timeline li{display:grid;grid-template-columns:190px 1fr;gap:12px;border-left:3px solid #376379;border-bottom:1px solid var(--line);padding:12px}
 time{font-family:ui-monospace,monospace;color:var(--mint);overflow-wrap:anywhere}em{font-size:12px;color:#f8d5a0}
-table{border-collapse:collapse;width:100%;min-width:720px}td,th{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
+table{border-collapse:collapse;width:100%%;min-width:720px}td,th{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
 td:nth-child(4){max-width:220px;overflow-wrap:anywhere}th{color:var(--muted)}.scroll{overflow-x:auto}
 label{font-weight:650;margin-right:8px}select,input{font:inherit;color:var(--ink);background:#091222;border:1px solid var(--line);border-radius:8px;padding:8px}
 nav{display:flex;flex-wrap:wrap;gap:15px;align-items:center;margin:12px 0}.hold{color:#f4c98a}
