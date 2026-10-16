@@ -207,5 +207,52 @@ class MetamorphicConsumerTests(unittest.TestCase):
             self.assertEqual(target.read_bytes(), original_projection)
 
 
+    def test_atomic_failure_preserves_evidence_and_cleans_temp(self):
+        from unittest.mock import patch
+        b, p = inputs()
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            source, binding, target = (
+                root / "source.json", root / "binding.json", root / "projection.json"
+            )
+            raw = json.dumps(p, sort_keys=True).encode()
+            source.write_bytes(raw)
+            b["producer_sha256"] = hashlib.sha256(raw).hexdigest()
+            binding.write_text(json.dumps(b))
+            with patch("mip_source_consumer.os.replace",
+                       side_effect=OSError("fixture denied rename")):
+                with self.assertRaisesRegex(OSError, "denied rename"):
+                    main(["--binding", str(binding), "--producer", str(source),
+                          "--out", str(target)])
+            self.assertEqual(source.read_bytes(), raw)
+            self.assertFalse(target.exists())
+            self.assertEqual(list(root.glob(".projection.json.*.tmp")), [])
+
+    def test_direct_script_entrypoint_executes_without_impersonating_merge(self):
+        import runpy
+        import sys
+        from unittest.mock import patch
+        b, p = inputs()
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            source, binding, target = (
+                root / "source.json", root / "binding.json", root / "projection.json"
+            )
+            raw = json.dumps(p, sort_keys=True).encode()
+            source.write_bytes(raw)
+            b["producer_sha256"] = hashlib.sha256(raw).hexdigest()
+            binding.write_text(json.dumps(b))
+            argv = ["mip_source_consumer.py", "--binding", str(binding),
+                    "--producer", str(source), "--out", str(target)]
+            with patch.object(sys, "argv", argv):
+                with self.assertRaises(SystemExit) as exit_status:
+                    runpy.run_path(str(Path(__file__).with_name(
+                        "mip_source_consumer.py")), run_name="__main__")
+            self.assertEqual(exit_status.exception.code, 0)
+            report = json.loads(target.read_text())
+            self.assertFalse(report["merge_authorized"])
+            self.assertEqual(report["admission"], "HOLD")
+
+
 if __name__ == "__main__":
     unittest.main()
