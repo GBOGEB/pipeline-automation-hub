@@ -3,7 +3,8 @@ on:
   pull_request:
     paths:
       - 'mission-control/federation-atlas/flightdeck/pulses/mip_source_consumer.py'
-      - 'mission-control/federation-atlas/flightdeck/pulses/test_mip_source_consumer.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/test_mip_source_consumer*.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/MIP_NATIVE_CONSUMER_MATH_ADMISSION.md'
       - '.github/workflows/mc-mip-consumer.yml'
   workflow_dispatch:
 permissions:
@@ -18,8 +19,43 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: '3.11'
-      - name: Native negative and positive boundary tests
-        run: >-
-          python -m unittest discover
-          -s mission-control/federation-atlas/flightdeck/pulses
-          -p test_mip_source_consumer.py -v
+      - name: Install pinned branch-coverage instrument
+        run: python -m pip install coverage==7.13.3
+      - name: Positive, adversarial, metamorphic and stress controls
+        run: |
+          python -m coverage run --branch --source=mip_source_consumer \
+            -m unittest discover \
+            -s mission-control/federation-atlas/flightdeck/pulses \
+            -p 'test_mip_source_consumer*.py' -v
+          python -m coverage report -m
+          mkdir -p out/mip-consumer
+          python -m coverage json -o out/mip-consumer/coverage.json
+      - name: Validate measured line and branch denominators
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('out/mip-consumer/coverage.json').read_text())
+          total = report['totals']
+          for key in ('num_statements', 'covered_lines', 'num_branches',
+                      'covered_branches'):
+              if type(total.get(key)) is not int or total[key] <= 0:
+                  raise ValueError('missing native coverage measurement: ' + key)
+          if total['covered_lines'] > total['num_statements']:
+              raise ValueError('invalid line coverage denominator')
+          if total['covered_branches'] > total['num_branches']:
+              raise ValueError('invalid branch coverage denominator')
+          print(json.dumps({
+              'schema': 'code-purple.mip.consumer.test-measurement.v1',
+              'lines': [total['covered_lines'], total['num_statements']],
+              'branches': [total['covered_branches'], total['num_branches']],
+              'source': 'mip_source_consumer', 'authority_transfer': False,
+          }, sort_keys=True))
+          PY
+      - name: Retain native tests and coverage evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: mc-mip-consumer-coverage-${{ github.run_id }}
+          path: out/mip-consumer/coverage.json
+          if-no-files-found: error
+          retention-days: 7
