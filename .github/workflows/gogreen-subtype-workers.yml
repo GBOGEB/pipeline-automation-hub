@@ -7,6 +7,10 @@ on:
       - "mission-control/gogreen/tests/test_subtype_orchestrator.py"
       - "mission-control/gogreen/samples/cbd_abacus_20261016.json"
       - "mission-control/gogreen/rerun_triage.py"
+      - "mission-control/gogreen/sipoc_instances.py"
+      - "mission-control/gogreen/tests/test_sipoc_instances.py"
+      - "mission-control/gogreen/samples/sipoc_instance_wave_20261016.json"
+      - "mission-control/gogreen/SIPOC_INSTANCE_DAG.md"
       - "mission-control/gogreen/tests/test_rerun_triage.py"
       - "mission-control/gogreen/samples/cbd_rerun_20261016.json"
       - ".github/workflows/gogreen-subtype-workers.yml"
@@ -15,11 +19,24 @@ on:
 permissions:
   contents: read
 
+env:
+  EVALUATED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
 jobs:
   subtype-plan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact evaluated source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact evaluated checkout before tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$EVALUATED_SOURCE_SHA"
+          echo "source_sha=$actual"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -63,6 +80,39 @@ jobs:
               fp.write(f"Focused source line coverage: {line_num}/{line_den}; "
                        f"branch coverage: {branch_num}/{branch_den}.\\n")
           PY
+      - name: SIPOC DAG negative tests and bounded asyncio simulation
+        run: |
+          set -euo pipefail
+          python -m unittest mission-control/gogreen/tests/test_sipoc_instances.py -v
+          python mission-control/gogreen/sipoc_instances.py \
+            --input mission-control/gogreen/samples/sipoc_instance_wave_20261016.json \
+            --atlas mission-control/federation-atlas/PROCESS_LANES_v1.json \
+            --out "$RUNNER_TEMP/cbd-sipoc" --synthetic-replay
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          out = Path(os.environ["RUNNER_TEMP"]) / "cbd-sipoc"
+          raw = (out / "sipoc_instance_receipt.json").read_bytes()
+          r = json.loads(raw)
+          replay = json.loads((out / "asyncio_synthetic_only.json").read_text())
+          recorded = (out / "sipoc_instance_receipt.sha256").read_text().strip()
+          assert hashlib.sha256(raw).hexdigest() == recorded
+          atlas_bytes = Path("mission-control/federation-atlas/PROCESS_LANES_v1.json").read_bytes()
+          assert r["canonical_atlas_sha256"] == hashlib.sha256(atlas_bytes).hexdigest()
+          assert r["kpi"]["instances_declared"] == 8
+          assert r["kpi"]["incarnations_by_role"]["P"] == 4
+          assert r["kpi"]["scheduled_proposals"] == 7
+          assert r["kpi"]["held_or_blocked"] == 1
+          assert r["kpi"]["asyncio_proposals"] == 4
+          assert r["kpi"]["waves_planned"] == 5
+          assert r["kpi"]["actual_worker_runs"] is None
+          assert r["dispatch_authorized"] is False
+          assert r["merge_authorized"] is False
+          assert replay["synthetic"] is True
+          assert replay["native_proof"] is False
+          assert replay["result"] == "SYNTHETIC_ONLY_PASS"
+          print("SIPOC Testflight PASS_LOCAL_PLAN_ONLY")
+          PY
       - name: Emit source-bound subtype receipt
         run: |
           python mission-control/gogreen/subtype_orchestrator.py \
@@ -88,11 +138,16 @@ jobs:
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: cbd-subtype-receipt-${{ github.sha }}
+          name: cbd-subtype-receipt-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/cbd-subtype/
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
-          name: cbd-rerun-triage-${{ github.sha }}
+          name: cbd-rerun-triage-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/cbd-rerun/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cbd-sipoc-instance-dag-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/cbd-sipoc/
           if-no-files-found: error
