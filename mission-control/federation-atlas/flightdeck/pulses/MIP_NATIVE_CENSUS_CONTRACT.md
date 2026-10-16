@@ -8,13 +8,16 @@ REST API. It delegates the numeric producer execution to that exact ABACUS
 source and passes its disposable v2 projection to the already-tested
 `mip_source_consumer.consume`.
 
-CI uses five selected exact-head native workflows at
-`22c90e0412d0ecc8384917df5e7e19a3195ce86b`: the MIP B0 admission
-producer, Python compatibility, workflow governance, CI/CD Test Suite and
-DOW recursive DMAIC. Selection is intentionally focused on first-red
-manifestations and is **not** a statistically random or complete thirty-run
-cohort. An outcome such as 2/5 successful would not represent the whole PR's
-workflow success rate.
+CI now includes a **complete PR-event exact-head cohort manifest** for source
+`22c90e0412d0ecc8384917df5e7e19a3195ce86b`. The manifest lists 30
+unique native run/attempt IDs. At execution time, the collector re-queries
+the pinned GitHub Actions listing with `event=pull_request`, compares the
+authoritative `total_count` and complete set of exact run attempts, then
+collects every selected job page; any drift fails closed. This proves only
+the full thirty-workflow pull-request event population at that exact head,
+not all possible GitHub events, subprocesses or independent experimental units.
+An observation of 27/30 successful workflows is a descriptive status for
+that event cohort, never an IID binomial sample or causal process change.
 
 The observation has a native HTTP run/job identity and selected code SHA, but
 no original artifact ZIP byte authentication, no independent process samples,

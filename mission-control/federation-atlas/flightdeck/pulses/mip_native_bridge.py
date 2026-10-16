@@ -34,10 +34,15 @@ def integer(x):
 
 
 def https_get(path, token=None):
-    require(re.fullmatch(
+    native_run = re.fullmatch(
         r"/repos/GBOGEB/ABACUS/actions/runs/[1-9][0-9]*"
         r"(?:/attempts/[1-9][0-9]*/jobs\?per_page=100&page=[1-9][0-9]*)?",
-        path) is not None, "GitHub endpoint must be exact native run/jobs path")
+        path) is not None
+    native_census = re.fullmatch(
+        r"/repos/GBOGEB/ABACUS/actions/runs\?head_sha=[0-9a-f]{40}"
+        r"&event=pull_request&per_page=100", path) is not None
+    require(native_run or native_census,
+            "GitHub endpoint must be an exact native run/jobs/census path")
     headers = {"Accept": "application/vnd.github+json",
                "User-Agent": "code-purple-mip-native-source-consumer",
                "X-GitHub-Api-Version": "2022-11-28"}
@@ -52,6 +57,44 @@ def https_get(path, token=None):
         return json.load(response)
     finally:
         client.close()
+
+
+def validate_manifest(manifest, getter=https_get):
+    require(isinstance(manifest, dict)
+            and manifest.get("schema") == "code-purple.mip.native-pr-census.v1"
+            and manifest.get("repository") == "GBOGEB/ABACUS"
+            and manifest.get("event") == "pull_request",
+            "native PR census manifest schema/owner invalid")
+    head = manifest.get("head_sha")
+    require(isinstance(head, str) and SHA40.fullmatch(head),
+            "manifest exact source SHA required")
+    selections = manifest.get("run_attempts")
+    count = manifest.get("expected_total")
+    require(type(count) is int and 1 <= count <= 100
+            and isinstance(selections, list) and len(selections) == count
+            and all(isinstance(x, list) and len(x) == 2
+                    and all(integer(v) for v in x) for x in selections)
+            and len({x[0] for x in selections}) == count,
+            "incomplete or duplicate native PR manifest")
+    url = ("/repos/GBOGEB/ABACUS/actions/runs\?head_sha=" + head
+           + "&event=pull_request&per_page=100")
+    api = getter(url)
+    require(isinstance(api, dict) and api.get("total_count") == count
+            and isinstance(api.get("workflow_runs"), list)
+            and len(api["workflow_runs"]) == count,
+            "native pull_request population changed")
+    actual = set()
+    for item in api["workflow_runs"]:
+        require(isinstance(item, dict)
+                and item.get("head_sha") == head
+                and item.get("event") == "pull_request"
+                and integer(item.get("id"))
+                and integer(item.get("run_attempt")),
+                "native PR census identity/attempt mismatch")
+        actual.add((item["id"], item["run_attempt"]))
+    require(actual == {tuple(x) for x in selections},
+            "manifest not equal to full native PR event cohort")
+    return head, selections
 
 
 def collect(source_sha, selections, getter=https_get):
@@ -85,7 +128,7 @@ def collect(source_sha, selections, getter=https_get):
         received = []
         for page in range(1, MAX_PAGES + 1):
             result = getter(ROOT + str(run_id) + "/attempts/" + str(attempt) +
-                            "/jobs?per_page=100&page=" + str(page))
+                            "/jobs\?per_page=100&page=" + str(page))
             require(isinstance(result, dict)
                     and type(result.get("total_count")) is int
                     and 0 <= result["total_count"] <= MAX_PAGES * 100
@@ -151,7 +194,8 @@ def canonical_producer(root, expected_sha):
     return module
 
 
-def project(source_sha, selections, producer_module, getter=https_get):
+def project(source_sha, selections, producer_module, getter=https_get,
+            *, verified_pr_event_cohort=False):
     native = collect(source_sha, selections, getter)
     metrics = producer_module.summarize(native)
     raw = (json.dumps(metrics, sort_keys=True, indent=2,
@@ -178,6 +222,7 @@ def project(source_sha, selections, producer_module, getter=https_get):
         "native_job_metadata_collected": True,
         "native_artifact_zip_bytes_authenticated": False,
         "source_selection_full_repository_population": None,
+        "pull_request_event_head_cohort_verified": verified_pr_event_cohort,
         "first_red": {
             "unique_signatures": downstream["observed"]["first_red_unique_signatures"],
             "manifestations": downstream["observed"]["first_red_manifestations"],
@@ -195,21 +240,35 @@ def project(source_sha, selections, producer_module, getter=https_get):
 def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--sha", required=True)
-    p.add_argument("--run", action="append", required=True)
+    p.add_argument("--run", action="append")
+    p.add_argument("--manifest", type=Path)
     p.add_argument("--abacus-checkout", type=Path, required=True)
     p.add_argument("--producer-sha", required=True)
     p.add_argument("--out", type=Path, required=True)
     args = p.parse_args(argv)
-    selections = []
-    for raw in args.run:
-        require(raw.count(":") == 1 and all(part.isdecimal()
-                for part in raw.split(":")), "native run selector is ID:ATTEMPT")
-        selections.append([int(x) for x in raw.split(":")])
+    require(bool(args.run) != bool(args.manifest),
+            "use exact --run IDs or one verified --manifest")
+    verified = False
+    if args.manifest:
+        require(args.manifest.is_file() and not args.manifest.is_symlink(),
+                "plain manifest required")
+        source_sha, selections = validate_manifest(json.loads(
+            args.manifest.read_text(encoding="utf-8")),
+            getter=lambda path: https_get(path, os.environ.get("GITHUB_TOKEN")))
+        require(source_sha == args.sha, "CLI source head vs manifest mismatch")
+        verified = True
+    else:
+        selections = []
+        for raw in args.run:
+            require(raw.count(":") == 1 and all(part.isdecimal()
+                    for part in raw.split(":")), "native selector is ID:ATTEMPT")
+            selections.append([int(x) for x in raw.split(":")])
     require(not args.out.is_symlink(), "output symlink not permitted")
     module = canonical_producer(args.abacus_checkout, args.producer_sha)
     result = project(args.sha, selections, module,
                      getter=lambda path: https_get(
-                         path, os.environ.get("GITHUB_TOKEN")))
+                         path, os.environ.get("GITHUB_TOKEN")),
+                     verified_pr_event_cohort=verified)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     fd, temp = tempfile.mkstemp(dir=args.out.parent,
                                 prefix="." + args.out.name + ".")
