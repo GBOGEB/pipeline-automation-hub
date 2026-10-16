@@ -158,7 +158,17 @@ python mission-control/federation-atlas/central/recensus.py \
 ```
 
 `GITHUB_TOKEN` or `GH_TOKEN` can be supplied through the environment,
-not embedded in generated HTML. The collector reads six head commits, 24
+not embedded in generated HTML. For a full GitHub issue-level register rather than counts only, add
+`--full-issue-register`. The bounded collector paginates open and closed
+issue records for each of the six repositories and retains number, title,
+native URL, state, created/updated/closed UTC timestamps and labels. It
+rejects duplicate IDs, unexpected PR records, a missing page, search
+incompleteness and a mid-scan change in total population. **All retrieved
+issue rows have `bd_root_id=null` and `accepted_root_closure=null`** until
+separately adjudicated; this is not a 90-repository fleet scan. Metadata
+only; no comments, secret-bearing bodies or private files are published.
+
+The collector reads six head commits, 24
 issue/PR count populations and owned work-item PR heads. It fails on
 incomplete search API results or invalid identity. Native evidence
 about other repos, job queues, reviewer approvals and accepted roots

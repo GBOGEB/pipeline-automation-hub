@@ -60,8 +60,73 @@ def exact_count(getter, repo, kind, state):
     return count
 
 
+
+def retrieve_issue_register(getter, repo, state, expected):
+    """Enumerate only genuine GitHub Issues with exact bounded pagination.
+
+    These records are operational work surfaces; never treat an issue close as
+    an admitted BD causal root. Incomplete/paged/churning registers fail.
+    """
+    if not REPOSITORY.fullmatch(repo) or state not in ("open", "closed"):
+        raise ValueError("invalid issue-register scope")
+    if type(expected) is not int or expected < 0 or expected > 1000:
+        raise ValueError("unbounded native issue population")
+    rows, observed = [], set()
+    pages = max(1, (expected + 99) // 100)
+    for page in range(1, pages + 1):
+        query = urlencode({
+            "q": f"repo:{repo} is:issue is:{state}",
+            "per_page": 100,
+            "page": page,
+        })
+        result = getter("/search/issues?" + query)
+        if (
+            not isinstance(result, dict) or
+            result.get("incomplete_results") is True or
+            result.get("total_count") != expected or
+            not isinstance(result.get("items"), list)
+        ):
+            raise ValueError("incomplete or changing issue-register page")
+        for issue in result["items"]:
+            if not isinstance(issue, dict):
+                raise ValueError("invalid issue record")
+            number = issue.get("number")
+            if (
+                type(number) is not int or number < 1 or
+                number in observed or
+                issue.get("state") != state or
+                issue.get("html_url") !=
+                f"https://github.com/{repo}/issues/{number}" or
+                "pull_request" in issue
+            ):
+                raise ValueError("wrong or duplicate issue identity")
+            observed.add(number)
+            raw_labels = issue.get("labels", [])
+            if not isinstance(raw_labels, list):
+                raise ValueError("invalid issue label population")
+            labels = [label.get("name") for label in raw_labels]
+            if any(not isinstance(label, str) for label in labels):
+                raise ValueError("untyped issue labels")
+            rows.append({
+                "repo": repo,
+                "number": number,
+                "title": issue.get("title"),
+                "url": issue["html_url"],
+                "state": state,
+                "created_at_utc": issue.get("created_at"),
+                "updated_at_utc": issue.get("updated_at"),
+                "closed_at_utc": issue.get("closed_at"),
+                "labels": labels,
+                "bd_root_id": None,
+                "accepted_root_closure": None,
+            })
+    if len(rows) != expected:
+        raise ValueError("issue-register coverage incomplete")
+    return rows
+
+
 def collect(snapshot, *, getter=github_get, observed_at_utc=None,
-            include_pr_heads=True):
+            include_pr_heads=True, include_issue_register=False):
     """Recensus bounded source cohort, preserve historical root UNKNOWN."""
     validate(snapshot)
     repos = snapshot["census"]["repositories"]
@@ -112,6 +177,17 @@ def collect(snapshot, *, getter=github_get, observed_at_utc=None,
             "record_deltas_are_root_closures": False,
             "source": f"https://github.com/{repo}/tree/{sha}",
         })
+    issue_records = None
+    if include_issue_register:
+        issue_records = []
+        for row in observations:
+            for state in ("open", "closed"):
+                issue_records.extend(
+                    retrieve_issue_register(
+                        getter, row["repo"], state,
+                        row["counts"][state + "_issues"],
+                    )
+                )
     totals = {
         key: sum(row["counts"][key] for row in observations)
         for key in ("open_issues", "closed_issues", "open_prs", "closed_prs")
@@ -159,6 +235,14 @@ def collect(snapshot, *, getter=github_get, observed_at_utc=None,
         "totals": totals,
         "scoped_pr_heads": prs,
         "scoped_pr_heads_observed": len(prs),
+        "issue_register_records": issue_records,
+        "issue_register_observed": (
+            len(issue_records) if issue_records is not None else None
+        ),
+        "issue_register_full_population_verified": (
+            len(issue_records) == totals["open_issues"] + totals["closed_issues"]
+            if issue_records is not None else None
+        ),
         "unobserved_other_repos": None,
         "native_queue_p95_seconds": None,
         "native_runner_slots": None,
@@ -180,6 +264,10 @@ def main(argv=None):
     parser.add_argument("--source", type=Path, default=REGISTRY)
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--skip-pr-heads", action="store_true")
+    parser.add_argument(
+        "--full-issue-register", action="store_true",
+        help="paginate all issue record metadata; closed issues are not roots",
+    )
     options = parser.parse_args(argv)
     snapshot = read_json(options.source)
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
@@ -187,6 +275,7 @@ def main(argv=None):
         snapshot,
         getter=lambda path: github_get(path, token=token),
         include_pr_heads=not options.skip_pr_heads,
+        include_issue_register=options.full_issue_register,
     )
     options.out.parent.mkdir(parents=True, exist_ok=True)
     options.out.write_text(json.dumps(data, sort_keys=True, indent=2) + "\n",
@@ -195,6 +284,7 @@ def main(argv=None):
         "observed_at_utc": data["observed_at_utc"],
         "repos": len(data["repositories"]),
         "pr_heads": len(data["scoped_pr_heads"]),
+        "issue_register_observed": data["issue_register_observed"],
         "issues_open": data["totals"]["open_issues"],
         "admission": "HOLD",
     }, sort_keys=True))
