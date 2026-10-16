@@ -195,7 +195,7 @@ a{color:#a6cdff}h1{font-size:clamp(27px,4vw,42px);margin:5px 0}h2{font-size:20px
 header p{color:var(--muted)}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 article,section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0;min-width:0}
 article h3{font-size:16px;margin:0 0 8px}.mono{font:12px/1.6 ui-monospace,monospace;overflow-wrap:anywhere}
-.num{font-size:25px;color:var(--mint);font-weight:750}strong{color:var(--mint)}.muted{color:var(--muted)}
+.num{font-size:25px;color:var(--mint);font-weight:750}#refreshStatus{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%%;}strong{color:var(--mint)}.muted{color:var(--muted)}
 ul.timeline{list-style:none;padding:0}ul.timeline li{display:grid;grid-template-columns:190px 1fr;gap:12px;border-left:3px solid #376379;border-bottom:1px solid var(--line);padding:12px}
 time{font-family:ui-monospace,monospace;color:var(--mint);overflow-wrap:anywhere}em{font-size:12px;color:#f8d5a0}
 table{border-collapse:collapse;width:100%%;min-width:720px}td,th{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
