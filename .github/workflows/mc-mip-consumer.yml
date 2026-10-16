@@ -1,0 +1,25 @@
+name: Mission Control MIP Source Consumer
+on:
+  pull_request:
+    paths:
+      - 'mission-control/federation-atlas/flightdeck/pulses/mip_source_consumer.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/test_mip_source_consumer.py'
+      - '.github/workflows/mc-mip-consumer.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.11'
+      - name: Native negative and positive boundary tests
+        run: >-
+          python -m unittest discover
+          -s mission-control/federation-atlas/flightdeck/pulses
+          -p test_mip_source_consumer.py -v
