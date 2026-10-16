@@ -51,6 +51,18 @@ def check_observation(o, *, debug=False):
             check_observation(o, debug=True)
 
 
+def canonical_group_id(category, *, repository, configuration, root, observation=None):
+    """Validate ABACUS producer's exact fingerprint grouping, never causal closure."""
+    if category == 'BANDIT':
+        identity = [repository, configuration, root.get('fingerprint')]
+    else:
+        identity = [observation['repository'], root.get('source_path'),
+                    root.get('rule_or_error_code'), observation.get('signature')]
+    digest = hashlib.sha256(json.dumps(identity, ensure_ascii=True,
+                separators=(',', ':')).encode('utf-8')).hexdigest()[:24]
+    return ('BD-' if category == 'BANDIT' else 'CI-') + digest
+
+
 def consume(joined, *, expected_sha, input_sha256):
     require(isinstance(joined, dict) and joined.get("schema") == "bd.ldab.joined.census.v1",
             "canonical BD-LDAB join schema required")
@@ -67,12 +79,19 @@ def consume(joined, *, expected_sha, input_sha256):
             joined.get("formal_credit_delta") == 0 and
             joined.get("engineering_credit_delta") == 0,
             "producer attempted authority/credit promotion")
+    require(type(scope.get('run_id')) is int and scope['run_id'] > 0 and
+            type(scope.get('job_id')) is int and scope['job_id'] > 0 and
+            isinstance(scope.get('evidence_url'), str) and
+            scope['evidence_url'] == ('https://github.com/GBOGEB/ABACUS/actions/runs/' +
+                                      str(scope['run_id'])),
+            'unbound canonical producer run/job identity')
     roots = joined.get("roots")
     unlinked = joined.get("unlinked_debug_receipts")
     m = joined.get("metrics")
     require(isinstance(roots, list) and isinstance(unlinked, list) and
             isinstance(m, dict), "missing canonical root/receipt arrays")
     ids = set(); known = set(); ci_n = 0; debug_n = 0; debugger_reported = 0
+    file_owners = {}
     root_rows = []; graph_edges = []
     for r in roots:
         require(isinstance(r, dict) and isinstance(r.get("root_id"), str) and
@@ -80,12 +99,47 @@ def consume(joined, *, expected_sha, input_sha256):
                 r["root_id"] not in ids and r.get("category") in CATEGORIES,
                 "duplicate/invalid canonical root")
         ids.add(r["root_id"])
+        if r['category'] == 'BANDIT':
+            require(isinstance(r.get('fingerprint'),str) and
+                    re.fullmatch('[0-9a-f]{64}',r['fingerprint']) and
+                    isinstance(r.get('source_path'),str) and
+                    r['source_path'].strip() and
+                    r.get('owner_lane') in ('B2-source','B3-subprocess','B4-files-secrets','B5-tests') and
+                    type(r.get('line')) is int and r['line'] > 0,
+                    'malformed canonical Bandit group')
+            require(r['root_id'] == canonical_group_id('BANDIT', repository=scope['repository'],
+                    configuration=scope['scan_configuration'], root=r),
+                    'noncanonical Bandit root fingerprint identity')
+            path = r['source_path']; lane = r['owner_lane']
+            require(path not in file_owners or file_owners[path] == lane,
+                    'disjoint file assigned to multiple owner lanes')
+            file_owners[path] = lane
         require(r.get("disposition") in ("OPEN_UNREVIEWED", "UNCLASSIFIED_FIRST_RED"),
                 "root closure cannot be inferred")
         observations = r.get("observations")
         require(isinstance(observations, list) and observations, "orphan canonical root")
+        if r['category'] == 'BANDIT':
+            require(sum(o.get('source') == 'bandit_disjoint' for o in observations) == 1,
+                    'canonical Bandit root must have exactly one source scanner observation')
         for o in observations:
             check_observation(o)
+            if o['source'] == 'bandit_disjoint':
+                require(r['category'] == 'BANDIT' and
+                        o['repository'] == scope['repository'] and
+                        o['source_sha'] == expected_sha and
+                        o['run_id'] == scope['run_id'] and
+                        o['job_id'] == scope['job_id'] and
+                        o['evidence_url'] == scope['evidence_url'] and
+                        o.get('scan_configuration') == scope['scan_configuration'],
+                        'Bandit root observation not bound to native source run')
+            if r['category'] == 'CI' and o['source'] == 'ci_failure':
+                require(isinstance(o.get('signature'),str) and o['signature'] and
+                        isinstance(r.get('rule_or_error_code'),str) and
+                        r['root_id'] == canonical_group_id('CI',repository=scope['repository'],
+                            configuration=scope['scan_configuration'],root=r,observation=o),
+                        'noncanonical CI grouping signature')
+            if r['category'] == 'CI':
+                require(o['source'] == 'ci_failure', 'CI group has non-CI observations')
             identity = (o["repository"], o["source_sha"], o["run_id"], o["job_id"], o["source"])
             require(identity not in known, "duplicate source observation identity")
             known.add(identity)
@@ -106,6 +160,10 @@ def consume(joined, *, expected_sha, input_sha256):
         require(identity not in known, "repeated unlinked native receipt")
         known.add(identity); debug_n += 1
         debugger_reported += (o["proof_level"] == "REPORTED_UNVERIFIED")
+    require(type(m.get('assigned_files')) is int and
+            m['assigned_files'] == len(file_owners) and
+            m.get('duplicate_file_owners') == 0,
+            'disjoint file ownership/denominator mismatch')
     require(type(m.get("full_bandit_unique")) is int and
             m["full_bandit_unique"] == sum(r["category"] == "BANDIT" for r in roots),
             "Bandit unique count/root denominator mismatch")
@@ -176,7 +234,7 @@ def render(data):
         if k!="comparable_fingerprint_delta")
     return '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CODE PURPLE · Golden Thread BD–LDAB Consumer</title><style>
 :root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;background:#081322;color:#eef5ff}*{box-sizing:border-box}body{max-width:1320px;margin:auto;padding:28px}header{border-bottom:1px solid #253d51;padding-bottom:20px}h1{font-size:clamp(23px,3vw,34px)}.sub{color:#a6bed0}section{margin:28px 0}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px}.cards article{background:#132638;border:1px solid #29485d;border-radius:11px;padding:15px}.cards small{display:block;color:#acc6d8;margin-bottom:10px}.cards strong{font-size:25px}input{width:100%;padding:13px;border:1px solid #536a83;background:#14283a;color:#fff;border-radius:8px;font-size:15px}table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;vertical-align:top;border-bottom:1px solid #274054;padding:12px;overflow-wrap:anywhere}th{color:#a6bed0}a{color:#75dafa}.hold{color:#ffbe82;font-weight:700}.scroll{overflow-x:auto}.mono{font-family:monospace;overflow-wrap:anywhere}footer{color:#a6bed0;border-top:1px solid #29485d;padding-top:18px}@media(max-width:500px){body{padding:14px}table{font-size:12px}}
-</style></head><body><header><p class="hold">GOVERNED / READ-ONLY / ADMISSION HOLD</p><h1>Golden Thread · BD–LDAB source consumer</h1><p class="sub">ABACUS owns the causal root register. This projection cannot authenticate native receipts, dispatch agents, approve security, or merge code.</p><p class="mono">Source SHA: '''+html.escape(data["source_sha"])+'''<br>Local input SHA-256: '''+html.escape(data["input_sha256"])+'''</p></header><section class="cards">'''+cards+'''</section><section><h2>Canonical roots · evidence lineage</h2><p class="sub">Every link opens its producer run; debug proof remains unverified unless separately authenticated.</p><label for="find">Search root / category / path</label><input id="find" type="search" placeholder="Filter source-linked roots" oninput="filterRows()"><div class="scroll"><table><thead><tr><th>Canonical ID</th><th>Family</th><th>State</th><th>Native links</th></tr></thead><tbody id="rows">'''+"".join(rows)+'''</tbody></table></div><p id="visible" aria-live="polite"></p></section><section><h2>Debugger evidence ladder</h2><p class="sub">Reported receipt → authentication required → hypothesis → reproduced failure → independently verified fix. None may be skipped.</p></section><footer>Owned by <a href="https://github.com/GBOGEB/ABACUS/issues/1929">ABACUS #1929</a> · Consumer only · No fabricated source data</footer><script>function filterRows(){let q=document.getElementById('find').value.toLowerCase();let n=0;for(const row of document.querySelectorAll('#rows tr')){let yes=row.dataset.text.includes(q);row.hidden=!yes;n+=yes}document.getElementById('visible').textContent=n+' roots displayed'}filterRows()</script></body></html>'''
+</style></head><body><header><p class="hold">GOVERNED / READ-ONLY / ADMISSION HOLD</p><h1>Golden Thread · BD–LDAB source consumer</h1><p class="sub">ABACUS owns the causal root register. This projection cannot authenticate native receipts, confirm causal roots, dispatch agents, approve security, or merge code.</p><p class="mono">Source SHA: '''+html.escape(data["source_sha"])+'''<br>Local input SHA-256: '''+html.escape(data["input_sha256"])+'''</p></header><section class="cards">'''+cards+'''</section><section><h2>Canonical fingerprint groups · evidence lineage</h2><p class="sub">Every link opens its producer run; debug proof remains unverified unless separately authenticated.</p><label for="find">Search fingerprint group / category / path</label><input id="find" type="search" placeholder="Filter source-linked roots" oninput="filterRows()"><div class="scroll"><table><thead><tr><th>Canonical ID</th><th>Family</th><th>State</th><th>Native links</th></tr></thead><tbody id="rows">'''+"".join(rows)+'''</tbody></table></div><p id="visible" aria-live="polite"></p></section><section><h2>Debugger evidence ladder</h2><p class="sub">Reported receipt → authentication required → hypothesis → reproduced failure → independently verified fix. None may be skipped.</p></section><footer>Owned by <a href="https://github.com/GBOGEB/ABACUS/issues/1929">ABACUS #1929</a> · Consumer only · No fabricated source data</footer><script>function filterRows(){let q=document.getElementById('find').value.toLowerCase();let n=0;for(const row of document.querySelectorAll('#rows tr')){let yes=row.dataset.text.includes(q);row.hidden=!yes;n+=yes}document.getElementById('visible').textContent=n+' groups displayed'}filterRows()</script></body></html>'''
 
 
 def main(argv=None):
