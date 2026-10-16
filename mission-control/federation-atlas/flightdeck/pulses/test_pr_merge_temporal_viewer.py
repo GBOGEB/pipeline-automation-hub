@@ -26,6 +26,11 @@ class TemporalLineageTests(unittest.TestCase):
         self.assertEqual([0,25,21],[len(p["phases"][1]["workflows"]) for p in d["prs"]])
         self.assertEqual(79,sum(MODULE.summary(d).values()))
 
+    def test_mobile_refresh_line_must_wrap_without_clipping(self):
+        page=MODULE.render(self.snapshot,"f"*64)
+        self.assertIn("white-space:pre-wrap;overflow-wrap:anywhere",page)
+        self.assertIn('name="viewport"',page)
+
     def test_utc_job_log_before_after(self):
         p=self.snapshot["prs"]
         self.assertEqual("POST_MERGE_JOB",MODULE.classify(

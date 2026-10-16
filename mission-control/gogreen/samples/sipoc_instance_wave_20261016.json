@@ -1,0 +1,71 @@
+{
+  "schema": "missioncontrol.sipoc-process-instances.v1",
+  "cohort": "CODE_PURPLE_SIPOC_FANIN_PILOT_20261016",
+  "authority_transfer": false,
+  "dispatch_authorized": false,
+  "max_parallel": 3,
+  "max_parallel_per_repo": 2,
+  "instances": [
+    {
+      "id": "S-OBSERVE", "incarnation": "source-snapshot", "sipoc_role": "S", "stage_ref": "SUPPLY:DISCOVER",
+      "repo": "GBOGEB/pipeline-automation-hub", "source_sha": "4b0a3255c8f194d840da8a38664d8920679338c9",
+      "owner_issue": 561, "state": "READY", "mode": "OBSERVE", "execution": "SYNC", "depends_on": [],
+      "blockers": [], "mutation_paths": [], "root_id": null,
+      "success_predicate": "Pin read-only owner/root inputs and current source identity"
+    },
+    {
+      "id": "I-VALIDATE", "incarnation": "source-binding", "sipoc_role": "I", "stage_ref": "TRUST:PIN",
+      "repo": "GBOGEB/pipeline-automation-hub", "source_sha": "4b0a3255c8f194d840da8a38664d8920679338c9",
+      "owner_issue": 561, "state": "READY", "mode": "OBSERVE", "execution": "SYNC", "depends_on": ["S-OBSERVE"],
+      "blockers": [], "mutation_paths": [], "root_id": null,
+      "success_predicate": "Bind SIPOC instance IDs, canonical process stages and output consumers"
+    },
+    {
+      "id": "P-CODE-MAROON", "incarnation": "review-security", "sipoc_role": "P", "stage_ref": "DMAIC:ANALYZE",
+      "repo": "GBOGEB/ABACUS", "source_sha": "eecfe8f9e69f32865120ebb153374d1ba29de908",
+      "owner_issue": 2052, "state": "READY", "mode": "OBSERVE", "execution": "ASYNCIO", "depends_on": ["I-VALIDATE"],
+      "blockers": [], "mutation_paths": [], "root_id": "MAROON-FIRSTRED",
+      "success_predicate": "Classify CODE_MAROON first-red without auto-closing security findings"
+    },
+    {
+      "id": "P-PY310", "incarnation": "python-compatibility", "sipoc_role": "P", "stage_ref": "DMAIC:ANALYZE",
+      "repo": "GBOGEB/ABACUS", "source_sha": "884212de9cdf9b168a41d8ea254d006bc3421690",
+      "owner_issue": 2026, "state": "READY", "mode": "OBSERVE", "execution": "ASYNCIO", "depends_on": ["I-VALIDATE"],
+      "blockers": [], "mutation_paths": [], "root_id": "PYTHON-ABI",
+      "success_predicate": "Reconcile the Python 3.10 Matplotlib first-red with its canonical owner"
+    },
+    {
+      "id": "P-GOVERNANCE", "incarnation": "workflow-inventory", "sipoc_role": "P", "stage_ref": "DMAIC:ANALYZE",
+      "repo": "GBOGEB/ABACUS", "source_sha": "60d2a5640c997fc916285580b6de8a3d86c27c38",
+      "owner_issue": 2041, "state": "READY", "mode": "OBSERVE", "execution": "ASYNCIO", "depends_on": ["I-VALIDATE"],
+      "blockers": [], "mutation_paths": [], "root_id": "GOV-INV-A10",
+      "success_predicate": "Classify canonical inventory and A10 as separately governed first-reds"
+    },
+    {
+      "id": "P-WORKER-TELEMETRY", "incarnation": "ci-worker-proof", "sipoc_role": "P", "stage_ref": "DMAIC:ANALYZE",
+      "repo": "GBOGEB/pipeline-automation-hub", "source_sha": "a8849e8c30f6807f372949938d4b242862f079ad",
+      "owner_issue": 563, "state": "READY", "mode": "NATIVE_PROVE", "execution": "ASYNCIO", "depends_on": ["I-VALIDATE"],
+      "blockers": [], "mutation_paths": [], "root_id": "CBQ-RERUN-PROOF",
+      "success_predicate": "Correlate exact-head worker testflight without asserting authenticated Crew launch"
+    },
+    {
+      "id": "O-JOIN", "incarnation": "disjoint-census", "sipoc_role": "O", "stage_ref": "CENSUS:ENUMERATE",
+      "repo": "GBOGEB/pipeline-automation-hub", "source_sha": "4b0a3255c8f194d840da8a38664d8920679338c9",
+      "owner_issue": 561, "state": "READY", "mode": "OBSERVE", "execution": "SYNC",
+      "depends_on": ["P-CODE-MAROON", "P-PY310", "P-GOVERNANCE", "P-WORKER-TELEMETRY"],
+      "blockers": [], "mutation_paths": [], "root_id": null,
+      "success_predicate": "Join source-bound candidate observations; missing bytes and proof stay UNKNOWN"
+    },
+    {
+      "id": "C-ADMISSION", "incarnation": "independent-review", "sipoc_role": "C", "stage_ref": "GATE:P5",
+      "repo": "GBOGEB/pipeline-automation-hub", "source_sha": "4b0a3255c8f194d840da8a38664d8920679338c9",
+      "owner_issue": 561, "state": "PROOF_PENDING", "mode": "NATIVE_PROVE", "execution": "SYNC",
+      "depends_on": ["O-JOIN"], "blockers": ["INDEPENDENT_ADMISSION_AND_BYTES_UNKNOWN"],
+      "mutation_paths": [], "root_id": null,
+      "success_predicate": "Return evidence to owners for independent admission; never infer PASS"
+    }
+  ],
+  "next_pulse_feedback": [
+    {"from": "O-JOIN", "to_stage_ref": "DMAIC:MEASURE", "phase": "NEXT_PULSE"}
+  ]
+}

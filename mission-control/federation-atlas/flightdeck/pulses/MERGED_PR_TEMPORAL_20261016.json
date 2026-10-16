@@ -1,0 +1,113 @@
+{
+  "schema": "code-purple.temporal.merged-pr.v1",
+  "observation_date": "2026-10-16",
+  "provenance": "GITHUB_READBACK_PR_METADATA_AND_FIRST_PAGE_PR_ASSOCIATED_RUNS",
+  "main_heads": {
+    "GBOGEB/ABACUS": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+    "GBOGEB/pipeline-automation-hub": "5db3ee70a6ad89465fa34fa73ac144021fe554e5"
+  },
+  "authority": {
+    "merge_admission": "HOLD",
+    "authority_transfer": false,
+    "security_waiver": false,
+    "accepted_root_closed": null,
+    "authenticated_workers": null,
+    "accepted_rex": null
+  },
+  "merge_edges": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2060,
+      "base": "test/dmaic-control-c5-20261016",
+      "head": "256034886917d2056d2cd0e17212d514b4649e00",
+      "merge_sha": "3ff3072471404fc35b3b07de9776b03ddade593e",
+      "merged_at": "2026-10-16T11:13:24Z",
+      "destination_kind": "FEATURE",
+      "associated_runs": {
+        "success": 14,
+        "failure": 0,
+        "cancelled": 0,
+        "nonterminal": 0
+      },
+      "evidence_url": "https://github.com/GBOGEB/ABACUS/pull/2060",
+      "post_merge_run_qualification": null
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2061,
+      "base": "feat/mip-ci-worker-telemetry-20261015",
+      "head": "28cd47bd2a27325b860628ddd17cff9216ce5108",
+      "merge_sha": "9b0b70684c821d3a1bff9ea6394aacf6ae216524",
+      "merged_at": "2026-10-16T11:13:10Z",
+      "destination_kind": "FEATURE",
+      "associated_runs": {
+        "success": 13,
+        "failure": 0,
+        "cancelled": 0,
+        "nonterminal": 0
+      },
+      "evidence_url": "https://github.com/GBOGEB/ABACUS/pull/2061",
+      "post_merge_run_qualification": null
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 562,
+      "base": "master",
+      "head": "68db897a626e2b62b919554844ba77ff176185b1",
+      "merge_sha": "4b0a3255c8f194d840da8a38664d8920679338c9",
+      "merged_at": "2026-10-16T09:08:29Z",
+      "destination_kind": "MAIN",
+      "associated_runs": {
+        "success": 6,
+        "failure": 0,
+        "cancelled": 0,
+        "nonterminal": 0
+      },
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/562",
+      "post_merge_run_qualification": null
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 567,
+      "base": "master",
+      "head": "e83c5708372cfd8c81b5e2fe66a125a6090d5c2c",
+      "merge_sha": "40e3c128ccdc27d737f16fbd8e8fbcf852b32945",
+      "merged_at": "2026-10-16T12:26:17Z",
+      "destination_kind": "MAIN",
+      "associated_runs": {
+        "success": 6,
+        "failure": 0,
+        "cancelled": 0,
+        "nonterminal": 0
+      },
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/567",
+      "post_merge_run_qualification": null
+    }
+  ],
+  "temporal_contract": {
+    "clocks": [
+      "pr_created_at",
+      "source_commit_at",
+      "run_created_at",
+      "job_started_at",
+      "job_completed_at",
+      "merged_at",
+      "post_merge_push_at",
+      "recurrence_observed_at"
+    ],
+    "missing_timestamps": null,
+    "merge_not_run": true,
+    "same_run_identity": "repository/run_id/attempt/job_id",
+    "post_merge_push_not_supported_by_pr_only_api": true,
+    "link_edge_basis": "native_merge_sha_and_exact_parentage",
+    "recursive_hooks": [
+      "PR_HEAD_CHANGED",
+      "RUN_TERMINAL",
+      "PR_MERGED",
+      "MAIN_ADVANCED",
+      "RECURSIVE_DOWNSTREAM_REPLAY",
+      "ROOT_RECURRED"
+    ],
+    "recurrence_verified": null
+  }
+}

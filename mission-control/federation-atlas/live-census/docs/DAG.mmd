@@ -1,0 +1,15 @@
+flowchart TD
+  H0["H0 Fresh five-repo exact SHA census"] --> H1["H1 Disjoint candidate root owner join"]
+  H1 --> H2["H2 Runs/jobs/attempts and real checkout probe"]
+  H2 --> H3["H3 Local positive/negative Testflight"]
+  H3 --> H4["H4 Native exact-head CI + B9"]
+  H4 --> GOV["A10 / Safety / policy / independent review"]
+  GOV --> DEC{"P0 admission gate"}
+  DEC -->|"HOLD"| QUEUE["BD/LDAB canonical queue #1929"]
+  QUEUE -.-> H0
+  DEC -->|"PASS + authorized"| MERGE["Owner-approved main merge"]
+  MERGE --> H7["Exact-main REX recurrence + causal root closure"]
+  H2 --> H5["H5 Existing Pages publisher - read-only"]
+  H5 --> H6["H6 Graph nodes and declared edges"]
+  H6 -.-> QUEUE
+  H7 -.-> H0
