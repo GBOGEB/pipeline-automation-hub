@@ -9,9 +9,10 @@ not create a duplicate root ledger, scanner fingerprint authority or HTML SSOT.
 ## Source and binary lineage
 
 1. The workflow input selects a single exact 40-character ABACUS commit SHA.
-2. The existing Mission Control GitHub read-only transport retrieves the full
-   bounded GitHub pull-request workflow census at that SHA, plus each run and
-   attempt-scoped native job. Missing pages, duplicates and source drift abort.
+2. The pinned GitHub CLI API client retrieves the full bounded GitHub
+   pull-request workflow census at that SHA, plus each run and attempt-scoped
+   native job. The dispatch job supplies a read-only GitHub token; repository
+   and endpoint forms are allowlisted. Missing pages or source drift abort.
 3. A second checkout of that exact ABACUS commit runs its own canonical
    tools/mip_ci_wave_telemetry.py executable on the native input.
 4. The Mission Control consumer validates source SHA/schema, independent HOLD
@@ -29,7 +30,10 @@ or inaccessible census remains UNKNOWN rather than a synthetic zero.
 To replay negative controls locally, run Python unittest discovery in
 mission-control/federation-atlas/flightdeck/pulses using the file pattern
 test_abacus_mip_*.py. To collect an exact head in GitHub, dispatch the
-CODE PURPLE ABACUS MIP Readonly Consumer workflow with abacus_sha.
+CODE PURPLE ABACUS MIP Readonly Consumer workflow with abacus_sha. Supply
+optional previous_abacus_sha to acquire a second complete native cohort and
+make a name-matched N/N+1 descriptive transition; if either census is
+incomplete, mismatched or nonterminal, the comparator fails closed.
 
 ## Metrics and statistical preconditions
 
@@ -42,6 +46,9 @@ CODE PURPLE ABACUS MIP Readonly Consumer workflow with abacus_sha.
 - Queue p95 uses job creation → job start. Workflow creation → job start is a
   different clock; fallback samples and under-20 samples are excluded from
   qualified cross-wave comparisons, while still retained in telemetry.
+- Paired workflow transitions report unchanged/gained/lost statuses by native
+  workflow name and source SHA, with source-input SHA-256 and a transition
+  matrix. Pairwise identities do not make jobs statistically independent.
 - The provider at authoring is gg_MATH main SHA
   d44b8e26818e4af9bbb02ec0d8369e57af3699bd.
   Provider kernels (kernels/uncertainty.py, stats_core.py, bt_uncertainty.py,
