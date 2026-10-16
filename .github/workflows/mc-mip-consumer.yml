@@ -64,7 +64,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: GBOGEB/gg_MATH
-          ref: 40ab86f2c821f50a85ace1556f656197b317e795
+          ref: 3a6417bff30a5894ea775b2a489d0076d16c1f3b
           path: providers/gg_MATH
           persist-credentials: false
       - name: Prove pinned provider and exercise 90/95/99 reference methods
@@ -72,7 +72,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git -C providers/gg_MATH rev-parse HEAD)" = \
-            "40ab86f2c821f50a85ace1556f656197b317e795"
+            "3a6417bff30a5894ea775b2a489d0076d16c1f3b"
           python -m unittest discover \
             -s mission-control/federation-atlas/flightdeck/pulses \
             -p test_gg_math_provider_contract.py -v
@@ -91,7 +91,7 @@ jobs:
           report = {
               "schema": "code-purple.mip.math-provider-reference.v1",
               "repository": "GBOGEB/gg_MATH",
-              "provider_sha": "40ab86f2c821f50a85ace1556f656197b317e795",
+              "provider_sha": "3a6417bff30a5894ea775b2a489d0076d16c1f3b",
               "class": "SYNTHETIC_REFERENCE_ONLY",
               "independent_abacus_trials_authenticated": False,
               "ci_process_intervals_admitted": False,

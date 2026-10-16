@@ -9,7 +9,7 @@ import subprocess
 import unittest
 from pathlib import Path
 
-PROVIDER_SHA = "40ab86f2c821f50a85ace1556f656197b317e795"
+PROVIDER_SHA = "3a6417bff30a5894ea775b2a489d0076d16c1f3b"
 PROVIDER = Path(__file__).resolve().parents[4] / "providers" / "gg_MATH"
 SOURCE = PROVIDER / "kernels" / "stats_core.py"
 

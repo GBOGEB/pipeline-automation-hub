@@ -35,7 +35,8 @@ def verify_provider(root, expected):
     require(observed == expected, "provider binary/source SHA mismatch")
     require((p / "kernels" / "stats_core.py").is_file()
             and (p / "kernels" / "pca_reference.py").is_file()
-            and (p / "kernels" / "bradley_terry.py").is_file(),
+            and (p / "kernels" / "bradley_terry.py").is_file()
+            and (p / "kernels" / "manova_reference.py").is_file(),
             "missing canonical provider kernels")
     path = str(p.resolve())
     if path not in sys.path:
@@ -189,13 +190,34 @@ def evaluate(request, *, provider_root=None):
                     "pairwise_probabilities": comparisons,
                     "model_covariance_kind": fit["covariance_kind"],
                 }
-    # The canonical gg_MATH provider currently has no admitted MANOVA
-    # numerical execution contract. Keep eligibility separate from execution.
-    out["methods"]["manova"] = {
-        "status": "HOLD_CANONICAL_PROVIDER_MANOVA_NOT_IMPLEMENTED",
-        "requested_eligibility": screen["method_status"]["manova"],
-        "wilks_lambda": None, "pillai_trace": None, "p_value": None,
-    }
+    if screen["method_status"]["manova"] == yes:
+        groups = data.get("manova_groups")
+        require(isinstance(groups, list)
+                and len(groups) == len(plan["group_sizes"])
+                and all(isinstance(g, list)
+                        and len(g) == plan["group_sizes"][i]
+                        and all(isinstance(row, list)
+                                and len(row) == plan["feature_count"]
+                                for row in g) for i, g in enumerate(groups)),
+                "MANOVA multivariate group n-by-p geometry mismatch")
+        module = importlib.import_module("kernels.manova_reference")
+        native = module.manova_reference(groups)
+        out["methods"]["manova"] = {
+            "status": "SYNTHETIC_REFERENCE_ONLY",
+            "provider_schema": native["schema"],
+            "wilks_lambda": native["wilks_lambda"],
+            "pillai_trace": native["pillai_trace"],
+            "p_value": native["p_value"],
+            "df_between": native["df_between"],
+            "df_within": native["df_within"],
+            "independence_authenticated": None,
+        }
+    else:
+        out["methods"]["manova"] = {
+            "status": "HOLD_DESIGN_NOT_QUALIFIED",
+            "requested_eligibility": screen["method_status"]["manova"],
+            "wilks_lambda": None, "pillai_trace": None, "p_value": None,
+        }
     return out
 
 

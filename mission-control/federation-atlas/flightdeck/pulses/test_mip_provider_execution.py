@@ -9,7 +9,7 @@ from pathlib import Path
 from mip_provider_execution import evaluate, main
 
 PROVIDER = Path(os.environ.get("MIP_PROVIDER_ROOT", "providers/gg_MATH"))
-SHA = os.environ.get("MIP_PROVIDER_SHA", "8f8542494b36c1476127a02a280b279ec2cf02f9")
+SHA = os.environ.get("MIP_PROVIDER_SHA", "3a6417bff30a5894ea775b2a489d0076d16c1f3b")
 
 
 def fixture():
@@ -39,6 +39,10 @@ def fixture():
         },
         "reference_data": {
             "pca_rows": rows, "pca_reference_rows": [row[:] for row in rows],
+            "manova_groups": [
+                [row[:] for row in rows[j*12:(j+1)*12]]
+                for j in range(3)
+            ],
             "anova_groups": [[j + 0.1 * k for j in range(i*12, i*12 + 12)]
                              for i in range(3) for k in ()],
             "winner_loser_pairs": paired,
@@ -98,7 +102,11 @@ class MathReferenceTests(unittest.TestCase):
                                  pair[level]["probability"])
             self.assertGreaterEqual(pair[level]["interval"][1],
                                     pair[level]["probability"])
-        self.assertIn("HOLD_CANONICAL_PROVIDER", r["methods"]["manova"]["status"])
+        self.assertEqual(r["methods"]["manova"]["status"],
+                         "SYNTHETIC_REFERENCE_ONLY")
+        self.assertLessEqual(r["methods"]["manova"]["wilks_lambda"], 1.0)
+        self.assertGreaterEqual(r["methods"]["manova"]["pillai_trace"], 0.0)
+        self.assertIsNone(r["methods"]["manova"]["p_value"])
         self.assertFalse(r["numerical_reference_is_process_inference"])
         self.assertEqual(r["admission"], "HOLD")
         self.assertFalse(r["merge_authorized"])
@@ -145,6 +153,22 @@ class MathReferenceTests(unittest.TestCase):
             "HOLD_"))
         self.assertIsNone(report["methods"]["bradley_terry"][
             "pairwise_probabilities"])
+
+    def test_manova_wrong_multivariate_population_fails_closed(self):
+        self.require_provider()
+        data = ready_fixture()
+        data["reference_data"]["manova_groups"][0][0].pop()
+        with self.assertRaisesRegex(ValueError, "MANOVA multivariate"):
+            evaluate(data, provider_root=PROVIDER)
+
+    def test_manova_unknown_rank_does_not_publish_a_statistic(self):
+        self.require_provider()
+        data = ready_fixture()
+        data["design"]["covariance_rank"] = None
+        result = evaluate(data, provider_root=PROVIDER)
+        self.assertEqual(result["methods"]["manova"]["status"],
+                         "HOLD_DESIGN_NOT_QUALIFIED")
+        self.assertIsNone(result["methods"]["manova"]["wilks_lambda"])
 
     def test_numeric_reference_bytes_reproducible(self):
         self.require_provider()

@@ -26,8 +26,9 @@ reference provider. QPS controls engineering acceptance.
 4. **Multivariate** — an exact-commit verified gg_MATH checkout supplies PCA,
    parallel analysis, seeded loading stability, temporal alignment,
    Bradley–Terry connected-graph finite-MLE fit/90-95-99 uncertainty and
-   one-way ANOVA F/eta-squared. A governed MANOVA runtime provider does not
-   yet exist and is explicitly HOLD (no Wilks/Pillai/p-value invented).
+   one-way ANOVA F/eta-squared. The new source-owned gg_MATH PR #58 provides
+   reference Wilks/Pillai values with p-values still null; native independent
+   MANOVA inference remains HOLD.
 5. **Predictive** — an issued N+1/N+2 forecast stores issuing wave/SHA,
    actual timestamp, method and prediction before target observed. Persistence
    is the first bounded estimator. Scores are signed error, MAE and RMSE on
