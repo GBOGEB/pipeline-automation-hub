@@ -296,6 +296,16 @@ jobs:
           fi
           python "$SRC/pr_run_history_collect.py" --source "$SRC/PR_MERGE_TEMPORAL_H1_20261016.json" --out /tmp/code-purple-atlas/pr-history/native-refresh.json "${options[@]}"
           test -s /tmp/code-purple-atlas/pr-history/native-refresh.json
+      - name: Build P3 typed worker and IDE review (no dispatch)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/flightdeck/pulses/devkit
+          python -m unittest discover -s mission-control/federation-atlas/flightdeck/pulses/devkit -p "test_worker_devkit.py" -v
+          python -m unittest discover -s mission-control/federation-atlas/flightdeck/pulses/devkit -p "test_worker_viewer.py" -v
+          python "$SRC/worker_viewer.py" --plan "$SRC/worker_plan.json" --observed "$SRC/OBSERVED_P3_20261016.json" --out /tmp/code-purple-atlas/worker-devkit
+          test -s /tmp/code-purple-atlas/worker-devkit/index.html
+          test -s /tmp/code-purple-atlas/worker-devkit/manifest.json
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
