@@ -53,7 +53,9 @@ class SubtypePlannerTests(unittest.TestCase):
         receipt = MOD.plan(json.loads(sample.read_text()))
         self.assertEqual(receipt["kpi"]["packets_total"], 18)
         self.assertEqual(receipt["kpi"]["ready_now"], 7)
-        self.assertEqual(receipt["kpi"]["blocked"], 3)\n        self.assertEqual(receipt["kpi"]["proof_pending"], 8)\n        self.assertEqual(receipt["schedule"]["waves_planned"], 3)
+        self.assertEqual(receipt["kpi"]["blocked"], 3)
+        self.assertEqual(receipt["kpi"]["proof_pending"], 8)
+        self.assertEqual(receipt["schedule"]["waves_planned"], 3)
         self.assertEqual(receipt["kpi"]["independently_accepted_root_closures"], 0)
 
 if __name__ == "__main__":
