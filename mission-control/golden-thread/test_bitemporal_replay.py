@@ -36,7 +36,8 @@ class GoldenThreadKnowledgeTimeTests(unittest.TestCase):
         self.assertEqual(14,b["metrics"]["event_count"])
         self.assertEqual(3,a["metrics"]["occurrence_count"])
         self.assertEqual(4,b["metrics"]["occurrence_count"])
-        self.assertEqual(1,b["metrics"]["unknown_needs_reader_count"])
+        self.assertEqual(1,b["metrics"]["unknown_needs_reader_count"] -
+                         a["metrics"]["unknown_needs_reader_count"])
         self.assertEqual(self.ledger["head_event_digest"],
                          a["temporal_selection"]["full_ledger_head_event_digest"])
         self.assertTrue(a["temporal_selection"]["full_ledger_verified"])
