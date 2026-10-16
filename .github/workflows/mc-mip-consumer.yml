@@ -52,10 +52,53 @@ jobs:
               'source': 'mip_source_consumer', 'authority_transfer': False,
           }, sort_keys=True))
           PY
+      - name: Checkout canonical gg_MATH provider at fixed source commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: GBOGEB/gg_MATH
+          ref: 40ab86f2c821f50a85ace1556f656197b317e795
+          path: providers/gg_MATH
+          persist-credentials: false
+      - name: Prove pinned provider and exercise 90/95/99 reference methods
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C providers/gg_MATH rev-parse HEAD)" = \
+            "40ab86f2c821f50a85ace1556f656197b317e795"
+          (cd providers/gg_MATH && python -m unittest discover \
+            -s tests -p test_wilson_score_reference.py -v)
+          python - <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+          provider = Path("providers/gg_MATH")
+          sys.path.insert(0, str(provider.resolve()))
+          from kernels.stats_core import wilson_proportion_interval
+          bands = {str(int(level * 100)): wilson_proportion_interval(
+              5, 10, level=level) for level in (.90, .95, .99)}
+          if any(result["independence_authenticated"] is not None
+                 or result["authority_transfer"] for result in bands.values()):
+              raise ValueError("unverified design promoted to inference")
+          report = {
+              "schema": "code-purple.mip.math-provider-reference.v1",
+              "repository": "GBOGEB/gg_MATH",
+              "provider_sha": "40ab86f2c821f50a85ace1556f656197b317e795",
+              "class": "SYNTHETIC_REFERENCE_ONLY",
+              "independent_abacus_trials_authenticated": False,
+              "ci_process_intervals_admitted": False,
+              "fixed_horizon_wilson": bands,
+              "qps_acceptance": "DEFER",
+              "authority_transfer": False,
+          }
+          Path("out/mip-consumer/math_reference.json").write_text(
+              json.dumps(report, sort_keys=True, indent=2) + "\\n"
+          )
+          print("verified pinned gg_MATH reference only")
+          PY
       - name: Retain native tests and coverage evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: mc-mip-consumer-coverage-${{ github.run_id }}
-          path: out/mip-consumer/coverage.json
+          path: out/mip-consumer/
           if-no-files-found: error
           retention-days: 7
