@@ -3,7 +3,7 @@
 import argparse, hashlib, html, json, re, shutil
 from pathlib import Path
 
-ALLOW={"index.html","code-purple.html","lane-process.html","lane-process.mmd","federation.svg","federation-latest.html","federation-wave-metrics.json","federation-latest.json","metrics.json","lane-process.json","sideload-k8s.html","sideload-k8s.json","sideload-k8s.mmd","sideload-k8s.sha256.json","sideload-operator.html","sideload-operator-receipt.json","sideload-telemetry.json","sideload-telemetry.sha256.json"}
+ALLOW={"index.html","code-purple.html","lane-process.html","lane-process.mmd","federation.svg","federation-latest.html","federation-wave-metrics.json","federation-latest.json","metrics.json","lane-process.json","code-health.html","code-health.json","code-health-dag.mmd","code-health-manifest.json","sideload-k8s.html","sideload-k8s.json","sideload-k8s.mmd","sideload-k8s.sha256.json","sideload-operator.html","sideload-operator-receipt.json","sideload-telemetry.json","sideload-telemetry.sha256.json"}
 FLIGHT={"index.html","flightdeck.svg","census.json","bd_leaves.json","anchors.json","manifest.json"}
 def build(atlas,out,sha):
     atlas,out=Path(atlas),Path(out)
@@ -25,7 +25,21 @@ def build(atlas,out,sha):
             dest=out/"native-pulse"/("index.html" if name.endswith("index.html") else name)
             dest.parent.mkdir(exist_ok=True,parents=True);shutil.copyfile(src,dest)
             hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
-    links=[("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
+    # Source-bounded BD / CHAR is a supporting view from this same Atlas build.
+    for name in ("index.html", "snapshot.json", "manifest.json"):
+        src=atlas/"bd-char"/name
+        if src.is_file():
+            dest=out/"bd-char"/name; dest.parent.mkdir(exist_ok=True,parents=True)
+            shutil.copyfile(src,dest)
+            hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
+    # Preserve existing publication ownership; PR history is review-only.
+    for name in ("index.html", "snapshot.json", "manifest.json", "native-refresh.json"):
+        src=atlas/"pr-history"/name
+        if src.is_file():
+            dest=out/"pr-history"/name; dest.parent.mkdir(exist_ok=True,parents=True)
+            shutil.copyfile(src,dest)
+            hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
+    links=[("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
     diagram=(atlas/"lane-process.mmd").read_text() if (atlas/"lane-process.mmd").is_file() else 'flowchart LR\n A["Source"] --> B["Native CI"] --> C["Read-only Atlas"] --> D["Owner gate"]'
     page='''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>CODE PURPLE | MissionControl</title><style>

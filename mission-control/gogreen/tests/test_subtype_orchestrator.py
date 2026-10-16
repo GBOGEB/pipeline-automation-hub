@@ -58,5 +58,55 @@ class SubtypePlannerTests(unittest.TestCase):
         self.assertEqual(receipt["schedule"]["waves_planned"], 3)
         self.assertEqual(receipt["kpi"]["independently_accepted_root_closures"], 0)
 
+
+    @staticmethod
+    def mutating(pid, paths, repo="GBOGEB/ABACUS"):
+        p = packet(pid, pid)
+        p.update(mode="MUTATING_REPAIR", phase="REPAIR", repo=repo, mutation_paths=paths)
+        return p
+
+    def test_nested_directory_and_file_leases_cannot_share_wave(self):
+        a = self.mutating("A", ["ci/governance"])
+        b = self.mutating("B", ["ci/governance/workflow_policy.json"])
+        receipt = MOD.plan(self.base([a, b]))
+        self.assertEqual(receipt["schedule"]["waves_planned"], 2)
+        self.assertEqual(receipt["schedule"]["path_conflicts_prevented"], 1)
+        self.assertFalse(receipt["dispatch_authorized"])
+
+    def test_identical_mutation_file_leases_conflict(self):
+        a = self.mutating("A", ["src/engine.py"])
+        b = self.mutating("B", ["src/engine.py"])
+        receipt = MOD.plan(self.base([a, b]))
+        self.assertEqual(receipt["schedule"]["waves_planned"], 2)
+
+    def test_sibling_files_can_share_wave_with_two_worker_ceiling(self):
+        a = self.mutating("A", ["ci/governance/workflow_policy.json"])
+        b = self.mutating("B", ["ci/governance/audit_ci_workflows.py"])
+        receipt = MOD.plan(self.base([a, b]))
+        self.assertEqual(receipt["schedule"]["waves_planned"], 1)
+
+    def test_same_path_in_distinct_repository_is_not_a_collision(self):
+        a = self.mutating("A", ["ci/governance"])
+        b = self.mutating("B", ["ci/governance/config.json"], "GBOGEB/CODEX")
+        receipt = MOD.plan(self.base([a, b]))
+        self.assertEqual(receipt["schedule"]["waves_planned"], 1)
+
+    def test_unsafe_or_noncanonical_path_leases_fail_closed(self):
+        invalid = ["/absolute/path", "src//file.py", "src/../file.py",
+                   "./src/file.py", "src\\file.py", "C:/temp/file.py",
+                   ".git/config", "src/"]
+        for i, path in enumerate(invalid):
+            with self.subTest(path=path):
+                with self.assertRaisesRegex(ValueError, "unsafe mutation path lease"):
+                    MOD.plan(self.base([self.mutating(f"A{i}", [path])]))
+
+    def test_explicit_mutating_lease_required_and_no_authority(self):
+        p = self.mutating("A", [])
+        with self.assertRaisesRegex(ValueError, "path lease"):
+            MOD.plan(self.base([p]))
+        ok = MOD.plan(self.base([self.mutating("B", ["src/core.py"])]))
+        self.assertFalse(ok["merge_authorized"])
+        self.assertFalse(ok["dispatch_authorized"])
+
 if __name__ == "__main__":
     unittest.main()

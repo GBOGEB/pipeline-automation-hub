@@ -52,6 +52,18 @@ def _strings(value, field):
     return value
 
 
+def _validate_path_lease(value):
+    """Enforce canonical repo-relative POSIX leases before cross-worker comparison."""
+    if (not isinstance(value, str) or not value or len(value) > 1024
+            or value.startswith("/") or "\\" in value or "\x00" in value
+            or re.match(r"^[A-Za-z]:", value)):
+        raise ValueError("unsafe mutation path lease")
+    segments = value.split("/")
+    if any(part in ("", ".", "..", ".git") for part in segments):
+        raise ValueError("unsafe mutation path lease")
+    return value
+
+
 def _validate_proof(proof, source_sha):
     if proof is None:
         return None
@@ -107,6 +119,8 @@ def validate(data):
             raise ValueError("source_sha")
         _positive(packet.get("owner_issue"), "owner_issue")
         paths = _strings(packet.get("mutation_paths", []), "mutation_paths")
+        for lease in paths:
+            _validate_path_lease(lease)
         blockers = _strings(packet.get("blockers", []), "blockers")
         if packet["mode"] == "MUTATING_REPAIR" and not paths:
             raise ValueError("mutating repair requires path lease")
@@ -133,7 +147,12 @@ def validate(data):
 def _conflicts(a, b):
     if a["repo"] != b["repo"]:
         return False
-    return bool(set(a["mutation_paths"]) & set(b["mutation_paths"]))
+    for first in a["mutation_paths"]:
+        for second in b["mutation_paths"]:
+            if (first == second or first.startswith(second + "/")
+                    or second.startswith(first + "/")):
+                return True
+    return False
 
 
 def _rank(packet):

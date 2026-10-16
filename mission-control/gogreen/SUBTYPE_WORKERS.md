@@ -43,3 +43,20 @@ denominator shrinkage or test-only source rewrites. A reported uplift is valid
 only when the measurement scope and denominator remain comparable to its
 baseline. Difficult lines may remain uncovered and visible until a safe
 behavioral harness exists; they shall not be hidden to improve a KPI.
+
+## 16 October 2026 — disjoint lease and Testflight root treatment
+
+Native source hardening on [PR #561](https://github.com/GBOGEB/pipeline-automation-hub/pull/561) now validates each mutation lease as a canonical repository-relative POSIX path. Empty components, `.`, `..`, `.git`, absolute and Windows paths fail closed. Two modifying packets in one repository conflict if their paths are identical **or one is an ancestor of the other**: `ci/governance` and `ci/governance/workflow_policy.json` cannot share a worker wave. Sibling files may share a wave when the owner and reviewed path contracts permit it. Cross-repository paths are not aliases.
+
+The native workflow also repairs literal-escaped newlines in the prior test and receipt validation code, uses `unittest discover` for the hyphenated source directory, pins the checkout to the actual PR-head SHA, disables credential persistence, uses SHA-pinned core actions, and publishes real branch-aware source coverage JSON. Authored tests are not native proof; only terminal exact-head CI and inspected artifacts establish DoV.
+
+**Concurrency distinction:** the 18-packet frozen sample declares `max_parallel=3`, allowing three *planned* packets per sample wave. The independent CBQ reverse-pressure expansion in [#562](https://github.com/GBOGEB/pipeline-automation-hub/pull/562) proposes **two read-only scouts per wave**. This is intentionally more conservative and is not a retroactive modification of #561's sample, nor evidence that any two or three workers launched. Increasing to four requires actual source-bound worker receipts, absence of path overlaps and comparable queue-p95/verification-yield observations.
+
+### Candidate N+2 routing
+
+- First read-only pressure wave: canonical workflow-policy reconciliation and independent security inspection; no mutating worker is scheduled on owner-blocked content.
+- Second read-only proof-drain wave: inspect the two highest nonterminal PR-head CI backlogs from #562's eight-PR snapshot and classify the actual elapsed queue/run timers via ABACUS #2033.
+- Independent source-owned mutation later: compatibility, coverage C2/C3/C4/C5 and security groups only after an owner selects source paths and the latest exact head.
+- REX/control: count genuine root reopenings only when accepted integrated-main evidence, source SHA, root ID, run/job/attempt and archive bytes prove them. Missing sessions remain UNKNOWN.
+
+A pressure score is a policy-weighted workload indicator, not a PCA loading, BT strength, expected root closure or instruction to dispatch.
