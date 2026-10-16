@@ -4,6 +4,7 @@ on:
     paths:
       - 'mission-control/federation-atlas/flightdeck/pulses/mip_source_consumer.py'
       - 'mission-control/federation-atlas/flightdeck/pulses/test_mip_source_consumer*.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/test_gg_math_provider_contract.py'
       - 'mission-control/federation-atlas/flightdeck/pulses/MIP_NATIVE_CONSUMER_MATH_ADMISSION.md'
       - '.github/workflows/mc-mip-consumer.yml'
   workflow_dispatch:
@@ -65,8 +66,9 @@ jobs:
           set -euo pipefail
           test "$(git -C providers/gg_MATH rev-parse HEAD)" = \
             "40ab86f2c821f50a85ace1556f656197b317e795"
-          (cd providers/gg_MATH && python -m unittest discover \
-            -s tests -p test_wilson_score_reference.py -v)
+          python -m unittest discover \
+            -s mission-control/federation-atlas/flightdeck/pulses \
+            -p test_gg_math_provider_contract.py -v
           python - <<'PY'
           import json
           import sys
