@@ -16,6 +16,14 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
+      - name: Verify source is actual PR head
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$EXPECTED_SHA"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: '3.11'
@@ -38,6 +46,42 @@ jobs:
             --parent CBQ_CH_BD_20261016.json \
             --source RE_CENSUS_IMPACT_20261016.json \
             --out "$GITHUB_WORKSPACE/out/cbq-ch-bd/impact"
+      - name: Native reverse-pressure positive and negative controls
+        run: |
+          python -m pip install coverage==7.16.2
+          python -m coverage run --branch --source=mission-control/federation-atlas/flightdeck/pulses -m unittest discover -s mission-control/federation-atlas/flightdeck/pulses -p test_reverse_pressure.py -v
+      - name: Produce conservative reverse-pressure roll-up
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/flightdeck/pulses/reverse_pressure.py \
+            --pulse mission-control/federation-atlas/flightdeck/pulses/CBQ_CH_BD_20261016.json \
+            --recensus mission-control/federation-atlas/flightdeck/pulses/RE_CENSUS_IMPACT_20261016.json \
+            --delta mission-control/federation-atlas/flightdeck/pulses/SOURCE_DELTA_20261016_P2.json \
+            --out out/cbq-ch-bd/pressure
+          python -m coverage json -o out/cbq-ch-bd/pressure/coverage.json
+      - name: Verify reverse-pressure receipt cannot promote authority
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          out = Path("out/cbq-ch-bd/pressure")
+          report = json.loads((out / "reverse_pressure.json").read_text())
+          manifest = json.loads((out / "reverse_pressure_manifest.json").read_text())
+          for name, sha in manifest["output_sha256"].items():
+              if hashlib.sha256((out / name).read_bytes()).hexdigest() != sha:
+                  raise ValueError("reverse-pressure member digest mismatch")
+          if report["authority"]["merge_authorized"] or report["authority"]["dispatch_authorized"]:
+              raise ValueError("unapproved authority promotion")
+          if report["metrics"]["accepted_engineering_roots_closed"] != 0:
+              raise ValueError("unsupported root closure")
+          if report["ranking_diagnostics"]["pca_ready"] or report["ranking_diagnostics"]["bt_ready"]:
+              raise ValueError("unqualified statistical fit")
+          coverage = json.loads((out / "coverage.json").read_text())
+          if not coverage.get("files"):
+              raise ValueError("missing real coverage file denominators")
+          PY
       - name: Build sealed read-only pulse projection
         shell: bash
         run: |
