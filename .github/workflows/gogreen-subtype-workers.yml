@@ -34,7 +34,7 @@ jobs:
       - name: Native subtype branch-aware regression coverage
         run: |
           python -m pip install coverage==7.16.2
-          python -m coverage run --branch --source=mission-control/gogreen -m unittest mission-control/gogreen/tests/test_subtype_orchestrator.py -v
+          python -m coverage run --branch --source=mission-control/gogreen -m unittest discover -s mission-control/gogreen/tests -p test_subtype_orchestrator.py -v
       - name: Emit source-bound subtype receipt
         run: |
           python mission-control/gogreen/subtype_orchestrator.py \
