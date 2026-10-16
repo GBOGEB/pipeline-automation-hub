@@ -296,6 +296,12 @@ jobs:
           fi
           python "$SRC/pr_run_history_collect.py" --source "$SRC/PR_MERGE_TEMPORAL_H1_20261016.json" --out /tmp/code-purple-atlas/pr-history/native-refresh.json "${options[@]}"
           test -s /tmp/code-purple-atlas/pr-history/native-refresh.json
+      - name: Build merged PR temporal view with recursive hooks
+        run: |
+          SRC=mission-control/federation-atlas/flightdeck/pulses
+          python -m unittest discover -s mission-control/federation-atlas/flightdeck/pulses -p "test_merged_pr_temporal.py" -v
+          python "$SRC/merged_pr_temporal.py" --source "$SRC/MERGED_PR_TEMPORAL_20261016.json" --out /tmp/code-purple-atlas/merged-pr
+          test -s /tmp/code-purple-atlas/merged-pr/index.html
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
