@@ -1,0 +1,161 @@
+{
+  "schema": "missioncontrol.cbd-rerun-input.v1",
+  "observed_at": "2026-10-16T08:38:22Z",
+  "main_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+  "authority_transfer": false,
+  "items": [
+    {
+      "pr": 1968,
+      "head_sha": "84beaa56aa4353f08db756cca04d1979763c1913",
+      "behind_main": 46,
+      "created_at": "2026-10-14T15:40:13Z",
+      "root_id": null,
+      "run": {
+        "id": 38591987618,
+        "attempt": 1,
+        "head_sha": "84beaa56aa4353f08db756cca04d1979763c1913",
+        "status": "completed",
+        "conclusion": "failure",
+        "failure_kind": "UNCLASSIFIED",
+        "logs_insufficient": false,
+        "cause": null
+      }
+    },
+    {
+      "pr": 1967,
+      "head_sha": "4dcc257e3228734429cfa222dc5efe2d17330549",
+      "behind_main": 48,
+      "created_at": "2026-10-14T15:37:03Z",
+      "root_id": "GOVERNANCE_INVENTORY",
+      "run": {
+        "id": 38597503146,
+        "attempt": 1,
+        "head_sha": "4dcc257e3228734429cfa222dc5efe2d17330549",
+        "status": "completed",
+        "conclusion": "failure",
+        "failure_kind": "DETERMINISTIC",
+        "logs_insufficient": false,
+        "cause": "policy_inventory"
+      }
+    },
+    {
+      "pr": 1965,
+      "head_sha": "b50c64b02e2b85c7f6f12388011c7778299fb1c0",
+      "behind_main": 48,
+      "created_at": "2026-10-14T15:25:16Z",
+      "root_id": "GOVERNANCE_INVENTORY",
+      "run": {
+        "id": 38601238932,
+        "attempt": 1,
+        "head_sha": "b50c64b02e2b85c7f6f12388011c7778299fb1c0",
+        "status": "completed",
+        "conclusion": "failure",
+        "failure_kind": "DETERMINISTIC",
+        "logs_insufficient": false,
+        "cause": "policy_inventory"
+      }
+    },
+    {
+      "pr": 1969,
+      "head_sha": "4e6b848345be1cc064944f24892bb9567a656630",
+      "behind_main": 48,
+      "created_at": "2026-10-14T15:46:21Z",
+      "root_id": "A10_REVIEW",
+      "run": {
+        "id": 38621525015,
+        "attempt": 1,
+        "head_sha": "4e6b848345be1cc064944f24892bb9567a656630",
+        "status": "completed",
+        "conclusion": "failure",
+        "failure_kind": "DETERMINISTIC",
+        "logs_insufficient": false,
+        "cause": "a10_confidentiality"
+      }
+    },
+    {
+      "pr": 1973,
+      "head_sha": "ca013b7df632d592544b204be009bfa0a66edd54",
+      "behind_main": 20,
+      "created_at": "2026-10-14T16:20:10Z",
+      "root_id": "A10_REVIEW",
+      "run": {
+        "id": 38597772979,
+        "attempt": 1,
+        "head_sha": "ca013b7df632d592544b204be009bfa0a66edd54",
+        "status": "completed",
+        "conclusion": "failure",
+        "failure_kind": "DETERMINISTIC",
+        "logs_insufficient": false,
+        "cause": "a10_confidentiality"
+      }
+    },
+    {
+      "pr": 1974,
+      "head_sha": "c1198be9094e04dc1ee93a0af2b51930b7928a2b",
+      "behind_main": 20,
+      "created_at": "2026-10-14T16:36:17Z",
+      "root_id": null,
+      "run": {
+        "id": 38599500335,
+        "attempt": 1,
+        "head_sha": "c1198be9094e04dc1ee93a0af2b51930b7928a2b",
+        "status": "completed",
+        "conclusion": "failure",
+        "failure_kind": "UNCLASSIFIED",
+        "logs_insufficient": false,
+        "cause": null
+      }
+    },
+    {
+      "pr": 1976,
+      "head_sha": "db6109f25c8dfac12a47eede1d3a87a816912348",
+      "behind_main": 20,
+      "created_at": "2026-10-14T17:43:53Z",
+      "root_id": "GOVERNANCE_INVENTORY",
+      "run": {
+        "id": 38609759775,
+        "attempt": 1,
+        "head_sha": "db6109f25c8dfac12a47eede1d3a87a816912348",
+        "status": "completed",
+        "conclusion": "failure",
+        "failure_kind": "DETERMINISTIC",
+        "logs_insufficient": false,
+        "cause": "policy_inventory"
+      }
+    },
+    {
+      "pr": 1977,
+      "head_sha": "63be4739f6d2038545e1a339deb4b60917e53b3b",
+      "behind_main": 20,
+      "created_at": "2026-10-14T17:49:20Z",
+      "root_id": "A10_REVIEW",
+      "run": {
+        "id": 38623526122,
+        "attempt": 1,
+        "head_sha": "63be4739f6d2038545e1a339deb4b60917e53b3b",
+        "status": "completed",
+        "conclusion": "failure",
+        "failure_kind": "DETERMINISTIC",
+        "logs_insufficient": false,
+        "cause": "a10_confidentiality"
+      }
+    },
+    {
+      "pr": 2027,
+      "head_sha": "8cb4d742ad046ab688d691f4cc68c4171ad4308f",
+      "behind_main": 0,
+      "created_at": "2026-10-15T16:52:57Z",
+      "root_id": "GOVERNANCE_INVENTORY",
+      "run": {
+        "id": 38774624108,
+        "attempt": 2,
+        "head_sha": "8cb4d742ad046ab688d691f4cc68c4171ad4308f",
+        "status": "queued",
+        "conclusion": null,
+        "failure_kind": "DETERMINISTIC",
+        "logs_insufficient": false,
+        "cause": "policy_inventory"
+      }
+    }
+  ]
+}
