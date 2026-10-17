@@ -1,0 +1,12 @@
+# CODE PURPLE fleet Issue Expedition — N→N+1 closed-state provenance
+
+- UTC source readback: **2026-10-17T18:58:12.551Z**. REST search for open issues paginated 100+42, complete, no duplicate identities.
+- Previous frozen baseline (2026-10-17T18:11:56.309Z): **152 open**. Current: **142 open**, net **-10**.
+- **10 independent GitHub CLOSED objects**: 9 dashboard-alert duplicates; 1 narrow unit-matrix census work order [ABACUS #1865](https://github.com/GBOGEB/ABACUS/issues/1865). Zero new open issues in the matched census, zero accepted source/security/engineering root closures.
+- Baseline before previous snapshot: 153 open, with earlier bounded tooling work order [ABACUS #1864](https://github.com/GBOGEB/ABACUS/issues/1864) closing at 18:06:47 UTC; full progression **153→152→142** (11 issues closed). These are **externally concurrent mutations**; this ChatGPT iteration did not call any issue-close action.
+- Current repo vector: GBOGEB/cryoplant-project=56; GBOGEB/ABACUS=38; GBOGEB/pipeline-automation-hub=32; GBOGEB/CODEX=10; GBOGEB/GEMINI=2; GBOGEB/document-organization-system=1; GBOGEB/DOCX_RTM_Automation=1; GBOGEB/gg_MATH=1; GBOGEB/Q_engineering_tools=1.
+- Exact-root [ABACUS #1885](https://github.com/GBOGEB/ABACUS/issues/1885) **remains OPEN** while draft [#2163](https://github.com/GBOGEB/ABACUS/pull/2163) awaits native proof. All nine dashboard closures are alert deduplication, not nine fixed navigation bugs. Scanner-source/denominator epoch is preserved per original issue in JSON.
+- Source repair and REX: [#2167](https://github.com/GBOGEB/ABACUS/pull/2167) merged with known failing CI; [#2168](https://github.com/GBOGEB/ABACUS/pull/2168) replaces Ariana CI, [#2170](https://github.com/GBOGEB/ABACUS/pull/2170) guards security and formal-credit forgery, [#2173](https://github.com/GBOGEB/ABACUS/pull/2173) repairs isolated Windows dependency installation. All remaining source PRs draft and not accepted.
+- Whole-fleet issue-count growth/decline is **not** a defect-quality or Six Sigma estimator; no PCA or BT priority winner inferred. Dependency/queue observations do not grant rerun/merge authority.
+
+Machine-readable source IDs, exact closure reasons/timestamps, full 142 live IDs and per-repo denominator available in sibling JSON. Canonical BD root SSOT remains [#85](https://github.com/GBOGEB/pipeline-automation-hub/issues/85), global Issue Expedition [#153](https://github.com/GBOGEB/pipeline-automation-hub/issues/153), and MIP stabilisation [#372](https://github.com/GBOGEB/pipeline-automation-hub/issues/372).
