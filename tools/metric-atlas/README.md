@@ -48,7 +48,7 @@ This fetches a PR source head and the first page of checks. The output is **RAW_
 
 ## Source qualification
 
-- The included **native artifact** `method_atlas_11964700323.zip` is the 73,965-byte historical ZIP from Mission Control #533. Its contents have been independently checked for ZIP integrity and SHA-256. Historical native CODE PURPLE series has **four** steps, not 20.
+- The **standalone ZIP distribution includes** the native artifact; the GitHub PR contains its hash/ledger metadata, not its binary bytes. The `method_atlas_11964700323.zip` is the 73,965-byte historical ZIP from Mission Control #533. Its contents have been independently checked for ZIP integrity and SHA-256. Historical native CODE PURPLE series has **four** steps, not 20.
 - Other selected observations are explicitly tagged `REPORTED_HISTORICAL` from previously reported ABACUS and Mission Control results. They are not represented as newly fetched CI or independently re-executed tests.
 - 52/66 branch coverage is a **four-module local Mission Control population**, not ABACUS or federation-wide coverage. The broader ABACUS 8,394 branch opportunities have an **UNKNOWN covered numerator**.
 - The 7-PR recurring Matplotlib pattern is a failure *fingerprint*, not seven independently proven causal roots, waived security checks or merged PRs.
