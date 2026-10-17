@@ -11,6 +11,7 @@ import html
 import json
 import re
 from pathlib import Path
+import source_freshness
 
 SCHEMA = 'missioncontrol.code_purple.cpq_convergence_n5.v1'
 SHA40 = re.compile(r'[0-9a-f]{40}\Z')
@@ -135,6 +136,9 @@ def converge(queue,top7,source_sha,*,observed_on=None):
     active=sum(i['state']=='ACTIVE' for i in items)
     reader=sum(i['state']=='UNKNOWN_NEEDS_READER' for i in items)
     done=sum(i['state'] in DONE for i in items)
+    freshness=source_freshness.annotate(
+        [{'name':'Top7 pulse '+str(p['pulse']), 'as_of':p['as_of'], 'as_of_basis':'observed_on'}
+         for p in t['pulses']], observed_on=observed_on, ttl_days=14)
     return {'schema':SCHEMA,'source':{'repository':'GBOGEB/pipeline-automation-hub',
              'path':'mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json',
              'exact_master_sha':source_sha},
@@ -144,7 +148,7 @@ def converge(queue,top7,source_sha,*,observed_on=None):
              'source_readback_coverage':{'numerator':len(items),'denominator':18},
              'accepted_causal_root_closures':None,'qualified_changed_line_coverage':None,
              'matched_wave_effect':None},
-            'top7':t,'waves':WAVES,'items':items,
+            'top7':t,'freshness':freshness,'waves':WAVES,'items':items,
             'root_credit':'UNKNOWN','admission':'HOLD','authority_transfer':False,
             'security_waiver':False,'dispatch_authorized':False,'formal_credit_delta':0}
 
@@ -157,7 +161,7 @@ def render_html(report):
 const D='''+data+''';const E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 document.getElementById('source').textContent=D.source.exact_master_sha+' · '+D.source.path;
 const m=D.metrics;document.getElementById('metrics').innerHTML=[['Open',m.open],['Active',m.active],['To do',m.todo],['Reader',m.reader],['Done',m.done],['Reviewed',m.source_readback_coverage.numerator+'/'+m.source_readback_coverage.denominator]].map(x=>'<div><span>'+E(x[0])+'</span><b>'+E(x[1])+'</b></div>').join('');
-document.getElementById('top7').textContent=D.top7.comparison+' · source matches '+(D.top7.pair_eligible_for_source_match?'eligible':'WITHHELD')+' · matched delta UNKNOWN';
+document.getElementById('top7').textContent=D.top7.comparison+' · source matches '+(D.top7.pair_eligible_for_source_match?'eligible':'WITHHELD')+' · temporal sources '+D.freshness.sources.map(x=>x.name+':'+x.state+'('+String(x.age_days??'UNKNOWN')+'d)').join(', ')+' · matched delta UNKNOWN';
 function draw(){const q=document.getElementById('search').value.toLowerCase(),filter=document.getElementById('status').value;let arr=D.items.filter(x=>(filter==='ALL'||(filter==='OPEN'?!['DONE','CONTROL','SUPERSEDED','INVALIDATED'].includes(x.state):x.state===filter))&&[x.id,x.title,x.route,x.evidence].join(' ').toLowerCase().includes(q));document.getElementById('items').innerHTML=arr.map(x=>'<tr><td>'+E(x.id)+'</td><td><strong>'+E(x.title)+'</strong><p class="dim">'+E(x.evidence)+'</p></td><td>'+E(x.state)+'</td><td>'+E(x.route??'NO ACTIVE LEASE')+'<p class="dim">'+E(x.obligation)+'</p></td></tr>').join('');document.getElementById('visible').textContent=arr.length+' of '+D.items.length+' registered records';}
 for(const id of ['search','status'])document.getElementById(id).addEventListener('input',draw);draw();</script></body></html>'''
 
