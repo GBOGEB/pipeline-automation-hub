@@ -1,0 +1,126 @@
+{
+  "schema": "code_purple.chat_continuation_protocol.v1",
+  "as_of_utc": "2026-10-17",
+  "status": "DRAFT_NON_AUTHORITATIVE_CONSUMER_OF_MISSION_CONTROL_V2",
+  "source_authority": "GBOGEB/pipeline-automation-hub:mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json",
+  "method_authority": "GBOGEB/pipeline-automation-hub:mission-control/v2/MC_METHOD_PROFILE_REGISTRY_v1.json",
+  "not_an_executable_api": true,
+  "not_a_background_scheduler": true,
+  "not_a_second_federation_ssot": true,
+  "monikers": {
+    "CP.HANDOFF": {
+      "display": "CP.HANDOFF()",
+      "alias": "CP.HANDOFF!",
+      "kind": "CHAT_INSTRUCTION_MACRO",
+      "meaning": "Freeze the present source-bound session into verified lossless-intent ZIP + standalone drop-in, manifest and next admissible owner queue.",
+      "input": {
+        "scope": "CURRENT_SESSION",
+        "mode": "LOSSLESS_INTENT",
+        "artifact": "ZIP+DROPIN+STATE+MANIFEST",
+        "horizon": "G3P:N_TO_N_PLUS_3"
+      },
+      "must_do": [
+        "CAPTURE_INTENT_AND_AUTHORITY",
+        "REFRESH_EXACT_HEADS_NATIVE_RUNS",
+        "FREEZE_SOURCE_BOUND_HISTORICAL_VERSUS_CURRENT",
+        "PRESERVE_PR_SHA_RUN_JOB_ATTEMPT_AND_BLOCKERS",
+        "PRESERVE_PLANNED_VS_ACTUAL_AND_UNKNOWN_DENOMINATORS",
+        "GIVE_CANONICAL_POINTERS_NO_SHADOW_SSOT",
+        "CREATE_DROPIN_AND_MACHINE_STATE",
+        "VERIFY_EACH_SHA256_AND_ZIP_CRC",
+        "EXPLICITLY_DISCLOSE_MISSING_PREDECESSOR_BYTES"
+      ],
+      "output": [
+        "START_HERE.md",
+        "LOSSLESS_HANDOVER.md",
+        "DROPIN_NEXT_CHAT.md",
+        "state.json",
+        "pr_heads_and_runs.json",
+        "root_blocker_queue.json",
+        "method_contract.md",
+        "metric_ledger.csv",
+        "MANIFEST.json",
+        "MANIFEST_SHA256.txt",
+        "ZIP_FILE_AND_EXTERNAL_SHA256"
+      ]
+    },
+    "CP.RESUME": {
+      "display": "CP.RESUME(bundle=...,horizon=\"G3P:N_TO_N_PLUS_3\")",
+      "alias": "CP.RESUME!",
+      "kind": "CHAT_INSTRUCTION_MACRO",
+      "meaning": "Reconstitute handover state from supplied bytes then independently requalify current sources before performing the next admissible bounded action.",
+      "input": {
+        "bundle": "ATTACHED_VERIFIABLE_HANDOVER_ZIP",
+        "mode": "VERIFY_REFRESH_EXECUTE",
+        "horizon": "G3P:N_TO_N_PLUS_3"
+      },
+      "must_do": [
+        "REQUIRE_ATTACHED_ARCHIVE_OR_ACCESSIBLE_SOURCE",
+        "VERIFY_ARCHIVE_MANIFEST",
+        "READ_START_HERE_HANDOVER_CURRENT_STATE_METHOD",
+        "RECONCILE_LIVE_GITHUB_DEFAULT_AND_PR_HEADS",
+        "KEEP_PREVIOUS_RUNS_HISTORICAL",
+        "CLASSIFY_FIRST_RED_AND_DISJOINT_LEASES",
+        "CONTINUE_ONE_G3P_WAVE_ONLY_IF_SAFE",
+        "REPORT_ACTUAL_N_TO_N_PLUS_3_OR_EARLY_STOP",
+        "NO_BACKGROUND_PROMISE"
+      ],
+      "output": [
+        "SOURCE_AND_GATE_RECENSUS",
+        "ACTIONS_AND_RECEIPTS",
+        "ACTUAL_TEST_AND_COVERAGE_DENOMINATORS",
+        "BLOCKERS_AND_NEXT_OWNER",
+        "OPTIONAL_NEXT_HANDOFF"
+      ]
+    },
+    "G3P.EXECUTE": {
+      "display": "G3P.EXECUTE(N,N+3)",
+      "kind": "CHAT_INSTRUCTION_MACRO",
+      "meaning": "Execute one governed wave with three sequential feedback pulses using canonical G3P envelope; do not confuse with three waves/runners/phases.",
+      "authority": "Mission Control v2 G3P proposal PR #607"
+    }
+  },
+  "file_integrity": {
+    "algorithm": "SHA-256",
+    "manifest": "MANIFEST.json",
+    "auxiliary_sha": "MANIFEST_SHA256.txt",
+    "outer_archive_sha": "ZIPNAME.sha256",
+    "verify_crc": true,
+    "member_paths": "RELATIVE_NO_PATH_TRAVERSAL",
+    "required_scope_disclosure": true
+  },
+  "lossless_classes": {
+    "operational_intent": "REQUIRED",
+    "source_lineage": "REQUIRED",
+    "material_decisions": "REQUIRED",
+    "native_evidence": "SOURCE_BOUND_ONLY",
+    "attachments": "INCLUDE_ONLY_IF_BYTES_AVAILABLE",
+    "verbatim_transcript": "NOT_IMPLIED",
+    "private_reasoning": "NOT_INCLUDED"
+  },
+  "governance": {
+    "authority_transfer": false,
+    "security_waiver": false,
+    "main_merge_admission": "HOLD_UNTIL_INDEPENDENT_GATE_PROOF",
+    "branch_protection_relaxation": false,
+    "unknown_not_zero": true,
+    "queued_not_success": true,
+    "no_unbounded_async_work": true
+  },
+  "historical_aliases": {
+    "three_waves": "THREE_DISTINCT_ENGINEERING_PACKAGES",
+    "three_pulses": "THREE_ORDERED_FEEDBACK_CYCLES",
+    "three_phases": "METHOD_STAGES_NOT_PULSE_ORDINALS",
+    "g3p": "ONE_WAVE_THREE_PULSES"
+  },
+  "identity": {
+    "repository": "owner/name",
+    "wave": "owner/name::mission_id::W<label>",
+    "pulse": "owner/name::mission_id::W<label>::PULSE-<id>"
+  },
+  "disposition": {
+    "success": "VERIFIED_BUNDLE_READY_FOR_REFRESH_NOT_MAIN_ADMISSION",
+    "global_blocker": "STOP_AND_PRESERVE_FUTURE_PULSE_SLOTS_NOT_RUN",
+    "missing_bundle": "CANNOT_RESUME_SOURCE_BOUND_PRIOR_SESSION_WITHOUT_BYTES"
+  }
+}
