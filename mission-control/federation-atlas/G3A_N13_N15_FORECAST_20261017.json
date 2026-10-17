@@ -1,0 +1,15 @@
+{
+ "schema": "missioncontrol.g3a.n13_n15.frozen_forecast.v1",
+ "authority_transfer": false, "merge_admission": "HOLD", "project_acceptance_increments": null,
+ "upstream_source_head": "296c2dfa6c81849038b3d378d2e179dfdb4ca8a4",
+ "forecast_issue_before_pulses": true,
+ "comparison_population": "n3_master_dags_bridge.py at identical source bytes, Python 3.11/3.12 target",
+ "pulse_plan": [
+  {"label": "N+13", "min_focused_passing": 8, "action": "Implement candidate graph bridge with fail-closed schema/authority and offline 8-case baseline"},
+  {"label": "N+14", "min_focused_passing": 17, "action": "Expand adversarial test pressure without changing source bytes; measure matched lines and branches"},
+  {"label": "N+15", "min_focused_passing": 23, "action": "Produce four-owner crosswalk, DAG/SIPOC handover and dashboard projection; exact integrated head CI"}
+ ],
+ "missing_master_dags_path": null,
+ "no_source_or_runners_dispatch": true,
+ "success_condition": "At most source-and-local-proof checkpoint, native exact-head CI and independent review separate"
+}
