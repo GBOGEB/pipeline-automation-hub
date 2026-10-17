@@ -125,6 +125,8 @@ class N3KPIContracts(unittest.TestCase):
             self.assertIn("Plotly.newPlot", page)
             self.assertIn('id="n3-queue_seconds"', page)
             self.assertIn('id="n3-runner_seconds"', page)
+            self.assertLess(page.index("<script>"), page.index('id="n3-queue_seconds"'),
+                            "Plotly library must load before chart newPlot scripts")
             self.assertIn("UNKNOWN", page)
             self.assertEqual(report["population"]["jobs"], 2)
             self.assertEqual(set(manifest["member_sha256"]),
