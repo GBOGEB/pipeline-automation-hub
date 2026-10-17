@@ -1,0 +1,124 @@
+{
+  "schema": "qps-metric-convergence-n4-n5.v1",
+  "as_of": "2026-10-17",
+  "authority": "SOURCE-BOUND REPORT, NOT ADMISSION",
+  "physical_sources": {
+    "eligible": 3,
+    "admitted_receivers": 2,
+    "pilot_routes": 4,
+    "max_routes": 6
+  },
+  "native_controller_observations": [
+    {
+      "pulse": "N1",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "head_sha": "a1c5ead53674eb98f05936e7aff9f5b247ba591a",
+      "run_id": 39036603118,
+      "job_id": 117407726693,
+      "passing_tests": 39,
+      "failed_tests": 0,
+      "skipped_tests": null,
+      "workflow_conclusion": "success"
+    },
+    {
+      "pulse": "N2",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "head_sha": "64280ac936f649801639e859e9f8ffe41cf56577",
+      "run_id": 39041432124,
+      "job_id": 117421562055,
+      "passing_tests": 48,
+      "failed_tests": 0,
+      "skipped_tests": null,
+      "workflow_conclusion": "success"
+    },
+    {
+      "pulse": "N3_visual",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "head_sha": "a7d5a309e456b403f9d049a76e2733464c3f97b7",
+      "run_id": 39047553770,
+      "job_id": 117439232145,
+      "passing_tests": 81,
+      "failed_tests": 1,
+      "skipped_tests": 1,
+      "workflow_conclusion": "failure"
+    }
+  ],
+  "measured_growth": {
+    "N1_to_N2_pass_test_delta": 9,
+    "N1_to_N2_percent": 23.0769230769,
+    "N2_to_N3_pass_test_delta": 33,
+    "N2_to_N3_percent": 68.75,
+    "N3_GATE": "FAIL, NOT CONVERGED"
+  },
+  "implementation": [
+    {
+      "wave": "N4",
+      "pr": 652,
+      "new_test_cases_authored": 10,
+      "local_regression_pass": 10,
+      "native_PR_head_result": null
+    },
+    {
+      "wave": "N5",
+      "pr": 653,
+      "new_test_cases_authored": 11,
+      "local_regression_pass": 11,
+      "native_PR_head_result": null
+    }
+  ],
+  "root_repair_candidates": [
+    {
+      "name": "LEDGER_TEST_INDEX_ZERO",
+      "affected_gate": "QPS Metric Census Federation N-pulse",
+      "first_red_run_id": 39047553770,
+      "first_red_job_id": 117439232145,
+      "fix_pr": 655,
+      "source_merged": true,
+      "native_root_closure": null
+    },
+    {
+      "name": "ZERO_TEST_SELECTOR_SHELL_VARIABLE",
+      "affected_gate": "Zero-Test Gate Guard",
+      "first_red_run_id": 39047553819,
+      "first_red_job_id": 117439232074,
+      "fix_pr": 657,
+      "source_merged": true,
+      "native_root_closure": null
+    }
+  ],
+  "remote_execution": {
+    "verified_source_receiver_job_count": 0,
+    "planned_pilot_routes": 4,
+    "canonical_530_receiver_zip_acceptance": null,
+    "private_qps_source_read_from_hub": null,
+    "remote_test_count": null,
+    "matched_coverage_improvement": null
+  },
+  "security": {
+    "P0_P1_disposition": null,
+    "P2_P3_deferral_approved": null,
+    "effective_required_checks": null,
+    "abacus_pr_2126_admitted": false
+  },
+  "statistics": {
+    "worker_hours": null,
+    "rate_yield": null,
+    "N20": null,
+    "PCA_ready": null,
+    "BT_ready": null,
+    "M2_ready": null,
+    "M3_ready": null
+  },
+  "decision": {
+    "current": "HOLD_PRIVATE_READ_AND_OWNER_AUTH",
+    "nominal_pilot": "2x4",
+    "scaleup": "HOLD_3x6",
+    "source_owner_control": true
+  },
+  "definitions": {
+    "null": "UNKNOWN, not zero",
+    "simulated_native_credit": false,
+    "merge_admission": "HOLD",
+    "qps_engineering_acceptance": false
+  }
+}
