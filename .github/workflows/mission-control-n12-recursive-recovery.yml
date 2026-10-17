@@ -76,3 +76,27 @@ jobs:
           name: mc-n12-live-run-attempts
           path: /tmp/mc-n12-live-readback.json
           if-no-files-found: warn
+
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install scoped Chromium QA dependencies
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify HTML, six tabs, three viewports and immutable source model
+        run: python mission-control/v2/recursive-recovery/browser_qa.py /tmp/mc-n12-browser-qa
+      - name: Preserve QA screenshots and digests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mc-n12-browser-visual
+          path: /tmp/mc-n12-browser-qa
+          if-no-files-found: warn
