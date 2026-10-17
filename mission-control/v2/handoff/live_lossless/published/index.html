@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://api.github.com; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'">
+<title>CODE PURPLE | Live Lossless</title>
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<header class="mast">
+  <div class="mast-inner">
+    <div><p class="eyebrow">MISSION CONTROL / CODE PURPLE / SESSION CUSTODY</p><h1>Live Lossless <span>· current-session continuity</span></h1><p class="lede">One compact snapshot; detailed evidence stays one selection away. GitHub readback never overwrites the frozen original.</p></div>
+    <div class="toolbar">
+      <button id="refresh" type="button">↻ Check GitHub</button>
+      <label for="interval">Recheck <select id="interval"><option value="0">Manual</option><option value="15" selected>15 minutes</option><option value="60">Hourly</option></select></label>
+      <span id="feed-status" role="status" aria-live="polite">Loading source-bound snapshot…</span>
+      <small id="readback-time">Readback time: not yet verified</small>
+    </div>
+  </div>
+</header>
+<nav class="tabs" aria-label="Live lossless sections" role="tablist">
+  <button id="tab-overview" role="tab" aria-controls="panel-overview" aria-selected="true" tabindex="0" data-tab="overview">Overview</button>
+  <button id="tab-intents" role="tab" aria-controls="panel-intents" aria-selected="false" tabindex="-1" data-tab="intents">Intents &amp; subrequests</button>
+  <button id="tab-actions" role="tab" aria-controls="panel-actions" aria-selected="false" tabindex="-1" data-tab="actions">Actions &amp; BD</button>
+  <button id="tab-evidence" role="tab" aria-controls="panel-evidence" aria-selected="false" tabindex="-1" data-tab="evidence">GitHub &amp; evidence</button>
+  <button id="tab-monikers" role="tab" aria-controls="panel-monikers" aria-selected="false" tabindex="-1" data-tab="monikers">Monikers &amp; resume</button>
+</nav>
+<main>
+  <p class="standpoint"><strong>Scope:</strong> sanitized semantic reconstruction plus selected public GitHub observations. A PR merge, browser green, screenshot or read-only refresh is <strong>not</strong> independent engineering/security admission. <span id="admission">Admission: HOLD</span></p>
+  <div id="source-errors" role="alert" hidden></div>
+  <section id="panel-overview" class="pane" role="tabpanel" aria-labelledby="tab-overview">
+    <div class="metric-grid" aria-label="Snapshot summary">
+      <article class="metric"><strong id="metric-intents">—</strong><span>Captured intents</span><small id="metric-intent-detail">historical + current addendum</small></article>
+      <article class="metric"><strong id="metric-actions">—</strong><span>Owned actions</span><small id="metric-action-detail">history retained</small></article>
+      <article class="metric"><strong id="metric-bd">—</strong><span>Canonical BD focus</span><small>Read-only · not whole programme</small></article>
+      <article class="metric"><strong id="metric-prompts">UNKNOWN</strong><span>Total original prompts</span><small>No verified complete chat export</small></article>
+      <article class="metric"><strong id="metric-checks">—</strong><span>Exact-main closeout tests</span><small>Scoped Python cohort; not global coverage</small></article>
+      <article class="metric"><strong id="metric-head" class="mono compact">—</strong><span>Last observed main</span><small>Date-only source checkpoint</small></article>
+    </div>
+    <div class="two-col">
+      <section class="panel">
+        <h2>Work state distribution</h2><p class="note">States below are from the session ledger at capture. Independent GitHub outcome changes appear separately, and do not silently change these rows.</p>
+        <div id="work-state" aria-label="State counts and proportional bars"></div>
+      </section>
+      <section class="panel">
+        <h2>Two-clock GitHub source lineage</h2><p class="note">Source SHAs and the displayed observation sequence are distinct from ChatGPT timestamps, G3P pulse ordinals and accepted-N.</p>
+        <svg id="source-timeline" role="img" aria-label="Frozen main checkpoint and more recent GitHub source observation" viewBox="0 0 600 125"></svg>
+        <div id="clock-note"></div>
+      </section>
+    </div>
+    <section class="panel">
+      <h2>Session and evidence health</h2>
+      <div class="two-col">
+        <div><p><strong>Frozen session:</strong> <code id="session-name">—</code></p><p><strong>Original source:</strong> <code id="frozen-head">—</code></p><p><strong>Latest observed:</strong> <code id="observed-head">—</code></p><p><strong>Browser-confirmed:</strong> <code id="remote-head">UNKNOWN</code></p></div>
+        <div><p><strong>Prompt completeness:</strong> <span id="prompt-status">UNKNOWN</span></p><p><strong>Accepted N:</strong> <span id="accepted-status">UNKNOWN</span></p><p><strong>Global branch coverage:</strong> <span id="coverage-status">UNKNOWN</span></p><p><strong>Latest source date:</strong> <span id="snapshot-date">UNKNOWN</span></p></div>
+      </div>
+    </section>
+    <details class="panel"><summary>What does the snapshot preserve, and what does it not?</summary><p>All available source-linked intents, actions, decisions, owner links and reference metrics are retained. It does not include inaccessible raw chat messages, hidden reasoning, a total prompt count, cross-repo governance authorizations, or a claim of native CI where no receipt exists.</p><p id="provenance-summary"></p></details>
+  </section>
+
+  <section id="panel-intents" class="pane" role="tabpanel" aria-labelledby="tab-intents" hidden>
+    <h2>Intent lineage and nested subrequests</h2>
+    <p class="note">Each intent and subrequest links to its owned actions. Expand a row to inspect detail and sources; nothing has been deleted or silently superseded.</p>
+    <div class="filters"><label for="search">Find text <input id="search" type="search" placeholder="Search titles, words, IDs"></label><button type="button" id="reset-filters">Clear filters</button><button type="button" id="expand-all">Expand visible</button><button type="button" id="collapse-all">Collapse visible</button></div>
+    <h3>Intents</h3><div id="intent-cards" class="detail-grid"></div>
+    <h3>Current continuation subrequests</h3><div id="subrequest-cards" class="detail-grid"></div>
+    <p id="intent-empty" class="note" hidden>No entries match your filter.</p>
+  </section>
+
+  <section id="panel-actions" class="pane" role="tabpanel" aria-labelledby="tab-actions" hidden>
+    <h2>Actions and canonical BD projection</h2>
+    <div class="filters"><label for="owner-filter">Owner lane <select id="owner-filter"><option value="ALL">All</option><option value="MC">Mission Control</option><option value="DOW">ABACUS / DOW</option><option value="KEB">CODEX / KEB</option><option value="QPS">QPS</option></select></label><label for="state-filter">State <select id="state-filter"><option value="ALL">All states</option><option>IN_PR</option><option>HOLD</option><option>TODO</option><option>DEFER</option><option>DONE</option><option>ACTIVE</option><option>CONTROL</option></select></label></div>
+    <div id="action-cards" class="detail-grid"></div>
+    <h3>Canonical BD subset — not a shadow queue</h3>
+    <div id="bd-cards" class="detail-grid"></div>
+  </section>
+
+  <section id="panel-evidence" class="pane" role="tabpanel" aria-labelledby="tab-evidence" hidden>
+    <h2>Source observations, PRs, issues and receipts</h2>
+    <p class="note">Frozen observations are dated and historical. Live API checks update only the browser readback; they do not create a commit or prove merged-review compliance. A failed live feed leaves the frozen source intact.</p>
+    <section class="panel"><h3>Pull requests</h3><div class="scroll"><table><thead><tr><th>PR</th><th>Frozen state</th><th>Live state</th><th>Head</th><th>Evidence</th></tr></thead><tbody id="pr-rows"></tbody></table></div></section>
+    <section class="panel"><h3>Issues</h3><div class="scroll"><table><thead><tr><th>Issue</th><th>Frozen state</th><th>Live state</th><th>Evidence</th></tr></thead><tbody id="issue-rows"></tbody></table></div></section>
+    <section class="panel"><h3>Metrics and scoped native proof</h3><div id="metric-observations"></div></section>
+    <section class="panel"><h3>Source, hashes and outstanding gates</h3><div id="source-links"></div><details><summary>Validation and federation boundaries</summary><pre id="feed-diagnostics"></pre></details></section>
+  </section>
+
+  <section id="panel-monikers" class="pane" role="tabpanel" aria-labelledby="tab-monikers" hidden>
+    <h2>Moniker palette and lossless resume controls</h2><p class="note">These are copyable chat instruction macros, not background workers, automatic merge permissions, or installed ChatGPT execution functions.</p>
+    <div id="moniker-cards" class="detail-grid"></div>
+    <section class="panel"><h3>Read in full / continue this chat</h3><div id="resume-links"></div><p>The current chat remains active. Invoke CP.CLOSEOUT only when choosing to freeze the next checkpoint; no automatic chat retirement follows a successful GitHub publish.</p></section>
+  </section>
+</main>
+<footer><span>CODE PURPLE · Live Lossless v1 · read-only GitHub projection · unknown ≠ zero</span><span>Canonical GitHub owner: Mission Control; no duplicate publisher</span></footer>
+</body>
+</html>
