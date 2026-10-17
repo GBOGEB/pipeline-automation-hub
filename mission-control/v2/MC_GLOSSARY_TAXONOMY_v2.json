@@ -128,18 +128,17 @@
       "canonical_meaning": "GRAND_MISSION_IN_MISSION_CONTROL",
       "rule": "Mathematical geometric mean MUST use GEOMETRIC_MEAN or GM_STAT in new cross-domain machine identifiers."
     },
-    "G3P": {
-      "canonical_meaning": "GOVERNED_THREE_PULSE_WAVE",
-      "type": "BOUNDED_EXECUTION_ENVELOPE_NOT_METHOD_PROFILE",
-      "cardinality": {
-        "waves": 1,
-        "pulses": 3,
-        "runs_per_pulse": "ZERO_OR_MORE"
-      },
-      "rule": "G3P is one wave containing 3 source/evidence-bound pulses at ordinal N+1,N+2,N+3. It is not three separate waves, 3PR, 3PC, three commits, three runner jobs, or three guaranteed successes.",
-      "identity_requirement": "Each pulse uses owner/name::mission_id::W<label>::PULSE-<id>; bare P1/P2/P3 are priority values unless qualified.",
-      "safety": "Missing or failed evidence does not permit acceptance, security waiver, authority transfer, or main merge.",
-      "status": "PROPOSED_ON_BRANCH"
+    "3W": {
+      "canonical_meaning": "THREE_WAVE_ADVANCEMENT",
+      "rule": "Use only for three outcome-level waves; a wave may comprise many pulses and cannot be normalized to N+3 pulse progress."
+    },
+    "3P-CONT": {
+      "canonical_meaning": "THREE_PULSE_CONTINUATION",
+      "rule": "Operational continuation count; distinct from 3PR/3PC/3P3 and 3P* selector, and never three guaranteed approvals or merges."
+    },
+    "N3-AUTO": {
+      "canonical_meaning": "GOVERNED_N_PLUS_THREE_AUTONOMOUS_CONTINUATION",
+      "rule": "Means no routine check-ins inside three bounded pulses; never overrides protected branches, owner leases, security, CI_PIPELINE or independent review."
     }
   },
   "coverage_maturity": {
@@ -195,14 +194,12 @@
     "SIPOC": "Suppliers-Inputs-Process-Outputs-Customers flow model; governed feedback may seed a subsequent pulse.",
     "DAG": "Directed Acyclic Graph of declared execution/evidence dependencies.",
     "KPI": "Key Performance Indicator with explicit owner, denominator, time window, units and evidence status.",
-    "G3P": "Governed Three-Pulse Wave: one bounded wave, exactly three ordered feedback pulses from a source-bound N baseline toward N+3; each pulse has an input, expected observation, actual evidence, disposition and next-source handoff.",
-    "THREE_WAVES": "Three distinct bounded WAVE work packages, each with its own objective, PR/source scope and independently sequenced pulse count; not a synonym for three pulses.",
-    "N_PLUS_3": "Three ordinal pulse transitions from N; denotes a traceable horizon/number of recorded dispositions, not three accepted source changes or a performance increase.",
-    "PULSE_RECEIPT": "Source-bound input, decision, executed-or-not actions, native outcome, observed metric denominators, blockers and next baseline; a valid HOLD receipt can advance the ordinal without engineering acceptance.",
-    "HANDS_OFF_BOUNDED": "Instruction to proceed without intermediate prompts inside one live bounded execution, respecting path leases, stop gates and authority; not permission for unlimited background execution.",
-    "MAJOR_BLOCKER": "Source or authority unavailability, global security/governance failure, destructive change without permission, source-head conflict, untrusted evidence or no safe next action; stop dependent mutation and explain.",
-    "DISJOINT_WORKER": "Scoped owner workstream with nonoverlapping changed file/path lease and independently identifiable evidence; worker or assignment is not a proven running agent.",
-    "PREDICTION_ACTUAL_PAIR": "Expected outcome frozen before each pulse action and later compared with source-bound actual; UNKNOWN when either side cannot be measured."
+    "THREE_WAVE_ADVANCEMENT": "3W: three coordinated outcome-level waves, each potentially containing multiple pulses; not equivalent to three execution steps.",
+    "THREE_PULSE_CONTINUATION": "3P-CONT: exactly three consecutively evaluated bounded pulse transactions within a declared wave, N -> N+1 -> N+2 -> N+3; no skipped or backdated pulse.",
+    "GOVERNED_N3_AUTO": "N3-AUTO: run 3P-CONT without routine interaction, using explicit scope, exact source identity, approved actions and resource leases, independent gates and a stop-on-major-blocker policy. Does not grant blanket dispatch or merge authority.",
+    "PULSE_RECEIPT": "Immutable record of per-pulse input reference/digest, source head, actual action, outputs, test and metric denominators, elapsed time, blockers and next legal transition.",
+    "BLOCKER": "Source-bound reason a legal next action cannot proceed; major blockers stop the 3P-CONT chain and preserve partial results.",
+    "N3_START_ORDINAL": "N is an integer pulse ordinal in a declared wave, not the number of repos, workers, commits, tests, or a global mission version."
   },
   "non_equivalences": [
     "CREW_ASSIGNMENT_NE_RUNNER_EXECUTION",
@@ -215,12 +212,9 @@
     "MERGE_NE_PROOF",
     "CONTROLLED_LIFECYCLE_NE_DMAIC_CONTROL_PHASE",
     "THREE_WAVES_NE_THREE_PULSES",
-    "THREE_PHASES_NE_THREE_PULSES",
-    "PULSE_ORDINAL_NE_ENGINEERING_PROGRESS",
-    "THREE_RUNS_NE_THREE_PULSES",
-    "FORECAST_NE_OBSERVED",
-    "DRAFT_PR_NE_MERGE",
-    "HANDS_OFF_NE_BACKGROUND_EXECUTION"
+    "PULSE_COMPLETION_NE_MERGE_ADMISSION",
+    "UNSUPERVISED_NE_UNGOVERNED",
+    "PREDICTED_METRIC_NE_OBSERVED_METRIC"
   ],
   "compatibility_aliases": {
     "COV-0": "MCOV-0",
@@ -239,8 +233,7 @@
     "pulse": "owner/name::mission_id::W<label>::PULSE-<id>",
     "run": "owner/name::RUN-<native_platform_run_id>",
     "rule": "Never join, order, or aggregate cross-repository lineage on bare PR number, bare W###, or bare P1/P2/P3.",
-    "g3p_envelope": "owner/name::mission_id::W<label>::G3P",
-    "g3p_pulses": "owner/name::mission_id::W<label>::PULSE-1|PULSE-2|PULSE-3, scoped to one wave and bound to sequential evidence"
+    "continuation": "owner/name::mission_id::W<label>::N<start>..N<start+3>"
   },
   "conflict_resolution_order": [
     "EXACT_MACHINE_FIELD_SEMANTICS",
@@ -423,29 +416,80 @@
       "AUTHORITY_TRANSFER_FALSE"
     ]
   },
-  "g3p_operational_extension": {
+  "continuation_extension": {
+    "version": "1.0.0",
     "as_of": "2026-10-17",
-    "status": "PROPOSED_ON_BRANCH",
-    "owner": "GBOGEB/pipeline-automation-hub:mission-control/v2",
-    "source_ref": "MC_METHOD_PROFILE_REGISTRY_v1.json:g3p_envelope",
-    "compatibility": {
-      "historical_3P_star_receipts": "IMMUTABLE",
-      "three_PR": "REFRESH_PROBE_RANK",
-      "three_PC": "PREPARE_PROVE_COMMIT",
-      "three_P_star": "PROFILE_SELECTOR",
-      "P1_P2_P3": "PRIORITIES_IF_UNQUALIFIED"
-    },
-    "return_contract": [
-      "baseline_N",
-      "pulse_N_plus_1",
-      "pulse_N_plus_2",
-      "pulse_N_plus_3",
-      "planned_vs_actual",
-      "source_and_ci_receipts",
-      "coverage_with_denominators",
-      "blockers_and_owner",
-      "next_admissible_action"
+    "control_issue": "GBOGEB/pipeline-automation-hub#604",
+    "scope": "MISSION_CONTROL_GOVERNED_N3_CONTINUATION",
+    "provenance": "ADDITIVE_EXTENSION_V2_BASELINE_PRESERVED",
+    "hierarchy": [
+      "MISSION",
+      "SPRINT",
+      "WAVE",
+      "PULSE",
+      "RUN"
     ],
-    "authority_transfer": false
+    "monikers": {
+      "3W": {
+        "kind": "wave_sequence",
+        "count": 3,
+        "unit": "waves",
+        "actions": [
+          "define three measurable outcome waves",
+          "plan pulses/owners/dependencies per wave",
+          "execute until each wave's independent outcome gate"
+        ],
+        "does_not_mean": "three bounded pulse executions"
+      },
+      "3P-CONT": {
+        "kind": "pulse_sequence",
+        "count": 3,
+        "unit": "pulses",
+        "actions": [
+          "bind N and exact source/manifest",
+          "run three bounded, sequential decision/action/proof cycles",
+          "return N+3 summary with receipts or first major blocker"
+        ],
+        "does_not_mean": "3PR/3PC/3P3 or three automatic commits"
+      },
+      "N3-AUTO": {
+        "kind": "execution_policy",
+        "unit": "three_pulses",
+        "actions": [
+          "run without routine prompting under explicit owner/path and risk scope",
+          "stop on major blocker or unauthorized material change",
+          "return planned/actual, receipts, tests, coverage, queue impact and remaining HOLD"
+        ],
+        "does_not_mean": "unlimited background agent; unattended protected merge"
+      }
+    },
+    "receipt_contract": "mission-control/v2/MC_N3_CONTINUATION_CONTRACT_v1.json",
+    "prohibitions": [
+      "NO_GUARANTEED_COVERAGE_DELTA",
+      "NO_UNVERIFIED_WORKER_CAPACITY",
+      "NO_ASSUMED_NATIVE_CI_PASS",
+      "NO_ADMISSION_FROM_LOCAL_TESTS",
+      "NO_CROSS_REPO_AUTHORITY_TRANSFER",
+      "NO_REWRITE_OF_HISTORICAL_RECEIPTS"
+    ],
+    "safety": {
+      "stop_reasons": [
+        "BRANCH_DRIFT",
+        "SOURCE_IDENTITY_CONFLICT",
+        "OWNER_LEASE_CONFLICT",
+        "P0_P1_SECURITY",
+        "A10_OR_GOVERNANCE_FAIL",
+        "NATIVE_PROOF_FAILED",
+        "DEPENDENCY_INCOMPLETE",
+        "POLICY_VIOLATION",
+        "UNKNOWN_HIGH_RISK"
+      ],
+      "wait_not_stop": [
+        "TRANSIENT_QUEUE",
+        "AWAITING_NONCRITICAL_RECEIPT"
+      ],
+      "merge_admission": "INDEPENDENT",
+      "authority_transfer": false
+    }
   }
 }

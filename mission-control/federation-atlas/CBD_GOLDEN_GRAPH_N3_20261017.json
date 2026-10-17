@@ -1,0 +1,102 @@
+{
+  "schema": "missioncontrol.n3_continuation.v1",
+  "mode": "N3-AUTO",
+  "operation": "3P-CONT",
+  "authority_transfer": false,
+  "mission": {
+    "id": "CBD-GOLDEN-GRAPH-604",
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "wave": "W-CBD-GRAPH-01",
+    "start_sha": "52c5152e8f8ed68c5fae7a451cbc97281d709ba0"
+  },
+  "start_ordinal": 0,
+  "policy": {
+    "max_pulses": 3,
+    "security_waiver": false,
+    "merge_without_review": false,
+    "unbounded_dispatch": false,
+    "allowed_paths": [
+      "mission-control/v2"
+    ]
+  },
+  "receipts": [
+    {
+      "ordinal": 1,
+      "pulse_id": "GBOGEB/pipeline-automation-hub::CBD-GOLDEN-GRAPH-604::W-CBD-GRAPH-01::PULSE-1",
+      "input_source_sha": "52c5152e8f8ed68c5fae7a451cbc97281d709ba0",
+      "output_source_sha": "2f21f60f29829b2956433195699a587e82a28fc4",
+      "prev_receipt_digest": null,
+      "status": "SOURCE_COMMITTED",
+      "changed_paths": [
+        "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json"
+      ],
+      "tests": {
+        "kind": "NOT_RUN",
+        "passed": 0,
+        "failed": 0
+      },
+      "coverage_delta": null,
+      "major_blocker": null,
+      "merge_admission": "HOLD",
+      "security_waiver": false,
+      "authority_transfer": false,
+      "action": "GLOSSARY_AND_TAXONOMY",
+      "observation_note": "GitHub source write verified by readback; not exact-head native CI or independent admission"
+    },
+    {
+      "ordinal": 2,
+      "pulse_id": "GBOGEB/pipeline-automation-hub::CBD-GOLDEN-GRAPH-604::W-CBD-GRAPH-01::PULSE-2",
+      "input_source_sha": "2f21f60f29829b2956433195699a587e82a28fc4",
+      "output_source_sha": "28ff5f3f5f7e50d493c937921d754bea628eb38f",
+      "prev_receipt_digest": "5682d870027abcae72b254e3a43e5cc5e9871d4bb087e169dd93676384bf0265",
+      "status": "SOURCE_COMMITTED",
+      "changed_paths": [
+        "mission-control/v2/n3_continuation.py",
+        "mission-control/v2/test_n3_continuation.py"
+      ],
+      "tests": {
+        "kind": "LOCAL",
+        "passed": 24,
+        "failed": 0
+      },
+      "coverage_delta": null,
+      "major_blocker": null,
+      "merge_admission": "HOLD",
+      "security_waiver": false,
+      "authority_transfer": false,
+      "action": "VALIDATOR_AND_NEGATIVE_TESTS",
+      "observation_note": "GitHub source write verified by readback; not exact-head native CI or independent admission"
+    },
+    {
+      "ordinal": 3,
+      "pulse_id": "GBOGEB/pipeline-automation-hub::CBD-GOLDEN-GRAPH-604::W-CBD-GRAPH-01::PULSE-3",
+      "input_source_sha": "28ff5f3f5f7e50d493c937921d754bea628eb38f",
+      "output_source_sha": "0de8e7736ddd7ca7e04c58f873fd09909d097504",
+      "prev_receipt_digest": "56a154f41c30b02c0f313f6b204bef24752e00ad40894349a0708ac0706cbf2e",
+      "status": "SOURCE_COMMITTED",
+      "changed_paths": [
+        "mission-control/v2/MC_N3_CONTINUATION_CONTRACT_v1.json",
+        "mission-control/v2/N3_CONTINUATION_GUIDE.md"
+      ],
+      "tests": {
+        "kind": "NOT_RUN",
+        "passed": 0,
+        "failed": 0
+      },
+      "coverage_delta": null,
+      "major_blocker": null,
+      "merge_admission": "HOLD",
+      "security_waiver": false,
+      "authority_transfer": false,
+      "action": "CONTRACT_RUNBOOK_AND_HANDOVER",
+      "observation_note": "GitHub source write verified by readback; not exact-head native CI or independent admission"
+    }
+  ],
+  "control_issue": "GBOGEB/pipeline-automation-hub#604",
+  "notes": [
+    "EXTERNAL_SOURCE_COMMIT_SHAS_READ_BACK_USING_GITHUB_CONNECTOR",
+    "LOCAL_TESTS_NOT_NATIVE_CI",
+    "LAST_CHECKPOINT_PRECEDES_THIS_AUDIT_LEDGER_COMMIT",
+    "NO_AUTONOMOUS_RUNNER_DISPATCH_OR_MERGE"
+  ]
+}
