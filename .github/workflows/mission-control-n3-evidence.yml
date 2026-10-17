@@ -7,6 +7,9 @@ on:
       - 'mission-control/v2/test_n3_*.py'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json'
+      - 'mission-control/federation-atlas/G3A_N10_N12_FORECAST_20261017.json'
+      - 'mission-control/federation-atlas/MC_G3A_PR620_NATIVE_CENSUS_20261017.json'
+      - 'mission-control/federation-atlas/G3A_N10_N12_LOCAL_OBSERVATIONS_20261017.json'
       - '.github/workflows/mission-control-n3-evidence.yml'
   push:
     branches: [master]
@@ -53,9 +56,9 @@ jobs:
           import json
           from pathlib import Path
           c=json.loads(Path('/tmp/n3-coverage.json').read_text())['files']
-          modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py','n3_native_join.py','n3_wave_federation.py')
+          modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py','n3_native_join.py','n3_wave_federation.py','n3_workflow_census.py','n3_g3a_assessment.py')
           s=[v['summary'] for k,v in c.items() if Path(k).name in modules]
-          assert len(s)==6, f'expected 6 exact source basenames, got {len(s)}'
+          assert len(s)==8, f'expected 8 exact source basenames, got {len(s)}'
           numerator=sum(x['covered_lines']+x['covered_branches'] for x in s)
           denominator=sum(x['num_statements']+x['num_branches'] for x in s)
           assert denominator>0
@@ -73,6 +76,25 @@ jobs:
           python mission-control/v2/n3_integrity.py mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json --out /tmp/n3-evidence/audit.json
           python mission-control/v2/n3_dashboard.py mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json --html /tmp/n3-evidence/index.html --metrics /tmp/n3-evidence/metrics.json
           cp /tmp/n3-coverage.json /tmp/n3-evidence/coverage.json
+          python mission-control/v2/n3_workflow_census.py \
+            mission-control/federation-atlas/MC_G3A_PR620_NATIVE_CENSUS_20261017.json \
+            --out /tmp/n3-evidence/g3a-pr620-native-census.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('/tmp/n3-evidence/g3a-pr620-native-census.json').read_text())
+          m=x['metrics']
+          assert m['workflow_runs_observed']==7 and m['reported_total_jobs_for_known_runs']==8
+          assert m['queued_or_pending_workflows']['numerator']==7
+          assert m['observed_queued_jobs']==8
+          assert m['known_run_attempts']['numerator']==7
+          assert m['observed_artifact_checks']==7
+          assert m['queue_latency_p95_ms'] is None
+          assert m['terminal_workflows']['numerator']==0
+          assert m['successful_terminal_workflows']['pct'] is None
+          assert x['native_exact_head_pass'] is False and x['merge_admission']=='HOLD'
+          print('G3A_HISTORICAL_CENSUS=PASS; TESTED_NATIVE_HEAD=UNVERIFIED; ADMISSION=HOLD')
+          PY
           python mission-control/v2/n3_wave_federation.py \
             --ledgers mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json \
             --out-dir /tmp/n3-evidence

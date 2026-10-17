@@ -1,0 +1,59 @@
+{
+  "schema": "missioncontrol.g3a.local_test_observations.v1",
+  "source_start_head": "acede0b62f458068a876cecab06b4838a2e64d0f",
+  "provenance": "LOCAL_NOT_NATIVE_EXACT_HEAD",
+  "python_runtime": "Python 3.13.5",
+  "as_of": "2026-10-17",
+  "coverage_engine": "coverage.py --branch; original six-module population preserved across matched comparison",
+  "pulse_scope": "G3A evaluated within canonical G3P wave 04",
+  "pulses": [
+    {
+      "pulse": 10,
+      "tests_passed": 116,
+      "tests_failed": 0,
+      "source_checkpoint": "70b5d266c7e52d5c93eb61ce0d14b019493d0379",
+      "measured_statement_covered": 371,
+      "measured_statement_total": 378,
+      "measured_branch_covered": 91,
+      "measured_branch_total": 98,
+      "scope": "ORIGINAL_SIX",
+      "coverage_sha256": "614143fa76c1f88ebb95c4b76e9fd7908c5f950c1450375fb03201177ed328c3",
+      "test_log_sha256": "76dd62275a9fb99a480d3849a10ec73d7ea9542bc9bf1899a8289ca626b8d242"
+    },
+    {
+      "pulse": 11,
+      "tests_passed": 136,
+      "tests_failed": 0,
+      "source_checkpoint": "2cc1614cb8e3e93f4fb5fb3542b56d81c176f8b6",
+      "measured_statement_covered": 482,
+      "measured_statement_total": 490,
+      "measured_branch_covered": 111,
+      "measured_branch_total": 120,
+      "scope": "SEVEN_MODULES",
+      "coverage_sha256": "a6048f3aab670aafed1338c892999261d136506619650d47be1ceff3614c2901",
+      "test_log_sha256": "d40015cc0caefca56c84f1eaa37a6d10211b66caacc15c33d32c600dd2998358"
+    },
+    {
+      "pulse": 12,
+      "tests_passed": 154,
+      "tests_failed": 0,
+      "source_checkpoint": "ba68686ca9ceeea8809f1bf942fe586ce50af85e",
+      "measured_statement_covered": 555,
+      "measured_statement_total": 563,
+      "measured_branch_covered": 119,
+      "measured_branch_total": 128,
+      "scope": "EIGHT_MODULES",
+      "coverage_sha256": "6ddd88355aa53550abd8cc34de24ee12dcf5bbc1eaa9825a98719fd2d7590b58",
+      "test_log_sha256": "e8d380011649e5327b241249e26c98bcfd75277f2479f1c5c9eaf6e7c06db4a6"
+    }
+  ],
+  "admission": "HOLD",
+  "independent_native_proof": false,
+  "authority_transfer": false,
+  "notes": [
+    "Tests are cumulative method counts and not independent statistical trials",
+    "Local coverage denominator for 8 modules must not be compared to 6-module percentage",
+    "Source checkpoint is the last implementation commit of each pulse; historical ledger created afterward",
+    "Workflow readback remains queued; no retroactive native PASS"
+  ]
+}
