@@ -79,6 +79,15 @@ jobs:
           else
             python mission-control/federation-atlas/build_atlas.py --method "$SELECTED_METHOD" --stage "$SELECTED_STAGE" --out /tmp/code-purple-atlas
           fi
+      - name: Build Mission Control W1 repo/graph explorer
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/federation-atlas/mission_rebuild -p 'test_*.py' -v
+          python mission-control/federation-atlas/mission_rebuild/build.py --source-sha "$EXACT_SHA" --out /tmp/code-purple-atlas/mission-rebuild
+          test -s /tmp/code-purple-atlas/mission-rebuild/manifest.json
       - name: "CPQ N5: source-bound convergence + disjoint test-coverage receipt"
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
