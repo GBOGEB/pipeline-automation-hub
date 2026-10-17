@@ -1,10 +1,16 @@
-# CP.CLOSE — GitHub-first lossless session closeout
+# CP.CLOSEOUT / CP.CLOSE — GitHub-first lossless session closeout
 
-**Command:** CP.CLOSE() | **Compatibility:** CP.HANDOFF() + CP.RESUME() | **G3P:** governed three-pulse wave, not three PRs. | **Authority:** Mission Control v2.
+**Canonical operator:** CP.CLOSEOUT() | **Expanded nine-artifact alias:** CP.CLOSE() | **Compatibility:** CP.HANDOFF() + CP.RESUME() | **G3P:** governed three-pulse wave, not three PRs. | **Authority:** Mission Control v2.
 
 ## Copy/paste moniker
 
-Use this in the chat being closed:
+Use the existing canonical operator in the chat being closed:
+
+    CP.CLOSEOUT(scope="CURRENT_CHAT", mode="GITHUB_FIRST", depth="LOSSLESS_INTENT", metrics="FULL_AVAILABLE", target="GOVERNED_MAIN")
+
+For the expanded nine-artifact generator, CP.CLOSE is the implementation shorthand. It does not create a competing session SSOT or override the canonical operator at ../CHAT_CLOSEOUT_OPERATOR_V1.md.
+
+Expanded CP.CLOSE form:
 
     CP.CLOSE(scope="CURRENT_SESSION",
              target="GBOGEB/pipeline-automation-hub:master",

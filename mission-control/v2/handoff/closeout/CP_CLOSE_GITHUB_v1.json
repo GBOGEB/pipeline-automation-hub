@@ -12,13 +12,17 @@
       "CODE_PURPLE_BD_QUEUE_v1.json",
       "Golden Thread session_hook",
       "BD_REX_CONTROL_REGISTER_v2"
-    ]
+    ],
+    "canonical_closeout_profile": "mission-control/v2/handoff/CHAT_CLOSEOUT_PROFILE_V1.json",
+    "canonical_closeout_operator": "mission-control/v2/handoff/CHAT_CLOSEOUT_OPERATOR_V1.md",
+    "dual_profiles_not_second_ssot": true
   },
   "invocations": {
-    "canonical": "CP.CLOSE(scope=\"CURRENT_SESSION\",target=\"GBOGEB/pipeline-automation-hub:master\",mode=\"GITHUB_FIRST_LOSSLESS\",outputs=\"PR+STATE+STATS+INTENTS+BD+REX+TODO+DROPIN+MANIFEST\",admission=\"GOVERNED\")",
+    "canonical": "CP.CLOSEOUT(scope=\"CURRENT_CHAT\",mode=\"GITHUB_FIRST\",depth=\"LOSSLESS_INTENT\",metrics=\"FULL_AVAILABLE\",target=\"GOVERNED_MAIN\")",
     "partial": "CP.CLOSE(scope=\"CURRENT_SESSION\",mode=\"EVIDENCE_FREEZE_ONLY\")",
     "prior_chats": "CP.CLOSE(scope=\"EXPORTED_CHATS\",mode=\"LOSSLESS_CORPUS_REVIEW\",requires=\"USER_SUPPLIED_AUTHORIZED_EXPORT\")",
-    "resume": "CP.RESUME(source=\"GBOGEB/pipeline-automation-hub:mission-control/v2/handoff/closeout\",mode=\"VERIFY_REFRESH_EXECUTE\")"
+    "resume": "CP.RESUME(source=\"GBOGEB/pipeline-automation-hub:mission-control/v2/handoff/closeout\",mode=\"VERIFY_REFRESH_EXECUTE\")",
+    "expanded_alias": "CP.CLOSE(scope=\"CURRENT_SESSION\",target=\"GBOGEB/pipeline-automation-hub:master\",mode=\"GITHUB_FIRST_LOSSLESS\",outputs=\"PR+STATE+STATS+INTENTS+BD+REX+TODO+DROPIN+MANIFEST\",admission=\"GOVERNED\")"
   },
   "contract": {
     "input": "missioncontrol.cp_close.intake.v1",

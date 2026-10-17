@@ -3,7 +3,10 @@
 **Status:** proposed Mission Control v2 consumer, not a replacement for the existing
 glossary, 3PR/3PC/MIP/DMAIC methods, canonical BD/REX or GitHub authority.
 
-The additive GitHub-first closeout moniker is **CP.CLOSE()**. It wraps the existing
+The **canonical** session closeout moniker is **CP.CLOSEOUT()**, as defined in
+[CHAT_CLOSEOUT_OPERATOR_V1.md](CHAT_CLOSEOUT_OPERATOR_V1.md) and
+[CHAT_CLOSEOUT_PROFILE_V1.json](CHAT_CLOSEOUT_PROFILE_V1.json).
+**CP.CLOSE()** is the expanded GitHub-first nine-artifact implementation alias. It wraps the existing
 CP.HANDOFF transport with a source-controlled narrative, prompt-statistics provenance,
 canonical BD projection, owner TODO, deterministic hashes and an independent PR-to-master
 gate. See [closeout/README.md](closeout/README.md). A main merge is never implied
