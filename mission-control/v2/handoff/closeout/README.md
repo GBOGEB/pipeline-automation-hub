@@ -100,3 +100,11 @@ Pause after three to five substantial pulses, context loss, changing source head
     CP.RESUME(source="GBOGEB/pipeline-automation-hub:mission-control/v2/handoff/closeout/records/CP-G3P-HTMLQA-20261017", mode="VERIFY_REFRESH_EXECUTE")
 
 Keep all source history historical. Never rewrite prior Golden Thread/BD state from a handover or infer a PR approval.
+
+## Naming and alias compatibility
+
+**`CP.CLOSE()` is the canonical moniker and implementation.** `CP.CLOSEOUT()`, `CP.CLOSEOUT!` and `CP.CLOSE!` may be used conversationally as shorthand and resolve to the exact `CP.CLOSE` invocation above. The alias never writes a second JSON receipt, owns another BD queue or bypasses this deterministic generator and its tests. The optional [closeout reporting annex](../CHAT_CLOSEOUT_OPERATOR_V1.md) adds explanatory prompts/insights but is **not** a new repository custody authority.
+
+For existing older chats without an authorized complete export, request **`scope="CURRENT_SESSION"`** for only the available context and mark all whole-chat message/prompt/token and duration totals `UNKNOWN`. For older chats *with* an actual authorized complete export, request `scope="EXPORTED_CHATS"`; the raw export remains private and counted statistics are exported as aggregate, not as raw messages. The available source cannot guarantee that the user-supplied export contains every original ChatGPT message.
+
+**Desired terminal state:** `MAIN_READBACK` of sanitized `records/<session_alias>`, verified independently from `PR_COMMITTED` and `CI_QUALIFIED`. This does not itself prove security or engineering acceptance. Neither command deletes or archives any chat.
