@@ -78,7 +78,7 @@ class LiveLosslessTests(unittest.TestCase):
         self.assertFalse(p["authority_transfer"])
         self.assertFalse(p["security_waiver"])
     def test_pr_source_census_not_global(self):
-        p=mod.build_data();self.assertEqual(len(p["prs"]),8)
+        p=mod.build_data();self.assertEqual(len(p["prs"]),9)
         self.assertEqual(p["source"]["current_observed_main_sha"],self.obs["main_sha"])
     def test_duplicate_delta_action_id_fail(self):
         self.changed(lambda d,o:d["actions"][1].update(id=d["actions"][0]["id"]),"coverage/identities")
