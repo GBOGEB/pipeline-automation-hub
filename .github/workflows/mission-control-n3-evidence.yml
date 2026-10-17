@@ -1,0 +1,90 @@
+name: Mission Control N3 Evidence Metrics
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/n3_*.py'
+      - 'mission-control/v2/test_n3_*.py'
+      - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
+      - '.github/workflows/mission-control-n3-evidence.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/v2/n3_*.py'
+      - 'mission-control/v2/test_n3_*.py'
+      - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
+      - '.github/workflows/mission-control-n3-evidence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-tests:
+    name: N3 evidence Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+      - name: Checkout exact PR source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact checkout
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install pinned coverage
+        run: python -m pip install --disable-pip-version-check coverage==7.13.3
+      - name: Run bounded N3 unit, adversarial and CLI tests
+        run: |
+          python -m coverage run --branch --source=mission-control/v2 -m unittest discover -s mission-control/v2 -p 'test_n3_*.py' -v
+          python -m coverage json --output=/tmp/n3-coverage.json
+      - name: Require focused statement+branch coverage >= 80
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          c=json.loads(Path('/tmp/n3-coverage.json').read_text())['files']
+          modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py')
+          s=[v['summary'] for k,v in c.items() if k.endswith(modules)]
+          assert len(s)==4, f'expected 4 module scopes, got {len(s)}'
+          numerator=sum(x['covered_lines']+x['covered_branches'] for x in s)
+          denominator=sum(x['num_statements']+x['num_branches'] for x in s)
+          assert denominator>0
+          pct=100*numerator/denominator
+          print(f'FOCUSED_N3_STMT_BRANCH={pct:.2f}% ({numerator}/{denominator})')
+          assert pct>=80, 'focused N3 changed-scope quality gate failed'
+          PY
+      - name: Produce source-bound audit, telemetry and HTML projection
+        run: |
+          mkdir -p /tmp/n3-evidence
+          python mission-control/v2/n3_integrity.py mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json --out /tmp/n3-evidence/audit.json
+          python mission-control/v2/n3_dashboard.py mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json --html /tmp/n3-evidence/index.html --metrics /tmp/n3-evidence/metrics.json
+          cp /tmp/n3-coverage.json /tmp/n3-evidence/coverage.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/tmp/n3-evidence')
+          a=json.loads((p/'audit.json').read_text())
+          m=json.loads((p/'metrics.json').read_text())
+          assert a['issue_count']==0 and a['merge_admission']=='HOLD'
+          assert m['metrics']['measurement_completeness']=={'numerator':0,'denominator':9,'fraction':0.0}
+          assert m['metrics']['native_attested_receipts']['numerator']==0
+          assert m['source_ledger_digest'] in (p/'index.html').read_text()
+          assert m['authority_transfer'] is False
+          print('N3_PROJECTION=PASS; ADMISSION=HOLD; STATISTICS=DEFER')
+          PY
+      - name: Upload read-only evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: n3-evidence-py${{ matrix.python-version }}
+          path: /tmp/n3-evidence/
+          if-no-files-found: warn
