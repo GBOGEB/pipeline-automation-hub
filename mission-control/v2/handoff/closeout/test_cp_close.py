@@ -67,7 +67,6 @@ class CloseoutTests(unittest.TestCase):
     def test_metric_invalid_numerator_fails(self):
         self.invalid(lambda d:d["metric_observations"][0].update(numerator=999),"invalid metric")
     def test_misidentified_bd_fails(self):
-        self.invalid(lambda d:d.update(bd_focus=["CPQ-999"]),"canonical BD") if False else None
         with self.assertRaisesRegex(ValueError,"canonical BD"):
             cp_close.bd_snapshot(QUEUE,["CPQ-999"])
     def test_real_bd_snapshot_stays_read_only(self):
@@ -141,8 +140,11 @@ class CloseoutTests(unittest.TestCase):
         d=copy.deepcopy(self.base)
         d["actions"][0]["state"]="DONE"
         out=cp_close.render(d,cp_close.bd_snapshot(QUEUE,d["bd_focus"]),cp_close.prompt_stats(None))
-        self.assertNotIn("SC-A001",out["TODO_BD_QUEUE.csv"].decode())
-        self.assertIn("SC-A002",out["TODO_BD_QUEUE.csv"].decode())
+        rows=list(__import__("csv").DictReader(out["TODO_BD_QUEUE.csv"].decode().splitlines()))
+        open_ids=[r["id"] for r in rows]
+        self.assertNotIn("SC-A001",open_ids)
+        self.assertIn("SC-A002",open_ids)
+        self.assertIn("SC-A001",next(r["depends_on"] for r in rows if r["id"]=="SC-A002"))
     def test_current_prs_are_source_claims_not_release_admission(self):
         d=copy.deepcopy(self.base)
         self.assertEqual(sum(p["state"]=="MERGED" for p in d["pr_snapshot"]),2)
