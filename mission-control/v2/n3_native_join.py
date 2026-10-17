@@ -45,15 +45,18 @@ def project(source):
     observed_at = stamp(source.get('observed_at'))
     runs = source.get('runs')
     check(isinstance(runs, list), 'native runs must be a list')
-    seen_runs, seen_jobs, completed_runs, queued_runs, failures = set(), set(), 0, 0, []
+    seen_runs, seen_jobs, completed_runs, queued_runs, failures = set(), set(), set(), set(), []
     observed_jobs, declared_jobs, completed_jobs, observed_failed_steps = 0, 0, 0, 0
-    attempts = set()
+    completed_attempts, queued_attempts = 0, 0
+    attempts, attempts_per_run = set(), {}
     for run in runs:
         check(isinstance(run, dict), 'invalid run')
         rid, attempt = run.get('run_id'), run.get('run_attempt')
-        check(integer(rid) and rid not in seen_runs and integer(attempt), 'invalid or duplicate run identity')
+        check(integer(rid) and integer(attempt) and (rid, attempt) not in attempts,
+              'invalid or duplicate run identity/attempt')
         seen_runs.add(rid)
         attempts.add((rid, attempt))
+        attempts_per_run.setdefault(rid, set()).add(attempt)
         check(run.get('head_sha') == sha, 'run head SHA drift')
         outcome(run)
         created = stamp(run.get('created_at'))
@@ -61,10 +64,12 @@ def project(source):
         check(created <= observed_at and (started is None or created <= started <= observed_at),
               'run time order drift')
         if run['status'] == 'queued':
-            queued_runs += 1
+            queued_runs.add(rid)
+            queued_attempts += 1
             check(started is None, 'queued run cannot have a start time')
         if run['status'] == 'completed':
-            completed_runs += 1
+            completed_runs.add(rid)
+            completed_attempts += 1
             check(started is not None, 'completed run without a start')
         jobs = run.get('jobs')
         total = run.get('job_total')
@@ -98,8 +103,14 @@ def project(source):
         'schema': 'missioncontrol.native_ci_projection.v1',
         'source_digest': digest(source), 'repository': repo, 'source_sha': sha,
         'observation_scope': 'USER_SUPPLIED_UNAUTHENTICATED_NATIVE_SNAPSHOT',
-        'observed_runs': len(seen_runs), 'completed_runs': completed_runs,
-        'queued_runs': queued_runs, 'distinct_run_attempts': len(attempts),
+        'observed_runs': len(seen_runs), 'completed_runs': len(completed_runs),
+        'queued_runs': len(queued_runs), 'distinct_run_attempts': len(attempts),
+        'completed_attempts': completed_attempts, 'queued_attempts': queued_attempts,
+        'run_attempt_aliases': len(attempts) - len(seen_runs),
+        'run_ids_with_multiple_observed_attempts': sum(
+            len(v) > 1 for v in attempts_per_run.values()
+        ),
+        'attempt_history_complete': None,
         'observed_jobs': observed_jobs, 'declared_job_total': declared_jobs,
         'unobserved_job_slots': declared_jobs - observed_jobs,
         'completed_jobs': completed_jobs, 'observed_failed_steps': observed_failed_steps,
