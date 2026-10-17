@@ -54,23 +54,41 @@ class N11WorkflowContractTests(unittest.TestCase):
         self.assertIn("fail-fast: false", src)
         self.assertNotIn("python-version: ['3.10']", src)
 
-    def test_six_module_denominators_and_negative_coverage_gates_preserved(self):
+    def test_eight_module_denominators_and_negative_coverage_gates_preserved(self):
         src = workflow()
         names = (
             "n3_continuation.py", "n3_integrity.py", "n3_metrics.py",
             "n3_dashboard.py", "n3_native_join.py", "n3_wave_federation.py",
+            "n3_workflow_census.py", "n3_g3a_assessment.py",
         )
         for name in names:
             with self.subTest(module=name):
                 self.assertEqual(src.count("'" + name + "'"), 1)
         for invariant in (
             "--branch --source=mission-control/v2",
-            "assert len(s)==6", "assert denominator>0",
+            "assert len(s)==8", "assert denominator>0",
             "assert pct>=80", "100*branches/branch_total>=80",
             "'HOLD'", "if-no-files-found: warn",
         ):
             with self.subTest(invariant=invariant):
                 self.assertIn(invariant, src)
+
+    def test_eight_module_reverse_pressure_preserves_source_and_floor(self):
+        src = workflow()
+        eight = (
+            "n3_continuation.py", "n3_integrity.py", "n3_metrics.py",
+            "n3_dashboard.py", "n3_native_join.py", "n3_wave_federation.py",
+            "n3_workflow_census.py", "n3_g3a_assessment.py",
+        )
+        self.assertEqual(src.count("assert len(s)==8"), 1)
+        self.assertNotIn("assert len(s)==6", src)
+        for name in eight:
+            with self.subTest(missing_module=name):
+                changed = src.replace("'" + name + "'", "'unregistered.py'", 1)
+                self.assertFalse(all(changed.count("'" + item + "'") == 1 for item in eight))
+        self.assertIn("assert pct>=80", src)
+        self.assertIn("100*branches/branch_total>=80", src)
+        self.assertNotIn("assert pct>=0", src)
 
     def test_live_coverage_cli_positive_and_negative_output_contracts(self):
         with tempfile.TemporaryDirectory() as tmp:
