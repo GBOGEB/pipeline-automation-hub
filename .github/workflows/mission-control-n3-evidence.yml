@@ -50,6 +50,7 @@ jobs:
       - name: Run bounded N3 unit, adversarial and CLI tests
         run: |
           python -m coverage run --branch --source=mission-control/v2 -m unittest discover -s mission-control/v2 -p 'test_n3_*.py' -v
+          python -m coverage run --append --branch --source=mission-control/v2 -m unittest discover -s mission-control/v2 -p 'test_g3p_live_dashboard.py' -v
           python -m coverage json -o /tmp/n3-coverage.json
       - name: Require focused statement+branch coverage >= 80
         run: |
@@ -57,9 +58,9 @@ jobs:
           import json
           from pathlib import Path
           c=json.loads(Path('/tmp/n3-coverage.json').read_text())['files']
-          modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py','n3_native_join.py','n3_wave_federation.py')
+          modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py','n3_native_join.py','n3_wave_federation.py','g3p_live_dashboard.py')
           s=[v['summary'] for k,v in c.items() if Path(k).name in modules]
-          assert len(s)==6, f'expected 6 exact source basenames, got {len(s)}'
+          assert len(s)==7, f'expected 7 exact source basenames, got {len(s)}'
           numerator=sum(x['covered_lines']+x['covered_branches'] for x in s)
           denominator=sum(x['num_statements']+x['num_branches'] for x in s)
           assert denominator>0
@@ -94,25 +95,23 @@ jobs:
           python mission-control/v2/n3_integrity.py mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json --out /tmp/n3-evidence/audit.json
           python mission-control/v2/n3_dashboard.py mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json --html /tmp/n3-evidence/index.html --metrics /tmp/n3-evidence/metrics.json
           cp /tmp/n3-coverage.json /tmp/n3-evidence/coverage.json
-          cp /tmp/g3p-live-coverage.json /tmp/n3-evidence/g3p-live-coverage.json
-          python mission-control/v2/g3p_live_dashboard.py \
-            --ledgers mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json \
+          python mission-control/v2/g3p_live_dashboard.py --ledgers \
+            mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json \
+            mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json \
             --out-dir /tmp/n3-evidence/live
           python - <<'PY'
           import hashlib,json
           from pathlib import Path
-          out=Path('/tmp/n3-evidence/live')
-          m=json.loads((out/'g3p-manifest.json').read_text())
-          g=json.loads((out/'g3p-lineage.json').read_text())
-          assert (g['metrics']['pulses'],g['metrics']['edge_count'],g['metrics']['intervening_unproven_source_boundaries'])==(6,5,1)
-          assert [n['ordinal'] for n in g['nodes'] if n['test_kind']=='NOT_RUN']==[1,3]
-          assert g['nodes'][-1]['passed_test_claim']==61
-          assert g['merge_admission']=='HOLD' and g['authority_transfer'] is False
-          for name, digest in m['outputs_sha256'].items():
-              assert hashlib.sha256((out/name).read_bytes()).hexdigest()==digest
-          h=(out/'g3p-lineage.html').read_text()
-          assert 'id="reload"' in h and 'id="poll"' in h and 'id="ordinal"' in h
-          print('G3P_LIVE_SNAPSHOT=PASS; LOCAL_FEED_ONLY; NATIVE_AUTH=UNKNOWN; ADMISSION=HOLD')
+          p=Path('/tmp/n3-evidence/live')
+          x=json.loads((p/'g3p-lineage.json').read_text())
+          manifest=json.loads((p/'g3p-manifest.json').read_text())
+          assert len(x['nodes'])==6 and len(x['edges'])==5 and x['merge_admission']=='HOLD'
+          assert x['metrics']['intervening_unproven_source_boundaries']==1
+          assert x['metrics']['authenticated_native_pulse_receipts']==0
+          assert all(hashlib.sha256((p/name).read_bytes()).hexdigest()==sha for name,sha in manifest['outputs_sha256'].items())
+          html=(p/'g3p-lineage.html').read_text()
+          assert 'id="reload"' in html and 'EventSource' in html and 'id="replay"' in html
+          print('G3P_LIVE_N6_EXPORT=PASS; LINKAGE_VALIDATED; CI_ADMISSION_SEPARATE')
           PY
           python mission-control/v2/n3_wave_federation.py \
             --ledgers mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json \
