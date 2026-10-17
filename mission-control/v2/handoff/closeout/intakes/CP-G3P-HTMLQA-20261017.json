@@ -1,0 +1,307 @@
+{
+  "schema": "missioncontrol.cp_close.intake.v1",
+  "session_alias": "CP-G3P-HTMLQA-20261017",
+  "capture_date": "2026-10-17",
+  "capture_granularity": "DATE_ONLY",
+  "capture_scope": "CURRENT_VISIBLE_CONTEXT_PLUS_NATIVE_GITHUB_READBACK",
+  "privacy": "SANITIZED_SEMANTIC_ONLY",
+  "complete_transcript_available": false,
+  "total_chat_user_prompts": null,
+  "total_chat_messages": null,
+  "source": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "default_branch": "master",
+    "observed_main_sha": "a2984bba91d1d8a6b8983f3d5679fc925d643d35",
+    "observed_git_provenance": "GITHUB_NATIVE_NONATOMIC_RECHECK_ON_RESTART"
+  },
+  "authority_transfer": false,
+  "security_waiver": false,
+  "merge_admission": "HOLD",
+  "intents": [
+    {
+      "id": "SC-I001",
+      "summary": "Expand the CBD E2E graph atlas test suite beyond the original 14 tests; preserve directed/weighted graph evidence.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A005"
+      ]
+    },
+    {
+      "id": "SC-I002",
+      "summary": "Separate local statement and branch coverage from global Mission Control DoD and DoV; improve weighted, dimensional KPI and gg_MATH planning.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A005"
+      ]
+    },
+    {
+      "id": "SC-I003",
+      "summary": "Maintain G3P time-series N+1 through later pulses, reloading HTML, ledgers and source refs without fabricating ancestral verification.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A003"
+      ]
+    },
+    {
+      "id": "SC-I004",
+      "summary": "Roll out end-to-end HTML QA: all links, buttons, graph interactions, mobile overlap, source errors, PNG screenshots and GitHub Pages proof.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A003",
+        "SC-A004"
+      ]
+    },
+    {
+      "id": "SC-I005",
+      "summary": "Propagate evidence-safe HTML QA to ABACUS, CODEX, GoGREEN/Flight Deck and QPS owner lanes.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A004"
+      ]
+    },
+    {
+      "id": "SC-I006",
+      "summary": "Close chats GitHub-first with lossless semantic narrative, intent, statistics, exact PR/issue evidence, BD queue, TODO, SHA manifest and restart drop-in.",
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A001",
+        "SC-A002",
+        "SC-A006",
+        "SC-A007"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "SC-A001",
+      "priority": "P1",
+      "state": "IN_PR",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "summary": "Implement reusable CP.CLOSE() generator, validator, schema and CI in existing handoff path.",
+      "done_when": "Reviewed PR merged into master; exact-main script, tests and source-integrity receipt rechecked.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/README.md"
+      ]
+    },
+    {
+      "id": "SC-A002",
+      "priority": "P1",
+      "state": "IN_PR",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "summary": "Publish sanitized conversation reconstruction, source-bound session analytics, MD drop-in, action/BD ledger and SHA manifest.",
+      "done_when": "All generated artifacts committed on reviewed PR and byte-parity verified at main SHA without raw secrets/transcript.",
+      "depends_on": [
+        "SC-A001"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ]
+    },
+    {
+      "id": "SC-A003",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "summary": "Confirm public G3P URL contents on deployed GitHub Pages and independent SHA/hash stability and human visual acceptance.",
+      "done_when": "Actual hosted HTTP 200 plus two consecutive exact-main parity readbacks, screenshot owner review; no unsupported G3P live claim.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/637",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/638"
+      ]
+    },
+    {
+      "id": "SC-A004",
+      "priority": "P2",
+      "state": "TODO",
+      "owner": "Owner-lane fanout: MC/ABACUS/CODEX/QPS",
+      "summary": "Complete source-owner QA adoption in Mission Control, ABACUS CBD/EVERRED, CODEX semantic viewer and QPS public-safe HTML.",
+      "done_when": "Each source owner runs native exact-head browser QA, attaches artifacts and files independent acceptance; no cross-repo hidden mutation.",
+      "depends_on": [
+        "SC-A003"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/638",
+        "https://github.com/GBOGEB/ABACUS/issues/2136",
+        "https://github.com/GBOGEB/CODEX/issues/1067",
+        "https://github.com/GBOGEB/cryoplant-project/issues/1950"
+      ]
+    },
+    {
+      "id": "SC-A005",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "summary": "Reconcile open PR #620/#621 historical native G3P controls and current release gates; prevent scope-mismatched metrics.",
+      "done_when": "Exact current PR SHA, terminal run/job/attempt receipts, combined native coverage, independent gate and blocker owner re-observed.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/620",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/621"
+      ]
+    },
+    {
+      "id": "SC-A006",
+      "priority": "P3",
+      "state": "DEFER",
+      "owner": "User-supplied authorized transcript / no automatic ChatGPT export",
+      "summary": "Optionally compute exact user prompt/message/word and timestamp statistics from a user-supplied complete export.",
+      "done_when": "User provides authorized complete export with schema and source timestamps; report count confidence and protect raw private text outside GitHub.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/golden-thread/session_hook/README.md"
+      ]
+    },
+    {
+      "id": "SC-A007",
+      "priority": "P2",
+      "state": "TODO",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "summary": "Integrate CP.CLOSE with Golden Thread intent checkpoint and existing BD/REX/PR readback without creating second canonical SSOT.",
+      "done_when": "Consumer compatibility and append-only verification are native tested; no duplicate event or canonical BD rewrite.",
+      "depends_on": [
+        "SC-A001"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/153",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "name": "Reuse handoff contract",
+      "disposition": "COMPATIBILITY_EXTENSION",
+      "rationale": "CP.CLOSE is a GitHub-first wrapper for existing CP.HANDOFF and CP.RESUME; no replacement canonical session method.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/README.md"
+    },
+    {
+      "name": "BD queue authority",
+      "disposition": "READ_ONLY_SUBSET",
+      "rationale": "Status/history remains owned by CODE_PURPLE_BD_QUEUE_v1; session TODO and BD overlay cannot mutate canonical lifecycle.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json"
+    },
+    {
+      "name": "GitHub main criterion",
+      "disposition": "GOVERNED_PENDING_INDEPENDENT_PROOF",
+      "rationale": "Source commit and PR are prerequisites but exact-head CI, review and postmerge main readback are separate DoD/DoV gates.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/637"
+    }
+  ],
+  "insights": [
+    {
+      "observation": "G3P visual QA reached 102 browser assertions and zero reported body overflow on three viewports for its measured candidate.",
+      "implication": "Portable interaction/geometry testing is high-value, but browser fixture success and Main/Pages admission remain separate.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39042677172"
+    },
+    {
+      "observation": "G3P Live Ledger #632 and HTML QA #637 subsequently merged; frozen previous statements that PRs were draft/open are stale.",
+      "implication": "Every session handover needs historical versus refreshed PR states and exact-head SHA comparison.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/637"
+    },
+    {
+      "observation": "Local four-module 52/66 branch coverage is a selected scope, not federation-wide DoD/DoV.",
+      "implication": "Measure matched denominators and reach independently before a composite KPI or PCA rollout.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+    }
+  ],
+  "pr_snapshot": [
+    {
+      "number": 620,
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/620",
+      "head_sha": "f3374560af1755693f53a4b2e9f8ef3c184a08a3",
+      "merge_sha": null,
+      "admission": "HOLD"
+    },
+    {
+      "number": 621,
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/621",
+      "head_sha": "296c2dfa6c81849038b3d378d2e179dfdb4ca8a4",
+      "merge_sha": null,
+      "admission": "HOLD"
+    },
+    {
+      "number": 632,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/632",
+      "head_sha": "a730f6a20d8962f527441e1771b4c85e8b29bc9a",
+      "merge_sha": "0f013cca1389a71dab7a3e81fa43e2410815e90f",
+      "admission": "MERGE_OBSERVED_NOT_INDEPENDENT_GATE"
+    },
+    {
+      "number": 637,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/637",
+      "head_sha": "c93487efccca35da3642bc2d96964f31862ccbff",
+      "merge_sha": "62657c3c300ef2b29f4770ab816dcd437429f148",
+      "admission": "MERGE_OBSERVED_NOT_INDEPENDENT_GATE"
+    }
+  ],
+  "external_issues": [
+    {
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604",
+      "owner_lane": "MISSION_CONTROL_G3P",
+      "state": "RECENSUS_ON_RESTART"
+    },
+    {
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/638",
+      "owner_lane": "MISSION_CONTROL_HTML_QA",
+      "state": "RECENSUS_ON_RESTART"
+    },
+    {
+      "url": "https://github.com/GBOGEB/ABACUS/issues/2136",
+      "owner_lane": "ABACUS_DOW",
+      "state": "RECENSUS_ON_RESTART"
+    },
+    {
+      "url": "https://github.com/GBOGEB/CODEX/issues/1067",
+      "owner_lane": "CODEX_KEB",
+      "state": "RECENSUS_ON_RESTART"
+    },
+    {
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1950",
+      "owner_lane": "QPS_SOURCE_OWNER",
+      "state": "RECENSUS_ON_RESTART"
+    }
+  ],
+  "metric_observations": [
+    {
+      "metric": "G3P_HTML_BROWSER_ASSERTIONS",
+      "numerator": 102,
+      "denominator": 102,
+      "unit": "PASSING_CHECKS",
+      "population": "G3P dashboard candidate: desktop/laptop/mobile three viewport runs, bounded exact head 1b574daf",
+      "evidence_class": "NATIVE_PR_HEAD_BROWSER_FIXTURES_NOT_PUBLIC_HTTP",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39042677172"
+    },
+    {
+      "metric": "G3P_HTML_STATIC_PYTHON_TESTS",
+      "numerator": 56,
+      "denominator": 56,
+      "unit": "PASSING_TESTS",
+      "population": "G3P closure 10 inherited and 46 closeout static/source/portal tests on exact runner",
+      "evidence_class": "NATIVE_PR_HEAD_SNAPSHOT",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39042677172"
+    }
+  ],
+  "bd_focus": [
+    "CPQ-003",
+    "CPQ-005",
+    "CPQ-007"
+  ]
+}
