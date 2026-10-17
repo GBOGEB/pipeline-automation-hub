@@ -52,6 +52,11 @@ def validate_g10(d):
             SHA40.fullmatch(d["module_source_git_blob"]), "missing G10 module object ID")
     require(isinstance(d.get("source_manifest_sha256"),str) and
             SHA256.fullmatch(d["source_manifest_sha256"]), "missing native output bytes provenance")
+    require(d["source_manifest_sha256"]=="1d67ed83efde97e32058973ccebd5b7ec50c876c00feda0d57591765a491f3cb",
+            "G10 native artifact manifest digest mismatch")
+    require(d["source_sha"]=="3cd7e7736aa0a328fc59d196102618efe4a199be" and
+            d["module_source_git_blob"]=="b4ce2e32a6122b79bda5322e4fc2d4299632b979",
+            "G10 exact-source object changed without recensus")
     require(d.get("tests_passed")==51 and d.get("tests_failed")==0,
             "G10 native test population failed")
     require((d.get("statement_covered"),d.get("statement_eligible"),
