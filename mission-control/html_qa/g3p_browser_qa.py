@@ -116,6 +116,14 @@ def exercise(page, label, w, h, output: Path, evidence: dict):
           "three cross-wave dashed edges", checks)
     check(page.locator("#tests").inner_text() == "154",
           "N12 local count 154, no native promotion", checks)
+    check(page.locator("#growth circle").count() >= 9,
+          "multi-pulse test growth points drawn", checks)
+    check(page.title().strip() == "G3P Live Lineage",
+          "HTML title and browser identity", checks)
+    check(page.locator("h1").count() == 1,
+          "single semantic page heading", checks)
+    check(page.locator("#graph").get_attribute("role") == "img",
+          "directed SVG image role present", checks)
     check("HOLD" in page.locator("main").inner_text(), "merge admission HOLD", checks)
     check(page.locator("#status").inner_text().startswith("STRUCTURAL ONLY"),
           "live source is not independent authority", checks)
