@@ -134,6 +134,9 @@ def inspect(source: str, *, base_dir: Path, strict_local: bool = True) -> dict:
     refs = []
     for anchor in tree.anchors:
         target = anchor.get("href")
+        if target is None and "hidden" in anchor:
+            # Intentional JS-bound link, browser test must bind and activate it.
+            continue
         refs.append(target)
         for problem in resolve_reference(target or "", base_dir, ids, require_exists=strict_local):
             add("ANCHOR_" + problem)
