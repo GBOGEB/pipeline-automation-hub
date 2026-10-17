@@ -75,6 +75,51 @@ jobs:
           else
             python mission-control/federation-atlas/build_atlas.py --method "$SELECTED_METHOD" --stage "$SELECTED_STAGE" --out /tmp/code-purple-atlas
           fi
+      - name: CPQ N5: source-bound convergence + disjoint test-coverage receipt
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          python -m coverage run --branch --source=cpq_convergence_n5 -m unittest discover \
+            -s "$SRC" -p "test_cpq_convergence_n5.py" -v
+          python -m coverage json -o /tmp/code-purple-atlas/cpq-n5-coverage.json -q
+          python "$SRC/cpq_convergence_n5.py" \
+            --queue "$SRC/CODE_PURPLE_BD_QUEUE_v1.json" \
+            --top7 "$SRC/TOP7_CENSUS_PULSES_v1.json" \
+            --head "$EXACT_SHA" --out /tmp/code-purple-atlas
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          out=Path('/tmp/code-purple-atlas')
+          r=json.loads((out/'cpq-n5.json').read_text())
+          c=json.loads((out/'cpq-n5-coverage.json').read_text())
+          t=c['totals']
+          assert r['source']['exact_master_sha']==os.environ['EXACT_SHA']
+          assert r['metrics']['canonical_rows']==18
+          assert r['metrics']['open']+r['metrics']['done']==18
+          assert r['metrics']['work_orders_with_routes']==r['metrics']['open']
+          assert r['admission']=='HOLD' and r['formal_credit_delta']==0
+          assert r['metrics']['accepted_causal_root_closures'] is None
+          assert r['top7']['matched_fleet_delta'] is None
+          assert t['covered_lines']>0 and t['num_branches']>0
+          assert t['percent_statements_covered']>=90
+          assert t['percent_branches_covered']>=90
+          print('CPQ_N5_FOCUSED_COVERAGE=PASS; scope=cpq_convergence_n5_only')
+          PY
+      - name: CPQ N5: native browser/SVG seeded-negative visual proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check playwright==1.56.0
+          python -m playwright install --with-deps chromium
+          python mission-control/federation-atlas/cpq_browser_check.py \
+            --atlas /tmp/code-purple-atlas/code-purple.html \
+            --cpq /tmp/code-purple-atlas/cpq-n5.html \
+            --out /tmp/code-purple-atlas/cpq-browser
+          test -s /tmp/code-purple-atlas/cpq-browser/browser_receipt.json
       - name: Build CODE-HEALTH Central with exact-checkout and fail-closed corpus
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
