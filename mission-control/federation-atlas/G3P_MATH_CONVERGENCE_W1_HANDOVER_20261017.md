@@ -60,3 +60,10 @@ The user requires active bounded implementation of convergence/stability analysi
 CP.RESUME(source="GITHUB_FIRST",mode="VERIFY_REFRESH_EXECUTE",horizon="G3P:N_TO_N_PLUS_3")
 Read GBOGEB/gg_MATH #61 merge, #62 guide and exact native run 39047980808, then GBOGEB/pipeline-automation-hub #656 bridge and run 39048364069. Read mission-control/federation-atlas/G3P_MATH_CONVERGENCE_W1_HANDOVER_20261017.md and GG_MATH_CONVERGENCE_BRIDGE_v1.json from exact PR head. Reclassify actual red and owner status from terminal native runs and artifact digests. Do not assume synthetic Plotly figures are live telemetry, or that merged code implies gate-compliant publication. Obtain real matched N-series source receipts and qualify DMAIC/TOST/PCA/BT/Six Sigma independently. Avoid duplicate SSOT/CPQ or shadow HTML publisher. Report new exact-source metrics, BD owners, provenance confidence, accepted N vs candidate pulse frontier, and next safe pulse.
 ```
+
+## Additional native Actions queue census (17 Oct, subsequent readback)
+
+GitHub REST `actions/runs?status=queued` returned **189 queued workflow runs** in `GBOGEB/pipeline-automation-hub` and **34 queued workflow runs** in `GBOGEB/gg_MATH`. These are two separate repository populations and a non-atomic one-snapshot read, not necessarily 223 simultaneous executing jobs. No root cause, provider fault or CI capacity utilization is identified by queue length alone.
+
+**DoV for queue convergence:** keep three subsequent time-separated readbacks of `queued/new/completed/cancelled` runs and job `queued_at/started_at/completed_at`, with exact run ID, attempt and revision; calculate arrivals, terminal departures, signed backlog change, queue/execution p50/p95 on matched populations. For stationarity or queue stability require a sufficient observation horizon and capacity/arrival balance evidence, not merely three equal counts. Avoid spamming re-runs while upstream jobs are queued; do disjoint read-only census and source-local tests where possible. Never recode QUEUED as PASS.
+
