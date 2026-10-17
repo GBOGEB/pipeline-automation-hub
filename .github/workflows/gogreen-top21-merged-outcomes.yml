@@ -29,6 +29,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$HEAD_SHA"
           node -v
           node -e "if(Number(process.versions.node.split('.')[0])<20)process.exit(2)"
+          node --check mission-control/gogreen/merged_outcome_census/collect_live.mjs
       - name: Native positive/hostile tests and source coverage
         shell: bash
         run: |
@@ -51,6 +52,11 @@ jobs:
             | tee "$RUNNER_TEMP/gogreen-top21/rollup_console.json"
           cp -R mission-control/gogreen/merged_outcome_census/generated \
             "$RUNNER_TEMP/gogreen-top21/generated"
+          mkdir -p "$RUNNER_TEMP/gogreen-top21/source"
+          cp -R mission-control/gogreen/merged_outcome_census \
+            "$RUNNER_TEMP/gogreen-top21/source/merged_outcome_census"
+          cp mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json \
+            "$RUNNER_TEMP/gogreen-top21/source/canonical_top21_roster.json"
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
