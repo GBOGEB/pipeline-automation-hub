@@ -1,0 +1,120 @@
+{
+  "schema": "code_purple.chat_closeout_profile.v1",
+  "status": "ADDITIVE_NON_AUTHORITATIVE_TRANSPORT_AND_REPORTING_PROFILE",
+  "control": "mission-control/v2/handoff/CP_HANDOFF_RESUME_V1.json",
+  "moniker": "CP.CLOSEOUT",
+  "alias": "CP.CLOSEOUT!",
+  "invocation": "CP.CLOSEOUT(scope=\"CURRENT_CHAT\",mode=\"GITHUB_FIRST\",depth=\"LOSSLESS_INTENT\",metrics=\"FULL_AVAILABLE\",target=\"GOVERNED_MAIN\")",
+  "intended_target": "GOVERNED_MAIN_NOT_UNCONDITIONAL_MERGE",
+  "output": {
+    "per_chat_location": "mission-control/v2/handoff/chat-closeouts/<bounded-session-id>/",
+    "files": [
+      "CLOSEOUT.md",
+      "RECEIPT.json",
+      "DROPIN.md"
+    ],
+    "optional_when_needed": [
+      "METRICS.json",
+      "BD_QUEUE.jsonl",
+      "MANIFEST_SHA256.json"
+    ],
+    "no_second_ssot": true,
+    "no_zip_by_default": true
+  },
+  "required_receipt_sections": [
+    "session",
+    "narrative",
+    "statistics",
+    "lineage",
+    "work",
+    "bd_queue",
+    "custody",
+    "controls"
+  ],
+  "preservation_order": [
+    "GitHub owning source and policy",
+    "GitHub native exact-SHA run/job/attempt and original artifact",
+    "GitHub immutable historical closeout pointer",
+    "Optional verified non-GitHub original bytes"
+  ],
+  "session_metrics": {
+    "scope_states": [
+      "FULL_EXPORT_VERIFIED",
+      "VISIBLE_CONTEXT_PARTIAL",
+      "GITHUB_ONLY",
+      "UNKNOWN"
+    ],
+    "count_definitions": {
+      "user_prompts": "number of messages with role=user in eligible normalized transcript population; followups are separate user messages",
+      "assistant_replies": "number of messages with role=assistant in eligible normalized transcript population, excluding tool messages; may count partial answers as distinct assistant messages where exported",
+      "tool_calls": "number of explicit tool invocation events where the source exposes them; UNKNOWN if omitted",
+      "prompt_intents": "versioned human/manual classification of eligible user prompts; overlapping categories require explicit method, denominator and weighting",
+      "exact_tokens": "only if an identified tokenizer/version and actual message bytes permit computation",
+      "session_duration": "only from actual eligible first/last timestamps; exclude inferred thinking or work durations"
+    },
+    "no_full_count_without_complete_export": true,
+    "null_means_unknown_not_zero": true,
+    "partial_counts_separate_from_full_population": true,
+    "no_estimated_tokens_presented_as_exact": true,
+    "source_sha256_required_for_export_derived_metrics": true,
+    "native_ci_and_session_counters_are_different_populations": true
+  },
+  "operational_story_sections": [
+    "mission_and_initial_intent",
+    "timeline_and_key_decisions",
+    "scope_changes_and_discards",
+    "implemented_source_and_outcomes",
+    "planned_vs_actual",
+    "insights_and_recommended_improvements",
+    "handover_instructions"
+  ],
+  "bd_item_minimum": [
+    "id",
+    "priority",
+    "status",
+    "root_or_symptom",
+    "owner",
+    "repo_or_pr",
+    "next_action",
+    "definition_of_verification"
+  ],
+  "allowed_bd_status": [
+    "OPEN",
+    "BLOCKED",
+    "IN_PROGRESS",
+    "VERIFY_PENDING",
+    "DEFER",
+    "CLOSED_VERIFIED"
+  ],
+  "custody_stages": [
+    "EVIDENCE_CAPTURED",
+    "COMMITTED_TO_PR",
+    "NATIVE_VERIFIED",
+    "MERGED_TO_DEFAULT",
+    "EXACT_MAIN_VERIFIED"
+  ],
+  "final_stage": "EXACT_MAIN_VERIFIED",
+  "merge_gate": [
+    "effective_required_checks",
+    "eligible_independent_review",
+    "security_and_confidentiality_disposition",
+    "source_head_branch_and_base_integrity",
+    "authorized_repository_owner_merge",
+    "exact_main_sha_and_postmerge_receipt"
+  ],
+  "privacy": {
+    "raw_transcript_in_git": false,
+    "credential_redaction": true,
+    "personal_sensitive_data_minimized": true,
+    "private_artifacts_not_copied_without_authority": true,
+    "archive_original_export_elsewhere_only_if_user_authorized": true
+  },
+  "safety": {
+    "does_not_delete_or_archive_chat": true,
+    "authority_transfer": false,
+    "auto_merge": false,
+    "security_waiver": false,
+    "branch_ruleset_relaxation": false,
+    "synthetic_native_proof": false
+  }
+}
