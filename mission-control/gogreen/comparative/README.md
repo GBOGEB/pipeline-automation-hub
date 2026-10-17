@@ -27,6 +27,23 @@ Counts are **event** counts across ABACUS, CODEX, QPS, gg_MATH and Mission Contr
 ## Native test and fail-closed proof
 `python -m unittest discover -s mission-control/gogreen/comparative -p test_comparison.py -v`
 
-The **23 regression/negative-control methods** cover source arithmetic, frozen event checkpoints, Top21 false-green overclaims, unauthorized merge/waiver, forged coverage, skipped-runner credit, bad runner seconds, invalid DAG parents/cycles, malicious render constraints, and unadmitted output. Native CI `.github/workflows/gogreen-g8-comparative.yml` binds exact immutable SHA and create a digest receipt, without Pages deployment or canonical register mutation.
+The **31 regression/negative-control methods** cover source arithmetic, frozen event checkpoints, Top21 false-green overclaims, unauthorized merge/waiver, forged coverage, skipped-runner credit, bad runner seconds, invalid DAG parents/cycles, malicious render constraints, and unadmitted output. Native CI `.github/workflows/gogreen-g8-comparative.yml` binds exact immutable SHA and create a digest receipt, without Pages deployment or canonical register mutation.
 
 Scope: `authority_transfer=false`, `security_waiver=false`, `root_closure_credit=0`, `merge_authorized=false`.
+
+
+## QPS three-pulse first-red convergence — native observation 17 Oct 2026
+
+Frozen branch-window census: 33 QPS main workflow runs, 22 successes, 11 failures, no cancellations. This is separate from the earlier 30-run G9 QPS cohort (20 success/10 failed), and is a **non-atomic event snapshot**, not a live counter. Ten of 11 failing runs have native job/step log evidence and exact first-red errors, versus one evolutionary workflow with no job record.
+
+| Family | Failed workflow associations | Distinct source SHAs | Source-bound finding |
+|---|---:|---:|---|
+| W163 unregistered chart G-prefix | 8 | 5 | `docs/qplant_wcs/myrrha_handover/hx-sizing.html`; five canonical + three standalone W163 failures |
+| Missing esbuild runtime module | 2 | 2 | npm test after incremental npm install |
+| Evolutionary workflow without retrievable native job | 1 | 1 | UNKNOWN first-red |
+
+**Pulse 1:** Classify 10/11 exact failure symptoms without inventing ten independent root causes. Pulse 2: QPS [#1943](https://github.com/GBOGEB/cryoplant-project/pull/1943) repairs npm dependency freshness. Native [run 39026660707](https://github.com/GBOGEB/cryoplant-project/actions/runs/39026660707) has 21/21 new hostile Python tests, 41/41 TypeScript tests and successful qps-canonicalization; all eleven observed PR checks passed on that head. Pulse 3: [#1944](https://github.com/GBOGEB/cryoplant-project/pull/1944) migrated chart DOM/Plotly/click/export targets to CH1/CH2/CH3. Its initial merge preceded terminal checks, and introduced invalid legacy literals in a test fixture; follow-up [#1945](https://github.com/GBOGEB/cryoplant-project/pull/1945) uses hostile fixture construction at runtime and retains W163's strict scanner. W163 namespace and canonicalization now pass; native [run 39027052892](https://github.com/GBOGEB/cryoplant-project/actions/runs/39027052892) passed 21/21 tests with 30/30 statements, 18/18 branches **after a source refactor removed unreachable aggregate-count logic**.
+
+Coverage limitation: the N0 `25/32 statements, 17/20 branches` and N2 `30/30, 18/18` are on **different production blobs**. Do not call these a matched uplift, and do not aggregate them as QPS whole-repo coverage. The telemetry ledger and dashboard preserve `source_scope_comparable=false`, `root_closure_credit=0`, `independent_review_verified=false` and admission HOLD. The native W163 follow-up PR is not credited with full governance approval simply because its targeted checks pass.
+
+New source-bound SIPOC extension: QPS Actions supplier -> exact run/head/job error input -> symptom deduplication, two disjoint fixes, retained governance-negative tests -> per-run receipts and QPS pulse dashboard -> independent QPS/EVERRED/REX customer. Edges to formal root acceptance and branch-rule legitimacy remain DECLARED.
