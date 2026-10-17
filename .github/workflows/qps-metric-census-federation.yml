@@ -122,6 +122,21 @@ jobs:
           python -m metric_atlas.dispatch \
             --manifest qps-metric-run/requests.json \
             --output qps-metric-run/dry-run-dispatch.json
+      - name: Roll up empty receiver evidence and render offline federation HMI
+        shell: bash
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: |
+          printf '[]\n' > qps-metric-run/receiver-receipts.json
+          python -m metric_atlas.census rollup \
+            --manifest qps-metric-run/requests.json \
+            --receipts qps-metric-run/receiver-receipts.json \
+            --output qps-metric-run/rollup.json
+          python -m metric_atlas.census_dashboard \
+            --manifest qps-metric-run/requests.json \
+            --rollup qps-metric-run/rollup.json \
+            --ledger tools/metric-atlas/data/observations.json \
+            --output qps-metric-run/qps-federation.html
       - name: Upload QPS census requests and dry-run receipt
         uses: actions/upload-artifact@v4
         with:
@@ -130,6 +145,9 @@ jobs:
             qps-receiver-heads.json
             qps-metric-run/requests.json
             qps-metric-run/dry-run-dispatch.json
+            qps-metric-run/receiver-receipts.json
+            qps-metric-run/rollup.json
+            qps-metric-run/qps-federation.html
 
   dispatch-to-source-owners:
     needs: plan-three-repo-slice
