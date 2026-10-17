@@ -1,0 +1,108 @@
+name: Mission Control GM MACH-II Mycelium and MIP
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/mach2/**'
+      - 'mission-control/federation-atlas/landing/MISSION_CONTROL_MACHII_N13.html'
+      - '.github/workflows/mission-control-mach2-mip.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mc-gm-mach2-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  math-and-mission-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Exact-head source identity
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$HEAD"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test MIP/GM/cyclic Mycelium and conditional statistics
+        run: python -m unittest discover -s mission-control/v2/mach2 -p 'test_mach2.py' -v
+      - name: Build and check deterministic graph projection
+        run: |
+          python mission-control/v2/mach2/mach2.py --out /tmp/mach2-projection.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path('/tmp/mach2-projection.json').read_text())
+          b=json.loads(Path('mission-control/v2/mach2/MACHII_MYCELIUM_GRAPH.json').read_text())
+          assert a['mycelium_graph']==b, 'exact-source Mycelium drift'
+          assert a['counts']['GM']==5 and a['counts']['MIP_axes']==15
+          assert a['counts']['SIPOC_steps']==20 and a['dispatch_authorized'] is False
+          assert a['admission']=='HOLD'
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mach2-source-projection
+          path: /tmp/mach2-projection.json
+          if-no-files-found: warn
+
+  actual-codex-mycelium-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Fetch read-only exact upstream CODEX Mycelium provider
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/CODEX
+          ref: 493145eea784d39f57ea64a730af9f3e85586714
+          path: _pinned_mycelium
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate through upstream Mycelium graph.py itself
+        run: |
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          sys.path.insert(0,str(Path('_pinned_mycelium/mission_control/mycelium/continuity')))
+          from mycelium_continuity.graph import validate_graph
+          g=json.loads(Path('mission-control/v2/mach2/MACHII_MYCELIUM_GRAPH.json').read_text())
+          r=validate_graph(g)
+          assert r['nodes']==44 and r['edges']==89
+          assert r['sipoc_nodes']==20 and r['sipoc_edges']==16
+          assert len(r['waves'])==5 and g['dispatch_authorized'] is False
+          print('PASS_ORIGINAL_CODEX_MYCE_GRAPH_PROVIDER',r)
+          PY
+
+  browser-visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install read-only Chromium QA
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Three viewports, six screens, controls and source parity
+        run: python mission-control/v2/mach2/browser_qa.py /tmp/mc-mach2-qa
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mc-mach2-browser-screens
+          path: /tmp/mc-mach2-qa
+          if-no-files-found: warn
