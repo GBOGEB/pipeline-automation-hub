@@ -5,6 +5,114 @@ const masterNode = document.getElementById('source-master');
 if (!masterNode) return;
 const M = JSON.parse(masterNode.textContent);
 const mode = document.body.dataset.mode || 'dashboard';
+let activeView = mode;
+let devopsOn = false;
+let activeContext = null;
+const MASTER_SHA = document.querySelector('meta[name=master-sha256]').content;
+const PR_URL = 'https://github.com/GBOGEB/pipeline-automation-hub/pull/670';
+const FILE_ROOT = 'docs/mission-control/w18/';
+const DEFAULT_TARGETS = [
+ ['Global issue controller #153','https://github.com/GBOGEB/pipeline-automation-hub/issues/153'],
+ ['Canonical BD/REX #85','https://github.com/GBOGEB/pipeline-automation-hub/issues/85'],
+ ['Local BD queue #358','https://github.com/GBOGEB/pipeline-automation-hub/issues/358'],
+ ['ABACUS admission #1860','https://github.com/GBOGEB/ABACUS/issues/1860']
+];
+const toSlug = (s) => String(s).toLowerCase().replace(/[^a-z0-9-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,70);
+function isGithub(url) {return typeof url==='string' && /^https:\/\/github\.com\/GBOGEB\/[a-zA-Z0-9_.-]+\/(issues|pull)\/\d+(?:[?#][^\s]*)?$/.test(url);}
+function getFile() {return mode==='dashboard'?'index.html':mode==='cards'?'cards.html':'deck.html';}
+function getRelativeLink(key, view=activeView) {
+ if (mode==='cards') return 'cards.html#'+encodeURIComponent(key);
+ if (mode==='deck') return 'deck.html#slide-'+String(key).replace(/[^0-9]/g,'').padStart(2,'0');
+ return 'index.html#'+view+'@'+encodeURIComponent(key);
+}
+function locate(node,key,title,source) {
+ const view=activeView;
+ const loc='CP-W18/'+view+'/'+key;
+ node.dataset.locationId=loc;
+ node.dataset.locationKey=key;
+ node.dataset.locationView=view;
+ if (!node.id) node.id='loc-'+toSlug(view+'-'+key);
+ const btn=E('button','devops-hook-btn','Comment / copy');btn.type='button';
+ btn.setAttribute('aria-label','DevOps location comment for '+title);
+ btn.addEventListener('click',(ev)=>{ev.stopPropagation();openDevops({key,view,loc,title,source:source||M.authorities.global_issue_controller});});
+ const bar=add(E('span','devops-hook-actions'),btn);
+ if (node.tagName==='TR') {
+   const last=node.lastElementChild;
+   if(last)last.append(bar);
+ } else node.append(bar);
+ return node;
+}
+function safeFeedback(value) {return String(value||'').trim().slice(0,4000);}
+function selectedTarget() {return $('devops-target').value;}
+function commentText() {
+ if (!activeContext)return '';
+ const ctx=activeContext;
+ const path=getFile();
+ const target=selectedTarget();
+ const relative=getRelativeLink(ctx.key,ctx.view);
+ const mark='CP-W18:'+ctx.view+'/'+ctx.key;
+ return [
+   '### CODE PURPLE W18 UI/BD feedback — '+ctx.title,
+   '',
+   '- Location ID: `'+mark+'`',
+   '- Frozen master: `'+M.slug+'`',
+   '- Source digest (SHA-256): `'+MASTER_SHA+'`',
+   '- Local/hosted route (host not yet verified): `'+FILE_ROOT+relative+'`',
+   '- GitHub review PR: '+PR_URL,
+   '- Canonical target: '+target,
+   '- Linked engineering evidence: '+(isGithub(ctx.source)?ctx.source:'UNKNOWN'),
+   '- Recursive authorities: '+M.authorities.global_issue_controller+' → '+M.authorities.bd_ssot+' → '+M.authorities.local_queue,
+   '- Evidence class: FROZEN_COMMUNICATION_PROJECTION (not a native gate)',
+   '',
+   '**Observed at this location:** '+(safeFeedback($('devops-observed').value)||'[describe observation]'),
+   '',
+   '**Expected / proposed improvement:** '+(safeFeedback($('devops-expected').value)||'[describe desired change]'),
+   '',
+   '**Next verifiable action:** '+(safeFeedback($('devops-next').value)||'[owner and completion evidence]'),
+   '',
+   '**Additional source / attempt / run / artifact:** '+(safeFeedback($('devops-evidence').value)||'[exact URL or unknown]'),
+   '',
+   'DoV: REQUESTED / NOT VALIDATED. This draft does not close a BD root, waive A10, or grant merge admission.'
+ ].join('\n');
+}
+function refreshComment() {if(activeContext)$('devops-output').value=commentText();}
+async function copyWithFallback(text) {
+ const out=$('devops-output');out.value=text;
+ let success=false;
+ try { if(navigator.clipboard && navigator.clipboard.writeText) {await navigator.clipboard.writeText(text);success=true;} } catch (_) {}
+ if (!success) {out.focus();out.select();try{success=!!document.execCommand('copy')}catch(_) {}}
+ $('devops-feedback').textContent=success?'Copied. Paste into the intended GitHub issue.':'Text selected — use Ctrl+C / Copy manually.';
+ return success;
+}
+function openDevops(ctx) {
+ activeContext=ctx;
+ $('devops-heading').textContent=ctx.title;
+ $('devops-locator').textContent=ctx.loc;
+ const sel=$('devops-target');sel.replaceChildren();
+ const opts=[...DEFAULT_TARGETS];
+ if(isGithub(ctx.source) && !opts.some(x=>x[1]===ctx.source))opts.unshift(['Current engineering leaf',ctx.source]);
+ opts.forEach(([label,url])=>{const o=E('option','',label);o.value=url;sel.append(o);});
+ for(const id of ['devops-observed','devops-expected','devops-next','devops-evidence'])$(id).value='';
+ $('devops-feedback').textContent='Draft only — nothing is posted automatically.';
+ refreshComment();
+ const modal=$('devops-dialog');if(!modal.open)modal.showModal();
+}
+function initDevops() {
+ const toggle=$('devops-toggle');
+ toggle.onclick=()=>{devopsOn=!devopsOn;document.body.dataset.devops=devopsOn?'on':'off';toggle.setAttribute('aria-pressed',String(devopsOn));toggle.textContent='DevOps hooks: '+(devopsOn?'ON':'OFF');};
+ $('devops-close').onclick=()=>$('devops-dialog').close();
+ for(const id of ['devops-observed','devops-expected','devops-next','devops-evidence','devops-target'])$(id).addEventListener('input',refreshComment);
+ $('devops-copy-location').onclick=()=>{
+  if(!activeContext)return;
+  const x=activeContext;
+  const relative=FILE_ROOT+getRelativeLink(x.key,x.view);
+  const data=['Locator: CP-W18:'+x.view+'/'+x.key,'Path: '+relative,'Master SHA-256: '+MASTER_SHA,'PR: '+PR_URL,'Canonical: '+selectedTarget()].join('\n');
+  copyWithFallback(data);
+ };
+ $('devops-copy-comment').onclick=()=>copyWithFallback(commentText());
+ $('devops-open-issue').onclick=()=>{const url=selectedTarget();if(isGithub(url))window.open(url,'_blank','noopener,noreferrer');};
+}
+
 const $ = (id) => document.getElementById(id);
 const E = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -24,11 +132,15 @@ const link = (url, label) => {
   return a;
 };
 const pill = (state) => E('span','tag '+String(state).replace(/[^A-Za-z0-9_]/g,''),state);
-const panel = (title) => add(E('section','panel'), E('h2','',title));
+const panel = (title,locKey=null,source=null) => {
+ const node=add(E('section','panel'), E('h2','',title));
+ return locate(node,locKey||'panel-'+toSlug(title),title,source||M.authorities.global_issue_controller);
+};
 const note = (t) => E('p','hint',t);
 const metric = (label,value,desc,good=false) => {
   const p=E('article','metric'),v=E('strong',good?'ok':'',value);
-  return add(p,v,E('span','',label),E('small','',desc));
+  add(p,v,E('span','',label),E('small','',desc));
+  return locate(p,'kpi-'+toSlug(label),label,M.authorities.global_issue_controller);
 };
 const metricGrid = (items) => add(E('div','metric-grid'),items);
 const h3 = (t) => E('h3','',t);
@@ -67,7 +179,7 @@ function issuePlot() {
   [[135,a,'153','First census'],[444,b,'142','Latest readback']].forEach(([x,y,v,t])=>{
     shape('circle',{cx:x,cy:y,r:7,fill:'#6ee2c9'});shape('text',{x:x-21,y:y-16,fill:'#ffffff','font-size':16,'font-weight':700},v);
     shape('text',{x:x-57,y:186,fill:'#bfd0e8','font-size':12},t);
-  });host.append(svg);return host;
+  });host.append(svg);return locate(host,'figure-two-point-issue-count','Historical fleet issue-count chart',M.authorities.global_issue_controller);
 }
 function loadOptionalPlotly() {
   if (!document.querySelector('#issue-plot')) return;
@@ -103,14 +215,24 @@ function overview() {
   const p=panel('Evidence and classification');
   add(p,para('11 observed issue closures = 9 monitoring duplicates + 2 completed DAB work items. This controller did not execute those closures; root closure credit remains zero.'),
      para('Canonical B0 PASS is not historical B9 changed-line >=80% proof. Current W16 four-module branch reach 231/444 and Python 3.12 five-file reach 336/560 belong to different cohorts.'),
-     foot('Open global BD register',M.authorities.global_issue_controller));root.append(p);
+     add(E('div','evidence-actions'),
+        add(E('a','action-link','Open global BD register — 8 actionable leaves ↗')),
+        add(E('a','source-link','Open canonical global issue #153 ↗'))));
+  const leaf=p.querySelector('.evidence-actions .action-link');leaf.href='cards.html#bd-register';
+  const origin=p.querySelector('.evidence-actions .source-link');origin.href=M.authorities.global_issue_controller;origin.target='_blank';origin.rel='noopener noreferrer';
+  const jump=E('button','jump-bd','Jump to BD queue here');jump.type='button';
+  jump.onclick=()=>{location.hash='bd@bd-register';};p.querySelector('.evidence-actions').append(jump);
+  root.append(p);
   return root;
 }
 function makeDecisionTable(items,kind) {
   const rows=items.map(x=>kind==='dod' ?
     [x.id,x.title,pill(x.state),x.completion,add(E('div'),para(x.detail),link(x.evidence,'Evidence'))]:
     [x.id,x.domain,pill(x.state),x.accept,add(E('div'),para(x.observed),link(x.evidence,'Receipt'))]);
-  return table(kind==='dod'?['ID','This session DOD','Evidence state','Completion','Proof / edge']:['ID','Global DOV domain','Verdict','Exit / acceptance test','Observed / source'],rows);
+  const t=table(kind==='dod'?['ID','This session DOD','Evidence state','Completion','Proof / edge']:['ID','Global DOV domain','Verdict','Exit / acceptance test','Observed / source'],rows);
+  const tr=t.querySelectorAll('tbody tr');
+  items.forEach((x,i)=>locate(tr[i],x.id,kind.toUpperCase()+' '+x.id+' — '+(x.title||x.domain),x.evidence));
+  return t;
 }
 function dod() {
   const root=E('div');
@@ -137,7 +259,8 @@ function bdCard(x){
   add(a,E('p','',x.owner),para('Root: '+x.root),para('Next: '+x.next));
   const details=E('details'),summary=E('summary','', 'Acceptance condition and dependency');
   add(details,summary,para(x.exit),para('Dependencies: '+(x.dependencies.length?x.dependencies.join(', '):'no additional owner edges declared')));
-  add(a,details,foot('Source / PR / issue',x.source));return a;
+  add(a,details,foot('Source / PR / issue',x.source));
+  return locate(a,x.id,x.title,x.source);
 }
 function bd(){
   const root=E('div'),filter=E('div','filterbar');
@@ -148,7 +271,52 @@ function bd(){
   const render=()=>{const q=input.value.toLowerCase(),pr=sel.value;const valid=M.bd_queue.filter(x=>(pr==='ALL'||x.priority===pr)&& JSON.stringify(x).toLowerCase().includes(q));
     list.replaceChildren(...valid.map(bdCard));cnt.textContent=valid.length+' / '+M.bd_queue.length+' controlled work packets';};
   input.addEventListener('input',render);sel.addEventListener('change',render);
-  add(filter,input,sel,cnt);add(root,filter,list);render();return root;
+  const hierarchy=panel('Recursive global register → root owners → BD leaves','bd-register');
+  hierarchy.id='bd-register';
+  const intro=para('Global #153 is the source-dated fleet census; #85 is the unique BD/REX root controller; #358 is the local execution queue. The eight W18 packets below are a governed communication projection, not all 142 root dispositions.');
+  const row=E('div','evidence-actions');
+  add(row,link(M.authorities.global_issue_controller,'Fleet controller #153'),link(M.authorities.bd_ssot,'Root owner #85'),link(M.authorities.local_queue,'Local queue #358'));
+  add(hierarchy,intro,row);
+  add(filter,input,sel,cnt);add(root,hierarchy,filter,list);render();return root;
+}
+function recursiveFocus() {
+ const root=E('div');
+ const p=panel('W17 → W18 recursive TODO and BD golden thread');
+ const t=E('div','recursive-stages');
+ const stages=[
+  {title:'Fleet / 153 → 143 → 142',detail:'Chronological issue-census readbacks, not equivalent independent rate samples.',url:M.authorities.global_issue_controller},
+  {title:'Mission Control root authority / #85',detail:'BD/REX owner mapping, no double-credit from duplicate notifications.',url:M.authorities.bd_ssot},
+  {title:'Local mission queue / #358',detail:'Runner capacity, source-owner edges and evidence returns.',url:M.authorities.local_queue},
+  {title:'Engineering admission / ABACUS #1860',detail:'B0, B9, security, review, governance, Python, coverage each retain their own gate.',url:M.authorities.admission_controller}
+ ];
+ stages.forEach((x,i)=>{
+  const node=add(E('article','recursive-stage'),h3(x.title),para(x.detail),link(x.url,'Open authority'));
+  locate(node,'authority-'+(i+1),x.title,x.url);
+  t.append(node);
+ });
+ add(p,t);root.append(p);
+ const r=panel('W17 historical native outcomes — do not overwrite');
+ add(r,metricGrid([
+   metric('W17 historical successes',M.ci.w16_historical_workflow_rollup.success,'On pinned W16 historical head, nonterminal'),
+   metric('W17 historical failures',M.ci.w16_historical_workflow_rollup.failure,'First-red ownership retained'),
+   metric('W17 historical queued',M.ci.w16_historical_workflow_rollup.queued,'Not assumed to be terminal'),
+   metric('Current-epoch baseline',pct(M.coverage.four_module.covered,M.coverage.four_module.eligible),'231/444; 157 tests passing')
+  ]),note('Chronology: 153 first census → 143 intermediate → 142 latest frozen readback. Nine duplicate dashboard notifications and two DAB worker investigations closed by concurrent lanes. Distinct-root CONTROL credit = 0. Historical 200/446 N14 and 231/444 W16 have different source epochs.'));
+ root.append(r);
+ const todo=panel('Next three source-gated pulses / parent TODO');
+ const leaves=[
+  ['P0','A10 owner approval','BD-W18-01'],
+  ['P1','Python 3.10 and requirement test contract','BD-W18-02'],
+  ['P1','Cross-interpreter matrix and Ariana secure XML dependency','BD-W18-03'],
+  ['P1','Main workflow classification / governed inventory','BD-W18-05'],
+  ['P2','Dashboard broken-links + native health and B9 80% changed-line proof','BD-W18-07'],
+  ['P2','All 142 issues need root classification, not just eight packets','BD-W18-08']
+ ];
+ const tb=table(['Priority','Unresolved edge / completion criterion','Actionable packet'],leaves.map(([priority,desc,id])=>{
+  const a=E('a','action-link','Open '+id+' ↗');a.href='index.html#bd@'+id;return [priority,desc,a];
+ }));
+ add(todo,tb,note('Three governed actions: N+1 security/TOML/Python qualification; N+2 shared Ariana dependency and source-owner repair; N+3 B9/coverage and queue-timing comparison. Do not scale tests or assign statistical CONTROL until receipts are comparable and gates pass.'));
+ root.append(todo);return root;
 }
 function telemetry() {
   const root=E('div'),box=M.coverage,ci=M.ci;
@@ -173,7 +341,12 @@ function telemetry() {
 }
 function lineage() {
   const root=E('div'),p=panel('One master; multiple controlled renditions');
-  const nodes=E('div','dagnodes');['GitHub read-only receipts','Source epoch + evidence contract','W18 snapshot.json','Dashboard / cards / HTML deck','Print/PPTX candidate','Review + native / Pages proof'].forEach((s,i)=>{if(i>0)nodes.append(E('div','arrow','>'));nodes.append(add(E('div'),E('strong','',s)));});
+  const nodes=E('div','dagnodes');['GitHub read-only receipts','Source epoch + evidence contract','W18 snapshot.json','Dashboard / cards / HTML deck','Print/PPTX candidate','Review + native / Pages proof'].forEach((s,i)=>{
+  if(i>0)nodes.append(E('div','arrow','>'));
+  const node=add(E('div'),E('strong','',s));
+  locate(node,'dag-'+String(i+1),s,M.authorities.bd_ssot);
+  nodes.append(node);
+});
   add(p,nodes,para('One slug and exact SHA-256 embedded in each derived HTML. Existing Mission Control BD authority #85 and CP.CLOSE lossless remain authoritative. The W18 master is only a communication projection.'),
     foot('Original CP.HANDOFF / CP.RESUME contract',M.authorities.existing_handover));root.append(p);
   const q=panel('Method validity: DMAIC / MIP / gg_MATH');
@@ -187,31 +360,68 @@ function lineage() {
   root.append(q);return root;
 }
 function pageInit() {
-  const views={overview,dod,dov,bd,telemetry,lineage};
+  const views={overview,dod,dov,bd,recursiveFocus,telemetry,lineage};
   const holder=$('content');
   const nav=$('view-nav');
-  Object.entries({overview:'Overview',dod:'Session DOD',dov:'Global DOV',bd:'BD queue',telemetry:'Telemetry',lineage:'Master lineage'}).forEach(([id,label])=>{
+  Object.entries({overview:'Overview',dod:'Session DOD',dov:'Global DOV',bd:'BD queue',recursiveFocus:'Recursive TODO',telemetry:'Telemetry',lineage:'Master lineage'}).forEach(([id,label])=>{
     const b=E('button','',label);b.type='button';b.dataset.view=id;b.setAttribute('aria-selected',id==='overview'?'true':'false');
-    b.addEventListener('click',()=>{nav.querySelectorAll('button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));
-      holder.replaceChildren(views[id]());history.replaceState(null,'','#'+id);if(id==='overview')loadOptionalPlotly();});nav.append(b);
+    nav.append(b);
   });
-  const hash=location.hash.slice(1);nav.querySelector('button[data-view="'+(views[hash]?hash:'overview')+'"]').click();
+  function activate(id,focus) {
+    const current=views[id]?id:'overview';
+    activeView=current;
+    const button=nav.querySelector('button[data-view="'+current+'"]');
+    nav.querySelectorAll('button').forEach(x=>x.setAttribute('aria-selected',String(x===button)));
+    holder.replaceChildren(views[current]());
+    if(current==='overview')loadOptionalPlotly();
+    if(focus)requestAnimationFrame(()=>{
+      const target=[...holder.querySelectorAll('[data-location-key]')].find(x=>x.dataset.locationKey===focus);
+      if(target){target.classList.add('locator-highlight');target.scrollIntoView({block:'center'});}
+    });
+  }
+  function parseRoute() {
+    const hash=decodeURIComponent(location.hash.slice(1));
+    const at=hash.indexOf('@');
+    const view=at>=0?hash.slice(0,at):hash;
+    const focus=at>=0?hash.slice(at+1):null;
+    activate(views[view]?view:'overview',focus);
+  }
+  nav.addEventListener('click',ev=>{
+    const b=ev.target.closest('button[data-view]');if(!b)return;
+    const route='#'+b.dataset.view;
+    if(location.hash===route)parseRoute(); else location.hash=route;
+  });
+  window.addEventListener('hashchange',parseRoute);
+  parseRoute();
   schedulePlotlyUpgrade();
 }
 function cardsInit() {
   const c=$('content');
+  activeView='bd';
   c.replaceChildren(metricGrid([
      metric('BD work packets',M.bd_queue.length,'Five P1/P2 source-owned; one P0 human gate'),
      metric('Open issues',M.census.latest_observed_open,'Project-wide issue surface'),
      metric('Root closures credited',M.controls.formal_root_closure_credit_this_wave,'This communication wave only'),
      metric('Queue telemetry','UNKNOWN','No exact job p95')
   ]),bd());
+  function jumpToLeaf() {
+    const hash=decodeURIComponent(location.hash.slice(1));
+    if(hash)requestAnimationFrame(()=>{
+      const target=hash==='bd-register' ? $('bd-register') : [...c.querySelectorAll('[data-location-key]')].find(x=>x.dataset.locationKey===hash);
+      if(target){target.classList.add('locator-highlight');target.scrollIntoView({block:'center'});}
+    });
+  }
+  window.addEventListener('hashchange',jumpToLeaf);
+  jumpToLeaf();
 }
 function slide(key,heading,items,details='') {
+  activeView='deck';
   const s=E('section','slide'),top=E('div');
   add(top,E('div','eyebrow','CODE PURPLE / '+M.slug.toUpperCase()+' / '+key),E('h2','',heading));s.append(top);
   const content=E('div');items.flat().forEach(i=>content.append(i));s.append(content);
-  const f=E('div','slide-footer');add(f,E('span','',details||'Read-only communication; no admission credit'),E('span','',M.presentation.publication.toUpperCase()));s.append(f);return s;
+  const f=E('div','slide-footer');add(f,E('span','',details||'Read-only communication; no admission credit'),E('span','',M.presentation.publication.toUpperCase()));s.append(f);
+  locate(s,'slide-'+key,heading,M.authorities.global_issue_controller);
+  return s;
 }
 function deckInit() {
   const c=$('slides'),m=M.census,v=M.coverage.four_module;
@@ -227,7 +437,7 @@ function deckInit() {
      metric('Phase 8 new reached arcs','+33','Same source blob, test cohort change')
   ]),para('Historical N14 200/446 is a different source epoch. A successful canonical B0 cannot imply B9 >=80% changed-line proof.')],'Source owner / test engineers');
   const fourth=slide('04','The first-red fault tree has distinct roots',[
-    add(E('div','dagnodes'),...[['A10 HUMAN','generated report'],['PYTHON','specifier mismatch'],['ARIANA','missing defusedxml'],['B9','changed-line gate']].map(([a,b])=>add(E('div'),E('strong','',a),E('small','',b)))),
+    add(E('div','dagnodes'),...[['A10 HUMAN','generated report'],['PYTHON','specifier mismatch'],['ARIANA','missing defusedxml'],['B9','changed-line gate']].map(([a,b],i)=>locate(add(E('div'),E('strong','',a),E('small','',b)),'fault-'+String(i+1),a,M.authorities.admission_controller))),
     para('Each branch has its own required exact-head native proof. Do not mask or waive another branch.')
   ],'Engineering root triage');
   const fifth=slide('05','DOD is delivery; DOV is acceptance',[metricGrid([
@@ -240,11 +450,15 @@ function deckInit() {
   })],'Controller / owner return conditions');
   const slides=[first,second,third,fourth,fifth,sixth];slides.forEach(s=>c.append(s));
   const prev=$('prev'),next=$('next'),indicator=$('slide-index');let active=0;
-  const show=(i)=>{active=Math.max(0,Math.min(i,slides.length-1));slides.forEach((s,j)=>s.classList.toggle('active',j===active));indicator.textContent=(active+1)+' / '+slides.length;prev.disabled=active===0;next.disabled=active===slides.length-1;location.hash='slide-'+(active+1);};
+  const show=(i)=>{active=Math.max(0,Math.min(i,slides.length-1));slides.forEach((s,j)=>s.classList.toggle('active',j===active));indicator.textContent=(active+1)+' / '+slides.length;prev.disabled=active===0;next.disabled=active===slides.length-1;
+    const hash='#slide-'+String(active+1).padStart(2,'0');if(location.hash!==hash)history.replaceState(null,'',hash);
+  };
   prev.onclick=()=>show(active-1);next.onclick=()=>show(active+1);
   document.addEventListener('keydown',ev=>{if(['ArrowRight','PageDown'].includes(ev.key))show(active+1);else if(['ArrowLeft','PageUp'].includes(ev.key))show(active-1);});
+  window.addEventListener('hashchange',()=>{const found=location.hash.match(/^#slide-(\d+)$/);if(found)show(Number(found[1])-1);});
   const query=location.hash.match(/^#slide-(\d+)$/);show(query?Number(query[1])-1:0);
 }
-$('master-hash').textContent=document.querySelector('meta[name=master-sha256]').content.slice(0,16)+'...';
+initDevops();
+$('master-hash').textContent=MASTER_SHA.slice(0,16)+'...';
 if(mode==='dashboard')pageInit();if(mode==='cards')cardsInit();if(mode==='deck')deckInit();
 })();
