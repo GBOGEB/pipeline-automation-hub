@@ -231,5 +231,24 @@
     "finding": "NOT_YET_MEASURED; 4 QUEUED at readback"
   },
   "next_decision": "HOLD_UNTIL_ALL_FOUR_NATIVE_RECEIPTS_AND_OWNER_REVIEW",
-  "proposed_promotion": "Only source-bound comparison and selected minimal safe policy MAY be proposed for main AFTER independent security/CI/review; actual CODEX apply activation separate governance."
+  "proposed_promotion": "Only source-bound comparison and selected minimal safe policy MAY be proposed for main AFTER independent security/CI/review; actual CODEX apply activation separate governance.",
+  "queue_amplification_readback": {
+    "status": "LOWER_BOUND_NONATOMIC_WORKFLOW_RUN_CENSUS",
+    "readback_date": "2026-10-17",
+    "across_four_candidate_pr_heads": 4,
+    "observed_workflow_runs_minimum": 20,
+    "focused_new_workflow_runs_queued": 4,
+    "existing_crosscutting_workflow_runs_queued_minimum": 16,
+    "observed_per_pr_workflow_names": [
+      "MCEX-W1 xx stage-only factorial branch",
+      "Zero-Test Gate Guard",
+      "First-Pass Closure Proof",
+      "QPS TRIAGE ULTRA Federation Control",
+      "W3-16 M03 W0 Recon"
+    ],
+    "measured_running_jobs": null,
+    "queue_latency_p95_seconds": null,
+    "execution_p95_seconds": null,
+    "caution": "Not 20 active workers; the connector lists first-page PR-triggered runs, so counts are lower bound. Broad status/proof workflows may be mandatory governance checks; don't classify them as waste."
+  }
 }

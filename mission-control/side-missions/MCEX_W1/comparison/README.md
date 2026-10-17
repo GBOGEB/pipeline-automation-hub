@@ -56,3 +56,9 @@ Factorial action-offer design forecast: local shadow main effect +2 over 2 nomin
 MC.EXPERIMENT.RESUME(mission="MCEX-W1",mode="VERIFY_COMPARE_CONTROL",base="0b6a6f1a062ecdcba4e532aa101735b54ab09911")
 Refresh the four sibling PRs #674 #675 #676 #677 and exact-head runs 39061935570, 39061939734, 39061942686, 39061946675. Read mission-control/side-missions/MCEX_W1/comparison/MCEX_W1_COMPARISON_v1.json from this review PR. Replace forecast-only entries with authenticated run/job/attempt/artifact observations; preserve original baseline/source blob hashes. Compare matched 22-scenario populations, root-first-red propagation and noncompensating review/security/owner gates. No main merge or CODEX mutation promotion without explicit gate receipts; report bounded next 3-pulse recommendation.
 ```
+
+## Native runner fan-out observation (new W1 finding)
+
+At the four individual PR-head readbacks, **at least five queued workflow runs per arm** were visible: the focused MCEX workflow and four pre-existing hub workflows (Zero-Test Gate Guard, First-Pass Closure Proof, QPS TRIAGE ULTRA Federation Control, W3-16 M03 W0 Recon). Across four arms this is **at least 20 queued workflows** for four focused simulation submissions; it is NOT 20 simultaneously executing workers and the first-page readback may omit additional workflows. **Queue latency p95 and execution time are UNKNOWN.** These pre-existing checks may serve independent controls; do not disable them to speed the lab. Future experiments should first consider one owner-qualified matrix wave or a non-production isolated test repository to reduce queue amplification, while preserving mandatory branch checks and human review.
+
+Any comparison of wall-clock timings across sibling PRs is confounded by runner availability and global queue load. Compare deterministic source-bound guard classifications first; only report throughput benefits on matched timed native populations.
