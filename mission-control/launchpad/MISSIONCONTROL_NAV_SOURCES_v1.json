@@ -1,0 +1,516 @@
+{
+  "schema": "missioncontrol.launchpad.federated_architecture.v1",
+  "snapshot": {
+    "observed_on": "2026-10-17",
+    "kind": "NONATOMIC_SOURCE_POINTER_READBACK",
+    "owner": "GBOGEB/pipeline-automation-hub",
+    "basis_sha": "4455321f1ac5ead05135e2cd2355e64ff0a3d9a2",
+    "live_runner_capacity": null,
+    "accepted_n": null,
+    "hosted_url_verified": false,
+    "metric_population": "SOURCE_DISCOVERY_NOT_NATIVE_COVERAGE"
+  },
+  "policy": {
+    "read_only": true,
+    "authority_transfer": false,
+    "merge_admission": "HOLD",
+    "security_waiver": false,
+    "qps_engineering_acceptance": false,
+    "mutation_enabled": false,
+    "enabled_mutation_transports": [],
+    "browser_apply_allowed": false,
+    "remote_dispatch_enabled": false,
+    "code_purple_bd_registry": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+    "pages_publisher": "mission-control/federation-atlas/pages_portal.py"
+  },
+  "source_inputs": [
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/v2/MISSION_CONTROL_CURRENT_v2.json",
+      "blob_sha": "31cd185f920173121138aed10dcb3e188bc466ac"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json",
+      "blob_sha": "1b83bb91e9a4c1710f7c88f6fb7db6bcf151e044"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+      "blob_sha": "ea5689003057b4bc9191cae65bd5126ca94d77cb"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/federation-atlas/PROCESS_LANES_v1.json",
+      "blob_sha": "c7f224399c2de0b94b0f584a7316d6399ee32401"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+      "blob_sha": "bf3d6d25e87ae47d6629e97b7cacb112994483e8"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "path": "mission_control/mycelium/control_manifest.yaml",
+      "blob_sha": "43d5317e7c08678fa7936b2c0959b4e504ea2489"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "path": "mission_control/mycelium/execution_gateway_contract.yaml",
+      "blob_sha": "252cfd0c4e761249fb92f7a9c5d4e8367bc25456"
+    }
+  ],
+  "hierarchy": [
+    {
+      "level": "Mission",
+      "depth": 0,
+      "description": "Registered purpose / source owner"
+    },
+    {
+      "level": "Sprint",
+      "depth": 1,
+      "description": "Bounded scope and review commitment"
+    },
+    {
+      "level": "Wave",
+      "depth": 2,
+      "description": "Coordinated disjoint delivery envelope"
+    },
+    {
+      "level": "Pulse",
+      "depth": 3,
+      "description": "One temporal measured disposition"
+    },
+    {
+      "level": "Run",
+      "depth": 4,
+      "description": "Source-owning native run/job/attempt"
+    }
+  ],
+  "repositories": [
+    {
+      "id": "hub",
+      "name": "GBOGEB/pipeline-automation-hub",
+      "sha": "4455321f1ac5ead05135e2cd2355e64ff0a3d9a2",
+      "role": "Mission orchestration · dashboard owner",
+      "lane": "CONTROL",
+      "source": "mission-control/v2/MISSION_CONTROL_CURRENT_v2.json",
+      "public_class": "PUBLIC_METADATA"
+    },
+    {
+      "id": "codex",
+      "name": "GBOGEB/CODEX",
+      "sha": "f8a179f8bf67bba4264364b5742c7c271f4041a6",
+      "role": "KEB · Mycelium UI and staged control gateway",
+      "lane": "SEMANTIC",
+      "source": "mission_control/mycelium/control_manifest.yaml",
+      "public_class": "PUBLIC_METADATA"
+    },
+    {
+      "id": "abacus",
+      "name": "GBOGEB/ABACUS",
+      "sha": "8d0c6ca568d6ea0b5e658198d0046283c049e557",
+      "role": "DOW · native source-owner CI and errors",
+      "lane": "EXECUTION",
+      "source": null,
+      "public_class": "PUBLIC_METADATA"
+    },
+    {
+      "id": "qps",
+      "name": "GBOGEB/cryoplant-project",
+      "sha": "4782b8ab418f8645ff409a1297ce2d84a8bdcaf8",
+      "role": "QPS · engineering and classified release authority",
+      "lane": "ENGINEERING",
+      "source": null,
+      "public_class": "METADATA_ONLY_OWNER_PUBLICATION_REVIEW"
+    },
+    {
+      "id": "math",
+      "name": "GBOGEB/gg_MATH",
+      "sha": "4caaeae153927fef6c30ac728cb70fc8611d0ac8",
+      "role": "PCA / Bradley–Terry / convergence methods",
+      "lane": "METHOD",
+      "source": "kernels/convergence_control.py",
+      "public_class": "PUBLIC_METADATA"
+    },
+    {
+      "id": "helper",
+      "name": "GBOGEB/Q_engineering_tools",
+      "sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "role": "Helper tools · Pages owner settings gate",
+      "lane": "HELPER",
+      "source": null,
+      "public_class": "PUBLIC_METADATA"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "intake",
+      "label": "Input & mission",
+      "column": 0,
+      "row": 2,
+      "kind": "CONTROL"
+    },
+    {
+      "id": "bdq",
+      "label": "BD root census",
+      "column": 1,
+      "row": 2,
+      "kind": "PROCESS"
+    },
+    {
+      "id": "scheduler",
+      "label": "Schedule proposals",
+      "column": 2,
+      "row": 2,
+      "kind": "PROCESS"
+    },
+    {
+      "id": "codex",
+      "label": "CODEX / KEB",
+      "column": 3,
+      "row": 0,
+      "kind": "REPOSITORY"
+    },
+    {
+      "id": "abacus",
+      "label": "ABACUS / DOW",
+      "column": 3,
+      "row": 1,
+      "kind": "REPOSITORY"
+    },
+    {
+      "id": "qps",
+      "label": "QPS / engineering",
+      "column": 3,
+      "row": 2,
+      "kind": "REPOSITORY"
+    },
+    {
+      "id": "math",
+      "label": "gg_MATH / methods",
+      "column": 3,
+      "row": 3,
+      "kind": "REPOSITORY"
+    },
+    {
+      "id": "helper",
+      "label": "Helper / tooling",
+      "column": 3,
+      "row": 4,
+      "kind": "REPOSITORY"
+    },
+    {
+      "id": "gateway",
+      "label": "Stage-only gateway",
+      "column": 4,
+      "row": 0,
+      "kind": "GATEWAY"
+    },
+    {
+      "id": "jobs",
+      "label": "Native owner CI",
+      "column": 4,
+      "row": 2,
+      "kind": "PROCESS"
+    },
+    {
+      "id": "join",
+      "label": "Evidence join",
+      "column": 5,
+      "row": 2,
+      "kind": "EVIDENCE"
+    },
+    {
+      "id": "admit",
+      "label": "Human admission",
+      "column": 6,
+      "row": 2,
+      "kind": "GATEWAY"
+    },
+    {
+      "id": "pages",
+      "label": "Existing Pages owner",
+      "column": 7,
+      "row": 2,
+      "kind": "VIEW"
+    }
+  ],
+  "edges": [
+    {
+      "from": "intake",
+      "to": "bdq",
+      "relation": "DEPENDS_ON",
+      "binding": "DECLARED",
+      "basis": "mission-control/v2/MISSION_CONTROL_CURRENT_v2.json",
+      "detail": "Mission to issue/root classification"
+    },
+    {
+      "from": "bdq",
+      "to": "scheduler",
+      "relation": "DEPENDS_ON",
+      "binding": "DECLARED",
+      "basis": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+      "detail": "Only explicitly eligible work becomes a scheduling proposal"
+    },
+    {
+      "from": "scheduler",
+      "to": "gateway",
+      "relation": "DEPENDS_ON",
+      "binding": "DECLARED",
+      "basis": "mission_control/mycelium/execution_gateway_contract.yaml",
+      "detail": "Owner auth is required; mutation is disabled"
+    },
+    {
+      "from": "scheduler",
+      "to": "codex",
+      "relation": "DECLARED_ROUTE",
+      "binding": "DECLARED",
+      "basis": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+      "detail": "No CODEX remote dispatch is proven"
+    },
+    {
+      "from": "scheduler",
+      "to": "abacus",
+      "relation": "DECLARED_ROUTE",
+      "binding": "DECLARED",
+      "basis": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+      "detail": "No ABACUS worker dispatch is proven"
+    },
+    {
+      "from": "scheduler",
+      "to": "qps",
+      "relation": "DECLARED_ROUTE",
+      "binding": "DECLARED",
+      "basis": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+      "detail": "QPS engineering owner and release are independent"
+    },
+    {
+      "from": "scheduler",
+      "to": "math",
+      "relation": "DECLARED_ROUTE",
+      "binding": "DECLARED",
+      "basis": "mission-control/federation-atlas/GG_MATH_CONVERGENCE_BRIDGE_v1.json",
+      "detail": "Read-only statistical provider pointer"
+    },
+    {
+      "from": "scheduler",
+      "to": "helper",
+      "relation": "DECLARED_ROUTE",
+      "binding": "DECLARED",
+      "basis": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+      "detail": "No helper runtime dispatcher proven"
+    },
+    {
+      "from": "gateway",
+      "to": "jobs",
+      "relation": "DEPENDS_ON",
+      "binding": "DECLARED",
+      "basis": "mission_control/mycelium/execution_gateway_contract.yaml",
+      "detail": "Stage-only authenticated CODEX transport; not mutation"
+    },
+    {
+      "from": "codex",
+      "to": "join",
+      "relation": "EVIDENCE",
+      "binding": "RECEIPT",
+      "basis": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+      "detail": "Historical KEB PR 775, run 35425623741; not current-head CI"
+    },
+    {
+      "from": "abacus",
+      "to": "join",
+      "relation": "EVIDENCE",
+      "binding": "RECEIPT",
+      "basis": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+      "detail": "Historical DOW PR 1286, run 35425352862; not current-head CI"
+    },
+    {
+      "from": "qps",
+      "to": "join",
+      "relation": "EVIDENCE",
+      "binding": "RECEIPT",
+      "basis": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+      "detail": "Historical QPS job 117072106782, run 38930253268; no engineering acceptance"
+    },
+    {
+      "from": "math",
+      "to": "join",
+      "relation": "EVIDENCE",
+      "binding": "DECLARED",
+      "basis": "mission-control/federation-atlas/GG_MATH_CONVERGENCE_BRIDGE_v1.json",
+      "detail": "Source pointer, native receipt withheld"
+    },
+    {
+      "from": "helper",
+      "to": "join",
+      "relation": "EVIDENCE",
+      "binding": "DECLARED",
+      "basis": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+      "detail": "Source/port proof withheld"
+    },
+    {
+      "from": "jobs",
+      "to": "join",
+      "relation": "DEPENDS_ON",
+      "binding": "DECLARED",
+      "basis": "mission-control/v2/MC_MISSION_TELEMETRY_CONTRACT_v1.json",
+      "detail": "Run/job/attempt evidence required"
+    },
+    {
+      "from": "join",
+      "to": "admit",
+      "relation": "DEPENDS_ON",
+      "binding": "DECLARED",
+      "basis": "mission-control/v2/MC_MISSION_TELEMETRY_CONTRACT_v1.json",
+      "detail": "Receipts do not themselves authorize admission"
+    },
+    {
+      "from": "admit",
+      "to": "pages",
+      "relation": "DEPENDS_ON",
+      "binding": "DECLARED",
+      "basis": "mission-control/federation-atlas/pages_portal.py",
+      "detail": "Existing publisher only, after governance"
+    },
+    {
+      "from": "pages",
+      "to": "intake",
+      "relation": "FEEDBACK",
+      "binding": "DECLARED",
+      "basis": "mission-control/v2/README.md",
+      "detail": "Next-pulse recensus only, excluded from executable DAG"
+    },
+    {
+      "from": "codex",
+      "to": "qps",
+      "relation": "ASSOCIATION",
+      "binding": "DECLARED",
+      "basis": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+      "detail": "Portfolio association, not an execution dependency"
+    }
+  ],
+  "sipoc": [
+    {
+      "key": "S",
+      "name": "Suppliers",
+      "description": "Repository owners, immutable Git source, CODEX gate, gg_MATH methods",
+      "source": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml"
+    },
+    {
+      "key": "I",
+      "name": "Inputs",
+      "description": "Exact source SHAs, authenticated native CI receipts, canonical root IDs, authorized path leases",
+      "source": "mission-control/v2/MC_MISSION_TELEMETRY_CONTRACT_v1.json"
+    },
+    {
+      "key": "P",
+      "name": "Process",
+      "description": "Discover → Classify → Stage proposal → Source-owner run → Evidence join → Governed review → Recensus",
+      "source": "mission-control/federation-atlas/PROCESS_LANES_v1.json"
+    },
+    {
+      "key": "O",
+      "name": "Outputs",
+      "description": "Qualified graph atoms, source-bound receipts, HTML/SVG/Mermaid projections and explicit HOLD",
+      "source": "mission-control/federation-atlas/pages_portal.py"
+    },
+    {
+      "key": "C",
+      "name": "Customers",
+      "description": "Repository owner/reviewer, next-wave worker, MissionControl viewer, QPS engineering owner",
+      "source": "mission-control/v2/MISSION_CONTROL_CURRENT_v2.json"
+    }
+  ],
+  "queues": [
+    {
+      "code": "EXECUTE_NOW",
+      "priority": 1,
+      "meaning": "Bounded source-owning repair with one path lease",
+      "admission": "ELIGIBLE_OWNER_ONLY",
+      "observed_jobs": null
+    },
+    {
+      "code": "PROVE",
+      "priority": 2,
+      "meaning": "Exact SHA tests / security / visual QA receipt",
+      "admission": "NATIVE_VERIFICATION_REQUIRED",
+      "observed_jobs": null
+    },
+    {
+      "code": "RETURN",
+      "priority": 3,
+      "meaning": "Wait for independent owner/admin/source evidence",
+      "admission": "NO_DISPATCH",
+      "observed_jobs": null
+    },
+    {
+      "code": "CONTROL",
+      "priority": 4,
+      "meaning": "Repeat readback and causal-root stability",
+      "admission": "RECURRENCE_PROOF_REQUIRED",
+      "observed_jobs": null
+    },
+    {
+      "code": "READ",
+      "priority": 5,
+      "meaning": "Read-only history/lineage scout",
+      "admission": "SCOUT_ONLY",
+      "observed_jobs": null
+    },
+    {
+      "code": "HOLD",
+      "priority": 6,
+      "meaning": "Unsafe or missing dependencies; cannot execute",
+      "admission": "DENY",
+      "observed_jobs": null
+    }
+  ],
+  "workers": [
+    {
+      "role": "SCOUT",
+      "scope": "Read-only GitHub/census/LLDB receipt discovery",
+      "permission": "READ_ONLY",
+      "active_count": null
+    },
+    {
+      "role": "SOURCE_OWNER_REPAIR",
+      "scope": "One repository / disjoint changed-path lease",
+      "permission": "PR_ONLY_REVIEW_REQUIRED",
+      "active_count": null
+    },
+    {
+      "role": "NATIVE_QA",
+      "scope": "Source-bound Python 3.11/3.12 / Playwright acceptance",
+      "permission": "RUNNER_ONLY",
+      "active_count": null
+    },
+    {
+      "role": "REVIEW_GATE",
+      "scope": "Owner, security and independent approval decisions",
+      "permission": "HUMAN_REQUIRED",
+      "active_count": null
+    },
+    {
+      "role": "FEDERATION_RECEIVER",
+      "scope": "Typed read-only consumer against freshly pinned SHA",
+      "permission": "READ_ONLY",
+      "active_count": null
+    }
+  ],
+  "scheduler": {
+    "model": "READ_ONLY_PROPOSAL",
+    "source_issue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/372",
+    "per_repo_source_repair_wip_limit": 1,
+    "per_repo_prove_wip_limit": 1,
+    "measured_concurrency": null,
+    "dispatch_authorized": false,
+    "run_created_by_this_view": false,
+    "worker_count_measured": null,
+    "clock_source": null
+  },
+  "links": {
+    "owner_issue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604",
+    "mycelium": "https://github.com/GBOGEB/CODEX/blob/f8a179f8bf67bba4264364b5742c7c271f4041a6/mission_control/mycelium/control_manifest.yaml"
+  }
+}
