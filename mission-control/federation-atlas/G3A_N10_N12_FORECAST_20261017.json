@@ -1,0 +1,68 @@
+{
+  "schema": "missioncontrol.g3a.forecast_preaction.v1",
+  "as_of": "2026-10-17",
+  "authority_transfer": false,
+  "merge_admission": "HOLD",
+  "relationship": {
+    "requested_alias": "G3A",
+    "canonical_envelope": "G3P",
+    "method": "3P-CONT",
+    "meaning": "three evaluations with bounded source/test changes; this file is a forecast, not retrospective results"
+  },
+  "mission_id": "CBD-GOLDEN-GRAPH-604",
+  "wave_id": "W-CBD-GRAPH-04",
+  "start_ordinal": 9,
+  "repo": "GBOGEB/pipeline-automation-hub",
+  "source_start_head": "acede0b62f458068a876cecab06b4838a2e64d0f",
+  "base_pull_request": 620,
+  "scope": {
+    "six_modules": [
+      "n3_continuation.py",
+      "n3_integrity.py",
+      "n3_metrics.py",
+      "n3_dashboard.py",
+      "n3_native_join.py",
+      "n3_wave_federation.py"
+    ],
+    "baseline_tests_passed_local": 100,
+    "baseline_statement_covered": 360,
+    "baseline_statement_total": 378,
+    "baseline_branch_covered": 84,
+    "baseline_branch_total": 98,
+    "native_workflow_id": 39029603161,
+    "native_state_at_forecast": "QUEUED",
+    "native_matrix_jobs_observed_queued": 2,
+    "native_artifacts_observed": 0
+  },
+  "predictions": [
+    {
+      "pulse": 10,
+      "predeclared_target": "increase meaningful negative and CLI branch tests, no source behavior weakening",
+      "expected_cumulative_local_tests_min": 108,
+      "expected_original_six_module_branches_min": 88,
+      "actual": null
+    },
+    {
+      "pulse": 11,
+      "predeclared_target": "fail-closed run/job/attempt telemetry and forecast observability; no false authenticated proof",
+      "expected_cumulative_local_tests_min": 115,
+      "expected_native_causality_confirmed": null,
+      "actual": null
+    },
+    {
+      "pulse": 12,
+      "predeclared_target": "integrate receipt/telemetry/visual QA and exact-head CI scope",
+      "expected_cumulative_local_tests_min": 120,
+      "expected_artifact_projection": "deterministic and read-only",
+      "actual": null
+    }
+  ],
+  "governance": {
+    "unverified_runs_are_not_pass": true,
+    "unknown_coverage_delta_is_null": true,
+    "freeze_prediction_before_observation": true,
+    "default_stop_on_major_blocker": true,
+    "independent_merge_authority": false
+  },
+  "data_policy": "Exact-head native results and matched denominators are fetched separately. Forecast claims are not proof of outcomes. Keep a source-bound observation digest when available."
+}
