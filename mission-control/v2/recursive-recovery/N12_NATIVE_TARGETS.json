@@ -1,0 +1,86 @@
+{
+  "schema": "missioncontrol.recursive_recovery.readback_targets.v1",
+  "as_of": "2026-10-17",
+  "authority_transfer": false,
+  "execution_mode": "GET_ONLY_NO_RERUN",
+  "max_runs_per_pr": 2,
+  "max_jobs_per_run": 100,
+  "max_pages": 2,
+  "max_prs": 12,
+  "controller": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "default_branch": "master",
+    "baseline_sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911"
+  },
+  "targets": [
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "branch": "master",
+      "prs": [
+        664,
+        671
+      ],
+      "issues": [
+        604,
+        426,
+        419,
+        85,
+        153
+      ],
+      "class": "CONTROL"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "branch": "main",
+      "prs": [
+        2161,
+        2162,
+        2172,
+        2177,
+        2181
+      ],
+      "issues": [
+        1860,
+        1929
+      ],
+      "class": "DOW_SOURCE_OWNER"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "branch": "main",
+      "prs": [
+        1068
+      ],
+      "issues": [
+        977
+      ],
+      "class": "KEB_MYCELIUM"
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "branch": "main",
+      "prs": [],
+      "issues": [
+        923,
+        1379
+      ],
+      "class": "QPS_DOMAIN"
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "branch": "main",
+      "prs": [],
+      "issues": [],
+      "class": "METHOD_PROVIDER"
+    }
+  ],
+  "invariants": [
+    "Unknown access is not a passed or failed check",
+    "No remote mutation; GET only",
+    "Different heads/attempts never coalesced for gate admission",
+    "No same-SHA blind rerun",
+    "Zero step is a Dockmaster first-red, not application repair",
+    "A passing focused cohort is not a full run",
+    "An issue closing does not grant engineering or release acceptance"
+  ]
+}
