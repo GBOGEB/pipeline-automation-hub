@@ -53,3 +53,50 @@ separate authorized producer. Native execution shall provide run ID, attempt,
 job/step identities, artifact bytes, pass/fail and resource timing. Join outputs
 only once their exact source identities match. A scheduled proposal is never a
 verified proof, and N+1 forecasts never overwrite the N checkpoint.
+
+
+## G7 positive-execution provenance / temporal SIPOC (17 Oct 2026)
+
+This is an **additive read-only projection** of the existing SIPOC instance planner. Producer:
+`success_graph/runner_telemetry.py`; frozen native evidence:
+`success_graph/samples/native_success_20261017.json`. It consumes the canonical
+`mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json` roster,
+not an independently invented Top21 register. The source-head census is 7+7+7
+repositories (21/21 current head metadata discovered), **not** a promotion.
+
+**Observed input:** 24 source-bound successful workflow run IDs from five named
+families, each with run number/attempt/source SHA and UTC event time; ten
+first-page native job records with nine successful runner-executed jobs and one
+explicit skipped job. Selected runner occupancy is 235 seconds, not billable
+runner time or steady-state throughput. Two separate native RED controls are
+retained, not filtered into a false-green population.
+
+**S → I → P → O → C typed edges:**
+
+| SIPOC | Node | Evidence / next behavior |
+|---|---|---|
+| S | `S` | Canonical source roster and repo SHA metadata, no CI promotion |
+| I | `I` | Exact source/run/attempt/job observations with optional runner-time |
+| P | `P_SOURCE` | Deduplicate actual run/job IDs; compare sequence, gap and maturation span |
+| P | `P_REVERSE` | 51 seeded positive/adverse contracts; native testflight required |
+| P | `P_REX` | Declared return to EVERRED/REX owner for real red fingerprint |
+| P | `CAP_*` | Eight code capability nodes with entrypoint, input, output and next expansion |
+| O | `O` | Hash-bound JSON metrics, graph, offline HTML and artifact manifest |
+| C | `C` | Source owner and independent security/governance/QPS admission, default HOLD |
+
+Edges identified from native source metadata are `OBSERVED`. Application or
+cross-repository consumers lacking proof of artifact bytes/owner sign-off are
+`DECLARED`. No DAG cycle, mutation path lease, remote executor or observer
+may convert a DECLARED edge to a receipt through a successful workflow label.
+
+**Positive MANTRA:** Start from six observed consecutive QPS native Debug DAG
+run numbers 181–186 and six observed gg_MATH kernel successes, then strengthen
+backend-specific negative tests, adverse inputs, workflow step containment,
+same-scope coverage and independent-source control. Other workflows contain
+unobserved run-number gaps and cannot claim uninterrupted streaks.
+
+**Native producer:** `.github/workflows/gogreen-g7-success-graph.yml` runs
+module-scoped branch/statement coverage, 51 tests, exact-head output hashing
+and a separate GitHub run/attempt-bound receipt. It neither replaces
+`sipoc_instances.py`, writes canonical BD/REX, relaxes status gates, nor
+publishes Pages. See [G7 capability and pruning ledger](success_graph/README.md).
