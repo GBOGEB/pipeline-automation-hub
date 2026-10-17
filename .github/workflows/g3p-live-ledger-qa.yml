@@ -92,6 +92,8 @@ jobs:
           print('PAGES_CANDIDATE=BYTE_IDENTICAL; NOT_DEPLOYED')
           PY
       - name: Chromium responsive and functional interaction matrix
+        env:
+          G3P_EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           python mission-control/html_qa/g3p_browser_qa.py \
             --html /tmp/g3p-qa/published/g3p/index.html \
@@ -110,6 +112,8 @@ jobs:
           assert len(r['screenshots'])==3
           assert r['checks_total']>=85
           assert r['hosted_http_verified'] is False
+          assert r['exact_checkout_sha_confirmed'] is True
+          assert r['native_source_head_claim']==r['pr_event_sha_separate'] or len(r['pr_event_sha_separate'])==40
           assert r['merge_admission']=='HOLD' and r['authority_transfer'] is False
           for item in r['screenshots']:
               assert (p/item['path']).stat().st_size>1000
