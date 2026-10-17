@@ -56,13 +56,24 @@ def main(argv=None):
                 width=verify(page,kind=kind)
                 if errors:raise AssertionError(f'{label}/{kind} JavaScript errors: {errors[:3]}')
                 if kind=='cpq':
+                    # Search intentionally includes title, evidence and route text.
+                    # CPQ-013 references CPQ-010: a substring query is NOT an
+                    # exact-ID selector and can legitimately yield two rows.
                     page.locator('#search').fill('CPQ-010')
-                    if page.locator('#items tr').count()!=1:raise AssertionError('search control inoperative')
+                    page.wait_for_function("document.querySelectorAll('#items tr').length > 0 && document.querySelectorAll('#items tr').length < 9",timeout=3500)
+                    matched=page.locator('#items tr').all_inner_texts()
+                    if not any(row.strip().startswith('CPQ-010') for row in matched):
+                        raise AssertionError('search control omitted exact target')
+                    page.locator('#search').fill('CPQ-UNMATCHED-SEED')
+                    page.wait_for_function("document.querySelectorAll('#items tr').length === 0")
                     page.locator('#search').fill('')
+                    page.wait_for_function("document.querySelectorAll('#items tr').length === 9")
                     page.locator('#status').select_option('DONE')
-                    if page.locator('#items tr').count()!=9:raise AssertionError('completed filter inoperative')
+                    page.wait_for_function("document.querySelectorAll('#items tr').length === 9")
+                    page.locator('#status').select_option('ACTIVE')
+                    page.wait_for_function("document.querySelectorAll('#items tr').length === 2")
                     page.locator('#status').select_option('OPEN')
-                    if page.locator('#items tr').count()!=9:raise AssertionError('open filter inoperative')
+                    page.wait_for_function("document.querySelectorAll('#items tr').length === 9")
                 path=args.out/f'{label}_{kind}.png';page.screenshot(path=str(path),full_page=True)
                 out['checks'].append({'viewport':label,'kind':kind,'status':'PASS',**width,
                                       'screenshot':path.name})
