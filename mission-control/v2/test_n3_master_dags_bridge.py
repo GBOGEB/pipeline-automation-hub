@@ -64,3 +64,53 @@ class BridgeContracts(unittest.TestCase):
                            "kind": "FEDERATION_CANDIDATE", "receipt": None})
         with self.assertRaisesRegex(ValueError, "cyclic"):
             project(a)
+
+    def test_reject_duplicate_repository(self):
+        m = fixture(); m["sources"][1] = copy.deepcopy(m["sources"][0])
+        with self.assertRaisesRegex(ValueError, "duplicate source repository"):
+            project(m)
+
+    def test_reject_missing_source_blob_sha(self):
+        m = fixture(); m["sources"][1].pop("blob_sha")
+        with self.assertRaisesRegex(ValueError, "source SHA"):
+            project(m)
+
+    def test_reject_untrusted_graph_identifier(self):
+        m = fixture(); m["sources"][1]["graph_ids"] = ["../../evil"]
+        with self.assertRaisesRegex(ValueError, "malformed graph ID"):
+            project(m)
+
+    def test_reject_empty_graph_family(self):
+        m = fixture(); m["sources"][1]["graph_ids"] = []
+        with self.assertRaisesRegex(ValueError, "missing graph IDs"):
+            project(m)
+
+    def test_reject_wrong_expected_hub_base(self):
+        with self.assertRaisesRegex(ValueError, "stale hub base SHA"):
+            project(fixture(), expected_hub_base="a" * 40)
+
+    def test_reject_undeclared_native_receipt(self):
+        m = fixture(); m["native_receipt"] = {"run_id": 1}
+        with self.assertRaisesRegex(ValueError, "native receipt"):
+            project(m)
+
+    def test_reject_fake_crew_dispatch_ids(self):
+        m = fixture(); m["authenticated_crew_ids"] = []
+        with self.assertRaisesRegex(ValueError, "crew identity"):
+            project(m)
+
+    def test_reject_admitted_root_counts(self):
+        m = fixture(); m["root_closures"] = 0
+        with self.assertRaisesRegex(ValueError, "causal root"):
+            project(m)
+
+    def test_reject_same_repo_federation_edge(self):
+        m = fixture()
+        m["links"][0]["to"] = "GBOGEB/ABACUS::AGENT_EXECUTION_GRAPH"
+        with self.assertRaisesRegex(ValueError, "cross repository"):
+            project(m)
+
+    def test_reject_duplicated_federation_edge(self):
+        m = fixture(); m["links"].append(copy.deepcopy(m["links"][0]))
+        with self.assertRaisesRegex(ValueError, "duplicate candidate edge"):
+            project(m)
