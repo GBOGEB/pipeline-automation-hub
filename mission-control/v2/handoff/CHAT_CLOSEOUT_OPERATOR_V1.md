@@ -1,5 +1,7 @@
 # CP.CLOSEOUT — Chat/session retirement and governed GitHub custody
 
+> **Canonical implementation precedence (17 Oct 2026):** This document is a non-authoritative explanatory annex. The actual reusable command is **`CP.CLOSE()`** in [closeout/CP_CLOSE_GITHUB_v1.json](closeout/CP_CLOSE_GITHUB_v1.json), implemented by [closeout/cp_close.py](closeout/cp_close.py). **`CP.CLOSEOUT()` and `CP.CLOSEOUT!` are aliases only**. Generate records under `closeout/records/<session_alias>/` using the one canonical intake/BD generator. Do not create a second receipt pipeline or add synthetic BD roots. The earlier `code_purple.chat_closeout_receipt.v1` schema below is a reporting example only, not an additional source of authority.
+
 **Status:** additive consumer of [CP_HANDOFF_RESUME_V1.json](CP_HANDOFF_RESUME_V1.json), [GITHUB_FIRST_PROFILE_V1.json](GITHUB_FIRST_PROFILE_V1.json), existing MissionControl glossary and method registry. This is a **chat instruction macro**, not an executable ChatGPT function, a transcript-export API, a GitHub merge permission or an automatic chat-deletion operation.
 
 ## Copyable operator commands
