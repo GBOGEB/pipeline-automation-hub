@@ -1,0 +1,181 @@
+{
+  "schema": "missioncontrol.github_workflow_census.v1",
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "source_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+  "retrieval_scope": "FIRST_PAGE_PR_HEAD",
+  "readback_class": "GITHUB_CONNECTOR_GET_RUN_AND_JOBS_AND_ARTIFACTS",
+  "observation_window": "2026-10-17; non-atomic per-endpoint readback; no synchronized capture timestamp",
+  "warning": "GitHub run_started_at equals created_at even for QUEUED workflows. It is not trusted as actual job start; normalized started_at=null.",
+  "artifact_check_run_ids": [
+    39029603050,
+    39029603063,
+    39029603059,
+    39029603129,
+    39029603161,
+    39029602969,
+    39029603005
+  ],
+  "workflow_runs": [
+    {
+      "run_id": 39029603050,
+      "name": "QPS TRIAGE ULTRA Federation Control",
+      "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+      "run_attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "created_at": "2026-10-17T11:40:31Z",
+      "started_at": null,
+      "completed_at": null,
+      "reported_job_total": 1,
+      "artifact_count": 0,
+      "jobs": [
+        {
+          "job_id": 117387233433,
+          "run_id": 39029603050,
+          "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "run_id": 39029603063,
+      "name": "First-Pass Closure Proof",
+      "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+      "run_attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "created_at": "2026-10-17T11:40:31Z",
+      "started_at": null,
+      "completed_at": null,
+      "reported_job_total": 1,
+      "artifact_count": 0,
+      "jobs": [
+        {
+          "job_id": 117387233284,
+          "run_id": 39029603063,
+          "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "run_id": 39029603059,
+      "name": "Mission Control v2 Contract",
+      "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+      "run_attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "created_at": "2026-10-17T11:40:31Z",
+      "started_at": null,
+      "completed_at": null,
+      "reported_job_total": 1,
+      "artifact_count": 0,
+      "jobs": [
+        {
+          "job_id": 117387233406,
+          "run_id": 39029603059,
+          "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "run_id": 39029603129,
+      "name": "W3-16 M03 W0 Recon",
+      "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+      "run_attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "created_at": "2026-10-17T11:40:31Z",
+      "started_at": null,
+      "completed_at": null,
+      "reported_job_total": 1,
+      "artifact_count": 0,
+      "jobs": [
+        {
+          "job_id": 117387233587,
+          "run_id": 39029603129,
+          "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "run_id": 39029603161,
+      "name": "Mission Control N3 Evidence Metrics",
+      "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+      "run_attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "created_at": "2026-10-17T11:40:31Z",
+      "started_at": null,
+      "completed_at": null,
+      "reported_job_total": 2,
+      "artifact_count": 0,
+      "jobs": [
+        {
+          "job_id": 117387233813,
+          "run_id": 39029603161,
+          "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "job_id": 117387233987,
+          "run_id": 39029603161,
+          "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "run_id": 39029602969,
+      "name": "Zero-Test Gate Guard",
+      "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+      "run_attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "created_at": "2026-10-17T11:40:31Z",
+      "started_at": null,
+      "completed_at": null,
+      "reported_job_total": 1,
+      "artifact_count": 0,
+      "jobs": [
+        {
+          "job_id": 117387233056,
+          "run_id": 39029602969,
+          "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "run_id": 39029603005,
+      "name": "CODE PURPLE Method Atlas (read-only)",
+      "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+      "run_attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "created_at": "2026-10-17T11:40:31Z",
+      "started_at": null,
+      "completed_at": null,
+      "reported_job_total": 1,
+      "artifact_count": 0,
+      "jobs": [
+        {
+          "job_id": 117387233181,
+          "run_id": 39029603005,
+          "head_sha": "acede0b62f458068a876cecab06b4838a2e64d0f",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    }
+  ]
+}
