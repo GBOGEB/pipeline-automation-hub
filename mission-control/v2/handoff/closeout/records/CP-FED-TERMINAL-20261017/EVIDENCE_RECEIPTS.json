@@ -1,0 +1,306 @@
+{
+  "capture_date": "2026-10-17",
+  "measurement": {
+    "BT": "NOT_READY",
+    "M1": "PARTIAL_METHOD",
+    "M2": "HOLD",
+    "M3": "HOLD",
+    "PCA": "NOT_READY",
+    "accepted_causal_closures": 0,
+    "breadth_eligible": 42,
+    "breadth_observed": 6,
+    "canonical_MCPR530": "ZIP_VERIFIER",
+    "canonical_MCPR531": "SIX_REPO_STATUS_BREADTH",
+    "canonical_MCPR533": "METHOD_VIEWER",
+    "distinct_root_candidates": 2,
+    "matched_cross_repo_coverage": null,
+    "observed_root_occurrences_prior_pulse": 7,
+    "runner_capacity": null,
+    "six_sigma_capability": "UNKNOWN",
+    "viewer_eligible": 5,
+    "viewer_measured": 1,
+    "worker_hours": null
+  },
+  "run_receipts": [
+    {
+      "attempt": 1,
+      "head": "04e6bde112592993e2d026c42b4aa5c3b747f2f1",
+      "job": 116339320611,
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "run": 38710173679,
+      "terminal": "success",
+      "tests": {
+        "evidence": "PRIOR_REPORT_RECONFIRMED_JOB",
+        "fail": 0,
+        "pass": 53,
+        "run": 53,
+        "skip": 0
+      },
+      "zip": {
+        "bytes": 70437,
+        "id": 11961956624,
+        "member_bytes": null,
+        "sha256": "ab68e13204565d70ea281bc848773e40273aa05971d39fae7e7a1c94376a427c"
+      }
+    },
+    {
+      "attempt": 1,
+      "head": "bf9383bc39bedf645175184049bdb2013379041d",
+      "job": 116370959125,
+      "members": [
+        "lane-process.html",
+        "lane-process.mmd",
+        "lane-process.json"
+      ],
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "run": 38719705691,
+      "terminal": "success",
+      "tests": {
+        "evidence": "PRIOR_REPORT_RECONFIRMED_JOB",
+        "fail": 0,
+        "lane_new": 16,
+        "pass": 74,
+        "run": 74,
+        "skip": 0
+      },
+      "zip": {
+        "bytes": 73965,
+        "id": 11964700323,
+        "member_bytes": null,
+        "sha256": "7f4258824b400e6def84a1c5c50dd8fbac827c316c2077854846a47e065a1eef"
+      }
+    },
+    {
+      "attempt": 1,
+      "head": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+      "jobs": [
+        {
+          "id": 117482412016,
+          "status": "success",
+          "tests": {
+            "fail": 0,
+            "pass": 38,
+            "run": 38,
+            "skip": 0
+          }
+        },
+        {
+          "first_red": "branch commits GET 404",
+          "id": 117482412110,
+          "status": "failure",
+          "tests": {
+            "fail": null,
+            "pass": null,
+            "run": null,
+            "skip": null
+          }
+        }
+      ],
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "root_candidate": "MC_CENSUS_BRANCH_GET_404",
+      "run": 39062244840,
+      "terminal": "failure",
+      "zip": {
+        "bytes": 8097,
+        "id": 12110994510,
+        "member_bytes": null,
+        "sha256": "3ff24b61b443ac1a2ac37bde68c36b4e2daffe38e4d8f5af06f62ec2e6f0cfe2"
+      }
+    },
+    {
+      "attempt": 1,
+      "coverage": {
+        "branches": {
+          "denominator": 84,
+          "numerator": 69
+        },
+        "matched_before": null,
+        "statements": {
+          "denominator": 172,
+          "numerator": 157
+        }
+      },
+      "head": "37afe75d9911691698a849b21fcfad0df1844432",
+      "jobs": [
+        {
+          "fail": 0,
+          "id": 117440470117,
+          "pass": 37,
+          "skip": 0
+        },
+        {
+          "fail": 0,
+          "id": 117440470325,
+          "pass": 37,
+          "skip": 0
+        },
+        {
+          "fail": 0,
+          "id": 117444144372,
+          "pass": 10,
+          "skip": 0
+        }
+      ],
+      "member_bytes": null,
+      "repository": "GBOGEB/gg_MATH",
+      "run": 39047980808,
+      "terminal": "success",
+      "zip": [
+        {
+          "bytes": 3111,
+          "id": 12106927458,
+          "sha256": "61173ddb6471028ec464db89cc96e6c764ebe3aa7200e2b887bc1c9b5d7bdf53"
+        },
+        {
+          "bytes": 3112,
+          "id": 12106594227,
+          "sha256": "ff18ea52db3a1ab19464adeacb76dccd662fbbdc274562734959fe228ce73b40"
+        },
+        {
+          "bytes": 2227336,
+          "id": 12107372904,
+          "sha256": "bcc99279e0a1dd536f5f9b5c34046777178d0bd8ece3ed2640899033f444e2a9"
+        }
+      ]
+    },
+    {
+      "attempt": 1,
+      "coverage": {
+        "branches": null,
+        "statements": null,
+        "threshold": "80_PERCENT_FOCUSED_PASS"
+      },
+      "head": "d073992785c68820c3c9aa44260314fb82bd8f34",
+      "jobs": [
+        {
+          "fail": 0,
+          "id": 117443781938,
+          "pass": 17,
+          "skip": 0
+        },
+        {
+          "fail": 0,
+          "id": 117443782273,
+          "pass": 17,
+          "skip": 0
+        }
+      ],
+      "member_bytes": null,
+      "repository": "GBOGEB/gg_MATH",
+      "run": 39049078036,
+      "terminal": "success",
+      "zip": [
+        {
+          "bytes": 1480,
+          "id": 12107631964,
+          "sha256": "f9665cb6c2a48cbc95b2cf0e2d91c7b0ca317d65b1abe8edeb9757c486428fec"
+        },
+        {
+          "bytes": 1481,
+          "id": 12107542216,
+          "sha256": "bce93433ba228e69150624c4e89f88acc90491d3c9b1872ba73cf07ad32f3b0a"
+        }
+      ]
+    },
+    {
+      "attempt": 1,
+      "head": "4782b8ab418f8645ff409a1297ce2d84a8bdcaf8",
+      "job": 117449898170,
+      "occurrences": "SIX_HISTORICAL_FAILING_RUNS_REPORTED",
+      "privacy": "OWNER_PRIVATE_DO_NOT_PUBLISH_ISSUE_PAYLOAD",
+      "repository": "GBOGEB/cryoplant-project",
+      "root_candidate": "QPS_BD_QUEUE_PARITY",
+      "run": 39051175754,
+      "terminal": "failure",
+      "tests": {
+        "fail": null,
+        "pass": null,
+        "run": null,
+        "skip": null
+      },
+      "zip": null
+    }
+  ],
+  "schema": "missioncontrol.cp_close.native_evidence_delta.v1",
+  "selected_PRs": [
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "79672200a0fb37b7538b996b03a1e82dceb83a2f",
+      "merge_sha": "b4657129623acba3a993f507dbe6758819057094",
+      "number": 1989,
+      "repository": "GBOGEB/ABACUS",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1989"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "01d99b1bda4ec828d6ffbe6f3fa6a911cd89ffcd",
+      "merge_sha": "14d79fa54d38fe845b0b9a20ae8201dc101a346f",
+      "number": 1990,
+      "repository": "GBOGEB/ABACUS",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1990"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "1cdacce594fcd2b091d0aab6bf6b717ea6fde036",
+      "merge_sha": "3e1b29c239a1f0f2cb0d9190deff61478a7b09f3",
+      "number": 1994,
+      "repository": "GBOGEB/ABACUS",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1994"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "1cb55efd15974af8e3554ee3f9bd5650eb9d3b9e",
+      "merge_sha": "94604c98cd2cdee346df278b0bb7a2cc451da319",
+      "number": 1997,
+      "repository": "GBOGEB/ABACUS",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1997"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "e36f7543d4e002296725474a3bc0d57abf7d2d3b",
+      "merge_sha": "49bf1e313584e3ca953c264741345163413fec24",
+      "number": 1998,
+      "repository": "GBOGEB/ABACUS",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1998"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "3d09f3134b7c891ae1a5ad198e951eeed5250c7e",
+      "merge_sha": "86917eb0f373e0595054f4f054e952870526b8f0",
+      "number": 530,
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/530"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "5507b2ebfcdd45adf54b473008f51fee4707758b",
+      "merge_sha": "de7589136b093e159aa305526b231994301cd889",
+      "number": 531,
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/531"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "bf9383bc39bedf645175184049bdb2013379041d",
+      "merge_sha": "5fb26dd1ca4cae0b24c8fcce572aac459fff0b2d",
+      "number": 533,
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/533"
+    }
+  ],
+  "source_heads": {
+    "GBOGEB/ABACUS": "19d0581e640f252f39984ef893d4fd4e9d236ad5",
+    "GBOGEB/CODEX": "493145eea784d39f57ea64a730af9f3e85586714",
+    "GBOGEB/cryoplant-project": "4782b8ab418f8645ff409a1297ce2d84a8bdcaf8",
+    "GBOGEB/gg_MATH": "4caaeae153927fef6c30ac728cb70fc8611d0ac8",
+    "GBOGEB/pipeline-automation-hub": "383961ca0588830ef3a81b8c3713e64dd6a5957b"
+  }
+}
