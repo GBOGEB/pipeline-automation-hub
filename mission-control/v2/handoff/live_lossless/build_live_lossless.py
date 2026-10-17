@@ -106,6 +106,22 @@ def validate_delta(delta, observed, ledger):
                 or not all(public_link(u) for u in a.get("evidence_urls", []))
                 or not set(a.get("depends_on", [])).issubset(allids)):
             fail("invalid owned delta action")
+    # Append-only dependencies cannot create an execution DAG cycle.
+    deps = {a["id"]: a.get("depends_on", []) for a in ledger["actions"] + actions}
+    visited, active = set(), set()
+    def walk(item):
+        if item in active:
+            fail("cycle in source-owned continuation DAG")
+        if item not in visited:
+            active.add(item)
+            for parent in deps[item]:
+                if parent not in deps:
+                    fail("dangling DAG edge")
+                walk(parent)
+            active.remove(item)
+            visited.add(item)
+    for item in deps:
+        walk(item)
     subs = delta.get("subrequests", [])
     if len(subs) < 4 or len({s.get("id") for s in subs}) != len(subs):
         fail("missing distinct subrequests")
