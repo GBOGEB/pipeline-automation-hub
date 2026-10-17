@@ -21,8 +21,8 @@ def require(condition: bool, message: str) -> None:
 def assess_jobs(payload: dict, name: str, expected_run_id: int | None = None) -> dict:
     """Summarize exact API population; terminal job proof requires actual steps.
 
-    \`complete\` means complete API pagination only, not a passing job or test.
-    \`terminal_success_with_steps\` means successful GitHub job steps, NOT tests.
+    `complete` means complete API pagination only, not a passing job or test.
+    `terminal_success_with_steps` means successful GitHub job steps, NOT tests.
     """
     require(isinstance(payload, dict), name + " payload")
     total = payload.get("total_count")
