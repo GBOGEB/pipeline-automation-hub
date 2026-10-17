@@ -1,0 +1,123 @@
+name: GOGREEN G7 Native Success Temporal and SIPOC
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/success_graph/**'
+      - 'mission-control/gogreen/SIPOC_INSTANCE_DAG.md'
+      - '.github/workflows/gogreen-g7-success-graph.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: gogreen-g7-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-bound-success:
+    name: G7 positive/reverse test, runner metrics and read-only DAG
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact immutable source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Native 51 positive/adversarial regressions with branch coverage
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          python -m pip install --disable-pip-version-check 'coverage==7.13.3'
+          mkdir -p "$RUNNER_TEMP/gogreen-g7"
+          export COVERAGE_FILE="$RUNNER_TEMP/gogreen-g7/.coverage"
+          python -m coverage run --branch \
+            --include='*/mission-control/gogreen/success_graph/runner_telemetry.py' \
+            -m unittest discover -s mission-control/gogreen/success_graph/tests \
+            -p 'test_runner_telemetry.py' -v \
+            2>&1 | tee "$RUNNER_TEMP/gogreen-g7/native_tests.log"
+          python -m coverage json -o "$RUNNER_TEMP/gogreen-g7/coverage.json" -q
+          python - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          base=Path(os.environ['RUNNER_TEMP'])/'gogreen-g7'
+          raw=(base/'native_tests.log').read_text()
+          counts=re.findall(r'Ran (\d+) tests? in',raw)
+          if counts != ['51'] or '\nOK' not in raw:
+              raise SystemExit(f'native G7 test denominator not qualified: {counts}')
+          cov=json.loads((base/'coverage.json').read_text())
+          key='mission-control/gogreen/success_graph/runner_telemetry.py'
+          if cov.get('meta',{}).get('branch_coverage') is not True or cov.get('meta',{}).get('version')!='7.13.3':
+              raise SystemExit('native coverage source/mode version mismatch')
+          files=cov.get('files',{})
+          if list(files)!=[key]:
+              raise SystemExit(f'scope drift: {list(files)}')
+          s=files[key]['summary']
+          st=(s['covered_lines'],s['num_statements'])
+          br=(s['covered_branches'],s['num_branches'])
+          if not st[1] or not br[1] or st[0]>st[1] or br[0]>br[1]:
+              raise SystemExit('zero or invalid scoped coverage denominator')
+          if 100*st[0]<80*st[1] or 100*br[0]<75*br[1]:
+              raise SystemExit(f'G7 focus coverage threshold red: statements {st}, branches {br}')
+          receipt={'schema':'gogreen.g7.native-test-and-coverage.v1',
+                   'source_sha':os.environ['EXPECTED_SHA'],'native_tests_passed':51,
+                   'scope':key,'tool':'coverage==7.13.3',
+                   'statement_covered':st[0],'statement_eligible':st[1],
+                   'branch_covered':br[0],'branch_eligible':br[1],
+                   'whole_repo_coverage_percent':None,
+                   'authority_transfer':False,'merge_authorized':False,
+                   'source_testflight_only':True}
+          (base/'native_coverage_receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n')
+          print(json.dumps(receipt,sort_keys=True))
+          PY
+      - name: Native source-bound SUCCESS/SIPOC artifact generation and hash check
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/gogreen-g7"
+          python mission-control/gogreen/success_graph/runner_telemetry.py \
+            --input mission-control/gogreen/success_graph/samples/native_success_20261017.json \
+            --registry mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json \
+            --out "$ROOT/generated" --source-sha "$EXPECTED_SHA"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          base=Path(os.environ['RUNNER_TEMP'])/'gogreen-g7'
+          manifest=json.loads((base/'generated/manifest.json').read_text())
+          for name,want in manifest['files'].items():
+              got=hashlib.sha256((base/'generated'/name).read_bytes()).hexdigest()
+              if got!=want:raise SystemExit('artifact corruption: '+name)
+          if manifest['producer_source_sha']!=os.environ['EXPECTED_SHA'] or manifest['merge_authorized'] is not False:
+              raise SystemExit('forged output source or admission')
+          metrics=json.loads((base/'generated/metrics.json').read_text())
+          assert (metrics['top21_head_discovered'],metrics['observed_successful_run_ids'])==(21,24)
+          assert metrics['measured_successful_native_jobs']==9
+          assert metrics['statistical_independent_trials'] is None
+          result={'schema':'gogreen.g7.native-artifact-receipt.v1',
+                  'run_id':int(os.environ['RUN_ID']),
+                  'run_attempt':int(os.environ['RUN_ATTEMPT']),
+                  'producer_source_sha':os.environ['EXPECTED_SHA'],
+                  'manifest_sha256':hashlib.sha256((base/'generated/manifest.json').read_bytes()).hexdigest(),
+                  'artifact_bytes_verified_in_same_workflow':True,
+                  'external_archive_custody_verified':False,
+                  'formal_closures':0,'authority_transfer':False,'merge_authorized':False}
+          (base/'native_execution_receipt.json').write_text(json.dumps(result,sort_keys=True,indent=2)+'\n')
+          print(json.dumps(result,sort_keys=True))
+          PY
+      - name: Upload immutable review surface, no Pages deployment
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gogreen-g7-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/gogreen-g7/
+          retention-days: 30
+          if-no-files-found: warn
