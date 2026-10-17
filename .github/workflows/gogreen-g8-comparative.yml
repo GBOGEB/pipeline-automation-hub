@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
-      - name: Execute 23 native data/HTML and negative tests
+      - name: Execute 31 native data/HTML and negative tests
         shell: bash
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -43,7 +43,7 @@ jobs:
           tmp=Path(os.environ['RUNNER_TEMP'])/'gogreen-g8'
           tests=(tmp/'native_tests.log').read_text()
           counts=re.findall(r'Ran (\d+) tests? in',tests)
-          if counts != ['23'] or '\nOK' not in tests:
+          if counts != ['31'] or '\nOK' not in tests:
               raise SystemExit('native G8 test denominator not met')
           data=json.loads((root/'comparison.json').read_text())
           html=(root/'index.html').read_text()
@@ -66,12 +66,26 @@ jobs:
           assert temporal['matched_branch_gain_pp']==2.6316
           assert temporal['source_module_git_blob']=='e7b54f64890489b495bfa43de7b1e5a43902f47a'
           assert temporal['whole_repo_pass_pct'] is None
+          pulse=data["go_green"]["qps_threepulse"]
+          assert pulse["frozen_main_run_census"]=={
+              "runs":33,"success":22,"failure":11,"cancelled":0,
+              "source_population":"ALL_RETRIEVED_BRANCH_DATE_RUNS",
+              "retrieved_page_complete":True}
+          assert sum(x["n"] for x in pulse["failure_family_manifestations"])==11
+          assert (pulse["first_red_exact_error_verified"],pulse["first_red_unknown"])==(10,1)
+          assert (pulse["pulse_results"][1]["python_tests_passed"],
+                  pulse["pulse_results"][1]["ts_tests_passed"])==(21,41)
+          assert pulse["pulse_results"][2]["source_scope_comparable"] is False
+          assert pulse["pulse_results"][2]["statement_n2"]==[30,30]
+          assert pulse["pulse_results"][2]["branch_n2"]==[18,18]
+          assert pulse["post_merge_controls"]["root_closure_credit"]==0
+
           hashes={}
           for name in ('comparison.json','index.html','test_comparison.py','README.md'):
               hashes[name]=hashlib.sha256((root/name).read_bytes()).hexdigest()
           proof={'schema':'gogreen.g8.native-comparative-receipt.v1',
                  'source_sha':os.environ['EXPECTED_SHA'],
-                 'tests_passed':23,'portfolio_event_window':'2026-10-16..2026-10-17',
+                 'tests_passed':31,'portfolio_event_window':'2026-10-16..2026-10-17',
                  'source_head_discovery':21,'top21_admission':None,
                  'runner_busy_seconds_not_billed':235,'artifacts_sha256':hashes,
                  'root_closure_credit':0,'authority_transfer':False,
