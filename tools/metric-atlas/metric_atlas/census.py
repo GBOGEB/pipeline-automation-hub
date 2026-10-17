@@ -42,18 +42,27 @@ def request(wave, heads, selector="all", max_fanout=3):
     if set(heads) != set(ALLOWED_REPOS):
         raise CensusError("require an exact three-lane manifest; unknown is not omitted")
     out = []
+    missing = []
     for lane, repo in ALLOWED_REPOS.items():
         sha = heads[lane]
+        if sha is None:
+            missing.append({"lane": lane, "repo": repo, "expected_sha": None,
+                            "request_id": None, "state": "HOLD_SOURCE_HEAD_UNKNOWN",
+                            "reason": "NO_AUTHORIZED_SOURCE_READ"})
+            continue
         if not isinstance(sha, str) or SHA.fullmatch(sha) is None:
-            raise CensusError("no exact SHA for " + lane)
+            raise CensusError("invalid exact SHA for " + lane)
         seed = {"wave": wave, "lane": lane, "repo": repo,
                 "expected_sha": sha, "selector": selector}
         identifier = "QPS-" + hashlib.sha256(canonical(seed).encode()).hexdigest()[:20]
         out.append(dict(seed, request_id=identifier, state="PLANNED_NOT_DISPATCHED"))
     return {"schema": SCHEMA, "wave": wave, "mode": "READ_ONLY",
             "dispatch_enabled": False, "max_fanout": max_fanout,
-            "requested_repos": len(out), "requests": out[:max_fanout],
-            "not_dispatched": out[max_fanout:],
+            "eligible_repos": len(ALLOWED_REPOS), "requested_repos": len(ALLOWED_REPOS),
+            "dispatchable_repos": min(len(out), max_fanout),
+            "unknown_head_repos": len(missing),
+            "requests": out[:max_fanout],
+            "not_dispatched": missing + out[max_fanout:],
             "authority_transfer": False, "engineering_acceptance": False}
 
 
@@ -145,7 +154,16 @@ def rollup(manifest, receipts):
                      "route_failure": "FAILURE" in state[repo],
                      "test_counts": None, "coverage": None,
                      "merge_admission": "HOLD_UNKNOWN_REQUIRED_EVIDENCE"})
+    for q in manifest.get("not_dispatched", []):
+        if q.get("state") == "HOLD_SOURCE_HEAD_UNKNOWN":
+            rows.append({"repo": q["repo"], "lane": q["lane"], "head_sha": None,
+                         "routes_received": [], "routes_required": [],
+                         "complete": False, "state": "HOLD_SOURCE_HEAD_UNKNOWN",
+                         "test_counts": None, "coverage": None,
+                         "merge_admission": "HOLD"})
     return {"schema": "qps-metric-rollup/v1", "wave": manifest["wave"],
+            "eligible_repos": manifest.get("eligible_repos", len(manifest["requests"])),
+            "unknown_head_repos": manifest.get("unknown_head_repos", 0),
             "planned_repos": len(manifest["requests"]),
             "observed_repos": len(observed),
             "fully_observed_repos": sum(r["complete"] for r in rows),
