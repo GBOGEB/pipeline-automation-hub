@@ -1,0 +1,185 @@
+name: QPS Metric Census Federation N-pulse
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'tools/metric-atlas/**'
+      - '.github/workflows/qps-metric-census-*.yml'
+  workflow_dispatch:
+    inputs:
+      wave:
+        description: One bounded census pulse ID
+        required: true
+        default: N1
+        type: string
+      selector:
+        description: Source-owned DAG route
+        required: true
+        type: choice
+        options: [all, native_checks, coverage_catalog]
+        default: all
+      dispatch_fanout:
+        description: Operator opt-in; requires separately provisioned cross-repo secret
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: qps-metric-n-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  verify-census-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact source tree
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Assert source identity
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Run native Metric Atlas and QPS census regression tests
+        shell: bash
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: |
+          python -m unittest discover -s tools/metric-atlas/tests -p 'test_*.py' -v
+          python -m compileall -q tools/metric-atlas/metric_atlas
+      - name: Render QPS DAG and SIPOC
+        shell: bash
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: python -m metric_atlas.census diagrams --output qps-metric-run/diagrams
+      - name: Publish contract diagrams
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-metric-dag-sipoc-${{ github.run_id }}-${{ github.run_attempt }}
+          path: qps-metric-run/diagrams/*.mmd
+
+  plan-three-repo-slice:
+    needs: verify-census-contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source exact tree
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Query current default-branch heads of allowed receivers
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          QPS_FEDERATION_READ_TOKEN: ${{ secrets.QPS_FEDERATION_READ_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.error, urllib.request
+          repos = {'ABACUS':'GBOGEB/ABACUS', 'CODEX':'GBOGEB/CODEX',
+                   'QPS_ENGINEERING':'GBOGEB/cryoplant-project'}
+          token = os.environ.get('QPS_FEDERATION_READ_TOKEN') or os.environ['GH_TOKEN']
+          out = {}
+          for lane, repo in repos.items():
+              req = urllib.request.Request(
+                  'https://api.github.com/repos/'+repo+'/commits/main',
+                  headers={'Authorization':'Bearer '+token,
+                           'Accept':'application/vnd.github+json',
+                           'User-Agent':'QPS-Metric-Census/1.0'})
+              try:
+                  with urllib.request.urlopen(req,timeout=20) as resp:
+                      out[lane] = json.load(resp)['sha']
+              except urllib.error.HTTPError as exc:
+                  if exc.code not in (403,404):
+                      raise
+                  out[lane] = None
+                  print('HOLD_SOURCE_HEAD_UNKNOWN:',lane,'HTTP',exc.code)
+          with open('qps-receiver-heads.json','w',encoding='utf8') as f:
+              json.dump(out,f,indent=2)
+          PY
+      - name: Generate source-bound request manifest
+        shell: bash
+        env:
+          PYTHONPATH: tools/metric-atlas
+          QPS_WAVE: ${{ inputs.wave || 'N1' }}
+          QPS_SELECTOR: ${{ inputs.selector || 'all' }}
+        run: |
+          python -m metric_atlas.census request \
+            --wave "$QPS_WAVE" --selector "$QPS_SELECTOR" \
+            --heads qps-receiver-heads.json --output qps-metric-run/requests.json
+          python -m metric_atlas.dispatch \
+            --manifest qps-metric-run/requests.json \
+            --output qps-metric-run/dry-run-dispatch.json
+      - name: Roll up empty receiver evidence and render offline federation HMI
+        shell: bash
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: |
+          printf '[]\n' > qps-metric-run/receiver-receipts.json
+          python -m metric_atlas.census rollup \
+            --manifest qps-metric-run/requests.json \
+            --receipts qps-metric-run/receiver-receipts.json \
+            --output qps-metric-run/rollup.json
+          python -m metric_atlas.census_dashboard \
+            --manifest qps-metric-run/requests.json \
+            --rollup qps-metric-run/rollup.json \
+            --ledger tools/metric-atlas/data/observations.json \
+            --output qps-metric-run/qps-federation.html
+      - name: Upload QPS census requests and dry-run receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-metric-census-request-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            qps-receiver-heads.json
+            qps-metric-run/requests.json
+            qps-metric-run/dry-run-dispatch.json
+            qps-metric-run/receiver-receipts.json
+            qps-metric-run/rollup.json
+            qps-metric-run/qps-federation.html
+
+  dispatch-to-source-owners:
+    needs: plan-three-repo-slice
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.dispatch_fanout == true &&
+      github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout current canonical controller
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Retrieve pinned census request
+        uses: actions/download-artifact@v4
+        with:
+          name: qps-metric-census-request-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Dispatch bounded, explicitly approved source-bound events
+        shell: bash
+        env:
+          PYTHONPATH: tools/metric-atlas
+          QPS_DISPATCH_APPROVED: 'YES'
+          QPS_TRIAGE_DISPATCH_TOKEN: ${{ secrets.QPS_TRIAGE_DISPATCH_TOKEN }}
+        run: |
+          python -m metric_atlas.dispatch \
+            --manifest qps-metric-run/requests.json \
+            --output qps-metric-run/dispatch-receipt.json --execute
+      - name: Upload dispatch attempt receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-metric-dispatch-attempt-${{ github.run_id }}-${{ github.run_attempt }}
+          path: qps-metric-run/dispatch-receipt.json
+          if-no-files-found: warn
