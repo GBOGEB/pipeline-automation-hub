@@ -100,3 +100,9 @@ consumers of the canonical glossary and method registry, **not another SSOT**.
 Hands-off means no intermediate user questions within the bounded *current*
 execution when safe; it does **not** authorize autonomous background work,
 security waivers, force-merge, or rule-relaxation.
+
+## N→N+3 cross-repository vocabulary (17 October 2026)
+
+[Wave / Pulse / Advance crosswalk](N3_G3A_G3P_EXECUTION_CROSSWALK.md) reconciles **CODEX's already-merged** global `3W` (delivery waves), `3MP` (measured pulses), and `G3A` (three independently accepted gates) with MissionControl's local **G3P** (one wave / three pulse dispositions) and `N3_CONTINUE` bounded invocation. These are **not interchangeable**. Existing historical `3P*` also denotes a method-profile selector in the method registry; do not emit that ambiguous alias in new cross-repository machine messages.
+
+The source-backed appendix is `MC_GLOSSARY_TAXONOMY_v2.json` field `cross_repository_execution_units` (version 2.1.2); adversarial checks: `test_n3_execution_unit_crosswalk.py`. No additional scheduler, SSOT, main-merge authority, security waiver, QPS acceptance or persistent background work is introduced. A pulse ordinal may advance on an evidenced HOLD; accepted N does **not** advance without separately verified gates.
