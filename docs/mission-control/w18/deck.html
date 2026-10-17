@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer"><meta name="master-sha256" content="8da98db2b6ff4550b40f923d72429366dfe32cb4ac2bad1ff9fc7edcf1e8dcee">
+<title>cp-w18-fleet-dov-20261017 | deck</title><style>:root{color-scheme:dark;--bg:#0b1525;--panel:#14253d;--panel2:#1c304c;--line:#314764;--ink:#edf5fe;--muted:#b3c3d8;--accent:#6ee2c9;--a2:#93b5fc;--warn:#ffcf87;--red:#ff9e9e;--pass:#73dfb5;font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:15px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 20% 0%,#1a3150 0,transparent 44%),var(--bg);color:var(--ink)}a{color:var(--a2);text-decoration:none}a:hover{text-decoration:underline}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}header{padding:26px max(20px,calc((100% - 1220px)/2));border-bottom:1px solid var(--line);background:#0a1728e0}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(1.55rem,3vw,2.65rem);line-height:1.1;letter-spacing:-.025em;margin-bottom:10px}h2{font-size:1.35rem}h3{font-size:1rem}p{line-height:1.55}main{max-width:1260px;margin:auto;padding:25px 20px 65px}.eyebrow{font-size:.73rem;letter-spacing:.17em;text-transform:uppercase;color:var(--accent);font-weight:800}.sub,.muted,small{color:var(--muted)}small{font-size:.81rem}.tag{display:inline-block;font-weight:750;border-radius:6px;padding:4px 9px;background:#233850;color:var(--muted);font-size:.76rem}.tag.HOLD,.tag.RETURN,.tag.NOT_QUALIFIED,.tag.NATIVE_RED{background:#563d44;color:#ffe0d7}.tag.PASS,.tag.VERIFIED,.tag.DONE{background:#174a41;color:#a8ffdd}.tag.PARTIAL,.tag.IN_PR,.tag.PROVE,.tag.ACTIVE{background:#494229;color:#ffe4a7}.headrow,.flex{display:flex;gap:14px;justify-content:space-between;align-items:center;flex-wrap:wrap}.lede{max-width:880px;margin-bottom:6px}.topnav{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px}.topnav button,.filterbar button,.decknav button{background:#1c3150;color:var(--ink);border:1px solid var(--line);border-radius:9px;cursor:pointer;padding:9px 13px;font-weight:650}.topnav button[aria-selected=true],.filterbar button[aria-pressed=true]{background:#25534f;border-color:var(--accent)}.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:18px 0 26px}.metric{background:var(--panel);padding:19px;border:1px solid var(--line);border-radius:13px;min-width:0;box-shadow:0 10px 25px #0001}.metric strong{display:block;font-size:clamp(1.4rem,3vw,2.25rem);letter-spacing:-.04em;color:var(--ink)}.metric strong.ok{color:var(--accent)}.metric span{display:block;font-size:.9rem;font-weight:650;margin:7px 0 4px}.metric small{display:block}.panel,.card{border:1px solid var(--line);background:var(--panel);border-radius:13px;padding:20px;min-width:0}.rowgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;margin-bottom:17px}.threegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.card p{font-size:.88rem;color:var(--muted);line-height:1.45}.card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.card-head h3{margin-bottom:6px}.card-footer{border-top:1px solid var(--line);padding-top:11px;margin-top:14px}.barwrap{margin:11px 0}.barlabel{display:flex;justify-content:space-between;gap:8px;font-size:.84rem;padding-bottom:3px}.track{height:11px;border-radius:9px;background:#253b56;overflow:hidden}.track>span{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#51b7bc,#85b0fc)}.statusline{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.warn{border-left:4px solid var(--warn);padding:12px 15px;background:#322e27}.foot{padding:23px;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted);line-height:1.55}.mono{font-family:Consolas,ui-monospace,monospace;word-break:break-all;font-size:.81rem}.method{border-left:3px solid var(--a2);padding:8px 16px;background:#192a42;margin-bottom:11px}.method strong{display:block;margin-bottom:5px}.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;font-size:.86rem}th,td{padding:12px 13px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#1c3350;text-transform:uppercase;letter-spacing:.06em;font-size:.71rem;color:#d9e9ff;white-space:nowrap}tr:last-child td{border-bottom:0}tr:hover td{background:#223956}input,select{background:#152a45;color:#fff;border:1px solid #48617d;padding:10px 12px;border-radius:8px;min-width:0}.filterbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}.filterbar input{flex:1;min-width:180px}details{margin:11px 0;border-top:1px solid var(--line);padding-top:11px}summary{cursor:pointer;font-weight:700;color:#d8ecff}summary:hover{color:white}.plot{height:275px;min-height:210px}.plot-fallback{padding:18px;border:1px dashed #456482;border-radius:10px;min-height:225px}.count{font-variant-numeric:tabular-nums}.hint{font-size:.77rem;color:var(--muted)}.bignum{font-size:clamp(3.3rem,7vw,6.8rem);font-weight:850;letter-spacing:-.06em;line-height:1;color:var(--accent)}.mini{margin-top:6px;font-size:.8rem}.sectionhead{margin:8px 0 18px;display:flex;justify-content:space-between;gap:14px;align-items:baseline;flex-wrap:wrap}.stats{font-variant-numeric:tabular-nums}.slide-outer{position:relative}.slide{min-height:calc(100vh - 165px);max-width:1260px;margin:20px auto;padding:34px;display:none;align-content:center;grid-template-rows:auto 1fr auto;background:#10243c;border-radius:16px;border:1px solid var(--line);box-shadow:0 20px 35px #0003}.slide.active{display:grid}.slide h2{font-size:clamp(2rem,3.2vw,3.5rem);line-height:1.12;letter-spacing:-.035em}.slide .metric-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.slide .eyebrow{margin-bottom:14px}.slide-footer{border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.8rem}.decknav{display:flex;align-items:center;gap:14px;justify-content:center;padding:12px}.decknav button:disabled{opacity:.35;cursor:not-allowed}.compact-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.stamp{font-size:.78rem;color:var(--muted);white-space:nowrap}.danger{color:var(--red)}.good{color:var(--pass)}.note{background:#183549;border-left:3px solid var(--accent);padding:14px 16px;margin-bottom:15px;color:#d7e9f5}.dagnodes{display:flex;align-items:stretch;gap:9px;flex-wrap:wrap}.dagnodes>div{border:1px solid #53738d;border-radius:9px;padding:12px;background:#203956;flex:1;min-width:110px;text-align:center}.dagnodes .arrow{flex:0;min-width:auto;border:none;background:none;font-size:1.6rem;align-self:center;color:var(--accent);padding:8px 0}
+@media (max-width:860px){.metric-grid,.compact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rowgrid,.cards,.threegrid{grid-template-columns:1fr}.slide{margin:10px;padding:20px;min-height:680px}.slide .metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:520px){.metric-grid,.compact-grid,.slide .metric-grid{grid-template-columns:1fr}.metric strong{font-size:2rem}header{padding:20px}.slide h2{font-size:1.9rem}.slide{min-height:640px}main{padding:14px 13px 55px}}
+@media print{@page{size:landscape;margin:10mm}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}body{background:white!important;color:#0b1525!important}.topnav,.filterbar,.decknav,button{display:none!important}.metric,.panel,.card{break-inside:avoid}body[data-mode=deck] header{display:none}body[data-mode=deck] .slide{display:grid!important;min-height:175mm;height:175mm;break-after:page;page-break-after:always;box-shadow:none;margin:0 0 4mm;padding:15mm;color:#edf5fe;background:#10243c!important}body[data-mode=deck] .slide:last-of-type{break-after:auto}a:after{content:none!important}body[data-mode=cards] .cards{grid-template-columns:repeat(2,1fr)}}
+/* Prevent grid min-content overflow from unbroken evidence/slug identifiers. */
+.slide{grid-template-columns:minmax(0,1fr);min-width:0}.slide>div{min-width:0;max-width:100%}.slide .eyebrow,.slide-footer,.slide .mono{overflow-wrap:anywhere}
+.decknav{flex-wrap:wrap}.decknav strong{white-space:nowrap;min-width:39px;text-align:center}@media(max-width:520px){.decknav .hint{flex-basis:100%;text-align:center}.decknav{gap:9px}.slide-footer{gap:7px;font-size:.72rem}}
+</style></head>
+<body data-mode="deck"><header><div class="headrow"><p class="eyebrow">MISSION CONTROL / CODE PURPLE / W18</p><span class="tag HOLD">MERGE ADMISSION: HOLD</span></div>
+<h1>Briefing deck from exactly one evidence master</h1><p class="lede">CODE PURPLE / W18 - session DOD and global DOV. Frozen read-only observations; separate exact-head proof, root closure and human security gates.</p>
+<div class="headrow"><span class="stamp">SLUG: cp-w18-fleet-dov-20261017</span><span class="stamp">SOURCE SNAPSHOT: 2026-10-17T18:37:00Z</span><a href="https://github.com/GBOGEB/pipeline-automation-hub/issues/153" target="_blank" rel="noopener noreferrer">Global issue register</a></div></header>
+<main class="slide-outer"><div id="slides"></div><div class="decknav"><button id="prev" type="button">Previous</button><strong id="slide-index">1 / 6</strong><button id="next" type="button">Next</button><span class="hint">Arrow keys, PageUp/PageDown, browser Print</span></div></main><footer class="foot">SOURCE MASTER: <code>snapshot.json</code> | SHA-256 <code id="master-hash">pending</code> | Mode: deck | This view does not create GitHub Actions runs or grant acceptance.
+GitHub Pages publication remains <strong>UNVERIFIED</strong>; locally packaged pages work without a web server. Plotly is an optional online upgrade for the two-point chart; the SVG fallback is offline. Material raw chat totals, queue p95 and unverified DOV remain UNKNOWN.</footer>
+<script id="source-master" type="application/json">{"authorities":{"admission_controller":"https://github.com/GBOGEB/ABACUS/issues/1860","bd_ssot":"https://github.com/GBOGEB/pipeline-automation-hub/issues/85","existing_census_candidate":"https://github.com/GBOGEB/pipeline-automation-hub/pull/663","existing_handover":"https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/README.md","global_issue_controller":"https://github.com/GBOGEB/pipeline-automation-hub/issues/153","local_queue":"https://github.com/GBOGEB/pipeline-automation-hub/issues/358"},"bd_queue":[{"dependencies":[],"exit":"Independent recorded review, no published controlled content; A10 native green","id":"BD-W18-01","next":"Review flagged generated policy/report content and obtain fresh exact-head A10 PASS","owner":"ABACUS security / named human reviewer","priority":"P0","root":"SECURITY_CONTENT_REVIEW_REQUIRED","source":"https://github.com/GBOGEB/ABACUS/issues/1996","state":"RETURN","title":"A10 exact-byte security disposition"},{"dependencies":[],"exit":"Current-head native \u003e=157 tests; frozen denominator and receipts; security independent","id":"BD-W18-02","next":"Qualify #2156 head ed8f... with coverage[toml] on Python 3.10/3.12","owner":"ABACUS G3A source owner","priority":"P1","root":"PY310_COVERAGE_TOML","source":"https://github.com/GBOGEB/ABACUS/pull/2156","state":"PROVE","title":"W16 source-epoch TOML requalification"},{"dependencies":[],"exit":"Pinned resolver and interpreter tests terminal green; actual support policy approved","id":"BD-W18-03","next":"Repair #2161 four version-assertion failures; rerun required matrix; preserve 3.9 support decision","owner":"ABACUS dependency owner","priority":"P1","root":"PY310_REQUIREMENT_CONTRACT","source":"https://github.com/GBOGEB/ABACUS/pull/2161","state":"ACTIVE","title":"Interpreter compatibility / Matplotlib markers"},{"dependencies":[],"exit":"B0 and matrix collect tests without missing defusedxml, no exclusion or skip","id":"BD-W18-04","next":"Pin package installation contract and negative test, then prove one exact-head common-root recovery","owner":"ABACUS test-env / Ariana owner","priority":"P1","root":"ARIANA_DEPENDENCY_INSTALL","source":"https://github.com/GBOGEB/ABACUS/actions/runs/39056967085","state":"TODO","title":"Shared Ariana defusedxml collection first-red"},{"dependencies":[],"exit":"Native policy/inventory green and owner-approved effective branch rule","id":"BD-W18-05","next":"Canonical generator + classify live workflows exactly once, compare protected-main first-red","owner":"ABACUS governance owner","priority":"P1","root":"POLICY_COLLISION_MAIN","source":"https://github.com/GBOGEB/ABACUS/issues/2087","state":"RETURN","title":"Main workflow governance duplicate semantic classifiers"},{"dependencies":[],"exit":"Exact-source native health succeeds, canonical #1885 verified; no placeholder pages","id":"BD-W18-06","next":"Review #2164 source, repeat scan at matched detector population, negative regression","owner":"ABACUS dashboard source owner","priority":"P2","root":"DASHBOARD_STATIC_LINKS","source":"https://github.com/GBOGEB/ABACUS/pull/2164","state":"PROVE","title":"Dashboard broken href source repair"},{"dependencies":[],"exit":"Source-matched \u003e=80% actual B9 numerator/denominator, canonical full-proof gates","id":"BD-W18-07","next":"Reproduce historic #1859 coverage CLI first-red on comparable eligible lines and head","owner":"ABACUS canonical coverage owner","priority":"P2","root":"B9_DIFF_COVERAGE","source":"https://github.com/GBOGEB/ABACUS/issues/1866","state":"HOLD","title":"B9 changed-line 80% gate"},{"dependencies":[],"exit":"Zero unclassified with independent root/owner/win and status evidence, no root ID conflicts","id":"BD-W18-08","next":"Refresh #663 historical 152 snapshot to current 142 separately; annotate open issue dispositions","owner":"MissionControl #85 / issue expedition","priority":"P2","root":"GLOBAL_BD_UNCLASSIFIED","source":"https://github.com/GBOGEB/pipeline-automation-hub/pull/663","state":"PROVE","title":"Global BD classification denominator"}],"census":{"age_utc_date_windows":[{"name":"\u003e30d date boundary","open":64},{"name":"8-30d date boundary","open":43},{"name":"1-7d date boundary","open":28},{"name":"Today UTC","open":7}],"closure_attribution":"concurrent_owner_lanes_not_this_controller","first_observed_open":153,"historical_census":{"as_of_utc":"2026-10-17T18:11:56.309Z","classification":"historical_not_latest","classified_provisional":24,"count":152,"source":"https://github.com/GBOGEB/pipeline-automation-hub/pull/663","unclassified":128},"incomplete_results":false,"latest_observed_open":142,"net_change":-11,"repos":[{"name":"cryoplant-project","open":56},{"name":"ABACUS","open":38},{"name":"pipeline-automation-hub","open":32},{"name":"CODEX","open":10},{"name":"GEMINI","open":2},{"name":"gg_MATH","open":1},{"name":"DOCX_RTM_Automation","open":1},{"name":"Q_engineering_tools","open":1},{"name":"document-organization-system","open":1}],"search":"user:GBOGEB is:issue is:open","verified_closure_categories":[{"canonical_url":"https://github.com/GBOGEB/ABACUS/issues/1885","class":"historical_dashboard_duplicate","count":9,"engineering_root_credit":0,"ids":[1447,1469,1481,1543,1641,1707,1763,1803,1845]},{"class":"DAB_worker_deliverable_completed","count":2,"engineering_root_credit":0,"ids":[1864,1865],"note":"T1 contains a previously merged verified tooling repair. T2 closed its classification worker, not Bandit root."}]},"ci":{"a10_first_red":"generated workflow rationalization content requires independent human confidentiality disposition","a10_run":39050945051,"dashboard_b0_first_red":"tests/test_ariana_ci_federation.py imports missing defusedxml during pytest collection","dashboard_b0_first_red_run":39056967085,"dashboard_head":"085f9991cb2735f178a4295a35b1fe380949b9eb","dashboard_matrix_first_red_run":39056967164,"dashboard_pr":2164,"py_matrix_failed_assertions_per_job":4,"py_matrix_first_red":"pytest-asyncio specifier string normalization mismatch: \u003c1.3 versus \u003c1.3.0 and \u003c1.5 versus \u003c1.5.0","py_matrix_first_red_run":39056628120,"py_matrix_head":"3d5554b7a62adc4b3df1760b7959fb390b7976c9","py_matrix_pr":2161,"queue_p50_seconds":null,"queue_p95_seconds":null,"runner_service_p95_seconds":null,"successor_native_run_count_returned":0,"w16_historical_head":"e7195fe5588514f65891ddb8181725b9325fe19d","w16_historical_workflow_rollup":{"denominator":37,"failure":3,"observation_class":"historical_nonterminal","queued":10,"success":24},"w16_speedup_seconds":null,"w16_success_runs":[39050945097,39050945332,39050944942,39050945035],"w16_successor_head":"ed8f8c24388e44285c7caf26507b4bb96687b71b","w16_successor_pr":2156},"controls":{"authority_transfer":false,"bt_qualified":false,"formal_root_closure_credit_this_wave":0,"github_pages_http_200":null,"global_engineering_acceptance":false,"human_a10_approval":null,"merge_admission":"HOLD","original_conversation_message_count":null,"original_conversation_prompt_count":null,"pca_qualified":false,"protected_main_proof":null,"security_waiver":false,"six_sigma_qualified":false},"coverage":{"b0_success_run":39050945332,"b9_diff_coverage_current":null,"b9_required_floor":0.8,"branch_scope_is_global":false,"epoch":"G3A_W16_V2_PHASE4_REPAIRED","exact_head":"e7195fe5588514f65891ddb8181725b9325fe19d","five_file_py312":{"covered":336,"eligible":560,"run":39050945039},"four_module":{"covered":231,"eligible":444,"uncovered":213},"historical_n14":{"comparable_with_w16":false,"covered":200,"eligible":446},"native_job":117449223838,"native_run":39050945097,"phase8_same_blob":{"after_covered":63,"before_covered":30,"eligible":118,"new_covered":33},"schema":"g3a.w16.native.current_epoch.v2","tests_fail":0,"tests_pass":157},"global_dov":[{"accept":"One scoped search, complete pagination, per-repo sum matches","domain":"Fleet census","evidence":"https://github.com/GBOGEB/pipeline-automation-hub/issues/153","id":"DOV-F01","observed":"142 open across nine repositories; no incomplete search","state":"PASS"},{"accept":"Each closure reason recorded, duplicate vs work item distinct","domain":"Issue lifecycle accounting","evidence":"https://github.com/GBOGEB/ABACUS/issues/1885","id":"DOV-F02","observed":"9 duplicates + 2 completed work items = 11, external concurrent","state":"PASS"},{"accept":"All open issues owner/root/return route classified","domain":"Semantic root deduplication","evidence":"https://github.com/GBOGEB/pipeline-automation-hub/pull/663","id":"DOV-F03","observed":"Existing PR #663 historical: 24/152 provisional, 128 unclassified; current 142 not classified exhaustively","state":"PARTIAL"},{"accept":"Current module + B9 same-head receipts and regression controls","domain":"ABACUS tests and branch obligations","evidence":"https://github.com/GBOGEB/ABACUS/actions/runs/39050945097","id":"DOV-F04","observed":"157 PASS, 231/444 W16; historical B9 80% gate failed; new head not complete","state":"PARTIAL"},{"accept":"New first-reds eliminated, comparable queue/execution p95 measured","domain":"CI root convergence and time economy","evidence":"https://github.com/GBOGEB/ABACUS/actions/runs/39056628120","id":"DOV-F05","observed":"Python specifier and Ariana defusedxml reds; latency p95 N/A","state":"HOLD"},{"accept":"Authorized A10, security, review, effective required rules","domain":"Security and admission","evidence":"https://github.com/GBOGEB/ABACUS/issues/1996","id":"DOV-F06","observed":"A10 independent review pending; merge HOLD","state":"HOLD"},{"accept":"Independent source-comparable repeat samples and uncertainty intervals","domain":"Method stability / gg_MATH","evidence":"https://github.com/GBOGEB/gg_MATH/issues/27","id":"DOV-F07","observed":"PCA, BT, 6-sigma NOT QUALIFIED; 2 issue census points do not establish slope equivalence","state":"HOLD"},{"accept":"Source reviewed, native rendering tests, hosted HTTP200, review and control repeat","domain":"Public communication and delivery","evidence":"https://github.com/GBOGEB/pipeline-automation-hub/pull/663","id":"DOV-F08","observed":"Candidate visual artifacts under review; hosted Pages and main SHA UNKNOWN","state":"PARTIAL"}],"measured_as_of_utc":"2026-10-17T18:37:00Z","metrics":[{"d":153,"decision":"IMPROVE_NOT_CONTROL","delta_unit":"tickets","id":"K-ISSUE","kind":"count","n":142,"name":"Fleet open-issue burndown","proof":"OBSERVED_NET_CHANGE","source":"https://github.com/GBOGEB/pipeline-automation-hub/issues/153","value":-11},{"d":444,"decision":"BASELINE_NOT_TREND","id":"K-COV","kind":"ratio","n":231,"name":"Frozen W16 four-module branch reach","proof":"NATIVE_EXACT_HEAD","source":"https://github.com/GBOGEB/ABACUS/actions/runs/39050945097","value":0.5202702702702703},{"d":null,"decision":"HOLD","id":"K-PROOF","kind":"ratio","n":null,"name":"Terminal matched-head proof yield","proof":"UNKNOWN","source":"https://github.com/GBOGEB/ABACUS/pull/2156","value":null},{"d":null,"decision":"HOLD","id":"K-ROOT","kind":"count","n":0,"name":"Verified root closures in this controller wave","proof":"NO_CLOSURE_CREDIT_AWARDED","source":"https://github.com/GBOGEB/pipeline-automation-hub/issues/85","value":0},{"d":null,"decision":"HOLD","id":"K-TIME","kind":"seconds","n":null,"name":"Queue and execution p95","proof":"UNKNOWN","source":"https://github.com/GBOGEB/CODEX/issues/319","value":null},{"d":null,"decision":"NOT_QUALIFIED","id":"K-CONTROL","kind":"categorical","n":null,"name":"Stable effect / statistical CONTROL","proof":"INSUFFICIENT_INDEPENDENT_COMPARABLE_PULSES","source":"https://github.com/GBOGEB/gg_MATH/issues/27","value":null}],"presentation":{"audiences":["executive","mission_controller","source_owner","security_reviewer","handover_receiver"],"master":"snapshot.json","publication":"candidate_source_only_pages_not_verified","renditions":["index.html","cards.html","deck.html","CP_W18_FLEET_DOV_20261017.pptx"],"safeguard":"All derived views must embed the exact same snapshot digest, share slug and preserve null metrics as UNKNOWN."},"schema":"code-purple.communication-master.v1","session_dod":[{"completion":"DONE","detail":"153 to 142 verified at separate readbacks, no causal attribution","evidence":"https://github.com/GBOGEB/pipeline-automation-hub/issues/153","id":"DOD-01","state":"VERIFIED","title":"Recensus global open issues with same search"},{"completion":"DONE","detail":"Nine dashboard duplicates and two completed census/tooling worker issues","evidence":"https://github.com/GBOGEB/ABACUS/issues/1885","id":"DOD-02","state":"VERIFIED","title":"Classify observed 11 issue closures without false credit"},{"completion":"DONE","detail":"B0 SUCCESS does not imply B9 80% diff coverage; current W16 is 231/444","evidence":"https://github.com/GBOGEB/ABACUS/issues/1866","id":"DOD-03","state":"VERIFIED","title":"Attribute B0, B9, branch epoch and current first-red separately"},{"completion":"IN_PR","detail":"First-reds identified; disjoint owner PRs remain native-red and independent","evidence":"https://github.com/GBOGEB/ABACUS/pull/2161","id":"DOD-04","state":"PARTIAL","title":"Source-own current Python 3.10 and Ariana first-reds"},{"completion":"IN_PR","detail":"One JSON master; three derived self-contained HTML views and PowerPoint handout; no hosted URL claimed","evidence":"https://github.com/GBOGEB/pipeline-automation-hub","id":"DOD-05","state":"LOCAL_PROOF","title":"Publish frozen communication SSOT and validated dashboard renditions"},{"completion":"HOLD","detail":"Only eligible owner/reviewer can disposition the exact file","evidence":"https://github.com/GBOGEB/ABACUS/issues/1996","id":"DOD-06","state":"BLOCKED_HUMAN","title":"Complete independent A10 confidentiality review"},{"completion":"HOLD","detail":"Requirements assertions red; defusedxml missing independently; B9 exact-head score UNKNOWN","evidence":"https://github.com/GBOGEB/ABACUS/actions/runs/39056628120","id":"DOD-07","state":"NATIVE_RED","title":"Prove current Python matrix and B9 required admission"},{"completion":"TODO","detail":"Repo source presence or local QA is not hosted HTTP200 or protected-main admission","evidence":"https://github.com/GBOGEB/pipeline-automation-hub/pull/663","id":"DOD-08","state":"NOT_MEASURED","title":"Verify GitHub Pages publication and independent review"}],"slug":"cp-w18-fleet-dov-20261017","snapshot_kind":"read_only_non_atomic_github_observations","statistics":{"bounded_queue_latency_p95_seconds":null,"bt_pairs":0,"causal_closure_fraction":null,"control":"NOT_ESTIMABLE","descriptive_issue_net_change":-11,"descriptive_issue_reduction_fraction":0.0718954248366013,"dopportunity_total_for_six_sigma":null,"independent_same_scope_pulses_for_stability":null,"pca_geometry":"two non-independent portfolio counts cannot qualify stable multivariate PCA","recommended_next_statistical_probe":"Freeze root/issue populations; at least 3 independent repeat exact-head CI observations, capture duration and attributable root transitions; then test slope equivalence with uncertainty."},"title":"CODE PURPLE / W18 - session DOD and global DOV","version":"1.0.0-rc1"}</script><script>/* CODE PURPLE W18: read-only views of one frozen, signed-by-hash snapshot. */
+(() => {
+'use strict';
+const masterNode = document.getElementById('source-master');
+if (!masterNode) return;
+const M = JSON.parse(masterNode.textContent);
+const mode = document.body.dataset.mode || 'dashboard';
+const $ = (id) => document.getElementById(id);
+const E = (tag, cls, text) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined && text !== null) e.textContent = String(text);
+  return e;
+};
+const add = (p, ...kids) => { kids.flat().filter(Boolean).forEach(x => p.append(x)); return p; };
+const whole = (n) => new Intl.NumberFormat('en-US').format(n);
+const unknown = (v, suffix='') => v === null || v === undefined ? 'UNKNOWN' : String(v) + suffix;
+const pct = (n,d) => (n === null || d === null || !d) ? 'UNKNOWN' : (100*n/d).toFixed(2) + '%';
+const link = (url, label) => {
+  const a = E('a','source-link',label || 'Evidence');
+  if (typeof url==='string' && /^https:\/\/github\.com\/GBOGEB\/[A-Za-z0-9_.\-/]+(?:[?#][^\s]*)?$/.test(url)) {
+    a.href=url; a.target='_blank'; a.rel='noopener noreferrer';
+  } else { a.textContent='SOURCE UNAVAILABLE'; }
+  return a;
+};
+const pill = (state) => E('span','tag '+String(state).replace(/[^A-Za-z0-9_]/g,''),state);
+const panel = (title) => add(E('section','panel'), E('h2','',title));
+const note = (t) => E('p','hint',t);
+const metric = (label,value,desc,good=false) => {
+  const p=E('article','metric'),v=E('strong',good?'ok':'',value);
+  return add(p,v,E('span','',label),E('small','',desc));
+};
+const metricGrid = (items) => add(E('div','metric-grid'),items);
+const h3 = (t) => E('h3','',t);
+const para = (t) => E('p','',t);
+const foot = (label,url) => add(E('div','card-footer'),link(url,label));
+const statusCount = (arr,s) => arr.filter(x=>x.state===s).length;
+const table = (head,rows) => {
+  const wrap=E('div','tablewrap'),t=E('table'),thead=E('thead'),tr=E('tr');
+  head.forEach(x=>add(tr,E('th','',x)));add(thead,tr);add(t,thead);
+  const tb=E('tbody');
+  rows.forEach(row=>{const r=E('tr');row.forEach(cell=>{const c=E('td');if(cell instanceof Node)c.append(cell);else c.textContent=unknown(cell);r.append(c)});tb.append(r)});
+  add(t,tb);return add(wrap,t);
+};
+function repoBars() {
+  const box=E('div');
+  const max=Math.max(...M.census.repos.map(x=>x.open));
+  for (const x of M.census.repos) {
+    const w=E('div','barwrap'),lbl=E('div','barlabel');
+    add(lbl,E('span','',x.name),E('strong','count',whole(x.open)));
+    const track=E('div','track'),bar=E('span');bar.style.width=(100*x.open/max).toFixed(2)+'%';
+    add(w,lbl,add(track,bar));box.append(w);
+  }
+  return box;
+}
+function issuePlot() {
+  const host=E('div','plot-fallback');host.id='issue-plot';
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 580 195');svg.setAttribute('role','img');
+  svg.setAttribute('aria-label','Two distinct GitHub search observations 153 and 142, not a statistically estimated slope');
+  svg.style.width='100%';svg.style.height='195px';
+  const NS='http://www.w3.org/2000/svg';
+  const shape=(tag,attrs,text)=>{const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,String(v)));if(text)e.textContent=text;svg.append(e);return e};
+  [130,140,150,160].forEach(y=>{const py=170-(y-130)*4.5;shape('line',{x1:58,x2:540,y1:py,y2:py,stroke:'#55708b','stroke-dasharray':'3,5'});shape('text',{x:14,y:py+4,fill:'#bdcbe0','font-size':11},String(y));});
+  const a=170-(153-130)*4.5,b=170-(142-130)*4.5;
+  shape('line',{x1:135,y1:a,x2:444,y2:b,stroke:'#93b5fc','stroke-width':3,'stroke-dasharray':'7,5'});
+  [[135,a,'153','First census'],[444,b,'142','Latest readback']].forEach(([x,y,v,t])=>{
+    shape('circle',{cx:x,cy:y,r:7,fill:'#6ee2c9'});shape('text',{x:x-21,y:y-16,fill:'#ffffff','font-size':16,'font-weight':700},v);
+    shape('text',{x:x-57,y:186,fill:'#bfd0e8','font-size':12},t);
+  });host.append(svg);return host;
+}
+function loadOptionalPlotly() {
+  if (!document.querySelector('#issue-plot')) return;
+  const host=$('issue-plot');
+  if (!host) return;
+  if (window.Plotly && window.Plotly.newPlot) {
+    host.classList.remove('plot-fallback');host.classList.add('plot');host.replaceChildren();
+    window.Plotly.newPlot(host,[{type:'scatter',mode:'lines+markers+text',x:['First census','Latest readback'],y:[153,142],text:['153','142'],textposition:'top center',line:{color:'#93b5fc',dash:'dot'},marker:{color:'#6ee2c9',size:14}}],{
+      paper_bgcolor:'#14253d',plot_bgcolor:'#14253d',font:{color:'#e6edfb',size:12},
+      margin:{l:48,r:20,t:24,b:58},xaxis:{title:'Two observations, not a stable rate',showgrid:false},
+      yaxis:{title:'Open issues',range:[130,160],dtick:10,gridcolor:'#36516c'},showlegend:false
+    },{displayModeBar:false,responsive:true});
+  }
+}
+function schedulePlotlyUpgrade() {
+  if(mode!=='dashboard')return;
+  const js=document.createElement('script');js.async=true;
+  js.src='https://cdn.plot.ly/plotly-2.35.2.min.js';
+  js.onload=loadOptionalPlotly;
+  js.onerror=()=>{};document.head.append(js);
+}
+function overview() {
+  const root=E('div'),c=M.census, cov=M.coverage.four_module;
+  add(root,metricGrid([
+    metric('Open GBOGEB/* issues',whole(c.latest_observed_open),'Nine repositories; source search complete'),
+    metric('Net open issue change',String(c.net_change),'153 to 142; external concurrent actions',true),
+    metric('W16 eligible branch coverage',pct(cov.covered,cov.eligible),`${cov.covered}/${cov.eligible} matched W16 obligations`,true),
+    metric('Admission',M.controls.merge_admission,'A10, review, required CI unresolved')
+  ]));
+  const g=E('div','rowgrid'),a=panel('Fleet by repository'),b=panel('Two-source-count comparison');
+  a.append(repoBars());add(b,issuePlot(),note('Dashed connector joins observations only. No queue velocity, p95 or statistical equivalence has been established.'));
+  add(g,a,b);root.append(g);
+  const p=panel('Evidence and classification');
+  add(p,para('11 observed issue closures = 9 monitoring duplicates + 2 completed DAB work items. This controller did not execute those closures; root closure credit remains zero.'),
+     para('Canonical B0 PASS is not historical B9 changed-line >=80% proof. Current W16 four-module branch reach 231/444 and Python 3.12 five-file reach 336/560 belong to different cohorts.'),
+     foot('Open global BD register',M.authorities.global_issue_controller));root.append(p);
+  return root;
+}
+function makeDecisionTable(items,kind) {
+  const rows=items.map(x=>kind==='dod' ?
+    [x.id,x.title,pill(x.state),x.completion,add(E('div'),para(x.detail),link(x.evidence,'Evidence'))]:
+    [x.id,x.domain,pill(x.state),x.accept,add(E('div'),para(x.observed),link(x.evidence,'Receipt'))]);
+  return table(kind==='dod'?['ID','This session DOD','Evidence state','Completion','Proof / edge']:['ID','Global DOV domain','Verdict','Exit / acceptance test','Observed / source'],rows);
+}
+function dod() {
+  const root=E('div');
+  add(root,metricGrid([
+    metric('Session DOD verified',String(statusCount(M.session_dod,'VERIFIED'))+'/'+M.session_dod.length,'Only verified rows, not all intents',true),
+    metric('In engineering PR / local proof','2','No main merge acceptance'),
+    metric('Owner or native holds','3','Security and CI non-compensating'),
+    metric('Original chat prompts','UNKNOWN','No complete transcript population')
+  ]),makeDecisionTable(M.session_dod,'dod'));return root;
+}
+function dov() {
+  const root=E('div'),r=M.global_dov;
+  add(root,metricGrid([
+    metric('Global DOV PASS',`${statusCount(r,'PASS')}/${r.length}`,'Two checks verified; not programme completion',true),
+    metric('DOV PARTIAL',String(statusCount(r,'PARTIAL')),'Evidence scope or qualification unfinished'),
+    metric('DOV HOLD',String(statusCount(r,'HOLD')),'Non-compensating blockers'),
+    metric('Six Sigma / PCA / BT','NOT QUALIFIED','No valid capability or ranking inference')
+  ]),makeDecisionTable(r,'dov'));return root;
+}
+function bdCard(x){
+  const a=E('article','card');
+  const top=E('div','card-head'),lh=E('div');add(lh,E('span','eyebrow',x.id+' / '+x.priority),h3(x.title));
+  add(top,lh,pill(x.state));add(a,top);
+  add(a,E('p','',x.owner),para('Root: '+x.root),para('Next: '+x.next));
+  const details=E('details'),summary=E('summary','', 'Acceptance condition and dependency');
+  add(details,summary,para(x.exit),para('Dependencies: '+(x.dependencies.length?x.dependencies.join(', '):'no additional owner edges declared')));
+  add(a,details,foot('Source / PR / issue',x.source));return a;
+}
+function bd(){
+  const root=E('div'),filter=E('div','filterbar');
+  const input=E('input');input.type='search';input.placeholder='Filter owner, root, issue or next action';input.setAttribute('aria-label','Filter BD queue');
+  const sel=E('select');sel.setAttribute('aria-label','Filter BD priority');
+  ['ALL','P0','P1','P2'].forEach(s=>{const o=E('option','',s);o.value=s;sel.add(o)});
+  const cnt=E('span','muted'),list=E('div','cards');
+  const render=()=>{const q=input.value.toLowerCase(),pr=sel.value;const valid=M.bd_queue.filter(x=>(pr==='ALL'||x.priority===pr)&& JSON.stringify(x).toLowerCase().includes(q));
+    list.replaceChildren(...valid.map(bdCard));cnt.textContent=valid.length+' / '+M.bd_queue.length+' controlled work packets';};
+  input.addEventListener('input',render);sel.addEventListener('change',render);
+  add(filter,input,sel,cnt);add(root,filter,list);render();return root;
+}
+function telemetry() {
+  const root=E('div'),box=M.coverage,ci=M.ci;
+  const p=panel('Native W16 source-bound measurements');
+  const rows=[
+    ['Four modules, branch obligations',box.four_module.covered,box.four_module.eligible,pct(box.four_module.covered,box.four_module.eligible)],
+    ['Five-file Python 3.12 control',box.five_file_py312.covered,box.five_file_py312.eligible,pct(box.five_file_py312.covered,box.five_file_py312.eligible)],
+    ['Phase 8 unchanged production blob',box.phase8_same_blob.after_covered,box.phase8_same_blob.eligible,'+33 reached arcs vs prior same blob'],
+    ['B9 changed-line current head',null,null,'UNKNOWN - old 80% threshold unproven'],
+    ['Queue p95 seconds',null,null,'UNKNOWN - no clock population'],
+    ['Actual W16 improvement in testflight duration',null,null,'UNKNOWN - no matched run timings']
+  ];
+  add(p,table(['Signal','Numerator','Denominator','Measured interpretation'],rows));root.append(p);
+  const g=E('div','rowgrid'),a=panel('Historical W16 runs'),b=panel('Current first-red signatures');
+  add(a,para(`At historical exact source ${ci.w16_historical_head.slice(0,12)}: ${ci.w16_historical_workflow_rollup.success} success, ${ci.w16_historical_workflow_rollup.failure} failure and ${ci.w16_historical_workflow_rollup.queued} queued out of ${ci.w16_historical_workflow_rollup.denominator} recorded workflow runs. This is not a terminal current-head total.`),
+      link('https://github.com/GBOGEB/ABACUS/actions/runs/'+box.native_run,'W16 157-test receipt'));
+  add(b,para('Python requirement unit fixture: '+ci.py_matrix_first_red),
+      para('Ariana: '+ci.dashboard_b0_first_red),
+      para('Security/A10: '+ci.a10_first_red),
+      foot('Python first-red run','https://github.com/GBOGEB/ABACUS/actions/runs/'+ci.py_matrix_first_red_run));
+  add(g,a,b);root.append(g);return root;
+}
+function lineage() {
+  const root=E('div'),p=panel('One master; multiple controlled renditions');
+  const nodes=E('div','dagnodes');['GitHub read-only receipts','Source epoch + evidence contract','W18 snapshot.json','Dashboard / cards / HTML deck','Print/PPTX candidate','Review + native / Pages proof'].forEach((s,i)=>{if(i>0)nodes.append(E('div','arrow','>'));nodes.append(add(E('div'),E('strong','',s)));});
+  add(p,nodes,para('One slug and exact SHA-256 embedded in each derived HTML. Existing Mission Control BD authority #85 and CP.CLOSE lossless remain authoritative. The W18 master is only a communication projection.'),
+    foot('Original CP.HANDOFF / CP.RESUME contract',M.authorities.existing_handover));root.append(p);
+  const q=panel('Method validity: DMAIC / MIP / gg_MATH');
+  for (const [a,b] of [
+    ['DEFINE / MEASURE','Fleet issue semantics, same search, native branch opportunities and unit denominators established.'],
+    ['ANALYZE','Separated nine monitoring duplicates, two worker completions, B9 vs B0 and two independent Python first-red families.'],
+    ['IMPROVE','W16 same-blob Phase 8 gains +33 arcs; human security and current-head matrix repair still prevent admission.'],
+    ['CONTROL','NOT YET: requires distinct-source regression proof and independent comparable repeats, not a two-point issue slope.'],
+    ['PCA / BT / Six Sigma','NOT QUALIFIED. No independent paired BT outcomes, multivariate stable PCA population, or DPMO opportunity population.']
+  ]) { const div=E('div','method');add(div,E('strong','',a),para(b));q.append(div);}
+  root.append(q);return root;
+}
+function pageInit() {
+  const views={overview,dod,dov,bd,telemetry,lineage};
+  const holder=$('content');
+  const nav=$('view-nav');
+  Object.entries({overview:'Overview',dod:'Session DOD',dov:'Global DOV',bd:'BD queue',telemetry:'Telemetry',lineage:'Master lineage'}).forEach(([id,label])=>{
+    const b=E('button','',label);b.type='button';b.dataset.view=id;b.setAttribute('aria-selected',id==='overview'?'true':'false');
+    b.addEventListener('click',()=>{nav.querySelectorAll('button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));
+      holder.replaceChildren(views[id]());history.replaceState(null,'','#'+id);if(id==='overview')loadOptionalPlotly();});nav.append(b);
+  });
+  const hash=location.hash.slice(1);nav.querySelector('button[data-view="'+(views[hash]?hash:'overview')+'"]').click();
+  schedulePlotlyUpgrade();
+}
+function cardsInit() {
+  const c=$('content');
+  c.replaceChildren(metricGrid([
+     metric('BD work packets',M.bd_queue.length,'Five P1/P2 source-owned; one P0 human gate'),
+     metric('Open issues',M.census.latest_observed_open,'Project-wide issue surface'),
+     metric('Root closures credited',M.controls.formal_root_closure_credit_this_wave,'This communication wave only'),
+     metric('Queue telemetry','UNKNOWN','No exact job p95')
+  ]),bd());
+}
+function slide(key,heading,items,details='') {
+  const s=E('section','slide'),top=E('div');
+  add(top,E('div','eyebrow','CODE PURPLE / '+M.slug.toUpperCase()+' / '+key),E('h2','',heading));s.append(top);
+  const content=E('div');items.flat().forEach(i=>content.append(i));s.append(content);
+  const f=E('div','slide-footer');add(f,E('span','',details||'Read-only communication; no admission credit'),E('span','',M.presentation.publication.toUpperCase()));s.append(f);return s;
+}
+function deckInit() {
+  const c=$('slides'),m=M.census,v=M.coverage.four_module;
+  const first=slide('01','Fleet recovery: movement is real, CONTROL is not',[metricGrid([
+      metric('Open issues',m.latest_observed_open,'Initial census 153'),
+      metric('Net change',String(m.net_change),'Eleven issue transitions',true),
+      metric('Root closure credit',M.controls.formal_root_closure_credit_this_wave,'Controller does not invent causal credit')
+  ]),para('Nine dashboard notifications closed as duplicates; two DAB worker deliverables completed. All underlying source-admission obligations retained.')],'Executive / portfolio');
+  const second=slide('02','Two-ended issue pressure: nine repositories',[repoBars(),para('Counts are a frozen, complete issue search. They are not nine independent PCA observations.')],'Portfolio / Mission Control');
+  const third=slide('03','W16 native branch baseline, not global coverage',[metricGrid([
+     metric('Four-module branches',pct(v.covered,v.eligible),`${v.covered}/${v.eligible} measured`),
+     metric('Tests passing',M.coverage.tests_pass,'Exact source run '+M.coverage.native_run),
+     metric('Phase 8 new reached arcs','+33','Same source blob, test cohort change')
+  ]),para('Historical N14 200/446 is a different source epoch. A successful canonical B0 cannot imply B9 >=80% changed-line proof.')],'Source owner / test engineers');
+  const fourth=slide('04','The first-red fault tree has distinct roots',[
+    add(E('div','dagnodes'),...[['A10 HUMAN','generated report'],['PYTHON','specifier mismatch'],['ARIANA','missing defusedxml'],['B9','changed-line gate']].map(([a,b])=>add(E('div'),E('strong','',a),E('small','',b)))),
+    para('Each branch has its own required exact-head native proof. Do not mask or waive another branch.')
+  ],'Engineering root triage');
+  const fifth=slide('05','DOD is delivery; DOV is acceptance',[metricGrid([
+    metric('DOD verified',statusCount(M.session_dod,'VERIFIED')+'/'+M.session_dod.length,'Session deliverable evidence'),
+    metric('DOV PASS',statusCount(M.global_dov,'PASS')+'/'+M.global_dov.length,'Global verification only'),
+    metric('DOV HOLD',statusCount(M.global_dov,'HOLD'),'Independent blockers remain')
+  ]),para('Statistical CONTROL, PCA, Bradley-Terry and Six Sigma cannot be promoted from two mixed-epoch observations.')],'Review board / ownership');
+  const sixth=slide('06','Next governed W18+3 execution',[...M.bd_queue.slice(0,5).map(x=>{
+    const d=E('div','method');add(d,E('strong','',x.id+' - '+x.title),para(x.next));return d;
+  })],'Controller / owner return conditions');
+  const slides=[first,second,third,fourth,fifth,sixth];slides.forEach(s=>c.append(s));
+  const prev=$('prev'),next=$('next'),indicator=$('slide-index');let active=0;
+  const show=(i)=>{active=Math.max(0,Math.min(i,slides.length-1));slides.forEach((s,j)=>s.classList.toggle('active',j===active));indicator.textContent=(active+1)+' / '+slides.length;prev.disabled=active===0;next.disabled=active===slides.length-1;location.hash='slide-'+(active+1);};
+  prev.onclick=()=>show(active-1);next.onclick=()=>show(active+1);
+  document.addEventListener('keydown',ev=>{if(['ArrowRight','PageDown'].includes(ev.key))show(active+1);else if(['ArrowLeft','PageUp'].includes(ev.key))show(active-1);});
+  const query=location.hash.match(/^#slide-(\d+)$/);show(query?Number(query[1])-1:0);
+}
+$('master-hash').textContent=document.querySelector('meta[name=master-sha256]').content.slice(0,16)+'...';
+if(mode==='dashboard')pageInit();if(mode==='cards')cardsInit();if(mode==='deck')deckInit();
+})();
+</script></body></html>
