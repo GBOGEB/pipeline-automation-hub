@@ -40,9 +40,26 @@ class MetricAtlasTests(unittest.TestCase):
         self.assertIsNone(c['delta'])
 
     def test_negative_numerator_denominator(self):
-        bad=copy.deepcopy(LEDGER)
-        bad['measurements'][0]['numerator']=67
-        with self.assertRaises(LedgerError): validate(bad)
+        bad = copy.deepcopy(LEDGER)
+        # Stable source identity: inserting unrelated metric rows must not
+        # silently invalidate this security-critical denominator regression.
+        rows = [r for r in bad['measurements']
+                if r['scope_id'] == 'MC:4-PY-MODULES'
+                and r['metric'] == 'branch_coverage']
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['denominator'], 66)
+        rows[0]['numerator'] = rows[0]['denominator'] + 1
+        with self.assertRaises(LedgerError):
+            validate(bad)
+
+    def test_negative_ratio_guard_survives_ledger_reordering(self):
+        bad = copy.deepcopy(LEDGER)
+        bad['measurements'].reverse()
+        target = next(r for r in bad['measurements']
+                      if r['id'] == 'mc-branch-66')
+        target['numerator'] = target['denominator'] + 1
+        with self.assertRaises(LedgerError):
+            validate(bad)
 
     def test_duplicate_evidence_rejected(self):
         bad=copy.deepcopy(LEDGER)
