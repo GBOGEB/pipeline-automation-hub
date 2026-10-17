@@ -1,0 +1,162 @@
+{
+  "schema": "missioncontrol.n3_continuation.v1",
+  "mode": "N3-AUTO",
+  "operation": "3P-CONT",
+  "mission": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "id": "CBD-GOLDEN-GRAPH-604",
+    "wave": "W-CBD-GRAPH-04",
+    "start_sha": "3bf018b8346e1601277454902e3509f56fb94d69"
+  },
+  "start_ordinal": 9,
+  "policy": {
+    "max_pulses": 3,
+    "security_waiver": false,
+    "merge_without_review": false,
+    "unbounded_dispatch": false,
+    "allowed_paths": [
+      "mission-control/v2",
+      "mission-control/federation-atlas",
+      ".github/workflows"
+    ]
+  },
+  "receipts": [
+    {
+      "ordinal": 10,
+      "pulse_id": "GBOGEB/pipeline-automation-hub::CBD-GOLDEN-GRAPH-604::W-CBD-GRAPH-04::PULSE-10",
+      "input_source_sha": "3bf018b8346e1601277454902e3509f56fb94d69",
+      "output_source_sha": "70b5d266c7e52d5c93eb61ce0d14b019493d0379",
+      "prev_receipt_digest": null,
+      "action": "FOCUSED_NEGATIVE_COVERAGE",
+      "changed_paths": [
+        "mission-control/v2/test_n3_g3a_negative.py"
+      ],
+      "status": "SOURCE_COMMITTED",
+      "major_blocker": null,
+      "tests": {
+        "kind": "LOCAL",
+        "passed": 116,
+        "failed": 0
+      },
+      "coverage_delta": 7.1429,
+      "coverage_matched": true,
+      "coverage_comparison": {
+        "metric": "CODE_BRANCH_COVERAGE",
+        "baseline_eligible": 98,
+        "actual_eligible": 98,
+        "baseline_covered": 84,
+        "actual_covered": 91
+      },
+      "planned": {
+        "preissued_ref": "mission-control/federation-atlas/G3A_N10_N12_FORECAST_20261017.json",
+        "preissued_commit": "3bf018b8346e1601277454902e3509f56fb94d69",
+        "expected_min_tests": 108
+      },
+      "source_evidence": {
+        "class": "GITHUB_COMMIT",
+        "locator": "https://github.com/GBOGEB/pipeline-automation-hub/commit/70b5d266c7e52d5c93eb61ce0d14b019493d0379",
+        "source_sha": "70b5d266c7e52d5c93eb61ce0d14b019493d0379"
+      },
+      "authority_transfer": false,
+      "security_waiver": false,
+      "merge_admission": "HOLD",
+      "observation_note": "Source commit observed in GitHub. Tests measured locally on identical source/test blob bytes, not native CI. Exact-head workflow queued."
+    },
+    {
+      "ordinal": 11,
+      "pulse_id": "GBOGEB/pipeline-automation-hub::CBD-GOLDEN-GRAPH-604::W-CBD-GRAPH-04::PULSE-11",
+      "input_source_sha": "70b5d266c7e52d5c93eb61ce0d14b019493d0379",
+      "output_source_sha": "2cc1614cb8e3e93f4fb5fb3542b56d81c176f8b6",
+      "prev_receipt_digest": "579040f6f409cb0070167147391ab3d088d0b812d60d69c62fbe4bc79addc544",
+      "action": "GITHUB_NATIVE_RUN_JOB_TELEMETRY",
+      "changed_paths": [
+        "mission-control/v2/n3_workflow_census.py",
+        "mission-control/v2/test_n3_workflow_census.py",
+        "mission-control/federation-atlas/MC_G3A_PR620_NATIVE_CENSUS_20261017.json"
+      ],
+      "status": "SOURCE_COMMITTED",
+      "major_blocker": null,
+      "tests": {
+        "kind": "LOCAL",
+        "passed": 136,
+        "failed": 0
+      },
+      "coverage_delta": 0.0,
+      "coverage_matched": true,
+      "coverage_comparison": {
+        "metric": "CODE_BRANCH_COVERAGE",
+        "baseline_eligible": 98,
+        "actual_eligible": 98,
+        "baseline_covered": 91,
+        "actual_covered": 91
+      },
+      "planned": {
+        "preissued_ref": "mission-control/federation-atlas/G3A_N10_N12_FORECAST_20261017.json",
+        "preissued_commit": "3bf018b8346e1601277454902e3509f56fb94d69",
+        "expected_min_tests": 115
+      },
+      "source_evidence": {
+        "class": "GITHUB_COMMIT",
+        "locator": "https://github.com/GBOGEB/pipeline-automation-hub/commit/2cc1614cb8e3e93f4fb5fb3542b56d81c176f8b6",
+        "source_sha": "2cc1614cb8e3e93f4fb5fb3542b56d81c176f8b6"
+      },
+      "authority_transfer": false,
+      "security_waiver": false,
+      "merge_admission": "HOLD",
+      "observation_note": "Source commit observed in GitHub. Tests measured locally on identical source/test blob bytes, not native CI. Exact-head workflow queued."
+    },
+    {
+      "ordinal": 12,
+      "pulse_id": "GBOGEB/pipeline-automation-hub::CBD-GOLDEN-GRAPH-604::W-CBD-GRAPH-04::PULSE-12",
+      "input_source_sha": "2cc1614cb8e3e93f4fb5fb3542b56d81c176f8b6",
+      "output_source_sha": "ba68686ca9ceeea8809f1bf942fe586ce50af85e",
+      "prev_receipt_digest": "6545bfebde404923e6331e226e649995db66e242855f50b81f7c2249ebd71716",
+      "action": "FORECAST_COMPARISON_AND_EIGHT_MODULE_CI",
+      "changed_paths": [
+        "mission-control/v2/n3_g3a_assessment.py",
+        "mission-control/v2/test_n3_g3a_assessment.py",
+        ".github/workflows/mission-control-n3-evidence.yml"
+      ],
+      "status": "SOURCE_COMMITTED",
+      "major_blocker": null,
+      "tests": {
+        "kind": "LOCAL",
+        "passed": 154,
+        "failed": 0
+      },
+      "coverage_delta": 0.0,
+      "coverage_matched": true,
+      "coverage_comparison": {
+        "metric": "CODE_BRANCH_COVERAGE",
+        "baseline_eligible": 98,
+        "actual_eligible": 98,
+        "baseline_covered": 91,
+        "actual_covered": 91
+      },
+      "planned": {
+        "preissued_ref": "mission-control/federation-atlas/G3A_N10_N12_FORECAST_20261017.json",
+        "preissued_commit": "3bf018b8346e1601277454902e3509f56fb94d69",
+        "expected_min_tests": 120
+      },
+      "source_evidence": {
+        "class": "GITHUB_COMMIT",
+        "locator": "https://github.com/GBOGEB/pipeline-automation-hub/commit/ba68686ca9ceeea8809f1bf942fe586ce50af85e",
+        "source_sha": "ba68686ca9ceeea8809f1bf942fe586ce50af85e"
+      },
+      "authority_transfer": false,
+      "security_waiver": false,
+      "merge_admission": "HOLD",
+      "observation_note": "Source commit observed in GitHub. Tests measured locally on identical source/test blob bytes, not native CI. Exact-head workflow queued."
+    }
+  ],
+  "control_issue": "GBOGEB/pipeline-automation-hub#604",
+  "authority_transfer": false,
+  "notes": [
+    "Baseline N+9 source acede0b62f458068a876cecab06b4838a2e64d0f; frozen forecast commit defines N+10 starting snapshot",
+    "Forecast immutable and committed before N+10 sources",
+    "Native GitHub PR #620 workflows queued at recensus; 7 workflow IDs, 7 run attempts, 8 jobs, 7 artifact checks; terminal results unknown",
+    "Local code coverage tracked at Python 3.13, native Python 3.11/3.12 must independently qualify",
+    "This append-only audit ledger and observed-series file are committed after pulse checkpoint N+12; not a new source-edit pulse",
+    "No main merge, no security/governance waiver and no new SSOT"
+  ]
+}
