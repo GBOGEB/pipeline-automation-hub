@@ -47,6 +47,19 @@ jobs:
                   "crew_dispatch":"NOT_LAUNCHED","security_waiver":False,"merge_authorized":False}
           (out/"receipt.json").write_text(json.dumps(result,indent=2,sort_keys=True)+"\n")
           PY
+      - name: Assemble offline launch bundle from native measured telemetry
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out/m3/site/docs/mission-control/m3
+          mkdir -p out/m3/site/docs/mission-control
+          cp -a docs/mission-control/m2 out/m3/site/docs/mission-control/m2
+          mkdir -p out/m3/site/docs/code-purple-live
+          cp -a docs/code-purple-live/. out/m3/site/docs/code-purple-live/
+          cp docs/mission-control/m3/index.html out/m3/site/docs/mission-control/m3/index.html
+          cp docs/mission-control/m3/state.json out/m3/site/docs/mission-control/m3/state.json
+          cp out/m3/telemetry.json out/m3/site/docs/mission-control/m3/telemetry.json
+          printf '%s\n' 'Read-only artifact. Serve this site folder via python -m http.server 8000; navigate to docs/mission-control/m3/index.html. No Pages publication or authority transfer.' > out/m3/site/README.txt
       - name: Publish diagnostic receipt, never Pages
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
