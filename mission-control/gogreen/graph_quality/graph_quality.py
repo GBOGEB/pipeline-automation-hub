@@ -16,6 +16,7 @@ from pathlib import Path
 
 SCHEMA = "gogreen.success-temporal.sipoc-dag.v1"
 RECEIPT = "gogreen.g10.graph-visual-qa.v1"
+SHA40 = re.compile(r"[0-9a-f]{40}\Z")
 ID = re.compile(r"(?:CAP_[A-Z0-9]{2,32}|S|I|P_SOURCE|P_REVERSE|P_REX|O|C)\Z")
 BINDINGS = ("OBSERVED", "DECLARED")
 ROLES = ("S", "I", "P", "O", "C")
