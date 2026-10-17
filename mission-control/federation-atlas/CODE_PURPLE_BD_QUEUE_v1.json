@@ -373,6 +373,12 @@
           "state": "TODO",
           "flow": "READY",
           "evidence": "I2 D1/D2 owner GM contract/control_job has no accepted source-bound CONTROL handoff yet; historical run 36336861952 cannot be silently promoted."
+        },
+        {
+          "at": "W1.C1.I3.S0",
+          "state": "ACTIVE",
+          "flow": "READY",
+          "evidence": "I2 D1/D2 job evidence re-verified natively (mission-control/federation-atlas/evidence/CODE_PURPLE_I3_OBSERVATION_20261017.json); contract rebind is the remaining step."
         }
       ]
     },
@@ -404,6 +410,12 @@
           "state": "TODO",
           "flow": "READY",
           "evidence": "Seven native exact-head Top7 observations recorded in pulse2 and owner receipt #419 comment 6220384217; source-match comparability remains UNKNOWN, no Top14 promotion."
+        },
+        {
+          "at": "W1.C1.I3.S0",
+          "state": "ACTIVE",
+          "flow": "BLOCKED",
+          "evidence": "Pulse 2 recorded (2026-10-16), comparable=false; matched comparator needs pulse 3."
         }
       ]
     },
@@ -469,6 +481,12 @@
           "state": "TODO",
           "flow": "BLOCKED",
           "evidence": "Depends on CPQ-010 accepted root/CONTROL handoff; unchanged-root denominator and autorepeat value cannot yet be qualified."
+        },
+        {
+          "at": "W1.C1.I3.S0",
+          "state": "ACTIVE",
+          "flow": "READY",
+          "evidence": "Measured: 8 same-head scheduled repeats (any root) / 1 (controlled roots); gate <=2 -> FAIL. mission-control/federation-atlas/evidence/CODE_PURPLE_I3_OBSERVATION_20261017.json"
         }
       ]
     },
@@ -631,6 +649,32 @@
           "state": "UNKNOWN_NEEDS_READER",
           "flow": "LINKED",
           "evidence": "gg_MATH main 54b7a806e398f0a0bcb76372dd2f53e41ec219ae five native successful runs; ABACUS #1164 real third-hop/3P* receipt not yet matched."
+        }
+      ]
+    },
+    {
+      "id": "CPQ-019",
+      "finding": "NEW",
+      "title": "ABACUS DMAIC CI red: Unit Tests (3.10) cannot install matplotlib>=3.11.2",
+      "severity": "P1",
+      "beam": "B3",
+      "critical_path": true,
+      "repos": [
+        "GBOGEB/ABACUS"
+      ],
+      "links": [
+        "https://github.com/GBOGEB/ABACUS/pull/2130",
+        "https://github.com/GBOGEB/ABACUS/pull/2012"
+      ],
+      "depends_on": [],
+      "done_when": "Post-merge DMAIC CI on ABACUS main succeeds on the Unit Tests (3.10) job.",
+      "control_when": "A later distinct head stays green on 3.10.",
+      "history": [
+        {
+          "at": "W1.C1.I3.S0",
+          "state": "ACTIVE",
+          "flow": "IN_PR",
+          "evidence": "Root: #2012 raised matplotlib floor for all Pythons; 14 red runs since 2026-10-15. Fix #2130 merged 2026-10-17T17:04Z; post-merge runs queued."
         }
       ]
     }
