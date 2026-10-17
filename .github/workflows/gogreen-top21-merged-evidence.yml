@@ -41,9 +41,15 @@ jobs:
           PY
       - name: Read-only merged-PR Actions census
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GOGREEN_TOP21_READ_TOKEN }}
         run: |
           set -euo pipefail
+          if [ -z "${GH_TOKEN:-}" ]; then
+            mkdir -p "$RUNNER_TEMP/gogreen-top21"
+            printf '%s\n' '{"schema":"gogreen.top21.access.v1","status":"DEFERRED_NO_CROSS_REPO_READ_TOKEN","formal_root_closure_credit":0,"merge_authorized":false}' > "$RUNNER_TEMP/gogreen-top21/access_receipt.json"
+            echo "::warning::TOP21 cross-repo read not configured; no live scan was credited"
+            exit 0
+          fi
           python mission-control/gogreen/merged_evidence/scan.py \
             --roster mission-control/gogreen/merged_evidence/roster_from_ssot.json \
             --limit 1 --out "$RUNNER_TEMP/gogreen-top21"
