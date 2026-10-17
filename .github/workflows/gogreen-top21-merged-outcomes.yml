@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'mission-control/gogreen/merged_outcome_census/**'
+      - 'mission-control/federation-atlas/GOGREEN_TOP21_MERGED_RED_HANDOFF_*.json'
       - '.github/workflows/gogreen-top21-merged-outcomes.yml'
   workflow_dispatch: {}
 permissions:
@@ -57,6 +58,8 @@ jobs:
             "$RUNNER_TEMP/gogreen-top21/source/merged_outcome_census"
           cp mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json \
             "$RUNNER_TEMP/gogreen-top21/source/canonical_top21_roster.json"
+          cp mission-control/federation-atlas/GOGREEN_TOP21_MERGED_RED_HANDOFF_20261017.json \
+            "$RUNNER_TEMP/gogreen-top21/source/code_purple_handoff_pointer.json"
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -67,6 +70,11 @@ jobs:
                   r["checks_observed"],r["failed_checks"])==(21,21,41,509,33)
           assert (r["pre_red_prs"],r["post_red_prs"],r["green_prs"],r["unknown_prs"])==(6,9,23,5)
           assert r["formal_root_closure_credit"]==0 and not r["merge_authorized"]
+          handoff=json.loads(Path("mission-control/federation-atlas/GOGREEN_TOP21_MERGED_RED_HANDOFF_20261017.json").read_text())
+          assert handoff["source_population"]["failed_check_manifestations"]==33
+          assert sum(x["failed_check_ids"] for x in handoff["observed_burden_by_repo"])==33
+          assert handoff["root_closure_credit"]==0 and not handoff["merge_authorized"]
+          assert handoff["historical_window_incomplete"] is True
           m=json.loads((out/"manifest.json").read_text())
           for f,expected in m["files_sha256"].items():
               assert hashlib.sha256((out/f).read_bytes()).hexdigest()==expected
