@@ -49,16 +49,35 @@ def validate(graph, evidence):
             'node-kind mismatch')
     require(any(n.get('lane') == 'LDAB' for n in nodes if n.get('kind') == 'STAGE'),
             'LDAB stage missing')
+    kinds = {n['id']: n['kind'] for n in nodes}
     adj = {x: [] for x in ids}
+    signatures, types = set(), {'PROCESS': 0, 'FEEDFORWARD': 0, 'FEEDBACK': 0}
+    stages = {x for x in ids if kinds[x] == 'STAGE'}
+    stages_in = {x: 0 for x in stages}
+    stages_out = {x: 0 for x in stages}
+    stage_next = {}
     for edge in edges:
         a, b = edge.get('source'), edge.get('target')
         require(a in adj and b in adj, 'unbound edge')
         kind, clock = edge.get('kind'), edge.get('temporal')
-        require(kind in ('PROCESS', 'FEEDFORWARD', 'FEEDBACK'), 'unsupported edge type')
+        require(kind in types, 'unsupported edge type')
         require(clock == ('NEXT_PULSE' if kind == 'FEEDBACK' else 'SAME_PULSE'),
                 'invalid edge clock')
+        expected = 'STAGE' if kind == 'PROCESS' else 'BEAM'
+        require(kinds[a] == expected and kinds[b] == expected,
+                'typed edge endpoint')
+        signature = (kind, a, b)
+        require(signature not in signatures, 'duplicate typed edge')
+        signatures.add(signature)
+        types[kind] += 1
+        if kind == 'PROCESS':
+            stages_out[a] += 1
+            stages_in[b] += 1
+            stage_next[a] = b
         if clock == 'SAME_PULSE':
             adj[a].append(b)
+    require(types == {'PROCESS': 38, 'FEEDFORWARD': 10, 'FEEDBACK': 3},
+            'canonical graph edge-type census')
     seen, active = set(), set()
     def visit(node):
         require(node not in active, 'same-pulse DAG cycle')
@@ -71,6 +90,20 @@ def validate(graph, evidence):
         seen.add(node)
     for nid in ids:
         visit(nid)
+    require(all(x <= 1 for x in stages_in.values()) and
+            all(x <= 1 for x in stages_out.values()), 'process chain degree')
+    starts = [x for x in stages if stages_in[x] == 0]
+    ends = [x for x in stages if stages_out[x] == 0]
+    require(len(starts) == len(ends) == 1, 'process chain endpoints')
+    visited = set()
+    cursor = starts[0]
+    while cursor not in visited:
+        visited.add(cursor)
+        if cursor not in stage_next:
+            break
+        cursor = stage_next[cursor]
+    require(len(visited) == len(stages) and cursor == ends[0],
+            'process chain connectivity')
     return counts
 
 
