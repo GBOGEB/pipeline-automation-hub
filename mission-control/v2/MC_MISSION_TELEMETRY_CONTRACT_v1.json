@@ -197,5 +197,43 @@
     "CREW_ASSIGNMENT_NE_RUNNER_EXECUTION",
     "RUN_SUCCESS_NE_MISSION_COMPLETE",
     "MISSION_COMPLETE_NE_AUTHORITY_TRANSFER"
-  ]
+  ],
+  "g3p_optional_receipt": {
+    "method": "G3P",
+    "required_identity": [
+      "mission_id",
+      "wave_id",
+      "repository",
+      "baseline_source_sha"
+    ],
+    "pulse_count": 3,
+    "pulse_required": [
+      "ordinal",
+      "input_source_sha",
+      "expected_before_action",
+      "action_records",
+      "observed",
+      "outcome",
+      "evidence_refs",
+      "next_source_sha",
+      "blocker"
+    ],
+    "required_native_metrics": [
+      "test_cases_passed",
+      "test_cases_failed",
+      "statement_covered",
+      "statement_total",
+      "branch_covered",
+      "branch_total",
+      "changed_lines_covered",
+      "changed_lines_total",
+      "run_duration_ms",
+      "run_attempt"
+    ],
+    "unknown_policy": "Null means unknown, never zero. Numeric % requires numerators/denominators and exact source match.",
+    "blocked_policy": "Local lane HOLD may advance the pulse ordinal with evidence and safe alternate work; global blocker leaves future ordinals NOT_RUN.",
+    "acceptance_policy": "Pulse success not merge admission; independently require security/A10/governance/coverage/review.",
+    "traceability": "Prior pulse next_source_sha must match subsequent pulse input_source_sha unless explicit observed source drift triggers HOLD.",
+    "authority_transfer": false
+  }
 }
