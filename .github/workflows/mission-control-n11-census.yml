@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: '22'
       - name: Execute N11 negative and positive contracts
-        run: node --test mission-control/federation-atlas/central/top21/test_top21_engine.cjs
+        run: node --test mission-control/federation-atlas/central/top21/test_top21_*.cjs
       - name: Replay 21 immutable source-bound snapshots
         run: |
           node mission-control/federation-atlas/central/top21/top21_engine.cjs \
