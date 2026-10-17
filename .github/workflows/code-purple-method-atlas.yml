@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'mission-control/federation-atlas/**'
+      - 'mission-control/html_qa/**'
       - 'mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json'
       - 'mission-control/grand-missions/GM_DMAIC_COVERAGE_TELEMETRY_v1.json'
       - 'mission-control/grand-missions/GM-I-A_FAST_HEAVY_FEDERATION_TOPOLOGY_v0.1.json'
@@ -12,6 +13,7 @@ on:
     branches: [master]
     paths:
       - 'mission-control/federation-atlas/**'
+      - 'mission-control/html_qa/**'
       - 'mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json'
       - 'mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json'
       - 'mission-control/grand-missions/GM_DMAIC_COVERAGE_TELEMETRY_v1.json'
@@ -453,3 +455,26 @@ jobs:
       - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Checkout exact-main read-only Pages proof
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: publisher-source
+      - name: Independent HTTP 200 and repeated hosted hash parity
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python publisher-source/mission-control/html_qa/hosted_pages_verify.py \
+            --expected-dir ./atlas-artifact/pages \
+            --base-url "$PAGES_URL" \
+            --receipt ./g3p-hosted-parity.json \
+            --repeat 2 --attempts 8 --wait 5
+          test -s ./g3p-hosted-parity.json
+      - name: Preserve hosted Pages proof receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g3p-hosted-parity-${{ github.sha }}
+          path: ./g3p-hosted-parity.json
+          if-no-files-found: warn
