@@ -105,9 +105,6 @@ class TestW2NativeBridge(unittest.TestCase):
         self.assertIn("Plotly.newPlot",page)
         self.assertIn("NOT_ASSESSABLE",page)
         self.assertIn("UNKNOWN",page)
-        self.assertIn("No duplicate statistical kernel",plots.__doc__.replace(
-           "Plots API-observed counts only; the scientific gg_MATH convergence model remains","No duplicate statistical kernel").splitlines()[2] if False else
-           "No duplicate statistical kernel") if False else None
 
     def test_renderer_rejects_imputed_coverage(self):
         s=self.make();s["unknown_burndown"]["coverage"]["covered_statements"]=10
