@@ -213,8 +213,8 @@
       "key": "W1.C1.I2.S1",
       "closes": "SUB",
       "label": "CPQ N4 five source-proved DONE, Top7 7-repo recensus, QPS native evidence edge",
-      "tree": "PR_HEAD",
-      "evidence_class": "PROVISIONAL_PR_HEAD",
+      "tree": "a62fe10076bc1c257349c2517cd2e331e46e1deb",
+      "evidence_class": "MEASURED",
       "refs": [
         "https://github.com/GBOGEB/pipeline-automation-hub/issues/419#issuecomment-6220384217",
         "https://github.com/GBOGEB/document-organization-system/actions/runs/38218661281",
@@ -264,6 +264,57 @@
         "bd_state_done": 5
       },
       "prev_digest": "e425acdd1168246c8d1a59320b56ccab6c02c48ff241bed4ec8e71d5f011663e"
+    },
+    {
+      "key": "W1.C1.I3.S0",
+      "closes": "ITERATION",
+      "label": "I3: native ABACUS DMAIC first-red, repeat metric, 4/6 KPIs bound; py310 root fixed (#2130)",
+      "tree": "PR_HEAD",
+      "evidence_class": "PROVISIONAL_PR_HEAD",
+      "refs": [
+        "https://github.com/GBOGEB/ABACUS/pull/2130"
+      ],
+      "metrics": {
+        "top14_gate_pass": 7,
+        "top14_gate_fail": 1,
+        "top14_gate_unknown": 1,
+        "top21_gate_pass": 3,
+        "top21_gate_fail": 6,
+        "top21_gate_unknown": 2,
+        "top7_green_control": 5,
+        "top14_green_control": 9,
+        "dmaic_complete_iterations": 1,
+        "dmaic_evolution_level": 1,
+        "coverage_rows_measured": 3,
+        "coverage_rows_total": 21,
+        "receipt_edges": 2,
+        "graph_edges_receipt": 4,
+        "graph_edges_declared": 7,
+        "zero_test_gates": 0,
+        "bd_total": 19,
+        "bd_open": 10,
+        "bd_complete": 9,
+        "bd_critical_open": 4,
+        "bd_ready": 2,
+        "bd_in_pr": 2,
+        "bd_blocked_or_held": 4,
+        "bd_state_todo": 2,
+        "bd_state_active": 6,
+        "bd_state_done": 9,
+        "bd_state_control": 0,
+        "bd_state_superseded": 0,
+        "bd_state_invalidated": 0,
+        "bd_state_unknown_needs_reader": 2
+      },
+      "delta": {
+        "bd_total": 1,
+        "bd_open": 1,
+        "bd_critical_open": 1,
+        "bd_in_pr": 1,
+        "bd_state_todo": -3,
+        "bd_state_active": 4
+      },
+      "prev_digest": "18c5e0756a210c49309f98ee9b023c46fcfac69714702f1ab2eb6aa058b6115d"
     }
   ]
 }
