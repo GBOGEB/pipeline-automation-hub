@@ -84,3 +84,20 @@ Role_PLATERS are *role definitions*, not authenticated Crew launches. Distinct r
 The local workflow runs all 24 negative/unit tests, but real remote scanning is intentionally **manual opt-in** (`workflow_dispatch.live_scan=true`), and becomes available once the workflow is admitted to the default branch. The PR run does not fan out or read other repositories. Every optional live scan remains a sampled, read-only observation rather than a complete fleet census. Non-green workflow results are sent to an unassigned first-red candidate register, not automatically given an EVERRED root ID.
 
 The execution receipt distinguishes **checked-out PR head** from GitHub's synthetic PR-merge context SHA and binds the internal manifest digest to `run_id` and `run_attempt`. The upload artifact name uses the actual checked-out source SHA, not the synthetic merge SHA.
+
+
+## G7 — Native successful-code provenance and Top21 source census (17 Oct 2026)
+
+The [G7 Success Graph](success_graph/README.md) adds a bounded,
+read-only 7+7+7 current source-head census with 24 selected native
+successful run observations, 10 job observations and temporal/SIPOC
+source-to-run-to-job-to-capability edges. It identifies what the verified
+successful code enables, records nine runner-executed successful job
+observations, excludes one skipped job and preserves two native RED controls.
+
+G7's separate native Testflight measures statement and branch denominators
+and generates hash-bound JSON + offline HTML. Historical successes are never
+treated as independent reliability trials or Top21 admission. The existing
+zero-test gate, local task executor, EXACT-HEAD guard and EVERRED/REX owner
+contracts remain unchanged. All source mutation remains behind security,
+governance, independent reviewer and current-head CI HOLD.
