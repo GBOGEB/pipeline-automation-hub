@@ -3,6 +3,12 @@
 **Status:** proposed Mission Control v2 consumer, not a replacement for the existing
 glossary, 3PR/3PC/MIP/DMAIC methods, canonical BD/REX or GitHub authority.
 
+The additive GitHub-first closeout moniker is **CP.CLOSE()**. It wraps the existing
+CP.HANDOFF transport with a source-controlled narrative, prompt-statistics provenance,
+canonical BD projection, owner TODO, deterministic hashes and an independent PR-to-master
+gate. See [closeout/README.md](closeout/README.md). A main merge is never implied
+by successful chat capture or local QA.
+
 The user-facing pair is **`CP.HANDOFF()`** (freeze current session) and
 **`CP.RESUME()`** (restart in a different chat with a supplied archive). A
 separate **`G3P.EXECUTE(N,N+3)`** command requests one governed G3P wave,

@@ -1,0 +1,59 @@
+{
+  "authority_transfer": false,
+  "focus": [
+    {
+      "at": "W1.C1.I2.S1",
+      "control_when": "The render check catches a seeded layout or script regression.",
+      "done_when": "Atlas source, unit tests and a browser-level (Playwright or equivalent) render check run in hub CI on the exact head.",
+      "flow": "LINKED",
+      "id": "CPQ-003",
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/519",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/520"
+      ],
+      "severity": "P1",
+      "source_evidence": "Atlas source build/CI pass on 38932665934; seeded negative native Playwright/SVG regression still not verified; #520 acceptance HOLD.",
+      "state": "ACTIVE",
+      "title": "v0.1 atlas QA claims had no SHA, run or receipt"
+    },
+    {
+      "at": "W1.C1.I2.S1",
+      "control_when": "Stale flag verified on a later render.",
+      "done_when": "Each source shows its as-of date and age; stale sources are flagged.",
+      "flow": "IN_PR",
+      "id": "CPQ-005",
+      "links": [],
+      "severity": "P2",
+      "source_evidence": "as_of/as_of_basis visible in build_code_purple; explicit TTL/stale-flag and later render not yet proven.",
+      "state": "ACTIVE",
+      "title": "No as-of date or evidence age on the atlas"
+    },
+    {
+      "at": "W1.C1.I2.S1",
+      "control_when": "A test fails if an edge lacks a binding.",
+      "done_when": "Every edge in ATLAS_GRAPH_v1.yaml carries binding DECLARED or RECEIPT and DECLARED edges render dashed.",
+      "flow": "NONE",
+      "id": "CPQ-007",
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/519"
+      ],
+      "severity": "P2",
+      "source_evidence": "Graph binding RECEIPT vs DECLARED and dashed-edge negative tests in test_atlas.py; native 38932665934 PASS. QPS receipt added, MC->QPS dispatch remains DECLARED.",
+      "state": "DONE",
+      "title": "Federation graph draws declared dispatch edges like receipt-bound edges"
+    }
+  ],
+  "global_item_count": 18,
+  "global_lifecycle_counts": {
+    "ACTIVE": 2,
+    "DONE": 9,
+    "TODO": 5,
+    "UNKNOWN_NEEDS_READER": 2
+  },
+  "new_canonical_bd_items": 0,
+  "owner": "CANONICAL_CODE_PURPLE_BD_QUEUE_ONLY",
+  "read_only_historical": true,
+  "schema": "missioncontrol.cp_close.bd_projection.v1",
+  "source_path": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+  "source_sha256": "0b4b2606d556878c40af1488d7fba5eaba3cea601177704486171fbd2a24adee"
+}
