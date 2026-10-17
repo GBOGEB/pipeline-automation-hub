@@ -742,15 +742,16 @@
     {
       "repository": "GBOGEB/GBOGEB-profile",
       "pr": 1,
-      "head_sha": "de9cb64e6e2db6388ee8382e5f3b223eaca88b3afae",
+      "head_sha": "de9cb64e6e2db6388b215893b223eaca88b3afae",
       "merged_at": "2025-09-08T15:55:52Z",
       "base_branch": "main",
       "pr_url": "https://github.com/GBOGEB/GBOGEB-profile/pull/1",
-      "check_total": null,
+      "check_total": 0,
       "check_runs": [],
-      "complete": false,
-      "error": "INVALID_ARGUMENT: Error code: INVALID_ARGUMENT; Error: GitHub API error 422: {\"message\":\"No commit found for SHA: de9cb64e6e2db6388ee8382e5f3b223eaca88b3afae\",\"documentation_url\":\"",
-      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED",
+      "readback_correction": "Pr HEAD verified using get_pr_info; previous manually transcribed non-40hex was rejected by native tests"
     }
   ]
 }
