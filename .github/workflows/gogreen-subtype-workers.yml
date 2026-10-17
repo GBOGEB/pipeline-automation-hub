@@ -13,6 +13,9 @@ on:
       - "mission-control/gogreen/tests/test_sipoc_instances.py"
       - "mission-control/gogreen/samples/sipoc_instance_wave_20261016.json"
       - "mission-control/gogreen/SIPOC_INSTANCE_DAG.md"
+      - "mission-control/gogreen/bd_queue_wave.py"
+      - "mission-control/gogreen/tests/test_bd_queue_wave.py"
+      - "mission-control/gogreen/BD_QUEUE_WAVE.md"
       - "mission-control/golden-thread/dependency_recompute.py"
       - "mission-control/golden-thread/fixtures/GT_BD_002_REAL_CONE_BATCH001_v1.json"
       - "mission-control/golden-thread/fixtures/GT_BD_011_BOOTSTRAP_BATCH001_20260917.json"
@@ -122,6 +125,58 @@ jobs:
           print(json.dumps({'status':'ACTUAL_EXECUTION_PASS','files':sorted(files),
            'observed_occurrences':receipt['occurrences'],'exact_sha':receipt['source_sha']},sort_keys=True))
           PY
+      - name: Branch-aware BD census regression coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m coverage run --branch \
+            --include='*/mission-control/gogreen/bd_queue_wave.py' \
+            -m unittest discover -s mission-control/gogreen/tests \
+            -p 'test_bd_queue_wave.py' -v
+          python -m coverage report --fail-under=95
+      - name: Execute live cross-repository BD census
+        shell: bash
+        timeout-minutes: 12
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          SOURCE_RUN_ID: ${{ github.run_id }}
+          SOURCE_RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/bd_queue_wave.py \
+            --out "$RUNNER_TEMP/cbd-live-bd" --max-parallel 4
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          p = Path(os.environ["RUNNER_TEMP"]) / "cbd-live-bd"
+          summary = json.loads((p / "bd_summary.json").read_text())
+          if summary["open_prs"] == 0 or summary["prs_unknown"] == summary["open_prs"]:
+              raise SystemExit("all PR-head evidence unobserved: HOLD")
+          if len(summary["issues"]) != 4 or summary["authority_transfer"] is not False:
+              raise SystemExit("federation issue completeness/authority violation")
+          if summary["root_closure_delta"] != 0 or summary["merge_authorized"] is not False:
+              raise SystemExit("admission boundary violated")
+          receipt = {
+              "schema": "codepurple.bd-native-execution.v1",
+              "source_sha": os.environ["SOURCE_HEAD_SHA"],
+              "run_id": os.environ["SOURCE_RUN_ID"],
+              "run_attempt": os.environ["SOURCE_RUN_ATTEMPT"],
+              "pr_denominator": summary["open_prs"],
+              "issue_denominator": summary["open_issues"],
+              "observed_run_pr_count": summary["open_prs"] - summary["prs_unknown"],
+              "failed_workflow_manifestations": summary["manifestations"],
+              "summary_sha256": hashlib.sha256((p / "bd_summary.json").read_bytes()).hexdigest(),
+              "actual_github_api_execution": True,
+              "causal_root_count": None,
+              "accepted_root_closures": 0,
+              "merge_authorized": False
+          }
+          (p / "native_execution_receipt.json").write_text(
+              json.dumps(receipt, indent=2, sort_keys=True) + "\n"
+          )
+          print("ACTUAL_BD_CENSUS", json.dumps(receipt, sort_keys=True))
+          PY
       - name: Emit source-bound subtype receipt
         run: |
           python mission-control/gogreen/subtype_orchestrator.py \
@@ -165,4 +220,9 @@ jobs:
         with:
           name: cbd-real-cone-execution-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/cbd-realcone/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: code-purple-bd-live-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/cbd-live-bd/
           if-no-files-found: error
