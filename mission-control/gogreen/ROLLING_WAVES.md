@@ -44,3 +44,13 @@ A wave may **decrease** on a compatible metric: never suppress regressions. `UNK
 - **3PC:** Prepare/Prove/Commit remains contingent on branch protection, independent review and owner authority. QPS returns DEFER.
 
 G4 is the next unmeasured wave. G3 improved native regression depth only; **G4 has no credited actual gain yet**.
+
+## Operational disambiguation: 3PSTAR vs 3WSTAR (17 Oct 2026)
+
+This historical G0/G1/G2/G3 **wave scorecard** is not retroactively renamed into N+1/N+2/N+3 pulse checkpoints.
+
+- `3PSTAR` / `3P*`: three sequential closed measurement/checkpoint opportunities under a **single** N baseline, source-bound, N→N+3. Every advance requires a new native run/attempt/job, scoped metric, comparable or explicitly incomparable change and disposition; a failed run remains RED.
+- `3WSTAR` / `3W*`: three source-owner work envelopes. Three waves can run within one pulse if they converge to one observed exact-head barrier; conversely a wave can take several measured pulses.
+- `N3_CONTINUE` / `N3!`: one bounded active-session task; execute up to three pulse transitions, adapt to native results, reverify source and stop only for a documented major blocker. Does not mean independent auto-merge or background work.
+- No source-blob or instrument-denominator matching → **null** comparable coverage delta, even if the coverage percent rises. No native job or missing authority → **HOLD**, not success.
+- Existing `3PR`, `3PC`, and historical `W###` remain independently qualified identities. See canonical `mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json` and executable `mission-control/gogreen/n3_continuation/`.
