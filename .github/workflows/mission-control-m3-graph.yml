@@ -61,11 +61,20 @@ jobs:
           cp docs/mission-control/m3/state.json out/m3/site/docs/mission-control/m3/state.json
           cp out/m3/telemetry.json out/m3/site/docs/mission-control/m3/telemetry.json
           printf '%s\n' 'Read-only artifact. Serve this site folder via python -m http.server 8000; navigate to docs/mission-control/m3/index.html. No Pages publication or authority transfer.' > out/m3/site/README.txt
+      - name: Build owner-gated release candidate and deny forged/missing release
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          node mission-control/federation-atlas/m3_session/m3_publication_preflight.js --site out/m3/site --out out/m3/publication-preflight.json --sha "$EXPECTED_SHA"
+          node mission-control/federation-atlas/m3_session/test_m3_publication_preflight.js
       - name: Publish diagnostic receipt, never Pages
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: m3-graph-contract-${{ github.run_id }}-${{ github.run_attempt }}
-          path: out/m3/receipt.json
+          path: out/m3/
           if-no-files-found: error
 
   m3-browser:
