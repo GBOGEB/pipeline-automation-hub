@@ -52,7 +52,7 @@ def check(out: Path) -> dict:
                     page.locator("#layer").select_option("orchestration")
                     page.locator("#reload").click()
                     assert page.locator("#repoCount").inner_text()=="6","reload changed source unexpectedly"
-                    assert "flowchart LR" in page.locator("#mermaid").inner_text(),"Mermaid unavailable"
+                    assert "flowchart LR" in page.locator("#mermaid").text_content(),"Mermaid unavailable"
                     overflow=page.evaluate("({scroll:document.documentElement.scrollWidth,viewport:window.innerWidth})")
                     assert overflow["scroll"]<=overflow["viewport"]+1,f"horizontal document overflow: {overflow}"
                     broken=[]
