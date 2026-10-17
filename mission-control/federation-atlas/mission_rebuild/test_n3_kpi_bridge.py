@@ -128,6 +128,8 @@ class N3KPIContracts(unittest.TestCase):
             self.assertLess(page.index("<script>"), page.index('id="n3-queue_seconds"'),
                             "Plotly library must load before chart newPlot scripts")
             self.assertIn("UNKNOWN", page)
+            self.assertIn('Plotly.Plots.resize(el)', page,
+                          "Charts must fit sibling grid cells after DOM load")
             self.assertEqual(report["population"]["jobs"], 2)
             self.assertEqual(set(manifest["member_sha256"]),
                              {"n3-metrics.json", "n3-metrics.html"})
