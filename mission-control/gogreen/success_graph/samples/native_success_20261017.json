@@ -1,0 +1,741 @@
+{
+  "schema": "gogreen.success-temporal.census.v1",
+  "observed_on_date": "2026-10-17",
+  "window_start_utc": "2026-10-16T00:00:00Z",
+  "window_end_exclusive_utc": "2026-10-18T00:00:00Z",
+  "source_basis": "GitHub REST default branches + Actions branch-filtered native runs + selected native job pages; non-atomic",
+  "canonical_roster_path": "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
+  "source_registry_git_blob": "0e42dd49eacc46a57fde432ad8d93ea17de4b4f9",
+  "authority_transfer": false,
+  "merge_authorized": false,
+  "security_waiver": false,
+  "root_closure_credit": 0,
+  "repo_heads": [
+    {
+      "repository": "GBOGEB/ABACUS",
+      "cohort": "TOP7",
+      "default_branch": "main",
+      "head_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "protected_branch": true,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "cohort": "TOP7",
+      "default_branch": "main",
+      "head_sha": "c15a1138355455692968b2dd52bf08330f23d910",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "cohort": "TOP7",
+      "default_branch": "main",
+      "head_sha": "d3c562d74eca661dd4879646bc74b6003235764e",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "cohort": "TOP7",
+      "default_branch": "master",
+      "head_sha": "4693f0164e9d4329d9ac4ce4f261f03077e9d8df",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/Q_engineering_tools",
+      "cohort": "TOP7",
+      "default_branch": "main",
+      "head_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/document-organization-system",
+      "cohort": "TOP7",
+      "default_branch": "main",
+      "head_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "cohort": "TOP7",
+      "default_branch": "main",
+      "head_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/gg_MATH",
+      "cohort": "TOP14_EXTENSION",
+      "default_branch": "main",
+      "head_sha": "0cd395a3ddb2a14d56e16235f2f5207719baebce",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/GEMINI",
+      "cohort": "TOP14_EXTENSION",
+      "default_branch": "main",
+      "head_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/CODESPACES_jyperter",
+      "cohort": "TOP14_EXTENSION",
+      "default_branch": "main",
+      "head_sha": "d9ebc82617d1523c3ae0b2f40c7b69914b206469",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/GBOGEB",
+      "cohort": "TOP14_EXTENSION",
+      "default_branch": "main",
+      "head_sha": "67b605e7c8b2298c86595abf0cf937adc1bc35ce",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/CoolProp",
+      "cohort": "TOP14_EXTENSION",
+      "default_branch": "master",
+      "head_sha": "0ce509b6a65cab5b3c52a7514a00dfb7ad81c20e",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/codespaces-jupyter",
+      "cohort": "TOP14_EXTENSION",
+      "default_branch": "main",
+      "head_sha": "68cc5017dd5460eb32df0cf984930a0e69b9a5fb",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/cryogenic-accelerator-workspace",
+      "cohort": "TOP14_EXTENSION",
+      "default_branch": "main",
+      "head_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/skills",
+      "cohort": "TOP21_EXTENSION",
+      "default_branch": "main",
+      "head_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "cohort": "TOP21_EXTENSION",
+      "default_branch": "main",
+      "head_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/telegraf",
+      "cohort": "TOP21_EXTENSION",
+      "default_branch": "master",
+      "head_sha": "3e18ad6fda07ebbe18994555ece894c29ed8b78c",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/github-mcp-server",
+      "cohort": "TOP21_EXTENSION",
+      "default_branch": "main",
+      "head_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/github_Documents",
+      "cohort": "TOP21_EXTENSION",
+      "default_branch": "master",
+      "head_sha": "f0dc40d437c37364c1933d41f4114ab2a6cdedcb",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/stale",
+      "cohort": "TOP21_EXTENSION",
+      "default_branch": "main",
+      "head_sha": "659bd94267f7320defcb861c24095c6ab0606454",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    },
+    {
+      "repository": "GBOGEB/GBOGEB-profile",
+      "cohort": "TOP21_EXTENSION",
+      "default_branch": "main",
+      "head_sha": "74ef0a36652dfe62145b3dbc1d2a023adbbaa50d",
+      "protected_branch": false,
+      "discovery": "NATIVE_DEFAULT_BRANCH_API",
+      "ci_at_current_head": "UNKNOWN_UNTIL_MATCHED"
+    }
+  ],
+  "workflow_samples": [
+    {
+      "name": "Zero-Test Gate Guard",
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "population_class": "SELECTED_LATEST_100_MAIN_RUNS_PARTIAL",
+      "sample_only": true,
+      "capability_id": "GUARD",
+      "run_observations": [
+        {
+          "run_number": 280,
+          "run_id": 38961690145,
+          "attempt": 1,
+          "source_sha": "38e01119b8a383f743c107e1a78a87f1a4eba16a",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T20:21:49Z",
+          "event": "push"
+        },
+        {
+          "run_number": 282,
+          "run_id": 38961761118,
+          "attempt": 1,
+          "source_sha": "6bd96703f1a81fd2ba446dd363259e7264bfb66d",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T20:22:23Z",
+          "event": "push"
+        },
+        {
+          "run_number": 283,
+          "run_id": 38961806283,
+          "attempt": 1,
+          "source_sha": "191232aa31bcdae3eda74aaca94db85238162cdf",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T20:22:46Z",
+          "event": "push"
+        },
+        {
+          "run_number": 286,
+          "run_id": 38961858531,
+          "attempt": 1,
+          "source_sha": "2e20fbad69f3196ad159878651a70ca913f4c82b",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T20:23:11Z",
+          "event": "push"
+        },
+        {
+          "run_number": 294,
+          "run_id": 39021598394,
+          "attempt": 1,
+          "source_sha": "5fdbbc1eb98176984a732e5b164a9df37036f290",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-17T09:33:39Z",
+          "event": "push"
+        },
+        {
+          "run_number": 295,
+          "run_id": 39021623362,
+          "attempt": 1,
+          "source_sha": "4693f0164e9d4329d9ac4ce4f261f03077e9d8df",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-17T09:34:04Z",
+          "event": "push"
+        }
+      ]
+    },
+    {
+      "name": "M02B Math Bunker Smoke",
+      "repository": "GBOGEB/gg_MATH",
+      "population_class": "ALL_MATCHING_MAIN_WORKFLOWS_RETURNED_IN_DATE_WINDOW",
+      "sample_only": false,
+      "capability_id": "MATH",
+      "run_observations": [
+        {
+          "run_number": 107,
+          "run_id": 38903233534,
+          "attempt": 1,
+          "source_sha": "d44b8e26818e4af9bbb02ec0d8369e57af3699bd",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T12:49:19Z",
+          "event": "push"
+        },
+        {
+          "run_number": 110,
+          "run_id": 38925109181,
+          "attempt": 1,
+          "source_sha": "07981c95082b5fc09a8f4f910bcfe5f62453a7ea",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T15:34:56Z",
+          "event": "push"
+        },
+        {
+          "run_number": 111,
+          "run_id": 38925148688,
+          "attempt": 1,
+          "source_sha": "dbd43ab7d5be882ac7b1098748236aa90d9d664d",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T15:35:14Z",
+          "event": "push"
+        },
+        {
+          "run_number": 113,
+          "run_id": 38926204705,
+          "attempt": 1,
+          "source_sha": "8f8542494b36c1476127a02a280b279ec2cf02f9",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T15:43:10Z",
+          "event": "push"
+        },
+        {
+          "run_number": 115,
+          "run_id": 38930914098,
+          "attempt": 1,
+          "source_sha": "54b7a806e398f0a0bcb76372dd2f53e41ec219ae",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T16:18:32Z",
+          "event": "push"
+        },
+        {
+          "run_number": 117,
+          "run_id": 38955869218,
+          "attempt": 1,
+          "source_sha": "0cd395a3ddb2a14d56e16235f2f5207719baebce",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T19:34:07Z",
+          "event": "push"
+        }
+      ]
+    },
+    {
+      "name": "QPS TRIAGE Debug DAG Pilot",
+      "repository": "GBOGEB/cryoplant-project",
+      "population_class": "ALL_MATCHING_MAIN_WORKFLOWS_RETURNED_IN_DATE_WINDOW",
+      "sample_only": false,
+      "capability_id": "QPSDEBUG",
+      "run_observations": [
+        {
+          "run_number": 181,
+          "run_id": 38832050805,
+          "attempt": 1,
+          "source_sha": "59315bbb0d8a15fd7d6f3c40a46f2db8874cfbc3",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T00:53:24Z",
+          "event": "schedule"
+        },
+        {
+          "run_number": 182,
+          "run_id": 38862443753,
+          "attempt": 1,
+          "source_sha": "59315bbb0d8a15fd7d6f3c40a46f2db8874cfbc3",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T06:39:25Z",
+          "event": "schedule"
+        },
+        {
+          "run_number": 183,
+          "run_id": 38901685844,
+          "attempt": 1,
+          "source_sha": "bd7d0156eb581f7803b73fe7158b6b49148d5229",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T12:36:17Z",
+          "event": "schedule"
+        },
+        {
+          "run_number": 184,
+          "run_id": 38947711301,
+          "attempt": 1,
+          "source_sha": "577353ed5f9cb1d3c19cb2a0967ea13e14fc683e",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T18:29:15Z",
+          "event": "schedule"
+        },
+        {
+          "run_number": 185,
+          "run_id": 38988517051,
+          "attempt": 1,
+          "source_sha": "6452e2cbb9dd6c1fa6949ce853613a207dc1a95b",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-17T00:54:34Z",
+          "event": "schedule"
+        },
+        {
+          "run_number": 186,
+          "run_id": 39010490843,
+          "attempt": 1,
+          "source_sha": "6452e2cbb9dd6c1fa6949ce853613a207dc1a95b",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-17T06:35:41Z",
+          "event": "schedule"
+        }
+      ]
+    },
+    {
+      "name": "QPS Perpetual Debug Control",
+      "repository": "GBOGEB/CODEX",
+      "population_class": "SELECTED_LATEST_100_MAIN_RUNS_PARTIAL",
+      "sample_only": true,
+      "capability_id": "CODEXDEBUG",
+      "run_observations": [
+        {
+          "run_number": 168,
+          "run_id": 38988735326,
+          "attempt": 1,
+          "source_sha": "c15a1138355455692968b2dd52bf08330f23d910",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-17T00:57:30Z",
+          "event": "schedule"
+        },
+        {
+          "run_number": 169,
+          "run_id": 39010698308,
+          "attempt": 1,
+          "source_sha": "c15a1138355455692968b2dd52bf08330f23d910",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-17T06:39:06Z",
+          "event": "schedule"
+        }
+      ]
+    },
+    {
+      "name": "Renderer Lint Guard",
+      "repository": "GBOGEB/CODEX",
+      "population_class": "SELECTED_LATEST_100_MAIN_RUNS_PARTIAL",
+      "sample_only": true,
+      "capability_id": "RENDER",
+      "run_observations": [
+        {
+          "run_number": 2617,
+          "run_id": 38903416671,
+          "attempt": 1,
+          "source_sha": "906cbcd8f3600819fc96c6f19e009c495fb70b09",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T12:50:51Z",
+          "event": "push"
+        },
+        {
+          "run_number": 2619,
+          "run_id": 38925198344,
+          "attempt": 1,
+          "source_sha": "e9058445b0d7c6a0f0040d10ebcdd6d705c30ad9",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T15:35:36Z",
+          "event": "push"
+        },
+        {
+          "run_number": 2621,
+          "run_id": 38926063560,
+          "attempt": 1,
+          "source_sha": "8248173beb940afe3bf9918103e52df3340f01a3",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T15:42:06Z",
+          "event": "push"
+        },
+        {
+          "run_number": 2623,
+          "run_id": 38954698307,
+          "attempt": 1,
+          "source_sha": "280faaaceee3710042dd215aab43e2e7c6decdc9",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-10-16T19:24:33Z",
+          "event": "push"
+        }
+      ]
+    }
+  ],
+  "native_jobs": [
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "run_id": 39021623362,
+      "attempt": 1,
+      "job_id": 117364418748,
+      "source_sha": "4693f0164e9d4329d9ac4ce4f261f03077e9d8df",
+      "name": "audit",
+      "runner_id": 1000624128,
+      "started_at": "2026-10-17T09:46:30Z",
+      "completed_at": "2026-10-17T09:46:45Z",
+      "conclusion": "success",
+      "steps_success_eligible": true
+    },
+    {
+      "repository": "GBOGEB/gg_MATH",
+      "run_id": 38955869218,
+      "attempt": 1,
+      "job_id": 117158455449,
+      "source_sha": "0cd395a3ddb2a14d56e16235f2f5207719baebce",
+      "name": "first-kernel",
+      "runner_id": 1000614335,
+      "started_at": "2026-10-16T19:34:11Z",
+      "completed_at": "2026-10-16T19:34:16Z",
+      "conclusion": "success",
+      "steps_success_eligible": true
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "run_id": 39010490843,
+      "attempt": 1,
+      "job_id": 117331809239,
+      "source_sha": "6452e2cbb9dd6c1fa6949ce853613a207dc1a95b",
+      "name": "plan DAG and prove session/port contract",
+      "runner_id": 1000621498,
+      "started_at": "2026-10-17T06:35:43Z",
+      "completed_at": "2026-10-17T06:36:03Z",
+      "conclusion": "success",
+      "steps_success_eligible": true
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "run_id": 39010490843,
+      "attempt": 1,
+      "job_id": 117331879062,
+      "source_sha": "6452e2cbb9dd6c1fa6949ce853613a207dc1a95b",
+      "name": "execute QPS native LLDB node",
+      "runner_id": 1000621499,
+      "started_at": "2026-10-17T06:36:12Z",
+      "completed_at": "2026-10-17T06:36:35Z",
+      "conclusion": "success",
+      "steps_success_eligible": true
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "run_id": 39010490843,
+      "attempt": 1,
+      "job_id": 117331974441,
+      "source_sha": "6452e2cbb9dd6c1fa6949ce853613a207dc1a95b",
+      "name": "roll up debug DAG metrics and next pulse",
+      "runner_id": 1000621500,
+      "started_at": "2026-10-17T06:36:37Z",
+      "completed_at": "2026-10-17T06:36:46Z",
+      "conclusion": "success",
+      "steps_success_eligible": true
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "run_id": 39010490843,
+      "attempt": 1,
+      "job_id": 117331880516,
+      "source_sha": "6452e2cbb9dd6c1fa6949ce853613a207dc1a95b",
+      "name": "execute Docker LLDB node when explicitly enabled",
+      "runner_id": null,
+      "started_at": null,
+      "completed_at": null,
+      "conclusion": "skipped",
+      "steps_success_eligible": false
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "run_id": 39010698308,
+      "attempt": 1,
+      "job_id": 117332433107,
+      "source_sha": "c15a1138355455692968b2dd52bf08330f23d910",
+      "name": "Docker real runtime LLDB",
+      "runner_id": 1000621505,
+      "started_at": "2026-10-17T06:39:08Z",
+      "completed_at": "2026-10-17T06:40:14Z",
+      "conclusion": "success",
+      "steps_success_eligible": true
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "run_id": 39010698308,
+      "attempt": 1,
+      "job_id": 117332433270,
+      "source_sha": "c15a1138355455692968b2dd52bf08330f23d910",
+      "name": "live debugpy and js-debug",
+      "runner_id": 1000621506,
+      "started_at": "2026-10-17T06:39:09Z",
+      "completed_at": "2026-10-17T06:39:45Z",
+      "conclusion": "success",
+      "steps_success_eligible": true
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "run_id": 39010698308,
+      "attempt": 1,
+      "job_id": 117332433289,
+      "source_sha": "c15a1138355455692968b2dd52bf08330f23d910",
+      "name": "live lldb-dap and MCP",
+      "runner_id": 1000621507,
+      "started_at": "2026-10-17T06:39:15Z",
+      "completed_at": "2026-10-17T06:40:08Z",
+      "conclusion": "success",
+      "steps_success_eligible": true
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "run_id": 39010698308,
+      "attempt": 1,
+      "job_id": 117332630855,
+      "source_sha": "c15a1138355455692968b2dd52bf08330f23d910",
+      "name": "heartbeat and terminal control gate",
+      "runner_id": 1000621508,
+      "started_at": "2026-10-17T06:40:16Z",
+      "completed_at": "2026-10-17T06:40:24Z",
+      "conclusion": "success",
+      "steps_success_eligible": true
+    }
+  ],
+  "red_controls": [
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "name": "qps-canonicalization",
+      "run_id": 39019340913,
+      "run_number": 3559,
+      "attempt": 1,
+      "source_sha": "d3c562d74eca661dd4879646bc74b6003235764e",
+      "status": "completed",
+      "conclusion": "failure",
+      "root_confirmed": false,
+      "first_red": "npm test",
+      "source": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39019340913"
+    },
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "name": "GOGREEN G0 Positive Evidence Testflight",
+      "run_id": 39021193358,
+      "run_number": null,
+      "attempt": 1,
+      "source_sha": "4260f7d8bd6390466a1039323bbb937cff799c82",
+      "status": "completed",
+      "conclusion": "failure",
+      "root_confirmed": false,
+      "first_red": "test import and cryptography",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39021193358"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "GUARD",
+      "owner_repo": "GBOGEB/pipeline-automation-hub",
+      "entrypoint": ".github/workflows/zero-test-gate-guard.yml",
+      "operation": "Fail CI when unittest gates silently execute zero tests",
+      "input": "native workflow/test change",
+      "output": "zero-test audit gate and artifact",
+      "evidence_level": "OBSERVED_NATIVE_SUCCESS",
+      "workflow": "Zero-Test Gate Guard",
+      "next": "Extend seeded 0-test mutation controls"
+    },
+    {
+      "id": "MATH",
+      "owner_repo": "GBOGEB/gg_MATH",
+      "entrypoint": "repo-local M02B Math Bunker Smoke",
+      "operation": "Execute mathematical kernel plus independent challenge and receipt",
+      "input": "source SHA and math kernel",
+      "output": "native source-bound kernel smoke and receipt",
+      "evidence_level": "OBSERVED_NATIVE_SUCCESS",
+      "workflow": "M02B Math Bunker Smoke",
+      "next": "Add conditioning, monotonicity and ill-posed input tests"
+    },
+    {
+      "id": "QPSDEBUG",
+      "owner_repo": "GBOGEB/cryoplant-project",
+      "entrypoint": "QPS TRIAGE Debug DAG Pilot",
+      "operation": "Plan native LLDB debugging, execute breakpoints and roll up DAG evidence",
+      "input": "QPS native debug session",
+      "output": "DAG metrics, provenance artifact and next pulse",
+      "evidence_level": "OBSERVED_NATIVE_SUCCESS",
+      "workflow": "QPS TRIAGE Debug DAG Pilot",
+      "next": "Stress isolation, explicit optional Docker behavior"
+    },
+    {
+      "id": "CODEXDEBUG",
+      "owner_repo": "GBOGEB/CODEX",
+      "entrypoint": "QPS Perpetual Debug Control",
+      "operation": "Execute Docker LLDB, debugpy, JS debugger, LLDB-MCP plus heartbeat/control",
+      "input": "debug adapters and runtime session",
+      "output": "terminal control summary and native artifacts",
+      "evidence_level": "OBSERVED_NATIVE_SUCCESS",
+      "workflow": "QPS Perpetual Debug Control",
+      "next": "Per-backend latency and injected failure recovery"
+    },
+    {
+      "id": "RENDER",
+      "owner_repo": "GBOGEB/CODEX",
+      "entrypoint": "Renderer Lint Guard",
+      "operation": "Validate rendering lint invariants",
+      "input": "renderer source changes",
+      "output": "lint gate",
+      "evidence_level": "OBSERVED_NATIVE_SUCCESS",
+      "workflow": "Renderer Lint Guard",
+      "next": "Add seeded duplicate and withheld-trace negatives"
+    },
+    {
+      "id": "GOGREENEXEC",
+      "owner_repo": "GBOGEB/pipeline-automation-hub",
+      "entrypoint": "mission-control/gogreen/execution_adapter.py",
+      "operation": "Allowlisted local six-task DAG with bounded asyncio, leases, signed ephemeral receipts and 6/6 verified idempotent reuse",
+      "input": "Git-tracked SIPOC plan, policy and fixtures",
+      "output": "scratch output hashes and local proof receipts",
+      "evidence_level": "LOCAL_NATIVE_STEP_ONLY_NOT_WORKFLOW_ADMITTED",
+      "workflow": null,
+      "next": "Trusted signer and independent exact-head native gate"
+    },
+    {
+      "id": "GOGREENBD",
+      "owner_repo": "GBOGEB/pipeline-automation-hub",
+      "entrypoint": "mission-control/gogreen/bd_queue_wave.py",
+      "operation": "Read-only four-repo BD manifestations census and duplicate-safe workflow grouping",
+      "input": "GitHub exact-head PR/Actions metadata",
+      "output": "source-bound JSON/CSV/Markdown receipt",
+      "evidence_level": "MERGED_IMPLEMENTATION_NATIVE_GATE_RED",
+      "workflow": null,
+      "next": "Shared import/cryptography first-red #597"
+    },
+    {
+      "id": "ABACUSPLANNER",
+      "owner_repo": "GBOGEB/pipeline-automation-hub",
+      "entrypoint": "GBOGEB/ABACUS#2090 scripts/cbd_workflow_failure_waves.py",
+      "operation": "Plan disjoint candidate-root waves using 20-PR/66 failed-link cohort",
+      "input": "source-bound failed workflow observations",
+      "output": "candidate impact and owner path lease",
+      "evidence_level": "CROSS_REPO_DRAFT_TESTS_PASS_ADMISSION_HOLD",
+      "workflow": null,
+      "next": "Black and security independent first-red repairs"
+    }
+  ]
+}
