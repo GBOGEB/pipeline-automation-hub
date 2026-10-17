@@ -117,6 +117,8 @@ def audit(manifest, receipts, *, native_fetch=None, zip_paths=None):
     groups = {k: [] for k in expected}
     for receipt in receipts:
         validate_receipt(receipt, manifest)
+        if receipt["execution_sha"] != receipt["target_sha"]:
+            raise CensusError("receiver execution/target SHA mismatch")
         pair = (receipt["repo"], receipt["route"])
         if pair not in groups:
             raise CensusError("receipt outside planned route")
