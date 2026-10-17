@@ -2,6 +2,7 @@
 /** M3 read-only native telemetry join. Does not dispatch or grant authority. */
 const fs=require("node:fs"),path=require("node:path"),crypto=require("node:crypto");
 const ROOT=path.resolve(__dirname,"../../..");
+const {queueP95}=require("./m3_metrics.js");
 const SHA=/^[0-9a-f]{40}$/;
 const TARGETS=[
  {repository:"GBOGEB/pipeline-automation-hub",pr:667,run:39059653346,source_sha:"93e3e977e0937624c342f1890578f8854c843c03"},
@@ -44,6 +45,7 @@ function bind(run,jobs,artifacts,target){
   assert(j.run_attempt===undefined||j.run_attempt===run.run_attempt,"job attempt mismatched");
   bound.push({job_id:j.id,job_name:j.name||null,run_id:run.id,run_attempt:run.run_attempt,
    state:j.status||null,conclusion:j.conclusion??null,
+   created_at:j.created_at||null,started_at:j.started_at||null,
    url:j.html_url||`https://github.com/${target.repository}/actions/runs/${run.id}/job/${j.id}`});
  }
  const distinctArtifacts=new Set(),boundArtifacts=[];
@@ -94,6 +96,7 @@ function build(raw,mode,now){
   crosswalk:crosswalk(m3,census),freshness:ages,run_observations:rows,
   matched_main_coverage:null,matched_diff_coverage:null,canonical_root_open:null,canonical_root_closed:null,
   temporal_metrics:{matched_series_points:null,root_recurrence:null,queue_p95_minutes:null,
+   per_run_queue_samples:rows.map(r=>({run_id:r.run_id,source_sha:r.source_sha,...queueP95(r.jobs)})),
    native_run_observation_count:rows.length,stable_or_six_sigma:null,
    qualification:"NO_MATCHED_TEMPORAL_SERIES_DO_NOT_FIT_PCA_BT_OR_CONVERGENCE"},
   authority:{merge_admission:"HOLD",correctly_governed_main_merge_verified:false,
