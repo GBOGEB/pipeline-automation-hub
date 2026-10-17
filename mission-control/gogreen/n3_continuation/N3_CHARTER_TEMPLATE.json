@@ -1,0 +1,108 @@
+{
+  "schema": "codepurple.n3.charter.v1",
+  "invocation": "N3_CONTINUE",
+  "method": "3PSTAR",
+  "execution_mode": "BOUNDED_IN_TURN",
+  "execution_id": "GOGREEN_QPS_N3_REPLACE_WITH_UNIQUE_ID",
+  "mission_id": "CODE_PURPLE_GOGREEN",
+  "repository": "GBOGEB/cryoplant-project",
+  "template_status": "UNBOUND_INPUT_REQUIRES_FRESH_NATIVE_RECONSENSUS",
+  "baseline": {
+    "source_sha": null,
+    "observed_utc": null,
+    "metric": {
+      "key": "first_red_attribution",
+      "scope": "QPS_MAIN_EXACT_RUN_WINDOW_TO_BE_BOUND",
+      "instrument": "GITHUB_NATIVE_RUN_JOB_LOGS",
+      "production_blob": null,
+      "covered": null,
+      "eligible": null
+    },
+    "evidence_url": null
+  },
+  "objective": {
+    "metric_key": "first_red_attribution",
+    "direction": "INCREASE",
+    "target": "MEASURED_11_OF_11_WITH_FIRST_RED_PROVENANCE"
+  },
+  "policy": {
+    "pulse_count": 3,
+    "wave_strategy": "PARALLEL_DISJOINT",
+    "max_disjoint_workers": 3,
+    "max_attempts_per_pulse": 2,
+    "mutation_scope": "OWNED_BRANCH_ONLY",
+    "merge_authorized": false,
+    "security_waiver_authorized": false,
+    "ruleset_change_authorized": false,
+    "background_execution_authorized": false,
+    "formal_root_closure_authorized": false
+  },
+  "lanes": [
+    {
+      "id": "ROOT_CENSUS",
+      "repository": "GBOGEB/cryoplant-project",
+      "owner": "QPS_GOGREEN_READER",
+      "paths": [
+        "triage/"
+      ],
+      "may_mutate": false,
+      "lease_required": false
+    },
+    {
+      "id": "DEPENDENCY_CI",
+      "repository": "GBOGEB/cryoplant-project",
+      "owner": "QPS_DEPENDENCY_SOURCE_OWNER",
+      "paths": [
+        ".github/workflows/qps-canonicalization.yml",
+        "tests/test_qps_canonicalization_ci_dependency_contract.py"
+      ],
+      "may_mutate": true,
+      "lease_required": true
+    },
+    {
+      "id": "W163_CHART",
+      "repository": "GBOGEB/cryoplant-project",
+      "owner": "QPS_W163_SOURCE_OWNER",
+      "paths": [
+        "docs/qplant_wcs/myrrha_handover/hx-sizing.html",
+        "tests/test_qps_w163_hx_chart_namespace.py"
+      ],
+      "may_mutate": true,
+      "lease_required": true
+    }
+  ],
+  "required_evidence": [
+    "NATIVE_RUN_ATTEMPT",
+    "EXACT_SOURCE_HEAD",
+    "SCOPE_DENOMINATOR",
+    "FIRST_RED_OR_PASS",
+    "INDEPENDENT_ADMISSION_HOLD"
+  ],
+  "pulse_objectives": [
+    {
+      "pulse_index": 1,
+      "phase": "P1_RECONCILE_MEASURE",
+      "action": "Fetch fresh native runs, exact source head, first-red job/step and prior source-bound baseline; compare N and N+1"
+    },
+    {
+      "pulse_index": 2,
+      "phase": "P2_ENHANCE_PROVE",
+      "action": "Select highest-leverage source owner, lease disjoint paths, expand positive/negative tests; native CI + code coverage"
+    },
+    {
+      "pulse_index": 3,
+      "phase": "P3_STABILIZE_RECHECK",
+      "action": "Rerun exact-head native proofs and regression recensus, attach matched-scope statistics, GOGREEN/REX, SIPOC/DAG and handover"
+    }
+  ],
+  "major_blocker_policy": "STOP_AFFECTED_LINE_RETURN_VERIFIED_PARTIAL_AND_OWNER_REQUIRED",
+  "requested_return": [
+    "N_TO_N3_SNAPSHOT_TABLE",
+    "PLAN_ACTUAL_TEST_AND_COVERAGE",
+    "RUN_ATTEMPT_JOB_FIRST_RED",
+    "MATCHED_SOURCE_DELTA_OR_NULL",
+    "SIPOC_DAG_REX",
+    "PR_AND_MAIN_STATE",
+    "OPEN_DEBT_AND_REENTRY"
+  ]
+}
