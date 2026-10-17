@@ -22,6 +22,14 @@ class CloseoutTests(unittest.TestCase):
         mutate(inp)
         with self.assertRaisesRegex(ValueError,needle or "CP_CLOSE_FAIL_CLOSED"):
             cp_close.validate(inp)
+    def test_canonical_closeout_operator_alias_compatible(self):
+        profile=json.loads((Path(__file__).resolve().parents[1]/"CHAT_CLOSEOUT_PROFILE_V1.json").read_text())
+        ext=json.loads((Path(__file__).resolve().parent/"CP_CLOSE_GITHUB_v1.json").read_text())
+        self.assertEqual(profile["moniker"],"CP.CLOSEOUT")
+        self.assertEqual(ext["canonical_operator_moniker"],"CP.CLOSEOUT")
+        self.assertEqual(ext["implementation_alias"],"CP.CLOSE")
+        self.assertTrue(ext["compatibility"]["dual_profiles_not_second_ssot"])
+
     def test_current_intake_valid(self):
         cp_close.validate(self.base)
     def test_observed_main_exact_sha(self):
