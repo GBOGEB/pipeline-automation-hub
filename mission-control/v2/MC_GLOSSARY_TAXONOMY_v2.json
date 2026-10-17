@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.glossary_taxonomy.v2",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "as_of": "2026-09-27",
   "control_issue": "GBOGEB/pipeline-automation-hub#437",
   "authority_transfer": false,
@@ -127,6 +127,18 @@
     "GM": {
       "canonical_meaning": "GRAND_MISSION_IN_MISSION_CONTROL",
       "rule": "Mathematical geometric mean MUST use GEOMETRIC_MEAN or GM_STAT in new cross-domain machine identifiers."
+    },
+    "3W": {
+      "canonical_meaning": "THREE_WAVE_ADVANCEMENT",
+      "rule": "Use only for three outcome-level waves; a wave may comprise many pulses and cannot be normalized to N+3 pulse progress."
+    },
+    "3P-CONT": {
+      "canonical_meaning": "THREE_PULSE_CONTINUATION",
+      "rule": "Operational continuation count; distinct from 3PR/3PC/3P3 and 3P* selector, and never three guaranteed approvals or merges."
+    },
+    "N3-AUTO": {
+      "canonical_meaning": "GOVERNED_N_PLUS_THREE_AUTONOMOUS_CONTINUATION",
+      "rule": "Means no routine check-ins inside three bounded pulses; never overrides protected branches, owner leases, security, CI_PIPELINE or independent review."
     }
   },
   "coverage_maturity": {
@@ -181,7 +193,13 @@
     "PCA": "Principal Component Analysis, a measured multivariate advisory diagnostic requiring comparable observed rows.",
     "SIPOC": "Suppliers-Inputs-Process-Outputs-Customers flow model; governed feedback may seed a subsequent pulse.",
     "DAG": "Directed Acyclic Graph of declared execution/evidence dependencies.",
-    "KPI": "Key Performance Indicator with explicit owner, denominator, time window, units and evidence status."
+    "KPI": "Key Performance Indicator with explicit owner, denominator, time window, units and evidence status.",
+    "THREE_WAVE_ADVANCEMENT": "3W: three coordinated outcome-level waves, each potentially containing multiple pulses; not equivalent to three execution steps.",
+    "THREE_PULSE_CONTINUATION": "3P-CONT: exactly three consecutively evaluated bounded pulse transactions within a declared wave, N -> N+1 -> N+2 -> N+3; no skipped or backdated pulse.",
+    "GOVERNED_N3_AUTO": "N3-AUTO: run 3P-CONT without routine interaction, using explicit scope, exact source identity, approved actions and resource leases, independent gates and a stop-on-major-blocker policy. Does not grant blanket dispatch or merge authority.",
+    "PULSE_RECEIPT": "Immutable record of per-pulse input reference/digest, source head, actual action, outputs, test and metric denominators, elapsed time, blockers and next legal transition.",
+    "BLOCKER": "Source-bound reason a legal next action cannot proceed; major blockers stop the 3P-CONT chain and preserve partial results.",
+    "N3_START_ORDINAL": "N is an integer pulse ordinal in a declared wave, not the number of repos, workers, commits, tests, or a global mission version."
   },
   "non_equivalences": [
     "CREW_ASSIGNMENT_NE_RUNNER_EXECUTION",
@@ -192,7 +210,11 @@
     "MISSING_METRIC_NE_ZERO",
     "ZERO_STEP_NE_APPLICATION_FAIL",
     "MERGE_NE_PROOF",
-    "CONTROLLED_LIFECYCLE_NE_DMAIC_CONTROL_PHASE"
+    "CONTROLLED_LIFECYCLE_NE_DMAIC_CONTROL_PHASE",
+    "THREE_WAVES_NE_THREE_PULSES",
+    "PULSE_COMPLETION_NE_MERGE_ADMISSION",
+    "UNSUPERVISED_NE_UNGOVERNED",
+    "PREDICTED_METRIC_NE_OBSERVED_METRIC"
   ],
   "compatibility_aliases": {
     "COV-0": "MCOV-0",
@@ -210,7 +232,8 @@
     "wave": "owner/name::mission_id::W<label>",
     "pulse": "owner/name::mission_id::W<label>::PULSE-<id>",
     "run": "owner/name::RUN-<native_platform_run_id>",
-    "rule": "Never join, order, or aggregate cross-repository lineage on bare PR number, bare W###, or bare P1/P2/P3."
+    "rule": "Never join, order, or aggregate cross-repository lineage on bare PR number, bare W###, or bare P1/P2/P3.",
+    "continuation": "owner/name::mission_id::W<label>::N<start>..N<start+3>"
   },
   "conflict_resolution_order": [
     "EXACT_MACHINE_FIELD_SEMANTICS",
@@ -392,5 +415,81 @@
       "NO_UNBOUND_VALUE_AS_LIVE",
       "AUTHORITY_TRANSFER_FALSE"
     ]
+  },
+  "continuation_extension": {
+    "version": "1.0.0",
+    "as_of": "2026-10-17",
+    "control_issue": "GBOGEB/pipeline-automation-hub#604",
+    "scope": "MISSION_CONTROL_GOVERNED_N3_CONTINUATION",
+    "provenance": "ADDITIVE_EXTENSION_V2_BASELINE_PRESERVED",
+    "hierarchy": [
+      "MISSION",
+      "SPRINT",
+      "WAVE",
+      "PULSE",
+      "RUN"
+    ],
+    "monikers": {
+      "3W": {
+        "kind": "wave_sequence",
+        "count": 3,
+        "unit": "waves",
+        "actions": [
+          "define three measurable outcome waves",
+          "plan pulses/owners/dependencies per wave",
+          "execute until each wave's independent outcome gate"
+        ],
+        "does_not_mean": "three bounded pulse executions"
+      },
+      "3P-CONT": {
+        "kind": "pulse_sequence",
+        "count": 3,
+        "unit": "pulses",
+        "actions": [
+          "bind N and exact source/manifest",
+          "run three bounded, sequential decision/action/proof cycles",
+          "return N+3 summary with receipts or first major blocker"
+        ],
+        "does_not_mean": "3PR/3PC/3P3 or three automatic commits"
+      },
+      "N3-AUTO": {
+        "kind": "execution_policy",
+        "unit": "three_pulses",
+        "actions": [
+          "run without routine prompting under explicit owner/path and risk scope",
+          "stop on major blocker or unauthorized material change",
+          "return planned/actual, receipts, tests, coverage, queue impact and remaining HOLD"
+        ],
+        "does_not_mean": "unlimited background agent; unattended protected merge"
+      }
+    },
+    "receipt_contract": "mission-control/v2/MC_N3_CONTINUATION_CONTRACT_v1.json",
+    "prohibitions": [
+      "NO_GUARANTEED_COVERAGE_DELTA",
+      "NO_UNVERIFIED_WORKER_CAPACITY",
+      "NO_ASSUMED_NATIVE_CI_PASS",
+      "NO_ADMISSION_FROM_LOCAL_TESTS",
+      "NO_CROSS_REPO_AUTHORITY_TRANSFER",
+      "NO_REWRITE_OF_HISTORICAL_RECEIPTS"
+    ],
+    "safety": {
+      "stop_reasons": [
+        "BRANCH_DRIFT",
+        "SOURCE_IDENTITY_CONFLICT",
+        "OWNER_LEASE_CONFLICT",
+        "P0_P1_SECURITY",
+        "A10_OR_GOVERNANCE_FAIL",
+        "NATIVE_PROOF_FAILED",
+        "DEPENDENCY_INCOMPLETE",
+        "POLICY_VIOLATION",
+        "UNKNOWN_HIGH_RISK"
+      ],
+      "wait_not_stop": [
+        "TRANSIENT_QUEUE",
+        "AWAITING_NONCRITICAL_RECEIPT"
+      ],
+      "merge_admission": "INDEPENDENT",
+      "authority_transfer": false
+    }
   }
 }
