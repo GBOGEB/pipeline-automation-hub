@@ -113,7 +113,7 @@ jobs:
           assert r['checks_total']>=85
           assert r['hosted_http_verified'] is False
           assert r['exact_checkout_sha_confirmed'] is True
-          assert r['native_source_head_claim']==r['pr_event_sha_separate'] or len(r['pr_event_sha_separate'])==40
+          assert len(r['native_source_head_claim'])==40 and r['native_source_head_claim']!='UNVERIFIED_LOCAL'
           assert r['merge_admission']=='HOLD' and r['authority_transfer'] is False
           for item in r['screenshots']:
               assert (p/item['path']).stat().st_size>1000
