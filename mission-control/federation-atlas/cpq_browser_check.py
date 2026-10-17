@@ -18,6 +18,9 @@ def verify(page, *, kind):
         if page.locator('#queue tr').count()<9: raise AssertionError('CPQ003_MISSING_BD_ROWS')
         if page.locator('#gates').count()!=1: raise AssertionError('CPQ003_MISSING_GATE_LEDGER')
         if page.locator('svg#dag *').count()<2: raise AssertionError('CPQ003_UNRENDERED_DAG')
+        if page.locator('#sources tr').count()!=6: raise AssertionError('CPQ005_SOURCE_CENSUS_MISSING')
+        if 'UNKNOWN' not in page.locator('#sources').inner_text():
+            raise AssertionError('CPQ005_FALSE_FRESHNESS_WITHOUT_OBSERVED_CLOCK')
     else:
         if page.locator('#search').count()!=1 or page.locator('#status').count()!=1:
             raise AssertionError('CPQ003_MISSING_REVIEW_CONTROLS')
