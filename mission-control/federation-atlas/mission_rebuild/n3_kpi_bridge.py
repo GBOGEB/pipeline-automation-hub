@@ -214,6 +214,14 @@ button:focus-visible{outline:3px solid #a5e4f4}
 document.getElementById("detailToggle").addEventListener("click",function(){
 const e=document.getElementById("details");e.hidden=!e.hidden;
 this.setAttribute("aria-expanded",String(!e.hidden));});
+// Plotly creates the first chart before the second CSS grid card is parsed.
+// Resize after all sibling cards are mounted; otherwise the first plot may
+// retain the single-column width and overlap the adjacent plot.
+window.addEventListener("load",function(){
+document.querySelectorAll(".js-plotly-plot").forEach(function(el){
+  Plotly.Plots.resize(el);
+});
+});
 </script></body></html>"""
     summary = json.dumps({"scope": report["scope"], "producer_run_id": RUN,
                           "producer_sha": PRODUCER_SHA, "first_red": report["manifestations"],
