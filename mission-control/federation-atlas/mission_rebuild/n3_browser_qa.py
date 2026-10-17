@@ -72,6 +72,16 @@ def qualify(source, public, sha, screenshots):
             demand(page.title() == "Mission Control N3 · native scoped KPI and REX", "title")
             demand(page.locator("h1").count() == 1, "primary heading")
             demand(page.locator(".js-plotly-plot").count() == 2, "two Plotly inlays")
+            # Body-level overflow misses a plot painting into its adjacent card.
+            # Require each chart's actual Plotly canvas to fit its mounted card.
+            page.wait_for_function("""() => [...document.querySelectorAll('.js-plotly-plot')].length === 2 &&
+              [...document.querySelectorAll('.js-plotly-plot')].every(p =>
+                p._fullLayout && p._fullLayout.width <= p.getBoundingClientRect().width + 1)
+            """, timeout=15000)
+            widths = page.evaluate("""() => [...document.querySelectorAll('.js-plotly-plot')].map(p =>
+              ({plot_px: p._fullLayout.width, card_px: p.getBoundingClientRect().width}))""")
+            demand(all(w["plot_px"] <= w["card_px"] + 1 for w in widths),
+                   "Plotly sibling card overlap")
             demand(page.locator("table tbody tr").count() == 6, "six governed KPI rows")
             detail = page.locator("#details")
             demand(detail.is_hidden(), "details initially hidden")
@@ -91,6 +101,7 @@ def qualify(source, public, sha, screenshots):
             demand(shot.stat().st_size > 10000, "nonempty screenshot")
             screenshots_receipt.append({"viewport": "%dx%d" % (width, height),
                                         "plotly_cards": 2, "kpi_rows": 6,
+                                        "chart_geometry_px": widths,
                                         "body_overflow_px": max(0, overflow),
                                         "errors": errors,
                                         "png_bytes": shot.stat().st_size,
