@@ -46,7 +46,7 @@ jobs:
       - name: Run bounded N3 unit, adversarial and CLI tests
         run: |
           python -m coverage run --branch --source=mission-control/v2 -m unittest discover -s mission-control/v2 -p 'test_n3_*.py' -v
-          python -m coverage json --output=/tmp/n3-coverage.json
+          python -m coverage json -o /tmp/n3-coverage.json
       - name: Require focused statement+branch coverage >= 80
         run: |
           python - <<'PY'
