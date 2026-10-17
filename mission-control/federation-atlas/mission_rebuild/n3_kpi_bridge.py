@@ -198,7 +198,7 @@ th,td{border-bottom:1px solid #3f5669;text-align:left;padding:8px;font-size:12px
 .scroller{overflow-x:auto}a{color:#a5e4f4}code{overflow-wrap:anywhere}
 button{padding:9px;color:#eaf5fa;background:#25465f;border:1px solid #6290a4;border-radius:8px;cursor:pointer}
 button:focus-visible{outline:3px solid #a5e4f4}
-</style></head><body><main>
+</style></head><body><script>@@PLOTLY@@</script><main>
 <p>N3 / CODE PURPLE · DMAIC / MIP / gg_MATH source-compatible</p><h1>Native KPI and LDAB evidence boundary</h1>
 <div class="notice">Historical two-job cohort, not live fleet capability. M2/M3/PCA/BT/Six Sigma and independent review remain unqualified. No merge, QPS engineering acceptance or worker dispatch.</div>
 <p>Source <code>@@SOURCE@@</code> · Run <a href="https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39066797657">39066797657</a> attempt 1 · Presentation SHA <code>@@PRESENT@@</code></p>
@@ -210,7 +210,7 @@ button:focus-visible{outline:3px solid #a5e4f4}
 <button id="detailToggle" type="button" aria-controls="details" aria-expanded="false">View source and gate details</button>
 <pre id="details" hidden style="white-space:pre-wrap;overflow-wrap:anywhere">@@DETAILS@@</pre>
 <p><a href="n3-metrics.json">Typed receipt</a> · <a href="n3-manifest.json">SHA-256 manifest</a></p></section>
-</main><script>@@PLOTLY@@</script><script>
+</main><script>
 document.getElementById("detailToggle").addEventListener("click",function(){
 const e=document.getElementById("details");e.hidden=!e.hidden;
 this.setAttribute("aria-expanded",String(!e.hidden));});
