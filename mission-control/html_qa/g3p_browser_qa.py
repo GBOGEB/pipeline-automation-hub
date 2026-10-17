@@ -86,6 +86,32 @@ def viewport_overlaps(page):
     return bad
 
 
+
+def layout_geometry(page):
+    """Sibling collision and text-clipping diagnostics at the actual viewport."""
+    return page.evaluate("""() => {
+       const problems=[], groups=['.tiles > .tile','main > section','.qa-nav > a'];
+       for(const selector of groups){
+         const nodes=[...document.querySelectorAll(selector)].filter(n=>getComputedStyle(n).display!=='none');
+         for(let i=0;i<nodes.length;i++){
+           const a=nodes[i].getBoundingClientRect();
+           if(a.width<=0||a.height<=0)problems.push(selector+':COLLAPSED:'+i);
+           for(let j=i+1;j<nodes.length;j++){
+             const b=nodes[j].getBoundingClientRect();
+             const width=Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left));
+             const height=Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
+             if(width*height>9)problems.push(selector+':OVERLAP:'+i+'/'+j);
+           }
+         }
+       }
+       for(const el of document.querySelectorAll('h1,h2,.tile small,#details')){
+         if(el.scrollWidth>el.clientWidth+3)problems.push('TEXT_HORIZONTAL_CLIP:'+(el.id||el.tagName));
+         const box=el.getBoundingClientRect();
+         if(box.width<1||box.height<1)problems.push('TEXT_COLLAPSED:'+(el.id||el.tagName));
+       }
+       return problems;
+    }""")
+
 def inspect_links(page):
     links = page.locator("a")
     found = []
@@ -134,6 +160,10 @@ def exercise(page, label, w, h, output: Path, evidence: dict):
           "no body viewport horizontal overflow", checks)
     overlap = viewport_overlaps(page)
     check(not overlap, "toolbar elements do not overlap", checks)
+    geometry = layout_geometry(page)
+    check(not geometry, "panel/card/link geometry and text are not colliding or clipped", checks)
+    check(page.locator("button").count() == 1 and page.locator("select").count() == 2,
+          "all declared toolbar controls present", checks)
     if w <= 650:
         check(page.locator("header").evaluate("el=>getComputedStyle(el).position") == "static",
               "mobile header cannot obscure scrolled review content", checks)
