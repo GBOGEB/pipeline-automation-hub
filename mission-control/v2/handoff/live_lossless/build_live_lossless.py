@@ -164,14 +164,43 @@ def validate_delta(delta, observed, ledger):
     return True
 
 
+def validate_closeout_moniker(profile, operator, protocol):
+    """Validate the canonical CP.CLOSE producer and CP.CLOSEOUT compatibility alias.
+
+    No handover output may treat the optional reporting profile as a second
+    authoritative closeout producer. Historical display order is independent
+    of implementation ownership.
+    """
+    canonical_path = "mission-control/v2/handoff/closeout/CP_CLOSE_GITHUB_v1.json"
+    monikers = operator.get("monikers", {})
+    close = monikers.get("CP.CLOSE", {})
+    alias = monikers.get("CP.CLOSEOUT", {})
+    if not (protocol.get("schema") == "missioncontrol.cp_close.protocol.v1"
+            and protocol.get("name") == "CP.CLOSE"
+            and "CP.CLOSEOUT" in protocol.get("aliases", [])):
+        fail("canonical CP.CLOSE protocol mismatch")
+    if not (close.get("control") == canonical_path
+            and alias.get("canonical") == "CP.CLOSE"
+            and alias.get("no_second_schema_or_queue") is True):
+        fail("canonical CP.CLOSE alias ownership mismatch")
+    if not (profile.get("status") == "OPTIONAL_REPORTING_ANNEX_NOT_CANONICAL"
+            and profile.get("moniker") == "CP.CLOSEOUT_ALIAS_OF_CP.CLOSE"
+            and profile.get("control") == canonical_path
+            and profile.get("no_second_producer") is True):
+        fail("canonical moniker drift")
+    if profile.get("invocation") != close.get("invocation"):
+        fail("closeout invocation drift")
+    return True
+
+
 def build_data():
     state, stats, frozen, bd, provenance = validate_frozen()
     delta, delta_hash = read(HERE / "FOLLOWUP_DELTA_20261017.json")
     observed, observed_hash = read(HERE / "GITHUB_OBSERVED_20261017.json")
     profile, profile_hash = read(CLOSE / "CHAT_CLOSEOUT_PROFILE_V1.json")
     _operator, operator_hash = read(CLOSE / "CP_HANDOFF_RESUME_V1.json")
-    if profile.get("moniker") != "CP.CLOSEOUT":
-        fail("canonical moniker drift")
+    protocol, protocol_hash = read(CLOSE / "closeout/CP_CLOSE_GITHUB_v1.json")
+    validate_closeout_moniker(profile, _operator, protocol)
     live_profile, live_profile_hash = read(HERE / "LIVE_LOSSLESS_PROFILE_v1.json")
     if (live_profile.get("schema") != "missioncontrol.live_lossless.profile.v1"
             or live_profile.get("moniker") != "CP.LIVE"
@@ -209,7 +238,7 @@ def build_data():
     repo_url = "https://github.com/GBOGEB/pipeline-automation-hub/"
     frozen_path = "mission-control/v2/handoff/closeout/records/CP-G3P-HTMLQA-20261017/"
     monikers = [
-        {"name":"CP.CLOSEOUT", "scope":"CANONICAL_SESSION_OPERATOR",
+        {"name":"CP.CLOSEOUT", "scope":"COMPATIBILITY_ALIAS_TO_CP_CLOSE",
          "invocation": profile["invocation"],
          "details":"Capture the complete accessible sanitized intent, latest owned PR/CI and BD, verify and pursue governed main custody.",
          "url":repo_url+"blob/master/mission-control/v2/handoff/CHAT_CLOSEOUT_OPERATOR_V1.md"},
@@ -217,10 +246,10 @@ def build_data():
          "invocation":live_profile["display"],
          "details":live_profile["purpose"]+" Browser refresh is read-only, and no background ChatGPT worker is launched.",
          "url":repo_url+"blob/master/mission-control/v2/handoff/live_lossless/LIVE_LOSSLESS_PROFILE_v1.json"},
-        {"name":"CP.CLOSE", "scope":"EXPANDED_NINE_ARTIFACT_ALIAS",
+        {"name":"CP.CLOSE", "scope":"CANONICAL_NINE_ARTIFACT_SESSION_OPERATOR",
          "invocation":'CP.CLOSE(scope="CURRENT_SESSION",target="GBOGEB/pipeline-automation-hub:master",mode="GITHUB_FIRST_LOSSLESS")',
-         "details":"Expanded deterministic closeout implementation; compatibility document #642 is a pending draft and not yet canonical main.",
-         "url":repo_url+"pull/642"},
+         "details":"Canonical deterministic nine-artifact closeout; CP.CLOSEOUT is an alias, not a second producer.",
+         "url":repo_url+"blob/master/mission-control/v2/handoff/closeout/README.md"},
         {"name":"CP.HANDOFF", "scope":"LOSSLESS_TRANSPORT",
          "invocation":'CP.HANDOFF(scope="CURRENT_SESSION",mode="LOSSLESS_INTENT",artifact="ZIP+DROPIN+STATE+MANIFEST")',
          "details":"Source-bound frozen handover ZIP and state; only complete original bytes if accessible.",
@@ -275,6 +304,7 @@ def build_data():
             "closeout_profile_sha256": profile_hash,
             "live_profile_sha256": live_profile_hash,
             "handoff_contract_sha256": operator_hash,
+            "canonical_closeout_protocol_sha256": protocol_hash,
             "native_run": observed["native_run"],
             "local_browser_qa_is_not_hosted_proof": True
         }
