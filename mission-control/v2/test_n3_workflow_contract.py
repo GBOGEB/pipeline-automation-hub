@@ -54,33 +54,33 @@ class N11WorkflowContractTests(unittest.TestCase):
         self.assertIn("fail-fast: false", src)
         self.assertNotIn("python-version: ['3.10']", src)
 
-    def test_eight_module_denominators_and_negative_coverage_gates_preserved(self):
+    def test_nine_module_denominators_and_negative_coverage_gates_preserved(self):
         src = workflow()
         names = (
             "n3_continuation.py", "n3_integrity.py", "n3_metrics.py",
             "n3_dashboard.py", "n3_native_join.py", "n3_wave_federation.py",
-            "n3_workflow_census.py", "n3_g3a_assessment.py",
+            "n3_workflow_census.py", "n3_g3a_assessment.py", "n3_master_dags_bridge.py",
         )
         for name in names:
             with self.subTest(module=name):
                 self.assertEqual(src.count("'" + name + "'"), 1)
         for invariant in (
             "--branch --source=mission-control/v2",
-            "assert len(s)==8", "assert denominator>0",
+            "assert len(s)==9", "assert denominator>0",
             "assert pct>=80", "100*branches/branch_total>=80",
             "'HOLD'", "if-no-files-found: warn",
         ):
             with self.subTest(invariant=invariant):
                 self.assertIn(invariant, src)
 
-    def test_eight_module_reverse_pressure_preserves_source_and_floor(self):
+    def test_nine_module_reverse_pressure_preserves_source_and_floor(self):
         src = workflow()
         eight = (
             "n3_continuation.py", "n3_integrity.py", "n3_metrics.py",
             "n3_dashboard.py", "n3_native_join.py", "n3_wave_federation.py",
-            "n3_workflow_census.py", "n3_g3a_assessment.py",
+            "n3_workflow_census.py", "n3_g3a_assessment.py", "n3_master_dags_bridge.py",
         )
-        self.assertEqual(src.count("assert len(s)==8"), 1)
+        self.assertEqual(src.count("assert len(s)==9"), 1)
         self.assertNotIn("assert len(s)==6", src)
         for name in eight:
             with self.subTest(missing_module=name):
@@ -118,6 +118,28 @@ class N11WorkflowContractTests(unittest.TestCase):
                 check=False, timeout=15,
             )
             self.assertNotEqual(bad.returncode, 0)
+
+
+    def test_graph_manifest_triggers_both_pr_and_master_push(self):
+        src = workflow()
+        manifest = "'mission-control/federation-atlas/G3A_N13_N15_MASTER_DAGS_COMPAT_20261017.json'"
+        self.assertEqual(src.count("      - " + manifest), 2)
+        pr, rest = src.split("  push:\n", 1)
+        push, _ = rest.split("  workflow_dispatch:", 1)
+        self.assertIn(manifest, pr)
+        self.assertIn(manifest, push)
+        self.assertNotIn("permissions:\n  contents: write", src)
+
+    def test_graph_bridge_module_is_coverage_denominator_member(self):
+        src = workflow()
+        self.assertIn("'n3_master_dags_bridge.py'", src)
+        self.assertIn("assert len(s)==9", src)
+        self.assertNotIn("assert len(s)==8", src)
+        self.assertIn("assert pct>=80", src)
+        self.assertIn("100*branches/branch_total>=80", src)
+        broken = src.replace("'n3_master_dags_bridge.py'", "'unregistered.py'", 1)
+        self.assertNotIn("'n3_master_dags_bridge.py'", broken)
+
 
 
 if __name__ == "__main__":

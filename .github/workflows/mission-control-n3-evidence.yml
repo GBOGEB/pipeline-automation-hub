@@ -10,6 +10,7 @@ on:
       - 'mission-control/federation-atlas/G3A_N10_N12_FORECAST_20261017.json'
       - 'mission-control/federation-atlas/MC_G3A_PR620_NATIVE_CENSUS_20261017.json'
       - 'mission-control/federation-atlas/G3A_N10_N12_LOCAL_OBSERVATIONS_20261017.json'
+      - 'mission-control/federation-atlas/G3A_N13_N15_MASTER_DAGS_COMPAT_20261017.json'
       - '.github/workflows/mission-control-n3-evidence.yml'
   push:
     branches: [master]
@@ -17,6 +18,7 @@ on:
       - 'mission-control/v2/n3_*.py'
       - 'mission-control/v2/test_n3_*.py'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
+      - 'mission-control/federation-atlas/G3A_N13_N15_MASTER_DAGS_COMPAT_20261017.json'
       - '.github/workflows/mission-control-n3-evidence.yml'
   workflow_dispatch:
 
@@ -56,9 +58,9 @@ jobs:
           import json
           from pathlib import Path
           c=json.loads(Path('/tmp/n3-coverage.json').read_text())['files']
-          modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py','n3_native_join.py','n3_wave_federation.py','n3_workflow_census.py','n3_g3a_assessment.py')
+          modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py','n3_native_join.py','n3_wave_federation.py','n3_workflow_census.py','n3_g3a_assessment.py','n3_master_dags_bridge.py')
           s=[v['summary'] for k,v in c.items() if Path(k).name in modules]
-          assert len(s)==8, f'expected 8 exact source basenames, got {len(s)}'
+          assert len(s)==9, f'expected 9 exact source basenames, got {len(s)}'
           numerator=sum(x['covered_lines']+x['covered_branches'] for x in s)
           denominator=sum(x['num_statements']+x['num_branches'] for x in s)
           assert denominator>0
