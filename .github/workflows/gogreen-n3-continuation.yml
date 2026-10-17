@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
-      - name: Native 72 positive and adversarial N3 tests and focused branch/statement instrument
+      - name: Native 75 positive and adversarial N3 tests and focused branch/statement instrument
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           RUN_ID: ${{ github.run_id }}
@@ -50,8 +50,8 @@ jobs:
           from pathlib import Path
           out=Path(os.environ["RUNNER_TEMP"])/"gogreen-n3"
           log=(out/"native_tests.log").read_text()
-          if re.findall(r"Ran (\d+) tests? in",log)!=["72"] or "\nOK" not in log:
-              raise SystemExit("N3 68-test native regression denominator not met")
+          if re.findall(r"Ran (\d+) tests? in",log)!=["75"] or "\nOK" not in log:
+              raise SystemExit("N3 75-test native regression denominator not met")
           d=json.loads((out/"coverage.json").read_text())
           key="mission-control/gogreen/n3_continuation/protocol.py"
           if d["meta"]["version"]!="7.13.3" or d["meta"]["branch_coverage"] is not True:
@@ -68,11 +68,39 @@ jobs:
           vocab=json.loads(Path("mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json").read_text())
           if vocab["n3_continuation_extension"]["canonical_machine_tokens"]!={"three_pulses":"3PSTAR","three_waves":"3WSTAR","invoke":"N3_CONTINUE"}:
               raise SystemExit("N3 canonical vocabulary inconsistent")
+          # Matched source policy: no edited executable lines, source Git
+          # blob and coverage instrument/eligible denominators are identical.
+          import subprocess
+          baseline_path=Path("mission-control/gogreen/n3_continuation/receipts/N3_TEST_COVERAGE_N0_20261017.json")
+          previous=json.loads(baseline_path.read_text())
+          git_blob=subprocess.check_output(["git","hash-object",key],text=True).strip()
+          if (git_blob!=previous["production_git_blob"] or
+              previous["coverage_tool"]!="coverage==7.13.3" or
+              previous["production_path"]!=key):
+              raise SystemExit("N3 production Git blob/instrument not comparable")
+          if (lines[1],branches[1])!=(previous["eligible_statements"],previous["eligible_branches"]):
+              raise SystemExit("N3 coverage denominator drift; no matched uplift admissible")
+          if lines!=(241,241) or branches!=(40,40):
+              raise SystemExit(f"N3 remaining previously uncovered paths: {lines}, {branches}")
+          improvement={"schema":"codepurple.n3.same-blob-coverage-delta.v1",
+              "source_blob":git_blob,
+              "n0_native_run_id":previous["native_run_id"],
+              "n0_native_attempt":previous["attempt"],
+              "n0_tests":previous["tests_passed"],
+              "n1_tests":75,
+              "statement_baseline":[previous["covered_statements"],previous["eligible_statements"]],
+              "statement_current":list(lines),
+              "branch_baseline":[previous["covered_branches"],previous["eligible_branches"]],
+              "branch_current":list(branches),
+              "statement_gain_pp":round(100*(lines[0]-previous["covered_statements"])/lines[1],4),
+              "branch_gain_pp":round(100*(branches[0]-previous["covered_branches"])/branches[1],4),
+              "comparable":True,"whole_repo_coverage":None,"merge_authorized":False}
+          (out/"matched_coverage_delta.json").write_text(json.dumps(improvement,sort_keys=True,indent=2)+"\n")
           receipt={"schema":"codepurple.n3.native-qualification.v1",
               "exact_head_sha":os.environ["EXPECTED_SHA"],
               "native_run_id":int(os.environ["RUN_ID"]),
               "run_attempt":int(os.environ["RUN_ATTEMPT"]),
-              "native_tests_executed_passed":72,
+              "native_tests_executed_passed":75,
               "covered_statements":lines[0],"eligible_statements":lines[1],
               "covered_branches":branches[0],"eligible_branches":branches[1],
               "source_scope":key,"coverage_tool":"7.13.3",

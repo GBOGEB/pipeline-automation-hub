@@ -433,6 +433,54 @@ class N3Contract(unittest.TestCase):
            {"lane_id":"DEPENDENCY_CI","disposition":"VERIFIED_NO_CHANGE"}]
         self.badobservation()
 
+    def test_invalid_native_test_outcome_type_rejected(self):
+        # True is an int subclass; numbers must be exact native integer counts.
+        self.o["tests"]["passed"]=True
+        self.badobservation()
+
+    def test_nonmutating_work_item_is_accepted(self):
+        # Exercise a non-empty, legitimate no-commit work lane.
+        self.o["completed_work"]=[{"lane_id":"ROOT_CENSUS",
+                                   "disposition":"VERIFIED_NO_CHANGE"}]
+        new=p.advance(self.c,self.l,self.o)
+        self.assertEqual(new["checkpoints"][0]["completed_work"][0]["disposition"],
+                         "VERIFIED_NO_CHANGE")
+        self.assertFalse(new["merge_authorized"])
+
+    def test_cli_major_blocker_stops_before_following_pulse(self):
+        import contextlib
+        import io
+        import runpy
+        import sys
+        from unittest.mock import patch
+        # An authoritative blocker must stop iteration, not silently execute P2.
+        with tempfile.TemporaryDirectory() as tmp:
+            d=Path(tmp)
+            c=d/"charter.json"
+            c.write_bytes(p.encoded(self.c))
+            blocked=copy.deepcopy(self.o)
+            blocked["blockers"]=[{
+                "code":"OWNER_LEASE_CONFLICT",
+                "severity":"MAJOR",
+                "evidence_ref":"https://github.com/GBOGEB/cryoplant-project/issues/7"
+            }]
+            subsequent=observation(self.c,2,B,C,run=987654)
+            obs=d/"observations.json"
+            obs.write_bytes(p.encoded([blocked,subsequent]))
+            target=d/"receipt"
+            out=io.StringIO()
+            argv=["protocol.py","--charter",str(c),
+                  "--observations",str(obs),"--out",str(target)]
+            with patch.object(sys,"argv",argv),contextlib.redirect_stdout(out):
+                runpy.run_path(str(SOURCE),run_name="__main__")
+            receipt=json.loads((target/"return_receipt.json").read_text())
+            self.assertFalse(receipt["three_pulses_complete"])
+            self.assertEqual(receipt["verified_checkpoint_count"],0)
+            self.assertEqual(receipt["next_action"],"HOLD_MAJOR")
+            self.assertEqual(receipt["stop_reason"]["at"],"N+1")
+            self.assertEqual(len(json.loads((target/"ledger.json").read_text())["checkpoints"]),0)
+            self.assertFalse(json.loads(out.getvalue())["complete"])
+
     def test_immutable_historical_root_baseline(self):
         tax=json.loads((REPO/"mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json").read_text())
         self.assertEqual(tax["as_of"],"2026-09-27")
