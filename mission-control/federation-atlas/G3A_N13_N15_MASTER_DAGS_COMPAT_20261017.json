@@ -1,0 +1,22 @@
+{
+  "schema": "code-purple.g3a.master-dags-compat.v1",
+  "authority_transfer": false,
+  "merge_admission": "HOLD",
+  "accepted_n_delta": null,
+  "canonical_master_dags_path": null,
+  "hub_base_sha": "296c2dfa6c81849038b3d378d2e179dfdb4ca8a4",
+  "native_receipt": null,
+  "authenticated_crew_ids": null,
+  "root_closures": null,
+  "sources": [
+    {"repository": "GBOGEB/ABACUS", "commit_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1", "path": "triage/GRAPH_REGISTRY.yaml", "blob_sha": "eb6c2a69103272b18ea3b858f4c54c09603de19a", "graph_ids": ["DMAIC_WORK_GRAPH", "DOW_ANALYSIS_GRAPH", "AGENT_EXECUTION_GRAPH"]},
+    {"repository": "GBOGEB/CODEX", "commit_sha": "3a9fceda87087bc1f501f359fe2754e24c119575", "path": "triage/GRAPH_REGISTRY.yaml", "blob_sha": "a3dab35f88655e401a22395c073c76e2baf52381", "graph_ids": ["SEMANTIC_GOVERNANCE_GRAPH", "FEDERATION_BRIDGE_GRAPH", "AGENT_RUNTIME_GRAPH"]},
+    {"repository": "GBOGEB/pipeline-automation-hub", "commit_sha": "766fa6ad7b10d7545c0e48c22bb787718f7bb700", "path": "mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json", "blob_sha": "e591765b4c423d94253f09da486d2ff24bfd2f60", "graph_ids": ["CODE_PURPLE_BEAMS_DAG"]},
+    {"repository": "GBOGEB/cryoplant-project", "commit_sha": "999148f5dd4cfe4c73fa5164e132e4994bcefead", "path": "federation/acceptance_dashboard/dag.json", "blob_sha": "6460d587892f582b04551c20eabc6f580f2c9371", "graph_ids": ["QPS_ACCEPTANCE_DAG"]}
+  ],
+  "links": [
+    {"from": "GBOGEB/ABACUS::DMAIC_WORK_GRAPH", "to": "GBOGEB/pipeline-automation-hub::CODE_PURPLE_BEAMS_DAG", "kind": "FEDERATION_CANDIDATE", "binding": "DECLARED", "receipt": null},
+    {"from": "GBOGEB/CODEX::FEDERATION_BRIDGE_GRAPH", "to": "GBOGEB/pipeline-automation-hub::CODE_PURPLE_BEAMS_DAG", "kind": "FEDERATION_CANDIDATE", "binding": "DECLARED", "receipt": null},
+    {"from": "GBOGEB/cryoplant-project::QPS_ACCEPTANCE_DAG", "to": "GBOGEB/pipeline-automation-hub::CODE_PURPLE_BEAMS_DAG", "kind": "FEDERATION_CANDIDATE", "binding": "DECLARED", "receipt": null}
+  ]
+}
