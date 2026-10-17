@@ -284,5 +284,31 @@ class NativeGreenProof(unittest.TestCase):
         self.invalid()
 
 
+    def test_invalid_utc_date_reaches_datetime_exception_path(self):
+        with self.assertRaisesRegex(ValueError, "malformed source timestamp"):
+            m.timestamp("2026-02-30T10:00:00Z")
+
+    def test_actual_cli_main_branch_generates_digest_bound_outputs(self):
+        import contextlib
+        import io
+        import runpy
+        import sys
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as path:
+            dst = Path(path) / "out"
+            argv = ["runner_telemetry.py", "--input", str(INPUT),
+                    "--registry", str(REGISTRY), "--out", str(dst),
+                    "--source-sha", SHA]
+            stdout = io.StringIO()
+            with patch.object(sys, "argv", argv), contextlib.redirect_stdout(stdout):
+                runpy.run_path(str(BASE / "runner_telemetry.py"), run_name="__main__")
+            self.assertEqual(json.loads(stdout.getvalue())["selected_green_runs"], 24)
+            self.assertEqual(json.loads((dst / "metrics.json").read_text())
+                             ["top21_head_discovered"], 21)
+            manifest = json.loads((dst / "manifest.json").read_text())
+            for name, checksum in manifest["files"].items():
+                self.assertEqual(checksum, m.digest((dst / name).read_bytes()))
+
+
 if __name__ == "__main__":
     unittest.main()
