@@ -75,7 +75,7 @@ jobs:
           else
             python mission-control/federation-atlas/build_atlas.py --method "$SELECTED_METHOD" --stage "$SELECTED_STAGE" --out /tmp/code-purple-atlas
           fi
-      - name: CPQ N5: source-bound convergence + disjoint test-coverage receipt
+      - name: "CPQ N5: source-bound convergence + disjoint test-coverage receipt"
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         shell: bash
@@ -109,7 +109,7 @@ jobs:
           assert t['percent_branches_covered']>=90
           print('CPQ_N5_FOCUSED_COVERAGE=PASS; scope=cpq_convergence_n5_only')
           PY
-      - name: CPQ N5: native browser/SVG seeded-negative visual proof
+      - name: "CPQ N5: native browser/SVG seeded-negative visual proof"
         shell: bash
         run: |
           set -euo pipefail
