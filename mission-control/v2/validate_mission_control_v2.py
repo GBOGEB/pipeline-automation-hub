@@ -190,6 +190,27 @@ def validate_bundle(bundle):
     req(m["profiles"]["3PR"]["phases"] == ["REFRESH","PROBE","RANK"], "3PR drift")
     req(m["profiles"]["3PC"]["phases"] == ["PREPARE","PROVE","COMMIT"], "3PC drift")
     req(m["mip"]["admission"] == "CONDITIONAL", "MIP must remain conditional")
+    # G3P adds an execution envelope, never a competing 3PR/3PC method profile.
+    g3p = m.get("g3p_envelope", {})
+    req(g["reservations"].get("G3P", {}).get("canonical_meaning") ==
+        "GOVERNED_THREE_PULSE_WAVE", "G3P namespace/moniker drift")
+    req(g.get("core_terms", {}).get("G3P") is not None,
+        "G3P glossary term missing")
+    req(g3p.get("id") == "G3P" and
+        g3p.get("kind") == "EXECUTION_ENVELOPE_NOT_METHOD_PROFILE",
+        "G3P cannot shadow 3PR/3PC method profiles")
+    req([p.get("ordinal") for p in g3p.get("pulses", [])] == [1, 2, 3],
+        "G3P requires exactly three pulse ordinals")
+    req("G3P" not in m.get("profiles", {}),
+        "G3P incorrectly promoted to a method profile")
+    req("PULSE-" in g["identity_grammar"].get("g3p_pulses", ""),
+        "G3P pulse identity qualification missing")
+    req(c.get("g3p_optional_receipt", {}).get("pulse_count") == 3,
+        "G3P telemetry envelope requires three pulse slots")
+    req(c.get("g3p_optional_receipt", {}).get("authority_transfer") is False,
+        "G3P receipt cannot transfer authority")
+    req("HANDS_OFF_NE_BACKGROUND_EXECUTION" in g["non_equivalences"],
+        "G3P cannot imply asynchronous background execution")
     req(m["historical_compatibility"]["no_bulk_rewrite"] is True, "historical rewrite forbidden")
 
     required_dims = {"status","progress","health","coverage","metrics","crew","runners","lifecycle","todo"}
