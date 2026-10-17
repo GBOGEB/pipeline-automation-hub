@@ -1,0 +1,52 @@
+{
+  "schema": "gogreen.g7.native-matched-coverage-baseline.v1",
+  "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39023807895",
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "native_run_id": 39023807895,
+  "native_job_id": 117370723961,
+  "attempt": 1,
+  "tested_pr_head": "4e7122c25588bc44d4bcb588454b8f13e1314b6d",
+  "production_module": "mission-control/gogreen/success_graph/runner_telemetry.py",
+  "source_module_git_blob": "e7b54f64890489b495bfa43de7b1e5a43902f47a",
+  "tool": "coverage==7.13.3",
+  "branch_mode": true,
+  "test_selection": "51 G7 tests, module-only path, unittest native Python 3.12",
+  "executed": 51,
+  "passed": 51,
+  "failed": 0,
+  "before": {
+    "statement_covered": 213,
+    "statement_eligible": 226,
+    "branch_covered": 37,
+    "branch_eligible": 38
+  },
+  "missing_lines": [
+    48,
+    49,
+    419,
+    420,
+    421,
+    422,
+    423,
+    424,
+    425,
+    426,
+    427,
+    428,
+    435
+  ],
+  "missing_branches": [
+    [
+      434,
+      435
+    ]
+  ],
+  "artifact_sha256_manifest": "800913115fb4337939385cf6f0ee13993460d93f51482dea82be3da1be7be82e",
+  "baseline_class": "NATIVE_EXACT_HEAD_ARTIFACT_OBSERVED",
+  "matched_after_status": "PENDING_NATIVE",
+  "whole_repo_coverage": null,
+  "source_scope_change_allowed": false,
+  "formal_closure_credit": 0,
+  "authority_transfer": false,
+  "merge_authorized": false
+}
