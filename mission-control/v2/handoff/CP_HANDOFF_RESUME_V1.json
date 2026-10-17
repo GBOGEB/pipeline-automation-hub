@@ -122,5 +122,32 @@
     "success": "VERIFIED_BUNDLE_READY_FOR_REFRESH_NOT_MAIN_ADMISSION",
     "global_blocker": "STOP_AND_PRESERVE_FUTURE_PULSE_SLOTS_NOT_RUN",
     "missing_bundle": "CANNOT_RESUME_SOURCE_BOUND_PRIOR_SESSION_WITHOUT_BYTES"
+  },
+  "transport_profiles": {
+    "GITHUB_FIRST_MINIMAL": {
+      "status": "ADDITIVE_TRANSPORT_ONLY",
+      "profile_path": "mission-control/v2/handoff/GITHUB_FIRST_PROFILE_V1.json",
+      "select_by": "CP.HANDOFF(mode=\"GITHUB_FIRST_MINIMAL\") or CP.RESUME(source=\"GITHUB_FIRST\")",
+      "purpose": "MINIMAL_DECISION_CRITICAL_CROSS_CHAT_CONTINUATION",
+      "transport_order": [
+        "CANONICAL_GITHUB_CODE_AND_CONTROL",
+        "EXACT_SHA_NATIVE_CI_AND_PR_EVIDENCE",
+        "APPEND_ONLY_GITHUB_CHECKPOINT_AND_DROPIN",
+        "NON_GITHUB_ORIGINAL_BYTES_IF_ESSENTIAL"
+      ],
+      "required_current_outputs": [
+        "GITHUB_SOURCE_POINTERS",
+        "CURRENT_VERSUS_HISTORICAL_DELTA",
+        "COPY_READY_RESUME_TEXT",
+        "UNKNOWN_AND_HOLD_DISCLOSURE"
+      ],
+      "archive_policy": "NO_ARCHIVE_WHEN_DECISION_CRITICAL_EVIDENCE_IS_GITHUB_ACCESSIBLE;USE_VERIFIED_SHA256_ARCHIVE_ONLY_FOR_ESSENTIAL_AVAILABLE_NON_GITHUB_BYTES",
+      "preserve_legacy_default": true,
+      "inherited_nonpromotion_and_authority_guards": true,
+      "never_claim_live_evidence_from_frozen_checkpoint": true,
+      "not_executable_api": true,
+      "not_background_scheduler": true,
+      "no_duplicate_ssot": true
+    }
   }
 }
