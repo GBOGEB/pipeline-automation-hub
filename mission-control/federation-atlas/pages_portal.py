@@ -159,12 +159,49 @@ def build(atlas,out,sha):
             dst.parent.mkdir(exist_ok=True, parents=True)
             shutil.copyfile(src, dst)
             hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
+    # N3 consumes a scoped historical native run; Pages only mirrors verified bytes.
+    n3_root = atlas / "mission-rebuild"
+    n3_names = ("n3-metrics.html", "n3-metrics.json", "n3-manifest.json")
+    n3_present = [name for name in n3_names if (n3_root / name).is_file()]
+    if n3_present and len(n3_present) != len(n3_names):
+        raise ValueError("partial N3 source-bound KPI output")
+    if len(n3_present) == len(n3_names):
+        n3_receipt = json.loads((n3_root / "n3-manifest.json").read_text(encoding="utf-8"))
+        n3_state = json.loads((n3_root / "n3-metrics.json").read_text(encoding="utf-8"))
+        if not (n3_receipt.get("schema") == "missioncontrol.n3.readonly_publisher_manifest.v1"
+                and n3_receipt.get("presentation_sha") == sha
+                and n3_receipt.get("producer_sha") == n3_state.get("producer_sha")
+                and n3_receipt.get("publisher") == "EXISTING_METHOD_ATLAS_PAGES_ONLY"
+                and n3_receipt.get("merge_admission") == "HOLD"
+                and n3_receipt.get("authority_transfer") is False
+                and n3_state.get("schema") == "missioncontrol.n3.scoped_native_kpi.v1"
+                and n3_state.get("presentation_sha") == sha
+                and n3_state.get("source_repo") == "GBOGEB/pipeline-automation-hub"
+                and n3_state.get("authority", {}).get("merge_admission") == "HOLD"
+                and n3_state.get("authority", {}).get("remote_dispatch") is False
+                and n3_state.get("fleet_runner_capacity") is None
+                and n3_state.get("owner_required_status_gate", {}).get("owner_installed") is None):
+            raise ValueError("unsafe N3 KPI/REX publication promotion")
+        if set(n3_receipt.get("member_sha256", {})) != {
+                "n3-metrics.html", "n3-metrics.json"}:
+            raise ValueError("N3 manifest member population drift")
+        for name in n3_names:
+            src = n3_root / name
+            if name != "n3-manifest.json":
+                if hashlib.sha256(src.read_bytes()).hexdigest() != n3_receipt["member_sha256"].get(name):
+                    raise ValueError("N3 source member digest mismatch: " + name)
+            dst = out / "mission-rebuild" / name
+            dst.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copyfile(src, dst)
+            hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
     links=[("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
     if (out / "mission-rebuild" / "index.html").is_file():
         cards += '<a class="card" href="mission-rebuild/index.html">MISSION CONTROL · Repository and DAG explorer ↗</a>'
     if (out / "mission-rebuild" / "evidence.html").is_file():
         cards += '<a class="card" href="mission-rebuild/evidence.html">MissionControl W2 · live queue / gg_MATH Plotly evidence ↗</a>'
+    if (out / "mission-rebuild" / "n3-metrics.html").is_file():
+        cards += '<a class="card" href="mission-rebuild/n3-metrics.html">N3 · Native job queue / KPI / LDAB proof boundary ↗</a>'
     # Source-owned gg_MATH Plotly proof is a navigational link, not a deployed
     # Pages asset or a second KPI producer. Fail closed on unsafe bridge claims.
     math_bridge=Path(__file__).resolve().parent/"GG_MATH_CONVERGENCE_BRIDGE_v1.json"
