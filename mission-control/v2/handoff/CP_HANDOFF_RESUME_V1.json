@@ -78,6 +78,67 @@
       "kind": "CHAT_INSTRUCTION_MACRO",
       "meaning": "Execute one governed wave with three sequential feedback pulses using canonical G3P envelope; do not confuse with three waves/runners/phases.",
       "authority": "Mission Control v2 G3P proposal PR #607"
+    },
+    "CP.CLOSEOUT": {
+      "display": "CP.CLOSEOUT()",
+      "alias": "CP.CLOSEOUT!",
+      "kind": "CHAT_INSTRUCTION_MACRO",
+      "meaning": "Conclude the accessible chat, reconcile completed work and material blockers, generate a privacy-minimal GitHub-first lossless-intent checkpoint with source-scoped session statistics, and request governed main publication through a PR.",
+      "invocation": "CP.CLOSEOUT(scope=\"CURRENT_CHAT\",mode=\"GITHUB_FIRST\",depth=\"LOSSLESS_INTENT\",metrics=\"FULL_AVAILABLE\",target=\"GOVERNED_MAIN\")",
+      "input": {
+        "scope": "CURRENT_CHAT",
+        "mode": "GITHUB_FIRST",
+        "depth": "LOSSLESS_INTENT",
+        "metrics": "FULL_AVAILABLE",
+        "target": "GOVERNED_MAIN"
+      },
+      "operator": "mission-control/v2/handoff/CHAT_CLOSEOUT_OPERATOR_V1.md",
+      "profile": "mission-control/v2/handoff/CHAT_CLOSEOUT_PROFILE_V1.json",
+      "compatible_with": [
+        "CP.HANDOFF",
+        "CP.RESUME",
+        "G3P.EXECUTE"
+      ],
+      "required_sections": [
+        "NARRATIVE_GOLDEN_THREAD",
+        "INTENT_DECISION_CHRONOLOGY",
+        "SOURCE_GITHUB_CUSTODY",
+        "DELIVERED_VS_PLANNED",
+        "PROMPT_COUNT_BASIS_AND_UNKNOWN",
+        "SESSION_STATISTICS_WITH_PROVENANCE",
+        "KPI_INSIGHTS_WITH_DENOMINATORS",
+        "TODO_AND_DEDUPLICATED_BD_QUEUE",
+        "NEXT_OWNER_ACTION_AND_DROPIN",
+        "MAIN_PUBLISH_EVIDENCE"
+      ],
+      "approval_stages": [
+        "EVIDENCE_CAPTURED",
+        "COMMITTED_TO_PR",
+        "NATIVE_VERIFIED",
+        "MERGED_TO_DEFAULT",
+        "EXACT_MAIN_VERIFIED"
+      ],
+      "must_do": [
+        "REUSE_CANONICAL_REPO_AND_EXISTING_PR_OWNER",
+        "DO_SAFE_REMAINING_ACTIONS_OR_MARK_BLOCKED",
+        "COUNT_ONLY_ACTUALLY_AVAILABLE_MESSAGES",
+        "KEEP_FULL_CHAT_COUNTS_UNKNOWN_WITHOUT_COMPLETE_VERIFIED_EXPORT",
+        "EXCLUDE_RAW_TRANSCRIPTS_AND_SECRETS_FROM_GITHUB_BY_DEFAULT",
+        "PRESERVE_EXISTING_CHECKPOINTS_APPEND_ONLY",
+        "EXPOSE_PR_VS_MAIN_ADMISSION_SEPARATELY",
+        "CREATE_COPY_READY_CP_RESUME_DROPIN"
+      ],
+      "must_not": [
+        "ASSUME_ACCESS_TO_UNEXPORTED_TRANSCRIPT",
+        "INVENT_PROMPT_COUNTS_TOKENS_OR_RUNTIME",
+        "CLAIM_PR_COMMIT_EQUALS_MAIN_MERGE",
+        "WAIVE_CI_SECURITY_REVIEW_OR_OWNER_DECISIONS",
+        "DELETE_OR_ARCHIVE_CHAT_AUTOMATICALLY",
+        "CREATE_SHADOW_SSOT"
+      ],
+      "not_executable_api": true,
+      "not_background_scheduler": true,
+      "does_not_delete_chat": true
     }
   },
   "file_integrity": {
@@ -149,5 +210,11 @@
       "not_background_scheduler": true,
       "no_duplicate_ssot": true
     }
+  },
+  "closeout_profile": {
+    "path": "mission-control/v2/handoff/CHAT_CLOSEOUT_PROFILE_V1.json",
+    "additive_to_v1": true,
+    "legacy_handoff_and_resume_unchanged": true,
+    "requires_independent_source_refresh": true
   }
 }
