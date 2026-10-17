@@ -1,0 +1,327 @@
+{
+  "schema": "missioncontrol.mcex.side_mission_comparison.v1",
+  "mission_id": "MCEX-W1",
+  "as_of": "2026-10-17",
+  "readback_class": "NONATOMIC_GITHUB_SOURCE_AND_RUN_SNAPSHOT",
+  "source_owner": "GBOGEB/pipeline-automation-hub",
+  "frozen_master_sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+  "codex_owner_main_observed_sha": "493145eea784d39f57ea64a730af9f3e85586714",
+  "owner_scope": "MUTATION_GATE_DESIGN_FEDERATION_READONLY_SIMULATION_ONLY",
+  "policy": {
+    "merge_admission": "HOLD",
+    "authority_transfer": false,
+    "security_waiver": false,
+    "enabled_mutation_transports": [],
+    "remote_mutation_enabled": false,
+    "security_review_independent": true,
+    "owner_review_independent": true,
+    "native_ci_independent": true,
+    "independent_human_review_required": true,
+    "real_owner_approval_observed": false,
+    "real_native_green_observed": false,
+    "real_remote_dispatch_observed": false,
+    "qps_engineering_acceptance": false,
+    "public_pages_proof": false
+  },
+  "design": {
+    "type": "FIXED_MATCHED_2x2_FACTORIAL",
+    "arm_count": 4,
+    "scenario_count_per_arm": 22,
+    "positive_synthetic_count": 2,
+    "negative_synthetic_count": 20,
+    "pulse_taxonomy": "G3P_P1_DESIGN_P2_SOURCE_BRANCHES_P3_NATIVE_COMPARE",
+    "shared_source_verification": "EXACT_SAME_PROBE_BLOB_AND_TEST_BLOB_FROZEN_BASE_SHA",
+    "branch_relationship": "SIBLINGS_ONLY_NO_ARM_BRANCH_ANCESTRY",
+    "scale_waves": "BOUNDED_TO_FOUR_REPO_LOCAL_PR_BRANCHES_NO_REMOTE_WRITES",
+    "real_source_trial": "GH_PR_SOURCE_WRITE_ONLY_TO_NEW_HUB_BRANCH_BY_OWNER_CONNECTED_TOOL",
+    "native_job_measured": false,
+    "actual_durability_and_cross_job_replay_not_measured": true,
+    "independent_verification_required": [
+      "EXACT_HEAD_TERMINAL_RUN",
+      "RUN_JOB_ATTEMPT",
+      "RECEIPT_DIGEST",
+      "BRANCH_COVERAGE_SCOPE_IF_AVAILABLE",
+      "HUMAN_REVIEW",
+      "SECURITY",
+      "OWNER_APPROVAL"
+    ],
+    "forecasts_dont_grant_admission": true
+  },
+  "arms": [
+    {
+      "arm": "00",
+      "pr_number": 674,
+      "pr_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/674",
+      "branch": "exp/mcex-w1-00-control-20261017",
+      "head_sha": "03c0a40c3c2a7af6717e3748f9b9c32e28cf9c0f",
+      "factors": {
+        "simulate_local_shadow": false,
+        "stage_remote_readonly_return": false
+      },
+      "guard_program_blob_sha": "4a56e81fedb73cc3027a0bcc9a41312cc2804291",
+      "test_program_blob_sha": "8c4d189d1ac24a8869ca543f83c5f88720f847c8",
+      "forecast_only": {
+        "synthetic_cases": 22,
+        "nominal_cases": 2,
+        "adversarial_cases": 20,
+        "expected_guard_rejections": 20,
+        "predicted_stage_plans": 2,
+        "predicted_shadow_plans": 0,
+        "predicted_remote_return_plans": 0,
+        "predicted_total_action_offers": 2
+      },
+      "native_observation": {
+        "run_id": 39061935570,
+        "job_id": 117481501696,
+        "attempt": 1,
+        "head_sha": "03c0a40c3c2a7af6717e3748f9b9c32e28cf9c0f",
+        "status": "queued",
+        "conclusion": null,
+        "artifact_id": null,
+        "artifact_sha256": null,
+        "qualified_test_count": null,
+        "measured_rejection_count": null,
+        "measured_false_green_count": null,
+        "measured_branch_coverage": null
+      },
+      "label": "SOURCE_PREDICTION_ONLY_NATIVE_TERMINAL_PENDING",
+      "real_mutation_performed": false,
+      "real_dispatch_performed": false
+    },
+    {
+      "arm": "10",
+      "pr_number": 675,
+      "pr_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/675",
+      "branch": "exp/mcex-w1-10-shadow-20261017",
+      "head_sha": "3198479f6f332812902b2669ecca5a3aa0cd32bb",
+      "factors": {
+        "simulate_local_shadow": true,
+        "stage_remote_readonly_return": false
+      },
+      "guard_program_blob_sha": "4a56e81fedb73cc3027a0bcc9a41312cc2804291",
+      "test_program_blob_sha": "8c4d189d1ac24a8869ca543f83c5f88720f847c8",
+      "forecast_only": {
+        "synthetic_cases": 22,
+        "nominal_cases": 2,
+        "adversarial_cases": 20,
+        "expected_guard_rejections": 20,
+        "predicted_stage_plans": 2,
+        "predicted_shadow_plans": 2,
+        "predicted_remote_return_plans": 0,
+        "predicted_total_action_offers": 4
+      },
+      "native_observation": {
+        "run_id": 39061939734,
+        "job_id": 117481513801,
+        "attempt": 1,
+        "head_sha": "3198479f6f332812902b2669ecca5a3aa0cd32bb",
+        "status": "queued",
+        "conclusion": null,
+        "artifact_id": null,
+        "artifact_sha256": null,
+        "qualified_test_count": null,
+        "measured_rejection_count": null,
+        "measured_false_green_count": null,
+        "measured_branch_coverage": null
+      },
+      "label": "SOURCE_PREDICTION_ONLY_NATIVE_TERMINAL_PENDING",
+      "real_mutation_performed": false,
+      "real_dispatch_performed": false
+    },
+    {
+      "arm": "01",
+      "pr_number": 676,
+      "pr_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/676",
+      "branch": "exp/mcex-w1-01-remote-return-20261017",
+      "head_sha": "a5d86c980f746899b7bacbb1f5cb47fc194d45ab",
+      "factors": {
+        "simulate_local_shadow": false,
+        "stage_remote_readonly_return": true
+      },
+      "guard_program_blob_sha": "4a56e81fedb73cc3027a0bcc9a41312cc2804291",
+      "test_program_blob_sha": "8c4d189d1ac24a8869ca543f83c5f88720f847c8",
+      "forecast_only": {
+        "synthetic_cases": 22,
+        "nominal_cases": 2,
+        "adversarial_cases": 20,
+        "expected_guard_rejections": 20,
+        "predicted_stage_plans": 2,
+        "predicted_shadow_plans": 0,
+        "predicted_remote_return_plans": 2,
+        "predicted_total_action_offers": 4
+      },
+      "native_observation": {
+        "run_id": 39061942686,
+        "job_id": 117481523280,
+        "attempt": 1,
+        "head_sha": "a5d86c980f746899b7bacbb1f5cb47fc194d45ab",
+        "status": "queued",
+        "conclusion": null,
+        "artifact_id": null,
+        "artifact_sha256": null,
+        "qualified_test_count": null,
+        "measured_rejection_count": null,
+        "measured_false_green_count": null,
+        "measured_branch_coverage": null
+      },
+      "label": "SOURCE_PREDICTION_ONLY_NATIVE_TERMINAL_PENDING",
+      "real_mutation_performed": false,
+      "real_dispatch_performed": false
+    },
+    {
+      "arm": "11",
+      "pr_number": 677,
+      "pr_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/677",
+      "branch": "exp/mcex-w1-11-combined-20261017",
+      "head_sha": "a6a84b50768acb540115e3ff59c37eb71f157e4c",
+      "factors": {
+        "simulate_local_shadow": true,
+        "stage_remote_readonly_return": true
+      },
+      "guard_program_blob_sha": "4a56e81fedb73cc3027a0bcc9a41312cc2804291",
+      "test_program_blob_sha": "8c4d189d1ac24a8869ca543f83c5f88720f847c8",
+      "forecast_only": {
+        "synthetic_cases": 22,
+        "nominal_cases": 2,
+        "adversarial_cases": 20,
+        "expected_guard_rejections": 20,
+        "predicted_stage_plans": 2,
+        "predicted_shadow_plans": 2,
+        "predicted_remote_return_plans": 2,
+        "predicted_total_action_offers": 6
+      },
+      "native_observation": {
+        "run_id": 39061946675,
+        "job_id": 117481534910,
+        "attempt": 1,
+        "head_sha": "a6a84b50768acb540115e3ff59c37eb71f157e4c",
+        "status": "queued",
+        "conclusion": null,
+        "artifact_id": null,
+        "artifact_sha256": null,
+        "qualified_test_count": null,
+        "measured_rejection_count": null,
+        "measured_false_green_count": null,
+        "measured_branch_coverage": null
+      },
+      "label": "SOURCE_PREDICTION_ONLY_NATIVE_TERMINAL_PENDING",
+      "real_mutation_performed": false,
+      "real_dispatch_performed": false
+    }
+  ],
+  "forecast_factorial_effects": {
+    "source": "DESIGN_ARITHMETIC_NOT_MEASURED_RUN",
+    "planned_offers": {
+      "10": 4,
+      "11": 6,
+      "00": 2,
+      "01": 4
+    },
+    "local_shadow_main_effect_offers": 2,
+    "remote_return_main_effect_offers": 2,
+    "interaction_offers": 0,
+    "practical_significance": "PLANNED_OFFERS_ONLY_NOT_PRODUCTIVITY_SPEED_SECURITY_OR_PROOF"
+  },
+  "observed": {
+    "native_arm_count_terminal": 0,
+    "native_arm_count_pass": 0,
+    "compared_qualified_arms": 0,
+    "executed_remote_mutations": null,
+    "completed_accepted_governance_states": null,
+    "finding": "NOT_YET_MEASURED; 4 QUEUED at readback"
+  },
+  "next_decision": "HOLD_UNTIL_ALL_FOUR_NATIVE_RECEIPTS_AND_OWNER_REVIEW",
+  "proposed_promotion": "Only source-bound comparison and selected minimal safe policy MAY be proposed for main AFTER independent security/CI/review; actual CODEX apply activation separate governance.",
+  "queue_amplification_readback": {
+    "status": "LOWER_BOUND_NONATOMIC_WORKFLOW_RUN_CENSUS",
+    "readback_date": "2026-10-17",
+    "across_four_candidate_pr_heads": 4,
+    "observed_workflow_runs_minimum": 20,
+    "focused_new_workflow_runs_queued": 4,
+    "existing_crosscutting_workflow_runs_queued_minimum": 16,
+    "observed_per_pr_workflow_names": [
+      "MCEX-W1 xx stage-only factorial branch",
+      "Zero-Test Gate Guard",
+      "First-Pass Closure Proof",
+      "QPS TRIAGE ULTRA Federation Control",
+      "W3-16 M03 W0 Recon"
+    ],
+    "measured_running_jobs": null,
+    "queue_latency_p95_seconds": null,
+    "execution_p95_seconds": null,
+    "caution": "Not 20 active workers; the connector lists first-page PR-triggered runs, so counts are lower bound. Broad status/proof workflows may be mandatory governance checks; don't classify them as waste."
+  },
+  "isolated_preflight": {
+    "state": "ISOLATED_TEST_SHIM_PASSED_NOT_NATIVE",
+    "method": "GitHub fetched probe.mjs identical blob; strip ESM syntax and inject deterministic noncryptographic test hash in restricted JS runtime. Execute suite(profile) for each exact PR-head arm profile; compare source-defined decisions to expected classifications. No OS, network, real SHA-256, GitHub account or real review involved.",
+    "reason_for_hash_substitution": "The restricted JS sandbox cannot import Node's node:crypto; this preflight probes branch logic only, not digest security or Node runtime correctness.",
+    "observed_preflight_cases": 88,
+    "negative_control_cases": 80,
+    "observed_negative_controls_held": 80,
+    "classification_mismatches": 0,
+    "observed_nominal_fixture_plans": 8,
+    "per_arm": [
+      {
+        "arm": "00",
+        "source": "V8_ISOLATED_EXECUTION_OF_COMMITTED_DECISION_LOGIC_WITH_SUBSTITUTE_NONCRYPTO_TEST_HASH",
+        "cases": 22,
+        "negative_cases": 20,
+        "negative_cases_held": 20,
+        "classification_mismatches": 0,
+        "simulated_local_shadow_offers": 0,
+        "simulated_remote_return_offers": 0,
+        "actual_repository_writes": 0,
+        "native_node22_result": null,
+        "authenticated_principal_verified": false,
+        "security_review_verified": false
+      },
+      {
+        "arm": "10",
+        "source": "V8_ISOLATED_EXECUTION_OF_COMMITTED_DECISION_LOGIC_WITH_SUBSTITUTE_NONCRYPTO_TEST_HASH",
+        "cases": 22,
+        "negative_cases": 20,
+        "negative_cases_held": 20,
+        "classification_mismatches": 0,
+        "simulated_local_shadow_offers": 2,
+        "simulated_remote_return_offers": 0,
+        "actual_repository_writes": 0,
+        "native_node22_result": null,
+        "authenticated_principal_verified": false,
+        "security_review_verified": false
+      },
+      {
+        "arm": "01",
+        "source": "V8_ISOLATED_EXECUTION_OF_COMMITTED_DECISION_LOGIC_WITH_SUBSTITUTE_NONCRYPTO_TEST_HASH",
+        "cases": 22,
+        "negative_cases": 20,
+        "negative_cases_held": 20,
+        "classification_mismatches": 0,
+        "simulated_local_shadow_offers": 0,
+        "simulated_remote_return_offers": 2,
+        "actual_repository_writes": 0,
+        "native_node22_result": null,
+        "authenticated_principal_verified": false,
+        "security_review_verified": false
+      },
+      {
+        "arm": "11",
+        "source": "V8_ISOLATED_EXECUTION_OF_COMMITTED_DECISION_LOGIC_WITH_SUBSTITUTE_NONCRYPTO_TEST_HASH",
+        "cases": 22,
+        "negative_cases": 20,
+        "negative_cases_held": 20,
+        "classification_mismatches": 0,
+        "simulated_local_shadow_offers": 2,
+        "simulated_remote_return_offers": 2,
+        "actual_repository_writes": 0,
+        "native_node22_result": null,
+        "authenticated_principal_verified": false,
+        "security_review_verified": false
+      }
+    ],
+    "security_assurance_gap": "Fixtures contain self-described SERVER_FIXTURE_NOT_REAL_AUTH, not an authenticated GitHub principal. Passing a fixture must never be treated as server-side identity, approval, security evidence, or production dispatch authorization.",
+    "qualified_as_native": false,
+    "qualified_as_security": false,
+    "qualified_as_cross_repo_mutation": false,
+    "acceptance": "HOLD"
+  }
+}
