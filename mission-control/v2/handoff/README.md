@@ -96,3 +96,19 @@ work asynchronously merely because the command was invoked.
 Do not move this protocol to another global SSOT. Later `V2` changes must
 be additive, preserve old invocation meaning and publish a backward
 compatibility receipt.
+
+## Additive GitHub-first chat closeout (CP.CLOSEOUT)
+
+The default legacy ZIP invocation above remains unchanged. When the user asks to *finish or retire the present conversation*, use the opt-in GitHub-first **`CP.CLOSEOUT()`** instruction macro (alias `CP.CLOSEOUT!`):
+
+```text
+CP.CLOSEOUT(scope="CURRENT_CHAT",mode="GITHUB_FIRST",depth="LOSSLESS_INTENT",metrics="FULL_AVAILABLE",target="GOVERNED_MAIN")
+```
+
+This adds four things to `CP.HANDOFF`: (1) an intent/decision/achievement narrative, (2) explicit statistics for accessible chat-source populations with full totals UNKNOWN without an authenticated complete export, (3) deduplicated owner-controlled TODO/BD/DoV links, and (4) GitHub custody steps from PR commit through authorized native verification, merge and exact-main proof. It does *not* grant GitHub merge rights or actually delete, archive or export a ChatGPT conversation.
+
+Reusable profile: [CHAT_CLOSEOUT_PROFILE_V1.json](CHAT_CLOSEOUT_PROFILE_V1.json); full procedure and data standards: [CHAT_CLOSEOUT_OPERATOR_V1.md](CHAT_CLOSEOUT_OPERATOR_V1.md); read-only structural/excerpt validation: [validate_chat_closeout.py](validate_chat_closeout.py) and [test_chat_closeout.py](test_chat_closeout.py). A per-chat report is a projection linked to the actual source PR; it does not replace engineering or security SSOT.
+
+**Example closeout:** [CP-HUB-HANDOFF-20261017/CLOSEOUT.md](chat-closeouts/CP-HUB-HANDOFF-20261017/CLOSEOUT.md), [machine receipt](chat-closeouts/CP-HUB-HANDOFF-20261017/RECEIPT.json), [drop-in](chat-closeouts/CP-HUB-HANDOFF-20261017/DROPIN.md). This example has a **partial visible-message population, not a complete transcript**. Publish only non-sensitive summaries; original transcripts remain private unless separately authorized.
+
+The receiver uses `CP.RESUME(source="GITHUB_FIRST")` and refreshes source/CI before assigning any new acceptance credit. `target=GOVERNED_MAIN` denotes an objective, never permission to bypass independent review or required checks.
