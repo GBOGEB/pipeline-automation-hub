@@ -49,6 +49,39 @@ class LiveLosslessTests(unittest.TestCase):
         self.assertEqual(p["monikers"][1]["name"],"CP.LIVE")
         self.assertEqual(p["monikers"][2]["name"],"CP.CLOSE")
         self.assertIn("CP.RESUME",[m["name"] for m in p["monikers"]])
+    def test_canonical_alias_is_bound_to_one_source_owner(self):
+        profile,_ = mod.read(mod.CLOSE/"CHAT_CLOSEOUT_PROFILE_V1.json")
+        contract,_ = mod.read(mod.CLOSE/"CP_HANDOFF_RESUME_V1.json")
+        canonical,_ = mod.read(mod.CLOSE/"closeout/CP_CLOSE_GITHUB_v1.json")
+        self.assertTrue(mod.validate_closeout_moniker(profile, contract, canonical))
+        generated = mod.build_data()
+        self.assertEqual(generated["monikers"][0]["scope"], "COMPATIBILITY_ALIAS_TO_CP_CLOSE")
+        self.assertEqual(generated["monikers"][2]["scope"], "CANONICAL_NINE_ARTIFACT_SESSION_OPERATOR")
+        self.assertIn("canonical_closeout_protocol_sha256", generated["provenance"])
+        self.assertNotIn("/pull/642", generated["monikers"][2]["url"])
+
+    def test_alias_ownership_fails_closed_on_mutation(self):
+        profile,_ = mod.read(mod.CLOSE/"CHAT_CLOSEOUT_PROFILE_V1.json")
+        contract,_ = mod.read(mod.CLOSE/"CP_HANDOFF_RESUME_V1.json")
+        canonical,_ = mod.read(mod.CLOSE/"closeout/CP_CLOSE_GITHUB_v1.json")
+        for field,bad in (("moniker", "CP.CLOSEOUT"),
+                          ("status", "CANONICAL"),
+                          ("control", "shadow/CP_CLOSE.json"),
+                          ("no_second_producer", False),
+                          ("invocation", "CP.FORGE()")):
+            mutated = copy.deepcopy(profile)
+            mutated[field] = bad
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "LIVE_LOSSLESS_FAIL_CLOSED"):
+                mod.validate_closeout_moniker(mutated, contract, canonical)
+        mutated = copy.deepcopy(contract)
+        mutated["monikers"]["CP.CLOSEOUT"]["canonical"] = "CP.CLOSEOUT"
+        with self.assertRaisesRegex(ValueError, "alias ownership mismatch"):
+            mod.validate_closeout_moniker(profile, mutated, canonical)
+        mutated = copy.deepcopy(canonical)
+        mutated["aliases"] = []
+        with self.assertRaisesRegex(ValueError, "canonical CP.CLOSE protocol mismatch"):
+            mod.validate_closeout_moniker(profile, contract, mutated)
+
     def test_source_delta_is_user_summarized_not_provider_export(self):
         p=mod.build_data()
         self.assertEqual(p["privacy"],"SANITIZED_NOT_VERBATIM")
