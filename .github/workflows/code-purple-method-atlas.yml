@@ -88,7 +88,7 @@ jobs:
           SRC=mission-control/federation-atlas
           python -m pip install --disable-pip-version-check coverage==7.13.3
           python -m coverage run --branch --source=cpq_convergence_n5,source_freshness -m unittest discover \
-            -s "$SRC" -p "test_cpq_convergence_n5.py" -v
+            -s mission-control/federation-atlas -p "test_cpq_convergence_n5.py" -v
           python -m coverage json -o /tmp/code-purple-atlas/cpq-n5-coverage.json -q
           python "$SRC/cpq_convergence_n5.py" \
             --queue "$SRC/CODE_PURPLE_BD_QUEUE_v1.json" \
@@ -120,7 +120,7 @@ jobs:
         run: |
           set -euo pipefail
           SRC=mission-control/federation-atlas
-          python -m coverage run --branch --source=cpq_i2_replay -m unittest discover -s "$SRC" -p "test_cpq_i2_replay.py" -v
+          python -m coverage run --branch --source=cpq_i2_replay -m unittest discover -s mission-control/federation-atlas -p "test_cpq_i2_replay.py" -v
           python -m coverage json -q -o /tmp/code-purple-atlas/cpq-n6-i2-coverage.json
           python "$SRC/cpq_i2_replay.py" \
             --input "$SRC/CPQ_I2_NATIVE_READBACK_20261017.json" \
@@ -249,7 +249,7 @@ jobs:
           OUT=/tmp/code-purple-atlas/flightdeck
           python -m pip install --disable-pip-version-check coverage==7.13.3
           python -m coverage run --branch --source=flightdeck -m unittest discover \
-            -s "$SRC" -p test_flightdeck.py -v > "$RUNNER_TEMP/flightdeck-tests.log" 2>&1
+            -s mission-control/federation-atlas/flightdeck -p test_flightdeck.py -v > "$RUNNER_TEMP/flightdeck-tests.log" 2>&1
           cat "$RUNNER_TEMP/flightdeck-tests.log"
           python -m coverage json -o "$RUNNER_TEMP/flightdeck-coverage.json" -q
           python - <<'PY'
@@ -403,7 +403,7 @@ jobs:
         run: |
           set -euo pipefail
           SRC=mission-control/v2/handoff/live_lossless
-          python -m unittest discover -s "$SRC" -p 'test_*.py' -v
+          python -m unittest discover -s mission-control/v2/handoff/live_lossless -p 'test_*.py' -v
           node --check "$SRC/app.js"
           python "$SRC/build_live_lossless.py" --out /tmp/code-purple-atlas/live-lossless
           python "$SRC/build_live_lossless.py" --out /tmp/code-purple-atlas/live-lossless --check
