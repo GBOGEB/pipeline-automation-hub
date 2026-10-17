@@ -16,6 +16,7 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from source_access import SourceAccessError, read_json, write_diagnostic
 
 SCHEMA = 'codepurple.disjoint_live_census.v1'
 REPOS = {'ABACUS':'main', 'CODEX':'main', 'pipeline-automation-hub':'master',
@@ -49,15 +50,14 @@ def utcnow()->str:
 
 class GitHubReadOnly:
     def __init__(self, token:str|None=None):
-        self.token=token or os.environ.get('GITHUB_TOKEN','')
+        self.token=(os.environ.get('CROSS_REPO_READ_TOKEN') or os.environ.get('GITHUB_TOKEN','')) if token is None else token
     def get(self, resource:str):
         if not resource.startswith('/repos/GBOGEB/') or any(x in resource for x in ('..','\\','%','\n','\r')):
             raise ValueError('unapproved read-only GitHub path')
         req=urllib.request.Request('https://api.github.com'+resource,headers={
             'Accept':'application/vnd.github+json','User-Agent':'code-purple-readonly-census/1.0',
             **({'Authorization':'Bearer '+self.token} if self.token else {})})
-        with urllib.request.urlopen(req,timeout=12) as response:
-            return json.load(response)
+        return read_json(req, resource, timeout=12)
 
 def status(counts:dict)->str:
     if counts.get('failure',0)>0 or counts.get('timed_out',0)>0: return 'FAIL'
@@ -218,7 +218,17 @@ def cli(argv=None):
         for name,sha in m['files_sha256'].items():
             if hashlib.sha256((root/name).read_bytes()).hexdigest()!=sha:raise ValueError('digest mismatch: '+name)
         data_identity(json.loads((root/'snapshot.json').read_text()));print('PASS',len(m['files_sha256']));return
-    obs=acquire(GitHubReadOnly()) if a.refresh else json.loads(Path(a.seed).read_text())
+    if a.refresh:
+        try:
+            obs=acquire(GitHubReadOnly())
+        except SourceAccessError as error:
+            diagnostic=write_diagnostic(error,Path(a.out))
+            print(json.dumps({'status':'SOURCE_ACCESS_UNKNOWN_FAIL_CLOSED',
+                              'repository':error.repository,'http_status':error.http_status,
+                              'diagnostic':str(diagnostic)},sort_keys=True))
+            raise SystemExit(2)
+    else:
+        obs=json.loads(Path(a.seed).read_text())
     prev=json.loads(Path(a.previous).read_text()) if a.previous else None
     m=write_outputs(build(obs,prev),Path(a.out));print(json.dumps({'status':'LOCAL_REPRODUCIBILITY','files':len(m['files_sha256']),'source_digest':m['source_digest']}))
 if __name__=='__main__':cli()

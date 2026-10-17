@@ -31,7 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
-          python -m unittest discover -s mission-control/federation-atlas/live-census/tests -p test_live_census.py -v
+          python -m unittest discover -s mission-control/federation-atlas/live-census/tests -p 'test_*.py' -v
       - name: Rebuild read-only frozen snapshot and verify member hashes
         shell: bash
         run: |
@@ -100,6 +100,7 @@ jobs:
         shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          CROSS_REPO_READ_TOKEN: ${{ secrets.CROSS_REPO_READ_TOKEN }}
         run: |
           set -euo pipefail
           cd mission-control/federation-atlas/live-census
@@ -120,3 +121,11 @@ jobs:
           name: disjoint-census-native-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/out/
           if-no-files-found: error
+
+      - name: Preserve native cross-repo source-access diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: disjoint-census-access-${{ github.run_id }}-${{ github.run_attempt }}
+          path: mission-control/federation-atlas/live-census/out/access_diagnostic.json
+          if-no-files-found: warn
