@@ -396,6 +396,19 @@ jobs:
           test -s /tmp/code-purple-atlas/federation-home/index.html
           test -s /tmp/code-purple-atlas/federation-home/snapshot.json
           test -s /tmp/code-purple-atlas/federation-home/manifest.json
+      - name: Build additive source-bound Live Lossless review site
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/v2/handoff/live_lossless
+          python -m unittest discover -s "$SRC" -p 'test_live_lossless.py' -v
+          node --check "$SRC/app.js"
+          python "$SRC/build_live_lossless.py" --out /tmp/code-purple-atlas/live-lossless
+          python "$SRC/build_live_lossless.py" --out /tmp/code-purple-atlas/live-lossless --check
+          if [ -f "$SRC/published/snapshot.json" ]; then
+            python "$SRC/build_live_lossless.py" --out "$SRC/published" --check
+          fi
+          test -s /tmp/code-purple-atlas/live-lossless/manifest.json
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
