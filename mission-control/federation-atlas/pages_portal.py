@@ -72,7 +72,34 @@ def build(atlas,out,sha):
             dest.parent.mkdir(exist_ok=True,parents=True)
             shutil.copyfile(src,dest)
             hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
-    links=[("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
+    # Live Lossless is a generated sanitized consumer of the existing
+    # closeout/GitHub provenance. It has no separate Pages publisher.
+    live_allow = ("index.html", "app.js", "style.css", "snapshot.json", "manifest.json")
+    live_source = atlas / "live-lossless"
+    live_present = [name for name in live_allow if (live_source / name).is_file()]
+    if live_present and len(live_present) != len(live_allow):
+        raise ValueError("incomplete Live Lossless Pages source")
+    if len(live_present) == len(live_allow):
+        ll = json.loads((live_source / "manifest.json").read_text(encoding="utf-8"))
+        state = json.loads((live_source / "snapshot.json").read_text(encoding="utf-8"))
+        if not (ll.get("schema") == "missioncontrol.live_lossless.publication_manifest.v1"
+                and ll.get("publisher") == "EXISTING_PAGES_ONLY"
+                and ll.get("authority_transfer") is False
+                and ll.get("security_waiver") is False
+                and ll.get("merge_admission") == "HOLD"
+                and state.get("schema") == "missioncontrol.live_lossless.dashboard.v1"
+                and state.get("authority_transfer") is False
+                and state.get("merge_admission") == "INDEPENDENT_HOLD"):
+            raise ValueError("unsafe Live Lossless Pages projection")
+        for name in live_allow:
+            src = live_source / name
+            if name != "manifest.json" and hashlib.sha256(src.read_bytes()).hexdigest() != ll.get("files_sha256", {}).get(name):
+                raise ValueError("Live Lossless source hash mismatch: " + name)
+            dest = out / "live-lossless" / name
+            dest.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copyfile(src, dest)
+            hashes[str(dest.relative_to(out))] = hashlib.sha256(dest.read_bytes()).hexdigest()
+    links=[("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
     diagram=(atlas/"lane-process.mmd").read_text() if (atlas/"lane-process.mmd").is_file() else 'flowchart LR\n A["Source"] --> B["Native CI"] --> C["Read-only Atlas"] --> D["Owner gate"]'
     page='''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>CODE PURPLE | MissionControl</title><style>
