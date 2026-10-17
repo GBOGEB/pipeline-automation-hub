@@ -34,7 +34,7 @@ class API:
         path=urlparse(route.request.url).path
         self.calls.append(path)
         if self.failure=="ALL" or (self.failure=="ONE" and path.endswith("/pulls/642")):
-            route.fulfill(status=503,content_type="application/json",body='{"message":"fixture outage"}')
+            route.fulfill(status=503,headers={"Access-Control-Allow-Origin":"*","Content-Type":"application/json"},body='{"message":"fixture outage"}')
             return
         if path.endswith("/branches/master"):
             obj={"name":"master","commit":{"sha":self.snapshot["source"]["current_observed_main_sha"]}}
@@ -58,7 +58,7 @@ class API:
         else:
             route.fulfill(status=404,body="unapproved path")
             return
-        route.fulfill(status=200,content_type="application/json",body=json.dumps(obj))
+        route.fulfill(status=200,headers={"Access-Control-Allow-Origin":"*","Content-Type":"application/json"},body=json.dumps(obj))
 
 
 def check(condition,why,log):
@@ -146,7 +146,6 @@ def test_viewport(browser,url,mode,w,h,snap,out,report):
     report["screenshots"].append({"name":pic.name,"sha256":hashlib.sha256(pic.read_bytes()).hexdigest(),"viewport":[w,h]})
     if mode=="desktop":
         page.locator("#tab-monikers").click()
-        page.locator("#moniker-cards details").first.open if False else None
         moniker=out/"monikers-open.png"
         page.screenshot(path=str(moniker),full_page=True)
         report["screenshots"].append({"name":moniker.name,"sha256":hashlib.sha256(moniker.read_bytes()).hexdigest()})
