@@ -61,4 +61,4 @@ The latest return receipt reports `N+0` through `N+3`, native terminal success/f
 
 Canonical Mission Control taxonomy is updated **additively**. GoGREEN's historical timeline and portfolio ledgers remain owners of their existing receipts; this protocol does not overwrite them. ABACUS owns affected code/security first-red repairs, CODEX owns its source, cryoplant-project (QPS) owns engineering acceptance, gg_MATH owns numerical/statistical qualification, Mission Control only joins bounded telemetry. TOP21 cohort definitions and upstream REX/BD root ownership remain unchanged.
 
-Native qualification: `.github/workflows/gogreen-n3-continuation.yml` must pass 68 positive/adversarial tests with exact-head SHA, coverage.py 7.13.3, and ≥90% statement / ≥85% branch coverage of `protocol.py`. No coverage of the federation is implied.
+Native qualification: `.github/workflows/gogreen-n3-continuation.yml` must pass 72 positive/adversarial tests with exact-head SHA, coverage.py 7.13.3, and ≥90% statement / ≥85% branch coverage of `protocol.py`. No coverage of the federation is implied.
