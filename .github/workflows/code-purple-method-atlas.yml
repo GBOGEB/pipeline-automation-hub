@@ -426,6 +426,19 @@ jobs:
         run: |
           python mission-control/federation-atlas/pages_portal.py --atlas /tmp/code-purple-atlas --out /tmp/code-purple-atlas/pages --sha "$EXACT_SHA"
           test -s /tmp/code-purple-atlas/pages/site-manifest.json
+      - name: Mission Control W1 Playwright three-viewport DoV and Pages byte parity
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/mission_rebuild/browser_qa.py \
+            --source /tmp/code-purple-atlas/mission-rebuild \
+            --portal /tmp/code-purple-atlas/pages/mission-rebuild \
+            --sha "$EXACT_SHA" \
+            --out /tmp/code-purple-atlas/mission-rebuild/w1-browser-qa.json \
+            --screens /tmp/code-purple-atlas/mission-rebuild/browser-screens
+          test -s /tmp/code-purple-atlas/mission-rebuild/w1-browser-qa.json
       - name: Upload identity-bound HTML SVG and metrics
         uses: actions/upload-artifact@v4
         with:
