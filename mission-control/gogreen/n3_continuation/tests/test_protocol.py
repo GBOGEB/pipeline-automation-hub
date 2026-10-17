@@ -411,6 +411,28 @@ class N3Contract(unittest.TestCase):
         with self.assertRaises(ValueError):
             p.advance(self.c,d,observation(self.c,3,D,G,run=2000))
 
+    def test_forged_completion_without_N3_rejected(self):
+        self.l["status"]="N3_MEASURED_COMPLETE"
+        self.badobservation()
+
+    def test_bounded_run_attempt_cannot_exceed_policy(self):
+        self.o["attempt"]=self.c["policy"]["max_attempts_per_pulse"]+1
+        self.badobservation()
+
+    def test_read_only_lane_cannot_claim_owner_commit(self):
+        self.o["completed_work"]=[{"lane_id":"ROOT_CENSUS",
+                                    "disposition":"OWNED_COMMIT",
+                                    "owner_lease_valid":True,"commit_sha":B}]
+        self.badobservation()
+
+    def test_worker_count_fanout_cap_fail_closed(self):
+        self.c["policy"]["max_disjoint_workers"]=1
+        self.l=p.initial(self.c)
+        self.o["completed_work"]=[
+           {"lane_id":"ROOT_CENSUS","disposition":"READ_ONLY"},
+           {"lane_id":"DEPENDENCY_CI","disposition":"VERIFIED_NO_CHANGE"}]
+        self.badobservation()
+
     def test_immutable_historical_root_baseline(self):
         tax=json.loads((REPO/"mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json").read_text())
         self.assertEqual(tax["as_of"],"2026-09-27")
