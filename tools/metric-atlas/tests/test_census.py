@@ -30,6 +30,16 @@ class CensusTests(unittest.TestCase):
         with self.assertRaises(CensusError):
             request("N1", dict(H, ABACUS="deadbeef"))
 
+    def test_private_unavailable_lane_preserved(self):
+        partial = request("N1", dict(H, QPS_ENGINEERING=None))
+        self.assertEqual(partial["eligible_repos"], 3)
+        self.assertEqual(partial["dispatchable_repos"], 2)
+        self.assertEqual(partial["unknown_head_repos"], 1)
+        self.assertEqual(partial["not_dispatched"][0]["state"], "HOLD_SOURCE_HEAD_UNKNOWN")
+        result = rollup(partial, [])
+        self.assertEqual((result["eligible_repos"], result["planned_repos"]), (3, 2))
+        self.assertEqual(result["lanes"][-1]["state"], "HOLD_SOURCE_HEAD_UNKNOWN")
+
     def test_unreceived_preserves_unknown(self):
         summary = rollup(self.m, [])
         self.assertEqual(summary["observed_repos"], 0)
