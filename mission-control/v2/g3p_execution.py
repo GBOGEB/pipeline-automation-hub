@@ -226,6 +226,20 @@ def validate_record(doc: Any) -> dict[str, Any]:
         need(isinstance(forecast.get("hypothesis"), str) and
              forecast["hypothesis"].strip(),
              "missing before-action expected outcome")
+        projected = forecast.get("metrics")
+        need(isinstance(projected, dict) and
+             set(projected) <= MEASURES,
+             "invalid forecast metric keys")
+        for metric, estimate in projected.items():
+            checked_count(estimate, "forecast:" + metric)
+        forecast_population = forecast.get("population_id")
+        need(isinstance(forecast_population, str) and
+             forecast_population.strip(),
+             "forecast requires declared observation population")
+        actual_population = observed.get("population_id")
+        need(isinstance(actual_population, str) and
+             actual_population.strip(),
+             "actual requires observed population identity")
         observed_sha = observed.get("source_sha")
         need(observed_sha == next_sha, "observed result not on next exact source")
         check_metrics(observed.get("metrics"), observed_sha)
@@ -241,6 +255,23 @@ def validate_record(doc: Any) -> dict[str, Any]:
              "terminal pulse requires evidence locator")
         paths = check_actions(pulse.get("actions"), status, input_sha,
                               next_sha, lease_cap)
+        if status in ("EXECUTED_PASS", "EXECUTED_FAIL"):
+            need(bool(pulse["actions"]),
+                 "executed pulse requires action or test records")
+        comparisons = {}
+        for metric, prediction in projected.items():
+            actual_value = observed["metrics"].get(metric)
+            comparable = (forecast_population == actual_population
+                          and prediction is not None
+                          and actual_value is not None)
+            comparisons[metric] = {
+                "expected": prediction,
+                "actual": actual_value,
+                "population_matched": forecast_population == actual_population,
+                "delta_actual_minus_expected":
+                    actual_value - prediction if comparable else None,
+                "state": "COMPARABLE" if comparable else "UNKNOWN_OR_UNMATCHED",
+            }
         if status == "EXECUTED_PASS":
             need(steps > 0, "zero-step cannot be PASS")
             need(observed.get("check_outcome") == "PASS",
@@ -270,6 +301,7 @@ def validate_record(doc: Any) -> dict[str, Any]:
             "blocker": blocker,
             "expected_hypothesis": forecast["hypothesis"],
             "observed_summary": observed["summary"],
+            "expected_vs_actual": comparisons,
         })
         completed += 1
         previous_sha, previous_time = next_sha, observed_time
@@ -296,6 +328,8 @@ def validate_record(doc: Any) -> dict[str, Any]:
         "independent_security_governance_review": None,
         "main_merge_admitted": False,
         "automatic_background_execution_claimed": False,
+        "evidence_locator_authentication":
+            "DECLARED_ONLY_NOT_VERIFIED_BY_THIS_VALIDATOR",
         "pulses": inspected,
     }
 
