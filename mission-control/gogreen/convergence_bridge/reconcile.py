@@ -207,7 +207,7 @@ def build(root,source_sha,out):
     outcomes_module=import_source(root/"outcome_convergence/outcome_flight.py","g9_source")
     g7=json.loads((root/"success_graph/samples/native_success_20261017.json").read_text())
     g9=json.loads((root/"outcome_convergence/samples/native_full_window_20261017.json").read_text())
-    reg=json.loads((root.parents[1]/"grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json").read_text())
+    reg=json.loads((root.parent/"grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json").read_text())
     g10=json.loads((root/"convergence_bridge/samples/g10_native_quality_20261017.json").read_text())
     report=join(g7,reg,g9,g10,graph_module,outcomes_module)
     dag=sipoc(report)
