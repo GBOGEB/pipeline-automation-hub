@@ -143,6 +143,31 @@ class CPQN5Tests(unittest.TestCase):
     def test_ordinal_history_tolerates_evidence_without_timestamp(self):
         q,t=fixture();q['items'][0]['history'][-1]['evidence']='No timestamp, no false age'
         self.assertEqual(c.converge(q,t,SHA)['metrics']['canonical_rows'],18)
+    def test_cpq005_freshness_explicit_clock_and_ttl(self):
+        q,t=fixture()
+        a=c.converge(q,t,SHA,observed_on='2026-10-17')
+        self.assertEqual([z['state'] for z in a['freshness']['sources']],['STALE','FRESH'])
+        self.assertEqual([z['age_days'] for z in a['freshness']['sources']],[19,1])
+        self.assertEqual(a['freshness']['ttl_days'],14)
+    def test_cpq005_no_clock_is_unknown_not_0(self):
+        q,t=fixture()
+        a=c.converge(q,t,SHA)
+        self.assertEqual([z['state'] for z in a['freshness']['sources']],['UNKNOWN','UNKNOWN'])
+        self.assertTrue(all(z['age_days'] is None for z in a['freshness']['sources']))
+    def test_cpq005_future_timestamp_is_invalid_not_fresh(self):
+        q,t=fixture()
+        t['pulses'][1]['observed_on']='2026-10-18'
+        a=c.converge(q,t,SHA,observed_on='2026-10-17')
+        self.assertEqual(a['freshness']['sources'][1]['state'],'FUTURE_INVALID')
+    def test_cpq005_malformed_clock_fails_closed(self):
+        q,t=fixture()
+        for value in ('tomorrow','2026-13-13',True,-1):
+            with self.subTest(value=value),self.assertRaises(ValueError):
+                c.converge(q,t,SHA,observed_on=value)
+    def test_cpq005_same_clock_repeat_is_byte_stable(self):
+        q,t=fixture()
+        a=c.converge(q,t,SHA,observed_on='2026-10-17')
+        self.assertEqual(c.render_html(a),c.render_html(c.converge(q,t,SHA,observed_on='2026-10-17')))
     def test_open_dependencies_classified_as_dependency_not_done(self):
         q,t=fixture();o=c.converge(q,t,SHA)
         root=next(x for x in o['items'] if x['id']=='CPQ-013')
