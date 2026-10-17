@@ -32,6 +32,8 @@ def executed(ordinal, original, next_sha, *, status="EXECUTED_PASS"):
         "owner_lease": "OWNER_A",
         "changed_paths": [f"scripts/pulse{ordinal}.py"] if is_mutation else [],
         "outcome": "DONE",
+        "started_at": first.replace(":00Z", ":15Z"),
+        "completed_at": first.replace(":00Z", ":45Z"),
         "evidence_ref": "https://github.com/GBOGEB/ABACUS/commit/" + next_sha,
     }
     return {
@@ -280,6 +282,44 @@ class G3PContractTests(unittest.TestCase):
         with self.assertRaisesRegex(g3p.G3PContractError,
                                     "fully qualified wave"):
             g3p.validate_record(doc)
+
+
+    def test_action_started_before_forecast_is_rejected(self):
+        doc = valid()
+        doc["pulses"][0]["actions"][0]["started_at"] = (
+            "2026-10-17T08:59:59Z"
+        )
+        with self.assertRaisesRegex(g3p.G3PContractError,
+                                    "after frozen forecast"):
+            g3p.validate_record(doc)
+
+    def test_inverted_action_clock_is_rejected(self):
+        doc = valid()
+        doc["pulses"][0]["actions"][0]["completed_at"] = (
+            "2026-10-17T09:00:20Z"
+        )
+        with self.assertRaisesRegex(g3p.G3PContractError,
+                                    "after frozen forecast"):
+            g3p.validate_record(doc)
+
+    def test_action_start_after_actual_measured_is_rejected(self):
+        doc = valid()
+        doc["pulses"][2]["actions"][0]["started_at"] = (
+            "2026-10-17T09:07:01Z"
+        )
+        with self.assertRaisesRegex(g3p.G3PContractError,
+                                    "before actual"):
+            g3p.validate_record(doc)
+
+    def test_global_blocker_on_last_pulse_marks_wave_stopped(self):
+        doc = valid()
+        doc["pulses"][2]["status"] = "HOLD_EVIDENCED"
+        doc["pulses"][2]["blocker"] = {
+            "scope": "GLOBAL", "reason": "NO_SAFE_NEXT_ACTION"
+        }
+        report = g3p.validate_record(doc)
+        self.assertEqual("STOPPED_MAJOR_BLOCKER", report["wave_status"])
+        self.assertFalse(report["main_merge_admitted"])
 
     def test_three_pulse_slots_not_three_runners(self):
         doc = valid()
