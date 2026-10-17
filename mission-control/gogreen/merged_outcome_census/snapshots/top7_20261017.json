@@ -1,0 +1,2530 @@
+{
+  "schema": "gogreen.top21.merged-check-snapshot.v1",
+  "cohort": "TOP7",
+  "canonical_roster": "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
+  "roster_blob": "0e42dd49eacc46a57fde432ad8d93ea17de4b4f9",
+  "observed_date": "2026-10-17",
+  "authority_transfer": false,
+  "merge_authorized": false,
+  "root_closure_credit": 0,
+  "prs": [
+    {
+      "repository": "GBOGEB/ABACUS",
+      "pr": 2129,
+      "head_sha": "cbb30387a863b1cc350826c0b5a7bd5a027a60cc",
+      "merged_at": "2026-10-17T14:03:11Z",
+      "base_branch": "feat/cbd-failure-root-disjoint-wave-p1-20261017",
+      "pr_url": "https://github.com/GBOGEB/ABACUS/pull/2129",
+      "check_total": 29,
+      "check_runs": [
+        {
+          "id": 117414793601,
+          "name": "summarize-merged-pr",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T14:03:16Z",
+          "completed_at": "2026-10-17T14:03:20Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39039110685/job/117414793601"
+        },
+        {
+          "id": 117411190387,
+          "name": "CodeQL",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:45:13Z",
+          "completed_at": "2026-10-17T13:45:16Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/runs/117411190387"
+        },
+        {
+          "id": 117410908618,
+          "name": "B0 report-only admission census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:43:47Z",
+          "completed_at": "2026-10-17T13:44:05Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117410908618"
+        },
+        {
+          "id": 117410025036,
+          "name": "DAB proposal worker DAB-cbb30387a863-F401-007",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:39:35Z",
+          "completed_at": "2026-10-17T13:39:46Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117410025036"
+        },
+        {
+          "id": 117410024988,
+          "name": "DAB proposal worker DAB-cbb30387a863-E731-003",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:39:34Z",
+          "completed_at": "2026-10-17T13:39:43Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117410024988"
+        },
+        {
+          "id": 117410024977,
+          "name": "DAB proposal worker DAB-cbb30387a863-F401-006",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:39:33Z",
+          "completed_at": "2026-10-17T13:39:42Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117410024977"
+        },
+        {
+          "id": 117410024953,
+          "name": "DAB proposal worker DAB-cbb30387a863-F401-008",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:39:23Z",
+          "completed_at": "2026-10-17T13:39:30Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117410024953"
+        },
+        {
+          "id": 117410024943,
+          "name": "DAB proposal worker DAB-cbb30387a863-E741-005",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:39:33Z",
+          "completed_at": "2026-10-17T13:39:42Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117410024943"
+        },
+        {
+          "id": 117410024925,
+          "name": "DAB proposal worker DAB-cbb30387a863-E731-002",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:39:31Z",
+          "completed_at": "2026-10-17T13:39:39Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117410024925"
+        },
+        {
+          "id": 117410024898,
+          "name": "DAB proposal worker DAB-cbb30387a863-E731-004",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:39:20Z",
+          "completed_at": "2026-10-17T13:39:27Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117410024898"
+        },
+        {
+          "id": 117410024878,
+          "name": "DAB proposal worker DAB-cbb30387a863-E731-001",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:39:19Z",
+          "completed_at": "2026-10-17T13:39:30Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117410024878"
+        },
+        {
+          "id": 117409822415,
+          "name": "B0 report-only producer",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:39:13Z",
+          "completed_at": "2026-10-17T13:41:51Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117409822415"
+        },
+        {
+          "id": 117409822408,
+          "name": "B0 canonical coverage producer",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:39:08Z",
+          "completed_at": "2026-10-17T13:43:45Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117409822408"
+        },
+        {
+          "id": 117409822407,
+          "name": "B1 false-green census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:39:10Z",
+          "completed_at": "2026-10-17T13:39:17Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117409822407"
+        },
+        {
+          "id": 117409822322,
+          "name": "graph-contract (3.12)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:42:39Z",
+          "completed_at": "2026-10-17T13:42:50Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375041/job/117409822322"
+        },
+        {
+          "id": 117409822275,
+          "name": "analyze (python)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:42:58Z",
+          "completed_at": "2026-10-17T13:45:21Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375059/job/117409822275"
+        },
+        {
+          "id": 117409822201,
+          "name": "dependency-review",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:42:21Z",
+          "completed_at": "2026-10-17T13:42:26Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375070/job/117409822201"
+        },
+        {
+          "id": 117409822164,
+          "name": "B0 static/DAB census producer",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:38:36Z",
+          "completed_at": "2026-10-17T13:39:17Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375013/job/117409822164"
+        },
+        {
+          "id": 117409822119,
+          "name": "graph-contract (3.11)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:42:39Z",
+          "completed_at": "2026-10-17T13:42:48Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375041/job/117409822119"
+        },
+        {
+          "id": 117409822093,
+          "name": "Full Repository Census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:42:54Z",
+          "completed_at": "2026-10-17T13:43:12Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375020/job/117409822093"
+        },
+        {
+          "id": 117409822085,
+          "name": "smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:42:31Z",
+          "completed_at": "2026-10-17T13:42:37Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375053/job/117409822085"
+        },
+        {
+          "id": 117409822072,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:42:49Z",
+          "completed_at": "2026-10-17T13:43:01Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375058/job/117409822072"
+        },
+        {
+          "id": 117409822063,
+          "name": "residual-lineage-census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:42:19Z",
+          "completed_at": "2026-10-17T13:42:27Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375024/job/117409822063"
+        },
+        {
+          "id": 117409822050,
+          "name": "validate-config",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:42:09Z",
+          "completed_at": "2026-10-17T13:42:54Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375076/job/117409822050"
+        },
+        {
+          "id": 117409822030,
+          "name": "a10-guard",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:42:49Z",
+          "completed_at": "2026-10-17T13:42:56Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375049/job/117409822030"
+        },
+        {
+          "id": 117409822004,
+          "name": "policy-and-inventory",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:42:34Z",
+          "completed_at": "2026-10-17T13:42:43Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375003/job/117409822004"
+        },
+        {
+          "id": 117409821985,
+          "name": "measured-pulse",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:42:42Z",
+          "completed_at": "2026-10-17T13:42:52Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037375008/job/117409821985"
+        },
+        {
+          "id": 117409821910,
+          "name": "YAML syntax scaffold",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:42:21Z",
+          "completed_at": "2026-10-17T13:42:25Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037374987/job/117409821910"
+        },
+        {
+          "id": 117409757171,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:43:13Z",
+          "completed_at": "2026-10-17T13:43:34Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39037351535/job/117409757171"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/ABACUS",
+      "pr": 2125,
+      "head_sha": "d9e40135d27de5697923c096b3fede62c81b9beb",
+      "merged_at": "2026-10-17T13:29:04Z",
+      "base_branch": "feat/mission-control-lite-burndown-20261014",
+      "pr_url": "https://github.com/GBOGEB/ABACUS/pull/2125",
+      "check_total": 27,
+      "check_runs": [
+        {
+          "id": 117409120500,
+          "name": "B0 report-only admission census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:35:16Z",
+          "completed_at": "2026-10-17T13:35:30Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117409120500"
+        },
+        {
+          "id": 117408726999,
+          "name": "CodeQL",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:32:35Z",
+          "completed_at": "2026-10-17T13:32:38Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/runs/117408726999"
+        },
+        {
+          "id": 117408034834,
+          "name": "summarize-merged-pr",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:32:25Z",
+          "completed_at": "2026-10-17T13:32:32Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036744764/job/117408034834"
+        },
+        {
+          "id": 117408015254,
+          "name": "DAB proposal worker DAB-d9e40135d27d-F401-008",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:30:35Z",
+          "completed_at": "2026-10-17T13:30:44Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117408015254"
+        },
+        {
+          "id": 117408015248,
+          "name": "DAB proposal worker DAB-d9e40135d27d-E741-002",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:30:27Z",
+          "completed_at": "2026-10-17T13:30:36Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117408015248"
+        },
+        {
+          "id": 117408015230,
+          "name": "DAB proposal worker DAB-d9e40135d27d-F401-006",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:30:23Z",
+          "completed_at": "2026-10-17T13:30:31Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117408015230"
+        },
+        {
+          "id": 117408015214,
+          "name": "DAB proposal worker DAB-d9e40135d27d-F401-004",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:30:18Z",
+          "completed_at": "2026-10-17T13:30:25Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117408015214"
+        },
+        {
+          "id": 117408015211,
+          "name": "DAB proposal worker DAB-d9e40135d27d-F401-003",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:30:10Z",
+          "completed_at": "2026-10-17T13:30:18Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117408015211"
+        },
+        {
+          "id": 117408015204,
+          "name": "DAB proposal worker DAB-d9e40135d27d-E731-001",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:30:00Z",
+          "completed_at": "2026-10-17T13:30:07Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117408015204"
+        },
+        {
+          "id": 117408015199,
+          "name": "DAB proposal worker DAB-d9e40135d27d-F401-007",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:30:12Z",
+          "completed_at": "2026-10-17T13:30:23Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117408015199"
+        },
+        {
+          "id": 117408015186,
+          "name": "DAB proposal worker DAB-d9e40135d27d-F401-005",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:29:40Z",
+          "completed_at": "2026-10-17T13:29:51Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117408015186"
+        },
+        {
+          "id": 117407796615,
+          "name": "B0 static/DAB census producer",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:28:13Z",
+          "completed_at": "2026-10-17T13:29:01Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117407796615"
+        },
+        {
+          "id": 117407796590,
+          "name": "B0 report-only producer",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:28:11Z",
+          "completed_at": "2026-10-17T13:30:44Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117407796590"
+        },
+        {
+          "id": 117407796553,
+          "name": "B0 canonical coverage producer",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:28:07Z",
+          "completed_at": "2026-10-17T13:34:35Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117407796553"
+        },
+        {
+          "id": 117407796548,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:28:14Z",
+          "completed_at": "2026-10-17T13:28:26Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662676/job/117407796548"
+        },
+        {
+          "id": 117407796421,
+          "name": "B1 false-green census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:28:06Z",
+          "completed_at": "2026-10-17T13:28:16Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662599/job/117407796421"
+        },
+        {
+          "id": 117407796418,
+          "name": "YAML syntax scaffold",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:28:23Z",
+          "completed_at": "2026-10-17T13:28:28Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662686/job/117407796418"
+        },
+        {
+          "id": 117407796365,
+          "name": "Full Repository Census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:27:56Z",
+          "completed_at": "2026-10-17T13:28:20Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662712/job/117407796365"
+        },
+        {
+          "id": 117407796319,
+          "name": "analyze (python)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:28:42Z",
+          "completed_at": "2026-10-17T13:32:44Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662578/job/117407796319"
+        },
+        {
+          "id": 117407796295,
+          "name": "native-proof",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:27:58Z",
+          "completed_at": "2026-10-17T13:28:09Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662673/job/117407796295"
+        },
+        {
+          "id": 117407796219,
+          "name": "dependency-review",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:27:56Z",
+          "completed_at": "2026-10-17T13:28:00Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662583/job/117407796219"
+        },
+        {
+          "id": 117407796205,
+          "name": "smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:27:59Z",
+          "completed_at": "2026-10-17T13:28:04Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662644/job/117407796205"
+        },
+        {
+          "id": 117407796184,
+          "name": "a10-guard",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:27:56Z",
+          "completed_at": "2026-10-17T13:28:02Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662615/job/117407796184"
+        },
+        {
+          "id": 117407796140,
+          "name": "residual-lineage-census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:27:58Z",
+          "completed_at": "2026-10-17T13:28:06Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662592/job/117407796140"
+        },
+        {
+          "id": 117407796061,
+          "name": "measured-pulse",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:27:56Z",
+          "completed_at": "2026-10-17T13:28:04Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662610/job/117407796061"
+        },
+        {
+          "id": 117407795928,
+          "name": "validate-config",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:27:55Z",
+          "completed_at": "2026-10-17T13:28:45Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036662563/job/117407795928"
+        },
+        {
+          "id": 117407791382,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:27:54Z",
+          "completed_at": "2026-10-17T13:28:08Z",
+          "details_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39036660940/job/117407791382"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "pr": 1066,
+      "head_sha": "797ce535a127bf592c7d3a2fadf245d24f24f07e",
+      "merged_at": "2026-10-17T13:36:20Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/CODEX/pull/1066",
+      "check_total": 59,
+      "check_runs": [
+        {
+          "id": 117410620394,
+          "name": "osv-scanner",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:42:16Z",
+          "completed_at": "2026-10-17T13:42:25Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/runs/117410620394"
+        },
+        {
+          "id": 117410508635,
+          "name": "release-readiness",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-17T13:41:42Z",
+          "completed_at": "2026-10-17T13:41:42Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172513/job/117410508635"
+        },
+        {
+          "id": 117410508369,
+          "name": "federation-bridge-build",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-17T13:41:42Z",
+          "completed_at": "2026-10-17T13:41:42Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172513/job/117410508369"
+        },
+        {
+          "id": 117410508140,
+          "name": "bridge-audit",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-17T13:41:42Z",
+          "completed_at": "2026-10-17T13:41:42Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172513/job/117410508140"
+        },
+        {
+          "id": 117410506994,
+          "name": "CodeQL",
+          "status": "completed",
+          "conclusion": "neutral",
+          "started_at": "2026-10-17T13:41:42Z",
+          "completed_at": "2026-10-17T13:41:52Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/runs/117410506994"
+        },
+        {
+          "id": 117410465469,
+          "name": "Bandit",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:30Z",
+          "completed_at": "2026-10-17T13:41:44Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/runs/117410465469"
+        },
+        {
+          "id": 117409440415,
+          "name": "ruff",
+          "status": "completed",
+          "conclusion": "neutral",
+          "started_at": "2026-10-17T13:36:13Z",
+          "completed_at": "2026-10-17T13:36:17Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/runs/117409440415"
+        },
+        {
+          "id": 117409251591,
+          "name": "scan-scheduled",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-17T13:35:15Z",
+          "completed_at": "2026-10-17T13:35:15Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037173060/job/117409251591"
+        },
+        {
+          "id": 117409250823,
+          "name": "scan-pr / osv-scan",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:27Z",
+          "completed_at": "2026-10-17T13:42:34Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037173060/job/117409250823"
+        },
+        {
+          "id": 117409249544,
+          "name": "Validate governance artifacts",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:14Z",
+          "completed_at": "2026-10-17T13:41:36Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172758/job/117409249544"
+        },
+        {
+          "id": 117409249361,
+          "name": "unknown-disposition",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:22Z",
+          "completed_at": "2026-10-17T13:41:31Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172803/job/117409249361"
+        },
+        {
+          "id": 117409249043,
+          "name": "self-smoke (3.12)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:32Z",
+          "completed_at": "2026-10-17T13:41:49Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172664/job/117409249043"
+        },
+        {
+          "id": 117409248997,
+          "name": "semantic-validation",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:41:13Z",
+          "completed_at": "2026-10-17T13:42:32Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172568/job/117409248997"
+        },
+        {
+          "id": 117409248947,
+          "name": "Run federation validation",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:25Z",
+          "completed_at": "2026-10-17T13:41:42Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172674/job/117409248947"
+        },
+        {
+          "id": 117409248911,
+          "name": "bandit",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:11Z",
+          "completed_at": "2026-10-17T13:41:39Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172611/job/117409248911"
+        },
+        {
+          "id": 117409248907,
+          "name": "scan",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:01Z",
+          "completed_at": "2026-10-17T13:41:10Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172660/job/117409248907"
+        },
+        {
+          "id": 117409248889,
+          "name": "validate-rtm-runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:29Z",
+          "completed_at": "2026-10-17T13:41:34Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172604/job/117409248889"
+        },
+        {
+          "id": 117409248877,
+          "name": "validate-runtime-manifest",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:21Z",
+          "completed_at": "2026-10-17T13:41:24Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172625/job/117409248877"
+        },
+        {
+          "id": 117409248873,
+          "name": "atom-census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:28Z",
+          "completed_at": "2026-10-17T13:41:36Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172647/job/117409248873"
+        },
+        {
+          "id": 117409248858,
+          "name": "zero-delta",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:36:16Z",
+          "completed_at": "2026-10-17T13:36:30Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172648/job/117409248858"
+        },
+        {
+          "id": 117409248850,
+          "name": "security-scan (macos-latest / py3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:36:35Z",
+          "completed_at": "2026-10-17T13:37:27Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172551/job/117409248850"
+        },
+        {
+          "id": 117409248839,
+          "name": "release-smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:17Z",
+          "completed_at": "2026-10-17T13:41:38Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172627/job/117409248839"
+        },
+        {
+          "id": 117409248838,
+          "name": "security-scan (ubuntu-latest / py3.12)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:40Z",
+          "completed_at": "2026-10-17T13:41:57Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172551/job/117409248838"
+        },
+        {
+          "id": 117409248826,
+          "name": "governance-gate",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:41:07Z",
+          "completed_at": "2026-10-17T13:41:16Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172649/job/117409248826"
+        },
+        {
+          "id": 117409248808,
+          "name": "wcag-gate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:26Z",
+          "completed_at": "2026-10-17T13:41:31Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172589/job/117409248808"
+        },
+        {
+          "id": 117409248804,
+          "name": "security-scan (macos-latest / py3.12)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:36:23Z",
+          "completed_at": "2026-10-17T13:36:47Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172551/job/117409248804"
+        },
+        {
+          "id": 117409248802,
+          "name": "security-scan (windows-latest / py3.12)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:36:22Z",
+          "completed_at": "2026-10-17T13:36:57Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172551/job/117409248802"
+        },
+        {
+          "id": 117409248800,
+          "name": "self-smoke (3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:26Z",
+          "completed_at": "2026-10-17T13:41:45Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172664/job/117409248800"
+        },
+        {
+          "id": 117409248796,
+          "name": "security-scan (windows-latest / py3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:36:24Z",
+          "completed_at": "2026-10-17T13:37:05Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172551/job/117409248796"
+        },
+        {
+          "id": 117409248795,
+          "name": "security-scan (windows-latest / py3.9)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:35:42Z",
+          "completed_at": "2026-10-17T13:38:09Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172551/job/117409248795"
+        },
+        {
+          "id": 117409248791,
+          "name": "security-scan (windows-latest / py3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:37:07Z",
+          "completed_at": "2026-10-17T13:38:49Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172551/job/117409248791"
+        },
+        {
+          "id": 117409248748,
+          "name": "security-scan (macos-latest / py3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:35:40Z",
+          "completed_at": "2026-10-17T13:36:23Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172551/job/117409248748"
+        },
+        {
+          "id": 117409248746,
+          "name": "parity",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:05Z",
+          "completed_at": "2026-10-17T13:41:11Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172594/job/117409248746"
+        },
+        {
+          "id": 117409248745,
+          "name": "deterministic-repeat",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:32Z",
+          "completed_at": "2026-10-17T13:41:47Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172614/job/117409248745"
+        },
+        {
+          "id": 117409248743,
+          "name": "security-scan (macos-latest / py3.9)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:35:55Z",
+          "completed_at": "2026-10-17T13:36:38Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172551/job/117409248743"
+        },
+        {
+          "id": 117409248737,
+          "name": "security-scan (ubuntu-latest / py3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:04Z",
+          "completed_at": "2026-10-17T13:41:22Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172551/job/117409248737"
+        },
+        {
+          "id": 117409248708,
+          "name": "security-scan (ubuntu-latest / py3.9)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:47Z",
+          "completed_at": "2026-10-17T13:42:19Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172551/job/117409248708"
+        },
+        {
+          "id": 117409248683,
+          "name": "security-scan (ubuntu-latest / py3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:26Z",
+          "completed_at": "2026-10-17T13:41:56Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172551/job/117409248683"
+        },
+        {
+          "id": 117409248673,
+          "name": "renderer-governance",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:40:54Z",
+          "completed_at": "2026-10-17T13:40:59Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172568/job/117409248673"
+        },
+        {
+          "id": 117409248667,
+          "name": "test",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:41:25Z",
+          "completed_at": "2026-10-17T13:42:52Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172585/job/117409248667"
+        },
+        {
+          "id": 117409248663,
+          "name": "manifest",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:14Z",
+          "completed_at": "2026-10-17T13:41:24Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172575/job/117409248663"
+        },
+        {
+          "id": 117409248617,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:16Z",
+          "completed_at": "2026-10-17T13:41:27Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172571/job/117409248617"
+        },
+        {
+          "id": 117409248605,
+          "name": "lint",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:11Z",
+          "completed_at": "2026-10-17T13:41:21Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172652/job/117409248605"
+        },
+        {
+          "id": 117409248557,
+          "name": "lineage-governance (codex)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:41:18Z",
+          "completed_at": "2026-10-17T13:41:38Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172513/job/117409248557"
+        },
+        {
+          "id": 117409248555,
+          "name": "lineage-governance (abacus)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-17T13:41:23Z",
+          "completed_at": "2026-10-17T13:41:42Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172513/job/117409248555"
+        },
+        {
+          "id": 117409248444,
+          "name": "Analyze (python)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:47Z",
+          "completed_at": "2026-10-17T13:43:39Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172448/job/117409248444"
+        },
+        {
+          "id": 117409248397,
+          "name": "render-regression",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:03Z",
+          "completed_at": "2026-10-17T13:41:26Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172512/job/117409248397"
+        },
+        {
+          "id": 117409248376,
+          "name": "lineage-governance (mcp-bridge)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:12Z",
+          "completed_at": "2026-10-17T13:41:27Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172513/job/117409248376"
+        },
+        {
+          "id": 117409248348,
+          "name": "Analyze (actions)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:40:52Z",
+          "completed_at": "2026-10-17T13:42:05Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172448/job/117409248348"
+        },
+        {
+          "id": 117409248341,
+          "name": "governance-adversary",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:40:47Z",
+          "completed_at": "2026-10-17T13:40:59Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172474/job/117409248341"
+        },
+        {
+          "id": 117409248340,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:41:05Z",
+          "completed_at": "2026-10-17T13:41:22Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172534/job/117409248340"
+        },
+        {
+          "id": 117409248271,
+          "name": "independent-consumer",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:40:42Z",
+          "completed_at": "2026-10-17T13:41:24Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172520/job/117409248271"
+        },
+        {
+          "id": 117409248252,
+          "name": "aggregate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:40:42Z",
+          "completed_at": "2026-10-17T13:40:59Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172465/job/117409248252"
+        },
+        {
+          "id": 117409248229,
+          "name": "dynamic-burndown",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:40:42Z",
+          "completed_at": "2026-10-17T13:41:02Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172487/job/117409248229"
+        },
+        {
+          "id": 117409248201,
+          "name": "governance-validation",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:41:01Z",
+          "completed_at": "2026-10-17T13:41:10Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172397/job/117409248201"
+        },
+        {
+          "id": 117409248175,
+          "name": "runtime-validation",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:40:46Z",
+          "completed_at": "2026-10-17T13:41:00Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172443/job/117409248175"
+        },
+        {
+          "id": 117409248144,
+          "name": "Analyze (javascript-typescript)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:40:41Z",
+          "completed_at": "2026-10-17T13:42:02Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172448/job/117409248144"
+        },
+        {
+          "id": 117409248127,
+          "name": "parity",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:40:42Z",
+          "completed_at": "2026-10-17T13:41:24Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172409/job/117409248127"
+        },
+        {
+          "id": 117409248080,
+          "name": "governance-validation",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:40:42Z",
+          "completed_at": "2026-10-17T13:40:47Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39037172456/job/117409248080"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "pr": 1065,
+      "head_sha": "7a123de7b3484583721f80d9103c363667191d6f",
+      "merged_at": "2026-10-17T13:31:54Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/CODEX/pull/1065",
+      "check_total": 60,
+      "check_runs": [
+        {
+          "id": 117408584818,
+          "name": "scan",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:36:27Z",
+          "completed_at": "2026-10-17T13:36:33Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036942303/job/117408584818"
+        },
+        {
+          "id": 117406483430,
+          "name": "osv-scanner",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:49Z",
+          "completed_at": "2026-10-17T13:21:55Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/runs/117406483430"
+        },
+        {
+          "id": 117406455267,
+          "name": "CodeQL",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:42Z",
+          "completed_at": "2026-10-17T13:21:44Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/runs/117406455267"
+        },
+        {
+          "id": 117406431778,
+          "name": "Bandit",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:35Z",
+          "completed_at": "2026-10-17T13:21:41Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/runs/117406431778"
+        },
+        {
+          "id": 117406404601,
+          "name": "ruff",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:27Z",
+          "completed_at": "2026-10-17T13:21:33Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/runs/117406404601"
+        },
+        {
+          "id": 117406402640,
+          "name": "federation-bridge-build",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-17T13:21:27Z",
+          "completed_at": "2026-10-17T13:21:26Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196880/job/117406402640"
+        },
+        {
+          "id": 117406402437,
+          "name": "bridge-audit",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-17T13:21:27Z",
+          "completed_at": "2026-10-17T13:21:26Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196880/job/117406402437"
+        },
+        {
+          "id": 117406402409,
+          "name": "release-readiness",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-17T13:21:27Z",
+          "completed_at": "2026-10-17T13:21:26Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196880/job/117406402409"
+        },
+        {
+          "id": 117406338304,
+          "name": "scan-scheduled",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-17T13:21:07Z",
+          "completed_at": "2026-10-17T13:21:06Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036197077/job/117406338304"
+        },
+        {
+          "id": 117406337439,
+          "name": "scan-pr / osv-scan",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:20Z",
+          "completed_at": "2026-10-17T13:21:58Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036197077/job/117406337439"
+        },
+        {
+          "id": 117406337224,
+          "name": "parity",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:13Z",
+          "completed_at": "2026-10-17T13:21:51Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196920/job/117406337224"
+        },
+        {
+          "id": 117406336998,
+          "name": "security-scan (windows-latest / py3.12)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:50Z",
+          "completed_at": "2026-10-17T13:22:21Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196866/job/117406336998"
+        },
+        {
+          "id": 117406336991,
+          "name": "security-scan (ubuntu-latest / py3.12)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:22:25Z",
+          "completed_at": "2026-10-17T13:22:40Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196866/job/117406336991"
+        },
+        {
+          "id": 117406336988,
+          "name": "semantic-validation",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:22:01Z",
+          "completed_at": "2026-10-17T13:23:17Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196868/job/117406336988"
+        },
+        {
+          "id": 117406336966,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:22:16Z",
+          "completed_at": "2026-10-17T13:22:29Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196884/job/117406336966"
+        },
+        {
+          "id": 117406336939,
+          "name": "security-scan (ubuntu-latest / py3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:22:26Z",
+          "completed_at": "2026-10-17T13:22:47Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196866/job/117406336939"
+        },
+        {
+          "id": 117406336932,
+          "name": "security-scan (macos-latest / py3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:28Z",
+          "completed_at": "2026-10-17T13:21:50Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196866/job/117406336932"
+        },
+        {
+          "id": 117406336929,
+          "name": "security-scan (windows-latest / py3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:30Z",
+          "completed_at": "2026-10-17T13:21:59Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196866/job/117406336929"
+        },
+        {
+          "id": 117406336925,
+          "name": "Validate governance artifacts",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:22Z",
+          "completed_at": "2026-10-17T13:21:43Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196848/job/117406336925"
+        },
+        {
+          "id": 117406336920,
+          "name": "deterministic-repeat",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:23Z",
+          "completed_at": "2026-10-17T13:21:40Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196954/job/117406336920"
+        },
+        {
+          "id": 117406336917,
+          "name": "security-scan (macos-latest / py3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:24Z",
+          "completed_at": "2026-10-17T13:21:58Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196866/job/117406336917"
+        },
+        {
+          "id": 117406336915,
+          "name": "security-scan (ubuntu-latest / py3.9)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:57Z",
+          "completed_at": "2026-10-17T13:22:24Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196866/job/117406336915"
+        },
+        {
+          "id": 117406336885,
+          "name": "security-scan (windows-latest / py3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:28Z",
+          "completed_at": "2026-10-17T13:21:57Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196866/job/117406336885"
+        },
+        {
+          "id": 117406336868,
+          "name": "security-scan (ubuntu-latest / py3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:38Z",
+          "completed_at": "2026-10-17T13:21:55Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196866/job/117406336868"
+        },
+        {
+          "id": 117406336865,
+          "name": "security-scan (macos-latest / py3.12)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:18Z",
+          "completed_at": "2026-10-17T13:21:37Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196866/job/117406336865"
+        },
+        {
+          "id": 117406336861,
+          "name": "lineage-governance (codex)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-17T13:21:06Z",
+          "completed_at": "2026-10-17T13:21:26Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196880/job/117406336861"
+        },
+        {
+          "id": 117406336829,
+          "name": "security-scan (macos-latest / py3.9)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:17Z",
+          "completed_at": "2026-10-17T13:21:51Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196866/job/117406336829"
+        },
+        {
+          "id": 117406336826,
+          "name": "validate-rtm-runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:12Z",
+          "completed_at": "2026-10-17T13:21:17Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196892/job/117406336826"
+        },
+        {
+          "id": 117406336806,
+          "name": "governance-gate",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:21:58Z",
+          "completed_at": "2026-10-17T13:22:05Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196856/job/117406336806"
+        },
+        {
+          "id": 117406336798,
+          "name": "lineage-governance (mcp-bridge)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-17T13:21:06Z",
+          "completed_at": "2026-10-17T13:21:26Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196880/job/117406336798"
+        },
+        {
+          "id": 117406336778,
+          "name": "aggregate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:16Z",
+          "completed_at": "2026-10-17T13:21:35Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196872/job/117406336778"
+        },
+        {
+          "id": 117406336745,
+          "name": "security-scan (windows-latest / py3.9)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:18Z",
+          "completed_at": "2026-10-17T13:22:40Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196866/job/117406336745"
+        },
+        {
+          "id": 117406336733,
+          "name": "manifest",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:25Z",
+          "completed_at": "2026-10-17T13:21:32Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196893/job/117406336733"
+        },
+        {
+          "id": 117406336727,
+          "name": "zero-delta",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:26Z",
+          "completed_at": "2026-10-17T13:21:38Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196782/job/117406336727"
+        },
+        {
+          "id": 117406336721,
+          "name": "test",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:22:13Z",
+          "completed_at": "2026-10-17T13:23:20Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196881/job/117406336721"
+        },
+        {
+          "id": 117406336703,
+          "name": "renderer-governance",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:52Z",
+          "completed_at": "2026-10-17T13:21:56Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196868/job/117406336703"
+        },
+        {
+          "id": 117406336694,
+          "name": "independent-consumer",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:29Z",
+          "completed_at": "2026-10-17T13:22:11Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196829/job/117406336694"
+        },
+        {
+          "id": 117406336676,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:22:04Z",
+          "completed_at": "2026-10-17T13:22:16Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196875/job/117406336676"
+        },
+        {
+          "id": 117406336654,
+          "name": "governance-validation",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:44Z",
+          "completed_at": "2026-10-17T13:21:50Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196887/job/117406336654"
+        },
+        {
+          "id": 117406336650,
+          "name": "lineage-governance (abacus)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T13:21:11Z",
+          "completed_at": "2026-10-17T13:21:26Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196880/job/117406336650"
+        },
+        {
+          "id": 117406336616,
+          "name": "lint",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:22:18Z",
+          "completed_at": "2026-10-17T13:22:25Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196850/job/117406336616"
+        },
+        {
+          "id": 117406336597,
+          "name": "parity",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:52Z",
+          "completed_at": "2026-10-17T13:21:57Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196845/job/117406336597"
+        },
+        {
+          "id": 117406336590,
+          "name": "governance-adversary",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:54Z",
+          "completed_at": "2026-10-17T13:22:04Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196857/job/117406336590"
+        },
+        {
+          "id": 117406336584,
+          "name": "wcag-gate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:14Z",
+          "completed_at": "2026-10-17T13:21:21Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196761/job/117406336584"
+        },
+        {
+          "id": 117406336582,
+          "name": "scan",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:22:07Z",
+          "completed_at": "2026-10-17T13:22:11Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196852/job/117406336582"
+        },
+        {
+          "id": 117406336569,
+          "name": "atom-census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:08Z",
+          "completed_at": "2026-10-17T13:21:17Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196842/job/117406336569"
+        },
+        {
+          "id": 117406336547,
+          "name": "Analyze (javascript-typescript)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:28Z",
+          "completed_at": "2026-10-17T13:22:18Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196758/job/117406336547"
+        },
+        {
+          "id": 117406336535,
+          "name": "governance-validation",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:36Z",
+          "completed_at": "2026-10-17T13:21:45Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196763/job/117406336535"
+        },
+        {
+          "id": 117406336507,
+          "name": "validate-runtime-manifest",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:54Z",
+          "completed_at": "2026-10-17T13:21:58Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196839/job/117406336507"
+        },
+        {
+          "id": 117406336500,
+          "name": "unknown-disposition",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:57Z",
+          "completed_at": "2026-10-17T13:22:04Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196818/job/117406336500"
+        },
+        {
+          "id": 117406336446,
+          "name": "self-smoke (3.12)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:08Z",
+          "completed_at": "2026-10-17T13:21:28Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196792/job/117406336446"
+        },
+        {
+          "id": 117406336442,
+          "name": "Analyze (python)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:28Z",
+          "completed_at": "2026-10-17T13:22:11Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196758/job/117406336442"
+        },
+        {
+          "id": 117406336428,
+          "name": "self-smoke (3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:22:01Z",
+          "completed_at": "2026-10-17T13:22:15Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196792/job/117406336428"
+        },
+        {
+          "id": 117406336416,
+          "name": "dynamic-burndown",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:37Z",
+          "completed_at": "2026-10-17T13:21:59Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196757/job/117406336416"
+        },
+        {
+          "id": 117406336414,
+          "name": "Run federation validation",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:39Z",
+          "completed_at": "2026-10-17T13:22:00Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196804/job/117406336414"
+        },
+        {
+          "id": 117406336404,
+          "name": "runtime-validation",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:28Z",
+          "completed_at": "2026-10-17T13:21:39Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196827/job/117406336404"
+        },
+        {
+          "id": 117406336381,
+          "name": "bandit",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:15Z",
+          "completed_at": "2026-10-17T13:21:45Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196831/job/117406336381"
+        },
+        {
+          "id": 117406336376,
+          "name": "render-regression",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:19Z",
+          "completed_at": "2026-10-17T13:21:40Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196764/job/117406336376"
+        },
+        {
+          "id": 117406336312,
+          "name": "release-smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:08Z",
+          "completed_at": "2026-10-17T13:21:25Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196781/job/117406336312"
+        },
+        {
+          "id": 117406336212,
+          "name": "Analyze (actions)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:21:08Z",
+          "completed_at": "2026-10-17T13:21:50Z",
+          "details_url": "https://github.com/GBOGEB/CODEX/actions/runs/39036196758/job/117406336212"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "pr": 1949,
+      "head_sha": "9ddfb1d23ccc5f2c8e47248f29f7aa2acacac225",
+      "merged_at": "2026-10-17T14:02:21Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/cryoplant-project/pull/1949",
+      "check_total": 23,
+      "check_runs": [
+        {
+          "id": 117411242674,
+          "name": "census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:29Z",
+          "completed_at": "2026-10-17T13:48:39Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827605/job/117411242674"
+        },
+        {
+          "id": 117411117576,
+          "name": "refresh-open-prs-after-main",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-17T13:44:50Z",
+          "completed_at": "2026-10-17T13:44:50Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827661/job/117411117576"
+        },
+        {
+          "id": 117411116782,
+          "name": "unresolved-binary-lineage",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:15Z",
+          "completed_at": "2026-10-17T13:47:24Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827641/job/117411116782"
+        },
+        {
+          "id": 117411116504,
+          "name": "refresh-current-pr",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:18Z",
+          "completed_at": "2026-10-17T13:47:31Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827661/job/117411116504"
+        },
+        {
+          "id": 117411116479,
+          "name": "coolprop-property-tunnel",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:24Z",
+          "completed_at": "2026-10-17T13:48:10Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827637/job/117411116479"
+        },
+        {
+          "id": 117411116452,
+          "name": "ubuntu_2204",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:46:14Z",
+          "completed_at": "2026-10-17T13:46:17Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827588/job/117411116452"
+        },
+        {
+          "id": 117411116410,
+          "name": "guard",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:03Z",
+          "completed_at": "2026-10-17T13:48:11Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827626/job/117411116410"
+        },
+        {
+          "id": 117411116400,
+          "name": "recurrence-control",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:10Z",
+          "completed_at": "2026-10-17T13:47:17Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827630/job/117411116400"
+        },
+        {
+          "id": 117411116383,
+          "name": "ubuntu_latest",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:04Z",
+          "completed_at": "2026-10-17T13:47:08Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827588/job/117411116383"
+        },
+        {
+          "id": 117411116381,
+          "name": "total-repo-census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:10Z",
+          "completed_at": "2026-10-17T13:47:17Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827630/job/117411116381"
+        },
+        {
+          "id": 117411116349,
+          "name": "console",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:06Z",
+          "completed_at": "2026-10-17T13:48:22Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827660/job/117411116349"
+        },
+        {
+          "id": 117411116326,
+          "name": "hosted-runner-probe (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:31Z",
+          "completed_at": "2026-10-17T13:47:37Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827571/job/117411116326"
+        },
+        {
+          "id": 117411116247,
+          "name": "federation-smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:19Z",
+          "completed_at": "2026-10-17T13:47:39Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827637/job/117411116247"
+        },
+        {
+          "id": 117411116217,
+          "name": "sentinel",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:45:23Z",
+          "completed_at": "2026-10-17T13:45:28Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827630/job/117411116217"
+        },
+        {
+          "id": 117411116122,
+          "name": "windows_latest",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:46:59Z",
+          "completed_at": "2026-10-17T13:47:03Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827588/job/117411116122"
+        },
+        {
+          "id": 117411116062,
+          "name": "configured-runner-probe",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:16Z",
+          "completed_at": "2026-10-17T13:47:22Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827571/job/117411116062"
+        },
+        {
+          "id": 117411116019,
+          "name": "sentinel",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:28Z",
+          "completed_at": "2026-10-17T13:48:37Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827613/job/117411116019"
+        },
+        {
+          "id": 117411116017,
+          "name": "hosted-runner-probe (ubuntu-22.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:45:26Z",
+          "completed_at": "2026-10-17T13:45:32Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827571/job/117411116017"
+        },
+        {
+          "id": 117411116002,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:00Z",
+          "completed_at": "2026-10-17T13:47:27Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827587/job/117411116002"
+        },
+        {
+          "id": 117411115992,
+          "name": "runner-preflight",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:45:24Z",
+          "completed_at": "2026-10-17T13:45:27Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827605/job/117411115992"
+        },
+        {
+          "id": 117411115849,
+          "name": "emit-global-victory-score",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:26Z",
+          "completed_at": "2026-10-17T13:47:39Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827593/job/117411115849"
+        },
+        {
+          "id": 117411115813,
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:13Z",
+          "completed_at": "2026-10-17T13:47:47Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037827567/job/117411115813"
+        },
+        {
+          "id": 117411054923,
+          "name": "guard",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:35Z",
+          "completed_at": "2026-10-17T13:44:41Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037807770/job/117411054923"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "pr": 1948,
+      "head_sha": "922a4726a39ab1ae92506ece38783eb6ebaa462f",
+      "merged_at": "2026-10-17T14:02:08Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/cryoplant-project/pull/1948",
+      "check_total": 22,
+      "check_runs": [
+        {
+          "id": 117411679604,
+          "name": "census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:37Z",
+          "completed_at": "2026-10-17T13:48:49Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870852/job/117411679604"
+        },
+        {
+          "id": 117411236115,
+          "name": "refresh-open-prs-after-main",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-17T13:45:26Z",
+          "completed_at": "2026-10-17T13:45:25Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870936/job/117411236115"
+        },
+        {
+          "id": 117411235304,
+          "name": "sentinel",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:24Z",
+          "completed_at": "2026-10-17T13:48:29Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870937/job/117411235304"
+        },
+        {
+          "id": 117411235302,
+          "name": "configured-runner-probe",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:33Z",
+          "completed_at": "2026-10-17T13:48:38Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870904/job/117411235302"
+        },
+        {
+          "id": 117411235260,
+          "name": "recurrence-control",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:17Z",
+          "completed_at": "2026-10-17T13:48:23Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870937/job/117411235260"
+        },
+        {
+          "id": 117411235221,
+          "name": "hosted-runner-probe (ubuntu-22.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:00Z",
+          "completed_at": "2026-10-17T13:47:06Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870904/job/117411235221"
+        },
+        {
+          "id": 117411235156,
+          "name": "total-repo-census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:19Z",
+          "completed_at": "2026-10-17T13:48:27Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870937/job/117411235156"
+        },
+        {
+          "id": 117411235133,
+          "name": "hosted-runner-probe (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:03Z",
+          "completed_at": "2026-10-17T13:48:10Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870904/job/117411235133"
+        },
+        {
+          "id": 117411235078,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:52Z",
+          "completed_at": "2026-10-17T13:48:20Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870891/job/117411235078"
+        },
+        {
+          "id": 117411235075,
+          "name": "ubuntu_2204",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:00Z",
+          "completed_at": "2026-10-17T13:47:03Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870910/job/117411235075"
+        },
+        {
+          "id": 117411235046,
+          "name": "refresh-current-pr",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:40Z",
+          "completed_at": "2026-10-17T13:47:50Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870936/job/117411235046"
+        },
+        {
+          "id": 117411235015,
+          "name": "windows_latest",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:46:59Z",
+          "completed_at": "2026-10-17T13:47:03Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870910/job/117411235015"
+        },
+        {
+          "id": 117411234998,
+          "name": "guard",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:01Z",
+          "completed_at": "2026-10-17T13:48:11Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870850/job/117411234998"
+        },
+        {
+          "id": 117411234965,
+          "name": "emit-global-victory-score",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:59Z",
+          "completed_at": "2026-10-17T13:48:10Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870916/job/117411234965"
+        },
+        {
+          "id": 117411234964,
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:41Z",
+          "completed_at": "2026-10-17T13:48:16Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870939/job/117411234964"
+        },
+        {
+          "id": 117411234895,
+          "name": "sentinel",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:33Z",
+          "completed_at": "2026-10-17T13:48:41Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870880/job/117411234895"
+        },
+        {
+          "id": 117411234864,
+          "name": "federation-smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:26Z",
+          "completed_at": "2026-10-17T13:48:42Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870859/job/117411234864"
+        },
+        {
+          "id": 117411234841,
+          "name": "unresolved-binary-lineage",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:50Z",
+          "completed_at": "2026-10-17T13:47:57Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870871/job/117411234841"
+        },
+        {
+          "id": 117411234834,
+          "name": "ubuntu_latest",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:52Z",
+          "completed_at": "2026-10-17T13:47:55Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870910/job/117411234834"
+        },
+        {
+          "id": 117411234761,
+          "name": "runner-preflight",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:36Z",
+          "completed_at": "2026-10-17T13:47:39Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870852/job/117411234761"
+        },
+        {
+          "id": 117411234718,
+          "name": "coolprop-property-tunnel",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:46:07Z",
+          "completed_at": "2026-10-17T13:46:48Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037870859/job/117411234718"
+        },
+        {
+          "id": 117411220666,
+          "name": "guard",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:47:59Z",
+          "completed_at": "2026-10-17T13:48:07Z",
+          "details_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39037865028/job/117411220666"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 630,
+      "head_sha": "91f66ed542f2a3b393afa0a615344315fac2125a",
+      "merged_at": "2026-10-17T14:04:04Z",
+      "base_branch": "feat/mc-g3p-n7-n9-evidence-20261017",
+      "pr_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/630",
+      "check_total": 3,
+      "check_runs": [
+        {
+          "id": 117411395179,
+          "name": "N3 evidence Python 3.11",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:25Z",
+          "completed_at": "2026-10-17T13:48:48Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037925906/job/117411395179"
+        },
+        {
+          "id": 117411395064,
+          "name": "N3 evidence Python 3.12",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:30Z",
+          "completed_at": "2026-10-17T13:48:55Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037925906/job/117411395064"
+        },
+        {
+          "id": 117411394932,
+          "name": "validate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:48:37Z",
+          "completed_at": "2026-10-17T13:48:45Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037925887/job/117411394932"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "pr": 629,
+      "head_sha": "6858cf8fd50496cbe3041a7691ba1e83921eca1f",
+      "merged_at": "2026-10-17T14:03:29Z",
+      "base_branch": "master",
+      "pr_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/629",
+      "check_total": 15,
+      "check_runs": [
+        {
+          "id": 117414840385,
+          "name": "first-pass-closure",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-17T14:03:30Z",
+          "completed_at": "2026-10-17T14:03:44Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39039126304/job/117414840385"
+        },
+        {
+          "id": 117411223385,
+          "name": "Publish CODE PURPLE review site",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-17T13:45:22Z",
+          "completed_at": "2026-10-17T13:45:22Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037782142/job/117411223385"
+        },
+        {
+          "id": 117411140325,
+          "name": "CodeQL",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:58Z",
+          "completed_at": "2026-10-17T13:45:01Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/runs/117411140325"
+        },
+        {
+          "id": 117410984439,
+          "name": "first-pass-closure",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-17T13:44:09Z",
+          "completed_at": "2026-10-17T13:44:09Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037782044/job/117410984439"
+        },
+        {
+          "id": 117410983488,
+          "name": "g3a-consumer-proof (3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:19Z",
+          "completed_at": "2026-10-17T13:44:29Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037782284/job/117410983488"
+        },
+        {
+          "id": 117410983376,
+          "name": "g3a-consumer-proof (3.12)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:17Z",
+          "completed_at": "2026-10-17T13:44:29Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037782284/job/117410983376"
+        },
+        {
+          "id": 117410983295,
+          "name": "frozen-head-census",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:16Z",
+          "completed_at": "2026-10-17T13:44:27Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037782219/job/117410983295"
+        },
+        {
+          "id": 117410983266,
+          "name": "canonical-self-test-and-mutation",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:16Z",
+          "completed_at": "2026-10-17T13:44:21Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037782230/job/117410983266"
+        },
+        {
+          "id": 117410983118,
+          "name": "validate-ultra-control",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:16Z",
+          "completed_at": "2026-10-17T13:44:23Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037782242/job/117410983118"
+        },
+        {
+          "id": 117410983078,
+          "name": "render",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:23Z",
+          "completed_at": "2026-10-17T13:45:22Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037782142/job/117410983078"
+        },
+        {
+          "id": 117410983065,
+          "name": "audit",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:31Z",
+          "completed_at": "2026-10-17T13:44:39Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037782191/job/117410983065"
+        },
+        {
+          "id": 117410980257,
+          "name": "Analyze (python)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:42Z",
+          "completed_at": "2026-10-17T13:45:35Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037780513/job/117410980257"
+        },
+        {
+          "id": 117410980212,
+          "name": "Analyze (javascript-typescript)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:18Z",
+          "completed_at": "2026-10-17T13:45:17Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037780513/job/117410980212"
+        },
+        {
+          "id": 117410980191,
+          "name": "Analyze (actions)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:40Z",
+          "completed_at": "2026-10-17T13:45:22Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037780513/job/117410980191"
+        },
+        {
+          "id": 117410980093,
+          "name": "Analyze (ruby)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-17T13:44:32Z",
+          "completed_at": "2026-10-17T13:45:07Z",
+          "details_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39037780513/job/117410980093"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 106,
+      "head_sha": "2683812e6e2f0e37532168ca42851cc572c5b54a",
+      "merged_at": "2026-10-12T07:38:26Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/Q_engineering_tools/pull/106",
+      "check_total": 3,
+      "check_runs": [
+        {
+          "id": 114665590159,
+          "name": "build-and-exercise",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-12T04:42:40Z",
+          "completed_at": "2026-10-12T04:42:46Z",
+          "details_url": "https://github.com/GBOGEB/Q_engineering_tools/actions/runs/38204733928/job/114665590159"
+        },
+        {
+          "id": 114665589265,
+          "name": "n200_checkpoint",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-12T04:41:45Z",
+          "completed_at": "2026-10-12T04:42:13Z",
+          "details_url": "https://github.com/GBOGEB/Q_engineering_tools/actions/runs/38204733674/job/114665589265"
+        },
+        {
+          "id": 114665589249,
+          "name": "engineering-source-smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-12T04:43:21Z",
+          "completed_at": "2026-10-12T04:43:27Z",
+          "details_url": "https://github.com/GBOGEB/Q_engineering_tools/actions/runs/38204733611/job/114665589249"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/Q_engineering_tools",
+      "pr": 97,
+      "head_sha": "5f023bc6adfb84a9d2095574aacb62af75ba84cf",
+      "merged_at": "2026-09-22T13:10:35Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/Q_engineering_tools/pull/97",
+      "check_total": 3,
+      "check_runs": [
+        {
+          "id": 106758247185,
+          "name": "exact-proof",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-09-22T13:09:02Z",
+          "completed_at": "2026-09-22T13:09:08Z",
+          "details_url": "https://github.com/GBOGEB/Q_engineering_tools/actions/runs/35731592077/job/106758247185"
+        },
+        {
+          "id": 106758247021,
+          "name": "build-and-exercise",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-22T13:09:02Z",
+          "completed_at": "2026-09-22T13:09:08Z",
+          "details_url": "https://github.com/GBOGEB/Q_engineering_tools/actions/runs/35731592039/job/106758247021"
+        },
+        {
+          "id": 106758246485,
+          "name": "engineering-source-smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-22T13:09:03Z",
+          "completed_at": "2026-09-22T13:09:11Z",
+          "details_url": "https://github.com/GBOGEB/Q_engineering_tools/actions/runs/35731591947/job/106758246485"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 78,
+      "head_sha": "dadaa49c08b54a4a51903d8b28e5abdb6c93e9aa",
+      "merged_at": "2026-10-12T07:36:09Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/document-organization-system/pull/78",
+      "check_total": 1,
+      "check_runs": [
+        {
+          "id": 114664293224,
+          "name": "modular-audit",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-12T04:34:07Z",
+          "completed_at": "2026-10-12T04:34:17Z",
+          "details_url": "https://github.com/GBOGEB/document-organization-system/actions/runs/38204310541/job/114664293224"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/document-organization-system",
+      "pr": 62,
+      "head_sha": "075dfd3b52282c8d165d536e0b4642b388ad68b0",
+      "merged_at": "2026-09-18T16:08:37Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/document-organization-system/pull/62",
+      "check_total": 1,
+      "check_runs": [
+        {
+          "id": 105669767091,
+          "name": "contract",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-18T16:05:41Z",
+          "completed_at": "2026-09-18T16:05:57Z",
+          "details_url": "https://github.com/GBOGEB/document-organization-system/actions/runs/35366388321/job/105669767091"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 91,
+      "head_sha": "a79e31eabfadb1b8901e1faad72ce967b817deca",
+      "merged_at": "2026-10-11T21:42:53Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/pull/91",
+      "check_total": 5,
+      "check_runs": [
+        {
+          "id": 114575864170,
+          "name": "admission-policy",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:09:02Z",
+          "completed_at": "2026-10-11T21:09:10Z",
+          "details_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38175147766/job/114575864170"
+        },
+        {
+          "id": 114575864146,
+          "name": "test-coverage-lineage",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:08:55Z",
+          "completed_at": "2026-10-11T21:09:25Z",
+          "details_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38175147760/job/114575864146"
+        },
+        {
+          "id": 114575864063,
+          "name": "release-identity",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:09:27Z",
+          "completed_at": "2026-10-11T21:09:34Z",
+          "details_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38175147751/job/114575864063"
+        },
+        {
+          "id": 114575863977,
+          "name": "typescript-orchestration",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:09:35Z",
+          "completed_at": "2026-10-11T21:10:08Z",
+          "details_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38175147752/job/114575863977"
+        },
+        {
+          "id": 114575863907,
+          "name": "gitlink-integrity",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:09:06Z",
+          "completed_at": "2026-10-11T21:09:14Z",
+          "details_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38175147734/job/114575863907"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/DOCX_RTM_Automation",
+      "pr": 90,
+      "head_sha": "676a15eb5760ff1536ac5860db0f4654afba4be9",
+      "merged_at": "2026-10-11T21:42:08Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/pull/90",
+      "check_total": 7,
+      "check_runs": [
+        {
+          "id": 114576007548,
+          "name": "apply",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-11T21:09:34Z",
+          "completed_at": "2026-10-11T21:09:33Z",
+          "details_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38175165496/job/114576007548"
+        },
+        {
+          "id": 114575917084,
+          "name": "unit",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:09:23Z",
+          "completed_at": "2026-10-11T21:09:32Z",
+          "details_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38175165496/job/114575917084"
+        },
+        {
+          "id": 114575917011,
+          "name": "typescript-orchestration",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:09:11Z",
+          "completed_at": "2026-10-11T21:09:39Z",
+          "details_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38175165497/job/114575917011"
+        },
+        {
+          "id": 114575916837,
+          "name": "gitlink-integrity",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:09:23Z",
+          "completed_at": "2026-10-11T21:09:31Z",
+          "details_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38175165491/job/114575916837"
+        },
+        {
+          "id": 114575916811,
+          "name": "release-identity",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:09:14Z",
+          "completed_at": "2026-10-11T21:09:21Z",
+          "details_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38175165541/job/114575916811"
+        },
+        {
+          "id": 114575916778,
+          "name": "admission-policy",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:09:30Z",
+          "completed_at": "2026-10-11T21:09:38Z",
+          "details_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38175165503/job/114575916778"
+        },
+        {
+          "id": 114575916754,
+          "name": "test-coverage-lineage",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:09:27Z",
+          "completed_at": "2026-10-11T21:09:58Z",
+          "details_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38175165492/job/114575916754"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    }
+  ]
+}

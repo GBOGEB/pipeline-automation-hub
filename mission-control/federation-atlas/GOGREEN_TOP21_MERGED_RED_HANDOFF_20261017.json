@@ -1,0 +1,143 @@
+{
+  "schema": "codepurple.gogreen.merged-red-handoff.v1",
+  "as_of_date": "2026-10-17",
+  "source_pr": "https://github.com/GBOGEB/pipeline-automation-hub/pull/635",
+  "native_proof": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39041881179",
+  "source_roster": "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
+  "source_roster_blob": "0e42dd49eacc46a57fde432ad8d93ea17de4b4f9",
+  "source_snapshots": [
+    "mission-control/gogreen/merged_outcome_census/snapshots/top7_20261017.json",
+    "mission-control/gogreen/merged_outcome_census/snapshots/top14_extension_20261017.json",
+    "mission-control/gogreen/merged_outcome_census/snapshots/top21_extension_20261017.json"
+  ],
+  "native_artifact_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39041881179/artifacts/12104815481",
+  "native_artifact_files": [
+    "generated/everred_handoff.json",
+    "generated/everred_handoff.csv",
+    "generated/merged_prs.json",
+    "generated/rollup.json",
+    "generated/manifest.json",
+    "native_receipt.json"
+  ],
+  "source_population": {
+    "eligible_repositories": 21,
+    "observed_repositories": 21,
+    "sampled_merged_prs": 41,
+    "check_runs_observed": 509,
+    "failed_check_manifestations": 33,
+    "premerge_red_prs": 6,
+    "postmerge_red_prs": 9,
+    "observed_green_prs": 23,
+    "unknown_prs": 5
+  },
+  "observed_burden_by_repo": [
+    {
+      "repo": "GBOGEB/CODEX",
+      "failed_check_ids": 10,
+      "owner": "CODEX",
+      "priority": "FIRST_RED_LOGS_AND_TEST_FAMILY"
+    },
+    {
+      "repo": "GBOGEB/CoolProp",
+      "failed_check_ids": 7,
+      "owner": "CoolProp",
+      "priority": "DOCKER_PULL_AND_PLATFORM_MATRIX"
+    },
+    {
+      "repo": "GBOGEB/telegraf",
+      "failed_check_ids": 6,
+      "owner": "telegraf",
+      "priority": "SEMANTIC_PR_TITLE_AND_LINT"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "failed_check_ids": 5,
+      "owner": "ABACUS",
+      "priority": "POLICY_INVENTORY_AND_GRAPH_CONTRACT"
+    },
+    {
+      "repo": "GBOGEB/github-mcp-server",
+      "failed_check_ids": 2,
+      "owner": "github-mcp-server",
+      "priority": "WINDOWS_UBUNTU_NATIVE_BUILDS"
+    },
+    {
+      "repo": "GBOGEB/stale",
+      "failed_check_ids": 1,
+      "owner": "stale",
+      "priority": "LICENSE_CHECK"
+    },
+    {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "failed_check_ids": 1,
+      "owner": "Q_engineering_tools",
+      "priority": "EXACT_PROOF"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "failed_check_ids": 1,
+      "owner": "MissionControl",
+      "priority": "POSTMERGE_FIRST_PASS_CLOSURE"
+    }
+  ],
+  "sample_native_first_red_evidence": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2129,
+      "check": "policy-and-inventory",
+      "finding": "generated workflow rationalization stale; unclassified workflows",
+      "causal_root_confirmed": false
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "pr": 1066,
+      "check": "semantic-validation",
+      "finding": "W169 replay sentinel has no hexdigest",
+      "causal_root_confirmed": false
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "pr": 1066,
+      "check": "governance-gate",
+      "finding": "PR-007 governance header and W003 follow-up absent",
+      "causal_root_confirmed": false
+    },
+    {
+      "repo": "GBOGEB/CoolProp",
+      "pr": 20,
+      "check": "build",
+      "finding": "Docker pull denied, infrastructure/access candidate",
+      "causal_root_confirmed": false
+    },
+    {
+      "repo": "GBOGEB/telegraf",
+      "pr": 3,
+      "check": "semantic / main",
+      "finding": "PR title fails semantic-title rule",
+      "causal_root_confirmed": false
+    }
+  ],
+  "consumer": "CODE_PURPLE_BD_QUEUE_REX_INDEPENDENT_DISPOSITION",
+  "dedup_identity": [
+    "repository",
+    "pr",
+    "head_sha",
+    "check_run_id"
+  ],
+  "root_dedup_required": true,
+  "historical_window_incomplete": true,
+  "required_gate_policy_verified": false,
+  "issue_auto_creation": false,
+  "source_mutation_authorized": false,
+  "root_closure_credit": 0,
+  "authority_transfer": false,
+  "merge_authorized": false,
+  "acceptance_before_import": [
+    "read exact native failed-job step",
+    "validate chronology and possible rerun resolution",
+    "identify independent source owner",
+    "deduplicate actual causal roots, do not use check-name equivalence",
+    "retain previous positive GoGREEN receipts",
+    "do not waive required checks or merge"
+  ]
+}
