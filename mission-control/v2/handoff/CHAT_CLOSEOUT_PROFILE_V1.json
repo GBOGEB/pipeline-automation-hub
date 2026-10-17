@@ -1,22 +1,26 @@
 {
   "schema": "code_purple.chat_closeout_profile.v1",
-  "status": "ADDITIVE_NON_AUTHORITATIVE_TRANSPORT_AND_REPORTING_PROFILE",
-  "control": "mission-control/v2/handoff/CP_HANDOFF_RESUME_V1.json",
-  "moniker": "CP.CLOSEOUT",
+  "status": "OPTIONAL_REPORTING_ANNEX_NOT_CANONICAL",
+  "control": "mission-control/v2/handoff/closeout/CP_CLOSE_GITHUB_v1.json",
+  "moniker": "CP.CLOSEOUT_ALIAS_OF_CP.CLOSE",
   "alias": "CP.CLOSEOUT!",
-  "invocation": "CP.CLOSEOUT(scope=\"CURRENT_CHAT\",mode=\"GITHUB_FIRST\",depth=\"LOSSLESS_INTENT\",metrics=\"FULL_AVAILABLE\",target=\"GOVERNED_MAIN\")",
+  "invocation": "CP.CLOSE(scope=\"CURRENT_SESSION\",target=\"GBOGEB/pipeline-automation-hub:master\",mode=\"GITHUB_FIRST_LOSSLESS\",outputs=\"PR+STATE+STATS+INTENTS+BD+REX+TODO+DROPIN+MANIFEST\",admission=\"GOVERNED\")",
   "intended_target": "GOVERNED_MAIN_NOT_UNCONDITIONAL_MERGE",
   "output": {
-    "per_chat_location": "mission-control/v2/handoff/chat-closeouts/<bounded-session-id>/",
+    "per_chat_location": "mission-control/v2/handoff/closeout/records/<session_alias>/",
     "files": [
-      "CLOSEOUT.md",
-      "RECEIPT.json",
-      "DROPIN.md"
+      "START_HERE.md",
+      "LOSSLESS_HANDOVER.md",
+      "NEXT_CHAT_DROPIN.md",
+      "STATE.json",
+      "CHAT_STATS.json",
+      "INTENT_ACTION_LEDGER.json",
+      "BD_QUEUE_READONLY.json",
+      "TODO_BD_QUEUE.csv",
+      "MANIFEST.json"
     ],
     "optional_when_needed": [
-      "METRICS.json",
-      "BD_QUEUE.jsonl",
-      "MANIFEST_SHA256.json"
+      "LOCAL_VERIFIED_ORIGINAL_EXPORT_OUTSIDE_GITHUB"
     ],
     "no_second_ssot": true,
     "no_zip_by_default": true
@@ -116,5 +120,7 @@
     "security_waiver": false,
     "branch_ruleset_relaxation": false,
     "synthetic_native_proof": false
-  }
+  },
+  "redundant_schema_note": "Earlier chat_closeout_receipt.v1 is optional reporting only. CP.CLOSE owns canonical transport projection, and canonical CPQ BD is read-only.",
+  "no_second_producer": true
 }
