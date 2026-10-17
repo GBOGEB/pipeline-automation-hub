@@ -108,9 +108,13 @@ function replay(parts, expectedRepositories = 21) {
 function main(argv) {
   if (argv.length < 4) fail('usage: node top21_engine.cjs <parts-directory> <output-json>');
   const dir = argv[2], output = argv[3];
-  const files = [1, 2, 3, 4].map(i => path.join(dir, 'CENSUS_N11_PART0' + i + '.json'));
+  const files = fs.readdirSync(dir).filter(n => /^CENSUS_[A-Z0-9_]+_PART[0-9]+\.json$/.test(n)).sort()
+    .map(n => path.join(dir, n));
+  if (!files.length) fail('missing append-only census pulse parts');
   const docs = files.map(file => JSON.parse(fs.readFileSync(file, 'utf8')));
-  const result = replay(docs);
+  const expected = argv[4] === undefined ? 21 : Number(argv[4]);
+  if (!Number.isSafeInteger(expected) || expected < 1 || expected > 100) fail('cohort size must be 1..100');
+  const result = replay(docs, expected);
   fs.mkdirSync(path.dirname(output), {recursive:true});
   fs.writeFileSync(output, JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify({source:files, output, ...result.total, sha256:result.semantic_sha256}));
