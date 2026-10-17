@@ -76,12 +76,14 @@ def assess_jobs(payload: dict, name: str, expected_run_id: int | None = None) ->
     nonempty = total > 0
     terminal = complete and nonempty and all(j["status"] == "completed" for j in rows)
     all_success = terminal and all(j.get("conclusion") == "success" for j in rows)
-    # At least one terminal completed step per successful job; this does NOT
-    # assert that a test ran or that an artifact was uploaded.
+    # Require a completed positive step AND no failed steps. A successful job
+    # may contain continue-on-error failures; those are manifestations, not
+    # a clean native proof. This does NOT assert a test or artifact existed.
     step_proof = all_success and all(
         isinstance(j.get("steps"), list) and any(
             s.get("status") == "completed" and s.get("conclusion") == "success"
-            for s in j["steps"])
+            for s in j["steps"]) and not any(
+            s.get("conclusion") == "failure" for s in j["steps"])
         for j in rows)
     bound = (None if expected_run_id is None else
              complete and nonempty and all(j.get("run_id") == expected_run_id for j in rows))
