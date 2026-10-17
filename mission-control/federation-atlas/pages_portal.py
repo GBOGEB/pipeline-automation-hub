@@ -126,10 +126,45 @@ def build(atlas,out,sha):
             dst.parent.mkdir(exist_ok=True, parents=True)
             shutil.copyfile(src, dst)
             hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
+    # Additive W2 read-only gg_MATH evidence inlay; no second publisher.
+    w2_names = ("evidence.json", "evidence.html", "evidence-manifest.json")
+    w2_root = atlas / "mission-rebuild"
+    w2_present = [name for name in w2_names if (w2_root / name).is_file()]
+    if w2_present and len(w2_present) != len(w2_names):
+        raise ValueError("partial W2 MissionControl evidence output")
+    if len(w2_present) == len(w2_names):
+        w2_receipt = json.loads((w2_root / "evidence-manifest.json").read_text(encoding="utf-8"))
+        w2_state = json.loads((w2_root / "evidence.json").read_text(encoding="utf-8"))
+        if not (w2_receipt.get("schema") == "missioncontrol.makeover.w2_plotly_manifest.v1"
+                and w2_receipt.get("source_sha") == sha
+                and w2_receipt.get("publisher") == "EXISTING_METHOD_ATLAS_PAGES_ONLY"
+                and w2_receipt.get("merge_admission") == "HOLD"
+                and w2_receipt.get("security_waiver") is False
+                and w2_receipt.get("authority_transfer") is False
+                and w2_receipt.get("gg_math_kernel_duplicated") is False
+                and w2_state.get("schema") == "missioncontrol.makeover.w2_native_observation.v1"
+                and w2_state.get("source_head_sha") == sha
+                and w2_state.get("governance", {}).get("merge_admission") == "HOLD"
+                and w2_state.get("gg_math", {}).get("native_live_pulse_receipts_ingested") == 0
+                and w2_state.get("fleet", {}).get("capacity_slots") is None
+                and w2_state.get("unknown_burndown", {}).get("coverage", {}).get("covered_statements") is None):
+            raise ValueError("unsafe W2 gg_MATH/Plotly bridge admission")
+        if set(w2_receipt.get("member_sha256", {})) != {"evidence.json", "evidence.html"}:
+            raise ValueError("W2 manifest population drift")
+        for name in w2_names:
+            src = w2_root / name
+            if name != "evidence-manifest.json" and hashlib.sha256(src.read_bytes()).hexdigest() != w2_receipt["member_sha256"].get(name):
+                raise ValueError("W2 evidence source hash mismatch: " + name)
+            dst = out / "mission-rebuild" / name
+            dst.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copyfile(src, dst)
+            hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
     links=[("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
     if (out / "mission-rebuild" / "index.html").is_file():
         cards += '<a class="card" href="mission-rebuild/index.html">MISSION CONTROL · Repository and DAG explorer ↗</a>'
+    if (out / "mission-rebuild" / "evidence.html").is_file():
+        cards += '<a class="card" href="mission-rebuild/evidence.html">MissionControl W2 · live queue / gg_MATH Plotly evidence ↗</a>'
     # Source-owned gg_MATH Plotly proof is a navigational link, not a deployed
     # Pages asset or a second KPI producer. Fail closed on unsafe bridge claims.
     math_bridge=Path(__file__).resolve().parent/"GG_MATH_CONVERGENCE_BRIDGE_v1.json"

@@ -58,6 +58,8 @@ jobs:
           python-version: '3.12'
       - name: Install pinned YAML parser
         run: python -m pip install pyyaml==6.0.3
+      - name: Install pinned offline Plotly for MissionControl W2
+        run: python -m pip install --disable-pip-version-check plotly==6.5.2
       - name: Contract and Doctor routing tests
         run: python -m unittest discover -s mission-control/federation-atlas -p "test_*.py" -v
       - name: CODE PURPLE series must match this tree (append an entry per closed iteration)
@@ -88,6 +90,20 @@ jobs:
           python -m unittest discover -s mission-control/federation-atlas/mission_rebuild -p 'test_*.py' -v
           python mission-control/federation-atlas/mission_rebuild/build.py --source-sha "$EXACT_SHA" --out /tmp/code-purple-atlas/mission-rebuild
           test -s /tmp/code-purple-atlas/mission-rebuild/manifest.json
+      - name: Capture bounded native W1 and gg_MATH read-only statuses
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/mission_rebuild/w2_live_bridge.py \
+            --head "$EXACT_SHA" \
+            --out /tmp/code-purple-atlas/mission-rebuild/evidence.json
+          python mission-control/federation-atlas/mission_rebuild/w2_plotly.py \
+            --snapshot /tmp/code-purple-atlas/mission-rebuild/evidence.json \
+            --out /tmp/code-purple-atlas/mission-rebuild
+          test -s /tmp/code-purple-atlas/mission-rebuild/evidence-manifest.json
       - name: "CPQ N5: source-bound convergence + disjoint test-coverage receipt"
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -439,6 +455,19 @@ jobs:
             --out /tmp/code-purple-atlas/mission-rebuild/w1-browser-qa.json \
             --screens /tmp/code-purple-atlas/mission-rebuild/browser-screens
           test -s /tmp/code-purple-atlas/mission-rebuild/w1-browser-qa.json
+      - name: W2 native Plotly responsive QA and Pages source/hash parity
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/mission_rebuild/w2_browser_qa.py \
+            --source /tmp/code-purple-atlas/mission-rebuild \
+            --portal /tmp/code-purple-atlas/pages/mission-rebuild \
+            --sha "$EXACT_SHA" \
+            --out /tmp/code-purple-atlas/mission-rebuild/w2-browser-qa.json \
+            --screens /tmp/code-purple-atlas/mission-rebuild/w2-screenshots
+          test -s /tmp/code-purple-atlas/mission-rebuild/w2-browser-qa.json
       - name: Upload identity-bound HTML SVG and metrics
         uses: actions/upload-artifact@v4
         with:
