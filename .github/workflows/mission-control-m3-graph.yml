@@ -52,3 +52,36 @@ jobs:
           name: m3-graph-contract-${{ github.run_id }}-${{ github.run_attempt }}
           path: out/m3/receipt.json
           if-no-files-found: error
+
+  m3-browser:
+    name: M3 Chromium responsive and interaction QA
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact event SHA
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.11"
+      - name: Install pinned Playwright and Chromium
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: QA 1440x1000, 1280x800, 390x844 with exact checkout
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          python mission-control/federation-atlas/m3_session/m3_browser_qa.py --out out/m3/browser
+      - name: Upload QA screenshots and negative receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: m3-browser-qa-${{ github.run_id }}-${{ github.run_attempt }}
+          path: out/m3/browser/
+          if-no-files-found: warn
