@@ -99,8 +99,37 @@ def build(atlas,out,sha):
             dest.parent.mkdir(exist_ok=True, parents=True)
             shutil.copyfile(src, dest)
             hashes[str(dest.relative_to(out))] = hashlib.sha256(dest.read_bytes()).hexdigest()
+    # Mission rebuild: one owner portal; never an alternate Pages publisher.
+    rebuild_allow = ("index.html", "graph.json", "graph.mmd", "manifest.json")
+    rebuild_src = atlas / "mission-rebuild"
+    rebuild_present = [n for n in rebuild_allow if (rebuild_src / n).is_file()]
+    if rebuild_present and len(rebuild_present) != len(rebuild_allow):
+        raise ValueError("partial Mission rebuild output")
+    if len(rebuild_present) == len(rebuild_allow):
+        receipt = json.loads((rebuild_src / "manifest.json").read_text(encoding="utf-8"))
+        graph = json.loads((rebuild_src / "graph.json").read_text(encoding="utf-8"))
+        if not (receipt.get("schema") == "missioncontrol.makeover.manifest.v1"
+                and receipt.get("source_sha") == sha
+                and receipt.get("published_by") == "EXISTING_METHOD_ATLAS_PAGES_ONLY"
+                and receipt.get("merge_admission") == "HOLD"
+                and receipt.get("security_waiver") is False
+                and receipt.get("authority_transfer") is False
+                and graph.get("source_sha") == sha
+                and graph.get("gate", {}).get("merge_admission") == "HOLD"
+                and graph.get("scheduler", {}).get("dispatch_authorized") is False):
+            raise ValueError("unsafe Mission rebuild source")
+        for name in rebuild_allow:
+            src = rebuild_src / name
+            if name != "manifest.json" and hashlib.sha256(src.read_bytes()).hexdigest() != receipt.get("files_sha256", {}).get(name):
+                raise ValueError("Mission rebuild hash mismatch: " + name)
+            dst = out / "mission-rebuild" / name
+            dst.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copyfile(src, dst)
+            hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
     links=[("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
+    if (out / "mission-rebuild" / "index.html").is_file():
+        cards += '<a class="card" href="mission-rebuild/index.html">MISSION CONTROL · Repository and DAG explorer ↗</a>'
     # Source-owned gg_MATH Plotly proof is a navigational link, not a deployed
     # Pages asset or a second KPI producer. Fail closed on unsafe bridge claims.
     math_bridge=Path(__file__).resolve().parent/"GG_MATH_CONVERGENCE_BRIDGE_v1.json"

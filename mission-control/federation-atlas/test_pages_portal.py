@@ -26,4 +26,20 @@ class TestPages(unittest.TestCase):
    self.assertIn("https://github.com/GBOGEB/gg_MATH/blob/",body)
    self.assertFalse((p/"out"/"gg-math"/"index.html").exists())
    self.assertFalse(m["merge_authorized"])
+ def test_mission_rebuild_partial_output_fails_closed(self):
+  with tempfile.TemporaryDirectory() as d:
+   p=Path(d);src=p/"atlas";src.mkdir();(src/"index.html").write_text("valid Atlas")
+   target=src/"mission-rebuild";target.mkdir();(target/"index.html").write_text("<title>incomplete</title>")
+   with self.assertRaisesRegex(ValueError,"partial Mission rebuild"):
+    pages_portal.build(src,p/"out","a"*40)
+ def test_mission_rebuild_forged_digest_fails_closed(self):
+  with tempfile.TemporaryDirectory() as d:
+   p=Path(d);src=p/"atlas";src.mkdir();(src/"index.html").write_text("valid Atlas")
+   target=src/"mission-rebuild";target.mkdir()
+   (target/"index.html").write_text("<title>fake</title>")
+   (target/"graph.json").write_text(json.dumps({"source_sha":"a"*40,"gate":{"merge_admission":"HOLD"},"scheduler":{"dispatch_authorized":False}}))
+   (target/"graph.mmd").write_text("flowchart LR\\n")
+   (target/"manifest.json").write_text(json.dumps({"schema":"missioncontrol.makeover.manifest.v1","source_sha":"a"*40,"published_by":"EXISTING_METHOD_ATLAS_PAGES_ONLY","merge_admission":"HOLD","security_waiver":False,"authority_transfer":False,"files_sha256":{"index.html":"0"*64,"graph.json":"0"*64,"graph.mmd":"0"*64}}))
+   with self.assertRaisesRegex(ValueError,"Mission rebuild hash mismatch"):
+    pages_portal.build(src,p/"out","a"*40)
 if __name__=="__main__":unittest.main()
