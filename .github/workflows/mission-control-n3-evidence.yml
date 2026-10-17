@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'mission-control/v2/n3_*.py'
+      - 'mission-control/v2/g3p_live_*.py'
+      - 'mission-control/v2/g3p_live_template.html'
+      - 'mission-control/v2/test_g3p_live_dashboard.py'
       - 'mission-control/v2/test_n3_*.py'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json'
@@ -14,6 +17,7 @@ on:
       - 'mission-control/v2/n3_*.py'
       - 'mission-control/v2/test_n3_*.py'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
+      - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json'
       - '.github/workflows/mission-control-n3-evidence.yml'
   workflow_dispatch:
 
@@ -67,12 +71,49 @@ jobs:
           assert branch_total>0 and 100*branches/branch_total>=80, 'N3 branch coverage gate failed'
           print(f'FOCUSED_N3_BRANCH={branches}/{branch_total}')
           PY
+      - name: Test G3P live N-index replay and fail-closed HTTP/SSE
+        run: |
+          python -m coverage run --branch --source=mission-control/v2 -m unittest discover -s mission-control/v2 -p 'test_g3p_live_dashboard.py' -v
+          python -m coverage json -o /tmp/g3p-live-coverage.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          c=json.loads(Path('/tmp/g3p-live-coverage.json').read_text())['files']
+          matches=[v['summary'] for k,v in c.items() if Path(k).name=='g3p_live_dashboard.py']
+          assert len(matches)==1, 'source blob denominator not unique'
+          x=matches[0]
+          lp=100*x['covered_lines']/x['num_statements']
+          bp=100*x['covered_branches']/x['num_branches']
+          print(f'G3P_LIVE_STMT={x["covered_lines"]}/{x["num_statements"]} {lp:.2f}%')
+          print(f'G3P_LIVE_BRANCH={x["covered_branches"]}/{x["num_branches"]} {bp:.2f}%')
+          assert lp>=85 and bp>=80, 'G3P live focused coverage gate failed'
+          PY
       - name: Produce source-bound audit, telemetry and HTML projection
         run: |
           mkdir -p /tmp/n3-evidence
           python mission-control/v2/n3_integrity.py mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json --out /tmp/n3-evidence/audit.json
           python mission-control/v2/n3_dashboard.py mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json --html /tmp/n3-evidence/index.html --metrics /tmp/n3-evidence/metrics.json
           cp /tmp/n3-coverage.json /tmp/n3-evidence/coverage.json
+          cp /tmp/g3p-live-coverage.json /tmp/n3-evidence/g3p-live-coverage.json
+          python mission-control/v2/g3p_live_dashboard.py \
+            --ledgers mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json \
+            --out-dir /tmp/n3-evidence/live
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          out=Path('/tmp/n3-evidence/live')
+          m=json.loads((out/'g3p-manifest.json').read_text())
+          g=json.loads((out/'g3p-lineage.json').read_text())
+          assert (g['metrics']['pulses'],g['metrics']['edge_count'],g['metrics']['intervening_unproven_source_boundaries'])==(6,5,1)
+          assert [n['ordinal'] for n in g['nodes'] if n['test_kind']=='NOT_RUN']==[1,3]
+          assert g['nodes'][-1]['passed_test_claim']==61
+          assert g['merge_admission']=='HOLD' and g['authority_transfer'] is False
+          for name, digest in m['outputs_sha256'].items():
+              assert hashlib.sha256((out/name).read_bytes()).hexdigest()==digest
+          h=(out/'g3p-lineage.html').read_text()
+          assert 'id="reload"' in h and 'id="poll"' in h and 'id="ordinal"' in h
+          print('G3P_LIVE_SNAPSHOT=PASS; LOCAL_FEED_ONLY; NATIVE_AUTH=UNKNOWN; ADMISSION=HOLD')
+          PY
           python mission-control/v2/n3_wave_federation.py \
             --ledgers mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json \
             --out-dir /tmp/n3-evidence
