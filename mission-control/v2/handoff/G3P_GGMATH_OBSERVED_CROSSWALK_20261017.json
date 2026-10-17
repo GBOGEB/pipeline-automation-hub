@@ -1,0 +1,41 @@
+{
+  "schema": "missioncontrol.ggmath.observed_projection_crosswalk.v1",
+  "created_on": "2026-10-17",
+  "consumer_repo": "GBOGEB/pipeline-automation-hub",
+  "consumer_base_sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+  "provider_repo": "GBOGEB/gg_MATH",
+  "provider_pr": 64,
+  "provider_candidate_head_sha": "a6ffc17898502c082f270b0df859ca0027f4d96a",
+  "provider_data_path": "mission/federation/G3P_OBSERVED_20261017.json",
+  "provider_data_blob_sha": "5435542c53b3c1b70fe24d108a28473a52864340",
+  "provider_code_path": "mission/federation/g3p_observed_dashboard.py",
+  "provider_kernel_path": "kernels/convergence_control.py",
+  "source_repo": "GBOGEB/ABACUS",
+  "historical_source_ledgers": [
+    "https://github.com/GBOGEB/ABACUS/issues/1929#issuecomment-6239719163",
+    "https://github.com/GBOGEB/ABACUS/issues/2049#issuecomment-6239248713"
+  ],
+  "observed_cohorts": [
+    "everred-black-68",
+    "everred-isort-68",
+    "mass-signal-combined-172"
+  ],
+  "projection_kind": "STATIC_READ_ONLY_HISTORICAL_ABACUS_PR_HEADS",
+  "provider_data_provenance": "SOURCE_BOUND_UNVERIFIED_RECEIPTS",
+  "provider_native_qa": "QUEUED_AT_CROSSWALK_AUTHORING",
+  "browser_execution": "EXTERNAL_PLOTLY_OPTIONAL; OFFLINE_NATIVE_PROVIDER_ARTIFACT_PENDING",
+  "pca": "NOT_QUALIFIED_NO_INDEPENDENT_MATRIX",
+  "bradley_terry": "NOT_QUALIFIED_NO_CONNECTED_OUTCOMES",
+  "six_sigma": "NOT_QUALIFIED_NO_INDEPENDENT_CTQ_OPPORTUNITIES",
+  "accepted_n_advances": null,
+  "authority_transfer": false,
+  "merge_admission": "HOLD",
+  "qps_engineering_acceptance": "NOT_ATTESTED",
+  "control_conditions": [
+    "Source-bound historic claim cannot imply latest default-branch head",
+    "UI plot never grants GitHub reviewer/security/FPC approval",
+    "Missing k/d and incomparable cohorts remain null, never zero",
+    "Plotly CDN failure must retain visible source/count table",
+    "No overwrite of legacy Mission Control status registry or graph"
+  ]
+}
