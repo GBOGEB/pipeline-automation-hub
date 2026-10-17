@@ -248,8 +248,8 @@ def build_data():
          "url":repo_url+"blob/master/mission-control/v2/handoff/live_lossless/LIVE_LOSSLESS_PROFILE_v1.json"},
         {"name":"CP.CLOSE", "scope":"CANONICAL_NINE_ARTIFACT_SESSION_OPERATOR",
          "invocation":'CP.CLOSE(scope="CURRENT_SESSION",target="GBOGEB/pipeline-automation-hub:master",mode="GITHUB_FIRST_LOSSLESS")',
-         "details":"Expanded deterministic closeout implementation; compatibility document #642 is a pending draft and not yet canonical main.",
-         "url":repo_url+"pull/642"},
+         "details":"Canonical deterministic nine-artifact closeout; CP.CLOSEOUT is an alias, not a second producer.",
+         "url":repo_url+"blob/master/mission-control/v2/handoff/closeout/README.md"},
         {"name":"CP.HANDOFF", "scope":"LOSSLESS_TRANSPORT",
          "invocation":'CP.HANDOFF(scope="CURRENT_SESSION",mode="LOSSLESS_INTENT",artifact="ZIP+DROPIN+STATE+MANIFEST")',
          "details":"Source-bound frozen handover ZIP and state; only complete original bytes if accessible.",
@@ -304,6 +304,7 @@ def build_data():
             "closeout_profile_sha256": profile_hash,
             "live_profile_sha256": live_profile_hash,
             "handoff_contract_sha256": operator_hash,
+            "canonical_closeout_protocol_sha256": protocol_hash,
             "native_run": observed["native_run"],
             "local_browser_qa_is_not_hosted_proof": True
         }
