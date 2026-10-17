@@ -101,6 +101,29 @@ def validate(profile, receipt, export_bytes=None):
         require(all(excerpt.get(k) is None for k in COUNT_FIELDS), "unobserved excerpt count")
     require(isinstance(stats.get("intent_topics"), list), "intent topics")
     require(all(isinstance(x, str) and x for x in stats["intent_topics"]), "intent labels")
+    metric_receipts = stats.get("metric_receipts", [])
+    require(isinstance(metric_receipts, list), "metric receipts")
+    metric_ids = set()
+    for measure in metric_receipts:
+        require(isinstance(measure, dict), "measurement record")
+        require(isinstance(measure.get("id"), str) and measure["id"] and
+                measure["id"] not in metric_ids, "metric identity")
+        metric_ids.add(measure["id"])
+        require(measure.get("source") == "GITHUB_NATIVE_RUN", "native source type")
+        require(github_url(measure.get("url")), "native metric URL")
+        require(isinstance(measure.get("exact_head_sha"), str)
+                and SHA1.fullmatch(measure["exact_head_sha"]), "metric exact SHA")
+        for ident in ("run_id", "job_id", "eligible_tests", "passed_tests", "failed_tests"):
+            require(type(measure.get(ident)) is int and measure[ident] >= 0,
+                    "metric " + ident)
+        require(measure["run_id"] > 0 and measure["job_id"] > 0 and
+                measure["eligible_tests"] > 0, "metric denominator")
+        require(measure["passed_tests"] + measure["failed_tests"] <=
+                measure["eligible_tests"], "metric population overshoot")
+        require(measure.get("status") in ("PASS", "FAIL", "CANCELLED", "UNKNOWN"),
+                "metric status")
+        if measure["status"] == "PASS":
+            require(measure["failed_tests"] == 0, "false native PASS")
 
     narrative = receipt["narrative"]
     for key in ("mission", "original_intent", "evolution", "decisions",
@@ -168,7 +191,8 @@ def validate(profile, receipt, export_bytes=None):
     return {
         "status": "STRUCTURAL_PASS_NOT_GITHUB_AUTHENTICATION",
         "stage": stage,
-        "exact_full_chat_counts_verified": bool(claimed_full),
+        "normalized_export_count_bytes_verified": bool(claimed_full),
+        "complete_population_independently_authenticated": False,
         "full_chat_statistics_missing": not claimed_full,
         "bd_items": len(bd),
         "pr_references": len(lineage["prs"]),
