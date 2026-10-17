@@ -1,0 +1,72 @@
+name: QPS Metric Census Reusable Receiver
+
+on:
+  workflow_call:
+    inputs:
+      wave:
+        type: string
+        required: true
+      selector:
+        type: string
+        required: true
+      route:
+        type: string
+        required: true
+      request_id:
+        type: string
+        required: true
+      expected_sha:
+        type: string
+        required: true
+      toolkit_ref:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  source-bound-census:
+    name: QPS Census receiver ${{ inputs.route }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout receiver repository exact source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout pinned Mission Control census toolkit
+        uses: actions/checkout@v4
+        with:
+          repository: GBOGEB/pipeline-automation-hub
+          ref: ${{ inputs.toolkit_ref }}
+          path: .qps-toolkit
+          persist-credentials: false
+      - name: Verify pinned toolkit identity
+        shell: bash
+        env:
+          EXPECTED_TOOLKIT_SHA: ${{ inputs.toolkit_ref }}
+        run: |
+          test "$(git -C .qps-toolkit rev-parse HEAD)" = "$EXPECTED_TOOLKIT_SHA"
+      - name: Capture source-bound read-only census
+        shell: bash
+        env:
+          QPS_WAVE: ${{ inputs.wave }}
+          QPS_SELECTOR: ${{ inputs.selector }}
+          QPS_REQUEST_ID: ${{ inputs.request_id }}
+          QPS_EXPECTED_SHA: ${{ inputs.expected_sha }}
+          QPS_ROUTE: ${{ inputs.route }}
+          QPS_JOB_NAME: QPS Census receiver ${{ inputs.route }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python .qps-toolkit/tools/metric-atlas/metric_atlas/receiver.py \
+            --route "$QPS_ROUTE" --output "qps-census/$QPS_ROUTE.json"
+      - name: Upload native check-census receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-metric-${{ inputs.route }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: qps-census/*.json
+          if-no-files-found: warn
+          retention-days: 21
