@@ -305,9 +305,6 @@ def validate_record(doc: Any) -> dict[str, Any]:
         })
         completed += 1
         previous_sha, previous_time = next_sha, observed_time
-    need(not global_stop or completed < 3 or
-         inspected[2]["status"] != "NOT_RUN_GLOBAL_BLOCKER",
-         "global-stop shape contradicted")
     wave_status = (
         "STOPPED_MAJOR_BLOCKER" if global_stop
         else "COMPLETED_THREE_EVIDENCED_PULSES"
@@ -352,7 +349,12 @@ def main(argv: list[str] | None = None) -> int:
                       "terminal_evidenced_pulses":
                       report["terminal_evidenced_pulses"],
                       "main_merge_admitted": False}, sort_keys=True))
-    return 0 if report["N_plus_3_ordinal_reached"] else 2
+    # Exit 0 means the three receipt slots have terminal traceability,
+    # never security/merge approval. A major global stop is exit 2 even
+    # when encountered during the third pulse.
+    return 0 if (report["N_plus_3_ordinal_reached"]
+                 and report["wave_status"] ==
+                 "COMPLETED_THREE_EVIDENCED_PULSES") else 2
 
 
 if __name__ == "__main__":
