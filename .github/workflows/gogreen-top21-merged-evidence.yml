@@ -1,0 +1,56 @@
+name: GOGREEN TOP21 Merged Evidence Scanner
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/merged_evidence/**'
+      - '.github/workflows/gogreen-top21-merged-evidence.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+  checks: read
+  pull-requests: read
+concurrency:
+  group: gogreen-top21-merged-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  merged-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Verify negative and missing evidence without false green
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/gogreen/merged_evidence/tests -v
+      - name: Generate exactly canonical TOP21 roster
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('mission-control/gogreen/success_graph/samples/native_success_20261017.json')
+          r=[x['repository'] for x in json.loads(p.read_text())['repo_heads']]
+          assert len(r)==len(set(r))==21
+          Path('mission-control/gogreen/merged_evidence/roster_from_ssot.json').write_text(json.dumps(r,indent=2)+'\n')
+          PY
+      - name: Read-only merged-PR Actions census
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/merged_evidence/scan.py \
+            --roster mission-control/gogreen/merged_evidence/roster_from_ssot.json \
+            --limit 1 --out "$RUNNER_TEMP/gogreen-top21"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: gogreen-top21-merged-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/gogreen-top21/
+          retention-days: 30
+          if-no-files-found: warn
