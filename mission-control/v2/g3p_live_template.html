@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+  <title>Mission Control — Live G3P Lineage / N+6</title>
+  <style>
+  :root{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#192e47;background:#edf3f9;color-scheme:light}
+  *{box-sizing:border-box}body{margin:0;max-width:1300px;padding:0 28px 50px;margin-inline:auto}
+  header{padding:29px 0 20px;border-bottom:2px solid #d5dfed;display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
+  .eyebrow{font-size:12px;letter-spacing:.15em;font-weight:760;color:#537397;text-transform:uppercase;margin:0 0 8px}
+  h1{font-size:clamp(24px,3vw,35px);line-height:1.16;margin:0 0 7px;letter-spacing:-.04em}
+  .sub{font-size:14px;color:#60728b;margin:0}h2{font-size:19px;letter-spacing:-.025em;margin:0 0 13px}
+  .chip{display:inline-flex;align-items:center;gap:7px;border:1px solid #ced8e5;border-radius:100px;padding:8px 13px;background:#fff;font-size:12px;font-weight:750;white-space:nowrap}
+  .chip::before{content:"";height:8px;width:8px;background:#c27e00;border-radius:50%}
+  .toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:18px 0 12px}
+  button,select,input[type="file"]{font:inherit}button,select{cursor:pointer;background:white;color:#20354f;border:1px solid #c2d1e2;border-radius:8px;padding:10px 13px;min-height:40px}
+  button:hover,select:hover{background:#e5effa;border-color:#7b9fc5}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #4185d0;outline-offset:2px}
+  button.primary{background:#245d97;border-color:#245d97;color:#fff}button.primary:hover{background:#194d84}
+  input[type="range"]{accent-color:#245d97;flex:1;min-width:130px;cursor:pointer}
+  label{color:#38506b;font-size:13px;font-weight:600;display:inline-flex;gap:7px;align-items:center}
+  .small{font-size:12px;color:#697d95;line-height:1.45}.status{font-size:13px;color:#435d75;flex:1;min-width:205px}strong.unknown{color:#906200}
+  .grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:12px 0 18px}
+  .tile,.panel{background:white;border:1px solid #d5dfeb;border-radius:13px;box-shadow:0 3px 13px rgba(23,48,75,.045)}
+  .tile{padding:16px}.tile .name{font-size:12px;font-weight:600;color:#596b83}.tile .number{font-size:clamp(24px,2.5vw,32px);font-weight:800;letter-spacing:-.045em;margin-top:6px}
+  .tile .annotation{font-size:11px;color:#74829a}.panel{padding:20px;margin:15px 0}
+  .panel-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+  .svg-wrap{overflow:auto;min-height:160px;border-radius:9px;background:linear-gradient(160deg,#fafcff,#f2f6fc);border:1px solid #e2eaf4}
+  #lineage-svg{display:block;width:100%;min-width:650px;height:auto}
+  #lineage-svg .pulse-node{cursor:pointer}#lineage-svg .pulse-node:focus{outline:none}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:#506682;margin:14px 0 0}
+  .legend span:before{content:"";display:inline-block;vertical-align:middle;width:24px;border-top:3px solid #347d86;margin-right:7px}
+  .legend .declared:before{border-top:3px dashed #c18a2d}.legend .claim:before{border-top:3px solid #546f96}
+  .two-col{display:grid;grid-template-columns:1.3fr 1fr;gap:15px}
+  .detail{display:grid;grid-template-columns:auto 1fr;gap:9px 14px;font-size:13px}
+  .detail dt{color:#5e728b}.detail dd{margin:0;overflow-wrap:anywhere;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+  .steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.step{padding:12px;border-radius:7px;background:#f3f7fc;color:#4a617f;font-size:12px}
+  .step b{display:block;margin-bottom:5px;color:#2b587c}
+  .scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:12px;min-width:700px}td,th{padding:11px 10px;border-bottom:1px solid #e3eaf3;text-align:left;white-space:nowrap}th{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#637792;background:#f4f8fd}tbody tr:hover{background:#f1f6fd}
+  td code{font-family:ui-monospace,Consolas,monospace;font-size:11px}.hold{color:#a76d0a;font-weight:800}
+  .warning{background:#fff8e8;border:1px solid #f0dfb6;border-radius:9px;padding:12px;font-size:12px;color:#745a26;line-height:1.55}
+  footer{color:#637992;font-size:12px;padding:16px 0 12px;overflow-wrap:anywhere}
+  @media(max-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.two-col{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){body{padding:0 14px 35px}.grid{grid-template-columns:1fr 1fr}header{display:block}.toolbar{gap:8px}.steps{grid-template-columns:1fr}.chip{margin-top:14px}}
+  @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+<header>
+ <div><p class="eyebrow">CODE PURPLE / MISSION CONTROL / GOVERNED G3P</p><h1>Live pulse lineage <span id="header-n">N+6</span></h1>
+  <p class="sub">Source-bound historical ledger • SIPOC and DAG • reload / cyclic update / replay</p></div>
+ <div class="chip">MERGE ADMISSION — HOLD</div>
+</header>
+<section class="toolbar" aria-label="Ledger refresh and temporal controls">
+ <button id="reload" class="primary" type="button">↻ Reload ledger</button>
+ <label>Auto update <select id="poll"><option value="0">Off</option><option value="5000">5 seconds</option><option value="15000" selected>15 seconds</option><option value="30000">30 seconds</option></select></label>
+ <button id="replay" type="button">▶ Play N replay</button>
+ <label for="ordinal">Cut N+i</label><input type="range" min="1" max="6" value="6" id="ordinal" aria-label="Rewind or advance pulse checkpoint">
+ <output id="ordinal-label" for="ordinal">N+6</output>
+ <span id="feed-status" class="status" role="status" aria-live="polite">Bundled N+6 snapshot; validating feed…</span>
+</section>
+<section class="grid" aria-label="Pulse-cutoff key performance indicators">
+ <div class="tile"><div class="name">Pulse nodes</div><div id="kpi-nodes" class="number">6</div><div class="annotation">Cumulative to selected N</div></div>
+ <div class="tile"><div class="name">Directed edges</div><div id="kpi-edges" class="number">5</div><div class="annotation">Lineage, not causality</div></div>
+ <div class="tile"><div class="name">Unproven bridges</div><div id="kpi-gaps" class="number">1</div><div class="annotation">Cross-wave ancestry</div></div>
+ <div class="tile"><div class="name">Local tests at N</div><div id="kpi-tests" class="number">61</div><div class="annotation" id="tests-note">LOCAL only, not native CI</div></div>
+ <div class="tile"><div class="name">Native authenticated</div><div id="kpi-native" class="number">0/6</div><div class="annotation">No admission credit</div></div>
+</section>
+<section class="panel">
+ <div class="panel-head"><h2>Directed pulse DAG</h2><span class="small">Solid = declared intra-wave · dashed = unproven inter-wave</span></div>
+ <div class="svg-wrap"><svg id="lineage-svg" role="img" aria-label="Six directed pulse nodes; dashed arrows indicate unproven intervening source ancestry" viewBox="0 0 960 180" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#556f91"/></marker></defs>
+  <g id="graph-edges">@@INITIAL_EDGES@@</g><g id="graph-nodes">@@INITIAL_NODES@@</g>
+ </svg></div>
+ <div class="legend"><span class="claim">Within-wave receipt link</span><span class="declared">Inter-wave source gap</span></div>
+ <p class="small">Graph edges represent ledger order. Neither dashed nor solid links prove Git ancestry, CI success or causal closure.</p>
+</section>
+<div class="two-col">
+ <section class="panel"><h2>SIPOC feeder — selected source population</h2>
+  <div class="steps"><div class="step"><b>S · Supplier</b><span id="sipoc-s">GitHub source owner</span></div><div class="step"><b>I · Inputs</b><span id="sipoc-i">Historical receipts</span></div><div class="step"><b>P · Process</b><span id="sipoc-p">Validate and project</span></div><div class="step"><b>O · Outputs</b><span id="sipoc-o">DAG and ledger</span></div><div class="step"><b>C · Customer</b><span id="sipoc-c">Mission Control</span></div></div>
+  <p class="small">Feeder health: <strong class="unknown" id="feeder-health">UNKNOWN</strong> · Root closure: <strong id="root-count">0 confirmed</strong> · Admission: HOLD.</p>
+ </section>
+ <section class="panel"><h2>Selected node — immutable source claim</h2>
+  <dl class="detail"><dt>Pulse</dt><dd id="detail-pulse">N+6</dd><dt>Wave</dt><dd id="detail-wave">W-CBD-GRAPH-02</dd><dt>Head SHA claim</dt><dd id="detail-sha">a69e627276e7</dd><dt>Testing</dt><dd id="detail-test">LOCAL / 61</dd><dt>Source</dt><dd id="detail-class">Ledger claim; native not authenticated</dd></dl>
+ </section>
+</div>
+<section class="panel"><h2>Pulse ledger — historical replay cut</h2><div class="scroll"><table>
+ <thead><tr><th>Pulse</th><th>Wave</th><th>Source SHA claim</th><th>Tests</th><th>Passed methods</th><th>Source authentication</th><th>Admission</th></tr></thead>
+ <tbody id="ledger-rows">@@INITIAL_ROWS@@</tbody></table></div>
+ <p class="small">NOT_RUN means the pulse has no locally executed test receipt; it is <b>not</b> counted as zero test coverage or a green gate.</p>
+</section>
+<section class="warning" id="boundary">
+ <strong>Evidence boundary:</strong> This interface displays validated ledger syntax and source claims, not authenticated native CI execution. Feed polling observes <em>local ledger files served by the read-only feeder</em>; it does not query GitHub or authorize any mutation. N-index replay is not a historical wall-clock knowledge reconstruction.
+</section>
+<footer>Source digest(s): <code id="source-digests">@@INITIAL_SOURCE_DIGESTS@@</code><br>
+ Revision: <code id="revision">@@INITIAL_REVISION@@</code> · <span id="readback">Bundled offline state</span>. No external JS, CSS, fonts or API keys.</footer>
+<script>
+'use strict';
+const BOOT = @@BOOTSTRAP@@;
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const el = id => document.getElementById(id);
+let data=BOOT, at=6, selected=6, timer=null, replayTimer=null, es=null;
+let pollingLock=false;
+function safe(value){return String(value===null||value===undefined?'UNKNOWN':value)}
+function valid(p){
+  if(!p||p.schema!=='missioncontrol.g3p.live_snapshot.v1'||p.merge_admission!=='HOLD'||p.authority_transfer!==false) throw new Error('Schema or authority mismatch');
+  if(!Array.isArray(p.nodes)||!Array.isArray(p.edges)||!Array.isArray(p.waves)||p.nodes.length<1||p.nodes.length>250) throw new Error('Invalid pulse population');
+  const seen=new Set(); let previous=null;
+  for(const n of p.nodes){
+    if(!Number.isSafeInteger(n.ordinal)||n.ordinal<1||seen.has(n.id)||typeof n.id!=='string'||typeof n.source_head_claim!=='string'||!/^[a-f0-9]{40}$/.test(n.source_head_claim)) throw new Error('Invalid pulse identity');
+    if(previous!==null && n.ordinal!==previous+1) throw new Error('Nonconsecutive pulse ordinals');
+    if(n.merge_admission!=='HOLD'||n.source_authenticated!==false) throw new Error('Unjustified admission/source authentication');
+    previous=n.ordinal;seen.add(n.id);
+  }
+  for(const x of p.edges) if(!seen.has(x.source)||!seen.has(x.target)||x.causal_confirmed!==false||x.source_ancestry_proven!==false) throw new Error('Invalid or promoted graph edge');
+  return p;
+}
+function svg(name,attrs){const node=document.createElementNS(SVG_NS,name);for(const [key,value] of Object.entries(attrs||{})) node.setAttribute(key,safe(value));return node;}
+function textSet(id,value){el(id).textContent=safe(value)}
+function cutoffNodes(){return data.nodes.filter(n=>n.ordinal<=at)}
+function render(){
+ const nodes=cutoffNodes(), ids=new Set(nodes.map(n=>n.id)); const edges=data.edges.filter(e=>ids.has(e.source)&&ids.has(e.target));
+ const gap=edges.filter(e=>e.evidence==='DECLARED_GAP').length, top=nodes.at(-1), count=nodes.length;
+ textSet('header-n','N+'+at);textSet('ordinal-label','N+'+at);textSet('kpi-nodes',count);textSet('kpi-edges',edges.length);textSet('kpi-gaps',gap);
+ textSet('kpi-tests',top.test_kind==='NOT_RUN'?'UNKNOWN':top.passed_test_claim);
+ textSet('tests-note',top.test_kind==='NOT_RUN'?'NOT_RUN; not zero':top.test_kind+' methods, not native CI');
+ textSet('kpi-native','0/'+count);textSet('feeder-health','UNKNOWN');textSet('root-count','0 confirmed');
+ el('ordinal').value=at; const active=data.nodes.find(n=>n.ordinal===selected&&n.ordinal<=at)||top;selected=active.ordinal;
+ textSet('detail-pulse','N+'+active.ordinal);textSet('detail-wave',active.wave);
+ textSet('detail-sha',active.source_head_claim);textSet('detail-test',active.test_kind==='NOT_RUN'?'NOT_RUN / UNKNOWN':active.test_kind+' / '+active.passed_test_claim);
+ textSet('detail-class','Source claim; native CI not authenticated');
+ const s=data.sipoc||{};
+ textSet('sipoc-s',s.supplier||'UNKNOWN');textSet('sipoc-i',s.inputs||'UNKNOWN');textSet('sipoc-p',s.process||'UNKNOWN');
+ textSet('sipoc-o',s.outputs||'UNKNOWN');textSet('sipoc-c',s.customer||'UNKNOWN');
+ textSet('source-digests',data.waves.map(w=>w.source_digest).join(', '));textSet('revision',data.revision||'bundled');
+ const svgRoot=el('lineage-svg');const w=Math.max(960,125+count*155);svgRoot.setAttribute('viewBox',`0 0 ${w} 190`);
+ svgRoot.setAttribute('aria-label',`${count} directed pulse nodes; ${gap} inter-wave ancestry gaps unproven`);
+ const eg=el('graph-edges');eg.replaceChildren();const ng=el('graph-nodes');ng.replaceChildren();
+ const loc=new Map(nodes.map((n,i)=>[n.id,105+155*i]));
+ for(const e of edges){const x1=loc.get(e.source)+31,x2=loc.get(e.target)-32;
+  const line=svg('line',{x1,y1:86,x2,y2:86,stroke:e.evidence==='DECLARED_GAP'?'#bc8528':'#456b94','stroke-width':e.evidence==='DECLARED_GAP'?2.3:2.8,'marker-end':'url(#arr)'});
+  if(e.evidence==='DECLARED_GAP')line.setAttribute('stroke-dasharray','7 6');
+  line.append(svg('title',{}));line.lastChild.textContent=e.evidence==='DECLARED_GAP'?'Unproven cross-wave ancestry':'Claimed pulse sequence';eg.append(line);
+ }
+ for(const n of nodes){let x=loc.get(n.id);let g=svg('g',{class:'pulse-node',tabindex:'0',role:'button','aria-label':'Select pulse N+'+n.ordinal});
+  g.append(svg('circle',{cx:x,cy:86,r:31,fill:n.ordinal===selected?'#cce7ef':'#edf2f8',stroke:n.ordinal===selected?'#1b798c':'#426486','stroke-width':n.ordinal===selected?3:2}));
+  const lab=svg('text',{x,y:92,'text-anchor':'middle',fill:'#18334e','font-weight':'700','font-size':'15'});lab.textContent='N+'+n.ordinal;g.append(lab);
+  let title=svg('title',{});title.textContent=n.wave+' / '+n.source_head_claim+' / '+n.test_kind;g.append(title);
+  const choose=()=>{selected=n.ordinal;render()};g.addEventListener('click',choose);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose();}});ng.append(g);
+ }
+ const tbody=el('ledger-rows');tbody.replaceChildren();
+ for(const n of nodes){const tr=document.createElement('tr');const values=['N+'+n.ordinal,n.wave,n.source_head_claim.slice(0,12),n.test_kind,n.test_kind==='NOT_RUN'?'UNKNOWN':n.passed_test_claim,'UNVERIFIED','HOLD'];
+  for(let i=0;i<values.length;i++){const td=document.createElement(i===0?'th':'td');td.textContent=safe(values[i]);if(i===6)td.className='hold';if(i===2){const code=document.createElement('code');code.textContent=safe(values[i]);td.replaceChildren(code);}tr.append(td)}tbody.append(tr);
+ }
+}
+function cutoff(value){const low=data.nodes[0].ordinal,high=data.nodes.at(-1).ordinal;at=Math.max(low,Math.min(high,Number(value)));selected=at;render();}
+function accept(packet,origin){const next=valid(packet);const previousLast=data.nodes.at(-1).ordinal; const followLatest=at===previousLast;
+ data=next;el('ordinal').min=data.nodes[0].ordinal;el('ordinal').max=data.nodes.at(-1).ordinal;
+ if(followLatest){at=data.nodes.at(-1).ordinal;selected=at;}else{at=Math.min(at,data.nodes.at(-1).ordinal);selected=at;}
+ render();textSet('feed-status',`${origin}: ${data.nodes.length} validated source claims; no native admission`);textSet('readback',`${origin} · ${new Date().toLocaleTimeString()} (poll time, not test time)`);
+}
+async function reload(){
+ if(pollingLock)return; if(!/^https?:$/.test(location.protocol)){textSet('feed-status','Offline file: use local server for cycling updates');return;}
+ pollingLock=true;try {const response=await fetch('/api/lineage?nonce='+Date.now(),{cache:'no-store',credentials:'omit'});
+  if(!response.ok)throw new Error(`Feed HTTP ${response.status}`);
+  const packet=await response.json();if(!packet||packet.schema!=='missioncontrol.g3p.live_snapshot.v1')throw new Error('Invalid feeder payload');
+  accept(packet,'Read-only HTTP feed');
+ }catch(err){textSet('feed-status','FEED INVALID / HOLD: '+err.message);}finally{pollingLock=false;}
+}
+function configurePoll(){if(timer)clearInterval(timer);timer=null;const ms=Number(el('poll').value);if(ms&&/^https?:$/.test(location.protocol))timer=setInterval(reload,ms)}
+function wireEvents(){if(!/^https?:$/.test(location.protocol)||typeof EventSource==='undefined')return;
+ es=new EventSource('/api/events');es.addEventListener('revision',evt=>{try{const p=JSON.parse(evt.data);if(p.revision!==data.revision)reload()}catch(_err){textSet('feed-status','Invalid SSE revision event; manual Reload available')}});
+ es.addEventListener('feed_error',()=>textSet('feed-status','FEED INVALID / HOLD: waiting for corrected source receipts'));
+ es.onerror=()=>{if(!timer)textSet('feed-status','Push disconnected; enable cyclic poll or Reload')};
+}
+function replay(){if(replayTimer){clearInterval(replayTimer);replayTimer=null;el('replay').textContent='▶ Play N replay';return}
+ cutoff(data.nodes[0].ordinal);el('replay').textContent='■ Pause replay';replayTimer=setInterval(()=>{if(at>=data.nodes.at(-1).ordinal){clearInterval(replayTimer);replayTimer=null;el('replay').textContent='▶ Play N replay';return;}cutoff(at+1)},900)}
+valid(BOOT);at=data.nodes.at(-1).ordinal;selected=at;render();
+if(!/^https?:$/.test(location.protocol))textSet('feed-status','OFFLINE N+6 snapshot: replay works; start the local server for live updates');
+el('ordinal').addEventListener('input',e=>cutoff(e.target.value));el('reload').addEventListener('click',reload);
+el('poll').addEventListener('change',configurePoll);el('replay').addEventListener('click',replay);
+configurePoll();wireEvents();if(/^https?:$/.test(location.protocol))reload();
+</script>
+</body></html>
