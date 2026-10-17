@@ -158,5 +158,19 @@ class CloseoutTests(unittest.TestCase):
             cp_close.build(INTAKE,QUEUE,root/"out2",archive=root/"b.zip")
             self.assertEqual((root/"a.zip").read_bytes(),(root/"b.zip").read_bytes())
 
+
+    def test_cp_closeout_alias_has_one_canonical_source(self):
+        source=Path(__file__).resolve().parent
+        protocol=json.loads((source/"CP_CLOSE_GITHUB_v1.json").read_text(encoding="utf-8"))
+        outer=json.loads((source.parent/"CP_HANDOFF_RESUME_V1.json").read_text(encoding="utf-8"))
+        self.assertEqual(protocol["name"],"CP.CLOSE")
+        self.assertIn("CP.CLOSEOUT",protocol["aliases"])
+        self.assertEqual(outer["monikers"]["CP.CLOSEOUT"]["canonical"],"CP.CLOSE")
+        self.assertEqual(outer["monikers"]["CP.CLOSE"]["generator"],
+                         "mission-control/v2/handoff/closeout/cp_close.py")
+        self.assertTrue((source/"cp_close.py").is_file())
+        self.assertFalse(protocol["contract"]["autonomous_merge"])
+        self.assertIsNone(protocol["contract"]["disclosure"]["full_chat_prompts_without_export"])
+
 if __name__=="__main__":
     unittest.main()
