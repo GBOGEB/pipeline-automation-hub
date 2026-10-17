@@ -1,0 +1,140 @@
+{
+  "schema": "missioncontrol.live_lossless.continuation_delta.v1",
+  "captured_on": "2026-10-17",
+  "time_precision": "DATE_ONLY",
+  "parent_session": "CP-G3P-HTMLQA-20261017",
+  "source_class": "USER_VISIBLE_CHAT_INTENT_SUMMARIZED_NOT_VERBATIM",
+  "original_chat_message_id": null,
+  "original_chat_timestamp": null,
+  "authority_transfer": false,
+  "security_waiver": false,
+  "merge_admission": "HOLD",
+  "intent": {
+    "id": "SC-I007",
+    "source_class": "USER_VISIBLE_RECONSTRUCTED",
+    "original_chat_message_id": null,
+    "original_chat_timestamp": null,
+    "summary": "Continue in the current chat while maintaining a GitHub-updated lossless handover, compact status/statistics dashboard, expandable/selectable monikers, nested subrequests, source evidence and BD/TODO controls.",
+    "actions": [
+      "SC-A008",
+      "SC-A009",
+      "SC-A010",
+      "SC-A011"
+    ]
+  },
+  "subrequests": [
+    {
+      "id": "LL-SR01",
+      "title": "Live GitHub head and PR readback",
+      "detail": "Refresh main SHA, tracked PR and issue states without treating a non-atomic observation as admission.",
+      "actions": [
+        "SC-A008"
+      ],
+      "tier": "LIVE_OBSERVATION"
+    },
+    {
+      "id": "LL-SR02",
+      "title": "Additive lossless session delta",
+      "detail": "Preserve immutable six-intent/seven-action closeout and append current request, source-bound insight, TODO and authority checks without shadow SSOT.",
+      "actions": [
+        "SC-A008"
+      ],
+      "tier": "RECORDED_INTENT"
+    },
+    {
+      "id": "LL-SR03",
+      "title": "Compact user-facing dashboard",
+      "detail": "Show measured stats and current status first, visible UNKNOWN and previous N source; include scoped action distribution and source-class legend.",
+      "actions": [
+        "SC-A009"
+      ],
+      "tier": "PRESENTATION"
+    },
+    {
+      "id": "LL-SR04",
+      "title": "Deep selectable handover details",
+      "detail": "Provide tabs, accessible expandable sections, search, owner/state filters, moniker snippets, parent-child intent/action edges, source links and copy operations.",
+      "actions": [
+        "SC-A009"
+      ],
+      "tier": "PRESENTATION"
+    },
+    {
+      "id": "LL-SR05",
+      "title": "Visual, link and negative QA",
+      "detail": "Test button click/refresh, moniker copy, keyboard, mobile width/overlap, API failure and stale fallback on exact PR head.",
+      "actions": [
+        "SC-A010"
+      ],
+      "tier": "NATIVE_QUALITY"
+    },
+    {
+      "id": "LL-SR06",
+      "title": "Single-owner publication and next pulse",
+      "detail": "Use canonical Method Atlas Pages publisher; after authorized merge verify independent hosted route and preserve chat continuation.",
+      "actions": [
+        "SC-A010",
+        "SC-A011"
+      ],
+      "tier": "HOSTED_GATE"
+    }
+  ],
+  "actions": [
+    {
+      "id": "SC-A008",
+      "priority": "P1",
+      "state": "IN_PR",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "summary": "Build SHA-bound read-only Live Lossless snapshot and current GitHub recensus overlay while preserving frozen original handover.",
+      "done_when": "Native exact-head source/contract validation passes and frozen 6/7 state remains byte-identical; no forged global counts.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/641",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ]
+    },
+    {
+      "id": "SC-A009",
+      "priority": "P1",
+      "state": "IN_PR",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "summary": "Render accessible Live Lossless HTML with selectable overview/intents/actions/BD/monikers, expandable details, search and source-freshness flags.",
+      "done_when": "All controls operate on the same snapshot, mobile view has no unintended body overflow and null message totals remain UNKNOWN.",
+      "depends_on": [
+        "SC-A008"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ]
+    },
+    {
+      "id": "SC-A010",
+      "priority": "P1",
+      "state": "IN_PR",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "summary": "Prove the dashboard with browser negative/keyboard/screenshot QA and package through existing single-owner Pages portal.",
+      "done_when": "Exact PR-head unit/browser/HTML tests PASS; site-manifest SHA parity; no duplicate Pages deployment workflow.",
+      "depends_on": [
+        "SC-A009"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/637",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/638"
+      ]
+    },
+    {
+      "id": "SC-A011",
+      "priority": "P2",
+      "state": "HOLD",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "summary": "Obtain eligible reviews, authorized merge, exact-main testflight and independent hosted Live Lossless HTTP/parity proof, then continue chat.",
+      "done_when": "Native exact-main run and hosted URL hash readback pass after authorized merge; next G3P is separate source-owner decision.",
+      "depends_on": [
+        "SC-A010"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ]
+    }
+  ]
+}
