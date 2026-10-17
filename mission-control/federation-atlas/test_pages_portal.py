@@ -67,4 +67,30 @@ class TestPages(unittest.TestCase):
    (w/"evidence-manifest.json").write_text(json.dumps(receipt))
    with self.assertRaisesRegex(ValueError,"W2 evidence source hash mismatch"):
     pages_portal.build(src,p/"out","a"*40)
+ def test_n3_partial_input_is_rejected(self):
+  with tempfile.TemporaryDirectory() as d:
+   p=Path(d);src=p/"atlas";src.mkdir();(src/"index.html").write_text("Atlas")
+   n=src/"mission-rebuild";n.mkdir();(n/"n3-metrics.html").write_text("partial")
+   with self.assertRaisesRegex(ValueError,"partial N3 source-bound KPI output"):
+    pages_portal.build(src,p/"out","a"*40)
+ def test_n3_manifest_digest_forgery_is_rejected(self):
+  with tempfile.TemporaryDirectory() as d:
+   p=Path(d);src=p/"atlas";src.mkdir();(src/"index.html").write_text("Atlas")
+   n=src/"mission-rebuild";n.mkdir()
+   state={"schema":"missioncontrol.n3.scoped_native_kpi.v1",
+          "presentation_sha":"a"*40,"producer_sha":"b"*40,
+          "source_repo":"GBOGEB/pipeline-automation-hub",
+          "fleet_runner_capacity":None,
+          "owner_required_status_gate":{"owner_installed":None},
+          "authority":{"merge_admission":"HOLD","remote_dispatch":False}}
+   manifest={"schema":"missioncontrol.n3.readonly_publisher_manifest.v1",
+             "presentation_sha":"a"*40,"producer_sha":"b"*40,
+             "publisher":"EXISTING_METHOD_ATLAS_PAGES_ONLY",
+             "merge_admission":"HOLD","authority_transfer":False,
+             "member_sha256":{"n3-metrics.html":"0"*64,"n3-metrics.json":"0"*64}}
+   (n/"n3-metrics.json").write_text(json.dumps(state))
+   (n/"n3-metrics.html").write_text("<title>forged</title>")
+   (n/"n3-manifest.json").write_text(json.dumps(manifest))
+   with self.assertRaisesRegex(ValueError,"N3 source member digest mismatch"):
+    pages_portal.build(src,p/"out","a"*40)
 if __name__=="__main__":unittest.main()
