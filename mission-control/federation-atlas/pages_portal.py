@@ -53,7 +53,26 @@ def build(atlas,out,sha):
             dest=out/"federation-home"/name; dest.parent.mkdir(exist_ok=True,parents=True)
             shutil.copyfile(src,dest)
             hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
-    links=[("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
+    # Single-owner Pages bridge: consume the approved G3P view in this existing
+    # portal build. This is file packaging only; no new deployer or release gate.
+    g3p_source=Path(__file__).resolve().parent
+    g3p_html=g3p_source/"G3P_LIVE_LEDGER.html"
+    g3p_manifest=g3p_source/"G3P_LIVE_SOURCES_v1.json"
+    if g3p_html.exists() != g3p_manifest.exists():
+        raise ValueError("incomplete G3P Pages source pair")
+    if g3p_html.is_file() and g3p_manifest.is_file():
+        source=json.loads(g3p_manifest.read_text(encoding="utf-8"))
+        if not (source.get("schema")=="missioncontrol.g3p.live_sources.v1"
+                and source.get("repository")=="GBOGEB/pipeline-automation-hub"
+                and source.get("authority_transfer") is False
+                and source.get("merge_admission")=="HOLD"):
+            raise ValueError("G3P Pages source contract invalid")
+        for src,name in ((g3p_html,"index.html"),(g3p_manifest,"G3P_LIVE_SOURCES_v1.json")):
+            dest=out/"g3p"/name
+            dest.parent.mkdir(exist_ok=True,parents=True)
+            shutil.copyfile(src,dest)
+            hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
+    links=[("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
     diagram=(atlas/"lane-process.mmd").read_text() if (atlas/"lane-process.mmd").is_file() else 'flowchart LR\n A["Source"] --> B["Native CI"] --> C["Read-only Atlas"] --> D["Owner gate"]'
     page='''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>CODE PURPLE | MissionControl</title><style>
