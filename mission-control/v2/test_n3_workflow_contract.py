@@ -54,18 +54,19 @@ class N11WorkflowContractTests(unittest.TestCase):
         self.assertIn("fail-fast: false", src)
         self.assertNotIn("python-version: ['3.10']", src)
 
-    def test_six_module_denominators_and_negative_coverage_gates_preserved(self):
+    def test_seven_module_denominators_and_negative_coverage_gates_preserved(self):
         src = workflow()
         names = (
             "n3_continuation.py", "n3_integrity.py", "n3_metrics.py",
             "n3_dashboard.py", "n3_native_join.py", "n3_wave_federation.py",
+            "g3p_live_dashboard.py",
         )
         for name in names:
             with self.subTest(module=name):
                 self.assertEqual(src.count("'" + name + "'"), 1)
         for invariant in (
             "--branch --source=mission-control/v2",
-            "assert len(s)==6", "assert denominator>0",
+            "assert len(s)==7", "assert denominator>0",
             "assert pct>=80", "100*branches/branch_total>=80",
             "'HOLD'", "if-no-files-found: warn",
         ):
