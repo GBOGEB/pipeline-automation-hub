@@ -1,0 +1,53 @@
+name: Mission Control G3A gg_MATH read-only consumer
+on:
+  pull_request:
+    paths:
+      - mission-control/federation-atlas/g3a_metric_consumer.py
+      - mission-control/federation-atlas/test_g3a_metric_consumer.py
+      - mission-control/federation-atlas/G3A_MATH_BRIDGE_VIEW_v1.json
+      - .github/workflows/g3a-metric-consumer.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  g3a-consumer-proof:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Exact checkout identity
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Native negative tests and scoped coverage
+        run: |
+          set -euo pipefail
+          python -m pip install "coverage==7.10.7"
+          mkdir -p build/g3a-consumer
+          python -m coverage run --branch --source=g3a_metric_consumer -m unittest discover -s mission-control/federation-atlas -p 'test_g3a_metric_consumer.py' -v 2>&1 | tee build/g3a-consumer/tests.log
+          python -m coverage json -o build/g3a-consumer/coverage.json
+          python - <<'PY2'
+          import json,re,pathlib
+          log=pathlib.Path('build/g3a-consumer/tests.log').read_text()
+          m=re.search(r'Ran (\d+) tests?',log)
+          if not m or int(m.group(1))<22 or not re.search(r'^OK$',log,re.M):
+              raise SystemExit('HOLD: insufficient passing tests')
+          t=json.loads(pathlib.Path('build/g3a-consumer/coverage.json').read_text())['totals']
+          if t['num_statements']<=0 or t['num_branches']<=0:
+              raise SystemExit('HOLD: unmeasured coverage')
+          PY2
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: g3a-mc-consumer-${{ matrix.python }}-${{ github.run_id }}
+          path: build/g3a-consumer/
+          if-no-files-found: warn
