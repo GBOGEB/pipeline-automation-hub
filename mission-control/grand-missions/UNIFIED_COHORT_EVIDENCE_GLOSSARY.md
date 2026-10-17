@@ -45,3 +45,17 @@ Apply **the same schema, formula, file-path normalisation, unique-line counting,
 See `CROSS_REPO_COVERAGE_ROLLUP_20261013.json`; these are dated immutable *branch receipts*, not an always-current fleet state. QPS 169/176 = 96.02%, CODEX 165/174 = 94.83%, ABACUS 150/160 = 93.75% at the newer native exact-head receipt; its bounded Bandit ratchet still fails (B101=59 against a 46-finding allowance). Subsequent commits do not inherit earlier native green status.
 
 **No main merges, ruleset overrides, scanner suppression or authority transfer.**
+
+## 3PSTAR / 3WSTAR / N3_CONTINUE interoperability (17 October 2026)
+
+The canonical [Mission Control taxonomy](../v2/MC_GLOSSARY_TAXONOMY_v2.json) carries this extension. No TOP7/TOP14/TOP21 mission roster, cohort denominator, release authority or historical evidence is rewritten.
+
+| Token | Definition and non-equivalence | Cross-federation proof |
+|---|---|---|
+| `3PSTAR` (`3P*`) | Three sequential measured checkpoint dispositions from N to N+3; **not** 3 green runs | N+i ledger hash, exact head, run/attempt/job, scope + dated metric |
+| `3WSTAR` (`3W*`) | Three coordinated work groupings; **not** three N+i transitions | Disjoint owner/path lease, per-wave barrier and fan-in evidence |
+| `N3_CONTINUE` (`N3!`) | Active **bounded in-turn** execution instruction; **not** a background agent or merge permission | Bound charter, major-blocker partial return, final lossless receipt |
+| `PULSE_CHECKPOINT` | Source-bound native outcome + comparable or explicitly incomparable metric | Source module blob, tool version, eligible denominator, source time |
+| `HOLD_MAJOR` | Hard stop on external safety/authority/native provenance blocker | Next legal action, owner and re-entry proof retained |
+
+A pulse advances only on a terminal native run and provenance receipt (green or explicitly red). Work waves may fan out in parallel, but no standalone worker output is treated as an independent statistical trial without qualifying observations. MIP and DMAIC remain supervisory; software coverage is distinct from MCOV maturity. See [N3 executable method](../gogreen/n3_continuation/README.md).
