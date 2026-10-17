@@ -1,0 +1,105 @@
+{
+  "schema": "missioncontrol.recursive_recovery.task_ledger.v1",
+  "as_of": "2026-10-17",
+  "parent_issues": [
+    "GBOGEB/pipeline-automation-hub#604",
+    "GBOGEB/pipeline-automation-hub#426",
+    "GBOGEB/pipeline-automation-hub#419",
+    "GBOGEB/pipeline-automation-hub#85",
+    "GBOGEB/pipeline-automation-hub#153"
+  ],
+  "execution_authority": false,
+  "admission": "HOLD",
+  "wave_mode": "DISJOINT_SOURCE_PATH_LEASE_PROPOSAL_ONLY",
+  "mission_statement": "Recover canonical GM I–V and HM/LM hierarchy, crew allocation, REX and bidirectional Golden Thread while extending N11 source-fresh native telemetry without declaring a new execution authority.",
+  "plan_version": 1,
+  "work_orders": [
+    {
+      "id": "N12-P1",
+      "wave": "N12",
+      "pulse": 1,
+      "owner_role": "U02_ARCHITECT+U08_REX_KEB",
+      "scope": "RECOVER",
+      "paths": [
+        "mission-control/v2/recursive-recovery/N12_SOURCE_ATLAS.json",
+        "mission-control/v2/recursive-recovery/lineage.py",
+        "mission-control/v2/recursive-recovery/test_lineage.py"
+      ],
+      "status": "IN_PROGRESS",
+      "dod": "Canonical GM IDs and 1:2:4:8:16; 23 crew; 10 REX; bitemporal conflict disposition",
+      "dov": "Exact-source hash validation and native tests",
+      "recuperation": "Re-read source pointers after commits"
+    },
+    {
+      "id": "N12-P2",
+      "wave": "N12",
+      "pulse": 2,
+      "owner_role": "U04_FLEET_ORCHESTRATOR+U06_QA",
+      "scope": "NATIVE_TELEMETRY",
+      "paths": [
+        "mission-control/v2/recursive-recovery/native_readback.py",
+        "mission-control/v2/recursive-recovery/N12_NATIVE_TARGETS.json",
+        "mission-control/v2/recursive-recovery/test_native_readback.py"
+      ],
+      "status": "PLANNED",
+      "dod": "Authenticated read-only exact default heads, PR heads, check statuses, run/job/attempt, bounded pagination and explicit 403/404 UNKNOWN",
+      "dov": "Native exact-head test and typed receipt; no fabricated launch",
+      "recuperation": "First-red extraction and source-owned action"
+    },
+    {
+      "id": "N12-P3",
+      "wave": "N12",
+      "pulse": 3,
+      "owner_role": "U07_CARTOGRAPHER+U06_QA",
+      "scope": "HTML_RENDITION",
+      "paths": [
+        "mission-control/federation-atlas/landing/MISSION_CONTROL_RECURSIVE_MISSIONS_N12.html",
+        "mission-control/v2/recursive-recovery/mission_atlas_template.html",
+        "mission-control/v2/recursive-recovery/N12_QA_RECEIPT.json"
+      ],
+      "status": "PLANNED",
+      "dod": "GM/HM/LM cards, mission, crew, REX/PR/issue, narrative hooks, drilldowns, source links",
+      "dov": "Desktop/mobile Playwright and exact-SHA model parity",
+      "recuperation": "Adjust layout without changing canonical mission state"
+    },
+    {
+      "id": "N12-P4",
+      "wave": "N12",
+      "pulse": 4,
+      "owner_role": "U03_PM_DOW+U01_GOVERNOR",
+      "scope": "ADMISSION_AND_RECENSUS",
+      "paths": [
+        "mission-control/v2/recursive-recovery/N12_DOV_BD_QUEUE.md"
+      ],
+      "status": "PLANNED",
+      "dod": "Classify existing first-red and handoff to source owners; issue comments and dashboard reconcile",
+      "dov": "No PR merge without effective controls; source-matched before/after",
+      "recuperation": "Gated N+1 only when owner and evidence ready"
+    }
+  ],
+  "no_double_count": [
+    "registered_crew_is_not_runner_capacity",
+    "historical_90_prs_ne_current_21_repo_files",
+    "top7_top14_top21_policy_ne_current_repo_census",
+    "issue_closed_ne_accepted_root",
+    "mission_registration_ne_GM_NUMBER",
+    "merge_ne_admission_proof"
+  ],
+  "crew_return_required": [
+    "crew_role",
+    "mission_id",
+    "task_id",
+    "source_repo",
+    "source_sha",
+    "run_id",
+    "attempt",
+    "job_id",
+    "evidence_class",
+    "REX_ids",
+    "DoD",
+    "DoV",
+    "BD_queue_delta",
+    "disposition",
+    "return_to_MissionControl"
+  ]
+}
