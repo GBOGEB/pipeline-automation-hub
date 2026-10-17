@@ -123,6 +123,8 @@ class N3KPIContracts(unittest.TestCase):
             self.assertIn("Mission Control N3", page)
             self.assertIn('id="detailToggle"', page)
             self.assertIn("Plotly.newPlot", page)
+            self.assertIn('id="n3-queue_seconds"', page)
+            self.assertIn('id="n3-runner_seconds"', page)
             self.assertIn("UNKNOWN", page)
             self.assertEqual(report["population"]["jobs"], 2)
             self.assertEqual(set(manifest["member_sha256"]),
