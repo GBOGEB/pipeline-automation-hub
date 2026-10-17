@@ -1,0 +1,148 @@
+{
+  "schema": "code_purple.github_first_continuation_checkpoint.v1",
+  "id": "CP-N15-20261017-GITHUB-FIRST",
+  "observed_date_utc": "2026-10-17",
+  "snapshot_atomic": false,
+  "handover_mode": "GITHUB_FIRST_MINIMAL",
+  "evidence_level": "GITHUB_READBACK_PLUS_USER_SCREENSHOT_HISTORICAL",
+  "mission": "CODE_PURPLE_MISSIONCONTROL_G3P_G3A",
+  "source_heads": {
+    "GBOGEB/pipeline-automation-hub": {
+      "ref": "master",
+      "sha": "7aef4f74f00409c505d03996dba2a97561834ef7"
+    },
+    "GBOGEB/ABACUS": {
+      "ref": "main",
+      "sha": "54da377cf82a358ac97903ecde0270c975b8fcc1"
+    },
+    "GBOGEB/CODEX": {
+      "ref": "main",
+      "sha": "f8a179f8bf67bba4264364b5742c7c271f4041a6"
+    },
+    "GBOGEB/cryoplant-project": {
+      "ref": "main",
+      "sha": "833a1cf79532464bd4f8afc606bd4a98fd60600e"
+    },
+    "GBOGEB/gg_MATH": {
+      "ref": "main",
+      "sha": "268cc8f7f20daf1eca1a893238b1b8abb113704c"
+    }
+  },
+  "candidate_pr_chain": [
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 620,
+      "head_sha": "f3374560af1755693f53a4b2e9f8ef3c184a08a3",
+      "base_ref": "master",
+      "status": "OPEN_UNMERGED"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 621,
+      "head_sha": "296c2dfa6c81849038b3d378d2e179dfdb4ca8a4",
+      "base_ref": "feat/mc-g3p-n7-n9-evidence-20261017",
+      "status": "OPEN_UNMERGED"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 631,
+      "head_sha": "ea234657c0d030e816a4a4368c95b15fc8dd661e",
+      "base_ref": "feat/mc-g3a-n10-n12-evidence-20261017",
+      "status": "OPEN_UNMERGED"
+    }
+  ],
+  "candidate_pulse_label": "N+13_TO_N+15",
+  "pulse_receipts_recorded_locally": 3,
+  "pulse_n15_source_sha": null,
+  "accepted_n": null,
+  "accepted_n_delta": null,
+  "formal_root_closures": null,
+  "matched_cross_repo_coverage_delta": null,
+  "user_screenshot_historical": {
+    "source": "USER_UPLOADED_SCREENSHOT",
+    "sha256": "4723edef8ff8c433a71255460e91e9611a90acda0835921334466a19787957ff",
+    "new_taxonomy_tests": {
+      "passed": 17,
+      "total": 17
+    },
+    "n3_suite_tests": {
+      "passed": 80,
+      "total": 80,
+      "python": [
+        "3.11",
+        "3.12"
+      ]
+    },
+    "native_workflows": {
+      "success": 6,
+      "total": 7
+    },
+    "source_sha": null,
+    "run_id": null,
+    "native_admission_credit": false,
+    "note": "Historical testflight fragment without exact run/head identity; cannot compare populations to current N3 suite."
+  },
+  "github_current": {
+    "pr": 631,
+    "head_sha": "ea234657c0d030e816a4a4368c95b15fc8dd661e",
+    "workflow_conclusions": {
+      "success": 8,
+      "failure": 2,
+      "total": 10
+    },
+    "n3_native_run_id": 39038435690,
+    "n3_native_python_311": {
+      "job_id": 117412862730,
+      "tests_passed": 197,
+      "tests_failed": 0
+    },
+    "n3_native_python_312": {
+      "job_id": 117412862908,
+      "tests_passed": 197,
+      "tests_failed": 0
+    },
+    "independent_first_pass_closure": {
+      "status": "FAIL",
+      "reason": "MISSING_RECEIPT",
+      "validation": "FINAL_RECEIPT_STATUS_NOT_PASS",
+      "failed_run_ids": [
+        39039207126,
+        39039393896
+      ],
+      "latest_failed_job_id": 117415606431,
+      "merge_allowed": false
+    },
+    "crossrepo_promoted_authority": false
+  },
+  "controls": {
+    "merge_admission": "HOLD",
+    "security_waiver": false,
+    "authority_transfer": false,
+    "authenticated_crew_dispatch": false,
+    "verified_qps_acceptance": false,
+    "main_merge_performed_by_this_handover": false
+  },
+  "next_action_policy": {
+    "wave": "ONE_G3P_WAVE_AT_MOST_THREE_PULSES_IF_SAFE",
+    "pulse_1": "REFRESH_SHA_RUN_JOBS_REVIEW_FPC_AND_ACCEPTED_N",
+    "pulse_2": "BOUNDED_SOURCE_OWNER_REPAIR_AND_FUNCTIONAL_TESTS_ONLY_IF_AUTHORIZED",
+    "pulse_3": "EXACT_HEAD_RETEST_CONTROL_RECENSUS_AND_ACCEPTED_VS_OBSERVED",
+    "major_blocker": "STOP_FURTHER_PULSES_WITH_NOT_RUN_GLOBAL_BLOCKER"
+  },
+  "historical_pointers": [
+    "GBOGEB/ABACUS#1929",
+    "GBOGEB/pipeline-automation-hub#304",
+    "GBOGEB/pipeline-automation-hub#336",
+    "GBOGEB/pipeline-automation-hub#610",
+    "GBOGEB/pipeline-automation-hub#623",
+    "GBOGEB/ABACUS#2119"
+  ],
+  "missing_evidence": [
+    "SAME_SHA_BINDING_FOR_SCREENSHOT_17_17_80_80_6_7",
+    "INDEPENDENT_VALID_FIRST_PASS_CLOSURE_RECEIPT",
+    "ACCEPTED_G3A_ADVANCE_COUNT",
+    "N15_EXACT_SOURCE_COMMIT",
+    "MATCHED_CROSS_REPO_COVERAGE_AND_ROOT_CLOSURES",
+    "VERBATIM_COMPLETE_CHAT_TRANSCRIPT"
+  ]
+}
