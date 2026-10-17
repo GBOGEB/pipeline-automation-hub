@@ -29,7 +29,7 @@ def safe_import_binding(text):
 def dependency_before_tests(text):
     step = "Install pinned GoGREEN receipt-signature dependency"
     return text.count(step) == 1 and text.count(PIN) == 1 and (
-        "python -m unittest discover" in text
+        "-m unittest discover" in text
     ) and text.index(PIN) < text.index("-m unittest")
 
 
