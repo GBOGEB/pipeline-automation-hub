@@ -12,7 +12,7 @@
   "admission": "HOLD",
   "wave_mode": "DISJOINT_SOURCE_PATH_LEASE_PROPOSAL_ONLY",
   "mission_statement": "Recover canonical GM I–V and HM/LM hierarchy, crew allocation, REX and bidirectional Golden Thread while extending N11 source-fresh native telemetry without declaring a new execution authority.",
-  "plan_version": 1,
+  "plan_version": 2,
   "work_orders": [
     {
       "id": "N12-P1",
@@ -25,10 +25,11 @@
         "mission-control/v2/recursive-recovery/lineage.py",
         "mission-control/v2/recursive-recovery/test_lineage.py"
       ],
-      "status": "IN_PROGRESS",
+      "status": "SOURCE_COMMITTED_STATIC_QA_PASS_NATIVE_PENDING",
       "dod": "Canonical GM IDs and 1:2:4:8:16; 23 crew; 10 REX; bitemporal conflict disposition",
       "dov": "Exact-source hash validation and native tests",
-      "recuperation": "Re-read source pointers after commits"
+      "recuperation": "Re-read source pointers after commits",
+      "reservation_authority": "PROPOSAL_ONLY_NOT_A_RUNTIME_PATH_LOCK"
     },
     {
       "id": "N12-P2",
@@ -41,10 +42,11 @@
         "mission-control/v2/recursive-recovery/N12_NATIVE_TARGETS.json",
         "mission-control/v2/recursive-recovery/test_native_readback.py"
       ],
-      "status": "PLANNED",
+      "status": "SOURCE_COMMITTED_NATIVE_READBACK_PENDING",
       "dod": "Authenticated read-only exact default heads, PR heads, check statuses, run/job/attempt, bounded pagination and explicit 403/404 UNKNOWN",
       "dov": "Native exact-head test and typed receipt; no fabricated launch",
-      "recuperation": "First-red extraction and source-owned action"
+      "recuperation": "First-red extraction and source-owned action",
+      "reservation_authority": "PROPOSAL_ONLY_NOT_A_RUNTIME_PATH_LOCK"
     },
     {
       "id": "N12-P3",
@@ -57,10 +59,11 @@
         "mission-control/v2/recursive-recovery/mission_atlas_template.html",
         "mission-control/v2/recursive-recovery/N12_QA_RECEIPT.json"
       ],
-      "status": "PLANNED",
+      "status": "SOURCE_COMMITTED_HTML_SOURCE_PARITY_PASS_BROWSER_PENDING",
       "dod": "GM/HM/LM cards, mission, crew, REX/PR/issue, narrative hooks, drilldowns, source links",
       "dov": "Desktop/mobile Playwright and exact-SHA model parity",
-      "recuperation": "Adjust layout without changing canonical mission state"
+      "recuperation": "Adjust layout without changing canonical mission state",
+      "reservation_authority": "PROPOSAL_ONLY_NOT_A_RUNTIME_PATH_LOCK"
     },
     {
       "id": "N12-P4",
@@ -71,10 +74,11 @@
       "paths": [
         "mission-control/v2/recursive-recovery/N12_DOV_BD_QUEUE.md"
       ],
-      "status": "PLANNED",
+      "status": "READ_ONLY_TRIAGE_PREPARED_OWNER_ACTION_PENDING",
       "dod": "Classify existing first-red and handoff to source owners; issue comments and dashboard reconcile",
       "dov": "No PR merge without effective controls; source-matched before/after",
-      "recuperation": "Gated N+1 only when owner and evidence ready"
+      "recuperation": "Gated N+1 only when owner and evidence ready",
+      "reservation_authority": "PROPOSAL_ONLY_NOT_A_RUNTIME_PATH_LOCK"
     }
   ],
   "no_double_count": [
@@ -101,5 +105,7 @@
     "BD_queue_delta",
     "disposition",
     "return_to_MissionControl"
-  ]
+  ],
+  "attribution": "PROPOSAL_ROLE_DUTY_NOT_ACTUAL_CREW_RUNTIME_ASSIGNMENT",
+  "next_recensus": "Read current PR #679 head and native run, then freeze exact-head DoV or source-own first-red."
 }

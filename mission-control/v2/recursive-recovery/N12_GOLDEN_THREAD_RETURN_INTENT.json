@@ -1,0 +1,66 @@
+{
+  "schema": "missioncontrol.golden_thread.return_intent.v1",
+  "parent_mission": "GM-FLEET-03",
+  "sub_mission": "MC-N12-RECURSIVE-MISSION-RECOVERY",
+  "direction": "CREW_TO_MISSIONCONTROL_PROPOSED_RETURN",
+  "event_class": "SOURCE_COMMITTED_UNVERIFIED",
+  "proposed_event_type": "EVIDENCE_ADDED",
+  "source_ref": "GBOGEB/pipeline-automation-hub#679",
+  "source_anchor_sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+  "latest_head_sha": null,
+  "crew_reporting": [
+    {
+      "role": "U02_ARCHITECT",
+      "task": "N12-P1_CANONICAL_GM_RECOVERY",
+      "status": "SOURCE_COMMITTED_NATIVE_PENDING"
+    },
+    {
+      "role": "U04_ORCHESTRATOR",
+      "task": "N12-P2_NATIVE_READBACK",
+      "status": "SOURCE_COMMITTED_NATIVE_PENDING"
+    },
+    {
+      "role": "U06_QA",
+      "task": "N12-P3_HTML_BROWSER",
+      "status": "STATIC_QA_PASS_BROWSER_PENDING"
+    }
+  ],
+  "required_return_fields": [
+    "crew_role",
+    "mission_id",
+    "task_id",
+    "source_repo",
+    "source_sha",
+    "run_id",
+    "attempt",
+    "job_id",
+    "evidence_class",
+    "REX_ids",
+    "DoD",
+    "DoV",
+    "BD_queue_delta",
+    "disposition",
+    "return_to_MissionControl"
+  ],
+  "topology": {
+    "parent_issue": "GBOGEB/pipeline-automation-hub#604",
+    "rex_binding": "mission-control/grand-missions/CREW_REX_BIDIRECTIONAL_CONTRACT.json",
+    "golden_thread_base": "mission-control/golden-thread/GOLDEN_THREAD_TEMPORAL_CONTRACT_v1_1.json",
+    "k_semantic_generation_delta": 0,
+    "e_event_sequence_delta": null,
+    "reason": "Not appended to authoritative ledger; do not fabricate event number"
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "admission": "HOLD",
+  "dispatch_authorized": false,
+  "accepted_by_governor": false,
+  "requires": [
+    "exact-head native receipt",
+    "independent owner and human review",
+    "REX recurrence/prevention classification",
+    "Golden Thread append-only governed admission"
+  ],
+  "side_effects": "NONE; PROPOSED_RETURN_ONLY"
+}
