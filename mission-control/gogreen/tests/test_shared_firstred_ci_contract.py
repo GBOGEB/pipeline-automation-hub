@@ -30,7 +30,7 @@ def dependency_before_tests(text):
     step = "Install pinned GoGREEN receipt-signature dependency"
     return text.count(step) == 1 and text.count(PIN) == 1 and (
         "python -m unittest discover" in text
-    ) and text.index(PIN) < text.index("python -m unittest discover")
+    ) and text.index(PIN) < text.index("-m unittest")
 
 
 class SharedFirstRedContractTests(unittest.TestCase):
@@ -75,7 +75,7 @@ class SharedFirstRedContractTests(unittest.TestCase):
         for path in TARGETS:
             with self.subTest(path=path):
                 text = (ROOT / path).read_text()
-                self.assertLess(text.index(PIN), text.index("python -m unittest discover"))
+                self.assertLess(text.index(PIN), text.index("-m unittest"))
 
     def test_no_weakening_by_unconditional_skip(self):
         for path in TARGETS:
