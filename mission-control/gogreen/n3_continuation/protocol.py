@@ -85,7 +85,8 @@ def charter(c):
     sha(base.get("source_sha"))
     timestamp(base.get("observed_utc"))
     metric(base.get("metric"))
-    require(base["metric"]["key"]==c.get("objective",{}).get("metric_key"),
+    require(type(c.get("objective")) is dict,"objective missing")
+    require(base["metric"]["key"]==c["objective"].get("metric_key"),
             "objective and baseline metric differ")
     require(c["objective"].get("direction") in ("INCREASE","DECREASE","STABILIZE"),
             "unknown improvement direction")
@@ -169,9 +170,9 @@ def validate_ledger(c,l):
         require(r.get("previous_source_sha")==prior and r.get("previous_receipt_sha256")==chain,
                 "broken N+ lineage chain")
         source=sha(r.get("source_sha"))
-        require(r.get("run_key") not in runs and
-                type(r.get("run_key")) is list and len(r["run_key"])==2 and
-                all(type(v) is int and v>0 for v in r["run_key"]),
+        require(type(r.get("run_key")) is list and len(r["run_key"])==2 and
+                all(type(v) is int and v>0 for v in r["run_key"]) and
+                tuple(r["run_key"]) not in runs,
                 "duplicate/invalid native run attempt")
         runs.add(tuple(r["run_key"]))
         last=timestamp(r.get("completed_utc"))
@@ -228,8 +229,8 @@ def advance(c,l,o):
             "native head mismatch: exact-source run required")
     require(type(o.get("job_id")) is int and o["job_id"]>0,
             "native job proof required")
-    require(isinstance(o.get("native_receipt_url"),str) and
-            o["native_receipt_url"].startswith("https://github.com/"+c["repository"]+"/actions/runs/"+str(rid)),
+    require(o.get("native_receipt_url")==
+            "https://github.com/"+c["repository"]+"/actions/runs/"+str(rid),
             "unbound native evidence URL")
     count=o.get("tests")
     require(type(count) is dict,"native test denominator required")
@@ -319,7 +320,7 @@ def return_receipt(c,l):
     validate_ledger(c,l)
     rs=l["checkpoints"]
     last=rs[-1]["metric"] if rs else c["baseline"]["metric"]
-    comp,delta=source_comparison(c["baseline"]["metric"],last)
+    comp,delta=source_comparison(c["baseline"]["metric"],last) if rs else ("NO_POST_BASELINE_EVIDENCE",None)
     return {"schema":RETURN,"execution_id":c["execution_id"],
             "moniker":"N3_CONTINUE/3PSTAR","baseline":"N",
             "last_verified_checkpoint":"N+"+str(len(rs)),
@@ -331,6 +332,7 @@ def return_receipt(c,l):
             "first_red_tasks":[x["first_red"] for x in rs if x["first_red"]],
             "stop_reason":l["stop_reason"],
             "next_action":plan(c,l)["state"],"head_sha":plan(c,l)["source_sha"],
+            "native_input_authentication":"STRUCTURAL_ONLY_REQUIRES_INDEPENDENT_GITHUB_READBACK",
             "no_global_coverage_or_admission_inference":True,
             "independent_review":"UNVERIFIED","formal_root_closure_credit":0,
             "merge_authorized":False}
