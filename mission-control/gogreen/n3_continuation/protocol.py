@@ -188,6 +188,11 @@ def validate_ledger(c,l):
         prior=source;chain=r["receipt_sha256"];last_time=last
     require(l.get("status") in ("N_BASELINE_READY","CONTINUE","REPAIR_NEXT_PULSE",
                                   "N3_MEASURED_COMPLETE","HOLD_MAJOR"),"bad execution state")
+    if l["status"]!="HOLD_MAJOR":
+        require((len(points)==0 and l["status"]=="N_BASELINE_READY") or
+                (0<len(points)<3 and l["status"] in ("CONTINUE","REPAIR_NEXT_PULSE")) or
+                (len(points)==3 and l["status"]=="N3_MEASURED_COMPLETE"),
+                "ledger disposition does not match verified checkpoint count")
     require(l.get("stop_reason") is None or
             (l["status"]=="HOLD_MAJOR" and type(l["stop_reason"]) is dict),
             "unbound blocker")
@@ -221,8 +226,9 @@ def advance(c,l,o):
     require(o.get("run_status")=="COMPLETED" and
             o.get("conclusion") in ("SUCCESS","FAILURE"),"queued/incomplete run cannot advance")
     rid,attempt=o.get("run_id"),o.get("attempt")
-    require(type(rid) is int and rid>0 and type(attempt) is int and attempt>0,
-            "run ID and attempt required")
+    require(type(rid) is int and rid>0 and type(attempt) is int and
+            1<=attempt<=c["policy"]["max_attempts_per_pulse"],
+            "native ID/attempt exceeds bounded policy")
     require(all([rid,attempt]!=r["run_key"] for r in l["checkpoints"]),
             "reused native attempt cannot give second pulse credit")
     require(o.get("native_head_sha")==o["source_sha"],
@@ -266,14 +272,17 @@ def advance(c,l,o):
         return out
     work=o.get("completed_work")
     require(type(work) is list,"work / no-work manifest required")
-    laneids={z["id"] for z in c["lanes"]}
+    lane_by_id={z["id"]:z for z in c["lanes"]}
+    require(len({r.get("lane_id") for r in work if type(r) is dict})<=
+            c["policy"]["max_disjoint_workers"],"worker limit exceeded")
     for row in work:
-        require(type(row) is dict and row.get("lane_id") in laneids and
+        require(type(row) is dict and row.get("lane_id") in lane_by_id and
                 isinstance(row.get("disposition"),str) and row["disposition"] in
                 ("READ_ONLY","OWNED_COMMIT","VERIFIED_NO_CHANGE"),
                 "unowned work lane")
         if row["disposition"]=="OWNED_COMMIT":
             require(c["policy"]["mutation_scope"]=="OWNED_BRANCH_ONLY" and
+                    lane_by_id[row["lane_id"]].get("may_mutate") is True and
                     row.get("owner_lease_valid") is True and
                     row.get("commit_sha")==o["source_sha"],
                     "unleased or stale source mutation")

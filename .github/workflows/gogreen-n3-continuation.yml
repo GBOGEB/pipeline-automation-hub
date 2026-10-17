@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
-      - name: Native 68 positive and adversarial N3 tests and focused branch/statement instrument
+      - name: Native 72 positive and adversarial N3 tests and focused branch/statement instrument
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           RUN_ID: ${{ github.run_id }}
@@ -50,7 +50,7 @@ jobs:
           from pathlib import Path
           out=Path(os.environ["RUNNER_TEMP"])/"gogreen-n3"
           log=(out/"native_tests.log").read_text()
-          if re.findall(r"Ran (\d+) tests? in",log)!=["68"] or "\nOK" not in log:
+          if re.findall(r"Ran (\d+) tests? in",log)!=["72"] or "\nOK" not in log:
               raise SystemExit("N3 68-test native regression denominator not met")
           d=json.loads((out/"coverage.json").read_text())
           key="mission-control/gogreen/n3_continuation/protocol.py"
@@ -72,7 +72,7 @@ jobs:
               "exact_head_sha":os.environ["EXPECTED_SHA"],
               "native_run_id":int(os.environ["RUN_ID"]),
               "run_attempt":int(os.environ["RUN_ATTEMPT"]),
-              "native_tests_executed_passed":68,
+              "native_tests_executed_passed":72,
               "covered_statements":lines[0],"eligible_statements":lines[1],
               "covered_branches":branches[0],"eligible_branches":branches[1],
               "source_scope":key,"coverage_tool":"7.13.3",
