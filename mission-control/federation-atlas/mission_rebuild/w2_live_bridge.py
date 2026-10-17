@@ -146,8 +146,9 @@ def make(client, head, bridge, observed_at):
     running_raw = maybe(client, W1_REPO, "/actions/runs?status=in_progress&per_page=1",
                         errors, "fleet_in_progress")
     def count(p):
-        return p.get("total_count") if isinstance(p, dict) and
-               type(p.get("total_count")) is int and p["total_count"] >= 0 else None
+        return (p.get("total_count")
+                if (isinstance(p, dict) and type(p.get("total_count")) is int
+                    and p["total_count"] >= 0) else None)
     # Cross-repository actions: a repo-scoped token may not have gg_MATH access.
     provider = []
     for n, source in zip(GG_RUNS, (bridge["provider"]["source_head_sha"],
