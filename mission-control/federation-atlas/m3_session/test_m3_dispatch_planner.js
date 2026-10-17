@@ -28,7 +28,7 @@ reject(()=>d.stage([pack({...A,action:"APPLY_BOUNDED_CODEX"})],context),"mutatio
 reject(()=>d.stage([pack({...A,repo:"GBOGEB/CODEX"})],context),"remote authority");
 reject(()=>d.stage([pack({...A,paths:["../secret"]})],context),"path escape");
 reject(()=>d.stage([pack(A),pack(A)],context),"duplicate work");
-reject(()=>d.stage([pack({...A,idempotency_key:"forged"})],context),"not normalizable");
+reject(()=>d.stage([{...pack(A),idempotency_key:"forged"}],context),"not normalizable");
 assert.equal(d.intersects("a/b","a/bc"),false);
 assert.equal(d.intersects("a/b","a/b/c"),true);
 console.log("PASS two disjoint staged, path lock caught, ten negative controls; zero dispatch claimed");
