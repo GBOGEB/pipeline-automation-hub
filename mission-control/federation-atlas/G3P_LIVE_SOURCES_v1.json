@@ -1,0 +1,39 @@
+{
+  "schema": "missioncontrol.g3p.live_sources.v1",
+  "mission_id": "CBD-GOLDEN-GRAPH-604",
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "refresh_seconds": 300,
+  "source_policy": "READ_ONLY_NOT_NATIVE_ATTESTED",
+  "waves": [
+    {
+      "wave": "W-CBD-GRAPH-01",
+      "start": 1,
+      "end": 3,
+      "ref": "master",
+      "path": "mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json"
+    },
+    {
+      "wave": "W-CBD-GRAPH-02",
+      "start": 4,
+      "end": 6,
+      "ref": "master",
+      "path": "mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json"
+    },
+    {
+      "wave": "W-CBD-GRAPH-03",
+      "start": 7,
+      "end": 9,
+      "ref": "feat/mc-g3p-n7-n9-evidence-20261017",
+      "path": "mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N9_20261017.json"
+    },
+    {
+      "wave": "W-CBD-GRAPH-04",
+      "start": 10,
+      "end": 12,
+      "ref": "feat/mc-g3a-n10-n12-evidence-20261017",
+      "path": "mission-control/federation-atlas/G3A_N10_N12_LEDGER_20261017.json"
+    }
+  ],
+  "authority_transfer": false,
+  "merge_admission": "HOLD"
+}
