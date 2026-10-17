@@ -34,7 +34,9 @@ class ModelTests(unittest.TestCase):
     def test_executable_cycle_fails(self):self.reject(lambda d:d["edges"].append(dict(d["edges"][0],**{"from":"admit","to":"intake"})),"cyclic executable")
     def test_feedback_separate_from_dag(self):
         d=sample();p=nav.project(d)
-        self.assertNotIn("pages",p["executable_dag_topology"][-1:])
+        self.assertIn("pages",p["executable_dag_topology"])
+        self.assertLess(p["executable_dag_topology"].index("admit"),
+                        p["executable_dag_topology"].index("pages"))
         self.assertIn("FEEDBACK",{x["relation"] for x in d["edges"]})
     def test_sipoc_complete_and_hierarchy(self):
         d=sample();text=nav.sipoc_md(d)
