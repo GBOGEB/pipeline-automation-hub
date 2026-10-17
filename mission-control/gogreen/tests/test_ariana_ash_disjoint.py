@@ -1,11 +1,16 @@
 """ASH tests: real CBD planning surfaces survive failure without false-green."""
 from __future__ import annotations
 
+import contextlib
 import copy
 import importlib.util
+import io
+import sys
+import tempfile
 import json
 from pathlib import Path
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location(
@@ -168,6 +173,85 @@ class ASHDisjointRecoveryTests(unittest.TestCase):
             receipt["recovery"]["fleet_or_crew_dispatched_by_this_adapter"]
         )
         self.assertFalse(receipt["recovery"]["mutation_fanout_admitted"])
+
+
+    def test_cli_readonly_stdout_is_valid_provenance_and_hold(self):
+        out = io.StringIO()
+        with mock.patch.object(
+            sys, "argv", ["ash_survival.py", "--input", str(INPUT)]
+        ), contextlib.redirect_stdout(out):
+            self.assertEqual(ASH.main(), 0)
+        receipt = json.loads(out.getvalue())
+        self.assertEqual(receipt["boundary"]["merge_admission"], "HOLD")
+        self.assertEqual(receipt["survival"]["ready_scouts_remaining"], 3)
+        self.assertIsNone(receipt["survival"]["runner_minutes_observed"])
+
+    def test_cli_explicit_output_is_atomic_scope_and_no_implicit_dispatch(self):
+        with tempfile.TemporaryDirectory() as temp:
+            outpath = Path(temp) / "subfolder" / "ash.json"
+            with mock.patch.object(
+                sys, "argv",
+                ["ash_survival.py", "--input", str(INPUT), "--out", str(outpath)]
+            ):
+                self.assertEqual(ASH.main(), 0)
+            receipt = json.loads(outpath.read_text(encoding="utf-8"))
+            self.assertTrue(outpath.is_file())
+            self.assertFalse(
+                receipt["recovery"]["fleet_or_crew_dispatched_by_this_adapter"]
+            )
+
+    def test_cli_simulated_loss_retains_only_planned_survivors(self):
+        out = io.StringIO()
+        with mock.patch.object(
+            sys, "argv",
+            ["ash_survival.py", "--input", str(INPUT),
+             "--simulate-loss", "ASH-SEC-SCOUT"]
+        ), contextlib.redirect_stdout(out):
+            self.assertEqual(ASH.main(), 0)
+        receipt = json.loads(out.getvalue())
+        self.assertEqual(receipt["survival"]["ready_scouts_remaining"], 2)
+        self.assertEqual(
+            receipt["observation_kind"], "SIMULATED_FAILURE_NOT_NATIVE_EXECUTION"
+        )
+
+    def test_cli_corrupted_json_fails_closed_without_receipt(self):
+        with tempfile.TemporaryDirectory() as temp:
+            bad = Path(temp) / "broken.json"
+            bad.write_text("{invalid", encoding="utf-8")
+            stdout, stderr = io.StringIO(), io.StringIO()
+            with mock.patch.object(
+                sys, "argv", ["ash_survival.py", "--input", str(bad)]
+            ), contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                self.assertEqual(ASH.main(), 2)
+            self.assertEqual(stdout.getvalue(), "")
+            self.assertIn("CBD_ASH_FAIL_CLOSED", stderr.getvalue())
+
+    def test_cli_missing_observation_fails_closed_without_zero(self):
+        with tempfile.TemporaryDirectory() as temp:
+            missing = Path(temp) / "not-present.json"
+            stderr = io.StringIO()
+            with mock.patch.object(
+                sys, "argv", ["ash_survival.py", "--input", str(missing)]
+            ), contextlib.redirect_stderr(stderr):
+                self.assertEqual(ASH.main(), 2)
+            self.assertIn("CBD_ASH_FAIL_CLOSED", stderr.getvalue())
+
+    def test_forged_dispatched_cbd_planner_is_rejected(self):
+        forged = ASH.CBD.plan(data())
+        forged["dispatch_authorized"] = True
+        with mock.patch.object(ASH.CBD, "plan", return_value=forged):
+            with self.assertRaisesRegex(ValueError, "dispatcher authority"):
+                ASH.analyze(data())
+
+    def test_forged_post_failure_merge_gate_is_rejected(self):
+        base = ASH.CBD.plan(data())
+        violated = copy.deepcopy(base)
+        violated["merge_authorized"] = True
+        with mock.patch.object(
+            ASH.CBD, "plan", side_effect=[base, violated]
+        ):
+            with self.assertRaisesRegex(ValueError, "cannot transfer authority"):
+                ASH.analyze(data())
 
 
 if __name__ == "__main__":
