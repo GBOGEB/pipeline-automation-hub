@@ -1,0 +1,70 @@
+{
+  "schema": "missioncontrol.n3_continuation_contract.v1",
+  "as_of": "2026-10-17",
+  "control_issue": "GBOGEB/pipeline-automation-hub#604",
+  "controller": "mission-control/v2/n3_continuation.py",
+  "evidence_authority": "EXTERNAL_OWNER_RECEIPTS_ONLY",
+  "write_authority": "LOCAL_LEDGER_ONLY",
+  "merge_admission": "INDEPENDENT_HOLD_UNTIL_NATIVE_PROOF_AND_REVIEW",
+  "profiles": {
+    "3W": {
+      "unit": "WAVE",
+      "count": 3,
+      "semantics": "THREE_OUTCOME_WAVES",
+      "may_have_many_pulses": true
+    },
+    "3P-CONT": {
+      "unit": "PULSE",
+      "count": 3,
+      "semantics": "THREE_BOUNDED_CONSECUTIVE_PULSES",
+      "requires": [
+        "EXACT_SOURCE",
+        "CONSECUTIVE_ORDINAL",
+        "RECEIPT_CHAIN",
+        "OWNER_LEASE"
+      ]
+    },
+    "N3-AUTO": {
+      "unit": "PULSE",
+      "count": 3,
+      "semantics": "GOVERNED_NO_ROUTINE_INTERACTION",
+      "stop_on_major_blocker": true,
+      "autonomous_merge": false
+    }
+  },
+  "ledger_schema": "missioncontrol.n3_continuation.v1",
+  "result_schema": "missioncontrol.n3_continuation_result.v1",
+  "receipt_statuses": [
+    "SOURCE_COMMITTED",
+    "LOCAL_VALIDATED",
+    "BLOCKED"
+  ],
+  "stop_reasons": [
+    "BRANCH_DRIFT",
+    "SOURCE_IDENTITY_CONFLICT",
+    "OWNER_LEASE_CONFLICT",
+    "P0_P1_SECURITY",
+    "A10_OR_GOVERNANCE_FAIL",
+    "NATIVE_PROOF_FAILED",
+    "DEPENDENCY_INCOMPLETE",
+    "POLICY_VIOLATION",
+    "UNKNOWN_HIGH_RISK"
+  ],
+  "guards": [
+    "NO_CROSS_REPO_AUTHORITY_TRANSFER",
+    "NO_NATIVE_PROOF_FROM_LOCAL_TESTS",
+    "NO_UNMATCHED_COVERAGE_DELTA",
+    "NO_CYCLE_OR_SKIPPED_PULSE",
+    "NO_MUTATION_OUTSIDE_PATH_LEASE",
+    "NO_UNATTESTED_CAPACITY",
+    "STOP_ON_MAJOR_BLOCKER",
+    "NO_AUTOMATIC_MERGE"
+  ],
+  "compatibility": {
+    "existing_3PR_3PC_3P3_3PSTAR": "UNCHANGED",
+    "v2_glossary": "ADDITIVE_2_0_2",
+    "historic_series": "UNCHANGED"
+  },
+  "authority_transfer": false,
+  "engineering_credit_delta": 0
+}

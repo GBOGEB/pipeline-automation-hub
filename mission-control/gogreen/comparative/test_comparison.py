@@ -47,6 +47,27 @@ def validate(d):
     assert d["go_green"]["native_temporal"]["source_module_git_blob"]=="e7b54f64890489b495bfa43de7b1e5a43902f47a"
     assert d["go_green"]["native_temporal"]["coverage_tool_version"]=="7.13.3"
     assert d["go_green"]["native_temporal"]["independent_trial_count"] is None
+    q=d["go_green"]["qps_threepulse"]
+    assert q["schema"]=="gogreen.qps-threepulse.native.v1"
+    q0=q["frozen_main_run_census"]
+    assert (q0["runs"],q0["success"],q0["failure"],q0["cancelled"])==(33,22,11,0)
+    assert sum(q0[x] for x in ("success","failure","cancelled"))==q0["runs"]
+    assert q0["retrieved_page_complete"] is True
+    assert sorted(x["n"] for x in q["failure_family_manifestations"])==[1,2,8]
+    assert sum(x["n"] for x in q["failure_family_manifestations"])==q0["failure"]
+    assert (q["first_red_exact_error_verified"],q["first_red_unknown"])==(10,1)
+    assert q["first_red_exact_error_verified"]+q["first_red_unknown"]==q0["failure"]
+    assert len(q["pulse_results"])==3
+    assert q["pulse_results"][1]["python_tests_passed"]==21
+    assert q["pulse_results"][1]["ts_tests_passed"]==41
+    assert q["pulse_results"][2]["test_n2"]==21
+    assert q["pulse_results"][2]["statement_n2"]==[30,30]
+    assert q["pulse_results"][2]["branch_n2"]==[18,18]
+    assert q["pulse_results"][2]["source_scope_comparable"] is False
+    assert q["pulse_results"][2]["formal_closure_credit"]==0
+    assert q["post_merge_controls"]["root_closure_credit"]==0
+    assert q["post_merge_controls"]["independent_review_verified"] is False
+    assert q["admission"]=="HOLD"
     assert d["rex"]["not_new_evidence"] is True
     ids={n["id"] for n in d["dag"]}
     assert len(ids)==len(d["dag"])
@@ -157,5 +178,45 @@ class Compare(unittest.TestCase):
     def test_false_source_modification_negative(self):
         self.d["go_green"]["native_temporal"]["production_source_modified_between_N_and_Nplus1"]=True
         with self.assertRaises(AssertionError):validate(self.d)
+
+
+    def test_qps_success_failure_partition(self):
+        q=self.d["go_green"]["qps_threepulse"]
+        self.assertEqual(q["frozen_main_run_census"]["success"],22)
+        self.assertEqual(sum(x["n"] for x in q["failure_family_manifestations"]),11)
+
+    def test_qps_missing_failed_family_negative(self):
+        self.d["go_green"]["qps_threepulse"]["failure_family_manifestations"].pop()
+        with self.assertRaises(AssertionError):validate(self.d)
+
+    def test_qps_false_exact_root_attribution_negative(self):
+        self.d["go_green"]["qps_threepulse"]["first_red_exact_error_verified"]=11
+        with self.assertRaises(AssertionError):validate(self.d)
+
+    def test_qps_stale_run_denominator_negative(self):
+        self.d["go_green"]["qps_threepulse"]["frozen_main_run_census"]["runs"]=30
+        with self.assertRaises(AssertionError):validate(self.d)
+
+    def test_qps_fake_matched_source_uplift_negative(self):
+        self.d["go_green"]["qps_threepulse"]["pulse_results"][2]["source_scope_comparable"]=True
+        with self.assertRaises(AssertionError):validate(self.d)
+
+    def test_qps_false_governance_closure_negative(self):
+        self.d["go_green"]["qps_threepulse"]["post_merge_controls"]["root_closure_credit"]=1
+        with self.assertRaises(AssertionError):validate(self.d)
+
+    def test_qps_source_scope_coverage_denominator_negative(self):
+        self.d["go_green"]["qps_threepulse"]["pulse_results"][2]["branch_n2"]=[18,17]
+        with self.assertRaises(AssertionError):validate(self.d)
+
+    def test_qps_html_root_surface_and_sipoc(self):
+        h=HTML.read_text()
+        for marker in ('id="q-runs"','id="q-root-rows"','id="q-firstred"',
+                       'id="q-coverage"','QPS first-red conversion'):
+            self.assertIn(marker,h)
+        ids={node["id"] for node in self.d["dag"]}
+        self.assertIn("P5",ids)
+        self.assertIn("O_QPS",ids)
+        self.assertIn("GG-W8",{t["id"] for t in self.d["todo"]})
 
 if __name__=="__main__":unittest.main()
