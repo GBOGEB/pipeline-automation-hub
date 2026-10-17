@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
-      - name: 50 genuine graph positive and adversarial tests with branch denominator
+      - name: 51 genuine graph positive and adversarial tests with branch denominator
         shell: bash
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -43,7 +43,7 @@ jobs:
           from pathlib import Path
           d=Path(os.environ['RUNNER_TEMP'])/'gogreen-g10'
           s=(d/'native_tests.log').read_text()
-          if re.findall(r'Ran (\d+) tests? in',s)!=['50'] or '\nOK' not in s:
+          if re.findall(r'Ran (\d+) tests? in',s)!=['51'] or '\nOK' not in s:
               raise SystemExit('G10 graph test denominator insufficient')
           c=json.loads((d/'coverage.json').read_text())
           key='mission-control/gogreen/graph_quality/graph_quality.py'
@@ -57,8 +57,29 @@ jobs:
               raise SystemExit('invalid eligible denominator')
           if 100*st[0]<85*st[1] or 100*br[0]<80*br[1]:
               raise SystemExit('G10 scoped statement/branch coverage below 85/80')
+          # Same production blob + matching source denominator: no false
+          # improvement by exclusions, scope shrinking or measurement drift.
+          import subprocess
+          baseline=json.loads(Path(
+            'mission-control/gogreen/graph_quality/samples/G10_NATIVE_N0_20261017.json').read_text())
+          actual_blob=subprocess.check_output(['git','hash-object',key],text=True).strip()
+          if actual_blob!=baseline['production_git_blob'] or baseline['tool']!='coverage==7.13.3':
+              raise SystemExit('G10 N/N+1 source/instrumentation incomparable')
+          if (st[1],br[1])!=(baseline['statement_eligible'],baseline['branch_eligible']):
+              raise SystemExit('G10 N/N+1 denominator drift')
+          if st!=(153,153) or br!=(32,32):
+              raise SystemExit(f'G10 reverse geometry remains uncovered: {st} {br}')
+          delta={'schema':'gogreen.g10.native-matched-delta.v1',
+                 'source_blob':actual_blob,
+                 'before_run_id':baseline['source_run_id'],
+                 'before_tests':baseline['tests_passed'],
+                 'after_tests':51,
+                 'statement_gain_pp':round(100*(st[0]-baseline['statement_covered'])/st[1],4),
+                 'branch_gain_pp':round(100*(br[0]-baseline['branch_covered'])/br[1],4),
+                 'whole_repo_gain':None,'merge_authorized':False}
+          (d/'native_matched_delta.json').write_text(json.dumps(delta,sort_keys=True,indent=2)+'\n')
           receipt={'schema':'gogreen.g10.native-focused-coverage.v1',
-              'exact_head':os.environ['EXPECTED_SHA'],'native_tests_passed':50,
+              'exact_head':os.environ['EXPECTED_SHA'],'native_tests_passed':51,
               'scope':key,'statement_covered':st[0],'statement_eligible':st[1],
               'branch_covered':br[0],'branch_eligible':br[1],
               'coverage_tool':'7.13.3','whole_repo_coverage':None,
