@@ -74,6 +74,34 @@ def check(out: Path) -> dict:
                         "page_or_console_errors":0,"screenshot":name,
                         "screenshot_sha256":hashlib.sha256(screenshot.read_bytes()).hexdigest()})
                     page.close()
+                # Isolated positive/negative overlay fixtures: no remote launch, no source mutation.
+                state_bytes=(ROOT/"docs/mission-control/m3/state.json").read_bytes()
+                sample={"schema":"missioncontrol.m3.telemetry_observation.v1",
+                    "mode":"FIXTURE","observed_at_utc":"2026-10-17T18:48:12Z",
+                    "source_identity":{"m3_state_sha256":hashlib.sha256(state_bytes).hexdigest()},
+                    "authority":{"merge_admission":"HOLD","remote_mutation":False,
+                        "security_waiver":False,"correctly_governed_main_merge_verified":False},
+                    "freshness":{"census_age_hours":12,"census_stale_by_24h":False},
+                    "run_observations":[{"repository":"GBOGEB/ABACUS","pr":2162,"conclusion":"failure",
+                        "observed_jobs":13,"source_sha":"e053a4898fc74018b83092b0d2f8af2f4a909eb0",
+                        "run_id":39056877380,"run_attempt":1,
+                        "url":"https://github.com/GBOGEB/ABACUS/actions/runs/39056877380"}],
+                    "crosswalk":[{"m3_id":"ABACUS"}]}
+                browser_page=browser.new_page(viewport={"width":1280,"height":800})
+                browser_page.route("**/telemetry.json?view=*",lambda route:
+                    route.fulfill(status=200,content_type="application/json",body=json.dumps(sample)))
+                browser_page.goto(url,wait_until="networkidle")
+                assert "Observation:" in browser_page.locator("#liveTelemetry").inner_text(), "valid overlay withheld"
+                result["overlay_positive_fixture"]=True
+                browser_page.close()
+                sample["source_identity"]["m3_state_sha256"]="0"*64
+                bad_page=browser.new_page(viewport={"width":1280,"height":800})
+                bad_page.route("**/telemetry.json?view=*",lambda route:
+                    route.fulfill(status=200,content_type="application/json",body=json.dumps(sample)))
+                bad_page.goto(url,wait_until="networkidle")
+                assert "WITHHELD" in bad_page.locator("#liveTelemetry").inner_text(), "forged digest accepted"
+                result["forged_overlay_rejected"]=True
+                bad_page.close()
             finally:
                 browser.close()
         result["status"]="PASS"
