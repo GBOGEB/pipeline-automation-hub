@@ -1,0 +1,137 @@
+name: CODE PURPLE Live Lossless QA
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/handoff/live_lossless/**'
+      - 'mission-control/v2/handoff/closeout/**'
+      - 'mission-control/federation-atlas/pages_portal.py'
+      - '.github/workflows/live-lossless-qa.yml'
+      - '.github/workflows/code-purple-method-atlas.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/v2/handoff/live_lossless/**'
+      - 'mission-control/v2/handoff/closeout/**'
+      - 'mission-control/federation-atlas/pages_portal.py'
+      - '.github/workflows/live-lossless-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  readonly-site-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact PR or main SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact checked-out source
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Python lineage/privacy/negative tests
+        run: python -m unittest discover -s mission-control/v2/handoff/live_lossless -p 'test_live_lossless.py' -v
+      - name: Validate JS and build source-bound dashboard
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/v2/handoff/live_lossless
+          node --check "$SRC/app.js"
+          python "$SRC/build_live_lossless.py" --out "$RUNNER_TEMP/live-lossless"
+          python "$SRC/build_live_lossless.py" --out "$RUNNER_TEMP/live-lossless" --check
+          if [ -f "$SRC/published/snapshot.json" ]; then
+            python "$SRC/build_live_lossless.py" --out "$SRC/published" --check
+            echo SOURCE_COMMITTED_BYTE_PARITY=PASS
+          else
+            echo SOURCE_COMMITTED_BYTE_PARITY=AWAITING_GENERATED_COMMIT
+          fi
+      - name: Install pinned Chromium and Playwright
+        shell: bash
+        run: |
+          python -m pip install --disable-pip-version-check "playwright==1.57.0"
+          python -m playwright install --with-deps chromium
+      - name: Three-viewport Chromium visual and functional QA
+        shell: bash
+        run: |
+          python mission-control/v2/handoff/live_lossless/browser_qa.py \
+            --site "$RUNNER_TEMP/live-lossless" \
+            --out "$RUNNER_TEMP/live-lossless-browser"
+      - name: Verify screenshot and source digest receipts
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os,hashlib,json
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])
+          qa=json.loads((p/'live-lossless-browser/qa-receipt.json').read_text())
+          assert qa['status']=='PASS' and qa['checks_total']>=85
+          assert len(qa['viewports'])==3
+          assert qa['hosted_public_url_verified'] is False
+          assert qa['github_remote_authenticated'] is False
+          assert qa['merge_admission']=='HOLD'
+          for x in qa['screenshots']:
+              f=p/'live-lossless-browser'/x['name']
+              assert f.stat().st_size > 500
+              assert hashlib.sha256(f.read_bytes()).hexdigest()==x['sha256']
+          site=p/'live-lossless'
+          man=json.loads((site/'manifest.json').read_text())
+          for name,expected in man['files_sha256'].items():
+              assert hashlib.sha256((site/name).read_bytes()).hexdigest()==expected
+          snap=json.loads((site/'snapshot.json').read_text())
+          assert snap['summary']['reconstructed_intents']==7
+          assert snap['summary']['tracked_actions']==11
+          assert snap['summary']['full_chat_user_prompts'] is None
+          print('LIVE_LOSSLESS_LOCAL_QA=PASS; REMOTE_HOSTED=UNKNOWN; ADMISSION=HOLD')
+          PY
+      - name: Prove existing single-owner Pages portal parity
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/atlas/live-lossless"
+          cp "$RUNNER_TEMP/live-lossless/"* "$RUNNER_TEMP/atlas/live-lossless/"
+          printf '<!doctype html><html><head><title>Atlas</title></head><body><h1>Atlas</h1></body></html>\n' > "$RUNNER_TEMP/atlas/index.html"
+          python mission-control/federation-atlas/pages_portal.py --atlas "$RUNNER_TEMP/atlas" --out "$RUNNER_TEMP/pages" --sha "$HEAD_SHA"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP']);site=p/'live-lossless';public=p/'pages/live-lossless'
+          m=json.loads((p/'pages/site-manifest.json').read_text())
+          for f in ("index.html","app.js","style.css","snapshot.json","manifest.json"):
+              orig=site/f;copy=public/f
+              assert orig.read_bytes()==copy.read_bytes()
+              assert m['public_files_sha256']["live-lossless/"+f]==hashlib.sha256(copy.read_bytes()).hexdigest()
+          assert 'live-lossless/index.html' in (p/'pages/index.html').read_text()
+          assert m['merge_authorized'] is False and m['security_waiver'] is False
+          print('LIVE_LOSSLESS_PAGES_CANDIDATE=BYTE_IDENTICAL; NOT_YET_DEPLOYED')
+          PY
+      - name: Export deterministic sanitized assets for GitHub commit
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os,json
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'live-lossless'
+          for f in sorted(root.iterdir()):
+              if f.is_file():
+                  print("LIVE_LOSSLESS_EXPORT_FILE="+json.dumps({
+                      'name':f.name,'content':f.read_text(encoding='utf-8')
+                  },ensure_ascii=True,separators=(',',':')))
+          PY
+      - name: Publish exact-head QA screenshots and evidence as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-lossless-qa-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/live-lossless/
+            ${{ runner.temp }}/live-lossless-browser/
+            ${{ runner.temp }}/pages/live-lossless/
+            ${{ runner.temp }}/pages/site-manifest.json
+          if-no-files-found: warn
+          retention-days: 14
