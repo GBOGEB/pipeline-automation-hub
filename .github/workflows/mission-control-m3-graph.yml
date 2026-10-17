@@ -1,0 +1,52 @@
+name: Mission Control M3 graph and portal contract
+on:
+  pull_request:
+    paths:
+      - "docs/mission-control/m3/**"
+      - "mission-control/federation-atlas/m3_session/**"
+      - ".github/workflows/mission-control-m3-graph.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  m3-graph:
+    name: M3 exact-head read-only contract
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact event SHA
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Setup node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "20"
+      - name: Fail closed on checkout drift; validate graph/projection
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          node mission-control/federation-atlas/m3_session/test_m3_contract.js
+          python - <<'PY'
+          import json, os, hashlib
+          from pathlib import Path
+          out=Path("out/m3")
+          out.mkdir(parents=True,exist_ok=True)
+          members={}
+          for p in (Path("docs/mission-control/m3/index.html"),Path("docs/mission-control/m3/state.json")):
+              members[str(p)]=hashlib.sha256(p.read_bytes()).hexdigest()
+          result={"schema":"missioncontrol.m3.native_receipt.v1","checkout_sha":os.environ["EXPECTED_SHA"],
+                  "run_id":os.environ["GITHUB_RUN_ID"],"attempt":os.environ["GITHUB_RUN_ATTEMPT"],
+                  "members":members,"qualification":"NATIVE_EXACT_HEAD_READ_ONLY_CONTRACT_NOT_ADMISSION",
+                  "crew_dispatch":"NOT_LAUNCHED","security_waiver":False,"merge_authorized":False}
+          (out/"receipt.json").write_text(json.dumps(result,indent=2,sort_keys=True)+"\n")
+          PY
+      - name: Publish diagnostic receipt, never Pages
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: m3-graph-contract-${{ github.run_id }}-${{ github.run_attempt }}
+          path: out/m3/receipt.json
+          if-no-files-found: error
