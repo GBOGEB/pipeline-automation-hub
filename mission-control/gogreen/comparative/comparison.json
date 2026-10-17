@@ -187,6 +187,153 @@
       "coverage_tool_version": "7.13.3",
       "production_source_modified_between_N_and_Nplus1": false,
       "artifact_manifest_sha256": "d720c2c02b0991105f7d176a0e12ce8a27c3ff9e8269286f897cf69543e5e142"
+    },
+    "qps_threepulse": {
+      "schema": "gogreen.qps-threepulse.native.v1",
+      "observed_date": "2026-10-17",
+      "window": "2026-10-16..2026-10-17",
+      "repo": "GBOGEB/cryoplant-project",
+      "branch": "main",
+      "frozen_main_run_census": {
+        "runs": 33,
+        "success": 22,
+        "failure": 11,
+        "cancelled": 0,
+        "source_population": "ALL_RETRIEVED_BRANCH_DATE_RUNS",
+        "retrieved_page_complete": true
+      },
+      "previous_g9_qps_census": {
+        "runs": 30,
+        "success": 20,
+        "failure": 10,
+        "cancelled": 0
+      },
+      "failure_family_manifestations": [
+        {
+          "family": "W163_UNREGISTERED_CHART_NAV_ID",
+          "n": 8,
+          "distinct_head_shas": 5,
+          "verified_log_examples": [
+            38961581767,
+            38961581756,
+            38954741916,
+            38954741915,
+            38926132761,
+            38925239623,
+            38924132770,
+            38924132824
+          ],
+          "root_class": "SAME_LOG_PATH_SYMPTOM_NOT_FORMAL_ROOT_CONTROL",
+          "source": "docs/qplant_wcs/myrrha_handover/hx-sizing.html",
+          "fix_pr": 1944,
+          "followup_pr": 1945
+        },
+        {
+          "family": "NPM_ESBUILD_RUNTIME_MODULE_MISSING",
+          "n": 2,
+          "distinct_head_shas": 2,
+          "verified_log_examples": [
+            39019340913,
+            39026075976
+          ],
+          "root_class": "SAME_NATIVE_MODULE_ERROR",
+          "source": "qps_contract_canonicalization/node_modules/esbuild/lib/main.js",
+          "fix_pr": 1943
+        },
+        {
+          "family": "EVOLUTIONARY_NO_NATIVE_JOB",
+          "n": 1,
+          "distinct_head_shas": 1,
+          "verified_log_examples": [
+            38858385258
+          ],
+          "root_class": "FIRST_RED_UNVERIFIED_NATIVE_ZERO_JOB_RECORDS",
+          "source": null,
+          "fix_pr": null
+        }
+      ],
+      "first_red_job_step_retrieved": 10,
+      "first_red_exact_error_verified": 10,
+      "first_red_unknown": 1,
+      "pulse_results": [
+        {
+          "pulse": "P1",
+          "name": "Native root-red QPS recensus",
+          "status": "NATIVE_LOG_READBACK",
+          "numerator": 10,
+          "denominator": 11,
+          "meaning": "Attributed native first-red exact error/path; 11 total failed runs, one jobless unknown",
+          "reference": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39026075976"
+        },
+        {
+          "pulse": "P2",
+          "name": "npm ci dependency and esbuild probe",
+          "status": "NATIVE_EXACT_HEAD_PASS",
+          "pr": 1943,
+          "run_id": 39026660707,
+          "python_tests_passed": 21,
+          "ts_tests_passed": 41,
+          "native_workflows_successful_on_head": 11,
+          "native_workflows_observed_on_head": 11,
+          "claim": "repair verified, formal REX recurrence CONTROL unverified"
+        },
+        {
+          "pulse": "P3",
+          "name": "W163 CH IDs, strict scanner and dead-code pruning",
+          "status": "NATIVE_FOCUSED_PASS_REVIEW_HOLD",
+          "fix_pr": 1944,
+          "followup_pr": 1945,
+          "run_id": 39027052892,
+          "statement_n0": [
+            25,
+            32
+          ],
+          "branch_n0": [
+            17,
+            20
+          ],
+          "test_n0": 19,
+          "test_n2": 21,
+          "statement_n2": [
+            30,
+            30
+          ],
+          "branch_n2": [
+            18,
+            18
+          ],
+          "source_scope_comparable": false,
+          "native_w163_workflow_on_followup_head": "PASS",
+          "native_canonical_workflow_on_followup_head": "PASS",
+          "formal_closure_credit": 0
+        }
+      ],
+      "post_merge_controls": {
+        "mission_control_ruleset_protected": false,
+        "qps_main_protected": false,
+        "independent_review_verified": false,
+        "root_closure_credit": 0,
+        "all_cross_repo_integrated_head_proven": false
+      },
+      "sipoc": {
+        "supplier": "GitHub QPS Actions native main historical runs and QPS source-owned PRs",
+        "input": "SHA, run ID/attempt, failing job/step and error signature",
+        "process": [
+          "deduplicate manifestation to symptom families",
+          "repair npm installation owner",
+          "repair CH namespace and preserve scanner",
+          "native positive/negative test and scoped coverage",
+          "independent REX/control review"
+        ],
+        "output": "QPS 3-pulse native evidence and bounded comparative projections",
+        "customer": "GoGREEN, QPS source owner, EVERRED/REX, independent admission",
+        "declared_only_edges": [
+          "root formal closure",
+          "merge legitimacy",
+          "cross-repo source acceptance"
+        ]
+      },
+      "admission": "HOLD"
     }
   },
   "bd": {
@@ -288,10 +435,32 @@
       "stage": "SIPOC:C",
       "name": "Independent admission + later recurrence control",
       "deps": [
-        "O"
+        "O",
+        "O_QPS"
       ],
       "owner": "GATE_KEEPER",
       "state": "HOLD"
+    },
+    {
+      "id": "P5",
+      "stage": "SIPOC:P",
+      "name": "QPS three-pulse root attribution, clean install and W163 hostile controls",
+      "deps": [
+        "I",
+        "P4"
+      ],
+      "owner": "QPS source-owner with GoGREEN projection",
+      "state": "NATIVE_REPAIRS_PASS_REX_CONTROL_HOLD"
+    },
+    {
+      "id": "O_QPS",
+      "stage": "SIPOC:O",
+      "name": "QPS full 33-run outcome and 11 failure associations, qualified tests",
+      "deps": [
+        "P5"
+      ],
+      "owner": "GoGREEN projection",
+      "state": "SOURCE_BOUND_HISTORIC_NON_ATOMIC"
     }
   ],
   "todo": [
@@ -343,6 +512,13 @@
       "text": "G7 verified 51→53 tests, 213/226→226/226 statements and 37/38→38/38 branches on identical module blob; independent merge/reviewer gates still HOLD",
       "owner": "GoGREEN G7",
       "state": "FOCUSED_53_TEST_COVERAGE_VERIFIED_REVIEW_HOLD"
+    },
+    {
+      "id": "GG-W8",
+      "priority": "P1",
+      "text": "Read terminal #1945 all-checks, confirm QPS main postmerge exact-head and independent REX historical recurrence control; W163 and esbuild separate",
+      "owner": "QPS/REX independent reader",
+      "state": "TODO"
     }
   ],
   "source_links": [
@@ -350,7 +526,10 @@
     "https://github.com/GBOGEB/pipeline-automation-hub/pull/597",
     "https://github.com/GBOGEB/ABACUS/pull/2090",
     "https://github.com/GBOGEB/ABACUS/pull/2100",
-    "https://github.com/GBOGEB/pipeline-automation-hub/pull/599"
+    "https://github.com/GBOGEB/pipeline-automation-hub/pull/599",
+    "https://github.com/GBOGEB/cryoplant-project/pull/1943",
+    "https://github.com/GBOGEB/cryoplant-project/pull/1944",
+    "https://github.com/GBOGEB/cryoplant-project/pull/1945"
   ],
   "portfolio_previous_checkpoint": {
     "created": 105,
