@@ -100,7 +100,8 @@ def check_metrics(metrics: Any, sha: str) -> None:
 
 
 def check_actions(actions: Any, status: str, input_sha: str,
-                  next_sha: str, lease_cap: int) -> list[str]:
+                  next_sha: str, lease_cap: int,
+                  forecast_time: datetime, observed_time: datetime) -> list[str]:
     need(isinstance(actions, list), "action records must be a list")
     mutation = False
     leases: dict[str, str] = {}
@@ -115,6 +116,10 @@ def check_actions(actions: Any, status: str, input_sha: str,
              "action requires accountable owner lease")
         need(outcome in {"DONE", "FAILED", "HOLD"},
              "action requires explicit actual outcome")
+        began = utc(action.get("started_at"))
+        ended = utc(action.get("completed_at"))
+        need(forecast_time <= began <= ended <= observed_time,
+             "action must start after frozen forecast and end before actual")
         changed = action.get("changed_paths")
         need(isinstance(changed, list), "changed paths missing")
         if kind not in MUTATIONS:
@@ -254,7 +259,7 @@ def validate_record(doc: Any) -> dict[str, Any]:
              all(isinstance(x, str) and x.strip() for x in evid),
              "terminal pulse requires evidence locator")
         paths = check_actions(pulse.get("actions"), status, input_sha,
-                              next_sha, lease_cap)
+                              next_sha, lease_cap, forecast_time, observed_time)
         if status in ("EXECUTED_PASS", "EXECUTED_FAIL"):
             need(bool(pulse["actions"]),
                  "executed pulse requires action or test records")
