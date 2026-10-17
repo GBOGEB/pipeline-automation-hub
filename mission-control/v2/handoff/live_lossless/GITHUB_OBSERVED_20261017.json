@@ -1,0 +1,108 @@
+{
+  "schema": "missioncontrol.live_lossless.github_observation.v1",
+  "observed_date": "2026-10-17",
+  "time_precision": "DATE_ONLY",
+  "scope": "SELECTED_MISSIONCONTROL_REFS_NOT_GLOBAL",
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "default_branch": "master",
+  "main_sha": "b293c818ebf280e570392e398720ec22e1aa4566",
+  "main_sha_source": "https://github.com/GBOGEB/pipeline-automation-hub/commit/b293c818ebf280e570392e398720ec22e1aa4566",
+  "native_run": {
+    "id": 39045180636,
+    "head_sha": "b293c818ebf280e570392e398720ec22e1aa4566",
+    "conclusion": "success",
+    "tests_passing": 34,
+    "tests_total": 34,
+    "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39045180636",
+    "proof": "EXACT_MAIN_CLOSEOUT_SUBSET_ONLY"
+  },
+  "prs": [
+    {
+      "number": 620,
+      "state": "OPEN",
+      "draft": false,
+      "head": "f3374560af1755693f53a4b2e9f8ef3c184a08a3"
+    },
+    {
+      "number": 621,
+      "state": "OPEN",
+      "draft": false,
+      "head": "296c2dfa6c81849038b3d378d2e179dfdb4ca8a4"
+    },
+    {
+      "number": 631,
+      "state": "OPEN",
+      "draft": false,
+      "head": "ea234657c0d030e816a4a4368c95b15fc8dd661e"
+    },
+    {
+      "number": 632,
+      "state": "MERGED",
+      "draft": false,
+      "head": "a730f6a20d8962f527441e1771b4c85e8b29bc9a",
+      "merge": "0f013cca1389a71dab7a3e81fa43e2410815e90f"
+    },
+    {
+      "number": 637,
+      "state": "MERGED",
+      "draft": false,
+      "head": "c93487efccca35da3642bc2d96964f31862ccbff",
+      "merge": "62657c3c300ef2b29f4770ab816dcd437429f148"
+    },
+    {
+      "number": 640,
+      "state": "MERGED",
+      "draft": false,
+      "head": "60ef65b1ade77e16863372d242eeea586fc7c82d",
+      "merge": "b293c818ebf280e570392e398720ec22e1aa4566"
+    },
+    {
+      "number": 641,
+      "state": "MERGED",
+      "draft": false,
+      "head": "857113d37353b51d40fb72a6f2d7c811f4a46e4b",
+      "merge": "91bc2652f0468f3a05e149bfdb5f9168c1fd02f5"
+    },
+    {
+      "number": 642,
+      "state": "OPEN",
+      "draft": true,
+      "head": "3e145954f7e7fb5bfe9d161c9a1d3d42ff9028a0"
+    }
+  ],
+  "issues": [
+    {
+      "number": 604,
+      "state": "open"
+    },
+    {
+      "number": 638,
+      "state": "open"
+    }
+  ],
+  "live_monitor": {
+    "pull_requests": [
+      620,
+      621,
+      631,
+      640,
+      641,
+      642
+    ],
+    "issues": [
+      604,
+      638
+    ],
+    "supported_frequency_minutes": [
+      0,
+      15,
+      60
+    ],
+    "default_frequency_minutes": 15,
+    "source": "PUBLIC_GITHUB_REST_NO_AUTH",
+    "merge_admission": "INDEPENDENT_HOLD"
+  },
+  "security_waiver": false,
+  "authority_transfer": false,
+  "engineering_credit_delta": 0
+}
