@@ -1,0 +1,92 @@
+{
+  "schema": "code-purple.adaptive-census.n7-local-rollup.v1",
+  "recorded_date": "2026-10-17",
+  "evidence_level": "LOCAL_REPRODUCIBILITY",
+  "source": {
+    "repository": "GBOGEB/ABACUS",
+    "head_sha": "94222bd2b9ba75563b41e6b7e6b058ea06ca6c0d",
+    "source_payload_sha256": "73bc7ae3df62c00e61dd2c6ba415801a2fc0b8d42767d6a399b64f6719fe136b",
+    "native_artifact_sha256": "6326d5ab241b330963d3afe42111efa97bf5dd37aacd35e4213d82172166af77",
+    "eligible_branch_population": 8328,
+    "coverage_catalog_modules": 299
+  },
+  "lineage": {
+    "parent_manifest_sha256": "f8ed2072ffb68473796bab7ce5148c2973b45f404eceed4d2848f0e634d38b73",
+    "parent_terminal_sha256": "47a68c8b6e08d5a5c08d2cdc76e341e056515c5e395adddd24791b0730a0f685",
+    "continuation_manifest_sha256": "9ee96a1c7da7dc5eb7f5bf59edff9253b0869fb2aac4d840326ed44c3d86eb13",
+    "terminal_partial_sha256": "f3777344d2a4198e995835dab2129ce0c39ee2f973cbe725eaa0368fade7383f"
+  },
+  "gates": {
+    "predeclared_min_known_missed_arcs_per_new_file": 16,
+    "max_readonly_local_readers": 2,
+    "source_writers_dispatched": 0,
+    "native_jobs_dispatched_by_census": 0,
+    "ldab_sessions_authenticated": null,
+    "first_red_roots_verified": null,
+    "security_waiver": false,
+    "authority_transfer": false,
+    "merge_admission": "HOLD"
+  },
+  "pulses": [
+    {
+      "pulse": "A4",
+      "new_files": 8,
+      "cumulative_files": 40,
+      "new_known_arcs": 610,
+      "new_known_missed_arcs": 246,
+      "missed_per_file": 30.75,
+      "partial_sha256": "ec1ef73396f7014c3537feb4b1534183a4f276c92076e0d754dbabf79634ba66",
+      "feedback": "PASS_DISCOVERY_DENSITY"
+    },
+    {
+      "pulse": "A5",
+      "new_files": 8,
+      "cumulative_files": 48,
+      "new_known_arcs": 236,
+      "new_known_missed_arcs": 217,
+      "missed_per_file": 27.125,
+      "partial_sha256": "6aa6bf99f2bb498fafb195e43bf1877588b9ac2972c781d4a1af1385abd70be3",
+      "feedback": "PASS_DISCOVERY_DENSITY"
+    },
+    {
+      "pulse": "A6",
+      "new_files": 16,
+      "cumulative_files": 64,
+      "new_known_arcs": 586,
+      "new_known_missed_arcs": 406,
+      "missed_per_file": 25.375,
+      "partial_sha256": "f3777344d2a4198e995835dab2129ce0c39ee2f973cbe725eaa0368fade7383f",
+      "feedback": "PASS_DISCOVERY_DENSITY"
+    }
+  ],
+  "cumulative": {
+    "files": 64,
+    "known_eligible_arcs": 3132,
+    "already_covered_arcs": 792,
+    "known_missed_arcs": 2340,
+    "source_file_fraction": 0.214047,
+    "known_arc_fraction": 0.376081,
+    "actual_new_test_coverage_gain": null,
+    "real_native_test_runtime_seconds": null
+  },
+  "qa": {
+    "local_contract_test_methods_passed": 29,
+    "ui_viewports": [
+      "desktop",
+      "laptop",
+      "mobile"
+    ],
+    "html_runtime_errors": 0,
+    "new_code_native_exact_sha_execution": "NOT_EXECUTED"
+  },
+  "status": "READ_ONLY_CENSUS_COMPLETE_OWNER_NATIVE_ADMISSION_HOLD",
+  "next": {
+    "candidate_caps": [
+      80,
+      96,
+      128
+    ],
+    "status": "NOT_DISPATCHED_FEEDBACK_GATED",
+    "note": "Known source catalog indicates 128 would fall below current 16 gaps/file screen; do not launch unchanged without owner review."
+  }
+}
