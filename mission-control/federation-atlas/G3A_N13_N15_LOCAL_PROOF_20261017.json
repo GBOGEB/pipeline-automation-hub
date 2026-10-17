@@ -1,0 +1,58 @@
+{
+  "schema": "missioncontrol.g3a.n13_n15.source_and_local_proof.v1",
+  "control_owner": "GBOGEB/pipeline-automation-hub",
+  "upstream_candidate_N12_head": "296c2dfa6c81849038b3d378d2e179dfdb4ca8a4",
+  "preaction_forecast_commit": "16c4dfe6eec34ad1049e76ff6cc5f6d99f486d37",
+  "pulse_records": [
+    {
+      "pulse": "N+13",
+      "source_commit": "8b814b7f8ae4188715e1551c1c0921de678079d2",
+      "tests_passed_local": 8,
+      "tests_failed_local": 0,
+      "statement_covered": 88,
+      "statement_total": 100,
+      "branch_covered": 19,
+      "branch_total": 22,
+      "combined_covered": 107,
+      "combined_total": 122
+    },
+    {
+      "pulse": "N+14",
+      "source_commit": "b8537ef98cf05485fa77c46c3afa74824315bed0",
+      "tests_passed_local": 18,
+      "tests_failed_local": 0,
+      "statement_covered": 89,
+      "statement_total": 100,
+      "branch_covered": 20,
+      "branch_total": 22,
+      "combined_covered": 109,
+      "combined_total": 122
+    },
+    {
+      "pulse": "N+15",
+      "source_commit": null,
+      "tests_passed_local": 24,
+      "tests_failed_local": 0,
+      "statement_covered": 99,
+      "statement_total": 100,
+      "branch_covered": 20,
+      "branch_total": 22,
+      "combined_covered": 119,
+      "combined_total": 122
+    }
+  ],
+  "source_bridge_sha256": "48a6221c5e5d2d390dd287513e5395e21b6313eb21586c09f2f0fd5fe14a6452",
+  "source_bridge_git_blob": "f7dcf511a102772e290aead84e9281bf8f984421",
+  "source_denominator_same": true,
+  "native_exact_head_ci": null,
+  "human_independent_approval": null,
+  "accepted_n_delta": null,
+  "canonical_master_dags_path": null,
+  "cross_repository_candidate_edges": 3,
+  "cross_repo_native_authenticated_edges": null,
+  "formal_root_closures": null,
+  "merge_admission": "HOLD",
+  "authority_transfer": false,
+  "security_waiver": false,
+  "note": "Local executed test/coverage evidence only; native terminal CI and independent approvals are separate. Last commit SHA only known at GitHub publication readback."
+}

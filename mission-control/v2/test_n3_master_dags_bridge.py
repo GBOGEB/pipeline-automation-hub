@@ -2,11 +2,13 @@
 import copy
 import json
 import sys
+import tempfile
+from unittest.mock import patch
 import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from n3_master_dags_bridge import project
+from n3_master_dags_bridge import project, main
 
 ROOT = Path(__file__).resolve().parents[1] / "federation-atlas"
 MANIFEST = ROOT / "G3A_N13_N15_MASTER_DAGS_COMPAT_20261017.json"
@@ -114,3 +116,57 @@ class BridgeContracts(unittest.TestCase):
         m = fixture(); m["links"].append(copy.deepcopy(m["links"][0]))
         with self.assertRaisesRegex(ValueError, "duplicate candidate edge"):
             project(m)
+
+    def test_cli_writes_source_bound_projection_and_unknowns(self):
+        with tempfile.TemporaryDirectory() as temp:
+            out = Path(temp) / "projection.json"
+            args = ["master_dags_bridge", "--manifest", str(MANIFEST),
+                    "--out", str(out), "--expected-hub-base",
+                    fixture()["hub_base_sha"]]
+            with patch.object(sys, "argv", args):
+                main()
+            result = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(result["metrics"]["graph_families"], 8)
+            self.assertIsNone(result["metrics"]["accepted_coverage_delta"])
+            self.assertIsNone(result["accepted_n_delta"])
+            self.assertEqual(result["merge_admission"], "HOLD")
+            self.assertEqual(len(result["source_digest_sha256"]), 64)
+
+    def test_cli_bad_manifest_is_fail_closed_without_output(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            bad = root / "bad.json"
+            bad.write_text('{"schema":"unsafe"}', encoding="utf-8")
+            out = root / "projection.json"
+            with patch.object(sys, "argv", ["master_dags_bridge", "--manifest",
+                                           str(bad), "--out", str(out)]):
+                with self.assertRaisesRegex(ValueError, "incompatible contract"):
+                    main()
+            self.assertFalse(out.exists())
+
+    def test_declared_edge_cannot_masquerade_as_verified(self):
+        x = project(fixture())
+        self.assertTrue(all(edge["binding"] == "DECLARED" and
+                            edge["accepted"] is False and edge["receipt"] is None
+                            for edge in x["edges"]))
+        self.assertIsNone(x["metrics"]["native_verified_edges"])
+        self.assertIsNone(x["metrics"]["formal_root_closures"])
+
+    def test_source_digest_is_stable_against_manifest_key_order(self):
+        m = fixture()
+        a = project(m)
+        b = project(dict(reversed(list(m.items()))))
+        self.assertEqual(a["source_digest_sha256"], b["source_digest_sha256"])
+        self.assertEqual(a["topological_order"], b["topological_order"])
+
+    def test_reject_unrecognized_edge_kind(self):
+        m = fixture(); m["links"][0]["kind"] = "CAUSES"
+        with self.assertRaisesRegex(ValueError, "unrecognized edge semantics"):
+            project(m)
+
+    def test_graph_with_no_declared_edges_is_not_false_positive(self):
+        m = fixture(); m["links"] = []
+        x = project(m)
+        self.assertEqual(x["metrics"]["declared_cross_repository_edges"], 0)
+        self.assertEqual(x["metrics"]["graph_families"], 8)
+        self.assertEqual(x["merge_admission"], "HOLD")

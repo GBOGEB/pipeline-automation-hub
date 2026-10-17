@@ -95,6 +95,22 @@ jobs:
           assert x['native_exact_head_pass'] is False and x['merge_admission']=='HOLD'
           print('G3A_HISTORICAL_CENSUS=PASS; TESTED_NATIVE_HEAD=UNVERIFIED; ADMISSION=HOLD')
           PY
+          # Source references only: not a registered MASTER_DAGS SSOT or admitted federated receipt.
+          python mission-control/v2/n3_master_dags_bridge.py \
+            --manifest mission-control/federation-atlas/G3A_N13_N15_MASTER_DAGS_COMPAT_20261017.json \
+            --expected-hub-base 296c2dfa6c81849038b3d378d2e179dfdb4ca8a4 \
+            --out /tmp/n3-evidence/g3a-master-dags-projection.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('/tmp/n3-evidence/g3a-master-dags-projection.json').read_text())
+          assert x['metrics']['sources']==4 and x['metrics']['graph_families']==8
+          assert x['metrics']['declared_cross_repository_edges']==3
+          assert x['metrics']['native_verified_edges'] is None
+          assert x['merge_admission']=='HOLD' and x['accepted_n_delta'] is None
+          assert all(e['binding']=='DECLARED' for e in x['edges'])
+          print('G3A_MASTER_DAGS_LOCAL_PROJECTION=PASS; FEDERATION_EDGES=DECLARED; ADMISSION=HOLD')
+          PY
           python mission-control/v2/n3_wave_federation.py \
             --ledgers mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json \
             --out-dir /tmp/n3-evidence
