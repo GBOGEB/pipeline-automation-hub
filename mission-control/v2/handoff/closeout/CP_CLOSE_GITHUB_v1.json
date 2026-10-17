@@ -95,5 +95,10 @@
     "security_waiver": false,
     "authority_transfer": false,
     "autonomous_merge": false
-  }
+  },
+  "aliases": [
+    "CP.CLOSEOUT",
+    "CP.CLOSEOUT!"
+  ],
+  "alias_policy": "All aliases invoke canonical CP.CLOSE generator; no second closeout schema, SSOT, BD queue or receipt publication lane."
 }
