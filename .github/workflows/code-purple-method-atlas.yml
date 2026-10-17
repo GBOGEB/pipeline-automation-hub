@@ -104,6 +104,18 @@ jobs:
             --snapshot /tmp/code-purple-atlas/mission-rebuild/evidence.json \
             --out /tmp/code-purple-atlas/mission-rebuild
           test -s /tmp/code-purple-atlas/mission-rebuild/evidence-manifest.json
+      - name: N3 bounded native historical queue KPI / REX projection
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/mission_rebuild
+          python "$SRC/n3_kpi_bridge.py" --head "$EXACT_SHA" \
+            --native-readonly --out /tmp/code-purple-atlas/mission-rebuild
+          test -s /tmp/code-purple-atlas/mission-rebuild/n3-metrics.json
+          test -s /tmp/code-purple-atlas/mission-rebuild/n3-manifest.json
       - name: "CPQ N5: source-bound convergence + disjoint test-coverage receipt"
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -472,6 +484,20 @@ jobs:
         run: |
           python mission-control/federation-atlas/pages_portal.py --atlas /tmp/code-purple-atlas --out /tmp/code-purple-atlas/pages --sha "$EXACT_SHA"
           test -s /tmp/code-purple-atlas/pages/site-manifest.json
+      - name: N3 responsive Plotly / SHA-bound Pages / control QA
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/mission_rebuild
+          python "$SRC/n3_browser_qa.py" \
+            --head "$EXACT_SHA" \
+            --source /tmp/code-purple-atlas/mission-rebuild \
+            --public /tmp/code-purple-atlas/pages/mission-rebuild \
+            --screens /tmp/code-purple-atlas/mission-rebuild/n3-screenshots \
+            --out /tmp/code-purple-atlas/mission-rebuild/n3-html-qa.json
+          test -s /tmp/code-purple-atlas/mission-rebuild/n3-html-qa.json
       - name: Mission Control W1 Playwright three-viewport DoV and Pages byte parity
         shell: bash
         env:
