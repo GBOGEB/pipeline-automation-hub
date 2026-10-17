@@ -28,6 +28,25 @@ def validate(d):
     assert d["authority"]["security_waiver"] is False
     assert d["authority"]["merge_authorized"] is False
     assert d["top21"]["status"]=="CANDIDATE_EXPANSION_NOT_VERIFIED"
+    assert d["top21"]["repo_count_eligible"]==21
+    assert d["top21"]["repo_count_scanned"]==21
+    assert d["top21"]["repo_count_source_heads_verified"]==21
+    assert d["top21"]["effective_admission"] is None
+    assert sum(d["top21"]["cohorts"].values())==21
+    assert d["go_green"]["native_temporal"]["runner_executed_successful_jobs"]==9
+    assert d["go_green"]["native_temporal"]["sampled_native_jobs"]==10
+    assert d["go_green"]["native_temporal"]["skipped_jobs_excluded"]==1
+    assert d["go_green"]["native_temporal"]["runner_busy_seconds"]==235
+    assert d["go_green"]["native_temporal"]["matched_coverage_gain_pp"]==5.7522
+    assert d["go_green"]["native_temporal"]["matched_branch_gain_pp"]==2.6316
+    assert d["go_green"]["native_temporal"]["native_Nplus1_test_methods_passed"]==53
+    assert d["go_green"]["native_temporal"]["production_source_modified_between_N_and_Nplus1"] is False
+    assert d["go_green"]["native_temporal"]["native_Nplus1_statement_cov"]=={"covered":226,"eligible":226,"source_module_only":True}
+    assert d["go_green"]["native_temporal"]["native_Nplus1_branch_cov"]=={"covered":38,"eligible":38,"source_module_only":True}
+    assert d["go_green"]["native_temporal"]["whole_repo_pass_pct"] is None
+    assert d["go_green"]["native_temporal"]["source_module_git_blob"]=="e7b54f64890489b495bfa43de7b1e5a43902f47a"
+    assert d["go_green"]["native_temporal"]["coverage_tool_version"]=="7.13.3"
+    assert d["go_green"]["native_temporal"]["independent_trial_count"] is None
     assert d["rex"]["not_new_evidence"] is True
     ids={n["id"] for n in d["dag"]}
     assert len(ids)==len(d["dag"])
@@ -89,5 +108,54 @@ class Compare(unittest.TestCase):
         with self.assertRaises(AssertionError):validate(self.d)
     def test_no_fleet_physics_claim(self):
         self.assertIsNone(self.d["go_green"]["coverage"]["whole_repository_percent"])
-        self.assertIsNone(self.d["top21"]["repo_count_scanned"])
+        self.assertIsNone(self.d["top21"]["effective_admission"])
+
+    def test_native_g7_top21_not_promotion(self):
+        self.assertEqual(self.d["top21"]["repo_count_scanned"], 21)
+        self.assertIsNone(self.d["top21"]["effective_admission"])
+        self.assertEqual(self.d["top21"]["source_registry"],
+                         "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json")
+
+    def test_false_22_of_21_fleet_negative(self):
+        self.d["top21"]["repo_count_scanned"]=22
+        with self.assertRaises(AssertionError):validate(self.d)
+
+    def test_runner_skipped_as_success_negative(self):
+        self.d["go_green"]["native_temporal"]["runner_executed_successful_jobs"]=10
+        with self.assertRaises(AssertionError):validate(self.d)
+
+    def test_runner_time_forgery_negative(self):
+        self.d["go_green"]["native_temporal"]["runner_busy_seconds"]=236
+        with self.assertRaises(AssertionError):validate(self.d)
+
+    def test_fake_matched_coverage_promotion_negative(self):
+        self.d["go_green"]["native_temporal"]["matched_coverage_gain_pp"]=100
+        with self.assertRaises(AssertionError):validate(self.d)
+
+    def test_portfolio_frozen_sequence(self):
+        self.assertEqual(self.d["portfolio_previous_checkpoint"]["created"], 105)
+        self.assertEqual((self.d["portfolio"]["created"],self.d["portfolio"]["merged"],
+                          self.d["portfolio"]["closed"]), (111,71,72))
+        self.assertEqual(self.d["portfolio"]["closed_unmerged"],1)
+
+    def test_standalone_html_native_dashboard_and_denominators(self):
+        s=HTML.read_text()
+        self.assertIn('id="k-runs"',s)
+        self.assertIn('id="k-runner"',s)
+        self.assertIn('id="k-top21"',s)
+        self.assertIn('id="k-merged"',s)
+        self.assertIn('G7 source PR',s)
+
+
+    def test_exact_blob_and_cov_denominators(self):
+        k=self.d["go_green"]["native_temporal"]
+        self.assertEqual(k["source_module_git_blob"],"e7b54f64890489b495bfa43de7b1e5a43902f47a")
+        self.assertEqual(k["statement_cov_n"]["eligible"],k["native_Nplus1_statement_cov"]["eligible"])
+        self.assertEqual(k["branch_cov_n"]["eligible"],k["native_Nplus1_branch_cov"]["eligible"])
+        self.assertFalse(k["production_source_modified_between_N_and_Nplus1"])
+
+    def test_false_source_modification_negative(self):
+        self.d["go_green"]["native_temporal"]["production_source_modified_between_N_and_Nplus1"]=True
+        with self.assertRaises(AssertionError):validate(self.d)
+
 if __name__=="__main__":unittest.main()
