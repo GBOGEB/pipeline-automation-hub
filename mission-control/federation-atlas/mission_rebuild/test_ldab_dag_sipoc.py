@@ -9,6 +9,10 @@ def samples():
     edges = ([{'source':'STAGE_'+str(i),'target':'STAGE_'+str(i+1),'kind':'PROCESS','temporal':'SAME_PULSE'} for i in range(38)] +
              [{'source':'BEAM_'+str(i),'target':'BEAM_'+str(i+1),'kind':'FEEDFORWARD','temporal':'SAME_PULSE'} for i in range(9)] +
              [{'source':'BEAM_'+str(i),'target':'BEAM_'+str(i+2),'kind':'FEEDFORWARD','temporal':'SAME_PULSE'} for i in range(4)])
+    # Mirror the canonical 38 PROCESS + 10 FEEDFORWARD + 3 NEXT_PULSE FEEDBACK split.
+    for edge in edges[-3:]:
+        edge['kind'] = 'FEEDBACK'
+        edge['temporal'] = 'NEXT_PULSE'
     graph={'schema':m.GRAPH_SCHEMA,'source_sha':'a'*40,
            'gate':{'merge_admission':'HOLD'},'scheduler':{'dispatch_authorized':False},
            'sipoc':[{'key':x,'name':x} for x in 'SIPOC'],
@@ -30,7 +34,7 @@ class GraphTests(unittest.TestCase):
         g,e=samples();g['edges'][0]['target']='MISSING'
         with self.assertRaisesRegex(ValueError,'unbound edge'):m.build(g,e)
     def test_same_pulse_cycle_denied(self):
-        g,e=samples();g['edges'][-1]['source'],g['edges'][-1]['target']='STAGE_1','STAGE_0'
+        g,e=samples();g['edges'][1]['target']='STAGE_0'
         with self.assertRaisesRegex(ValueError,'same-pulse DAG cycle'):m.build(g,e)
     def test_feedback_same_pulse_denied(self):
         g,e=samples();g['edges'][0]['kind']='FEEDBACK'
