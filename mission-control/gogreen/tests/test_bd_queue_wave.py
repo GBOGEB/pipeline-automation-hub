@@ -8,7 +8,7 @@ from unittest.mock import patch
 from datetime import datetime
 
 here = Path(__file__).resolve().parent
-spec = importlib.util.spec_from_file_location('bd_queue_wave', here/'bd_queue_wave.py')
+spec = importlib.util.spec_from_file_location('bd_queue_wave', here.parent/'bd_queue_wave.py')
 mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
 H = 'a' * 40
