@@ -109,6 +109,37 @@ jobs:
           assert t['percent_branches_covered']>=90
           print('CPQ_N5_FOCUSED_COVERAGE=PASS; scope=cpq_convergence_n5_only')
           PY
+      - name: "CPQ N6: historical I2 job lineage and scoped coverage"
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas
+          python -m coverage run --branch --source=cpq_i2_replay -m unittest discover -s "$SRC" -p "test_cpq_i2_replay.py" -v
+          python -m coverage json -q -o /tmp/code-purple-atlas/cpq-n6-i2-coverage.json
+          python "$SRC/cpq_i2_replay.py" \
+            --input "$SRC/CPQ_I2_NATIVE_READBACK_20261017.json" \
+            --out /tmp/code-purple-atlas/cpq-n6-i2-historical.json \
+            --head "$EXACT_SHA"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          out=Path('/tmp/code-purple-atlas')
+          r=json.loads((out/'cpq-n6-i2-historical.json').read_text())
+          c=json.loads((out/'cpq-n6-i2-coverage.json').read_text())['totals']
+          assert r['consumer_source_sha']==os.environ['EXACT_SHA']
+          assert (r['native_run_count'],r['distinct_heads'],r['paired_e2e_quality_success_runs'])==(3,3,2)
+          assert r['paired_success_run_ids']==[36336861952,36420226456]
+          assert r['i2_canonical_control_handoff'] is None
+          assert r['cpq013_max_unchanged_root_auto_repeat_after_control'] is None
+          assert r['cpq013_eligible_denominator'] is None
+          assert r['accepted_causal_root_closures'] is None
+          assert r['admission']=='HOLD'
+          assert c['num_statements']>0 and c['num_branches']>0
+          assert c['percent_statements_covered']>=90 and c['percent_branches_covered']>=90
+          print('CPQ_N6_I2_NATIVE=PASS; COVERAGE=FOCUSED_ONLY; CONTROL=HOLD')
+          PY
       - name: "CPQ N5: native browser/SVG seeded-negative visual proof"
         shell: bash
         run: |
