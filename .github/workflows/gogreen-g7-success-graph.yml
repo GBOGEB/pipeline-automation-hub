@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
-      - name: Native 51 positive/adversarial regressions with branch coverage
+      - name: Native 53 positive/adversarial regressions with branch coverage
         shell: bash
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -48,7 +48,7 @@ jobs:
           base=Path(os.environ['RUNNER_TEMP'])/'gogreen-g7'
           raw=(base/'native_tests.log').read_text()
           counts=re.findall(r'Ran (\d+) tests? in',raw)
-          if counts != ['51'] or '\nOK' not in raw:
+          if counts != ['53'] or '\nOK' not in raw:
               raise SystemExit(f'native G7 test denominator not qualified: {counts}')
           cov=json.loads((base/'coverage.json').read_text())
           key='mission-control/gogreen/success_graph/runner_telemetry.py'
@@ -64,11 +64,38 @@ jobs:
               raise SystemExit('zero or invalid scoped coverage denominator')
           if 100*st[0]<80*st[1] or 100*br[0]<75*br[1]:
               raise SystemExit(f'G7 focus coverage threshold red: statements {st}, branches {br}')
+          # Compare N and N+1 only when the source module bytes and
+          # statement/branch denominators are exactly identical.
+          import subprocess
+          baseline=json.loads((Path('mission-control/gogreen/success_graph/samples')/
+                         'G7_NATIVE_COVERAGE_N0_20261017.json').read_text())
+          native_blob=subprocess.check_output(['git','hash-object',key],text=True).strip()
+          if native_blob!=baseline['source_module_git_blob'] or baseline['tool']!='coverage==7.13.3':
+              raise SystemExit('unmatched source bytes or coverage tool')
+          n=baseline['before']
+          if (n['statement_eligible'],n['branch_eligible']) != (st[1],br[1]):
+              raise SystemExit('source denominator drift between N and N+1')
+          if st[0]<n['statement_covered'] or br[0]<n['branch_covered']:
+              raise SystemExit('coverage regression in matched source')
+          if st[0]!=st[1] or br[0]!=br[1]:
+              raise SystemExit(f'missing positive coverage paths remain: {st} {br}')
+          delta={'statement_gain_pp':round(100*(st[0]-n['statement_covered'])/st[1],4),
+                 'branch_gain_pp':round(100*(br[0]-n['branch_covered'])/br[1],4),
+                 'baseline_tests':baseline['executed'],
+                 'baseline_run_id':baseline['native_run_id'],
+                 'baseline_head':baseline['tested_pr_head'],
+                 'production_module_git_blob':native_blob,
+                 'test_population':'51_N_TO_53_NPLUS1'}
+          (base/'native_matched_coverage_delta.json').write_text(json.dumps(delta,sort_keys=True,indent=2)+'\n')
           receipt={'schema':'gogreen.g7.native-test-and-coverage.v1',
-                   'source_sha':os.environ['EXPECTED_SHA'],'native_tests_passed':51,
+                   'source_sha':os.environ['EXPECTED_SHA'],'native_tests_passed':53,
                    'scope':key,'tool':'coverage==7.13.3',
                    'statement_covered':st[0],'statement_eligible':st[1],
                    'branch_covered':br[0],'branch_eligible':br[1],
+                   'baseline_run_id':baseline['native_run_id'],
+                   'statement_gain_pp':delta['statement_gain_pp'],
+                   'branch_gain_pp':delta['branch_gain_pp'],
+                   'module_source_git_blob':native_blob,
                    'whole_repo_coverage_percent':None,
                    'authority_transfer':False,'merge_authorized':False,
                    'source_testflight_only':True}
