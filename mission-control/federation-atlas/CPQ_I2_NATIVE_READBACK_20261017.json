@@ -1,0 +1,78 @@
+{
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "repository": "GBOGEB/ABACUS",
+  "runs": [
+    {
+      "attempt": 1,
+      "conclusion": "failure",
+      "event": "pull_request",
+      "head_sha": "f8c3365feac6903152b7d42bdcc3cd992ff48414",
+      "html_url": "https://github.com/GBOGEB/ABACUS/actions/runs/36249393504",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "job_id": 108424874248,
+          "name": "End-to-End Tests",
+          "steps": 9
+        },
+        {
+          "conclusion": "failure",
+          "job_id": 108424874250,
+          "name": "Quality Gates",
+          "steps": 11
+        }
+      ],
+      "run_id": 36249393504,
+      "workflow": "DMAIC V3 Test Suite - Continuous Integration"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "event": "push",
+      "head_sha": "2d29cb81937b11dced88b128256ae138050b706b",
+      "html_url": "https://github.com/GBOGEB/ABACUS/actions/runs/36336861952",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "job_id": 108675180974,
+          "name": "End-to-End Tests",
+          "steps": 9
+        },
+        {
+          "conclusion": "success",
+          "job_id": 108675180909,
+          "name": "Quality Gates",
+          "steps": 11
+        }
+      ],
+      "run_id": 36336861952,
+      "workflow": "DMAIC V3 Test Suite - Continuous Integration"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "event": "schedule",
+      "head_sha": "d9b261f203eef96388db2523f2c78ee1f8cd38bd",
+      "html_url": "https://github.com/GBOGEB/ABACUS/actions/runs/36420226456",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "job_id": 108921685585,
+          "name": "End-to-End Tests",
+          "steps": 10
+        },
+        {
+          "conclusion": "success",
+          "job_id": 108921685543,
+          "name": "Quality Gates",
+          "steps": 12
+        }
+      ],
+      "run_id": 36420226456,
+      "workflow": "DMAIC V3 Test Suite - Continuous Integration"
+    }
+  ],
+  "schema": "missioncontrol.code_purple.cpq_i2_native_evidence.v1",
+  "source_class": "NATIVE_API_TRANSCRIPTION_NOT_ARTIFACT"
+}
