@@ -30,13 +30,15 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           node mission-control/federation-atlas/m3_session/test_m3_contract.js
+          node mission-control/federation-atlas/m3_session/test_m3_live_bridge.js
+          node mission-control/federation-atlas/m3_session/m3_live_bridge.js --live --out out/m3/telemetry.json
           python - <<'PY'
           import json, os, hashlib
           from pathlib import Path
           out=Path("out/m3")
           out.mkdir(parents=True,exist_ok=True)
           members={}
-          for p in (Path("docs/mission-control/m3/index.html"),Path("docs/mission-control/m3/state.json")):
+          for p in (Path("docs/mission-control/m3/index.html"),Path("docs/mission-control/m3/state.json"),Path("out/m3/telemetry.json")):
               members[str(p)]=hashlib.sha256(p.read_bytes()).hexdigest()
           result={"schema":"missioncontrol.m3.native_receipt.v1","checkout_sha":os.environ["EXPECTED_SHA"],
                   "run_id":os.environ["GITHUB_RUN_ID"],"attempt":os.environ["GITHUB_RUN_ATTEMPT"],
