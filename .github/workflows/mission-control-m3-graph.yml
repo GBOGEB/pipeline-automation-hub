@@ -70,6 +70,15 @@ jobs:
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           node mission-control/federation-atlas/m3_session/m3_publication_preflight.js --site out/m3/site --out out/m3/publication-preflight.json --sha "$EXPECTED_SHA"
           node mission-control/federation-atlas/m3_session/test_m3_publication_preflight.js
+      - name: Generate single-file M3 open-me download and test portable integrity
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          node mission-control/federation-atlas/m3_session/m3_offline_delivery.js --site out/m3/site --sha "$EXPECTED_SHA" --out out/m3/M3_OPEN_ME_OFFLINE.html
+          node mission-control/federation-atlas/m3_session/test_m3_offline_delivery.js
       - name: Publish diagnostic receipt, never Pages
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
