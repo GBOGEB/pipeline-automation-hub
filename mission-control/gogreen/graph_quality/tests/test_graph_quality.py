@@ -292,5 +292,14 @@ class GraphVisualQANative(unittest.TestCase):
         self.assertIn("aria-label",page)
 
 
+    def test_reverse_direction_geometry_metaproperty(self):
+        # Visual reverse case is not a causal DAG edge. It tests geometry only.
+        positions={"S":(100,130),"C":(1300,120)}
+        result=g.edge_path("C","S",positions)
+        self.assertTrue(result.startswith("M 1222.0,120.0"))
+        self.assertTrue(result.endswith("180.0,130.0"))
+        self.assertIn(" C ",result)
+
+
 if __name__=="__main__":
     unittest.main()
