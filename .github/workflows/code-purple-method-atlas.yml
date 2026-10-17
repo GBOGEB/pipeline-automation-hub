@@ -83,7 +83,7 @@ jobs:
           set -euo pipefail
           SRC=mission-control/federation-atlas
           python -m pip install --disable-pip-version-check coverage==7.13.3
-          python -m coverage run --branch --source=cpq_convergence_n5 -m unittest discover \
+          python -m coverage run --branch --source=cpq_convergence_n5,source_freshness -m unittest discover \
             -s "$SRC" -p "test_cpq_convergence_n5.py" -v
           python -m coverage json -o /tmp/code-purple-atlas/cpq-n5-coverage.json -q
           python "$SRC/cpq_convergence_n5.py" \
