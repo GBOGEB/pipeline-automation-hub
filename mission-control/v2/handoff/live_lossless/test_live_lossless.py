@@ -46,7 +46,8 @@ class LiveLosslessTests(unittest.TestCase):
     def test_canonical_moniker_is_closeout(self):
         p=mod.build_data()
         self.assertEqual(p["monikers"][0]["name"],"CP.CLOSEOUT")
-        self.assertEqual(p["monikers"][1]["name"],"CP.CLOSE")
+        self.assertEqual(p["monikers"][1]["name"],"CP.LIVE")
+        self.assertEqual(p["monikers"][2]["name"],"CP.CLOSE")
         self.assertIn("CP.RESUME",[m["name"] for m in p["monikers"]])
     def test_source_delta_is_user_summarized_not_provider_export(self):
         p=mod.build_data()
