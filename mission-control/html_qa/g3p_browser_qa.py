@@ -11,6 +11,7 @@ import hashlib
 import io
 import json
 import os
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -133,6 +134,11 @@ def exercise(page, label, w, h, output: Path, evidence: dict):
           "no body viewport horizontal overflow", checks)
     overlap = viewport_overlaps(page)
     check(not overlap, "toolbar elements do not overlap", checks)
+    if w <= 650:
+        check(page.locator("header").evaluate("el=>getComputedStyle(el).position") == "static",
+              "mobile header cannot obscure scrolled review content", checks)
+        check(page.locator(".graph-scroll").evaluate("el=>el.scrollWidth > el.clientWidth"),
+              "mobile horizontal graph navigation is explicit", checks)
     check(page.locator("h1").bounding_box()["width"] > 120, "heading readable", checks)
 
     links = inspect_links(page)
@@ -180,6 +186,10 @@ def exercise(page, label, w, h, output: Path, evidence: dict):
     page.locator("#interval").select_option("0")
     check(page.locator("#interval").input_value() == "0", "manual-only refresh option", checks)
 
+    # A sticky header captured mid-scroll can visually occlude past content.
+    # Reset viewport for a stable, comparable full-page screenshot.
+    page.evaluate("window.scrollTo(0, 0)")
+    page.wait_for_timeout(100)
     screenshot = output / (label + ".png")
     page.screenshot(path=str(screenshot), full_page=True, animations="disabled")
     evidence["screenshots"].append({"viewport": label, "path": screenshot.name,
@@ -202,6 +212,14 @@ def run(html_path: Path, manifest_path: Path, fixture_dir: Path, out: Path,
     assert all(v["mission"]["repo"] == manifest["repository"] for v in ledgers.values())
     source = html_path.read_text(encoding="utf-8")
     page_html = mock_html(source, manifest, ledgers)
+    expected_head = os.getenv("G3P_EXACT_HEAD")
+    try:
+        checkout_head = subprocess.check_output(["git", "rev-parse", "HEAD"],
+                         stderr=subprocess.DEVNULL).decode().strip()
+    except (OSError, subprocess.CalledProcessError):
+        checkout_head = "UNVERIFIED_LOCAL"
+    if expected_head and checkout_head != expected_head:
+        raise AssertionError("QA exact checkout SHA drift: " + checkout_head + " != " + expected_head)
     report = {
         "schema":"missioncontrol.html_quality.playwright.v1",
         "scope":"G3P_LIVE_LEDGER",
@@ -210,7 +228,9 @@ def run(html_path: Path, manifest_path: Path, fixture_dir: Path, out: Path,
         "html_sha256":file_sha(html_path),
         "manifest_sha256":file_sha(manifest_path),
         "source_ledger_sha256":{n:file_sha(fixture_dir/n) for n in WAVE_NAMES},
-        "native_source_head_claim":os.getenv("GITHUB_SHA","UNKNOWN"),
+        "native_source_head_claim":checkout_head,
+        "pr_event_sha_separate":os.getenv("GITHUB_SHA","UNKNOWN"),
+        "exact_checkout_sha_confirmed":bool(expected_head and checkout_head==expected_head),
         "viewports":[], "screenshots":[], "errors":[], "checks_total":0,
         "merge_admission":"HOLD", "authority_transfer":False, "hosted_http_verified":False,
     }
