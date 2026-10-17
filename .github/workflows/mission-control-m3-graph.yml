@@ -32,6 +32,7 @@ jobs:
           node mission-control/federation-atlas/m3_session/test_m3_contract.js
           node mission-control/federation-atlas/m3_session/test_m3_live_bridge.js
           node mission-control/federation-atlas/m3_session/test_m3_dispatch_planner.js
+          node mission-control/federation-atlas/m3_session/test_m3_metrics.js
           node mission-control/federation-atlas/m3_session/m3_live_bridge.js --live --out out/m3/telemetry.json
           python - <<'PY'
           import json, os, hashlib
