@@ -6,6 +6,7 @@ on:
       - 'mission-control/v2/n3_*.py'
       - 'mission-control/v2/test_n3_*.py'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
+      - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json'
       - '.github/workflows/mission-control-n3-evidence.yml'
   push:
     branches: [master]
@@ -45,22 +46,26 @@ jobs:
       - name: Run bounded N3 unit, adversarial and CLI tests
         run: |
           python -m coverage run --branch --source=mission-control/v2 -m unittest discover -s mission-control/v2 -p 'test_n3_*.py' -v
-          python -m coverage json --output=/tmp/n3-coverage.json
+          python -m coverage json -o /tmp/n3-coverage.json
       - name: Require focused statement+branch coverage >= 80
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
           c=json.loads(Path('/tmp/n3-coverage.json').read_text())['files']
-          modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py')
+          modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py','n3_native_join.py','n3_wave_federation.py')
           s=[v['summary'] for k,v in c.items() if Path(k).name in modules]
-          assert len(s)==4, f'expected 4 exact source basenames, got {len(s)}'
+          assert len(s)==6, f'expected 6 exact source basenames, got {len(s)}'
           numerator=sum(x['covered_lines']+x['covered_branches'] for x in s)
           denominator=sum(x['num_statements']+x['num_branches'] for x in s)
           assert denominator>0
           pct=100*numerator/denominator
           print(f'FOCUSED_N3_STMT_BRANCH={pct:.2f}% ({numerator}/{denominator})')
           assert pct>=80, 'focused N3 changed-scope quality gate failed'
+          branches=sum(x['covered_branches'] for x in s)
+          branch_total=sum(x['num_branches'] for x in s)
+          assert branch_total>0 and 100*branches/branch_total>=80, 'N3 branch coverage gate failed'
+          print(f'FOCUSED_N3_BRANCH={branches}/{branch_total}')
           PY
       - name: Produce source-bound audit, telemetry and HTML projection
         run: |
@@ -68,6 +73,21 @@ jobs:
           python mission-control/v2/n3_integrity.py mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json --out /tmp/n3-evidence/audit.json
           python mission-control/v2/n3_dashboard.py mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json --html /tmp/n3-evidence/index.html --metrics /tmp/n3-evidence/metrics.json
           cp /tmp/n3-coverage.json /tmp/n3-evidence/coverage.json
+          python mission-control/v2/n3_wave_federation.py \
+            --ledgers mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json \
+            --out-dir /tmp/n3-evidence
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/tmp/n3-evidence')
+          g=json.loads((p/'g3p-lineage.json').read_text())
+          assert g['metrics']['waves']==2 and g['metrics']['pulses']==6 and g['metrics']['edge_count']==5
+          assert g['metrics']['intervening_unproven_source_boundaries']==1
+          assert g['merge_admission']=='HOLD' and g['authority_transfer'] is False
+          assert (p/'g3p-lineage.mmd').read_text().count('-.->')==1
+          assert (p/'g3p-lineage.html').stat().st_size>1000
+          print('G3P_DAG_SIPOC_PROJECTION=PASS; SOURCE_ANCESTRY=UNKNOWN; ADMISSION=HOLD')
+          PY
           python - <<'PY'
           import json
           from pathlib import Path
