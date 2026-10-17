@@ -1,0 +1,119 @@
+{
+  "authority_transfer": false,
+  "control_issue": "GBOGEB/pipeline-automation-hub#604",
+  "mission": {
+    "id": "CBD-GOLDEN-GRAPH-604",
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "start_sha": "8de3f734cee50b6260adaeb24d051a1c6945a40e",
+    "wave": "W-CBD-GRAPH-03"
+  },
+  "mode": "N3-AUTO",
+  "notes": [
+    "THREE_SOURCE_CHECKPOINTS",
+    "NO_ASSUMED_NATIVE_CI_PROOF",
+    "N9_LEDGER_APPEND_AFTER_CHECKPOINT",
+    "G3P_CANONICAL_OPERATOR_IN_MASTER"
+  ],
+  "operation": "3P-CONT",
+  "policy": {
+    "allowed_paths": [
+      "mission-control/v2",
+      ".github/workflows"
+    ],
+    "max_pulses": 3,
+    "merge_without_review": false,
+    "security_waiver": false,
+    "unbounded_dispatch": false
+  },
+  "receipts": [
+    {
+      "action": "NATIVE_CLI_NEGATIVE_TEST_COVERAGE",
+      "authority_transfer": false,
+      "changed_paths": [
+        "mission-control/v2/test_n3_continuation_cli_extra.py"
+      ],
+      "coverage_delta": null,
+      "input_source_sha": "8de3f734cee50b6260adaeb24d051a1c6945a40e",
+      "major_blocker": null,
+      "merge_admission": "HOLD",
+      "observation_note": "GitHub source checkout readback is distinct from locally measured tests; native CI remains pending",
+      "ordinal": 7,
+      "output_source_sha": "a0a446d3b2755803eef57cb3f4e14845fe5ebbeb",
+      "prev_receipt_digest": null,
+      "pulse_id": "GBOGEB/pipeline-automation-hub::CBD-GOLDEN-GRAPH-604::W-CBD-GRAPH-03::PULSE-7",
+      "security_waiver": false,
+      "source_evidence": {
+        "class": "GITHUB_COMMIT",
+        "locator": "https://github.com/GBOGEB/pipeline-automation-hub/commit/a0a446d3b2755803eef57cb3f4e14845fe5ebbeb",
+        "source_sha": "a0a446d3b2755803eef57cb3f4e14845fe5ebbeb"
+      },
+      "status": "SOURCE_COMMITTED",
+      "tests": {
+        "failed": 0,
+        "kind": "LOCAL",
+        "passed": 68
+      }
+    },
+    {
+      "action": "NATIVE_RUN_JOB_ATTEMPT_READ_ONLY_JOIN",
+      "authority_transfer": false,
+      "changed_paths": [
+        "mission-control/v2/n3_native_join.py",
+        "mission-control/v2/test_n3_native_join.py"
+      ],
+      "coverage_delta": null,
+      "input_source_sha": "a0a446d3b2755803eef57cb3f4e14845fe5ebbeb",
+      "major_blocker": null,
+      "merge_admission": "HOLD",
+      "observation_note": "GitHub source checkout readback is distinct from locally measured tests; native CI remains pending",
+      "ordinal": 8,
+      "output_source_sha": "14115a65a799475d0e7aa9f987a40b1810cb7e16",
+      "prev_receipt_digest": "360bfdf916642476d737d1c2f03cebccccb884836fe9bda579942d867c5488c7",
+      "pulse_id": "GBOGEB/pipeline-automation-hub::CBD-GOLDEN-GRAPH-604::W-CBD-GRAPH-03::PULSE-8",
+      "security_waiver": false,
+      "source_evidence": {
+        "class": "GITHUB_COMMIT",
+        "locator": "https://github.com/GBOGEB/pipeline-automation-hub/commit/14115a65a799475d0e7aa9f987a40b1810cb7e16",
+        "source_sha": "14115a65a799475d0e7aa9f987a40b1810cb7e16"
+      },
+      "status": "SOURCE_COMMITTED",
+      "tests": {
+        "failed": 0,
+        "kind": "LOCAL",
+        "passed": 87
+      }
+    },
+    {
+      "action": "SIX_PULSE_DAG_SIPOC_AND_CI_ARTIFACTS",
+      "authority_transfer": false,
+      "changed_paths": [
+        "mission-control/v2/n3_wave_federation.py",
+        "mission-control/v2/test_n3_wave_federation.py",
+        ".github/workflows/mission-control-n3-evidence.yml"
+      ],
+      "coverage_delta": null,
+      "input_source_sha": "14115a65a799475d0e7aa9f987a40b1810cb7e16",
+      "major_blocker": null,
+      "merge_admission": "HOLD",
+      "observation_note": "GitHub source checkout readback is distinct from locally measured tests; native CI remains pending",
+      "ordinal": 9,
+      "output_source_sha": "cc33713a5bbb56ddd928affc5b784f89e529ed65",
+      "prev_receipt_digest": "e5411c465ded99fe62d62bb39361c9a602b969bcfe1726a5c34d38bea86e7152",
+      "pulse_id": "GBOGEB/pipeline-automation-hub::CBD-GOLDEN-GRAPH-604::W-CBD-GRAPH-03::PULSE-9",
+      "security_waiver": false,
+      "source_evidence": {
+        "class": "GITHUB_COMMIT",
+        "locator": "https://github.com/GBOGEB/pipeline-automation-hub/commit/cc33713a5bbb56ddd928affc5b784f89e529ed65",
+        "source_sha": "cc33713a5bbb56ddd928affc5b784f89e529ed65"
+      },
+      "status": "SOURCE_COMMITTED",
+      "tests": {
+        "failed": 0,
+        "kind": "LOCAL",
+        "passed": 100
+      }
+    }
+  ],
+  "schema": "missioncontrol.n3_continuation.v1",
+  "start_ordinal": 6
+}
