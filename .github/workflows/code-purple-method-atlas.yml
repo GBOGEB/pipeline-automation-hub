@@ -436,6 +436,36 @@ jobs:
             python "$SRC/build_live_lossless.py" --out "$SRC/published" --check
           fi
           test -s /tmp/code-purple-atlas/live-lossless/manifest.json
+      - name: "LDAB / DAG / SIPOC cold lint, negative tests and typed receipt"
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          COVERAGE_FILE: /tmp/mission-ldab-coverage
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/mission_rebuild
+          python -m compileall -q "$SRC"
+          python -m tabnanny "$SRC"
+          python -m coverage run --branch --source=ldab_guard,ldab_dag_sipoc \
+            -m unittest discover -s "$SRC" -p 'test_ldab_*.py' -v
+          python -m coverage json -q -o /tmp/code-purple-atlas/mission-rebuild/ldab-focused-coverage.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("/tmp/code-purple-atlas/mission-rebuild/ldab-focused-coverage.json").read_text())
+          t=d["totals"]
+          assert t["covered_lines"] > 0 and t["num_branches"] > 0
+          assert t["percent_statements_covered"] >= 80
+          assert t["percent_branches_covered"] >= 80
+          print("LDAB_FOCUSED_STATEMENTS=%s/%s" % (t["covered_lines"],t["num_statements"]))
+          print("LDAB_FOCUSED_BRANCHES=%s/%s" % (t["covered_branches"],t["num_branches"]))
+          PY
+          python "$SRC/ldab_dag_sipoc.py" \
+            --graph /tmp/code-purple-atlas/mission-rebuild/graph.json \
+            --evidence /tmp/code-purple-atlas/mission-rebuild/evidence.json \
+            --out /tmp/code-purple-atlas/mission-rebuild
+          test -s /tmp/code-purple-atlas/mission-rebuild/ldab-sipoc-manifest.json
+          echo "LLDB_NATIVE_SESSION=NOT_RUN_NO_DEBUG_TRACE"
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}

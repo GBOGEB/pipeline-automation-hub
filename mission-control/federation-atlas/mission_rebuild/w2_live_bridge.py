@@ -17,6 +17,8 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+import ldab_guard
+
 HERE = Path(__file__).resolve().parent
 ATLAS = HERE.parent
 SHA = re.compile(r"[a-f0-9]{40}\Z")
@@ -73,21 +75,10 @@ def run_status(run, expected, run_id):
             "updated_at": run.get("updated_at")}
 
 
-def sample_jobs(payload, name):
-    require(isinstance(payload, dict) and type(payload.get("total_count")) is int,
-            name + " job census")
-    total = payload["total_count"]
-    rows = payload.get("jobs", [])
-    require(isinstance(rows, list) and 0 <= len(rows) <= total, name + " job population")
-    for r in rows:
-        require(type(r.get("id")) is int and r.get("status") in
-                ("queued", "waiting", "pending", "in_progress", "completed"), name + " job record")
-    covered = total == len(rows)
-    return {"total": total, "observed": len(rows), "complete": covered,
-            "passing": sum(r.get("conclusion") == "success" for r in rows) if covered else None,
-            "failing": sum(r.get("conclusion") == "failure" for r in rows) if covered else None,
-            "queued": sum(r.get("status") == "queued" for r in rows) if covered else None,
-            "job_ids": [r["id"] for r in rows], "actual_worker_hours": None}
+def sample_jobs(payload, name, expected_run_id=None):
+    # Job-census completeness is not terminal proof: reject empty, queued,
+    # step-less and unbound native jobs via the single LDAB diagnostic guard.
+    return ldab_guard.assess_jobs(payload, name, expected_run_id)
 
 
 def artifacts(payload):
@@ -131,7 +122,7 @@ def make(client, head, bridge, observed_at):
     w1 = run_status(first, W1_HEAD, W1_RUN) if first else None
     jobs_raw = maybe(client, W1_REPO, "/actions/runs/" + str(W1_RUN) + "/jobs?per_page=100",
                      errors, "w1_jobs") if first else None
-    w1_jobs = sample_jobs(jobs_raw, "W1") if jobs_raw else None
+    w1_jobs = sample_jobs(jobs_raw, "W1", W1_RUN) if jobs_raw else None
     a_raw = maybe(client, W1_REPO, "/actions/runs/" + str(W1_RUN) + "/artifacts?per_page=100",
                   errors, "w1_artifacts") if first else None
     w1_artifacts = artifacts(a_raw) if a_raw else None
@@ -159,7 +150,7 @@ def make(client, head, bridge, observed_at):
                    errors, "gg_jobs_" + str(n)) if rr else None
         aa = maybe(client, GG_REPO, "/actions/runs/" + str(n) + "/artifacts?per_page=100",
                    errors, "gg_artifacts_" + str(n)) if rr else None
-        provider.append({"run": status, "jobs": sample_jobs(jj, "gg_MATH") if jj else None,
+        provider.append({"run": status, "jobs": sample_jobs(jj, "gg_MATH", n) if jj else None,
                          "artifacts": artifacts(aa) if aa else None})
     match = provider[0]["run"]
     drift = ("CONSUMER_SNAPSHOT_STALE_PROVIDER_TERMINAL" if match is not None
@@ -169,7 +160,7 @@ def make(client, head, bridge, observed_at):
     available = (w1 is not None and w1["status"] == "completed"
                  and w1["conclusion"] == "success"
                  and w1_jobs is not None and w1_jobs["complete"]
-                 and w1_jobs["failing"] == 0)
+                 and w1_jobs["terminal_success_with_steps"])
     return {"schema": SCHEMA, "source_head_sha": head,
             "observed_at_utc": observed_at,
             "atomic_cross_repo_snapshot": False, "evidence_class": "GITHUB_API_METADATA_READ_ONLY",
