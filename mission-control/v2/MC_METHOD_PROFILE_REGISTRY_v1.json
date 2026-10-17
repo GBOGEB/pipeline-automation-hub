@@ -108,5 +108,84 @@
     "preserve_existing_3pstar_mip_receipts": true,
     "reinterpretation": "Existing receipts retain their historical meaning. New controls treat them as method executions under the broader Mission Control operating model.",
     "no_bulk_rewrite": true
+  },
+  "g3p_envelope": {
+    "id": "G3P",
+    "name": "GOVERNED_THREE_PULSE_WAVE",
+    "kind": "EXECUTION_ENVELOPE_NOT_METHOD_PROFILE",
+    "status": "PROPOSED_ON_BRANCH",
+    "hierarchy": "MISSION->SPRINT->WAVE->(PULSE-1,PULSE-2,PULSE-3)->ZERO_OR_MORE_RUNS",
+    "source_requirement": "Pin baseline N by exact repository/mission/wave identity, source SHA, timestamp, scope, previous receipt; no assumed former or current main.",
+    "before_start": [
+      "objective_measurable",
+      "source_owner_and_authority",
+      "baseline_N_exact_source",
+      "workset_and_disjoint_path_leases",
+      "acceptance_and_safety_gates",
+      "stop_rules",
+      "execution_budget",
+      "metrics_denominators",
+      "forecast_N_plus_1_before_action"
+    ],
+    "pulses": [
+      {
+        "ordinal": 1,
+        "name": "PULSE-1",
+        "aim": "Measure and remove highest-leverage observed first-red, or classify HOLD with evidence."
+      },
+      {
+        "ordinal": 2,
+        "name": "PULSE-2",
+        "aim": "Use N+1 actuals; expand qualifying coverage/telemetry or disjoint repair; record forecast before execution."
+      },
+      {
+        "ordinal": 3,
+        "name": "PULSE-3",
+        "aim": "Integrate only source-authorized disjoint results, verify exact head/negative controls, publish complete ledger and residuals."
+      }
+    ],
+    "inner_pulse_cycle": [
+      "REFRESH_NATIVE_HEAD_AND_DENOMINATOR",
+      "DEFINE_DOV_AND_FORECAST",
+      "ANALYZE_DAG_SIPOC_DEPENDENCIES",
+      "PICK_SAFE_PATH_LEASES",
+      "EXECUTE_OR_EXPLICIT_HOLD",
+      "VERIFY_NATIVE_EXACT_HEAD",
+      "SCORE_FORECAST_VS_ACTUAL",
+      "FREEZE_RECEIPT_AND_NEXT_BASELINE"
+    ],
+    "methods_per_pulse": [
+      "3PR_FOR_RECONNAISSANCE",
+      "3PC_FOR_ADMITTED_IMPLEMENTATION",
+      "DMAIC_SUPERVISORY",
+      "MIP_ONLY_WHEN_CONDITIONALLY_ADMITTED"
+    ],
+    "credit_rule": "A pulse ordinal advances on a dated, source-bound terminal receipt including PASS/HOLD/DEFER; this does not itself advance engineering acceptance or prove a code change.",
+    "continuation": "After a local lane HOLD, pivot to an independent safe ready lane if source-bound priorities allow; never alter owners' branch rules to force progress.",
+    "major_blocker": "Stop when all safe next actions require unauthorized mutation, unreconciled source head, security/governance waiver, missing tool/permission, destructive side effect or mutually contradictory evidence.",
+    "independent_boundaries": [
+      "NO_MAIN_MERGE_WITHOUT_ADMISSION",
+      "NO_SECURITY_WAIVER",
+      "NO_BRANCH_PROTECTION_RELAXATION",
+      "NO_FALSE_0_FOR_UNKNOWN",
+      "NO_ASYNC_WORK_CLAIM",
+      "NO_DUPLICATE_FEDERATION_SSOT"
+    ],
+    "concurrency": {
+      "default_source_owners": 2,
+      "verification_owners": 1,
+      "allow_parallel_reads": true,
+      "mutation_only_disjoint_path_leases": true,
+      "serialize_same_branch_writes": true
+    },
+    "outcome_states": [
+      "EXECUTED_PASS",
+      "EXECUTED_FAIL",
+      "HOLD_EVIDENCED",
+      "DEFER_EVIDENCED",
+      "NOT_RUN_GLOBAL_BLOCKER"
+    ],
+    "completion": "Return complete observed N to N+3 report for exactly 3 terminal evidenced pulses; if global blocker stops earlier, report partial frontier and the untouched remaining ordinals as NOT_RUN.",
+    "execution_scope": "One invocation and available authenticated runners; no deferred/background completion unless a separately authorized scheduled task exists."
   }
 }

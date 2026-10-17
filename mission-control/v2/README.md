@@ -75,3 +75,28 @@ A no-change CONTROL/HOLD disposition is valid. MIP is not mandatory.
 `crew assignment != runner execution != run success != proof != mission completion != authority transfer`.
 
 Missing data is unknown, not zero. Zero-step is not application failure. Merge is not proof.
+
+## G3P — Governed Three-Pulse Wave (proposed 2026-10-17)
+
+Use **G3P N→N+3** for one bounded wave with three sequential measured pulse
+dispositions, not three separate waves, commits, test invocations or runners.
+The existing mission hierarchy remains **Mission → Sprint → Wave → Pulse → Run**.
+Select the existing **3PR** (Refresh/Probe/Rank), **3PC**
+(Prepare/Prove/Commit), DMAIC and conditionally MIP *inside* each pulse;
+G3P is an execution envelope, **not a competing method profile**.
+
+A frozen, exact-source N baseline is followed by PULSE-1 (N+1), PULSE-2
+(N+2) and PULSE-3 (N+3). Each requires its own forecast-before-action,
+observed or explicitly UNKNOWN test/coverage/telemetry, exact source and
+run/attempt identity, decision, action/hold, QA, blocker, and next input.
+A HOLD pulse may advance the ordinal without any engineering closure.
+If all next actions are globally unsafe or lack authority, stop early and
+mark later pulses NOT_RUN; never fabricate N+3.
+
+Machine contract/renderer: `g3p_execution.py`; focused adversarial tests:
+`test_g3p_execution.py`. See `G3P_EXECUTION_OPERATOR.md` for the
+copyable one-turn instruction and evidence requirements. These are
+consumers of the canonical glossary and method registry, **not another SSOT**.
+Hands-off means no intermediate user questions within the bounded *current*
+execution when safe; it does **not** authorize autonomous background work,
+security waivers, force-merge, or rule-relaxation.
