@@ -53,8 +53,8 @@ jobs:
           from pathlib import Path
           c=json.loads(Path('/tmp/n3-coverage.json').read_text())['files']
           modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py')
-          s=[v['summary'] for k,v in c.items() if k.endswith(modules)]
-          assert len(s)==4, f'expected 4 module scopes, got {len(s)}'
+          s=[v['summary'] for k,v in c.items() if Path(k).name in modules]
+          assert len(s)==4, f'expected 4 exact source basenames, got {len(s)}'
           numerator=sum(x['covered_lines']+x['covered_branches'] for x in s)
           denominator=sum(x['num_statements']+x['num_branches'] for x in s)
           assert denominator>0
