@@ -14,7 +14,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 SNAPSHOT = HERE / 'snapshot.json'
-RENDERED = ('index.html', 'cards.html', 'deck.html', 'metrics.csv')
+RENDERED = ('index.html', 'cards.html', 'deck.html', 'metrics.csv','locator_index.json')
 
 
 def digest(data: bytes) -> str:
@@ -86,7 +86,21 @@ def html_page(d: dict, raw: bytes, mode: str) -> bytes:
 <body data-mode="{mode}"><header><div class="headrow"><p class="eyebrow">MISSION CONTROL / CODE PURPLE / W18</p><span class="tag HOLD">MERGE ADMISSION: HOLD</span></div>
 <h1>{headline}</h1><p class="lede">{d['title']}. Frozen read-only observations; separate exact-head proof, root closure and human security gates.</p>
 <div class="headrow"><span class="stamp">SLUG: {d['slug']}</span><span class="stamp">SOURCE SNAPSHOT: {d['measured_as_of_utc']}</span><a href="{src}" target="_blank" rel="noopener noreferrer">Global issue register</a></div></header>
-{middle}<footer class="foot">SOURCE MASTER: <code>snapshot.json</code> | SHA-256 <code id="master-hash">pending</code> | Mode: {mode} | This view does not create GitHub Actions runs or grant acceptance.
+<div class="devops-toolbar" role="region" aria-label="Optional DevOps location controls">
+<button id="devops-toggle" type="button" aria-pressed="false">DevOps hooks: OFF</button>
+<span class="muted">Turn on to comment on a card, leaf or diagram. Copy a location or a ready-made GitHub comment; nothing posts automatically.</span>
+</div>
+{middle}
+<dialog id="devops-dialog" aria-labelledby="devops-heading"><div class="devops-dialog-head"><div><p class="eyebrow">DEVOPS / LOCATION HOOK / DRAFT ONLY</p><h2 id="devops-heading">Element context</h2><code id="devops-locator">CP-W18</code></div><button id="devops-close" type="button" aria-label="Close DevOps comment composer">✕ Close</button></div>
+<p class="hint">Exact source digest, scope, owner and parent BD trail are included automatically. Use copy + GitHub issue; no secrets, screenshots or API keys required.</p>
+<div class="devops-fields"><label>GitHub comment destination<select id="devops-target"></select></label>
+<label>Observed<textarea id="devops-observed" rows="2" placeholder="What specifically is wrong or needs improvement?"></textarea></label>
+<label>Expected / proposed change<textarea id="devops-expected" rows="2" placeholder="What outcome should this element communicate?"></textarea></label>
+<label>Next verifiable action<textarea id="devops-next" rows="2" placeholder="Owner, acceptance test, exact-SHA run or TODO edge"></textarea></label>
+<label>Additional evidence / link<textarea id="devops-evidence" rows="2" placeholder="GitHub PR, issue, run/job/attempt, artifact SHA or UNKNOWN"></textarea></label>
+<label>GitHub-ready Markdown<textarea id="devops-output" rows="11" readonly aria-label="Generated GitHub Markdown comment"></textarea></label></div>
+<div class="devops-actions"><button id="devops-copy-location" type="button">Copy precise location</button><button id="devops-copy-comment" type="button">Copy GitHub comment</button><button id="devops-open-issue" type="button">Open target issue ↗</button></div><p id="devops-feedback" class="hint" role="status" aria-live="polite">Draft only.</p></dialog>
+<footer class="foot">SOURCE MASTER: <code>snapshot.json</code> | SHA-256 <code id="master-hash">pending</code> | Mode: {mode} | This view does not create GitHub Actions runs or grant acceptance.
 GitHub Pages publication remains <strong>UNVERIFIED</strong>; locally packaged pages work without a web server. Plotly is an optional online upgrade for the two-point chart; the SVG fallback is offline. Material raw chat totals, queue p95 and unverified DOV remain UNKNOWN.</footer>
 <script id="source-master" type="application/json">{payload}</script><script>{js}</script></body></html>
 '''
@@ -102,6 +116,40 @@ def metric_csv(d: dict) -> bytes:
     return s.getvalue().encode('utf-8')
 
 
+def locator_index(d: dict, raw: bytes) -> bytes:
+    """Stable UI locator registry; child of one frozen master, not a new evidence SSOT."""
+    entries=[]
+    def add(key, mode, title, source, file, fragment):
+        entries.append({'location_id':'CP-W18/'+mode+'/'+key,
+                        'view':mode,'title':title,'canonical_issue':source,
+                        'route':'docs/mission-control/w18/'+file+'#'+fragment})
+    a=d['authorities']
+    add('panel-evidence-and-classification','overview','Evidence and classification',a['global_issue_controller'],'index.html','overview@panel-evidence-and-classification')
+    add('figure-two-point-issue-count','overview','Two-source-count comparison chart',a['global_issue_controller'],'index.html','overview@figure-two-point-issue-count')
+    add('bd-register','bd','Recursive global BD register',a['global_issue_controller'],'index.html','bd@bd-register')
+    for x in d['bd_queue']:
+        add(x['id'],'bd',x['title'],x['source'],'cards.html',x['id'])
+    for x in d['session_dod']:
+        add(x['id'],'dod',x['title'],x['evidence'],'index.html','dod@'+x['id'])
+    for x in d['global_dov']:
+        add(x['id'],'dov',x['domain'],x['evidence'],'index.html','dov@'+x['id'])
+    for i,title in enumerate(('Fleet controller','BD/REX authority','Local BD queue','ABACUS admission'),1):
+        add('authority-'+str(i),'recursiveFocus',title,[a['global_issue_controller'],a['bd_ssot'],a['local_queue'],a['admission_controller']][i-1],'index.html','recursiveFocus@authority-'+str(i))
+    for i in range(1,7):
+        add('dag-'+str(i),'lineage','Canonical lineage graph node '+str(i),a['bd_ssot'],'index.html','lineage@dag-'+str(i))
+        add('slide-'+str(i).zfill(2),'deck','Briefing slide '+str(i),a['global_issue_controller'],'deck.html','slide-'+str(i).zfill(2))
+    for i in range(1,5):
+        add('fault-'+str(i),'deck','First-red diagram node '+str(i),a['admission_controller'],'deck.html','slide-04')
+    ids=[e['location_id'] for e in entries]
+    if len(ids)!=len(set(ids)):
+        fail('duplicate deterministic UI location identity')
+    o={'schema':'code-purple.w18.location-index.v1','slug':d['slug'],
+       'master_sha256':digest(raw),'identity_type':'RENDI­TION_HOOK_NOT_ENGINEERING_ROOT'.replace('­',''),
+       'count':len(entries),'canonical_parent':a['global_issue_controller'],
+       'controls':{'auto_comment_post':False,'merge_admission':'HOLD',
+                   'snapshots_do_not_modify_bd':True},'locations':entries}
+    return (json.dumps(o,sort_keys=True,indent=2,ensure_ascii=True)+'\n').encode('utf-8')
+
 def run():
     d,raw=load_contract()
     generated={
@@ -109,6 +157,7 @@ def run():
        'cards.html':html_page(d,raw,'cards'),
        'deck.html':html_page(d,raw,'deck'),
        'metrics.csv':metric_csv(d),
+       'locator_index.json':locator_index(d,raw),
     }
     for k,v in generated.items(): (HERE/k).write_bytes(v)
     manifest={
@@ -116,7 +165,7 @@ def run():
        'slug':d['slug'],
        'master_sha256':digest(raw),
        'generated_sha256':{k:digest(v) for k,v in sorted(generated.items())},
-       'source_sha256':{k:digest((HERE/k).read_bytes()) for k in ('runtime.js','theme.css','render.py')},
+       'source_sha256':{k:digest((HERE/k).read_bytes()) for k in ('runtime.js','theme.css','render.py','README.md','RECURSIVE_W17_W18_FOCUS.md','tests/test_locator_contract.py','devops_browser_qa.py')},
        'authority_transfer':False,
        'merge_admission':'HOLD',
        'publication':'SOURCE_ONLY_NOT_HOSTED',

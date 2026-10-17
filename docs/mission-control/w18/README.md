@@ -121,3 +121,22 @@ implicit success. Recheck the latest PR heads before any source action.
   [main governance #2087](https://github.com/GBOGEB/ABACUS/issues/2087),
   [B9 coverage #1866](https://github.com/GBOGEB/ABACUS/issues/1866),
   [gg_MATH runtime #27](https://github.com/GBOGEB/gg_MATH/issues/27)
+
+## V2 follow-up: actionable register and screenshot-free DevOps location hooks
+
+The original frozen `snapshot.json` and its SHA-256 remain **unchanged**. This is a view/navigation extension, not a reclassification or merge gate. The dashboard's formerly external-only “Open global BD register” now opens `cards.html#bd-register` (the eight W18 BD leaves), while keeping a separate direct link to canonical GitHub #153. The dashboard adds a `Recursive TODO` view that preserves W17's 24/3/10 readback, source-epoch 231/444 + Phase8 +33, 153→143→142 census sequence, and the root dependency trail #153→#85→#358→source-owner issues.
+
+Interactive dashboard, leaf cards, HTML deck and diagram nodes support a **DevOps hooks: ON/OFF** toggle. Click the context-specific “Comment / copy” button to receive a stable `CP-W18/<view>/<key>` ID, shareable relative route (hosted URL not yet verified), source digest and GitHub PR/issue. It drafts (but does **not** send) a comment. Copy its Markdown, open the selected issue and paste manually. No authentication tokens, write APIs, screenshots, global memory or storage are needed. Use `locator_index.json` for deterministic navigation without the graphical interface. See `RECURSIVE_W17_W18_FOCUS.md` for the recursive W17→W18 TODO/BD continuity protocol.
+
+Rebuild and verify:
+
+```sh
+python render.py
+python -m unittest discover -s tests -v
+python tests/browser_qa.py
+python devops_browser_qa.py
+```
+
+The browser environment may restrict localhost or `file://` cross-page navigation. Browser QA therefore verifies the generated relative link destinations statically, loads each self-contained rendition offline, and separately exercises its fragment/deep-link logic; this is **not** a hosted GitHub Pages HTTP-200 acceptance claim. Clipboard tests use an explicit mocked browser clipboard and exercise generated comment text and the direct user action. System clipboard interoperability remains client/browser dependent; the comment text is selectable for manual copy.
+
+The old eight-slide PowerPoint remains a static presentation from the same frozen master; the DevOps toggle is **HTML-only**. To annotate a PowerPoint-specific visual, reference its corresponding `deck.html#slide-XX` locator in the GitHub issue comment.

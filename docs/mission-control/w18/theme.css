@@ -5,3 +5,42 @@
 /* Prevent grid min-content overflow from unbroken evidence/slug identifiers. */
 .slide{grid-template-columns:minmax(0,1fr);min-width:0}.slide>div{min-width:0;max-width:100%}.slide .eyebrow,.slide-footer,.slide .mono{overflow-wrap:anywhere}
 .decknav{flex-wrap:wrap}.decknav strong{white-space:nowrap;min-width:39px;text-align:center}@media(max-width:520px){.decknav .hint{flex-basis:100%;text-align:center}.decknav{gap:9px}.slide-footer{gap:7px;font-size:.72rem}}
+
+/* W18 DevOps hook UI: read-only, per-element locators; reveal only after consent. */
+.devops-toolbar{max-width:1380px;margin:8px auto 0;padding:9px 18px;display:flex;gap:13px;align-items:center;flex-wrap:wrap;border:1px solid #3e617e;background:#10283d;border-radius:10px}
+.devops-toolbar button{border:1px solid #72acc5;color:#fff;background:#245274;padding:9px 13px;border-radius:9px;font-weight:750;cursor:pointer;white-space:nowrap}
+.devops-toolbar .muted{color:#bdd4e8;font-size:.84rem;flex:1;min-width:200px}
+body[data-devops=on] .devops-toolbar{border-color:#74d3c3;box-shadow:0 0 0 1px #74d3c33d}
+.metric,.panel,.card,.recursive-stage,.plot-fallback,.slide{position:relative}
+body .devops-hook-actions{display:none!important}
+body[data-devops=on] .devops-hook-actions{display:block!important;position:absolute;right:10px;top:10px;z-index:4}
+body[data-devops=on] .metric,body[data-devops=on] .recursive-stage{padding-top:43px}
+body[data-devops=on] .slide{padding-top:56px}
+.devops-hook-btn{font-size:11px!important;padding:5px 8px!important;line-height:1.2;background:#36617e;color:white;border:1px solid #99c9e0;border-radius:6px;cursor:pointer}
+.tablewrap td{position:relative}body[data-devops=on] tr .devops-hook-actions{display:inline-flex!important;position:static;vertical-align:middle;margin:5px}
+.locator-highlight{outline:3px solid #67e3bd!important;outline-offset:3px;scroll-margin-top:28px}
+.evidence-actions{display:flex;flex-wrap:wrap;align-items:center;gap:11px;margin-top:8px;padding-top:12px;border-top:1px solid var(--line)}
+.action-link{color:#9dd1ff;text-decoration:underline;text-underline-offset:2px;font-weight:650}
+.jump-bd{cursor:pointer;border:1px solid #548aac;background:#214667;color:#e9f5ff;padding:7px 11px;border-radius:7px}
+.recursive-stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+.recursive-stage{padding:15px;border-radius:11px;border:1px solid #527594;background:#203a52;min-width:0;overflow-wrap:anywhere}
+.recursive-stage h3{margin:0 0 8px;font-size:1rem}.recursive-stage p{font-size:.87rem;color:#caddf0}
+#devops-dialog{border:1px solid #557b9a;border-radius:14px;background:#14263e;color:#edf4fd;width:min(860px,95vw);max-height:90vh;padding:20px;overflow:auto;box-shadow:0 28px 80px #0008}
+#devops-dialog::backdrop{background:#000b}
+.devops-dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.devops-dialog-head h2{margin:4px 0 8px;font-size:1.3rem}.devops-dialog-head code{font-size:.79rem;overflow-wrap:anywhere;color:#98e8dd}
+.devops-dialog-head button{background:#264867;border:1px solid #739cbe;border-radius:8px;color:#fff;padding:8px 12px;cursor:pointer}
+.devops-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.devops-fields label{font-size:.82rem;color:#c6dbef;font-weight:600;display:flex;flex-direction:column;gap:5px}
+.devops-fields label:nth-last-child(1),.devops-fields label:nth-last-child(2){grid-column:1/-1}
+.devops-fields select,.devops-fields textarea{min-width:0;max-width:100%;width:100%;border:1px solid #52718e;border-radius:7px;background:#101d32;color:#fff;padding:9px;font:13px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace}
+.devops-actions{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+.devops-actions button{background:#265174;border:1px solid #8cb4d3;color:white;padding:9px 13px;border-radius:8px;cursor:pointer;font-weight:600}
+body[data-devops=on] .dagnodes>div:not(.arrow){padding-top:40px}
+@media(max-width:860px){.recursive-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){.recursive-stages,.devops-fields{grid-template-columns:1fr}.devops-fields label:nth-last-child(1),.devops-fields label:nth-last-child(2){grid-column:auto}.devops-dialog-head{gap:7px}.devops-toolbar{margin:8px 10px}.devops-toolbar .muted{font-size:.74rem}#devops-dialog{padding:12px}}
+@media print{.devops-toolbar,.devops-hook-actions,#devops-dialog,.evidence-actions button{display:none!important}}
+/* Individual diagram hook controls are children of their own node, not the whole slide. */
+.dagnodes > div:not(.arrow){position:relative}
+body[data-devops=on] .dagnodes > div:not(.arrow) .devops-hook-actions{position:static;display:block!important;margin:9px auto 0}
+body[data-devops=on] .dagnodes > div:not(.arrow){padding-top:12px}
