@@ -172,6 +172,12 @@ def build_data():
     _operator, operator_hash = read(CLOSE / "CP_HANDOFF_RESUME_V1.json")
     if profile.get("moniker") != "CP.CLOSEOUT":
         fail("canonical moniker drift")
+    live_profile, live_profile_hash = read(HERE / "LIVE_LOSSLESS_PROFILE_v1.json")
+    if (live_profile.get("schema") != "missioncontrol.live_lossless.profile.v1"
+            or live_profile.get("moniker") != "CP.LIVE"
+            or live_profile.get("review", {}).get("authority_transfer") is not False
+            or live_profile.get("data_population_policy", {}).get("original_user_prompt_count") is not None):
+        fail("CP.LIVE cannot replace canonical source or invent prompt counts")
     validate_delta(delta, observed, frozen)
     intents = frozen["intents"] + [delta["intent"]]
     actions = frozen["actions"] + delta["actions"]
@@ -207,6 +213,10 @@ def build_data():
          "invocation": profile["invocation"],
          "details":"Capture the complete accessible sanitized intent, latest owned PR/CI and BD, verify and pursue governed main custody.",
          "url":repo_url+"blob/master/mission-control/v2/handoff/CHAT_CLOSEOUT_OPERATOR_V1.md"},
+        {"name":"CP.LIVE", "scope":"ROLLING_IN_CHAT_GITHUB_SNAPSHOT",
+         "invocation":live_profile["display"],
+         "details":live_profile["purpose"]+" Browser refresh is read-only, and no background ChatGPT worker is launched.",
+         "url":repo_url+"blob/master/mission-control/v2/handoff/live_lossless/LIVE_LOSSLESS_PROFILE_v1.json"},
         {"name":"CP.CLOSE", "scope":"EXPANDED_NINE_ARTIFACT_ALIAS",
          "invocation":'CP.CLOSE(scope="CURRENT_SESSION",target="GBOGEB/pipeline-automation-hub:master",mode="GITHUB_FIRST_LOSSLESS")',
          "details":"Expanded deterministic closeout implementation; compatibility document #642 is a pending draft and not yet canonical main.",
@@ -263,6 +273,7 @@ def build_data():
             "continuation_delta_sha256": delta_hash,
             "github_observation_sha256": observed_hash,
             "closeout_profile_sha256": profile_hash,
+            "live_profile_sha256": live_profile_hash,
             "handoff_contract_sha256": operator_hash,
             "native_run": observed["native_run"],
             "local_browser_qa_is_not_hosted_proof": True
