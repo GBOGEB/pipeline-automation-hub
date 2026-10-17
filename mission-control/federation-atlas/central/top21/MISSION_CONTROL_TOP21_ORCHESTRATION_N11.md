@@ -106,11 +106,21 @@ flowchart TD
 ## Rebuild and tests
 
 ```bash
-node --test mission-control/federation-atlas/central/top21/test_top21_engine.cjs
+node --test mission-control/federation-atlas/central/top21/test_top21_*.cjs
 node mission-control/federation-atlas/central/top21/top21_engine.cjs mission-control/federation-atlas/central/top21 /tmp/mission-top21-replay.json
 ```
 
-Local synthetic validation: **13/13 Node unit tests passed**. Native exact-head CI on the new source remains an independent obligation. To refresh all 21 repos, use authenticated read-only GitHub Git Trees API and write append-only parts with fresh SHAs; reject `truncated=true`. Do not overwrite the 17 October evidence.
+Local synthetic validation: **19/19 Node unit tests passed** across replay and collector. Native exact-head results are separate. Native exact-head CI on the new source remains an independent obligation. To refresh all 21 repos without rewriting the frozen N11 baseline, use the read-only CLI below with GitHub token only if required; reject missing/truncated trees. Writes are local append-only snapshots, never GitHub mutations or runner dispatches.
+
+```bash
+node mission-control/federation-atlas/central/top21/top21_collect.cjs \
+  mission-control/federation-atlas/central/top21/TOP21_COHORT_ROSTER.json \
+  /tmp/mc-n12-census N12
+node mission-control/federation-atlas/central/top21/top21_engine.cjs \
+  /tmp/mc-n12-census /tmp/mc-n12-replay.json 21
+```
+
+Credentials are not embedded in source or output. Source comparison between N11/N12 requires equal repo population, classifier version and pinned source SHA; statistical improvement is not inferred from a changed denominator.
 
 ## Source hierarchy
 
