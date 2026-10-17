@@ -5,7 +5,8 @@
     "end_exclusive": "2026-10-18T00:00:00Z",
     "observed_on": "2026-10-17",
     "source": "GitHub REST search/issues owner GBOGEB, GitHub Actions exact-head readback",
-    "atomic": false
+    "atomic": false,
+    "observed_source_checkpoint": "2026-10-17T10:14:00Z GitHub search/repo; counts non-atomic"
   },
   "authority": {
     "source": "GBOGEB/pipeline-automation-hub",
@@ -17,22 +18,23 @@
     "formal_closure_delta": 0
   },
   "portfolio": {
-    "created": 105,
-    "closed": 67,
-    "merged": 66,
+    "created": 111,
+    "closed": 72,
+    "merged": 71,
     "closed_unmerged": 1,
+    "snapshot_state": "FROZEN_N_PLUS_1_NOT_CURRENT_STREAM",
     "repo_events": [
       {
         "repo": "GBOGEB/pipeline-automation-hub",
-        "created": 36,
-        "closed": 35,
-        "merged": 35
+        "created": 39,
+        "closed": 38,
+        "merged": 38
       },
       {
         "repo": "GBOGEB/ABACUS",
-        "created": 50,
-        "closed": 13,
-        "merged": 12
+        "created": 53,
+        "closed": 15,
+        "merged": 14
       },
       {
         "repo": "GBOGEB/cryoplant-project",
@@ -56,10 +58,18 @@
   },
   "top21": {
     "status": "CANDIDATE_EXPANSION_NOT_VERIFIED",
-    "repo_count_eligible": null,
-    "repo_count_scanned": null,
-    "source_registry": "mission-control/federation-atlas/TOP7_CENSUS_PULSES_v1.json",
-    "note": "Top21 is a candidate breadth target. Do not invent 21 identities or validated source-head proof."
+    "repo_count_eligible": 21,
+    "repo_count_scanned": 21,
+    "repo_count_source_heads_verified": 21,
+    "cohorts": {
+      "TOP7": 7,
+      "TOP14_EXTENSION": 7,
+      "TOP21_EXTENSION": 7
+    },
+    "effective_admission": null,
+    "source_registry": "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
+    "native_source_census": "https://github.com/GBOGEB/pipeline-automation-hub/blob/codex/gogreen-success-temporal-top21-20261017/mission-control/gogreen/success_graph/samples/native_success_20261017.json",
+    "note": "21/21 current source-head metadata is discovery, NOT 21 passing workflows or approved Top21 promotion"
   },
   "abacus": {
     "open_prs_current": 91,
@@ -84,14 +94,14 @@
         "manifestations": 5,
         "verified": "NATIVE_LOG",
         "repair": "https://github.com/GBOGEB/pipeline-automation-hub/pull/597",
-        "closure": "PENDING_NATIVE_PROOF"
+        "closure": "REPAIR_MERGED_WITH_SUITES_PASS_ON_REPAIR_HEAD; REX_CONTROL_UNCLAIMED"
       },
       {
         "key": "GOGREEN_CRYPTOGRAPHY_MISSING",
         "manifestations": 3,
         "verified": "NATIVE_LOG",
         "repair": "https://github.com/GBOGEB/pipeline-automation-hub/pull/597",
-        "closure": "PENDING_NATIVE_PROOF"
+        "closure": "REPAIR_MERGED_WITH_SUITES_PASS_ON_REPAIR_HEAD; REX_CONTROL_UNCLAIMED"
       }
     ],
     "coverage": {
@@ -127,7 +137,40 @@
         "repo": "GBOGEB/gg_MATH",
         "scope": "six PR merge events, not statistical proof"
       }
-    ]
+    ],
+    "native_temporal": {
+      "source_pr": 599,
+      "source_head_baseline": "4e7122c25588bc44d4bcb588454b8f13e1314b6d",
+      "scope": "FIVE_WORKFLOW_FAMILIES_FOUR_REPOS_SELECTED_SUCCESS_ONLY",
+      "workflow_families": 5,
+      "observed_success_run_ids": 24,
+      "source_current_head_success_observations": 4,
+      "sampled_native_jobs": 10,
+      "runner_executed_successful_jobs": 9,
+      "skipped_jobs_excluded": 1,
+      "runner_busy_seconds": 235,
+      "runner_busy_minutes_not_billed": 3.9167,
+      "selected_red_control_run_ids": 2,
+      "statement_cov_n": {
+        "covered": 213,
+        "eligible": 226,
+        "source_module_only": true
+      },
+      "branch_cov_n": {
+        "covered": 37,
+        "eligible": 38,
+        "source_module_only": true
+      },
+      "native_N_test_run": 39023807895,
+      "native_N_test_methods_passed": 51,
+      "native_Nplus1_test_run": 39024046315,
+      "native_Nplus1_state": "PENDING_EXACT_HEAD",
+      "matched_coverage_gain_pp": null,
+      "whole_repo_pass_pct": null,
+      "independent_trial_count": null,
+      "root_closed_verified": 0,
+      "external_archive_custody_verified": false
+    }
   },
   "bd": {
     "total": 18,
@@ -175,7 +218,7 @@
         "I"
       ],
       "owner": "Mission Control test owner",
-      "state": "IN_PR",
+      "state": "REPAIR_MERGED_PR597_NATIVE_REGRESSIONS_PASS",
       "pr": 597
     },
     {
@@ -196,7 +239,19 @@
         "I"
       ],
       "owner": "READER",
-      "state": "STAGED"
+      "state": "21_OF_21_REPO_HEADS_DISCOVERED_NO_ADMISSION"
+    },
+    {
+      "id": "P4",
+      "stage": "SIPOC:P",
+      "name": "Native success run -> job -> runner -> capability graph",
+      "deps": [
+        "I",
+        "P3"
+      ],
+      "owner": "GoGREEN G7",
+      "state": "NATIVE_51_TEST_PASS_53_PENDING",
+      "pr": 599
     },
     {
       "id": "O",
@@ -205,7 +260,8 @@
       "deps": [
         "P1",
         "P2",
-        "P3"
+        "P3",
+        "P4"
       ],
       "owner": "REX_READER",
       "state": "HOLD"
@@ -225,8 +281,8 @@
     {
       "id": "GG-W1",
       "priority": "P0",
-      "text": "Native exact-head 14-method regression and pass/fail of PR #597; no success assumed",
-      "state": "IN_PR",
+      "text": "PR #597 merged; native 358 suite tests passed on repair head; REX CONTROL still not established",
+      "state": "MERGED_VERIFIED_PR597",
       "owner": "Mission Control"
     },
     {
@@ -239,8 +295,8 @@
     {
       "id": "GG-W3",
       "priority": "P1",
-      "text": "Top21 SHA-bound read-only census using existing source registry, no missing repo invented",
-      "state": "TODO",
+      "text": "Source-bound Top21 repo heads verified 21/21; promote ONLY after separate native gates and owner acceptance",
+      "state": "SOURCE_HEADS_21_OF_21",
       "owner": "SCOUT"
     },
     {
@@ -263,12 +319,27 @@
       "text": "Measure positive/negative test yield, mutation detection, repeatability and queue-cost per verified assertion",
       "state": "TODO",
       "owner": "gg_MATH/GoGREEN"
+    },
+    {
+      "id": "GG-W7",
+      "priority": "P1",
+      "text": "G7 N/N+1 same-source 51→53 test coverage, source Git blob and 100% line+branch threshold; native #599 pending",
+      "owner": "GoGREEN G7",
+      "state": "IN_PR"
     }
   ],
   "source_links": [
     "https://github.com/GBOGEB/pipeline-automation-hub/pull/595",
     "https://github.com/GBOGEB/pipeline-automation-hub/pull/597",
     "https://github.com/GBOGEB/ABACUS/pull/2090",
-    "https://github.com/GBOGEB/ABACUS/pull/2100"
-  ]
+    "https://github.com/GBOGEB/ABACUS/pull/2100",
+    "https://github.com/GBOGEB/pipeline-automation-hub/pull/599"
+  ],
+  "portfolio_previous_checkpoint": {
+    "created": 105,
+    "closed": 67,
+    "merged": 66,
+    "window_id": "same 16-17 Oct UTC, earlier non-atomic checkpoint",
+    "interpretation": "Additional events were observed, not proof of reduced technical defects or changed CI quality"
+  }
 }
