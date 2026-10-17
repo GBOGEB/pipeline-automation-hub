@@ -28,7 +28,7 @@ This moniker's machine contract is LIVE_LOSSLESS_PROFILE_v1.json. It does not re
 
 Main **Overview** shows captured intent count, owned action count, canonical BD subset, exact-main **scoped** tests, observed SHA and UNKNOWN full prompt count, plus lifecycle bars and two-clock source lineage.
 
-The remaining five sections (five tabs total including Overview) are user-selectable:
+The four remaining sections (five tabs total including Overview) are user-selectable:
 - Intents and subrequests — expandable parent and linked action IDs, current vs historical capture, search and expand/collapse.
 - Actions and canonical BD — owner/state filters, DoD, dependencies and source links.
 - GitHub and evidence — frozen-vs-browser readback PR statuses, source confidence, scoped metrics, full file links.
