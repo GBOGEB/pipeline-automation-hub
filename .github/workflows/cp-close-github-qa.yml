@@ -88,3 +88,57 @@ jobs:
             ${{ runner.temp }}/CP-G3P-HTMLQA-20261017.zip
           if-no-files-found: warn
           retention-days: 21
+
+  m3-fed-closeout-evidence:
+    name: M3 canonical lossless handover and digest proof
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - name: Generate CP.CLOSE nine-artifact packet and reject drift
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          C=mission-control/v2/handoff/closeout
+          OUT="$RUNNER_TEMP/m3-closeout-record"
+          python "$C/cp_close.py" --intake "$C/intakes/CP-M3-FED-QA-20261017.json" --bd mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json --out "$OUT" --zip "$RUNNER_TEMP/CP-M3-FED-QA-20261017.zip"
+          python "$C/cp_close.py" --intake "$C/intakes/CP-M3-FED-QA-20261017.json" --bd mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json --out "$OUT" --check
+          python - <<"PY"
+          import json,os,hashlib,zipfile
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'m3-closeout-record'
+          manifest=json.loads((root/'MANIFEST.json').read_text())
+          assert len(manifest['member_sha256'])==8
+          assert all(hashlib.sha256((root/n).read_bytes()).hexdigest()==d for n,d in manifest['member_sha256'].items())
+          state=json.loads((root/'STATE.json').read_text())
+          stats=json.loads((root/'CHAT_STATS.json').read_text())
+          queue=json.loads((root/'BD_QUEUE_READONLY.json').read_text())
+          assert state['intent_count_reconstructed']==8 and state['action_count_reconstructed']==13
+          assert state['full_chat_prompt_count'] is None and stats['full_chat_total_prompts'] is None
+          assert queue['new_canonical_bd_items']==0 and len(queue['focus'])==5
+          assert manifest['verbatim_transcript_claim'] is False and manifest['authority_transfer'] is False
+          archive=Path(os.environ['RUNNER_TEMP'])/'CP-M3-FED-QA-20261017.zip'
+          with zipfile.ZipFile(archive) as z:
+              assert z.testzip() is None and len(z.namelist())==9
+          print('CP_CLOSE_M3_NATIVE=PASS INTENTS=8 ACTIONS=13 METRICS=7 CHAT_TOTAL=UNKNOWN')
+          PY
+      - name: Upload native canonical closeout artifact only
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cp-close-m3-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/m3-closeout-record/
+            ${{ runner.temp }}/CP-M3-FED-QA-20261017.zip
+          if-no-files-found: error
+          retention-days: 21
