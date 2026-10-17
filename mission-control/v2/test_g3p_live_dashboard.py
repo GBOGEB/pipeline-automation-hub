@@ -3,6 +3,9 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import contextlib
+import io
+from unittest.mock import patch
 import json
 import sys
 import tempfile
@@ -132,6 +135,120 @@ class LiveDashboardTests(unittest.TestCase):
             files=copies(d)
             files[0].write_text('{')
             with self.assertRaises(json.JSONDecodeError):live.create_server(files,port=0)
+
+    def test_readonly_health_html_alias_and_404(self):
+        server=live.create_server(PATHS,port=0)
+        th=threading.Thread(target=server.serve_forever,daemon=True)
+        th.start()
+        base=f'http://127.0.0.1:{server.server_port}'
+        try:
+            with urlopen(base+'/g3p-lineage.html',timeout=3) as req:
+                self.assertEqual(req.status,200)
+                self.assertIn('text/html',req.headers['Content-Type'])
+            with urlopen(base+'/health',timeout=3) as req:
+                ok=json.load(req)
+                self.assertTrue(ok['healthy'])
+                self.assertEqual(ok['merge_admission'],'HOLD')
+            with self.assertRaises(HTTPError) as e:
+                urlopen(base+'/secret-data',timeout=3)
+            self.assertEqual(e.exception.code,404)
+        finally:
+            server.shutdown();server.server_close();th.join(timeout=4)
+
+    def test_cli_export_without_serve_is_readonly(self):
+        with tempfile.TemporaryDirectory() as d:
+            args=['g3p_live_dashboard.py','--ledgers',*(str(p) for p in PATHS),'--out-dir',d]
+            with patch.object(sys,'argv',args),contextlib.redirect_stdout(io.StringIO()) as out:
+                live.main()
+            self.assertIn('revision',out.getvalue())
+            self.assertIn('outputs_sha256',json.loads((Path(d)/'g3p-manifest.json').read_text()))
+
+    def test_cli_missing_output_or_serve_fails(self):
+        args=['g3p_live_dashboard.py','--ledgers',*(str(p) for p in PATHS)]
+        with patch.object(sys,'argv',args),contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as e:live.main()
+        self.assertEqual(e.exception.code,2)
+
+    def test_cli_serve_dispatch_respects_loopback_and_stops(self):
+        class FakeServer:
+            server_port=8765
+            def __enter__(self):return self
+            def __exit__(self,exc_type,exc,tb):return None
+            def serve_forever(self,poll_interval):raise KeyboardInterrupt
+            def shutdown(self):pass
+        args=['g3p_live_dashboard.py','--ledgers',*(str(p) for p in PATHS),'--serve']
+        with patch.object(sys,'argv',args),patch.object(live,'create_server',return_value=FakeServer()) as fake:
+            with contextlib.redirect_stdout(io.StringIO()) as out:
+                live.main()
+        self.assertEqual(fake.call_args.kwargs['port'],8765)
+        self.assertIn('127.0.0.1',out.getvalue())
+
+    def test_invalid_schema_and_missing_nodes_fail_renderer(self):
+        p=live.load_snapshot(PATHS)
+        p['schema']='unsupported'
+        with self.assertRaisesRegex(ValueError,'invalid wave graph'):live.render_html(p)
+        p=live.load_snapshot(PATHS);p['nodes']=[]
+        with self.assertRaisesRegex(ValueError,'no pulse nodes'):live.render_html(p)
+
+    def test_snapshot_requires_complete_inputs(self):
+        with self.assertRaisesRegex(ValueError,'two or more'):live.load_snapshot(PATHS[:1])
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/'missing.json'
+            with self.assertRaises(FileNotFoundError):live.load_snapshot([PATHS[0],path])
+
+    def test_unicode_script_safety(self):
+        x=live._escape_bootstrap({'text':'</script><svg>&\u2028\u2029'})
+        self.assertNotIn('</script>',x)
+        self.assertIn('\\u003c',x)
+        self.assertNotIn('<svg>',x)
+
+    def test_sse_invalid_local_source_yields_hold_event(self):
+        with tempfile.TemporaryDirectory() as d:
+            files=copies(d)
+            server=live.create_server(files,port=0)
+            th=threading.Thread(target=server.serve_forever,daemon=True)
+            th.start()
+            try:
+                with urlopen(f'http://127.0.0.1:{server.server_port}/api/events',timeout=10) as event_source:
+                    event_source.readline();event_source.readline();event_source.readline()
+                    o=json.loads(files[1].read_text())
+                    o['receipts'][0]['merge_admission']='PASS'
+                    files[1].write_text(json.dumps(o))
+                    received=False
+                    for _ in range(14):
+                        line=event_source.readline().decode().strip()
+                        if line == 'event: feed_error':received=True;break
+                    self.assertTrue(received)
+            finally:
+                server.shutdown();server.server_close();th.join(timeout=4)
+
+    def test_sse_push_changed_revision_without_reload(self):
+        with tempfile.TemporaryDirectory() as d:
+            files = copies(d)
+            server = live.create_server(files, port=0)
+            th = threading.Thread(target=server.serve_forever, daemon=True)
+            th.start()
+            try:
+                with urlopen(f'http://127.0.0.1:{server.server_port}/api/events',timeout=9) as event_source:
+                    self.assertEqual(event_source.readline().decode().strip(),'event: revision')
+                    previous = json.loads(event_source.readline().decode()[6:])['revision']
+                    event_source.readline()  # blank line
+                    o = json.loads(files[1].read_text())
+                    o.setdefault('notes',[]).append('VALID_LOCAL_FEED_REVISION_TEST')
+                    files[1].write_text(json.dumps(o))
+                    event_type=None
+                    revision=None
+                    # Bounded SSE reader. Server checks input every 2 s.
+                    for _ in range(12):
+                        line=event_source.readline().decode().strip()
+                        if line == 'event: revision':event_type='revision'
+                        elif event_type=='revision' and line.startswith('data: '):
+                            revision=json.loads(line[6:])['revision']
+                            break
+                    self.assertIsNotNone(revision)
+                    self.assertNotEqual(previous,revision)
+            finally:
+                server.shutdown();server.server_close();th.join(timeout=4)
 
     def test_http_reload_and_sse_revision(self):
         with tempfile.TemporaryDirectory() as d:
