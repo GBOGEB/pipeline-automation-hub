@@ -396,6 +396,19 @@ jobs:
           test -s /tmp/code-purple-atlas/federation-home/index.html
           test -s /tmp/code-purple-atlas/federation-home/snapshot.json
           test -s /tmp/code-purple-atlas/federation-home/manifest.json
+      - name: Build additive source-bound Live Lossless review site
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/v2/handoff/live_lossless
+          python -m unittest discover -s "$SRC" -p 'test_*.py' -v
+          node --check "$SRC/app.js"
+          python "$SRC/build_live_lossless.py" --out /tmp/code-purple-atlas/live-lossless
+          python "$SRC/build_live_lossless.py" --out /tmp/code-purple-atlas/live-lossless --check
+          if [ -f "$SRC/published/snapshot.json" ]; then
+            python "$SRC/build_live_lossless.py" --out "$SRC/published" --check
+          fi
+          test -s /tmp/code-purple-atlas/live-lossless/manifest.json
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -471,10 +484,22 @@ jobs:
             --receipt ./g3p-hosted-parity.json \
             --repeat 2 --attempts 8 --wait 5
           test -s ./g3p-hosted-parity.json
+      - name: Independent hosted Live Lossless repeated SHA proof
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python publisher-source/mission-control/v2/handoff/live_lossless/hosted_readback.py \
+            --expected-dir ./atlas-artifact/pages \
+            --base-url "$PAGES_URL" \
+            --receipt ./live-lossless-hosted-parity.json \
+            --repeat 2 --attempts 8 --wait 5
+          test -s ./live-lossless-hosted-parity.json
       - name: Preserve hosted Pages proof receipt
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: g3p-hosted-parity-${{ github.sha }}
-          path: ./g3p-hosted-parity.json
+          path: |
+            ./g3p-hosted-parity.json
+            ./live-lossless-hosted-parity.json
           if-no-files-found: warn
