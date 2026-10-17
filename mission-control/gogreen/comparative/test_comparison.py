@@ -37,8 +37,15 @@ def validate(d):
     assert d["go_green"]["native_temporal"]["sampled_native_jobs"]==10
     assert d["go_green"]["native_temporal"]["skipped_jobs_excluded"]==1
     assert d["go_green"]["native_temporal"]["runner_busy_seconds"]==235
-    assert d["go_green"]["native_temporal"]["matched_coverage_gain_pp"] is None
+    assert d["go_green"]["native_temporal"]["matched_coverage_gain_pp"]==5.7522
+    assert d["go_green"]["native_temporal"]["matched_branch_gain_pp"]==2.6316
+    assert d["go_green"]["native_temporal"]["native_Nplus1_test_methods_passed"]==53
+    assert d["go_green"]["native_temporal"]["production_source_modified_between_N_and_Nplus1"] is False
+    assert d["go_green"]["native_temporal"]["native_Nplus1_statement_cov"]=={"covered":226,"eligible":226,"source_module_only":True}
+    assert d["go_green"]["native_temporal"]["native_Nplus1_branch_cov"]=={"covered":38,"eligible":38,"source_module_only":True}
     assert d["go_green"]["native_temporal"]["whole_repo_pass_pct"] is None
+    assert d["go_green"]["native_temporal"]["source_module_git_blob"]=="e7b54f64890489b495bfa43de7b1e5a43902f47a"
+    assert d["go_green"]["native_temporal"]["coverage_tool_version"]=="7.13.3"
     assert d["go_green"]["native_temporal"]["independent_trial_count"] is None
     assert d["rex"]["not_new_evidence"] is True
     ids={n["id"] for n in d["dag"]}
@@ -122,7 +129,7 @@ class Compare(unittest.TestCase):
         with self.assertRaises(AssertionError):validate(self.d)
 
     def test_fake_matched_coverage_promotion_negative(self):
-        self.d["go_green"]["native_temporal"]["matched_coverage_gain_pp"]=5.75
+        self.d["go_green"]["native_temporal"]["matched_coverage_gain_pp"]=100
         with self.assertRaises(AssertionError):validate(self.d)
 
     def test_portfolio_frozen_sequence(self):
@@ -138,5 +145,17 @@ class Compare(unittest.TestCase):
         self.assertIn('id="k-top21"',s)
         self.assertIn('id="k-merged"',s)
         self.assertIn('G7 source PR',s)
+
+
+    def test_exact_blob_and_cov_denominators(self):
+        k=self.d["go_green"]["native_temporal"]
+        self.assertEqual(k["source_module_git_blob"],"e7b54f64890489b495bfa43de7b1e5a43902f47a")
+        self.assertEqual(k["statement_cov_n"]["eligible"],k["native_Nplus1_statement_cov"]["eligible"])
+        self.assertEqual(k["branch_cov_n"]["eligible"],k["native_Nplus1_branch_cov"]["eligible"])
+        self.assertFalse(k["production_source_modified_between_N_and_Nplus1"])
+
+    def test_false_source_modification_negative(self):
+        self.d["go_green"]["native_temporal"]["production_source_modified_between_N_and_Nplus1"]=True
+        with self.assertRaises(AssertionError):validate(self.d)
 
 if __name__=="__main__":unittest.main()
