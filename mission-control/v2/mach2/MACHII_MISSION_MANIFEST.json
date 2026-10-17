@@ -1,0 +1,256 @@
+{
+  "schema": "missioncontrol.gm.mach_ii.extension.v1",
+  "version": "MACH-II-N13",
+  "created_at_date": "2026-10-17",
+  "mission_namespace": "EXISTING_GM_I_TO_V_ONLY",
+  "new_grand_mission_number": false,
+  "source": {
+    "control_repo": "GBOGEB/pipeline-automation-hub",
+    "baseline_sha": "7e3b640c7e81b0410a3ffd309228e2bc6eeaced1",
+    "gm_registry": "mission-control/grand-missions/GRAND_MISSION_REGISTRY.json",
+    "gm_registry_blob_sha": "4fbd28140b403e90a0507931875f721de917af2a",
+    "v2": "mission-control/v2/MISSION_CONTROL_CURRENT_v2.json",
+    "n12": "mission-control/v2/recursive-recovery/N12_SOURCE_ATLAS.json",
+    "mycelium": {
+      "repo": "GBOGEB/CODEX",
+      "sha": "493145eea784d39f57ea64a730af9f3e85586714",
+      "path": "mission_control/mycelium/continuity/mycelium_continuity/graph.py",
+      "blob_sha": "8e27c02bb214146bd1be93df4ec8a4708c03d958"
+    },
+    "gg_math": {
+      "repo": "GBOGEB/gg_MATH",
+      "sha": "4caaeae153927fef6c30ac728cb70fc8611d0ac8",
+      "authority": "STATISTICAL_PROVIDER_ONLY"
+    },
+    "qps": {
+      "repo": "GBOGEB/cryoplant-project",
+      "sha": "4782b8ab418f8645ff409a1297ce2d84a8bdcaf8",
+      "path": "docs/qps_recon/M01_COOLPROP_CONTROL_STATE.yaml",
+      "authority": "QPS_DOMAIN_ONLY"
+    },
+    "abacus": {
+      "repo": "GBOGEB/ABACUS",
+      "sha": "19d0581e640f252f39984ef893d4fd4e9d236ad5",
+      "issue": 1860
+    }
+  },
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "engineering_credit_delta": 0,
+  "dispatch_authorized": false,
+  "admission": "HOLD",
+  "entrypoint": "Additive instructions/expectations; never overwrites canonical GRAND_MISSION_REGISTRY.json",
+  "mission_iteration": {
+    "state_clock": [
+      "N",
+      "wave",
+      "pulse",
+      "run",
+      "attempt",
+      "event_sequence_e",
+      "semantic_generation_k"
+    ],
+    "temporal_orders": "IRREGULAR_NON_SEQUENTIAL_FUNCTIONS_ALLOWED",
+    "nonlinear_state_machine": [
+      "DEFINE",
+      "MEASURE",
+      "ANALYSE",
+      "IMPROVE",
+      "CONTROL",
+      "RECENSUS",
+      "REX",
+      "REPLAN",
+      "BLOCKED",
+      "WAIT_OWNER",
+      "WAIT_RUNNER"
+    ],
+    "edge_policy": {
+      "reference_cycles": "ALLOWED",
+      "feedback_cycles": "ALLOWED",
+      "executable_SIPOC_dependencies": "DAG_ONLY",
+      "cyclic_executable_SIPOC": "FAIL_CLOSED"
+    },
+    "bounded_parallelism": {
+      "per_repo_repair_wip": 1,
+      "per_repo_proof_wip": 1,
+      "cross_repo_disjoint": true,
+      "held_mission_no_dispatch": true
+    },
+    "MIP_every_pulse": true
+  },
+  "methods": {
+    "MIP": {
+      "method": "MIP",
+      "verbs": [
+        "MODERNISE",
+        "INNOVATE",
+        "PERPETUATE"
+      ],
+      "non_compensation": [
+        "STAGED_NE_EXECUTED",
+        "FOCUSED_NE_FULL_CI",
+        "MERGED_NE_GOVERNED_ADMISSION",
+        "HEPAK_LOCAL_RUN_NE_STABLE_SOURCE_ATTESTATION",
+        "DECLARED_CREW_NE_AVAILABLE_RUNNER",
+        "CENSUS_21_NE_T21_REPAIR_PROMOTION",
+        "LOOPS_NE_EXECUTION_DAG",
+        "UNVERIFIED_ROOT_NE_CLOSED"
+      ]
+    },
+    "DMAIC": "D-M-A-I-C plus REX/REPLAN/RECENSUS loops (not only one linear pass)",
+    "SIPOC": "Supplier-Input-Process-Output-Customer and owner/consumer full graph",
+    "rolling_forecast": "Frozen N+1/N+2 predictions scored after outcomes"
+  },
+  "metrics": {
+    "failure_rate": "d/n only exact comparable independently qualified opportunity population",
+    "wilson_95": "fixed horizon only for independent Bernoulli trials",
+    "six_sigma_candidate": "Only after sufficient independent opportunities and stable monitored process; 3.4 DPMO upper-bound requires roughly 881k zero-defect trials for 95% one-sided",
+    "multiwindow_stability": "Descriptive >=5 matched windows, monitor >=20, independent repeat and uncertainty before verified CONTROL",
+    "pca": "require geometry/independence/eigengap/alignment, not volume-only",
+    "bt": "require connected comparisons and finite MLE conditions",
+    "velocity": "only matched denominator/time population",
+    "root_leverage": "verified distinct affected jobs cleared divided by one causally owner-accepted root; never co-count manifestations"
+  },
+  "outputs": [
+    "mach2_manifest",
+    "mycelium_typed_graph",
+    "SIPOC_DAG",
+    "nonlinear_cycle_receipts",
+    "MIP_gates",
+    "GG_MATH_rolling_prediction",
+    "crew_REX_return",
+    "GM_transition_review",
+    "HTML_launch"
+  ],
+  "missions": [
+    {
+      "id": "GM-I",
+      "mach2_moniker": "COOLPROP_DARKLAND_MACH_II",
+      "class": "ENGINEERING_REFERENCE_AND_HEPAK_PROVENANCE",
+      "frontiers": 1,
+      "source_disposition": "HOLD_EXTERNAL_OR_HABITAT_GATE",
+      "goal": "Upgrade CoolProp independent CHECK to durable recurrence CONTROL and close the licensed local HEPAK 2.0-4.5 K stable source/receipt gap without replacing the certified domain authority.",
+      "mip": {
+        "modernise": "Reuse existing QPS property_router + hepak_bridge and local Python/Excel call; no rewritten EOS or licensed binary",
+        "innovate": "Paired pre/post source SHA256 attestation, local XLA/XLAM Python COM and direct licensed callable with identical receipt semantics; diagnose phase validity",
+        "perpetuate": "Pin 8 governed state identities, source hashes, run/attempt identity, one-repeat provenance and QPS child disposition"
+      },
+      "source_bound_current": {
+        "coolprop_runtime": "INDEPENDENT_CHECK_ACHIEVED",
+        "hepak_runtime": "LOCAL_HECALC_3_40_EXECUTED",
+        "hepak_provenance": "HOLD_SOURCE_STABILITY_REENTRY",
+        "governing_temperature_K": [
+          2,
+          4.5
+        ],
+        "owner_issue": "GBOGEB/cryoplant-project#923",
+        "owner_issue_current": "CLOSED_HABITAT_ONLY"
+      },
+      "must_prove": [
+        "QPS owner HEPAK source SHA256 before=after",
+        "Licensed local HEPAK property vector true >0-step",
+        "QPS Zod+manifest+RTM raw vs derived digest",
+        "Boundary 2.0K and lambda marked governing only with provider receipt",
+        "Explicit ACCEPT/REJECT/DEFER by QPS child owner"
+      ],
+      "forbidden": [
+        "CoolProp governing 2 K HE-II replacement",
+        "Licence-free Python EOS claim",
+        "Promote a source-code SHA as a licensed binary SHA"
+      ]
+    },
+    {
+      "id": "GM-II",
+      "mach2_moniker": "TWO_OUTPOST_MATH_MACH_II",
+      "class": "MEASURED_DUAL_FEDERATION",
+      "frontiers": 2,
+      "source_disposition": "CONTROL",
+      "goal": "Turn engineering and gg_MATH twin outposts into matched-source, repeated and independently scored method-provider federation.",
+      "mip": {
+        "modernise": "Typed methods, exact-source mathematical provider envelope, stable metric identity and units",
+        "innovate": "Rolling N+2 predeclared forecasts; independent reference kernels, PCA/BT only when identifiable; graph and nested DOEs",
+        "perpetuate": "Source-bound return checks, historical forecast-error calibration and regression invariants"
+      },
+      "must_prove": [
+        "Two source-owned repo readers with independent receipt",
+        "Comparable metric denominator, independent trials and confounder register",
+        "MIP adoption feedback from consumer",
+        "CONTROL survives a fresh-source repeated flight"
+      ],
+      "forbidden": [
+        "PCA/BT promotion from n=5 or disconnected comparisons",
+        "Confidence interval from dependent job repeats"
+      ]
+    },
+    {
+      "id": "GM-III",
+      "mach2_moniker": "HETEROGENEOUS_RECON_MACH_II",
+      "class": "FOUR_FRONTIER_HETEROGENEOUS_RECON",
+      "frontiers": 4,
+      "source_disposition": "RECON_CONTROL",
+      "goal": "Turn heterogeneous external repository exploration into governed ADAPT/EXTRACT/REFERENCE/PARK decisions with bidirectional Mycelium provenance and REX return.",
+      "mip": {
+        "modernise": "Typed repo capability and edge semantics with source/licence/consumer ownership",
+        "innovate": "Nonlinear search/backtrack/revisit with bounded hypothesis tests; no synthetic admission",
+        "perpetuate": "Reusable negative controls, attested adapter reuse, and archived rejection rationale"
+      },
+      "must_prove": [
+        "Four frontier owner and source SHA hooks",
+        "Each accepted source asset has an owner/consumer/copyright disposition",
+        "REX event knows occurred-at and recorded-at",
+        "At least one repeated CONTROL with a changed source"
+      ],
+      "forbidden": [
+        "Undisclosed external auth",
+        "Auto-promote upstream clone to mission authority"
+      ]
+    },
+    {
+      "id": "GM-IV",
+      "mach2_moniker": "EIGHT_FRONTIER_REPEAT_CONTROL_MACH_II",
+      "class": "ACTIVE_EIGHT_FRONTS_WITHOUT_CHILD_AUTHORITY",
+      "frontiers": 8,
+      "source_disposition": "ACTIVE_8_OF_8",
+      "goal": "Prove sustained 8-frontier safe federation, crew availability and root-leverage with controlled path-disjoint waves and repeated return receipts.",
+      "mip": {
+        "modernise": "Map all eight named slots and their candidate identities, owners and path leases",
+        "innovate": "Resource-aware scheduler proposals using actual runner queue p95 and source-identified cross-repo blocker leverage",
+        "perpetuate": "Repeat-control at distinct current heads, duplicate root/fan-out suppression, crew return and feedback aging controls"
+      },
+      "must_prove": [
+        "Eight named slot identities",
+        "Zero invented canonical child bindings",
+        "Two independent repeat-control series at pinned new source heads",
+        "Measured nondegrading proof yield and queue p95 with comparable sample",
+        "Governor owner-admin disposition before GM-V"
+      ],
+      "forbidden": [
+        "8 named slots imply 8 authorized workers",
+        "Backfill historic GM-IV with new child claims"
+      ]
+    },
+    {
+      "id": "GM-V",
+      "mach2_moniker": "CLOUD16_READINESS_MACH_II",
+      "class": "PRELAUNCH_READINESS_ONLY",
+      "frontiers": 16,
+      "source_disposition": "HELD",
+      "goal": "Specify elastic 16-frontier readiness and stress/adversarial scheduling without initiating a new mission or child dispatch.",
+      "mip": {
+        "modernise": "Formal capability/runner ledger and distinct owner/worker demand",
+        "innovate": "16-slot shadow scheduler simulation, boundary stress and resource-constrained policy sensitivity",
+        "perpetuate": "Governor-reviewable Go/HOLD receipt and mission end/return plan; no automatic transition"
+      },
+      "must_prove": [
+        "GM-IV post-active8 repeated accepted CONTROL",
+        "At least 16 eligible frontier owners and measured runner capacity, not names alone",
+        "QPS HEPAK dependency effect isolated and correctly classified",
+        "Formal separate Governor launch grant"
+      ],
+      "forbidden": [
+        "Create GM-VI or child PR automatically",
+        "Synthetic capacity and inferred security waiver"
+      ]
+    }
+  ]
+}
