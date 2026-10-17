@@ -250,5 +250,78 @@
     "queue_latency_p95_seconds": null,
     "execution_p95_seconds": null,
     "caution": "Not 20 active workers; the connector lists first-page PR-triggered runs, so counts are lower bound. Broad status/proof workflows may be mandatory governance checks; don't classify them as waste."
+  },
+  "isolated_preflight": {
+    "state": "ISOLATED_TEST_SHIM_PASSED_NOT_NATIVE",
+    "method": "GitHub fetched probe.mjs identical blob; strip ESM syntax and inject deterministic noncryptographic test hash in restricted JS runtime. Execute suite(profile) for each exact PR-head arm profile; compare source-defined decisions to expected classifications. No OS, network, real SHA-256, GitHub account or real review involved.",
+    "reason_for_hash_substitution": "The restricted JS sandbox cannot import Node's node:crypto; this preflight probes branch logic only, not digest security or Node runtime correctness.",
+    "observed_preflight_cases": 88,
+    "negative_control_cases": 80,
+    "observed_negative_controls_held": 80,
+    "classification_mismatches": 0,
+    "observed_nominal_fixture_plans": 8,
+    "per_arm": [
+      {
+        "arm": "00",
+        "source": "V8_ISOLATED_EXECUTION_OF_COMMITTED_DECISION_LOGIC_WITH_SUBSTITUTE_NONCRYPTO_TEST_HASH",
+        "cases": 22,
+        "negative_cases": 20,
+        "negative_cases_held": 20,
+        "classification_mismatches": 0,
+        "simulated_local_shadow_offers": 0,
+        "simulated_remote_return_offers": 0,
+        "actual_repository_writes": 0,
+        "native_node22_result": null,
+        "authenticated_principal_verified": false,
+        "security_review_verified": false
+      },
+      {
+        "arm": "10",
+        "source": "V8_ISOLATED_EXECUTION_OF_COMMITTED_DECISION_LOGIC_WITH_SUBSTITUTE_NONCRYPTO_TEST_HASH",
+        "cases": 22,
+        "negative_cases": 20,
+        "negative_cases_held": 20,
+        "classification_mismatches": 0,
+        "simulated_local_shadow_offers": 2,
+        "simulated_remote_return_offers": 0,
+        "actual_repository_writes": 0,
+        "native_node22_result": null,
+        "authenticated_principal_verified": false,
+        "security_review_verified": false
+      },
+      {
+        "arm": "01",
+        "source": "V8_ISOLATED_EXECUTION_OF_COMMITTED_DECISION_LOGIC_WITH_SUBSTITUTE_NONCRYPTO_TEST_HASH",
+        "cases": 22,
+        "negative_cases": 20,
+        "negative_cases_held": 20,
+        "classification_mismatches": 0,
+        "simulated_local_shadow_offers": 0,
+        "simulated_remote_return_offers": 2,
+        "actual_repository_writes": 0,
+        "native_node22_result": null,
+        "authenticated_principal_verified": false,
+        "security_review_verified": false
+      },
+      {
+        "arm": "11",
+        "source": "V8_ISOLATED_EXECUTION_OF_COMMITTED_DECISION_LOGIC_WITH_SUBSTITUTE_NONCRYPTO_TEST_HASH",
+        "cases": 22,
+        "negative_cases": 20,
+        "negative_cases_held": 20,
+        "classification_mismatches": 0,
+        "simulated_local_shadow_offers": 2,
+        "simulated_remote_return_offers": 2,
+        "actual_repository_writes": 0,
+        "native_node22_result": null,
+        "authenticated_principal_verified": false,
+        "security_review_verified": false
+      }
+    ],
+    "security_assurance_gap": "Fixtures contain self-described SERVER_FIXTURE_NOT_REAL_AUTH, not an authenticated GitHub principal. Passing a fixture must never be treated as server-side identity, approval, security evidence, or production dispatch authorization.",
+    "qualified_as_native": false,
+    "qualified_as_security": false,
+    "qualified_as_cross_repo_mutation": false,
+    "acceptance": "HOLD"
   }
 }
