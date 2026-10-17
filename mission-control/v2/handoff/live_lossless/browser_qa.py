@@ -121,7 +121,7 @@ def test_viewport(browser,url,mode,w,h,snap,out,report):
     check(page.locator("#issue-rows tr").count()==2,"selected native issue rows",log)
     check(page.locator("#pr-rows").inner_text().count("MERGED")>=4,"live readback preserves merged PR statuses",log)
     page.locator("#tab-monikers").click()
-    check(page.locator("#moniker-cards details").count()==5,"five versioned monikers",log)
+    check(page.locator("#moniker-cards details").count()==6,"six versioned monikers",log)
     page.locator("#moniker-cards details").first.locator("summary").click()
     check("CP.CLOSEOUT" in page.locator("#moniker-cards pre").first.inner_text(),"canonical moniker details",log)
     # Clipboard is explicitly user-triggered; failure is reported without false success.
