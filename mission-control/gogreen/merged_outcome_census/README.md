@@ -8,7 +8,7 @@
 - Historical findings include *premerge* and *postmerge* check completions. The merge-chronology comparison uses native \`completed_at\` relative to the PR's \`merged_at\`; check creation after merging cannot retroactively be considered a premerge required gate.
 - **6** selected PRs have checks failing before merge, **9** have checks failing after merge (two PRs occur in both populations). 23 of 41 have positive **observed** check surfaces; five PRs have missing/inaccessible/nonpositive check evidence. Nothing here proves all effective required checks/review/security were satisfied.
 - The full raw check-run evidence is retained in \`snapshots/top7_20261017.json\`, \`top14_extension_20261017.json\`, \`top21_extension_20261017.json\`. Each native check entry preserves exact ID/name/status/conclusion/started/completed UTC/details URL. Check population completeness is explicit.
-- One archived PR head in \`GBOGEB/GBOGEB-profile#1\` returned API 422; three other PRs have no check runs on the selected source head. These are **UNKNOWN**, never green. GitHub commit status contexts and effective required-check policies were not part of this bounded scan.
+- The historical profile PR #1 source head was re-read and corrected after a fail-closed native SHA validation; **five PRs have zero native check runs**, including that PR. These are **UNKNOWN**, never green. GitHub commit status contexts and effective required-check policies were not part of this bounded scan.
 
 ## Dual output and owner lanes
 
