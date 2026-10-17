@@ -159,6 +159,18 @@ class CPQN5Tests(unittest.TestCase):
         t['pulses'][1]['observed_on']='2026-10-18'
         a=c.converge(q,t,SHA,observed_on='2026-10-17')
         self.assertEqual(a['freshness']['sources'][1]['state'],'FUTURE_INVALID')
+    def test_cpq005_timestamp_basis_acceptance_and_bad_suffix(self):
+        q,t=fixture()
+        t['pulses'][1]['observed_on']='2026-10-16T13:00:00Z'
+        self.assertEqual(c.converge(q,t,SHA,observed_on='2026-10-17')['freshness']['sources'][1]['state'],'FRESH')
+        t['pulses'][1]['observed_on']='2026-10-16not-a-timestamp'
+        self.assertEqual(c.converge(q,t,SHA,observed_on='2026-10-17')['freshness']['sources'][1]['state'],'UNKNOWN')
+    def test_cpq005_ttl_range_never_forged(self):
+        import source_freshness as sf
+        for ttl in (-1, 367, True, '14'):
+            with self.subTest(ttl=ttl),self.assertRaises(ValueError):
+                sf.annotate([],observed_on='2026-10-17',ttl_days=ttl)
+        self.assertEqual(sf.annotate([],observed_on='2026-10-17',ttl_days=0)['ttl_days'],0)
     def test_cpq005_malformed_clock_fails_closed(self):
         q,t=fixture()
         for value in ('tomorrow','2026-13-13',True,-1):
