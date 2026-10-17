@@ -84,20 +84,28 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          QPS_FEDERATION_READ_TOKEN: ${{ secrets.QPS_FEDERATION_READ_TOKEN }}
         run: |
           python - <<'PY'
-          import json, os, urllib.request
+          import json, os, urllib.error, urllib.request
           repos = {'ABACUS':'GBOGEB/ABACUS', 'CODEX':'GBOGEB/CODEX',
                    'QPS_ENGINEERING':'GBOGEB/cryoplant-project'}
+          token = os.environ.get('QPS_FEDERATION_READ_TOKEN') or os.environ['GH_TOKEN']
           out = {}
           for lane, repo in repos.items():
               req = urllib.request.Request(
                   'https://api.github.com/repos/'+repo+'/commits/main',
-                  headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],
+                  headers={'Authorization':'Bearer '+token,
                            'Accept':'application/vnd.github+json',
                            'User-Agent':'QPS-Metric-Census/1.0'})
-              with urllib.request.urlopen(req,timeout=20) as resp:
-                  out[lane] = json.load(resp)['sha']
+              try:
+                  with urllib.request.urlopen(req,timeout=20) as resp:
+                      out[lane] = json.load(resp)['sha']
+              except urllib.error.HTTPError as exc:
+                  if exc.code not in (403,404):
+                      raise
+                  out[lane] = None
+                  print('HOLD_SOURCE_HEAD_UNKNOWN:',lane,'HTTP',exc.code)
           with open('qps-receiver-heads.json','w',encoding='utf8') as f:
               json.dump(out,f,indent=2)
           PY
