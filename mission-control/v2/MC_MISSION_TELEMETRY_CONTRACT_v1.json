@@ -234,6 +234,16 @@
     "blocked_policy": "Local lane HOLD may advance the pulse ordinal with evidence and safe alternate work; global blocker leaves future ordinals NOT_RUN.",
     "acceptance_policy": "Pulse success not merge admission; independently require security/A10/governance/coverage/review.",
     "traceability": "Prior pulse next_source_sha must match subsequent pulse input_source_sha unless explicit observed source drift triggers HOLD.",
-    "authority_transfer": false
+    "authority_transfer": false,
+    "per_action_required": [
+      "kind",
+      "owner_lease",
+      "changed_paths",
+      "outcome",
+      "started_at",
+      "completed_at"
+    ],
+    "chronology": "baseline.observed_at <= forecast.frozen_at <= action.started_at <= action.completed_at <= observed.measured_at, all timezone-aware",
+    "event_authentication": "Timestamps and evidence refs are validated for internal consistency only; native provider authentication remains independent"
   }
 }
