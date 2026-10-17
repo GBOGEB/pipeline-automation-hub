@@ -1,0 +1,85 @@
+name: GOGREEN G8 Comparative Native N+1
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/comparative/**'
+      - '.github/workflows/gogreen-g8-comparative.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: gogreen-g8-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  native-comparative:
+    name: G8 comparative data, HTML and adversarial tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - name: Checkout exact author head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Execute 21 native data/HTML and negative tests
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          mkdir -p "$RUNNER_TEMP/gogreen-g8"
+          python -m unittest discover -s mission-control/gogreen/comparative \
+            -p 'test_comparison.py' -v \
+            2>&1 | tee "$RUNNER_TEMP/gogreen-g8/native_tests.log"
+          python - <<'PY'
+          import hashlib,json,os,re
+          from pathlib import Path
+          root=Path('mission-control/gogreen/comparative')
+          tmp=Path(os.environ['RUNNER_TEMP'])/'gogreen-g8'
+          tests=(tmp/'native_tests.log').read_text()
+          counts=re.findall(r'Ran (\d+) tests? in',tests)
+          if counts != ['21'] or '\nOK' not in tests:
+              raise SystemExit('native G8 test denominator not met')
+          data=json.loads((root/'comparison.json').read_text())
+          html=(root/'index.html').read_text()
+          open_tag='<script id="data" type="application/json">'
+          if html.count(open_tag)!=1:raise SystemExit('no unique embedded JSON source')
+          raw=html.split(open_tag,1)[1].split('</script>',1)[0]
+          embedded=json.loads(raw)
+          if embedded != data:
+              raise SystemExit('stale rendered HTML/JSON snapshot parity')
+          assert data['portfolio']['created']==111
+          assert data['portfolio']['closed']==72
+          assert data['portfolio']['merged']==71
+          assert data['top21']['repo_count_source_heads_verified']==21
+          assert data['top21']['effective_admission'] is None
+          assert data['go_green']['native_temporal']['runner_executed_successful_jobs']==9
+          assert data['go_green']['native_temporal']['runner_busy_seconds']==235
+          hashes={}
+          for name in ('comparison.json','index.html','test_comparison.py','README.md'):
+              hashes[name]=hashlib.sha256((root/name).read_bytes()).hexdigest()
+          proof={'schema':'gogreen.g8.native-comparative-receipt.v1',
+                 'source_sha':os.environ['EXPECTED_SHA'],
+                 'tests_passed':21,'portfolio_event_window':'2026-10-16..2026-10-17',
+                 'source_head_discovery':21,'top21_admission':None,
+                 'runner_busy_seconds_not_billed':235,'artifacts_sha256':hashes,
+                 'root_closure_credit':0,'authority_transfer':False,
+                 'merge_authorized':False,'external_artifact_custody':False}
+          (tmp/'native_receipt.json').write_text(json.dumps(proof,sort_keys=True,indent=2)+'\n')
+          (tmp/'index.html').write_bytes((root/'index.html').read_bytes())
+          (tmp/'comparison.json').write_bytes((root/'comparison.json').read_bytes())
+          print(json.dumps(proof,sort_keys=True))
+          PY
+      - name: Upload review artifacts, without Pages publication
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gogreen-g8-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/gogreen-g8/
+          retention-days: 30
+          if-no-files-found: warn
