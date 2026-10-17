@@ -1,0 +1,505 @@
+{
+  "schema": "missioncontrol.cp_close.intake.v1",
+  "session_alias": "CP-M3-FED-QA-20261017",
+  "capture_date": "2026-10-17",
+  "capture_granularity": "DATE_ONLY",
+  "capture_scope": "CURRENT_VISIBLE_CONTEXT_PLUS_NONATOMIC_NATIVE_GITHUB_READBACK",
+  "privacy": "SANITIZED_SEMANTIC_ONLY",
+  "complete_transcript_available": false,
+  "total_chat_user_prompts": null,
+  "total_chat_messages": null,
+  "source": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "default_branch": "master",
+    "observed_main_sha": "85386c5f7cd2873997a537aab68850aca6f917e7",
+    "observed_git_provenance": "LIVE_NONATOMIC_READBACK_REFRESH_ON_RESUME"
+  },
+  "authority_transfer": false,
+  "security_waiver": false,
+  "merge_admission": "HOLD",
+  "intents": [
+    {
+      "id": "SC-I001",
+      "summary": "Federated Mission Control full makeover: pipeline, orchestration, bridge, repo launch HTML, worker/dispatch and typed DAG/atoms.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A001",
+        "SC-A002",
+        "SC-A012"
+      ]
+    },
+    {
+      "id": "SC-I002",
+      "summary": "Converge through source-owned waves/pulses, disjoint runner commits and measurable CI status rather than only planning.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A002",
+        "SC-A004",
+        "SC-A006"
+      ]
+    },
+    {
+      "id": "SC-I003",
+      "summary": "Make P0 reviews/policy, exact-head CI and main merge admission independent controlled gates.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A003",
+        "SC-A006"
+      ]
+    },
+    {
+      "id": "SC-I004",
+      "summary": "Preserve Mission Control V2/Golden Thread and one canonical data source; no parallel authority or fabricated launch.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A001",
+        "SC-A002",
+        "SC-A009"
+      ]
+    },
+    {
+      "id": "SC-I005",
+      "summary": "Complete owner-gated M3 launch and presentation/publication QA including responsive browser and Pages integrity.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A005",
+        "SC-A007",
+        "SC-A008"
+      ]
+    },
+    {
+      "id": "SC-I006",
+      "summary": "Fix underlying ABACUS Ariana, Bandit, DOW and Py3.10 first-reds; measure shift and separate unique roots.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A004",
+        "SC-A006",
+        "SC-A010"
+      ]
+    },
+    {
+      "id": "SC-I007",
+      "summary": "Respond to user screenshot demonstrating download/open failure of M3 owner-gated candidate; provide usable one-click offline HTML.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A008"
+      ]
+    },
+    {
+      "id": "SC-I008",
+      "summary": "Deliver easy-copy canonical lossless GitHub-first session handover, provenance, statistics/unknowns, DoD/DoV, TODO/BD and restart moniker.",
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "actions": [
+        "SC-A011",
+        "SC-A013"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "SC-A001",
+      "priority": "P1",
+      "state": "DONE",
+      "owner": "Mission Control V2",
+      "summary": "Inventory six source-pinned repositories, M2/V2 federation and Mission Control M3 graph, DAG/SIPOC and scheduler architecture",
+      "done_when": "Native source HEAD/M3 graph and typed 29-node/32-edge source evidence is attributable.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/667"
+      ]
+    },
+    {
+      "id": "SC-A002",
+      "priority": "P1",
+      "state": "DONE",
+      "owner": "Mission Control M3",
+      "summary": "Implement source-read-only live GitHub run/job/attempt/artifact join, Golden Thread crosswalk and disjoint scheduler staging",
+      "done_when": "Exact-head native testflight for graph/telemetry and 3-viewport browser passes; all remote dispatch stays disabled.",
+      "depends_on": [
+        "SC-A001"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39060504736"
+      ]
+    },
+    {
+      "id": "SC-A003",
+      "priority": "P0",
+      "state": "HOLD",
+      "owner": "ABACUS policy owner",
+      "summary": "Restore branch ruleset approved independent review, last-push review, resolved threads and required contexts",
+      "done_when": "Native effective rules readback, independent human review and all required PR-head contexts on current SHA.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/ABACUS/issues/1860"
+      ]
+    },
+    {
+      "id": "SC-A004",
+      "priority": "P1",
+      "state": "DONE",
+      "owner": "ABACUS source owners",
+      "summary": "Merge historical #2175 and #2178 first-red fixes while preserving different native populations and root accountability",
+      "done_when": "Source merges verified; does not credit root closure or compliant admission.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/ABACUS/pull/2175",
+        "https://github.com/GBOGEB/ABACUS/pull/2178"
+      ]
+    },
+    {
+      "id": "SC-A005",
+      "priority": "P1",
+      "state": "DONE",
+      "owner": "Mission Control M3",
+      "summary": "Create and merge owner-gated 7-leaf offline publication preflight #680",
+      "done_when": "Native 2/2 jobs pass on head SHA; merged source verified but hosted Pages remains outside DoV.",
+      "depends_on": [
+        "SC-A002"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/680",
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39063607003"
+      ]
+    },
+    {
+      "id": "SC-A006",
+      "priority": "P1",
+      "state": "ACTIVE",
+      "owner": "ABACUS W1 integration owner",
+      "summary": "Review exact-source #2182 fan-in B0 and #2185 Python 3.10 native readbacks following merges",
+      "done_when": "Exact PR/main source, full B0, postmerge regression and security/independent gate readback; no false coverage comparisons.",
+      "depends_on": [
+        "SC-A004"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/ABACUS/pull/2182",
+        "https://github.com/GBOGEB/ABACUS/pull/2185",
+        "https://github.com/GBOGEB/ABACUS/actions/runs/39063903966"
+      ]
+    },
+    {
+      "id": "SC-A007",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "Mission Control Pages release owner",
+      "summary": "Publish M3 only after eligible human review, approved Pages environment and hosted byte-digest proof",
+      "done_when": "Authenticated HTTPS URL and matching bytes for every reviewed leaf; owner approval and exact published SHA.",
+      "depends_on": [
+        "SC-A005"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/680"
+      ]
+    },
+    {
+      "id": "SC-A008",
+      "priority": "P1",
+      "state": "IN_PR",
+      "owner": "Mission Control M3 artifact owner",
+      "summary": "Fix broken user download/open UX: replace REST /zip links, add truly standalone no-fetch M3_OPEN_ME_OFFLINE.html and three-viewport offline tests",
+      "done_when": "Same exact-head native artifact contains top-level standalone file; offline browser tests with all requests blocked PASS; link UI instructions correct.",
+      "depends_on": [
+        "SC-A005"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39063607003"
+      ]
+    },
+    {
+      "id": "SC-A009",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "CODEX Mycelium gateway owner",
+      "summary": "Qualify authenticated CODEX-to-ABACUS Crew dispatch and accepted REX separate from native GitHub DAB jobs",
+      "done_when": "Principal/scope/locks/replay/head/native return receipts; issue #977 explicitly eligible, no inferred launch.",
+      "depends_on": [
+        "SC-A002"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/issues/977"
+      ]
+    },
+    {
+      "id": "SC-A010",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "ABACUS DMAIC/coverage owner",
+      "summary": "Collect comparable current main and diff coverage, count accepted closed engineering roots separately from issue housekeeping",
+      "done_when": "Matched k/d at equal scope/config/source/instrument, root signature and owner-native acceptance; no false zero.",
+      "depends_on": [
+        "SC-A006"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/ABACUS/issues/1860",
+        "https://github.com/GBOGEB/ABACUS/issues/1885"
+      ]
+    },
+    {
+      "id": "SC-A011",
+      "priority": "P1",
+      "state": "IN_PR",
+      "owner": "Mission Control handoff owner",
+      "summary": "Freeze current visible session into canonical CP.CLOSE GitHub intake and native lossless-intent artifacts",
+      "done_when": "Canonical generator outputs nine members + SHA256 manifest+ZIP, negative tests, exact-head reviewable PR and standalone CP.RESUME drop-in.",
+      "depends_on": [
+        "SC-A008"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/CP_CLOSE_GITHUB_v1.json"
+      ]
+    },
+    {
+      "id": "SC-A012",
+      "priority": "P2",
+      "state": "HOLD",
+      "owner": "Mission Control multi-repo federation owners",
+      "summary": "Connect typed graphs and multi-repo HTML portal to continuously qualified native receipts, not just stale frozen source",
+      "done_when": "Contracted lineage, source freshness, hosted QA, authoritative master DAG identities and source-owner crosswalk verified.",
+      "depends_on": [
+        "SC-A002",
+        "SC-A007"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/667"
+      ]
+    },
+    {
+      "id": "SC-A013",
+      "priority": "P3",
+      "state": "DEFER",
+      "owner": "User-supplied authorized chat export owner",
+      "summary": "Count full user prompts, word/token stats and exact duration only after actual complete authorized export",
+      "done_when": "Supplied export with declared completeness, original time markers, validated digest, no raw export in GitHub.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/README.md"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "name": "Source ownership",
+      "disposition": "NO_SECOND_SSOT",
+      "rationale": "M3 is a read-only V2/Golden Thread/census projection; CODEx/QPS/ABACUS retain own authority.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/667"
+    },
+    {
+      "name": "Main merge vs governed admission",
+      "disposition": "SOURCE_MERGED_NOT_FORMALLY_ADMITTED",
+      "rationale": "Historical M3 #667/#680 and ABACUS #2175/#2178/#2182/#2185 merges lack confirmed eligible independent human review; rules do not enforce required contexts.",
+      "evidence_url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "name": "Artifact delivery incident",
+      "disposition": "SOURCE_QA_FIX_PENDING_NATIVE",
+      "rationale": "REST artifacts API /zip not reliable direct browser link; original ZIP valid; M3 index requires HTTP, now offline standalone adapter proposed.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39063607003"
+    },
+    {
+      "name": "Canonical chat protocol",
+      "disposition": "REUSE_CP_CLOSE",
+      "rationale": "Use the existing cp_close.py intake, nine deterministic records and manifest rather than a competing handover producer.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/README.md"
+    },
+    {
+      "name": "Coverage and BD closure",
+      "disposition": "UNKNOWN_NOT_ZERO",
+      "rationale": "Do not turn deduplicated ticket closures or different test populations into causal closures or coverage uplift.",
+      "evidence_url": "https://github.com/GBOGEB/ABACUS/issues/1885"
+    }
+  ],
+  "insights": [
+    {
+      "observation": "Original M3 ZIP contained valid bytes and 24 entries, while the API browser link and file-scheme entrypoint were unusable in some clients.",
+      "implication": "QA must cover download/access and offline open, not only served-HTTP HTML.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39063607003"
+    },
+    {
+      "observation": "M3 #667/#680 source merged while independent APPROVED review submissions were absent.",
+      "implication": "Green native QA and actual merge are separate from correctly governed acceptance.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/680"
+    },
+    {
+      "observation": "ABACUS #2182 B0 run 39063903966 turned SUCCESS on exact PR head but previous Python matrix #2185 remained FAIL on a different first-red population.",
+      "implication": "Qualify serial source and first-red displacement per SHA, never infer full portfolio closure.",
+      "evidence_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39063903966"
+    },
+    {
+      "observation": "Source historical issue #1885 records 53 href occurrences (50 MYRRHA/2 reports/1 expression) and six housekeeping closures.",
+      "implication": "Occurrences/tickets/unique engineering roots require separate event populations.",
+      "evidence_url": "https://github.com/GBOGEB/ABACUS/issues/1885"
+    }
+  ],
+  "pr_snapshot": [
+    {
+      "number": 667,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/667",
+      "head_sha": "52058748a7a8f08ed7498d650376ba963f9568ea",
+      "merge_sha": "1c49c12ab5eda79a255b34a267d69ed51fad8fa5",
+      "admission": "GITHUB_MERGED_HUMAN_GATE_UNPROVEN"
+    },
+    {
+      "number": 680,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/680",
+      "head_sha": "6211ca0d1ebb4aacaee447ddf535033d7ddb3912",
+      "merge_sha": "bce1268130da5b145ad4c57eedde4447d1fe8f68",
+      "admission": "GITHUB_MERGED_HUMAN_GATE_UNPROVEN"
+    },
+    {
+      "number": 2175,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2175",
+      "head_sha": "554a5fdd4d2a268c6e97e883788ad6c3e6e5a156",
+      "merge_sha": "2687ad9bd3afee9fcb824bd21b6ac73dd008dd80",
+      "admission": "GITHUB_MERGED_HUMAN_GATE_UNPROVEN"
+    },
+    {
+      "number": 2178,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2178",
+      "head_sha": "e31452a78ba33ba1eb03fe80a4517eea84e6bf68",
+      "merge_sha": "19d0581e640f252f39984ef893d4fd4e9d236ad5",
+      "admission": "GITHUB_MERGED_HUMAN_GATE_UNPROVEN"
+    },
+    {
+      "number": 2182,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2182",
+      "head_sha": "203f7d3e083eb1738a91655b9610b24d36e39351",
+      "merge_sha": "7104bf83a252538ebbe28bafaa3bb56956b20580",
+      "admission": "GITHUB_MERGED_HUMAN_GATE_UNPROVEN"
+    },
+    {
+      "number": 2185,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2185",
+      "head_sha": "cfef674ab131092289ece7db80dc1082fdbf5f2a",
+      "merge_sha": "174ed96a345850209b4af4eabb8fe46d8bcfd809",
+      "admission": "GITHUB_MERGED_HUMAN_GATE_UNPROVEN"
+    },
+    {
+      "number": 2184,
+      "state": "CLOSED_UNMERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2184",
+      "head_sha": "521714b794d61fe7002eacde8ce1a10f50f56faf",
+      "merge_sha": null,
+      "admission": "DUPLICATE_HOUSEKEEPING_NOT_ROOT_CLOSURE"
+    },
+    {
+      "number": 2162,
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2162",
+      "head_sha": "63524e0ace718c34ffb5b1e1a3e582e036bbc88d",
+      "merge_sha": null,
+      "admission": "HOLD"
+    }
+  ],
+  "external_issues": [
+    {
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860",
+      "owner_lane": "ABACUS_ADMISSION",
+      "state": "OPEN_1_OF_12"
+    },
+    {
+      "url": "https://github.com/GBOGEB/CODEX/issues/977",
+      "owner_lane": "CODEX_CREW",
+      "state": "OPEN_0_OF_7"
+    },
+    {
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1885",
+      "owner_lane": "ABACUS_DASHBOARD",
+      "state": "OPEN_HOUSEKEEPING_NOT_ROOT_CLOSURE"
+    }
+  ],
+  "metric_observations": [
+    {
+      "metric": "M3_PUBLISH_NATIVE_JOBS",
+      "numerator": 2,
+      "denominator": 2,
+      "unit": "SUCCEEDED_JOBS",
+      "population": "Mission Control PR #680 exact SHA 6211ca0d... run 39063607003 attempt 1",
+      "evidence_class": "NATIVE_EXACT_HEAD_NOT_HOSTED_PAGES",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39063607003"
+    },
+    {
+      "metric": "M3_BROWSER_VIEWPORTS",
+      "numerator": 3,
+      "denominator": 3,
+      "unit": "QA_VIEWPORTS",
+      "population": "1440x1000, 1280x800, 390x844 run 39063607003, receipt screenshot SHA",
+      "evidence_class": "NATIVE_BROWSER_SERVED_HTTP",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39063607003"
+    },
+    {
+      "metric": "ABACUS_1860_TODO_DONE",
+      "numerator": 1,
+      "denominator": 12,
+      "unit": "ISSUE_CHECKBOXES",
+      "population": "ABACUS #1860 issue body on 2026-10-17",
+      "evidence_class": "ISSUE_TODO_NOT_CAUSAL_ROOT_CLOSURE",
+      "source": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "metric": "CODEX_977_TODO_DONE",
+      "numerator": 0,
+      "denominator": 7,
+      "unit": "ISSUE_CHECKBOXES",
+      "population": "CODEX #977 issue body on 2026-10-17",
+      "evidence_class": "ISSUE_TODO_NOT_DISPATCH_PROOF",
+      "source": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "metric": "ABACUS_MAIN_COVERAGE_HISTORICAL",
+      "numerator": 21437,
+      "denominator": 39139,
+      "unit": "COVERED_STATEMENTS",
+      "population": "Last qualified historical baseline; current matched instrument/population remains UNKNOWN",
+      "evidence_class": "HISTORICAL_BASELINE_NOT_CURRENT",
+      "source": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "metric": "M3_HISTORICAL_ZIP_MEMBERS_INTEGRITY",
+      "numerator": 24,
+      "denominator": 24,
+      "unit": "CRC_VERIFIED_ZIP_ENTRIES",
+      "population": "Artifact #12112576421 run 39063607003 manual downloaded ZIP SHA256 ac3aaa...",
+      "evidence_class": "LOCAL_RETRIEVAL_VERIFIED_NOT_HOSTED",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39063607003"
+    },
+    {
+      "metric": "ABACUS_2182_B0_WORKFLOW",
+      "numerator": 1,
+      "denominator": 1,
+      "unit": "SUCCESS_RUNS",
+      "population": "One exact PR #2182 head 203f7d3... attempt 1; NOT coverage uplift",
+      "evidence_class": "NATIVE_EXACT_HEAD_FULL_B0",
+      "source": "https://github.com/GBOGEB/ABACUS/actions/runs/39063903966"
+    }
+  ],
+  "bd_focus": [
+    "CPQ-003",
+    "CPQ-005",
+    "CPQ-015",
+    "CPQ-016",
+    "CPQ-018"
+  ]
+}
