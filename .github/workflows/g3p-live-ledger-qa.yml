@@ -1,0 +1,37 @@
+name: G3P Live Ledger QA
+on:
+  pull_request:
+    paths:
+      - 'mission-control/federation-atlas/G3P_LIVE_*'
+      - 'mission-control/v2/test_g3p_live_ledger.py'
+      - '.github/workflows/g3p-live-ledger-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-and-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run ten fail-closed regression tests
+        run: python -m unittest discover -s mission-control/v2 -p 'test_g3p_live_ledger.py' -v
+      - name: Validate embedded JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('mission-control/federation-atlas/G3P_LIVE_LEDGER.html').read_text()
+          Path('/tmp/g3p-client.js').write_text(s.split('<script>',1)[1].split('</script>',1)[0])
+          PY
+          node --check /tmp/g3p-client.js
+      - name: Check manifest wave source provenance
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          f=pathlib.Path('mission-control/federation-atlas/G3P_LIVE_SOURCES_v1.json')
+          j=json.loads(f.read_text())
+          assert j['authority_transfer'] is False and j['merge_admission']=='HOLD'
+          assert len(j['waves'])==4 and j['waves'][-1]['end']==12
+          PY
