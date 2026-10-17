@@ -1,0 +1,1846 @@
+{
+  "schema": "missioncontrol.top21.census.rollup.v1",
+  "cohort": "MISSION_SELECTED_TOP21",
+  "as_of": "2026-10-17",
+  "source": "complete exact SHA Git tree snapshots part01-part04",
+  "admission": "HOLD",
+  "authority_transfer": false,
+  "totals": {
+    "repositories": 21,
+    "files": 26836,
+    "root_files": 880,
+    "root_review_candidates": 706,
+    "type_counts": {
+      ".py": 4229,
+      ".md": 4026,
+      ".yaml": 2908,
+      ".yml": 1272,
+      ".json": 2004,
+      ".toml": 27,
+      ".js": 4715,
+      ".ts": 850,
+      ".tsx": 188,
+      ".jsx": 15,
+      ".mjs": 49,
+      ".cjs": 29,
+      ".ps1": 91,
+      ".sh": 162,
+      ".bat": 43,
+      "Makefile": 7
+    }
+  },
+  "statistics": {
+    "file_population_hhi": 0.179556,
+    "root_review_hhi": 0.320759,
+    "level": "DESCRIPTIVE_CENSUS",
+    "root_review_is_defect_count": false
+  },
+  "repositories": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "sha": "8d0c6ca568d6ea0b5e658198d0046283c049e557",
+      "tree_sha": "8d0c6ca568d6ea0b5e658198d0046283c049e557",
+      "branch": "main",
+      "complete": true,
+      "files": 3624,
+      "dirs": 592,
+      "root_files": 389,
+      "root_review": 368,
+      "workflow_files": 179,
+      "tests_files": 486,
+      "manifest_total": 27,
+      "by_type": {
+        ".py": 1145,
+        ".md": 961,
+        ".yaml": 383,
+        ".yml": 234,
+        ".json": 441,
+        ".toml": 4,
+        ".js": 8,
+        ".ts": 35,
+        ".tsx": 70,
+        ".jsx": 0,
+        ".mjs": 6,
+        ".cjs": 0,
+        ".ps1": 10,
+        ".sh": 32,
+        ".bat": 0,
+        "Makefile": 1
+      },
+      "wireframe": [
+        {
+          "name": "[root]",
+          "files": 389
+        },
+        {
+          "name": "tools",
+          "files": 312
+        },
+        {
+          "name": "tests",
+          "files": 291
+        },
+        {
+          "name": "DMAIC_V3",
+          "files": 267
+        },
+        {
+          "name": "MINERVA_PID",
+          "files": 239
+        },
+        {
+          "name": "docs",
+          "files": 216
+        },
+        {
+          "name": ".github",
+          "files": 212
+        },
+        {
+          "name": "qplant",
+          "files": 176
+        },
+        {
+          "name": "ABACUS-v032",
+          "files": 164
+        },
+        {
+          "name": "scripts",
+          "files": 139
+        },
+        {
+          "name": "architecture",
+          "files": 112
+        },
+        {
+          "name": "qps_slide_reviewer",
+          "files": 110
+        },
+        {
+          "name": "handover",
+          "files": 87
+        },
+        {
+          "name": "runtime",
+          "files": 82
+        },
+        {
+          "name": "triage",
+          "files": 69
+        },
+        {
+          "name": "federation",
+          "files": 68
+        },
+        {
+          "name": "governance",
+          "files": 57
+        },
+        {
+          "name": "DMAIC_V3_OUTPUT",
+          "files": 39
+        },
+        {
+          "name": "docs_versioned",
+          "files": 39
+        },
+        {
+          "name": "deepagent-handover-package",
+          "files": 32
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "sha": "4455321f1ac5ead05135e2cd2355e64ff0a3d9a2",
+      "tree_sha": "4455321f1ac5ead05135e2cd2355e64ff0a3d9a2",
+      "branch": "master",
+      "complete": true,
+      "files": 1881,
+      "dirs": 243,
+      "root_files": 11,
+      "root_review": 5,
+      "workflow_files": 126,
+      "tests_files": 176,
+      "manifest_total": 7,
+      "by_type": {
+        ".py": 418,
+        ".md": 289,
+        ".yaml": 137,
+        ".yml": 136,
+        ".json": 437,
+        ".toml": 1,
+        ".js": 11,
+        ".ts": 28,
+        ".tsx": 61,
+        ".jsx": 0,
+        ".mjs": 3,
+        ".cjs": 0,
+        ".ps1": 6,
+        ".sh": 2,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "mission-control",
+          "files": 1012
+        },
+        {
+          "name": ".logs",
+          "files": 255
+        },
+        {
+          "name": "app",
+          "files": 230
+        },
+        {
+          "name": ".github",
+          "files": 135
+        },
+        {
+          "name": "tools",
+          "files": 45
+        },
+        {
+          "name": "handover",
+          "files": 39
+        },
+        {
+          "name": "docs",
+          "files": 24
+        },
+        {
+          "name": "federation",
+          "files": 24
+        },
+        {
+          "name": "scripts",
+          "files": 16
+        },
+        {
+          "name": "recursive_doc_engine",
+          "files": 15
+        },
+        {
+          "name": "TECHNICAL_ANALYSIS",
+          "files": 14
+        },
+        {
+          "name": "excel_schedule_engine",
+          "files": 13
+        },
+        {
+          "name": "[root]",
+          "files": 11
+        },
+        {
+          "name": "governance",
+          "files": 11
+        },
+        {
+          "name": "rtm_pipelines",
+          "files": 8
+        },
+        {
+          "name": "tests",
+          "files": 8
+        },
+        {
+          "name": "triage",
+          "files": 6
+        },
+        {
+          "name": "MIP",
+          "files": 3
+        },
+        {
+          "name": "level1",
+          "files": 3
+        },
+        {
+          "name": "qps",
+          "files": 3
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "sha": "f8a179f8bf67bba4264364b5742c7c271f4041a6",
+      "tree_sha": "f8a179f8bf67bba4264364b5742c7c271f4041a6",
+      "branch": "main",
+      "complete": true,
+      "files": 2575,
+      "dirs": 618,
+      "root_files": 94,
+      "root_review": 82,
+      "workflow_files": 146,
+      "tests_files": 233,
+      "manifest_total": 11,
+      "by_type": {
+        ".py": 765,
+        ".md": 507,
+        ".yaml": 462,
+        ".yml": 179,
+        ".json": 347,
+        ".toml": 2,
+        ".js": 9,
+        ".ts": 18,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 1,
+        ".cjs": 0,
+        ".ps1": 18,
+        ".sh": 8,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "docs",
+          "files": 401
+        },
+        {
+          "name": "tests",
+          "files": 207
+        },
+        {
+          "name": "federation",
+          "files": 161
+        },
+        {
+          "name": ".github",
+          "files": 151
+        },
+        {
+          "name": "src",
+          "files": 144
+        },
+        {
+          "name": "scripts",
+          "files": 136
+        },
+        {
+          "name": "governance",
+          "files": 124
+        },
+        {
+          "name": "mission_control",
+          "files": 100
+        },
+        {
+          "name": "[root]",
+          "files": 94
+        },
+        {
+          "name": "triage",
+          "files": 63
+        },
+        {
+          "name": "tools",
+          "files": 53
+        },
+        {
+          "name": "ssot",
+          "files": 52
+        },
+        {
+          "name": "MASTER_input",
+          "files": 48
+        },
+        {
+          "name": "abacus_render_pipeline",
+          "files": 46
+        },
+        {
+          "name": "book_md",
+          "files": 35
+        },
+        {
+          "name": "pca_engine",
+          "files": 32
+        },
+        {
+          "name": "qcell_svg_model",
+          "files": 32
+        },
+        {
+          "name": "semantic_substrate",
+          "files": 31
+        },
+        {
+          "name": "federation_runtime",
+          "files": 30
+        },
+        {
+          "name": "07_ops",
+          "files": 24
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "sha": "4782b8ab418f8645ff409a1297ce2d84a8bdcaf8",
+      "tree_sha": "4782b8ab418f8645ff409a1297ce2d84a8bdcaf8",
+      "branch": "main",
+      "complete": true,
+      "files": 3832,
+      "dirs": 497,
+      "root_files": 7,
+      "root_review": 3,
+      "workflow_files": 106,
+      "tests_files": 249,
+      "manifest_total": 4,
+      "by_type": {
+        ".py": 651,
+        ".md": 596,
+        ".yaml": 1694,
+        ".yml": 109,
+        ".json": 343,
+        ".toml": 1,
+        ".js": 26,
+        ".ts": 30,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 1,
+        ".cjs": 0,
+        ".ps1": 27,
+        ".sh": 10,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "ocd-adr",
+          "files": 857
+        },
+        {
+          "name": "triage",
+          "files": 843
+        },
+        {
+          "name": "tender_library",
+          "files": 339
+        },
+        {
+          "name": "handover",
+          "files": 327
+        },
+        {
+          "name": "controls",
+          "files": 317
+        },
+        {
+          "name": "docs",
+          "files": 226
+        },
+        {
+          "name": "tests",
+          "files": 221
+        },
+        {
+          "name": "scripts",
+          "files": 193
+        },
+        {
+          "name": ".github",
+          "files": 108
+        },
+        {
+          "name": "architecture",
+          "files": 83
+        },
+        {
+          "name": "federation",
+          "files": 52
+        },
+        {
+          "name": "tools",
+          "files": 44
+        },
+        {
+          "name": "canonical_set",
+          "files": 28
+        },
+        {
+          "name": "qps_contract_canonicalization",
+          "files": 27
+        },
+        {
+          "name": "OFFERS_ITT",
+          "files": 26
+        },
+        {
+          "name": "qps-cost-roundtrip",
+          "files": 23
+        },
+        {
+          "name": "canonical",
+          "files": 15
+        },
+        {
+          "name": "mission_control",
+          "files": 11
+        },
+        {
+          "name": "governance",
+          "files": 9
+        },
+        {
+          "name": "qps_cost_overlay",
+          "files": 9
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "sha": "4caaeae153927fef6c30ac728cb70fc8611d0ac8",
+      "tree_sha": "4caaeae153927fef6c30ac728cb70fc8611d0ac8",
+      "branch": "main",
+      "complete": true,
+      "files": 153,
+      "dirs": 20,
+      "root_files": 2,
+      "root_review": 1,
+      "workflow_files": 26,
+      "tests_files": 30,
+      "manifest_total": 1,
+      "by_type": {
+        ".py": 71,
+        ".md": 18,
+        ".yaml": 18,
+        ".yml": 26,
+        ".json": 15,
+        ".toml": 0,
+        ".js": 0,
+        ".ts": 0,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 0,
+        ".cjs": 0,
+        ".ps1": 0,
+        ".sh": 0,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "mission",
+          "files": 48
+        },
+        {
+          "name": "tests",
+          "files": 30
+        },
+        {
+          "name": ".github",
+          "files": 26
+        },
+        {
+          "name": "kernels",
+          "files": 24
+        },
+        {
+          "name": "research",
+          "files": 11
+        },
+        {
+          "name": "release",
+          "files": 6
+        },
+        {
+          "name": "governance",
+          "files": 4
+        },
+        {
+          "name": "[root]",
+          "files": 2
+        },
+        {
+          "name": "docs",
+          "files": 1
+        },
+        {
+          "name": "scripts",
+          "files": 1
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/ariana",
+      "sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+      "tree_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+      "branch": "main",
+      "complete": true,
+      "files": 186,
+      "dirs": 40,
+      "root_files": 4,
+      "root_review": 1,
+      "workflow_files": 0,
+      "tests_files": 0,
+      "manifest_total": 11,
+      "by_type": {
+        ".py": 5,
+        ".md": 13,
+        ".yaml": 0,
+        ".yml": 0,
+        ".json": 12,
+        ".toml": 2,
+        ".js": 4,
+        ".ts": 81,
+        ".tsx": 31,
+        ".jsx": 0,
+        ".mjs": 2,
+        ".cjs": 0,
+        ".ps1": 1,
+        ".sh": 2,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "extensions",
+          "files": 146
+        },
+        {
+          "name": "cli",
+          "files": 33
+        },
+        {
+          "name": "[root]",
+          "files": 4
+        },
+        {
+          "name": "dedale-ariana",
+          "files": 2
+        },
+        {
+          "name": ".githooks",
+          "files": 1
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+      "tree_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+      "branch": "main",
+      "complete": true,
+      "files": 88,
+      "dirs": 19,
+      "root_files": 10,
+      "root_review": 3,
+      "workflow_files": 7,
+      "tests_files": 7,
+      "manifest_total": 1,
+      "by_type": {
+        ".py": 23,
+        ".md": 21,
+        ".yaml": 7,
+        ".yml": 9,
+        ".json": 13,
+        ".toml": 1,
+        ".js": 0,
+        ".ts": 0,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 0,
+        ".cjs": 0,
+        ".ps1": 1,
+        ".sh": 1,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "docs",
+          "files": 38
+        },
+        {
+          "name": "src",
+          "files": 14
+        },
+        {
+          "name": "[root]",
+          "files": 10
+        },
+        {
+          "name": ".github",
+          "files": 7
+        },
+        {
+          "name": "tests",
+          "files": 7
+        },
+        {
+          "name": "handover",
+          "files": 4
+        },
+        {
+          "name": "scripts",
+          "files": 3
+        },
+        {
+          "name": ".gemini",
+          "files": 2
+        },
+        {
+          "name": "output",
+          "files": 2
+        },
+        {
+          "name": "config",
+          "files": 1
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "tree_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "branch": "main",
+      "complete": true,
+      "files": 953,
+      "dirs": 116,
+      "root_files": 79,
+      "root_review": 62,
+      "workflow_files": 23,
+      "tests_files": 78,
+      "manifest_total": 11,
+      "by_type": {
+        ".py": 512,
+        ".md": 121,
+        ".yaml": 40,
+        ".yml": 25,
+        ".json": 27,
+        ".toml": 2,
+        ".js": 0,
+        ".ts": 14,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 0,
+        ".cjs": 1,
+        ".ps1": 2,
+        ".sh": 48,
+        ".bat": 42,
+        "Makefile": 1
+      },
+      "wireframe": [
+        {
+          "name": "scripts",
+          "files": 216
+        },
+        {
+          "name": "archive",
+          "files": 116
+        },
+        {
+          "name": "src",
+          "files": 110
+        },
+        {
+          "name": "[root]",
+          "files": 79
+        },
+        {
+          "name": "docs",
+          "files": 58
+        },
+        {
+          "name": "tests",
+          "files": 50
+        },
+        {
+          "name": "config",
+          "files": 44
+        },
+        {
+          "name": ".github",
+          "files": 24
+        },
+        {
+          "name": "code",
+          "files": 22
+        },
+        {
+          "name": "input",
+          "files": 18
+        },
+        {
+          "name": "federation",
+          "files": 17
+        },
+        {
+          "name": "orchestration_ts",
+          "files": 17
+        },
+        {
+          "name": "media",
+          "files": 15
+        },
+        {
+          "name": "shell_scripts",
+          "files": 13
+        },
+        {
+          "name": "markdown_main",
+          "files": 12
+        },
+        {
+          "name": "utils",
+          "files": 12
+        },
+        {
+          "name": "triage",
+          "files": 10
+        },
+        {
+          "name": "agents",
+          "files": 9
+        },
+        {
+          "name": "dashboard_outputs",
+          "files": 9
+        },
+        {
+          "name": "output",
+          "files": 7
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "tree_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "branch": "main",
+      "complete": true,
+      "files": 383,
+      "dirs": 267,
+      "root_files": 3,
+      "root_review": 1,
+      "workflow_files": 60,
+      "tests_files": 41,
+      "manifest_total": 0,
+      "by_type": {
+        ".py": 122,
+        ".md": 4,
+        ".yaml": 93,
+        ".yml": 63,
+        ".json": 64,
+        ".toml": 0,
+        ".js": 0,
+        ".ts": 0,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 6,
+        ".cjs": 0,
+        ".ps1": 4,
+        ".sh": 1,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "federation",
+          "files": 253
+        },
+        {
+          "name": ".github",
+          "files": 60
+        },
+        {
+          "name": "payload",
+          "files": 16
+        },
+        {
+          "name": "scripts",
+          "files": 12
+        },
+        {
+          "name": "mission",
+          "files": 11
+        },
+        {
+          "name": "triage",
+          "files": 8
+        },
+        {
+          "name": "ocd-adr",
+          "files": 6
+        },
+        {
+          "name": "governance",
+          "files": 5
+        },
+        {
+          "name": "tests",
+          "files": 4
+        },
+        {
+          "name": "[root]",
+          "files": 3
+        },
+        {
+          "name": "cryo_dashboard_v0_3_0",
+          "files": 2
+        },
+        {
+          "name": "carriers",
+          "files": 1
+        },
+        {
+          "name": "controls",
+          "files": 1
+        },
+        {
+          "name": "runtime",
+          "files": 1
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/cryo_leak_rate_dashboard",
+      "sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+      "tree_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+      "branch": "main",
+      "complete": true,
+      "files": 483,
+      "dirs": 55,
+      "root_files": 123,
+      "root_review": 115,
+      "workflow_files": 5,
+      "tests_files": 8,
+      "manifest_total": 2,
+      "by_type": {
+        ".py": 39,
+        ".md": 89,
+        ".yaml": 9,
+        ".yml": 5,
+        ".json": 55,
+        ".toml": 1,
+        ".js": 3,
+        ".ts": 0,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 0,
+        ".cjs": 0,
+        ".ps1": 0,
+        ".sh": 11,
+        ".bat": 0,
+        "Makefile": 1
+      },
+      "wireframe": [
+        {
+          "name": "docs",
+          "files": 179
+        },
+        {
+          "name": "[root]",
+          "files": 123
+        },
+        {
+          "name": "outputs",
+          "files": 80
+        },
+        {
+          "name": "src",
+          "files": 25
+        },
+        {
+          "name": "data",
+          "files": 14
+        },
+        {
+          "name": "scripts",
+          "files": 12
+        },
+        {
+          "name": "tables",
+          "files": 8
+        },
+        {
+          "name": "tests",
+          "files": 8
+        },
+        {
+          "name": ".github",
+          "files": 5
+        },
+        {
+          "name": "repo_templates",
+          "files": 5
+        },
+        {
+          "name": "source",
+          "files": 4
+        },
+        {
+          "name": "governance",
+          "files": 3
+        },
+        {
+          "name": "level1",
+          "files": 3
+        },
+        {
+          "name": "triage",
+          "files": 3
+        },
+        {
+          "name": "MIP",
+          "files": 2
+        },
+        {
+          "name": "assets",
+          "files": 2
+        },
+        {
+          "name": "skill",
+          "files": 2
+        },
+        {
+          "name": ".githooks",
+          "files": 1
+        },
+        {
+          "name": ".mesh",
+          "files": 1
+        },
+        {
+          "name": "federation",
+          "files": 1
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/cryogenic-accelerator-workspace",
+      "sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+      "tree_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+      "branch": "main",
+      "complete": true,
+      "files": 59,
+      "dirs": 19,
+      "root_files": 14,
+      "root_review": 12,
+      "workflow_files": 6,
+      "tests_files": 1,
+      "manifest_total": 0,
+      "by_type": {
+        ".py": 9,
+        ".md": 17,
+        ".yaml": 11,
+        ".yml": 12,
+        ".json": 3,
+        ".toml": 0,
+        ".js": 0,
+        ".ts": 0,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 0,
+        ".cjs": 0,
+        ".ps1": 0,
+        ".sh": 1,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "[root]",
+          "files": 14
+        },
+        {
+          "name": "docs",
+          "files": 8
+        },
+        {
+          "name": "triage",
+          "files": 7
+        },
+        {
+          "name": ".github",
+          "files": 6
+        },
+        {
+          "name": "governance",
+          "files": 3
+        },
+        {
+          "name": "level1",
+          "files": 3
+        },
+        {
+          "name": "scripts",
+          "files": 3
+        },
+        {
+          "name": "src",
+          "files": 3
+        },
+        {
+          "name": "web",
+          "files": 3
+        },
+        {
+          "name": "MIP",
+          "files": 2
+        },
+        {
+          "name": "config",
+          "files": 2
+        },
+        {
+          "name": "skill",
+          "files": 2
+        },
+        {
+          "name": ".mesh",
+          "files": 1
+        },
+        {
+          "name": "federation",
+          "files": 1
+        },
+        {
+          "name": "tests",
+          "files": 1
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/document-organization-system",
+      "sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+      "tree_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+      "branch": "main",
+      "complete": true,
+      "files": 284,
+      "dirs": 66,
+      "root_files": 20,
+      "root_review": 16,
+      "workflow_files": 7,
+      "tests_files": 28,
+      "manifest_total": 1,
+      "by_type": {
+        ".py": 60,
+        ".md": 70,
+        ".yaml": 35,
+        ".yml": 8,
+        ".json": 43,
+        ".toml": 0,
+        ".js": 20,
+        ".ts": 0,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 0,
+        ".cjs": 0,
+        ".ps1": 1,
+        ".sh": 0,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "gloob",
+          "files": 107
+        },
+        {
+          "name": "cryo_dashboard_v0_3_0",
+          "files": 70
+        },
+        {
+          "name": "[root]",
+          "files": 20
+        },
+        {
+          "name": "docs",
+          "files": 17
+        },
+        {
+          "name": "performance_optimizations",
+          "files": 17
+        },
+        {
+          "name": ".github",
+          "files": 7
+        },
+        {
+          "name": "adapters",
+          "files": 7
+        },
+        {
+          "name": "contracts",
+          "files": 7
+        },
+        {
+          "name": "Automation",
+          "files": 6
+        },
+        {
+          "name": "governance",
+          "files": 5
+        },
+        {
+          "name": "handover",
+          "files": 5
+        },
+        {
+          "name": "triage",
+          "files": 4
+        },
+        {
+          "name": "level1",
+          "files": 3
+        },
+        {
+          "name": "MIP",
+          "files": 2
+        },
+        {
+          "name": "skill",
+          "files": 2
+        },
+        {
+          "name": "tests",
+          "files": 2
+        },
+        {
+          "name": ".mesh",
+          "files": 1
+        },
+        {
+          "name": "federation",
+          "files": 1
+        },
+        {
+          "name": "scripts",
+          "files": 1
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+      "sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+      "tree_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+      "branch": "master",
+      "complete": true,
+      "files": 4,
+      "dirs": 0,
+      "root_files": 4,
+      "root_review": 2,
+      "workflow_files": 0,
+      "tests_files": 0,
+      "manifest_total": 0,
+      "by_type": {
+        ".py": 1,
+        ".md": 1,
+        ".yaml": 0,
+        ".yml": 0,
+        ".json": 0,
+        ".toml": 0,
+        ".js": 0,
+        ".ts": 0,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 0,
+        ".cjs": 0,
+        ".ps1": 0,
+        ".sh": 0,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "[root]",
+          "files": 4
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/github-mcp-server",
+      "sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+      "tree_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+      "branch": "main",
+      "complete": true,
+      "files": 588,
+      "dirs": 143,
+      "root_files": 18,
+      "root_review": 8,
+      "workflow_files": 17,
+      "tests_files": 0,
+      "manifest_total": 5,
+      "by_type": {
+        ".py": 0,
+        ".md": 46,
+        ".yaml": 1,
+        ".yml": 22,
+        ".json": 8,
+        ".toml": 0,
+        ".js": 0,
+        ".ts": 4,
+        ".tsx": 7,
+        ".jsx": 0,
+        ".mjs": 1,
+        ".cjs": 0,
+        ".ps1": 0,
+        ".sh": 0,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "pkg",
+          "files": 399
+        },
+        {
+          "name": "third-party",
+          "files": 37
+        },
+        {
+          "name": ".github",
+          "files": 29
+        },
+        {
+          "name": "docs",
+          "files": 29
+        },
+        {
+          "name": "internal",
+          "files": 29
+        },
+        {
+          "name": "ui",
+          "files": 19
+        },
+        {
+          "name": "[root]",
+          "files": 18
+        },
+        {
+          "name": "script",
+          "files": 14
+        },
+        {
+          "name": "cmd",
+          "files": 9
+        },
+        {
+          "name": "agent-plugin",
+          "files": 2
+        },
+        {
+          "name": "e2e",
+          "files": 2
+        },
+        {
+          "name": ".vscode",
+          "files": 1
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/docker-stacks",
+      "sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "tree_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "branch": "main",
+      "complete": true,
+      "files": 287,
+      "dirs": 86,
+      "root_files": 16,
+      "root_review": 4,
+      "workflow_files": 13,
+      "tests_files": 73,
+      "manifest_total": 23,
+      "by_type": {
+        ".py": 99,
+        ".md": 45,
+        ".yaml": 4,
+        ".yml": 25,
+        ".json": 3,
+        ".toml": 0,
+        ".js": 0,
+        ".ts": 0,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 0,
+        ".cjs": 0,
+        ".ps1": 0,
+        ".sh": 27,
+        ".bat": 0,
+        "Makefile": 2
+      },
+      "wireframe": [
+        {
+          "name": "tests",
+          "files": 73
+        },
+        {
+          "name": "images",
+          "files": 55
+        },
+        {
+          "name": "docs",
+          "files": 50
+        },
+        {
+          "name": "tagging",
+          "files": 33
+        },
+        {
+          "name": "examples",
+          "files": 28
+        },
+        {
+          "name": ".github",
+          "files": 23
+        },
+        {
+          "name": "[root]",
+          "files": 16
+        },
+        {
+          "name": "wiki",
+          "files": 5
+        },
+        {
+          "name": ".devcontainer",
+          "files": 2
+        },
+        {
+          "name": "binder",
+          "files": 2
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/yaml-grammar",
+      "sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "tree_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "branch": "master",
+      "complete": true,
+      "files": 10,
+      "dirs": 1,
+      "root_files": 7,
+      "root_review": 4,
+      "workflow_files": 0,
+      "tests_files": 0,
+      "manifest_total": 1,
+      "by_type": {
+        ".py": 0,
+        ".md": 1,
+        ".yaml": 2,
+        ".yml": 0,
+        ".json": 1,
+        ".toml": 0,
+        ".js": 0,
+        ".ts": 0,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 0,
+        ".cjs": 0,
+        ".ps1": 0,
+        ".sh": 0,
+        ".bat": 0,
+        "Makefile": 1
+      },
+      "wireframe": [
+        {
+          "name": "[root]",
+          "files": 7
+        },
+        {
+          "name": "bin",
+          "files": 3
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/prettier",
+      "sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+      "tree_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+      "branch": "main",
+      "complete": true,
+      "files": 9362,
+      "dirs": 3144,
+      "root_files": 26,
+      "root_review": 9,
+      "workflow_files": 17,
+      "tests_files": 8401,
+      "manifest_total": 59,
+      "by_type": {
+        ".py": 0,
+        ".md": 1022,
+        ".yaml": 3,
+        ".yml": 387,
+        ".json": 111,
+        ".toml": 3,
+        ".js": 4632,
+        ".ts": 608,
+        ".tsx": 19,
+        ".jsx": 15,
+        ".mjs": 25,
+        ".cjs": 28,
+        ".ps1": 0,
+        ".sh": 1,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "tests",
+          "files": 8398
+        },
+        {
+          "name": "src",
+          "files": 403
+        },
+        {
+          "name": "website",
+          "files": 257
+        },
+        {
+          "name": "scripts",
+          "files": 122
+        },
+        {
+          "name": "changelog_unreleased",
+          "files": 87
+        },
+        {
+          "name": "[root]",
+          "files": 26
+        },
+        {
+          "name": ".github",
+          "files": 24
+        },
+        {
+          "name": "docs",
+          "files": 24
+        },
+        {
+          "name": "packages",
+          "files": 8
+        },
+        {
+          "name": "benchmarks",
+          "files": 5
+        },
+        {
+          "name": ".vscode",
+          "files": 2
+        },
+        {
+          "name": ".yarn",
+          "files": 2
+        },
+        {
+          "name": "bin",
+          "files": 2
+        },
+        {
+          "name": "types",
+          "files": 2
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/vscode-powershell",
+      "sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "tree_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "branch": "main",
+      "complete": true,
+      "files": 115,
+      "dirs": 26,
+      "root_files": 27,
+      "root_review": 5,
+      "workflow_files": 2,
+      "tests_files": 14,
+      "manifest_total": 4,
+      "by_type": {
+        ".py": 0,
+        ".md": 15,
+        ".yaml": 0,
+        ".yml": 8,
+        ".json": 10,
+        ".toml": 0,
+        ".js": 1,
+        ".ts": 32,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 2,
+        ".cjs": 0,
+        ".ps1": 19,
+        ".sh": 0,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "[root]",
+          "files": 27
+        },
+        {
+          "name": "examples",
+          "files": 25
+        },
+        {
+          "name": "src",
+          "files": 24
+        },
+        {
+          "name": "test",
+          "files": 14
+        },
+        {
+          "name": ".github",
+          "files": 8
+        },
+        {
+          "name": "docs",
+          "files": 7
+        },
+        {
+          "name": "media",
+          "files": 3
+        },
+        {
+          "name": "tools",
+          "files": 2
+        },
+        {
+          "name": ".config",
+          "files": 1
+        },
+        {
+          "name": ".pipelines",
+          "files": 1
+        },
+        {
+          "name": "scripts",
+          "files": 1
+        },
+        {
+          "name": "snippets",
+          "files": 1
+        },
+        {
+          "name": "themes",
+          "files": 1
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/cli",
+      "sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "tree_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "branch": "trunk",
+      "complete": true,
+      "files": 1229,
+      "dirs": 396,
+      "root_files": 10,
+      "root_review": 2,
+      "workflow_files": 12,
+      "tests_files": 29,
+      "manifest_total": 2,
+      "by_type": {
+        ".py": 0,
+        ".md": 36,
+        ".yaml": 0,
+        ".yml": 18,
+        ".json": 69,
+        ".toml": 0,
+        ".js": 0,
+        ".ts": 0,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 0,
+        ".cjs": 0,
+        ".ps1": 2,
+        ".sh": 16,
+        ".bat": 1,
+        "Makefile": 1
+      },
+      "wireframe": [
+        {
+          "name": "pkg",
+          "files": 786
+        },
+        {
+          "name": "internal",
+          "files": 137
+        },
+        {
+          "name": "acceptance",
+          "files": 125
+        },
+        {
+          "name": "docs",
+          "files": 64
+        },
+        {
+          "name": ".github",
+          "files": 28
+        },
+        {
+          "name": "api",
+          "files": 24
+        },
+        {
+          "name": "git",
+          "files": 18
+        },
+        {
+          "name": "script",
+          "files": 15
+        },
+        {
+          "name": "[root]",
+          "files": 10
+        },
+        {
+          "name": "test",
+          "files": 8
+        },
+        {
+          "name": "build",
+          "files": 4
+        },
+        {
+          "name": "cmd",
+          "files": 3
+        },
+        {
+          "name": "context",
+          "files": 3
+        },
+        {
+          "name": "skills",
+          "files": 2
+        },
+        {
+          "name": ".devcontainer",
+          "files": 1
+        },
+        {
+          "name": "utils",
+          "files": 1
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/python-sdk",
+      "sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "tree_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "branch": "main",
+      "complete": true,
+      "files": 286,
+      "dirs": 61,
+      "root_files": 13,
+      "root_review": 2,
+      "workflow_files": 5,
+      "tests_files": 81,
+      "manifest_total": 11,
+      "by_type": {
+        ".py": 232,
+        ".md": 17,
+        ".yaml": 5,
+        ".yml": 6,
+        ".json": 1,
+        ".toml": 10,
+        ".js": 0,
+        ".ts": 0,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 0,
+        ".cjs": 0,
+        ".ps1": 0,
+        ".sh": 0,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "examples",
+          "files": 98
+        },
+        {
+          "name": "src",
+          "files": 81
+        },
+        {
+          "name": "tests",
+          "files": 81
+        },
+        {
+          "name": "[root]",
+          "files": 13
+        },
+        {
+          "name": ".github",
+          "files": 10
+        },
+        {
+          "name": "docs",
+          "files": 2
+        },
+        {
+          "name": "scripts",
+          "files": 1
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/skills",
+      "sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "tree_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "branch": "main",
+      "complete": true,
+      "files": 454,
+      "dirs": 107,
+      "root_files": 3,
+      "root_review": 1,
+      "workflow_files": 0,
+      "tests_files": 1,
+      "manifest_total": 2,
+      "by_type": {
+        ".py": 77,
+        ".md": 137,
+        ".yaml": 4,
+        ".yml": 0,
+        ".json": 1,
+        ".toml": 0,
+        ".js": 1,
+        ".ts": 0,
+        ".tsx": 0,
+        ".jsx": 0,
+        ".mjs": 2,
+        ".cjs": 0,
+        ".ps1": 0,
+        ".sh": 2,
+        ".bat": 0,
+        "Makefile": 0
+      },
+      "wireframe": [
+        {
+          "name": "skills",
+          "files": 448
+        },
+        {
+          "name": "[root]",
+          "files": 3
+        },
+        {
+          "name": ".claude-plugin",
+          "files": 1
+        },
+        {
+          "name": "spec",
+          "files": 1
+        },
+        {
+          "name": "template",
+          "files": 1
+        }
+      ]
+    }
+  ]
+}

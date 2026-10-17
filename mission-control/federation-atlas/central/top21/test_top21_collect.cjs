@@ -1,0 +1,10 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict');
+const {classify,rootReason,summarize}=require('./top21_collect.cjs');
+const sha='a'.repeat(40),tree={sha:'b'.repeat(40),truncated:false,tree:[{type:'blob',path:'README.md',size:5},{type:'blob',path:'report.md',size:9},{type:'blob',path:'src/file.py',size:4},{type:'tree',path:'src'}]};
+test('known extensions',()=>{assert.equal(classify('Makefile'),'Makefile');assert.equal(classify('bin/setup.ps1'),'.ps1');assert.equal(classify('web/app.tsx'),'.tsx');});
+test('root narrative heuristic is not arbitrary',()=>{assert.equal(rootReason('README.md'),null);assert.equal(rootReason('handover.md'),'ROOT_NARRATIVE_JUSTIFICATION');});
+test('root bundle named family',()=>assert.equal(rootReason('handover.pdf'),'ROOT_BINARY_OR_BUNDLE'));
+test('exact tree counted with directory and file atoms',()=>{const r=summarize('GBOGEB/demo','main',sha,tree);assert.equal(r.files,3);assert.equal(r.directories,1);assert.equal(r.root_files.length,2);assert.equal(r.root_review.length,1);});
+test('fail closed on truncated source',()=>assert.throws(()=>summarize('GBOGEB/demo','main',sha,{...tree,truncated:true}),/TRUNCATED/));
+test('fail closed on spoofed source',()=>assert.throws(()=>summarize('GBOGEB/demo','main','BAD',tree),/TRUNCATED/));

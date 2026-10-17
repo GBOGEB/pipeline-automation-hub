@@ -1,0 +1,1957 @@
+{
+  "schema": "missioncontrol.top21.root_stewardship.v1",
+  "parent_rollup": "mission-control/federation-atlas/central/top21/REPO_CENSUS_ROLLUP_N11.json",
+  "evidence_type": "FILENAME_AND_PATH_HEURISTIC",
+  "authority_transfer": false,
+  "decisions": [
+    "KEEP_JUSTIFIED",
+    "CANONICAL_ROOT",
+    "LINK_ALIAS_FIRST",
+    "MOVE_WITH_CONSUMER_REPLAY",
+    "ARCHIVE_PRESERVE_LINKS",
+    "WAIT_OWNER"
+  ],
+  "rules": [
+    "No direct root-file moves or deletion",
+    "Verify imports, code searches, docs hyperlinks, Actions working-directory and Pages paths before any relocation",
+    "Same stem across extensions is a document family, not proof of duplication",
+    "Do not close source issues from a count reduction",
+    "Old paths must have alias/redirect or explicit consumer migration"
+  ],
+  "totals": {
+    "review_candidates": 706,
+    "root_files": 880,
+    "paired_stem_families": 44,
+    "reasons": {
+      "ROOT_NARRATIVE_JUSTIFICATION": 434,
+      "ROOT_BINARY_OR_BUNDLE": 78,
+      "ROOT_EXECUTABLE_REVIEW": 123,
+      "ROOT_MANIFEST_REVIEW": 61,
+      "ROOT_DATA_OR_LAUNCH": 10
+    }
+  },
+  "per_repo": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "source_sha": "8d0c6ca568d6ea0b5e658198d0046283c049e557",
+      "tree_sha": "8d0c6ca568d6ea0b5e658198d0046283c049e557",
+      "file_count": 3624,
+      "root_total": 389,
+      "review_total": 368,
+      "reasons": {
+        "ROOT_NARRATIVE_JUSTIFICATION": 305,
+        "ROOT_BINARY_OR_BUNDLE": 1,
+        "ROOT_EXECUTABLE_REVIEW": 51,
+        "ROOT_MANIFEST_REVIEW": 11
+      },
+      "name_based_companions": [
+        {
+          "stem": "github_tracking_state",
+          "paths": [
+            "github_tracking_state.json",
+            "github_tracking_state.yaml"
+          ]
+        }
+      ],
+      "example_cases": [
+        {
+          "path": "12CLUSTER_ARCHITECTURE_BOOK.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "12CLUSTER_DMAIC_V3_QUICK_START_GUIDE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "12_cluster_vision.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_DEPLOYMENT_STATUS.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_EXECUTION_BACKLOG.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_EXECUTION_BASELINE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_FEATURE_LINEAGE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_GAP_VALIDATION.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_INTEGRATION_MATRIX.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_MAIN_LINEAGE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_RUNTIME_INVENTORY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_CANONICAL_DEFINITIONS.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_COMPLETE_SESSION_SUMMARY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_DELIVERABLES_INDEX.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_DEPLOYMENT_COMPLETE_SUMMARY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_DEVELOPMENT_CONTINUUM.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_DEVELOPMENT_PHASE_STATUS_DASHBOARD.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_EXECUTIVE_SUMMARY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_FILE_INDEX.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_MASTER_INDEX.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_MIGRATION_COMPLETION_SUMMARY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_MIGRATION_GUIDE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_POSTCD_COMPLETE_SUMMARY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_PRE_CD_COMPLETE_SUMMARY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_V21_QUICK_REFERENCE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "source_sha": "4455321f1ac5ead05135e2cd2355e64ff0a3d9a2",
+      "tree_sha": "4455321f1ac5ead05135e2cd2355e64ff0a3d9a2",
+      "file_count": 1881,
+      "root_total": 11,
+      "review_total": 5,
+      "reasons": {
+        "ROOT_BINARY_OR_BUNDLE": 2,
+        "ROOT_NARRATIVE_JUSTIFICATION": 2,
+        "ROOT_MANIFEST_REVIEW": 1
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": "Conversation_track_handover.zip",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "LEVEL1.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "PROCESSING_MANIFEST.json",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "SECURITY.pdf",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "WORKFLOW_FILES_NOTE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "source_sha": "f8a179f8bf67bba4264364b5742c7c271f4041a6",
+      "tree_sha": "f8a179f8bf67bba4264364b5742c7c271f4041a6",
+      "file_count": 2575,
+      "root_total": 94,
+      "review_total": 82,
+      "reasons": {
+        "ROOT_EXECUTABLE_REVIEW": 15,
+        "ROOT_DATA_OR_LAUNCH": 9,
+        "ROOT_NARRATIVE_JUSTIFICATION": 27,
+        "ROOT_BINARY_OR_BUNDLE": 12,
+        "ROOT_MANIFEST_REVIEW": 19
+      },
+      "name_based_companions": [
+        {
+          "stem": "adr_ocd_background",
+          "paths": [
+            "ADR_OCD_Background.html",
+            "ADR_OCD_Background.md"
+          ]
+        },
+        {
+          "stem": "codex_index",
+          "paths": [
+            "CODEX_Index.json",
+            "CODEX_Index.yaml"
+          ]
+        },
+        {
+          "stem": "full_vcr_handover",
+          "paths": [
+            "Full_VCR_Handover.docx",
+            "Full_VCR_Handover.html",
+            "Full_VCR_Handover.md"
+          ]
+        },
+        {
+          "stem": "full_vcr_handover_master",
+          "paths": [
+            "Full_VCR_Handover_master.docx",
+            "Full_VCR_Handover_master.html"
+          ]
+        },
+        {
+          "stem": "vcr_adr_ocd_partial",
+          "paths": [
+            "VCR_ADR_OCD_Partial.docx",
+            "VCR_ADR_OCD_Partial.md"
+          ]
+        },
+        {
+          "stem": "vcr_only_handover",
+          "paths": [
+            "VCR_Only_Handover.docx",
+            "VCR_Only_Handover.md"
+          ]
+        },
+        {
+          "stem": "vcr_only_handover_master",
+          "paths": [
+            "VCR_Only_Handover_master.docx",
+            "VCR_Only_Handover_master.html"
+          ]
+        },
+        {
+          "stem": "vcr_quality_procedures",
+          "paths": [
+            "VCR_Quality_Procedures.docx",
+            "VCR_Quality_Procedures.md"
+          ]
+        },
+        {
+          "stem": "vcr_requirements",
+          "paths": [
+            "VCR_Requirements.docx",
+            "VCR_Requirements.md"
+          ]
+        },
+        {
+          "stem": "vcr_summary",
+          "paths": [
+            "VCR_Summary.html",
+            "VCR_Summary.md",
+            "VCR_Summary.pdf"
+          ]
+        },
+        {
+          "stem": "vcr_summary_master",
+          "paths": [
+            "VCR_Summary_master.docx",
+            "VCR_Summary_master.pdf"
+          ]
+        }
+      ],
+      "example_cases": [
+        {
+          "path": "ABACUS_LOCAL_GROUND_TRUTH_AUDIT.ps1",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ADR_OCD_Background.html",
+          "reason": "ROOT_DATA_OR_LAUNCH",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ADR_OCD_Background.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "Addendum_book_master.docx",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "BACKBONE_POLICY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "BUILD_LOG.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "Book_Master.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "CLEANUP_PLAN.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "CODEX_EXECUTION_REPORT.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "CODEX_Index.json",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "CODEX_Index.yaml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "CODEX_PR_PCA_ENGINE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DORMANT_CODE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "EMBEDDED_REPOS.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ERROR_LOG.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "FEATURE_BRANCH_LOCKSTEP_GUIDE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "FILE_INVENTORY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "Full_VCR_Handover.docx",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "Full_VCR_Handover.html",
+          "reason": "ROOT_DATA_OR_LAUNCH",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "Full_VCR_Handover.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "Full_VCR_Handover_master.docx",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "Full_VCR_Handover_master.html",
+          "reason": "ROOT_DATA_OR_LAUNCH",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "GITHUB_CENTERED_SOFTWARE_DELIVERY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "GLOB.yaml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "GLOBAL_index.json",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "source_sha": "4782b8ab418f8645ff409a1297ce2d84a8bdcaf8",
+      "tree_sha": "4782b8ab418f8645ff409a1297ce2d84a8bdcaf8",
+      "file_count": 3832,
+      "root_total": 7,
+      "review_total": 3,
+      "reasons": {
+        "ROOT_NARRATIVE_JUSTIFICATION": 2,
+        "ROOT_MANIFEST_REVIEW": 1
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": "BINARIES_MANIFEST.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "FEDERATION.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "QPS_FED_W04_EXECUTABLE_PARENT_RETURN_JOIN_v0.1.yaml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "source_sha": "4caaeae153927fef6c30ac728cb70fc8611d0ac8",
+      "tree_sha": "4caaeae153927fef6c30ac728cb70fc8611d0ac8",
+      "file_count": 153,
+      "root_total": 2,
+      "review_total": 1,
+      "reasons": {
+        "ROOT_NARRATIVE_JUSTIFICATION": 1
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": "requirements-release.txt",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/ariana",
+      "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+      "tree_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+      "file_count": 186,
+      "root_total": 4,
+      "review_total": 1,
+      "reasons": {
+        "ROOT_NARRATIVE_JUSTIFICATION": 1
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": "LICENCE.txt",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+      "tree_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+      "file_count": 88,
+      "root_total": 10,
+      "review_total": 3,
+      "reasons": {
+        "ROOT_NARRATIVE_JUSTIFICATION": 2,
+        "ROOT_MANIFEST_REVIEW": 1
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": "GEMINI.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "notebook.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "repo_manifest.yaml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "tree_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "file_count": 953,
+      "root_total": 79,
+      "review_total": 62,
+      "reasons": {
+        "ROOT_NARRATIVE_JUSTIFICATION": 22,
+        "ROOT_EXECUTABLE_REVIEW": 39,
+        "ROOT_MANIFEST_REVIEW": 1
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": "# Code Citations.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "@echo off.bat",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ACHIEVEMENTS.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ACHIEVEMENT_SUMMARY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "AGENT_ENTRYPOINT.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ARIANA_CLARIFICATION.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DIAGNOSTIC_SUMMARY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "EXECUTION_GUIDE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "FINAL_EXCELLENCE_REPORT.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "LEVEL1.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "QUICK_REFERENCE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "QUICK_START_GUIDE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "STARTER_GUIDE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "SYSTEM_CERTIFICATION.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "SYSTEM_STATUS.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "WORD_MARKDOWN_GUIDE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "WORKFLOW_FILES_NOTE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "__init__.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "activate_environment.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "activate_venv.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ascii_art.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "auto_fix_ruff_issues.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "check_available_files.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "check_backup_and_organize.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "check_environment.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "tree_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "file_count": 383,
+      "root_total": 3,
+      "review_total": 1,
+      "reasons": {
+        "ROOT_DATA_OR_LAUNCH": 1
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": "index.html",
+          "reason": "ROOT_DATA_OR_LAUNCH",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/cryo_leak_rate_dashboard",
+      "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+      "tree_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+      "file_count": 483,
+      "root_total": 123,
+      "review_total": 115,
+      "reasons": {
+        "ROOT_NARRATIVE_JUSTIFICATION": 48,
+        "ROOT_BINARY_OR_BUNDLE": 57,
+        "ROOT_MANIFEST_REVIEW": 6,
+        "ROOT_EXECUTABLE_REVIEW": 4
+      },
+      "name_based_companions": [
+        {
+          "stem": "ambiguity_fixes",
+          "paths": [
+            "AMBIGUITY_FIXES.docx",
+            "AMBIGUITY_FIXES.md",
+            "AMBIGUITY_FIXES.pdf"
+          ]
+        },
+        {
+          "stem": "backup_strategy",
+          "paths": [
+            "BACKUP_STRATEGY.docx",
+            "BACKUP_STRATEGY.md",
+            "BACKUP_STRATEGY.pdf"
+          ]
+        },
+        {
+          "stem": "build_log",
+          "paths": [
+            "BUILD_LOG.docx",
+            "BUILD_LOG.md",
+            "BUILD_LOG.pdf"
+          ]
+        },
+        {
+          "stem": "continuation_guide",
+          "paths": [
+            "CONTINUATION_GUIDE.docx",
+            "CONTINUATION_GUIDE.md",
+            "CONTINUATION_GUIDE.pdf"
+          ]
+        },
+        {
+          "stem": "deployment_status",
+          "paths": [
+            "DEPLOYMENT_STATUS.docx",
+            "DEPLOYMENT_STATUS.md",
+            "DEPLOYMENT_STATUS.pdf"
+          ]
+        },
+        {
+          "stem": "download_checklist",
+          "paths": [
+            "DOWNLOAD_CHECKLIST.docx",
+            "DOWNLOAD_CHECKLIST.md",
+            "DOWNLOAD_CHECKLIST.pdf"
+          ]
+        },
+        {
+          "stem": "final_deployment_summary",
+          "paths": [
+            "FINAL_DEPLOYMENT_SUMMARY.docx",
+            "FINAL_DEPLOYMENT_SUMMARY.md",
+            "FINAL_DEPLOYMENT_SUMMARY.pdf"
+          ]
+        },
+        {
+          "stem": "github_integration_status",
+          "paths": [
+            "GITHUB_INTEGRATION_STATUS.docx",
+            "GITHUB_INTEGRATION_STATUS.md",
+            "GITHUB_INTEGRATION_STATUS.pdf"
+          ]
+        },
+        {
+          "stem": "github_pages_setup_guide",
+          "paths": [
+            "GITHUB_PAGES_SETUP_GUIDE.md",
+            "GITHUB_PAGES_SETUP_GUIDE.pdf"
+          ]
+        },
+        {
+          "stem": "github_pages_urls",
+          "paths": [
+            "GITHUB_PAGES_URLS.docx",
+            "GITHUB_PAGES_URLS.md",
+            "GITHUB_PAGES_URLS.pdf"
+          ]
+        },
+        {
+          "stem": "github_pages_visual_guide",
+          "paths": [
+            "GITHUB_PAGES_VISUAL_GUIDE.docx",
+            "GITHUB_PAGES_VISUAL_GUIDE.md",
+            "GITHUB_PAGES_VISUAL_GUIDE.pdf"
+          ]
+        },
+        {
+          "stem": "github_repo_creation_steps",
+          "paths": [
+            "GITHUB_REPO_CREATION_STEPS.docx",
+            "GITHUB_REPO_CREATION_STEPS.md",
+            "GITHUB_REPO_CREATION_STEPS.pdf"
+          ]
+        },
+        {
+          "stem": "github_repo_organization",
+          "paths": [
+            "GITHUB_REPO_ORGANIZATION.docx",
+            "GITHUB_REPO_ORGANIZATION.md",
+            "GITHUB_REPO_ORGANIZATION.pdf"
+          ]
+        },
+        {
+          "stem": "handover",
+          "paths": [
+            "HANDOVER.docx",
+            "HANDOVER.md",
+            "HANDOVER.pdf"
+          ]
+        },
+        {
+          "stem": "html_organization_plan",
+          "paths": [
+            "HTML_ORGANIZATION_PLAN.docx",
+            "HTML_ORGANIZATION_PLAN.md",
+            "HTML_ORGANIZATION_PLAN.pdf"
+          ]
+        },
+        {
+          "stem": "immediate_actions",
+          "paths": [
+            "IMMEDIATE_ACTIONS.docx",
+            "IMMEDIATE_ACTIONS.md",
+            "IMMEDIATE_ACTIONS.pdf"
+          ]
+        },
+        {
+          "stem": "migration_checklist",
+          "paths": [
+            "MIGRATION_CHECKLIST.docx",
+            "MIGRATION_CHECKLIST.md",
+            "MIGRATION_CHECKLIST.pdf"
+          ]
+        },
+        {
+          "stem": "post_deployment_checklist",
+          "paths": [
+            "POST_DEPLOYMENT_CHECKLIST.docx",
+            "POST_DEPLOYMENT_CHECKLIST.md",
+            "POST_DEPLOYMENT_CHECKLIST.pdf"
+          ]
+        },
+        {
+          "stem": "project_review_blueprint",
+          "paths": [
+            "PROJECT_REVIEW_BLUEPRINT.docx",
+            "PROJECT_REVIEW_BLUEPRINT.md",
+            "PROJECT_REVIEW_BLUEPRINT.pdf"
+          ]
+        },
+        {
+          "stem": "pr_checklist",
+          "paths": [
+            "PR_CHECKLIST.docx",
+            "PR_CHECKLIST.md",
+            "PR_CHECKLIST.pdf"
+          ]
+        },
+        {
+          "stem": "pr_review_summary",
+          "paths": [
+            "PR_REVIEW_SUMMARY.docx",
+            "PR_REVIEW_SUMMARY.md",
+            "PR_REVIEW_SUMMARY.pdf"
+          ]
+        },
+        {
+          "stem": "pr_strategy",
+          "paths": [
+            "PR_STRATEGY.docx",
+            "PR_STRATEGY.md",
+            "PR_STRATEGY.pdf"
+          ]
+        },
+        {
+          "stem": "rebuild_guide",
+          "paths": [
+            "REBUILD_GUIDE.docx",
+            "REBUILD_GUIDE.md",
+            "REBUILD_GUIDE.pdf"
+          ]
+        },
+        {
+          "stem": "reuse_guide",
+          "paths": [
+            "REUSE_GUIDE.docx",
+            "REUSE_GUIDE.md",
+            "REUSE_GUIDE.pdf"
+          ]
+        },
+        {
+          "stem": "slide_packages_status",
+          "paths": [
+            "SLIDE_PACKAGES_STATUS.docx",
+            "SLIDE_PACKAGES_STATUS.md",
+            "SLIDE_PACKAGES_STATUS.pdf"
+          ]
+        },
+        {
+          "stem": "stale_files_audit",
+          "paths": [
+            "STALE_FILES_AUDIT.docx",
+            "STALE_FILES_AUDIT.md",
+            "STALE_FILES_AUDIT.pdf"
+          ]
+        },
+        {
+          "stem": "v3_discovery_report",
+          "paths": [
+            "V3_DISCOVERY_REPORT.docx",
+            "V3_DISCOVERY_REPORT.md",
+            "V3_DISCOVERY_REPORT.pdf"
+          ]
+        },
+        {
+          "stem": "v3_v4_integration_guide",
+          "paths": [
+            "V3_V4_INTEGRATION_GUIDE.docx",
+            "V3_V4_INTEGRATION_GUIDE.md",
+            "V3_V4_INTEGRATION_GUIDE.pdf"
+          ]
+        },
+        {
+          "stem": "verification_report",
+          "paths": [
+            "VERIFICATION_REPORT.docx",
+            "VERIFICATION_REPORT.md",
+            "VERIFICATION_REPORT.pdf"
+          ]
+        }
+      ],
+      "example_cases": [
+        {
+          "path": "100_PERCENT_COMPLETE_SUMMARY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_PR400_CHECKLIST.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ABACUS_STATUS_REPORT.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ALIGNMENT_VERIFICATION_REPORT.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "AMBIGUITY_FIXES.docx",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "AMBIGUITY_FIXES.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "AMBIGUITY_FIXES.pdf",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "ARTIFACTS.yaml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "BACKUP_STRATEGY.docx",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "BACKUP_STRATEGY.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "BACKUP_STRATEGY.pdf",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "BUILD_LOG.docx",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "BUILD_LOG.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "BUILD_LOG.pdf",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "CONTINUATION_GUIDE.docx",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "CONTINUATION_GUIDE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "CONTINUATION_GUIDE.pdf",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DEPLOYMENT_STATUS.docx",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DEPLOYMENT_STATUS.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DEPLOYMENT_STATUS.pdf",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DEPLOYMENT_SUCCESS_REPORT.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DMAIC_0_REPORT.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DOWNLOAD_CHECKLIST.docx",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DOWNLOAD_CHECKLIST.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DOWNLOAD_CHECKLIST.pdf",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/cryogenic-accelerator-workspace",
+      "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+      "tree_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+      "file_count": 59,
+      "root_total": 14,
+      "review_total": 12,
+      "reasons": {
+        "ROOT_NARRATIVE_JUSTIFICATION": 10,
+        "ROOT_MANIFEST_REVIEW": 1,
+        "ROOT_EXECUTABLE_REVIEW": 1
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": "CROSS_CHAT_ORCHESTRATION.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "CROSS_REPO_MCP_BRIDGE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DOCUMENT_ORG_INTEGRATION_PLAN.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "EXHIBIT_EXTRACTION_TUPLES.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "GBA_MCP_ORCHESTRATION.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "GBC_MCP_ORCHESTRATION.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "GBOGEB_INTEGRATION_MANIFEST.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "LEVEL1.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "MCP_ORCHESTRATION_FRAMEWORK.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "QPS_M08_CONTROL.yaml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "UBUNTU_MCP_SEQUENCES.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "workspace_build.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/document-organization-system",
+      "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+      "tree_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+      "file_count": 284,
+      "root_total": 20,
+      "review_total": 16,
+      "reasons": {
+        "ROOT_BINARY_OR_BUNDLE": 4,
+        "ROOT_NARRATIVE_JUSTIFICATION": 4,
+        "ROOT_EXECUTABLE_REVIEW": 8
+      },
+      "name_based_companions": [
+        {
+          "stem": "deployment_confirmation_v0.4.9",
+          "paths": [
+            "DEPLOYMENT_CONFIRMATION_v0.4.9.docx",
+            "DEPLOYMENT_CONFIRMATION_v0.4.9.md",
+            "DEPLOYMENT_CONFIRMATION_v0.4.9.pdf"
+          ]
+        },
+        {
+          "stem": "status_report_2026-05-18",
+          "paths": [
+            "STATUS_REPORT_2026-05-18.docx",
+            "STATUS_REPORT_2026-05-18.md",
+            "STATUS_REPORT_2026-05-18.pdf"
+          ]
+        }
+      ],
+      "example_cases": [
+        {
+          "path": "DEPLOYMENT_CONFIRMATION_v0.4.9.docx",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DEPLOYMENT_CONFIRMATION_v0.4.9.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "DEPLOYMENT_CONFIRMATION_v0.4.9.pdf",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "LEVEL1.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "PRE_RUN_CHECK.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "STATUS_REPORT_2026-05-18.docx",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "STATUS_REPORT_2026-05-18.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "STATUS_REPORT_2026-05-18.pdf",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "WORKFLOW_DIAGRAM.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "fix_unicode_console.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "git_integration.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "handle_logs_folder.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "organize_safe.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "setup_organization.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "simple_setup.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "status_check.py",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+      "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+      "tree_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+      "file_count": 4,
+      "root_total": 4,
+      "review_total": 2,
+      "reasons": {
+        "ROOT_BINARY_OR_BUNDLE": 2
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": "Inkscape_full.zip",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "PFD-PID MINERVA QCELL-LB.zip",
+          "reason": "ROOT_BINARY_OR_BUNDLE",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/github-mcp-server",
+      "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+      "tree_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+      "file_count": 588,
+      "root_total": 18,
+      "review_total": 8,
+      "reasons": {
+        "ROOT_MANIFEST_REVIEW": 4,
+        "ROOT_NARRATIVE_JUSTIFICATION": 4
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": ".golangci.yml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": ".goreleaser.yaml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "SUPPORT.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "gemini-extension.json",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "server.json",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "third-party-licenses.darwin.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "third-party-licenses.linux.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "third-party-licenses.windows.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/docker-stacks",
+      "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "tree_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "file_count": 287,
+      "root_total": 16,
+      "review_total": 4,
+      "reasons": {
+        "ROOT_MANIFEST_REVIEW": 3,
+        "ROOT_NARRATIVE_JUSTIFICATION": 1
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": ".hadolint.yaml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": ".markdownlint.yaml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": ".readthedocs.yaml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "requirements-dev.txt",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/yaml-grammar",
+      "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "tree_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "file_count": 10,
+      "root_total": 7,
+      "review_total": 4,
+      "reasons": {
+        "ROOT_MANIFEST_REVIEW": 3,
+        "ROOT_NARRATIVE_JUSTIFICATION": 1
+      },
+      "name_based_companions": [
+        {
+          "stem": "yaml-spec-1.2",
+          "paths": [
+            "yaml-spec-1.2.json",
+            "yaml-spec-1.2.txt",
+            "yaml-spec-1.2.yaml"
+          ]
+        }
+      ],
+      "example_cases": [
+        {
+          "path": "yaml-spec-1.2-comments.yaml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "yaml-spec-1.2.json",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "yaml-spec-1.2.txt",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "yaml-spec-1.2.yaml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/prettier",
+      "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+      "tree_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+      "file_count": 9362,
+      "root_total": 26,
+      "review_total": 9,
+      "reasons": {
+        "ROOT_MANIFEST_REVIEW": 5,
+        "ROOT_NARRATIVE_JUSTIFICATION": 1,
+        "ROOT_EXECUTABLE_REVIEW": 3
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": ".codecov.yml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": ".gitpod.yml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": ".yarnrc.yml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "FUNDING.json",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "commands.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "cspell.json",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "index.js",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "knip.config.js",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "standalone.js",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/vscode-powershell",
+      "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "tree_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "file_count": 115,
+      "root_total": 27,
+      "review_total": 5,
+      "reasons": {
+        "ROOT_MANIFEST_REVIEW": 2,
+        "ROOT_NARRATIVE_JUSTIFICATION": 1,
+        "ROOT_EXECUTABLE_REVIEW": 2
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": ".markdownlint.json",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "CodeQL.yml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "SUPPORT.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "build.ps1",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "vscode-powershell.build.ps1",
+          "reason": "ROOT_EXECUTABLE_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/cli",
+      "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "tree_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "file_count": 1229,
+      "root_total": 10,
+      "review_total": 2,
+      "reasons": {
+        "ROOT_MANIFEST_REVIEW": 2
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": ".golangci.yml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": ".goreleaser.yml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/python-sdk",
+      "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "tree_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "file_count": 286,
+      "root_total": 13,
+      "review_total": 2,
+      "reasons": {
+        "ROOT_NARRATIVE_JUSTIFICATION": 1,
+        "ROOT_MANIFEST_REVIEW": 1
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": "RELEASE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        },
+        {
+          "path": "mkdocs.yml",
+          "reason": "ROOT_MANIFEST_REVIEW",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    },
+    {
+      "repo": "GBOGEB/skills",
+      "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "tree_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "file_count": 454,
+      "root_total": 3,
+      "review_total": 1,
+      "reasons": {
+        "ROOT_NARRATIVE_JUSTIFICATION": 1
+      },
+      "name_based_companions": [],
+      "example_cases": [
+        {
+          "path": "THIRD_PARTY_NOTICES.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION",
+          "disposition": "OWNER_JUSTIFY",
+          "consumer": "UNKNOWN",
+          "proposed_move": false
+        }
+      ]
+    }
+  ],
+  "full_candidate_source": "Exact files and reasons are retained without cap in part01..part04"
+}
