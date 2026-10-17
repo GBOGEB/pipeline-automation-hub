@@ -36,6 +36,12 @@ class TestPages(unittest.TestCase):
    home=(p/"published"/"index.html").read_text()
    self.assertIn('href="missioncontrol/index.html"',home)
    self.assertIn("six-panel federation navigator",home)
+   atom=json.loads((dst/"GRAPH_ATOMS_W1_v1.json").read_text())
+   self.assertEqual(atom["metrics"]["all_atoms"],32)
+   self.assertEqual((atom["metrics"]["node_atoms"],atom["metrics"]["relation_atoms"]),(13,19))
+   self.assertIsNone(atom["metrics"]["eligible_causal_roots"])
+   self.assertEqual(len(atom["atoms"]),32)
+   self.assertIn("missioncontrol/GRAPH_ATOMS_W1_v1.json",m["public_files_sha256"])
    self.assertFalse(m["merge_authorized"])
  def test_bad_sha(self):
   with tempfile.TemporaryDirectory() as d:

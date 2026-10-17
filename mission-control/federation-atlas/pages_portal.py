@@ -121,10 +121,27 @@ def build(atlas,out,sha):
             if actual!=want:raise ValueError("MC navigation file digest mismatch: "+name)
             hashes["missioncontrol/"+name]=actual
         hashes["missioncontrol/manifest.json"]=hashlib.sha256((out/"missioncontrol/manifest.json").read_bytes()).hexdigest()
+        # Atomic review table derived from the same typed graph (not a BD SSOT).
+        atom_src=launch_dir/"GRAPH_ATOMS_W1_v1.json"
+        atom_doc=json.loads(atom_src.read_text(encoding="utf-8"))
+        from nav_model import CONFIG as graph_source
+        graph=json.loads(graph_source.read_text(encoding="utf-8"))
+        if not (atom_doc.get("schema")=="missioncontrol.launchpad.graph_atoms.v1"
+                and atom_doc.get("source_git_blob_sha")=="74a8e45d26d24f52aa751713df3706c492a9f94e"
+                and atom_doc.get("authority_transfer") is False
+                and atom_doc.get("merge_admission")=="HOLD"
+                and atom_doc.get("canonical_bd_unchanged") is True
+                and atom_doc.get("metrics",{}).get("all_atoms")==len(graph["nodes"])+len(graph["edges"])
+                and len(atom_doc.get("atoms",[]))==len(graph["nodes"])+len(graph["edges"])):
+            raise ValueError("MC graph atom source parity/authority failure")
+        target=out/"missioncontrol/GRAPH_ATOMS_W1_v1.json"
+        shutil.copyfile(atom_src,target)
+        hashes["missioncontrol/GRAPH_ATOMS_W1_v1.json"]=hashlib.sha256(target.read_bytes()).hexdigest()
+
     links=[("MissionControl · Federated Navigator","missioncontrol/index.html"),("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
     featured=('<div class="note"><strong>Mission Control makeover:</strong> '
-              '<a href="missioncontrol/index.html">Open six-panel federation navigator ↗</a>'
+              '<a href="missioncontrol/index.html">Open six-panel federation navigator ↗</a> · <a href="missioncontrol/GRAPH_ATOMS_W1_v1.json">Inspect 32 graph atoms ↗</a>'
               ' · graph/DAG, scheduler proposals, source-owned repositories, SIPOC and QA'
               '</div>' if (out/"missioncontrol/index.html").is_file() else '')
 
