@@ -1,0 +1,81 @@
+{
+  "schema": "missioncontrol.federated_operations_atlas_handoff.v2",
+  "evidence_class": "PINNED_SOURCE_BLOBS_AND_DECLARED_LINKS_NOT_NATIVE_AUTHENTICATION",
+  "date": "2026-10-17",
+  "producer": {
+    "repo": "GBOGEB/CODEX",
+    "pr": 1068,
+    "head_sha": "a9a512055beaf96d522d89d5200c4089e61d7322",
+    "artifact_base": "docs/",
+    "source_ledger": {
+      "path": "docs/data/missioncontrol_operations_atlas_v2.json",
+      "git_blob_sha": "42bc965eccab6b211ef9859005000a7c589d4e20"
+    },
+    "visualization": {
+      "path": "docs/missioncontrol_operations_atlas.html",
+      "git_blob_sha": "9b2a09eb7c4b4c718e9cd4924020121bc197f931"
+    },
+    "mermaid": {
+      "path": "docs/missioncontrol_operations_atlas_v2.mmd",
+      "git_blob_sha": "18e98ed7a4929a11278629be25c75fc78595871d"
+    },
+    "url": "https://github.com/GBOGEB/CODEX/pull/1068"
+  },
+  "consumer": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "pr": 631,
+    "prior_hub_source_sha": "3071d1e244c4623e1e8537dc23708636f97123a9",
+    "compatibility_manifest_path": "mission-control/federation-atlas/G3A_N13_N15_MASTER_DAGS_COMPAT_20261017.json",
+    "compatibility_manifest_blob": "84f0fdf2260d8230b7dafd23f4f462cdd5270acb",
+    "native_run_job_binding": null
+  },
+  "measurement": {
+    "repository_views": 5,
+    "source_registry_repositories": 4,
+    "verified_graph_families": 8,
+    "declared_cross_repo_links": 3,
+    "typed_nodes": 32,
+    "typed_edges": 43,
+    "accepted_remote_execution_edges": null,
+    "matched_coverage_delta": null,
+    "authenticated_worker_runs": null
+  },
+  "edges": [
+    {
+      "from": "GBOGEB/ABACUS::DMAIC_WORK_GRAPH",
+      "to": "GBOGEB/pipeline-automation-hub::CODE_PURPLE_BEAMS_DAG",
+      "state": "DECLARED",
+      "native_receipt": null,
+      "executable": false
+    },
+    {
+      "from": "GBOGEB/CODEX::FEDERATION_BRIDGE_GRAPH",
+      "to": "GBOGEB/pipeline-automation-hub::CODE_PURPLE_BEAMS_DAG",
+      "state": "DECLARED",
+      "native_receipt": null,
+      "executable": false
+    },
+    {
+      "from": "GBOGEB/cryoplant-project::QPS_ACCEPTANCE_DAG",
+      "to": "GBOGEB/pipeline-automation-hub::CODE_PURPLE_BEAMS_DAG",
+      "state": "DECLARED",
+      "native_receipt": null,
+      "executable": false
+    }
+  ],
+  "limits": {
+    "canonical_master_dags_path": null,
+    "approval_by_source_owner_required": true,
+    "source_blob_readback_required": true,
+    "cross_repository_dispatch_enabled": false,
+    "security_waiver": false,
+    "authority_transfer": false,
+    "merge_admission": "HOLD",
+    "causal_root_closure_credit": null
+  },
+  "notices": [
+    "Hub existing MASTER_DAGS compatibility bridge remains authoritative for candidate source registry validation, not a new master.",
+    "CODEX Mycelium is the orchestration owner; this is a read-only consumer crosswalk.",
+    "Static view, QA receipts and declared edges cannot be promoted to native run/job/attempt or main merge authority."
+  ]
+}
