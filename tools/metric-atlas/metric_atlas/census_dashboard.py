@@ -31,8 +31,11 @@ def render(manifest, rollup, ledger):
         raise ValueError("bad census source schemas")
     if manifest.get("wave") != rollup.get("wave"):
         raise ValueError("manifest/rollup wave mismatch")
-    counts = [cohort(ledger, "MC:METHOD_ATLAS"), cohort(ledger, "ABACUS:PY312_SUITE")]
-    counts[0]["label"], counts[1]["label"] = "Method Atlas", "ABACUS Python 3.12"
+    counts = [cohort(ledger, "MC:METHOD_ATLAS"),
+              cohort(ledger, "ABACUS:PY312_SUITE"),
+              cohort(ledger, "MC:QPS_CENSUS_CONTROLLER")]
+    counts[0]["label"], counts[1]["label"], counts[2]["label"] = (
+        "Method Atlas", "ABACUS Python 3.12", "QPS census controller")
     series = json.dumps(counts, separators=(",", ":")).replace("<", "\\u003c")
     lanes = rollup["lanes"]
     rows = "".join(
