@@ -1,0 +1,65 @@
+{
+  "schema": "missioncontrol.gg_math_convergence_bridge.v1",
+  "observed_date_utc": "2026-10-17",
+  "snapshot_atomic": false,
+  "owner": "GBOGEB/pipeline-automation-hub",
+  "provider": {
+    "repo": "GBOGEB/gg_MATH",
+    "merged_pr": 61,
+    "source_head_sha": "37afe75d9911691698a849b21fcfad0df1844432",
+    "merge_commit_sha": "961eadf43f19b6bc0ef11fdd640c30ab59f74f41",
+    "math_module": "kernels/convergence_control.py",
+    "html_generator": "mission/federation/convergence_dashboard.py",
+    "method_doc_pr": 62,
+    "native_candidate_run": 39047980808,
+    "native_conclusion_at_observation": "QUEUED",
+    "native_terminal_verified": false,
+    "native_run_job_attempt_evidence": null
+  },
+  "consumer": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "branch_baseline": "d4541f8e28c27d9182b583b62d72cf9d8b7ec679",
+    "existing_kpi_contract": "mission-control/federation-atlas/G3A_MATH_BRIDGE_VIEW_v1.json",
+    "six_kpi_registry_unchanged": true,
+    "native_consumer_qa": null,
+    "published_pages_url": null,
+    "hosted_http_verified": false,
+    "external_pointer_display": "gg_MATH convergence kernel & Plotly dashboard source (not hosted)"
+  },
+  "method": {
+    "gg_math_receipt_schema": "gg_math.convergence_receipt.v1",
+    "evidence_class": "SYNTHETIC_REFERENCE",
+    "live_pulse_receipts_ingested": 0,
+    "forecast_before_actual_input_provenance": null,
+    "canonical_bd_queue": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+    "candidate_states": [
+      "PROGRESSING",
+      "REGRESSING",
+      "PLATEAU_DESCRIPTIVE_NOT_PROVEN_STABLE",
+      "BLOCKED_UNTIL_OWNER_EVIDENCE",
+      "NEAR_FINITE_CAP_DESCRIPTIVE",
+      "EQUIVALENCE_ESTIMATE_PASS_PROVENANCE_UNVERIFIED",
+      "INSUFFICIENT_TEMPORAL_DEPTH"
+    ],
+    "six_sigma_attested": false,
+    "pca_temporal_certified": false,
+    "bt_stable_certified": false
+  },
+  "controls": {
+    "read_only": true,
+    "new_global_kpi_registry": false,
+    "duplicate_ssot": false,
+    "authority_transfer": false,
+    "merge_admission": "HOLD",
+    "qps_acceptance": false,
+    "security_waiver": false,
+    "merge_allowed": false,
+    "raw_telemetry_promoted": false
+  },
+  "next_owner": [
+    "OBTAIN_PROVIDER_EXACT_HEAD_TERMINAL_PY311_PY312",
+    "OBTAIN_PROVIDER_PLOTLY_CHROMIUM_QA",
+    "AUTHENTICATE_ARTIFACT_SHA256_AND_PROVENANCE_BEFORE_PAGES_CUSTODY",
+    "OWNER_REVIEW_AND_GOVERNED_CONSUMER_MERGE"
+  ]
+}
