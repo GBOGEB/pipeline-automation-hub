@@ -177,6 +177,7 @@ def render(report):
                           font=dict(color="#cce0ed",size=11),
                           yaxis=dict(rangemode="tozero",gridcolor="#3e596a"))
         figures.append(to_html(fig, full_html=False, include_plotlyjs=False,
+                               div_id="n3-" + key,
                                config={"responsive": True, "displayModeBar": False}))
     table = "".join("<tr><th>" + html.escape(k["label"]) + "</th><td>" +
                     (html.escape(str(k["current_value"])) if k["current_value"] is not None
