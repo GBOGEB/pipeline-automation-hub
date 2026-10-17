@@ -117,7 +117,7 @@ def test_viewport(browser,url,mode,w,h,snap,out,report):
     page.locator("#state-filter").select_option("ALL")
     check(count_visible(page,"#action-cards details")==11,"ALL restores actions",log)
     page.locator("#tab-evidence").click()
-    check(page.locator("#pr-rows tr").count()==8,"all eight source PR rows",log)
+    check(page.locator("#pr-rows tr").count()==9,"all nine source PR rows",log)
     check(page.locator("#issue-rows tr").count()==2,"selected native issue rows",log)
     check(page.locator("#pr-rows").inner_text().count("MERGED")>=4,"live readback preserves merged PR statuses",log)
     page.locator("#tab-monikers").click()
