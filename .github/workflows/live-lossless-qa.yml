@@ -34,7 +34,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Python lineage/privacy/negative tests
-        run: python -m unittest discover -s mission-control/v2/handoff/live_lossless -p 'test_live_lossless.py' -v
+        run: python -m unittest discover -s mission-control/v2/handoff/live_lossless -p 'test_*.py' -v
       - name: Validate JS and build source-bound dashboard
         shell: bash
         run: |
