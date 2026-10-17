@@ -42,4 +42,29 @@ class TestPages(unittest.TestCase):
    (target/"manifest.json").write_text(json.dumps({"schema":"missioncontrol.makeover.manifest.v1","source_sha":"a"*40,"published_by":"EXISTING_METHOD_ATLAS_PAGES_ONLY","merge_admission":"HOLD","security_waiver":False,"authority_transfer":False,"files_sha256":{"index.html":"0"*64,"graph.json":"0"*64,"graph.mmd":"0"*64}}))
    with self.assertRaisesRegex(ValueError,"Mission rebuild hash mismatch"):
     pages_portal.build(src,p/"out","a"*40)
+ def test_w2_requires_complete_native_plotly_pair(self):
+  with tempfile.TemporaryDirectory() as d:
+   p=Path(d);src=p/"atlas";src.mkdir();(src/"index.html").write_text("Atlas")
+   w=src/"mission-rebuild";w.mkdir();(w/"evidence.json").write_text("{}")
+   with self.assertRaisesRegex(ValueError,"partial W2 MissionControl evidence"):
+    pages_portal.build(src,p/"out","a"*40)
+ def test_w2_rejects_forged_member_hash(self):
+  with tempfile.TemporaryDirectory() as d:
+   p=Path(d);src=p/"atlas";src.mkdir();(src/"index.html").write_text("Atlas")
+   w=src/"mission-rebuild";w.mkdir()
+   state={"schema":"missioncontrol.makeover.w2_native_observation.v1",
+          "source_head_sha":"a"*40,"governance":{"merge_admission":"HOLD"},
+          "gg_math":{"native_live_pulse_receipts_ingested":0},
+          "fleet":{"capacity_slots":None},
+          "unknown_burndown":{"coverage":{"covered_statements":None}}}
+   receipt={"schema":"missioncontrol.makeover.w2_plotly_manifest.v1",
+            "source_sha":"a"*40,"publisher":"EXISTING_METHOD_ATLAS_PAGES_ONLY",
+            "merge_admission":"HOLD","security_waiver":False,
+            "authority_transfer":False,"gg_math_kernel_duplicated":False,
+            "member_sha256":{"evidence.json":"0"*64,"evidence.html":"0"*64}}
+   (w/"evidence.json").write_text(json.dumps(state))
+   (w/"evidence.html").write_text("<title>forged</title>")
+   (w/"evidence-manifest.json").write_text(json.dumps(receipt))
+   with self.assertRaisesRegex(ValueError,"W2 evidence source hash mismatch"):
+    pages_portal.build(src,p/"out","a"*40)
 if __name__=="__main__":unittest.main()
