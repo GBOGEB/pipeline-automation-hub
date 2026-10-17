@@ -1,0 +1,90 @@
+name: CP.CLOSE GitHub Handover QA
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/handoff/**'
+      - '.github/workflows/cp-close-github-qa.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/v2/handoff/**'
+      - '.github/workflows/cp-close-github-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  closeout-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact checkout
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run CP.CLOSE negative/contract tests
+        run: python -m unittest discover -s mission-control/v2/handoff/closeout -p 'test_cp_close.py' -v
+      - name: Build, verify and optionally check committed closeout bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/v2/handoff/closeout
+          INTAKE="$SRC/intakes/CP-G3P-HTMLQA-20261017.json"
+          QUEUE=mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json
+          OUT="$RUNNER_TEMP/cp-close-record"
+          python "$SRC/cp_close.py" --intake "$INTAKE" --bd "$QUEUE" --out "$OUT" --zip "$RUNNER_TEMP/CP-G3P-HTMLQA-20261017.zip"
+          python "$SRC/cp_close.py" --intake "$INTAKE" --bd "$QUEUE" --out "$OUT" --check
+          if [ -f "$SRC/records/CP-G3P-HTMLQA-20261017/STATE.json" ]; then
+            python "$SRC/cp_close.py" --intake "$INTAKE" --bd "$QUEUE" --out "$SRC/records/CP-G3P-HTMLQA-20261017" --check
+            echo COMMITTED_RECORD_BYTE_PARITY=PASS
+          else
+            echo COMMITTED_RECORD_BYTE_PARITY=PENDING_FIRST_GENERATION
+          fi
+      - name: Native SHA and privacy assertions
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          root=Path(os.environ['RUNNER_TEMP'])/'cp-close-record'
+          m=json.loads((root/'MANIFEST.json').read_text())
+          for name,digest in m['member_sha256'].items():
+              assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest
+          s=json.loads((root/'STATE.json').read_text())
+          p=json.loads((root/'CHAT_STATS.json').read_text())
+          b=json.loads((root/'BD_QUEUE_READONLY.json').read_text())
+          assert m['verbatim_transcript_claim'] is False
+          assert s['full_chat_prompt_count'] is None
+          assert p['full_chat_total_prompts'] is None and p['model_tokens'] is None
+          assert s['intent_count_reconstructed']==6 and s['action_count_reconstructed']==7
+          assert len(b['focus'])==3 and b['new_canonical_bd_items']==0
+          assert s['release_gate']=='INDEPENDENT_PR_AND_MAIN_ADMISSION'
+          print('CP_CLOSE_NATIVE=PASS INTENTS=6 ACTIONS=7 PROMPTS=UNKNOWN BD_READONLY=3')
+          PY
+      - name: Emit sanitized generated files for main-bound source commit
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,json
+          root=Path(os.environ['RUNNER_TEMP'])/'cp-close-record'
+          for file in sorted(root.iterdir()):
+              if file.is_file():
+                  print('CP_CLOSE_EXPORT_'+'FILE='+json.dumps({'name':file.name,'content':file.read_text(encoding='utf-8')},ensure_ascii=True,separators=(',',':')))
+          PY
+      - name: Upload verified bundle and ZIP
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp-close-github-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/cp-close-record/
+            ${{ runner.temp }}/CP-G3P-HTMLQA-20261017.zip
+          if-no-files-found: warn
+          retention-days: 21
