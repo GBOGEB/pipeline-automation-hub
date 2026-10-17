@@ -87,37 +87,13 @@ def mermaid(data):
 
 
 def html_report(data):
-    check(data.get('merge_admission')=='HOLD' and data.get('authority_transfer') is False,
-          'cannot render escalated authority')
-    esc=lambda s: html.escape(str(s),quote=True)
-    circles=[]
-    for i,node in enumerate(data['nodes']):
-        x=105+i*148
-        circles.append(f'<g><circle cx="{x}" cy="85" r="30" fill="#e4e8ed" stroke="#253c52" stroke-width="2"/>'
-                       f'<text x="{x}" y="90" text-anchor="middle">N+{node["ordinal"]}</text>'
-                       f'<title>{esc(node["id"])}</title></g>')
-    edge_lines=[]
-    for i,edge in enumerate(data['edges']):
-        style=' stroke-dasharray="5 5"' if edge['evidence']=='DECLARED_GAP' else ''
-        edge_lines.append(f'<path d="M {135+i*148} 85 L {223+i*148} 85" stroke="#35475e"'
-                          f' stroke-width="2" marker-end="url(#arr)"{style}/>' )
-    rows=''.join(f'<tr><th>N+{n["ordinal"]}</th><td>{esc(n["wave"])}</td>'
-                 f'<td><code>{esc(n["source_head_claim"][:12])}</code></td>'
-                 f'<td>{esc(n["test_kind"])}</td><td>HOLD</td></tr>' for n in data['nodes'])
-    return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
-            '<title>Mission Control G3P lineage</title><style>body{font:16px system-ui,sans-serif;margin:auto;padding:2rem;max-width:1140px;color:#203247}'
-            'svg{max-width:100%;height:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:.55rem;border-bottom:1px solid #cbd2da}'
-            'code{overflow-wrap:anywhere} .warning{font-weight:700}</style></head><body><h1>G3P — six-pulse evidence lineage</h1>'
-            '<p class="warning">Read-only source claims. Unverified intermediate Git ancestry and native CI cannot grant merge admission.</p>'
-            '<svg role="img" aria-label="Six directed pulse nodes; dashed arrows indicate unproven intervening source ancestry" viewBox="0 0 960 180">'
-            '<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z"/></marker></defs>'
-            +''.join(edge_lines)+''.join(circles)+'</svg>'
-            '<p>Solid arrows: declared intra-wave continuation. Dashed arrow: unproven cross-wave source ancestry.</p>'
-            '<h2>SIPOC feeder</h2><p>'+esc(data['sipoc']['supplier'])+' → '+esc(data['sipoc']['inputs'])+' → '
-            +esc(data['sipoc']['process'])+' → '+esc(data['sipoc']['outputs'])+' → '+esc(data['sipoc']['customer'])+'</p>'
-            '<p>Feed health: UNKNOWN · Confirmed causal roots: 0 · Admission: HOLD</p>'
-            '<h2>Pulse ledger</h2><table><thead><tr><th>Pulse</th><th>Wave</th><th>Source SHA claim</th><th>Tests</th><th>Admission</th></tr></thead><tbody>'
-            +rows+'</tbody></table><p>Input wave digests: '+', '.join(esc(w['source_digest']) for w in data['waves'])+'</p></body></html>')
+    """Self-contained, interactive N-index replay; source data remain read-only.
+
+    The bundled page is usable offline; same-origin cyclic reload and push
+    updates activate when served by g3p_live_dashboard.py.
+    """
+    from g3p_live_dashboard import render_html
+    return render_html(data)
 
 
 def main():
