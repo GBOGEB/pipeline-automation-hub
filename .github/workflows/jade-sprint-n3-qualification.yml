@@ -1,0 +1,59 @@
+name: JADE_CASTE N+3 point-release sprint readiness QA
+on:
+  pull_request:
+    paths:
+      - 'mission-control/jade_temple/sprint/**'
+      - 'mission-control/jade_temple/tests/test_jade_sprint_n3.py'
+      - '.github/workflows/jade-sprint-n3-qualification.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: jade-n3-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  offline-contract:
+    name: JADE N+3 read-only ${{ matrix.os }} Python ${{ matrix.python }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, python: '3.11'}
+          - {os: windows-2022, python: '3.12'}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    steps:
+      - name: Exact-head checkout without saved credentials
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Source SHA and full N+3 adversarial testflight
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          python -m unittest discover -s mission-control/jade_temple/tests -p 'test_jade_sprint_n3.py' -v
+      - name: Build source-bound DAG/SIPOC/queue/HTML receipts
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/jade_temple/sprint/cli.py --mode plan --out jade_sprint_results --expected-head "$HEAD_SHA"
+          python mission-control/jade_temple/sprint/cli.py --mode verify --out jade_sprint_results --expected-head "$HEAD_SHA"
+          test -s jade_sprint_results/SPRINT_SPINE.mmd
+          test -s jade_sprint_results/SPRINT_DASHBOARD.html
+      - name: Retain JADE non-authoritative candidate receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: jade-sprint-${{ matrix.os }}-${{ matrix.python }}-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: jade_sprint_results/
+          retention-days: 21
+          if-no-files-found: warn
