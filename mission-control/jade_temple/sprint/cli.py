@@ -234,6 +234,11 @@ def write_bundle(root,out,readback=None):
 def seal(out,head,inputs):
     names=list(HASH_FILES)
     if (out/"LOCAL_RUN.json").is_file():
+        local=json.loads((out/"LOCAL_RUN.json").read_text(encoding="utf-8"))
+        demand(local.get("head")==head and local.get("source_digest")==inputs and
+               local.get("release_admission")=="HOLD" and
+               local.get("point_release")=="TARGET_NOT_ACHIEVED" and
+               local.get("external_worker_dispatches")==0, "STALE_OR_PROMOTED_LOCAL_RESULT")
         names.append("LOCAL_RUN.json")
     receipt={"schema":SCHEMA,"source_head":head,
              "source_contents_sha256":inputs,
