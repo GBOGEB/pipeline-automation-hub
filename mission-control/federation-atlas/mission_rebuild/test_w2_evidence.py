@@ -106,6 +106,18 @@ class TestW2NativeBridge(unittest.TestCase):
         self.assertIn("NOT_ASSESSABLE",page)
         self.assertIn("UNKNOWN",page)
 
+    def test_renderer_plotly_library_precedes_inline_inlays(self):
+        """Offline fragments must not call Plotly before it exists."""
+        s = self.make()
+        s["evidence_class"] = "SYNTHETIC_TEST_FIXTURE_NOT_NATIVE"
+        page = plots.render(s)
+        signature = plots.get_plotlyjs()[:48]
+        self.assertIn(signature, page)
+        self.assertLess(
+            page.index(signature), page.index('class="inlay"')
+        )
+        self.assertEqual(page.count('class="inlay"'), 4)
+
     def test_renderer_rejects_imputed_coverage(self):
         s=self.make();s["unknown_burndown"]["coverage"]["covered_statements"]=10
         with self.assertRaisesRegex(ValueError,"unknown counts may not be imputed"):
