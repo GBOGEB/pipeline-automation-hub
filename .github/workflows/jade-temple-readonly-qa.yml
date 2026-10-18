@@ -1,0 +1,72 @@
+name: JADE_CASTE N+1 source and browser assurance (read-only)
+on:
+  pull_request:
+    paths:
+      - 'mission-control/jade_temple/**'
+      - 'mission-control/federation-atlas/pages_portal.py'
+      - '.github/workflows/jade-temple-readonly-qa.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: jade-nplus1-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  source:
+    name: JADE source, negative controls, deterministic bundle
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact checkout and source binding
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$HEAD"
+          echo "JADE_SOURCE_HEAD=$HEAD"
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Contract, adversarial and hash-drift tests
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/jade_temple/tests -p 'test_*.py' -v
+          python mission-control/jade_temple/site/build_dashboard.py --check
+          python mission-control/jade_temple/site/build_green.py --check
+          python -m py_compile mission-control/federation-atlas/pages_portal.py
+          test -s mission-control/jade_temple/site/site-manifest.json
+  browser:
+    name: JADE responsive browser / offline security QA
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install pinned Playwright / Chromium
+        run: |
+          python -m pip install --disable-pip-version-check playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Responsive interactions and negative external-request check
+        run: |
+          set -euo pipefail
+          python mission-control/jade_temple/tools/run_nplus1_browser_qa.py
+          test -s mission-control/jade_temple/qa/nplus1/receipt.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: jade-nplus1-browser-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: |
+            mission-control/jade_temple/qa/nplus1/receipt.json
+            mission-control/jade_temple/qa/nplus1/*.png
+          retention-days: 21
+          if-no-files-found: warn

@@ -235,7 +235,21 @@ def build(atlas,out,sha):
             if src.is_file() and src.suffix in {".html",".js",".json",".pdf",".md",".yaml",".py"}:
                 dest=out/"p-process"/src.relative_to(psite); dest.parent.mkdir(exist_ok=True,parents=True)
                 shutil.copyfile(src,dest); hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
-    links=[("GLOBAL DoV · Consolidated Convergence Hub","convergence/index.html"),("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("P process: Code Purple × EVERRED","p-process/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
+    # JADE_CASTE is a fail-closed, hash-bound child of this existing Pages publisher.
+    # This is file staging, not independent deployment or release authority.
+    jade_root = Path(__file__).resolve().parents[1] / "jade_temple"
+    jade_bridge = jade_root / "portal_bridge.py"
+    if jade_bridge.is_file():
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("jade_temple_pages_bridge", jade_bridge)
+        if spec is None or spec.loader is None:
+            raise ValueError("JADE_BRIDGE_IMPORT_FAILED")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        module.stage_jade(jade_root, out, hashes, sha)
+    elif (jade_root / "site" / "green.html").exists():
+        raise ValueError("JADE_SOURCE_WITHOUT_VALIDATED_BRIDGE")
+    links=[("JADE_CASTE · GoGREEN Top21 readiness","jade/green.html"),("GLOBAL DoV · Consolidated Convergence Hub","convergence/index.html"),("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("P process: Code Purple × EVERRED","p-process/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
     if (out / "mission-rebuild" / "index.html").is_file():
         cards += '<a class="card" href="mission-rebuild/index.html">MISSION CONTROL · Repository and DAG explorer ↗</a>'

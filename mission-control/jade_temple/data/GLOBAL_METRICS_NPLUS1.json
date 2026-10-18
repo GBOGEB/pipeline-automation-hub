@@ -1,0 +1,66 @@
+{
+  "schema": "jade.temple.global_kpi.v1",
+  "denominator": "N11_MISSION_SELECTED_21",
+  "observed_non_atomic": true,
+  "snapshot_group": "J1_READINESS_RECENSUS",
+  "kpis": {
+    "heads_observed": {
+      "numerator": 21,
+      "denominator": 21,
+      "evidence": "GitHub branch API readback"
+    },
+    "readme_root_exists": {
+      "numerator": 21,
+      "denominator": 21,
+      "evidence": "GitHub top-level tree/readme enumeration"
+    },
+    "n11_green_sample_overlap": {
+      "numerator": 13,
+      "denominator": 21,
+      "evidence": "2026-10-17 GoGREEN merged sample cohort crosswalk"
+    },
+    "no_recent_branch_workflow_observed": {
+      "numerator": 8,
+      "denominator": 21,
+      "evidence": "GitHub recent Actions query, not absence proof"
+    },
+    "historical_n11_root_review_candidates": {
+      "count": 706,
+      "denominator": 880,
+      "not_confirmed_defects": true
+    },
+    "protected_flag_true": {
+      "numerator": 1,
+      "denominator": 21,
+      "not_effective_governance_proof": true
+    },
+    "historical_gogreen_sample_prs": {
+      "sampled_prs": 41,
+      "check_ids": 509,
+      "failed_check_manifestations": 33,
+      "cohort": "OTHER_TOP21_COHORT"
+    },
+    "positive_historical_sample_n11_overlap": {
+      "numerator": 9,
+      "denominator": 13,
+      "not_admission": true
+    },
+    "successful_pages_dynamic_run_samples": {
+      "numerator": 3,
+      "denominator": 21,
+      "hosted_url_verified": null
+    },
+    "owner_verified_pages": null,
+    "owner_verified_mach": null,
+    "eligible_exact_head_release_ci": null,
+    "governed_point_releases": null,
+    "priorities": {
+      "P0": 5,
+      "P1": 9,
+      "P2": 7
+    }
+  },
+  "release_admission": "HOLD",
+  "security_waiver": false,
+  "authority_transfer": false
+}
