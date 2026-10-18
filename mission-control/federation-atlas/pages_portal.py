@@ -228,6 +228,42 @@ def build(atlas,out,sha):
             dst.parent.mkdir(exist_ok=True, parents=True)
             shutil.copyfile(src, dst)
             hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
+    # W34 Superstitch: existing Method Atlas is the ONLY public publisher.
+    sw_allow=("index.html","app.js","style.css","graph.svg","graph.json",
+              "spline.svg","taxonomy.json","glossary.json","manifest.json")
+    sw_src=atlas/"superstitch"
+    sw_present=[n for n in sw_allow if (sw_src/n).is_file()]
+    if sw_present and len(sw_present)!=len(sw_allow):
+        raise ValueError("partial W34 Superstitch output")
+    sw_ready=len(sw_present)==len(sw_allow)
+    if sw_ready:
+        sw_m=json.loads((sw_src/"manifest.json").read_text(encoding="utf-8"))
+        sw_g=json.loads((sw_src/"graph.json").read_text(encoding="utf-8"))
+        if not (sw_m.get("schema")=="missioncontrol.superstitch.manifest.v1"
+                and sw_m.get("presentation_head")==sha
+                and sw_m.get("role")=="READ_ONLY_EXISTING_PAGES_CONSUMER"
+                and sw_m.get("merger_admission")=="HOLD"
+                and sw_m.get("run_dispatch") is False
+                and sw_m.get("qps_owner_acceptance") is None
+                and sw_m.get("native_test_attestation") is None
+                and sw_g.get("publication",{}).get("presentation_head")==sha
+                and sw_g.get("publication",{}).get("native_current_attestation") is None
+                and sw_g.get("authority",{}).get("zip_verifier")=="MC-530"
+                and sw_g.get("authority",{}).get("breadth_producer")=="MC-531"
+                and sw_g.get("authority",{}).get("method_viewer")=="MC-533"
+                and sw_g.get("authority",{}).get("merge_admission")=="HOLD"):
+            raise ValueError("Superstitch publication/authority contract")
+        if set(sw_m.get("member_sha256",{})) != set(sw_allow)-{"manifest.json"}:
+            raise ValueError("Superstitch public-member population drift")
+        for filename in sw_allow:
+            src=sw_src/filename
+            if filename!="manifest.json":
+                if hashlib.sha256(src.read_bytes()).hexdigest()!=sw_m["member_sha256"][filename] or src.stat().st_size!=sw_m["member_bytes"][filename]:
+                    raise ValueError("Superstitch public-member byte mismatch: "+filename)
+            dest=out/"superstitch"/filename
+            dest.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copyfile(src,dest)
+            hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
     # P process (Code Purple x EVERRED): prebuilt static site committed under qps-triage-ultra/p-process/site.
     psite=atlas/"p-process"
     if psite.is_dir():
@@ -249,7 +285,9 @@ def build(atlas,out,sha):
         module.stage_jade(jade_root, out, hashes, sha)
     elif (jade_root / "site" / "green.html").exists():
         raise ValueError("JADE_SOURCE_WITHOUT_VALIDATED_BRIDGE")
-    links=[("JADE_CASTE · GoGREEN Top21 readiness","jade/green.html"),("GLOBAL DoV · Consolidated Convergence Hub","convergence/index.html"),("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("P process: Code Purple × EVERRED","p-process/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
+    links=[("JADE_CASTE · GoGREEN Top21 readiness","jade/green.html"),
+    if sw_ready:
+        links.insert(1,("W34 Superstitch · DOW/KEB/QPS (proposed)","superstitch/index.html"))("GLOBAL DoV · Consolidated Convergence Hub","convergence/index.html"),("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("P process: Code Purple × EVERRED","p-process/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
     if (out / "mission-rebuild" / "index.html").is_file():
         cards += '<a class="card" href="mission-rebuild/index.html">MISSION CONTROL · Repository and DAG explorer ↗</a>'
