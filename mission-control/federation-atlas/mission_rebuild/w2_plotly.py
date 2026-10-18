@@ -183,6 +183,8 @@ def render(d):
     page=r'''<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer"><title>MISSION CONTROL W2 · gg_MATH evidence</title>
+<!-- Plotly is loaded BEFORE to_html card fragments that synchronously call Plotly.newPlot. -->
+<script>__PLOTLY_LIBRARY__</script>
 <style>
 :root{color-scheme:dark;font-family:system-ui,sans-serif;color:#e8f3fa;background:#0b1725}
 *{box-sizing:border-box}body{margin:0}header{background:#123047;padding:24px clamp(18px,3vw,45px);border-bottom:1px solid #385b70}
