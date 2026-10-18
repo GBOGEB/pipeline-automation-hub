@@ -47,9 +47,15 @@ def project(proof, graph, producer=None):
             "graph source population mismatch")
     require(metrics.get("native_verified_edges") is None and
             metrics.get("formal_root_closures") is None, "graph native receipt unverified")
-    require(len(graph.get("topological_order") or []) == 8 and
-            all(e.get("binding") == "DECLARED" and e.get("accepted") is False and
-                e.get("receipt") is None for e in graph.get("edges", [])),
+    order, edges = graph.get("topological_order"), graph.get("edges")
+    require(isinstance(order, list) and len(order) == 8 and
+            all(isinstance(node, str) and node for node in order) and
+            len(set(order)) == 8 and
+            isinstance(edges, list) and len(edges) == 3 and
+            all(isinstance(edge, dict) and
+                edge.get("binding") == "DECLARED" and
+                edge.get("accepted") is False and
+                edge.get("receipt") is None for edge in edges),
             "graph edges promoted or topology incomplete")
     rows = proof.get("pulse_records")
     require(isinstance(rows, list) and len(rows) == 3, "G3A three pulses incomplete")
