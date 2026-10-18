@@ -1,0 +1,82 @@
+name: Mission Control W4 SPINE control-plane (read-only)
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/spine_w4/**'
+      - '.github/workflows/mission-control-w4-spine.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/v2/spine_w4/**'
+      - '.github/workflows/mission-control-w4-spine.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  spine-proof:
+    name: SPINE/SIPOC Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11','3.12']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Exact HEAD, native positive and negative tests
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_HEAD"
+          python -m unittest discover -s mission-control/v2/spine_w4 -p 'test_spine_control.py' -v 2>&1 | tee spine-tests.log
+          grep -Eq '^Ran 19 tests?' spine-tests.log
+      - name: Generate source-bound DAG/SIPOC/HTML/telemetry with hash manifest
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/v2/spine_w4/spine_control.py \
+            --contract mission-control/v2/spine_w4/control_view.json \
+            --out /tmp/spine-w4
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path('/tmp/spine-w4')
+          receipt=json.loads((root/'spine-control.json').read_text())
+          manifest=json.loads((root/'manifest.json').read_text())
+          assert receipt['gate']=='HOLD'
+          assert receipt['node_count']==20 and receipt['forward_edge_count']==21
+          assert receipt['next_pulse_feedback_count']==3 and receipt['sipoc_processes']==6
+          assert len(manifest['artifacts_sha256'])==5 and manifest['gate']=='HOLD'
+          assert receipt['consumer_acceptance']=='WITHHELD'
+          assert receipt['authority_transfer'] is False
+          for name,digest in manifest['artifacts_sha256'].items():
+              assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest
+          r={'schema':'missioncontrol.spine.w4.native_observation.v1',
+             'workflow_head_sha':os.environ['EXACT_HEAD'],
+             'producer_snapshot_sha':receipt['source_sha'],
+             'run_id':os.environ.get('GITHUB_RUN_ID'),
+             'run_attempt':os.environ.get('GITHUB_RUN_ATTEMPT'),
+             'scope':'W4_CONTROL_VIEW_ONLY',
+             'actual_github_owner_rules_retested':False,
+             'native_tests':'PASS','merge_admission':'HOLD',
+             'remote_dispatch_authorized':False,'formal_credit_delta':0}
+          (root/'ci-observation.json').write_text(json.dumps(r,indent=2)+'\n')
+          print('W4_SPINE_SOURCE=PASS; GRAPH=20/21+3; SIPOC=6; ADMISSION=HOLD')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: w4-spine-py${{ matrix.python-version }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/spine-w4/
+            spine-tests.log
+          if-no-files-found: warn
