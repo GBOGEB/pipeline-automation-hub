@@ -194,6 +194,33 @@ def mermaid(data):
   LONG -.-> J3
 """
 
+def stage_svg():
+    """Human-scale owner-gate view; full 253-node DAG remains in receipt JSON."""
+    return '''<div class="scroll" role="region" aria-label="JADE gated readiness DAG">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1110 300" width="1100" height="300" role="img" aria-label="Source census to owner point release, including deferred gate paths">
+<defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="#94b9da"/></marker></defs>
+<g fill="none" stroke="#91b5d4" stroke-width="2" marker-end="url(#arrow)">
+<path d="M153 153 H185"/><path d="M310 153 H340"/><path d="M255 120 V50 H340"/>
+<path d="M255 120 V50 H600"/><path d="M255 177 V250 H505"/><path d="M465 153 H505"/>
+<path d="M635 153 H775"/><path d="M570 82 V108 H835 V122"/>
+<path d="M740 50 H835 V122"/><path d="M635 250 H835 V177"/>
+<path d="M910 153 H950"/>
+</g>
+<g font-family="system-ui,Arial" font-size="12" text-anchor="middle">
+<a href="#owners"><rect x="20" y="122" width="133" height="60" rx="8" fill="#1f3755" stroke="#62b3df"/><text x="86" y="147" fill="#eff8ff">Top21 source</text><text x="86" y="166" fill="#a9c2dc">Historical census</text></a>
+<rect x="185" y="122" width="125" height="60" rx="8" fill="#173d39" stroke="#50aa8c"/><text x="247" y="147" fill="#eaf9f3">J0 INVENTORY</text><text x="247" y="167" fill="#8dd8bf">21 / 21 observed</text>
+<a href="#dimensions"><rect x="340" y="122" width="125" height="60" rx="8" fill="#233147" stroke="#6195bd" stroke-dasharray="4 3"/><text x="402" y="147" fill="#f0f4fb">J1 NAVIGATION</text><text x="402" y="167" fill="#b4c6d8">Unverified</text></a>
+<a href="#dimensions"><rect x="340" y="15" width="235" height="67" rx="8" fill="#322b51" stroke="#ab9de8" stroke-dasharray="4 3"/><text x="457" y="39" fill="#f0f0ff">5 ENGINEERING AXES</text><text x="457" y="58" fill="#cec2f7">Coverage · faults · integration</text><text x="457" y="73" fill="#cec2f7">Runners · first-red</text></a>
+<rect x="600" y="15" width="140" height="67" rx="8" fill="#27384a" stroke="#81b1d6" stroke-dasharray="4 3"/><text x="670" y="43" fill="#f1f7ff">SUPPLY CHAIN</text><text x="670" y="62" fill="#bcd5e9">Proof pending</text>
+<a href="#dimensions"><rect x="505" y="122" width="130" height="60" rx="8" fill="#43351d" stroke="#e4b869" stroke-dasharray="4 3"/><text x="570" y="148" fill="#fff5de">J2 HOSTED</text><text x="570" y="167" fill="#f5d399">Owner / deferred</text></a>
+<a href="#dimensions"><rect x="505" y="220" width="130" height="60" rx="8" fill="#43351d" stroke="#e4b869" stroke-dasharray="4 3"/><text x="570" y="246" fill="#fff5de">J3 GOVERNANCE</text><text x="570" y="266" fill="#f5d399">Owner / deferred</text></a>
+<rect x="775" y="122" width="135" height="60" rx="8" fill="#42352c" stroke="#e6b177"/><text x="842" y="147" fill="#fff4e8">J4 CANDIDATE</text><text x="842" y="167" fill="#f1c897">Not qualified</text>
+<rect x="950" y="122" width="140" height="60" rx="8" fill="#452735" stroke="#e88caa"/><text x="1020" y="147" fill="#fff0f3">J5 POINT RELEASE</text><text x="1020" y="167" fill="#f8bdcc">TARGET · HOLD</text>
+</g>
+<text x="20" y="295" fill="#a8bad1" font-size="12">Solid = prerequisite · dashed border = proof pending · no remote worker dispatched</text>
+</svg></div>'''
+
+
 def render_html(data):
     card=lambda x,y:"<article><strong>"+html.escape(str(x))+"</strong><p>"+html.escape(str(y))+"</p></article>"
     cards="".join([card("21 / 21","Historical J0 inventory"),card("21","Owner TODOs"),
@@ -222,8 +249,9 @@ def render_html(data):
     doc+="<title>JADE_CASTE · Point-release sprint target</title><style>"+css+"</style></head><body><main>"
     doc+="<h1>JADE_TEMPLE · POINT RELEASE preparation</h1><p>Source-bound readiness projection, not a released outcome. No live GitHub connection.</p>"
     doc+="<div class='grid'>"+cards+"</div>"
-    doc+="<section><h2>Gated sequence</h2><details open><summary>J0 → J1 → J2/J3 → J4 → J5 and independent testing lanes</summary><p>Local QA, source coverage, adversarial penetration, integration, platform reach, first-red, supply chain and hosted Pages are separate proof lanes. External approvals and long CI dependencies are deferred, not worker-occupied. Machine DAG and SIPOC are companion JSON files.</p></details></section>"
-    doc+="<section><h2>15 independent dimensions</h2><div class='scroll'><table><tr><th>Dimension</th><th>Unit</th><th>Qualified N/D</th><th>Owner</th></tr>"+dims+"</table></div></section>"
-    doc+="<section><h2>Owner work-order queue — staged only</h2><div class='scroll'><table><tr><th>Priority</th><th>Repo</th><th>Required next action</th><th>Permission</th></tr>"+work+"</table></div></section>"
+    doc+="<section><h2>Gated DAG sequence · source to owner release</h2>"+stage_svg()+"<details><summary>Expand SIPOC, resource and dependency boundaries</summary><p>Local QA, source coverage, adversarial penetration, integration, platform reach, first-red, supply chain and hosted Pages are separate proof lanes. External approvals and long CI dependencies are deferred, not worker-occupied. Machine DAG and SIPOC are companion JSON files.</p></details></section>"
+    doc+="<section><h2>Worker pools · queue pressure · caching</h2><div class=grid>"+card("2 planned","Local Python slots; not a measured native pool")+card("UNKNOWN","GitHub Actions free/occupied slots")+card("UNKNOWN","Native queue P95")+card("LOCAL ONLY","Content-hash cache never creates release credit")+"</div></section>"
+    doc+="<section id="dimensions"><h2>15 independent dimensions</h2><div class='scroll'><table><tr><th>Dimension</th><th>Unit</th><th>Qualified N/D</th><th>Owner</th></tr>"+dims+"</table></div></section>"
+    doc+="<section id="owners"><h2>Owner work-order queue — staged only</h2><div class='scroll'><table><tr><th>Priority</th><th>Repo</th><th>Required next action</th><th>Permission</th></tr>"+work+"</table></div></section>"
     doc+="<p>J0 source identity is not J1 quality. Cached local successes cannot replace native CI, HTTPS parity, security, reviewers or point-release approval.</p></main></body></html>\n"
     return doc
