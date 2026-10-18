@@ -183,8 +183,7 @@ def render(d):
     page=r'''<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer"><title>MISSION CONTROL W2 · gg_MATH evidence</title>
-<!-- Plotly is loaded BEFORE to_html card fragments that synchronously call Plotly.newPlot. -->
-<script>__PLOTLY_LIBRARY__</script>
+<!-- Offline Plotly loads once at body start, before synchronous to_html fragments. -->
 <style>
 :root{color-scheme:dark;font-family:system-ui,sans-serif;color:#e8f3fa;background:#0b1725}
 *{box-sizing:border-box}body{margin:0}header{background:#123047;padding:24px clamp(18px,3vw,45px);border-bottom:1px solid #385b70}
@@ -208,7 +207,6 @@ dialog::backdrop{background:#020810cd}.modal-head{display:flex;justify-content:s
 <div class="notice">Read-only API observation; not an atomic snapshot or Six Sigma certificate. Provider's built-in Plotly demonstrations are SYNTHETIC, not actual federation coverage. W1 historical merge does not imply admission.</div></header><main>
 <p class="meta">Consumer checkout <code>__SHA__</code> · observation __OBS__ · W1 run attempt __ATTEMPT__ · queued __QUEUED__ / active __ACTIVE__</p>
 <div class="filters"><button data-filter="all" aria-pressed="true">All</button><button data-filter="runtime" aria-pressed="false">Runner & queue</button><button data-filter="governance" aria-pressed="false">Unknowns & DoV</button><button data-filter="statistics" aria-pressed="false">DMAIC / PCA / BT</button></div>
-<script>__PLOTLY_LIBRARY__</script>
 <section class="cards">__CARDS__</section>
 <section class="card" style="margin-top:13px"><h2>DMAIC → MIP → gg_MATH handoff</h2>
 <p><strong>Define:</strong> CTQ is source-bound terminal first-red resolution and valid evidence, not prettier cards.
