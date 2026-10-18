@@ -214,13 +214,30 @@ def get_log_bytes(job_id, *, token=None):
 
 
 def select_for_jobs(runs, max_jobs):
-    """Prefer failures and recent successes; never imply a random sample."""
+    """Use explicitly stratified red/green recent samples, never random fleet rate.
+
+    Source cohort is complete workflow RUN metadata; JOB detail is sampled.
+    Prefer 5/8 red and 3/8 green when both populations exist. Missing strata
+    lend capacity to the other cohort without manufacturing green observations.
+    """
+    demand(type(max_jobs) is int and max_jobs > 0, "job selection size")
     candidates = sorted(runs, key=lambda r: (r["created_at"] or "", r["id"]),
                         reverse=True)
     reds = [r for r in candidates if r["conclusion"] in
             {"failure", "timed_out", "action_required"}]
-    remainder = [r for r in candidates if r not in reds]
-    return (reds + remainder)[:max_jobs]
+    greens = [r for r in candidates if r["conclusion"] == "success"]
+    other = [r for r in candidates if r not in reds and r not in greens]
+    red_quota = max(1, (5 * max_jobs + 7) // 8) if reds else 0
+    green_quota = max_jobs - red_quota if greens else 0
+    selected = reds[:red_quota] + greens[:green_quota]
+    chosen = {r["id"] for r in selected}
+    for row in reds[red_quota:] + greens[green_quota:] + other:
+        if len(selected) >= max_jobs:
+            break
+        if row["id"] not in chosen:
+            selected.append(row)
+            chosen.add(row["id"])
+    return selected
 
 
 def merged_pr_sample(fetch, *, max_pages=2):
@@ -262,6 +279,8 @@ def collect(fetch, get_logs, *, max_runs=1000, max_job_runs=120,
     details = {}
     selected = select_for_jobs(runs, max_job_runs)
     failures_read = 0
+    attempted_log_reads = 0
+    unreadable_log_attempts = 0
     job_errors = []
     for run in selected:
         try:
@@ -270,8 +289,9 @@ def collect(fetch, get_logs, *, max_runs=1000, max_job_runs=120,
             job_errors.append({"run_id": run["id"], "kind":type(error).__name__})
             continue
         for job in detail["jobs"]:
-            if (failures_read < max_failure_logs and
+            if (attempted_log_reads < max_failure_logs and
                 job["first_failed_step"] is not None):
+                attempted_log_reads += 1
                 try:
                     raw = get_logs(job["id"])
                     job["log_bytes_sha256"] = hashlib.sha256(raw).hexdigest()
@@ -279,6 +299,7 @@ def collect(fetch, get_logs, *, max_runs=1000, max_job_runs=120,
                     job["log_read_status"] = "READ_BOUNDED"
                     failures_read += 1
                 except (ValueError, urllib.error.HTTPError, urllib.error.URLError) as e:
+                    unreadable_log_attempts += 1
                     job["log_read_status"] = type(e).__name__.upper()
         details[str(run["id"])] = detail
     prs = merged_pr_sample(fetch)
@@ -292,10 +313,12 @@ def collect(fetch, get_logs, *, max_runs=1000, max_job_runs=120,
         "source_main_stable_during_scan": sha0 == sha1,
         **inventory,
         "selected_job_details": details,
-        "job_detail_policy": "PRIORITIZED_FAILING_PLUS_RECENT_NOT_RANDOM",
+        "job_detail_policy": "STRATIFIED_FIVE_EIGHTHS_RED_THREE_EIGHTHS_GREEN_NOT_RANDOM",
         "selected_job_run_count": len(details),
         "job_detail_error_count": len(job_errors), "job_detail_errors": job_errors[:100],
         "failure_log_reads": failures_read,
+        "log_read_attempts": attempted_log_reads,
+        "unreadable_log_attempts": unreadable_log_attempts,
         "older_attempts_collected": all(r["attempt"] == 1 for r in runs),
         "merged_pr_sample": prs, "merged_pr_sample_is_complete": False,
         "merge_admission": "HOLD", "authority_transfer": False,
@@ -309,7 +332,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--max-runs", type=int, default=1000)
-    p.add_argument("--job-detail-limit", type=int, default=120)
+    p.add_argument("--job-detail-limit", type=int, default=160)
     p.add_argument("--failure-log-limit", type=int, default=18)
     args = p.parse_args()
     demand(0 < args.max_runs <= 1200 and
