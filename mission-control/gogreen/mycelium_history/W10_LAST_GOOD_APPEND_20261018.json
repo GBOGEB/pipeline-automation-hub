@@ -1,0 +1,142 @@
+{
+  "schema": "missioncontrol.code_purple.w10_append_checkpoint.v1",
+  "checkpoint_date_utc": "2026-10-18",
+  "basis": "READ_ONLY_NONATOMIC_GITHUB_READBACK_WITH_HISTORICAL_NATIVE_PROOF",
+  "parent_w9": {
+    "pr": 724,
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "pr_head": "fec6231abdead0ce8554b36c7199470bda3a97b1",
+    "merge_sha": "2cc9b4d433c404b50d7afc661f863b96d42e97cc",
+    "merged_at": "2026-10-18T17:04:36Z",
+    "merge_admission_credit": 0,
+    "native_run_id": 39147416140,
+    "attempt": 1,
+    "conclusion": "success",
+    "native_jobs": {
+      "python311": 117734119664,
+      "python312": 117734119798,
+      "census": 117734170421
+    },
+    "tests_per_python": 77,
+    "statements": {
+      "covered": 434,
+      "eligible": 516
+    },
+    "branches": {
+      "covered": 122,
+      "eligible": 144
+    },
+    "zip_artifact_id": 12143768528,
+    "zip_reported_bytes": 135187,
+    "zip_sha256": "262131fdaba860aef00e28dd158bb4f8eed7b1da00c36010a69a0f83b584ba12",
+    "zip_crc_members_verified": 10,
+    "zip_crc_members_total": 10,
+    "preview_manifest_members_verified": 7,
+    "zip_scope": "THIS_ARTIFACT_INDEPENDENT_READBACK_NOT_CANONICAL_530_GLOBAL_CUSTODY",
+    "mycelium_run_population": {
+      "observed": 661,
+      "eligible": 661,
+      "success": 261,
+      "failure": 400
+    },
+    "job_detail": {
+      "observed": 160,
+      "red": 100,
+      "green": 60,
+      "first_red_occurrences": 100,
+      "recurring_fingerprints": 2,
+      "log_reads_attempted": 18,
+      "log_reads_readable": 0
+    },
+    "canonical_bd": {
+      "items": 19,
+      "done": 10,
+      "active": 5,
+      "todo": 2,
+      "unknown_reader": 2,
+      "open_work_items": 9,
+      "git_blob": "426a8b6ed3630c874eca4c2c1daaea7d13f3492a"
+    },
+    "source_module_blobs": {
+      "history.py": "95acd43be61a28485abea440a9448042a8200772"
+    }
+  },
+  "codex_n7_return": {
+    "pr": 1097,
+    "repo": "GBOGEB/CODEX",
+    "head": "d3f55c168a65bd287873d461bcc26ddaccbfbfaf",
+    "merged_at": "2026-10-18T17:02:51Z",
+    "independent_reviews_observed": 0,
+    "native_run": 39146937220,
+    "job_id": 117732579114,
+    "attempt": 1,
+    "native_N7_tests": {
+      "pass": 23,
+      "failed": 0
+    },
+    "statements": {
+      "covered": 495,
+      "eligible": 512,
+      "minimum_pct": 90
+    },
+    "branches": {
+      "covered": 114,
+      "eligible": 136,
+      "minimum_pct": 80
+    },
+    "first_red_improvement": "DIAGNOSTIC_CLASSIFICATION_NOT_CAUSAL_ROOT_CLOSURE"
+  },
+  "new_postmerge_signal": {
+    "repo": "GBOGEB/CODEX",
+    "observed_main_sha": "d4174eb97a48ee5bc0d463640a305dd63059fa12",
+    "source_role": "HISTORICAL_POST_MERGE_CHECKPOINT_MAIN_ADVANCED_SINCE",
+    "workflow_run": 39147772131,
+    "job_id": 117735007297,
+    "family": "OSV-SCANNER_FAIL_ON_VULN",
+    "conclusion": "failure",
+    "affected_packages": 4,
+    "vulnerabilities_total": 6,
+    "severities": {
+      "critical": 0,
+      "high": 0,
+      "medium": 3,
+      "low": 3,
+      "unknown": 0
+    },
+    "causal_attribution": "NOT_PROVEN",
+    "disposition": "OWNER_REPAIR_NO_SECURITY_WAIVER"
+  },
+  "w10_plan": {
+    "intervention": "ADD_ONLY_SOURCE_OWNED_ANNOTATED_GREEN_CENSUS",
+    "target_path": "mission-control/gogreen/mycelium_history/annotated_green.py",
+    "owner": "GBOGEB/pipeline-automation-hub",
+    "source_pr_selection": "CURRENT_CODEX_MAIN_PLUS_LATEST_THREE_MERGED_PR_HEADS",
+    "default_detail_limit_per_cohort": 6,
+    "partial_access": "UNKNOWN_HTTP_401_403_404_429_NOT_ZERO",
+    "check_run_success_with_annotation": "ANNOTATED_GREEN_COUNTS_ANY_LEVEL",
+    "true_error_annotation_requires": "SOURCE_BOUND_CHECK_RUN_ANNOTATION_LEVEL_READ",
+    "no_raw_annotation_messages": true,
+    "same_repo_W9_tests_must_remain_untouched": true,
+    "native_w10_terminal": "PENDING_NOT_YET_VERIFIED",
+    "main_push_validation": "PENDING_NOT_YET_VERIFIED",
+    "branch_protection_evidence": "OWNER_REQUIRED"
+  },
+  "authority": {
+    "zip_verifier": "#530",
+    "six_repo_breadth": "#531",
+    "method_viewer": "#533",
+    "source_bd": "CODE_PURPLE_BD_QUEUE_v1.json",
+    "distinct_engineering_root_closures_accepted": 0,
+    "worker_hours": null,
+    "capacity_slots": null,
+    "M1": "PARTIAL",
+    "M2": "HOLD",
+    "M3": "HOLD",
+    "PCA": "NOT_QUALIFIED",
+    "BT": "NOT_QUALIFIED",
+    "QPS_owner_acceptance": "WITHHELD",
+    "security_waiver": false,
+    "merge_admission": "HOLD",
+    "public_deployment": false
+  }
+}
