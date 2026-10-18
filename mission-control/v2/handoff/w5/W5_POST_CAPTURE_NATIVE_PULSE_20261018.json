@@ -1,0 +1,161 @@
+{
+  "schema": "missioncontrol.w5.append_only_native_pulse.v1",
+  "as_of_calendar_date_utc": "2026-10-18",
+  "capture": "NONATOMIC_NATIVE_GITHUB_OBSERVATION",
+  "privacy": "PUBLIC_SAFE",
+  "authorities": {
+    "repository": "GBOGEB/ABACUS",
+    "canonical_root_owner": "https://github.com/GBOGEB/ABACUS/issues/1929",
+    "handover_owner": "GBOGEB/pipeline-automation-hub",
+    "root_closure_approval": null,
+    "admission": "HOLD",
+    "authority_transfer": false,
+    "security_waiver": false
+  },
+  "source_populations": [
+    {
+      "role": "N_CURRENT_AT_PRIOR_CAPTURE",
+      "sha": "97a8b13faff577272a90edaf0dd4593035e10605",
+      "b0": {
+        "run_id": 39142444027,
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "jobs": {
+          "success": 13
+        },
+        "tests": {
+          "pass": 4168,
+          "skip": 2,
+          "warnings": 3,
+          "fail": 0
+        },
+        "source": "https://github.com/GBOGEB/ABACUS/actions/runs/39142444027"
+      },
+      "matrix": {
+        "run_id": 39142443923,
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "jobs": {
+          "success": 7,
+          "skipped": 1
+        },
+        "source": "https://github.com/GBOGEB/ABACUS/actions/runs/39142443923"
+      },
+      "measured_coverage": {
+        "source_artifact_id": 12142426649,
+        "source_artifact_name": "b0-report-only-producer-97a8b13faff577272a90edaf0dd4593035e10605",
+        "source_file": "coverage-dab.json",
+        "source_artifact_sha256": "a23a5269492f68afc3bfe7f8efc045cc14f34b78030f5f77717d332419e2589f",
+        "config": {
+          "branch_coverage": true,
+          "dynamic_context": "test_function"
+        },
+        "covered_statements": 7765,
+        "total_statements": 22188,
+        "excluded_lines": 374,
+        "covered_branches": 1651,
+        "total_branches": 5444,
+        "statement_pct": 34.99639444744907,
+        "branch_pct": 30.326965466568698,
+        "combined_pct": 34.07643312101911,
+        "measurement_verified": "NATIVE_ARTIFACT_JSON_EXTRACTED",
+        "source": "https://github.com/GBOGEB/ABACUS/actions/runs/39142444027"
+      }
+    },
+    {
+      "role": "NPLUS1_NEW_MAIN",
+      "sha": "1122dca15557e4d2b0ec16300fcbf409db678e86",
+      "exact_head_workflows": {
+        "total": 165,
+        "success": 105,
+        "failed": 8,
+        "cancelled": 44,
+        "queued": 6,
+        "pending": 2,
+        "terminal": 157,
+        "nonterminal": 8,
+        "complete_paginated": true,
+        "source": "https://api.github.com/repos/GBOGEB/ABACUS/actions/runs?head_sha=1122dca15557e4d2b0ec16300fcbf409db678e86&per_page=100"
+      },
+      "b0": {
+        "run_id": 39143732112,
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "failure",
+        "jobs": {
+          "success": 11,
+          "failure": 2
+        },
+        "source": "https://github.com/GBOGEB/ABACUS/actions/runs/39143732112"
+      },
+      "matrix": {
+        "run_id": 39143732055,
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "failure",
+        "jobs": {
+          "success": 2,
+          "failure": 5,
+          "skipped": 1
+        },
+        "source": "https://github.com/GBOGEB/ABACUS/actions/runs/39143732055"
+      },
+      "observed_common_first_red": {
+        "kind": "G3CS_TEST_MODULE_IMPORT_FAILURE",
+        "module": "test_g3cs_assurance_matrix",
+        "file": "tests/test_g3cs_source_mutations.py",
+        "native_error": "ModuleNotFoundError: No module named 'test_g3cs_assurance_matrix'",
+        "manifestations": [
+          {
+            "run": 39143732112,
+            "job": 117723231077,
+            "step": "Run canonical exact-head coverage surface"
+          },
+          {
+            "run": 39143732055,
+            "job": 117723910018,
+            "step": "Run functional compatibility proof"
+          },
+          {
+            "run": 39143732055,
+            "job": 117723909985,
+            "step": "Run functional compatibility proof"
+          },
+          {
+            "run": 39143732055,
+            "job": 117723909919,
+            "step": "Run canonical coverage and emit governed evidence"
+          }
+        ],
+        "propagated_downstream_jobs": [
+          117723965963,
+          117724290884,
+          117724326603
+        ],
+        "source_owner_pr": "https://github.com/GBOGEB/ABACUS/pull/2234",
+        "root_identity_disposition": "CANDIDATE_SHARED_ROOT_NOT_INDEPENDENTLY_ACCEPTED"
+      },
+      "latest_main_coverage": {
+        "statement": null,
+        "branch": null,
+        "combined": null,
+        "reason": "collection failed at import; previous SHA measurement cannot be promoted"
+      }
+    }
+  ],
+  "comparison": {
+    "matching_coverage_delta_pct": null,
+    "direct_test_count_comparison_valid": false,
+    "explanation": "different main SHA, different test population and B0 failed before measurement on new source; prior SHA green retained as historical",
+    "first_red_changed": true,
+    "formal_engineering_credit_delta": 0,
+    "accepted_root_closure_delta": null
+  },
+  "next_action": {
+    "source_owner": "ABACUS G3CS / test collection owner",
+    "fix": "Resolve import of tests/test_g3cs_source_mutations.py without weakening collection or skipping tests",
+    "done_when": "Native current-new-SHA B0 + matrix terminal success including nonzero collection and artifact-return verification, plus independent source owner root disposition"
+  }
+}
