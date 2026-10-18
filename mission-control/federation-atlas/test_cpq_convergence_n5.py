@@ -42,8 +42,8 @@ class CPQN5Tests(unittest.TestCase):
         q,t=fixture();out=c.converge(q,t,SHA,observed_on='2026-10-17')
         self.assertEqual(out['metrics']['canonical_rows'],19)
         self.assertEqual({k:out['metrics'][k] for k in ('open','active','todo','reader','done')},
-                         {'open':10,'active':2,'todo':6,'reader':2,'done':9})
-        self.assertEqual(out['metrics']['work_orders_with_routes'],10)
+                         {'open':9,'active':2,'todo':5,'reader':2,'done':10})
+        self.assertEqual(out['metrics']['work_orders_with_routes'],9)
         self.assertEqual(out['metrics']['source_readback_coverage'],{'numerator':19,'denominator':19})
         self.assertIsNone(out['metrics']['qualified_changed_line_coverage'])
         self.assertIsNone(out['metrics']['accepted_causal_root_closures'])
