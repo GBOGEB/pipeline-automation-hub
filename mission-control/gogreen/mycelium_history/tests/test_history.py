@@ -76,7 +76,8 @@ def fixture():
         "selected_job_details": detail, "selected_job_run_count": 2,
         "job_detail_policy": "PRIORITIZED_FAILING_PLUS_RECENT_NOT_RANDOM",
         "job_detail_error_count": 0, "job_detail_errors": [],
-        "failure_log_reads": 2, "older_attempts_collected": True,
+        "failure_log_reads": 2, "log_read_attempts": 2,
+        "unreadable_log_attempts": 0, "older_attempts_collected": True,
         "merged_pr_sample": [{
             "number": 1095, "title": "fix(mycelium W5): recensus 521 executable assets",
             "head_sha": A, "merge_sha": B,
@@ -314,6 +315,32 @@ class CollectorTests(unittest.TestCase):
                               run(101,A,"failure","2026-10-18T13:40:00Z"))
         self.assertEqual(d["api_job_total"], 0)
         self.assertTrue(d["jobs_complete"])
+
+    def test_balanced_160_run_quota_reports_100_red_60_green(self):
+        vals = [run(i, A, "failure", "2026-10-18T15:00:00Z")
+                for i in range(2000, 2120)]
+        vals += [run(i, B, "success", "2026-10-18T15:10:00Z")
+                 for i in range(3000, 3080)]
+        selected = collect.select_for_jobs(vals, 160)
+        self.assertEqual(len(selected), 160)
+        self.assertEqual(sum(r["conclusion"] == "failure" for r in selected), 100)
+        self.assertEqual(sum(r["conclusion"] == "success" for r in selected), 60)
+
+    def test_short_green_stratum_lends_selection_to_red(self):
+        vals = [run(i, A, "failure", "2026-10-18T15:00:00Z")
+                for i in range(4000, 4020)]
+        vals += [run(5000, B, "success", "2026-10-18T15:00:00Z")]
+        selected = collect.select_for_jobs(vals, 10)
+        self.assertEqual(len(selected), 10)
+        self.assertEqual(sum(r["conclusion"] == "success" for r in selected), 1)
+
+    def test_days_with_zero_runs_are_kept_explicit(self):
+        vals = [run(8001, A, "success", "2026-10-01T12:00:00Z"),
+                run(8002, A, "failure", "2026-10-03T12:00:00Z")]
+        out = history.bins(vals)
+        self.assertEqual([x["date"] for x in out],
+                         ["2026-10-01", "2026-10-02", "2026-10-03"])
+        self.assertEqual([x["observed"] for x in out], [1, 0, 1])
 
     def test_failure_priority_before_selected_success(self):
         vals = [run(i, A, "success", "2026-10-18T15:00:00Z")
