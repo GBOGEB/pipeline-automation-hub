@@ -13,7 +13,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
 SIZES=(("desktop",1440,960),("laptop",1280,800),("mobile",390,844))
 MAIN="b293c818ebf280e570392e398720ec22e1aa4566"
@@ -59,6 +59,16 @@ class API:
             route.fulfill(status=404,body="unapproved path")
             return
         route.fulfill(status=200,headers={"Access-Control-Allow-Origin":"*","Content-Type":"application/json"},body=json.dumps(obj))
+
+
+def wait_status(page,token,timeout=30000):
+    """Wait for #feed-status to contain token without in-page eval.
+
+    The dashboard ships a strict CSP (script-src 'self', no 'unsafe-eval'); string
+    wait_for_function predicates are evaluated in-page and are blocked by it.
+    Locator assertions use Playwright's selector engine and keep the CSP intact.
+    """
+    expect(page.locator("#feed-status")).to_contain_text(token,timeout=timeout)
 
 
 def check(condition,why,log):
