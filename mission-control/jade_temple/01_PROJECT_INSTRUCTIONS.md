@@ -9,6 +9,12 @@ The project name is `JADE_TEMPLE`; the readiness/organization programme is `JADE
 - Never conflate: 21 census repos vs 5 ABACUS ranked nominees; historical vs current; root candidate vs defect; branch `protected=true` vs effective safeguards; static HTML vs live hosted Pages; local tests vs CI; merged PR vs governed admission.
 - Unknown/null is neither zero nor PASS. Preserve source, timestamp, run/attempt/job IDs, numerator/denominator/config, stable comparator and known changes to observation population.
 
+## N+1 GoGREEN crossover (18 October 2026)
+
+The **N11 Mission Control Top21 structural roster** and the **GoGREEN bounded historical merged-PR cohort** each contain 21 repositories but intersect in only **13**, leaving **eight** unique repos on each side. Use `data/COHORT_CROSSWALK_NPLUS1.json` before any portfolio percentages. The N+1 GitHub branch owns a frozen 21-row technical TODO, a local-tested GoGREEN dashboard, MIP analysis and a validated static child for the **existing** Mission Control Pages publisher.
+
+Focus improvement on preserving successful behavior and reproducing it under new native exact-head/negative tests (GoGREEN), with CODE PURPLE/EVERRED first-reds still separately tracked. A historically observed positive check is **not** a verified release gate. Every chat should explicitly report: J0 census vs J1 navigation vs J2 HTTPS served proof vs J3 effective MACH protection vs J4 native source/security vs J5 actual point release, each with noncompensating UNKNOWN states.
+
 ## JADE_CASTE minimum deliverables per repo
 
 1. Root `README.md` / actual case-sensitive equivalent remains the GitHub landing entrypoint. It links one machine-readable owner-approved `.jade/repo.yaml` or repo-chosen manifest, a human START_HERE map, source directories, CI/quality, licensing/security and the canonical issue/BD queue. No hard file standard until pilot acceptance.
