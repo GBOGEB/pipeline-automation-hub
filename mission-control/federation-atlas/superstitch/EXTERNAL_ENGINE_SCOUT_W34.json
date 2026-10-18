@@ -1,0 +1,16 @@
+{
+  "schema":"missioncontrol.superstitch.external_engine_scout.v1",
+  "status":"PUBLIC_REFERENCE_SCOUT_NOT_INSTALLED_OR_COPIED",
+  "source_precaution":"Public example docs are design input only; validate license/version/security before any dependency is vendored or executed",
+  "entries":[
+    {"project":"plotly/plotly.py","url":"https://github.com/plotly/plotly.py","role":"Offline interactive numerical charts; gg_MATH adapter now uses a single embedded Plotly bundle","decision":"ADOPT_OFFLINE_API","version_review_required":true,"license_reported":"MIT"},
+    {"project":"matplotlib/matplotlib","url":"https://github.com/matplotlib/matplotlib","role":"Agg PNG/SVG parity export with exact payload and member SHA","decision":"ADOPT_EXISTING_PYTHON_API","version_review_required":true,"license_reported":"VERIFY_UPSTREAM"},
+    {"project":"cytoscape/cytoscape.js","url":"https://github.com/cytoscape/cytoscape.js","role":"Potential future >100-node interactive graph querying","decision":"DEFER_DEPENDENCY_CURRENT_NATIVE_SVG_IS_LIGHTER","version_review_required":true,"license_reported":"MIT"},
+    {"project":"kieler/elkjs","url":"https://github.com/kieler/elkjs","role":"Possible layered compound-layout engine for very large adjacent DAGs","decision":"DEFER_TILL_ROUTE_COLLISION_METRIC_OR_NODE_COUNT_REQUIRES_IT","version_review_required":true,"license_reported":"VERIFY_UPSTREAM"},
+    {"project":"openai/openai-agents-python","url":"https://github.com/openai/openai-agents-python","role":"Potential guarded orchestration tracing/spans and human handoffs; not live dispatch","decision":"REFERENCE_PATTERNS_ONLY_NO_AGENT_RUNTIME_AUTHORISED","version_review_required":true,"license_reported":"MIT"},
+    {"project":"anthropics/anthropic-cookbook","url":"https://github.com/anthropics/anthropic-cookbook","role":"Public independent workflow/tool-evaluation examples, optional benchmark corpus","decision":"REFERENCE_ONLY_NO_CODE_CHERRY_PICKED","version_review_required":true,"license_reported":"VERIFY_UPSTREAM"}
+  ],
+  "authority_transfer":false,
+  "qps_owner_acceptance":null,
+  "merge_admission":"HOLD"
+}
