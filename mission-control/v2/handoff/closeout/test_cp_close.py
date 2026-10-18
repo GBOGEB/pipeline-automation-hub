@@ -25,9 +25,12 @@ class CloseoutTests(unittest.TestCase):
     def test_canonical_closeout_operator_alias_compatible(self):
         profile=json.loads((Path(__file__).resolve().parents[1]/"CHAT_CLOSEOUT_PROFILE_V1.json").read_text())
         ext=json.loads((Path(__file__).resolve().parent/"CP_CLOSE_GITHUB_v1.json").read_text())
-        self.assertEqual(profile["moniker"],"CP.CLOSEOUT")
-        self.assertEqual(ext["canonical_operator_moniker"],"CP.CLOSEOUT")
-        self.assertEqual(ext["implementation_alias"],"CP.CLOSE")
+        self.assertEqual(profile["moniker"],"CP.CLOSEOUT_ALIAS_OF_CP.CLOSE")
+        self.assertEqual(profile["status"],"OPTIONAL_REPORTING_ANNEX_NOT_CANONICAL")
+        self.assertEqual(ext["name"],"CP.CLOSE")
+        self.assertIn("CP.CLOSEOUT",ext["aliases"])
+        self.assertEqual(ext["contract"]["generator"],
+                         "mission-control/v2/handoff/closeout/cp_close.py")
         self.assertTrue(ext["compatibility"]["dual_profiles_not_second_ssot"])
 
     def test_current_intake_valid(self):

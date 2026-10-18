@@ -1,0 +1,65 @@
+# Code Purple incident instance — the only file you edit to adapt the method.
+# Everything else (readback, classification, lift check, page, deck) reads from here.
+id: CP-2026-10-12-ABACUS-MERGE-STALL
+title: ABACUS merge stall (Codex review allowance exhausted)
+declared: 2026-10-12T09:51:00+02:00      # when Code Purple was declared
+owner: GBOGEB                            # the only person who may break glass
+agent: Claude                            # who runs readbacks, fixes, issues, merges on approval
+timezone: Europe/Brussels
+
+repos:
+  - name: GBOGEB/ABACUS
+    role: blocked                        # blocked | seed | peer
+    default_branch: main
+    ruleset_id: 24494381                 # hard gate; null if the repo has none
+    gate_check: PR Feedback Gate         # the single required check (or null)
+    nightly_workflow: ci-cd-tests.yml    # workflow whose scheduled run on main defines "inherited" reds
+  - name: GBOGEB/CODEX
+    role: seed
+    default_branch: main
+    ruleset_id: null
+    gate_check: null
+    nightly_workflow: null
+
+tracked_prs:                             # PRs whose state decides the lift
+  - {repo: GBOGEB/ABACUS, number: 1858, role: unblocker}
+  - {repo: GBOGEB/ABACUS, number: 1859, role: debt-ratchet}
+  - {repo: GBOGEB/ABACUS, number: 1857, role: queued}
+  - {repo: GBOGEB/ABACUS, number: 1856, role: queued}
+  - {repo: GBOGEB/CODEX, number: 984, role: seed}
+
+follow_up_issues:
+  - {repo: GBOGEB/ABACUS, number: 1878, check: "A→B→A head move leaves the gate pending on main"}
+  - {repo: GBOGEB/ABACUS, number: 1879, check: "outage reply to an earlier-head request keeps the fallback closed on main"}
+
+baseline:                                # captured at declaration, for the before/after census
+  open_prs: 20
+  last_merge_before: {pr: 1838, at: 2026-10-06}
+  coverage_line_branch: 36.9             # % measured on #1858 head 203d63af, 1,086 tests
+
+lift_criteria:                           # all must hold to call Code Purple lifted
+  - id: L1
+    text: Unblocker PR merged
+    kind: pr_merged
+    ref: {repo: GBOGEB/ABACUS, number: 1858}
+  - id: L2
+    text: Gate restored (ruleset active, no bypass, expected rules present)
+    kind: ruleset_clean
+    ref:
+      repo: GBOGEB/ABACUS
+      ruleset_id: 24494381
+      expected_rules:                    # pre-incident content; a ruleset with no rules is NOT clean
+        - {type: deletion}
+        - {type: required_status_checks, contexts: [PR Feedback Gate], strict: true}
+  - id: L5
+    text: Admission integrity (no merge since the unblocker without a green gate)
+    kind: gated_merges
+    ref: {repo: GBOGEB/ABACUS, after_pr: 1858, gate_check: PR Feedback Gate, max_ungated: 0}
+  - id: L3
+    text: Merge flow restored (at least 5 merges to the default branch since the unblocker)
+    kind: merges_since
+    ref: {repo: GBOGEB/ABACUS, after_pr: 1858, min: 5}
+  - id: L4
+    text: Open PR backlog at most a quarter of the baseline
+    kind: open_prs_at_most
+    ref: {repo: GBOGEB/ABACUS, max_fraction_of_baseline: 0.25}

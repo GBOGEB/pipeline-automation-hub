@@ -2,6 +2,7 @@ name: CODE PURPLE Method Atlas (read-only)
 on:
   pull_request:
     paths:
+      - 'mission-control/qps-triage-ultra/p-process/site/**'
       - 'mission-control/federation-atlas/**'
       - 'mission-control/html_qa/**'
       - 'mission-control/v2/handoff/live_lossless/**'
@@ -13,6 +14,7 @@ on:
   push:
     branches: [master]
     paths:
+      - 'mission-control/qps-triage-ultra/p-process/site/**'
       - 'mission-control/federation-atlas/**'
       - 'mission-control/html_qa/**'
       - 'mission-control/v2/handoff/live_lossless/**'
@@ -192,6 +194,7 @@ jobs:
           python mission-control/federation-atlas/cpq_browser_check.py \
             --atlas /tmp/code-purple-atlas/code-purple.html \
             --cpq /tmp/code-purple-atlas/cpq-n5.html \
+            --report /tmp/code-purple-atlas/cpq-n5.json \
             --out /tmp/code-purple-atlas/cpq-browser
           test -s /tmp/code-purple-atlas/cpq-browser/browser_receipt.json
       - name: Build CODE-HEALTH Central with exact-checkout and fail-closed corpus
@@ -480,6 +483,11 @@ jobs:
             --out /tmp/code-purple-atlas/mission-rebuild
           test -s /tmp/code-purple-atlas/mission-rebuild/ldab-sipoc-manifest.json
           echo "LLDB_NATIVE_SESSION=NOT_RUN_NO_DEBUG_TRACE"
+      - name: Stage P process site (prebuilt, hash-checked by its own tests)
+        run: |
+          set -euo pipefail
+          test -s mission-control/qps-triage-ultra/p-process/site/index.html
+          cp -r mission-control/qps-triage-ultra/p-process/site /tmp/code-purple-atlas/p-process
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}

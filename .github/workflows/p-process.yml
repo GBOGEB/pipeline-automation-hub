@@ -1,0 +1,73 @@
+name: P process (Code Purple x EVERRED) offline tests
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/p-process/**'
+      - '.github/workflows/p-process.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/qps-triage-ultra/p-process/**'
+      - '.github/workflows/p-process.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  p-process-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned parser
+        run: python -m pip install --disable-pip-version-check pyyaml==6.0.3
+      - name: Unit tests (offline; zero tests is a failure)
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/qps-triage-ultra/p-process/tests -v 2>&1 | tee p-process-tests.log
+          grep -Eq '^Ran [1-9][0-9]* tests?' p-process-tests.log
+      - name: Code Purple model integrity (TypeScript)
+        working-directory: mission-control/qps-triage-ultra/p-process
+        run: |
+          node tools/check_model.mts
+          npx -y -p typescript@6.0.3 tsc -p tsconfig.json
+      - name: JavaScript syntax
+        working-directory: mission-control/qps-triage-ultra/p-process
+        run: |
+          node --check code-purple/assets/model.js
+          node --check code-purple/assets/app.js
+          node --check code-purple/build_deck.js
+      - name: Package site zip (verified against site/manifest.json)
+        working-directory: mission-control/qps-triage-ultra/p-process
+        run: python package.py --out dist
+      - name: Stage source-pinned MYCELIUM reference candidate (no mutation)
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        working-directory: mission-control/qps-triage-ultra/p-process
+        run: |
+          python mycelium_bridge.py --site site --producer-sha "$EXACT_HEAD" --out dist/mycelium-p-process-candidate.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('dist/mycelium-p-process-candidate.json').read_text())
+          assert d['authority_transfer'] is False and d['dispatch_authorized'] is False
+          assert d['merge_admission']=='HOLD' and d['consumer_acceptance']=='WITHHELD'
+          assert len(d['nodes'])==22 and len(d['edges'])==16
+          print('MYCELIUM_REF=STAGE_ONLY; graph=22 nodes/16 edges; admission=HOLD')
+          PY
+      - name: Upload site zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: p-process-site-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/p-process/dist/
+          if-no-files-found: error
