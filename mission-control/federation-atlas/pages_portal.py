@@ -229,8 +229,11 @@ def build(atlas,out,sha):
             shutil.copyfile(src, dst)
             hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
     # W34 Superstitch: existing Method Atlas is the ONLY public publisher.
-    sw_allow=("index.html","app.js","style.css","graph.svg","graph.json",
-              "spline.svg","taxonomy.json","glossary.json","manifest.json")
+    sw_allow=("index.html","app.js","stitch_interaction.js","style.css",
+              "stitch_interaction.css","graph.svg","graph.json","spline.svg",
+              "taxonomy.json","glossary.json","groups.json","sipoc-lanes.svg",
+              "trigger-dag.svg","superstitch.mmd","sipoc-lanes.mmd",
+              "trigger-dag.mmd","manifest.json")
     sw_src=atlas/"superstitch"
     sw_present=[n for n in sw_allow if (sw_src/n).is_file()]
     if sw_present and len(sw_present)!=len(sw_allow):
