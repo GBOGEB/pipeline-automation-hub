@@ -57,9 +57,16 @@ jobs:
       - name: Three-viewport Chromium visual and functional QA
         shell: bash
         run: |
+          set +e
           python mission-control/v2/handoff/live_lossless/browser_qa.py \
             --site "$RUNNER_TEMP/live-lossless" \
-            --out "$RUNNER_TEMP/live-lossless-browser"
+            --out "$RUNNER_TEMP/live-lossless-browser" 2>&1 | tee "$RUNNER_TEMP/qa-live-lossless-browser-qa.log"
+          rc=${PIPESTATUS[0]}; set -e
+          if [ "$rc" -ne 0 ]; then
+            msg=$(grep -E "Error|assert|require|FAIL|mismatch|parity" "$RUNNER_TEMP/qa-live-lossless-browser-qa.log" | tail -n 3 | tr '\n' ' ' | cut -c1-900)
+            echo "::error title=live-lossless-browser-qa::${msg:-exit $rc (no assertion text captured)}"
+            exit "$rc"
+          fi
       - name: Verify screenshot and source digest receipts
         shell: bash
         run: |
