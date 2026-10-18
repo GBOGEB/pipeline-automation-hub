@@ -2,6 +2,25 @@
 
 **Canonical producer:** `mission-control/v2/handoff/closeout/cp_close.py` and `CP_HANDOFF_RESUME_V1.json` in this repository. **Source input:** `intakes/CP-FED-CENSUS-W4-20261018.json`. This appendix is a curated source-linked narrative, not a second SSOT and not a verbatim chat transcript.
 
+## W4 native GET-only CENSUS re-entry (newer than the initial frozen capture)
+
+At **2026-10-18T15:10:42.787707Z**, native GitHub runner [39139236501](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39139236501), attempt 1, completed the four-repository public source census. Exact source snapshot [CENSUS_PULL_NATIVE_20261018.json](CENSUS_PULL_NATIVE_20261018.json) is an unchanged byte copy of provider artifact `12141162352` (`SHA-256 78e54ba29f51ce9d34157b8c502e043fc1f95fbf41ac9e10b0f7b9364719592e`). **This observation supersedes the earlier count for operational re-entry, without rewriting the older frozen snapshot.**
+
+| Source-object metric | Earlier dated capture | Later native PULL | Movement |
+| --- | ---: | ---: | ---: |
+| Four public repositories / ordinary open issues | 82 | **83** | +1 |
+| Four public repositories / open PRs | 23 | **25** | +2 |
+| 0–6-day open issues | 30 | **31** | +1 |
+| 7–13 / 14–29 / 30+ issues | 1 / 23 / 28 | 1 / 23 / 28 | Unchanged |
+| ABACUS issues / PRs | 38 / 16 | 38 / 16 | Unchanged |
+| CODEX issues / PRs | 11 / 2 | 11 / 2 | Unchanged; main SHA advanced |
+| hub issues / PRs | 32 / 5 | **33 / 7** | +1 / +2 |
+| gg_MATH issues / PRs | 1 / 0 | 1 / 0 | Unchanged |
+
+The newer native snapshot records CODEX `main` as `d2523f7ce938ef3bbd71cef32959d5b3897c4a04` versus the earlier captured `926bfd646df6bf09dd92faad6f8806e1a61d1ec1`. The hub's own new handover PR is part of the observable PR population. **No claim of +1 new engineering BD root or +2 successful workers is made**; native observations are non-atomic.
+
+**Canonical packet QA:** Native exact-head [39139236501](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39139236501) ran the unchanged `cp_close.py` generator, **36 existing contract tests and 10 new CENSUS negative tests**, SHA-256 manifest and ZIP CRC/replay; both runner jobs PASS. Its immutable [canonical nine-file ZIP](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39139236501) is separately committed under this handover record. Further head commits require a fresh parity readback for current-PR-head credit. This remains a *draft packet*, not admitted `master` custody.
+
 ## Decision and current source
 
 - **Date-only observation:** 2026-10-18; GitHub reads were not atomic. Refresh before any write, closure, merge, or worker launch.
