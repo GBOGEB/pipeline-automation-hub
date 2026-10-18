@@ -526,6 +526,47 @@ jobs:
                             "branches":[c["covered_branches"],c["num_branches"]],
                             "cross_repository_coverage_credit":False},sort_keys=True))
           PY
+      - name: W34 source-bound Superstitch / DOW TESTFLIGHT and visual QA
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/superstitch
+          python "$SRC/testflight.py" --mode pr --expected-head "$EXACT_SHA" --browser \
+            --out "$RUNNER_TEMP/w34-testflight"
+          mkdir -p /tmp/code-purple-atlas/superstitch
+          cp "$RUNNER_TEMP/w34-testflight/site/"* /tmp/code-purple-atlas/superstitch/
+          cp "$RUNNER_TEMP/w34-testflight/home_testflight_receipt.json" \
+            /tmp/code-purple-atlas/w34-home-testflight-receipt.json
+          python "$SRC/build.py" --head "$EXACT_SHA" \
+            --out /tmp/code-purple-atlas/superstitch --verify-only
+          python -m pip install --disable-pip-version-check Pillow==11.3.0
+          for VIEW in desktop mobile; do
+            python "$SRC/visual_pattern_scanner.py" \
+              --image "$RUNNER_TEMP/w34-testflight/browser/$VIEW.png" \
+              --out "/tmp/code-purple-atlas/w34-$VIEW-pattern.json"
+          done
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path("/tmp/code-purple-atlas/superstitch")
+          m=json.loads((root/"manifest.json").read_text())
+          t=json.loads((Path(os.environ["RUNNER_TEMP"])/"w34-testflight"/"home_testflight_receipt.json").read_text())
+          b=json.loads((Path(os.environ["RUNNER_TEMP"])/"w34-testflight"/"browser"/"browser_qa_receipt.json").read_text())
+          assert m["presentation_head"]==os.environ["EXACT_SHA"]
+          assert m["run_dispatch"] is False and m["merger_admission"]=="HOLD"
+          assert t["qualification"]=="LOCAL_ONLY_NOT_GITHUB_NATIVE"
+          assert t["status"]=="PASS_LOCAL_PR_REPRODUCTION"
+          assert len(b["checks"])==3 and all(x["interactions"]=="PASS"
+               and x["page_errors"]==0 and x["document_horizontal_overflow_px"]==0
+               for x in b["checks"])
+          assert len(m["member_sha256"])==8
+          print(json.dumps({"W34_SUPERSTITCH":"LOCAL_REPRO_ON_NATIVE_RUNNER",
+            "presentation_head":m["presentation_head"],"members":len(m["member_sha256"]),
+            "viewports":len(b["checks"]),"native_owner_acceptance":None,
+            "merge_admission":"HOLD"},sort_keys=True))
+          PY
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
