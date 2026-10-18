@@ -1,0 +1,140 @@
+name: CODE PURPLE Mycelium History Testflight
+
+on:
+  pull_request:
+    paths:
+      - "mission-control/gogreen/mycelium_history/**"
+      - ".github/workflows/code-purple-mycelium-history.yml"
+  push:
+    branches: [master]
+    paths:
+      - "mission-control/gogreen/mycelium_history/**"
+      - ".github/workflows/code-purple-mycelium-history.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+concurrency:
+  group: mycelium-history-${ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native:
+    name: Python ${ matrix.python-version }} history contracts
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${ matrix.python-version }}
+      - name: Test native lineage and coverage
+        env:
+          SOURCE_SHA: ${ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          SRC=mission-control/gogreen/mycelium_history
+          PYTHONPATH="$SRC" python -m coverage run --branch --source=collect,history \
+            -m unittest discover -s "$SRC/tests" -p 'test_history.py' -v \
+            2>&1 | tee w6-history-tests.log
+          grep -Eq '^Ran (5[0-9]|[6-9][0-9]|[1-9][0-9][0-9]+) tests?' w6-history-tests.log
+          python -m coverage json -o w6-history-coverage.json
+          python -m coverage report --show-missing --fail-under=60
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("w6-history-coverage.json").read_text())["totals"]
+          if data["num_statements"] == 0 or data["num_branches"] == 0:
+              raise SystemExit("MYCELIUM_HOLD: zero statement/branch denominator")
+          print("STATEMENTS",data["covered_lines"],"/",data["num_statements"])
+          print("BRANCHES",data["covered_branches"],"/",data["num_branches"])
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mycelium-history-testflight-${ matrix.python-version }}-${ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            w6-history-tests.log
+            w6-history-coverage.json
+          if-no-files-found: warn
+
+  history-census:
+    name: CODEX 660-run GET-only history and deterministic preview
+    needs: native
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Collect and project bounded native source
+        env:
+          GITHUB_TOKEN: ${ github.token }}
+          SOURCE_SHA: ${ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          SRC=mission-control/gogreen/mycelium_history
+          python "$SRC/collect.py" --output dist/history/native.json \
+            --max-runs 1000 --job-detail-limit 120 --failure-log-limit 18
+          python "$SRC/history.py" --input dist/history/native.json \
+            --source-sha "$SOURCE_SHA" --out dist/preview
+          python "$SRC/history.py" --input dist/history/native.json \
+            --source-sha "$SOURCE_SHA" --out dist/preview --check
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          p=Path("dist/preview")
+          manifest=json.loads((p/"manifest.json").read_text())
+          for name,digest in manifest["file_sha256"].items():
+              if hashlib.sha256((p/name).read_bytes()).hexdigest()!=digest:
+                  raise SystemExit("MYCELIUM_HOLD: byte manifest mismatch")
+          metrics=json.loads((p/"metrics.json").read_text())
+          scope=metrics["run_population"]
+          receipt={
+            "schema":"mycelium.history.native_ci.v1",
+            "hub_source_sha":os.environ["SOURCE_SHA"],
+            "run_id":int(os.environ["GITHUB_RUN_ID"]),
+            "run_attempt":int(os.environ["GITHUB_RUN_ATTEMPT"]),
+            "job_id":None,
+            "run_population":[scope["observed"],scope["eligible_api_reported"]],
+            "run_population_complete":scope["complete"],
+            "sampled_job_count":metrics["job_detail"]["observed_run_records"],
+            "symptom_occurrences":metrics["first_red"]["sampled_occurrences"],
+            "distinct_fingerprints":metrics["first_red"]["sampled_distinct_fingerprints"],
+            "accepted_roots":0,
+            "artifact_zip_and_member_bytes_independently_verified":False,
+            "public_pages_deployed":False,"admission":"HOLD"
+          }
+          (p/"native_ci.json").write_text(json.dumps(receipt,indent=2,sort_keys=True)+"\n")
+          with open(os.environ["GITHUB_STEP_SUMMARY"],"a") as f:
+              f.write("### CODE PURPLE Mycelium historical census\n")
+              f.write(f"- Workflow runs {scope['observed']}/{scope['eligible_api_reported']}")
+              f.write(" COMPLETE_AT_CAPTURE\n" if scope["complete"] else " PARTIAL_OR_NONATOMIC\n")
+              f.write(f"- Failed {scope['failed']}, sampled first-red occurrences "
+                      f"{receipt['symptom_occurrences']}, fingerprints "
+                      f"{receipt['distinct_fingerprints']}\n")
+              f.write("- Formal root closure 0. No Pages deployment or merge authorization.\n")
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-purple-mycelium-history-${ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/history/native.json
+            dist/preview/
+          if-no-files-found: warn
