@@ -14,6 +14,10 @@ import re
 from collections import Counter, defaultdict
 from pathlib import Path
 
+from stitch_views import (validate_groups, mermaid, mermaid_group, mermaid_sipoc,
+                          mermaid_trigger, sipoc_svg, trigger_svg,
+                          summarize_group_edges)
+
 ROOT = Path(__file__).parent
 SOURCE = ROOT / 'SUPERSTITCH_SOURCE_v1.json'
 SCHEMA = 'missioncontrol.superstitch.source.v1'
@@ -167,13 +171,15 @@ def spline(model):
     x=[65,145,225,305]; y=110-65*(p['observed']/p['eligible'])
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 150" role="img" aria-label="Historical six-repository observed breadth 6 of 42; no measured future point">
     <path d="M 42 18 V 118 H 344" stroke="#455576" stroke-width="1.2" fill="none"/>
-    <path d="M {x[1]} {y:.2f} L {x[2]} {y:.2f}" fill="none" stroke="#60e2c4" stroke-width="3" />
-    <path d="M {x[2]} {y:.2f} L {x[3]} {y-20:.2f}" stroke="#e8c78f" stroke-width="1.5" stroke-dasharray="5 5" fill="none" opacity=".65"/>
-    <circle cx="{x[1]}" cy="{y:.2f}" r="5" fill="#60e2c4"/><circle cx="{x[2]}" cy="{y:.2f}" r="5" fill="#60e2c4"/>
-    <circle cx="{x[3]}" cy="{y-20:.2f}" r="6" fill="#151d32" stroke="#e8c78f" stroke-dasharray="3 3" stroke-width="1.8"/>
+    <path d="M {x[1]} {y:.2f} L {x[2]} {y:.2f}" fill="none" stroke="#bd91ff" stroke-width="3" />
+    <!-- Future N+1 has no measured numerator, therefore NO interpolated trend line -->
+    <circle cx="{x[1]}" cy="{y:.2f}" r="5" fill="#bd91ff" role="button" tabindex="0" data-pulse="N-1" aria-label="N minus 1 historical breadth 6 of 42"/>
+    <circle cx="{x[2]}" cy="{y:.2f}" r="5" fill="#bd91ff" role="button" tabindex="0" data-pulse="N" aria-label="N historical breadth 6 of 42"/>
+    <circle cx="{x[3]}" cy="40" r="6" fill="#151d32" stroke="#e8c78f" stroke-dasharray="3 3" stroke-width="1.8" role="button" tabindex="0" data-pulse="N+1" aria-label="N plus 1 future breadth unknown"/>
     <text x="10" y="12" font-size="10" fill="#bbcae7">Observed / 42</text>
-    <text x="{x[1]}" y="{y-14:.2f}" font-size="12" text-anchor="middle" fill="#a9f3e0">6 / 42</text>
-    <text x="{x[3]}" y="{y-35:.2f}" font-size="10" text-anchor="middle" fill="#e8c78f">UNKNOWN</text>
+    <text x="{x[1]}" y="{y-14:.2f}" font-size="12" text-anchor="middle" fill="#e1c8ff">6 / 42</text>
+    <text x="200" y="20" font-size="9" text-anchor="middle" fill="#c0a1eb">36 cells remain unobserved</text>
+    <text x="{x[3]}" y="25" font-size="10" text-anchor="middle" fill="#e8c78f">UNKNOWN · no point</text>
     {''.join(f'<text x="{x[i]}" y="139" font-size="11" text-anchor="middle" fill="#9badd0">{name}</text>' for i,name in enumerate(["N−2","N−1","N","N+1"]))}
     </svg>'''
 
@@ -181,6 +187,17 @@ def spline(model):
 def do_build(source:Path,out:Path,presentation_head:str):
     if not SHA40.fullmatch(presentation_head):raise ValueError('EXACT_40_SHA_REQUIRED')
     raw=source.read_bytes();model=validate(json.loads(raw))
+    group_source=ROOT/'SUPERSTITCH_GROUPS_W35.json'
+    group_raw=group_source.read_bytes()
+    group_contract=validate_groups(json.loads(group_raw),model)
+    model['groups']=group_contract['groups']
+    model['group_contract']=group_contract
+    model['group_topology']={g['id']:summarize_group_edges(model,g) for g in model['groups']}
+    model['mermaid']={
+        'dag':mermaid(model),
+        'sipoc':mermaid_sipoc(model,model['groups']),
+        'triggers':mermaid_trigger(model),
+        'groups':{g['id']:mermaid_group(model,g) for g in model['groups']}}
     out.mkdir(parents=True,exist_ok=True)
     svg=draw_svg(model)
     model['publication']={"presentation_head":presentation_head,"source_sha256":digest(raw),
@@ -194,16 +211,30 @@ def do_build(source:Path,out:Path,presentation_head:str):
     model['taxonomy']=tax;model['glossary']=gloss
     compiled=canonical_bytes(model)
     template=(ROOT/'template.html').read_text(encoding='utf-8')
-    view=template.replace('__GRAPH_SVG__',svg).replace('__SPLINE_SVG__',spline(model))
+    view=(template.replace('__GRAPH_SVG__',svg)
+          .replace('__SPLINE_SVG__',spline(model))
+          .replace('__SIPOC_SVG__',sipoc_svg(model,model['groups']))
+          .replace('__TRIGGER_SVG__',trigger_svg(model,draw_svg)))
     view=view.replace('__MODEL_JSON__',json.dumps(model,ensure_ascii=True).replace('<',r'\u003c'))
-    files={'index.html':view.encode('utf-8'),'app.js':(ROOT/'app.js').read_bytes(),
-       'style.css':(ROOT/'style.css').read_bytes(),'graph.svg':svg.encode('utf-8'),
+    files={'index.html':view.encode('utf-8'),
+       'app.js':(ROOT/'app.js').read_bytes(),
+       'stitch_interaction.js':(ROOT/'stitch_interaction.js').read_bytes(),
+       'style.css':(ROOT/'style.css').read_bytes(),
+       'stitch_interaction.css':(ROOT/'stitch_interaction.css').read_bytes(),
+       'graph.svg':svg.encode('utf-8'),
        'graph.json':compiled,'spline.svg':spline(model).encode('utf-8'),
-           'taxonomy.json':canonical_bytes(tax),'glossary.json':canonical_bytes(gloss)}
+       'taxonomy.json':canonical_bytes(tax),'glossary.json':canonical_bytes(gloss),
+       'groups.json':group_raw,
+       'sipoc-lanes.svg':sipoc_svg(model,model['groups']).encode('utf-8'),
+       'trigger-dag.svg':trigger_svg(model,draw_svg).encode('utf-8'),
+       'superstitch.mmd':model['mermaid']['dag'].encode('utf-8'),
+       'sipoc-lanes.mmd':model['mermaid']['sipoc'].encode('utf-8'),
+       'trigger-dag.mmd':model['mermaid']['triggers'].encode('utf-8')}
     for filename,data in files.items():(out/filename).write_bytes(data)
     manifest={'schema':'missioncontrol.superstitch.manifest.v1',
        'presentation_head':presentation_head,'source_sha256':digest(raw),
-       'source_file':source.name,'role':'READ_ONLY_EXISTING_PAGES_CONSUMER',
+       'source_file':source.name,'group_source_sha256':digest(group_raw),
+       'role':'READ_ONLY_EXISTING_PAGES_CONSUMER',
        'merger_admission':'HOLD','qps_owner_acceptance':None,
        'run_dispatch':False,'native_test_attestation':None,'source_validation':'PASS',
        'member_sha256':{name:digest(data) for name,data in files.items()},
@@ -217,13 +248,25 @@ def verify(out:Path,sha:str):
     out=Path(out);manifest=json.loads((out/'manifest.json').read_bytes())
     if manifest.get('presentation_head')!=sha or manifest.get('merger_admission')!='HOLD' or manifest.get('run_dispatch') is not False:
         raise ValueError('MANIFEST_PROMOTION_OR_STALE_HEAD')
-    if set(manifest.get('member_sha256',{})) != {'index.html','app.js','style.css','graph.svg','graph.json','spline.svg','taxonomy.json','glossary.json'}:
+    if set(manifest.get('member_sha256',{})) != {'index.html','app.js','stitch_interaction.js',
+            'style.css','stitch_interaction.css','graph.svg','graph.json','spline.svg',
+            'taxonomy.json','glossary.json','groups.json','sipoc-lanes.svg',
+            'trigger-dag.svg','superstitch.mmd','sipoc-lanes.mmd','trigger-dag.mmd'}:
         raise ValueError('INCOMPLETE_MEMBER_SET')
     for name,expected in manifest['member_sha256'].items():
         data=(out/name).read_bytes()
         if digest(data)!=expected or len(data)!=manifest['member_bytes'][name]:
             raise ValueError('TAMPERED_MEMBER:'+name)
     graph=json.loads((out/'graph.json').read_bytes());validate(graph)
+    declared=json.loads((out/'groups.json').read_bytes())
+    validate_groups(declared,graph)
+    if (manifest.get('group_source_sha256')!=digest((out/'groups.json').read_bytes()) or
+            graph.get('group_contract')!=declared or graph.get('groups')!=declared['groups']):
+        raise ValueError('GROUP_SOURCE_OR_IDENTITY_MISMATCH')
+    if (graph.get('mermaid',{}).get('dag') != (out/'superstitch.mmd').read_text() or
+            graph.get('mermaid',{}).get('sipoc') != (out/'sipoc-lanes.mmd').read_text() or
+            graph.get('mermaid',{}).get('triggers') != (out/'trigger-dag.mmd').read_text()):
+        raise ValueError('MERMAID_MACHINE_PARITY_FAIL')
     if graph['publication']['presentation_head']!=sha or graph['publication']['native_current_attestation'] is not None:
         raise ValueError('FAKE_NATIVE_STATUS')
     return manifest
