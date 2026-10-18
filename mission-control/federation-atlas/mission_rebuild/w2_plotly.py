@@ -226,6 +226,9 @@ dialog::backdrop{background:#020810cd}.modal-head{display:flex;justify-content:s
 </main>
 <script id="plot-specs" type="application/json">__SPECS__</script>
 <script>(function(){"use strict";
+// Inline card fragments call Plotly.newPlot while parsing, so the library is loaded at
+// the top of <body>. Resize once every grid card is mounted (same fix as N3 dabefbc).
+window.addEventListener("load",function(){document.querySelectorAll(".inlay .js-plotly-plot").forEach(function(el){Plotly.Plots.resize(el)})});
 var specs=JSON.parse(document.getElementById("plot-specs").textContent);
 document.querySelectorAll("[data-filter]").forEach(function(b){b.addEventListener("click",function(){
  var v=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});
