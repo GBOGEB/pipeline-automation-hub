@@ -377,6 +377,41 @@ class CollectorTests(unittest.TestCase):
 
 
 class PresentationTests(unittest.TestCase):
+    def test_empty_run_list_has_no_invented_day_bars(self):
+        self.assertEqual(history.bins([]), [])
+
+    def test_partial_run_snapshot_stays_partial(self):
+        d = fixture()
+        d["api_total_count"] = 4
+        d["run_inventory_complete"] = False
+        d["pagination_nonatomic_or_capped"] = True
+        history.validate(d)
+        self.assertFalse(history.summarize(d)["run_population"]["complete"])
+
+    def test_incomplete_job_page_cannot_claim_complete(self):
+        d = fixture()
+        d["selected_job_details"]["101"]["jobs_complete"] = False
+        history.validate(d)
+        self.assertEqual(history.summarize(d)["job_detail"]["observed_run_records"], 2)
+
+    def test_successful_selected_job_exercises_skip_firstred_path(self):
+        d = fixture()
+        d["selected_job_details"]["102"] = {
+            "run_id": 102, "attempt": 1, "api_job_total": 1,
+            "jobs_complete": True, "jobs": [job(903, 102, "success")],
+        }
+        d["selected_job_run_count"] = 3
+        r = history.summarize(d)
+        self.assertEqual(r["job_detail"]["sampled_successful_runs"], 1)
+        self.assertEqual(r["first_red"]["sampled_occurrences"], 2)
+
+    def test_missing_merge_sha_stays_unknown_without_inferred_main(self):
+        d = fixture()
+        d["merged_pr_sample"][0]["merge_sha"] = None
+        r = history.summarize(d)
+        self.assertEqual(r["merged_with_red"]["prs"][0]["observed_runs_on_head_or_merge_sha"], 1)
+        self.assertEqual(r["merged_with_red"]["prs"][0]["successful_post_merge"], 0)
+
     def test_dag_edges_tagged_by_evidence(self):
         graph = history.lineage_dag(history.summarize(fixture()))
         self.assertEqual(len(graph["nodes"]), 8)
