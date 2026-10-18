@@ -38,6 +38,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          python -m py_compile mission-control/jade_temple/sprint/model.py mission-control/jade_temple/sprint/cli.py
           python -m unittest discover -s mission-control/jade_temple/tests -p 'test_jade_sprint_n3.py' -v
       - name: Build source-bound DAG/SIPOC/queue/HTML receipts
         shell: bash
