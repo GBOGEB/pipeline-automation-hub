@@ -45,7 +45,7 @@ jobs:
           set -euo pipefail
           PYTHONPATH=mission-control/v2 python -m coverage run --branch --source=g3c_convergence -m unittest discover \
             -s mission-control/v2 -p 'test_g3c_convergence.py' -v 2>&1 | tee g3c-tests.log
-          grep -Eq '^Ran 16 tests?' g3c-tests.log
+          grep -Eq '^Ran (1[7-9]|[2-9][0-9]+) tests?' g3c-tests.log
           mkdir -p /tmp/g3c-out
           python -m coverage json -o /tmp/g3c-out/g3c-coverage.json -q
       - name: Require module-scoped statements and branches
