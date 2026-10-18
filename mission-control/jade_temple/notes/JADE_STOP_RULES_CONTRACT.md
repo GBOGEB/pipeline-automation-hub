@@ -1,0 +1,18 @@
+# JADE_CASTE — Executable stop/pivot/retrigger contract v2
+
+SSOT: `data/STOP_MODEL_NPLUS2.json` (immutable input); engine: `tools/stop_rules.py`; HTML: `site/burndown.html` (derived projection); native QA: `tests/test_stop_rules.py`. Every pulse must declare cohort Git blob, 21 eligible source heads, denominator, instrumentor version, exact-native run/job/attempt and all independent gate values. A count without a current-head trusted receipt is `null`.
+
+## States, precedence and exits
+
+| Order | Predicate | Result | Required follow-up |
+|---|---|---|---|
+| 1 | Current SHA has an owner-bound failed native source gate | `REPAIR_FIRST_RED` | Fix owner source, do not suppress test or re-label root |
+| 2 | Same exact head native jobs pending | `WAIT_NATIVE` | Await terminal run and inspect job-level first-red; zero redundant dispatch |
+| 3 | Independent reviewer, governance checks, blocked RED canary or security are missing/failed | `OWNER_BLOCKED` | Admin/reviewer action, server-side negative proof |
+| 4 | Three consecutive equal matched terminal evidence pulses, 0 pending roots, all four numerical progress measures unchanged | `PIVOT_DISJOINT_OWNER` | Halt same recensus; seek different source owner or failure frontier |
+| 5 | All nine gate states `PASS`, two *distinct* successful SHA/run IDs, no red/pending | `TARGET_MET_STOP_ENGINEERING` | Stop engineering repetition; separate authorized release decision required |
+| else | Unqualified/unknown/noncomparable observation | `CONTINUE_DISJOINT_MEASUREMENT` | Qualify missing receipts without fabricated gain |
+
+Nine noncompensating gates: source integrity, native tests, matched coverage, security, independent reviewer, required checks, blocked RED canary, hosted parity, owner release. The presence of `NULL` or `UNKNOWN` is *not* a numerical zero or a PASS. Scope/head drift, different branch instrumentation, a partial source list and an owner-unknown decision disqualify plateau and release.
+
+Pass no more than 12 hosted HTTP retries and two-or-three verification rounds to the sanctioned origin; use no second Pages publisher, browser token, background worker or silent postmerge normalization. The controller never mutates GitHub. All releases and merges remain gated by actual server-side rules.
