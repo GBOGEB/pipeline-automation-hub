@@ -31,3 +31,10 @@
 | `DROPIN_NEXT_CHAT.md` | Receiver text to start a later JADE_TEMPLE chat |
 
 **Do not automatically move files**, rename README, enable bypass, merge, deploy, assume a hosted URL or declare release ready.
+
+## GoGREEN N+1 supplement (18 October 2026)
+
+**[Current project README](README.md)** · **[21-repo GoGREEN dashboard](site/green.html)** · **[N+1 MIP/DMAIC analysis](notes/MIP_ANALYSIS_NPLUS1.md)** · **[Technical TODOs](notes/REPO_TECHNICAL_NEEDS_NPLUS1.md)** · **[Navigation and Pages contract](notes/NAVIGATION_PAGES_STYLE_CONTRACT.md)** · **[Next-chat drop-in](DROPIN_NEXT_CHAT.md)**.
+
+The N11 structural Top21 and historical GoGREEN sampled Top21 are **different populations** (13 shared, 8 source-only in each). Heads and recent Actions here are a non-atomic 18 October readback; every point-release and hosted-URL proof remains UNKNOWN until source-owned native and HTTP receipts arrive. The N+1 static child is intended for the existing Mission Control Pages publisher; no parallel Pages workflow or relaxed admission has been added.
+
