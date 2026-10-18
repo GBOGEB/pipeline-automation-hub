@@ -52,7 +52,11 @@ def main(argv=None):
     p.add_argument('--cpq',type=Path,required=True)
     p.add_argument('--report',type=Path,required=True,help='Same-run cpq-n5.json; source of expected denominators')
     p.add_argument('--out',type=Path,required=True)
+    p.add_argument('--report',type=Path,help='cpq-n5.json; default: sibling of --cpq')
     args=p.parse_args(argv)
+    from playwright.sync_api import sync_playwright
+    report_path=args.report or args.cpq.with_name('cpq-n5.json')
+    exp=expectations(json.loads(report_path.read_text(encoding='utf-8')))
     atlas=args.atlas.read_text(encoding='utf-8');cpq=args.cpq.read_text(encoding='utf-8')
     report=json.loads(args.report.read_text(encoding='utf-8'))
     expected=census_counts(report)
@@ -121,6 +125,7 @@ def main(argv=None):
             else:raise AssertionError(f'false-green seed did not fail: {kind}')
         browser.close()
     if len(out['checks'])!=6 or len(out['seeded_negatives'])!=2:raise AssertionError('incomplete browser QA')
+    out['expected_rows']=exp
     (args.out/'browser_receipt.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
     print('CPQ003_BROWSER=PASS; VIEWPORT_CHECKS=6; SEEDED_FALSE_GREEN_REJECTIONS=2')
 

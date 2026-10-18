@@ -514,12 +514,19 @@ jobs:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
+          set +e
           python mission-control/federation-atlas/mission_rebuild/browser_qa.py \
             --source /tmp/code-purple-atlas/mission-rebuild \
             --portal /tmp/code-purple-atlas/pages/mission-rebuild \
             --sha "$EXACT_SHA" \
             --out /tmp/code-purple-atlas/mission-rebuild/w1-browser-qa.json \
-            --screens /tmp/code-purple-atlas/mission-rebuild/browser-screens
+            --screens /tmp/code-purple-atlas/mission-rebuild/browser-screens 2>&1 | tee "$RUNNER_TEMP/qa-w1-browser-qa.log"
+          rc=${PIPESTATUS[0]}; set -e
+          if [ "$rc" -ne 0 ]; then
+            msg=$(grep -E "Error|assert|require|FAIL|mismatch|parity" "$RUNNER_TEMP/qa-w1-browser-qa.log" | tail -n 3 | tr '\n' ' ' | cut -c1-900)
+            echo "::error title=w1-browser-qa::${msg:-exit $rc (no assertion text captured)}"
+            exit "$rc"
+          fi
           test -s /tmp/code-purple-atlas/mission-rebuild/w1-browser-qa.json
       - name: W2 native Plotly responsive QA and Pages source/hash parity
         shell: bash

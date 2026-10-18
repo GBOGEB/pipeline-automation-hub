@@ -123,7 +123,11 @@ def test_viewport(browser,url,mode,w,h,snap,out,report):
     page.locator("#tab-monikers").click()
     check(page.locator("#moniker-cards details").count()==6,"six versioned monikers",log)
     page.locator("#moniker-cards details").first.locator("summary").click()
-    check("CP.CLOSEOUT" in page.locator("#moniker-cards pre").first.inner_text(),"canonical moniker details",log)
+    # CP.CLOSEOUT is an alias card; its instruction must bind to the canonical CP.CLOSE
+    # producer (8b03321), never a second CP.CLOSEOUT(...) producer.
+    first=snap["monikers"][0]["invocation"]
+    check(first.startswith("CP.CLOSE(") and not first.startswith("CP.CLOSEOUT("),"alias binds to canonical CP.CLOSE",log)
+    check(page.locator("#moniker-cards pre").first.inner_text()==first,"canonical moniker details",log)
     # Clipboard is explicitly user-triggered; failure is reported without false success.
     page.evaluate("""() => {
        Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
@@ -132,7 +136,7 @@ def test_viewport(browser,url,mode,w,h,snap,out,report):
     }""")
     page.locator("#moniker-cards .copy").first.click()
     check(page.locator("#moniker-cards .copy").first.get_attribute("data-copied")=="true","copy control action returns success",log)
-    check("CP.CLOSEOUT" in page.evaluate("window.__copied"),"copied instruction is canonical",log)
+    check(page.evaluate("window.__copied")==first,"copied instruction is canonical",log)
     page.locator("#tab-overview").focus()
     page.keyboard.press("ArrowRight")
     check(page.locator("#tab-intents").get_attribute("aria-selected")=="true","tab keyboard arrow navigation",log)
