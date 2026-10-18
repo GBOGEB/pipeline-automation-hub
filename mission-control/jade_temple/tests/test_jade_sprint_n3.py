@@ -92,6 +92,13 @@ class SprintDAGTests(unittest.TestCase):
         self.assertIn("&lt;script&gt;",page)
         self.assertNotIn("<script>alert(9)</script>",page)
         self.assertNotIn("fetch(",page)
+    def test_n4_svg_is_internal_and_stage_anchored(self):
+        page=model.render_html(model.build(self.data))
+        self.assertIn("<svg",page)
+        self.assertIn("J5 POINT RELEASE",page)
+        self.assertIn("id='dimensions'",page)
+        self.assertIn("id='owners'",page)
+        self.assertNotIn("fetch(",page)
     def test_worker_capacity_remains_unverified(self):
         p=model.build(self.data)
         self.assertIsNone(p["pools"]["native_runner_slots"])

@@ -24,7 +24,7 @@ param(
   [ValidateRange(1,72)]
   [int]$CacheHours=12,
   [switch]$FreshClone,
-  [string]$CloneRef="code-purple/jade-n3-release-sprint-dag-20261019",
+  [string]$CloneRef="code-purple/jade-n4-powershell-cache-dag-20261019",
   [switch]$InstallOptionalDependencies,
   [switch]$WithBrowser,
   [switch]$NoCache,
