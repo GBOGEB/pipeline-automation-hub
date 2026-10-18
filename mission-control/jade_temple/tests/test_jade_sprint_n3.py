@@ -82,6 +82,20 @@ class SprintDAGTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"DUPLICATE_EDGE"):
             model.topo([{"id":"A"},{"id":"B"}],
                        [{"from":"A","to":"B"},{"from":"A","to":"B"}])
+    def test_hosted_staging_manifest_keys_are_posix_on_all_platforms(self):
+        import importlib.util
+        root=ROOT/'mission-control/jade_temple'
+        spec=importlib.util.spec_from_file_location('jade_n5_bridge',root/'portal_bridge.py')
+        module=importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        with tempfile.TemporaryDirectory() as d:
+            hashes={}
+            response=module.stage_jade(root,Path(d),hashes,'a'*40)
+            self.assertEqual(response['burndown_assets_in_pages'],7)
+            self.assertEqual(len(hashes),16)
+            self.assertIn('jade/burndown.html',hashes)
+            self.assertIn('jade/publisher-receipt.json',hashes)
+            self.assertTrue(all('\\' not in k for k in hashes))
     def test_sipoc_separate_provenance(self):
         p=model.build(self.data)
         self.assertEqual({x["axis"] for x in p["dimensions"]},

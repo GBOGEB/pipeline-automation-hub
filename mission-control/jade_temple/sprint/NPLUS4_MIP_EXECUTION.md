@@ -59,3 +59,9 @@ Gate constants: `MERGE_ADMISSION=HOLD`; `J5=TARGET_NOT_ACHIEVED`; `AUTO_DISPATCH
 - N+5 branch `code-purple/jade-n5-exact-head-testflight-20261019` is derived from actual master `d757aee382e0a0daf278d28fc08a6f032bcc6ea8` and carries the precise five disjoint subsequent repairs (including Python source quoting and Windows native preflight).
 - A bounded branch-specific GitHub push workflow now collects exact head native Linux3.11 / Windows3.12 without creating a PR that might merge prematurely. No separate publisher, no native runner dispatch from local script, no release tag.
 - Do not create further PR or claim current-main repair until N+5 push workflow terminal checks and complete artifact hashes are examined; then source owner may stage human review and P0 branch rule canary.
+
+## N+5 cross-platform first-red displacement — exact evidence
+
+- Initial Windows branch test had 4/4 local check failures, 9 test FAIL + 16 ERROR, reproduced in run [39174799135](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39174799135); Git-for-Windows CRLF conversion broke byte-exact source manifests. LF Git-blob checkout restored `EXACT_SOURCE_BYTES 5` at head `7a43298e...`.
+- Next run [39175034484](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39175034484) reached 3/4 PASS local checks, one test suite FAIL (4 failures/4 errors) due Windows `portal_hashes[str(dst.relative_to(output_root))]` emitting backslash URL keys. Source-cause repair is `.as_posix()` on all three bridge manifest paths; retains 16-asset hosted exact population, strict negative controls and J2 UNKNOWN until real HTTPS.
+- These are first-red displacements/isolated source fixes; **zero formal causal owner closures and zero point release credits** until independent exact-head native proof plus security/hosted/admin/reviewer gates.

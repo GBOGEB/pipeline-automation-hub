@@ -63,7 +63,7 @@ def stage_burndown(project_root, output_root, portal_hashes):
         dst=output_root/'jade'/name
         dst.parent.mkdir(parents=True,exist_ok=True)
         shutil.copyfile(src,dst)
-        portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
+        portal_hashes[dst.relative_to(output_root).as_posix()]=sha256(dst)
     return len(BURNDOWN_REQUIRED)
 
 SHA40=re.compile(r'^[0-9a-f]{40}$')
@@ -106,7 +106,7 @@ def stage_jade(project_root, output_root, portal_hashes, source_sha):
         if not src.is_file() or src.is_symlink():raise ValueError('JADE_STATIC_MISSING: '+name)
         dst=output_root/'jade'/name;dst.parent.mkdir(parents=True,exist_ok=True)
         shutil.copyfile(src,dst)
-        portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
+        portal_hashes[dst.relative_to(output_root).as_posix()]=sha256(dst)
     n2_assets=stage_burndown(project_root,output_root,portal_hashes)
     proof={'schema':'jade.temple.pages_bridge.v1','presentation_head':source_sha,
         'publisher':'EXISTING_METHOD_ATLAS_PAGES_ONLY','merge_admission':'HOLD',
@@ -117,5 +117,5 @@ def stage_jade(project_root, output_root, portal_hashes, source_sha):
         'files_in_pages':len(STATIC_REQUIRED)+n2_assets,'burndown_assets_in_pages':n2_assets}
     dst=output_root/'jade'/'publisher-receipt.json'
     dst.write_text(json.dumps(proof,sort_keys=True,indent=2)+'\n',encoding='utf-8')
-    portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
+    portal_hashes[dst.relative_to(output_root).as_posix()]=sha256(dst)
     return proof
