@@ -304,5 +304,227 @@ class CaptureTests(unittest.TestCase):
             a.native_get("https://attacker.example", "token-only-in-test")
 
 
+
+class NPlusOneBoundaryAndFaultTests(unittest.TestCase):
+    """W10 N+1 disjoint adversarial cases, no source-test exclusions."""
+
+    def test_branch_response_must_be_an_object(self):
+        with self.assertRaisesRegex(ValueError, "branch response"):
+            a.sha_of(None)
+
+    def test_branch_commit_sha_missing_is_unknown_not_accepted(self):
+        with self.assertRaisesRegex(ValueError, "branch source head"):
+            a.sha_of({"commit": {}})
+
+    def test_invalid_merged_pr_limit_bool_not_an_integer(self):
+        fetch, _ = fixture()
+        with self.assertRaisesRegex(ValueError, "bounded PR limit"):
+            a.list_merged(fetch, limit=True)
+
+    def test_merged_pr_limit_above_five_rejected(self):
+        fetch, _ = fixture()
+        with self.assertRaisesRegex(ValueError, "bounded PR limit"):
+            a.list_merged(fetch, limit=6)
+
+    def test_merged_pr_selection_excludes_unmerged_and_foreign_base(self):
+        fetch, _ = fixture()
+        def extra(path):
+            d = fetch(path)
+            if "/pulls?" in path:
+                d.append({"number": 1111, "head": {"sha": B},
+                          "base": {"ref": "main"}, "merged_at": None})
+                d.append({"number": 2222, "head": {"sha": B},
+                          "base": {"ref": "dev"},
+                          "merged_at": "2026-10-18T23:00:00Z"})
+            return d
+        self.assertEqual([x["number"] for x in a.list_merged(extra)], [1098,1097,1096])
+
+    def test_merge_selection_sorts_out_of_order_response(self):
+        fetch, _ = fixture()
+        def reverse(path):
+            d = fetch(path)
+            return list(reversed(d)) if "/pulls?" in path else d
+        self.assertEqual([x["number"] for x in a.list_merged(reverse)],
+                         [1098,1097,1096])
+
+    def test_invalid_merged_pr_boolean_number_rejected(self):
+        fetch, _ = fixture()
+        def changed(path):
+            d = fetch(path)
+            if "/pulls?" in path:
+                d[0]["number"] = True
+            return d
+        with self.assertRaisesRegex(ValueError, "merged PR number"):
+            a.list_merged(changed)
+
+    def test_missing_pull_list_rejected(self):
+        with self.assertRaisesRegex(ValueError, "closed PR return"):
+            a.list_merged(lambda _: {"items":[]})
+
+    def test_source_check_run_rejects_unknown_status(self):
+        with self.assertRaisesRegex(ValueError, "unknown check status"):
+            a.check_run(item(101, A, status="sleeping"), A)
+
+    def test_source_check_run_rejects_bool_annotation_count(self):
+        with self.assertRaisesRegex(ValueError, "annotation count invalid"):
+            a.check_run(item(101, A, annotations=True), A)
+
+    def test_untrusted_check_run_url_is_not_rendered(self):
+        d = item(101, A)
+        d["details_url"] = "https://attacker.example/job/5"
+        self.assertIsNone(a.check_run(d, A)["url"])
+
+    def test_trusted_exact_provider_url_is_retained(self):
+        d = item(101, A)
+        self.assertEqual(a.check_run(d, A)["url"], d["details_url"])
+
+    def test_empty_source_check_population_is_measured_zero_not_fabricated(self):
+        v = a.get_commit_checks(lambda _:{
+            "total_count":0, "check_runs":[]}, A)
+        self.assertEqual((v["api_total"], v["observed"]), (0,0))
+        self.assertTrue(v["complete"])
+        self.assertEqual(a.cohort_rollup(v)["successful_annotated_checks_observed"], 0)
+
+    def test_exact_check_run_second_page_101_of_101(self):
+        checks = [item(i, A, annotations=0) for i in range(1,102)]
+        def fetch(path):
+            return {"total_count":101,"check_runs":(
+                checks[:100] if path.endswith("page=1") else checks[100:])}
+        d = a.get_commit_checks(fetch,A)
+        self.assertEqual((d["observed"], d["api_total"]), (101,101))
+        self.assertTrue(d["complete"])
+
+    def test_page_budget_four_marks_401_as_partial(self):
+        checks = [item(i, A, annotations=0) for i in range(1,402)]
+        def fetch(path):
+            page = int(path.rsplit("page=",1)[1])
+            return {"total_count":401, "check_runs":checks[(page-1)*100:page*100]}
+        d = a.get_commit_checks(fetch,A)
+        self.assertEqual((d["observed"], d["api_total"]), (400,401))
+        self.assertFalse(d["complete"])
+
+    def test_invalid_page_budget_false_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "bounded check-run page count"):
+            a.get_commit_checks(lambda _: {}, A, max_pages=False)
+
+    def test_invalid_page_budget_above_four_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "bounded check-run page count"):
+            a.get_commit_checks(lambda _: {}, A, max_pages=5)
+
+    def test_invalid_check_response_list_shape_rejected(self):
+        with self.assertRaisesRegex(ValueError, "check-run population"):
+            a.get_commit_checks(lambda _: {"total_count":1,"check_runs":{}}, A)
+
+    def test_bool_check_total_is_not_an_integer(self):
+        with self.assertRaisesRegex(ValueError, "check-run population"):
+            a.get_commit_checks(lambda _: {"total_count":True,"check_runs":[]}, A)
+
+    def test_detail_probe_boolean_limit_rejected(self):
+        fetch, _ = fixture()
+        c = a.get_commit_checks(fetch,A)
+        with self.assertRaisesRegex(ValueError, "annotation detail probe cap"):
+            a.read_level_sample(fetch,c,limit=False)
+
+    def test_rate_limited_annotation_probe_is_explicit_unknown(self):
+        fetch, _ = fixture()
+        c = a.get_commit_checks(fetch,A)
+        def rate_limited(path):
+            if "/check-runs/" in path:
+                raise HTTPError(path,429,"rate limit",None,io.BytesIO())
+            return fetch(path)
+        a.read_level_sample(rate_limited,c,limit=2)
+        self.assertEqual(c["checks"][0]["annotation_severity"], "UNKNOWN_HTTP_429")
+        self.assertIsNone(a.cohort_rollup(c)["total_failure_level_annotations"])
+
+    def test_not_found_annotation_probe_is_explicit_unknown(self):
+        fetch, _ = fixture()
+        c = a.get_commit_checks(fetch,A)
+        def not_found(path):
+            if "/check-runs/" in path:
+                raise HTTPError(path,404,"owner restricted",None,io.BytesIO())
+            return fetch(path)
+        a.read_level_sample(not_found,c,limit=2)
+        self.assertEqual(c["checks"][0]["annotation_severity"], "UNKNOWN_HTTP_404")
+
+    def test_service_failure_does_not_turn_into_green(self):
+        fetch, _ = fixture()
+        c = a.get_commit_checks(fetch,A)
+        def outage(path):
+            if "/check-runs/" in path:
+                raise HTTPError(path,503,"provider unavailable",None,io.BytesIO())
+            return fetch(path)
+        with self.assertRaises(HTTPError):
+            a.read_level_sample(outage,c,limit=2)
+
+    def test_malformed_annotation_detail_response_rejected(self):
+        fetch, _ = fixture()
+        c = a.get_commit_checks(fetch,A)
+        def tamper(path):
+            return {"message":"not a list"} if "/check-runs/" in path else fetch(path)
+        with self.assertRaisesRegex(ValueError,"annotation detail is not a list"):
+            a.read_level_sample(tamper,c,limit=2)
+
+    def test_priority_prefers_validate_over_security(self):
+        v = [a.check_run(item(10,A,name="Security Scan"),A),
+             a.check_run(item(11,A,name="Validate Manifest"),A)]
+        self.assertEqual(sorted(v,key=a.priority)[0]["id"],11)
+
+    def test_pending_does_not_count_as_terminal_red(self):
+        fetch, _ = fixture()
+        m = a.cohort_rollup(a.get_commit_checks(fetch,A))
+        self.assertEqual(m["terminal_red_check_count"],1)
+        self.assertEqual(m["unknown_or_pending_check_count"],1)
+
+    def test_current_main_spoofing_rejected_even_when_sha_valid(self):
+        fetch, _ = fixture()
+        d = a.collect(fetch)
+        d["hub_source_sha"] = A
+        d["source_bound_cohorts"][0]["head_sha"] = B
+        with self.assertRaisesRegex(ValueError, "current CODEX main source-binding"):
+            a.validate(d,A)
+
+    def test_forged_breadth_rejected_as_not_six_repo(self):
+        fetch, _ = fixture()
+        d = a.collect(fetch)
+        d["hub_source_sha"] = A
+        d["source_bound_breadth"]["six_repo_federation_breadth"] = 6
+        with self.assertRaisesRegex(ValueError, "unsupported federation breadth"):
+            a.validate(d,A)
+
+    def test_negative_successful_count_rejected(self):
+        fetch, _ = fixture()
+        d = a.collect(fetch)
+        d["hub_source_sha"] = A
+        d["source_bound_cohorts"][0]["metrics"]["successful_checks"] = -1
+        with self.assertRaisesRegex(ValueError, "nonnegative native census"):
+            a.validate(d,A)
+
+    def test_check_array_must_match_observed_count(self):
+        fetch, _ = fixture()
+        d = a.collect(fetch)
+        d["hub_source_sha"] = A
+        d["source_bound_cohorts"][0]["checks"] = []
+        with self.assertRaisesRegex(ValueError, "invalid check denominator"):
+            a.validate(d,A)
+
+    def test_claimed_complete_with_smaller_check_population_rejected(self):
+        fetch, _ = fixture()
+        d = a.collect(fetch)
+        d["hub_source_sha"] = A
+        d["source_bound_cohorts"][0]["metrics"]["check_runs_api_total"] = 5
+        with self.assertRaisesRegex(ValueError, "false complete check cohort"):
+            a.validate(d,A)
+
+    def test_w10_breadth_proves_only_codex_check_cohorts(self):
+        fetch, _ = fixture()
+        d = a.collect(fetch)
+        d["hub_source_sha"] = A
+        b = d["source_bound_breadth"]
+        self.assertEqual((b["complete_check_cohorts_observed"],
+                          b["check_cohorts_eligible"]),(4,4))
+        self.assertIsNone(b["six_repo_federation_breadth"])
+        self.assertTrue(a.validate(d,A))
+
+
 if __name__ == "__main__":
     unittest.main()
