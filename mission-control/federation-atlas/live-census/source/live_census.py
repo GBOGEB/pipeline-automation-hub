@@ -16,7 +16,8 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-from source_access import SourceAccessError, read_json, write_diagnostic
+from source_access import (CROSS_REPO_TOKEN_ENV, DEFERRED_NO_TOKEN, SourceAccessError,
+                           credential_deferral, read_json, write_diagnostic)
 
 SCHEMA = 'codepurple.disjoint_live_census.v1'
 REPOS = {'ABACUS':'main', 'CODEX':'main', 'pipeline-automation-hub':'master',
@@ -212,6 +213,8 @@ def cli(argv=None):
     parser=argparse.ArgumentParser();group=parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--seed');group.add_argument('--refresh',action='store_true');group.add_argument('--verify')
     parser.add_argument('--previous');parser.add_argument('--out',default='output')
+    parser.add_argument('--require-cross-repo-token',action='store_true',
+                        help='refresh: defer (no requests) unless '+CROSS_REPO_TOKEN_ENV+' is set')
     a=parser.parse_args(argv)
     if a.verify:
         root=Path(a.verify);m=json.loads((root/'manifest.json').read_text())
@@ -219,6 +222,11 @@ def cli(argv=None):
             if hashlib.sha256((root/name).read_bytes()).hexdigest()!=sha:raise ValueError('digest mismatch: '+name)
         data_identity(json.loads((root/'snapshot.json').read_text()));print('PASS',len(m['files_sha256']));return
     if a.refresh:
+        if a.require_cross_repo_token and not os.environ.get(CROSS_REPO_TOKEN_ENV,'').strip():
+            diagnostic=write_diagnostic(credential_deferral(),Path(a.out))
+            print(json.dumps({'status':DEFERRED_NO_TOKEN,'requests_attempted':0,
+                              'fresh_census_generated':False,'diagnostic':str(diagnostic)},sort_keys=True))
+            return DEFERRED_NO_TOKEN
         try:
             obs=acquire(GitHubReadOnly())
         except SourceAccessError as error:

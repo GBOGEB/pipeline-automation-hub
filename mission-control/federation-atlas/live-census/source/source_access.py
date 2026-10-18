@@ -63,12 +63,46 @@ def read_json(request: urllib.request.Request, resource: str, *, timeout: int = 
         raise SourceAccessError(resource, reason=type(err).__name__) from None
 
 
-def write_diagnostic(error: SourceAccessError, out_dir: Path) -> Path:
+CROSS_REPO_TOKEN_ENV = "CROSS_REPO_READ_TOKEN"
+DEFERRED_NO_TOKEN = "DEFERRED_NO_CROSS_REPO_READ_TOKEN"
+
+
+def credential_deferral() -> dict:
+    """Typed receipt for a census that was NOT attempted: no cross-repo credential.
+
+    A repository-scoped GITHUB_TOKEN cannot read sibling private repositories, so
+    every GET would 404. That is a known configuration absence, not a fresh
+    source-visibility observation, so no request is made and nothing is credited.
+    """
+    return {
+        "schema": "missioncontrol.n13.source_access_diagnostic.v1",
+        "observed_at_utc": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "repository": None,
+        "endpoint_class": None,
+        "http_status": None,
+        "reason_class": "CREDENTIAL_NOT_CONFIGURED",
+        "classification": "CROSS_REPO_CREDENTIAL_ABSENT",
+        "credential_env": CROSS_REPO_TOKEN_ENV,
+        "requests_attempted": 0,
+        "source_sha": None,
+        "source_present": None,
+        "source_access_authorized": None,
+        "fresh_census_generated": False,
+        "accepted_causal_root_closures": None,
+        "merge_authorized": False,
+        "crew_dispatch_authorized": False,
+        "engineering_acceptance": False,
+        "disposition": DEFERRED_NO_TOKEN,
+    }
+
+
+def write_diagnostic(error: "SourceAccessError | dict", out_dir: Path) -> Path:
     """Durable diagnostic even when native refresh cannot emit a valid snapshot."""
+    payload = error if isinstance(error, dict) else error.diagnostic()
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     path = out / "access_diagnostic.json"
     tmp = out / "access_diagnostic.json.tmp"
-    tmp.write_text(json.dumps(error.diagnostic(), indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    tmp.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     tmp.replace(path)
     return path
