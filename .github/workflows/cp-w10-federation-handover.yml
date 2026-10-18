@@ -42,7 +42,7 @@ jobs:
           BD=mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json
           OUT="$RUNNER_TEMP/cp-w10-record"
           ZIP="$RUNNER_TEMP/CP-W10-MYCELIUM-FEDERATION-20261018.zip"
-          python -m unittest discover -s "$ROOT" -p test_cp_close.py -v
+          python -m unittest discover -s mission-control/v2/handoff/closeout -p test_cp_close.py -v
           python "$ROOT/cp_close.py" --intake "$INTAKE" --bd "$BD" --out "$OUT" --zip "$ZIP"
           python "$ROOT/cp_close.py" --intake "$INTAKE" --bd "$BD" --out "$OUT" --check
           if test -f "$ROOT/records/CP-W10-MYCELIUM-FEDERATION-20261018/MANIFEST.json"; then

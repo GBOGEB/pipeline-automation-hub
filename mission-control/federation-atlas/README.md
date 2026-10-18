@@ -1,5 +1,24 @@
 # CODE PURPLE Federation Method Atlas (v0.1)
 
+## W34 Superstitch — DOW → KEB → QPS digital-twin review (19 October 2026)
+
+The existing Method Atlas workflow remains the **only** public GitHub Pages publisher. The additive /superstitch/index.html is a read-only, uncropped six-lane DOW/KEB/QPS/Mission-Control/gg_MATH/TESTFLIGHT view, not a source-of-truth replacement or a QPS engineering acceptance path.
+
+Source: super­stitch/SUPERSTITCH_SOURCE_v1.json, SUPERSTITCH_TAXONOMY_v1.json and SUPERSTITCH_GLOSSARY_v1.json (all in mission-control/federation-atlas/superstitch/). The namespace defines 29 node placements, 26 canonical identities, three visibly repeated aliases and typed role-only / declared / touch / feedback edges. The source graph is always fully available. The UI adds accessible click-to-inspect level 1/2/3 hierarchy, duplicate highlighting, filterable edge lenses, and adjacent SIPOC/dependency/temporal/DAG activity views. No fabricated live/queued status; absent run/attempt/job timestamps remain UNKNOWN.
+
+Rendering: super­stitch/build.py writes eight review members plus an exact-head, byte-checked manifest.json. The existing pages_portal.py copies the complete verified package, and the existing code-purple-method-atlas.yml executes test_superstitch.py, W34 HOME/PR-style TESTFLIGHT, three viewports (1440x1000 / 1280x800 / 390x844), no-CDN browser interaction checks, and a structural pixel/edge pattern scanner before publishing. This is *local reproducibility on a native runner*, not independent workflow admission. GitHub exact SHA, job, run attempt, artifact byte verification and independent review are separate requirements.
+
+Local pre-PR command (run from the full repository checkout after staging changes):
+
+    python mission-control/federation-atlas/superstitch/testflight.py --mode home --browser --out /tmp/w34-home-testflight
+
+The HOME receipt reports staged-file count/hash and F0-F4 check results. It is LOCAL_PREVIEW_NOT_STAGED, not green staging, when nothing is staged. The PR workflow uses --mode pr --expected-head with its own checked-out exact source; F5-F7 native acceptance, owner review and federation are never self-certified by HOME.
+
+Outward family: HTML/SVG/JSON (same Pages publisher), optional PptxGenJS export_deck.js montage and QA PNGs, plus disjoint gg_MATH kernels/visual_engine_bridge.py for offline Plotly HTML and Matplotlib PNG/SVG reproducibility. The optional external engine scout lists public upstream Plotly, Matplotlib, Cytoscape, ELKjs, OpenAI Agents and Anthropic Cookbook with evaluation/attribution, **no copied upstream source or promoted external acceptance**. Taxonomy/glossary are additive to the canonical MC v2 glossary and six phase02 KPI family definitions.
+
+Authority stays #530 ZIP verifier, #531 canonical six-repo census producer, #533 Method Atlas lane viewer; historical breadth 6/42, authenticated CODEX→QPS pair 0/1, QPS DEFER, worker-hours UNKNOWN, M1 PARTIAL and M2/M3 HOLD. This W34 view carries no security waiver, formal coverage uplift, merge approval or private QPS engineering record.
+
+
 ## W32 Global DoV concentrated entrypoint (18 October 2026)
 
 The same Method Atlas/Pages workflow now publishes a read-only **Global DoV Convergence Hub** at `convergence/index.html` inside the existing portal root index. Its `ledger.json` and SHA-256 `manifest.json` are hash-verified, and `lineage.mmd` links native source owners to CP.W10 Golden Thread.
