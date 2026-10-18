@@ -343,6 +343,7 @@ Artifact is an incubation preview only.</p></section></main></body></html>
 
 
 def render_svg(dag):
+    """Portable self-contained two-row DAG, with declared vs next-pulse links."""
     labels = [(i, html.escape(n["label"])) for i, n in enumerate(dag["nodes"])]
     rectangles = []
     for i, label in labels:
@@ -352,9 +353,30 @@ def render_svg(dag):
             f'<rect x="{x}" y="{y}" width="333" height="74" rx="12" '
             f'fill="#162d44" stroke="#88bed5"/><text x="{x+11}" '
             f'y="{y+29}" fill="#f1f6fd" font-size="12">{label}</text>')
-    return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1110 245" '
-            'role="img"><title>G12 read-only native incubation DAG stages</title>' +
-            ''.join(rectangles) + '</svg>\n')
+    # Three top-row nodes, then three bottom-row nodes: within-wave edges
+    # are solid; the recurrence loop is a visually different dashed edge.
+    paths = [
+        'M358 65 L379 65',
+        'M713 65 L734 65',
+        'M900 102 V122 H190 V137',
+        'M358 175 L379 175',
+        'M713 175 L734 175',
+    ]
+    stroke = ''.join(
+        '<path d="' + p + '" fill="none" stroke="#65d5b0" stroke-width="2" '
+        'marker-end="url(#tip)"/>' for p in paths)
+    recurrence = (
+        '<path d="M385 212 H12 V12 H35 V28" fill="none" '
+        'stroke="#eac36a" stroke-width="2" stroke-dasharray="6 5" '
+        'marker-end="url(#tip)"/><text x="21" y="228" '
+        'font-size="11" fill="#ffdfa2">next-pulse feedback only</text>')
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1110 245" '
+        'role="img"><title>G12 read-only native incubation DAG stages</title>'
+        '<defs><marker id="tip" viewBox="0 0 10 10" refX="10" refY="5" '
+        'markerWidth="6" markerHeight="6" orient="auto-start-reverse">'
+        '<path d="M0 0 L10 5 L0 10 Z" fill="#65d5b0"/></marker></defs>' +
+        stroke + recurrence + ''.join(rectangles) + '</svg>\\n')
 
 
 def render_mermaid(dag):
