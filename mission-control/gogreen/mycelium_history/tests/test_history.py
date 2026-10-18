@@ -410,6 +410,94 @@ class CollectorTests(unittest.TestCase):
             collect.request_json("/repos/GBOGEB/CODEX//actions/runs")
 
 
+class CanonicalBDProjectionTests(unittest.TestCase):
+    @staticmethod
+    def source():
+        path = HERE.parents[1] / "federation-atlas" / "CODE_PURPLE_BD_QUEUE_v1.json"
+        raw = path.read_bytes()
+        return json.loads(raw), raw
+
+    def test_canonical_cpq_full_bd_states_and_dep_proof(self):
+        data, raw = self.source()
+        out = history.bd_projection(data, raw)
+        self.assertEqual(out["total"], 19)
+        self.assertEqual(out["open_work_items"], 9)
+        self.assertEqual(out["state_counts"]["DONE"], 10)
+        self.assertEqual(out["state_counts"]["ACTIVE"], 5)
+        self.assertEqual(out["state_counts"]["TODO"], 2)
+        self.assertEqual(out["state_counts"]["UNKNOWN_NEEDS_READER"], 2)
+        self.assertIn({"from":"CPQ-010","to":"CPQ-013",
+                       "type":"DECLARED_BD_DEPENDENCY"},out["dependency_edges"])
+        self.assertEqual(out["accepted_formal_root_closures"], 0)
+        self.assertIsNone(out["state_delta_since_previous_pulse"])
+
+    def test_canonical_blob_identity_and_owner(self):
+        data, raw = self.source()
+        d = history.bd_projection(data, raw)
+        self.assertEqual(hashlib.sha256(raw).hexdigest(), d["source_sha256"])
+        git_blob = hashlib.sha1(
+            b"blob " + str(len(raw)).encode("ascii") + b"\\0" + raw
+        ).hexdigest()
+        self.assertEqual(d["source_git_blob_sha"], git_blob)
+        self.assertFalse(d["authority_transfer"])
+
+    def test_false_bd_owner_transfer_rejected(self):
+        data, raw = self.source()
+        data["authority_transfer"] = True
+        with self.assertRaisesRegex(ValueError, "canonical BD owner"):
+            history.bd_projection(data, raw)
+
+    def test_duplicate_bd_atom_rejected(self):
+        data, raw = self.source()
+        data["items"].append(copy.deepcopy(data["items"][0]))
+        with self.assertRaisesRegex(ValueError, "duplicate CPQ identity"):
+            history.bd_projection(data, raw)
+
+    def test_orphan_bd_dependency_rejected(self):
+        data, raw = self.source()
+        next(i for i in data["items"] if i["id"] == "CPQ-013")[
+            "depends_on"] = ["CPQ-999"]
+        with self.assertRaisesRegex(ValueError, "orphan BD dependency"):
+            history.bd_projection(data, raw)
+
+    def test_foreign_source_link_rejected(self):
+        data, raw = self.source()
+        data["items"][0]["links"].append("https://evil.example/run")
+        with self.assertRaisesRegex(ValueError, "external BD link"):
+            history.bd_projection(data, raw)
+
+    def test_unknown_last_state_rejected(self):
+        data, raw = self.source()
+        data["items"][0]["history"][-1]["state"] = "GREEN"
+        with self.assertRaisesRegex(ValueError, "BD state/flow"):
+            history.bd_projection(data, raw)
+
+    def test_bd_dashboard_escapes_title_and_preserves_all_atoms(self):
+        data, raw = self.source()
+        data["items"][0]["title"] = "<script>steal()</script>"
+        out = history.bd_projection(data, raw)
+        page = history.bd_html(out)
+        self.assertNotIn("<script>", page)
+        self.assertIn("&lt;script&gt;", page)
+        self.assertIn("CPQ-001", page)
+        self.assertIn("CPQ-019", page)
+
+    def test_native_preview_includes_bd_member_and_digest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)
+            result = history.build(fixture(), C, path)
+            self.assertIn("canonical_bd_status", result)
+            self.assertEqual(result["canonical_bd_status"]["items"], 19)
+            m = json.loads((path / "manifest.json").read_text())
+            self.assertIn("bd_queue.json", m["file_sha256"])
+            self.assertEqual(
+                hashlib.sha256((path/"bd_queue.json").read_bytes()).hexdigest(),
+                m["file_sha256"]["bd_queue.json"])
+            self.assertIn("Canonical CODE PURPLE BD queue",
+                          (path/"index.html").read_text())
+            history.build(fixture(), C, path, check=True)
+
+
 class PresentationTests(unittest.TestCase):
     def test_empty_run_list_has_no_invented_day_bars(self):
         self.assertEqual(history.bins([]), [])
