@@ -26,7 +26,7 @@ def build():
  out['green.html']=(SITE/'green_template.html').read_bytes()
  out['jade_data.js']=('window.JADE_NPLUS1='+compact(z)+';\n').encode('utf-8')
  out['snapshot.json']=(json.dumps(z,sort_keys=True,indent=2,ensure_ascii=True)+'\n').encode('utf-8')
- s=io.StringIO();w=csv.writer(s);w.writerow(['rank','repository','priority','head_sha','technical_need','next_point_release_todo','gogreen_observation','latest_sample_run','hosting','admission'])
+ s=io.StringIO();w=csv.writer(s,lineterminator="\n");w.writerow(['rank','repository','priority','head_sha','technical_need','next_point_release_todo','gogreen_observation','latest_sample_run','hosting','admission'])
  for r in rows:w.writerow([r['rank'],r['repo'],r['priority'],r['head_readback'],r['technical_need'],r['next_point_release_todo'],r['historical_gogreen']['status'],r['observed_recent_branch_runs'][0]['run_id'] if r['observed_recent_branch_runs'] else 'UNKNOWN','UNKNOWN','HOLD'])
  out['top21_bd_queue.csv']=s.getvalue().encode('utf-8')
  # The standalone bundle does not contain an executable GitHub publisher.
