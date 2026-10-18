@@ -1,0 +1,151 @@
+{
+  "schema": "missioncontrol.code_purple.g3d_obligation_snapshot.v1",
+  "authority_transfer": false,
+  "merge_admission": "HOLD",
+  "security_waiver": false,
+  "parents": [
+    {
+      "id": "GOVERNANCE",
+      "status": "PARTIAL",
+      "canonical_issue": "https://github.com/GBOGEB/ABACUS/issues/2087"
+    },
+    {
+      "id": "ADMISSION",
+      "status": "BLOCKED_OWNER",
+      "canonical_issue": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "id": "CREDENTIALS",
+      "status": "BLOCKED_OWNER",
+      "canonical_issue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/636"
+    },
+    {
+      "id": "BROWSER",
+      "status": "PARTIAL",
+      "canonical_issue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/638"
+    },
+    {
+      "id": "FEDERATION",
+      "status": "HOLD",
+      "canonical_issue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/520"
+    }
+  ],
+  "history": [
+    {
+      "n": 0,
+      "source_sha": "6198d6cc411c6b6b836e1536edb7b4dc48aae24a",
+      "workflow_denominator": 188,
+      "classified": 164,
+      "evidence_class": "EXACT_SOURCE_AUDIT"
+    },
+    {
+      "n": 1,
+      "source_sha": "ef7062ce46bb8c0a3716a15c8f1b8847f568c29e",
+      "workflow_denominator": 188,
+      "classified": 172,
+      "evidence_class": "NATIVE_POLICY_AUDIT"
+    },
+    {
+      "n": 2,
+      "source_sha": "2cb4eb7ccde9014e49219e4e0114b8df4f0a97b7",
+      "workflow_denominator": 188,
+      "classified": 188,
+      "evidence_class": "EXACT_SOURCE_AUDIT"
+    }
+  ],
+  "source_multiple_matches": 0,
+  "terminal": [
+    {
+      "parent": "GOVERNANCE",
+      "source_sha": "ef7062ce46bb8c0a3716a15c8f1b8847f568c29e",
+      "run_id": 39133354888,
+      "attempt": 1,
+      "job_id": 117692839515,
+      "conclusion": "failure"
+    },
+    {
+      "parent": "BROWSER",
+      "source_sha": "6f083793bb74a997edb0518d678b06993f5b53e6",
+      "run_id": 39133481136,
+      "attempt": 1,
+      "job_id": 117693202930,
+      "conclusion": "failure"
+    },
+    {
+      "parent": "GOVERNANCE",
+      "source_sha": "2cb4eb7ccde9014e49219e4e0114b8df4f0a97b7",
+      "run_id": 39134912332,
+      "attempt": 1,
+      "job_id": null,
+      "conclusion": "queued"
+    }
+  ],
+  "fingerprints": [
+    {
+      "id": "POSTMERGE_ZERO_PASS_FALSE_GREEN",
+      "accepted_root_id": null,
+      "observed_occurrences": 1
+    },
+    {
+      "id": "ABACUS_METRICS_TOKEN_UNAVAILABLE",
+      "accepted_root_id": null,
+      "observed_occurrences": null
+    },
+    {
+      "id": "QPS_FEDERATION_HTTP_404",
+      "accepted_root_id": null,
+      "observed_occurrences": null
+    },
+    {
+      "id": "MC_W1_MOBILE_OVERFLOW",
+      "accepted_root_id": null,
+      "observed_occurrences": 1
+    },
+    {
+      "id": "MC_W2_PLOTLY_INLINE_INITIALIZATION",
+      "accepted_root_id": null,
+      "observed_occurrences": null
+    }
+  ],
+  "accepted_causal_root_closures": 0,
+  "human_worker_hours": null,
+  "runner_capacity_slots": null,
+  "coverage": {
+    "evidence_class": "HISTORICAL_MATCHED_SCOPE_ONLY",
+    "scope": "MC_531_HISTORICAL_MATCHED_SOURCE_SCOPE",
+    "statements": {
+      "scope": "MC_531_HISTORICAL_MATCHED_SOURCE_SCOPE",
+      "before": 78,
+      "after": 93,
+      "denominator": 93
+    },
+    "branches": {
+      "scope": "MC_531_HISTORICAL_MATCHED_SOURCE_SCOPE",
+      "before": 23,
+      "after": 26,
+      "denominator": 26
+    }
+  },
+  "historical_census": {
+    "observed": 6,
+    "eligible": 42
+  },
+  "forecasts": [
+    {
+      "target_n": 3,
+      "prediction": "FULL_GOVERNANCE_STILL_HOLD_UNTIL_DERIVED_REPORT_RECONCILED",
+      "confidence_class": "SOURCE_LOGICAL",
+      "issued_before_outcome": true,
+      "outcome": null,
+      "probability": null
+    },
+    {
+      "target_n": 4,
+      "prediction": "FEDERATION_STILL_HOLD_UNLESS_PRIVATE_QPS_RECEIVER_ACCEPTED",
+      "confidence_class": "OWNER_DEPENDENCY",
+      "issued_before_outcome": true,
+      "outcome": null,
+      "probability": null
+    }
+  ]
+}
