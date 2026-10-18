@@ -1,0 +1,105 @@
+name: Mission Control G3C N16-N18 Convergence (read-only)
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/g3c_convergence.py'
+      - 'mission-control/v2/test_g3c_convergence.py'
+      - 'mission-control/federation-atlas/G3C_N16_N18_*.json'
+      - '.github/workflows/mission-control-g3c-convergence.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/v2/g3c_convergence.py'
+      - 'mission-control/v2/test_g3c_convergence.py'
+      - 'mission-control/federation-atlas/G3C_N16_N18_*.json'
+      - '.github/workflows/mission-control-g3c-convergence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  g3c-source:
+    name: G3C convergence Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact checkout identity
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXACT_HEAD"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install pinned coverage
+        run: python -m pip install --disable-pip-version-check coverage==7.13.3
+      - name: G3C focused positive/negative tests (zero-tests rejected)
+        run: |
+          set -euo pipefail
+          PYTHONPATH=mission-control/v2 python -m coverage run --branch --source=g3c_convergence -m unittest discover \
+            -s mission-control/v2 -p 'test_g3c_convergence.py' -v 2>&1 | tee g3c-tests.log
+          grep -Eq '^Ran 16 tests?' g3c-tests.log
+          mkdir -p /tmp/g3c-out
+          python -m coverage json -o /tmp/g3c-out/g3c-coverage.json -q
+      - name: Require module-scoped statements and branches
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/g3c-out/g3c-coverage.json'))['totals']
+          assert x['num_statements']>0 and x['num_branches']>0, 'empty source population'
+          assert x['percent_statements_covered']>=90, 'G3C focused statement threshold'
+          assert x['percent_branches_covered']>=80, 'G3C focused branch threshold'
+          print('G3C_LOCAL_NATIVE_TESTFLIGHT_STATEMENTS',
+                x['covered_lines'],x['num_statements'],
+                'BRANCH',x['covered_branches'],x['num_branches'])
+          PY
+      - name: G3A native graph projection for G3C consumer
+        run: |
+          set -euo pipefail
+          python mission-control/v2/n3_master_dags_bridge.py \
+            --manifest mission-control/federation-atlas/G3A_N13_N15_MASTER_DAGS_COMPAT_20261017.json \
+            --expected-hub-base 296c2dfa6c81849038b3d378d2e179dfdb4ca8a4 \
+            --out /tmp/g3c-out/g3a-declared-graph.json
+      - name: G3C N16-N18 bounded graph/convergence/read-only HTML
+        run: |
+          python mission-control/v2/g3c_convergence.py \
+            --proof mission-control/federation-atlas/G3A_N13_N15_LOCAL_PROOF_20261017.json \
+            --graph /tmp/g3c-out/g3a-declared-graph.json \
+            --producer-observation mission-control/federation-atlas/G3C_N16_N18_PRODUCER_PIN_20261018.json \
+            --out-dir /tmp/g3c-out
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path('/tmp/g3c-out')
+          m=json.loads((root/'manifest.json').read_text())
+          r=json.loads((root/'g3c-convergence.json').read_text())
+          assert m['admission']==r['merge_admission']=='HOLD'
+          assert r['authority_transfer'] is False
+          assert r['stability']['status']=='NOT_QUALIFIED'
+          assert r['matched_local_metrics']['covered_delta']==12
+          assert r['matched_local_metrics']['denominator']==122
+          assert r['source_gap']['last_pulse_commit_missing'] is True
+          assert r['typed_graph']['declared_edges']==3
+          assert r['typed_graph']['native_authenticated_edges'] is None
+          assert r['external_producer']['status']=='HISTORICAL_PRODUCER_GREEN'
+          assert len(m['files_sha256'])==2
+          for rel,h in m['files_sha256'].items():
+              assert hashlib.sha256((root/rel).read_bytes()).hexdigest()==h
+          print('G3C_SOURCE=PASS; 107->109->119 / 122; ADMISSION=HOLD; STABILITY=NOT_QUALIFIED')
+          PY
+      - name: Upload source-bound G3C evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g3c-n16-n18-py${{ matrix.python-version }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/g3c-out/
+            g3c-tests.log
+          if-no-files-found: warn
