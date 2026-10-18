@@ -118,4 +118,54 @@ class G3CConvergence(unittest.TestCase):
         p,g=fixture()
         self.assertEqual(digest(g),digest(dict(reversed(list(g.items())))))
 
+    def test_cli_outputs_hash_registry(self):
+        import json
+        import tempfile
+        from unittest.mock import patch
+        import g3c_convergence as m
+        p,g=fixture()
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            proof,graph,out=root/"proof.json",root/"graph.json",root/"out"
+            proof.write_text(json.dumps(p));graph.write_text(json.dumps(g))
+            with patch.object(sys,"argv",["g3c_convergence","--proof",str(proof),
+                       "--graph",str(graph),"--out-dir",str(out)]):
+                m.main()
+            man=json.loads((out/"manifest.json").read_text())
+            self.assertEqual(man["admission"],"HOLD")
+            for f,d in man["files_sha256"].items():
+                self.assertEqual(__import__("hashlib").sha256((out/f).read_bytes()).hexdigest(),d)
+            self.assertEqual(len(man["files_sha256"]),2)
+
+    def test_cli_invalid_source_fails_without_output(self):
+        import json
+        import tempfile
+        from unittest.mock import patch
+        import g3c_convergence as m
+        p,g=fixture();p["schema"]="invented"
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            proof,graph,out=root/"proof.json",root/"graph.json",root/"out"
+            proof.write_text(json.dumps(p));graph.write_text(json.dumps(g))
+            with patch.object(sys,"argv",["g3c_convergence","--proof",str(proof),
+                       "--graph",str(graph),"--out-dir",str(out)]):
+                with self.assertRaisesRegex(ValueError,"invalid G3A proof"):m.main()
+            self.assertFalse(out.exists())
+
+    def test_deceleration_and_constant_rate_are_not_six_sigma(self):
+        p,g=fixture()
+        p["pulse_records"][1].update(statement_covered=98,branch_covered=20,combined_covered=118)
+        self.assertEqual(project(p,g)["matched_local_metrics"]["trend"],"DECELERATING_LOCAL_COVERAGE")
+        p,g=fixture()
+        p["pulse_records"][1].update(statement_covered=93,branch_covered=20,combined_covered=113)
+        self.assertEqual(project(p,g)["matched_local_metrics"]["trend"],"CONSTANT_RATE_LOCAL_COVERAGE")
+        self.assertEqual(project(p,g)["stability"]["status"],"NOT_QUALIFIED")
+
+    def test_bad_producer_scope_is_rejected(self):
+        p,g=fixture()
+        bad={"sha":SHA,"artifact_id":False,"workflow_run_id":2,"status":"UNVERIFIED"}
+        with self.assertRaisesRegex(ValueError,"producer native identity"):project(p,g,bad)
+        bad["artifact_id"]=1;bad["extra"]=True
+        with self.assertRaisesRegex(ValueError,"producer contract"):project(p,g,bad)
+
 if __name__=="__main__":unittest.main()
