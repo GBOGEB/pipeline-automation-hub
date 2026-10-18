@@ -8,7 +8,6 @@ import argparse
 import json
 import os
 from pathlib import Path
-from playwright.sync_api import expect, sync_playwright
 
 VIEWPORTS=[('desktop',1440,1000),('laptop',1280,800),('mobile',390,844)]
 
@@ -25,6 +24,36 @@ def census_counts(report):
     if m['open'] == 0 or m['open'] + m['done'] != m['canonical_rows'] or m['active'] > m['open']:
         raise AssertionError('CPQ003_INCONSISTENT_CENSUS_COUNTS')
     return {k: m[k] for k in names}
+
+
+def expectations(report):
+    """Reconcile native CPQ report with its item population before browser QA."""
+    if not isinstance(report, dict) or report.get('schema') != 'missioncontrol.code_purple.cpq_convergence_n5.v1':
+        raise AssertionError('CPQ003_REPORT_SCHEMA_MISMATCH')
+    m = report.get('metrics')
+    names = ('canonical_rows', 'open', 'done', 'active')
+    if not isinstance(m, dict) or any(type(m.get(k)) is not int or m[k] < 0 for k in names):
+        raise AssertionError('CPQ003_REPORT_COUNTS_INVALID')
+    if m['open'] == 0 or m['open'] + m['done'] != m['canonical_rows'] or m['active'] > m['open']:
+        raise AssertionError('CPQ003_REPORT_INCONSISTENT')
+    # Authority and denominator failures are independent of the renderer.
+    expected = census_counts(report)
+    items = report.get('items')
+    if not isinstance(items, list) or len(items) != expected['canonical_rows']:
+        raise AssertionError('CPQ003_REPORT_ITEMS_INCOMPLETE')
+    ids = [x.get('id') for x in items if isinstance(x, dict)]
+    if len(ids) != len(items) or len(set(ids)) != len(ids) or 'CPQ-010' not in ids:
+        raise AssertionError('CPQ003_REPORT_ITEMS_IDS')
+    open_states = {'TODO', 'ACTIVE', 'UNKNOWN_NEEDS_READER'}
+    done_states = {'DONE', 'CONTROL', 'SUPERSEDED', 'INVALIDATED'}
+    actual = {
+        'open': sum(x.get('state') in open_states for x in items),
+        'done': sum(x.get('state') in done_states for x in items),
+        'active': sum(x.get('state') == 'ACTIVE' for x in items)
+    }
+    if any(actual[k] != expected[k] for k in actual):
+        raise AssertionError('CPQ003_REPORT_ITEMS_METRICS_DRIFT')
+    return expected
 
 
 def verify(page, *, kind, expected):
@@ -50,16 +79,14 @@ def main(argv=None):
     p=argparse.ArgumentParser()
     p.add_argument('--atlas',type=Path,required=True)
     p.add_argument('--cpq',type=Path,required=True)
-    p.add_argument('--report',type=Path,required=True,help='Same-run cpq-n5.json; source of expected denominators')
+    p.add_argument('--report',type=Path,help='Same-run cpq-n5.json (defaults to sibling of --cpq)')
     p.add_argument('--out',type=Path,required=True)
-    p.add_argument('--report',type=Path,help='cpq-n5.json; default: sibling of --cpq')
     args=p.parse_args(argv)
-    from playwright.sync_api import sync_playwright
+    from playwright.sync_api import expect, sync_playwright
     report_path=args.report or args.cpq.with_name('cpq-n5.json')
-    exp=expectations(json.loads(report_path.read_text(encoding='utf-8')))
+    report=json.loads(report_path.read_text(encoding='utf-8'))
+    expected=expectations(report)
     atlas=args.atlas.read_text(encoding='utf-8');cpq=args.cpq.read_text(encoding='utf-8')
-    report=json.loads(args.report.read_text(encoding='utf-8'))
-    expected=census_counts(report)
     source_sha=(report.get('source') or {}).get('exact_master_sha')
     if not isinstance(source_sha,str) or len(source_sha)!=40 or source_sha not in cpq:
         raise AssertionError('CPQ003_REPORT_HTML_SOURCE_MISMATCH')
@@ -125,7 +152,7 @@ def main(argv=None):
             else:raise AssertionError(f'false-green seed did not fail: {kind}')
         browser.close()
     if len(out['checks'])!=6 or len(out['seeded_negatives'])!=2:raise AssertionError('incomplete browser QA')
-    out['expected_rows']=exp
+    out['expected_rows']=expected
     (args.out/'browser_receipt.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
     print('CPQ003_BROWSER=PASS; VIEWPORT_CHECKS=6; SEEDED_FALSE_GREEN_REJECTIONS=2')
 
