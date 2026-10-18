@@ -50,7 +50,7 @@ jobs:
             2>&1 | tee w6-history-tests.log
           grep -Eq '^Ran (5[0-9]|[6-9][0-9]|[1-9][0-9][0-9]+) tests?' w6-history-tests.log
           python -m coverage json -o w6-history-coverage.json
-          python -m coverage report --show-missing --fail-under=60
+          python -m coverage report --show-missing --fail-under=80
           python - <<'PY'
           import json
           from pathlib import Path
@@ -90,7 +90,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
           SRC=mission-control/gogreen/mycelium_history
           python "$SRC/collect.py" --output dist/history/native.json \
-            --max-runs 1000 --job-detail-limit 120 --failure-log-limit 18
+            --max-runs 1000 --job-detail-limit 160 --failure-log-limit 18
           python "$SRC/history.py" --input dist/history/native.json \
             --source-sha "$SOURCE_SHA" --out dist/preview
           python "$SRC/history.py" --input dist/history/native.json \
