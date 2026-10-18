@@ -21,7 +21,9 @@ REQUIRED_JADE={"jade/index.html","jade/green.html","jade/jade.css","jade/jade.js
  "jade/jade_data.js","jade/site-manifest.json","jade/snapshot.json","jade/publisher-receipt.json",
  "jade/top21_bd_queue.csv",
  "jade/burndown.html","jade/burndown.css","jade/burndown.js","jade/burndown-data.js",
- "jade/burndown.json","jade/burndown.csv","jade/burndown-manifest.json"}
+ "jade/burndown.json","jade/burndown.csv","jade/burndown-manifest.json",
+ "jade/eightpoint.html","jade/eightpoint.css","jade/eightpoint.js",
+ "jade/eightpoint-data.js","jade/eightpoint.json","jade/eightpoint.csv","jade/eightpoint-manifest.json"}
 MAX_BYTES=2_000_000
 
 
@@ -81,6 +83,19 @@ def trusted_files(root: Path, head: str) -> dict[str, str]:
     for rel, want in future.get("public_files_sha256", {}).items():
         if "jade/"+rel not in jade or jade["jade/"+rel]!=want:
             raise ValueError("JADE_BURNDOWN_BRIDGE_MANIFEST_MISMATCH")
+    eight=json.loads((root/'jade/eightpoint-manifest.json').read_text(encoding='utf-8'))
+    if not (eight.get('schema')=='jade.temple.eightpoint_manifest.v3'
+            and eight.get('merge_admission')=='HOLD'
+            and eight.get('security_waiver') is False
+            and eight.get('authority_transfer') is False
+            and eight.get('hosted_eightpoint_sha') is None
+            and eight.get('publisher')=='EXISTING_METHOD_ATLAS_PAGES_ONLY'
+            and eight.get('controlled_ids')==['J%02d'%i for i in range(1,9)]
+            and eight.get('repo_count')==21):
+        raise ValueError('JADE_EIGHT_UNSAFE_HOSTED_CLAIM')
+    for rel,want in eight.get('public_files_sha256',{}).items():
+        if 'jade/'+rel not in jade or jade['jade/'+rel]!=want:
+            raise ValueError('JADE_EIGHT_HOSTED_MANIFEST_MISMATCH')
     return jade
 
 

@@ -66,6 +66,65 @@ def stage_burndown(project_root, output_root, portal_hashes):
         portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
     return len(BURNDOWN_REQUIRED)
 
+EIGHT_REQUIRED={
+    'eightpoint.html','eightpoint.css','eightpoint.js',
+    'eightpoint-data.js','eightpoint.json','eightpoint.csv','eightpoint-manifest.json',
+}
+EIGHT_SOURCES={
+    'data/EIGHT_POINT_AUDIT_NPLUS3.json','data/HEAD_RECENSUS_NPLUS3.json',
+    'data/CAPABILITY_LEDGER_NPLUS3.json','data/COHORT_CROSSWALK_NPLUS1.json',
+    'data/READBACK_NPLUS2.json','tools/eight_point_contract.py',
+    'site/eightpoint_template.html',
+}
+
+def stage_eight_point(project_root, output_root, portal_hashes):
+    """Fail-closed optional N+3 child; no second publisher, no merge authority."""
+    project_root,output_root=Path(project_root),Path(output_root)
+    site=project_root/'site'
+    present={p for p in EIGHT_REQUIRED if (site/p).exists()}
+    if not present:return 0  # N+2 predecessor remains replayable
+    if present!=EIGHT_REQUIRED:raise ValueError('JADE_EIGHT_PARTIAL_SITE')
+    m=json.loads((site/'eightpoint-manifest.json').read_text('utf-8'))
+    if not (m.get('schema')=='jade.temple.eightpoint_manifest.v3'
+            and m.get('publisher')=='EXISTING_METHOD_ATLAS_PAGES_ONLY'
+            and m.get('merge_admission')=='HOLD'
+            and m.get('security_waiver') is False
+            and m.get('authority_transfer') is False
+            and m.get('hosted_eightpoint_sha') is None
+            and m.get('static_population')==6
+            and m.get('controlled_ids')==['J%02d'%i for i in range(1,9)]
+            and m.get('repo_count')==21
+            and set(m.get('public_files_sha256',{}))==EIGHT_REQUIRED-{'eightpoint-manifest.json'}
+            and set(m.get('source_files_sha256',{}))==EIGHT_SOURCES):
+        raise ValueError('JADE_EIGHT_UNSAFE_MANIFEST')
+    for rel,want in m['source_files_sha256'].items():
+        if not SHA256.fullmatch(want) or sha256(project_root/rel)!=want:
+            raise ValueError('JADE_EIGHT_SOURCE_DIGEST_DRIFT: '+rel)
+    projection=json.loads((site/'eightpoint.json').read_text('utf-8'))
+    if not (projection.get('schema')=='jade.temple.eightpoint_projection.v3'
+            and projection.get('merge_admission')=='HOLD'
+            and projection.get('authority_transfer') is False
+            and projection.get('security_waiver') is False
+            and projection.get('hosted_nplus3_verified') is None
+            and projection.get('formal_point_release') is None
+            and len(projection.get('sections',[]))==8
+            and len(projection.get('rows',[]))==21
+            and projection.get('metrics',{}).get('action_open')==21
+            and projection.get('metrics',{}).get('action_owner_closed')==0):
+        raise ValueError('JADE_EIGHT_UNSAFE_PROJECTION')
+    for rel,want in m['public_files_sha256'].items():
+        src=site/rel
+        if not SHA256.fullmatch(want) or src.is_symlink() or not src.is_file() or sha256(src)!=want:
+            raise ValueError('JADE_EIGHT_STATIC_DIGEST_DRIFT: '+rel)
+    for name in sorted(EIGHT_REQUIRED):
+        src=site/name
+        if src.is_symlink() or not src.is_file():raise ValueError('JADE_EIGHT_MISSING_ASSET: '+name)
+        dst=output_root/'jade'/name
+        dst.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copyfile(src,dst)
+        portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
+    return len(EIGHT_REQUIRED)
+
 SHA40=re.compile(r'^[0-9a-f]{40}$')
 SHA256=re.compile(r'^[0-9a-f]{64}$')
 def sha256(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
@@ -108,13 +167,15 @@ def stage_jade(project_root, output_root, portal_hashes, source_sha):
         shutil.copyfile(src,dst)
         portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
     n2_assets=stage_burndown(project_root,output_root,portal_hashes)
+    n3_assets=stage_eight_point(project_root,output_root,portal_hashes)
     proof={'schema':'jade.temple.pages_bridge.v1','presentation_head':source_sha,
         'publisher':'EXISTING_METHOD_ATLAS_PAGES_ONLY','merge_admission':'HOLD',
         'authority_transfer':False,'security_waiver':False,
         'hosted_http_verified':False,'native_release_admission':None,
         'site_manifest_sha256':sha256(site/'site-manifest.json'),
         'cohort_overlap':[13,21],'repository_count':21,
-        'files_in_pages':len(STATIC_REQUIRED)+n2_assets,'burndown_assets_in_pages':n2_assets}
+        'files_in_pages':len(STATIC_REQUIRED)+n2_assets+n3_assets,
+        'burndown_assets_in_pages':n2_assets,'eightpoint_assets_in_pages':n3_assets}
     dst=output_root/'jade'/'publisher-receipt.json'
     dst.write_text(json.dumps(proof,sort_keys=True,indent=2)+'\n',encoding='utf-8')
     portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)

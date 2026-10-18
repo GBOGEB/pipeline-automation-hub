@@ -1,3 +1,33 @@
+# JADE N+3 / EIGHT-POINT CP.RESUME — FULL BOUNDED RECEIVER
+
+1. Canonical Mission Control: `GBOGEB/pipeline-automation-hub`; N+3 is a **separate governed candidate** on Mission Control main after merged N+2 PR #733; preserve original native evidence and require its own independent acceptance.
+2. N+2 source `274ee97add4bf5be6f47ef3353a6bffe022998d3` has exact-head 92/92 native regression PASS, 3/3 browser PASS and Method Atlas PR-head render PASS. N+2 PR #733 merged at 48044c... without observed human review at later readback. Check current SHA before further work.
+3. CP-W10 #734 merged. PR head `8c2baf22286ba6500d32e3258658dc9aaa0071b0` has 36/36 canonical and strict 78/78 PASS, but no recorded independent review. Recover later `master` exact-head audit before claiming causal main closure.
+4. Full N11 source roster 21/21; N+3 non-atomic heads drift 4 (ABACUS, CODEX, MissionControl, gg_MATH); priority P0=5 P1=9 P2=7; 21 owner launch actions open and **zero qualified closed**.
+5. Historical GoGREEN sample is DIFFERENT Top21 (13 common, 8 N11-only, 8 historical-only); NEVER assert 21/21 historical GoGREEN success or fleet statement/branch coverage.
+6. N+3 source files `data/EIGHT_POINT_AUDIT_NPLUS3.json`, `data/HEAD_RECENSUS_NPLUS3.json`, `data/CAPABILITY_LEDGER_NPLUS3.json` and deterministic generator `site/build_eightpoint.py`. Sources are frozen review inputs; no on-page controls execute GitHub Actions.
+7. Native qualification: `python -m unittest discover -s mission-control/jade_temple/tests -p test_*.py` plus `build_eightpoint.py --check`, matched six-module branch coverage and 3 viewport Playwright. HTML QA from local sandbox used inlined unchanged CSS/JS with adjusted CSP due admin-blocked local HTTP; hosted parity requires exact-main native two-round HTTPS receipt after authorized merge.
+8. Do not waive: independent human review, required CI, RED canary, native security, Pages served SHA, owner point release are noncompensating. Preserve all historical first-reds. Stop controller: OWNER_BLOCKED until gates independently resolve; never auto-merge.
+9. Stop only after eight work packages prove their acceptance receipts, all nine noncompensating gates PASS, 2 source-consistent native receipts and separate owner authorization; only pivot a recensus after three matched terminal zero-uplift pulses; missing data is not zero.
+10. Build a new CP.HANDOFF after each session; include current PR heads, run/job/attempt, source digests and unresolved first red. Preserve N+2 and N+1 predecessor ZIPs with manifest hashes, not raw-chat assumptions.
+
+---
+
+# JADE N+3 / EIGHT-POINT CP.RESUME — FULL BOUNDED RECEIVER
+
+1. Canonical Mission Control: `GBOGEB/pipeline-automation-hub`; N+3 is a **stacked draft PR** targeting the existing N+2 branch from PR #733. Never merge the child before its parent and mandatory independent acceptance.
+2. N+2 source `274ee97add4bf5be6f47ef3353a6bffe022998d3` has exact-head 92/92 native regression PASS, 3/3 browser PASS and Method Atlas PR-head render PASS. N+2 PR #733 was OPEN_DRAFT at source freeze. Check current SHA before further work.
+3. CP-W10 #734 merged. PR head `8c2baf22286ba6500d32e3258658dc9aaa0071b0` has 36/36 canonical and strict 78/78 PASS, but no recorded independent review. Recover later `master` exact-head audit before claiming causal main closure.
+4. Full N11 source roster 21/21; N+3 non-atomic heads drift 4 (ABACUS, CODEX, MissionControl, gg_MATH); priority P0=5 P1=9 P2=7; 21 owner launch actions open and **zero qualified closed**.
+5. Historical GoGREEN sample is DIFFERENT Top21 (13 common, 8 N11-only, 8 historical-only); NEVER assert 21/21 historical GoGREEN success or fleet statement/branch coverage.
+6. N+3 source files `data/EIGHT_POINT_AUDIT_NPLUS3.json`, `data/HEAD_RECENSUS_NPLUS3.json`, `data/CAPABILITY_LEDGER_NPLUS3.json` and deterministic generator `site/build_eightpoint.py`. Sources are frozen review inputs; no on-page controls execute GitHub Actions.
+7. Native qualification: `python -m unittest discover -s mission-control/jade_temple/tests -p test_*.py` plus `build_eightpoint.py --check`, matched six-module branch coverage and 3 viewport Playwright. HTML QA from local sandbox used inlined unchanged CSS/JS with adjusted CSP due admin-blocked local HTTP; hosted parity requires exact-main native two-round HTTPS receipt after authorized merge.
+8. Do not waive: independent human review, required CI, RED canary, native security, Pages served SHA, owner point release are noncompensating. Preserve all historical first-reds. Stop controller: OWNER_BLOCKED until gates independently resolve; never auto-merge.
+9. Stop only after eight work packages prove their acceptance receipts, all nine noncompensating gates PASS, 2 source-consistent native receipts and separate owner authorization; only pivot a recensus after three matched terminal zero-uplift pulses; missing data is not zero.
+10. Build a new CP.HANDOFF after each session; include current PR heads, run/job/attempt, source digests and unresolved first red. Preserve N+2 and N+1 predecessor ZIPs with manifest hashes, not raw-chat assumptions.
+
+---
+
 # JADE_TEMPLE — N+2 lossless receiver (newest checkpoint)
 
 **Entry:** [N+2 measured burn-down](site/burndown.html) · [MIP/DoV source](notes/NPLUS2_MIP_BURNDOWN_DOV.md) · [stop contract](notes/JADE_STOP_RULES_CONTRACT.md). Original N+1 receiver is preserved below, but its PENDING statuses have been superseded by current GitHub evidence.
@@ -52,3 +82,11 @@
 - DoD=local source/test completeness; DoV=terminal exact-head source-bound job+artifact evidence; Admission=eligible human/governance and main/release readback. Three distinct noncompensating decisions.
 
 **Current disposition:** `MERGE_ADMISSION=HOLD` · `AUTHORITY_TRANSFER=false` · `SECURITY_WAIVER=false` · `NATIVE_RELEASE=UNKNOWN` · `HOSTED_PAGES=UNKNOWN`.
+
+## 19 October 2026 - current GitHub execution hook
+
+JADE N+2 draft PR #733: https://github.com/GBOGEB/pipeline-automation-hub/pull/733, exact repaired head 274ee97add4bf5be6f47ef3353a6bffe022998d3. Native QA run 39172563817, Method Atlas 39172563756, Zero-Test Guard 39172563776 all queued at final snapshot. The first JADE run 39172292443 was a retained RED due to missing committed site/build_burndown.py and was repaired on the same PR with no test culling. Disjoint CP-W10 selector fix: draft PR #734 https://github.com/GBOGEB/pipeline-automation-hub/pull/734, source head 8c2baf22286ba6500d32e3258658dc9aaa0071b0, canonical run 39172319452 and strict audit run 39172319475. Read terminal run/job/attempt/first-red logs and current branches before touching either PR; unknown stays unknown. No merging or release qualification inferred.
+
+N+2 native source job 117808502566 terminal SUCCESS on SHA 274ee97add4bf5be6f47ef3353a6bffe022998d3: 92/92 tests, 279/291 statements and 113/130 branches, artifact 12152674642. Its browser job 117808915838 and Method Atlas run 39172563756 were queued at source-job readback. CP-W10 PR #734 functional replay run 39172319452 terminal SUCCESS: 36/36 tests, nine-artifact source proof; strict audit run 39172319475 remained queued. Do not promote any pending gate.
+
+Latest terminal technical proof (2026-10-19 Brussels snapshot): JADE PR #733 native run 39172563817 COMPLETED SUCCESS (92/92 tests; 279/291 statements; 113/130 branches; 3/3 browser; source artifact 12152674642, browser artifact 12153107743). CP-W10 PR #734 native run 39172319452 SUCCESS (36/36 canonical replay) and strict audit run 39172319475 SUCCESS (78/78 gates, zero unresolved). Method Atlas PR run 39172563756 and review/hosted JADE J2 still not qualified. No owner closure or release admission.

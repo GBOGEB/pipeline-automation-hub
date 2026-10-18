@@ -1,0 +1,361 @@
+{
+  "authority_transfer": false,
+  "cohort_source": "data/COHORT_CROSSWALK_NPLUS1.json",
+  "cp_w10_pr_734_head": "8c2baf22286ba6500d32e3258658dc9aaa0071b0",
+  "cp_w10_pr_734_state": "MERGED_WITHOUT_OBSERVED_HUMAN_REVIEW",
+  "dependencies": [
+    {
+      "from": "J01",
+      "kind": "population",
+      "to": "J02"
+    },
+    {
+      "from": "J02",
+      "kind": "denominator",
+      "to": "J05"
+    },
+    {
+      "from": "J01",
+      "kind": "head",
+      "to": "J04"
+    },
+    {
+      "from": "J04",
+      "kind": "causal",
+      "to": "J08"
+    },
+    {
+      "from": "J05",
+      "kind": "owner queue",
+      "to": "J06"
+    },
+    {
+      "from": "J03",
+      "kind": "site QA",
+      "to": "J07"
+    },
+    {
+      "from": "J06",
+      "kind": "BD priority",
+      "to": "J08"
+    },
+    {
+      "from": "J07",
+      "kind": "qualification",
+      "to": "J08"
+    }
+  ],
+  "eight_points": [
+    {
+      "MIP": "Separate GitHub merge, CI, reviewer and effective ruleset dimensions; bind each receipt to exact head",
+      "admission_blocker": "No protected independent admission proof",
+      "baseline": "N+2 PR #733 has now merged at 48044c656...; no recorded independent human review. #734 also merged.",
+      "current_gap": "Latest native checks require current-main readback; 4/21 heads moved since N+2 snapshot.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/733",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/734"
+      ],
+      "hard_gate_promoted": false,
+      "id": "J01",
+      "implementation": [
+        "data/HEAD_RECENSUS_NPLUS3.json",
+        "tools/eight_point_contract.py",
+        "site/eightpoint.html"
+      ],
+      "kpi": {
+        "drift": 4,
+        "heads": 21,
+        "independent_pr_reviews": 0
+      },
+      "outline": "Current-state reconciliation",
+      "owner": "MissionControl telemetry + repo owners",
+      "owner_qualified": false,
+      "scope": "Repo/PR/run/merge identity",
+      "source_qualified": false,
+      "stop_rule": "WAIT_NATIVE when exact-head is queued; DO_NOT_CLOSE without main receipts",
+      "target_or_stop": "21/21 bound heads; each claimed green current-head success verified independently"
+    },
+    {
+      "MIP": "Typed full outer join with explicit exclusions and owner cohort election",
+      "admission_blocker": "No owner-approved unified cohort",
+      "baseline": "21 N11 / 21 sampled GoGREEN / 13 intersect / 8+8 symmetric difference",
+      "current_gap": "Top21 GoGREEN cannot be asserted for structural 21",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/central/top21/TOP21_COHORT_ROSTER.json"
+      ],
+      "hard_gate_promoted": false,
+      "id": "J02",
+      "implementation": [
+        "data/COHORT_CROSSWALK_NPLUS1.json",
+        "tools/eight_point_contract.py",
+        "site/eightpoint.html"
+      ],
+      "kpi": {
+        "green": 21,
+        "green_only": 8,
+        "intersect": 13,
+        "n11": 21,
+        "n11_only": 8
+      },
+      "outline": "Cohort population reconciliation",
+      "owner": "MissionControl Top21 owner",
+      "owner_qualified": false,
+      "scope": "N11 vs historical GoGREEN",
+      "source_qualified": false,
+      "stop_rule": "HOLD_COHORT_PROMOTION until full owner disposition",
+      "target_or_stop": "No conflation; owner-signed disposition for all 16 cohort-only memberships"
+    },
+    {
+      "MIP": "Single design tokens, keyboard-safe filters, searchable eight-axis cards, source hashes and one publisher",
+      "admission_blocker": "Independent served HTTP proof unavailable",
+      "baseline": "N+2 3/3 native browser PASS; PR #733 merged; latest HTTPS serving parity not yet qualified.",
+      "current_gap": "HTML access and navigation cannot replace served SHA/production CSP",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39172563817"
+      ],
+      "hard_gate_promoted": false,
+      "id": "J03",
+      "implementation": [
+        "site/eightpoint.html",
+        "site/eightpoint.css",
+        "site/eightpoint.js",
+        "portal_bridge.py"
+      ],
+      "kpi": {
+        "hosted_nplus3": null,
+        "locally_qualified_viewports": 3
+      },
+      "outline": "Dashboard implementation and navigation",
+      "owner": "MissionControl site publisher",
+      "owner_qualified": false,
+      "scope": "HTML/SPA/source-bound pages",
+      "source_qualified": false,
+      "stop_rule": "STOP_UI_ITERATION at native visual PASS; wait for hosted source receipt",
+      "target_or_stop": "3/3 exact-head browser PASS and postmerge two-round HTTPS hash parity"
+    },
+    {
+      "MIP": "Immutable failure->repair->native->merge->postmerge causal chain, no merge-only green",
+      "admission_blocker": "Latest-main terminal audit not qualified",
+      "baseline": "CP-W10 #734 merged, PR-head 36/36 and strict audit 78/78 PASS; earlier main 77/78 FAIL",
+      "current_gap": "Fresh postmerge exact-main audit has no terminal receipt in this snapshot",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/734",
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39172319475"
+      ],
+      "hard_gate_promoted": false,
+      "id": "J04",
+      "implementation": [
+        "data/CAPABILITY_LEDGER_NPLUS3.json",
+        "tools/eight_point_contract.py"
+      ],
+      "kpi": {
+        "audit_total": 78,
+        "main_audit_verified": null,
+        "pr_audit_resolved": 78,
+        "pr_native_tests": 36
+      },
+      "outline": "Native first-red and causal closure",
+      "owner": "CP-W10 workflow owner",
+      "owner_qualified": false,
+      "scope": "EVERRED to GoGREEN transition",
+      "source_qualified": false,
+      "stop_rule": "PENDING_MAIN_AUDIT; never reclassify historical first-red",
+      "target_or_stop": "Exact-main terminal 78/78 audit plus source-bound owner closeout; root recurrence=0"
+    },
+    {
+      "MIP": "Preserve complete 21-row BD queue with current head, role, next TODO and proof requirement",
+      "admission_blocker": "Owner closure and release receipts missing",
+      "baseline": "21 open, 0 owner-verified closures; priorities 5 P0,9 P1,7 P2",
+      "current_gap": "No main-scope releases independently qualified",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"
+      ],
+      "hard_gate_promoted": false,
+      "id": "J05",
+      "implementation": [
+        "data/HEAD_RECENSUS_NPLUS3.json",
+        "site/eightpoint.csv"
+      ],
+      "kpi": {
+        "P0": 5,
+        "P1": 9,
+        "P2": 7,
+        "open": 21,
+        "qualified_closed": 0
+      },
+      "outline": "Top21 technical readiness and TODO",
+      "owner": "21 individual source owners",
+      "owner_qualified": false,
+      "scope": "Repo owner action queue",
+      "source_qualified": false,
+      "stop_rule": "PIVOT_DJ_ONLY on three matched terminal no-gain pulses, not on silence",
+      "target_or_stop": "Demonstrably close owner-qualified work orders; five P0 prioritized; no fabricated 21/21 release"
+    },
+    {
+      "MIP": "Pareto triage prioritizes source-owner cohorts; triage one candidate family before move/cleanup",
+      "admission_blocker": "No authoritative defect classifications",
+      "baseline": "Historical filename/path heuristic 627/706 candidates in four repos (88.81%)",
+      "current_gap": "Candidates are not verified bugs; no safe deletion or deduplication credit",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ],
+      "hard_gate_promoted": false,
+      "id": "J06",
+      "implementation": [
+        "tools/eight_point_contract.py",
+        "notes/EIGHT_POINT_MIP_DOV.md"
+      ],
+      "kpi": {
+        "all_candidates": 706,
+        "priority_candidates": 627,
+        "verified_defects": null
+      },
+      "outline": "MIP/Pareto and process controls",
+      "owner": "ABACUS, CODEX, DOCX_RTM and cryo_leak owners",
+      "owner_qualified": false,
+      "scope": "Root organization + first-red efficiency",
+      "source_qualified": false,
+      "stop_rule": "STOP_ROOT_SWEEP if no owner disposition / cannot establish source proof",
+      "target_or_stop": "Classify provenance+runtime impact, hash duplicate lineage, owner approves any destructive action"
+    },
+    {
+      "MIP": "Deterministic JSON/CSV/HTML build, SHA-256 manifest, native regression and screenshots",
+      "admission_blocker": "New N+3 native QA not yet qualified",
+      "baseline": "N+2 archive CRC and source hashes; 92/92 scoped native tests",
+      "current_gap": "New eight-axis release needs its own manifest and cross-format parity",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/733"
+      ],
+      "hard_gate_promoted": false,
+      "id": "J07",
+      "implementation": [
+        "site/build_eightpoint.py",
+        "site/eightpoint-manifest.json",
+        "qa/eightpoint_receipt.json"
+      ],
+      "kpi": {
+        "nplus2_native_tests": 92,
+        "nplus3_native_tests": null
+      },
+      "outline": "Deliverables and handover assurance",
+      "owner": "JADE artefact QA owner",
+      "owner_qualified": false,
+      "scope": "QA manifests/replay/ancestry",
+      "source_qualified": false,
+      "stop_rule": "STOP_BUILD after reproducible 2x output; no claims of published production",
+      "target_or_stop": "8/8 source IDs and 21/21 rows, 3 viewport QA, exact-head native and hash/ZIP replay"
+    },
+    {
+      "MIP": "Reuse existing source-owned JADE sprint local DAG/worker pools; validate eight-point readiness as a distinct acceptance layer, not a second scheduler.",
+      "admission_blocker": "Independent governance and served SHA remain unqualified; external sprint and new MIP must not double-count.",
+      "baseline": "N+2 PR #733 merged without recorded independent review; #734 merged; existing JADE sprint 15-axis local execution added on main.",
+      "current_gap": "Governance, postmerge hosted parity and owner release remain unqualified",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/733",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/372"
+      ],
+      "hard_gate_promoted": false,
+      "id": "J08",
+      "implementation": [
+        "data/EIGHT_POINT_AUDIT_NPLUS3.json",
+        "tools/eight_point_contract.py",
+        "site/eightpoint.html",
+        "sprint/model.py",
+        "sprint/cli.py"
+      ],
+      "kpi": {
+        "approved_release_count": null,
+        "gates_total": 9,
+        "matching_plateau_pulses": 0
+      },
+      "outline": "Next bounded execution and recursive stop rules",
+      "owner": "MissionControl DOV + release owners",
+      "owner_qualified": false,
+      "scope": "DAG owner/CI/protection/release",
+      "source_qualified": false,
+      "stop_rule": "HOLD_ADMISSION; WAIT_NATIVE on queued evidence; never auto-merge",
+      "target_or_stop": "No outstanding first-red, all 9 independent gates proven and owner-approved release"
+    }
+  ],
+  "evidence_level": "FROZEN_NON_ATOMIC_GITHUB_OBSERVATIONS",
+  "fleet_source": "data/HEAD_RECENSUS_NPLUS3.json",
+  "gate_states": {
+    "blocked_red_canary": "UNKNOWN",
+    "hosted_parity": "UNKNOWN",
+    "independent_review": "FAIL",
+    "matched_coverage": "UNKNOWN",
+    "native_tests": "UNKNOWN",
+    "owner_release": "UNKNOWN",
+    "required_checks": "FAIL",
+    "security": "UNKNOWN",
+    "source_integrity": "PASS"
+  },
+  "hosted_eightpoint_exact_parity": null,
+  "limitations": [
+    "positive native outcome is a scoped capability, not release admission",
+    "historical review candidates are not confirmed defects",
+    "no destructive refactor or original binary disposal without owner authorization",
+    "branch protected flag cannot substitute effective required checks / reviews",
+    "unknown and queued are not zero or PASS"
+  ],
+  "merge_admission": "HOLD",
+  "n2_source": "data/READBACK_NPLUS2.json",
+  "newer_main_is_non_atomic": true,
+  "newer_main_readback_sha": "d757aee382e0a0daf278d28fc08a6f032bcc6ea8",
+  "owner_review_disposition": null,
+  "parent_pr_733_head": "ccc016bf463275b463c68641382d1dc4783f837e",
+  "parent_pr_733_merge_sha": "48044c656241472a0c6b178b2ba3e01226e6b08a",
+  "parent_pr_733_source_tested_sha": "274ee97add4bf5be6f47ef3353a6bffe022998d3",
+  "parent_pr_733_state": "MERGED_WITHOUT_OBSERVED_HUMAN_REVIEW",
+  "parent_publisher": "EXISTING_METHOD_ATLAS_PAGES_ONLY",
+  "point_release_qualifications": null,
+  "schema": "jade.temple.eightpoint_audit.v3",
+  "security_waiver": false,
+  "success_credit_mode": "EVIDENCE_EXPLICIT_ONLY",
+  "wave_plan": [
+    {
+      "admission": "HOLD",
+      "depends_on": [],
+      "goal": "Reconcile native terminal CI and exact-head PRs",
+      "id": "W1",
+      "owner": "MissionControl CI"
+    },
+    {
+      "admission": "HOLD",
+      "depends_on": [
+        "W1"
+      ],
+      "goal": "Confirm CP-W10 exact-main audit and independently classify first-red",
+      "id": "W2",
+      "owner": "CP-W10 owner"
+    },
+    {
+      "admission": "HOLD",
+      "depends_on": [
+        "W1"
+      ],
+      "goal": "Execute one disjoint P0 root-owner pilot using current SHA",
+      "id": "W3",
+      "owner": "P0 repo owners"
+    },
+    {
+      "admission": "HOLD",
+      "depends_on": [
+        "W2"
+      ],
+      "goal": "Independent branch/ruleset human-review and RED canary",
+      "id": "W4",
+      "owner": "Governance"
+    },
+    {
+      "admission": "HOLD",
+      "depends_on": [
+        "W3",
+        "W4"
+      ],
+      "goal": "After authorized merge: single Pages publisher, served 2-round SHA and point-release owner acceptance",
+      "id": "W5",
+      "owner": "Pages and release owners"
+    }
+  ]
+}

@@ -1,0 +1,393 @@
+{
+  "authority_transfer": false,
+  "changed_repos": [
+    "GBOGEB/ABACUS",
+    "GBOGEB/pipeline-automation-hub",
+    "GBOGEB/CODEX",
+    "GBOGEB/gg_MATH"
+  ],
+  "cohort": "N11_MISSION_SELECTED_TOP21",
+  "head_drift_count": 4,
+  "merge_admission": "HOLD",
+  "new_pulse": "N+3",
+  "observation_kind": "NON_ATOMIC_21_GITHUB_BRANCH_READBACK",
+  "observed_at_utc": "2026-10-18T22:47:14+00:00",
+  "old_pulse": "N+2",
+  "roster_blob_sha1": "4b5bc76e6b4ceefa032c1c89e485755cf9326884",
+  "rows": [
+    {
+      "branch": "main",
+      "branch_protected_flag": true,
+      "green_historical_class": "HISTORICAL_RED_OBSERVED",
+      "head_changed": true,
+      "links": [
+        "https://github.com/GBOGEB/ABACUS",
+        "https://github.com/GBOGEB/ABACUS/issues/1860",
+        "https://github.com/GBOGEB/ABACUS/issues/2087"
+      ],
+      "next_release_todo": "Reconcile #1860/#2087; classify current native first-red; qualify N+2 dashboard and matched tests; repair required checks, A10, Safety and RED canary",
+      "observed_head": "1f3dafda8969b8bb10fe67d681c65924b7c2750e",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "a13c5f4edaca814e4a80e5b902dfe44fecf39361",
+      "priority": "P0",
+      "rank": 1,
+      "repo": "GBOGEB/ABACUS"
+    },
+    {
+      "branch": "master",
+      "branch_protected_flag": false,
+      "green_historical_class": "POSITIVE_OBSERVED_HISTORICAL",
+      "head_changed": true,
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/529"
+      ],
+      "next_release_todo": "Qualify JADE native CI, align 13+8 cohort crosswalk with GM owner, add read-only Pages bridge to existing publisher, verify served SHA and canary",
+      "observed_head": "48044c656241472a0c6b178b2ba3e01226e6b08a",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e",
+      "priority": "P0",
+      "rank": 2,
+      "repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "HISTORICAL_RED_OBSERVED",
+      "head_changed": true,
+      "links": [
+        "https://github.com/GBOGEB/CODEX",
+        "https://github.com/GBOGEB/CODEX/issues/977",
+        "https://github.com/GBOGEB/CODEX/issues/1037"
+      ],
+      "next_release_todo": "Resolve #977/#1037 source-owner first-red; bind consumer REX/Pages receipt to exact head and prove governance before tag",
+      "observed_head": "843020d9e85b404ac10a94bbc1a1283865d1d57e",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "13ed167963312b897ba7e489bb5a81c80db104f7",
+      "priority": "P0",
+      "rank": 3,
+      "repo": "GBOGEB/CODEX"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "POSITIVE_OBSERVED_HISTORICAL",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/cryoplant-project",
+        "https://github.com/GBOGEB/cryoplant-project/issues/1379",
+        "https://github.com/GBOGEB/cryoplant-project/issues/1959"
+      ],
+      "next_release_todo": "Investigate run 39159008697; close #1959 branch protection and #1379 release/Pages provenance; retain QPS domain authority",
+      "observed_head": "fc07545c3986181a1b837c0eb7ff9a8393fd4058",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "fc07545c3986181a1b837c0eb7ff9a8393fd4058",
+      "priority": "P0",
+      "rank": 4,
+      "repo": "GBOGEB/cryoplant-project"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "POSITIVE_OBSERVED_HISTORICAL",
+      "head_changed": true,
+      "links": [
+        "https://github.com/GBOGEB/gg_MATH",
+        "https://github.com/GBOGEB/gg_MATH/issues/27"
+      ],
+      "next_release_todo": "Verify run 39164028980 terminal exact-head, reproducible provider-proof, served Pages SHA and versioned tag plan (#27)",
+      "observed_head": "8d198c0b399ecf895dda803ba218cfe16d18d4c9",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "b9efad57e1985a6e54cb776130b8a70fa9357e0a",
+      "priority": "P0",
+      "rank": 5,
+      "repo": "GBOGEB/gg_MATH"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "COHORT_NOT_SAMPLED",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/ariana"
+      ],
+      "next_release_todo": "Confirm upstream/fork ownership and package.json scripts; run deterministic build and extension smoke; owner decide hosted docs and release scope",
+      "observed_head": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+      "priority": "P1",
+      "rank": 6,
+      "repo": "GBOGEB/ariana"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "POSITIVE_OBSERVED_HISTORICAL",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/GEMINI"
+      ],
+      "next_release_todo": "Verify served Pages URL and exact SHA; qualify pyproject/GEMINI manifest and cross-platform tests before tag",
+      "observed_head": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+      "priority": "P1",
+      "rank": 7,
+      "repo": "GBOGEB/GEMINI"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "POSITIVE_OBSERVED_HISTORICAL",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/DOCX_RTM_Automation"
+      ],
+      "next_release_todo": "Replay DOCX\u2194Markdown/RTM fidelity with negative tests and 2-step source/asset manifests; link canonical launch guide without breaking old aliases",
+      "observed_head": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "priority": "P1",
+      "rank": 8,
+      "repo": "GBOGEB/DOCX_RTM_Automation"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "POSITIVE_OBSERVED_HISTORICAL",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/Q_engineering_tools"
+      ],
+      "next_release_todo": "Verify hosted dashboard and production-repeat owner gate; retain source-bound W184F check and QPS engineering authority",
+      "observed_head": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "priority": "P1",
+      "rank": 9,
+      "repo": "GBOGEB/Q_engineering_tools"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "POSITIVE_OBSERVED_HISTORICAL",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/cryo_leak_rate_dashboard"
+      ],
+      "next_release_todo": "Curate root START_HERE and aliases before any move; verify Pages served SHA, unit replay and generated artifact lineage",
+      "observed_head": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+      "priority": "P1",
+      "rank": 10,
+      "repo": "GBOGEB/cryo_leak_rate_dashboard"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "POSITIVE_OBSERVED_HISTORICAL",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/cryogenic-accelerator-workspace"
+      ],
+      "next_release_todo": "Run workspace build and MCP integration negatives; source-bound docs/Pages owner pilot, retain 12 root-review candidates",
+      "observed_head": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+      "priority": "P1",
+      "rank": 11,
+      "repo": "GBOGEB/cryogenic-accelerator-workspace"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "POSITIVE_OBSERVED_HISTORICAL",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/document-organization-system"
+      ],
+      "next_release_todo": "Retest safe organize/rollback, verify Pages URL and SHA, root aliases and current release manifest",
+      "observed_head": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+      "priority": "P1",
+      "rank": 12,
+      "repo": "GBOGEB/document-organization-system"
+    },
+    {
+      "branch": "master",
+      "branch_protected_flag": false,
+      "green_historical_class": "COHORT_NOT_SAMPLED",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/github_documentorganisatiesysteem_GBOGEB"
+      ],
+      "next_release_todo": "Owner decide archival/reference vs release scope; hash/check binary provenance; fix setup.py smoke, avoid unsupported Pages mandate",
+      "observed_head": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+      "priority": "P2",
+      "rank": 13,
+      "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "HISTORICAL_RED_OBSERVED",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/github-mcp-server"
+      ],
+      "next_release_todo": "Determine upstream-derived fork applicability; run exact-head Go build/tests and Docker matrix; no inherited current merge-green",
+      "observed_head": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+      "priority": "P1",
+      "rank": 14,
+      "repo": "GBOGEB/github-mcp-server"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "COHORT_NOT_SAMPLED",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/docker-stacks"
+      ],
+      "next_release_todo": "Owner decide fork applicability; run Dockerfile lint/build, image scan and docs smoke on exact head",
+      "observed_head": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "priority": "P2",
+      "rank": 15,
+      "repo": "GBOGEB/docker-stacks"
+    },
+    {
+      "branch": "master",
+      "branch_protected_flag": false,
+      "green_historical_class": "COHORT_NOT_SAMPLED",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/yaml-grammar"
+      ],
+      "next_release_todo": "Preserve case-sensitive README and spec inputs; validate grammar/Makefile outputs, consider offline docs not mandatory Pages",
+      "observed_head": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "priority": "P2",
+      "rank": 16,
+      "repo": "GBOGEB/yaml-grammar"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "COHORT_NOT_SAMPLED",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/prettier"
+      ],
+      "next_release_todo": "Owner decide local release vs mirror; rerun pinned format/parser tests and security; prefer small owner-owned navigation pointer",
+      "observed_head": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+      "priority": "P2",
+      "rank": 17,
+      "repo": "GBOGEB/prettier"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "COHORT_NOT_SAMPLED",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/vscode-powershell"
+      ],
+      "next_release_todo": "Qualify extension packaging and platform smoke on exact head if actively maintained; otherwise declared reference only",
+      "observed_head": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "priority": "P2",
+      "rank": 18,
+      "repo": "GBOGEB/vscode-powershell"
+    },
+    {
+      "branch": "trunk",
+      "branch_protected_flag": false,
+      "green_historical_class": "COHORT_NOT_SAMPLED",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/cli"
+      ],
+      "next_release_todo": "Owner decide fork release necessity; validate Go build/test and binary provenance; no forced Pages adoption",
+      "observed_head": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "priority": "P2",
+      "rank": 19,
+      "repo": "GBOGEB/cli"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "COHORT_NOT_SAMPLED",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/python-sdk"
+      ],
+      "next_release_todo": "Owner decide fork release scope; verify uv/pyproject lock, type tests, wheel/sdist and signing if publishing",
+      "observed_head": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "priority": "P2",
+      "rank": 20,
+      "repo": "GBOGEB/python-sdk"
+    },
+    {
+      "branch": "main",
+      "branch_protected_flag": false,
+      "green_historical_class": "NO_NATIVE_CHECK_EVIDENCE",
+      "head_changed": false,
+      "links": [
+        "https://github.com/GBOGEB/skills"
+      ],
+      "next_release_todo": "Add schema/packaging negative tests and version registry; link skill metadata and publication; owner choose HTML applicability",
+      "observed_head": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "owner_work_order_state": "OPEN_UNQUALIFIED",
+      "point_release": "UNQUALIFIED",
+      "prior_nplus2_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "priority": "P1",
+      "rank": 21,
+      "repo": "GBOGEB/skills"
+    }
+  ],
+  "schema": "jade.temple.eightpoint_heads.v3",
+  "security_waiver": false,
+  "source_limits": [
+    "branch protection flag is not effective approval proof",
+    "head readback is non-atomic",
+    "missing recent Actions is UNKNOWN not zero",
+    "owner closure requires owner receipt"
+  ]
+}
