@@ -100,7 +100,7 @@ python refresh.py --offline  # rebuild pages and PDFs from the committed data</p
 <p>Pages re-read <span class="mono">data/*.json</span> every 5 minutes while open; a new census appears once refresh.py republishes it.</p></div>
 <div class="card"><h3>Verify</h3><pre>python -m unittest discover -s tests -v
 node tools/check_model.mts   # model integrity (TypeScript)
-npx -y typescript@6.0.3 tsc -p tsconfig.json</pre><p>CI: <span class="mono">.github/workflows/p-process.yml</span>, offline, no secrets.</p></div></div>
+npx -y -p typescript@6.0.3 tsc -p tsconfig.json</pre><p>CI: <span class="mono">.github/workflows/p-process.yml</span>, offline, no secrets.</p></div></div>
 <p class="small">Sources: <a href="data/p_state.json">p_state.json</a> · <a href="everred/data/everred.json">everred.json</a> · <a href="code-purple/kit/census.json">census.json</a> · <a href="rulesets/drift.json">drift.json</a> · <a href="data/p_process.yaml">p_process.yaml</a></p>
 </section>
 <footer>Read-only review projection: not merge admission, not a security waiver, not QPS engineering approval. UNKNOWN stays UNKNOWN.</footer>

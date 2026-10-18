@@ -53,5 +53,5 @@ Committed data is a snapshot as of the last refresh; check `census_at` in `site/
 
 ```bash
 python -m unittest discover -s tests -v          # offline; CI: .github/workflows/p-process.yml
-node tools/check_model.mts && npx -y typescript@6.0.3 tsc -p tsconfig.json
+node tools/check_model.mts && npx -y -p typescript@6.0.3 tsc -p tsconfig.json
 ```

@@ -40,7 +40,7 @@ jobs:
         working-directory: mission-control/qps-triage-ultra/p-process
         run: |
           node tools/check_model.mts
-          npx -y typescript@6.0.3 tsc -p tsconfig.json
+          npx -y -p typescript@6.0.3 tsc -p tsconfig.json
       - name: JavaScript syntax
         working-directory: mission-control/qps-triage-ultra/p-process
         run: |
