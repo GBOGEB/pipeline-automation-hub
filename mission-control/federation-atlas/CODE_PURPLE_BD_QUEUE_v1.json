@@ -379,6 +379,12 @@
           "state": "ACTIVE",
           "flow": "READY",
           "evidence": "I2 D1/D2 job evidence re-verified natively (mission-control/federation-atlas/evidence/CODE_PURPLE_I3_OBSERVATION_20261017.json); contract rebind is the remaining step."
+        },
+        {
+          "at": "W1.C1.I3.S1",
+          "state": "ACTIVE",
+          "flow": "IN_PR",
+          "evidence": "Contract rebinds I2 D1/D2 to job ids and moves I2 to completed_iterations; I3 active."
         }
       ]
     },
@@ -487,6 +493,12 @@
           "state": "ACTIVE",
           "flow": "READY",
           "evidence": "Measured: 8 same-head scheduled repeats (any root) / 1 (controlled roots); gate <=2 -> FAIL. mission-control/federation-atlas/evidence/CODE_PURPLE_I3_OBSERVATION_20261017.json"
+        },
+        {
+          "at": "W1.C1.I3.S1",
+          "state": "ACTIVE",
+          "flow": "IN_PR",
+          "evidence": "Contract binds max_unchanged_root_auto_repeat_after_control = 8 (predicate FAIL)."
         }
       ]
     },
@@ -675,6 +687,12 @@
           "state": "ACTIVE",
           "flow": "IN_PR",
           "evidence": "Root: #2012 raised matplotlib floor for all Pythons; 14 red runs since 2026-10-15. Fix #2130 merged 2026-10-17T17:04Z; post-merge runs queued."
+        },
+        {
+          "at": "W1.C1.I3.S1",
+          "state": "DONE",
+          "flow": "NONE",
+          "evidence": "ABACUS #2130 merged; DMAIC CI on main green incl. Unit Tests (3.10) on 8 runs / 6 distinct heads, latest 39126061649 @337109e."
         }
       ]
     }
