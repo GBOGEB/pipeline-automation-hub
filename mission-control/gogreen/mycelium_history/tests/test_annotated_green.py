@@ -5,8 +5,11 @@ import copy
 import io
 import json
 import sys
+import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
+from unittest.mock import patch
 from urllib.error import HTTPError
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -524,6 +527,126 @@ class NPlusOneBoundaryAndFaultTests(unittest.TestCase):
                           b["check_cohorts_eligible"]),(4,4))
         self.assertIsNone(b["six_repo_federation_breadth"])
         self.assertTrue(a.validate(d,A))
+
+
+
+class NPlusThreeCLINativeReceiptTests(unittest.TestCase):
+    """Cover the real write/validate and authorized request boundary."""
+
+    def invoke(self, argv, *, env=None, fetch=None):
+        output = io.StringIO()
+        with patch.object(sys, "argv", ["annotated_green.py"]+list(argv)), \
+                patch.dict(a.os.environ, env or {}, clear=True), \
+                patch.object(a, "native_get",
+                             side_effect=(lambda path, token: fetch(path)) if fetch
+                                         else None), redirect_stdout(output):
+            a.main()
+        return output.getvalue()
+
+    def test_native_get_authorized_get_and_json_response(self):
+        payload=io.BytesIO(b'{"commit":{"sha":"' + A.encode() + b'"}}')
+        with patch.object(a, "urlopen", return_value=payload) as mocked:
+            returned=a.native_get(a.ROOT+"/branches/main", "local-test-token")
+        self.assertEqual(a.sha_of(returned),A)
+        request=mocked.call_args.args[0]
+        self.assertEqual(request.get_method(),"GET")
+        self.assertEqual(request.full_url,
+                         a.API+a.ROOT+"/branches/main")
+        self.assertEqual(request.get_header("Authorization"),
+                         "Bearer local-test-token")
+
+    def test_native_get_rejects_double_slash_api_escape(self):
+        with self.assertRaisesRegex(ValueError,"external API endpoint"):
+            a.native_get(a.ROOT+"//../../other", "local-test-token")
+
+    def test_cli_collect_records_exact_run_attempt_and_breadth(self):
+        fetch,_=fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"deep"/"w10.json"
+            observed=self.invoke(["--output",str(path),"--source-sha",A],
+                         env={"GITHUB_TOKEN":"local-fixture-token",
+                              "GITHUB_RUN_ID":"1234567","GITHUB_RUN_ATTEMPT":"2"},
+                         fetch=fetch)
+            d=json.loads(path.read_text())
+            self.assertEqual((d["run_id"],d["run_attempt"]),(1234567,2))
+            self.assertEqual(d["hub_source_sha"],A)
+            self.assertEqual((d["source_bound_breadth"]["complete_check_cohorts_observed"],
+                              d["source_bound_breadth"]["check_cohorts_eligible"]),(4,4))
+            self.assertIn('"W10": "APPEND_ONLY"',observed)
+            self.assertTrue(a.validate(d,A))
+
+    def test_cli_roundtrip_validate_requires_no_network_or_token(self):
+        fetch,_=fixture()
+        d=a.collect(fetch)
+        d["hub_source_sha"]=A
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"w10.json"
+            path.write_text(json.dumps(d))
+            result=self.invoke(["--output",str(path),"--source-sha",A,"--validate"])
+            self.assertIn('"admission": "HOLD"',result)
+
+    def test_cli_collect_missing_run_identity_remains_unknown(self):
+        fetch,_=fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"w10.json"
+            self.invoke(["--output",str(path),"--source-sha",A],
+                        env={"GITHUB_TOKEN":"local-fixture-token"},fetch=fetch)
+            d=json.loads(path.read_text())
+            self.assertIsNone(d["run_id"])
+            self.assertIsNone(d["run_attempt"])
+            self.assertIsNone(d["numeric_job_id"])
+
+    def test_cli_no_token_cannot_fake_native_source_read(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"w10.json"
+            with self.assertRaisesRegex(ValueError,"authorized GitHub token required"):
+                self.invoke(["--output",str(path),"--source-sha",A])
+            self.assertFalse(path.exists())
+
+    def test_cli_invalid_head_rejected_before_network(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"w10.json"
+            with self.assertRaisesRegex(ValueError,"40-hex source SHA"):
+                self.invoke(["--output",str(path),"--source-sha","not-an-exact-head"])
+            self.assertFalse(path.exists())
+
+    def test_cli_validate_rejects_non_json_native_receipt(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"w10.json"
+            path.write_text("{broken_json")
+            with self.assertRaises(json.JSONDecodeError):
+                self.invoke(["--output",str(path),"--source-sha",A,"--validate"])
+
+    def test_cli_validate_refuses_synthetic_qps_acceptance(self):
+        fetch,_=fixture()
+        d=a.collect(fetch)
+        d["hub_source_sha"]=A
+        d["qps_owner_accepted"]=True
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"w10.json"
+            path.write_text(json.dumps(d))
+            with self.assertRaisesRegex(ValueError,"false admission"):
+                self.invoke(["--output",str(path),"--source-sha",A,"--validate"])
+
+    def test_cli_invalid_attempt_is_not_fake_terminal_proof(self):
+        fetch,_=fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"w10.json"
+            with self.assertRaises(ValueError):
+                self.invoke(["--output",str(path),"--source-sha",A],
+                            env={"GITHUB_TOKEN":"local-fixture-token",
+                                 "GITHUB_RUN_ATTEMPT":"not-a-number"},fetch=fetch)
+
+    def test_cli_main_drift_typed_receipt_not_current_admission(self):
+        fetch,_=fixture(main_second=B)
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"w10.json"
+            self.invoke(["--output",str(path),"--source-sha",A],
+                        env={"GITHUB_TOKEN":"local-fixture-token"},fetch=fetch)
+            d=json.loads(path.read_text())
+            self.assertFalse(d["main_head_unchanged_during_capture"])
+            self.assertFalse(d["source_bound_breadth"]["main_stable"])
+            self.assertEqual(d["admission"],"HOLD")
 
 
 if __name__ == "__main__":
