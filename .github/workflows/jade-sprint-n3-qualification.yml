@@ -49,6 +49,30 @@ jobs:
           python mission-control/jade_temple/sprint/cli.py --mode verify --out jade_sprint_results --expected-head "$HEAD_SHA"
           test -s jade_sprint_results/SPRINT_SPINE.mmd
           test -s jade_sprint_results/SPRINT_DASHBOARD.html
+      - name: Windows isolated venv / bounded worker pool / cache replay
+        if: matrix.os == 'windows-2022'
+        shell: pwsh
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          $work = Join-Path $env:RUNNER_TEMP 'JADE_N3_WORK'
+          & ./mission-control/jade_temple/sprint/Start-JadeSprint.ps1 -Mode Full -Workspace $work -ExpectedHead $env:HEAD_SHA -Offline -MaxWorkers 2
+          if ($LASTEXITCODE -ne 0) { throw 'PS1 isolated full testflight first red' }
+          $first = Get-Content (Join-Path $work 'output/LOCAL_RUN.json') -Raw | ConvertFrom-Json
+          if ($first.local_failures -ne 0 -or $first.local_pass -lt 3) { throw 'Local evidence first pulse not green' }
+          & ./mission-control/jade_temple/sprint/Start-JadeSprint.ps1 -Mode Local -Workspace $work -ExpectedHead $env:HEAD_SHA -Offline -MaxWorkers 2
+          if ($LASTEXITCODE -ne 0) { throw 'PS1 second bounded pulse failed' }
+          $second = Get-Content (Join-Path $work 'output/LOCAL_RUN.json') -Raw | ConvertFrom-Json
+          if ($second.local_failures -ne 0 -or $second.local_cache_hits -lt 3) { throw 'Same-head cache replay qualification failed' }
+          Copy-Item (Join-Path $work 'output/LOCAL_RUN.json') 'jade_sprint_results/WINDOWS_LOCAL_RUN.json'
+      - name: Retain Windows local diagnostic proof only
+        if: matrix.os == 'windows-2022'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: jade-sprint-local-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: jade_sprint_results/WINDOWS_LOCAL_RUN.json
+          retention-days: 14
+          if-no-files-found: warn
       - name: Retain JADE non-authoritative candidate receipts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
