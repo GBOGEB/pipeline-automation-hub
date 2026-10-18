@@ -18,12 +18,12 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: mycelium-history-${ github.ref }}
+  group: mycelium-history-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   native:
-    name: Python ${ matrix.python-version }} history contracts
+    name: Python ${{ matrix.python-version }} history contracts
     strategy:
       fail-fast: false
       matrix:
@@ -32,14 +32,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: ${ matrix.python-version }}
+          python-version: ${{ matrix.python-version }}
       - name: Test native lineage and coverage
         env:
-          SOURCE_SHA: ${ github.event.pull_request.head.sha || github.sha }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
@@ -63,7 +63,7 @@ jobs:
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: mycelium-history-testflight-${ matrix.python-version }}-${ github.event.pull_request.head.sha || github.sha }}
+          name: mycelium-history-testflight-${{ matrix.python-version }}-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             w6-history-tests.log
             w6-history-coverage.json
@@ -76,15 +76,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Collect and project bounded native source
         env:
-          GITHUB_TOKEN: ${ github.token }}
-          SOURCE_SHA: ${ github.event.pull_request.head.sha || github.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
@@ -133,7 +133,7 @@ jobs:
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: code-purple-mycelium-history-${ github.event.pull_request.head.sha || github.sha }}
+          name: code-purple-mycelium-history-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             dist/history/native.json
             dist/preview/
