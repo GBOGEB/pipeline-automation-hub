@@ -4,7 +4,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-FILE=Path(__file__).resolve().parents[1]/"mission-control"/"gogreen"/"dependency_spine_temporal.py"
+FILE=Path(__file__).resolve().parents[1]/"dependency_spine_temporal.py"
 spec=importlib.util.spec_from_file_location("dep_spine_temporal",FILE)
 assert spec and spec.loader
 mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
