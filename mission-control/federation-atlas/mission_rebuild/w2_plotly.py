@@ -183,6 +183,8 @@ def render(d):
     page=r'''<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer"><title>MISSION CONTROL W2 · gg_MATH evidence</title>
+<!-- Plotly is loaded BEFORE to_html card fragments that synchronously call Plotly.newPlot. -->
+<script>__PLOTLY_LIBRARY__</script>
 <style>
 :root{color-scheme:dark;font-family:system-ui,sans-serif;color:#e8f3fa;background:#0b1725}
 *{box-sizing:border-box}body{margin:0}header{background:#123047;padding:24px clamp(18px,3vw,45px);border-bottom:1px solid #385b70}
@@ -222,7 +224,6 @@ dialog::backdrop{background:#020810cd}.modal-head{display:flex;justify-content:s
 <dialog id="detail"><div class="modal-head"><h2 id="modalTitle">Expanded evidence</h2><button id="closeDialog">Close</button></div><div id="expanded"></div></dialog>
 <footer>Current queue snapshot is a single observation and has no valid trend slope, p95 wait-time or worker capacity inference. UNKNOWN ≠ zero; provider PASS ≠ federation acceptance; merged ≠ DoV.</footer>
 </main>
-<script>__PLOTLY_LIBRARY__</script>
 <script id="plot-specs" type="application/json">__SPECS__</script>
 <script>(function(){"use strict";
 var specs=JSON.parse(document.getElementById("plot-specs").textContent);
