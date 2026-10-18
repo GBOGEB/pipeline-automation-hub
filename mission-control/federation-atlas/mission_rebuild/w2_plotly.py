@@ -201,7 +201,7 @@ dialog::backdrop{background:#020810cd}.modal-head{display:flex;justify-content:s
 #expanded{width:100%;min-height:425px}a{color:#b2eaf7}
 [hidden]{display:none!important}
 @media(max-width:430px){.card{padding:11px}.inlay{height:235px}.card-head h2{font-size:16px}}
-</style></head><body><header><div class="meta">CODE PURPLE / MISSION CONTROL W2 / MIP · gg_MATH provider</div>
+</style></head><body><script>__PLOTLY_LIBRARY__</script><header><div class="meta">CODE PURPLE / MISSION CONTROL W2 / MIP · gg_MATH provider</div>
 <h1>Federation evidence and convergence</h1><p>Native run census · queue pressure · blocked-vs-stable classification · Plotly inlay diagnostics</p>
 <div class="notice">Read-only API observation; not an atomic snapshot or Six Sigma certificate. Provider's built-in Plotly demonstrations are SYNTHETIC, not actual federation coverage. W1 historical merge does not imply admission.</div></header><main>
 <p class="meta">Consumer checkout <code>__SHA__</code> · observation __OBS__ · W1 run attempt __ATTEMPT__ · queued __QUEUED__ / active __ACTIVE__</p>
@@ -222,7 +222,6 @@ dialog::backdrop{background:#020810cd}.modal-head{display:flex;justify-content:s
 <dialog id="detail"><div class="modal-head"><h2 id="modalTitle">Expanded evidence</h2><button id="closeDialog">Close</button></div><div id="expanded"></div></dialog>
 <footer>Current queue snapshot is a single observation and has no valid trend slope, p95 wait-time or worker capacity inference. UNKNOWN ≠ zero; provider PASS ≠ federation acceptance; merged ≠ DoV.</footer>
 </main>
-<script>__PLOTLY_LIBRARY__</script>
 <script id="plot-specs" type="application/json">__SPECS__</script>
 <script>(function(){"use strict";
 var specs=JSON.parse(document.getElementById("plot-specs").textContent);
@@ -237,6 +236,14 @@ document.querySelectorAll("[data-expand]").forEach(function(b){b.addEventListene
  dlg.showModal();Plotly.newPlot("expanded",s.data,Object.assign({},s.layout,{autosize:true,height:450}),{responsive:true,displayModeBar:true});})});
 document.getElementById("closeDialog").addEventListener("click",function(){dlg.close()});
 dlg.addEventListener("close",function(){Plotly.purge("expanded")});
+// The first inline Plotly graph executes before all CSS-grid siblings are
+// parsed. Reflow every mounted chart after the grid is complete to prevent
+// a false zero-page-overflow result with overlapping plot canvases.
+window.addEventListener("load",function(){
+ document.querySelectorAll(".inlay .js-plotly-plot").forEach(function(el){
+  Plotly.Plots.resize(el);
+ });
+});
 })();</script></body></html>'''
     subs={"__SHA__":h(d["source_head_sha"]),"__OBS__":h(d["observed_at_utc"]),
           "__ATTEMPT__":h(attempt),"__QUEUED__":h(qp if qp is not None else "UNKNOWN"),
