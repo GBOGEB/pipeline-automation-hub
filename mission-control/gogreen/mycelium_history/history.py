@@ -12,7 +12,7 @@ import html
 import json
 import re
 from collections import Counter, defaultdict
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 SCHEMA = "missioncontrol.mycelium.history_capture.v1"
@@ -207,7 +207,13 @@ def bins(runs, *, limit=21):
         day = utc(run["created_at"]).date().isoformat()
         buckets[day][run["conclusion"] or "nonterminal"] += 1
     data = []
-    for day in sorted(buckets)[-limit:]:
+    if not buckets:
+        return []
+    end = max(datetime.fromisoformat(x).date() for x in buckets)
+    begin = max(min(datetime.fromisoformat(x).date() for x in buckets),
+                end - timedelta(days=limit - 1))
+    for offset in range((end - begin).days + 1):
+        day = (begin + timedelta(days=offset)).isoformat()
         b = buckets[day]
         data.append({"date": day, "pass": b["success"], "red": (
             b["failure"] + b["timed_out"] + b["action_required"]),
@@ -320,6 +326,15 @@ def summarize(data):
             "sampling": data["job_detail_policy"],
             "detail_errors": data["job_detail_error_count"],
             "failure_log_reads": data["failure_log_reads"],
+            "log_read_attempts": data.get("log_read_attempts"),
+            "unreadable_log_attempts": data.get("unreadable_log_attempts"),
+            "sampled_failed_runs": sum(
+                keyed[k]["conclusion"] in {"failure","timed_out","action_required"}
+                for k in data["selected_job_details"]),
+            "sampled_successful_runs": sum(
+                keyed[k]["conclusion"] == "success"
+                for k in data["selected_job_details"]),
+            "observed_error_annotations_in_green_jobs": None,
             "full_fleet_job_breadth": None,
         },
         "first_red": {
@@ -544,6 +559,13 @@ def html_page(report, graph):
         '</strong>. Job detail: ' + str(report["job_detail"]["observed_run_records"]) +
         ' selected run IDs; prior rerun attempts and full archive ZIP member '
         'verification: <strong>UNKNOWN</strong> unless separately verified.</p>'
+        '<p>Sampling strata: RED ' +
+        str(report["job_detail"]["sampled_failed_runs"]) +
+        ' / GREEN ' + str(report["job_detail"]["sampled_successful_runs"]) +
+        ' selected runs; bounded log reads ' +
+        str(report["job_detail"]["failure_log_reads"]) + '/' +
+        str(report["job_detail"]["log_read_attempts"]) +
+        '. Annotated-green severity: <strong>UNKNOWN</strong>.</p>'
         '<p>First-red occurrences: ' +
         str(report["first_red"]["sampled_occurrences"]) +
         '; distinct fingerprints: ' +
