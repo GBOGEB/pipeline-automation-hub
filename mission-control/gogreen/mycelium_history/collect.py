@@ -43,7 +43,7 @@ def request_json(path, *, token=None):
     request = urllib.request.Request(API + path, headers=headers, method="GET")
     with urllib.request.urlopen(request, timeout=35) as response:
         value = json.load(response)
-    demand(isinstance(value, dict), "GitHub API did not return an object")
+    demand(isinstance(value, (dict, list)), "GitHub API unexpected document type")
     return value
 
 
