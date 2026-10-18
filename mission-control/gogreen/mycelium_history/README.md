@@ -24,7 +24,7 @@ For example, **🔧 🧬 W5** corresponds to fix(mycelium W5): recensus. Unknown
 | W8 LINEAGE | Join recent merged PR head/merge SHA against source-bound runs | Red-before-merge/red-after-merge observed, no automatic admission |
 | W9 NURTURE | Two-Python native matrix, deterministic offline HTML/SVG/Mermaid/Plotly JSON | Real test counts, scoped coverage, SHA manifest, independently assessed artifact custody |
 
-Scale is 1000 maximum run metadata entries per capture, **120 detailed runs** and **18 log reads** initially. Full run coverage is not full job coverage. Every partial/racy collection remains PARTIAL/NONATOMIC, rather than claiming the historical run denominator is complete. After terminal proof, proposed escalation is 120→240 job details and 18→36 bounded failure logs; these are not yet executed worker allocations.
+Scale is 1000 maximum run metadata entries per capture, **160 stratified detailed runs** (100 RED / 60 GREEN if both strata are available) and **18 attempted log reads** initially. Full run coverage is not full job coverage. Every partial/racy collection remains PARTIAL/NONATOMIC, rather than claiming the historical run denominator is complete. After terminal proof, proposed escalation is 160→240 job details and 18→36 bounded failure logs; these are not yet executed worker allocations.
 
 The dashboard preserves whole integer issue/run scales, dated failure/success/cancellation columns, type-and-scope icons, truncated first-red groups, native job links, selected PR merge chronology, and warnings for unknown worker-hours or admission.
 
@@ -51,3 +51,7 @@ The source entrypoints are collect.py (bounded authenticated GET-only), history.
 The collector never writes a GitHub issue, repository, workflow or PR, never logs the token, and never falls back to unauthenticated reads after an authorization error. ZIP/member-byte verification remains the separate canonical #530 gate.
 
 **MERGE_ADMISSION=HOLD; accepted causal-root closure=0; owner QPS acceptance=WITHHELD; unknown worker-hours/capacity and cross-repo coverage remain UNKNOWN.**
+
+### N+1 maturity increment
+
+The first native 660/660 capture found 400 failed and 260 successful workflow runs, but selected 120 failing runs only, producing two first-step fingerprints and zero readable log bodies. N+1 uses a 100-red/60-green sampling plan (when those strata remain available), caps attempted rather than only successful log reads at 18, and keeps zero-run dates explicitly in daily charts. This changes the **job-detail sampling population**, so 120→160 is evidence breadth, not 40 new failures or causal root closures. Scoped native source coverage baseline on the prior code head was 348/423 statements and 89/108 branches; the next testflight enforces at least 80% combined coverage without omitting source lines. An annotated GREEN checker remains a future separate source-owned contract, not an invented result.
