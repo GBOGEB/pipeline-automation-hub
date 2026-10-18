@@ -43,6 +43,36 @@ def gaps(effective: list, expected: dict) -> list[str]:
     return out
 
 
+def probe_status(effective, rulesets, branch, expected, untargeted=()):
+    """Classify observed missing rules separately from inaccessible GitHub data.
+
+    Unknown API reads MUST hold the control gate, but are not evidence that a
+    rule is missing. Keep a visible distinction from confirmed control drift.
+    """
+    unknown = []
+    if not isinstance(effective, list):
+        unknown.append("effective branch rules API unavailable")
+    if not isinstance(rulesets, list):
+        unknown.append("rulesets inventory API unavailable")
+    if not isinstance(branch, dict) or type(branch.get("protected")) is not bool:
+        unknown.append("default branch protection readback unavailable")
+    missing = gaps(effective, expected) if isinstance(effective, list) else []
+    if unknown:
+        state = "UNKNOWN_API_READBACK"
+    elif missing or untargeted:
+        state = "CONFIRMED_DRIFT"
+    else:
+        state = "VERIFIED_EFFECTIVE"
+    return {
+        "probe_status": state, "red": state != "VERIFIED_EFFECTIVE",
+        "gaps": missing, "unknown_readbacks": unknown,
+        "observation_coverage": {
+            "observed": 3-len(unknown), "required": 3,
+            "qualification": "COMPLETE" if not unknown else "INCOMPLETE"
+        }
+    }
+
+
 def main():
     man = json.loads((D / "manifest.json").read_text())
     res = {"generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "repos": {}}
@@ -57,13 +87,16 @@ def main():
                 inc = (((full.get("conditions") or {}).get("ref_name") or {}).get("include")) or []
                 if full.get("enforcement") == "active" and not inc:
                     untargeted.append(f"ruleset {s['id']} '{s['name']}' is active but targets no branch")
-        prot = gh(f"repos/{repo}/branches/{m['branch']}").get("protected")
-        g = gaps(eff if isinstance(eff, list) else [], exp)
-        res["repos"][repo] = {"branch": m["branch"], "protected": prot, "effective_rules": [r["type"] for r in eff] if isinstance(eff, list) else eff,
-                              "gaps": g, "untargeted_rulesets": untargeted, "red": bool(g)}
+        branch = gh(f"repos/{repo}/branches/{m['branch']}")
+        measured = probe_status(eff, sets, branch, exp, untargeted)
+        # Unknown is a separate evidence state, not fabricated absent rules.
+        res["repos"][repo] = {"branch": m["branch"],
+                              "protected": branch.get("protected") if isinstance(branch, dict) else None,
+                              "effective_rules": [r["type"] for r in eff] if isinstance(eff, list) else None,
+                              "untargeted_rulesets": untargeted, **measured}
     (D / "drift.json").write_text(json.dumps(res, indent=2) + "\n")
     for r, v in res["repos"].items():
-        print(f"{'RED ' if v['red'] else 'OK  '} {r:34s} effective={v['effective_rules']}  gaps={len(v['gaps'])}  {'; '.join(v['untargeted_rulesets'])}")
+        print(f"{v['probe_status']:21s} {r:34s} observed={v['observation_coverage']['observed']}/3  gaps={len(v['gaps'])}  unknown={len(v['unknown_readbacks'])}")
 
 
 if __name__ == "__main__":
