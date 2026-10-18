@@ -17,8 +17,8 @@ from pathlib import Path
 
 SCHEMA = "gogreen.g12.incubator_input.v1"
 OUTPUT = "gogreen.g12.native_convergence.v1"
-SHA = re.compile(r"[a-f0-9]{40}\\Z")
-DIGEST = re.compile(r"[a-f0-9]{64}\\Z")
+SHA = re.compile(r"[a-f0-9]{40}\Z")
+DIGEST = re.compile(r"[a-f0-9]{64}\Z")
 OUTCOMES = frozenset({"success", "failure", "cancelled", "skipped", "timed_out"})
 OWNERS = {
     "ZIP_VERIFIER": "GBOGEB/pipeline-automation-hub#530",
@@ -41,7 +41,7 @@ def integer(n, name, *, positive=False):
 
 def canonical(payload):
     return (json.dumps(payload, sort_keys=True, indent=2, ensure_ascii=True) +
-            "\\n").encode("ascii")
+            "\n").encode("ascii")
 
 
 def ratio(covered, eligible):
@@ -367,7 +367,7 @@ def render_mermaid(dag):
             lines.append("  " + e["from"] + " --> " + e["to"])
         else:
             lines.append("  " + e["from"] + " -. next pulse .-> " + e["to"])
-    return "\\n".join(lines) + "\\n"
+    return "\n".join(lines) + "\n"
 
 
 def build(data, source_sha, out, *, check=False):
