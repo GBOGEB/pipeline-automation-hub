@@ -111,6 +111,9 @@ class G3CConvergence(unittest.TestCase):
         self.assertIn("107/122",page)
         self.assertIn("119/122",page)
         self.assertIn("Covered obligations (whole counts)",page)
+        self.assertIn('aria-label="Exact covered-count table"',page)
+        self.assertIn('aria-label="Whole covered obligations: 107, 109, 119 of matched denominator 122"',page)
+        self.assertIn('x1="126"',page,"integer Y-axis leaves space beside the first data label")
         self.assertIn("NOT QUALIFIED",page)
         self.assertEqual(page,render(x))
 
