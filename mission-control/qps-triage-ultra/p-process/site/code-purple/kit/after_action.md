@@ -1,6 +1,6 @@
 # ABACUS merge stall (Codex review allowance exhausted)
 
-Incident `CP-2026-10-12-ABACUS-MERGE-STALL` · readback 2026-10-18T13:17:35+00:00 · owner GBOGEB
+Incident `CP-2026-10-12-ABACUS-MERGE-STALL` · readback 2026-10-18T13:27:47+00:00 · owner GBOGEB
 
 ## Lift: NOT LIFTED
 
@@ -10,7 +10,7 @@ Incident `CP-2026-10-12-ABACUS-MERGE-STALL` · readback 2026-10-18T13:17:35+00:0
 | L2 | Gate restored (ruleset active, no bypass, expected rules present) | no | active, bypass=6, rules=3; missing: required_status_checks rule absent |
 | L5 | Admission integrity (no merge since the unblocker without a green gate) | no | 97 merged; gate green on 0; 97 merged with red checks |
 | L3 | Merge flow restored (at least 5 merges to the default branch since the unblocker) | yes | 97 merges since 2026-10-12T16:17:07Z |
-| L4 | Open PR backlog at most a quarter of the baseline | no | 12 open (baseline 20) |
+| L4 | Open PR backlog at most a quarter of the baseline | no | 13 open (baseline 20) |
 
 ## Admission integrity
 
@@ -30,7 +30,7 @@ Since 2026-10-12T16:17:07Z: **97 merged**, gate `PR Feedback Gate` green on **0*
 
 | Repo | Head | Open PRs | Nightly reds (inherited set) | Ruleset |
 |---|---|---|---|---|
-| GBOGEB/ABACUS | `337109e1` | 12 | Code Quality Checks, Full Red Proof Summary, Security Scanning, Unit Tests (Python 3.10, macos-latest), Unit Tests (Python 3.10, ubuntu-latest), Unit Tests (Python 3.10, windows-latest), Unit Tests (Python 3.11, macos-latest), Unit Tests (Python 3.11, ubuntu-latest), Unit Tests (Python 3.11, windows-latest), Unit Tests (Python 3.12, macos-latest), Unit Tests (Python 3.12, ubuntu-latest), Unit Tests (Python 3.12, windows-latest) | active, bypass 6 |
+| GBOGEB/ABACUS | `337109e1` | 13 | Code Quality Checks, Full Red Proof Summary, Security Scanning, Unit Tests (Python 3.10, macos-latest), Unit Tests (Python 3.10, ubuntu-latest), Unit Tests (Python 3.10, windows-latest), Unit Tests (Python 3.11, macos-latest), Unit Tests (Python 3.11, ubuntu-latest), Unit Tests (Python 3.11, windows-latest), Unit Tests (Python 3.12, macos-latest), Unit Tests (Python 3.12, ubuntu-latest), Unit Tests (Python 3.12, windows-latest) | active, bypass 6 |
 | GBOGEB/CODEX | `e422201c` | 0 | — | none |
 
 ## Follow-ups
@@ -42,5 +42,5 @@ Since 2026-10-12T16:17:07Z: **97 merged**, gate `PR Feedback Gate` green on **0*
 
 - Meet L2: Gate restored (ruleset active, no bypass, expected rules present) (active, bypass=6, rules=3; missing: required_status_checks rule absent)
 - Meet L5: Admission integrity (no merge since the unblocker without a green gate) (97 merged; gate green on 0; 97 merged with red checks)
-- Meet L4: Open PR backlog at most a quarter of the baseline (12 open (baseline 20))
+- Meet L4: Open PR backlog at most a quarter of the baseline (13 open (baseline 20))
 - Turn every inherited red into a dated burn-down item; never repair it inside an unrelated PR

@@ -45,6 +45,14 @@ class CodePurpleKit(unittest.TestCase):
         exp = [{"type": "deletion"}, {"type": "required_status_checks", "contexts": ["PR Feedback Gate"], "strict": True}]
         self.assertEqual(readback.missing_rules(actual, exp), ["required check 'PR Feedback Gate' absent", "strict up-to-date policy off"])
 
+    def test_gate_state_is_taken_at_merge_time(self):
+        runs = [{"name": "PR Feedback Gate", "conclusion": "failure", "completed_at": "2026-10-13T10:00:00Z"},
+                {"name": "PR Feedback Gate", "conclusion": "success", "completed_at": "2026-10-13T12:00:00Z"}]
+        self.assertEqual(readback.gate_at_merge(runs, "PR Feedback Gate", "2026-10-13T11:00:00Z"), "failure", "a green rerun after the merge must not count")
+        self.assertEqual(readback.gate_at_merge(runs, "PR Feedback Gate", "2026-10-13T13:00:00Z"), "success")
+        self.assertEqual(readback.gate_at_merge(runs[1:], "PR Feedback Gate", "2026-10-13T11:00:00Z"), "in_progress")
+        self.assertEqual(readback.gate_at_merge([], "PR Feedback Gate", "2026-10-13T11:00:00Z"), "none")
+
     def test_classify_inherited_vs_source(self):
         c = readback.classify(["coverage", "lint"], ["coverage"])
         self.assertEqual(c, {"inherited": ["coverage"], "source_defect_candidates": ["lint"]})
@@ -101,6 +109,15 @@ class Rulesets(unittest.TestCase):
         eff = [{"type": "deletion"}, {"type": "pull_request", "parameters": {"required_review_thread_resolution": True}}, {"type": "non_fast_forward"}]
         self.assertEqual(verify_rulesets.gaps(eff, exp), ["required_status_checks missing"])
         self.assertEqual(len(verify_rulesets.gaps([], exp)), 4)
+
+    def test_drift_detects_wrong_app(self):
+        exp = json.loads((P / "rulesets/gg_MATH.basic.json").read_text())
+        good = [{"type": t} for t in ("deletion", "non_fast_forward")] + [
+            {"type": "pull_request", "parameters": {"required_review_thread_resolution": True}},
+            {"type": "required_status_checks", "parameters": {"required_status_checks": [{"context": "first-kernel", "integration_id": 15368}, {"context": "monte-carlo-reference", "integration_id": 15368}]}}]
+        self.assertEqual(verify_rulesets.gaps(good, exp), [])
+        good[3]["parameters"]["required_status_checks"][0]["integration_id"] = 999
+        self.assertEqual(verify_rulesets.gaps(good, exp), ["required check 'first-kernel' pinned to another app (expected integration 15368)"])
 
 
 class Everred(unittest.TestCase):

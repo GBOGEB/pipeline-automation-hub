@@ -1,6 +1,6 @@
 # Global Code Purple
 
-_GitHub readback 2026-10-18 13:17 UTC · not lifted: 2 of 5 lift criteria met. Generated from the same model as the page and the deck; anchors match the PDF links._
+_GitHub readback 2026-10-18 13:27 UTC · not lifted: 2 of 5 lift criteria met. Generated from the same model as the page and the deck; anchors match the PDF links._
 
 ## Contents
 

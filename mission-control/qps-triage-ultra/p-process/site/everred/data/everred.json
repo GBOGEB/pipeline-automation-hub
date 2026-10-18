@@ -1,13 +1,13 @@
 {
  "schema": "everred.census/1.0",
- "generated_at": "2026-10-18T13:19:45+00:00",
+ "generated_at": "2026-10-18T13:29:56+00:00",
  "scope": [
   "GBOGEB/ABACUS",
   "GBOGEB/CODEX",
   "GBOGEB/cryoplant-project"
  ],
  "metrics": {
-  "occurrences_total": 374,
+  "occurrences_total": 375,
   "occurrences_on_independent_roots": 20,
   "distinct_signatures": 68,
   "roots_independent": 15,
@@ -15,7 +15,7 @@
   "unmatched_signatures": 64,
   "failure_amplification": 1.538,
   "failure_amplification_note": "occurrences linked to triaged independent roots / triaged independent roots",
-  "signature_amplification_upper_bound": 5.5,
+  "signature_amplification_upper_bound": 5.515,
   "root_closure_rate": 0.2,
   "recurrence_rate": 0.0,
   "consumer_replay_coverage": "UNKNOWN",
@@ -30,7 +30,7 @@
   },
   "occurrences_by_source": {
    "main:nightly": 12,
-   "open-pr": 134,
+   "open-pr": 135,
    "merged-pr": 228
   },
   "control_plane_red": 6,
@@ -988,6 +988,24 @@
    "example_url": "https://github.com/GBOGEB/CODEX/actions/runs/39117733919/job/117646835366"
   },
   {
+   "signature": "CI Workflow Governance :: policy-and-inventory :: Fail closed on governance red",
+   "occurrences": 8,
+   "prs": [
+    2090,
+    2091,
+    2101,
+    2144,
+    2145,
+    2202,
+    2204,
+    2209
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39131584237/job/117687687592"
+  },
+  {
    "signature": "Validate Docs (Markdown/YAML/JSON) :: Changed docs lint :: Validate changed docs",
    "occurrences": 7,
    "prs": [
@@ -1003,23 +1021,6 @@
     "GBOGEB/ABACUS"
    ],
    "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39050983265/job/117449339277"
-  },
-  {
-   "signature": "CI Workflow Governance :: policy-and-inventory :: Fail closed on governance red",
-   "occurrences": 7,
-   "prs": [
-    2090,
-    2091,
-    2101,
-    2144,
-    2145,
-    2202,
-    2204
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39050952869/job/117449248446"
   },
   {
    "signature": "Full Stack Governance CI :: lineage-governance (codex) :: Governance validation",

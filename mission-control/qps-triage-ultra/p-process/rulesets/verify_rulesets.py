@@ -30,10 +30,14 @@ def gaps(effective: list, expected: dict) -> list[str]:
             out.append(f"{t} missing")
             continue
         if t == "required_status_checks":
-            ctx = {c["context"] for p in have[t] for c in p.get("required_status_checks", [])}
+            # compare (context, integration_id): a same-named check from another app must not read green
+            got = {(c["context"], c.get("integration_id")) for p in have[t] for c in p.get("required_status_checks", [])}
+            names = {g[0] for g in got}
             for c in e["parameters"]["required_status_checks"]:
-                if c["context"] not in ctx:
-                    out.append(f"required check '{c['context']}' missing")
+                if (c["context"], c.get("integration_id")) in got:
+                    continue
+                out.append(f"required check '{c['context']}' missing" if c["context"] not in names
+                           else f"required check '{c['context']}' pinned to another app (expected integration {c.get('integration_id')})")
         if t == "pull_request" and e["parameters"].get("required_review_thread_resolution") and not any(p.get("required_review_thread_resolution") for p in have[t]):
             out.append("review-thread resolution off")
     return out

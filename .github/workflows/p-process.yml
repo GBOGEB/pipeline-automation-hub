@@ -47,3 +47,12 @@ jobs:
           node --check code-purple/assets/model.js
           node --check code-purple/assets/app.js
           node --check code-purple/build_deck.js
+      - name: Package site zip (verified against site/manifest.json)
+        working-directory: mission-control/qps-triage-ultra/p-process
+        run: python package.py --out dist
+      - name: Upload site zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: p-process-site-${{ github.event.pull_request.head.sha || github.sha }}
+          path: mission-control/qps-triage-ultra/p-process/dist/
+          if-no-files-found: error

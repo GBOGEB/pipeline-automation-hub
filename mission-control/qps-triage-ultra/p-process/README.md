@@ -55,3 +55,13 @@ Committed data is a snapshot as of the last refresh; check `census_at` in `site/
 python -m unittest discover -s tests -v          # offline; CI: .github/workflows/p-process.yml
 node tools/check_model.mts && npx -y -p typescript@6.0.3 tsc -p tsconfig.json
 ```
+
+## Zip from a fresh clone
+
+- **GitHub:** every `p-process.yml` run uploads the artifact `p-process-site-<sha>` (zip plus `.sha256`). Download it from the run page.
+- **Windows PowerShell:** `pwsh -File regenerate.ps1 [-Offline] [-Branch <name>]`. It clones the repo, installs pinned tools, refreshes, tests, then packages.
+- **Linux/macOS:** `python refresh.py [--offline] && python package.py`
+
+`package.py` checks every file against `site/manifest.json` first. Zip timestamps are fixed, so the same site always gives a byte-identical zip.
+
+Wave record: `WAVE_CLOSE_P_PROCESS_20261018.md`.

@@ -85,6 +85,18 @@ def missing_rules(actual: list[dict], expected: list[dict]) -> list[str]:
     return gaps
 
 
+def gate_at_merge(runs: list[dict], gate_check: str, merged_at: str) -> str:
+    """Gate state as of the merge: the latest gate run completed at or before merged_at.
+
+    A rerun that turns green after the merge must not make an ungated merge look gated (L5).
+    Runs still open, or finished only after the merge, count as 'in_progress' at merge time."""
+    gate = [r for r in runs if r["name"] == gate_check]
+    if not gate:
+        return "none"
+    done = sorted((r for r in gate if r.get("completed_at") and r["completed_at"] <= merged_at), key=lambda r: r["completed_at"])
+    return (done[-1]["conclusion"] or "in_progress") if done else "in_progress"
+
+
 def gate_audit(repo: str, since_iso: str, gate_check: str) -> list[dict]:
     """Every PR merged since `since_iso`: the gate conclusion and red-check count on its merged head."""
     rows = []
@@ -92,9 +104,8 @@ def gate_audit(repo: str, since_iso: str, gate_check: str) -> list[dict]:
         p = gh(f"repos/{repo}/pulls/{m['number']}")
         sha = p["head"]["sha"]
         runs = gh(f"repos/{repo}/commits/{sha}/check-runs?per_page=100")["check_runs"]
-        gate = [r for r in runs if r["name"] == gate_check]
         rows.append({"number": m["number"], "merged_at": m["merged_at"], "head": sha, "merged_by": (p.get("merged_by") or {}).get("login"),
-                     "gate": (gate[0]["conclusion"] or gate[0]["status"]) if gate else "none",
+                     "gate": gate_at_merge(runs, gate_check, m["merged_at"]),
                      "reds": sum(1 for r in runs if r["conclusion"] == "failure")})
     return rows
 

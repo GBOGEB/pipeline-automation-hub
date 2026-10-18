@@ -1,10 +1,10 @@
 # EVERRED register
 
-Census 2026-10-18T13:19:45+00:00 · scope GBOGEB/ABACUS, GBOGEB/CODEX, GBOGEB/cryoplant-project
+Census 2026-10-18T13:29:56+00:00 · scope GBOGEB/ABACUS, GBOGEB/CODEX, GBOGEB/cryoplant-project
 
 ## Metrics
 
-- **occurrences_total**: 374
+- **occurrences_total**: 375
 - **occurrences_on_independent_roots**: 20
 - **distinct_signatures**: 68
 - **roots_independent**: 15
@@ -12,13 +12,13 @@ Census 2026-10-18T13:19:45+00:00 · scope GBOGEB/ABACUS, GBOGEB/CODEX, GBOGEB/cr
 - **unmatched_signatures**: 64
 - **failure_amplification**: 1.538
 - **failure_amplification_note**: occurrences linked to triaged independent roots / triaged independent roots
-- **signature_amplification_upper_bound**: 5.5
+- **signature_amplification_upper_bound**: 5.515
 - **root_closure_rate**: 0.2
 - **recurrence_rate**: 0.0
 - **consumer_replay_coverage**: UNKNOWN
 - **consumer_replay_note**: no replay outcomes recorded yet; 13 roots list consumers
 - **active_roots_by_state**: {'BLOCKED_AUTHORITY': 6, 'OWNED': 1, 'TRIAGED': 2, 'PRODUCER_GREEN': 1, 'VERIFIED_FIXED': 3, 'DISCOVERED': 2}
-- **occurrences_by_source**: {'main:nightly': 12, 'open-pr': 134, 'merged-pr': 228}
+- **occurrences_by_source**: {'main:nightly': 12, 'open-pr': 135, 'merged-pr': 228}
 - **control_plane_red**: 6
 - **control_plane_probed**: 6
 - **dims**: {'diagnosis': {'CONFIRMED': 11, 'CANDIDATE': 2, 'UNRESOLVED': 2}, 'repair': {'PROPOSED': 7, 'NONE': 4, 'COMMITTED': 1, 'PRODUCER_VERIFIED': 3}, 'integration': {'NA': 6, 'NOT_EVALUATED': 5, 'EXACT_HEAD_PASSED': 4}, 'security': {'NA': 12, 'RED': 1, 'UNKNOWN': 2}, 'governance': {'INEFFECTIVE': 11, 'UNKNOWN': 4}, 'admission': {'NA': 8, 'HOLD': 4, 'ADMITTED': 3}, 'control': {'UNCONTROLLED': 11, 'UNDER_OBSERVATION': 4}}
@@ -57,8 +57,8 @@ Census 2026-10-18T13:19:45+00:00 · scope GBOGEB/ABACUS, GBOGEB/CODEX, GBOGEB/cr
 | `CI :: test :: Run tests` | 15 | #1068, #1069, #1070, #1071, #1072, #1073 | [run](https://github.com/GBOGEB/CODEX/actions/runs/39118199013/job/117648202582) |
 | `MissionControl Mycelium CI :: validate :: Mycelium N7: standalone continuity testflight` | 14 | #1068, #1069, #1070, #1071, #1072, #1073 | [run](https://github.com/GBOGEB/CODEX/actions/runs/39126570729/job/117672842776) |
 | `Full Stack Governance CI :: lineage-governance (abacus) :: Governance validation` | 12 | #1068, #1069, #1070, #1074, #1075, #1076 | [run](https://github.com/GBOGEB/CODEX/actions/runs/39117733919/job/117646835366) |
+| `CI Workflow Governance :: policy-and-inventory :: Fail closed on governance red` | 8 | #2090, #2091, #2101, #2144, #2145, #2202 | [run](https://github.com/GBOGEB/ABACUS/actions/runs/39131584237/job/117687687592) |
 | `Validate Docs (Markdown/YAML/JSON) :: Changed docs lint :: Validate changed docs` | 7 | #2063, #2090, #2091, #2098, #2145, #2151 | [run](https://github.com/GBOGEB/ABACUS/actions/runs/39050983265/job/117449339277) |
-| `CI Workflow Governance :: policy-and-inventory :: Fail closed on governance red` | 7 | #2090, #2091, #2101, #2144, #2145, #2202 | [run](https://github.com/GBOGEB/ABACUS/actions/runs/39050952869/job/117449248446) |
 | `Full Stack Governance CI :: lineage-governance (codex) :: Governance validation` | 7 | #1071, #1072, #1073, #1078, #1079, #1080 | [run](https://github.com/GBOGEB/CODEX/actions/runs/39118020851/job/117647676441) |
 | `W003 Governance Gate :: governance-gate :: Run governance parser on PR metadata` | 7 | #1068, #1069, #1070, #1071, #1072, #1073 | [run](https://github.com/GBOGEB/CODEX/actions/runs/39075465807/job/117521587196) |
 | `DOW + Recursive DMAIC - Enhanced CI :: Test (3.11) :: Run python -m coverage erase` | 6 | #2190, #2191, #2192, #2193, #2194, #2200 | [run](https://github.com/GBOGEB/ABACUS/actions/runs/39080367179/job/117554064162) |
