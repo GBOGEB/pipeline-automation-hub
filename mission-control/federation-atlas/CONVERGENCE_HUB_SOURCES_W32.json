@@ -431,6 +431,33 @@
       },
       "observations": "First-red repair committed with 7 negative/positive tests; native G3P latest observation queued, not credited",
       "immutable": false
+    },
+    {
+      "id": "MC-G4-W32-PLAN",
+      "family": "federation",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 731,
+      "head": "7dd05129433e8751775b168683a1a66a05319acb",
+      "run": 39165085476,
+      "attempt": null,
+      "jobs": [],
+      "status": "NONTERMINAL",
+      "tests": {
+        "executed": null,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      },
+      "artifact": {
+        "id": null,
+        "zip_bytes": null,
+        "member_bytes": null,
+        "crc_members": null,
+        "members": null,
+        "verification": "PLAN_ONLY_NOT_EXECUTED"
+      },
+      "observations": "G4 W32 source-owned six disjoint repository packet plan and empty push contract committed. Six candidates, zero dispatched or accepted; new 16 tests committed, native G4 status pending. Historical breadth unchanged 6/42.",
+      "immutable": false
     }
   ],
   "roots": [
@@ -486,6 +513,12 @@
       "to": "MC531",
       "kind": "SIX_REPO_COVERAGE_PROJECTION",
       "status": "NOT_FEDERATED"
+    },
+    {
+      "from": "MC-G4-W32-PLAN",
+      "to": "MC531",
+      "kind": "SOURCE_OWNED_PLAN_CONSUMPTION",
+      "status": "NONTERMINAL_NOT_CENSUS_CREDIT"
     }
   ],
   "lineage": [
@@ -536,7 +569,7 @@
       "scope": "GLOBAL",
       "name": "Six-repo missing census atoms",
       "eligible": "36 historical unobserved of 42 eligible",
-      "next": "Use #531 only, bounded 6-cell family slice, no duplicate census",
+      "next": "Use canonical #531 + source-owned G4 W32 PR #731 six disjoint candidate pull packets. Await native terminal G4 run and actual source-verified push; six candidates are zero executed/accepted.",
       "stop": "Every selected cell source-bound or declared UNKNOWN"
     },
     {
