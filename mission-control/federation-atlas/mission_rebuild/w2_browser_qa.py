@@ -67,6 +67,17 @@ def check(source, portal, expected_sha, screenshots):
             require(page.locator("h1").count()==1,"primary heading")
             require(page.locator(".inlay .js-plotly-plot").count()==4,"four proper Plotly inlays")
             require(page.locator(".card[data-group]:visible").count()==4,"initial four cards")
+            # A chart can spill over a sibling card while document scrollWidth
+            # remains unchanged: test plotted geometry, not body overflow alone.
+            page.wait_for_function("""() => [...document.querySelectorAll('.inlay .js-plotly-plot')]
+               .length === 4 && [...document.querySelectorAll('.inlay .js-plotly-plot')]
+               .every(p => p._fullLayout && p._fullLayout.width <=
+               p.getBoundingClientRect().width + 1)""", timeout=15000)
+            card_widths=page.evaluate("""() => [...document.querySelectorAll('.inlay .js-plotly-plot')]
+               .map(p => ({plot_px:p._fullLayout.width,
+                           card_px:p.getBoundingClientRect().width}))""")
+            require(all(p["plot_px"]<=p["card_px"]+1 for p in card_widths),
+                    "sibling card chart overflow")
             page.locator('[data-filter="statistics"]').click()
             require(page.locator(".card[data-group]:visible").count()==1,"method filter")
             page.locator('[data-filter="all"]').click()
@@ -84,7 +95,8 @@ def check(source, portal, expected_sha, screenshots):
             require(img.stat().st_size>10000,"empty screenshot")
             rows.append({"viewport":str(width)+"x"+str(height),
                          "browser_errors":0,"body_overflow_px":max(0,overflow),
-                         "plotly_inlays":4,"screenshot_bytes":img.stat().st_size,
+                         "plotly_inlays":4,"plotly_chart_geometry_px":card_widths,
+                         "screenshot_bytes":img.stat().st_size,
                          "screenshot_sha256":sha(img)})
             page.close()
         browser.close()
