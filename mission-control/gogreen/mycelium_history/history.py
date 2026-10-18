@@ -496,7 +496,8 @@ def html_page(report, graph):
         prs.append('<tr><td><span class="sym">' +
                    html.escape(icon["icon"]) + ' ' +
                    html.escape(icon["scope_icon"]) + '</span> ' +
-                   '<a href="' + html.escape(item["url"], quote=True) + '">#' +
+                   '<a href="' + html.escape(item["url"], quote=True) + '" title="' +
+                   html.escape(icon["title"], quote=True) + '">#' +
                    str(item["number"]) + '</a></td><td>' +
                    html.escape(icon["kind"]) + ' / ' +
                    html.escape(icon["family"]) +
