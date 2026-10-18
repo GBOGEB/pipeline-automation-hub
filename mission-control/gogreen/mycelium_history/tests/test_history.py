@@ -203,6 +203,8 @@ class RejectionTests(unittest.TestCase):
     def test_running_without_conclusion_accepts_zero_credit(self):
         d = fixture()
         d["runs"][0].update(status="queued", conclusion=None)
+        del d["selected_job_details"]["101"]
+        d["selected_job_run_count"] = 1
         history.validate(d)
         self.assertEqual(history.summarize(d)["run_population"]["nonterminal"], 1)
 
@@ -260,7 +262,7 @@ class CollectorTests(unittest.TestCase):
     def test_pages_two_pages_of_101(self):
         rows = [self.raw(i, "success") for i in range(1001, 1102)]
         def getter(path):
-            page = 1 if "page=1" in path else 2
+            page = 1 if path.endswith("&page=1") else 2
             return {"total_count": 101, "workflow_runs":
                     rows[:100] if page == 1 else rows[100:]}
         result = collect.read_run_pages(getter)
@@ -270,7 +272,7 @@ class CollectorTests(unittest.TestCase):
     def test_pages_capture_non_atomic_denominator(self):
         rows = [self.raw(i, "success") for i in range(2001, 2102)]
         def getter(path):
-            page = 1 if "page=1" in path else 2
+            page = 1 if path.endswith("&page=1") else 2
             return {"total_count": 101 if page == 1 else 102,
                     "workflow_runs": rows[:100] if page == 1 else rows[100:]}
         self.assertFalse(collect.read_run_pages(getter)["run_inventory_complete"])
@@ -287,7 +289,7 @@ class CollectorTests(unittest.TestCase):
         rows = [self.raw(i, "success") for i in range(4001, 4101)]
         def getter(path):
             return {"total_count": 101, "workflow_runs":
-                    rows if "page=1" in path else [rows[-1]]}
+                    rows if path.endswith("&page=1") else [rows[-1]]}
         result = collect.read_run_pages(getter)
         self.assertEqual(len(result["duplicated_ids"]), 1)
         self.assertFalse(result["run_inventory_complete"])
@@ -353,7 +355,6 @@ class PresentationTests(unittest.TestCase):
         self.assertIn("CODE PURPLE", page)
         self.assertIn("MYCELIUM", page)
         self.assertIn("Merged PRs with RED", page)
-        self.assertIn("660", page.replace("660", "660")) if False else None
         self.assertIn('viewBox="0 0 980 310"', history.mini_chart(report))
 
     def test_juxtaposed_run_counts_not_coverage(self):
