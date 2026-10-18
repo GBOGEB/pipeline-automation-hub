@@ -34,7 +34,7 @@ The fifth restricted repository is excluded in this public artifact. See `CENSUS
 | P1 | ABACUS BD https://github.com/GBOGEB/ABACUS/issues/1929 | OPEN | Causal-root fingerprint, matched scope and source-owner accepted closure, distinct from 38 issue objects |
 | P1 | ABACUS dashboard https://github.com/GBOGEB/ABACUS/issues/1885 | OPEN | Source-reproduced internal-link check, matched denominators and postrepair main acceptance |
 | P1 | hub BD https://github.com/GBOGEB/pipeline-automation-hub/issues/85 | OPEN | CPQ-010/011/013/015/016/018 remain in canonical queue with their own source event history |
-| P1 | cryoplant C2 private authority | 0/8 in **private** owner checklist at readback | Owner-local evidence only; no sensitive data copied into public MissionControl repo |
+| P1 | Restricted QPS source authority | **RESTRICTED / owner-local** | Owner-only evidence; no private counts, titles or source hashes copied to the public handover |
 
 ### Recent native receipts — historical, NOT current-main acceptance
 
