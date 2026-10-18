@@ -170,11 +170,30 @@ def read_jobs(fetch, run, *, max_pages=4):
 
 
 def parse_error(log: bytes):
-    """Extract one short red diagnostic, never serialize unbounded raw logs."""
+    """Return a safe error CLASS, never arbitrary untrusted raw log text.
+
+    Log SHA-256 retains a byte-level identity. The readable artifact must not
+    disclose tokens, private paths, user emails or terminal output contents.
+    """
     value = log[:3_000_000].decode("utf-8", errors="replace")
     for line in value.splitlines():
-        if "##[error]" in line and "echo " not in line:
-            return line.split("##[error]", 1)[1].strip()[:260]
+        if "##[error]" not in line or "echo " in line:
+            continue
+        clue = line.split("##[error]", 1)[1].strip().lower()
+        if "inventory" in clue and ("drift" in clue or "generated" in clue):
+            return "GENERATED_EXECUTABLE_INVENTORY_DRIFT"
+        if "untracked public" in clue or "stale artifact" in clue:
+            return "PUBLICATION_MANIFEST_DRIFT"
+        if "pr-007" in clue or "governance header" in clue:
+            return "GOVERNANCE_HEADER_FIRST_RED"
+        if "timeout" in clue or "timed out" in clue:
+            return "EXECUTION_TIMEOUT"
+        if "401" in clue or "403" in clue or "permission denied" in clue:
+            return "OWNER_AUTHORIZATION_GATE"
+        if "test" in clue or "assert" in clue:
+            return "NATIVE_TEST_ASSERTION"
+        return "UNCLASSIFIED_ERROR_" + hashlib.sha256(
+            clue.encode("utf-8")).hexdigest()[:12]
     return None
 
 
