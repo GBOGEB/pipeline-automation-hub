@@ -194,6 +194,40 @@ def build(atlas,out,sha):
             dst.parent.mkdir(exist_ok=True, parents=True)
             shutil.copyfile(src, dst)
             hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
+    # W32 Global DoV: pack an existing-publisher-only, exact-head projection.
+    # No second authority, no second Pages workflow, no GitHub status as proof.
+    hub_allow = ("index.html", "ledger.json", "lineage.mmd", "manifest.json")
+    hub_src = atlas / "convergence"
+    hub_present = [n for n in hub_allow if (hub_src / n).is_file()]
+    if hub_present and len(hub_present) != len(hub_allow):
+        raise ValueError("partial Convergence Hub output")
+    if len(hub_present) == len(hub_allow):
+        hub_manifest = json.loads((hub_src / "manifest.json").read_text(encoding="utf-8"))
+        hub_ledger = json.loads((hub_src / "ledger.json").read_text(encoding="utf-8"))
+        if not (hub_manifest.get("schema") == "codepurple.convergence_hub.manifest.v1"
+                and hub_manifest.get("presentation_head") == sha
+                and hub_manifest.get("publisher") == "EXISTING_METHOD_ATLAS_PAGES_ONLY"
+                and hub_manifest.get("merge_admission") == "HOLD"
+                and hub_manifest.get("security_waiver") is False
+                and hub_manifest.get("authority_transfer") is False
+                and hub_manifest.get("qps_owner_acceptance") is None
+                and hub_ledger.get("presentation_head") == sha
+                and hub_ledger.get("schema") == "codepurple.convergence_hub.projection.v1"
+                and hub_ledger.get("browser_refresh_credit") is False
+                and hub_ledger.get("native_cross_repo_attestation") is None
+                and hub_ledger.get("kpis", {}).get("coverage_rollup_global") is None):
+            raise ValueError("unsafe Convergence Hub publication contract")
+        if set(hub_manifest.get("member_sha256", {})) != {
+                "index.html", "ledger.json", "lineage.mmd"}:
+            raise ValueError("Convergence Hub manifest member drift")
+        for name in hub_allow:
+            src = hub_src / name
+            if name != "manifest.json" and hashlib.sha256(src.read_bytes()).hexdigest() != hub_manifest["member_sha256"][name]:
+                raise ValueError("Convergence Hub source member hash mismatch: " + name)
+            dst = out / "convergence" / name
+            dst.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copyfile(src, dst)
+            hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
     # P process (Code Purple x EVERRED): prebuilt static site committed under qps-triage-ultra/p-process/site.
     psite=atlas/"p-process"
     if psite.is_dir():
@@ -201,7 +235,7 @@ def build(atlas,out,sha):
             if src.is_file() and src.suffix in {".html",".js",".json",".pdf",".md",".yaml",".py"}:
                 dest=out/"p-process"/src.relative_to(psite); dest.parent.mkdir(exist_ok=True,parents=True)
                 shutil.copyfile(src,dest); hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
-    links=[("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("P process: Code Purple × EVERRED","p-process/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
+    links=[("GLOBAL DoV · Consolidated Convergence Hub","convergence/index.html"),("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("P process: Code Purple × EVERRED","p-process/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
     if (out / "mission-rebuild" / "index.html").is_file():
         cards += '<a class="card" href="mission-rebuild/index.html">MISSION CONTROL · Repository and DAG explorer ↗</a>'
