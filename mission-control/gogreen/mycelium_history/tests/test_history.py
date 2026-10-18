@@ -436,7 +436,7 @@ class CanonicalBDProjectionTests(unittest.TestCase):
         d = history.bd_projection(data, raw)
         self.assertEqual(hashlib.sha256(raw).hexdigest(), d["source_sha256"])
         git_blob = hashlib.sha1(
-            b"blob " + str(len(raw)).encode("ascii") + b"\\0" + raw
+            b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw
         ).hexdigest()
         self.assertEqual(d["source_git_blob_sha"], git_blob)
         self.assertFalse(d["authority_transfer"])
