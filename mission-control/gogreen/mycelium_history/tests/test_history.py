@@ -134,6 +134,40 @@ class SemanticTests(unittest.TestCase):
         self.assertIsNone(p["independent_approval"])
         self.assertEqual(p["governed_admission"], "UNKNOWN_NOT_CREDITED")
 
+    def test_native_job_completion_before_merge_separate_from_proxy(self):
+        d = fixture()
+        d["selected_job_details"]["101"]["jobs"][0]["completed_at"] = (
+            "2026-10-18T13:42:00Z")
+        out = history.summarize(d)["merged_with_red"]["prs"][0]
+        self.assertEqual(out["native_failed_jobs_completed_before_merge"], 1)
+        self.assertEqual(out["native_failed_jobs_completed_after_merge"], 0)
+        self.assertEqual(out["native_jobs_with_completion_timestamps"], 1)
+        self.assertEqual(out["run_timing_basis"],
+                         "RUN_UPDATED_AT_PROXY_NOT_CHECK_COMPLETION")
+        self.assertFalse(out["native_job_timing_complete_for_all_runs"])
+
+    def test_native_job_after_merge_can_contradict_run_updated_proxy(self):
+        d = fixture()
+        d["selected_job_details"]["101"]["jobs"][0]["completed_at"] = (
+            "2026-10-18T14:23:00Z")
+        out = history.summarize(d)["merged_with_red"]["prs"][0]
+        self.assertEqual(out["red_before_merge"], 1)
+        self.assertEqual(out["native_failed_jobs_completed_before_merge"], 0)
+        self.assertEqual(out["native_failed_jobs_completed_after_merge"], 1)
+        self.assertEqual(out["governed_admission"], "UNKNOWN_NOT_CREDITED")
+
+    def test_untrusted_job_completion_timestamp_rejected(self):
+        d = fixture()
+        d["selected_job_details"]["101"]["jobs"][0]["completed_at"] = "soon"
+        with self.assertRaisesRegex(ValueError, "UTC timestamp"):
+            history.summarize(d)
+
+    def test_symbol_parser_ci_scope_has_distinct_icon(self):
+        value = history.norm_title("fix(ci W5): register W4 handover")
+        self.assertEqual(value["kind"], "REPAIR")
+        self.assertEqual(value["family"], "CI")
+        self.assertEqual(value["wave"], "W5")
+
     def test_fingerprint_repeat_is_not_root_closure(self):
         r = history.summarize(fixture())
         self.assertEqual(r["first_red"]["sampled_occurrences"], 2)
