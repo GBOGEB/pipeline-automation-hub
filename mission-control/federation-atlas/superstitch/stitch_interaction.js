@@ -69,8 +69,8 @@ function drawGroup(g){
   rr.setAttribute('x',String(b.x));rr.setAttribute('y',String(b.y));
   rr.setAttribute('width',String(b.right-b.x));rr.setAttribute('height',String(b.bottom-b.y));
   rr.setAttribute('rx','15');rr.setAttribute('data-group-bound',g.id);hull.appendChild(rr);
-  const title=document.createElementNS(ns,'text');title.setAttribute('x',String(b.x+9));
-  title.setAttribute('y',String(Math.max(b.y+12,b.bottom-1)));title.textContent=g.label+' · '+b.lane.toUpperCase();hull.appendChild(title);
+  // Group identity is accessible in its rail/inspector. Avoid overlapping
+  // source-node labels with the lasso label on compressed mobile viewports.
  }
 }
 function makeBurndown(parent,g){
