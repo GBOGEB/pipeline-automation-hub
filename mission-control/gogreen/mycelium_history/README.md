@@ -40,6 +40,10 @@ M1 remains source-bound/partial until pagination, identity and native artefacts 
 
 Canonical Top21 historical context: 41 bounded merged PRs, 509 native check-run IDs and 33 failed-check manifestations across 21 repos. This module does not duplicate or recategorize their ownership.
 
+The pinned CODEX Top7 subset includes PR #1065 and #1066 with five failed check-run manifestations each. Their check completion chronology differs: #1065 has failures before merging, #1066 has failures after merging. These are ten check manifestations, **not ten independently accepted causal roots**. Confirm required statuses and exact merge-head before any admission classification.
+
+**Annotated GREEN** is a separate sentinel: a successful workflow may have error-level annotations (as in the native CI #1096 screenshot). A future expanded check-run-annotation adapter must count that explicitly; this first flight does not pretend its Mycelium workflow-only job census measures all CODEX CI annotation families.
+
 ## Native reproduction and deployment boundary
 
 The source entrypoints are collect.py (bounded authenticated GET-only), history.py (deterministic renderer), tests/test_history.py (adversarial contracts), and the code-purple-mycelium-history.yml two-Python Actions testflight. Output files: metrics.json, spine.json, spine.mmd, plotly.json, burndown.svg, index.html, manifest.json, plus native_ci.json after terminal CI. Read-only GitHub Actions artifact **only**; no independent Pages publisher.
