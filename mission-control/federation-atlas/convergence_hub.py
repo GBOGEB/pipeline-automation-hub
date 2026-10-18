@@ -109,7 +109,12 @@ d.families.forEach(f=>{const o=elem("option",f.title);o.value=f.id;fs.appendChil
 const fgrid=el("family-grid");
 d.families.forEach(f=>{const a=elem("article",undefined,"panel");append(a,"div",f.id.toUpperCase(),"eyebrow");append(a,"h3",f.title);append(a,"p",f.purpose,"small muted");append(a,"p","Owner: "+f.owner,"small");append(a,"span",f.gate,"tag");const related=d.events.filter(e=>e.family===f.id);append(a,"p",related.length+" curated evidence records","small muted");fgrid.appendChild(a)});
 const cg2=el("coverage-grid");
-d.events.filter(e=>e.coverage).forEach(e=>{const a=elem("article",undefined,"panel");append(a,"h3",e.coverage.label);append(a,"p","Scope key: "+e.coverage.scope_key+" · exact PR head "+e.head.slice(0,12),"small muted");for(const [label,v] of [["Statements",e.coverage.statements],["Branches",e.coverage.branches]]){const row=append(a,"div",undefined,"barrow");append(row,"span",label);const bar=append(row,"div",undefined,"progress");const fill=append(bar,"div",undefined,"fill");fill.style.width=(100*v.covered/v.total).toFixed(2)+"%";append(row,"strong",v.covered+"/"+v.total+" · "+pct(v.covered,v.total),"stats")}append(a,"p","Different source/denominator: NO MATCHED DELTA","small state-unknown");cg2.appendChild(a)});
+d.events.filter(e=>e.coverage).forEach(e=>{const a=elem("article",undefined,"panel");append(a,"h3",e.coverage.label);append(a,"p","Scope key: "+e.coverage.scope_key+" · exact PR head "+e.head.slice(0,12),"small muted");for(const [label,v] of [["Statements",e.coverage.statements],["Branches",e.coverage.branches]]){const row=append(a,"div",undefined,"barrow");append(row,"span",label);const bar=append(row,"div",undefined,"progress");const fill=append(bar,"div",undefined,"fill");fill.style.width=(100*v.covered/v.total).toFixed(2)+"%";append(row,"strong",v.covered+"/"+v.total+" · "+pct(v.covered,v.total),"stats")}const cmp=e.coverage.historical_comparison;
+if(cmp){const gain=cmp.contemporary_covered-cmp.observed_covered;
+append(a,"p","Historical B0 "+cmp.observed_covered+"/"+cmp.observed_total+" → focused native "+cmp.contemporary_covered+"/"+cmp.contemporary_total+"; Δ "+(gain>=0?"+":"")+gain+" opportunities","small");
+append(a,"p","Descriptive same-file cohort; B0/source/config admission pairing still required","small state-unknown");
+}else{append(a,"p","Different source/denominator: NO MATCHED DELTA","small state-unknown")}
+cg2.appendChild(a)});
 const rg=el("root-grid");d.roots.forEach(r=>{const a=elem("article",undefined,"panel");append(a,"h3",r.fingerprint);append(a,"div",r.job_manifestations+" manifestations","value");append(a,"p",r.distinct_run_attempts+" observed run attempt(s); root ID: "+fmt(r.root_id),"small muted");append(a,"p","Owner closure: UNKNOWN","state-unknown small");rg.appendChild(a)});
 const wg=el("expansion-grid");d.avenues.forEach(o=>{const a=elem("article",undefined,"panel");append(a,"span",o.scope+" · "+o.id,"tag");append(a,"h3",o.name);append(a,"p","Opportunity: "+o.eligible,"small");append(a,"p","Next: "+o.next,"small muted");append(a,"p","Stop/retrigger: "+o.stop,"small state-unknown");wg.appendChild(a)});
 const lg=el("lineage-grid");d.lineage.forEach(n=>{const a=elem("article",undefined,"panel");append(a,"span",n.id,"tag");append(a,"h3",n.state.replaceAll("_"," "));const url="https://github.com/GBOGEB/pipeline-automation-hub/blob/master/"+n.path;a.appendChild(safeExternal(url,"Open canonical source ↗"));append(a,"p","GitHub PR #"+n.pr,"small dim");lg.appendChild(a)});
@@ -227,6 +232,18 @@ def validate(d):
                 fail_if(type(v["covered"]) is not int or type(v["total"]) is not int
                         or v["total"] < 1 or not 0 <= v["covered"] <= v["total"],
                         "COVERAGE_DENOMINATOR_INVALID")
+            pair = cov.get("historical_comparison")
+            if pair:
+                summed = cov["statements"]["covered"] + cov["branches"]["covered"]
+                denom = cov["statements"]["total"] + cov["branches"]["total"]
+                fail_if(pair.get("admission_qualified") is not False
+                        or pair.get("source_blobs_reported_unchanged") is not True
+                        or pair.get("scope_paths_same") is not True
+                        or pair.get("contemporary_covered") != summed
+                        or pair.get("contemporary_total") != denom
+                        or pair.get("observed_total") != denom
+                        or not 0 <= pair.get("observed_covered",-1) <= denom,
+                        "UNQUALIFIED_HISTORICAL_COMPARISON")
         z = e["artifact"]
         fail_if(z.get("verification") == "DOWNLOADED_VALIDATED" and
                 (z.get("member_bytes") is None or z.get("crc_members") != z.get("members")),
