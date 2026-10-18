@@ -14,6 +14,8 @@ from pathlib import Path
 import source_freshness
 
 SCHEMA = 'missioncontrol.code_purple.cpq_convergence_n5.v1'
+# Historical floor: the queue may grow by appending CPQ-NNN rows, never shrink below this.
+MIN_CANONICAL_ROWS = 18
 SHA40 = re.compile(r'[0-9a-f]{40}\Z')
 KEY = re.compile(r'W([0-9]+)\.C([0-9]+)\.I([0-9]+)\.S([0-9]+)\Z')
 OPEN = {'TODO','ACTIVE','UNKNOWN_NEEDS_READER'}
@@ -23,12 +25,12 @@ ROUTING = {
     'CPQ-009':'EXTERNAL_TELEMETRY', 'CPQ-010':'ABACUS_OWNER_CONTROL',
     'CPQ-011':'TOP7_RECONCILIATION', 'CPQ-013':'DEPENDENCY_CONTROL',
     'CPQ-015':'AUTHENTICATED_DISPATCH_OWNER', 'CPQ-016':'RULESET_OWNER',
-    'CPQ-018':'THIRD_HOP_READBACK',
+    'CPQ-018':'THIRD_HOP_READBACK', 'CPQ-019':'ABACUS_OWNER_CONTROL',
 }
 # Validated review scheduling (not a second causal-root register).
 WAVES = {
     'SCOUT_DISJOINT':['CPQ-003','CPQ-005','CPQ-011','CPQ-018'],
-    'SOURCE_OWNER':['CPQ-010'],
+    'SOURCE_OWNER':['CPQ-010','CPQ-019'],
     'DEPENDENCY_WAIT':['CPQ-013'],
     'EXTERNAL_RETURN':['CPQ-009','CPQ-015','CPQ-016'],
 }
@@ -61,9 +63,12 @@ def check_queue(queue):
     required(isinstance(queue,dict) and queue.get('schema') == 'missioncontrol.code_purple.bd_queue.v1', 'canonical queue schema missing')
     required(queue.get('authority_transfer') is False and queue.get('formal_credit_delta') == 0, 'authority or formal-credit promotion')
     items=queue.get('items')
-    required(isinstance(items,list) and len(items)==18, '18-item canonical queue must be complete')
+    required(isinstance(items,list) and len(items)>=MIN_CANONICAL_ROWS,
+             f'canonical queue must be complete (>= {MIN_CANONICAL_ROWS} rows)')
     ids=[x.get('id') for x in items]
-    required(len(set(ids))==18 and all(re.fullmatch(r'CPQ-\d{3}',x) for x in ids), 'bad/duplicate IDs')
+    required(len(set(ids))==len(ids) and all(isinstance(x,str) and re.fullmatch(r'CPQ-\d{3}',x) for x in ids), 'bad/duplicate IDs')
+    # Completeness = contiguous CPQ-001..CPQ-N: an appended row is growth, a gap is truncation.
+    required(sorted(ids)==['CPQ-%03d'%n for n in range(1,len(ids)+1)], 'canonical queue must be complete (non-contiguous CPQ IDs)')
     for i in items:
         now=_latest(i)
         required(now.get('state') in OPEN|DONE, 'invalid lifecycle state')
@@ -145,7 +150,7 @@ def converge(queue,top7,source_sha,*,observed_on=None):
             'observed_on':observed_on,'metrics':{'canonical_rows':len(items),'open':len(open_ids),
              'active':active,'todo':todo,'reader':reader,'done':done,
              'work_orders_with_routes':sum(i['route'] is not None for i in items),
-             'source_readback_coverage':{'numerator':len(items),'denominator':18},
+             'source_readback_coverage':{'numerator':len(items),'denominator':len(idx)},
              'accepted_causal_root_closures':None,'qualified_changed_line_coverage':None,
              'matched_wave_effect':None},
             'top7':t,'freshness':freshness,'waves':WAVES,'items':items,
@@ -157,7 +162,7 @@ def render_html(report):
     # This generated view is *not* the canonical ledger.
     data=json.dumps(report,sort_keys=True,separators=(',',':'),ensure_ascii=True).replace('<','\\u003c').replace('>','\\u003e').replace('&','\\u0026')
     return '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CODE PURPLE | CPQ Convergence N5</title><style>
-    :root{color-scheme:dark;font-family:system-ui;background:#10131d;color:#f2f4fc}*{box-sizing:border-box}body{max-width:1320px;margin:auto;padding:24px}h1{font-size:clamp(23px,3vw,34px)}.dim{color:#acb7ca}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin:20px 0}.metrics>div{padding:18px;background:#202c40;border-radius:10px}.metrics b{display:block;font-size:28px}main{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{padding:13px;border-bottom:1px solid #39445d;text-align:left;vertical-align:top;font-size:13px}input,select{padding:11px;border-radius:8px;background:#202c40;color:white;border:1px solid #68718b;margin:5px 0}input{min-width:min(100%,350px)}a{color:#85d4ee}.hold{color:#ffcb89}footer{margin-top:24px;color:#acb7ca}.tiny{font-size:12px;overflow-wrap:anywhere}#top7{overflow-wrap:anywhere}@media(max-width:520px){body{padding:12px}table{min-width:720px}}</style></head><body><p class="hold">READ ONLY / NO MERGE / NO DISPATCH</p><h1>CODE PURPLE · N5 CPQ Convergence</h1><p class="dim">Source-bound 18-row ledger projection. N1/N2 receipts are not independent experiment trials. Owner gates remain distinct.</p><div class="tiny" id="source"></div><section class="metrics" id="metrics"></section><label for="search">Search CPQ records</label> <input id="search" type="search" placeholder="ID, title, route, evidence"><label for="status">Status</label> <select id="status"><option value="OPEN">Open</option><option value="ALL">All 18</option><option value="DONE">Done</option><option value="ACTIVE">Active</option><option value="TODO">To do</option><option value="UNKNOWN_NEEDS_READER">Reader</option></select><main><table><thead><tr><th>CPQ</th><th>Finding / native evidence</th><th>Status</th><th>Next proof</th></tr></thead><tbody id="items"></tbody></table></main><p class="dim" id="visible" aria-live="polite"></p><h2>Top7 denominator qualification</h2><p id="top7"></p><footer>Canonical authority: Mission Control CODE_PURPLE_BD_QUEUE_v1.json · Security/reviewer/owner controls never inferred from this review page.</footer><script>
+    :root{color-scheme:dark;font-family:system-ui;background:#10131d;color:#f2f4fc}*{box-sizing:border-box}body{max-width:1320px;margin:auto;padding:24px}h1{font-size:clamp(23px,3vw,34px)}.dim{color:#acb7ca}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin:20px 0}.metrics>div{padding:18px;background:#202c40;border-radius:10px}.metrics b{display:block;font-size:28px}main{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{padding:13px;border-bottom:1px solid #39445d;text-align:left;vertical-align:top;font-size:13px}input,select{padding:11px;border-radius:8px;background:#202c40;color:white;border:1px solid #68718b;margin:5px 0}input{min-width:min(100%,350px)}a{color:#85d4ee}.hold{color:#ffcb89}footer{margin-top:24px;color:#acb7ca}.tiny{font-size:12px;overflow-wrap:anywhere}#top7{overflow-wrap:anywhere}@media(max-width:520px){body{padding:12px}table{min-width:720px}}</style></head><body><p class="hold">READ ONLY / NO MERGE / NO DISPATCH</p><h1>CODE PURPLE · N5 CPQ Convergence</h1><p class="dim">Source-bound '''+str(report['metrics']['canonical_rows'])+'''-row ledger projection. N1/N2 receipts are not independent experiment trials. Owner gates remain distinct.</p><div class="tiny" id="source"></div><section class="metrics" id="metrics"></section><label for="search">Search CPQ records</label> <input id="search" type="search" placeholder="ID, title, route, evidence"><label for="status">Status</label> <select id="status"><option value="OPEN">Open</option><option value="ALL">All '''+str(report['metrics']['canonical_rows'])+'''</option><option value="DONE">Done</option><option value="ACTIVE">Active</option><option value="TODO">To do</option><option value="UNKNOWN_NEEDS_READER">Reader</option></select><main><table><thead><tr><th>CPQ</th><th>Finding / native evidence</th><th>Status</th><th>Next proof</th></tr></thead><tbody id="items"></tbody></table></main><p class="dim" id="visible" aria-live="polite"></p><h2>Top7 denominator qualification</h2><p id="top7"></p><footer>Canonical authority: Mission Control CODE_PURPLE_BD_QUEUE_v1.json · Security/reviewer/owner controls never inferred from this review page.</footer><script>
 const D='''+data+''';const E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 document.getElementById('source').textContent=D.source.exact_master_sha+' · '+D.source.path;
 const m=D.metrics;document.getElementById('metrics').innerHTML=[['Open',m.open],['Active',m.active],['To do',m.todo],['Reader',m.reader],['Done',m.done],['Reviewed',m.source_readback_coverage.numerator+'/'+m.source_readback_coverage.denominator]].map(x=>'<div><span>'+E(x[0])+'</span><b>'+E(x[1])+'</b></div>').join('');
