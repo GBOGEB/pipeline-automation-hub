@@ -324,7 +324,13 @@ class CollectorTests(unittest.TestCase):
 
     def test_log_extract_only_runtime_annotation(self):
         line = b'echo "fake ##[error]example"\n2026-10-18 ##[error]inventory drift\n'
-        self.assertEqual(collect.parse_error(line), "inventory drift")
+        self.assertEqual(collect.parse_error(line), "GENERATED_EXECUTABLE_INVENTORY_DRIFT")
+
+    def test_secret_line_reduces_to_hash_not_raw_secret(self):
+        secret = "ghs_" + "Z" * 48
+        observed = collect.parse_error(("##[error]" + secret + " rejected").encode())
+        self.assertTrue(observed.startswith("UNCLASSIFIED_ERROR_"))
+        self.assertNotIn(secret, observed)
 
     def test_no_error_log_is_unknown(self):
         self.assertIsNone(collect.parse_error(b"tests passed and logs empty"))
