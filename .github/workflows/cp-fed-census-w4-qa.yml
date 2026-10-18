@@ -62,6 +62,14 @@ jobs:
           assert p['totals']['public_open_ordinary_issues']==sum(z['ordinary_open_issues'] for z in p['public_repositories'])==82
           assert p['totals']['public_open_prs']==sum(z['open_prs'] for z in p['public_repositories'])==23
           assert sum(p['totals']['public_issue_age_cohorts'])==82
+          native=Path('mission-control/v2/handoff/closeout/records/CP-FED-CENSUS-W4-20261018/CENSUS_PULL_NATIVE_20261018.json')
+          assert hashlib.sha256(native.read_bytes()).hexdigest()=='78e54ba29f51ce9d34157b8c502e043fc1f95fbf41ac9e10b0f7b9364719592e'
+          observed=json.loads(native.read_text())
+          assert observed['observed_utc']=='2026-10-18T15:10:42.787707Z'
+          assert observed['ordinary_open_issues']==83 and observed['open_prs']==25
+          assert sum(observed['age_bins'])==83
+          assert observed['causal_bd_roots_closed'] is None and observed['causal_bd_roots_open'] is None
+          assert observed['restricted_child_sources']=='WITHHELD' and observed['merge_admission']=='HOLD'
           with zipfile.ZipFile(Path(os.environ['RUNNER_TEMP'])/'CP-FED-CENSUS-W4-20261018.zip') as z:
               assert z.testzip() is None and set(z.namelist())==set(m['member_sha256'])|{'MANIFEST.json'}
           print('CP_FED_CANONICAL=PASS INTENTS=10 ACTIONS=17 BD_FOCUS=6 PUBLIC_ISSUES=82 PUBLIC_PRS=23')
