@@ -61,10 +61,8 @@ def main(argv=None):
     report_path=args.report or args.cpq.with_name('cpq-n5.json')
     exp=expectations(json.loads(report_path.read_text(encoding='utf-8')))
     atlas=args.atlas.read_text(encoding='utf-8');cpq=args.cpq.read_text(encoding='utf-8')
-    # Row expectations come from the producer's own metrics, not literals, so a
-    # queue state change (e.g. an item closing) cannot desynchronise the proof.
-    m=json.loads(args.cpq.with_suffix('.json').read_text(encoding='utf-8'))['metrics']
-    n_open,n_done,n_active=m['open'],m['done'],m['active']
+    # Row expectations come from the producer's own metrics (validated above), not
+    # literals, so a queue state change (e.g. an item closing) cannot desynchronise the proof.
     args.out.mkdir(parents=True,exist_ok=True)
     out={'schema':'missioncontrol.code_purple.cpq_browser_check.v1', 'checks':[],
          'seeded_negatives':[],'admission':'HOLD','authority_transfer':False}
