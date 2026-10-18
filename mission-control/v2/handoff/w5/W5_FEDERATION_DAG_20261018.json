@@ -1,0 +1,510 @@
+{
+  "schema": "missioncontrol.w5.typed_handover_dag.v1",
+  "as_of_date": "2026-10-18",
+  "role": "READ_ONLY_PROJECTION_NOT_MASTER_DAGS",
+  "source_snapshot": "W5_CENSUS_TELEMETRY_20261018.json",
+  "nodes": [
+    {
+      "id": "GIT_ABACUS",
+      "atom_type": "GITHUB_SOURCE",
+      "owner": "ABACUS",
+      "status": "SOURCE_OBSERVED",
+      "url": "https://github.com/GBOGEB/ABACUS/commit/97a8b13faff577272a90edaf0dd4593035e10605"
+    },
+    {
+      "id": "A_B0",
+      "atom_type": "NATIVE_GATE",
+      "owner": "ABACUS DOW",
+      "status": "NONTERMINAL",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/39142444027"
+    },
+    {
+      "id": "A_MATRIX",
+      "atom_type": "NATIVE_GATE",
+      "owner": "ABACUS DOW",
+      "status": "NONTERMINAL",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/39142443923"
+    },
+    {
+      "id": "A_COVERAGE",
+      "atom_type": "MEASUREMENT",
+      "owner": "ABACUS coverage owner",
+      "status": "MISSING_MATCHED_DENOMINATOR",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1991"
+    },
+    {
+      "id": "A_BD",
+      "atom_type": "ROOT_CAUSE_JOIN",
+      "owner": "ABACUS LDAB owner",
+      "status": "SOURCE_ACCEPTANCE_OUTSTANDING",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1929"
+    },
+    {
+      "id": "A_POLICY",
+      "atom_type": "ADMIN_GATE",
+      "owner": "ABACUS admin",
+      "status": "REQUIRED_APPROVALS_ZERO",
+      "url": "https://github.com/GBOGEB/ABACUS/rules/24494381"
+    },
+    {
+      "id": "A_REVIEW",
+      "atom_type": "REVIEW_GATE",
+      "owner": "Independent reviewer",
+      "status": "NO_ELIGIBLE_RECEIPT",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "id": "A_ADMISSION",
+      "atom_type": "PROMOTION",
+      "owner": "ABACUS admin",
+      "status": "HOLD",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "id": "GIT_CODEX",
+      "atom_type": "GITHUB_SOURCE",
+      "owner": "CODEX",
+      "status": "SOURCE_OBSERVED",
+      "url": "https://github.com/GBOGEB/CODEX/commit/f73c98c9f9c99f234446644e22c14c93d8300e92"
+    },
+    {
+      "id": "C_REDS",
+      "atom_type": "NATIVE_GATE",
+      "owner": "CODEX first-red owner",
+      "status": "3_FAILED_WORKFLOWS",
+      "url": "https://github.com/GBOGEB/CODEX/issues/1037"
+    },
+    {
+      "id": "C_BROWSER",
+      "atom_type": "VISUAL_GATE",
+      "owner": "CODEX browser owner",
+      "status": "CURRENT_SHA_NO_ACCEPTED_RECEIPT",
+      "url": "https://github.com/GBOGEB/CODEX/pull/1068"
+    },
+    {
+      "id": "C_POLICY",
+      "atom_type": "ADMIN_GATE",
+      "owner": "CODEX admin",
+      "status": "UNPROTECTED_MAIN",
+      "url": "https://github.com/GBOGEB/CODEX/issues/1037"
+    },
+    {
+      "id": "C_STAGE",
+      "atom_type": "CONTROL_PLANE",
+      "owner": "CODEX orchestrator",
+      "status": "STAGE_ONLY",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "id": "A_STAGE",
+      "atom_type": "EXECUTOR_CONTRACT",
+      "owner": "ABACUS local owner",
+      "status": "STAGE_ONLY",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2172"
+    },
+    {
+      "id": "C_REMOTE",
+      "atom_type": "EXECUTION_PROMOTION",
+      "owner": "ABACUS executor owner",
+      "status": "NOT_AUTHENTICATED",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "id": "C_REX",
+      "atom_type": "REX_RECEIPT",
+      "owner": "CODEX/ABACUS return owner",
+      "status": "UNKNOWN",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "id": "GIT_MC",
+      "atom_type": "GITHUB_SOURCE",
+      "owner": "MissionControl",
+      "status": "SOURCE_OBSERVED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/commit/ccd695c22b50bf36369cdc669757063029a86551"
+    },
+    {
+      "id": "MC_CENSUS",
+      "atom_type": "READ_ONLY_COLLECTOR",
+      "owner": "MissionControl CENSUS",
+      "status": "PUBLIC_SNAPSHOT_4_OF_4",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/CENSUS_PULL_ROUTING_V2.md"
+    },
+    {
+      "id": "MC_CPQ",
+      "atom_type": "BD_REGISTER",
+      "owner": "MissionControl BD owner",
+      "status": "19_ITEMS_CANONICAL",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json"
+    },
+    {
+      "id": "MC_CP_CLOSE",
+      "atom_type": "CANONICAL_HANDOVER",
+      "owner": "MissionControl CP.CLOSE",
+      "status": "SOURCE_OWNED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/README.md"
+    },
+    {
+      "id": "MC_HANDOVER",
+      "atom_type": "HANDOVER_PROJECTION",
+      "owner": "MissionControl CP.RESUME",
+      "status": "REVIEW_CANDIDATE",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+    },
+    {
+      "id": "RESUME",
+      "atom_type": "SUCCESSOR_CONSUMER",
+      "owner": "Next chat/owner",
+      "status": "PENDING_FRESH_RECHECK",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+    },
+    {
+      "id": "GIT_MATH",
+      "atom_type": "GITHUB_SOURCE",
+      "owner": "gg_MATH",
+      "status": "SOURCE_OBSERVED",
+      "url": "https://github.com/GBOGEB/gg_MATH/commit/7ce2e3832357c0b87ab17ff439f4d6e84c0292a4"
+    },
+    {
+      "id": "MATH_RELEASE",
+      "atom_type": "NATIVE_GATE",
+      "owner": "gg_MATH release owner",
+      "status": "RELEASE_FIRST_RED",
+      "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/39064404253"
+    },
+    {
+      "id": "QPS_PRIVATE_RETURN",
+      "atom_type": "RESTRICTED_OWNER_GATE",
+      "owner": "QPS engineering owner",
+      "status": "PUBLIC_PROJECTION_WITHHELD",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+    }
+  ],
+  "edges": [
+    {
+      "id": "E001",
+      "from": "GIT_ABACUS",
+      "to": "A_B0",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E002",
+      "from": "GIT_ABACUS",
+      "to": "A_MATRIX",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E003",
+      "from": "A_B0",
+      "to": "A_COVERAGE",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E004",
+      "from": "A_B0",
+      "to": "A_BD",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E005",
+      "from": "A_B0",
+      "to": "A_ADMISSION",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E006",
+      "from": "A_MATRIX",
+      "to": "A_ADMISSION",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E007",
+      "from": "A_POLICY",
+      "to": "A_ADMISSION",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E008",
+      "from": "A_REVIEW",
+      "to": "A_ADMISSION",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E009",
+      "from": "GIT_CODEX",
+      "to": "C_REDS",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E010",
+      "from": "GIT_CODEX",
+      "to": "C_BROWSER",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E011",
+      "from": "C_REDS",
+      "to": "C_REMOTE",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E012",
+      "from": "C_POLICY",
+      "to": "C_REMOTE",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E013",
+      "from": "C_STAGE",
+      "to": "C_REMOTE",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E014",
+      "from": "A_STAGE",
+      "to": "C_REMOTE",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E015",
+      "from": "A_POLICY",
+      "to": "C_REMOTE",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E016",
+      "from": "C_REMOTE",
+      "to": "C_REX",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E017",
+      "from": "GIT_MC",
+      "to": "MC_CENSUS",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E018",
+      "from": "MC_CENSUS",
+      "to": "MC_HANDOVER",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E019",
+      "from": "MC_CPQ",
+      "to": "MC_HANDOVER",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E020",
+      "from": "MC_CP_CLOSE",
+      "to": "MC_HANDOVER",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E021",
+      "from": "MC_HANDOVER",
+      "to": "RESUME",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E022",
+      "from": "GIT_MATH",
+      "to": "MATH_RELEASE",
+      "edge_type": "requires",
+      "binding": "REQUIRED_NOT_EXECUTED"
+    },
+    {
+      "id": "E023",
+      "from": "A_B0",
+      "to": "MC_HANDOVER",
+      "edge_type": "observed_evidence_link",
+      "binding": "READ_ONLY_LINK_NOT_EXECUTION"
+    },
+    {
+      "id": "E024",
+      "from": "A_MATRIX",
+      "to": "MC_HANDOVER",
+      "edge_type": "observed_evidence_link",
+      "binding": "READ_ONLY_LINK_NOT_EXECUTION"
+    },
+    {
+      "id": "E025",
+      "from": "A_BD",
+      "to": "MC_CPQ",
+      "edge_type": "owner_reference",
+      "binding": "READ_ONLY_LINK_NOT_EXECUTION"
+    },
+    {
+      "id": "E026",
+      "from": "C_REDS",
+      "to": "MC_HANDOVER",
+      "edge_type": "observed_evidence_link",
+      "binding": "READ_ONLY_LINK_NOT_EXECUTION"
+    },
+    {
+      "id": "E027",
+      "from": "C_BROWSER",
+      "to": "MC_HANDOVER",
+      "edge_type": "observed_evidence_link",
+      "binding": "READ_ONLY_LINK_NOT_EXECUTION"
+    },
+    {
+      "id": "E028",
+      "from": "MATH_RELEASE",
+      "to": "MC_HANDOVER",
+      "edge_type": "observed_evidence_link",
+      "binding": "READ_ONLY_LINK_NOT_EXECUTION"
+    },
+    {
+      "id": "E029",
+      "from": "A_COVERAGE",
+      "to": "MC_HANDOVER",
+      "edge_type": "observed_evidence_link",
+      "binding": "READ_ONLY_LINK_NOT_EXECUTION"
+    },
+    {
+      "id": "E030",
+      "from": "A_ADMISSION",
+      "to": "MC_HANDOVER",
+      "edge_type": "observed_evidence_link",
+      "binding": "READ_ONLY_LINK_NOT_EXECUTION"
+    },
+    {
+      "id": "E031",
+      "from": "QPS_PRIVATE_RETURN",
+      "to": "MC_CENSUS",
+      "edge_type": "restricted_owner_reference",
+      "binding": "PRIVATE_RETURN_ONLY"
+    },
+    {
+      "id": "E032",
+      "from": "C_REX",
+      "to": "MC_HANDOVER",
+      "edge_type": "observed_evidence_link",
+      "binding": "READ_ONLY_LINK_NOT_EXECUTION"
+    },
+    {
+      "id": "E033",
+      "from": "C_REMOTE",
+      "to": "MC_CPQ",
+      "edge_type": "owner_reference",
+      "binding": "READ_ONLY_LINK_NOT_EXECUTION"
+    }
+  ],
+  "metrics": {
+    "nodes": 25,
+    "edges": 33,
+    "required_dependency_edges": 22,
+    "reference_edges": 11,
+    "directed_density": 0.055,
+    "dependency_density": 0.036667,
+    "topological_layers": 4,
+    "observed_authenticated_remote_dispatches": null,
+    "accepted_rex": null
+  },
+  "scheduler_projection": {
+    "topological_layers": [
+      [
+        "A_POLICY",
+        "A_REVIEW",
+        "A_STAGE",
+        "C_POLICY",
+        "C_STAGE",
+        "GIT_ABACUS",
+        "GIT_CODEX",
+        "GIT_MATH",
+        "GIT_MC",
+        "MC_CPQ",
+        "MC_CP_CLOSE",
+        "QPS_PRIVATE_RETURN"
+      ],
+      [
+        "A_B0",
+        "A_MATRIX",
+        "C_BROWSER",
+        "C_REDS",
+        "MATH_RELEASE",
+        "MC_CENSUS"
+      ],
+      [
+        "A_ADMISSION",
+        "A_BD",
+        "A_COVERAGE",
+        "C_REMOTE",
+        "MC_HANDOVER"
+      ],
+      [
+        "C_REX",
+        "RESUME"
+      ]
+    ],
+    "meaning": "Prerequisite order for human review; not permission, resource schedule, or proof of worker launch"
+  },
+  "sipoc": [
+    {
+      "supplier": "GitHub source owners",
+      "input": "Main SHA + run/job/attempt + issue/PR identity",
+      "process": "CENSUS_PULL",
+      "output": "Scoped source-bound observations",
+      "consumer": "CP.CLOSE and domain owners",
+      "verification": "SHA40, complete issue-vs-PR populations"
+    },
+    {
+      "supplier": "ABACUS and CODEX CI",
+      "input": "Native run status + first-red + coverage bytes",
+      "process": "Root attribution/DoV",
+      "output": "Owner-bound first-red and matched metrics",
+      "consumer": "ABACUS #1929 / CODEX #1037",
+      "verification": "Exact-head terminal artifacts, not one line of chat"
+    },
+    {
+      "supplier": "MissionControl BD register",
+      "input": "CPQ history + root control states",
+      "process": "Read-only graph join",
+      "output": "19-item controlled root projection",
+      "consumer": "MissionControl #85/#358",
+      "verification": "Never issue count equals causal-root count"
+    },
+    {
+      "supplier": "Repository administrators",
+      "input": "Ruleset and eligible reviewers",
+      "process": "Merge-admission enforcement",
+      "output": "RED canary blocked / reviewed GREEN permitted",
+      "consumer": "ABACUS/CODEX/MissionControl",
+      "verification": "REST rules and negative merge canary"
+    },
+    {
+      "supplier": "Authorized executor/owner",
+      "input": "ABACUS stage identity, allowed paths, REX",
+      "process": "Bounded dispatch and return",
+      "output": "Authenticated worker/run/attempt and accepted REX",
+      "consumer": "CODEX #977",
+      "verification": "Keep stage only until approved executor; no synthetic launch"
+    }
+  ],
+  "authority_transfer": false,
+  "security_waiver": false,
+  "merge_admission": "HOLD"
+}
