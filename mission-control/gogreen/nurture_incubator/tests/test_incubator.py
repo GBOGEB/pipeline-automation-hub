@@ -68,7 +68,7 @@ class NativeIncubatorTests(unittest.TestCase):
     def test_capacity_m2_m3_pca_bt_and_forecast_not_fabricated(self):
         r = mod.summarize(specimen())
         self.assertEqual(r["maturity"]["M1"], "PARTIAL_SOURCE_BOUND")
-        self.assertTrue(all("NOT_QUALIFIED" in x or x is None for x in
+        self.assertTrue(all(x is None or "NOT_QUALIFIED" in x for x in
                             r["statistical_readiness"].values()))
         self.assertTrue(all("HOLD" in x for x in
                             (r["maturity"]["M2"], r["maturity"]["M3"])))
