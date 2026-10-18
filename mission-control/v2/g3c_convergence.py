@@ -143,13 +143,17 @@ def project(proof, graph, producer=None):
 def render(r):
     """Static, accessible, whole-count view; never a second SSOT."""
     vals = r["matched_local_metrics"]["pulses"]
-    left,right,top,bottom = 65,588,75,295
+    # Leave a real gutter for the first data label; on mobile an SVG shrinks
+    # horizontally, so axis labels must never compete for that same space.
+    left,right,top,bottom = 126,585,75,295
+    denominator = vals[0]["total"]
+    tick_step = max(1, 10 * max(1, round(denominator / 40)))
     xs = [left+(right-left)*i/2 for i in range(3)]
     ys = [bottom-(v["covered"]/v["total"])*(bottom-top) for v in vals]
     ticks = "".join(
-        f'<g><line x1="{left}" x2="{right}" y1="{bottom-(n/122)*(bottom-top):.1f}" y2="{bottom-(n/122)*(bottom-top):.1f}" stroke="#dde2ed"/>'
-        f'<text x="48" y="{bottom-(n/122)*(bottom-top)+5:.1f}" font-size="12" text-anchor="end">{n}</text></g>'
-        for n in (0,30,60,90,120))
+        f'<g><line x1="{left}" x2="{right}" y1="{bottom-(n/denominator)*(bottom-top):.1f}" y2="{bottom-(n/denominator)*(bottom-top):.1f}" stroke="#dde2ed"/>'
+        f'<text x="78" y="{bottom-(n/denominator)*(bottom-top)+5:.1f}" font-size="12" text-anchor="end">{n}</text></g>'
+        for n in range(0,denominator+1,tick_step))
     path = " ".join(("M" if i == 0 else "L")+f"{x:.1f},{y:.1f}"
                     for i,(x,y) in enumerate(zip(xs,ys)))
     dots = "".join(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="6" fill="#247b75"/>'
@@ -159,11 +163,18 @@ def render(r):
         f'<text x="{x:.1f}" y="{bottom+24}" font-size="13" text-anchor="middle">{html.escape(v["pulse"])}</text>'
         for x,y,v in zip(xs,ys,vals))
     met = r["matched_local_metrics"]
+    accessible = html.escape("Whole covered obligations: " +
+                             ", ".join(str(v["covered"]) for v in vals) +
+                             " of matched denominator " + str(denominator),quote=True)
+    data_rows = "".join(
+        f'<tr><th scope="row">{html.escape(v["pulse"])}</th><td>{v["covered"]}</td><td>{v["total"]}</td></tr>'
+        for v in vals)
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>G3C N16–N18 | Convergence</title><style>body{{font:16px/1.45 system-ui,sans-serif;max-width:900px;margin:35px auto;padding:0 18px;background:#f6f8fb;color:#172338}}.card{{background:white;padding:20px;border:1px solid #d5dce6;border-radius:12px;margin:12px 0}}svg{{max-width:100%;height:auto}}code{{overflow-wrap:anywhere}}</style></head>
+<title>G3C N16–N18 | Convergence</title><style>body{{font:16px/1.45 system-ui,sans-serif;max-width:900px;margin:35px auto;padding:0 18px;background:#f6f8fb;color:#172338}}.card{{background:white;padding:20px;border:1px solid #d5dce6;border-radius:12px;margin:12px 0}}svg{{max-width:100%;height:auto}}table{{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:13px}}th,td{{padding:5px 8px;border-bottom:1px solid #d5dce6;text-align:left}}code{{overflow-wrap:anywhere}}</style></head>
 <body><h1>G3C · N+16–N+18</h1><p>Source-bound convergence candidate. NO MERGE, NO SIX-SIGMA CREDIT, NO FEDERATION ACCEPTANCE.</p>
-<div class="card"><h2>Matched local G3A coverage trend</h2><svg viewBox="0 0 640 335" role="img" aria-label="Integer covered obligations: 107, 109, 119 of the constant 122 total">
+<div class="card"><h2>Matched local G3A coverage trend</h2><svg viewBox="0 0 640 335" role="img" aria-label="{accessible}">
 <text x="20" y="28" font-size="14">Covered obligations (whole counts)</text>{ticks}<path d="{path}" fill="none" stroke="#247b75" stroke-width="3"/>{dots}{tags}</svg>
+<table aria-label="Exact covered-count table"><thead><tr><th>Pulse</th><th>Covered</th><th>Population</th></tr></thead><tbody>{data_rows}</tbody></table>
 <p>Measured: <strong>{met["covered_delta"]} / {met["denominator"]}</strong> additional covered obligations; +{met["percentage_point_change"]} pp; {met["trend"]}.</p></div>
 <div class="card"><h2>Control / caveats</h2><p>Terminal native CI and independent approval: UNKNOWN. Third pulse source commit: not source-bound in historical JSON. Eight graph nodes and three federation edges remain DECLARED; no authenticated edges or accepted root closures claimed.</p><p>Stability: <strong>NOT QUALIFIED</strong>. Three adaptive local checkpoints are not independent process samples.</p></div>
 <p>Evidence: <code>{r["g3a_proof_digest_sha256"]}</code> · <code>{r["g3a_graph_digest_sha256"]}</code>.</p></body></html>'''
