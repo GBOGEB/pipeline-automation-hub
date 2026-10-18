@@ -50,6 +50,21 @@ jobs:
       - name: Package site zip (verified against site/manifest.json)
         working-directory: mission-control/qps-triage-ultra/p-process
         run: python package.py --out dist
+      - name: Stage source-pinned MYCELIUM reference candidate (no mutation)
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        working-directory: mission-control/qps-triage-ultra/p-process
+        run: |
+          python mycelium_bridge.py --site site --producer-sha "$EXACT_HEAD" --out dist/mycelium-p-process-candidate.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('dist/mycelium-p-process-candidate.json').read_text())
+          assert d['authority_transfer'] is False and d['dispatch_authorized'] is False
+          assert d['merge_admission']=='HOLD' and d['consumer_acceptance']=='WITHHELD'
+          assert len(d['nodes'])==22 and len(d['edges'])==16
+          print('MYCELIUM_REF=STAGE_ONLY; graph=22 nodes/16 edges; admission=HOLD')
+          PY
       - name: Upload site zip
         uses: actions/upload-artifact@v4
         with:
