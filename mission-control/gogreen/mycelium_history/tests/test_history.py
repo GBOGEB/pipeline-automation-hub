@@ -242,6 +242,7 @@ class RejectionTests(unittest.TestCase):
 class CollectorTests(unittest.TestCase):
     def raw(self, id=101, conclusion="failure", sha=A):
         x = run(id, sha, conclusion, "2026-10-18T13:40:00Z")
+        x["run_attempt"] = x["attempt"]  # REST input, not normalized fixture
         return x
 
     def test_normalize_run_preserves_exact_attempt(self):
