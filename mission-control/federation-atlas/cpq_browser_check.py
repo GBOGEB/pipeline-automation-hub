@@ -8,11 +8,26 @@ import argparse
 import json
 import os
 from pathlib import Path
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
 VIEWPORTS=[('desktop',1440,1000),('laptop',1280,800),('mobile',390,844)]
 
-def verify(page, *, kind):
+def census_counts(report):
+    """Source-bound comparison; never assume that the open queue has a fixed size."""
+    if report.get('schema') != 'missioncontrol.code_purple.cpq_convergence_n5.v1':
+        raise AssertionError('CPQ003_REPORT_SCHEMA_MISMATCH')
+    if report.get('admission') != 'HOLD' or report.get('formal_credit_delta') != 0:
+        raise AssertionError('CPQ003_REPORT_AUTHORITY_ESCALATION')
+    m = report.get('metrics') or {}
+    names = ('open', 'done', 'active', 'canonical_rows')
+    if any(type(m.get(k)) is not int or m[k] < 0 for k in names):
+        raise AssertionError('CPQ003_MISSING_CENSUS_COUNTS')
+    if m['open'] == 0 or m['open'] + m['done'] != m['canonical_rows'] or m['active'] > m['open']:
+        raise AssertionError('CPQ003_INCONSISTENT_CENSUS_COUNTS')
+    return {k: m[k] for k in names}
+
+
+def verify(page, *, kind, expected):
     if kind=='atlas':
         if page.locator('svg#dag').count()!=1: raise AssertionError('CPQ003_MISSING_SVG_DAG')
         if page.locator('#queue tr').count()<9: raise AssertionError('CPQ003_MISSING_BD_ROWS')
@@ -24,7 +39,7 @@ def verify(page, *, kind):
     else:
         if page.locator('#search').count()!=1 or page.locator('#status').count()!=1:
             raise AssertionError('CPQ003_MISSING_REVIEW_CONTROLS')
-        if page.locator('#items tr').count()!=9: raise AssertionError('CPQ003_INCORRECT_OPEN_DENOMINATOR')
+        if page.locator('#items tr').count()!=expected['open']: raise AssertionError('CPQ003_INCORRECT_OPEN_DENOMINATOR')
         if 'WITHHELD' not in page.locator('#top7').inner_text():
             raise AssertionError('CPQ011_FALSE_COMPARABLE_SOURCE')
     width=page.evaluate('({scroll:document.documentElement.scrollWidth,inner:window.innerWidth})')
@@ -35,12 +50,19 @@ def main(argv=None):
     p=argparse.ArgumentParser()
     p.add_argument('--atlas',type=Path,required=True)
     p.add_argument('--cpq',type=Path,required=True)
+    p.add_argument('--report',type=Path,required=True,help='Same-run cpq-n5.json; source of expected denominators')
     p.add_argument('--out',type=Path,required=True)
     args=p.parse_args(argv)
     atlas=args.atlas.read_text(encoding='utf-8');cpq=args.cpq.read_text(encoding='utf-8')
+    report=json.loads(args.report.read_text(encoding='utf-8'))
+    expected=census_counts(report)
+    source_sha=(report.get('source') or {}).get('exact_master_sha')
+    if not isinstance(source_sha,str) or len(source_sha)!=40 or source_sha not in cpq:
+        raise AssertionError('CPQ003_REPORT_HTML_SOURCE_MISMATCH')
     args.out.mkdir(parents=True,exist_ok=True)
     out={'schema':'missioncontrol.code_purple.cpq_browser_check.v1', 'checks':[],
-         'seeded_negatives':[],'admission':'HOLD','authority_transfer':False}
+         'seeded_negatives':[],'admission':'HOLD','authority_transfer':False,
+         'expected_counts':expected,'source_sha':source_sha}
     with sync_playwright() as pw:
         exe=os.environ.get('CHROMIUM_EXECUTABLE_PATH')
         browser=pw.chromium.launch(headless=True,executable_path=exe or None,
@@ -56,27 +78,29 @@ def main(argv=None):
                 page.on('pageerror',lambda e:errors.append(str(e)))
                 page.on('console',lambda m:errors.append(m.text) if m.type=='error' else None)
                 page.set_content(content,wait_until='load')
-                width=verify(page,kind=kind)
+                width=verify(page,kind=kind,expected=expected)
                 if errors:raise AssertionError(f'{label}/{kind} JavaScript errors: {errors[:3]}')
                 if kind=='cpq':
                     # Search intentionally includes title, evidence and route text.
                     # CPQ-013 references CPQ-010: a substring query is NOT an
                     # exact-ID selector and can legitimately yield two rows.
                     page.locator('#search').fill('CPQ-010')
-                    page.wait_for_function("document.querySelectorAll('#items tr').length > 0 && document.querySelectorAll('#items tr').length < 9",timeout=3500)
+                    page.locator('#items tr').first.wait_for(timeout=3500)
                     matched=page.locator('#items tr').all_inner_texts()
+                    if not 0<len(matched)<expected['open']:
+                        raise AssertionError('CPQ003_SEARCH_DENOMINATOR_MISMATCH')
                     if not any(row.strip().startswith('CPQ-010') for row in matched):
                         raise AssertionError('search control omitted exact target')
                     page.locator('#search').fill('CPQ-UNMATCHED-SEED')
-                    page.wait_for_function("document.querySelectorAll('#items tr').length === 0")
+                    expect(page.locator('#items tr')).to_have_count(0)
                     page.locator('#search').fill('')
-                    page.wait_for_function("document.querySelectorAll('#items tr').length === 9")
+                    expect(page.locator('#items tr')).to_have_count(expected['open'])
                     page.locator('#status').select_option('DONE')
-                    page.wait_for_function("document.querySelectorAll('#items tr').length === 9")
+                    expect(page.locator('#items tr')).to_have_count(expected['done'])
                     page.locator('#status').select_option('ACTIVE')
-                    page.wait_for_function("document.querySelectorAll('#items tr').length === 2")
+                    expect(page.locator('#items tr')).to_have_count(expected['active'])
                     page.locator('#status').select_option('OPEN')
-                    page.wait_for_function("document.querySelectorAll('#items tr').length === 9")
+                    expect(page.locator('#items tr')).to_have_count(expected['open'])
                 path=args.out/f'{label}_{kind}.png';page.screenshot(path=str(path),full_page=True)
                 out['checks'].append({'viewport':label,'kind':kind,'status':'PASS',**width,
                                       'screenshot':path.name})
@@ -90,7 +114,7 @@ def main(argv=None):
         ]:
             if broken==content:raise AssertionError(f'seed injection did not apply for {kind}')
             page.set_content(broken,wait_until='load')
-            try:verify(page,kind=kind)
+            try:verify(page,kind=kind,expected=expected)
             except AssertionError as e:
                 if signature not in str(e):raise
                 out['seeded_negatives'].append({'kind':kind,'status':'EXPECTED_FAIL','root':signature})
