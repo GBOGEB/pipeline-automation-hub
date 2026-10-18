@@ -139,8 +139,10 @@ jobs:
           c=json.loads((out/'cpq-n5-coverage.json').read_text())
           t=c['totals']
           assert r['source']['exact_master_sha']==os.environ['EXACT_SHA']
-          assert r['metrics']['canonical_rows']==18
-          assert r['metrics']['open']+r['metrics']['done']==18
+          q=json.loads(Path('mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json').read_text())
+          rows=len(q['items'])
+          assert rows>=18 and r['metrics']['canonical_rows']==rows
+          assert r['metrics']['open']+r['metrics']['done']==rows
           assert r['metrics']['work_orders_with_routes']==r['metrics']['open']
           assert r['admission']=='HOLD' and r['formal_credit_delta']==0
           assert r['metrics']['accepted_causal_root_closures'] is None
