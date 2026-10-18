@@ -5,7 +5,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
 
 SCREENS=((1440,1000),(1280,800),(390,844))
 ALLOW=("evidence.html","evidence.json","evidence-manifest.json")
@@ -62,7 +62,18 @@ def check(source, portal, expected_sha, screenshots):
             page.on("pageerror",lambda err:errors.append("PAGE:"+str(err)))
             page.goto((Path(portal)/"evidence.html").resolve().as_uri(),
                       wait_until="load",timeout=30000)
-            page.locator(".inlay .js-plotly-plot").first.wait_for(timeout=30000)
+            try:
+                page.locator(".inlay .js-plotly-plot").first.wait_for(timeout=30000)
+            except PlaywrightTimeout:
+                state = page.evaluate("""() => ({
+                    plotly_available: typeof Plotly !== 'undefined',
+                    chart_elements: document.querySelectorAll(
+                        '.inlay .js-plotly-plot').length,
+                    script_count: document.scripts.length
+                })""")
+                require(False, "PLOTLY_INLAY_MISSING at " + str(width) +
+                        ": " + json.dumps(state, sort_keys=True) +
+                        " browser_errors=" + repr(errors[:5]))
             require(page.title()=="MISSION CONTROL W2 · gg_MATH evidence","title")
             require(page.locator("h1").count()==1,"primary heading")
             require(page.locator(".inlay .js-plotly-plot").count()==4,"four proper Plotly inlays")
