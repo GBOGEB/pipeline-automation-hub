@@ -93,4 +93,30 @@ class TestPages(unittest.TestCase):
    (n/"n3-manifest.json").write_text(json.dumps(manifest))
    with self.assertRaisesRegex(ValueError,"N3 source member digest mismatch"):
     pages_portal.build(src,p/"out","a"*40)
+ def test_convergence_hub_existing_publisher_entrypoint(self):
+  import convergence_hub
+  with tempfile.TemporaryDirectory() as d:
+   p=Path(d);src=p/"atlas";src.mkdir();(src/"index.html").write_text("<title>Atlas</title>")
+   convergence_hub.build(convergence_hub.HERE/convergence_hub.SOURCE_NAME,
+                         src/"convergence","a"*40)
+   m=pages_portal.build(src,p/"pages","a"*40)
+   self.assertTrue((p/"pages"/"convergence"/"index.html").is_file())
+   self.assertTrue((p/"pages"/"convergence"/"ledger.json").is_file())
+   self.assertIn("GLOBAL DoV", (p/"pages"/"index.html").read_text())
+   self.assertIn("convergence/index.html",m["public_files_sha256"])
+ def test_convergence_hub_partial_is_fatal(self):
+  with tempfile.TemporaryDirectory() as d:
+   p=Path(d);src=p/"atlas";src.mkdir();(src/"index.html").write_text("Atlas")
+   c=src/"convergence";c.mkdir();(c/"index.html").write_text("incomplete")
+   with self.assertRaisesRegex(ValueError,"partial Convergence Hub"):
+    pages_portal.build(src,p/"pages","a"*40)
+ def test_convergence_hub_tampered_byte_is_fatal(self):
+  import convergence_hub
+  with tempfile.TemporaryDirectory() as d:
+   p=Path(d);src=p/"atlas";src.mkdir();(src/"index.html").write_text("Atlas")
+   convergence_hub.build(convergence_hub.HERE/convergence_hub.SOURCE_NAME,
+                         src/"convergence","a"*40)
+   (src/"convergence"/"index.html").write_text("FORGED",encoding="utf-8")
+   with self.assertRaisesRegex(ValueError,"Convergence Hub source member hash mismatch"):
+    pages_portal.build(src,p/"pages","a"*40)
 if __name__=="__main__":unittest.main()
