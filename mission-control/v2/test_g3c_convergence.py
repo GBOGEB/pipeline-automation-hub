@@ -46,6 +46,14 @@ class G3CConvergence(unittest.TestCase):
         self.assertIsNone(x["stability"]["six_sigma"])
         self.assertEqual(x["merge_admission"],"HOLD")
 
+    def test_missing_edge_and_duplicate_node_are_rejected(self):
+        p,g=fixture();g["edges"].pop()
+        with self.assertRaisesRegex(ValueError,"topology incomplete"):project(p,g)
+        p,g=fixture();g["topological_order"][7]=g["topological_order"][0]
+        with self.assertRaisesRegex(ValueError,"topology incomplete"):project(p,g)
+        p,g=fixture();g["edges"]=[None]*3
+        with self.assertRaisesRegex(ValueError,"topology incomplete"):project(p,g)
+
     def test_denominator_change_rejected(self):
         p,g=fixture()
         p["pulse_records"][2]["branch_total"]+=1
