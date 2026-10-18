@@ -561,7 +561,7 @@ jobs:
           assert len(b["checks"])==3 and all(x["interactions"]=="PASS"
                and x["page_errors"]==0 and x["document_horizontal_overflow_px"]==0
                for x in b["checks"])
-          assert len(m["member_sha256"])==8
+          assert len(m["member_sha256"])==16
           print(json.dumps({"W34_SUPERSTITCH":"LOCAL_REPRO_ON_NATIVE_RUNNER",
             "presentation_head":m["presentation_head"],"members":len(m["member_sha256"]),
             "viewports":len(b["checks"]),"native_owner_acceptance":None,
