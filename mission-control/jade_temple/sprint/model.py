@@ -251,7 +251,7 @@ def render_html(data):
     doc+="<div class='grid'>"+cards+"</div>"
     doc+="<section><h2>Gated DAG sequence · source to owner release</h2>"+stage_svg()+"<details><summary>Expand SIPOC, resource and dependency boundaries</summary><p>Local QA, source coverage, adversarial penetration, integration, platform reach, first-red, supply chain and hosted Pages are separate proof lanes. External approvals and long CI dependencies are deferred, not worker-occupied. Machine DAG and SIPOC are companion JSON files.</p></details></section>"
     doc+="<section><h2>Worker pools · queue pressure · caching</h2><div class=grid>"+card("2 planned","Local Python slots; not a measured native pool")+card("UNKNOWN","GitHub Actions free/occupied slots")+card("UNKNOWN","Native queue P95")+card("LOCAL ONLY","Content-hash cache never creates release credit")+"</div></section>"
-    doc+="<section id="dimensions"><h2>15 independent dimensions</h2><div class='scroll'><table><tr><th>Dimension</th><th>Unit</th><th>Qualified N/D</th><th>Owner</th></tr>"+dims+"</table></div></section>"
-    doc+="<section id="owners"><h2>Owner work-order queue — staged only</h2><div class='scroll'><table><tr><th>Priority</th><th>Repo</th><th>Required next action</th><th>Permission</th></tr>"+work+"</table></div></section>"
+    doc+="<section id='dimensions'><h2>15 independent dimensions</h2><div class='scroll'><table><tr><th>Dimension</th><th>Unit</th><th>Qualified N/D</th><th>Owner</th></tr>"+dims+"</table></div></section>"
+    doc+="<section id='owners'><h2>Owner work-order queue — staged only</h2><div class='scroll'><table><tr><th>Priority</th><th>Repo</th><th>Required next action</th><th>Permission</th></tr>"+work+"</table></div></section>"
     doc+="<p>J0 source identity is not J1 quality. Cached local successes cannot replace native CI, HTTPS parity, security, reviewers or point-release approval.</p></main></body></html>\n"
     return doc

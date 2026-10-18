@@ -1,5 +1,12 @@
 name: JADE_CASTE N+3 point-release sprint readiness QA
 on:
+  push:
+    branches:
+      - 'code-purple/jade-n5-exact-head-testflight-20261019'
+    paths:
+      - 'mission-control/jade_temple/sprint/**'
+      - 'mission-control/jade_temple/tests/test_jade_sprint_n3.py'
+      - '.github/workflows/jade-sprint-n3-qualification.yml'
   pull_request:
     paths:
       - 'mission-control/jade_temple/sprint/**'
@@ -38,6 +45,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          python -m py_compile mission-control/jade_temple/sprint/model.py mission-control/jade_temple/sprint/cli.py
           python -m unittest discover -s mission-control/jade_temple/tests -p 'test_jade_sprint_n3.py' -v
       - name: Build source-bound DAG/SIPOC/queue/HTML receipts
         shell: bash
