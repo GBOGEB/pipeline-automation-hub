@@ -94,8 +94,11 @@ def check_run(raw, source_sha):
     return {"id": ident, "name": name[:180], "head_sha": source_sha,
             "status": status, "conclusion": conclusion,
             "annotation_count": ann, "completed_at": raw.get("completed_at"),
-            "url": "https://github.com/GBOGEB/CODEX/actions/runs" +
-                   ("/" + str(ident) if False else ""),
+            "url": (raw.get("details_url")
+                    if isinstance(raw.get("details_url"), str) and
+                    raw["details_url"].startswith(
+                        "https://github.com/GBOGEB/CODEX/actions/runs/")
+                    else None),
             "annotation_severity": "UNKNOWN_NOT_INSPECTED",
             "annotation_levels": None}
 
