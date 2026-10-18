@@ -1,0 +1,835 @@
+{
+  "schema": "missioncontrol.cp_close.intake.v1",
+  "session_alias": "CP-W10-MYCELIUM-FEDERATION-20261018",
+  "capture_date": "2026-10-18",
+  "capture_granularity": "DATE_ONLY",
+  "capture_scope": "CURRENT_VISIBLE_INTENTS_PLUS_GITHUB_PUBLIC_SAFE_NONATOMIC_SUCCESSOR_OF_CP_FED_CENSUS_W4_AND_W9",
+  "privacy": "SANITIZED_SEMANTIC_ONLY",
+  "complete_transcript_available": false,
+  "total_chat_user_prompts": null,
+  "total_chat_messages": null,
+  "source": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "default_branch": "master",
+    "observed_main_sha": "2cc9b4d433c404b50d7afc661f863b96d42e97cc",
+    "observed_git_provenance": "SOURCE_BOUND_NONATOMIC_GITHUB_CONNECTOR_REFRESH_BEFORE_CP_RESUME"
+  },
+  "authority_transfer": false,
+  "security_waiver": false,
+  "merge_admission": "HOLD",
+  "intents": [
+    {
+      "id": "SC-I001",
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Resume from last verified hook, do not restart or redo W9; append W10 with exact GitHub source and native evidence.",
+      "actions": [
+        "SC-A001",
+        "SC-A002",
+        "SC-A003",
+        "SC-A004"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "SC-I002",
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Give an operationally lossless handover using the canonical GitHub/ABACUS templates, CP.CLOSE process and CP.RESUME drop-in across core repositories.",
+      "actions": [
+        "SC-A017",
+        "SC-A018",
+        "SC-A019",
+        "SC-A020"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "SC-I003",
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Preserve full waves and measurable first-red transitions, historical run/fingerprint/BD denominators and native job/ZIP IDs.",
+      "actions": [
+        "SC-A001",
+        "SC-A002",
+        "SC-A003",
+        "SC-A005",
+        "SC-A006",
+        "SC-A007",
+        "SC-A008",
+        "SC-A009"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "SC-I004",
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Standardize type(scope wave) symbols and surface a curated MissionControl Mycelium historical test DAG rather than single-action cards.",
+      "actions": [
+        "SC-A003",
+        "SC-A005",
+        "SC-A009"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "SC-I005",
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Improve coverage using negative/branch tests without culling and compare only matched populations.",
+      "actions": [
+        "SC-A004",
+        "SC-A010",
+        "SC-A011"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "SC-I006",
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Keep federation/CPQ queue and dependency edges authoritative; preserve the 19-item owner-owned BD ledger.",
+      "actions": [
+        "SC-A012",
+        "SC-A013",
+        "SC-A014"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "SC-I007",
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Identify new post-merge CODEX security first-red, preserve nonzero Safety/OSV and avoid unsupported causal attribution.",
+      "actions": [
+        "SC-A006",
+        "SC-A015"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "SC-I008",
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Distinguish successful checks with annotations from confirmed failure-level annotations, including 403 UNKNOWN.",
+      "actions": [
+        "SC-A001",
+        "SC-A007"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "SC-I009",
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Return read-only federation context to CODEX, ABACUS, gg_MATH and restricted QPS, without new worker or domain authority.",
+      "actions": [
+        "SC-A018",
+        "SC-A019",
+        "SC-A020",
+        "SC-A021"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "SC-I010",
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Report next three pulse G3P, DoD/DoV, root recurrence, capacity, M1/M2/M3, PCA/BT and forecasts with UNKNOWNs explicit.",
+      "actions": [
+        "SC-A008",
+        "SC-A010",
+        "SC-A011",
+        "SC-A016",
+        "SC-A022"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "SC-I011",
+      "source_class": "SOURCE_BOUND_REFERENCE",
+      "summary": "Keep historical W4, W9 and W10 source receipts and exact prior native hashes, never promote stale runs to latest-main evidence.",
+      "actions": [
+        "SC-A002",
+        "SC-A003",
+        "SC-A017"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    },
+    {
+      "id": "SC-I012",
+      "source_class": "SOURCE_BOUND_REFERENCE",
+      "summary": "No complete authenticated conversation export exists; retain unknown chat counts, original message IDs and any omitted tool data.",
+      "actions": [
+        "SC-A017",
+        "SC-A022"
+      ],
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null
+    }
+  ],
+  "actions": [
+    {
+      "id": "SC-A001",
+      "priority": "P1",
+      "state": "IN_PR",
+      "owner": "MissionControl W10 Mycelium owner",
+      "summary": "Qualify draft hub #725 annotated-GREEN child at its final exact PR head; queued native run is not a pass.",
+      "done_when": "Terminal exact-head Python matrix, W10 native job/test counts, authorized severity census and SHA-verified archive.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/725",
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39148332224"
+      ]
+    },
+    {
+      "id": "SC-A002",
+      "priority": "P1",
+      "state": "DONE",
+      "owner": "MissionControl W9 source owner",
+      "summary": "Preserve W9 #724 merged exact-source history and byte-verified ZIP as historical good hook; no rebuild.",
+      "done_when": "Prior historical W9 3/3 terminal jobs, 77 tests/cell and verified 135187-byte ZIP remain unchanged.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/724",
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39147416140"
+      ]
+    },
+    {
+      "id": "SC-A003",
+      "priority": "P1",
+      "state": "DONE",
+      "owner": "CODEX N7 source owner",
+      "summary": "Preserve merged CODEX #1097 N7 fail-closed receipt diagnostic, not retroactive historical defect closure.",
+      "done_when": "Historical 23/23 unit + 495/512 statement + 114/136 branch at exact PR head; main/current recurrence separate.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/pull/1097",
+        "https://github.com/GBOGEB/CODEX/actions/runs/39146937220"
+      ]
+    },
+    {
+      "id": "SC-A004",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "CODEX/ABACUS native CI owner",
+      "summary": "Check current exact-main B0, Mycelium and Python/security matrix after source merges.",
+      "done_when": "Terminal at current SHA; classify independent failed jobs, artifact bytes and missing QPS acceptance.",
+      "depends_on": [
+        "SC-A003"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/issues/1088",
+        "https://github.com/GBOGEB/ABACUS/issues/1860"
+      ]
+    },
+    {
+      "id": "SC-A005",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "MissionControl MYCELIUM CENSUS owner",
+      "summary": "Refresh complete workflow-run observed/eligible metadata; stratified job detail and fingerprint recurrence.",
+      "done_when": "Source SHA/run/attempt/job, terminal counts, red/green selection and identical population comparisons.",
+      "depends_on": [
+        "SC-A001"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/724",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/725"
+      ]
+    },
+    {
+      "id": "SC-A006",
+      "priority": "P0",
+      "state": "HOLD",
+      "owner": "CODEX dependency/security owner",
+      "summary": "Investigate post-#1097 OSV RED, four packages and six vulnerabilities without waiving scan enforcement or assuming #1097 caused it.",
+      "done_when": "Patch source-owner dependency root and terminal current-main OSV/Safety/CodeQL outcomes with unchanged fail-closed logic.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/actions/runs/39147772131",
+        "https://github.com/GBOGEB/CODEX/issues/1088"
+      ]
+    },
+    {
+      "id": "SC-A007",
+      "priority": "P1",
+      "state": "IN_PR",
+      "owner": "MissionControl CODEX check-run adapter owner",
+      "summary": "Separate ANNOTATED_GREEN check count from verified error/warning/notice annotations.",
+      "done_when": "Authorized source-bound severity read; denied endpoint reports UNKNOWN rather than zero; native W10 negative tests.",
+      "depends_on": [
+        "SC-A001"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/725",
+        "https://github.com/GBOGEB/CODEX/pull/1096"
+      ]
+    },
+    {
+      "id": "SC-A008",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "REX/BD owner",
+      "summary": "Measure distinct causally identified roots separately from 2 first-step fingerprints, repeated failures, skips and check annotations.",
+      "done_when": "Owner-accepted root IDs and recurrence verification; do not count 100 failure samples as roots.",
+      "depends_on": [
+        "SC-A005"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/529",
+        "https://github.com/GBOGEB/ABACUS/issues/1929"
+      ]
+    },
+    {
+      "id": "SC-A009",
+      "priority": "P1",
+      "state": "DONE",
+      "owner": "MissionControl MYCELIUM W9 owner",
+      "summary": "Preserve canonical Mycelium historical DAG and 19-item CPQ source projection with integer run burndown.",
+      "done_when": "Prior W9 661/661 runs, canonical 19 BD items, source Git blob, manifest-bound HTML/SVG/Plotly.",
+      "depends_on": [
+        "SC-A002"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/724",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/529"
+      ]
+    },
+    {
+      "id": "SC-A010",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "ABACUS coverage owner",
+      "summary": "Recalculate main/PR broad/diff statement and branch coverage with matched exact-source, instrumentor and denominators.",
+      "done_when": "No uplift unless matched numerator/denominator and config; zero source exclusions added.",
+      "depends_on": [
+        "SC-A004"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/ABACUS/issues/1991",
+        "https://github.com/GBOGEB/ABACUS/issues/1929"
+      ]
+    },
+    {
+      "id": "SC-A011",
+      "priority": "P2",
+      "state": "HOLD",
+      "owner": "CODE PURPLE MIP statistics owner",
+      "summary": "Qualify M1/M2/M3, PCA/Bradley-Terry and worker-hours/capacity before fitting rate or capability.",
+      "done_when": "Repeated independent windows, identical native scope/censoring and qualified statistical populations.",
+      "depends_on": [
+        "SC-A005",
+        "SC-A010"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/529",
+        "https://github.com/GBOGEB/ABACUS/issues/1929"
+      ]
+    },
+    {
+      "id": "SC-A012",
+      "priority": "P0",
+      "state": "HOLD",
+      "owner": "ABACUS authorized administrator",
+      "summary": "Verify effective main required contexts, human independent approval, last-push and rejected RED canary.",
+      "done_when": "Authenticated rule/readback, explicit eligible reviewer, blocked RED and terminal main verification.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/ABACUS/issues/1860",
+        "https://github.com/GBOGEB/ABACUS/issues/1278"
+      ]
+    },
+    {
+      "id": "SC-A013",
+      "priority": "P0",
+      "state": "HOLD",
+      "owner": "MissionControl authorized administrator",
+      "summary": "Restore effective protected master, required checks, independent approval and negative merge canary.",
+      "done_when": "Server-side rule and rejected RED merge canary; no source doc substitutes.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/336"
+      ]
+    },
+    {
+      "id": "SC-A014",
+      "priority": "P0",
+      "state": "HOLD",
+      "owner": "CODEX authorized administrator",
+      "summary": "Restore effective required security, W003 controls and independent review on CODEX main.",
+      "done_when": "Approved effective branch rules; eligibility and negative RED canary; no retroactive credit to #1097.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/issues/977",
+        "https://github.com/GBOGEB/CODEX/issues/1037"
+      ]
+    },
+    {
+      "id": "SC-A015",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "CODEX source security owner",
+      "summary": "Reconcile post-merge OSV vulnerability count and observed annotated-green with actual affected packages.",
+      "done_when": "Root fix without security waiver and specific current-main scan/package closure receipts.",
+      "depends_on": [
+        "SC-A006"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/actions/runs/39147772131",
+        "https://github.com/GBOGEB/CODEX/issues/1037"
+      ]
+    },
+    {
+      "id": "SC-A016",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "MissionControl federation/gg_MATH reader owners",
+      "summary": "Return fresh gg_MATH MIP, CODEX and ABACUS source-bound evidence through legitimate owner interfaces.",
+      "done_when": "Fresh source SHA and read-only native receipt, no fake remote worker/census broadening.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/529"
+      ]
+    },
+    {
+      "id": "SC-A017",
+      "priority": "P1",
+      "state": "IN_PR",
+      "owner": "MissionControl canonical CP.CLOSE owner",
+      "summary": "Build new versioned source intake using unchanged cp_close.py and canonical 19-atom BD source.",
+      "done_when": "Nine generated files, SHA-256 manifest, exact-head CI, deterministic --check; no complete-chat claim.",
+      "depends_on": [],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/724"
+      ]
+    },
+    {
+      "id": "SC-A018",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "ABACUS handover V2 consumer owner",
+      "summary": "Publish additive ABACUS pointer to hub canonical CP.CLOSE and V2 operational template, without shadow schema.",
+      "done_when": "Receiver PR references verified source and unknowns; no sealed-V2 assertion without actual V2 generator/replay.",
+      "depends_on": [
+        "SC-A017"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/ABACUS/issues/1860",
+        "https://github.com/GBOGEB/ABACUS/blob/main/handover/HANDOVER_MESSAGE_TEMPLATE.md"
+      ]
+    },
+    {
+      "id": "SC-A019",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "CODEX semantic handover receiver owner",
+      "summary": "Publish source-bound CODEX receiver pointer for CP.RESUME, N7 and OSV owner red.",
+      "done_when": "CODEX PR and native current-main consumer receipt; no QPS acceptance or worker dispatch.",
+      "depends_on": [
+        "SC-A017"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/issues/977",
+        "https://github.com/GBOGEB/CODEX/issues/1088"
+      ]
+    },
+    {
+      "id": "SC-A020",
+      "priority": "P2",
+      "state": "HOLD",
+      "owner": "gg_MATH handover receiver owner",
+      "summary": "Publish gg_MATH read-only receiver pointer to the existing public handover and owner-specific MIP proof.",
+      "done_when": "Own-repository pointer and qualified evidence return, no duplicated global BD register.",
+      "depends_on": [
+        "SC-A017"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/529"
+      ]
+    },
+    {
+      "id": "SC-A021",
+      "priority": "P1",
+      "state": "HOLD",
+      "owner": "QPS private engineering source owner",
+      "summary": "Maintain restricted QPS receiver; do not transfer private engineering SHAs/titles/artifacts into public handover.",
+      "done_when": "Authorized private receipt or public-safe owner-return pointer; engineering acceptance separately signed.",
+      "depends_on": [
+        "SC-A017"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ]
+    },
+    {
+      "id": "SC-A022",
+      "priority": "P2",
+      "state": "TODO",
+      "owner": "CODE PURPLE G3P coordinator",
+      "summary": "Execute next N+1/N+2/N+3 only after refreshing live heads and first-red owner/terminal gates.",
+      "done_when": "Freeze predictions before pulses; evaluate actual test/coverage and root transitions; stop early on owner gate.",
+      "depends_on": [
+        "SC-A001",
+        "SC-A004",
+        "SC-A010",
+        "SC-A012",
+        "SC-A013",
+        "SC-A014"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/529",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ]
+    },
+    {
+      "id": "SC-A023",
+      "priority": "P0",
+      "state": "HOLD",
+      "owner": "Authorized independent human reviewers",
+      "summary": "Review handover and source PRs independently; only then consider governed serial admission and postmerge readback.",
+      "done_when": "Eligible human approval and effective last-push review; security/gates green and blocked RED canary.",
+      "depends_on": [
+        "SC-A012",
+        "SC-A013",
+        "SC-A014",
+        "SC-A017"
+      ],
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/336",
+        "https://github.com/GBOGEB/ABACUS/issues/1860",
+        "https://github.com/GBOGEB/CODEX/issues/977"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "name": "Canonical producers and V2 fidelity",
+      "disposition": "REUSE_EXISTING_CP_CLOSE_AND_ABACUS_V2",
+      "rationale": "MissionControl cp_close.py owns nine-artifact GitHub-first operational transport, while ABACUS LOSSLESS_HANDOVER_V2 remains the separate sealed domain capsule protocol; full verbatim chat export unavailable.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/CP_HANDOFF_RESUME_V1.json"
+    },
+    {
+      "name": "Append from last good, never rewrite",
+      "disposition": "W9_W10_APPEND_ONLY",
+      "rationale": "#724 W9 was merged as 2cc9... with terminal native evidence; #725 is the separate unmerged W10 child and pending at observation.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/725"
+    },
+    {
+      "name": "Canonical CPQ and ZIP ownership",
+      "disposition": "READ_ONLY_OWNER_PROJECTION",
+      "rationale": "19-item CODE_PURPLE_BD_QUEUE_v1 remains owner ledger; #530 ZIP verifier, #531 breadth producer and #533 lane viewer remain separate; no new SSOT.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/724"
+    },
+    {
+      "name": "Observed merge not admitted",
+      "disposition": "ADMISSION_HOLD",
+      "rationale": "Hub #724 and CODEX #1097 merged with no observed independent reviews; default branch protection and effective rule evidence unresolved, so no formal admission credit.",
+      "evidence_url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "name": "Private QPS segregated",
+      "disposition": "OWNER_RETURN_ONLY",
+      "rationale": "Public handover omits QPS private SHA, commercial/engineering documents, ticket titles and telemetry until authorized owner returns a public-safe receipt.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+    },
+    {
+      "name": "Failure level annotations separate from annotated green",
+      "disposition": "SEVERITY_UNKNOWN_UNTIL_READ",
+      "rationale": "Successful CODEX checks can have multiple annotations; the count is not evidence of failure-level severity without authorized per-annotation readback.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/725"
+    }
+  ],
+  "insights": [
+    {
+      "observation": "W9 exact-head hub run 39147416140 passed 3/3 native jobs and independent ZIP bytes were verified at that head.",
+      "implication": "This remains dated historical W9 proof after #724 merged; does not automatically verify new current hub master or #725.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39147416140"
+    },
+    {
+      "observation": "CODEX #1097 post-test N7 diagnostic source merged after native 23/23 tests; zero PR reviews observed at readback.",
+      "implication": "Pass, merge and governed review are distinct; postmerge run is required and no reviewer should be fabricated.",
+      "evidence_url": "https://github.com/GBOGEB/CODEX/pull/1097"
+    },
+    {
+      "observation": "CODEX old post-merge main OSV source run 39147772131 failed with 6 known vulnerabilities across 4 packages (3 medium, 3 low).",
+      "implication": "Keep scanner fail-closed; dependency causality cannot be inferred from timing alone.",
+      "evidence_url": "https://github.com/GBOGEB/CODEX/actions/runs/39147772131"
+    },
+    {
+      "observation": "W9 run history measured 661/661 CODEX workflow runs with 400 failures and 261 successes and a separately biased 160 job sample.",
+      "implication": "Run count, sampled first-red fingerprints, 19 CPQ work items and independent accepted root IDs must remain different denominators.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/724"
+    },
+    {
+      "observation": "W10 #725 introduced read-only check-run annotation census and 34 authored tests; its first run 39148332224 was queued.",
+      "implication": "Do not claim W10 executed tests, security severity, generated ZIP bytes or metric uplift before terminal source-bound readback.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/725"
+    },
+    {
+      "observation": "Core public source heads observed ABACUS main 9e020..., CODEX main 0b313..., hub master 2cc9..., gg_MATH main 7ce2... on 2026-10-18.",
+      "implication": "These non-atomic observed source SHA snapshots are historical on CP.RESUME; private QPS source custody stays restricted.",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/529"
+    }
+  ],
+  "pr_snapshot": [
+    {
+      "number": 724,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/724",
+      "head_sha": "fec6231abdead0ce8554b36c7199470bda3a97b1",
+      "merge_sha": "2cc9b4d433c404b50d7afc661f863b96d42e97cc",
+      "admission": "HOLD"
+    },
+    {
+      "number": 725,
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/725",
+      "head_sha": "f83f2fcea92cbc21ff54aabdc5e79aa239547a5a",
+      "merge_sha": null,
+      "admission": "HOLD"
+    },
+    {
+      "number": 1097,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/CODEX/pull/1097",
+      "head_sha": "d3f55c168a65bd287873d461bcc26ddaccbfbfaf",
+      "merge_sha": "d4174eb97a48ee5bc0d463640a305dd63059fa12",
+      "admission": "HOLD"
+    },
+    {
+      "number": 1098,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/CODEX/pull/1098",
+      "head_sha": "fae6a123ee849893a3025d89d4249284b5b5977a",
+      "merge_sha": "1e80f32844a1a00613f0b33ea8b13483364c2ea4",
+      "admission": "HOLD"
+    },
+    {
+      "number": 1096,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/CODEX/pull/1096",
+      "head_sha": "d81a509d79dce5d1d6921308b2ce91a7b38eb25c",
+      "merge_sha": "0b313c2ec3fc48f1c6cf6920e7a5636c161746c3",
+      "admission": "HOLD"
+    }
+  ],
+  "external_issues": [
+    {
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860",
+      "owner_lane": "ABACUS_GOVERNANCE",
+      "state": "HOLD"
+    },
+    {
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1929",
+      "owner_lane": "ABACUS_CAUSAL_ROOT_OWNER",
+      "state": "OPEN_OWNER_DISPOSITION"
+    },
+    {
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1991",
+      "owner_lane": "ABACUS_COVERAGE",
+      "state": "UNKNOWN_CURRENT_HEAD"
+    },
+    {
+      "url": "https://github.com/GBOGEB/CODEX/issues/977",
+      "owner_lane": "CODEX_GOVERNANCE_AND_CREW",
+      "state": "HOLD"
+    },
+    {
+      "url": "https://github.com/GBOGEB/CODEX/issues/1088",
+      "owner_lane": "CODEX_MYCIELIUM_FIRST_RED",
+      "state": "SOURCE_REPAIR_MERGED_N7_NEW_OSV_RED"
+    },
+    {
+      "url": "https://github.com/GBOGEB/CODEX/issues/1037",
+      "owner_lane": "CODEX_W003_GOVERNANCE",
+      "state": "HOLD"
+    },
+    {
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/336",
+      "owner_lane": "MISSIONCONTROL_MASTER_PROTECTION",
+      "state": "HOLD"
+    },
+    {
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/529",
+      "owner_lane": "MISSIONCONTROL_GOGREEN_CENSUS",
+      "state": "ACTIVE"
+    },
+    {
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604",
+      "owner_lane": "MISSIONCONTROL_CP_CLOSE_AND_QPS_OWNER",
+      "state": "HOLD"
+    }
+  ],
+  "metric_observations": [
+    {
+      "metric": "W9_SOURCE_NATIVE_PYTHON311_TESTS",
+      "numerator": 77,
+      "denominator": 77,
+      "unit": "EXECUTED_PASSED_TESTS",
+      "population": "Hub #724 exact PR head fec6231a; run39147416140 attempt1 job117734119664, not fleet tests",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39147416140"
+    },
+    {
+      "metric": "W9_SOURCE_NATIVE_PYTHON312_TESTS",
+      "numerator": 77,
+      "denominator": 77,
+      "unit": "EXECUTED_PASSED_TESTS",
+      "population": "Hub #724 exact PR head fec6231a; run39147416140 attempt1 job117734119798",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39147416140"
+    },
+    {
+      "metric": "W9_SCOPED_STATEMENTS",
+      "numerator": 434,
+      "denominator": 516,
+      "unit": "STATEMENTS",
+      "population": "Only MYCELIUM history collect.py+history.py coverage at W9 source fec6231a",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39147416140"
+    },
+    {
+      "metric": "W9_SCOPED_BRANCHES",
+      "numerator": 122,
+      "denominator": 144,
+      "unit": "BRANCHES",
+      "population": "Only MYCELIUM history collect.py+history.py branch coverage at W9 source fec6231a",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39147416140"
+    },
+    {
+      "metric": "W9_MYCELIUM_HISTORY_RUN_BREADTH",
+      "numerator": 661,
+      "denominator": 661,
+      "unit": "WORKFLOW_RUNS",
+      "population": "CODEX workflow history metadata observed/eligible at native W9 capture; may change on refresh",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39147416140"
+    },
+    {
+      "metric": "W9_MYCELIUM_WORKFLOW_SUCCESSES",
+      "numerator": 261,
+      "denominator": 661,
+      "unit": "WORKFLOW_RUNS",
+      "population": "Historical source CODEX workflow runs at W9 snapshot; correlated outcomes, not independent trials",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39147416140"
+    },
+    {
+      "metric": "W9_MYCELIUM_WORKFLOW_FAILURES",
+      "numerator": 400,
+      "denominator": 661,
+      "unit": "WORKFLOW_RUNS",
+      "population": "Historical source CODEX workflow failures at W9 snapshot; not root count",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39147416140"
+    },
+    {
+      "metric": "W9_MYCI_STRATIFIED_FAILED_JOB_SAMPLES",
+      "numerator": 100,
+      "denominator": 160,
+      "unit": "SAMPLED_JOB_RUNS",
+      "population": "100 red /60 green job-detail sample; 2 step fingerprints; biased sample not fleet rate",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39147416140"
+    },
+    {
+      "metric": "W9_CANONICAL_BD_ITEMS_DONE",
+      "numerator": 10,
+      "denominator": 19,
+      "unit": "WORK_ITEMS",
+      "population": "Canonical CPQ ledger latest state 10 DONE/5 ACTIVE/2 TODO/2 reader; not accepted causal roots",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/724"
+    },
+    {
+      "metric": "CODEX_N7_DIAGNOSTIC_TESTS",
+      "numerator": 23,
+      "denominator": 23,
+      "unit": "TEST_CASES",
+      "population": "CODEX #1097 source d3f55c16, N7 job117732579114 attempt1, not current main",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/CODEX/actions/runs/39146937220"
+    },
+    {
+      "metric": "CODEX_N7_DIAGNOSTIC_STATEMENTS",
+      "numerator": 495,
+      "denominator": 512,
+      "unit": "STATEMENTS",
+      "population": "CODEX #1097 exact PR head; N7 threshold 90 percent unmodified",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/CODEX/actions/runs/39146937220"
+    },
+    {
+      "metric": "CODEX_N7_DIAGNOSTIC_BRANCHES",
+      "numerator": 114,
+      "denominator": 136,
+      "unit": "BRANCHES",
+      "population": "CODEX #1097 exact PR head; N7 branch threshold 80 percent unmodified",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/CODEX/actions/runs/39146937220"
+    },
+    {
+      "metric": "CODEX_POSTMERGE_OSV_VULNERABILITIES",
+      "numerator": 6,
+      "denominator": 6,
+      "unit": "KNOWN_VULNERABILITY_FINDINGS",
+      "population": "CODEX post-#1097 main d4174e... run39147772131 job117735007297; 4 packages; 3 medium 3 low; root UNKNOWN",
+      "evidence_class": "SOURCE_BOUND_HISTORICAL",
+      "source": "https://github.com/GBOGEB/CODEX/actions/runs/39147772131"
+    },
+    {
+      "metric": "HUB_W10_PYTHON_NEGATIVE_TESTS",
+      "numerator": null,
+      "denominator": null,
+      "unit": "TESTS",
+      "population": "Hub draft #725 exact head f83f... submitted 34 authored methods; native run39148332224 queued, executed count UNKNOWN",
+      "evidence_class": "PENDING_NATIVE",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/725"
+    },
+    {
+      "metric": "ABACUS_CURRENT_MAIN_COVERAGE",
+      "numerator": null,
+      "denominator": null,
+      "unit": "STATEMENT_OR_BRANCH_COVERAGE",
+      "population": "ABACUS main 9e020... fresh current-matched B0 and coverage not verified at this capture",
+      "evidence_class": "UNKNOWN",
+      "source": "https://github.com/GBOGEB/ABACUS/issues/1991"
+    },
+    {
+      "metric": "WORKER_HOURS",
+      "numerator": null,
+      "denominator": null,
+      "unit": "HOURS",
+      "population": "No native capacity/worker-hours receipt; not zero",
+      "evidence_class": "UNKNOWN",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/issues/529"
+    }
+  ],
+  "bd_focus": [
+    "CPQ-001",
+    "CPQ-002",
+    "CPQ-003",
+    "CPQ-004",
+    "CPQ-005",
+    "CPQ-006",
+    "CPQ-007",
+    "CPQ-008",
+    "CPQ-009",
+    "CPQ-010",
+    "CPQ-011",
+    "CPQ-012",
+    "CPQ-013",
+    "CPQ-014",
+    "CPQ-015",
+    "CPQ-016",
+    "CPQ-017",
+    "CPQ-018",
+    "CPQ-019"
+  ]
+}
