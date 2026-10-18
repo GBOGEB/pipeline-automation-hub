@@ -14,3 +14,7 @@ python mission-control/v2/handoff/closeout/cp_close.py --intake mission-control/
 ~~~
 
 Recorded source SHA/census is date-only non-atomic and historical on restart. The W5 workflow must prove the exact PR source head and publish SHA-256 file receipts; static proof cannot approve a merge, create an engineering closure, or dispatch a remote worker.
+
+## Post-capture evidence, separate source populations
+
+After the frozen W5 readback, [N+1 exact-SHA native evidence](POST_CAPTURE_NATIVE_PULSE_20261018.md) and [machine metrics](W5_POST_CAPTURE_NATIVE_PULSE_20261018.json) proved B0 and coverage on earlier ABACUS main SHA 97a8… (4,168 PASS/2 SKIP, 35.00% statements and 30.33% branches), then identified G3CS collection first-red on newer 1122… main. Do not overwrite prior snapshot or claim the two coverage populations are matched.

@@ -51,7 +51,7 @@ jobs:
           import hashlib,json,os
           from pathlib import Path
           root=Path('mission-control/v2/handoff/w5')
-          names=['W5_CENSUS_TELEMETRY_20261018.json','W5_FEDERATION_DAG_20261018.json','HANDOVER_20261018.md','NEXT_CHAT_DROPIN_20261018.md']
+          names=['W5_CENSUS_TELEMETRY_20261018.json','W5_FEDERATION_DAG_20261018.json','HANDOVER_20261018.md','NEXT_CHAT_DROPIN_20261018.md','W5_POST_CAPTURE_NATIVE_PULSE_20261018.json','POST_CAPTURE_NATIVE_PULSE_20261018.md']
           receipt={'schema':'missioncontrol.w5.native_qa.v1','exact_source_sha':os.environ['EXACT_SHA'],'run_id':int(os.environ['GITHUB_RUN_ID']),'attempt':int(os.environ['GITHUB_RUN_ATTEMPT']),'python_version':os.environ['PYTHON_LANE'],'files_sha256':{n:hashlib.sha256((root/n).read_bytes()).hexdigest() for n in names},'native_static_qa':'PASS','merge_admission':'HOLD','authenticated_remote_dispatch':None,'accepted_rex':None,'authority_transfer':False}
           Path('w5-native-proof/receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n',encoding='utf-8')
           print('W5_STATIC_NATIVE_PASS run='+str(receipt['run_id'])+' attempt='+str(receipt['attempt']))

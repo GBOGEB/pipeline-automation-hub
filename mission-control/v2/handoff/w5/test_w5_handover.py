@@ -121,5 +121,29 @@ class W5HandoverTests(unittest.TestCase):
         self.assertEqual((issues["GBOGEB/ABACUS"]["checked"],issues["GBOGEB/ABACUS"]["total"]),(1,12))
         self.assertEqual((issues["GBOGEB/CODEX"]["checked"],issues["GBOGEB/CODEX"]["total"]),(0,7))
 
+    def test_post_capture_native_coverage_has_real_denominators(self):
+        pulse=json.loads((HERE/"W5_POST_CAPTURE_NATIVE_PULSE_20261018.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(pulse["source_populations"]),2)
+        old,new=pulse["source_populations"]
+        self.assertNotEqual(old["sha"],new["sha"])
+        c=old["measured_coverage"]
+        self.assertEqual((c["covered_statements"],c["total_statements"]),(7765,22188))
+        self.assertEqual((c["covered_branches"],c["total_branches"]),(1651,5444))
+        self.assertAlmostEqual(100*c["covered_statements"]/c["total_statements"],c["statement_pct"],places=10)
+        self.assertAlmostEqual(100*c["covered_branches"]/c["total_branches"],c["branch_pct"],places=10)
+        self.assertEqual(old["b0"]["tests"]["pass"],4168)
+        self.assertEqual(old["b0"]["tests"]["skip"],2)
+
+    def test_post_capture_failure_never_silently_closes_root(self):
+        pulse=json.loads((HERE/"W5_POST_CAPTURE_NATIVE_PULSE_20261018.json").read_text(encoding="utf-8"))
+        new=pulse["source_populations"][1]
+        self.assertEqual(new["b0"]["conclusion"],"failure")
+        self.assertEqual(new["matrix"]["conclusion"],"failure")
+        self.assertIsNone(new["latest_main_coverage"]["statement"])
+        self.assertEqual(len(new["observed_common_first_red"]["manifestations"]),4)
+        self.assertEqual(new["observed_common_first_red"]["root_identity_disposition"],"CANDIDATE_SHARED_ROOT_NOT_INDEPENDENTLY_ACCEPTED")
+        self.assertIsNone(pulse["comparison"]["matching_coverage_delta_pct"])
+        self.assertIsNone(pulse["comparison"]["accepted_root_closure_delta"])
+
 if __name__=="__main__":
     unittest.main()
