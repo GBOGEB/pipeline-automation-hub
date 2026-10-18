@@ -1,345 +1,383 @@
 {
-  "schema": "missioncontrol.gm_dmaic_evolution.v1",
-  "mission_id": "GM-DMAIC-EVOLUTION-T7-T14-T21-20260926",
-  "controller_issue": 419,
-  "authority_transfer": false,
-  "formal_credit_delta": 0,
-  "engineering_credit_delta": 0,
-  "goal": "Evolve DMAIC iteration quality from Top7 to Top14 to Top21 while each admitted repository serializes up to three genuine first-red repairs and repositories execute in parallel.",
-  "axes": {
-    "depth": {
-      "order": [
-        "D1",
-        "D2",
-        "D3"
-      ],
-      "rule": "Per repository: current depth must reach exact-head CONTROL and recensus before the next depth is admitted.",
-      "max_genuine_reds_per_cycle": 3,
-      "no_synthetic_reds": true
-    },
-    "breadth": {
-      "order": [
-        "top7",
-        "top14",
-        "top21"
-      ],
-      "rule": "Cohort promotion is earned by DMAIC iteration quality and CONTROL evidence, not raw issue/check reduction."
-    }
-  },
-  "pulse": [
-    "DEFINE",
-    "MEASURE",
-    "ANALYZE",
-    "IMPROVE",
-    "CONTROL",
-    "RECENSUS"
-  ],
-  "parallelism": {
-    "across_repositories": true,
-    "within_repository_depth": false,
-    "repair_wip_per_repo": 1,
-    "prove_wip_per_repo": 1,
-    "return_hold_control_consume_repair_wip": false
-  },
-  "noncompensation": [
-    "ZERO_STEP_NE_APPLICATION_FAIL",
-    "PENDING_NE_GREEN",
-    "SKIPPED_NE_GREEN",
-    "MISSING_EVIDENCE_NE_GREEN",
-    "MERGE_NE_PROOF",
-    "RETURN_NE_REPAIR",
-    "RAW_FAILURE_REDUCTION_NE_DMAIC_MATURITY"
-  ],
-  "cohorts": {
-    "top7": [
-      "GBOGEB/ABACUS",
-      "GBOGEB/CODEX",
-      "GBOGEB/cryoplant-project",
-      "GBOGEB/pipeline-automation-hub",
-      "GBOGEB/Q_engineering_tools",
-      "GBOGEB/document-organization-system",
-      "GBOGEB/DOCX_RTM_Automation"
-    ],
-    "top14_extension": [
-      "GBOGEB/gg_MATH",
-      "GBOGEB/GEMINI",
-      "GBOGEB/CODESPACES_jyperter",
-      "GBOGEB/GBOGEB",
-      "GBOGEB/CoolProp",
-      "GBOGEB/codespaces-jupyter",
-      "GBOGEB/cryogenic-accelerator-workspace"
-    ],
-    "top21_extension": [
-      "GBOGEB/skills",
-      "GBOGEB/cryo_leak_rate_dashboard",
-      "GBOGEB/telegraf",
-      "GBOGEB/github-mcp-server",
-      "GBOGEB/github_Documents",
-      "GBOGEB/stale",
-      "GBOGEB/GBOGEB-profile"
-    ]
-  },
-  "promotion_gates": {
-    "top7_to_top14": {
-      "classified_min": 7,
-      "green_control_min": 5,
-      "unclassified_max": 0,
-      "abacus_d1_requires": "CONTROL_AND_FRESH_HEAD_RECENSUS",
-      "full_dmaic_iterations_min": 1,
-      "proof_debt_trend": "NON_INCREASING_TWO_PULSES",
-      "unchanged_root_auto_repeat_max": 2,
-      "fail_closed_evidence": true,
-      "recursive_control_handoff_min": 1,
-      "iteration_chain_integrity_required": true
-    },
-    "top14_to_top21": {
-      "classified_min": 14,
-      "green_control_min": 10,
-      "unclassified_max": 0,
-      "proof_debt_max": 10,
-      "unchanged_root_auto_repeat_max": 2,
-      "full_dmaic_iterations_distinct_repos_min": 2,
-      "recurrent_control_distinct_source_repeat_min": 1,
-      "semantic_net_delta": "LE_0_TWO_CONSECUTIVE_PULSES",
-      "proof_yield_trend": "NON_DEGRADING_TWO_PULSES",
-      "fail_closed_evidence": true,
-      "recursive_control_handoff_min": 2,
-      "iteration_chain_integrity_required": true
-    }
-  },
-  "current": {
-    "top7_state": "ACTIVE",
-    "top14_state": "SHADOW_MEASURE",
-    "top21_state": "HOLD",
-    "top14_green_control_observed": 9,
-    "top14_proof_debt_observed": null,
-    "mission_era_full_dmaic_iterations": 1,
-    "mission_era_distinct_repos_full_dmaic": 0,
-    "recurrent_controls_with_distinct_source_repeat": 0,
-    "abacus": {
-      "pr": 1386,
-      "d1": {
-        "root": "STALE_DMAIC_ROOT_13_CORE_SYSTEMS_DMAIC",
-        "state": "CONTROL_AND_FRESH_HEAD_RECENSUS",
-        "evidence_run": 36247844047,
-        "smoke_job": 108420241924,
-        "merge_sha": "0e35017f4a0a88ad00ba870939a2740fab1ba5ea",
-        "postmerge_control_run": 36249043726
-      },
-      "d2": {
-        "root": "STALE_DOW_CORE_TEST_TARGETS",
-        "state": "CONTROL",
-        "repair_head": "34bfe01a171fdd1fc3142d359a58ff11d59cf4f1",
-        "control_run": 36248809710,
-        "control_job": 108422959297
-      },
-      "d3": {
-        "root": "PHASE6_9_EMPTY_MARKER_SELECTION",
-        "state": "CONTROL",
-        "repair_head": "fe51cb43f0d71980d42de1d42e6119e534939a57"
-      },
-      "i2": {
-        "pr": 1387,
-        "d1": {
-          "root": "E2E_EMPTY_MARKER_POPULATION",
-          "state": "PATCHED_WAIT_EXACT_HEAD_PROOF",
-          "repair_head": "f8c3365feac6903152b7d42bdcc3cd992ff48414",
-          "evidence_run": 36249043726,
-          "evidence_job": 108424143045,
-          "proof_run": 36249393504
+    "schema": "missioncontrol.gm_dmaic_evolution.v1",
+    "mission_id": "GM-DMAIC-EVOLUTION-T7-T14-T21-20260926",
+    "controller_issue": 419,
+    "authority_transfer": false,
+    "formal_credit_delta": 0,
+    "engineering_credit_delta": 0,
+    "goal": "Evolve DMAIC iteration quality from Top7 to Top14 to Top21 while each admitted repository serializes up to three genuine first-red repairs and repositories execute in parallel.",
+    "axes": {
+        "depth": {
+            "order": [
+                "D1",
+                "D2",
+                "D3"
+            ],
+            "rule": "Per repository: current depth must reach exact-head CONTROL and recensus before the next depth is admitted.",
+            "max_genuine_reds_per_cycle": 3,
+            "no_synthetic_reds": true
         },
-        "d2": {
-          "root": "QUALITY_COVERAGE_THRESHOLD",
-          "state": "CANDIDATE_WAIT_D1_CONTROL",
-          "observed_coverage_pct": 25.04,
-          "required_coverage_pct": 70
+        "breadth": {
+            "order": [
+                "top7",
+                "top14",
+                "top21"
+            ],
+            "rule": "Cohort promotion is earned by DMAIC iteration quality and CONTROL evidence, not raw issue/check reduction."
         }
-      }
     },
-    "top7_classified_observed": 7,
-    "top7_green_control_observed": 5,
-    "top7_unclassified_observed": 0,
-    "top7_proof_debt_two_pulse_nonincreasing": false,
-    "top14_classified_observed": 14,
-    "top14_unclassified_observed": 0,
-    "max_unchanged_root_auto_repeat_after_control": null,
-    "top14_two_pulse_net_semantic_delta_le_zero": false,
-    "top14_two_pulse_proof_yield_nondegrading": false
-  },
-  "metrics": [
-    "classified_repos",
-    "green_control_repos",
-    "proof_debt",
-    "runner_admission_rate",
-    "executed_step_rate",
-    "exact_head_proof_yield",
-    "queue_seconds",
-    "execute_seconds",
-    "time_to_first_red",
-    "time_to_green",
-    "first_pass_closure_rate",
-    "same_sha_repeat_rate",
-    "noop_rate",
-    "accepted_receipt_yield",
-    "recurrence_count",
-    "red_amplification_factor",
-    "distinct_source_control_repeat",
-    "workflow_family_fanout",
-    "zero_denominator_unknown_count",
-    "net_semantic_root_delta",
-    "coverage_instrumented_repos",
-    "coverage_exact_head_measured_repos",
-    "test_population_executed",
-    "coverage_statement_denominator",
-    "statement_coverage_pct",
-    "coverage_gate_pct",
-    "coverage_gate_result",
-    "coverage_scope_comparability",
-    "pre_github_testpilot_result"
-  ],
-  "exact_head_baseline": {
-    "GBOGEB/ABACUS": "93e9516e967b20165e9b2ad7586029d4715bbdb1",
-    "GBOGEB/CODEX": "c472d40beda79b1a35e79b2b500f0b4f71d34922",
-    "GBOGEB/cryoplant-project": "ca40eca444ea0960517d759e6a1e4bb1db4e94df",
-    "GBOGEB/pipeline-automation-hub": "5356e8497d389af36070eb6d2142bd6e8af08371",
-    "GBOGEB/Q_engineering_tools": "593b24ff1c878924537b3ca65c40b15bb015f423",
-    "GBOGEB/document-organization-system": "f238ebfaaa129ed13bd912fea67f6d16fed4bd6e",
-    "GBOGEB/DOCX_RTM_Automation": "f059782e84fd1706ea78c67c806462c6975f5d69",
-    "GBOGEB/gg_MATH": "a0882beadc6b4630e7c3545fcf8614e426709994",
-    "GBOGEB/GEMINI": "9e2be9c5e66d4e3a00e6f3dfd6c59319d2274049",
-    "GBOGEB/CODESPACES_jyperter": "83bfeea95956807015a86e16ef84ff129b36065e",
-    "GBOGEB/GBOGEB": "99bf0f61018ff6798c661d44256077c0b14297a3",
-    "GBOGEB/CoolProp": "0ce509b6a65cab5b3c52a7514a00dfb7ad81c20e",
-    "GBOGEB/codespaces-jupyter": "68cc5017dd5460eb32df0cf984930a0e69b9a5fb",
-    "GBOGEB/cryogenic-accelerator-workspace": "96c2212823c9af101cc6791edd26351960fd89ec",
-    "GBOGEB/skills": "26ffd6297a79a6b3ec01a2af497623adc6aca2c6",
-    "GBOGEB/cryo_leak_rate_dashboard": "6f6ce5fe1042e4ff59be06909b248a6444136e92",
-    "GBOGEB/telegraf": "3e18ad6fda07ebbe18994555ece894c29ed8b78c",
-    "GBOGEB/github-mcp-server": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
-    "GBOGEB/github_Documents": "0b4193fa7052477763c829921fa7bf81206d3a37",
-    "GBOGEB/stale": "67869de0acc573f1fd3e4505aa23678289cd76cf",
-    "GBOGEB/GBOGEB-profile": "74ef0a36652dfe62145b3dbc1d2a023adbbaa50d"
-  },
-  "iteration_evolution": {
-    "core_cycle": [
-      "DEFINE",
-      "MEASURE",
-      "ANALYZE",
-      "IMPROVE",
-      "CONTROL"
+    "pulse": [
+        "DEFINE",
+        "MEASURE",
+        "ANALYZE",
+        "IMPROVE",
+        "CONTROL",
+        "RECENSUS"
     ],
-    "post_control_envelope": [
-      "KNOWLEDGE",
-      "ACTION_TRACKING",
-      "TODO_MANAGEMENT",
-      "DOCUMENTATION"
-    ],
-    "invariant": "Iteration N+1 may consume only a CONTROL receipt from N, or an explicit RETURN/HOLD receipt that preserves the unresolved predicate. Green inference is forbidden.",
-    "required_iteration_record": [
-      "iteration_id",
-      "repository",
-      "source_sha",
-      "input_control_receipt",
-      "define_hypothesis",
-      "measure_snapshot",
-      "analyze_root_family",
-      "improve_commit",
-      "control_run",
-      "control_job",
-      "control_outcome",
-      "next_iteration_seed"
-    ],
-    "evolution_levels": [
-      {
-        "level": "E0_OBSERVED",
-        "criterion": "One fail-closed baseline census with exact source SHA."
-      },
-      {
-        "level": "E1_REPEATABLE",
-        "criterion": "One complete DMAIC iteration with >0-step CONTROL proof."
-      },
-      {
-        "level": "E2_RECURSIVE",
-        "criterion": "A later iteration consumes the prior CONTROL receipt and preserves lineage."
-      },
-      {
-        "level": "E3_PARALLEL_TOP7",
-        "criterion": "Multiple Top7 repositories execute independent DMAIC iterations in one pulse without within-repo depth overlap."
-      },
-      {
-        "level": "E4_PARALLEL_TOP14",
-        "criterion": "Top14 promotion gate passes and recursive iteration quality does not degrade."
-      },
-      {
-        "level": "E5_PARALLEL_TOP21",
-        "criterion": "Top21 promotion gate passes with recurrence CONTROL and distinct-source repeat evidence."
-      }
-    ],
-    "current_level": "E1_REPEATABLE",
-    "complete_iteration_count": 1,
-    "recursive_control_handoff_count": 1,
-    "iteration_chain_integrity": true,
-    "active_iteration": {
-      "iteration_id": "ABACUS-I2-RESIDUALS",
-      "repository": "GBOGEB/ABACUS",
-      "source_sha": "82a32d6922d3f7d75302578e4d1b9652413861ec",
-      "input_control_receipt": {
-        "iteration_id": "ABACUS-I1-FIRST3",
-        "merge_sha": "0e35017f4a0a88ad00ba870939a2740fab1ba5ea",
-        "postmerge_control_run": 36249043726
-      },
-      "define_hypothesis": "Eliminate the next genuine residual red from the post-I1 DMAIC control run without widening into later residuals.",
-      "measure_snapshot": {
-        "d1_root": "E2E_EMPTY_MARKER_POPULATION",
-        "d1_job": 108424143045,
-        "d1_observation": "416 collected / 416 deselected / 0 selected; pytest exit 5",
-        "d2_candidate": "QUALITY_COVERAGE_THRESHOLD",
-        "d2_measure": "403 passed; total coverage 25.04%; configured gate 70%",
-        "other_candidates": [
-          "DOW_MAIN_STALE_TESTING_SUITE_PATH",
-          "CI_GOVERNANCE_STALE_RATIONALIZATION_AND_UNCLASSIFIED_WORKFLOW",
-          "FORMAT_SESSION_TUPLE_FAMILIES"
-        ]
-      },
-      "analyze_root_family": "E2E_EMPTY_MARKER_POPULATION",
-      "improve_commit": "f8c3365feac6903152b7d42bdcc3cd992ff48414",
-      "control_run": 36249393504,
-      "control_job": null,
-      "control_outcome": "PENDING_EXACT_HEAD_PROOF",
-      "next_iteration_seed": null
+    "parallelism": {
+        "across_repositories": true,
+        "within_repository_depth": false,
+        "repair_wip_per_repo": 1,
+        "prove_wip_per_repo": 1,
+        "return_hold_control_consume_repair_wip": false
     },
-    "completed_iterations": [
-      {
-        "iteration_id": "ABACUS-I1-FIRST3",
-        "repository": "GBOGEB/ABACUS",
-        "source_sha": "93e9516e967b20165e9b2ad7586029d4715bbdb1",
-        "merge_sha": "0e35017f4a0a88ad00ba870939a2740fab1ba5ea",
-        "current_main_after_metrics": "82a32d6922d3f7d75302578e4d1b9652413861ec",
-        "semantic_delta_after_merge": "NONE_DMAIC_CODE_WORKFLOW",
-        "controlled_roots": [
-          "STALE_DMAIC_ROOT_13_CORE_SYSTEMS_DMAIC",
-          "STALE_DOW_CORE_TEST_TARGETS",
-          "PHASE6_9_EMPTY_MARKER_SELECTION"
+    "noncompensation": [
+        "ZERO_STEP_NE_APPLICATION_FAIL",
+        "PENDING_NE_GREEN",
+        "SKIPPED_NE_GREEN",
+        "MISSING_EVIDENCE_NE_GREEN",
+        "MERGE_NE_PROOF",
+        "RETURN_NE_REPAIR",
+        "RAW_FAILURE_REDUCTION_NE_DMAIC_MATURITY"
+    ],
+    "cohorts": {
+        "top7": [
+            "GBOGEB/ABACUS",
+            "GBOGEB/CODEX",
+            "GBOGEB/cryoplant-project",
+            "GBOGEB/pipeline-automation-hub",
+            "GBOGEB/Q_engineering_tools",
+            "GBOGEB/document-organization-system",
+            "GBOGEB/DOCX_RTM_Automation"
         ],
-        "postmerge_control_run": 36249043726,
-        "control_jobs": {
-          "smoke": 108423507666,
-          "dow_core": 108423734221,
-          "phase0_2": 108424058206,
-          "phase3_5": 108424058254,
-          "phase6_9": 108424058221
+        "top14_extension": [
+            "GBOGEB/gg_MATH",
+            "GBOGEB/GEMINI",
+            "GBOGEB/CODESPACES_jyperter",
+            "GBOGEB/GBOGEB",
+            "GBOGEB/CoolProp",
+            "GBOGEB/codespaces-jupyter",
+            "GBOGEB/cryogenic-accelerator-workspace"
+        ],
+        "top21_extension": [
+            "GBOGEB/skills",
+            "GBOGEB/cryo_leak_rate_dashboard",
+            "GBOGEB/telegraf",
+            "GBOGEB/github-mcp-server",
+            "GBOGEB/github_Documents",
+            "GBOGEB/stale",
+            "GBOGEB/GBOGEB-profile"
+        ]
+    },
+    "promotion_gates": {
+        "top7_to_top14": {
+            "classified_min": 7,
+            "green_control_min": 5,
+            "unclassified_max": 0,
+            "abacus_d1_requires": "CONTROL_AND_FRESH_HEAD_RECENSUS",
+            "full_dmaic_iterations_min": 1,
+            "proof_debt_trend": "NON_INCREASING_TWO_PULSES",
+            "unchanged_root_auto_repeat_max": 2,
+            "fail_closed_evidence": true,
+            "recursive_control_handoff_min": 1,
+            "iteration_chain_integrity_required": true
         },
-        "bounded_control_outcome": "CONTROLLED_WITH_RESIDUALS",
-        "next_iteration_seed": "E2E_EMPTY_MARKER_POPULATION"
-      }
-    ]
-  },
-  "coverage_telemetry_ref": "mission-control/grand-missions/GM_DMAIC_COVERAGE_TELEMETRY_v1.json",
-  "coverage_policy": {
-    "missing_measurement": "UNKNOWN_NOT_ZERO",
-    "test_count_is_not_coverage": true,
-    "cross_repo_test_count_denominator": false,
-    "compare_only_when_scope_is_aligned": true,
-    "lower_gate_to_green": false
-  }
+        "top14_to_top21": {
+            "classified_min": 14,
+            "green_control_min": 10,
+            "unclassified_max": 0,
+            "proof_debt_max": 10,
+            "unchanged_root_auto_repeat_max": 2,
+            "full_dmaic_iterations_distinct_repos_min": 2,
+            "recurrent_control_distinct_source_repeat_min": 1,
+            "semantic_net_delta": "LE_0_TWO_CONSECUTIVE_PULSES",
+            "proof_yield_trend": "NON_DEGRADING_TWO_PULSES",
+            "fail_closed_evidence": true,
+            "recursive_control_handoff_min": 2,
+            "iteration_chain_integrity_required": true
+        }
+    },
+    "current": {
+        "top7_state": "ACTIVE",
+        "top14_state": "SHADOW_MEASURE",
+        "top21_state": "HOLD",
+        "top14_green_control_observed": 9,
+        "top14_proof_debt_observed": null,
+        "mission_era_full_dmaic_iterations": 2,
+        "mission_era_distinct_repos_full_dmaic": 0,
+        "recurrent_controls_with_distinct_source_repeat": 0,
+        "abacus": {
+            "pr": 1386,
+            "d1": {
+                "root": "STALE_DMAIC_ROOT_13_CORE_SYSTEMS_DMAIC",
+                "state": "CONTROL_AND_FRESH_HEAD_RECENSUS",
+                "evidence_run": 36247844047,
+                "smoke_job": 108420241924,
+                "merge_sha": "0e35017f4a0a88ad00ba870939a2740fab1ba5ea",
+                "postmerge_control_run": 36249043726
+            },
+            "d2": {
+                "root": "STALE_DOW_CORE_TEST_TARGETS",
+                "state": "CONTROL",
+                "repair_head": "34bfe01a171fdd1fc3142d359a58ff11d59cf4f1",
+                "control_run": 36248809710,
+                "control_job": 108422959297
+            },
+            "d3": {
+                "root": "PHASE6_9_EMPTY_MARKER_SELECTION",
+                "state": "CONTROL",
+                "repair_head": "fe51cb43f0d71980d42de1d42e6119e534939a57"
+            },
+            "i2": {
+                "pr": 1387,
+                "d1": {
+                    "root": "E2E_EMPTY_MARKER_POPULATION",
+                    "state": "CONTROL_AND_FRESH_HEAD_RECENSUS",
+                    "repair_head": "f8c3365feac6903152b7d42bdcc3cd992ff48414",
+                    "evidence_run": 36249043726,
+                    "evidence_job": 108424143045,
+                    "proof_run": 36249393504,
+                    "control_job": 108424874248,
+                    "postmerge_control_run": 36336861952,
+                    "postmerge_control_job": 108675180974
+                },
+                "d2": {
+                    "root": "QUALITY_COVERAGE_THRESHOLD",
+                    "state": "CONTROL",
+                    "observed_coverage_pct": 76.13,
+                    "required_coverage_pct": 75,
+                    "gate_note": "G70->G75 ratchet (#428)",
+                    "control_run": 36336861952,
+                    "control_job": 108675180909,
+                    "repeat_run": 36420226456,
+                    "repeat_job": 108921685543
+                }
+            }
+        },
+        "top7_classified_observed": 7,
+        "top7_green_control_observed": 5,
+        "top7_unclassified_observed": 0,
+        "top7_proof_debt_two_pulse_nonincreasing": false,
+        "top14_classified_observed": 14,
+        "top14_unclassified_observed": 0,
+        "max_unchanged_root_auto_repeat_after_control": 8,
+        "top14_two_pulse_net_semantic_delta_le_zero": false,
+        "top14_two_pulse_proof_yield_nondegrading": false,
+        "max_unchanged_root_auto_repeat_evidence": "mission-control/federation-atlas/evidence/CODE_PURPLE_I3_OBSERVATION_20261017.json (Unit Tests (3.10)/Install dependencies, 8 scheduled runs on unchanged head 54da377; controlled roots only = 1)"
+    },
+    "metrics": [
+        "classified_repos",
+        "green_control_repos",
+        "proof_debt",
+        "runner_admission_rate",
+        "executed_step_rate",
+        "exact_head_proof_yield",
+        "queue_seconds",
+        "execute_seconds",
+        "time_to_first_red",
+        "time_to_green",
+        "first_pass_closure_rate",
+        "same_sha_repeat_rate",
+        "noop_rate",
+        "accepted_receipt_yield",
+        "recurrence_count",
+        "red_amplification_factor",
+        "distinct_source_control_repeat",
+        "workflow_family_fanout",
+        "zero_denominator_unknown_count",
+        "net_semantic_root_delta",
+        "coverage_instrumented_repos",
+        "coverage_exact_head_measured_repos",
+        "test_population_executed",
+        "coverage_statement_denominator",
+        "statement_coverage_pct",
+        "coverage_gate_pct",
+        "coverage_gate_result",
+        "coverage_scope_comparability",
+        "pre_github_testpilot_result"
+    ],
+    "exact_head_baseline": {
+        "GBOGEB/ABACUS": "93e9516e967b20165e9b2ad7586029d4715bbdb1",
+        "GBOGEB/CODEX": "c472d40beda79b1a35e79b2b500f0b4f71d34922",
+        "GBOGEB/cryoplant-project": "ca40eca444ea0960517d759e6a1e4bb1db4e94df",
+        "GBOGEB/pipeline-automation-hub": "5356e8497d389af36070eb6d2142bd6e8af08371",
+        "GBOGEB/Q_engineering_tools": "593b24ff1c878924537b3ca65c40b15bb015f423",
+        "GBOGEB/document-organization-system": "f238ebfaaa129ed13bd912fea67f6d16fed4bd6e",
+        "GBOGEB/DOCX_RTM_Automation": "f059782e84fd1706ea78c67c806462c6975f5d69",
+        "GBOGEB/gg_MATH": "a0882beadc6b4630e7c3545fcf8614e426709994",
+        "GBOGEB/GEMINI": "9e2be9c5e66d4e3a00e6f3dfd6c59319d2274049",
+        "GBOGEB/CODESPACES_jyperter": "83bfeea95956807015a86e16ef84ff129b36065e",
+        "GBOGEB/GBOGEB": "99bf0f61018ff6798c661d44256077c0b14297a3",
+        "GBOGEB/CoolProp": "0ce509b6a65cab5b3c52a7514a00dfb7ad81c20e",
+        "GBOGEB/codespaces-jupyter": "68cc5017dd5460eb32df0cf984930a0e69b9a5fb",
+        "GBOGEB/cryogenic-accelerator-workspace": "96c2212823c9af101cc6791edd26351960fd89ec",
+        "GBOGEB/skills": "26ffd6297a79a6b3ec01a2af497623adc6aca2c6",
+        "GBOGEB/cryo_leak_rate_dashboard": "6f6ce5fe1042e4ff59be06909b248a6444136e92",
+        "GBOGEB/telegraf": "3e18ad6fda07ebbe18994555ece894c29ed8b78c",
+        "GBOGEB/github-mcp-server": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "GBOGEB/github_Documents": "0b4193fa7052477763c829921fa7bf81206d3a37",
+        "GBOGEB/stale": "67869de0acc573f1fd3e4505aa23678289cd76cf",
+        "GBOGEB/GBOGEB-profile": "74ef0a36652dfe62145b3dbc1d2a023adbbaa50d"
+    },
+    "iteration_evolution": {
+        "core_cycle": [
+            "DEFINE",
+            "MEASURE",
+            "ANALYZE",
+            "IMPROVE",
+            "CONTROL"
+        ],
+        "post_control_envelope": [
+            "KNOWLEDGE",
+            "ACTION_TRACKING",
+            "TODO_MANAGEMENT",
+            "DOCUMENTATION"
+        ],
+        "invariant": "Iteration N+1 may consume only a CONTROL receipt from N, or an explicit RETURN/HOLD receipt that preserves the unresolved predicate. Green inference is forbidden.",
+        "required_iteration_record": [
+            "iteration_id",
+            "repository",
+            "source_sha",
+            "input_control_receipt",
+            "define_hypothesis",
+            "measure_snapshot",
+            "analyze_root_family",
+            "improve_commit",
+            "control_run",
+            "control_job",
+            "control_outcome",
+            "next_iteration_seed"
+        ],
+        "evolution_levels": [
+            {
+                "level": "E0_OBSERVED",
+                "criterion": "One fail-closed baseline census with exact source SHA."
+            },
+            {
+                "level": "E1_REPEATABLE",
+                "criterion": "One complete DMAIC iteration with >0-step CONTROL proof."
+            },
+            {
+                "level": "E2_RECURSIVE",
+                "criterion": "A later iteration consumes the prior CONTROL receipt and preserves lineage."
+            },
+            {
+                "level": "E3_PARALLEL_TOP7",
+                "criterion": "Multiple Top7 repositories execute independent DMAIC iterations in one pulse without within-repo depth overlap."
+            },
+            {
+                "level": "E4_PARALLEL_TOP14",
+                "criterion": "Top14 promotion gate passes and recursive iteration quality does not degrade."
+            },
+            {
+                "level": "E5_PARALLEL_TOP21",
+                "criterion": "Top21 promotion gate passes with recurrence CONTROL and distinct-source repeat evidence."
+            }
+        ],
+        "current_level": "E2_RECURSIVE",
+        "complete_iteration_count": 2,
+        "recursive_control_handoff_count": 2,
+        "iteration_chain_integrity": true,
+        "active_iteration": {
+            "iteration_id": "ABACUS-I3-PY310",
+            "repository": "GBOGEB/ABACUS",
+            "source_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+            "input_control_receipt": {
+                "iteration_id": "ABACUS-I2-RESIDUALS",
+                "postmerge_control_run": 36336861952
+            },
+            "define_hypothesis": "Restore the Unit Tests (3.10) leg broken by the all-Python matplotlib floor in #2012.",
+            "measure_snapshot": {
+                "d1_root": "PY310_MATPLOTLIB_FLOOR",
+                "first_red_run": 38746401869,
+                "same_head_repeats": 8
+            },
+            "analyze_root_family": "PY310_MATPLOTLIB_FLOOR",
+            "improve_commit": "GBOGEB/ABACUS#2130",
+            "control_run": 39126061649,
+            "control_job": null,
+            "control_outcome": "POSTMERGE_GREEN_REPEAT_PENDING_CONTRACT_REVIEW",
+            "next_iteration_seed": null
+        },
+        "completed_iterations": [
+            {
+                "iteration_id": "ABACUS-I1-FIRST3",
+                "repository": "GBOGEB/ABACUS",
+                "source_sha": "93e9516e967b20165e9b2ad7586029d4715bbdb1",
+                "merge_sha": "0e35017f4a0a88ad00ba870939a2740fab1ba5ea",
+                "current_main_after_metrics": "82a32d6922d3f7d75302578e4d1b9652413861ec",
+                "semantic_delta_after_merge": "NONE_DMAIC_CODE_WORKFLOW",
+                "controlled_roots": [
+                    "STALE_DMAIC_ROOT_13_CORE_SYSTEMS_DMAIC",
+                    "STALE_DOW_CORE_TEST_TARGETS",
+                    "PHASE6_9_EMPTY_MARKER_SELECTION"
+                ],
+                "postmerge_control_run": 36249043726,
+                "control_jobs": {
+                    "smoke": 108423507666,
+                    "dow_core": 108423734221,
+                    "phase0_2": 108424058206,
+                    "phase3_5": 108424058254,
+                    "phase6_9": 108424058221
+                },
+                "bounded_control_outcome": "CONTROLLED_WITH_RESIDUALS",
+                "next_iteration_seed": "E2E_EMPTY_MARKER_POPULATION"
+            },
+            {
+                "iteration_id": "ABACUS-I2-RESIDUALS",
+                "repository": "GBOGEB/ABACUS",
+                "source_sha": "82a32d6922d3f7d75302578e4d1b9652413861ec",
+                "input_control_receipt": {
+                    "iteration_id": "ABACUS-I1-FIRST3",
+                    "merge_sha": "0e35017f4a0a88ad00ba870939a2740fab1ba5ea",
+                    "postmerge_control_run": 36249043726
+                },
+                "define_hypothesis": "Eliminate the next genuine residual red from the post-I1 DMAIC control run without widening into later residuals.",
+                "measure_snapshot": {
+                    "d1_root": "E2E_EMPTY_MARKER_POPULATION",
+                    "d1_job": 108424143045,
+                    "d1_observation": "416 collected / 416 deselected / 0 selected; pytest exit 5",
+                    "d2_candidate": "QUALITY_COVERAGE_THRESHOLD",
+                    "d2_measure": "403 passed; total coverage 25.04%; configured gate 70%",
+                    "other_candidates": [
+                        "DOW_MAIN_STALE_TESTING_SUITE_PATH",
+                        "CI_GOVERNANCE_STALE_RATIONALIZATION_AND_UNCLASSIFIED_WORKFLOW",
+                        "FORMAT_SESSION_TUPLE_FAMILIES"
+                    ]
+                },
+                "analyze_root_family": "E2E_EMPTY_MARKER_POPULATION",
+                "improve_commit": "f8c3365feac6903152b7d42bdcc3cd992ff48414",
+                "control_run": 36249393504,
+                "control_job": 108424874248,
+                "control_outcome": "CONTROLLED_WITH_RESIDUALS",
+                "next_iteration_seed": "PY310_MATPLOTLIB_FLOOR",
+                "merge_sha": null,
+                "postmerge_control_run": 36336861952,
+                "controlled_roots": [
+                    "E2E_EMPTY_MARKER_POPULATION",
+                    "QUALITY_COVERAGE_THRESHOLD"
+                ],
+                "bounded_control_outcome": "CONTROLLED_WITH_RESIDUALS",
+                "repeat_run": 36420226456
+            }
+        ]
+    },
+    "coverage_telemetry_ref": "mission-control/grand-missions/GM_DMAIC_COVERAGE_TELEMETRY_v1.json",
+    "coverage_policy": {
+        "missing_measurement": "UNKNOWN_NOT_ZERO",
+        "test_count_is_not_coverage": true,
+        "cross_repo_test_count_denominator": false,
+        "compare_only_when_scope_is_aligned": true,
+        "lower_gate_to_green": false
+    }
 }

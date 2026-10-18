@@ -38,6 +38,10 @@ def main(argv=None):
     p.add_argument('--out',type=Path,required=True)
     args=p.parse_args(argv)
     atlas=args.atlas.read_text(encoding='utf-8');cpq=args.cpq.read_text(encoding='utf-8')
+    # Row expectations come from the producer's own metrics, not literals, so a
+    # queue state change (e.g. an item closing) cannot desynchronise the proof.
+    m=json.loads(args.cpq.with_suffix('.json').read_text(encoding='utf-8'))['metrics']
+    n_open,n_done,n_active=m['open'],m['done'],m['active']
     args.out.mkdir(parents=True,exist_ok=True)
     out={'schema':'missioncontrol.code_purple.cpq_browser_check.v1', 'checks':[],
          'seeded_negatives':[],'admission':'HOLD','authority_transfer':False}
@@ -63,20 +67,20 @@ def main(argv=None):
                     # CPQ-013 references CPQ-010: a substring query is NOT an
                     # exact-ID selector and can legitimately yield two rows.
                     page.locator('#search').fill('CPQ-010')
-                    page.wait_for_function("document.querySelectorAll('#items tr').length > 0 && document.querySelectorAll('#items tr').length < 9",timeout=3500)
+                    page.wait_for_function(f"document.querySelectorAll('#items tr').length > 0 && document.querySelectorAll('#items tr').length < {n_open}",timeout=3500)
                     matched=page.locator('#items tr').all_inner_texts()
                     if not any(row.strip().startswith('CPQ-010') for row in matched):
                         raise AssertionError('search control omitted exact target')
                     page.locator('#search').fill('CPQ-UNMATCHED-SEED')
                     page.wait_for_function("document.querySelectorAll('#items tr').length === 0")
                     page.locator('#search').fill('')
-                    page.wait_for_function("document.querySelectorAll('#items tr').length === 9")
+                    page.wait_for_function(f"document.querySelectorAll('#items tr').length === {n_open}")
                     page.locator('#status').select_option('DONE')
-                    page.wait_for_function("document.querySelectorAll('#items tr').length === 9")
+                    page.wait_for_function(f"document.querySelectorAll('#items tr').length === {n_done}")
                     page.locator('#status').select_option('ACTIVE')
-                    page.wait_for_function("document.querySelectorAll('#items tr').length === 2")
+                    page.wait_for_function(f"document.querySelectorAll('#items tr').length === {n_active}")
                     page.locator('#status').select_option('OPEN')
-                    page.wait_for_function("document.querySelectorAll('#items tr').length === 9")
+                    page.wait_for_function(f"document.querySelectorAll('#items tr').length === {n_open}")
                 path=args.out/f'{label}_{kind}.png';page.screenshot(path=str(path),full_page=True)
                 out['checks'].append({'viewport':label,'kind':kind,'status':'PASS',**width,
                                       'screenshot':path.name})
