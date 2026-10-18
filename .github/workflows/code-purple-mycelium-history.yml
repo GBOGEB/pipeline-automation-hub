@@ -156,14 +156,14 @@ jobs:
       - name: Checkout exact additive W10 head
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
       - name: Native W10 adversarial metadata and permission-denial contracts
         env:
-          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
@@ -190,8 +190,8 @@ jobs:
       - name: Read native check runs and annotation severity or explicit UNKNOWN
         if: matrix.python == '3.12'
         env:
-          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}}
-          GITHUB_TOKEN: ${{ github.token }}}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           SRC=mission-control/gogreen/mycelium_history
@@ -240,7 +240,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: mycelium-annotated-green-w10-py${{ matrix.python }}-${{ github.event.pull_request.head.sha || github.sha }}}
+          name: mycelium-annotated-green-w10-py${{ matrix.python }}-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             dist/w10/
             w10-checks-tests.log
