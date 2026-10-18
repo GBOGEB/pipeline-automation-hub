@@ -194,6 +194,7 @@ jobs:
           python mission-control/federation-atlas/cpq_browser_check.py \
             --atlas /tmp/code-purple-atlas/code-purple.html \
             --cpq /tmp/code-purple-atlas/cpq-n5.html \
+            --report /tmp/code-purple-atlas/cpq-n5.json \
             --out /tmp/code-purple-atlas/cpq-browser
           test -s /tmp/code-purple-atlas/cpq-browser/browser_receipt.json
       - name: Build CODE-HEALTH Central with exact-checkout and fail-closed corpus
