@@ -158,7 +158,7 @@ class SprintPreflightTests(unittest.TestCase):
     def test_ps1_does_not_hide_network_work(self):
         script=(SPRINT/"Start-JadeSprint.ps1").read_text()
         for token in ("$FreshClone","$InstallOptionalDependencies","$Offline",
-                      "$ExpectedHead","$NoCache","git clone","python.exe"):
+                      "$ExpectedHead","$NoCache","git -c core.autocrlf=false clone","python.exe"):
             self.assertIn(token,script)
     def test_pinned_optional_dependencies(self):
         txt=(SPRINT/"requirements-optional.txt").read_text()
