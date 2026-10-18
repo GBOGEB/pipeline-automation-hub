@@ -1,0 +1,42 @@
+{
+  "authority_transfer": false,
+  "cohort": "N11_MISSION_SELECTED_TOP21",
+  "controlled_ids": [
+    "J01",
+    "J02",
+    "J03",
+    "J04",
+    "J05",
+    "J06",
+    "J07",
+    "J08"
+  ],
+  "evidence_level": "LOCAL_REPRODUCIBILITY",
+  "hosted_eightpoint_sha": null,
+  "merge_admission": "HOLD",
+  "parent_pr_733_head": "ccc016bf463275b463c68641382d1dc4783f837e",
+  "public_files_sha256": {
+    "eightpoint-data.js": "d9f5a3980babbfc12efc94ddffbe2e01c2616b66b92ef1c4b3f454e37dea0e34",
+    "eightpoint.css": "3a227dcf6d58eff2f6ebb64b3f8fa00724f7839038b2117608ee12c6dd3bc001",
+    "eightpoint.csv": "2258930bd153928754cf15821d1ee1307cd7743128c3d8d1827ff690228eb966",
+    "eightpoint.html": "7a750795a33e7dcaecf009c870b9dec70d7816de4b969d1084c66b9544b16e43",
+    "eightpoint.js": "f432da7a72b0213718e12d6719f4a22c38716aabf4d3eaeb7447a8342ebefedf",
+    "eightpoint.json": "8de7e4eb04711a271e7e893ce1a46ee3db93360663880b21363637d5c281188c"
+  },
+  "publisher": "EXISTING_METHOD_ATLAS_PAGES_ONLY",
+  "replay_command": "python mission-control/jade_temple/site/build_eightpoint.py --check",
+  "repo_count": 21,
+  "schema": "jade.temple.eightpoint_manifest.v3",
+  "security_waiver": false,
+  "source_files_sha256": {
+    "data/CAPABILITY_LEDGER_NPLUS3.json": "8169f0552f8f7871a56fe6cb46b9f0250c02b46a5e9473c00ac38a5f72cdc3ab",
+    "data/COHORT_CROSSWALK_NPLUS1.json": "8e22c5963cc165b2ec8e83383a7469aebd177335eaddca8043b1692bf10e2cbc",
+    "data/EIGHT_POINT_AUDIT_NPLUS3.json": "39f2b7a5d7b067f7dd432db5294f7be1abaa0affc959ee06315fff91cf6af6f7",
+    "data/HEAD_RECENSUS_NPLUS3.json": "365ea2429b647c23758ce32b9c025bce4ad53a19aa8d498c9389f853b21a7f51",
+    "data/READBACK_NPLUS2.json": "9a965253720d608f9922cfbf2c17f0338fcee6586aaa71d11a5ca8c82607523f",
+    "site/eightpoint_template.html": "7a750795a33e7dcaecf009c870b9dec70d7816de4b969d1084c66b9544b16e43",
+    "tools/eight_point_contract.py": "41f532b6bdf10cd01f866fe1f5061570601e1a6d92e9aeaa2e9aa247b53470e2"
+  },
+  "source_semantic_sha256": "825037289dd4032ef54a2259c97c48baa7d67c7139b3fd565f5ebaea048a4b24",
+  "static_population": 6
+}

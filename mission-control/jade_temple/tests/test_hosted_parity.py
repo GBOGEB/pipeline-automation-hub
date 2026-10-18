@@ -49,7 +49,7 @@ class HostedTests(unittest.TestCase):
   from unittest.mock import patch
   with tempfile.TemporaryDirectory() as t:
    out=self.fixture(t);target=Path(t)/'receipt.json'
-   with patch.object(hosted,'verify',return_value={'schema':'jade.temple.hosted_parity.v2','head':SHA,'members_verified':16,'status':'PASS','observations':[{},{}]}),patch.object(sys,'argv',['hosted_parity.py','--expected-dir',str(out),'--base-url',URL,'--head',SHA,'--receipt',str(target)]):
+   with patch.object(hosted,'verify',return_value={'schema':'jade.temple.hosted_parity.v2','head':SHA,'members_verified':23,'status':'PASS','observations':[{},{}]}),patch.object(sys,'argv',['hosted_parity.py','--expected-dir',str(out),'--base-url',URL,'--head',SHA,'--receipt',str(target)]):
     hosted.main()
    self.assertTrue(target.is_file())
  def test_missing_static_asset_denied_before_hosted_get(self):
@@ -61,9 +61,9 @@ class HostedTests(unittest.TestCase):
    out=self.fixture(t);calls=[]
    def fetch(url,rel):calls.append(rel);return (out/rel).read_bytes()
    r=hosted.verify(out,URL,SHA,repeat=2,attempts=1,wait=0,fetcher=fetch)
-   self.assertEqual(r['members_verified'],16)
+   self.assertEqual(r['members_verified'],23)
    self.assertEqual(len(r['observations']),2)
-   self.assertEqual(len(calls),32)
+   self.assertEqual(len(calls),46)
    self.assertEqual(r['merge_admission'],'HOLD')
    self.assertIsNone(r['engineering_acceptance'])
  def test_mutated_hosted_asset_fails(self):
@@ -108,6 +108,18 @@ class HostedTests(unittest.TestCase):
    out=self.fixture(t);p=out/'jade/burndown-manifest.json';m=json.loads(p.read_text());m['hosted_sha']=SHA;p.write_text(json.dumps(m))
    top=out/'site-manifest.json';d=json.loads(top.read_text());d['public_files_sha256']['jade/burndown-manifest.json']=hosted.digest(p.read_bytes());top.write_text(json.dumps(d))
    with self.assertRaisesRegex(ValueError,'JADE_BURNDOWN_UNSAFE_CLAIM'):hosted.trusted_files(out,SHA)
+ def test_eightpoint_fake_hosted_claim_rejected(self):
+  with tempfile.TemporaryDirectory() as t:
+   out=self.fixture(t);p=out/'jade/eightpoint-manifest.json';m=json.loads(p.read_text());m['hosted_eightpoint_sha']=SHA;p.write_text(json.dumps(m))
+   top=out/'site-manifest.json';d=json.loads(top.read_text());d['public_files_sha256']['jade/eightpoint-manifest.json']=hosted.digest(p.read_bytes());top.write_text(json.dumps(d))
+   with self.assertRaisesRegex(ValueError,'JADE_EIGHT_UNSAFE_HOSTED_CLAIM'):hosted.trusted_files(out,SHA)
+ def test_eightpoint_asset_corruption_rejected(self):
+  with tempfile.TemporaryDirectory() as t:
+   out=self.fixture(t)
+   def served(url,rel):
+    return b'poison' if rel=='jade/eightpoint.js' else (out/rel).read_bytes()
+   with self.assertRaisesRegex(ValueError,'JADE_HOSTED_SHA_MISMATCH'):
+    hosted.verify(out,URL,SHA,repeat=2,attempts=1,wait=0,fetcher=served)
  def test_bounded_repeat_policy(self):
   with tempfile.TemporaryDirectory() as t:
    out=self.fixture(t)

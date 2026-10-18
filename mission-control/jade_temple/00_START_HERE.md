@@ -1,3 +1,5 @@
+**N+3 strict eight-point project entry:** [eight-point MIP dashboard](site/eightpoint.html) · [all eight MIP decisions](notes/EIGHT_POINT_MIP_DOV.md) · [Top21 owner queue](notes/TOP21_TECHNICAL_QUEUE_NPLUS3.md). Exact 21-repo readback changed heads=4, owner-qualified closures=0, current release admission=HOLD.
+
 # JADE_TEMPLE — Start here
 
 **Project:** JADE_TEMPLE (ChatGPT project/workspace)  
