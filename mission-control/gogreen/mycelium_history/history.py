@@ -32,6 +32,11 @@ FAMILIES = {
     "mycelium": ("🧬", "MYCELIUM"), "code purple": ("🟣", "CODE_PURPLE"),
     "everred": ("🔴", "EVERRED"), "gogreen": ("🟢", "GOGREEN"),
     "spine": ("🕸️", "SPINE"), "go green": ("🟢", "GOGREEN"),
+    "ci": ("⚙️", "CI"), "security": ("🛡️", "SECURITY"),
+    "coverage": ("📈", "COVERAGE"), "mip": ("📊", "MIP"),
+    "dmaic": ("📊", "DMAIC"), "ldab": ("🧭", "LDAB"),
+    "lldb": ("🪲", "LLDB"), "dependabot": ("📦", "DEPENDENCY"),
+    "swift": ("🕊️", "SWIFT"),
     "w003": ("🛡️", "GOVERNANCE"), "governance": ("🛡️", "GOVERNANCE"),
     "qps": ("❄️", "QPS"), "gg_math": ("∑", "GG_MATH"),
 }
@@ -225,7 +230,7 @@ def bins(runs, *, limit=21):
     return data
 
 
-def compare_pr(pr, runs):
+def compare_pr(pr, runs, selected_job_details=None):
     merge_time = utc(pr["merged_at"])
     matched = [
         r for r in runs if r["head_sha"] in
@@ -233,9 +238,29 @@ def compare_pr(pr, runs):
         r["status"] == "completed"
     ]
     pre, post = [], []
+    native_fail_before, native_fail_after = 0, 0
+    native_timed_jobs = 0
+    selected_job_run_ids = []
+    detail = selected_job_details if isinstance(selected_job_details, dict) else {}
     for r in matched:
+        # Weak observation, retained distinctly from actual job completion.
         stamp = utc(r.get("updated_at") or r["created_at"])
         (pre if stamp <= merge_time else post).append(r)
+        jobs = detail.get(str(r["id"]))
+        if not jobs or jobs.get("jobs_complete") is not True:
+            continue
+        selected_job_run_ids.append(r["id"])
+        for job in jobs["jobs"]:
+            end = job.get("completed_at")
+            if end is None:
+                continue
+            job_end = utc(end)
+            native_timed_jobs += 1
+            if job.get("conclusion") in {"failure", "timed_out", "action_required"}:
+                if job_end <= merge_time:
+                    native_fail_before += 1
+                else:
+                    native_fail_after += 1
     return {
         "number": pr["number"], "title": norm_title(pr.get("title", "")),
         "url": pr["url"], "head_sha": pr["head_sha"],
@@ -246,6 +271,12 @@ def compare_pr(pr, runs):
                                 {"failure", "timed_out", "action_required"} for x in pre),
         "red_after_merge": sum(x["conclusion"] in
                                {"failure", "timed_out", "action_required"} for x in post),
+        "run_timing_basis": "RUN_UPDATED_AT_PROXY_NOT_CHECK_COMPLETION",
+        "selected_native_job_run_ids": selected_job_run_ids,
+        "native_jobs_with_completion_timestamps": native_timed_jobs,
+        "native_failed_jobs_completed_before_merge": native_fail_before,
+        "native_failed_jobs_completed_after_merge": native_fail_after,
+        "native_job_timing_complete_for_all_runs": False,
         "successful_pre_merge": sum(x["conclusion"] == "success" for x in pre),
         "successful_post_merge": sum(x["conclusion"] == "success" for x in post),
         "complete_required_checks": None,
@@ -284,7 +315,7 @@ def summarize(data):
     for rec in fingerprints.values():
         rec["distinct_run_ids"] = sorted(set(rec["distinct_run_ids"]))
     daily = bins(runs)
-    sample = [compare_pr(pr, runs) for pr in data["merged_pr_sample"]]
+    sample = [compare_pr(pr, runs, data["selected_job_details"]) for pr in data["merged_pr_sample"]]
     terminal_count = sum(outcomes[x] for x in TERMINAL)
     first_red_occurrences = len(episodes)
     merged_red = [pr for pr in sample
@@ -353,6 +384,11 @@ def summarize(data):
             "with_observed_native_red": len(merged_red),
             "red_before_merge": sum(bool(x["red_before_merge"]) for x in sample),
             "red_after_merge": sum(bool(x["red_after_merge"]) for x in sample),
+            "sampled_native_failed_job_before_merge": sum(
+                x["native_failed_jobs_completed_before_merge"] for x in sample),
+            "sampled_native_failed_job_after_merge": sum(
+                x["native_failed_jobs_completed_after_merge"] for x in sample),
+            "native_job_timing_not_a_required_status_census": True,
             "prs": sample,
             "no_admission_inference": True,
         },
@@ -519,6 +555,10 @@ def html_page(report, graph):
                    (' / ' + html.escape(icon["wave"]) if icon["wave"] else '') +
                    '</td><td class="number">' + str(item["red_before_merge"]) +
                    '</td><td class="number">' + str(item["red_after_merge"]) +
+                   '</td><td class="number">' +
+                   str(item["native_failed_jobs_completed_before_merge"]) +
+                   '</td><td class="number">' +
+                   str(item["native_failed_jobs_completed_after_merge"]) +
                    '</td><td>' + status + '</td></tr>')
     svg = mini_chart(report)
     return (
@@ -583,10 +623,15 @@ def html_page(report, graph):
         '</table></div></section>'
         '<section><h2>GoGREEN · merged outcomes with unqualified red</h2>'
         '<div class="wide"><table><tr><th>PR</th><th>Type / scope / wave</th>'
-        '<th>Before</th><th>After</th><th>Observation</th></tr>' +
+        '<th>Run proxy before</th><th>Run proxy after</th>'
+        '<th>Native failed jobs before*</th><th>Native failed jobs after*</th>'
+        '<th>Observation</th></tr>' +
         ''.join(prs) + '</table></div>'
         '<p class="muted">Recent PR selection, not lifetime merge denominator. '
-        'Checking the merged commit on main is a separate proof obligation.</p>'
+        'Run columns use updated_at and remain weak proxies. *Native-job columns '
+        'count only timestamped failures in the selected job-detail cohort '
+        '(unknown jobs are not zero). Neither view establishes required-status '
+        'or independent-review admission. Checking merged main is separate.</p>'
         '</section></div><p class="muted">Native source: ' +
         html.escape(report["producer"]) + '. Captured ' +
         html.escape(report["capture_at"]) +
