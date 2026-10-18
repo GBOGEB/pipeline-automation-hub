@@ -87,5 +87,6 @@ const fs=document.getElementById('flight-stages');stages.forEach(([step,desc])=>
 const glossary=m.glossary.terms.map(x=>[x.term,x.definition]);
 const terms=document.getElementById('terms');glossary.forEach(([a,b])=>{const p=add(terms,'div',undefined,'term');add(p,'strong',a);add(p,'span',b)});
 document.getElementById('snapshot-head').textContent=m.publication.presentation_head.slice(0,12)+'…';
+window.SuperstitchBridge={selectNode,showAll,applyFilters,resetEmphasis,focusNode};
 showAll();
 })();

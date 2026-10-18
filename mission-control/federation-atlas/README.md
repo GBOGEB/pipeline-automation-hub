@@ -1,5 +1,21 @@
 # CODE PURPLE Federation Method Atlas (v0.1)
 
+## W35 · granular purple lasso DAG, Mermaid, SIPOC and SPLINE (19 October 2026)
+
+W35 is an ADDITIVE source-owned enhancement to the existing Method Atlas publisher. It is not a new scheduler, QPS engineering SSOT, authenticated federation producer or GitHub action launcher.
+
+The user-facing Superstitch now has ten selectable purple bounded groups: six owner DAG lanes and four overlapping cross-DAG groups (federation, Golden Thread, canonical alias Mycelium and bounded first-red feedback). Node aliases retain their stable canonical IDs. Freehand/rectangle lasso creates a TEMPORARY local visual selection only. Clicking a group shows the source-bound node hierarchy, child DAG and typed internal/dependency/touch edges; clicking a nested node opens its source/provenance inspector.
+
+The synchronized views are: (1) bounded child SVG, (2) five clickable SIPOC source/process swimlanes, (3) typed trigger/dependency/federation DAG with declared/non-native edges, (4) historical SPLINE with N+1 UNKNOWN, never a fabricated upward trend, and (5) editable Mermaid source. The code generators use source groups in SUPERSTITCH_GROUPS_W35.json and stitch_views.py. Machine-readable outputs include superstitch.mmd, sipoc-lanes.mmd, trigger-dag.mmd, sipoc-lanes.svg and trigger-dag.svg.
+
+PURPLE BURNDOWN RULE: show only one eligible denominator per source population. MC #531 historical breadth = 6/42; authenticated CODEX→QPS pair = 0/1; gg_MATH W33 single-module statements = 172/172 and branches = 84/84; three repeated identity mappings = TOPOLOGY_ONLY, not evidence. All other group completion is UNKNOWN, not 0%. Worker-hours, M2/M3, PCA/BT and QPS owner acceptance cannot be inferred from UI composition.
+
+The source-rendered review package consists of 16 SHA-256+byte-verified members plus manifest, atomically added to the existing Pages site. The local/homed TESTFLIGHT records actual 26+ source tests and all package members. Native PR browser QA checks ten group selectors, clickable SIPOC, typed trigger view, editable Mermaid, spline UNKNOWN, freeform lasso, canonical nested nodes, 1440/1280/390 viewports, zero console errors and zero document overflow. This is visual/local evidence, not branch-governance acceptance.
+
+HOME invocation: python mission-control/federation-atlas/superstitch/testflight.py --mode home --browser --out /tmp/w35-home
+
+Predecessor #735 merged while its Zero-Test Gate was RED. W35 must have an independent draft PR, exact-head native artifacts, security, effective protection and eligible review before any admission. Canonical #530 ZIP verifier, #531 six-repository census and #533 Method Atlas viewer remain unchanged. MERGE_ADMISSION=HOLD.
+
 ## W34 Superstitch — DOW → KEB → QPS digital-twin review (19 October 2026)
 
 The existing Method Atlas workflow remains the **only** public GitHub Pages publisher. The additive /superstitch/index.html is a read-only, uncropped six-lane DOW/KEB/QPS/Mission-Control/gg_MATH/TESTFLIGHT view, not a source-of-truth replacement or a QPS engineering acceptance path.
