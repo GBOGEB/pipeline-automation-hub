@@ -469,6 +469,109 @@ def mini_chart(report):
             ''.join(grid + bars) + '</svg>\n')
 
 
+def bd_projection(data, source_bytes):
+    """Consume canonical CPQ register without creating or closing BD atoms."""
+    require(isinstance(data, dict) and
+            data.get("schema") == "missioncontrol.code_purple.bd_queue.v1" and
+            data.get("owner") ==
+            "GBOGEB/pipeline-automation-hub:mission-control/federation-atlas" and
+            data.get("authority_transfer") is False and
+            data.get("formal_credit_delta") == 0 and
+            data.get("engineering_credit_delta") == 0,
+            "canonical BD owner/provenance")
+    raw = data.get("items")
+    require(isinstance(raw, list) and len(raw) >= 19, "BD historical floor")
+    lifecycle, flows = set(data.get("lifecycle", [])), set(data.get("flows", []))
+    require({"TODO", "ACTIVE", "DONE", "CONTROL", "UNKNOWN_NEEDS_READER"} <= lifecycle
+            and {"HOLD", "RETURN_OWNER", "IN_PR", "LINKED"} <= flows,
+            "BD lifecycle contract")
+    entries, ids = [], set()
+    for item in raw:
+        ident = item.get("id")
+        require(isinstance(ident, str) and re.fullmatch(r"CPQ-[0-9]{3}", ident)
+                and ident not in ids, "invalid duplicate CPQ identity")
+        ids.add(ident)
+        history = item.get("history")
+        require(isinstance(history, list) and history, "BD history required")
+        latest = history[-1]
+        state, flow = latest.get("state"), latest.get("flow")
+        require(state in lifecycle and flow in flows, "BD state/flow contract")
+        deps = item.get("depends_on")
+        require(isinstance(deps, list) and
+                all(isinstance(d, str) and re.fullmatch(r"CPQ-[0-9]{3}", d)
+                    for d in deps), "typed BD dependency")
+        links = item.get("links")
+        require(isinstance(links, list) and
+                all(isinstance(link, str) and
+                    link.startswith("https://github.com/GBOGEB/") and
+                    len(link) <= 2048 for link in links),
+                "external BD link not permitted")
+        require(item.get("severity") in ("P0","P1","P2","P3")
+                and isinstance(item.get("title"), str) and item["title"]
+                and type(item.get("critical_path")) is bool,
+                "BD title / priority")
+        entries.append({
+            "id": ident, "title": item["title"], "severity": item["severity"],
+            "state": state, "flow": flow, "critical_path": item["critical_path"],
+            "history_ordinal": latest.get("at"), "dependencies": deps,
+            "links": links,
+        })
+    for item in entries:
+        require(all(dep in ids and dep != item["id"]
+                    for dep in item["dependencies"]), "orphan BD dependency")
+    counts = dict(sorted(Counter(row["state"] for row in entries).items()))
+    total_open = sum(row["state"] in data["open_states"] for row in entries)
+    raw_sha = hashlib.sha256(source_bytes).hexdigest()
+    git_blob = hashlib.sha1(b"blob " + str(len(source_bytes)).encode("ascii") +
+                             b"\0" + source_bytes).hexdigest()
+    return {
+        "schema": "missioncontrol.mycelium.canonical_bd_projection.v1",
+        "source_path": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+        "source_sha256": raw_sha, "source_git_blob_sha": git_blob,
+        "owner": data["owner"], "kind": "READ_ONLY_SAME_REPO_BD_PROJECTION",
+        "total": len(entries), "open_work_items": total_open,
+        "state_counts": counts,
+        "open_eligible": len(entries),
+        "causal_root_ids_verified": [],
+        "accepted_formal_root_closures": 0,
+        "state_delta_since_previous_pulse": None,
+        "items": entries,
+        "dependency_edges": [
+            {"from": dependency, "to": item["id"], "type": "DECLARED_BD_DEPENDENCY"}
+            for item in entries for dependency in item["dependencies"]
+        ],
+        "owner_admission": "HOLD", "authority_transfer": False,
+    }
+
+
+def bd_html(overlay):
+    rows = []
+    for item in overlay["items"]:
+        link = ('<a href="' + html.escape(item["links"][0], quote=True) +
+                '">source ↗</a>') if item["links"] else "SOURCE_LINK_UNKNOWN"
+        rows.append(
+            '<tr><td><strong>' + html.escape(item["id"]) +
+            '</strong></td><td>' + html.escape(item["title"]) +
+            '</td><td>' + html.escape(item["severity"]) +
+            '</td><td>' + html.escape(item["state"]) +
+            '</td><td>' + html.escape(item["flow"]) +
+            '</td><td>' + html.escape(", ".join(item["dependencies"]) or "—") +
+            '</td><td>' + link + '</td></tr>'
+        )
+    return (
+        '<section><h2>📋 Canonical CODE PURPLE BD queue · source-bound</h2>'
+        '<p><strong>' + str(overlay["total"]) + '</strong> work items · ' +
+        str(overlay["open_work_items"]) + ' open/reader items · states ' +
+        html.escape(json.dumps(overlay["state_counts"], sort_keys=True)) +
+        '. Status is the last canonical history entry. DONE work items are '
+        'not formal causal-root closures. State deltas vs a prior pinned BD '
+        'snapshot: UNKNOWN.</p><div class="wide"><table><tr>'
+        '<th>ID</th><th>Owner-owned BD finding</th><th>Priority</th>'
+        '<th>State</th><th>Flow</th><th>Dependencies</th><th>Proof link</th>'
+        '</tr>' + ''.join(rows) + '</table></div></section>'
+    )
+
+
 def lineage_dag(report):
     return {
         "schema": "missioncontrol.mycelium.history_spine.v1",
@@ -513,7 +616,7 @@ def mermaid(dag):
     return "\n".join(lines) + "\n"
 
 
-def html_page(report, graph):
+def html_page(report, graph, bd=None):
     pop = report["run_population"]
     summary = [
         ("Runs observed", str(pop["observed"]) + "/" +
@@ -632,7 +735,8 @@ def html_page(report, graph):
         'count only timestamped failures in the selected job-detail cohort '
         '(unknown jobs are not zero). Neither view establishes required-status '
         'or independent-review admission. Checking merged main is separate.</p>'
-        '</section></div><p class="muted">Native source: ' +
+        '</section></div>' + (bd_html(bd) if bd is not None else '') +
+        '<p class="muted">Native source: ' +
         html.escape(report["producer"]) + '. Captured ' +
         html.escape(report["capture_at"]) +
         '. Actions artifact preview only; no Pages publication or owner authority.</p>'
@@ -660,14 +764,27 @@ def build(source, source_sha, out, *, check=False):
     require(isinstance(source_sha, str) and SHA.fullmatch(source_sha),
             "renderer source SHA required")
     report = summarize(source)
+    # Same checkout and owner path: never mirror BD statuses into another SSOT.
+    canonical_path = (Path(__file__).resolve().parents[2] /
+                      "federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json")
+    require(canonical_path.is_file(), "canonical BD source unavailable")
+    bd_raw = canonical_path.read_bytes()
+    bd = bd_projection(json.loads(bd_raw), bd_raw)
+    report["canonical_bd_status"] = {
+        "items": bd["total"], "open_work_items": bd["open_work_items"],
+        "state_counts": bd["state_counts"],
+        "accepted_root_closures": 0, "historical_delta": None,
+        "canonical_git_blob": bd["source_git_blob_sha"],
+    }
     graph = lineage_dag(report)
     files = {
         "metrics.json": canonical(report),
+        "bd_queue.json": canonical(bd),
         "spine.json": canonical(graph),
         "spine.mmd": mermaid(graph).encode("utf-8"),
         "burndown.svg": mini_chart(report).encode("utf-8"),
         "plotly.json": canonical(plotly_payload(report)),
-        "index.html": html_page(report, graph).encode("utf-8"),
+        "index.html": html_page(report, graph, bd).encode("utf-8"),
     }
     manifest = {
         "schema": "missioncontrol.mycelium.history_preview.v1",
