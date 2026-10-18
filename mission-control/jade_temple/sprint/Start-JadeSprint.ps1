@@ -90,12 +90,17 @@ if (-not (Test-Path $pythonExe)) {
   $pythonExe=Join-Path $venv "bin/python"
 }
 if (-not (Test-Path $pythonExe)) {
-  if (Get-Command py -ErrorAction SilentlyContinue) {
+  $preferPython=$false
+  if (Get-Command python -ErrorAction SilentlyContinue) {
+    $probe=(& python -c "import sys;print(1 if sys.version_info >= (3,11) else 0)" 2>$null | Out-String).Trim()
+    if ($LASTEXITCODE -eq 0 -and $probe -eq "1") { $preferPython=$true }
+  }
+  if ($preferPython) {
+    & python -m venv $venv
+    Assert-Exit "Create venv with explicitly qualified active Python"
+  } elseif (Get-Command py -ErrorAction SilentlyContinue) {
     & py -3.11 -m venv $venv
     Assert-Exit "Create Python 3.11 environment"
-  } elseif (Get-Command python -ErrorAction SilentlyContinue) {
-    & python -m venv $venv
-    Assert-Exit "Create Python environment"
   } else {
     throw "Install Python 3.11+ or Windows py launcher before starting"
   }
