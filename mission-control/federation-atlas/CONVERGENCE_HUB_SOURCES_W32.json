@@ -1,0 +1,548 @@
+{
+  "schema": "codepurple.convergence_hub.sources.v1",
+  "snapshot_id": "W32-N-20261018-2217-CEST",
+  "snapshot_date": "2026-10-18",
+  "evidence_class": "FROZEN_PRIOR_NATIVE_REPORT_PLUS_GITHUB_CONNECTOR_READBACK",
+  "authority": {
+    "publisher": "EXISTING_METHOD_ATLAS_PAGES_ONLY",
+    "zip_verifier_pr": 530,
+    "six_repo_census_pr": 531,
+    "method_viewer_pr": 533,
+    "merge_admission": "HOLD",
+    "authority_transfer": false,
+    "security_waiver": false,
+    "qps_owner_acceptance": null,
+    "formal_root_closures": null
+  },
+  "populations": {
+    "canonical_federation": {
+      "observed": 6,
+      "eligible": 42,
+      "unobserved": 36,
+      "observation_class": "HISTORICAL_G4_SIX_REPO_CENSUS",
+      "canonical_source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/531",
+      "fresh_readback_qualified": false
+    },
+    "w31_run_identity": {
+      "observed": 124,
+      "reported": 157,
+      "unknown_tail": 33,
+      "observation_class": "TWO_REPO_FROZEN_RUN_CENSUS_NOT_SIX_REPO_COVERAGE"
+    },
+    "native_federation_authenticated_edges": {
+      "observed": 0,
+      "required": 1,
+      "scope": "CODEX_W30_TO_QPS_W30",
+      "credit": false
+    }
+  },
+  "readiness": {
+    "M1": "PARTIAL",
+    "M2": "HOLD",
+    "M3": "HOLD",
+    "PCA": "NOT_FEDERATION_QUALIFIED",
+    "BT": "NOT_FEDERATION_QUALIFIED",
+    "worker_hours": null,
+    "usable_worker_capacity": null,
+    "source_bound_proof_coverage_global": null
+  },
+  "families": [
+    {
+      "id": "governance",
+      "title": "Governance and ZIP integrity",
+      "purpose": "Evidence acceptance, independent review, byte lineage",
+      "owner": "Mission Control / #530",
+      "gate": "HOLD"
+    },
+    {
+      "id": "coverage",
+      "title": "Coverage and negative pressure",
+      "purpose": "Statements, branches, fault-injection and disjoint uncovered slices",
+      "owner": "ABACUS, gg_MATH source owners",
+      "gate": "SCOPE_MATCH_REQUIRED"
+    },
+    {
+      "id": "federation",
+      "title": "Federation and six-repo census",
+      "purpose": "Distinct eligibility, authenticated producer/consumer hops",
+      "owner": "Mission Control #531; CODEX → QPS",
+      "gate": "DEFER"
+    },
+    {
+      "id": "runners",
+      "title": "Concurrency, telemetry and causal roots",
+      "purpose": "Exact-head job/attempt identity, root recurrence and capacity",
+      "owner": "CODEX / MYCELIUM",
+      "gate": "HOLD"
+    },
+    {
+      "id": "math",
+      "title": "MIP statistical capability",
+      "purpose": "M1/M2/M3, PCA, Bradley–Terry and rolling N+2",
+      "owner": "gg_MATH statistical provider",
+      "gate": "NOT_QUALIFIED"
+    },
+    {
+      "id": "lineage",
+      "title": "Golden Thread and lossless session",
+      "purpose": "CP.CLOSE → CP.HANDOFF → CP.RESUME; no orphan actions",
+      "owner": "Mission Control",
+      "gate": "CONTINUITY_ONLY"
+    }
+  ],
+  "events": [
+    {
+      "id": "MC533",
+      "family": "governance",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 533,
+      "head": "bf9383bc39bedf645175184049bdb2013379041d",
+      "run": 38719705691,
+      "attempt": 1,
+      "jobs": [
+        116370959125
+      ],
+      "status": "TERMINAL_SUCCESS",
+      "tests": {
+        "executed": 74,
+        "passed": 74,
+        "failed": 0,
+        "skipped": 0
+      },
+      "artifact": {
+        "id": 11964700323,
+        "zip_bytes": 73965,
+        "member_bytes": null,
+        "crc_members": 15,
+        "members": 15,
+        "verification": "REPORTED_DOWNLOADED_CRC_AND_MEMBER_HASH"
+      },
+      "observations": "16 lane-process tests and Code Purple series W1.C1.I2.S0 PASS; viewer only",
+      "immutable": true
+    },
+    {
+      "id": "CODEX-W31-CENSUS",
+      "family": "runners",
+      "repo": "GBOGEB/CODEX",
+      "pr": 1106,
+      "head": "cf3dc23f1158cfbd1638e853fee90b78ac234152",
+      "run": 39161146097,
+      "attempt": 1,
+      "jobs": [
+        117774546821
+      ],
+      "status": "TERMINAL_SUCCESS",
+      "tests": {
+        "executed": 14,
+        "passed": 14,
+        "failed": 0,
+        "skipped": 0
+      },
+      "artifact": {
+        "id": 12149260823,
+        "zip_bytes": 1528,
+        "member_bytes": 2709,
+        "crc_members": 2,
+        "members": 2,
+        "verification": "REPORTED_DOWNLOADED_MEMBER_HASH_VALIDATED"
+      },
+      "observations": "124/157 two-repo frozen run IDs, 33 unknown tail; proposal one new lane",
+      "immutable": true
+    },
+    {
+      "id": "CODEX-W31-FIVEAXIS",
+      "family": "runners",
+      "repo": "GBOGEB/CODEX",
+      "pr": 1106,
+      "head": "cf3dc23f1158cfbd1638e853fee90b78ac234152",
+      "run": 39161146003,
+      "attempt": 1,
+      "jobs": [
+        117774546216,
+        117774546227,
+        117774546252,
+        117774546263
+      ],
+      "status": "TERMINAL_SUCCESS",
+      "tests": {
+        "executed": 48,
+        "passed": 48,
+        "failed": 0,
+        "skipped": 0
+      },
+      "artifact": {
+        "id": null,
+        "zip_bytes": null,
+        "member_bytes": 63524,
+        "crc_members": 16,
+        "members": 16,
+        "verification": "FOUR_REPORTED_VALIDATED_CELL_ZIPS; EACH_4874_BYTES"
+      },
+      "observations": "12 cases × four cells; one family, not 48 distinct tests",
+      "immutable": true
+    },
+    {
+      "id": "CODEX-DEPENDENCY",
+      "family": "federation",
+      "repo": "GBOGEB/CODEX",
+      "pr": 1106,
+      "head": "cf3dc23f1158cfbd1638e853fee90b78ac234152",
+      "run": 39161146052,
+      "attempt": null,
+      "jobs": [
+        117774546887
+      ],
+      "status": "TERMINAL_SUCCESS",
+      "tests": {
+        "executed": 11,
+        "passed": 11,
+        "failed": 0,
+        "skipped": 0
+      },
+      "artifact": {
+        "id": 12149090729,
+        "zip_bytes": 7148,
+        "member_bytes": null,
+        "crc_members": null,
+        "members": null,
+        "verification": "UPLOADED_ONLY_MEMBER_VALIDATION_UNKNOWN"
+      },
+      "observations": "Native source-local dependency census; not six-repo coverage",
+      "immutable": true
+    },
+    {
+      "id": "QPS-W30",
+      "family": "federation",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 1961,
+      "head": "0c52dbd67a8e7648b899373d817ed78e58bcfc2f",
+      "run": 39158769270,
+      "attempt": 1,
+      "jobs": [
+        117767413687,
+        117767413931
+      ],
+      "status": "TERMINAL_SUCCESS",
+      "tests": {
+        "executed": 30,
+        "passed": 30,
+        "failed": 0,
+        "skipped": 0
+      },
+      "artifact": {
+        "id": null,
+        "zip_bytes": 1800,
+        "member_bytes": null,
+        "crc_members": 4,
+        "members": 4,
+        "verification": "TWO_REPORTED_900_BYTE_ZIPS"
+      },
+      "observations": "Two 15-test cells; consumer reports DEFER_NO_CODEX_W30_BUNDLE; authenticated hops 0",
+      "immutable": true
+    },
+    {
+      "id": "MATH-W13-PAIR",
+      "family": "coverage",
+      "repo": "GBOGEB/gg_MATH",
+      "pr": 68,
+      "head": "0a424aa806d3091a2398182be55f1d26f64e06cb",
+      "run": 39157776159,
+      "attempt": null,
+      "jobs": [
+        117764474740,
+        117764475034
+      ],
+      "status": "TERMINAL_SUCCESS",
+      "tests": {
+        "executed": 154,
+        "passed": 154,
+        "failed": 0,
+        "skipped": 0
+      },
+      "artifact": {
+        "id": null,
+        "zip_bytes": 10662,
+        "member_bytes": 69272,
+        "crc_members": 6,
+        "members": 6,
+        "verification": "TWO_REPORTED_VALIDATED_5331_BYTE_ZIPS"
+      },
+      "observations": "77 W13 tests on 2 Python cells, scope same W13 module",
+      "immutable": true,
+      "coverage": {
+        "label": "gg_MATH W13 scoped",
+        "scope_key": "MATH-W13-SCOPED",
+        "statements": {
+          "covered": 253,
+          "total": 274
+        },
+        "branches": {
+          "covered": 125,
+          "total": 146
+        }
+      }
+    },
+    {
+      "id": "MATH-W13-RELEASE",
+      "family": "math",
+      "repo": "GBOGEB/gg_MATH",
+      "pr": 68,
+      "head": "0a424aa806d3091a2398182be55f1d26f64e06cb",
+      "run": 39157776111,
+      "attempt": null,
+      "jobs": [
+        117764475028
+      ],
+      "status": "TERMINAL_SUCCESS",
+      "tests": {
+        "executed": 379,
+        "passed": 379,
+        "failed": 0,
+        "skipped": 0
+      },
+      "artifact": {
+        "id": 12148926646,
+        "zip_bytes": 1639340,
+        "member_bytes": 5312074,
+        "crc_members": 34,
+        "members": 34,
+        "verification": "REPORTED_RELEASE_MANIFEST_30_OF_30_HASH_VALIDATED"
+      },
+      "observations": "310 ordinary passing tests +69 subtests; broader release scope",
+      "immutable": true,
+      "coverage": {
+        "label": "gg_MATH #68 release",
+        "scope_key": "MATH-RELEASE-68",
+        "statements": {
+          "covered": 2643,
+          "total": 3469
+        },
+        "branches": {
+          "covered": 856,
+          "total": 1270
+        }
+      }
+    },
+    {
+      "id": "MATH-G3P-RED",
+      "family": "coverage",
+      "repo": "GBOGEB/gg_MATH",
+      "pr": 66,
+      "head": "cd468e98d9967d8f2d3480fd41bf03b3ead502f9",
+      "run": 39151317332,
+      "attempt": 1,
+      "jobs": [
+        117752424127
+      ],
+      "status": "TERMINAL_FAILURE",
+      "tests": {
+        "executed": 12,
+        "passed": 12,
+        "failed": 0,
+        "skipped": 0
+      },
+      "artifact": {
+        "id": 12147355152,
+        "zip_bytes": 3570883,
+        "member_bytes": null,
+        "crc_members": 8,
+        "members": 8,
+        "verification": "REPORTED_DOWNLOADED_CRC_VALID"
+      },
+      "observations": "Browser first-red: six visible cards asserted after observed All reset, nine required; Python tests 12/12",
+      "first_red": "qa_convergence_html.py:53 visible card assertion",
+      "immutable": true
+    },
+    {
+      "id": "MATH-G3P-W32",
+      "family": "coverage",
+      "repo": "GBOGEB/gg_MATH",
+      "pr": 69,
+      "head": "3e6985bc187a7f5b895a8a717718d71a5179021c",
+      "run": 39161390018,
+      "attempt": null,
+      "jobs": [],
+      "status": "NONTERMINAL",
+      "tests": {
+        "executed": null,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      },
+      "artifact": {
+        "id": null,
+        "zip_bytes": null,
+        "member_bytes": null,
+        "crc_members": null,
+        "members": null,
+        "verification": "UNKNOWN"
+      },
+      "observations": "First-red repair committed with 7 negative/positive tests; native G3P latest observation queued, not credited",
+      "immutable": false
+    }
+  ],
+  "roots": [
+    {
+      "fingerprint": "PYTHON_IMPORT_SHARED",
+      "job_manifestations": 4,
+      "distinct_run_attempts": 1,
+      "root_id": null,
+      "owner_disposition": null
+    },
+    {
+      "fingerprint": "COVERAGE_DATA_MISSING",
+      "job_manifestations": 4,
+      "distinct_run_attempts": 1,
+      "root_id": null,
+      "owner_disposition": null
+    },
+    {
+      "fingerprint": "SKIP_REASON_GOVERNED_MARKER",
+      "job_manifestations": 1,
+      "distinct_run_attempts": 1,
+      "root_id": null,
+      "owner_disposition": null
+    }
+  ],
+  "links": [
+    {
+      "from": "MC530",
+      "to": "MC533",
+      "kind": "VERIFICATION_ROLE",
+      "status": "CANONICAL_ROLE_ONLY"
+    },
+    {
+      "from": "MC531",
+      "to": "MC533",
+      "kind": "BREADTH_ROLE",
+      "status": "CANONICAL_ROLE_ONLY"
+    },
+    {
+      "from": "CODEX-W31-CENSUS",
+      "to": "QPS-W30",
+      "kind": "AUTHENTICATED_CONSUMPTION",
+      "status": "NOT_PROVEN"
+    },
+    {
+      "from": "MATH-G3P-RED",
+      "to": "MATH-G3P-W32",
+      "kind": "FIRST_RED_REPAIR",
+      "status": "IMPLEMENTED_RETEST_PENDING"
+    }
+  ],
+  "lineage": [
+    {
+      "id": "CP.W10",
+      "path": "mission-control/v2/handoff/closeout/records/CP-W10-MYCELIUM-FEDERATION-20261018/START_HERE.md",
+      "state": "CANONICAL_9_FILE_LOSSLESS_RECORD",
+      "pr": 726
+    },
+    {
+      "id": "CP.W10-LEDGER",
+      "path": "mission-control/v2/handoff/closeout/records/CP-W10-MYCELIUM-FEDERATION-20261018/INTENT_ACTION_LEDGER.json",
+      "state": "SOURCE_OWNED_INTENTS",
+      "pr": 726
+    },
+    {
+      "id": "GLOBAL.DOV",
+      "path": "mission-control/federation-atlas/flightdeck/GLOBAL_DOV_W4_HANDOFF.json",
+      "state": "READ_ONLY_OWNER_CROSSWALK",
+      "pr": 539
+    },
+    {
+      "id": "MIP.SERIES",
+      "path": "mission-control/federation-atlas/CODE_PURPLE_ITERATION_SERIES_v1.json",
+      "state": "ORDINAL_HISTORY_NOT_CLOCK",
+      "pr": 533
+    }
+  ],
+  "avenues": [
+    {
+      "id": "A",
+      "scope": "LOCAL",
+      "name": "Observed browser fault-injection",
+      "eligible": "Original one first-red + 7 new tests",
+      "next": "Current-head browser run, screenshots, remeasure exact cards",
+      "stop": "0 unresolved browser reds for 2 comparable runs"
+    },
+    {
+      "id": "B",
+      "scope": "REGIONAL",
+      "name": "W75 + W64 disjoint negative coverage",
+      "eligible": "260 historical uncovered of 346 opportunities; remeasure before credit",
+      "next": "Per-module same-scope statements and branches, two disjoint owners",
+      "stop": "3 flat matched deltas below target → pivot"
+    },
+    {
+      "id": "C",
+      "scope": "GLOBAL",
+      "name": "Six-repo missing census atoms",
+      "eligible": "36 historical unobserved of 42 eligible",
+      "next": "Use #531 only, bounded 6-cell family slice, no duplicate census",
+      "stop": "Every selected cell source-bound or declared UNKNOWN"
+    },
+    {
+      "id": "D",
+      "scope": "FEDERATION",
+      "name": "Authenticated CODEX → QPS pairing",
+      "eligible": "0/1 W30 required provenance pair",
+      "next": "Upstream exact SHA/run/attempt/job/ZIP/member hash consumed by QPS",
+      "stop": "1/1 verified independent native consumer or DEFER"
+    },
+    {
+      "id": "E",
+      "scope": "GLOBAL",
+      "name": "Closed PR / issue temporal edge lineage",
+      "eligible": "Counts and completeness UNKNOWN",
+      "next": "Paginated 7/21/90-day intake with supersession edge qualification",
+      "stop": "Stable observed denominator and no orphan unexplained closures"
+    }
+  ],
+  "navigation": [
+    {
+      "label": "Canonical Method Atlas",
+      "href": "../atlas/index.html",
+      "role": "METHOD_VIEW"
+    },
+    {
+      "label": "39-stage SIPOC / lane viewer",
+      "href": "../atlas/lane-process.html",
+      "role": "METHOD_VIEW"
+    },
+    {
+      "label": "Canonical Flight Deck",
+      "href": "../atlas/flightdeck/index.html",
+      "role": "SIX_REPO_CENSUS"
+    },
+    {
+      "label": "Native pulse evidence",
+      "href": "../native-pulse/index.html",
+      "role": "NATIVE_EVIDENCE"
+    },
+    {
+      "label": "Live Lossless CP.RESUME",
+      "href": "../live-lossless/index.html",
+      "role": "GOLDEN_THREAD"
+    },
+    {
+      "label": "G3P Live Ledger",
+      "href": "../g3p/index.html",
+      "role": "G3P_LEDGER"
+    },
+    {
+      "label": "Historical PR chronology",
+      "href": "../pr-history/index.html",
+      "role": "HISTORICAL_TREND"
+    },
+    {
+      "label": "Worker/IDE P3",
+      "href": "../worker-devkit/index.html",
+      "role": "DISJOINT_WORKERS"
+    },
+    {
+      "label": "MISSIONCONTROL DAG explorer",
+      "href": "../mission-rebuild/index.html",
+      "role": "ORCHESTRATOR"
+    }
+  ]
+}

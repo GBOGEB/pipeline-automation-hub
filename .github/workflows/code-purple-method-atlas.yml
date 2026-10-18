@@ -488,12 +488,61 @@ jobs:
           set -euo pipefail
           test -s mission-control/qps-triage-ultra/p-process/site/index.html
           cp -r mission-control/qps-triage-ultra/p-process/site /tmp/code-purple-atlas/p-process
+      - name: W32 Global DoV source-locked hub / local-scope branch coverage
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas
+          mkdir -p /tmp/code-purple-atlas/convergence
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          python -m coverage run --branch --source=convergence_hub -m unittest discover \
+            -s "$SRC" -p 'test_convergence_hub.py' -v > "$RUNNER_TEMP/convergence-hub-tests.log" 2>&1
+          cat "$RUNNER_TEMP/convergence-hub-tests.log"
+          python -m coverage json -q -o /tmp/code-purple-atlas/convergence/w32_coverage.json
+          cp "$RUNNER_TEMP/convergence-hub-tests.log" /tmp/code-purple-atlas/convergence/w32_tests.log
+          python "$SRC/convergence_hub.py" --source "$SRC/CONVERGENCE_HUB_SOURCES_W32.json" \
+            --out /tmp/code-purple-atlas/convergence --head "$EXACT_SHA"
+          python "$SRC/convergence_hub.py" --out /tmp/code-purple-atlas/convergence \
+            --head "$EXACT_SHA" --verify-only
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          root=Path("/tmp/code-purple-atlas/convergence")
+          log=(root/"w32_tests.log").read_text()
+          found=[int(n) for n in re.findall(r"Ran (\d+) tests? in",log)]
+          assert len(found)==1 and found[0]>=15 and "\nOK" in log, "W32_NATIVE_TEST_COUNT_OR_FAILURE"
+          c=json.loads((root/"w32_coverage.json").read_text())["totals"]
+          assert c["num_statements"]>0 and c["num_branches"]>0
+          l=json.loads((root/"ledger.json").read_text())
+          assert l["presentation_head"]==os.environ["EXACT_SHA"]
+          assert l["populations"]["canonical_federation"]["eligible"]==42
+          assert l["kpis"]["coverage_rollup_global"] is None
+          assert l["authority"]["merge_admission"]=="HOLD"
+          print(json.dumps({"w32_tests":found[0],
+                            "scope":"CONVERGENCE_HUB_MODULE_ONLY",
+                            "statements":[c["covered_lines"],c["num_statements"]],
+                            "branches":[c["covered_branches"],c["num_branches"]],
+                            "cross_repository_coverage_credit":False},sort_keys=True))
+          PY
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           python mission-control/federation-atlas/pages_portal.py --atlas /tmp/code-purple-atlas --out /tmp/code-purple-atlas/pages --sha "$EXACT_SHA"
           test -s /tmp/code-purple-atlas/pages/site-manifest.json
+      - name: W32 Global DoV three-viewport / status-overlay browser QA
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/convergence_browser_qa.py \
+            --html /tmp/code-purple-atlas/pages/convergence/index.html \
+            --out /tmp/code-purple-atlas/convergence/browser_qa \
+            --head "$EXACT_SHA"
+          test -s /tmp/code-purple-atlas/convergence/browser_qa/qa_receipt.json
       - name: N3 responsive Plotly / SHA-bound Pages / control QA
         shell: bash
         env:
