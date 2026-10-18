@@ -151,14 +151,14 @@ jobs:
       - name: Checkout exact additive W10 head
         uses: actions/checkout@v4
         with:
-          ref: ${ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}}
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Native W10 adversarial metadata and permission-denial contracts
         env:
-          SOURCE_SHA: ${ github.event.pull_request.head.sha || github.sha }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}}
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
@@ -178,11 +178,14 @@ jobs:
               raise SystemExit("W10_HOLD: missing native scope denominators")
           print("W10_NATIVE_STATEMENTS",c["covered_lines"],"/",c["num_statements"])
           print("W10_NATIVE_BRANCHES",c["covered_branches"],"/",c["num_branches"])
+          if (100 * c["covered_lines"] < 80 * c["num_statements"] or
+              100 * c["covered_branches"] < 80 * c["num_branches"]):
+              raise SystemExit("W10_HOLD: annotated_green.py scoped statements or branches below 80%")
           PY
       - name: Read native check runs and annotation severity or explicit UNKNOWN
         env:
-          SOURCE_SHA: ${ github.event.pull_request.head.sha || github.sha }}
-          GITHUB_TOKEN: ${ github.token }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}}
+          GITHUB_TOKEN: ${{ github.token }}}
         run: |
           set -euo pipefail
           SRC=mission-control/gogreen/mycelium_history
@@ -231,7 +234,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: mycelium-annotated-green-w10-${ github.event.pull_request.head.sha || github.sha }}
+          name: mycelium-annotated-green-w10-${{ github.event.pull_request.head.sha || github.sha }}}
           path: |
             dist/w10/
             w10-checks-tests.log
