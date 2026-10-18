@@ -64,7 +64,24 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           $work = Join-Path $env:RUNNER_TEMP 'JADE_N3_WORK'
-          & ./mission-control/jade_temple/sprint/Start-JadeSprint.ps1 -Mode Full -Workspace $work -ExpectedHead $env:HEAD_SHA -Offline -MaxWorkers 2
+          try {
+            & ./mission-control/jade_temple/sprint/Start-JadeSprint.ps1 -Mode Full -Workspace $work -ExpectedHead $env:HEAD_SHA -Offline -MaxWorkers 2
+          } catch {
+            Write-Host 'JADE first-red: capturing bounded source-local failing task diagnostics'
+            $root = Join-Path $work 'output'
+            $receipt = Join-Path $root 'LOCAL_RUN.json'
+            if (Test-Path -LiteralPath $receipt) {
+              $report = Get-Content -LiteralPath $receipt -Raw | ConvertFrom-Json
+              foreach ($item in $report.results) {
+                Write-Host ('LOCAL_STEP '+$item.id+' status='+$item.status+' exit='+$item.exit_code)
+                $taskLog = Join-Path $root ($item.id + '.log')
+                if ((Test-Path -LiteralPath $taskLog) -and $item.status -ne 'LOCAL_TEST_PASS') {
+                  Get-Content -LiteralPath $taskLog -Tail 32 | ForEach-Object { Write-Host $_ }
+                }
+              }
+            }
+            throw
+          }
           if ($LASTEXITCODE -ne 0) { throw 'PS1 isolated full testflight first red' }
           $first = Get-Content (Join-Path $work 'output/LOCAL_RUN.json') -Raw | ConvertFrom-Json
           if ($first.local_failures -ne 0 -or $first.local_pass -lt 3) { throw 'Local evidence first pulse not green' }
@@ -73,6 +90,16 @@ jobs:
           $second = Get-Content (Join-Path $work 'output/LOCAL_RUN.json') -Raw | ConvertFrom-Json
           if ($second.local_failures -ne 0 -or $second.local_cache_hits -lt 3) { throw 'Same-head cache replay qualification failed' }
           Copy-Item (Join-Path $work 'output/LOCAL_RUN.json') 'jade_sprint_results/WINDOWS_LOCAL_RUN.json'
+      - name: Retain first-red diagnostics even if Windows local preflight fails
+        if: always() && matrix.os == 'windows-2022'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: jade-sprint-local-debug-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/JADE_N3_WORK/output/LOCAL_RUN.json
+            ${{ runner.temp }}/JADE_N3_WORK/output/*.log
+          retention-days: 7
+          if-no-files-found: warn
       - name: Retain Windows local diagnostic proof only
         if: matrix.os == 'windows-2022'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
