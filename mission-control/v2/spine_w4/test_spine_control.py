@@ -102,7 +102,8 @@ class SpineW4(unittest.TestCase):
         s=sipoc_md(self.d)
         self.assertIn("| Supplier | Inputs | Process | Outputs | Customer | Authority |",s)
         self.assertIn("Authorized rule receipts",s)
-        self.assertIn("Source-controlled",s) if False else None
+        self.assertEqual(s.count("| OWNER_ADMIN_ONLY |"),1)
+        self.assertEqual(s.count("| PROJECTION_NOT_SSOT |"),1)
 
     def test_deterministic_file_receipts(self):
         with tempfile.TemporaryDirectory() as tmp:
