@@ -112,7 +112,7 @@ class TestW2NativeBridge(unittest.TestCase):
         head=page.split("</head>",1)[0]
         self.assertIn("<script>",head)
         self.assertIn("Plotly",head)
-        self.assertIn("js-plotly-plot",page)
+        self.assertIn("plotly-graph-div",page)
         self.assertLess(page.index("<script>"),page.index('class="inlay"'),
                         "to_html scripts execute during parsing; Plotly must already exist")
         self.assertNotIn("<script src=",page,"offline bundle cannot fetch CDN scripts")
