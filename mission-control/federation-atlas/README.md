@@ -1,5 +1,24 @@
 # CODE PURPLE Federation Method Atlas (v0.1)
 
+## W32 Global DoV concentrated entrypoint (18 October 2026)
+
+The same Method Atlas/Pages workflow now publishes a read-only **Global DoV Convergence Hub** at `convergence/index.html` inside the existing portal root index. Its `ledger.json` and SHA-256 `manifest.json` are hash-verified, and `lineage.mmd` links native source owners to CP.W10 Golden Thread.
+
+Source-controlled observation: `CONVERGENCE_HUB_SOURCES_W32.json`; generator: `convergence_hub.py`; native contract: `test_convergence_hub.py`; rendered-browser proof: `convergence_browser_qa.py` in the existing Method Atlas workflow. **No new publisher or six-repo producer.** GitHub browser status refresh is a clearly separated UNVERIFIED overlay, not an authenticated artifact readback, native test, or admission gate. Historical counts are frozen and retain independent denominators.
+
+The companion [W32 Global DoV / Golden Thread handover](CONVERGENCE_HUB_W32_HANDOVER.md) preserves N-1/N/N+1 coverage families, W75/W64 focused case evidence, unknown worker-hours, M1/M2/M3 and PCA/BT gates, 6/42 canonical breadth, 124/157 W31 two-repository run identities, scope-stop/retrigger and CP.W10 restart.
+
+Run the focused producer and tests on the current source:
+
+```bash
+python -m unittest discover -s mission-control/federation-atlas -p test_convergence_hub.py -v
+python mission-control/federation-atlas/convergence_hub.py --out /tmp/code-purple-atlas/convergence --head $(git rev-parse HEAD)
+python mission-control/federation-atlas/convergence_hub.py --out /tmp/code-purple-atlas/convergence --head $(git rev-parse HEAD) --verify-only
+```
+
+Browser QA requires Playwright Chromium and runs in the existing source-head workflow; a local render is **LOCAL_REPRODUCIBILITY**, not exact-head native or hosted Pages proof.
+
+
 Owned by `GBOGEB/pipeline-automation-hub` Mission Control. A read-only projection, not another QPS engineering authority, release writer, or Pages publisher.
 
 ## Bounded run / task
