@@ -106,6 +106,17 @@ class TestW2NativeBridge(unittest.TestCase):
         self.assertIn("NOT_ASSESSABLE",page)
         self.assertIn("UNKNOWN",page)
 
+    def test_offline_plotly_bundle_loads_before_synchronous_card_scripts(self):
+        s=self.make();s["evidence_class"]="SYNTHETIC_TEST_FIXTURE_NOT_NATIVE"
+        page=plots.render(s)
+        head=page.split("</head>",1)[0]
+        self.assertIn("<script>",head)
+        self.assertIn("Plotly",head)
+        self.assertIn("plotly-graph-div",page)
+        self.assertLess(page.index("<script>"),page.index('class="inlay"'),
+                        "to_html scripts execute during parsing; Plotly must already exist")
+        self.assertNotIn("<script src=",page,"offline bundle cannot fetch CDN scripts")
+
     def test_renderer_rejects_imputed_coverage(self):
         s=self.make();s["unknown_burndown"]["coverage"]["covered_statements"]=10
         with self.assertRaisesRegex(ValueError,"unknown counts may not be imputed"):
