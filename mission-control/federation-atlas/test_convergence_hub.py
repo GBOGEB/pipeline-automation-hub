@@ -49,6 +49,24 @@ class GlobalDOVHubTests(unittest.TestCase):
         self.assertEqual((s["root_manifestations"],s["first_red_signatures"]), (9,3))
         self.assertIsNone(s["formal_causal_root_closures"])
 
+    def test_w29_regional_gain_is_descriptive_not_admitted(self):
+        d=hub.validate(self.d())
+        e=next(x for x in d["events"] if x["id"]=="ABACUS-W29-W75-W64")
+        c=e["coverage"]
+        self.assertEqual((c["statements"]["covered"], c["statements"]["total"]), (268,270))
+        self.assertEqual((c["branches"]["covered"], c["branches"]["total"]), (74,76))
+        pair=c["historical_comparison"]
+        self.assertEqual(pair["contemporary_covered"]-pair["observed_covered"],256)
+        self.assertFalse(pair["admission_qualified"])
+        self.assertIsNone(hub.summary(d)["coverage_rollup_global"])
+
+    def test_w29_baseline_coverage_forgery_rejected(self):
+        d=self.d()
+        e=next(x for x in d["events"] if x["id"]=="ABACUS-W29-W75-W64")
+        e["coverage"]["historical_comparison"]["admission_qualified"]=True
+        with self.assertRaisesRegex(ValueError,"UNQUALIFIED_HISTORICAL_COMPARISON"):
+            hub.validate(d)
+
     def test_authentication_cannot_be_promoted_by_reader(self):
         d = self.d()
         d["populations"]["native_federation_authenticated_edges"]["observed"] = 1
