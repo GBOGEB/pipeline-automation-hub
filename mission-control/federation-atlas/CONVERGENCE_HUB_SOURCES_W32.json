@@ -241,6 +241,58 @@
       "immutable": true
     },
     {
+      "id": "ABACUS-W29-W75-W64",
+      "family": "coverage",
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2250,
+      "head": "312042de13212319c0e85c9d012fa43747508e4e",
+      "run": 39150712686,
+      "attempt": 1,
+      "jobs": [
+        117743603707,
+        117743603897
+      ],
+      "status": "TERMINAL_SUCCESS",
+      "tests": {
+        "executed": 128,
+        "passed": 128,
+        "failed": 0,
+        "skipped": 0
+      },
+      "artifact": {
+        "id": null,
+        "zip_bytes": 12276,
+        "member_bytes": null,
+        "crc_members": null,
+        "members": null,
+        "verification": "TWO_UPLOADED_ZIPS_DIGEST_KNOWN_MEMBER_BYTES_UNKNOWN"
+      },
+      "observations": "64 tests × 2 native cells PASS; W75+W64 exact scope 268/270 statements and 74/76 branches from native log; other CI governance remains independently RED",
+      "immutable": true,
+      "coverage": {
+        "label": "ABACUS W75 + W64 focused W29",
+        "scope_key": "ABACUS-W75-W64-FROZEN-2-MODULE-346-OPPORTUNITIES",
+        "statements": {
+          "covered": 268,
+          "total": 270
+        },
+        "branches": {
+          "covered": 74,
+          "total": 76
+        },
+        "historical_comparison": {
+          "source": "HISTORICAL_B0_39142444027",
+          "observed_covered": 86,
+          "observed_total": 346,
+          "contemporary_covered": 342,
+          "contemporary_total": 346,
+          "scope_paths_same": true,
+          "source_blobs_reported_unchanged": true,
+          "admission_qualified": false
+        }
+      }
+    },
+    {
       "id": "MATH-W13-PAIR",
       "family": "coverage",
       "repo": "GBOGEB/gg_MATH",
@@ -379,6 +431,33 @@
       },
       "observations": "First-red repair committed with 7 negative/positive tests; native G3P latest observation queued, not credited",
       "immutable": false
+    },
+    {
+      "id": "MC-G4-W32-PLAN",
+      "family": "federation",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 731,
+      "head": "7dd05129433e8751775b168683a1a66a05319acb",
+      "run": 39165085476,
+      "attempt": null,
+      "jobs": [],
+      "status": "NONTERMINAL",
+      "tests": {
+        "executed": null,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      },
+      "artifact": {
+        "id": null,
+        "zip_bytes": null,
+        "member_bytes": null,
+        "crc_members": null,
+        "members": null,
+        "verification": "PLAN_ONLY_NOT_EXECUTED"
+      },
+      "observations": "G4 W32 source-owned six disjoint repository packet plan and empty push contract committed. Six candidates, zero dispatched or accepted; new 16 tests committed, native G4 status pending. Historical breadth unchanged 6/42.",
+      "immutable": false
     }
   ],
   "roots": [
@@ -428,6 +507,18 @@
       "to": "MATH-G3P-W32",
       "kind": "FIRST_RED_REPAIR",
       "status": "IMPLEMENTED_RETEST_PENDING"
+    },
+    {
+      "from": "ABACUS-W29-W75-W64",
+      "to": "MC531",
+      "kind": "SIX_REPO_COVERAGE_PROJECTION",
+      "status": "NOT_FEDERATED"
+    },
+    {
+      "from": "MC-G4-W32-PLAN",
+      "to": "MC531",
+      "kind": "SOURCE_OWNED_PLAN_CONSUMPTION",
+      "status": "NONTERMINAL_NOT_CENSUS_CREDIT"
     }
   ],
   "lineage": [
@@ -469,8 +560,8 @@
       "id": "B",
       "scope": "REGIONAL",
       "name": "W75 + W64 disjoint negative coverage",
-      "eligible": "260 historical uncovered of 346 opportunities; remeasure before credit",
-      "next": "Per-module same-scope statements and branches, two disjoint owners",
+      "eligible": "W75+W64 same 346 opportunity denominator: B0 historical 86/346 covered; W29 focused native 342/346 (64 tests × 2 cells). Differences are descriptive until B0/instrumentation pairing accepted",
+      "next": "Target 4 remaining focused opportunities, THEN scout disjoint W81/W70 with per-path baseline and native log/CRC/manifest; fix independent governance reds",
       "stop": "3 flat matched deltas below target → pivot"
     },
     {
@@ -478,7 +569,7 @@
       "scope": "GLOBAL",
       "name": "Six-repo missing census atoms",
       "eligible": "36 historical unobserved of 42 eligible",
-      "next": "Use #531 only, bounded 6-cell family slice, no duplicate census",
+      "next": "Use canonical #531 + source-owned G4 W32 PR #731 six disjoint candidate pull packets. Await native terminal G4 run and actual source-verified push; six candidates are zero executed/accepted.",
       "stop": "Every selected cell source-bound or declared UNKNOWN"
     },
     {
