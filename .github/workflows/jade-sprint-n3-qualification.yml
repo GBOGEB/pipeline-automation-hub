@@ -30,14 +30,54 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 12
     steps:
+      - name: Preserve blob-exact EOL in ephemeral Actions checkout
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Actions runner checkout is disposable; do not alter user originals.
+          # Git for Windows autocrlf otherwise changes SHA-bound JADE JSON/HTML.
+          git config --global core.autocrlf false
       - name: Exact-head checkout without saved credentials
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
+      - name: Force exact Git blob bytes in disposable Windows worktree
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --local core.autocrlf false
+          git -c core.autocrlf=false checkout-index --all --force
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
+      - name: Compare checked-out JADE bytes with Git blobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          paths = [
+              'mission-control/jade_temple/data/REPO_READINESS_NPLUS1.json',
+              'mission-control/jade_temple/site/green.html',
+              'mission-control/jade_temple/site/jade_data.js',
+              'mission-control/jade_temple/data/READBACK_NPLUS2.json',
+              'mission-control/jade_temple/site/burndown.json',
+          ]
+          observed = 0
+          for path in paths:
+              if not Path(path).is_file():
+                  continue
+              git_blob = subprocess.check_output(['git', 'show', 'HEAD:'+path])
+              actual = Path(path).read_bytes()
+              assert actual == git_blob, 'EOL_OR_BLOB_DRIFT:'+path
+              observed += 1
+          assert observed >= 3, 'MISSING_SOURCE_BYTE_PROBE_POPULATION'
+          print('EXACT_SOURCE_BYTES', observed)
+          PY
       - name: Source SHA and full N+3 adversarial testflight
         shell: bash
         env:

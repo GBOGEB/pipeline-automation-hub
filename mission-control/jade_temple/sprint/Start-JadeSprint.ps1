@@ -64,7 +64,7 @@ if ($FreshClone) {
   $folder="source-"+[DateTime]::UtcNow.ToString("yyyyMMdd-HHmmss")+"-"+[Guid]::NewGuid().ToString("N").Substring(0,6)
   $target=Join-Path $Workspace $folder
   if (Test-Path -LiteralPath $target) { throw "Fresh checkout target already exists" }
-  & git clone --depth 1 --no-tags --branch $CloneRef https://github.com/GBOGEB/pipeline-automation-hub.git $target
+  & git -c core.autocrlf=false clone --depth 1 --no-tags --branch $CloneRef https://github.com/GBOGEB/pipeline-automation-hub.git $target
   Assert-Exit "Fresh isolated JADE clone"
   $ProjectRoot=$target
 }

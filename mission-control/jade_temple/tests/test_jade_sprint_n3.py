@@ -169,6 +169,13 @@ class SprintPreflightTests(unittest.TestCase):
             path=Path(d)
             with self.assertRaisesRegex(ValueError,"WORKER_BOUND_1_TO_4"):
                 cli.local_run(ROOT,path,path/"cache","a"*40,"b"*64,8,12,True,False)
+    def test_windows_git_blob_integrity_guard(self):
+        workflow=(ROOT/".github/workflows/jade-sprint-n3-qualification.yml").read_text()
+        ps=(SPRINT/"Start-JadeSprint.ps1").read_text()
+        self.assertIn("core.autocrlf=false checkout-index --all --force",workflow)
+        self.assertIn("EOL_OR_BLOB_DRIFT",workflow)
+        self.assertIn("git -c core.autocrlf=false clone",ps)
+        self.assertIn("JADE_SOURCE_DIGEST_DRIFT", (ROOT/"mission-control/jade_temple/portal_bridge.py").read_text())
     def test_no_second_pages_deployer(self):
         script=(ROOT/".github"/"workflows"/"jade-sprint-n3-qualification.yml")
         self.assertNotIn("deploy-pages",script.read_text())
