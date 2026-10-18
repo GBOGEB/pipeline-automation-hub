@@ -135,6 +135,8 @@ def validate(d):
         ids.add(rid)
         require(isinstance(run.get("head_sha"), str) and
                 SHA.fullmatch(run["head_sha"]), "run head")
+        require(run.get("workflow_id") == d.get("workflow_id"),
+                "run workflow provenance")
         s, c = run.get("status"), run.get("conclusion")
         require(s in ("completed", "queued", "in_progress", "pending",
                       "requested", "waiting"), "run status")
@@ -149,6 +151,8 @@ def validate(d):
     require(type(d.get("selected_job_run_count")) is int and
             d["selected_job_run_count"] == len(details), "job cohort count")
     for rid, detail in details.items():
+        require(rid in keyed and keyed[rid]["status"] == "completed",
+                "job evidence tied to nonterminal run")
         require(rid in keyed and type(detail.get("run_id")) is int and
                 detail["run_id"] == int(rid) and
                 detail.get("attempt") == keyed[rid]["attempt"], "job/run binding")
