@@ -57,6 +57,9 @@ jobs:
           data=json.loads(Path("w6-history-coverage.json").read_text())["totals"]
           if data["num_statements"] == 0 or data["num_branches"] == 0:
               raise SystemExit("MYCELIUM_HOLD: zero statement/branch denominator")
+          if (100 * data["covered_lines"] < 80 * data["num_statements"] or
+              100 * data["covered_branches"] < 80 * data["num_branches"]):
+              raise SystemExit("MYCELIUM_HOLD: statement or branch coverage below 80%")
           print("STATEMENTS",data["covered_lines"],"/",data["num_statements"])
           print("BRANCHES",data["covered_branches"],"/",data["num_branches"])
           PY
