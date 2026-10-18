@@ -46,6 +46,7 @@ def native_get(path, token):
 
 
 def sha_of(branch):
+    require(isinstance(branch, dict), "branch response")
     sha = (branch.get("commit") or {}).get("sha")
     require(isinstance(sha, str) and SHA40.fullmatch(sha), "branch source head")
     return sha
@@ -104,6 +105,8 @@ def check_run(raw, source_sha):
 
 
 def get_commit_checks(fetch, sha, max_pages=4):
+    require(type(max_pages) is int and 1 <= max_pages <= 4,
+            "bounded check-run page count")
     require(isinstance(sha, str) and SHA40.fullmatch(sha), "commit SHA")
     page_url = ROOT + "/commits/" + sha + "/check-runs?per_page=100&page="
     first = fetch(page_url + "1")
@@ -141,7 +144,8 @@ def priority(item):
 
 
 def read_level_sample(fetch, cohort, limit=6):
-    require(0 <= limit <= 12, "annotation detail probe cap")
+    require(type(limit) is int and 0 <= limit <= 12,
+            "annotation detail probe cap")
     candidates = sorted((x for x in cohort["checks"]
                          if x["conclusion"] == "success" and
                          x["annotation_count"] is not None and
@@ -231,6 +235,9 @@ def collect(fetch, *, pr_limit=3, detail_limit=6):
             out.append({**entry, "availability": "SOURCE_READ_BLOCKED_HTTP_" + str(err.code),
                         "metrics": None, "checks": []})
     main1 = sha_of(fetch(ROOT + "/branches/main"))
+    fully_observed = sum(
+        x["metrics"] is not None and x["metrics"]["complete"] is True
+        for x in out)
     return {
         "schema": SCHEMA, "producer_repo": "GBOGEB/CODEX",
         "consumer_repo": "GBOGEB/pipeline-automation-hub",
@@ -242,6 +249,13 @@ def collect(fetch, *, pr_limit=3, detail_limit=6):
         "selection": "MAIN_PLUS_3_LATEST_MERGED_FROM_FIRST_100_UPDATED_CLOSED",
         "source_bound_cohorts": out,
         "cohort_count": len(out),
+        "source_bound_breadth": {
+            "repo": "GBOGEB/CODEX",
+            "complete_check_cohorts_observed": fully_observed,
+            "check_cohorts_eligible": len(out),
+            "six_repo_federation_breadth": None,
+            "main_stable": main0 == main1
+        },
         "annotated_green_is_severity_agnostic": True,
         "error_level_annotation_population_complete": False,
         "accepted_root_closures": 0,
@@ -272,22 +286,64 @@ def validate(data, expected_sha):
     require(data.get("worker_hours") is None and
             data.get("capacity_slots") is None, "falsified capacity")
     require(isinstance(data.get("source_bound_cohorts"), list) and
-            data.get("cohort_count") == len(data["source_bound_cohorts"]),
-            "cohort denominator")
+            data.get("cohort_count") == len(data["source_bound_cohorts"]) and
+            data["cohort_count"] >= 1, "cohort denominator")
+    first = data["source_bound_cohorts"][0]
+    require(data.get("main_sha_before") == first.get("head_sha") and
+            first.get("kind") == "CURRENT_MAIN" and first.get("pr") is None and
+            isinstance(data.get("main_sha_after"), str) and
+            SHA40.fullmatch(data["main_sha_after"]) and
+            data.get("main_head_unchanged_during_capture") is
+            (data["main_sha_before"] == data["main_sha_after"]),
+            "current CODEX main source-binding contract")
+    count_complete = 0
     for c in data["source_bound_cohorts"]:
-        require(SHA40.fullmatch(c["head_sha"]), "cohort SHA")
+        require(isinstance(c.get("head_sha"), str) and
+                SHA40.fullmatch(c["head_sha"]), "cohort SHA")
+        require(isinstance(c.get("checks"), list), "check-run receipt shape")
         if c["metrics"] is None:
-            require(c["availability"].startswith("SOURCE_READ_BLOCKED_HTTP_"),
-                    "unmeasured cohort claimed success")
+            require(c["availability"].startswith("SOURCE_READ_BLOCKED_HTTP_") and
+                    c["checks"] == [], "unmeasured cohort claimed success")
         else:
             m = c["metrics"]
-            require(m["head_sha"] == c["head_sha"], "cohort binding")
+            require(c.get("availability") == "CHECK_RUN_API_OBSERVED" and
+                    m["head_sha"] == c["head_sha"], "cohort binding")
+            fields = ("successful_annotated_checks_observed", "successful_checks",
+                      "check_runs_observed", "check_runs_api_total",
+                      "annotation_items_reported",
+                      "detail_severity_verified_check_count",
+                      "terminal_red_check_count", "unknown_or_pending_check_count")
+            require(all(type(m.get(k)) is int and m[k] >= 0 for k in fields),
+                    "invalid nonnegative native census fields")
             require(m["successful_annotated_checks_observed"] <=
                     m["successful_checks"] <= m["check_runs_observed"] <=
-                    m["check_runs_api_total"], "invalid check denominator")
+                    m["check_runs_api_total"] and
+                    m["check_runs_observed"] == len(c["checks"]) and
+                    m["annotation_items_reported"] >=
+                    m["successful_annotated_checks_observed"] and
+                    m["detail_severity_verified_check_count"] <=
+                    m["successful_annotated_checks_observed"] and
+                    m["terminal_red_check_count"] +
+                    m["unknown_or_pending_check_count"] <= m["check_runs_observed"],
+                    "invalid check denominator")
             require(m["total_failure_level_annotations"] is None and
                     m["annotated_green_does_not_imply_error_severity"] is True,
                     "invented full error severity")
+            require(type(m["complete"]) is bool and
+                    (m["complete"] is False or
+                     m["check_runs_observed"] == m["check_runs_api_total"]),
+                    "false complete check cohort")
+            count_complete += int(m["complete"])
+    breadth = data.get("source_bound_breadth")
+    require(isinstance(breadth, dict) and
+            breadth.get("repo") == "GBOGEB/CODEX" and
+            type(breadth.get("complete_check_cohorts_observed")) is int and
+            breadth["complete_check_cohorts_observed"] == count_complete and
+            breadth.get("check_cohorts_eligible") == data["cohort_count"] and
+            breadth.get("six_repo_federation_breadth") is None and
+            breadth.get("main_stable") is
+            data["main_head_unchanged_during_capture"],
+            "unsupported federation breadth")
     return True
 
 
