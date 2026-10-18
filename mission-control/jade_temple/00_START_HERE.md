@@ -32,9 +32,10 @@
 
 **Do not automatically move files**, rename README, enable bypass, merge, deploy, assume a hosted URL or declare release ready.
 
-## GoGREEN N+1 supplement (18 October 2026)
+**Merged bootstrap:** [Mission Control PR #729](https://github.com/GBOGEB/pipeline-automation-hub/pull/729) merged 18 October 2026; N+1 is a separate source-owned candidate. The old 13 bootstrap additions are not the current readiness view.
 
-**[Current project README](README.md)** · **[21-repo GoGREEN dashboard](site/green.html)** · **[N+1 MIP/DMAIC analysis](notes/MIP_ANALYSIS_NPLUS1.md)** · **[Technical TODOs](notes/REPO_TECHNICAL_NEEDS_NPLUS1.md)** · **[Navigation and Pages contract](notes/NAVIGATION_PAGES_STYLE_CONTRACT.md)** · **[Next-chat drop-in](DROPIN_NEXT_CHAT.md)**.
+## GoGREEN N+1 implementation and technical TODO
 
-The N11 structural Top21 and historical GoGREEN sampled Top21 are **different populations** (13 shared, 8 source-only in each). Heads and recent Actions here are a non-atomic 18 October readback; every point-release and hosted-URL proof remains UNKNOWN until source-owned native and HTTP receipts arrive. The N+1 static child is intended for the existing Mission Control Pages publisher; no parallel Pages workflow or relaxed admission has been added.
+**[New project README](README.md)** · **[GoGREEN interactive dashboard](site/green.html)** · **[Technical launch TODO for all 21 repos](notes/REPO_TECHNICAL_NEEDS_NPLUS1.md)** · **[Full MIP/DMAIC analysis](notes/MIP_ANALYSIS_NPLUS1.md)** · **[Shared root/navigation/Pages contract](notes/NAVIGATION_PAGES_STYLE_CONTRACT.md)** · **[N+1 lossless restart](DROPIN_NEXT_CHAT.md)**.
 
+Top21 structural census and GoGREEN merged-outcome sample have a **13-repository overlap and eight disjoint members in each**; do not mix source denominators. 21 heads were observed non-atomically 18 October. Native point-release eligibility and hosted HTTPS SHA parity remain UNKNOWN. The N+1 site is prepared as an existing-portal Pages child, not a second publisher.
