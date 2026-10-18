@@ -1,0 +1,753 @@
+<title>Global Code Purple</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: control-room atlas. One data model (nodes, edges, stages) drives the graph, cards, tables and exports; telemetry overlays it. */
+:root{
+  --bg:#f5f4f8; --surface:#ffffff; --surface-2:#efedf4; --lane:#f0edf6;
+  --ink:#1c1626; --muted:#625a70; --line:#dad4e3; --line-2:#c3bad0;
+  --accent:#5a2a86; --accent-soft:#e9e0f4;
+  --auth:#56287a; --auth-s:#3f1c5c; --auth-ink:#ffffff;
+  --proc:#eee7f7; --proc-s:#9879b8; --proc-ink:#452366;
+  --rep:#fce6eb; --rep-s:#cf5f7d; --rep-ink:#8f2747;
+  --pass:#dff4e9; --pass-s:#3f9b6c; --pass-ink:#145c43;
+  --hold:#fff1d9; --hold-s:#c98f2e; --hold-ink:#7c5118;
+  --evid:#def1f2; --evid-s:#2f8f95; --evid-ink:#135458;
+  --dec:#ffffff; --e-flow:#8a8296; --shadow:0 10px 30px rgba(40,20,70,.18);
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Aptos","IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121017; --surface:#1a1722; --surface-2:#221e2c; --lane:#1d1a26;
+  --ink:#ece8f3; --muted:#a69db4; --line:#322c3d; --line-2:#463e54;
+  --accent:#b98ce6; --accent-soft:#2c2240;
+  --auth:#6b3a96; --auth-s:#8a5bb7; --auth-ink:#ffffff;
+  --proc:#2a2139; --proc-s:#8b6bb1; --proc-ink:#ddccf4;
+  --rep:#3a1c26; --rep-s:#de7392; --rep-ink:#f5b8c9;
+  --pass:#15301f; --pass-s:#55b383; --pass-ink:#a8e2c2;
+  --hold:#35280f; --hold-s:#d9a24a; --hold-ink:#f1d39d;
+  --evid:#11302f; --evid-s:#45a9ae; --evid-ink:#a2dfe2;
+  --dec:#1a1722; --e-flow:#7f768e; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121017; --surface:#1a1722; --surface-2:#221e2c; --lane:#1d1a26;
+  --ink:#ece8f3; --muted:#a69db4; --line:#322c3d; --line-2:#463e54;
+  --accent:#b98ce6; --accent-soft:#2c2240;
+  --auth:#6b3a96; --auth-s:#8a5bb7; --auth-ink:#ffffff;
+  --proc:#2a2139; --proc-s:#8b6bb1; --proc-ink:#ddccf4;
+  --rep:#3a1c26; --rep-s:#de7392; --rep-ink:#f5b8c9;
+  --pass:#15301f; --pass-s:#55b383; --pass-ink:#a8e2c2;
+  --hold:#35280f; --hold-s:#d9a24a; --hold-ink:#f1d39d;
+  --evid:#11302f; --evid-s:#45a9ae; --evid-ink:#a2dfe2;
+  --dec:#1a1722; --e-flow:#7f768e; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:1320px;margin:0 auto;padding-inline:20px;padding-block:28px 56px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+h1{font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-.01em}
+h2{font-size:20px;font-weight:800}
+h3{font-size:15px;font-weight:600;font-family:var(--f-body)}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mono,code{font-family:var(--f-mono);font-size:.88em}
+a{color:var(--accent)}
+p{margin:0}
+.muted{color:var(--muted)}
+section+section{margin-top:0}
+.block{margin-top:26px}
+
+header.top{display:grid;gap:10px;margin-bottom:22px}
+.status-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);border-radius:999px;padding:3px 10px;font-size:12.5px;font-family:var(--f-mono);background:var(--surface);color:var(--ink)}
+.pill.hold{background:var(--hold);border-color:var(--hold-s);color:var(--hold-ink)}
+.pill.rep{background:var(--rep);border-color:var(--rep-s);color:var(--rep-ink)}
+.pill.auth{background:var(--auth);border-color:var(--auth-s);color:var(--auth-ink)}
+
+/* central rule */
+.rule{margin:6px 0 24px;display:grid;gap:10px}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.steps button{all:unset;box-sizing:border-box;cursor:pointer;display:grid;gap:4px;height:100%;width:100%;padding:10px 12px 12px;border:1px solid var(--line);background:var(--surface);border-radius:8px}
+.steps button:hover{border-color:var(--accent)}
+.steps button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.steps button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.steps .n{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.steps .l{font-weight:600;font-size:13.5px;line-height:1.3}
+.steps .ph{font-family:var(--f-mono);font-size:11px;color:var(--accent)}
+@media (max-width:900px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* tabs + controls */
+.tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.tabs button{all:unset;cursor:pointer;padding:9px 14px;font-weight:600;font-size:14px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.view-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px;margin-bottom:12px}
+.view-head>p{max-width:70ch;color:var(--muted);font-size:14px}
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:7px;overflow:hidden;background:var(--surface)}
+.seg button{all:unset;cursor:pointer;font-size:12.5px;padding:5px 11px;color:var(--muted)}
+.seg button+button{border-left:1px solid var(--line-2)}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--ink);font-weight:600}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.ctl-l{font-family:var(--f-mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;user-select:none}
+.toggle input{accent-color:var(--accent);width:16px;height:16px}
+.btn{all:unset;cursor:pointer;font-size:13px;padding:5px 11px;border:1px solid var(--line-2);border-radius:6px;background:var(--surface);color:var(--ink)}
+.btn:focus-visible{outline:2px solid var(--accent)}
+.btn.small{font-size:12px;padding:3px 9px}
+label.btn input{position:absolute;width:1px;height:1px;opacity:0}
+.banner{display:none;font-family:var(--f-mono);font-size:12px;padding:6px 12px;border-radius:6px;background:var(--hold);color:var(--hold-ink);border:1px dashed var(--hold-s);margin-bottom:10px}
+.banner.on{display:block}
+
+/* pulse */
+.pulse{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+@media (max-width:1050px){.pulse{grid-template-columns:minmax(0,1fr)}}
+.canvas{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+.canvas svg{display:block;width:100%;min-width:760px;height:auto}
+.side{display:grid;gap:14px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.card h3{margin-bottom:8px}
+
+svg text{font-family:var(--f-body)}
+.lane-bg{fill:var(--lane)}
+.lane-t{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;fill:var(--muted)}
+.node{cursor:pointer;transition:opacity .2s}
+.node text{fill:currentColor}
+.node .t{font-size:14px;font-weight:600;text-anchor:middle}
+.node .s{font-size:11.5px;text-anchor:middle;opacity:.85}
+.node .nid{font-family:var(--f-mono);font-size:10px;opacity:.75}
+.node:focus{outline:none}
+.node .b{stroke-width:1.4}
+.node:focus-visible .b,.node.sel .b{stroke-width:3;stroke:var(--accent)}
+.hot{cursor:help}
+.hot .hit{fill:transparent}
+.hot:hover rect.tg{stroke-width:2;opacity:1}
+.tg{fill:none;stroke:currentColor;stroke-width:1;opacity:.7}
+.tgt{font-family:var(--f-mono);font-size:10.5px;font-weight:500;text-anchor:middle}
+.n-auth{color:var(--auth-ink)} .n-auth .b{fill:var(--auth);stroke:var(--auth-s)}
+.n-proc{color:var(--proc-ink)} .n-proc .b{fill:var(--proc);stroke:var(--proc-s)}
+.n-rep{color:var(--rep-ink)} .n-rep .b{fill:var(--rep);stroke:var(--rep-s)}
+.n-pass{color:var(--pass-ink)} .n-pass .b{fill:var(--pass);stroke:var(--pass-s)}
+.n-hold{color:var(--hold-ink)} .n-hold .b{fill:var(--hold);stroke:var(--hold-s)}
+.n-evid{color:var(--evid-ink)} .n-evid .b{fill:var(--evid);stroke:var(--evid-s)}
+.n-dec{color:var(--ink)} .n-dec .b{fill:var(--dec);stroke:var(--accent);stroke-dasharray:5 3}
+.s-ok{color:var(--pass-ink)} .s-ok .b{fill:var(--pass);stroke:var(--pass-s)}
+.s-progress{color:var(--proc-ink)} .s-progress .b{fill:var(--proc);stroke:var(--proc-s)}
+.s-hold{color:var(--hold-ink)} .s-hold .b{fill:var(--hold);stroke:var(--hold-s)}
+.s-partial{color:var(--evid-ink)} .s-partial .b{fill:var(--evid);stroke:var(--evid-s)}
+.s-block{color:var(--rep-ink)} .s-block .b{fill:var(--rep);stroke:var(--rep-s)}
+.s-todo{color:var(--ink)} .s-todo .b{fill:var(--surface);stroke:var(--line-2)}
+.s-none{color:var(--muted)} .s-none .b{fill:var(--surface-2);stroke:var(--line-2);stroke-dasharray:4 3}
+.inr{fill:none;stroke:currentColor;stroke-width:1;opacity:.35}
+.chip rect{fill:var(--surface);stroke:currentColor;stroke-width:1;opacity:.9}
+.chip text{font-family:var(--f-mono);font-size:11px;text-anchor:middle}
+.rcpt{fill:var(--evid-s);stroke:var(--surface);stroke-width:2}
+.nbar-bg{fill:var(--line);opacity:.6}
+.seg-pass{fill:var(--pass-s)} .seg-fail{fill:var(--rep-s)} .seg-neu{fill:var(--e-flow)} .seg-pend{fill:var(--hold-s);opacity:.45}
+.edge{fill:none;transition:opacity .2s}
+.e-flow{stroke:var(--e-flow);stroke-width:1.6}
+.e-yes{stroke:var(--pass-s);stroke-width:2.2}
+.e-fail{stroke:var(--rep-s);stroke-width:2.2}
+.e-hold{stroke:var(--hold-s);stroke-width:2;stroke-dasharray:7 4}
+.e-evid{stroke:var(--evid-s);stroke-width:2;stroke-dasharray:1.5 4;stroke-linecap:round}
+.e-rec{stroke:var(--accent);stroke-width:2.6;stroke-dasharray:11 5}
+.edge.esel{stroke-width:4.5}
+.hitp{fill:none;stroke:transparent;stroke-width:14;cursor:pointer;pointer-events:stroke}
+.m-flow{fill:var(--e-flow)} .m-yes{fill:var(--pass-s)} .m-fail{fill:var(--rep-s)} .m-hold{fill:var(--hold-s)} .m-evid{fill:var(--evid-s)} .m-rec{fill:var(--accent)}
+.elab rect{fill:var(--surface);stroke:var(--line-2);stroke-width:1}
+.elab text{font-family:var(--f-mono);font-size:10.5px;fill:var(--ink);text-anchor:middle}
+.elab.yes text{fill:var(--pass-ink)} .elab.fail text{fill:var(--rep-ink)} .elab.hold text{fill:var(--hold-ink)} .elab.rec text{fill:var(--accent)} .elab.evid text{fill:var(--evid-ink)}
+.dimmed .node:not(.hl),.dimmed .edge:not(.hl),.dimmed .elab:not(.hl){opacity:.16}
+.ring{fill:none;stroke:var(--hold-s);stroke-width:2.5;stroke-dasharray:3 4}
+@media (prefers-reduced-motion:no-preference){.ring{animation:march 1.4s linear infinite}@keyframes march{to{stroke-dashoffset:-14}}}
+.callout rect.cb{fill:var(--hold);stroke:var(--hold-s)}
+.callout text{fill:var(--hold-ink);font-size:12px}
+.callout .ct{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em}
+.callout .cv{font-weight:600}
+.callout line{stroke:var(--hold-s);stroke-width:1.5}
+.ring.rep{stroke:var(--rep-s)}
+.callout.rep rect.cb{fill:var(--rep);stroke:var(--rep-s)} .callout.rep text{fill:var(--rep-ink)} .callout.rep line{stroke:var(--rep-s)}
+
+/* legend */
+.legend{display:grid;gap:7px;font-size:13px}
+.lg{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;gap:10px}
+.sw{height:18px;border-radius:5px;border:1.4px solid}
+.sw.auth{background:var(--auth);border-color:var(--auth-s)}
+.sw.proc,.sw.progress{background:var(--proc);border-color:var(--proc-s)}
+.sw.rep,.sw.block{background:var(--rep);border-color:var(--rep-s)}
+.sw.pass,.sw.ok{background:var(--pass);border-color:var(--pass-s)}
+.sw.hold{background:var(--hold);border-color:var(--hold-s)}
+.sw.evid,.sw.partial{background:var(--evid);border-color:var(--evid-s)}
+.sw.todo{background:var(--surface);border-color:var(--line-2)}
+.sw.none{background:var(--surface-2);border-color:var(--line-2);border-style:dashed}
+.sw.dec{height:16px;width:16px;margin-left:14px;transform:rotate(45deg);border-radius:2px;border:1.5px dashed var(--accent);background:var(--dec)}
+.lg svg{width:44px;height:14px;overflow:visible}
+.legend .sub{font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:6px}
+.phases{display:flex;flex-wrap:wrap;gap:6px}
+.phases span{font-family:var(--f-mono);font-size:11.5px;border:1px solid var(--line-2);border-radius:4px;padding:1px 6px}
+
+/* detail + hover card shared */
+.kv{display:grid;grid-template-columns:92px minmax(0,1fr);gap:6px 10px;margin:10px 0 0;font-size:13.5px}
+.kv dt{font-family:var(--f-mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+.kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.acts{margin:4px 0 0;padding-left:20px;font-size:13px}
+.acts li+li{margin-top:2px}
+.runs{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px;font-variant-numeric:tabular-nums}
+.runs th,.runs td{text-align:right;padding:3px 5px;border-bottom:1px solid var(--line)}
+.runs th:first-child,.runs td:first-child{text-align:left}
+.runs th{font-family:var(--f-mono);font-size:10.5px;font-weight:500;color:var(--muted)}
+.rbar{display:flex;height:7px;border-radius:2px;overflow:hidden;background:var(--line);min-width:50px}
+.rbar span{display:block;height:100%}
+.rbar .p{background:var(--pass-s)} .rbar .f{background:var(--rep-s)} .rbar .n{background:var(--e-flow)} .rbar .q{background:var(--hold-s);opacity:.45}
+.pc{display:flex;flex-wrap:wrap;gap:5px}
+.pchip{font-family:var(--f-mono);font-size:11px;padding:0 7px;border-radius:999px;border:1px solid var(--line-2);white-space:nowrap}
+.pchip.pass{background:var(--pass);border-color:var(--pass-s);color:var(--pass-ink)}
+.pchip.fail{background:var(--rep);border-color:var(--rep-s);color:var(--rep-ink)}
+.pchip.pending{background:var(--hold);border-color:var(--hold-s);color:var(--hold-ink)}
+.pchip.on,.pchip.trace{background:var(--proc);border-color:var(--proc-s);color:var(--proc-ink)}
+.pchip.none,.pchip.off{color:var(--muted)}
+.rate{font-family:var(--f-display);font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.ratebox{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:center;margin-top:8px}
+.errline{font-size:12.5px;color:var(--rep-ink);background:var(--rep);border:1px solid var(--rep-s);border-radius:5px;padding:4px 8px;margin-top:6px;overflow-wrap:anywhere}
+.secl{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:10px}
+#hc{position:fixed;z-index:50;width:340px;max-width:calc(100vw - 24px);background:var(--surface);border:1px solid var(--line-2);border-radius:10px;box-shadow:var(--shadow);padding:12px 14px;pointer-events:none;font-size:13px}
+#hc .hh{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+#hc .hh b{font-size:14.5px}
+
+/* tables */
+.tbl{overflow-x:auto}
+.grid-t{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.grid-t th,.grid-t td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+.grid-t th{font-family:var(--f-mono);font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;position:sticky;top:0;background:var(--surface)}
+.grid-t tbody tr{cursor:pointer}
+.grid-t tbody tr:hover{background:var(--surface-2)}
+.grid-t td.num{text-align:right}
+.idb{font-family:var(--f-mono);font-size:12px;white-space:nowrap}
+.refs{display:flex;flex-wrap:wrap;gap:4px}
+.ref{all:unset;cursor:pointer;font-family:var(--f-mono);font-size:11px;padding:0 6px;border:1px solid var(--line-2);border-radius:4px;white-space:nowrap}
+.ref:hover,.ref:focus-visible{border-color:var(--accent);color:var(--accent)}
+.kind-dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1.4px solid}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+select,input[type=search]{font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--line-2);border-radius:6px;background:var(--surface);color:var(--ink)}
+
+/* stages */
+.stages{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:st}
+.stage{display:grid;grid-template-columns:56px minmax(0,1fr);gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.stage .no{font-family:var(--f-display);font-size:30px;font-weight:800;color:var(--accent);line-height:1}
+.stage .phl{font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-top:4px}
+.stage-b{display:grid;gap:8px;min-width:0}
+.stage-h{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.eae{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;font-size:13.5px}
+.eae b{display:block;font-family:var(--f-mono);font-size:10.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.eae ul{margin:0;padding-left:18px}
+@media (max-width:800px){.eae{grid-template-columns:minmax(0,1fr)}}
+pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:12px;line-height:1.5;overflow:auto;max-height:420px;margin:8px 0 0;white-space:pre}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+@media (max-width:1000px){.two{grid-template-columns:minmax(0,1fr)}}
+
+/* census */
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:16px}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:520px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;min-width:0}
+.kpi b{display:block;font-family:var(--f-display);font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
+.kpi.rep{border-left:4px solid var(--rep-s)} .kpi.hold{border-left:4px solid var(--hold-s)} .kpi.pass{border-left:4px solid var(--pass-s)} .kpi.proc{border-left:4px solid var(--proc-s)} .kpi.evid{border-left:4px solid var(--evid-s)}
+.feed{list-style:none;margin:0;padding:0;display:grid;gap:0;font-size:13px;max-height:360px;overflow:auto}
+.feed li{display:grid;grid-template-columns:92px 54px 40px minmax(0,1fr);gap:8px;padding:6px 4px;border-bottom:1px solid var(--line)}
+.feed .ts{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.lvl{font-family:var(--f-mono);font-size:10.5px;font-weight:500}
+.lvl.ERROR{color:var(--rep-ink)} .lvl.WARN{color:var(--hold-ink)} .lvl.INFO{color:var(--proc-ink)} .lvl.DEBUG{color:var(--muted)}
+.empty{font-size:13px;color:var(--muted);padding:10px 2px}
+.vcs{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;font-size:13px}
+.vcs dt{font-family:var(--f-mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.vcs dd{margin:0;font-family:var(--f-mono);font-size:12px;overflow-wrap:anywhere}
+details summary{cursor:pointer;font-weight:600}
+
+/* sipoc, lanes, admission (from v1) */
+.sipoc-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+@media (max-width:1000px){.sipoc-grid{grid-template-columns:minmax(0,1fr)}}
+.box-t{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em}
+.formula{font-family:var(--f-mono);font-size:17px;padding:12px 14px;background:var(--surface-2);border-radius:8px;margin:6px 0 10px;overflow-x:auto;white-space:nowrap}
+.terms{display:grid;gap:8px;font-size:13.5px}
+.terms div{display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px}
+.terms b{font-family:var(--f-mono);font-weight:500}
+.census{width:100%;border-collapse:collapse;font-size:13px}
+.census th,.census td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.census th{font-family:var(--f-mono);font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.root-node{width:max-content;max-width:100%;margin:0 auto;padding:10px 18px;border-radius:8px;background:var(--auth);color:var(--auth-ink);text-align:center}
+.root-node .eyebrow{color:var(--auth-ink);opacity:.8}
+.stem{width:0;height:18px;border-left:1.5px solid var(--line-2);margin:0 auto}
+.tiers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.tier{position:relative;padding:18px 7px 0;display:grid;gap:10px;align-content:start;min-width:0}
+.tier::before{content:"";position:absolute;top:0;left:50%;height:18px;border-left:1.5px solid var(--line-2)}
+.tier::after{content:"";position:absolute;top:0;left:0;right:0;border-top:1.5px solid var(--line-2)}
+.tier:first-child::after{left:50%} .tier:last-child::after{right:50%}
+.tier-h{background:var(--surface-2);border:1px solid var(--line-2);border-radius:8px;padding:8px 12px;text-align:center}
+.leaf{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:11px 12px;display:grid;gap:6px;min-width:0}
+.leaf code{display:block;background:var(--surface-2);padding:4px 7px;border-radius:5px;overflow-wrap:anywhere}
+.leaf .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.repo{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line-2);border-radius:4px;padding:0 6px}
+.jump{all:unset;cursor:pointer;font-family:var(--f-mono);font-size:11px;color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.jump:focus-visible{outline:2px solid var(--accent)}
+@media (max-width:900px){.tiers{grid-template-columns:minmax(0,1fr)}.tier::before,.tier::after{display:none}.tier{padding-top:12px}}
+.dock{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin-top:22px}
+@media (max-width:900px){.dock{grid-template-columns:minmax(0,1fr)}}
+.ladder td.st{text-align:center;white-space:nowrap}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle}
+.dot.ok{background:var(--pass-s)} .dot.un{border:1.5px dashed var(--hold-s)} .dot.na{background:var(--line-2);border-radius:2px;height:3px;width:12px}
+.classes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:6px 0 18px}
+@media (max-width:800px){.classes{grid-template-columns:minmax(0,1fr)}}
+.cls{border:1px dashed var(--line-2);border-radius:8px;padding:9px 12px;font-size:13px;background:var(--surface)}
+.cls b{display:block;font-size:13.5px}
+.prs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:22px}
+.pr{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:6px;align-content:start;border-top:4px solid var(--line-2)}
+.pr.rep{border-top-color:var(--rep-s)} .pr.hold{border-top-color:var(--hold-s)} .pr.auth{border-top-color:var(--auth)}
+.pr .id{font-family:var(--f-mono);font-size:12.5px;display:flex;justify-content:space-between;gap:8px}
+.st-pill{font-family:var(--f-mono);font-size:11px;padding:1px 8px;border-radius:999px;white-space:nowrap;border:1px solid}
+.st-pill.ok{background:var(--pass);border-color:var(--pass-s);color:var(--pass-ink)}
+.st-pill.prog,.st-pill.progress{background:var(--proc);border-color:var(--proc-s);color:var(--proc-ink)}
+.st-pill.block{background:var(--rep);border-color:var(--rep-s);color:var(--rep-ink)}
+.st-pill.hold{background:var(--hold);border-color:var(--hold-s);color:var(--hold-ink)}
+.st-pill.todo{background:var(--surface);border-color:var(--line-2);color:var(--muted)}
+.st-pill.none{background:var(--surface-2);border-color:var(--line-2);color:var(--muted);border-style:dashed}
+.st-pill.guard,.st-pill.partial{background:var(--evid);border-color:var(--evid-s);color:var(--evid-ink)}
+footer{margin-top:30px;font-size:12.5px;color:var(--muted);max-width:90ch}
+.node.static{cursor:default}
+.print-only{display:none}
+.wired{font-family:var(--f-mono);font-size:11px;padding:1px 8px;border-radius:999px;border:1px solid;white-space:nowrap}
+.wired.partial{background:var(--evid);border-color:var(--evid-s);color:var(--evid-ink)}
+.wired.proposed{background:var(--surface);border-color:var(--line-2);color:var(--muted);border-style:dashed}
+.tcode{font-family:var(--f-mono);font-size:11.5px;background:var(--surface-2);padding:0 4px;border-radius:3px}
+
+@media print{
+  @page{size:A4;margin:14mm 12mm 16mm}
+  body{font-size:11.5px;background:#fff}
+  .wrap{max-width:none;padding:0}
+  .tabs,.controls,#hc,#detail,.no-print,.jump,.filters input,.filters select,.btn,label.btn,.banner{display:none!important}
+  section[role=tabpanel][hidden]{display:block!important}
+  section[role=tabpanel]{break-before:page}
+  .print-only{display:block!important}
+  h2.print-only{font-size:22px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+  .pulse,.sipoc-grid,.two,.dock{grid-template-columns:minmax(0,1fr)!important}
+  .canvas{overflow:visible;border:none}
+  .canvas svg{min-width:0!important}
+  .card,.stage,.leaf,.pr,.kpi,tr,.lg{break-inside:avoid}
+  h2,h3{break-after:avoid}
+  pre.code{max-height:none;white-space:pre-wrap;font-size:9px}
+  .grid-t th{position:static}
+  .grid-t{font-size:10.5px}
+  .feed{max-height:none}
+  .ring{animation:none!important}
+  .steps{grid-template-columns:repeat(4,minmax(0,1fr))}
+  a{color:inherit;text-decoration:none}
+  .tbl{overflow:visible}
+  .ncell{min-width:30ch}
+  .pb{break-before:page}
+  footer{display:none}
+  #nodeT td.mono{max-width:none!important;font-size:9.5px}
+  .tiers{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .tier::before,.tier::after{display:block!important}
+  .tier{padding-top:18px!important}
+  .eae{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .classes{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .kpis{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+  #admission .kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .stage{padding:10px 12px}
+}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">QPS TRIAGE · ABACUS · CODEX — execution seed 2026-10-12 · federated DMAIC</div>
+  <h1>Global Code Purple</h1>
+  <p class="muted" style="max-width:78ch">A reusable, recursively self-testing execution protocol across repositories, agents, Docker, CI, PR admission and evidence. It builds on QPS TRIAGE, ABACUS, CODEX, KEB and DOW and does not introduce a second system of authority.</p>
+  <div class="status-row" id="liveRow">
+<!-- census:begin (rewritten by refresh.py from kit/census.json) -->
+    <span class="pill" style="background:var(--rep);border-color:var(--rep-s);color:var(--rep-ink)">NOT LIFTED · 2 of 5 lift criteria</span>
+    <span class="pill">read back 2026-10-18 13:17 UTC</span>
+    <span class="pill" style="background:var(--pass);border-color:var(--pass-s);color:var(--pass-ink)">ABACUS #1858 · merged</span>
+    <span class="pill" style="background:var(--pass);border-color:var(--pass-s);color:var(--pass-ink)">ABACUS #1859 · merged</span>
+    <span class="pill">ABACUS: 12 open PRs</span>
+    <span class="pill">CODEX: 0 open PRs</span>
+    <span class="pill">97 merges since unblock</span>
+<!-- census:end -->
+  </div>
+  <div class="controls"><button class="btn small" id="refreshBtn">Refresh readback</button><span class="muted" id="liveNote" style="font-size:12.5px">Loads the latest census published with this page; rechecks every 5 minutes while the tab is open.</span></div>
+  <div class="controls" style="margin-top:6px">
+    <span class="ctl-l">Telemetry</span>
+    <div class="seg" id="srcSeg">
+      <button data-src="recorded" aria-pressed="true">Recorded</button>
+      <button data-src="example" aria-pressed="false">Example</button>
+      <button data-src="loaded" aria-pressed="false" disabled hidden>Loaded file</button>
+    </div>
+    <button class="btn small" id="deckBtn" hidden>Download deck (16:9)</button>
+    <button class="btn small" id="pdfBtn" hidden>Download A4 PDF</button>
+    <span id="pdfLinks"><a class="btn small" href="Code-Purple-deck.pdf" download>Deck PDF (16:9)</a> <a class="btn small" href="code-purple.pdf" download>A4 PDF</a> <a class="btn small" href="../index.html">P process</a></span>
+    <label class="btn small" for="fileIn">Load census JSON<input type="file" id="fileIn" accept=".json,application/json"></label>
+    <span class="muted" id="srcNote" style="font-size:12.5px"></span>
+  </div>
+</header>
+
+<section class="rule" aria-label="Central rule">
+  <div class="eyebrow">The central rule · select a step to trace it on the pulse graph</div>
+  <ol class="steps" id="steps">
+    <li><button data-hl="N12,N03,N05" aria-pressed="false"><span class="n">01</span><span class="l">Reuse proven evidence</span><span class="ph">Define → Measure</span></button></li>
+    <li><button data-hl="N02,N03,N04,N05" aria-pressed="false"><span class="n">02</span><span class="l">Allocate, preconfigure and pretest</span><span class="ph">Measure</span></button></li>
+    <li><button data-hl="N05,N06" aria-pressed="false"><span class="n">03</span><span class="l">Identify the first material red</span><span class="ph">Analyse</span></button></li>
+    <li><button data-hl="N06,N07" aria-pressed="false"><span class="n">04</span><span class="l">Repair the smallest common cause</span><span class="ph">Improve</span></button></li>
+    <li><button data-hl="N07,N08,N09" aria-pressed="false"><span class="n">05</span><span class="l">Independently verify</span><span class="ph">Improve</span></button></li>
+    <li><button data-hl="N09,N14" aria-pressed="false"><span class="n">06</span><span class="l">Publish exact-head evidence</span><span class="ph">Control</span></button></li>
+    <li><button data-hl="N10,N13,N11" aria-pressed="false"><span class="n">07</span><span class="l">Advance only admissible successors</span><span class="ph">Control</span></button></li>
+  </ol>
+</section>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" id="tab-pulse" aria-controls="pulse" aria-selected="true">Execution pulse</button>
+  <button role="tab" id="tab-census" aria-controls="census" aria-selected="false">Census &amp; telemetry</button>
+  <button role="tab" id="tab-reference" aria-controls="reference" aria-selected="false">Process reference</button>
+  <button role="tab" id="tab-sipoc" aria-controls="sipoc" aria-selected="false">Recursive SIPOC</button>
+  <button role="tab" id="tab-lanes" aria-controls="lanes" aria-selected="false">Lanes &amp; dock</button>
+  <button role="tab" id="tab-admission" aria-controls="admission" aria-selected="false">Admission board</button>
+  <button role="tab" id="tab-method" aria-controls="method" aria-selected="false">Lift &amp; method</button>
+</nav>
+
+<!-- ============ PULSE ============ -->
+<section id="pulse" role="tabpanel" aria-labelledby="tab-pulse">
+  <h2 class="print-only">1 · Execution pulse</h2>
+  <div class="view-head">
+    <p class="no-print">Hover a node's phase letter or ID for its actions and run telemetry. Click a node or an edge for full detail.</p>
+    <div class="controls">
+      <span class="ctl-l">Colour by</span>
+      <div class="seg" id="modeSeg">
+        <button data-mode="role" aria-pressed="true">Role</button>
+        <button data-mode="status" aria-pressed="false">Status</button>
+        <button data-mode="rate" aria-pressed="false">Pass rate</button>
+      </div>
+      <label class="toggle"><input type="checkbox" id="live" checked> Tracked PRs</label>
+      <button class="btn small" id="clear" hidden>Clear trace</button>
+    </div>
+  </div>
+  <div class="banner" id="exBanner1">EXAMPLE TELEMETRY · illustrative numbers, not real runs</div>
+  <div class="pulse">
+    <div class="canvas" id="canvas"></div>
+    <aside class="side">
+      <div class="card" id="detail" aria-live="polite"></div>
+      <div class="card"><h3>Legend</h3><div class="legend" id="legend"></div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ CENSUS ============ -->
+<section id="census" role="tabpanel" aria-labelledby="tab-census" hidden>
+  <h2 class="print-only">2 · Census and telemetry</h2>
+  <div class="view-head">
+    <p>Iteration census from the <span class="mono">.self</span> harness: preconfig state per node, run attempts and outcomes, errors, logs, REX lessons, Python runtime and version control. Pass rate counts decisive runs only; pending and neutral runs are shown separately.</p>
+  </div>
+  <div class="banner" id="exBanner2">EXAMPLE TELEMETRY · illustrative numbers, not real runs</div>
+  <div class="kpis" id="kpis"></div>
+  <div class="card" style="margin-bottom:18px">
+    <div class="filters" style="justify-content:space-between;margin-bottom:6px"><h3 style="margin:0">Coverage · breadth × depth</h3><span class="muted mono" style="font-size:12px">local run with the CI command on #1858 head 203d63af · 1,086 tests</span></div>
+    <div class="kpis" style="margin-bottom:12px">
+      <div class="kpi hold"><span class="eyebrow">Overall</span><b>36.9%</b><span class="muted" style="font-size:12px">line + branch</span></div>
+      <div class="kpi proc"><span class="eyebrow">Lines</span><b>38.2%</b><span class="muted" style="font-size:12px">10,686 / 27,998</span></div>
+      <div class="kpi evid"><span class="eyebrow">Breadth</span><b>64.5%</b><span class="muted" style="font-size:12px">155 of 269 files touched</span></div>
+      <div class="kpi evid"><span class="eyebrow">Depth</span><b>59.2%</b><span class="muted" style="font-size:12px">inside touched files</span></div>
+      <div class="kpi rep"><span class="eyebrow">Untested files</span><b>114</b><span class="muted" style="font-size:12px">57% of the gap</span></div>
+      <div class="kpi pass"><span class="eyebrow">Gate</span><b>75%</b><span class="muted" style="font-size:12px">fixed; red on every PR</span></div>
+    </div>
+    <div class="tbl"><table class="grid-t" style="cursor:default"><thead><tr><th>Wave</th><th>Scope</th><th class="num">Line coverage after</th><th>Target date (proposed)</th></tr></thead><tbody>
+      <tr><td class="mono">W0</td><td>Floor = measured; new and changed lines ≥ 80% (diff coverage)</td><td class="num">38.2%</td><td class="mono">16 Oct</td></tr>
+      <tr><td class="mono">W1</td><td>Written disposition for 34 one-shot or legacy files (keep+test, archive, omit)</td><td class="num">46.5%</td><td class="mono">20 Oct</td></tr>
+      <tr><td class="mono">W2</td><td>DMAIC_V3 phase modules to 80%</td><td class="num">52.1%</td><td class="mono">27 Oct</td></tr>
+      <tr><td class="mono">W3</td><td>53 untested DMAIC_V3 modules to 70%</td><td class="num">65.5%</td><td class="mono">6 Nov</td></tr>
+      <tr><td class="mono">W4</td><td>34 partly covered DMAIC_V3 modules to 75%</td><td class="num">72.1%</td><td class="mono">13 Nov</td></tr>
+      <tr><td class="mono">W5</td><td>tools, scripts, models, src, renderers, integration to 80%</td><td class="num">80.2%</td><td class="mono">20 Nov</td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="two">
+    <div class="card"><h3>Version control</h3><dl class="vcs" id="vcs"></dl></div>
+    <div class="card"><h3>Runtime and debug</h3><dl class="vcs" id="rt"></dl></div>
+  </div>
+  <div class="block">
+    <h2 style="margin-bottom:8px">Node census</h2>
+    <div class="card" style="padding:0"><div class="tbl"><table class="grid-t" id="censusT"></table></div></div>
+  </div>
+  <div class="two block">
+    <div class="card"><div class="filters" style="justify-content:space-between"><h3 style="margin:0">Logs</h3><select id="lvlF" aria-label="Log level"><option value="">All levels</option><option>ERROR</option><option>WARN</option><option>INFO</option><option>DEBUG</option></select></div><ul class="feed" id="logs"></ul></div>
+    <div class="card"><h3>Errors</h3><div class="tbl"><table class="grid-t" id="errT"></table></div>
+      <h3 style="margin-top:16px">REX lessons</h3><div class="tbl"><table class="grid-t" id="rexT"></table></div></div>
+  </div>
+  <div class="card block">
+    <details><summary>Census JSON contract · code-purple.census/v1</summary>
+      <p class="muted" style="font-size:13px;margin-top:8px">The <span class="mono">.self</span> harness writes one file per iteration in this shape. Load it with "Load census JSON" to replace the recorded data on every view.</p>
+      <div style="margin-top:8px"><button class="btn small" id="cpSchema">Copy contract</button></div>
+      <pre class="code" id="schema"></pre>
+    </details>
+  </div>
+</section>
+
+<!-- ============ REFERENCE ============ -->
+<section id="reference" role="tabpanel" aria-labelledby="tab-reference" hidden>
+  <h2 class="print-only">3 · Process reference</h2>
+  <div class="view-head">
+    <p>The pulse as a written procedure. Stages run in order; each lists entry criteria, actions and exit outputs, with the nodes it touches. The node and edge tables are generated from the same model as the graph.</p>
+  </div>
+  <h2 style="margin-bottom:6px">Lifecycle triggers</h2>
+  <p class="muted" style="font-size:13.5px;max-width:84ch;margin-bottom:10px">What moves a work item (a PR head or a red finding) from one state to the next. Each transition has one triggering event, a guard that must hold, and an action that writes evidence. Today only T01's CI start is wired, because GitHub runs checks on pull-request events; the rest are proposed and need the <span class="mono">.self</span> harness and a readback workflow.</p>
+  <div class="canvas" id="lifeSvg"></div>
+  <div class="card" style="padding:0;margin-top:12px"><div class="tbl"><table class="grid-t" id="trigT"></table></div></div>
+
+  <h2 class="block" style="margin-bottom:10px">Process stages</h2>
+  <ol class="stages" id="stages"></ol>
+
+  <div class="block pb">
+    <h2 style="margin-bottom:8px">Node reference</h2>
+    <div class="filters">
+      <input type="search" id="nq" placeholder="Filter nodes" aria-label="Filter nodes">
+      <select id="nph" aria-label="Phase"><option value="">All phases</option><option value="D">Define</option><option value="M">Measure</option><option value="A">Analyse</option><option value="I">Improve</option><option value="C">Control</option></select>
+      <select id="nlane" aria-label="Lane"><option value="">All lanes</option><option value="spine">Admission spine</option><option value="ev">Evidence · hold</option><option value="rep">Repair loop</option></select>
+      <span class="muted" id="ncount" style="font-size:12.5px"></span>
+    </div>
+    <div class="card" style="padding:0"><div class="tbl"><table class="grid-t" id="nodeT"></table></div></div>
+  </div>
+
+  <div class="block">
+    <h2 style="margin-bottom:8px">Edge reference</h2>
+    <div class="card" style="padding:0"><div class="tbl"><table class="grid-t" id="edgeT"></table></div></div>
+  </div>
+
+  <div class="two block">
+    <div class="card"><div class="filters" style="justify-content:space-between"><h3 style="margin:0">Mermaid export</h3><button class="btn small" id="cpMer">Copy Mermaid</button></div><pre class="code" id="mer"></pre></div>
+    <div class="card no-print"><div class="filters" style="justify-content:space-between"><h3 style="margin:0">Model JSON</h3><button class="btn small" id="cpJson">Copy JSON</button></div><pre class="code" id="mjson"></pre></div>
+  </div>
+</section>
+
+<!-- ============ SIPOC ============ -->
+<section id="sipoc" role="tabpanel" aria-labelledby="tab-sipoc" hidden>
+  <h2 class="print-only">4 · Recursive SIPOC</h2>
+  <div class="view-head">
+    <p>A standard SIPOC runs once, left to right. With <span class="mono">.self</span>, the customer of iteration N becomes the supplier of iteration N+1, and the next input is a governed reconciliation, not a concatenation.</p>
+  </div>
+  <div class="sipoc-grid">
+    <div class="canvas">
+<svg viewBox="0 0 1000 420" role="img" aria-label="Recursive SIPOC across two iterations" style="min-width:760px">
+  <defs>
+    <marker id="s-flow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-flow" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="s-rec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-rec" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="s-evid" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-evid" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="s-hold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="m-hold" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+  <text class="lane-t" x="40" y="38">ITERATION N</text>
+  <text class="lane-t" x="40" y="282">ITERATION N+1</text>
+  <g class="node n-proc" style="cursor:default"><rect class="b" x="40" y="50" width="160" height="80" rx="9"/><text class="box-t" x="54" y="70">S · SUPPLIER</text><text class="s" x="54" y="92" style="text-anchor:start">GLOB census</text><text class="s" x="54" y="110" style="text-anchor:start">prior REX lessons</text></g>
+  <g class="node n-auth" style="cursor:default"><rect class="b" x="230" y="50" width="160" height="80" rx="9"/><text class="box-t" x="244" y="70">I · INPUT I<tspan dy="3" font-size="9">N</tspan></text><text class="s" x="244" y="92" style="text-anchor:start">SHA-pinned scope</text><text class="s" x="244" y="110" style="text-anchor:start">seed YAML contract</text></g>
+  <g class="node n-proc" style="cursor:default"><rect class="b" x="420" y="50" width="160" height="80" rx="9"/><text class="box-t" x="434" y="70">P · PROCESS</text><text class="s" x="434" y="92" style="text-anchor:start">preflight → repair</text><text class="s" x="434" y="110" style="text-anchor:start">→ verify</text></g>
+  <g class="node n-pass" style="cursor:default"><rect class="b" x="610" y="50" width="160" height="80" rx="9"/><text class="box-t" x="624" y="70">O · OUTPUT O<tspan dy="3" font-size="9">N</tspan></text><text class="s" x="624" y="92" style="text-anchor:start">receipts · check states</text><text class="s" x="624" y="110" style="text-anchor:start">ranked findings</text></g>
+  <g class="node n-hold" style="cursor:default"><rect class="b" x="800" y="50" width="160" height="80" rx="9"/><text class="box-t" x="814" y="70">C · CUSTOMER</text><text class="s" x="814" y="92" style="text-anchor:start">admission gate</text><text class="s" x="814" y="110" style="text-anchor:start">QPS acceptance</text></g>
+  <path class="edge e-flow" d="M200,90 L228,90" marker-end="url(#s-flow)"/>
+  <path class="edge e-flow" d="M390,90 L418,90" marker-end="url(#s-flow)"/>
+  <path class="edge e-flow" d="M580,90 L608,90" marker-end="url(#s-flow)"/>
+  <path class="edge e-flow" d="M770,90 L798,90" marker-end="url(#s-flow)"/>
+  <g class="node n-evid" style="cursor:default"><rect class="b" x="200" y="200" width="170" height="46" rx="9"/><text class="t" x="285" y="220" style="font-size:13px">ΔE<tspan dy="3" font-size="9">N</tspan><tspan dy="-3"> new evidence</tspan></text><text class="s" x="285" y="237">checks, runners, findings</text></g>
+  <g class="node n-hold" style="cursor:default"><rect class="b" x="630" y="200" width="170" height="46" rx="9"/><text class="t" x="715" y="220" style="font-size:13px">C<tspan dy="3" font-size="9">N+1</tspan><tspan dy="-3"> constraints</tspan></text><text class="s" x="715" y="237">new gates, policies</text></g>
+  <circle cx="500" cy="223" r="20" style="fill:var(--surface);stroke:var(--accent);stroke-width:2"/>
+  <text x="500" y="231" style="fill:var(--accent);font-size:24px;text-anchor:middle;font-weight:600">⊕</text>
+  <path class="edge e-flow" d="M690,130 C690,180 540,170 510,201" marker-end="url(#s-flow)"/>
+  <g class="elab"><rect x="596" y="152" width="34" height="17" rx="8"/><text x="613" y="164">O<tspan dy="2" font-size="8">N</tspan></text></g>
+  <path class="edge e-evid" d="M370,223 L478,223" marker-end="url(#s-evid)"/>
+  <path class="edge e-hold" d="M630,223 L522,223" marker-end="url(#s-hold)"/>
+  <path class="edge e-rec" d="M494,243 C470,280 330,260 314,288" marker-end="url(#s-rec)"/>
+  <g class="elab rec"><rect x="372" y="262" width="96" height="17" rx="8"/><text x="420" y="274">governed merge</text></g>
+  <g class="node n-proc" style="cursor:default"><rect class="b" x="40" y="290" width="160" height="80" rx="9"/><text class="box-t" x="54" y="310">S · SUPPLIER = C<tspan dy="3" font-size="9">N</tspan></text><text class="s" x="54" y="332" style="text-anchor:start">admission result</text><text class="s" x="54" y="350" style="text-anchor:start">+ REX lessons</text></g>
+  <g class="node n-auth" style="cursor:default"><rect class="b" x="230" y="290" width="160" height="80" rx="9"/><text class="box-t" x="244" y="310">I · INPUT I<tspan dy="3" font-size="9">N+1</tspan></text><text class="s" x="244" y="332" style="text-anchor:start">reconciled by ⊕</text><text class="s" x="244" y="350" style="text-anchor:start">bounded scope</text></g>
+  <g class="node n-proc" style="cursor:default"><rect class="b" x="420" y="290" width="160" height="80" rx="9"/><text class="box-t" x="434" y="310">P · PROCESS</text><text class="s" x="434" y="332" style="text-anchor:start">next red only</text><text class="s" x="434" y="350" style="text-anchor:start">impacted tests</text></g>
+  <g class="node n-pass" style="cursor:default"><rect class="b" x="610" y="290" width="160" height="80" rx="9"/><text class="box-t" x="624" y="310">O · OUTPUT O<tspan dy="3" font-size="9">N+1</tspan></text><text class="s" x="624" y="332" style="text-anchor:start">census delta</text><text class="s" x="624" y="350" style="text-anchor:start">JSON + SARIF</text></g>
+  <g class="node n-hold" style="cursor:default"><rect class="b" x="800" y="290" width="160" height="80" rx="9"/><text class="box-t" x="814" y="310">C · CUSTOMER</text><text class="s" x="814" y="332" style="text-anchor:start">admission gate</text><text class="s" x="814" y="350" style="text-anchor:start">→ supplier N+2</text></g>
+  <path class="edge e-flow" d="M200,330 L228,330" marker-end="url(#s-flow)"/>
+  <path class="edge e-flow" d="M390,330 L418,330" marker-end="url(#s-flow)"/>
+  <path class="edge e-flow" d="M580,330 L608,330" marker-end="url(#s-flow)"/>
+  <path class="edge e-flow" d="M770,330 L798,330" marker-end="url(#s-flow)"/>
+  <path class="edge e-rec" d="M960,90 L985,90 L985,398 L120,398 L120,372" marker-end="url(#s-rec)"/>
+  <g class="elab rec"><rect x="430" y="389" width="210" height="18" rx="9"/><text x="535" y="402">.self · customer N = supplier N+1</text></g>
+</svg>
+    </div>
+    <div class="side">
+      <div class="card">
+        <h3>State transition</h3>
+        <div class="formula">I<sub>N+1</sub> = O<sub>N</sub> ⊕ ΔE<sub>N</sub> ⊕ C<sub>N+1</sub></div>
+        <div class="terms">
+          <div><b>O<sub>N</sub></b><span>Last output: receipts, check states, ranked findings.</span></div>
+          <div><b>ΔE<sub>N</sub></b><span>Newly observed evidence: completed checks, runner behaviour, new findings.</span></div>
+          <div><b>C<sub>N+1</sub></b><span>Newly applicable constraints: gates, policies, review rules.</span></div>
+          <div><b>⊕</b><span>Governed reconciliation. Superseded evidence is retired, conflicts go to HOLD, nothing is appended blindly.</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Confidence is not admission</h3>
+        <p style="font-size:13.5px">A passing local preflight raises confidence for the next iteration. Only exact-head GitHub checks and reviews move a PR through the admission gate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LANES ============ -->
+<section id="lanes" role="tabpanel" aria-labelledby="tab-lanes" hidden>
+  <h2 class="print-only">5 · Lanes and dock</h2>
+  <div class="view-head">
+    <p>Ten execution lanes grouped by what they contribute. Each lane keeps its existing canonical owner; Code Purple only routes between them. "Show on pulse" traces the lane onto the execution graph.</p>
+  </div>
+  <div class="root-node"><div class="eyebrow">protocol</div><b style="font-family:var(--f-display);font-size:17px">Code Purple</b></div>
+  <div class="stem"></div>
+  <div class="tiers">
+    <div class="tier">
+      <div class="tier-h"><div class="eyebrow">Tier 1</div><b>Discover</b></div>
+      <div class="leaf"><h3>Global lookup</h3><code>GLOB.yaml · global mesh census</code><p class="muted" style="font-size:13px">Discover authorities and available capabilities.</p><div class="meta"><span class="repo">CODEX</span><button class="jump" data-hl="N01">show on pulse</button></div></div>
+      <div class="leaf"><h3>Dock interface</h3><code>.mesh/MESH_DOCK.yaml</code><p class="muted" style="font-size:13px">Resolve producer, consumer, receipts and scope.</p><div class="meta"><span class="repo">mesh</span><button class="jump" data-hl="N01,N02">show on pulse</button></div></div>
+    </div>
+    <div class="tier">
+      <div class="tier-h"><div class="eyebrow">Tier 2</div><b>Verify</b></div>
+      <div class="leaf"><h3>Runtime and self-test</h3><code>scripts/testpilot_preflight.py</code><p class="muted" style="font-size:13px">Fast preflight, smoke and testflight.</p><div class="meta"><span class="repo">ABACUS</span><button class="jump" data-hl="N04,N05,N08">show on pulse</button></div></div>
+      <div class="leaf"><h3>Lint and configuration</h3><code>pre-commit · Ruff · YAML/JSON/TOML</code><p class="muted" style="font-size:13px">Detect deterministic defects early.</p><div class="meta"><span class="repo">both</span><button class="jump" data-hl="N04,N05">show on pulse</button></div></div>
+      <div class="leaf"><h3>Coverage</h3><code>ci-cd-tests.yml · MIP B0 coverage evidence</code><p class="muted" style="font-size:13px">Line + branch per test; breadth, depth and per-area census; floor ratchet (T16).</p><div class="meta"><span class="repo">ABACUS</span><button class="jump" data-hl="N04,N05,N06,N14">show on pulse</button></div></div>
+      <div class="leaf"><h3>Security</h3><code>Bandit · Semgrep · SARIF</code><p class="muted" style="font-size:13px">Typed findings. No fabricated security PASS.</p><div class="meta"><span class="repo">both</span><button class="jump" data-hl="N04,N09">show on pulse</button></div></div>
+    </div>
+    <div class="tier">
+      <div class="tier-h"><div class="eyebrow">Tier 3</div><b>Analyse and remember</b></div>
+      <div class="leaf"><h3>Derived analysis</h3><code>DOW</code><p class="muted" style="font-size:13px">Rank findings and return scoped dispositions.</p><div class="meta"><span class="repo">ABACUS</span><button class="jump" data-hl="N06,N07">show on pulse</button></div></div>
+      <div class="leaf"><h3>Semantic and provenance</h3><code>KEB · REX</code><p class="muted" style="font-size:13px">Evidence identity, recurrence and reusable lessons.</p><div class="meta"><span class="repo">CODEX</span><button class="jump" data-hl="N12,N03,N11">show on pulse</button></div></div>
+    </div>
+    <div class="tier">
+      <div class="tier-h"><div class="eyebrow">Tier 4</div><b>Authorise and deliver</b></div>
+      <div class="leaf"><h3>QPS domain</h3><code>cryoplant-project controlled sources</code><p class="muted" style="font-size:13px">Engineering authority over acceptance stays here.</p><div class="meta"><span class="repo">cryoplant-project</span><button class="jump" data-hl="N10,N15">show on pulse</button></div></div>
+      <div class="leaf"><h3>Delivery</h3><code>GitHub Actions · PR Feedback Gate · Pages</code><p class="muted" style="font-size:13px">Exact-head admission and post-merge proof.</p><div class="meta"><span class="repo">GitHub</span><button class="jump" data-hl="N09,N10,N13,N14">show on pulse</button></div></div>
+    </div>
+  </div>
+  <div class="dock">
+    <div class="card">
+      <h3>Two meanings of "dock"</h3>
+      <div class="terms" style="margin-top:6px">
+        <div><b>logical</b><span>The mesh contract in <span class="mono">MESH_DOCK.yaml</span>: who produces, who consumes, which receipts count, what scope applies.</span></div>
+        <div><b>runtime</b><span>Container networking: ports a devcontainer or compose service exposes. Configuration alone proves nothing about a running service.</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Runtime dock status ladder</h3>
+      <div class="tbl"><table class="census ladder">
+        <thead><tr><th>Surface</th><th>Configured</th><th>Listening</th><th>Published</th><th>Probed</th></tr></thead>
+        <tbody>
+          <tr><td>ABACUS devcontainer<br><span class="mono muted">8000 · 8080 · 5000 forwarded</span></td><td class="st"><span class="dot ok" title="verified"></span></td><td class="st"><span class="dot un" title="unproven"></span></td><td class="st"><span class="dot un" title="unproven"></span></td><td class="st"><span class="dot un" title="unproven"></span></td></tr>
+          <tr><td>CODEX compose validator<br><span class="mono muted">no published ports</span></td><td class="st"><span class="dot ok" title="verified"></span></td><td class="st"><span class="dot un" title="unproven"></span></td><td class="st"><span class="dot na" title="not declared"></span></td><td class="st"><span class="dot un" title="unproven"></span></td></tr>
+        </tbody>
+      </table></div>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:12.5px" class="muted">
+        <span><span class="dot ok"></span> verified</span><span><span class="dot un"></span> unproven</span><span><span class="dot na"></span> not declared</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ADMISSION ============ -->
+<section id="admission" role="tabpanel" aria-labelledby="tab-admission" hidden>
+  <h2 class="print-only">6 · Admission board</h2>
+  <div class="view-head">
+    <p>The inbox shows an execution bottleneck rather than a coding backlog. Each red gets one of four causes before anyone repairs it, so a runner outage is never fixed as a source defect.</p>
+  </div>
+  <div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+    <div class="kpi rep"><span class="eyebrow">Red in scope</span><b>4</b><span class="muted" style="font-size:12.5px">ABACUS #1856 #1857 #1858 #1859</span></div>
+    <div class="kpi pass"><span class="eyebrow">Ready to merge</span><b>0</b><span class="muted" style="font-size:12.5px">ABACUS main idle since #1838 (10-06)</span></div>
+    <div class="kpi hold"><span class="eyebrow">Open ABACUS PRs</span><b>20</b><span class="muted" style="font-size:12.5px">all held by the Codex review gate</span></div>
+    <div class="kpi proc"><span class="eyebrow">Merged today</span><b>1</b><span class="muted" style="font-size:12.5px">CODEX #984, with 4 red checks</span></div>
+  </div>
+  <h2 style="margin-bottom:4px">Failure classes</h2>
+  <div class="classes">
+    <div class="cls"><b>Source defect</b>Introduced by this PR. Repair in the PR.</div>
+    <div class="cls"><b>Inherited quality debt</b>Already on main. Ratchet new debt; keep full-main enforcement.</div>
+    <div class="cls"><b>Review capacity</b>Codex review or security review unavailable. Owner fallback, never self-approval.</div>
+    <div class="cls"><b>Runner or infrastructure</b>Not a code fault. Retry or fix the runner, then re-read.</div>
+  </div>
+  <h2 style="margin-bottom:8px">Pull requests in scope · read back 17:55 CEST</h2>
+  <div class="prs">
+    <div class="pr auth"><div class="id"><a href="https://github.com/GBOGEB/ABACUS/pull/1858">ABACUS #1858</a><span class="st-pill block">P0 · gate FAILURE</span></div><b>Owner-attested review fallback</b>
+      <div class="rbar" title="89 pass · 6 fail · 1 neutral"><span class="p" style="width:92.7%"></span><span class="f" style="width:6.25%"></span><span class="n" style="width:1.05%"></span></div>
+      <p class="muted" style="font-size:13px">Head e7616e62 (17:52): regenerated rationalization doc, policy-and-inventory green. Remaining reds (Code Quality, Security Scanning; Coverage and Full Red Proof still running at 17:55) all fail nightly on ABACUS main: inherited debt. Threads resolved; the follow-up fixes are already in the PR (a7f623b5, 14430046). Gate pending on Codex reviews, so landing needs the owner break-glass.</p></div>
+    <div class="pr rep"><div class="id"><a href="https://github.com/GBOGEB/ABACUS/pull/1859">ABACUS #1859</a><span class="st-pill block">4 red</span></div><b>PR-level new-debt ratchet</b>
+      <div class="rbar"><span class="p" style="width:92.4%"></span><span class="f" style="width:6.1%"></span><span class="n" style="width:1.5%"></span></div>
+      <p class="muted" style="font-size:13px">Head 6fac58cc. Red: Code Quality Checks, Full Red Proof Summary, Security Scanning, validate-scripts. Class not yet assigned. Distinct control from #1858; must not weaken full-main enforcement.</p></div>
+    <div class="pr rep"><div class="id"><a href="https://github.com/GBOGEB/ABACUS/pull/1857">ABACUS #1857</a><span class="st-pill block">4 red</span></div><b>Fix syntax error in diagnostic_kpi_probe.py</b>
+      <div class="rbar"><span class="p" style="width:92.3%"></span><span class="f" style="width:6.2%"></span><span class="n" style="width:1.5%"></span></div>
+      <p class="muted" style="font-size:13px">Head e7b45912. Red: Code Coverage, Code Quality Checks, Full Red Proof Summary, Security Scanning. Likely inherited debt (the same reds as #1856); class not yet confirmed.</p></div>
+    <div class="pr rep"><div class="id"><a href="https://github.com/GBOGEB/ABACUS/pull/1856">ABACUS #1856</a><span class="st-pill block">3 red</span></div><b>Lossless branch hygiene burn-down</b>
+      <div class="rbar"><span class="p" style="width:95.8%"></span><span class="f" style="width:3.2%"></span><span class="n" style="width:1%"></span></div>
+      <p class="muted" style="font-size:13px">Head f11d8044. Red: Code Coverage, Code Quality Checks, Full Red Proof Summary. Same reds recur across PRs, which points to inherited debt; #1859 targets exactly this.</p></div>
+    <div class="pr rep"><div class="id"><a href="https://github.com/GBOGEB/CODEX/pull/984">CODEX #984</a><span class="st-pill ok">merged 12:16</span></div><b>Global Code Purple seed</b>
+      <div class="rbar" title="55 pass · 4 fail"><span class="p" style="width:93.2%"></span><span class="f" style="width:6.8%"></span></div>
+      <p class="muted" style="font-size:13px">Merged with 4 red checks on head 90e3396a (ruff, governance-gate ×2, validate). CODEX main has no required-check ruleset, so nothing stopped it. Post-merge 768c9e35: 38 pass, 2 fail (validate, scheduled osv-scan). Current main 6edf28b7 green.</p></div>
+  </div>
+  <h2 style="margin-bottom:8px">Burndown</h2>
+  <div class="card" style="padding:0"><div class="tbl"><table class="grid-t" style="cursor:default">
+    <thead><tr><th>#</th><th>Item</th><th>Status</th><th>Next action</th><th>Owner</th><th>Target (proposed)</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">1</td><td>Land ABACUS #1858</td><td><span class="st-pill prog">in progress</span></td><td>Done: threads resolved (17:20), #1878/#1879 opened, rationalization doc pushed (e7616e62, policy-and-inventory green). Next: owner accepts the 4 inherited reds and adds the one-time bypass; Claude squash-merges and reads back; owner restores the ruleset.</td><td>GBO (ruleset, merge) · Claude (threads, issues, readback)</td><td class="mono">2026-10-13</td></tr>
+      <tr><td class="mono">2</td><td>Follow-up hardening for #1858</td><td><span class="st-pill ok">opened</span></td><td><a href="https://github.com/GBOGEB/ABACUS/issues/1878">#1878</a> gate pending on <span class="mono">pull_request: synchronize</span>; <a href="https://github.com/GBOGEB/ABACUS/issues/1879">#1879</a> correlate outage reply with a current-head request.</td><td>Open for implementation</td><td class="mono">2026-10-13</td></tr>
+      <tr><td class="mono">3</td><td>CODEX post-merge reds</td><td><span class="st-pill ok">classified</span></td><td>validate fixed on main at f9ae4676. OSV-Scanner fails on every main push since before #984: inherited, needs its own fix.</td><td>Claude</td><td class="mono">2026-10-13</td></tr>
+      <tr><td class="mono">4</td><td>CODEX admission gap</td><td><span class="st-pill todo">decision</span></td><td>Decide whether CODEX main gets a required-check ruleset like ABACUS.</td><td>GBO</td><td class="mono">2026-10-14</td></tr>
+      <tr><td class="mono">5</td><td>Classify reds on #1856, #1857, #1859</td><td><span class="st-pill ok">confirmed</span></td><td>Code Coverage, Code Quality, Full Red Proof and Security Scanning fail in every nightly run on ABACUS main since at least 7 Oct: inherited debt.</td><td>Claude</td><td class="mono">2026-10-14</td></tr>
+      <tr><td class="mono">6</td><td>Runnable <span class="mono">.self</span> harness</td><td><span class="st-pill todo">todo</span></td><td>Emit census JSON (contract in the Census tab), SARIF findings and exact-commit receipts.</td><td>Claude</td><td class="mono">2026-10-16</td></tr>
+      <tr><td class="mono">7</td><td>Scheduled readback pulse (T12)</td><td><span class="st-pill todo">todo</span></td><td>Read back tracked PRs and both mains on a schedule; update this page's data.</td><td>Claude</td><td class="mono">2026-10-16</td></tr>
+      <tr><td class="mono">8</td><td>Docker smoke harness, live port probing</td><td><span class="st-pill todo">not built</span></td><td>After the harness contract is stable.</td><td>Claude</td><td class="mono">2026-10-23</td></tr>
+      <tr><td class="mono">9</td><td>Cross-repository adoption (T09)</td><td><span class="st-pill todo">gated</span></td><td>Adopt the seed in ABACUS once #1858 has landed.</td><td>—</td><td class="mono">gate: item 1</td></tr>
+      <tr><td class="mono">—</td><td>QPS completed lanes</td><td><span class="st-pill guard">guard</span></td><td>Preserve; no regression from Code Purple changes.</td><td>—</td><td class="mono">ongoing</td></tr>
+    </tbody>
+  </table></div></div>
+</section>
+
+<!-- ============ LIFT & METHOD ============ -->
+<section id="method" role="tabpanel" aria-labelledby="tab-method" hidden>
+  <h2 class="print-only">7 · Lift and method</h2>
+  <div class="view-head"><p><b>Not lifted.</b> Merge flow returned when #1858 merged on 12 October, but the ruleset was emptied during the break-glass and never restored: since then no merge has passed a green PR Feedback Gate (EVERRED root EVR-ABACUS-0001). These criteria are read from GitHub by <span class="mono">kit/readback.py</span>; the eight steps below are the reusable method, adapted per incident through one file, <span class="mono">kit/incident.yaml</span>.</p></div>
+  <div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+    <div class="kpi pass"><span class="eyebrow">Open ABACUS PRs</span><b>20 → 2</b><span class="muted" style="font-size:12px">declaration → 13 Oct 17:43</span></div>
+    <div class="kpi pass"><span class="eyebrow">Merges in 23 h</span><b>44</b><span class="muted" style="font-size:12px">after 6 days with none</span></div>
+    <div class="kpi proc"><span class="eyebrow">Coverage</span><b>40.3%</b><span class="muted" style="font-size:12px">from 36.9%; 1,247 tests</span></div>
+    <div class="kpi rep"><span class="eyebrow">Ruleset rules</span><b>0</b><span class="muted" style="font-size:12px">emptied 12 Oct 17:58; main unprotected</span></div>
+  </div>
+  <div class="card" style="padding:0;margin-bottom:18px"><div class="tbl"><table class="grid-t" style="cursor:default"><thead><tr><th>ID</th><th>Lift criterion</th><th>Met</th><th>Evidence</th></tr></thead><tbody id="liftBody">
+    <tr><td class="idb">L1</td><td>Unblocker PR merged</td><td><span class="st-pill ok">yes</span></td><td>#1858 merged 2026-10-12 18:17 CEST (e10e39d3)</td></tr>
+    <tr><td class="idb">L2</td><td>Break-glass bypass removed</td><td><span class="st-pill ok">yes</span></td><td>Ruleset 24494381 active, 0 bypass actors</td></tr>
+    <tr><td class="idb">L3</td><td>Merge flow restored (≥ 5 merges since the unblocker)</td><td><span class="st-pill ok">yes</span></td><td>43 merges after #1858</td></tr>
+    <tr><td class="idb">L4</td><td>Backlog ≤ 25% of baseline</td><td><span class="st-pill ok">yes</span></td><td>2 open (baseline 20)</td></tr>
+  </tbody></table></div></div>
+  <div class="two">
+    <div class="card"><h3>Worked</h3><ul class="acts" style="list-style:disc">
+      <li>Readback before action showed #1858 could not admit itself and #984 had merged red.</li>
+      <li>Classifying against main's nightly run proved four reds inherited.</li>
+      <li>The smallest fix (a 3-line regenerated doc) cleared the only red the PR caused.</li>
+      <li>Owner/agent split: owner bypass, merge and restore; agent threads, issues, fix, readback.</li></ul></div>
+    <div class="card"><h3>Change next time</h3><ul class="acts" style="list-style:disc">
+      <li>Run the readback every pulse and on a schedule; snapshots went stale twice in an hour.</li>
+      <li>Re-read the PR head before writing a decision on it.</li>
+      <li>Decide on a required-check ruleset for CODEX (#984 merged with 4 reds).</li>
+      <li>Break glass with a bypass actor, never by deleting rules; the lift check now compares actual rules to expected rules (it passed falsely on 13 Oct).</li>
+      <li>Burn down the four inherited reds; coverage W0 due 16 Oct.</li></ul></div>
+  </div>
+  <h2 class="block" style="margin-bottom:8px">The method in eight steps</h2>
+  <div class="card" style="padding:0"><div class="tbl"><table class="grid-t" style="cursor:default"><thead><tr><th>Step</th><th>Name</th><th>Entry</th><th>Action</th><th>Who</th></tr></thead><tbody>
+    <tr><td class="idb">0</td><td><b>Declare</b></td><td>Merge flow stalled, the same checks red across PRs, or a required reviewer unavailable</td><td>Write incident.yaml</td><td>Owner</td></tr>
+    <tr><td class="idb">1</td><td><b>Read back</b></td><td>incident.yaml exists</td><td>Run readback.py; no action before the first census</td><td>Agent</td></tr>
+    <tr><td class="idb">2</td><td><b>Classify every red</b></td><td>Census on exact heads</td><td>Inherited · source defect · review capacity · runner or infra</td><td>Agent</td></tr>
+    <tr><td class="idb">3</td><td><b>Find the unblocker</b></td><td>Classes known</td><td>Smallest change that lets the gate admit again; prove it cannot admit itself</td><td>Agent + owner</td></tr>
+    <tr><td class="idb">4</td><td><b>Repair source defects only</b></td><td>Unblocker chosen</td><td>Fix, impacted retest, exact-head readback</td><td>Agent</td></tr>
+    <tr><td class="idb">5</td><td><b>Admit or break glass</b></td><td>Only inherited or capacity reds left</td><td>Owner writes residual risk, one-time bypass, merge, remove bypass</td><td>Owner</td></tr>
+    <tr><td class="idb">6</td><td><b>Lift check</b></td><td>Unblocker merged</td><td>readback.py evaluates the L-criteria</td><td>Agent</td></tr>
+    <tr><td class="idb">7</td><td><b>Close out</b></td><td>Lifted</td><td>Verify follow-ups on main and close; REX lesson; inherited reds become dated burn-down items</td><td>Agent + owner</td></tr>
+  </tbody></table></div></div>
+  <p class="muted" style="font-size:13px;margin-top:12px">Toolkit files: <a href="kit/incident.yaml">incident.yaml</a> · <a href="kit/readback.py">readback.py</a> · <a href="kit/after_action.md">after_action.md</a> · <a href="code-purple.md">code-purple.md</a></p>
+</section>
+
+<footer id="foot">Case figures in the tabs are the recorded CP-2026-10-12 readback (2026-10-13 17:43 CEST) of ABACUS #1858, CODEX #984 and both main branches. The header status row and the lift table re-read <a href="kit/census.json">kit/census.json</a>, which refresh.py republishes after each readback. Part of the <a href="../index.html">P process</a>.</footer>
+</div>
+<div id="hc" hidden></div>
+
+<script src="assets/model.js"></script>
+<script src="assets/app.js"></script>

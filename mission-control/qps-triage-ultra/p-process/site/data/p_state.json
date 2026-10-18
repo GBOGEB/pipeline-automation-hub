@@ -1,0 +1,92 @@
+{
+  "schema": "p-process.state/1.0",
+  "generated_at": "2026-10-18T13:23:31+00:00",
+  "census_at": "2026-10-18T13:17:35+00:00",
+  "everred_at": "2026-10-18T13:19:45+00:00",
+  "drift_at": "2026-10-18T13:19:39+00:00",
+  "lifted": false,
+  "repos": {
+    "GBOGEB/ABACUS": {
+      "mode": "CODE_PURPLE",
+      "reasons": [
+        "E2: Code Purple case open, 2 of 5 lift criteria met",
+        "E1: ABACUS-RC-2026-0001 P0 control-plane probe red"
+      ],
+      "ruleset": "RED",
+      "ruleset_gaps": [
+        "review-thread resolution off",
+        "required_status_checks missing"
+      ],
+      "open_roots": 6,
+      "worst": "P0"
+    },
+    "GBOGEB/CODEX": {
+      "mode": "EVERRED",
+      "reasons": [],
+      "ruleset": "RED",
+      "ruleset_gaps": [
+        "deletion missing",
+        "non_fast_forward missing",
+        "pull_request missing",
+        "required_status_checks missing"
+      ],
+      "open_roots": 2,
+      "worst": "P1"
+    },
+    "GBOGEB/Q_engineering_tools": {
+      "mode": "EVERRED",
+      "reasons": [],
+      "ruleset": "RED",
+      "ruleset_gaps": [
+        "deletion missing",
+        "non_fast_forward missing",
+        "pull_request missing",
+        "required_status_checks missing"
+      ],
+      "open_roots": 1,
+      "worst": "P3"
+    },
+    "GBOGEB/cryoplant-project": {
+      "mode": "EVERRED",
+      "reasons": [],
+      "ruleset": "RED",
+      "ruleset_gaps": [
+        "deletion missing",
+        "non_fast_forward missing",
+        "pull_request missing",
+        "required_status_checks missing"
+      ],
+      "open_roots": 1,
+      "worst": "P1"
+    },
+    "GBOGEB/gg_MATH": {
+      "mode": "EVERRED",
+      "reasons": [],
+      "ruleset": "RED",
+      "ruleset_gaps": [
+        "deletion missing",
+        "non_fast_forward missing",
+        "pull_request missing",
+        "required_status_checks missing"
+      ],
+      "open_roots": 1,
+      "worst": "P2"
+    },
+    "GBOGEB/pipeline-automation-hub": {
+      "mode": "EVERRED",
+      "reasons": [],
+      "ruleset": "RED",
+      "ruleset_gaps": [
+        "deletion missing",
+        "non_fast_forward missing",
+        "pull_request missing",
+        "required_status_checks missing",
+        "required_linear_history missing",
+        "copilot_code_review missing"
+      ],
+      "open_roots": 1,
+      "worst": "P2"
+    }
+  },
+  "incident": "CP-2026-10-12-ABACUS-MERGE-STALL"
+}

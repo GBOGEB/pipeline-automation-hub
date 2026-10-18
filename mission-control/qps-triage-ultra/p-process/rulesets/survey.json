@@ -1,0 +1,1623 @@
+{
+ "GBOGEB/ABACUS": {
+  "visibility": "public",
+  "private": false,
+  "default_branch": "main",
+  "protected": true,
+  "allow_auto_merge": true,
+  "merge_methods": {
+   "allow_squash_merge": true,
+   "allow_merge_commit": true,
+   "allow_rebase_merge": true
+  },
+  "delete_branch_on_merge": true,
+  "rulesets": [
+   {
+    "id": 24494381,
+    "name": "ABACUS Main Hard Gate",
+    "enforcement": "active",
+    "target": "branch",
+    "rules": [
+     "deletion",
+     "pull_request",
+     "non_fast_forward"
+    ],
+    "bypass": 0
+   }
+  ],
+  "effective_rules": [
+   "deletion",
+   "pull_request",
+   "non_fast_forward"
+  ],
+  "workflows": 205,
+  "merged_sampled": 12,
+  "checks": {
+   "validate": {
+    "seen": 27,
+    "success": 27,
+    "app": "github-actions"
+   },
+   "summarize-merged-pr": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "CodeQL": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-advanced-security"
+   },
+   "dependency-review": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "analyze (python)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "residual-lineage-census": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "measured-pulse": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "YAML syntax scaffold": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "smoke": {
+    "seen": 12,
+    "success": 11,
+    "failure": 1,
+    "app": "github-actions"
+   },
+   "a10-guard": {
+    "seen": 12,
+    "success": 11,
+    "failure": 1,
+    "app": "github-actions"
+   },
+   "B0 report-only admission census": {
+    "seen": 10,
+    "success": 10,
+    "app": "github-actions"
+   },
+   "B0 static/DAB census producer": {
+    "seen": 10,
+    "success": 10,
+    "app": "github-actions"
+   },
+   "B0 report-only producer": {
+    "seen": 10,
+    "success": 10,
+    "app": "github-actions"
+   },
+   "B0 canonical coverage producer": {
+    "seen": 10,
+    "success": 10,
+    "app": "github-actions"
+   },
+   "B1 false-green census": {
+    "seen": 10,
+    "success": 10,
+    "app": "github-actions"
+   },
+   "Full Repository Census": {
+    "seen": 9,
+    "success": 9,
+    "app": "github-actions"
+   },
+   "validate-config": {
+    "seen": 6,
+    "success": 6,
+    "app": "github-actions"
+   },
+   "policy-and-inventory": {
+    "seen": 5,
+    "failure": 4,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "Evaluate PR feedback gate (#${{ matrix.pr }})": {
+    "seen": 5,
+    "skipped": 5,
+    "app": "github-actions"
+   },
+   "Invalidate PR feedback gate (#${{ matrix.pr }})": {
+    "seen": 5,
+    "skipped": 5,
+    "app": "github-actions"
+   },
+   "Route PRs to evaluate": {
+    "seen": 5,
+    "success": 5,
+    "app": "github-actions"
+   },
+   "self-smoke": {
+    "seen": 4,
+    "success": 4,
+    "app": "github-actions"
+   },
+   "zero-delta": {
+    "seen": 4,
+    "success": 4,
+    "app": "github-actions"
+   },
+   "resolve-and-gate": {
+    "seen": 4,
+    "success": 4,
+    "app": "github-actions"
+   },
+   "clean-clone": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "Review artifact package": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "aggregate": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-68b878b2849e-E741-002": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-68b878b2849e-F401-007": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-68b878b2849e-F401-004": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-68b878b2849e-F401-003": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-68b878b2849e-E731-001": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-68b878b2849e-F401-008": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-68b878b2849e-F401-006": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-68b878b2849e-F401-005": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-8e2b75a3c6d5-F401-007": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-8e2b75a3c6d5-F401-004": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-8e2b75a3c6d5-E731-001": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-8e2b75a3c6d5-F401-003": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-8e2b75a3c6d5-F401-008": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-8e2b75a3c6d5-F401-006": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-8e2b75a3c6d5-E741-002": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-8e2b75a3c6d5-F401-005": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "compatibility (3.12)": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "compatibility (3.11)": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "compatibility (3.10)": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-52a09874eca4-E741-002": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-52a09874eca4-E731-001": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-52a09874eca4-F401-004": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-52a09874eca4-F401-008": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-52a09874eca4-F401-006": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-52a09874eca4-F401-003": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-52a09874eca4-F401-007": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-52a09874eca4-F401-005": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-256034886917-F401-007": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-256034886917-F401-005": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-256034886917-F401-006": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-256034886917-F401-004": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-256034886917-F401-008": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-256034886917-E731-001": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-256034886917-F401-003": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-256034886917-E741-002": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-28cd47bd2a27-F401-004": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-28cd47bd2a27-E731-001": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-28cd47bd2a27-F401-008": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-28cd47bd2a27-E741-002": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-28cd47bd2a27-F401-006": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-28cd47bd2a27-F401-003": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-28cd47bd2a27-F401-007": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-28cd47bd2a27-F401-005": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-2dec725cfffa-F401-007": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-2dec725cfffa-F401-005": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-2dec725cfffa-E731-001": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-2dec725cfffa-F401-003": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-2dec725cfffa-E741-002": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-2dec725cfffa-F401-008": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-2dec725cfffa-F401-006": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-2dec725cfffa-F401-004": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-77c420ad26d4-F401-006": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-77c420ad26d4-F401-007": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-77c420ad26d4-F401-008": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-77c420ad26d4-F401-005": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-77c420ad26d4-E741-002": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-77c420ad26d4-F401-004": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-77c420ad26d4-F401-003": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-77c420ad26d4-E731-001": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "representative-adversarial": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "measure (w80_repair, 7d9802aab65b3fead4c1a99719b839485d55f8a2)": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "measure (w77_fail, 49852ad2c8c92f2bacc06d5a52ccb6fb5b2f211a)": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "measure (w80_fail, b70f28ba5144aa352b60a511a4237417c6757920)": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "measure (w77_repair, bf8e8bce977e895825e7c39f5609bfa89d751df1)": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s11": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s15": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s15": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s05": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s13": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s07": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s10": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s06": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s08": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s14": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s12": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s03": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s04": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s09": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s01": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s11": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s04": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s01": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s02": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s14": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s10": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s05": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s07": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s12": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s08": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s03": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r2-s02": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s09": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s13": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w78-r1-s06": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "r01": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "governance-report-preview": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "verify-outcomes": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "real-api-runtime": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "w79-analysis": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "census": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-0e22f3eb3cec-F401-007": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-0e22f3eb3cec-E741-002": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-0e22f3eb3cec-F401-004": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-0e22f3eb3cec-F401-003": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-0e22f3eb3cec-F401-005": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-0e22f3eb3cec-E731-001": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-0e22f3eb3cec-F401-006": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-0e22f3eb3cec-F401-008": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-10d75dacf065-F401-004": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-10d75dacf065-F401-008": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-10d75dacf065-F401-007": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-10d75dacf065-E731-001": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-10d75dacf065-F401-003": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-10d75dacf065-E741-002": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-10d75dacf065-F401-006": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-10d75dacf065-F401-005": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-c29b929148ec-F401-005": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-c29b929148ec-F401-007": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-c29b929148ec-F401-003": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-c29b929148ec-F401-004": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-c29b929148ec-E731-001": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-c29b929148ec-F401-006": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-c29b929148ec-E741-002": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "DAB proposal worker DAB-c29b929148ec-F401-008": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   }
+  }
+ },
+ "GBOGEB/CODEX": {
+  "visibility": "public",
+  "private": false,
+  "default_branch": "main",
+  "protected": false,
+  "allow_auto_merge": true,
+  "merge_methods": {
+   "allow_squash_merge": true,
+   "allow_merge_commit": true,
+   "allow_rebase_merge": true
+  },
+  "delete_branch_on_merge": true,
+  "rulesets": [],
+  "effective_rules": [],
+  "workflows": 156,
+  "merged_sampled": 12,
+  "checks": {
+   "scan": {
+    "seen": 29,
+    "success": 22,
+    "skipped": 7,
+    "app": "github-actions"
+   },
+   "parity": {
+    "seen": 24,
+    "success": 24,
+    "app": "github-actions"
+   },
+   "governance-validation": {
+    "seen": 24,
+    "success": 24,
+    "app": "github-actions"
+   },
+   "validate": {
+    "seen": 18,
+    "success": 14,
+    "failure": 4,
+    "app": "github-actions"
+   },
+   "release-readiness": {
+    "seen": 14,
+    "skipped": 12,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "federation-bridge-build": {
+    "seen": 14,
+    "skipped": 12,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "bridge-audit": {
+    "seen": 14,
+    "skipped": 12,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "lineage-governance (abacus)": {
+    "seen": 14,
+    "cancelled": 6,
+    "failure": 2,
+    "success": 6,
+    "app": "github-actions"
+   },
+   "lineage-governance (codex)": {
+    "seen": 14,
+    "failure": 10,
+    "cancelled": 1,
+    "success": 3,
+    "app": "github-actions"
+   },
+   "lineage-governance (mcp-bridge)": {
+    "seen": 14,
+    "success": 7,
+    "cancelled": 7,
+    "app": "github-actions"
+   },
+   "semantic-validation": {
+    "seen": 14,
+    "failure": 8,
+    "success": 6,
+    "app": "github-actions"
+   },
+   "renderer-governance": {
+    "seen": 14,
+    "success": 14,
+    "app": "github-actions"
+   },
+   "governance-gate": {
+    "seen": 14,
+    "failure": 7,
+    "success": 7,
+    "app": "github-actions"
+   },
+   "CodeQL": {
+    "seen": 12,
+    "neutral": 3,
+    "success": 9,
+    "app": "github-advanced-security"
+   },
+   "osv-scanner": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-advanced-security"
+   },
+   "ruff": {
+    "seen": 12,
+    "neutral": 2,
+    "success": 7,
+    "failure": 3,
+    "app": "github-advanced-security"
+   },
+   "Bandit": {
+    "seen": 12,
+    "success": 11,
+    "neutral": 1,
+    "app": "github-advanced-security"
+   },
+   "scan-scheduled": {
+    "seen": 12,
+    "skipped": 12,
+    "app": "github-actions"
+   },
+   "scan-pr / osv-scan": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "lint": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "self-smoke (3.11)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "self-smoke (3.12)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "manifest": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "zero-delta": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "deterministic-repeat": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "release-smoke": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "governance-adversary": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "unknown-disposition": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "test": {
+    "seen": 12,
+    "failure": 10,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "Run federation validation": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "atom-census": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "runtime-validation": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "security-scan (macos-latest / py3.10)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "dynamic-burndown": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "aggregate": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "Analyze (actions)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "Analyze (python)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "bandit": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "Analyze (javascript-typescript)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "security-scan (windows-latest / py3.10)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "security-scan (windows-latest / py3.12)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "security-scan (ubuntu-latest / py3.10)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "render-regression": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "security-scan (macos-latest / py3.11)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "security-scan (macos-latest / py3.12)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "security-scan (macos-latest / py3.9)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "independent-consumer": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "security-scan (ubuntu-latest / py3.11)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "security-scan (windows-latest / py3.11)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "security-scan (windows-latest / py3.9)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "security-scan (ubuntu-latest / py3.12)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "wcag-gate": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "security-scan (ubuntu-latest / py3.9)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "validate-runtime-manifest": {
+    "seen": 6,
+    "success": 6,
+    "app": "github-actions"
+   },
+   "validate-rtm-runtime": {
+    "seen": 6,
+    "success": 6,
+    "app": "github-actions"
+   },
+   "semgrep": {
+    "seen": 4,
+    "success": 4,
+    "app": "github-advanced-security"
+   },
+   "Scan": {
+    "seen": 4,
+    "success": 4,
+    "app": "github-actions"
+   },
+   "evidence-join": {
+    "seen": 3,
+    "success": 3,
+    "app": "github-actions"
+   },
+   "quality-census": {
+    "seen": 3,
+    "success": 3,
+    "app": "github-actions"
+   },
+   "ubi9-runtime": {
+    "seen": 3,
+    "success": 3,
+    "app": "github-actions"
+   },
+   "Extract & Update Documentation": {
+    "seen": 3,
+    "success": 3,
+    "app": "github-actions"
+   },
+   "copilot-pull-request-reviewer": {
+    "seen": 2,
+    "failure": 2,
+    "app": "github-actions"
+   },
+   "keb-semantic-candidate (3.10)": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "keb-semantic-candidate (3.12)": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "prove": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "Exact-head mandatory check contract and negative testflight": {
+    "seen": 1,
+    "failure": 1,
+    "app": "github-actions"
+   }
+  }
+ },
+ "GBOGEB/cryoplant-project": {
+  "visibility": "private",
+  "private": true,
+  "default_branch": "main",
+  "protected": false,
+  "allow_auto_merge": false,
+  "merge_methods": {
+   "allow_squash_merge": true,
+   "allow_merge_commit": true,
+   "allow_rebase_merge": true
+  },
+  "delete_branch_on_merge": false,
+  "rulesets": [],
+  "effective_rules": [],
+  "workflows": 112,
+  "merged_sampled": 12,
+  "checks": {
+   "sentinel": {
+    "seen": 24,
+    "success": 24,
+    "app": "github-actions"
+   },
+   "guard": {
+    "seen": 24,
+    "success": 24,
+    "app": "github-actions"
+   },
+   "refresh-open-prs-after-main": {
+    "seen": 12,
+    "skipped": 12,
+    "app": "github-actions"
+   },
+   "verify": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "unresolved-binary-lineage": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "recurrence-control": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "federation-smoke": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "emit-global-victory-score": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "total-repo-census": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "ubuntu_latest": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "ubuntu_2204": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "coolprop-property-tunnel": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "refresh-current-pr": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "validate": {
+    "seen": 12,
+    "failure": 2,
+    "success": 10,
+    "app": "github-actions"
+   },
+   "hosted-runner-probe (ubuntu-latest)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "hosted-runner-probe (ubuntu-22.04)": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "windows_latest": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "configured-runner-probe": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "census": {
+    "seen": 6,
+    "success": 6,
+    "app": "github-actions"
+   },
+   "runner-preflight": {
+    "seen": 6,
+    "success": 6,
+    "app": "github-actions"
+   },
+   "Exact-head SSOT tree, DAG and forecast validation": {
+    "seen": 4,
+    "success": 4,
+    "app": "github-actions"
+   },
+   "namespace-control": {
+    "seen": 1,
+    "failure": 1,
+    "app": "github-actions"
+   },
+   "qps-private-boundary (3.11)": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "qps-private-boundary (3.12)": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   }
+  }
+ },
+ "GBOGEB/gg_MATH": {
+  "visibility": "public",
+  "private": false,
+  "default_branch": "main",
+  "protected": false,
+  "allow_auto_merge": false,
+  "merge_methods": {
+   "allow_squash_merge": true,
+   "allow_merge_commit": true,
+   "allow_rebase_merge": true
+  },
+  "delete_branch_on_merge": false,
+  "rulesets": [],
+  "effective_rules": [],
+  "workflows": 27,
+  "merged_sampled": 12,
+  "checks": {
+   "deterministic-w011": {
+    "seen": 13,
+    "success": 13,
+    "app": "github-actions"
+   },
+   "monte-carlo-reference": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "first-kernel": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "Deploy admitted Pages site": {
+    "seen": 9,
+    "skipped": 9,
+    "app": "github-actions"
+   },
+   "signal-stack": {
+    "seen": 9,
+    "success": 9,
+    "app": "github-actions"
+   },
+   "Exact-head release gate": {
+    "seen": 9,
+    "success": 9,
+    "app": "github-actions"
+   },
+   "exact-head-provider (3.10)": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "exact-head-provider (3.12)": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "theorem-challenge": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "Wilks and Pillai invariance / negative coverage": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "prove": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "h05-reference": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "scale-bifurcation-challenge": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   }
+  }
+ },
+ "GBOGEB/pipeline-automation-hub": {
+  "visibility": "public",
+  "private": false,
+  "default_branch": "master",
+  "protected": false,
+  "allow_auto_merge": false,
+  "merge_methods": {
+   "allow_squash_merge": true,
+   "allow_merge_commit": true,
+   "allow_rebase_merge": true
+  },
+  "delete_branch_on_merge": false,
+  "rulesets": [
+   {
+    "id": 25252917,
+    "name": "QPS TRAIGE project",
+    "enforcement": "active",
+    "target": "branch",
+    "rules": [
+     "deletion",
+     "non_fast_forward",
+     "required_linear_history",
+     "copilot_code_review"
+    ],
+    "bypass": 0
+   }
+  ],
+  "effective_rules": [],
+  "workflows": 121,
+  "merged_sampled": 12,
+  "checks": {
+   "first-pass-closure": {
+    "seen": 24,
+    "failure": 13,
+    "skipped": 11,
+    "app": "github-actions"
+   },
+   "canonical-self-test-and-mutation": {
+    "seen": 13,
+    "success": 13,
+    "app": "github-actions"
+   },
+   "validate-ultra-control": {
+    "seen": 13,
+    "success": 13,
+    "app": "github-actions"
+   },
+   "frozen-head-census": {
+    "seen": 13,
+    "success": 13,
+    "app": "github-actions"
+   },
+   "Analyze (python)": {
+    "seen": 13,
+    "success": 13,
+    "app": "github-actions"
+   },
+   "Analyze (javascript-typescript)": {
+    "seen": 13,
+    "success": 13,
+    "app": "github-actions"
+   },
+   "Analyze (actions)": {
+    "seen": 13,
+    "success": 13,
+    "app": "github-actions"
+   },
+   "Analyze (ruby)": {
+    "seen": 13,
+    "success": 13,
+    "app": "github-actions"
+   },
+   "CodeQL": {
+    "seen": 12,
+    "success": 9,
+    "neutral": 3,
+    "app": "github-advanced-security"
+   },
+   "audit": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "Publish CODE PURPLE review site": {
+    "seen": 9,
+    "skipped": 9,
+    "app": "github-actions"
+   },
+   "render": {
+    "seen": 9,
+    "success": 7,
+    "failure": 2,
+    "app": "github-actions"
+   },
+   "Source-hashed CBQ and CH-BD projection": {
+    "seen": 7,
+    "success": 7,
+    "app": "github-actions"
+   },
+   "Exact ABACUS source/job identities through canonical MIP": {
+    "seen": 3,
+    "success": 3,
+    "app": "github-actions"
+   },
+   "contract": {
+    "seen": 3,
+    "success": 1,
+    "failure": 2,
+    "app": "github-actions"
+   },
+   "G4 source-bound wave rollup": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "G0 offline evidence and synthetic bounds": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "G4 offline proof and optional passive fleet scout": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "G1/G3 source-bound coverage and scaling": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "repair-probe": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "test": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "subtype-plan": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "Exact-head intent lineage, replay, and privacy controls": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "golden-thread-control": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "replay": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "Pinned gg_MATH provider and method geometry proofs": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "Exact-head temporal maturity and N+2 negative tests": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   }
+  }
+ },
+ "GBOGEB/Q_engineering_tools": {
+  "visibility": "public",
+  "private": false,
+  "default_branch": "main",
+  "protected": false,
+  "allow_auto_merge": false,
+  "merge_methods": {
+   "allow_squash_merge": true,
+   "allow_merge_commit": true,
+   "allow_rebase_merge": true
+  },
+  "delete_branch_on_merge": false,
+  "rulesets": [],
+  "effective_rules": [],
+  "workflows": 70,
+  "merged_sampled": 12,
+  "checks": {
+   "build-and-exercise": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "engineering-source-smoke": {
+    "seen": 12,
+    "success": 12,
+    "app": "github-actions"
+   },
+   "exact-proof": {
+    "seen": 5,
+    "failure": 2,
+    "success": 3,
+    "app": "github-actions"
+   },
+   "prove-equation-v1": {
+    "seen": 2,
+    "success": 2,
+    "app": "github-actions"
+   },
+   "n200_checkpoint": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "exact-w304": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "prove_owner_reentry_contract": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "prepare_owner_input": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   },
+   "prove-w295-exact-payload": {
+    "seen": 1,
+    "success": 1,
+    "app": "github-actions"
+   }
+  }
+ }
+}

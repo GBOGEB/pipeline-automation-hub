@@ -1,0 +1,259 @@
+schema: gbogeb-repo-rex-return/1.0
+repo: GBOGEB/ABACUS
+measurement_window:
+  end: '2026-10-18T13:19:45+00:00'
+  basis: everred harvest
+records:
+- rex_id: ABACUS-RC-2026-0001
+  signature: everred.control_plane_drift.abacus-rc-2026-0001
+  issue_kind: INCIDENT
+  family: AUTHORITY
+  symptom: ABACUS default branch has no required status checks (rules emptied 12 Oct;
+    partly restored 15 Oct)
+  frequency:
+    observed_count: 0
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: '12 Oct 17:58: ruleset 24494381 emptied during break-glass; 61 PRs merged
+    with PR Feedback Gate green on 0; 15 Oct 10:35: deletion, pull_request (thread
+    resolution) and non_fast_forward restored; required_status_checks still absent;
+    Open PRs #2075-#2077: PR Feedback Gate failure; merges continue without a required
+    check'
+  repair_method: Owner imports rulesets/ABACUS.basic.json (or adds its required_status_checks
+    rule to 24494381); ABACUS.hard.json once PR Feedback Gate can pass
+  control_guard:
+  - verify_rulesets.py probe every census; any gap = RED (CONTROL_PLANE_DRIFT)
+  control_status: DEFERRED
+  everred_state: BLOCKED_AUTHORITY
+- rex_id: ABACUS-RC-2026-0002
+  signature: everred.existing_repository_debt.abacus-rc-2026-0002
+  issue_kind: DEBT
+  family: CI_CD
+  symptom: Fixed 75% repository coverage threshold above measured main coverage (structural
+    admission deadlock)
+  frequency:
+    observed_count: 0
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: 'Broad CI on #1914 head e9f34b22: 12,731 / 29,093 statements, 42.63%
+    combined (V3 §9.3); Red in every nightly through 16 Oct (54da377c)'
+  repair_method: Raise coverage (waves W0–W5) or admit a reviewed baseline-plus-ratchet
+    policy; never reinterpret 75% as advisory
+  control_guard:
+  - Ratchet floor rises only after exact-main measurement; changed-line coverage ≥
+    80% (0 eligible lines = N/A, not 100%)
+  control_status: OPEN
+  everred_state: OWNED
+- rex_id: ABACUS-RC-2026-0003
+  signature: everred.existing_repository_debt.abacus-rc-2026-0003
+  issue_kind: DEBT
+  family: CI_CD
+  symptom: Code-quality full-red surface (Black / isort / Flake8 umbrella)
+  frequency:
+    observed_count: 8
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: Red in every nightly since at least 7 Oct; DAB full-red census 2,973
+    (E501 943, E402 612, F401 330, F541 295, E305 108)
+  repair_method: DAB G1-C cohorts T0–T4, one lane per rule family
+  control_guard:
+  - One Black/isort configuration for local preflight and CI; no-new-debt ratchet
+    on changed files
+  control_status: OPEN
+  everred_state: TRIAGED
+- rex_id: ABACUS-RC-2026-0004
+  signature: everred.security_or_policy.abacus-rc-2026-0004
+  issue_kind: DEFECT
+  family: SECURITY
+  symptom: Bandit full-scan security debt (6,363 raw observations)
+  frequency:
+    observed_count: 11
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: '6,363 raw Bandit observations full scan vs 3 configured (V3 §9.3);
+    Burndown must use matched fingerprints: opened = after − before, resolved = before
+    − after'
+  repair_method: B101 intent classification; fingerprint-matched burndown under identical
+    scan configuration
+  control_guard:
+  - Normalized fingerprints; unchanged scanner config between before/after
+  control_status: OPEN
+  everred_state: TRIAGED
+- rex_id: ABACUS-RC-2026-0005
+  signature: everred.test_or_measurement_defect.abacus-rc-2026-0005
+  issue_kind: DEFECT
+  family: VALIDATION
+  symptom: DMAIC measurement-receipt failure broke the broad coverage suite
+  frequency:
+    observed_count: 0
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: 'tests/test_dmaic_measurement_receipts.py::test_real_measurement_and_repeat
+    → RuntimeError: Measurement reports missing (V3 §1, #1914 run 38532010346); Fix
+    lineage on main 14 Oct: 21e0c0f8, d3466031, 25e7d5ae, 7e0fb54a (nested SUT coverage,
+    COVERAGE_RCFILE isolation); Run Tests with Coverage green on main from 68e9e6e3
+    (14 Oct 16:23 CEST), every run since incl. nightly 16 Oct'
+  repair_method: 'Main commits above (integrated without an effective gate: governance
+    INEFFECTIVE)'
+  control_guard:
+  - test_real_measurement_ignores_parent_coverage_config + test_real_measurement_and_repeat
+  control_status: REPAIRED
+  everred_state: PRODUCER_GREEN
+- rex_id: ABACUS-RC-2026-0006
+  signature: everred.generated_artifact_drift.abacus-rc-2026-0006
+  issue_kind: DEFECT
+  family: ARTIFACT
+  symptom: Workflow rationalization report stale after policy change
+  frequency:
+    observed_count: 0
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: 'Regenerated in e7616e62 on #1858; check green; merged with #1858'
+  repair_method: ABACUS e7616e62
+  control_guard:
+  - Regenerate twice from canonical policy; identical bytes; check mode green
+  control_status: VERIFIED
+  everred_state: VERIFIED_FIXED
+- rex_id: ABACUS-RC-2026-0008
+  signature: everred.security_or_policy.abacus-rc-2026-0008
+  issue_kind: DEFECT
+  family: SECURITY
+  symptom: 'Safety scanner exit 64 (unclassified: auth, invocation, version or vulnerability)'
+  frequency:
+    observed_count: 0
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: 'Safety exit 64 on #1914 and main (V3 §1); exit 64 is a usage/invocation
+    code, not a vulnerability count'
+  repair_method: Read the Safety step log; separate authentication, invocation, version
+    and vulnerability outcomes
+  control_guard:
+  - Explicit regression case per Safety exit class
+  control_status: OPEN
+  everred_state: DISCOVERED
+- rex_id: ABACUS-RC-2026-0009
+  signature: everred.test_or_measurement_defect.abacus-rc-2026-0009
+  issue_kind: DEFECT
+  family: VALIDATION
+  symptom: Bandit census coverage producer (module identity / JUnit receipt mismatch)
+  frequency:
+    observed_count: 1
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: '#1914 head e9f34b22: Bandit Census run 38532010232 PASS, 52/52 tests,
+    49/61 statements; #1914 merged 14 Oct 10:56 CEST'
+  repair_method: 'ABACUS #1914'
+  control_guard:
+  - Canonical module identity, non-empty coverage XML, source-bound numerator/denominator
+  control_status: VERIFIED
+  everred_state: VERIFIED_FIXED
+- rex_id: CODEX-RC-2026-0001
+  signature: everred.security_or_policy.codex-rc-2026-0001
+  issue_kind: DEFECT
+  family: SECURITY
+  symptom: OSV-Scanner reporter fails on every CODEX main push
+  frequency:
+    observed_count: 0
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: 'Red on 59b0326d (before #984) and every main push since'
+  repair_method: Read reporter output; fix dependency or reporter configuration
+  control_guard:
+  - TBD
+  control_status: OPEN
+  everred_state: DISCOVERED
+- rex_id: CODEX-RC-2026-0002
+  signature: everred.generated_artifact_drift.codex-rc-2026-0002
+  issue_kind: DEFECT
+  family: ARTIFACT
+  symptom: Deterministic materializations differed after
+  frequency:
+    observed_count: 0
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: Red on 768c9e35 and 6e9eea8c; green from f9ae4676
+  repair_method: CODEX f9ae4676
+  control_guard:
+  - Materialization check on every main push
+  control_status: VERIFIED
+  everred_state: VERIFIED_FIXED
+- rex_id: CODEX-RC-2026-0003
+  signature: everred.control_plane_drift.codex-rc-2026-0003
+  issue_kind: INCIDENT
+  family: AUTHORITY
+  symptom: CODEX default branch unprotected (no ruleset)
+  frequency:
+    observed_count: 0
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: 'No ruleset; #984 merged with 4 red checks on 12 Oct'
+  repair_method: Import rulesets/CODEX.basic.json
+  control_guard:
+  - verify_rulesets.py probe
+  control_status: DEFERRED
+  everred_state: BLOCKED_AUTHORITY
+- rex_id: CRYO-RC-2026-0001
+  signature: everred.control_plane_drift.cryo-rc-2026-0001
+  issue_kind: INCIDENT
+  family: AUTHORITY
+  symptom: cryoplant-project default branch unprotected (no ruleset)
+  frequency:
+    observed_count: 0
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: No ruleset on the engineering-authority repo
+  repair_method: Import rulesets/cryoplant-project.basic.json
+  control_guard:
+  - verify_rulesets.py probe
+  control_status: DEFERRED
+  everred_state: BLOCKED_AUTHORITY
+- rex_id: GGMATH-RC-2026-0001
+  signature: everred.control_plane_drift.ggmath-rc-2026-0001
+  issue_kind: INCIDENT
+  family: AUTHORITY
+  symptom: gg_MATH default branch unprotected (no ruleset)
+  frequency:
+    observed_count: 0
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: No ruleset
+  repair_method: Import rulesets/gg_MATH.basic.json
+  control_guard:
+  - verify_rulesets.py probe
+  control_status: DEFERRED
+  everred_state: BLOCKED_AUTHORITY
+- rex_id: PAH-RC-2026-0001
+  signature: everred.control_plane_drift.pah-rc-2026-0001
+  issue_kind: INCIDENT
+  family: AUTHORITY
+  symptom: pipeline-automation-hub ruleset active but targets no branch
+  frequency:
+    observed_count: 0
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: Ruleset 25252917 'QPS TRAIGE project' has ref_name include [] — no branch
+    protected; default branch master
+  repair_method: Set its target to ~DEFAULT_BRANCH or import rulesets/pipeline-automation-hub.basic.json
+  control_guard:
+  - verify_rulesets.py reports untargeted rulesets
+  control_status: DEFERRED
+  everred_state: BLOCKED_AUTHORITY
+- rex_id: QET-RC-2026-0001
+  signature: everred.control_plane_drift.qet-rc-2026-0001
+  issue_kind: INCIDENT
+  family: AUTHORITY
+  symptom: Q_engineering_tools default branch unprotected (no ruleset)
+  frequency:
+    observed_count: 0
+    unit: occurrences
+    measurement_window: '2026-10-18T13:19:45+00:00'
+  root_cause: No ruleset
+  repair_method: Import rulesets/Q_engineering_tools.basic.json
+  control_guard:
+  - verify_rulesets.py probe
+  control_status: DEFERRED
+  everred_state: BLOCKED_AUTHORITY
+return_contract:
+  consumer: GBOGEB/CODEX
+  merge_key: signature_plus_authority_relevant_scope
+  authority_transfer: false
