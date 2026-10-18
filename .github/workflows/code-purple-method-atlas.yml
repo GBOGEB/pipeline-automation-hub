@@ -4,6 +4,7 @@ on:
     paths:
       - 'mission-control/qps-triage-ultra/p-process/site/**'
       - 'mission-control/federation-atlas/**'
+      - 'mission-control/jade_temple/**'
       - 'mission-control/html_qa/**'
       - 'mission-control/v2/handoff/live_lossless/**'
       - 'mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json'
@@ -16,6 +17,7 @@ on:
     paths:
       - 'mission-control/qps-triage-ultra/p-process/site/**'
       - 'mission-control/federation-atlas/**'
+      - 'mission-control/jade_temple/**'
       - 'mission-control/html_qa/**'
       - 'mission-control/v2/handoff/live_lossless/**'
       - 'mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json'
@@ -676,6 +678,17 @@ jobs:
             --receipt ./live-lossless-hosted-parity.json \
             --repeat 2 --attempts 8 --wait 5
           test -s ./live-lossless-hosted-parity.json
+      - name: Independent JADE N+2 served Pages exact-head SHA parity
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+          EXACT_SHA: ${{ github.sha }}
+        run: |
+          python publisher-source/mission-control/jade_temple/tools/hosted_parity.py \
+            --expected-dir ./atlas-artifact/pages \
+            --base-url "$PAGES_URL" --head "$EXACT_SHA" \
+            --receipt ./jade-hosted-parity.json \
+            --repeat 2 --attempts 8 --wait 5
+          test -s ./jade-hosted-parity.json
       - name: Preserve hosted Pages proof receipt
         if: always()
         uses: actions/upload-artifact@v4
@@ -684,4 +697,5 @@ jobs:
           path: |
             ./g3p-hosted-parity.json
             ./live-lossless-hosted-parity.json
+            ./jade-hosted-parity.json
           if-no-files-found: warn

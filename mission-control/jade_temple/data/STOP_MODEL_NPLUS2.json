@@ -1,0 +1,137 @@
+{
+  "authority_transfer": false,
+  "cohort": "N11_MISSION_SELECTED_TOP21",
+  "current_main_sha": "ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e",
+  "current_owner_actions": {
+    "P0": 5,
+    "P1": 9,
+    "P2": 7,
+    "closed_qualified": 0,
+    "open": 21,
+    "partial_engineering_positive_observations": 1
+  },
+  "evidence_refs": [
+    "data/READBACK_NPLUS2.json",
+    "data/EVIDENCE_EVENTS_NPLUS2.json",
+    "data/REPO_READINESS_NPLUS1.json",
+    "mission-control/federation-atlas/pages_portal.py"
+  ],
+  "first_red_current_head": [
+    {
+      "job_id": 117799185507,
+      "owner": "MissionControl CP.W10 workflow owner",
+      "run_id": 39169421620,
+      "signature": "UNRESOLVED_UNITTEST_SELECTOR_CP_W10",
+      "source_sha": "ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39169421620"
+    }
+  ],
+  "gates": {
+    "blocked_red_canary": "UNKNOWN",
+    "hosted_parity": "PENDING",
+    "independent_review": "MISSING",
+    "matched_coverage": "UNKNOWN",
+    "native_tests": "PASS",
+    "owner_release": "UNKNOWN",
+    "required_checks": "UNKNOWN",
+    "security": "UNKNOWN",
+    "source_integrity": "PASS"
+  },
+  "merge_admission": "HOLD",
+  "native_pending": false,
+  "population": 21,
+  "pulses": [
+    {
+      "cohort_sha": "4b5bc76e6b4ceefa032c1c89e485755cf9326884",
+      "eligible_denominator": 21,
+      "heads": {
+        "GBOGEB/ABACUS": "2246c7bd3a9bda6a3d43b9a9116cb7088cfbcc88",
+        "GBOGEB/CODEX": "0653007cf68fe20824beb937329f8b567ff27f35",
+        "GBOGEB/DOCX_RTM_Automation": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "GBOGEB/GEMINI": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "GBOGEB/Q_engineering_tools": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "GBOGEB/ariana": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "GBOGEB/cli": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "GBOGEB/cryo_leak_rate_dashboard": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "GBOGEB/cryogenic-accelerator-workspace": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "GBOGEB/cryoplant-project": "fc07545c3986181a1b837c0eb7ff9a8393fd4058",
+        "GBOGEB/docker-stacks": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "GBOGEB/document-organization-system": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "GBOGEB/gg_MATH": "b9efad57e1985a6e54cb776130b8a70fa9357e0a",
+        "GBOGEB/github-mcp-server": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "GBOGEB/github_documentorganisatiesysteem_GBOGEB": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "GBOGEB/pipeline-automation-hub": "d3d450fbdbb34403e22589188a877560fb147b29",
+        "GBOGEB/prettier": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "GBOGEB/python-sdk": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "GBOGEB/skills": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "GBOGEB/vscode-powershell": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "GBOGEB/yaml-grammar": "75083c2aaabd0d7453d72de895666b21021826c1"
+      },
+      "id": "N+1_HISTORICAL",
+      "instrumentor": "JADE_GOGREEN_FROZEN_N11_V1",
+      "metrics": {
+        "accepted_owner_actions": 0,
+        "comparable_new_branches_covered": null,
+        "deduplicated_owner_roots_closed": 0,
+        "new_evidence_edges_qualified": null
+      },
+      "native_state": "INCOMPLETE",
+      "observed_date": "2026-10-18",
+      "pending_roots": null,
+      "qualification": "HISTORICAL_LOCAL_SNAPSHOT_NOT_RELEASE",
+      "scope": "N11_MISSION_SELECTED_TOP21"
+    },
+    {
+      "cohort_sha": "4b5bc76e6b4ceefa032c1c89e485755cf9326884",
+      "eligible_denominator": 21,
+      "heads": {
+        "GBOGEB/ABACUS": "a13c5f4edaca814e4a80e5b902dfe44fecf39361",
+        "GBOGEB/CODEX": "13ed167963312b897ba7e489bb5a81c80db104f7",
+        "GBOGEB/DOCX_RTM_Automation": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "GBOGEB/GEMINI": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "GBOGEB/Q_engineering_tools": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "GBOGEB/ariana": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "GBOGEB/cli": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "GBOGEB/cryo_leak_rate_dashboard": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "GBOGEB/cryogenic-accelerator-workspace": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "GBOGEB/cryoplant-project": "fc07545c3986181a1b837c0eb7ff9a8393fd4058",
+        "GBOGEB/docker-stacks": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "GBOGEB/document-organization-system": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "GBOGEB/gg_MATH": "b9efad57e1985a6e54cb776130b8a70fa9357e0a",
+        "GBOGEB/github-mcp-server": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "GBOGEB/github_documentorganisatiesysteem_GBOGEB": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "GBOGEB/pipeline-automation-hub": "ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e",
+        "GBOGEB/prettier": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "GBOGEB/python-sdk": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "GBOGEB/skills": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "GBOGEB/vscode-powershell": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "GBOGEB/yaml-grammar": "75083c2aaabd0d7453d72de895666b21021826c1"
+      },
+      "id": "N+2_READBACK",
+      "instrumentor": "JADE_GOGREEN_FROZEN_N11_V1",
+      "metrics": {
+        "accepted_owner_actions": 0,
+        "comparable_new_branches_covered": null,
+        "deduplicated_owner_roots_closed": 0,
+        "new_evidence_edges_qualified": null
+      },
+      "native_state": "TERMINAL_WITH_FIRST_RED",
+      "observed_date": "2026-10-19",
+      "pending_roots": 1,
+      "qualification": "NONATOMIC_HEADS_CURRENT_MAIN_FIRST_RED",
+      "scope": "N11_MISSION_SELECTED_TOP21"
+    }
+  ],
+  "release_repeat_proofs": [],
+  "schema": "jade.temple.stopping_model.v2",
+  "security_waiver": false,
+  "stop_rules": {
+    "admission": "HOLD until all independent noncompensating gates source-authorized",
+    "drift": "changed default head, changed scope/instrumentor or null matched coverage blocks plateau",
+    "first_red": "source owner repair with same test denominator and no suppressed canaries",
+    "plateau": "3 consecutive comparable terminal pulses, exact identical head/cohort/instrumentor/denominator, 0 pending roots, all numeric nonnegative metrics identical; stop redundant recensus and pivot to owner",
+    "target_met": "all nine gates PASS plus >=2 distinct source-bound native run receipts, none first-red, no pending, owner admission separate",
+    "unknown": "NULL is not zero, skipped checks not pass, J0 README presence not J1 verified navigation",
+    "wait": "native pending on unchanged exact head: stop duplicate dispatch, wait for terminal job/attempt"
+  }
+}

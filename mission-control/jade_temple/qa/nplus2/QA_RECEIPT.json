@@ -1,0 +1,87 @@
+{
+  "authority_transfer": false,
+  "cross_format_parity": "PASS_JSON_JS_CSV_SCOPE_21",
+  "evidence_level": "LOCAL_REPRODUCIBILITY",
+  "github_native": "PENDING_NEW_PR",
+  "hosted_http": "NOT_TESTED_LOCALLY",
+  "kind": "JADE_NPLUS2_READONLY_HTML_SOURCE_PROJECTION",
+  "merge_admission": "HOLD",
+  "next": "native exact-head tests and independent served Pages SHA",
+  "outputs": [
+    {
+      "path": "site/burndown.html",
+      "sha256": "036b2ad0a75b6b97ae503ba95cdbe36f5076f6f2b3c3013c23c31217dc58bf17"
+    },
+    {
+      "path": "site/burndown.json",
+      "sha256": "bb6be399fadf0fafca3e40f3a2681ecee51668ce866b4eaed3828f5456095916"
+    },
+    {
+      "path": "site/burndown-manifest.json",
+      "sha256": "2ed541b57fd1688c1989cad9a034ad58072b6a10ad1df854b27e13f3f4287c6e"
+    },
+    {
+      "path": "site/burndown.js",
+      "sha256": "af75e100e7526dc8d5773eecc70103e0c2dfda9ab64155cf99455014be20d5e6"
+    },
+    {
+      "path": "site/burndown.css",
+      "sha256": "879558e08bddb5f3469f72649e832fc97cdb16fb46c440c2c23c2b9675fe5122"
+    },
+    {
+      "path": "site/burndown-data.js",
+      "sha256": "1e64f3d988aebb2e9eaa710d6ccde3695495e2640e38acceaab4109e2903cd7f"
+    },
+    {
+      "path": "site/burndown.csv",
+      "sha256": "3d397d689f42dd073c8b64a368f7cd20035d96da9d12c4bdbe01180620ade791"
+    }
+  ],
+  "schema": "qps-artifact-qa/1.0",
+  "security_waiver": false,
+  "source": {
+    "cohort": "N11_MISSION_SELECTED_TOP21",
+    "current_non_atomic_main_sha": "ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e",
+    "source_files": [
+      {
+        "path": "data/READBACK_NPLUS2.json",
+        "sha256": "9a965253720d608f9922cfbf2c17f0338fcee6586aaa71d11a5ca8c82607523f"
+      },
+      {
+        "path": "data/EVIDENCE_EVENTS_NPLUS2.json",
+        "sha256": "709adbf4692dbeeda7e2158c83f41399a9558dfb06ccc435d4b5bcea05f2f8cc"
+      },
+      {
+        "path": "data/STOP_MODEL_NPLUS2.json",
+        "sha256": "df3da328b73abc0aaf113a24db9cfdc2f144a9937b689285cbf94fc5e48fd361"
+      }
+    ]
+  },
+  "structural_qa": "PASS",
+  "tests": {
+    "browser_viewports": {
+      "method": "Playwright offline exact bytes, test CSP adjusted for inline; hosted CSP deferred",
+      "passed": 3,
+      "total": 3
+    },
+    "focused_coverage": {
+      "branch_pct": 86.9231,
+      "branches": [
+        113,
+        130
+      ],
+      "instrumentor": "coverage.py 7.13.3",
+      "scope": "FOUR_JADE_MODULES_ONLY",
+      "statement_pct": 95.8763,
+      "statements": [
+        279,
+        291
+      ]
+    },
+    "local_unittest": {
+      "passed": 92,
+      "total": 92
+    }
+  },
+  "version": "N+2"
+}

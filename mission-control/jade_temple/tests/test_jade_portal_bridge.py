@@ -7,7 +7,9 @@ class BridgeTest(unittest.TestCase):
  def test_stage_copy_and_manifest(self):
   with tempfile.TemporaryDirectory() as t:
    hashes={};p=mod.stage_jade(ROOT,t,hashes,HEAD)
-   self.assertEqual(p['files_in_pages'],8);self.assertEqual(len(hashes),9)
+   self.assertEqual(p['files_in_pages'],15);self.assertEqual(len(hashes),16)
+   self.assertEqual(p['burndown_assets_in_pages'],7)
+   self.assertEqual(hashes['jade/burndown.html'],mod.sha256(ROOT/'site/burndown.html'))
    self.assertEqual(hashes['jade/green.html'],mod.sha256(ROOT/'site/green.html'))
    self.assertFalse(p['hosted_http_verified'])
  def test_tampered_static_rejected(self):

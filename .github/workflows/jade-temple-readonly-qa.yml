@@ -1,4 +1,4 @@
-name: JADE_CASTE N+1 source and browser assurance (read-only)
+name: JADE_CASTE N+2 controlled regression / stop rules (read-only)
 on:
   pull_request:
     paths:
@@ -9,7 +9,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: jade-nplus1-${{ github.event.pull_request.head.sha || github.sha }}
+  group: jade-nplus2-${{ github.event.pull_request.head.sha || github.sha }}
   cancel-in-progress: false
 jobs:
   source:
@@ -34,11 +34,49 @@ jobs:
       - name: Contract, adversarial and hash-drift tests
         run: |
           set -euo pipefail
-          python -m unittest discover -s mission-control/jade_temple/tests -p 'test_*.py' -v
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          python -m unittest discover -s mission-control/jade_temple/tests -p 'test_*.py' -v \
+            2>&1 | tee "$RUNNER_TEMP/jade-nplus2-tests.log"
+          grep -E '^Ran 92 tests in ' "$RUNNER_TEMP/jade-nplus2-tests.log"
+          python -m coverage run --branch \
+            --include='*/mission-control/jade_temple/tools/stop_rules.py,*/mission-control/jade_temple/tools/hosted_parity.py,*/mission-control/jade_temple/site/build_burndown.py,*/mission-control/jade_temple/portal_bridge.py' \
+            -m unittest discover -s mission-control/jade_temple/tests -p 'test_*.py' -q
+          python -m coverage json -o "$RUNNER_TEMP/jade-nplus2-coverage.json" -q
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'jade-nplus2-coverage.json'
+          d=json.loads(p.read_text())
+          want={'portal_bridge.py','build_burndown.py','hosted_parity.py','stop_rules.py'}
+          got={k.rsplit('/',1)[-1] for k in d['files']}
+          if got!=want:raise SystemExit('JADE_COVERAGE_FIRST_RED: source population drift')
+          t=d['totals']
+          if t['num_statements']<291 or t['num_branches']<130:
+              raise SystemExit('JADE_COVERAGE_FIRST_RED: instrumented denominator shrank')
+          if t['percent_statements_covered']<90 or t['percent_branches_covered']<80:
+              raise SystemExit('JADE_COVERAGE_FIRST_RED: behavioral coverage target')
+          print(json.dumps({'source_scope':sorted(got),'statements':[t['covered_lines'],t['num_statements']],
+                'branches':[t['covered_branches'],t['num_branches']],
+                'global_fleet_coverage':None,'merge_admission':'HOLD'},sort_keys=True))
+          PY
           python mission-control/jade_temple/site/build_dashboard.py --check
           python mission-control/jade_temple/site/build_green.py --check
+          python mission-control/jade_temple/site/build_burndown.py --check
+          python mission-control/jade_temple/tools/stop_rules.py \
+            --receipt "$RUNNER_TEMP/jade-nplus2-stop.json"
           python -m py_compile mission-control/federation-atlas/pages_portal.py
           test -s mission-control/jade_temple/site/site-manifest.json
+          test -s mission-control/jade_temple/site/burndown-manifest.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: jade-nplus2-source-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/jade-nplus2-tests.log
+            ${{ runner.temp }}/jade-nplus2-coverage.json
+            ${{ runner.temp }}/jade-nplus2-stop.json
+          retention-days: 21
+          if-no-files-found: warn
   browser:
     name: JADE responsive browser / offline security QA
     needs: source
@@ -60,13 +98,17 @@ jobs:
         run: |
           set -euo pipefail
           python mission-control/jade_temple/tools/run_nplus1_browser_qa.py
+          python mission-control/jade_temple/tools/run_nplus2_browser_qa.py
           test -s mission-control/jade_temple/qa/nplus1/receipt.json
+          test -s mission-control/jade_temple/qa/nplus2/receipt.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: jade-nplus1-browser-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          name: jade-nplus2-browser-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
           path: |
             mission-control/jade_temple/qa/nplus1/receipt.json
             mission-control/jade_temple/qa/nplus1/*.png
+            mission-control/jade_temple/qa/nplus2/receipt.json
+            mission-control/jade_temple/qa/nplus2/*.png
           retention-days: 21
           if-no-files-found: warn

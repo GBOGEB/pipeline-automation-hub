@@ -1,3 +1,17 @@
+# JADE_TEMPLE — N+2 lossless receiver (newest checkpoint)
+
+**Entry:** [N+2 measured burn-down](site/burndown.html) · [MIP/DoV source](notes/NPLUS2_MIP_BURNDOWN_DOV.md) · [stop contract](notes/JADE_STOP_RULES_CONTRACT.md). Original N+1 receiver is preserved below, but its PENDING statuses have been superseded by current GitHub evidence.
+
+**Canonical repositories:** `GBOGEB/pipeline-automation-hub`/`master` is Mission Control Top21 stewardship; ABACUS/ CODEX/ QPS own their native truth. N11 Top21 vs historical GoGREEN Top21 intersection 13, 8-only in each. No cohort substitution.
+
+**Baseline checkpoint 2026-10-19 non-atomic:** Mission Control N+1 PR #732 merged at `ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e`, with no recorded independent human review. N+1 exact-head JADE native 44/44 + 3/3 PASS, merged-main Method Atlas render AND Pages deployment SUCCESS in run `39169421552`. Native check census at that main is 23 success, 3 skipped, **1 failure** out of 27. The failing strict zero-test audit is run `39169421620`, job `117799185507`, `77/78` statically resolved gates, variable-based CP-W10 unittest selector. This is an unresolved selector, not demonstrated zero tests.
+
+**N+2 implementation:** immutable 21-repo readback (three changed heads: ABACUS, CODEX, Mission Control), six source-bound event records, executable stop rules with 3 source-comparable no-gain pulses to pivot, 21-owner TODO burn-down (21 open; 0 owner-qualified closed), new responsive HTML and single-publisher SHA-bound staging. Hosted independent JADE readback is an instrument awaiting native proof, not precredited. Local 92/92 tests, focused `coverage.py 7.13.3` statements 279/291 and branches 113/130, 3/3 viewports. These are JADE-only not fleet coverage. If this checkpoint remains draft, recheck exact PR head and native run first.
+
+**Resume N+3:** 1) check current main/PR SHA and native N+2 tests and Method Atlas source; 2) inspect W+2 hosted JADE parity run; 3) independent CP-W10 first-red repair PR and zero-test static check; 4) independent human reviewer, ruleset, required checks and blocked-RED canary; 5) only then consider P0 owner pilots and J1..J5. Do not merge or waive merely because tests green. Treat source-head drift as invalidating inherited comparable coverage. `MERGE_ADMISSION=HOLD`.
+
+---
+
 # JADE_TEMPLE — CP.RESUME lossless operational drop-in (N+1)
 
 **Immediate instruction for any fresh chat:** Continue JADE_TEMPLE / JADE_CASTE from the existing `GBOGEB/pipeline-automation-hub` GitHub project, not from this prose alone. **Do not restart, fork authority, duplicate PRs, hard-gate all repos, merge, waive or deploy until fresh source-owner proofs.** This is an operational continuation macro, not an executable background API or full-chat transcript.

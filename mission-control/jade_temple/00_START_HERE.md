@@ -39,3 +39,7 @@
 **[New project README](README.md)** · **[GoGREEN interactive dashboard](site/green.html)** · **[Technical launch TODO for all 21 repos](notes/REPO_TECHNICAL_NEEDS_NPLUS1.md)** · **[Full MIP/DMAIC analysis](notes/MIP_ANALYSIS_NPLUS1.md)** · **[Shared root/navigation/Pages contract](notes/NAVIGATION_PAGES_STYLE_CONTRACT.md)** · **[N+1 lossless restart](DROPIN_NEXT_CHAT.md)**.
 
 Top21 structural census and GoGREEN merged-outcome sample have a **13-repository overlap and eight disjoint members in each**; do not mix source denominators. 21 heads were observed non-atomically 18 October. Native point-release eligibility and hosted HTTPS SHA parity remain UNKNOWN. The N+1 site is prepared as an existing-portal Pages child, not a second publisher.
+
+## N+2 implementation and restart (19 October 2026)
+
+**[Measured Top21 / MIP / stop dashboard](site/burndown.html)** · **[21 current heads](data/READBACK_NPLUS2.json)** · **[Strict stop model](data/STOP_MODEL_NPLUS2.json)** · **[Source-bound first-red events](data/EVIDENCE_EVENTS_NPLUS2.json)** · **[Next-chat receiver](DROPIN_NEXT_CHAT.md)**. Do not mix 13/21 historical GoGREEN overlap with full fleet admission, or issue closure with an executable native test. Three source-matched zero-gain terminal pulses pivot the measurement route; they do not waive independent acceptance.
