@@ -206,6 +206,7 @@ dialog::backdrop{background:#020810cd}.modal-head{display:flex;justify-content:s
 <div class="notice">Read-only API observation; not an atomic snapshot or Six Sigma certificate. Provider's built-in Plotly demonstrations are SYNTHETIC, not actual federation coverage. W1 historical merge does not imply admission.</div></header><main>
 <p class="meta">Consumer checkout <code>__SHA__</code> · observation __OBS__ · W1 run attempt __ATTEMPT__ · queued __QUEUED__ / active __ACTIVE__</p>
 <div class="filters"><button data-filter="all" aria-pressed="true">All</button><button data-filter="runtime" aria-pressed="false">Runner & queue</button><button data-filter="governance" aria-pressed="false">Unknowns & DoV</button><button data-filter="statistics" aria-pressed="false">DMAIC / PCA / BT</button></div>
+<script>__PLOTLY_LIBRARY__</script>
 <section class="cards">__CARDS__</section>
 <section class="card" style="margin-top:13px"><h2>DMAIC → MIP → gg_MATH handoff</h2>
 <p><strong>Define:</strong> CTQ is source-bound terminal first-red resolution and valid evidence, not prettier cards.
@@ -222,7 +223,6 @@ dialog::backdrop{background:#020810cd}.modal-head{display:flex;justify-content:s
 <dialog id="detail"><div class="modal-head"><h2 id="modalTitle">Expanded evidence</h2><button id="closeDialog">Close</button></div><div id="expanded"></div></dialog>
 <footer>Current queue snapshot is a single observation and has no valid trend slope, p95 wait-time or worker capacity inference. UNKNOWN ≠ zero; provider PASS ≠ federation acceptance; merged ≠ DoV.</footer>
 </main>
-<script>__PLOTLY_LIBRARY__</script>
 <script id="plot-specs" type="application/json">__SPECS__</script>
 <script>(function(){"use strict";
 var specs=JSON.parse(document.getElementById("plot-specs").textContent);
