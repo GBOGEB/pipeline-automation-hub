@@ -147,5 +147,95 @@
       "outcome": null,
       "probability": null
     }
-  ]
+  ],
+  "live_epoch": {
+    "schema": "missioncontrol.code_purple.g3f_live_source_epoch.v1",
+    "evidence_class": "EXACT_SOURCE_AUDIT_PLUS_NATIVE_PR_GOVERNANCE",
+    "observed_at_utc": "2026-10-19T09:33:44Z",
+    "historical_fixed": {
+      "source_sha": "2cb4eb7ccde9014e49219e4e0114b8df4f0a97b7",
+      "workflow_total": 188,
+      "classified": 188
+    },
+    "arrivals_since_fixed": [
+      "cbd-w38-route-yield.yml",
+      "cbd-w38-source-branch.yml",
+      "cbd-w6c-office-style-qa.yml",
+      "code-purple-evidence-observatory.yml",
+      "code-purple-hosted-operator.yml",
+      "code-purple-w40-binary-penetration.yml",
+      "code-purple-w42-remaining-arcs.yml",
+      "code-purple-w43-matched-proof.yml",
+      "code-purple-w44-matched-proof.yml",
+      "dependency-spine-peer-census.yml",
+      "dependency-spine-stage-only.yml",
+      "mcl-roundtrip-hub-qa.yml",
+      "w007-runtime-validator-qa.yml",
+      "w13-neural-spine.yml",
+      "w26-testpilot-matched-coverage.yml",
+      "w28-testpilot-git-failure-coverage.yml",
+      "w29-cbd-temporal-matched-coverage.yml",
+      "w29-disjoint-frontier-coverage.yml",
+      "w33-backbone-pool.yml",
+      "w36-g3cs-skip-contract.yml",
+      "w38-local-pool-mip.yml"
+    ],
+    "retired_since_fixed": [],
+    "pre_repair": {
+      "source_sha": "09e02d0d60bffd39e601cc7622b53a64e3703799",
+      "workflow_total": 209,
+      "classified": 201
+    },
+    "repair_head": {
+      "source_sha": "f5a8816cddfc3d883dad2ab817d5b29773b74805",
+      "workflow_total": 209,
+      "classified": 209,
+      "newly_classified": [
+        "cbd-w38-route-yield.yml",
+        "cbd-w38-source-branch.yml",
+        "code-purple-hosted-operator.yml",
+        "code-purple-w40-binary-penetration.yml",
+        "code-purple-w42-remaining-arcs.yml",
+        "code-purple-w43-matched-proof.yml",
+        "code-purple-w44-matched-proof.yml",
+        "mcl-roundtrip-hub-qa.yml"
+      ],
+      "native_governance": {
+        "run_id": 39230923051,
+        "run_attempt": 1,
+        "job_id": 117988389828,
+        "conclusion": "success",
+        "unit_tests_run": 324,
+        "unit_tests_passed": 324,
+        "unit_tests_failed": 0,
+        "unit_tests_skipped": 0,
+        "extra_tests_run": 18,
+        "extra_tests_passed": 18,
+        "report_check": "PASS"
+      }
+    },
+    "main_source_at_observation": {
+      "source_sha": "16b63ac81d3fd5b1534a25afa3b5d171f19db6a8",
+      "workflow_total": 209,
+      "classified": 209,
+      "policy_blob_sha": "90e7989f2f8b270a4dd128a9ea81a3b28d2759b9",
+      "report_blob_sha": "61f800d9c2195a98892c29d088488d4d3a863508",
+      "native_main_run_id": null
+    },
+    "effective_governance_at_observation": {
+      "required_approving_reviews": 0,
+      "required_status_rules": 0,
+      "require_last_push_approval": false,
+      "required_review_thread_resolution": false,
+      "source": "https://github.com/GBOGEB/ABACUS/rules/24494381"
+    },
+    "fresh_authenticated_breadth": null,
+    "source_matched_new_coverage": null,
+    "actual_human_worker_hours": null,
+    "runner_slots": null,
+    "accepted_root_closures": 0,
+    "merge_admission": "HOLD",
+    "authority_transfer": false,
+    "security_waiver": false
+  }
 }
