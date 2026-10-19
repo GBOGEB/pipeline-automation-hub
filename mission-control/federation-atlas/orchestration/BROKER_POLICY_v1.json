@@ -1,0 +1,31 @@
+{
+  "schema": "atlas.local-broker.policy.v1",
+  "evidence_class": "LOCAL_PROCESS_EXECUTION_AND_ADVISORY_REMOTE_PLAN",
+  "provisional": true,
+  "default_workers": 2,
+  "default_max_pending": 8,
+  "max_workers": 4,
+  "max_pending": 32,
+  "max_tasks": 2048,
+  "snapshot_max_age_seconds": 300,
+  "cooldown_seconds": 30,
+  "advisory_caps": {
+    "CONGESTED": 0,
+    "RECOVERING": 1,
+    "STABLE": 2
+  },
+  "cohort": null,
+  "regime_controller": "mission-control/gogreen/regime_controller.py",
+  "dispatch_authorized": false,
+  "merge_authorized": false,
+  "authority_transfer": false,
+  "notes": [
+    "These provisional bounds describe this local process, not measured GitHub or organization capacity.",
+    "The existing GOGREEN controller owns regime classification; this adapter never promotes a regime.",
+    "An advisory snapshot requires UTC freshness, complete scope and a matching configured repo/source_sha cohort.",
+    "Snapshot worker_slots, running and reserved_capacity must describe the same worker-slot pool.",
+    "Read/write paths are declared local leases; other processes, hosts and undeclared writes are not controlled.",
+    "Registered handlers and validators own their side effects, subprocess timeouts and output semantics.",
+    "The adapter has no remote dispatch transport, persistent leases, automatic retries or autonomous schedule."
+  ]
+}

@@ -1,5 +1,6 @@
-import tempfile,unittest,json
+import tempfile,unittest,json,hashlib
 from pathlib import Path
+from unittest import mock
 import pages_portal
 class TestPages(unittest.TestCase):
  def test_generate_sanitized(self):
@@ -119,4 +120,115 @@ class TestPages(unittest.TestCase):
    (src/"convergence"/"index.html").write_text("FORGED",encoding="utf-8")
    with self.assertRaisesRegex(ValueError,"Convergence Hub source member hash mismatch"):
     pages_portal.build(src,p/"pages","a"*40)
+
+class ExecutionAtlasPackagingTests(unittest.TestCase):
+    """Exercise the real child verifier through the single existing packager."""
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        self.atlas = self.root / "atlas"
+        self.out = self.root / "pages"
+        self.atlas.mkdir()
+        (self.atlas / "index.html").write_text("<html>Parent Atlas</html>", encoding="utf-8")
+        self.sha = "a" * 40
+
+    @staticmethod
+    def canonical(value):
+        return (json.dumps(value, sort_keys=True, indent=2, ensure_ascii=False, allow_nan=False) + "\n").encode()
+
+    def execution_child(self):
+        child = self.atlas / "orchestration"
+        child.mkdir()
+        repo = Path(pages_portal.__file__).resolve().parents[2]
+        source = "mission-control/federation-atlas/orchestration/BROKER_POLICY_v1.json"
+        source_hashes = {source: hashlib.sha256((repo / source).read_bytes()).hexdigest()}
+        source_digest = hashlib.sha256(self.canonical(source_hashes)).hexdigest()
+        model = {"schema": "missioncontrol.orchestration.atlas.v1",
+                 "source": {"head_sha": self.sha, "dirty": False,
+                            "source_files_sha256": source_hashes, "source_digest": source_digest},
+                 "authority_transfer": False, "remote_dispatch": False, "merge_admission": "HOLD"}
+        members = {"index.html": b"<html>Child Atlas</html>", "style.css": b"body{}",
+                   "app.js": b"'use strict';", "atlas.json": self.canonical(model),
+                   "inventory.json": b"{}\n", "burndown.json": b"{}\n",
+                   "broker-plan.json": b"{}\n", "source-check.json": b"{}\n"}
+        for name, raw in members.items():
+            (child / name).write_bytes(raw)
+        manifest = {"schema": "missioncontrol.orchestration.manifest.v1",
+                    "source_sha": self.sha, "source_dirty": False, "source_digest": source_digest,
+                    "publisher": "EXISTING_METHOD_ATLAS_PAGES_ONLY", "authority_transfer": False,
+                    "remote_dispatch": False, "merge_admission": "HOLD",
+                    "files_sha256": {name: hashlib.sha256(raw).hexdigest() for name, raw in members.items()},
+                    "files_bytes": {name: len(raw) for name, raw in members.items()}}
+        (child / "manifest.json").write_bytes(self.canonical(manifest))
+        return child, manifest
+
+    def test_canonical_code_purple_json_is_preserved_with_its_hash(self):
+        raw = self.canonical({"schema": "missioncontrol.code_purple.page.v1", "items": []})
+        (self.atlas / "code-purple.json").write_bytes(raw)
+        result = pages_portal.build(self.atlas, self.out, self.sha)
+        self.assertEqual((self.out / "atlas" / "code-purple.json").read_bytes(), raw)
+        self.assertEqual(result["public_files_sha256"]["atlas/code-purple.json"], hashlib.sha256(raw).hexdigest())
+
+    def test_verified_child_is_an_owned_member_of_existing_parent(self):
+        child, manifest = self.execution_child()
+        result = pages_portal.build(self.atlas, self.out, self.sha)
+        for name in [*manifest["files_sha256"], "manifest.json"]:
+            raw = (child / name).read_bytes()
+            self.assertEqual((self.out / "orchestration" / name).read_bytes(), raw)
+            self.assertEqual(result["public_files_sha256"]["orchestration/" + name], hashlib.sha256(raw).hexdigest())
+        self.assertEqual(result["schema"], "codepurple.pages.readonly/v1")
+        self.assertFalse(result["merge_authorized"])
+        self.assertFalse(result["security_waiver"])
+        self.assertEqual(manifest["publisher"], "EXISTING_METHOD_ATLAS_PAGES_ONLY")
+        self.assertIn('href="orchestration/index.html"', (self.out / "index.html").read_text())
+
+    def test_tampered_child_fails_before_parent_manifest_is_written(self):
+        child, _ = self.execution_child()
+        (child / "app.js").write_bytes(b"tampered();")
+        with self.assertRaisesRegex(ValueError, "member hash mismatch"):
+            pages_portal.build(self.atlas, self.out, self.sha)
+        self.assertFalse((self.out / "site-manifest.json").exists())
+        self.assertFalse((self.out / "orchestration").exists())
+
+    def test_child_cannot_claim_another_publisher_or_remote_authority(self):
+        child, manifest = self.execution_child()
+        for field, value in (("publisher", "ANOTHER_PUBLISHER"), ("remote_dispatch", True), ("authority_transfer", True)):
+            with self.subTest(field=field):
+                modified = {**manifest, field: value}
+                (child / "manifest.json").write_bytes(self.canonical(modified))
+                with self.assertRaisesRegex(ValueError, "manifest authority violation"):
+                    pages_portal.build(self.atlas, self.out, self.sha)
+        self.assertFalse((self.out / "site-manifest.json").exists())
+
+    def test_different_child_head_cannot_be_relabelled_by_parent(self):
+        self.execution_child()
+        with self.assertRaisesRegex(ValueError, "bundle head mismatch"):
+            pages_portal.build(self.atlas, self.out, "b" * 40)
+        self.assertFalse((self.out / "site-manifest.json").exists())
+
+    def test_unmanifested_child_file_is_not_silently_published(self):
+        child, _ = self.execution_child()
+        (child / "extra.json").write_bytes(b"{}")
+        with self.assertRaisesRegex(ValueError, "unmanifested bundle member"):
+            pages_portal.build(self.atlas, self.out, self.sha)
+        self.assertFalse((self.out / "site-manifest.json").exists())
+
+    def test_copy_time_corruption_is_detected_before_parent_sealing(self):
+        self.execution_child()
+        original_copy = pages_portal.shutil.copyfile
+
+        def damaged_copy(source, destination, *args, **kwargs):
+            result = original_copy(source, destination, *args, **kwargs)
+            if Path(destination) == self.out / "orchestration" / "app.js":
+                Path(destination).write_bytes(b"damaged during copy")
+            return result
+
+        with mock.patch.object(pages_portal.shutil, "copyfile", side_effect=damaged_copy):
+            with self.assertRaisesRegex(ValueError, "member hash mismatch"):
+                pages_portal.build(self.atlas, self.out, self.sha)
+        self.assertFalse((self.out / "site-manifest.json").exists())
+
+
 if __name__=="__main__":unittest.main()
