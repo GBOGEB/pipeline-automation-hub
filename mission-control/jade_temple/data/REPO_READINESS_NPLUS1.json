@@ -1,0 +1,1449 @@
+{
+  "schema": "jade.temple.repo_readiness.v1",
+  "observed_window": "2026-10-18 19:29–20:50 UTC non-atomic",
+  "source": "GitHub default branches and bounded two-recent-branch Actions readback; historical Mission Control N11 + GoGREEN 2026-10-17",
+  "source_n11_roster_blob": "4b5bc76e6b4ceefa032c1c89e485755cf9326884",
+  "source_n11_rollup_blob": "90bdd778857b737d51d143d2242aecae0ae3f994",
+  "source_green_snapshot_blobs": [
+    "2ac488a8a9920bd26c8597af308d69713759c67d",
+    "539d3e17ec2f951ff2d043942d67c3700e0cf087",
+    "cbabfb329a54042f8267026211e4514721d17509"
+  ],
+  "evidence_limitations": [
+    "non_atomic_head_readback",
+    "last_two_actions_not_full_required_check_population",
+    "historical_green_cohort_different_from_N11",
+    "branch_protected_flag_is_not_effective_ruleset",
+    "Pages_dynamic_run_not_served_website"
+  ],
+  "authority_transfer": false,
+  "admission": "HOLD",
+  "verified_release_count": null,
+  "current_matched_main_coverage": null,
+  "owner_rulesets_effective": null,
+  "rows": [
+    {
+      "rank": 1,
+      "repo": "GBOGEB/ABACUS",
+      "branch": "main",
+      "head_readback": "2246c7bd3a9bda6a3d43b9a9116cb7088cfbcc88",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": true,
+      "owner_role": "DOW / evidence and acceptance",
+      "priority": "P0",
+      "lane": "CORE",
+      "mach_proposal": "MACH_IV_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "tools",
+        "tests",
+        ".github",
+        "handover"
+      ],
+      "technical_need": "CI/admission first-red, missing effective reviews and security; historical root sprawl",
+      "next_point_release_todo": "Reconcile #1860/#2087; classify current native first-red; qualify N+2 dashboard and matched tests; repair required checks, A10, Safety and RED canary",
+      "candidate_issue_links": [
+        "https://github.com/GBOGEB/ABACUS/issues/1860",
+        "https://github.com/GBOGEB/ABACUS/issues/2087",
+        "https://github.com/GBOGEB/ABACUS/issues/1991"
+      ],
+      "observed_recent_branch_runs": [
+        {
+          "name": "PR Feedback Gate Evaluator",
+          "run_id": 39165080756,
+          "url": "https://github.com/GBOGEB/ABACUS/actions/runs/39165080756",
+          "status": "queued",
+          "conclusion": null,
+          "event": "issue_comment",
+          "attempt": 1,
+          "head_sha": "2246c7bd3a9bda6a3d43b9a9116cb7088cfbcc88",
+          "head_matches_default": true
+        },
+        {
+          "name": "PR Feedback Gate Evaluator",
+          "run_id": 39165077704,
+          "url": "https://github.com/GBOGEB/ABACUS/actions/runs/39165077704",
+          "status": "queued",
+          "conclusion": null,
+          "event": "workflow_run",
+          "attempt": 1,
+          "head_sha": "2246c7bd3a9bda6a3d43b9a9116cb7088cfbcc88",
+          "head_matches_default": true
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 368,
+      "historical_n11_files": 3624,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          2129,
+          2125
+        ],
+        "native_check_ids": 56,
+        "premerge_failing_prs": 2,
+        "postmerge_failing_prs": 1,
+        "prs_without_any_failing_checks": 0,
+        "positive_or_red_example": "graph-contract (3.12) PRE; summarize-merged-pr POST",
+        "status": "HISTORICAL_RED_OBSERVED"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 2,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "branch": "master",
+      "head_readback": "d3d450fbdbb34403e22589188a877560fb147b29",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "Mission Control / cohort authority",
+      "priority": "P0",
+      "lane": "CORE",
+      "mach_proposal": "MACH_III_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "mission-control",
+        "tests",
+        "app",
+        ".github"
+      ],
+      "technical_need": "No effective protected default; parallel Actions queue; cross-cohort denominators differ",
+      "next_point_release_todo": "Qualify JADE native CI, align 13+8 cohort crosswalk with GM owner, add read-only Pages bridge to existing publisher, verify served SHA and canary",
+      "candidate_issue_links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/529",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/638"
+      ],
+      "observed_recent_branch_runs": [
+        {
+          "name": "GM-FLEET-03 Capacity Gate",
+          "run_id": 39164757557,
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39164757557",
+          "status": "queued",
+          "conclusion": null,
+          "event": "push",
+          "attempt": 1,
+          "head_sha": "d3d450fbdbb34403e22589188a877560fb147b29",
+          "head_matches_default": true
+        },
+        {
+          "name": "GM-FLEET-03 F03 Pilot",
+          "run_id": 39164757603,
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39164757603",
+          "status": "queued",
+          "conclusion": null,
+          "event": "push",
+          "attempt": 1,
+          "head_sha": "d3d450fbdbb34403e22589188a877560fb147b29",
+          "head_matches_default": true
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 5,
+      "historical_n11_files": 1881,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          630,
+          629
+        ],
+        "native_check_ids": 18,
+        "premerge_failing_prs": 0,
+        "postmerge_failing_prs": 1,
+        "prs_without_any_failing_checks": 1,
+        "positive_or_red_example": "N3 evidence Python 3.11 / 3.12; first-pass-closure POST",
+        "status": "POSITIVE_OBSERVED_HISTORICAL"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 3,
+      "repo": "GBOGEB/CODEX",
+      "branch": "main",
+      "head_readback": "0653007cf68fe20824beb937329f8b567ff27f35",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "KEB / federation consumer",
+      "priority": "P0",
+      "lane": "CORE",
+      "mach_proposal": "MACH_IV_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "src",
+        "tests",
+        "federation",
+        "governance"
+      ],
+      "technical_need": "Historical semantic-validation and governance-gate red; current federation receipts unqualified",
+      "next_point_release_todo": "Resolve #977/#1037 source-owner first-red; bind consumer REX/Pages receipt to exact head and prove governance before tag",
+      "candidate_issue_links": [
+        "https://github.com/GBOGEB/CODEX/issues/977",
+        "https://github.com/GBOGEB/CODEX/issues/1037",
+        "https://github.com/GBOGEB/CODEX/issues/989"
+      ],
+      "observed_recent_branch_runs": [
+        {
+          "name": "Agentic PR Discrepancy Scan",
+          "run_id": 39164772153,
+          "url": "https://github.com/GBOGEB/CODEX/actions/runs/39164772153",
+          "status": "completed",
+          "conclusion": "skipped",
+          "event": "issue_comment",
+          "attempt": 1,
+          "head_sha": "0653007cf68fe20824beb937329f8b567ff27f35",
+          "head_matches_default": true
+        },
+        {
+          "name": "MissionControl Owner Comment Transport",
+          "run_id": 39164772142,
+          "url": "https://github.com/GBOGEB/CODEX/actions/runs/39164772142",
+          "status": "completed",
+          "conclusion": "skipped",
+          "event": "issue_comment",
+          "attempt": 1,
+          "head_sha": "0653007cf68fe20824beb937329f8b567ff27f35",
+          "head_matches_default": true
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 82,
+      "historical_n11_files": 2575,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          1066,
+          1065
+        ],
+        "native_check_ids": 119,
+        "premerge_failing_prs": 1,
+        "postmerge_failing_prs": 1,
+        "prs_without_any_failing_checks": 0,
+        "positive_or_red_example": "semantic-validation and governance-gate failures",
+        "status": "HISTORICAL_RED_OBSERVED"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 4,
+      "repo": "GBOGEB/cryoplant-project",
+      "branch": "main",
+      "head_readback": "fc07545c3986181a1b837c0eb7ff9a8393fd4058",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "QPS / engineering authority",
+      "priority": "P0",
+      "lane": "CORE",
+      "mach_proposal": "MACH_IV_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "ocd-adr",
+        "triage",
+        "controls",
+        "release"
+      ],
+      "technical_need": "Exact-head qps-canonicalization failure; QPS v6 controlled release not closed",
+      "next_point_release_todo": "Investigate run 39159008697; close #1959 branch protection and #1379 release/Pages provenance; retain QPS domain authority",
+      "candidate_issue_links": [
+        "https://github.com/GBOGEB/cryoplant-project/issues/1379",
+        "https://github.com/GBOGEB/cryoplant-project/issues/1959",
+        "https://github.com/GBOGEB/cryoplant-project/issues/1950"
+      ],
+      "observed_recent_branch_runs": [
+        {
+          "name": "QPS PR binary refresh",
+          "run_id": 39159008691,
+          "url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39159008691",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "push",
+          "attempt": 1,
+          "head_sha": "fc07545c3986181a1b837c0eb7ff9a8393fd4058",
+          "head_matches_default": true
+        },
+        {
+          "name": "qps-canonicalization",
+          "run_id": 39159008697,
+          "url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39159008697",
+          "status": "completed",
+          "conclusion": "failure",
+          "event": "push",
+          "attempt": 1,
+          "head_sha": "fc07545c3986181a1b837c0eb7ff9a8393fd4058",
+          "head_matches_default": true
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 3,
+      "historical_n11_files": 3832,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          1949,
+          1948
+        ],
+        "native_check_ids": 45,
+        "premerge_failing_prs": 0,
+        "postmerge_failing_prs": 0,
+        "prs_without_any_failing_checks": 2,
+        "positive_or_red_example": "census; unresolved-binary-lineage observed success",
+        "status": "POSITIVE_OBSERVED_HISTORICAL"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 5,
+      "repo": "GBOGEB/gg_MATH",
+      "branch": "main",
+      "head_readback": "b9efad57e1985a6e54cb776130b8a70fa9357e0a",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "math kernels / method authority",
+      "priority": "P0",
+      "lane": "CORE",
+      "mach_proposal": "MACH_III_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "kernels",
+        "tests",
+        "release",
+        "research"
+      ],
+      "technical_need": "Release Infrastructure v1 latest run queued; Pages and point-release evidence incomplete",
+      "next_point_release_todo": "Verify run 39164028980 terminal exact-head, reproducible provider-proof, served Pages SHA and versioned tag plan (#27)",
+      "candidate_issue_links": [
+        "https://github.com/GBOGEB/gg_MATH/issues/27"
+      ],
+      "observed_recent_branch_runs": [
+        {
+          "name": "Release Infrastructure v1",
+          "run_id": 39164028980,
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/39164028980",
+          "status": "queued",
+          "conclusion": null,
+          "event": "push",
+          "attempt": 1,
+          "head_sha": "b9efad57e1985a6e54cb776130b8a70fa9357e0a",
+          "head_matches_default": true
+        },
+        {
+          "name": "LM-10 Signal Stack",
+          "run_id": 39164028979,
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/39164028979",
+          "status": "queued",
+          "conclusion": null,
+          "event": "push",
+          "attempt": 1,
+          "head_sha": "b9efad57e1985a6e54cb776130b8a70fa9357e0a",
+          "head_matches_default": true
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 1,
+      "historical_n11_files": 153,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          60,
+          59
+        ],
+        "native_check_ids": 14,
+        "premerge_failing_prs": 0,
+        "postmerge_failing_prs": 0,
+        "prs_without_any_failing_checks": 2,
+        "positive_or_red_example": "provider-proof (3.11); exact-head release gate observed success",
+        "status": "POSITIVE_OBSERVED_HISTORICAL"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 6,
+      "repo": "GBOGEB/ariana",
+      "branch": "main",
+      "head_readback": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "runtime/extension; owner applicability review",
+      "priority": "P1",
+      "lane": "EXTENSION",
+      "mach_proposal": "MACH_IIB_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "extensions",
+        "cli"
+      ],
+      "technical_need": "No branch-filtered Actions runs returned; TS extension/build qualification absent",
+      "next_point_release_todo": "Confirm upstream/fork ownership and package.json scripts; run deterministic build and extension smoke; owner decide hosted docs and release scope",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [],
+      "recent_branch_query_returned_no_runs": true,
+      "historical_n11_root_candidates": 1,
+      "historical_n11_files": 186,
+      "historical_gogreen": {
+        "cohort": "N11_NOT_IN_GOGREEN_SAMPLE",
+        "sampled_merged_pr_ids": [],
+        "native_check_ids": null,
+        "premerge_failing_prs": null,
+        "postmerge_failing_prs": null,
+        "prs_without_any_failing_checks": null,
+        "positive_or_red_example": "Not in sampled GoGREEN roster; not evidence of zero successful work",
+        "status": "COHORT_NOT_SAMPLED"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 7,
+      "repo": "GBOGEB/GEMINI",
+      "branch": "main",
+      "head_readback": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "runtime/workbench; owner applicability review",
+      "priority": "P1",
+      "lane": "EXTENSION",
+      "mach_proposal": "MACH_III_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "src",
+        "tests",
+        "docs",
+        "scripts"
+      ],
+      "technical_need": "Historical successful Pages workflow does not prove current HTTP content or revision",
+      "next_point_release_todo": "Verify served Pages URL and exact SHA; qualify pyproject/GEMINI manifest and cross-platform tests before tag",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [
+        {
+          "name": "Generate Code-Driven BLSN Reports",
+          "run_id": 36993630961,
+          "url": "https://github.com/GBOGEB/GEMINI/actions/runs/36993630961",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "push",
+          "attempt": 1,
+          "head_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+          "head_matches_default": true
+        },
+        {
+          "name": "pages build and deployment",
+          "run_id": 36993630580,
+          "url": "https://github.com/GBOGEB/GEMINI/actions/runs/36993630580",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "dynamic",
+          "attempt": 1,
+          "head_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+          "head_matches_default": true
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 3,
+      "historical_n11_files": 88,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          35,
+          34
+        ],
+        "native_check_ids": 20,
+        "premerge_failing_prs": 0,
+        "postmerge_failing_prs": 0,
+        "prs_without_any_failing_checks": 2,
+        "positive_or_red_example": "Python 3.13-dev and review observed success",
+        "status": "POSITIVE_OBSERVED_HISTORICAL"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": true
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 8,
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "branch": "main",
+      "head_readback": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "RTM/document processing",
+      "priority": "P1",
+      "lane": "EXTENSION",
+      "mach_proposal": "MACH_III_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "src",
+        "scripts",
+        "tests",
+        "docs"
+      ],
+      "technical_need": "62 N11 root-review candidates; latest sampled success is branch hygiene only",
+      "next_point_release_todo": "Replay DOCX↔Markdown/RTM fidelity with negative tests and 2-step source/asset manifests; link canonical launch guide without breaking old aliases",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [
+        {
+          "name": "Branch hygiene (lossless)",
+          "run_id": 38186316862,
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38186316862",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "workflow_dispatch",
+          "attempt": 1,
+          "head_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+          "head_matches_default": true
+        },
+        {
+          "name": "Branch hygiene (lossless)",
+          "run_id": 38186276984,
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38186276984",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "workflow_dispatch",
+          "attempt": 1,
+          "head_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+          "head_matches_default": true
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 62,
+      "historical_n11_files": 953,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          91,
+          90
+        ],
+        "native_check_ids": 12,
+        "premerge_failing_prs": 0,
+        "postmerge_failing_prs": 0,
+        "prs_without_any_failing_checks": 2,
+        "positive_or_red_example": "admission-policy; test-coverage-lineage observed success",
+        "status": "POSITIVE_OBSERVED_HISTORICAL"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 9,
+      "repo": "GBOGEB/Q_engineering_tools",
+      "branch": "main",
+      "head_readback": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "engineering tools",
+      "priority": "P1",
+      "lane": "EXTENSION",
+      "mach_proposal": "MACH_IV_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "federation",
+        "payload",
+        "controls"
+      ],
+      "technical_need": "Pages production repeat workflow skipped in current sample; engineering evidence independent",
+      "next_point_release_todo": "Verify hosted dashboard and production-repeat owner gate; retain source-bound W184F check and QPS engineering authority",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [
+        {
+          "name": "W184F Visual N200 Checkpoint",
+          "run_id": 38218875948,
+          "url": "https://github.com/GBOGEB/Q_engineering_tools/actions/runs/38218875948",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "push",
+          "attempt": 1,
+          "head_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+          "head_matches_default": true
+        },
+        {
+          "name": "M02A Pages Production Repeat Control",
+          "run_id": 38218875950,
+          "url": "https://github.com/GBOGEB/Q_engineering_tools/actions/runs/38218875950",
+          "status": "completed",
+          "conclusion": "skipped",
+          "event": "push",
+          "attempt": 1,
+          "head_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+          "head_matches_default": true
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 1,
+      "historical_n11_files": 383,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          106,
+          97
+        ],
+        "native_check_ids": 6,
+        "premerge_failing_prs": 1,
+        "postmerge_failing_prs": 0,
+        "prs_without_any_failing_checks": 1,
+        "positive_or_red_example": "build-and-exercise observed success; exact-proof failure",
+        "status": "POSITIVE_OBSERVED_HISTORICAL"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 10,
+      "repo": "GBOGEB/cryo_leak_rate_dashboard",
+      "branch": "main",
+      "head_readback": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "cryogenic dashboard",
+      "priority": "P1",
+      "lane": "EXTENSION",
+      "mach_proposal": "MACH_III_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "src",
+        "tests",
+        "docs",
+        "outputs"
+      ],
+      "technical_need": "115 N11 root-review candidates; old three-format document families; Pages run success not content proof",
+      "next_point_release_todo": "Curate root START_HERE and aliases before any move; verify Pages served SHA, unit replay and generated artifact lineage",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [
+        {
+          "name": "Branch hygiene (lossless)",
+          "run_id": 38186277332,
+          "url": "https://github.com/GBOGEB/cryo_leak_rate_dashboard/actions/runs/38186277332",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "workflow_dispatch",
+          "attempt": 1,
+          "head_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+          "head_matches_default": true
+        },
+        {
+          "name": "pages build and deployment",
+          "run_id": 38177431172,
+          "url": "https://github.com/GBOGEB/cryo_leak_rate_dashboard/actions/runs/38177431172",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "dynamic",
+          "attempt": 1,
+          "head_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+          "head_matches_default": true
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 115,
+      "historical_n11_files": 483,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          17,
+          16
+        ],
+        "native_check_ids": 2,
+        "premerge_failing_prs": 0,
+        "postmerge_failing_prs": 0,
+        "prs_without_any_failing_checks": 1,
+        "positive_or_red_example": "unit observed success; one PR without checks",
+        "status": "POSITIVE_OBSERVED_HISTORICAL"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": true
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 11,
+      "repo": "GBOGEB/cryogenic-accelerator-workspace",
+      "branch": "main",
+      "head_readback": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "workspace/runtime",
+      "priority": "P1",
+      "lane": "EXTENSION",
+      "mach_proposal": "MACH_III_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "src",
+        "tests",
+        "scripts",
+        "federation"
+      ],
+      "technical_need": "Latest successes concern branch hygiene; runtime/MCP integration unqualified",
+      "next_point_release_todo": "Run workspace build and MCP integration negatives; source-bound docs/Pages owner pilot, retain 12 root-review candidates",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [
+        {
+          "name": "Branch hygiene (lossless)",
+          "run_id": 38186344569,
+          "url": "https://github.com/GBOGEB/cryogenic-accelerator-workspace/actions/runs/38186344569",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "workflow_dispatch",
+          "attempt": 1,
+          "head_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+          "head_matches_default": true
+        },
+        {
+          "name": "Branch hygiene (lossless)",
+          "run_id": 38186276780,
+          "url": "https://github.com/GBOGEB/cryogenic-accelerator-workspace/actions/runs/38186276780",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "workflow_dispatch",
+          "attempt": 1,
+          "head_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+          "head_matches_default": true
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 12,
+      "historical_n11_files": 59,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          19,
+          18
+        ],
+        "native_check_ids": 3,
+        "premerge_failing_prs": 0,
+        "postmerge_failing_prs": 0,
+        "prs_without_any_failing_checks": 2,
+        "positive_or_red_example": "unit; census observed success",
+        "status": "POSITIVE_OBSERVED_HISTORICAL"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 12,
+      "repo": "GBOGEB/document-organization-system",
+      "branch": "main",
+      "head_readback": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "document organization",
+      "priority": "P1",
+      "lane": "EXTENSION",
+      "mach_proposal": "MACH_III_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "Automation",
+        "tests",
+        "scripts",
+        "docs"
+      ],
+      "technical_need": "Modular audit and Pages dynamic success observed; HTTP parity not verified",
+      "next_point_release_todo": "Retest safe organize/rollback, verify Pages URL and SHA, root aliases and current release manifest",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [
+        {
+          "name": "Modular CI Pipeline Audit",
+          "run_id": 38218661281,
+          "url": "https://github.com/GBOGEB/document-organization-system/actions/runs/38218661281",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "push",
+          "attempt": 1,
+          "head_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+          "head_matches_default": true
+        },
+        {
+          "name": "pages build and deployment",
+          "run_id": 38218660789,
+          "url": "https://github.com/GBOGEB/document-organization-system/actions/runs/38218660789",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "dynamic",
+          "attempt": 1,
+          "head_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+          "head_matches_default": true
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 16,
+      "historical_n11_files": 284,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          78,
+          62
+        ],
+        "native_check_ids": 2,
+        "premerge_failing_prs": 0,
+        "postmerge_failing_prs": 0,
+        "prs_without_any_failing_checks": 2,
+        "positive_or_red_example": "modular-audit; contract observed success",
+        "status": "POSITIVE_OBSERVED_HISTORICAL"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": true
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 13,
+      "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+      "branch": "master",
+      "head_readback": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "historical small artifact repo / applicability review",
+      "priority": "P2",
+      "lane": "APPLICABILITY",
+      "mach_proposal": "MACH_IIB_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "setup.py"
+      ],
+      "technical_need": "Four tracked historical files, two binary ZIPs; latest workflow on different commit",
+      "next_point_release_todo": "Owner decide archival/reference vs release scope; hash/check binary provenance; fix setup.py smoke, avoid unsupported Pages mandate",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [
+        {
+          "name": "Graph Update: pip in /. #1393747228",
+          "run_id": 26808673832,
+          "url": "https://github.com/GBOGEB/github_documentorganisatiesysteem_GBOGEB/actions/runs/26808673832",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "dynamic",
+          "attempt": 1,
+          "head_sha": "60134ad7a72aa8bcb8cff790d1278112108e7034",
+          "head_matches_default": false
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 2,
+      "historical_n11_files": 4,
+      "historical_gogreen": {
+        "cohort": "N11_NOT_IN_GOGREEN_SAMPLE",
+        "sampled_merged_pr_ids": [],
+        "native_check_ids": null,
+        "premerge_failing_prs": null,
+        "postmerge_failing_prs": null,
+        "prs_without_any_failing_checks": null,
+        "positive_or_red_example": "Not in sampled GoGREEN roster; not evidence of zero successful work",
+        "status": "COHORT_NOT_SAMPLED"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 14,
+      "repo": "GBOGEB/github-mcp-server",
+      "branch": "main",
+      "head_readback": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "GitHub MCP / external-derived scope review",
+      "priority": "P1",
+      "lane": "APPLICABILITY",
+      "mach_proposal": "MACH_IIB_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "cmd",
+        "internal",
+        "pkg",
+        "e2e"
+      ],
+      "technical_need": "Latest scheduled Docker run queued; sampled historical OS build reds postmerge",
+      "next_point_release_todo": "Determine upstream-derived fork applicability; run exact-head Go build/tests and Docker matrix; no inherited current merge-green",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [
+        {
+          "name": "Close inactive issues",
+          "run_id": 39112493396,
+          "url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/39112493396",
+          "status": "completed",
+          "conclusion": "success",
+          "event": "schedule",
+          "attempt": 1,
+          "head_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+          "head_matches_default": true
+        },
+        {
+          "name": "Docker",
+          "run_id": 39085287468,
+          "url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/39085287468",
+          "status": "queued",
+          "conclusion": null,
+          "event": "schedule",
+          "attempt": 1,
+          "head_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+          "head_matches_default": true
+        }
+      ],
+      "recent_branch_query_returned_no_runs": false,
+      "historical_n11_root_candidates": 8,
+      "historical_n11_files": 588,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          5,
+          4
+        ],
+        "native_check_ids": 34,
+        "premerge_failing_prs": 0,
+        "postmerge_failing_prs": 2,
+        "prs_without_any_failing_checks": 0,
+        "positive_or_red_example": "OS matrix build failures after merge",
+        "status": "HISTORICAL_RED_OBSERVED"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 15,
+      "repo": "GBOGEB/docker-stacks",
+      "branch": "main",
+      "head_readback": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "Docker / upstream-derived scope review",
+      "priority": "P2",
+      "lane": "APPLICABILITY",
+      "mach_proposal": "MACH_IIB_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "images",
+        "tests",
+        "docs"
+      ],
+      "technical_need": "No branch-filtered Actions runs returned; Docker release verification unknown",
+      "next_point_release_todo": "Owner decide fork applicability; run Dockerfile lint/build, image scan and docs smoke on exact head",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [],
+      "recent_branch_query_returned_no_runs": true,
+      "historical_n11_root_candidates": 4,
+      "historical_n11_files": 287,
+      "historical_gogreen": {
+        "cohort": "N11_NOT_IN_GOGREEN_SAMPLE",
+        "sampled_merged_pr_ids": [],
+        "native_check_ids": null,
+        "premerge_failing_prs": null,
+        "postmerge_failing_prs": null,
+        "prs_without_any_failing_checks": null,
+        "positive_or_red_example": "Not in sampled GoGREEN roster; not evidence of zero successful work",
+        "status": "COHORT_NOT_SAMPLED"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 16,
+      "repo": "GBOGEB/yaml-grammar",
+      "branch": "master",
+      "head_readback": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "YAML grammar / static utility",
+      "priority": "P2",
+      "lane": "APPLICABILITY",
+      "mach_proposal": "MACH_IIB_PROPOSED",
+      "readme_path": "ReadMe.md",
+      "source_roots_from_inspected_root": [
+        "bin",
+        "Makefile"
+      ],
+      "technical_need": "Actual root README is ReadMe.md; no branch-filtered Actions runs returned",
+      "next_point_release_todo": "Preserve case-sensitive README and spec inputs; validate grammar/Makefile outputs, consider offline docs not mandatory Pages",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [],
+      "recent_branch_query_returned_no_runs": true,
+      "historical_n11_root_candidates": 4,
+      "historical_n11_files": 10,
+      "historical_gogreen": {
+        "cohort": "N11_NOT_IN_GOGREEN_SAMPLE",
+        "sampled_merged_pr_ids": [],
+        "native_check_ids": null,
+        "premerge_failing_prs": null,
+        "postmerge_failing_prs": null,
+        "prs_without_any_failing_checks": null,
+        "positive_or_red_example": "Not in sampled GoGREEN roster; not evidence of zero successful work",
+        "status": "COHORT_NOT_SAMPLED"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 17,
+      "repo": "GBOGEB/prettier",
+      "branch": "main",
+      "head_readback": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "upstream-derived / owner applicability review",
+      "priority": "P2",
+      "lane": "APPLICABILITY",
+      "mach_proposal": "MACH_IIB_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "src",
+        "tests",
+        "packages",
+        "website"
+      ],
+      "technical_need": "Upstream-derived high-volume JS source, no runs in branch-filtered recent sample",
+      "next_point_release_todo": "Owner decide local release vs mirror; rerun pinned format/parser tests and security; prefer small owner-owned navigation pointer",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [],
+      "recent_branch_query_returned_no_runs": true,
+      "historical_n11_root_candidates": 9,
+      "historical_n11_files": 9362,
+      "historical_gogreen": {
+        "cohort": "N11_NOT_IN_GOGREEN_SAMPLE",
+        "sampled_merged_pr_ids": [],
+        "native_check_ids": null,
+        "premerge_failing_prs": null,
+        "postmerge_failing_prs": null,
+        "prs_without_any_failing_checks": null,
+        "positive_or_red_example": "Not in sampled GoGREEN roster; not evidence of zero successful work",
+        "status": "COHORT_NOT_SAMPLED"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 18,
+      "repo": "GBOGEB/vscode-powershell",
+      "branch": "main",
+      "head_readback": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "PowerShell extension / upstream-derived",
+      "priority": "P2",
+      "lane": "APPLICABILITY",
+      "mach_proposal": "MACH_IIB_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "src",
+        "test",
+        "docs"
+      ],
+      "technical_need": "No sampled native Actions; extension Windows/macOS/Linux compatibility not established",
+      "next_point_release_todo": "Qualify extension packaging and platform smoke on exact head if actively maintained; otherwise declared reference only",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [],
+      "recent_branch_query_returned_no_runs": true,
+      "historical_n11_root_candidates": 5,
+      "historical_n11_files": 115,
+      "historical_gogreen": {
+        "cohort": "N11_NOT_IN_GOGREEN_SAMPLE",
+        "sampled_merged_pr_ids": [],
+        "native_check_ids": null,
+        "premerge_failing_prs": null,
+        "postmerge_failing_prs": null,
+        "prs_without_any_failing_checks": null,
+        "positive_or_red_example": "Not in sampled GoGREEN roster; not evidence of zero successful work",
+        "status": "COHORT_NOT_SAMPLED"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 19,
+      "repo": "GBOGEB/cli",
+      "branch": "trunk",
+      "head_readback": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "CLI / upstream-derived",
+      "priority": "P2",
+      "lane": "APPLICABILITY",
+      "mach_proposal": "MACH_IIB_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "cmd",
+        "internal",
+        "test"
+      ],
+      "technical_need": "Upstream-derived CLI; no branch-filtered runs; point-release ownership unclear",
+      "next_point_release_todo": "Owner decide fork release necessity; validate Go build/test and binary provenance; no forced Pages adoption",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [],
+      "recent_branch_query_returned_no_runs": true,
+      "historical_n11_root_candidates": 2,
+      "historical_n11_files": 1229,
+      "historical_gogreen": {
+        "cohort": "N11_NOT_IN_GOGREEN_SAMPLE",
+        "sampled_merged_pr_ids": [],
+        "native_check_ids": null,
+        "premerge_failing_prs": null,
+        "postmerge_failing_prs": null,
+        "prs_without_any_failing_checks": null,
+        "positive_or_red_example": "Not in sampled GoGREEN roster; not evidence of zero successful work",
+        "status": "COHORT_NOT_SAMPLED"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 20,
+      "repo": "GBOGEB/python-sdk",
+      "branch": "main",
+      "head_readback": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "SDK / upstream-derived",
+      "priority": "P2",
+      "lane": "APPLICABILITY",
+      "mach_proposal": "MACH_IIB_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "src",
+        "tests",
+        "docs"
+      ],
+      "technical_need": "Upstream-derived SDK; no branch-filtered CI; distribution provenance unknown",
+      "next_point_release_todo": "Owner decide fork release scope; verify uv/pyproject lock, type tests, wheel/sdist and signing if publishing",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [],
+      "recent_branch_query_returned_no_runs": true,
+      "historical_n11_root_candidates": 2,
+      "historical_n11_files": 286,
+      "historical_gogreen": {
+        "cohort": "N11_NOT_IN_GOGREEN_SAMPLE",
+        "sampled_merged_pr_ids": [],
+        "native_check_ids": null,
+        "premerge_failing_prs": null,
+        "postmerge_failing_prs": null,
+        "prs_without_any_failing_checks": null,
+        "positive_or_red_example": "Not in sampled GoGREEN roster; not evidence of zero successful work",
+        "status": "COHORT_NOT_SAMPLED"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    },
+    {
+      "rank": 21,
+      "repo": "GBOGEB/skills",
+      "branch": "main",
+      "head_readback": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "readback": "2026-10-18_NONATOMIC",
+      "branch_protected_flag": false,
+      "owner_role": "reusable skill source authority",
+      "priority": "P1",
+      "lane": "APPLICABILITY",
+      "mach_proposal": "MACH_III_PROPOSED",
+      "readme_path": "README.md",
+      "source_roots_from_inspected_root": [
+        "skills",
+        "spec",
+        "template"
+      ],
+      "technical_need": "Canonical skill provider, no sampled native Actions on branch and GoGREEN PR with zero checks",
+      "next_point_release_todo": "Add schema/packaging negative tests and version registry; link skill metadata and publication; owner choose HTML applicability",
+      "candidate_issue_links": [],
+      "observed_recent_branch_runs": [],
+      "recent_branch_query_returned_no_runs": true,
+      "historical_n11_root_candidates": 1,
+      "historical_n11_files": 454,
+      "historical_gogreen": {
+        "cohort": "GM_DMAIC_GO_GREEN_OCT17",
+        "sampled_merged_pr_ids": [
+          1
+        ],
+        "native_check_ids": 0,
+        "premerge_failing_prs": 0,
+        "postmerge_failing_prs": 0,
+        "prs_without_any_failing_checks": 0,
+        "positive_or_red_example": "No native check ID in sampled PR",
+        "status": "NO_NATIVE_CHECK_EVIDENCE"
+      },
+      "site": {
+        "served_http_url": null,
+        "served_sha": null,
+        "hosting_qualification": "UNKNOWN",
+        "successful_dynamic_pages_workflow_observed": false
+      },
+      "readiness": {
+        "inventory": "J0_OBSERVED",
+        "root_navigation": "ROOT_README_EXISTS_ONLY",
+        "pages": "UNQUALIFIED",
+        "governance": "UNQUALIFIED",
+        "native_release": "UNQUALIFIED",
+        "point_release": "UNQUALIFIED"
+      },
+      "authority_transfer": false,
+      "merge_admission": "HOLD"
+    }
+  ]
+}

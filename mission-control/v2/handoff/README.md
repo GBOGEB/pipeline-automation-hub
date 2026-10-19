@@ -105,3 +105,7 @@ work asynchronously merely because the command was invoked.
 Do not move this protocol to another global SSOT. Later `V2` changes must
 be additive, preserve old invocation meaning and publish a backward
 compatibility receipt.
+
+## 18 October 2026 — W4 published core-handover method
+
+The additive [ABACUS W4 GitHub-first crosswalk](ABACUS_W4_GITHUB_FIRST_CROSSWALK_20261018.md) points to the **existing** ABACUS V2 message template, native nine-cell byte receipts and review-only continuation PR. Use it through `CP.HANDOFF/CP.RESUME`, not as a new method registry, BD queue, authenticated dispatcher or authority bypass. `MERGE_ADMISSION=HOLD` until effective admin rules and independent native evidence are verified.

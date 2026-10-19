@@ -1,0 +1,152 @@
+{
+  "schema": "missioncontrol.superstitch.glossary.v1",
+  "inherits": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json",
+  "authority_transfer": false,
+  "terms": [
+    {
+      "term": "DOW",
+      "definition": "ABACUS data/analysis and workflow decision-observability plane; not QPS engineering SSOT",
+      "owner": "ABACUS"
+    },
+    {
+      "term": "KEB",
+      "definition": "CODEX Knowledge Exchange Bridge controlling semantic meaning, provenance, policy, tuple and receipt continuity",
+      "owner": "CODEX"
+    },
+    {
+      "term": "QPS CHILD",
+      "definition": "Cryoplant project retains acceptance/rejection/defer disposition for all engineering material",
+      "owner": "QPS"
+    },
+    {
+      "term": "SIPOC",
+      "definition": "Supplier, Input, Process, Output, Customer flow with source-owned feedback",
+      "owner": "Mission Control"
+    },
+    {
+      "term": "DAG TOUCH",
+      "definition": "Typed cross-DAG adjacency, not itself proof of authenticated dispatch",
+      "owner": "Graph model"
+    },
+    {
+      "term": "DUPLICATE ALIAS",
+      "definition": "Second spatial representation of one canonical_id; not a duplicated engineering source or second accepted root",
+      "owner": "Graph model"
+    },
+    {
+      "term": "SUPERSTITCH",
+      "definition": "Uncollapsed joined projection of multiple scoped DAGs with shared identities and touches",
+      "owner": "Mission Control"
+    },
+    {
+      "term": "SPINE",
+      "definition": "Source/process/identity/node/evidence navigation lens. Proposed view label; not a separate canonical method",
+      "owner": "Mission Control"
+    },
+    {
+      "term": "TESTFLIGHT",
+      "definition": "Local F0–F4 probes and receipts followed by independently run exact-head F5 CI and F6–F7 owner gates",
+      "owner": "ABACUS DOW"
+    },
+    {
+      "term": "HOME TEST",
+      "definition": "Pre-GitHub staged-tree validation receipt. LOCAL_ONLY_NOT_MERGE_AUTHORITY even if successful",
+      "owner": "Local developer"
+    },
+    {
+      "term": "PCA",
+      "definition": "Principal Component Analysis of a qualified repeated comparable metric population, not causal acceptance",
+      "owner": "gg_MATH"
+    },
+    {
+      "term": "BT",
+      "definition": "Bradley–Terry pairwise ranking, not backtesting; needs connected comparison graph",
+      "owner": "gg_MATH"
+    },
+    {
+      "term": "MCOV",
+      "definition": "Mission Control observability/control maturity; unrelated to software line/branch coverage percentages",
+      "owner": "Mission Control"
+    },
+    {
+      "term": "DIGITAL TWIN",
+      "definition": "Read-only synchronized structural/process projection in W34; no claimed live autonomous workflow or plant-control feedback",
+      "owner": "Mission Control"
+    },
+    {
+      "term": "NATIVE RECEIPT",
+      "definition": "Independent exact-SHA GitHub run, attempt, job and validated artifact-member identity",
+      "owner": "Source CI"
+    },
+    {
+      "term": "FIRST RED",
+      "definition": "First attributable failing job/step signature for an exact source; distinct from owner-accepted causal root",
+      "owner": "EVERRED"
+    },
+    {
+      "term": "SPLINE",
+      "definition": "Time-aligned descriptive trend over source-comparable observations; unknowns are gaps rather than interpolated measurements",
+      "owner": "gg_MATH"
+    },
+    {
+      "term": "PLOTLY OFFLINE",
+      "definition": "Embed Plotly once or store local plotly.min.js; never silently require CDN in release offline view",
+      "owner": "gg_MATH"
+    },
+    {
+      "term": "MATPLOTLIB EXPORT",
+      "definition": "Static PNG/SVG with pinned semantic source payload and hash; not a substituted native run",
+      "owner": "gg_MATH"
+    },
+    {
+      "term": "Purple burndown",
+      "definition": "Visual debt bar constrained to ONE source-owned numerator and denominator, including explicit historical/unknown qualification. Not a merge or native runtime status.",
+      "owner": "Mission Control projection only"
+    },
+    {
+      "term": "Bounded DAG group",
+      "definition": "Clickable typed list of canonical placements in one owner lane or multiple touching DAGs. Drawn purple regions are topology, not compliance.",
+      "owner": "Mission Control projection only"
+    },
+    {
+      "term": "Lasso selection",
+      "definition": "Ephemeral rectangle over visible SVG node geometry, used only to view a subset. Creates no source group or worker action.",
+      "owner": "Mission Control projection only"
+    },
+    {
+      "term": "SIPOC lane projection",
+      "definition": "Supplier/Input/Process/Output/Customer rows rendered as selectable process swimlanes joining existing source-owned DAG nodes.",
+      "owner": "Mission Control projection only"
+    },
+    {
+      "term": "Trigger DAG interface",
+      "definition": "Declared source edges classified TRIGGER, RETRIGGER, DEPENDENCY and FEDERATION. No workflow dispatch without authenticated native scheduler action.",
+      "owner": "Mission Control projection only"
+    },
+    {
+      "term": "Mermaid source",
+      "definition": "Machine-readable flowchart projection sharing node and edge IDs with HTML and SVG; not a separate canonical SSOT or runtime.",
+      "owner": "Mission Control projection only"
+    },
+    {
+      "term": "SPLINE evidence view",
+      "definition": "Historical measured points are connected only where comparable; future unknown remains unplotted and cannot imply numerical trajectory.",
+      "owner": "Mission Control projection only"
+    },
+    {
+      "term": "Cross-DAG multi-touch",
+      "definition": "One canonical source identity can have multiple named placements and typed touch relationships across planar DAGs. Touches are not causal roots or proofs.",
+      "owner": "Mission Control projection only"
+    },
+    {
+      "term": "Topology count",
+      "definition": "Count of source-described node placements or duplicate identity mappings, distinct from source-bound acceptance or executed tests.",
+      "owner": "Mission Control projection only"
+    },
+    {
+      "term": "Group denominator",
+      "definition": "The eligible population supporting a group-scoped metric (e.g. six-repo cells, authenticated pairs, kernel statements). Incompatible populations cannot be summed.",
+      "owner": "Mission Control projection only"
+    }
+  ]
+}

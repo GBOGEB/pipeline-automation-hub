@@ -1,0 +1,91 @@
+name: "CODE PURPLE CP.CLOSE W10 lossless handover qualification"
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/handoff/closeout/intakes/CP-W10-MYCELIUM-FEDERATION-20261018.json'
+      - 'mission-control/v2/handoff/closeout/records/CP-W10-MYCELIUM-FEDERATION-20261018/**'
+      - '.github/workflows/cp-w10-federation-handover.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/v2/handoff/closeout/intakes/CP-W10-MYCELIUM-FEDERATION-20261018.json'
+      - 'mission-control/v2/handoff/closeout/records/CP-W10-MYCELIUM-FEDERATION-20261018/**'
+      - '.github/workflows/cp-w10-federation-handover.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exact-head-cp-close:
+    name: "W10 CP.CLOSE canonical 9-artifact native replay"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact PR source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Canonical CP.CLOSE tests and frozen snapshot
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          ROOT=mission-control/v2/handoff/closeout
+          INTAKE="$ROOT/intakes/CP-W10-MYCELIUM-FEDERATION-20261018.json"
+          BD=mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json
+          OUT="$RUNNER_TEMP/cp-w10-record"
+          ZIP="$RUNNER_TEMP/CP-W10-MYCELIUM-FEDERATION-20261018.zip"
+          python -m unittest discover -s mission-control/v2/handoff/closeout -p test_cp_close.py -v
+          python "$ROOT/cp_close.py" --intake "$INTAKE" --bd "$BD" --out "$OUT" --zip "$ZIP"
+          python "$ROOT/cp_close.py" --intake "$INTAKE" --bd "$BD" --out "$OUT" --check
+          if test -f "$ROOT/records/CP-W10-MYCELIUM-FEDERATION-20261018/MANIFEST.json"; then
+            python "$ROOT/cp_close.py" --intake "$INTAKE" --bd "$BD" \
+              --out "$ROOT/records/CP-W10-MYCELIUM-FEDERATION-20261018" --check
+            echo CP_W10_COMMITTED_RECORD_PARITY=PASS
+          else
+            echo CP_W10_COMMITTED_RECORD_PARITY=PENDING_FIRST_SOURCE_COMMIT
+          fi
+          python - <<'PY'
+          import hashlib,json,os,zipfile
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])/"cp-w10-record"
+          zip_path=Path(os.environ["RUNNER_TEMP"])/"CP-W10-MYCELIUM-FEDERATION-20261018.zip"
+          m=json.loads((root/"MANIFEST.json").read_text(encoding="utf-8"))
+          state=json.loads((root/"STATE.json").read_text(encoding="utf-8"))
+          stats=json.loads((root/"CHAT_STATS.json").read_text(encoding="utf-8"))
+          bd=json.loads((root/"BD_QUEUE_READONLY.json").read_text(encoding="utf-8"))
+          if len(m["member_sha256"])!=8 or not all(hashlib.sha256((root/p).read_bytes()).hexdigest()==d for p,d in m["member_sha256"].items()):
+              raise SystemExit("CP_W10_FIRST_RED: nine-artifact manifest digest mismatch")
+          if state["intent_count_reconstructed"]!=12 or state["action_count_reconstructed"]!=23:
+              raise SystemExit("CP_W10_FIRST_RED: source intent/action population changed")
+          if len(bd["focus"])!=19 or bd["new_canonical_bd_items"]!=0:
+              raise SystemExit("CP_W10_FIRST_RED: BD canonical owner/breadth mismatch")
+          if stats["full_chat_total_prompts"] is not None or stats["model_tokens"] is not None or m["verbatim_transcript_claim"] or m["authority_transfer"]:
+              raise SystemExit("CP_W10_FIRST_RED: fabricated transcript or authority")
+          with zipfile.ZipFile(zip_path) as z:
+              if z.testzip() is not None or len(z.namelist())!=9:
+                  raise SystemExit("CP_W10_FIRST_RED: ZIP CRC/member mismatch")
+          print("CP_W10_NINE_ARTIFACT=PASS SOURCE_HEAD="+os.environ["SOURCE_SHA"])
+          print("INTENTS=12 ACTIONS=23 BD_FOCUS=19 CHAT_COUNTS=UNKNOWN")
+          print("ARCHIVE_BYTES=",zip_path.stat().st_size,"SHA256=",hashlib.sha256(zip_path.read_bytes()).hexdigest())
+          for file in sorted(root.iterdir()):
+              if file.is_file():
+                  print("CP_W10_EXPORT_FILE="+json.dumps({"name":file.name,"content":file.read_text(encoding="utf-8")},ensure_ascii=True,separators=(",",":")))
+          PY
+      - name: Upload source-bound canonical handover files and ZIP
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cp-w10-source-bound-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/cp-w10-record/
+            ${{ runner.temp }}/CP-W10-MYCELIUM-FEDERATION-20261018.zip
+          if-no-files-found: warn
+          retention-days: 21

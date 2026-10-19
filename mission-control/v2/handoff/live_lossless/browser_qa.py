@@ -13,7 +13,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
 SIZES=(("desktop",1440,960),("laptop",1280,800),("mobile",390,844))
 MAIN="b293c818ebf280e570392e398720ec22e1aa4566"
@@ -61,6 +61,16 @@ class API:
         route.fulfill(status=200,headers={"Access-Control-Allow-Origin":"*","Content-Type":"application/json"},body=json.dumps(obj))
 
 
+def wait_status(page,token,timeout=30000):
+    """Wait for #feed-status to contain token without in-page eval.
+
+    The dashboard ships a strict CSP (script-src 'self', no 'unsafe-eval'); string
+    wait_for_function predicates are evaluated in-page and are blocked by it.
+    Locator assertions use Playwright's selector engine and keep the CSP intact.
+    """
+    expect(page.locator("#feed-status")).to_contain_text(token,timeout=timeout)
+
+
 def check(condition,why,log):
     if not condition:
         raise AssertionError(why)
@@ -78,7 +88,7 @@ def test_viewport(browser,url,mode,w,h,snap,out,report):
     page.on("pageerror",lambda error:errors.append(str(error)))
     page.route("https://api.github.com/**",api)
     page.goto(url,wait_until="load")
-    page.wait_for_function("document.querySelector('#feed-status').textContent.includes('LIVE_COMPLETE')",timeout=15000)
+    page.locator('#feed-status').filter(has_text='LIVE_COMPLETE').wait_for(timeout=15000)
     log=[]
     check(page.locator("#metric-intents").inner_text()=="7","7 reconstructed intent rows",log)
     check(page.locator("#metric-actions").inner_text()=="11","11 tracked owned actions",log)
@@ -123,7 +133,11 @@ def test_viewport(browser,url,mode,w,h,snap,out,report):
     page.locator("#tab-monikers").click()
     check(page.locator("#moniker-cards details").count()==6,"six versioned monikers",log)
     page.locator("#moniker-cards details").first.locator("summary").click()
-    check("CP.CLOSEOUT" in page.locator("#moniker-cards pre").first.inner_text(),"canonical moniker details",log)
+    # CP.CLOSEOUT is an alias card; its instruction must bind to the canonical CP.CLOSE
+    # producer (8b03321), never a second CP.CLOSEOUT(...) producer.
+    first=snap["monikers"][0]["invocation"]
+    check(first.startswith("CP.CLOSE(") and not first.startswith("CP.CLOSEOUT("),"alias binds to canonical CP.CLOSE",log)
+    check(page.locator("#moniker-cards pre").first.inner_text()==first,"canonical moniker details",log)
     # Clipboard is explicitly user-triggered; failure is reported without false success.
     page.evaluate("""() => {
        Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
@@ -132,7 +146,7 @@ def test_viewport(browser,url,mode,w,h,snap,out,report):
     }""")
     page.locator("#moniker-cards .copy").first.click()
     check(page.locator("#moniker-cards .copy").first.get_attribute("data-copied")=="true","copy control action returns success",log)
-    check("CP.CLOSEOUT" in page.evaluate("window.__copied"),"copied instruction is canonical",log)
+    check(page.evaluate("window.__copied")==first,"copied instruction is canonical",log)
     page.locator("#tab-overview").focus()
     page.keyboard.press("ArrowRight")
     check(page.locator("#tab-intents").get_attribute("aria-selected")=="true","tab keyboard arrow navigation",log)
@@ -158,12 +172,12 @@ def test_viewport(browser,url,mode,w,h,snap,out,report):
     # Remote partial/unavailable must not replace the source-bound immutable metrics.
     api.failure="ONE"
     page.locator("#refresh").click()
-    page.wait_for_function("document.querySelector('#feed-status').textContent.includes('LIVE_PARTIAL')")
+    page.locator('#feed-status').filter(has_text='LIVE_PARTIAL').wait_for(timeout=15000)
     check(page.locator("#metric-prompts").inner_text()=="UNKNOWN","partial API keeps null chat population",log)
     check(page.locator("#source-errors").is_visible(),"partial API shows explicit warning",log)
     api.failure="ALL"
     page.locator("#refresh").click()
-    page.wait_for_function("document.querySelector('#feed-status').textContent.includes('LIVE_UNAVAILABLE')")
+    page.locator('#feed-status').filter(has_text='LIVE_UNAVAILABLE').wait_for(timeout=15000)
     check(page.locator("#metric-checks").inner_text()=="34/34","API outage never replaces matched native proof",log)
     check(page.locator("#remote-head").inner_text()==MAIN,"last independently retrieved browser main retained",log)
     outage=out/("api-failure-"+mode+".png")
@@ -200,7 +214,7 @@ def run(source,out):
                 page.route("**/snapshot.json",lambda route:route.fulfill(status=200,content_type="application/json",body=json.dumps(bad)))
                 page.route("https://api.github.com/**",lambda route:route.fulfill(status=503,body="blocked"))
                 page.goto(url)
-                page.wait_for_function("document.querySelector('#feed-status').textContent.includes('SNAPSHOT_UNAVAILABLE')")
+                page.locator('#feed-status').filter(has_text='SNAPSHOT_UNAVAILABLE').wait_for(timeout=15000)
                 if page.locator("#metric-intents").inner_text()!="—":
                     raise AssertionError("invalid input promoted into KPI")
                 page.screenshot(path=str(out/"rejected-fake-snapshot.png"),full_page=True)

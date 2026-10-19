@@ -1,0 +1,84 @@
+{
+  "schema": "code-purple.handover-state.v1",
+  "protocol_reference": "LOSSLESS_HANDOVER_V2",
+  "capsule_certification": "NOT_ATTESTED_ORIGINAL_GENERATOR_UNEXECUTED",
+  "cut": "2026-10-17T19:51:25Z",
+  "branches": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "branch": "main",
+      "sha": "19d0581e640f252f39984ef893d4fd4e9d236ad5",
+      "protected_flag": true
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "branch": "main",
+      "sha": "493145eea784d39f57ea64a730af9f3e85586714",
+      "protected_flag": false
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "branch": "main",
+      "sha": "4782b8ab418f8645ff409a1297ce2d84a8bdcaf8",
+      "protected_flag": false
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "branch": "master",
+      "sha": "ed15d8d3e8a87d62d6fcea2e5ff50e30876198a3",
+      "protected_flag": false
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "branch": "main",
+      "sha": "4caaeae153927fef6c30ac728cb70fc8611d0ac8",
+      "protected_flag": false
+    }
+  ],
+  "issue_population": {
+    "at_utc": "2026-10-17T19:51:25Z",
+    "open": 141,
+    "prior_142_to_141": "ABACUS #1885 closed completed 2026-10-17T19:51:17Z",
+    "prior_153_to_142": "9 duplicated monitoring issue tickets, 2 bounded completed worker issues",
+    "causal_roots_accepted": 0,
+    "closures_by_this_handover": 0
+  },
+  "ruleset": {
+    "id": 24494381,
+    "name": "ABACUS Main Hard Gate",
+    "enforcement": "active",
+    "required_approving_review_count": 0,
+    "required_last_push_approval": false,
+    "required_review_thread_resolution": false,
+    "required_status_check_rules": 0,
+    "branch_protection_details_read": "403_FORBIDDEN",
+    "effective_P0_compliant": false
+  },
+  "native_current": {
+    "pr": 2182,
+    "head": "203f7d3e083eb1738a91655b9610b24d36e39351",
+    "b0_run": 39063903966,
+    "matrix_run": 39063903736,
+    "b0_terminal": false,
+    "matrix_terminal": false
+  },
+  "admission": "HOLD",
+  "authority_transfer": false,
+  "security_waiver": false,
+  "qps_accepted": false,
+  "n9_historical": {
+    "dmaic_metrics": 75,
+    "b0_runs": 10,
+    "serialized_cases": 22711,
+    "distinct_test_case_ids": 2504,
+    "method_PCA_descriptive_only": true,
+    "prospective_fail_recall_percent": 0,
+    "certified_stable_elements": 0
+  },
+  "session_statistics": {
+    "exact_prompts": null,
+    "complete_transcript_available": false,
+    "number_of_direct_issue_closures_by_this_handover": 0,
+    "observed_user_external_closed_issues_since_prior_cut": 1
+  }
+}

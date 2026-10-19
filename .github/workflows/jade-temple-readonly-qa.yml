@@ -1,0 +1,129 @@
+name: JADE_CASTE N+3 eight-point MIP qualification (read-only)
+on:
+  pull_request:
+    paths:
+      - 'mission-control/jade_temple/**'
+      - 'mission-control/federation-atlas/pages_portal.py'
+      - '.github/workflows/jade-temple-readonly-qa.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: jade-nplus3-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  source:
+    name: JADE source, negative controls, deterministic bundle
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact checkout and source binding
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$HEAD"
+          echo "JADE_SOURCE_HEAD=$HEAD"
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Contract, adversarial and hash-drift tests
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          python -m unittest discover -s mission-control/jade_temple/tests -p 'test_*.py' -v \
+            2>&1 | tee "$RUNNER_TEMP/jade-nplus2-tests.log"
+          python - <<'PYTEST'
+          import os,re
+          from pathlib import Path
+          raw=(Path(os.environ['RUNNER_TEMP'])/'jade-nplus2-tests.log').read_text()
+          all_counts=[int(v) for v in re.findall(r'^Ran ([0-9]+) tests in ',raw,re.M)]
+          if not all_counts or all_counts[-1] < 130:
+              raise SystemExit('JADE_TEST_POPULATION_FIRST_RED: required N+3 >=130')
+          print('JADE_TEST_POPULATION_QUALIFIED='+str(all_counts[-1]))
+          PYTEST
+          python -m coverage run --branch \
+            --include='*/mission-control/jade_temple/tools/stop_rules.py,*/mission-control/jade_temple/tools/hosted_parity.py,*/mission-control/jade_temple/site/build_burndown.py,*/mission-control/jade_temple/portal_bridge.py,*/mission-control/jade_temple/tools/eight_point_contract.py,*/mission-control/jade_temple/site/build_eightpoint.py' \
+            -m unittest discover -s mission-control/jade_temple/tests -p 'test_*.py' -q
+          python -m coverage json -o "$RUNNER_TEMP/jade-nplus2-coverage.json" -q
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'jade-nplus2-coverage.json'
+          d=json.loads(p.read_text())
+          want={'portal_bridge.py','build_burndown.py','hosted_parity.py','stop_rules.py','eight_point_contract.py','build_eightpoint.py'}
+          got={k.rsplit('/',1)[-1] for k in d['files']}
+          if got!=want:raise SystemExit('JADE_COVERAGE_FIRST_RED: source population drift')
+          t=d['totals']
+          if t['num_statements']<469 or t['num_branches']<182:
+              raise SystemExit('JADE_COVERAGE_FIRST_RED: instrumented denominator shrank')
+          if t['percent_statements_covered']<90 or t['percent_branches_covered']<80:
+              raise SystemExit('JADE_COVERAGE_FIRST_RED: behavioral coverage target')
+          print(json.dumps({'source_scope':sorted(got),'statements':[t['covered_lines'],t['num_statements']],
+                'branches':[t['covered_branches'],t['num_branches']],
+                'global_fleet_coverage':None,'merge_admission':'HOLD'},sort_keys=True))
+          PY
+          python mission-control/jade_temple/site/build_dashboard.py --check
+          python mission-control/jade_temple/site/build_green.py --check
+          python mission-control/jade_temple/site/build_burndown.py --check
+          python mission-control/jade_temple/tools/eight_point_contract.py
+          python mission-control/jade_temple/site/build_eightpoint.py --check
+          python mission-control/jade_temple/tools/stop_rules.py \
+            --receipt "$RUNNER_TEMP/jade-nplus2-stop.json"
+          python -m py_compile mission-control/federation-atlas/pages_portal.py
+          test -s mission-control/jade_temple/site/site-manifest.json
+          test -s mission-control/jade_temple/site/burndown-manifest.json
+          test -s mission-control/jade_temple/site/eightpoint-manifest.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: jade-nplus3-source-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/jade-nplus2-tests.log
+            ${{ runner.temp }}/jade-nplus2-coverage.json
+            ${{ runner.temp }}/jade-nplus2-stop.json
+          retention-days: 21
+          if-no-files-found: warn
+  browser:
+    name: JADE responsive browser / offline security QA
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install pinned Playwright / Chromium
+        run: |
+          python -m pip install --disable-pip-version-check playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Responsive interactions and negative external-request check
+        run: |
+          set -euo pipefail
+          python mission-control/jade_temple/tools/run_nplus1_browser_qa.py
+          python mission-control/jade_temple/tools/run_nplus2_browser_qa.py
+          python mission-control/jade_temple/tools/run_eight_browser_qa.py
+          test -s mission-control/jade_temple/qa/nplus1/receipt.json
+          test -s mission-control/jade_temple/qa/nplus2/receipt.json
+          test -s mission-control/jade_temple/qa/nplus3/receipt.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: jade-nplus3-browser-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: |
+            mission-control/jade_temple/qa/nplus1/receipt.json
+            mission-control/jade_temple/qa/nplus1/*.png
+            mission-control/jade_temple/qa/nplus2/receipt.json
+            mission-control/jade_temple/qa/nplus2/*.png
+            mission-control/jade_temple/qa/nplus3/receipt.json
+            mission-control/jade_temple/qa/nplus3/*.png
+          retention-days: 21
+          if-no-files-found: warn

@@ -1,0 +1,176 @@
+{
+  "schema": "gogreen.g12.incubator_input.v1",
+  "evidence_class": "FROZEN_NATIVE_API_AND_JOB_LOG_OBSERVATIONS",
+  "authority_transfer": false,
+  "dispatch_authorized": false,
+  "merge_authorized": false,
+  "security_waiver": false,
+  "qps_owner_acceptance": "WITHHELD",
+  "legacy_ownership": {
+    "ZIP_VERIFIER": "GBOGEB/pipeline-automation-hub#530",
+    "CENSUS_PRODUCER": "GBOGEB/pipeline-automation-hub#531",
+    "METHOD_VIEWER": "GBOGEB/pipeline-automation-hub#533",
+    "CONVERGENCE_CONSUMER": "mission-control/gogreen/convergence_bridge/reconcile.py"
+  },
+  "census": {
+    "observed": 6,
+    "eligible": 42,
+    "source_class": "HISTORICAL_METADATA_ONLY",
+    "fresh_observed": null
+  },
+  "historical_root_ledger": {
+    "independent_root_count": 15,
+    "signature_count": 68,
+    "occurrences": 375,
+    "evidence_class": "HISTORICAL_NOT_CURRENT_CAUSAL_ROOT_PROOF",
+    "accepted_closed_root_ids": []
+  },
+  "worker_hours": null,
+  "runner_capacity_slots": null,
+  "waves": [
+    {
+      "wave": "N-1",
+      "ordinal": 0,
+      "source_sha": "7fb311adff1065570ea832c4539028df2c052f43",
+      "observations": [
+        {
+          "repository": "GBOGEB/pipeline-automation-hub",
+          "workflow": "CODE PURPLE Live Lossless QA",
+          "run_id": 39135313824,
+          "attempt": 1,
+          "job_id": 117698522402,
+          "conclusion": "failure",
+          "tests": {
+            "executed": 50,
+            "passed": 50,
+            "failed": 0,
+            "skipped": 0
+          },
+          "first_red_fingerprint": "published artifact byte drift: snapshot.json",
+          "artifact": {
+            "id": 12140261715,
+            "reported_size_bytes": 21511,
+            "reported_sha256": "be71e5b6a12746b3d001da681183591bec3bef7de8c9f0feed3fb0bba74b80ed",
+            "verified_in_this_wave": false
+          }
+        },
+        {
+          "repository": "GBOGEB/pipeline-automation-hub",
+          "workflow": "CP.CLOSE GitHub Handover QA",
+          "run_id": 39135313944,
+          "attempt": 1,
+          "job_id": 117698523142,
+          "conclusion": "success",
+          "tests": {
+            "executed": 36,
+            "passed": 36,
+            "failed": 0,
+            "skipped": 0
+          },
+          "first_red_fingerprint": null,
+          "artifact": null
+        }
+      ]
+    },
+    {
+      "wave": "N",
+      "ordinal": 1,
+      "source_sha": "857c27c4bc53b85a00654653f5ec09301ee0bb89",
+      "observations": [
+        {
+          "repository": "GBOGEB/pipeline-automation-hub",
+          "workflow": "CODE PURPLE Live Lossless QA",
+          "run_id": 39139435825,
+          "attempt": 1,
+          "job_id": 117710620214,
+          "conclusion": "success",
+          "tests": {
+            "executed": 50,
+            "passed": 50,
+            "failed": 0,
+            "skipped": 0
+          },
+          "first_red_fingerprint": null,
+          "artifact": null
+        },
+        {
+          "repository": "GBOGEB/pipeline-automation-hub",
+          "workflow": "CP.CLOSE GitHub Handover QA",
+          "run_id": 39139435797,
+          "attempt": 1,
+          "job_id": 117710620121,
+          "conclusion": "success",
+          "tests": {
+            "executed": 36,
+            "passed": 36,
+            "failed": 0,
+            "skipped": 0
+          },
+          "first_red_fingerprint": null,
+          "artifact": null
+        },
+        {
+          "repository": "GBOGEB/pipeline-automation-hub",
+          "workflow": "CODE PURPLE Method Atlas (read-only)",
+          "run_id": 39139435679,
+          "attempt": 1,
+          "job_id": 117710619753,
+          "conclusion": "success",
+          "tests": null,
+          "first_red_fingerprint": null,
+          "artifact": {
+            "id": 12141995998,
+            "reported_size_bytes": 19903534,
+            "reported_sha256": "8982ce8505bd7aee2b678d3c5583ee7bb35715987cae87adc24fbc11fbd1764b",
+            "verified_in_this_wave": false
+          }
+        },
+        {
+          "repository": "GBOGEB/pipeline-automation-hub",
+          "workflow": "QPS TRIAGE ULTRA Federation Control",
+          "run_id": 39139435627,
+          "attempt": 1,
+          "job_id": 117710619422,
+          "conclusion": "success",
+          "tests": null,
+          "first_red_fingerprint": null,
+          "artifact": null
+        }
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "repository": "GBOGEB/CODEX",
+      "source_sha": "8502944c9908909f26f81cbe2fef88cf208087b6",
+      "run_id": 39134906124,
+      "scope": "mission_control.mycelium.p_process_reference",
+      "tool": "coverage==7.10.7",
+      "statements": {
+        "covered": 116,
+        "eligible": 126
+      },
+      "branches": {
+        "covered": 21,
+        "eligible": 22
+      },
+      "evidence_class": "PRIOR_TERMINAL_FOCUSED"
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "source_sha": "0e9a9d77a0597e20eafe13786aefafe312dee724",
+      "run_id": 39137364715,
+      "scope": "mission_control.mycelium.p_process_reference",
+      "tool": "coverage==7.10.7",
+      "statements": {
+        "covered": 125,
+        "eligible": 135
+      },
+      "branches": {
+        "covered": 21,
+        "eligible": 22
+      },
+      "evidence_class": "CURRENT_TERMINAL_FOCUSED"
+    }
+  ]
+}

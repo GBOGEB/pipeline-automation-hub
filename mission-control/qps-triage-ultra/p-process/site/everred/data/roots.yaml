@@ -1,0 +1,252 @@
+# EVERRED 3.0 root ledger — GBOGEB federation (ABACUS authority; CODEX coordinates only).
+# Occurrences are harvested, never typed here. A signature match makes an occurrence a CANDIDATE member of a root;
+# causal proof lives in `evidence`. Root IDs are persistent; retired IDs stay as aliases (V3 §2.3).
+schema: everred.roots/3.0
+repo_scope: [GBOGEB/ABACUS, GBOGEB/CODEX, GBOGEB/cryoplant-project]
+probe_scope: [GBOGEB/ABACUS, GBOGEB/CODEX, GBOGEB/cryoplant-project, GBOGEB/gg_MATH, GBOGEB/pipeline-automation-hub, GBOGEB/Q_engineering_tools]
+nightly_workflows:
+  GBOGEB/ABACUS: [ci-cd-tests.yml]
+  GBOGEB/CODEX: []
+  GBOGEB/cryoplant-project: []
+id_format: <REPO>-RC-YYYY-NNNN
+lifecycle: [DISCOVERED, TRIAGED, OWNED, FIX_COMMITTED, PRODUCER_GREEN, CONSUMERS_REPLAYED, VERIFIED_FIXED, CLOSED, BLOCKED_AUTHORITY, BLOCKED_INFRA, BLOCKED_DEPENDENCY, REOPENED]
+dimensions:                            # V3 §8: independent states, never one global GREEN/RED
+  diagnosis: [CANDIDATE, CONFIRMED, UNRESOLVED]
+  repair: [NONE, PROPOSED, COMMITTED, PRODUCER_VERIFIED]
+  integration: [NOT_EVALUATED, PREVIEW_PASSED, EXACT_HEAD_PASSED]
+  security: [PASS, RED, UNKNOWN, NA]
+  governance: [EFFECTIVE, INEFFECTIVE, UNKNOWN]
+  admission: [HOLD, ELIGIBLE, ADMITTED, NA]
+  control: [UNCONTROLLED, INTEGRATED, UNDER_OBSERVATION, CLOSED, REOPENED]
+classes: [PRODUCT_DEFECT, TEST_OR_MEASUREMENT_DEFECT, GENERATED_ARTIFACT_DRIFT, INFRA_ENV_DEFECT, EXISTING_REPOSITORY_DEBT, SECURITY_OR_POLICY, CONTROL_PLANE_DRIFT]
+
+roots:
+  - id: ABACUS-RC-2026-0001
+    aliases: [EVR-ABACUS-0001]
+    title: ABACUS default branch has no required status checks (rules emptied 12 Oct; partly restored 15 Oct)
+    class: CONTROL_PLANE_DRIFT
+    severity: P0
+    state: BLOCKED_AUTHORITY
+    dims: {diagnosis: CONFIRMED, repair: PROPOSED, integration: NA, security: NA, governance: INEFFECTIVE, admission: NA, control: UNCONTROLLED}
+    owner: GBOGEB
+    match: [{probe: ruleset_drift, repo: GBOGEB/ABACUS}]
+    evidence:
+      - "12 Oct 17:58: ruleset 24494381 emptied during break-glass; 61 PRs merged with PR Feedback Gate green on 0"
+      - "15 Oct 10:35: deletion, pull_request (thread resolution) and non_fast_forward restored; required_status_checks still absent"
+      - "Open PRs #2075-#2077: PR Feedback Gate failure; merges continue without a required check"
+    canonical_repair: "Owner imports rulesets/ABACUS.basic.json (or adds its required_status_checks rule to 24494381); ABACUS.hard.json once PR Feedback Gate can pass"
+    regression_contract: "verify_rulesets.py probe every census; any gap = RED (CONTROL_PLANE_DRIFT)"
+    consumers: [all ABACUS PRs]
+
+  - id: ABACUS-RC-2026-0002
+    aliases: [EVR-ABACUS-0002]
+    title: Fixed 75% repository coverage threshold above measured main coverage (structural admission deadlock)
+    class: EXISTING_REPOSITORY_DEBT
+    severity: P1
+    state: OWNED
+    dims: {diagnosis: CONFIRMED, repair: PROPOSED, integration: NOT_EVALUATED, security: NA, governance: UNKNOWN, admission: HOLD, control: UNCONTROLLED}
+    owner: GBOGEB
+    match: [{workflow: CI/CD Test Suite, job: Code Coverage, step: Enforce coverage threshold}]
+    evidence:
+      - "Broad CI on #1914 head e9f34b22: 12,731 / 29,093 statements, 42.63% combined (V3 §9.3)"
+      - "Red in every nightly through 16 Oct (54da377c)"
+    canonical_repair: "Raise coverage (waves W0–W5) or admit a reviewed baseline-plus-ratchet policy; never reinterpret 75% as advisory"
+    regression_contract: "Ratchet floor rises only after exact-main measurement; changed-line coverage ≥ 80% (0 eligible lines = N/A, not 100%)"
+    consumers: [all ABACUS PRs]
+
+  - id: ABACUS-RC-2026-0003
+    aliases: [EVR-ABACUS-0003]
+    title: Code-quality full-red surface (Black / isort / Flake8 umbrella)
+    class: EXISTING_REPOSITORY_DEBT
+    severity: P2
+    state: TRIAGED
+    dims: {diagnosis: CANDIDATE, repair: NONE, integration: NOT_EVALUATED, security: NA, governance: UNKNOWN, admission: HOLD, control: UNCONTROLLED}
+    owner: null
+    note: "Umbrella step; split per tool from upstream step outcomes before assigning owners (V3 §3.2)."
+    match: [{workflow: CI/CD Test Suite, job: Code Quality Checks, step: Enforce code-quality red roots}]
+    evidence: ["Red in every nightly since at least 7 Oct", "DAB full-red census 2,973 (E501 943, E402 612, F401 330, F541 295, E305 108)"]
+    canonical_repair: "DAB G1-C cohorts T0–T4, one lane per rule family"
+    regression_contract: "One Black/isort configuration for local preflight and CI; no-new-debt ratchet on changed files"
+    consumers: [all ABACUS PRs]
+
+  - id: ABACUS-RC-2026-0004
+    aliases: [EVR-ABACUS-0004]
+    split_children: [ABACUS-RC-2026-0008]
+    title: Bandit full-scan security debt (6,363 raw observations)
+    class: SECURITY_OR_POLICY
+    severity: P1
+    state: TRIAGED
+    dims: {diagnosis: CANDIDATE, repair: NONE, integration: NOT_EVALUATED, security: RED, governance: UNKNOWN, admission: HOLD, control: UNCONTROLLED}
+    owner: null
+    note: "Shares the umbrella signature 'Enforce security red roots' with ABACUS-RC-2026-0008; occurrences attach here first."
+    match: [{workflow: CI/CD Test Suite, job: Security Scanning, step: Enforce security red roots}]
+    evidence: ["6,363 raw Bandit observations full scan vs 3 configured (V3 §9.3)", "Burndown must use matched fingerprints: opened = after − before, resolved = before − after"]
+    canonical_repair: "B101 intent classification; fingerprint-matched burndown under identical scan configuration"
+    regression_contract: "Normalized fingerprints; unchanged scanner config between before/after"
+    consumers: [all ABACUS PRs]
+
+  - id: ABACUS-RC-2026-0005
+    aliases: [EVR-ABACUS-0005]
+    title: DMAIC measurement-receipt failure broke the broad coverage suite
+    class: TEST_OR_MEASUREMENT_DEFECT
+    severity: P1
+    state: PRODUCER_GREEN
+    dims: {diagnosis: CONFIRMED, repair: COMMITTED, integration: EXACT_HEAD_PASSED, security: NA, governance: INEFFECTIVE, admission: NA, control: UNDER_OBSERVATION}
+    owner: GBOGEB
+    match: [{workflow: CI/CD Test Suite, job: Code Coverage, step: Run Tests with Coverage}]
+    evidence:
+      - "tests/test_dmaic_measurement_receipts.py::test_real_measurement_and_repeat → RuntimeError: Measurement reports missing (V3 §1, #1914 run 38532010346)"
+      - "Fix lineage on main 14 Oct: 21e0c0f8, d3466031, 25e7d5ae, 7e0fb54a (nested SUT coverage, COVERAGE_RCFILE isolation)"
+      - "Run Tests with Coverage green on main from 68e9e6e3 (14 Oct 16:23 CEST), every run since incl. nightly 16 Oct"
+    canonical_repair: "Main commits above (integrated without an effective gate: governance INEFFECTIVE)"
+    regression_contract: "test_real_measurement_ignores_parent_coverage_config + test_real_measurement_and_repeat"
+    consumers: [open ABACUS PRs based before 68e9e6e3]
+
+  - id: ABACUS-RC-2026-0006
+    aliases: [EVR-ABACUS-0006]
+    title: Workflow rationalization report stale after policy change
+    class: GENERATED_ARTIFACT_DRIFT
+    severity: P2
+    state: VERIFIED_FIXED
+    dims: {diagnosis: CONFIRMED, repair: PRODUCER_VERIFIED, integration: EXACT_HEAD_PASSED, security: NA, governance: INEFFECTIVE, admission: ADMITTED, control: UNDER_OBSERVATION}
+    owner: Claude
+    match: [{workflow: CI Workflow Governance, job: policy-and-inventory, step: Check governed inventory}]
+    evidence: ["Regenerated in e7616e62 on #1858; check green; merged with #1858"]
+    canonical_repair: "ABACUS e7616e62"
+    regression_contract: "Regenerate twice from canonical policy; identical bytes; check mode green"
+    consumers: []
+
+  - id: ABACUS-RC-2026-0007
+    aliases: [EVR-ABACUS-0007]
+    title: Full Red Proof Summary (dependent red)
+    class: TEST_OR_MEASUREMENT_DEFECT
+    severity: P3
+    state: TRIAGED
+    derived: true
+    dims: {diagnosis: CONFIRMED, repair: NONE, integration: NA, security: NA, governance: UNKNOWN, admission: NA, control: UNCONTROLLED}
+    owner: null
+    match: [{workflow: CI/CD Test Suite, job: Full Red Proof Summary}]
+    evidence: ["Fails whenever any full-red root is red; never counted as an independent root (V3 §3.2)"]
+    canonical_repair: "None of its own"
+    regression_contract: "Summary lists root IDs, not only red job names"
+    consumers: []
+
+  - id: ABACUS-RC-2026-0008
+    split_from: ABACUS-RC-2026-0004
+    title: "Safety scanner exit 64 (unclassified: auth, invocation, version or vulnerability)"
+    class: SECURITY_OR_POLICY
+    severity: P1
+    state: DISCOVERED
+    dims: {diagnosis: UNRESOLVED, repair: NONE, integration: NOT_EVALUATED, security: UNKNOWN, governance: UNKNOWN, admission: HOLD, control: UNCONTROLLED}
+    owner: null
+    match: []
+    evidence: ["Safety exit 64 on #1914 and main (V3 §1); exit 64 is a usage/invocation code, not a vulnerability count"]
+    canonical_repair: "Read the Safety step log; separate authentication, invocation, version and vulnerability outcomes"
+    regression_contract: "Explicit regression case per Safety exit class"
+    consumers: [all ABACUS PRs]
+
+  - id: ABACUS-RC-2026-0009
+    title: Bandit census coverage producer (module identity / JUnit receipt mismatch)
+    class: TEST_OR_MEASUREMENT_DEFECT
+    severity: P2
+    state: VERIFIED_FIXED
+    dims: {diagnosis: CONFIRMED, repair: PRODUCER_VERIFIED, integration: EXACT_HEAD_PASSED, security: NA, governance: INEFFECTIVE, admission: ADMITTED, control: UNDER_OBSERVATION}
+    owner: GBOGEB
+    match: [{workflow: Bandit Disjoint Census, job: census}]
+    evidence: ["#1914 head e9f34b22: Bandit Census run 38532010232 PASS, 52/52 tests, 49/61 statements", "#1914 merged 14 Oct 10:56 CEST"]
+    canonical_repair: "ABACUS #1914"
+    regression_contract: "Canonical module identity, non-empty coverage XML, source-bound numerator/denominator"
+    consumers: ["#1912", "#1913", "#1916", "#1918", "#1920"]
+
+  - id: CODEX-RC-2026-0001
+    aliases: [EVR-CODEX-0001]
+    title: OSV-Scanner reporter fails on every CODEX main push
+    class: SECURITY_OR_POLICY
+    severity: P2
+    state: DISCOVERED
+    dims: {diagnosis: UNRESOLVED, repair: NONE, integration: NOT_EVALUATED, security: UNKNOWN, governance: INEFFECTIVE, admission: NA, control: UNCONTROLLED}
+    owner: null
+    match: [{repo: GBOGEB/CODEX, workflow: OSV-Scanner, step: Run osv-scanner-reporter}]
+    evidence: ["Red on 59b0326d (before #984) and every main push since"]
+    canonical_repair: "Read reporter output; fix dependency or reporter configuration"
+    regression_contract: "TBD"
+    consumers: [all CODEX PRs]
+
+  - id: CODEX-RC-2026-0002
+    aliases: [EVR-CODEX-0002]
+    title: Deterministic materializations differed after #984
+    class: GENERATED_ARTIFACT_DRIFT
+    severity: P3
+    state: VERIFIED_FIXED
+    dims: {diagnosis: CONFIRMED, repair: PRODUCER_VERIFIED, integration: EXACT_HEAD_PASSED, security: NA, governance: INEFFECTIVE, admission: ADMITTED, control: UNDER_OBSERVATION}
+    owner: GBOGEB
+    match: [{repo: GBOGEB/CODEX, workflow: MissionControl Mycelium CI, step: Verify deterministic materializations}]
+    evidence: ["Red on 768c9e35 and 6e9eea8c; green from f9ae4676"]
+    canonical_repair: "CODEX f9ae4676"
+    regression_contract: "Materialization check on every main push"
+    consumers: []
+
+  - id: CODEX-RC-2026-0003
+    title: CODEX default branch unprotected (no ruleset)
+    class: CONTROL_PLANE_DRIFT
+    severity: P1
+    state: BLOCKED_AUTHORITY
+    dims: {diagnosis: CONFIRMED, repair: PROPOSED, integration: NA, security: NA, governance: INEFFECTIVE, admission: NA, control: UNCONTROLLED}
+    owner: GBOGEB
+    match: [{probe: ruleset_drift, repo: GBOGEB/CODEX}]
+    evidence: ["No ruleset; #984 merged with 4 red checks on 12 Oct"]
+    canonical_repair: "Import rulesets/CODEX.basic.json"
+    regression_contract: "verify_rulesets.py probe"
+    consumers: [all CODEX PRs]
+
+  - id: CRYO-RC-2026-0001
+    title: cryoplant-project default branch unprotected (no ruleset)
+    class: CONTROL_PLANE_DRIFT
+    severity: P1
+    state: BLOCKED_AUTHORITY
+    dims: {diagnosis: CONFIRMED, repair: PROPOSED, integration: NA, security: NA, governance: INEFFECTIVE, admission: NA, control: UNCONTROLLED}
+    owner: GBOGEB
+    match: [{probe: ruleset_drift, repo: GBOGEB/cryoplant-project}]
+    evidence: ["No ruleset on the engineering-authority repo"]
+    canonical_repair: "Import rulesets/cryoplant-project.basic.json"
+    regression_contract: "verify_rulesets.py probe"
+    consumers: [all cryoplant-project PRs]
+
+  - id: GGMATH-RC-2026-0001
+    title: gg_MATH default branch unprotected (no ruleset)
+    class: CONTROL_PLANE_DRIFT
+    severity: P2
+    state: BLOCKED_AUTHORITY
+    dims: {diagnosis: CONFIRMED, repair: PROPOSED, integration: NA, security: NA, governance: INEFFECTIVE, admission: NA, control: UNCONTROLLED}
+    owner: GBOGEB
+    match: [{probe: ruleset_drift, repo: GBOGEB/gg_MATH}]
+    evidence: ["No ruleset"]
+    canonical_repair: "Import rulesets/gg_MATH.basic.json"
+    regression_contract: "verify_rulesets.py probe"
+    consumers: [all gg_MATH PRs]
+
+  - id: PAH-RC-2026-0001
+    title: pipeline-automation-hub ruleset active but targets no branch
+    class: CONTROL_PLANE_DRIFT
+    severity: P2
+    state: BLOCKED_AUTHORITY
+    dims: {diagnosis: CONFIRMED, repair: PROPOSED, integration: NA, security: NA, governance: INEFFECTIVE, admission: NA, control: UNCONTROLLED}
+    owner: GBOGEB
+    match: [{probe: ruleset_drift, repo: GBOGEB/pipeline-automation-hub}]
+    evidence: ["Ruleset 25252917 'QPS TRAIGE project' has ref_name include [] — no branch protected; default branch master"]
+    canonical_repair: "Set its target to ~DEFAULT_BRANCH or import rulesets/pipeline-automation-hub.basic.json"
+    regression_contract: "verify_rulesets.py reports untargeted rulesets"
+    consumers: [all pipeline-automation-hub PRs]
+
+  - id: QET-RC-2026-0001
+    title: Q_engineering_tools default branch unprotected (no ruleset)
+    class: CONTROL_PLANE_DRIFT
+    severity: P3
+    state: BLOCKED_AUTHORITY
+    dims: {diagnosis: CONFIRMED, repair: PROPOSED, integration: NA, security: NA, governance: INEFFECTIVE, admission: NA, control: UNCONTROLLED}
+    owner: GBOGEB
+    match: [{probe: ruleset_drift, repo: GBOGEB/Q_engineering_tools}]
+    evidence: ["No ruleset"]
+    canonical_repair: "Import rulesets/Q_engineering_tools.basic.json"
+    regression_contract: "verify_rulesets.py probe"
+    consumers: [all Q_engineering_tools PRs]

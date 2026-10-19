@@ -1,0 +1,1484 @@
+{
+  "schema": "missioncontrol.recursive_recovery.hmi_snapshot.v1",
+  "as_of": "2026-10-17",
+  "authority_transfer": false,
+  "merge_admission": "HOLD",
+  "no_dispatch": true,
+  "source_bound": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "baseline_sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+    "canonical_precedence": [
+      "gm",
+      "official",
+      "crew",
+      "rex",
+      "fleet",
+      "top7",
+      "scope"
+    ],
+    "internal": {
+      "gm": {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "path": "mission-control/grand-missions/GRAND_MISSION_REGISTRY.json",
+        "sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+        "blob": "4fbd28140b403e90a0507931875f721de917af2a"
+      },
+      "crew": {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "path": "mission-control/qps-triage-ultra/crew/CREW_REGISTRY_v1.json",
+        "sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+        "blob": "4d60806114e8fb0809e2ac98d009b7b015a96218"
+      },
+      "rex": {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "path": "mission-control/grand-missions/CREW_REX_LEDGER.json",
+        "sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+        "blob": "dc163c8967a06fba7d6c2c3bc6efe2e2af3cc5b5"
+      },
+      "top7": {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "path": "mission-control/grand-missions/GM_TOP7_DEPTH3_MISSION_v1.json",
+        "sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+        "blob": "5ed898cc188aba8c57a12063b19bd67459d24d37"
+      },
+      "scope": {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "path": "mission-control/federation-atlas/central/top21/REPO_CENSUS_ROLLUP_N11.json",
+        "sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+        "blob": "90bdd778857b737d51d143d2242aecae0ae3f994"
+      },
+      "fleet": {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "path": "mission-control/grand-missions/GM_FLEET_03_PR_LINEAGE_BACKFILL_STRUCTURAL_RECEIPT_v1.json",
+        "sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+        "blob": "a43f92596f3a20be26ffb948ab0bfe677ed0d6b5"
+      },
+      "official": {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "path": "mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml",
+        "sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+        "blob": "7ea179a05056bc10fea5d0986f83e92e12ae3abf"
+      }
+    }
+  },
+  "metrics": {
+    "gm": 5,
+    "variants": 3,
+    "horizontal": 1,
+    "local": 2,
+    "crew": 23,
+    "conceptual": 8,
+    "rex": 10,
+    "top7": 7,
+    "top21": 21,
+    "top21_files": 26836,
+    "top21_root_review": 706,
+    "pr_fleet_repos": 90,
+    "pr_fleet_prs": 4486
+  },
+  "missions": [
+    {
+      "id": "GM-I",
+      "type": "GRAND_MISSION",
+      "name": "COOLPROP_DARKLAND",
+      "state": "HOLD_EXTERNAL_OR_HABITAT_GATE",
+      "goal": "governed_independent_helium_property_reference_and_validation",
+      "frontiers": 1,
+      "children": [
+        "GBOGEB/CoolProp"
+      ],
+      "candidates": [],
+      "crew_posture": "CONTRACTED_DOCKMASTER_WATCH",
+      "authority_transfer": false,
+      "source": "gm"
+    },
+    {
+      "id": "GM-II",
+      "type": "GRAND_MISSION",
+      "name": "TWO_OUTPOST_FEDERATION",
+      "state": "CONTROL",
+      "goal": "prove_independent_engineering_and_math_capabilities_can_federate_and_be_consumed",
+      "frontiers": 2,
+      "children": [
+        "GBOGEB/Q_engineering_tools",
+        "GBOGEB/gg_MATH"
+      ],
+      "candidates": [],
+      "crew_posture": "SMALL_RECURRENCE_CELLS",
+      "authority_transfer": false,
+      "source": "gm"
+    },
+    {
+      "id": "GM-III",
+      "type": "GRAND_MISSION",
+      "name": "FOUR_FRONTIER_RECON",
+      "state": "RECON_CONTROL",
+      "goal": "prove_controlled_heterogeneous_multi_frontier_reconnaissance_without_authority_leakage",
+      "frontiers": 4,
+      "children": [
+        "GBOGEB/github-mcp-server",
+        "GBOGEB/scientific-agent-skills",
+        "GBOGEB/GEMINI",
+        "GBOGEB/orchestration-sandbox"
+      ],
+      "candidates": [],
+      "crew_posture": "BROAD_CREW_RETURNED_SPECIALISTS_RESERVE",
+      "authority_transfer": false,
+      "source": "gm"
+    },
+    {
+      "id": "GM-IV",
+      "type": "GRAND_MISSION",
+      "name": "EIGHT_FRONTIER_EXPANSION",
+      "state": "ACTIVE_8_OF_8",
+      "goal": "scale_controlled_reconnaissance_to_eight_frontiers_without_receipt_or_authority_degradation",
+      "frontiers": 8,
+      "children": [],
+      "candidates": [
+        "GM-IV-F01",
+        "GM-IV-F02",
+        "GM-IV-F03",
+        "GM-IV-F04",
+        "GM-IV-F05",
+        "GM-IV-F06",
+        "GM-IV-F07",
+        "GM-IV-F08"
+      ],
+      "crew_posture": "EIGHT_NAMED_FRONTIERS_UNDER_CONTROLLED_ACTIVE8_WITH_TWO_CONTROLLED_PILOTS_FOUR_NEW_CANDIDATE_RECON_FRONTIERS",
+      "authority_transfer": false,
+      "source": "gm"
+    },
+    {
+      "id": "GM-V",
+      "type": "GRAND_MISSION",
+      "name": "CLOUD16",
+      "state": "HELD",
+      "goal": "prove_elastic_mission_city_operation_at_sixteen_frontiers",
+      "frontiers": 16,
+      "children": [],
+      "candidates": [],
+      "crew_posture": "UNALLOCATED",
+      "authority_transfer": false,
+      "source": "gm"
+    },
+    {
+      "id": "GM-I-A",
+      "type": "GRAND_MISSION_VARIANT",
+      "parent": "GM-I",
+      "name": "COOLPROP_DARKLAND",
+      "state": "HOLD_EXTERNAL_OR_HABITAT_GATE",
+      "goal": "foreign_land_reconnaissance_adapt_and_return",
+      "repo": "GBOGEB/CoolProp",
+      "source": "gm"
+    },
+    {
+      "id": "GM-I-B",
+      "type": "GRAND_MISSION_VARIANT",
+      "parent": "GM-I",
+      "name": "TEMPORAL_PCA_FEDERATION",
+      "state": "CONTROL_SENTINEL_RECEIPT_REGRESSION",
+      "goal": "native_provider_reuse_bind_integrate_prune",
+      "repo": "GBOGEB/gg_MATH",
+      "source": "gm"
+    },
+    {
+      "id": "GM-I-C",
+      "type": "GRAND_MISSION_VARIANT",
+      "parent": "GM-I",
+      "name": "CROSS_AGENT_DRIVE_FEDERATION",
+      "state": "REGISTERED_BUILD_EXTERNAL_AUTH_PROOF_PENDING",
+      "goal": "cross_agent_persistent_bridge_authenticated_consumption_and_replay",
+      "repo": "GBOGEB/GEMINI",
+      "source": "gm"
+    },
+    {
+      "id": "HM-01",
+      "type": "HORIZONTAL_MISSION",
+      "name": "QPS_V6_RELEASE_TRAIN",
+      "state": "R0_FREEZE_R1_CONTRACT_ACTIVE",
+      "home": "GBOGEB/pipeline-automation-hub",
+      "provider": null,
+      "source": "official",
+      "authority_transfer": false
+    },
+    {
+      "id": "LM-10",
+      "type": "LOCAL_MISSION",
+      "name": "GG_MATH_SIGNAL_EXTRACTION_AND_METHOD_DEEP_DIVES",
+      "state": "W260_CONTROLLED_COMPLETE_REENTRY_GOVERNED",
+      "home": "GBOGEB/pipeline-automation-hub",
+      "provider": "GBOGEB/gg_MATH",
+      "source": "official",
+      "authority_transfer": false
+    },
+    {
+      "id": "LM-11",
+      "type": "LOCAL_MISSION",
+      "name": "QPS_WAVE_LINEAGE_DEPENDENCY_RECONSTRUCTION",
+      "state": "CONTROL_PLANE_REGISTERED_QPS_RUNTIME_DOV_WITHHELD_REPRODUCED",
+      "home": "GBOGEB/pipeline-automation-hub",
+      "provider": null,
+      "source": "official",
+      "authority_transfer": false
+    }
+  ],
+  "crew": [
+    {
+      "id": "U01",
+      "name": "Mission Commander / Governor",
+      "roles": [
+        "MISSION_COMMANDER",
+        "GOVERNOR"
+      ],
+      "home": "QPS_TRIAGE_ULTRA",
+      "mission_at_source": "HOME_QPS_TRIAGE_ULTRA",
+      "secondment": null,
+      "maturity": "OBSERVED",
+      "load_archival": "CONTROL_AND_GATE",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "operations_control",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "planning",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "architecture",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "ELIGIBLE_WITH_GATE_EVIDENCE"
+    },
+    {
+      "id": "U02",
+      "name": "Chief Architect / Architecture Hat",
+      "roles": [
+        "CHIEF_ARCHITECT",
+        "ARCHITECTURE_HAT"
+      ],
+      "home": "QPS_TRIAGE_ULTRA",
+      "mission_at_source": "HOME_QPS_TRIAGE_ULTRA",
+      "secondment": null,
+      "maturity": "OBSERVED",
+      "load_archival": "CONTROL",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "architecture",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "discovery",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "planning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "ELIGIBLE_WITH_REPEAT_EVIDENCE"
+    },
+    {
+      "id": "U03",
+      "name": "Project Manager / DOW",
+      "roles": [
+        "PROJECT_MANAGER",
+        "PM_DOW"
+      ],
+      "home": "QPS_TRIAGE_ULTRA",
+      "mission_at_source": "BD0_RUNTIME_LANE_SCHEDULER",
+      "secondment": "DOW",
+      "maturity": "OBSERVED",
+      "load_archival": "BD0",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "planning",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "operations_control",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "analysis_pca_bt",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "ELIGIBLE_WITH_REPEAT_EVIDENCE"
+    },
+    {
+      "id": "U04",
+      "name": "Fleet Orchestrator",
+      "roles": [
+        "FLEET_ORCHESTRATOR",
+        "SCHEDULER"
+      ],
+      "home": "QPS_TRIAGE_ULTRA",
+      "mission_at_source": "HOME_FLEET_ORCHESTRATION",
+      "secondment": null,
+      "maturity": "OBSERVED",
+      "load_archival": "ACTIVE_CONTROL_MIX",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "planning",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "analysis_pca_bt",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "operations_control",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "architecture",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "runtime_execution",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "NOT_PROMOTION_AUTHORITY"
+    },
+    {
+      "id": "U05",
+      "name": "Analyst",
+      "roles": [
+        "ANALYST",
+        "DMAIC",
+        "PCA",
+        "BT"
+      ],
+      "home": "QPS_TRIAGE_ULTRA",
+      "mission_at_source": "BD0_RUNTIME_LANE_SCHEDULER",
+      "secondment": null,
+      "maturity": "OBSERVED",
+      "load_archival": "BD0",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "analysis_pca_bt",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "planning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "ELIGIBLE_FOR_ANALYTIC_CONTROL_ONLY"
+    },
+    {
+      "id": "U06",
+      "name": "QA / Signalman",
+      "roles": [
+        "QA",
+        "SIGNALMAN",
+        "VERIFIER"
+      ],
+      "home": "QPS_TRIAGE_ULTRA",
+      "mission_at_source": "W3_12_HEPAK_NUMERIC_RECEIPT",
+      "secondment": null,
+      "maturity": "OBSERVED",
+      "load_archival": "ACTIVE",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "evidence_provenance",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "operations_control",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "runtime_execution",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "ELIGIBLE_FOR_VERIFICATION_CONTROL"
+    },
+    {
+      "id": "U07",
+      "name": "Cartographer / Oculars",
+      "roles": [
+        "CARTOGRAPHER",
+        "OCULARS"
+      ],
+      "home": "QPS_TRIAGE_ULTRA",
+      "mission_at_source": "HOME_OBSERVABILITY",
+      "secondment": null,
+      "maturity": "OBSERVED",
+      "load_archival": "CONTROL",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "discovery",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "architecture",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "analysis_pca_bt",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "ELIGIBLE_FOR_OBSERVABILITY_CONTROL"
+    },
+    {
+      "id": "U08",
+      "name": "REX / KEB Integrator",
+      "roles": [
+        "REX_CURATOR",
+        "KEB_INTEGRATOR",
+        "TECHNICAL_CHALLENGER"
+      ],
+      "home": "QPS_TRIAGE_ULTRA",
+      "mission_at_source": "HOME_REX_INTEGRATION",
+      "secondment": "KEB",
+      "maturity": "OBSERVED",
+      "load_archival": "CONTROL",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "evidence_provenance",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "architecture",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "planning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "ELIGIBLE_FOR_REX_CONTROL"
+    },
+    {
+      "id": "S01",
+      "name": "Ambassador",
+      "roles": [
+        "AMBASSADOR",
+        "CLAIM_BOUNDARY_RECONCILER",
+        "AUTHORITY_STATUS_MESSENGER"
+      ],
+      "home": "MISSIONCONTROL_FLEET",
+      "mission_at_source": "RETURNED_FROM_M09",
+      "secondment": null,
+      "maturity": "OBSERVED",
+      "load_archival": "RETURNED",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_M09_ROLE",
+      "competency": [
+        {
+          "key": "evidence_provenance",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "operations_control",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "discovery",
+          "level": 3,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 1,
+      "live_runtime_status": null,
+      "control_eligible_archival": "ELIGIBLE_FOR_BOUNDED_CLAIM_CONTROL"
+    },
+    {
+      "id": "S02",
+      "name": "Doctor",
+      "roles": [
+        "DOCTOR",
+        "DEBUGGER",
+        "REPAIR_SPECIALIST"
+      ],
+      "home": "MISSIONCONTROL_FLEET",
+      "mission_at_source": "RESERVE_RETURNED_FROM_M09",
+      "secondment": null,
+      "maturity": "OBSERVED",
+      "load_archival": "RESERVE",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "build_repair",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "runtime_execution",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "discovery",
+          "level": 3,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 1,
+      "live_runtime_status": null,
+      "control_eligible_archival": "NOT_PROMOTION_AUTHORITY"
+    },
+    {
+      "id": "S03",
+      "name": "Dockmaster",
+      "roles": [
+        "DOCKMASTER",
+        "RUNNER_ADMISSION_SPECIALIST",
+        "RUNTIME_GATE_SPECIALIST"
+      ],
+      "home": "MISSIONCONTROL_FLEET",
+      "mission_at_source": "M01_PRIVATE_QPS_RUNNER_WATCH",
+      "secondment": null,
+      "maturity": "OBSERVED",
+      "load_archival": "BD1_EXTERNAL_BLOCK_SINGLE_CELL",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "runtime_execution",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "operations_control",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "planning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "ELIGIBLE_FOR_RUNTIME_GATE_CONTROL"
+    },
+    {
+      "id": "S04",
+      "name": "Scientist",
+      "roles": [
+        "SCIENTIST",
+        "DOMAIN_VALIDATION_SPECIALIST"
+      ],
+      "home": "MISSIONCONTROL_FLEET",
+      "mission_at_source": "W3_12_HEPAK_NUMERIC_RECEIPT",
+      "secondment": null,
+      "maturity": "PARTIAL",
+      "load_archival": "ACTIVE",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "deep_reading",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "runtime_execution",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "analysis_pca_bt",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "REQUIRES_MEASURED_REPEAT"
+    },
+    {
+      "id": "S05",
+      "name": "Engineer",
+      "roles": [
+        "ENGINEER",
+        "BUILDER",
+        "IMPLEMENTER"
+      ],
+      "home": "MISSIONCONTROL_FLEET",
+      "mission_at_source": "BD0_RUNTIME_LANE_SCHEDULER",
+      "secondment": null,
+      "maturity": "PARTIAL",
+      "load_archival": "BD0",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "build_repair",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "runtime_execution",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "planning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "NOT_PROMOTION_AUTHORITY"
+    },
+    {
+      "id": "S06",
+      "name": "Technical Manager / KEB",
+      "roles": [
+        "TECHNICAL_MANAGER",
+        "TM_KEB",
+        "SEMANTIC_AUTHORITY"
+      ],
+      "home": "KEB",
+      "mission_at_source": "W3_12_HEPAK_NUMERIC_RECEIPT",
+      "secondment": "QPS_TRIAGE_ULTRA",
+      "maturity": "OBSERVED",
+      "load_archival": "ACTIVE",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE",
+      "competency": [
+        {
+          "key": "deep_reading",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "architecture",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "operations_control",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "ELIGIBLE_WITH_DOMAIN_EVIDENCE"
+    },
+    {
+      "id": "S07",
+      "name": "Licensed Local Runtime Operator / Smoker",
+      "roles": [
+        "LICENSED_LOCAL_RUNTIME_OPERATOR",
+        "SMOKER",
+        "SPECIAL_RUNTIME_OPERATOR"
+      ],
+      "home": "MISSIONCONTROL_FLEET",
+      "mission_at_source": "W3_12_HEPAK_NUMERIC_RECEIPT",
+      "secondment": null,
+      "maturity": "PARTIAL",
+      "load_archival": "ACTIVE_EXTERNAL_LOCAL",
+      "competence_basis": "EXPERT_SEEDED_FROM_OBSERVED_ROLE_ALIASES",
+      "competency": [
+        {
+          "key": "runtime_execution",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "operations_control",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 3,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "REQUIRES_ACCEPTED_RUNTIME_RECEIPT"
+    },
+    {
+      "id": "C01",
+      "name": "Scout",
+      "roles": [
+        "SCOUT",
+        "FRONTIER_DISCOVERY"
+      ],
+      "home": "MISSIONCONTROL_FLEET",
+      "mission_at_source": "NONE_CONCEPTUAL",
+      "secondment": null,
+      "maturity": "CONCEPTUAL",
+      "load_archival": "UNASSIGNED",
+      "competence_basis": "TARGET_PROFILE",
+      "competency": [
+        {
+          "key": "discovery",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 3,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "architecture",
+          "level": 3,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 3,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 3,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "NOT_ELIGIBLE"
+    },
+    {
+      "id": "C02",
+      "name": "Reader",
+      "roles": [
+        "READER",
+        "DEEP_READER"
+      ],
+      "home": "MISSIONCONTROL_FLEET",
+      "mission_at_source": "NONE_CONCEPTUAL",
+      "secondment": null,
+      "maturity": "CONCEPTUAL",
+      "load_archival": "UNASSIGNED",
+      "competence_basis": "TARGET_PROFILE",
+      "competency": [
+        {
+          "key": "deep_reading",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "discovery",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "architecture",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "NOT_ELIGIBLE"
+    },
+    {
+      "id": "C03",
+      "name": "Targeter",
+      "roles": [
+        "TARGETER",
+        "BOUNDED_OBJECTIVE_DESIGNER"
+      ],
+      "home": "QPS_TRIAGE_ULTRA",
+      "mission_at_source": "NONE_CONCEPTUAL",
+      "secondment": null,
+      "maturity": "CONCEPTUAL",
+      "load_archival": "UNASSIGNED",
+      "competence_basis": "TARGET_PROFILE",
+      "competency": [
+        {
+          "key": "planning",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "analysis_pca_bt",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "architecture",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "NOT_ELIGIBLE"
+    },
+    {
+      "id": "C04",
+      "name": "Builder / Repairer",
+      "roles": [
+        "BUILDER",
+        "REPAIRER"
+      ],
+      "home": "MISSIONCONTROL_FLEET",
+      "mission_at_source": "NONE_CONCEPTUAL",
+      "secondment": null,
+      "maturity": "CONCEPTUAL",
+      "load_archival": "UNASSIGNED",
+      "competence_basis": "TARGET_PROFILE",
+      "competency": [
+        {
+          "key": "build_repair",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "runtime_execution",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "architecture",
+          "level": 3,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "NOT_ELIGIBLE"
+    },
+    {
+      "id": "C05",
+      "name": "Integrator / Federator",
+      "roles": [
+        "INTEGRATOR",
+        "FEDERATOR"
+      ],
+      "home": "MISSIONCONTROL_FLEET",
+      "mission_at_source": "NONE_CONCEPTUAL",
+      "secondment": null,
+      "maturity": "CONCEPTUAL",
+      "load_archival": "UNASSIGNED",
+      "competence_basis": "TARGET_PROFILE",
+      "competency": [
+        {
+          "key": "architecture",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "runtime_execution",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "planning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "NOT_ELIGIBLE"
+    },
+    {
+      "id": "C06",
+      "name": "Operator",
+      "roles": [
+        "OPERATOR",
+        "CONTROL_OPERATOR"
+      ],
+      "home": "MISSIONCONTROL_FLEET",
+      "mission_at_source": "NONE_CONCEPTUAL",
+      "secondment": null,
+      "maturity": "CONCEPTUAL",
+      "load_archival": "UNASSIGNED",
+      "competence_basis": "TARGET_PROFILE",
+      "competency": [
+        {
+          "key": "operations_control",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "runtime_execution",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "evidence_provenance",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 3,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "NOT_ELIGIBLE"
+    },
+    {
+      "id": "C07",
+      "name": "Performance Specialist",
+      "roles": [
+        "PERFORMANCE_SPECIALIST",
+        "RESOURCE_OPTIMIZER"
+      ],
+      "home": "QPS_TRIAGE_ULTRA",
+      "mission_at_source": "NONE_CONCEPTUAL",
+      "secondment": null,
+      "maturity": "CONCEPTUAL",
+      "load_archival": "UNASSIGNED",
+      "competence_basis": "TARGET_PROFILE",
+      "competency": [
+        {
+          "key": "analysis_pca_bt",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "runtime_execution",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "architecture",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "planning",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "NOT_ELIGIBLE"
+    },
+    {
+      "id": "C08",
+      "name": "Independent Verifier",
+      "roles": [
+        "INDEPENDENT_VERIFIER",
+        "CHILD_PROOF_CHECKER"
+      ],
+      "home": "MISSIONCONTROL_FLEET",
+      "mission_at_source": "NONE_CONCEPTUAL",
+      "secondment": null,
+      "maturity": "CONCEPTUAL",
+      "load_archival": "UNASSIGNED",
+      "competence_basis": "TARGET_PROFILE",
+      "competency": [
+        {
+          "key": "evidence_provenance",
+          "level": 6,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "deep_reading",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "rex_learning",
+          "level": 5,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "runtime_execution",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        },
+        {
+          "key": "operations_control",
+          "level": 4,
+          "evidence": "SEEDED_NOT_MEASURED"
+        }
+      ],
+      "runtime_receipts_archival": 0,
+      "live_runtime_status": null,
+      "control_eligible_archival": "NOT_ELIGIBLE"
+    }
+  ],
+  "rex": [
+    {
+      "id": "GMF02B-E001",
+      "mission_id": "GM-I",
+      "direction": "CREW_TO_MC",
+      "role": "DOCKMASTER",
+      "event": "CREW_REPORT",
+      "requested": "STAY",
+      "observation": "runner_id_0_executed_steps_0",
+      "causal_parent": null,
+      "recorded_at": "2026-09-13T13:50:34Z",
+      "timestamp_basis": "LEDGER_SEED_COMMIT_RECORDED_AT",
+      "source": "rex"
+    },
+    {
+      "id": "GMF02B-E002",
+      "mission_id": "GM-I",
+      "direction": "MC_TO_CREW",
+      "role": "DOCKMASTER",
+      "event": "MISSION_CONTROL_DISPOSITION",
+      "requested": "STAY",
+      "observation": "habitat_owner_retained_no_application_patch",
+      "causal_parent": "GMF02B-E001",
+      "recorded_at": "2026-09-13T13:50:34Z",
+      "timestamp_basis": "LEDGER_SEED_COMMIT_RECORDED_AT",
+      "source": "rex"
+    },
+    {
+      "id": "GMF02B-E003",
+      "mission_id": "GM-I",
+      "direction": "CREW_TO_MC",
+      "role": "SCOUT",
+      "event": "REX_RETURN",
+      "requested": "ASSIMILATE",
+      "observation": "search_saturation_scouts_1_2_3_returned",
+      "causal_parent": null,
+      "recorded_at": "2026-09-13T13:50:34Z",
+      "timestamp_basis": "LEDGER_SEED_COMMIT_RECORDED_AT",
+      "source": "rex"
+    },
+    {
+      "id": "GMF02B-E004",
+      "mission_id": "GM-I",
+      "direction": "MC_TO_CREW",
+      "role": "SCOUT",
+      "event": "MISSION_CONTROL_DISPOSITION",
+      "requested": "ACCEPT_LEARNING",
+      "observation": "reuse_search_saturation_as_return_rule",
+      "causal_parent": "GMF02B-E003",
+      "recorded_at": "2026-09-13T13:50:34Z",
+      "timestamp_basis": "LEDGER_SEED_COMMIT_RECORDED_AT",
+      "source": "rex"
+    },
+    {
+      "id": "GMF02B-E005",
+      "mission_id": "GM-II",
+      "direction": "CREW_TO_MC",
+      "role": "QA",
+      "event": "CREW_REPORT",
+      "requested": "PRUNE",
+      "observation": "two_child_federation_repeated_control",
+      "causal_parent": null,
+      "recorded_at": "2026-09-13T13:50:34Z",
+      "timestamp_basis": "LEDGER_SEED_COMMIT_RECORDED_AT",
+      "source": "rex"
+    },
+    {
+      "id": "GMF02B-E006",
+      "mission_id": "GM-II",
+      "direction": "MC_TO_CREW",
+      "role": "QA",
+      "event": "MISSION_CONTROL_DISPOSITION",
+      "requested": "RETURN",
+      "observation": "contract_generalists_keep_small_recurrence_cells",
+      "causal_parent": "GMF02B-E005",
+      "recorded_at": "2026-09-13T13:50:34Z",
+      "timestamp_basis": "LEDGER_SEED_COMMIT_RECORDED_AT",
+      "source": "rex"
+    },
+    {
+      "id": "GMF02B-E007",
+      "mission_id": "GM-III",
+      "direction": "CREW_TO_MC",
+      "role": "AMBASSADOR",
+      "event": "CREW_REPORT",
+      "requested": "BRIDGE",
+      "observation": "four_frontiers_classified_adapt_extract_reference_park",
+      "causal_parent": null,
+      "recorded_at": "2026-09-13T13:50:34Z",
+      "timestamp_basis": "LEDGER_SEED_COMMIT_RECORDED_AT",
+      "source": "rex"
+    },
+    {
+      "id": "GMF02B-E008",
+      "mission_id": "GM-III",
+      "direction": "MC_TO_CREW",
+      "role": "AMBASSADOR",
+      "event": "MISSION_CONTROL_DISPOSITION",
+      "requested": "RETURN",
+      "observation": "preserve_dispositions_return_broad_recon_crew",
+      "causal_parent": "GMF02B-E007",
+      "recorded_at": "2026-09-13T13:50:34Z",
+      "timestamp_basis": "LEDGER_SEED_COMMIT_RECORDED_AT",
+      "source": "rex"
+    },
+    {
+      "id": "GMF02B-E009",
+      "mission_id": "GM-IV",
+      "direction": "MC_TO_CREW",
+      "role": "ORCHESTRATOR",
+      "event": "MISSION_CONTROL_DISPOSITION",
+      "requested": "STAY",
+      "observation": "held_8_no_fabricated_children_no_operational_surge",
+      "causal_parent": null,
+      "recorded_at": "2026-09-13T13:50:34Z",
+      "timestamp_basis": "LEDGER_SEED_COMMIT_RECORDED_AT",
+      "source": "rex"
+    },
+    {
+      "id": "GMF02B-E010",
+      "mission_id": "GM-V",
+      "direction": "MC_TO_CREW",
+      "role": "ORCHESTRATOR",
+      "event": "MISSION_CONTROL_DISPOSITION",
+      "requested": "STAY",
+      "observation": "held_16_no_fabricated_children_no_operational_surge",
+      "causal_parent": null,
+      "recorded_at": "2026-09-13T13:50:34Z",
+      "timestamp_basis": "LEDGER_SEED_COMMIT_RECORDED_AT",
+      "source": "rex"
+    }
+  ],
+  "scaling": {
+    "rungs": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "gm4_state": "ACTIVE_8_OF_8",
+    "gm4_candidate_frontiers": 8,
+    "gm4_bound_children": 0,
+    "gm5_state": "HELD",
+    "historical_top7": [
+      "GBOGEB/cryoplant-project",
+      "GBOGEB/ABACUS",
+      "GBOGEB/CODEX",
+      "GBOGEB/document-organization-system",
+      "GBOGEB/pipeline-automation-hub",
+      "GBOGEB/DOCX_RTM_Automation",
+      "GBOGEB/Q_engineering_tools"
+    ],
+    "source_cohorts_distinct": true,
+    "policy": "TOP7→TOP14→TOP21 only after separate DMAIC gates, not by file census",
+    "historical_90_pr_fleet_prs": 4486
+  },
+  "first_red_recovery": {
+    "missionhub": {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "master_sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+      "run": 39062244840,
+      "attempt": 1,
+      "job": 117482412110,
+      "conclusion": "FAILURE",
+      "symptom": "HTTP 404 on cross-repository native census GET",
+      "next": "Access-aware typed readback; no deterministic rerun"
+    },
+    "abacus": {
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2161,
+      "qualified_sha": "6b89e0421fee000c4aa9bbdcffdc69b31f34d33c",
+      "run": 39060580597,
+      "attempt": 1,
+      "passing_jobs": 3,
+      "total_jobs": 3,
+      "full_ci": "NOT_PROVEN"
+    },
+    "qps": {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue": 923,
+      "state": "CLOSED_OWNER_EVIDENCE",
+      "result": "RUNNER_GT0_PROVEN_ONLY",
+      "no_engineering_acceptance": true
+    }
+  },
+  "historical_conflicts": [
+    {
+      "mission": "GM-IV",
+      "legacy": "HELD_GENEALOGY",
+      "now": "ACTIVE_8_OF_8_CANONICAL",
+      "disposition": "PRESERVE_HISTORY"
+    },
+    {
+      "mission": "GM-V",
+      "legacy": "HELD",
+      "now": "HELD",
+      "disposition": "NO_CREW_SURGE"
+    },
+    {
+      "mission": "QPS runner #923",
+      "legacy": "WITHHELD_AT_SOURCE",
+      "now": "CLOSED_WITH_NONZERO_STEP_PROOF",
+      "disposition": "HABITAT_RECOVERED_NOT_DOMAIN_DOV"
+    }
+  ],
+  "methods": {
+    "retrieval": "EXACT_SOURCE_BLOB_FROZEN",
+    "crew_competency": "EXPERT_SEEDED_PLANNING_PRIOR",
+    "rex_timestamp": "RECORDED_AT_NOT_OCCURRENCE",
+    "statistics": "DESCRIPTIVE_N_IS_NOT_INDEPENDENT_REPLICATION",
+    "batch_operating_model": "MISSION_WAVE_PULSE_RECEIPT_REALLOCATE_RECURSE",
+    "no_auto_worker": true
+  },
+  "narrative_hooks": {
+    "crew_report_fields": [
+      "mission",
+      "task",
+      "crew_id",
+      "source",
+      "head_sha",
+      "run",
+      "attempt",
+      "job",
+      "first_red",
+      "REX",
+      "DoD",
+      "DoV",
+      "BD_queue_delta",
+      "next_action",
+      "return_to_MissionControl"
+    ],
+    "gm_end_rule": "DoV requires independent source-bound acceptance + crew return + REX assimilation + updated time-known Golden Thread; otherwise HOLD or CONTROL watch",
+    "horizontal_end_rule": "Release train publication and runtime GOLD separately gated by QPS owner"
+  }
+}

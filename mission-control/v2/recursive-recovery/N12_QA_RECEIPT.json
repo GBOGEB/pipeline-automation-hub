@@ -1,0 +1,70 @@
+{
+  "schema": "qps-artifact-qa/1.0",
+  "kind": "MC_N12_RECURSIVE_MISSION_SOURCE_AND_HTML",
+  "version": "N12",
+  "source": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "baseline_sha": "0b6a6f1a062ecdcba4e532aa101735b54ab09911",
+    "candidate_pr": 679,
+    "head_at_structural_review": "51449c5d15f2ada47faa12c55c66040fd2849824",
+    "source_bindings": 15,
+    "pinned_blob_identity": "15/15 EXACT GITHUB BLOBS VERIFIED"
+  },
+  "artifacts": {
+    "html": {
+      "path": "mission-control/federation-atlas/landing/MISSION_CONTROL_RECURSIVE_MISSIONS_N12.html",
+      "git_blob_sha1": "18faa3fb611d40c89362eef48ecbbb784ba920ad",
+      "sha256": null
+    },
+    "source_projection": {
+      "path": "mission-control/v2/recursive-recovery/N12_HMI_SOURCE_PROJECTION.json",
+      "git_blob_sha1": "301bdbff86ce2e0842e7766837edcac955b82004",
+      "sha256": null
+    },
+    "legacy_n11": {
+      "path": "mission-control/federation-atlas/landing/MISSION_CONTROL_TOP21_CENSUS_N11.html",
+      "git_blob_sha1": "8c39e95a6cab3b6af3ecdf7382caee599d21221a"
+    }
+  },
+  "checks": {
+    "source_pins": "PASS_15_OF_15",
+    "GM_identity_1_2_4_8_16": "PASS_STRUCTURAL",
+    "crew_23_conceptual_8_REX_10": "PASS_STRUCTURAL",
+    "HTML_inline_JSON_parity": "PASS",
+    "HTML_six_tabs_six_panels": "PASS",
+    "HTML_unresolved_control_selectors": "PASS_ZERO_MISSING",
+    "HTML_N11_link": "PASS",
+    "test_cases_authored": 31,
+    "local_python_test_execution": "NOT_EXECUTED",
+    "native_exact_head_unit_and_collector": "QUEUED_OR_PENDING",
+    "native_browser_3_viewport": "NOT_EXECUTED",
+    "screenshot_hashes": "NOT_AVAILABLE",
+    "runtime_job_sha_checkout_proof": "NOT_AVAILABLE",
+    "independent_review": "UNKNOWN",
+    "governed_merge_admission": "HOLD"
+  },
+  "evidence_level": "SOURCE_BLOB_STRUCTURAL_ONLY",
+  "defects": [
+    {
+      "id": "N11-LIVE-404",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "run": 39062244840,
+      "job": 117482412110,
+      "attempt": 1,
+      "disposition": "SOURCE_ACCESS_FIRST_RED_REQUIRED",
+      "not_claimed": "REPAIRED"
+    },
+    {
+      "id": "N11-HTMLQA",
+      "disposition": "PENDING_NATIVE_THREE_VIEWPORT"
+    }
+  ],
+  "controls": {
+    "authority_transfer": false,
+    "main_merge_performed": false,
+    "waiver_granted": false,
+    "remote_dispatch": false,
+    "engineering_acceptance": false
+  },
+  "next_action": "Consume existing PR #679 exact-head workflow and per-job steps; fix material first-red only; then browser viewport/screenshots."
+}

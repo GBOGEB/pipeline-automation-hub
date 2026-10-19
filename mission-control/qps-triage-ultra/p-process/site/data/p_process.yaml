@@ -1,0 +1,35 @@
+# P process: one control loop with two modes. Machine-readable; p_decide.py evaluates it each refresh.
+# Code Purple (acute): PR and problem burndown, highest priority, most resources focused, owner breaks glass.
+# EVERRED (recursive): standing health monitor; harvest -> root -> repair -> verify -> admit -> control -> RECURSE.
+schema: p-process/1.0
+modes:
+  CODE_PURPLE:
+    intent: PR and problem burndown; highest priority; most resources focused on one admission blocker
+    entry: incident.yaml declared by the owner (kit/incident.yaml)
+    exit: all lift criteria L1-L5 met, then close-out hands every inherited red to EVERRED as a root
+    break_glass: owner only, one-time bypass actor, never delete rules; re-read rule content after (L2)
+  EVERRED:
+    intent: health monitor; continuous root-cause repair; recursive (RECURSE every pulse)
+    loop: [harvest, classify, root, repair_lane, verify_progressive, admit, control, recurse]
+    cadence: every pulse and on schedule; each everred.json is an immutable census row
+escalation:            # EVERRED -> CODE_PURPLE
+  - id: E1
+    when: a P0 root has a red control-plane probe (gate absent; merges admitted ungated)
+  - id: E2
+    when: a Code Purple case for the repo is open and not lifted
+  - id: E3
+    when: the owner declares (merge stall, reviewer outage, same red on most open PRs)
+handoff:               # CODE_PURPLE -> EVERRED
+  - id: H1
+    when: all lift criteria met; close-out filed
+  - id: H2
+    when: every red seen during the case has a root ID or an alias in everred/roots.yaml
+  - id: H3
+    when: work items that are steady burndown (coverage floor, debt cohorts) move to EVERRED lanes while the case stays open
+scenarios:
+  - {case: Admission deadlock (merge flow stalled), mode: CODE_PURPLE, first: readback, then: classify every red against main nightly}
+  - {case: Required gate missing or emptied, mode: "CODE_PURPLE if P0 (E1), else EVERRED P1 lane", first: verify_rulesets.py, then: owner imports the BASIC ruleset}
+  - {case: Inherited red recurring on many PRs, mode: EVERRED, first: harvest, then: "one root, one lane, one owner"}
+  - {case: Security finding, mode: EVERRED security lane, first: matched-fingerprint burndown, then: independent verifier closes}
+  - {case: Required reviewer or runner outage, mode: CODE_PURPLE, first: owner-attested fallback, then: lift on restored capacity}
+  - {case: Coverage below floor, mode: EVERRED ratchet, first: floor never lowers, then: breadth x depth cohorts}

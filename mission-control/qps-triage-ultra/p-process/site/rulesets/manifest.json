@@ -1,0 +1,62 @@
+{
+  "GBOGEB/ABACUS": {
+    "file": "ABACUS.basic.json",
+    "branch": "main",
+    "checks": [
+      "YAML syntax scaffold",
+      "smoke",
+      "a10-guard",
+      "dependency-review"
+    ],
+    "why": "Fast, reliable PR checks: syntax, smoke, restricted-term guard, dependency review. Full-red jobs (coverage, quality, security) stay out until their EVERRED roots close.",
+    "hard_file": "ABACUS.hard.json"
+  },
+  "GBOGEB/CODEX": {
+    "file": "CODEX.basic.json",
+    "branch": "main",
+    "checks": [
+      "lint",
+      "self-smoke (3.12)",
+      "bandit",
+      "governance-adversary"
+    ],
+    "why": "Lint, smoke, Bandit and the governance adversary pass on every PR. governance-gate (50% red) and semantic-validation stay out until triaged."
+  },
+  "GBOGEB/cryoplant-project": {
+    "file": "cryoplant-project.basic.json",
+    "branch": "main",
+    "checks": [
+      "verify",
+      "recurrence-control",
+      "federation-smoke"
+    ],
+    "why": "Engineering-authority repo: verification, recurrence control and federation smoke on every PR."
+  },
+  "GBOGEB/gg_MATH": {
+    "file": "gg_MATH.basic.json",
+    "branch": "main",
+    "checks": [
+      "first-kernel",
+      "monte-carlo-reference"
+    ],
+    "why": "Numerical kernels: first kernel and Monte-Carlo reference run on every PR."
+  },
+  "GBOGEB/pipeline-automation-hub": {
+    "file": "pipeline-automation-hub.basic.json",
+    "branch": "master",
+    "checks": [
+      "validate-ultra-control",
+      "canonical-self-test-and-mutation"
+    ],
+    "why": "Hosts the Code Purple review site. Keeps linear history and Copilot review from the existing ruleset, which currently targets no branch."
+  },
+  "GBOGEB/Q_engineering_tools": {
+    "file": "Q_engineering_tools.basic.json",
+    "branch": "main",
+    "checks": [
+      "build-and-exercise",
+      "engineering-source-smoke"
+    ],
+    "why": "Build and engineering-source smoke run on every PR."
+  }
+}

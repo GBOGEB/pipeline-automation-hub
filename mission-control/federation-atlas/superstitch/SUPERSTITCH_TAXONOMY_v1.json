@@ -1,0 +1,129 @@
+{
+  "schema": "missioncontrol.superstitch.taxonomy.v1",
+  "parent_glossary": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json",
+  "parent_kpis": "mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json",
+  "authority_transfer": false,
+  "status": "ADDITIVE_VIEW_TAXONOMY_NOT_REPLACEMENT",
+  "node_kinds": [
+    "source",
+    "process",
+    "receipt",
+    "verifier",
+    "producer",
+    "viewer",
+    "gate",
+    "handover",
+    "trigger",
+    "provider",
+    "method",
+    "testflight",
+    "duplicate"
+  ],
+  "edge_kinds": [
+    "INPUT",
+    "FLOW",
+    "FEDERATION",
+    "EVIDENCE",
+    "DEPENDENCY",
+    "HANDOVER",
+    "TRIGGER",
+    "TESTFLIGHT",
+    "RETRIGGER",
+    "TOUCH"
+  ],
+  "bindings": {
+    "NATIVE_RECEIPT": "Only with exact repository SHA, run ID, attempt, job, verified artifact member hash",
+    "ROLE_ONLY": "Canonical responsibility, not evidence of an execution",
+    "DECLARED": "Source-defined intended interface; must render dashed",
+    "DESIGN_ONLY": "Proposed local/testflight dependency; must render dashed"
+  },
+  "status_classes": {
+    "HISTORICAL_PASS": "Source-bound earlier native proof, never live",
+    "CANONICAL_ROLE": "Existing role; no implied execution",
+    "DECLARED": "Defined process relationship without native trigger",
+    "PROPOSED": "Not activated or automatically scheduled",
+    "OWNER_ONLY": "Requires child engineering authority",
+    "HOLD": "Explicit acceptance blocker",
+    "ALIAS": "Graph placement duplicate sharing canonical identity",
+    "DESIGNED_NOT_EXECUTED": "Testflight stage designed, not run",
+    "NATIVE_REQUIRED": "Next run requires exact runner job/attempt"
+  },
+  "required_native_identity": [
+    "repository",
+    "head_sha",
+    "run_id",
+    "run_attempt",
+    "job_id",
+    "artifact_id",
+    "member_sha256",
+    "observed_at_utc"
+  ],
+  "graph_join_key": "canonical_id",
+  "observation_key": "repository+head_sha+run_id+run_attempt+job_id",
+  "coverage_key": "repository+head_sha+file_scope_hash+instrumentation_version+branch_and_statement_denominators",
+  "unknown_semantics": "null means missing/unknown; not zero, not green",
+  "temporal_class": "HISTORICAL | CURRENT_NATIVE | PROPOSED | FORECAST_ONLY | UNKNOWN",
+  "private_qps_publication": "METADATA_ONLY, zero private child source payload",
+  "prohibited_promotions": [
+    "mock_running_to_native",
+    "local_testflight_to_approval",
+    "merge_to_owner_acceptance",
+    "historical_breadth_to_current",
+    "synthetic_to_measurement",
+    "DAG_TOUCH_to_authenticated_transfer"
+  ],
+  "visual_engines": {
+    "html": "interactive inspectable hierarchy",
+    "svg": "vector-typed native graph and spline",
+    "png": "screenshot or Matplotlib exported raster",
+    "pptx": "read-only snapshot from same semantic JSON",
+    "plotly": "optional offline interactive numeric view",
+    "matplotlib": "optional numerical PNG/SVG parity"
+  },
+  "sampling_guard": "PCA and BT qualify only with enough independent comparable samples and a connected pairwise design",
+  "W35_additive_views": {
+    "release": "W35-N+1-PROPOSED",
+    "view_modes": [
+      "UNCOLLAPSED_SVG",
+      "BOUNDED_CHILD_DAG",
+      "SIPOC_AS_LANES",
+      "TRIGGER_DEPENDENCY_DAG",
+      "SPLINE_HISTORICAL_ONLY",
+      "MERMAID_TYPED_SOURCE"
+    ],
+    "selection": [
+      "SOURCE_GROUP_BOUNDARY",
+      "MULTI_TOUCH_ALIAS",
+      "UI_ONLY_POINTER_LASSO",
+      "CANONICAL_NODE_DRILLDOWN"
+    ],
+    "metric_scope_separation": [
+      "HISTORICAL_SIX_REPO_6_OF_42",
+      "AUTHENTICATED_PAIR_0_OF_1",
+      "G3P_W33_MODULE_STATEMENTS_172_OF_172",
+      "G3P_W33_MODULE_BRANCHES_84_OF_84",
+      "ALIAS_TOPOLOGY_3_OF_3_NOT_PROOF",
+      "OTHER_UNKNOWN"
+    ],
+    "forbid_metric_promotion": [
+      "NONE_MEANS_UNKNOWN_NOT_ZERO",
+      "NO_CROSS_DENOMINATOR_ROLLUP",
+      "GROUP_BOUNDARY_NOT_RUNTIME_PROGRESS",
+      "DECLARED_TRIGGER_NOT_DISPATCH"
+    ],
+    "permitted_source_groups": [
+      "OWNER_LANE",
+      "CROSS_DAG"
+    ],
+    "mermaid": "OFFLINE_TYPED_EDITABLE_SOURCE_WITH_STABLE_NODE_IDS",
+    "spline": "NO_NUMERIC_FORWARD_INTERPOLATION_WHEN_NEXT_PULSE_UNKNOWN",
+    "canonical_roles": {
+      "zip_verifier": "MC-530",
+      "breadth_producer": "MC-531",
+      "method_viewer": "MC-533"
+    },
+    "authority_transfer": false,
+    "QPS_owner_acceptance": null,
+    "merge_admission": "HOLD"
+  }
+}

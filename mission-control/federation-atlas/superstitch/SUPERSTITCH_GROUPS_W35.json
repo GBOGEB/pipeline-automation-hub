@@ -1,0 +1,22 @@
+{
+  "schema": "missioncontrol.superstitch.groups.v1",
+  "mode": "READ_ONLY_PROJECTION",
+  "admission": "HOLD",
+  "runtime_dispatch": false,
+  "authority_transfer": false,
+  "merge_approval": null,
+  "classification": "PUBLIC_ROLE_METADATA_ONLY",
+  "description": "Purple group burndown displays source-scope coverage or known gate obligations, never a configured schedule as a native run.",
+  "groups": [
+    {"id":"qps-boundary","label":"QPS · owner boundary","kind":"OWNER_LANE","nodes":["qps-source","qps-defer"],"metric_refs":[],"sipoc_row":null,"explanation":"Private engineering ownership; no automatically accepted CODEX return."},
+    {"id":"dow-chain","label":"ABACUS / DOW · intake → evidence","kind":"OWNER_LANE","nodes":["dow-ingest","dow-map","dow-analyze","dow-output","dow-duplicate"],"metric_refs":[],"sipoc_row":0,"explanation":"Source-owner graph integrity and first-red analysis; native CURRENT proof UNKNOWN."},
+    {"id":"keb-chain","label":"CODEX / KEB · semantic exchange","kind":"OWNER_LANE","nodes":["keb-contract","keb-normalize","keb-graph","keb-receipt","keb-duplicate"],"metric_refs":[],"sipoc_row":1,"explanation":"Semantic contracts, provenance and receipts; not QPS consumer acceptance."},
+    {"id":"mc-control","label":"Mission Control · verify / census","kind":"OWNER_LANE","nodes":["mc530","mc531","mc533","w34hub","cpw10","next-pulse"],"metric_refs":["census"],"sipoc_row":2,"explanation":"6 of 42 historical source cells; current freshness and queue capacity UNKNOWN."},
+    {"id":"math-methods","label":"gg_MATH · numeric qualification","kind":"OWNER_LANE","nodes":["math-provider","math-pca","math-bt","math-receipt","math-duplicate"],"metric_refs":["statements","branches"],"sipoc_row":3,"explanation":"W33 G3P one-module native coverage, not PCA/Bradley-Terry maturity."},
+    {"id":"home-testflight","label":"TESTFLIGHT · home → PR gates","kind":"OWNER_LANE","nodes":["f0","f1","f3","f4","f5","f7"],"metric_refs":[],"sipoc_row":4,"explanation":"F0–F4 home; F5–F7 independently governed native/review/owner gates. W35 run UNKNOWN."},
+    {"id":"federation-touch","label":"Federation · multi-owner boundary","kind":"CROSS_DAG","nodes":["dow-output","keb-graph","keb-receipt","qps-defer","math-receipt"],"metric_refs":["authenticated"],"sipoc_row":null,"explanation":"0 of 1 authenticated CODEX to QPS pair; shared source edges do not prove delivery."},
+    {"id":"golden-thread","label":"Golden Thread · source to next pulse","kind":"CROSS_DAG","nodes":["dow-output","mc530","mc531","mc533","w34hub","cpw10","next-pulse"],"metric_refs":[],"sipoc_row":null,"explanation":"Dependency/traceability stitch only. CP.W10 restart is not automatic orchestration."},
+    {"id":"alias-mycelium","label":"Mycelium · duplicated identities","kind":"CROSS_DAG","nodes":["dow-output","dow-duplicate","keb-graph","keb-duplicate","math-receipt","math-duplicate"],"metric_refs":["alias_topology"],"sipoc_row":null,"explanation":"Three canonical identities repeated as six visible placements; topology measure only."},
+    {"id":"first-red-feedback","label":"First-red · bounded feedback","kind":"CROSS_DAG","nodes":["dow-analyze","dow-output","mc530","f4","f5","next-pulse"],"metric_refs":[],"sipoc_row":null,"explanation":"A proposed run-observation route, not a configured CI trigger, worker launch, or closure."}
+  ]
+}

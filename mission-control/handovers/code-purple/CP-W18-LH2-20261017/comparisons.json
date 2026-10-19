@@ -1,0 +1,49 @@
+{
+  "schema": "code-purple.receipt-comparison.v1",
+  "scope": "GitHub issue search unchanged; coverage comparability independent",
+  "issue_history": [
+    {
+      "open": 153,
+      "closed": 438,
+      "epoch": "preceding wave"
+    },
+    {
+      "open": 142,
+      "closed": 449,
+      "epoch": "previous wave"
+    },
+    {
+      "open": 141,
+      "closed": null,
+      "epoch": "2026-10-17T19:51:25Z"
+    }
+  ],
+  "delta_open_first_to_current": -12,
+  "reason_breakdown": {
+    "monitoring_duplicates": 9,
+    "bounded_completed_work_items": 2,
+    "dashboard_issue_closed_completed": 1
+  },
+  "formal_root_closure_credit": 0,
+  "session_issue_closures_by_assistant": 0,
+  "historical_coverage": {
+    "source_head": "94222bd2b9ba75563b41e6b7e6b058ea06ca6c0d",
+    "canonical": {
+      "covered_branches": 4327,
+      "eligible_branches": 8328,
+      "covered_lines": 17435
+    },
+    "post_b0_union": {
+      "covered_branches": 4333,
+      "eligible_branches": 8328,
+      "covered_lines": 17475
+    },
+    "interpretation": "+6 covered arcs from additional test contexts on same SHA, not source improvement"
+  },
+  "main_current_coverage_delta_pp": null,
+  "changed_line_B9_current_head": {
+    "numerator": null,
+    "denominator": null
+  },
+  "note": "Issue closure not causal root proof; native test runs and source denominators must be compared on matched populations."
+}

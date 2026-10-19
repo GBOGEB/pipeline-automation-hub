@@ -1,0 +1,539 @@
+{
+  "schema": "missioncontrol.spine.governance_dag_sipoc.v1",
+  "intent": "READ_ONLY_CONTROL_VIEW_NOT_NEW_SSOT",
+  "created_for": "W+4 CODE PURPLE owner/SPINE wave",
+  "merge_admission": "HOLD",
+  "formal_credit_delta": 0,
+  "authority_transfer": false,
+  "dispatch_authorized": false,
+  "source_snapshot": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "default_branch": "master",
+    "sha": "91ea7f23edc9cd7ab984b8a2730650609eddb55c",
+    "observation_class": "NON_ATOMIC_GITHUB_READBACK_2026_10_18",
+    "freshness": "SNAPSHOT_NOT_LIVE"
+  },
+  "authority_refs": [
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/v2/MISSION_CONTROL_CURRENT_v2.json",
+      "authority": "MISSION_OPERATING_MODEL"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json",
+      "authority": "EXISTING_BEAM_GRAPH"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "governance/branch_protection/policy.json",
+      "authority": "OWNER_CONTROL_PROPOSAL"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "path": "mission_control/mycelium/control_manifest.yaml",
+      "authority": "MYCELIUM_RECEIVER"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "path": "governance/adr/ADR-0002-spine-core-public-backbone.md",
+      "authority": "DIFFERENT_PROPOSED_SPINE_CORE_PRODUCT"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/v2/g3c_convergence.py",
+      "authority": "G3C_METHOD_CANDIDATE_NOT_MASTER"
+    }
+  ],
+  "issue_refs": [
+    {
+      "node": "ABACUS_POLICY",
+      "uri": "https://github.com/GBOGEB/ABACUS/issues/1860",
+      "state": "OPEN"
+    },
+    {
+      "node": "HUB_POLICY",
+      "uri": "https://github.com/GBOGEB/pipeline-automation-hub/issues/336",
+      "state": "OPEN"
+    },
+    {
+      "node": "CODEX_REPAIR",
+      "uri": "https://github.com/GBOGEB/CODEX/pull/1093",
+      "state": "OPEN_DRAFT"
+    },
+    {
+      "node": "G3C",
+      "uri": "https://github.com/GBOGEB/pipeline-automation-hub/pull/708",
+      "state": "OPEN"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ABACUS_POLICY",
+      "label": "ABACUS hard gate",
+      "rank": 0,
+      "lane": 0,
+      "owner": "GBOGEB/ABACUS",
+      "state": "OWNER_BLOCKED",
+      "kind": "CONTROL"
+    },
+    {
+      "id": "HUB_POLICY",
+      "label": "Hub master rules",
+      "rank": 0,
+      "lane": 1,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "OWNER_BLOCKED",
+      "kind": "CONTROL"
+    },
+    {
+      "id": "CODEX_POLICY",
+      "label": "CODEX main rules",
+      "rank": 0,
+      "lane": 2,
+      "owner": "GBOGEB/CODEX",
+      "state": "UNQUALIFIED",
+      "kind": "CONTROL"
+    },
+    {
+      "id": "HUB_REPAIR",
+      "label": "W2 / CP.CLOSE source",
+      "rank": 0,
+      "lane": 3,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "MAIN_SOURCE_OBSERVED",
+      "kind": "SOURCE"
+    },
+    {
+      "id": "CODEX_REPAIR",
+      "label": "#1093 generated receipts",
+      "rank": 0,
+      "lane": 4,
+      "owner": "GBOGEB/CODEX",
+      "state": "PR_OPEN",
+      "kind": "SOURCE"
+    },
+    {
+      "id": "ABACUS_CANARY",
+      "label": "ABACUS RED canary",
+      "rank": 1,
+      "lane": 0,
+      "owner": "GBOGEB/ABACUS",
+      "state": "NOT_TESTED",
+      "kind": "GATE"
+    },
+    {
+      "id": "HUB_CANARY",
+      "label": "Hub RED canary",
+      "rank": 1,
+      "lane": 1,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "NOT_TESTED",
+      "kind": "GATE"
+    },
+    {
+      "id": "HUB_PR_CI",
+      "label": "Hub exact PR checks",
+      "rank": 1,
+      "lane": 3,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "HISTORICAL_GREEN_ONLY",
+      "kind": "EVIDENCE"
+    },
+    {
+      "id": "CODEX_PR_CI",
+      "label": "CODEX #1093 native CI",
+      "rank": 1,
+      "lane": 4,
+      "owner": "GBOGEB/CODEX",
+      "state": "QUEUED",
+      "kind": "EVIDENCE"
+    },
+    {
+      "id": "HUB_REVIEW",
+      "label": "Eligible hub review",
+      "rank": 1,
+      "lane": 2,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "NOT_VERIFIED",
+      "kind": "HUMAN"
+    },
+    {
+      "id": "CODEX_REVIEW",
+      "label": "Eligible CODEX review",
+      "rank": 1,
+      "lane": 5,
+      "owner": "GBOGEB/CODEX",
+      "state": "NOT_VERIFIED",
+      "kind": "HUMAN"
+    },
+    {
+      "id": "HUB_ADMISSION",
+      "label": "Hub merge decision",
+      "rank": 2,
+      "lane": 1,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "HOLD",
+      "kind": "ADMISSION"
+    },
+    {
+      "id": "CODEX_ADMISSION",
+      "label": "CODEX merge decision",
+      "rank": 2,
+      "lane": 4,
+      "owner": "GBOGEB/CODEX",
+      "state": "HOLD",
+      "kind": "ADMISSION"
+    },
+    {
+      "id": "HUB_MAIN_CI",
+      "label": "Hub main W2 / CP",
+      "rank": 3,
+      "lane": 1,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "PARTIAL_QUEUED",
+      "kind": "EVIDENCE"
+    },
+    {
+      "id": "CODEX_MAIN_CI",
+      "label": "CODEX main verify",
+      "rank": 3,
+      "lane": 4,
+      "owner": "GBOGEB/CODEX",
+      "state": "NOT_TESTED",
+      "kind": "EVIDENCE"
+    },
+    {
+      "id": "CENSUS",
+      "label": "Six-repo recensus",
+      "rank": 4,
+      "lane": 0,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "OBSERVED_HISTORICAL",
+      "kind": "OBSERVATION"
+    },
+    {
+      "id": "MYCELIUM",
+      "label": "CODEX typed receiver",
+      "rank": 4,
+      "lane": 4,
+      "owner": "GBOGEB/CODEX",
+      "state": "WITHHELD",
+      "kind": "CONSUMER"
+    },
+    {
+      "id": "TELEMETRY",
+      "label": "Exact-head proof ledger",
+      "rank": 5,
+      "lane": 2,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "PARTIAL_OBSERVED",
+      "kind": "OBSERVATION"
+    },
+    {
+      "id": "G3C",
+      "label": "G3C N16–N18 method",
+      "rank": 6,
+      "lane": 4,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "LATEST_CI_UNKNOWN",
+      "kind": "ANALYSIS"
+    },
+    {
+      "id": "PUBLICATION",
+      "label": "Controlled publication",
+      "rank": 6,
+      "lane": 2,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "DEFERRED",
+      "kind": "REVIEW_VIEW"
+    }
+  ],
+  "edges": [
+    {
+      "from": "ABACUS_POLICY",
+      "to": "ABACUS_CANARY",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "owner rules effective"
+    },
+    {
+      "from": "HUB_POLICY",
+      "to": "HUB_CANARY",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "owner rules effective"
+    },
+    {
+      "from": "HUB_POLICY",
+      "to": "HUB_ADMISSION",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "mandatory checks"
+    },
+    {
+      "from": "HUB_CANARY",
+      "to": "HUB_ADMISSION",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "RED merge refusal"
+    },
+    {
+      "from": "HUB_REPAIR",
+      "to": "HUB_PR_CI",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "committed exact head"
+    },
+    {
+      "from": "HUB_PR_CI",
+      "to": "HUB_ADMISSION",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "terminal green native CI"
+    },
+    {
+      "from": "HUB_REVIEW",
+      "to": "HUB_ADMISSION",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "independent approval"
+    },
+    {
+      "from": "HUB_ADMISSION",
+      "to": "HUB_MAIN_CI",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "authorized merge then main SHA"
+    },
+    {
+      "from": "CODEX_POLICY",
+      "to": "CODEX_ADMISSION",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "mandatory checks"
+    },
+    {
+      "from": "CODEX_REPAIR",
+      "to": "CODEX_PR_CI",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "committed exact head"
+    },
+    {
+      "from": "CODEX_PR_CI",
+      "to": "CODEX_ADMISSION",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "terminal green native CI"
+    },
+    {
+      "from": "CODEX_REVIEW",
+      "to": "CODEX_ADMISSION",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "independent approval"
+    },
+    {
+      "from": "CODEX_ADMISSION",
+      "to": "CODEX_MAIN_CI",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "authorized merge then main SHA"
+    },
+    {
+      "from": "ABACUS_CANARY",
+      "to": "CENSUS",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "governance evidence"
+    },
+    {
+      "from": "HUB_MAIN_CI",
+      "to": "CENSUS",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "source-bounded main receipt"
+    },
+    {
+      "from": "CODEX_MAIN_CI",
+      "to": "MYCELIUM",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "source-bounded consumer receipt"
+    },
+    {
+      "from": "CENSUS",
+      "to": "TELEMETRY",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "deduplicated observations"
+    },
+    {
+      "from": "MYCELIUM",
+      "to": "TELEMETRY",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "typed return WITHHELD until accepted"
+    },
+    {
+      "from": "TELEMETRY",
+      "to": "G3C",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "matched proof data"
+    },
+    {
+      "from": "HUB_MAIN_CI",
+      "to": "PUBLICATION",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "site manifest & post-main parity"
+    },
+    {
+      "from": "TELEMETRY",
+      "to": "PUBLICATION",
+      "type": "FEEDFORWARD",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "label evidence class"
+    },
+    {
+      "from": "TELEMETRY",
+      "to": "HUB_REPAIR",
+      "type": "FEEDBACK_NEXT_PULSE",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "next-pulse first-red disposition"
+    },
+    {
+      "from": "TELEMETRY",
+      "to": "CODEX_REPAIR",
+      "type": "FEEDBACK_NEXT_PULSE",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "next-pulse owner repair"
+    },
+    {
+      "from": "G3C",
+      "to": "CENSUS",
+      "type": "FEEDBACK_NEXT_PULSE",
+      "binding": "DECLARED_DEPENDENCY",
+      "condition": "next-pulse forecast evaluated against native outcome"
+    }
+  ],
+  "sipoc": [
+    {
+      "id": "OWNER_PROTECTION",
+      "supplier": "ABACUS/hub/CODEX repository administrators",
+      "input": "Live effective ruleset + default-branch identity",
+      "process": "Qualify CORE/FULL & negative RED canary",
+      "output": "Authorized rule receipts (or explicit HOLD)",
+      "customer": "PR admission controller",
+      "authority": "OWNER_ADMIN_ONLY"
+    },
+    {
+      "id": "SOURCE_REPAIR",
+      "supplier": "Hub/CODEX source owners",
+      "input": "PR head, source blobs, first-red job/step",
+      "process": "Bounded disjoint repair + review",
+      "output": "Exact-head source/test candidates",
+      "customer": "Native GitHub Actions",
+      "authority": "REPO_SOURCE_ONLY"
+    },
+    {
+      "id": "PROOF_CUSTODY",
+      "supplier": "GitHub Actions/check publishers",
+      "input": "run, attempt, job, SHA, steps, artifact digests",
+      "process": "Classify terminal/pending/failed + confidence",
+      "output": "Typed CI and failure receipts",
+      "customer": "Governed decision & telemetry",
+      "authority": "NATIVE_RECEIPT_REQUIRED"
+    },
+    {
+      "id": "FEDERATION",
+      "supplier": "CODEX MYCELIUM",
+      "input": "Pinned producer artifact / source digests",
+      "process": "Validate graph identities & owner disposition",
+      "output": "Typed DEFER/REJECT/ACCEPT (currently WITHHELD)",
+      "customer": "CENSUS, REX, downstream consumers",
+      "authority": "NO_REMOTE_AUTHORITY"
+    },
+    {
+      "id": "ANALYTICS",
+      "supplier": "G3C / gg_MATH provider",
+      "input": "Matched repeated populations, control samples",
+      "process": "Estimate rate/CI/PCA/BT only when qualified",
+      "output": "Analysis class or NOT_QUALIFIED",
+      "customer": "MissionControl operators",
+      "authority": "NONCOMPENSATING"
+    },
+    {
+      "id": "RELEASE",
+      "supplier": "Hub owner & site publisher",
+      "input": "Approved exact-head merge/main & rendered manifest",
+      "process": "Post-merge readback + HTML/browser QA",
+      "output": "Versioned user-facing site/read-only receipt",
+      "customer": "Reviewers and operators",
+      "authority": "PROJECTION_NOT_SSOT"
+    }
+  ],
+  "telemetry_contract": {
+    "identities": [
+      "repository",
+      "branch",
+      "source_sha",
+      "run_id",
+      "attempt",
+      "job_id",
+      "artifact_sha256",
+      "observed_at_utc"
+    ],
+    "quality_states": [
+      "UNKNOWN",
+      "QUEUED",
+      "TERMINAL_FAILURE",
+      "TERMINAL_SUCCESS",
+      "EXACT_HEAD_RECEIPT",
+      "GOVERNED_ACCEPTED"
+    ],
+    "measures": [
+      "first_red_manifestations",
+      "deduplicated_causal_roots",
+      "eligible_issue_closures",
+      "governed_merge_admissions",
+      "queue_p95_seconds",
+      "native_proof_yield",
+      "matched_coverage_numerator",
+      "matched_coverage_denominator",
+      "source_freshness"
+    ],
+    "unsupported": [
+      "worker_hours_fleet",
+      "independent_trials_for_process_control",
+      "six_sigma_capability",
+      "pca_stability",
+      "bt_rank"
+    ],
+    "gate_rule": "Statistics/presentation/first-red displacement cannot compensate for owner rule, native CI, independent review or RED canary."
+  },
+  "spine_rules": {
+    "no_cycle_within_pulse": true,
+    "feedback_only_next_pulse": true,
+    "merge_requires": [
+      "effective_owner_controls",
+      "failed_RED_canary",
+      "native_exact_head_checks",
+      "eligible_independent_approval"
+    ],
+    "postmerge_requires": [
+      "main_SHA_readback",
+      "terminal_main_CI",
+      "manifest_parity"
+    ],
+    "publication_is_not_engineering_acceptance": true
+  },
+  "named_counts": {
+    "repositories_sampled": 6,
+    "qualified_owner_controls": 0,
+    "governed_issue_closures": 0,
+    "source_repairs_verified_as_governed": 0
+  }
+}

@@ -1,0 +1,361 @@
+{
+  "actions": [
+    {
+      "depends_on": [],
+      "done_when": "Classify and repair authenticated GET branch 404 without conflating 38/38 contract tests with live acquisition PASS",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39062244840"
+      ],
+      "id": "SC-A001",
+      "owner": "MC live GitHub census",
+      "priority": "P0",
+      "state": "TODO",
+      "summary": "Classify and repair authenticated GET branch 404 without conflating 38/38 contract tests with live acquisition PASS"
+    },
+    {
+      "depends_on": [],
+      "done_when": "Repair canonical BD-issue parity and rerun native parity; owner acceptance separate",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/cryoplant-project/actions/runs/39051175754"
+      ],
+      "id": "SC-A002",
+      "owner": "QPS private owner",
+      "priority": "P0",
+      "state": "HOLD",
+      "summary": "Repair canonical BD-issue parity and rerun native parity; owner acceptance separate"
+    },
+    {
+      "depends_on": [],
+      "done_when": "Obtain independent A10 confidentiality/pass and effective current branch rules",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/ABACUS/issues/1996"
+      ],
+      "id": "SC-A003",
+      "owner": "ABACUS A10 reviewer",
+      "priority": "P0",
+      "state": "HOLD",
+      "summary": "Obtain independent A10 confidentiality/pass and effective current branch rules"
+    },
+    {
+      "depends_on": [],
+      "done_when": "Verify #530 archive/member bytes, #531 six-repo breadth and #533 lane viewer independently",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/533"
+      ],
+      "id": "SC-A004",
+      "owner": "MC federation",
+      "priority": "P1",
+      "state": "TODO",
+      "summary": "Verify #530 archive/member bytes, #531 six-repo breadth and #533 lane viewer independently"
+    },
+    {
+      "depends_on": [],
+      "done_when": "Expand comparable native observations, distinguish M1 from M2/M3, PCA/BT/Six-Sigma readiness",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/gg_MATH/actions/runs/39047980808"
+      ],
+      "id": "SC-A005",
+      "owner": "gg_MATH statistical owner",
+      "priority": "P1",
+      "state": "TODO",
+      "summary": "Expand comparable native observations, distinguish M1 from M2/M3, PCA/BT/Six-Sigma readiness"
+    },
+    {
+      "depends_on": [],
+      "done_when": "Postmerge exact-main recensus of five merged MIP PRs, tests, coverage matched denominators and deduplicated roots",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/ABACUS/pull/1998"
+      ],
+      "id": "SC-A006",
+      "owner": "ABACUS MIP source owner",
+      "priority": "P1",
+      "state": "TODO",
+      "summary": "Postmerge exact-main recensus of five merged MIP PRs, tests, coverage matched denominators and deduplicated roots"
+    },
+    {
+      "depends_on": [],
+      "done_when": "Native-qualify this nine-file handover with existing cp_close.py, exact-head CI and eligible independent review",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/641"
+      ],
+      "id": "SC-A007",
+      "owner": "MC CP.CLOSE owner",
+      "priority": "P1",
+      "state": "TODO",
+      "summary": "Native-qualify this nine-file handover with existing cp_close.py, exact-head CI and eligible independent review"
+    },
+    {
+      "depends_on": [],
+      "done_when": "Update append-only terminal-event ledger, avoid double counted root occurrences, assess actual runner hours/capacity",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ],
+      "id": "SC-A008",
+      "owner": "MC Golden Thread/BD reader",
+      "priority": "P2",
+      "state": "TODO",
+      "summary": "Update append-only terminal-event ledger, avoid double counted root occurrences, assess actual runner hours/capacity"
+    },
+    {
+      "depends_on": [],
+      "done_when": "Whole-chat prompt/token/duration stats from complete authorized corpus, otherwise UNKNOWN",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/README.md"
+      ],
+      "id": "SC-A009",
+      "owner": "User authorized export",
+      "priority": "P3",
+      "state": "DEFER",
+      "summary": "Whole-chat prompt/token/duration stats from complete authorized corpus, otherwise UNKNOWN"
+    }
+  ],
+  "decisions": [
+    {
+      "disposition": "SPLIT_NON_COMPENSATING",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/533",
+      "name": "Source ownership",
+      "rationale": "PR #530 ZIP verifier, #531 breadth, #533 viewer remain separate and no live-GitHub status-only count is coverage."
+    },
+    {
+      "disposition": "HOLD",
+      "evidence_url": "https://github.com/GBOGEB/ABACUS/issues/1996",
+      "name": "Governed admission",
+      "rationale": "A merged PR or green fixture does not prove A10, review, security or QPS acceptance."
+    }
+  ],
+  "insights": [
+    {
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39062244840",
+      "implication": "Root candidate must be authenticated-reproduced before owner closure.",
+      "observation": "MC exact-head scheduled live acquisition failed branch GET 404 while independent controls passed."
+    },
+    {
+      "evidence_url": "https://github.com/GBOGEB/gg_MATH/actions/runs/39047980808",
+      "implication": "Operational M2/M3 and global PCA/BT remain unqualified.",
+      "observation": "gg_MATH G3P native Python and Plotly tests succeeded on source-bounded heads."
+    }
+  ],
+  "intents": [
+    {
+      "actions": [
+        "SC-A001",
+        "SC-A002",
+        "SC-A004",
+        "SC-A006",
+        "SC-A008"
+      ],
+      "id": "SC-I001",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Watch specific ABACUS and MC MIP/federation PRs for source-bound new terminal first-red, success or mismatch."
+    },
+    {
+      "actions": [
+        "SC-A001",
+        "SC-A004",
+        "SC-A005",
+        "SC-A006"
+      ],
+      "id": "SC-I002",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Report exact-head attempts/jobs/tests ZIP bytes and member bytes or UNKNOWN, matched coverage, 6/42 breadth and worker capacity."
+    },
+    {
+      "actions": [
+        "SC-A002",
+        "SC-A005",
+        "SC-A006"
+      ],
+      "id": "SC-I003",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "DMAIC MIP M1/M2/M3, PCA/BT stability/capability must distinguish distinct root candidates from 7 observed repeated failures."
+    },
+    {
+      "actions": [
+        "SC-A007",
+        "SC-A008",
+        "SC-A009"
+      ],
+      "id": "SC-I004",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Publish GitHub-first lossless closeout and copy-ready restart with code provenance, current states, TODO and BD."
+    },
+    {
+      "actions": [
+        "SC-A002",
+        "SC-A003",
+        "SC-A007"
+      ],
+      "id": "SC-I005",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Never fabricate native attestations, independent approval, QPS owner acceptance, security waiver or cross-repo coverage."
+    }
+  ],
+  "issues": [
+    {
+      "owner_lane": "ABACUS_A10",
+      "state": "OPEN_AT_READBACK",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1996"
+    },
+    {
+      "owner_lane": "MC_GOLDEN_GRAPH",
+      "state": "OPEN_AT_READBACK",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+    },
+    {
+      "owner_lane": "QPS_PRIVATE_OWNER",
+      "state": "OPEN_AT_READBACK",
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1950"
+    }
+  ],
+  "metrics": [
+    {
+      "denominator": 38,
+      "evidence_class": "PRIOR_REPORT_WITH_GITHUB_RUN_STATE_RECONFIRMED",
+      "metric": "MC_404_CONTROL_TESTS",
+      "numerator": 38,
+      "population": "passing tests",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39062244840",
+      "unit": "passing tests"
+    },
+    {
+      "denominator": 74,
+      "evidence_class": "PRIOR_REPORT_WITH_GITHUB_RUN_STATE_RECONFIRMED",
+      "metric": "MC_METHOD_VIEWER_LATEST_TESTS",
+      "numerator": 74,
+      "population": "passing tests (earlier run 53/53)",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38719705691",
+      "unit": "passing tests (earlier run 53/53)"
+    },
+    {
+      "denominator": 42,
+      "evidence_class": "PRIOR_REPORT_WITH_GITHUB_RUN_STATE_RECONFIRMED",
+      "metric": "G4_SOURCE_STATUS_BREADTH",
+      "numerator": 6,
+      "population": "STATUS_ONLY repo-family cells",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/531",
+      "unit": "STATUS_ONLY repo-family cells"
+    },
+    {
+      "denominator": 5,
+      "evidence_class": "PRIOR_REPORT_WITH_GITHUB_RUN_STATE_RECONFIRMED",
+      "metric": "METHOD_VIEWER_MEASURED_CELLS",
+      "numerator": 1,
+      "population": "independent viewer scope",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/533",
+      "unit": "independent viewer scope"
+    },
+    {
+      "denominator": 172,
+      "evidence_class": "PRIOR_REPORT_WITH_GITHUB_RUN_STATE_RECONFIRMED",
+      "metric": "GG_MATH_G3P_STATEMENTS",
+      "numerator": 157,
+      "population": "focused statement coverage",
+      "source": "https://github.com/GBOGEB/gg_MATH/actions/runs/39047980808",
+      "unit": "focused statement coverage"
+    },
+    {
+      "denominator": 84,
+      "evidence_class": "PRIOR_REPORT_WITH_GITHUB_RUN_STATE_RECONFIRMED",
+      "metric": "GG_MATH_G3P_BRANCHES",
+      "numerator": 69,
+      "population": "focused branch coverage",
+      "source": "https://github.com/GBOGEB/gg_MATH/actions/runs/39047980808",
+      "unit": "focused branch coverage"
+    },
+    {
+      "denominator": null,
+      "evidence_class": "PRIOR_REPORT_WITH_GITHUB_RUN_STATE_RECONFIRMED",
+      "metric": "CROSS_REPO_MATCHED_COVERAGE",
+      "numerator": null,
+      "population": "UNKNOWN, not zero",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/531",
+      "unit": "UNKNOWN, not zero"
+    },
+    {
+      "denominator": null,
+      "evidence_class": "PRIOR_REPORT_WITH_GITHUB_RUN_STATE_RECONFIRMED",
+      "metric": "WORKER_HOURS",
+      "numerator": null,
+      "population": "UNKNOWN, not zero",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604",
+      "unit": "UNKNOWN, not zero"
+    }
+  ],
+  "prs": [
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "79672200a0fb37b7538b996b03a1e82dceb83a2f",
+      "merge_sha": "b4657129623acba3a993f507dbe6758819057094",
+      "number": 1989,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1989"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "01d99b1bda4ec828d6ffbe6f3fa6a911cd89ffcd",
+      "merge_sha": "14d79fa54d38fe845b0b9a20ae8201dc101a346f",
+      "number": 1990,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1990"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "1cdacce594fcd2b091d0aab6bf6b717ea6fde036",
+      "merge_sha": "3e1b29c239a1f0f2cb0d9190deff61478a7b09f3",
+      "number": 1994,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1994"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "1cb55efd15974af8e3554ee3f9bd5650eb9d3b9e",
+      "merge_sha": "94604c98cd2cdee346df278b0bb7a2cc451da319",
+      "number": 1997,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1997"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "e36f7543d4e002296725474a3bc0d57abf7d2d3b",
+      "merge_sha": "49bf1e313584e3ca953c264741345163413fec24",
+      "number": 1998,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/1998"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "3d09f3134b7c891ae1a5ad198e951eeed5250c7e",
+      "merge_sha": "86917eb0f373e0595054f4f054e952870526b8f0",
+      "number": 530,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/530"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "5507b2ebfcdd45adf54b473008f51fee4707758b",
+      "merge_sha": "de7589136b093e159aa305526b231994301cd889",
+      "number": 531,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/531"
+    },
+    {
+      "admission": "SOURCE_MERGE_ONLY",
+      "head_sha": "bf9383bc39bedf645175184049bdb2013379041d",
+      "merge_sha": "5fb26dd1ca4cae0b24c8fcce572aac459fff0b2d",
+      "number": 533,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/533"
+    }
+  ],
+  "schema": "missioncontrol.cp_close.semantic_ledger.v1"
+}

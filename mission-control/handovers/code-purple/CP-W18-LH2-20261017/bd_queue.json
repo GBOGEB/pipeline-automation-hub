@@ -1,0 +1,159 @@
+{
+  "schema": "code-purple.bd-queue.v1",
+  "cut": "2026-10-17T19:51:25Z",
+  "owner": "Existing GitHub issue owners; this is a read-only route projection",
+  "items": [
+    {
+      "order": 1,
+      "priority": "P0",
+      "id": "GOV-ABACUS",
+      "issue": "GBOGEB/ABACUS#1860",
+      "issue_url": "https://github.com/GBOGEB/ABACUS/issues/1860",
+      "status": "OWNER_ADMIN_GATE",
+      "blocker": "ABACUS Main Hard Gate #24494381: 0 required reviews, no required status rule, last push and threads false",
+      "next_action": "Owner/admin fix enforceable rules; prove negative CI/red/pending/unapproved merge block and eligible second human reviewer",
+      "completion_predicate": "Effective independent review + all named required checks + thread resolution and negative tests, exact main readback",
+      "depends_on": []
+    },
+    {
+      "order": 2,
+      "priority": "P0",
+      "id": "W1-EXACT-B0",
+      "issue": "GBOGEB/ABACUS#1929",
+      "issue_url": "https://github.com/GBOGEB/ABACUS/issues/1929",
+      "status": "NATIVE_IN_PROGRESS",
+      "blocker": "#2182 head 203f7d... B0 #39063903966 + Matrix #39063903736 not terminal at cut",
+      "next_action": "Read run/attempt/job/artifact current head, compare last accepted baseline, isolate first-red failures",
+      "completion_predicate": "All exact-head B0/Matrix and negative proof terminal; scope-matched numerator/denominator and cause status",
+      "depends_on": []
+    },
+    {
+      "order": 3,
+      "priority": "P0",
+      "id": "A10-SECURITY",
+      "issue": "GBOGEB/ABACUS#1996",
+      "issue_url": "https://github.com/GBOGEB/ABACUS/issues/1996",
+      "status": "HOLD",
+      "blocker": "Independent A10 reviewer/security gate outstanding",
+      "next_action": "Read confidential review #1996, security #1738, native GHAS/Safety/Bandit, no waiver",
+      "completion_predicate": "Authorized confidentiality PASS + nonzero security enforcement and eligible approval",
+      "depends_on": []
+    },
+    {
+      "order": 4,
+      "priority": "P1",
+      "id": "BD-SECURITY-GUARD",
+      "issue": "GBOGEB/ABACUS#1929",
+      "issue_url": "https://github.com/GBOGEB/ABACUS/issues/1929",
+      "status": "UNMERGED_SOURCE_GAP",
+      "blocker": "#2170 closed unmerged; #2178 merged narrower test; forged security and positive credit guards uncertain",
+      "next_action": "Compare `scripts/bd_three_pulse_bridge.py` main vs #2170 and #2177 and #2182; write disjoint guarded PR if absent",
+      "completion_predicate": "Both forgery cases (security=APPROVED and formal/engineering positive) native fail closed on exact head",
+      "depends_on": [
+        "W1-EXACT-B0"
+      ]
+    },
+    {
+      "order": 5,
+      "priority": "P1",
+      "id": "DASHBOARD-ROOT",
+      "issue": "GBOGEB/ABACUS#1885",
+      "issue_url": "https://github.com/GBOGEB/ABACUS/issues/1885",
+      "status": "ISSUE_CLOSED_ROOT_NOT_PROVED",
+      "blocker": "Ticket marked completed 19:51:17Z while #2163/#2164 overlap and hosted Pages proof unresolved",
+      "next_action": "Owner disposition: reconcile Pages generated runtime status, link scanner negative tests, check #2163 current B0/Matrix",
+      "completion_predicate": "Real published Pages / actual scanner CI PASS + documented owner acceptance; issue-close alone insufficient",
+      "depends_on": [
+        "W1-EXACT-B0"
+      ]
+    },
+    {
+      "order": 6,
+      "priority": "P1",
+      "id": "PY-MATRIX",
+      "issue": "GBOGEB/ABACUS#1874",
+      "issue_url": "https://github.com/GBOGEB/ABACUS/issues/1874",
+      "status": "NATIVE_RED",
+      "blocker": "#2169 secure XML path requirements-test for 3×3 suite still failing B0/Matrix",
+      "next_action": "Check actual Windows/Linux/macOS requirements-test and source first-red; repair only one owner path",
+      "completion_predicate": "Terminal nine cells prove secure defusedxml/DTD and functional compatibility, no security downgrade",
+      "depends_on": [
+        "W1-EXACT-B0"
+      ]
+    },
+    {
+      "order": 7,
+      "priority": "P1",
+      "id": "W70-NO-DROP",
+      "issue": "GBOGEB/ABACUS#1660",
+      "issue_url": "https://github.com/GBOGEB/ABACUS/issues/1660",
+      "status": "ROOT_OPEN",
+      "blocker": "One retain workflow per measured pulse and `continue-on-error: true` around direct main push",
+      "next_action": "Inventory source-bound missing artifact receipts; design serial no-drop batching + fail-closed negative source PR",
+      "completion_predicate": "No missing SHA/run/attempt; proved queue p95 and actual write reduction with no lost measurement",
+      "depends_on": []
+    },
+    {
+      "order": 8,
+      "priority": "P1",
+      "id": "ISSUE-EXPEDITION",
+      "issue": "GBOGEB/pipeline-automation-hub#153",
+      "issue_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/153",
+      "status": "MEASURED_141_OPEN",
+      "blocker": "141 issue IDs, backlog includes 56 QPS external returns and administrative control issues",
+      "next_action": "Re-classify 5 newest + 5 oldest, source owner/root/DAG and close reasons; do not create competing SSOT",
+      "completion_predicate": "Current 141 vs frozen 142/152/153 epochs documented; confirmed engineering roots separate from closed tickets",
+      "depends_on": []
+    },
+    {
+      "order": 9,
+      "priority": "P1",
+      "id": "CODEX-FEDERATION",
+      "issue": "GBOGEB/CODEX#1037",
+      "issue_url": "https://github.com/GBOGEB/CODEX/issues/1037",
+      "status": "HOLD",
+      "blocker": "CODEX main protected false, live responsive browser and authenticated remote dispatch not fully attested",
+      "next_action": "Owner/admin + live browser/source proof and CODEX #977 dispatch authority checks",
+      "completion_predicate": "Effective protected main, independent review, current browser proof, authorized Crew execution only",
+      "depends_on": [
+        "GOV-ABACUS"
+      ]
+    },
+    {
+      "order": 10,
+      "priority": "P2",
+      "id": "QPS-EXTERNAL",
+      "issue": "GBOGEB/cryoplant-project#481",
+      "issue_url": "https://github.com/GBOGEB/cryoplant-project/issues/481",
+      "status": "RETURN_EXTERNAL_OWNER",
+      "blocker": "RFI #75 cold compressor, #79 HP N-1, #82 PVPS N+1 bidder evidence pending",
+      "next_action": "Get source-own bidder/engineering returns, bind RTM/controlled cost lineage",
+      "completion_predicate": "Independently accepted cryoplant engineering DoV and source-approved RTM, never infer from code CI",
+      "depends_on": []
+    },
+    {
+      "order": 11,
+      "priority": "P2",
+      "id": "GG-MATH",
+      "issue": "GBOGEB/gg_MATH#27",
+      "issue_url": "https://github.com/GBOGEB/gg_MATH/issues/27",
+      "status": "METHOD_UNQUALIFIED",
+      "blocker": "PCA cases correlated, BT separation, failure recall 0 and no 6sigma process baseline",
+      "next_action": "Freeze test/node/graph population; run group-aware bootstrap, prospective forecasts, explicit CTQ opportunities",
+      "completion_predicate": "Valid independent confidence/statistical stability with prospective calibration and model-owner approval",
+      "depends_on": []
+    },
+    {
+      "order": 12,
+      "priority": "P2",
+      "id": "RELEASE-ADMIN",
+      "issue": "GBOGEB/document-organization-system#51",
+      "issue_url": "https://github.com/GBOGEB/document-organization-system/issues/51",
+      "status": "RETURN_RELEASE_ADMIN",
+      "blocker": "v0.4.9 annotated tag existed but GitHub Release absent at earlier readback",
+      "next_action": "Release-admin publish normal release on unchanged tag, obtain native proof",
+      "completion_predicate": "GitHub Release URL/tag target immutable and verified owner acceptance",
+      "depends_on": []
+    }
+  ]
+}
