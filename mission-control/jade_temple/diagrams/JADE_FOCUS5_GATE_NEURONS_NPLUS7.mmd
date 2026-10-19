@@ -1,188 +1,187 @@
-%% JADE_TEMPLE N+7 typed focus-five candidate; read-only
+%% JADE_TEMPLE N+7 R1 source-specific 60-gate graph, READ-ONLY
 flowchart LR
-  SOURCE["Mission Control N11 / TOP21<br/>focus cohort 5/21"]:::authority
-  QPS["QPS TRIAGE / H4<br/>QPS + DOW + KEB"]:::authority
-  RELEASE(("J5 owner point release<br/>HOLD")):::blocked
-  SOURCE -. "fixed focus denominator" .-> QPS
-  subgraph Q["04 / cryoplant-project · 2/12"]
+  FOCUS["Focus5 · 15/60 PASS · 25.00%"]:::authority
+  QP["QPS TRIAGE / QPS+DOW+KEB"]:::authority
+  ADMIT(("J5 owner tag + rollback / HOLD")):::blocked
+  FOCUS -. "source census" .-> QP
+  subgraph Q["4. cryoplant-project · 3/12 PASS"]
     direction TB
-    QH01["H01 Exact default-branch SHA obs…"]:::pass
-    QH02["H02 Root source and entrypoint l…"]:::pass
-    QH03["H03 Release applicability and ow…"]:::unknown
-    QH04["H04 Reproducible dependency/buil…"]:::unknown
-    QH05["H05 Native primary B0/test equiv…"]:::fail
-    QH06["H06 Independent domain/integrati…"]:::unknown
-    QH07["H07 Security and supply-chain ga…"]:::unknown
-    QH08["H08 Effective protection and rej…"]:::fail
-    QH09["H09 Eligible independent human a…"]:::unknown
-    QH10["H10 Matched coverage and negativ…"]:::unknown
-    QH11["H11 Source-bound binary/site art…"]:::unknown
-    QH12["H12 Owner point-release tag, ass…"]:::unknown
-    QF{{"All 12 noncompensating<br/>owner gates"}}:::blocked
-    QH01 -. "PASS" .-> QF
-    QH02 -. "PASS" .-> QF
-    QH03 -. "UNKNOWN" .-> QF
-    QH04 -. "UNKNOWN" .-> QF
-    QH05 -. "FAIL" .-> QF
-    QH06 -. "UNKNOWN" .-> QF
-    QH07 -. "UNKNOWN" .-> QF
-    QH08 -. "FAIL" .-> QF
-    QH09 -. "UNKNOWN" .-> QF
-    QH10 -. "UNKNOWN" .-> QF
-    QH11 -. "UNKNOWN" .-> QF
-    QH12 -. "UNKNOWN" .-> QF
+    QH01["H01: Exact default-branch SHA o…"]:::pass
+    QH02["H02: Root source and entrypoint…"]:::pass
+    QH03["H03: Release applicability and …"]:::unknown
+    QH04["H04: Reproducible dependency/bu…"]:::unknown
+    QH05["H05: Native primary B0/test equ…"]:::pass
+    QH06["H06: Independent domain/integra…"]:::unknown
+    QH07["H07: Security and supply-chain …"]:::unknown
+    QH08["H08: Effective protection and r…"]:::fail
+    QH09["H09: Eligible independent human…"]:::unknown
+    QH10["H10: Matched coverage and negat…"]:::unknown
+    QH11["H11: Source-bound binary/site a…"]:::unknown
+    QH12["H12: Owner point-release tag, a…"]:::unknown
+    QALL{{"12/12 independent minimum release gates"}}:::blocked
+    QH01 -. "PASS" .-> QALL
+    QH02 -. "PASS" .-> QALL
+    QH03 -. "UNKNOWN" .-> QALL
+    QH04 -. "UNKNOWN" .-> QALL
+    QH05 -. "PASS" .-> QALL
+    QH06 -. "UNKNOWN" .-> QALL
+    QH07 -. "UNKNOWN" .-> QALL
+    QH08 -. "FAIL" .-> QALL
+    QH09 -. "UNKNOWN" .-> QALL
+    QH10 -. "UNKNOWN" .-> QALL
+    QH11 -. "UNKNOWN" .-> QALL
+    QH12 -. "UNKNOWN" .-> QALL
   end
-  SOURCE -. "HEAD bound, not approved" .-> QH01
-  QF -. "NOT ADMITTED" .-> RELEASE
-  subgraph D["08 / DOCX_RTM_Automation · 4/12"]
+  FOCUS -. "observed 87e39abba7" .-> QH01
+  QALL -. "not owner-approved" .-> ADMIT
+  subgraph D["8. DOCX_RTM_Automation · 4/12 PASS"]
     direction TB
-    DH01["H01 Exact default-branch SHA obs…"]:::pass
-    DH02["H02 Root source and entrypoint l…"]:::pass
-    DH03["H03 Release applicability and ow…"]:::unknown
-    DH04["H04 Reproducible dependency/buil…"]:::unknown
-    DH05["H05 Native primary B0/test equiv…"]:::pass
-    DH06["H06 Independent domain/integrati…"]:::pass
-    DH07["H07 Security and supply-chain ga…"]:::unknown
-    DH08["H08 Effective protection and rej…"]:::fail
-    DH09["H09 Eligible independent human a…"]:::unknown
-    DH10["H10 Matched coverage and negativ…"]:::unknown
-    DH11["H11 Source-bound binary/site art…"]:::unknown
-    DH12["H12 Owner point-release tag, ass…"]:::unknown
-    DF{{"All 12 noncompensating<br/>owner gates"}}:::blocked
-    DH01 -. "PASS" .-> DF
-    DH02 -. "PASS" .-> DF
-    DH03 -. "UNKNOWN" .-> DF
-    DH04 -. "UNKNOWN" .-> DF
-    DH05 -. "PASS" .-> DF
-    DH06 -. "PASS" .-> DF
-    DH07 -. "UNKNOWN" .-> DF
-    DH08 -. "FAIL" .-> DF
-    DH09 -. "UNKNOWN" .-> DF
-    DH10 -. "UNKNOWN" .-> DF
-    DH11 -. "UNKNOWN" .-> DF
-    DH12 -. "UNKNOWN" .-> DF
+    DH01["H01: Exact default-branch SHA o…"]:::pass
+    DH02["H02: Root source and entrypoint…"]:::pass
+    DH03["H03: Release applicability and …"]:::unknown
+    DH04["H04: Reproducible dependency/bu…"]:::unknown
+    DH05["H05: Native primary B0/test equ…"]:::pass
+    DH06["H06: Independent domain/integra…"]:::pass
+    DH07["H07: Security and supply-chain …"]:::unknown
+    DH08["H08: Effective protection and r…"]:::fail
+    DH09["H09: Eligible independent human…"]:::unknown
+    DH10["H10: Matched coverage and negat…"]:::unknown
+    DH11["H11: Source-bound binary/site a…"]:::unknown
+    DH12["H12: Owner point-release tag, a…"]:::unknown
+    DALL{{"12/12 independent minimum release gates"}}:::blocked
+    DH01 -. "PASS" .-> DALL
+    DH02 -. "PASS" .-> DALL
+    DH03 -. "UNKNOWN" .-> DALL
+    DH04 -. "UNKNOWN" .-> DALL
+    DH05 -. "PASS" .-> DALL
+    DH06 -. "PASS" .-> DALL
+    DH07 -. "UNKNOWN" .-> DALL
+    DH08 -. "FAIL" .-> DALL
+    DH09 -. "UNKNOWN" .-> DALL
+    DH10 -. "UNKNOWN" .-> DALL
+    DH11 -. "UNKNOWN" .-> DALL
+    DH12 -. "UNKNOWN" .-> DALL
   end
-  SOURCE -. "HEAD bound, not approved" .-> DH01
-  DF -. "NOT ADMITTED" .-> RELEASE
-  subgraph Y["16 / yaml-grammar · 2/12"]
+  FOCUS -. "observed 252a684582" .-> DH01
+  DALL -. "not owner-approved" .-> ADMIT
+  subgraph Y["16. yaml-grammar · 2/12 PASS"]
     direction TB
-    YH01["H01 Exact default-branch SHA obs…"]:::pass
-    YH02["H02 Root source and entrypoint l…"]:::pass
-    YH03["H03 Release applicability and ow…"]:::unknown
-    YH04["H04 Reproducible dependency/buil…"]:::unknown
-    YH05["H05 Native primary B0/test equiv…"]:::unknown
-    YH06["H06 Independent domain/integrati…"]:::unknown
-    YH07["H07 Security and supply-chain ga…"]:::unknown
-    YH08["H08 Effective protection and rej…"]:::fail
-    YH09["H09 Eligible independent human a…"]:::unknown
-    YH10["H10 Matched coverage and negativ…"]:::unknown
-    YH11["H11 Source-bound binary/site art…"]:::unknown
-    YH12["H12 Owner point-release tag, ass…"]:::unknown
-    YF{{"All 12 noncompensating<br/>owner gates"}}:::blocked
-    YH01 -. "PASS" .-> YF
-    YH02 -. "PASS" .-> YF
-    YH03 -. "UNKNOWN" .-> YF
-    YH04 -. "UNKNOWN" .-> YF
-    YH05 -. "UNKNOWN" .-> YF
-    YH06 -. "UNKNOWN" .-> YF
-    YH07 -. "UNKNOWN" .-> YF
-    YH08 -. "FAIL" .-> YF
-    YH09 -. "UNKNOWN" .-> YF
-    YH10 -. "UNKNOWN" .-> YF
-    YH11 -. "UNKNOWN" .-> YF
-    YH12 -. "UNKNOWN" .-> YF
+    YH01["H01: Exact default-branch SHA o…"]:::pass
+    YH02["H02: Root source and entrypoint…"]:::pass
+    YH03["H03: Release applicability and …"]:::unknown
+    YH04["H04: Reproducible dependency/bu…"]:::unknown
+    YH05["H05: Native primary B0/test equ…"]:::unknown
+    YH06["H06: Independent domain/integra…"]:::unknown
+    YH07["H07: Security and supply-chain …"]:::unknown
+    YH08["H08: Effective protection and r…"]:::fail
+    YH09["H09: Eligible independent human…"]:::unknown
+    YH10["H10: Matched coverage and negat…"]:::unknown
+    YH11["H11: Source-bound binary/site a…"]:::unknown
+    YH12["H12: Owner point-release tag, a…"]:::unknown
+    YALL{{"12/12 independent minimum release gates"}}:::blocked
+    YH01 -. "PASS" .-> YALL
+    YH02 -. "PASS" .-> YALL
+    YH03 -. "UNKNOWN" .-> YALL
+    YH04 -. "UNKNOWN" .-> YALL
+    YH05 -. "UNKNOWN" .-> YALL
+    YH06 -. "UNKNOWN" .-> YALL
+    YH07 -. "UNKNOWN" .-> YALL
+    YH08 -. "FAIL" .-> YALL
+    YH09 -. "UNKNOWN" .-> YALL
+    YH10 -. "UNKNOWN" .-> YALL
+    YH11 -. "UNKNOWN" .-> YALL
+    YH12 -. "UNKNOWN" .-> YALL
   end
-  SOURCE -. "HEAD bound, not approved" .-> YH01
-  YF -. "NOT ADMITTED" .-> RELEASE
-  subgraph M["05 / gg_MATH · 3/12"]
+  FOCUS -. "observed 75083c2aaa" .-> YH01
+  YALL -. "not owner-approved" .-> ADMIT
+  subgraph M["5. gg_MATH · 3/12 PASS"]
     direction TB
-    MH01["H01 Exact default-branch SHA obs…"]:::pass
-    MH02["H02 Root source and entrypoint l…"]:::pass
-    MH03["H03 Release applicability and ow…"]:::unknown
-    MH04["H04 Reproducible dependency/buil…"]:::fail
-    MH05["H05 Native primary B0/test equiv…"]:::fail
-    MH06["H06 Independent domain/integrati…"]:::pass
-    MH07["H07 Security and supply-chain ga…"]:::unknown
-    MH08["H08 Effective protection and rej…"]:::fail
-    MH09["H09 Eligible independent human a…"]:::unknown
-    MH10["H10 Matched coverage and negativ…"]:::unknown
-    MH11["H11 Source-bound binary/site art…"]:::unknown
-    MH12["H12 Owner point-release tag, ass…"]:::unknown
-    MF{{"All 12 noncompensating<br/>owner gates"}}:::blocked
-    MH01 -. "PASS" .-> MF
-    MH02 -. "PASS" .-> MF
-    MH03 -. "UNKNOWN" .-> MF
-    MH04 -. "FAIL" .-> MF
-    MH05 -. "FAIL" .-> MF
-    MH06 -. "PASS" .-> MF
-    MH07 -. "UNKNOWN" .-> MF
-    MH08 -. "FAIL" .-> MF
-    MH09 -. "UNKNOWN" .-> MF
-    MH10 -. "UNKNOWN" .-> MF
-    MH11 -. "UNKNOWN" .-> MF
-    MH12 -. "UNKNOWN" .-> MF
+    MH01["H01: Exact default-branch SHA o…"]:::pass
+    MH02["H02: Root source and entrypoint…"]:::pass
+    MH03["H03: Release applicability and …"]:::unknown
+    MH04["H04: Reproducible dependency/bu…"]:::fail
+    MH05["H05: Native primary B0/test equ…"]:::fail
+    MH06["H06: Independent domain/integra…"]:::pass
+    MH07["H07: Security and supply-chain …"]:::unknown
+    MH08["H08: Effective protection and r…"]:::fail
+    MH09["H09: Eligible independent human…"]:::unknown
+    MH10["H10: Matched coverage and negat…"]:::unknown
+    MH11["H11: Source-bound binary/site a…"]:::unknown
+    MH12["H12: Owner point-release tag, a…"]:::unknown
+    MALL{{"12/12 independent minimum release gates"}}:::blocked
+    MH01 -. "PASS" .-> MALL
+    MH02 -. "PASS" .-> MALL
+    MH03 -. "UNKNOWN" .-> MALL
+    MH04 -. "FAIL" .-> MALL
+    MH05 -. "FAIL" .-> MALL
+    MH06 -. "PASS" .-> MALL
+    MH07 -. "UNKNOWN" .-> MALL
+    MH08 -. "FAIL" .-> MALL
+    MH09 -. "UNKNOWN" .-> MALL
+    MH10 -. "UNKNOWN" .-> MALL
+    MH11 -. "UNKNOWN" .-> MALL
+    MH12 -. "UNKNOWN" .-> MALL
   end
-  SOURCE -. "HEAD bound, not approved" .-> MH01
-  MF -. "NOT ADMITTED" .-> RELEASE
-  subgraph H["02 / pipeline-automation-hub · 3/12"]
+  FOCUS -. "observed a91d3ea591" .-> MH01
+  MALL -. "not owner-approved" .-> ADMIT
+  subgraph H["2. pipeline-automation-hub · 3/12 PASS"]
     direction TB
-    HH01["H01 Exact default-branch SHA obs…"]:::pass
-    HH02["H02 Root source and entrypoint l…"]:::pass
-    HH03["H03 Release applicability and ow…"]:::unknown
-    HH04["H04 Reproducible dependency/buil…"]:::unknown
-    HH05["H05 Native primary B0/test equiv…"]:::unknown
-    HH06["H06 Independent domain/integrati…"]:::pass
-    HH07["H07 Security and supply-chain ga…"]:::unknown
-    HH08["H08 Effective protection and rej…"]:::fail
-    HH09["H09 Eligible independent human a…"]:::unknown
-    HH10["H10 Matched coverage and negativ…"]:::unknown
-    HH11["H11 Source-bound binary/site art…"]:::unknown
-    HH12["H12 Owner point-release tag, ass…"]:::unknown
-    HF{{"All 12 noncompensating<br/>owner gates"}}:::blocked
-    HH01 -. "PASS" .-> HF
-    HH02 -. "PASS" .-> HF
-    HH03 -. "UNKNOWN" .-> HF
-    HH04 -. "UNKNOWN" .-> HF
-    HH05 -. "UNKNOWN" .-> HF
-    HH06 -. "PASS" .-> HF
-    HH07 -. "UNKNOWN" .-> HF
-    HH08 -. "FAIL" .-> HF
-    HH09 -. "UNKNOWN" .-> HF
-    HH10 -. "UNKNOWN" .-> HF
-    HH11 -. "UNKNOWN" .-> HF
-    HH12 -. "UNKNOWN" .-> HF
+    HH01["H01: Exact default-branch SHA o…"]:::pass
+    HH02["H02: Root source and entrypoint…"]:::pass
+    HH03["H03: Release applicability and …"]:::unknown
+    HH04["H04: Reproducible dependency/bu…"]:::unknown
+    HH05["H05: Native primary B0/test equ…"]:::unknown
+    HH06["H06: Independent domain/integra…"]:::pass
+    HH07["H07: Security and supply-chain …"]:::unknown
+    HH08["H08: Effective protection and r…"]:::fail
+    HH09["H09: Eligible independent human…"]:::unknown
+    HH10["H10: Matched coverage and negat…"]:::unknown
+    HH11["H11: Source-bound binary/site a…"]:::fail
+    HH12["H12: Owner point-release tag, a…"]:::unknown
+    HALL{{"12/12 independent minimum release gates"}}:::blocked
+    HH01 -. "PASS" .-> HALL
+    HH02 -. "PASS" .-> HALL
+    HH03 -. "UNKNOWN" .-> HALL
+    HH04 -. "UNKNOWN" .-> HALL
+    HH05 -. "UNKNOWN" .-> HALL
+    HH06 -. "PASS" .-> HALL
+    HH07 -. "UNKNOWN" .-> HALL
+    HH08 -. "FAIL" .-> HALL
+    HH09 -. "UNKNOWN" .-> HALL
+    HH10 -. "UNKNOWN" .-> HALL
+    HH11 -. "FAIL" .-> HALL
+    HH12 -. "UNKNOWN" .-> HALL
   end
-  SOURCE -. "HEAD bound, not approved" .-> HH01
-  HF -. "NOT ADMITTED" .-> RELEASE
-  DOW["ABACUS DOW<br/>separate acceptance"]:::authority
-  KEB["CODEX KEB<br/>Crew/REX not implied"]:::authority
-  DH06 -. "candidate trace" .-> QH10
-  YH05 -. "reference grammar, unverified" .-> QH04
-  MH06 -. "method proof only" .-> QH06
-  QH05 -. "QPS native first-red" .-> HH06
-  DOW -. "no authority transfer" .-> QPS
-  KEB -. "no execution inference" .-> QPS
-  QPS -. "original authority preserved" .-> QH03
-  G1(("SOURCE SHA")):::gold
-  G2(("OWNER + FIRST RED")):::gold
-  G3(("DISJOINT BRANCH")):::gold
-  G4(("EXACT NATIVE JOB")):::gold
-  G5(("A10 + SECURITY")):::gold
-  G6(("RED CANARY")):::gold
-  G7(("HUMAN REVIEW")):::gold
-  G8(("POSTMERGE HEAD")):::gold
-  G9(("TAG + ROLLBACK")):::gold
-  G1 -. "proof-gated" .-> G2
-  G2 -. "proof-gated" .-> G3
-  G3 -. "proof-gated" .-> G4
-  G4 -. "proof-gated" .-> G5
-  G5 -. "proof-gated" .-> G6
-  G6 -. "proof-gated" .-> G7
-  G7 -. "proof-gated" .-> G8
-  G8 -. "proof-gated" .-> G9
-  classDef pass fill:#14453b,stroke:#69dbb6,color:#dffcf0
-  classDef fail fill:#522e37,stroke:#ee858e,color:#ffeef0
-  classDef unknown fill:#213847,stroke:#7a97b0,color:#edf4fa
-  classDef authority fill:#192d44,stroke:#70b5d4,color:#e7f6fd
-  classDef blocked fill:#4d2930,stroke:#ea9b9b,color:#ffe8ec
-  classDef gold fill:#483a21,stroke:#eac471,color:#fff2d9
+  FOCUS -. "observed 7bda104289" .-> HH01
+  HALL -. "not owner-approved" .-> ADMIT
+  DOW["ABACUS · independent DOW acceptance"]:::authority
+  KEB["CODEX · separate KEB REX proof"]:::authority
+  DH06 -. "candidate source only" .-> QH10
+  YH05 -. "grammar reference" .-> QH04
+  MH06 -. "method provider" .-> QH06
+  QH05 -. "current native canonicalization" .-> HH06
+  DOW -. "authority boundary" .-> QP
+  KEB -. "Crew not inferred" .-> QP
+  G1(("SOURCE_SHA")):::gold
+  G2(("OWNER_FIRST_RED")):::gold
+  G1 -. "not auto-qualified" .-> G2
+  G3(("DISJOINT_BRANCH")):::gold
+  G2 -. "not auto-qualified" .-> G3
+  G4(("NATIVE_RUN_JOB")):::gold
+  G3 -. "not auto-qualified" .-> G4
+  G5(("SECURITY")):::gold
+  G4 -. "not auto-qualified" .-> G5
+  G6(("RED_CANARY")):::gold
+  G5 -. "not auto-qualified" .-> G6
+  G7(("INDEPENDENT_REVIEW")):::gold
+  G6 -. "not auto-qualified" .-> G7
+  G8(("POSTMERGE_SHA")):::gold
+  G7 -. "not auto-qualified" .-> G8
+  G9(("OWNER_TAG_ROLLBACK")):::gold
+  G8 -. "not auto-qualified" .-> G9
+  classDef pass fill:#17463a,stroke:#5bdcb7,color:#e6fff4
+  classDef fail fill:#56303a,stroke:#f4939c,color:#ffe8ed
+  classDef unknown fill:#293c4e,stroke:#8eacbf,color:#e6f4ff
+  classDef blocked fill:#4b2930,stroke:#d58c9a,color:#fff0f1
+  classDef gold fill:#42351a,stroke:#efd085,color:#fff4d4
+  classDef authority fill:#193a4a,stroke:#90c0e0,color:#f0fcff
