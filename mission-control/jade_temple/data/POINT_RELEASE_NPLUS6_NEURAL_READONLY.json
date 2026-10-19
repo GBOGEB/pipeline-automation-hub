@@ -1,0 +1,3375 @@
+{
+  "schema": "jade.temple.nplus6.neural_readonly.v1",
+  "source": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "base_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+    "roster_blob_sha1": "4b5bc76e6b4ceefa032c1c89e485755cf9326884",
+    "date_utc": "2026-10-19",
+    "non_atomic": true
+  },
+  "authority": "READ_ONLY_PROJECTION",
+  "membership": "MISSION_CONTROL_N11_TOP21",
+  "merge_admission": "HOLD",
+  "J5_point_release": "TARGET_NOT_ACHIEVED",
+  "owner_release_receipts": null,
+  "authenticated_crew_launch": null,
+  "canonical_root_open": null,
+  "canonical_root_closed": null,
+  "denominators": {
+    "top21": 21,
+    "core": 5,
+    "expand": 7,
+    "support": 9,
+    "ordinary_open_issues": 146,
+    "ordinary_open_prs": 18,
+    "historical_gogreen_overlap": 13
+  },
+  "repositories": [
+    {
+      "rank": 1,
+      "repo": "GBOGEB/ABACUS",
+      "default_branch": "main",
+      "head_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+      "lane": "CORE",
+      "priority": "P0",
+      "ordinary_open_issues": 39,
+      "ordinary_open_prs": 13,
+      "observed_native": {
+        "family": "FIRST_RED",
+        "run_id": 39176606240,
+        "attempt": 1,
+        "job_id": 117821147655,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 2,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "default_branch": "master",
+      "head_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+      "lane": "CORE",
+      "priority": "P0",
+      "ordinary_open_issues": 33,
+      "ordinary_open_prs": 5,
+      "observed_native": {
+        "family": "PARTIAL_NATIVE",
+        "run_id": 39176449686,
+        "attempt": 1,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 3,
+      "repo": "GBOGEB/CODEX",
+      "default_branch": "main",
+      "head_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+      "lane": "CORE",
+      "priority": "P0",
+      "ordinary_open_issues": 11,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "SCOPED_SUCCESS",
+        "run_id": 39179077241,
+        "attempt": 1,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 4,
+      "repo": "GBOGEB/cryoplant-project",
+      "default_branch": "main",
+      "head_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+      "lane": "CORE",
+      "priority": "P0",
+      "ordinary_open_issues": 57,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "FIRST_RED",
+        "run_id": 39174767597,
+        "attempt": 1,
+        "job_id": 117815065198,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 5,
+      "repo": "GBOGEB/gg_MATH",
+      "default_branch": "main",
+      "head_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+      "lane": "CORE",
+      "priority": "P0",
+      "ordinary_open_issues": 1,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "FIRST_RED",
+        "run_id": 39173707688,
+        "attempt": 1,
+        "job_id": 117811925658,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 6,
+      "repo": "GBOGEB/ariana",
+      "default_branch": "main",
+      "head_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+      "lane": "EXPAND",
+      "priority": "P1",
+      "ordinary_open_issues": 0,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "OWNER_B0",
+        "run_id": null,
+        "attempt": null,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 7,
+      "repo": "GBOGEB/GEMINI",
+      "default_branch": "main",
+      "head_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+      "lane": "EXPAND",
+      "priority": "P1",
+      "ordinary_open_issues": 2,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "SCOPED_SUCCESS",
+        "run_id": 36993630580,
+        "attempt": 1,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 8,
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "default_branch": "main",
+      "head_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "lane": "EXPAND",
+      "priority": "P1",
+      "ordinary_open_issues": 1,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "FIRST_RED",
+        "run_id": 38177507900,
+        "attempt": 1,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 9,
+      "repo": "GBOGEB/Q_engineering_tools",
+      "default_branch": "main",
+      "head_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "lane": "EXPAND",
+      "priority": "P1",
+      "ordinary_open_issues": 1,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "SCOPED_SUCCESS",
+        "run_id": 38218875994,
+        "attempt": 1,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 10,
+      "repo": "GBOGEB/cryo_leak_rate_dashboard",
+      "default_branch": "main",
+      "head_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+      "lane": "EXPAND",
+      "priority": "P1",
+      "ordinary_open_issues": 0,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "SCOPED_SUCCESS",
+        "run_id": 38177431172,
+        "attempt": 1,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 11,
+      "repo": "GBOGEB/cryogenic-accelerator-workspace",
+      "default_branch": "main",
+      "head_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+      "lane": "EXPAND",
+      "priority": "P1",
+      "ordinary_open_issues": 0,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "SCOPED_SUCCESS",
+        "run_id": 38177399537,
+        "attempt": 1,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 12,
+      "repo": "GBOGEB/document-organization-system",
+      "default_branch": "main",
+      "head_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+      "lane": "EXPAND",
+      "priority": "P1",
+      "ordinary_open_issues": 1,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "SCOPED_SUCCESS",
+        "run_id": 38218661281,
+        "attempt": 1,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 13,
+      "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+      "default_branch": "master",
+      "head_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+      "lane": "SUPPORT",
+      "priority": "P2",
+      "ordinary_open_issues": 0,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "OWNER_B0",
+        "run_id": null,
+        "attempt": null,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 14,
+      "repo": "GBOGEB/github-mcp-server",
+      "default_branch": "main",
+      "head_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+      "lane": "SUPPORT",
+      "priority": "P1",
+      "ordinary_open_issues": 0,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "QUEUED",
+        "run_id": 39085287468,
+        "attempt": 1,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 15,
+      "repo": "GBOGEB/docker-stacks",
+      "default_branch": "main",
+      "head_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "lane": "SUPPORT",
+      "priority": "P2",
+      "ordinary_open_issues": 0,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "OWNER_B0",
+        "run_id": null,
+        "attempt": null,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 16,
+      "repo": "GBOGEB/yaml-grammar",
+      "default_branch": "master",
+      "head_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "lane": "SUPPORT",
+      "priority": "P2",
+      "ordinary_open_issues": 0,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "OWNER_B0",
+        "run_id": null,
+        "attempt": null,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 17,
+      "repo": "GBOGEB/prettier",
+      "default_branch": "main",
+      "head_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+      "lane": "SUPPORT",
+      "priority": "P2",
+      "ordinary_open_issues": 0,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "OWNER_B0",
+        "run_id": null,
+        "attempt": null,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 18,
+      "repo": "GBOGEB/vscode-powershell",
+      "default_branch": "main",
+      "head_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "lane": "SUPPORT",
+      "priority": "P2",
+      "ordinary_open_issues": 0,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "OWNER_B0",
+        "run_id": null,
+        "attempt": null,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 19,
+      "repo": "GBOGEB/cli",
+      "default_branch": "trunk",
+      "head_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "lane": "SUPPORT",
+      "priority": "P2",
+      "ordinary_open_issues": 0,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "OWNER_B0",
+        "run_id": null,
+        "attempt": null,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 20,
+      "repo": "GBOGEB/python-sdk",
+      "default_branch": "main",
+      "head_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "lane": "SUPPORT",
+      "priority": "P2",
+      "ordinary_open_issues": 0,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "OWNER_B0",
+        "run_id": null,
+        "attempt": null,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    },
+    {
+      "rank": 21,
+      "repo": "GBOGEB/skills",
+      "default_branch": "main",
+      "head_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "lane": "SUPPORT",
+      "priority": "P1",
+      "ordinary_open_issues": 0,
+      "ordinary_open_prs": 0,
+      "observed_native": {
+        "family": "OWNER_B0",
+        "run_id": null,
+        "attempt": null,
+        "job_id": null,
+        "release_gate_qualified": false
+      },
+      "point_release_owner_receipt": null
+    }
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "id": "R01:J0_HEAD",
+        "repo": "GBOGEB/ABACUS",
+        "lane": "CORE",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+        "accepted_release": false
+      },
+      {
+        "id": "R01:J1_OWNER_SPINE",
+        "repo": "GBOGEB/ABACUS",
+        "lane": "CORE",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+        "accepted_release": false
+      },
+      {
+        "id": "R01:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/ABACUS",
+        "lane": "CORE",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+        "accepted_release": false
+      },
+      {
+        "id": "R01:J3_RULES_CANARY",
+        "repo": "GBOGEB/ABACUS",
+        "lane": "CORE",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+        "accepted_release": false
+      },
+      {
+        "id": "R01:J4_REPO_B0",
+        "repo": "GBOGEB/ABACUS",
+        "lane": "CORE",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "FIRST_RED",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+        "accepted_release": false
+      },
+      {
+        "id": "R01:J5_OWNER_TAG",
+        "repo": "GBOGEB/ABACUS",
+        "lane": "CORE",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+        "accepted_release": false
+      },
+      {
+        "id": "R02:J0_HEAD",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "lane": "CORE",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "accepted_release": false
+      },
+      {
+        "id": "R02:J1_OWNER_SPINE",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "lane": "CORE",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "accepted_release": false
+      },
+      {
+        "id": "R02:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "lane": "CORE",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "accepted_release": false
+      },
+      {
+        "id": "R02:J3_RULES_CANARY",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "lane": "CORE",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "accepted_release": false
+      },
+      {
+        "id": "R02:J4_REPO_B0",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "lane": "CORE",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "PARTIAL_NATIVE",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "accepted_release": false
+      },
+      {
+        "id": "R02:J5_OWNER_TAG",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "lane": "CORE",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "accepted_release": false
+      },
+      {
+        "id": "R03:J0_HEAD",
+        "repo": "GBOGEB/CODEX",
+        "lane": "CORE",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+        "accepted_release": false
+      },
+      {
+        "id": "R03:J1_OWNER_SPINE",
+        "repo": "GBOGEB/CODEX",
+        "lane": "CORE",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+        "accepted_release": false
+      },
+      {
+        "id": "R03:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/CODEX",
+        "lane": "CORE",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+        "accepted_release": false
+      },
+      {
+        "id": "R03:J3_RULES_CANARY",
+        "repo": "GBOGEB/CODEX",
+        "lane": "CORE",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+        "accepted_release": false
+      },
+      {
+        "id": "R03:J4_REPO_B0",
+        "repo": "GBOGEB/CODEX",
+        "lane": "CORE",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "SCOPED_SUCCESS",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+        "accepted_release": false
+      },
+      {
+        "id": "R03:J5_OWNER_TAG",
+        "repo": "GBOGEB/CODEX",
+        "lane": "CORE",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+        "accepted_release": false
+      },
+      {
+        "id": "R04:J0_HEAD",
+        "repo": "GBOGEB/cryoplant-project",
+        "lane": "CORE",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "accepted_release": false
+      },
+      {
+        "id": "R04:J1_OWNER_SPINE",
+        "repo": "GBOGEB/cryoplant-project",
+        "lane": "CORE",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "accepted_release": false
+      },
+      {
+        "id": "R04:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/cryoplant-project",
+        "lane": "CORE",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "accepted_release": false
+      },
+      {
+        "id": "R04:J3_RULES_CANARY",
+        "repo": "GBOGEB/cryoplant-project",
+        "lane": "CORE",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "accepted_release": false
+      },
+      {
+        "id": "R04:J4_REPO_B0",
+        "repo": "GBOGEB/cryoplant-project",
+        "lane": "CORE",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "FIRST_RED",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "accepted_release": false
+      },
+      {
+        "id": "R04:J5_OWNER_TAG",
+        "repo": "GBOGEB/cryoplant-project",
+        "lane": "CORE",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "accepted_release": false
+      },
+      {
+        "id": "R05:J0_HEAD",
+        "repo": "GBOGEB/gg_MATH",
+        "lane": "CORE",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "accepted_release": false
+      },
+      {
+        "id": "R05:J1_OWNER_SPINE",
+        "repo": "GBOGEB/gg_MATH",
+        "lane": "CORE",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "accepted_release": false
+      },
+      {
+        "id": "R05:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/gg_MATH",
+        "lane": "CORE",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "accepted_release": false
+      },
+      {
+        "id": "R05:J3_RULES_CANARY",
+        "repo": "GBOGEB/gg_MATH",
+        "lane": "CORE",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "accepted_release": false
+      },
+      {
+        "id": "R05:J4_REPO_B0",
+        "repo": "GBOGEB/gg_MATH",
+        "lane": "CORE",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "FIRST_RED",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "accepted_release": false
+      },
+      {
+        "id": "R05:J5_OWNER_TAG",
+        "repo": "GBOGEB/gg_MATH",
+        "lane": "CORE",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "accepted_release": false
+      },
+      {
+        "id": "R06:J0_HEAD",
+        "repo": "GBOGEB/ariana",
+        "lane": "EXPAND",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "accepted_release": false
+      },
+      {
+        "id": "R06:J1_OWNER_SPINE",
+        "repo": "GBOGEB/ariana",
+        "lane": "EXPAND",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "accepted_release": false
+      },
+      {
+        "id": "R06:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/ariana",
+        "lane": "EXPAND",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "accepted_release": false
+      },
+      {
+        "id": "R06:J3_RULES_CANARY",
+        "repo": "GBOGEB/ariana",
+        "lane": "EXPAND",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "accepted_release": false
+      },
+      {
+        "id": "R06:J4_REPO_B0",
+        "repo": "GBOGEB/ariana",
+        "lane": "EXPAND",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_B0",
+        "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "accepted_release": false
+      },
+      {
+        "id": "R06:J5_OWNER_TAG",
+        "repo": "GBOGEB/ariana",
+        "lane": "EXPAND",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "accepted_release": false
+      },
+      {
+        "id": "R07:J0_HEAD",
+        "repo": "GBOGEB/GEMINI",
+        "lane": "EXPAND",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "accepted_release": false
+      },
+      {
+        "id": "R07:J1_OWNER_SPINE",
+        "repo": "GBOGEB/GEMINI",
+        "lane": "EXPAND",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "accepted_release": false
+      },
+      {
+        "id": "R07:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/GEMINI",
+        "lane": "EXPAND",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "accepted_release": false
+      },
+      {
+        "id": "R07:J3_RULES_CANARY",
+        "repo": "GBOGEB/GEMINI",
+        "lane": "EXPAND",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "accepted_release": false
+      },
+      {
+        "id": "R07:J4_REPO_B0",
+        "repo": "GBOGEB/GEMINI",
+        "lane": "EXPAND",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "SCOPED_SUCCESS",
+        "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "accepted_release": false
+      },
+      {
+        "id": "R07:J5_OWNER_TAG",
+        "repo": "GBOGEB/GEMINI",
+        "lane": "EXPAND",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "accepted_release": false
+      },
+      {
+        "id": "R08:J0_HEAD",
+        "repo": "GBOGEB/DOCX_RTM_Automation",
+        "lane": "EXPAND",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "accepted_release": false
+      },
+      {
+        "id": "R08:J1_OWNER_SPINE",
+        "repo": "GBOGEB/DOCX_RTM_Automation",
+        "lane": "EXPAND",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "accepted_release": false
+      },
+      {
+        "id": "R08:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/DOCX_RTM_Automation",
+        "lane": "EXPAND",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "accepted_release": false
+      },
+      {
+        "id": "R08:J3_RULES_CANARY",
+        "repo": "GBOGEB/DOCX_RTM_Automation",
+        "lane": "EXPAND",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "accepted_release": false
+      },
+      {
+        "id": "R08:J4_REPO_B0",
+        "repo": "GBOGEB/DOCX_RTM_Automation",
+        "lane": "EXPAND",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "FIRST_RED",
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "accepted_release": false
+      },
+      {
+        "id": "R08:J5_OWNER_TAG",
+        "repo": "GBOGEB/DOCX_RTM_Automation",
+        "lane": "EXPAND",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "accepted_release": false
+      },
+      {
+        "id": "R09:J0_HEAD",
+        "repo": "GBOGEB/Q_engineering_tools",
+        "lane": "EXPAND",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "accepted_release": false
+      },
+      {
+        "id": "R09:J1_OWNER_SPINE",
+        "repo": "GBOGEB/Q_engineering_tools",
+        "lane": "EXPAND",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "accepted_release": false
+      },
+      {
+        "id": "R09:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/Q_engineering_tools",
+        "lane": "EXPAND",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "accepted_release": false
+      },
+      {
+        "id": "R09:J3_RULES_CANARY",
+        "repo": "GBOGEB/Q_engineering_tools",
+        "lane": "EXPAND",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "accepted_release": false
+      },
+      {
+        "id": "R09:J4_REPO_B0",
+        "repo": "GBOGEB/Q_engineering_tools",
+        "lane": "EXPAND",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "SCOPED_SUCCESS",
+        "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "accepted_release": false
+      },
+      {
+        "id": "R09:J5_OWNER_TAG",
+        "repo": "GBOGEB/Q_engineering_tools",
+        "lane": "EXPAND",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "accepted_release": false
+      },
+      {
+        "id": "R10:J0_HEAD",
+        "repo": "GBOGEB/cryo_leak_rate_dashboard",
+        "lane": "EXPAND",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "accepted_release": false
+      },
+      {
+        "id": "R10:J1_OWNER_SPINE",
+        "repo": "GBOGEB/cryo_leak_rate_dashboard",
+        "lane": "EXPAND",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "accepted_release": false
+      },
+      {
+        "id": "R10:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/cryo_leak_rate_dashboard",
+        "lane": "EXPAND",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "accepted_release": false
+      },
+      {
+        "id": "R10:J3_RULES_CANARY",
+        "repo": "GBOGEB/cryo_leak_rate_dashboard",
+        "lane": "EXPAND",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "accepted_release": false
+      },
+      {
+        "id": "R10:J4_REPO_B0",
+        "repo": "GBOGEB/cryo_leak_rate_dashboard",
+        "lane": "EXPAND",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "SCOPED_SUCCESS",
+        "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "accepted_release": false
+      },
+      {
+        "id": "R10:J5_OWNER_TAG",
+        "repo": "GBOGEB/cryo_leak_rate_dashboard",
+        "lane": "EXPAND",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "accepted_release": false
+      },
+      {
+        "id": "R11:J0_HEAD",
+        "repo": "GBOGEB/cryogenic-accelerator-workspace",
+        "lane": "EXPAND",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "accepted_release": false
+      },
+      {
+        "id": "R11:J1_OWNER_SPINE",
+        "repo": "GBOGEB/cryogenic-accelerator-workspace",
+        "lane": "EXPAND",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "accepted_release": false
+      },
+      {
+        "id": "R11:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/cryogenic-accelerator-workspace",
+        "lane": "EXPAND",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "accepted_release": false
+      },
+      {
+        "id": "R11:J3_RULES_CANARY",
+        "repo": "GBOGEB/cryogenic-accelerator-workspace",
+        "lane": "EXPAND",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "accepted_release": false
+      },
+      {
+        "id": "R11:J4_REPO_B0",
+        "repo": "GBOGEB/cryogenic-accelerator-workspace",
+        "lane": "EXPAND",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "SCOPED_SUCCESS",
+        "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "accepted_release": false
+      },
+      {
+        "id": "R11:J5_OWNER_TAG",
+        "repo": "GBOGEB/cryogenic-accelerator-workspace",
+        "lane": "EXPAND",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "accepted_release": false
+      },
+      {
+        "id": "R12:J0_HEAD",
+        "repo": "GBOGEB/document-organization-system",
+        "lane": "EXPAND",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "accepted_release": false
+      },
+      {
+        "id": "R12:J1_OWNER_SPINE",
+        "repo": "GBOGEB/document-organization-system",
+        "lane": "EXPAND",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "accepted_release": false
+      },
+      {
+        "id": "R12:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/document-organization-system",
+        "lane": "EXPAND",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "accepted_release": false
+      },
+      {
+        "id": "R12:J3_RULES_CANARY",
+        "repo": "GBOGEB/document-organization-system",
+        "lane": "EXPAND",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "accepted_release": false
+      },
+      {
+        "id": "R12:J4_REPO_B0",
+        "repo": "GBOGEB/document-organization-system",
+        "lane": "EXPAND",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "SCOPED_SUCCESS",
+        "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "accepted_release": false
+      },
+      {
+        "id": "R12:J5_OWNER_TAG",
+        "repo": "GBOGEB/document-organization-system",
+        "lane": "EXPAND",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "accepted_release": false
+      },
+      {
+        "id": "R13:J0_HEAD",
+        "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+        "lane": "SUPPORT",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "accepted_release": false
+      },
+      {
+        "id": "R13:J1_OWNER_SPINE",
+        "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+        "lane": "SUPPORT",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "accepted_release": false
+      },
+      {
+        "id": "R13:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+        "lane": "SUPPORT",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "accepted_release": false
+      },
+      {
+        "id": "R13:J3_RULES_CANARY",
+        "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+        "lane": "SUPPORT",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "accepted_release": false
+      },
+      {
+        "id": "R13:J4_REPO_B0",
+        "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+        "lane": "SUPPORT",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_B0",
+        "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "accepted_release": false
+      },
+      {
+        "id": "R13:J5_OWNER_TAG",
+        "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+        "lane": "SUPPORT",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "accepted_release": false
+      },
+      {
+        "id": "R14:J0_HEAD",
+        "repo": "GBOGEB/github-mcp-server",
+        "lane": "SUPPORT",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "accepted_release": false
+      },
+      {
+        "id": "R14:J1_OWNER_SPINE",
+        "repo": "GBOGEB/github-mcp-server",
+        "lane": "SUPPORT",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "accepted_release": false
+      },
+      {
+        "id": "R14:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/github-mcp-server",
+        "lane": "SUPPORT",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "accepted_release": false
+      },
+      {
+        "id": "R14:J3_RULES_CANARY",
+        "repo": "GBOGEB/github-mcp-server",
+        "lane": "SUPPORT",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "accepted_release": false
+      },
+      {
+        "id": "R14:J4_REPO_B0",
+        "repo": "GBOGEB/github-mcp-server",
+        "lane": "SUPPORT",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "QUEUED",
+        "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "accepted_release": false
+      },
+      {
+        "id": "R14:J5_OWNER_TAG",
+        "repo": "GBOGEB/github-mcp-server",
+        "lane": "SUPPORT",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "accepted_release": false
+      },
+      {
+        "id": "R15:J0_HEAD",
+        "repo": "GBOGEB/docker-stacks",
+        "lane": "SUPPORT",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "accepted_release": false
+      },
+      {
+        "id": "R15:J1_OWNER_SPINE",
+        "repo": "GBOGEB/docker-stacks",
+        "lane": "SUPPORT",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "accepted_release": false
+      },
+      {
+        "id": "R15:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/docker-stacks",
+        "lane": "SUPPORT",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "accepted_release": false
+      },
+      {
+        "id": "R15:J3_RULES_CANARY",
+        "repo": "GBOGEB/docker-stacks",
+        "lane": "SUPPORT",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "accepted_release": false
+      },
+      {
+        "id": "R15:J4_REPO_B0",
+        "repo": "GBOGEB/docker-stacks",
+        "lane": "SUPPORT",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_B0",
+        "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "accepted_release": false
+      },
+      {
+        "id": "R15:J5_OWNER_TAG",
+        "repo": "GBOGEB/docker-stacks",
+        "lane": "SUPPORT",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "accepted_release": false
+      },
+      {
+        "id": "R16:J0_HEAD",
+        "repo": "GBOGEB/yaml-grammar",
+        "lane": "SUPPORT",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "accepted_release": false
+      },
+      {
+        "id": "R16:J1_OWNER_SPINE",
+        "repo": "GBOGEB/yaml-grammar",
+        "lane": "SUPPORT",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "accepted_release": false
+      },
+      {
+        "id": "R16:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/yaml-grammar",
+        "lane": "SUPPORT",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "accepted_release": false
+      },
+      {
+        "id": "R16:J3_RULES_CANARY",
+        "repo": "GBOGEB/yaml-grammar",
+        "lane": "SUPPORT",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "accepted_release": false
+      },
+      {
+        "id": "R16:J4_REPO_B0",
+        "repo": "GBOGEB/yaml-grammar",
+        "lane": "SUPPORT",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_B0",
+        "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "accepted_release": false
+      },
+      {
+        "id": "R16:J5_OWNER_TAG",
+        "repo": "GBOGEB/yaml-grammar",
+        "lane": "SUPPORT",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "accepted_release": false
+      },
+      {
+        "id": "R17:J0_HEAD",
+        "repo": "GBOGEB/prettier",
+        "lane": "SUPPORT",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "accepted_release": false
+      },
+      {
+        "id": "R17:J1_OWNER_SPINE",
+        "repo": "GBOGEB/prettier",
+        "lane": "SUPPORT",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "accepted_release": false
+      },
+      {
+        "id": "R17:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/prettier",
+        "lane": "SUPPORT",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "accepted_release": false
+      },
+      {
+        "id": "R17:J3_RULES_CANARY",
+        "repo": "GBOGEB/prettier",
+        "lane": "SUPPORT",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "accepted_release": false
+      },
+      {
+        "id": "R17:J4_REPO_B0",
+        "repo": "GBOGEB/prettier",
+        "lane": "SUPPORT",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_B0",
+        "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "accepted_release": false
+      },
+      {
+        "id": "R17:J5_OWNER_TAG",
+        "repo": "GBOGEB/prettier",
+        "lane": "SUPPORT",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "accepted_release": false
+      },
+      {
+        "id": "R18:J0_HEAD",
+        "repo": "GBOGEB/vscode-powershell",
+        "lane": "SUPPORT",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "accepted_release": false
+      },
+      {
+        "id": "R18:J1_OWNER_SPINE",
+        "repo": "GBOGEB/vscode-powershell",
+        "lane": "SUPPORT",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "accepted_release": false
+      },
+      {
+        "id": "R18:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/vscode-powershell",
+        "lane": "SUPPORT",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "accepted_release": false
+      },
+      {
+        "id": "R18:J3_RULES_CANARY",
+        "repo": "GBOGEB/vscode-powershell",
+        "lane": "SUPPORT",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "accepted_release": false
+      },
+      {
+        "id": "R18:J4_REPO_B0",
+        "repo": "GBOGEB/vscode-powershell",
+        "lane": "SUPPORT",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_B0",
+        "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "accepted_release": false
+      },
+      {
+        "id": "R18:J5_OWNER_TAG",
+        "repo": "GBOGEB/vscode-powershell",
+        "lane": "SUPPORT",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "accepted_release": false
+      },
+      {
+        "id": "R19:J0_HEAD",
+        "repo": "GBOGEB/cli",
+        "lane": "SUPPORT",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "accepted_release": false
+      },
+      {
+        "id": "R19:J1_OWNER_SPINE",
+        "repo": "GBOGEB/cli",
+        "lane": "SUPPORT",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "accepted_release": false
+      },
+      {
+        "id": "R19:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/cli",
+        "lane": "SUPPORT",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "accepted_release": false
+      },
+      {
+        "id": "R19:J3_RULES_CANARY",
+        "repo": "GBOGEB/cli",
+        "lane": "SUPPORT",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "accepted_release": false
+      },
+      {
+        "id": "R19:J4_REPO_B0",
+        "repo": "GBOGEB/cli",
+        "lane": "SUPPORT",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_B0",
+        "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "accepted_release": false
+      },
+      {
+        "id": "R19:J5_OWNER_TAG",
+        "repo": "GBOGEB/cli",
+        "lane": "SUPPORT",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "accepted_release": false
+      },
+      {
+        "id": "R20:J0_HEAD",
+        "repo": "GBOGEB/python-sdk",
+        "lane": "SUPPORT",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "accepted_release": false
+      },
+      {
+        "id": "R20:J1_OWNER_SPINE",
+        "repo": "GBOGEB/python-sdk",
+        "lane": "SUPPORT",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "accepted_release": false
+      },
+      {
+        "id": "R20:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/python-sdk",
+        "lane": "SUPPORT",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "accepted_release": false
+      },
+      {
+        "id": "R20:J3_RULES_CANARY",
+        "repo": "GBOGEB/python-sdk",
+        "lane": "SUPPORT",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "accepted_release": false
+      },
+      {
+        "id": "R20:J4_REPO_B0",
+        "repo": "GBOGEB/python-sdk",
+        "lane": "SUPPORT",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_B0",
+        "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "accepted_release": false
+      },
+      {
+        "id": "R20:J5_OWNER_TAG",
+        "repo": "GBOGEB/python-sdk",
+        "lane": "SUPPORT",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "accepted_release": false
+      },
+      {
+        "id": "R21:J0_HEAD",
+        "repo": "GBOGEB/skills",
+        "lane": "SUPPORT",
+        "layer": 0,
+        "kind": "GATE_NEURON",
+        "state": "HEAD_OBSERVED",
+        "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "accepted_release": false
+      },
+      {
+        "id": "R21:J1_OWNER_SPINE",
+        "repo": "GBOGEB/skills",
+        "lane": "SUPPORT",
+        "layer": 1,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "accepted_release": false
+      },
+      {
+        "id": "R21:J2_PAGES_OR_NA",
+        "repo": "GBOGEB/skills",
+        "lane": "SUPPORT",
+        "layer": 2,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "accepted_release": false
+      },
+      {
+        "id": "R21:J3_RULES_CANARY",
+        "repo": "GBOGEB/skills",
+        "lane": "SUPPORT",
+        "layer": 3,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_PROOF_PENDING",
+        "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "accepted_release": false
+      },
+      {
+        "id": "R21:J4_REPO_B0",
+        "repo": "GBOGEB/skills",
+        "lane": "SUPPORT",
+        "layer": 4,
+        "kind": "GATE_NEURON",
+        "state": "OWNER_B0",
+        "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "accepted_release": false
+      },
+      {
+        "id": "R21:J5_OWNER_TAG",
+        "repo": "GBOGEB/skills",
+        "lane": "SUPPORT",
+        "layer": 5,
+        "kind": "GATE_NEURON",
+        "state": "HOLD_RELEASE",
+        "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "accepted_release": false
+      }
+    ],
+    "edges": [
+      {
+        "from": "R01:J0_HEAD",
+        "to": "R01:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R01:J1_OWNER_SPINE",
+        "to": "R01:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R01:J1_OWNER_SPINE",
+        "to": "R01:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R01:J2_PAGES_OR_NA",
+        "to": "R01:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R01:J3_RULES_CANARY",
+        "to": "R01:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R01:J4_REPO_B0",
+        "to": "R01:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R01:GOLD:ISSUE_REGISTER",
+        "to": "R01:GOLD:FIRST_RED",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R01:GOLD:FIRST_RED",
+        "to": "R01:GOLD:OWNER_LEASE",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R01:GOLD:OWNER_LEASE",
+        "to": "R01:GOLD:SOURCE_PR",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R01:GOLD:SOURCE_PR",
+        "to": "R01:GOLD:NATIVE_SHA_JOB",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R01:GOLD:NATIVE_SHA_JOB",
+        "to": "R01:GOLD:ELIGIBLE_REVIEW",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R01:GOLD:ELIGIBLE_REVIEW",
+        "to": "R01:GOLD:POSTMERGE_MAIN",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R01:GOLD:POSTMERGE_MAIN",
+        "to": "R01:GOLD:RELEASE_TAG",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:J0_HEAD",
+        "to": "R02:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:J1_OWNER_SPINE",
+        "to": "R02:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:J1_OWNER_SPINE",
+        "to": "R02:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:J2_PAGES_OR_NA",
+        "to": "R02:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:J3_RULES_CANARY",
+        "to": "R02:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:J4_REPO_B0",
+        "to": "R02:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:GOLD:ISSUE_REGISTER",
+        "to": "R02:GOLD:FIRST_RED",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:GOLD:FIRST_RED",
+        "to": "R02:GOLD:OWNER_LEASE",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:GOLD:OWNER_LEASE",
+        "to": "R02:GOLD:SOURCE_PR",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:GOLD:SOURCE_PR",
+        "to": "R02:GOLD:NATIVE_SHA_JOB",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:GOLD:NATIVE_SHA_JOB",
+        "to": "R02:GOLD:ELIGIBLE_REVIEW",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:GOLD:ELIGIBLE_REVIEW",
+        "to": "R02:GOLD:POSTMERGE_MAIN",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R02:GOLD:POSTMERGE_MAIN",
+        "to": "R02:GOLD:RELEASE_TAG",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:J0_HEAD",
+        "to": "R03:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:J1_OWNER_SPINE",
+        "to": "R03:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:J1_OWNER_SPINE",
+        "to": "R03:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:J2_PAGES_OR_NA",
+        "to": "R03:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:J3_RULES_CANARY",
+        "to": "R03:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:J4_REPO_B0",
+        "to": "R03:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:GOLD:ISSUE_REGISTER",
+        "to": "R03:GOLD:FIRST_RED",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:GOLD:FIRST_RED",
+        "to": "R03:GOLD:OWNER_LEASE",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:GOLD:OWNER_LEASE",
+        "to": "R03:GOLD:SOURCE_PR",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:GOLD:SOURCE_PR",
+        "to": "R03:GOLD:NATIVE_SHA_JOB",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:GOLD:NATIVE_SHA_JOB",
+        "to": "R03:GOLD:ELIGIBLE_REVIEW",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:GOLD:ELIGIBLE_REVIEW",
+        "to": "R03:GOLD:POSTMERGE_MAIN",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R03:GOLD:POSTMERGE_MAIN",
+        "to": "R03:GOLD:RELEASE_TAG",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:J0_HEAD",
+        "to": "R04:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:J1_OWNER_SPINE",
+        "to": "R04:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:J1_OWNER_SPINE",
+        "to": "R04:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:J2_PAGES_OR_NA",
+        "to": "R04:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:J3_RULES_CANARY",
+        "to": "R04:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:J4_REPO_B0",
+        "to": "R04:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:GOLD:ISSUE_REGISTER",
+        "to": "R04:GOLD:FIRST_RED",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:GOLD:FIRST_RED",
+        "to": "R04:GOLD:OWNER_LEASE",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:GOLD:OWNER_LEASE",
+        "to": "R04:GOLD:SOURCE_PR",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:GOLD:SOURCE_PR",
+        "to": "R04:GOLD:NATIVE_SHA_JOB",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:GOLD:NATIVE_SHA_JOB",
+        "to": "R04:GOLD:ELIGIBLE_REVIEW",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:GOLD:ELIGIBLE_REVIEW",
+        "to": "R04:GOLD:POSTMERGE_MAIN",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R04:GOLD:POSTMERGE_MAIN",
+        "to": "R04:GOLD:RELEASE_TAG",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:J0_HEAD",
+        "to": "R05:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:J1_OWNER_SPINE",
+        "to": "R05:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:J1_OWNER_SPINE",
+        "to": "R05:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:J2_PAGES_OR_NA",
+        "to": "R05:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:J3_RULES_CANARY",
+        "to": "R05:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:J4_REPO_B0",
+        "to": "R05:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:GOLD:ISSUE_REGISTER",
+        "to": "R05:GOLD:FIRST_RED",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:GOLD:FIRST_RED",
+        "to": "R05:GOLD:OWNER_LEASE",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:GOLD:OWNER_LEASE",
+        "to": "R05:GOLD:SOURCE_PR",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:GOLD:SOURCE_PR",
+        "to": "R05:GOLD:NATIVE_SHA_JOB",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:GOLD:NATIVE_SHA_JOB",
+        "to": "R05:GOLD:ELIGIBLE_REVIEW",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:GOLD:ELIGIBLE_REVIEW",
+        "to": "R05:GOLD:POSTMERGE_MAIN",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R05:GOLD:POSTMERGE_MAIN",
+        "to": "R05:GOLD:RELEASE_TAG",
+        "type": "GOLDEN_THREAD",
+        "verified": false,
+        "weight": null,
+        "causal_root_closure": false
+      },
+      {
+        "from": "R06:J0_HEAD",
+        "to": "R06:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R06:J1_OWNER_SPINE",
+        "to": "R06:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R06:J1_OWNER_SPINE",
+        "to": "R06:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R06:J2_PAGES_OR_NA",
+        "to": "R06:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R06:J3_RULES_CANARY",
+        "to": "R06:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R06:J4_REPO_B0",
+        "to": "R06:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R07:J0_HEAD",
+        "to": "R07:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R07:J1_OWNER_SPINE",
+        "to": "R07:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R07:J1_OWNER_SPINE",
+        "to": "R07:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R07:J2_PAGES_OR_NA",
+        "to": "R07:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R07:J3_RULES_CANARY",
+        "to": "R07:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R07:J4_REPO_B0",
+        "to": "R07:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R08:J0_HEAD",
+        "to": "R08:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R08:J1_OWNER_SPINE",
+        "to": "R08:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R08:J1_OWNER_SPINE",
+        "to": "R08:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R08:J2_PAGES_OR_NA",
+        "to": "R08:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R08:J3_RULES_CANARY",
+        "to": "R08:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R08:J4_REPO_B0",
+        "to": "R08:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R09:J0_HEAD",
+        "to": "R09:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R09:J1_OWNER_SPINE",
+        "to": "R09:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R09:J1_OWNER_SPINE",
+        "to": "R09:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R09:J2_PAGES_OR_NA",
+        "to": "R09:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R09:J3_RULES_CANARY",
+        "to": "R09:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R09:J4_REPO_B0",
+        "to": "R09:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R10:J0_HEAD",
+        "to": "R10:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R10:J1_OWNER_SPINE",
+        "to": "R10:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R10:J1_OWNER_SPINE",
+        "to": "R10:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R10:J2_PAGES_OR_NA",
+        "to": "R10:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R10:J3_RULES_CANARY",
+        "to": "R10:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R10:J4_REPO_B0",
+        "to": "R10:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R11:J0_HEAD",
+        "to": "R11:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R11:J1_OWNER_SPINE",
+        "to": "R11:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R11:J1_OWNER_SPINE",
+        "to": "R11:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R11:J2_PAGES_OR_NA",
+        "to": "R11:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R11:J3_RULES_CANARY",
+        "to": "R11:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R11:J4_REPO_B0",
+        "to": "R11:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R12:J0_HEAD",
+        "to": "R12:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R12:J1_OWNER_SPINE",
+        "to": "R12:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R12:J1_OWNER_SPINE",
+        "to": "R12:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R12:J2_PAGES_OR_NA",
+        "to": "R12:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R12:J3_RULES_CANARY",
+        "to": "R12:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R12:J4_REPO_B0",
+        "to": "R12:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R13:J0_HEAD",
+        "to": "R13:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R13:J1_OWNER_SPINE",
+        "to": "R13:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R13:J1_OWNER_SPINE",
+        "to": "R13:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R13:J2_PAGES_OR_NA",
+        "to": "R13:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R13:J3_RULES_CANARY",
+        "to": "R13:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R13:J4_REPO_B0",
+        "to": "R13:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R14:J0_HEAD",
+        "to": "R14:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R14:J1_OWNER_SPINE",
+        "to": "R14:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R14:J1_OWNER_SPINE",
+        "to": "R14:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R14:J2_PAGES_OR_NA",
+        "to": "R14:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R14:J3_RULES_CANARY",
+        "to": "R14:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R14:J4_REPO_B0",
+        "to": "R14:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R15:J0_HEAD",
+        "to": "R15:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R15:J1_OWNER_SPINE",
+        "to": "R15:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R15:J1_OWNER_SPINE",
+        "to": "R15:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R15:J2_PAGES_OR_NA",
+        "to": "R15:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R15:J3_RULES_CANARY",
+        "to": "R15:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R15:J4_REPO_B0",
+        "to": "R15:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R16:J0_HEAD",
+        "to": "R16:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R16:J1_OWNER_SPINE",
+        "to": "R16:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R16:J1_OWNER_SPINE",
+        "to": "R16:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R16:J2_PAGES_OR_NA",
+        "to": "R16:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R16:J3_RULES_CANARY",
+        "to": "R16:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R16:J4_REPO_B0",
+        "to": "R16:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R17:J0_HEAD",
+        "to": "R17:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R17:J1_OWNER_SPINE",
+        "to": "R17:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R17:J1_OWNER_SPINE",
+        "to": "R17:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R17:J2_PAGES_OR_NA",
+        "to": "R17:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R17:J3_RULES_CANARY",
+        "to": "R17:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R17:J4_REPO_B0",
+        "to": "R17:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R18:J0_HEAD",
+        "to": "R18:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R18:J1_OWNER_SPINE",
+        "to": "R18:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R18:J1_OWNER_SPINE",
+        "to": "R18:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R18:J2_PAGES_OR_NA",
+        "to": "R18:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R18:J3_RULES_CANARY",
+        "to": "R18:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R18:J4_REPO_B0",
+        "to": "R18:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R19:J0_HEAD",
+        "to": "R19:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R19:J1_OWNER_SPINE",
+        "to": "R19:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R19:J1_OWNER_SPINE",
+        "to": "R19:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R19:J2_PAGES_OR_NA",
+        "to": "R19:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R19:J3_RULES_CANARY",
+        "to": "R19:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R19:J4_REPO_B0",
+        "to": "R19:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R20:J0_HEAD",
+        "to": "R20:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R20:J1_OWNER_SPINE",
+        "to": "R20:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R20:J1_OWNER_SPINE",
+        "to": "R20:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R20:J2_PAGES_OR_NA",
+        "to": "R20:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R20:J3_RULES_CANARY",
+        "to": "R20:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R20:J4_REPO_B0",
+        "to": "R20:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R21:J0_HEAD",
+        "to": "R21:J1_OWNER_SPINE",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": true,
+        "weight": null,
+        "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R21:J1_OWNER_SPINE",
+        "to": "R21:J2_PAGES_OR_NA",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R21:J1_OWNER_SPINE",
+        "to": "R21:J3_RULES_CANARY",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R21:J2_PAGES_OR_NA",
+        "to": "R21:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R21:J3_RULES_CANARY",
+        "to": "R21:J4_REPO_B0",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "causal_root_closure": false
+      },
+      {
+        "from": "R21:J4_REPO_B0",
+        "to": "R21:J5_OWNER_TAG",
+        "type": "DEPENDENCY_SYNAPSE",
+        "verified": false,
+        "weight": null,
+        "source_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "causal_root_closure": false
+      }
+    ],
+    "golden_atoms": [
+      {
+        "id": "R01:GOLD:ISSUE_REGISTER",
+        "repo": "GBOGEB/ABACUS",
+        "kind": "EVIDENCE_ATOM",
+        "state": "REGISTER_IDENTIFIED",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675"
+      },
+      {
+        "id": "R01:GOLD:FIRST_RED",
+        "repo": "GBOGEB/ABACUS",
+        "kind": "EVIDENCE_ATOM",
+        "state": "FIRST_RED_VERIFIED",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675"
+      },
+      {
+        "id": "R01:GOLD:OWNER_LEASE",
+        "repo": "GBOGEB/ABACUS",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675"
+      },
+      {
+        "id": "R01:GOLD:SOURCE_PR",
+        "repo": "GBOGEB/ABACUS",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675"
+      },
+      {
+        "id": "R01:GOLD:NATIVE_SHA_JOB",
+        "repo": "GBOGEB/ABACUS",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675"
+      },
+      {
+        "id": "R01:GOLD:ELIGIBLE_REVIEW",
+        "repo": "GBOGEB/ABACUS",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675"
+      },
+      {
+        "id": "R01:GOLD:POSTMERGE_MAIN",
+        "repo": "GBOGEB/ABACUS",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675"
+      },
+      {
+        "id": "R01:GOLD:RELEASE_TAG",
+        "repo": "GBOGEB/ABACUS",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "c728c8a50dbbfa11ff7f3b27db18ded0a25a5675"
+      },
+      {
+        "id": "R02:GOLD:ISSUE_REGISTER",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "kind": "EVIDENCE_ATOM",
+        "state": "REGISTER_IDENTIFIED",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198"
+      },
+      {
+        "id": "R02:GOLD:FIRST_RED",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198"
+      },
+      {
+        "id": "R02:GOLD:OWNER_LEASE",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198"
+      },
+      {
+        "id": "R02:GOLD:SOURCE_PR",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198"
+      },
+      {
+        "id": "R02:GOLD:NATIVE_SHA_JOB",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198"
+      },
+      {
+        "id": "R02:GOLD:ELIGIBLE_REVIEW",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198"
+      },
+      {
+        "id": "R02:GOLD:POSTMERGE_MAIN",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198"
+      },
+      {
+        "id": "R02:GOLD:RELEASE_TAG",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198"
+      },
+      {
+        "id": "R03:GOLD:ISSUE_REGISTER",
+        "repo": "GBOGEB/CODEX",
+        "kind": "EVIDENCE_ATOM",
+        "state": "REGISTER_IDENTIFIED",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5"
+      },
+      {
+        "id": "R03:GOLD:FIRST_RED",
+        "repo": "GBOGEB/CODEX",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5"
+      },
+      {
+        "id": "R03:GOLD:OWNER_LEASE",
+        "repo": "GBOGEB/CODEX",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5"
+      },
+      {
+        "id": "R03:GOLD:SOURCE_PR",
+        "repo": "GBOGEB/CODEX",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5"
+      },
+      {
+        "id": "R03:GOLD:NATIVE_SHA_JOB",
+        "repo": "GBOGEB/CODEX",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5"
+      },
+      {
+        "id": "R03:GOLD:ELIGIBLE_REVIEW",
+        "repo": "GBOGEB/CODEX",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5"
+      },
+      {
+        "id": "R03:GOLD:POSTMERGE_MAIN",
+        "repo": "GBOGEB/CODEX",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5"
+      },
+      {
+        "id": "R03:GOLD:RELEASE_TAG",
+        "repo": "GBOGEB/CODEX",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5"
+      },
+      {
+        "id": "R04:GOLD:ISSUE_REGISTER",
+        "repo": "GBOGEB/cryoplant-project",
+        "kind": "EVIDENCE_ATOM",
+        "state": "REGISTER_IDENTIFIED",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558"
+      },
+      {
+        "id": "R04:GOLD:FIRST_RED",
+        "repo": "GBOGEB/cryoplant-project",
+        "kind": "EVIDENCE_ATOM",
+        "state": "FIRST_RED_VERIFIED",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558"
+      },
+      {
+        "id": "R04:GOLD:OWNER_LEASE",
+        "repo": "GBOGEB/cryoplant-project",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558"
+      },
+      {
+        "id": "R04:GOLD:SOURCE_PR",
+        "repo": "GBOGEB/cryoplant-project",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558"
+      },
+      {
+        "id": "R04:GOLD:NATIVE_SHA_JOB",
+        "repo": "GBOGEB/cryoplant-project",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558"
+      },
+      {
+        "id": "R04:GOLD:ELIGIBLE_REVIEW",
+        "repo": "GBOGEB/cryoplant-project",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558"
+      },
+      {
+        "id": "R04:GOLD:POSTMERGE_MAIN",
+        "repo": "GBOGEB/cryoplant-project",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558"
+      },
+      {
+        "id": "R04:GOLD:RELEASE_TAG",
+        "repo": "GBOGEB/cryoplant-project",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "1072a6ed78245b956951684c0b716a98924b3558"
+      },
+      {
+        "id": "R05:GOLD:ISSUE_REGISTER",
+        "repo": "GBOGEB/gg_MATH",
+        "kind": "EVIDENCE_ATOM",
+        "state": "REGISTER_IDENTIFIED",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb"
+      },
+      {
+        "id": "R05:GOLD:FIRST_RED",
+        "repo": "GBOGEB/gg_MATH",
+        "kind": "EVIDENCE_ATOM",
+        "state": "FIRST_RED_VERIFIED",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb"
+      },
+      {
+        "id": "R05:GOLD:OWNER_LEASE",
+        "repo": "GBOGEB/gg_MATH",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb"
+      },
+      {
+        "id": "R05:GOLD:SOURCE_PR",
+        "repo": "GBOGEB/gg_MATH",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb"
+      },
+      {
+        "id": "R05:GOLD:NATIVE_SHA_JOB",
+        "repo": "GBOGEB/gg_MATH",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb"
+      },
+      {
+        "id": "R05:GOLD:ELIGIBLE_REVIEW",
+        "repo": "GBOGEB/gg_MATH",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb"
+      },
+      {
+        "id": "R05:GOLD:POSTMERGE_MAIN",
+        "repo": "GBOGEB/gg_MATH",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb"
+      },
+      {
+        "id": "R05:GOLD:RELEASE_TAG",
+        "repo": "GBOGEB/gg_MATH",
+        "kind": "EVIDENCE_ATOM",
+        "state": "NOT_ADMITTED",
+        "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb"
+      }
+    ]
+  },
+  "semantic_rules": {
+    "verified_edge_weight": null,
+    "causal_direction_only_if_owner_qualified": true,
+    "ordinary_issue_close_not_root_close": true,
+    "no_release_from_pages_or_dashboard": true
+  }
+}
