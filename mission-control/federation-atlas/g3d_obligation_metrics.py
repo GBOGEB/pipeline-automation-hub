@@ -113,6 +113,115 @@ def validate(snapshot: dict) -> dict:
     return snapshot
 
 
+
+def summarize_live_epoch(e: dict, fixed: dict) -> dict:
+    """Separate fixed-cohort history, new arrivals and PR-head native proof.
+
+    This is a frozen observation, not a live API claim. The external GitHub
+    source/main must be re-read before any current-main admission assertion.
+    """
+    need(isinstance(e, dict) and
+         e.get("schema") == "missioncontrol.code_purple.g3f_live_source_epoch.v1",
+         "live-epoch schema")
+    need(e.get("evidence_class") ==
+         "EXACT_SOURCE_AUDIT_PLUS_NATIVE_PR_GOVERNANCE", "source class")
+    need(e.get("merge_admission") == "HOLD" and
+         e.get("authority_transfer") is False and
+         e.get("security_waiver") is False and
+         e.get("accepted_root_closures") == 0, "authority custody")
+    need(all(e.get(x) is None for x in (
+        "fresh_authenticated_breadth", "source_matched_new_coverage",
+        "actual_human_worker_hours", "runner_slots")),
+        "unknown cannot be interpreted as zero")
+    h, before, repaired, main = (
+        e["historical_fixed"], e["pre_repair"],
+        e["repair_head"], e["main_source_at_observation"])
+    for row in (h, before, repaired, main):
+        need(SHA.fullmatch(row.get("source_sha", "")), "live SHA")
+        den, got = row.get("workflow_total"), row.get("classified")
+        need(type(den) is int and den > 0 and
+             type(got) is int and 0 <= got <= den,
+             "live cohort denominator and classified numerator")
+    need(h["workflow_total"] == fixed["workflow_denominator"] and
+         h["source_sha"] == fixed["source_sha"] and
+         h["classified"] == fixed["classified"], "frozen cohort lineage")
+    need(before["workflow_total"] == repaired["workflow_total"] ==
+         main["workflow_total"], "matched 209-denominator wave")
+    need(main["classified"] == repaired["classified"] and
+         repaired["classified"] >= before["classified"],
+         "candidate/main source count regression")
+    arrivals = e["arrivals_since_fixed"]
+    retired = e["retired_since_fixed"]
+    need(isinstance(arrivals, list) and isinstance(retired, list) and
+         len(arrivals) == len(set(arrivals)) and
+         len(retired) == len(set(retired)) and
+         not (set(arrivals) & set(retired)) and
+         all(isinstance(name, str) and name.endswith(".yml")
+             for name in arrivals + retired), "unique workflow identities")
+    need(h["workflow_total"] + len(arrivals) - len(retired) ==
+         main["workflow_total"], "workflow inflow/outflow conservation")
+    resolved = repaired["newly_classified"]
+    need(isinstance(resolved, list) and
+         len(resolved) == len(set(resolved)) and
+         set(resolved) <= set(arrivals) and
+         len(resolved) == repaired["classified"] - before["classified"],
+         "newly classified source members")
+    native = repaired["native_governance"]
+    need(native["conclusion"] == "success" and
+         all(type(native[x]) is int and native[x] > 0
+             for x in ("run_id", "run_attempt", "job_id")),
+         "terminal native source identity")
+    need(native["unit_tests_run"] == native["unit_tests_passed"] and
+         native["unit_tests_failed"] == 0 and
+         native["unit_tests_skipped"] == 0 and
+         native["extra_tests_run"] == native["extra_tests_passed"] and
+         native["report_check"] == "PASS",
+         "native test denominator/report parity")
+    need(main.get("native_main_run_id") is None, "no main CI credit")
+    need(all(SHA.fullmatch(main[x]) for x in
+             ("policy_blob_sha", "report_blob_sha")), "main binary blob identity")
+    protection = e["effective_governance_at_observation"]
+    need(protection["required_approving_reviews"] == 0 and
+         protection["required_status_rules"] == 0 and
+         protection["require_last_push_approval"] is False and
+         protection["required_review_thread_resolution"] is False,
+         "do not forge effective review protection")
+    return {
+        "observed_at_utc": e["observed_at_utc"],
+        "evidence_class": e["evidence_class"],
+        "historical_cohort_total": h["workflow_total"],
+        "new_arrivals": len(arrivals), "retirements": len(retired),
+        "pre_repair": {
+            "source_sha": before["source_sha"],
+            "classified": before["classified"],
+            "total": before["workflow_total"],
+            "unclassified": before["workflow_total"]-before["classified"]},
+        "repair_head": {
+            "source_sha": repaired["source_sha"],
+            "classified": repaired["classified"],
+            "total": repaired["workflow_total"],
+            "unclassified": repaired["workflow_total"]-repaired["classified"],
+            "native_governance_run": native["run_id"],
+            "native_job": native["job_id"],
+            "native_run_attempt": native["run_attempt"],
+            "unit_tests_passed": native["unit_tests_passed"],
+            "extra_tests_passed": native["extra_tests_passed"],
+            "scope": "PR_HEAD_EXACT_SHA_ONLY",
+            "technical_gate": "PASS"},
+        "main_source": {
+            "source_sha": main["source_sha"],
+            "classified": main["classified"],
+            "total": main["workflow_total"],
+            "native_main_gate": "UNKNOWN_NOT_CREDITED"},
+        "newly_classified_names": resolved,
+        "private_census_breadth": None,
+        "actual_human_worker_hours": None,
+        "root_closures_verified": 0,
+        "effective_independent_admission": False,
+        "source_repair_pass_not_programme_admission": True
+    }
+
+
 def summarize(snapshot: dict) -> dict:
     s = validate(snapshot)
     rows = s["history"]
@@ -149,6 +258,8 @@ def summarize(snapshot: dict) -> dict:
             "qualifies_for_admission": False,
             "reason": "independent effective controls and full DoV absent"
         })
+    live = (summarize_live_epoch(s["live_epoch"], rows[-1])
+            if s.get("live_epoch") is not None else None)
     return {
         "schema": OUT_SCHEMA,
         "authority_transfer": False, "merge_admission": "HOLD",
@@ -159,6 +270,8 @@ def summarize(snapshot: dict) -> dict:
         "workflow_source_history": series,
         "source_progress_velocity": velocities,
         "source_current_unclassified": den - last["classified"],
+        "source_current_unclassified_scope": "HISTORICAL_FIXED_188_NOT_LIVE",
+        "latest_source_epoch": live,
         "source_current_multiple_matches": s["source_multiple_matches"],
         "source_goal_achieved": (last["classified"] == den and
                                  s["source_multiple_matches"] == 0),
