@@ -19,6 +19,7 @@ on:
       - "mission-control/gogreen/qbd_contract.py"
       - "mission-control/gogreen/tests/test_qbd_contract.py"
       - "mission-control/gogreen/QBD_W49_PUBLIC_DISJOINT_COHORT_20261019.json"
+      - "mission-control/gogreen/QBD_W49_PUBLIC_83_ISSUE_REVIEW_20261019.json"
       - "mission-control/gogreen/QBD_W49_PUBLIC_EXECUTION_SPINE.mmd"
       - "mission-control/golden-thread/dependency_recompute.py"
       - "mission-control/golden-thread/fixtures/GT_BD_002_REAL_CONE_BATCH001_v1.json"
@@ -135,7 +136,8 @@ jobs:
           set -euo pipefail
           python -m unittest discover -s mission-control/gogreen/tests -p 'test_qbd_contract.py' -v
           python mission-control/gogreen/qbd_contract.py \
-            --input mission-control/gogreen/QBD_W49_PUBLIC_DISJOINT_COHORT_20261019.json
+            --input mission-control/gogreen/QBD_W49_PUBLIC_DISJOINT_COHORT_20261019.json \
+            --issue-review mission-control/gogreen/QBD_W49_PUBLIC_83_ISSUE_REVIEW_20261019.json
       - name: Branch-aware BD census regression coverage
         shell: bash
         run: |
