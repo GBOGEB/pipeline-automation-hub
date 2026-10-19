@@ -70,7 +70,7 @@ class Focus5ReleaseContract(unittest.TestCase):
         expected = builder.make_csv(source)
         actual = (JADE / "site/focus5_burndown.csv").read_text(encoding="utf-8")
         self.assertEqual(expected, actual)
-        self.assertEqual(actual.count("\\n"), 61)
+        self.assertEqual(actual.count("\n"), 61)
         self.assertIn("H12", actual)
         self.assertIn("GBOGEB/cryoplant-project", actual)
 
