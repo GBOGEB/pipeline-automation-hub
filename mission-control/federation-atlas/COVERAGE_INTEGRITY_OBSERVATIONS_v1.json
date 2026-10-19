@@ -1,0 +1,426 @@
+{
+  "authority": {
+    "engineering_acceptance": "WITHHELD",
+    "formal_credit_delta": 0,
+    "is_qps_owner_source": false,
+    "is_six_repo_canonical_breadth": false,
+    "merge_admission": "HOLD",
+    "security_waiver": "NONE"
+  },
+  "federation_breadth": {
+    "authenticated_fresh": null,
+    "canonical_pr": 531,
+    "current_validated_breadth": null,
+    "eligible_historical": 42,
+    "observed_historical": 6,
+    "producer": "GBOGEB/pipeline-automation-hub",
+    "state": "PASSIVE_STABLE_HOLD_MISSING_CREDENTIAL"
+  },
+  "inventory_projections": [
+    {
+      "active_status": "UNATTESTED_SOURCE_INVENTORY",
+      "candidate_source_paths": [
+        "triage/jade_temple_qps/bb_lkt_offer_v1/agenda_review_dashboard.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/agenda_text_probe.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/build_dashboard.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/commercial_variant_gate.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/document_discrepancy_probe.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/kpi_stats.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/ldab_native_jobs.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/native_pdf_source_binding.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/offer12_power_boundary.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/offer_header_identity_gate.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/offer_service_rate_probe.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/review_atoms.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/source_census.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/support_bridge.py",
+        "triage/jade_temple_qps/bb_lkt_offer_v1/thermo_support.py"
+      ],
+      "head_sha": "2c85973b2a9ab65407af812b70958063ce8803f8",
+      "measured_source_paths": null,
+      "measurement_status": "CURRENT_MAIN_COVERAGE_UNKNOWN",
+      "repository": "GBOGEB/cryoplant-project",
+      "scope": "QPS:BB_JADE_LKT:15_FILE:MAIN"
+    }
+  ],
+  "observations": [
+    {
+      "cohort_type": "HISTORICAL_PR_HEAD",
+      "head_sha": "a975da034e590049f7270bb7116ba96aa540343e",
+      "id": "qps-pr-2016",
+      "lineage": {
+        "artifact_id": 12179875406,
+        "artifact_member_sha256": "61195a6e6249a7ae245f9c14b4f60b53e8549ba0477392eac140e1682bd1c110",
+        "artifact_zip_sha256": "6af88e006ace8e76dc4c7ec7c66236c786726d48a088f700f795d7a75d51d82d",
+        "job_executed_steps": 9,
+        "job_id": 118004344696,
+        "job_status": "success",
+        "run_attempt": 1,
+        "run_id": 39235772095,
+        "zip_crc_verified": true
+      },
+      "population_key": "QPS:BB_JADE_LKT:10_FILE:PY311",
+      "pr": 2016,
+      "python": "3.11",
+      "repository": "GBOGEB/cryoplant-project",
+      "rows": [
+        {
+          "branch": [
+            14,
+            14
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/agenda_review_dashboard.py",
+          "source_blob": "f968c7dc911d149802862df3f1b2c5cc9a2e6251",
+          "statement": [
+            45,
+            45
+          ]
+        },
+        {
+          "branch": [
+            23,
+            24
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/agenda_text_probe.py",
+          "source_blob": "b3eff79921ab7f6b2013c6d7f7ff75037466860a",
+          "statement": [
+            95,
+            96
+          ]
+        },
+        {
+          "branch": [
+            4,
+            4
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/build_dashboard.py",
+          "source_blob": "91cec4348c8772a36c5019654290a5d8c4f952f9",
+          "statement": [
+            30,
+            30
+          ]
+        },
+        {
+          "branch": [
+            37,
+            42
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/kpi_stats.py",
+          "source_blob": "e70d22ea9f5af0260277c8456fce71819f1cd2fa",
+          "statement": [
+            83,
+            99
+          ]
+        },
+        {
+          "branch": [
+            27,
+            28
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/ldab_native_jobs.py",
+          "source_blob": "e9b74aebe78e5eefaf65e70254fb2813adc8943d",
+          "statement": [
+            85,
+            86
+          ]
+        },
+        {
+          "branch": [
+            47,
+            50
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/offer_service_rate_probe.py",
+          "source_blob": "e792341b187d7badb0ce3f8e6a048b6c3ec613cd",
+          "statement": [
+            128,
+            133
+          ]
+        },
+        {
+          "branch": [
+            30,
+            34
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/review_atoms.py",
+          "source_blob": "5303aef8b12f242a2181fadc1ced8b7b56997613",
+          "statement": [
+            69,
+            83
+          ]
+        },
+        {
+          "branch": [
+            41,
+            48
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/source_census.py",
+          "source_blob": "70e4557508d615f92cb366581a356e610801c8b3",
+          "statement": [
+            106,
+            130
+          ]
+        },
+        {
+          "branch": [
+            25,
+            34
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/support_bridge.py",
+          "source_blob": "d99d491df81796bcad1a3c545ff29fcb25ed5aec",
+          "statement": [
+            52,
+            70
+          ]
+        },
+        {
+          "branch": [
+            22,
+            26
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/thermo_support.py",
+          "source_blob": "92590c930826718b57ba82cc9b812bfcbbe5de01",
+          "statement": [
+            61,
+            80
+          ]
+        }
+      ],
+      "test_suite_identity": "QPS_BB_JADE_SYNTHETIC_PR_HEAD",
+      "tool": "coverage.py",
+      "tool_version": "7.16.2"
+    },
+    {
+      "cohort_type": "HISTORICAL_PR_HEAD",
+      "head_sha": "a31e094a046e24bf52f024ed21913ed09159c20f",
+      "id": "qps-pr-2017",
+      "lineage": {
+        "artifact_id": 12180055848,
+        "artifact_member_sha256": "aa5c85e072326938c565907aa889daf7d348f0b7777467816f93a7e61f5577fa",
+        "artifact_zip_sha256": "7dc0849fce48b2b327560dd0589735095feef150396094fdb3f646df5f3f646a",
+        "job_executed_steps": 9,
+        "job_id": 118006251696,
+        "job_status": "success",
+        "run_attempt": 1,
+        "run_id": 39236354670,
+        "zip_crc_verified": true
+      },
+      "population_key": "QPS:BB_JADE_LKT:10_FILE:PY311",
+      "pr": 2017,
+      "python": "3.11",
+      "repository": "GBOGEB/cryoplant-project",
+      "rows": [
+        {
+          "branch": [
+            14,
+            14
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/agenda_review_dashboard.py",
+          "source_blob": "f968c7dc911d149802862df3f1b2c5cc9a2e6251",
+          "statement": [
+            45,
+            45
+          ]
+        },
+        {
+          "branch": [
+            23,
+            24
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/agenda_text_probe.py",
+          "source_blob": "b3eff79921ab7f6b2013c6d7f7ff75037466860a",
+          "statement": [
+            95,
+            96
+          ]
+        },
+        {
+          "branch": [
+            2,
+            4
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/build_dashboard.py",
+          "source_blob": "91cec4348c8772a36c5019654290a5d8c4f952f9",
+          "statement": [
+            21,
+            30
+          ]
+        },
+        {
+          "branch": [
+            37,
+            42
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/kpi_stats.py",
+          "source_blob": "e70d22ea9f5af0260277c8456fce71819f1cd2fa",
+          "statement": [
+            83,
+            99
+          ]
+        },
+        {
+          "branch": [
+            27,
+            28
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/ldab_native_jobs.py",
+          "source_blob": "e9b74aebe78e5eefaf65e70254fb2813adc8943d",
+          "statement": [
+            85,
+            86
+          ]
+        },
+        {
+          "branch": [
+            47,
+            50
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/offer_service_rate_probe.py",
+          "source_blob": "e792341b187d7badb0ce3f8e6a048b6c3ec613cd",
+          "statement": [
+            128,
+            133
+          ]
+        },
+        {
+          "branch": [
+            30,
+            34
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/review_atoms.py",
+          "source_blob": "5303aef8b12f242a2181fadc1ced8b7b56997613",
+          "statement": [
+            69,
+            83
+          ]
+        },
+        {
+          "branch": [
+            41,
+            48
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/source_census.py",
+          "source_blob": "70e4557508d615f92cb366581a356e610801c8b3",
+          "statement": [
+            106,
+            130
+          ]
+        },
+        {
+          "branch": [
+            34,
+            34
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/support_bridge.py",
+          "source_blob": "d99d491df81796bcad1a3c545ff29fcb25ed5aec",
+          "statement": [
+            70,
+            70
+          ]
+        },
+        {
+          "branch": [
+            22,
+            26
+          ],
+          "path": "triage/jade_temple_qps/bb_lkt_offer_v1/thermo_support.py",
+          "source_blob": "92590c930826718b57ba82cc9b812bfcbbe5de01",
+          "statement": [
+            61,
+            80
+          ]
+        }
+      ],
+      "test_suite_identity": "QPS_BB_JADE_SYNTHETIC_PR_HEAD",
+      "tool": "coverage.py",
+      "tool_version": "7.16.2"
+    }
+  ],
+  "other_scopes": [
+    {
+      "branch": [
+        341,
+        378
+      ],
+      "evidence": "REPORTED_HISTORICAL_SEPARATE_COHORT",
+      "file_count": 12,
+      "id": "qps-2014-n6",
+      "repository": "GBOGEB/cryoplant-project",
+      "scope": "QPS_N6_DIFFERENT_12_FILE_COHORT",
+      "statement": [
+        918,
+        1026
+      ]
+    },
+    {
+      "branch": [
+        8986,
+        13066
+      ],
+      "evidence": "VERIFIED_HISTORICAL_NOT_LIVE_MAIN",
+      "file_count": null,
+      "id": "abacus-main-historical",
+      "repository": "GBOGEB/ABACUS",
+      "scope": "ABACUS_BROAD_MAIN_OLDER_SHA",
+      "statement": [
+        30603,
+        43527
+      ],
+      "target_statements_pct": 75
+    },
+    {
+      "branch": [
+        84,
+        84
+      ],
+      "evidence": "HISTORICAL_FOCUSED_NONPORTFOLIO",
+      "file_count": 1,
+      "id": "ggmath-w33-historical",
+      "repository": "GBOGEB/gg_MATH",
+      "scope": "GGMATH_W33_FOCUSED_1_MODULE",
+      "statement": [
+        172,
+        172
+      ]
+    },
+    {
+      "branch": null,
+      "evidence": "CURRENT_MAIN_COVERAGE_UNKNOWN",
+      "file_count": null,
+      "id": "codex-current",
+      "repository": "GBOGEB/CODEX",
+      "scope": "CODEX_MAIN",
+      "statement": null
+    }
+  ],
+  "repo_heads": {
+    "GBOGEB/ABACUS": "f2b78a1a626ab72fefbc04e8d2b9505c735eb9b8",
+    "GBOGEB/CODEX": "41c9b4ada5339f840bf020d859a54ef83383a566",
+    "GBOGEB/cryoplant-project": "2c85973b2a9ab65407af812b70958063ce8803f8",
+    "GBOGEB/gg_MATH": "5cf036c66be498cd00a4ff09687802806200368b",
+    "GBOGEB/pipeline-automation-hub": "9b9a556b4287889c44cd0d5d3c2ac16b33baea4e"
+  },
+  "schema": "codepurple.coverage_integrity.observations.v1",
+  "source_evidence_date": "2026-10-19",
+  "telemetry": {
+    "bt_qualified": false,
+    "deduplicated_accepted_closures": null,
+    "m1": "PARTIAL",
+    "m2": "HOLD",
+    "m3": "HOLD",
+    "pca_qualified": false,
+    "qps_pr_2030": {
+      "acceptance": "HOLD",
+      "attempt": 1,
+      "ci_run": 39265626258,
+      "executed_steps": 0,
+      "head_sha": "3b67dc9127eafb5919c5694b71202057f85ef02e",
+      "jobs_failure_preexecution": 4,
+      "linux_windows_jobs": 4,
+      "merge_commit": "9dad00551745b13866e31e542e90794f3d24661c",
+      "merged_at_utc": "2026-10-19T14:35:39Z",
+      "submitted_reviews": 0
+    },
+    "runner_causal_root_id": null,
+    "worker_hours": null
+  }
+}
