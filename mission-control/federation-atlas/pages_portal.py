@@ -5,6 +5,93 @@ from pathlib import Path
 
 ALLOW={"index.html","code-purple.html","code-purple.json","lane-process.html","lane-process.mmd","federation.svg","federation-latest.html","federation-wave-metrics.json","federation-latest.json","metrics.json","lane-process.json","code-health.html","code-health.json","code-health-dag.mmd","code-health-manifest.json","sideload-k8s.html","sideload-k8s.json","sideload-k8s.mmd","sideload-k8s.sha256.json","sideload-operator.html","sideload-operator-receipt.json","sideload-telemetry.json","sideload-telemetry.sha256.json"}
 FLIGHT={"index.html","flightdeck.svg","census.json","bd_leaves.json","anchors.json","manifest.json"}
+
+# W55: optional, source-owned coverage-integrity viewer; never a second publisher.
+COVERAGE_INTEGRITY_SOURCE = Path(__file__).resolve().parent / "COVERAGE_INTEGRITY_OBSERVATIONS_v1.json"
+COVERAGE_INTEGRITY_MEMBERS = (
+    "index.html", "snapshot.json", "dependency.mmd", "sipoc.mmd",
+    "spline.mmd", "graph-light.svg", "graph-dark.svg",
+)
+
+
+def stage_coverage_integrity(atlas, out, sha, hashes, source_path=None):
+    """Fail closed on any incomplete, tampered or falsely authoritative child."""
+    import xml.etree.ElementTree as ET
+    child = Path(atlas) / "coverage-integrity"
+    if not child.exists():
+        return False
+    if not child.is_dir() or child.is_symlink():
+        raise ValueError("COVERAGE_CHILD_INVALID_DIRECTORY")
+    source = Path(source_path) if source_path is not None else COVERAGE_INTEGRITY_SOURCE
+    if not source.is_file() or source.is_symlink():
+        raise ValueError("COVERAGE_SOURCE_OWNER_NOT_JOINED")
+    source_bytes = source.read_bytes()
+    source_digest = hashlib.sha256(source_bytes).hexdigest()
+    source_doc = json.loads(source_bytes)
+    auth = source_doc.get("authority", {})
+    if not (source_doc.get("schema") == "codepurple.coverage_integrity.observations.v1"
+            and auth.get("merge_admission") == "HOLD"
+            and auth.get("engineering_acceptance") == "WITHHELD"
+            and auth.get("security_waiver") == "NONE"
+            and auth.get("formal_credit_delta") == 0
+            and auth.get("is_six_repo_canonical_breadth") is False):
+        raise ValueError("COVERAGE_SOURCE_AUTHORITY_VIOLATION")
+    declared = set(COVERAGE_INTEGRITY_MEMBERS) | {"manifest.json"}
+    entries = list(child.iterdir())
+    if ({p.name for p in entries} != declared or
+            any(not p.is_file() or p.is_symlink() for p in entries)):
+        raise ValueError("COVERAGE_MEMBER_POPULATION_DRIFT")
+    manifest = json.loads((child / "manifest.json").read_bytes())
+    if not (manifest.get("schema") == "codepurple.coverage_integrity.manifest.v1"
+            and manifest.get("presentation_head_sha") == sha
+            and manifest.get("source_json_sha256") == source_digest
+            and manifest.get("merge_admission") == "HOLD"
+            and manifest.get("authority_transfer") is False
+            and manifest.get("formal_credit_delta") == 0
+            and "current_main_coverage_attestation" in manifest
+            and manifest["current_main_coverage_attestation"] is None):
+        raise ValueError("COVERAGE_HEAD_SOURCE_OR_AUTHORITY_DRIFT")
+    digests, sizes = manifest.get("member_sha256"), manifest.get("member_bytes")
+    if not (isinstance(digests, dict) and isinstance(sizes, dict)
+            and set(digests) == set(COVERAGE_INTEGRITY_MEMBERS)
+            and set(sizes) == set(COVERAGE_INTEGRITY_MEMBERS)):
+        raise ValueError("COVERAGE_MEMBER_MANIFEST_DRIFT")
+    snapshot = json.loads((child / "snapshot.json").read_bytes())
+    state = snapshot.get("authority", {})
+    if not (snapshot.get("schema") == "codepurple.coverage_integrity.snapshot.v1"
+            and snapshot.get("presentation_head_sha") == sha
+            and snapshot.get("source_json_sha256") == source_digest
+            and snapshot.get("portfolio_total_coverage") is None
+            and state.get("merge_admission") == "HOLD"
+            and state.get("engineering_acceptance") == "WITHHELD"
+            and state.get("security_waiver") == "NONE"
+            and state.get("formal_credit_delta") == 0
+            and state.get("is_native_current_attestation") is False
+            and state.get("run_dispatch") is False):
+        raise ValueError("COVERAGE_SNAPSHOT_AUTHORITY_DRIFT")
+    for name in COVERAGE_INTEGRITY_MEMBERS:
+        raw = (child / name).read_bytes()
+        digest = digests[name]
+        if (not isinstance(digest, str) or
+                re.fullmatch("[0-9a-f]{64}", digest) is None or
+                hashlib.sha256(raw).hexdigest() != digest or
+                type(sizes[name]) is not int or sizes[name] != len(raw)):
+            raise ValueError("COVERAGE_MEMBER_DIGEST_MISMATCH:" + name)
+        if name.endswith(".svg"):
+            ET.fromstring(raw)
+        if name.endswith(".mmd") and not raw.lstrip().startswith(b"flowchart"):
+            raise ValueError("COVERAGE_MERMAID_INVALID:" + name)
+    for name in (*COVERAGE_INTEGRITY_MEMBERS, "manifest.json"):
+        dst = Path(out) / "coverage-integrity" / name
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(child / name, dst)
+        from_digest = hashlib.sha256((child / name).read_bytes()).hexdigest()
+        to_digest = hashlib.sha256(dst.read_bytes()).hexdigest()
+        if from_digest != to_digest:
+            raise ValueError("COVERAGE_COPY_TIME_MUTATION:" + name)
+        hashes[str(dst.relative_to(out))] = to_digest
+    return True
+
 def build(atlas,out,sha):
     atlas,out=Path(atlas),Path(out)
     if not re.fullmatch("[a-f0-9]{40}",sha): raise ValueError("exact SHA required")
@@ -76,6 +163,8 @@ def build(atlas,out,sha):
         # detect a copy-time mutation before the parent seals its public hashes.
         checker.verify_bundle(out / "orchestration", sha,
                               source_root=Path(__file__).resolve().parents[2])
+    # W55 bounded bridge: historical projection only when source owner is in checkout.
+    stage_coverage_integrity(atlas, out, sha, hashes)
     # Single-owner Pages bridge: consume the approved G3P view in this existing
     # portal build. This is file packaging only; no new deployer or release gate.
     g3p_source=Path(__file__).resolve().parent
@@ -315,6 +404,8 @@ def build(atlas,out,sha):
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
     if (out / "orchestration" / "index.html").is_file():
         cards = '<a class="card" href="orchestration/index.html">Method Atlas · functional I/O, all workflow DAGs, broker and burndown ↗</a>' + cards
+    if (out / "coverage-integrity" / "index.html").is_file():
+        cards = '<a class="card" href="coverage-integrity/index.html">CODE PURPLE · source-matched coverage, zero-module integrity &amp; BD ↗</a>' + cards
     if (out / "mission-rebuild" / "index.html").is_file():
         cards += '<a class="card" href="mission-rebuild/index.html">MISSION CONTROL · Repository and DAG explorer ↗</a>'
     if (out / "mission-rebuild" / "evidence.html").is_file():
