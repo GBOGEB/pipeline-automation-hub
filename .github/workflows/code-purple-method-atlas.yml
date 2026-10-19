@@ -589,6 +589,29 @@ jobs:
             --out /tmp/code-purple-atlas/orchestration --head "$EXACT_SHA"
           python "$SRC/browser_qa.py" --html /tmp/code-purple-atlas/orchestration/index.html \
             --out /tmp/code-purple-atlas/orchestration-qa --head "$EXACT_SHA"
+      - name: Bind source-owned coverage-integrity view when present
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas
+          if [ -e "$SRC/coverage_integrity.py" ] || \
+             [ -e "$SRC/COVERAGE_INTEGRITY_OBSERVATIONS_v1.json" ] || \
+             [ -e "$SRC/test_coverage_integrity.py" ]; then
+            test -f "$SRC/coverage_integrity.py"
+            test -f "$SRC/COVERAGE_INTEGRITY_OBSERVATIONS_v1.json"
+            test -f "$SRC/test_coverage_integrity.py"
+            python -m unittest discover -s "$SRC" -p test_coverage_integrity.py -v
+            python "$SRC/coverage_integrity.py" \
+              --head "$EXACT_SHA" --out /tmp/code-purple-atlas/coverage-integrity
+            python "$SRC/coverage_integrity.py" \
+              --head "$EXACT_SHA" --out /tmp/code-purple-atlas/coverage-integrity \
+              --verify-only
+            echo "COVERAGE_INTEGRITY=SOURCE_BOUND_VIEW; authority=HOLD"
+          else
+            echo "COVERAGE_INTEGRITY=SOURCE_OWNER_NOT_YET_JOINED"
+          fi
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
