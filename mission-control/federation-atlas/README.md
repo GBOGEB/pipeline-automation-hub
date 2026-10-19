@@ -1,5 +1,74 @@
 # CODE PURPLE Federation Method Atlas (v0.1)
 
+## Execution Atlas · functional I/O, complete local workflow inventory and bounded rebuilds
+
+The existing publisher now also builds `orchestration/index.html`. Its source is
+[`orchestration/main.py`](orchestration/main.py), with a typed input/output overlay
+in [`orchestration/PIPELINE_CONTRACTS_v1.json`](orchestration/PIPELINE_CONTRACTS_v1.json)
+and an operator guide in
+[`orchestration/main.md`](orchestration/main.md). The canonical method registry,
+six KPI families, CPQ history and existing Superstitch sources remain the inputs.
+
+The joined view shows functional Python entrypoints and signatures, declared
+inputs and expected outputs, all discovered local workflow job DAGs, the Atlas
+workflow's ordered steps, canonical beams with feedback unrolled into the next
+pulse, method lanes, typed SIPOC, owner groups and CPQ dependencies. Static calls
+and YAML declarations are explicitly separate from observed execution. Every
+normalized graph emits canonical Mermaid and light/dark SVG; existing Mermaid
+source is retained in the manifest with its original source locator. The current
+profile has 15 functional blocks and seven typed joins, alongside the wider
+discovered inventory.
+
+`build`, `plan` and `run-local` execute only against their own checkout;
+`check --root` can inspect another root. Exact head identity and a dirty-source
+fingerprint bind all Mission Control files plus repository Python, workflow YAML,
+Mermaid and declared source inputs. The snapshot policy is explicit rather than
+a claim of runtime dependency tracing. A source-only broker plan is deterministic
+and has no wall-clock observation; absent remote capacity remains UNKNOWN.
+
+`run-local` executes registered existing generators through bounded workers and
+declared read/write leases, verifies outputs and joins the resulting files using
+the existing Pages packager. It records measured local task timings and failure
+dispositions. It does not launch GitHub jobs or provide distributed leases. The
+existing native render job now queues same-PR/ref invocations through one GitHub
+concurrency group; other repos and workflows remain outside that bound.
+To show these timings in a rebuilt child, use `build --local-receipt` with the
+completed `local-run.json`; the head and source digest must both match. Measured
+task time excludes later receipt attachment, bundle sealing and publication.
+
+```bash
+python mission-control/federation-atlas/orchestration/main.py check --root .
+python mission-control/federation-atlas/orchestration/main.py run-local \
+  --out ../atlas-review --head "$(git rev-parse HEAD)" --workers 2
+```
+
+Programme tags are additive under the existing Superstitch taxonomy: GoGREEN,
+EVERRED, CODE_PURPLE, CODE_MAROON, JADE_TEMPLE, JADE_CASTE and the P-process
+composition. B&B remains an explicitly unresolved user label until a source
+definition is bound. SPINE and SPLINE retain their existing meanings.
+
+CPQ dispositions, JADE owner actions, historical federation breadth and
+authenticated pairs retain distinct denominators. Missing cohort/configuration
+identity breaks temporal comparison; missing measurements are gaps. Package
+verification checks exact output members and the current consumed source bytes.
+Source builds and local test receipts do not grant admission or engineering credit.
+
+The coverage view is generated from
+[`COVERAGE_OBSERVATIONS_v1.json`](orchestration/COVERAGE_OBSERVATIONS_v1.json)
+and its user-attachment provenance. QPS 2016/2017 (10 modules), QPS 2014 N6
+(12 modules), later QPS main (15 inventory modules, coverage UNKNOWN), ABACUS
+broad history, gg_MATH focused history and CODEX UNKNOWN remain separate.
+QPS's nine additional covered statements over 852 eligible are **1.06 percentage
+points** from exact counts; the attachment's 1.05 is a rounded-card difference.
+The historical comparison is not independently verified. Live comparison keys
+require actual source/configuration/denominator identities and native receipts;
+unknown current metrics never become passing gates or a portfolio total.
+Inventory, zero-coverage, behavior and aggregate gates are noncompensating.
+`metric_observations.json` and `coverage_burndown.jsonl` are generated outputs.
+Available committed registry events must remain an identical ordered prefix;
+corrections append superseding events. JSONL is a regenerated read projection,
+not a separately maintained persistent log.
+
 ## W35 · granular purple lasso DAG, Mermaid, SIPOC and SPLINE (19 October 2026)
 
 W35 is an ADDITIVE source-owned enhancement to the existing Method Atlas publisher. It is not a new scheduler, QPS engineering SSOT, authenticated federation producer or GitHub action launcher.

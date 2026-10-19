@@ -147,6 +147,46 @@
       "term": "Group denominator",
       "definition": "The eligible population supporting a group-scoped metric (e.g. six-repo cells, authenticated pairs, kernel statements). Incompatible populations cannot be summed.",
       "owner": "Mission Control projection only"
+    },
+    {
+      "term": "PROGRAMME COMPOSITION",
+      "definition": "A set of source-bound programme tags on one scoped work item. Tags do not replace method profile, execution unit, health, evidence, denominator or owner authority.",
+      "owner": "Mission Control projection only"
+    },
+    {
+      "term": "TYPED SIPOC JOIN",
+      "definition": "A declared output-port to input-port binding with compatible schema, cardinality, source identity and acceptance predicate. Customer-to-supplier continuity names an actor handover and does not prove artifact compatibility.",
+      "owner": "Source process owners"
+    },
+    {
+      "term": "EXECUTION DAG PROJECTION",
+      "definition": "The acyclic same-scope prerequisite subset of a richer typed graph. Ownership, reference, aliases and next-pulse feedback are retained as distinct relations.",
+      "owner": "Source scheduler contract"
+    },
+    {
+      "term": "BROKER PLAN",
+      "definition": "A bounded admission proposal based on observed dependency readiness, capacity, owner quotas and conflicts. Planned workers are distinct from started local workers and authenticated remote jobs.",
+      "owner": "Mission Control projection only"
+    },
+    {
+      "term": "QUEUE DEPTH",
+      "definition": "Number of work items waiting at a named queue boundary and observation time. Record the included states; blocked backlog and running work are separate populations.",
+      "owner": "Queue producer"
+    },
+    {
+      "term": "QUEUE LENGTH",
+      "definition": "Contextual queue-size label. Normalize to queue depth only when boundary, states and timestamp match; otherwise retain the producer definition.",
+      "owner": "Queue producer"
+    },
+    {
+      "term": "SCHEDULE PRESSURE",
+      "definition": "Arrival, service and occupancy evidence for a declared queue/window, including concurrent demand. Time of day is context, not proof of congestion or capacity.",
+      "owner": "Queue producer"
+    },
+    {
+      "term": "B&B / Bread & Butter",
+      "definition": "User-requested label with no authoritative programme meaning or source binding recovered in the current checkout. Preserve unresolved status until a source owner supplies the definition.",
+      "owner": "UNRESOLVED"
     }
   ]
 }

@@ -47,6 +47,12 @@ permissions:
 jobs:
   render:
     runs-on: ubuntu-latest
+    # Same-PR/ref rebuilds share one render slot. This is not a fleet-wide
+    # capacity claim; the local broker separately bounds generator workers.
+    concurrency:
+      group: method-atlas-render-${{ github.event.pull_request.number || github.ref }}
+      queue: max
+      cancel-in-progress: false
     steps:
       - name: Checkout exact source
         uses: actions/checkout@v4
@@ -569,6 +575,20 @@ jobs:
             "viewports":len(b["checks"]),"native_owner_acceptance":None,
             "merge_admission":"HOLD"},sort_keys=True))
           PY
+      - name: Build source-bound execution Atlas and validate every output member
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/orchestration
+          python "$SRC/main.py" check --root .
+          python "$SRC/main.py" build --root . \
+            --out /tmp/code-purple-atlas/orchestration --head "$EXACT_SHA"
+          python "$SRC/main.py" check --root . \
+            --out /tmp/code-purple-atlas/orchestration --head "$EXACT_SHA"
+          python "$SRC/browser_qa.py" --html /tmp/code-purple-atlas/orchestration/index.html \
+            --out /tmp/code-purple-atlas/orchestration-qa --head "$EXACT_SHA"
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}

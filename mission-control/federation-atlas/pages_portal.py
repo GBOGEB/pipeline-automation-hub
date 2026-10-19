@@ -3,7 +3,7 @@
 import argparse, hashlib, html, json, re, shutil
 from pathlib import Path
 
-ALLOW={"index.html","code-purple.html","lane-process.html","lane-process.mmd","federation.svg","federation-latest.html","federation-wave-metrics.json","federation-latest.json","metrics.json","lane-process.json","code-health.html","code-health.json","code-health-dag.mmd","code-health-manifest.json","sideload-k8s.html","sideload-k8s.json","sideload-k8s.mmd","sideload-k8s.sha256.json","sideload-operator.html","sideload-operator-receipt.json","sideload-telemetry.json","sideload-telemetry.sha256.json"}
+ALLOW={"index.html","code-purple.html","code-purple.json","lane-process.html","lane-process.mmd","federation.svg","federation-latest.html","federation-wave-metrics.json","federation-latest.json","metrics.json","lane-process.json","code-health.html","code-health.json","code-health-dag.mmd","code-health-manifest.json","sideload-k8s.html","sideload-k8s.json","sideload-k8s.mmd","sideload-k8s.sha256.json","sideload-operator.html","sideload-operator-receipt.json","sideload-telemetry.json","sideload-telemetry.sha256.json"}
 FLIGHT={"index.html","flightdeck.svg","census.json","bd_leaves.json","anchors.json","manifest.json"}
 def build(atlas,out,sha):
     atlas,out=Path(atlas),Path(out)
@@ -53,6 +53,29 @@ def build(atlas,out,sha):
             dest=out/"federation-home"/name; dest.parent.mkdir(exist_ok=True,parents=True)
             shutil.copyfile(src,dest)
             hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
+    # Execution Atlas is a derived child of this existing publisher. The shared
+    # verifier checks every member and current source byte before packaging.
+    execution_source = atlas / "orchestration"
+    if execution_source.exists():
+        import importlib.util
+        checker_path = Path(__file__).resolve().parent / "orchestration" / "main.py"
+        spec = importlib.util.spec_from_file_location("execution_atlas_packaging", checker_path)
+        if spec is None or spec.loader is None:
+            raise ValueError("execution Atlas verifier unavailable")
+        checker = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(checker)
+        receipt = checker.verify_bundle(execution_source, sha,
+                                        source_root=Path(__file__).resolve().parents[2])
+        for name in [*receipt["files_sha256"], "manifest.json"]:
+            source = checker.safe_path(execution_source, name)
+            dest = out / "orchestration" / name
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, dest)
+            hashes[str(dest.relative_to(out))] = hashlib.sha256(dest.read_bytes()).hexdigest()
+        # Recheck the copied child as well: source verification alone cannot
+        # detect a copy-time mutation before the parent seals its public hashes.
+        checker.verify_bundle(out / "orchestration", sha,
+                              source_root=Path(__file__).resolve().parents[2])
     # Single-owner Pages bridge: consume the approved G3P view in this existing
     # portal build. This is file packaging only; no new deployer or release gate.
     g3p_source=Path(__file__).resolve().parent
@@ -290,6 +313,8 @@ def build(atlas,out,sha):
         raise ValueError("JADE_SOURCE_WITHOUT_VALIDATED_BRIDGE")
     links=[("JADE_CASTE · N+3 eight-point MIP","jade/eightpoint.html"),("JADE_CASTE · N+2 measured burn-down and stop rules","jade/burndown.html"),("JADE_CASTE · GoGREEN Top21 readiness","jade/green.html"),("GLOBAL DoV · Consolidated Convergence Hub","convergence/index.html"),("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("P process: Code Purple × EVERRED","p-process/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
+    if (out / "orchestration" / "index.html").is_file():
+        cards = '<a class="card" href="orchestration/index.html">Method Atlas · functional I/O, all workflow DAGs, broker and burndown ↗</a>' + cards
     if (out / "mission-rebuild" / "index.html").is_file():
         cards += '<a class="card" href="mission-rebuild/index.html">MISSION CONTROL · Repository and DAG explorer ↗</a>'
     if (out / "mission-rebuild" / "evidence.html").is_file():
