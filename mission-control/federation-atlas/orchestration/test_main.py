@@ -824,5 +824,64 @@ class PortableGraphArtifactTests(FixtureCase):
         self.assertEqual(list(self.root.iterdir()), [])
 
 
+class CliPlanIdentityTests(FixtureCase):
+    def setUp(self):
+        super().setUp()
+        policy_path = "mission-control/federation-atlas/orchestration/BROKER_POLICY_v1.json"
+        self.write(policy_path, atlas.read_json(atlas.ROOT, policy_path))
+        self.write("src/worker.py", "def emit():\n    return {}\n")
+        identities = ("source-contracts", "method-atlas", "burndown", "superstitch",
+                      "convergence", "orchestration-view", "pages-portal")
+        self.write(atlas.PROFILE, {"repository": "example/project", "blocks": [
+            {"id": identity, "source_path": "src/worker.py", "inputs": []} for identity in identities]})
+
+    def test_repeated_no_snapshot_cli_plans_are_identical_without_runtime_timestamp(self):
+        from contextlib import redirect_stdout
+        import io
+        from types import SimpleNamespace
+        from unittest import mock
+
+        broker = atlas.module("cli_plan_test_broker", MODULE_PATH.with_name("broker.py"))
+        clocks = iter(("2026-10-19T00:00:00Z", "2026-10-20T12:00:00Z"))
+        observed_clocks = []
+
+        def clocked_plan(tasks, snapshot, policy):
+            self.assertIsNone(snapshot)
+            result = broker.plan(tasks, snapshot, policy, now=next(clocks))
+            observed_clocks.append(result["generated_at"])
+            return result
+
+        outputs = []
+        with mock.patch.object(atlas, "ROOT", self.root), mock.patch.object(atlas, "git", return_value=HEAD), \
+             mock.patch.object(atlas, "module", return_value=SimpleNamespace(plan=clocked_plan)), \
+             redirect_stdout(io.StringIO()):
+            for name in ("first", "second"):
+                out = self.root / name
+                self.assertEqual(atlas.main(["plan", "--root", str(self.root), "--out", str(out), "--head", HEAD]), 0)
+                outputs.append((out / "broker-plan.json").read_bytes())
+        self.assertNotEqual(*observed_clocks)
+        self.assertEqual(*outputs)
+        plan = json.loads(outputs[0])
+        self.assertIsNone(plan["generated_at"])
+        self.assertEqual(plan["time_basis"], "DETERMINISTIC_SOURCE_PLAN_NO_RUNTIME_OBSERVATION")
+        self.assertFalse(plan["dispatch_authorized"])
+
+    def test_mismatched_valid_head_is_rejected_before_plan_or_output_creation(self):
+        from contextlib import redirect_stderr, redirect_stdout
+        import io
+        from unittest import mock
+
+        out = self.root / "rejected-plan"
+        error = io.StringIO()
+        with mock.patch.object(atlas, "ROOT", self.root), mock.patch.object(atlas, "git", return_value=HEAD), \
+             mock.patch.object(atlas, "module") as load_broker, \
+             redirect_stdout(io.StringIO()), redirect_stderr(error):
+            result = atlas.main(["plan", "--root", str(self.root), "--out", str(out), "--head", "b" * 40])
+        self.assertEqual(result, 1)
+        self.assertIn("checkout/head mismatch", json.loads(error.getvalue())["error"])
+        load_broker.assert_not_called()
+        self.assertFalse(out.exists())
+
+
 if __name__ == "__main__":
     unittest.main()

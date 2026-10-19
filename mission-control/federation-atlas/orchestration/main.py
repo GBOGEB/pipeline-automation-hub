@@ -946,8 +946,12 @@ def main(argv=None):
                 profile = read_json(args.root, PROFILE)
                 policy = read_json(args.root, "mission-control/federation-atlas/orchestration/BROKER_POLICY_v1.json")
                 demand(SHA.fullmatch(head or "") is not None, "exact head required")
+                demand(git(args.root, "rev-parse", "HEAD") == head, "checkout/head mismatch")
                 policy["cohort"] = {"repo": profile["repository"], "source_sha": head}
                 result = module("atlas_local_broker", HERE / "broker.py").plan(tasks(profile), snapshot, policy)
+                if snapshot is None:
+                    result["generated_at"] = None
+                    result["time_basis"] = "DETERMINISTIC_SOURCE_PLAN_NO_RUNTIME_OBSERVATION"
                 args.out.mkdir(parents=True, exist_ok=True)
                 (args.out / "broker-plan.json").write_bytes(canonical(result))
             else:
