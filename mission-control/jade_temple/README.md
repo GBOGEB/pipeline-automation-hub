@@ -57,3 +57,17 @@ This **staged branch**, not the accepted JADE publisher or a governed merge, add
 - Existing `sprint/Start-JadeSprint.ps1` and `sprint/cli.py` remain the sole bounded local sprint entrypoints.
 
 Readback: 21/21 non-atomic HEAD identities, 146 ordinary open issues, 18 ordinary open PRs; canonical root counts and J5 owner-accepted releases remain **UNKNOWN**. A separately generated interactive HTML atlas passed local responsive QA, but **is not currently part of the published source-controlled Pages child**. Port its visualization through the existing single-publisher generator only after owner review, exact-source parity and noncompensating J3/J4 acceptance. `MERGE_ADMISSION=HOLD`.
+
+
+## N+7 QPS TRIAGE focus-five parallel owner lanes
+
+**[Interactive focus-five dashboard](site/focus5.html)** · **[Source-bound 60-gate ledger](data/FOCUS5_POINT_RELEASE_NPLUS7.json)** · [Deterministic generator](site/build_focus5.py) · [8 fail-closed release-check tests](tests/test_focus5_release_contract.py).
+
+Five repo-specific owners: **04 cryoplant-project, 08 DOCX_RTM_Automation, 16 yaml-grammar, 05 gg_MATH, 02 pipeline-automation-hub**. Current read-only evidence is **14/60 (23.33%)** verified minimum PASS, 8/60 FAIL, 38/60 UNKNOWN. This is **not** broader Top21 release completion; the 16 unassessed repositories remain outside this denominator. Each gate has the same 12-item contract and repo-specific B0 definition. Absence of an Actions workflow, genuine approval or source-binary hash never counts as PASS.
+
+```bash
+python mission-control/jade_temple/site/build_focus5.py --check
+python -m unittest discover -s mission-control/jade_temple/tests -p test_focus5_release_contract.py -v
+```
+
+This is **one generated read-only child under existing JADE site**, not a new GitHub Action, dispatcher or alternative Pages publisher. The original repo owners retain source fixes, native B0 and application/release authority. `MERGE_ADMISSION=HOLD`; no J5 tag, security waiver or accepted root closure is inferred.
