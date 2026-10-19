@@ -21,7 +21,7 @@ class Focus5ReleaseContract(unittest.TestCase):
     def setUp(self):
         self.data = json.loads(SOURCE.read_text(encoding="utf-8"))
 
-    def test_60_gates_14_qualified_and_original_heads(self):
+    def test_60_gates_15_qualified_and_latest_heads(self):
         builder.validate(self.data)
         self.assertEqual(self.data["metrics"]["passed"], 15)
         self.assertEqual(self.data["metrics"]["required_gate_total"], 60)
