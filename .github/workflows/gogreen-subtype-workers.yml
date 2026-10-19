@@ -16,6 +16,10 @@ on:
       - "mission-control/gogreen/bd_queue_wave.py"
       - "mission-control/gogreen/tests/test_bd_queue_wave.py"
       - "mission-control/gogreen/BD_QUEUE_WAVE.md"
+      - "mission-control/gogreen/qbd_contract.py"
+      - "mission-control/gogreen/tests/test_qbd_contract.py"
+      - "mission-control/gogreen/QBD_W49_PUBLIC_DISJOINT_COHORT_20261019.json"
+      - "mission-control/gogreen/QBD_W49_PUBLIC_EXECUTION_SPINE.mmd"
       - "mission-control/golden-thread/dependency_recompute.py"
       - "mission-control/golden-thread/fixtures/GT_BD_002_REAL_CONE_BATCH001_v1.json"
       - "mission-control/golden-thread/fixtures/GT_BD_011_BOOTSTRAP_BATCH001_20260917.json"
@@ -125,6 +129,13 @@ jobs:
           print(json.dumps({'status':'ACTUAL_EXECUTION_PASS','files':sorted(files),
            'observed_occurrences':receipt['occurrences'],'exact_sha':receipt['source_sha']},sort_keys=True))
           PY
+      - name: QBD public-safe structural and negative TestFlight
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/gogreen/tests -p 'test_qbd_contract.py' -v
+          python mission-control/gogreen/qbd_contract.py \
+            --input mission-control/gogreen/QBD_W49_PUBLIC_DISJOINT_COHORT_20261019.json
       - name: Branch-aware BD census regression coverage
         shell: bash
         run: |
