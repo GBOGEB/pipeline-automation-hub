@@ -97,6 +97,33 @@ class QBDContractTests(unittest.TestCase):
         obj["public_issue_counts"][0]["repo"] = "GBOGEB/cryoplant-project"
         self.assert_rejects(obj)
 
+    def issue_doc(self):
+        return json.loads((ROOT / "QBD_W49_PUBLIC_83_ISSUE_REVIEW_20261019.json").read_text(encoding="utf-8"))
+
+    def test_public_83_issue_parity(self):
+        result = qbd_contract.validate_issue_review(self.issue_doc(), self.doc())
+        self.assertEqual(result["reviewed_open_issue_objects"], 83)
+        self.assertIsNone(result["causal_root_count"])
+
+    def test_public_83_forged_private_source(self):
+        obj = self.issue_doc()
+        obj["authority"]["private_qps_issues"] = [1897]
+        with self.assertRaises(ValueError):
+            qbd_contract.validate_issue_review(obj, self.doc())
+
+    def test_public_83_false_root_closure(self):
+        obj = self.issue_doc()
+        obj["items"][0]["root_verified"] = True
+        with self.assertRaises(ValueError):
+            qbd_contract.validate_issue_review(obj, self.doc())
+
+    def test_public_83_duplicate_issue(self):
+        obj = self.issue_doc()
+        obj["items"][1] = copy.deepcopy(obj["items"][0])
+        with self.assertRaises(ValueError):
+            qbd_contract.validate_issue_review(obj, self.doc())
+
+
 
 if __name__ == "__main__":
     unittest.main()
