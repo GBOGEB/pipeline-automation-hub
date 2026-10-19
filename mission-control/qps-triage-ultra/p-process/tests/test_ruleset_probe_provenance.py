@@ -52,4 +52,22 @@ class ReadbackProvenance(unittest.TestCase):
         self.assertTrue(r["red"])
         self.assertTrue(r["gaps"])
 
+    def test_basic_does_not_substitute_for_hard(self):
+        hard=json.loads((P/"rulesets/ABACUS.hard.json").read_text())
+        result=v.gaps(RULES,hard)
+        self.assertIn("required approvals below 1", result)
+        self.assertIn("last-push approval off", result)
+        self.assertIn("strict required-status-check policy off", result)
+        self.assertTrue(any("PR Feedback Gate" in x for x in result))
+
+    def test_full_hard_rule_set_meets_strength(self):
+        hard=json.loads((P/"rulesets/ABACUS.hard.json").read_text())
+        self.assertEqual(v.gaps(hard["rules"], hard), [])
+
+    def test_hard_profile_cannot_promote_unknown_api(self):
+        hard=json.loads((P/"rulesets/ABACUS.hard.json").read_text())
+        read=v.probe_status({"_error":"403"},[],{"protected":True},hard)
+        self.assertTrue(read["red"])
+        self.assertEqual(read["probe_status"],"UNKNOWN_API_READBACK")
+
 if __name__=="__main__":unittest.main()
