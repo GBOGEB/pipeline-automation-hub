@@ -79,6 +79,47 @@ class G3DMetricsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "source binding"):
             g3d.summarize(self.data)
 
+    def test_g3f_latest_epoch_separates_cohort_and_live(self):
+        x = g3d.summarize(self.data)
+        self.assertEqual(x["source_current_unclassified_scope"],
+                         "HISTORICAL_FIXED_188_NOT_LIVE")
+        r = x["latest_source_epoch"]
+        self.assertEqual((r["new_arrivals"], r["retirements"]), (21, 0))
+        self.assertEqual(r["pre_repair"]["unclassified"], 8)
+        self.assertEqual(r["repair_head"]["unclassified"], 0)
+        self.assertEqual(r["repair_head"]["unit_tests_passed"], 324)
+        self.assertEqual(r["main_source"]["native_main_gate"],
+                         "UNKNOWN_NOT_CREDITED")
+        self.assertFalse(r["effective_independent_admission"])
+        self.assertEqual(x["parents_verified_closed"], 0)
+
+    def test_g3f_population_conservation_rejects_fabricated_arrival(self):
+        self.data["live_epoch"]["arrivals_since_fixed"].pop()
+        with self.assertRaisesRegex(ValueError, "conservation"):
+            g3d.summarize(self.data)
+
+    def test_g3f_mismatched_live_denominator_rejected(self):
+        self.data["live_epoch"]["pre_repair"]["workflow_total"] = 208
+        with self.assertRaisesRegex(ValueError, "matched 209"):
+            g3d.summarize(self.data)
+
+    def test_g3f_mismatched_native_test_population_rejected(self):
+        self.data["live_epoch"]["repair_head"]["native_governance"][
+            "unit_tests_passed"] = 323
+        with self.assertRaisesRegex(ValueError, "native test"):
+            g3d.summarize(self.data)
+
+    def test_g3f_root_closure_or_admission_forgery_rejected(self):
+        self.data["live_epoch"]["accepted_root_closures"] = 1
+        with self.assertRaisesRegex(ValueError, "authority"):
+            g3d.summarize(self.data)
+
+    def test_g3f_missing_receipt_is_not_main_success(self):
+        self.data["live_epoch"]["main_source_at_observation"][
+            "native_main_run_id"] = 39230923051
+        with self.assertRaisesRegex(ValueError, "main CI"):
+            g3d.summarize(self.data)
+
     def test_historical_federation_denominators_stable(self):
         out = g3d.summarize(self.data)
         self.assertEqual((out["historical_census_observed"],
