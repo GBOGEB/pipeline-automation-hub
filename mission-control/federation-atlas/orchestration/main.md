@@ -107,6 +107,11 @@ An attached local receipt adds `local-run.json`. The manifest records source ide
 Python entries and diagrams; discovery is distinct from registering an
 executable process. A discovered script is not automatically safe or scheduled.
 
+Graph files use bounded ASCII stems with a digest of the canonical graph identity;
+labels such as `3P*` remain unchanged in the model and diagrams. The bundle gate
+rejects nonportable member paths before artifact upload, and the builder rejects
+duplicate identities or filename collisions.
+
 Keep generated members together when copying a bundle. Edit the source/template
 and rebuild; a manual change to an emitted card, graph or stylesheet invalidates
 its member hash. The existing Pages workflow stages and publishes the child.

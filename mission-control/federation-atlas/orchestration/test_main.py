@@ -749,5 +749,80 @@ class LocalReceiptBoundaryTests(FixtureCase):
             atlas.validate_local_receipt(drifted, original_model)
 
 
+class PortableGraphArtifactTests(FixtureCase):
+    def assert_portable_stem(self, stem):
+        self.assertIsInstance(stem, str)
+        self.assertTrue(stem.isascii())
+        self.assertRegex(stem, r"^[A-Za-z0-9_-]+-[0-9a-f]{12}$")
+        self.assertLessEqual(len(stem), 80 + 1 + 12)
+        self.assertNotRegex(stem, r'[<>:"/\\|?*\x00-\x1f]')
+        self.assertFalse(stem.endswith((".", " ")))
+        reserved = {"CON", "PRN", "AUX", "NUL", *("COM" + str(i) for i in range(1, 10)),
+                    *("LPT" + str(i) for i in range(1, 10))}
+        self.assertNotIn(stem.upper(), reserved)
+
+    def test_awkward_canonical_ids_produce_bounded_portable_artifact_stems(self):
+        identities = ["lane-3p*", "name:variant", "a/b", "a\\b", "../escape", "../../",
+                      "日本語/JADÉ", "CON", "con.txt", "NUL", "COM1", "LPT9", ".", "..",
+                      "trailing...", "trailing ", "line\nbreak", "x" * 400]
+        for identity in identities:
+            with self.subTest(identity=identity):
+                stem = atlas.artifact_stem(identity)
+                self.assert_portable_stem(stem)
+                for extension in (".mmd", ".light.svg", ".dark.svg"):
+                    member = "graphs/" + stem + extension
+                    self.assertEqual(atlas.safe_path(self.root, member).parent, self.root / "graphs")
+                    self.assertNotRegex(member, r'[<>:"\\|?*\x00-\x1f]')
+        for invalid in ("", None, 0, False, {}, []):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(ValueError):
+                    atlas.artifact_stem(invalid)
+
+    def test_normalized_collisions_case_variants_and_long_ids_stay_distinct(self):
+        identities = ["3P*", "3P?", "3P:", "3P/", "3P\\", "3P", "3p", "CON", "con",
+                      "é", "e\u0301", ".", "..", "x" * 400 + "a", "x" * 400 + "b"]
+        stems = {identity: atlas.artifact_stem(identity) for identity in identities}
+        self.assertEqual(len({value.casefold() for value in stems.values()}), len(identities))
+        self.assertEqual(stems, {identity: atlas.artifact_stem(identity) for identity in reversed(identities)})
+        for stem in stems.values():
+            self.assert_portable_stem(stem)
+
+    def test_safe_filenames_preserve_original_3p_star_mermaid_labels_and_identity(self):
+        graph = atlas.graph_record("lane-3p*", "Canonical 3P* lane", "LANE",
+                                   [{"id": "3P*", "label": "3P*", "role": "source"}], [], "source.json")
+        before = atlas.graph_mermaid(graph)
+        stem = atlas.artifact_stem(graph["id"])
+        self.assertNotIn("*", stem)
+        graph["mermaid_path"] = "graphs/" + stem + ".mmd"
+        graph["paths"] = {"svg_light": "graphs/" + stem + ".light.svg",
+                          "svg_dark": "graphs/" + stem + ".dark.svg"}
+        self.assertEqual(graph["id"], "lane-3p*")
+        self.assertEqual(graph["nodes"][0]["id"], "3P*")
+        self.assertIn("Canonical 3P* lane", before)
+        self.assertIn('["3P* · source"]', before)
+        self.assertEqual(atlas.graph_mermaid(graph), before)
+        expected_hash = atlas.digest(before.encode())
+        for theme in ("light", "dark"):
+            self.assertIn("canonical Mermaid SHA-256: " + expected_hash, atlas.graph_svg(graph, theme))
+
+    def test_artifact_member_gate_rejects_nonportable_names_before_file_access(self):
+        for name in ("graphs/diagram-123.dark.svg", "graphs/CON-safe.svg", "graphs/展示.svg"):
+            with self.subTest(valid=name):
+                self.assertEqual(atlas.artifact_path(self.root, name), self.root / name)
+        invalid_names = ["", ".", "..", "../escape.svg", "/absolute.svg", "C:/absolute.svg",
+                         "graphs//empty.svg", "graphs/./dot.svg", "graphs/../escape.svg", "graphs/",
+                         "graphs/lane-3p*.svg", "graphs/name:variant.svg", "graphs/name?.svg",
+                         "graphs/<name>.svg", "graphs/name|variant.svg", "graphs\\name.svg",
+                         "graphs/line\nbreak.svg", "graphs/null\x00.svg", "graphs/file.svg.",
+                         "graphs/file.svg ", "graphs/trailing./file.svg", "graphs/trailing /file.svg",
+                         "graphs/CON", "graphs/con.svg", "graphs/PRN.txt", "graphs/aux.tar.svg",
+                         "graphs/NUL.svg", "graphs/COM1.svg", "graphs/lpt9.dark.svg"]
+        for name in invalid_names:
+            with self.subTest(invalid=name):
+                with self.assertRaises(ValueError):
+                    atlas.artifact_path(self.root, name)
+        self.assertEqual(list(self.root.iterdir()), [])
+
+
 if __name__ == "__main__":
     unittest.main()

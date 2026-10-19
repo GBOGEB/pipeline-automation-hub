@@ -59,6 +59,25 @@ def safe_path(root, name):
     return resolved
 
 
+def artifact_stem(identity):
+    """Portable filename stem; canonical graph identity remains in the model."""
+    demand(isinstance(identity, str) and bool(identity), "empty or invalid artifact identity")
+    slug = re.sub(r"[^A-Za-z0-9_-]+", "-", identity).strip("-_")[:80] or "graph"
+    return slug + "-" + digest(identity.encode("utf-8"))[:12]
+
+
+def artifact_path(root, name):
+    """Gate portable relative members before writing or accepting a bundle."""
+    demand(isinstance(name, str) and bool(name), "invalid artifact member path")
+    for part in name.split("/"):
+        demand(part not in {"", ".", ".."}, "invalid artifact member segment")
+        demand(not re.search(r'[<>:"\\|?*\x00-\x1f]', part), "nonportable artifact member")
+        demand(not part.endswith((".", " ")), "nonportable artifact member suffix")
+        demand(not re.match(r"(?i)^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)", part),
+               "reserved artifact member basename")
+    return safe_path(root, name)
+
+
 def read_json(root, name):
     return json.loads(safe_path(root, name).read_text(encoding="utf-8"))
 
@@ -738,7 +757,7 @@ def verify_bundle(out, head=None, *, require_clean=False, source_root=None):
     members = manifest.get("files_sha256", {})
     demand({"index.html", "style.css", "app.js", "atlas.json", "inventory.json", "burndown.json", "broker-plan.json", "source-check.json"} <= members.keys(), "incomplete member set")
     for name, expected in members.items():
-        path = safe_path(out, name)
+        path = artifact_path(out, name)
         demand(path.is_file() and digest(path.read_bytes()) == expected, "member hash mismatch: " + name)
         demand(path.stat().st_size == manifest["files_bytes"].get(name), "member size mismatch: " + name)
     actual_members = {p.relative_to(out).as_posix() for p in out.rglob("*") if p.is_file()}
@@ -779,6 +798,10 @@ def build(root, out, head, snapshot=None, local_receipt=None):
     root, out = runtime_root(root), Path(out).resolve()
     demand(not out.is_relative_to(root) and not root.is_relative_to(out), "output overlaps source root")
     model = source_model(root, head, snapshot)
+    identities = [g["id"] for g in model["graphs"]]
+    stems = [artifact_stem(identity) for identity in identities]
+    demand(len(identities) == len(set(identities)), "duplicate graph identity")
+    demand(len(stems) == len({stem.casefold() for stem in stems}), "graph artifact filename collision")
     if local_receipt is not None:
         model["broker"]["local_receipt"] = validate_local_receipt(local_receipt, model)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -788,19 +811,21 @@ def build(root, out, head, snapshot=None, local_receipt=None):
         staged = Path(temporary) / "bundle"
         staged.mkdir()
         (staged / "graphs").mkdir()
-        for g in model["graphs"]:
+        for g, stem in zip(model["graphs"], stems):
             g["mermaid"] = graph_mermaid(g)
-            g["mermaid_path"] = "graphs/" + g["id"] + ".mmd"
-            g["svg_path"] = "graphs/" + g["id"] + ".light.svg"
+            g["mermaid_path"] = "graphs/" + stem + ".mmd"
+            g["svg_path"] = "graphs/" + stem + ".light.svg"
             g["paths"] = {"mermaid": g["mermaid_path"], "svg_light": g["svg_path"],
-                          "svg_dark": "graphs/" + g["id"] + ".dark.svg"}
+                          "svg_dark": "graphs/" + stem + ".dark.svg"}
             g["canonical_mermaid_sha256"] = digest(g["mermaid"].encode())
-            (staged / g["mermaid_path"]).write_text(g["mermaid"], encoding="utf-8")
-            (staged / g["paths"]["svg_light"]).write_text(graph_svg(g, "light"), encoding="utf-8")
-            (staged / g["paths"]["svg_dark"]).write_text(graph_svg(g, "dark"), encoding="utf-8")
+            artifact_path(staged, g["mermaid_path"]).write_text(g["mermaid"], encoding="utf-8")
+            artifact_path(staged, g["paths"]["svg_light"]).write_text(graph_svg(g, "light"), encoding="utf-8")
+            artifact_path(staged, g["paths"]["svg_dark"]).write_text(graph_svg(g, "dark"), encoding="utf-8")
         for d in model["inventory"]["diagrams"]:
             path = "graphs/source-" + digest(d["path"].encode())[:12] + ".mmd"
-            (staged / path).write_bytes(safe_path(root, d["path"]).read_bytes())
+            target = artifact_path(staged, path)
+            demand(not target.exists(), "source diagram artifact filename collision")
+            target.write_bytes(safe_path(root, d["path"]).read_bytes())
             d["artifact_path"] = path
         renderer = module("atlas_execution_renderer", HERE / "render.py")
         renderer.render(model, staged)
