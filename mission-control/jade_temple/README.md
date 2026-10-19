@@ -61,7 +61,7 @@ Readback: 21/21 non-atomic HEAD identities, 146 ordinary open issues, 18 ordinar
 
 ## N+7 QPS TRIAGE focus-five parallel owner lanes
 
-**[Interactive focus-five dashboard](site/focus5.html)** · **[Source-bound 60-gate ledger](data/FOCUS5_POINT_RELEASE_NPLUS7.json)** · [Deterministic generator](site/build_focus5.py) · [8 fail-closed release-check tests](tests/test_focus5_release_contract.py).
+**[Interactive focus-five dashboard](site/focus5.html)** · **[Source-bound 60-gate ledger](data/FOCUS5_POINT_RELEASE_NPLUS7.json)** · [60-row Excel-ready burndown CSV](site/focus5_burndown.csv) · [60-gate neural dependency graph](diagrams/JADE_FOCUS5_GATE_NEURONS_NPLUS7.mmd) · [Parallel wave and parked owner action](notes/FOCUS5_NPLUS7_PARALLEL_WAVE_ORDER.md) · [Deterministic generator](site/build_focus5.py) · [9 authored fail-closed source-contract tests](tests/test_focus5_release_contract.py).
 
 Five repo-specific owners: **04 cryoplant-project, 08 DOCX_RTM_Automation, 16 yaml-grammar, 05 gg_MATH, 02 pipeline-automation-hub**. Current read-only evidence is **14/60 (23.33%)** verified minimum PASS, 8/60 FAIL, 38/60 UNKNOWN. This is **not** broader Top21 release completion; the 16 unassessed repositories remain outside this denominator. Each gate has the same 12-item contract and repo-specific B0 definition. Absence of an Actions workflow, genuine approval or source-binary hash never counts as PASS.
 
