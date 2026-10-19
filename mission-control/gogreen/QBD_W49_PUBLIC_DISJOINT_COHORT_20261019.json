@@ -77,7 +77,12 @@
         "sha": "00cc896802b426c6b222c2557338e54412a51062",
         "step": "Fail closed on governance red",
         "symptom": "two unclassified workflows and stale generated report",
-        "owner_issue": 2087
+        "owner_issue": 2087,
+        "run_attempt": 1,
+        "job_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39024179117/job/117371788046",
+        "native_job_failure_observed": true,
+        "causal_root_confirmed": false,
+        "receipt_class": "HISTORICAL_PR_HEAD_NATIVE_JOB_NOT_CURRENT_MAIN"
       },
       {
         "candidate": "EVERRED_FORMAT",
@@ -86,7 +91,12 @@
         "sha": "00cc896802b426c6b222c2557338e54412a51062",
         "step": "Verify committed Black and isort styles",
         "symptom": "unformatted CBD 260 script/tests at exact old head",
-        "owner_issue": 2049
+        "owner_issue": 2049,
+        "run_attempt": 1,
+        "job_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39024179339/job/117371827109",
+        "native_job_failure_observed": true,
+        "causal_root_confirmed": false,
+        "receipt_class": "HISTORICAL_PR_HEAD_NATIVE_JOB_NOT_CURRENT_MAIN"
       },
       {
         "candidate": "PY39_DEPENDENCY",
@@ -95,7 +105,12 @@
         "sha": "00cc896802b426c6b222c2557338e54412a51062",
         "step": "Install dependencies",
         "symptom": "pytest-asyncio >=1.4 requires Python >=3.10; Python3.9 failed",
-        "owner_issue": 1874
+        "owner_issue": 1874,
+        "run_attempt": 1,
+        "job_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39024179288/job/117371788698",
+        "native_job_failure_observed": true,
+        "causal_root_confirmed": false,
+        "receipt_class": "HISTORICAL_PR_HEAD_NATIVE_JOB_NOT_CURRENT_MAIN"
       },
       {
         "candidate": "DOCS_MARKDOWN",
@@ -104,7 +119,12 @@
         "sha": "00cc896802b426c6b222c2557338e54412a51062",
         "step": "Validate changed docs",
         "symptom": "MD060/MD013 in CBD 260 SIPOC docs",
-        "owner_issue": 1860
+        "owner_issue": 1860,
+        "run_attempt": 2,
+        "job_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39024179225/job/117691333068",
+        "native_job_failure_observed": true,
+        "causal_root_confirmed": false,
+        "receipt_class": "HISTORICAL_PR_HEAD_NATIVE_JOB_NOT_CURRENT_MAIN"
       },
       {
         "candidate": "SECURITY_FULL_RED",
@@ -113,7 +133,12 @@
         "sha": "00cc896802b426c6b222c2557338e54412a51062",
         "step": "Enforce security red roots",
         "symptom": "independent security gate failed; findings need owner review",
-        "owner_issue": 1738
+        "owner_issue": 1738,
+        "run_attempt": 1,
+        "job_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39024179357/job/117371788932",
+        "native_job_failure_observed": true,
+        "causal_root_confirmed": false,
+        "receipt_class": "HISTORICAL_PR_HEAD_NATIVE_JOB_NOT_CURRENT_MAIN"
       }
     ],
     "verified_causal_root_count": null
