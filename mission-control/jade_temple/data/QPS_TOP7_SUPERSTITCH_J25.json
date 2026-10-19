@@ -1,0 +1,943 @@
+{
+  "schema": "jade.qps.temple.superstitch.v1",
+  "source": "MISSION_SELECTED_TOP21_NON_ATOMIC_2026_10_19",
+  "authority_transfer": false,
+  "merge_admission": "HOLD",
+  "release_status": "TARGET_NOT_ACHIEVED",
+  "release_decision": null,
+  "public_sanitization": "NO_QPS_PRIVATE_BIDDER_PAYLOAD_OR_SOURCE_HEAD",
+  "historical_roster": "mission-control/jade_temple/data/TOP21_PORTFOLIO.json",
+  "qps_source_registry": "QPS_CURRENT_MASTERS_REGISTRY_OWNER_PRIVATE",
+  "ranks_selected_top7": [
+    4,
+    1,
+    2,
+    3,
+    5,
+    8,
+    16
+  ],
+  "scope_of_top7": "PROPOSED_CRITICAL_DEPENDENCY_SUBSET_NOT_ROSTER_RANK1_TO7",
+  "observed_non_atomic_branches": 21,
+  "roster": [
+    {
+      "rank": 1,
+      "repo": "GBOGEB/ABACUS",
+      "branch": "main",
+      "observed_head": "cc49e0ce780032461b2482b1ca1743578fcbe119",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": true,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 2,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "branch": "master",
+      "observed_head": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 3,
+      "repo": "GBOGEB/CODEX",
+      "branch": "main",
+      "observed_head": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 4,
+      "repo": "GBOGEB/cryoplant-project",
+      "branch": "main",
+      "observed_head": null,
+      "public_head_visibility": "PRIVATE_WITHHELD",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 5,
+      "repo": "GBOGEB/gg_MATH",
+      "branch": "main",
+      "observed_head": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 6,
+      "repo": "GBOGEB/ariana",
+      "branch": "main",
+      "observed_head": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 7,
+      "repo": "GBOGEB/GEMINI",
+      "branch": "main",
+      "observed_head": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 8,
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "branch": "main",
+      "observed_head": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 9,
+      "repo": "GBOGEB/Q_engineering_tools",
+      "branch": "main",
+      "observed_head": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 10,
+      "repo": "GBOGEB/cryo_leak_rate_dashboard",
+      "branch": "main",
+      "observed_head": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 11,
+      "repo": "GBOGEB/cryogenic-accelerator-workspace",
+      "branch": "main",
+      "observed_head": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 12,
+      "repo": "GBOGEB/document-organization-system",
+      "branch": "main",
+      "observed_head": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 13,
+      "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB",
+      "branch": "master",
+      "observed_head": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 14,
+      "repo": "GBOGEB/github-mcp-server",
+      "branch": "main",
+      "observed_head": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 15,
+      "repo": "GBOGEB/docker-stacks",
+      "branch": "main",
+      "observed_head": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 16,
+      "repo": "GBOGEB/yaml-grammar",
+      "branch": "master",
+      "observed_head": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 17,
+      "repo": "GBOGEB/prettier",
+      "branch": "main",
+      "observed_head": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 18,
+      "repo": "GBOGEB/vscode-powershell",
+      "branch": "main",
+      "observed_head": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 19,
+      "repo": "GBOGEB/cli",
+      "branch": "trunk",
+      "observed_head": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 20,
+      "repo": "GBOGEB/python-sdk",
+      "branch": "main",
+      "observed_head": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    },
+    {
+      "rank": 21,
+      "repo": "GBOGEB/skills",
+      "branch": "main",
+      "observed_head": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "public_head_visibility": "PUBLIC",
+      "protected_flag": false,
+      "release_J4": "UNKNOWN",
+      "release_J5": "UNKNOWN"
+    }
+  ],
+  "groups": [
+    {
+      "id": "commercial",
+      "label": "Contract → PO → stages",
+      "color": "#db9cfb",
+      "ids": [
+        "NEG",
+        "REFINE",
+        "PREL0",
+        "L0L8"
+      ]
+    },
+    {
+      "id": "masters",
+      "label": "Eight QPS Masters",
+      "color": "#a78bfa",
+      "ids": [
+        "OFFER",
+        "OCD",
+        "COST",
+        "CONFIG",
+        "WCS",
+        "BOM",
+        "PROVENANCE",
+        "ICD"
+      ]
+    },
+    {
+      "id": "engineering",
+      "label": "System engineering / interfaces",
+      "color": "#c4b5fd",
+      "ids": [
+        "WPS",
+        "QLM",
+        "CONTROL",
+        "RAMS"
+      ]
+    },
+    {
+      "id": "toolchain",
+      "label": "Parallel DOW / KEB / maths / documents",
+      "color": "#bdb0f7",
+      "ids": [
+        "DOCX",
+        "YAML",
+        "DOW",
+        "KEB",
+        "MATH"
+      ]
+    },
+    {
+      "id": "release",
+      "label": "B0 / binary QA / governance / owner",
+      "color": "#e1acff",
+      "ids": [
+        "B0",
+        "BINQA",
+        "HUB",
+        "GOV",
+        "RELEASE"
+      ]
+    },
+    {
+      "id": "golden",
+      "label": "Golden Thread multi-touch",
+      "color": "#f0a3dd",
+      "ids": [
+        "OFFER",
+        "PROVENANCE",
+        "DOCX",
+        "YAML",
+        "DOW",
+        "KEB",
+        "MATH",
+        "HUB",
+        "RELEASE"
+      ]
+    },
+    {
+      "id": "qps-firstred",
+      "label": "QPS source-blocker lasso",
+      "color": "#fba7cb",
+      "ids": [
+        "NEG",
+        "REFINE",
+        "WCS",
+        "RAMS",
+        "GOV",
+        "RELEASE"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "NEG",
+      "label": "NEGO1 / RFI",
+      "subtitle": "LKT + ALAT returns",
+      "group": "commercial",
+      "x": 70,
+      "y": 55,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "REFINE",
+      "label": "Requirement refinement",
+      "subtitle": "Ad# / codes / deliverables",
+      "group": "commercial",
+      "x": 385,
+      "y": 55,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "PREL0",
+      "label": "Pre-L0 · PO",
+      "subtitle": "Owner contractual gate",
+      "group": "commercial",
+      "x": 700,
+      "y": 55,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "L0L8",
+      "label": "L0–L8 stage spine",
+      "subtitle": "durations = UNKNOWN",
+      "group": "commercial",
+      "x": 1015,
+      "y": 55,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "OFFER",
+      "label": "Master 01 · RTM/OFFER",
+      "subtitle": "722 RTM; control ≠ compliance",
+      "group": "masters",
+      "x": 60,
+      "y": 210,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "OCD",
+      "label": "Master 02 · OCD/ADR",
+      "subtitle": "current working master",
+      "group": "masters",
+      "x": 360,
+      "y": 210,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "COST",
+      "label": "Master 03 · COST",
+      "subtitle": "Excel numerical SSOT",
+      "group": "masters",
+      "x": 660,
+      "y": 210,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "CONFIG",
+      "label": "Master 04 · states",
+      "subtitle": "C24/C30 · operating matrix",
+      "group": "masters",
+      "x": 960,
+      "y": 210,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "WCS",
+      "label": "Master 05 · WCS",
+      "subtitle": "HP / PVPS / CC",
+      "group": "masters",
+      "x": 60,
+      "y": 330,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "BOM",
+      "label": "Master 06 · BOM",
+      "subtitle": "scope/supply ≠ spares",
+      "group": "masters",
+      "x": 360,
+      "y": 330,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "PROVENANCE",
+      "label": "Master 07 · evidence",
+      "subtitle": "source/hash/authority",
+      "group": "masters",
+      "x": 660,
+      "y": 330,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "ICD",
+      "label": "Master 08 · interfaces",
+      "subtitle": "TP + building ICD",
+      "group": "masters",
+      "x": 960,
+      "y": 330,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "WPS",
+      "label": "WPS warm lines",
+      "subtitle": "W / U / S",
+      "group": "engineering",
+      "x": 60,
+      "y": 480,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "QLM",
+      "label": "QLM cold lines",
+      "subtitle": "A / B / D / E",
+      "group": "engineering",
+      "x": 360,
+      "y": 480,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "CONTROL",
+      "label": "CIS / ICT / MIT",
+      "subtitle": "control / security / FAT",
+      "group": "engineering",
+      "x": 660,
+      "y": 480,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "RAMS",
+      "label": "RAMS / RCM / spares",
+      "subtitle": "FAT / SAT / MTTR",
+      "group": "engineering",
+      "x": 960,
+      "y": 480,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "DOCX",
+      "label": "Document bridge",
+      "subtitle": "RTM / DOCX / PDF",
+      "group": "toolchain",
+      "x": 65,
+      "y": 625,
+      "owner": "GBOGEB/DOCX_RTM_Automation",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "YAML",
+      "label": "Grammar contract",
+      "subtitle": "YAML / schemas",
+      "group": "toolchain",
+      "x": 330,
+      "y": 625,
+      "owner": "GBOGEB/yaml-grammar",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "DOW",
+      "label": "ABACUS DOW",
+      "subtitle": "coverage / testflight",
+      "group": "toolchain",
+      "x": 595,
+      "y": 625,
+      "owner": "GBOGEB/ABACUS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "KEB",
+      "label": "CODEX KEB",
+      "subtitle": "typed provenance",
+      "group": "toolchain",
+      "x": 860,
+      "y": 625,
+      "owner": "GBOGEB/CODEX",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "MATH",
+      "label": "gg_MATH",
+      "subtitle": "methods; scoped only",
+      "group": "toolchain",
+      "x": 1125,
+      "y": 625,
+      "owner": "GBOGEB/gg_MATH",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "B0",
+      "label": "Per-repo B0",
+      "subtitle": "conditional applicability",
+      "group": "release",
+      "x": 65,
+      "y": 805,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "BINQA",
+      "label": "Cross-format QA",
+      "subtitle": "XLSX/PPTX/DOCX/PDF",
+      "group": "release",
+      "x": 330,
+      "y": 805,
+      "owner": "QPS",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "HUB",
+      "label": "Golden Thread Hub",
+      "subtitle": "read-only presentation",
+      "group": "release",
+      "x": 595,
+      "y": 805,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "GOV",
+      "label": "Governance P0",
+      "subtitle": "branch + RED canary",
+      "group": "release",
+      "x": 860,
+      "y": 805,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    },
+    {
+      "id": "RELEASE",
+      "label": "J4 → J5 point release",
+      "subtitle": "owner admission withheld",
+      "group": "release",
+      "x": 1125,
+      "y": 805,
+      "owner": "GBOGEB/cryoplant-project",
+      "status": "PLAN_OR_SOURCE_POINTER_ONLY",
+      "native_run": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "NEG",
+      "to": "REFINE",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "REFINE",
+      "to": "PREL0",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "PREL0",
+      "to": "L0L8",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "REFINE",
+      "to": "OFFER",
+      "type": "evidence",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "OFFER",
+      "to": "OCD",
+      "type": "evidence",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "OFFER",
+      "to": "COST",
+      "type": "evidence",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "OCD",
+      "to": "CONFIG",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "CONFIG",
+      "to": "WCS",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "COST",
+      "to": "BOM",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "OFFER",
+      "to": "PROVENANCE",
+      "type": "evidence",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "OCD",
+      "to": "ICD",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "WCS",
+      "to": "WPS",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "WCS",
+      "to": "QLM",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "ICD",
+      "to": "CONTROL",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "BOM",
+      "to": "RAMS",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "CONFIG",
+      "to": "RAMS",
+      "type": "touch",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "OFFER",
+      "to": "DOCX",
+      "type": "evidence",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "PROVENANCE",
+      "to": "YAML",
+      "type": "evidence",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "DOCX",
+      "to": "DOW",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "YAML",
+      "to": "DOW",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "DOW",
+      "to": "KEB",
+      "type": "handover",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "KEB",
+      "to": "MATH",
+      "type": "touch",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "KEB",
+      "to": "HUB",
+      "type": "handover",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "RAMS",
+      "to": "BINQA",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "CONTROL",
+      "to": "BINQA",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "COST",
+      "to": "BINQA",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "B0",
+      "to": "BINQA",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "BINQA",
+      "to": "HUB",
+      "type": "evidence",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "HUB",
+      "to": "GOV",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "GOV",
+      "to": "RELEASE",
+      "type": "dependency",
+      "evidence_class": "DECLARED_PLAN"
+    },
+    {
+      "from": "KEB",
+      "to": "OFFER",
+      "type": "feedback",
+      "evidence_class": "PROPOSED_RETURN_NO_AUTHENTICATED_PROOF"
+    },
+    {
+      "from": "HUB",
+      "to": "B0",
+      "type": "feedback",
+      "evidence_class": "PROPOSED_NEXT_WAVE_RETRIGGER"
+    }
+  ],
+  "scope": [
+    {
+      "family": "Tender and contract",
+      "topics": [
+        "NEGO1 LKT + ALAT returns",
+        "Pre-L0 PO and contract precedence",
+        "Applicable Documents [AD#], deliverables",
+        "Codes/standards, glossary, definition control",
+        "Technical requirements refinement"
+      ]
+    },
+    {
+      "family": "SSOT and commercial",
+      "topics": [
+        "Excel OFFER/RTM numerical/technical SSOT",
+        "Cost Master CAPEX/OPEX/lifecycle and energy",
+        "Cost estimate: source maturity E0-E4 and option boundaries",
+        "Three-point uncertainty and cost–reliability crosswalk",
+        "Option: WSH warm vessels and warm gas storage"
+      ]
+    },
+    {
+      "family": "OCD / schedule",
+      "topics": [
+        "Canonical OCD v0.8 and ADR register v0.3 as existing working pair",
+        "Stage L0-L6 with L7/L8 post-project",
+        "Durations, milestones, Gantt/temporal views (UNKNOWN pending owner)",
+        "Configuration C24/C30 and warm/cold plant modes"
+      ]
+    },
+    {
+      "family": "Physical and interface",
+      "topics": [
+        "WPS warm lines W/U/S; cold lines QLM A/B/D/E",
+        "Warm interconnect HP/LP/VLP",
+        "3 building areas, move-in, roof and door openings",
+        "Building and utility ICD; terminal points; cooling water/air/power",
+        "QPS:CIS controls, MIT/MCB/ICT, cyber and interlocks"
+      ]
+    },
+    {
+      "family": "RAMS / acceptance",
+      "topics": [
+        "RAM/RCM, system reliability and source-bound RTM",
+        "Spares philosophy: installed vs shelf stock, lead-time, MTTR",
+        "FAT and SAT test matrices including failure/retest",
+        "Installation, commissioning, training, handover"
+      ]
+    },
+    {
+      "family": "Binary generation / QA",
+      "topics": [
+        "Input PDF/DOCX/OFFER and Excel binary hash census",
+        "Generate controlled XLSX/DOCX/PPTX/PDF/HTML from governing sources",
+        "Tables, figures, TOC, navigation, PDF links, acronym parity",
+        "Render + inspect fonts, labels, captions, formulas and ZIP CRC",
+        "Playwright 3-viewports and visual arrow/legend contract",
+        "Cross-format semantic/hash parity; owner receipt and rollback"
+      ]
+    }
+  ],
+  "qps_master_count": 8,
+  "release_maturity": {
+    "J0": "21 identities observed",
+    "J1": "UNASSESSED",
+    "J2": "UNASSESSED",
+    "J3": "UNASSESSED",
+    "J4": "UNASSESSED",
+    "J5": "NO_ACCEPTED_RECEIPT"
+  },
+  "strict_gates": [
+    {
+      "id": "GOV_P0",
+      "state": "OPEN",
+      "source": "QPS #1959",
+      "role": "noncompensating"
+    },
+    {
+      "id": "QPS_RC",
+      "state": "HOLD",
+      "source": "QPS #1379",
+      "role": "separate release authority"
+    },
+    {
+      "id": "NEGO1_RETURN",
+      "state": "SOURCE_BLOCKED",
+      "source": "QPS current negotiation control",
+      "role": "bidder return never inferred"
+    },
+    {
+      "id": "FEDERATION",
+      "state": "HOLD",
+      "source": "CODEX→QPS",
+      "role": "authenticated member-bound receipt required"
+    },
+    {
+      "id": "B0",
+      "state": "UNQUALIFIED",
+      "source": "repo-specific",
+      "role": "native tests only when applicable"
+    },
+    {
+      "id": "QA_BINARY",
+      "state": "UNQUALIFIED",
+      "source": "QPS product registry",
+      "role": "canonical output receipts required"
+    }
+  ],
+  "edge_semantics": {
+    "evidence": {
+      "color": "#44eac8",
+      "dash": "solid",
+      "meaning": "Source/provenance atom → consumer; source receipt still required"
+    },
+    "dependency": {
+      "color": "#80bdff",
+      "dash": "solid",
+      "meaning": "Hard ordering/dependency; not executed"
+    },
+    "handover": {
+      "color": "#db9fff",
+      "dash": "solid",
+      "meaning": "Typed logical producer → consumer"
+    },
+    "feedback": {
+      "color": "#ffce73",
+      "dash": "dashed",
+      "meaning": "Next pulse feedback only; no autonomous trigger"
+    },
+    "touch": {
+      "color": "#ff86c8",
+      "dash": "dotted",
+      "meaning": "Shared/touching context, NOT DAG admission"
+    }
+  }
+}
