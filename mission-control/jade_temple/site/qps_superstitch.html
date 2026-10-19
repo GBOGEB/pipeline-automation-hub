@@ -1,0 +1,1086 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>JADE_TEMPLE — QPS Superstitch J25</title><style>:root{color-scheme:dark;--bg:#090d1d;--panel:#151d34;--pale:#e2cfff;--ink:#f5f3ff;--muted:#bfcee4;--line:#50617f}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.52 system-ui,Segoe UI,Arial,sans-serif}h1{font-size:clamp(24px,3vw,35px);margin:4px 0;line-height:1.15}h2{font-size:17px;color:var(--pale);margin:0 0 8px}h3{font-size:15px;color:var(--pale);margin:0 0 7px}p{margin:7px 0}a{color:#9edbff}a:hover{color:white}button,input,select{font:inherit;background:#222a48;color:white;border:1px solid #8794ba;border-radius:9px;padding:8px 11px}button{cursor:pointer}button:hover,button:focus-visible{outline:2px solid #ceaeff;background:#41306f}button[aria-pressed=true]{background:#542f91;border-color:#f0ceff}.page{max-width:1900px;margin:auto;padding:14px}.mast{display:flex;gap:18px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;background:linear-gradient(110deg,#1c1436,#17233d 68%,#27133d);border:1px solid #735398;border-radius:15px;padding:17px}.eyebrow{font-size:11px;color:#d1a8ff;letter-spacing:1.2px}.tags,.toolbar,.legend{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.pill{border:1px solid #b997ee;border-radius:24px;background:#44306e;padding:6px 12px;font-size:12px;font-weight:700}.pill.hold{border-color:#ffa0b9;background:#5b2447}.muted,.small{color:var(--muted)}.small{font-size:12px}.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:12px 0}.kpi,.panel{border:1px solid #4c5c7f;background:var(--panel);padding:12px;border-radius:12px;min-width:0}.kpi span,.kpi small{display:block;color:#cbd5ec;font-size:12px}.kpi strong{display:block;color:#dec8ff;font-size:28px;line-height:1.15;margin:5px 0}.toolbar{margin:10px 0}.legend{margin:8px 0}.legendItem{display:flex;gap:7px;align-items:center;background:#111a30;border:1px solid #546585;border-radius:9px;padding:6px 9px;font-size:12px}.legendItem svg{flex-shrink:0}.legendItem small{color:#bdcae5}.view{margin-top:12px}.hidden{display:none!important}.workspace{display:grid;grid-template-columns:minmax(0,3.4fr) minmax(278px,1fr);gap:12px}.graphViewport{overflow:auto;max-width:100%;min-height:0;height:auto;border:1px solid #465577;border-radius:11px;background:radial-gradient(circle at 17% 8%,#191a42,#0d1426 65%)}.graphViewport svg{width:100%;height:auto;min-width:1140px;display:block}.inspector{border:1px solid #7860a0;border-radius:12px;background:#201b3e;padding:14px;min-height:160px;max-height:min(69vh,880px);overflow:auto}.inspector b{color:#e5c4ff}.node{cursor:pointer}.node rect{fill:#352359;stroke:#c29aff;stroke-width:2.4}.node .main{fill:#fff;font-size:17px;font-weight:700}.node .sub{fill:#eee0ff;font-size:12.5px}.node.active rect{fill:#5c3192;stroke:#fff;stroke-width:3.4}.node.dim{opacity:.45}.node:hover rect,.node:focus rect{stroke:#fff}.edge{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:3.65;cursor:pointer}.edge.dim{opacity:.12}.edge:hover{stroke-width:5.3}.lane{fill:rgba(177,112,246,.055);stroke:#bc8aff;stroke-width:2.25;stroke-dasharray:10 7;pointer-events:none}.laneLabel{fill:#edcfff;font-size:14px;font-weight:740}.badge{display:inline-block;background:#362650;border:1px solid #aa88cf;border-radius:5px;font-size:11px;padding:2px 7px;margin:3px}.metric{height:9px;border-radius:10px;background:#46395f;overflow:hidden}.metric span{display:block;height:100%;background:#b28af5}.tableWrap{overflow:auto;max-width:100%}table{border-collapse:collapse;width:100%;min-width:670px}th,td{padding:8px 11px;border-bottom:1px solid #415173;font-size:12px;text-align:left}th{background:#242440;color:#e6ccff;position:sticky;top:0}tr[data-group]{cursor:pointer}tr[data-group]:hover{background:#302c52}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.checks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.checks article{background:#1d2642;border:1px solid #516788;border-radius:10px;padding:10px;font-size:12px}.vis{display:block;width:100%;height:auto;max-width:100%;border-radius:10px;background:#111a31}.footer{padding:18px 0;color:#b4c5df}ol,ul{padding-left:24px}li{margin:6px 0}
+@media(max-width:1080px){.workspace{grid-template-columns:1fr}.inspector{max-height:none}.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.checks{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:610px){.page{padding:8px}.kpis,.grid2,.grid3,.checks{grid-template-columns:repeat(2,minmax(0,1fr))}.graphViewport{min-height:0;height:545px}.kpi strong{font-size:22px}.kpi:last-child{grid-column:span 2}}@media(max-width:420px){.grid2,.grid3,.checks{grid-template-columns:1fr}}
+</style></head><body>
+<main class="page"><header class="mast"><div><div class="eyebrow">CODE PURPLE / CBD! · JADE_CASTE · QPS TRIAGE</div><h1>JADE_TEMPLE / QPS Superstitch</h1><p class="muted">TOP7 dependency priority · TOP21 point-release preparations · disjoint DAG lanes · Golden Thread</p><p class="small">Historical and observed source identities are separate from current native gates. Read-only digital-twin <b>projection</b>, not a running orchestrator.</p></div><div class="tags"><span class="pill">PROPOSED / J25</span><span class="pill hold">MERGE ADMISSION · HOLD</span></div></header>
+<section class="kpis"><div class="kpi"><span>TOP21 observed heads</span><strong>21/21</strong><small>Non-atomic J0 identities</small></div><div class="kpi"><span>Proposed critical subset</span><strong>7/21</strong><small>Dependency-prioritized TOP7</small></div><div class="kpi"><span>Protected branch flags</span><strong>1/21</strong><small>Not effective protection</small></div><div class="kpi"><span>QPS Master domains</span><strong>8</strong><small>Current + expected gaps</small></div><div class="kpi"><span>Verified J5 point releases</span><strong>UNKNOWN</strong><small>Owner admission withheld</small></div></section>
+<nav class="panel toolbar" aria-label="Dashboard views"><button data-view="dag" aria-pressed="true">Superstitch DAG</button><button data-view="sipoc" aria-pressed="false">SIPOC as DAG lanes</button><button data-view="stages" aria-pressed="false">L0–L8 / temporal</button><button data-view="atoms" aria-pressed="false">Atoms / neural analogy</button><button data-view="fleet" aria-pressed="false">21 repositories</button><button data-view="binaries" aria-pressed="false">Binary QA / SSOT</button><button data-view="queue" aria-pressed="false">Burndown / parked TODO</button></nav>
+<div class="panel"><h2>Directional edge legend · MUSTARD quality contract</h2><div id="legend" class="legend"></div><p class="small">Each directed edge has a >=14-pixel <b>filled arrowhead with pale outline</b>; color and dash pattern carry type. Yellow dashed feedback is <b>proposed next-pulse flow, not an observed trigger</b>. Pink dotted links represent cross-DAG touch, not admission.</p></div>
+<section id="view-dag" class="view"><div class="toolbar"><label for="group">Purple bounded group</label><select id="group"><option value="">All expanded · nothing collapsed</option></select><button id="reset">Unfocus all</button><button id="lasso" aria-pressed="false">Draw temporary lasso</button><button id="mermaid">Copy Mermaid</button><span id="status" class="small">Click any node, edge or grouping</span></div><div class="workspace"><div class="panel"><h2>Parallel owner lanes & Golden Thread</h2><div class="graphViewport"><svg id="mainGraph" viewBox="0 0 1460 995" role="img" aria-label="Source-owned engineering and point-release dependency graph"><title>QPS TOP7 and Jade point-release typed DAG</title></svg></div><p class="small">Disjoint owner lanes are bounded; shared nodes may touch multiple DAGs. The source graph remains uncollapsed. Any lasso is a client-only view, not a new commit, CI action, owner approval or causal closure.</p></div><aside id="inspector" class="inspector" aria-live="polite"><h2>Hierarchy / evidence inspector</h2><p>Choose a source node, arrow, bounded group or temporary lasso.</p></aside></div></section>
+<section id="view-sipoc" class="view hidden"><div class="panel"><h2>Clickable SIPOC · group = bounded process lane</h2><p class="small">Select a process row to highlight source nodes in the main DAG. SIPOC suppliers and customers are roles, not authenticated acceptance.</p><div class="tableWrap"><table><thead><tr><th>Supplier</th><th>Input</th><th>Process</th><th>Output</th><th>Customer</th></tr></thead><tbody id="sipocBody"></tbody></table></div></div></section>
+<section id="view-stages" class="view hidden"><div class="panel"><h2>Pre-L0 contractual path → L0–L8</h2><p>Stages are ordered only. Dates, durations, resources and milestones remain <b>UNKNOWN</b> pending the controlled schedule and PO/owner commitments.</p><svg id="stageSVG" class="vis" viewBox="0 0 1250 350" role="img" aria-label="Milestone-stage order with unknown durations"></svg><p class="small">L7–L8 are post-project controls. No fabricated Gantt elapsed time, critical-path length or float credit.</p></div></section>
+<section id="view-atoms" class="view hidden"><div class="panel"><h2>Atoms and neuron-like graph sequence</h2><p class="small">This visual is a typed <b>neural analogy</b>: atoms → evidence → method → review → release gates. It is not a learned network, PCA evidence or confidence score.</p><svg id="atomSVG" class="vis" viewBox="0 0 1260 520" role="img" aria-label="Evidence atom network and handovers"></svg></div></section>
+<section id="view-fleet" class="view hidden"><div class="panel"><h2>TOP21 repo-by-repo B0/J4/J5 register</h2><p class="small">Exact source readbacks are dated non-atomic. QPS private SHA is deliberately redacted from the public projection. No B0 is assumed applicable until an owner records a repository-specific test contract.</p><div class="toolbar"><input id="repoFilter" placeholder="Filter repo" aria-label="Filter repositories"><button id="only7" aria-pressed="false">Focus TOP7</button><button id="refresh">Refresh public GitHub metadata only</button><span id="refreshText" class="small">Frozen snapshot — no API calls yet</span></div><div class="tableWrap"><table><thead><tr><th>Rank</th><th>Repository</th><th>Branch</th><th>Observed SHA</th><th>Protected flag</th><th>B0</th><th>J4/J5</th></tr></thead><tbody id="fleetRows"></tbody></table></div></div></section>
+<section id="view-binaries" class="view hidden"><div class="grid2"><div class="panel"><h2>Eight governed QPS Master families</h2><div id="masters"></div></div><div class="panel"><h2>Source / binary factory</h2><ol><li>Immutable input OFFER/contract PDF, DOCX and RTM XLSX; source SHA256 + locators.</li><li>Source-classified SSOT: OFFER, numerical COST, controlled OCD/ADR, interfaces and BOM.</li><li>YAML/semantic content, generator code, style/color test palette, decision trace.</li><li>Build XLSX, DOCX, PPTX, PDF and HTML as <b>views</b> — not replacement SSOT.</li><li>Validate OOXML CRC, formulas/tables, rendered pages/slides, TOC, anchors, glossary and native artifact bytes.</li><li>Compare controlled IDs, source semantic hash, layout/arrow QA and restart/rebuild determinism.</li></ol><p class="small">Vendor/offer binaries and OneDrive release copies have <b>not</b> been read or regenerated by this projection. Real cross-binary proof is DEFERRED.</p></div></div><div id="scope" class="grid3" style="margin-top:12px"></div></section>
+<section id="view-queue" class="view hidden"><div class="grid2"><div class="panel"><h2>Non-compensating first-red and owner holds</h2><div id="gates"></div></div><div class="panel"><h2>JADE_CASTE J0 → J5</h2><div id="ladder"></div></div></div><div class="panel" style="margin-top:12px"><h2>Next bounded wave / parked leftovers</h2><ol><li><b>N0:</b> reconcile fresh 21 repo heads, PRs/issues and source-first-red roots; no duplicate runners.</li><li><b>N+1:</b> QPS 8 Master source/candidate inventory, binary list, RTM/OFFER evidence, NEGO1 RFI residuals.</li><li><b>N+2:</b> run repo-specific B0 on eligible owners in disjoint lanes; pin SHA/run/attempt/job/test denominator.</li><li><b>N+3:</b> inspect canonical XLSX/DOCX/PPTX/PDF/HTML bytes and repair visual arrow failures; build read-only review montage.</li><li><b>N+4:</b> independently qualify protections, security, review and blocked RED canary; no green from a merge alone.</li><li><b>N+5:</b> controlled owner point-release tag/asset/rollback only when J5 gates pass.</li><li><b>Parked:</b> supplier-return gaps, optional WSH, source-blocked legacy binaries, L7–L8 dates, 14 nonselected repos for applicability/release-owner decisions.</li></ol></div></section>
+<section class="panel" style="margin-top:12px"><h2>Arrow MUSTARD — explicit visual acceptance</h2><div class="checks"><article><b>1. Head contrast</b><p>≥14px solid color triangle with white outline; clearly visible at 100% and mobile internal scroll.</p></article><article><b>2. Direction</b><p>Terminations reach target boundary; no arrowhead buried in card, label or line crossing.</p></article><article><b>3. Type semantics</b><p>Dependency blue, evidence teal, handover purple, feedback amber dashed, touch pink dotted.</p></article><article><b>4. Negative QA</b><p>Unlegend-ed type, missing marker, low-contrast arrow or reversed direction blocks rendered publication.</p></article></div></section>
+<footer class="footer">CODE PURPLE / JADE J25 · source-controlled read-only projection · no approval, waiver, auto-merge, QPS engineering acceptance or cross-repo coverage.</footer></main>
+<script type="application/json" id="model">{
+  "authority": {
+    "DOW": "GBOGEB/ABACUS",
+    "KEB": "GBOGEB/CODEX",
+    "masters": "GBOGEB/cryoplant-project",
+    "publisher": "GBOGEB/pipeline-automation-hub",
+    "release": "QPS owner only"
+  },
+  "edge_semantics": {
+    "dependency": {
+      "color": "#89c4ff",
+      "dash": "none",
+      "role": "Hard order / dependency (not executed)"
+    },
+    "evidence": {
+      "color": "#49eacb",
+      "dash": "none",
+      "role": "Source-bound evidence/provenance (not yet accepted)"
+    },
+    "feedback": {
+      "color": "#ffd17b",
+      "dash": "12 9",
+      "role": "Next-wave feedback / trigger candidate, NO dispatch"
+    },
+    "handover": {
+      "color": "#d6a2ff",
+      "dash": "none",
+      "role": "Typed producer → consumer (receipt required)"
+    },
+    "touch": {
+      "color": "#ff88c9",
+      "dash": "2 8",
+      "role": "Shared/multi-touch context, NOT causal admission"
+    }
+  },
+  "edges": [
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "NEG",
+      "to": "REQ",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "REQ",
+      "to": "PO",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "PO",
+      "to": "STAGE",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "REQ",
+      "to": "RTM",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "RTM",
+      "to": "OCD",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "RTM",
+      "to": "COST",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "OCD",
+      "to": "CONFIG",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "CONFIG",
+      "to": "WCS",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "COST",
+      "to": "BOM",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "RTM",
+      "to": "PROV",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "OCD",
+      "to": "ICD",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "WCS",
+      "to": "WPS",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "WCS",
+      "to": "QLM",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "ICD",
+      "to": "CIS",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "BOM",
+      "to": "RCM",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "CONFIG",
+      "to": "RCM",
+      "type": "touch"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "RTM",
+      "to": "DOCX",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "PROV",
+      "to": "YAML",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "DOCX",
+      "to": "DOW",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "YAML",
+      "to": "DOW",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "DOW",
+      "to": "KEB",
+      "type": "handover"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "KEB",
+      "to": "MATH",
+      "type": "touch"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "KEB",
+      "to": "HUB",
+      "type": "handover"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "RCM",
+      "to": "QA",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "CIS",      "to": "QA",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "COST",
+      "to": "QA",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "B0",
+      "to": "QA",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "QA",
+      "to": "HUB",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "HUB",
+      "to": "GOV",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "GOV",
+      "to": "J5",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PROPOSED_RETURN_NOT_AUTHENTICATED",
+      "from": "KEB",
+      "to": "RTM",
+      "type": "feedback"
+    },
+    {
+      "evidence_class": "PROPOSED_NEXT_PULSE_NOT_DISPATCHED",
+      "from": "HUB",
+      "to": "B0",
+      "type": "feedback"
+    }
+  ],
+  "focus7": [
+    4,
+    1,
+    2,
+    3,
+    5,
+    8,
+    16
+  ],
+  "focus7_status": "PROPOSED_QPS_DEPENDENCY_PRIORITIZATION_NOT_TOP_RANK7",
+  "gates": [
+    {
+      "id": "QPS-1959",
+      "label": "Effective main protections + independent RED canary",
+      "status": "OPEN"
+    },
+    {
+      "id": "QPS-1379",
+      "label": "v6 release / Pages / binary publication",
+      "status": "OPEN"
+    },
+    {
+      "id": "QPS-NEGO1",
+      "label": "Bidder returns, no inferred negotiation closure",
+      "status": "SOURCE_WAIT"
+    },
+    {
+      "id": "QPS-BINARY",
+      "label": "Real controlled source/ZIP byte validation",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "QPS-CODEX",
+      "label": "Authenticated KEB producer → QPS consumer",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "TOP7-B0",
+      "label": "Repo-specific native tests and matched denominator",
+      "status": "APPLICABILITY_PENDING"
+    }
+  ],
+  "groups": [
+    {
+      "id": "commercial",
+      "ids": [
+        "NEG",
+        "REQ",
+        "PO",
+        "STAGE"
+      ],
+      "label": "Contract → PO → stage spine"
+    },
+    {
+      "id": "masters",
+      "ids": [
+        "RTM",
+        "OCD",
+        "COST",
+        "CONFIG",
+        "WCS",
+        "BOM",
+        "PROV",
+        "ICD"
+      ],
+      "label": "Eight QPS Masters"
+    },
+    {
+      "id": "engineering",
+      "ids": [
+        "WPS",
+        "QLM",
+        "CIS",
+        "RCM"
+      ],
+      "label": "Physical and control interfaces"
+    },
+    {
+      "id": "toolchain",
+      "ids": [
+        "DOCX",
+        "YAML",
+        "DOW",
+        "KEB",
+        "MATH"
+      ],
+      "label": "Parallel DOW / KEB / documents"
+    },
+    {
+      "id": "release",
+      "ids": [
+        "B0",
+        "QA",
+        "HUB",
+        "GOV",
+        "J5"
+      ],
+      "label": "B0 · QA · governance · J5"
+    },
+    {
+      "id": "golden",
+      "ids": [
+        "RTM",
+        "PROV",
+        "DOCX",
+        "YAML",
+        "DOW",
+        "KEB",
+        "MATH",
+        "HUB",
+        "J5"
+      ],
+      "label": "Golden Thread / multi-touch"
+    },
+    {
+      "id": "qpsfirstred",
+      "ids": [
+        "NEG",
+        "REQ",
+        "WCS",
+        "RCM",
+        "GOV",
+        "J5"
+      ],
+      "label": "QPS first-red / critical path"
+    }
+  ],
+  "j4_admitted": null,
+  "j5_admitted": null,
+  "known_numerators": {
+    "j0_identity": {
+      "d": 21,
+      "n": 21
+    },
+    "protected_branch_flags": {
+      "d": 21,
+      "n": 1
+    },
+    "selected_focus": {
+      "d": 21,
+      "n": 7
+    }
+  },
+  "merge_admission": "HOLD",
+  "native_jobs": null,
+  "nodes": [
+    {
+      "height": 72,
+      "id": "NEG",
+      "label": "NEGO1 / RFI",
+      "lane": "commercial",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",      "subtitle": "LKT/ALAT owner returns",
+      "width": 250,
+      "x": 55,
+      "y": 75
+    },
+    {
+      "height": 72,
+      "id": "REQ",
+      "label": "Requirements",
+      "lane": "commercial",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "AD# / standards / refinement",
+      "width": 250,
+      "x": 342,
+      "y": 75
+    },
+    {
+      "height": 72,
+      "id": "PO",
+      "label": "Pre-L0 / PO",
+      "lane": "commercial",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "No signed PO inferred",
+      "width": 250,
+      "x": 629,
+      "y": 75
+    },
+    {
+      "height": 72,
+      "id": "STAGE",
+      "label": "L0–L8 schedule",
+      "lane": "commercial",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Durations UNKNOWN",
+      "width": 250,
+      "x": 916,
+      "y": 75
+    },
+    {
+      "height": 72,
+      "id": "RTM",
+      "label": "Master 01 · OFFER/RTM",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "722 controlled RTM refs",
+      "width": 250,
+      "x": 50,
+      "y": 238
+    },
+    {
+      "height": 72,
+      "id": "OCD",
+      "label": "Master 02 · OCD/ADR",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Working engineering master",
+      "width": 250,
+      "x": 340,
+      "y": 238
+    },
+    {
+      "height": 72,
+      "id": "COST",
+      "label": "Master 03 · COST",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Excel numerical SSOT",
+      "width": 250,
+      "x": 630,
+      "y": 238
+    },
+    {
+      "height": 72,
+      "id": "CONFIG",
+      "label": "Master 04 · states",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "C24/C30 operating states",
+      "width": 250,
+      "x": 920,
+      "y": 238
+    },
+    {
+      "height": 72,
+      "id": "WCS",
+      "label": "Master 05 · WCS",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "HP/PVPS/CC; bidder-specific",
+      "width": 250,
+      "x": 50,
+      "y": 365
+    },
+    {
+      "height": 72,
+      "id": "BOM",
+      "label": "Master 06 · BOM",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Supply scope ≠ spare kits",
+      "width": 250,
+      "x": 340,
+      "y": 365
+    },
+    {
+      "height": 72,
+      "id": "PROV",
+      "label": "Master 07 · source",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Hash/authority/evidence",
+      "width": 250,
+      "x": 630,
+      "y": 365
+    },
+    {
+      "height": 72,
+      "id": "ICD",
+      "label": "Master 08 · ICD",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "TP / buildings / utility",
+      "width": 250,
+      "x": 920,
+      "y": 365
+    },
+    {
+      "height": 72,
+      "id": "WPS",
+      "label": "WPS warm lines",
+      "lane": "engineering",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "W / U / S, WSH option",
+      "width": 250,
+      "x": 50,
+      "y": 520
+    },
+    {
+      "height": 72,
+      "id": "QLM",
+      "label": "QLM cold lines",
+      "lane": "engineering",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "A / B / D / E",
+      "width": 250,
+      "x": 340,
+      "y": 520
+    },
+    {
+      "height": 72,
+      "id": "CIS",
+      "label": "CIS, MIT, ICT, MCB",
+      "lane": "engineering",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Controls + FAT/SAT",
+      "width": 250,
+      "x": 630,
+      "y": 520
+    },
+    {
+      "height": 72,
+      "id": "RCM",
+      "label": "RCM / reliability",
+      "lane": "engineering",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Spares, MTTR, FAT/SAT",
+      "width": 250,
+      "x": 920,
+      "y": 520
+    },    {
+      "height": 72,
+      "id": "DOCX",
+      "label": "DOCX RTM",
+      "lane": "toolchain",
+      "native_identity": null,
+      "owner": "GBOGEB/DOCX_RTM_Automation",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Word and PDF QA bridge",
+      "width": 250,
+      "x": 45,
+      "y": 682
+    },
+    {
+      "height": 72,
+      "id": "YAML",
+      "label": "YAML grammar",
+      "lane": "toolchain",
+      "native_identity": null,
+      "owner": "GBOGEB/yaml-grammar",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Schemas and validation",
+      "width": 250,
+      "x": 320,
+      "y": 682
+    },
+    {
+      "height": 72,
+      "id": "DOW",
+      "label": "ABACUS / DOW",
+      "lane": "toolchain",
+      "native_identity": null,
+      "owner": "GBOGEB/ABACUS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Native test/coverage",
+      "width": 250,
+      "x": 595,
+      "y": 682
+    },
+    {
+      "height": 72,
+      "id": "KEB",
+      "label": "CODEX / KEB",
+      "lane": "toolchain",
+      "native_identity": null,
+      "owner": "GBOGEB/CODEX",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Typed receipts and provenance",
+      "width": 250,
+      "x": 870,
+      "y": 682
+    },
+    {
+      "height": 72,
+      "id": "MATH",
+      "label": "gg_MATH",
+      "lane": "toolchain",
+      "native_identity": null,
+      "owner": "GBOGEB/gg_MATH",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Source-scoped method QA",
+      "width": 250,
+      "x": 1145,
+      "y": 682
+    },
+    {
+      "height": 72,
+      "id": "B0",
+      "label": "B0 applicability",
+      "lane": "release",
+      "native_identity": null,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Repository-specific test",
+      "width": 250,
+      "x": 45,
+      "y": 857
+    },
+    {
+      "height": 72,
+      "id": "QA",
+      "label": "Binary QC gates",
+      "lane": "release",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "XLSX/PPTX/DOCX/PDF/HTML",
+      "width": 250,
+      "x": 320,
+      "y": 857
+    },
+    {
+      "height": 72,
+      "id": "HUB",
+      "label": "Mission Control",
+      "lane": "release",
+      "native_identity": null,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Read-only Golden Thread",
+      "width": 250,
+      "x": 595,
+      "y": 857
+    },
+    {
+      "height": 72,
+      "id": "GOV",
+      "label": "P0 protection",
+      "lane": "release",
+      "native_identity": null,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Independent RED canary",
+      "width": 250,
+      "x": 870,
+      "y": 857
+    },
+    {
+      "height": 72,
+      "id": "J5",
+      "label": "J4 → J5 release",
+      "lane": "release",
+      "native_identity": null,
+      "owner": "GBOGEB/cryoplant-project",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Owner admission UNKNOWN",
+      "width": 250,
+      "x": 1145,
+      "y": 857
+    }
+  ],
+  "observed_heads": 21,
+  "protected_branch_flags": 1,
+  "public_payload": "SANITIZED_NO_QPS_PRIVATE_SOURCE_HEAD_OR_BIDDER_BINARY",
+  "qps_master_count": 8,
+  "readback": "2026-10-19_NON_ATOMIC",
+  "readback_head_mc": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+  "release_ladder": {
+    "J0": "21 non-atomic identities observed",
+    "J1": "UNASSESSED",
+    "J2": "UNASSESSED",
+    "J3": "UNASSESSED",
+    "J4": "UNKNOWN",
+    "J5": "NOT_OWNER_ADMITTED"
+  },
+  "repo_count": 21,
+  "roster": [
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "cc49e0ce780032461b2482b1ca1743578fcbe119",
+      "protected_flag": true,
+      "rank": 1,
+      "repo": "GBOGEB/ABACUS"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "master",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+      "protected_flag": false,
+      "rank": 2,
+      "repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+      "protected_flag": false,
+      "rank": 3,
+      "repo": "GBOGEB/CODEX"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PRIVATE_WITHHELD",
+      "observed_sha": null,
+      "protected_flag": false,
+      "rank": 4,
+      "repo": "GBOGEB/cryoplant-project"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+      "protected_flag": false,
+      "rank": 5,      "repo": "GBOGEB/gg_MATH"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+      "protected_flag": false,
+      "rank": 6,
+      "repo": "GBOGEB/ariana"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+      "protected_flag": false,
+      "rank": 7,
+      "repo": "GBOGEB/GEMINI"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "protected_flag": false,
+      "rank": 8,
+      "repo": "GBOGEB/DOCX_RTM_Automation"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "protected_flag": false,
+      "rank": 9,
+      "repo": "GBOGEB/Q_engineering_tools"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+      "protected_flag": false,
+      "rank": 10,
+      "repo": "GBOGEB/cryo_leak_rate_dashboard"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+      "protected_flag": false,
+      "rank": 11,
+      "repo": "GBOGEB/cryogenic-accelerator-workspace"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+      "protected_flag": false,
+      "rank": 12,
+      "repo": "GBOGEB/document-organization-system"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "master",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+      "protected_flag": false,
+      "rank": 13,
+      "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+      "protected_flag": false,
+      "rank": 14,
+      "repo": "GBOGEB/github-mcp-server"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "protected_flag": false,
+      "rank": 15,
+      "repo": "GBOGEB/docker-stacks"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "master",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "protected_flag": false,
+      "rank": 16,
+      "repo": "GBOGEB/yaml-grammar"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+      "protected_flag": false,
+      "rank": 17,
+      "repo": "GBOGEB/prettier"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "protected_flag": false,
+      "rank": 18,
+      "repo": "GBOGEB/vscode-powershell"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "trunk",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "protected_flag": false,
+      "rank": 19,
+      "repo": "GBOGEB/cli"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "protected_flag": false,
+      "rank": 20,
+      "repo": "GBOGEB/python-sdk"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "protected_flag": false,
+      "rank": 21,
+      "repo": "GBOGEB/skills"
+    }
+  ],
+  "schema": "jade.temple.j25.qps-superstitch/1.0",
+  "scope": [
+    {
+      "family": "Tender/contract",
+      "topics": [
+        "NEGO1 LKT/ALAT source return",
+        "Pre-L0 PO/contractual precedence",
+        "Applicable Documents [AD#], codes and standards",
+        "Terms/abbreviations, TOC, training and deliverables",
+        "RTM requirements refinement and source contradiction review"
+      ]
+    },
+    {
+      "family": "Commercial",
+      "topics": [
+        "Offer evaluation SSOT XLSX",
+        "Cost estimate SSOT Excel, CAPEX/OPEX and 5/10-year lifecycle",
+        "WSH warm vessels and optional cost boundaries",
+        "Three-point uncertainty E0–E4 and scope normalization",
+        "Energy/maintenance and operating-state duty weighting"
+      ]    },
+    {
+      "family": "OCD/temporal",
+      "topics": [
+        "Canonical OCD v0.8 and ADR register v0.3 as working pair",
+        "Stage L0–L6, plus post-project L7 and L8",
+        "Milestones/durations/Gantt pending schedule owner",
+        "C24/C30 operating matrix and load cases"
+      ]
+    },
+    {
+      "family": "Physical interfaces",
+      "topics": [
+        "Warm lines W/U/S and warm interconnect HP/LP/VLP",
+        "QLM cold lines A/B/D/E",
+        "Three building areas: move-in, doors, roof",
+        "Utilities, building support ICD and terminal-point matrix",
+        "QPS:CIS, MIT, MCB, ICT, interlocks and cybersecurity"
+      ]
+    },
+    {
+      "family": "Reliability/acceptance",
+      "topics": [
+        "Reliability RAMS/RCM, MTBF/MTTR source basis",
+        "Spares and operation stock philosophy",
+        "FAT/SAT matrices incl. failed test repair and retest",
+        "Installation, commissioning, handover and training"
+      ]
+    },
+    {
+      "family": "Artifact factory",
+      "topics": [
+        "Input/vendor binaries immutable with exact SHA256 and locators",
+        "Canonical XLSX/DOCX/PPTX/PDF/HTML views from governing masters",
+        "Figures, tables, section anchors, PDF navigation and TOC",
+        "Formula/XML/PPT overflow/PDF glyph/DOCX structure QA",
+        "Arrow legend: contrast and head geometry; browser 3 viewports",
+        "Source-to-output semantic parity, receipt and rollback"
+      ]
+    }
+  ],
+  "worker_hours": null,
+  "zero_formal_credit": true
+}
+</script><script>(()=>{'use strict';
+const M=JSON.parse(document.getElementById('model').textContent),NS='http://www.w3.org/2000/svg',V=document.getElementById('mainGraph'),byId=Object.fromEntries(M.nodes.map(n=>[n.id,n]));
+let group='',selected='',lasso=false,start=null,lassoRect=null,top7Only=false;
+function svg(parent,tag,attrs={},text){let x=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))x.setAttribute(k,String(v));if(text!==undefined)x.textContent=text;parent.append(x);return x}
+function safe(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const ins=document.getElementById('inspector'),stat=document.getElementById('status');
+function marker(defs,type,color){let m=svg(defs,'marker',{id:'arrow-'+type,markerWidth:18,markerHeight:16,viewBox:'0 0 18 16',refX:16,refY:8,orient:'auto',markerUnits:'userSpaceOnUse'});svg(m,'path',{d:'M 1.3 1.2 L 17 8 L 1.3 14.8 Z',fill:color,stroke:'#fff','stroke-width':1.35,'stroke-linejoin':'round'});}
+function hull(ids){let a=ids.map(id=>byId[id]).filter(Boolean);return{x:Math.min(...a.map(n=>n.x))-16,y:Math.min(...a.map(n=>n.y))-33,w:Math.max(...a.map(n=>n.x+250))-Math.min(...a.map(n=>n.x))+32,h:Math.max(...a.map(n=>n.y+72))-Math.min(...a.map(n=>n.y))+51}}
+function edgeRoute(a,b,t){let ax=a.x+125,ay=a.y+36,bx=b.x+125,by=b.y+36,dx=bx-ax,dy=by-ay;
+if(t==='feedback'){
+ let sy=a.y+70,ty=b.y-5,ex=b.x+125,sx=a.x+125;
+ return 'M '+sx+' '+sy+' C '+(sx+170)+' '+(sy+75)+' '+(ex-145)+' '+(ty-100)+' '+ex+' '+ty;
+}
+if(Math.abs(dx)>Math.abs(dy)*1.18){let sx=dx>=0?a.x+253:a.x-4,ex=dx>=0?b.x-4:b.x+254,sy=ay,ey=by,c=Math.max(48,Math.abs(ex-sx)*.48)*(dx>=0?1:-1);return 'M '+sx+' '+sy+' C '+(sx+c)+' '+sy+' '+(ex-c)+' '+ey+' '+ex+' '+ey;}
+let sx=ax,sy=dy>=0?a.y+76:a.y-4,ex=bx,ey=dy>=0?b.y-4:b.y+76,c=Math.max(29,Math.abs(ey-sy)*.47)*(dy>=0?1:-1);return 'M '+sx+' '+sy+' C '+sx+' '+(sy+c)+' '+ex+' '+(ey-c)+' '+ex+' '+ey;
+}
+function draw(){V.replaceChildren();svg(V,'title',{},'JADE QPS source-bound typed directed graph');let defs=svg(V,'defs');Object.entries(M.edge_semantics).forEach(([k,v])=>marker(defs,k,v.color));
+for(let y=40;y<993;y+=130)svg(V,'path',{d:'M 0 '+y+' H 1460',fill:'none',stroke:'#293654','stroke-width':1,'stroke-dasharray':'2 13'});
+M.groups.slice(0,5).forEach(g=>{let b=hull(g.ids);svg(V,'rect',{x:b.x,y:b.y,width:b.w,height:b.h,rx:20,class:'lane',opacity:group&&group!==g.id?'.36':'1'});svg(V,'text',{x:b.x+9,y:b.y+18,class:'laneLabel'},g.label)});
+let edgeLayer=svg(V,'g',{id:'edges'});M.edges.forEach((e,i)=>{let tp=M.edge_semantics[e.type];let path=svg(edgeLayer,'path',{d:edgeRoute(byId[e.from],byId[e.to],e.type),class:'edge',stroke:tp.color,'marker-end':'url(#arrow-'+e.type+')',role:'button',tabindex:0,'data-from':e.from,'data-to':e.to,'data-type':e.type,'aria-label':e.type+' from '+e.from+' to '+e.to,'data-edge':i+1});if(tp.dash!=='none')path.setAttribute('stroke-dasharray',tp.dash);path.addEventListener('click',()=>inspectEdge(e,i));path.addEventListener('keydown',ev=>{if(ev.key==='Enter')inspectEdge(e,i)})});
+let g=svg(V,'g',{id:'nodes'});M.nodes.forEach(n=>{let wrap=svg(g,'g',{class:'node',role:'button',tabindex:0,'data-node':n.id,'aria-label':'Inspect '+n.label});svg(wrap,'rect',{x:n.x,y:n.y,width:250,height:72,rx:14});svg(wrap,'circle',{cx:n.x+18,cy:n.y+18,r:5.5,fill:'#cbaaff',stroke:'#fff','stroke-width':1.2});svg(wrap,'text',{x:n.x+28,y:n.y+29,class:'main'},n.label);svg(wrap,'text',{x:n.x+16,y:n.y+55,class:'sub'},n.subtitle);wrap.addEventListener('click',()=>inspectNode(n.id));wrap.addEventListener('keydown',ev=>{if(['Enter',' '].includes(ev.key)){ev.preventDefault();inspectNode(n.id)}})});
+focus();}
+function focus(){let ids=group?new Set(M.groups.find(g=>g.id===group)?.ids||[]):null;V.querySelectorAll('.node').forEach(g=>{g.classList.toggle('dim',!!ids&&!ids.has(g.dataset.node));g.classList.toggle('active',g.dataset.node===selected)});V.querySelectorAll('.edge').forEach(p=>p.classList.toggle('dim',!!ids&&!(ids.has(p.dataset.from)&&ids.has(p.dataset.to))))}
+function listing(arr){return arr.length?'<ul>'+arr.map(e=>'<li>'+safe(e.from)+' → '+safe(e.to)+' · <b>'+safe(e.type)+'</b> · '+safe(e.evidence_class)+'</li>').join('')+'</ul>':'<p class="small">None in this lens</p>'}
+function inspectNode(id){selected=id;focus();let n=byId[id];let incoming=M.edges.filter(e=>e.to===id),out=M.edges.filter(e=>e.from===id);ins.innerHTML='<div style="font-size:18px;font-weight:800;color:#e8d1ff">'+safe(n.label)+'</div><span class="badge">'+safe(n.lane)+'</span><p>'+safe(n.subtitle)+'</p><p><b>Source owner:</b> '+safe(n.owner==='QPS'?'QPS PRIVATE engineering authority':n.owner)+'</p><p><b>Evidence:</b> DECLARED_OR_SOURCE_POINTER · not native acceptance</p><p><b>Run / attempt / job:</b> UNKNOWN</p><h3>Incoming '+incoming.length+'</h3>'+listing(incoming)+'<h3>Outgoing '+out.length+'</h3>'+listing(out);stat.textContent=id+' · '+n.label}
+function inspectEdge(e,i){selected='';focus();ins.innerHTML='<h2>Directed edge E'+(i+1)+'</h2><p><b>'+safe(e.from)+' → '+safe(e.to)+'</b></p><span class="badge">'+safe(e.type)+'</span><p>'+safe(M.edge_semantics[e.type].role)+'</p><p>Evidence state: '+safe(e.evidence_class)+'</p><p>Run/job/attempt and child-owner acceptance: UNKNOWN</p>';stat.textContent='Edge E'+(i+1)+' · '+e.type}
+function chooseGroup(id){group=id;selected='';draw();if(!id){ins.innerHTML='<h2>Whole Superstitch · uncollapsed</h2><p>26 canonical nodes and 32 typed edges. No release admission is implied by topology.</p>';return}let g=M.groups.find(x=>x.id===id),within=M.edges.filter(e=>g.ids.includes(e.from)&&g.ids.includes(e.to)),touch=M.edges.filter(e=>g.ids.includes(e.from)!==g.ids.includes(e.to));let known=id==='golden'?'<p><b>Historical six-repo producer breadth: 6/42.</b> Not group completion.</p><div class="metric"><span style="width:14.29%"></span></div>':'<p>Group completion: <b>UNKNOWN</b>. No numerical denominator assigned.</p>';
+ins.innerHTML='<h2>'+safe(g.label)+'</h2><p>'+g.ids.length+' canonical children · '+within.length+' internal directed edges · '+touch.length+' touching edges.</p>'+known+'<h3>Clickable children</h3><div class="toolbar">'+g.ids.map(id=>'<button data-child="'+id+'">'+safe(byId[id].label)+'</button>').join('')+'</div><h3>Internal</h3>'+listing(within)+'<h3>Touching</h3>'+listing(touch);ins.querySelectorAll('[data-child]').forEach(b=>b.onclick=()=>inspectNode(b.dataset.child));stat.textContent=g.label}
+function legend(){let target=document.getElementById('legend');Object.entries(M.edge_semantics).forEach(([key,t])=>{let row=document.createElement('div');row.className='legendItem';let dash=t.dash==='none'?'':'stroke-dasharray="'+t.dash+'"';row.innerHTML='<svg width="79" height="22" viewBox="0 0 79 22" aria-hidden="true"><path d="M 2 11 L 60 11" stroke="'+t.color+'" stroke-width="3.6" fill="none" '+dash+'/>'+'<path d="M 57 3 L 76 11 L 57 19 Z" fill="'+t.color+'" stroke="#fff" stroke-width="1.4"/></svg><div><b>'+key.toUpperCase()+'</b> <small>'+safe(t.role)+'</small></div>';target.append(row)})}
+function view(tab){document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===tab)));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!=='view-'+tab))}document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>view(b.dataset.view));
+M.groups.forEach(g=>{let o=document.createElement('option');o.value=g.id;o.textContent=g.label;document.getElementById('group').append(o)});document.getElementById('group').onchange=e=>chooseGroup(e.target.value);document.getElementById('reset').onclick=()=>{document.getElementById('group').value='';chooseGroup('')};
+let toggle=document.getElementById('lasso');toggle.onclick=()=>{lasso=!lasso;toggle.setAttribute('aria-pressed',String(lasso));stat.textContent=lasso?'Drag on blank SVG background to create client-only selection':'Lasso disabled'};
+function point(evt){let bb=V.getBoundingClientRect();return{x:(evt.clientX-bb.left)/bb.width*1460,y:(evt.clientY-bb.top)/bb.height*995}}
+V.addEventListener('pointerdown',e=>{if(!lasso||e.target.closest('.node')||e.target.closest('.edge'))return;start=point(e);lassoRect=svg(V,'rect',{x:start.x,y:start.y,width:1,height:1,fill:'rgba(155,100,248,.23)',stroke:'#fff','stroke-width':2.3,'stroke-dasharray':'9 6',rx:7});V.setPointerCapture(e.pointerId)});V.addEventListener('pointermove',e=>{if(!start||!lassoRect)return;let p=point(e);for(const[k,v]of Object.entries({x:Math.min(start.x,p.x),y:Math.min(start.y,p.y),width:Math.abs(start.x-p.x),height:Math.abs(start.y-p.y)}))lassoRect.setAttribute(k,v)});V.addEventListener('pointerup',()=>{if(!start||!lassoRect)return;let b={x:+lassoRect.getAttribute('x'),y:+lassoRect.getAttribute('y'),w:+lassoRect.getAttribute('width'),h:+lassoRect.getAttribute('height')};let ids=M.nodes.filter(n=>n.x+125>=b.x&&n.x+125<=b.x+b.w&&n.y+36>=b.y&&n.y+36<=b.y+b.h).map(n=>n.id);lassoRect.remove();lassoRect=null;start=null;lasso=false;toggle.setAttribute('aria-pressed','false');V.querySelectorAll('.node').forEach(el=>el.classList.toggle('dim',!ids.includes(el.dataset.node)));V.querySelectorAll('.edge').forEach(el=>el.classList.toggle('dim',!(ids.includes(el.dataset.from)&&ids.includes(el.dataset.to))));ins.innerHTML='<h2>Temporary selected rectangle</h2><p>'+ids.length+' node identities, <b>zero</b> dispatched workflows.</p><p>'+safe(ids.join(', ')||'Empty')+'</p><p>Group-level progress: UNKNOWN / no denominator.</p>';stat.textContent='Temporary visual lasso: '+ids.length+' nodes'});
+document.getElementById('mermaid').onclick=async()=>{let lines=['flowchart LR',...M.nodes.map(n=>' '+n.id+'["'+n.label.replaceAll('"',"'")+'"]'),...M.edges.map(e=>' '+e.from+(e.type==='feedback'?' -.-> ':' --> ')+e.to)];try{await navigator.clipboard.writeText(lines.join('\n'));stat.textContent='Mermaid copied (proposal / no run attestation)'}catch{stat.textContent='Clipboard permission unavailable; source is in JADE_SPINE_J25.mmd'}};
+const sipoc=[['QPS owner','NEGO1, RTM, OFFER','Commercial requirements','OCD/ADR/COST trace atoms','QPS engineering','commercial'],['Eight QPS Masters','Operating states & interfaces','Engineering design + reliability','WPS/QLM/ICD/RAMS source evidence','Commissioning and reviewer','masters'],['DOCX + YAML','Controlled schema and references','Document bridge / B0 native tests','Source-scoped QA evidence','ABACUS / CODEX','toolchain'],['CODEX / gg_MATH','Typed producer data','Normalization and methods','Source-bound return or UNKNOWN','QPS owner','golden'],['Mission Control','Native receipts and QPS disposition','Governed publication','J4 candidate, rollback dossier','Independent reviewer / QPS','release']];
+const sb=document.getElementById('sipocBody');sipoc.forEach(row=>{let tr=document.createElement('tr');tr.dataset.group=row[5];row.slice(0,5).forEach(v=>{let td=document.createElement('td');td.textContent=v;tr.append(td)});tr.tabIndex=0;tr.onclick=()=>{view('dag');document.getElementById('group').value=tr.dataset.group;chooseGroup(tr.dataset.group)};tr.onkeydown=e=>{if(e.key==='Enter')tr.click()};sb.append(tr)});
+const s=document.getElementById('stageSVG');let stages=['NEGO1','Requirements','Pre-L0 · PO','L0','L1','L2','L3','L4','L5','L6','L7','L8'];stages.forEach((t,i)=>{let x=22+(i%6)*201,y=55+Math.floor(i/6)*150;svg(s,'rect',{x,y,width:181,height:67,rx:11,fill:'#38245e',stroke:'#d6a2ff','stroke-width':2});svg(s,'text',{x:x+12,y:y+25,fill:'#fff','font-weight':700,'font-size':16},t);svg(s,'text',{x:x+12,y:y+47,fill:'#e0ccfb','font-size':12},'duration UNKNOWN');if(i%6!==5)svg(s,'path',{d:'M '+(x+184)+' '+(y+33)+' H '+(x+195),stroke:'#ffd17b','stroke-width':3,fill:'none'});if(i===5)svg(s,'path',{d:'M '+(x+90)+' '+(y+71)+' V '+(y+126)+' H 111 V '+(y+145),stroke:'#ffd17b','stroke-width':3,fill:'none'})});
+const a=document.getElementById('atomSVG'),layers=[['RTM','OFFER','AD#','BOM'],['SSOT','ADR','COST','ICD'],['DOW','DOCX','YAML','MATH'],['KEB','ZIP','QA','SEC'],['REVIEW','J4','J5','REX']];layers.forEach((ts,i)=>ts.forEach((t,j)=>{let x=83+i*275,y=66+j*110;svg(a,'circle',{cx:x,cy:y,r:32,fill:'#36255b',stroke:'#cba1ff','stroke-width':2});svg(a,'text',{x,y:y+5,'text-anchor':'middle',fill:'#fff','font-size':13,'font-weight':650},t);if(i<4){[j,(j+1)%4].forEach((z,k)=>{let tx=83+(i+1)*275,ty=66+z*110;svg(a,'path',{d:'M '+(x+32)+' '+y+' Q '+(x+140)+' '+((y+ty)/2+(k?22:-22))+' '+(tx-33)+' '+ty,stroke:k?'#ff88c9':'#89c4ff',fill:'none','stroke-width':2.3,'stroke-dasharray':k?'3 6':'none'})})}}));
+const masters=['Master 01 · OFFER/RTM','Master 02 · OCD/ADR','Master 03 · COST Master','Master 04 · State configuration','Master 05 · WCS HP/PVPS','Master 06 · BOM/Supply','Master 07 · Evidence lineage','Master 08 · ICD/Interfaces'];let ids=['RTM','OCD','COST','CONFIG','WCS','BOM','PROV','ICD'];document.getElementById('masters').innerHTML=masters.map((t,i)=>'<p><button data-master="'+ids[i]+'" style="width:100%;text-align:left">'+safe(t)+' ↗</button></p>').join('');document.querySelectorAll('[data-master]').forEach(b=>b.onclick=()=>{view('dag');inspectNode(b.dataset.master)});
+document.getElementById('scope').innerHTML=M.scope.map(g=>'<div class="panel"><h3>'+safe(g.family)+'</h3><ul>'+g.topics.map(x=>'<li>'+safe(x)+'</li>').join('')+'</ul><p class="small">Owner decision / native evidence: unqualified</p></div>').join('');document.getElementById('gates').innerHTML=M.gates.map(g=>'<p><span class="badge">'+safe(g.status)+'</span><b>'+safe(g.id)+'</b><br>'+safe(g.label)+'</p>').join('');document.getElementById('ladder').innerHTML=Object.entries(M.release_ladder).map(([k,v])=>'<p><b>'+k+'</b> · '+safe(v)+'</p>').join('');
+function repoTable(){let q=document.getElementById('repoFilter').value.toLowerCase();let rr=M.roster.filter(r=>(!top7Only||M.focus7.includes(r.rank))&&r.repo.toLowerCase().includes(q));document.getElementById('fleetRows').innerHTML=rr.map(r=>'<tr><td>'+r.rank+(M.focus7.includes(r.rank)?' ★':'')+'</td><td><a href="https://github.com/'+encodeURI(r.repo)+'" target="_blank" rel="noopener noreferrer">'+safe(r.repo)+'</a></td><td>'+safe(r.branch)+'</td><td><code>'+(r.observed_sha?r.observed_sha.slice(0,13):'PRIVATE_WITHHELD')+'</code></td><td>'+String(r.protected_flag)+' (flag only)</td><td>OWNER_APPLICABILITY_PENDING</td><td>UNKNOWN / HOLD</td></tr>').join('')}
+document.getElementById('repoFilter').oninput=repoTable;document.getElementById('only7').onclick=function(){top7Only=!top7Only;this.setAttribute('aria-pressed',String(top7Only));repoTable()};
+document.getElementById('refresh').onclick=async()=>{let txt=document.getElementById('refreshText');txt.textContent='Refreshing public metadata only…';let eligible=M.roster.filter(r=>r.observed_sha);let result=[];for(let i=0;i<eligible.length;i+=4){let batch=eligible.slice(i,i+4);result.push(...await Promise.all(batch.map(async r=>{try{let res=await fetch('https://api.github.com/repos/'+r.repo+'/branches/'+encodeURIComponent(r.branch),{headers:{Accept:'application/vnd.github+json'}});if(!res.ok)throw Error('HTTP '+res.status);let body=await res.json();return{changed:body.commit.sha!==r.observed_sha}}catch(e){return{error:String(e)}}})));}txt.textContent='LIVE UNVERIFIED · '+result.filter(x=>x.changed).length+' heads moved / '+result.filter(x=>x.error).length+' fetch errors. Native proof unaffected.'};
+legend();M.groups.forEach(g=>{let opt=document.createElement('option');opt.value=g.id;opt.textContent=g.label;document.getElementById('group').append(opt)});document.getElementById('group').onchange=e=>chooseGroup(e.target.value);document.getElementById('reset').onclick=()=>{document.getElementById('group').value='';chooseGroup('')};draw();chooseGroup('');repoTable();
+})();
+</script></body></html>
