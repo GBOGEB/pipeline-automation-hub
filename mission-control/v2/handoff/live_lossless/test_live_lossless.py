@@ -49,6 +49,16 @@ class LiveLosslessTests(unittest.TestCase):
         self.assertEqual(p["monikers"][1]["name"],"CP.LIVE")
         self.assertEqual(p["monikers"][2]["name"],"CP.CLOSE")
         self.assertIn("CP.RESUME",[m["name"] for m in p["monikers"]])
+    def test_closeout_alias_remains_bound_to_canonical_protocol(self):
+        profile,_=mod.read(mod.CLOSE/"CHAT_CLOSEOUT_PROFILE_V1.json")
+        protocol,_=mod.read(mod.CLOSE/"closeout/CP_CLOSE_GITHUB_v1.json")
+        mod.validate_closeout_profile(profile,protocol)
+        for field,value in (("control","elsewhere.json"),("status","CANONICAL"),("moniker","OTHER")):
+            changed=copy.deepcopy(profile);changed[field]=value
+            with self.assertRaisesRegex(ValueError,"canonical moniker drift"):
+                mod.validate_closeout_profile(changed,protocol)
+        with self.assertRaisesRegex(ValueError,"canonical moniker drift"):
+            mod.validate_closeout_profile(profile,{**protocol,"name":"OTHER"})
     def test_source_delta_is_user_summarized_not_provider_export(self):
         p=mod.build_data()
         self.assertEqual(p["privacy"],"SANITIZED_NOT_VERBATIM")

@@ -164,14 +164,25 @@ def validate_delta(delta, observed, ledger):
     return True
 
 
+def validate_closeout_profile(profile, protocol):
+    if profile.get("moniker") == "CP.CLOSEOUT":
+        return
+    if (profile.get("moniker") != "CP.CLOSEOUT_ALIAS_OF_CP.CLOSE"
+            or profile.get("status") != "OPTIONAL_REPORTING_ANNEX_NOT_CANONICAL"
+            or profile.get("control") != "mission-control/v2/handoff/closeout/CP_CLOSE_GITHUB_v1.json"
+            or protocol.get("schema") != "missioncontrol.cp_close.protocol.v1"
+            or protocol.get("name") != "CP.CLOSE"):
+        fail("canonical moniker drift")
+
+
 def build_data():
     state, stats, frozen, bd, provenance = validate_frozen()
     delta, delta_hash = read(HERE / "FOLLOWUP_DELTA_20261017.json")
     observed, observed_hash = read(HERE / "GITHUB_OBSERVED_20261017.json")
     profile, profile_hash = read(CLOSE / "CHAT_CLOSEOUT_PROFILE_V1.json")
     _operator, operator_hash = read(CLOSE / "CP_HANDOFF_RESUME_V1.json")
-    if profile.get("moniker") != "CP.CLOSEOUT":
-        fail("canonical moniker drift")
+    protocol, _ = read(CLOSE / "closeout/CP_CLOSE_GITHUB_v1.json")
+    validate_closeout_profile(profile, protocol)
     live_profile, live_profile_hash = read(HERE / "LIVE_LOSSLESS_PROFILE_v1.json")
     if (live_profile.get("schema") != "missioncontrol.live_lossless.profile.v1"
             or live_profile.get("moniker") != "CP.LIVE"

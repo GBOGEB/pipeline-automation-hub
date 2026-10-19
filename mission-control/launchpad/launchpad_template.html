@@ -157,7 +157,7 @@ async function copyMermaid(){const body=mermaidText();try{await navigator.clipbo
 function reset(){state.query="";state.lane="ALL";state.mode="ALL";state.binding="ALL";$("search").value="";$("lane").value="ALL";$("graph-mode").value="ALL";$("edge-filter").value="ALL";renderAll()}
 function renderAll(){renderQueues();renderWorkers();renderRepos();renderEdges();renderGraph()}
 function init(){
- if(DATA.schema!=="missioncontrol.launchpad.public_projection.v1"||DATA.admission!=="HOLD"||DATA.policy.authority_transfer!==false||DATA.policy.mutation_enabled!==false||DATA.policy.remote_dispatch_enabled!==false)throw new Error("CONTROL_GUARD_FAIL");
+ if(DATA.schema!=="missioncontrol.launchpad.public_projection.v1"||DATA.admission!=="HOLD"||DATA.policy.merge_admission!=="HOLD"||DATA.policy.authority_transfer!==false||DATA.policy.mutation_enabled!==false||DATA.policy.remote_dispatch_enabled!==false)throw new Error("CONTROL_GUARD_FAIL");
  paintHeader();renderHierarchy();renderShortcuts();text($("dmaic"),"span","crumb","DEFINE → MEASURE → ANALYZE → IMPROVE → CONTROL");
  renderAll();
  $("search").addEventListener("input",e=>{state.query=e.target.value.trim().toLowerCase();renderAll()});
