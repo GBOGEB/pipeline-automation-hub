@@ -71,3 +71,9 @@ python -m unittest discover -s mission-control/jade_temple/tests -p test_focus5_
 ```
 
 This is **one generated read-only child under existing JADE site**, not a new GitHub Action, dispatcher or alternative Pages publisher. The original repo owners retain source fixes, native B0 and application/release authority. `MERGE_ADMISSION=HOLD`; no J5 tag, security waiver or accepted root closure is inferred.
+
+## CODE BREAD & BUTTER — distinct private QPS owner lane
+
+[Public-safe design gateway](site/qps_bread_butter_gateway.html) · [QPS private owner workbench](https://github.com/GBOGEB/cryoplant-project/tree/code-purple/bread-and-butter-qps-jade-n8-20261019/triage/jade_temple_qps/bread_and_butter) · [Confidentiality and authority contract](notes/QPS_BREAD_BUTTER_PRIVATE_GATEWAY.md).
+
+JADE now has a separately styled QPS-first engineering/review lane. **Do not place private QPS action tables, bidder references or numerical review data into the public JADE site without QPS owner classification.** The private owner branch contains the QPS-specific detailed burndown and tests; this hub contains only an authenticated navigation gateway. No new controller, runner workflow or publication authority is introduced. `MERGE_ADMISSION=HOLD`.
