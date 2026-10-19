@@ -81,7 +81,7 @@ def make_csv(source_text: str) -> str:
     data = json.loads(source_text)
     validate(data)
     buf = io.StringIO(newline="")
-    writer = csv.writer(buf, lineterminator="\\n")
+    writer = csv.writer(buf, lineterminator="\n")
     writer.writerow(["rank", "repo", "source_sha", "gate_id", "gate_label",
                      "status", "verified_complete", "denominator",
                      "evidence_url", "next_owner_action"])
