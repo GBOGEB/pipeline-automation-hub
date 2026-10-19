@@ -46,3 +46,14 @@ python mission-control/jade_temple/tools/run_nplus2_browser_qa.py
 ```
 
 An existing-portal-only child at `/jade/burndown.html`; hosted verification is performed independently **after** `deploy-pages` and hashes actual served files against the exact source-bound publisher artifact. No alternate workflow publishes Pages.
+
+## N+6 read-only point-release dependency and mop-up candidate
+
+This **staged branch**, not the accepted JADE publisher or a governed merge, adds a source-bound Top21 dependency/neuron/GOLDEN thread ledger. It does not create a competing scheduler, Pages deployment, automatic release or authority transfer.
+
+- [N+6 owner-based mop-up / parked release checkpoint](notes/NPLUS6_POINT_RELEASE_MOPUP.md)
+- [N+6 neural/parallel-lane Mermaid SPINE](diagrams/JADE_TOP21_NEURAL_NPLUS6.mmd)
+- [N+6 machine-readable typed nodes/edges/Golden thread](data/POINT_RELEASE_NPLUS6_NEURAL_READONLY.json)
+- Existing `sprint/Start-JadeSprint.ps1` and `sprint/cli.py` remain the sole bounded local sprint entrypoints.
+
+Readback: 21/21 non-atomic HEAD identities, 146 ordinary open issues, 18 ordinary open PRs; canonical root counts and J5 owner-accepted releases remain **UNKNOWN**. A separately generated interactive HTML atlas passed local responsive QA, but **is not currently part of the published source-controlled Pages child**. Port its visualization through the existing single-publisher generator only after owner review, exact-source parity and noncompensating J3/J4 acceptance. `MERGE_ADMISSION=HOLD`.
