@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JADE_TEMPLE · QPS TRIAGE Focus5 Release Readiness</title>
+  <meta name="description" content="Source-bound, read-only JADE Top21 five-lane release-preparation evidence projection">
+  <link rel="stylesheet" href="focus5.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to evidence</a>
+  <header class="topline">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◇</span>
+      <div><div class="eyebrow">CODE PURPLE / JADE_TEMPLE / QPS TRIAGE</div>
+      <h1>Release Readiness <em>Focus / 05</em></h1></div>
+    </div>
+    <div class="top-meta">
+      <span class="signal signal-hold">J5 RELEASE: HOLD</span>
+      <span class="meta-sha" id="sourceEpoch">GitHub readback · non-atomic</span>
+    </div>
+  </header>
+  <main id="main">
+    <section class="intro">
+      <div><p class="eyebrow">Reproducible minimum-gate denominator</p>
+      <h2>Five disjoint owner lanes. One evidence thread.</h2>
+      <p class="muted">Strictly counted: verified <strong>PASS / 12</strong> for each repository. Failure and unknown remain within the denominator. Structural graph reach is not engineering-root closure, admission, or accepted coverage.</p></div>
+      <div class="source-chip">MISSION-SELECTED TOP21<br><strong>5 active / 21 total</strong><span>16 other repos unassessed in this view</span></div>
+    </section>
+    <section class="metrics" aria-label="Portfolio progress metrics">
+      <div class="metric"><p>Verified completion</p><strong id="totalPct">–</strong><div class="progress-track"><div id="totalBar" class="progress-fill"></div></div><small id="totalGateCount"></small></div>
+      <div class="metric"><p>Qualified PASS</p><strong id="passCount">–</strong><small>Native/source-evidenced gates</small></div>
+      <div class="metric"><p>Confirmed RED</p><strong id="failCount">–</strong><small>Explicitly open blocker gates</small></div>
+      <div class="metric"><p>Not established</p><strong id="unknownCount">–</strong><small>UNKNOWN is never zero</small></div>
+    </section>
+    <section class="toolbar" aria-label="Visualization controls">
+      <div class="view-switch" role="group" aria-label="Graph perspective">
+        <button class="active" type="button" data-view="parallel">Parallel lanes</button>
+        <button type="button" data-view="dependencies">Dependency DAG</button>
+        <button type="button" data-view="golden">Golden thread</button>
+      </div>
+      <label class="search-label">Find repository or gate <input id="search" type="search" placeholder="QPS, DOCX, W163, Matplotlib…" autocomplete="off"></label>
+      <label class="search-label">Focus repository <select id="repoSelect"><option value="all">All five</option></select></label>
+    </section>
+    <section class="graph-panel">
+      <div class="panel-heading"><h2 id="graphTitle">Parallel release-gate lanes</h2><span class="muted" id="graphLegend">Each neuron is one minimum release requirement</span></div>
+      <div class="graph-scroll"><svg id="dag" role="img" aria-label="Release requirement and dependency network" viewBox="0 0 1060 445"></svg></div>
+      <div class="legend"><span><i class="dot pass"></i>verified PASS</span><span><i class="dot fail"></i>verified FAIL</span><span><i class="dot unk"></i>not verified</span><span><i class="dot guard"></i>authority-bound edge</span></div>
+    </section>
+    <div class="split">
+      <section class="panel">
+        <div class="panel-heading"><h2>Lane burndown</h2><span class="muted">Click a repository to inspect its 12-gate contract</span></div>
+        <div id="repoCards" class="lane-list"></div>
+      </section>
+      <section class="panel" id="details-panel">
+        <div class="panel-heading"><h2>Granular proof inspector</h2><span class="muted">GitHub native source links</span></div>
+        <div id="detail" aria-live="polite"></div>
+      </section>
+    </div>
+    <section class="panel actions">
+      <div class="panel-heading"><h2>Bounded wave sequence and parked exit conditions</h2><span class="muted">Parallel source work; serial independent admission</span></div>
+      <div id="waveActions"></div>
+    </section>
+  </main>
+  <footer><strong>JADE source truth stays in each owner repository.</strong> HTML is a read-only, manually refreshed evidence projection. No GitHub dispatch, approvals, ruleset changes, tags, or root closure are performed here. <a href="../data/FOCUS5_POINT_RELEASE_NPLUS7.json">View source ledger</a>.</footer>
+  <script id="focus5-data" type="application/json">
+<!-- FOCUS5_CANONICAL_JSON -->
+  </script>
+  <script src="focus5.js" defer></script>
+</body>
+</html>
