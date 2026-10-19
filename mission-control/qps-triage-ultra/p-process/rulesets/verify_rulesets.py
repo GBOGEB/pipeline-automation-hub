@@ -32,12 +32,25 @@ def gaps(effective: list, expected: dict) -> list[str]:
         if t == "required_status_checks":
             # compare (context, integration_id): a same-named check from another app must not read green
             got = {(c["context"], c.get("integration_id")) for p in have[t] for c in p.get("required_status_checks", [])}
+            # HARD requires branch currency: matching names alone is not enough.
+            if e["parameters"].get("strict_required_status_checks_policy") and not any(
+                p.get("strict_required_status_checks_policy") for p in have[t]
+            ):
+                out.append("strict required-status-check policy off")
             names = {g[0] for g in got}
             for c in e["parameters"]["required_status_checks"]:
                 if (c["context"], c.get("integration_id")) in got:
                     continue
                 out.append(f"required check '{c['context']}' missing" if c["context"] not in names
                            else f"required check '{c['context']}' pinned to another app (expected integration {c.get('integration_id')})")
+        if t == "pull_request":
+            required = int(e["parameters"].get("required_approving_review_count") or 0)
+            if required and not any(int(p.get("required_approving_review_count") or 0) >= required for p in have[t]):
+                out.append(f"required approvals below {required}")
+            if e["parameters"].get("require_last_push_approval") and not any(
+                p.get("require_last_push_approval") for p in have[t]
+            ):
+                out.append("last-push approval off")
         if t == "pull_request" and e["parameters"].get("required_review_thread_resolution") and not any(p.get("required_review_thread_resolution") for p in have[t]):
             out.append("review-thread resolution off")
     return out
@@ -94,6 +107,13 @@ def main():
                               "protected": branch.get("protected") if isinstance(branch, dict) else None,
                               "effective_rules": [r["type"] for r in eff] if isinstance(eff, list) else None,
                               "untargeted_rulesets": untargeted, **measured}
+        # BASIC and HARD are distinct profiles. A BASIC restoration never
+        # grants HARD admission credit, and unknown reads remain blocked.
+        if m.get("hard_file"):
+            hard_expected = json.loads((D / m["hard_file"]).read_text())
+            res["repos"][repo]["hard_gate"] = probe_status(
+                eff, sets, branch, hard_expected, untargeted
+            )
     (D / "drift.json").write_text(json.dumps(res, indent=2) + "\n")
     for r, v in res["repos"].items():
         print(f"{v['probe_status']:21s} {r:34s} observed={v['observation_coverage']['observed']}/3  gaps={len(v['gaps'])}  unknown={len(v['unknown_readbacks'])}")
