@@ -1,0 +1,376 @@
+{
+  "schema": "codepurple.qbd.disjoint_convergence.public_ro.v1",
+  "as_of_date": "2026-10-19",
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "observed_main": "f4226f6e96b7f423600e050f52844aa329452d4c",
+  "public_safe": true,
+  "source_authority": {
+    "authority_transfer": false,
+    "merge_admission": "HOLD",
+    "dispatch_authorized": false,
+    "source_mutation_authorized": false,
+    "issue_closure_authorized": false,
+    "action_closure_authorized": false,
+    "security_waiver": false,
+    "formal_root_closure_credit_delta": 0,
+    "engineering_credit_delta": 0
+  },
+  "public_issue_counts": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "open_issues": 39,
+      "open_prs": 13,
+      "pr_page_complete": true,
+      "source": "NATIVE_GITHUB_API_AT_OBSERVATION",
+      "issue_objects_may_be_control_or_blocked": true
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "open_issues": 11,
+      "open_prs": 0,
+      "pr_page_complete": true,
+      "source": "NATIVE_GITHUB_API_AT_OBSERVATION",
+      "issue_objects_may_be_control_or_blocked": true
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "open_issues": 33,
+      "open_prs": 5,
+      "pr_page_complete": true,
+      "source": "NATIVE_GITHUB_API_AT_OBSERVATION",
+      "issue_objects_may_be_control_or_blocked": true
+    }
+  ],
+  "private_qps": {
+    "repository": "GBOGEB/cryoplant-project",
+    "visibility": "PRIVATE_OWNER_RECEIPT_ONLY",
+    "open_issue_count": null,
+    "neg_mom_action_count": null,
+    "private_issue_ids": null,
+    "private_source_sha": null,
+    "owner_source_required": true
+  },
+  "historical_abacus_n0": {
+    "producer_pr": 2077,
+    "source_pr_head": "00cc896802b426c6b222c2557338e54412a51062",
+    "declared_pr_heads": 75,
+    "failed_workflow_associations": 260,
+    "distinct_failed_run_ids": 253,
+    "duplicate_aliases": 7,
+    "workflow_name_buckets": 19,
+    "source_status": "FROZEN_FIRST_PAGE_HISTORICAL_NOT_CURRENT_CENSUS",
+    "causal_root_count": null,
+    "eligible_root_closures": null
+  },
+  "observed_abacus_pr2077": {
+    "complete_first_page": true,
+    "workflow_runs": 29,
+    "success": 23,
+    "failure": 5,
+    "cancelled": 1,
+    "head": "00cc896802b426c6b222c2557338e54412a51062",
+    "native_failure_jobs": [
+      {
+        "candidate": "POLICY_INVENTORY",
+        "workflow_run": 39024179117,
+        "native_job": 117371788046,
+        "sha": "00cc896802b426c6b222c2557338e54412a51062",
+        "step": "Fail closed on governance red",
+        "symptom": "two unclassified workflows and stale generated report",
+        "owner_issue": 2087
+      },
+      {
+        "candidate": "EVERRED_FORMAT",
+        "workflow_run": 39024179339,
+        "native_job": 117371827109,
+        "sha": "00cc896802b426c6b222c2557338e54412a51062",
+        "step": "Verify committed Black and isort styles",
+        "symptom": "unformatted CBD 260 script/tests at exact old head",
+        "owner_issue": 2049
+      },
+      {
+        "candidate": "PY39_DEPENDENCY",
+        "workflow_run": 39024179288,
+        "native_job": 117371788698,
+        "sha": "00cc896802b426c6b222c2557338e54412a51062",
+        "step": "Install dependencies",
+        "symptom": "pytest-asyncio >=1.4 requires Python >=3.10; Python3.9 failed",
+        "owner_issue": 1874
+      },
+      {
+        "candidate": "DOCS_MARKDOWN",
+        "workflow_run": 39024179225,
+        "native_job": 117691333068,
+        "sha": "00cc896802b426c6b222c2557338e54412a51062",
+        "step": "Validate changed docs",
+        "symptom": "MD060/MD013 in CBD 260 SIPOC docs",
+        "owner_issue": 1860
+      },
+      {
+        "candidate": "SECURITY_FULL_RED",
+        "workflow_run": 39024179357,
+        "native_job": 117371788932,
+        "sha": "00cc896802b426c6b222c2557338e54412a51062",
+        "step": "Enforce security red roots",
+        "symptom": "independent security gate failed; findings need owner review",
+        "owner_issue": 1738
+      }
+    ],
+    "verified_causal_root_count": null
+  },
+  "parallel_capacity": {
+    "read_only_scouts": 4,
+    "source_writer_max": 2,
+    "writer_claims_committed": 0,
+    "reader_dispatch_executed": false,
+    "writer_dispatch_executed": false
+  },
+  "proposed_writers": [
+    {
+      "slot": "W1",
+      "repo": "GBOGEB/ABACUS",
+      "scope": [
+        "tools/everred_v3/scripts/cbd_260.py",
+        "tools/everred_v3/tests/test_cbd_260.py"
+      ],
+      "owner_pr": 2077,
+      "mutation_authorized": false,
+      "first_red": "EVERRED_FORMAT",
+      "lease_state": "PROPOSED_NOT_CLAIMED"
+    },
+    {
+      "slot": "W2",
+      "repo": "GBOGEB/ABACUS",
+      "scope": [
+        "ci/governance/workflow_policy.json",
+        "docs/ci/WORKFLOW_RATIONALIZATION.md"
+      ],
+      "owner_pr": 2144,
+      "mutation_authorized": false,
+      "first_red": "POLICY_INVENTORY",
+      "lease_state": "PROPOSED_NOT_CLAIMED"
+    }
+  ],
+  "diagram": {
+    "nodes": [
+      {
+        "id": "HUB_BD",
+        "lane": "GT00",
+        "role": "CONTROL",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "status": "SOURCE_REVIEW"
+      },
+      {
+        "id": "ABACUS_N0",
+        "lane": "GT01",
+        "role": "HISTORICAL_COHORT",
+        "repo": "GBOGEB/ABACUS",
+        "status": "READ_ONLY"
+      },
+      {
+        "id": "FIRST_RED",
+        "lane": "GT01",
+        "role": "NATIVE_OBSERVATION",
+        "repo": "GBOGEB/ABACUS",
+        "status": "PARTIAL_N5"
+      },
+      {
+        "id": "FAMILY",
+        "lane": "GT01",
+        "role": "CANDIDATE_NOT_CAUSAL_ROOT",
+        "repo": "GBOGEB/ABACUS",
+        "status": "HOLD"
+      },
+      {
+        "id": "LEASE",
+        "lane": "GT02",
+        "role": "PROPOSED_SOURCE_SCOPE",
+        "repo": "GBOGEB/ABACUS",
+        "status": "HOLD"
+      },
+      {
+        "id": "WRITER_A",
+        "lane": "GT02",
+        "role": "FORMAT_OWNER",
+        "repo": "GBOGEB/ABACUS",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "WRITER_B",
+        "lane": "GT02",
+        "role": "GOVERNANCE_OWNER",
+        "repo": "GBOGEB/ABACUS",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "PROOF",
+        "lane": "GT03",
+        "role": "NATIVE_EXACT_HEAD_CI",
+        "repo": "GBOGEB/ABACUS",
+        "status": "NOT_RUN_THIS_WAVE"
+      },
+      {
+        "id": "REVIEW",
+        "lane": "GT03",
+        "role": "ELIGIBLE_INDEPENDENT_REVIEW",
+        "repo": "GBOGEB/ABACUS",
+        "status": "HOLD"
+      },
+      {
+        "id": "ROOT_CLOSE",
+        "lane": "GT03",
+        "role": "CONTROLLED_ROOT_DISPOSITION",
+        "repo": "GBOGEB/ABACUS",
+        "status": "WITHHELD"
+      },
+      {
+        "id": "CODEX_REX",
+        "lane": "GT04",
+        "role": "READ_ONLY_PRODUCER",
+        "repo": "GBOGEB/CODEX",
+        "status": "INDEPENDENT_ACCEPT_REQUIRED"
+      },
+      {
+        "id": "QPS_PRIVATE",
+        "lane": "GT05",
+        "role": "PRIVATE_OWNER_EVIDENCE",
+        "repo": null,
+        "status": "SOURCE_RETURN_REQUIRED"
+      },
+      {
+        "id": "QPS_ACTION_CLOSE",
+        "lane": "GT05",
+        "role": "PRIVATE_ACTION_DISPOSITION",
+        "repo": null,
+        "status": "WITHHELD"
+      },
+      {
+        "id": "ADMIN_RULE",
+        "lane": "GT06",
+        "role": "BRANCH_PROTECTION_RED_CANARY",
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "status": "HOLD"
+      },
+      {
+        "id": "ADMISSION",
+        "lane": "GT06",
+        "role": "AUTHORIZED_RELEASE",
+        "repo": null,
+        "status": "HOLD"
+      }
+    ],
+    "edges": [
+      {
+        "from": "HUB_BD",
+        "to": "ABACUS_N0",
+        "relation": "observes",
+        "binding": "DECLARED_CURRENT_GRAPH"
+      },
+      {
+        "from": "ABACUS_N0",
+        "to": "FIRST_RED",
+        "relation": "source_lineage",
+        "binding": "DECLARED_CURRENT_GRAPH"
+      },
+      {
+        "from": "FIRST_RED",
+        "to": "FAMILY",
+        "relation": "candidate",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      },
+      {
+        "from": "FAMILY",
+        "to": "LEASE",
+        "relation": "depends_on",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      },
+      {
+        "from": "LEASE",
+        "to": "WRITER_A",
+        "relation": "depends_on",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      },
+      {
+        "from": "LEASE",
+        "to": "WRITER_B",
+        "relation": "depends_on",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      },
+      {
+        "from": "WRITER_A",
+        "to": "PROOF",
+        "relation": "depends_on",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      },
+      {
+        "from": "WRITER_B",
+        "to": "PROOF",
+        "relation": "depends_on",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      },
+      {
+        "from": "PROOF",
+        "to": "REVIEW",
+        "relation": "depends_on",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      },
+      {
+        "from": "REVIEW",
+        "to": "ROOT_CLOSE",
+        "relation": "depends_on",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      },
+      {
+        "from": "ROOT_CLOSE",
+        "to": "ADMISSION",
+        "relation": "depends_on",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      },
+      {
+        "from": "ADMIN_RULE",
+        "to": "ADMISSION",
+        "relation": "depends_on",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      },
+      {
+        "from": "CODEX_REX",
+        "to": "QPS_PRIVATE",
+        "relation": "advisory_handoff",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      },
+      {
+        "from": "QPS_PRIVATE",
+        "to": "QPS_ACTION_CLOSE",
+        "relation": "depends_on",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      },
+      {
+        "from": "QPS_ACTION_CLOSE",
+        "to": "ADMISSION",
+        "relation": "depends_on",
+        "binding": "DECLARED_NO_NATIVE_CROSS_REPO_PROOF"
+      }
+    ],
+    "edge_binding_rule": "DECLARED edges are not authenticated cross-repository dispatch or formal admission"
+  },
+  "missing_proof": [
+    "QPS private physical bytes and action row identities",
+    "ABACUS verified causal counterfactual and comparable re-run",
+    "ABACUS / Hub / CODEX effective owner check protection",
+    "eligible human review",
+    "CODEX authenticated CREW/REX consumer",
+    "QPS procurement and engineering owner dispositions"
+  ],
+  "metrics": {
+    "issue_count_public_three_repos": 83,
+    "current_public_open_prs": 18,
+    "qps_hidden_unknown_not_zero": true,
+    "root_burndown_delta": null,
+    "proof_yield": null,
+    "recurrence": null,
+    "coverage_matched": null,
+    "bt_rank": null,
+    "pca_status": "WITHHELD_UNMATCHED"
+  },
+  "notes": "Read-only public-safe observation; do NOT import private QPS source IDs, bids, versioned SHAs, titles or action rows. No dispatch, no code repair, no issue/action closure."
+}
