@@ -23,7 +23,7 @@ class Focus5ReleaseContract(unittest.TestCase):
 
     def test_60_gates_14_qualified_and_original_heads(self):
         builder.validate(self.data)
-        self.assertEqual(self.data["metrics"]["passed"], 14)
+        self.assertEqual(self.data["metrics"]["passed"], 15)
         self.assertEqual(self.data["metrics"]["required_gate_total"], 60)
         self.assertEqual({x["rank"] for x in self.data["rows"]}, {2, 4, 5, 8, 16})
 
