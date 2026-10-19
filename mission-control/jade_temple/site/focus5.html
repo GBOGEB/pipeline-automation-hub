@@ -75,15 +75,23 @@
     "readback": "NON_ATOMIC_GITHUB_API",
     "hub_parent_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
     "source_truth": "REPOSITORY_OWNER_ONLY",
-    "release_authority_transfer": false
+    "release_authority_transfer": false,
+    "observation_pulse": "N_PLUS_7_R1",
+    "initial_snapshot": {
+      "passed": 14,
+      "failed": 8,
+      "unknown": 38,
+      "qualified_percent": 23.33
+    },
+    "latest_note": "Current QPS and HUB main advanced; old observations retained in native_observations as historical, no retroactive receipt promotion"
   },
   "metrics": {
     "required_gate_count_per_repo": 12,
     "required_gate_total": 60,
-    "passed": 14,
+    "passed": 15,
     "failed": 8,
-    "unknown": 38,
-    "verified_completion_pct": 23.33,
+    "unknown": 37,
+    "verified_completion_pct": 25,
     "definition": "Only verified PASS increments completed numerator; FAIL and UNKNOWN remain in denominator, and coverage metrics never substitute release proof.",
     "top21_master_population": 21,
     "top21_unassessed_outside_focus": 16,
@@ -161,23 +169,23 @@
       "role": "QPS TRIAGE engineering / canonical OCD ADR SSOT",
       "owner_lane": "QPS/source namespace & artifact owner",
       "default_branch": "main",
-      "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+      "source_sha": "87e39abba7e398046b74070e0b3d793118ae51f4",
       "head_readback": "2026-10-19 non-atomic",
       "release": "HOLD",
       "cohort": "FOCUS5_FROM_N11",
       "gate_denominator": 12,
-      "verified_complete": 2,
-      "verified_failed": 2,
+      "verified_complete": 3,
+      "verified_failed": 1,
       "unqualified": 8,
-      "percent": 16.67,
+      "percent": 25,
       "gates": [
         {
           "id": "H01",
           "label": "Exact default-branch SHA observed",
           "phase": "DEFINE",
           "status": "PASS",
-          "evidence": "https://github.com/GBOGEB/cryoplant-project/commit/1072a6ed78245b956951684c0b716a98924b3558",
-          "reason": "GitHub default branch exact SHA read back"
+          "evidence": "https://github.com/GBOGEB/cryoplant-project/commit/87e39abba7e398046b74070e0b3d793118ae51f4",
+          "reason": "Latest main SHA read back after QPS #1970; non-atomic observation"
         },
         {
           "id": "H02",
@@ -207,9 +215,9 @@
           "id": "H05",
           "label": "Native primary B0/test equivalent terminal PASS",
           "phase": "MEASURE",
-          "status": "FAIL",
-          "evidence": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39174767597/job/117815065198",
-          "reason": "W163 namespace canonicalization terminal failure; two historical G-prefix paths unregistered"
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39183963689/job/117842375209",
+          "reason": "Current-main qps-canonicalization run 39183963689 / job 117842375209 / attempt 1 terminal SUCCESS; scoped structural B0 equivalent"
         },
         {
           "id": "H06",
@@ -270,15 +278,35 @@
       ],
       "candidate_branch": "code-purple/jade-focus-qps-w163-alias-20261019",
       "candidate_sha": "53789ae79330fce95133db7ca77b029be6383201",
-      "owner_action": "W163 owner: validate exact-only historical aliases, collect new qps-canonicalization pass, then binary/RTM/Office QA and owner release.",
+      "owner_action": "Reconcile independently merged QPS #1970 before any duplicate W163 repair, then qualify v6 RC SSOT/binary parity, owner governance and J5.",
       "blockers": [
-        "W163 exact-source namespace first-red",
-        "Effective branch protection #1959",
-        "OCD/ADR source + XLSX/PPTX/PDF/DOCX/HTML artifact QA and v6 RC gate"
+        "W163 current-main first-red displaced: avoid double closure",
+        "QPS effective main protection and negative RED canary unverified",
+        "OCD/ADR and XLSX/PPTX/PDF/DOCX/HTML artifacts and versioned v6 RC unqualified"
       ],
       "open_github_issues": 57,
       "open_github_prs": 0,
       "native_observations": [
+        {
+          "source_sha": "87e39abba7e398046b74070e0b3d793118ae51f4",
+          "run_id": 39183963569,
+          "attempt": 1,
+          "job_id": 117842374642,
+          "workflow_name": "QPS W163 Namespace Collision Control",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39183963569",
+          "release_credit": false
+        },
+        {
+          "source_sha": "87e39abba7e398046b74070e0b3d793118ae51f4",
+          "run_id": 39183963689,
+          "attempt": 1,
+          "job_id": 117842375209,
+          "workflow_name": "qps-canonicalization",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39183963689",
+          "release_credit": false
+        },
         {
           "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
           "run_id": 39174767597,
@@ -303,7 +331,7 @@
       "authenticated_crew": null,
       "accepted_root_count": null,
       "matched_coverage_delta": null,
-      "candidate_note": "LAST_GITHUB_BRANCH_READBACK_BEFORE_CENTRAL_REFRESH, W163 JSON fixture correction"
+      "candidate_note": "OVERLAP_HOLD: PR #1970 independently merged W163/schema source-owner repair; proposed branch requires changed-path reconciliation before promotion"
     },
     {
       "rank": 8,
@@ -764,14 +792,14 @@
       "role": "JADE_Temple Top21 read-only orchestration and single-publisher dashboard",
       "owner_lane": "MissionControl JADE source and publisher owner",
       "default_branch": "master",
-      "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+      "source_sha": "7bda104289843812d5be0a21b354542273752b0e",
       "head_readback": "2026-10-19 non-atomic",
       "release": "HOLD",
       "cohort": "FOCUS5_FROM_N11",
       "gate_denominator": 12,
       "verified_complete": 3,
-      "verified_failed": 1,
-      "unqualified": 8,
+      "verified_failed": 2,
+      "unqualified": 7,
       "percent": 25,
       "gates": [
         {
@@ -779,8 +807,8 @@
           "label": "Exact default-branch SHA observed",
           "phase": "DEFINE",
           "status": "PASS",
-          "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/commit/8986c7fdbcc02b639bb476f28cb63559d7845198",
-          "reason": "GitHub default branch exact SHA read back"
+          "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/commit/7bda104289843812d5be0a21b354542273752b0e",
+          "reason": "Latest main SHA read back after HUB #743; non-atomic observation"
         },
         {
           "id": "H02",
@@ -819,8 +847,8 @@
           "label": "Independent domain/integration smoke terminal PASS",
           "phase": "MEASURE",
           "status": "PASS",
-          "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39176449821",
-          "reason": "Exact-main SPINE peer source census and adversarial/native checksum step successful"
+          "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39183229155/job/117840235735",
+          "reason": "Current-main QPS TRIAGE ULTRA federation-control run 39183229155 / job 117840235735 terminal SUCCESS; scoped independent DoV"
         },
         {
           "id": "H07",
@@ -858,9 +886,9 @@
           "id": "H11",
           "label": "Source-bound binary/site artifact QA and hashes",
           "phase": "IMPROVE",
-          "status": "UNKNOWN",
-          "evidence": null,
-          "reason": "Not yet independently qualified"
+          "status": "FAIL",
+          "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39183229045/job/117840235595",
+          "reason": "Current-head Method Atlas run 39183229045 / job 117840235595 fails W34 Superstitch Python SyntaxError at testflight.py:47; site SHA QA not accepted"
         },
         {
           "id": "H12",
@@ -873,15 +901,35 @@
       ],
       "candidate_branch": "code-purple/jade-n6-point-release-neural-mopup-20261019",
       "candidate_sha": null,
-      "owner_action": "Mission Control owner: source-bound generator, 3-viewport QA, J0-J5 rollup, one Pages publisher; do not spawn a second workflow family.",
+      "owner_action": "Fix W34 Superstitch testflight.py:47 SyntaxError in separate owner lane, then exact-head native site QA, served Pages parity, independent approval and RED canary.",
       "blockers": [
-        "Full JADE point-release native and served HTTPS parity pending",
-        "Main protected=false and RED canary unverified",
-        "Five stacked/open PR objects not independently merge-ready"
+        "W34 Method Atlas current-main Superstitch SyntaxError at testflight.py:47",
+        "Exact-branch JADE native focus5 and served Pages SHA proof unverified",
+        "Effective protected branch and RED/unapproved canary absent"
       ],
       "open_github_issues": 33,
       "open_github_prs": 5,
       "native_observations": [
+        {
+          "source_sha": "7bda104289843812d5be0a21b354542273752b0e",
+          "run_id": 39183229045,
+          "attempt": 1,
+          "job_id": 117840235595,
+          "workflow_name": "CODE PURPLE Method Atlas",
+          "conclusion": "failure",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39183229045",
+          "release_credit": false
+        },
+        {
+          "source_sha": "7bda104289843812d5be0a21b354542273752b0e",
+          "run_id": 39183229155,
+          "attempt": 1,
+          "job_id": 117840235735,
+          "workflow_name": "QPS TRIAGE ULTRA Federation Control",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39183229155",
+          "release_credit": false
+        },
         {
           "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
           "run_id": 39176449821,
