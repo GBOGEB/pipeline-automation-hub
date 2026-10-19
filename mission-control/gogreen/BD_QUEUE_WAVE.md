@@ -53,3 +53,8 @@ new issue/action closures or published binaries.
 
 `MERGE_ADMISSION=HOLD`; `FORMAL_ROOT_CLOSURE_CREDIT_DELTA=0`;
 `QPS_ENGINEERING_ACCEPTANCE=WITHHELD`.
+
+## Complete public issue intake (W49)
+The additive QBD_W49_PUBLIC_83_ISSUE_REVIEW_20261019.json covers all 39 ABACUS, 11 CODEX and 33 Hub observed Open issue objects, with native identities and candidate classes: 20 policy/security, 19 technical diagnostics, 28 programme control, 1 release dependency and 15 requiring owner classification. None is an accepted causal root or automatic EXECUTE_NOW authorization. Private QPS is omitted, not counted as zero.
+
+The existing qbd_contract.py now validates 83/83 issue identity parity, private-data redaction, no unauthorized closure, duplicates and candidate family counts. Four new negative/positive tests extend the prior 12. The canonical four-repository live census remains separately HOLD for HTTP 404 until the source owner proves private read access; do not suppress the result.
