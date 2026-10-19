@@ -152,6 +152,108 @@ class CoverageIntegrityTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'PUBLISHER_EXACT'):
                 ci.build(ci.SOURCE,Path(t),'fake-head')
 
+    def test_cli_build_then_verify_exact_head(self):
+        with tempfile.TemporaryDirectory() as t:
+            self.assertEqual(ci.main(['--source',str(ci.SOURCE),'--out',t,'--head',HEAD]),0)
+            self.assertEqual(ci.main(['--source',str(ci.SOURCE),'--out',t,'--head',HEAD,'--verify-only']),0)
+
+    def test_missing_output_requires_declared_local_path(self):
+        with self.assertRaisesRegex(ValueError,'OUTPUT_REQUIRED'):
+            ci.build(ci.SOURCE, None, HEAD)
+
+    def test_bad_input_contract_families_are_independent(self):
+        cases = [
+            ('schema', 'SCHEMA_DRIFT', lambda d: d.__setitem__('schema','wrong')),
+            ('head','INVALID_REPO_HEAD', lambda d: d['repo_heads'].__setitem__('GBOGEB/ABACUS','bad')),
+            ('empty_events','NO_HISTORICAL_OBSERVATIONS',lambda d: d.__setitem__('observations',[])),
+            ('dupe_event','DUPLICATE_OBSERVATION',lambda d: d['observations'].append(copy.deepcopy(d['observations'][0]))),
+            ('event_sha','INVALID_MEASUREMENT_HEAD', lambda d: d['observations'][0].__setitem__('head_sha','bad')),
+            ('event_class','UNSUPPORTED_MEASUREMENT_STATE',lambda d: d['observations'][0].__setitem__('cohort_type','LIVE')),
+            ('unbound','UNBOUND_POPULATION',lambda d: d['observations'][0].__setitem__('population_key','')),
+            ('missing_rows','MISSING_FILE_ROWS',lambda d: d['observations'][0].__setitem__('rows',[])),
+            ('blob','MISSING_GIT_BLOB',lambda d: d['observations'][0]['rows'][0].__setitem__('source_blob','x')),
+            ('job_id','MISSING_NATIVE_ID',lambda d: d['observations'][0]['lineage'].__setitem__('job_id',0)),
+            ('inventory_head','INVENTORY_HEAD',lambda d: d['inventory_projections'][0].__setitem__('head_sha','bad')),
+            ('inventory_dupe','INVALID_INVENTORY',lambda d: d['inventory_projections'][0]['candidate_source_paths'].append(d['inventory_projections'][0]['candidate_source_paths'][0])),
+            ('other_shape','INVALID_OTHER_SCOPE',lambda d: d['other_scopes'][0].__setitem__('statement',[1])),
+            ('other_counter','INVALID_OTHER_SCOPE_DENOMINATOR',lambda d: d['other_scopes'][0].__setitem__('statement',[100,5])),
+            ('statement_over','COVERED_EXCEEDS_ELIGIBLE',lambda d: d['observations'][0]['rows'][0].__setitem__('statement',[100000,1])),
+        ]
+        for label, expected, modify in cases:
+            with self.subTest(label=label):
+                source = copy.deepcopy(self.doc)
+                modify(source)
+                with self.assertRaisesRegex(ValueError,expected):
+                    ci.validate(source)
+
+    def test_zero_eligible_population_is_not_100_percent(self):
+        obs=copy.deepcopy(self.doc['observations'][0])
+        for row in obs['rows']: row['statement']=[0,0]
+        with self.assertRaisesRegex(ValueError,'NO_ELIGIBLE'):
+            ci.measure(obs)
+        self.assertIsNone(ci.ratio(0,0))
+
+    def test_mismatched_test_runtime_and_source_sets_split_cohort(self):
+        first,second=copy.deepcopy(self.doc['observations'])
+        second['python']='3.12'
+        self.assertEqual(ci.compare(first,second)['reason'],'COHORT_METADATA_DRIFT')
+        second['python']=first['python']
+        second['rows'].pop()
+        self.assertEqual(ci.compare(first,second)['reason'],'SOURCE_FILE_SET_DRIFT')
+
+    def test_expected_historical_pair_cannot_change_silently(self):
+        payload=copy.deepcopy(self.doc)
+        payload['observations'][1]['rows'][0]['source_blob']='a'*40
+        with self.assertRaisesRegex(ValueError,'EXPECTED_HISTORICAL_PAIR'):
+            ci.summarize(payload)
+
+    def test_render_manifest_provenance_drift(self):
+        with tempfile.TemporaryDirectory() as t:
+            ci.build(ci.SOURCE,t,HEAD)
+            path=Path(t,'manifest.json')
+            m=json.loads(path.read_text())
+            m['merge_admission']='PASS'
+            path.write_text(json.dumps(m))
+            with self.assertRaisesRegex(ValueError,'MANIFEST_PROVENANCE'):
+                ci.verify(t,HEAD)
+
+    def test_forged_portfolio_coverage_rejected_even_with_resealed_member(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as t:
+            ci.build(ci.SOURCE,t,HEAD)
+            p=Path(t,'snapshot.json');doc=json.loads(p.read_text());doc['portfolio_total_coverage']=100
+            raw=json.dumps(doc).encode();p.write_bytes(raw)
+            mpath=Path(t,'manifest.json');m=json.loads(mpath.read_text())
+            m['member_sha256']['snapshot.json']=hashlib.sha256(raw).hexdigest()
+            m['member_bytes']['snapshot.json']=len(raw)
+            mpath.write_text(json.dumps(m))
+            with self.assertRaisesRegex(ValueError,'PORTFOLIO_OR_AUTHORITY_PROMOTION'):
+                ci.verify(t,HEAD)
+
+
+
+    def test_historical_inventory_state_remains_noncurrent_and_nonqualified(self):
+        d=copy.deepcopy(self.doc)
+        d['inventory_projections'][0]['measurement_status']='HISTORICAL_INVENTORY_ONLY'
+        ci.validate(d)
+        result=ci.summarize(d)
+        self.assertIsNone(result['current_inventory']['currently_measured_count'])
+        self.assertIsNone(result['portfolio_total_coverage'])
+
+    def test_direct_module_entrypoint_exits_after_writing_receipt(self):
+        import contextlib
+        import io
+        import runpy
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as t:
+            args=['coverage_integrity.py','--out',t,'--head',HEAD]
+            with patch.object(sys,'argv',args), contextlib.redirect_stdout(io.StringIO()) as output:
+                with self.assertRaises(SystemExit) as caught:
+                    runpy.run_path(str(HERE/'coverage_integrity.py'),run_name='__main__')
+            self.assertEqual(caught.exception.code,0)
+            self.assertIn('SOURCE_BOUND_HISTORICAL_VIEW',output.getvalue())
+            ci.verify(t,HEAD)
+
 
 if __name__ == '__main__':
     unittest.main()
