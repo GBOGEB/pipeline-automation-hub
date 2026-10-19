@@ -1,0 +1,70 @@
+name: GOGREEN Red-Trace Ledger (read-only)
+
+# Per-workflow EVERRED / GREEN_TO_RED / RED_TO_GREEN / FLAKY ledger for master,
+# with break windows (last green -> first red head), suspect commits, first failing
+# step, shared break roots, staleness and pinned-evidence markers.
+# Published as the job summary (visible from every PR's Checks tab) and an artifact.
+# Informational: never blocks a merge; fails only if the tracer itself cannot run.
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/red_trace/**'
+      - '.github/workflows/gogreen-red-trace.yml'
+  push:
+    branches: [master]
+  schedule:
+    - cron: '41 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      per_workflow:
+        description: Max runs fetched per workflow
+        default: '200'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: gogreen-red-trace-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ledger:
+    name: Master red/green transition ledger
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Offline classification and guard tests
+        run: python -m unittest discover -s mission-control/gogreen/red_trace -p 'test_*.py' -v
+      - name: Trace master history (GET only)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PER_WORKFLOW: ${{ inputs.per_workflow || (github.event_name == 'pull_request' && '100' || '200') }}
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/red_trace/red_trace.py \
+            --repo "$GITHUB_REPOSITORY" --branch master \
+            --per-workflow "$PER_WORKFLOW" --root . --out "$RUNNER_TEMP/red-trace"
+          cat "$RUNNER_TEMP/red-trace/red_trace.md" >> "$GITHUB_STEP_SUMMARY"
+          python - "$RUNNER_TEMP/red-trace/red_trace.json" <<'PY'
+          import json, sys
+          r = json.load(open(sys.argv[1]))
+          fresh = [n for n in r["currently_red"] if n not in r["currently_red_stale"]]
+          for n in fresh:
+              print(f"::warning title=master red ({r['branch']})::{n}")
+          for root in r["shared_break_roots"]:
+              print(f"::notice title=shared break root {root['first_red_sha'][:8]}::{root['count']} workflows")
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: gogreen-red-trace-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/red-trace/
+          if-no-files-found: warn
+          retention-days: 90
