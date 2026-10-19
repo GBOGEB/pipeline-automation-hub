@@ -185,12 +185,91 @@ def validate(document: dict) -> dict:
     }
 
 
+ISSUE_CLASSES = {
+    "OWNER_CLASSIFICATION_NEEDED", "POLICY_SECURITY_CANDIDATE",
+    "PROGRAMME_CONTROL_CANDIDATE", "TECHNICAL_DIAGNOSTIC_CANDIDATE",
+    "RELEASE_DEPENDENCY_CANDIDATE",
+}
+
+
+def validate_issue_review(document: dict, baseline: dict) -> dict:
+    """Fail closed on false issue closure, private source leakage and census drift."""
+    require(document.get("schema") == "codepurple.qbd.public_issue_review.v1",
+            "ISSUE_REVIEW_SCHEMA")
+    require(document.get("visibility") == "PUBLIC_SAFE_3_REPOSITORIES_ONLY",
+            "PRIVATE_CENSUS_VISIBILITY")
+    authority = document.get("authority", {})
+    require(authority.get("source_class") ==
+            "LIVE_OBJECT_METADATA_NOT_CAUSAL_PROOF", "FALSE_ISSUE_SOURCE_CLASS")
+    for field in ("private_qps_source", "private_qps_issues", "private_qps_actions"):
+        require(authority.get(field) is None, "PRIVATE_QPS_DATA_IN_PUBLIC_CENSUS")
+    require(authority.get("source_writer_dispatch") is False and
+            authority.get("issue_closure_authorized") is False and
+            authority.get("root_closure_verified") is None and
+            authority.get("merge_admission") == "HOLD" and
+            authority.get("engineering_credit_delta") == 0,
+            "UNVERIFIED_ISSUE_CREDIT")
+    population = document.get("population", {})
+    items = document.get("items", [])
+    require(isinstance(items, list) and items and
+            population.get("n") == len(items) and
+            population.get("unique_issue_identities") == len(items),
+            "ISSUE_POPULATION_DRIFT")
+    expected = {
+        row["repo"]: row["open_issues"]
+        for row in baseline.get("public_issue_counts", [])
+    }
+    require(expected.keys() == PUBLIC_REPOS and
+            population.get("by_repository") == expected,
+            "SOURCE_REPO_ISSUE_DENOMINATOR_DRIFT")
+    classified = {}
+    observed = {}
+    seen = set()
+    for row in items:
+        repo, number = row.get("repository"), row.get("issue_id")
+        require(repo in PUBLIC_REPOS and type(number) is int and number > 0,
+                "INVALID_PUBLIC_ISSUE_IDENTITY")
+        key = (repo, number)
+        require(key not in seen, "DUPLICATE_PUBLIC_ISSUE")
+        seen.add(key)
+        require(row.get("issue_url") == f"https://github.com/{repo}/issues/{number}",
+                "INVALID_PUBLIC_ISSUE_URL")
+        require(row.get("state") == "open", "CLOSED_ISSUE_PRESENTED_OPEN")
+        require(isinstance(row.get("title"), str) and bool(row["title"]),
+                "MISSING_ISSUE_TITLE")
+        require(row.get("candidate_class") in ISSUE_CLASSES, "UNAPPROVED_ISSUE_CLASS")
+        require(row.get("root_verified") is False and
+                row.get("issue_closure_eligible") is False and
+                row.get("source_mutation_authorized") is False and
+                row.get("match_to_native_first_red") is None and
+                row.get("owner_next") == "OWNER_REVIEW_REQUIRED_NOT_AUTOMATED",
+                "FALSE_ISSUE_OR_CAUSAL_DISPOSITION")
+        classified[row["candidate_class"]] = classified.get(row["candidate_class"], 0) + 1
+        observed[repo] = observed.get(repo, 0) + 1
+    require(observed == expected, "MISSING_REPO_ISSUES")
+    require(classified == population.get("by_candidate_family"),
+            "CANDIDATE_FAMILY_COUNT_DRIFT")
+    return {
+        "schema": "codepurple.qbd.issue_review_check.v1",
+        "status": "ISSUE_IDENTITY_PARITY_ONLY_NOT_CLOSURE",
+        "reviewed_open_issue_objects": len(items),
+        "public_repositories": 3, "private_qps_excluded": True,
+        "causal_root_count": None, "issue_closure_delta": None,
+        "source_authority_transfer": False,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, required=True)
+    parser.add_argument("--issue-review", type=Path)
     args = parser.parse_args()
     try:
-        result = validate(json.loads(args.input.read_text(encoding="utf-8")))
+        baseline = json.loads(args.input.read_text(encoding="utf-8"))
+        result = validate(baseline)
+        if args.issue_review:
+            source = json.loads(args.issue_review.read_text(encoding="utf-8"))
+            result["issue_review"] = validate_issue_review(source, baseline)
     except (ValueError, KeyError, TypeError, OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"status": "REJECT", "reason": str(exc)}, sort_keys=True))
         return 1
