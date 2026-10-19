@@ -5,7 +5,7 @@
   const $ = (id) => document.getElementById(id);
   const SVG = 'http://www.w3.org/2000/svg';
   const state = { view: 'parallel', repo: 'all', search: '' };
-  const rows = [...D.rows].sort((a, b) => a.rank - b.rank);
+  const rows = [...D.rows]; // preserve QPS-first owner priority, not numeric rank
   const allowed = new Set(['PASS', 'FAIL', 'UNKNOWN']);
   if (D.workflow.merge_admission !== 'HOLD' || D.workflow.dispatch_performed !== false) {
     throw new Error('Unsafe dashboard authority input');
@@ -233,5 +233,5 @@
     drawCards();
   });
   $('repoSelect').addEventListener('change', event => choose(event.target.value));
-  drawMetrics(); drawWaves(); choose(rows[0].repo);
+  drawMetrics(); drawWaves(); choose(rows.find(r => r.rank === 4).repo);
 })();
