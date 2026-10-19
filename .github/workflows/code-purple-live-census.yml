@@ -88,6 +88,8 @@ jobs:
     name: Fresh GitHub GET and source-bound graph artifact
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
     runs-on: ubuntu-24.04
+    outputs:
+      census_disposition: ${{ steps.refresh.outputs.census }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -152,3 +154,47 @@ jobs:
           name: disjoint-census-access-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/out/access_diagnostic.json
           if-no-files-found: warn
+
+  qualified-native-five-repo-proof:
+    name: Authenticated five-repo readback qualification (never a deferred green)
+    needs: [native-readonly-census]
+    if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && needs.native-readonly-census.outputs.census_disposition == 'NATIVE_READ' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout immutable workflow source only
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Install Python 3.11
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.11'
+      - name: Download same-run native snapshot, never a deferred receipt
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: disjoint-census-native-${{ github.run_id }}-${{ github.run_attempt }}
+          path: mission-control/federation-atlas/live-census/qualified-input
+      - name: Verify five source identities, exact master and member digests
+        shell: bash
+        env:
+          EXPECTED_SOURCE_HEAD: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_HEAD"
+          cd mission-control/federation-atlas/live-census
+          python source/live_census.py --verify qualified-input
+          mkdir -p qualified-output
+          python source/native_qualify.py --directory qualified-input \
+            --expected-master "$EXPECTED_SOURCE_HEAD" \
+            --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" \
+            --output qualified-output/qualification.json
+      - name: Publish narrowly scoped qualified readback receipt only
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: five-repo-native-qualified-${{ github.run_id }}-${{ github.run_attempt }}
+          path: mission-control/federation-atlas/live-census/qualified-output/qualification.json
+          if-no-files-found: error
