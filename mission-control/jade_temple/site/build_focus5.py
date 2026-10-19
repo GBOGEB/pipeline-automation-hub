@@ -6,6 +6,8 @@ never queries GitHub, launches jobs, marks roots closed or makes releases.
 """
 from __future__ import annotations
 import argparse
+import csv
+import io
 import hashlib
 import json
 from pathlib import Path
@@ -14,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "FOCUS5_POINT_RELEASE_NPLUS7.json"
 TEMPLATE = ROOT / "site" / "focus5_template.html"
 OUTPUT = ROOT / "site" / "focus5.html"
+CSV = ROOT / "site" / "focus5_burndown.csv"
 TOKEN = "<!-- FOCUS5_CANONICAL_JSON -->"
 
 
@@ -73,22 +76,47 @@ def render(source_text: str, template: str) -> str:
     return template.replace(TOKEN, source_text.strip())
 
 
+
+def make_csv(source_text: str) -> str:
+    data = json.loads(source_text)
+    validate(data)
+    buf = io.StringIO(newline="")
+    writer = csv.writer(buf, lineterminator="\\n")
+    writer.writerow(["rank", "repo", "source_sha", "gate_id", "gate_label",
+                     "status", "verified_complete", "denominator",
+                     "evidence_url", "next_owner_action"])
+    for row in data["rows"]:
+        for gate in row["gates"]:
+            writer.writerow([
+                row["rank"], row["repo"], row["source_sha"], gate["id"],
+                gate["label"], gate["status"],
+                "1" if gate["status"] == "PASS" else "0",
+                row["gate_denominator"], gate["evidence"] or "",
+                row["owner_action"],
+            ])
+    return buf.getvalue()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     modes = parser.add_mutually_exclusive_group(required=True)
     modes.add_argument("--check", action="store_true")
     modes.add_argument("--build", action="store_true")
     args = parser.parse_args()
-    result = render(DATA.read_text(encoding="utf-8"),
-                    TEMPLATE.read_text(encoding="utf-8"))
+    source = DATA.read_text(encoding="utf-8")
+    result = render(source, TEMPLATE.read_text(encoding="utf-8"))
+    tabular = make_csv(source)
     digest = hashlib.sha256(result.encode("utf-8")).hexdigest()
     if args.check:
         if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != result:
             raise SystemExit("FAIL: generated focus-five page out of sync")
-        print("PASS focus-five generated HTML parity SHA256=" + digest)
+        if not CSV.is_file() or CSV.read_text(encoding="utf-8") != tabular:
+            raise SystemExit("FAIL: generated focus-five CSV out of sync")
+        print("PASS focus-five HTML + CSV source parity SHA256=" + digest)
     else:
         OUTPUT.write_text(result, encoding="utf-8")
-        print("BUILD focus-five generated HTML SHA256=" + digest)
+        CSV.write_text(tabular, encoding="utf-8")
+        print("BUILD focus-five HTML + CSV SHA256=" + digest)
 
 
 if __name__ == "__main__":
