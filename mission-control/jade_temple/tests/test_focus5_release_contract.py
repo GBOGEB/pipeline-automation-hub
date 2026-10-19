@@ -65,6 +65,15 @@ class Focus5ReleaseContract(unittest.TestCase):
         actual = (JADE / "site/focus5.html").read_text(encoding="utf-8")
         self.assertEqual(expected, actual)
 
+    def test_excel_ready_burndown_has_exactly_sixty_atoms(self):
+        source = SOURCE.read_text(encoding="utf-8")
+        expected = builder.make_csv(source)
+        actual = (JADE / "site/focus5_burndown.csv").read_text(encoding="utf-8")
+        self.assertEqual(expected, actual)
+        self.assertEqual(actual.count("\\n"), 61)
+        self.assertIn("H12", actual)
+        self.assertIn("GBOGEB/cryoplant-project", actual)
+
     def test_embedded_script_termination_fails_closed(self):
         source = SOURCE.read_text(encoding="utf-8")
         unsafe = source.replace('"name": "', '"name": "</script>', 1)
