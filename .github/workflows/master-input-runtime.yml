@@ -1,0 +1,66 @@
+name: Master_Input Pipeline Runtime (read-only)
+
+# #529 G09: re-run the Master_Input document pipeline through the PowerShell wrapper and publish
+# what it actually did: errors/tracebacks per process, processes spawned, repo functions called,
+# outputs created/modified/deleted vs committed (SHA-256 + git O-ID), input immutability, stray
+# writes, SIPOC/DAG/SPINE diagrams and an interactive report. SANDBOX mode: repo not modified.
+on:
+  pull_request:
+    paths:
+      - 'mission-control/pipeline_runtime/**'
+      - 'scripts/run_processing.py'
+      - 'scripts/ppt_processor.py'
+      - 'scripts/Recursive_Build_Master.py'
+      - 'app/public/master_input/**'
+      - '.github/workflows/master-input-runtime.yml'
+  schedule:
+    - cron: '29 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runtime:
+    name: Run Master_Input pipeline under the runtime harness (pwsh)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0 (node24)
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Harness tests (incl. PowerShell parse check)
+        run: python -m unittest mission-control/pipeline_runtime/test_harness.py -v
+      - name: Run pipeline via PowerShell wrapper
+        shell: pwsh
+        run: |
+          ./mission-control/pipeline_runtime/Run-MasterInputPipeline.ps1 -ReportDir "$env:RUNNER_TEMP/master-input-run"
+      - name: Summary
+        if: always()
+        run: |
+          python - "$RUNNER_TEMP/master-input-run/receipt.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          r = json.load(open(sys.argv[1]))
+          o = r["outputs"]["counts"]
+          print(f"### Master_Input pipeline: {r['result']} (exit {r['exit_code']})\n")
+          print(f"{len(r['processes'])} processes · {sum(p['functions_called'] for p in r['processes'])} functions · "
+                f"outputs +{o['created']} ~{o['modified']} -{o['deleted']} (unchanged {o['unchanged']}) · "
+                f"inputs immutable {r['input']['immutable']} · stray writes {sum(len(v) for v in r['stray_repo_writes'].values())}\n")
+          for e in r["errors"]["uncaught"]:
+              print(f"- **{e['type']}** in {e['process']}: {e['message']}")
+          PY
+          cat "$RUNNER_TEMP/master-input-run/DIAGRAMS.md" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6.0.0 (node24)
+        if: always()
+        with:
+          name: master-input-runtime-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/master-input-run/receipt.json
+            ${{ runner.temp }}/master-input-run/report.html
+            ${{ runner.temp }}/master-input-run/*.mmd
+            ${{ runner.temp }}/master-input-run/DIAGRAMS.md
+          if-no-files-found: warn
+          retention-days: 30

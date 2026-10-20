@@ -1,0 +1,7 @@
+flowchart LR
+  S["SUPPLIERS<br/>owner decks in Master_Input<br/>24 files (.pptx)"]
+  I["INPUTS<br/>app/public/master_input<br/>immutable: True"]
+  P["PROCESS<br/>run_processing.py<br/>ppt_processor.py<br/>Recursive_Build_Master.py"]
+  O["OUTPUTS<br/>created 28 · modified 74 · deleted 0 · unchanged 32"]
+  C["CUSTOMERS<br/>api/document-engines/route.ts<br/>api/io-files/route.ts<br/>app/components/dashboard.tsx"]
+  S --> I --> P --> O --> C
