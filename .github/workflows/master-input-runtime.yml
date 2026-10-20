@@ -33,7 +33,14 @@ jobs:
         with:
           python-version: '3.12'
       - name: Harness tests (incl. PowerShell parse check)
-        run: python -m unittest mission-control/pipeline_runtime/test_harness.py -v
+        run: |
+          set +e
+          python -m unittest mission-control/pipeline_runtime/test_harness.py -v 2>&1 | tee "$RUNNER_TEMP/harness-tests.log"
+          rc=${PIPESTATUS[0]}; set -e
+          if [ "$rc" -ne 0 ]; then
+            grep -E "^(FAIL|ERROR):|Error|assert" "$RUNNER_TEMP/harness-tests.log" | tail -n 6 | while read -r l; do echo "::error title=harness tests::$l"; done
+            exit "$rc"
+          fi
       - name: Run pipeline via PowerShell wrapper
         shell: pwsh
         run: |
