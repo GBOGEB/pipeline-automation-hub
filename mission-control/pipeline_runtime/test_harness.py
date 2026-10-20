@@ -129,7 +129,7 @@ class PowerShellWrapper(unittest.TestCase):
     @unittest.skipUnless(shutil.which("pwsh"), "pwsh not installed")
     def test_wrapper_parses(self):
         p = subprocess.run(["pwsh", "-NoProfile", "-Command",
-                            "$null=[System.Management.Automation.Language.Parser]::ParseFile('%s',[ref]$null,[ref]$e);"
+                            "$t=$null;$e=$null;$null=[System.Management.Automation.Language.Parser]::ParseFile('%s',[ref]$t,[ref]$e);"
                             "if($e){$e|%%{$_.Message};exit 1}" % (HERE / "Run-MasterInputPipeline.ps1")],
                            capture_output=True, text=True)
         self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
