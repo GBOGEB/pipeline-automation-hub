@@ -41,7 +41,15 @@ def produce(coverage_bytes,log_bytes,repository,expected_sha,checked_out_sha,wav
     production={}
     for name,record in files.items():
         normal=str(name).replace('\\','/')
-        if 'mission-control/gogreen/' not in normal or '/tests/' in normal or not normal.endswith('.py'):
+        # Count only canonical repository-relative production paths. A file under
+        # another root containing this fragment is not part of the GOGREEN cohort.
+        # Reject aliases rather than silently manufacturing a coverage denominator.
+        if 'mission-control/gogreen/' in normal:
+            parts=normal.split('/')
+            if parts[:2]!=['mission-control','gogreen'] or any(
+                    part in ('','.','..') for part in parts):
+                raise ValueError('ambiguous coverage production path')
+        if not normal.startswith('mission-control/gogreen/') or '/tests/' in normal or not normal.endswith('.py'):
             continue
         sums=record.get('summary')
         if not isinstance(sums,dict):
@@ -92,8 +100,31 @@ def produce(coverage_bytes,log_bytes,repository,expected_sha,checked_out_sha,wav
                 for k in production))
         result['comparability']='MATCHED_SCOPE' if comparable else 'INCOMPARABLE_SCOPE_OR_TOOL'
         if comparable:
+            # Scope equality is necessary but not sufficient. Recompute every
+            # baseline aggregate from its constituent per-module counts before
+            # permitting a numerical wave-to-wave delta.
+            keys=('num_statements','covered_lines','num_branches','covered_branches')
+            if old.get('source_checkout_matched') is not True or old.get('merge_authorized') is not False:
+                raise ValueError('baseline coverage integrity: provenance or authority')
+            if any(type(m.get(k)) is not int or m[k]<0 for m in old_mod.values() for k in keys):
+                raise ValueError('baseline coverage integrity: invalid module count')
+            if any(m['num_statements']==0 or m['covered_lines']>m['num_statements']
+                   or m['covered_branches']>m['num_branches'] for m in old_mod.values()):
+                raise ValueError('baseline coverage integrity: incoherent module count')
+            sums={k:sum(m[k] for m in old_mod.values()) for k in keys}
+            old_covered=sums['covered_lines']+sums['covered_branches']
+            old_eligible=sums['num_statements']+sums['num_branches']
+            required={'covered_statements':sums['covered_lines'],
+                      'eligible_statements':sums['num_statements'],
+                      'covered_branches':sums['covered_branches'],
+                      'eligible_branches':sums['num_branches'],
+                      'combined_covered':old_covered,
+                      'combined_eligible':old_eligible,
+                      'combined_percent':round(100*old_covered/old_eligible,4)}
+            if any(old_cov.get(k)!=v for k,v in required.items()):
+                raise ValueError('baseline coverage integrity: aggregate mismatch')
             result['comparable_delta_pp']=round(result['coverage']['combined_percent']
-                - old_cov['combined_percent'],4)
+                - required['combined_percent'],4)
     return result
 
 def main():
