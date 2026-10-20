@@ -1,9 +1,11 @@
-"""QPS N5 deterministic, fail-closed census scale recommendation.
+"""Evidence-gated QPS N5 scale recommendation. No dispatch or merge authority.
 
-Output is an owner decision aid, NEVER a dispatcher or merge controller.
-Native receipts and #530 canonical acceptance are independent controls.
+W6 adds conservative cohort/independence validation without changing producer
+formats or the existing bounded 2x4 / 3x6 recommendations. Missing proof is HOLD.
 """
 from __future__ import annotations
+
+import re
 
 
 class ScaleError(ValueError):
@@ -11,26 +13,67 @@ class ScaleError(ValueError):
 
 
 SCHEMA = "qps-metric-pulse/v1"
+_SHA256 = re.compile(r"[0-9a-f]{64}\Z")
+_SCOPE = re.compile(r"[A-Za-z0-9._:/-]{1,128}\Z")
 
 
 def _yes(flags, name):
     return flags.get(name) is True
 
 
-def decide(metrics, flags, *, previous=None):
-    if (metrics.get("schema") != SCHEMA or metrics.get("eligible_repos") != 3
-            or metrics.get("eligible_routes") != 6):
+def _valid_int(v, low, high):
+    return type(v) is int and low <= v <= high
+
+
+def _population(metrics):
+    if not isinstance(metrics, dict) or (metrics.get("schema") != SCHEMA or
+            metrics.get("eligible_repos") != 3 or metrics.get("eligible_routes") != 6):
         raise ScaleError("invalid effective census population")
-    current_routes = metrics.get("planned_routes")
-    verified = metrics.get("verified_zip_routes")
-    terminal = metrics.get("terminal_native_jobs")
-    if (type(current_routes) is not int or current_routes < 0 or current_routes > 6 or
-            type(verified) is not int or type(terminal) is not int or
-            not (0 <= verified <= terminal <= current_routes)):
+    routes, verified, terminal = (metrics.get(k) for k in (
+        "planned_routes", "verified_zip_routes", "terminal_native_jobs"))
+    if not all(_valid_int(x, 0, 6) for x in (routes, verified, terminal)) or not (verified <= terminal <= routes):
         raise ScaleError("inconsistent/native-unknown route population")
-    if (metrics.get("merge_admission") != "HOLD" or
-            metrics.get("qps_engineering_acceptance") is not False):
+    if metrics.get("merge_admission") != "HOLD" or metrics.get("qps_engineering_acceptance") is not False:
         raise ScaleError("metrics cannot convey admission or QPS authority")
+    return routes, verified, terminal
+
+
+def _qualified_repeat(previous, current):
+    """Check repeatability *eligibility*; not independent native verification.
+
+    Identity fields are required when proposing scale. A pair of manually
+    populated pulse records is still advisory until source-owner proof.
+    """
+    if not isinstance(previous, dict):
+        return False
+    try:
+        prior_routes, prior_zip, prior_terminal = _population(previous)
+    except ScaleError:
+        return False
+    if (prior_routes != 4 or prior_zip != 4 or prior_terminal != 4 or
+            not _valid_int(previous.get("pulse_index"), 0, 10**9) or
+            not _valid_int(current.get("pulse_index"), 1, 10**9) or
+            previous["pulse_index"] >= current["pulse_index"]):
+        return False
+    for item in (previous, current):
+        fp = item.get("scope_fingerprint")
+        if not isinstance(fp, str) or _SCOPE.fullmatch(fp) is None:
+            return False
+        for key in ("source_heads_sha256", "native_receipt_set_sha256"):
+            value = item.get(key)
+            if not isinstance(value, str) or _SHA256.fullmatch(value) is None:
+                return False
+    if (previous["scope_fingerprint"] != current["scope_fingerprint"] or
+            previous["source_heads_sha256"] != current["source_heads_sha256"] or
+            previous["native_receipt_set_sha256"] == current["native_receipt_set_sha256"]):
+        return False
+    return True
+
+
+def decide(metrics, flags, *, previous=None):
+    if not isinstance(flags, dict):
+        raise ScaleError("owner/guard flags must be an object")
+    current_routes, verified, terminal = _population(metrics)
     if flags.get("security_p0_p1_present") is True:
         return _result("HOLD_CRITICAL_SECURITY", 0, 0, metrics, "critical security finding")
     if not (_yes(flags, "codex_receiver_merged") and _yes(flags, "qps_receiver_merged")):
@@ -51,18 +94,14 @@ def decide(metrics, flags, *, previous=None):
     if not _yes(flags, "abacus_effective_required_checks_green"):
         return _result("HOLD_REQUIRED_GATES", 2, 4, metrics,
                        "required checks have not been proven")
-    if not _yes(flags, "security_p0_p1_cleared_or_accepted"):
+    if flags.get("security_p0_p1_present") is not False or not _yes(flags, "security_p0_p1_cleared_or_accepted"):
         return _result("HOLD_SECURITY_CLASSIFICATION", 2, 4, metrics,
-                       "P0/P1 security disposition unknown")
-    if (not isinstance(previous, dict) or
-            previous.get("scope_fingerprint") != metrics.get("scope_fingerprint") or
-            previous.get("planned_routes") != 4 or
-            previous.get("verified_zip_routes") != 4 or
-            previous.get("pulse_index", 10**9) >= metrics.get("pulse_index", -1)):
+                       "P0/P1 security status must be explicitly reviewed and clear")
+    if not _qualified_repeat(previous, metrics):
         return _result("HOLD_REPEATABILITY", 2, 4, metrics,
-                       "two comparable successful four-route pulses required")
+                       "scope, source-heads and distinct native receipt sets required")
     return _result("PROPOSE_3x6_OWNER_REVIEW", 3, 6, metrics,
-                   "next expansion needs its own source SHA admission verification")
+                   "next expansion needs source SHA, independent proof and owner review")
 
 
 def _result(status, repos, routes, metrics, why):
@@ -75,7 +114,6 @@ def _result(status, repos, routes, metrics, why):
         "nominal_max_source_repos": 3, "nominal_max_routes": 6,
         "new_native_tests_credited": None, "matched_statement_branch_uplift": None,
         "worker_hour_yield": None, "statistical_sigma": None,
-        "action_authority": "OWNER_PROPOSAL_ONLY",
-        "dispatch_performed": False, "merge_admission": "HOLD",
-        "qps_engineering_acceptance": False,
+        "action_authority": "OWNER_PROPOSAL_ONLY", "dispatch_performed": False,
+        "merge_admission": "HOLD", "qps_engineering_acceptance": False,
     }
