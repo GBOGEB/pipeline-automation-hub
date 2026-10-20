@@ -54,12 +54,14 @@ def verify(archive: bytes, binding: dict) -> dict:
             p = PurePosixPath(x.filename)
             mode = x.external_attr >> 16
             if (p.is_absolute() or ".." in p.parts or "\\" in x.filename or x.is_dir()
-                    or x.flag_bits & 1 or stat.S_ISLNK(mode) or x.file_size > MAX_MEMBER_BYTES):
+                    or x.flag_bits & 1 or stat.S_IFMT(mode) not in (0, stat.S_IFREG) or p.as_posix() != x.filename
+                    or x.file_size > MAX_MEMBER_BYTES):
                 raise ValueError("unsafe ZIP member")
             total += x.file_size
             if total > MAX_TOTAL_BYTES:
                 raise ValueError("ZIP expansion budget exceeded")
-        data = {name: z.read(name) for name in names}
+        data = {name: z.read(name) for name in names}  # z.read checks each member CRC
+    member_sha256 = {name: sha256(data[name]) for name in sorted(names)}
     manifest = json.loads(data["manifest.json"])
     if manifest.get("schema") != "gogreen.manifest.v1" or manifest.get("authority_transfer") is not False:
         raise ValueError("invalid inner manifest contract")
@@ -96,6 +98,7 @@ def verify(archive: bytes, binding: dict) -> dict:
         "run_id": binding["run_id"], "run_attempt": binding["run_attempt"],
         "job_id": binding["job_id"], "artifact_id": binding["artifact_id"],
         "archive_sha256": actual, "verified_inner_files": len(digests),
+        "member_sha256": member_sha256, "zip_crc_verified": True,
         "artifact_bytes_verified": True, "metadata_origin_authenticated": False,
         "native_green_admission": "HOLD", "owner_acceptance": "DEFER",
         "source_class": "OFFLINE_BYTES_WITH_CALLER_ASSERTED_METADATA",
