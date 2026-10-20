@@ -114,8 +114,9 @@ def validate(data):
             raise ValueError("mode")
         if packet.get("phase") not in PHASES:
             raise ValueError("phase")
-        if not isinstance(packet.get("repo"), str) or not REPO.fullmatch(packet["repo"])
-                or any(part in {".", ".."} for part in packet["repo"].split("/")):
+        if (not isinstance(packet.get("repo"), str)
+                or not REPO.fullmatch(packet["repo"])
+                or any(part in {".", ".."} for part in packet["repo"].split("/"))):
             raise ValueError("repo")
         if not isinstance(packet.get("source_sha"), str) or not SHA.fullmatch(packet["source_sha"]):
             raise ValueError("source_sha")
