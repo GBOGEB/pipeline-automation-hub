@@ -18,10 +18,28 @@ Evidence rules:
 - **`stale`:** the last observation is more than 3 days old. A replay is needed before it says anything about HEAD.
 - **📌 Pinned evidence:** the workflow asserts on a hard-coded historical run or artifact ID. Artifacts expire, so the gate can turn red with zero code change, and its suspect list is then meaningless.
 - **No credit:** suspects are not a causal attribution, and the ledger gives no root-closure credit.
+- **`green_streak`:** consecutive green heads since the last red: how stable a gate has been since its last repair.
+- **`nondeterminism`:** `same_head_disagreements` (one head SHA gave both green and red) and `rerun_rescues` (a rerun turned red into green). This separates a nondeterministic gate from repair oscillation, which `FLAKY` alone cannot.
+- **`census`:** the full workflow listing is the denominator. A workflow that never ran on the branch is listed as `unobserved`, never counted green.
+
+## Merged-PR lane (N+9, `--pr-lane N`)
+
+About half of the hub's PR gates never run on `master`, so the master lane cannot see them. The merged-PR lane replays the same `classify()` over a second sequence: for each of the last N merged PRs, the result each workflow showed on the merged head **at merge time** (the `merged_outcome_census` chronology). It costs one paginated `/actions/runs?head_sha=` listing per PR.
+
+| Field | Meaning |
+|---|---|
+| `merge_matrix` | Per merged PR: `{workflow: conclusion at merge}`, plus `merge_after_s`, the seconds from the first check starting to the merge. |
+| `pending_at_merge` | The run had not completed when the PR merged. |
+| `rerun_after_merge` | The attempt that existed at merge was overwritten by a later rerun, so its result is unknown. |
+| `merged_with_red` / `merged_with_pending` | PRs merged while a check was red or still running. |
+
+Neither of the two pending states counts as green or red. Output: `red_trace_pr.json` (`gogreen.red_trace.pr_lane.v1`) and `red_trace_pr.md`. The master-lane file keeps schema `gogreen.red_trace.v1` (additive fields only), so the ABACUS EVERRED adapter is unaffected.
+
+Consumers: `../required_gate/admission.py` (trust → authority) and `../required_gate/backtest.py`.
 
 Run locally (GET only):
 
 ```bash
 GITHUB_TOKEN=... python mission-control/gogreen/red_trace/red_trace.py \
-  --repo GBOGEB/pipeline-automation-hub --per-workflow 300 --root . --out /tmp/red-trace
+  --repo GBOGEB/pipeline-automation-hub --per-workflow 300 --root . --pr-lane 100 --out /tmp/red-trace
 ```

@@ -55,9 +55,8 @@ class Reader:
             return json.load(r)
 
 
-def collect(reader: Reader, branch: str, per_workflow: int) -> dict:
-    """Per-workflow history (the global run listing is capped at 1000 by the API, which
-    starves rarely-run workflows). Truncation is recorded per workflow from total_count."""
+def list_workflows(reader: Reader) -> list:
+    """Complete workflow census (fails closed when the listing is short of total_count)."""
     wfs, wpage = [], 1
     while True:  # repos here carry 150-250 workflows; one page silently dropped >half of them
         data = reader.get(f"/repos/{reader.repo}/actions/workflows?per_page=100&page={wpage}")
@@ -71,6 +70,13 @@ def collect(reader: Reader, branch: str, per_workflow: int) -> dict:
         wpage += 1
     if isinstance(data.get("total_count"), int) and len(wfs) < data["total_count"]:
         raise ValueError(f"workflow census incomplete: {len(wfs)}/{data['total_count']}")
+    return wfs
+
+
+def collect(reader: Reader, branch: str, per_workflow: int) -> dict:
+    """Per-workflow history (the global run listing is capped at 1000 by the API, which
+    starves rarely-run workflows). Truncation is recorded per workflow from total_count."""
+    wfs = list_workflows(reader)
     runs, truncated = [], {}
     for wf in wfs:
         got, page, total = [], 1, None
@@ -89,7 +95,49 @@ def collect(reader: Reader, branch: str, per_workflow: int) -> dict:
         if got and isinstance(total, int) and total > len(got):
             truncated[wf.get("path")] = {"fetched": len(got), "total": total}
         runs += got
-    return {"runs": runs, "truncated": bool(truncated), "truncated_workflows": truncated}
+    return {"runs": runs, "truncated": bool(truncated), "truncated_workflows": truncated,
+            "workflows_meta": workflow_meta(wfs)}
+
+
+def workflow_meta(wfs: list) -> dict:
+    """{path: {id, name, state, created_at}} for the full census (the coverage denominator)."""
+    return {w["path"]: {"id": w.get("id"), "name": w.get("name"), "state": w.get("state"),
+                        "created_at": w.get("created_at")}
+            for w in wfs if isinstance(w, dict) and w.get("path")}
+
+
+def nondeterminism(runs: list) -> dict:
+    """Per workflow: evidence that the SAME code gave different terminal results.
+
+    `outcomes()` keeps one result per head, so a red that a rerun turned green is invisible
+    to `classify()`. That is what separates a nondeterministic gate from one that flipped
+    because the code changed (repair oscillation). Two signals, both read-only:
+      * same_head_disagreements: distinct runs on one head SHA with both a GREEN and a RED
+        terminal conclusion (e.g. push + schedule + dispatch on the same master head);
+      * rerun_rescues: runs whose latest attempt (>1) is green, i.e. a rerun was needed.
+    """
+    heads, rescues = {}, {}
+    for r in runs:
+        path, sha = r.get("path"), r.get("head_sha")
+        if not path or not isinstance(sha, str) or len(sha) != 40:
+            continue
+        s = state(r.get("conclusion"))
+        if s:
+            heads.setdefault((path, sha), set()).add(s)
+        if s == "GREEN" and (r.get("run_attempt") or 1) > 1:
+            rescues[path] = rescues.get(path, 0) + 1
+    out = {}
+    for (path, sha), states in heads.items():
+        o = out.setdefault(path, {"same_head_disagreements": 0, "disagreeing_shas": [], "rerun_rescues": 0})
+        if len(states) > 1:
+            o["same_head_disagreements"] += 1
+            o["disagreeing_shas"] = sorted(o["disagreeing_shas"] + [sha])[:5]
+    for path, n in rescues.items():
+        out.setdefault(path, {"same_head_disagreements": 0, "disagreeing_shas": [], "rerun_rescues": 0})
+        out[path]["rerun_rescues"] = n
+    for o in out.values():
+        o["nondeterministic"] = bool(o["same_head_disagreements"] or o["rerun_rescues"])
+    return out
 
 
 def outcomes(runs: list) -> dict:
@@ -138,6 +186,12 @@ def classify(seq: list) -> dict:
     current = state(terminal[-1]["conclusion"])
     out["current"] = current
     out["latest"] = {k: terminal[-1][k] for k in ("sha", "run_id", "at", "conclusion")}
+    streak = 0
+    for x in reversed(terminal):  # consecutive heads green since the last red (stability after repair)
+        if state(x["conclusion"]) != "GREEN":
+            break
+        streak += 1
+    out["green_streak"] = streak
     if not greens:
         out["class"] = "EVERRED"
         out["first_red"] = {k: terminal[0][k] for k in ("sha", "run_id", "at")}
@@ -216,11 +270,14 @@ def pins(workflow_file: Path) -> list:
 
 def build(repo, branch, collected, flows, enriched_reader=None, observed_at=None, root=None):
     observed_at = observed_at or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    nd = nondeterminism(collected["runs"])
     wfs = []
     for path, seq in sorted(flows.items()):
         c = classify(seq)
         c.update(path=path, name=seq[-1]["name"],
-                 history_truncated=path in collected.get("truncated_workflows", {}))
+                 history_truncated=path in collected.get("truncated_workflows", {}),
+                 nondeterminism=nd.get(path, {"same_head_disagreements": 0, "disagreeing_shas": [],
+                                              "rerun_rescues": 0, "nondeterministic": False}))
         if c.get("latest"):
             c["latest_age_days"] = round(hours(c["latest"]["at"], observed_at) / 24, 1)
             c["stale"] = c["latest_age_days"] > STALE_DAYS
@@ -251,8 +308,192 @@ def build(repo, branch, collected, flows, enriched_reader=None, observed_at=None
               "currently_red_stale": sorted(w["name"] for w in wfs if w.get("current") == "RED" and w.get("stale")),
               "workflows": wfs,
               "authority": {"merge_authorized": False, "root_closure_credit": None, "security_waiver": False}}
+    meta = {k: v for k, v in (collected.get("workflows_meta") or {}).items() if k.startswith(".github/workflows/")}
+    if meta:  # explicit denominator: a workflow absent from this lane is unobserved, not green
+        seen = set(flows)
+        report["census"] = {"workflows_total": len(meta), "observed": len(seen & set(meta)),
+                            "unobserved": sorted(set(meta) - seen)}
     report["digest_sha256"] = hashlib.sha256(json.dumps(report, sort_keys=True).encode()).hexdigest()
     return report
+
+
+# ---------------------------------------------------------------------------------------
+# Merged-PR lane. The master lane only sees workflows that run on master; a gate that is
+# pull_request-only (about half of this fleet) is invisible to it. The same classify() is
+# replayed over a second ordered sequence: the result each workflow showed on the final
+# head of every merged PR, AT merge time (merged_outcome_census chronology: a check that
+# completed after merging was not a premerge observation).
+# ---------------------------------------------------------------------------------------
+PR_SCHEMA = "gogreen.red_trace.pr_lane.v1"
+PENDING_AT_MERGE = "pending_at_merge"
+RERUN_AFTER_MERGE = "rerun_after_merge"
+
+
+def merged_prs(reader: Reader, base: str, limit: int) -> list:
+    if not base or any(c in base for c in "?&#%\\ \n") or ".." in base:
+        raise ValueError("invalid base branch")
+    prs, page = [], 1
+    while page <= 10:
+        batch = reader.get(f"/repos/{reader.repo}/pulls?state=closed&base={base}"
+                           f"&sort=updated&direction=desc&per_page=100&page={page}")
+        if not isinstance(batch, list):
+            raise ValueError("pulls missing")
+        for p in batch:
+            head = (p.get("head") or {}).get("sha")
+            if p.get("merged_at") and isinstance(head, str) and len(head) == 40:
+                prs.append({"number": int(p["number"]), "head_sha": head, "merged_at": p["merged_at"],
+                            "title": (p.get("title") or "")[:120]})
+        if len(batch) < 100 or len(prs) >= 3 * limit:
+            break
+        page += 1
+    prs.sort(key=lambda p: (p["merged_at"], p["number"]), reverse=True)
+    return prs[:limit]
+
+
+def head_runs(reader: Reader, sha: str) -> list:
+    """Every pull_request run on one head SHA, all workflows, in one paginated listing."""
+    if not isinstance(sha, str) or len(sha) != 40 or any(c not in "0123456789abcdef" for c in sha):
+        raise ValueError("invalid head SHA")
+    runs, page = [], 1
+    while True:
+        data = reader.get(f"/repos/{reader.repo}/actions/runs?head_sha={sha}&event=pull_request"
+                          f"&per_page=100&page={page}")
+        batch = data.get("workflow_runs")
+        if not isinstance(batch, list):
+            raise ValueError("workflow_runs missing")
+        runs += batch
+        total = data.get("total_count")
+        if len(batch) < 100 or (isinstance(total, int) and len(runs) >= total) or page >= 10:
+            return runs
+        page += 1
+
+
+def collect_pr_lane(reader: Reader, base: str, limit: int, workflows_meta: dict | None = None) -> dict:
+    prs = merged_prs(reader, base, limit)
+    for p in prs:
+        p["runs"] = head_runs(reader, p["head_sha"])
+    return {"prs": prs, "workflows_meta": workflows_meta or workflow_meta(list_workflows(reader))}
+
+
+def at_merge(runs: list, merged_at: str) -> dict:
+    """{workflow path: result on the merged head at merge time}. Only runs created before
+    the merge count; a run that was still going (or was re-run) after the merge is
+    PENDING_AT_MERGE, never green or red."""
+    best = {}
+    for r in runs:
+        path = r.get("path")
+        if not path or not r.get("created_at") or r["created_at"] > merged_at:
+            continue
+        rank = (r["created_at"], r.get("run_attempt") or 0, r.get("id") or 0)
+        if path not in best or rank > best[path][0]:
+            best[path] = (rank, r)
+    out = {}
+    for path, (_, r) in best.items():
+        done = r.get("status") == "completed" and (r.get("updated_at") or "9") <= merged_at
+        if done:
+            c = r.get("conclusion")
+        elif (r.get("run_attempt") or 1) > 1 and (r.get("run_started_at") or "") > merged_at:
+            c = RERUN_AFTER_MERGE  # the attempt seen at merge was overwritten by a later rerun
+        else:
+            c = PENDING_AT_MERGE
+        out[path] = {"conclusion": c, "run_id": r.get("id"), "attempt": r.get("run_attempt"), "name": r.get("name")}
+    return out
+
+
+def build_pr_lane(repo, base, collected, observed_at=None):
+    observed_at = observed_at or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    prs = sorted(collected["prs"], key=lambda p: (p["merged_at"], p["number"]))
+    flows, matrix, premerge = {}, [], []
+    for p in prs:
+        am = at_merge(p.get("runs", []), p["merged_at"])
+        pre = [r for r in p.get("runs", []) if (r.get("created_at") or "9") <= p["merged_at"]]
+        premerge += pre
+        started = min((r["created_at"] for r in pre), default=None)
+        matrix.append({"pr": p["number"], "head_sha": p["head_sha"], "merged_at": p["merged_at"],
+                       "title": p.get("title", ""), "at_merge": {k: v["conclusion"] for k, v in sorted(am.items())},
+                       "checks_started_at": started,
+                       "merge_after_s": round(hours(started, p["merged_at"]) * 3600) if started else None})
+        for path, v in am.items():
+            flows.setdefault(path, []).append({"path": path, "name": v["name"], "sha": p["head_sha"],
+                                               "at": p["merged_at"], "run_id": v["run_id"], "attempt": v["attempt"],
+                                               "event": "pull_request", "conclusion": v["conclusion"],
+                                               "pr": p["number"]})
+    nd = nondeterminism(premerge)
+    wfs = []
+    for path, seq in sorted(flows.items()):
+        c = classify(seq)
+        c.update(path=path, name=seq[-1]["name"], lane="merged_pr_heads",
+                 merged_red_prs=[x["pr"] for x in seq if state(x["conclusion"]) == "RED"],
+                 pending_at_merge_prs=[x["pr"] for x in seq if x["conclusion"] in (PENDING_AT_MERGE, RERUN_AFTER_MERGE)],
+                 nondeterminism=nd.get(path, {"same_head_disagreements": 0, "disagreeing_shas": [],
+                                              "rerun_rescues": 0, "nondeterministic": False}))
+        if c.get("latest"):
+            c["latest_pr"] = next(x["pr"] for x in reversed(seq) if x["sha"] == c["latest"]["sha"])
+            c["latest_age_days"] = round(hours(c["latest"]["at"], observed_at) / 24, 1)
+            c["stale"] = c["latest_age_days"] > STALE_DAYS
+        wfs.append(c)
+    counts = {}
+    for w in wfs:
+        counts[w["class"]] = counts.get(w["class"], 0) + 1
+    red = [{"pr": m["pr"], "workflows": sorted(k for k, v in m["at_merge"].items() if state(v) == "RED")}
+           for m in matrix]
+    pend = [{"pr": m["pr"], "workflows": sorted(k for k, v in m["at_merge"].items()
+                                                if v in (PENDING_AT_MERGE, RERUN_AFTER_MERGE))}
+            for m in matrix]
+    lat = sorted(m["merge_after_s"] for m in matrix if m["merge_after_s"] is not None)
+    report = {"schema": PR_SCHEMA, "repository": repo, "base": base, "observed_at_utc": observed_at,
+              "window": {"merged_prs": len(prs), "oldest_merged_at": prs[0]["merged_at"] if prs else None,
+                         "newest_merged_at": prs[-1]["merged_at"] if prs else None,
+                         "runs_premerge": len(premerge)},
+              "merge_timing": {"prs_with_checks": len(lat), "prs_without_premerge_checks": len(matrix) - len(lat),
+                               "median_s_first_check_to_merge": lat[len(lat) // 2] if lat else None,
+                               "merged_within_120s_of_first_check": sum(x <= 120 for x in lat)},
+              "counts": counts,
+              "merged_with_red": [x for x in red if x["workflows"]],
+              "merged_with_pending": [x for x in pend if x["workflows"]],
+              "workflows": wfs, "merge_matrix": matrix,
+              "authority": {"merge_authorized": False, "root_closure_credit": None, "security_waiver": False}}
+    meta = collected.get("workflows_meta")
+    meta = {k: v for k, v in (meta or {}).items() if k.startswith(".github/workflows/")}
+    if meta:
+        report["census"] = {"workflows_total": len(meta), "observed": len(set(flows) & set(meta)),
+                            "unobserved": sorted(set(meta) - set(flows)),
+                            "created_at": {k: v.get("created_at") for k, v in sorted(meta.items())}}
+    report["digest_sha256"] = hashlib.sha256(json.dumps(report, sort_keys=True).encode()).hexdigest()
+    return report
+
+
+def markdown_pr_lane(rep: dict) -> str:
+    w = rep["window"]
+    lines = [f"### GOGREEN red-trace · merged-PR lane · `{rep['repository']}` → `{rep['base']}`",
+             f"{w['merged_prs']} merged PRs ({w['oldest_merged_at']} → {w['newest_merged_at']}), "
+             f"{w['runs_premerge']} premerge runs. Each cell = the result a workflow showed on the merged head "
+             f"**at merge time**."]
+    if rep.get("census"):
+        c = rep["census"]
+        lines.append(f"Coverage: {c['observed']}/{c['workflows_total']} workflows observed in this lane.")
+    lines += ["", "| Class | Count |", "|---|---:|"]
+    lines += [f"| {k} | {rep['counts'].get(k, 0)} |" for k in ORDER if rep["counts"].get(k)]
+    mt = rep.get("merge_timing") or {}
+    lines += ["", f"**Merged with a red check at merge time: {len(rep['merged_with_red'])} PR(s)** · "
+              f"merged while a check was still pending: {len(rep['merged_with_pending'])} PR(s) · "
+              f"merged ≤ 120 s after its first check started: {mt.get('merged_within_120s_of_first_check', '—')} "
+              f"(median {mt.get('median_s_first_check_to_merge', '—')} s)", ""]
+    for x in rep["merged_with_red"][-15:]:
+        lines.append(f"- #{x['pr']}: " + ", ".join(p.split('/')[-1] for p in x["workflows"]))
+    lines += ["", "| Class | Workflow | Now | Green streak | Merged red | Same-head disagreement / rerun rescue |",
+              "|---|---|---|---:|---:|---|"]
+    for cls in ORDER:
+        if cls == "STABLE_GREEN":
+            continue
+        for x in [x for x in rep["workflows"] if x["class"] == cls]:
+            nd = x["nondeterminism"]
+            lines.append(f"| {cls} | {x['name']} | {x.get('current', '—')} (#{x.get('latest_pr', '—')}) | "
+                         f"{x.get('green_streak', 0)} | {len(x['merged_red_prs'])} | "
+                         f"{nd['same_head_disagreements']} / {nd['rerun_rescues']} |")
+    lines += ["", "_Read-only. A red at merge is an observation about that head, not a root or a fault "
+              "attribution; whether the check was required at the time is not read here._"]
+    return "\n".join(lines) + "\n"
 
 
 ORDER = ["GREEN_TO_RED", "EVERRED", "FLAKY", "RED_TO_GREEN", "STABLE_GREEN", "UNKNOWN_NO_TERMINAL"]
@@ -263,6 +504,10 @@ def markdown(rep: dict, limit_green=False) -> str:
     lines = [f"### GOGREEN red-trace · `{rep['repository']}@{rep['branch']}`",
              f"Window: {w['runs']} runs since {w['oldest_run_at']}" + (f" · history truncated for {w.get('truncated_workflows', 0)} workflow(s) (EVERRED there = never green *in window*)" if w["truncated"] else ""),
              "", "| Class | Count |", "|---|---:|"]
+    if rep.get("census"):
+        c = rep["census"]
+        lines.insert(2, f"Coverage: {c['observed']}/{c['workflows_total']} workflows ran on `{rep['branch']}` in window; "
+                        f"the other {len(c['unobserved'])} are unobserved here (see the merged-PR lane), not green.")
     lines += [f"| {k} | {rep['counts'].get(k, 0)} |" for k in ORDER if rep["counts"].get(k)]
     if rep.get("shared_break_roots"):
         lines += ["", "**Shared break roots** (one head SHA turned several workflows red; treat as one candidate root):", ""]
@@ -291,9 +536,12 @@ def markdown(rep: dict, limit_green=False) -> str:
             now = x.get("current", "—") + (f" · stale {x['latest_age_days']} d" if x.get("stale") else "")
             if x.get("pinned_historical_ids") and x.get("current") == "RED":
                 now += " · 📌 pinned run/artifact"
+            if (x.get("nondeterminism") or {}).get("nondeterministic"):
+                now += " · ↻ same-head disagreement/rerun"
             lines.append(f"| {cls} | {x['name']}{' ⁺' if x.get('history_truncated') else ''} | {now} | {win} | {t.get('suspect_commit_count', '')} | {step} |")
     lines += ["", "_Read-only metadata trace. Suspects = commits between last green and first red head "
               "(meaningless when 📌: a pinned run/artifact can expire with zero code change). "
+              "↻ = the same head gave both green and red, or needed a rerun (nondeterminism, not a code change). "
               "⁺ = older history not fetched. Not a causal attribution or root-closure credit._"]
     return "\n".join(lines) + "\n"
 
@@ -307,6 +555,8 @@ def main(argv=None):
     ap.add_argument("--no-enrich", action="store_true")
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--root", type=Path, default=Path("."), help="checkout root, for pinned-ID scan")
+    ap.add_argument("--pr-lane", type=int, default=0, metavar="N",
+                    help="also trace the last N merged PR heads into --branch (0 = off)")
     a = ap.parse_args(argv)
     if not a.repo:
         raise SystemExit("--repo required")
@@ -322,8 +572,18 @@ def main(argv=None):
     a.out.mkdir(parents=True, exist_ok=True)
     (a.out / "red_trace.json").write_text(json.dumps(rep, indent=2, sort_keys=True) + "\n")
     (a.out / "red_trace.md").write_text(markdown(rep))
-    print(json.dumps({"status": "PASS", "counts": rep["counts"], "runs": rep["window"]["runs"],
-                      "truncated": rep["window"]["truncated"], "requests": rep["requests"]}, sort_keys=True))
+    summary = {"status": "PASS", "counts": rep["counts"], "runs": rep["window"]["runs"],
+               "truncated": rep["window"]["truncated"], "requests": rep["requests"]}
+    if a.pr_lane > 0 and not a.runs_json:
+        before = reader.requests
+        pr = build_pr_lane(a.repo, a.branch, collect_pr_lane(reader, a.branch, a.pr_lane,
+                                                              collected.get("workflows_meta")))
+        pr["requests"] = reader.requests - before
+        (a.out / "red_trace_pr.json").write_text(json.dumps(pr, indent=2, sort_keys=True) + "\n")
+        (a.out / "red_trace_pr.md").write_text(markdown_pr_lane(pr))
+        summary["pr_lane"] = {"merged_prs": pr["window"]["merged_prs"], "counts": pr["counts"],
+                              "merged_with_red": len(pr["merged_with_red"]), "requests": pr["requests"]}
+    print(json.dumps(summary, sort_keys=True))
     return rep
 
 

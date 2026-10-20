@@ -193,5 +193,119 @@ class ReaderGuard(unittest.TestCase):
                 self.assertNotIn("SECRETVALUE", (Path(d) / f).read_text())
 
 
+class Nondeterminism(unittest.TestCase):
+    def test_same_head_disagreement_and_rerun_rescue(self):
+        runs = [run("w.yml", 1, "failure", 1, rid=1), run("w.yml", 1, "success", 2, rid=2),
+                run("v.yml", 2, "success", 1, attempt=2), run("u.yml", 3, "success", 1)]
+        nd = t.nondeterminism(runs)
+        self.assertEqual(nd["w.yml"]["same_head_disagreements"], 1)
+        self.assertEqual(nd["w.yml"]["disagreeing_shas"], [sha(1)])
+        self.assertEqual(nd["v.yml"]["rerun_rescues"], 1)
+        self.assertTrue(nd["v.yml"]["nondeterministic"])
+        self.assertFalse(nd["u.yml"]["nondeterministic"])
+
+    def test_repair_oscillation_is_not_nondeterminism(self):
+        # FLAKY by flips (code changed between heads) but each head is consistent
+        runs = [run("w.yml", i + 1, c, i) for i, c in enumerate(("success", "failure", "success", "failure", "success"))]
+        rep = t.build(REPO, "master", {"runs": runs, "truncated": False}, t.outcomes(runs),
+                      observed_at="2026-10-18T06:00:00Z")
+        w = rep["workflows"][0]
+        self.assertEqual(w["class"], "FLAKY")
+        self.assertFalse(w["nondeterminism"]["nondeterministic"])
+        self.assertEqual(w["green_streak"], 1)
+
+    def test_green_streak(self):
+        self.assertEqual(classify_seq("failure", "success", "success")["green_streak"], 2)
+        self.assertEqual(classify_seq("success", "failure")["green_streak"], 0)
+        self.assertEqual(classify_seq("success", "cancelled", "success")["green_streak"], 2)
+
+
+class Census(unittest.TestCase):
+    def test_unobserved_workflows_are_explicit(self):
+        runs = [run(".github/workflows/a.yml", 1, "success", 1)]
+        meta = {".github/workflows/a.yml": {}, ".github/workflows/b.yml": {}, "dynamic/codeql": {}}
+        rep = t.build(REPO, "master", {"runs": runs, "truncated": False, "workflows_meta": meta}, t.outcomes(runs),
+                      observed_at="2026-10-18T03:00:00Z")
+        self.assertEqual(rep["census"], {"workflows_total": 2, "observed": 1,
+                                         "unobserved": [".github/workflows/b.yml"]})
+        self.assertIn("Coverage: 1/2", t.markdown(rep))
+
+
+def prun(path, head, conclusion, created, updated, attempt=1, rid=None, status="completed", started=None):
+    return {"path": path, "name": path, "head_sha": head, "id": rid or hash((path, head, created)) % 10**8,
+            "run_attempt": attempt, "created_at": created, "updated_at": updated, "status": status,
+            "run_started_at": started or created, "conclusion": conclusion, "event": "pull_request"}
+
+
+class PRLane(unittest.TestCase):
+    M = "2026-10-19T10:00:00Z"
+
+    def test_at_merge_chronology(self):
+        h = sha(9)
+        runs = [prun("a.yml", h, "success", "2026-10-19T09:00:00Z", "2026-10-19T09:10:00Z"),
+                prun("b.yml", h, "failure", "2026-10-19T09:00:00Z", "2026-10-19T09:10:00Z"),
+                prun("c.yml", h, "success", "2026-10-19T09:59:00Z", "2026-10-19T10:30:00Z"),   # finished after merge
+                prun("d.yml", h, "success", "2026-10-19T10:01:00Z", "2026-10-19T10:05:00Z"),   # created after merge
+                prun("e.yml", h, "success", "2026-10-19T09:00:00Z", "2026-10-19T11:00:00Z", attempt=2,
+                     started="2026-10-19T10:50:00Z")]                                            # rerun after merge
+        am = t.at_merge(runs, self.M)
+        self.assertEqual({k: v["conclusion"] for k, v in am.items()},
+                         {"a.yml": "success", "b.yml": "failure", "c.yml": t.PENDING_AT_MERGE,
+                          "e.yml": t.RERUN_AFTER_MERGE})
+
+    def lane(self):
+        prs = []
+        for i, (ca, cb) in enumerate((("success", "success"), ("success", "failure"), ("success", "success"))):
+            h = sha(100 + i)
+            m = f"2026-10-19T1{i}:00:00Z"
+            prs.append({"number": 10 + i, "head_sha": h, "merged_at": m, "title": f"pr{i}",
+                        "runs": [prun("a.yml", h, ca, f"2026-10-19T0{i}:00:00Z", f"2026-10-19T0{i}:30:00Z"),
+                                 prun("b.yml", h, cb, f"2026-10-19T0{i}:00:00Z", f"2026-10-19T0{i}:30:00Z")]})
+        return t.build_pr_lane(REPO, "master", {"prs": prs, "workflows_meta": {
+            "a.yml": {}, "b.yml": {}, ".github/workflows/x.yml": {}}}, observed_at="2026-10-19T13:00:00Z")
+
+    def test_pr_lane_reuses_classify_over_merged_heads(self):
+        rep = self.lane()
+        w = {x["path"]: x for x in rep["workflows"]}
+        self.assertEqual(w["a.yml"]["class"], "STABLE_GREEN")
+        self.assertEqual(w["b.yml"]["class"], "RED_TO_GREEN")
+        self.assertEqual(w["b.yml"]["merged_red_prs"], [11])
+        self.assertEqual(w["b.yml"]["latest_pr"], 12)
+        self.assertEqual(rep["merged_with_red"], [{"pr": 11, "workflows": ["b.yml"]}])
+        self.assertEqual(rep["schema"], t.PR_SCHEMA)
+        self.assertFalse(rep["authority"]["merge_authorized"])
+        self.assertEqual(rep["merge_matrix"][0]["merge_after_s"], 36000)
+        self.assertIn("Merged with a red check at merge time: 1", t.markdown_pr_lane(rep))
+
+    def test_merged_prs_skips_unmerged_and_validates_base(self):
+        h = sha(5)
+        body = [{"number": 1, "merged_at": None, "head": {"sha": h}},
+                {"number": 2, "merged_at": "2026-10-19T01:00:00Z", "head": {"sha": h}, "title": "x"},
+                {"number": 3, "merged_at": "2026-10-19T02:00:00Z", "head": {"sha": "short"}}]
+        r = t.Reader(REPO, token="", opener=lambda req, timeout: io.BytesIO(json.dumps(body).encode()))
+        self.assertEqual([p["number"] for p in t.merged_prs(r, "master", 10)], [2])
+        for bad in ("", "a&b", "../x"):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                t.merged_prs(r, bad, 1)
+
+    def test_one_listing_per_merged_head(self):
+        h1, h2 = sha(7), sha(8)
+        def opener(req, timeout):
+            u = req.full_url
+            if "/pulls?" in u:
+                body = [{"number": 1, "merged_at": "2026-10-19T01:00:00Z", "head": {"sha": h1}},
+                        {"number": 2, "merged_at": "2026-10-19T02:00:00Z", "head": {"sha": h2}}]
+            else:
+                body = {"total_count": 1, "workflow_runs": [prun("a.yml", h1, "success", "2026-10-19T00:00:00Z",
+                                                                  "2026-10-19T00:10:00Z")]}
+            return io.BytesIO(json.dumps(body).encode())
+        r = t.Reader(REPO, token="", opener=opener)
+        got = t.collect_pr_lane(r, "master", 5, workflows_meta={"a.yml": {}})
+        self.assertEqual(r.requests, 1 + 2)
+        self.assertEqual(len(got["prs"]), 2)
+        with self.assertRaises(ValueError):
+            t.head_runs(r, "not-a-sha")
+
+
 if __name__ == "__main__":
     unittest.main()
