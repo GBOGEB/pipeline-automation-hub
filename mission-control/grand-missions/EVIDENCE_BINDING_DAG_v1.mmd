@@ -1,0 +1,17 @@
+%% #529 G05 evidence-binding DAG: gates resolve LATEST VALID producer runs, producers are scheduled inside retention
+flowchart LR
+  subgraph SCHED["Scheduler (cron, retention 30 d)"]
+    C1(["Mon 05:17 UTC"]) --> P1
+    C2(["Wed 05:47 UTC"]) --> P2
+  end
+  P1["P1 gm-iv-runtime-capacity-proof-v2.yml<br/>artifact gm-iv-runtime-capacity-v2-&lt;sha&gt;"]
+  P2["P2 gm-v-governor-readiness.yml<br/>artifact gm-v-governor-readiness-&lt;sha&gt;"]
+  G3["gm-v-3pstar-mip-control.yml"]
+  P1 -- "E1 latest valid run" --> P2
+  P1 -- "E2 latest valid run" --> G3
+  P2 -- "E3 latest valid run" --> G3
+  R{{"evidence_binding.py resolve<br/>success · master · ancestor · live digest · age ≤ 30 d"}}
+  R -.-> P2
+  R -.-> G3
+  X["pinned run 35171901674 / art 10476967287<br/>pinned run 35343419829 / art 10546460986<br/>(purged by retention 2026-10-17)"]:::dead -. replaced by .-> R
+  classDef dead stroke-dasharray:4 3,opacity:.6

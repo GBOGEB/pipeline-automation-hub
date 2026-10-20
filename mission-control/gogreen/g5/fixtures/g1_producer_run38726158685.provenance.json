@@ -1,0 +1,20 @@
+{
+  "schema": "gogreen.g5.vendored_artifact.v1",
+  "why": "#529 G05: gogreen-federation.yml replayed these exact bytes from artifact 11968217957, which GitHub artifact retention deletes on 2026-10-29. A byte-exact replay cannot rebind to a 'latest' run (new run = new bytes), so the immutable archive is vendored and still verified against the same pinned digest.",
+  "origin": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "artifact_id": 11968217957,
+    "artifact_name": "gogreen-g1-rollup-63d1ac9618b2612d0ec3ceb32faad3841413b79d-38726158685",
+    "producer_run_id": 38726158685,
+    "producer_job_id": 116392416193,
+    "producer_head_sha": "63d1ac9618b2612d0ec3ceb32faad3841413b79d",
+    "artifact_created_at": "2026-10-15T11:19:44Z",
+    "artifact_expires_at": "2026-10-29T11:19:43Z"
+  },
+  "bytes": 5371,
+  "sha256": "f926b86d377f989cfb380c587ce5cbf2843a3e7e152d0df3c4d8a3a914ba2117",
+  "github_artifact_digest": "sha256:f926b86d377f989cfb380c587ce5cbf2843a3e7e152d0df3c4d8a3a914ba2117",
+  "members": ["html_tests.log", "manifest.json", "rollup.html", "rollup.json", "source_tests.log"],
+  "transport": "fetched by a read-only Actions job (run 39425232920) that verified the digest before emitting the bytes; re-verified locally (sha256 equal) before commit",
+  "merge_authorized": false
+}

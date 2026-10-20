@@ -1,0 +1,22 @@
+{
+  "schema": "gm.evidence_binding.dag.v1",
+  "purpose": "Which gate consumes which producer's evidence, resolved as LATEST_VALID_RUN (never a pinned id), and the producer schedules that keep a valid run inside artifact retention (#529 G05).",
+  "retention_days": 30,
+  "rule": "latest successful default-branch run (push/schedule/workflow_dispatch), head ancestor of the gate source SHA, live artifact <prefix><head_sha> with sha256 digest, age <= retention",
+  "producers": [
+    {"id": "P1", "workflow": "gm-iv-runtime-capacity-proof-v2.yml", "artifact_prefix": "gm-iv-runtime-capacity-v2-", "cadence": "weekly (Mon)"},
+    {"id": "P2", "workflow": "gm-v-governor-readiness.yml", "artifact_prefix": "gm-v-governor-readiness-", "cadence": "weekly (Wed), after P1"}
+  ],
+  "edges": [
+    {"id": "E1", "producer": "gm-iv-runtime-capacity-proof-v2.yml", "consumer": "gm-v-governor-readiness.yml", "artifact_prefix": "gm-iv-runtime-capacity-v2-", "replaces_pins": {"run_id": 35171901674, "artifact_id": 10476967287}},
+    {"id": "E2", "producer": "gm-iv-runtime-capacity-proof-v2.yml", "consumer": "gm-v-3pstar-mip-control.yml", "artifact_prefix": "gm-iv-runtime-capacity-v2-", "replaces_pins": {"run_id": 35171901674, "artifact_id": 10476967287}},
+    {"id": "E3", "producer": "gm-v-governor-readiness.yml", "consumer": "gm-v-3pstar-mip-control.yml", "artifact_prefix": "gm-v-governor-readiness-", "replaces_pins": {"run_id": 35343419829, "artifact_id": 10546460986}}
+  ],
+  "historical_lineage_unchanged": [
+    "mission-control/grand-missions/GM_V_GOVERNOR_READINESS_CONTRACT.json",
+    "mission-control/grand-missions/GM_V_3PSTAR_MIP_CONTROL_v1.json",
+    "mission-control/grand-missions/GM_FLEET_IMMINENT_LAUNCH_CONTROL_v1.json",
+    "mission-control/golden-thread/FEDERATION_GOLDEN_THREAD_BASELINE_v1.json"
+  ],
+  "merge_authorized": false
+}
