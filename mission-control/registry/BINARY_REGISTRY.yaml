@@ -1,0 +1,151 @@
+# CANONICAL binary registry summary (SSOT). Generated: python mission-control/registry/census.py binaries
+schema: gbogeb.registry.binaries.v1
+canonical: true
+observed_at_utc: '2026-10-20T18:15:23Z'
+identity: git blob object id (O-ID) per path; identical O-ID = identical bytes; canonical = most referenced, then
+  shortest path
+totals:
+  binaries: 68
+  bytes: 173313982
+  unique_contents: 68
+  duplicate_copies: 0
+  duplicate_bytes: 0
+repositories:
+  pipeline-automation-hub:
+    head_sha: d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e
+    binaries: 47
+    bytes: 158337269
+    unique_contents: 47
+    duplicate_groups: 0
+    duplicate_bytes: 0
+    referenced: 42
+    unreferenced: 5
+    by_type:
+      pptx:
+        files: 24
+        bytes: 153208587
+      pdf:
+        files: 15
+        bytes: 4441516
+      zip:
+        files: 1
+        bytes: 569546
+      woff2:
+        files: 7
+        bytes: 117620
+    hierarchy_top_dirs:
+      app:
+        files: 24
+        bytes: 153208587
+      mission-control:
+        files: 11
+        bytes: 3525323
+      .:
+        files: 2
+        bytes: 685283
+      TECHNICAL_ANALYSIS:
+        files: 6
+        bytes: 538881
+      .github:
+        files: 4
+        bytes: 379195
+    depth_spread:
+      0: 2
+      1: 1
+      2: 9
+      3: 25
+      4: 8
+      5: 2
+  ABACUS:
+    head_sha: e721bd320f509c65e8e52ce9babccc9a1de3c8bf
+    binaries: 1
+    bytes: 641
+    unique_contents: 1
+    duplicate_groups: 0
+    duplicate_bytes: 0
+    referenced: 1
+    unreferenced: 0
+    by_type:
+      png:
+        files: 1
+        bytes: 641
+    hierarchy_top_dirs:
+      qps_slide_reviewer:
+        files: 1
+        bytes: 641
+    depth_spread:
+      2: 1
+  CODEX:
+    head_sha: bc39e1acf4a847f28167fc11de28edb738c486f9
+    binaries: 17
+    bytes: 14904302
+    unique_contents: 17
+    duplicate_groups: 0
+    duplicate_bytes: 0
+    referenced: 17
+    unreferenced: 0
+    by_type:
+      docx:
+        files: 12
+        bytes: 14575882
+      pdf:
+        files: 3
+        bytes: 250194
+      dotx:
+        files: 1
+        bytes: 69969
+      zip:
+        files: 1
+        bytes: 8257
+    hierarchy_top_dirs:
+      .:
+        files: 12
+        bytes: 9495979
+      Input:
+        files: 3
+        bytes: 5268388
+      tools:
+        files: 2
+        bytes: 139935
+    depth_spread:
+      0: 12
+      1: 3
+      3: 2
+  cryoplant-project:
+    head_sha: c44256271ff38d44d79a3adc17591fc39b9183aa
+    binaries: 3
+    bytes: 71770
+    unique_contents: 3
+    duplicate_groups: 0
+    duplicate_bytes: 0
+    referenced: 3
+    unreferenced: 0
+    by_type:
+      docx:
+        files: 1
+        bytes: 37133
+      pptx:
+        files: 1
+        bytes: 28588
+      xlsx:
+        files: 1
+        bytes: 6049
+    hierarchy_top_dirs:
+      federation:
+        files: 3
+        bytes: 71770
+    depth_spread:
+      3: 3
+  gg_MATH:
+    head_sha: e857f44531388add95230afec8b7e2c8d5f2e8cc
+    binaries: 0
+    bytes: 0
+    unique_contents: 0
+    duplicate_groups: 0
+    duplicate_bytes: 0
+    referenced: 0
+    unreferenced: 0
+    by_type: {}
+    hierarchy_top_dirs: {}
+    depth_spread: {}
+merge_authorized: false

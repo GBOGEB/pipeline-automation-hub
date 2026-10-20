@@ -1,0 +1,29 @@
+name: Registry Census (read-only)
+# #529 G01: canonical registry + YAML tiers stay generator-consistent and retrievable.
+on:
+  pull_request:
+    paths:
+      - 'mission-control/registry/**'
+      - '.github/workflows/registry-census.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  census:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0 (node24)
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Registry tests and tier retrieval
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check pyyaml==6.0.3
+          python -m unittest discover -s mission-control/registry -p 'test_*.py' -v
+          for t in all.top_3 all.top_7 all.top_21 owned.top_14 all.bottom_7; do
+            echo "## $t"; python mission-control/registry/census.py get mission-control/registry/REPO_TIERS.yaml "$t"
+          done | tee -a "$GITHUB_STEP_SUMMARY"
