@@ -123,5 +123,67 @@ class G1ZipTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "forbidden authority"):
             V.verify(edited, binding(edited))
 
+
+    def test_receipt_includes_individually_verified_member_hashes_and_crc(self):
+        raw = fixture()
+        receipt = V.verify(raw, binding(raw))
+        with zipfile.ZipFile(io.BytesIO(raw)) as z:
+            expected = {name: hashlib.sha256(z.read(name)).hexdigest()
+                        for name in sorted(z.namelist())}
+        self.assertEqual(receipt["member_sha256"], expected)
+        self.assertEqual(set(receipt["member_sha256"]), V.REQUIRED)
+        self.assertTrue(receipt["zip_crc_verified"])
+        self.assertFalse(receipt["metadata_origin_authenticated"])
+        self.assertEqual(receipt["native_green_admission"], "HOLD")
+
+    def test_alias_member_hidden_by_posix_normalization_rejected(self):
+        raw = fixture()
+        out = io.BytesIO()
+        with zipfile.ZipFile(io.BytesIO(raw)) as src, zipfile.ZipFile(out, "w") as z:
+            for name in src.namelist():
+                z.writestr(name, src.read(name))
+            z.writestr("./sidecar.json", b"hidden")
+        edited = out.getvalue()
+        with self.assertRaisesRegex(ValueError, "unsafe ZIP member"):
+            V.verify(edited, binding(edited))
+
+    def test_special_unix_device_member_without_slash_rejected(self):
+        raw = fixture()
+        out = io.BytesIO()
+        with zipfile.ZipFile(io.BytesIO(raw)) as src, zipfile.ZipFile(out, "w") as z:
+            for name in src.namelist():
+                z.writestr(name, src.read(name))
+            extra = zipfile.ZipInfo("device-node")
+            extra.create_system = 3
+            extra.external_attr = 0o020666 << 16
+            z.writestr(extra, b"")
+        edited = out.getvalue()
+        with self.assertRaisesRegex(ValueError, "unsafe ZIP member"):
+            V.verify(edited, binding(edited))
+
+    def test_rebound_outer_digest_does_not_mask_member_crc_corruption(self):
+        raw = fixture()
+        out = io.BytesIO()
+        with zipfile.ZipFile(io.BytesIO(raw)) as src, zipfile.ZipFile(out, "w", zipfile.ZIP_STORED) as z:
+            for name in src.namelist():
+                z.writestr(name, src.read(name))
+        stored = out.getvalue()
+        self.assertIn(b"# G1 test fixture\n", stored)
+        tampered = stored.replace(b"# G1 test fixture\n", b"! G1 test fixture\n", 1)
+        with self.assertRaisesRegex(zipfile.BadZipFile, "CRC"):
+            V.verify(tampered, binding(tampered))
+
+    def test_sum_of_safe_sized_members_still_obeys_expansion_ceiling(self):
+        raw = fixture()
+        out = io.BytesIO()
+        with zipfile.ZipFile(io.BytesIO(raw)) as src, zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+            for name in src.namelist():
+                z.writestr(name, src.read(name))
+            for i in range(5):
+                z.writestr(f"safe-sized-{i}.bin", b"A" * 1_700_000)
+        edited = out.getvalue()
+        with self.assertRaisesRegex(ValueError, "expansion budget"):
+            V.verify(edited, binding(edited))
+
 if __name__ == "__main__":
     unittest.main()
