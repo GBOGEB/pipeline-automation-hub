@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
       - tools/bd_workflow_frequency.py
+      - tests/test_bd_workflow_frequency.py
       - .github/workflows/bd-workflow-frequency-telemetry.yml
 
 permissions:
@@ -19,6 +20,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - name: Offline unit controls (measurement contract)
+        run: python3 -m unittest discover -s tests -p 'test_bd_workflow_frequency.py' -v
       - name: Measure top workflow families
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
