@@ -115,7 +115,9 @@ def judge(views: dict, pinned: list, flags: list) -> list:
     freshest = min(present.values(), key=lambda v: v["latest_age_days"] if v["latest_age_days"] is not None else 1e9)
     if freshest["latest_age_days"] is None or freshest["latest_age_days"] > FRESH_DAYS:
         out.append("NOT_EXERCISED_RECENTLY")
-    if freshest["current"] == "GREEN" and freshest["green_streak"] < MIN_STREAK:
+    # Stability is the longest current green streak on any lane: a short lane window (e.g. a
+    # recent PR-lane sample) must not hide a long master streak and raise a false demotion.
+    if freshest["current"] == "GREEN" and max(v["green_streak"] for v in present.values()) < MIN_STREAK:
         out.append("GREEN_STREAK_SHORT")
     if pinned:
         out.append("PINNED_EVIDENCE")

@@ -6,20 +6,20 @@
   "proposed_by": "AGENT"
  },
  "counts": {
-  "ENFORCED": 65,
+  "ENFORCED": 68,
   "EXCLUDED": 4,
   "OBSERVED": 81
  },
  "coverage": {
-  "dispositioned": 150,
-  "enforced_of_pr_scoped": 65,
-  "pull_request_scoped": 147,
-  "with_any_evidence": 141,
+  "dispositioned": 153,
+  "enforced_of_pr_scoped": 68,
+  "pull_request_scoped": 150,
+  "with_any_evidence": 139,
   "with_evidence": {
    "master": 124,
-   "pr": 57
+   "pr": 63
   },
-  "workflow_files": 150
+  "workflow_files": 153
  },
  "entries": [
   {
@@ -29,8 +29,20 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 4,
-     "latest_age_days": 1.4,
+     "latest_age_days": 1.6,
      "latest_sha": "6df08b30c0206936c8765f20ac19a33f94adf406",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 766,
+     "latest_sha": "b2a444156eb791469df793465d2909db37831179",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -64,7 +76,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 8.5,
+     "latest_age_days": 8.8,
      "latest_sha": "d4f203afd369559ddbff7e833e74f2a6b7a43f70",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -122,7 +134,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -157,9 +169,9 @@
     "master": {
      "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 22,
+     "green_streak": 23,
      "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -167,8 +179,8 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 3,
-     "latest_age_days": 1.1,
+     "green_streak": 1,
+     "latest_age_days": 1.4,
      "latest_pr": 749,
      "latest_sha": "17e309a95ea569e463dbf2ca100ef5d38e554b72",
      "merged_red_prs": 0,
@@ -208,14 +220,26 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 761,
+     "latest_sha": "320715a10d4665afd2de855677172faae414d37e",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "CODE PURPLE M3 Lossless Stabilization",
    "node20_uses": [
     "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
@@ -244,21 +268,21 @@
     "master": {
      "class": "FLAKY",
      "current": "GREEN",
-     "green_streak": 9,
-     "latest_age_days": 0.1,
-     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "green_streak": 11,
+     "latest_age_days": 0.2,
+     "latest_sha": "cfb93207fb7ea1ec58f10e21e04063048a70d09b",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "FLAKY",
+     "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 9,
-     "latest_age_days": 0.1,
-     "latest_pr": 668,
-     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
-     "merged_red_prs": 4,
+     "green_streak": 11,
+     "latest_age_days": 0.2,
+     "latest_pr": 761,
+     "latest_sha": "320715a10d4665afd2de855677172faae414d37e",
+     "merged_red_prs": 1,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -300,7 +324,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 1.8,
+     "latest_age_days": 2.0,
      "latest_sha": "339bee59cf790498408be19e9c7deb092cc51738",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -310,7 +334,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 1.8,
+     "latest_age_days": 2.1,
      "latest_pr": 724,
      "latest_sha": "fec6231abdead0ce8554b36c7199470bda3a97b1",
      "merged_red_prs": 0,
@@ -349,7 +373,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -386,20 +410,20 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 7,
-     "latest_age_days": 1.8,
+     "latest_age_days": 2.0,
      "latest_sha": "285c667aa01b948e00f0bab36bfab6de1dbc7021",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "RED_TO_GREEN",
+     "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 1.8,
+     "latest_age_days": 2.0,
      "latest_pr": 726,
      "latest_sha": "8dc23c6ea497d5d9d2e8ecb017abe51a41976e46",
-     "merged_red_prs": 1,
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -441,7 +465,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 3,
-     "latest_age_days": 1.8,
+     "latest_age_days": 2.0,
      "latest_pr": 726,
      "latest_sha": "8dc23c6ea497d5d9d2e8ecb017abe51a41976e46",
      "merged_red_prs": 0,
@@ -480,7 +504,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 1.6,
+     "latest_age_days": 1.8,
      "latest_sha": "c71ad78baf9abf5fbe2f39c7c5993a3c75c1d505",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -490,7 +514,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 1.6,
+     "latest_age_days": 1.8,
      "latest_pr": 734,
      "latest_sha": "8c2baf22286ba6500d32e3258658dc9aaa0071b0",
      "merged_red_prs": 0,
@@ -529,14 +553,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 57,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "MissionControl Crew Capability System",
    "node20_uses": [
     "actions/checkout@v4",
@@ -566,7 +590,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 39,
-     "latest_age_days": 28.3,
+     "latest_age_days": 28.5,
      "latest_sha": "51371fd71cad8d2a0e703c8b003848478377e2ed",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -601,7 +625,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 36.8,
+     "latest_age_days": 37.0,
      "latest_sha": "c7b726dd48ddc458e4fbfbeaf4a4162e2fcd8b4b",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -639,14 +663,14 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 38,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "MissionControl Crew Frontier PCA BT",
    "node20_uses": [
     "actions/checkout@v4",
@@ -678,14 +702,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 3,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "MissionControl Crew PC3 Conditional BT",
    "node20_uses": [
     "actions/checkout@v4",
@@ -719,14 +743,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 7,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "MissionControl Repeat Stable Acceptance",
    "node20_uses": [
     "actions/checkout@v4",
@@ -810,7 +834,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -847,9 +871,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 47,
+     "green_streak": 45,
      "latest_age_days": 0.2,
-     "latest_sha": "4f9267ce4808a952dfcbe62aad9073ca57099c76",
+     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -888,7 +912,7 @@
      "current": "GREEN",
      "green_streak": 47,
      "latest_age_days": 0.2,
-     "latest_sha": "4f9267ce4808a952dfcbe62aad9073ca57099c76",
+     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -925,9 +949,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 75,
+     "green_streak": 64,
      "latest_age_days": 0.2,
-     "latest_sha": "4f9267ce4808a952dfcbe62aad9073ca57099c76",
+     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": true,
      "rerun_rescues": 0,
      "same_head_disagreements": 1
@@ -967,7 +991,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 32.0,
+     "latest_age_days": 32.3,
      "latest_sha": "4866869771cf6a1176165c815256598c3db69a59",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1001,9 +1025,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 50,
+     "green_streak": 45,
      "latest_age_days": 0.2,
-     "latest_sha": "4f9267ce4808a952dfcbe62aad9073ca57099c76",
+     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1040,9 +1064,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 14,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 15,
+     "latest_age_days": 0.2,
+     "latest_sha": "8b63873715ab864212f6ad2aad941ea4dc94bac2",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1050,10 +1074,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 13,
-     "latest_age_days": 0.0,
-     "latest_pr": 759,
-     "latest_sha": "82a4eb3f5f633ac705f2e22a46acfe1b982eff27",
+     "green_streak": 17,
+     "latest_age_days": 0.2,
+     "latest_pr": 763,
+     "latest_sha": "3e36c994257bd3d8368b609b79e6b94340cfbb8f",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1086,7 +1110,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1096,7 +1120,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 1.8,
+     "latest_age_days": 2.0,
      "latest_pr": 727,
      "latest_sha": "d08897940211b420d0180506f3ae21389d68e535",
      "merged_red_prs": 0,
@@ -1125,13 +1149,13 @@
    ]
   },
   {
-   "disposition": "OBSERVED",
+   "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 6,
-     "latest_age_days": 27.8,
+     "latest_age_days": 28.1,
      "latest_sha": "288e44f21724efe1bd46a699af6fa47d115fbee5",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1141,7 +1165,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 1.6,
+     "latest_age_days": 1.9,
      "latest_pr": 732,
      "latest_sha": "a4697e4706f996e0c00212a26f217e9fe27d72ff",
      "merged_red_prs": 0,
@@ -1158,7 +1182,7 @@
    ],
    "path": ".github/workflows/excel-schedule-engine.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "EVIDENCE_HEALTHY"
    ],
    "trigger": {
     "branches": null,
@@ -1201,10 +1225,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 33,
-     "latest_age_days": 0.0,
-     "latest_pr": 759,
-     "latest_sha": "82a4eb3f5f633ac705f2e22a46acfe1b982eff27",
+     "green_streak": 35,
+     "latest_age_days": 0.2,
+     "latest_pr": 769,
+     "latest_sha": "1e3ab761cfecac15a6e558d9538d7bcc04908ebc",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1239,14 +1263,14 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 8,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "Fleet Open-Issue Convergence",
    "node20_uses": [
     "actions/checkout@v4",
@@ -1276,7 +1300,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1313,19 +1337,19 @@
      "class": "EVERRED",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "UNKNOWN_NO_TERMINAL",
-     "current": null,
-     "green_streak": 0,
-     "latest_age_days": null,
-     "latest_pr": null,
-     "latest_sha": null,
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 766,
+     "latest_sha": "b2a444156eb791469df793465d2909db37831179",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1357,9 +1381,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 16,
-     "latest_age_days": 0.1,
-     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "green_streak": 17,
+     "latest_age_days": 0.2,
+     "latest_sha": "cfb93207fb7ea1ec58f10e21e04063048a70d09b",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1367,10 +1391,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 5,
-     "latest_age_days": 0.1,
-     "latest_pr": 668,
-     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "green_streak": 6,
+     "latest_age_days": 0.2,
+     "latest_pr": 761,
+     "latest_sha": "320715a10d4665afd2de855677172faae414d37e",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1407,7 +1431,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 5,
-     "latest_age_days": 0.1,
+     "latest_age_days": 0.4,
      "latest_pr": 668,
      "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
      "merged_red_prs": 0,
@@ -1446,14 +1470,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GM DAB Flake8 Propagation Control",
    "node20_uses": [
     "actions/checkout@v4",
@@ -1483,20 +1507,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 5,
-     "latest_age_days": 2.0,
+     "latest_age_days": 2.2,
      "latest_sha": "dfff1992546c29242ef42c65c518e19a72a18342",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 2.0,
-     "latest_pr": 700,
-     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1528,14 +1540,49 @@
    ]
   },
   {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM Evidence Binding Guard (read-only)",
+   "node20_uses": [],
+   "path": ".github/workflows/gm-evidence-binding.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f"
+   ]
+  },
+  {
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 200,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 150,
+     "latest_age_days": 0.2,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1544,9 +1591,9 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 2.0,
-     "latest_pr": 700,
-     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1580,9 +1627,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 200,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 150,
+     "latest_age_days": 0.2,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1591,9 +1638,9 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 2.0,
-     "latest_pr": 700,
-     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1627,9 +1674,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 200,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 150,
+     "latest_age_days": 0.2,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1637,10 +1684,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 2.0,
-     "latest_pr": 700,
-     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "green_streak": 2,
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1674,9 +1721,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 200,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 150,
+     "latest_age_days": 0.2,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1684,10 +1731,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 2.0,
-     "latest_pr": 700,
-     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "green_streak": 2,
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1721,9 +1768,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 200,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 150,
+     "latest_age_days": 0.2,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1732,9 +1779,9 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 2.0,
-     "latest_pr": 700,
-     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1768,9 +1815,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 200,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 150,
+     "latest_age_days": 0.2,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1779,9 +1826,9 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 2.0,
-     "latest_pr": 700,
-     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1816,14 +1863,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 4,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GM-FLEET-04 Ring2 Scout A",
    "node20_uses": [
     "actions/checkout@v4",
@@ -1851,14 +1898,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GM-FLEET-04 Ring2 Scout B",
    "node20_uses": [
     "actions/checkout@v4",
@@ -1886,7 +1933,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 31.3,
+     "latest_age_days": 31.5,
      "latest_sha": "533dc7e7f636c60fc6131a2ae7e5126183d6d09d",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1921,7 +1968,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1960,7 +2007,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1999,7 +2046,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2038,7 +2085,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2073,7 +2120,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2110,7 +2157,7 @@
      "class": "EVERRED",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2145,7 +2192,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2180,7 +2227,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2217,7 +2264,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2252,9 +2299,9 @@
     "master": {
      "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 80,
-     "latest_age_days": 2.0,
-     "latest_sha": "dfff1992546c29242ef42c65c518e19a72a18342",
+     "green_streak": 81,
+     "latest_age_days": 0.2,
+     "latest_sha": "4591345190887e1d69c0a53c4e54835922318599",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2263,9 +2310,9 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 2.0,
-     "latest_pr": 700,
-     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2300,7 +2347,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2335,14 +2382,14 @@
      "class": "FLAKY",
      "current": "GREEN",
      "green_streak": 4,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GM-IV Evidence Economics",
    "node20_uses": [
     "actions/checkout@v4",
@@ -2370,7 +2417,7 @@
      "class": "EVERRED",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2405,14 +2452,14 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 3,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GM-IV Forward Gate Safety",
    "node20_uses": [
     "actions/checkout@v4",
@@ -2439,9 +2486,9 @@
     "master": {
      "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 92,
-     "latest_age_days": 2.0,
-     "latest_sha": "dfff1992546c29242ef42c65c518e19a72a18342",
+     "green_streak": 94,
+     "latest_age_days": 0.2,
+     "latest_sha": "4591345190887e1d69c0a53c4e54835922318599",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2449,10 +2496,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 2.0,
-     "latest_pr": 700,
-     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "green_streak": 2,
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2488,9 +2535,9 @@
     "master": {
      "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 101,
-     "latest_age_days": 2.0,
-     "latest_sha": "dfff1992546c29242ef42c65c518e19a72a18342",
+     "green_streak": 102,
+     "latest_age_days": 0.2,
+     "latest_sha": "4591345190887e1d69c0a53c4e54835922318599",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2499,9 +2546,9 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 2.0,
-     "latest_pr": 700,
-     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2536,7 +2583,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2571,7 +2618,7 @@
      "class": "GREEN_TO_RED",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 0.8,
+     "latest_age_days": 1.0,
      "latest_sha": "c3b874fe98c4201a8dd92e5978c763b8067f5f6e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2606,7 +2653,7 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 3,
-     "latest_age_days": 29.2,
+     "latest_age_days": 29.4,
      "latest_sha": "644877ba1a925b196ab6175fc59c46f7d83e1676",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2642,14 +2689,26 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GM-IV Runtime Capability Capacity Proof v2",
    "node20_uses": [
     "actions/checkout@v4",
@@ -2679,14 +2738,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GM Top7 Depth3 Mission Control",
    "node20_uses": [
     "actions/checkout@v4",
@@ -2718,8 +2777,20 @@
      "class": "FLAKY",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 31.3,
-     "latest_sha": "06ea8a1c30d6f4a82a3f2611abf6c0e7b03fbe77",
+     "latest_age_days": 0.2,
+     "latest_sha": "4591345190887e1d69c0a53c4e54835922318599",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "EVERRED",
+     "current": "RED",
+     "green_streak": 0,
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
+     "merged_red_prs": 1,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2734,8 +2805,7 @@
    "path": ".github/workflows/gm-v-3pstar-mip-control.yml",
    "reasons": [
     "RED_NOW_MASTER",
-    "NOT_EXERCISED_RECENTLY",
-    "PINNED_EVIDENCE"
+    "RED_NOW_PR"
    ],
    "trigger": {
     "branches": [
@@ -2754,23 +2824,23 @@
    "disposition": "OBSERVED",
    "evidence": {
     "master": {
-     "class": "GREEN_TO_RED",
-     "current": "RED",
-     "green_streak": 0,
-     "latest_age_days": 2.0,
-     "latest_sha": "dfff1992546c29242ef42c65c518e19a72a18342",
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_sha": "4591345190887e1d69c0a53c4e54835922318599",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "EVERRED",
-     "current": "RED",
-     "green_streak": 0,
-     "latest_age_days": 2.0,
-     "latest_pr": 700,
-     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
-     "merged_red_prs": 1,
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2784,9 +2854,7 @@
    ],
    "path": ".github/workflows/gm-v-governor-readiness.yml",
    "reasons": [
-    "RED_NOW_MASTER",
-    "RED_NOW_PR",
-    "PINNED_EVIDENCE"
+    "GREEN_STREAK_SHORT"
    ],
    "trigger": {
     "branches": [
@@ -2803,13 +2871,47 @@
   },
   {
    "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GOGREEN Federation Spine (read-only)",
+   "node20_uses": [],
+   "path": ".github/workflows/gogreen-federation-spine.yml",
+   "reasons": [
+    "DECLARED_INFORMATIONAL"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2844,10 +2946,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 11,
-     "latest_age_days": 0.0,
-     "latest_pr": 759,
-     "latest_sha": "82a4eb3f5f633ac705f2e22a46acfe1b982eff27",
+     "green_streak": 16,
+     "latest_age_days": 0.2,
+     "latest_pr": 768,
+     "latest_sha": "e23e625f95edab3fa8c5e0d3958f6b0cd1148042",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2883,10 +2985,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 11,
-     "latest_age_days": 0.0,
-     "latest_pr": 759,
-     "latest_sha": "82a4eb3f5f633ac705f2e22a46acfe1b982eff27",
+     "green_streak": 16,
+     "latest_age_days": 0.2,
+     "latest_pr": 768,
+     "latest_sha": "e23e625f95edab3fa8c5e0d3958f6b0cd1148042",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2923,7 +3025,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2960,8 +3062,20 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 761,
+     "latest_sha": "320715a10d4665afd2de855677172faae414d37e",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2997,8 +3111,20 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 761,
+     "latest_sha": "320715a10d4665afd2de855677172faae414d37e",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3034,7 +3160,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3053,7 +3179,7 @@
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GoGREEN G12 read-only incubation and native preview",
    "node20_uses": [
     "actions/checkout@v4",
@@ -3082,10 +3208,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 9,
-     "latest_age_days": 0.0,
-     "latest_pr": 759,
-     "latest_sha": "82a4eb3f5f633ac705f2e22a46acfe1b982eff27",
+     "green_streak": 14,
+     "latest_age_days": 0.2,
+     "latest_pr": 768,
+     "latest_sha": "e23e625f95edab3fa8c5e0d3958f6b0cd1148042",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3120,8 +3246,20 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3157,7 +3295,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3194,7 +3332,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3231,7 +3369,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3268,8 +3406,20 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 768,
+     "latest_sha": "e23e625f95edab3fa8c5e0d3958f6b0cd1148042",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3304,7 +3454,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3340,10 +3490,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 9,
-     "latest_age_days": 0.0,
-     "latest_pr": 759,
-     "latest_sha": "82a4eb3f5f633ac705f2e22a46acfe1b982eff27",
+     "green_streak": 15,
+     "latest_age_days": 0.2,
+     "latest_pr": 768,
+     "latest_sha": "e23e625f95edab3fa8c5e0d3958f6b0cd1148042",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3379,9 +3529,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 6,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 7,
+     "latest_age_days": 0.1,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3389,10 +3539,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 3,
-     "latest_age_days": 0.0,
-     "latest_pr": 759,
-     "latest_sha": "82a4eb3f5f633ac705f2e22a46acfe1b982eff27",
+     "green_streak": 4,
+     "latest_age_days": 0.2,
+     "latest_pr": 766,
+     "latest_sha": "b2a444156eb791469df793465d2909db37831179",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3419,15 +3569,50 @@
    ]
   },
   {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "EVERRED",
+     "current": "RED",
+     "green_streak": 0,
+     "latest_age_days": 0.2,
+     "latest_pr": 763,
+     "latest_sha": "3e36c994257bd3d8368b609b79e6b94340cfbb8f",
+     "merged_red_prs": 1,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GOGREEN Replay Lane (bounded)",
+   "node20_uses": [],
+   "path": ".github/workflows/gogreen-replay-lane.yml",
+   "reasons": [
+    "RED_NOW_PR"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f"
+   ]
+  },
+  {
    "disposition": "EXCLUDED",
    "evidence": {
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 3,
-     "latest_age_days": 0.0,
-     "latest_pr": 759,
-     "latest_sha": "82a4eb3f5f633ac705f2e22a46acfe1b982eff27",
+     "green_streak": 13,
+     "latest_age_days": 0.2,
+     "latest_pr": 769,
+     "latest_sha": "1e3ab761cfecac15a6e558d9538d7bcc04908ebc",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3460,10 +3645,10 @@
      "class": "EVERRED",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 1.1,
-     "latest_pr": 748,
-     "latest_sha": "4174590821c8fa7a0f9909de3eccbcc554adc299",
-     "merged_red_prs": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 768,
+     "latest_sha": "e23e625f95edab3fa8c5e0d3958f6b0cd1148042",
+     "merged_red_prs": 2,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3493,20 +3678,7 @@
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 2.9,
-     "latest_pr": 659,
-     "latest_sha": "9590d857849452db976dd05fcff486cf637846f0",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "GOGREEN TOP21 Merged Evidence Scanner",
    "node20_uses": [
@@ -3516,7 +3688,7 @@
    ],
    "path": ".github/workflows/gogreen-top21-merged-evidence.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": null,
@@ -3537,7 +3709,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3596,7 +3768,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3633,7 +3805,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 23,
-     "latest_age_days": 3.9,
+     "latest_age_days": 4.1,
      "latest_sha": "af45c55eb2a2811eb62a83aa4fe00d434edb5989",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3668,7 +3840,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3705,14 +3877,14 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 9,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "MissionControl Historian Register Control",
    "node20_uses": [
     "actions/checkout@v4"
@@ -3738,7 +3910,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3775,7 +3947,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3812,7 +3984,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3849,7 +4021,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3886,7 +4058,7 @@
      "class": "EVERRED",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3933,10 +4105,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 5,
-     "latest_age_days": 0.1,
-     "latest_pr": 668,
-     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "green_streak": 7,
+     "latest_age_days": 0.2,
+     "latest_pr": 761,
+     "latest_sha": "320715a10d4665afd2de855677172faae414d37e",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3966,13 +4138,13 @@
    ]
   },
   {
-   "disposition": "OBSERVED",
+   "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3981,10 +4153,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 0.0,
-     "latest_pr": 759,
-     "latest_sha": "82a4eb3f5f633ac705f2e22a46acfe1b982eff27",
+     "green_streak": 3,
+     "latest_age_days": 0.2,
+     "latest_pr": 766,
+     "latest_sha": "b2a444156eb791469df793465d2909db37831179",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3999,7 +4171,7 @@
    ],
    "path": ".github/workflows/level1-mip.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "EVIDENCE_HEALTHY"
    ],
    "trigger": {
     "branches": null,
@@ -4018,21 +4190,21 @@
     "master": {
      "class": "FLAKY",
      "current": "GREEN",
-     "green_streak": 11,
-     "latest_age_days": 0.1,
-     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "green_streak": 12,
+     "latest_age_days": 0.2,
+     "latest_sha": "cfb93207fb7ea1ec58f10e21e04063048a70d09b",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "RED_TO_GREEN",
+     "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 7,
-     "latest_age_days": 0.1,
-     "latest_pr": 668,
-     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
-     "merged_red_prs": 1,
+     "green_streak": 8,
+     "latest_age_days": 0.2,
+     "latest_pr": 761,
+     "latest_sha": "320715a10d4665afd2de855677172faae414d37e",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4068,14 +4240,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 5,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "LM-10 W260 BD-260.5 TRIAGE",
    "node20_uses": [
     "actions/checkout@v4",
@@ -4105,7 +4277,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4137,9 +4309,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 3,
+     "latest_age_days": 0.2,
+     "latest_sha": "cfb93207fb7ea1ec58f10e21e04063048a70d09b",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4147,17 +4319,17 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.1,
-     "latest_pr": 668,
-     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "green_streak": 2,
+     "latest_age_days": 0.2,
+     "latest_pr": 761,
+     "latest_sha": "320715a10d4665afd2de855677172faae414d37e",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "MissionControl Makeover Navigator (read-only QA)",
    "node20_uses": [
     "actions/checkout@v4",
@@ -4187,7 +4359,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4223,7 +4395,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4259,7 +4431,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4295,7 +4467,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 8,
-     "latest_age_days": 8.2,
+     "latest_age_days": 8.5,
      "latest_sha": "1b5aa6e18676695f348207bfa35426a7228e4753",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4331,7 +4503,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 6,
-     "latest_age_days": 8.2,
+     "latest_age_days": 8.5,
      "latest_sha": "1b5aa6e18676695f348207bfa35426a7228e4753",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4360,20 +4532,7 @@
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "UNKNOWN_NO_TERMINAL",
-     "current": null,
-     "green_streak": 0,
-     "latest_age_days": null,
-     "latest_pr": null,
-     "latest_sha": null,
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "MCEX-W1 00 stage-only factorial branch",
    "node20_uses": [
@@ -4399,20 +4558,7 @@
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "UNKNOWN_NO_TERMINAL",
-     "current": null,
-     "green_streak": 0,
-     "latest_age_days": null,
-     "latest_pr": null,
-     "latest_sha": null,
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "MCEX-W1 01 stage-only factorial branch",
    "node20_uses": [
@@ -4438,20 +4584,7 @@
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "UNKNOWN_NO_TERMINAL",
-     "current": null,
-     "green_streak": 0,
-     "latest_age_days": null,
-     "latest_pr": null,
-     "latest_sha": null,
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "MCEX-W1 10 stage-only factorial branch",
    "node20_uses": [
@@ -4477,20 +4610,7 @@
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "UNKNOWN_NO_TERMINAL",
-     "current": null,
-     "green_streak": 0,
-     "latest_age_days": null,
-     "latest_pr": null,
-     "latest_sha": null,
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "MCEX-W1 11 stage-only factorial branch",
    "node20_uses": [
@@ -4521,14 +4641,14 @@
      "class": "FLAKY",
      "current": "GREEN",
      "green_streak": 7,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "MissionControl Measured Crew Allocation",
    "node20_uses": [
     "actions/checkout@v4",
@@ -4552,15 +4672,18 @@
    ]
   },
   {
+   "demotion_candidate": [
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 3,
-     "latest_age_days": 2.7,
-     "latest_pr": 690,
-     "latest_sha": "448673b68f66a2f149e0bc72a36fa7d8cdff9cbb",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 761,
+     "latest_sha": "320715a10d4665afd2de855677172faae414d37e",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4577,7 +4700,7 @@
    ],
    "path": ".github/workflows/mission-control-m3-graph.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -4600,20 +4723,20 @@
      "class": "EVERRED",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "UNKNOWN_NO_TERMINAL",
-     "current": null,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
      "green_streak": 0,
-     "latest_age_days": null,
-     "latest_pr": null,
-     "latest_sha": null,
-     "merged_red_prs": 0,
+     "latest_age_days": 0.2,
+     "latest_pr": 761,
+     "latest_sha": "320715a10d4665afd2de855677172faae414d37e",
+     "merged_red_prs": 1,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4628,7 +4751,8 @@
    ],
    "path": ".github/workflows/mission-control-mach2-mip.yml",
    "reasons": [
-    "RED_NOW_MASTER"
+    "RED_NOW_MASTER",
+    "RED_NOW_PR"
    ],
    "trigger": {
     "branches": null,
@@ -4649,20 +4773,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "UNKNOWN_NO_TERMINAL",
-     "current": null,
-     "green_streak": 0,
-     "latest_age_days": null,
-     "latest_pr": null,
-     "latest_sha": null,
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4698,20 +4810,20 @@
      "class": "EVERRED",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "UNKNOWN_NO_TERMINAL",
-     "current": null,
+     "class": "EVERRED",
+     "current": "RED",
      "green_streak": 0,
-     "latest_age_days": null,
-     "latest_pr": null,
-     "latest_sha": null,
-     "merged_red_prs": 0,
+     "latest_age_days": 0.2,
+     "latest_pr": 761,
+     "latest_sha": "320715a10d4665afd2de855677172faae414d37e",
+     "merged_red_prs": 1,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4726,7 +4838,8 @@
    ],
    "path": ".github/workflows/mission-control-n12-recursive-recovery.yml",
    "reasons": [
-    "RED_NOW_MASTER"
+    "RED_NOW_MASTER",
+    "RED_NOW_PR"
    ],
    "trigger": {
     "branches": null,
@@ -4744,11 +4857,23 @@
    "disposition": "OBSERVED",
    "evidence": {
     "master": {
-     "class": "EVERRED",
-     "current": "RED",
-     "green_streak": 0,
-     "latest_age_days": 2.9,
-     "latest_sha": "c362b651c4f89fe909ab0f8d7680047b248a4b47",
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_sha": "dc9c5f5afc8dcf6610a39d41d6db600b3b045398",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 766,
+     "latest_sha": "b2a444156eb791469df793465d2909db37831179",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4763,7 +4888,7 @@
    ],
    "path": ".github/workflows/mission-control-n3-evidence.yml",
    "reasons": [
-    "RED_NOW_MASTER"
+    "GREEN_STREAK_SHORT"
    ],
    "trigger": {
     "branches": null,
@@ -4783,9 +4908,9 @@
     "master": {
      "class": "FLAKY",
      "current": "GREEN",
-     "green_streak": 34,
-     "latest_age_days": 1.8,
-     "latest_sha": "285c667aa01b948e00f0bab36bfab6de1dbc7021",
+     "green_streak": 35,
+     "latest_age_days": 0.2,
+     "latest_sha": "dc9c5f5afc8dcf6610a39d41d6db600b3b045398",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4794,9 +4919,9 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 3,
-     "latest_age_days": 1.8,
-     "latest_pr": 726,
-     "latest_sha": "8dc23c6ea497d5d9d2e8ecb017abe51a41976e46",
+     "latest_age_days": 0.2,
+     "latest_pr": 766,
+     "latest_sha": "b2a444156eb791469df793465d2909db37831179",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4831,7 +4956,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4850,7 +4975,7 @@
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "Mission Control W4 SPINE control-plane (read-only)",
    "node20_uses": [
     "actions/checkout@v4",
@@ -4906,7 +5031,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 3,
-     "latest_age_days": 1.4,
+     "latest_age_days": 1.6,
      "latest_sha": "7cfe0d1f0e5d0dbd04d9ef58ed622560876fd98f",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4916,7 +5041,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 1.4,
+     "latest_age_days": 1.6,
      "latest_pr": 745,
      "latest_sha": "15dcda2b70d0bb47491c4043d4e7d5f4dd79e5bc",
      "merged_red_prs": 0,
@@ -4959,7 +5084,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5006,7 +5131,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5016,7 +5141,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 1.6,
+     "latest_age_days": 1.9,
      "latest_pr": 732,
      "latest_sha": "a4697e4706f996e0c00212a26f217e9fe27d72ff",
      "merged_red_prs": 0,
@@ -5055,7 +5180,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5083,16 +5208,16 @@
    ]
   },
   {
-   "disposition": "OBSERVED",
+   "disposition": "ENFORCED",
    "evidence": {
     "pr": {
-     "class": "RED_TO_GREEN",
+     "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.0,
-     "latest_pr": 758,
-     "latest_sha": "8938a2ece07f2ab16106bfc54b99e03306453054",
-     "merged_red_prs": 1,
+     "green_streak": 3,
+     "latest_age_days": 0.2,
+     "latest_pr": 769,
+     "latest_sha": "1e3ab761cfecac15a6e558d9538d7bcc04908ebc",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5108,7 +5233,7 @@
    ],
    "path": ".github/workflows/qps-metric-census-federation.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "EVIDENCE_HEALTHY"
    ],
    "trigger": {
     "branches": [
@@ -5156,20 +5281,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 4,
-     "latest_age_days": 2.0,
+     "latest_age_days": 2.2,
      "latest_sha": "fb615a6fade149f892441f76f321339243a4a8bb",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "UNKNOWN_NO_TERMINAL",
-     "current": null,
-     "green_streak": 0,
-     "latest_age_days": null,
-     "latest_pr": null,
-     "latest_sha": null,
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5200,9 +5313,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 200,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 150,
+     "latest_age_days": 0.2,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5210,10 +5323,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 32,
-     "latest_age_days": 0.0,
-     "latest_pr": 759,
-     "latest_sha": "82a4eb3f5f633ac705f2e22a46acfe1b982eff27",
+     "green_streak": 35,
+     "latest_age_days": 0.2,
+     "latest_pr": 769,
+     "latest_sha": "1e3ab761cfecac15a6e558d9538d7bcc04908ebc",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5250,14 +5363,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 3,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "QPS TRIAGE W3 Measured Analytics",
    "node20_uses": [
     "actions/checkout@v4",
@@ -5285,7 +5398,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 4,
-     "latest_age_days": 7.9,
+     "latest_age_days": 8.1,
      "latest_sha": "0f48ce7dd37ded845d1aa7601d4e840178cf8d5f",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5321,7 +5434,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 6,
-     "latest_age_days": 27.8,
+     "latest_age_days": 28.1,
      "latest_sha": "288e44f21724efe1bd46a699af6fa47d115fbee5",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5356,7 +5469,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5390,15 +5503,27 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 3,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 5,
+     "latest_age_days": 0.2,
+     "latest_sha": "4591345190887e1d69c0a53c4e54835922318599",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 0.2,
+     "latest_pr": 762,
+     "latest_sha": "b8ad5dcc6cf12033dc31af41a7512099f8360f42",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "Runner Fanout MIP Control",
    "node20_uses": [
     "actions/checkout@v4",
@@ -5423,7 +5548,20 @@
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {},
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 766,
+     "latest_sha": "b2a444156eb791469df793465d2909db37831179",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
    "incumbent": false,
    "name": "TRIAGE Renegade Smoke",
    "node20_uses": [
@@ -5432,7 +5570,7 @@
    ],
    "path": ".github/workflows/triage-renegade-smoke.yml",
    "reasons": [
-    "NO_TERMINAL_EVIDENCE"
+    "GREEN_STREAK_SHORT"
    ],
    "trigger": {
     "branches": null,
@@ -5452,7 +5590,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5511,7 +5649,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 35.8,
+     "latest_age_days": 36.1,
      "latest_sha": "355e2023791d6f98c7afe42500b4743df923f892",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5549,7 +5687,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 32.0,
+     "latest_age_days": 32.3,
      "latest_sha": "1a695ce95927ddd2b580cd34af78768f384b06d5",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5585,7 +5723,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 32.0,
+     "latest_age_days": 32.2,
      "latest_sha": "270bb4b237ff5c2a1313734a43cb0d31d32f8e70",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5621,7 +5759,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 32.0,
+     "latest_age_days": 32.2,
      "latest_sha": "23cdfed4042d7b1766d06ef93647c86593335731",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5656,9 +5794,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 200,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 150,
+     "latest_age_days": 0.2,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5693,9 +5831,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 200,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 150,
+     "latest_age_days": 0.2,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5728,9 +5866,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 200,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 150,
+     "latest_age_days": 0.2,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5765,9 +5903,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 200,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 150,
+     "latest_age_days": 0.2,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5775,10 +5913,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 32,
-     "latest_age_days": 0.0,
-     "latest_pr": 759,
-     "latest_sha": "82a4eb3f5f633ac705f2e22a46acfe1b982eff27",
+     "green_streak": 35,
+     "latest_age_days": 0.2,
+     "latest_pr": 769,
+     "latest_sha": "1e3ab761cfecac15a6e558d9538d7bcc04908ebc",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5815,7 +5953,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.0,
+     "latest_age_days": 0.2,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5825,7 +5963,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 1.8,
+     "latest_age_days": 2.1,
      "latest_pr": 723,
      "latest_sha": "29ff120187bde0c7e66acd48ed1efeb6cf6ff224",
      "merged_red_prs": 0,
@@ -5863,9 +6001,9 @@
     "master": {
      "class": "FLAKY",
      "current": "GREEN",
-     "green_streak": 4,
-     "latest_age_days": 0.0,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "green_streak": 14,
+     "latest_age_days": 0.2,
+     "latest_sha": "2785ce6fbd26e1d0669563adfce5e8d00cf44b6f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5873,10 +6011,10 @@
     "pr": {
      "class": "FLAKY",
      "current": "GREEN",
-     "green_streak": 4,
-     "latest_age_days": 0.0,
-     "latest_pr": 759,
-     "latest_sha": "82a4eb3f5f633ac705f2e22a46acfe1b982eff27",
+     "green_streak": 14,
+     "latest_age_days": 0.2,
+     "latest_pr": 769,
+     "latest_sha": "1e3ab761cfecac15a6e558d9538d7bcc04908ebc",
      "merged_red_prs": 6,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5911,30 +6049,30 @@
  ],
  "generated_from": {
   "master_lane": {
-   "digest_sha256": "b82a5e2afcd74e51677747ddf02a840211b49d1f985db2ace8319faebd7bf891",
-   "observed_at_utc": "2026-10-20T13:13:07Z",
+   "digest_sha256": "6ca7f55b152c66d2da37d62eb031c7bf68aa07a18c1194e5fda993cb19996908",
+   "observed_at_utc": "2026-10-20T18:30:17Z",
    "schema": "gogreen.red_trace.v1",
    "window": {
     "oldest_run_at": "2025-09-19T05:49:32Z",
-    "runs": 4809,
+    "runs": 4091,
     "truncated": true,
-    "truncated_workflows": 13
+    "truncated_workflows": 18
    }
   },
   "pr_lane": {
-   "digest_sha256": "56ea62ca0c737781461255bb08af08f08ad35198ebeb36761497792f236ecc20",
-   "observed_at_utc": "2026-10-20T13:14:29Z",
+   "digest_sha256": "d3e5db4606430e3ef2295a843aae9b072fe1596a2738ee98488f7e3ba31d5eff",
+   "observed_at_utc": "2026-10-20T18:30:52Z",
    "schema": "gogreen.red_trace.pr_lane.v1",
    "window": {
-    "merged_prs": 100,
-    "newest_merged_at": "2026-10-20T12:20:00Z",
-    "oldest_merged_at": "2026-10-17T16:14:55Z",
-    "runs_premerge": 687
+    "merged_prs": 60,
+    "newest_merged_at": "2026-10-20T14:46:42Z",
+    "oldest_merged_at": "2026-10-18T14:21:35Z",
+    "runs_premerge": 507
    }
   },
-  "previous_ledger_sha256": "685242c635e4d35a7e8443b58fdb3d056a0197dd2c97893de3c5d7cfec68d6a1"
+  "previous_ledger_sha256": "9917a208410b4b5e95963671eef755eacd2138be63eccfaca61aedb55c38811d"
  },
- "ledger_sha256": "9917a208410b4b5e95963671eef755eacd2138be63eccfaca61aedb55c38811d",
+ "ledger_sha256": "8f6c06f0c60fff9add1657caa07bfce456309f4654e017bf24d1e08bb2ff3551",
  "rules": {
   "FRESH_DAYS": 14,
   "MIN_STREAK": 2,

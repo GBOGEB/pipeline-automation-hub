@@ -31,6 +31,11 @@ FILES = {
     "lib/mod.py": "Y = 2\n",
     "lib/tests/test_mod.py": "from mod import Y\ndef test_y():\n    assert Y\nclass TestK:\n    def test_k(self):\n        pass\n",
     "tools/check.py": "print('ok')\n",
+    "loaded/engine.py": "Z = 3\n",
+    "loaded/tests/test_engine_by_path.py": ("import importlib.util, pathlib\nROOT = pathlib.Path(__file__).parents[1]\n"
+                                           "SPEC = importlib.util.spec_from_file_location('e', ROOT / 'engine.py')\n"),
+    "elsewhere/engine2.py": "Q = 4\n",
+    "loaded/tests/test_mentions.py": "NOTE = 'engine2.py is far away'\n",
     "tools/browser_qa.py": "print('qa')\n",
     "web/app.config.js": "module.exports = {}\n",
     "web/widget.mjs": "export const w = 1\n",
@@ -87,12 +92,13 @@ class Census(unittest.TestCase):
         z = self.doc["zero_tested_modules"]
         self.assertIn("pkg/orphan.py", z)
         self.assertIn("tools/check.py", z)
-        for ok in ("pkg/core.py", "lib/mod.py", "web/widget.mjs"):
+        for ok in ("pkg/core.py", "lib/mod.py", "web/widget.mjs", "loaded/engine.py"):
             self.assertNotIn(ok, z)
+        self.assertIn("elsewhere/engine2.py", z)  # a bare filename far from the test is not a reference
         self.assertEqual(self.doc["harness_modules"], ["tools/browser_qa.py"])
         self.assertNotIn("web/app.config.js", z + self.doc["harness_modules"])
         t = self.doc["totals"]["tested"]
-        self.assertEqual((t["tested"], t["harness"], t["zero_tested"]), (3, 1, 2))
+        self.assertEqual((t["tested"], t["harness"], t["zero_tested"]), (4, 1, 3))
 
     def test_zero_evidence_without_ledger_and_authority(self):
         self.assertTrue(all("ZERO_EVIDENCE" in x["zero"] for x in self.doc["workflows"]))

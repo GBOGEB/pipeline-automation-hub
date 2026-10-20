@@ -47,6 +47,14 @@ Static census of the control spine's own reach, with an explicit ZERO bucket per
 
 `--ledger none` derives dispositions from workflow files alone, using the admission scope rules, so the same census runs on any federation repo without evidence. The red-trace workflow publishes it in the job summary from the live ledger proposal.
 
+## Federation spine (N+11, `federation.py`)
+
+Replays the same chain over every core repository: red-trace (both lanes) → `admission.build()` → `backtest.run()` → `depth.build()`. The result is one federation table plus totals with explicit denominators.
+
+- **Ledgers are proposals.** Each non-hub row is a `proposed_admission`: only the hub has a required gate, so nothing outside it is enforced. The hub row keeps its committed ledger, so the ratchet holds.
+- **States:** a repository is `OBSERVED` (telemetry read), `STATIC_ONLY` (checkout but no telemetry) or `DEFERRED` (nothing readable, for example the private cryoplant-project without `CROSS_REPO_READ_TOKEN`). `DEFERRED` rows are listed with their reason and are never counted green.
+- **CI:** `.github/workflows/gogreen-federation-spine.yml` runs daily and on dispatch. Public repos are read with the run's own token. PR runs execute only the offline controls, so they do not compete with the red-trace ledger for the API budget.
+
 ## Run locally (GET only)
 
 ```bash

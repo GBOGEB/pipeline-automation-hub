@@ -196,9 +196,18 @@ def imported_names(path: Path) -> set:
 
 def module_testedness(root: Path, files: list) -> dict:
     tests = [f for f in files if TEST_FILE.search(f)]
-    referenced = set()
+    fileset = set(files)
+    referenced, local = set(), set()
     for t in tests:
-        referenced |= imported_names(root / t)
+        names = imported_names(root / t)
+        referenced |= names
+        here = Path(t).parent
+        for n in names:  # bare "x.py" resolves only next to the test or one level up (ROOT / "x.py")
+            if n.startswith("path:") and "/" not in n[5:]:
+                for d in (here, here.parent):
+                    cand = (d / n[5:]).as_posix()
+                    if cand in fileset:
+                        local.add(cand)
         stem = Path(t).name
         for pre, suf in (("test_", ".py"), ("", "_test.py")):
             if stem.startswith(pre) and stem.endswith(suf):
@@ -206,7 +215,7 @@ def module_testedness(root: Path, files: list) -> dict:
         if ".test." in stem:
             referenced.add(stem.split(".test.")[0])
     paths = {n[5:] for n in referenced if n.startswith("path:")}
-    by_path = set()
+    by_path = set(local)
     for f in files:
         for ref in paths:  # exact path (or path suffix with a directory), never a bare basename guess
             if f == ref or ("/" in ref and f.endswith("/" + ref)):
