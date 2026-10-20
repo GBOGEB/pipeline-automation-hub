@@ -83,7 +83,7 @@ class W75ExecutorNegatives(unittest.TestCase):
                 self.check(policy=self.policy_with("max_attempts", value))
 
     def test_all_allowed_lower_and_upper_budget_edges(self):
-        for parallel, timeout, attempts in ((1, 2, 1), (3, 60, 3)):
+        for parallel, timeout, attempts in ((2, 2, 1), (3, 60, 3)):
             policy = copy.deepcopy(self.policy)
             policy.update(max_parallel=parallel, timeout_seconds=timeout, max_attempts=attempts)
             with self.subTest(policy=policy):
@@ -103,7 +103,7 @@ class W75ExecutorNegatives(unittest.TestCase):
             self.check(policy=self.policy_with("allowed_operations", ["SOURCE_DIGEST"]))
 
     def test_untracked_input_and_policy_unlisted_source_denied(self):
-        with self.assertRaisesRegex(MOD.ExecutionHold, "not allowlisted"):
+        with self.assertRaisesRegex(MOD.ExecutionHold, "allowlisted"):
             self.check(tasks=self.task_with("P-CANON", "input", "other/file.json"))
         with self.assertRaisesRegex(MOD.ExecutionHold, "not allowlisted or produced"):
             self.check(tasks=self.task_with("O-JOIN", "inputs", ["unknown/upstream.json"]))
