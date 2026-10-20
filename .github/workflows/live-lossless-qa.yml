@@ -52,6 +52,7 @@ jobs:
       - name: Install pinned Chromium and Playwright
         shell: bash
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Install pinned Chromium and Playwright" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           python -m pip install --disable-pip-version-check "playwright==1.57.0"
           python -m playwright install --with-deps chromium
       - name: Three-viewport Chromium visual and functional QA

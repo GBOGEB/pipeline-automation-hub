@@ -58,6 +58,7 @@ jobs:
 
       - name: QA negative authority mutation must fail closed
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="QA negative authority mutation must fail closed" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           python3 - <<'PY'
           import os, pathlib, yaml
           src=pathlib.Path('f01/federation/ADR_OCD/bridge_manifest.yaml')

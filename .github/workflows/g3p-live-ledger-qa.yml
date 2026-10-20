@@ -53,6 +53,7 @@ jobs:
           node --check /tmp/g3p-client.js
       - name: Install pinned Chromium QA runner
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Install pinned Chromium QA runner" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           python -m pip install --disable-pip-version-check playwright==1.57.0
           python -m playwright install --with-deps chromium
       - name: Resolve referenced wave-source identities read-only
@@ -95,6 +96,7 @@ jobs:
         env:
           G3P_EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Chromium responsive and functional interaction matrix" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           python mission-control/html_qa/g3p_browser_qa.py \
             --html /tmp/g3p-qa/published/g3p/index.html \
             --manifest /tmp/g3p-qa/published/g3p/G3P_LIVE_SOURCES_v1.json \
@@ -102,6 +104,7 @@ jobs:
           test -s /tmp/g3p-qa/browser/qa-receipt.json
       - name: Enforce QA receipt, screenshots and no false hosted claim
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Enforce QA receipt, screenshots and no false hosted claim" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           python - <<'PY'
           import json
           from pathlib import Path

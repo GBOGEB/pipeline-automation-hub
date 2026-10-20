@@ -103,10 +103,12 @@ jobs:
           python-version: '3.12'
       - name: Install pinned Playwright / Chromium
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Install pinned Playwright / Chromium" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           python -m pip install --disable-pip-version-check playwright==1.56.0
           python -m playwright install --with-deps chromium
       - name: Responsive interactions and negative external-request check
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Responsive interactions and negative external-request check" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           python mission-control/jade_temple/tools/run_nplus1_browser_qa.py
           python mission-control/jade_temple/tools/run_nplus2_browser_qa.py

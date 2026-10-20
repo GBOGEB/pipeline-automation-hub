@@ -96,10 +96,13 @@ jobs:
           python-version: '3.11'
       - name: Install read-only Chromium QA
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Install read-only Chromium QA" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           python -m pip install playwright
           python -m playwright install --with-deps chromium
       - name: Three viewports, six screens, controls and source parity
-        run: python mission-control/v2/mach2/browser_qa.py /tmp/mc-mach2-qa
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Three viewports, six screens, controls and source parity" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          python mission-control/v2/mach2/browser_qa.py /tmp/mc-mach2-qa
       - uses: actions/upload-artifact@v4
         if: always()
         with:
