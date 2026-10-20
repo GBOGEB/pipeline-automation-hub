@@ -1,0 +1,15 @@
+flowchart LR
+  S["S 01 | Source owners & private QPS"] --> I["I 02 | Authenticated heads, canonical census"]
+  I --> P["P 03 | Bounded, disjoint DRY-RUN plan"]
+  P --> O["O 04 | Typed routes, proposed tickets, UNKNOWN receipts"]
+  O --> C["C 05 | Maintainers, Mission Control, QPS reviewers"]
+  C -.->|N+1 no authority transfer| R["CONTROL | new evidence epoch"]
+  classDef master fill:#CEE8E4,stroke:#156F70,color:#184244
+  classDef purple fill:#DFD5F2,stroke:#694AA8,color:#342355
+  classDef mission fill:#D1E3F5,stroke:#32669E,color:#173D64
+  classDef maroon fill:#F1D3DB,stroke:#A44962,color:#61283A
+  classDef green fill:#D2EACB,stroke:#357A50,color:#224B30
+  class S,I master
+  class P mission
+  class O maroon
+  class C,R green
