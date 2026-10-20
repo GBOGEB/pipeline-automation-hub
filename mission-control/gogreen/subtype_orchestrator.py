@@ -144,7 +144,7 @@ def validate(data):
             # This read-only planner accepts caller-supplied JSON, not a signed
             # independent approval channel. Even PASS + approval=true is merely
             # a claim; accepting it would fabricate causal-root closure.
-            raise ValueError("untrusted accepted root closure requires authenticated independent channel")
+            raise ValueError("untrusted accepted root closure: accepted roots require authenticated independent channel")
     return data
 
 
