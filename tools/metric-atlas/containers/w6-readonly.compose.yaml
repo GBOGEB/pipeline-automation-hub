@@ -1,0 +1,27 @@
+# Offline, operator-only reproducibility aid. No GitHub dispatch or credentials.
+# Build/pull image separately under owner-controlled policy; not a native CI receipt.
+name: codepurple-w6-readonly
+x-common: &w6-common
+  image: python:3.12-slim
+  working_dir: /workspace
+  network_mode: none
+  read_only: true
+  user: "65534:65534"
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  pids_limit: 128
+  mem_limit: 512m
+  cpus: "1.0"
+  tmpfs:
+    - /tmp:size=32m,mode=1777
+  volumes:
+    - ../../../:/workspace:ro
+  environment:
+    PYTHONPATH: /workspace/tools/metric-atlas
+services:
+  census-negative:
+    <<: *w6-common
+    command: ["python", "-m", "unittest", "discover", "-s", "tools/metric-atlas/tests", "-p", "test_census_w5.py", "-v"]
+  disjoint-adversarial:
+    <<: *w6-common
+    command: ["python", "-m", "unittest", "discover", "-s", "tools/metric-atlas/tests", "-p", "test_disjoint_scale_w6.py", "-v"]
