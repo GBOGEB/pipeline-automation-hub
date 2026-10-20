@@ -1,0 +1,5454 @@
+{
+ "authority": {
+  "branch_protection_changed": false,
+  "merge_authorized": false,
+  "owner_review": "required before merge",
+  "proposed_by": "AGENT"
+ },
+ "counts": {
+  "ENFORCED": 44,
+  "EXCLUDED": 4,
+  "OBSERVED": 102
+ },
+ "coverage": {
+  "dispositioned": 150,
+  "enforced_of_pr_scoped": 44,
+  "pull_request_scoped": 147,
+  "with_any_evidence": 101,
+  "with_evidence": {
+   "master": 74,
+   "pr": 57
+  },
+  "workflow_files": 150
+ },
+ "entries": [
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 4,
+     "latest_age_days": 1.4,
+     "latest_sha": "6df08b30c0206936c8765f20ac19a33f94adf406",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "BD Workflow Frequency Telemetry",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/bd-workflow-frequency-telemetry.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 8.5,
+     "latest_sha": "d4f203afd369559ddbff7e833e74f2a6b7a43f70",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Branch hygiene (lossless)",
+   "node20_uses": [],
+   "path": ".github/workflows/branch-hygiene.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "CODE PURPLE ABACUS MIP Readonly Consumer",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/code-purple-abacus-mip-readonly.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "CODE PURPLE CBQ CH-BD Readonly Pulse",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/code-purple-cbq-ch-bd-pulse.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 21,
+     "latest_age_days": 0.0,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 3,
+     "latest_age_days": 1.1,
+     "latest_pr": 749,
+     "latest_sha": "17e309a95ea569e463dbf2ca100ef5d38e554b72",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "CODE PURPLE Disjoint Live Census (read-only)",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/code-purple-live-census.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.8,
+     "latest_sha": "c3b874fe98c4201a8dd92e5978c763b8067f5f6e",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "CODE PURPLE M3 Lossless Stabilization",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/code-purple-m3-lossless.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "FLAKY",
+     "current": "GREEN",
+     "green_streak": 9,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "FLAKY",
+     "current": "GREEN",
+     "green_streak": 9,
+     "latest_age_days": 0.1,
+     "latest_pr": 668,
+     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "merged_red_prs": 4,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": true,
+   "name": "CODE PURPLE Method Atlas (read-only)",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/configure-pages@v5",
+    "actions/deploy-pages@v4",
+    "actions/download-artifact@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/code-purple-method-atlas.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/configure-pages@v5",
+    "actions/deploy-pages@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-python@v6",
+    "actions/upload-artifact@v4",
+    "actions/upload-pages-artifact@v3"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 1.7,
+     "latest_sha": "339bee59cf790498408be19e9c7deb092cc51738",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.8,
+     "latest_pr": 724,
+     "latest_sha": "fec6231abdead0ce8554b36c7199470bda3a97b1",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "CODE PURPLE Mycelium History Testflight",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/code-purple-mycelium-history.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "CODE PURPLE Session Intent Golden Thread",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/code-purple-session-hook.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 7,
+     "latest_age_days": 1.7,
+     "latest_sha": "285c667aa01b948e00f0bab36bfab6de1dbc7021",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 1.7,
+     "latest_pr": 726,
+     "latest_sha": "8dc23c6ea497d5d9d2e8ecb017abe51a41976e46",
+     "merged_red_prs": 1,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "CP.CLOSE GitHub Handover QA",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/checkout@v4",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/cp-close-github-qa.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/checkout@v4",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 3,
+     "latest_age_days": 1.7,
+     "latest_pr": 726,
+     "latest_sha": "8dc23c6ea497d5d9d2e8ecb017abe51a41976e46",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "CP.FED W4 canonical handover and public CENSUS QA",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/cp-fed-census-w4-qa.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 1.6,
+     "latest_sha": "c71ad78baf9abf5fbe2f39c7c5993a3c75c1d505",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 1.6,
+     "latest_pr": 734,
+     "latest_sha": "8c2baf22286ba6500d32e3258658dc9aaa0071b0",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "CODE PURPLE CP.CLOSE W10 lossless handover qualification",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/cp-w10-federation-handover.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 56,
+     "latest_age_days": 28.2,
+     "latest_sha": "51371fd71cad8d2a0e703c8b003848478377e2ed",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl Crew Capability System",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/crew-capability-system.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 39,
+     "latest_age_days": 28.2,
+     "latest_sha": "51371fd71cad8d2a0e703c8b003848478377e2ed",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Crew Exposure Instrumentation",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/crew-exposure-instrumentation.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 36.7,
+     "latest_sha": "c7b726dd48ddc458e4fbfbeaf4a4162e2fcd8b4b",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Crew Exposure PCA Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/crew-exposure-pca-control.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 37,
+     "latest_age_days": 28.2,
+     "latest_sha": "51371fd71cad8d2a0e703c8b003848478377e2ed",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl Crew Frontier PCA BT",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/crew-frontier-pca-bt.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 36.7,
+     "latest_sha": "fe5f5699f187fce41d2ef08533ef5610eb76c362",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl Crew PC3 Conditional BT",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/crew-pc3-conditional-bt.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 6,
+     "latest_age_days": 35.2,
+     "latest_sha": "6eed0c7fc663e652a302ab31a9ebb15e08c39b97",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl Repeat Stable Acceptance",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ],
+   "path": ".github/workflows/crew-repeat-stable-acceptance.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "MissionControl Crew Skill Federated Pulse",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/crew-skill-federated-pulse.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "MissionControl Crew Skill Resolution",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/crew-skill-resolution.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "MissionControl Crew Telemetry + Role Gap",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/crew-telemetry-role-gap.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master",
+     "mission/crew-capability-system-v1-20260913"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 47,
+     "latest_age_days": 0.2,
+     "latest_sha": "4f9267ce4808a952dfcbe62aad9073ca57099c76",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl Temporal 3PR MIP Control Surface",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/crew-temporal-3pr-mip-control-surface.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 47,
+     "latest_age_days": 0.2,
+     "latest_sha": "4f9267ce4808a952dfcbe62aad9073ca57099c76",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl Temporal 3PSTAR MIP Burndown",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/crew-temporal-3pstar-mip-burndown.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 75,
+     "latest_age_days": 0.2,
+     "latest_sha": "4f9267ce4808a952dfcbe62aad9073ca57099c76",
+     "nondeterministic": true,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 1
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl Temporal Allocation Policy",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/crew-temporal-allocation-policy.yml",
+   "reasons": [
+    "NONDETERMINISTIC_MASTER"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 32.0,
+     "latest_sha": "4866869771cf6a1176165c815256598c3db69a59",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl Temporal CONTROL Acceptance",
+   "node20_uses": [
+    "actions/checkout@v4"
+   ],
+   "path": ".github/workflows/crew-temporal-control-acceptance.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 50,
+     "latest_age_days": 0.2,
+     "latest_sha": "4f9267ce4808a952dfcbe62aad9073ca57099c76",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl Temporal Effect Diagnostics",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/crew-temporal-effect-diagnostics.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 13,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 12,
+     "latest_age_days": 0.1,
+     "latest_pr": 668,
+     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Dependency SPINE Peer Source Census (HUB)",
+   "node20_uses": [],
+   "path": ".github/workflows/dependency-spine-peer-census.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v7.0.1",
+    "actions/setup-python@v7",
+    "actions/upload-artifact@v7.0.2"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.7,
+     "latest_pr": 727,
+     "latest_sha": "d08897940211b420d0180506f3ae21389d68e535",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Mission Control Dependency SPINE N+1 Temporal Consumer",
+   "node20_uses": [],
+   "path": ".github/workflows/dependency-spine-temporal.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v7.0.1",
+    "actions/setup-python@v7",
+    "actions/upload-artifact@v7.0.2"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 6,
+     "latest_age_days": 27.8,
+     "latest_sha": "288e44f21724efe1bd46a699af6fa47d115fbee5",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.6,
+     "latest_pr": 732,
+     "latest_sha": "a4697e4706f996e0c00212a26f217e9fe27d72ff",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Excel Schedule Engine",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ],
+   "path": ".github/workflows/excel-schedule-engine.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ]
+  },
+  {
+   "disposition": "EXCLUDED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "First-Pass Closure Gate",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/first-pass-closure-gate.yml",
+   "reasons": [
+    "PULL_REQUEST_TARGET_ONLY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "ALL",
+    "pull_request": false,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 31,
+     "latest_age_days": 0.1,
+     "latest_pr": 668,
+     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "First-Pass Closure Proof",
+   "node20_uses": [
+    "actions/checkout@v4"
+   ],
+   "path": ".github/workflows/first-pass-closure-proof.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "ALL",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 7,
+     "latest_age_days": 28.7,
+     "latest_sha": "65f9d3699785c371e3aede338a6e3543d31b9cb4",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Fleet Open-Issue Convergence",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/fleet-open-issue-convergence.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "Mission Control G3A gg_MATH read-only consumer",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/g3a-metric-consumer.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MC gg_MATH G3P observed Plotly source projection",
+   "node20_uses": [],
+   "path": ".github/workflows/g3p-ggmath-observed-projection.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 16,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 5,
+     "latest_age_days": 0.1,
+     "latest_pr": 668,
+     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "G3P Live Ledger QA",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/g3p-live-ledger-qa.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 5,
+     "latest_age_days": 0.1,
+     "latest_pr": 668,
+     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl gg_MATH convergence read-only bridge",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gg-math-convergence-bridge.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 8.0,
+     "latest_sha": "3399a1bc445e409c504befeee7165961463ce666",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM DAB Flake8 Propagation Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ],
+   "path": ".github/workflows/gm-dab-flake8-propagation.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 5,
+     "latest_age_days": 1.9,
+     "latest_sha": "dfff1992546c29242ef42c65c518e19a72a18342",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.9,
+     "latest_pr": 700,
+     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM DMAIC Evolution Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-dmaic-evolution.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 200,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.9,
+     "latest_pr": 700,
+     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-FLEET-02B Closeout",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-fleet-02b.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 200,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.9,
+     "latest_pr": 700,
+     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-FLEET-03 Capacity Gate",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-fleet-03-capacity-gate.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 200,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.9,
+     "latest_pr": 700,
+     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-FLEET-03 F01 Pilot",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-fleet-03-f01-pilot.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 200,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.9,
+     "latest_pr": 700,
+     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-FLEET-03 F03 Pilot",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-fleet-03-f03-pilot.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 200,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.9,
+     "latest_pr": 700,
+     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-FLEET-03 Ring1 Recon",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-fleet-03-ring1-recon.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 200,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.9,
+     "latest_pr": 700,
+     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-FLEET-03 Ring2 Recon",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-fleet-03-ring2-recon.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 3,
+     "latest_age_days": 36.2,
+     "latest_sha": "58b7098b4eba22b6282706f45fe6a43967334509",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-FLEET-04 Ring2 Scout A",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-fleet-04-ring2-scout-a.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 36.8,
+     "latest_sha": "e9d07454358f5ea22371508812be5bf2a9eefbc2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-FLEET-04 Ring2 Scout B",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-fleet-04-ring2-scout-b.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 31.3,
+     "latest_sha": "533dc7e7f636c60fc6131a2ae7e5126183d6d09d",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM Fleet 3PSTAR MIP v4",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-fleet-3pstar-mip-v4.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GM-I-A Federation Sentinel",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-i-a-federation-sentinel.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GM-I-A Multi-Clock 3PSTAR MIP",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-i-a-multiclock-3pstar-mip.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GM-I-A Multi-Clock Measurement",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-i-a-multiclock-measurement.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GM-I-B Cycle3 Propagation Contract",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-i-b-cycle3-propagation-contract.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GM-I-B Cycle3 3P3 Content-Address Relay Proof",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-i-b-cycle3-propagation-proof-relay.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GM-I-B Cycle3 3P3 Propagation Proof",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-i-b-cycle3-propagation-proof.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GM-I-B Fleet Sync and Launch Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-i-b-fleet-sync.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GM-I-C 3PR MIP IC3 Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-i-c-3pr-mip.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GM-I-C Registration Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-i-c-registration.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v6",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 80,
+     "latest_age_days": 1.9,
+     "latest_sha": "dfff1992546c29242ef42c65c518e19a72a18342",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.9,
+     "latest_pr": 700,
+     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-IV ACTIVE_8 Governor Readiness",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-iv-active8-governor-readiness.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GM-IV ACTIVE_8 Promotion Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-iv-active8-promotion.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "FLAKY",
+     "current": "GREEN",
+     "green_streak": 3,
+     "latest_age_days": 31.3,
+     "latest_sha": "06ea8a1c30d6f4a82a3f2611abf6c0e7b03fbe77",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-IV Evidence Economics",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-iv-evidence-economics.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GM-IV F05 F06 Bounded Runtime Probe",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-iv-f05-f06-runtime-probe.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 31.3,
+     "latest_sha": "06ea8a1c30d6f4a82a3f2611abf6c0e7b03fbe77",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-IV Forward Gate Safety",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-iv-forward-gate-safety.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 92,
+     "latest_age_days": 1.9,
+     "latest_sha": "dfff1992546c29242ef42c65c518e19a72a18342",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.9,
+     "latest_pr": 700,
+     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-IV PILOT_2_OF_8 Final Recensus",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-iv-pilot2-final-recensus.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 101,
+     "latest_age_days": 1.9,
+     "latest_sha": "dfff1992546c29242ef42c65c518e19a72a18342",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.9,
+     "latest_pr": 700,
+     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-IV PILOT_2_OF_8 Governor",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-iv-pilot2-governor.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GM-IV Post-ACTIVE8 Repeat CONTROL",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-iv-post-active8-repeat-control.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "green_streak": 0,
+     "latest_age_days": 0.8,
+     "latest_sha": "c3b874fe98c4201a8dd92e5978c763b8067f5f6e",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-IV RECON_4 Governor Gate",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-iv-recon4-governor.yml",
+   "reasons": [
+    "RED_NOW_MASTER"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 3,
+     "latest_age_days": 29.1,
+     "latest_sha": "644877ba1a925b196ab6175fc59c46f7d83e1676",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-IV RECON_4 Promotion Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-iv-recon4-promotion.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY",
+    "PINNED_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.8,
+     "latest_sha": "c3b874fe98c4201a8dd92e5978c763b8067f5f6e",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-IV Runtime Capability Capacity Proof v2",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-iv-runtime-capacity-proof-v2.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 24.2,
+     "latest_sha": "4ec9f7210b0e7ac6cffbb6462ca3464cd29031dd",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM Top7 Depth3 Mission Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-top7-depth3.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "FLAKY",
+     "current": "RED",
+     "green_streak": 0,
+     "latest_age_days": 31.3,
+     "latest_sha": "06ea8a1c30d6f4a82a3f2611abf6c0e7b03fbe77",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-V 3PSTAR MIP Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-v-3pstar-mip-control.yml",
+   "reasons": [
+    "RED_NOW_MASTER",
+    "NOT_EXERCISED_RECENTLY",
+    "PINNED_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "green_streak": 0,
+     "latest_age_days": 1.9,
+     "latest_sha": "dfff1992546c29242ef42c65c518e19a72a18342",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "EVERRED",
+     "current": "RED",
+     "green_streak": 0,
+     "latest_age_days": 1.9,
+     "latest_pr": 700,
+     "latest_sha": "42c06610e54abb4fbb3d5c185526f18db820c454",
+     "merged_red_prs": 1,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GM-V Governor Readiness",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gm-v-governor-readiness.yml",
+   "reasons": [
+    "RED_NOW_MASTER",
+    "RED_NOW_PR",
+    "PINNED_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GOGREEN G5 Federation Census",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-federation.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 10,
+     "latest_age_days": 0.2,
+     "latest_pr": 757,
+     "latest_sha": "88c8fb555dad789621ea5772f15042b36c63473e",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GOGREEN G0 Positive Evidence Testflight",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-g0.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 10,
+     "latest_age_days": 0.2,
+     "latest_pr": 757,
+     "latest_sha": "88c8fb555dad789621ea5772f15042b36c63473e",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GOGREEN G1/G3 Coverage and Bounded Scaling Proof",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-g1-metrics.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GOGREEN G1 Native Rollup and HTML",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-g1-native-rollup.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GOGREEN G10 Graph Visual QA and Coverage",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-g10-graph-qa.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GOGREEN G11 Cross-Lane Exact-Run Convergence",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-g11-convergence.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.8,
+     "latest_sha": "e40f735b3279589db7510e1c812cfc2f124fbb74",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GoGREEN G12 read-only incubation and native preview",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gogreen-g12-incubator.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 8,
+     "latest_age_days": 0.2,
+     "latest_pr": 757,
+     "latest_sha": "88c8fb555dad789621ea5772f15042b36c63473e",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GOGREEN G4 MissionControl-Wide Bounded Census",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-g4-fleet.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GOGREEN G5 Matched Coverage",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-g5-coverage.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GOGREEN G7 Native Success Temporal and SIPOC",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-g7-success-graph.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GOGREEN G8 Comparative Native N+1",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-g8-comparative.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GOGREEN G9 Complete-Window Outcome Convergence",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-g9-outcome-convergence.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GoGREEN Governed Local Executor Testflight",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-governed-executor.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GOGREEN N3 Governed Three-Pulse Continuation",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-n3-continuation.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 8,
+     "latest_age_days": 0.2,
+     "latest_pr": 757,
+     "latest_sha": "88c8fb555dad789621ea5772f15042b36c63473e",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GOGREEN G4 Wave Metrics",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-pulses.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 5,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 0.2,
+     "latest_pr": 757,
+     "latest_sha": "88c8fb555dad789621ea5772f15042b36c63473e",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GOGREEN Red-Trace Ledger (read-only)",
+   "node20_uses": [],
+   "path": ".github/workflows/gogreen-red-trace.yml",
+   "reasons": [
+    "DECLARED_INFORMATIONAL"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f"
+   ]
+  },
+  {
+   "disposition": "EXCLUDED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 757,
+     "latest_sha": "88c8fb555dad789621ea5772f15042b36c63473e",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GOGREEN Required Gate",
+   "node20_uses": [],
+   "path": ".github/workflows/gogreen-required-gate.yml",
+   "reasons": [
+    "SELF"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "ALL",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "EVERRED",
+     "current": "RED",
+     "green_streak": 0,
+     "latest_age_days": 1.1,
+     "latest_pr": 748,
+     "latest_sha": "4174590821c8fa7a0f9909de3eccbcc554adc299",
+     "merged_red_prs": 1,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "CBD Subtype Worker Orchestrator",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-subtype-workers.yml",
+   "reasons": [
+    "RED_NOW_PR"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 2.8,
+     "latest_pr": 659,
+     "latest_sha": "9590d857849452db976dd05fcff486cf637846f0",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "GOGREEN TOP21 Merged Evidence Scanner",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-top21-merged-evidence.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GOGREEN TOP21 Merged PR Outcome Census",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/gogreen-top21-merged-outcomes.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "Golden Thread Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ],
+   "path": ".github/workflows/golden-thread-control.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "Golden Thread P4 Fleet Import",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/golden-thread-p4-fleet-import.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 23,
+     "latest_age_days": 3.8,
+     "latest_sha": "af45c55eb2a2811eb62a83aa4fe00d434edb5989",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Golden Thread Replay",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/golden-thread.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "GT-BD-003 3PC Prepare",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/gt-bd-003-3pc-prepare.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 8,
+     "latest_age_days": 21.8,
+     "latest_sha": "49471d43285776ba4df24e644c5c756ab2221c8f",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl Historian Register Control",
+   "node20_uses": [
+    "actions/checkout@v4"
+   ],
+   "path": ".github/workflows/historian-register-control.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "HM-01 R3 DMAIC Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/hm01-r3-dmaic-control.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "HM-01 R3 DMAIC KPI",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/hm01-r3-dmaic-kpi.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "HM-01 R3 DMAIC Premerge",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/hm01-r3-dmaic-premerge.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "HM-01 R3 DMAIC W285 3PR",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/hm01-r3-dmaic-w285-3pr.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "JADE_CASTE N+3 point-release sprint readiness QA",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/jade-sprint-n3-qualification.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@v6",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 5,
+     "latest_age_days": 0.1,
+     "latest_pr": 668,
+     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "JADE_CASTE N+3 eight-point MIP qualification (read-only)",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/jade-temple-readonly-qa.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@v6",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.2,
+     "latest_pr": 757,
+     "latest_sha": "88c8fb555dad789621ea5772f15042b36c63473e",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Level 1 MIP",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/level1-mip.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "FLAKY",
+     "current": "GREEN",
+     "green_streak": 11,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 7,
+     "latest_age_days": 0.1,
+     "latest_pr": 668,
+     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "merged_red_prs": 1,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": true,
+   "name": "CODE PURPLE Live Lossless QA",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/live-lossless-qa.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 4,
+     "latest_age_days": 29.0,
+     "latest_sha": "a1bfe58d23a109ebfdf6e976f300b18d021ecbbb",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "LM-10 W260 BD-260.5 TRIAGE",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/lm10-w260-bd2605-triage.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "LM-11 QPS Wave Federation Proof",
+   "node20_uses": [
+    "actions/checkout@v4"
+   ],
+   "path": ".github/workflows/lm11-qps-wave-federation-proof.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.1,
+     "latest_pr": 668,
+     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl Makeover Navigator (read-only QA)",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mc-makeover-launchpad-qa.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "Mission Control MIP Source Consumer",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/mc-mip-consumer.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "CODE PURPLE MIP Statistical Maturity",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/mc-mip-maturity.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "CODE PURPLE MIP Native ABACUS Bridge",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/mc-mip-native-bridge.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 8,
+     "latest_age_days": 8.2,
+     "latest_sha": "1b5aa6e18676695f348207bfa35426a7228e4753",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MC-S2 A3 Validator Enforcement",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mc-s2-a3-validator-enforcement.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v6",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 6,
+     "latest_age_days": 8.2,
+     "latest_sha": "1b5aa6e18676695f348207bfa35426a7228e4753",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MC-S2 A4 Dashboard TODO Surface",
+   "node20_uses": [
+    "actions/checkout@v4"
+   ],
+   "path": ".github/workflows/mc-s2-a4-dashboard-todo.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v6"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MCEX-W1 00 stage-only factorial branch",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-node@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mcex-w1-00.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-node@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MCEX-W1 01 stage-only factorial branch",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-node@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mcex-w1-01.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-node@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MCEX-W1 10 stage-only factorial branch",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-node@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mcex-w1-10.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-node@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MCEX-W1 11 stage-only factorial branch",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-node@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mcex-w1-11.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-node@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "FLAKY",
+     "current": "GREEN",
+     "green_streak": 6,
+     "latest_age_days": 28.2,
+     "latest_sha": "51371fd71cad8d2a0e703c8b003848478377e2ed",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MissionControl Measured Crew Allocation",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/measured-crew-allocation.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 3,
+     "latest_age_days": 2.7,
+     "latest_pr": 690,
+     "latest_sha": "448673b68f66a2f149e0bc72a36fa7d8cdff9cbb",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Mission Control M3 graph and portal contract",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/mission-control-m3-graph.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Mission Control GM MACH-II Mycelium and MIP",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mission-control-mach2-mip.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Mission Control N11 Top-21 Census",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-node@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mission-control-n11-census.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-node@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Mission Control N12 Recursive Recovery",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mission-control-n12-recursive-recovery.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "EVERRED",
+     "current": "RED",
+     "green_streak": 0,
+     "latest_age_days": 2.8,
+     "latest_sha": "c362b651c4f89fe909ab0f8d7680047b248a4b47",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Mission Control N3 Evidence Metrics",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mission-control-n3-evidence.yml",
+   "reasons": [
+    "RED_NOW_MASTER"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "FLAKY",
+     "current": "GREEN",
+     "green_streak": 34,
+     "latest_age_days": 1.7,
+     "latest_sha": "285c667aa01b948e00f0bab36bfab6de1dbc7021",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 3,
+     "latest_age_days": 1.7,
+     "latest_pr": 726,
+     "latest_sha": "8dc23c6ea497d5d9d2e8ecb017abe51a41976e46",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Mission Control v2 Contract",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mission-control-v2-contract.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.9,
+     "latest_sha": "4bfccf5ce845cabf2fa7a6cc283278e586edd690",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Mission Control W4 SPINE control-plane (read-only)",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mission-control-w4-spine.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "MP_P6 MIP Skill Portability Hardening",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/mp-p6-mip-skill-hardening.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 3,
+     "latest_age_days": 1.3,
+     "latest_sha": "7cfe0d1f0e5d0dbd04d9ef58ed622560876fd98f",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.3,
+     "latest_pr": 745,
+     "latest_sha": "15dcda2b70d0bb47491c4043d4e7d5f4dd79e5bc",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "P process (Code Purple x EVERRED) offline tests",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-node@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/p-process.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-node@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "QBD Public Three-Repository Observer",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/qbd-public-three-observer.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.6,
+     "latest_pr": 732,
+     "latest_sha": "a4697e4706f996e0c00212a26f217e9fe27d72ff",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "QPS M09 Legacy Processor Repair Probe",
+   "node20_uses": [
+    "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/qps-m09-legacy-processor-truth.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "QPS gg_MATH P4 Orchestration Plan",
+   "node20_uses": [],
+   "path": ".github/workflows/qps-math-wormhole-plan.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "EVERRED",
+     "current": "RED",
+     "green_streak": 0,
+     "latest_age_days": 2.8,
+     "latest_pr": 653,
+     "latest_sha": "f28af6bb84323ca3511b3fb4061544fc18dd35f8",
+     "merged_red_prs": 1,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "QPS Metric Census Federation N-pulse",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/qps-metric-census-federation.yml",
+   "reasons": [
+    "RED_NOW_PR"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/download-artifact@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "EXCLUDED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "QPS Metric Census Reusable Receiver",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/qps-metric-census-receiver.yml",
+   "reasons": [
+    "NO_PULL_REQUEST_TRIGGER"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "ALL",
+    "pull_request": false,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 4,
+     "latest_age_days": 1.9,
+     "latest_sha": "fb615a6fade149f892441f76f321339243a4a8bb",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "green_streak": 0,
+     "latest_age_days": null,
+     "latest_pr": null,
+     "latest_sha": null,
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "QPS Repo Function Topology",
+   "node20_uses": [
+    "actions/checkout@v4"
+   ],
+   "path": ".github/workflows/qps-repo-function-topology.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 200,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 30,
+     "latest_age_days": 0.1,
+     "latest_pr": 668,
+     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "QPS TRIAGE ULTRA Federation Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/qps-triage-ultra-w0.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "ALL",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 38.1,
+     "latest_sha": "7cc101f41a60bce2a858d38d63930612598b6655",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "QPS TRIAGE W3 Measured Analytics",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/qps-triage-w3-analytics.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 4,
+     "latest_age_days": 7.8,
+     "latest_sha": "0f48ce7dd37ded845d1aa7601d4e840178cf8d5f",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "QPS Triage Web DoV",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/qps-triage-web.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4",
+    "ruby/setup-ruby@v1"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 6,
+     "latest_age_days": 27.8,
+     "latest_sha": "288e44f21724efe1bd46a699af6fa47d115fbee5",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "recursive-build",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ],
+   "path": ".github/workflows/recursive-build.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "recursive-doc-ke-gate",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ],
+   "path": ".github/workflows/recursive-doc-ke-gate.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 29.1,
+     "latest_sha": "7a626eb7ba446cfe89a37d33baee7ab0650a594a",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Runner Fanout MIP Control",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/runner-fanout-mip-control.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "TRIAGE Renegade Smoke",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ],
+   "path": ".github/workflows/triage-renegade-smoke.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "MissionControl Unbound Transfer Intake",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/unbound-transfer-intake-control.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "EXCLUDED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "Unified cohort evidence contract testflight",
+   "node20_uses": [],
+   "path": ".github/workflows/unified-cohort-evidence-contract.yml",
+   "reasons": [
+    "NO_PULL_REQUEST_TRIGGER"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "ALL",
+    "pull_request": false,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v7.0.1",
+    "actions/setup-python@v7.0.0",
+    "actions/upload-artifact@v7.0.2"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 35.8,
+     "latest_sha": "355e2023791d6f98c7afe42500b4743df923f892",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W189RF Exact Federation Sample 4 Return",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/w189rf-federation-sample4-return-exact.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 32.0,
+     "latest_sha": "1a695ce95927ddd2b580cd34af78768f384b06d5",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W280RF Exact Federation Sample 5 Return",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/w280rf-federation-sample5-return.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 31.9,
+     "latest_sha": "270bb4b237ff5c2a1313734a43cb0d31d32f8e70",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W283F2 Exact Federation Surface Proof",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/w283f2-federation-surface-exact.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 31.9,
+     "latest_sha": "23cdfed4042d7b1766d06ef93647c86593335731",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W283RF2 Exact Federation Surface Authority Proof",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/w283rf2-federation-surface-authority-exact.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 200,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W3-11 Non-Origin Math Consumer",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/w3-11-non-origin-math-consumer.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 200,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W3-13 Measured Fleet Telemetry",
+   "node20_uses": [
+    "actions/checkout@v4"
+   ],
+   "path": ".github/workflows/w3-13-measured-telemetry.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 200,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W3-14 Measured PCA",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/w3-14-measured-pca.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 200,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 30,
+     "latest_age_days": 0.1,
+     "latest_pr": 668,
+     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W3-16 M03 W0 Recon",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/w3-16-m03-w0-recon.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "ALL",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/upload-artifact@v4"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.8,
+     "latest_pr": 723,
+     "latest_sha": "29ff120187bde0c7e66acd48ed1efeb6cf6ff224",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W5 GitHub-first lossless telemetry and graph QA",
+   "node20_uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ],
+   "path": ".github/workflows/w5-handover-telemetry-qa.yml",
+   "reasons": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+   ]
+  },
+  {
+   "disposition": "ENFORCED",
+   "evidence": {
+    "master": {
+     "class": "FLAKY",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 0.1,
+     "latest_sha": "e5e2a23fdfe8d57d36559722bbb2c9b11345e4b2",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "FLAKY",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 0.1,
+     "latest_pr": 668,
+     "latest_sha": "70775dd7c75cc10a7ad783a53c6fb7c1f99ba7bf",
+     "merged_red_prs": 6,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Zero-Test Gate Guard",
+   "node20_uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ],
+   "path": ".github/workflows/zero-test-gate-guard.yml",
+   "reasons": [
+    "EVIDENCE_HEALTHY"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@v4",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4"
+   ]
+  }
+ ],
+ "generated_from": {
+  "master_lane": {
+   "digest_sha256": "fc21c9b42cc42bc70f12dacd64e935b95a299f1386c0bd056b7db72b0f21b7e8",
+   "observed_at_utc": "2026-10-20T12:04:22Z",
+   "schema": "gogreen.red_trace.v1",
+   "window": {
+    "oldest_run_at": "2025-09-19T05:49:32Z",
+    "runs": 4731,
+    "truncated": true,
+    "truncated_workflows": 13
+   }
+  },
+  "pr_lane": {
+   "digest_sha256": "f66af1bfc1c0a88cedb7842363ec51c35337bb6d4984ead07cfab03afbcfa01d",
+   "observed_at_utc": "2026-10-20T12:05:38Z",
+   "schema": "gogreen.red_trace.pr_lane.v1",
+   "window": {
+    "merged_prs": 100,
+    "newest_merged_at": "2026-10-20T09:47:13Z",
+    "oldest_merged_at": "2026-10-17T16:13:59Z",
+    "runs_premerge": 682
+   }
+  },
+  "previous_ledger_sha256": null
+ },
+ "ledger_sha256": "685242c635e4d35a7e8443b58fdb3d056a0197dd2c97893de3c5d7cfec68d6a1",
+ "rules": {
+  "FRESH_DAYS": 14,
+  "MIN_STREAK": 2,
+  "policy_read_from": "base branch (gate.py --policy base)",
+  "ratchet": "an ENFORCED entry is never auto-demoted; bad evidence -> demotion_candidate (OWNER)"
+ },
+ "runtime_debt": {
+  "node20_refs": [
+   "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+   "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+   "actions/checkout@v4",
+   "actions/configure-pages@v5",
+   "actions/deploy-pages@v4",
+   "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+   "actions/download-artifact@v4",
+   "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+   "actions/setup-node@v4",
+   "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+   "actions/setup-python@v5",
+   "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+   "actions/upload-artifact@v4"
+  ],
+  "node20_workflows": 142,
+  "unresolved_refs": []
+ },
+ "runtimes": {
+  "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683": "node20",
+  "actions/checkout@11d5960a326750d5838078e36cf38b85af677262": "node20",
+  "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": "node24",
+  "actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09": "node24",
+  "actions/checkout@v4": "node20",
+  "actions/checkout@v7.0.1": "node24",
+  "actions/configure-pages@v5": "node20",
+  "actions/deploy-pages@v4": "node20",
+  "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093": "node20",
+  "actions/download-artifact@v4": "node20",
+  "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020": "node20",
+  "actions/setup-node@v4": "node20",
+  "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97": "node24",
+  "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065": "node20",
+  "actions/setup-python@v5": "node20",
+  "actions/setup-python@v6": "node24",
+  "actions/setup-python@v7": "node24",
+  "actions/setup-python@v7.0.0": "node24",
+  "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a": "node24",
+  "actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f": "node24",
+  "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9": "node24",
+  "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02": "node20",
+  "actions/upload-artifact@v4": "node20",
+  "actions/upload-artifact@v7.0.2": "node24",
+  "actions/upload-pages-artifact@v3": "composite",
+  "ruby/setup-ruby@v1": "node24"
+ },
+ "schema": "gogreen.required_gate.admission.v1"
+}

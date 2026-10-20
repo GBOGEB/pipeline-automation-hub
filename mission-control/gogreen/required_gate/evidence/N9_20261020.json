@@ -1,0 +1,343 @@
+{
+ "admission": {
+  "counts": {
+   "ENFORCED": 44,
+   "EXCLUDED": 4,
+   "OBSERVED": 102
+  },
+  "coverage": {
+   "dispositioned": 150,
+   "enforced_of_pr_scoped": 44,
+   "pull_request_scoped": 147,
+   "with_any_evidence": 101,
+   "with_evidence": {
+    "master": 74,
+    "pr": 57
+   },
+   "workflow_files": 150
+  },
+  "runtime_debt": {
+   "node20_refs": [
+    "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+    "actions/checkout@v4",
+    "actions/configure-pages@v5",
+    "actions/deploy-pages@v4",
+    "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+    "actions/download-artifact@v4",
+    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+    "actions/setup-node@v4",
+    "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+    "actions/upload-artifact@v4"
+   ],
+   "node20_workflows": 142,
+   "unresolved_refs": []
+  }
+ },
+ "authority": {
+  "actor": "AGENT",
+  "branch_protection_changed": false,
+  "merge_authorized": false,
+  "root_closure_credit": null
+ },
+ "backtest": {
+  "admission_ledger": {
+   "enforced": 44,
+   "non_pending_findings": [
+    {
+     "pr": 658,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/code-purple-method-atlas.yml"
+    },
+    {
+     "pr": 699,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/code-purple-method-atlas.yml"
+    },
+    {
+     "pr": 699,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/cp-close-github-qa.yml"
+    },
+    {
+     "pr": 699,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/live-lossless-qa.yml"
+    },
+    {
+     "pr": 700,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/code-purple-method-atlas.yml"
+    },
+    {
+     "pr": 721,
+     "reason": "CANCELLED_AT_MERGE",
+     "workflow": ".github/workflows/gogreen-pulses.yml"
+    },
+    {
+     "pr": 727,
+     "reason": "CANCELLED_AT_MERGE",
+     "workflow": ".github/workflows/gogreen-g4-fleet.yml"
+    },
+    {
+     "pr": 726,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/zero-test-gate-guard.yml"
+    },
+    {
+     "pr": 725,
+     "reason": "CANCELLED_AT_MERGE",
+     "workflow": ".github/workflows/gogreen-pulses.yml"
+    },
+    {
+     "pr": 729,
+     "reason": "ABSENT_OR_FILTER_DRIFT",
+     "workflow": ".github/workflows/code-purple-method-atlas.yml"
+    },
+    {
+     "pr": 731,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/zero-test-gate-guard.yml"
+    },
+    {
+     "pr": 730,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/zero-test-gate-guard.yml"
+    },
+    {
+     "pr": 732,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/zero-test-gate-guard.yml"
+    },
+    {
+     "pr": 735,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/zero-test-gate-guard.yml"
+    },
+    {
+     "pr": 741,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/code-purple-method-atlas.yml"
+    },
+    {
+     "pr": 756,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/zero-test-gate-guard.yml"
+    }
+   ],
+   "summary": {
+    "applicable_checks": 628,
+    "by_reason": {
+     "ABSENT_OR_FILTER_DRIFT": 1,
+     "CANCELLED_AT_MERGE": 3,
+     "PENDING_AT_MERGE": 398,
+     "RED_AT_MERGE": 12
+    },
+    "evaluated": 100,
+    "prs_with_applicable_gate": 100,
+    "would_fail": 83,
+    "would_have_caught_red": 10,
+    "would_pass": 17
+   }
+  },
+  "bootstrap_n8": {
+   "enforced": 2,
+   "non_pending_findings": [
+    {
+     "pr": 658,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/code-purple-method-atlas.yml"
+    },
+    {
+     "pr": 699,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/code-purple-method-atlas.yml"
+    },
+    {
+     "pr": 699,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/live-lossless-qa.yml"
+    },
+    {
+     "pr": 700,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/code-purple-method-atlas.yml"
+    },
+    {
+     "pr": 729,
+     "reason": "ABSENT_OR_FILTER_DRIFT",
+     "workflow": ".github/workflows/code-purple-method-atlas.yml"
+    },
+    {
+     "pr": 741,
+     "reason": "RED_AT_MERGE",
+     "workflow": ".github/workflows/code-purple-method-atlas.yml"
+    }
+   ],
+   "summary": {
+    "applicable_checks": 89,
+    "by_reason": {
+     "ABSENT_OR_FILTER_DRIFT": 1,
+     "PENDING_AT_MERGE": 64,
+     "RED_AT_MERGE": 5
+    },
+    "evaluated": 100,
+    "prs_with_applicable_gate": 65,
+    "would_fail": 52,
+    "would_have_caught_red": 4,
+    "would_pass": 48
+   }
+  }
+ },
+ "caveats": [
+  "trigger filters read from today's workflow files; historical filter drift possible",
+  "ABSENT_OR_FILTER_DRIFT = no run on the merged head before merge (trigger miss or drift)",
+  "an observation about merge-time state, not a root, attribution or required-check claim"
+ ],
+ "inputs": {
+  "ADMISSION.json": {
+   "ledger_sha256": "685242c635e4d35a7e8443b58fdb3d056a0197dd2c97893de3c5d7cfec68d6a1"
+  },
+  "backtest.json": {
+   "sha256": "c36bdec680d3e8306195adcf16f8ace413e273b24bca6bfd61c73de9c2d81444"
+  },
+  "red_trace.json": {
+   "digest_sha256": "fc21c9b42cc42bc70f12dacd64e935b95a299f1386c0bd056b7db72b0f21b7e8",
+   "sha256": "e068b6f3538c71524f09425324135574498fd1edb2de26fba54ca5fcbf49614f"
+  },
+  "red_trace_pr.json": {
+   "digest_sha256": "f66af1bfc1c0a88cedb7842363ec51c35337bb6d4984ead07cfab03afbcfa01d",
+   "sha256": "84c5b2399e2665269387679e9c2df98a16276f6c0cef20e19e6da1fdfe496aa9"
+  }
+ },
+ "iteration": "N+9",
+ "observed_at_utc": "2026-10-20T12:05:38Z",
+ "produced_by": [
+  "red_trace.py --per-workflow 200 --pr-lane 100 --root .",
+  "admission.py --master-trace red_trace.json --pr-trace red_trace_pr.json --resolve-runtimes",
+  "backtest.py --pr-trace red_trace_pr.json --ledger ADMISSION.json --limit 100"
+ ],
+ "repository": "GBOGEB/pipeline-automation-hub",
+ "schema": "gogreen.required_gate.evidence.v1",
+ "telemetry": {
+  "master_lane": {
+   "census": {
+    "observed": 74,
+    "workflows_total": 158
+   },
+   "counts": {
+    "EVERRED": 1,
+    "FLAKY": 7,
+    "GREEN_TO_RED": 3,
+    "RED_TO_GREEN": 12,
+    "STABLE_GREEN": 56
+   },
+   "runs": 4731
+  },
+  "merged_pr_lane": {
+   "census": {
+    "observed": 57,
+    "workflows_total": 158
+   },
+   "counts": {
+    "EVERRED": 3,
+    "FLAKY": 2,
+    "RED_TO_GREEN": 2,
+    "STABLE_GREEN": 37,
+    "UNKNOWN_NO_TERMINAL": 13
+   },
+   "merge_timing": {
+    "median_s_first_check_to_merge": 296,
+    "merged_within_120s_of_first_check": 36,
+    "prs_with_checks": 100,
+    "prs_without_premerge_checks": 0
+   },
+   "merged_with_pending_prs": 76,
+   "merged_with_red": [
+    {
+     "pr": 658,
+     "workflows": [
+      ".github/workflows/code-purple-method-atlas.yml"
+     ]
+    },
+    {
+     "pr": 653,
+     "workflows": [
+      ".github/workflows/qps-metric-census-federation.yml"
+     ]
+    },
+    {
+     "pr": 699,
+     "workflows": [
+      ".github/workflows/code-purple-method-atlas.yml",
+      ".github/workflows/cp-close-github-qa.yml",
+      ".github/workflows/live-lossless-qa.yml"
+     ]
+    },
+    {
+     "pr": 700,
+     "workflows": [
+      ".github/workflows/code-purple-method-atlas.yml",
+      ".github/workflows/gm-v-governor-readiness.yml"
+     ]
+    },
+    {
+     "pr": 726,
+     "workflows": [
+      ".github/workflows/zero-test-gate-guard.yml"
+     ]
+    },
+    {
+     "pr": 731,
+     "workflows": [
+      ".github/workflows/zero-test-gate-guard.yml"
+     ]
+    },
+    {
+     "pr": 730,
+     "workflows": [
+      ".github/workflows/zero-test-gate-guard.yml"
+     ]
+    },
+    {
+     "pr": 732,
+     "workflows": [
+      ".github/workflows/zero-test-gate-guard.yml"
+     ]
+    },
+    {
+     "pr": 735,
+     "workflows": [
+      ".github/workflows/zero-test-gate-guard.yml"
+     ]
+    },
+    {
+     "pr": 741,
+     "workflows": [
+      ".github/workflows/code-purple-method-atlas.yml"
+     ]
+    },
+    {
+     "pr": 748,
+     "workflows": [
+      ".github/workflows/gogreen-subtype-workers.yml"
+     ]
+    },
+    {
+     "pr": 756,
+     "workflows": [
+      ".github/workflows/zero-test-gate-guard.yml"
+     ]
+    }
+   ],
+   "window": {
+    "merged_prs": 100,
+    "newest_merged_at": "2026-10-20T09:47:13Z",
+    "oldest_merged_at": "2026-10-17T16:13:59Z",
+    "runs_premerge": 682
+   }
+  }
+ }
+}
