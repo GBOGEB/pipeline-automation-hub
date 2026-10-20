@@ -1,0 +1,1851 @@
+# CANONICAL GBOGEB repository registry (SSOT). Generated: python mission-control/registry/census.py repos
+# Read a tier: python mission-control/registry/census.py get mission-control/registry/REPO_TIERS.yaml all.top_7
+schema: gbogeb.registry.repos.v1
+canonical: true
+decision: '#529 G01 (owner): ONE canonical registry; every other list is a derived view or legacy input'
+schema_base: 'JADE REPO_READINESS_NPLUS1 (most developed: 21 rows x 24 fields) extended to the whole account'
+observed_at_utc: '2026-10-20T16:00:00Z'
+seed: mission-control/registry/seed/ORG_LISTING_20261020.tsv
+legacy_inputs:
+  TOP21_COHORT_ROSTER: 21
+  TOP7_CENSUS: 7
+  LIVE_CENSUS_REPOS: 5
+  RED_TRACE_CORE: 5
+score_rule: 'score = core_federation 30 (live census / red-trace core) + TOP7 12 + TOP21 8 + JADE priority (P0 5,
+  P1 3, P2 1) + recency (<=2 d 25, <=7 d 20, <=30 d 12, <=90 d 6, <=365 d 2) - fork 20 - archived 30; ties: newer
+  push first, then name'
+population: 90
+classes:
+  CORE: 5
+  SATELLITE: 3
+  OWNED: 23
+  UPSTREAM_FORK: 59
+repositories:
+- rank: 1
+  name: ABACUS
+  full_name: GBOGEB/ABACUS
+  score: 80
+  score_parts:
+    core_federation: 30
+    top7: 12
+    top21: 8
+    jade_priority: 5
+    recency: 25
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-10-20T15:54:43Z'
+  days_since_push: 0.0
+  memberships:
+  - LIVE_CENSUS_REPOS
+  - RED_TRACE_CORE
+  - TOP21_COHORT_ROSTER
+  - TOP7_CENSUS
+  jade:
+    priority: P0
+    lane: CORE
+    owner_role: DOW / evidence and acceptance
+    mach_proposal: MACH_IV_PROPOSED
+    technical_need: CI/admission first-red, missing effective reviews and security; historical root sprawl
+    next_point_release_todo: 'Reconcile #1860/#2087; classify current native first-red; qualify N+2 dashboard and
+      matched tests; repair required checks, A10, Safety and RED canary'
+  class: CORE
+- rank: 2
+  name: CODEX
+  full_name: GBOGEB/CODEX
+  score: 80
+  score_parts:
+    core_federation: 30
+    top7: 12
+    top21: 8
+    jade_priority: 5
+    recency: 25
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-10-20T15:48:21Z'
+  days_since_push: 0.0
+  memberships:
+  - LIVE_CENSUS_REPOS
+  - RED_TRACE_CORE
+  - TOP21_COHORT_ROSTER
+  - TOP7_CENSUS
+  jade:
+    priority: P0
+    lane: CORE
+    owner_role: KEB / federation consumer
+    mach_proposal: MACH_IV_PROPOSED
+    technical_need: Historical semantic-validation and governance-gate red; current federation receipts unqualified
+    next_point_release_todo: 'Resolve #977/#1037 source-owner first-red; bind consumer REX/Pages receipt to exact
+      head and prove governance before tag'
+  class: CORE
+- rank: 3
+  name: cryoplant-project
+  full_name: GBOGEB/cryoplant-project
+  score: 80
+  score_parts:
+    core_federation: 30
+    top7: 12
+    top21: 8
+    jade_priority: 5
+    recency: 25
+    fork: 0
+    archived: 0
+  visibility: private
+  fork: false
+  pushed_at: '2026-10-20T15:45:14Z'
+  days_since_push: 0.0
+  memberships:
+  - LIVE_CENSUS_REPOS
+  - RED_TRACE_CORE
+  - TOP21_COHORT_ROSTER
+  - TOP7_CENSUS
+  jade:
+    priority: P0
+    lane: CORE
+    owner_role: QPS / engineering authority
+    mach_proposal: MACH_IV_PROPOSED
+    technical_need: Exact-head qps-canonicalization failure; QPS v6 controlled release not closed
+    next_point_release_todo: 'Investigate run 39159008697; close #1959 branch protection and #1379 release/Pages
+      provenance; retain QPS domain authority'
+  class: CORE
+- rank: 4
+  name: pipeline-automation-hub
+  full_name: GBOGEB/pipeline-automation-hub
+  score: 80
+  score_parts:
+    core_federation: 30
+    top7: 12
+    top21: 8
+    jade_priority: 5
+    recency: 25
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-10-20T14:46:42Z'
+  days_since_push: 0.1
+  memberships:
+  - LIVE_CENSUS_REPOS
+  - RED_TRACE_CORE
+  - TOP21_COHORT_ROSTER
+  - TOP7_CENSUS
+  jade:
+    priority: P0
+    lane: CORE
+    owner_role: Mission Control / cohort authority
+    mach_proposal: MACH_III_PROPOSED
+    technical_need: No effective protected default; parallel Actions queue; cross-cohort denominators differ
+    next_point_release_todo: Qualify JADE native CI, align 13+8 cohort crosswalk with GM owner, add read-only Pages
+      bridge to existing publisher, verify served SHA and canary
+  class: CORE
+- rank: 5
+  name: gg_MATH
+  full_name: GBOGEB/gg_MATH
+  score: 68
+  score_parts:
+    core_federation: 30
+    top7: 0
+    top21: 8
+    jade_priority: 5
+    recency: 25
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-10-19T14:35:56Z'
+  days_since_push: 1.1
+  memberships:
+  - LIVE_CENSUS_REPOS
+  - RED_TRACE_CORE
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P0
+    lane: CORE
+    owner_role: math kernels / method authority
+    mach_proposal: MACH_III_PROPOSED
+    technical_need: Release Infrastructure v1 latest run queued; Pages and point-release evidence incomplete
+    next_point_release_todo: Verify run 39164028980 terminal exact-head, reproducible provider-proof, served Pages
+      SHA and versioned tag plan (#27)
+  class: CORE
+- rank: 6
+  name: DOCX_RTM_Automation
+  full_name: GBOGEB/DOCX_RTM_Automation
+  score: 48
+  score_parts:
+    core_federation: 0
+    top7: 12
+    top21: 8
+    jade_priority: 3
+    recency: 25
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-10-19T01:04:39Z'
+  days_since_push: 1.6
+  memberships:
+  - TOP21_COHORT_ROSTER
+  - TOP7_CENSUS
+  jade:
+    priority: P1
+    lane: EXTENSION
+    owner_role: RTM/document processing
+    mach_proposal: MACH_III_PROPOSED
+    technical_need: 62 N11 root-review candidates; latest sampled success is branch hygiene only
+    next_point_release_todo: Replay DOCX↔Markdown/RTM fidelity with negative tests and 2-step source/asset manifests;
+      link canonical launch guide without breaking old aliases
+  class: SATELLITE
+- rank: 7
+  name: Q_engineering_tools
+  full_name: GBOGEB/Q_engineering_tools
+  score: 35
+  score_parts:
+    core_federation: 0
+    top7: 12
+    top21: 8
+    jade_priority: 3
+    recency: 12
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-10-12T07:38:26Z'
+  days_since_push: 8.3
+  memberships:
+  - TOP21_COHORT_ROSTER
+  - TOP7_CENSUS
+  jade:
+    priority: P1
+    lane: EXTENSION
+    owner_role: engineering tools
+    mach_proposal: MACH_IV_PROPOSED
+    technical_need: Pages production repeat workflow skipped in current sample; engineering evidence independent
+    next_point_release_todo: Verify hosted dashboard and production-repeat owner gate; retain source-bound W184F
+      check and QPS engineering authority
+  class: SATELLITE
+- rank: 8
+  name: document-organization-system
+  full_name: GBOGEB/document-organization-system
+  score: 35
+  score_parts:
+    core_federation: 0
+    top7: 12
+    top21: 8
+    jade_priority: 3
+    recency: 12
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-10-12T07:36:09Z'
+  days_since_push: 8.3
+  memberships:
+  - TOP21_COHORT_ROSTER
+  - TOP7_CENSUS
+  jade:
+    priority: P1
+    lane: EXTENSION
+    owner_role: document organization
+    mach_proposal: MACH_III_PROPOSED
+    technical_need: Modular audit and Pages dynamic success observed; HTTP parity not verified
+    next_point_release_todo: Retest safe organize/rollback, verify Pages URL and SHA, root aliases and current release
+      manifest
+  class: SATELLITE
+- rank: 9
+  name: cryogenic-accelerator-workspace
+  full_name: GBOGEB/cryogenic-accelerator-workspace
+  score: 23
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 3
+    recency: 12
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-10-12T00:00:44Z'
+  days_since_push: 8.7
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P1
+    lane: EXTENSION
+    owner_role: workspace/runtime
+    mach_proposal: MACH_III_PROPOSED
+    technical_need: Latest successes concern branch hygiene; runtime/MCP integration unqualified
+    next_point_release_todo: Run workspace build and MCP integration negatives; source-bound docs/Pages owner pilot,
+      retain 12 root-review candidates
+  class: OWNED
+- rank: 10
+  name: cryo_leak_rate_dashboard
+  full_name: GBOGEB/cryo_leak_rate_dashboard
+  score: 23
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 3
+    recency: 12
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-10-11T23:59:27Z'
+  days_since_push: 8.7
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P1
+    lane: EXTENSION
+    owner_role: cryogenic dashboard
+    mach_proposal: MACH_III_PROPOSED
+    technical_need: 115 N11 root-review candidates; old three-format document families; Pages run success not content
+      proof
+    next_point_release_todo: Curate root START_HERE and aliases before any move; verify Pages served SHA, unit replay
+      and generated artifact lineage
+  class: OWNED
+- rank: 11
+  name: GEMINI
+  full_name: GBOGEB/GEMINI
+  score: 23
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 3
+    recency: 12
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-10-02T10:06:33Z'
+  days_since_push: 18.2
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P1
+    lane: EXTENSION
+    owner_role: runtime/workbench; owner applicability review
+    mach_proposal: MACH_III_PROPOSED
+    technical_need: Historical successful Pages workflow does not prove current HTTP content or revision
+    next_point_release_todo: Verify served Pages URL and exact SHA; qualify pyproject/GEMINI manifest and cross-platform
+      tests before tag
+  class: OWNED
+- rank: 12
+  name: yaml-grammar
+  full_name: GBOGEB/yaml-grammar
+  score: 14
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 1
+    recency: 25
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-10-19T01:04:41Z'
+  days_since_push: 1.6
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P2
+    lane: APPLICABILITY
+    owner_role: YAML grammar / static utility
+    mach_proposal: MACH_IIB_PROPOSED
+    technical_need: Actual root README is ReadMe.md; no branch-filtered Actions runs returned
+    next_point_release_todo: Preserve case-sensitive README and spec inputs; validate grammar/Makefile outputs,
+      consider offline docs not mandatory Pages
+  class: UPSTREAM_FORK
+- rank: 13
+  name: CODESPACES_jyperter
+  full_name: GBOGEB/CODESPACES_jyperter
+  score: 12
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-10-12T00:19:58Z'
+  days_since_push: 8.7
+  memberships: []
+  class: OWNED
+- rank: 14
+  name: github_Documents
+  full_name: GBOGEB/github_Documents
+  score: 12
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: 0
+    archived: 0
+  visibility: private
+  fork: false
+  pushed_at: '2026-10-11T23:59:28Z'
+  days_since_push: 8.7
+  memberships: []
+  class: OWNED
+- rank: 15
+  name: GBOGEB
+  full_name: GBOGEB/GBOGEB
+  score: 12
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-10-02T10:40:49Z'
+  days_since_push: 18.2
+  memberships: []
+  class: OWNED
+- rank: 16
+  name: github_documentorganisatiesysteem_GBOGEB
+  full_name: GBOGEB/github_documentorganisatiesysteem_GBOGEB
+  score: 11
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 1
+    recency: 2
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-06-08T13:50:28Z'
+  days_since_push: 134.1
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P2
+    lane: APPLICABILITY
+    owner_role: historical small artifact repo / applicability review
+    mach_proposal: MACH_IIB_PROPOSED
+    technical_need: Four tracked historical files, two binary ZIPs; latest workflow on different commit
+    next_point_release_todo: Owner decide archival/reference vs release scope; hash/check binary provenance; fix
+      setup.py smoke, avoid unsupported Pages mandate
+  class: OWNED
+- rank: 17
+  name: Edit_WORD_Roundtrip
+  full_name: GBOGEB/Edit_WORD_Roundtrip
+  score: 6
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 6
+    fork: 0
+    archived: 0
+  visibility: private
+  fork: false
+  pushed_at: '2026-09-11T07:45:25Z'
+  days_since_push: 39.3
+  memberships: []
+  class: OWNED
+- rank: 18
+  name: OMI_PTIT
+  full_name: GBOGEB/OMI_PTIT
+  score: 6
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 6
+    fork: 0
+    archived: 0
+  visibility: private
+  fork: false
+  pushed_at: '2026-09-11T07:45:16Z'
+  days_since_push: 39.3
+  memberships: []
+  class: OWNED
+- rank: 19
+  name: gpt_session_toolkit
+  full_name: GBOGEB/gpt_session_toolkit
+  score: 6
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 6
+    fork: 0
+    archived: 0
+  visibility: private
+  fork: false
+  pushed_at: '2026-09-11T07:45:12Z'
+  days_since_push: 39.3
+  memberships: []
+  class: OWNED
+- rank: 20
+  name: document-organization-system_GBOGEB
+  full_name: GBOGEB/document-organization-system_GBOGEB
+  score: 6
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 6
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-09-11T07:44:59Z'
+  days_since_push: 39.3
+  memberships: []
+  class: OWNED
+- rank: 21
+  name: orchestration-sandbox
+  full_name: GBOGEB/orchestration-sandbox
+  score: 6
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 6
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-09-11T07:44:48Z'
+  days_since_push: 39.3
+  memberships: []
+  class: OWNED
+- rank: 22
+  name: skills
+  full_name: GBOGEB/skills
+  score: 3
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 3
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-10-02T10:14:24Z'
+  days_since_push: 18.2
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P1
+    lane: APPLICABILITY
+    owner_role: reusable skill source authority
+    mach_proposal: MACH_III_PROPOSED
+    technical_need: Canonical skill provider, no sampled native Actions on branch and GoGREEN PR with zero checks
+    next_point_release_todo: Add schema/packaging negative tests and version registry; link skill metadata and publication;
+      owner choose HTML applicability
+  class: UPSTREAM_FORK
+- rank: 23
+  name: github-mcp-server
+  full_name: GBOGEB/github-mcp-server
+  score: 3
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 3
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-22T16:29:45Z'
+  days_since_push: 28.0
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P1
+    lane: APPLICABILITY
+    owner_role: GitHub MCP / external-derived scope review
+    mach_proposal: MACH_IIB_PROPOSED
+    technical_need: Latest scheduled Docker run queued; sampled historical OS build reds postmerge
+    next_point_release_todo: Determine upstream-derived fork applicability; run exact-head Go build/tests and Docker
+      matrix; no inherited current merge-green
+  class: UPSTREAM_FORK
+- rank: 24
+  name: anthropic
+  full_name: GBOGEB/anthropic
+  score: 2
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-06-01T03:26:04Z'
+  days_since_push: 141.5
+  memberships: []
+  class: OWNED
+- rank: 25
+  name: GBOGEB-PROGRAM-COOL
+  full_name: GBOGEB/GBOGEB-PROGRAM-COOL
+  score: 2
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-05-26T10:27:18Z'
+  days_since_push: 147.2
+  memberships: []
+  class: OWNED
+- rank: 26
+  name: ARTSTYLE-WIP
+  full_name: GBOGEB/ARTSTYLE-WIP
+  score: 2
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2026-05-26T00:58:13Z'
+  days_since_push: 147.6
+  memberships: []
+  class: OWNED
+- rank: 27
+  name: GBOGEB-profile
+  full_name: GBOGEB/GBOGEB-profile
+  score: 0
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2025-09-29T07:25:05Z'
+  days_since_push: 386.4
+  memberships: []
+  class: OWNED
+- rank: 28
+  name: dmaic-recursive-pipeline_ALL_agennts-CP-G5-GEM-ABAC-as-4-sources
+  full_name: GBOGEB/dmaic-recursive-pipeline_ALL_agennts-CP-G5-GEM-ABAC-as-4-sources
+  score: 0
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: 0
+    archived: 0
+  visibility: private
+  fork: false
+  pushed_at: '2025-08-28T01:17:59Z'
+  days_since_push: 418.6
+  memberships: []
+  class: OWNED
+- rank: 29
+  name: dmaic-recursive-pipeline
+  full_name: GBOGEB/dmaic-recursive-pipeline
+  score: 0
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2025-08-28T01:15:34Z'
+  days_since_push: 418.6
+  memberships: []
+  class: OWNED
+- rank: 30
+  name: qplant-system-v0-1-1-dmaic2-temp
+  full_name: GBOGEB/qplant-system-v0-1-1-dmaic2-temp
+  score: 0
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2025-08-26T08:11:06Z'
+  days_since_push: 420.3
+  memberships: []
+  class: OWNED
+- rank: 31
+  name: downloads-organization
+  full_name: GBOGEB/downloads-organization
+  score: 0
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2025-07-13T15:49:54Z'
+  days_since_push: 464.0
+  memberships: []
+  class: OWNED
+- rank: 32
+  name: skills-introduction-to-github
+  full_name: GBOGEB/skills-introduction-to-github
+  score: 0
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2025-06-05T15:44:47Z'
+  days_since_push: 502.0
+  memberships: []
+  class: OWNED
+- rank: 33
+  name: welcome-_-test
+  full_name: GBOGEB/welcome-_-test
+  score: 0
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: 0
+    archived: 0
+  visibility: private
+  fork: false
+  pushed_at: '2025-06-04T20:50:43Z'
+  days_since_push: 502.8
+  memberships: []
+  class: OWNED
+- rank: 34
+  name: cryogenic-compliance
+  full_name: GBOGEB/cryogenic-compliance
+  score: 0
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: 0
+    archived: 0
+  visibility: public
+  fork: false
+  pushed_at: '2025-05-08T14:28:21Z'
+  days_since_push: 530.1
+  memberships: []
+  class: OWNED
+- rank: 35
+  name: docker-stacks
+  full_name: GBOGEB/docker-stacks
+  score: -5
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 1
+    recency: 6
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-11T13:59:49Z'
+  days_since_push: 39.1
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P2
+    lane: APPLICABILITY
+    owner_role: Docker / upstream-derived scope review
+    mach_proposal: MACH_IIB_PROPOSED
+    technical_need: No branch-filtered Actions runs returned; Docker release verification unknown
+    next_point_release_todo: Owner decide fork applicability; run Dockerfile lint/build, image scan and docs smoke
+      on exact head
+  class: UPSTREAM_FORK
+- rank: 36
+  name: stale
+  full_name: GBOGEB/stale
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-29T11:58:00Z'
+  days_since_push: 21.2
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 37
+  name: CoolProp
+  full_name: GBOGEB/CoolProp
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-26T07:35:10Z'
+  days_since_push: 24.4
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 38
+  name: codespaces-jupyter
+  full_name: GBOGEB/codespaces-jupyter
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-23T19:35:09Z'
+  days_since_push: 26.9
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 39
+  name: treg
+  full_name: GBOGEB/treg
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-23T07:27:16Z'
+  days_since_push: 27.4
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 40
+  name: univer
+  full_name: GBOGEB/univer
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-23T07:04:21Z'
+  days_since_push: 27.4
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 41
+  name: claude-code-templates
+  full_name: GBOGEB/claude-code-templates
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-23T04:15:32Z'
+  days_since_push: 27.5
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 42
+  name: substrate
+  full_name: GBOGEB/substrate
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-22T23:56:02Z'
+  days_since_push: 27.7
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 43
+  name: kubernetes
+  full_name: GBOGEB/kubernetes
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-22T19:04:41Z'
+  days_since_push: 27.9
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 44
+  name: python
+  full_name: GBOGEB/python
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-22T16:31:54Z'
+  days_since_push: 28.0
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 45
+  name: scientific-agent-skills
+  full_name: GBOGEB/scientific-agent-skills
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-22T16:31:31Z'
+  days_since_push: 28.0
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 46
+  name: codex-universal
+  full_name: GBOGEB/codex-universal
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-22T16:31:01Z'
+  days_since_push: 28.0
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 47
+  name: yaml-reference-parser
+  full_name: GBOGEB/yaml-reference-parser
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-22T16:30:38Z'
+  days_since_push: 28.0
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 48
+  name: plotly.py
+  full_name: GBOGEB/plotly.py
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-22T16:29:05Z'
+  days_since_push: 28.0
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 49
+  name: telegraf
+  full_name: GBOGEB/telegraf
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-22T16:18:57Z'
+  days_since_push: 28.0
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 50
+  name: financial-services
+  full_name: GBOGEB/financial-services
+  score: -8
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 12
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-21T21:10:41Z'
+  days_since_push: 28.8
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 51
+  name: cli
+  full_name: GBOGEB/cli
+  score: -9
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 1
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-05-28T08:44:59Z'
+  days_since_push: 145.3
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P2
+    lane: APPLICABILITY
+    owner_role: CLI / upstream-derived
+    mach_proposal: MACH_IIB_PROPOSED
+    technical_need: Upstream-derived CLI; no branch-filtered runs; point-release ownership unclear
+    next_point_release_todo: Owner decide fork release necessity; validate Go build/test and binary provenance;
+      no forced Pages adoption
+  class: UPSTREAM_FORK
+- rank: 52
+  name: vscode-powershell
+  full_name: GBOGEB/vscode-powershell
+  score: -9
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 1
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-11-25T23:44:43Z'
+  days_since_push: 328.7
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P2
+    lane: APPLICABILITY
+    owner_role: PowerShell extension / upstream-derived
+    mach_proposal: MACH_IIB_PROPOSED
+    technical_need: No sampled native Actions; extension Windows/macOS/Linux compatibility not established
+    next_point_release_todo: Qualify extension packaging and platform smoke on exact head if actively maintained;
+      otherwise declared reference only
+  class: UPSTREAM_FORK
+- rank: 53
+  name: prettier
+  full_name: GBOGEB/prettier
+  score: -9
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 1
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-11-22T04:45:47Z'
+  days_since_push: 332.5
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P2
+    lane: APPLICABILITY
+    owner_role: upstream-derived / owner applicability review
+    mach_proposal: MACH_IIB_PROPOSED
+    technical_need: Upstream-derived high-volume JS source, no runs in branch-filtered recent sample
+    next_point_release_todo: Owner decide local release vs mirror; rerun pinned format/parser tests and security;
+      prefer small owner-owned navigation pointer
+  class: UPSTREAM_FORK
+- rank: 54
+  name: ariana
+  full_name: GBOGEB/ariana
+  score: -9
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 3
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-06-16T09:56:53Z'
+  days_since_push: 491.3
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P1
+    lane: EXTENSION
+    owner_role: runtime/extension; owner applicability review
+    mach_proposal: MACH_IIB_PROPOSED
+    technical_need: No branch-filtered Actions runs returned; TS extension/build qualification absent
+    next_point_release_todo: Confirm upstream/fork ownership and package.json scripts; run deterministic build and
+      extension smoke; owner decide hosted docs and release scope
+  class: UPSTREAM_FORK
+- rank: 55
+  name: python-sdk
+  full_name: GBOGEB/python-sdk
+  score: -11
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 8
+    jade_priority: 1
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-09-05T14:20:15Z'
+  days_since_push: 410.1
+  memberships:
+  - TOP21_COHORT_ROSTER
+  jade:
+    priority: P2
+    lane: APPLICABILITY
+    owner_role: SDK / upstream-derived
+    mach_proposal: MACH_IIB_PROPOSED
+    technical_need: Upstream-derived SDK; no branch-filtered CI; distribution provenance unknown
+    next_point_release_todo: Owner decide fork release scope; verify uv/pyproject lock, type tests, wheel/sdist
+      and signing if publishing
+  class: UPSTREAM_FORK
+- rank: 56
+  name: ax
+  full_name: GBOGEB/ax
+  score: -14
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 6
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-09-20T03:33:20Z'
+  days_since_push: 30.5
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 57
+  name: markdownlint
+  full_name: GBOGEB/markdownlint
+  score: -18
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-05-29T16:58:40Z'
+  days_since_push: 144.0
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 58
+  name: attest-build-provenance
+  full_name: GBOGEB/attest-build-provenance
+  score: -18
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-05-28T08:48:01Z'
+  days_since_push: 145.3
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 59
+  name: openai-node
+  full_name: GBOGEB/openai-node
+  score: -18
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-05-15T23:12:45Z'
+  days_since_push: 157.7
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 60
+  name: awesome-sysadmin
+  full_name: GBOGEB/awesome-sysadmin
+  score: -18
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-05-13T10:45:19Z'
+  days_since_push: 160.2
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 61
+  name: awesome-system-design-resources
+  full_name: GBOGEB/awesome-system-design-resources
+  score: -18
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2026-02-16T18:32:29Z'
+  days_since_push: 245.9
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 62
+  name: vscode
+  full_name: GBOGEB/vscode
+  score: -18
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-11-23T17:02:52Z'
+  days_since_push: 331.0
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 63
+  name: prettier-eslint
+  full_name: GBOGEB/prettier-eslint
+  score: -18
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-11-20T21:08:23Z'
+  days_since_push: 333.8
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 64
+  name: gk-cli
+  full_name: GBOGEB/gk-cli
+  score: -18
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-11-17T15:42:54Z'
+  days_since_push: 337.0
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 65
+  name: notebook
+  full_name: GBOGEB/notebook
+  score: -18
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-10-31T15:10:10Z'
+  days_since_push: 354.0
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 66
+  name: prettier-vscode
+  full_name: GBOGEB/prettier-vscode
+  score: -18
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 2
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-10-29T11:01:47Z'
+  days_since_push: 356.2
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 67
+  name: vscode-emacs-mcx
+  full_name: GBOGEB/vscode-emacs-mcx
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-08-25T09:11:41Z'
+  days_since_push: 421.3
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 68
+  name: eslint-config-prettier
+  full_name: GBOGEB/eslint-config-prettier
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-08-22T04:26:14Z'
+  days_since_push: 424.5
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 69
+  name: tesseract
+  full_name: GBOGEB/tesseract
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-08-15T21:00:54Z'
+  days_since_push: 430.8
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 70
+  name: camelot
+  full_name: GBOGEB/camelot
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-08-15T12:03:02Z'
+  days_since_push: 431.2
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 71
+  name: haikus-for-codespaces
+  full_name: GBOGEB/haikus-for-codespaces
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-06-23T14:00:44Z'
+  days_since_push: 484.1
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 72
+  name: node-glob
+  full_name: GBOGEB/node-glob
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-06-12T20:33:05Z'
+  days_since_push: 494.8
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 73
+  name: openai-cookbook
+  full_name: GBOGEB/openai-cookbook
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-05-27T14:42:40Z'
+  days_since_push: 511.1
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 74
+  name: awesome-deep-learning
+  full_name: GBOGEB/awesome-deep-learning
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-05-26T12:28:00Z'
+  days_since_push: 512.1
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 75
+  name: omi
+  full_name: GBOGEB/omi
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-05-26T02:10:29Z'
+  days_since_push: 512.6
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 76
+  name: ExplorerPatcher
+  full_name: GBOGEB/ExplorerPatcher
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-05-20T22:58:10Z'
+  days_since_push: 517.7
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 77
+  name: awesome
+  full_name: GBOGEB/awesome
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-05-19T10:23:15Z'
+  days_since_push: 519.2
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 78
+  name: grid-table-editor
+  full_name: GBOGEB/grid-table-editor
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-05-13T21:12:59Z'
+  days_since_push: 524.8
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 79
+  name: css-protips
+  full_name: GBOGEB/css-protips
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-03-20T14:10:02Z'
+  days_since_push: 579.1
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 80
+  name: vscode-drawio
+  full_name: GBOGEB/vscode-drawio
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-02-26T10:49:57Z'
+  days_since_push: 601.2
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 81
+  name: Awesome-Hacking
+  full_name: GBOGEB/Awesome-Hacking
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2025-01-18T01:48:02Z'
+  days_since_push: 640.6
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 82
+  name: ExcelAddinInstaller
+  full_name: GBOGEB/ExcelAddinInstaller
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2024-12-07T19:31:56Z'
+  days_since_push: 681.9
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 83
+  name: the-book-of-secret-knowledge
+  full_name: GBOGEB/the-book-of-secret-knowledge
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2024-11-19T14:00:38Z'
+  days_since_push: 700.1
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 84
+  name: segment-anything
+  full_name: GBOGEB/segment-anything
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2024-09-18T17:46:55Z'
+  days_since_push: 761.9
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 85
+  name: RouteLLM
+  full_name: GBOGEB/RouteLLM
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2024-08-10T19:10:15Z'
+  days_since_push: 800.9
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 86
+  name: python-proofreader
+  full_name: GBOGEB/python-proofreader
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2024-04-02T09:11:27Z'
+  days_since_push: 931.3
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 87
+  name: inkscape
+  full_name: GBOGEB/inkscape
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2022-03-03T20:52:00Z'
+  days_since_push: 1691.8
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 88
+  name: morris.js
+  full_name: GBOGEB/morris.js
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2021-10-07T12:56:12Z'
+  days_since_push: 1839.1
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 89
+  name: Encode-Sans
+  full_name: GBOGEB/Encode-Sans
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2020-06-24T19:37:08Z'
+  days_since_push: 2308.8
+  memberships: []
+  class: UPSTREAM_FORK
+- rank: 90
+  name: code-prettify
+  full_name: GBOGEB/code-prettify
+  score: -20
+  score_parts:
+    core_federation: 0
+    top7: 0
+    top21: 0
+    jade_priority: 0
+    recency: 0
+    fork: -20
+    archived: 0
+  visibility: public
+  fork: true
+  pushed_at: '2020-04-21T16:43:49Z'
+  days_since_push: 2373.0
+  memberships: []
+  class: UPSTREAM_FORK
+merge_authorized: false
