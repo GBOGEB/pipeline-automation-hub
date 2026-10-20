@@ -51,7 +51,7 @@ class BurndownTests(unittest.TestCase):
   with tempfile.TemporaryDirectory() as t:
    h={};r=bridge.stage_jade(ROOT,t,h,'a'*40)
    self.assertEqual(r['burndown_assets_in_pages'],7)
-   self.assertEqual(len(h),23)
+   self.assertEqual(len(h),27)
    self.assertEqual(h['jade/burndown-manifest.json'],bridge.sha256(ROOT/'site/burndown-manifest.json'))
  def test_n2_changed_source_rejected(self):
   import shutil

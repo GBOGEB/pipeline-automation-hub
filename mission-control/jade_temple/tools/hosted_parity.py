@@ -23,7 +23,8 @@ REQUIRED_JADE={"jade/index.html","jade/green.html","jade/jade.css","jade/jade.js
  "jade/burndown.html","jade/burndown.css","jade/burndown.js","jade/burndown-data.js",
  "jade/burndown.json","jade/burndown.csv","jade/burndown-manifest.json",
  "jade/eightpoint.html","jade/eightpoint.css","jade/eightpoint.js",
- "jade/eightpoint-data.js","jade/eightpoint.json","jade/eightpoint.csv","jade/eightpoint-manifest.json"}
+ "jade/eightpoint-data.js","jade/eightpoint.json","jade/eightpoint.csv","jade/eightpoint-manifest.json",
+ "jade/redtrace.html","jade/redtrace-slides.html","jade/redtrace-slides.pdf","jade/redtrace-manifest.json"}
 MAX_BYTES=2_000_000
 
 
@@ -96,6 +97,15 @@ def trusted_files(root: Path, head: str) -> dict[str, str]:
     for rel,want in eight.get('public_files_sha256',{}).items():
         if 'jade/'+rel not in jade or jade['jade/'+rel]!=want:
             raise ValueError('JADE_EIGHT_HOSTED_MANIFEST_MISMATCH')
+    red=json.loads((root/'jade/redtrace-manifest.json').read_text(encoding='utf-8'))
+    if not (red.get('schema')=='jade.temple.redtrace_manifest.v1'
+            and red.get('merge_authorized') is False
+            and red.get('pdf',{}).get('file')=='redtrace-slides.pdf'
+            and red.get('pdf',{}).get('deterministic') is False):
+        raise ValueError('JADE_N8_UNSAFE_HOSTED_CLAIM')
+    for rel,want in red.get('public_files_sha256',{}).items():
+        if 'jade/'+rel not in jade or jade['jade/'+rel]!=want:
+            raise ValueError('JADE_N8_HOSTED_MANIFEST_MISMATCH')
     return jade
 
 

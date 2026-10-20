@@ -19,6 +19,49 @@ BURNDOWN_SOURCES={
     'data/STOP_MODEL_NPLUS2.json','data/REPO_READINESS_NPLUS1.json',
 }
 
+REDTRACE_REQUIRED={'redtrace.html','redtrace-slides.html','redtrace-slides.pdf','redtrace-manifest.json'}
+REDTRACE_SOURCES={'data/RED_TRACE_FEDERATION_N8.json','data/GAP_ANALYSIS_N8.json'}
+REDTRACE_PDF_MAX=2_000_000
+
+def stage_redtrace(project_root, output_root, portal_hashes):
+    """Fail-closed optional N+8 red-trace child: ledger page, 16:9 slides, interactive PDF.
+
+    HTML/manifest bytes are deterministic and digest-bound to the committed sources; the PDF
+    (Chromium print, not byte-deterministic) is bound by magic, size bound and the slide
+    count recorded in the manifest outline, and is published byte-for-byte as committed."""
+    project_root,output_root=Path(project_root),Path(output_root)
+    site=project_root/'site'
+    names={x for x in REDTRACE_REQUIRED if (site/x).exists()}
+    if not names:
+        return 0
+    if names!=REDTRACE_REQUIRED:
+        raise ValueError('JADE_N8_PARTIAL_SITE')
+    m=json.loads((site/'redtrace-manifest.json').read_text('utf-8'))
+    if not (m.get('schema')=='jade.temple.redtrace_manifest.v1'
+            and m.get('merge_authorized') is False
+            and m.get('pdf',{}).get('file')=='redtrace-slides.pdf'
+            and set(m.get('public_files_sha256',{}))=={'redtrace.html','redtrace-slides.html'}
+            and set(m.get('sources_sha256',{}))==REDTRACE_SOURCES
+            and isinstance(m.get('slide_outline'),list) and m['slide_outline']):
+        raise ValueError('JADE_N8_UNSAFE_MANIFEST')
+    for rel,want in m['sources_sha256'].items():
+        if not SHA256.fullmatch(want) or sha256(project_root/rel)!=want:
+            raise ValueError('JADE_N8_SOURCE_DIGEST_DRIFT: '+rel)
+    for name,want in m['public_files_sha256'].items():
+        src=site/name
+        if not SHA256.fullmatch(want) or src.is_symlink() or not src.is_file() or sha256(src)!=want:
+            raise ValueError('JADE_N8_STATIC_DIGEST_DRIFT: '+name)
+    pdf=site/'redtrace-slides.pdf'
+    raw=pdf.read_bytes() if pdf.is_file() and not pdf.is_symlink() else b''
+    if not (raw[:5]==b'%PDF-' and 0<len(raw)<=REDTRACE_PDF_MAX
+            and raw.count(b'/Type /Page')-raw.count(b'/Type /Pages')>=len(m['slide_outline'])):
+        raise ValueError('JADE_N8_BAD_PDF')
+    for name in sorted(REDTRACE_REQUIRED):
+        dst=output_root/'jade'/name;dst.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copyfile(site/name,dst)
+        portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
+    return len(REDTRACE_REQUIRED)
+
 def stage_burndown(project_root, output_root, portal_hashes):
     """Fail-closed optional N+2 child, no new publisher or admission claim."""
     project_root,output_root=Path(project_root),Path(output_root)
@@ -168,14 +211,16 @@ def stage_jade(project_root, output_root, portal_hashes, source_sha):
         portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
     n2_assets=stage_burndown(project_root,output_root,portal_hashes)
     n3_assets=stage_eight_point(project_root,output_root,portal_hashes)
+    n8_assets=stage_redtrace(project_root,output_root,portal_hashes)
     proof={'schema':'jade.temple.pages_bridge.v1','presentation_head':source_sha,
         'publisher':'EXISTING_METHOD_ATLAS_PAGES_ONLY','merge_admission':'HOLD',
         'authority_transfer':False,'security_waiver':False,
         'hosted_http_verified':False,'native_release_admission':None,
         'site_manifest_sha256':sha256(site/'site-manifest.json'),
         'cohort_overlap':[13,21],'repository_count':21,
-        'files_in_pages':len(STATIC_REQUIRED)+n2_assets+n3_assets,
-        'burndown_assets_in_pages':n2_assets,'eightpoint_assets_in_pages':n3_assets}
+        'files_in_pages':len(STATIC_REQUIRED)+n2_assets+n3_assets+n8_assets,
+        'burndown_assets_in_pages':n2_assets,'eightpoint_assets_in_pages':n3_assets,
+        'redtrace_assets_in_pages':n8_assets}
     dst=output_root/'jade'/'publisher-receipt.json'
     dst.write_text(json.dumps(proof,sort_keys=True,indent=2)+'\n',encoding='utf-8')
     portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)

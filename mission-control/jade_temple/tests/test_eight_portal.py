@@ -17,8 +17,8 @@ class EightPortal(unittest.TestCase):
   with tempfile.TemporaryDirectory() as temp:
    hash={};proof=bridge.stage_jade(ROOT,temp,hash,SHA)
    self.assertEqual(proof['eightpoint_assets_in_pages'],7)
-   self.assertEqual(proof['files_in_pages'],22)
-   self.assertEqual(len(hash),23)
+   self.assertEqual(proof['files_in_pages'],26)
+   self.assertEqual(len(hash),27)
    self.assertFalse(proof['hosted_http_verified'])
    self.assertEqual(hash['jade/eightpoint.html'],bridge.sha256(ROOT/'site/eightpoint.html'))
  def test_partial_page_population_fails(self):

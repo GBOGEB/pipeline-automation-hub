@@ -7,7 +7,8 @@ class BridgeTest(unittest.TestCase):
  def test_stage_copy_and_manifest(self):
   with tempfile.TemporaryDirectory() as t:
    hashes={};p=mod.stage_jade(ROOT,t,hashes,HEAD)
-   self.assertEqual(p['files_in_pages'],22);self.assertEqual(len(hashes),23)
+   self.assertEqual(p['files_in_pages'],26);self.assertEqual(len(hashes),27)
+   self.assertEqual(p['redtrace_assets_in_pages'],4)
    self.assertEqual(p['burndown_assets_in_pages'],7)
    self.assertEqual(p['eightpoint_assets_in_pages'],7)
    self.assertEqual(hashes['jade/eightpoint.html'],mod.sha256(ROOT/'site/eightpoint.html'))

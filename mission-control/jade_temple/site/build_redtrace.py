@@ -183,7 +183,7 @@ def page(fed, gap):
 <title>JADE N+8 · Red-trace federation ledger</title><link rel="stylesheet" href="jade.css"><style>{CSS}</style></head><body>
 <a class="skip" href="#main">Skip to content</a><div class="app-shell">{MAST.format(obs=E(fed["observed_at_utc"]))}<main id="main" class="rt-wrap">
 <h1 class="rt-h1">Which workflows are red, since when, and why?</h1>
-<p class="rt-lead">Per-workflow EVERRED · GREEN→RED · RED→GREEN · FLAKY ledger for the five federation core repositories, from native Actions history (one outcome per head SHA, terminal results only). Break windows link to the first red run. <a href="redtrace-slides.html">Slides</a> · <a href="redtrace-slides.pdf">Interactive PDF</a> · <a href="../data/RED_TRACE_FEDERATION_N8.json">Data</a> · <a href="../data/GAP_ANALYSIS_N8.json">Gap analysis</a></p>
+<p class="rt-lead">Per-workflow EVERRED · GREEN→RED · RED→GREEN · FLAKY ledger for the five federation core repositories, from native Actions history (one outcome per head SHA, terminal results only). Break windows link to the first red run. <a href="redtrace-slides.html">Slides</a> · <a href="redtrace-slides.pdf">Interactive PDF</a> · <a href="https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json">Data</a> · <a href="https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/jade_temple/data/GAP_ANALYSIS_N8.json">Gap analysis</a></p>
 {kpis(fed, gap)}
 <h2 class="rt-sec" id="core">Core repositories: pipeline and federation</h2>{core_block(gap)}
 <h2 class="rt-sec" id="score">Federation scoreboard</h2><div class="rt-card">{bars(fed)}</div>
