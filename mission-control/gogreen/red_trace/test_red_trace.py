@@ -157,6 +157,27 @@ class ReaderGuard(unittest.TestCase):
         self.assertTrue(got["truncated"])
         self.assertEqual(got["truncated_workflows"]["w.yml"], {"fetched": 100, "total": 250})
 
+    def test_collect_paginates_workflow_listing(self):
+        wfs=[{"id":i,"path":f"w{i}.yml"} for i in range(1,151)]
+        def opener(req, timeout):
+            u=req.full_url
+            if "/actions/workflows?" in u:
+                page=int(u.split("page=")[-1]); body={"total_count":150,"workflows":wfs[(page-1)*100:page*100]}
+            else:
+                body={"total_count":0,"workflow_runs":[]}
+            return io.BytesIO(json.dumps(body).encode())
+        r=t.Reader(REPO, token="", opener=opener)
+        t.collect(r,"master",per_workflow=10)
+        self.assertEqual(r.requests, 2+150)
+
+    def test_incomplete_workflow_census_fails_closed(self):
+        def opener(req, timeout):
+            if "/actions/workflows?" in req.full_url:
+                return io.BytesIO(json.dumps({"total_count":5,"workflows":[{"id":1,"path":"a.yml"}]}).encode())
+            return io.BytesIO(json.dumps({"workflow_runs":[]}).encode())
+        with self.assertRaisesRegex(ValueError,"incomplete"):
+            t.collect(t.Reader(REPO, token="", opener=opener),"master",per_workflow=10)
+
     def test_token_not_in_outputs(self):
         with tempfile.TemporaryDirectory() as d:
             src = Path(d) / "runs.json"

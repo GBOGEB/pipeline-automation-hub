@@ -58,9 +58,19 @@ class Reader:
 def collect(reader: Reader, branch: str, per_workflow: int) -> dict:
     """Per-workflow history (the global run listing is capped at 1000 by the API, which
     starves rarely-run workflows). Truncation is recorded per workflow from total_count."""
-    wfs = reader.get(f"/repos/{reader.repo}/actions/workflows?per_page=100").get("workflows")
-    if not isinstance(wfs, list):
-        raise ValueError("workflows missing")
+    wfs, wpage = [], 1
+    while True:  # repos here carry 150-250 workflows; one page silently dropped >half of them
+        data = reader.get(f"/repos/{reader.repo}/actions/workflows?per_page=100&page={wpage}")
+        batch = data.get("workflows")
+        if not isinstance(batch, list):
+            raise ValueError("workflows missing")
+        wfs += batch
+        total = data.get("total_count")
+        if len(batch) < 100 or (isinstance(total, int) and len(wfs) >= total) or wpage >= 20:
+            break
+        wpage += 1
+    if isinstance(data.get("total_count"), int) and len(wfs) < data["total_count"]:
+        raise ValueError(f"workflow census incomplete: {len(wfs)}/{data['total_count']}")
     runs, truncated = [], {}
     for wf in wfs:
         got, page, total = [], 1, None
