@@ -1,0 +1,126 @@
+name: GOGREEN Federation Spine (read-only)
+
+# N+11: the hub's control spine (red-trace both lanes -> admission -> backtest -> depth)
+# replayed over every core repository, rolled into one federation view.
+# Public repos (ABACUS, CODEX, gg_MATH) are read with the run's own token. The private
+# cryoplant-project is read only when the owner installs CROSS_REPO_READ_TOKEN; without it
+# the row is a typed DEFERRED (zero requests, never green), same contract as #698.
+# Per-repo ledgers are proposals only: nothing outside the hub is enforced.
+# PR runs execute the offline controls only, so they never compete with the red-trace
+# ledger for the API budget; the live pass runs on schedule and dispatch.
+# gogreen-admission: observe
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/required_gate/**'
+      - 'mission-control/gogreen/red_trace/**'
+      - '.github/workflows/gogreen-federation-spine.yml'
+  schedule:
+    - cron: '23 5 * * *'
+  workflow_dispatch:
+    inputs:
+      pr_lane:
+        description: Merged PRs traced per repo
+        default: '30'
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+concurrency:
+  group: gogreen-federation-spine-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  spine:
+    name: Federation spine (5 repos)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0 (node24)
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Offline controls
+        run: |
+          python -m pip install --disable-pip-version-check pyyaml==6.0.3
+          python -m unittest discover -s mission-control/gogreen/required_gate -p 'test_federation.py' -v
+      - name: Check out public federation repos (read-only, shallow)
+        if: github.event_name != 'pull_request'
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/fed"
+          for r in ABACUS CODEX gg_MATH; do
+            GIT_LFS_SKIP_SMUDGE=1 git clone -q --depth 1 "https://github.com/GBOGEB/$r" "$RUNNER_TEMP/fed/$r"
+          done
+      - name: Check out private cryoplant-project when a cross-repo credential exists
+        if: github.event_name != 'pull_request'
+        env:
+          CROSS_REPO_READ_TOKEN: ${{ secrets.CROSS_REPO_READ_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CROSS_REPO_READ_TOKEN:-}" ]; then
+            echo "::warning title=federation spine::cryoplant-project DEFERRED_NO_CROSS_REPO_READ_TOKEN (0 requests)"
+            exit 0
+          fi
+          git -c "http.extraheader=Authorization: Basic $(printf 'x-access-token:%s' "$CROSS_REPO_READ_TOKEN" | base64 -w0)" \
+            clone -q --depth 1 https://github.com/GBOGEB/cryoplant-project "$RUNNER_TEMP/fed/cryoplant-project"
+      - name: Trace both lanes per repository (GET only)
+        if: github.event_name != 'pull_request'
+        env:
+          HUB_TOKEN: ${{ github.token }}
+          CROSS_REPO_READ_TOKEN: ${{ secrets.CROSS_REPO_READ_TOKEN }}
+          PR_LANE: ${{ inputs.pr_lane || '30' }}
+        run: |
+          set -euo pipefail
+          T="$RUNNER_TEMP/traces"; mkdir -p "$T"
+          trace() {  # repo branch root token
+            GITHUB_TOKEN="$4" python mission-control/gogreen/red_trace/red_trace.py --repo "$1" --branch "$2" \
+              --per-workflow 100 --no-enrich --root "$3" --pr-lane "$PR_LANE" --out "$T/${1#GBOGEB/}"
+          }
+          trace GBOGEB/pipeline-automation-hub master . "$HUB_TOKEN"
+          for r in ABACUS CODEX gg_MATH; do trace "GBOGEB/$r" main "$RUNNER_TEMP/fed/$r" "$HUB_TOKEN"; done
+          if [ -d "$RUNNER_TEMP/fed/cryoplant-project" ]; then
+            trace GBOGEB/cryoplant-project main "$RUNNER_TEMP/fed/cryoplant-project" "$CROSS_REPO_READ_TOKEN"
+          fi
+      - name: Federation rollup (admission proposal, backtest, depth census)
+        if: github.event_name != 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python - "$RUNNER_TEMP" <<'PY'
+          import json, os, subprocess, sys
+          t = sys.argv[1]
+          def head(p):
+              return subprocess.run(["git", "-C", p, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip() or None
+          spec = [{"repo": "GBOGEB/pipeline-automation-hub", "branch": "master", "root": ".", "head_sha": head("."),
+                   "trace_dir": f"{t}/traces/pipeline-automation-hub",
+                   "ledger": "mission-control/gogreen/required_gate/ADMISSION.json"}]
+          for r in ("ABACUS", "CODEX", "cryoplant-project", "gg_MATH"):
+              root = f"{t}/fed/{r}"
+              if os.path.isdir(root):
+                  spec.append({"repo": f"GBOGEB/{r}", "branch": "main", "root": root, "head_sha": head(root),
+                               "trace_dir": f"{t}/traces/{r}"})
+              else:
+                  spec.append({"repo": f"GBOGEB/{r}", "root": None,
+                               "deferred_reason": "DEFERRED_NO_CROSS_REPO_READ_TOKEN (private)"})
+          json.dump(spec, open(f"{t}/spec.json", "w"), indent=1)
+          PY
+          # Backtest file reads use the hub token; repos it cannot read are warned per PR, never dropped.
+          python mission-control/gogreen/required_gate/federation.py --spec "$RUNNER_TEMP/spec.json" \
+            --backtest-limit 20 --out "$RUNNER_TEMP/federation"
+          cat "$RUNNER_TEMP/federation/federation.md" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6.0.0 (node24)
+        if: always() && github.event_name != 'pull_request'
+        with:
+          name: gogreen-federation-spine-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/federation/
+            ${{ runner.temp }}/traces/
+            ${{ runner.temp }}/spec.json
+          if-no-files-found: warn
+          retention-days: 90
