@@ -82,3 +82,55 @@ class PulseReceiptTests(unittest.TestCase):
         cov=json.loads(fixture()[0])
         cov['files']['mission-control/gogreen/spine.py']['summary']['num_statements']=0
         with self.assertRaisesRegex(ValueError,'incoherent'):report(json.dumps(cov).encode())
+
+    def test_foreign_root_fragment_rejected(self):
+        cov=json.loads(fixture()[0])
+        rec=cov['files'].pop('mission-control/gogreen/spine.py')
+        cov['files']['unrelated/mission-control/gogreen/spine.py']=rec
+        with self.assertRaisesRegex(ValueError,'ambiguous coverage production path'):
+            report(json.dumps(cov).encode())
+
+    def test_parent_traversal_production_alias_rejected(self):
+        cov=json.loads(fixture()[0])
+        rec=cov['files'].pop('mission-control/gogreen/spine.py')
+        cov['files']['mission-control/gogreen/../gogreen/spine.py']=rec
+        with self.assertRaisesRegex(ValueError,'ambiguous coverage production path'):
+            report(json.dumps(cov).encode())
+
+    def test_valid_control_scope_still_matched(self):
+        baseline=report()
+        current=report(comparison=baseline)
+        self.assertEqual('MATCHED_SCOPE',current['comparability'])
+        self.assertEqual(0,current['comparable_delta_pp'])
+
+    def test_forged_baseline_aggregate_rejected(self):
+        baseline=report()
+        baseline['coverage']['combined_covered']=16
+        with self.assertRaisesRegex(ValueError,'baseline coverage integrity: aggregate mismatch'):
+            report(comparison=baseline)
+
+    def test_forged_baseline_percent_rejected(self):
+        baseline=report()
+        baseline['coverage']['combined_percent']=99.0
+        with self.assertRaisesRegex(ValueError,'baseline coverage integrity: aggregate mismatch'):
+            report(comparison=baseline)
+
+    def test_baseline_authority_forgery_rejected(self):
+        baseline=report()
+        baseline['merge_authorized']=True
+        with self.assertRaisesRegex(ValueError,'baseline coverage integrity: provenance or authority'):
+            report(comparison=baseline)
+
+    def test_baseline_negative_numerator_rejected(self):
+        baseline=report()
+        baseline['coverage']['production_modules']['mission-control/gogreen/spine.py']['covered_lines']=-1
+        with self.assertRaisesRegex(ValueError,'baseline coverage integrity: invalid module count'):
+            report(comparison=baseline)
+
+    def test_changed_scope_remains_incomparable(self):
+        baseline=report()
+        cov=json.loads(fixture()[0])
+        cov['files']['mission-control/gogreen/spine.py']['summary']['num_branches']=7
+        receipt=report(json.dumps(cov).encode(),comparison=baseline)
+        self.assertEqual('INCOMPARABLE_SCOPE_OR_TOOL',receipt['comparability'])
+        self.assertIsNone(receipt['comparable_delta_pp'])
