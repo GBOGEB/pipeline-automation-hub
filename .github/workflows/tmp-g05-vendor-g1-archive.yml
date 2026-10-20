@@ -1,0 +1,22 @@
+name: TMP G05 vendor G1 archive (read-only, delete after use)
+on:
+  push:
+    branches: [tmp/g05-vendor-g1-archive]
+permissions:
+  actions: read
+  contents: read
+jobs:
+  fetch:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Fetch and digest-verify artifact 11968217957, emit base64 as notices
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            -o g1.zip "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/11968217957/zip"
+          echo "f926b86d377f989cfb380c587ce5cbf2843a3e7e152d0df3c4d8a3a914ba2117  g1.zip" | sha256sum -c -
+          base64 -w0 g1.zip > b64
+          split -b 3500 -d -a 2 b64 part.
+          for f in part.*; do echo "::notice title=G1ZIP ${f#part.}::$(cat "$f")"; done
