@@ -1,0 +1,112 @@
+{
+ "schema": "gm.evidence_binding.federation_pin_census.v1",
+ "observed_at_utc": "2026-10-20T12:55:00Z",
+ "repositories": [
+  {
+   "repository": "GBOGEB/pipeline-automation-hub",
+   "files_scanned": 1467,
+   "pins_total": 933,
+   "live_gate_pins": 4,
+   "historical_record_pins": 929,
+   "live_gate_pins_dead": 0,
+   "live_gate_pins_time_bomb": 0,
+   "live_gate_rows": [
+    {
+     "state": "LIVE",
+     "kind": "artifact",
+     "id": "10335023900",
+     "gates": [
+      ".github/workflows/gm-iv-recon4-promotion.yml"
+     ],
+     "days_left": 53.7
+    },
+    {
+     "state": "LIVE",
+     "kind": "id",
+     "id": "10335023900",
+     "gates": [
+      ".github/workflows/gm-iv-recon4-promotion.yml"
+     ],
+     "days_left": 53.7
+    },
+    {
+     "state": "LIVE",
+     "kind": "id",
+     "id": "34812456207",
+     "gates": [
+      ".github/workflows/gm-iv-recon4-promotion.yml"
+     ],
+     "days_left": null
+    },
+    {
+     "state": "LIVE",
+     "kind": "run",
+     "id": "34812456207",
+     "gates": [
+      ".github/workflows/gm-iv-recon4-promotion.yml"
+     ],
+     "days_left": null
+    }
+   ]
+  },
+  {
+   "repository": "GBOGEB/ABACUS",
+   "files_scanned": 2564,
+   "pins_total": 994,
+   "live_gate_pins": 0,
+   "historical_record_pins": 994,
+   "live_gate_pins_dead": 0,
+   "live_gate_pins_time_bomb": 0,
+   "live_gate_rows": []
+  },
+  {
+   "repository": "GBOGEB/CODEX",
+   "files_scanned": 1883,
+   "pins_total": 194,
+   "live_gate_pins": 0,
+   "historical_record_pins": 194,
+   "live_gate_pins_dead": 0,
+   "live_gate_pins_time_bomb": 0,
+   "live_gate_rows": []
+  },
+  {
+   "repository": "GBOGEB/cryoplant-project",
+   "files_scanned": 3178,
+   "pins_total": 1211,
+   "live_gate_pins": 1,
+   "historical_record_pins": 1210,
+   "live_gate_pins_dead": 1,
+   "live_gate_pins_time_bomb": 0,
+   "live_gate_rows": [
+    {
+     "state": "DEAD",
+     "kind": "artifact",
+     "id": "10464776497",
+     "gates": [
+      ".github/workflows/qps-w257-grandmission-i-b-temporal-pca.yml"
+     ],
+     "days_left": null
+    }
+   ]
+  },
+  {
+   "repository": "GBOGEB/gg_MATH",
+   "files_scanned": 155,
+   "pins_total": 17,
+   "live_gate_pins": 0,
+   "historical_record_pins": 17,
+   "live_gate_pins_dead": 0,
+   "live_gate_pins_time_bomb": 0,
+   "live_gate_rows": []
+  }
+ ],
+ "totals": {
+  "pins_total": 3349,
+  "live_gate_pins": 5,
+  "historical_record_pins": 3344,
+  "live_gate_pins_dead": 1,
+  "live_gate_pins_time_bomb": 0
+ },
+ "note": "Historical-record pins are committed lineage and harmless. Live-gate pins decay with artifact retention. Hub values are AFTER this PR (GM-V gates rebound, G1 archive vendored).",
+ "merge_authorized": false
+}
