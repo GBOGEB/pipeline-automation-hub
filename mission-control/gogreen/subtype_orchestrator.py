@@ -15,7 +15,7 @@ from pathlib import Path
 SCHEMA = "missioncontrol.cbd-subtype-plan.v1"
 RECEIPT = "missioncontrol.cbd-subtype-receipt.v1"
 SHA = re.compile(r"^[0-9a-f]{40}$")
-REPO = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\\Z")
+REPO = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
 PRIORITY = {"P0": 0, "P1": 1, "P2": 2}
 CATEGORY = {
     "GOVERNANCE": 0,
