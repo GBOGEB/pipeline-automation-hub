@@ -77,9 +77,22 @@ def summarize(rows: list) -> dict:
             "by_workflow": dict(sorted(by_wf.items(), key=lambda kv: (-kv[1], kv[0])))}
 
 
-def run(root, pr_lane: dict, ledger: dict | None, files_by_pr: dict, limit: int) -> dict:
+def landed_on_base(master: dict | None) -> dict:
+    """{workflow: first run on the base branch} when the master lane saw its whole history
+    (not truncated): a workflow that first ran on base after a PR merged was not there yet."""
+    out = {}
+    for w in (master or {}).get("workflows", []):
+        if w.get("first_observed_at") and not w.get("history_truncated"):
+            out[w["path"]] = w["first_observed_at"]
+    return out
+
+
+def run(root, pr_lane: dict, ledger: dict | None, files_by_pr: dict, limit: int, master: dict | None = None) -> dict:
     base = pr_lane.get("base", "master")
-    created = (pr_lane.get("census") or {}).get("created_at", {})
+    created = dict((pr_lane.get("census") or {}).get("created_at", {}))
+    for wf, at in landed_on_base(master).items():  # the later of API created_at and first base run
+        if not created.get(wf) or at > created[wf]:
+            created[wf] = at
     matrix = sorted(pr_lane["merge_matrix"], key=lambda m: (m["merged_at"], m["pr"]))[-limit:]
     matrix = [m for m in matrix if m["pr"] in files_by_pr]
     policies = {"bootstrap_n8": sorted(g.GUARDED)}
@@ -92,6 +105,7 @@ def run(root, pr_lane: dict, ledger: dict | None, files_by_pr: dict, limit: int)
                       "to": matrix[-1]["merged_at"] if matrix else None},
            "policies": {}, "caveats": [
                "trigger filters read from today's workflow files; historical filter drift possible",
+               "a workflow counts only for PRs merged after it was created and (with --master-trace) first ran on base",
                "ABSENT_OR_FILTER_DRIFT = no run on the merged head before merge (trigger miss or drift)",
                "an observation about merge-time state, not a root, attribution or required-check claim"],
            "authority": {"merge_authorized": False, "branch_protection_changed": False}}
@@ -127,6 +141,7 @@ def main(argv=None):
     ap.add_argument("--root", type=Path, default=Path("."))
     ap.add_argument("--pr-trace", type=Path, required=True)
     ap.add_argument("--ledger", type=Path)
+    ap.add_argument("--master-trace", type=Path, help="red_trace.json: skip workflows not yet on base at merge")
     ap.add_argument("--limit", type=int, default=40, help="most recent merged PRs to replay (1 files read each)")
     ap.add_argument("--files-json", type=Path, help="offline: {pr: [files]} instead of the API")
     ap.add_argument("--out", type=Path, required=True)
@@ -139,7 +154,8 @@ def main(argv=None):
     else:
         reader = g.Reader(a.repo)
         files = {m["pr"]: g.changed_files(reader, m["pr"]) for m in recent}
-    rep = run(a.root, lane, ledger, files, a.limit)
+    master = json.loads(a.master_trace.read_text()) if a.master_trace else None
+    rep = run(a.root, lane, ledger, files, a.limit, master)
     a.out.mkdir(parents=True, exist_ok=True)
     (a.out / "backtest.json").write_text(json.dumps(rep, indent=1, sort_keys=True) + "\n")
     (a.out / "backtest.md").write_text(markdown(rep))

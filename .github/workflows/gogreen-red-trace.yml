@@ -4,6 +4,7 @@ name: GOGREEN Red-Trace Ledger (read-only)
 # with break windows (last green -> first red head), suspect commits, first failing
 # step, shared break roots, staleness and pinned-evidence markers.
 # Published as the job summary (visible from every PR's Checks tab) and an artifact.
+# N+10: depth census (breadth/depth/penetration/tested + ZERO buckets) from the live ledger.
 # N+9: also traces the merged-PR lane (result of every workflow on each merged head at
 # merge time), proposes the admission ledger from both lanes and backtests the required
 # gate against merged history. All read-only.
@@ -90,9 +91,16 @@ jobs:
           set -euo pipefail
           python mission-control/gogreen/required_gate/backtest.py --repo "$GITHUB_REPOSITORY" --root . \
             --pr-trace "$RUNNER_TEMP/red-trace/red_trace_pr.json" \
+            --master-trace "$RUNNER_TEMP/red-trace/red_trace.json" \
             --ledger mission-control/gogreen/required_gate/ADMISSION.json \
             --limit 40 --out "$RUNNER_TEMP/red-trace"
           cat "$RUNNER_TEMP/red-trace/backtest.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Depth census (breadth, depth, penetration, tested, ZERO buckets; static)
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/required_gate/depth.py --root . \
+            --ledger "$RUNNER_TEMP/red-trace/admission_proposed.json" --out "$RUNNER_TEMP/red-trace"
+          cat "$RUNNER_TEMP/red-trace/depth.md" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6.0.0 (node24)
         if: always()
         with:

@@ -34,6 +34,19 @@ Anything else is `OBSERVED` with the reason codes that held it back (`RED_NOW_MA
 - **Visibility.** `OBSERVED` gates are snapshot when the enforced ones finish: a red one becomes a `::warning`, never a failure. Unlisted workflows are reported as such. The gate never waits for itself.
 - **Fail closed.** An enforced gate with no terminal run on the exact head by the deadline fails.
 
+## Depth census (N+10, `depth.py`)
+
+Static census of the control spine's own reach, with an explicit ZERO bucket per dimension. Unknown is never counted as zero, and zero is never hidden.
+
+| Dimension | Measures | ZERO bucket |
+|---|---|---|
+| Breadth | workflows with terminal red/green evidence, and on how many lanes | `ZERO_EVIDENCE` |
+| Depth | tests each workflow executes: unittest (via `scripts/zero_test_gate_audit.py`), pytest and `node --test` by static count | `ZERO_TESTS`, `UNKNOWN_TESTS` |
+| Penetration | tracked files whose change fires a PR gate, using `gate.applies()`. *Targeted* counts path-filtered gates only, because a catch-all gate reaches 100% while saying nothing about a file | `ZERO_TARGETED` files, `ZERO_PENETRATION` (dead filter) |
+| Tested | source modules a test file imports or is named after. QA/validator harnesses and config/data files are counted separately | `ZERO_TESTED` modules |
+
+`--ledger none` derives dispositions from workflow files alone, using the admission scope rules, so the same census runs on any federation repo without evidence. The red-trace workflow publishes it in the job summary from the live ledger proposal.
+
 ## Run locally (GET only)
 
 ```bash
@@ -44,6 +57,8 @@ python mission-control/gogreen/required_gate/admission.py --root . \
   --resolve-runtimes --out /tmp/ADMISSION.json --summary /tmp/admission.md
 python mission-control/gogreen/required_gate/backtest.py --repo GBOGEB/pipeline-automation-hub --root . \
   --pr-trace /tmp/rt/red_trace_pr.json --ledger /tmp/ADMISSION.json --limit 60 --out /tmp/bt
+python mission-control/gogreen/required_gate/depth.py --root . --ledger /tmp/ADMISSION.json --out /tmp/depth
+python mission-control/gogreen/required_gate/depth.py --root ../ABACUS --ledger none --out /tmp/depth-abacus
 ```
 
 `merge_authorized=false`. A ledger proposal, a backtest FAIL and a gate PASS are each one observation, not an admission. Requiring `GOGREEN required gate` on `master`, accepting a promotion and demoting a gate are owner decisions.

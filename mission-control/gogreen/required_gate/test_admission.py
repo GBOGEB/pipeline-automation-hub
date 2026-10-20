@@ -156,6 +156,14 @@ class Backtest(unittest.TestCase):
             self.assertNotIn(5, [r["pr"] for r in led["failing_prs"]])
             self.assertFalse(rep["authority"]["merge_authorized"])
             self.assertIn("would have answered", b.markdown(rep))
+            # healthy.yml first ran on base after PR 3 merged -> not applicable, ABSENT disappears
+            master = {"workflows": [{"path": ".github/workflows/healthy.yml", "first_observed_at": "2026-10-19T03:30:00Z",
+                                     "history_truncated": False}]}
+            rep2 = b.run(root, lane, ledger, files, limit=10, master=master)
+            self.assertNotIn("ABSENT_OR_FILTER_DRIFT", rep2["policies"]["admission_ledger"]["summary"]["by_reason"])
+            truncated = {"workflows": [dict(master["workflows"][0], history_truncated=True)]}
+            rep3 = b.run(root, lane, ledger, files, limit=10, master=truncated)
+            self.assertIn("ABSENT_OR_FILTER_DRIFT", rep3["policies"]["admission_ledger"]["summary"]["by_reason"])
 
 
 if __name__ == "__main__":
