@@ -37,9 +37,10 @@ def request(wave, heads, selector="all", max_fanout=3):
     """Build deterministic, bounded, source-pinned disjoint producer requests."""
     if not isinstance(wave, str) or not re.fullmatch(r"[A-Za-z0-9_.-]{1,64}", wave):
         raise CensusError("invalid wave ID")
-    if selector not in ALLOWED_SELECTORS or not 1 <= max_fanout <= 3:
+    if (selector not in ALLOWED_SELECTORS or
+            type(max_fanout) is not int or not 1 <= max_fanout <= 3):
         raise CensusError("selector/fanout invalid")
-    if set(heads) != set(ALLOWED_REPOS):
+    if not isinstance(heads, dict) or set(heads) != set(ALLOWED_REPOS):
         raise CensusError("require an exact three-lane manifest; unknown is not omitted")
     out = []
     missing = []
@@ -62,7 +63,8 @@ def request(wave, heads, selector="all", max_fanout=3):
             "dispatchable_repos": min(len(out), max_fanout),
             "unknown_head_repos": len(missing),
             "requests": out[:max_fanout],
-            "not_dispatched": missing + out[max_fanout:],
+            "not_dispatched": missing + [dict(q, state="DEFERRED_FANOUT_LIMIT")
+                                         for q in out[max_fanout:]],
             "authority_transfer": False, "engineering_acceptance": False}
 
 
@@ -151,20 +153,24 @@ def rollup(manifest, receipts):
         rows.append({"repo": repo, "lane": q["lane"], "head_sha": q["expected_sha"],
                      "routes_received": sorted(got), "routes_required": sorted(target),
                      "complete": target.issubset(got),
-                     "route_failure": "FAILURE" in state[repo],
+                     "route_failure": ("FAILURE" in state[repo]) if state[repo] else None,
                      "test_counts": None, "coverage": None,
                      "merge_admission": "HOLD_UNKNOWN_REQUIRED_EVIDENCE"})
     for q in manifest.get("not_dispatched", []):
-        if q.get("state") == "HOLD_SOURCE_HEAD_UNKNOWN":
-            rows.append({"repo": q["repo"], "lane": q["lane"], "head_sha": None,
-                         "routes_received": [], "routes_required": [],
-                         "complete": False, "state": "HOLD_SOURCE_HEAD_UNKNOWN",
-                         "test_counts": None, "coverage": None,
-                         "merge_admission": "HOLD"})
+        unknown = q.get("state") == "HOLD_SOURCE_HEAD_UNKNOWN"
+        target = expected_routes if q.get("selector", "all") == "all" else {q["selector"]}
+        rows.append({"repo": q["repo"], "lane": q["lane"],
+                     "head_sha": q.get("expected_sha"),
+                     "routes_received": [], "routes_required": sorted(target),
+                     "complete": False, "route_failure": None,
+                     "state": "HOLD_SOURCE_HEAD_UNKNOWN" if unknown else "DEFERRED_FANOUT_LIMIT",
+                     "test_counts": None, "coverage": None, "merge_admission": "HOLD"})
     return {"schema": "qps-metric-rollup/v1", "wave": manifest["wave"],
             "eligible_repos": manifest.get("eligible_repos", len(manifest["requests"])),
             "unknown_head_repos": manifest.get("unknown_head_repos", 0),
             "planned_repos": len(manifest["requests"]),
+            "deferred_repos": sum(r.get("state") == "DEFERRED_FANOUT_LIMIT" for r in rows),
+            "represented_repos": len(rows),
             "observed_repos": len(observed),
             "fully_observed_repos": sum(r["complete"] for r in rows),
             "native_job_receipts": len(identities),
@@ -180,7 +186,7 @@ def dag_mermaid():
     return """flowchart LR
  A[QPS TRIAGE N request] --> B{Exact source SHA + allowlist?}
  B -- no --> HOLD[HOLD / re-census]
- B -- yes --> C[Disjoint repo-specific dispatch]
+ B -- yes --> C[Disjoint repo-specific request - not dispatched]
  C --> D1[ABACUS native-check census]
  C --> D2[CODEX transformation census]
  C --> D3[QPS engineering census]
@@ -192,7 +198,7 @@ def dag_mermaid():
  F -- yes --> G[Metric Atlas normalized / absolute rollup]
  G --> H[Root attribution and coverage comparison]
  H --> I[Owner decision / next N+i wave]
- I --> A
+ I -.->|next pulse only| NEXT[New source snapshot N+1]
 """
 
 
@@ -212,6 +218,7 @@ def main(argv=None):
     a.add_argument("--wave", required=True)
     a.add_argument("--heads", type=Path, required=True)
     a.add_argument("--selector", choices=sorted(ALLOWED_SELECTORS), default="all")
+    a.add_argument("--max-fanout", type=int, default=3)
     a.add_argument("--output", type=Path, required=True)
     b = sp.add_parser("rollup")
     b.add_argument("--manifest", type=Path, required=True)
@@ -223,7 +230,7 @@ def main(argv=None):
     try:
         if args.command == "request":
             heads = json.loads(args.heads.read_text(encoding="utf-8"))
-            output = request(args.wave, heads, args.selector)
+            output = request(args.wave, heads, args.selector, args.max_fanout)
             args.output.parent.mkdir(parents=True, exist_ok=True)
             args.output.write_text(json.dumps(output, indent=2) + "\n", encoding="utf-8")
         elif args.command == "rollup":
@@ -236,7 +243,7 @@ def main(argv=None):
             (args.output / "QPS_CENSUS_SIPOC.mmd").write_text(sipoc_mermaid(), encoding="utf-8")
             output = {"state": "DIAGRAMS_WRITTEN", "path": str(args.output)}
         print(json.dumps(output, indent=2))
-    except (ValueError, KeyError, TypeError) as exc:
+    except (OSError, ValueError, KeyError, TypeError) as exc:
         p.exit(2, "CENSUS_HOLD: " + str(exc) + "\n")
 
 
