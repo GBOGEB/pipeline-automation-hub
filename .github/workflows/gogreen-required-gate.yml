@@ -1,9 +1,13 @@
 name: GOGREEN Required Gate
 
-# One always-reporting check that stands in for path-filtered gates
-# (CODE PURPLE Method Atlas, CODE PURPLE Live Lossless QA). NOT_APPLICABLE when the PR
-# touches none of their paths; otherwise passes only when they succeed on the exact PR
-# head. Making this single check required on master is the owner's protection decision.
+# One always-reporting check that stands in for the path-filtered PR gates.
+# N+9: which gates it ENFORCES comes from the admission ledger
+# (mission-control/gogreen/required_gate/ADMISSION.json) as committed on the BASE branch,
+# so a PR cannot demote the gates that judge it; until the ledger exists on the base the
+# bootstrap is the N+8 pair (CODE PURPLE Method Atlas, CODE PURPLE Live Lossless QA).
+# NOT_APPLICABLE when a gate's own trigger would not fire for this PR; otherwise passes only
+# when it succeeds on the exact PR head. OBSERVED gates are annotated, never blocking.
+# Making this single check required on master is the owner's protection decision.
 on:
   pull_request:
 
@@ -22,7 +26,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0 (node24)
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
@@ -41,4 +45,13 @@ jobs:
           python mission-control/gogreen/required_gate/gate.py \
             --pr "${{ github.event.pull_request.number }}" \
             --sha "${{ github.event.pull_request.head.sha }}" \
+            --base-ref "${{ github.base_ref }}" \
+            --base-sha "${{ github.event.pull_request.base.sha }}" \
             --root . --deadline-min 75 --out "$RUNNER_TEMP/required-gate.json"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6.0.0 (node24)
+        if: always()
+        with:
+          name: gogreen-required-gate-${{ github.event.pull_request.number }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/required-gate.json
+          if-no-files-found: warn
+          retention-days: 30
