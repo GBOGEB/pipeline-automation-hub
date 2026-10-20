@@ -61,9 +61,9 @@ class HostedTests(unittest.TestCase):
    out=self.fixture(t);calls=[]
    def fetch(url,rel):calls.append(rel);return (out/rel).read_bytes()
    r=hosted.verify(out,URL,SHA,repeat=2,attempts=1,wait=0,fetcher=fetch)
-   self.assertEqual(r['members_verified'],23)
+   self.assertEqual(r['members_verified'],27)
    self.assertEqual(len(r['observations']),2)
-   self.assertEqual(len(calls),46)
+   self.assertEqual(len(calls),54)
    self.assertEqual(r['merge_admission'],'HOLD')
    self.assertIsNone(r['engineering_acceptance'])
  def test_mutated_hosted_asset_fails(self):
@@ -113,6 +113,23 @@ class HostedTests(unittest.TestCase):
    out=self.fixture(t);p=out/'jade/eightpoint-manifest.json';m=json.loads(p.read_text());m['hosted_eightpoint_sha']=SHA;p.write_text(json.dumps(m))
    top=out/'site-manifest.json';d=json.loads(top.read_text());d['public_files_sha256']['jade/eightpoint-manifest.json']=hosted.digest(p.read_bytes());top.write_text(json.dumps(d))
    with self.assertRaisesRegex(ValueError,'JADE_EIGHT_UNSAFE_HOSTED_CLAIM'):hosted.trusted_files(out,SHA)
+ def test_redtrace_authority_claim_rejected(self):
+  with tempfile.TemporaryDirectory() as t:
+   out=self.fixture(t);p=out/'jade/redtrace-manifest.json';m=json.loads(p.read_text());m['merge_authorized']=True;p.write_text(json.dumps(m))
+   top=out/'site-manifest.json';d=json.loads(top.read_text());d['public_files_sha256']['jade/redtrace-manifest.json']=hosted.digest(p.read_bytes());top.write_text(json.dumps(d))
+   with self.assertRaisesRegex(ValueError,'JADE_N8_UNSAFE_HOSTED_CLAIM'):hosted.trusted_files(out,SHA)
+ def test_redtrace_manifest_mismatch_rejected(self):
+  with tempfile.TemporaryDirectory() as t:
+   out=self.fixture(t);p=out/'jade/redtrace-manifest.json';m=json.loads(p.read_text());m['public_files_sha256']['redtrace.html']='0'*64;p.write_text(json.dumps(m))
+   top=out/'site-manifest.json';d=json.loads(top.read_text());d['public_files_sha256']['jade/redtrace-manifest.json']=hosted.digest(p.read_bytes());top.write_text(json.dumps(d))
+   with self.assertRaisesRegex(ValueError,'JADE_N8_HOSTED_MANIFEST_MISMATCH'):hosted.trusted_files(out,SHA)
+ def test_redtrace_pdf_served_bytes_must_match(self):
+  with tempfile.TemporaryDirectory() as t:
+   out=self.fixture(t)
+   def served(url,rel):
+    return b'%PDF-poison' if rel=='jade/redtrace-slides.pdf' else (out/rel).read_bytes()
+   with self.assertRaisesRegex(ValueError,'JADE_HOSTED_SHA_MISMATCH'):
+    hosted.verify(out,URL,SHA,repeat=2,attempts=1,wait=0,fetcher=served)
  def test_eightpoint_asset_corruption_rejected(self):
   with tempfile.TemporaryDirectory() as t:
    out=self.fixture(t)
