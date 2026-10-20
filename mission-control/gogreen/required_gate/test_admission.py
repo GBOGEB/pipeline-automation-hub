@@ -99,6 +99,12 @@ class Ledger(unittest.TestCase):
         self.assertEqual((h["disposition"], h["demotion_candidate"]), (g.ENFORCED, ["RED_NOW_MASTER"]))
         self.assertIn(".github/workflows/healthy.yml", a.diff(self.doc, nxt)["demotion_candidates"])
 
+    def test_short_window_lane_does_not_hide_long_master_streak(self):
+        doc = a.build(self.root, {"workflows": [wf("healthy.yml", "STABLE_GREEN", "GREEN", streak=4, age=1.6)]},
+                      {"workflows": [wf("healthy.yml", "STABLE_GREEN", "GREEN", streak=1, age=0.2)]}, {"entries": []}, {})
+        h = {Path(x["path"]).name: x for x in doc["entries"]}["healthy.yml"]
+        self.assertEqual((h["disposition"], h["reasons"]), (g.ENFORCED, ["EVIDENCE_HEALTHY"]))
+
     def test_stale_and_pinned_and_no_evidence_observed(self):
         doc = a.build(self.root, {"workflows": [wf("healthy.yml", "STABLE_GREEN", "GREEN", age=30),
                                                  wf("red.yml", "STABLE_GREEN", "GREEN", pins=["123456789"])]},
