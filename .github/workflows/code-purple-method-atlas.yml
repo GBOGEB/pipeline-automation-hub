@@ -602,7 +602,7 @@ jobs:
             test -f "$SRC/coverage_integrity.py"
             test -f "$SRC/COVERAGE_INTEGRITY_OBSERVATIONS_v1.json"
             test -f "$SRC/test_coverage_integrity.py"
-            python -m unittest discover -s "$SRC" -p test_coverage_integrity.py -v
+            python -m unittest discover -s mission-control/federation-atlas -p test_coverage_integrity.py -v
             python "$SRC/coverage_integrity.py" \
               --head "$EXACT_SHA" --out /tmp/code-purple-atlas/coverage-integrity
             python "$SRC/coverage_integrity.py" \
