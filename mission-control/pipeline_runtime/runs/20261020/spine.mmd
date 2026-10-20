@@ -1,0 +1,7 @@
+flowchart LR
+  A["1 SNAPSHOT before<br/>1.81 s"] --> B["2 RUN run_processing.py<br/>0.87 s · exit 0"]
+  B --> B1["2.1 ppt_processor.py<br/>0.653 s"]
+  B1 --> B2["2.2 Recursive_Build_Master.py<br/>0.052 s"]
+  B2 --> C["3 SNAPSHOT after<br/>1.72 s"]
+  C --> D["4 DIFF<br/>inputs immutable True<br/>stray writes 0"]
+  D --> E["5 RECEIPT PASS"]
