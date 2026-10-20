@@ -1,0 +1,33 @@
+flowchart LR
+    intake["Input & mission"]
+    bdq["BD root census"]
+    scheduler["Schedule proposals"]
+    codex["CODEX / KEB"]
+    abacus["ABACUS / DOW"]
+    qps["QPS / engineering"]
+    math["gg_MATH / methods"]
+    helper["Helper / tooling"]
+    gateway["Stage-only gateway"]
+    jobs["Native owner CI"]
+    join["Evidence join"]
+    admit["Human admission"]
+    pages["Existing Pages owner"]
+    intake -.-> bdq
+    bdq -.-> scheduler
+    scheduler -.-> gateway
+    scheduler -.-> codex
+    scheduler -.-> abacus
+    scheduler -.-> qps
+    scheduler -.-> math
+    scheduler -.-> helper
+    gateway -.-> jobs
+    codex --> join
+    abacus --> join
+    qps --> join
+    math -.-> join
+    helper -.-> join
+    jobs -.-> join
+    join -.-> admit
+    admit -.-> pages
+    pages -.-> intake
+    codex -.-> qps

@@ -211,6 +211,45 @@ def build(atlas,out,sha):
             dest.parent.mkdir(exist_ok=True, parents=True)
             shutil.copyfile(src, dest)
             hashes[str(dest.relative_to(out))] = hashlib.sha256(dest.read_bytes()).hexdigest()
+    # Source-owned MissionControl navigator, packaged by the EXISTING Pages
+    # publisher only. This is a materialized read-only projection, never a
+    # second workflow/deployer or evidence-admission endpoint.
+    import sys
+    launch_dir=Path(__file__).resolve().parent.parent/"launchpad"
+    if launch_dir.is_dir():
+        if str(launch_dir) not in sys.path:sys.path.insert(0,str(launch_dir))
+        from render_launchpad import build as build_launchpad
+        nav=build_launchpad(out/"missioncontrol",sha)
+        if not (nav.get("schema")=="missioncontrol.launchpad.publication_manifest.v1"
+                and nav.get("publisher")=="EXISTING_ATLAS_PAGES_ONLY"
+                and nav.get("source_head_sha")==sha
+                and nav.get("native_qa") is None
+                and nav.get("hosted_http_verified") is False
+                and nav.get("authority_transfer") is False
+                and nav.get("merge_admission")=="HOLD"):
+            raise ValueError("MC navigation publication policy drift")
+        for name,want in nav["files_sha256"].items():
+            actual=hashlib.sha256((out/"missioncontrol"/name).read_bytes()).hexdigest()
+            if actual!=want:raise ValueError("MC navigation file digest mismatch: "+name)
+            hashes["missioncontrol/"+name]=actual
+        hashes["missioncontrol/manifest.json"]=hashlib.sha256((out/"missioncontrol/manifest.json").read_bytes()).hexdigest()
+        # Atomic review table derived from the same typed graph (not a BD SSOT).
+        atom_src=launch_dir/"GRAPH_ATOMS_W1_v1.json"
+        atom_doc=json.loads(atom_src.read_text(encoding="utf-8"))
+        from nav_model import CONFIG as graph_source
+        graph=json.loads(graph_source.read_text(encoding="utf-8"))
+        if not (atom_doc.get("schema")=="missioncontrol.launchpad.graph_atoms.v1"
+                and atom_doc.get("source_git_blob_sha")=="74a8e45d26d24f52aa751713df3706c492a9f94e"
+                and atom_doc.get("authority_transfer") is False
+                and atom_doc.get("merge_admission")=="HOLD"
+                and atom_doc.get("canonical_bd_unchanged") is True
+                and atom_doc.get("metrics",{}).get("all_atoms")==len(graph["nodes"])+len(graph["edges"])
+                and len(atom_doc.get("atoms",[]))==len(graph["nodes"])+len(graph["edges"])):
+            raise ValueError("MC graph atom source parity/authority failure")
+        target=out/"missioncontrol/GRAPH_ATOMS_W1_v1.json"
+        shutil.copyfile(atom_src,target)
+        hashes["missioncontrol/GRAPH_ATOMS_W1_v1.json"]=hashlib.sha256(target.read_bytes()).hexdigest()
+
     # Mission rebuild: one owner portal; never an alternate Pages publisher.
     rebuild_allow = ("index.html", "graph.json", "graph.mmd", "manifest.json")
     rebuild_src = atlas / "mission-rebuild"
@@ -400,7 +439,7 @@ def build(atlas,out,sha):
         module.stage_jade(jade_root, out, hashes, sha)
     elif (jade_root / "site" / "green.html").exists():
         raise ValueError("JADE_SOURCE_WITHOUT_VALIDATED_BRIDGE")
-    links=[("JADE_CASTE · N+3 eight-point MIP","jade/eightpoint.html"),("JADE_CASTE · N+2 measured burn-down and stop rules","jade/burndown.html"),("JADE_CASTE · GoGREEN Top21 readiness","jade/green.html"),("GLOBAL DoV · Consolidated Convergence Hub","convergence/index.html"),("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("P process: Code Purple × EVERRED","p-process/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
+    links=[("MissionControl · Federated Navigator","missioncontrol/index.html"),("JADE_CASTE · N+3 eight-point MIP","jade/eightpoint.html"),("JADE_CASTE · N+2 measured burn-down and stop rules","jade/burndown.html"),("JADE_CASTE · GoGREEN Top21 readiness","jade/green.html"),("GLOBAL DoV · Consolidated Convergence Hub","convergence/index.html"),("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("P process: Code Purple × EVERRED","p-process/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
     if (out / "orchestration" / "index.html").is_file():
         cards = '<a class="card" href="orchestration/index.html">Method Atlas · functional I/O, all workflow DAGs, broker and burndown ↗</a>' + cards
@@ -412,6 +451,11 @@ def build(atlas,out,sha):
         cards += '<a class="card" href="mission-rebuild/evidence.html">MissionControl W2 · live queue / gg_MATH Plotly evidence ↗</a>'
     if (out / "mission-rebuild" / "n3-metrics.html").is_file():
         cards += '<a class="card" href="mission-rebuild/n3-metrics.html">N3 · Native job queue / KPI / LDAB proof boundary ↗</a>'
+    featured=('<div class="note"><strong>Mission Control makeover:</strong> '
+              '<a href="missioncontrol/index.html">Open six-panel federation navigator ↗</a> · <a href="missioncontrol/GRAPH_ATOMS_W1_v1.json">Inspect 32 graph atoms ↗</a>'
+              ' · graph/DAG, scheduler proposals, source-owned repositories, SIPOC and QA'
+              '</div>' if (out/"missioncontrol/index.html").is_file() else '')
+
     # Source-owned gg_MATH Plotly proof is a navigational link, not a deployed
     # Pages asset or a second KPI producer. Fail closed on unsafe bridge claims.
     math_bridge=Path(__file__).resolve().parent/"GG_MATH_CONVERGENCE_BRIDGE_v1.json"
@@ -425,8 +469,9 @@ def build(atlas,out,sha):
 
     diagram=(atlas/"lane-process.mmd").read_text() if (atlas/"lane-process.mmd").is_file() else 'flowchart LR\n A["Source"] --> B["Native CI"] --> C["Read-only Atlas"] --> D["Owner gate"]'
     page='''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>CODE PURPLE | MissionControl</title><style>
-body{background:#0d1728;color:#e9f2fc;font:16px/1.6 system-ui;margin:0}main{max-width:1120px;margin:auto;padding:28px}h1{font-size:clamp(2rem,5vw,3.5rem)}p{color:#b9cbe1}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.card{display:block;padding:22px;background:#1b2b46;color:#c6eeff;border:1px solid #516988;border-radius:14px;text-decoration:none;font-weight:650}.card:hover,.card:focus-visible{outline:2px solid #7ecce5}.note{border-left:4px solid #7ecce5;background:#22354e;padding:14px;margin:25px 0}.mermaid{background:#f4f8ff;color:#13233b;border-radius:12px;overflow:auto;padding:12px}a{color:#9de5fa}code{overflow-wrap:anywhere}</style></head><body><main><p>MISSIONCONTROL / CODE PURPLE — GOVERNED REVIEW PROJECTION</p><h1>Engineering evidence flight deck</h1><p>Source-bound methods, Mermaid diagrams, QPS evidence, ABACUS/DOW and CODEX/KEB workflows, separated by scope and authority.</p><div class="note"><strong>Read-only:</strong> hosted HTML is not merge admission, a security waiver, native federation acceptance or QPS engineering approval. UNKNOWN remains UNKNOWN.</div><section><h2>Navigate evidence views</h2><div class="grid">'''+cards+'''</div></section><section><h2>Execution and control DAG</h2><pre class="mermaid">'''+html.escape(diagram)+'''</pre><p><a href="atlas/lane-process.mmd">Open Mermaid source</a> · <a href="atlas/federation.svg">Open native SVG</a></p></section><section><h2>Exact source</h2><code>'''+sha+'''</code><p><a href="site-manifest.json">Published file hash manifest</a> · <a href="https://github.com/GBOGEB/pipeline-automation-hub">Repository</a></p></section></main><script type="module">try{let m=await import("https://cdn.jsdelivr.net/npm/mermaid@11.11.0/dist/mermaid.esm.min.mjs");m.default.initialize({startOnLoad:true,securityLevel:"strict",theme:"neutral"})}catch(e){document.querySelectorAll(".mermaid").forEach(x=>x.setAttribute("aria-label","Mermaid source available in text form"))}</script></body></html>'''
+body{background:#0d1728;color:#e9f2fc;font:16px/1.6 system-ui;margin:0}main{max-width:1120px;margin:auto;padding:28px}h1{font-size:clamp(2rem,5vw,3.5rem)}p{color:#b9cbe1}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.card{display:block;padding:22px;background:#1b2b46;color:#c6eeff;border:1px solid #516988;border-radius:14px;text-decoration:none;font-weight:650}.card:hover,.card:focus-visible{outline:2px solid #7ecce5}.note{border-left:4px solid #7ecce5;background:#22354e;padding:14px;margin:25px 0}.mermaid{background:#f4f8ff;color:#13233b;border-radius:12px;overflow:auto;padding:12px}a{color:#9de5fa}code{overflow-wrap:anywhere}</style></head><body><main><p>MISSIONCONTROL / CODE PURPLE — GOVERNED REVIEW PROJECTION</p><h1>Engineering evidence flight deck</h1><p>Source-bound methods, Mermaid diagrams, QPS evidence, ABACUS/DOW and CODEX/KEB workflows, separated by scope and authority.</p>'''+featured+'''<div class="note"><strong>Read-only:</strong> hosted HTML is not merge admission, a security waiver, native federation acceptance or QPS engineering approval. UNKNOWN remains UNKNOWN.</div><section><h2>Navigate evidence views</h2><div class="grid">'''+cards+'''</div></section><section><h2>Execution and control DAG</h2><pre class="mermaid">'''+html.escape(diagram)+'''</pre><p><a href="atlas/lane-process.mmd">Open Mermaid source</a> · <a href="atlas/federation.svg">Open native SVG</a></p></section><section><h2>Exact source</h2><code>'''+sha+'''</code><p><a href="site-manifest.json">Published file hash manifest</a> · <a href="https://github.com/GBOGEB/pipeline-automation-hub">Repository</a></p></section></main><script type="module">try{let m=await import("https://cdn.jsdelivr.net/npm/mermaid@11.11.0/dist/mermaid.esm.min.mjs");m.default.initialize({startOnLoad:true,securityLevel:"strict",theme:"neutral"})}catch(e){document.querySelectorAll(".mermaid").forEach(x=>x.setAttribute("aria-label","Mermaid source available in text form"))}</script></body></html>'''
     (out/"index.html").write_text(page,encoding="utf-8");hashes["index.html"]=hashlib.sha256((out/"index.html").read_bytes()).hexdigest()
+    hashes={name.replace("\\", "/"):value for name,value in hashes.items()}
     m={"schema":"codepurple.pages.readonly/v1","source_git_sha":sha,"public_files_sha256":hashes,"qps_owner_decision":"DEFER","merge_authorized":False,"security_waiver":False}
     (out/"site-manifest.json").write_text(json.dumps(m,indent=2,sort_keys=True)+"\n")
     return m
