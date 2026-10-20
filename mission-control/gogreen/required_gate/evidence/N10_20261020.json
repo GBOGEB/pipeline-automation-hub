@@ -1,0 +1,393 @@
+{
+ "authority": {
+  "actor": "AGENT",
+  "branch_protection_changed": false,
+  "merge_authorized": false,
+  "root_closure_credit": null
+ },
+ "burndown_master": [
+  {
+   "actor": "AGENT",
+   "root": "contract test requires a separate focused G3P gate the workflow lacked (EVERRED)",
+   "state": "REPAIRED_IN_THIS_PR",
+   "workflow": "mission-control-n3-evidence.yml"
+  },
+  {
+   "actor": "OWNER",
+   "root": "live cross-repo BD census with repo-scoped token -> HOLD; credential root (G03)",
+   "state": "OWNER_CREDENTIAL",
+   "workflow": "gogreen-subtype-workers.yml"
+  },
+  {
+   "actor": "CI",
+   "root": "green on latest run after #758",
+   "state": "GREEN_ON_LATEST",
+   "workflow": "qps-metric-census-federation.yml"
+  }
+ ],
+ "caveats": [
+  "depth/tested are static: referenced-by-a-test is not line coverage",
+  "federation repos have no ledger yet (--ledger none): nothing there is enforced or evidenced",
+  "test executions sum over invocations; unique tests count each test file once"
+ ],
+ "federation": {
+  "GBOGEB/ABACUS": {
+   "breadth": {
+    "both_lanes": 0,
+    "with_evidence": 0,
+    "workflows": 212
+   },
+   "depth": {
+    "enforced_tests": 0,
+    "tests_total": 245993,
+    "unique_test_files": 573,
+    "unique_tests": 6132,
+    "unresolved_invocations": 103,
+    "workflows_with_tests": 97
+   },
+   "depth_json_sha256": "b619ad198662c827545fb18a46a31dd3ee18e78fff1cf108ecd3acb48ddafd43",
+   "head_sha": "e721bd320f509c65e8e52ce9babccc9a1de3c8bf",
+   "penetration": {
+    "code_files": 1504,
+    "dead_filters": 0,
+    "pr_gated_pct": 100.0,
+    "targeted_enforced_files": 0,
+    "targeted_enforced_pct": 0.0,
+    "targeted_files": 2379,
+    "targeted_pct": 58.9,
+    "tracked_files": 4040,
+    "zero_targeted_code": 152,
+    "zero_targeted_files": 1661
+   },
+   "tested": {
+    "harness": 19,
+    "modules": 762,
+    "tested": 412,
+    "tested_or_harness_pct": 56.6,
+    "tested_pct": 54.1,
+    "zero_tested": 331
+   },
+   "zero": {
+    "UNKNOWN_TESTS": 9,
+    "ZERO_EVIDENCE": 212,
+    "ZERO_TESTS": 106
+   }
+  },
+  "GBOGEB/CODEX": {
+   "breadth": {
+    "both_lanes": 0,
+    "with_evidence": 0,
+    "workflows": 163
+   },
+   "depth": {
+    "enforced_tests": 0,
+    "tests_total": 39354,
+    "unique_test_files": 247,
+    "unique_tests": 1932,
+    "unresolved_invocations": 14,
+    "workflows_with_tests": 47
+   },
+   "depth_json_sha256": "f4f51ad05f0d2f0a99ab895d66288df63e77c0b98ee670439c74cebc3c5bbebc",
+   "head_sha": "bc39e1acf4a847f28167fc11de28edb738c486f9",
+   "penetration": {
+    "code_files": 882,
+    "dead_filters": 0,
+    "pr_gated_pct": 100.0,
+    "targeted_enforced_files": 0,
+    "targeted_enforced_pct": 0.0,
+    "targeted_files": 1921,
+    "targeted_pct": 70.8,
+    "tracked_files": 2713,
+    "zero_targeted_code": 115,
+    "zero_targeted_files": 792
+   },
+   "tested": {
+    "harness": 21,
+    "modules": 564,
+    "tested": 295,
+    "tested_or_harness_pct": 56.0,
+    "tested_pct": 52.3,
+    "zero_tested": 248
+   },
+   "zero": {
+    "UNKNOWN_TESTS": 3,
+    "ZERO_EVIDENCE": 163,
+    "ZERO_TESTS": 113
+   }
+  },
+  "GBOGEB/cryoplant-project": {
+   "breadth": {
+    "both_lanes": 0,
+    "with_evidence": 0,
+    "workflows": 139
+   },
+   "depth": {
+    "enforced_tests": 0,
+    "tests_total": 41452,
+    "unique_test_files": 319,
+    "unique_tests": 2984,
+    "unresolved_invocations": 14,
+    "workflows_with_tests": 62
+   },
+   "depth_json_sha256": "0a8649b9a7264284ea41beafd996e8be286c2cbc26780e2d48d0aa29f89710fd",
+   "head_sha": "c44256271ff38d44d79a3adc17591fc39b9183aa",
+   "penetration": {
+    "code_files": 940,
+    "dead_filters": 0,
+    "pr_gated_pct": 100.0,
+    "targeted_enforced_files": 0,
+    "targeted_enforced_pct": 0.0,
+    "targeted_files": 2202,
+    "targeted_pct": 50.6,
+    "tracked_files": 4352,
+    "zero_targeted_code": 515,
+    "zero_targeted_files": 2150
+   },
+   "tested": {
+    "harness": 29,
+    "modules": 570,
+    "tested": 181,
+    "tested_or_harness_pct": 36.8,
+    "tested_pct": 31.8,
+    "zero_tested": 360
+   },
+   "zero": {
+    "UNKNOWN_TESTS": 1,
+    "ZERO_EVIDENCE": 139,
+    "ZERO_TESTS": 76
+   }
+  },
+  "GBOGEB/gg_MATH": {
+   "breadth": {
+    "both_lanes": 0,
+    "with_evidence": 0,
+    "workflows": 29
+   },
+   "depth": {
+    "enforced_tests": 0,
+    "tests_total": 854,
+    "unique_test_files": 37,
+    "unique_tests": 368,
+    "unresolved_invocations": 0,
+    "workflows_with_tests": 7
+   },
+   "depth_json_sha256": "74a7481c6f59cf5659f297c657c61918413e8cf46cd35894a74b4de3412ceb17",
+   "head_sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc",
+   "penetration": {
+    "code_files": 86,
+    "dead_filters": 0,
+    "pr_gated_pct": 100.0,
+    "targeted_enforced_files": 0,
+    "targeted_enforced_pct": 0.0,
+    "targeted_files": 88,
+    "targeted_pct": 48.9,
+    "tracked_files": 180,
+    "zero_targeted_code": 43,
+    "zero_targeted_files": 92
+   },
+   "tested": {
+    "harness": 2,
+    "modules": 49,
+    "tested": 37,
+    "tested_or_harness_pct": 79.6,
+    "tested_pct": 75.5,
+    "zero_tested": 10
+   },
+   "zero": {
+    "ZERO_EVIDENCE": 29,
+    "ZERO_TESTS": 22
+   }
+  }
+ },
+ "findings": [
+  "tools/metric-atlas/data/build_seed.py cannot run from the repo: evidence/method_atlas_11964700323.zip is not committed (OWNER)",
+  "ABACUS runs 6,132 unique tests 245,993 times per full CI pass (~40x fan-out): runner-economics lead, not a defect"
+ ],
+ "hub": {
+  "after": {
+   "breadth": {
+    "both_lanes": 31,
+    "with_evidence": 137,
+    "workflows": 150
+   },
+   "depth": {
+    "enforced_tests": 2868,
+    "tests_total": 10317,
+    "unique_test_files": 244,
+    "unique_tests": 3279,
+    "unresolved_invocations": 0,
+    "workflows_with_tests": 71
+   },
+   "penetration": {
+    "code_files": 724,
+    "dead_filters": 0,
+    "pr_gated_pct": 100.0,
+    "targeted_enforced_files": 1499,
+    "targeted_enforced_pct": 61.8,
+    "targeted_files": 1650,
+    "targeted_pct": 68.1,
+    "tracked_files": 2424,
+    "zero_targeted_code": 105,
+    "zero_targeted_files": 774
+   },
+   "tested": {
+    "harness": 60,
+    "modules": 400,
+    "tested": 209,
+    "tested_or_harness_pct": 67.2,
+    "tested_pct": 52.2,
+    "zero_tested": 131
+   },
+   "zero": {
+    "ZERO_EVIDENCE": 13,
+    "ZERO_TESTS": 79
+   }
+  },
+  "backtest": {
+   "admission_ledger": {
+    "applicable_checks": 632,
+    "by_reason": {
+     "ABSENT_OR_FILTER_DRIFT": 1,
+     "CANCELLED_AT_MERGE": 3,
+     "PENDING_AT_MERGE": 389,
+     "RED_AT_MERGE": 12
+    },
+    "enforced": 65,
+    "evaluated": 100,
+    "prs_with_applicable_gate": 100,
+    "would_fail": 81,
+    "would_have_caught_red": 10,
+    "would_pass": 19
+   },
+   "bootstrap_n8": {
+    "applicable_checks": 88,
+    "by_reason": {
+     "ABSENT_OR_FILTER_DRIFT": 1,
+     "PENDING_AT_MERGE": 63,
+     "RED_AT_MERGE": 5
+    },
+    "enforced": 2,
+    "evaluated": 100,
+    "prs_with_applicable_gate": 64,
+    "would_fail": 51,
+    "would_have_caught_red": 4,
+    "would_pass": 49
+   }
+  },
+  "before": {
+   "breadth": {
+    "both_lanes": 27,
+    "with_evidence": 91,
+    "workflows": 150
+   },
+   "depth": {
+    "enforced_tests": 2780,
+    "tests_total": 10187,
+    "unique_test_files": 240,
+    "unique_tests": 3238,
+    "unresolved_invocations": 0,
+    "workflows_with_tests": 68
+   },
+   "penetration": {
+    "code_files": 719,
+    "dead_filters": 0,
+    "pr_gated_pct": 100.0,
+    "targeted_enforced_files": 1470,
+    "targeted_enforced_pct": 60.8,
+    "targeted_files": 1645,
+    "targeted_pct": 68.0,
+    "tracked_files": 2419,
+    "zero_targeted_code": 105,
+    "zero_targeted_files": 774
+   },
+   "tested": {
+    "harness": 60,
+    "modules": 399,
+    "tested": 204,
+    "tested_or_harness_pct": 66.2,
+    "tested_pct": 51.1,
+    "zero_tested": 135
+   },
+   "zero": {
+    "ZERO_EVIDENCE": 59,
+    "ZERO_TESTS": 82
+   }
+  },
+  "ledger": {
+   "after": {
+    "ENFORCED": 65,
+    "EXCLUDED": 4,
+    "OBSERVED": 81
+   },
+   "before": {
+    "ENFORCED": 44,
+    "EXCLUDED": 4,
+    "OBSERVED": 102
+   },
+   "evidence_after": 141,
+   "evidence_before": 101
+  }
+ },
+ "inputs": {
+  "ADMISSION.ledger_sha256": "9917a208410b4b5e95963671eef755eacd2138be63eccfaca61aedb55c38811d",
+  "ADMISSION_N9.ledger_sha256": "685242c635e4d35a7e8443b58fdb3d056a0197dd2c97893de3c5d7cfec68d6a1",
+  "backtest.json": "4c672fcb618012e6569c51dbfbddcc99dcb9d9691b34d2551af00486aadb06fd",
+  "depth_after.json": "7cfddefbbf61585123b6d34c4b0c7ef2862542e29f4125e2d6e9eefe825a379d",
+  "depth_before.json": "555dbd21fbc170c1ff4eb28504f373d2d1d422fa597fd1a787e0ea573a8c4a2b",
+  "red_trace.json": "2214c2dc4f4355dd7b11932b7481895dc47f35201070ed09d0afa3c525a00ea6",
+  "red_trace_pr.json": "4854f3e0f21845301331771bbb8c333ba458a7d4dbf47d7f9c78252db4916074"
+ },
+ "iteration": "N+10",
+ "observed_at_utc": "2026-10-20T13:13:07Z",
+ "replays": {
+  "dispatched": 71,
+  "failure": 6,
+  "reds": [
+   {
+    "actor": "AGENT",
+    "root": "generator omitted source_manifest_blob/status present in committed graph",
+    "state": "REPAIRED_IN_THIS_PR",
+    "workflow": "mission-control-mach2-mip.yml"
+   },
+   {
+    "actor": "AGENT",
+    "root": "page never carried the scope caveat its contract test requires (EVERRED since birth)",
+    "state": "REPAIRED_IN_THIS_PR",
+    "workflow": "g3p-ggmath-observed-projection.yml"
+   },
+   {
+    "actor": "OWNER",
+    "root": "frozen source GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json changed 2026-10-18 (8b6ea415); atlas pins blob 0e42dd49",
+    "state": "OWNER_REBIND_DECISION",
+    "workflow": "mission-control-n12-recursive-recovery.yml"
+   },
+   {
+    "actor": "OWNER",
+    "root": "asserts STAGED_ACTIVE_RECON_4_OF_8; canonical is now ACTIVE_8_OF_8 (superseded stage, same class as RECON_4/G06)",
+    "state": "OWNER_RETIRE_OR_SUPERSEDE",
+    "workflow": "gm-iv-f05-f06-runtime-probe.yml"
+   },
+   {
+    "actor": "OWNER",
+    "root": "unauthenticated raw fetch of private cryoplant-project evidence (curl 22): cross-repo credential, same root as Live Census/G03",
+    "state": "OWNER_CREDENTIAL",
+    "workflow": "gm-i-b-cycle3-propagation-proof.yml"
+   },
+   {
+    "actor": "AGENT",
+    "root": "Windows lane step exits 1 with no annotation; logs not reachable from this session",
+    "state": "OPEN_DIAGNOSTICS_GAP_G10",
+    "workflow": "jade-sprint-n3-qualification.yml"
+   }
+  ],
+  "selection": "workflow_dispatch, no write permissions, no required inputs, no secrets beyond GITHUB_TOKEN; pinned-evidence gates excluded",
+  "success": 65
+ },
+ "schema": "gogreen.required_gate.evidence.v1",
+ "zero_tested_burndown": [
+  "level1/runtime.py (18 tests)",
+  "tools/bd_workflow_frequency.py (11 tests)",
+  "scripts/triage_renegade_smoke.py (5 negative controls)",
+  "mission-control/gogreen/required_gate/depth.py (8 tests)"
+ ]
+}
