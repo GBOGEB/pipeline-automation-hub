@@ -1,3 +1,12 @@
+**N+8 update (20 October 2026):** [Red-trace federation ledger](site/redtrace.html) · [16:9 slides](site/redtrace-slides.html) · [interactive PDF](site/redtrace-slides.pdf) · [federation snapshot](data/RED_TRACE_FEDERATION_N8.json) · [gap analysis](data/GAP_ANALYSIS_N8.json). EVERRED / GREEN→RED / RED→GREEN for the 5 core repos (hub, ABACUS, CODEX, cryoplant-project, gg_MATH), break windows to the first red run, stale/pinned flags, a gap analysis of what our own tooling could not answer, and explicit `AGENT` / `OWNER` / `CI` actor badges. Validated JADE child, **not yet staged into Pages** (gap G13: the hosted-parity contract pins the public asset set; owner review first).
+
+```bash
+python mission-control/jade_temple/tools/build_redtrace_data.py --reports <dir-with-repo/red_trace.json>
+python mission-control/jade_temple/site/build_redtrace.py --check
+python mission-control/jade_temple/tools/render_redtrace_pdf.py
+python mission-control/jade_temple/tools/run_redtrace_browser_qa.py
+```
+
 **N+3 update:** [8-point MIP audit](site/eightpoint.html) · [full source decisions](notes/EIGHT_POINT_MIP_DOV.md) · [current frozen 21-repo technical queue](notes/TOP21_TECHNICAL_QUEUE_NPLUS3.md) · [8-point deterministic manifest](site/eightpoint-manifest.json) · [CP.RESUME](DROPIN_NEXT_CHAT.md). It is a separate candidate from newer Mission Control main after JADE N+2 #733 merged; NOT an accepted point release or hard gate.
 
 # JADE_TEMPLE / JADE_CASTE — Top21 GoGREEN launch-readiness pilot

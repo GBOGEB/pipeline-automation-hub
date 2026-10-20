@@ -1,0 +1,282 @@
+{
+ "agent_actions": [
+  {
+   "action": "Repaired 8 master first-red roots",
+   "actor": "AGENT",
+   "date": "2026-10-18",
+   "ref": "PRs #698 #699 #702 #703 #705 #707 #720"
+  },
+  {
+   "action": "Merged all repairs",
+   "actor": "OWNER",
+   "date": "2026-10-18",
+   "ref": "#698–#720"
+  },
+  {
+   "action": "Built red-trace ledger",
+   "actor": "AGENT",
+   "date": "2026-10-19",
+   "ref": "#752"
+  },
+  {
+   "action": "Merged red-trace ledger",
+   "actor": "OWNER",
+   "date": "2026-10-19",
+   "ref": "#752"
+  },
+  {
+   "action": "Dispatched 3 stale-red replays (owner-authorised 'do all unblocked')",
+   "actor": "AGENT",
+   "date": "2026-10-19",
+   "ref": "m3-lossless ✓, capacity proof v2 ✓, RECON_4 ✗"
+  },
+  {
+   "action": "Root-traced RECON_4 (superseded stage) and GM-V (purged artifacts)",
+   "actor": "AGENT",
+   "date": "2026-10-19",
+   "ref": "#529"
+  },
+  {
+   "action": "Fixed tracer workflow pagination; federation trace ×5 repos",
+   "actor": "AGENT",
+   "date": "2026-10-20",
+   "ref": "this PR"
+  },
+  {
+   "action": "Built GOGREEN required-gate aggregator",
+   "actor": "AGENT",
+   "date": "2026-10-20",
+   "ref": "this PR"
+  },
+  {
+   "action": "EVERRED adapter + ledger append",
+   "actor": "AGENT",
+   "date": "2026-10-20",
+   "ref": "ABACUS PR"
+  },
+  {
+   "action": "Native verification of every PR head",
+   "actor": "CI",
+   "date": "2026-10-20",
+   "ref": "Actions"
+  },
+  {
+   "action": "Branch protection, evidence rebind, gate retirement, replay lane",
+   "actor": "OWNER",
+   "date": "—",
+   "ref": "pending decisions"
+  }
+ ],
+ "authority": {
+  "merge_authorized": false
+ },
+ "core": {
+  "cohort_note": "TOP21 roster = 5 core + 3 satellites + 13 others, of which 9 are upstream forks (ariana, cli, docker-stacks, github-mcp-server, prettier, python-sdk, skills, vscode-powershell, yaml-grammar).",
+  "federation_core": [
+   {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "role": "Mission Control hub / control plane / Pages publisher"
+   },
+   {
+    "repo": "GBOGEB/ABACUS",
+    "role": "System Under Test; EVERRED ledger owner; local tree named Master_Input"
+   },
+   {
+    "repo": "GBOGEB/CODEX",
+    "role": "Federation governance & orchestration (Mycelium, receipts)"
+   },
+   {
+    "repo": "GBOGEB/cryoplant-project",
+    "role": "QPS engineering SSOT and TRIAGE owner (private)"
+   },
+   {
+    "repo": "GBOGEB/gg_MATH",
+    "role": "Mathematics provider (PCA/BT/MC kernels)"
+   }
+  ],
+  "pipeline": {
+   "answer": "The 'pipeline' is pipeline-automation-hub. It began as the Master_Input document pipeline (PPTX/DOCX → digital twins, PROCESSING_MANIFEST.json, last run 2025-09-10) and grew into Mission Control, GOGREEN, CODE PURPLE and JADE: the federation's read-only control plane.",
+   "evidence": [
+    "PROCESSING_MANIFEST.json generated 2025-09-10",
+    "app/public/master_input/",
+    "mission-control/"
+   ],
+   "repo": "GBOGEB/pipeline-automation-hub"
+  },
+  "satellites": [
+   "GBOGEB/DOCX_RTM_Automation",
+   "GBOGEB/Q_engineering_tools",
+   "GBOGEB/document-organization-system"
+  ],
+  "source_lists": {
+   "TOP21 roster": [
+    "ABACUS",
+    "CODEX",
+    "DOCX_RTM_Automation",
+    "GEMINI",
+    "Q_engineering_tools",
+    "ariana",
+    "cli",
+    "cryo_leak_rate_dashboard",
+    "cryogenic-accelerator-workspace",
+    "cryoplant-project",
+    "docker-stacks",
+    "document-organization-system",
+    "gg_MATH",
+    "github-mcp-server",
+    "github_documentorganisatiesysteem_GBOGEB",
+    "pipeline-automation-hub",
+    "prettier",
+    "python-sdk",
+    "skills",
+    "vscode-powershell",
+    "yaml-grammar"
+   ],
+   "TOP7 census": [
+    "ABACUS",
+    "CODEX",
+    "DOCX_RTM_Automation",
+    "Q_engineering_tools",
+    "cryoplant-project",
+    "document-organization-system",
+    "pipeline-automation-hub"
+   ],
+   "W1 rebuild": [
+    "ABACUS",
+    "CODEX",
+    "cryoplant-project",
+    "gg_MATH",
+    "pipeline-automation-hub"
+   ],
+   "live_census": [
+    "ABACUS",
+    "CODEX",
+    "cryoplant-project",
+    "gg_MATH",
+    "pipeline-automation-hub"
+   ]
+  }
+ },
+ "gaps": [
+  {
+   "actor": "AGENT",
+   "fill": "Crosswalk computed from all 4 SSOTs + live org (this iteration).",
+   "finding": "Asking 'which repos are core' gives 4 different lists (TOP21 roster 21, TOP7 census 7, live_census 5, W1 rebuild 5). TOP21 includes 9 forks.",
+   "id": "G01",
+   "next": "Owner: name ONE canonical registry; others derive.",
+   "state": "FILLED_PARTIAL",
+   "title": "One question, four answers"
+  },
+  {
+   "actor": "AGENT",
+   "fill": "Paginated listing + fail-closed if census incomplete; 2 regression tests.",
+   "finding": "Tracer listed only the first 100 workflows; ABACUS has 244, CODEX 174, QPS 149, hub 162.",
+   "id": "G02",
+   "next": "—",
+   "state": "FILLED",
+   "title": "Red-trace saw half the fleet"
+  },
+  {
+   "actor": "AGENT",
+   "fill": "Same tracer run over all 5 core repos; federation snapshot drives HTML/slides/PDF.",
+   "finding": "Ledger covered 1 of 5 core repos.",
+   "id": "G03",
+   "next": "Schedule federation trace (needs cross-repo read token for private QPS in CI).",
+   "state": "EXCEEDED",
+   "title": "Hub-only measurement"
+  },
+  {
+   "actor": "AGENT",
+   "fill": "3 replays dispatched: m3-lossless and GM-IV capacity proof v2 flipped to GREEN; RECON_4 stays red (superseded gate).",
+   "finding": "Path-filtered workflows keep a red verdict for weeks.",
+   "id": "G04",
+   "next": "Owner: approve bounded auto-replay lane (actions:write).",
+   "state": "FILLED_PARTIAL",
+   "title": "Stale reds never re-evaluated"
+  },
+  {
+   "actor": "OWNER",
+   "fill": "📌 marker + PINNED_HISTORICAL_EVIDENCE cause in ledger; fresh native evidence now exists (run 39293734282, expires 2026-11-18).",
+   "finding": "2 GM-V gates assert on purged artifacts (30-day retention); red with zero code change.",
+   "id": "G05",
+   "next": "Owner: bind to latest valid run, not a pinned id.",
+   "state": "DETECTED",
+   "title": "Retention time-bombs"
+  },
+  {
+   "actor": "OWNER",
+   "fill": "Root traced (mode=INVALID).",
+   "finding": "GM-IV RECON_4 gate rejects the later ACTIVE_8 state → permanent red.",
+   "id": "G06",
+   "next": "Owner: retire, or classify later stage as SUPERSEDED.",
+   "state": "DETECTED",
+   "title": "Superseded stage gates"
+  },
+  {
+   "actor": "AGENT",
+   "fill": "Always-reporting GOGREEN Required Gate aggregates them on exact head (13 tests).",
+   "finding": "Method Atlas & Live Lossless are path-filtered; requiring them blocks unrelated PRs forever.",
+   "id": "G07",
+   "next": "Owner: require only 'GOGREEN required gate' on master.",
+   "state": "FILLED",
+   "title": "Required checks would deadlock"
+  },
+  {
+   "actor": "AGENT",
+   "fill": "EVERRED ingest_red_trace adapter (5 tests, EVERRED 376/376) + events appended to Master_Input/ABACUS ledger.",
+   "finding": "Hub red-trace and ABACUS EVERRED ledger did not share events.",
+   "id": "G08",
+   "next": "—",
+   "state": "FILLED",
+   "title": "Two ledgers, no join"
+  },
+  {
+   "actor": "OWNER",
+   "fill": "Recorded; not changed (out of scope, live app).",
+   "finding": "Document pipeline manifest last generated 2025-09-10; scan route hard-codes file names.",
+   "id": "G09",
+   "next": "Owner: re-run or retire the document pipeline.",
+   "state": "OPEN",
+   "title": "Master_Input pipeline frozen"
+  },
+  {
+   "actor": "AGENT",
+   "fill": "Annotation wrapper on W1/W2/Live Lossless (N+0..N+7).",
+   "finding": "QA steps reported only 'exit code 1'.",
+   "id": "G10",
+   "next": "Extend wrapper to remaining QA steps.",
+   "state": "FILLED_PARTIAL",
+   "title": "Opaque failures"
+  },
+  {
+   "actor": "AGENT",
+   "fill": "Explicit actor badges (AGENT · OWNER · CI) on every action/gap in HTML, slides and PDF.",
+   "finding": "Pages did not show which actions an agent took vs owner/CI.",
+   "id": "G11",
+   "next": "—",
+   "state": "FILLED",
+   "title": "Implicit agent involvement"
+  },
+  {
+   "actor": "AGENT",
+   "fill": "JADE HTML page + 16:9 HTML slides + interactive PDF (bookmarks, internal & source links).",
+   "finding": "Ledger only in JSON/markdown.",
+   "id": "G12",
+   "next": "—",
+   "state": "FILLED",
+   "title": "No shareable evidence pack"
+  },
+  {
+   "actor": "OWNER",
+   "fill": "Red-trace HTML/slides/PDF built and validated as a JADE child; staging deliberately not wired into portal_bridge.",
+   "finding": "The hosted-parity contract pins JADE's exact public asset set; adding the red-trace child changes the published Pages contract.",
+   "id": "G13",
+   "next": "Owner: approve extending portal_bridge + hosted_parity asset set (one follow-up PR).",
+   "state": "OPEN",
+   "title": "Pages publication contract"
+  }
+ ],
+ "iteration": "N+8",
+ "question": "If I use my own code to answer 'what is the federation and what is red', what is answered, what is missing?",
+ "schema": "jade.temple.gap_analysis.v1"
+}
