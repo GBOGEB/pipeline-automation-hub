@@ -68,6 +68,21 @@ jobs:
           assert branch_total>0 and 100*branches/branch_total>=80, 'N3 branch coverage gate failed'
           print(f'FOCUSED_N3_BRANCH={branches}/{branch_total}')
           PY
+      - name: Require separate focused G3P live statement+branch coverage >= 80
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          c=json.loads(Path('/tmp/n3-coverage.json').read_text())['files']
+          s=[v['summary'] for k,v in c.items() if Path(k).name=='g3p_live_dashboard.py']
+          assert len(s)==1, f'expected exactly one g3p_live_dashboard.py source, got {len(s)}'
+          x=s[0]
+          denominator=x['num_statements']+x['num_branches']
+          assert denominator>0
+          pct=100*(x['covered_lines']+x['covered_branches'])/denominator
+          print(f'FOCUSED_G3P_STMT_BRANCH={pct:.2f}%')
+          assert pct>=80, 'focused G3P live quality gate failed'
+          PY
       - name: Produce source-bound audit, telemetry and HTML projection
         run: |
           mkdir -p /tmp/n3-evidence

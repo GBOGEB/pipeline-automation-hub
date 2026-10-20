@@ -22,6 +22,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Compile Level-1 kernel
         run: python -m py_compile level1/runtime.py
+      - name: Unit controls (analytic engines, census arithmetic, CLI contract)
+        run: python -m unittest discover -s level1 -p 'test_*.py' -v
       - name: Execute census MIP and orchestration
         run: |
           python level1/runtime.py census

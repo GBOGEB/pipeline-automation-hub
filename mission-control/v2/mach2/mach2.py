@@ -172,6 +172,8 @@ def build_graph(manifest: dict, canonical: dict) -> dict:
         edge("sipoc:"+mid+":REX_RETURN","sipoc:"+mid+":SOURCE_READBACK","REVERSE_PRESSURE","GOLDEN_THREAD")
     graph={"schema":FULL,"authority_transfer":False,"dispatch_authorized":False,
            "source_repo":"GBOGEB/pipeline-automation-hub",
+           "source_manifest_blob":blob_sha(Path(__file__).with_name("MACHII_MISSION_MANIFEST.json").read_bytes()),
+           "status":"READ_ONLY_SOURCE_BOUND_TYPED_GRAPH_NO_OWNER_ACCEPTANCE",
            "historical_gm_unchanged":True,"nodes":nodes,"edges":edges}
     graph["projection_receipt"]=validate_mycelium(graph)
     return graph

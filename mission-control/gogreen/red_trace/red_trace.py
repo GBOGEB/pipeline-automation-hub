@@ -274,7 +274,7 @@ def build(repo, branch, collected, flows, enriched_reader=None, observed_at=None
     wfs = []
     for path, seq in sorted(flows.items()):
         c = classify(seq)
-        c.update(path=path, name=seq[-1]["name"],
+        c.update(path=path, name=seq[-1]["name"], first_observed_at=seq[0]["at"],
                  history_truncated=path in collected.get("truncated_workflows", {}),
                  nondeterminism=nd.get(path, {"same_head_disagreements": 0, "disagreeing_shas": [],
                                               "rerun_rescues": 0, "nondeterministic": False}))
