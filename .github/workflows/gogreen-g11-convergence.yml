@@ -73,6 +73,7 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Reconcile 24 plus 57 and G10 native visual QA, verify output bytes" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           python mission-control/gogreen/convergence_bridge/reconcile.py \
             --root mission-control/gogreen \

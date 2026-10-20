@@ -72,6 +72,7 @@ jobs:
 
       - name: Emit boundary QA receipt
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Emit boundary QA receipt" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           python3 - <<'PY'
           import json, os
           from pathlib import Path

@@ -89,10 +89,13 @@ jobs:
           python-version: '3.11'
       - name: Install scoped Chromium QA dependencies
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Install scoped Chromium QA dependencies" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           python -m pip install playwright
           python -m playwright install --with-deps chromium
       - name: Verify HTML, six tabs, three viewports and immutable source model
-        run: python mission-control/v2/recursive-recovery/browser_qa.py /tmp/mc-n12-browser-qa
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Verify HTML, six tabs, three viewports and immutable source model" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          python mission-control/v2/recursive-recovery/browser_qa.py /tmp/mc-n12-browser-qa
       - name: Preserve QA screenshots and digests
         if: always()
         uses: actions/upload-artifact@v4

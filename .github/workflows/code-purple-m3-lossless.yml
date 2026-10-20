@@ -35,6 +35,7 @@ jobs:
           grep -Fqx 'Ran 36 M3 tests: PASS' "$RUNNER_TEMP/m3/m3_testflight.log"
       - name: Existing M2 portal 12-case native QA
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Existing M2 portal 12-case native QA" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           node mission-control/federation-atlas/m2_session/test_m2_portal.js 2>&1 | tee "$RUNNER_TEMP/m3/m2_testflight.log"
           node mission-control/federation-atlas/m2_session/m2_portal.js --check
@@ -45,6 +46,7 @@ jobs:
           NATIVE_RUN: ${{ github.run_id }}
           ATTEMPT: ${{ github.run_attempt }}
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Rebuild source-bound handover and verify SHA" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           SCRIPT=mission-control/federation-atlas/m2_session/continuation/m3_handover.js
           node "$SCRIPT" --out "$RUNNER_TEMP/m3" --source-sha "$EXPECTED_SHA"

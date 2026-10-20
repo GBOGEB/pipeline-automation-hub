@@ -74,6 +74,7 @@ jobs:
       - name: W32 canonical six-repo bounded pull and empty-push packet QA
         shell: bash
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="W32 canonical six-repo bounded pull and empty-push packet QA" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           EXPECTED_SHA="$(git rev-parse HEAD)"
           export EXPECTED_SHA

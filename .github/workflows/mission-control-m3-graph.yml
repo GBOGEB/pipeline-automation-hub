@@ -102,6 +102,7 @@ jobs:
           python-version: "3.11"
       - name: Install pinned Playwright and Chromium
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Install pinned Playwright and Chromium" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           python -m pip install playwright==1.55.0
           python -m playwright install --with-deps chromium
       - name: Download matching exact-run M3 graph and open-me artifact
@@ -112,6 +113,7 @@ jobs:
       - name: Verify standalone open-me offline with all networking denied
         shell: bash
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Verify standalone open-me offline with all networking denied" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           python mission-control/federation-atlas/m3_session/m3_offline_browser_qa.py --html out/m3/from-graph/M3_OPEN_ME_OFFLINE.html --out out/m3/browser
       - name: QA 1440x1000, 1280x800, 390x844 with exact checkout
@@ -119,6 +121,7 @@ jobs:
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="QA 1440x1000, 1280x800, 390x844 with exact checkout" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           python mission-control/federation-atlas/m3_session/m3_browser_qa.py --out out/m3/browser

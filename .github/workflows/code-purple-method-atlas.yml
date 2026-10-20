@@ -196,6 +196,7 @@ jobs:
       - name: "CPQ N5: native browser/SVG seeded-negative visual proof"
         shell: bash
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="CPQ N5: native browser/SVG seeded-negative visual proof" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           python -m pip install --disable-pip-version-check playwright==1.56.0
           python -m playwright install --with-deps chromium
@@ -539,6 +540,7 @@ jobs:
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="W34 source-bound Superstitch / DOW TESTFLIGHT and visual QA" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           SRC=mission-control/federation-atlas/superstitch
           python "$SRC/testflight.py" --mode pr --expected-head "$EXACT_SHA" --browser \
@@ -580,6 +582,7 @@ jobs:
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Build source-bound execution Atlas and validate every output member" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           SRC=mission-control/federation-atlas/orchestration
           python "$SRC/main.py" check --root .
@@ -623,6 +626,7 @@ jobs:
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="W32 Global DoV three-viewport / status-overlay browser QA" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           python mission-control/federation-atlas/convergence_browser_qa.py \
             --html /tmp/code-purple-atlas/pages/convergence/index.html \
@@ -634,6 +638,7 @@ jobs:
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="N3 responsive Plotly / SHA-bound Pages / control QA" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           SRC=mission-control/federation-atlas/mission_rebuild
           python "$SRC/n3_browser_qa.py" \
