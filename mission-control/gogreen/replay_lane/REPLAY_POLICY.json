@@ -1,0 +1,21 @@
+{
+  "schema": "gogreen.replay_lane.policy.v1",
+  "approved_by": "repository owner, #529 G04 (2026-10-20): bounded auto-replay lane (actions:write)",
+  "purpose": "Re-evaluate STALE reds on master (red at last observation, no run for > stale_days) by dispatching the workflow on master. A replay produces evidence; it never repairs, merges, waives or confirms a root.",
+  "branch": "master",
+  "stale_days": 3,
+  "max_dispatches_per_run": 3,
+  "min_hours_between_replays_per_workflow": 24,
+  "max_repo_queued_runs": 40,
+  "allowed_permission_writes": [
+    "checks",
+    "statuses"
+  ],
+  "deny": {
+    ".github/workflows/gm-iv-recon4-governor.yml": "superseded stage gate (G06): GM-IV is ACTIVE_8_OF_8; replay cannot turn it green",
+    ".github/workflows/gogreen-replay-lane.yml": "the lane never replays itself",
+    ".github/workflows/code-purple-method-atlas.yml": "Pages publisher job: replay only via owner dispatch"
+  },
+  "merge_authorized": false,
+  "why_no_actions_write": "a replayed workflow holding actions:write could itself dispatch others; refusing it keeps the lane non-cascading"
+}
