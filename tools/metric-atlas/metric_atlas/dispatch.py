@@ -12,6 +12,7 @@ import urllib.request
 from pathlib import Path
 
 from .census import ALLOWED_REPOS, SCHEMA, CensusError, canonical
+from .disjoint_scale import DisjointScaleError, _check_manifest
 
 
 class DispatchError(ValueError):
@@ -19,6 +20,12 @@ class DispatchError(ValueError):
 
 
 def plan(manifest):
+    # Reuse the W6 canonical source/allowlist/selector reconstruction.
+    # A locally forged route, ID or SHA must never reach even the dry-run plan.
+    try:
+        manifest = _check_manifest(manifest)
+    except (DisjointScaleError, ValueError, KeyError, TypeError, AttributeError) as exc:
+        raise DispatchError("untrusted source-bound census manifest") from exc
     if manifest.get("schema") != SCHEMA or manifest.get("mode") != "READ_ONLY":
         raise DispatchError("census schema/mode mismatch")
     reqs = manifest.get("requests")
