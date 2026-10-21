@@ -68,6 +68,12 @@ def produce(coverage_bytes,log_bytes,repository,expected_sha,checked_out_sha,wav
     lines=sum(x['num_statements'] for x in production.values())
     covered_branches=sum(x['covered_branches'] for x in production.values())
     branches=sum(x['num_branches'] for x in production.values())
+    # Breadth-first, measured-cohort-only zero coverage census. This is not
+    # a repository inventory or an authenticated 42-cell federation reading.
+    zero_statement_modules=sorted(k for k,v in production.items()
+        if v['covered_lines']==0)
+    zero_branch_modules=sorted(k for k,v in production.items()
+        if v['num_branches']>0 and v['covered_branches']==0)
     n=covered_lines+covered_branches
     d=lines+branches
     result={'schema':'gogreen.pulse.metrics.v1','wave_id':wave_id,
@@ -79,8 +85,15 @@ def produce(coverage_bytes,log_bytes,repository,expected_sha,checked_out_sha,wav
         'coverage':{'covered_statements':covered_lines,'eligible_statements':lines,
                     'covered_branches':covered_branches,'eligible_branches':branches,
                     'combined_covered':n,'combined_eligible':d,
-                    'combined_percent':round(100*n/d,4),'production_modules':production},
+                    'combined_percent':round(100*n/d,4),'production_modules':production,
+                    'zero_statement_modules':zero_statement_modules,
+                    'zero_branch_modules':zero_branch_modules,
+                    'nonzero_statement_modules':len(production)-len(zero_statement_modules),
+                    'measured_zero_gate':('FAIL' if zero_statement_modules or zero_branch_modules
+                                          else 'PASS_MEASURED_COHORT_ONLY'),
+                    'inventory_scope':'COVERAGE_JSON_REPORTED_ONLY'},
         'comparability':'NO_BASELINE_SUPPLIED','comparable_delta_pp':None,
+        'comparable_zero_statement_delta':None,'comparable_zero_branch_delta':None,
         'evidence_source':'LOCAL_OR_CI_PRODUCER_NOT_EXTERNAL_GITHUB_AUTHENTICATION',
         'coverage_json_sha256':sha256(coverage_bytes),'unittest_log_sha256':sha256(log_bytes),
         'native_artifact_bytes_verified':False,'real_child_capacity':None,
@@ -125,6 +138,13 @@ def produce(coverage_bytes,log_bytes,repository,expected_sha,checked_out_sha,wav
                 raise ValueError('baseline coverage integrity: aggregate mismatch')
             result['comparable_delta_pp']=round(result['coverage']['combined_percent']
                 - required['combined_percent'],4)
+            old_zero_statement=sum(m['covered_lines']==0 for m in old_mod.values())
+            old_zero_branch=sum(m['num_branches']>0 and m['covered_branches']==0
+                for m in old_mod.values())
+            result['comparable_zero_statement_delta']=(
+                len(zero_statement_modules)-old_zero_statement)
+            result['comparable_zero_branch_delta']=(
+                len(zero_branch_modules)-old_zero_branch)
     return result
 
 def main():
