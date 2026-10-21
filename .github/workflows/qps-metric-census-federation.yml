@@ -183,3 +183,54 @@ jobs:
           name: qps-metric-dispatch-attempt-${{ github.run_id }}-${{ github.run_attempt }}
           path: qps-metric-run/dispatch-receipt.json
           if-no-files-found: warn
+
+  w7-disjoint-negative-matrix:
+    name: W7 / ${{ matrix.source }} / Python ${{ matrix.python }}
+    if: github.event_name == 'pull_request'
+    needs: verify-census-contract
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        source: [dispatch, receiver]
+        python: ['3.11', '3.12']
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout exact reviewed PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Assert exact source head
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+      - name: Install pinned coverage instrumenter
+        shell: bash
+        run: python -m pip install 'coverage==7.13.3'
+      - name: Disjoint adversarial source flight
+        shell: bash
+        env:
+          PYTHONPATH: tools/metric-atlas
+          SOURCE: ${{ matrix.source }}
+        run: |
+          python -m coverage run --branch --source="metric_atlas.${SOURCE}" -m unittest discover -s tools/metric-atlas/tests -p "test_${SOURCE}_w7*.py" -v
+          python -m coverage json -o "w7-${SOURCE}-coverage.json"
+          python -m coverage report -m
+          python -c 'import json,os; p="w7-"+os.environ["SOURCE"]+"-coverage.json"; f=json.load(open(p))["files"]; assert len(f)==1, "source_scope_breach"; s=next(iter(f.values()))["summary"]; print("W7_MATCHED_NATIVE",os.environ["SOURCE"],s); assert s["covered_lines"]==s["num_statements"],"uncovered_statements"; assert s["covered_branches"]==s["num_branches"],"uncovered_branches"; assert s["excluded_lines"]==0,"unexpected_exclusions"'
+          git hash-object "tools/metric-atlas/metric_atlas/${SOURCE}.py"
+      - name: Preserve source-scoped evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: w7-${{ matrix.source }}-py${{ matrix.python }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: w7-${{ matrix.source }}-coverage.json
+          if-no-files-found: warn

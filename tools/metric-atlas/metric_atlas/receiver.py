@@ -21,6 +21,8 @@ LANES = {
 }
 SHA = re.compile(r"^[a-f0-9]{40}$")
 ID = re.compile(r"^QPS-[a-f0-9]{20}$")
+MAX_API_PAGES = 4  # Hard cap: 4 x 100 per endpoint, never unbounded read fan-out.
+PAGE_SIZE = 100
 
 
 def canonical(value):
@@ -76,14 +78,57 @@ def github_json(env, endpoint):
         return json.load(r)
 
 
+def bounded_github_rows(env, endpoint, field):
+    """Read up to 400 stable metadata rows or HOLD; never report partial as full.
+
+    GitHub's jobs/check-runs endpoints both return total_count and a paged list.
+    A changing total, duplicate ID, missing page, bool count or excess breadth
+    makes the result unusable as native-source observation.
+    """
+    if field not in ("jobs", "check_runs") or not isinstance(endpoint, str):
+        raise ValueError("unsupported bounded evidence route")
+    sep = "&" if "?" in endpoint else "?"
+    total = None
+    rows = []
+    seen = set()
+    for page in range(1, MAX_API_PAGES + 1):
+        url = f"{endpoint}{sep}per_page={PAGE_SIZE}&page={page}"
+        response = github_json(env, url)
+        if not isinstance(response, dict):
+            raise ValueError("untrusted GitHub pagination response")
+        count = response.get("total_count")
+        current = response.get(field)
+        if (type(count) is not int or count < 0 or
+                count > PAGE_SIZE * MAX_API_PAGES or
+                not isinstance(current, list) or len(current) > PAGE_SIZE):
+            raise ValueError("invalid or unbounded GitHub metadata population")
+        if total is not None and total != count:
+            raise ValueError("GitHub metadata population changed during pagination")
+        total = count
+        needed = min(PAGE_SIZE, total - len(rows))
+        if len(current) != needed:
+            raise ValueError("GitHub metadata page incomplete or inconsistent")
+        for item in current:
+            if not isinstance(item, dict) or type(item.get("id")) is not int or item["id"] <= 0:
+                raise ValueError("GitHub metadata object without unique positive ID")
+            if item["id"] in seen:
+                raise ValueError("duplicate GitHub metadata ID across pages")
+            seen.add(item["id"])
+        rows.extend(current)
+        if len(rows) == total:
+            return rows, total
+    raise ValueError("GitHub metadata pagination exceeded bounded limit")
+
+
 def platform_job(env):
     repo, run, target_name = (
         env["GITHUB_REPOSITORY"], env["GITHUB_RUN_ID"], env.get("QPS_JOB_NAME")
     )
     if not target_name:
         raise ValueError("job name missing")
-    doc = github_json(env, "repos/{}/actions/runs/{}/jobs?per_page=100&filter=latest".format(repo, run))
-    jobs = [j for j in doc.get("jobs", [])
+    all_jobs, _ = bounded_github_rows(
+        env, "repos/{}/actions/runs/{}/jobs?filter=latest".format(repo, run), "jobs")
+    jobs = [j for j in all_jobs
             if j.get("name") == target_name or
             str(j.get("name", "")).endswith(" / " + target_name)]
     if len(jobs) != 1 or type(jobs[0].get("id")) is not int:
@@ -117,11 +162,11 @@ def collect(env, route):
     repo, sha = env["GITHUB_REPOSITORY"], env["GITHUB_SHA"]
     payload = source_catalog() if route == "coverage_catalog" else {}
     if route == "native_checks":
-        raw = github_json(env, "repos/{}/commits/{}/check-runs?per_page=100".format(repo, sha))
-        checks = raw.get("check_runs", [])
+        checks, total = bounded_github_rows(
+            env, "repos/{}/commits/{}/check-runs".format(repo, sha), "check_runs")
         payload = {"observed_check_runs": len(checks),
-                   "reported_total_checks": raw.get("total_count"),
-                   "pagination_complete": len(checks) == raw.get("total_count"),
+                   "reported_total_checks": total,
+                   "pagination_complete": True,
                    "check_statuses": [
                        {"id": c.get("id"), "name": c.get("name"),
                         "status": c.get("status"), "conclusion": c.get("conclusion")}
