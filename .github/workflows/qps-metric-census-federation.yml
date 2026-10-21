@@ -222,9 +222,10 @@ jobs:
           PYTHONPATH: tools/metric-atlas
           SOURCE: ${{ matrix.source }}
         run: |
-          python -m coverage run --branch --source="metric_atlas.${SOURCE}" -m unittest discover -s tools/metric-atlas/tests -p "test_${SOURCE}_w7.py" -v
+          python -m coverage run --branch --source="metric_atlas.${SOURCE}" -m unittest discover -s tools/metric-atlas/tests -p "test_${SOURCE}_w7*.py" -v
           python -m coverage json -o "w7-${SOURCE}-coverage.json"
           python -m coverage report -m
+          python -c 'import json,os; p="w7-"+os.environ["SOURCE"]+"-coverage.json"; f=json.load(open(p))["files"]; assert len(f)==1, "source_scope_breach"; s=next(iter(f.values()))["summary"]; print("W7_MATCHED_NATIVE",os.environ["SOURCE"],s); assert s["covered_lines"]==s["num_statements"],"uncovered_statements"; assert s["covered_branches"]==s["num_branches"],"uncovered_branches"; assert s["excluded_lines"]==0,"unexpected_exclusions"'
           git hash-object "tools/metric-atlas/metric_atlas/${SOURCE}.py"
       - name: Preserve source-scoped evidence
         if: always()
