@@ -134,3 +134,52 @@ class PulseReceiptTests(unittest.TestCase):
         receipt=report(json.dumps(cov).encode(),comparison=baseline)
         self.assertEqual('INCOMPARABLE_SCOPE_OR_TOOL',receipt['comparability'])
         self.assertIsNone(receipt['comparable_delta_pp'])
+
+
+    def test_zero_statement_and_branch_debt_is_visible_without_waiver(self):
+        cov=json.loads(fixture()[0])
+        rec=cov['files']['mission-control/gogreen/spine.py']['summary']
+        rec['covered_lines']=0
+        rec['covered_branches']=0
+        out=report(json.dumps(cov).encode())
+        debt=out['coverage']
+        self.assertEqual(['mission-control/gogreen/spine.py'],debt['zero_statement_modules'])
+        self.assertEqual(['mission-control/gogreen/spine.py'],debt['zero_branch_modules'])
+        self.assertEqual(0,debt['nonzero_statement_modules'])
+        self.assertEqual('FAIL',debt['measured_zero_gate'])
+        self.assertEqual('COVERAGE_JSON_REPORTED_ONLY',debt['inventory_scope'])
+        self.assertFalse(out['merge_authorized'])
+
+    def test_branchless_nonzero_statement_module_is_not_zero_branch_debt(self):
+        cov=json.loads(fixture()[0])
+        cov['files']['mission-control/gogreen/branchless.py']={'summary':{
+            'num_statements':2,'covered_lines':1,
+            'num_branches':0,'covered_branches':0}}
+        out=report(json.dumps(cov).encode())
+        self.assertEqual([],out['coverage']['zero_statement_modules'])
+        self.assertEqual([],out['coverage']['zero_branch_modules'])
+        self.assertEqual(2,out['coverage']['nonzero_statement_modules'])
+        self.assertEqual('PASS_MEASURED_COHORT_ONLY',out['coverage']['measured_zero_gate'])
+
+    def test_zero_debt_reduction_only_when_scope_matches(self):
+        old=json.loads(fixture()[0])
+        s=old['files']['mission-control/gogreen/spine.py']['summary']
+        s['covered_lines']=s['covered_branches']=0
+        baseline=report(json.dumps(old).encode())
+        new=report(comparison=baseline)
+        self.assertEqual('MATCHED_SCOPE',new['comparability'])
+        self.assertEqual(-1,new['comparable_zero_statement_delta'])
+        self.assertEqual(-1,new['comparable_zero_branch_delta'])
+        self.assertEqual([],new['coverage']['zero_statement_modules'])
+
+    def test_changed_denominator_never_claims_zero_debt_gain(self):
+        old=json.loads(fixture()[0])
+        s=old['files']['mission-control/gogreen/spine.py']['summary']
+        s['covered_lines']=s['covered_branches']=0
+        baseline=report(json.dumps(old).encode())
+        now=json.loads(fixture()[0])
+        now['files']['mission-control/gogreen/spine.py']['summary']['num_statements']=11
+        new=report(json.dumps(now).encode(),comparison=baseline)
+        self.assertEqual('INCOMPARABLE_SCOPE_OR_TOOL',new['comparability'])
+        self.assertIsNone(new['comparable_zero_statement_delta'])
+        self.assertIsNone(new['comparable_zero_branch_delta'])
