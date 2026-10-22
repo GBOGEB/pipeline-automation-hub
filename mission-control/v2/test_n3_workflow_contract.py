@@ -130,6 +130,15 @@ class N11WorkflowContractTests(unittest.TestCase):
         self.assertIn(manifest, push)
         self.assertNotIn("permissions:\n  contents: write", src)
 
+    def test_operations_atlas_fixture_triggers_both_pr_and_master_push(self):
+        src = workflow()
+        fixture = "'mission-control/federation-atlas/MC_OPERATIONS_ATLAS_V2_BRIDGE_20261017.json'"
+        self.assertEqual(src.count("      - " + fixture), 2)
+        pr, rest = src.split("  push:\n", 1)
+        push, _ = rest.split("  workflow_dispatch:", 1)
+        self.assertIn(fixture, pr)
+        self.assertIn(fixture, push)
+
     def test_graph_bridge_module_is_coverage_denominator_member(self):
         src = workflow()
         self.assertIn("'n3_master_dags_bridge.py'", src)

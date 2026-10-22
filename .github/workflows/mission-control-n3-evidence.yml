@@ -11,6 +11,7 @@ on:
       - 'mission-control/federation-atlas/MC_G3A_PR620_NATIVE_CENSUS_20261017.json'
       - 'mission-control/federation-atlas/G3A_N10_N12_LOCAL_OBSERVATIONS_20261017.json'
       - 'mission-control/federation-atlas/G3A_N13_N15_MASTER_DAGS_COMPAT_20261017.json'
+      - 'mission-control/federation-atlas/MC_OPERATIONS_ATLAS_V2_BRIDGE_20261017.json'
       - '.github/workflows/mission-control-n3-evidence.yml'
   push:
     branches: [master]
@@ -19,6 +20,7 @@ on:
       - 'mission-control/v2/test_n3_*.py'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
       - 'mission-control/federation-atlas/G3A_N13_N15_MASTER_DAGS_COMPAT_20261017.json'
+      - 'mission-control/federation-atlas/MC_OPERATIONS_ATLAS_V2_BRIDGE_20261017.json'
       - '.github/workflows/mission-control-n3-evidence.yml'
   workflow_dispatch:
 
