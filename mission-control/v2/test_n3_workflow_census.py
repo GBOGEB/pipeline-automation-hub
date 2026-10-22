@@ -88,6 +88,19 @@ class WorkflowCensusTests(unittest.TestCase):
     def test_terminal_without_conclusion(self):
         self.bad(lambda x:x['workflow_runs'][1].__setitem__('conclusion',None),'inconsistent terminal')
 
+    def test_run_startup_failure_counts_as_failed_terminal(self):
+        run = self.obj['workflow_runs'][0]
+        run.update(status='completed', conclusion='startup_failure',
+                   completed_at='2026-10-17T12:01:00Z', reported_job_total=0, jobs=[])
+        metrics = census.project(self.obj)['metrics']
+        self.assertEqual(metrics['terminal_workflows']['numerator'], 2)
+        self.assertEqual(metrics['failed_terminal_workflows']['numerator'], 1)
+
+    def test_job_startup_failure_is_not_a_supported_conclusion(self):
+        job = self.obj['workflow_runs'][0]['jobs'][0]
+        job.update(status='completed', conclusion='startup_failure')
+        self.bad(lambda x: None, 'inconsistent terminal')
+
     def test_queued_with_started_at(self):
         self.bad(lambda x:x['workflow_runs'][0].__setitem__('started_at','2026-10-17T12:01:00Z'),'queued run falsely')
 

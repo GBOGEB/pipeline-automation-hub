@@ -14,7 +14,8 @@ from pathlib import Path
 
 SHA = re.compile(r'[0-9a-f]{40}\Z')
 RUN_STATUS = {'queued', 'pending', 'waiting', 'requested', 'in_progress', 'completed'}
-CONCLUSION = {'success', 'failure', 'cancelled', 'skipped', 'timed_out', 'neutral', 'action_required', 'stale'}
+JOB_CONCLUSION = {'success', 'failure', 'cancelled', 'skipped', 'timed_out', 'neutral', 'action_required', 'stale'}
+RUN_CONCLUSION = JOB_CONCLUSION | {'startup_failure'}
 
 
 def require(condition, reason):
@@ -34,11 +35,11 @@ def timestamp(value):
     return out
 
 
-def state(record):
+def state(record, conclusions=JOB_CONCLUSION):
     status, conclusion = record.get('status'), record.get('conclusion')
     require(status in RUN_STATUS, 'unknown workflow/job status')
     if status == 'completed':
-        require(conclusion in CONCLUSION, 'inconsistent terminal status/conclusion')
+        require(conclusion in conclusions, 'inconsistent terminal status/conclusion')
     else:
         require(conclusion is None, 'inconsistent terminal status/conclusion')
     return status
@@ -77,7 +78,7 @@ def project(snapshot):
         seen_runs.add(rid)
         require(r.get('head_sha') == sha, 'workflow exact-head mismatch')
         require(isinstance(r.get('name'), str) and r['name'].strip(), 'workflow name missing')
-        status = state(r)
+        status = state(r, RUN_CONCLUSION)
         attempt = r.get('run_attempt')
         require(attempt is None or (type(attempt) is int and attempt > 0), 'run attempt invalid')
         attempts_known += (attempt is not None)
@@ -96,7 +97,7 @@ def project(snapshot):
         queued += status in ('queued', 'pending', 'waiting', 'requested')
         in_progress += status == 'in_progress'
         success += r.get('conclusion') == 'success'
-        failed += r.get('conclusion') == 'failure'
+        failed += r.get('conclusion') in {'failure', 'timed_out', 'startup_failure'}
         jobs = r.get('jobs')
         require(jobs is None or isinstance(jobs, list), 'jobs must be list or unknown')
         reported = r.get('reported_job_total')
