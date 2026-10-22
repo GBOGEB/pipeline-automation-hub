@@ -32,6 +32,15 @@ def scope(coverage, modules):
     require(len(paths) == len(set(paths)), 'colliding coverage source basenames')
     chosen = {Path(k).name:v.get('summary') for k,v in coverage['files'].items() if Path(k).name in modules}
     require(set(chosen) == set(modules), 'missing or colliding coverage source modules')
+    for row in chosen.values():
+        require(isinstance(row, dict), 'malformed coverage counter')
+        require(all(type(row.get(key)) is int and row[key] >= 0 for key in
+                    ('covered_lines', 'num_statements', 'covered_branches', 'num_branches')),
+                'malformed coverage counter')
+        for covered, total in (('covered_lines', 'num_statements'),
+                               ('covered_branches', 'num_branches')):
+            require(row[covered] <= row[total],
+                    'invalid module coverage population')
     def sum_stat(k):
         require(all(type(row.get(k)) is int and row[k] >= 0 for row in chosen.values()), 'malformed coverage counter')
         return sum(row[k] for row in chosen.values())
@@ -46,7 +55,7 @@ def scope(coverage, modules):
     return result
 
 
-def assess(forecast, census, coverage, observations):
+def assess(forecast, census, coverage, observations, coverage_sha256):
     require(forecast.get('schema') == 'missioncontrol.g3a.forecast_preaction.v1', 'unrecognized frozen forecast')
     require(forecast.get('source_start_head') == census.get('source_sha'), 'forecast/census source SHA drift')
     require(forecast.get('authority_transfer') is False and forecast.get('merge_admission') == 'HOLD',
@@ -74,6 +83,12 @@ def assess(forecast, census, coverage, observations):
                        'forecast_surplus':count-target,'target_met':count>=target and failed==0,
                        'source_checkpoint':actual['source_checkpoint'],
                        'evidence_kind':'LOCAL_ONLY_NOT_NATIVE_CI'})
+    terminal_observation = actuals[-1]
+    require(isinstance(coverage_sha256, str) and len(coverage_sha256) == 64 and
+            all(x in '0123456789abcdef' for x in coverage_sha256) and
+            terminal_observation.get('coverage_sha256') == coverage_sha256,
+            'coverage artifact digest is not bound to terminal local observation')
+    coverage_source_checkpoint = terminal_observation['source_checkpoint']
     native=workflow_project(census)
     six=scope(coverage,CORE)
     require((six['num_statements'],six['num_branches']) ==
@@ -93,6 +108,8 @@ def assess(forecast, census, coverage, observations):
             'mission_id':forecast['mission_id'],'start_ordinal':9,'terminal_ordinal':12,
             'forecast_digest':digest(forecast),'native_census_source_sha':census['source_sha'],
             'local_observations_digest':digest(observations),
+            'matched_coverage_artifact_sha256':coverage_sha256,
+            'matched_coverage_source_checkpoint':coverage_source_checkpoint,
             'planned_vs_actual':scored,
             'local_test_growth':scored[-1]['actual_local_tests']-forecast['scope']['baseline_tests_passed_local'],
             'matched_core_coverage':six,'expanded_scope_coverage':expanded,
@@ -119,6 +136,8 @@ def render(report):
                  f'fill="#426ca8"><title>N+{p["pulse"]}: {p["actual_local_tests"]} local test cases</title></rect>'
                  for i,p in enumerate(scores))
     n=report['native_ci_observation']
+    queue_p95 = n['queue_latency_p95_ms']
+    queue_label = 'unknown' if queue_p95 is None else f'{e(queue_p95)} ms'
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
             '<title>CODE PURPLE G3A: N+10 to N+12</title><style>'
             'body{font:16px system-ui,sans-serif;background:#f7f8fc;color:#243448;max-width:1000px;margin:auto;padding:2rem}'
@@ -132,12 +151,14 @@ def render(report):
             f'<p>Original six: statements {e(report["matched_core_coverage"]["covered_lines"])}/{e(report["matched_core_coverage"]["num_statements"])}; '
             f'branches {e(report["matched_core_coverage"]["covered_branches"])}/{e(report["matched_core_coverage"]["num_branches"])}. '
             f'Branch delta {e(report["matched_coverage_improvement"]["branch_delta_pp"])} pp.</p>'
+            f'<p>Coverage artifact SHA256: <code>{e(report["matched_coverage_artifact_sha256"])}</code>; '
+            f'local source checkpoint: <code>{e(report["matched_coverage_source_checkpoint"])}</code>.</p>'
             f'<p>Expanded eight-module scope: {e(report["expanded_scope_coverage"]["combined_pct"])}% combined (not matched to original).</p>'
             '</section><section><h2>GitHub native readback (historical #620 head)</h2>'
             f'<p>Queued workflows: {e(n["queued_or_pending_workflows"]["numerator"])}/{e(n["workflow_runs_observed"])}; '
             f'queued jobs: {e(n["observed_queued_jobs"])}/{e(n["reported_total_jobs_for_known_runs"])}; '
             f'attempt IDs known: {e(n["known_run_attempts"]["numerator"])}/{e(n["workflow_runs_observed"])}. '
-            'Native PASS unknown, queue p95 unknown, admission HOLD.</p></section>'
+            f'Native PASS unknown, queue p95 {queue_label}, admission HOLD.</p></section>'
             '<section><h2>Source &amp; proof boundaries</h2><p>Forecast SHA256: <code>'+e(report['forecast_digest'])+'</code></p>'
             '<p>Independent trials UNKNOWN · Confirmed engineering-root burndown UNKNOWN · Runtime cost savings UNKNOWN</p>'
             '<p>Historical upstream source: <code>'+e(report['native_census_source_sha'])+'</code></p></section></body></html>')
@@ -150,7 +171,9 @@ def main():
     ap.add_argument('--out-dir',type=Path,required=True)
     args=ap.parse_args()
     def load(p):return json.loads(p.read_text(encoding='utf-8'))
-    report=assess(load(args.forecast),load(args.census),load(args.coverage),load(args.observations))
+    coverage_bytes = args.coverage.read_bytes()
+    report=assess(load(args.forecast),load(args.census),json.loads(coverage_bytes),
+                  load(args.observations),hashlib.sha256(coverage_bytes).hexdigest())
     args.out_dir.mkdir(parents=True,exist_ok=True)
     (args.out_dir/'g3a-evaluation.json').write_text(json.dumps(report,sort_keys=True,indent=2)+'\n',encoding='utf-8')
     (args.out_dir/'g3a-evaluation.html').write_text(render(report)+'\n',encoding='utf-8')

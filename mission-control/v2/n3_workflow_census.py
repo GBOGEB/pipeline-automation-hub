@@ -69,6 +69,7 @@ def project(snapshot):
     seen_runs, seen_jobs = set(), set()
     terminal, queued, in_progress, success, failed, attempts_known = 0, 0, 0, 0, 0, 0
     jobs_seen, jobs_completed, jobs_queued, jobs_total_known, jobs_total_censored = 0, 0, 0, 0, 0
+    job_attempts_bound = 0
     queue_samples, execution_samples, artifact_checked = [], [], 0
     summaries = []
     for r in runs:
@@ -108,12 +109,22 @@ def project(snapshot):
         else:
             jobs_total_censored += 1
         if jobs is not None:
+            job_attempts = []
             for j in jobs:
                 require(isinstance(j, dict), 'invalid job')
                 jid = j.get('job_id')
                 require(type(jid) is int and jid > 0 and jid not in seen_jobs, 'duplicate/invalid job')
                 seen_jobs.add(jid)
                 require(j.get('run_id') == rid and j.get('head_sha') == sha, 'job run/head mismatch')
+                job_attempt = j.get('run_attempt')
+                require(job_attempt is None or (type(job_attempt) is int and job_attempt > 0),
+                        'job run attempt invalid')
+                if attempt is not None and job_attempt is not None:
+                    require(job_attempt == attempt, 'job run-attempt mismatch')
+                attempt_binding = 'MATCHED' if attempt is not None and job_attempt is not None else 'UNKNOWN'
+                job_attempts_bound += attempt_binding == 'MATCHED'
+                job_attempts.append({'job_id':jid, 'run_attempt':job_attempt,
+                                     'attempt_binding':attempt_binding})
                 js = state(j)
                 jobs_seen += 1
                 jobs_completed += js == 'completed'
@@ -127,6 +138,7 @@ def project(snapshot):
         summaries.append({'id':rid, 'name':r['name'], 'status':status,
                           'conclusion':r.get('conclusion'), 'run_attempt':attempt,
                           'observed_jobs':len(jobs) if jobs is not None else None,
+                          'job_attempts':job_attempts if jobs is not None else None,
                           'reported_job_total':reported,
                           'artifact_count_if_checked':artifact_count})
     require(set(checked) <= seen_runs, 'artifact check does not belong to observed runs')
@@ -143,6 +155,7 @@ def project(snapshot):
                 'running_workflows':in_progress,
                 'known_run_attempts':metric(attempts_known,len(runs)),
                 'observed_jobs':jobs_seen,
+                'known_job_attempt_bindings':metric(job_attempts_bound,jobs_seen),
                 'observed_queued_jobs':jobs_queued,
                 'observed_completed_jobs':jobs_completed,
                 'reported_total_jobs_for_known_runs':jobs_total_known if jobs_total_censored == 0 else None,

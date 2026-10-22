@@ -1,6 +1,7 @@
 """G3A N+12: forecast/actual, scope parity, and safe SVG/HTML QA tests."""
 import copy
 import contextlib
+import hashlib
 import io
 import json
 import sys
@@ -50,7 +51,12 @@ def cov():
 class G3AAssessmentTests(unittest.TestCase):
     def setUp(self):
         self.f=frozen();self.c=observation();self.v=cov();self.o=obs()
-    def report(self):return assessment.assess(self.f,self.c,self.v,self.o)
+    def coverage_bytes(self):
+        return json.dumps(self.v,sort_keys=True,separators=(',',':')).encode()
+    def report(self):
+        sha=hashlib.sha256(self.coverage_bytes()).hexdigest()
+        self.o['pulses'][-1]['coverage_sha256']=sha
+        return assessment.assess(self.f,self.c,self.v,self.o,sha)
     def reject(self,fn,fragment):
         fn()
         with self.assertRaisesRegex(ValueError,fragment):self.report()
@@ -80,11 +86,30 @@ class G3AAssessmentTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'colliding coverage source'):
             self.report()
 
+    def test_coverage_counters_cannot_exceed_individual_module_population(self):
+        row=self.v['files']['mission-control/v2/n3_dashboard.py']['summary']
+        row['covered_lines']=38
+        with self.assertRaisesRegex(ValueError,'invalid module coverage population'):
+            self.report()
+
+    def test_coverage_artifact_digest_must_match_terminal_observation(self):
+        expected=hashlib.sha256(self.coverage_bytes()).hexdigest()
+        self.o['pulses'][-1]['coverage_sha256']=expected
+        with self.assertRaisesRegex(ValueError,'coverage artifact digest'):
+            assessment.assess(self.f,self.c,self.v,self.o,'0'*64)
+
+    def test_matched_coverage_records_its_local_source_binding(self):
+        p=self.report()
+        self.assertEqual(p['matched_coverage_artifact_sha256'],self.o['pulses'][-1]['coverage_sha256'])
+        self.assertEqual(p['matched_coverage_source_checkpoint'],self.o['pulses'][-1]['source_checkpoint'])
+
     def test_cli_writes_consistent_machine_and_human(self):
         with tempfile.TemporaryDirectory() as d:
             base=Path(d); paths={}
             for k, obj in [('forecast',self.f),('census',self.c),('coverage',self.v),('observations',self.o)]:
                 p=base/(k+'.json');p.write_text(json.dumps(obj));paths[k]=p
+            self.o['pulses'][-1]['coverage_sha256']=hashlib.sha256(paths['coverage'].read_bytes()).hexdigest()
+            paths['observations'].write_text(json.dumps(self.o))
             out=base/'artifacts'
             argv=['n3_g3a_assessment.py']
             for k,p in paths.items():argv += ['--'+k,str(p)]
@@ -95,6 +120,7 @@ class G3AAssessmentTests(unittest.TestCase):
             h=(out/'g3a-evaluation.html').read_text()
             self.assertEqual(r['native_proof_state'],'PENDING_OR_UNVERIFIED_NOT_PASS')
             self.assertIn(r['forecast_digest'],h)
+            self.assertIn(r['matched_coverage_artifact_sha256'],h)
             self.assertEqual(r['merge_admission'],'HOLD')
 
     def test_mismatched_denominator(self):
@@ -119,6 +145,16 @@ class G3AAssessmentTests(unittest.TestCase):
 
     def test_bad_coverage_counter(self):
         self.reject(lambda:self.v['files']['mission-control/v2/n3_dashboard.py']['summary'].__setitem__('covered_branches',False),'malformed coverage')
+
+    def test_html_shows_measured_queue_p95(self):
+        p=self.report()
+        p['native_ci_observation']['queue_latency_p95_ms']=300000
+        self.assertIn('queue p95 300000 ms',assessment.render(p))
+
+    def test_html_keeps_unknown_queue_p95_when_unmeasured(self):
+        self.c['workflow_runs']=self.c['workflow_runs'][:1]
+        p=self.report()
+        self.assertIn('queue p95 unknown',assessment.render(p))
 
     def test_html_render_and_escaping(self):
         p=self.report()

@@ -23,12 +23,12 @@ def observation():
                 {'run_id':101,'head_sha':sha,'name':'N3 Evidence Metrics','run_attempt':1,
                  'status':'queued','conclusion':None,'created_at':'2026-10-17T12:00:00Z',
                  'started_at':None,'completed_at':None,'reported_job_total':None,
-                 'artifact_count':0,'jobs':[{'job_id':501,'run_id':101,'head_sha':sha,'status':'queued','conclusion':None}]},
+                 'artifact_count':0,'jobs':[{'job_id':501,'run_id':101,'run_attempt':1,'head_sha':sha,'status':'queued','conclusion':None}]},
                 {'run_id':102,'head_sha':sha,'name':'V2 Contract','run_attempt':None,
                  'status':'completed','conclusion':'success','created_at':'2026-10-17T11:00:00Z',
                  'started_at':'2026-10-17T11:05:00Z','completed_at':'2026-10-17T11:06:00Z',
                  'reported_job_total':1,'artifact_count':None,
-                 'jobs':[{'job_id':502,'run_id':102,'head_sha':sha,'status':'completed','conclusion':'success'}]},
+                 'jobs':[{'job_id':502,'run_id':102,'run_attempt':1,'head_sha':sha,'status':'completed','conclusion':'success'}]},
             ]}
 
 
@@ -46,6 +46,8 @@ class WorkflowCensusTests(unittest.TestCase):
         self.assertEqual(got['known_run_attempts']['numerator'],1)
         self.assertEqual(got['queue_latency_p95_ms'],300000)
         self.assertEqual(got['run_duration_p95_ms'],60000)
+        self.assertEqual(got['known_job_attempt_bindings'],{'numerator':1,'denominator':2,'pct':50.0})
+        self.assertEqual(census.project(self.obj)['workflows'][0]['job_attempts'][0]['run_attempt'],1)
         self.assertIsNone(got['reported_total_jobs_for_known_runs'])
         self.assertEqual(got['runs_with_unknown_job_denominator'],1)
 
@@ -66,6 +68,19 @@ class WorkflowCensusTests(unittest.TestCase):
 
     def test_duplicate_job_id(self):
         self.bad(lambda x:x['workflow_runs'][1]['jobs'][0].__setitem__('job_id',501),'duplicate/invalid job')
+
+    def test_job_attempt_must_match_enclosing_run(self):
+        self.bad(lambda x:x['workflow_runs'][0]['jobs'][0].__setitem__('run_attempt',2),'job run-attempt mismatch')
+
+    def test_job_attempt_binding_is_unknown_when_either_attempt_is_missing(self):
+        self.obj['workflow_runs'][0]['jobs'][0]['run_attempt']=None
+        result=census.project(self.obj)
+        self.assertEqual(result['workflows'][0]['job_attempts'][0],
+                         {'job_id':501,'run_attempt':None,'attempt_binding':'UNKNOWN'})
+        self.obj['workflow_runs'][0]['jobs'][0]['run_attempt']=1
+        result=census.project(self.obj)
+        self.assertEqual(result['workflows'][1]['job_attempts'][0],
+                         {'job_id':502,'run_attempt':1,'attempt_binding':'UNKNOWN'})
 
     def test_wrong_sha(self):
         self.bad(lambda x:x['workflow_runs'][1].__setitem__('head_sha','b'*40),'exact-head')
