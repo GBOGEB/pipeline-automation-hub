@@ -71,14 +71,22 @@ class W7DispatchNative(unittest.TestCase):
             status=204
             def __enter__(self): return self
             def __exit__(self,*args): return False
-        urls=[]
+        urls=[];bodies=[]
         def post(req,timeout):
             urls.append(req.full_url);self.assertEqual(timeout,20)
             self.assertEqual(req.get_method(),"POST")
-            self.assertEqual(json.loads(req.data)["event_type"],"qps-metric-census-v1")
+            bodies.append(json.loads(req.data))
             return OK()
         proof=dispatch(self.m,execute=True,environment=ENV,opener=post)
         self.assertEqual(len(set(urls)),3)
+        for url,body,q in zip(urls,bodies,self.m["requests"]):
+            # workflow_dispatch (Actions: write), never repository_dispatch (Contents: write)
+            self.assertEqual(url,"https://api.github.com/repos/"+q["repo"]+
+                             "/actions/workflows/qps-metric-census-receiver.yml/dispatches")
+            self.assertEqual(set(body),{"ref","inputs"})
+            self.assertEqual(body["ref"],"main")
+            self.assertEqual(body["inputs"],{k:q[k] for k in
+                             ("wave","selector","request_id","expected_sha")})
         self.assertEqual(proof["triggered"],3)
         self.assertIsNone(proof["receiver_job_ids"])
         self.assertIsNone(proof["receiver_results"])

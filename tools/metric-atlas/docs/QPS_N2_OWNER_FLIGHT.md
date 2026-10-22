@@ -59,7 +59,8 @@ engineering acceptance, security waiver or merge permission.
 
 Central Mission Control fan-out remains separately owner-controlled.
 It requires `QPS_FEDERATION_READ_TOKEN` for private-source reads and
-`QPS_TRIAGE_DISPATCH_TOKEN` for authorized cross-repository dispatch.
+`QPS_TRIAGE_DISPATCH_TOKEN` for authorized cross-repository dispatch
+(fine-grained: Actions read/write on the receivers, no Contents permission).
 These secrets are not provisioned, inferred or accepted from PR payloads.
 Only an authorized operator can configure them in repository secrets.
 The hub's `workflow_dispatch` launch with `dispatch_fanout=true` must

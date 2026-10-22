@@ -2,6 +2,10 @@
 
 Dry-run is the default. Dispatch acknowledges an event enqueue (HTTP 204), not
 receiver execution, tests, artifact validation or an admission decision.
+
+Uses workflow_dispatch on the receiver workflow, so the fine-grained
+QPS_TRIAGE_DISPATCH_TOKEN needs only Actions: Read and write on the receivers.
+repository_dispatch would need Contents: write, which can also push code.
 """
 from __future__ import annotations
 
@@ -13,6 +17,13 @@ from pathlib import Path
 
 from .census import ALLOWED_REPOS, SCHEMA, CensusError, canonical
 from .disjoint_scale import DisjointScaleError, _check_manifest
+
+# Same receiver file and default branch as owner_flight and the planner's head read.
+RECEIVER_WORKFLOW = "qps-metric-census-receiver.yml"
+RECEIVER_REF = "main"
+# Exactly the receiver's declared inputs: GitHub rejects undeclared ones (HTTP 422).
+# Lane is not sent; it is bound into request_id and re-derived by the receiver.
+RECEIVER_INPUTS = ("wave", "selector", "request_id", "expected_sha")
 
 
 class DispatchError(ValueError):
@@ -60,11 +71,10 @@ def dispatch(manifest, *, execute=False, environment=None, opener=None):
         raise DispatchError("separate cross-repository dispatch credential missing")
     http_open = opener or urllib.request.urlopen
     for i, q in enumerate(reqs):
-        url = "https://api.github.com/repos/{}/dispatches".format(q["repo"])
-        body = {"event_type": "qps-metric-census-v1", "client_payload": {
-            "wave": q["wave"], "selector": q["selector"],
-            "lane": q["lane"], "expected_sha": q["expected_sha"],
-            "request_id": q["request_id"]}}
+        url = "https://api.github.com/repos/{}/actions/workflows/{}/dispatches".format(
+            q["repo"], RECEIVER_WORKFLOW)
+        body = {"ref": RECEIVER_REF,
+                "inputs": {key: q[key] for key in RECEIVER_INPUTS}}
         req = urllib.request.Request(
             url, data=canonical(body).encode("utf-8"), method="POST",
             headers={"Authorization": "Bearer " + token,
@@ -73,7 +83,7 @@ def dispatch(manifest, *, execute=False, environment=None, opener=None):
                      "User-Agent": "QPS-TRIAGE-Control-Plane"})
         with http_open(req, timeout=20) as response:
             if response.status != 204:
-                raise DispatchError("repository dispatch did not return HTTP 204")
+                raise DispatchError("workflow dispatch did not return HTTP 204")
         out[i]["state"] = "HTTP_204_EVENT_ENQUEUED_NOT_PROVEN_EXECUTED"
     return {"schema": "qps-dispatch-receipt/v1", "events": out,
             "triggered": len(reqs), "receiver_job_ids": None, "receiver_results": None}
