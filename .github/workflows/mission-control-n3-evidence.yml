@@ -129,6 +129,7 @@ jobs:
           assert m['successful_terminal_workflows']['pct'] is None
           assert x['native_exact_head_pass'] is False and x['merge_admission']=='HOLD'
           print('G3A_HISTORICAL_CENSUS=PASS; TESTED_NATIVE_HEAD=UNVERIFIED; ADMISSION=HOLD')
+          PY
           python mission-control/v2/g3p_live_dashboard.py --ledgers \
             mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json \
             mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json \

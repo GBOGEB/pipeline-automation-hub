@@ -85,6 +85,10 @@ class N11WorkflowContractTests(unittest.TestCase):
             with self.subTest(invariant=invariant):
                 self.assertIn(invariant, src)
 
+    def test_python_workflow_heredocs_are_closed(self):
+        src = workflow()
+        self.assertEqual(src.count("python - <<'PY'"), src.count("\n          PY\n"))
+
     def test_live_coverage_cli_positive_and_negative_output_contracts(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
