@@ -190,7 +190,9 @@ def create_server(paths, port=8765, host='127.0.0.1'):
             self.send_header('Cache-Control', 'no-store, max-age=0')
             self.send_header('X-Content-Type-Options', 'nosniff')
             self.send_header('X-Accel-Buffering', 'no')
+            self.send_header('Connection', 'close')
             self.end_headers()
+            self.close_connection = True
             last = None
             try:
                 # Bounded connection lifetime; EventSource reconnects automatically.

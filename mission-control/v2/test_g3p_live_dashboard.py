@@ -250,6 +250,21 @@ class LiveDashboardTests(unittest.TestCase):
             finally:
                 server.shutdown();server.server_close();th.join(timeout=4)
 
+    def test_sse_connection_closes_after_bounded_stream(self):
+        with tempfile.TemporaryDirectory() as d:
+            files = copies(d)
+            server = live.create_server(files, port=0)
+            th = threading.Thread(target=server.serve_forever, daemon=True)
+            th.start()
+            try:
+                with patch.object(live.time, 'sleep', return_value=None):
+                    with urlopen(f'http://127.0.0.1:{server.server_port}/api/events', timeout=3) as stream:
+                        self.assertEqual(stream.headers.get('Connection'), 'close')
+                        self.assertEqual(stream.readline().decode().strip(), 'event: revision')
+                        self.assertIn(b'data: ', stream.read())
+            finally:
+                server.shutdown();server.server_close();th.join(timeout=4)
+
     def test_http_reload_and_sse_revision(self):
         with tempfile.TemporaryDirectory() as d:
             files=copies(d)

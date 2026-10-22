@@ -15,6 +15,9 @@ on:
     branches: [master]
     paths:
       - 'mission-control/v2/n3_*.py'
+      - 'mission-control/v2/g3p_live_*.py'
+      - 'mission-control/v2/g3p_live_template.html'
+      - 'mission-control/v2/test_g3p_live_dashboard.py'
       - 'mission-control/v2/test_n3_*.py'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json'
