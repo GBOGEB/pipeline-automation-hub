@@ -1,0 +1,110 @@
+name: GOGREEN Red-Trace Ledger (read-only)
+
+# Per-workflow EVERRED / GREEN_TO_RED / RED_TO_GREEN / FLAKY ledger for master,
+# with break windows (last green -> first red head), suspect commits, first failing
+# step, shared break roots, staleness and pinned-evidence markers.
+# Published as the job summary (visible from every PR's Checks tab) and an artifact.
+# N+10: depth census (breadth/depth/penetration/tested + ZERO buckets) from the live ledger.
+# N+9: also traces the merged-PR lane (result of every workflow on each merged head at
+# merge time), proposes the admission ledger from both lanes and backtests the required
+# gate against merged history. All read-only.
+# Informational: never blocks a merge; fails only if the tracer itself cannot run.
+# gogreen-admission: observe
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/red_trace/**'
+      - 'mission-control/gogreen/required_gate/**'
+      - '.github/workflows/gogreen-red-trace.yml'
+  push:
+    branches: [master]
+  schedule:
+    - cron: '41 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      per_workflow:
+        description: Max runs fetched per workflow
+        default: '200'
+      pr_lane:
+        description: Merged PRs traced in the merged-PR lane
+        default: '100'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: gogreen-red-trace-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ledger:
+    name: Master red/green transition ledger
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0 (node24)
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Offline classification and guard tests
+        run: |
+          python -m pip install --disable-pip-version-check pyyaml==6.0.3
+          python -m unittest discover -s mission-control/gogreen/red_trace -p 'test_*.py' -v
+          python -m unittest discover -s mission-control/gogreen/required_gate -p 'test_*.py' -v
+      - name: Trace master history (GET only)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PER_WORKFLOW: ${{ inputs.per_workflow || (github.event_name == 'pull_request' && '100' || '200') }}
+          PR_LANE: ${{ inputs.pr_lane || (github.event_name == 'pull_request' && '40' || '100') }}
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/red_trace/red_trace.py \
+            --repo "$GITHUB_REPOSITORY" --branch master \
+            --per-workflow "$PER_WORKFLOW" --pr-lane "$PR_LANE" --root . --out "$RUNNER_TEMP/red-trace"
+          cat "$RUNNER_TEMP/red-trace/red_trace.md" >> "$GITHUB_STEP_SUMMARY"
+          cat "$RUNNER_TEMP/red-trace/red_trace_pr.md" >> "$GITHUB_STEP_SUMMARY"
+          python - "$RUNNER_TEMP/red-trace/red_trace.json" <<'PY'
+          import json, sys
+          r = json.load(open(sys.argv[1]))
+          fresh = [n for n in r["currently_red"] if n not in r["currently_red_stale"]]
+          for n in fresh:
+              print(f"::warning title=master red ({r['branch']})::{n}")
+          for root in r["shared_break_roots"]:
+              print(f"::notice title=shared break root {root['first_red_sha'][:8]}::{root['count']} workflows")
+          PY
+      - name: Admission ledger drift (trust -> authority, offline proposal)
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/required_gate/admission.py --root . \
+            --master-trace "$RUNNER_TEMP/red-trace/red_trace.json" \
+            --pr-trace "$RUNNER_TEMP/red-trace/red_trace_pr.json" \
+            --out "$RUNNER_TEMP/red-trace/admission_proposed.json" \
+            --summary "$RUNNER_TEMP/red-trace/admission.md"
+          cat "$RUNNER_TEMP/red-trace/admission.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Required-gate backtest against merged history (GET only)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/required_gate/backtest.py --repo "$GITHUB_REPOSITORY" --root . \
+            --pr-trace "$RUNNER_TEMP/red-trace/red_trace_pr.json" \
+            --master-trace "$RUNNER_TEMP/red-trace/red_trace.json" \
+            --ledger mission-control/gogreen/required_gate/ADMISSION.json \
+            --limit 40 --out "$RUNNER_TEMP/red-trace"
+          cat "$RUNNER_TEMP/red-trace/backtest.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Depth census (breadth, depth, penetration, tested, ZERO buckets; static)
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/required_gate/depth.py --root . \
+            --ledger "$RUNNER_TEMP/red-trace/admission_proposed.json" --out "$RUNNER_TEMP/red-trace"
+          cat "$RUNNER_TEMP/red-trace/depth.md" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6.0.0 (node24)
+        if: always()
+        with:
+          name: gogreen-red-trace-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/red-trace/
+          if-no-files-found: warn
+          retention-days: 90

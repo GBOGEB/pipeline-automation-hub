@@ -1,0 +1,31 @@
+flowchart LR
+  subgraph S[Suppliers]
+    S1[Source repo owners]
+    S2[Native GitHub runners]
+    S3[Security domain owners]
+  end
+  subgraph I[Inputs]
+    I1[Exact SHA + population]
+    I2[Run attempt job + ZIP]
+    I3[Severity + required controls]
+  end
+  subgraph P[Process]
+    P1[Observe / census]
+    P2[Verify bytes / first-red]
+    P3[Attribute roots / rank repairs]
+    P4[Retest / admission]
+  end
+  subgraph O[Outputs]
+    O1[Metric ledger + KPI]
+    O2[DAG / SIPOC / timeline]
+    O3[Source-bound admission receipt]
+  end
+  subgraph C[Customers]
+    C1[Maintainers + Mission Control]
+    C2[GoGREEN CONTROL + gg_MATH]
+  end
+  S1 --> I1 --> P1 --> P2 --> P3 --> P4 --> O1 --> C1
+  S2 --> I2 --> P2
+  S3 --> I3 --> P4
+  P3 --> O2 --> C2
+  P4 --> O3 --> C1

@@ -1,0 +1,12 @@
+flowchart LR
+  M["hub master exact SHA"] --> B00["B00: stage-only"]
+  M --> B10["B10: shadow CODEX"]
+  M --> B01["B01: remote-return"]
+  M --> B11["B11: combined"]
+  B00 -.-> V["read-only comparison"]
+  B10 -.-> V
+  B01 -.-> V
+  B11 -.-> V
+  V --> G{"Independent gates?"}
+  G -->|No/UNKNOWN| H["HOLD"]
+  G -->|Evidenced| N["Separate promotion PR into main"]

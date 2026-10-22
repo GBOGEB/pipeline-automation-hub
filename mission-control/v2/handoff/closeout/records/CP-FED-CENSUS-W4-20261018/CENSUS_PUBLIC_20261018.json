@@ -1,0 +1,92 @@
+{
+  "schema": "missioncontrol.fleet_public_issues_prs_census.v1",
+  "as_of_date_utc": "2026-10-18",
+  "observed_time_precision": "DATE_ONLY_NONATOMIC",
+  "owner": "GBOGEB/pipeline-automation-hub",
+  "source": "GITHUB_ISSUE_SEARCH_AND_BRANCH_GET",
+  "population": "FOUR_PUBLIC_CORE_REPOSITORIES_ONLY",
+  "issue_class": "ORDINARY_ISSUE_NOT_PR",
+  "excluded_private_repo_count": 1,
+  "private_issue_and_sha": "WITHHELD_PUBLIC_PROJECTION",
+  "private_repo_name": "WITHHELD",
+  "public_repositories": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "default_branch": "main",
+      "sha": "585dd7476d3b3c629f864c37ec7d7526a648b4c0",
+      "ordinary_open_issues": 38,
+      "open_prs": 16,
+      "issue_age_bins_0_6_7_13_14_29_30plus": [
+        19,
+        1,
+        8,
+        10
+      ],
+      "main_protected_rest": true
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "default_branch": "main",
+      "sha": "926bfd646df6bf09dd92faad6f8806e1a61d1ec1",
+      "ordinary_open_issues": 11,
+      "open_prs": 2,
+      "issue_age_bins_0_6_7_13_14_29_30plus": [
+        6,
+        0,
+        1,
+        4
+      ],
+      "main_protected_rest": false
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "default_branch": "master",
+      "sha": "91ea7f23edc9cd7ab984b8a2730650609eddb55c",
+      "ordinary_open_issues": 32,
+      "open_prs": 5,
+      "issue_age_bins_0_6_7_13_14_29_30plus": [
+        5,
+        0,
+        14,
+        13
+      ],
+      "main_protected_rest": false
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "default_branch": "main",
+      "sha": "7ce2e3832357c0b87ab17ff439f4d6e84c0292a4",
+      "ordinary_open_issues": 1,
+      "open_prs": 0,
+      "issue_age_bins_0_6_7_13_14_29_30plus": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "main_protected_rest": false
+    }
+  ],
+  "totals": {
+    "public_open_ordinary_issues": 82,
+    "public_open_prs": 23,
+    "public_issue_age_cohorts": [
+      30,
+      1,
+      23,
+      28
+    ],
+    "engineering_roots_open": null,
+    "engineering_roots_closed": null,
+    "governed_merges_accepted": null,
+    "main_coverage_current": null,
+    "pr_broad_coverage_current": null,
+    "pr_diff_coverage_current": null,
+    "auth_remote_crew_runs": null
+  },
+  "read_only": true,
+  "source_sha_lineage": "PER_REPOSITORY_DEFAULT_BRANCH_NONATOMIC",
+  "authority_transfer": false,
+  "security_waiver": false,
+  "merge_admission": "HOLD"
+}

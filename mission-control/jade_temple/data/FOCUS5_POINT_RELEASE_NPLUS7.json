@@ -1,0 +1,948 @@
+{
+  "schema": "jade.temple.focus5.readonly/1.0",
+  "name": "QPS TRIAGE JADE_TEMPLE focus five parallel lanes",
+  "source": {
+    "roster": "N11 Top21",
+    "roster_repositories": 21,
+    "focus_repositories": 5,
+    "observed_date": "2026-10-19",
+    "readback": "NON_ATOMIC_GITHUB_API",
+    "hub_parent_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+    "source_truth": "REPOSITORY_OWNER_ONLY",
+    "release_authority_transfer": false
+  },
+  "metrics": {
+    "required_gate_count_per_repo": 12,
+    "required_gate_total": 60,
+    "passed": 14,
+    "failed": 8,
+    "unknown": 38,
+    "verified_completion_pct": 23.33,
+    "definition": "Only verified PASS increments completed numerator; FAIL and UNKNOWN remain in denominator, and coverage metrics never substitute release proof.",
+    "top21_master_population": 21,
+    "top21_unassessed_outside_focus": 16,
+    "globally_admitted_point_release": null,
+    "canonical_root_open": null,
+    "canonical_root_closed": null
+  },
+  "requisites": [
+    {
+      "id": "H01",
+      "label": "Exact default-branch SHA observed",
+      "phase": "DEFINE"
+    },
+    {
+      "id": "H02",
+      "label": "Root source and entrypoint located",
+      "phase": "DEFINE"
+    },
+    {
+      "id": "H03",
+      "label": "Release applicability and owner signed",
+      "phase": "DEFINE"
+    },
+    {
+      "id": "H04",
+      "label": "Reproducible dependency/build contract qualified",
+      "phase": "MEASURE"
+    },
+    {
+      "id": "H05",
+      "label": "Native primary B0/test equivalent terminal PASS",
+      "phase": "MEASURE"
+    },
+    {
+      "id": "H06",
+      "label": "Independent domain/integration smoke terminal PASS",
+      "phase": "MEASURE"
+    },
+    {
+      "id": "H07",
+      "label": "Security and supply-chain gates accepted",
+      "phase": "CONTROL"
+    },
+    {
+      "id": "H08",
+      "label": "Effective protection and rejected RED canary",
+      "phase": "CONTROL"
+    },
+    {
+      "id": "H09",
+      "label": "Eligible independent human approval",
+      "phase": "CONTROL"
+    },
+    {
+      "id": "H10",
+      "label": "Matched coverage and negative tests accepted",
+      "phase": "ANALYZE"
+    },
+    {
+      "id": "H11",
+      "label": "Source-bound binary/site artifact QA and hashes",
+      "phase": "IMPROVE"
+    },
+    {
+      "id": "H12",
+      "label": "Owner point-release tag, assets and rollback signed",
+      "phase": "CONTROL"
+    }
+  ],
+  "rows": [
+    {
+      "rank": 4,
+      "repo": "GBOGEB/cryoplant-project",
+      "name": "cryoplant-project",
+      "role": "QPS TRIAGE engineering / canonical OCD ADR SSOT",
+      "owner_lane": "QPS/source namespace & artifact owner",
+      "default_branch": "main",
+      "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+      "head_readback": "2026-10-19 non-atomic",
+      "release": "HOLD",
+      "cohort": "FOCUS5_FROM_N11",
+      "gate_denominator": 12,
+      "verified_complete": 2,
+      "verified_failed": 2,
+      "unqualified": 8,
+      "percent": 16.67,
+      "gates": [
+        {
+          "id": "H01",
+          "label": "Exact default-branch SHA observed",
+          "phase": "DEFINE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/cryoplant-project/commit/1072a6ed78245b956951684c0b716a98924b3558",
+          "reason": "GitHub default branch exact SHA read back"
+        },
+        {
+          "id": "H02",
+          "label": "Root source and entrypoint located",
+          "phase": "DEFINE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/cryoplant-project/tree/1072a6ed78245b956951684c0b716a98924b3558",
+          "reason": "Root README.md and build/source surfaces enumerated"
+        },
+        {
+          "id": "H03",
+          "label": "Release applicability and owner signed",
+          "phase": "DEFINE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner acceptance of release applicability not received"
+        },
+        {
+          "id": "H04",
+          "label": "Reproducible dependency/build contract qualified",
+          "phase": "MEASURE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H05",
+          "label": "Native primary B0/test equivalent terminal PASS",
+          "phase": "MEASURE",
+          "status": "FAIL",
+          "evidence": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39174767597/job/117815065198",
+          "reason": "W163 namespace canonicalization terminal failure; two historical G-prefix paths unregistered"
+        },
+        {
+          "id": "H06",
+          "label": "Independent domain/integration smoke terminal PASS",
+          "phase": "MEASURE",
+          "status": "UNKNOWN",
+          "evidence": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39174767591",
+          "reason": "PR binary refresh successful, but this is a PR inventory census, not engineering B0"
+        },
+        {
+          "id": "H07",
+          "label": "Security and supply-chain gates accepted",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H08",
+          "label": "Effective protection and rejected RED canary",
+          "phase": "CONTROL",
+          "status": "FAIL",
+          "evidence": "https://github.com/GBOGEB/cryoplant-project/settings/branches",
+          "reason": "Default branch reported protected=false; effective RED/unapproved canary not verified"
+        },
+        {
+          "id": "H09",
+          "label": "Eligible independent human approval",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H10",
+          "label": "Matched coverage and negative tests accepted",
+          "phase": "ANALYZE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H11",
+          "label": "Source-bound binary/site artifact QA and hashes",
+          "phase": "IMPROVE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H12",
+          "label": "Owner point-release tag, assets and rollback signed",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        }
+      ],
+      "candidate_branch": "code-purple/jade-focus-qps-w163-alias-20261019",
+      "candidate_sha": "b319404438379377967870c94b1997a33436cc7f",
+      "owner_action": "W163 owner: validate exact-only historical aliases, collect new qps-canonicalization pass, then binary/RTM/Office QA and owner release.",
+      "blockers": [
+        "W163 exact-source namespace first-red",
+        "Effective branch protection #1959",
+        "OCD/ADR source + XLSX/PPTX/PDF/DOCX/HTML artifact QA and v6 RC gate"
+      ],
+      "open_github_issues": 57,
+      "open_github_prs": 0,
+      "native_observations": [
+        {
+          "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+          "run_id": 39174767597,
+          "workflow_name": "qps-canonicalization",
+          "conclusion": "failure",
+          "evidence_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39174767597"
+        },
+        {
+          "source_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+          "run_id": 39174767591,
+          "workflow_name": "QPS PR binary refresh",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/39174767591",
+          "release_credit": false
+        }
+      ],
+      "input_paths": [
+        "controls/QPS_MISSION_CONTROL_LEGACY_ALIAS_REGISTRY_v1.yaml",
+        "tests/test_qps_w163_namespace_collisions.py"
+      ],
+      "source_gate_status": "OWNER_GATE_REQUIRED",
+      "authenticated_crew": null,
+      "accepted_root_count": null,
+      "matched_coverage_delta": null
+    },
+    {
+      "rank": 8,
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "name": "DOCX_RTM_Automation",
+      "role": "DOCX->RTM candidate traceability, no source-to-compliance promotion",
+      "owner_lane": "DOCX source/test and governance owner",
+      "default_branch": "main",
+      "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "head_readback": "2026-10-19 non-atomic",
+      "release": "HOLD",
+      "cohort": "FOCUS5_FROM_N11",
+      "gate_denominator": 12,
+      "verified_complete": 4,
+      "verified_failed": 1,
+      "unqualified": 7,
+      "percent": 33.33,
+      "gates": [
+        {
+          "id": "H01",
+          "label": "Exact default-branch SHA observed",
+          "phase": "DEFINE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/DOCX_RTM_Automation/commit/252a6845821ac3981d680730f22beb0b0cae8440",
+          "reason": "GitHub default branch exact SHA read back"
+        },
+        {
+          "id": "H02",
+          "label": "Root source and entrypoint located",
+          "phase": "DEFINE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/DOCX_RTM_Automation/tree/252a6845821ac3981d680730f22beb0b0cae8440",
+          "reason": "Root README.md and build/source surfaces enumerated"
+        },
+        {
+          "id": "H03",
+          "label": "Release applicability and owner signed",
+          "phase": "DEFINE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner acceptance of release applicability not received"
+        },
+        {
+          "id": "H04",
+          "label": "Reproducible dependency/build contract qualified",
+          "phase": "MEASURE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H05",
+          "label": "Native primary B0/test equivalent terminal PASS",
+          "phase": "MEASURE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38177507863",
+          "reason": "Exact-main native Python CI terminal SUCCESS"
+        },
+        {
+          "id": "H06",
+          "label": "Independent domain/integration smoke terminal PASS",
+          "phase": "MEASURE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38177507913",
+          "reason": "Exact-main TypeScript orchestration build/test/lint/typecheck SUCCESS"
+        },
+        {
+          "id": "H07",
+          "label": "Security and supply-chain gates accepted",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H08",
+          "label": "Effective protection and rejected RED canary",
+          "phase": "CONTROL",
+          "status": "FAIL",
+          "evidence": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38177507900/job/114582897286",
+          "reason": "Native admission-policy job confirms main.protected=false; must retain fail-closed policy"
+        },
+        {
+          "id": "H09",
+          "label": "Eligible independent human approval",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H10",
+          "label": "Matched coverage and negative tests accepted",
+          "phase": "ANALYZE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H11",
+          "label": "Source-bound binary/site artifact QA and hashes",
+          "phase": "IMPROVE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H12",
+          "label": "Owner point-release tag, assets and rollback signed",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        }
+      ],
+      "candidate_branch": "code-purple/jade-focus-docx-qps-bridge-20261019",
+      "candidate_sha": "b4da0e848edfd986114cba0a0b73b6506f6133ff",
+      "owner_action": "DOCX owner: run four new synthetic RTM/OTC/DEL tests and complete independent branch protection RED canary; preserve Python+TS CI.",
+      "blockers": [
+        "main.protected=false, admission-policy red",
+        "New negative DOCX penetration not native-qualified",
+        "No accepted QPS binary traceability and generated cross-format parity"
+      ],
+      "open_github_issues": 1,
+      "open_github_prs": 0,
+      "native_observations": [
+        {
+          "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+          "run_id": 38177507863,
+          "workflow_name": "Python CI",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38177507863"
+        },
+        {
+          "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+          "run_id": 38177507913,
+          "workflow_name": "TypeScript orchestration CI",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38177507913"
+        },
+        {
+          "source_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+          "run_id": 38177507900,
+          "workflow_name": "Repository admission policy",
+          "conclusion": "failure",
+          "evidence_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/38177507900"
+        }
+      ],
+      "input_paths": [
+        "tests/test_jade_qps_bridge_penetration.py",
+        "parser/direct_docx.py",
+        "parser/source_extractor.py"
+      ],
+      "source_gate_status": "OWNER_GATE_REQUIRED",
+      "authenticated_crew": null,
+      "accepted_root_count": null,
+      "matched_coverage_delta": null
+    },
+    {
+      "rank": 16,
+      "repo": "GBOGEB/yaml-grammar",
+      "name": "yaml-grammar",
+      "role": "YAML 1.2 grammar source and parser reference, release applicability owner-bound",
+      "owner_lane": "YAML grammar/reproducibility owner",
+      "default_branch": "master",
+      "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "head_readback": "2026-10-19 non-atomic",
+      "release": "HOLD",
+      "cohort": "FOCUS5_FROM_N11",
+      "gate_denominator": 12,
+      "verified_complete": 2,
+      "verified_failed": 1,
+      "unqualified": 9,
+      "percent": 16.67,
+      "gates": [
+        {
+          "id": "H01",
+          "label": "Exact default-branch SHA observed",
+          "phase": "DEFINE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/yaml-grammar/commit/75083c2aaabd0d7453d72de895666b21021826c1",
+          "reason": "GitHub default branch exact SHA read back"
+        },
+        {
+          "id": "H02",
+          "label": "Root source and entrypoint located",
+          "phase": "DEFINE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/yaml-grammar/tree/75083c2aaabd0d7453d72de895666b21021826c1",
+          "reason": "Root ReadMe.md and build/source surfaces enumerated"
+        },
+        {
+          "id": "H03",
+          "label": "Release applicability and owner signed",
+          "phase": "DEFINE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner acceptance of release applicability not received"
+        },
+        {
+          "id": "H04",
+          "label": "Reproducible dependency/build contract qualified",
+          "phase": "MEASURE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Makefile node_modules worktree fetch lacks verified offline reproducibility"
+        },
+        {
+          "id": "H05",
+          "label": "Native primary B0/test equivalent terminal PASS",
+          "phase": "MEASURE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "No Actions native B0 observed; owner-defined grammar suite needed"
+        },
+        {
+          "id": "H06",
+          "label": "Independent domain/integration smoke terminal PASS",
+          "phase": "MEASURE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Seven authored Node offline grammar audit tests on separate branch; unqualified native"
+        },
+        {
+          "id": "H07",
+          "label": "Security and supply-chain gates accepted",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H08",
+          "label": "Effective protection and rejected RED canary",
+          "phase": "CONTROL",
+          "status": "FAIL",
+          "evidence": "https://github.com/GBOGEB/yaml-grammar/settings/branches",
+          "reason": "Default branch reported protected=false; effective RED/unapproved canary not verified"
+        },
+        {
+          "id": "H09",
+          "label": "Eligible independent human approval",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H10",
+          "label": "Matched coverage and negative tests accepted",
+          "phase": "ANALYZE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H11",
+          "label": "Source-bound binary/site artifact QA and hashes",
+          "phase": "IMPROVE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H12",
+          "label": "Owner point-release tag, assets and rollback signed",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        }
+      ],
+      "candidate_branch": "code-purple/jade-focus-yaml-offline-b0-20261019",
+      "candidate_sha": "c327dbe5e140e366d9488d3bfc834f0f90919571",
+      "owner_action": "YAML owner: run seven offline 211-rule structural audit tests, preserve upstream Makefile/grammar, decide whether a point-release gate applies.",
+      "blockers": [
+        "No native B0 qualification",
+        "Unpinned remote node_modules worktree in Makefile",
+        "No signed applicability/branch protection or release"
+      ],
+      "open_github_issues": 0,
+      "open_github_prs": 0,
+      "native_observations": [
+        {
+          "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+          "run_id": null,
+          "workflow_name": "No native Actions workflow observed",
+          "conclusion": "unknown",
+          "evidence_url": null
+        }
+      ],
+      "input_paths": [
+        "yaml-spec-1.2.json",
+        "bin/jade-grammar-audit.mjs",
+        "tests/jade_grammar_audit.test.mjs"
+      ],
+      "source_gate_status": "OWNER_GATE_REQUIRED",
+      "authenticated_crew": null,
+      "accepted_root_count": null,
+      "matched_coverage_delta": null
+    },
+    {
+      "rank": 5,
+      "repo": "GBOGEB/gg_MATH",
+      "name": "gg_MATH",
+      "role": "QPS math method/provider evidence, not QPS engineering authority",
+      "owner_lane": "gg_MATH release/toolchain owner",
+      "default_branch": "main",
+      "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+      "head_readback": "2026-10-19 non-atomic",
+      "release": "HOLD",
+      "cohort": "FOCUS5_FROM_N11",
+      "gate_denominator": 12,
+      "verified_complete": 3,
+      "verified_failed": 3,
+      "unqualified": 6,
+      "percent": 25,
+      "gates": [
+        {
+          "id": "H01",
+          "label": "Exact default-branch SHA observed",
+          "phase": "DEFINE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/gg_MATH/commit/a91d3ea59109773d0f747395c60d4597e807ebcb",
+          "reason": "GitHub default branch exact SHA read back"
+        },
+        {
+          "id": "H02",
+          "label": "Root source and entrypoint located",
+          "phase": "DEFINE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/gg_MATH/tree/a91d3ea59109773d0f747395c60d4597e807ebcb",
+          "reason": "Root README.md and build/source surfaces enumerated"
+        },
+        {
+          "id": "H03",
+          "label": "Release applicability and owner signed",
+          "phase": "DEFINE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner acceptance of release applicability not received"
+        },
+        {
+          "id": "H04",
+          "label": "Reproducible dependency/build contract qualified",
+          "phase": "MEASURE",
+          "status": "FAIL",
+          "evidence": "https://github.com/GBOGEB/gg_MATH/actions/runs/39173707688/job/117811925658",
+          "reason": "Release requirements omitted Matplotlib used by visual-bridge tests"
+        },
+        {
+          "id": "H05",
+          "label": "Native primary B0/test equivalent terminal PASS",
+          "phase": "MEASURE",
+          "status": "FAIL",
+          "evidence": "https://github.com/GBOGEB/gg_MATH/actions/runs/39173707688",
+          "reason": "Exact-main full release gate failed with ModuleNotFoundError: matplotlib"
+        },
+        {
+          "id": "H06",
+          "label": "Independent domain/integration smoke terminal PASS",
+          "phase": "MEASURE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/gg_MATH/actions/runs/39173707662",
+          "reason": "Independent W260 uncertainty/H05 method-proof job terminal SUCCESS"
+        },
+        {
+          "id": "H07",
+          "label": "Security and supply-chain gates accepted",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H08",
+          "label": "Effective protection and rejected RED canary",
+          "phase": "CONTROL",
+          "status": "FAIL",
+          "evidence": "https://github.com/GBOGEB/gg_MATH/settings/branches",
+          "reason": "Default branch reported protected=false; effective RED/unapproved canary not verified"
+        },
+        {
+          "id": "H09",
+          "label": "Eligible independent human approval",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H10",
+          "label": "Matched coverage and negative tests accepted",
+          "phase": "ANALYZE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H11",
+          "label": "Source-bound binary/site artifact QA and hashes",
+          "phase": "IMPROVE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H12",
+          "label": "Owner point-release tag, assets and rollback signed",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        }
+      ],
+      "candidate_branch": "code-purple/jade-focus-math-release-mpl-20261019",
+      "candidate_sha": "9473fbf3c223e2275f2656cdee9c6f5370015265",
+      "owner_action": "Math owner: qualify Matplotlib pin and source-bound visual-bridge test, rerun exact-head full release gate, then independent tag/asset/Pages proof.",
+      "blockers": [
+        "Matplotlib missing from release install",
+        "Full release test FAIL; Pages deployment skipped",
+        "No effective protected approval and owner release tag"
+      ],
+      "open_github_issues": 1,
+      "open_github_prs": 0,
+      "native_observations": [
+        {
+          "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+          "run_id": 39173707688,
+          "workflow_name": "Release Infrastructure v1",
+          "conclusion": "failure",
+          "evidence_url": "https://github.com/GBOGEB/gg_MATH/actions/runs/39173707688"
+        },
+        {
+          "source_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+          "run_id": 39173707662,
+          "workflow_name": "W260 uncertainty and H05 repair",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/gg_MATH/actions/runs/39173707662"
+        }
+      ],
+      "input_paths": [
+        "requirements-release.txt",
+        "tests/test_jade_release_dependency_contract.py"
+      ],
+      "source_gate_status": "OWNER_GATE_REQUIRED",
+      "authenticated_crew": null,
+      "accepted_root_count": null,
+      "matched_coverage_delta": null
+    },
+    {
+      "rank": 2,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "name": "pipeline-automation-hub",
+      "role": "JADE_Temple Top21 read-only orchestration and single-publisher dashboard",
+      "owner_lane": "MissionControl JADE source and publisher owner",
+      "default_branch": "master",
+      "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+      "head_readback": "2026-10-19 non-atomic",
+      "release": "HOLD",
+      "cohort": "FOCUS5_FROM_N11",
+      "gate_denominator": 12,
+      "verified_complete": 3,
+      "verified_failed": 1,
+      "unqualified": 8,
+      "percent": 25,
+      "gates": [
+        {
+          "id": "H01",
+          "label": "Exact default-branch SHA observed",
+          "phase": "DEFINE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/commit/8986c7fdbcc02b639bb476f28cb63559d7845198",
+          "reason": "GitHub default branch exact SHA read back"
+        },
+        {
+          "id": "H02",
+          "label": "Root source and entrypoint located",
+          "phase": "DEFINE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/tree/8986c7fdbcc02b639bb476f28cb63559d7845198",
+          "reason": "Root README.md and build/source surfaces enumerated"
+        },
+        {
+          "id": "H03",
+          "label": "Release applicability and owner signed",
+          "phase": "DEFINE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner acceptance of release applicability not received"
+        },
+        {
+          "id": "H04",
+          "label": "Reproducible dependency/build contract qualified",
+          "phase": "MEASURE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H05",
+          "label": "Native primary B0/test equivalent terminal PASS",
+          "phase": "MEASURE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "JADE full source/native point-release B0 not qualified; individual checks insufficient"
+        },
+        {
+          "id": "H06",
+          "label": "Independent domain/integration smoke terminal PASS",
+          "phase": "MEASURE",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39176449821",
+          "reason": "Exact-main SPINE peer source census and adversarial/native checksum step successful"
+        },
+        {
+          "id": "H07",
+          "label": "Security and supply-chain gates accepted",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H08",
+          "label": "Effective protection and rejected RED canary",
+          "phase": "CONTROL",
+          "status": "FAIL",
+          "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/settings/branches",
+          "reason": "Default branch reported protected=false; effective RED/unapproved canary not verified"
+        },
+        {
+          "id": "H09",
+          "label": "Eligible independent human approval",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H10",
+          "label": "Matched coverage and negative tests accepted",
+          "phase": "ANALYZE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H11",
+          "label": "Source-bound binary/site artifact QA and hashes",
+          "phase": "IMPROVE",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        },
+        {
+          "id": "H12",
+          "label": "Owner point-release tag, assets and rollback signed",
+          "phase": "CONTROL",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not yet independently qualified"
+        }
+      ],
+      "candidate_branch": "code-purple/jade-n6-point-release-neural-mopup-20261019",
+      "candidate_sha": "35acd01abedafc6a18f76d3eccb5a11eeafe3fdf",
+      "owner_action": "Mission Control owner: source-bound generator, 3-viewport QA, J0-J5 rollup, one Pages publisher; do not spawn a second workflow family.",
+      "blockers": [
+        "Full JADE point-release native and served HTTPS parity pending",
+        "Main protected=false and RED canary unverified",
+        "Five stacked/open PR objects not independently merge-ready"
+      ],
+      "open_github_issues": 33,
+      "open_github_prs": 5,
+      "native_observations": [
+        {
+          "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+          "run_id": 39176449821,
+          "workflow_name": "Dependency SPINE Peer Source Census (HUB)",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39176449821"
+        },
+        {
+          "source_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+          "run_id": 39176449686,
+          "workflow_name": "Zero-Test Gate Guard",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39176449686"
+        }
+      ],
+      "input_paths": [
+        "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+        "mission-control/jade_temple/site/focus5.html"
+      ],
+      "source_gate_status": "OWNER_GATE_REQUIRED",
+      "authenticated_crew": null,
+      "accepted_root_count": null,
+      "matched_coverage_delta": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "GBOGEB/DOCX_RTM_Automation",
+      "to": "GBOGEB/cryoplant-project",
+      "type": "CANDIDATE_RTM_SOURCE_INPUT",
+      "state": "EVIDENCE_ONLY",
+      "causal_root_proof": false,
+      "guard": "No canonical RTM promotion",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/yaml-grammar",
+      "to": "GBOGEB/cryoplant-project",
+      "type": "YAML_GRAMMAR_REFERENCE",
+      "state": "REFERENCE_ONLY",
+      "causal_root_proof": false,
+      "guard": "Upstream grammar usage is not an admitted runtime dependency",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/gg_MATH",
+      "to": "GBOGEB/cryoplant-project",
+      "type": "METHOD_PROVIDER",
+      "state": "PROVIDER_ONLY",
+      "causal_root_proof": false,
+      "guard": "QPS engineering authority does not transfer",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/cryoplant-project",
+      "to": "GBOGEB/pipeline-automation-hub",
+      "type": "QPS_TRIAGE_RECEIPT",
+      "state": "OBSERVATION_ONLY",
+      "causal_root_proof": false,
+      "guard": "A failing QPS gate stays RED",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/DOCX_RTM_Automation",
+      "to": "GBOGEB/pipeline-automation-hub",
+      "type": "RTM_BUILD_TELEMETRY",
+      "state": "OBSERVATION_ONLY",
+      "causal_root_proof": false,
+      "guard": "No file-content transfer in dashboard",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/yaml-grammar",
+      "to": "GBOGEB/pipeline-automation-hub",
+      "type": "YAML_NATIVE_QA",
+      "state": "OBSERVATION_ONLY",
+      "causal_root_proof": false,
+      "guard": "No native runner proven",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/gg_MATH",
+      "to": "GBOGEB/pipeline-automation-hub",
+      "type": "MATH_PROOF_TELEMETRY",
+      "state": "OBSERVATION_ONLY",
+      "causal_root_proof": false,
+      "guard": "No automatic J5 release",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/ABACUS",
+      "to": "GBOGEB/pipeline-automation-hub",
+      "type": "DOW_ACCEPTANCE",
+      "state": "AUTHORITY_BOUND",
+      "causal_root_proof": false,
+      "guard": "Governance receipts independent",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/CODEX",
+      "to": "GBOGEB/pipeline-automation-hub",
+      "type": "KEB_FEDERATION",
+      "state": "AUTHORITY_BOUND",
+      "causal_root_proof": false,
+      "guard": "Crew must authenticate signed REX",
+      "weight": null
+    }
+  ],
+  "workflow": {
+    "authority": "READ_ONLY_PARALLEL_PLAN",
+    "dispatch_performed": false,
+    "merge_admission": "HOLD",
+    "max_local_parallel_lanes": 4,
+    "repository_owner_parallel_lanes": 5,
+    "next": [
+      "QPS W163 exact historic aliases -> qualified canonicalization",
+      "gg_MATH exact visual release dependency -> qualified full release",
+      "DOCX source/oracle & YAML offline native qualification in disjoint branches",
+      "MissionControl JADE focus5 evidence re-ingest and browser QA",
+      "Independent branch rules, review, security, owner tags (serial per repo)"
+    ]
+  },
+  "golden_thread": [
+    "SOURCE_SHA",
+    "OWNER_SCOPE",
+    "FIRST_RED_OR_NEGATIVE_TEST",
+    "DISJOINT_CANDIDATE_BRANCH",
+    "NATIVE_B0_RUN_JOB_ATTEMPT",
+    "SECURITY_AND_GOVERNANCE",
+    "HUMAN_REVIEW",
+    "POSTMERGE_SHA",
+    "RELEASE_TAG_AND_ROLLBACK"
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "artifacts": {
+    "css": {
+      "path": "site/jade.css",
+      "sha256": "ecbef0b2567ae7919785c60a003d7052664195ed57e37d3a0a1c56a311d124f0",
+      "status": "PASS"
+    },
+    "csv": {
+      "path": "site/top21_bd_queue.csv",
+      "sha256": "7e5721b2665af9b420785b419ace9256252982bf29aedaad266c5c96fb4b63c1",
+      "status": "PASS"
+    },
+    "html": {
+      "path": "site/green.html",
+      "sha256": "45efe6477f7a559270687de7bf137f6db9d901661d3979f007eeac3c4054bd2a",
+      "status": "PASS"
+    },
+    "js": {
+      "path": "site/jade.js",
+      "sha256": "82329304fbe835d952df00f47220763a24e7209feba6335472e9b4425a003948",
+      "status": "PASS"
+    },
+    "json": {
+      "path": "site/snapshot.json",
+      "sha256": "bc364e24cd1de68b85a48d6e9b8d5197e21431f3792c691c40a9dc5059ee7522",
+      "status": "PASS"
+    }
+  },
+  "as_of_utc": "2026-10-18T20:50:00Z",
+  "authority_transfer": false,
+  "checks": {
+    "cross_format_parity": "PASS_SITE_JSON_CSV_N11_COHORT_ONLY",
+    "deterministic_gogreen_dashboard": "PASS",
+    "deterministic_original_dashboard": "PASS",
+    "github_native_exact_pr_head": "DEFER",
+    "hosted_http_and_asset_parity": "DEFER",
+    "independent_review_branch_governance": "DEFER",
+    "local_contract_and_negative_tests": "PASS_44_OF_44",
+    "manifest_and_source_sha": "PASS",
+    "playwright": "PASS_3_OF_3_ASSET_ASSEMBLED_INLINE",
+    "point_release_binary_runtime": "DEFER",
+    "portal_bridge_copy_negative_controls": "PASS",
+    "production_csp_static_serving": "DEFER"
+  },
+  "defects": [
+    {
+      "fix": "Build CSV with portable LF; GitHub commit composed from exact JSON instead of extracted parsed sheet; remote Git blob parity checked",
+      "id": "J1-CSV1",
+      "root": "Filesystem-to-Files text extraction converted CSV into a parsed worksheet and altered bytes",
+      "status": "LOCAL_FIXED_SOURCE_BOUND"
+    }
+  ],
+  "evidence_level": "LOCAL_REPRODUCIBILITY",
+  "family": "JADE_TEMPLE_NPLUS1_GOGREEN",
+  "merge_admission": "HOLD",
+  "notes": [
+    "Native GitHub PR CI outcomes must be re-read at exact head, never infer local tests equal native admission.",
+    "Browser QA uses exact source asset contents assembled inline because local navigations were blocked; CSP relaxed for local DOM test only; served URL/CSP untested.",
+    "Separate 21-repo N11 and 21-repo GoGREEN cohorts overlap only in 13, no mixed metrics.",
+    "No merged new PR, policy mutation, security waiver, issue closure, remote worker or new Pages publisher in N+1.",
+    "Reader must refresh GitHub refs and Pages URL immediately before admission or publication."
+  ],
+  "schema": "qps-artifact-qa/1.0",
+  "security_waiver": false,
+  "site_manifest_sha256": "a79f811b160c993a160bed7509daabb94c3799c773980c1b57260770827a249d",
+  "snapshot_non_atomic": true,
+  "source": {
+    "git_sha": "READBACK_REQUIRED_AFTER_FINAL_PR_COMMIT",
+    "locator": "GBOGEB/pipeline-automation-hub:docs/jade-temple-gogreen-nplus1-20261018:mission-control/jade_temple/",
+    "predecessor_bootstrap_zip_sha256": "9a9e8f42f5f32c4e79ec0166ef1b1ae11d220afe619ba81fd62fa2e36879ac88",
+    "predecessor_code_purple_nplus2_zip_sha256": "1067bd590d06c379e965e86a7e2d57af69337b5b322e67e3f453a35dca15c089",
+    "semantic_sha256": "2ae6354e821a83f72df4b224ad95ca07b96db7e151ddbb193df8afc80c2c9238"
+  }
+}

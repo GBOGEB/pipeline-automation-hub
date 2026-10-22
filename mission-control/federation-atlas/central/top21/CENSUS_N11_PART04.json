@@ -1,0 +1,838 @@
+{
+  "schema": "missioncontrol.top21.tree_census.part.v1",
+  "source": "GitHub Git Trees API recursive",
+  "frozen_at": "2026-10-17",
+  "batch": 4,
+  "records": [
+    {
+      "repo": "GBOGEB/vscode-powershell",
+      "branch": "main",
+      "sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "tree_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "complete": true,
+      "tree_entries": 141,
+      "files": 115,
+      "directories": 26,
+      "bytes": 1507868,
+      "extensions": {
+        ".json": 10,
+        ".editorconfig": 1,
+        ".git-blame-ignore-revs": 1,
+        ".gitattributes": 1,
+        "[extensionless]": 1,
+        ".yml": 8,
+        ".md": 15,
+        ".gitignore": 2,
+        ".mailmap": 1,
+        ".npmrc": 1,
+        ".prettierignore": 1,
+        ".mjs": 2,
+        ".vscodeignore": 1,
+        ".props": 2,
+        ".txt": 3,
+        ".ps1": 19,
+        ".ipynb": 1,
+        ".js": 1,
+        ".css": 1,
+        "PowerShell module": 3,
+        ".png": 2,
+        ".code-workspace": 3,
+        ".ts": 32,
+        ".csproj": 1,
+        ".cs": 1,
+        ".config": 1
+      },
+      "top_level": [
+        {
+          "name": "[root]",
+          "files": 27
+        },
+        {
+          "name": "examples",
+          "files": 25
+        },
+        {
+          "name": "src",
+          "files": 24
+        },
+        {
+          "name": "test",
+          "files": 14
+        },
+        {
+          "name": ".github",
+          "files": 8
+        },
+        {
+          "name": "docs",
+          "files": 7
+        },
+        {
+          "name": "media",
+          "files": 3
+        },
+        {
+          "name": "tools",
+          "files": 2
+        },
+        {
+          "name": ".config",
+          "files": 1
+        },
+        {
+          "name": ".pipelines",
+          "files": 1
+        },
+        {
+          "name": "scripts",
+          "files": 1
+        },
+        {
+          "name": "snippets",
+          "files": 1
+        },
+        {
+          "name": "themes",
+          "files": 1
+        }
+      ],
+      "depth2": [
+        {
+          "path": "src/features",
+          "files": 15
+        },
+        {
+          "path": "test/features",
+          "files": 4
+        },
+        {
+          "path": "test/mocks",
+          "files": 4
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE",
+          "files": 3
+        },
+        {
+          "path": "docs/azure_data_studio",
+          "files": 3
+        },
+        {
+          "path": "examples/.vscode",
+          "files": 3
+        },
+        {
+          "path": "test/core",
+          "files": 3
+        },
+        {
+          "path": ".github/workflows",
+          "files": 2
+        },
+        {
+          "path": "examples/Assets",
+          "files": 2
+        },
+        {
+          "path": "examples/Tests",
+          "files": 2
+        },
+        {
+          "path": "examples/en-US",
+          "files": 1
+        },
+        {
+          "path": "src/controls",
+          "files": 1
+        },
+        {
+          "path": "themes/theme-psise",
+          "files": 1
+        }
+      ],
+      "root_files": [
+        ".editorconfig",
+        ".git-blame-ignore-revs",
+        ".gitattributes",
+        ".gitignore",
+        ".mailmap",
+        ".markdownlint.json",
+        ".npmrc",
+        ".prettierignore",
+        ".vscode-test.mjs",
+        ".vscodeignore",
+        "CHANGELOG.md",
+        "CODE_OF_CONDUCT.md",
+        "CodeQL.yml",
+        "Directory.Build.props",
+        "Directory.Packages.props",
+        "LICENSE.txt",
+        "NOTICE.txt",
+        "README.md",
+        "SECURITY.md",
+        "SUPPORT.md",
+        "build.ps1",
+        "eslint.config.mjs",
+        "package-lock.json",
+        "package.json",
+        "pwsh-extension-dev.code-workspace",
+        "tsconfig.json",
+        "vscode-powershell.build.ps1"
+      ],
+      "root_review": [
+        {
+          "path": ".markdownlint.json",
+          "reason": "ROOT_MANIFEST_REVIEW"
+        },
+        {
+          "path": "CodeQL.yml",
+          "reason": "ROOT_MANIFEST_REVIEW"
+        },
+        {
+          "path": "SUPPORT.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION"
+        },
+        {
+          "path": "build.ps1",
+          "reason": "ROOT_EXECUTABLE_REVIEW"
+        },
+        {
+          "path": "vscode-powershell.build.ps1",
+          "reason": "ROOT_EXECUTABLE_REVIEW"
+        }
+      ],
+      "manifest_paths": [
+        "package-lock.json",
+        "package.json",
+        "test/mocks/BinaryModule/BinaryModule.csproj",
+        "tsconfig.json"
+      ],
+      "manifest_total": 4,
+      "workflow_files": 2,
+      "tests_files": 14
+    },
+    {
+      "repo": "GBOGEB/cli",
+      "branch": "trunk",
+      "sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "tree_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "complete": true,
+      "tree_entries": 1625,
+      "files": 1229,
+      "directories": 396,
+      "bytes": 21380086,
+      "extensions": {
+        ".json": 69,
+        ".gitattributes": 1,
+        ".md": 36,
+        "[extensionless]": 30,
+        ".yml": 18,
+        ".tmpl": 1,
+        ".sh": 16,
+        ".gitignore": 2,
+        "Makefile": 1,
+        ".go": 856,
+        ".txtar": 123,
+        ".xml": 1,
+        ".wixproj": 1,
+        ".wxs": 2,
+        ".png": 44,
+        ".mod": 1,
+        ".sum": 1,
+        ".proto": 3,
+        ".zip": 5,
+        ".txt": 8,
+        ".jsonl": 4,
+        ".whl": 1,
+        ".tgz": 1,
+        ".bat": 1,
+        ".ps1": 2,
+        ".ubuntu": 1
+      },
+      "top_level": [
+        {
+          "name": "pkg",
+          "files": 786
+        },
+        {
+          "name": "internal",
+          "files": 137
+        },
+        {
+          "name": "acceptance",
+          "files": 125
+        },
+        {
+          "name": "docs",
+          "files": 64
+        },
+        {
+          "name": ".github",
+          "files": 28
+        },
+        {
+          "name": "api",
+          "files": 24
+        },
+        {
+          "name": "git",
+          "files": 18
+        },
+        {
+          "name": "script",
+          "files": 15
+        },
+        {
+          "name": "[root]",
+          "files": 10
+        },
+        {
+          "name": "test",
+          "files": 8
+        },
+        {
+          "name": "build",
+          "files": 4
+        },
+        {
+          "name": "cmd",
+          "files": 3
+        },
+        {
+          "name": "context",
+          "files": 3
+        },
+        {
+          "name": "skills",
+          "files": 2
+        },
+        {
+          "name": ".devcontainer",
+          "files": 1
+        },
+        {
+          "name": "utils",
+          "files": 1
+        }
+      ],
+      "depth2": [
+        {
+          "path": "pkg/cmd",
+          "files": 731
+        },
+        {
+          "path": "acceptance/testdata",
+          "files": 123
+        },
+        {
+          "path": "docs/primer",
+          "files": 48
+        },
+        {
+          "path": "internal/codespaces",
+          "files": 29
+        },
+        {
+          "path": "internal/licenses",
+          "files": 21
+        },
+        {
+          "path": ".github/workflows",
+          "files": 17
+        },
+        {
+          "path": "pkg/cmdutil",
+          "files": 15
+        },
+        {
+          "path": "internal/skills",
+          "files": 14
+        },
+        {
+          "path": "git/fixtures",
+          "files": 10
+        },
+        {
+          "path": "internal/prompter",
+          "files": 9
+        },
+        {
+          "path": "pkg/iostreams",
+          "files": 9
+        },
+        {
+          "path": "internal/config",
+          "files": 7
+        },
+        {
+          "path": "pkg/search",
+          "files": 7
+        },
+        {
+          "path": "test/integration",
+          "files": 7
+        },
+        {
+          "path": "internal/docs",
+          "files": 5
+        },
+        {
+          "path": "internal/gh",
+          "files": 5
+        },
+        {
+          "path": "internal/ghcmd",
+          "files": 5
+        },
+        {
+          "path": "internal/telemetry",
+          "files": 5
+        },
+        {
+          "path": "pkg/extensions",
+          "files": 5
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE",
+          "files": 4
+        },
+        {
+          "path": "internal/flock",
+          "files": 4
+        },
+        {
+          "path": "build/windows",
+          "files": 3
+        },
+        {
+          "path": "internal/authflow",
+          "files": 3
+        },
+        {
+          "path": "internal/featuredetection",
+          "files": 3
+        },
+        {
+          "path": "internal/zip",
+          "files": 3
+        },
+        {
+          "path": "pkg/httpmock",
+          "files": 3
+        },
+        {
+          "path": "pkg/surveyext",
+          "files": 3
+        },
+        {
+          "path": "cmd/gen-docs",
+          "files": 2
+        },
+        {
+          "path": "internal/agents",
+          "files": 2
+        },
+        {
+          "path": "internal/barista",
+          "files": 2
+        },
+        {
+          "path": "internal/browser",
+          "files": 2
+        },
+        {
+          "path": "internal/ci",
+          "files": 2
+        },
+        {
+          "path": "internal/ghinstance",
+          "files": 2
+        },
+        {
+          "path": "internal/ghrepo",
+          "files": 2
+        },
+        {
+          "path": "internal/run",
+          "files": 2
+        },
+        {
+          "path": "internal/safepaths",
+          "files": 2
+        },
+        {
+          "path": "internal/tableprinter",
+          "files": 2
+        },
+        {
+          "path": "internal/text",
+          "files": 2
+        },
+        {
+          "path": "internal/update",
+          "files": 2
+        },
+        {
+          "path": "pkg/findsh",
+          "files": 2
+        },
+        {
+          "path": "pkg/githubtemplate",
+          "files": 2
+        },
+        {
+          "path": "pkg/jsoncolor",
+          "files": 2
+        },
+        {
+          "path": "pkg/option",
+          "files": 2
+        },
+        {
+          "path": "pkg/set",
+          "files": 2
+        },
+        {
+          "path": "build/macOS",
+          "files": 1
+        }
+      ],
+      "root_files": [
+        ".gitattributes",
+        ".gitignore",
+        ".golangci.yml",
+        ".goreleaser.yml",
+        "AGENTS.md",
+        "LICENSE",
+        "Makefile",
+        "README.md",
+        "go.mod",
+        "go.sum"
+      ],
+      "root_review": [
+        {
+          "path": ".golangci.yml",
+          "reason": "ROOT_MANIFEST_REVIEW"
+        },
+        {
+          "path": ".goreleaser.yml",
+          "reason": "ROOT_MANIFEST_REVIEW"
+        }
+      ],
+      "manifest_paths": [
+        "Makefile",
+        "go.mod"
+      ],
+      "manifest_total": 2,
+      "workflow_files": 12,
+      "tests_files": 29
+    },
+    {
+      "repo": "GBOGEB/python-sdk",
+      "branch": "main",
+      "sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "tree_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "complete": true,
+      "tree_entries": 347,
+      "files": 286,
+      "directories": 61,
+      "bytes": 1864287,
+      "extensions": {
+        ".git-blame-ignore-revs": 1,
+        "[extensionless]": 2,
+        ".yaml": 5,
+        ".yml": 6,
+        ".gitignore": 1,
+        ".md": 17,
+        ".py": 232,
+        ".toml": 10,
+        ".lock": 3,
+        ".python-version": 4,
+        ".example": 1,
+        ".txt": 1,
+        ".json": 1,
+        ".db": 1,
+        ".typed": 1
+      },
+      "top_level": [
+        {
+          "name": "examples",
+          "files": 98
+        },
+        {
+          "name": "src",
+          "files": 81
+        },
+        {
+          "name": "tests",
+          "files": 81
+        },
+        {
+          "name": "[root]",
+          "files": 13
+        },
+        {
+          "name": ".github",
+          "files": 10
+        },
+        {
+          "name": "docs",
+          "files": 2
+        },
+        {
+          "name": "scripts",
+          "files": 1
+        }
+      ],
+      "depth2": [
+        {
+          "path": "src/mcp",
+          "files": 81
+        },
+        {
+          "path": "examples/servers",
+          "files": 39
+        },
+        {
+          "path": "tests/server",
+          "files": 38
+        },
+        {
+          "path": "examples/snippets",
+          "files": 33
+        },
+        {
+          "path": "examples/clients",
+          "files": 14
+        },
+        {
+          "path": "tests/client",
+          "files": 14
+        },
+        {
+          "path": "tests/issues",
+          "files": 13
+        },
+        {
+          "path": "examples/fastmcp",
+          "files": 11
+        },
+        {
+          "path": "tests/shared",
+          "files": 10
+        },
+        {
+          "path": ".github/workflows",
+          "files": 5
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE",
+          "files": 4
+        },
+        {
+          "path": "tests/cli",
+          "files": 2
+        }
+      ],
+      "root_files": [
+        ".git-blame-ignore-revs",
+        ".gitignore",
+        ".pre-commit-config.yaml",
+        "CLAUDE.md",
+        "CODE_OF_CONDUCT.md",
+        "CONTRIBUTING.md",
+        "LICENSE",
+        "README.md",
+        "RELEASE.md",
+        "SECURITY.md",
+        "mkdocs.yml",
+        "pyproject.toml",
+        "uv.lock"
+      ],
+      "root_review": [
+        {
+          "path": "RELEASE.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION"
+        },
+        {
+          "path": "mkdocs.yml",
+          "reason": "ROOT_MANIFEST_REVIEW"
+        }
+      ],
+      "manifest_paths": [
+        "examples/clients/simple-auth-client/pyproject.toml",
+        "examples/clients/simple-chatbot/mcp_simple_chatbot/requirements.txt",
+        "examples/clients/simple-chatbot/pyproject.toml",
+        "examples/servers/simple-auth/pyproject.toml",
+        "examples/servers/simple-prompt/pyproject.toml",
+        "examples/servers/simple-resource/pyproject.toml",
+        "examples/servers/simple-streamablehttp-stateless/pyproject.toml",
+        "examples/servers/simple-streamablehttp/pyproject.toml",
+        "examples/servers/simple-tool/pyproject.toml",
+        "examples/snippets/pyproject.toml",
+        "pyproject.toml"
+      ],
+      "manifest_total": 11,
+      "workflow_files": 5,
+      "tests_files": 81
+    },
+    {
+      "repo": "GBOGEB/skills",
+      "branch": "main",
+      "sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "tree_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "complete": true,
+      "tree_entries": 561,
+      "files": 454,
+      "directories": 107,
+      "bytes": 11699774,
+      "extensions": {
+        ".json": 1,
+        ".gitignore": 1,
+        ".md": 137,
+        ".txt": 47,
+        ".js": 1,
+        ".html": 3,
+        ".ttf": 54,
+        ".mjs": 2,
+        ".py": 77,
+        ".xsd": 117,
+        ".xml": 6,
+        ".yaml": 4,
+        ".pdf": 1,
+        ".sh": 2,
+        ".gz": 1
+      },
+      "top_level": [
+        {
+          "name": "skills",
+          "files": 448
+        },
+        {
+          "name": "[root]",
+          "files": 3
+        },
+        {
+          "name": ".claude-plugin",
+          "files": 1
+        },
+        {
+          "name": "spec",
+          "files": 1
+        },
+        {
+          "name": "template",
+          "files": 1
+        }
+      ],
+      "depth2": [
+        {
+          "path": "skills/canvas-design",
+          "files": 83
+        },
+        {
+          "path": "skills/claude-api",
+          "files": 81
+        },
+        {
+          "path": "skills/docx",
+          "files": 61
+        },
+        {
+          "path": "skills/pptx",
+          "files": 56
+        },
+        {
+          "path": "skills/xlsx",
+          "files": 53
+        },
+        {
+          "path": "skills/skill-creator",
+          "files": 18
+        },
+        {
+          "path": "skills/theme-factory",
+          "files": 13
+        },
+        {
+          "path": "skills/pdf",
+          "files": 12
+        },
+        {
+          "path": "skills/mcp-builder",
+          "files": 10
+        },
+        {
+          "path": "skills/math-plots",
+          "files": 8
+        },
+        {
+          "path": "skills/math",
+          "files": 8
+        },
+        {
+          "path": "skills/plots",
+          "files": 7
+        },
+        {
+          "path": "skills/slack-gif-creator",
+          "files": 7
+        },
+        {
+          "path": "skills/internal-comms",
+          "files": 6
+        },
+        {
+          "path": "skills/webapp-testing",
+          "files": 6
+        },
+        {
+          "path": "skills/web-artifacts-builder",
+          "files": 5
+        },
+        {
+          "path": "skills/algorithmic-art",
+          "files": 4
+        },
+        {
+          "path": "skills/academy-guide",
+          "files": 2
+        },
+        {
+          "path": "skills/brand-guidelines",
+          "files": 2
+        },
+        {
+          "path": "skills/discernment-nudge",
+          "files": 2
+        },
+        {
+          "path": "skills/frontend-design",
+          "files": 2
+        },
+        {
+          "path": "skills/doc-coauthoring",
+          "files": 1
+        }
+      ],
+      "root_files": [
+        ".gitignore",
+        "README.md",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "root_review": [
+        {
+          "path": "THIRD_PARTY_NOTICES.md",
+          "reason": "ROOT_NARRATIVE_JUSTIFICATION"
+        }
+      ],
+      "manifest_paths": [
+        "skills/mcp-builder/scripts/requirements.txt",
+        "skills/slack-gif-creator/requirements.txt"
+      ],
+      "manifest_total": 2,
+      "workflow_files": 0,
+      "tests_files": 1
+    }
+  ]
+}

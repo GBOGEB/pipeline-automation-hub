@@ -1,0 +1,660 @@
+{
+  "actions": [
+    {
+      "depends_on": [],
+      "done_when": "Reviewed PR merged into master; exact-main script, tests and source-integrity receipt rechecked.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/README.md"
+      ],
+      "id": "SC-A001",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "priority": "P1",
+      "state": "IN_PR",
+      "summary": "Implement reusable CP.CLOSE() generator, validator, schema and CI in existing handoff path."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "All generated artifacts committed on reviewed PR and byte-parity verified at main SHA without raw secrets/transcript.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ],
+      "id": "SC-A002",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "priority": "P1",
+      "state": "IN_PR",
+      "summary": "Publish sanitized conversation reconstruction, source-bound session analytics, MD drop-in, action/BD ledger and SHA manifest."
+    },
+    {
+      "depends_on": [],
+      "done_when": "Actual hosted HTTP 200 plus two consecutive exact-main parity readbacks, screenshot owner review; no unsupported G3P live claim.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/637",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/638"
+      ],
+      "id": "SC-A003",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "priority": "P1",
+      "state": "HOLD",
+      "summary": "Confirm public G3P URL contents on deployed GitHub Pages and independent SHA/hash stability and human visual acceptance."
+    },
+    {
+      "depends_on": [
+        "SC-A003"
+      ],
+      "done_when": "Each source owner runs native exact-head browser QA, attaches artifacts and files independent acceptance; no cross-repo hidden mutation.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/638",
+        "https://github.com/GBOGEB/ABACUS/issues/2136",
+        "https://github.com/GBOGEB/CODEX/issues/1067",
+        "https://github.com/GBOGEB/cryoplant-project/issues/1950"
+      ],
+      "id": "SC-A004",
+      "owner": "Owner-lane fanout: MC/ABACUS/CODEX/QPS",
+      "priority": "P2",
+      "state": "TODO",
+      "summary": "Complete source-owner QA adoption in Mission Control, ABACUS CBD/EVERRED, CODEX semantic viewer and QPS public-safe HTML."
+    },
+    {
+      "depends_on": [],
+      "done_when": "Exact current PR SHA, terminal run/job/attempt receipts, combined native coverage, independent gate and blocker owner re-observed.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/620",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/621"
+      ],
+      "id": "SC-A005",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "priority": "P1",
+      "state": "HOLD",
+      "summary": "Reconcile open PR #620/#621 historical native G3P controls and current release gates; prevent scope-mismatched metrics."
+    },
+    {
+      "depends_on": [],
+      "done_when": "User provides authorized complete export with schema and source timestamps; report count confidence and protect raw private text outside GitHub.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/golden-thread/session_hook/README.md"
+      ],
+      "id": "SC-A006",
+      "owner": "User-supplied authorized transcript / no automatic ChatGPT export",
+      "priority": "P3",
+      "state": "DEFER",
+      "summary": "Optionally compute exact user prompt/message/word and timestamp statistics from a user-supplied complete export."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "Consumer compatibility and append-only verification are native tested; no duplicate event or canonical BD rewrite.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/153",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ],
+      "id": "SC-A007",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "priority": "P2",
+      "state": "TODO",
+      "summary": "Integrate CP.CLOSE with Golden Thread intent checkpoint and existing BD/REX/PR readback without creating second canonical SSOT."
+    },
+    {
+      "depends_on": [],
+      "done_when": "Native exact-head source/contract validation passes and frozen 6/7 state remains byte-identical; no forged global counts.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/641",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ],
+      "id": "SC-A008",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "priority": "P1",
+      "state": "IN_PR",
+      "summary": "Build SHA-bound read-only Live Lossless snapshot and current GitHub recensus overlay while preserving frozen original handover."
+    },
+    {
+      "depends_on": [
+        "SC-A008"
+      ],
+      "done_when": "All controls operate on the same snapshot, mobile view has no unintended body overflow and null message totals remain UNKNOWN.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ],
+      "id": "SC-A009",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "priority": "P1",
+      "state": "IN_PR",
+      "summary": "Render accessible Live Lossless HTML with selectable overview/intents/actions/BD/monikers, expandable details, search and source-freshness flags."
+    },
+    {
+      "depends_on": [
+        "SC-A009"
+      ],
+      "done_when": "Exact PR-head unit/browser/HTML tests PASS; site-manifest SHA parity; no duplicate Pages deployment workflow.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/637",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/638"
+      ],
+      "id": "SC-A010",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "priority": "P1",
+      "state": "IN_PR",
+      "summary": "Prove the dashboard with browser negative/keyboard/screenshot QA and package through existing single-owner Pages portal."
+    },
+    {
+      "depends_on": [
+        "SC-A010"
+      ],
+      "done_when": "Native exact-main run and hosted URL hash readback pass after authorized merge; next G3P is separate source-owner decision.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+      ],
+      "id": "SC-A011",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "priority": "P2",
+      "state": "HOLD",
+      "summary": "Obtain eligible reviews, authorized merge, exact-main testflight and independent hosted Live Lossless HTTP/parity proof, then continue chat."
+    }
+  ],
+  "authority_transfer": false,
+  "bd_queue": {
+    "authority_transfer": false,
+    "focus": [
+      {
+        "at": "W1.C1.I2.S1",
+        "control_when": "The render check catches a seeded layout or script regression.",
+        "done_when": "Atlas source, unit tests and a browser-level (Playwright or equivalent) render check run in hub CI on the exact head.",
+        "flow": "LINKED",
+        "id": "CPQ-003",
+        "links": [
+          "https://github.com/GBOGEB/pipeline-automation-hub/pull/519",
+          "https://github.com/GBOGEB/pipeline-automation-hub/issues/520"
+        ],
+        "severity": "P1",
+        "source_evidence": "Atlas source build/CI pass on 38932665934; seeded negative native Playwright/SVG regression still not verified; #520 acceptance HOLD.",
+        "state": "ACTIVE",
+        "title": "v0.1 atlas QA claims had no SHA, run or receipt"
+      },
+      {
+        "at": "W1.C1.I2.S1",
+        "control_when": "Stale flag verified on a later render.",
+        "done_when": "Each source shows its as-of date and age; stale sources are flagged.",
+        "flow": "IN_PR",
+        "id": "CPQ-005",
+        "links": [],
+        "severity": "P2",
+        "source_evidence": "as_of/as_of_basis visible in build_code_purple; explicit TTL/stale-flag and later render not yet proven.",
+        "state": "ACTIVE",
+        "title": "No as-of date or evidence age on the atlas"
+      },
+      {
+        "at": "W1.C1.I2.S1",
+        "control_when": "A test fails if an edge lacks a binding.",
+        "done_when": "Every edge in ATLAS_GRAPH_v1.yaml carries binding DECLARED or RECEIPT and DECLARED edges render dashed.",
+        "flow": "NONE",
+        "id": "CPQ-007",
+        "links": [
+          "https://github.com/GBOGEB/pipeline-automation-hub/pull/519"
+        ],
+        "severity": "P2",
+        "source_evidence": "Graph binding RECEIPT vs DECLARED and dashed-edge negative tests in test_atlas.py; native 38932665934 PASS. QPS receipt added, MC->QPS dispatch remains DECLARED.",
+        "state": "DONE",
+        "title": "Federation graph draws declared dispatch edges like receipt-bound edges"
+      }
+    ],
+    "global_item_count": 19,
+    "global_lifecycle_counts": {
+      "ACTIVE": 5,
+      "DONE": 10,
+      "TODO": 2,
+      "UNKNOWN_NEEDS_READER": 2
+    },
+    "new_canonical_bd_items": 0,
+    "owner": "CANONICAL_CODE_PURPLE_BD_QUEUE_ONLY",
+    "read_only_historical": true,
+    "schema": "missioncontrol.cp_close.bd_projection.v1",
+    "source_path": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+    "source_sha256": "a1d1b32ec9f53ceb7028493a6b28a8967852e99f00263139377d65a00a241748"
+  },
+  "decisions": [
+    {
+      "disposition": "COMPATIBILITY_EXTENSION",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/README.md",
+      "name": "Reuse handoff contract",
+      "rationale": "CP.CLOSE is a GitHub-first wrapper for existing CP.HANDOFF and CP.RESUME; no replacement canonical session method."
+    },
+    {
+      "disposition": "READ_ONLY_SUBSET",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+      "name": "BD queue authority",
+      "rationale": "Status/history remains owned by CODE_PURPLE_BD_QUEUE_v1; session TODO and BD overlay cannot mutate canonical lifecycle."
+    },
+    {
+      "disposition": "GOVERNED_PENDING_INDEPENDENT_PROOF",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/637",
+      "name": "GitHub main criterion",
+      "rationale": "Source commit and PR are prerequisites but exact-head CI, review and postmerge main readback are separate DoD/DoV gates."
+    }
+  ],
+  "github_monitor": {
+    "default_frequency_minutes": 15,
+    "issues": [
+      604,
+      638
+    ],
+    "merge_admission": "INDEPENDENT_HOLD",
+    "pull_requests": [
+      620,
+      621,
+      631,
+      640,
+      641,
+      642,
+      648,
+      651
+    ],
+    "source": "PUBLIC_GITHUB_REST_NO_AUTH",
+    "supported_frequency_minutes": [
+      0,
+      15,
+      60
+    ]
+  },
+  "insights": [
+    {
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39042677172",
+      "implication": "Portable interaction/geometry testing is high-value, but browser fixture success and Main/Pages admission remain separate.",
+      "observation": "G3P visual QA reached 102 browser assertions and zero reported body overflow on three viewports for its measured candidate."
+    },
+    {
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/637",
+      "implication": "Every session handover needs historical versus refreshed PR states and exact-head SHA comparison.",
+      "observation": "G3P Live Ledger #632 and HTML QA #637 subsequently merged; frozen previous statements that PRs were draft/open are stale."
+    },
+    {
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604",
+      "implication": "Measure matched denominators and reach independently before a composite KPI or PCA rollout.",
+      "observation": "Local four-module 52/66 branch coverage is a selected scope, not federation-wide DoD/DoV."
+    }
+  ],
+  "intents": [
+    {
+      "actions": [
+        "SC-A005"
+      ],
+      "id": "SC-I001",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Expand the CBD E2E graph atlas test suite beyond the original 14 tests; preserve directed/weighted graph evidence."
+    },
+    {
+      "actions": [
+        "SC-A005"
+      ],
+      "id": "SC-I002",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Separate local statement and branch coverage from global Mission Control DoD and DoV; improve weighted, dimensional KPI and gg_MATH planning."
+    },
+    {
+      "actions": [
+        "SC-A003"
+      ],
+      "id": "SC-I003",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Maintain G3P time-series N+1 through later pulses, reloading HTML, ledgers and source refs without fabricating ancestral verification."
+    },
+    {
+      "actions": [
+        "SC-A003",
+        "SC-A004"
+      ],
+      "id": "SC-I004",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Roll out end-to-end HTML QA: all links, buttons, graph interactions, mobile overlap, source errors, PNG screenshots and GitHub Pages proof."
+    },
+    {
+      "actions": [
+        "SC-A004"
+      ],
+      "id": "SC-I005",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Propagate evidence-safe HTML QA to ABACUS, CODEX, GoGREEN/Flight Deck and QPS owner lanes."
+    },
+    {
+      "actions": [
+        "SC-A001",
+        "SC-A002",
+        "SC-A006",
+        "SC-A007"
+      ],
+      "id": "SC-I006",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Close chats GitHub-first with lossless semantic narrative, intent, statistics, exact PR/issue evidence, BD queue, TODO, SHA manifest and restart drop-in."
+    },
+    {
+      "actions": [
+        "SC-A008",
+        "SC-A009",
+        "SC-A010",
+        "SC-A011"
+      ],
+      "id": "SC-I007",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Continue in the current chat while maintaining a GitHub-updated lossless handover, compact status/statistics dashboard, expandable/selectable monikers, nested subrequests, source evidence and BD/TODO controls."
+    }
+  ],
+  "issues": [
+    {
+      "number": 604,
+      "state": "open"
+    },
+    {
+      "number": 638,
+      "state": "open"
+    }
+  ],
+  "merge_admission": "INDEPENDENT_HOLD",
+  "metric_observations": [
+    {
+      "denominator": 102,
+      "evidence_class": "NATIVE_PR_HEAD_BROWSER_FIXTURES_NOT_PUBLIC_HTTP",
+      "metric": "G3P_HTML_BROWSER_ASSERTIONS",
+      "numerator": 102,
+      "population": "G3P dashboard candidate: desktop/laptop/mobile three viewport runs, bounded exact head 1b574daf",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39042677172",
+      "unit": "PASSING_CHECKS"
+    },
+    {
+      "denominator": 56,
+      "evidence_class": "NATIVE_PR_HEAD_SNAPSHOT",
+      "metric": "G3P_HTML_STATIC_PYTHON_TESTS",
+      "numerator": 56,
+      "population": "G3P closure 10 inherited and 46 closeout static/source/portal tests on exact runner",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39042677172",
+      "unit": "PASSING_TESTS"
+    }
+  ],
+  "monikers": [
+    {
+      "details": "Capture the complete accessible sanitized intent, latest owned PR/CI and BD, verify and pursue governed main custody.",
+      "invocation": "CP.CLOSE(scope=\"CURRENT_SESSION\",target=\"GBOGEB/pipeline-automation-hub:master\",mode=\"GITHUB_FIRST_LOSSLESS\",outputs=\"PR+STATE+STATS+INTENTS+BD+REX+TODO+DROPIN+MANIFEST\",admission=\"GOVERNED\")",
+      "name": "CP.CLOSEOUT",
+      "scope": "COMPATIBILITY_ALIAS_TO_CP_CLOSE",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/CHAT_CLOSEOUT_OPERATOR_V1.md"
+    },
+    {
+      "details": "Refresh GitHub source readbacks, append new current-chat intent/action deltas and publish a hash-verified rolling lossless record without ending this conversation. Browser refresh is read-only, and no background ChatGPT worker is launched.",
+      "invocation": "CP.LIVE(scope=\"CURRENT_CHAT\",mode=\"GITHUB_REFRESH_APPEND\",target=\"GOVERNED_PR_TO_MASTER\",view=\"SUMMARY_PLUS_SELECTABLE_DETAILS\",continue_chat=true)",
+      "name": "CP.LIVE",
+      "scope": "ROLLING_IN_CHAT_GITHUB_SNAPSHOT",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/live_lossless/LIVE_LOSSLESS_PROFILE_v1.json"
+    },
+    {
+      "details": "Canonical deterministic nine-artifact closeout; CP.CLOSEOUT is an alias, not a second producer.",
+      "invocation": "CP.CLOSE(scope=\"CURRENT_SESSION\",target=\"GBOGEB/pipeline-automation-hub:master\",mode=\"GITHUB_FIRST_LOSSLESS\")",
+      "name": "CP.CLOSE",
+      "scope": "CANONICAL_NINE_ARTIFACT_SESSION_OPERATOR",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/README.md"
+    },
+    {
+      "details": "Source-bound frozen handover ZIP and state; only complete original bytes if accessible.",
+      "invocation": "CP.HANDOFF(scope=\"CURRENT_SESSION\",mode=\"LOSSLESS_INTENT\",artifact=\"ZIP+DROPIN+STATE+MANIFEST\")",
+      "name": "CP.HANDOFF",
+      "scope": "LOSSLESS_TRANSPORT",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/README.md"
+    },
+    {
+      "details": "Refresh native GitHub source heads and custody before any next authorized pulse.",
+      "invocation": "CP.RESUME(source=\"GITHUB_FIRST\",mode=\"VERIFY_REFRESH_EXECUTE\",horizon=\"G3P:N_TO_N_PLUS_3\")",
+      "name": "CP.RESUME",
+      "scope": "NEXT_OR_CURRENT_CHAT_REFRESH",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/records/CP-G3P-HTMLQA-20261017/NEXT_CHAT_DROPIN.md"
+    },
+    {
+      "details": "One three-pulse bounded engineering wave; measured feedback is not three accepted advances.",
+      "invocation": "G3P.EXECUTE(N,N+3)",
+      "name": "G3P.EXECUTE",
+      "scope": "GOVERNED_THREE_PULSE_WAVE",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/N3_CONTINUATION_GUIDE.md"
+    }
+  ],
+  "privacy": "SANITIZED_NOT_VERBATIM",
+  "provenance": {
+    "canonical_closeout_protocol_sha256": "80207cc3bb9399a1e664c36d0c591936ec31ca2f219cc3e267b294a6f9a4a178",
+    "closeout_profile_sha256": "eb1e0989a0cb15be19b38658a157aaf871605c10c2e4cf20f461222b733edfaf",
+    "continuation_delta_sha256": "86c0803fb76b8ee9a6a597821231e5e3019a1caf0770269e4e23584e6919067c",
+    "frozen_manifest_sha256": "cbd55eb9cc27e70f7540f082c2aa6b6f0bbb3b19aef4cf3e4c109a218a3e0206",
+    "github_observation_sha256": "93e74d33e1a7366f7555256905da764d347a888259466b02e1cf831bd7064868",
+    "handoff_contract_sha256": "dae3a23895ebfb295bd4385547eaaede46f88d0bd745a48c712011377db64cd9",
+    "live_profile_sha256": "aea934d38997721a12ae80fe3f54c9ca23c2d285e25054aee90f6554c31b4b14",
+    "local_browser_qa_is_not_hosted_proof": true,
+    "native_run": {
+      "conclusion": "success",
+      "head_sha": "b293c818ebf280e570392e398720ec22e1aa4566",
+      "id": 39045180636,
+      "proof": "EXACT_MAIN_CLOSEOUT_SUBSET_ONLY",
+      "tests_passing": 34,
+      "tests_total": 34,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39045180636"
+    }
+  },
+  "prs": [
+    {
+      "draft": false,
+      "head": "f3374560af1755693f53a4b2e9f8ef3c184a08a3",
+      "number": 620,
+      "state": "OPEN"
+    },
+    {
+      "draft": false,
+      "head": "296c2dfa6c81849038b3d378d2e179dfdb4ca8a4",
+      "number": 621,
+      "state": "OPEN"
+    },
+    {
+      "draft": false,
+      "head": "ea234657c0d030e816a4a4368c95b15fc8dd661e",
+      "number": 631,
+      "state": "OPEN"
+    },
+    {
+      "draft": false,
+      "head": "a730f6a20d8962f527441e1771b4c85e8b29bc9a",
+      "merge": "0f013cca1389a71dab7a3e81fa43e2410815e90f",
+      "number": 632,
+      "state": "MERGED"
+    },
+    {
+      "draft": false,
+      "head": "c93487efccca35da3642bc2d96964f31862ccbff",
+      "merge": "62657c3c300ef2b29f4770ab816dcd437429f148",
+      "number": 637,
+      "state": "MERGED"
+    },
+    {
+      "draft": false,
+      "head": "60ef65b1ade77e16863372d242eeea586fc7c82d",
+      "merge": "b293c818ebf280e570392e398720ec22e1aa4566",
+      "number": 640,
+      "state": "MERGED"
+    },
+    {
+      "draft": false,
+      "head": "857113d37353b51d40fb72a6f2d7c811f4a46e4b",
+      "merge": "91bc2652f0468f3a05e149bfdb5f9168c1fd02f5",
+      "number": 641,
+      "state": "MERGED"
+    },
+    {
+      "draft": true,
+      "head": "3e145954f7e7fb5bfe9d161c9a1d3d42ff9028a0",
+      "number": 642,
+      "state": "OPEN"
+    },
+    {
+      "draft": true,
+      "head": "40e795750161746172db509f7cffc2e7a59bff8e",
+      "number": 648,
+      "source_class": "PR_OPENING_HEAD_HISTORICAL_RECHECK_FOR_CURRENT",
+      "state": "OPEN"
+    },
+    {
+      "draft": true,
+      "head": "61470e10743bd0fb346cb4d3a2524b020f8ae2d4",
+      "number": 651,
+      "source_class": "PR_OPENING_HEAD_HISTORICAL_RECHECK_FOR_CURRENT",
+      "state": "OPEN"
+    }
+  ],
+  "publisher": "EXISTING_MISSIONCONTROL_METHOD_ATLAS_ONLY",
+  "schema": "missioncontrol.live_lossless.dashboard.v1",
+  "security_waiver": false,
+  "session": {
+    "alias": "CP-G3P-HTMLQA-20261017",
+    "capture_scope": "CURRENT_VISIBLE_CONTEXT_PLUS_NATIVE_GITHUB_READBACK",
+    "closeout_original_state": {
+      "DEFER": 1,
+      "HOLD": 2,
+      "IN_PR": 2,
+      "TODO": 2
+    },
+    "complete_transcript_available": false,
+    "full_chat_messages": null,
+    "full_chat_prompts": null,
+    "native_source_status": "SOURCE_OBSERVED_NONATOMIC",
+    "statistics": {
+      "completeness": "UNAVAILABLE",
+      "duration_hours": null,
+      "full_chat_total_messages": null,
+      "full_chat_total_prompts": null,
+      "latency_ms_p95": null,
+      "model_tokens": null,
+      "provider_verified": false,
+      "sample_assistant_messages": null,
+      "sample_tool_messages": null,
+      "sample_total_messages": null,
+      "sample_user_characters": null,
+      "sample_user_prompts": null,
+      "sample_user_words": null,
+      "sample_user_words_median": null,
+      "sample_user_words_p95": null,
+      "source": "NOT_SUPPLIED",
+      "timestamp_coverage": null
+    }
+  },
+  "snapshot_time": {
+    "date": "2026-10-17",
+    "precision": "DATE_ONLY"
+  },
+  "source": {
+    "branch": "master",
+    "current_observed_main_sha": "b293c818ebf280e570392e398720ec22e1aa4566",
+    "frozen_main_sha": "a2984bba91d1d8a6b8983f3d5679fc925d643d35",
+    "live_head_only_after_remote_readback": true,
+    "repository": "GBOGEB/pipeline-automation-hub"
+  },
+  "source_class": "FROZEN_SEMANTIC_HANDOVER_PLUS_READ_ONLY_GITHUB_OBSERVATION",
+  "source_links": {
+    "bd_owner": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+    "canonical_handover": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/records/CP-G3P-HTMLQA-20261017/LOSSLESS_HANDOVER.md",
+    "closeout_operator": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/CHAT_CLOSEOUT_OPERATOR_V1.md",
+    "frozen_manifest": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/records/CP-G3P-HTMLQA-20261017/MANIFEST.json",
+    "next_chat": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/records/CP-G3P-HTMLQA-20261017/NEXT_CHAT_DROPIN.md",
+    "session_statistics": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/records/CP-G3P-HTMLQA-20261017/CHAT_STATS.json"
+  },
+  "subrequests": [
+    {
+      "actions": [
+        "SC-A008"
+      ],
+      "detail": "Refresh main SHA, tracked PR and issue states without treating a non-atomic observation as admission.",
+      "id": "LL-SR01",
+      "tier": "LIVE_OBSERVATION",
+      "title": "Live GitHub head and PR readback"
+    },
+    {
+      "actions": [
+        "SC-A008"
+      ],
+      "detail": "Preserve immutable six-intent/seven-action closeout and append current request, source-bound insight, TODO and authority checks without shadow SSOT.",
+      "id": "LL-SR02",
+      "tier": "RECORDED_INTENT",
+      "title": "Additive lossless session delta"
+    },
+    {
+      "actions": [
+        "SC-A009"
+      ],
+      "detail": "Show measured stats and current status first, visible UNKNOWN and previous N source; include scoped action distribution and source-class legend.",
+      "id": "LL-SR03",
+      "tier": "PRESENTATION",
+      "title": "Compact user-facing dashboard"
+    },
+    {
+      "actions": [
+        "SC-A009"
+      ],
+      "detail": "Provide tabs, accessible expandable sections, search, owner/state filters, moniker snippets, parent-child intent/action edges, source links and copy operations.",
+      "id": "LL-SR04",
+      "tier": "PRESENTATION",
+      "title": "Deep selectable handover details"
+    },
+    {
+      "actions": [
+        "SC-A010"
+      ],
+      "detail": "Test button click/refresh, moniker copy, keyboard, mobile width/overlap, API failure and stale fallback on exact PR head.",
+      "id": "LL-SR05",
+      "tier": "NATIVE_QUALITY",
+      "title": "Visual, link and negative QA"
+    },
+    {
+      "actions": [
+        "SC-A010",
+        "SC-A011"
+      ],
+      "detail": "Use canonical Method Atlas Pages publisher; after authorized merge verify independent hosted route and preserve chat continuation.",
+      "id": "LL-SR06",
+      "tier": "HOSTED_GATE",
+      "title": "Single-owner publication and next pulse"
+    }
+  ],
+  "summary": {
+    "action_states": {
+      "DEFER": 1,
+      "HOLD": 3,
+      "IN_PR": 5,
+      "TODO": 2
+    },
+    "bd_focus": 3,
+    "current_new_intents": 1,
+    "full_chat_messages": null,
+    "full_chat_tokens": null,
+    "full_chat_user_prompts": null,
+    "global_code_coverage": null,
+    "n_accepted": null,
+    "native_closeout_tests": {
+      "d": 34,
+      "k": 34,
+      "population": "CP.CLOSE_EXACT_MAIN_ONLY",
+      "run": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39045180636"
+    },
+    "new_actions": 4,
+    "open_actions": 11,
+    "original_actions": 7,
+    "original_intents": 6,
+    "reconstructed_intents": 7,
+    "subrequests": 6,
+    "tracked_actions": 11
+  }
+}

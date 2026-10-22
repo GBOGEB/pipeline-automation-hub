@@ -1,0 +1,41 @@
+{
+  "evidence_level": "LOCAL_REPRODUCIBILITY",
+  "failures": [],
+  "method": "playwright.set_content, exact HTML/CSS/JS asset bytes inlined for admin-blocked HTTP browser; CSP adjusted to permit inline execution; actual URL/CSP deployment untested",
+  "no_github_ci_claim": true,
+  "no_hosted_pages_claim": true,
+  "schema": "jade.temple.browser.qa.v1",
+  "source": "site/green.html",
+  "viewports": {
+    "desktop": {
+      "errors": 0,
+      "external_requests": 0,
+      "height": 1000,
+      "horizontal_overflow": false,
+      "http_errors": 0,
+      "screenshot": "qa/nplus1/desktop.png",
+      "search_reset_priority_green_filter_detail": "PASS",
+      "width": 1440
+    },
+    "laptop": {
+      "errors": 0,
+      "external_requests": 0,
+      "height": 800,
+      "horizontal_overflow": false,
+      "http_errors": 0,
+      "screenshot": "qa/nplus1/laptop.png",
+      "search_reset_priority_green_filter_detail": "PASS",
+      "width": 1280
+    },
+    "mobile": {
+      "errors": 0,
+      "external_requests": 0,
+      "height": 844,
+      "horizontal_overflow": false,
+      "http_errors": 0,
+      "screenshot": "qa/nplus1/mobile.png",
+      "search_reset_priority_green_filter_detail": "PASS",
+      "width": 390
+    }
+  }
+}

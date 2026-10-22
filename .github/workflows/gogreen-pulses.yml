@@ -71,6 +71,50 @@ jobs:
             --input mission-control/gogreen/samples/wave_timeline.json \
             --out "$RUNNER_TEMP/gogreen-pulses" \
             --source-sha "$EXPECTED_SHA"
+      - name: W32 canonical six-repo bounded pull and empty-push packet QA
+        shell: bash
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="W32 canonical six-repo bounded pull and empty-push packet QA" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          set -euo pipefail
+          EXPECTED_SHA="$(git rev-parse HEAD)"
+          export EXPECTED_SHA
+          OUT="$RUNNER_TEMP/gogreen-pulses"
+          mkdir -p "$OUT/census-packets"
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          COVERAGE_FILE="$OUT/.w32" python -m coverage run --branch \
+            --include='*/mission-control/gogreen/census_packets.py' \
+            -m unittest discover -s mission-control/gogreen/tests \
+            -p test_census_packets.py -v > "$OUT/w32_packet_tests.log" 2>&1
+          cat "$OUT/w32_packet_tests.log"
+          COVERAGE_FILE="$OUT/.w32" python -m coverage json -q -o "$OUT/w32_packet_coverage.json"
+          python mission-control/gogreen/census_packets.py \
+            --rollup "$OUT/pulse_rollup.json" --out "$OUT/census-packets" --head "$EXPECTED_SHA"
+          python mission-control/gogreen/census_packets.py \
+            --rollup "$OUT/pulse_rollup.json" --out "$OUT/census-packets" \
+            --head "$EXPECTED_SHA" --verify-only
+          python - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          out=Path(os.environ["RUNNER_TEMP"])/"gogreen-pulses"
+          log=(out/"w32_packet_tests.log").read_text()
+          n=re.findall(r"Ran (\d+) tests? in",log)
+          assert len(n)==1 and int(n[0])>=16 and "\nOK" in log
+          p=json.loads((out/"census-packets"/"pull-plan.json").read_text())
+          e=json.loads((out/"census-packets"/"empty-push.json").read_text())
+          cov=json.loads((out/"w32_packet_coverage.json").read_text())["totals"]
+          assert p["producer_head"]==os.environ["EXPECTED_SHA"]
+          assert p["packet_count"]==6 and p["conservative_new_lane_cap"]==1
+          assert len({r["repo"] for r in p["packets"]})==6
+          assert e["emissions"]==[] and e["packets_executed"]==0
+          assert p["actual_worker_capacity"] is None
+          assert p["cross_repo_coverage_gain"] is None
+          assert cov["num_statements"]>0 and cov["num_branches"]>0
+          print(json.dumps({"tests_executed":int(n[0]),
+             "scoped_statements":[cov["covered_lines"],cov["num_statements"]],
+             "scoped_branches":[cov["covered_branches"],cov["num_branches"]],
+             "packets_planned":6,"packets_dispatched":0,
+             "formal_acceptance":"HOLD"},sort_keys=True))
+          PY
       - name: G4 comparable focused module coverage
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}

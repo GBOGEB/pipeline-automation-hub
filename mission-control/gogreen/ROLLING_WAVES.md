@@ -54,3 +54,18 @@ This historical G0/G1/G2/G3 **wave scorecard** is not retroactively renamed into
 - `N3_CONTINUE` / `N3!`: one bounded active-session task; execute up to three pulse transitions, adapt to native results, reverify source and stop only for a documented major blocker. Does not mean independent auto-merge or background work.
 - No source-blob or instrument-denominator matching → **null** comparable coverage delta, even if the coverage percent rises. No native job or missing authority → **HOLD**, not success.
 - Existing `3PR`, `3PC`, and historical `W###` remain independently qualified identities. See canonical `mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json` and executable `mission-control/gogreen/n3_continuation/`.
+
+
+## W32 six-repository source-bound census packet emission (18 October 2026)
+
+This is within canonical G4 producer Mission Control #531 and the existing gogreen-pulses.yml native artifact, not another census authority, Pages publisher, authenticated GitHub job dispatcher or worker manager.
+
+- census_packets.py consumes the same pulse_rollup.json SHA and G0/G1 fixed six-repo catalog. It selects up to six disjoint repository packets from the preexisting bounded source plan. Each candidate is pinned to a historical source SHA and per-repo/family identity SHA256. run_id, run_attempt, job_id, member_sha256, statement/branch counts, worker-hours, owner receipt, capacity and native result all begin null.
+- It writes census-packets/pull-plan.json (PULL_PLAN_ONLY_NOT_EXECUTED), census-packets/empty-push.json (emissions=[], packets_executed=0), and a SHA256 manifest for both members. These flow through the EXISTING G4 upload artifact. This is a plan receipt, not executed pull/push actions.
+- tests/test_census_packets.py adds 16 positive/adversarial guards: stale SHA, denominator drift, forged QPS acceptance, duplicate repository, unsafe mutation paths, false push, false capacity, unauthorized concurrency >1 and tampered member bytes.
+- The old bounded_schedule() still owns candidate ordering; census_packets.py is a bounded verifier/serializer, not a duplicate scheduler. New-source concurrency cap is ONE until real queue/capacity telemetry supports growth. Configured workers are not observed capacity.
+- Historical G1 = 6 observed/42 eligible, 36 unobserved. Six candidate packets DO NOT increment observed breadth. A source-owned return needs exact repo/source SHA, run/attempt/job, artifact ID, ZIP/member hash, scope and coverage numerator/denominator, then #530 ZIP verification before #531 breadth adjustment.
+
+N+1: six planned packets, zero dispatched and zero new observed cells until terminal source-bound receipts arrive. N+2: conditionally fan out six additional nonduplicate candidates if capacity justifies it. Stop locally on three consecutive matched flat deltas below target; retrigger on SHA drift, first-red, terminal success or member mismatch. QPS stays DEFER; M2/M3 and PCA/BT do not improve from a plan-only record.
+
+See the [concentrated Global DoV Hub](../federation-atlas/README.md) and [canonical CP.W10 handover](../v2/handoff/closeout/records/CP-W10-MYCELIUM-FEDERATION-20261018/START_HERE.md). No source release, security waiver, independent review or engineering authority transfer is inferred from a passing packet contract test.

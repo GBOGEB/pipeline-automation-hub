@@ -1,0 +1,57 @@
+flowchart LR
+  %% QBD! W49 · public-safe CODE PURPLE / EVERRED · non-authoritative
+  subgraph HIST["GT01 · ABACUS historical N0"]
+    H["75 PR heads · 260 failed associations\n253 run IDs · 19 name buckets"]
+    J["5 native job first-red candidates\n#2077 · historical exact head"]
+    R{"Causal root confirmed?"}
+    H --> J --> R
+  end
+  subgraph DIS["GT02 · disjoint proposed source owners"]
+    LEASE["EVERRED lease CAS check\nNOT CLAIMED"]
+    W1["Writer W1 · CBD formatter\nPR #2077"]
+    W2["Writer W2 · workflow policy\nPR #2144"]
+    PROOF["Native exact-head replay\nnegative regression + source digest"]
+    R -->|No, read-only diagnosis| LEASE
+    LEASE --> W1
+    LEASE --> W2
+    W1 --> PROOF
+    W2 --> PROOF
+  end
+  subgraph CORE["GT03 · CODE PURPLE governance"]
+    A10["Security/A10 independent owner"]
+    ADMIN["Effective required check +\nblocked RED canary"]
+    HUMAN["Independent human reviewer"]
+    CLOSURE{"Native root + owner disposition?"}
+    PROOF --> CLOSURE
+    A10 --> CLOSURE
+    ADMIN --> HUMAN --> CLOSURE
+  end
+  subgraph QPS["GT04 · private QPS Bread & Butter"]
+    P["Private action register\nowner-source bytes withheld here"]
+    Q["QPS owner / SPOC disposition"]
+    B["Private release / QA gates"]
+    P --> Q --> B
+  end
+  subgraph FED["GT05 · Mission Control / CODEX"]
+    MC["Existing live BD census\nread-only GoGREEN workflow"]
+    C["CODEX REX producer"]
+    HGR["Declared cross-repo handoff\nnot authenticated worker run"]
+    MC -.-> H
+    C -.-> HGR -.-> Q
+  end
+  CLOSURE -->|No| HOLD["HOLD · no causal/issue/action credit"]
+  B --> ADMIT{"Independent admission gates?"}
+  CLOSURE -->|Yes, independently proven| ADMIT
+  ADMIT -->|Not proven| HOLD
+  ADMIT -->|Separate authenticated decision| OUT["Candidate closeout + recurrence watch"]
+  classDef abacus fill:#e6def3,stroke:#745e9d,color:#2f2046
+  classDef bread fill:#f1dfbb,stroke:#9c7646,color:#45301b
+  classDef code fill:#dee9f5,stroke:#5981b0,color:#1b354f
+  classDef hub fill:#dcefe5,stroke:#4a8466,color:#254332
+  classDef red fill:#f7dddd,stroke:#ae4c4c,color:#512020
+  class H,J,R,LEASE,W1,W2,PROOF abacus
+  class P,Q,B bread
+  class C,HGR code
+  class MC hub
+  class A10,ADMIN,HUMAN,CLOSURE,ADMIT,HOLD red
+  class OUT hub

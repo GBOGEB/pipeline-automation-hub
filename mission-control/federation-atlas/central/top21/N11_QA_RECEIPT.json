@@ -1,0 +1,69 @@
+{
+  "schema": "qps-artifact-qa/1.0",
+  "kind": "MISSION_CONTROL_READ_ONLY_HTML_AND_SOURCE_CENSUS",
+  "version": "N11",
+  "evidence_level": "LOCAL_REPRODUCIBILITY",
+  "source": {
+    "frozen_default_branch_shas": "CENSUS_N11_PART01..04.json",
+    "source_git_sha": "4455321f1ac5ead05135e2cd2355e64ff0a3d9a2",
+    "semantic_sha256": null,
+    "source_hash_semantics": "GIT_BLOB_SHA1_RECORDED_SEPARATELY"
+  },
+  "artifacts": {
+    "html": {
+      "path": "mission-control/federation-atlas/landing/MISSION_CONTROL_TOP21_CENSUS_N11.html",
+      "git_blob_sha1": "ca1970ccd33b2eb44e5c2f46589eb0b8b235fcbb",
+      "sha256": null,
+      "status": "STRUCTURAL_PASS"
+    },
+    "rollup": {
+      "path": "mission-control/federation-atlas/central/top21/REPO_CENSUS_ROLLUP_N11.json",
+      "git_blob_sha1": "90bdd778857b737d51d143d2242aecae0ae3f994",
+      "sha256": null,
+      "status": "STRUCTURAL_PASS"
+    },
+    "graph": {
+      "path": "mission-control/federation-atlas/central/top21/FEDERATION_GRAPH_N11.json",
+      "git_blob_sha1": "680306ad7d3d75a0282de710fb69a1b30221811d",
+      "sha256": null,
+      "status": "STRUCTURAL_PASS"
+    },
+    "root": {
+      "path": "mission-control/federation-atlas/central/top21/ROOT_STEWARDSHIP_N11.json",
+      "git_blob_sha1": "365b14f7d4121bb9a2229c178951545efa011f79",
+      "sha256": null,
+      "status": "STRUCTURAL_PASS"
+    },
+    "csv": {
+      "path": "mission-control/federation-atlas/central/top21/REPO_CENSUS_TOP21_N11.csv",
+      "git_blob_sha1": "bc30089454e54d0e4b4dedaa5ca5cd52d114d458",
+      "sha256": null,
+      "status": "STRUCTURAL_PASS"
+    }
+  },
+  "checks": {
+    "source_tree_complete": "PASS_21_OF_21",
+    "structural": "PASS",
+    "model_json": "PASS",
+    "semantic_count_parity": "PASS",
+    "html_control_id_parity": "PASS",
+    "local_unit_tests": "PASS_19_OF_19",
+    "browser_desktop_mobile": "DEFER",
+    "browser_pixel_regression": "DEFER",
+    "native_exact_head_ci": "DEFER",
+    "exact_artifact_sha256": "DEFER",
+    "cross_format_parity": "PASS_COUNTS_ONLY"
+  },
+  "defects": [
+    "Browser interaction and desktop/laptop/mobile visual execution not run against exact GitHub HTML bytes",
+    "Native exact-head Actions outcome not terminal at QA snapshot",
+    "No SHA256 of exact committed HTML/JSON byte streams; Git blob SHAs retained"
+  ],
+  "notes": [
+    "Semantic root review candidates are heuristic, not defects",
+    "No new worker dispatch, waiver, merge, engineering root closure or QPS compliance acceptance",
+    "No runtime/installed-dependency verification for declared package edges"
+  ],
+  "authority_transfer": false,
+  "merge_admission": "HOLD"
+}

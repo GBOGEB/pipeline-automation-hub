@@ -3,6 +3,15 @@
 **Status:** proposed Mission Control v2 consumer, not a replacement for the existing
 glossary, 3PR/3PC/MIP/DMAIC methods, canonical BD/REX or GitHub authority.
 
+The **canonical** session closeout moniker is **CP.CLOSEOUT()**, as defined in
+[CHAT_CLOSEOUT_OPERATOR_V1.md](CHAT_CLOSEOUT_OPERATOR_V1.md) and
+[CHAT_CLOSEOUT_PROFILE_V1.json](CHAT_CLOSEOUT_PROFILE_V1.json).
+**CP.CLOSE()** is the expanded GitHub-first nine-artifact implementation alias. It wraps the existing
+CP.HANDOFF transport with a source-controlled narrative, prompt-statistics provenance,
+canonical BD projection, owner TODO, deterministic hashes and an independent PR-to-master
+gate. See [closeout/README.md](closeout/README.md). A main merge is never implied
+by successful chat capture or local QA.
+
 The user-facing pair is **`CP.HANDOFF()`** (freeze current session) and
 **`CP.RESUME()`** (restart in a different chat with a supplied archive). A
 separate **`G3P.EXECUTE(N,N+3)`** command requests one governed G3P wave,
@@ -96,3 +105,7 @@ work asynchronously merely because the command was invoked.
 Do not move this protocol to another global SSOT. Later `V2` changes must
 be additive, preserve old invocation meaning and publish a backward
 compatibility receipt.
+
+## 18 October 2026 — W4 published core-handover method
+
+The additive [ABACUS W4 GitHub-first crosswalk](ABACUS_W4_GITHUB_FIRST_CROSSWALK_20261018.md) points to the **existing** ABACUS V2 message template, native nine-cell byte receipts and review-only continuation PR. Use it through `CP.HANDOFF/CP.RESUME`, not as a new method registry, BD queue, authenticated dispatcher or authority bypass. `MERGE_ADMISSION=HOLD` until effective admin rules and independent native evidence are verified.

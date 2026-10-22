@@ -130,17 +130,17 @@ jobs:
           if hits!=["10"] or "\nOK" not in raw:
               raise SystemExit("G1 consumer negative controls incomplete")
           PY
-      - name: Independently download immutable G1 producer archive
+      - name: Load vendored immutable G1 producer archive (retention-proof)
         shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          curl --fail --location --silent --show-error --max-time 75 --retry 2 \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            -o "$RUNNER_TEMP/gogreen-g5/g1_producer.zip" \
-            "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/artifacts/11968217957/zip"
+          # #529 G05: artifact 11968217957 is deleted by retention on 2026-10-29; a byte-exact
+          # replay cannot rebind to a newer run, so the exact bytes are vendored with provenance
+          # and still verified below against the same pinned archive digest.
+          FIX=mission-control/gogreen/g5/fixtures/g1_producer_run38726158685.zip
+          echo "f926b86d377f989cfb380c587ce5cbf2843a3e7e152d0df3c4d8a3a914ba2117  $FIX" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/gogreen-g5"
+          cp "$FIX" "$RUNNER_TEMP/gogreen-g5/g1_producer.zip"
           test -s "$RUNNER_TEMP/gogreen-g5/g1_producer.zip"
       - name: Bind G1 ZIP bytes to consumer receipt
         shell: bash

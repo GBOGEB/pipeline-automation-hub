@@ -1,0 +1,44 @@
+{
+  "schema": "qps-artifact-qa/1.0",
+  "source": {
+    "locator": "MissionControl N11 historical source + 2026-10-18 non-atomic GitHub head readbacks",
+    "semantic_sha256": "cf038e789f51d2d15f1f86ff712e6ea66cf8301bf43dc10726523a04d3d78ee3",
+    "git_sha": null
+  },
+  "artifacts": {
+    "html": {
+      "path": "site/index.html",
+      "sha256": "f7680ff4a45662a07dbaf953cc6fcf7149843816a9eec7263757a988952b7984",
+      "status": "PASS_LOCAL_ONLY"
+    },
+    "project_pack": {
+      "path": "JADE_TEMPLE_BOOTSTRAP_20261018.zip",
+      "sha256": null,
+      "status": "SEALED_LOCALLY"
+    },
+    "draft_pr": {
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/729",
+      "head_sha": "30070bf28f5fd4bd5017b658171a5b251023e7e7",
+      "native_status": "UNKNOWN"
+    }
+  },
+  "checks": {
+    "structural": "PASS_21_OF_21",
+    "formula_or_content": "PASS_20_TESTS",
+    "render_visual": "PASS_3_VIEWPORTS",
+    "playwright": "PASS_LOCAL_SET_CONTENT",
+    "cross_format_parity": "PASS_HISTORICAL_COUNTS",
+    "native_github": "DEFER",
+    "pages_hosting": "DEFER"
+  },
+  "evidence_level": "LOCAL_REPRODUCIBILITY",
+  "defects": [
+    "Draft GitHub PR contains 13 added docs and HTML files but not local JSON source or test/build code",
+    "Browser navigation used exact HTML bytes with set_content, not file:// or deployed site",
+    "No independent exact-PR-head CI, human review, effective required checks or hosted Pages verification"
+  ],
+  "notes": [
+    "No release admission, security waiver, or authority transfer.",
+    "N11 root candidate counts are triage heuristics not confirmed defects."
+  ]
+}

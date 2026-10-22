@@ -1,0 +1,20 @@
+flowchart TD
+  IN[("Master_Input<br/>24 inputs")]
+  P519["run_processing.py<br/>11 functions · 16 calls · 0.826 s"]
+  P520["ppt_processor.py<br/>27 functions · 38141 calls · 0.653 s"]
+  P521["Recursive_Build_Master.py<br/>25 functions · 553 calls · 0.052 s"]
+  IN --> P519
+  P519 -->|spawns| P520
+  P519 -->|spawns| P521
+  O_cross_references[/"cross_references<br/>+0 ~24 -0"/]
+  P520 --> O_cross_references
+  O_digital_twins[/"digital_twins<br/>+0 ~24 -0"/]
+  P520 --> O_digital_twins
+  O_metadata[/"metadata<br/>+0 ~24 -0"/]
+  P520 --> O_metadata
+  O_pipeline_run_receipt_json[/"pipeline_run_receipt.json<br/>+1 ~0 -0"/]
+  P520 --> O_pipeline_run_receipt_json
+  O_processing_summary_json[/"processing_summary.json<br/>+0 ~1 -0"/]
+  P520 --> O_processing_summary_json
+  O_recursive_build[/"recursive_build<br/>+27 ~1 -0"/]
+  P521 --> O_recursive_build

@@ -1,0 +1,134 @@
+name: G3P Live Ledger QA
+on:
+  pull_request:
+    paths:
+      - 'mission-control/federation-atlas/G3P_LIVE_*'
+      - 'mission-control/federation-atlas/pages_portal.py'
+      - 'mission-control/html_qa/**'
+      - 'mission-control/v2/test_g3p_live_ledger.py'
+      - '.github/workflows/g3p-live-ledger-qa.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/federation-atlas/G3P_LIVE_*'
+      - 'mission-control/federation-atlas/pages_portal.py'
+      - 'mission-control/html_qa/**'
+      - '.github/workflows/g3p-live-ledger-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-and-browser:
+    name: static-and-browser
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+      - name: Assert exact checked-out SHA
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Existing G3P plus reusable HTML static and Pages bridge tests
+        run: |
+          python -m unittest discover -s mission-control/v2 -p 'test_g3p_live_ledger.py' -v
+          python -m unittest discover -s mission-control/html_qa -p 'test_*.py' -v
+          python -m unittest discover -s mission-control/federation-atlas -p 'test_pages_portal.py' -v
+      - name: Parse and validate embedded JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('mission-control/federation-atlas/G3P_LIVE_LEDGER.html').read_text()
+          assert s.count('<script>')==1 and s.count('</script>')==1
+          Path('/tmp/g3p-client.js').write_text(s.split('<script>',1)[1].split('</script>',1)[0])
+          PY
+          node --check /tmp/g3p-client.js
+      - name: Install pinned Chromium QA runner
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Install pinned Chromium QA runner" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          python -m pip install --disable-pip-version-check playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Resolve referenced wave-source identities read-only
+        run: |
+          mkdir -p /tmp/g3p-qa
+          python mission-control/html_qa/prepare_sources.py \
+            --manifest mission-control/federation-atlas/G3P_LIVE_SOURCES_v1.json \
+            --repo-root . --out /tmp/g3p-qa/fixtures
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('/tmp/g3p-qa/fixtures/source-readback.json').read_text())
+          assert len(x['sources'])==4 and x['all_ordinals_present']==12
+          assert all(len(s['resolved_git_sha'])==40 for s in x['sources'])
+          assert not any(s['native_attestation'] for s in x['sources'])
+          print('G3P_SOURCE_REPLAY=12/12; NATIVE_ATTESTATION=WITHHELD')
+          PY
+      - name: Build candidate using the existing single-owner Pages portal
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          mkdir -p /tmp/g3p-qa/atlas
+          printf '<!doctype html><html><head><title>QA Atlas</title></head><body><h1>Atlas</h1></body></html>\n' > /tmp/g3p-qa/atlas/index.html
+          python mission-control/federation-atlas/pages_portal.py \
+            --atlas /tmp/g3p-qa/atlas --out /tmp/g3p-qa/published --sha "$EXACT_SHA"
+          python mission-control/html_qa/html_contract.py \
+            /tmp/g3p-qa/published/g3p/index.html --out /tmp/g3p-qa/html-static.json
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          out=Path('/tmp/g3p-qa/published')
+          m=json.loads((out/'site-manifest.json').read_text())
+          for rel in ('g3p/index.html','g3p/G3P_LIVE_SOURCES_v1.json'):
+              assert hashlib.sha256((out/rel).read_bytes()).hexdigest()==m['public_files_sha256'][rel]
+          assert 'href="g3p/index.html"' in (out/'index.html').read_text()
+          assert m['merge_authorized'] is False and m['security_waiver'] is False
+          print('PAGES_CANDIDATE=BYTE_IDENTICAL; NOT_DEPLOYED')
+          PY
+      - name: Chromium responsive and functional interaction matrix
+        env:
+          G3P_EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Chromium responsive and functional interaction matrix" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          python mission-control/html_qa/g3p_browser_qa.py \
+            --html /tmp/g3p-qa/published/g3p/index.html \
+            --manifest /tmp/g3p-qa/published/g3p/G3P_LIVE_SOURCES_v1.json \
+            --fixtures /tmp/g3p-qa/fixtures --out /tmp/g3p-qa/browser
+          test -s /tmp/g3p-qa/browser/qa-receipt.json
+      - name: Enforce QA receipt, screenshots and no false hosted claim
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Enforce QA receipt, screenshots and no false hosted claim" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/tmp/g3p-qa/browser')
+          r=json.loads((p/'qa-receipt.json').read_text())
+          assert r['status']=='PASS'
+          assert len(r['viewports'])==3
+          assert len(r['screenshots'])==3
+          assert r['checks_total']>=85
+          assert r['hosted_http_verified'] is False
+          assert r['exact_checkout_sha_confirmed'] is True
+          assert len(r['native_source_head_claim'])==40 and r['native_source_head_claim']!='UNVERIFIED_LOCAL'
+          assert r['merge_admission']=='HOLD' and r['authority_transfer'] is False
+          for item in r['screenshots']:
+              assert (p/item['path']).stat().st_size>1000
+          for name in ('missing-source.png','forged-authority.png'):
+              assert (p/name).stat().st_size>1000
+          print('G3P_RESPONSIVE_QA=PASS; REAL_HOSTED=DEFER; ADMISSION=HOLD')
+          PY
+      - name: Upload exact-checkout QA receipt and viewports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: g3p-html-qa-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/g3p-qa/
+          if-no-files-found: warn
+          retention-days: 14

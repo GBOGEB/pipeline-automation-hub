@@ -1,0 +1,329 @@
+{
+  "schema": "missioncontrol.w5.public_census_telemetry.v1",
+  "as_of_date_utc": "2026-10-18",
+  "granularity": "DATE_ONLY",
+  "capture": "NONATOMIC_AUTHENTICATED_GITHUB_READBACK",
+  "kind": "READ_ONLY_PUBLIC_SAFE_HANDOVER_PROJECTION_NOT_SOURCE_OF_TRUTH",
+  "canonical": {
+    "closeout": "mission-control/v2/handoff/closeout/records/CP-FED-CENSUS-W4-20261018",
+    "census_operator": "mission-control/v2/handoff/closeout/public_census_pull.py",
+    "bd_register": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+    "master_dags": "existing MissionControl MASTER_DAGS; projection does not overwrite this"
+  },
+  "source_committed_to": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "branch": "missioncontrol/w5-lossless-telemetry-graph-20261018",
+    "base_sha": "ccd695c22b50bf36369cdc669757063029a86551"
+  },
+  "public_repositories": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "default_branch": "main",
+      "sha": "97a8b13faff577272a90edaf0dd4593035e10605",
+      "protected": true,
+      "issues": 38,
+      "prs": 12,
+      "run_count": 47,
+      "statuses": {
+        "success": 2,
+        "failure": 0,
+        "skipped": 0,
+        "queued": 44,
+        "pending": 1,
+        "in_progress": 0
+      },
+      "issues_query": "https://api.github.com/search/issues?q=repo:GBOGEB/ABACUS%20is:issue%20is:open",
+      "prs_query": "https://api.github.com/search/issues?q=repo:GBOGEB/ABACUS%20is:pr%20is:open",
+      "runs_query": "https://api.github.com/repos/GBOGEB/ABACUS/actions/runs?head_sha=97a8b13faff577272a90edaf0dd4593035e10605&per_page=100",
+      "collection_complete": true
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "default_branch": "main",
+      "sha": "f73c98c9f9c99f234446644e22c14c93d8300e92",
+      "protected": false,
+      "issues": 11,
+      "prs": 0,
+      "run_count": 22,
+      "statuses": {
+        "success": 14,
+        "failure": 3,
+        "skipped": 4,
+        "queued": 1,
+        "pending": 0,
+        "in_progress": 0
+      },
+      "issues_query": "https://api.github.com/search/issues?q=repo:GBOGEB/CODEX%20is:issue%20is:open",
+      "prs_query": "https://api.github.com/search/issues?q=repo:GBOGEB/CODEX%20is:pr%20is:open",
+      "runs_query": "https://api.github.com/repos/GBOGEB/CODEX/actions/runs?head_sha=f73c98c9f9c99f234446644e22c14c93d8300e92&per_page=100",
+      "collection_complete": true
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "default_branch": "master",
+      "sha": "ccd695c22b50bf36369cdc669757063029a86551",
+      "protected": false,
+      "issues": 33,
+      "prs": 5,
+      "run_count": 16,
+      "statuses": {
+        "success": 15,
+        "failure": 0,
+        "skipped": 0,
+        "queued": 1,
+        "pending": 0,
+        "in_progress": 0
+      },
+      "issues_query": "https://api.github.com/search/issues?q=repo:GBOGEB/pipeline-automation-hub%20is:issue%20is:open",
+      "prs_query": "https://api.github.com/search/issues?q=repo:GBOGEB/pipeline-automation-hub%20is:pr%20is:open",
+      "runs_query": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/actions/runs?head_sha=ccd695c22b50bf36369cdc669757063029a86551&per_page=100",
+      "collection_complete": true
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "default_branch": "main",
+      "sha": "7ce2e3832357c0b87ab17ff439f4d6e84c0292a4",
+      "protected": false,
+      "issues": 1,
+      "prs": 0,
+      "run_count": 5,
+      "statuses": {
+        "success": 4,
+        "failure": 1,
+        "skipped": 0,
+        "queued": 0,
+        "pending": 0,
+        "in_progress": 0
+      },
+      "issues_query": "https://api.github.com/search/issues?q=repo:GBOGEB/gg_MATH%20is:issue%20is:open",
+      "prs_query": "https://api.github.com/search/issues?q=repo:GBOGEB/gg_MATH%20is:pr%20is:open",
+      "runs_query": "https://api.github.com/repos/GBOGEB/gg_MATH/actions/runs?head_sha=7ce2e3832357c0b87ab17ff439f4d6e84c0292a4&per_page=100",
+      "collection_complete": true
+    }
+  ],
+  "public_total": {
+    "issues": 83,
+    "prs": 17,
+    "run_count": 90,
+    "success": 35,
+    "failure": 4,
+    "skipped": 4,
+    "queued": 46,
+    "pending": 1,
+    "in_progress": 0,
+    "terminal": 43,
+    "nonterminal": 47,
+    "terminality_pct": 47.78
+  },
+  "prior_matched_W4": {
+    "issues": 82,
+    "prs": 23,
+    "source": "mission-control/v2/handoff/closeout/intakes/CP-FED-CENSUS-W4-20261018.json"
+  },
+  "change_vs_W4": {
+    "issues": 1,
+    "prs": -6,
+    "comparison": "same public four-repository issue vs PR definition; counts measure lifecycle pressure, not BD closure"
+  },
+  "restricted_qps": {
+    "status": "OWNER_READBACK_RESTRICTED",
+    "private_sha": null,
+    "private_issue_count": null,
+    "private_pr_count": null,
+    "release_to_public": false
+  },
+  "canonical_CPQ": {
+    "git_blob_sha": "426a8b6ed3630c874eca4c2c1daaea7d13f3492a",
+    "item_count": 19,
+    "states": {
+      "DONE": 10,
+      "ACTIVE": 5,
+      "TODO": 2,
+      "UNKNOWN_NEEDS_READER": 2
+    },
+    "current_engineering_root_closures_accepted": null,
+    "focus": [
+      {
+        "id": "CPQ-015",
+        "status": "TODO",
+        "flow": "RETURN_OWNER"
+      },
+      {
+        "id": "CPQ-016",
+        "status": "UNKNOWN_NEEDS_READER",
+        "flow": "RETURN_OWNER"
+      }
+    ]
+  },
+  "current_issues": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "number": 1860,
+      "state": "OPEN",
+      "checked": 1,
+      "total": 12,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "number": 977,
+      "state": "OPEN",
+      "checked": 0,
+      "total": 7,
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "number": 604,
+      "state": "OPEN",
+      "checked": 0,
+      "total": 12,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604"
+    }
+  ],
+  "abacus_exact_current_head_jobs": {
+    "b0": {
+      "head": "97a8b13faff577272a90edaf0dd4593035e10605",
+      "run_id": 39142444027,
+      "attempt": 1,
+      "run_conclusion": null,
+      "job_count": 13,
+      "job_statuses": {
+        "success": 12,
+        "queued": 1
+      },
+      "status": "NONTERMINAL_AT_READBACK",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/39142444027"
+    },
+    "matrix": {
+      "head": "97a8b13faff577272a90edaf0dd4593035e10605",
+      "run_id": 39142443923,
+      "attempt": 1,
+      "run_conclusion": null,
+      "job_count": 6,
+      "job_statuses": {
+        "success": 4,
+        "skipped": 1,
+        "in_progress": 1
+      },
+      "status": "NONTERMINAL_AT_READBACK",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/39142443923"
+    }
+  },
+  "first_red_occurrences": [
+    {
+      "owner": "CODEX",
+      "family": "OSV_REPORTER",
+      "run": 39140533265,
+      "job": 117713866577,
+      "step": "Run osv-scanner-reporter",
+      "url": "https://github.com/GBOGEB/CODEX/actions/runs/39140533265"
+    },
+    {
+      "owner": "CODEX",
+      "family": "ABACUS_LINEAGE_GOVERNANCE",
+      "run": 39140532940,
+      "job": 117713865624,
+      "step": "Governance validation",
+      "url": "https://github.com/GBOGEB/CODEX/actions/runs/39140532940"
+    },
+    {
+      "owner": "CODEX",
+      "family": "STALE_GENERATED_ARTIFACTS",
+      "run": 39140532954,
+      "job": 117713866132,
+      "step": "Check stale artifacts",
+      "url": "https://github.com/GBOGEB/CODEX/actions/runs/39140532954"
+    },
+    {
+      "owner": "gg_MATH",
+      "family": "RELEASE_TEST_COVERAGE",
+      "run": 39064404253,
+      "job": 117488885683,
+      "step": "Execute complete test inventory with coverage",
+      "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/39064404253"
+    }
+  ],
+  "governance": {
+    "ABACUS": {
+      "ruleset": 24494381,
+      "required_approvals": 0,
+      "last_push_approval": false,
+      "review_threads": false,
+      "required_status_rule_present": false,
+      "url": "https://github.com/GBOGEB/ABACUS/rules/24494381"
+    },
+    "CODEX": {
+      "main_protected": false,
+      "rulesets_returned": 0
+    },
+    "MissionControl": {
+      "master_protected": false,
+      "rulesets_returned": 1,
+      "required_eligible_approval_enforced": false
+    }
+  },
+  "coverage": {
+    "current_main_statement": null,
+    "current_main_branch": null,
+    "current_pr_broad": null,
+    "current_pr_diff": null,
+    "why_not_measured": "No comparable current SHA/target/config/instrumentor numerator+denominator receipt was retrieved",
+    "required_return": "Exact source head and native statement/branch covered/total and PR diff eligible lines, paired configuration and evidence artifact",
+    "prior_only": {
+      "main_pct": 36.85,
+      "pr_broad_pct": 36.92,
+      "diff_pct": 51
+    }
+  },
+  "evidence_penetration": {
+    "public_repo_shas": {
+      "value": 4,
+      "total": 4
+    },
+    "head_run_terminal": {
+      "value": 43,
+      "total": 90
+    },
+    "head_run_success": {
+      "value": 35,
+      "total": 90
+    },
+    "observed_failed_workflow_manifestations": {
+      "value": 4,
+      "total": 90
+    },
+    "validated_independent_causal_root_closures": null,
+    "authenticated_remote_crew_runs": null,
+    "accepted_rex": null
+  },
+  "queue_pressure": {
+    "ABACUS_early_same_head": {
+      "run_count": 29,
+      "terminal": 0,
+      "nonterminal": 29
+    },
+    "ABACUS_later_same_head": {
+      "run_count": 47,
+      "terminal": 2,
+      "nonterminal": 45
+    },
+    "arrival_delta": 18,
+    "terminal_delta": 2,
+    "nonterminal_delta": 16,
+    "interpretation": "observed queue pressure growing while run-arrival denominator grows; no invented ETA, queue delay or runner hours"
+  },
+  "forecast": {
+    "Nplus1": "For the same exact head/config cohort, require delta terminal >= delta arrived for nonterminal backlog non-growth; stronger goal is delta terminal > delta arrivals and no new first-red; not a claimed prediction interval",
+    "stability": "NOT_ESTABLISHED_3_NONINDEPENDENT_OR_SCOPE_DIFFERENT_SNAPSHOTS"
+  },
+  "privacy_and_controls": {
+    "authority_transfer": false,
+    "security_waiver": false,
+    "merge_admission": "HOLD",
+    "public_snapshot_excludes_private_source": true,
+    "complete_chat_export_available": false,
+    "original_chat_prompt_count": null
+  },
+  "qualification": "SOURCE_OBSERVED_ONLY_WAITING_EXACT_HEAD_NATIVE_QA_AND_INDEPENDENT_REVIEW"
+}

@@ -15,7 +15,7 @@ import cpq_convergence_n5 as c
 SHA='a'*40
 
 def fixture():
-    ids=['CPQ-%03d'%n for n in range(1,19)]
+    ids=['CPQ-%03d'%n for n in range(1,20)]
     work=set(sum(c.WAVES.values(),[]))
     items=[]
     for k in ids:
@@ -40,11 +40,11 @@ def fixture():
 class CPQN5Tests(unittest.TestCase):
     def test_positive_canonical_census_and_routes(self):
         q,t=fixture();out=c.converge(q,t,SHA,observed_on='2026-10-17')
-        self.assertEqual(out['metrics']['canonical_rows'],18)
+        self.assertEqual(out['metrics']['canonical_rows'],19)
         self.assertEqual({k:out['metrics'][k] for k in ('open','active','todo','reader','done')},
-                         {'open':9,'active':2,'todo':5,'reader':2,'done':9})
+                         {'open':9,'active':2,'todo':5,'reader':2,'done':10})
         self.assertEqual(out['metrics']['work_orders_with_routes'],9)
-        self.assertEqual(out['metrics']['source_readback_coverage'],{'numerator':18,'denominator':18})
+        self.assertEqual(out['metrics']['source_readback_coverage'],{'numerator':19,'denominator':19})
         self.assertIsNone(out['metrics']['qualified_changed_line_coverage'])
         self.assertIsNone(out['metrics']['accepted_causal_root_closures'])
         self.assertEqual(out['admission'],'HOLD')
@@ -56,8 +56,10 @@ class CPQN5Tests(unittest.TestCase):
     def test_duplicate_and_truncated_census_fail_closed(self):
         q,t=fixture();q['items'][0]=copy.deepcopy(q['items'][1]);
         with self.assertRaisesRegex(ValueError,'bad/duplicate'):c.converge(q,t,SHA)
-        q,t=fixture();q['items'].pop()
-        with self.assertRaisesRegex(ValueError,'18-item'):c.converge(q,t,SHA)
+        q,t=fixture();q['items']=q['items'][:17]
+        with self.assertRaisesRegex(ValueError,'canonical queue must be complete'):c.converge(q,t,SHA)
+        q,t=fixture();del q['items'][4]
+        with self.assertRaisesRegex(ValueError,'non-contiguous'):c.converge(q,t,SHA)
     def test_wrong_schema_and_authority_transfer(self):
         for change in (lambda q:q.update(schema='fake'),lambda q:q.update(authority_transfer=True),
                        lambda q:q.update(formal_credit_delta=1)):
@@ -142,7 +144,7 @@ class CPQN5Tests(unittest.TestCase):
             self.assertEqual(pre,(hashlib.sha256(a.read_bytes()).hexdigest(),hashlib.sha256(b.read_bytes()).hexdigest()))
     def test_ordinal_history_tolerates_evidence_without_timestamp(self):
         q,t=fixture();q['items'][0]['history'][-1]['evidence']='No timestamp, no false age'
-        self.assertEqual(c.converge(q,t,SHA)['metrics']['canonical_rows'],18)
+        self.assertEqual(c.converge(q,t,SHA)['metrics']['canonical_rows'],19)
     def test_cpq005_freshness_explicit_clock_and_ttl(self):
         q,t=fixture()
         a=c.converge(q,t,SHA,observed_on='2026-10-17')
@@ -186,5 +188,30 @@ class CPQN5Tests(unittest.TestCase):
         self.assertEqual(root['route'],'DEPENDENCY_CONTROL')
         self.assertEqual(root['dependencies'],['CPQ-010'])
         self.assertEqual(root['state'],'TODO')
+
+    def test_appended_done_row_is_growth_not_drift(self):
+        q,t=fixture();n=copy.deepcopy(q['items'][0]);n['id']='CPQ-020';q['items'].append(n)
+        out=c.converge(q,t,SHA)
+        self.assertEqual(out['metrics']['canonical_rows'],20)
+        self.assertEqual(out['metrics']['source_readback_coverage'],{'numerator':20,'denominator':20})
+    def test_appended_open_row_without_route_fails_closed(self):
+        q,t=fixture();n=copy.deepcopy(q['items'][0]);n['id']='CPQ-020'
+        n['history'][-1].update(state='TODO',flow='READY');q['items'].append(n)
+        with self.assertRaisesRegex(ValueError,'unclassified/open work order drift'):c.converge(q,t,SHA)
+    def test_every_routed_row_is_in_exactly_one_wave(self):
+        waved=sum(c.WAVES.values(),[])
+        self.assertEqual(len(waved),len(set(waved)))
+        self.assertEqual(set(waved),set(c.ROUTING))
+    def test_checked_in_canonical_queue_converges(self):
+        """Regression: CI runs the producer on the real queue, not the fixture."""
+        q=json.loads((HERE/'CODE_PURPLE_BD_QUEUE_v1.json').read_text())
+        t=json.loads((HERE/'TOP7_CENSUS_PULSES_v1.json').read_text())
+        out=c.converge(q,t,SHA)
+        m=out['metrics']
+        self.assertEqual(m['canonical_rows'],len(q['items']))
+        self.assertGreaterEqual(m['canonical_rows'],c.MIN_CANONICAL_ROWS)
+        self.assertEqual(m['open']+m['done'],m['canonical_rows'])
+        self.assertEqual(m['work_orders_with_routes'],m['open'])
+        self.assertEqual(out['admission'],'HOLD')
 
 if __name__ == '__main__':unittest.main()

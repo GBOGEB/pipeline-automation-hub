@@ -99,6 +99,21 @@ class ZeroTestGateAuditTests(unittest.TestCase):
         self.assertEqual(ztga.audit(repo)["rows"][0]["state"], "UNRESOLVED")
         self.assertEqual(ztga.main(["--repo", str(repo), "--strict"]), 2)
 
+    def test_literal_live_lossless_discovery_is_static_and_nonzero(self):
+        root = "mission-control/v2/handoff/live_lossless"
+        repo = self.repo({
+            root + "/test_probe.py": CASE,
+            ".github/workflows/w.yml": workflow(
+                "python -m unittest discover -s " + root + " -p 'test_*.py' -v"
+            ),
+        })
+        result = ztga.audit(repo)
+        self.assertEqual(result["summary"]["zero_test_gates"], 0)
+        self.assertEqual(result["summary"]["unresolved_gates"], 0)
+        self.assertEqual(result["rows"][0]["state"], "OK")
+        self.assertEqual(result["rows"][0]["tests_collectable"], 2)
+        self.assertEqual(ztga.main(["--repo", str(repo), "--strict"]), 0)
+
     def test_zero_test_suite_still_fails_with_tee(self):
         repo = self.repo({
             "t/test_bare.py": BARE,

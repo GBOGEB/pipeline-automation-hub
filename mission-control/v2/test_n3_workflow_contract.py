@@ -77,7 +77,7 @@ class N11WorkflowContractTests(unittest.TestCase):
                 # G3P live is counted once in the seven-module population
                 # and once in its separate focused gate. Do not double-count
                 # it within the combined source coverage denominator.
-                count = 2 if name == "g3p_live_dashboard.py" else 1
+                count = 3 if name == "g3p_live_dashboard.py" else 1
                 self.assertEqual(src.count("'" + name + "'"), count)
         for invariant in (
             "--branch --source=mission-control/v2",

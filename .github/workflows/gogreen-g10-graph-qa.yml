@@ -28,6 +28,7 @@ jobs:
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="51 genuine graph positive and adversarial tests with branch denominator" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           python -m pip install --disable-pip-version-check 'coverage==7.13.3'

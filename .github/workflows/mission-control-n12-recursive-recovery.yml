@@ -1,0 +1,105 @@
+name: Mission Control N12 Recursive Recovery
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/recursive-recovery/**'
+      - 'mission-control/federation-atlas/landing/MISSION_CONTROL_RECURSIVE_MISSIONS_N12.html'
+      - '.github/workflows/mission-control-n12-recursive-recovery.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  checks: read
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: mc-n12-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-lineage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Check exact SHA identity
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run source-bound and adversarial unit tests
+        run: python -m unittest discover -s mission-control/v2/recursive-recovery -p 'test_*.py' -v
+      - name: Rebuild exact-blob Grand Mission and crew projection
+        run: |
+          python mission-control/v2/recursive-recovery/lineage.py --out /tmp/mc-n12-missions.json
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/mc-n12-missions.json',encoding='utf-8'))
+          assert d['authority_transfer'] is False and d['merge_admission']=='HOLD'
+          assert d['metrics']['grand_frontier_ladder']==[1,2,4,8,16]
+          assert d['metrics']['crew_registered']==23 and d['metrics']['rex_historical_events']==10
+          assert d['metrics']['historical_pr_fleet_repos']==90
+          PY
+      - name: Persist recovery projection and source receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mc-n12-recursive-missions
+          path: /tmp/mc-n12-missions.json
+          if-no-files-found: warn
+
+  live-native-readback:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Authenticated GET-only current source and run/job attempts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python mission-control/v2/recursive-recovery/native_readback.py \
+            --out /tmp/mc-n12-live-readback.json --require-controller
+      - name: Persist typed source-access and native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mc-n12-live-run-attempts
+          path: /tmp/mc-n12-live-readback.json
+          if-no-files-found: warn
+
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install scoped Chromium QA dependencies
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Install scoped Chromium QA dependencies" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify HTML, six tabs, three viewports and immutable source model
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Verify HTML, six tabs, three viewports and immutable source model" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          python mission-control/v2/recursive-recovery/browser_qa.py /tmp/mc-n12-browser-qa
+      - name: Preserve QA screenshots and digests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mc-n12-browser-visual
+          path: /tmp/mc-n12-browser-qa
+          if-no-files-found: warn

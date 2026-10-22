@@ -55,3 +55,7 @@ Repository routing is controlled by function rather than by historical activity 
 The topology distinguishes `ACTIVE_USED`, `EXECUTION_SATELLITE`, `CONTROL_RESERVE`, `CONDITIONAL_RESERVE`, `DORMANT_CANDIDATE`, and `MAINTENANCE_ONLY`. These are routing states only. They do not alter the authority boundary above.
 
 Current high-value route: QPS engineering/source/disposition remains in `GBOGEB/cryoplant-project`; `GBOGEB/Q_engineering_tools` is the bounded exact-payload execution carrier when child Actions admission is blocked; `GBOGEB/CODEX` and `GBOGEB/ABACUS` remain semantic and independent-measurement receivers; `GBOGEB/gg_MATH` is a reusable math provider held in CONTROL reserve. Dormant candidates receive no workers until a named source/consumer blocker justifies activation.
+
+## P process (Code Purple × EVERRED)
+
+`p-process/` holds the acute Code Purple mode and the recursive EVERRED 3.0 mode as one loop: lift census, root ledger, ruleset drift probe, BASIC rulesets for owner import, and a refreshable site with a 16:9 companion PDF. See `p-process/README.md`.

@@ -1,0 +1,157 @@
+{
+  "schema": "missioncontrol.html_quality.matrix.v1",
+  "as_of": "2026-10-17",
+  "authority": {
+    "owner": "Mission Control canonical HTML/Pages publisher",
+    "role": "PRESENTATION_QA_ONLY",
+    "merge_admission": "HOLD",
+    "authority_transfer": false
+  },
+  "source_contracts": [
+    "mission-control/federation-atlas/G3P_LIVE_SOURCES_v1.json",
+    "mission-control/federation-atlas/pages_portal.py",
+    "mission-control/v2/MC_MISSION_TELEMETRY_CONTRACT_v1.json"
+  ],
+  "mandatory": [
+    {
+      "id": "H01",
+      "family": "SEMANTIC_STRUCTURE",
+      "method": "HTMLParser",
+      "proof": "title,h1,viewport,DOM IDs,labels",
+      "owner": "html_qa/html_contract.py",
+      "status": "IMPLEMENTED"
+    },
+    {
+      "id": "H02",
+      "family": "LINK_AND_ASSET_INTEGRITY",
+      "method": "file parity + clickable browser anchors",
+      "proof": "safe URLs,new-tab isolation,working source link",
+      "owner": "html_contract.py + g3p_browser_qa.py",
+      "status": "IMPLEMENTED"
+    },
+    {
+      "id": "H03",
+      "family": "INTERACTIVE_CONTROLS",
+      "method": "Playwright controlled actual-wave fixture",
+      "proof": "reload,interval 0/60/900,cutoff 6/9/12,SVG mouse/keyboard",
+      "owner": "g3p_browser_qa.py",
+      "status": "IMPLEMENTED"
+    },
+    {
+      "id": "H04",
+      "family": "RESPONSIVE_GEOMETRY",
+      "method": "Chromium viewports",
+      "proof": "1440x1000,1280x800,390x844; zero body overflow; zero toolbar overlap",
+      "owner": "g3p_browser_qa.py",
+      "status": "IMPLEMENTED"
+    },
+    {
+      "id": "H05",
+      "family": "VISUAL_ARTIFACTS",
+      "method": "captured exact-source PNG plus manifest",
+      "proof": "desktop/laptop/mobile,missing-source,forged-authority",
+      "owner": "G3P Live Ledger QA workflow",
+      "status": "IMPLEMENTED_SCREENSHOT_REVIEW_PENDING"
+    },
+    {
+      "id": "H06",
+      "family": "FEED_AND_FAILURE_BEHAVIOR",
+      "method": "negative browser/state tests",
+      "proof": "missing wave,forged PASS,invalid manifest never promote",
+      "owner": "g3p_browser_qa.py",
+      "status": "IMPLEMENTED"
+    },
+    {
+      "id": "H07",
+      "family": "SOURCE_REF_AND_LEDGER_IDENTITY",
+      "method": "read-only git fetch and validation",
+      "proof": "4 refs,12 pulse receipts,40-digit Git SHAs,source digest",
+      "owner": "prepare_sources.py",
+      "status": "IMPLEMENTED_NONATOMIC"
+    },
+    {
+      "id": "H08",
+      "family": "PAGES_PACKAGING",
+      "method": "existing single-owner pages_portal",
+      "proof": "g3p/index.html and manifest byte parity,site-manifest hashes",
+      "owner": "pages_portal.py",
+      "status": "IMPLEMENTED_PR_PENDING_MERGE"
+    },
+    {
+      "id": "H09",
+      "family": "HOSTED_HTTP_CONVERGENCE",
+      "method": "two independent repeated 200+hash readbacks",
+      "proof": "exact-master publisher candidate versus hosted URL",
+      "owner": "hosted_pages_verify.py",
+      "status": "IMPLEMENTED_PENDING_MASTER_DEPLOY"
+    },
+    {
+      "id": "H10",
+      "family": "GOVERNANCE_ADMISSION",
+      "method": "security/independent review/native CI",
+      "proof": "noncompensating; no mocked visual green",
+      "owner": "canonical Mission Control",
+      "status": "HOLD"
+    },
+    {
+      "id": "H11",
+      "family": "ACCESSIBILITY_ADVANCED",
+      "method": "axe and human keyboard/screen-reader review",
+      "proof": "WCAG audit beyond current semantics",
+      "owner": "source owner with accessibility specialist",
+      "status": "FUTURE_SEPARATE_PROOF"
+    },
+    {
+      "id": "H12",
+      "family": "CROSS_BROWSER_PIXEL_BASELINE",
+      "method": "independent Firefox/WebKit and approved visual goldens",
+      "proof": "per-browser screenshot diff thresholds with drift approvals",
+      "owner": "HTML QA owners",
+      "status": "FUTURE_NOT_MEASURED"
+    }
+  ],
+  "rollout": [
+    {
+      "tier": "PILOT",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "surface": "G3P Live Ledger / existing portal",
+      "owner_lane": "MC",
+      "proof_status": "EXACT_HEAD_BROWSER_PASS_ON_PRIOR_CANDIDATE_NEW_REPAIR_PENDING"
+    },
+    {
+      "tier": "FANOUT_1",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "surface": "flightdeck,live-census,GoGREEN G10",
+      "owner_lane": "MC_DISJOINT",
+      "proof_status": "ADOPTION_REQUEST"
+    },
+    {
+      "tier": "FANOUT_2",
+      "repo": "GBOGEB/ABACUS",
+      "surface": "CBD atlas and EVERRED HTML artifacts",
+      "owner_lane": "DOW",
+      "proof_status": "ADOPTION_REQUEST"
+    },
+    {
+      "tier": "FANOUT_2",
+      "repo": "GBOGEB/CODEX",
+      "surface": "KEB SSOT/Zod-compatible HTML consumers",
+      "owner_lane": "KEB",
+      "proof_status": "ADOPTION_REQUEST"
+    },
+    {
+      "tier": "FANOUT_3",
+      "repo": "GBOGEB/cryoplant-project",
+      "surface": "approved QPS technical review HTML only; no restricted input publication",
+      "owner_lane": "QPS_OWNER",
+      "proof_status": "REQUIRES_PUBLICATION_CLASSIFICATION"
+    }
+  ],
+  "acceptance": {
+    "unit": "per_source_sha_per_artifact",
+    "local_coverage_is_not_global": true,
+    "release": "PAGES_HOSTED_SHA_MATCH_AND_INDEPENDENT_REVIEW",
+    "independent_security": true,
+    "engineering_credit_delta": 0
+  }
+}

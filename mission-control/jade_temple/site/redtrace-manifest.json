@@ -1,0 +1,81 @@
+{
+  "iteration": "N+8",
+  "merge_authorized": false,
+  "pdf": {
+    "deterministic": false,
+    "file": "redtrace-slides.pdf",
+    "renderer": "tools/render_redtrace_pdf.py"
+  },
+  "public_files_sha256": {
+    "redtrace-slides.html": "b9df6927227cf3eed1f0ba2e14805143f0e8730f2b3fe962070bc081c6402d5a",
+    "redtrace.html": "8a8c7e05b1e2c0f2478eef1f6cafb32f76c4806d6d46ffd97de978af55594894"
+  },
+  "replay_command": "python mission-control/jade_temple/site/build_redtrace.py --check",
+  "schema": "jade.temple.redtrace_manifest.v1",
+  "slide_outline": [
+    {
+      "id": "s-title",
+      "title": "Red-trace federation ledger"
+    },
+    {
+      "id": "s-toc",
+      "title": "Contents"
+    },
+    {
+      "id": "s-core",
+      "title": "Core repositories"
+    },
+    {
+      "id": "s-score",
+      "title": "Federation scoreboard"
+    },
+    {
+      "id": "s-repo-pipeline-automation-hub",
+      "title": "pipeline-automation-hub reds"
+    },
+    {
+      "id": "s-repo-ABACUS",
+      "title": "ABACUS reds"
+    },
+    {
+      "id": "s-repo-CODEX",
+      "title": "CODEX reds"
+    },
+    {
+      "id": "s-repo-cryoplant-project",
+      "title": "cryoplant-project reds"
+    },
+    {
+      "id": "s-repo-gg_MATH",
+      "title": "gg_MATH reds"
+    },
+    {
+      "id": "s-gaps-1",
+      "title": "Gap analysis 1"
+    },
+    {
+      "id": "s-gaps-2",
+      "title": "Gap analysis 2"
+    },
+    {
+      "id": "s-gaps-3",
+      "title": "Gap analysis 3"
+    },
+    {
+      "id": "s-agents",
+      "title": "Agentic involvement"
+    },
+    {
+      "id": "s-decide",
+      "title": "Owner decisions"
+    },
+    {
+      "id": "s-sources",
+      "title": "Sources"
+    }
+  ],
+  "sources_sha256": {
+    "data/GAP_ANALYSIS_N8.json": "6dc1e6b180ead82c875020d2359349f0885bd705e99fe658daac182e18a21645",
+    "data/RED_TRACE_FEDERATION_N8.json": "4def5f03f98c336234efc0705c6af8a39a11d8d50e0e6bb9bf4d74f310c948cb"
+  }
+}

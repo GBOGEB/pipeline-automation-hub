@@ -1,0 +1,99 @@
+{
+  "artifact_hashes": {
+    "README.md": "bc827ad369910b512986aa5273341df3bad819788cfb12cdc0f391d02cc2aee6",
+    "RECURSIVE_W17_W18_FOCUS.md": "fd9a793aa12cd7b5bd66eb56cab46e732217e3290acf40853ab612f4af726845",
+    "cards.html": "918315bba8ccb5f134a188c946007355a6ac9c700c6caad83419817f12e4c6ff",
+    "deck.html": "ffab509e86bc5fee49a73f804c53b94b0e31b77f4f577fdcf89720d5c320f9fd",
+    "devops_browser_qa.py": "58125b752044128f1d9038f29e15b0729fe472512bb930f357b4020bcf90a313",
+    "index.html": "ca82beb9fd2e329ace963382902d4bee25e1dbaea5c82e6a0660b9954c7ce1e8",
+    "locator_index.json": "cbdcf2c348131fb2f1e5654e787924b218f0f0f428cda54581ce59dd2a9994b8",
+    "manifest.json": "55b19624620c097c3bdb6d6f551526419ee2d6eebff3e39a25acce9a971bbc9f",
+    "metrics.csv": "84c59d662635106614bbbcc3a30c47d3a7ee2756fdc37e14fe8769a30de4aa69",
+    "render.py": "2e9d23dca95e7baa1b642e17ab02aaf9c7b317757321999a16d91f5a16684649",
+    "runtime.js": "8abdd3508d2b4b88d543ab653739a6e948901a79c510d937d44b7e696b26135d",
+    "snapshot.json": "8da98db2b6ff4550b40f923d72429366dfe32cb4ac2bad1ff9fc7edcf1e8dcee",
+    "tests/browser_qa.py": "0663abce9e7e25869effa16b629aec91a7d627e61c1f86e4e752798ebad99f71",
+    "tests/test_contract.py": "b5611d36ab06e764c4d12b4c5012f299a1cc1ba774226c46ace42448799951b1",
+    "tests/test_locator_contract.py": "fbfd2f20fab8663c3697b4d1d420bc00e5fa6f4eccf1c9262581c4b5c5edcd78",
+    "theme.css": "a73fdf585cb07dccc773715950c3f3d94d6f865b08f55d8e40dbec20de6d4c5b"
+  },
+  "artifacts": {
+    "html": {
+      "paths": [
+        "index.html",
+        "cards.html",
+        "deck.html"
+      ],
+      "status": "PASS_LOCAL"
+    },
+    "json": {
+      "paths": [
+        "snapshot.json",
+        "locator_index.json"
+      ],
+      "status": "PASS_LOCAL"
+    },
+    "pptx": {
+      "path": "CP_W18_FLEET_DOV_20261017.pptx",
+      "status": "UNCHANGED_STATIC_PRESENTATION"
+    }
+  },
+  "candidate": {
+    "base_pr": 670,
+    "commit_this_candidate": "PENDING",
+    "moniker": "CP-W18-RECURSIVE-LOCATORS-v1",
+    "previous_git_sha": "3cd4fc93b26e770e8dbc6a5485961daad1269b97"
+  },
+  "checks": {
+    "cross_format_parity": "PASS_LOCAL",
+    "formula_or_content": "PASS",
+    "playwright": "PASS_LOCAL",
+    "render_visual": "PASS_LOCAL",
+    "structural": "PASS"
+  },
+  "controls": {
+    "authority_transfer": false,
+    "auto_github_comment": false,
+    "global_root_closure_credit": 0,
+    "hosted_pages_http200": null,
+    "merge_admission": "HOLD"
+  },
+  "defects_fixed": [
+    "Dashboard evidence link to canonical #153 was external-only; added jump into actionable BD register while retaining #153 direct link.",
+    "Missing stable per-element comment locators; added source-bound ID, route, issue target and draft-only comment composer.",
+    "Diagram node comment controls overlapped slide-level control; positioned them within respective nodes.",
+    "Static pages lacked recursive W17→W18 TODO/BD route; added derived focus view without editing snapshot."
+  ],
+  "evidence_level": "LOCAL_REPRODUCIBILITY",
+  "known_limits": [
+    "HTTP localhost navigation blocked by browser runtime; page-to-page href verified statically and loaded independently with in-document hash tests.",
+    "Clipboard tested using mocked navigator.clipboard; manual select/copy remains supported on restrictive clients.",
+    "GitHub Pages publication and exact-GitHub-head runner verification not yet established.",
+    "Static PPTX presentation is not an interactive DevOps surface; HTML deck is."
+  ],
+  "notes": [
+    "Do not interpret 24/3/10 historical workflows as current nonterminal fleet run totals.",
+    "N14 200/446 and W16 231/444 differ by source epoch.",
+    "Nine duplicate issue closures and two completed DAB tasks cannot certify eleven engineering root fixes."
+  ],
+  "schema": "qps-artifact-qa/1.0",
+  "source": {
+    "git_sha": "3cd4fc93b26e770e8dbc6a5485961daad1269b97",
+    "locator": "docs/mission-control/w18/snapshot.json",
+    "semantic_sha256": "8da98db2b6ff4550b40f923d72429366dfe32cb4ac2bad1ff9fc7edcf1e8dcee",
+    "source_epoch": "FROZEN_W18"
+  },
+  "test_counts": {
+    "deck_diagram_hook": true,
+    "devops_interactive": 4,
+    "devops_viewports": [
+      1440,
+      1280,
+      390
+    ],
+    "existing_responsive": 12,
+    "horizontal_overflow_cases": 0,
+    "javascript_errors": 0,
+    "source_static": 21
+  }
+}

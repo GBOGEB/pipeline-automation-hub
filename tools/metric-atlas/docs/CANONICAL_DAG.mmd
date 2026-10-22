@@ -1,0 +1,25 @@
+flowchart TD
+    A[Owner-defined eligible repository cohort] --> B[Exact source SHA + population fingerprint]
+    B --> C[GitHub run / attempt / job evidence]
+    C --> D{Artifact ZIP available?}
+    D -->|Yes| E[Canonical ZIP byte verifier #530]
+    D -->|No| U[UNKNOWN evidence; not zero]
+    E --> F{CRC, member SHA and identity valid?}
+    F -->|No| H[HOLD provenance; investigate]
+    F -->|Yes| G[Canonical breadth producer #531]
+    U --> G
+    G --> I[Metric ledger: repository / scope / N index]
+    I --> J[First-red fingerprint and root attribution]
+    J --> K{Proven root and owner?}
+    K -->|No| L[Classify; preserve distinct fingerprints]
+    K -->|Yes| M[Disjoint source-owned repair]
+    L --> I
+    M --> N[Exact-head negative / reverse / integration tests]
+    N --> O{Effective required CI, P0/P1, approvals pass?}
+    O -->|No| H
+    O -->|Yes| P[Authorized serial merge and SHA receipt]
+    P --> Q[Post-merge stability and CONTROL]
+    Q --> I
+    I --> R[Method Atlas viewer #533]
+    I --> S[gg_MATH PCA / BT only when ready]
+    S -->|Not qualified| H

@@ -9,6 +9,10 @@ on:
       - 'mission-control/grand-missions/probe_gm_iv_runtime_capability.py'
       - '.github/workflows/gm-iv-runtime-capacity-proof-v2.yml'
   workflow_dispatch:
+  schedule:
+    # #529 G05 scheduler: weekly read-only proof keeps a valid capacity artifact inside the
+    # 30-day retention for GM-V gates (EVIDENCE_BINDING_DAG_v1 P1; GM-V readiness runs Wed).
+    - cron: '17 5 * * 1'
 
 permissions:
   contents: read

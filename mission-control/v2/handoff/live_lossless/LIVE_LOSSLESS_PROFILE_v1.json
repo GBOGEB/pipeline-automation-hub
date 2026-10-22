@@ -1,0 +1,70 @@
+{
+  "schema": "missioncontrol.live_lossless.profile.v1",
+  "as_of": "2026-10-17",
+  "moniker": "CP.LIVE",
+  "alias": "CP.LIVE!",
+  "display": "CP.LIVE(scope=\"CURRENT_CHAT\",mode=\"GITHUB_REFRESH_APPEND\",target=\"GOVERNED_PR_TO_MASTER\",view=\"SUMMARY_PLUS_SELECTABLE_DETAILS\",continue_chat=true)",
+  "kind": "CHAT_INSTRUCTION_MACRO_NOT_INSTALLED_EXECUTABLE",
+  "extends": "CP.CLOSEOUT",
+  "not_replacement_of": [
+    "CP.HANDOFF",
+    "CP.RESUME",
+    "CODE_PURPLE_BD_QUEUE_v1",
+    "Golden Thread session_hook",
+    "Mission Control Pages publisher"
+  ],
+  "purpose": "Refresh GitHub source readbacks, append new current-chat intent/action deltas and publish a hash-verified rolling lossless record without ending this conversation.",
+  "cadence": "USER_INVOKED_NOT_BACKGROUND",
+  "required_steps": [
+    "REFRESH_GITHUB_MASTER_PR_ISSUE_SOURCE",
+    "RECONCILE_FROZEN_VERSUS_LIVE_WITH_TYPED_EVIDENCE",
+    "APPEND_ONLY_SANITIZED_INTENT_SUBREQUEST_ACTION_DELTA",
+    "REGENERATE_DETERMINISTIC_SNAPSHOT_HTML_AND_HASH_MANIFEST",
+    "RUN_EXACT_HEAD_TEST_AND_BROWSER_QA",
+    "COMMIT_TO_OWNED_PR",
+    "AUTHORISED_MERGE_ONLY_IF_INDEPENDENT_GATES",
+    "READBACK_MASTER_AND_HOSTED_PARITY",
+    "RETURN_USER_SUMMARY_PLUS_EXPANDABLE_DETAILS",
+    "CONTINUE_CURRENT_CHAT"
+  ],
+  "data_population_policy": {
+    "verified_complete_chat_export": false,
+    "original_user_prompt_count": null,
+    "token_usage": null,
+    "original_message_id": null,
+    "do_not_infer_full_chat_from_visible_reconstruction": true
+  },
+  "outputs": [
+    "SNAPSHOT_JSON",
+    "DETAILS_HTML",
+    "SCRIPT_AND_CSS",
+    "SUBREQUEST_DAG_EDGES",
+    "SOURCE_SHA256_MANIFEST",
+    "NATIVE_QA_RECEIPTS",
+    "OWNER_BD_TODO_AND_NEXT_STEP"
+  ],
+  "review": {
+    "main_merge_separate": true,
+    "independent_review_required": true,
+    "security_waiver": false,
+    "qps_acceptance_inferred": false,
+    "authority_transfer": false
+  },
+  "monitor": {
+    "client_source": "PUBLIC_GITHUB_REST",
+    "automatic": "WHEN_WEB_PAGE_OPEN_AND_ENABLED_ONLY",
+    "default_interval_minutes": 15,
+    "rate_limit_failure": "KEEP_FROZEN_SHOW_STALE"
+  },
+  "related": {
+    "closeout": "CP.CLOSEOUT",
+    "transport": "CP.HANDOFF",
+    "continuation": "CP.RESUME",
+    "wave": "G3P.EXECUTE"
+  },
+  "legacy": {
+    "cp_close_implementation_alias": "CP.CLOSE",
+    "pr_ref": "GBOGEB/pipeline-automation-hub#642",
+    "status": "PENDING_REVIEW_AT_CAPTURE"
+  }
+}

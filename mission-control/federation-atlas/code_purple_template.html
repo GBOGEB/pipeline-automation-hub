@@ -189,10 +189,21 @@ function drawer(){const all=store.all();$('dbtn').textContent='Comments · '+all
 $('dbtn').onclick=()=>{const p=$('dpane');p.hidden=!p.hidden;$('dbtn').setAttribute('aria-expanded',!p.hidden);drawer()};
 
 /* ---------- provenance ---------- */
-const today=new Date();
-const age=d=>d?Math.floor((today-new Date(d+'T00:00:00Z'))/864e5):null;
+/* Date arithmetic belongs to source_freshness.py, never the client clock.
+   Missing clock or untrusted as_of_basis is UNKNOWN, not fresh/stale. */
+const sourceFreshnessRows=(D.source_freshness&&Array.isArray(D.source_freshness.sources))?D.source_freshness.sources:[];
+const freshnessByName=new Map(sourceFreshnessRows.map(r=>[r.name,r]));
+const freshnessClasses={FRESH:'s-pass',STALE:'s-warn',FUTURE_INVALID:'s-fail',UNKNOWN:'s-unk'};
 $('prov').innerHTML='<span>build <b>'+sh(D.build_sha)+'</b></span><span>series <b>'+esc(D.series_key)+'</b> ('+esc(latest.closes)+', '+esc(latest.evidence_class)+')</span><span>Top7 <b>'+esc(D.cohort_states.top7)+'</b> · Top14 <b>'+esc(D.cohort_states.top14)+'</b> · Top21 <b>'+esc(D.cohort_states.top21)+'</b></span><span>DMAIC <b>'+esc(D.evolution.level)+'</b> · active '+esc(D.evolution.active)+' '+esc(D.evolution.active_outcome)+'</span>';
-$('sources').innerHTML=D.sources.map(s=>{const a=age(s.as_of);return '<tr><td>'+esc(s.name)+'</td><td class="m">'+esc(s.path)+'</td><td class="m">'+esc(s.as_of||s.as_of_basis)+'</td><td class="m '+(a!=null&&a>7?'s-warn':'')+'">'+(a==null?'—':a+' d'+(a>7?' · stale':''))+'</td></tr>'}).join('');
+$('sources').innerHTML=D.sources.map(s=>{
+  const f=freshnessByName.get(s.name);
+  const state=f&&Object.prototype.hasOwnProperty.call(freshnessClasses,f.state)?f.state:'UNKNOWN';
+  const days=(f&&Number.isInteger(f.age_days))?f.age_days:null;
+  const ageLabel=days===null?'age UNKNOWN':days+' d';
+  return '<tr><td>'+esc(s.name)+'</td><td class="m">'+esc(s.path)+'</td><td class="m">'+
+    esc(s.as_of||'DATE_UNKNOWN')+' <small>'+esc(s.as_of_basis||'BASIS_UNKNOWN')+'</small></td>'+
+    '<td class="m">'+pill(state,freshnessClasses[state])+' '+esc(ageLabel)+'</td></tr>';
+}).join('');
 
 /* ---------- now strip ---------- */
 const g14=D.ledger.top7_to_top14, blockers=g14.filter(r=>r.state!=='PASS');

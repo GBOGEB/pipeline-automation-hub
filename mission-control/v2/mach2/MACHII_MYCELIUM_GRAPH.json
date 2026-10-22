@@ -1,0 +1,1220 @@
+{
+  "schema": "code-purple.mycelium.graph.v2",
+  "authority_transfer": false,
+  "dispatch_authorized": false,
+  "source_repo": "GBOGEB/pipeline-automation-hub",
+  "historical_gm_unchanged": true,
+  "nodes": [
+    {
+      "id": "mc:control",
+      "title": "Mission Control v2",
+      "kind": "CONTROL",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED"
+    },
+    {
+      "id": "mycelium:bridge",
+      "title": "CODEX Mycelium crosswalk",
+      "kind": "BRIDGE",
+      "layer": "FEDERATION",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "source_sha": "493145eea784d39f57ea64a730af9f3e85586714"
+    },
+    {
+      "id": "math:provider",
+      "title": "gg_MATH MIP and statistics provider",
+      "kind": "METHOD_PROVIDER",
+      "layer": "FEDERATION",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "source_sha": "4caaeae153927fef6c30ac728cb70fc8611d0ac8"
+    },
+    {
+      "id": "qps:owner",
+      "title": "QPS HEPAK domain owner",
+      "kind": "ENGINEERING_OWNER",
+      "layer": "FEDERATION",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "source_sha": "4782b8ab418f8645ff409a1297ce2d84a8bdcaf8"
+    },
+    {
+      "id": "mission:GM-I",
+      "title": "GM-I · COOLPROP_DARKLAND_MACH_II",
+      "kind": "GRAND_MISSION",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "state": "HOLD_EXTERNAL_OR_HABITAT_GATE",
+      "frontiers": 1
+    },
+    {
+      "id": "mip:GM-I:modernise",
+      "title": "MODERNISE · GM-I",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Reuse existing QPS property_router + hepak_bridge and local Python/Excel call; no rewritten EOS or licensed binary"
+    },
+    {
+      "id": "mip:GM-I:innovate",
+      "title": "INNOVATE · GM-I",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Paired pre/post source SHA256 attestation, local XLA/XLAM Python COM and direct licensed callable with identical receipt semantics; diagnose phase validity"
+    },
+    {
+      "id": "mip:GM-I:perpetuate",
+      "title": "PERPETUATE · GM-I",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Pin 8 governed state identities, source hashes, run/attempt identity, one-repeat provenance and QPS child disposition"
+    },
+    {
+      "id": "sipoc:GM-I:SOURCE_READBACK",
+      "title": "GM-I SOURCE_READBACK",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-I:OWNER_CLASSIFICATION",
+      "title": "GM-I OWNER_CLASSIFICATION",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-I:BOUNDED_CHANGE",
+      "title": "GM-I BOUNDED_CHANGE",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-I:NATIVE_PROOF",
+      "title": "GM-I NATIVE_PROOF",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-I:REX_RETURN",
+      "title": "GM-I REX_RETURN",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "mission:GM-II",
+      "title": "GM-II · TWO_OUTPOST_MATH_MACH_II",
+      "kind": "GRAND_MISSION",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "state": "CONTROL",
+      "frontiers": 2
+    },
+    {
+      "id": "mip:GM-II:modernise",
+      "title": "MODERNISE · GM-II",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Typed methods, exact-source mathematical provider envelope, stable metric identity and units"
+    },
+    {
+      "id": "mip:GM-II:innovate",
+      "title": "INNOVATE · GM-II",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Rolling N+2 predeclared forecasts; independent reference kernels, PCA/BT only when identifiable; graph and nested DOEs"
+    },
+    {
+      "id": "mip:GM-II:perpetuate",
+      "title": "PERPETUATE · GM-II",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Source-bound return checks, historical forecast-error calibration and regression invariants"
+    },
+    {
+      "id": "sipoc:GM-II:SOURCE_READBACK",
+      "title": "GM-II SOURCE_READBACK",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-II:OWNER_CLASSIFICATION",
+      "title": "GM-II OWNER_CLASSIFICATION",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-II:BOUNDED_CHANGE",
+      "title": "GM-II BOUNDED_CHANGE",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-II:NATIVE_PROOF",
+      "title": "GM-II NATIVE_PROOF",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-II:REX_RETURN",
+      "title": "GM-II REX_RETURN",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "mission:GM-III",
+      "title": "GM-III · HETEROGENEOUS_RECON_MACH_II",
+      "kind": "GRAND_MISSION",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "state": "RECON_CONTROL",
+      "frontiers": 4
+    },
+    {
+      "id": "mip:GM-III:modernise",
+      "title": "MODERNISE · GM-III",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Typed repo capability and edge semantics with source/licence/consumer ownership"
+    },
+    {
+      "id": "mip:GM-III:innovate",
+      "title": "INNOVATE · GM-III",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Nonlinear search/backtrack/revisit with bounded hypothesis tests; no synthetic admission"
+    },
+    {
+      "id": "mip:GM-III:perpetuate",
+      "title": "PERPETUATE · GM-III",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Reusable negative controls, attested adapter reuse, and archived rejection rationale"
+    },
+    {
+      "id": "sipoc:GM-III:SOURCE_READBACK",
+      "title": "GM-III SOURCE_READBACK",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-III:OWNER_CLASSIFICATION",
+      "title": "GM-III OWNER_CLASSIFICATION",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-III:BOUNDED_CHANGE",
+      "title": "GM-III BOUNDED_CHANGE",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-III:NATIVE_PROOF",
+      "title": "GM-III NATIVE_PROOF",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-III:REX_RETURN",
+      "title": "GM-III REX_RETURN",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "mission:GM-IV",
+      "title": "GM-IV · EIGHT_FRONTIER_REPEAT_CONTROL_MACH_II",
+      "kind": "GRAND_MISSION",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "state": "ACTIVE_8_OF_8",
+      "frontiers": 8
+    },
+    {
+      "id": "mip:GM-IV:modernise",
+      "title": "MODERNISE · GM-IV",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Map all eight named slots and their candidate identities, owners and path leases"
+    },
+    {
+      "id": "mip:GM-IV:innovate",
+      "title": "INNOVATE · GM-IV",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Resource-aware scheduler proposals using actual runner queue p95 and source-identified cross-repo blocker leverage"
+    },
+    {
+      "id": "mip:GM-IV:perpetuate",
+      "title": "PERPETUATE · GM-IV",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Repeat-control at distinct current heads, duplicate root/fan-out suppression, crew return and feedback aging controls"
+    },
+    {
+      "id": "sipoc:GM-IV:SOURCE_READBACK",
+      "title": "GM-IV SOURCE_READBACK",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-IV:OWNER_CLASSIFICATION",
+      "title": "GM-IV OWNER_CLASSIFICATION",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-IV:BOUNDED_CHANGE",
+      "title": "GM-IV BOUNDED_CHANGE",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-IV:NATIVE_PROOF",
+      "title": "GM-IV NATIVE_PROOF",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "sipoc:GM-IV:REX_RETURN",
+      "title": "GM-IV REX_RETURN",
+      "kind": "SIPOC_INSTANCE",
+      "layer": "SIPOC",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "proposal_only": true
+    },
+    {
+      "id": "mission:GM-V",
+      "title": "GM-V · CLOUD16_READINESS_MACH_II",
+      "kind": "GRAND_MISSION",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "state": "HELD",
+      "frontiers": 16
+    },
+    {
+      "id": "mip:GM-V:modernise",
+      "title": "MODERNISE · GM-V",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Formal capability/runner ledger and distinct owner/worker demand"
+    },
+    {
+      "id": "mip:GM-V:innovate",
+      "title": "INNOVATE · GM-V",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "16-slot shadow scheduler simulation, boundary stress and resource-constrained policy sensitivity"
+    },
+    {
+      "id": "mip:GM-V:perpetuate",
+      "title": "PERPETUATE · GM-V",
+      "kind": "MIP_AXIS",
+      "layer": "CONTROL",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "source": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json",
+      "evidence": "DECLARED",
+      "description": "Governor-reviewable Go/HOLD receipt and mission end/return plan; no automatic transition"
+    }
+  ],
+  "edges": [
+    {
+      "from": "mc:control",
+      "to": "mycelium:bridge",
+      "kind": "FEDERATION_BRIDGE",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mc:control",
+      "to": "math:provider",
+      "kind": "PROPOSED_CONSUMER",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mc:control",
+      "to": "qps:owner",
+      "kind": "REFERENCE",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mc:control",
+      "to": "mission:GM-I",
+      "kind": "OWNED_BY",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-I",
+      "to": "mip:GM-I:modernise",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-I:modernise",
+      "to": "mission:GM-I",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-I",
+      "to": "mip:GM-I:innovate",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-I:innovate",
+      "to": "mission:GM-I",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-I",
+      "to": "mip:GM-I:perpetuate",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-I:perpetuate",
+      "to": "mission:GM-I",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-I",
+      "to": "mycelium:bridge",
+      "kind": "FEDERATION_BRIDGE",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-I",
+      "to": "math:provider",
+      "kind": "PROPOSED_CONSUMER",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-I",
+      "to": "qps:owner",
+      "kind": "PROPOSED_CONSUMER",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-I",
+      "to": "sipoc:GM-I:SOURCE_READBACK",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-I",
+      "to": "sipoc:GM-I:OWNER_CLASSIFICATION",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-I",
+      "to": "sipoc:GM-I:BOUNDED_CHANGE",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-I",
+      "to": "sipoc:GM-I:NATIVE_PROOF",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-I",
+      "to": "sipoc:GM-I:REX_RETURN",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-I:SOURCE_READBACK",
+      "to": "sipoc:GM-I:OWNER_CLASSIFICATION",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-I:OWNER_CLASSIFICATION",
+      "to": "sipoc:GM-I:BOUNDED_CHANGE",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-I:BOUNDED_CHANGE",
+      "to": "sipoc:GM-I:NATIVE_PROOF",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-I:NATIVE_PROOF",
+      "to": "sipoc:GM-I:REX_RETURN",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-I:REX_RETURN",
+      "to": "sipoc:GM-I:SOURCE_READBACK",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mc:control",
+      "to": "mission:GM-II",
+      "kind": "OWNED_BY",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-II",
+      "to": "mip:GM-II:modernise",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-II:modernise",
+      "to": "mission:GM-II",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-II",
+      "to": "mip:GM-II:innovate",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-II:innovate",
+      "to": "mission:GM-II",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-II",
+      "to": "mip:GM-II:perpetuate",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-II:perpetuate",
+      "to": "mission:GM-II",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-II",
+      "to": "mycelium:bridge",
+      "kind": "FEDERATION_BRIDGE",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-II",
+      "to": "math:provider",
+      "kind": "PROPOSED_CONSUMER",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-II",
+      "to": "sipoc:GM-II:SOURCE_READBACK",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-II",
+      "to": "sipoc:GM-II:OWNER_CLASSIFICATION",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-II",
+      "to": "sipoc:GM-II:BOUNDED_CHANGE",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-II",
+      "to": "sipoc:GM-II:NATIVE_PROOF",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-II",
+      "to": "sipoc:GM-II:REX_RETURN",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-II:SOURCE_READBACK",
+      "to": "sipoc:GM-II:OWNER_CLASSIFICATION",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-II:OWNER_CLASSIFICATION",
+      "to": "sipoc:GM-II:BOUNDED_CHANGE",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-II:BOUNDED_CHANGE",
+      "to": "sipoc:GM-II:NATIVE_PROOF",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-II:NATIVE_PROOF",
+      "to": "sipoc:GM-II:REX_RETURN",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-II:REX_RETURN",
+      "to": "sipoc:GM-II:SOURCE_READBACK",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mc:control",
+      "to": "mission:GM-III",
+      "kind": "OWNED_BY",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-III",
+      "to": "mip:GM-III:modernise",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-III:modernise",
+      "to": "mission:GM-III",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-III",
+      "to": "mip:GM-III:innovate",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-III:innovate",
+      "to": "mission:GM-III",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-III",
+      "to": "mip:GM-III:perpetuate",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-III:perpetuate",
+      "to": "mission:GM-III",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-III",
+      "to": "mycelium:bridge",
+      "kind": "FEDERATION_BRIDGE",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-III",
+      "to": "math:provider",
+      "kind": "PROPOSED_CONSUMER",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-III",
+      "to": "sipoc:GM-III:SOURCE_READBACK",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-III",
+      "to": "sipoc:GM-III:OWNER_CLASSIFICATION",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-III",
+      "to": "sipoc:GM-III:BOUNDED_CHANGE",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-III",
+      "to": "sipoc:GM-III:NATIVE_PROOF",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-III",
+      "to": "sipoc:GM-III:REX_RETURN",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-III:SOURCE_READBACK",
+      "to": "sipoc:GM-III:OWNER_CLASSIFICATION",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-III:OWNER_CLASSIFICATION",
+      "to": "sipoc:GM-III:BOUNDED_CHANGE",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-III:BOUNDED_CHANGE",
+      "to": "sipoc:GM-III:NATIVE_PROOF",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-III:NATIVE_PROOF",
+      "to": "sipoc:GM-III:REX_RETURN",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-III:REX_RETURN",
+      "to": "sipoc:GM-III:SOURCE_READBACK",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mc:control",
+      "to": "mission:GM-IV",
+      "kind": "OWNED_BY",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-IV",
+      "to": "mip:GM-IV:modernise",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-IV:modernise",
+      "to": "mission:GM-IV",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-IV",
+      "to": "mip:GM-IV:innovate",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-IV:innovate",
+      "to": "mission:GM-IV",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-IV",
+      "to": "mip:GM-IV:perpetuate",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-IV:perpetuate",
+      "to": "mission:GM-IV",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-IV",
+      "to": "mycelium:bridge",
+      "kind": "FEDERATION_BRIDGE",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-IV",
+      "to": "math:provider",
+      "kind": "PROPOSED_CONSUMER",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-IV",
+      "to": "sipoc:GM-IV:SOURCE_READBACK",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-IV",
+      "to": "sipoc:GM-IV:OWNER_CLASSIFICATION",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-IV",
+      "to": "sipoc:GM-IV:BOUNDED_CHANGE",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-IV",
+      "to": "sipoc:GM-IV:NATIVE_PROOF",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-IV",
+      "to": "sipoc:GM-IV:REX_RETURN",
+      "kind": "REFERENCE",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-IV:SOURCE_READBACK",
+      "to": "sipoc:GM-IV:OWNER_CLASSIFICATION",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-IV:OWNER_CLASSIFICATION",
+      "to": "sipoc:GM-IV:BOUNDED_CHANGE",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-IV:BOUNDED_CHANGE",
+      "to": "sipoc:GM-IV:NATIVE_PROOF",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-IV:NATIVE_PROOF",
+      "to": "sipoc:GM-IV:REX_RETURN",
+      "kind": "SIPOC_DEPENDENCY",
+      "layer": "SIPOC",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "sipoc:GM-IV:REX_RETURN",
+      "to": "sipoc:GM-IV:SOURCE_READBACK",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mc:control",
+      "to": "mission:GM-V",
+      "kind": "OWNED_BY",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-V",
+      "to": "mip:GM-V:modernise",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-V:modernise",
+      "to": "mission:GM-V",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-V",
+      "to": "mip:GM-V:innovate",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-V:innovate",
+      "to": "mission:GM-V",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-V",
+      "to": "mip:GM-V:perpetuate",
+      "kind": "SUPPLIES",
+      "layer": "CONTROL",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mip:GM-V:perpetuate",
+      "to": "mission:GM-V",
+      "kind": "REVERSE_PRESSURE",
+      "layer": "GOLDEN_THREAD",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-V",
+      "to": "mycelium:bridge",
+      "kind": "FEDERATION_BRIDGE",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    },
+    {
+      "from": "mission:GM-V",
+      "to": "math:provider",
+      "kind": "PROPOSED_CONSUMER",
+      "layer": "FEDERATION",
+      "binding": "DECLARED",
+      "source_ref": "mission-control/v2/mach2/MACHII_MISSION_MANIFEST.json"
+    }
+  ],
+  "projection_receipt": {
+    "nodes": 44,
+    "edges": 89,
+    "waves": [
+      [
+        "sipoc:GM-I:SOURCE_READBACK",
+        "sipoc:GM-II:SOURCE_READBACK",
+        "sipoc:GM-III:SOURCE_READBACK",
+        "sipoc:GM-IV:SOURCE_READBACK"
+      ],
+      [
+        "sipoc:GM-I:OWNER_CLASSIFICATION",
+        "sipoc:GM-II:OWNER_CLASSIFICATION",
+        "sipoc:GM-III:OWNER_CLASSIFICATION",
+        "sipoc:GM-IV:OWNER_CLASSIFICATION"
+      ],
+      [
+        "sipoc:GM-I:BOUNDED_CHANGE",
+        "sipoc:GM-II:BOUNDED_CHANGE",
+        "sipoc:GM-III:BOUNDED_CHANGE",
+        "sipoc:GM-IV:BOUNDED_CHANGE"
+      ],
+      [
+        "sipoc:GM-I:NATIVE_PROOF",
+        "sipoc:GM-II:NATIVE_PROOF",
+        "sipoc:GM-III:NATIVE_PROOF",
+        "sipoc:GM-IV:NATIVE_PROOF"
+      ],
+      [
+        "sipoc:GM-I:REX_RETURN",
+        "sipoc:GM-II:REX_RETURN",
+        "sipoc:GM-III:REX_RETURN",
+        "sipoc:GM-IV:REX_RETURN"
+      ]
+    ],
+    "edge_classes": {
+      "FEDERATION_BRIDGE": 6,
+      "PROPOSED_CONSUMER": 7,
+      "REFERENCE": 21,
+      "OWNED_BY": 5,
+      "SUPPLIES": 15,
+      "REVERSE_PRESSURE": 19,
+      "SIPOC_DEPENDENCY": 16
+    },
+    "binding_classes": {
+      "DECLARED": 89
+    },
+    "reference_feedback_cycles_allowed": true,
+    "executable_sipoc_acyclic": true,
+    "dispatches_verified": null
+  },
+  "status": "READ_ONLY_SOURCE_BOUND_TYPED_GRAPH_NO_OWNER_ACCEPTANCE",
+  "source_manifest_blob": "0c437b28f0de2e10aab899824a41cf6af308aad6"
+}

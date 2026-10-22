@@ -1,0 +1,690 @@
+{
+  "schema": "missioncontrol.m3.readonly_projection.v1",
+  "milestone": "M3.W0",
+  "observed_date_utc": "2026-10-17",
+  "observation_precision": "DATE",
+  "source_repository": "GBOGEB/pipeline-automation-hub",
+  "source_sha": "4455321f1ac5ead05135e2cd2355e64ff0a3d9a2",
+  "content_slug": "mc-federation-m3-20261017",
+  "generator": "HAND_AUTHORED_PROJECTION_V1",
+  "authority": {
+    "merge_admission": "HOLD",
+    "governed_main_merge_verified": false,
+    "code_x_to_abacus_crew_launch": null,
+    "accepted_rex": null,
+    "root_open": null,
+    "root_closed": null,
+    "main_coverage_current": null,
+    "diff_coverage_current": null,
+    "security_waiver": false,
+    "qps_decision": "DEFER",
+    "remote_mutation_enabled": false,
+    "pages_published": null
+  },
+  "baselines": {
+    "abacus_1860": {
+      "completed": 1,
+      "total": 12,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    "codex_977": {
+      "completed": 0,
+      "total": 7,
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    },
+    "main_coverage_last": {
+      "covered": 21437,
+      "eligible": 39139,
+      "source_sha": null,
+      "instrument": null,
+      "comparable_to_current": false
+    },
+    "dashboard_1885": {
+      "href_occurrences": 53,
+      "myrrha": 50,
+      "reports": 2,
+      "dynamic": 1,
+      "closed_duplicate_alert_tickets": 6,
+      "root_closed": false,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1885"
+    }
+  },
+  "repos": [
+    {
+      "id": "MC",
+      "name": "GBOGEB/pipeline-automation-hub",
+      "sha": "4455321f1ac5ead05135e2cd2355e64ff0a3d9a2",
+      "role": "Orchestration, scheduling, observation, portal",
+      "authority": "FEDERATED_READ_ONLY",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "CODEX",
+      "name": "GBOGEB/CODEX",
+      "sha": "f8a179f8bf67bba4264364b5742c7c271f4041a6",
+      "role": "KEB/Mycelium and authenticated gateway (stage-only)",
+      "authority": "CODEX_EXECUTION_CONTROL",
+      "link": "https://github.com/GBOGEB/CODEX"
+    },
+    {
+      "id": "ABACUS",
+      "name": "GBOGEB/ABACUS",
+      "sha": "8d0c6ca568d6ea0b5e658198d0046283c049e557",
+      "role": "DOW, LDAB, CI, coverage, source-owned repair",
+      "authority": "ABACUS_SOURCE_OWNER",
+      "link": "https://github.com/GBOGEB/ABACUS"
+    },
+    {
+      "id": "QPS",
+      "name": "GBOGEB/cryoplant-project",
+      "sha": "4782b8ab418f8645ff409a1297ce2d84a8bdcaf8",
+      "role": "Controlled engineering evidence and acceptance",
+      "authority": "QPS_ONLY_ENGINEERING",
+      "link": "https://github.com/GBOGEB/cryoplant-project"
+    },
+    {
+      "id": "MATH",
+      "name": "GBOGEB/gg_MATH",
+      "sha": "4caaeae153927fef6c30ac728cb70fc8611d0ac8",
+      "role": "Model qualification, statistical / numerical methods",
+      "authority": "MODEL_SOURCE",
+      "link": "https://github.com/GBOGEB/gg_MATH"
+    },
+    {
+      "id": "DOCS",
+      "name": "GBOGEB/DOCX_RTM_Automation",
+      "sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "role": "RTM and outward document projections",
+      "authority": "PRESENTATION_ONLY",
+      "link": "https://github.com/GBOGEB/DOCX_RTM_Automation"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "MC",
+      "type": "repo",
+      "label": "MC",
+      "owner": "MC",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub",
+      "detail": "Orchestration, scheduling, observation, portal"
+    },
+    {
+      "id": "CODEX",
+      "type": "repo",
+      "label": "CODEX",
+      "owner": "CODEX",
+      "link": "https://github.com/GBOGEB/CODEX",
+      "detail": "KEB/Mycelium and authenticated gateway (stage-only)"
+    },
+    {
+      "id": "ABACUS",
+      "type": "repo",
+      "label": "ABACUS",
+      "owner": "ABACUS",
+      "link": "https://github.com/GBOGEB/ABACUS",
+      "detail": "DOW, LDAB, CI, coverage, source-owned repair"
+    },
+    {
+      "id": "QPS",
+      "type": "repo",
+      "label": "QPS",
+      "owner": "QPS",
+      "link": "https://github.com/GBOGEB/cryoplant-project",
+      "detail": "Controlled engineering evidence and acceptance"
+    },
+    {
+      "id": "MATH",
+      "type": "repo",
+      "label": "MATH",
+      "owner": "MATH",
+      "link": "https://github.com/GBOGEB/gg_MATH",
+      "detail": "Model qualification, statistical / numerical methods"
+    },
+    {
+      "id": "DOCS",
+      "type": "repo",
+      "label": "DOCS",
+      "owner": "DOCS",
+      "link": "https://github.com/GBOGEB/DOCX_RTM_Automation",
+      "detail": "RTM and outward document projections"
+    },
+    {
+      "id": "P00",
+      "type": "process",
+      "label": "Preflight / freeze",
+      "owner": "MC",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/docs/mission-control/m2/pipeline.html",
+      "detail": "Existing P00–P70 process stage. Presentation alone cannot prove execution."
+    },
+    {
+      "id": "P10",
+      "type": "process",
+      "label": "Census / discovery",
+      "owner": "MC",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/docs/mission-control/m2/pipeline.html",
+      "detail": "Existing P00–P70 process stage. Presentation alone cannot prove execution."
+    },
+    {
+      "id": "P20",
+      "type": "process",
+      "label": "LDAB first red",
+      "owner": "MC",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/docs/mission-control/m2/pipeline.html",
+      "detail": "Existing P00–P70 process stage. Presentation alone cannot prove execution."
+    },
+    {
+      "id": "P30",
+      "type": "process",
+      "label": "Graph / HTML",
+      "owner": "MC",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/docs/mission-control/m2/pipeline.html",
+      "detail": "Existing P00–P70 process stage. Presentation alone cannot prove execution."
+    },
+    {
+      "id": "P40",
+      "type": "process",
+      "label": "Office projection",
+      "owner": "MC",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/docs/mission-control/m2/pipeline.html",
+      "detail": "Existing P00–P70 process stage. Presentation alone cannot prove execution."
+    },
+    {
+      "id": "P50",
+      "type": "process",
+      "label": "Exact-head proof",
+      "owner": "MC",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/docs/mission-control/m2/pipeline.html",
+      "detail": "Existing P00–P70 process stage. Presentation alone cannot prove execution."
+    },
+    {
+      "id": "P60",
+      "type": "process",
+      "label": "Admission gate",
+      "owner": "MC",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/docs/mission-control/m2/pipeline.html",
+      "detail": "Existing P00–P70 process stage. Presentation alone cannot prove execution."
+    },
+    {
+      "id": "P70",
+      "type": "process",
+      "label": "DMAIC / REX",
+      "owner": "MC",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/docs/mission-control/m2/pipeline.html",
+      "detail": "Existing P00–P70 process stage. Presentation alone cannot prove execution."
+    },
+    {
+      "id": "KEB",
+      "type": "bridge",
+      "label": "KEB semantic",
+      "owner": "CODEX",
+      "link": "https://github.com/GBOGEB/CODEX/tree/main/mission_control/mycelium",
+      "detail": "Semantic/provenance bridge; cross-repo execution remains unverified."
+    },
+    {
+      "id": "DOW",
+      "type": "bridge",
+      "label": "DOW / LDAB",
+      "owner": "ABACUS",
+      "link": "https://github.com/GBOGEB/ABACUS/issues/1860",
+      "detail": "Native root and coverage diagnostics, no QPS acceptance."
+    },
+    {
+      "id": "QPS_IN",
+      "type": "bridge",
+      "label": "QPS return",
+      "owner": "QPS",
+      "link": "https://github.com/GBOGEB/cryoplant-project",
+      "detail": "Owner-authorized receipt required; UNKNOWN is not zero."
+    },
+    {
+      "id": "MATH_BRIDGE",
+      "type": "bridge",
+      "label": "gg_MATH bridge",
+      "owner": "MATH",
+      "link": "https://github.com/GBOGEB/gg_MATH",
+      "detail": "Method model handoff, observed return receipts not claimed."
+    },
+    {
+      "id": "REX",
+      "type": "bridge",
+      "label": "REX return",
+      "owner": "CODEX",
+      "link": "https://github.com/GBOGEB/CODEX/issues/977",
+      "detail": "Accepted remote return UNKNOWN, not zero."
+    },
+    {
+      "id": "HTML",
+      "type": "bridge",
+      "label": "HTML / Pages",
+      "owner": "MC",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub/tree/master/docs/mission-control/m2",
+      "detail": "Offline projection; Pages publication not verified."
+    },
+    {
+      "id": "SCHED",
+      "type": "orchestration",
+      "label": "Scheduler",
+      "owner": "MC",
+      "link": "https://github.com/GBOGEB/pipeline-automation-hub/tree/master/mission-control/v2",
+      "detail": "Dependency eligibility / ready queue, no implicit launch."
+    },
+    {
+      "id": "DISPATCH",
+      "type": "orchestration",
+      "label": "Dispatch gate",
+      "owner": "CODEX",
+      "link": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/execution_gateway_contract.yaml",
+      "detail": "Authenticated CODEX gateway stage-only; cross-repo mutation disabled."
+    },
+    {
+      "id": "WORKER",
+      "type": "orchestration",
+      "label": "Repo worker",
+      "owner": "ABACUS",
+      "link": "https://github.com/GBOGEB/ABACUS/actions/runs/39056877380",
+      "detail": "Eight DAB proposal-worker jobs ran natively; not authenticated CODEX Crew."
+    },
+    {
+      "id": "RUN",
+      "type": "orchestration",
+      "label": "Native run / job",
+      "owner": "ABACUS",
+      "link": "https://github.com/GBOGEB/ABACUS/actions/runs/39056877380",
+      "detail": "Run/job/attempt/source SHA must agree."
+    },
+    {
+      "id": "RECEIPT",
+      "type": "orchestration",
+      "label": "Artifact / proof",
+      "owner": "ABACUS",
+      "link": "https://api.github.com/repos/GBOGEB/ABACUS/actions/artifacts/12110186678",
+      "detail": "Artifact must be linked to same run and SHA."
+    },
+    {
+      "id": "ADMIT",
+      "type": "orchestration",
+      "label": "Human gate",
+      "owner": "ABACUS",
+      "link": "https://github.com/GBOGEB/ABACUS/issues/1860",
+      "detail": "Exact-head required contexts and human/security review: HOLD."
+    },
+    {
+      "id": "ROOT1885",
+      "type": "root",
+      "label": "Dashboard #1885",
+      "owner": "ABACUS",
+      "link": "https://github.com/GBOGEB/ABACUS/issues/1885",
+      "detail": "53 historical href occurrences / six duplicate-ticket closures, not proven root repair."
+    },
+    {
+      "id": "ROOT2162",
+      "type": "root",
+      "label": "B0 #2162",
+      "owner": "ABACUS",
+      "link": "https://github.com/GBOGEB/ABACUS/pull/2162",
+      "detail": "Canonical B0 has defusedxml import first-red."
+    },
+    {
+      "id": "ROOT2161",
+      "type": "root",
+      "label": "Py #2161",
+      "owner": "ABACUS",
+      "link": "https://github.com/GBOGEB/ABACUS/pull/2161",
+      "detail": "Normalized pytest-asyncio specifier assertions fail in native matrix."
+    }
+  ],
+  "edges": [
+    {
+      "from": "MATH",
+      "to": "MATH_BRIDGE",
+      "kind": "federation",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "MATH_BRIDGE",
+      "to": "KEB",
+      "kind": "federation",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "CODEX",
+      "to": "KEB",
+      "kind": "federation",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "KEB",
+      "to": "DOW",
+      "kind": "federation",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "ABACUS",
+      "to": "DOW",
+      "kind": "federation",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "DOW",
+      "to": "QPS_IN",
+      "kind": "federation",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "QPS_IN",
+      "to": "QPS",
+      "kind": "federation",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "QPS",
+      "to": "DOCS",
+      "kind": "federation",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "MC",
+      "to": "HTML",
+      "kind": "publication",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "MC",
+      "to": "SCHED",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "SCHED",
+      "to": "DISPATCH",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "DISPATCH",
+      "to": "WORKER",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "WORKER",
+      "to": "RUN",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "RUN",
+      "to": "RECEIPT",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "RECEIPT",
+      "to": "ADMIT",
+      "kind": "proof",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "ROOT1885",
+      "to": "P30",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "ROOT2161",
+      "to": "P20",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "ROOT2162",
+      "to": "P20",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "P00",
+      "to": "P10",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "P10",
+      "to": "P20",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "P20",
+      "to": "P30",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "P30",
+      "to": "P40",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "P40",
+      "to": "P50",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "P50",
+      "to": "P60",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "P60",
+      "to": "P70",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "P50",
+      "to": "ADMIT",
+      "kind": "proof",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "ADMIT",
+      "to": "P60",
+      "kind": "proof",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "DOW",
+      "to": "P20",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "HTML",
+      "to": "P30",
+      "kind": "dependency",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "P70",
+      "to": "SCHED",
+      "kind": "feedback",
+      "binding": "CONTROL_FEEDBACK_ONLY"
+    },
+    {
+      "from": "RECEIPT",
+      "to": "REX",
+      "kind": "federation",
+      "binding": "DECLARED"
+    },
+    {
+      "from": "REX",
+      "to": "P70",
+      "kind": "feedback",
+      "binding": "CONTROL_FEEDBACK_ONLY"
+    }
+  ],
+  "stages": [
+    {
+      "id": "P00",
+      "action": "Freeze exact repository heads and source authority"
+    },
+    {
+      "id": "P10",
+      "action": "Build read-only cohort and topology census"
+    },
+    {
+      "id": "P20",
+      "action": "Attach first-red / unique root-family evidence"
+    },
+    {
+      "id": "P30",
+      "action": "Render governed graph / HTML projections"
+    },
+    {
+      "id": "P40",
+      "action": "Generate document/slide projections only from source"
+    },
+    {
+      "id": "P50",
+      "action": "Validate native run / job / attempt and comparable denominators"
+    },
+    {
+      "id": "P60",
+      "action": "Apply independent protection, security and human-review gates"
+    },
+    {
+      "id": "P70",
+      "action": "Record accepted REX and DMAIC feedback only after proof"
+    }
+  ],
+  "sipoc": [
+    {
+      "id": "S1",
+      "supplier": "GitHub repo/branch owner",
+      "input": "Repo + exact default/head SHA",
+      "process": "Freeze source / census",
+      "output": "Pinned source inventory",
+      "customer": "Mission Control P00/P10",
+      "authority": "READ_ONLY"
+    },
+    {
+      "id": "S2",
+      "supplier": "CODEX Mycelium KEB",
+      "input": "Stage-only gateway contract + owner decision",
+      "process": "Check principal, scope, head, path/lock and replay",
+      "output": "Staged request or DENY",
+      "customer": "ABACUS-local dispatcher",
+      "authority": "REMOTE_MUTATION_DISABLED"
+    },
+    {
+      "id": "S3",
+      "supplier": "ABACUS native workflow",
+      "input": "Exact head, job, attempt, artifact and failure trace",
+      "process": "First-red diagnosis and disjoint repair",
+      "output": "Source-owner repair candidate + evidence",
+      "customer": "P50 native verification",
+      "authority": "HOLD"
+    },
+    {
+      "id": "S4",
+      "supplier": "QPS source owner",
+      "input": "Paired source-native engineering evidence",
+      "process": "ACCEPT / REJECT / DEFER",
+      "output": "Explicit QPS engineering decision",
+      "customer": "Federation / documents",
+      "authority": "QPS_OWNER_ONLY"
+    },
+    {
+      "id": "S5",
+      "supplier": "MC, gg_MATH and DOCS adapters",
+      "input": "Source-linked reports and typed models",
+      "process": "Render HTML, Mermaid, SIPOC, statistics and documents",
+      "output": "Non-authoritative rendition",
+      "customer": "Owner / review board",
+      "authority": "PRESENTATION_ONLY"
+    }
+  ],
+  "receipts": [
+    {
+      "id": "ABACUS-B0",
+      "class": "NATIVE_WORKFLOW",
+      "source_sha": "e053a4898fc74018b83092b0d2f8af2f4a909eb0",
+      "status": "FAILURE",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/39056877380",
+      "run_id": 39056877380,
+      "attempt": 1,
+      "job_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39056877380/job/117468668280",
+      "artifact_url": "https://api.github.com/repos/GBOGEB/ABACUS/actions/artifacts/12110186678/zip",
+      "job_population": {
+        "native_dab_proposals_successful": 8,
+        "native_dab_proposals_observed": 8
+      },
+      "credit": "NATIVE_PROPOSAL_ONLY_NOT_CODEX_CREW"
+    },
+    {
+      "id": "ABACUS-PY",
+      "class": "NATIVE_WORKFLOW",
+      "source_sha": "3d5554b7a62adc4b3df1760b7959fb390b7976c9",
+      "status": "FAILURE",
+      "url": "https://github.com/GBOGEB/ABACUS/actions/runs/39056628120",
+      "run_id": 39056628120,
+      "attempt": 1,
+      "job_url": "https://github.com/GBOGEB/ABACUS/actions/runs/39056628120/job/117465802923",
+      "artifact_url": null,
+      "job_population": {
+        "compatibility_failed": 3,
+        "compatibility_observed": 3
+      },
+      "credit": "FIRST_RED_CHANGE_NOT_ROOT_CLOSURE"
+    },
+    {
+      "id": "CODEX-975",
+      "class": "HISTORICAL_MERGED_PR",
+      "source_sha": "a4778553793bd2c0df2cc799fb163e846dc902f5",
+      "status": "MERGED_HISTORICAL_NOT_EXECUTION",
+      "url": "https://github.com/GBOGEB/CODEX/pull/975",
+      "run_id": null,
+      "attempt": null,
+      "job_url": null,
+      "artifact_url": null,
+      "merge_commit": "c51b3debd784558c6ccb9b85d091eb1decb38605",
+      "credit": "INVENTORY_REGEN_NOT_CREW_PROOF"
+    }
+  ],
+  "pulses": [
+    {
+      "id": "M3.P1",
+      "wave": "W1",
+      "repo": "MC",
+      "scope": "docs/mission-control/m3/** + isolated QA",
+      "status": "IMPLEMENTATION_CANDIDATE",
+      "dispatch": "NOT_A_RUNNER_LAUNCH",
+      "goal": "Typed M3 graph, launchpad, responsive static QA",
+      "next": "Exact-head PR CI, visual browser proof"
+    },
+    {
+      "id": "M3.P2",
+      "wave": "W2",
+      "repo": "CODEX",
+      "scope": "mission_control/mycelium/gateway/**",
+      "status": "PLANNED_OWNER_DECISION",
+      "dispatch": "STAGED_NOT_LAUNCHED",
+      "goal": "Bind authenticated ABACUS-local, nonmutating dispatch request",
+      "next": "Independent gateway decision and native control tests"
+    },
+    {
+      "id": "M3.P3",
+      "wave": "W3",
+      "repo": "ABACUS",
+      "scope": "Disjoint first-red source-owner paths in PR #2161 / #2162",
+      "status": "BLOCKED_NATIVE_FIRST_RED",
+      "dispatch": "NOT_LAUNCHED_BY_M3",
+      "goal": "Repair independently proven first-red, rerun exact-head CI",
+      "next": "Source owner repair, security, protection, eligible human review"
+    }
+  ]
+}

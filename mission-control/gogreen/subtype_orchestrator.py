@@ -15,6 +15,7 @@ from pathlib import Path
 SCHEMA = "missioncontrol.cbd-subtype-plan.v1"
 RECEIPT = "missioncontrol.cbd-subtype-receipt.v1"
 SHA = re.compile(r"^[0-9a-f]{40}$")
+REPO = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
 PRIORITY = {"P0": 0, "P1": 1, "P2": 2}
 CATEGORY = {
     "GOVERNANCE": 0,
@@ -79,7 +80,7 @@ def _validate_proof(proof, source_sha):
     artifact_id = proof.get("artifact_id")
     if artifact_id is not None:
         _positive(artifact_id, "artifact_id")
-    if proof.get("archive_bytes_verified") not in {True, False, None}:
+    if proof.get("archive_bytes_verified") is not None and type(proof.get("archive_bytes_verified")) is not bool:
         raise ValueError("invalid byte-verification state")
     return proof
 
@@ -113,7 +114,9 @@ def validate(data):
             raise ValueError("mode")
         if packet.get("phase") not in PHASES:
             raise ValueError("phase")
-        if not isinstance(packet.get("repo"), str) or "/" not in packet["repo"]:
+        if (not isinstance(packet.get("repo"), str)
+                or not REPO.fullmatch(packet["repo"])
+                or any(part in {".", ".."} for part in packet["repo"].split("/"))):
             raise ValueError("repo")
         if not isinstance(packet.get("source_sha"), str) or not SHA.fullmatch(packet["source_sha"]):
             raise ValueError("source_sha")
@@ -134,13 +137,14 @@ def validate(data):
         _count(packet.get("fingerprint_count"), "fingerprint_count")
         _validate_proof(packet.get("proof"), packet["source_sha"])
         approved = packet.get("independent_approval")
-        if approved not in {True, False, None}:
+        if approved is not None and type(approved) is not bool:
             raise ValueError("independent_approval")
         roots = _strings(packet.get("accepted_root_ids", []), "accepted_root_ids")
         if roots:
-            proof = packet.get("proof")
-            if approved is not True or not proof or proof.get("conclusion") != "PASS":
-                raise ValueError("accepted roots require independent passing proof")
+            # This read-only planner accepts caller-supplied JSON, not a signed
+            # independent approval channel. Even PASS + approval=true is merely
+            # a claim; accepting it would fabricate causal-root closure.
+            raise ValueError("untrusted accepted root closure: accepted roots require authenticated independent channel")
     return data
 
 
@@ -277,6 +281,8 @@ def plan(data):
             "occurrences_are_not_causal_roots": True,
             "planned_workers_are_not_launched_workers": True,
             "proof_without_independent_approval_is_not_root_closure": True,
+            "caller_asserted_approval_is_not_trusted_root_closure": True,
+            "source_bound_proof_counts_are_unverified_claims": True,
             "cross_head_metrics_are_not_coverage_uplift": True,
         },
     }

@@ -1,0 +1,47 @@
+{
+  "schema": "jade.temple.cohort_crosswalk.v1",
+  "n11_roster_source": "mission-control/federation-atlas/central/top21/TOP21_COHORT_ROSTER.json",
+  "green_roster_source": "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
+  "n11_count": 21,
+  "green_count": 21,
+  "intersection_count": 13,
+  "intersection": [
+    "ABACUS",
+    "CODEX",
+    "DOCX_RTM_Automation",
+    "GEMINI",
+    "Q_engineering_tools",
+    "cryo_leak_rate_dashboard",
+    "cryogenic-accelerator-workspace",
+    "cryoplant-project",
+    "document-organization-system",
+    "gg_MATH",
+    "github-mcp-server",
+    "pipeline-automation-hub",
+    "skills"
+  ],
+  "n11_only": [
+    "ariana",
+    "cli",
+    "docker-stacks",
+    "github_documentorganisatiesysteem_GBOGEB",
+    "prettier",
+    "python-sdk",
+    "vscode-powershell",
+    "yaml-grammar"
+  ],
+  "green_only": [
+    "CODESPACES_jyperter",
+    "CoolProp",
+    "GBOGEB",
+    "GBOGEB-profile",
+    "codespaces-jupyter",
+    "github_Documents",
+    "stale",
+    "telegraf"
+  ],
+  "merge_prohibition": "Never roll up N11 and historical GoGREEN denominators as one population",
+  "reconciliation_owner": "Mission Control Top21/GM owner",
+  "owner_approved_single_cohort": null,
+  "authority_transfer": false
+}

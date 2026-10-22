@@ -1,6 +1,6 @@
 {
   "schema": "missioncontrol.glossary_taxonomy.v2",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "as_of": "2026-09-27",
   "control_issue": "GBOGEB/pipeline-automation-hub#437",
   "authority_transfer": false,
@@ -240,7 +240,14 @@
     "THREE_WAVE_ADVANCEMENT": "3W: three coordinated outcome-level waves, each potentially containing multiple pulses; not equivalent to three execution steps.",
     "THREE_PULSE_CONTINUATION": "3P-CONT: exactly three consecutively evaluated bounded pulse transactions within a declared wave, N -> N+1 -> N+2 -> N+3; no skipped or backdated pulse.",
     "GOVERNED_N3_AUTO": "N3-AUTO: run 3P-CONT without routine interaction, using explicit scope, exact source identity, approved actions and resource leases, independent gates and a stop-on-major-blocker policy. Does not grant blanket dispatch or merge authority.",
-    "N3_START_ORDINAL": "N is an integer pulse ordinal in a declared wave, not the number of repos, workers, commits, tests, or a global mission version."
+    "N3_START_ORDINAL": "N is an integer pulse ordinal in a declared wave, not the number of repos, workers, commits, tests, or a global mission version.",
+    "3W": "CODEX global Three-Wave Delivery: three outcome-delivery packages. MissionControl local 3WSTAR remains source-contextual.",
+    "3MP": "CODEX global Three Measurement/Improvement Pulses: three source-bound feedback records; any HOLD does not confer accepted N increment.",
+    "G3A": "CODEX Governed Three-Advance Mission: target three distinct independently evidenced accepted gates; stop early at major blocker.",
+    "ADVANCE": "Evidence-qualified accepted checkpoint with owner/authority/required-gate confirmation; never inferred from a pulse, run, commit or PR merge.",
+    "N_PULSE": "Index of dispositioned measured pulse receipts; distinct from accepted engineering/mission checkpoint ordinal.",
+    "N_ACCEPTED": "Index of independently verified scoped acceptance checkpoints, which increases only when non-compensating requirements are satisfied.",
+    "3PSTAR_COLLISION": "Legacy MissionControl 3PSTAR displayed as 3P*, while method registry uses 3P* as a profile-family selector. New cross-repo identity MUST use 3MP/G3P and never bare 3P*."
   },
   "non_equivalences": [
     "CREW_ASSIGNMENT_NE_RUNNER_EXECUTION",
@@ -267,7 +274,11 @@
     "HANDS_OFF_NE_BACKGROUND_EXECUTION",
     "PULSE_COMPLETION_NE_MERGE_ADMISSION",
     "UNSUPERVISED_NE_UNGOVERNED",
-    "PREDICTED_METRIC_NE_OBSERVED_METRIC"
+    "PREDICTED_METRIC_NE_OBSERVED_METRIC",
+    "THREE_MEASURED_PULSES_NE_THREE_ACCEPTED_ADVANCES",
+    "THREE_WAVES_NE_THREE_ACCEPTED_ADVANCES",
+    "G3P_HOLD_RECEIPT_NE_G3A_ACCEPTED_CHECKPOINT",
+    "BARE_3P_STAR_ALIAS_NE_CROSS_REPO_TOKEN"
   ],
   "compatibility_aliases": {
     "COV-0": "MCOV-0",
@@ -290,7 +301,9 @@
     "n3_checkpoint": "owner/name::mission_id::N3-<execution_id>::PULSE-<1|2|3>",
     "n3_wave": "owner/name::mission_id::N3-<execution_id>::WAVE-<1|2|3>",
     "g3p_envelope": "owner/name::mission_id::W<label>::G3P",
-    "g3p_pulses": "owner/name::mission_id::W<label>::PULSE-1|PULSE-2|PULSE-3, scoped to one wave and bound to sequential evidence"
+    "g3p_pulses": "owner/name::mission_id::W<label>::PULSE-1|PULSE-2|PULSE-3, scoped to one wave and bound to sequential evidence",
+    "g3a_advance": "owner/name::mission_id::G3A-<execution_id>::ADVANCE-<1|2|3>",
+    "cross_repo_measured_pulse": "owner/name::mission_id::W<label>::PULSE-<id>"
   },
   "conflict_resolution_order": [
     "EXACT_MACHINE_FIELD_SEMANTICS",
@@ -541,7 +554,10 @@
     "formal_credit_delta": 0,
     "source_owner": "GBOGEB/pipeline-automation-hub::MissionControl",
     "executable_contract": "mission-control/gogreen/n3_continuation/protocol.py",
-    "charter_template": "mission-control/gogreen/n3_continuation/N3_CHARTER_TEMPLATE.json"
+    "charter_template": "mission-control/gogreen/n3_continuation/N3_CHARTER_TEMPLATE.json",
+    "cross_repo_resolution": "For new cross-repository payloads use CODEX global 3W/3MP/G3A. MissionControl G3P and 3PSTAR remain scoped legacy/local; 3P* alone is ambiguous; do not recast historical sources.",
+    "separate_accepted_checkpoint_ordinal": true,
+    "unsupervised_means": "IN_TURN_BOUNDED_WITH_STOP_GATES; no indefinite/background autonomy"
   },
   "g3p_operational_extension": {
     "as_of": "2026-10-17",
@@ -643,5 +659,133 @@
       "merge_admission": "INDEPENDENT",
       "authority_transfer": false
     }
+  },
+  "cross_repository_execution_units": {
+    "schema": "missioncontrol.execution_unit_crosswalk.v1",
+    "as_of": "2026-10-17",
+    "semantic_authority": "GBOGEB/CODEX::federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml",
+    "semantic_source_main_sha": "3a9fceda87087bc1f501f359fe2754e24c119575",
+    "control_owner": "GBOGEB/pipeline-automation-hub::MissionControl",
+    "purpose": "Additive cross-repository interpretation. No second SSOT, authorization, release credit or historical rewrite.",
+    "units": {
+      "3W": {
+        "name": "THREE_WAVE_DELIVERY",
+        "unit": "WAVE",
+        "missioncontrol_legacy": "3WSTAR",
+        "completion": "THREE_DISTINCT_WAVE_DISPOSITIONS",
+        "accepted_advance_implicit": false
+      },
+      "3MP": {
+        "name": "THREE_MEASUREMENT_IMPROVEMENT_PULSES",
+        "unit": "PULSE",
+        "missioncontrol_local": "3PSTAR",
+        "optional_envelope": "G3P",
+        "completion": "THREE_SOURCE_BOUND_PULSE_DISPOSITIONS",
+        "hold_may_complete_pulse": true,
+        "accepted_advance_implicit": false
+      },
+      "G3P": {
+        "name": "GOVERNED_THREE_PULSE_WAVE",
+        "unit": "WAVE_ENVELOPE",
+        "pulse_slots": 3,
+        "received_holds_do_not_prove_accepted_advances": true
+      },
+      "G3A": {
+        "name": "GOVERNED_THREE_ADVANCE_MISSION",
+        "unit": "ACCEPTED_CHECKPOINT",
+        "target_accepted_advances": 3,
+        "requires": "THREE_DISTINCT_INDEPENDENTLY_VERIFIED_ACCEPTANCE_GATES",
+        "stop_on_major_blocker": true,
+        "accepted_advance_implicit": false
+      }
+    },
+    "ordinal_contract": {
+      "n_pulse": "Three evidence-qualified pulse dispositions may include HOLD/DEFER and do not imply N_accepted delta.",
+      "n_accepted": "Only independently verified, scoped acceptance checkpoints increase this ordinal. Unknown or self-attested evidence never increments.",
+      "n3_continue": "Invocation/target; not a proof of N+3, not an ongoing background agent.",
+      "g3a_target": "Attempt N_accepted to N_accepted+3; return actual accepted ordinal and major blocker if fewer than three gates qualify."
+    },
+    "namespace_conflict": {
+      "3P*": "HISTORICAL_CONTEXTUAL_ONLY: legacy method-profile selector or local 3PSTAR display alias. Never persist bare 3P* as cross-repository measurement unit; use 3MP or fully qualified G3P.",
+      "3PR": "REFRESH_PROBE_RANK_METHOD_PROFILE_NOT_THREE_PULSES",
+      "3PC": "PREPARE_PROVE_COMMIT_METHOD_PROFILE_NOT_THREE_PULSES",
+      "3PSTAR": "MISSIONCONTROL_LOCAL_THREE_MEASURED_PULSE_COMPATIBILITY_TOKEN_NOT_GLOBAL_3PSTAR_SELECTOR",
+      "G3A": "ACCEPTED_GATE_LEVEL_DISTINCT_FROM_G3P_MEASURED_PULSE_LEVEL",
+      "N3_CONTINUE": "EXECUTION_REQUEST_NOT_AN_ACCEPTANCE_STATUS"
+    },
+    "kickoff_required": [
+      "mission_id",
+      "repository_scope",
+      "baseline_sha_and_observed_at",
+      "baseline_pulse_ordinal_and_accepted_ordinal",
+      "objective_and_dov",
+      "source_owner_path_leases",
+      "time_run_worker_budget",
+      "permitted_actions",
+      "mandatory_security_governance_stops",
+      "expected_metric_numerators_denominators_and_instrument",
+      "return_receipt_destination"
+    ],
+    "pulse_actions": [
+      {
+        "slot": 1,
+        "name": "N_PLUS_1_RECONCILE",
+        "method": "3PR",
+        "operations": [
+          "FRESH_EXACT_HEAD_CENSUS",
+          "FIRST_INDEPENDENT_RED_CLASSIFICATION",
+          "FREEZE_FORECAST_BEFORE_ACTION"
+        ],
+        "terminal": [
+          "SOURCE_BOUND_RECEIPT_OR_EXPLICIT_BLOCKER"
+        ]
+      },
+      {
+        "slot": 2,
+        "name": "N_PLUS_2_BUILD_AND_MEASURE",
+        "method": "3PC_IF_ADMITTED",
+        "operations": [
+          "DISJOINT_OWNER_WORK",
+          "BEHAVIORAL_POSITIVE_NEGATIVE_TESTS",
+          "MATCHED_STATEMENT_BRANCH_CHANGED_LINE_COVERAGE"
+        ],
+        "terminal": [
+          "EXACT_HEAD_TESTFLIGHT_OR_EXPLICIT_BLOCKER"
+        ]
+      },
+      {
+        "slot": 3,
+        "name": "N_PLUS_3_INTEGRATE_CONTROL_RETURN",
+        "method": "DMAIC_CONTROL",
+        "operations": [
+          "SERIAL_FANIN_ONLY_IF_AUTHORIZED",
+          "NATIVE_RUN_JOB_ATTEMPT_ARTIFACT_RECHECK",
+          "SIPOC_DAG_BD_REX_UPDATE",
+          "PLAN_VS_ACTUAL_AND_NEXT_LEGAL_ACTION"
+        ],
+        "terminal": [
+          "THREE_PULSE_LEDGER_AND_DISTINCT_G3A_ADVANCE_DISPOSITION"
+        ]
+      }
+    ],
+    "hard_stops": [
+      "P0_P1_SECURITY",
+      "A10_OWNER_REQUIRED",
+      "FAILED_OR_UNKNOWN_REQUIRED_GATE",
+      "UNAUTHENTICATED_EXACT_HEAD",
+      "OWNER_LEASE_CONFLICT",
+      "SOURCE_DRIFT_WITHOUT_REBASE",
+      "UNAUTHORIZED_MERGE_OR_RULESET_CHANGE",
+      "QPS_ENGINEERING_ACCEPTANCE_NEEDED",
+      "EXHAUSTED_EXECUTION_BUDGET"
+    ],
+    "independent_controls": {
+      "authority_transfer": false,
+      "security_waiver": false,
+      "automatic_main_merge": false,
+      "pca_bt_without_qualified_trials": false,
+      "no_background_work_claim": true
+    },
+    "source_scope_rule": "Existing CODEX global taxonomy, MissionControl G3P local envelope and ABACUS G3A consumer remain separate; do not promote feature-branch merges or locally passed tests into guarded main acceptance."
   }
 }

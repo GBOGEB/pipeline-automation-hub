@@ -1,0 +1,65 @@
+name: W5 GitHub-first lossless telemetry and graph QA
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/handoff/w5/**'
+      - '.github/workflows/w5-handover-telemetry-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  telemetry-reproducibility:
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        python-version: ['3.10','3.11','3.12']
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Exact-head checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Exact source identity and W5 negative tests
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_SHA"
+          python -m unittest discover -s mission-control/v2/handoff/w5 -p 'test_w5_handover.py' -v
+      - name: Canonical W4 CP.CLOSE byte-replay proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          C=mission-control/v2/handoff/closeout
+          python "$C/cp_close.py" --intake "$C/intakes/CP-FED-CENSUS-W4-20261018.json" --bd mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json --out "$C/records/CP-FED-CENSUS-W4-20261018" --check
+      - name: Emit source hash evidence (not REX)
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          PYTHON_LANE: ${{ matrix.python-version }}
+        run: |
+          set -euo pipefail
+          mkdir -p w5-native-proof
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path('mission-control/v2/handoff/w5')
+          names=['W5_CENSUS_TELEMETRY_20261018.json','W5_FEDERATION_DAG_20261018.json','HANDOVER_20261018.md','NEXT_CHAT_DROPIN_20261018.md','W5_POST_CAPTURE_NATIVE_PULSE_20261018.json','POST_CAPTURE_NATIVE_PULSE_20261018.md']
+          receipt={'schema':'missioncontrol.w5.native_qa.v1','exact_source_sha':os.environ['EXACT_SHA'],'run_id':int(os.environ['GITHUB_RUN_ID']),'attempt':int(os.environ['GITHUB_RUN_ATTEMPT']),'python_version':os.environ['PYTHON_LANE'],'files_sha256':{n:hashlib.sha256((root/n).read_bytes()).hexdigest() for n in names},'native_static_qa':'PASS','merge_admission':'HOLD','authenticated_remote_dispatch':None,'accepted_rex':None,'authority_transfer':False}
+          Path('w5-native-proof/receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+          print('W5_STATIC_NATIVE_PASS run='+str(receipt['run_id'])+' attempt='+str(receipt['attempt']))
+          PY
+      - name: Upload actual sha256 receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w5-public-census-${{ matrix.python-version }}
+          path: w5-native-proof/receipt.json
+          if-no-files-found: error

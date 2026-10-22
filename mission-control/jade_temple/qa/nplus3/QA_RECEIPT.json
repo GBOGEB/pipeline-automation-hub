@@ -1,0 +1,83 @@
+{
+  "artifacts": {
+    "csv": {
+      "path": "site/eightpoint.csv",
+      "sha256": "2258930bd153928754cf15821d1ee1307cd7743128c3d8d1827ff690228eb966",
+      "status": "PASS"
+    },
+    "html": {
+      "path": "site/eightpoint.html",
+      "sha256": "7a750795a33e7dcaecf009c870b9dec70d7816de4b969d1084c66b9544b16e43",
+      "status": "PASS"
+    },
+    "json": {
+      "path": "site/eightpoint.json",
+      "sha256": "8de7e4eb04711a271e7e893ce1a46ee3db93360663880b21363637d5c281188c",
+      "status": "PASS"
+    },
+    "site_manifest": {
+      "path": "site/eightpoint-manifest.json",
+      "sha256": "f32ef5438a1235557ce9e8b567f43abc8d941b6bef8aaadab1b64b61d1748ad6",
+      "status": "PASS"
+    }
+  },
+  "checks": {
+    "cross_format_parity": "PASS",
+    "formula_or_content": "PASS",
+    "hosted_pages": "DEFER",
+    "independent_governance": "DEFER",
+    "native_exact_pr_head": "DEFER",
+    "playwright": "PASS",
+    "render_visual": "PASS",
+    "structural": "PASS"
+  },
+  "defects": [
+    {
+      "description": "Local HTTP blocked by administrator; browser QA fell back to exact inlined source with explicit CSP adjustment; native served QA still required.",
+      "state": "LOCAL_REPAIRED"
+    }
+  ],
+  "evidence_level": "LOCAL_REPRODUCIBILITY",
+  "notes": [
+    "Preserves N+2 controller PASS and historical EVERRED first-reds",
+    "Not a point release, merged admission, hosted GitHub Pages or owner-approved hard gate",
+    "PR #733 final head was ccc016bf, historical tested head was 274ee97; no SHA substitution",
+    "N+3 source is a non-atomic dated observation; concurrent repo changes require recensus"
+  ],
+  "presentation_qa": {
+    "github_hosted_sha_verified": false,
+    "local_http_admin_blocked": true,
+    "local_real_csp": false,
+    "screenshots": [
+      "qa/nplus3/desktop.png",
+      "qa/nplus3/laptop.png",
+      "qa/nplus3/mobile.png"
+    ],
+    "viewports": 3
+  },
+  "schema": "qps-artifact-qa/1.0",
+  "source": {
+    "git_sha": null,
+    "locator": "mission-control/jade_temple/data/EIGHT_POINT_AUDIT_NPLUS3.json",
+    "semantic_sha256": "825037289dd4032ef54a2259c97c48baa7d67c7139b3fd565f5ebaea048a4b24"
+  },
+  "source_bound_metrics": {
+    "cohort_intersection": 13,
+    "eight_sections": 8,
+    "focused_branches": [
+      161,
+      182
+    ],
+    "focused_statements": [
+      454,
+      469
+    ],
+    "local_unit_tests": 130,
+    "n11_repos": 21,
+    "native_fleet_coverage": null,
+    "new_head_drift": 4,
+    "nine_gate_status": "HOLD",
+    "owner_accepted_closures": 0,
+    "owner_actions_open": 21
+  }
+}

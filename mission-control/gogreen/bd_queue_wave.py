@@ -24,6 +24,9 @@ from pathlib import Path
 
 SCHEMA = "codepurple.bd-queue-wave.v1"
 REPOS = ("GBOGEB/ABACUS", "GBOGEB/CODEX", "GBOGEB/pipeline-automation-hub", "GBOGEB/cryoplant-project")
+PUBLIC_REPOS = REPOS[:-1]
+PRIVATE_OWNER_REPO = REPOS[-1]
+PUBLIC_SCOPE = "LIVE_PUBLIC_THREE_REPO_PARTIAL_QPS_UNKNOWN"
 SHA = re.compile(r"^[a-f0-9]{40}$")
 RULES = (
     ("CONFIDENTIALITY", r"a10-guard|confidentiality"),
@@ -268,6 +271,32 @@ def scan(reader, repos=REPOS, max_parallel=4):
     summary, manifests = aggregate(out_rows, issues, errors)
     return summary, out_rows, manifests
 
+def scan_public(reader, max_parallel=4):
+    """Observe exactly three PUBLIC producers without probing private QPS.
+
+    The public source census can be successful while the four-repository
+    federation remains HOLD. A missing private owner receipt is never zero.
+    """
+    summary, rows, manifestations = scan(
+        reader, repos=PUBLIC_REPOS, max_parallel=max_parallel
+    )
+    _require(len(summary["issues"]) == len(PUBLIC_REPOS), "public readback incomplete")
+    _require({x["repository"] for x in summary["issues"]} == set(PUBLIC_REPOS),
+             "public source mismatch")
+    summary.update({
+        "scope": PUBLIC_SCOPE,
+        "observed_repositories": list(PUBLIC_REPOS),
+        "unobserved_private_repositories": [PRIVATE_OWNER_REPO],
+        "private_qps_open_issues": None,
+        "private_qps_open_prs": None,
+        "private_qps_root_closures": None,
+        "private_receipt_status": "HOLD_OWNER_PRIVATE_RECEIPT_REQUIRED",
+        "full_four_repo_census": False,
+        "federation_admission": "HOLD",
+        "public_is_not_global_denominator": True,
+    })
+    return summary, rows, manifestations
+
 
 def write_outputs(dest, summary, prs, manifest):
     dest = Path(dest)
@@ -288,7 +317,9 @@ def write_outputs(dest, summary, prs, manifest):
     for filename, data in payloads.items():
         (dest / filename).write_bytes(data)
     manifest_receipt = {"schema": "codepurple.bd-wave-files.v1", "files_sha256": {name: digest(data) for name, data in sorted(payloads.items())},
-                        "source_is_live_api": summary["scope"] == "LIVE_READ_ONLY_API_CENSUS", "dispatch_authorized": False, "root_closure_delta": 0}
+                        "source_is_live_api": summary["scope"] in ("LIVE_READ_ONLY_API_CENSUS", PUBLIC_SCOPE),
+                        "complete_federation_observed": summary["scope"] == "LIVE_READ_ONLY_API_CENSUS",
+                        "dispatch_authorized": False, "root_closure_delta": 0}
     receipt = stable(manifest_receipt)
     (dest / "bd_files_sha256.json").write_bytes(receipt)
     return {"files": sorted([*payloads, "bd_files_sha256.json"]), "manifest_sha256": digest(receipt)}
@@ -299,8 +330,14 @@ def main():
     p.add_argument("--out", required=True)
     p.add_argument("--token-env", default="GITHUB_TOKEN")
     p.add_argument("--max-parallel", type=int, default=4)
+    p.add_argument("--public-only", action="store_true",
+                   help="three public sources only; QPS private stays UNKNOWN/HOLD")
     a = p.parse_args()
-    summary, rows, failures = scan(GitHubReader(os.environ.get(a.token_env, "")), max_parallel=a.max_parallel)
+    reader = GitHubReader(os.environ.get(a.token_env, ""))
+    if a.public_only:
+        summary, rows, failures = scan_public(reader, max_parallel=a.max_parallel)
+    else:
+        summary, rows, failures = scan(reader, max_parallel=a.max_parallel)
     receipt = write_outputs(a.out, summary, rows, failures)
     print(json.dumps({"scope": summary["scope"], "open_items": summary["open_items"],
                       "open_prs": summary["open_prs"], "manifestations": summary["manifestations"],

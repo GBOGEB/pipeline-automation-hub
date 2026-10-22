@@ -1,0 +1,100 @@
+name: GOGREEN TOP21 Merged PR Outcome Census
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/merged_outcome_census/**'
+      - 'mission-control/federation-atlas/GOGREEN_TOP21_MERGED_RED_HANDOFF_*.json'
+      - '.github/workflows/gogreen-top21-merged-outcomes.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: gogreen-top21-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  classify-native-evidence:
+    name: TOP21 source-owned 41 PR / 509 check census and negative testflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Exact source and runtime identity
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          node -v
+          node -e "if(Number(process.versions.node.split('.')[0])<20)process.exit(2)"
+          node --check mission-control/gogreen/merged_outcome_census/collect_live.mjs
+      - name: Native positive/hostile tests and source coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gogreen-top21"
+          node --experimental-test-coverage --test \
+            mission-control/gogreen/merged_outcome_census/tests/analyze.test.mjs \
+            2>&1 | tee "$RUNNER_TEMP/gogreen-top21/native_tests.log"
+          grep -E '^# pass 26$' "$RUNNER_TEMP/gogreen-top21/native_tests.log"
+          grep -E '^# fail 0$' "$RUNNER_TEMP/gogreen-top21/native_tests.log"
+      - name: Emit exact-head read-only GoGREEN and EVERRED outputs
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          NATIVE_RUN_ID: ${{ github.run_id }}
+          NATIVE_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          node mission-control/gogreen/merged_outcome_census/analyze.mjs \
+            | tee "$RUNNER_TEMP/gogreen-top21/rollup_console.json"
+          cp -R mission-control/gogreen/merged_outcome_census/generated \
+            "$RUNNER_TEMP/gogreen-top21/generated"
+          mkdir -p "$RUNNER_TEMP/gogreen-top21/source"
+          cp -R mission-control/gogreen/merged_outcome_census \
+            "$RUNNER_TEMP/gogreen-top21/source/merged_outcome_census"
+          cp mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json \
+            "$RUNNER_TEMP/gogreen-top21/source/canonical_top21_roster.json"
+          cp mission-control/federation-atlas/GOGREEN_TOP21_MERGED_RED_HANDOFF_20261017.json \
+            "$RUNNER_TEMP/gogreen-top21/source/code_purple_handoff_pointer.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          d=Path(os.environ["RUNNER_TEMP"])/"gogreen-top21"
+          out=d/"generated"
+          r=json.loads((out/"rollup.json").read_text())
+          assert (r["roster_total"],r["repos_seen"],r["prs_sampled"],
+                  r["checks_observed"],r["failed_checks"])==(21,21,41,509,33)
+          assert (r["pre_red_prs"],r["post_red_prs"],r["green_prs"],r["unknown_prs"])==(6,9,23,5)
+          assert r["formal_root_closure_credit"]==0 and not r["merge_authorized"]
+          handoff=json.loads(Path("mission-control/federation-atlas/GOGREEN_TOP21_MERGED_RED_HANDOFF_20261017.json").read_text())
+          assert handoff["source_population"]["failed_check_manifestations"]==33
+          assert sum(x["failed_check_ids"] for x in handoff["observed_burden_by_repo"])==33
+          assert handoff["root_closure_credit"]==0 and not handoff["merge_authorized"]
+          assert handoff["historical_window_incomplete"] is True
+          m=json.loads((out/"manifest.json").read_text())
+          for f,expected in m["files_sha256"].items():
+              assert hashlib.sha256((out/f).read_bytes()).hexdigest()==expected
+          claim={"schema":"gogreen.top21.native-exact-head-receipt.v1",
+            "head":os.environ["SOURCE_SHA"],"run_id":int(os.environ["NATIVE_RUN_ID"]),
+            "attempt":int(os.environ["NATIVE_ATTEMPT"]),
+            "source_prs":41,"source_repos":21,"check_runs":509,
+            "failed_check_observations":33,
+            "manifest_sha256":hashlib.sha256((out/"manifest.json").read_bytes()).hexdigest(),
+            "historical_census_not_live_run":True,"newly_executed_feature_tests":26,
+            "native_job_log_first_red_extraction":False,
+            "global_fleet_coverage":None,"required_gate_admission":None,
+            "root_closure_credit":0,"merge_authorized":False}
+          (d/"native_receipt.json").write_text(json.dumps(claim,sort_keys=True,indent=2)+"\n")
+          print(json.dumps(claim,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: gogreen-top21-merged-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/gogreen-top21/
+          retention-days: 30
+          if-no-files-found: warn

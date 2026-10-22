@@ -1,0 +1,48 @@
+{
+  "schema": "code_purple.chat_continuation_transport_profile.v1",
+  "profile": "GITHUB_FIRST_MINIMAL",
+  "status": "DRAFT_ADDITIVE_CONSUMER",
+  "extends": "mission-control/v2/handoff/CP_HANDOFF_RESUME_V1.json",
+  "not_executable_api": true,
+  "not_background_scheduler": true,
+  "not_second_ssot": true,
+  "invocation": "CP.HANDOFF(scope=\"CURRENT_SESSION\",mode=\"GITHUB_FIRST_MINIMAL\",artifact=\"GITHUB_POINTERS+DROPIN+STATE\",horizon=\"G3P:N_TO_N_PLUS_3\")",
+  "resume": "CP.RESUME(source=\"GITHUB_FIRST\",mode=\"VERIFY_REFRESH_EXECUTE\",horizon=\"G3P:N_TO_N_PLUS_3\")",
+  "transport_precedence": [
+    "CANONICAL_GITHUB_CODE_AND_MANIFESTS",
+    "EXACT_HEAD_NATIVE_RUN_JOB_ATTEMPT",
+    "FROZEN_GITHUB_HANDOVER_POINTERS",
+    "USER_SCREENSHOT_UNBOUND_HISTORICAL",
+    "OPTIONAL_PORTABLE_ARCHIVE"
+  ],
+  "required_outputs": [
+    "HANDOVER_N13_N15_20261017.md",
+    "DROPIN_N13_N15_20261017.md",
+    "STATE_N13_N15_20261017.json"
+  ],
+  "archive_rule": "DO_NOT_CREATE_ARCHIVE_WHEN_ALL_DECISION_CRITICAL_DATA_HAS_VERIFIABLE_GITHUB_LOCATORS",
+  "archive_exception": "ONLY_FOR_REQUIRED_NON_GITHUB_ORIGINAL_BYTES_ACTUALLY_AVAILABLE;_SHA256_AND_ZIP_CRC_REQUIRED",
+  "source_authority": {
+    "contract": "mission-control/v2/handoff/CP_HANDOFF_RESUME_V1.json",
+    "glossary": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json",
+    "method": "mission-control/v2/MC_METHOD_PROFILE_REGISTRY_v1.json",
+    "crosswalk": "mission-control/v2/N3_G3A_G3P_EXECUTION_CROSSWALK.md",
+    "operator": "mission-control/v2/G3P_EXECUTION_OPERATOR.md",
+    "codex_taxonomy": "GBOGEB/CODEX:federation/mesh/GLOBAL_ACTION_TAXONOMY_v1.yaml"
+  },
+  "rules": {
+    "freeze_intent_authority": true,
+    "exact_sha_heads": true,
+    "include_run_job_attempt": true,
+    "non_atomic_snapshot_disclosed": true,
+    "source_and_base_lineage": true,
+    "separate_candidate_pulses_from_accepted_advances": true,
+    "no_stale_green_credit": true,
+    "unknown_is_not_zero": true,
+    "readback_before_action": true,
+    "security_waiver": false,
+    "authority_transfer": false,
+    "auto_merge": false,
+    "main_admission": "HOLD_UNTIL_VERIFIED"
+  }
+}

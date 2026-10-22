@@ -1,0 +1,241 @@
+{
+  "schema": "missioncontrol.code_purple.g3d_obligation_snapshot.v1",
+  "authority_transfer": false,
+  "merge_admission": "HOLD",
+  "security_waiver": false,
+  "parents": [
+    {
+      "id": "GOVERNANCE",
+      "status": "PARTIAL",
+      "canonical_issue": "https://github.com/GBOGEB/ABACUS/issues/2087"
+    },
+    {
+      "id": "ADMISSION",
+      "status": "BLOCKED_OWNER",
+      "canonical_issue": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "id": "CREDENTIALS",
+      "status": "BLOCKED_OWNER",
+      "canonical_issue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/636"
+    },
+    {
+      "id": "BROWSER",
+      "status": "PARTIAL",
+      "canonical_issue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/638"
+    },
+    {
+      "id": "FEDERATION",
+      "status": "HOLD",
+      "canonical_issue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/520"
+    }
+  ],
+  "history": [
+    {
+      "n": 0,
+      "source_sha": "6198d6cc411c6b6b836e1536edb7b4dc48aae24a",
+      "workflow_denominator": 188,
+      "classified": 164,
+      "evidence_class": "EXACT_SOURCE_AUDIT"
+    },
+    {
+      "n": 1,
+      "source_sha": "ef7062ce46bb8c0a3716a15c8f1b8847f568c29e",
+      "workflow_denominator": 188,
+      "classified": 172,
+      "evidence_class": "NATIVE_POLICY_AUDIT"
+    },
+    {
+      "n": 2,
+      "source_sha": "2cb4eb7ccde9014e49219e4e0114b8df4f0a97b7",
+      "workflow_denominator": 188,
+      "classified": 188,
+      "evidence_class": "EXACT_SOURCE_AUDIT"
+    }
+  ],
+  "source_multiple_matches": 0,
+  "terminal": [
+    {
+      "parent": "GOVERNANCE",
+      "source_sha": "ef7062ce46bb8c0a3716a15c8f1b8847f568c29e",
+      "run_id": 39133354888,
+      "attempt": 1,
+      "job_id": 117692839515,
+      "conclusion": "failure"
+    },
+    {
+      "parent": "BROWSER",
+      "source_sha": "6f083793bb74a997edb0518d678b06993f5b53e6",
+      "run_id": 39133481136,
+      "attempt": 1,
+      "job_id": 117693202930,
+      "conclusion": "failure"
+    },
+    {
+      "parent": "GOVERNANCE",
+      "source_sha": "2cb4eb7ccde9014e49219e4e0114b8df4f0a97b7",
+      "run_id": 39134912332,
+      "attempt": 1,
+      "job_id": null,
+      "conclusion": "queued"
+    }
+  ],
+  "fingerprints": [
+    {
+      "id": "POSTMERGE_ZERO_PASS_FALSE_GREEN",
+      "accepted_root_id": null,
+      "observed_occurrences": 1
+    },
+    {
+      "id": "ABACUS_METRICS_TOKEN_UNAVAILABLE",
+      "accepted_root_id": null,
+      "observed_occurrences": null
+    },
+    {
+      "id": "QPS_FEDERATION_HTTP_404",
+      "accepted_root_id": null,
+      "observed_occurrences": null
+    },
+    {
+      "id": "MC_W1_MOBILE_OVERFLOW",
+      "accepted_root_id": null,
+      "observed_occurrences": 1
+    },
+    {
+      "id": "MC_W2_PLOTLY_INLINE_INITIALIZATION",
+      "accepted_root_id": null,
+      "observed_occurrences": null
+    }
+  ],
+  "accepted_causal_root_closures": 0,
+  "human_worker_hours": null,
+  "runner_capacity_slots": null,
+  "coverage": {
+    "evidence_class": "HISTORICAL_MATCHED_SCOPE_ONLY",
+    "scope": "MC_531_HISTORICAL_MATCHED_SOURCE_SCOPE",
+    "statements": {
+      "scope": "MC_531_HISTORICAL_MATCHED_SOURCE_SCOPE",
+      "before": 78,
+      "after": 93,
+      "denominator": 93
+    },
+    "branches": {
+      "scope": "MC_531_HISTORICAL_MATCHED_SOURCE_SCOPE",
+      "before": 23,
+      "after": 26,
+      "denominator": 26
+    }
+  },
+  "historical_census": {
+    "observed": 6,
+    "eligible": 42
+  },
+  "forecasts": [
+    {
+      "target_n": 3,
+      "prediction": "FULL_GOVERNANCE_STILL_HOLD_UNTIL_DERIVED_REPORT_RECONCILED",
+      "confidence_class": "SOURCE_LOGICAL",
+      "issued_before_outcome": true,
+      "outcome": null,
+      "probability": null
+    },
+    {
+      "target_n": 4,
+      "prediction": "FEDERATION_STILL_HOLD_UNLESS_PRIVATE_QPS_RECEIVER_ACCEPTED",
+      "confidence_class": "OWNER_DEPENDENCY",
+      "issued_before_outcome": true,
+      "outcome": null,
+      "probability": null
+    }
+  ],
+  "live_epoch": {
+    "schema": "missioncontrol.code_purple.g3f_live_source_epoch.v1",
+    "evidence_class": "EXACT_SOURCE_AUDIT_PLUS_NATIVE_PR_GOVERNANCE",
+    "observed_at_utc": "2026-10-19T09:33:44Z",
+    "historical_fixed": {
+      "source_sha": "2cb4eb7ccde9014e49219e4e0114b8df4f0a97b7",
+      "workflow_total": 188,
+      "classified": 188
+    },
+    "arrivals_since_fixed": [
+      "cbd-w38-route-yield.yml",
+      "cbd-w38-source-branch.yml",
+      "cbd-w6c-office-style-qa.yml",
+      "code-purple-evidence-observatory.yml",
+      "code-purple-hosted-operator.yml",
+      "code-purple-w40-binary-penetration.yml",
+      "code-purple-w42-remaining-arcs.yml",
+      "code-purple-w43-matched-proof.yml",
+      "code-purple-w44-matched-proof.yml",
+      "dependency-spine-peer-census.yml",
+      "dependency-spine-stage-only.yml",
+      "mcl-roundtrip-hub-qa.yml",
+      "w007-runtime-validator-qa.yml",
+      "w13-neural-spine.yml",
+      "w26-testpilot-matched-coverage.yml",
+      "w28-testpilot-git-failure-coverage.yml",
+      "w29-cbd-temporal-matched-coverage.yml",
+      "w29-disjoint-frontier-coverage.yml",
+      "w33-backbone-pool.yml",
+      "w36-g3cs-skip-contract.yml",
+      "w38-local-pool-mip.yml"
+    ],
+    "retired_since_fixed": [],
+    "pre_repair": {
+      "source_sha": "09e02d0d60bffd39e601cc7622b53a64e3703799",
+      "workflow_total": 209,
+      "classified": 201
+    },
+    "repair_head": {
+      "source_sha": "f5a8816cddfc3d883dad2ab817d5b29773b74805",
+      "workflow_total": 209,
+      "classified": 209,
+      "newly_classified": [
+        "cbd-w38-route-yield.yml",
+        "cbd-w38-source-branch.yml",
+        "code-purple-hosted-operator.yml",
+        "code-purple-w40-binary-penetration.yml",
+        "code-purple-w42-remaining-arcs.yml",
+        "code-purple-w43-matched-proof.yml",
+        "code-purple-w44-matched-proof.yml",
+        "mcl-roundtrip-hub-qa.yml"
+      ],
+      "native_governance": {
+        "run_id": 39230923051,
+        "run_attempt": 1,
+        "job_id": 117988389828,
+        "conclusion": "success",
+        "unit_tests_run": 324,
+        "unit_tests_passed": 324,
+        "unit_tests_failed": 0,
+        "unit_tests_skipped": 0,
+        "extra_tests_run": 18,
+        "extra_tests_passed": 18,
+        "report_check": "PASS"
+      }
+    },
+    "main_source_at_observation": {
+      "source_sha": "16b63ac81d3fd5b1534a25afa3b5d171f19db6a8",
+      "workflow_total": 209,
+      "classified": 209,
+      "policy_blob_sha": "90e7989f2f8b270a4dd128a9ea81a3b28d2759b9",
+      "report_blob_sha": "61f800d9c2195a98892c29d088488d4d3a863508",
+      "native_main_run_id": null
+    },
+    "effective_governance_at_observation": {
+      "required_approving_reviews": 0,
+      "required_status_rules": 0,
+      "require_last_push_approval": false,
+      "required_review_thread_resolution": false,
+      "source": "https://github.com/GBOGEB/ABACUS/rules/24494381"
+    },
+    "fresh_authenticated_breadth": null,
+    "source_matched_new_coverage": null,
+    "actual_human_worker_hours": null,
+    "runner_slots": null,
+    "accepted_root_closures": 0,
+    "merge_admission": "HOLD",
+    "authority_transfer": false,
+    "security_waiver": false
+  }
+}

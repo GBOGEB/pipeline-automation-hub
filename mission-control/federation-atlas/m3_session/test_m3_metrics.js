@@ -1,0 +1,25 @@
+"use strict";
+const assert=require("node:assert/strict"),m=require("./m3_metrics");
+const H=i=>i.toString(16).padStart(40,"0");
+const one={cohort_key:"ABACUS/PY/CONTRACT_20261017",instrument_id:"coverage.py/branch-7.16.2",denominator:100,source_sha:H(1),n:1,numerator:40};
+let x=m.coverage([one]);assert.equal(x.current,null);assert.equal(x.numerator_delta,null);assert.equal(x.convergence,"INSUFFICIENT_MATCHED_SERIES");
+const cohort=[one,...[45,49,51,51,51].map((v,i)=>({...one,n:i+2,numerator:v,source_sha:H(i+2)}))];
+x=m.coverage(cohort);assert.equal(x.baseline.numerator,40);assert.equal(x.current.numerator,51);
+assert.equal(x.numerator_delta,11);assert.equal(x.percentage_point_delta,11);
+assert.equal(x.convergence,"NOT_STABLE"); // 5 transitions include positive improvements, insufficient plateau tail
+assert.equal(x.qualified_for_statistical_stability,false);
+const plateau=[one,...[41,41,41,41,41].map((v,i)=>({...one,n:i+2,numerator:v,source_sha:H(i+2)}))];
+assert.equal(m.coverage(plateau).convergence,"OBSERVED_PLATEAU_NOT_SIX_SIGMA");
+const fail=fn=>assert.throws(fn);
+fail(()=>m.coverage([{...one,denominator:0}]));
+fail(()=>m.coverage([one,{...one,n:2,source_sha:H(2),cohort_key:"different"}]));
+fail(()=>m.coverage([one,{...one,n:2,source_sha:H(2),denominator:200}]));
+fail(()=>m.coverage([one,{...one,n:1,source_sha:H(2)}]));
+fail(()=>m.coverage([one,{...one,n:2,source_sha:H(2),numerator:200}]));
+const samples=Array.from({length:19},(_,i)=>({job_id:i+1,created_at:"2026-10-17T18:00:00Z",started_at:"2026-10-17T18:03:00Z"}));
+assert.equal(m.queueP95(samples).queue_p95_minutes,null);
+assert.equal(m.queueP95([...samples,{job_id:20,created_at:"2026-10-17T18:00:00Z",started_at:"2026-10-17T18:11:00Z"}]).queue_p95_minutes,3);
+fail(()=>m.queueP95([{job_id:1,created_at:"2026-10-17T18:05:00Z",started_at:"2026-10-17T18:00:00Z"}]));
+const roots=m.rootClosures([{source_repo:"GBOGEB/ABACUS",signature:"DASHBOARD_HREF_DETECTOR",source_sha:H(8),repair_verified:false,housekeeping_tickets_closed:6}]);
+assert.equal(roots.distinct_root_candidates,1);assert.equal(roots.verified_closed_roots,0);assert.equal(roots.housekeeping_issue_closures_excluded,true);
+console.log("PASS M3 N-series denominators, plateau, latency sample floor and root/housekeeping split");

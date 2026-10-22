@@ -1,5 +1,128 @@
 # CODE PURPLE Federation Method Atlas (v0.1)
 
+## Execution Atlas · functional I/O, complete local workflow inventory and bounded rebuilds
+
+The existing publisher now also builds `orchestration/index.html`. Its source is
+[`orchestration/main.py`](orchestration/main.py), with a typed input/output overlay
+in [`orchestration/PIPELINE_CONTRACTS_v1.json`](orchestration/PIPELINE_CONTRACTS_v1.json)
+and an operator guide in
+[`orchestration/main.md`](orchestration/main.md). The canonical method registry,
+six KPI families, CPQ history and existing Superstitch sources remain the inputs.
+
+The joined view shows functional Python entrypoints and signatures, declared
+inputs and expected outputs, all discovered local workflow job DAGs, the Atlas
+workflow's ordered steps, canonical beams with feedback unrolled into the next
+pulse, method lanes, typed SIPOC, owner groups and CPQ dependencies. Static calls
+and YAML declarations are explicitly separate from observed execution. Every
+normalized graph emits canonical Mermaid and light/dark SVG; existing Mermaid
+source is retained in the manifest with its original source locator. The current
+profile has 15 functional blocks and seven typed joins, alongside the wider
+discovered inventory.
+
+`build`, `plan` and `run-local` execute only against their own checkout;
+`check --root` can inspect another root. Exact head identity and a dirty-source
+fingerprint bind all Mission Control files plus repository Python, workflow YAML,
+Mermaid and declared source inputs. The snapshot policy is explicit rather than
+a claim of runtime dependency tracing. A source-only broker plan is deterministic
+and has no wall-clock observation; absent remote capacity remains UNKNOWN.
+
+`run-local` executes registered existing generators through bounded workers and
+declared read/write leases, verifies outputs and joins the resulting files using
+the existing Pages packager. It records measured local task timings and failure
+dispositions. It does not launch GitHub jobs or provide distributed leases. The
+existing native render job now queues same-PR/ref invocations through one GitHub
+concurrency group; other repos and workflows remain outside that bound.
+To show these timings in a rebuilt child, use `build --local-receipt` with the
+completed `local-run.json`; the head and source digest must both match. Measured
+task time excludes later receipt attachment, bundle sealing and publication.
+
+```bash
+python mission-control/federation-atlas/orchestration/main.py check --root .
+python mission-control/federation-atlas/orchestration/main.py run-local \
+  --out ../atlas-review --head "$(git rev-parse HEAD)" --workers 2
+```
+
+Programme tags are additive under the existing Superstitch taxonomy: GoGREEN,
+EVERRED, CODE_PURPLE, CODE_MAROON, JADE_TEMPLE, JADE_CASTE and the P-process
+composition. B&B remains an explicitly unresolved user label until a source
+definition is bound. SPINE and SPLINE retain their existing meanings.
+
+CPQ dispositions, JADE owner actions, historical federation breadth and
+authenticated pairs retain distinct denominators. Missing cohort/configuration
+identity breaks temporal comparison; missing measurements are gaps. Package
+verification checks exact output members and the current consumed source bytes.
+Source builds and local test receipts do not grant admission or engineering credit.
+
+The coverage view is generated from
+[`COVERAGE_OBSERVATIONS_v1.json`](orchestration/COVERAGE_OBSERVATIONS_v1.json)
+and its user-attachment provenance. QPS 2016/2017 (10 modules), QPS 2014 N6
+(12 modules), later QPS main (15 inventory modules, coverage UNKNOWN), ABACUS
+broad history, gg_MATH focused history and CODEX UNKNOWN remain separate.
+QPS's nine additional covered statements over 852 eligible are **1.06 percentage
+points** from exact counts; the attachment's 1.05 is a rounded-card difference.
+The historical comparison is not independently verified. Live comparison keys
+require actual source/configuration/denominator identities and native receipts;
+unknown current metrics never become passing gates or a portfolio total.
+Inventory, zero-coverage, behavior and aggregate gates are noncompensating.
+`metric_observations.json` and `coverage_burndown.jsonl` are generated outputs.
+Available committed registry events must remain an identical ordered prefix;
+corrections append superseding events. JSONL is a regenerated read projection,
+not a separately maintained persistent log.
+
+## W35 · granular purple lasso DAG, Mermaid, SIPOC and SPLINE (19 October 2026)
+
+W35 is an ADDITIVE source-owned enhancement to the existing Method Atlas publisher. It is not a new scheduler, QPS engineering SSOT, authenticated federation producer or GitHub action launcher.
+
+The user-facing Superstitch now has ten selectable purple bounded groups: six owner DAG lanes and four overlapping cross-DAG groups (federation, Golden Thread, canonical alias Mycelium and bounded first-red feedback). Node aliases retain their stable canonical IDs. Freehand/rectangle lasso creates a TEMPORARY local visual selection only. Clicking a group shows the source-bound node hierarchy, child DAG and typed internal/dependency/touch edges; clicking a nested node opens its source/provenance inspector.
+
+The synchronized views are: (1) bounded child SVG, (2) five clickable SIPOC source/process swimlanes, (3) typed trigger/dependency/federation DAG with declared/non-native edges, (4) historical SPLINE with N+1 UNKNOWN, never a fabricated upward trend, and (5) editable Mermaid source. The code generators use source groups in SUPERSTITCH_GROUPS_W35.json and stitch_views.py. Machine-readable outputs include superstitch.mmd, sipoc-lanes.mmd, trigger-dag.mmd, sipoc-lanes.svg and trigger-dag.svg.
+
+PURPLE BURNDOWN RULE: show only one eligible denominator per source population. MC #531 historical breadth = 6/42; authenticated CODEX→QPS pair = 0/1; gg_MATH W33 single-module statements = 172/172 and branches = 84/84; three repeated identity mappings = TOPOLOGY_ONLY, not evidence. All other group completion is UNKNOWN, not 0%. Worker-hours, M2/M3, PCA/BT and QPS owner acceptance cannot be inferred from UI composition.
+
+The source-rendered review package consists of 16 SHA-256+byte-verified members plus manifest, atomically added to the existing Pages site. The local/homed TESTFLIGHT records actual 26+ source tests and all package members. Native PR browser QA checks ten group selectors, clickable SIPOC, typed trigger view, editable Mermaid, spline UNKNOWN, freeform lasso, canonical nested nodes, 1440/1280/390 viewports, zero console errors and zero document overflow. This is visual/local evidence, not branch-governance acceptance.
+
+HOME invocation: python mission-control/federation-atlas/superstitch/testflight.py --mode home --browser --out /tmp/w35-home
+
+Predecessor #735 merged while its Zero-Test Gate was RED. W35 must have an independent draft PR, exact-head native artifacts, security, effective protection and eligible review before any admission. Canonical #530 ZIP verifier, #531 six-repository census and #533 Method Atlas viewer remain unchanged. MERGE_ADMISSION=HOLD.
+
+## W34 Superstitch — DOW → KEB → QPS digital-twin review (19 October 2026)
+
+The existing Method Atlas workflow remains the **only** public GitHub Pages publisher. The additive /superstitch/index.html is a read-only, uncropped six-lane DOW/KEB/QPS/Mission-Control/gg_MATH/TESTFLIGHT view, not a source-of-truth replacement or a QPS engineering acceptance path.
+
+Source: super­stitch/SUPERSTITCH_SOURCE_v1.json, SUPERSTITCH_TAXONOMY_v1.json and SUPERSTITCH_GLOSSARY_v1.json (all in mission-control/federation-atlas/superstitch/). The namespace defines 29 node placements, 26 canonical identities, three visibly repeated aliases and typed role-only / declared / touch / feedback edges. The source graph is always fully available. The UI adds accessible click-to-inspect level 1/2/3 hierarchy, duplicate highlighting, filterable edge lenses, and adjacent SIPOC/dependency/temporal/DAG activity views. No fabricated live/queued status; absent run/attempt/job timestamps remain UNKNOWN.
+
+Rendering: super­stitch/build.py writes eight review members plus an exact-head, byte-checked manifest.json. The existing pages_portal.py copies the complete verified package, and the existing code-purple-method-atlas.yml executes test_superstitch.py, W34 HOME/PR-style TESTFLIGHT, three viewports (1440x1000 / 1280x800 / 390x844), no-CDN browser interaction checks, and a structural pixel/edge pattern scanner before publishing. This is *local reproducibility on a native runner*, not independent workflow admission. GitHub exact SHA, job, run attempt, artifact byte verification and independent review are separate requirements.
+
+Local pre-PR command (run from the full repository checkout after staging changes):
+
+    python mission-control/federation-atlas/superstitch/testflight.py --mode home --browser --out /tmp/w34-home-testflight
+
+The HOME receipt reports staged-file count/hash and F0-F4 check results. It is LOCAL_PREVIEW_NOT_STAGED, not green staging, when nothing is staged. The PR workflow uses --mode pr --expected-head with its own checked-out exact source; F5-F7 native acceptance, owner review and federation are never self-certified by HOME.
+
+Outward family: HTML/SVG/JSON (same Pages publisher), optional PptxGenJS export_deck.js montage and QA PNGs, plus disjoint gg_MATH kernels/visual_engine_bridge.py for offline Plotly HTML and Matplotlib PNG/SVG reproducibility. The optional external engine scout lists public upstream Plotly, Matplotlib, Cytoscape, ELKjs, OpenAI Agents and Anthropic Cookbook with evaluation/attribution, **no copied upstream source or promoted external acceptance**. Taxonomy/glossary are additive to the canonical MC v2 glossary and six phase02 KPI family definitions.
+
+Authority stays #530 ZIP verifier, #531 canonical six-repo census producer, #533 Method Atlas lane viewer; historical breadth 6/42, authenticated CODEX→QPS pair 0/1, QPS DEFER, worker-hours UNKNOWN, M1 PARTIAL and M2/M3 HOLD. This W34 view carries no security waiver, formal coverage uplift, merge approval or private QPS engineering record.
+
+
+## W32 Global DoV concentrated entrypoint (18 October 2026)
+
+The same Method Atlas/Pages workflow now publishes a read-only **Global DoV Convergence Hub** at `convergence/index.html` inside the existing portal root index. Its `ledger.json` and SHA-256 `manifest.json` are hash-verified, and `lineage.mmd` links native source owners to CP.W10 Golden Thread.
+
+Source-controlled observation: `CONVERGENCE_HUB_SOURCES_W32.json`; generator: `convergence_hub.py`; native contract: `test_convergence_hub.py`; rendered-browser proof: `convergence_browser_qa.py` in the existing Method Atlas workflow. **No new publisher or six-repo producer.** GitHub browser status refresh is a clearly separated UNVERIFIED overlay, not an authenticated artifact readback, native test, or admission gate. Historical counts are frozen and retain independent denominators.
+
+The companion [W32 Global DoV / Golden Thread handover](CONVERGENCE_HUB_W32_HANDOVER.md) preserves N-1/N/N+1 coverage families, W75/W64 focused case evidence, unknown worker-hours, M1/M2/M3 and PCA/BT gates, 6/42 canonical breadth, 124/157 W31 two-repository run identities, scope-stop/retrigger and CP.W10 restart.
+
+Run the focused producer and tests on the current source:
+
+```bash
+python -m unittest discover -s mission-control/federation-atlas -p test_convergence_hub.py -v
+python mission-control/federation-atlas/convergence_hub.py --out /tmp/code-purple-atlas/convergence --head $(git rev-parse HEAD)
+python mission-control/federation-atlas/convergence_hub.py --out /tmp/code-purple-atlas/convergence --head $(git rev-parse HEAD) --verify-only
+```
+
+Browser QA requires Playwright Chromium and runs in the existing source-head workflow; a local render is **LOCAL_REPRODUCIBILITY**, not exact-head native or hosted Pages proof.
+
+
 Owned by `GBOGEB/pipeline-automation-hub` Mission Control. A read-only projection, not another QPS engineering authority, release writer, or Pages publisher.
 
 ## Bounded run / task

@@ -1,0 +1,344 @@
+{
+  "schema": "missioncontrol.superstitch.taxonomy.v1",
+  "parent_glossary": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json",
+  "parent_kpis": "mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json",
+  "authority_transfer": false,
+  "status": "ADDITIVE_VIEW_TAXONOMY_NOT_REPLACEMENT",
+  "node_kinds": [
+    "source",
+    "process",
+    "receipt",
+    "verifier",
+    "producer",
+    "viewer",
+    "gate",
+    "handover",
+    "trigger",
+    "provider",
+    "method",
+    "testflight",
+    "duplicate"
+  ],
+  "edge_kinds": [
+    "INPUT",
+    "FLOW",
+    "FEDERATION",
+    "EVIDENCE",
+    "DEPENDENCY",
+    "HANDOVER",
+    "TRIGGER",
+    "TESTFLIGHT",
+    "RETRIGGER",
+    "TOUCH"
+  ],
+  "bindings": {
+    "NATIVE_RECEIPT": "Only with exact repository SHA, run ID, attempt, job, verified artifact member hash",
+    "ROLE_ONLY": "Canonical responsibility, not evidence of an execution",
+    "DECLARED": "Source-defined intended interface; must render dashed",
+    "DESIGN_ONLY": "Proposed local/testflight dependency; must render dashed"
+  },
+  "status_classes": {
+    "HISTORICAL_PASS": "Source-bound earlier native proof, never live",
+    "CANONICAL_ROLE": "Existing role; no implied execution",
+    "DECLARED": "Defined process relationship without native trigger",
+    "PROPOSED": "Not activated or automatically scheduled",
+    "OWNER_ONLY": "Requires child engineering authority",
+    "HOLD": "Explicit acceptance blocker",
+    "ALIAS": "Graph placement duplicate sharing canonical identity",
+    "DESIGNED_NOT_EXECUTED": "Testflight stage designed, not run",
+    "NATIVE_REQUIRED": "Next run requires exact runner job/attempt"
+  },
+  "required_native_identity": [
+    "repository",
+    "head_sha",
+    "run_id",
+    "run_attempt",
+    "job_id",
+    "artifact_id",
+    "member_sha256",
+    "observed_at_utc"
+  ],
+  "graph_join_key": "canonical_id",
+  "observation_key": "repository+head_sha+run_id+run_attempt+job_id",
+  "coverage_key": "repository+head_sha+file_scope_hash+instrumentation_version+branch_and_statement_denominators",
+  "unknown_semantics": "null means missing/unknown; not zero, not green",
+  "temporal_class": "HISTORICAL | CURRENT_NATIVE | PROPOSED | FORECAST_ONLY | UNKNOWN",
+  "private_qps_publication": "METADATA_ONLY, zero private child source payload",
+  "prohibited_promotions": [
+    "mock_running_to_native",
+    "local_testflight_to_approval",
+    "merge_to_owner_acceptance",
+    "historical_breadth_to_current",
+    "synthetic_to_measurement",
+    "DAG_TOUCH_to_authenticated_transfer"
+  ],
+  "visual_engines": {
+    "html": "interactive inspectable hierarchy",
+    "svg": "vector-typed native graph and spline",
+    "png": "screenshot or Matplotlib exported raster",
+    "pptx": "read-only snapshot from same semantic JSON",
+    "plotly": "optional offline interactive numeric view",
+    "matplotlib": "optional numerical PNG/SVG parity"
+  },
+  "sampling_guard": "PCA and BT qualify only with enough independent comparable samples and a connected pairwise design",
+  "W35_additive_views": {
+    "release": "W35-N+1-PROPOSED",
+    "view_modes": [
+      "UNCOLLAPSED_SVG",
+      "BOUNDED_CHILD_DAG",
+      "SIPOC_AS_LANES",
+      "TRIGGER_DEPENDENCY_DAG",
+      "SPLINE_HISTORICAL_ONLY",
+      "MERMAID_TYPED_SOURCE"
+    ],
+    "selection": [
+      "SOURCE_GROUP_BOUNDARY",
+      "MULTI_TOUCH_ALIAS",
+      "UI_ONLY_POINTER_LASSO",
+      "CANONICAL_NODE_DRILLDOWN"
+    ],
+    "metric_scope_separation": [
+      "HISTORICAL_SIX_REPO_6_OF_42",
+      "AUTHENTICATED_PAIR_0_OF_1",
+      "G3P_W33_MODULE_STATEMENTS_172_OF_172",
+      "G3P_W33_MODULE_BRANCHES_84_OF_84",
+      "ALIAS_TOPOLOGY_3_OF_3_NOT_PROOF",
+      "OTHER_UNKNOWN"
+    ],
+    "forbid_metric_promotion": [
+      "NONE_MEANS_UNKNOWN_NOT_ZERO",
+      "NO_CROSS_DENOMINATOR_ROLLUP",
+      "GROUP_BOUNDARY_NOT_RUNTIME_PROGRESS",
+      "DECLARED_TRIGGER_NOT_DISPATCH"
+    ],
+    "permitted_source_groups": [
+      "OWNER_LANE",
+      "CROSS_DAG"
+    ],
+    "mermaid": "OFFLINE_TYPED_EDITABLE_SOURCE_WITH_STABLE_NODE_IDS",
+    "spline": "NO_NUMERIC_FORWARD_INTERPOLATION_WHEN_NEXT_PULSE_UNKNOWN",
+    "canonical_roles": {
+      "zip_verifier": "MC-530",
+      "breadth_producer": "MC-531",
+      "method_viewer": "MC-533"
+    },
+    "authority_transfer": false,
+    "QPS_owner_acceptance": null,
+    "merge_admission": "HOLD"
+  },
+  "PROGRAMMES": {
+    "schema": "missioncontrol.superstitch.programmes.v1",
+    "status": "ADDITIVE_SOURCE_BOUND_CLASSIFICATION",
+    "parent_authority": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json",
+    "source_baseline_sha": "8df6383d4253e1765ac86fbf508cd99bb987144c",
+    "historical_interpretation": "Preserve historical source spelling and meaning. Normalize aliases only in explicitly typed new programme fields; do not rewrite old artifacts.",
+    "authority_transfer": false,
+    "records": [
+      {
+        "id": "GOGREEN",
+        "label": "GoGREEN",
+        "aliases": [
+          "GOGREEN",
+          "GoGREEN",
+          "GoGreen"
+        ],
+        "purpose": "Observe source-bound successful behavior, verify its evidence, widen proof and plan bounded resilience and coverage experiments.",
+        "definition_status": "SOURCE_DEFINED",
+        "source_refs": [
+          "mission-control/gogreen/README.md"
+        ],
+        "authority_boundary": "PASS is an observation. New failures return to the source root owner; a programme label does not prove current-head admission or statistical stability."
+      },
+      {
+        "id": "EVERRED",
+        "label": "EVERRED",
+        "aliases": [
+          "EVERRED",
+          "EVERRED 3.0"
+        ],
+        "purpose": "Recurring health census and root-cause repair: harvest, classify, assign one root/owner, repair, verify, admit, control and recur.",
+        "definition_status": "SOURCE_DEFINED",
+        "source_refs": [
+          "mission-control/qps-triage-ultra/p-process/README.md",
+          "mission-control/qps-triage-ultra/p-process/p_process.yaml"
+        ],
+        "authority_boundary": "Occurrences, signatures, candidate roots and independently accepted root closures remain separate. Standing cadence in the method is not proof of a running monitor."
+      },
+      {
+        "id": "CODE_PURPLE",
+        "label": "CODE PURPLE",
+        "aliases": [
+          "CODE PURPLE",
+          "Code Purple",
+          "CODE_PURPLE",
+          "C-PURPLE"
+        ],
+        "purpose": "Govern critical quality, evidence and admission recovery; in the P process, concentrate bounded resources on an acute owner-declared blocker.",
+        "definition_status": "SOURCE_DEFINED",
+        "source_refs": [
+          "mission-control/jade_temple/02_CHARTER.md",
+          "mission-control/qps-triage-ultra/p-process/p_process.yaml"
+        ],
+        "authority_boundary": "Existing incident entry, lift and inherited-root handoff rules remain source-owned. A colour or tag does not activate incident mode, break glass, waive gates or authorize release."
+      },
+      {
+        "id": "CODE_MAROON",
+        "label": "CODE MAROON",
+        "aliases": [
+          "CODE_MAROON",
+          "CODE MAROON",
+          "Maroon"
+        ],
+        "purpose": "Classify review and security debt with separate source receipts, manifestation/fingerprint deduplication and closed, deferred and outstanding dispositions.",
+        "definition_status": "SOURCE_DECLARED_INSTANCE",
+        "source_refs": [
+          "mission-control/gogreen/SIPOC_INSTANCE_DAG.md",
+          "mission-control/gogreen/samples/sipoc_instance_wave_20261016.json",
+          "mission-control/gogreen/samples/cbd_abacus_20261016.json"
+        ],
+        "authority_boundary": "The local sources describe the review-security instance. Preserve scanner/SARIF and review provenance independently; this mapping establishes neither current counts nor automatic finding closure."
+      },
+      {
+        "id": "JADE_TEMPLE",
+        "label": "JADE TEMPLE",
+        "aliases": [
+          "JADE_TEMPLE",
+          "JADE TEMPLE"
+        ],
+        "family": "JADE",
+        "purpose": "Provide programme continuity, shared instructions, human review artifacts and navigation for owner-defined release-candidate preparation.",
+        "definition_status": "SOURCE_DEFINED",
+        "source_refs": [
+          "mission-control/jade_temple/02_CHARTER.md",
+          "mission-control/jade_temple/README.md"
+        ],
+        "authority_boundary": "Uses existing cohort, root ledger, scheduler and Pages publisher. QPS and each repository retain their own acceptance and release authority."
+      },
+      {
+        "id": "JADE_CASTE",
+        "label": "JADE CASTE",
+        "aliases": [
+          "JADE_CASTE",
+          "JADE CASTE"
+        ],
+        "family": "JADE",
+        "purpose": "Describe the source-bound repository readiness ladder J0 inventoried, J1 navigable, J2 published, J3 governed candidate, J4 release ready and J5 owner released.",
+        "definition_status": "SOURCE_DEFINED",
+        "source_refs": [
+          "mission-control/jade_temple/02_CHARTER.md",
+          "mission-control/jade_temple/03_JADE_CASTE_METHOD.md"
+        ],
+        "authority_boundary": "Bare JADE does not identify a level. J4 is candidate qualification; J5 needs independently supported owner release. Unknown applicability remains explicit."
+      },
+      {
+        "id": "P_PROCESS",
+        "label": "P process",
+        "aliases": [
+          "P_PROCESS",
+          "P process",
+          "P-process"
+        ],
+        "purpose": "Coordinate acute CODE_PURPLE and recurring EVERRED modes using the existing incident escalation, lift and inherited-root handoff contract.",
+        "definition_status": "SOURCE_DEFINED",
+        "source_refs": [
+          "mission-control/qps-triage-ultra/p-process/README.md",
+          "mission-control/qps-triage-ultra/p-process/p_process.yaml"
+        ],
+        "authority_boundary": "p_process.yaml and p_decide.py own the transition logic. This taxonomy is a projection and does not create a second mode controller."
+      },
+      {
+        "id": "BREAD_AND_BUTTER",
+        "label": "B&B / Bread & Butter",
+        "aliases": [
+          "B&B",
+          "Bread & Butter",
+          "BREAD & BUTTER"
+        ],
+        "purpose": null,
+        "definition_status": "UNRESOLVED_USER_LABEL",
+        "source_refs": [],
+        "authority_boundary": "Requested programme label retained for discovery. No authoritative definition or code binding was found in the current checkout; do not infer that it means CODE_PURPLE, JADE, CBD! or ordinary maintenance."
+      }
+    ],
+    "families": {
+      "JADE": {
+        "members": [
+          "JADE_TEMPLE",
+          "JADE_CASTE"
+        ],
+        "rule": "Resolve the intended member or preserve the family label; never infer readiness from the family."
+      }
+    },
+    "composition": {
+      "tag_fields": [
+        "programmes",
+        "method_profile",
+        "execution_unit",
+        "repository",
+        "mission_id",
+        "sprint_id",
+        "wave_id",
+        "pulse_id",
+        "run_id",
+        "priority",
+        "health",
+        "disposition",
+        "evidence_class"
+      ],
+      "rule": "Programme tags may compose as a set; method, execution unit, priority, health, readiness and evidence remain orthogonal fields. Composition does not sum populations or transfer authority.",
+      "examples": [
+        {
+          "programmes": [
+            "CODE_PURPLE",
+            "EVERRED",
+            "CODE_MAROON"
+          ],
+          "method_profile": "DMAIC",
+          "execution_unit": "G3P",
+          "meaning": "A security-root workstream inside a governed three-pulse recovery wave; observed and accepted root counts retain their source scopes."
+        },
+        {
+          "programmes": [
+            "GOGREEN",
+            "JADE_CASTE"
+          ],
+          "method_profile": "3PR",
+          "execution_unit": "3MP",
+          "meaning": "Refresh, probe and rank positive evidence for repository readiness during three measured pulses; neither a PASS nor a pulse increments J-level automatically."
+        }
+      ],
+      "alias_scope": "Only programme/family fields; palette colours, old filenames, bare P1/P2/P3, bare W labels and method aliases are not programme identities.",
+      "unknown_rule": "Preserve unresolved label, source and null meaning; exclude it from dispatch predicates until a source-owned mapping exists."
+    },
+    "execution_hierarchy": {
+      "levels": [
+        "MISSION",
+        "SPRINT",
+        "WAVE",
+        "PULSE",
+        "RUN"
+      ],
+      "definitions_source": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json#core_terms",
+      "identity_rule": "Qualify repository, mission and wave; keep sprint_id as planning context, pulse_id distinct from priority, and native run_id/run_attempt/job_id distinct from logical worker IDs.",
+      "pulse_example": "GBOGEB/pipeline-automation-hub::METHOD_ATLAS_IO::W1::PULSE-1",
+      "counts": "A sprint contains one or more waves; a wave coordinates pulses; a pulse may have zero or more runs, including an explicit blocked disposition.",
+      "cross_repository_units_source": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json#cross_repository_execution_units",
+      "G3P": "One wave envelope with exactly three ordered pulse slots; not three waves or three accepted advances.",
+      "3MP": "Three source-bound measurement/improvement pulse dispositions; HOLD may complete a pulse without acceptance.",
+      "3W": "Three distinct delivery waves; each has its own outcome and pulse accounting.",
+      "G3A": "Target three independently accepted advances, stopping at a major blocker.",
+      "ordinals": [
+        "n_pulse",
+        "n_accepted"
+      ],
+      "ordinal_rule": "Increment n_pulse only for a qualified disposition record and n_accepted only for separately qualified acceptance; never derive either from worker, test, PR or run totals."
+    },
+    "view_semantics": {
+      "SPINE": "Source/process/identity/node/evidence navigation lens; inherits the existing proposed view label and is not a new canonical method.",
+      "SPLINE": "Time-aligned descriptive trend over source-comparable observations. Unknowns are gaps; a line is not a causal claim or forecast.",
+      "DAG": "Acyclic projection of explicitly selected dependency edges for one execution scope. Reference, ownership and next-pulse feedback do not automatically become prerequisites.",
+      "SIPOC": "Keep all five roles and bind output artifact ports to compatible next-process input ports. Customer/supplier actor continuity is a separate handover relationship.",
+      "display_rule": "Programme palette, execution status, evidence class and edge type each need their own legend; purple grouping is topology, not progress."
+    }
+  }
+}

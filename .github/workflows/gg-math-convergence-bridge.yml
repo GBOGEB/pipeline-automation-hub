@@ -1,0 +1,63 @@
+name: MissionControl gg_MATH convergence read-only bridge
+on:
+  pull_request:
+    paths:
+      - 'mission-control/federation-atlas/GG_MATH_CONVERGENCE_BRIDGE_v1.json'
+      - 'mission-control/federation-atlas/gg_math_convergence_consumer.py'
+      - 'mission-control/federation-atlas/test_gg_math_convergence_consumer.py'
+      - 'mission-control/federation-atlas/pages_portal.py'
+      - 'mission-control/federation-atlas/test_pages_portal.py'
+      - '.github/workflows/gg-math-convergence-bridge.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  read-only-bridge:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact source SHA
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Source-scoped bridge and portal negative tests
+        run: |
+          set -euo pipefail
+          mkdir -p build/math-bridge
+          python -m unittest discover -s mission-control/federation-atlas -p 'test_gg_math_convergence_consumer.py' -v 2>&1 | tee build/math-bridge/tests.log
+          python -m unittest discover -s mission-control/federation-atlas -p 'test_pages_portal.py' -v 2>&1 | tee build/math-bridge/pages.log
+      - name: Emit consumer read-only receipt
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/gg_math_convergence_consumer.py \
+            --bridge mission-control/federation-atlas/GG_MATH_CONVERGENCE_BRIDGE_v1.json \
+            --out build/math-bridge/consumer.json
+          python - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          r=json.loads(Path('build/math-bridge/consumer.json').read_text())['consumer']
+          assert r['authority_transfer'] is False and r['merge_admission']=='HOLD'
+          assert r['live_pulse_receipts_ingested']==0
+          assert r['new_kpi_registry_created'] is False
+          assert r['plotly_html_status']=='GENERATED_BY_PROVIDER_RUN_ONLY_NOT_HOSTED'
+          assert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==os.environ['EXPECTED']
+          print('GG_MATH_MISSIONCONTROL_BRIDGE_NATIVE=PASS; PROVIDER_ARTIFACT_AUTH=DEFER')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mc-ggmath-bridge-${{ matrix.python }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: build/math-bridge
+          if-no-files-found: warn

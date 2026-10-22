@@ -1,0 +1,1027 @@
+{
+  "authority": {
+    "DOW": "GBOGEB/ABACUS",
+    "KEB": "GBOGEB/CODEX",
+    "masters": "GBOGEB/cryoplant-project",
+    "publisher": "GBOGEB/pipeline-automation-hub",
+    "release": "QPS owner only"
+  },
+  "edge_semantics": {
+    "dependency": {
+      "color": "#89c4ff",
+      "dash": "none",
+      "role": "Hard order / dependency (not executed)"
+    },
+    "evidence": {
+      "color": "#49eacb",
+      "dash": "none",
+      "role": "Source-bound evidence/provenance (not yet accepted)"
+    },
+    "feedback": {
+      "color": "#ffd17b",
+      "dash": "12 9",
+      "role": "Next-wave feedback / trigger candidate, NO dispatch"
+    },
+    "handover": {
+      "color": "#d6a2ff",
+      "dash": "none",
+      "role": "Typed producer → consumer (receipt required)"
+    },
+    "touch": {
+      "color": "#ff88c9",
+      "dash": "2 8",
+      "role": "Shared/multi-touch context, NOT causal admission"
+    }
+  },
+  "edges": [
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "NEG",
+      "to": "REQ",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "REQ",
+      "to": "PO",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "PO",
+      "to": "STAGE",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "REQ",
+      "to": "RTM",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "RTM",
+      "to": "OCD",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "RTM",
+      "to": "COST",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "OCD",
+      "to": "CONFIG",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "CONFIG",
+      "to": "WCS",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "COST",
+      "to": "BOM",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "RTM",
+      "to": "PROV",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "OCD",
+      "to": "ICD",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "WCS",
+      "to": "WPS",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "WCS",
+      "to": "QLM",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "ICD",
+      "to": "CIS",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "BOM",
+      "to": "RCM",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "CONFIG",
+      "to": "RCM",
+      "type": "touch"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "RTM",
+      "to": "DOCX",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "PROV",
+      "to": "YAML",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "DOCX",
+      "to": "DOW",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "YAML",
+      "to": "DOW",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "DOW",
+      "to": "KEB",
+      "type": "handover"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "KEB",
+      "to": "MATH",
+      "type": "touch"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "KEB",
+      "to": "HUB",
+      "type": "handover"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "RCM",
+      "to": "QA",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "CIS",
+      "to": "QA",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "COST",
+      "to": "QA",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "B0",
+      "to": "QA",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "QA",
+      "to": "HUB",
+      "type": "evidence"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "HUB",
+      "to": "GOV",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PLAN_NOT_EXECUTED",
+      "from": "GOV",
+      "to": "J5",
+      "type": "dependency"
+    },
+    {
+      "evidence_class": "PROPOSED_RETURN_NOT_AUTHENTICATED",
+      "from": "KEB",
+      "to": "RTM",
+      "type": "feedback"
+    },
+    {
+      "evidence_class": "PROPOSED_NEXT_PULSE_NOT_DISPATCHED",
+      "from": "HUB",
+      "to": "B0",
+      "type": "feedback"
+    }
+  ],
+  "focus7": [
+    4,
+    1,
+    2,
+    3,
+    5,
+    8,
+    16
+  ],
+  "focus7_status": "PROPOSED_QPS_DEPENDENCY_PRIORITIZATION_NOT_TOP_RANK7",
+  "gates": [
+    {
+      "id": "QPS-1959",
+      "label": "Effective main protections + independent RED canary",
+      "status": "OPEN"
+    },
+    {
+      "id": "QPS-1379",
+      "label": "v6 release / Pages / binary publication",
+      "status": "OPEN"
+    },
+    {
+      "id": "QPS-NEGO1",
+      "label": "Bidder returns, no inferred negotiation closure",
+      "status": "SOURCE_WAIT"
+    },
+    {
+      "id": "QPS-BINARY",
+      "label": "Real controlled source/ZIP byte validation",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "QPS-CODEX",
+      "label": "Authenticated KEB producer → QPS consumer",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "TOP7-B0",
+      "label": "Repo-specific native tests and matched denominator",
+      "status": "APPLICABILITY_PENDING"
+    }
+  ],
+  "groups": [
+    {
+      "id": "commercial",
+      "ids": [
+        "NEG",
+        "REQ",
+        "PO",
+        "STAGE"
+      ],
+      "label": "Contract → PO → stage spine"
+    },
+    {
+      "id": "masters",
+      "ids": [
+        "RTM",
+        "OCD",
+        "COST",
+        "CONFIG",
+        "WCS",
+        "BOM",
+        "PROV",
+        "ICD"
+      ],
+      "label": "Eight QPS Masters"
+    },
+    {
+      "id": "engineering",
+      "ids": [
+        "WPS",
+        "QLM",
+        "CIS",
+        "RCM"
+      ],
+      "label": "Physical and control interfaces"
+    },
+    {
+      "id": "toolchain",
+      "ids": [
+        "DOCX",
+        "YAML",
+        "DOW",
+        "KEB",
+        "MATH"
+      ],
+      "label": "Parallel DOW / KEB / documents"
+    },
+    {
+      "id": "release",
+      "ids": [
+        "B0",
+        "QA",
+        "HUB",
+        "GOV",
+        "J5"
+      ],
+      "label": "B0 · QA · governance · J5"
+    },
+    {
+      "id": "golden",
+      "ids": [
+        "RTM",
+        "PROV",
+        "DOCX",
+        "YAML",
+        "DOW",
+        "KEB",
+        "MATH",
+        "HUB",
+        "J5"
+      ],
+      "label": "Golden Thread / multi-touch"
+    },
+    {
+      "id": "qpsfirstred",
+      "ids": [
+        "NEG",
+        "REQ",
+        "WCS",
+        "RCM",
+        "GOV",
+        "J5"
+      ],
+      "label": "QPS first-red / critical path"
+    }
+  ],
+  "j4_admitted": null,
+  "j5_admitted": null,
+  "known_numerators": {
+    "j0_identity": {
+      "d": 21,
+      "n": 21
+    },
+    "protected_branch_flags": {
+      "d": 21,
+      "n": 1
+    },
+    "selected_focus": {
+      "d": 21,
+      "n": 7
+    }
+  },
+  "merge_admission": "HOLD",
+  "native_jobs": null,
+  "nodes": [
+    {
+      "height": 72,
+      "id": "NEG",
+      "label": "NEGO1 / RFI",
+      "lane": "commercial",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "LKT/ALAT owner returns",
+      "width": 250,
+      "x": 55,
+      "y": 75
+    },
+    {
+      "height": 72,
+      "id": "REQ",
+      "label": "Requirements",
+      "lane": "commercial",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "AD# / standards / refinement",
+      "width": 250,
+      "x": 342,
+      "y": 75
+    },
+    {
+      "height": 72,
+      "id": "PO",
+      "label": "Pre-L0 / PO",
+      "lane": "commercial",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "No signed PO inferred",
+      "width": 250,
+      "x": 629,
+      "y": 75
+    },
+    {
+      "height": 72,
+      "id": "STAGE",
+      "label": "L0–L8 schedule",
+      "lane": "commercial",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Durations UNKNOWN",
+      "width": 250,
+      "x": 916,
+      "y": 75
+    },
+    {
+      "height": 72,
+      "id": "RTM",
+      "label": "Master 01 · OFFER/RTM",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "722 controlled RTM refs",
+      "width": 250,
+      "x": 50,
+      "y": 238
+    },
+    {
+      "height": 72,
+      "id": "OCD",
+      "label": "Master 02 · OCD/ADR",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Working engineering master",
+      "width": 250,
+      "x": 340,
+      "y": 238
+    },
+    {
+      "height": 72,
+      "id": "COST",
+      "label": "Master 03 · COST",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Excel numerical SSOT",
+      "width": 250,
+      "x": 630,
+      "y": 238
+    },
+    {
+      "height": 72,
+      "id": "CONFIG",
+      "label": "Master 04 · states",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "C24/C30 operating states",
+      "width": 250,
+      "x": 920,
+      "y": 238
+    },
+    {
+      "height": 72,
+      "id": "WCS",
+      "label": "Master 05 · WCS",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "HP/PVPS/CC; bidder-specific",
+      "width": 250,
+      "x": 50,
+      "y": 365
+    },
+    {
+      "height": 72,
+      "id": "BOM",
+      "label": "Master 06 · BOM",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Supply scope ≠ spare kits",
+      "width": 250,
+      "x": 340,
+      "y": 365
+    },
+    {
+      "height": 72,
+      "id": "PROV",
+      "label": "Master 07 · source",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Hash/authority/evidence",
+      "width": 250,
+      "x": 630,
+      "y": 365
+    },
+    {
+      "height": 72,
+      "id": "ICD",
+      "label": "Master 08 · ICD",
+      "lane": "masters",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "TP / buildings / utility",
+      "width": 250,
+      "x": 920,
+      "y": 365
+    },
+    {
+      "height": 72,
+      "id": "WPS",
+      "label": "WPS warm lines",
+      "lane": "engineering",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "W / U / S, WSH option",
+      "width": 250,
+      "x": 50,
+      "y": 520
+    },
+    {
+      "height": 72,
+      "id": "QLM",
+      "label": "QLM cold lines",
+      "lane": "engineering",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "A / B / D / E",
+      "width": 250,
+      "x": 340,
+      "y": 520
+    },
+    {
+      "height": 72,
+      "id": "CIS",
+      "label": "CIS, MIT, ICT, MCB",
+      "lane": "engineering",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Controls + FAT/SAT",
+      "width": 250,
+      "x": 630,
+      "y": 520
+    },
+    {
+      "height": 72,
+      "id": "RCM",
+      "label": "RCM / reliability",
+      "lane": "engineering",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Spares, MTTR, FAT/SAT",
+      "width": 250,
+      "x": 920,
+      "y": 520
+    },
+    {
+      "height": 72,
+      "id": "DOCX",
+      "label": "DOCX RTM",
+      "lane": "toolchain",
+      "native_identity": null,
+      "owner": "GBOGEB/DOCX_RTM_Automation",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Word and PDF QA bridge",
+      "width": 250,
+      "x": 45,
+      "y": 682
+    },
+    {
+      "height": 72,
+      "id": "YAML",
+      "label": "YAML grammar",
+      "lane": "toolchain",
+      "native_identity": null,
+      "owner": "GBOGEB/yaml-grammar",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Schemas and validation",
+      "width": 250,
+      "x": 320,
+      "y": 682
+    },
+    {
+      "height": 72,
+      "id": "DOW",
+      "label": "ABACUS / DOW",
+      "lane": "toolchain",
+      "native_identity": null,
+      "owner": "GBOGEB/ABACUS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Native test/coverage",
+      "width": 250,
+      "x": 595,
+      "y": 682
+    },
+    {
+      "height": 72,
+      "id": "KEB",
+      "label": "CODEX / KEB",
+      "lane": "toolchain",
+      "native_identity": null,
+      "owner": "GBOGEB/CODEX",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Typed receipts and provenance",
+      "width": 250,
+      "x": 870,
+      "y": 682
+    },
+    {
+      "height": 72,
+      "id": "MATH",
+      "label": "gg_MATH",
+      "lane": "toolchain",
+      "native_identity": null,
+      "owner": "GBOGEB/gg_MATH",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Source-scoped method QA",
+      "width": 250,
+      "x": 1145,
+      "y": 682
+    },
+    {
+      "height": 72,
+      "id": "B0",
+      "label": "B0 applicability",
+      "lane": "release",
+      "native_identity": null,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Repository-specific test",
+      "width": 250,
+      "x": 45,
+      "y": 857
+    },
+    {
+      "height": 72,
+      "id": "QA",
+      "label": "Binary QC gates",
+      "lane": "release",
+      "native_identity": null,
+      "owner": "QPS",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "XLSX/PPTX/DOCX/PDF/HTML",
+      "width": 250,
+      "x": 320,
+      "y": 857
+    },
+    {
+      "height": 72,
+      "id": "HUB",
+      "label": "Mission Control",
+      "lane": "release",
+      "native_identity": null,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Read-only Golden Thread",
+      "width": 250,
+      "x": 595,
+      "y": 857
+    },
+    {
+      "height": 72,
+      "id": "GOV",
+      "label": "P0 protection",
+      "lane": "release",
+      "native_identity": null,
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Independent RED canary",
+      "width": 250,
+      "x": 870,
+      "y": 857
+    },
+    {
+      "height": 72,
+      "id": "J5",
+      "label": "J4 → J5 release",
+      "lane": "release",
+      "native_identity": null,
+      "owner": "GBOGEB/cryoplant-project",
+      "state": "DECLARED_OR_SOURCE_POINTER",
+      "subtitle": "Owner admission UNKNOWN",
+      "width": 250,
+      "x": 1145,
+      "y": 857
+    }
+  ],
+  "observed_heads": 21,
+  "protected_branch_flags": 1,
+  "public_payload": "SANITIZED_NO_QPS_PRIVATE_SOURCE_HEAD_OR_BIDDER_BINARY",
+  "qps_master_count": 8,
+  "readback": "2026-10-19_NON_ATOMIC",
+  "readback_head_mc": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+  "release_ladder": {
+    "J0": "21 non-atomic identities observed",
+    "J1": "UNASSESSED",
+    "J2": "UNASSESSED",
+    "J3": "UNASSESSED",
+    "J4": "UNKNOWN",
+    "J5": "NOT_OWNER_ADMITTED"
+  },
+  "repo_count": 21,
+  "roster": [
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "cc49e0ce780032461b2482b1ca1743578fcbe119",
+      "protected_flag": true,
+      "rank": 1,
+      "repo": "GBOGEB/ABACUS"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "master",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+      "protected_flag": false,
+      "rank": 2,
+      "repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+      "protected_flag": false,
+      "rank": 3,
+      "repo": "GBOGEB/CODEX"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PRIVATE_WITHHELD",
+      "observed_sha": null,
+      "protected_flag": false,
+      "rank": 4,
+      "repo": "GBOGEB/cryoplant-project"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+      "protected_flag": false,
+      "rank": 5,
+      "repo": "GBOGEB/gg_MATH"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+      "protected_flag": false,
+      "rank": 6,
+      "repo": "GBOGEB/ariana"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+      "protected_flag": false,
+      "rank": 7,
+      "repo": "GBOGEB/GEMINI"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+      "protected_flag": false,
+      "rank": 8,
+      "repo": "GBOGEB/DOCX_RTM_Automation"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "911e0058045e4edd125ad2b67b412275b3329e8f",
+      "protected_flag": false,
+      "rank": 9,
+      "repo": "GBOGEB/Q_engineering_tools"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+      "protected_flag": false,
+      "rank": 10,
+      "repo": "GBOGEB/cryo_leak_rate_dashboard"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+      "protected_flag": false,
+      "rank": 11,
+      "repo": "GBOGEB/cryogenic-accelerator-workspace"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+      "protected_flag": false,
+      "rank": 12,
+      "repo": "GBOGEB/document-organization-system"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "master",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+      "protected_flag": false,
+      "rank": 13,
+      "repo": "GBOGEB/github_documentorganisatiesysteem_GBOGEB"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+      "protected_flag": false,
+      "rank": 14,
+      "repo": "GBOGEB/github-mcp-server"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+      "protected_flag": false,
+      "rank": 15,
+      "repo": "GBOGEB/docker-stacks"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "master",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "protected_flag": false,
+      "rank": 16,
+      "repo": "GBOGEB/yaml-grammar"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+      "protected_flag": false,
+      "rank": 17,
+      "repo": "GBOGEB/prettier"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+      "protected_flag": false,
+      "rank": 18,
+      "repo": "GBOGEB/vscode-powershell"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "trunk",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+      "protected_flag": false,
+      "rank": 19,
+      "repo": "GBOGEB/cli"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+      "protected_flag": false,
+      "rank": 20,
+      "repo": "GBOGEB/python-sdk"
+    },
+    {
+      "B0_applicable": null,
+      "J4": "UNKNOWN",
+      "J5": "UNKNOWN",
+      "branch": "main",
+      "head_visibility": "PUBLIC",
+      "observed_sha": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+      "protected_flag": false,
+      "rank": 21,
+      "repo": "GBOGEB/skills"
+    }
+  ],
+  "schema": "jade.temple.j25.qps-superstitch/1.0",
+  "scope": [
+    {
+      "family": "Tender/contract",
+      "topics": [
+        "NEGO1 LKT/ALAT source return",
+        "Pre-L0 PO/contractual precedence",
+        "Applicable Documents [AD#], codes and standards",
+        "Terms/abbreviations, TOC, training and deliverables",
+        "RTM requirements refinement and source contradiction review"
+      ]
+    },
+    {
+      "family": "Commercial",
+      "topics": [
+        "Offer evaluation SSOT XLSX",
+        "Cost estimate SSOT Excel, CAPEX/OPEX and 5/10-year lifecycle",
+        "WSH warm vessels and optional cost boundaries",
+        "Three-point uncertainty E0–E4 and scope normalization",
+        "Energy/maintenance and operating-state duty weighting"
+      ]
+    },
+    {
+      "family": "OCD/temporal",
+      "topics": [
+        "Canonical OCD v0.8 and ADR register v0.3 as working pair",
+        "Stage L0–L6, plus post-project L7 and L8",
+        "Milestones/durations/Gantt pending schedule owner",
+        "C24/C30 operating matrix and load cases"
+      ]
+    },
+    {
+      "family": "Physical interfaces",
+      "topics": [
+        "Warm lines W/U/S and warm interconnect HP/LP/VLP",
+        "QLM cold lines A/B/D/E",
+        "Three building areas: move-in, doors, roof",
+        "Utilities, building support ICD and terminal-point matrix",
+        "QPS:CIS, MIT, MCB, ICT, interlocks and cybersecurity"
+      ]
+    },
+    {
+      "family": "Reliability/acceptance",
+      "topics": [
+        "Reliability RAMS/RCM, MTBF/MTTR source basis",
+        "Spares and operation stock philosophy",
+        "FAT/SAT matrices incl. failed test repair and retest",
+        "Installation, commissioning, handover and training"
+      ]
+    },
+    {
+      "family": "Artifact factory",
+      "topics": [
+        "Input/vendor binaries immutable with exact SHA256 and locators",
+        "Canonical XLSX/DOCX/PPTX/PDF/HTML views from governing masters",
+        "Figures, tables, section anchors, PDF navigation and TOC",
+        "Formula/XML/PPT overflow/PDF glyph/DOCX structure QA",
+        "Arrow legend: contrast and head geometry; browser 3 viewports",
+        "Source-to-output semantic parity, receipt and rollback"
+      ]
+    }
+  ],
+  "worker_hours": null,
+  "zero_formal_credit": true
+}

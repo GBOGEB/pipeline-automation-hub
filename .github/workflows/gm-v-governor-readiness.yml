@@ -14,6 +14,10 @@ on:
       - '!mission-control/grand-missions/analytics/**'
       - '.github/workflows/gm-v-governor-readiness.yml'
   workflow_dispatch:
+  schedule:
+    # #529 G05 scheduler: weekly producer run keeps a valid readiness artifact inside the
+    # 30-day retention for GM-V 3PSTAR (EVIDENCE_BINDING_DAG_v1 P2; Wed, after P1 on Mon).
+    - cron: '47 5 * * 3'
 
 permissions:
   contents: read
@@ -52,25 +56,33 @@ jobs:
           set -euo pipefail
           python mission-control/grand-missions/validate_gm_fleet.py --out gm_v_fleet_control.json
 
-      - name: Verify exact GM-IV runtime capacity run and artifact identity
+      - name: Bind latest valid GM-IV runtime capacity evidence (no pinned ids)
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          GATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
-          api='https://api.github.com/repos/GBOGEB/pipeline-automation-hub'
-          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json'             "$api/actions/runs/35171901674" > gm_iv_capacity_run.json
-          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json'             "$api/actions/runs/35171901674/artifacts" > gm_iv_capacity_artifacts.json
+          # #529 G05: was pinned to run 35171901674 / artifact 10476967287, purged by
+          # 30-day retention on 2026-10-17 (red with zero code change). Now: latest
+          # successful master run of the producer whose head is an ancestor of this
+          # gate's source, with a live digested artifact. Fails closed if none.
+          python mission-control/grand-missions/evidence_binding.py resolve \
+            --producer gm-iv-runtime-capacity-proof-v2.yml \
+            --artifact-prefix gm-iv-runtime-capacity-v2- \
+            --source-sha "$GATE_SHA" \
+            --run-out gm_iv_capacity_run.json \
+            --artifacts-list-out gm_iv_capacity_artifacts.json \
+            --binding-out gm_iv_capacity_binding.json
           python - <<'PY'
           import json
+          b=json.load(open('gm_iv_capacity_binding.json'))
           run=json.load(open('gm_iv_capacity_run.json'))
-          arts=json.load(open('gm_iv_capacity_artifacts.json'))['artifacts']
-          assert run['head_sha']=='9cdb8fe35e15b675f3fe1b2492c16f9785fc3115'
-          assert run['status']=='completed' and run['conclusion']=='success'
-          a=next(x for x in arts if x['id']==10476967287)
-          assert a['expired'] is False
-          assert a['digest']=='sha256:7a5a0910db8639b642d8e63b4e37169d636ee3e6b7fc2ba0da93789ad183fc68'
-          print('PASS_EXACT_GM_IV_RUNTIME_CAPACITY_EVIDENCE')
+          a=next(x for x in json.load(open('gm_iv_capacity_artifacts.json'))['artifacts'] if x['id']==b['artifact_id'])
+          assert b['result']=='PASS' and b['pinned_ids_used'] is False
+          assert run['status']=='completed' and run['conclusion']=='success' and run['head_sha']==b['head_sha']
+          assert a['expired'] is False and a['digest']==b['artifact_digest'] and a['digest'].startswith('sha256:')
+          print('PASS_LATEST_VALID_GM_IV_RUNTIME_CAPACITY_EVIDENCE run=%s artifact=%s' % (b['run_id'], b['artifact_id']))
           PY
 
       - name: Evaluate GM-V Governor readiness
@@ -121,6 +133,7 @@ jobs:
             gm_v_fleet_control.json
             gm_iv_capacity_run.json
             gm_iv_capacity_artifacts.json
+            gm_iv_capacity_binding.json
             mission-control/grand-missions/GM_V_GOVERNOR_READINESS_CONTRACT.json
           if-no-files-found: error
           retention-days: 30

@@ -1,0 +1,122 @@
+%% JADE_TEMPLE N+6 / source-bound neural dependency / graph projection only
+%% Pinned source main 8986c7fdbcc02b639bb476f28cb63559d7845198
+flowchart LR
+J0(("J0 HEAD<br/>21/21 observed")):::observed
+J1(("J1 owner SPINE<br/>unqualified")):::pending
+J2(("J2 hosted / N.A.<br/>proof pending")):::pending
+J3(("J3 governance<br/>RED canary missing")):::blocked
+J4(("J4 repo-native B0<br/>scope-specific")):::pending
+J5(("J5 signed point release<br/>TARGET — HOLD")):::blocked
+J1 -. "G-S1" .-> J2
+J1 -. "G-S2" .-> J3
+J2 -. "G-S3" .-> J4
+J3 -. "G-S4" .-> J4
+J4 -. "G-S5" .-> J5
+subgraph CORE["CORE / P0 / five disjoint first-red-owner lanes"]
+direction TB
+R01(("1. ABACUS<br/>RED")):::bad
+R02(("2. pipeline-automation-hub<br/>owner")):::core
+R03(("3. CODEX<br/>scoped")):::core
+R04(("4. cryoplant-project<br/>RED")):::bad
+R05(("5. gg_MATH<br/>RED")):::bad
+end
+subgraph EXPAND["EXPAND / seven domain pilots"]
+direction TB
+R06(("6. ariana<br/>owner")):::expand
+R07(("7. GEMINI<br/>scoped")):::expand
+R08(("8. DOCX_RTM_Automation<br/>RED")):::bad
+R09(("9. Q_engineering_tools<br/>scoped")):::expand
+R10(("10. cryo_leak_rate_dashboard<br/>scoped")):::expand
+R11(("11. cryogenic-accelerator-workspace<br/>scoped")):::expand
+R12(("12. document-organization-system<br/>scoped")):::expand
+end
+subgraph SUPPORT["SUPPORT / nine applicability decisions"]
+direction TB
+R13(("13. github_documentorganisatiesysteem_GBOGEB<br/>owner")):::support
+R14(("14. github-mcp-server<br/>owner")):::support
+R15(("15. docker-stacks<br/>owner")):::support
+R16(("16. yaml-grammar<br/>owner")):::support
+R17(("17. prettier<br/>owner")):::support
+R18(("18. vscode-powershell<br/>owner")):::support
+R19(("19. cli<br/>owner")):::support
+R20(("20. python-sdk<br/>owner")):::support
+R21(("21. skills<br/>owner")):::support
+end
+J0 -- "HEAD #01" --> R01
+R01 -. "owner SPINE" .-> J1
+J0 -- "HEAD #02" --> R02
+R02 -. "owner SPINE" .-> J1
+J0 -- "HEAD #03" --> R03
+R03 -. "owner SPINE" .-> J1
+J0 -- "HEAD #04" --> R04
+R04 -. "owner SPINE" .-> J1
+J0 -- "HEAD #05" --> R05
+R05 -. "owner SPINE" .-> J1
+J0 -- "HEAD #06" --> R06
+R06 -. "owner SPINE" .-> J1
+J0 -- "HEAD #07" --> R07
+R07 -. "owner SPINE" .-> J1
+J0 -- "HEAD #08" --> R08
+R08 -. "owner SPINE" .-> J1
+J0 -- "HEAD #09" --> R09
+R09 -. "owner SPINE" .-> J1
+J0 -- "HEAD #10" --> R10
+R10 -. "owner SPINE" .-> J1
+J0 -- "HEAD #11" --> R11
+R11 -. "owner SPINE" .-> J1
+J0 -- "HEAD #12" --> R12
+R12 -. "owner SPINE" .-> J1
+J0 -- "HEAD #13" --> R13
+R13 -. "owner SPINE" .-> J1
+J0 -- "HEAD #14" --> R14
+R14 -. "owner SPINE" .-> J1
+J0 -- "HEAD #15" --> R15
+R15 -. "owner SPINE" .-> J1
+J0 -- "HEAD #16" --> R16
+R16 -. "owner SPINE" .-> J1
+J0 -- "HEAD #17" --> R17
+R17 -. "owner SPINE" .-> J1
+J0 -- "HEAD #18" --> R18
+R18 -. "owner SPINE" .-> J1
+J0 -- "HEAD #19" --> R19
+R19 -. "owner SPINE" .-> J1
+J0 -- "HEAD #20" --> R20
+R20 -. "owner SPINE" .-> J1
+J0 -- "HEAD #21" --> R21
+R21 -. "owner SPINE" .-> J1
+A10["ABACUS #1860 / B0 collection"]:::bad
+Q163["QPS W163 / namespace first-red"]:::bad
+MATH["gg_MATH / matplotlib release dependency"]:::bad
+COD["CODEX #977 / Crew REX staged"]:::blocked
+MC["Mission Control / one Pages publisher"]:::pending
+R01 -- "observed job 117821147655" --> A10
+R04 -- "observed job 117815065198" --> Q163
+R05 -- "observed job 117811925658" --> MATH
+R03 -. "auth owner only" .-> COD
+R02 -. "hosted acceptance" .-> MC
+A10 -. "repair PR pending" .-> J4
+Q163 -. "repair PR pending" .-> J4
+MATH -. "dependency owner" .-> J4
+COD -. "separate receipt" .-> J4
+MC -. "served SHA required" .-> J2
+GOLD0(("Golden: issue")):::gold
+GOLD1(("first-red")):::gold
+GOLD2(("owner + PR")):::gold
+GOLD3(("exact-head CI")):::gold
+GOLD4(("human review")):::gold
+GOLD5(("postmerge SHA")):::gold
+GOLD6(("tag + rollback")):::gold
+GOLD0 -. "not automatically proven" .-> GOLD1
+GOLD1 -. "not automatically proven" .-> GOLD2
+GOLD2 -. "not automatically proven" .-> GOLD3
+GOLD3 -. "not automatically proven" .-> GOLD4
+GOLD4 -. "not automatically proven" .-> GOLD5
+GOLD5 -. "not automatically proven" .-> GOLD6
+classDef observed fill:#18443a,stroke:#6cdcb9,color:#dbfff3,stroke-width:2px
+classDef core fill:#183b51,stroke:#6ab9d6,color:#dff8ff
+classDef expand fill:#253450,stroke:#a6b8fb,color:#e4ecff
+classDef support fill:#293541,stroke:#788da3,color:#e1ebf6
+classDef pending fill:#3a2b19,stroke:#e2b65d,color:#ffe0aa
+classDef blocked fill:#472536,stroke:#f0a0a1,color:#ffe4e4
+classDef bad fill:#481f29,stroke:#ff7e8c,color:#fff0f0
+classDef gold fill:#3b311a,stroke:#f6cf81,color:#fff4d5
