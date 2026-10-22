@@ -60,6 +60,14 @@ class G3CConvergence(unittest.TestCase):
         p["pulse_records"][2]["combined_total"]+=1
         with self.assertRaisesRegex(ValueError,"non-comparable"):project(p,g)
 
+    def test_consistent_historical_population_drift_rejected(self):
+        p,g=fixture()
+        for row in p["pulse_records"]:
+            row["statement_total"] += 1
+            row["combined_total"] += 1
+        with self.assertRaisesRegex(ValueError,"historical coverage population"):
+            project(p,g)
+
     def test_combined_drift_rejected(self):
         p,g=fixture();p["pulse_records"][0]["combined_covered"]=108
         with self.assertRaisesRegex(ValueError,"combined coverage"):project(p,g)

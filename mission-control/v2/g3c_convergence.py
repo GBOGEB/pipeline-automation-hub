@@ -92,6 +92,9 @@ def project(proof, graph, producer=None):
     total = data[0]["total"]
     require(all(v["total"] == total for v in data),
             "non-comparable numerator denominator")
+    require(total == 122 and all(
+        v["statement"]["total"] == 100 and v["branch"]["total"] == 22
+        for v in data), "historical coverage population mismatch")
     cover = [x["covered"] for x in data]
     require(cover == sorted(cover), "negative matched coverage trend")
     diffs = [cover[i+1]-cover[i] for i in range(2)]

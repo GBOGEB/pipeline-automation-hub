@@ -5,6 +5,9 @@ on:
       - 'mission-control/v2/g3c_convergence.py'
       - 'mission-control/v2/test_g3c_convergence.py'
       - 'mission-control/federation-atlas/G3C_N16_N18_*.json'
+      - 'mission-control/federation-atlas/G3A_N13_N15_LOCAL_PROOF_20261017.json'
+      - 'mission-control/federation-atlas/G3A_N13_N15_MASTER_DAGS_COMPAT_20261017.json'
+      - 'mission-control/v2/n3_master_dags_bridge.py'
       - '.github/workflows/mission-control-g3c-convergence.yml'
   push:
     branches: [master]
@@ -12,6 +15,9 @@ on:
       - 'mission-control/v2/g3c_convergence.py'
       - 'mission-control/v2/test_g3c_convergence.py'
       - 'mission-control/federation-atlas/G3C_N16_N18_*.json'
+      - 'mission-control/federation-atlas/G3A_N13_N15_LOCAL_PROOF_20261017.json'
+      - 'mission-control/federation-atlas/G3A_N13_N15_MASTER_DAGS_COMPAT_20261017.json'
+      - 'mission-control/v2/n3_master_dags_bridge.py'
       - '.github/workflows/mission-control-g3c-convergence.yml'
   workflow_dispatch:
 
