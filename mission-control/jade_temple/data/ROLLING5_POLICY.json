@@ -1,0 +1,68 @@
+{
+  "schema": "jade.temple.rolling5.policy/1.0",
+  "authority": "READ_ONLY_PROJECTION",
+  "authority_transfer": false,
+  "merge_admission": "HOLD",
+  "window_size": 5,
+  "roster_source": "data/TOP21_PORTFOLIO.json",
+  "nirvana": {
+    "definition": "STATE_OF_NIRVANA: every required gate PASS on the same exact source SHA in at least sustain_pulses consecutive observed pulses. UNKNOWN, FAIL or a missing gate is never PASS.",
+    "sustain_pulses": 2,
+    "release_credit": false,
+    "note": "NIRVANA frees a window slot; it is engineering completion, not an owner point release (H12 still needs a separate owner decision)."
+  },
+  "admission": {
+    "order": "TOP21 rank ascending",
+    "skip": ["already_in_window", "already_nirvana"],
+    "empty_queue": "slot stays EMPTY; never back-filled with a graduated repo"
+  },
+  "gate_prerequisites": {
+    "H01": [],
+    "H02": ["H01"],
+    "H03": ["H02"],
+    "H04": ["H02"],
+    "H05": ["H04"],
+    "H06": ["H04"],
+    "H07": ["H04"],
+    "H08": ["H01"],
+    "H09": ["H08"],
+    "H10": ["H05"],
+    "H11": ["H05"],
+    "H12": ["H03", "H06", "H07", "H08", "H09", "H10", "H11"]
+  },
+  "golden_thread": {
+    "SOURCE_SHA": ["H01"],
+    "OWNER_SCOPE": ["H02", "H03"],
+    "FIRST_RED_OR_NEGATIVE_TEST": ["H10"],
+    "DISJOINT_CANDIDATE_BRANCH": ["@candidate_branch"],
+    "NATIVE_B0_RUN_JOB_ATTEMPT": ["H05", "H06"],
+    "SECURITY_AND_GOVERNANCE": ["H07", "H08"],
+    "HUMAN_REVIEW": ["H09"],
+    "POSTMERGE_SHA": [],
+    "RELEASE_TAG_AND_ROLLBACK": ["H12"]
+  },
+  "golden_thread_note": "A step with no mapped evidence is UNKNOWN, never PASS. '@candidate_branch' passes only when the row declares a candidate branch and a 40-hex candidate SHA.",
+  "streaks": {
+    "unit": "observed pulse (a hash-pinned focus snapshot), not calendar time",
+    "unattended_after_pulses": 3,
+    "definitions": {
+      "streak_on_current": "consecutive PASS pulses ending at the latest pulse (0 if the latest is not PASS)",
+      "streak_record": "longest consecutive PASS run in observed history",
+      "previous_streak": "length of the most recent completed PASS run before the current state (null if none)",
+      "nevergreen": "true when the gate has never been PASS in any observed pulse",
+      "regressions": "count of PASS to non-PASS transitions",
+      "unattended": "UNKNOWN for at least unattended_after_pulses consecutive latest pulses; null while history is shorter"
+    }
+  },
+  "source_red": {
+    "definition": "A FAIL gate ranked by what it unlocks: gates in the same repo that transitively require it and are not PASS, plus outbound repo edges that are AUTHORITY_BOUND or carry receipts/telemetry. A gate failing in at least common_cause_min_repos window repos is a COMMON_CAUSE source red.",
+    "common_cause_min_repos": 3,
+    "edge_weights": {
+      "AUTHORITY_BOUND": 2,
+      "OBSERVATION_ONLY": 1,
+      "EVIDENCE_ONLY": 1,
+      "PROVIDER_ONLY": 1,
+      "REFERENCE_ONLY": 0
+    }
+  }
+}

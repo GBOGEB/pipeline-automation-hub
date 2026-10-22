@@ -1,0 +1,14 @@
+{
+  "schema": "jade.temple.rolling5.pulses/1.0",
+  "authority": "APPEND_ONLY_READ_ONLY_LEDGER",
+  "note": "Each pulse pins one focus snapshot by sha256. Append with tools/rolling5.py --append-pulse; never edit or reorder past pulses.",
+  "pulses": [
+    {
+      "id": "P0001",
+      "observed_date": "2026-10-19",
+      "snapshot": "data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+      "snapshot_sha256": "8c92b0627b2ba2e9a0894fe368017226649227dd606566a9675e638198a39f12",
+      "origin": "GENESIS_FROM_FOCUS5_NPLUS7"
+    }
+  ]
+}
