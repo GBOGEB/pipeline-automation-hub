@@ -75,7 +75,8 @@ class N11WorkflowContractTests(unittest.TestCase):
                 self.assertEqual(src.count("'" + name + "'"), expected)
         for invariant in (
             "--branch --source=mission-control/v2",
-            "assert len(s)==7", "assert len(g3a)==8",
+            "assert len(s)==7", "set(modules)",
+            "assert len(g3a)==8", "set(g3a_modules)",
             "assert denominator>0", "assert g3a_denominator>0",
             "assert pct>=80", "100*branches/branch_total>=80",
             "assert g3a_pct>=80",

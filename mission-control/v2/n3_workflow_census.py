@@ -37,7 +37,10 @@ def timestamp(value):
 def state(record):
     status, conclusion = record.get('status'), record.get('conclusion')
     require(status in RUN_STATUS, 'unknown workflow/job status')
-    require((status == 'completed') == (conclusion in CONCLUSION), 'inconsistent terminal status/conclusion')
+    if status == 'completed':
+        require(conclusion in CONCLUSION, 'inconsistent terminal status/conclusion')
+    else:
+        require(conclusion is None, 'inconsistent terminal status/conclusion')
     return status
 
 

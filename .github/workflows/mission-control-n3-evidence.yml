@@ -63,7 +63,7 @@ jobs:
           c=json.loads(Path('/tmp/n3-coverage.json').read_text())['files']
           modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py','n3_native_join.py','n3_wave_federation.py','g3p_live_dashboard.py')
           s=[v['summary'] for k,v in c.items() if Path(k).name in modules]
-          assert len(s)==7, f'expected 7 exact source basenames, got {len(s)}'
+          assert len(s)==7 and {Path(k).name for k in c if Path(k).name in modules}==set(modules), f'expected 7 exact source basenames, got {len(s)}'
           numerator=sum(x['covered_lines']+x['covered_branches'] for x in s)
           denominator=sum(x['num_statements']+x['num_branches'] for x in s)
           assert denominator>0
@@ -76,7 +76,7 @@ jobs:
           print(f'FOCUSED_N3_BRANCH={branches}/{branch_total}')
           g3a_modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py','n3_native_join.py','n3_wave_federation.py','n3_workflow_census.py','n3_g3a_assessment.py')
           g3a=[v['summary'] for k,v in c.items() if Path(k).name in g3a_modules]
-          assert len(g3a)==8, f'expected 8 exact G3A source basenames, got {len(g3a)}'
+          assert len(g3a)==8 and {Path(k).name for k in c if Path(k).name in g3a_modules}==set(g3a_modules), f'expected 8 exact G3A source basenames, got {len(g3a)}'
           g3a_numerator=sum(x['covered_lines']+x['covered_branches'] for x in g3a)
           g3a_denominator=sum(x['num_statements']+x['num_branches'] for x in g3a)
           assert g3a_denominator>0

@@ -79,6 +79,12 @@ class WorkflowCensusTests(unittest.TestCase):
     def test_queued_with_success(self):
         self.bad(lambda x:x['workflow_runs'][0].__setitem__('conclusion','success'),'inconsistent terminal')
 
+    def test_queued_with_unknown_conclusion(self):
+        self.bad(lambda x:x['workflow_runs'][0].__setitem__('conclusion','unknown'),'inconsistent terminal')
+
+    def test_job_with_unknown_conclusion(self):
+        self.bad(lambda x:x['workflow_runs'][0]['jobs'][0].__setitem__('conclusion','unknown'),'inconsistent terminal')
+
     def test_terminal_without_conclusion(self):
         self.bad(lambda x:x['workflow_runs'][1].__setitem__('conclusion',None),'inconsistent terminal')
 
