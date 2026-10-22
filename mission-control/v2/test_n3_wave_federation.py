@@ -75,7 +75,10 @@ class WaveFederationTests(unittest.TestCase):
         self.assertEqual(sum(t=='circle' for t,_ in p.tags),6)
         self.assertIn('aria-label="Six directed',h)
         self.assertIn('stroke-dasharray',h)
-        self.assertNotIn('<script',h)
+        self.assertEqual(h.count('<script>'), 1)
+        self.assertNotIn('<script src=', h)
+        self.assertIn('id="reload"', h)
+        self.assertIn('id="ordinal"', h)
 
     def test_cross_wave_equal_sha_remains_unverified(self):
         # The sha record may be equal without an authenticated Git ancestry proof.

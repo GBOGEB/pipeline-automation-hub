@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'mission-control/v2/n3_*.py'
+      - 'mission-control/v2/g3p_live_*.py'
+      - 'mission-control/v2/g3p_live_template.html'
+      - 'mission-control/v2/test_g3p_live_dashboard.py'
       - 'mission-control/v2/test_n3_*.py'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json'
@@ -17,6 +20,7 @@ on:
       - 'mission-control/v2/n3_*.py'
       - 'mission-control/v2/test_n3_*.py'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
+      - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json'
       - '.github/workflows/mission-control-n3-evidence.yml'
   workflow_dispatch:
 
@@ -49,6 +53,7 @@ jobs:
       - name: Run bounded N3 unit, adversarial and CLI tests
         run: |
           python -m coverage run --branch --source=mission-control/v2 -m unittest discover -s mission-control/v2 -p 'test_n3_*.py' -v
+          python -m coverage run --append --branch --source=mission-control/v2 -m unittest discover -s mission-control/v2 -p 'test_g3p_live_dashboard.py' -v
           python -m coverage json -o /tmp/n3-coverage.json
       - name: Require focused statement+branch coverage >= 80
         run: |
@@ -56,9 +61,9 @@ jobs:
           import json
           from pathlib import Path
           c=json.loads(Path('/tmp/n3-coverage.json').read_text())['files']
-          modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py','n3_native_join.py','n3_wave_federation.py','n3_workflow_census.py','n3_g3a_assessment.py')
+          modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py','n3_native_join.py','n3_wave_federation.py','g3p_live_dashboard.py')
           s=[v['summary'] for k,v in c.items() if Path(k).name in modules]
-          assert len(s)==8, f'expected 8 exact source basenames, got {len(s)}'
+          assert len(s)==7, f'expected 7 exact source basenames, got {len(s)}'
           numerator=sum(x['covered_lines']+x['covered_branches'] for x in s)
           denominator=sum(x['num_statements']+x['num_branches'] for x in s)
           assert denominator>0
@@ -69,6 +74,36 @@ jobs:
           branch_total=sum(x['num_branches'] for x in s)
           assert branch_total>0 and 100*branches/branch_total>=80, 'N3 branch coverage gate failed'
           print(f'FOCUSED_N3_BRANCH={branches}/{branch_total}')
+          g3a_modules=('n3_continuation.py','n3_integrity.py','n3_metrics.py','n3_dashboard.py','n3_native_join.py','n3_wave_federation.py','n3_workflow_census.py','n3_g3a_assessment.py')
+          g3a=[v['summary'] for k,v in c.items() if Path(k).name in g3a_modules]
+          assert len(g3a)==8, f'expected 8 exact G3A source basenames, got {len(g3a)}'
+          g3a_numerator=sum(x['covered_lines']+x['covered_branches'] for x in g3a)
+          g3a_denominator=sum(x['num_statements']+x['num_branches'] for x in g3a)
+          assert g3a_denominator>0
+          g3a_pct=100*g3a_numerator/g3a_denominator
+          print(f'FOCUSED_G3A_STMT_BRANCH={g3a_pct:.2f}% ({g3a_numerator}/{g3a_denominator})')
+          assert g3a_pct>=80, 'focused G3A changed-scope quality gate failed'
+          g3a_branches=sum(x['covered_branches'] for x in g3a)
+          g3a_branch_total=sum(x['num_branches'] for x in g3a)
+          assert g3a_branch_total>0 and 100*g3a_branches/g3a_branch_total>=80, 'G3A branch coverage gate failed'
+          print(f'FOCUSED_G3A_BRANCH={g3a_branches}/{g3a_branch_total}')
+          PY
+      - name: Test G3P live N-index replay and fail-closed HTTP/SSE
+        run: |
+          python -m coverage run --branch --source=mission-control/v2 -m unittest discover -s mission-control/v2 -p 'test_g3p_live_dashboard.py' -v
+          python -m coverage json -o /tmp/g3p-live-coverage.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          c=json.loads(Path('/tmp/g3p-live-coverage.json').read_text())['files']
+          matches=[v['summary'] for k,v in c.items() if Path(k).name=='g3p_live_dashboard.py']
+          assert len(matches)==1, 'source blob denominator not unique'
+          x=matches[0]
+          lp=100*x['covered_lines']/x['num_statements']
+          bp=100*x['covered_branches']/x['num_branches']
+          print(f'G3P_LIVE_STMT={x["covered_lines"]}/{x["num_statements"]} {lp:.2f}%')
+          print(f'G3P_LIVE_BRANCH={x["covered_branches"]}/{x["num_branches"]} {bp:.2f}%')
+          assert lp>=85 and bp>=80, 'G3P live focused coverage gate failed'
           PY
       - name: Produce source-bound audit, telemetry and HTML projection
         run: |
@@ -94,6 +129,23 @@ jobs:
           assert m['successful_terminal_workflows']['pct'] is None
           assert x['native_exact_head_pass'] is False and x['merge_admission']=='HOLD'
           print('G3A_HISTORICAL_CENSUS=PASS; TESTED_NATIVE_HEAD=UNVERIFIED; ADMISSION=HOLD')
+          python mission-control/v2/g3p_live_dashboard.py --ledgers \
+            mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json \
+            mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json \
+            --out-dir /tmp/n3-evidence/live
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('/tmp/n3-evidence/live')
+          x=json.loads((p/'g3p-lineage.json').read_text())
+          manifest=json.loads((p/'g3p-manifest.json').read_text())
+          assert len(x['nodes'])==6 and len(x['edges'])==5 and x['merge_admission']=='HOLD'
+          assert x['metrics']['intervening_unproven_source_boundaries']==1
+          assert x['metrics']['authenticated_native_pulse_receipts']==0
+          assert all(hashlib.sha256((p/name).read_bytes()).hexdigest()==sha for name,sha in manifest['outputs_sha256'].items())
+          html=(p/'g3p-lineage.html').read_text()
+          assert 'id="reload"' in html and 'EventSource' in html and 'id="replay"' in html
+          print('G3P_LIVE_N6_EXPORT=PASS; LINKAGE_VALIDATED; CI_ADMISSION_SEPARATE')
           PY
           python mission-control/v2/n3_wave_federation.py \
             --ledgers mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json \
