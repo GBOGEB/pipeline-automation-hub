@@ -47,16 +47,42 @@ def project(proof, graph, producer=None):
             "graph source population mismatch")
     require(metrics.get("native_verified_edges") is None and
             metrics.get("formal_root_closures") is None, "graph native receipt unverified")
+    nodes = graph.get("nodes")
+    require(isinstance(nodes, list) and len(nodes) == 8 and
+            all(isinstance(node, dict) and isinstance(node.get("id"), str) and
+                node["id"] for node in nodes), "graph nodes incomplete")
+    node_ids = [node["id"] for node in nodes]
+    require(len(set(node_ids)) == len(node_ids), "duplicate graph node ID")
     order, edges = graph.get("topological_order"), graph.get("edges")
-    require(isinstance(order, list) and len(order) == 8 and
+    require(isinstance(order, list) and len(order) == len(node_ids) and
             all(isinstance(node, str) and node for node in order) and
-            len(set(order)) == 8 and
-            isinstance(edges, list) and len(edges) == 3 and
-            all(isinstance(edge, dict) and
+            len(set(order)) == len(order) and set(order) == set(node_ids),
+            "topological order incomplete")
+    require(isinstance(edges, list) and len(edges) == 3,
+            "graph edges incomplete")
+    positions = {node: index for index, node in enumerate(order)}
+    pairs = set()
+    for edge in edges:
+        require(isinstance(edge, dict) and
                 edge.get("binding") == "DECLARED" and
                 edge.get("accepted") is False and
-                edge.get("receipt") is None for edge in edges),
-            "graph edges promoted or topology incomplete")
+                edge.get("receipt") is None and
+                edge.get("kind") == "FEDERATION_CANDIDATE" and
+                isinstance(edge.get("from"), str) and
+                isinstance(edge.get("to"), str),
+                "graph edges promoted or malformed")
+        source, target = edge["from"], edge["to"]
+        source_repo, source_sep, _ = source.partition("::")
+        target_repo, target_sep, _ = target.partition("::")
+        require(source in node_ids and target in node_ids,
+                "unregistered graph endpoint")
+        require(source_sep and target_sep and source_repo != target_repo,
+                "candidate edge must cross repository boundary")
+        pair = (source, target)
+        require(pair not in pairs, "duplicate graph edge")
+        pairs.add(pair)
+        require(positions[source] < positions[target],
+                "topological order violates graph edge")
     rows = proof.get("pulse_records")
     require(isinstance(rows, list) and len(rows) == 3, "G3A three pulses incomplete")
     require(tuple(r.get("pulse") for r in rows) == PULSES, "pulse ordinal drift")
@@ -90,7 +116,11 @@ def project(proof, graph, producer=None):
                      "local_tests_passed": r["tests_passed_local"],
                      "source_commit": commit})
     total = data[0]["total"]
-    require(all(v["total"] == total for v in data),
+    statement_total = data[0]["statement"]["total"]
+    branch_total = data[0]["branch"]["total"]
+    require(all(v["total"] == total and
+                v["statement"]["total"] == statement_total and
+                v["branch"]["total"] == branch_total for v in data),
             "non-comparable numerator denominator")
     require(total == 122 and all(
         v["statement"]["total"] == 100 and v["branch"]["total"] == 22

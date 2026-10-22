@@ -26,13 +26,31 @@ def fixture():
        "source_bridge_git_blob":SHA,"source_bridge_sha256":"b"*64,
        "cross_repository_candidate_edges":3,
        "cross_repo_native_authenticated_edges":None,"pulse_records":pulses}
+    node_ids=[
+        "GBOGEB/ABACUS::DMAIC_WORK_GRAPH",
+        "GBOGEB/ABACUS::DOW_ANALYSIS_GRAPH",
+        "GBOGEB/ABACUS::AGENT_EXECUTION_GRAPH",
+        "GBOGEB/CODEX::FEDERATION_BRIDGE_GRAPH",
+        "GBOGEB/CODEX::SEMANTIC_GOVERNANCE_GRAPH",
+        "GBOGEB/CODEX::AGENT_RUNTIME_GRAPH",
+        "GBOGEB/cryoplant-project::QPS_ACCEPTANCE_DAG",
+        "GBOGEB/pipeline-automation-hub::CODE_PURPLE_BEAMS_DAG",
+    ]
+    target=node_ids[-1]
     g={"schema":"code-purple.g3a.master-dags-projection.v1",
        "merge_admission":"HOLD","authority_transfer":False,"accepted_n_delta":None,
        "metrics":{"sources":4,"graph_families":8,"declared_cross_repository_edges":3,
                   "native_verified_edges":None,"formal_root_closures":None},
-       "topological_order":[str(i) for i in range(8)],
-       "edges":[{"binding":"DECLARED","receipt":None,"accepted":False}
-                for _ in range(3)]}
+       "nodes":[{"id":node} for node in node_ids],
+       "topological_order":node_ids,
+       "edges":[
+           {"from":node_ids[0],"to":target,"kind":"FEDERATION_CANDIDATE",
+            "binding":"DECLARED","receipt":None,"accepted":False},
+           {"from":node_ids[3],"to":target,"kind":"FEDERATION_CANDIDATE",
+            "binding":"DECLARED","receipt":None,"accepted":False},
+           {"from":node_ids[6],"to":target,"kind":"FEDERATION_CANDIDATE",
+            "binding":"DECLARED","receipt":None,"accepted":False},
+       ]}
     return p,g
 
 class G3CConvergence(unittest.TestCase):
@@ -48,11 +66,30 @@ class G3CConvergence(unittest.TestCase):
 
     def test_missing_edge_and_duplicate_node_are_rejected(self):
         p,g=fixture();g["edges"].pop()
-        with self.assertRaisesRegex(ValueError,"topology incomplete"):project(p,g)
+        with self.assertRaisesRegex(ValueError,"graph edges incomplete"):project(p,g)
+        p,g=fixture();g["nodes"][7]["id"]=g["nodes"][0]["id"]
+        with self.assertRaisesRegex(ValueError,"duplicate graph node ID"):project(p,g)
         p,g=fixture();g["topological_order"][7]=g["topological_order"][0]
-        with self.assertRaisesRegex(ValueError,"topology incomplete"):project(p,g)
+        with self.assertRaisesRegex(ValueError,"topological order incomplete"):project(p,g)
         p,g=fixture();g["edges"]=[None]*3
-        with self.assertRaisesRegex(ValueError,"topology incomplete"):project(p,g)
+        with self.assertRaisesRegex(ValueError,"graph edges promoted or malformed"):project(p,g)
+
+    def test_graph_edges_require_known_unique_cross_repository_endpoints(self):
+        p,g=fixture();g["edges"][0]["from"]="unknown::GRAPH"
+        with self.assertRaisesRegex(ValueError,"unregistered graph endpoint"):project(p,g)
+        p,g=fixture();g["edges"][1]=copy.deepcopy(g["edges"][0])
+        with self.assertRaisesRegex(ValueError,"duplicate graph edge"):project(p,g)
+        p,g=fixture();g["edges"][0]["to"]=g["nodes"][1]["id"]
+        with self.assertRaisesRegex(ValueError,"cross repository boundary"):project(p,g)
+
+    def test_graph_cycle_cannot_have_a_valid_topological_order(self):
+        p,g=fixture()
+        hub=g["nodes"][7]["id"]
+        abacus=g["nodes"][0]["id"]
+        g["edges"][0].update({"from":hub,"to":abacus})
+        g["edges"][1].update({"from":abacus,"to":hub})
+        with self.assertRaisesRegex(ValueError,"topological order violates"):
+            project(p,g)
 
     def test_denominator_change_rejected(self):
         p,g=fixture()
@@ -66,6 +103,14 @@ class G3CConvergence(unittest.TestCase):
             row["statement_total"] += 1
             row["combined_total"] += 1
         with self.assertRaisesRegex(ValueError,"historical coverage population"):
+            project(p,g)
+
+    def test_offsetting_component_denominator_changes_rejected(self):
+        p,g=fixture()
+        row=p["pulse_records"][2]
+        row["statement_total"] += 1
+        row["branch_total"] -= 1
+        with self.assertRaisesRegex(ValueError,"non-comparable numerator denominator"):
             project(p,g)
 
     def test_combined_drift_rejected(self):
