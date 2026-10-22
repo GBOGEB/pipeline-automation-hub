@@ -54,6 +54,17 @@ class N11WorkflowContractTests(unittest.TestCase):
         self.assertIn("fail-fast: false", src)
         self.assertNotIn("python-version: ['3.10']", src)
 
+    def test_master_push_filter_covers_g3p_live_inputs(self):
+        src = workflow()
+        push_paths = src.split("\n  push:\n", 1)[1].split("\n  workflow_dispatch:", 1)[0]
+        for path in (
+            "'mission-control/v2/g3p_live_*.py'",
+            "'mission-control/v2/g3p_live_template.html'",
+            "'mission-control/v2/test_g3p_live_dashboard.py'",
+        ):
+            with self.subTest(path=path):
+                self.assertIn(path, push_paths)
+
     def test_seven_and_eight_module_denominators_and_negative_coverage_gates_preserved(self):
         src = workflow()
         g3p_modules = (
