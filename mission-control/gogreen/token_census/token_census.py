@@ -87,6 +87,8 @@ def load_registry_from(registry):
                 raise ValueError("incomplete consumer for " + s["name"])
             if "events" in c and not (isinstance(c["events"], list) and c["events"]):
                 raise ValueError("consumer events must be a non-empty list for " + s["name"])
+            if "job" in c and not (isinstance(c["job"], str) and c["job"]):
+                raise ValueError("consumer job must be a job name for " + s["name"])
     if not set(registry["private_readers"]) <= {s["name"] for s in registry["secrets"]}:
         raise ValueError("private reader is not a registered secret")
     return registry
@@ -98,9 +100,7 @@ def _state(run):
 
 def lane_verdict(set_at, runs):
     """Compare the last terminal run before the secret was saved with the latest one after."""
-    terminal = sorted((r for r in runs if r.get("status") == "completed"
-                       and (r.get("conclusion") == "success" or r.get("conclusion") in RED)),
-                      key=lambda r: r["created_at"])
+    terminal = sorted((r for r in runs if _terminal(r)), key=lambda r: r["created_at"])
     latest = terminal[-1] if terminal else None
     out = {"latest": _state(latest) if latest else None,
            "latest_run": ({"id": latest["id"], "created_at": latest["created_at"],
@@ -162,6 +162,50 @@ class GitHub:
         return body.decode("utf-8", "replace")
 
 
+def _terminal(run):
+    return run.get("status") == "completed" and (
+        run.get("conclusion") == "success" or run.get("conclusion") in RED)
+
+
+def list_runs(gh, consumer, set_at, per_page=100, max_pages=10):
+    """Page newest-first until a terminal run from before the save is in hand.
+
+    Returns (runs, baseline_complete). Without a save time one page is enough.
+    """
+    runs = []
+    for page in range(1, max_pages + 1):
+        raw = gh.json(consumer["repo"], "/actions/workflows/%s/runs?branch=%s&per_page=%d&page=%d"
+                      % (consumer["workflow"], consumer["branch"], per_page, page)).get("workflow_runs", [])
+        batch = ([r for r in raw if r.get("event") in consumer["events"]]  # events that use the secret
+                 if consumer.get("events") else raw)
+        runs += batch
+        if set_at is None or any(_terminal(r) and parse_time(r["created_at"]) < set_at for r in batch):
+            return runs, True
+        if len(raw) < per_page:
+            return runs, True  # history exhausted: there is no earlier run
+    return runs, False
+
+
+def job_view(gh, repo, runs, job, set_at, max_runs=15):
+    """Replace each run's conclusion with that of the named job; drop runs where it did not run.
+
+    A workflow can be green while the job that uses the secret was skipped (for
+    example dispatch without the opt-in), which must not count as the token working.
+    """
+    out = []
+    for run in sorted((r for r in runs if r.get("status") == "completed"),
+                      key=lambda r: r["created_at"], reverse=True)[:max_runs]:
+        jobs = gh.json(repo, "/actions/runs/%d/jobs?per_page=100" % run["id"]).get("jobs", [])
+        mine = [j for j in jobs if j.get("name") == job]
+        if not mine or not all(_terminal(j) for j in mine):
+            continue
+        state = "success" if all(j["conclusion"] == "success" for j in mine) else "failure"
+        out.append(dict(run, conclusion=state))
+        if set_at is not None and parse_time(run["created_at"]) < set_at:
+            break  # baseline found
+    return out
+
+
 def red_signal(gh, repo, run_id, max_jobs=3):
     try:
         jobs = gh.json(repo, "/actions/runs/%d/jobs?per_page=100" % run_id).get("jobs", [])
@@ -189,7 +233,7 @@ def action_for(lane):
     if lane.get("probe") not in (None, "VALID", "NOT_PROBED"):
         return "OWNER", "hub probe says %s: re-save from token #%s" % (lane["probe"], lane["token"])
     if lane["verdict"] == "NO_RUN_SINCE_SET":
-        return "WAIT", "no default-branch run since the secret was saved"
+        return "WAIT", "no default-branch run has used the secret since it was saved"
     if lane.get("latest") != "RED":
         return "OK", "latest run green"
     signal = lane.get("signal", "NONE")
@@ -209,10 +253,9 @@ def census(registry, gh, probes, now):
             if s["repo"] == registry["hub"]:
                 lane["probe"] = probes.get(s["name"], "UNSET")
             try:
-                runs = gh.json(c["repo"], "/actions/workflows/%s/runs?branch=%s&per_page=30"
-                               % (c["workflow"], c["branch"])).get("workflow_runs", [])
-                if c.get("events"):  # only the events whose jobs use the secret
-                    runs = [r for r in runs if r.get("event") in c["events"]]
+                runs, lane["baseline_complete"] = list_runs(gh, c, set_at)
+                if c.get("job"):  # judge only runs where the secret's own job actually ran
+                    runs = job_view(gh, c["repo"], runs, c["job"], set_at)
                 lane.update(lane_verdict(set_at, runs))
                 if lane["latest"] == "RED":
                     lane["signal"] = red_signal(gh, c["repo"], lane["latest_run"]["id"])
