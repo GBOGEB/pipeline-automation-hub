@@ -22,7 +22,7 @@ jobs:
       PRODUCER_SHA: d3799ae0ee4d9666d3ec985c7b7edde12cc98306
     steps:
       - name: Checkout exact consumer head
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           path: consumer
@@ -34,7 +34,7 @@ jobs:
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$expected"
       - name: Checkout exact producer head
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: GBOGEB/gg_MATH
           ref: ${{ env.PRODUCER_SHA }}
