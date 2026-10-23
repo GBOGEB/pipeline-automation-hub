@@ -1,0 +1,88 @@
+name: JADE H01-H12 DoV preview and browser QA (read-only)
+on:
+  pull_request:
+    paths:
+      - 'mission-control/jade_temple/data/GATE12_DOV_ACTIONS.json'
+      - 'mission-control/jade_temple/tools/build_gate12_dov.py'
+      - 'mission-control/jade_temple/tools/run_gate12_browser_qa.py'
+      - 'mission-control/jade_temple/site/gate12*'
+      - 'mission-control/jade_temple/tests/test_gate12_dov.py'
+      - '.github/workflows/jade-gate12-preview.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: jade-gate12-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  preview:
+    name: Gate12 deterministic data + 3-viewport browser QA
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Exact-head source identity
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          echo "JADE_GATE12_SOURCE_SHA=$HEAD_SHA"
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: '3.12'
+      - name: Source and evidence parity
+        run: |
+          set -euo pipefail
+          python mission-control/jade_temple/tools/build_gate12_dov.py --check
+          python -m unittest discover -s mission-control/jade_temple/tests -p test_gate12_dov.py -v
+      - name: Recover DAG page generator candidate for review (not a commit)
+        run: |
+          set -euo pipefail
+          python mission-control/jade_temple/tools/cicd_dag.py --write
+          python mission-control/jade_temple/site/build_cicd_dag.py
+          test -s mission-control/jade_temple/site/cicd_dag.html
+          git diff --name-only -- mission-control/jade_temple/site mission-control/jade_temple/diagrams
+      - name: Install pinned Playwright and Chromium
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Responsive offline controls and visual evidence
+        run: |
+          set -euo pipefail
+          python mission-control/jade_temple/tools/run_gate12_browser_qa.py
+          test -s mission-control/jade_temple/qa/gate12/receipt.json
+      - name: Hash member receipts
+        if: always()
+        run: |
+          set -euo pipefail
+          SRC=mission-control/jade_temple
+          mkdir -p "$SRC/qa/gate12"
+          git rev-parse HEAD > "$SRC/qa/gate12/exact_head.sha"
+          sha256sum "$SRC/site/gate12_hub.html" "$SRC/site/gate12.css" \
+            "$SRC/site/gate12_ui.js" "$SRC/site/gate12_data.js" \
+            "$SRC/site/gate12_data.json" "$SRC/site/gate12_bd_queue.csv" \
+            "$SRC/site/cicd_dag.html" > "$SRC/qa/gate12/members.sha256"
+      - name: Retain preview and exact-head evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: jade-gate12-preview-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: |
+            mission-control/jade_temple/site/gate12_hub.html
+            mission-control/jade_temple/site/gate12.css
+            mission-control/jade_temple/site/gate12_ui.js
+            mission-control/jade_temple/site/gate12_data.js
+            mission-control/jade_temple/site/gate12_data.json
+            mission-control/jade_temple/site/gate12_bd_queue.csv
+            mission-control/jade_temple/site/cicd_dag.html
+            mission-control/jade_temple/site/cicd_dag.json
+            mission-control/jade_temple/site/cicd_dag_crosswalk.csv
+            mission-control/jade_temple/qa/gate12/
+          retention-days: 21
+          if-no-files-found: warn
