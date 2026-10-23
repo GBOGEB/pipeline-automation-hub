@@ -39,6 +39,43 @@ Coverage compares only identical `(repo,population,scope,tool,selection)` and id
 
 N+1=N is a *local evidence-state equality* after checking source heads, native identities, population, coverage, queue identities and finding states. It is a **scaling stop/diagnostic trigger**; it does not mean M2 process stability or release admission.
 
+## First-red / root-red and docked metrics
+
+Every receipt now carries three additive blocks. The stop decision is unchanged by them.
+
+**`red_metrics`** comes from the pulse series alone:
+- Per pulse: red count and rate; the share of reds with a known first-failed step; root-linked vs unrooted reds; `root_red` (candidate roots with at least one RED manifestation); `root_recovered` (all RECOVERED); and `fingerprint_root_conflicts`, where one fingerprint points to two candidate roots (a crosswalk defect, not two roots).
+- Per N→N+1 transition: `new_first_reds`, `recoveries`, `regressions` (RECOVERED→RED) and `persisting_reds`.
+- Window totals: `everred_in_window` (RED in every pulse), `red_burndown`, `recovery_rate` and `regression_rate`. These describe manifestation state only and give no root-closure credit.
+
+**`docks`** holds read-only projections of existing producers, each bound by `input_sha256` and aged against the latest pulse (`stale` past 72 h):
+
+| Dock | Producer schema | Metrics |
+|---|---|---|
+| `everred` | `everred.census/1.0` | signature match rate; open roots by priority; closure and recurrence rate; control-plane red rate; E1 red P0 probes; scale-dock candidate roots matched to EVERRED IDs or aliases |
+| `code_purple` | `code-purple.census/v2` | lift criteria met and unmet; gate-green and red-merge rate since the unblocker; open PRs; open follow-ups |
+| `p_process` | `p-process.state/1.0` | mode per repo; CODE_PURPLE repos; open roots; worst priority; ruleset-red rate |
+| `issue_bd` | `codepurple.bd-queue-wave.v1` | open items and issues by repo; red-PR and unknown-PR rate; manifestations per red PR; top families; queue p50/p95 |
+| `crosswalk` | `codepurple.g5.discovery-gap-crosswalk.v1` | historical and current 42-cell breadth; gap packets by state and family; native-identity rate; verified archives; root-bound packets |
+
+An absent dock is `NOT_DOCKED`, which means UNKNOWN, never zero. Docks fail closed on schema, partition, numerator/denominator, partial native identity, alias collision, and any authority, dispatch or merge flag set to true.
+
+**`dock_consistency`** cross-checks the sources:
+- incident and `lifted` match between CODE PURPLE and P-process;
+- EVERRED open roots equal the P-process sum;
+- snapshot timestamps agree;
+- E1 and E2 imply that at least one repo is in CODE_PURPLE mode.
+
+Any disagreement yields `HOLD_SOURCE_DISAGREEMENT`; the dock reports it and never repairs it.
+
+```bash
+P=mission-control/qps-triage-ultra/p-process/site
+python mission-control/gogreen/scale_dock.py --input <series.json> --out ./out --source-sha "$(git rev-parse HEAD)" \
+  --everred $P/everred/data/everred.json --code-purple $P/code-purple/kit/census.json \
+  --p-process $P/data/p_state.json --issue-bd <bd_summary.json> \
+  --crosswalk mission-control/gogreen/g5_gap_crosswalk_20261015.json
+```
+
 ## Rebuild outputs
 
 `out/scale-dock.json`, `out/scale-dock.mmd`, `out/scale-dock.html`, `out/scale-dock-manifest.json`. Manifest binds exact *operator-supplied* generator SHA, member byte lengths and SHA-256. Rebuild assets only from an upstream source; never edit outward HTML into engineering truth. A GitHub-native run/job/artifact receipt and independent ZIP readback remain required for `EXACT_SHA_RECEIPT`.
