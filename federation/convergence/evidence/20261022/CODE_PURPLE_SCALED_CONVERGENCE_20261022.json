@@ -1,7 +1,7 @@
 {
   "schema_version": "1.1",
   "programme": "CODE_PURPLE",
-  "generated_utc": "2026-10-23T08:58:43Z",
+  "generated_utc": "2026-10-23T10:16:16Z",
   "inputs": [
     {
       "file": "CODE_PURPLE_VERIFIED_ZIP_LEDGER_20261022.json",
@@ -91,7 +91,8 @@
               "fail": null,
               "run_ids": [
                 39769223048
-              ]
+              ],
+              "artifact_claims": []
             }
           ]
         },
@@ -117,7 +118,8 @@
               "artifact_ids": [],
               "pass": 0,
               "fail": null,
-              "run_ids": []
+              "run_ids": [],
+              "artifact_claims": []
             }
           ]
         },
@@ -143,7 +145,8 @@
               "artifact_ids": [],
               "pass": 0,
               "fail": null,
-              "run_ids": []
+              "run_ids": [],
+              "artifact_claims": []
             }
           ]
         },
@@ -171,7 +174,8 @@
               "fail": null,
               "run_ids": [
                 39771131257
-              ]
+              ],
+              "artifact_claims": []
             }
           ]
         },
@@ -211,6 +215,16 @@
               ],
               "job_ids": [
                 119811942264
+              ],
+              "artifact_claims": [
+                {
+                  "artifact_id": 12423779766,
+                  "integrity": "UNKNOWN"
+                },
+                {
+                  "artifact_id": 12424201789,
+                  "integrity": "UNKNOWN"
+                }
               ]
             },
             {
@@ -223,7 +237,8 @@
               "fingerprint": "BANDIT_NEW_DEBT_TEST_FIXTURES",
               "class": "NEW_TERMINAL_RED",
               "occurrences": null,
-              "artifact_ids": []
+              "artifact_ids": [],
+              "artifact_claims": []
             },
             {
               "source": "chat",
@@ -235,7 +250,8 @@
               "fingerprint": "DOC_VALIDATION_LINE_LENGTH",
               "class": "NEW_TERMINAL_RED",
               "occurrences": null,
-              "artifact_ids": []
+              "artifact_ids": [],
+              "artifact_claims": []
             }
           ]
         },
@@ -260,7 +276,8 @@
               "occurrences": null,
               "artifact_ids": [],
               "pass": 18,
-              "fail": 4
+              "fail": 4,
+              "artifact_claims": []
             }
           ]
         },
@@ -289,7 +306,8 @@
               ],
               "job_ids": [
                 119826731634
-              ]
+              ],
+              "artifact_claims": []
             }
           ]
         },
@@ -317,7 +335,8 @@
               "fail": 1,
               "job_ids": [
                 119826241442
-              ]
+              ],
+              "artifact_claims": []
             }
           ]
         },
@@ -342,7 +361,8 @@
               "occurrences": 11,
               "artifact_ids": [],
               "pass": 14,
-              "fail": 1
+              "fail": 1,
+              "artifact_claims": []
             }
           ]
         },
@@ -367,7 +387,8 @@
               "occurrences": 15,
               "artifact_ids": [],
               "pass": 20,
-              "fail": 3
+              "fail": 3,
+              "artifact_claims": []
             },
             {
               "source": "chat",
@@ -387,6 +408,12 @@
               ],
               "job_ids": [
                 119851489814
+              ],
+              "artifact_claims": [
+                {
+                  "artifact_id": 12429667081,
+                  "integrity": "VERIFIED_IN_CHAT"
+                }
               ]
             },
             {
@@ -399,7 +426,8 @@
               "fingerprint": "TESTPILOT_RUFF_MISSING_E2E_PATH",
               "class": "NEW_TERMINAL_RED",
               "occurrences": null,
-              "artifact_ids": []
+              "artifact_ids": [],
+              "artifact_claims": []
             }
           ]
         }
@@ -453,10 +481,11 @@
     "QPS": {
       "last_qualified_head": null,
       "observed_main": {
-        "state": "OBSERVED_NONEMPTY",
-        "value": "c8217721ecad86777b4ca3ce98efee92a643c170",
+        "state": "NOT_OBSERVED",
+        "value": null,
         "sources": [
-          "chat:1337Z"
+          "last seen c8217721ecad86777b4ca3ce98efee92a643c170 @chat:1337Z",
+          "chat:1426Z merge of #2047 at 2026-10-22T14:26:05Z; chat:1426Z merge of #2048 at 2026-10-22T14:24:46Z"
         ]
       },
       "populations": [
@@ -604,7 +633,10 @@
                 39786774636,
                 39786774661,
                 39786774741
-              ]
+              ],
+              "artifact_integrity": "UNKNOWN",
+              "merged_utc": "2026-10-22T14:26:05Z",
+              "artifact_claims": []
             },
             {
               "source": "chat",
@@ -616,7 +648,8 @@
               "fingerprint": "GOVERNANCE_MERGE_WITHOUT_APPROVAL",
               "class": "RECURRENCE",
               "occurrences": 2,
-              "artifact_ids": []
+              "artifact_ids": [],
+              "artifact_claims": []
             }
           ]
         },
@@ -648,7 +681,10 @@
               ],
               "job_ids": [
                 119857432684
-              ]
+              ],
+              "artifact_integrity": "UNKNOWN",
+              "merged_utc": "2026-10-22T14:24:46Z",
+              "artifact_claims": []
             }
           ]
         },
@@ -1257,13 +1293,17 @@
     "verified_member_bytes": 14270962,
     "digest_failures": 0,
     "crc_failures": 0,
+    "inconsistent_archives": [],
+    "failed_archives": [],
     "verified_in_chat_only": [
       12429667081
     ],
     "unknown": [
       12423779766,
       12424201789,
-      "QPS #2047 seven artifacts (ids not recorded)"
+      "cryoplant-project#2047 run 39786774636 (artifact ids not recorded)",
+      "cryoplant-project#2047 run 39786774661 (artifact ids not recorded)",
+      "cryoplant-project#2047 run 39786774741 (artifact ids not recorded)"
     ]
   },
   "crosschecks": [
@@ -1280,7 +1320,7 @@
     {
       "id": "C03_member_ledger_per_archive",
       "result": "PASS",
-      "detail": "archives with mismatch: []"
+      "detail": "archives with count/byte/digest/CRC mismatch: []"
     },
     {
       "id": "C04_terminal_summary_vs_member_ledger",
@@ -1298,9 +1338,9 @@
       "detail": "overlapping artifacts [11964700323] digests agree=True"
     },
     {
-      "id": "C07_ledger_cited_artifacts_verified",
-      "result": "PASS",
-      "detail": "cited by ledger events but unverified: []"
+      "id": "C07_event_artifact_citations",
+      "result": "WARN",
+      "detail": "citation problems: []; chat-only citations with no ledger record: [12423779766, 12424201789, 12429667081]"
     },
     {
       "id": "C08_verified_artifacts_bound_to_event",

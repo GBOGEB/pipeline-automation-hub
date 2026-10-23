@@ -20,6 +20,9 @@ Rules the code enforces:
   (`NOT_OBSERVED`, `OBSERVED_EMPTY`, `OBSERVED_NONEMPTY`, `VERIFIED`, `CONFLICT`).
 - Occurrences are not roots; `accepted_root_id` stays `null` until an owner assigns one.
 - A population is comparable only when its exact head SHA equals the observed main SHA.
+  A later merge without a re-observed main invalidates the anchor (`NOT_OBSERVED`).
+- Integrity totals count only archives whose digest, CRC and member accounting hold in every
+  ledger. Failures are counted and listed, never assumed to be zero.
 - Plateau uses fresh, same-cohort measurements only. Replayed snapshots give
   `STARVED`, not `STABLE_HOLD`.
 
