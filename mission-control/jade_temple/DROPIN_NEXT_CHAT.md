@@ -1,3 +1,45 @@
+# JADE N+9 DEVOPS LIFECYCLE — CP.HANDOFF CHECKPOINT (2026-10-23, newest)
+
+**Entry:** [architecture + adoption waves](devops/DEPLOY_PRODUCTION_ARCHITECTURE_N9.md) · [generated census reading](devops/DEVOPS_CENSUS_N9_READING.md) · [census tool README](devops/README.md). Earlier receivers below are preserved unchanged.
+
+1. **Scope.** `project_id=JADE_TEMPLE`, `wave_id=N9-W0 census + N9-W1 pin`. Full S0..S9 DevOps lifecycle measured at exact HEAD for all 21 TOP21 repos (`obs_utc` 2026-10-23T09:55:39Z, 21/21 reachable). Heads and digest are in `data/DEVOPS_CENSUS_N9.json` (`digest_sha256` `1b3a1c5272145d62fa11b171def677186931c32af85adaa8e03fda90879d3bfd`). Every node carries a git id and a `jade:` OID.
+2. **PRs.**
+   - #784: census, deploy contract DP1–DP10, `jade-reusable-{ci,deploy}.yml`, `jade-devops-census.yml`. Head `2fc580dd`, merge `1919b005`.
+   - #786 (W1): pinned the 6 actions of `code-purple-method-atlas.yml#publish-pages`. Head `7162446f`, merge `ff4e25bc`.
+   - Parallel #787 (CI/CD DAG/SIPOC/OID, other session) consumes the census digest. Files are disjoint.
+3. **Native receipts.**
+   - `JADE N+9 DevOps census` success on PR #784 (run 39937724338) and on master pushes 1919b005 (39937742382) and ff4e25bc (39945532649).
+   - Method Atlas master run 39945532906: `Publish CODE PURPLE review site` success. This is the first SHA-pinned Pages deploy, including the hosted parity steps.
+4. **Metric ledger** (pre-W1, instrumentor `devops/census.py`):
+   - Deploy jobs passing core contract: 0/34.
+   - Python modules with no referencing test: 1,756/3,283, +270 since the 2026-10-18 heads.
+   - CI test jobs without a zero-test guard: 255/446.
+   - Actions pinned to a SHA: 594/3,078.
+   - Stage medians: L3 for BUILD and TEST; L0–L1 for SECURE through CONTROL. Only TEST and RELEASE are formalized.
+   - These are census denominators. Do not mix them with N11 or GoGREEN cohorts.
+5. **First-red / BD.**
+   - The hub `publish-pages` DP6 (floating tags) is repaired by #786. It is recorded as a cross-repo recurrence of `HIST-BD-015` / `REX-CM-003` in the historian register.
+   - Open: CODEX `.github/workflows/pages.yml#deploy` DP6 at `86c969e4`.
+6. **Unknowns (not zero).** Branch protection, environment protection and deployments are UNKNOWN for 21/21: the public API answered 403. The census refresh must run with a token. Pages served-SHA parity: the hub served `010ac255` ≠ HEAD `24c7dd93`; 7 other live sites publish no manifest.
+7. **Governance gates.** First-Pass Closure Gate was FAIL on #784 (no controller PASS receipt) and the owner merged anyway. `MERGE_ADMISSION=HOLD` for every JADE claim. No release or deploy authority is derived from the census.
+8. **Next admissible action** (each disjoint; exit = probe state):
+   - CODEX DP6 pin → `deploy.contract`.
+   - W2: CORE five adopt `jade-reusable-ci.yml` → `test.fail_closed`.
+   - W3: pilot `jade-reusable-deploy.yml` on cryo_leak_rate_dashboard.
+   - W4: owners protect `production` and the refresh runs with a token.
+   - W5: readback canary.
+   - W6: untested-module ratchet.
+   - Then refresh the census and compare digests.
+9. **REX** (process lessons; not BD-eligible because no defect existed in current code):
+   - (a) Check for a duplicate session before building. A split by file ownership plus one schema joined on git blob OIDs produced #784 + #787 with zero conflicts.
+   - (b) Generate any number in prose from data with `--check` parity. Two hand-written claims were wrong and were caught only by re-checking.
+   - (c) On Windows, `tempfile.mkdtemp()` (Python ≥ 3.12.4) is not traversable by git, and new dirs trip `safe.directory`. Tests use plain `mkdir` and command-scope `safe.directory=*`.
+   - (d) On blobless clones never use `git ls-tree -l`; batch-fetch blob OIDs with `fetch --stdin`.
+   - (e) Pin a floating tag to the commit it resolves to today, so runtime is unchanged.
+10. **Fidelity.** Built from GitHub state plus the session's local census cache. The transcript export and scratch rescue were sealed locally with SHA256 (`_pulse/2026-10-23/` in the owner workspace, not on GitHub). This checkpoint claims no canonical V2 schema replay.
+
+---
+
 # JADE N+3 / EIGHT-POINT CP.RESUME — FULL BOUNDED RECEIVER
 
 1. Canonical Mission Control: `GBOGEB/pipeline-automation-hub`; N+3 is a **separate governed candidate** on Mission Control main after merged N+2 PR #733; preserve original native evidence and require its own independent acceptance.
