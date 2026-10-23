@@ -3,6 +3,7 @@ import contextlib
 import io
 import json
 import runpy
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -64,6 +65,30 @@ class W7ReceiverExtra(unittest.TestCase):
         self.assertEqual(receipt["tests"],{})
         self.assertEqual(receipt["coverage"],{})
         self.assertFalse(receipt["engineering_acceptance"])
+
+    def test_coverage_catalog_route_is_source_catalog_only_without_network(self):
+        listing=subprocess.CompletedProcess(["git","ls-files"],0,
+            stdout="pkg/core.py\ntests/test_core.py\nweb/app.test.js\npyproject.toml\n")
+        with patch("metric_atlas.receiver.platform_job",return_value=12),\
+             patch("metric_atlas.receiver.subprocess.run",return_value=listing) as git,\
+             patch("metric_atlas.receiver.github_json",side_effect=AssertionError("NETWORK FORBIDDEN")) as fetch,\
+             patch("urllib.request.urlopen",side_effect=AssertionError("NETWORK FORBIDDEN")) as http:
+            receipt=collect(env("coverage_catalog"),"coverage_catalog")
+        fetch.assert_not_called();http.assert_not_called()
+        self.assertEqual(git.call_args[0][0],["git","ls-files"])
+        catalog=receipt["observation"]
+        self.assertEqual(receipt["route"],"coverage_catalog")
+        self.assertEqual(receipt["job_id"],12)
+        self.assertEqual(catalog["tracked_source_files"],4)
+        self.assertEqual(catalog["tracked_test_paths"],["tests/test_core.py","web/app.test.js"])
+        self.assertEqual(catalog["coverage_config_paths"],["pyproject.toml"])
+        self.assertIsNone(catalog["executed_test_count"])
+        self.assertIsNone(catalog["branch_coverage"])
+        self.assertIn("no test execution",catalog["disclaimer"])
+        self.assertNotIn("observed_check_runs",catalog)
+        self.assertEqual(receipt["tests"],{})
+        self.assertEqual(receipt["coverage"],{})
+        self.assertEqual(receipt["merge_admission"],"HOLD")
 
     def test_receiver_main_success_then_controlled_error(self):
         from metric_atlas import receiver
