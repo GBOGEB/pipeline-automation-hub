@@ -258,13 +258,11 @@ class Shipped(unittest.TestCase):
         self.assertEqual(text.count("@" + "0" * 40), 3)
         self.assertIn("Replace " + "0" * 40, text)
 
-    def test_hub_pages_publisher_fails_only_on_unpinned_actions(self):
-        path = REPO / ".github/workflows/code-purple-method-atlas.yml"
-        if not path.exists():
-            self.skipTest("publisher workflow not present in this checkout")
-        rc, report = self.lint(".github/workflows/code-purple-method-atlas.yml")
-        self.assertEqual(rc, 1)
-        self.assertEqual([r["failed"] for r in report if r.get("job") == "publish-pages"], [["DP6"]])
+    def test_hub_pages_publisher_passes_full_deploy_contract(self):
+        # Wave W1 exit: the hub's only production deploy passes DP1..DP10 (it failed only DP6 before pinning).
+        rc, report = self.lint(".github/workflows/code-purple-method-atlas.yml", require=True)
+        self.assertEqual(rc, 0, report)
+        self.assertEqual([(r["job"], r["failed"]) for r in report], [("publish-pages", [])])
 
     def test_delegation_requires_a_sha_pinned_reusable_deploy(self):
         caller = ("on: push\npermissions: {contents: read}\njobs:\n  ci:\n"
