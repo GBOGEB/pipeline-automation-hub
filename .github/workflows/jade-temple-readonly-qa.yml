@@ -4,6 +4,9 @@ on:
     paths:
       - 'mission-control/jade_temple/**'
       - 'mission-control/federation-atlas/pages_portal.py'
+      - 'mission-control/qps-triage-ultra/p-process/**'
+      - '.github/workflows/p-process.yml'
+      - 'mission-control/gogreen/scale_dock.py'
       - '.github/workflows/jade-temple-readonly-qa.yml'
   workflow_dispatch: {}
 permissions:
@@ -47,7 +50,7 @@ jobs:
           print('JADE_TEST_POPULATION_QUALIFIED='+str(all_counts[-1]))
           PYTEST
           python -m coverage run --branch \
-            --include='*/mission-control/jade_temple/tools/stop_rules.py,*/mission-control/jade_temple/tools/hosted_parity.py,*/mission-control/jade_temple/site/build_burndown.py,*/mission-control/jade_temple/portal_bridge.py,*/mission-control/jade_temple/tools/eight_point_contract.py,*/mission-control/jade_temple/site/build_eightpoint.py' \
+            --include='*/mission-control/jade_temple/tools/stop_rules.py,*/mission-control/jade_temple/tools/hosted_parity.py,*/mission-control/jade_temple/site/build_burndown.py,*/mission-control/jade_temple/portal_bridge.py,*/mission-control/jade_temple/tools/eight_point_contract.py,*/mission-control/jade_temple/site/build_eightpoint.py,*/mission-control/jade_temple/tools/rolling5.py,*/mission-control/jade_temple/tools/cicd_dag.py,*/mission-control/jade_temple/site/build_cicd_dag.py' \
             -m unittest discover -s mission-control/jade_temple/tests -p 'test_*.py' -q
           python -m coverage json -o "$RUNNER_TEMP/jade-nplus2-coverage.json" -q
           python - <<'PY'
@@ -55,11 +58,11 @@ jobs:
           from pathlib import Path
           p=Path(os.environ['RUNNER_TEMP'])/'jade-nplus2-coverage.json'
           d=json.loads(p.read_text())
-          want={'portal_bridge.py','build_burndown.py','hosted_parity.py','stop_rules.py','eight_point_contract.py','build_eightpoint.py'}
+          want={'portal_bridge.py','build_burndown.py','hosted_parity.py','stop_rules.py','eight_point_contract.py','build_eightpoint.py','rolling5.py','cicd_dag.py','build_cicd_dag.py'}
           got={k.rsplit('/',1)[-1] for k in d['files']}
           if got!=want:raise SystemExit('JADE_COVERAGE_FIRST_RED: source population drift')
           t=d['totals']
-          if t['num_statements']<469 or t['num_branches']<182:
+          if t['num_statements']<1615 or t['num_branches']<608:
               raise SystemExit('JADE_COVERAGE_FIRST_RED: instrumented denominator shrank')
           if t['percent_statements_covered']<90 or t['percent_branches_covered']<80:
               raise SystemExit('JADE_COVERAGE_FIRST_RED: behavioral coverage target')
@@ -72,6 +75,9 @@ jobs:
           python mission-control/jade_temple/site/build_burndown.py --check
           python mission-control/jade_temple/tools/eight_point_contract.py
           python mission-control/jade_temple/site/build_eightpoint.py --check
+          python mission-control/jade_temple/tools/rolling5.py --check
+          python mission-control/jade_temple/tools/cicd_dag.py --check
+          python mission-control/jade_temple/site/build_cicd_dag.py --check
           python mission-control/jade_temple/tools/stop_rules.py \
             --receipt "$RUNNER_TEMP/jade-nplus2-stop.json"
           python -m py_compile mission-control/federation-atlas/pages_portal.py
