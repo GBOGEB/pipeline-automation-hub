@@ -50,6 +50,11 @@ Does this PR affect document processing?
 ### Fixed
 - 
 
+## 🔒 First-Pass Closure receipt
+Required by `First-Pass Closure Gate / first-pass-closure`. After the `First-Pass Closure Proof` workflow succeeds on your final head, run `python scripts/fpc_receipt.py --pr <N> --write` to replace the placeholder below (see `docs/W305_FIRST_PASS_CLOSURE_GATE.md`). Re-run it after every new push.
+
+<!-- FPC_RECEIPT_V1 {"schema": "first_pass_closure/v1", "head_sha": "<40-char PR head SHA>", "required_runs": [{"repo": "GBOGEB/pipeline-automation-hub", "run_id": "<First-Pass Closure Proof run id>"}]} -->
+
 ## 🖼️ Screenshots (if applicable)
 Add screenshots to help reviewers understand the changes.
 

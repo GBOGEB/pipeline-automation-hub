@@ -5,6 +5,18 @@ python mission-control/jade_temple/tools/cicd_dag.py --check
 python mission-control/jade_temple/site/build_cicd_dag.py --check
 ```
 
+**Regenerating after OID / digest drift.** The generated DAG outputs (`site/cicd_dag.json`, `site/cicd_dag_crosswalk.csv`, `site/cicd_dag.html`, `diagrams/CICD_DAG_*.mmd`) pin the git blob OIDs of the p-process files (`mission-control/qps-triage-ultra/p-process/**`), `mission-control/gogreen/scale_dock.py`, the workflows and the census, plus sha256 digests of every input. A change to any of them makes the JADE QA check red. The failure names each drifted source file with its old and new OID or digest (`drifted sources: ...`) and prints the one command that fixes it. Run it from the repo root and commit the outputs:
+
+```bash
+python mission-control/jade_temple/tools/cicd_dag.py --write && python mission-control/jade_temple/site/build_cicd_dag.py
+```
+
+A census refresh changes `data/DEVOPS_CENSUS_N9.json` and its digest. Re-pin `devops_census.digest_sha256` in `data/CICD_DAG_POLICY.json` first; the load error names the file and the command. When two open PRs both touch pinned inputs, whichever merges second must re-run the command on top of the first.
+
+**One pulse (census vs gate snapshot).** The census and the latest gate snapshot (`data/ROLLING5_PULSES.json`) are two reads of the same focus repos. `pulse_alignment` in `site/cicd_dag.json` gives each focus repo `pulse_mismatch` (census SHA ≠ gate SHA, or not in the census) and a `mismatch_count`. Each REPO scope carries the same `pulse_mismatch`, and the page shows a *Pulse alignment* table. Pass `--strict-pulse` to either builder to fail on any mismatch. CI leaves it off for now, because the current census was read at newer commits than gate pulse P0001 for 4 of 5 focus repos. Turn it on in `.github/workflows/jade-temple-readonly-qa.yml` once both snapshots are re-taken in one pulse.
+
+**Option: generate in CI (not enabled).** CI could regenerate the outputs instead of only checking them. A workflow step would run the regen command on the PR head and fail with the resulting `git diff` (or upload it as an artifact), so contributors never hand-regenerate. Alternatively, a bot commit could push the regenerated files to the PR branch. Neither is wired up: the current contract keeps generated outputs committed, reviewed and byte-checked (`--check`). A bot commit would also need `contents: write` on a workflow that is read-only today.
+
 **N+8 update (20 October 2026):** [Red-trace federation ledger](site/redtrace.html) · [16:9 slides](site/redtrace-slides.html) · [interactive PDF](site/redtrace-slides.pdf) · [federation snapshot](data/RED_TRACE_FEDERATION_N8.json) · [gap analysis](data/GAP_ANALYSIS_N8.json). EVERRED / GREEN→RED / RED→GREEN for the 5 core repos (hub, ABACUS, CODEX, cryoplant-project, gg_MATH), break windows to the first red run, stale/pinned flags, a gap analysis of what our own tooling could not answer, and explicit `AGENT` / `OWNER` / `CI` actor badges. Validated JADE child, **not yet staged into Pages** (gap G13: the hosted-parity contract pins the public asset set; owner review first).
 
 ```bash

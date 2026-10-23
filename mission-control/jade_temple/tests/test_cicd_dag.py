@@ -318,6 +318,93 @@ class ScaleDock(unittest.TestCase):
             cd.scale_docks(HUB, POLICY, src)
 
 
+class PulseAlignment(unittest.TestCase):
+    """Lesson 6: census and gate snapshot must come from one pulse, or say so."""
+
+    def test_every_focus_repo_carries_pulse_mismatch(self):
+        pa = MODEL["pulse_alignment"]
+        snap_rows = cd.r5.verified_pulses(ROOT, json.loads((ROOT / cd.r5.LEDGER).read_text(encoding="utf-8")))[-1][1]["rows"]
+        self.assertEqual(set(pa["repos"]), {cd._short(r["repo"]) for r in snap_rows})
+        self.assertEqual(pa["focus_repos"], len(snap_rows))
+        self.assertEqual(pa["mismatch_count"], sum(v["pulse_mismatch"] for v in pa["repos"].values()))
+        self.assertEqual(pa["one_pulse"], pa["mismatch_count"] == 0)
+        self.assertEqual(pa["gate_pulse"], MODEL["latest_pulse"])
+        for short, v in pa["repos"].items():
+            self.assertEqual(v["pulse_mismatch"], v["census_sha"] != v["gate_sha"] or not v["census_sha"])
+            self.assertEqual(SCOPES[f"REPO:{short}"]["metrics"]["pulse_mismatch"], v["pulse_mismatch"])
+
+    def test_alignment_agrees_with_census_drift_where_observed(self):
+        pa = MODEL["pulse_alignment"]
+        observed = sorted(k for k, v in pa["repos"].items() if v["state"] == "MISMATCH")
+        self.assertEqual(observed, SCOPES["TOTAL"]["metrics"]["devops"]["census_sha_drift"])
+
+    def test_states_aligned_mismatch_and_unobserved(self):
+        pulse = {"id": "P9", "snapshot": "s.json", "observed_date": "2026-10-23"}
+        snap = {"rows": [{"rank": 1, "repo": "o/a", "source_sha": "a" * 40},
+                         {"rank": 2, "repo": "o/b", "source_sha": "b" * 40},
+                         {"rank": 3, "repo": "o/c", "source_sha": "c" * 40}]}
+        census = {"census": {"observed_at_utc": "t", "digest_sha256": "d"},
+                  "repos": {"o/a": {"head_sha": "a" * 40}, "o/b": {"head_sha": "f" * 40}}}
+        pa = cd.pulse_alignment(census, pulse, snap)
+        self.assertEqual({k: v["state"] for k, v in pa["repos"].items()},
+                         {"a": "ALIGNED", "b": "MISMATCH", "c": "CENSUS_UNOBSERVED"})
+        self.assertEqual((pa["mismatch_count"], pa["mismatched"], pa["one_pulse"]), (2, ["b", "c"], False))
+        red = cd.pulse_first_red({"pulse_alignment": pa})
+        self.assertIn("CICD_DAG_PULSE_FIRST_RED: 2/3", red)
+        self.assertIn(cd.REGEN_CMD, red)
+        census["repos"] = {"o/a": {"head_sha": "a" * 40}}
+        one = cd.pulse_alignment(census, pulse, {"rows": snap["rows"][:1]})
+        self.assertTrue(one["one_pulse"])
+        self.assertIsNone(cd.pulse_first_red({"pulse_alignment": one}))
+        self.assertIsNone(cd.pulse_alignment(None, pulse, snap))
+        self.assertIsNone(cd.pulse_first_red({"pulse_alignment": None}))
+
+    def test_strict_pulse_fails_only_when_asked(self):
+        expect = 1 if MODEL["pulse_alignment"]["mismatch_count"] else 0
+        for mod in (cd, page):
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                self.assertEqual(mod.main(["--check"]), 0, buf.getvalue())
+                self.assertEqual(mod.main(["--check", "--strict-pulse"]), expect, buf.getvalue())
+            self.assertEqual("CICD_DAG_PULSE_FIRST_RED" in buf.getvalue(), bool(expect))
+
+    def test_strict_pulse_write_refuses_without_writing(self):
+        if not MODEL["pulse_alignment"]["mismatch_count"]:
+            self.skipTest("data already from one pulse")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = _hub_copy(Path(tmp))
+            before = (root / cd.OUT_JSON).read_bytes()
+            (root / cd.OUT_JSON).write_bytes(b"{}")
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                self.assertEqual(cd.main(["--write", "--strict-pulse"], root=root), 1)
+                self.assertEqual(page.main(["--strict-pulse"], root=root), 1)
+            self.assertEqual((root / cd.OUT_JSON).read_bytes(), b"{}")
+            self.assertNotEqual(before, b"{}")
+
+    def test_page_renders_pulse_alignment_visibly(self):
+        html = (ROOT / page.OUT).read_text(encoding="utf-8")
+        pa = MODEL["pulse_alignment"]
+        self.assertIn('id="pulse"', html)
+        self.assertIn('id="cd-pulse"', html)
+        self.assertIn(f'PULSE MISMATCH {pa["mismatch_count"]}/{pa["focus_repos"]}' if pa["mismatch_count"]
+                      else "ONE PULSE", html)
+        for short in pa["repos"]:
+            self.assertIn(f"<td><b>{short}</b></td>", html)
+        self.assertEqual(page.pulse_section({"pulse_alignment": None}), "")
+
+
+def _hub_copy(tmp: Path) -> Path:
+    """Copy JADE plus the hub files its pinned objects live in."""
+    root = tmp / "mission-control" / "jade_temple"
+    shutil.copytree(ROOT, root, ignore=shutil.ignore_patterns("qa", "__pycache__", "*.pdf", "*.png"))
+    for rel in ("mission-control/qps-triage-ultra/p-process", "mission-control/federation-atlas",
+                "mission-control/gogreen", ".github/workflows"):
+        shutil.copytree(HUB / rel, tmp / rel,
+                        ignore=shutil.ignore_patterns("fonts", "*.pdf", "node_modules"))
+    return root
+
+
 class Outputs(unittest.TestCase):
     def test_tool_check_parity(self):
         buf = io.StringIO()
@@ -331,22 +418,65 @@ class Outputs(unittest.TestCase):
 
     def test_check_detects_drift(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp) / "mission-control" / "jade_temple"
-            shutil.copytree(ROOT, root, ignore=shutil.ignore_patterns("qa", "__pycache__", "*.pdf", "*.png"))
-            for rel in ("mission-control/qps-triage-ultra/p-process", "mission-control/federation-atlas",
-                        "mission-control/gogreen", ".github/workflows"):
-                shutil.copytree(HUB / rel, Path(tmp) / rel,
-                                ignore=shutil.ignore_patterns("fonts", "*.pdf", "node_modules"))
+            root = _hub_copy(Path(tmp))
             buf = io.StringIO()
             with redirect_stdout(buf):
                 self.assertEqual(cd.main(["--check"], root=root), 0, buf.getvalue())
                 (root / cd.OUT_CSV).write_text("tampered\n", encoding="utf-8")
                 self.assertEqual(cd.main(["--check"], root=root), 1)
             self.assertIn("CICD_DAG_FIRST_RED", buf.getvalue())
+            self.assertIn("none of the pinned OIDs/digests moved", buf.getvalue())
+            self.assertIn(cd.REGEN_CMD, buf.getvalue())
+
+    def test_oid_drift_names_the_exact_source_files_and_one_regen_command(self):
+        """Lesson 7: a p-process / scale_dock.py edit names those files, not just outputs."""
+        drifted = ("mission-control/qps-triage-ultra/p-process/p_decide.py",
+                   "mission-control/gogreen/scale_dock.py")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = _hub_copy(Path(tmp))
+            for rel in drifted:
+                with open(Path(tmp) / rel, "a", encoding="utf-8", newline="\n") as fh:
+                    fh.write("# drift\n")
+            with open(root / "site" / "rolling5.json", "a", encoding="utf-8", newline="\n") as fh:
+                fh.write("\n")
+            drifted += ("mission-control/jade_temple/site/rolling5.json",)
+            for mod, prefix in ((cd, "CICD_DAG_FIRST_RED"), (page, "CICD_DAG_PAGE_FIRST_RED")):
+                buf = io.StringIO()
+                with redirect_stdout(buf):
+                    self.assertEqual(mod.main(["--check"], root=root), 1)
+                out = buf.getvalue()
+                self.assertIn(prefix, out)
+                for rel in drifted[:2]:
+                    self.assertIn(rel + " (git blob ", out)
+                self.assertIn(drifted[2] + " (sha256 ", out)
+                self.assertIn("regenerate with: " + cd.REGEN_CMD, out)
+                self.assertNotIn("tools/rolling5.py (git blob", out)
+            (root / cd.OUT_JSON).write_text("not json", encoding="utf-8")
+            self.assertEqual(cd.source_drift(root, cd.project(root)),
+                             [f"{cd.OUT_JSON} (missing or unreadable: no pins to compare)"])
+
+    def test_census_pin_drift_names_file_and_command(self):
+        pol = copy.deepcopy(POLICY)
+        pol["devops_census"]["digest_sha256"] = "0" * 64
+        with self.assertRaises(ValueError) as ctx:
+            cd.load_census(ROOT, pol)
+        self.assertIn(pol["devops_census"]["census"], str(ctx.exception))
+        self.assertIn(cd.REGEN_CMD, str(ctx.exception))
+
+    def test_jade_css_min_width_is_scoped_to_wide_tables(self):
+        """Lesson 8: small tables shrink; only wide data tables keep min-width."""
+        css = (ROOT / "site" / "jade.css").read_text(encoding="utf-8")
+        self.assertNotRegex(css, r"(^|[}\s])table\{[^}]*min-width")
+        self.assertIn(".table-scroll table,table.wide{min-width:1000px}", css)
+        self.assertNotIn("table.cd-kv{border-collapse:collapse;width:100%;min-width:0", page.CSS)
 
     def test_page_is_offline_and_labels_every_lens(self):
         html = (ROOT / page.OUT).read_text(encoding="utf-8")
         self.assertNotRegex(html, r'<script[^>]+src=')
+        # Detail panel is DOM-built (CodeQL js/xss-through-dom): no HTML string sinks, https links only.
+        self.assertNotIn("innerHTML", html)
+        self.assertNotIn("insertAdjacentHTML", html)
+        self.assertIn("x.protocol==='https:'", html)
         self.assertEqual(re.findall(r'<link[^>]+href="([^"]+)"', html), ["jade.css"])
         for lens in cd.LENSES:
             self.assertIn(f'data-lens-btn="{lens}"', html)

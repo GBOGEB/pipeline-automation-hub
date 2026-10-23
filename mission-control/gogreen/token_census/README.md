@@ -44,7 +44,15 @@ read all three repos it needs.
 Each **lane** is one secret paired with one consumer workflow. A lane takes the
 last completed run before the save and the latest one after. Only the
 consumer's default branch counts, and only the listed events where given.
-Cancelled and skipped runs are ignored.
+Cancelled and skipped runs are ignored. Runs are paged newest-first until a run
+from before the save is found (up to 1,000 runs). If none is found within that
+limit, `baseline_complete` is `false`.
+
+When a consumer names a `job`, only that job's result counts. Runs where the job
+was skipped are ignored, so a green workflow that never exercised the secret
+cannot count as the token working. The dispatch lane depends on this: a
+federation run without `dispatch_fanout` skips `dispatch-to-source-owners`, and
+the lane stays `WAIT` until an opted-in dispatch actually runs.
 
 | Verdict | Meaning |
 |---|---|
@@ -85,7 +93,10 @@ run then goes red:
 - a consumer log shows `AUTH_INVALID`, `FORBIDDEN` or `SECRET_MISSING`.
 
 Each hub probe is one `GET /repos/GBOGEB/cryoplant-project`. That repo is
-private, so only a valid token that selects it returns 200. Secrets stored in
+private, so only a valid token that selects it returns 200. `VALID` proves that
+GitHub accepts the token and that the token selects the repo. It does not prove
+write permissions such as the dispatcher's Actions write. No read-only call can
+show that, so it is judged by the dispatch job lane. Secrets stored in
 other repos can't be probed from the hub, so they are judged by their
 consumers' runs.
 

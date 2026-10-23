@@ -45,3 +45,13 @@ Top21 structural census and GoGREEN merged-outcome sample have a **13-repository
 ## N+2 implementation and restart (19 October 2026)
 
 **[Measured Top21 / MIP / stop dashboard](site/burndown.html)** · **[21 current heads](data/READBACK_NPLUS2.json)** · **[Strict stop model](data/STOP_MODEL_NPLUS2.json)** · **[Source-bound first-red events](data/EVIDENCE_EVENTS_NPLUS2.json)** · **[Next-chat receiver](DROPIN_NEXT_CHAT.md)**. Do not mix 13/21 historical GoGREEN overlap with full fleet admission, or issue closure with an executable native test. Three source-matched zero-gain terminal pulses pivot the measurement route; they do not waive independent acceptance.
+
+## N+9 DevOps lifecycle and deploy contract (23 October 2026)
+
+**[Architecture, SIPOC, maturity and adoption waves](devops/DEPLOY_PRODUCTION_ARCHITECTURE_N9.md)** · **[Generated census reading](devops/DEVOPS_CENSUS_N9_READING.md)** · **[Census data](data/DEVOPS_CENSUS_N9.json)** · **[Census tool](devops/README.md)** · **[N+9 checkpoint](DROPIN_NEXT_CHAT.md)**.
+
+- **What it measures:** ten lifecycle stages, S0 PLAN to S9 CONTROL. Each stage has 5 probes on a cumulative L0–L5 ladder, a formalization status, and exact-head git ids plus `jade:` OIDs for every node.
+- **Deploy contract:** DP1–DP10, with the reusable workflows `jade-reusable-ci.yml` and `jade-reusable-deploy.yml`.
+- **Shipped:** #784 merged, plus W1 #786 (the hub Pages publisher pinned; it passes DP1–DP10).
+- **Reading:** deploy, operate and monitor are the least mature stages. 0/34 deploy jobs passed the core contract before W1.
+- **Open:** waves W2–W6 and the CODEX DP6 pin. API-backed probes stay UNKNOWN until a token-backed refresh runs; unknown is not zero.
