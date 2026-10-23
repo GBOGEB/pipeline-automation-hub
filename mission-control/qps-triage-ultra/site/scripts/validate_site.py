@@ -76,6 +76,20 @@ if index_html.exists():
     require(bool(sha), "source_sha is not an exact 40-character Git SHA")
     require("mermaid.min.js" not in html and "cdn.jsdelivr.net/npm/mermaid" not in html, "CDN Mermaid is forbidden for governed evidence")
 
+# gg_MATH bridge: pinned provider identity, committed figure JSON, offline Plotly only
+ggmath_data = SITE / "_data" / "ggmath_bridge_figures.json"
+require(ggmath_data.exists(), "gg_MATH bridge figure JSON missing")
+ggmath_html = BUILT / "ggmath-bridge.html"
+require(ggmath_html.exists(), f"built gg_MATH bridge page missing: {ggmath_html}")
+if ggmath_data.exists() and ggmath_html.exists():
+    figures = json.loads(ggmath_data.read_text(encoding="utf-8"))
+    require(figures.get("authority_transfer") is False, "gg_MATH figure JSON transfers authority")
+    page = ggmath_html.read_text(encoding="utf-8")
+    pinned = re.search(r'data-ggmath-provider-sha="([0-9a-f]{40})"', page)
+    require(bool(pinned) and pinned.group(1) == figures["provider"]["sha"], "gg_MATH page lacks exact provider SHA")
+    require(not re.search(r'<script\b[^>]*\bsrc\s*=\s*["\']https?://', page, re.I), "remote script on gg_MATH page")
+    require(all(f'data-figure-id="{f["id"]}"' in page for f in figures["figures"]), "gg_MATH figure missing")
+
 if errors:
     print("QPS WEB VALIDATION: FAIL")
     for item in errors:

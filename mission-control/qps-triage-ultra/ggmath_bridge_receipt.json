@@ -1,0 +1,1201 @@
+{
+  "authority_transfer": false,
+  "binding_sha256": "3b3feee4ee04aaed593395c8a01c61d8bfdc683bacbd7ca5f0fe4c68405c7412",
+  "engineering_acceptance": false,
+  "inputs": {
+    "analytics/EXPEDITION_FLEET_ITERATION_LEDGER_v1.json": "aa7d90845ccc95b08d9d671e4d4533ad7e3afe0e936c1eec2f725230dc8eee42",
+    "mission/GRANDMISSION_I_B_TEMPORAL_PCA/inbound/GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json": "22fc75a043ebb4df52cb1895ce932ff0c8a1678f9abd1ea7344d7dad3ac0adb6",
+    "w3_bt_observations.json": "d049e1d4f1913d2b760193190f4334e4c7d68dbbf1df1abba36db4cc7f47adce",
+    "w3_fleet_telemetry.json": "884df1928448916dfb358150841c7bd72af6aafd2b0bbcdcc61db57c11f2b100"
+  },
+  "measured": {
+    "bt_reverse_pressure_gm_i_a": {
+      "adapter": "bt_reverse_pressure",
+      "authority_transfer": false,
+      "bt_admissible": null,
+      "engineering_acceptance": false,
+      "kernels": {
+        "kernels/bt_uncertainty.py": "a2a727366cd7c6e5c4860d10848f6a536135204bbc3e597cc0c156a037245121"
+      },
+      "provider": {
+        "repo": "GBOGEB/gg_MATH",
+        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+      },
+      "result": {
+        "comparison_semantics": "longer measured duration wins runtime-pressure comparison",
+        "comparisons": 6,
+        "interpretation": "reverse-pressure routing diagnostic only; not intervention superiority or engineering authority",
+        "lanes": [
+          "dow",
+          "fast",
+          "heavy",
+          "keb"
+        ],
+        "measured_pulses": 1,
+        "minimum_repeat_pulses": 3
+      },
+      "schema": "qps-ggmath-bridge-output/v1",
+      "status": "DEFER_INSUFFICIENT_REPEAT_PULSES",
+      "threshold_kind": {
+        "bt_reverse_pressure": "PROJECT_GOVERNED"
+      }
+    },
+    "bt_strength_w3_current_frontier": {
+      "adapter": "bt_strength",
+      "authority_transfer": false,
+      "bt_admissible": null,
+      "engineering_acceptance": false,
+      "kernels": {
+        "kernels/bt_uncertainty.py": "a2a727366cd7c6e5c4860d10848f6a536135204bbc3e597cc0c156a037245121",
+        "kernels/uncertainty.py": "674372d48d79116613164df3a7bb0d0c04d2c3f427c1a59aaa93f61e086f9477"
+      },
+      "provider": {
+        "repo": "GBOGEB/gg_MATH",
+        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+      },
+      "result": {
+        "comparison_semantics": "explicit observed winner/loser outcomes only",
+        "comparisons": 2,
+        "finite_mle_guard": {
+          "authority_transfer": false,
+          "condition": "FORD_STRONG_CONNECTIVITY",
+          "directed_win_graph_strongly_connected": false,
+          "names": [
+            "SEMANTIC_BOUNDARY_GUARD_REPAIR",
+            "STATISTICAL_TOLERANCE_REPAIR",
+            "UNREPAIRED_BASELINE"
+          ],
+          "status": "DEFER_NO_FINITE_MLE"
+        },
+        "log_strength_intervals": {
+          "authority_transfer": false,
+          "covariance_kind": "PENALIZED_CURVATURE",
+          "intervals": {
+            "SEMANTIC_BOUNDARY_GUARD_REPAIR": {
+              "estimate": 0.809732241294,
+              "interval": [
+                -2.79484218629,
+                4.41430666888
+              ],
+              "standard_error": 1.83910237944
+            },
+            "STATISTICAL_TOLERANCE_REPAIR": {
+              "estimate": 0.809732241294,
+              "interval": [
+                -2.79484218629,
+                4.41430666888
+              ],
+              "standard_error": 1.83910237944
+            },
+            "UNREPAIRED_BASELINE": {
+              "estimate": -1.61946448259,
+              "interval": [
+                -4.43417287115,
+                1.19524390598
+              ],
+              "standard_error": 1.43610209717
+            }
+          },
+          "level": 0.95,
+          "status": "PASS",
+          "threshold_kind": "DISTRIBUTION_DERIVED"
+        },
+        "rank_frequency": {
+          "authority_transfer": false,
+          "failed_resamples": 0,
+          "name_universe": [
+            "SEMANTIC_BOUNDARY_GUARD_REPAIR",
+            "STATISTICAL_TOLERANCE_REPAIR",
+            "UNREPAIRED_BASELINE"
+          ],
+          "penalty": 0.1,
+          "rank_frequency": {
+            "SEMANTIC_BOUNDARY_GUARD_REPAIR": {
+              "1": 0.503,
+              "2": 0.497,
+              "3": 0.0
+            },
+            "STATISTICAL_TOLERANCE_REPAIR": {
+              "1": 0.497,
+              "2": 0.503,
+              "3": 0.0
+            },
+            "UNREPAIRED_BASELINE": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 1.0
+            }
+          },
+          "resamples": 500,
+          "seed": 20260921,
+          "status": "PASS",
+          "tie_rank_semantics": "FRACTIONAL_RANK_MASS",
+          "valid_resamples": 500
+        },
+        "reported_fit": {
+          "covariance_kind": "PENALIZED_CURVATURE",
+          "fit_kind": "L2_PENALIZED_BT",
+          "log_likelihood": -0.168880042382,
+          "log_strengths": {
+            "SEMANTIC_BOUNDARY_GUARD_REPAIR": 0.809732241294,
+            "STATISTICAL_TOLERANCE_REPAIR": 0.809732241294,
+            "UNREPAIRED_BASELINE": -1.61946448259
+          },
+          "names": [
+            "SEMANTIC_BOUNDARY_GUARD_REPAIR",
+            "STATISTICAL_TOLERANCE_REPAIR",
+            "UNREPAIRED_BASELINE"
+          ],
+          "penalty": 0.1,
+          "scores": {
+            "SEMANTIC_BOUNDARY_GUARD_REPAIR": 0.478902528833,
+            "STATISTICAL_TOLERANCE_REPAIR": 0.478902528833,
+            "UNREPAIRED_BASELINE": 0.0421949423341
+          }
+        },
+        "reported_fit_is_classical_mle": false
+      },
+      "schema": "qps-ggmath-bridge-output/v1",
+      "status": "DEFER_NO_FINITE_MLE",
+      "threshold_kind": {
+        "bt_finite_mle_guard": "EXACT_IDENTITY",
+        "bt_log_strength_intervals": "DISTRIBUTION_DERIVED",
+        "bt_rank_frequency": "DATA_CALIBRATED"
+      }
+    },
+    "flow_kpi_fleet_ledger": {
+      "adapter": "flow_kpi",
+      "authority_transfer": false,
+      "engineering_acceptance": false,
+      "excluded": [
+        {
+          "mission_id": "M09_PIPELINE_AUTOMATION_HUB_LEGACY_PROCESSOR",
+          "reason": "NO_COMPLETED_RUNNER_JOB_NOT_IMPUTED",
+          "result": "QUEUED"
+        },
+        {
+          "mission_id": "W3_12_HEPAK_REFERENCE",
+          "reason": "NO_COMPLETED_RUNNER_JOB_NOT_IMPUTED",
+          "result": "STATIC_REPAIR_MERGED"
+        }
+      ],
+      "feature_timestamp_reconciled": true,
+      "fleet": {
+        "dominant_component": "QUEUE_ADMISSION",
+        "execute_seconds": 458.0,
+        "flow_efficiency": 0.379139072848,
+        "queue_execute_ratio": 1.63755458515,
+        "queue_seconds": 750.0
+      },
+      "jobs": [
+        {
+          "execute_seconds": 14.0,
+          "execute_source": "MEASURED_FEATURE",
+          "feature_timestamp_reconciled": true,
+          "flow_efficiency": 0.823529411765,
+          "job_id": 103529746206,
+          "lane": "CRYPTO_PROVENANCE_LIGHTWEIGHT",
+          "queue_execute_ratio": 0.214285714286,
+          "queue_seconds": 3.0,
+          "repo": "GBOGEB/CODEX",
+          "run_id": 34684775435,
+          "timestamp_execute_seconds": 14.0,
+          "timestamp_queue_seconds": 3.0,
+          "window": "FLEET_LEDGER"
+        },
+        {
+          "execute_seconds": 410.0,
+          "execute_source": "MEASURED_FEATURE",
+          "feature_timestamp_reconciled": true,
+          "flow_efficiency": 0.995145631068,
+          "job_id": 103532230883,
+          "lane": "COMPILED_FOREIGN_OBSERVER",
+          "queue_execute_ratio": 0.00487804878049,
+          "queue_seconds": 2.0,
+          "repo": "GBOGEB/telegraf",
+          "run_id": 34685712612,
+          "timestamp_execute_seconds": 410.0,
+          "timestamp_queue_seconds": 2.0,
+          "window": "FLEET_LEDGER"
+        },
+        {
+          "execute_seconds": 16.0,
+          "execute_source": "MEASURED_FEATURE",
+          "feature_timestamp_reconciled": true,
+          "flow_efficiency": 0.0909090909091,
+          "job_id": 103532742688,
+          "lane": "PYTHON_EVIDENCE_KERNEL",
+          "queue_execute_ratio": 10.0,
+          "queue_seconds": 160.0,
+          "repo": "GBOGEB/cryo_leak_rate_dashboard",
+          "run_id": 34685908185,
+          "timestamp_execute_seconds": 16.0,
+          "timestamp_queue_seconds": 160.0,
+          "window": "FLEET_LEDGER"
+        },
+        {
+          "execute_seconds": 8.0,
+          "execute_source": "MEASURED_FEATURE",
+          "feature_timestamp_reconciled": true,
+          "flow_efficiency": 0.0754716981132,
+          "job_id": 103532987417,
+          "lane": "PYTHON_CONTROL_GUARD",
+          "queue_execute_ratio": 12.25,
+          "queue_seconds": 98.0,
+          "repo": "GBOGEB/cryogenic-accelerator-workspace",
+          "run_id": 34686000829,
+          "timestamp_execute_seconds": 8.0,
+          "timestamp_queue_seconds": 98.0,
+          "window": "FLEET_LEDGER"
+        },
+        {
+          "execute_seconds": 10.0,
+          "execute_source": "MEASURED_FEATURE",
+          "feature_timestamp_reconciled": true,
+          "flow_efficiency": 0.0201207243461,
+          "job_id": 103533306583,
+          "lane": "PYTHON_HOME_CONTROL_ANALYTICS",
+          "queue_execute_ratio": 48.7,
+          "queue_seconds": 487.0,
+          "repo": "GBOGEB/pipeline-automation-hub",
+          "run_id": 34686126465,
+          "timestamp_execute_seconds": 10.0,
+          "timestamp_queue_seconds": 487.0,
+          "window": "FLEET_LEDGER"
+        }
+      ],
+      "lanes": {
+        "COMPILED_FOREIGN_OBSERVER": {
+          "execute_seconds": 410.0,
+          "flow_efficiency": 0.995145631068,
+          "jobs": 1,
+          "queue_execute_ratio": 0.00487804878049,
+          "queue_seconds": 2.0
+        },
+        "CRYPTO_PROVENANCE_LIGHTWEIGHT": {
+          "execute_seconds": 14.0,
+          "flow_efficiency": 0.823529411765,
+          "jobs": 1,
+          "queue_execute_ratio": 0.214285714286,
+          "queue_seconds": 3.0
+        },
+        "PYTHON_CONTROL_GUARD": {
+          "execute_seconds": 8.0,
+          "flow_efficiency": 0.0754716981132,
+          "jobs": 1,
+          "queue_execute_ratio": 12.25,
+          "queue_seconds": 98.0
+        },
+        "PYTHON_EVIDENCE_KERNEL": {
+          "execute_seconds": 16.0,
+          "flow_efficiency": 0.0909090909091,
+          "jobs": 1,
+          "queue_execute_ratio": 10.0,
+          "queue_seconds": 160.0
+        },
+        "PYTHON_HOME_CONTROL_ANALYTICS": {
+          "execute_seconds": 10.0,
+          "flow_efficiency": 0.0201207243461,
+          "jobs": 1,
+          "queue_execute_ratio": 48.7,
+          "queue_seconds": 487.0
+        }
+      },
+      "littles_law_consistency": {
+        "FLEET_LEDGER": {
+          "L_time_average_sweep": 0.516680923867,
+          "Lq_time_average_sweep": 0.320786997434,
+          "arrival_rate_per_second": 0.00213857998289,
+          "interpretation": "closed-window accounting identity over measured timestamps; not a stationary queue model",
+          "jobs": 5,
+          "lambda_times_W": 0.516680923867,
+          "lambda_times_Wq": 0.320786997434,
+          "mean_queue_wait_seconds": 150.0,
+          "mean_sojourn_seconds": 241.6,
+          "relative_residual": 0.0,
+          "relative_residual_queue": 0.0,
+          "status": "PASS_LITTLES_LAW_CONSISTENT",
+          "steady_state_claimed": false,
+          "tolerance": 1e-09,
+          "window_seconds": 2338.0
+        }
+      },
+      "schema": "qps-ggmath-flow-kpi/v1",
+      "source": "analytics/EXPEDITION_FLEET_ITERATION_LEDGER_v1.json",
+      "source_sha": null,
+      "status": "PASS_FLOW_KPI",
+      "threshold_kind": {
+        "flow_efficiency": "EXACT_IDENTITY",
+        "littles_law_consistency": "EXACT_IDENTITY",
+        "queue_execute_ratio": "EXACT_IDENTITY"
+      }
+    },
+    "flow_kpi_gm_i_a": {
+      "adapter": "flow_kpi",
+      "authority_transfer": false,
+      "engineering_acceptance": false,
+      "excluded": [],
+      "feature_timestamp_reconciled": true,
+      "fleet": {
+        "dominant_component": "QUEUE_ADMISSION",
+        "execute_seconds": 275.0,
+        "flow_efficiency": 0.123263110713,
+        "queue_execute_ratio": 7.11272727273,
+        "queue_seconds": 1956.0
+      },
+      "jobs": [
+        {
+          "execute_seconds": 8.0,
+          "execute_source": "MEASURED_FEATURE",
+          "feature_timestamp_reconciled": true,
+          "flow_efficiency": 0.0125,
+          "job_id": 105850219298,
+          "lane": "dow",
+          "queue_execute_ratio": 79.0,
+          "queue_seconds": 632.0,
+          "repo": "GBOGEB/ABACUS",
+          "run_id": 35425352862,
+          "timestamp_execute_seconds": 8.0,
+          "timestamp_queue_seconds": 632.0,
+          "window": "GM-I-A-MCLOCK-P001"
+        },
+        {
+          "execute_seconds": 7.0,
+          "execute_source": "MEASURED_FEATURE",
+          "feature_timestamp_reconciled": true,
+          "flow_efficiency": 0.0134874759152,
+          "job_id": 105848961200,
+          "lane": "fast",
+          "queue_execute_ratio": 73.1428571429,
+          "queue_seconds": 512.0,
+          "repo": "GBOGEB/CoolProp",
+          "run_id": 35424686224,
+          "timestamp_execute_seconds": 7.0,
+          "timestamp_queue_seconds": 512.0,
+          "window": "GM-I-A-MCLOCK-P001"
+        },
+        {
+          "execute_seconds": 251.0,
+          "execute_source": "TIMESTAMP_DERIVED",
+          "feature_timestamp_reconciled": true,
+          "flow_efficiency": 0.98431372549,
+          "job_id": 105848481303,
+          "lane": "heavy",
+          "queue_execute_ratio": 0.0159362549801,
+          "queue_seconds": 4.0,
+          "repo": "GBOGEB/CoolProp",
+          "run_id": 35424686224,
+          "timestamp_execute_seconds": 251.0,
+          "timestamp_queue_seconds": 4.0,
+          "window": "GM-I-A-MCLOCK-P001"
+        },
+        {
+          "execute_seconds": 9.0,
+          "execute_source": "MEASURED_FEATURE",
+          "feature_timestamp_reconciled": true,
+          "flow_efficiency": 0.0110159118727,
+          "job_id": 105850933005,
+          "lane": "keb",
+          "queue_execute_ratio": 89.7777777778,
+          "queue_seconds": 808.0,
+          "repo": "GBOGEB/CODEX",
+          "run_id": 35425623741,
+          "timestamp_execute_seconds": 9.0,
+          "timestamp_queue_seconds": 808.0,
+          "window": "GM-I-A-MCLOCK-P001"
+        }
+      ],
+      "lanes": {
+        "dow": {
+          "execute_seconds": 8.0,
+          "flow_efficiency": 0.0125,
+          "jobs": 1,
+          "queue_execute_ratio": 79.0,
+          "queue_seconds": 632.0
+        },
+        "fast": {
+          "execute_seconds": 7.0,
+          "flow_efficiency": 0.0134874759152,
+          "jobs": 1,
+          "queue_execute_ratio": 73.1428571429,
+          "queue_seconds": 512.0
+        },
+        "heavy": {
+          "execute_seconds": 251.0,
+          "flow_efficiency": 0.98431372549,
+          "jobs": 1,
+          "queue_execute_ratio": 0.0159362549801,
+          "queue_seconds": 4.0
+        },
+        "keb": {
+          "execute_seconds": 9.0,
+          "flow_efficiency": 0.0110159118727,
+          "jobs": 1,
+          "queue_execute_ratio": 89.7777777778,
+          "queue_seconds": 808.0
+        }
+      },
+      "littles_law_consistency": {
+        "GM-I-A-MCLOCK-P001": {
+          "L_time_average_sweep": 1.05235849057,
+          "Lq_time_average_sweep": 0.922641509434,
+          "arrival_rate_per_second": 0.00188679245283,
+          "interpretation": "closed-window accounting identity over measured timestamps; not a stationary queue model",
+          "jobs": 4,
+          "lambda_times_W": 1.05235849057,
+          "lambda_times_Wq": 0.922641509434,
+          "mean_queue_wait_seconds": 489.0,
+          "mean_sojourn_seconds": 557.75,
+          "relative_residual": 0.0,
+          "relative_residual_queue": 0.0,
+          "status": "PASS_LITTLES_LAW_CONSISTENT",
+          "steady_state_claimed": false,
+          "tolerance": 1e-09,
+          "window_seconds": 2120.0
+        }
+      },
+      "schema": "qps-ggmath-flow-kpi/v1",
+      "source": "mission/GRANDMISSION_I_B_TEMPORAL_PCA/inbound/GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json",
+      "source_sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc",
+      "status": "PASS_FLOW_KPI",
+      "threshold_kind": {
+        "flow_efficiency": "EXACT_IDENTITY",
+        "littles_law_consistency": "EXACT_IDENTITY",
+        "queue_execute_ratio": "EXACT_IDENTITY"
+      }
+    },
+    "pca_retention_gm_i_a": {
+      "adapter": "pca_retention",
+      "authority_transfer": false,
+      "bt_admissible": false,
+      "engineering_acceptance": false,
+      "kernels": {
+        "kernels/matrix_core.py": "a6cec382bdd827310568416fcc113e408483662d3813f58b0d99493ebddb929e",
+        "kernels/pca_reference.py": "acafe56e3006a054b9fbd4770a52c6a51a9bc807a86faab47362893b297c6096",
+        "kernels/pca_uncertainty.py": "49d7b2f122bf8175ea523c98107c387ae982e7cb6edb4469a5a75cf00ba4382d",
+        "kernels/rmt_calibration.py": "52e77790fe24a663ba22073a71113a54b409eab82168269b3576e1f96ef5805c",
+        "kernels/rmt_signal.py": "815285216e83995bb96f344415dac2283049b44fa155f7600a459aad11b27677",
+        "kernels/stats_core.py": "c35d9d886ba809a9b6cb6320668dc8ed24ffd2bd35b0cda450dc3424602bbbed"
+      },
+      "provider": {
+        "repo": "GBOGEB/gg_MATH",
+        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+      },
+      "result": {
+        "bt_admissible": false,
+        "calibration": {
+          "minimum": 3,
+          "n": 1
+        },
+        "features": [
+          "heavy_queue_seconds",
+          "heavy_checkout_seconds",
+          "heavy_build_seconds",
+          "fast_queue_seconds",
+          "fast_execute_seconds",
+          "dow_queue_seconds",
+          "dow_execute_seconds",
+          "keb_queue_seconds",
+          "keb_execute_seconds"
+        ],
+        "n": 1,
+        "p": 9,
+        "sample_adequacy_rule": "n >= max(10, 3*p)",
+        "sample_adequate": false
+      },
+      "schema": "qps-ggmath-bridge-output/v1",
+      "status": "DEFER_INSUFFICIENT_OBSERVATIONS",
+      "threshold_kind": {
+        "pca_bootstrap_subspace": "DATA_CALIBRATED",
+        "pca_eigengap_guard": "HEURISTIC",
+        "pca_mp_edge": "MODEL_DERIVED",
+        "pca_pa95": "DATA_CALIBRATED"
+      }
+    },
+    "pca_retention_w3_fleet": {
+      "adapter": "pca_retention",
+      "authority_transfer": false,
+      "bt_admissible": false,
+      "engineering_acceptance": false,
+      "kernels": {
+        "kernels/matrix_core.py": "a6cec382bdd827310568416fcc113e408483662d3813f58b0d99493ebddb929e",
+        "kernels/pca_reference.py": "acafe56e3006a054b9fbd4770a52c6a51a9bc807a86faab47362893b297c6096",
+        "kernels/pca_uncertainty.py": "49d7b2f122bf8175ea523c98107c387ae982e7cb6edb4469a5a75cf00ba4382d",
+        "kernels/rmt_calibration.py": "52e77790fe24a663ba22073a71113a54b409eab82168269b3576e1f96ef5805c",
+        "kernels/rmt_signal.py": "815285216e83995bb96f344415dac2283049b44fa155f7600a459aad11b27677",
+        "kernels/stats_core.py": "c35d9d886ba809a9b6cb6320668dc8ed24ffd2bd35b0cda450dc3424602bbbed"
+      },
+      "provider": {
+        "repo": "GBOGEB/gg_MATH",
+        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+      },
+      "result": {
+        "bootstrap": {
+          "alignment_order": "ASSIGNMENT_THEN_SIGN",
+          "authority_transfer": false,
+          "component_status": "PASS_ALIGNED_COMPONENT_UNCERTAINTY",
+          "components": 1,
+          "congruence_intervals": [
+            {
+              "median": 0.995193336077,
+              "p05": 0.799043169188,
+              "p95": 0.99991977245
+            }
+          ],
+          "eigengap": {
+            "boundary_gap_ratio": 0.753614719851,
+            "component_identity_admissible": true,
+            "internal_gap_ratios": [],
+            "status": "PASS_EIGENGAP_GUARD",
+            "subspace_dimension_admissible": true,
+            "threshold_kind": "HEURISTIC_DIAGNOSTIC_GUARD",
+            "tolerance_ratio": 0.05
+          },
+          "eigenvalue_intervals": [
+            {
+              "median": 4.06902693032,
+              "p05": 3.71893057158,
+              "p95": 4.76837625606
+            }
+          ],
+          "loading_intervals": [
+            [
+              {
+                "median": -0.484770877457,
+                "p05": -0.821797936636,
+                "p95": 0.986643240774
+              }
+            ],
+            [
+              {
+                "median": 0.947914752341,
+                "p05": 0.847372388573,
+                "p95": 0.990979964953
+              }
+            ],
+            [
+              {
+                "median": 0.979054604784,
+                "p05": 0.958130223679,
+                "p95": 0.999748391981
+              }
+            ],
+            [
+              {
+                "median": 0.98172732401,
+                "p05": 0.949651532511,
+                "p95": 0.999998753774
+              }
+            ],
+            [
+              {
+                "median": 0.982460508902,
+                "p05": 0.951096121821,
+                "p95": 0.999995751257
+              }
+            ]
+          ],
+          "n": 5,
+          "p": 5,
+          "resamples": 300,
+          "scale": true,
+          "seed": 20260921,
+          "skipped_replicates": 105,
+          "status": "PASS",
+          "subspace_uncertainty": {
+            "grassmann_distance": {
+              "median": 0.0980868955127,
+              "p05": 0.0126671719729,
+              "p95": 0.645094135664
+            },
+            "max_principal_angle_radians": {
+              "median": 0.0980868955127,
+              "p05": 0.0126671719729,
+              "p95": 0.645094135664
+            },
+            "procrustes_residual": {
+              "median": 0.0980475794974,
+              "p05": 0.0126670872839,
+              "p95": 0.633966609234
+            },
+            "projection_distance": {
+              "median": 0.097929688181,
+              "p05": 0.012666833219,
+              "p95": 0.601273659637
+            }
+          },
+          "threshold_kind": "DATA_CALIBRATED_WITH_HEURISTIC_EIGENGAP_GUARD",
+          "valid_resamples": 195
+        },
+        "bt_admissible": false,
+        "calibration_guard": "The empirical PA edge is fixture- and preprocessing-specific. MP is asymptotic and model-dependent. Exceeding either edge yields only an outlier/retention candidate until stability, provenance and measured-consumer gates pass.",
+        "eigengap": {
+          "boundary_gap_ratio": 0.753614719851,
+          "component_identity_admissible": true,
+          "internal_gap_ratios": [],
+          "status": "PASS_EIGENGAP_GUARD",
+          "subspace_dimension_admissible": true,
+          "threshold_kind": "HEURISTIC_DIAGNOSTIC_GUARD",
+          "tolerance_ratio": 0.05
+        },
+        "features": [
+          "queue_delay_s",
+          "job_duration_s",
+          "executed_step_count",
+          "artifact_count",
+          "artifact_bytes"
+        ],
+        "n": 5,
+        "p": 5,
+        "sample_adequacy_rule": "n >= max(10, 3*p)",
+        "sample_adequate": false,
+        "scree": {
+          "leading_retained_candidates": 1,
+          "mp_lower_asymptotic": 0.0,
+          "mp_upper_asymptotic": 4.0,
+          "observed_eigenvalues": [
+            3.79870170235,
+            0.935944183137,
+            0.263473745021,
+            0.00188036948989,
+            0.0
+          ],
+          "pa95_component_thresholds": [
+            3.37597715964,
+            1.93899067485,
+            1.17954023539,
+            0.513136249636,
+            6.63285683613e-17
+          ],
+          "pa_retained_candidate": [
+            true,
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      },
+      "schema": "qps-ggmath-bridge-output/v1",
+      "status": "DEFER_BELOW_SAMPLE_ADEQUACY_DESCRIPTIVE_ONLY",
+      "threshold_kind": {
+        "pca_bootstrap_subspace": "DATA_CALIBRATED",
+        "pca_eigengap_guard": "HEURISTIC",
+        "pca_mp_edge": "MODEL_DERIVED",
+        "pca_pa95": "DATA_CALIBRATED"
+      }
+    },
+    "research_interfaces": {
+      "adapter": "research_interfaces",
+      "authority_transfer": false,
+      "bt_admissible": null,
+      "engineering_acceptance": false,
+      "kernels": {
+        "kernels/bt_uncertainty.py": "a2a727366cd7c6e5c4860d10848f6a536135204bbc3e597cc0c156a037245121",
+        "kernels/pca_uncertainty.py": "49d7b2f122bf8175ea523c98107c387ae982e7cb6edb4469a5a75cf00ba4382d"
+      },
+      "provider": {
+        "repo": "GBOGEB/gg_MATH",
+        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+      },
+      "result": {
+        "bayesian_bt": {
+          "authority_transfer": false,
+          "method": "HIERARCHICAL_BAYESIAN_BRADLEY_TERRY",
+          "reason": "Prior, calibration and posterior-diagnostic contract not yet selected and challenged.",
+          "status": "RESEARCH_TODO"
+        },
+        "grassmann_state_space": {
+          "authority_transfer": false,
+          "method": "GRASSMANN_STATE_SPACE",
+          "reason": "Process and measurement model not yet selected and challenged.",
+          "status": "RESEARCH_TODO"
+        }
+      },
+      "schema": "qps-ggmath-bridge-output/v1",
+      "status": "RESEARCH_TODO",
+      "threshold_kind": {
+        "bt_bayesian": "RESEARCH_TODO",
+        "grassmann_state_space": "RESEARCH_TODO"
+      }
+    }
+  },
+  "provider": {
+    "repo": "GBOGEB/gg_MATH",
+    "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+  },
+  "reference_challenges": {
+    "convergence_reference_cohort": {
+      "adapter": "convergence",
+      "authority_transfer": false,
+      "bt_admissible": null,
+      "engineering_acceptance": false,
+      "kernels": {
+        "kernels/convergence_control.py": "f672b5dceacef19e637fedad6cf17d6080c2c68cbe4b1f21441f73fe215b150e",
+        "kernels/visual_engine_bridge.py": "b269dee5e1c9dfd0423f84384b039cc984f650a7473b69f4b9774fc2c134ab18"
+      },
+      "provider": {
+        "repo": "GBOGEB/gg_MATH",
+        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+      },
+      "result": {
+        "receipt": {
+          "acceleration_pp_per_pulse2": -1.0,
+          "authority_transfer": false,
+          "bradley_terry": {
+            "status": "NOT_MEASURED"
+          },
+          "cap_distance_pp": 33.0,
+          "cap_tolerance_pp": 2.0,
+          "capability": {
+            "dpmo": null,
+            "independence_authenticated": false,
+            "status": "NOT_MEASURED",
+            "upper_dpmo": null
+          },
+          "classification": "PLATEAU_DESCRIPTIVE_NOT_PROVEN_STABLE",
+          "dmaic": {
+            "analyze": "ROOT_VS_MANIFESTATION_AND_MODEL_GUARDS",
+            "control": "NEXT_EXACT_SHA_RECENSUS_REQUIRED",
+            "define": "MATCHED_COHORT",
+            "improve": "OWNER_DEPENDENT",
+            "measure": "SOURCE_BOUND_SERIES"
+          },
+          "equivalence": {
+            "interval": null,
+            "status": "NOT_MEASURED"
+          },
+          "evidence_class": "SYNTHETIC_REFERENCE",
+          "forecast_vs_actual": null,
+          "global_stability_proven": false,
+          "inhibition": [],
+          "last_covered_k": 67,
+          "matched_denominator_d": 100,
+          "merge_admission": "HOLD",
+          "mip": {
+            "innovate": "METHOD_GAP_IF_PROVEN",
+            "modernize": "MEASURED_DEFECT_ONLY",
+            "perpetuate": "AFTER_NATIVE_AND_OWNER_APPROVAL"
+          },
+          "observations": [
+            {
+              "attempt": 1,
+              "coverage_pp": 40.0,
+              "covered": 40,
+              "denominator": 100,
+              "n": 0,
+              "run_id": 1000,
+              "sha": "00000000000000000000000000000000000a11ce"
+            },
+            {
+              "attempt": 1,
+              "coverage_pp": 55.0,
+              "covered": 55,
+              "denominator": 100,
+              "n": 1,
+              "run_id": 1001,
+              "sha": "00000000000000000000000000000000000a11cf"
+            },
+            {
+              "attempt": 1,
+              "coverage_pp": 63.0,
+              "covered": 63,
+              "denominator": 100,
+              "n": 2,
+              "run_id": 1002,
+              "sha": "00000000000000000000000000000000000a11d0"
+            },
+            {
+              "attempt": 1,
+              "coverage_pp": 66.0,
+              "covered": 66,
+              "denominator": 100,
+              "n": 3,
+              "run_id": 1003,
+              "sha": "00000000000000000000000000000000000a11d1"
+            },
+            {
+              "attempt": 1,
+              "coverage_pp": 66.0,
+              "covered": 66,
+              "denominator": 100,
+              "n": 4,
+              "run_id": 1004,
+              "sha": "00000000000000000000000000000000000a11d2"
+            },
+            {
+              "attempt": 1,
+              "coverage_pp": 67.0,
+              "covered": 67,
+              "denominator": 100,
+              "n": 5,
+              "run_id": 1005,
+              "sha": "00000000000000000000000000000000000a11d3"
+            },
+            {
+              "attempt": 1,
+              "coverage_pp": 67.0,
+              "covered": 67,
+              "denominator": 100,
+              "n": 6,
+              "run_id": 1006,
+              "sha": "00000000000000000000000000000000000a11d4"
+            }
+          ],
+          "pca": {
+            "status": "NOT_MEASURED"
+          },
+          "plateau_last_three_steps": true,
+          "population_id": "SYNTHETIC_REFERENCE_COHORT",
+          "recent_velocity_mad_pp": 0.0,
+          "recent_velocity_median_pp": 0.0,
+          "schema": "gg_math.convergence_receipt.v1",
+          "series_clock": "PULSE_INDEX_NOT_WALL_TIME",
+          "six_sigma_achievement_proven": false,
+          "source_shas": [
+            "00000000000000000000000000000000000a11ce",
+            "00000000000000000000000000000000000a11cf",
+            "00000000000000000000000000000000000a11d0",
+            "00000000000000000000000000000000000a11d1",
+            "00000000000000000000000000000000000a11d2",
+            "00000000000000000000000000000000000a11d3",
+            "00000000000000000000000000000000000a11d4"
+          ],
+          "tolerance_pp": 1.5,
+          "velocity_pp_per_pulse": 0.0
+        },
+        "velocity_series": [
+          {
+            "from_n": 0,
+            "to_n": 1,
+            "velocity_pp_per_pulse": 15.0
+          },
+          {
+            "from_n": 1,
+            "to_n": 2,
+            "velocity_pp_per_pulse": 8.0
+          },
+          {
+            "from_n": 2,
+            "to_n": 3,
+            "velocity_pp_per_pulse": 3.0
+          },
+          {
+            "from_n": 3,
+            "to_n": 4,
+            "velocity_pp_per_pulse": 0.0
+          },
+          {
+            "from_n": 4,
+            "to_n": 5,
+            "velocity_pp_per_pulse": 1.0
+          },
+          {
+            "from_n": 5,
+            "to_n": 6,
+            "velocity_pp_per_pulse": 0.0
+          }
+        ],
+        "visual_series_contract": "PASS_gg_math.visual_engine_bridge.v1"
+      },
+      "schema": "qps-ggmath-bridge-output/v1",
+      "status": "PASS_CONVERGENCE_CLASSIFIED",
+      "threshold_kind": {
+        "convergence_classification": "PROJECT_GOVERNED"
+      }
+    },
+    "evidence_class": "SYNTHETIC_REFERENCE",
+    "note": "Renderer and kernel challenges only; not QPS evidence and never promoted.",
+    "temporal_trace_rank3_r4": {
+      "adapter": "temporal_trace",
+      "authority_transfer": false,
+      "bt_admissible": false,
+      "engineering_acceptance": false,
+      "kernels": {
+        "kernels/matrix_core.py": "a6cec382bdd827310568416fcc113e408483662d3813f58b0d99493ebddb929e",
+        "kernels/pca_reference.py": "acafe56e3006a054b9fbd4770a52c6a51a9bc807a86faab47362893b297c6096",
+        "kernels/stats_core.py": "c35d9d886ba809a9b6cb6320668dc8ed24ffd2bd35b0cda450dc3424602bbbed",
+        "kernels/subspace_metrics.py": "6130a69d14efa02cc12483ed037a7578dac0c200480f0d5562f7c012164ebc91",
+        "kernels/temporal_pca_receipt.py": "f5e8fdf390b4fe9b55cb8fa8a4815eda046ae9621efba760d6dfede4fc096c63",
+        "kernels/temporal_subspace_trace.py": "c26b1c339dab5f26035f06abaf3cb586333142b5e14a5ac4adbf670fb5c2d6e2"
+      },
+      "provider": {
+        "repo": "GBOGEB/gg_MATH",
+        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+      },
+      "result": {
+        "bt_admissible": false,
+        "evidence_class": "SYNTHETIC_REFERENCE",
+        "multiclock_steps": [
+          {
+            "authority_transfer": false,
+            "current": {
+              "a": 10.0,
+              "k": 1,
+              "pr": null,
+              "pulse": "SYN-1",
+              "release": null,
+              "run": null,
+              "t": "2026-10-02T00:00:00Z",
+              "wave": null
+            },
+            "delta_a": 10.0,
+            "delta_k": 1,
+            "delta_t_seconds": 86400.0,
+            "distance": 0.1,
+            "event_index_rate": 0.1,
+            "exposure_rate_per_age_unit": 0.01,
+            "previous": {
+              "a": 0.0,
+              "k": 0,
+              "pr": null,
+              "pulse": "SYN-0",
+              "release": null,
+              "run": null,
+              "t": "2026-10-01T00:00:00Z",
+              "wave": null
+            },
+            "schema": "gg-math-multiclock-step/v1",
+            "wall_time_rate_per_second": 1.15740740741e-06
+          },
+          {
+            "authority_transfer": false,
+            "current": {
+              "a": 20.0,
+              "k": 2,
+              "pr": null,
+              "pulse": "SYN-2",
+              "release": null,
+              "run": null,
+              "t": "2026-10-03T00:00:00Z",
+              "wave": null
+            },
+            "delta_a": 10.0,
+            "delta_k": 1,
+            "delta_t_seconds": 86400.0,
+            "distance": 0.15,
+            "event_index_rate": 0.15,
+            "exposure_rate_per_age_unit": 0.015,
+            "previous": {
+              "a": 10.0,
+              "k": 1,
+              "pr": null,
+              "pulse": "SYN-1",
+              "release": null,
+              "run": null,
+              "t": "2026-10-02T00:00:00Z",
+              "wave": null
+            },
+            "schema": "gg-math-multiclock-step/v1",
+            "wall_time_rate_per_second": 1.73611111111e-06
+          },
+          {
+            "authority_transfer": false,
+            "current": {
+              "a": 30.0,
+              "k": 3,
+              "pr": null,
+              "pulse": "SYN-3",
+              "release": null,
+              "run": null,
+              "t": "2026-10-04T00:00:00Z",
+              "wave": null
+            },
+            "delta_a": 10.0,
+            "delta_k": 1,
+            "delta_t_seconds": 86400.0,
+            "distance": 0.05,
+            "event_index_rate": 0.05,
+            "exposure_rate_per_age_unit": 0.005,
+            "previous": {
+              "a": 20.0,
+              "k": 2,
+              "pr": null,
+              "pulse": "SYN-2",
+              "release": null,
+              "run": null,
+              "t": "2026-10-03T00:00:00Z",
+              "wave": null
+            },
+            "schema": "gg-math-multiclock-step/v1",
+            "wall_time_rate_per_second": 5.78703703704e-07
+          },
+          {
+            "authority_transfer": false,
+            "current": {
+              "a": 40.0,
+              "k": 4,
+              "pr": null,
+              "pulse": "SYN-4",
+              "release": null,
+              "run": null,
+              "t": "2026-10-05T00:00:00Z",
+              "wave": null
+            },
+            "delta_a": 10.0,
+            "delta_k": 1,
+            "delta_t_seconds": 86400.0,
+            "distance": 0.15,
+            "event_index_rate": 0.15,
+            "exposure_rate_per_age_unit": 0.015,
+            "previous": {
+              "a": 30.0,
+              "k": 3,
+              "pr": null,
+              "pulse": "SYN-3",
+              "release": null,
+              "run": null,
+              "t": "2026-10-04T00:00:00Z",
+              "wave": null
+            },
+            "schema": "gg-math-multiclock-step/v1",
+            "wall_time_rate_per_second": 1.73611111111e-06
+          }
+        ],
+        "trace": {
+          "adjacent": [
+            {
+              "current_eigengaps": null,
+              "delta_a": 10.0,
+              "delta_k": 1,
+              "delta_t": 86400.0,
+              "from_k": 0,
+              "geodesic_per_age": 0.01,
+              "geodesic_per_event_index": 0.1,
+              "geodesic_per_wall_time": 1.15740740741e-06,
+              "grassmann_geodesic_distance": 0.1,
+              "previous_eigengaps": null,
+              "principal_angles_degrees": [
+                0.0,
+                0.0,
+                5.72957795131
+              ],
+              "principal_angles_radians": [
+                0.0,
+                0.0,
+                0.1
+              ],
+              "procrustes_residual": 0.0999583385414,
+              "projection_distance": 0.0998334166468,
+              "projection_per_age": 0.00998334166468,
+              "projection_per_event_index": 0.0998334166468,
+              "projection_per_wall_time": 1.15547935934e-06,
+              "rho_min": 0.995004165278,
+              "theta_max_radians": 0.1,
+              "to_k": 1
+            },
+            {
+              "current_eigengaps": null,
+              "delta_a": 10.0,
+              "delta_k": 1,
+              "delta_t": 86400.0,
+              "from_k": 1,
+              "geodesic_per_age": 0.015,
+              "geodesic_per_event_index": 0.15,
+              "geodesic_per_wall_time": 1.73611111111e-06,
+              "grassmann_geodesic_distance": 0.15,
+              "previous_eigengaps": null,
+              "principal_angles_degrees": [
+                0.0,
+                0.0,
+                8.59436692696
+              ],
+              "principal_angles_radians": [
+                0.0,
+                0.0,
+                0.15
+              ],
+              "procrustes_residual": 0.149859414545,
+              "projection_distance": 0.149438132474,
+              "projection_per_age": 0.0149438132474,
+              "projection_per_event_index": 0.149438132474,
+              "projection_per_wall_time": 1.72960801474e-06,
+              "rho_min": 0.988771077936,
+              "theta_max_radians": 0.15,
+              "to_k": 2
+            },
+            {
+              "current_eigengaps": null,
+              "delta_a": 10.0,
+              "delta_k": 1,
+              "delta_t": 86400.0,
+              "from_k": 2,
+              "geodesic_per_age": 0.005,
+              "geodesic_per_event_index": 0.05,
+              "geodesic_per_wall_time": 5.78703703704e-07,
+              "grassmann_geodesic_distance": 0.05,
+              "previous_eigengaps": null,
+              "principal_angles_degrees": [
+                0.0,
+                0.0,
+                2.86478897565
+              ],
+              "principal_angles_radians": [
+                0.0,
+                0.0,
+                0.05
+              ],
+              "procrustes_residual": 0.0499947918294,
+              "projection_distance": 0.0499791692707,
+              "projection_per_age": 0.00499791692707,
+              "projection_per_event_index": 0.0499791692707,
+              "projection_per_wall_time": 5.784626073e-07,
+              "rho_min": 0.998750260395,
+              "theta_max_radians": 0.05,
+              "to_k": 3
+            },
+            {
+              "current_eigengaps": null,
+              "delta_a": 10.0,
+              "delta_k": 1,
+              "delta_t": 86400.0,
+              "from_k": 3,
+              "geodesic_per_age": 0.015,
+              "geodesic_per_event_index": 0.15,
+              "geodesic_per_wall_time": 1.73611111111e-06,
+              "grassmann_geodesic_distance": 0.15,
+              "previous_eigengaps": null,
+              "principal_angles_degrees": [
+                0.0,
+                0.0,
+                8.59436692696
+              ],
+              "principal_angles_radians": [
+                0.0,
+                0.0,
+                0.15
+              ],
+              "procrustes_residual": 0.149859414545,
+              "projection_distance": 0.149438132474,
+              "projection_per_age": 0.0149438132474,
+              "projection_per_event_index": 0.149438132474,
+              "projection_per_wall_time": 1.72960801474e-06,
+              "rho_min": 0.988771077936,
+              "theta_max_radians": 0.15,
+              "to_k": 4
+            }
+          ],
+          "ambient_dimension": 4,
+          "authority_transfer": false,
+          "cumulative_grassmann_path_length": 0.45,
+          "cumulative_projection_path_length": 0.448688850865,
+          "event_wall_age_clocks_separate": true,
+          "grassmann_path_to_displacement_ratio": 1.28571428571,
+          "interpretation_guard": "cumulative path measures total travelled subspace motion; net displacement measures only start-to-end separation and can be small after reversals",
+          "net_grassmann_displacement_from_reference": 0.35,
+          "net_projection_displacement_from_reference": 0.342897807455,
+          "projection_path_to_displacement_ratio": 1.30852061783,
+          "retained_rank": 3,
+          "schema": "gg-math-temporal-subspace-trace/v1",
+          "states": 5
+        }
+      },
+      "schema": "qps-ggmath-bridge-output/v1",
+      "status": "PASS_TEMPORAL_SUBSPACE_TRACE",
+      "threshold_kind": {
+        "temporal_subspace_trace": "NO_UNIVERSAL_THRESHOLD"
+      }
+    }
+  },
+  "schema": "qps-ggmath-bridge-receipt/v1"
+}

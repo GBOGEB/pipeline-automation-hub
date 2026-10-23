@@ -1,0 +1,36 @@
+{
+  "schema": "qps-ggmath-jade-hook/v1",
+  "enabled": false,
+  "consumer": "mission-control/jade_temple",
+  "producer": "mission-control/qps-triage-ultra/ggmath_bridge_receipt.json",
+  "activation": {
+    "requires_on_master": [
+      "mission-control/jade_temple/tools/rolling5.py",
+      "mission-control/jade_temple/data/ROLLING5_POLICY.json"
+    ],
+    "pending_source_branch": "feat/jade-rolling5-nirvana-source-red-20261022",
+    "switch": "After the rolling-5 engine is on master, set enabled=true in a reviewed PR; ggmath_jade_hook.py then emits jade.temple.ggmath_annotation.v1 for rolling5.py to read.",
+    "disabled_status": "DEFER_JADE_HOOK_DISABLED",
+    "missing_target_status": "DEFER_JADE_TARGET_NOT_ON_MASTER"
+  },
+  "feeds": [
+    {
+      "from": "measured.flow_kpi_gm_i_a",
+      "as": "per-repo queue-admission pressure annotation beside SOURCE_RED ranking",
+      "threshold_kind": "EXACT_IDENTITY"
+    },
+    {
+      "from": "measured.bt_reverse_pressure_gm_i_a",
+      "as": "reverse-pressure status (DEFER until three measured repeat pulses)",
+      "threshold_kind": "PROJECT_GOVERNED"
+    }
+  ],
+  "contract": {
+    "read_only": true,
+    "may_change_jade_gates": false,
+    "may_change_nirvana_or_streaks": false,
+    "release_credit": false,
+    "pca_outputs_are_bt_evidence": false
+  },
+  "authority_transfer": false
+}

@@ -43,6 +43,16 @@ jobs:
       - name: Install Jekyll dependencies
         run: bundle install
 
+      - name: Set up Python for the offline Plotly bundle
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Vendor offline plotly.js from the gg_MATH pin (no CDN)
+        run: |
+          python3 -m pip install plotly==7.0.0
+          python3 ../ggmath_plotly.py --vendor-plotlyjs assets/js
+
       - name: Bind exact build identity
         env:
           QPS_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}

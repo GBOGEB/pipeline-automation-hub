@@ -56,6 +56,17 @@ The topology distinguishes `ACTIVE_USED`, `EXECUTION_SATELLITE`, `CONTROL_RESERV
 
 Current high-value route: QPS engineering/source/disposition remains in `GBOGEB/cryoplant-project`; `GBOGEB/Q_engineering_tools` is the bounded exact-payload execution carrier when child Actions admission is blocked; `GBOGEB/CODEX` and `GBOGEB/ABACUS` remain semantic and independent-measurement receivers; `GBOGEB/gg_MATH` is a reusable math provider held in CONTROL reserve. Dormant candidates receive no workers until a named source/consumer blocker justifies activation.
 
+## gg_MATH math bridge
+
+QPS TRIAGE consumes `GBOGEB/gg_MATH` kernels without vendoring them. `ggmath_provider_binding_v1.json` pins the provider by exact 40-character SHA and lists the SHA-256 of every bound kernel (plus its import closure and the GM-I-A measured pulses). `ggmath_bridge.py` fetches those files by that SHA, verifies every digest, and executes only the verified bytes; a mismatch, a missing file or an import outside the bound closure stops with a `DEFER_*` status.
+
+- **Adapters** (`ggmath_bridge.py`): BT strength with Wald intervals and bootstrap rank frequency (classical MLE only when the win graph is strongly connected); BT order effect from forward and *independently observed* reverse trials (never swapped labels); reverse-pressure BT over measured lane queue waits; PCA retention (scree, MP edge, PA95, eigengap guard, bootstrap subspace); PCA alignment and temporal subspace uncertainty; RMT calibration; convergence classification; temporal principal-angle / Grassmann trace. Every output carries a `threshold_kind` and `authority_transfer: false`. PCA outputs are tagged `bt_admissible: false`, and BT rejects any record with PCA/RMT provenance.
+- **Flow KPIs** (`ggmath_flow_kpi.py`): flow efficiency `execute/(queue+execute)`, queue/execute ratio and a closed-window Little's-law consistency field, computed on the GM-I-A pulses and the fleet iteration ledger.
+- **Plotly** (`ggmath_plotly.py`): deterministic figure JSON in `site/_data/ggmath_bridge_figures.json`, rendered by `site/ggmath-bridge.md` with an offline plotly.js that the web build vendors from `plotly==7.0.0`. No CDN.
+- **JADE hook** (`ggmath_jade_hook_v1.json`, `ggmath_jade_hook.py`): disabled by default. Enable it in a reviewed PR once `jade_temple/tools/rolling5.py` is on master. It is read-only.
+
+Regenerate with `python ggmath_bridge.py build` and then `python ggmath_plotly.py`. Bump the pin with `python ggmath_bridge.py rebind --sha <40-hex>`, which recomputes every digest from the new SHA, then rebuild and review the diff.
+
 ## P process (Code Purple × EVERRED)
 
 `p-process/` holds the acute Code Purple mode and the recursive EVERRED 3.0 mode as one loop: lift census, root ledger, ruleset drift probe, BASIC rulesets for owner import, and a refreshable site with a 16:9 companion PDF. See `p-process/README.md`.
