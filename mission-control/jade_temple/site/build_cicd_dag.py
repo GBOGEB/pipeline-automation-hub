@@ -225,6 +225,27 @@ def heatmap(model):
             f'<tr><td></td><td><b>Fleet median</b></td>{fleet}</tr></tbody></table></div>')
 
 
+def pulse_section(model):
+    """Census vs gate snapshot per focus repo: one pulse or an explicit mismatch."""
+    pa = model.get("pulse_alignment")
+    if not pa:
+        return ""
+    verdict = (chip("PASS", "ONE PULSE") if pa["one_pulse"] else
+               chip("CROSSWALK", f'PULSE MISMATCH {pa["mismatch_count"]}/{pa["focus_repos"]}'))
+    rows = "".join(
+        f'<tr><td><b>{E(k)}</b></td><td><code title="{E(v["gate_sha"])}">{E((v["gate_sha"] or "—")[:10])}</code></td>'
+        f'<td><code title="{E(v["census_sha"])}">{E((v["census_sha"] or "—")[:10])}</code></td>'
+        f'<td>{chip("CROSSWALK" if v["pulse_mismatch"] else "PASS", v["state"].replace("_", " "))}</td></tr>'
+        for k, v in pa["repos"].items())
+    return (f'<h2 class="cd-sec" id="pulse">Pulse alignment: census vs gate snapshot {verdict}</h2>'
+            f'<p class="cd-lead">Gate pulse <b>{E(pa["gate_pulse"])}</b> ({E(pa["gate_observed_date"])}, '
+            f'<code>{E(pa["gate_snapshot"])}</code>) joined with the DevOps census observed {E(pa["census_observed_at_utc"])}. '
+            f'A mismatched row mixes two trees: gate verdicts describe the gate SHA, census OIDs and levels the census SHA. '
+            f'<code>tools/cicd_dag.py --strict-pulse</code> fails the build on any mismatch.</p>'
+            f'<div class="cd-card"><table class="cd-pulse" id="cd-pulse"><thead><tr><th>Focus repo</th><th>Gate SHA</th>'
+            f'<th>Census SHA</th><th>pulse_mismatch</th></tr></thead><tbody>{rows}</tbody></table></div>')
+
+
 def objects_table(model):
     rows = "".join(f'<tr><td><code>{E(o["oid"])}</code></td><td>{E(o["path"])}{"<b>::" + E(o["symbol"]) + "</b>" if o.get("symbol") else ""}</td>'
                    f'<td>{E(o["kind"])}</td><td>{E(o["function"])}</td></tr>' for o in model["objects"])
@@ -305,9 +326,11 @@ svg.dag .e-x{stroke:#6fd6e8;stroke-dasharray:5 4}svg.dag .e-t{stroke:#b48cff;str
 table.cd th,table.cd td{padding:8px 10px;border-bottom:1px solid var(--stroke);text-align:left;vertical-align:top;font-size:12.5px}
 table.cd th{background:var(--panel-hi);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);position:sticky;top:0}
 table.cd small{color:var(--quiet)}table.cd code{font-size:11.5px}
-table.cd-kv{border-collapse:collapse;width:100%;min-width:0;table-layout:fixed}table.cd-kv th{color:var(--muted);font-weight:600;text-align:left;padding:3px 10px 3px 0;font-size:12px;vertical-align:top;width:44%}table.cd-kv td{font-size:12.5px;padding:3px 0;overflow-wrap:anywhere;word-break:break-word}
+table.cd-kv{border-collapse:collapse;width:100%;table-layout:fixed}table.cd-kv th{color:var(--muted);font-weight:600;text-align:left;padding:3px 10px 3px 0;font-size:12px;vertical-align:top;width:44%}table.cd-kv td{font-size:12.5px;padding:3px 0;overflow-wrap:anywhere;word-break:break-word}
 .cd-bars{display:grid;gap:8px}.cd-bar{display:grid;grid-template-columns:200px 1fr 110px;gap:10px;align-items:center;font-size:13px}
 .cd-track{display:block;height:14px;border-radius:7px;overflow:hidden;background:var(--panel-hi)}.cd-track i{display:block;height:100%;background:var(--green)}
+table.cd-pulse{border-collapse:collapse;width:100%}table.cd-pulse th,table.cd-pulse td{padding:5px 10px 5px 0;text-align:left;font-size:12.5px;border-bottom:1px solid var(--stroke);overflow-wrap:anywhere}
+table.cd-pulse th{color:var(--muted);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
 .cd-scope[hidden]{display:none}table.cd td.lv{text-align:center;font-weight:800;white-space:nowrap}table.cd td.lv small{display:block;font-weight:600;font-size:10px;color:inherit;opacity:.85}
 .lv.c-pass,.lv.c-fail,.lv.c-unknown{border-left:1px solid var(--stroke)}footer.cd-foot{color:var(--quiet);font-size:12px;margin-top:40px;border-top:1px solid var(--stroke);padding-top:14px;overflow-wrap:anywhere}
 @media(max-width:980px){.cd-stage{grid-template-columns:1fr}.cd-panel{position:static;max-height:none}.sipoc{grid-template-columns:1fr 1fr}}
@@ -361,6 +384,7 @@ def page(model):
 <h1 class="cd-h1">How does CI/CD flow, where is it red, and which object produces each step?</h1>
 <p class="cd-lead">One process model, seven views: the federation total, each JADE focus repo, and the orchestrating / federating assets. Every node carries three identities: <b>FUNCTION</b> (what the step means), <b>SHA</b> (the exact commit or sha256 snapshot it was observed on) and <b>OID</b> (the git blob of the Python, workflow or data object that produces it, with the function symbol). Read-only projection; UNKNOWN is never PASS. <a href="cicd_dag.json">JSON</a> · <a href="cicd_dag_crosswalk.csv">crosswalk CSV</a> · <a href="rolling5.json">rolling-5</a> · <a href="redtrace.html">red-trace</a></p>
 {kpis(total, orch)}
+{pulse_section(model)}
 <h2 class="cd-sec" id="dag">DAG / SIPOC</h2>
 <div class="cd-tools"><label for="cd-scope" class="cd-q">View</label><select id="cd-scope">{opts}</select>
 <span class="cd-seg" role="group" aria-label="Identity lens"><button type="button" data-lens-btn="FUNCTION" aria-pressed="true">Function</button><button type="button" data-lens-btn="SHA" aria-pressed="false">SHA</button><button type="button" data-lens-btn="OID" aria-pressed="false">Object-ID</button></span></div>
@@ -382,15 +406,25 @@ def page(model):
 def main(argv=None, root: Path = ROOT) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--strict-pulse", action="store_true",
+                    help="fail when census and gate snapshot were not read in one pulse")
     args = ap.parse_args(argv)
-    data = page(dag.project(root)).encode("utf-8")
+    model = dag.project(root)
+    data = page(model).encode("utf-8")
     out = root / OUT
+    red = dag.pulse_first_red(model) if args.strict_pulse else None
+    if red:
+        print(red)
     if args.check:
         if not out.exists() or out.read_bytes() != data:
-            print("CICD_DAG_PAGE_FIRST_RED: regenerate " + OUT)
+            print(dag.drift_message("CICD_DAG_PAGE_FIRST_RED", [OUT], root, model))
+            return 1
+        if red:
             return 1
         print("CICD_DAG_PAGE_PARITY_OK")
         return 0
+    if red:
+        return 1
     out.write_bytes(data)
     print("CICD_DAG_PAGE_WROTE " + OUT)
     return 0
