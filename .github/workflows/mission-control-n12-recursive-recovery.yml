@@ -23,14 +23,14 @@ jobs:
   source-lineage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Check exact SHA identity
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
       - name: Run source-bound and adversarial unit tests
@@ -48,7 +48,7 @@ jobs:
           PY
       - name: Persist recovery projection and source receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: mc-n12-recursive-missions
           path: /tmp/mc-n12-missions.json
@@ -57,10 +57,10 @@ jobs:
   live-native-readback:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
       - name: Authenticated GET-only current source and run/job attempts
@@ -71,7 +71,7 @@ jobs:
             --out /tmp/mc-n12-live-readback.json --require-controller
       - name: Persist typed source-access and native evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: mc-n12-live-run-attempts
           path: /tmp/mc-n12-live-readback.json
@@ -81,10 +81,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
       - name: Install scoped Chromium QA dependencies
@@ -98,7 +98,7 @@ jobs:
           python mission-control/v2/recursive-recovery/browser_qa.py /tmp/mc-n12-browser-qa
       - name: Preserve QA screenshots and digests
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: mc-n12-browser-visual
           path: /tmp/mc-n12-browser-qa

@@ -17,7 +17,7 @@ jobs:
   measured-kpi:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Validate measured KPI contract
         run: |
           mkdir -p output/r3-dmaic
@@ -25,7 +25,7 @@ jobs:
       - name: Run KPI regression tests
         run: python -m unittest mission-control/grand-missions/tests/test_r3_dmaic_kpis.py
       - name: Upload KPI receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: hm01-r3-dmaic-kpi
           path: output/r3-dmaic/R3_DMAIC_KPI_RECEIPT_v1.json

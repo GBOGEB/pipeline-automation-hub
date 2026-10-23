@@ -24,7 +24,7 @@ jobs:
         working-directory: federation/w280r/payload
     steps:
       - name: Checkout exact consumer head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
@@ -47,7 +47,7 @@ jobs:
         run: python -m unittest tests/test_qps_w280_federation_sample5.py -v
 
       - name: Upload W280RF receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: w280rf-${{ github.event.pull_request.head.sha || github.sha }}
           path: federation/w280r/payload/w280rf-validation-receipt.json

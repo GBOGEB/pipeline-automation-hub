@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact source head
@@ -50,7 +50,7 @@ jobs:
               'purpose':'artifact-cache-reuse'
           },sort_keys=True)+'\n')
       - name: Upload reusable artifact seed
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: temporal-reuse-seed-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed/REUSE_ARTIFACT.json
@@ -75,7 +75,7 @@ jobs:
       habitat: ${{ steps.discover.outputs.habitat }}
     steps:
       - name: Checkout exact source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact source head
@@ -93,7 +93,7 @@ jobs:
           python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/discover_constrained_runner.py
           --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_RUNNER_DISCOVERY.json
       - name: Upload constrained runner discovery
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: constrained-runner-discovery-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_RUNNER_DISCOVERY.json
@@ -114,11 +114,11 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout exact source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.13'
       - name: Assert exact source head
@@ -131,7 +131,7 @@ jobs:
       - name: Validate reusable REX checklist
         run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
       - name: Download reusable artifact seed
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: temporal-reuse-seed-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed
@@ -159,7 +159,7 @@ jobs:
           assert all(r['source_sha']==actual and r['disposition']=='ACCEPT' for r in rows)
           assert all(r['promotion_allowed'] is False and r['authority_transfer'] is False for r in rows)
       - name: Upload temporal baseline receipts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: temporal-pc3-raw-${{ matrix.habitat }}-baseline-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/receipts/${{ matrix.habitat }}-baseline/*.json
@@ -180,11 +180,11 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout exact source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.13'
       - name: Assert exact source head
@@ -197,7 +197,7 @@ jobs:
       - name: Validate reusable REX checklist
         run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
       - name: Download reusable artifact seed
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: temporal-reuse-seed-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed
@@ -225,7 +225,7 @@ jobs:
           assert all(r['source_sha']==actual and r['disposition']=='ACCEPT' for r in rows)
           assert all(r['promotion_allowed'] is False and r['authority_transfer'] is False for r in rows)
       - name: Upload temporal held receipts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: temporal-pc3-raw-${{ matrix.habitat }}-held-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/receipts/${{ matrix.habitat }}-held/*.json
@@ -236,7 +236,7 @@ jobs:
     runs-on: ${{ fromJSON(needs.discover-constrained-runner.outputs.labels) }}
     steps:
       - name: Checkout exact source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact source head and Python availability
@@ -249,7 +249,7 @@ jobs:
       - name: Validate reusable REX checklist
         run: python mission-control/qps-triage-ultra/crew/measured/validate_rex_reuse.py
       - name: Download reusable artifact seed
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: temporal-reuse-seed-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed
@@ -269,7 +269,7 @@ jobs:
           --input-root mission-control/qps-triage-ultra/crew/measured/frontier/temporal/constrained
           --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_HABITAT_WINDOW.json
       - name: Upload constrained habitat evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: constrained-habitat-window-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
@@ -282,7 +282,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact source head
@@ -292,19 +292,19 @@ jobs:
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$expected"
       - name: Download six hosted temporal cell receipt sets
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: temporal-pc3-raw-*-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/aggregate
           merge-multiple: true
       - name: Download constrained runner discovery
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: constrained-runner-discovery-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal
       - name: Download constrained habitat evidence when assigned
         if: needs.constrained-habitat.result == 'success'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: constrained-habitat-window-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal
@@ -402,7 +402,7 @@ jobs:
             'authority_transfer':False
           },sort_keys=True))
       - name: Upload temporal allocation policy evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: crew-temporal-pc3-${{ github.event.pull_request.head.sha || github.sha }}
           path: |

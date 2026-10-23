@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact source head
@@ -30,7 +30,7 @@ jobs:
           mkdir -p output/r3-dmaic
           python mission-control/grand-missions/validate_r3_dmaic_control.py             --control mission-control/grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json             --self-test --out output/r3-dmaic/R3_DMAIC_CONTROL_RECEIPT_v3.json
       - name: Upload control receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: hm01-r3-dmaic-control
           path: output/r3-dmaic/R3_DMAIC_CONTROL_RECEIPT_v3.json

@@ -37,7 +37,7 @@ jobs:
         python-version: ['3.11', '3.12']
     steps:
       - name: Checkout exact PR source
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact checkout
@@ -45,7 +45,7 @@ jobs:
           SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install pinned coverage
@@ -161,7 +161,7 @@ jobs:
           PY
       - name: Upload read-only evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: n3-evidence-py${{ matrix.python-version }}
           path: /tmp/n3-evidence/

@@ -39,12 +39,12 @@ jobs:
     timeout-minutes: 12
     steps:
       - name: Checkout exact source tree
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Setup Python 3.12
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
       - name: Assert source identity
@@ -65,7 +65,7 @@ jobs:
           PYTHONPATH: tools/metric-atlas
         run: python -m metric_atlas.census diagrams --output qps-metric-run/diagrams
       - name: Publish contract diagrams
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: qps-metric-dag-sipoc-${{ github.run_id }}-${{ github.run_attempt }}
           path: qps-metric-run/diagrams/*.mmd
@@ -76,7 +76,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout source exact tree
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
@@ -138,7 +138,7 @@ jobs:
             --ledger tools/metric-atlas/data/observations.json \
             --output qps-metric-run/qps-federation.html
       - name: Upload QPS census requests and dry-run receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: qps-metric-census-request-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -159,11 +159,11 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout current canonical controller
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       - name: Retrieve pinned census request
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: qps-metric-census-request-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Dispatch bounded, explicitly approved source-bound events
@@ -180,7 +180,7 @@ jobs:
             --output qps-metric-run/dispatch-receipt.json --execute
       - name: Upload dispatch attempt receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: qps-metric-dispatch-attempt-${{ github.run_id }}-${{ github.run_attempt }}
           path: qps-metric-run/dispatch-receipt.json
@@ -202,12 +202,12 @@ jobs:
       contents: read
     steps:
       - name: Checkout exact reviewed PR head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: ${{ matrix.python }}
       - name: Assert exact source head
@@ -231,7 +231,7 @@ jobs:
           git hash-object "tools/metric-atlas/metric_atlas/${SOURCE}.py"
       - name: Preserve source-scoped evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: w7-${{ matrix.source }}-py${{ matrix.python }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: w7-${{ matrix.source }}-coverage.json

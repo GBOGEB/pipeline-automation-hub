@@ -20,14 +20,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Exact-head source identity
         env:
           HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: test "$(git rev-parse HEAD)" = "$HEAD"
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
       - name: Test MIP/GM/cyclic Mycelium and conditional statistics
@@ -45,7 +45,7 @@ jobs:
           assert a['counts']['SIPOC_steps']==20 and a['dispatch_authorized'] is False
           assert a['admission']=='HOLD'
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: mach2-source-projection
@@ -56,17 +56,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Fetch read-only exact upstream CODEX Mycelium provider
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: GBOGEB/CODEX
           ref: 493145eea784d39f57ea64a730af9f3e85586714
           path: _pinned_mycelium
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
       - name: Validate through upstream Mycelium graph.py itself
@@ -88,10 +88,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
       - name: Install read-only Chromium QA
@@ -103,7 +103,7 @@ jobs:
         run: |
           [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Three viewports, six screens, controls and source parity" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           python mission-control/v2/mach2/browser_qa.py /tmp/mc-mach2-qa
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: mc-mach2-browser-screens
