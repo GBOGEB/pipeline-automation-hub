@@ -62,7 +62,7 @@
       "token": 1,
       "set_at": "2026-10-23T10:03:15Z",
       "consumers": [
-        {"repo": "GBOGEB/pipeline-automation-hub", "workflow": "qps-metric-census-federation.yml", "branch": "master", "without": "SOURCE_HEAD_HOLD"}
+        {"repo": "GBOGEB/pipeline-automation-hub", "workflow": "qps-metric-census-federation.yml", "branch": "master", "job": "plan-three-repo-slice", "without": "SOURCE_HEAD_HOLD"}
       ]
     },
     {
@@ -80,7 +80,7 @@
       "token": 3,
       "set_at": "2026-10-23T11:18:30Z",
       "consumers": [
-        {"repo": "GBOGEB/pipeline-automation-hub", "workflow": "qps-metric-census-federation.yml", "branch": "master", "without": "DISPATCH_HOLD"}
+        {"repo": "GBOGEB/pipeline-automation-hub", "workflow": "qps-metric-census-federation.yml", "branch": "master", "job": "dispatch-to-source-owners", "without": "DISPATCH_HOLD"}
       ]
     },
     {
@@ -108,7 +108,7 @@
       "token": 4,
       "set_at": "2026-10-23T10:00:36Z",
       "consumers": [
-        {"repo": "GBOGEB/ABACUS", "workflow": "dmaic-commit-metrics.yml", "branch": "main", "events": ["push"], "without": "RED"}
+        {"repo": "GBOGEB/ABACUS", "workflow": "dmaic-commit-metrics.yml", "branch": "main", "events": ["push"], "job": "Publish DMAIC Metrics Through Governed PR", "without": "RED"}
       ]
     },
     {

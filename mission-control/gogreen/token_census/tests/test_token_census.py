@@ -46,8 +46,61 @@ class Fake:
         return status, body if isinstance(body, bytes) else json.dumps(body).encode(), location
 
 
-def runs_url(repo, wf, branch):
-    return "%s/repos/%s/actions/workflows/%s/runs?branch=%s&per_page=30" % (tc.API, repo, wf, branch)
+def runs_url(repo, wf, branch, page=1):
+    return "%s/repos/%s/actions/workflows/%s/runs?branch=%s&per_page=100&page=%d" % (tc.API, repo, wf, branch, page)
+
+
+def jobs_url(repo, rid):
+    return "%s/repos/%s/actions/runs/%d/jobs?per_page=100" % (tc.API, repo, rid)
+
+
+class Paging(unittest.TestCase):
+    consumer = {"repo": "GBOGEB/hub", "workflow": "live.yml", "branch": "master", "without": "SOFT_DEFERRED"}
+
+    def test_follows_pages_until_the_pre_save_baseline(self):
+        newer = [run(1000 + i, "2026-10-24T%02d:%02d:00Z" % (i // 60, i % 60), "success") for i in range(100)]
+        fake = Fake({runs_url("GBOGEB/hub", "live.yml", "master", 1): (200, {"workflow_runs": newer}, None),
+                     runs_url("GBOGEB/hub", "live.yml", "master", 2):
+                         (200, {"workflow_runs": [run(1, "2026-10-23T09:00:00Z", "failure")]}, None)})
+        gh = tc.GitHub("public", "", [], fake)
+        runs, complete = tc.list_runs(gh, self.consumer, tc.parse_time(SET))
+        self.assertTrue(complete)
+        out = tc.lane_verdict(tc.parse_time(SET), runs)
+        self.assertEqual((out["verdict"], out["runs_since_set"]), ("FIXED", 100))
+
+    def test_page_cap_marks_the_baseline_incomplete(self):
+        full = [run(i, "2026-10-24T10:00:00Z", "success") for i in range(100)]
+        fake = Fake({runs_url("GBOGEB/hub", "live.yml", "master", p): (200, {"workflow_runs": full}, None)
+                     for p in (1, 2)})
+        runs, complete = tc.list_runs(tc.GitHub("public", "", [], fake), self.consumer, tc.parse_time(SET), max_pages=2)
+        self.assertEqual((len(runs), complete), (200, False))
+
+    def test_short_page_means_history_is_complete(self):
+        fake = Fake({runs_url("GBOGEB/hub", "live.yml", "master", 1):
+                     (200, {"workflow_runs": [run(5, "2026-10-23T11:00:00Z", "success")]}, None)})
+        runs, complete = tc.list_runs(tc.GitHub("public", "", [], fake), self.consumer, tc.parse_time(SET))
+        self.assertEqual((len(runs), complete, len(fake.calls)), (1, True, 1))
+
+
+class JobView(unittest.TestCase):
+    def view(self, jobs_by_run, runs):
+        fake = Fake({jobs_url("GBOGEB/hub", rid): (200, {"jobs": jobs}, None) for rid, jobs in jobs_by_run.items()})
+        return tc.job_view(tc.GitHub("public", "", [], fake), "GBOGEB/hub", runs, "dispatch", tc.parse_time(SET))
+
+    def test_green_workflow_with_skipped_job_does_not_count(self):
+        runs = [run(7, "2026-10-23T11:00:00Z", "success")]
+        out = self.view({7: [{"name": "plan", "status": "completed", "conclusion": "success"},
+                             {"name": "dispatch", "status": "completed", "conclusion": "skipped"}]}, runs)
+        self.assertEqual(out, [])
+        self.assertEqual(tc.action_for(dict(tc.lane_verdict(tc.parse_time(SET), out), token=3))[0], "WAIT")
+
+    def test_the_named_job_decides_the_run(self):
+        runs = [run(7, "2026-10-23T11:00:00Z", "failure"), run(6, "2026-10-23T09:00:00Z", "success")]
+        out = self.view({7: [{"name": "dispatch", "status": "completed", "conclusion": "success"},
+                             {"name": "w7", "status": "completed", "conclusion": "failure"}],
+                         6: [{"name": "dispatch", "status": "completed", "conclusion": "failure"}]}, runs)
+        self.assertEqual([(r["id"], r["conclusion"]) for r in out], [(7, "success"), (6, "failure")])
+        self.assertEqual(tc.lane_verdict(tc.parse_time(SET), out)["verdict"], "FIXED")
 
 
 class Verdicts(unittest.TestCase):
@@ -200,11 +253,13 @@ class Registry(unittest.TestCase):
     def test_real_registry_matches_hub_workflows(self):
         reg = tc.load_registry(MODULE / "REGISTRY.json")
         self.assertEqual({t["id"] for t in reg["tokens"]}, {1, 2, 3, 4})
-        hub = [(s["name"], c["workflow"]) for s in reg["secrets"] for c in s["consumers"] if c["repo"] == reg["hub"]]
+        hub = [(s["name"], c) for s in reg["secrets"] for c in s["consumers"] if c["repo"] == reg["hub"]]
         self.assertTrue(hub)
-        for name, workflow in hub:
-            text = (ROOT / ".github" / "workflows" / workflow).read_text(encoding="utf-8")
-            self.assertIn("secrets." + name, text, "%s no longer reads %s" % (workflow, name))
+        for name, c in hub:
+            text = (ROOT / ".github" / "workflows" / c["workflow"]).read_text(encoding="utf-8")
+            self.assertIn("secrets." + name, text, "%s no longer reads %s" % (c["workflow"], name))
+            if c.get("job"):
+                self.assertIn("\n  %s:\n" % c["job"], text, "%s has no job %s" % (c["workflow"], c["job"]))
         census_wf = (ROOT / ".github" / "workflows" / "gogreen-token-census.yml").read_text(encoding="utf-8")
         for s in reg["secrets"]:
             if s["repo"] == reg["hub"]:
