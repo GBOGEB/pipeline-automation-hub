@@ -347,6 +347,10 @@ class Outputs(unittest.TestCase):
     def test_page_is_offline_and_labels_every_lens(self):
         html = (ROOT / page.OUT).read_text(encoding="utf-8")
         self.assertNotRegex(html, r'<script[^>]+src=')
+        # Detail panel is DOM-built (CodeQL js/xss-through-dom): no HTML string sinks, https links only.
+        self.assertNotIn("innerHTML", html)
+        self.assertNotIn("insertAdjacentHTML", html)
+        self.assertIn("x.protocol==='https:'", html)
         self.assertEqual(re.findall(r'<link[^>]+href="([^"]+)"', html), ["jade.css"])
         for lens in cd.LENSES:
             self.assertIn(f'data-lens-btn="{lens}"', html)
