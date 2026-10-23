@@ -23,7 +23,8 @@
       "allOf": [
         {"if": {"properties": {"state": {"const": "NOT_OBSERVED"}}}, "then": {"properties": {"value": {"type": "null"}}}},
         {"if": {"properties": {"state": {"const": "OBSERVED_EMPTY"}}}, "then": {"properties": {"value": {"enum": [0, []]}}}},
-        {"if": {"properties": {"state": {"enum": ["OBSERVED_NONEMPTY", "VERIFIED"]}}}, "then": {"properties": {"value": {"not": {"type": "null"}}}}},
+        {"if": {"properties": {"state": {"const": "OBSERVED_NONEMPTY"}}}, "then": {"properties": {"value": {"not": {"enum": [null, 0, [], "", {}]}}}}},
+        {"if": {"properties": {"state": {"const": "VERIFIED"}}}, "then": {"properties": {"value": {"not": {"type": "null"}}}}},
         {"if": {"required": ["numerator"], "properties": {"numerator": {"type": "integer"}}}, "then": {"required": ["denominator", "scope"], "properties": {"denominator": {"type": "integer"}, "scope": {"type": "string"}}}}
       ]
     },

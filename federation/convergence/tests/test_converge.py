@@ -190,6 +190,31 @@ class ReviewFindings(unittest.TestCase):
         self.assertEqual(receipt["artifact_integrity"]["inconsistent_archives"], [12431130883])
         self.assertEqual(receipt["artifact_integrity"]["verified_unique_archives"], 21)
 
+    def test_cross_ledger_metadata_disagreement_is_inconsistent(self):
+        # PR #789 review: both records self-consistent, digests equal, but run/totals differ
+        for field, delta in (("run", 1), ("zip_bytes", 1)):
+            def mutate(d, field=field, delta=delta):
+                a = next(x for x in d["members"] if x["artifact_id"] == 11964700323)
+                a[field] += delta
+            with self.subTest(field=field):
+                _, receipt, _ = self.tampered(mutate)
+                self.assertIn(11964700323, receipt["artifact_integrity"]["inconsistent_archives"])
+                self.assertEqual(receipt["artifact_integrity"]["verified_unique_archives"], 21)
+
+    def test_nonempty_evidence_rejects_empty_value(self):
+        for value in (None, 0, [], ""):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                converge.evidence("OBSERVED_NONEMPTY", value)
+
+    @needs_jsonschema
+    def test_schema_rejects_empty_nonempty_evidence(self):
+        _, receipt, _ = build()
+        for value in (0, [], "", {}):
+            bad = copy.deepcopy(receipt)
+            bad["repos"]["HUB"]["observed_main"]["value"] = value
+            with self.subTest(value=value), self.assertRaises(jsonschema.ValidationError):
+                jsonschema.validate(bad, SCHEMA)
+
     def test_c07_reports_chat_only_citations(self):
         _, _, checks = build()
         self.assertEqual(checks["C07_event_artifact_citations"], "WARN")

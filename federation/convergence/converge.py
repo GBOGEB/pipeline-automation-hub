@@ -48,6 +48,8 @@ SHA40 = re.compile(r"^[0-9a-f]{40}$")
 def evidence(state, value=None, sources=(), numerator=None, denominator=None, scope=None):
     if state == "NOT_OBSERVED" and value is not None:
         raise ValueError("NOT_OBSERVED evidence cannot carry a value")
+    if state == "OBSERVED_NONEMPTY" and (value is None or value == 0 or value in ([], "", {})):
+        raise ValueError("OBSERVED_NONEMPTY evidence needs a non-empty value")
     if numerator is not None and (denominator is None or scope is None):
         raise ValueError("a numerator needs its denominator and scope")
     ev = {"state": state, "value": value, "sources": list(sources)}
@@ -154,10 +156,12 @@ def archive_status(data):
         }
         prev = status.get(a["artifact_id"])
         if prev:
+            # two self-consistent records can still disagree with each other: require the same run and totals
+            same_meta = all(prev[k] == rec[k] for k in ("run", "zip_bytes", "members", "member_bytes"))
             rec = {**prev,
                    "digest_ok": prev["digest_ok"] and rec["digest_ok"] and prev["sha256"] == rec["sha256"],
                    "crc_ok": prev["crc_ok"] and rec["crc_ok"],
-                   "consistent": prev["consistent"] and rec["consistent"]}
+                   "consistent": prev["consistent"] and rec["consistent"] and same_meta}
         status[a["artifact_id"]] = rec
     for rec in status.values():
         rec["verified"] = rec["digest_ok"] and rec["crc_ok"] and rec["consistent"]
