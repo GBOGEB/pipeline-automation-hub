@@ -53,7 +53,7 @@ jobs:
             --wave-id 'G3-P3' --output "$RUNNER_TEMP/gogreen-g1/pulse.json"
       - name: Upload bounded evidence without admission
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: gogreen-g1-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
           path: ${{ runner.temp }}/gogreen-g1/

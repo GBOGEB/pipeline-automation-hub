@@ -68,7 +68,7 @@ jobs:
           print('PASS_GM_IV_F05_F06_NONPROMOTION_GUARD')
           PY
       - name: Upload F05 F06 receipts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gm-iv-f05-f06-bounded-probe-${{ github.event.pull_request.head.sha || github.sha }}
           path: |

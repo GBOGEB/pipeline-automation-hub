@@ -50,7 +50,7 @@ jobs:
               'purpose':'artifact-cache-reuse'
           },sort_keys=True)+'\n')
       - name: Upload reusable artifact seed
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: temporal-reuse-seed-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/pc3/reuse-seed/REUSE_ARTIFACT.json
@@ -93,7 +93,7 @@ jobs:
           python mission-control/qps-triage-ultra/crew/measured/frontier/temporal/discover_constrained_runner.py
           --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_RUNNER_DISCOVERY.json
       - name: Upload constrained runner discovery
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: constrained-runner-discovery-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_RUNNER_DISCOVERY.json
@@ -159,7 +159,7 @@ jobs:
           assert all(r['source_sha']==actual and r['disposition']=='ACCEPT' for r in rows)
           assert all(r['promotion_allowed'] is False and r['authority_transfer'] is False for r in rows)
       - name: Upload temporal baseline receipts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: temporal-pc3-raw-${{ matrix.habitat }}-baseline-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/receipts/${{ matrix.habitat }}-baseline/*.json
@@ -225,7 +225,7 @@ jobs:
           assert all(r['source_sha']==actual and r['disposition']=='ACCEPT' for r in rows)
           assert all(r['promotion_allowed'] is False and r['authority_transfer'] is False for r in rows)
       - name: Upload temporal held receipts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: temporal-pc3-raw-${{ matrix.habitat }}-held-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/receipts/${{ matrix.habitat }}-held/*.json
@@ -269,7 +269,7 @@ jobs:
           --input-root mission-control/qps-triage-ultra/crew/measured/frontier/temporal/constrained
           --out mission-control/qps-triage-ultra/crew/measured/frontier/temporal/CONSTRAINED_HABITAT_WINDOW.json
       - name: Upload constrained habitat evidence
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: constrained-habitat-window-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
@@ -402,7 +402,7 @@ jobs:
             'authority_transfer':False
           },sort_keys=True))
       - name: Upload temporal allocation policy evidence
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: crew-temporal-pc3-${{ github.event.pull_request.head.sha || github.sha }}
           path: |

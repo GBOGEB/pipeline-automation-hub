@@ -79,7 +79,7 @@ jobs:
           )
           PYRECEIPT
       - name: Upload diagnostic artifact only, no Pages publish or source mutation
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: disjoint-census-contract-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/out/
@@ -133,7 +133,7 @@ jobs:
           echo "census=NATIVE_READ" >> "$GITHUB_OUTPUT"
       - name: Upload fresh native read-only GET snapshot, NOT accepted REX
         if: ${{ steps.refresh.outputs.census == 'NATIVE_READ' }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: disjoint-census-native-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/out/
@@ -141,7 +141,7 @@ jobs:
 
       - name: Preserve typed credential-deferral receipt
         if: ${{ steps.refresh.outputs.census == 'DEFERRED_NO_CROSS_REPO_READ_TOKEN' }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: disjoint-census-deferred-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/out/access_diagnostic.json
@@ -149,7 +149,7 @@ jobs:
 
       - name: Preserve native cross-repo source-access diagnostics on failure
         if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: disjoint-census-access-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/out/access_diagnostic.json
@@ -193,7 +193,7 @@ jobs:
             --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" \
             --output qualified-output/qualification.json
       - name: Publish narrowly scoped qualified readback receipt only
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: five-repo-native-qualified-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/qualified-output/qualification.json
