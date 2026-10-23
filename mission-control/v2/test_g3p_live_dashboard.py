@@ -77,6 +77,15 @@ class LiveDashboardTests(unittest.TestCase):
             files[1].write_text(json.dumps(o))
             with self.assertRaises(ValueError): live.load_snapshot(files)
 
+    def test_null_mission_is_a_structural_validation_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            files=copies(tmp)
+            o=json.loads(files[0].read_text())
+            o['mission']=None
+            files[0].write_text(json.dumps(o))
+            with self.assertRaisesRegex(ValueError,'invalid source ledger structure'):
+                live.load_snapshot(files)
+
     def test_wrong_cross_wave_position(self):
         with tempfile.TemporaryDirectory() as tmp:
             files=copies(tmp)
@@ -93,6 +102,9 @@ class LiveDashboardTests(unittest.TestCase):
         self.assertIn('id="reload"',h)
         self.assertIn('id="poll"',h)
         self.assertIn('id="replay"',h)
+        self.assertIn('#lineage-svg .pulse-node:focus-visible circle{stroke:#d35400',h)
+        self.assertIn("function unprovenBoundary(e){return e.relationship==='inter_wave_source_lineage'&&e.source_ancestry_proven!==true;}",h)
+        self.assertIn("el('ordinal').min=data.nodes[0].ordinal;el('ordinal').max=data.nodes.at(-1).ordinal;at=data.nodes.at(-1).ordinal",h)
         self.assertIn('NOT_RUN',h)
         self.assertIn('HOLD',h)
 
@@ -120,6 +132,12 @@ class LiveDashboardTests(unittest.TestCase):
     def test_export_standalone_and_hash_manifest(self):
         with tempfile.TemporaryDirectory() as d:
             man=live.export(PATHS,d)
+            first_hashes=man['outputs_sha256']
+            j=json.loads((Path(d)/'g3p-lineage.json').read_text())
+            self.assertNotIn('feeder_observed_at_utc',j)
+            man=live.export(PATHS,d)
+            self.assertEqual(man['outputs_sha256'],first_hashes)
+            self.assertEqual(man['outputs_sha256'],json.loads((Path(d)/'g3p-manifest.json').read_text())['outputs_sha256'])
             for file,digest in man['outputs_sha256'].items():
                 self.assertEqual(hashlib.sha256((Path(d)/file).read_bytes()).hexdigest(),digest)
             j=json.loads((Path(d)/'g3p-lineage.json').read_text())
@@ -202,7 +220,7 @@ class LiveDashboardTests(unittest.TestCase):
         self.assertIn('\\u003c',x)
         self.assertNotIn('<svg>',x)
 
-    def test_sse_invalid_local_source_yields_hold_event(self):
+    def test_sse_structurally_invalid_local_source_yields_hold_event(self):
         with tempfile.TemporaryDirectory() as d:
             files=copies(d)
             server=live.create_server(files,port=0)
@@ -212,13 +230,31 @@ class LiveDashboardTests(unittest.TestCase):
                 with urlopen(f'http://127.0.0.1:{server.server_port}/api/events',timeout=10) as event_source:
                     event_source.readline();event_source.readline();event_source.readline()
                     o=json.loads(files[1].read_text())
-                    o['receipts'][0]['merge_admission']='PASS'
+                    o['mission']=None
                     files[1].write_text(json.dumps(o))
                     received=False
                     for _ in range(14):
                         line=event_source.readline().decode().strip()
                         if line == 'event: feed_error':received=True;break
                     self.assertTrue(received)
+            finally:
+                server.shutdown();server.server_close();th.join(timeout=4)
+
+    def test_structurally_invalid_ledger_returns_http_hold_responses(self):
+        with tempfile.TemporaryDirectory() as d:
+            files=copies(d)
+            server=live.create_server(files,port=0)
+            th=threading.Thread(target=server.serve_forever,daemon=True)
+            th.start()
+            try:
+                o=json.loads(files[0].read_text())
+                o['mission']=None
+                files[0].write_text(json.dumps(o))
+                for path, expected in (('/api/lineage',409),('/health',503)):
+                    with self.subTest(path=path):
+                        with self.assertRaises(HTTPError) as error:
+                            urlopen(f'http://127.0.0.1:{server.server_port}{path}',timeout=3)
+                        self.assertEqual(error.exception.code,expected)
             finally:
                 server.shutdown();server.server_close();th.join(timeout=4)
 
@@ -247,6 +283,21 @@ class LiveDashboardTests(unittest.TestCase):
                             break
                     self.assertIsNotNone(revision)
                     self.assertNotEqual(previous,revision)
+            finally:
+                server.shutdown();server.server_close();th.join(timeout=4)
+
+    def test_sse_connection_closes_after_bounded_stream(self):
+        with tempfile.TemporaryDirectory() as d:
+            files = copies(d)
+            server = live.create_server(files, port=0)
+            th = threading.Thread(target=server.serve_forever, daemon=True)
+            th.start()
+            try:
+                with patch.object(live.time, 'sleep', return_value=None):
+                    with urlopen(f'http://127.0.0.1:{server.server_port}/api/events', timeout=3) as stream:
+                        self.assertEqual(stream.headers.get('Connection'), 'close')
+                        self.assertEqual(stream.readline().decode().strip(), 'event: revision')
+                        self.assertIn(b'data: ', stream.read())
             finally:
                 server.shutdown();server.server_close();th.join(timeout=4)
 

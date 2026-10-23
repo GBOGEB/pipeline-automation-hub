@@ -92,6 +92,12 @@ class WaveFederationTests(unittest.TestCase):
         e=[e for e in p['edges'] if e['relationship']=='inter_wave_source_lineage'][0]
         self.assertEqual(e['evidence'],'LEDGER_HEAD_EQUALITY')
         self.assertFalse(e['source_ancestry_proven'])
+        self.assertEqual(p['metrics']['intervening_unproven_source_boundaries'],1)
+        self.assertEqual(fed.mermaid(p).count('-.->'),1)
+        h=fed.html_report(p);parsed=Tags();parsed.feed(h)
+        lines=[attrs for tag,attrs in parsed.tags if tag=='line']
+        self.assertEqual(sum('stroke-dasharray' in attrs for attrs in lines),1)
+        self.assertIn("function unprovenBoundary(e){return e.relationship==='inter_wave_source_lineage'&&e.source_ancestry_proven!==true;}",h)
 
     def test_renderer_refuses_unsafe_authority(self):
         p=self.graph();p['merge_admission']='PASS'

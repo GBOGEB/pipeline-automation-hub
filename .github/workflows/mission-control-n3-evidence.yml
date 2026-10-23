@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'mission-control/v2/n3_*.py'
+      - 'mission-control/v2/g3p_live_*.py'
+      - 'mission-control/v2/g3p_live_template.html'
+      - 'mission-control/v2/test_g3p_live_dashboard.py'
       - 'mission-control/v2/test_n3_*.py'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json'
@@ -12,8 +15,12 @@ on:
     branches: [master]
     paths:
       - 'mission-control/v2/n3_*.py'
+      - 'mission-control/v2/g3p_live_*.py'
+      - 'mission-control/v2/g3p_live_template.html'
+      - 'mission-control/v2/test_g3p_live_dashboard.py'
       - 'mission-control/v2/test_n3_*.py'
       - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N3_20261017.json'
+      - 'mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N6_20261017.json'
       - '.github/workflows/mission-control-n3-evidence.yml'
   workflow_dispatch:
 
@@ -82,6 +89,23 @@ jobs:
           pct=100*(x['covered_lines']+x['covered_branches'])/denominator
           print(f'FOCUSED_G3P_STMT_BRANCH={pct:.2f}%')
           assert pct>=80, 'focused G3P live quality gate failed'
+          PY
+      - name: Test G3P live N-index replay and fail-closed HTTP/SSE
+        run: |
+          python -m coverage run --branch --source=mission-control/v2 -m unittest discover -s mission-control/v2 -p 'test_g3p_live_dashboard.py' -v
+          python -m coverage json -o /tmp/g3p-live-coverage.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          c=json.loads(Path('/tmp/g3p-live-coverage.json').read_text())['files']
+          matches=[v['summary'] for k,v in c.items() if Path(k).name=='g3p_live_dashboard.py']
+          assert len(matches)==1, 'source blob denominator not unique'
+          x=matches[0]
+          lp=100*x['covered_lines']/x['num_statements']
+          bp=100*x['covered_branches']/x['num_branches']
+          print(f'G3P_LIVE_STMT={x["covered_lines"]}/{x["num_statements"]} {lp:.2f}%')
+          print(f'G3P_LIVE_BRANCH={x["covered_branches"]}/{x["num_branches"]} {bp:.2f}%')
+          assert lp>=85 and bp>=80, 'G3P live focused coverage gate failed'
           PY
       - name: Produce source-bound audit, telemetry and HTML projection
         run: |

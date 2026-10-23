@@ -217,6 +217,14 @@ class NativeJoinTests(unittest.TestCase):
     def test_job_identity_wrong_run(self):
         self.bad(lambda x: x['runs'][0]['jobs'][0].__setitem__('run_id', 444), 'identity/head')
 
+    def test_job_run_bindings_reject_booleans_and_floats(self):
+        for field, value in (('run_id', True), ('run_id', 1001.0),
+                             ('run_attempt', True), ('run_attempt', 2.0)):
+            with self.subTest(field=field,value=value):
+                self.s=fixture()
+                self.bad(lambda x: x['runs'][0]['jobs'][0].__setitem__(field,value),
+                         'identity/head')
+
 
 if __name__ == '__main__':
     unittest.main()

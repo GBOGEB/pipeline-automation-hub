@@ -38,7 +38,10 @@ def load_snapshot(paths):
         obj = json.loads(payload.decode('utf-8'))
         ledgers.append(obj)
         inputs.append({'filename': source.name, 'raw_sha256': hashlib.sha256(payload).hexdigest()})
-    data = compile_waves(ledgers)  # underlying controller rejects broken chains, duplicate identities, escalation
+    try:
+        data = compile_waves(ledgers)  # underlying controller rejects broken chains, duplicate identities, escalation
+    except (AttributeError, KeyError, TypeError, IndexError) as error:
+        raise ValueError('invalid source ledger structure') from error
     if data['merge_admission'] != 'HOLD' or data['authority_transfer'] is not False:
         raise ValueError('refuse propagated admission authority')
     if any(node['merge_admission'] != 'HOLD' or node['source_authenticated'] is not False
@@ -71,13 +74,14 @@ def render_html(data):
                  'capture_class': 'BUNDLED_VALIDATED_CLAIM_NOT_NATIVE_PROOF',
                  'source_inputs': []}
     nodes, edges = graph['nodes'], graph['edges']
+    from n3_wave_federation import is_unproven_boundary
     if not nodes:
         raise ValueError('no pulse nodes')
     esc = lambda x: html.escape(str(x), quote=True)
     loc = {node['id']: 105 + 155 * i for i, node in enumerate(nodes)}
     initial_edges = []
     for edge in edges:
-        style = ' stroke-dasharray="7 6"' if edge['evidence'] == 'DECLARED_GAP' else ''
+        style = ' stroke-dasharray="7 6"' if is_unproven_boundary(edge) else ''
         first = loc[edge['source']] + 31
         last = loc[edge['target']] - 32
         initial_edges.append(f'<line x1="{first}" y1="86" x2="{last}" y2="86" '
@@ -114,7 +118,9 @@ def export(paths, out_dir):
     from n3_wave_federation import mermaid
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    payload = load_snapshot(paths)
+    snapshot = load_snapshot(paths)
+    payload = {key: value for key, value in snapshot.items()
+               if key != 'feeder_observed_at_utc'}
     (out / 'g3p-lineage.html').write_text(render_html(payload) + '\n', encoding='utf-8')
     (out / 'g3p-lineage.json').write_text(json.dumps(payload, indent=2, sort_keys=True) + '\n', encoding='utf-8')
     (out / 'g3p-lineage.mmd').write_text(mermaid({**payload,'schema':'missioncontrol.g3p.wave_lineage.v1'}), encoding='utf-8')
@@ -190,7 +196,9 @@ def create_server(paths, port=8765, host='127.0.0.1'):
             self.send_header('Cache-Control', 'no-store, max-age=0')
             self.send_header('X-Content-Type-Options', 'nosniff')
             self.send_header('X-Accel-Buffering', 'no')
+            self.send_header('Connection', 'close')
             self.end_headers()
+            self.close_connection = True
             last = None
             try:
                 # Bounded connection lifetime; EventSource reconnects automatically.
