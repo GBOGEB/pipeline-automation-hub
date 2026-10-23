@@ -133,6 +133,16 @@ function Get-GitState([string]$Dir) {
     $st.DirtyFiles = $porcelain.Count
     # Commits on HEAD that no remote-tracking ref contains.
     $st.Unpushed = [int]((G $Dir rev-list --count HEAD --not --remotes) | Select-Object -First 1)
+    $st.RemoteCheckedLive = $false
+    if ($st.Unpushed -gt 0 -and $st.Branch -ne '(detached)') {
+        # Single-branch clones (narrow fetch refspec) never get remote-tracking refs for pushed branches,
+        # so ask the remote directly before calling the work unpushed.
+        $remoteSha = ((G $Dir ls-remote origin "refs/heads/$($st.Branch)") | Select-Object -First 1) -replace '\s.*$', ''
+        if ($remoteSha) {
+            & git.exe -C $Dir merge-base --is-ancestor HEAD $remoteSha 2>$null
+            if ($LASTEXITCODE -eq 0) { $st.Unpushed = 0; $st.RemoteCheckedLive = $true }
+        }
+    }
     $range = if ($st.Unpushed -gt 0) { @('HEAD', '--not', '--remotes') } elseif ($st.Ahead -gt 0) { @('@{u}..HEAD') } else { @() }
     $st.OldestUnpushedHours = -1
     if ($range) {
@@ -258,7 +268,7 @@ foreach ($d in $dirs) {
         $reason += if (-not $st.Upstream) { "local-only branch, $($st.Unpushed) unpushed" } else { "ahead $($st.Ahead) of $($st.Upstream)" }
         $reason += "oldest unpushed $(Format-Age $st.OldestUnpushedHours)"
     }
-    elseif ($unpushed) { $reason += "unpushed commits (younger than $PushAfterHours h)" }
+    elseif ($unpushed) { $reason += "$([math]::Max($st.Unpushed, $st.Ahead)) unpushed commit(s), younger than $PushAfterHours h" }
     elseif ($st.Dirty) { $reason += "dirty ($($st.DirtyFiles) files)" }
     elseif (-not $landed) { $reason += if ($prState -eq 'OPEN') { "PR $prNumbers open" } else { 'not in default branch, no merged/closed PR' } }
     elseif ($excluded) { $reason += 'excluded (in use)' }
