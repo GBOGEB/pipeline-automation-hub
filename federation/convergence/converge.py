@@ -48,6 +48,8 @@ SHA40 = re.compile(r"^[0-9a-f]{40}$")
 def evidence(state, value=None, sources=(), numerator=None, denominator=None, scope=None):
     if state == "NOT_OBSERVED" and value is not None:
         raise ValueError("NOT_OBSERVED evidence cannot carry a value")
+    if state == "OBSERVED_NONEMPTY" and (value is None or value == 0 or value in ([], "", {})):
+        raise ValueError("OBSERVED_NONEMPTY evidence needs a non-empty value")
     if numerator is not None and (denominator is None or scope is None):
         raise ValueError("a numerator needs its denominator and scope")
     ev = {"state": state, "value": value, "sources": list(sources)}
@@ -97,7 +99,10 @@ def normalise_events(data):
     for p in data["chat"]["pulses"]:
         for e in p["events"]:
             arts = [a["artifact_id"] for a in e.get("artifacts", [])]
-            extra = {k: e[k] for k in ("pass", "fail", "approvals", "tests", "run_ids", "job_ids") if k in e}
+            extra = {k: e[k] for k in ("pass", "fail", "approvals", "tests", "run_ids", "job_ids",
+                                       "artifact_integrity", "merged_utc") if k in e}
+            extra["artifact_claims"] = [{"artifact_id": a["artifact_id"], "integrity": a["integrity"]}
+                                        for a in e.get("artifacts", [])]
             add("chat", p["pulse_id"], e["repo"], e["pr"], e["head_sha"], e["fingerprint"],
                 e["class"], e.get("occurrences"), arts, extra)
 
@@ -126,6 +131,43 @@ def normalise_events(data):
     return out
 
 
+# --------------------------------------------------------------------------- integrity
+
+def archive_status(data):
+    """Per-archive integrity from both ledgers. An archive counts as verified only when its digest,
+    CRC and member accounting all hold in every ledger that lists it, and the ledgers agree on its digest."""
+    status = {}
+    for a in data["zip"]["archives"]:
+        status[a["artifact_id"]] = {
+            "run": a["run_id"], "zip_bytes": a["zip_bytes"], "members": a["members_count"],
+            "member_bytes": a["member_bytes"], "sha256": a["archive_sha256"],
+            "digest_ok": bool(a["checksum_verified"]), "crc_ok": bool(a["crc_verified"]),
+            "consistent": a["members_count"] == len(a["members"])
+            and a["member_bytes"] == sum(x["uncompressed_bytes"] for x in a["members"]),
+        }
+    for a in data["members"]:
+        rec = {
+            "run": a["run"], "zip_bytes": a["zip_bytes"], "members": a["member_count"],
+            "member_bytes": a["uncompressed_member_bytes"], "sha256": a["observed_sha256"],
+            "digest_ok": bool(a["digest_match"]) and a["expected_sha256"] == a["observed_sha256"],
+            "crc_ok": bool(a["crc_all_members_pass"]),
+            "consistent": a["member_count"] == len(a["members"])
+            and a["uncompressed_member_bytes"] == sum(x["bytes"] for x in a["members"]),
+        }
+        prev = status.get(a["artifact_id"])
+        if prev:
+            # two self-consistent records can still disagree with each other: require the same run and totals
+            same_meta = all(prev[k] == rec[k] for k in ("run", "zip_bytes", "members", "member_bytes"))
+            rec = {**prev,
+                   "digest_ok": prev["digest_ok"] and rec["digest_ok"] and prev["sha256"] == rec["sha256"],
+                   "crc_ok": prev["crc_ok"] and rec["crc_ok"],
+                   "consistent": prev["consistent"] and rec["consistent"] and same_meta}
+        status[a["artifact_id"]] = rec
+    for rec in status.values():
+        rec["verified"] = rec["digest_ok"] and rec["crc_ok"] and rec["consistent"]
+    return status
+
+
 # --------------------------------------------------------------------------- cross-checks
 
 def crosschecks(data, events):
@@ -151,8 +193,9 @@ def crosschecks(data, events):
     bad = [a["artifact_id"] for a in m
            if a["member_count"] != len(a["members"])
            or a["uncompressed_member_bytes"] != sum(x["bytes"] for x in a["members"])
-           or a["expected_sha256"] != a["observed_sha256"] or not a["digest_match"]]
-    chk("C03_member_ledger_per_archive", not bad, f"archives with mismatch: {bad}")
+           or a["expected_sha256"] != a["observed_sha256"] or not a["digest_match"]
+           or not a["crc_all_members_pass"]]
+    chk("C03_member_ledger_per_archive", not bad, f"archives with count/byte/digest/CRC mismatch: {bad}")
     mt = (len(m), sum(a["member_count"] for a in m), sum(a["zip_bytes"] for a in m),
           sum(a["uncompressed_member_bytes"] for a in m))
     ts = t["zip_verification_summary"]
@@ -165,10 +208,28 @@ def crosschecks(data, events):
     agree = all(zi[a]["archive_sha256"] == mi[a]["observed_sha256"] for a in overlap)
     chk("C06_cross_ledger_digest_agreement", agree, f"overlapping artifacts {overlap} digests agree={agree}")
 
-    verified = set(zi) | set(mi)
+    # every cited artifact, from any source: a ledger citation must resolve to a verified archive, and a
+    # resolved archive must come from one of the runs the event cites; chat-only citations stay unverified
+    st = archive_status(data)
+    problems, chat_unverified = [], set()
+    for e in events:
+        for a in e["artifact_ids"]:
+            rec = st.get(a)
+            if rec is None:
+                if e["source"] == "chat":
+                    chat_unverified.add(a)
+                else:
+                    problems.append(f"{a}: cited by {e['pulse']} but in no ledger")
+                continue
+            if not rec["verified"]:
+                problems.append(f"{a}: cited by {e['pulse']} but failed integrity")
+            if e.get("run_ids") and rec["run"] not in e["run_ids"]:
+                problems.append(f"{a}: ledger run {rec['run']} not among {e['pulse']} cited runs {e['run_ids']}")
+    res.append({"id": "C07_event_artifact_citations",
+                "result": "FAIL" if problems else "WARN" if chat_unverified else "PASS",
+                "detail": f"citation problems: {problems}; chat-only citations with no ledger record: "
+                          f"{sorted(chat_unverified)}"})
     cited_ledger = {a for e in events if e["source"] != "chat" for a in e["artifact_ids"]}
-    missing = sorted(cited_ledger - verified)
-    chk("C07_ledger_cited_artifacts_verified", not missing, f"cited by ledger events but unverified: {missing}")
     atlas = n["method_atlas"]
     run_cited = {r for e in events for r in e.get("run_ids", [])} | {atlas["original_run"], atlas["qualified_run"]}
     orphans = sorted(a for a, rec in zi.items() if rec["run_id"] not in run_cited and a not in cited_ledger)
@@ -289,16 +350,66 @@ def plateau(series, asserted):
             "state": state, "asserted_state": asserted, "derivation": why}
 
 
+def main_anchors(pulses):
+    """Latest observed main SHA per repo. A later pulse that records a merge into a repo without
+    re-observing its main invalidates the anchor: the old SHA is no longer main, the new one is unknown."""
+    short_of = {full: short for short, full in REPOS.items()}
+    mains = {}
+    for p in pulses:
+        for k, v in p["anchors"].items():
+            if k.endswith("_main"):
+                mains[k[:-5]] = {"sha": v, "pulse": p["pulse_id"], "invalidated_by": None}
+        for e in p["events"]:
+            short = short_of.get(e["repo"])
+            if e.get("merged_utc") and short in mains and f"{short}_main" not in p["anchors"]:
+                note = f"chat:{p['pulse_id']} merge of #{e['pr']} at {e['merged_utc']}"
+                prior = mains[short]["invalidated_by"]
+                mains[short] = {**mains[short], "invalidated_by": f"{prior}; {note}" if prior else note}
+    return mains
+
+
+def observed_main(main):
+    if main is None:
+        return evidence("NOT_OBSERVED")
+    if main["invalidated_by"]:
+        return evidence("NOT_OBSERVED", sources=[f"last seen {main['sha']} @chat:{main['pulse']}",
+                                                 main["invalidated_by"]])
+    return evidence("OBSERVED_NONEMPTY", main["sha"], [f"chat:{main['pulse']}"])
+
+
+def integrity_summary(data, events):
+    """Totals over archives that pass every integrity check; failures are counted, not assumed away."""
+    st = archive_status(data)
+    ok = {a: s for a, s in st.items() if s["verified"]}
+    claims = [c for e in events for c in e.get("artifact_claims", [])]
+    unknown = sorted({c["artifact_id"] for c in claims
+                      if c["integrity"] != "VERIFIED_IN_CHAT" and c["artifact_id"] not in ok})
+    verified_runs = {s["run"] for s in ok.values()}
+    for e in events:
+        if e.get("artifact_integrity") == "UNKNOWN" and not e["artifact_ids"]:
+            unknown += [f"{e['repo'].split('/')[1]}#{e['pr']} run {r} (artifact ids not recorded)"
+                        for r in e.get("run_ids", []) if r not in verified_runs]
+    return {
+        "verified_unique_archives": len(ok),
+        "verified_unique_members": sum(s["members"] for s in ok.values()),
+        "verified_zip_bytes": sum(s["zip_bytes"] for s in ok.values()),
+        "verified_member_bytes": sum(s["member_bytes"] for s in ok.values()),
+        "digest_failures": sum(1 for s in st.values() if not s["digest_ok"]),
+        "crc_failures": sum(1 for s in st.values() if not s["crc_ok"]),
+        "inconsistent_archives": sorted(a for a, s in st.items() if not s["consistent"]),
+        "failed_archives": sorted(set(st) - set(ok)),
+        "verified_in_chat_only": sorted({c["artifact_id"] for c in claims
+                                         if c["integrity"] == "VERIFIED_IN_CHAT" and c["artifact_id"] not in ok}),
+        "unknown": unknown,
+    }
+
+
 def reduce(data, manifest, checks, events):
     by_repo = defaultdict(list)
     for e in events:
         by_repo[e["repo"]].append(e)
     meas = measurements(data)
-    chat_mains = {}
-    for p in data["chat"]["pulses"]:
-        for k, v in p["anchors"].items():
-            if k.endswith("_main"):
-                chat_mains[k[:-5]] = (v, p["pulse_id"])
+    chat_mains = main_anchors(data["chat"]["pulses"])
     finding_ids = {c["id"] for c in checks if c["result"] in ("FAIL", "WARN")}
     repo_findings = {"ABACUS": {"C18_abacus_2367_conflict", "C19_truncated_heads"},
                      "QPS": {"C08_verified_artifacts_bound_to_event", "C13_icd_pptx_qa_identical", "C17_qps_main_drift"},
@@ -316,7 +427,7 @@ def reduce(data, manifest, checks, events):
         for (pr, head), pe in sorted(pops.items(), key=lambda kv: (kv[0][0] or 0, kv[0][1] or "")):
             exact = bool(head and SHA40.match(head))
             # an unrecorded PR number is UNKNOWN, not "this is main": eligibility needs a positive SHA match
-            on_main = exact and main is not None and head == main[0]
+            on_main = exact and main is not None and main["invalidated_by"] is None and head == main["sha"]
             reasons = []
             if not exact:
                 reasons.append("head SHA not exact")
@@ -334,8 +445,7 @@ def reduce(data, manifest, checks, events):
         reasons = sorted(repo_findings.get(short, set()) & finding_ids)
         repos[short] = {
             "last_qualified_head": None,
-            "observed_main": (evidence("OBSERVED_NONEMPTY", main[0], [f"chat:{main[1]}"]) if main
-                              else evidence("NOT_OBSERVED")),
+            "observed_main": observed_main(main),
             "populations": populations,
             "progress": {
                 "new_terminal_events": terminal,
@@ -350,7 +460,8 @@ def reduce(data, manifest, checks, events):
             "notify_reasons": reasons,
         }
 
-    fps = defaultdict(lambda: {"occurrences": 0, "occurrences_unknown": 0, "populations": set(), "classes": set()})
+    fps = defaultdict(lambda: {"occurrences": 0, "counted": 0, "occurrences_unknown": 0,
+                               "populations": set(), "classes": set()})
     for e in events:
         if not e["fingerprint"]:
             continue
@@ -359,13 +470,14 @@ def reduce(data, manifest, checks, events):
             f["occurrences_unknown"] += 1
         else:
             f["occurrences"] += e["occurrences"]
+            f["counted"] += 1
         f["populations"].add(f"{e['repo'].split('/')[1]}#{e['pr'] or (e['head_sha'] or '?')[:12]}")
         f["classes"].add(e["class"])
     fingerprints = [{
         "fingerprint": k,
-        # an event without a count makes the total a lower bound, never a zero
-        "occurrences": (evidence("OBSERVED_NONEMPTY", v["occurrences"], ["events"]) if v["occurrences"]
-                        else evidence("NOT_OBSERVED", sources=["events"])),
+        # an event without a count makes the total a lower bound, never a zero;
+        # a counted zero stays OBSERVED_EMPTY
+        "occurrences": count_evidence(v["occurrences"] if v["counted"] else None, ["events"]),
         "occurrences_lower_bound": bool(v["occurrences_unknown"]),
         "populations": sorted(v["populations"]),
         "classes": sorted(v["classes"]),
@@ -377,18 +489,7 @@ def reduce(data, manifest, checks, events):
                              "occurrences_lower_bound": True, "populations": [d["path"]],
                              "classes": ["METHOD_DEFECT"], "accepted_root_id": None, "closed": False})
 
-    zi = {a["artifact_id"]: a for a in data["zip"]["archives"]}
-    mi = {a["artifact_id"]: a for a in data["members"]}
-    uniq = set(zi) | set(mi)
-    integ = {
-        "verified_unique_archives": len(uniq),
-        "verified_unique_members": sum(zi[a]["members_count"] if a in zi else mi[a]["member_count"] for a in uniq),
-        "verified_zip_bytes": sum(zi[a]["zip_bytes"] if a in zi else mi[a]["zip_bytes"] for a in uniq),
-        "verified_member_bytes": sum(zi[a]["member_bytes"] if a in zi else mi[a]["uncompressed_member_bytes"] for a in uniq),
-        "digest_failures": 0, "crc_failures": 0,
-        "verified_in_chat_only": [12429667081],
-        "unknown": [12423779766, 12424201789, "QPS #2047 seven artifacts (ids not recorded)"],
-    }
+    integ = integrity_summary(data, events)
 
     novel_total = sum(len(r["progress"]["new_fingerprints"]) for r in repos.values())
     return {

@@ -22,6 +22,9 @@
       },
       "allOf": [
         {"if": {"properties": {"state": {"const": "NOT_OBSERVED"}}}, "then": {"properties": {"value": {"type": "null"}}}},
+        {"if": {"properties": {"state": {"const": "OBSERVED_EMPTY"}}}, "then": {"properties": {"value": {"enum": [0, []]}}}},
+        {"if": {"properties": {"state": {"const": "OBSERVED_NONEMPTY"}}}, "then": {"properties": {"value": {"not": {"enum": [null, 0, [], "", {}]}}}}},
+        {"if": {"properties": {"state": {"const": "VERIFIED"}}}, "then": {"properties": {"value": {"not": {"type": "null"}}}}},
         {"if": {"required": ["numerator"], "properties": {"numerator": {"type": "integer"}}}, "then": {"required": ["denominator", "scope"], "properties": {"denominator": {"type": "integer"}, "scope": {"type": "string"}}}}
       ]
     },
@@ -69,8 +72,12 @@
                 "ineligible_reasons": {"type": "array", "items": {"type": "string"}},
                 "events": {"type": "array", "items": {"type": "object"}}
               },
-              "if": {"properties": {"head_sha_exact": {"const": false}}},
-              "then": {"properties": {"eligible_for_comparison": {"const": false}}}
+              "allOf": [
+                {"if": {"properties": {"head_sha_exact": {"const": false}}},
+                 "then": {"properties": {"eligible_for_comparison": {"const": false}}}},
+                {"if": {"properties": {"head_sha_exact": {"const": true}}},
+                 "then": {"properties": {"head_sha": {"$ref": "#/$defs/sha40"}}}}
+              ]
             }
           },
           "progress": {
@@ -111,8 +118,43 @@
         }
       }
     },
-    "fingerprints": {"type": "array", "items": {"type": "object", "required": ["fingerprint", "occurrences", "populations", "accepted_root_id", "closed"]}},
-    "artifact_integrity": {"type": "object"},
+    "fingerprints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fingerprint", "occurrences", "occurrences_lower_bound", "populations", "classes", "accepted_root_id", "closed"],
+        "properties": {
+          "fingerprint": {"type": "string", "minLength": 1},
+          "occurrences": {"allOf": [{"$ref": "#/$defs/evidence"}, {"properties": {"value": {"type": ["integer", "null"], "minimum": 0}}}]},
+          "occurrences_lower_bound": {"type": "boolean"},
+          "populations": {"type": "array", "items": {"type": "string"}},
+          "classes": {"type": "array", "items": {"type": "string"}},
+          "accepted_root_id": {"type": ["string", "null"]},
+          "closed": {"type": "boolean"}
+        },
+        "if": {"properties": {"closed": {"const": true}}},
+        "then": {"properties": {"accepted_root_id": {"type": "string"}}}
+      }
+    },
+    "artifact_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verified_unique_archives", "verified_unique_members", "verified_zip_bytes", "verified_member_bytes",
+                   "digest_failures", "crc_failures", "inconsistent_archives", "failed_archives", "verified_in_chat_only", "unknown"],
+      "properties": {
+        "verified_unique_archives": {"type": "integer", "minimum": 0},
+        "verified_unique_members": {"type": "integer", "minimum": 0},
+        "verified_zip_bytes": {"type": "integer", "minimum": 0},
+        "verified_member_bytes": {"type": "integer", "minimum": 0},
+        "digest_failures": {"type": "integer", "minimum": 0},
+        "crc_failures": {"type": "integer", "minimum": 0},
+        "inconsistent_archives": {"type": "array", "items": {"type": "integer"}},
+        "failed_archives": {"type": "array", "items": {"type": "integer"}},
+        "verified_in_chat_only": {"type": "array", "items": {"type": "integer"}},
+        "unknown": {"type": "array", "items": {"type": ["integer", "string"]}}
+      }
+    },
     "crosschecks": {"type": "array", "items": {"type": "object", "required": ["id", "result", "detail"], "properties": {"result": {"enum": ["PASS", "FAIL", "WARN", "UNKNOWN"]}}}},
     "federation": {
       "type": "object",
