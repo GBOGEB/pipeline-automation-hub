@@ -28,6 +28,8 @@ cd = _load("cicd_dag_under_test", "tools/cicd_dag.py")
 page = _load("build_cicd_dag_under_test", "site/build_cicd_dag.py")
 MODEL = cd.project(ROOT)
 SCOPES = {s["scope"]: s for s in MODEL["scopes"]}
+POLICY = json.loads((ROOT / cd.POLICY).read_text(encoding="utf-8"))
+CENSUS = cd.load_census(ROOT, POLICY)
 
 
 def n(nid, kind):
@@ -77,8 +79,20 @@ class Identity(unittest.TestCase):
     def test_external_paths_are_never_given_an_oid(self):
         b = cd.path_binding(HUB, "GBOGEB/gg_MATH", "requirements-release.txt")
         self.assertEqual((b["oid"], b["status"]), (None, "EXTERNAL_UNOBSERVED"))
+        b = cd.path_binding(HUB, "GBOGEB/gg_MATH", "no/such/file.py", CENSUS)
+        self.assertEqual((b["oid"], b["status"]), (None, "EXTERNAL_UNOBSERVED"))
         b = cd.path_binding(HUB, cd.HUB_REPO, "no/such/file.html")
         self.assertEqual((b["oid"], b["status"]), (None, "NOT_IN_CHECKOUT"))
+
+    def test_external_paths_bind_to_census_blob_at_census_head(self):
+        crow = CENSUS["repos"]["GBOGEB/cryoplant-project"]
+        wf = crow["workflows"][0]
+        b = cd.path_binding(HUB, crow["repo"], wf["path"], CENSUS)
+        self.assertEqual(b["status"], "BOUND_AT_CENSUS_HEAD")
+        self.assertEqual((b["oid"], b["at"], b["jade_oid"]), (wf["blob_oid"], crow["head_sha"], wf["oid"]))
+        run = cd.census_workflow(CENSUS, crow["repo"], wf["name"])
+        self.assertEqual(run["oid"], CENSUS["index"][crow["repo"]]["paths"][
+            CENSUS["index"][crow["repo"]]["names"][wf["name"]]][0])
 
     def test_sha_ref_accepts_only_full_commit_or_sha256(self):
         self.assertEqual(cd.sha_ref("x", "abc"), [])
@@ -155,6 +169,8 @@ class Projection(unittest.TestCase):
                         self.assertIn(b["status"], {"EXTERNAL_UNOBSERVED", "NOT_IN_CHECKOUT"})
                     else:
                         self.assertRegex(b["oid"], r"^[0-9a-f]{40}$")
+                    if b["status"] == "BOUND_AT_CENSUS_HEAD" and b["at"] is not None:
+                        self.assertRegex(b["at"], r"^[0-9a-f]{40}$")
 
     def test_total_gate_metrics_agree_with_rolling5(self):
         g = SCOPES["TOTAL"]["metrics"]["gates"]
@@ -189,6 +205,83 @@ class Projection(unittest.TestCase):
         repos = SCOPES["ORCHESTRATORS"]["metrics"]["repos"]
         hub = repos[cd.HUB_REPO]["in_degree"]
         self.assertEqual(hub, max(r["in_degree"] for r in repos.values()))
+
+
+class Census(unittest.TestCase):
+    def test_census_pin_drift_fails_closed(self):
+        pol = copy.deepcopy(POLICY)
+        pol["devops_census"]["digest_sha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "digest/schema drift"):
+            cd.load_census(ROOT, pol)
+
+    def test_objects_must_reference_the_pinned_census(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            t = Path(tmp)
+            cfg = POLICY["devops_census"]
+            (t / "data").mkdir()
+            shutil.copy(ROOT / cfg["census"], t / cfg["census"])
+            obj = json.loads((ROOT / cfg["objects"]).read_text(encoding="utf-8"))
+            obj["census_digest_sha256"] = "f" * 64
+            (t / cfg["objects"]).write_text(json.dumps(obj), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "not bound to the pinned census"):
+                cd.load_census(t, POLICY)
+
+    def test_no_census_policy_means_no_census(self):
+        self.assertIsNone(cd.load_census(ROOT, {k: v for k, v in POLICY.items() if k != "devops_census"}))
+        self.assertIsNone(cd.census_binding(None, "GBOGEB/x", "a.py"))
+
+    def test_lifecycle_chain_is_acyclic_with_one_feedback_edge(self):
+        for name in ["TOTAL"] + [s for s in SCOPES if s.startswith("REPO:")]:
+            s = SCOPES[name]
+            life = [x for x in s["nodes"] if x["type"] == "LIFECYCLE"]
+            self.assertEqual(len(life), 10, name)
+            fb = [e for e in s["edges"] if e["from"] == "L.S9_CONTROL" and e["to"] == "L.S0_PLAN"]
+            self.assertEqual([e["type"] for e in fb], ["TEMPORAL"], name)
+            xs = {(e["from"], e["to"]) for e in s["edges"] if e["type"] == "CROSSWALK"}
+            self.assertIn(("L.S3_TEST", "H05"), xs, name)
+        self.assertIn(("L.S9_CONTROL", "P.root"),
+                      {(e["from"], e["to"]) for e in SCOPES["TOTAL"]["edges"]})
+
+    def test_stage_status_never_promotes_unknown(self):
+        self.assertEqual(cd.stage_status({"probes": 5, "pass": 5}), "PASS")
+        self.assertEqual(cd.stage_status({"probes": 5, "pass": 4,
+                                          "next_blocker": {"state": "UNKNOWN"}}), "UNKNOWN")
+        self.assertEqual(cd.stage_status({"probes": 5, "pass": 1,
+                                          "next_blocker": {"state": "FAIL"}}), "FAIL")
+        self.assertEqual(cd.stage_status({"probes": 0, "pass": 0}), "UNKNOWN")
+
+    def test_fleet_metrics_and_matrix_follow_the_census(self):
+        dv = SCOPES["TOTAL"]["metrics"]["devops"]
+        t = CENSUS["census"]["fleet"]["totals"]
+        self.assertEqual(dv["deploy_contract_core"], f"{t['wf_deploy_contract_core']}/{t['wf_deploy']}")
+        self.assertEqual(dv["workflows"], t["wf_workflows"])
+        lc = MODEL["lifecycle"]
+        self.assertEqual(len(lc["repos"]), len(CENSUS["census"]["repos"]))
+        drift = sorted(cd._short(r["repo"]) for r in lc["repos"] if r["sha_drift"])
+        self.assertEqual(drift, dv["census_sha_drift"])
+
+    def test_repo_census_nodes_and_drift_flag(self):
+        for name, s in SCOPES.items():
+            if not name.startswith("REPO:"):
+                continue
+            ids = {x["id"]: x for x in s["nodes"]}
+            for nid in ("I.CENSUS_HEAD", "I.TESTS", "O.DEPLOY"):
+                self.assertIn(nid, ids, name)
+            head = ids["I.CENSUS_HEAD"]
+            self.assertEqual(head["metrics"]["sha_drift"], s["metrics"]["devops"]["sha_drift"])
+            if not s["metrics"]["devops"]["deploy_jobs"]:
+                self.assertEqual(ids["O.DEPLOY"]["status"], "UNKNOWN")
+
+    def test_hub_objects_adopt_jade_oid_only_on_identical_blob(self):
+        seen = 0
+        for s in MODEL["scopes"]:
+            for node in s["nodes"]:
+                for b in node["oids"]:
+                    if b["status"] == "BOUND" and b["jade_oid"]:
+                        hit = cd.census_binding(CENSUS, cd.HUB_REPO, b["path"])
+                        self.assertEqual(hit["oid"], b["oid"])
+                        seen += 1
+        self.assertGreater(seen, 0)
 
 
 class Outputs(unittest.TestCase):

@@ -77,22 +77,138 @@ def bind_objects(hub: Path, objects: list[dict]) -> dict[str, dict]:
     return out
 
 
+def _binding(obj_id, path, symbol, oid, status, at=None, jade_oid=None) -> dict:
+    return {"object": obj_id, "path": path, "symbol": symbol, "oid": oid,
+            "status": status, "at": at, "jade_oid": jade_oid}
+
+
 def oid_binding(obj: dict) -> dict:
-    return {"object": obj["id"], "path": obj["path"], "symbol": obj.get("symbol"),
-            "oid": obj["oid"], "status": "BOUND"}
+    return _binding(obj["id"], obj["path"], obj.get("symbol"), obj["oid"], "BOUND")
 
 
-def path_binding(hub: Path, repo: str, rel: str) -> dict:
-    """OID of a repo input path: only observable for files in this checkout."""
+def path_binding(hub: Path, repo: str, rel: str, census: dict | None = None) -> dict:
+    """OID of a repo path: local checkout for the hub, census HEAD for the rest."""
     if repo != HUB_REPO:
-        return {"object": None, "path": f"{repo}:{rel}", "symbol": None,
-                "oid": None, "status": "EXTERNAL_UNOBSERVED"}
+        return (census_binding(census, repo, rel)
+                or _binding(None, f"{repo}:{rel}", None, None, "EXTERNAL_UNOBSERVED"))
     p = hub / rel
     if not p.is_file():
-        return {"object": None, "path": rel, "symbol": None, "oid": None,
-                "status": "NOT_IN_CHECKOUT"}
-    return {"object": None, "path": rel, "symbol": None,
-            "oid": git_blob_oid(p.read_bytes()), "status": "BOUND"}
+        return _binding(None, rel, None, None, "NOT_IN_CHECKOUT")
+    return _binding(None, rel, None, git_blob_oid(p.read_bytes()), "BOUND")
+
+
+# --- DevOps census (peer N+9 input) ---------------------------------------
+
+def load_census(root: Path, policy: dict) -> dict | None:
+    """Load the pinned census and index every path to (blob, jade oid, kind).
+
+    Fails closed when the census digest, the objects back-reference, the schema
+    or the read-only authority flags drift from the policy pin.
+    """
+    cfg = policy.get("devops_census")
+    if not cfg:
+        return None
+    raw_c, raw_o = (root / cfg["census"]).read_bytes(), (root / cfg["objects"]).read_bytes()
+    census, objects = json.loads(raw_c), json.loads(raw_o)
+    if census.get("schema") != cfg["schema"] or census.get("digest_sha256") != cfg["digest_sha256"]:
+        raise ValueError("devops census digest/schema drift from policy pin")
+    if objects.get("census_digest_sha256") != cfg["digest_sha256"]:
+        raise ValueError("devops objects are not bound to the pinned census")
+    auth = census.get("authority", {})
+    if auth.get("authority_transfer") is not False or auth.get("merge_admission") != "HOLD":
+        raise ValueError("devops census claims authority")
+    cols = objects["columns"]
+    index = {}
+    for r in census["repos"]:
+        name, paths = _short(r["repo"]), {}
+        objs = objects["repos"].get(r["repo"], {})
+        for rec in (dict(zip(cols["test_files"], x)) for x in objs.get("test_files", [])):
+            paths[rec["path"]] = (rec["blob_oid"], f"jade:file:{name}:{rec['path']}", "test")
+        for rec in (dict(zip(cols["py_modules"], x)) for x in objs.get("py_modules", [])):
+            paths[rec["path"]] = (rec["blob_oid"], f"jade:py:{name}:{rec['dotted']}", "python")
+        for items in r.get("evidence", {}).values():
+            for ev in items:
+                paths[ev["path"]] = (ev["blob_oid"], ev["oid"], ev["kind"])
+        for root_red in (r.get("red_trace") or {}).get("first_red_roots", []):
+            if root_red.get("blob_oid"):
+                paths.setdefault(root_red["path"], (root_red["blob_oid"],
+                                                    f"jade:wf:{name}:{root_red['path']}", "workflow"))
+        names = {}
+        for w in r.get("workflows", []):
+            paths[w["path"]] = (w["blob_oid"], w["oid"], "workflow")
+            names.setdefault(w["name"], w["path"])
+        index[r["repo"]] = {"head": r.get("head_sha"), "paths": paths, "names": names}
+    return {"census": census, "index": index,
+            "repos": {r["repo"]: r for r in census["repos"]},
+            "digests": {cfg["census"]: hashlib.sha256(raw_c).hexdigest(),
+                        cfg["objects"]: hashlib.sha256(raw_o).hexdigest()}}
+
+
+def census_binding(census: dict | None, repo: str, rel: str) -> dict | None:
+    ent = (census or {}).get("index", {}).get(repo)
+    hit = ent and ent["paths"].get(rel)
+    if not hit or not hit[0]:
+        return None
+    return _binding(None, f"{repo}:{rel}", None, hit[0], "BOUND_AT_CENSUS_HEAD",
+                    at=ent["head"], jade_oid=hit[1])
+
+
+def census_workflow(census: dict | None, repo: str, name: str) -> dict | None:
+    ent = (census or {}).get("index", {}).get(repo)
+    path = ent and ent["names"].get(name)
+    return census_binding(census, repo, path) if path else None
+
+
+def stage_status(stage: dict) -> str:
+    """State of the stage's next blocker, not a verdict on the attained level.
+
+    A census level is attainment (highest fully passed tier); the colour follows
+    the first probe above it, so an UNKNOWN blocker stays UNKNOWN. No blocker
+    means L5: every probe passed.
+    """
+    if stage["probes"] and (stage["pass"] == stage["probes"] or stage.get("next_blocker") is None):
+        return PASS
+    blocker = (stage.get("next_blocker") or {}).get("state")
+    return FAIL if blocker == FAIL else UNKNOWN
+
+
+def add_lifecycle(g: "Graph", census: dict, stages: dict, *, fleet: bool,
+                  feed_from: str, loop_target: str | None) -> None:
+    """S0..S9 chain: FEEDFORWARD edges layer it, S9 -> S0 is TEMPORAL, and each
+    stage crosswalks to the H gates it evidences (non-H gates stay text)."""
+    life = census["census"]["lifecycle"]
+    level_status = g.policy["lifecycle_level_status"]
+    names = census["census"]["lifecycle"]["levels"]
+    for st in life["stages"]:
+        key, s = st["key"], stages[st["key"]]
+        if fleet:
+            lvl = s["median_level"]
+            status = level_status[str(lvl)]
+            detail = (f"median L{lvl} {names[str(lvl)]} · ≥L3 {s['repos_ge_L3']}/21 · "
+                      f"completion {round(100 * s['mean_completion'])}% · {s['formalization']}")
+            metrics = {k: s[k] for k in ("levels", "median_level", "mean_completion",
+                                         "repos_ge_L3", "repos_ge_L4", "formalization")}
+        else:
+            status = stage_status(s)
+            nb = s.get("next_blocker") or {}
+            detail = (f"L{s['level']} {s['label']} · "
+                      + (f"blocked by {nb.get('probe')} {nb.get('state')}" if nb else "all probes PASS")
+                      + f" · {s['pass']}/{s['probes']} probes")
+            metrics = dict(s)
+        g.node(f"L.{key}", "P", "LIFECYCLE", f"{key} · {st['question'][:40]}" if fleet else key,
+               status=status, phase="LIFECYCLE", producers=["LIFECYCLE"],
+               oids=[_binding(None, c["path"], None, c["blob_oid"], "BOUND_AT_CENSUS_HEAD",
+                              jade_oid=st["oid"]) for c in st.get("contract", []) if c.get("present")],
+               detail=detail + f" · gates {', '.join(st['gates'])}", metrics=metrics)
+        for gate in st["gates"]:
+            if gate in g.nodes and gate.startswith("H"):
+                g.edge(f"L.{key}", gate, "CROSSWALK", "stage evidences gate")
+            elif gate == "P-loop" and loop_target:
+                g.edge(f"L.{key}", loop_target, "CROSSWALK", "S9 control = P-loop")
+    for a, b, kind in life["edges"]:
+        g.edge(f"L.{a}", f"L.{b}", "TEMPORAL" if kind.startswith("FEEDBACK") else "FLOW",
+               "next pulse" if kind.startswith("FEEDBACK") else "")
+    g.edge(feed_from, f"L.{life['layers'][0][0]}")
 
 
 def sha_ref(label: str, value: str | None) -> list[dict]:
@@ -225,9 +341,10 @@ def _short(repo: str) -> str:
 
 
 class Graph:
-    def __init__(self, scope: str, title: str, policy: dict, objects: dict):
+    def __init__(self, scope: str, title: str, policy: dict, objects: dict,
+                 census: dict | None = None):
         self.scope, self.title = scope, title
-        self.policy, self.objects = policy, objects
+        self.policy, self.objects, self.census = policy, objects, census
         self.nodes: dict[str, dict] = {}
         self.edges: list[dict] = []
 
@@ -241,6 +358,10 @@ class Graph:
                     b = oid_binding(self.objects[oid_id])
                     if b not in bindings:
                         bindings.append(b)
+        for b in bindings:  # same blob in the census => same object: adopt its jade oid
+            hit = census_binding(self.census, HUB_REPO, b["path"]) if b["status"] == "BOUND" else None
+            if hit and hit["oid"] == b["oid"]:
+                b["jade_oid"] = hit["jade_oid"]
         flags = set(flags) | ({status} if status else set())
         self.nodes[nid] = {
             "id": nid, "kind": kind, "type": ntype, "label": label,
@@ -336,7 +457,7 @@ def everred_metrics(red_trace: dict) -> dict:
 def build_total(ctx: dict) -> dict:
     pol, snap, src = ctx["policy"], ctx["snapshot"], ctx["sources"]
     g = Graph("TOTAL", "Federation CI/CD process (all focus repos + P-process)",
-              pol, ctx["objects"])
+              pol, ctx["objects"], ctx["census"])
     rows, srd, pstate = snap["rows"], ctx["rolling5"]["source_red"], src["p_state"]
     pulse = ctx["rolling5"]["pulses"][-1]
     focus = {r["repo"] for r in rows}
@@ -543,6 +664,22 @@ def build_total(ctx: dict) -> dict:
     g.edge("O.SITE", "C.PAGES")
     g.edge("O.SITE", "C.FEDERATION")
 
+    census = ctx["census"]
+    if census:
+        c = census["census"]
+        t = c["fleet"]["totals"]
+        g.node("I.DEVOPS_CENSUS", "I", "INPUT", "DevOps lifecycle census N+9",
+               flags={"CROSSWALK"}, producers=["CENSUS"],
+               shas=sha_ref("census digest", c["digest_sha256"]),
+               detail=f"{c['fleet']['reachable']}/{c['fleet']['repos']} repos · {t['wf_workflows']} workflows · "
+                      f"{t['jobs']} jobs · observed {c['observed_at_utc']}",
+               metrics={"repos": c["fleet"]["repos"], "workflows": t["wf_workflows"], "jobs": t["jobs"]})
+        for repo in repos:
+            if repo in census["repos"]:
+                g.edge(f"S.{_short(repo)}", "I.DEVOPS_CENSUS")
+        add_lifecycle(g, census, c["fleet"]["stages"], fleet=True,
+                      feed_from="I.DEVOPS_CENSUS", loop_target="P.root")
+
     # Metrics.
     flat = [s for st in statuses.values() for s in st.values()]
     c = _count(flat)
@@ -601,7 +738,34 @@ def build_total(ctx: dict) -> dict:
                       "cohort_intersection": cc["intersection_count"],
                       "n11": cc["n11_count"], "green": cc["green_count"]},
     }
+    if census:
+        metrics["devops"] = devops_fleet_metrics(census, rows)
     return g.finish(metrics)
+
+
+def devops_fleet_metrics(census: dict, rows: list[dict]) -> dict:
+    c = census["census"]
+    t, st = c["fleet"]["totals"], c["fleet"]["stages"]
+    focus = {r["repo"]: r.get("source_sha") for r in rows}
+    drift = sorted(_short(r) for r, sha in focus.items()
+                   if census["repos"].get(r, {}).get("head_sha") not in (None, sha))
+    return {
+        "observed_at_utc": c["observed_at_utc"], "digest_sha256": c["digest_sha256"],
+        "repos": c["fleet"]["repos"], "reachable": c["fleet"]["reachable"],
+        "workflows": t["wf_workflows"], "jobs": t["jobs"],
+        "deploy_contract_core": f"{t['wf_deploy_contract_core']}/{t['wf_deploy']}",
+        "deploy_env": t["wf_deploy_env"], "deploy_verified": t["wf_deploy_verified"],
+        "untested_module_pct": round(100 * t["tests_py_untested"] / t["tests_py_modules"], 2),
+        "py_untested": f"{t['tests_py_untested']}/{t['tests_py_modules']}",
+        "unguarded_test_job_pct": round(100 * t["wf_unguarded_test_jobs"] / t["wf_tests_ci"], 2),
+        "actions_pinned_pct": round(100 * t["wf_actions_pinned"] / t["wf_actions_total"], 2),
+        "test_cases": t["tests_cases"], "test_files": t["tests_files"],
+        "zero_case_files": t["tests_zero_case_files"],
+        "lifecycle_median_level": {k: v["median_level"] for k, v in st.items()},
+        "repos_ge_L3": {k: v["repos_ge_L3"] for k, v in st.items()},
+        "census_sha_drift": drift,
+        "outcomes_since_baseline": c["fleet"]["outcomes_since_baseline"],
+    }
 
 
 # --- REPO scope -----------------------------------------------------------
@@ -609,7 +773,7 @@ def build_total(ctx: dict) -> dict:
 def build_repo(ctx: dict, row: dict) -> dict:
     pol, snap, src = ctx["policy"], ctx["snapshot"], ctx["sources"]
     repo, short = row["repo"], _short(row["repo"])
-    g = Graph(f"REPO:{short}", f"{short} · CI/CD DAG and SIPOC", pol, ctx["objects"])
+    g = Graph(f"REPO:{short}", f"{short} · CI/CD DAG and SIPOC", pol, ctx["objects"], ctx["census"])
     pstate = src["p_state"]["repos"].get(repo, {})
     traced = {r["repository"]: r for r in src["red_trace"]["repositories"]}.get(repo)
     heads = {h["repo"]: h for h in src["head_crosswalk"]["repositories"]}
@@ -647,15 +811,18 @@ def build_repo(ctx: dict, row: dict) -> dict:
     for e in inbound:
         g.edge(f"S.{_short(e['from'])}", "I.SOURCE_SHA", "FEDERATION", e["type"], e["state"])
     for i, rel in enumerate(row.get("input_paths", []), 1):
-        b = path_binding(ctx["hub"], repo, rel)
+        b = path_binding(ctx["hub"], repo, rel, ctx["census"])
         g.node(f"I.PATH{i}", "I", "INPUT_PATH", rel, flags={"CROSSWALK"},
                status=None, oids=[b], detail=f"object {b['status']}")
         g.edge("S.self", f"I.PATH{i}")
         g.edge(f"I.PATH{i}", "H02", "FLOW", "root source / entrypoint")
     for i, o in enumerate(row.get("native_observations", []), 1):
         st = {"success": PASS, "failure": FAIL}.get(o["conclusion"], UNKNOWN)
+        wf = (census_workflow(ctx["census"], repo, o["workflow_name"])
+              if repo != HUB_REPO else None)
         g.node(f"I.RUN{i}", "I", "NATIVE_RUN", o["workflow_name"], status=st,
                shas=sha_ref("run head", o.get("source_sha")), producers=["I.NATIVE_RUNS"],
+               oids=[wf] if wf else (),
                detail=f"run {o.get('run_id') or 'none'} · {o['conclusion']}"
                       + (" · no release credit" if o.get("release_credit") is False else ""),
                url=o.get("evidence_url"))
@@ -672,7 +839,7 @@ def build_repo(ctx: dict, row: dict) -> dict:
                    shas=sha_ref("first red", win.get("first_red_sha"))
                    + sha_ref("last green", win.get("last_green_sha")),
                    producers=["I.FIRST_RED"],
-                   oids=[path_binding(ctx["hub"], repo, w["path"])],
+                   oids=[path_binding(ctx["hub"], repo, w["path"], ctx["census"])],
                    detail=f"{w['class']} · {w['age_days']} d · "
                           + ("; ".join(win.get("failing", [])) or "step unknown"),
                    url=(f"https://github.com/{repo}/actions/runs/{win['first_red_run']}"
@@ -737,9 +904,15 @@ def build_repo(ctx: dict, row: dict) -> dict:
                    url=f"https://github.com/{e['to']}")
         g.edge("H11", nid, "FEDERATION", e["type"], e["state"])
 
+    census = ctx["census"]
+    crow = (census or {}).get("repos", {}).get(repo)
+    if crow:
+        add_repo_census(g, census, crow, sha)
+
     ev = ctx["everred"]["per_repo"].get(repo)
     counts = _count(status.values())
     return g.finish({
+        "devops": devops_repo_metrics(crow, sha) if crow else None,
         "gates": {"pass": counts.get(PASS, 0), "fail": counts.get(FAIL, 0),
                   "unknown": counts.get(UNKNOWN, 0), **front,
                   "source_red": sorted(reds), "root_red": sorted(root_red)},
@@ -753,11 +926,68 @@ def build_repo(ctx: dict, row: dict) -> dict:
     })
 
 
+def add_repo_census(g: Graph, census: dict, crow: dict, focus_sha: str | None) -> None:
+    """Census HEAD, test inventory, lifecycle chain and deploy contract for one repo."""
+    head = crow.get("head_sha")
+    same = head == focus_sha
+    g.node("I.CENSUS_HEAD", "I", "CROSSWALK", "Census HEAD vs gate SHA", flags={"CROSSWALK"},
+           producers=["CENSUS"], shas=sha_ref("census HEAD", head) + sha_ref("gate source", focus_sha),
+           detail=("census HEAD = gate SHA" if same else
+                   "census HEAD differs from gate SHA: census OIDs describe a different tree"),
+           metrics={"sha_drift": not same})
+    g.edge("S.self", "I.CENSUS_HEAD")
+    t, z = crow["tests"], crow.get("zero_test") or {}
+    top = [_binding(None, f"{crow['repo']}:{m['path']}", None, m["blob_oid"],
+                    "BOUND_AT_CENSUS_HEAD", at=head, jade_oid=m["oid"])
+           for m in z.get("untested_modules_top", [])[:5] if m.get("blob_oid")]
+    g.node("I.TESTS", "I", "TEST_INVENTORY", "Test inventory (census)",
+           status=(PASS if t["py_modules"] and not t["py_untested"] else
+                   FAIL if t["py_untested"] else UNKNOWN),
+           producers=["CENSUS"], oids=top,
+           detail=f"{t['files']} files · {t['cases']} cases · untested modules "
+                  f"{t['py_untested']}/{t['py_modules']} · zero-case files {t['zero_case_files']}",
+           metrics={k: t[k] for k in ("files", "cases", "py_modules", "py_untested", "zero_case_files")})
+    g.edge("S.self", "I.TESTS")
+    add_lifecycle(g, census, crow["stages"], fleet=False, feed_from="I.CENSUS_HEAD", loop_target=None)
+    g.edge("I.TESTS", "L.S3_TEST", "FLOW", "test inventory")
+    deploys = [(w, j) for w in crow.get("workflows", []) for j in w["jobs"] if j.get("dp")]
+    core = sum(all(v == PASS for v in j["dp"].values()) for _, j in deploys)
+    g.node("O.DEPLOY", "O", "OUTPUT", "Deploy jobs vs DP1-DP10",
+           status=(UNKNOWN if not deploys else PASS if core == len(deploys) else FAIL),
+           producers=["CENSUS"],
+           oids=[_binding(None, f"{crow['repo']}:{w['path']}", None, w["blob_oid"],
+                          "BOUND_AT_CENSUS_HEAD", at=head, jade_oid=j["oid"]) for w, j in deploys[:5]],
+           detail=(f"{len(deploys)} deploy jobs · core contract {core}/{len(deploys)}"
+                   if deploys else "no deploy job found: deploy path UNKNOWN"),
+           metrics={"deploy_jobs": len(deploys), "core_pass": core})
+    g.edge("L.S6_DEPLOY", "O.DEPLOY")
+    g.edge("O.DEPLOY", "C.OWNER")
+
+
+def devops_repo_metrics(crow: dict, focus_sha: str | None) -> dict:
+    wf, t = crow.get("workflow_facts") or {}, crow["tests"]
+    delta = crow.get("delta") or {}
+    return {
+        "census_head": crow.get("head_sha"), "sha_drift": crow.get("head_sha") != focus_sha,
+        "lane": crow.get("lane"),
+        "levels": {k: v["level"] for k, v in crow["stages"].items()},
+        "workflows": wf.get("workflows"), "tests_ci": wf.get("tests_ci"),
+        "unguarded_test_jobs": wf.get("unguarded_test_jobs"),
+        "deploy_jobs": wf.get("deploy"), "deploy_contract_core": wf.get("deploy_contract_core"),
+        "actions_pinned": f"{wf.get('actions_pinned')}/{wf.get('actions_total')}",
+        "py_untested": f"{t['py_untested']}/{t['py_modules']}", "test_cases": t["cases"],
+        "ci_mttr_hours_median": (crow.get("red_trace") or {}).get("ci_mttr_hours_median"),
+        "commits_since_baseline": delta.get("commits"),
+        "outcomes_since_baseline": delta.get("outcomes"),
+    }
+
+
 # --- ORCHESTRATORS scope --------------------------------------------------
 
 def build_orchestrators(ctx: dict) -> dict:
     pol, snap, src = ctx["policy"], ctx["snapshot"], ctx["sources"]
-    g = Graph("ORCHESTRATORS", "Orchestrating and federating assets", pol, ctx["objects"])
+    g = Graph("ORCHESTRATORS", "Orchestrating and federating assets", pol, ctx["objects"],
+              ctx["census"])
     traced = {r["repository"]: r for r in src["red_trace"]["repositories"]}
     pstate = src["p_state"]["repos"]
     weights = ctx["rolling5_policy"]["source_red"]["edge_weights"]
@@ -785,6 +1015,12 @@ def build_orchestrators(ctx: dict) -> dict:
             "red_now": ev.get("red_now"), "everred": ev.get("everred"),
             "workflows_traced": ev.get("workflows_traced"),
         }
+        crow = (ctx["census"] or {}).get("repos", {}).get(repo)
+        if crow:
+            levels = [v["level"] for v in crow["stages"].values()]
+            per[repo].update({"census_head": crow.get("head_sha"),
+                              "lifecycle_median_level": statistics.median(levels),
+                              "lifecycle_min_level": min(levels)})
         flags = set()
         if st.get("mode") == "CODE_PURPLE":
             flags.add("CODE_PURPLE")
@@ -833,6 +1069,7 @@ def project(root: Path = ROOT) -> dict:
     rolling = r5.project(root)
     sources = load_sources(root, policy)
     objects = bind_objects(hub, policy["objects"])
+    census = load_census(root, policy)
     srd = rolling["source_red"]
     common = {a["gate"] for a in srd["ranked_gates"] if a["class"] == "COMMON_CAUSE"}
     path = critical_path(r5_policy["gate_prerequisites"])
@@ -852,7 +1089,8 @@ def project(root: Path = ROOT) -> dict:
     ctx = {"policy": policy, "rolling5_policy": r5_policy, "snapshot": snapshot,
            "rolling5": rolling, "sources": sources, "objects": objects, "hub": hub,
            "everred": everred_metrics(sources["red_trace"]), "common_cause": common,
-           "pass_depth": pass_depth, "heads": heads, "site_digests": site_digests}
+           "pass_depth": pass_depth, "heads": heads, "site_digests": site_digests,
+           "census": census}
     total = build_total(ctx)
     repos = [build_repo(ctx, r) for r in sorted(snapshot["rows"], key=lambda r: r["rank"])]
     orch = build_orchestrators(ctx)
@@ -860,6 +1098,8 @@ def project(root: Path = ROOT) -> dict:
               r5.POLICY: hashlib.sha256((root / r5.POLICY).read_bytes()).hexdigest(),
               r5.LEDGER: hashlib.sha256((root / r5.LEDGER).read_bytes()).hexdigest()}
     inputs.update(sources["digests"])
+    if census:
+        inputs.update(census["digests"])
     inputs.update(site_digests)
     return {
         "schema": SCHEMA,
@@ -875,8 +1115,33 @@ def project(root: Path = ROOT) -> dict:
         "sipoc_definitions": policy["sipoc"],
         "objects": [{k: o.get(k) for k in ("id", "path", "symbol", "kind", "function", "oid")}
                     for o in objects.values()],
+        "lifecycle": lifecycle_matrix(census, snapshot),
         "scopes": [total] + repos + [orch],
     }
+
+
+def lifecycle_matrix(census: dict | None, snapshot: dict) -> dict | None:
+    """21-repo x S0..S9 level matrix for the heatmap, plus census-vs-gate SHA drift."""
+    if not census:
+        return None
+    c = census["census"]
+    focus = {r["repo"]: r.get("source_sha") for r in snapshot["rows"]}
+    keys = [s["key"] for s in c["lifecycle"]["stages"]]
+    rows = []
+    for r in c["repos"]:
+        rows.append({
+            "rank": r["rank"], "repo": r["repo"], "lane": r["lane"],
+            "head_sha": r.get("head_sha"), "focus_sha": focus.get(r["repo"]),
+            "sha_drift": (r["repo"] in focus and focus[r["repo"]] != r.get("head_sha")),
+            "levels": {k: r["stages"][k]["level"] for k in keys},
+            "status": {k: stage_status(r["stages"][k]) for k in keys},
+            "next_blocker": {k: (r["stages"][k].get("next_blocker") or {}).get("probe") for k in keys},
+        })
+    return {"schema": c["schema"], "digest_sha256": c["digest_sha256"],
+            "observed_at_utc": c["observed_at_utc"], "stages": keys,
+            "level_names": c["lifecycle"]["levels"], "repos": rows,
+            "fleet": {k: {x: c["fleet"]["stages"][k][x] for x in ("median_level", "mean_completion", "repos_ge_L3")}
+                      for k in keys}}
 
 
 # --- Rendering ------------------------------------------------------------
@@ -890,7 +1155,7 @@ def lens_text(node: dict, lens: str) -> str:
         if not b:
             return node["oids"][0]["status"] if node["oids"] else "no object bound"
         name = Path(b["path"]).name + (f"::{b['symbol']}" if b.get("symbol") else "")
-        return f"{b['oid'][:10]} {name}"
+        return f"{b['oid'][:10]} {name}" + (f" @{b['at'][:7]}" if b.get("at") else "")
     return node["status"] or node["colour"]
 
 
@@ -940,7 +1205,7 @@ def crosswalk_csv(model: dict) -> str:
     buf = io.StringIO()
     w = csv.writer(buf, lineterminator="\n")
     w.writerow(["scope", "node_id", "sipoc", "type", "label", "status", "colour_class",
-                "dmaic_phase", "layer", "sha_bindings", "oid_bindings", "detail"])
+                "dmaic_phase", "layer", "sha_bindings", "oid_bindings", "jade_oids", "detail"])
     for s in model["scopes"]:
         for n in s["nodes"]:
             w.writerow([s["scope"], n["id"], n["kind"], n["type"], n["label"], n["status"] or "",
@@ -948,7 +1213,9 @@ def crosswalk_csv(model: dict) -> str:
                         "|".join(f"{b['label']}={b['value']}" for b in n["shas"]),
                         "|".join(f"{b['oid'] or b['status']}:{b['path']}"
                                  + (f"::{b['symbol']}" if b.get("symbol") else "")
+                                 + (f"@{b['at']}" if b.get("at") else "")
                                  for b in n["oids"]),
+                        "|".join(b["jade_oid"] for b in n["oids"] if b.get("jade_oid")),
                         n["detail"]])
     return buf.getvalue()
 

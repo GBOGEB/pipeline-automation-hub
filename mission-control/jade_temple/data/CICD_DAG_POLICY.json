@@ -14,6 +14,17 @@
     "p_state": "../qps-triage-ultra/p-process/site/data/p_state.json",
     "everred_census": "../qps-triage-ultra/p-process/site/everred/data/everred.json"
   },
+  "devops_census": {
+    "census": "data/DEVOPS_CENSUS_N9.json",
+    "objects": "data/DEVOPS_OBJECTS_N9.json",
+    "schema": "jade.devops.census.v1",
+    "digest_sha256": "1b3a1c5272145d62fa11b171def677186931c32af85adaa8e03fda90879d3bfd",
+    "source_commit": "2fc580ddb6e9e30ef52f8f8d53e187ee94a47253",
+    "source_branch": "feat/jade-devops-lifecycle-n9-20261023",
+    "note": "Peer N+9 census, copied as the exact committed blobs. Its blob ids are read at each repo's census HEAD, which can be newer than the FOCUS5 gate SHA; every such binding carries that HEAD and the drift is reported, never hidden."
+  },
+  "lifecycle_level_status": {"0": "FAIL", "1": "FAIL", "2": "UNKNOWN", "3": "PASS", "4": "PASS", "5": "PASS"},
+  "lifecycle_level_note": "Fleet stage colour uses the median census level: L3 AUTOMATED is the pass floor, L2 DEFINED is not yet automated, L0-L1 is red. Per-repo stage nodes are coloured by the state of the next blocking probe (census level = attainment, not a verdict): no blocker (L5) is PASS, a FAIL blocker is FAIL, an UNKNOWN blocker stays UNKNOWN.",
   "p_process_loop": ["harvest", "classify", "root", "repair_lane", "verify_progressive", "admit", "control", "recurse"],
   "p_process_loop_note": "Copied from p_process.yaml modes.EVERRED.loop and verified byte-for-byte on every run; 'recurse' closes the loop into the next pulse and is a TEMPORAL edge, excluded from DAG metrics.",
   "sipoc": {
@@ -97,6 +108,8 @@
     {"id": "OBJ.BD_QUEUE", "path": "mission-control/jade_temple/data/BD_QUEUE.csv", "kind": "data", "function": "JADE burn-down queue (issue BD)"},
     {"id": "OBJ.HEAD_CROSSWALK", "path": "mission-control/jade_temple/data/HEAD_CROSSWALK.json", "kind": "data", "function": "Prior vs observed default-branch SHA per repo"},
     {"id": "OBJ.COHORT_CROSSWALK", "path": "mission-control/jade_temple/data/COHORT_CROSSWALK_NPLUS1.json", "kind": "data", "function": "N11 roster vs GoGREEN roster intersection"},
+    {"id": "OBJ.DEVOPS_CENSUS", "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N9.json", "kind": "data", "function": "N+9 DevOps lifecycle census: 21 repos, S0..S9 levels, workflows, jobs, tests, git blob ids"},
+    {"id": "OBJ.DEVOPS_OBJECTS", "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N9.json", "kind": "data", "function": "N+9 object table: python modules and test files with blob ids"},
     {"id": "OBJ.CICD_DAG", "path": "mission-control/jade_temple/tools/cicd_dag.py", "symbol": "project", "kind": "code", "function": "This projection: DAG/SIPOC, metrics, SHA/OID crosswalk"},
     {"id": "OBJ.JADE_QA_WF", "path": ".github/workflows/jade-temple-readonly-qa.yml", "kind": "workflow", "function": "JADE read-only QA: tests, coverage floors, --check parity"},
     {"id": "OBJ.P_PROCESS_WF", "path": ".github/workflows/p-process.yml", "kind": "workflow", "function": "P-process offline tests, TypeScript check, site zip"},
@@ -122,6 +135,8 @@
     "REPO": ["OBJ.FOCUS5", "OBJ.P_STATE"],
     "ROOT": ["OBJ.EVERRED_ROOTS", "OBJ.EVERRED_PROBE"],
     "BD": ["OBJ.BD_QUEUE"],
+    "LIFECYCLE": ["OBJ.DEVOPS_CENSUS"],
+    "CENSUS": ["OBJ.DEVOPS_CENSUS", "OBJ.DEVOPS_OBJECTS"],
     "ASSET": []
   },
   "per_repo_first_red_limit": 6,
@@ -137,6 +152,11 @@
     "flake_rate": "FLAKY / workflows traced.",
     "red_now_median_age_days": "Median age in days of currently red workflows (first red to observation).",
     "oid_coverage": "Nodes bound to at least one git blob OID / all nodes.",
+    "census_sha_drift": "Focus repos whose census HEAD differs from the FOCUS5 gate SHA: their census OIDs describe a newer tree than the gate evidence.",
+    "lifecycle_median_level": "Median S0..S9 census level per stage over the 21-repo roster (L0 ABSENT .. L5 CONTROLLED, cumulative ladder).",
+    "deploy_contract_core": "Deploy jobs passing the core deploy contract (DP1-DP10) / deploy jobs found.",
+    "untested_module_pct": "Python modules with no referencing test / python modules.",
+    "unguarded_test_job_pct": "CI test jobs without a zero-test guard / CI test jobs.",
     "sha_coverage": "Nodes bound to at least one 40-hex commit SHA or sha256 digest / all nodes."
   }
 }

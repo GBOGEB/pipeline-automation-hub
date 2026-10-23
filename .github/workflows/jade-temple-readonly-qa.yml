@@ -61,7 +61,7 @@ jobs:
           got={k.rsplit('/',1)[-1] for k in d['files']}
           if got!=want:raise SystemExit('JADE_COVERAGE_FIRST_RED: source population drift')
           t=d['totals']
-          if t['num_statements']<1436 or t['num_branches']<534:
+          if t['num_statements']<1590 or t['num_branches']<602:
               raise SystemExit('JADE_COVERAGE_FIRST_RED: instrumented denominator shrank')
           if t['percent_statements_covered']<90 or t['percent_branches_covered']<80:
               raise SystemExit('JADE_COVERAGE_FIRST_RED: behavioral coverage target')

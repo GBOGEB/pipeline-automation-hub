@@ -189,12 +189,40 @@ def crosswalk_rows(model):
         for n in s["nodes"]:
             shas = "<br>".join(f'<code>{E(b["value"][:12])}</code> <small>{E(b["label"])}</small>' for b in n["shas"]) or "—"
             oids = "<br>".join((f'<code>{E(b["oid"][:12])}</code> ' if b["oid"] else f'<small>{E(b["status"])}</small> ')
-                               + f'<small>{E(b["path"])}{"::" + E(b["symbol"]) if b.get("symbol") else ""}</small>'
+                               + f'<small>{E(b["path"])}{"::" + E(b["symbol"]) if b.get("symbol") else ""}'
+                               + (f' @{E(b["at"][:7])}' if b.get("at") else "")
+                               + (f'<br>{E(b["jade_oid"])}' if b.get("jade_oid") else "") + '</small>'
                                for b in n["oids"]) or "—"
             rows.append(f'<tr data-scope="{E(s["scope"])}"><td>{E(s["scope"])}</td><td><b>{E(n["label"])}</b><br><small>{E(n["id"])} · {E(n["detail"])}</small></td>'
                         f'<td>{E(n["kind"])}</td><td>{chip(n["colour"], n["status"] or n["colour"].replace("_", " "))}</td>'
                         f'<td>{shas}</td><td>{oids}</td></tr>')
     return "".join(rows)
+
+
+def heatmap(model):
+    lc = model.get("lifecycle")
+    if not lc:
+        return ""
+    keys, names = lc["stages"], lc["level_names"]
+    head = "".join(f"<th>{E(k.split('_', 1)[0])}<br><small>{E(k.split('_', 1)[1])}</small></th>" for k in keys)
+    rows = []
+    for r in lc["repos"]:
+        cells = "".join(
+            f'<td class="lv c-{r["status"][k].lower()}" title="{E(k)} L{r["levels"][k]} {E(names[str(r["levels"][k])])}'
+            f' · blocked by {E(r["next_blocker"][k] or "nothing (L5)")} {E(r["status"][k]) if r["next_blocker"][k] else ""}">L{r["levels"][k]}'
+            f'<small>{"blocker " + E(r["status"][k]) if r["next_blocker"][k] else "all PASS"}</small></td>'
+            for k in keys)
+        drift = (chip("CROSSWALK", "HEAD ≠ gate SHA") if r["sha_drift"] else
+                 chip("PASS", "HEAD = gate SHA") if r["focus_sha"] else "")
+        rows.append(f'<tr><td>{r["rank"]}</td><td><b>{E(dag._short(r["repo"]))}</b><br><small>{E(r["lane"])} · '
+                    f'<code>{E((r["head_sha"] or "")[:10])}</code></small> {drift}</td>{cells}</tr>')
+    fleet = "".join(f'<td class="lv">L{lc["fleet"][k]["median_level"]}<small>≥L3 {lc["fleet"][k]["repos_ge_L3"]}/21</small></td>' for k in keys)
+    return (f'<h2 class="cd-sec" id="lifecycle">DevOps lifecycle maturity S0–S9 (21 repos, census N+9)</h2>'
+            f'<p class="cd-lead">Level per stage on the census ladder (L0 ABSENT … L5 CONTROLLED); the cell text gives the level and the stage status '
+            f'(the level is attainment, not a verdict; the label is the state of the next blocking probe above it, so an unobservable blocker stays UNKNOWN). Census <code>{E(lc["digest_sha256"][:12])}</code> '
+            f'observed {E(lc["observed_at_utc"])}; HEADs can be newer than the gate SHAs.</p>'
+            f'<div class="cd-tablewrap"><table class="cd"><thead><tr><th>#</th><th>Repo</th>{head}</tr></thead><tbody>{"".join(rows)}'
+            f'<tr><td></td><td><b>Fleet median</b></td>{fleet}</tr></tbody></table></div>')
 
 
 def objects_table(model):
@@ -229,6 +257,15 @@ def kpis(total, orch):
         (f'{total["dag"]["oid_coverage"] * 100:.0f}%', "nodes bound to a git OID", "CROSSWALK"),
         (f'{orch["metrics"]["hub_fan_in_share"] * 100:.0f}%', "hub share of federation edges", "P_PROCESS"),
     ]
+    dv = total["metrics"].get("devops")
+    if dv:
+        items += [
+            (dv["deploy_contract_core"], "deploy jobs passing DP1-DP10", "ROOT_RED"),
+            (f'{dv["untested_module_pct"]}%', f'python modules untested ({dv["py_untested"]})', "FAIL"),
+            (f'{dv["unguarded_test_job_pct"]}%', "CI test jobs without zero-test guard", "UNKNOWN"),
+            (f'{dv["actions_pinned_pct"]}%', "third-party actions SHA-pinned", "UNKNOWN"),
+            (f'{len(dv["census_sha_drift"])}/5', "focus repos: census HEAD ≠ gate SHA", "CROSSWALK"),
+        ]
     return '<div class="cd-kpis">' + "".join(
         f'<div class="cd-kpi c-{c.lower()}-edge"><b>{E(v)}</b><span>{E(k)}</span></div>' for v, k, c in items) + "</div>"
 
@@ -268,10 +305,11 @@ svg.dag .e-x{stroke:#6fd6e8;stroke-dasharray:5 4}svg.dag .e-t{stroke:#b48cff;str
 table.cd th,table.cd td{padding:8px 10px;border-bottom:1px solid var(--stroke);text-align:left;vertical-align:top;font-size:12.5px}
 table.cd th{background:var(--panel-hi);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);position:sticky;top:0}
 table.cd small{color:var(--quiet)}table.cd code{font-size:11.5px}
-table.cd-kv{border-collapse:collapse;width:100%}table.cd-kv th{color:var(--muted);font-weight:600;text-align:left;padding:3px 10px 3px 0;font-size:12px;vertical-align:top;width:44%}table.cd-kv td{font-size:12.5px;padding:3px 0;overflow-wrap:anywhere}
+table.cd-kv{border-collapse:collapse;width:100%;min-width:0;table-layout:fixed}table.cd-kv th{color:var(--muted);font-weight:600;text-align:left;padding:3px 10px 3px 0;font-size:12px;vertical-align:top;width:44%}table.cd-kv td{font-size:12.5px;padding:3px 0;overflow-wrap:anywhere;word-break:break-word}
 .cd-bars{display:grid;gap:8px}.cd-bar{display:grid;grid-template-columns:200px 1fr 110px;gap:10px;align-items:center;font-size:13px}
 .cd-track{display:block;height:14px;border-radius:7px;overflow:hidden;background:var(--panel-hi)}.cd-track i{display:block;height:100%;background:var(--green)}
-.cd-scope[hidden]{display:none}footer.cd-foot{color:var(--quiet);font-size:12px;margin-top:40px;border-top:1px solid var(--stroke);padding-top:14px;overflow-wrap:anywhere}
+.cd-scope[hidden]{display:none}table.cd td.lv{text-align:center;font-weight:800;white-space:nowrap}table.cd td.lv small{display:block;font-weight:600;font-size:10px;color:inherit;opacity:.85}
+.lv.c-pass,.lv.c-fail,.lv.c-unknown{border-left:1px solid var(--stroke)}footer.cd-foot{color:var(--quiet);font-size:12px;margin-top:40px;border-top:1px solid var(--stroke);padding-top:14px;overflow-wrap:anywhere}
 @media(max-width:980px){.cd-stage{grid-template-columns:1fr}.cd-panel{position:static;max-height:none}.sipoc{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.app-shell{padding:0 16px}.sipoc{grid-template-columns:1fr}.cd-bar{grid-template-columns:1fr}.mast{flex-wrap:wrap}}
 """
@@ -289,7 +327,7 @@ function show(id){document.querySelectorAll('svg.dag .node.sel').forEach(functio
  var n=data[sel.value][id];if(!n)return;var g=document.querySelector('.cd-scope:not([hidden]) .node[data-id="'+id.replace(/"/g,'')+'"]');if(g)g.classList.add('sel');
  var h='<h4>'+esc(n.kind)+' · '+esc(n.type)+'</h4><p><b>'+esc(n.label)+'</b></p><p><span class="cd-chip c-'+n.colour.toLowerCase()+'">'+esc(n.status||n.colour)+'</span>'+(n.phase?' <small>'+esc(n.phase)+'</small>':'')+'</p><p class="cd-q">'+esc(n.detail)+'</p>';
  h+='<h4>SHA lens</h4>'+(n.shas.length?n.shas.map(function(b){return '<div><small>'+esc(b.label)+'</small><br><code>'+esc(b.value)+'</code></div>'}).join(''):'<p class="cd-q">no SHA bound</p>');
- h+='<h4>OID lens</h4>'+(n.oids.length?n.oids.map(function(b){return '<div><small>'+esc(b.path)+(b.symbol?'::<b>'+esc(b.symbol)+'</b>':'')+'</small><br><code>'+esc(b.oid||b.status)+'</code></div>'}).join(''):'<p class="cd-q">no object bound</p>');
+ h+='<h4>OID lens</h4>'+(n.oids.length?n.oids.map(function(b){return '<div><small>'+esc(b.path)+(b.symbol?'::<b>'+esc(b.symbol)+'</b>':'')+'</small><br><code>'+esc(b.oid||b.status)+'</code>'+(b.at?' <small>@ census HEAD '+esc(b.at.slice(0,10))+'</small>':'')+(b.jade_oid?'<br><small>'+esc(b.jade_oid)+'</small>':'')+'</div>'}).join(''):'<p class="cd-q">no object bound</p>');
  if(n.url)h+='<p><a href="'+esc(n.url)+'">evidence ↗</a></p>';panel.innerHTML=h;}
 document.querySelectorAll('svg.dag .node').forEach(function(g){g.addEventListener('click',function(){show(g.dataset.id)});g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();show(g.dataset.id)}})});
 var q=document.getElementById('cd-q'),xs=document.getElementById('cd-xscope'),cnt=document.getElementById('cd-n');
@@ -329,6 +367,7 @@ def page(model):
 {legend(model)}
 <div id="cd-views">{panels}</div>
 <h2 class="cd-sec" id="yield">DMAIC phase yield (federation total)</h2>{phase_bars(total)}
+{heatmap(model)}
 <h2 class="cd-sec" id="orch">Orchestrating and federating repositories</h2><p class="cd-lead">In/out degree over typed federation edges; w-in weights inbound edges by state (AUTHORITY_BOUND 2, observation/evidence/provider 1, reference 0). {orch["metrics"]["causal_root_proof_edges"]} edges carry causal root proof.</p>{orch_table(orch)}
 <h2 class="cd-sec" id="crosswalk">Crosswalk: function ⇄ SHA ⇄ OID</h2>
 <div class="cd-tools"><input id="cd-q" type="search" placeholder="Search label, SHA, OID, path, symbol…" aria-label="Search crosswalk"><select id="cd-xscope" aria-label="Scope"><option value="">All scopes</option>{xopts}</select><span id="cd-n" aria-live="polite"></span></div>
