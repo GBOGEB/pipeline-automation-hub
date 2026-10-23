@@ -11,7 +11,10 @@ Read-only projection. Reuses tools/rolling5.py for the pulse ledger, gate DAG
 and SOURCE_RED; never mutates GitHub; UNKNOWN is never PASS.
 
   python tools/cicd_dag.py --write     regenerate site/cicd_dag.{json,_crosswalk.csv} + diagrams
-  python tools/cicd_dag.py --check     fail if committed outputs drift
+  python tools/cicd_dag.py --check     fail if committed outputs drift; names the
+                                       drifted source files and the regen command
+  --strict-pulse                       also fail when any focus repo's census SHA
+                                       differs from its gate-snapshot SHA (one pulse)
 """
 from __future__ import annotations
 
@@ -39,6 +42,9 @@ PASS, FAIL, UNKNOWN = "PASS", "FAIL", "UNKNOWN"
 SHA40 = re.compile(r"[0-9a-f]{40}")
 SHA64 = re.compile(r"[0-9a-f]{64}")
 SIPOC_ORDER = "SIPOC"
+# One command regenerates every committed CI/CD DAG output (json, csv, mermaid, html).
+REGEN_CMD = ("python mission-control/jade_temple/tools/cicd_dag.py --write && "
+             "python mission-control/jade_temple/site/build_cicd_dag.py")
 KIND_MIN_LAYER = {"S": 0, "I": 1, "P": 2, "O": 3}
 LAYERING_EDGES = {"FLOW", "PREREQ", "FEDERATION", "CONTAINS"}
 
@@ -111,7 +117,11 @@ def load_census(root: Path, policy: dict) -> dict | None:
     raw_c, raw_o = (root / cfg["census"]).read_bytes(), (root / cfg["objects"]).read_bytes()
     census, objects = json.loads(raw_c), json.loads(raw_o)
     if census.get("schema") != cfg["schema"] or census.get("digest_sha256") != cfg["digest_sha256"]:
-        raise ValueError("devops census digest/schema drift from policy pin")
+        raise ValueError(
+            f"devops census digest/schema drift from policy pin: {cfg['census']} declares "
+            f"{census.get('schema')} {str(census.get('digest_sha256'))[:12]}, {POLICY} pins "
+            f"{cfg['schema']} {cfg['digest_sha256'][:12]}; re-pin devops_census in {POLICY}, "
+            f"then run: {REGEN_CMD}")
     if objects.get("census_digest_sha256") != cfg["digest_sha256"]:
         raise ValueError("devops objects are not bound to the pinned census")
     auth = census.get("authority", {})
@@ -962,8 +972,10 @@ def build_repo(ctx: dict, row: dict) -> dict:
 
     ev = ctx["everred"]["per_repo"].get(repo)
     counts = _count(status.values())
+    align = (ctx.get("pulse_alignment") or {}).get("repos", {}).get(short)
     return g.finish({
         "devops": devops_repo_metrics(crow, sha) if crow else None,
+        "pulse_mismatch": align["pulse_mismatch"] if align else None,
         "gates": {"pass": counts.get(PASS, 0), "fail": counts.get(FAIL, 0),
                   "unknown": counts.get(UNKNOWN, 0), **front,
                   "source_red": sorted(reds), "root_red": sorted(root_red)},
@@ -1116,7 +1128,7 @@ def project(root: Path = ROOT) -> dict:
     policy = json.loads((root / POLICY).read_text(encoding="utf-8"))
     r5_policy = json.loads((root / r5.POLICY).read_text(encoding="utf-8"))
     pairs = r5.verified_pulses(root, json.loads((root / r5.LEDGER).read_text(encoding="utf-8")))
-    snapshot = pairs[-1][1]
+    pulse, snapshot = pairs[-1]
     rolling = r5.project(root)
     sources = load_sources(root, policy)
     objects = bind_objects(hub, policy["objects"])
@@ -1141,7 +1153,8 @@ def project(root: Path = ROOT) -> dict:
            "rolling5": rolling, "sources": sources, "objects": objects, "hub": hub,
            "everred": everred_metrics(sources["red_trace"]), "common_cause": common,
            "pass_depth": pass_depth, "heads": heads, "site_digests": site_digests,
-           "census": census, "docks": scale_docks(hub, policy, sources)}
+           "census": census, "docks": scale_docks(hub, policy, sources),
+           "pulse_alignment": pulse_alignment(census, pulse, snapshot)}
     total = build_total(ctx)
     repos = [build_repo(ctx, r) for r in sorted(snapshot["rows"], key=lambda r: r["rank"])]
     orch = build_orchestrators(ctx)
@@ -1167,8 +1180,88 @@ def project(root: Path = ROOT) -> dict:
         "objects": [{k: o.get(k) for k in ("id", "path", "symbol", "kind", "function", "oid")}
                     for o in objects.values()],
         "lifecycle": lifecycle_matrix(census, snapshot),
+        "pulse_alignment": ctx["pulse_alignment"],
         "scopes": [total] + repos + [orch],
     }
+
+
+def pulse_alignment(census: dict | None, pulse: dict, snapshot: dict) -> dict | None:
+    """One pulse: does each focus repo's census SHA equal the gate-snapshot SHA it joins?
+
+    The census and the gate snapshot are two reads of the same repos. When they
+    were taken at different commits the joined row mixes two trees, so every
+    focus repo carries an explicit pulse_mismatch. A focus repo absent from the
+    census is CENSUS_UNOBSERVED, also a mismatch: UNKNOWN is never PASS.
+    """
+    if not census:
+        return None
+    repos = {}
+    for row in sorted(snapshot["rows"], key=lambda r: r["rank"]):
+        gate_sha = row.get("source_sha")
+        census_sha = census["repos"].get(row["repo"], {}).get("head_sha")
+        state = ("CENSUS_UNOBSERVED" if not census_sha else
+                 "ALIGNED" if census_sha == gate_sha else "MISMATCH")
+        repos[_short(row["repo"])] = {"repo": row["repo"], "gate_sha": gate_sha,
+                                      "census_sha": census_sha, "state": state,
+                                      "pulse_mismatch": state != "ALIGNED"}
+    mismatched = [k for k, v in repos.items() if v["pulse_mismatch"]]
+    return {"gate_pulse": pulse["id"], "gate_snapshot": pulse["snapshot"],
+            "gate_observed_date": pulse["observed_date"],
+            "census_observed_at_utc": census["census"]["observed_at_utc"],
+            "census_digest_sha256": census["census"]["digest_sha256"],
+            "focus_repos": len(repos), "mismatch_count": len(mismatched),
+            "mismatched": mismatched, "one_pulse": not mismatched, "repos": repos}
+
+
+def pulse_first_red(model: dict) -> str | None:
+    """--strict-pulse verdict: None when census and gates come from one pulse."""
+    pa = model.get("pulse_alignment")
+    if not pa or pa["one_pulse"]:
+        return None
+    detail = ", ".join(f"{k} census {str(v['census_sha'])[:10]} != gate {str(v['gate_sha'])[:10]}"
+                       for k, v in pa["repos"].items() if v["pulse_mismatch"])
+    return (f"CICD_DAG_PULSE_FIRST_RED: {pa['mismatch_count']}/{pa['focus_repos']} focus repos were "
+            f"read by the census ({pa['census_observed_at_utc']}) at a different commit than gate "
+            f"pulse {pa['gate_pulse']} ({pa['gate_observed_date']}): {detail}. Re-take the census and "
+            f"the gate snapshot in one pulse, then run: {REGEN_CMD}")
+
+
+def source_drift(root: Path, model: dict) -> list[str]:
+    """Which pinned sources moved since the committed cicd_dag.json was generated.
+
+    Compares the committed json's object OIDs and input sha256 digests with the
+    fresh projection, so a red check names the exact files (p-process,
+    scale_dock.py, census, ...) that drifted, not only the outputs to rebuild.
+    """
+    try:
+        old = json.loads((root / OUT_JSON).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return [f"{OUT_JSON} (missing or unreadable: no pins to compare)"]
+    hub = root.parents[1].resolve()
+    old_oids = {o.get("path"): o.get("oid") for o in old.get("objects", [])}
+    out = {}
+    for o in model["objects"]:
+        was = old_oids.get(o["path"])
+        if was != o["oid"]:
+            out[o["path"]] = f"{o['path']} (git blob {str(was)[:10]} -> {o['oid'][:10]})"
+    for rel, digest in model["inputs"].items():
+        was = old.get("inputs", {}).get(rel)
+        if was == digest:
+            continue
+        path = (root / rel).resolve().relative_to(hub).as_posix()
+        out.setdefault(path, f"{path} (sha256 {str(was)[:10]} -> {digest[:10]})")
+    return [out[k] for k in sorted(out)]
+
+
+def drift_message(prefix: str, outputs: list[str], root: Path, model: dict) -> str:
+    """First-red text: stale outputs, the pinned sources that moved, one regen command."""
+    sources = source_drift(root, model)
+    return "\n".join([
+        f"{prefix}: committed outputs are stale: {', '.join(outputs)}",
+        "  drifted sources: " + ("; ".join(sources) if sources else
+                                 "none of the pinned OIDs/digests moved (generator or template changed)"),
+        f"  regenerate with: {REGEN_CMD}",
+    ])
 
 
 def lifecycle_matrix(census: dict | None, snapshot: dict) -> dict | None:
@@ -1288,16 +1381,26 @@ def main(argv=None, root: Path = ROOT) -> int:
     mode = ap.add_mutually_exclusive_group(required=True)
     mode.add_argument("--write", action="store_true")
     mode.add_argument("--check", action="store_true")
+    ap.add_argument("--strict-pulse", action="store_true",
+                    help="fail when census and gate snapshot were not read in one pulse")
     args = ap.parse_args(argv)
-    files = render(project(root))
+    model = project(root)
+    files = render(model)
+    red = pulse_first_red(model) if args.strict_pulse else None
+    if red:
+        print(red)
     if args.check:
         drift = [rel for rel, data in files.items()
                  if not (root / rel).exists() or (root / rel).read_bytes() != data]
         if drift:
-            print("CICD_DAG_FIRST_RED: regenerate " + ", ".join(drift))
+            print(drift_message("CICD_DAG_FIRST_RED", drift, root, model))
+            return 1
+        if red:
             return 1
         print("CICD_DAG_PARITY_OK")
         return 0
+    if red:
+        return 1
     for rel, data in files.items():
         (root / rel).write_bytes(data)
     print("CICD_DAG_WROTE " + " ".join(files))
