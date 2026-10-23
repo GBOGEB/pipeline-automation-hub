@@ -162,3 +162,24 @@ R8 repository code
 The required owner/admin control should require `First-Pass Closure Gate / first-pass-closure` on the PR head and, where GitHub configuration permits, bind the required check/status to the trusted publisher application or an equivalent non-candidate identity. Until that administrative control is installed, the FPC controller is a fail-closed **process controller**, not an unbypassable repository merge lock.
 
 This distinction is non-compensating: a green controller run does not prove the admin barrier exists, and installing a branch rule does not replace exact-head proof/review evidence.
+
+
+## Filling the receipt
+
+The gate fails on every PR without a receipt, so a red gate that "always fails" must not become background noise. Fill the receipt with `scripts/fpc_receipt.py` instead of copying run ids by hand:
+
+```bash
+# 1. push your final head and wait for "First-Pass Closure Proof" to succeed on it
+# 2. preview the receipt (default --dry-run; nothing is written)
+python scripts/fpc_receipt.py --pr <N>
+# 3. replace the template placeholder (or append a section) in the PR body
+python scripts/fpc_receipt.py --pr <N> --write
+```
+
+The helper uses your existing `gh auth` login, reads the live PR head/base SHA, lists completed/success workflow runs on that exact head, and keeps only runs the gate itself would trust: it imports `allowed_purposes` from `scripts/first_pass_closure_gate.py`, so allowlist identity and candidate-vs-base workflow-content equality are decided by the same code. The newest trusted run per uncovered purpose is bound.
+
+- Exit `0`: all of `canonical_self_test`, `mutation_test`, `exact_head_ci` are covered; the block is validated with the gate's own `parse_receipt` before it is printed or written.
+- Exit `1`: coverage is incomplete; the missing purposes are listed on stderr and the PR body is not modified.
+- Exit `2`: `gh`/API or policy error.
+
+`--write` is idempotent (re-running on an unchanged head leaves the body untouched) and editing the body re-triggers the gate. Every new push changes the head SHA and makes the receipt stale (`STALE_HEAD`), so re-run the helper after each push. A receipt is necessary but not sufficient: the exact-head Codex review and the protected-path bootstrap rule still apply, and the helper notes on stderr when a PR touches protected controller paths.
