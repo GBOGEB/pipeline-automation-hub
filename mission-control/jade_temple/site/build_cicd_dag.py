@@ -317,18 +317,31 @@ table.cd-kv{border-collapse:collapse;width:100%;min-width:0;table-layout:fixed}t
 JS = """(function(){
 var main=document.getElementById('main'),data=JSON.parse(document.getElementById('cd-data').textContent);
 var sel=document.getElementById('cd-scope'),panel=document.getElementById('cd-panel');
-function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=String(text);return e}
+function add(p){for(var i=1;i<arguments.length;i++)if(arguments[i])p.appendChild(arguments[i]);return p}
+function safeUrl(u){try{var x=new URL(u);return x.protocol==='https:'?x.href:null}catch(e){return null}}
 function lens(l){main.dataset.lens=l;document.querySelectorAll('[data-lens-btn]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.lensBtn===l)});}
 document.querySelectorAll('[data-lens-btn]').forEach(function(b){b.addEventListener('click',function(){lens(b.dataset.lensBtn)})});
 function scope(s){document.querySelectorAll('.cd-scope').forEach(function(p){p.hidden=p.dataset.scope!==s});show(null);}
 sel.addEventListener('change',function(){scope(sel.value)});
+// The panel is built with DOM nodes and textContent only; evidence links must be https.
 function show(id){document.querySelectorAll('svg.dag .node.sel').forEach(function(g){g.classList.remove('sel')});
- if(!id){panel.innerHTML='<h4>Node detail</h4><p class="cd-q">Select a node (click or Enter) to see its function, every SHA and every git object OID bound to it.</p>';return}
- var n=data[sel.value][id];if(!n)return;var g=document.querySelector('.cd-scope:not([hidden]) .node[data-id="'+id.replace(/"/g,'')+'"]');if(g)g.classList.add('sel');
- var h='<h4>'+esc(n.kind)+' · '+esc(n.type)+'</h4><p><b>'+esc(n.label)+'</b></p><p><span class="cd-chip c-'+n.colour.toLowerCase()+'">'+esc(n.status||n.colour)+'</span>'+(n.phase?' <small>'+esc(n.phase)+'</small>':'')+'</p><p class="cd-q">'+esc(n.detail)+'</p>';
- h+='<h4>SHA lens</h4>'+(n.shas.length?n.shas.map(function(b){return '<div><small>'+esc(b.label)+'</small><br><code>'+esc(b.value)+'</code></div>'}).join(''):'<p class="cd-q">no SHA bound</p>');
- h+='<h4>OID lens</h4>'+(n.oids.length?n.oids.map(function(b){return '<div><small>'+esc(b.path)+(b.symbol?'::<b>'+esc(b.symbol)+'</b>':'')+'</small><br><code>'+esc(b.oid||b.status)+'</code>'+(b.at?' <small>@ census HEAD '+esc(b.at.slice(0,10))+'</small>':'')+(b.jade_oid?'<br><small>'+esc(b.jade_oid)+'</small>':'')+'</div>'}).join(''):'<p class="cd-q">no object bound</p>');
- if(n.url)h+='<p><a href="'+esc(n.url)+'">evidence ↗</a></p>';panel.innerHTML=h;}
+ panel.replaceChildren();
+ if(!id){add(panel,el('h4',null,'Node detail'),el('p','cd-q','Select a node (click or Enter) to see its function, every SHA and every git object OID bound to it.'));return}
+ var n=(data[sel.value]||{})[id];if(!n)return;
+ document.querySelectorAll('.cd-scope:not([hidden]) .node').forEach(function(g){if(g.dataset.id===id)g.classList.add('sel')});
+ var chip=el('span','cd-chip c-'+String(n.colour).toLowerCase().replace(/[^a-z_]/g,''),n.status||n.colour);
+ add(panel,el('h4',null,n.kind+' · '+n.type),add(el('p'),el('b',null,n.label)),
+     add(el('p'),chip,n.phase?el('small',null,' '+n.phase):null),el('p','cd-q',n.detail));
+ add(panel,el('h4',null,'SHA lens'));
+ if(!n.shas.length)add(panel,el('p','cd-q','no SHA bound'));
+ n.shas.forEach(function(b){add(panel,add(el('div'),el('small',null,b.label),el('br'),el('code',null,b.value)))});
+ add(panel,el('h4',null,'OID lens'));
+ if(!n.oids.length)add(panel,el('p','cd-q','no object bound'));
+ n.oids.forEach(function(b){add(panel,add(el('div'),el('small',null,b.path+(b.symbol?'::'+b.symbol:'')),el('br'),el('code',null,b.oid||b.status),
+   b.at?el('small',null,' @ census HEAD '+String(b.at).slice(0,10)):null,b.jade_oid?el('br'):null,b.jade_oid?el('small',null,b.jade_oid):null))});
+ var u=n.url?safeUrl(n.url):null;
+ if(u){var a=el('a',null,'evidence ↗');a.href=u;a.rel='noopener noreferrer';add(panel,add(el('p'),a))}}
 document.querySelectorAll('svg.dag .node').forEach(function(g){g.addEventListener('click',function(){show(g.dataset.id)});g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();show(g.dataset.id)}})});
 var q=document.getElementById('cd-q'),xs=document.getElementById('cd-xscope'),cnt=document.getElementById('cd-n');
 function f(){var s=q.value.toLowerCase(),c=0;document.querySelectorAll('#cd-xwalk tbody tr').forEach(function(tr){var ok=(!xs.value||tr.dataset.scope===xs.value)&&tr.textContent.toLowerCase().indexOf(s)>-1;tr.hidden=!ok;if(ok)c++});cnt.textContent=c+' rows';}
