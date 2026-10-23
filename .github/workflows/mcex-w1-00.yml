@@ -33,7 +33,7 @@ jobs:
           set -euo pipefail
           node 'mission-control/side-missions/MCEX_W1/arm_00/emit.mjs' 'build/mcex/arm-00-receipt.json'
           node -e 'const fs=require("node:fs");const r=JSON.parse(fs.readFileSync("build/mcex/arm-00-receipt.json"));if(r.metrics.cases!==22||r.metrics.negative_cases!==20||r.metrics.false_green||r.metrics.git_writes||r.metrics.remote_writes||r.boundary.merge_admission!=="HOLD")process.exit(7);'
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: mcex-arm-00-${{ github.event.pull_request.head.sha }}

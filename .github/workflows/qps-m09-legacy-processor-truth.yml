@@ -63,7 +63,7 @@ jobs:
           pathlib.Path('artifacts/m09/M09_REPAIR_RECEIPT.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n',encoding='utf-8')
           PY
       - name: Upload retained M09 repair receipt
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: qps-m09-repair-${{ env.SOURCE_HEAD_SHA }}
           path: artifacts/m09/

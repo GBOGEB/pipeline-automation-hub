@@ -114,7 +114,7 @@ jobs:
           python mission-control/gogreen/required_gate/federation.py --spec "$RUNNER_TEMP/spec.json" \
             --backtest-limit 20 --out "$RUNNER_TEMP/federation"
           cat "$RUNNER_TEMP/federation/federation.md" >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6.0.0 (node24)
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v6.0.0 (node24)
         if: always() && github.event_name != 'pull_request'
         with:
           name: gogreen-federation-spine-${{ github.run_id }}-${{ github.run_attempt }}

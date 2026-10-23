@@ -30,7 +30,7 @@ jobs:
           mkdir -p output/r3-dmaic
           python mission-control/grand-missions/validate_r3_dmaic_control.py             --control mission-control/grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json             --self-test --out output/r3-dmaic/R3_DMAIC_CONTROL_RECEIPT_v3.json
       - name: Upload control receipt
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: hm01-r3-dmaic-control
           path: output/r3-dmaic/R3_DMAIC_CONTROL_RECEIPT_v3.json

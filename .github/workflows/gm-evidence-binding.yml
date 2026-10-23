@@ -70,7 +70,7 @@ jobs:
           open(__import__('os').environ['GITHUB_STEP_SUMMARY'], 'a').write("\n".join(lines) + "\n")
           sys.exit(1 if dead else 0)
           PY
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6.0.0 (node24)
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v6.0.0 (node24)
         if: always()
         with:
           name: gm-evidence-binding-${{ github.run_id }}-${{ github.run_attempt }}

@@ -60,7 +60,7 @@ jobs:
               print(f"- **{e['type']}** in {e['process']}: {e['message']}")
           PY
           cat "$RUNNER_TEMP/master-input-run/DIAGRAMS.md" >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6.0.0 (node24)
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v6.0.0 (node24)
         if: always()
         with:
           name: master-input-runtime-${{ github.run_id }}-${{ github.run_attempt }}
