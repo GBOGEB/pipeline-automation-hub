@@ -1,0 +1,63 @@
+{
+  "schema": "codepurple.chat_pulse_transcription.v1",
+  "authority": "CHAT_TRANSCRIPT_UNVERIFIED",
+  "note": "Hand transcription of four chat pulse reports. The referenced sandbox receipts (*.json + .sha256) were not supplied, so nothing here is source-bound. Truncated SHAs are kept as prefixes and flagged head_sha_exact=false.",
+  "pulses": [
+    {
+      "pulse_id": "1156Z",
+      "observed_through_utc": "2026-10-22T11:56:00Z",
+      "receipt_name": "CODE_PURPLE_pulse_20261022_1156Z_source_bound.json",
+      "receipt_supplied": false,
+      "events": [
+        {"repo": "GBOGEB/ABACUS", "pr": 2367, "head_sha": "301960e92b12", "head_sha_exact": false, "fingerprint": "GITHUB_WORKFLOW_ACTION_REQUIRED", "class": "NEW_TERMINAL_EVENT", "occurrences": 30, "pass": 0, "fail": null, "run_ids": [39769223048], "jobs_observed": 0, "artifacts_observed": 0},
+        {"repo": "GBOGEB/ABACUS", "pr": 2385, "head_sha": "95084b427bf7", "head_sha_exact": false, "fingerprint": "GITHUB_WORKFLOW_ACTION_REQUIRED", "class": "NEW_TERMINAL_EVENT", "occurrences": 22, "pass": 0, "fail": null, "run_ids": [], "jobs_observed": 0, "artifacts_observed": 0},
+        {"repo": "GBOGEB/ABACUS", "pr": 2386, "head_sha": "8e062ff8be0", "head_sha_exact": false, "fingerprint": "GITHUB_WORKFLOW_ACTION_REQUIRED", "class": "NEW_TERMINAL_EVENT", "occurrences": 30, "pass": 0, "fail": null, "run_ids": [39771131257], "jobs_observed": 0, "artifacts_observed": 0},
+        {"repo": "GBOGEB/ABACUS", "pr": 2374, "head_sha": "3d9abad49427", "head_sha_exact": false, "fingerprint": "GITHUB_WORKFLOW_ACTION_REQUIRED", "class": "NEW_TERMINAL_EVENT", "occurrences": 24, "pass": 0, "fail": null, "run_ids": [], "jobs_observed": 0, "artifacts_observed": 0}
+      ],
+      "anchors": {"ABACUS_main": "44caccf716a7c20693a2911566289bfc75ea81d9", "QPS_coverage_anchor": {"statements": [763, 852], "branches": [277, 304], "scope": "ten-module PR-head (QPS #2017)"}, "HUB_531": "STABLE_HOLD"}
+    },
+    {
+      "pulse_id": "1235Z",
+      "observed_through_utc": "2026-10-22T12:39:00Z",
+      "receipt_name": "CODE_PURPLE_pulse_20261022_1235Z_source_bound.json",
+      "receipt_supplied": false,
+      "events": [
+        {"repo": "GBOGEB/ABACUS", "pr": 2388, "head_sha": "41ba0ab47b5a", "head_sha_exact": false, "fingerprint": "PYTEST_NAMEERROR_PHASE8_TODO", "class": "NEW_TERMINAL_RED", "occurrences": 2, "pass": 16, "fail": 4, "cancelled": 1, "run_ids": [39774919258], "job_ids": [119811942264], "tests": {"passed": 6320, "failed": 2, "skipped": 3, "xfailed": 5}, "source_blob": "c6d70c51b89355371245831fe1d40dcdb46c2772", "artifacts": [{"artifact_id": 12423779766, "integrity": "UNKNOWN"}, {"artifact_id": 12424201789, "integrity": "UNKNOWN"}]},
+        {"repo": "GBOGEB/ABACUS", "pr": 2388, "head_sha": "41ba0ab47b5a", "head_sha_exact": false, "fingerprint": "BANDIT_NEW_DEBT_TEST_FIXTURES", "class": "NEW_TERMINAL_RED", "occurrences": null},
+        {"repo": "GBOGEB/ABACUS", "pr": 2388, "head_sha": "41ba0ab47b5a", "head_sha_exact": false, "fingerprint": "DOC_VALIDATION_LINE_LENGTH", "class": "NEW_TERMINAL_RED", "occurrences": null},
+        {"repo": "GBOGEB/ABACUS", "pr": 2390, "head_sha": "479631d3b5f4", "head_sha_exact": false, "fingerprint": "DOC_VALIDATION_LINE_LENGTH", "class": "NEW_FIRST_RED", "occurrences": 3, "run_ids": [39779479098], "job_ids": [119826731634], "source_blob": "5e25e17b8ced7bea147aba27a1c80d62ffde88e4", "source_reproduced": true}
+      ],
+      "anchors": {"ABACUS_main": "44caccf716a7c20693a2911566289bfc75ea81d9", "QPS_main": "587f29f2d797597492289895212d5bdc24eb7b6c", "HUB_531": "STABLE_HOLD"}
+    },
+    {
+      "pulse_id": "1337Z",
+      "observed_through_utc": "2026-10-22T13:37:00Z",
+      "receipt_name": "CODE_PURPLE_pulse_20261022_1337Z_source_bound.json",
+      "receipt_supplied": false,
+      "events": [
+        {"repo": "GBOGEB/ABACUS", "pr": 2393, "head_sha": "0b64e8bdb2b99e2e2963797c38a2e47bb2119df4", "head_sha_exact": true, "fingerprint": "DOC_VALIDATION_LINE_LENGTH", "class": "NEW_TERMINAL_RED", "occurrences": 15, "pass": 20, "fail": 3, "cancelled": 1, "in_progress": 2},
+        {"repo": "GBOGEB/ABACUS", "pr": 2393, "head_sha": "0b64e8bdb2b99e2e2963797c38a2e47bb2119df4", "head_sha_exact": true, "fingerprint": "GOVERNANCE_UNCLASSIFIED_WORKFLOWS", "class": "NEW_TERMINAL_RED", "occurrences": 3, "run_ids": [39786641504], "job_ids": [119851489814], "artifacts": [{"artifact_id": 12429667081, "integrity": "VERIFIED_IN_CHAT", "zip_sha256": "9500281fecfde5257153b7e40f06146ca4eb6151e9be3edb0465278723eaa2ba", "zip_bytes": 2663027, "members_verified": [11, 11]}], "measure": {"workflows": 215, "classified": 212}},
+        {"repo": "GBOGEB/ABACUS", "pr": 2393, "head_sha": "0b64e8bdb2b99e2e2963797c38a2e47bb2119df4", "head_sha_exact": true, "fingerprint": "TESTPILOT_RUFF_MISSING_E2E_PATH", "class": "NEW_TERMINAL_RED", "occurrences": null},
+        {"repo": "GBOGEB/ABACUS", "pr": 2392, "head_sha": "248535e287ba88e6ca920b1ddf9e68602c957dd1", "head_sha_exact": true, "fingerprint": "DOC_VALIDATION_MARKDOWN", "class": "NEW_TERMINAL_RED", "occurrences": 11, "pass": 14, "fail": 1},
+        {"repo": "GBOGEB/ABACUS", "pr": 2391, "head_sha": "bd3ba56c7f", "head_sha_exact": false, "fingerprint": "BANDIT_NEW_DEBT_TEST_FIXTURES", "class": "RECURRENCE", "occurrences": null, "pass": 20, "fail": 1, "job_ids": [119826241442]},
+        {"repo": "GBOGEB/ABACUS", "pr": 2390, "head_sha": null, "head_sha_exact": false, "fingerprint": "DOC_VALIDATION_LINE_LENGTH", "class": "RECURRENCE", "occurrences": null, "pass": 18, "fail": 4, "cancelled": 1}
+      ],
+      "anchors": {"ABACUS_main": "44caccf716a7c20693a2911566289bfc75ea81d9", "QPS_main": "c8217721ecad86777b4ca3ce98efee92a643c170", "HUB_main": "e7a3c8514127bc66ee68d049487d7a7a7a16fc58", "CODEX_main": "5e05fd8f9958952e044fce8b7701fbb4ae30c3dd", "gg_MATH_main": "e857f44531388add95230afec8b7e2c8d5f2e8cc", "HUB_531": "STABLE_HOLD"}
+    },
+    {
+      "pulse_id": "1426Z",
+      "observed_through_utc": "2026-10-22T14:26:00Z",
+      "receipt_name": "CODE_PURPLE_pulse_20261022_1426Z_source_bound.json",
+      "receipt_supplied": false,
+      "events": [
+        {"repo": "GBOGEB/cryoplant-project", "pr": 2047, "head_sha": "7ef0ba9dabc2", "head_sha_exact": false, "fingerprint": null, "class": "TERMINAL_GREEN_MERGED", "pass": 16, "fail": 0, "approvals": 0, "merged_utc": "2026-10-22T14:26:05Z", "run_ids": [39786774636, 39786774661, 39786774741], "artifact_integrity": "UNKNOWN"},
+        {"repo": "GBOGEB/cryoplant-project", "pr": 2048, "head_sha": "fb16a84bb999", "head_sha_exact": false, "fingerprint": null, "class": "SMOKE_PASS_MERGED", "pass": 11, "fail": 0, "in_progress": 3, "approvals": 0, "merged_utc": "2026-10-22T14:24:46Z", "run_ids": [39788358873], "job_ids": [119857432684], "artifact_integrity": "UNKNOWN"},
+        {"repo": "GBOGEB/cryoplant-project", "pr": 2047, "head_sha": "7ef0ba9dabc2", "head_sha_exact": false, "fingerprint": "GOVERNANCE_MERGE_WITHOUT_APPROVAL", "class": "RECURRENCE", "occurrences": 2}
+      ],
+      "anchors": {"QPS_coverage_anchor": {"statements": [763, 852], "branches": [277, 304], "scope": "ten-module PR-head (QPS #2017)"}}
+    }
+  ],
+  "method_defects": [
+    {"repo": "GBOGEB/pipeline-automation-hub", "path": "mission-control/qps-triage-ultra/p-process/rulesets/survey.py", "pattern": "len(x.get(\"bypass_actors\", []))", "fingerprint": "MISSING_COERCED_TO_ZERO", "observed_consequence": "observatory reported 0 bypass actors while live ruleset had 6"}
+  ]
+}
