@@ -1,0 +1,197 @@
+# JADE N+9 reusable deploy: admit -> verify digest -> deploy serialized per environment -> read back -> receipt.
+# Contract DP1..DP10: mission-control/jade_temple/devops/DEPLOY_PRODUCTION_ARCHITECTURE_N9.md (S6..S8).
+# It promotes exactly the artefact jade-reusable-ci.yml built and hashed in the same run; it never rebuilds.
+# Rollback = re-run this workflow's deploy job from the last good run, which carries that run's
+# SHA, artefact and manifest digest.
+# Callers pin this file by commit SHA:
+#   uses: GBOGEB/pipeline-automation-hub/.github/workflows/jade-reusable-deploy.yml@<40-hex>
+# Production protection (required reviewers, wait timer, branch policy) is an owner setting on the
+# GitHub environment; this workflow records it as UNKNOWN unless the environment enforces it.
+name: JADE reusable deploy (promote by digest, verify served result)
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: preview, staging or production
+        type: string
+        required: true
+      artifact-name:
+        type: string
+        required: true
+      manifest-sha256:
+        description: sha256 of jade-manifest.json from jade-reusable-ci.yml
+        type: string
+        required: true
+      tests-ran:
+        description: tests-ran output of jade-reusable-ci.yml; below 1 is refused
+        type: number
+        required: true
+      target:
+        description: pages (GitHub Pages) or artifact (promotion record only)
+        type: string
+        default: pages
+      verify-url:
+        description: Base URL to read back when target is not pages
+        type: string
+        default: ''
+      production-ref:
+        type: string
+        default: refs/heads/main
+      verify-attempts:
+        type: number
+        default: 8
+    outputs:
+      page-url:
+        value: ${{ jobs.deploy.outputs.page-url }}
+permissions:
+  contents: read
+jobs:
+  admit:
+    name: Admission (environment, ref, digest, test evidence)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      admitted: ${{ steps.admit.outputs.admitted }}
+    steps:
+      - name: Admit
+        id: admit
+        env:
+          ENV_NAME: ${{ inputs.environment }}
+          TARGET: ${{ inputs.target }}
+          DIGEST: ${{ inputs.manifest-sha256 }}
+          TESTS_RAN: ${{ inputs.tests-ran }}
+          PROD_REF: ${{ inputs.production-ref }}
+        run: |
+          set -euo pipefail
+          fail() { echo "::error title=JADE_DEPLOY_FIRST_RED::$1"; exit 1; }
+          case "$ENV_NAME" in preview|staging|production) ;; *) fail "unknown environment '$ENV_NAME'";; esac
+          case "$TARGET" in pages|artifact) ;; *) fail "unknown target '$TARGET'";; esac
+          [[ "$DIGEST" =~ ^[0-9a-f]{64}$ ]] || fail "manifest-sha256 is not a sha256"
+          [ "${TESTS_RAN%.*}" -ge 1 ] || fail "no test evidence (tests-ran=$TESTS_RAN)"
+          if [ "$ENV_NAME" = production ] && [ "$GITHUB_REF" != "$PROD_REF" ] && [[ "$GITHUB_REF" != refs/tags/* ]]; then
+            fail "production deploys only from $PROD_REF or a tag, not $GITHUB_REF"
+          fi
+          echo "admitted=true" >> "$GITHUB_OUTPUT"
+          echo "JADE_DEPLOY_ADMITTED env=$ENV_NAME sha=$GITHUB_SHA digest=$DIGEST"
+
+  deploy:
+    name: Deploy ${{ inputs.environment }} (serialized)
+    needs: admit
+    if: needs.admit.outputs.admitted == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ steps.pages.outputs.page_url || inputs.verify-url }}
+    concurrency:
+      group: jade-deploy-${{ github.repository }}-${{ inputs.environment }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    outputs:
+      page-url: ${{ steps.pages.outputs.page_url || inputs.verify-url }}
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: artifact
+      - name: Verify manifest digest, source SHA and every file
+        env:
+          DIGEST: ${{ inputs.manifest-sha256 }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root = Path("artifact").resolve()
+          body = (root / "jade-manifest.json").read_bytes()
+          if hashlib.sha256(body).hexdigest() != os.environ["DIGEST"]:
+              raise SystemExit("::error title=JADE_DEPLOY_FIRST_RED::manifest digest mismatch")
+          m = json.loads(body)
+          if m["source_git_sha"] != os.environ["GITHUB_SHA"] or m.get("merge_authorized") is not False:
+              raise SystemExit("::error title=JADE_DEPLOY_FIRST_RED::artefact is not from this exact SHA")
+          for rel, expected in m["files"].items():
+              p = (root / rel).resolve()
+              if root not in p.parents or not p.is_file() or hashlib.sha256(p.read_bytes()).hexdigest() != expected:
+                  raise SystemExit(f"::error title=JADE_DEPLOY_FIRST_RED::file digest drift {rel}")
+          print(f"JADE_ARTIFACT_VERIFIED files={len(m['files'])}")
+          PY
+      - name: Configure Pages
+        if: inputs.target == 'pages'
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+      - name: Upload Pages artefact
+        if: inputs.target == 'pages'
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        with:
+          path: artifact
+      - name: Deploy GitHub Pages
+        id: pages
+        if: inputs.target == 'pages'
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+      - name: Promotion record (artifact target)
+        if: inputs.target == 'artifact'
+        run: echo "JADE_PROMOTED env=${{ inputs.environment }} artifact=${{ inputs.artifact-name }}"
+
+  verify:
+    name: Post-deploy readback and receipt
+    needs: deploy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: artifact
+      - name: Read back served files and write the deployment receipt
+        env:
+          BASE_URL: ${{ needs.deploy.outputs.page-url }}
+          ENV_NAME: ${{ inputs.environment }}
+          TARGET: ${{ inputs.target }}
+          DIGEST: ${{ inputs.manifest-sha256 }}
+          ATTEMPTS: ${{ inputs.verify-attempts }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, time, urllib.error, urllib.request
+          from pathlib import Path
+          m = json.loads(Path("artifact/jade-manifest.json").read_text())
+          base = (os.environ["BASE_URL"] or "").rstrip("/") + "/"
+          checks = {"jade-manifest.json": os.environ["DIGEST"]}
+          checks.update(dict(sorted(m["files"].items())[:60]))
+          mismatches, verdict = sorted(checks), "NOT_APPLICABLE"
+          if base != "/":
+              for attempt in range(int(float(os.environ["ATTEMPTS"]))):
+                  mismatches = []
+                  for rel, expected in checks.items():
+                      try:
+                          with urllib.request.urlopen(urllib.request.Request(base + rel, headers={"Cache-Control": "no-cache"}), timeout=20) as r:
+                              got = hashlib.sha256(r.read()).hexdigest() if r.status == 200 else None
+                      except (urllib.error.URLError, TimeoutError, OSError):
+                          got = None
+                      if got != expected:
+                          mismatches.append(rel)
+                  if not mismatches:
+                      break
+                  time.sleep(10)
+              verdict = "PARITY" if not mismatches else "PARITY_FIRST_RED"
+          elif os.environ["TARGET"] == "pages":
+              verdict = "PARITY_FIRST_RED"
+          receipt = {"schema": "jade.devops.deploy_receipt.v1", "repository": os.environ["GITHUB_REPOSITORY"],
+                     "environment": os.environ["ENV_NAME"], "target": os.environ["TARGET"],
+                     "source_git_sha": os.environ["GITHUB_SHA"], "manifest_sha256": os.environ["DIGEST"],
+                     "url": base if base != "/" else None, "files_checked": len(checks),
+                     "mismatches": mismatches[:20], "verdict": verdict,
+                     "run_id": os.environ["GITHUB_RUN_ID"], "run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+                     "merge_authorized": False, "release_authorized": False}
+          Path("jade-deploy-receipt.json").write_text(json.dumps(receipt, indent=1, sort_keys=True))
+          print(json.dumps(receipt, sort_keys=True))
+          if verdict == "PARITY_FIRST_RED":
+              raise SystemExit("::error title=JADE_DEPLOY_FIRST_RED::served content does not match the promoted artefact")
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: jade-deploy-receipt-${{ inputs.environment }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: jade-deploy-receipt.json
+          retention-days: 90
+          if-no-files-found: warn
