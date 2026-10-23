@@ -51,8 +51,16 @@ class DispatchTests(unittest.TestCase):
         env = {"GITHUB_REPOSITORY": "GBOGEB/pipeline-automation-hub",
                "GITHUB_REF": "refs/heads/master", "GITHUB_EVENT_NAME": "workflow_dispatch",
                "QPS_DISPATCH_APPROVED": "YES", "QPS_TRIAGE_DISPATCH_TOKEN": "t"*40}
-        result = dispatch(self.m, execute=True, environment=env, opener=lambda *a, **k: Response())
+        urls = []
+        def post(req, **kwargs):
+            urls.append(req.full_url)
+            return Response()
+        result = dispatch(self.m, execute=True, environment=env, opener=post)
         self.assertEqual(result["triggered"], 3)
+        self.assertTrue(all(u.endswith("/actions/workflows/qps-metric-census-receiver.yml/dispatches")
+                            for u in urls))
+        self.assertEqual({e["state"] for e in result["events"]},
+                         {"HTTP_204_EVENT_ENQUEUED_NOT_PROVEN_EXECUTED"})
         self.assertIsNone(result["receiver_job_ids"])
         self.assertIsNone(result["receiver_results"])
 

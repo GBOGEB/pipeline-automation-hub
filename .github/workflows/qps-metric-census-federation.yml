@@ -171,6 +171,8 @@ jobs:
         env:
           PYTHONPATH: tools/metric-atlas
           QPS_DISPATCH_APPROVED: 'YES'
+          # Fine-grained PAT on the three receivers: Actions read/write only.
+          # workflow_dispatch needs no Contents permission (cannot push code).
           QPS_TRIAGE_DISPATCH_TOKEN: ${{ secrets.QPS_TRIAGE_DISPATCH_TOKEN }}
         run: |
           python -m metric_atlas.dispatch \
