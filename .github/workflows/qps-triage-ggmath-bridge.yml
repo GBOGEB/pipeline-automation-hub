@@ -1,0 +1,84 @@
+name: QPS TRIAGE gg_MATH Bridge
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - mission-control/qps-triage-ultra/ggmath_*
+      - mission-control/qps-triage-ultra/test_ggmath_bridge.py
+      - mission-control/qps-triage-ultra/site/_data/ggmath_bridge_figures.json
+      - mission-control/qps-triage-ultra/w3_fleet_telemetry.json
+      - mission-control/qps-triage-ultra/w3_bt_observations.json
+      - mission-control/qps-triage-ultra/w3_bt_gate.py
+      - mission-control/qps-triage-ultra/analytics/EXPEDITION_FLEET_ITERATION_LEDGER_v1.json
+      - .github/workflows/qps-triage-ggmath-bridge.yml
+  pull_request:
+    paths:
+      - mission-control/qps-triage-ultra/ggmath_*
+      - mission-control/qps-triage-ultra/test_ggmath_bridge.py
+      - mission-control/qps-triage-ultra/site/_data/ggmath_bridge_figures.json
+      - mission-control/qps-triage-ultra/w3_fleet_telemetry.json
+      - mission-control/qps-triage-ultra/w3_bt_observations.json
+      - mission-control/qps-triage-ultra/w3_bt_gate.py
+      - mission-control/qps-triage-ultra/analytics/EXPEDITION_FLEET_ITERATION_LEDGER_v1.json
+      - .github/workflows/qps-triage-ggmath-bridge.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ggmath-bridge:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mission-control/qps-triage-ultra
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact source head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install gg_MATH release pins (numpy, scipy, plotly)
+        run: python -m pip install numpy==2.3.5 scipy==1.17.0 plotly==7.0.0
+
+      - name: Fetch pinned provider by exact SHA and verify digests (fail closed)
+        run: python ggmath_bridge.py fetch
+
+      - name: Bridge unit and negative controls (digest, authority, PCA-not-BT, reverse trials, flow, Plotly, JADE hook)
+        env:
+          GGMATH_REQUIRE_PROVIDER: '1'
+        run: python -m unittest discover -s . -p 'test_ggmath_bridge.py' -v
+
+      - name: W3 engines remain green beside the bridge
+        run: python -m unittest discover -s . -p 'test_w3_engines.py' -v
+
+      - name: Rebuild receipt from pinned kernels and compare with committed figures
+        run: |
+          python ggmath_bridge.py build --out "$RUNNER_TEMP/ggmath_bridge_receipt.json"
+          python ggmath_plotly.py --compare-fresh "$RUNNER_TEMP/ggmath_bridge_receipt.json"
+
+      - name: Deterministic Plotly JSON and plotly 7 validation
+        run: python ggmath_plotly.py --check --validate --html "$RUNNER_TEMP/ggmath_bridge.html"
+
+      - name: JADE hook stays disabled until the rolling-5 engine is on master
+        run: python ggmath_jade_hook.py
+
+      - name: Upload bridge evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: qps-ggmath-bridge-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/ggmath_bridge_receipt.json
+            ${{ runner.temp }}/ggmath_bridge.html
+          if-no-files-found: error

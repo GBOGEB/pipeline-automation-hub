@@ -1,0 +1,960 @@
+{
+ "authority_transfer": false,
+ "deferred_measured_adapters": [
+  {
+   "adapter": "bt_reverse_pressure_gm_i_a",
+   "status": "DEFER_INSUFFICIENT_REPEAT_PULSES"
+  },
+  {
+   "adapter": "bt_strength_w3_current_frontier",
+   "status": "DEFER_NO_FINITE_MLE"
+  },
+  {
+   "adapter": "pca_retention_gm_i_a",
+   "status": "DEFER_INSUFFICIENT_OBSERVATIONS"
+  },
+  {
+   "adapter": "pca_retention_w3_fleet",
+   "status": "DEFER_BELOW_SAMPLE_ADEQUACY_DESCRIPTIVE_ONLY"
+  },
+  {
+   "adapter": "research_interfaces",
+   "status": "RESEARCH_TODO"
+  }
+ ],
+ "figures": [
+  {
+   "evidence_class": "MEASURED",
+   "figure": {
+    "data": [
+     {
+      "hovertemplate": "%{x}: %{y:.3f}<extra>observed</extra>",
+      "line": {
+       "color": "#2a78d6",
+       "width": 2
+      },
+      "marker": {
+       "color": "#2a78d6",
+       "size": 8
+      },
+      "mode": "lines+markers",
+      "name": "Observed eigenvalue",
+      "type": "scatter",
+      "x": [
+       "PC1",
+       "PC2",
+       "PC3",
+       "PC4",
+       "PC5"
+      ],
+      "y": [
+       3.7987,
+       0.935944,
+       0.263474,
+       0.00188037,
+       0.0
+      ]
+     },
+     {
+      "hovertemplate": "%{x}: %{y:.3f}<extra>PA95</extra>",
+      "line": {
+       "color": "#eb6834",
+       "dash": "dash",
+       "width": 2
+      },
+      "marker": {
+       "color": "#eb6834",
+       "size": 8,
+       "symbol": "diamond"
+      },
+      "mode": "lines+markers",
+      "name": "PA95 null threshold",
+      "type": "scatter",
+      "x": [
+       "PC1",
+       "PC2",
+       "PC3",
+       "PC4",
+       "PC5"
+      ],
+      "y": [
+       3.37598,
+       1.93899,
+       1.17954,
+       0.513136,
+       6.63286e-17
+      ]
+     },
+     {
+      "hovertemplate": "MP upper edge: %{y:.3f}<extra></extra>",
+      "line": {
+       "color": "#8a8984",
+       "dash": "dot",
+       "width": 2
+      },
+      "mode": "lines",
+      "name": "MP upper edge (asymptotic)",
+      "type": "scatter",
+      "x": [
+       "PC1",
+       "PC5"
+      ],
+      "y": [
+       4.0,
+       4.0
+      ]
+     }
+    ],
+    "layout": {
+     "font": {
+      "color": "#52514e",
+      "family": "IBM Plex Sans, system-ui, sans-serif",
+      "size": 12
+     },
+     "hovermode": "closest",
+     "legend": {
+      "orientation": "h",
+      "x": 0,
+      "y": -0.22
+     },
+     "margin": {
+      "b": 56,
+      "l": 72,
+      "r": 24,
+      "t": 64
+     },
+     "paper_bgcolor": "rgba(0,0,0,0)",
+     "plot_bgcolor": "rgba(0,0,0,0)",
+     "title": {
+      "font": {
+       "color": "#52514e",
+       "size": 15
+      },
+      "text": "Scree with MP edge and PA95 - DEFER_BELOW_SAMPLE_ADEQUACY_DESCRIPTIVE_ONLY",
+      "x": 0,
+      "xanchor": "left"
+     },
+     "xaxis": {
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "title": {
+       "text": "Component"
+      },
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     },
+     "yaxis": {
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "rangemode": "tozero",
+      "title": {
+       "text": "Eigenvalue (standardised)"
+      },
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     }
+    }
+   },
+   "headline": "n=5, p=5; 1 PA95 retention candidate(s); sample adequate=False",
+   "id": "scree_w3_fleet",
+   "status": "DEFER_BELOW_SAMPLE_ADEQUACY_DESCRIPTIVE_ONLY",
+   "threshold_kind": {
+    "pca_eigengap_guard": "HEURISTIC",
+    "pca_mp_edge": "MODEL_DERIVED",
+    "pca_pa95": "DATA_CALIBRATED"
+   }
+  },
+  {
+   "evidence_class": "MEASURED",
+   "figure": {
+    "data": [
+     {
+      "error_x": {
+       "array": [
+        2.81471,
+        3.60457,
+        3.60457
+       ],
+       "arrayminus": [
+        2.81471,
+        3.60457,
+        3.60457
+       ],
+       "color": "#2a78d6",
+       "symmetric": false,
+       "thickness": 2,
+       "type": "data",
+       "width": 6
+      },
+      "hovertemplate": "%{y}: %{x:.3f}<extra></extra>",
+      "marker": {
+       "color": "#2a78d6",
+       "size": 10
+      },
+      "mode": "markers",
+      "name": "log-strength, 95% Wald",
+      "type": "scatter",
+      "x": [
+       -1.61946,
+       0.809732,
+       0.809732
+      ],
+      "y": [
+       "UNREPAIRED_BASELINE",
+       "SEMANTIC_BOUNDARY_GUARD_REPAIR",
+       "STATISTICAL_TOLERANCE_REPAIR"
+      ]
+     }
+    ],
+    "layout": {
+     "font": {
+      "color": "#52514e",
+      "family": "IBM Plex Sans, system-ui, sans-serif",
+      "size": 12
+     },
+     "hovermode": "closest",
+     "legend": {
+      "orientation": "h",
+      "x": 0,
+      "y": -0.22
+     },
+     "margin": {
+      "b": 56,
+      "l": 72,
+      "r": 24,
+      "t": 64
+     },
+     "paper_bgcolor": "rgba(0,0,0,0)",
+     "plot_bgcolor": "rgba(0,0,0,0)",
+     "showlegend": false,
+     "title": {
+      "font": {
+       "color": "#52514e",
+       "size": 15
+      },
+      "text": "Bradley-Terry strength (L2_PENALIZED_BT) - DEFER_NO_FINITE_MLE",
+      "x": 0,
+      "xanchor": "left"
+     },
+     "xaxis": {
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "title": {
+       "text": "log-strength (sum-to-zero)"
+      },
+      "zeroline": true,
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     },
+     "yaxis": {
+      "automargin": true,
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "title": {
+       "text": ""
+      },
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     }
+    }
+   },
+   "headline": "2 measured comparisons; classical MLE withheld (graph not strongly connected)",
+   "id": "bt_strength_w3_current_frontier",
+   "status": "DEFER_NO_FINITE_MLE",
+   "threshold_kind": {
+    "bt_finite_mle_guard": "EXACT_IDENTITY",
+    "bt_log_strength_intervals": "DISTRIBUTION_DERIVED"
+   }
+  },
+  {
+   "evidence_class": "MEASURED",
+   "figure": {
+    "data": [
+     {
+      "colorbar": {
+       "title": {
+        "text": "share"
+       }
+      },
+      "colorscale": [
+       [
+        0.0,
+        "#eef4fc"
+       ],
+       [
+        0.5,
+        "#7fb0ea"
+       ],
+       [
+        1.0,
+        "#174a8c"
+       ]
+      ],
+      "hovertemplate": "%{y} at %{x}: %{z:.3f}<extra></extra>",
+      "showscale": true,
+      "texttemplate": "%{z:.2f}",
+      "type": "heatmap",
+      "x": [
+       "rank 1",
+       "rank 2",
+       "rank 3"
+      ],
+      "y": [
+       "SEMANTIC_BOUNDARY_GUARD_REPAIR",
+       "STATISTICAL_TOLERANCE_REPAIR",
+       "UNREPAIRED_BASELINE"
+      ],
+      "z": [
+       [
+        0.503,
+        0.497,
+        0.0
+       ],
+       [
+        0.497,
+        0.503,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "zmax": 1,
+      "zmin": 0
+     }
+    ],
+    "layout": {
+     "font": {
+      "color": "#52514e",
+      "family": "IBM Plex Sans, system-ui, sans-serif",
+      "size": 12
+     },
+     "hovermode": "closest",
+     "legend": {
+      "orientation": "h",
+      "x": 0,
+      "y": -0.22
+     },
+     "margin": {
+      "b": 56,
+      "l": 72,
+      "r": 24,
+      "t": 64
+     },
+     "paper_bgcolor": "rgba(0,0,0,0)",
+     "plot_bgcolor": "rgba(0,0,0,0)",
+     "title": {
+      "font": {
+       "color": "#52514e",
+       "size": 15
+      },
+      "text": "Bootstrap rank frequency (L2 penalty 0.1, 500 resamples) - DEFER_NO_FINITE_MLE",
+      "x": 0,
+      "xanchor": "left"
+     },
+     "xaxis": {
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "side": "bottom",
+      "title": {
+       "text": "Rank"
+      },
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     },
+     "yaxis": {
+      "automargin": true,
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     }
+    }
+   },
+   "headline": "seed 20260921; ties share fractional rank mass",
+   "id": "bt_rank_frequency_w3_current_frontier",
+   "status": "DEFER_NO_FINITE_MLE",
+   "threshold_kind": {
+    "bt_rank_frequency": "DATA_CALIBRATED"
+   }
+  },
+  {
+   "evidence_class": "SYNTHETIC_REFERENCE",
+   "figure": {
+    "data": [
+     {
+      "hovertemplate": "%{x}: %{y:.2f} deg<extra></extra>",
+      "line": {
+       "color": "#2a78d6",
+       "width": 2
+      },
+      "marker": {
+       "color": "#2a78d6",
+       "size": 8
+      },
+      "mode": "lines+markers",
+      "name": "max principal angle",
+      "type": "scatter",
+      "x": [
+       "k0->k1",
+       "k1->k2",
+       "k2->k3",
+       "k3->k4"
+      ],
+      "y": [
+       5.72958,
+       8.59437,
+       2.86479,
+       8.59437
+      ]
+     }
+    ],
+    "layout": {
+     "font": {
+      "color": "#52514e",
+      "family": "IBM Plex Sans, system-ui, sans-serif",
+      "size": 12
+     },
+     "hovermode": "closest",
+     "legend": {
+      "orientation": "h",
+      "x": 0,
+      "y": -0.22
+     },
+     "margin": {
+      "b": 56,
+      "l": 72,
+      "r": 24,
+      "t": 64
+     },
+     "paper_bgcolor": "rgba(0,0,0,0)",
+     "plot_bgcolor": "rgba(0,0,0,0)",
+     "showlegend": false,
+     "title": {
+      "font": {
+       "color": "#52514e",
+       "size": 15
+      },
+      "text": "Adjacent principal angle - SYNTHETIC_REFERENCE - PASS_TEMPORAL_SUBSPACE_TRACE",
+      "x": 0,
+      "xanchor": "left"
+     },
+     "xaxis": {
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "title": {
+       "text": "Transition (event index)"
+      },
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     },
+     "yaxis": {
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "rangemode": "tozero",
+      "title": {
+       "text": "theta max (degrees)"
+      },
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     }
+    }
+   },
+   "headline": "rank 3 in R^4; 5 states",
+   "id": "principal_angles_reference",
+   "status": "PASS_TEMPORAL_SUBSPACE_TRACE",
+   "threshold_kind": {
+    "temporal_subspace_trace": "NO_UNIVERSAL_THRESHOLD"
+   }
+  },
+  {
+   "evidence_class": "SYNTHETIC_REFERENCE",
+   "figure": {
+    "data": [
+     {
+      "hovertemplate": "k=%{x}: %{y:.3f} rad<extra>path</extra>",
+      "line": {
+       "color": "#2a78d6",
+       "width": 2
+      },
+      "marker": {
+       "color": "#2a78d6",
+       "size": 8
+      },
+      "mode": "lines+markers",
+      "name": "cumulative geodesic path",
+      "type": "scatter",
+      "x": [
+       0,
+       1,
+       2,
+       3,
+       4
+      ],
+      "y": [
+       0.0,
+       0.1,
+       0.25,
+       0.3,
+       0.45
+      ]
+     },
+     {
+      "hovertemplate": "k=%{x}: %{y:.3f} rad<extra>step</extra>",
+      "line": {
+       "color": "#eb6834",
+       "dash": "dash",
+       "width": 2
+      },
+      "marker": {
+       "color": "#eb6834",
+       "size": 8,
+       "symbol": "diamond"
+      },
+      "mode": "lines+markers",
+      "name": "per-step geodesic distance",
+      "type": "scatter",
+      "x": [
+       1,
+       2,
+       3,
+       4
+      ],
+      "y": [
+       0.1,
+       0.15,
+       0.05,
+       0.15
+      ]
+     }
+    ],
+    "layout": {
+     "font": {
+      "color": "#52514e",
+      "family": "IBM Plex Sans, system-ui, sans-serif",
+      "size": 12
+     },
+     "hovermode": "closest",
+     "legend": {
+      "orientation": "h",
+      "x": 0,
+      "y": -0.22
+     },
+     "margin": {
+      "b": 56,
+      "l": 72,
+      "r": 24,
+      "t": 64
+     },
+     "paper_bgcolor": "rgba(0,0,0,0)",
+     "plot_bgcolor": "rgba(0,0,0,0)",
+     "title": {
+      "font": {
+       "color": "#52514e",
+       "size": 15
+      },
+      "text": "Grassmann history - SYNTHETIC_REFERENCE - PASS_TEMPORAL_SUBSPACE_TRACE",
+      "x": 0,
+      "xanchor": "left"
+     },
+     "xaxis": {
+      "dtick": 1,
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "title": {
+       "text": "Event index k"
+      },
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     },
+     "yaxis": {
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "rangemode": "tozero",
+      "title": {
+       "text": "Grassmann geodesic (radians)"
+      },
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     }
+    }
+   },
+   "headline": "path 0.450 rad vs net displacement 0.350 rad",
+   "id": "grassmann_history_reference",
+   "status": "PASS_TEMPORAL_SUBSPACE_TRACE",
+   "threshold_kind": {
+    "temporal_subspace_trace": "NO_UNIVERSAL_THRESHOLD"
+   }
+  },
+  {
+   "evidence_class": "SYNTHETIC_REFERENCE",
+   "figure": {
+    "data": [
+     {
+      "fill": "toself",
+      "fillcolor": "rgba(138,137,132,0.18)",
+      "hoverinfo": "skip",
+      "line": {
+       "width": 0
+      },
+      "mode": "lines",
+      "name": "plateau band (+/-1.5 pp)",
+      "type": "scatter",
+      "x": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       6,
+       5,
+       4,
+       3,
+       2,
+       1
+      ],
+      "y": [
+       1.5,
+       1.5,
+       1.5,
+       1.5,
+       1.5,
+       1.5,
+       -1.5,
+       -1.5,
+       -1.5,
+       -1.5,
+       -1.5,
+       -1.5
+      ]
+     },
+     {
+      "hovertemplate": "pulse %{x}: %{y:.2f} pp/pulse<extra></extra>",
+      "line": {
+       "color": "#2a78d6",
+       "width": 2
+      },
+      "marker": {
+       "color": "#2a78d6",
+       "size": 8
+      },
+      "mode": "lines+markers",
+      "name": "coverage velocity",
+      "type": "scatter",
+      "x": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6
+      ],
+      "y": [
+       15.0,
+       8.0,
+       3.0,
+       0.0,
+       1.0,
+       0.0
+      ]
+     }
+    ],
+    "layout": {
+     "font": {
+      "color": "#52514e",
+      "family": "IBM Plex Sans, system-ui, sans-serif",
+      "size": 12
+     },
+     "hovermode": "closest",
+     "legend": {
+      "orientation": "h",
+      "x": 0,
+      "y": -0.22
+     },
+     "margin": {
+      "b": 56,
+      "l": 72,
+      "r": 24,
+      "t": 64
+     },
+     "paper_bgcolor": "rgba(0,0,0,0)",
+     "plot_bgcolor": "rgba(0,0,0,0)",
+     "title": {
+      "font": {
+       "color": "#52514e",
+       "size": 15
+      },
+      "text": "Convergence velocity - SYNTHETIC_REFERENCE - PLATEAU_DESCRIPTIVE_NOT_PROVEN_STABLE",
+      "x": 0,
+      "xanchor": "left"
+     },
+     "xaxis": {
+      "dtick": 1,
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "title": {
+       "text": "Pulse index (not wall time)"
+      },
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     },
+     "yaxis": {
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "title": {
+       "text": "Velocity (pp per pulse)"
+      },
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     }
+    }
+   },
+   "headline": "PLATEAU_DESCRIPTIVE_NOT_PROVEN_STABLE; plateau last three steps=True; cap distance 33.0 pp",
+   "id": "convergence_velocity_reference",
+   "status": "PASS_CONVERGENCE_CLASSIFIED",
+   "threshold_kind": {
+    "convergence_classification": "PROJECT_GOVERNED"
+   }
+  },
+  {
+   "evidence_class": "MEASURED",
+   "figure": {
+    "data": [
+     {
+      "hovertemplate": "%{y}: %{x:.0f} s queue<extra></extra>",
+      "marker": {
+       "color": "#eb6834",
+       "line": {
+        "color": "#ffffff",
+        "width": 2
+       }
+      },
+      "name": "queue (admission wait)",
+      "orientation": "h",
+      "type": "bar",
+      "x": [
+       808.0,
+       632.0,
+       512.0,
+       4.0
+      ],
+      "y": [
+       "keb",
+       "dow",
+       "fast",
+       "heavy"
+      ]
+     },
+     {
+      "cliponaxis": false,
+      "hovertemplate": "%{y}: %{x:.0f} s execute<extra></extra>",
+      "marker": {
+       "color": "#2a78d6",
+       "line": {
+        "color": "#ffffff",
+        "width": 2
+       }
+      },
+      "name": "execute",
+      "orientation": "h",
+      "text": [
+       "1.1% flow eff.",
+       "1.2% flow eff.",
+       "1.3% flow eff.",
+       "98.4% flow eff."
+      ],
+      "textposition": "outside",
+      "type": "bar",
+      "x": [
+       9.0,
+       8.0,
+       7.0,
+       251.0
+      ],
+      "y": [
+       "keb",
+       "dow",
+       "fast",
+       "heavy"
+      ]
+     }
+    ],
+    "layout": {
+     "barmode": "stack",
+     "font": {
+      "color": "#52514e",
+      "family": "IBM Plex Sans, system-ui, sans-serif",
+      "size": 12
+     },
+     "hovermode": "closest",
+     "legend": {
+      "orientation": "h",
+      "x": 0,
+      "y": -0.22
+     },
+     "margin": {
+      "b": 56,
+      "l": 72,
+      "r": 110,
+      "t": 64
+     },
+     "paper_bgcolor": "rgba(0,0,0,0)",
+     "plot_bgcolor": "rgba(0,0,0,0)",
+     "title": {
+      "font": {
+       "color": "#52514e",
+       "size": 15
+      },
+      "text": "Queue vs execute time - GM-I-A pulse P001 - PASS_FLOW_KPI",
+      "x": 0,
+      "xanchor": "left"
+     },
+     "xaxis": {
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "title": {
+       "text": "Seconds (measured)"
+      },
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     },
+     "yaxis": {
+      "automargin": true,
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     }
+    }
+   },
+   "headline": "pooled flow efficiency 12.3%, queue/execute 7.11; dominant: QUEUE_ADMISSION",
+   "id": "flow_gm_i_a",
+   "status": "PASS_FLOW_KPI",
+   "threshold_kind": {
+    "flow_efficiency": "EXACT_IDENTITY",
+    "littles_law_consistency": "EXACT_IDENTITY",
+    "queue_execute_ratio": "EXACT_IDENTITY"
+   }
+  },
+  {
+   "evidence_class": "MEASURED",
+   "figure": {
+    "data": [
+     {
+      "hovertemplate": "%{y}: %{x:.0f} s queue<extra></extra>",
+      "marker": {
+       "color": "#eb6834",
+       "line": {
+        "color": "#ffffff",
+        "width": 2
+       }
+      },
+      "name": "queue (admission wait)",
+      "orientation": "h",
+      "type": "bar",
+      "x": [
+       487.0,
+       98.0,
+       160.0,
+       3.0,
+       2.0
+      ],
+      "y": [
+       "PYTHON_HOME_CONTROL_ANALYTICS",
+       "PYTHON_CONTROL_GUARD",
+       "PYTHON_EVIDENCE_KERNEL",
+       "CRYPTO_PROVENANCE_LIGHTWEIGHT",
+       "COMPILED_FOREIGN_OBSERVER"
+      ]
+     },
+     {
+      "cliponaxis": false,
+      "hovertemplate": "%{y}: %{x:.0f} s execute<extra></extra>",
+      "marker": {
+       "color": "#2a78d6",
+       "line": {
+        "color": "#ffffff",
+        "width": 2
+       }
+      },
+      "name": "execute",
+      "orientation": "h",
+      "text": [
+       "2.0% flow eff.",
+       "7.5% flow eff.",
+       "9.1% flow eff.",
+       "82.4% flow eff.",
+       "99.5% flow eff."
+      ],
+      "textposition": "outside",
+      "type": "bar",
+      "x": [
+       10.0,
+       8.0,
+       16.0,
+       14.0,
+       410.0
+      ],
+      "y": [
+       "PYTHON_HOME_CONTROL_ANALYTICS",
+       "PYTHON_CONTROL_GUARD",
+       "PYTHON_EVIDENCE_KERNEL",
+       "CRYPTO_PROVENANCE_LIGHTWEIGHT",
+       "COMPILED_FOREIGN_OBSERVER"
+      ]
+     }
+    ],
+    "layout": {
+     "barmode": "stack",
+     "font": {
+      "color": "#52514e",
+      "family": "IBM Plex Sans, system-ui, sans-serif",
+      "size": 12
+     },
+     "hovermode": "closest",
+     "legend": {
+      "orientation": "h",
+      "x": 0,
+      "y": -0.22
+     },
+     "margin": {
+      "b": 56,
+      "l": 72,
+      "r": 110,
+      "t": 64
+     },
+     "paper_bgcolor": "rgba(0,0,0,0)",
+     "plot_bgcolor": "rgba(0,0,0,0)",
+     "title": {
+      "font": {
+       "color": "#52514e",
+       "size": 15
+      },
+      "text": "Queue vs execute time - QPS fleet ledger - PASS_FLOW_KPI",
+      "x": 0,
+      "xanchor": "left"
+     },
+     "xaxis": {
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "title": {
+       "text": "Seconds (measured)"
+      },
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     },
+     "yaxis": {
+      "automargin": true,
+      "gridcolor": "rgba(127,127,127,0.25)",
+      "linecolor": "#8a8984",
+      "zerolinecolor": "rgba(127,127,127,0.25)"
+     }
+    }
+   },
+   "headline": "pooled flow efficiency 37.9%, queue/execute 1.64; dominant: QUEUE_ADMISSION",
+   "id": "flow_fleet_ledger",
+   "status": "PASS_FLOW_KPI",
+   "threshold_kind": {
+    "flow_efficiency": "EXACT_IDENTITY",
+    "littles_law_consistency": "EXACT_IDENTITY",
+    "queue_execute_ratio": "EXACT_IDENTITY"
+   }
+  }
+ ],
+ "plotly_python_pin": "plotly==7.0.0",
+ "provider": {
+  "repo": "GBOGEB/gg_MATH",
+  "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+ },
+ "receipt": "ggmath_bridge_receipt.json",
+ "receipt_sha256": "6e01cba2584d897f97a3acc2788fd5b52bfb63a0028723bc4a51c77a164b55e8",
+ "schema": "qps-ggmath-plotly-figures/v1"
+}
