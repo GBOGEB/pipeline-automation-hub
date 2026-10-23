@@ -1,0 +1,68 @@
+# Dependabot version updates (CI lesson 3: supply-chain basics).
+# - github-actions: bumps the SHA pins written by scripts/ci/pin_actions.py and keeps the
+#   trailing `# <tag>` comment in step.
+# - pip / npm: one entry per directory that actually holds a manifest with dependencies.
+#   tools/metric-atlas/requirements.txt is stdlib-only (no entries) and is not listed.
+#   mission-control/qps-triage-ultra/site/Gemfile (bundler) is out of scope here.
+# Minor and patch bumps are grouped per ecosystem; majors arrive as individual PRs.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps-actions)"
+    groups:
+      actions-minor-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "pip"
+    directory: "/scripts"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps-pip)"
+    groups:
+      pip-scripts-minor-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "pip"
+    directory: "/excel_schedule_engine"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps-pip)"
+    groups:
+      pip-excel-minor-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "pip"
+    directory: "/mission-control/jade_temple/sprint"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps-pip)"
+    groups:
+      pip-jade-sprint-minor-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "npm"
+    directory: "/app"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps-npm)"
+    groups:
+      npm-app-minor-patch:
+        update-types: ["minor", "patch"]

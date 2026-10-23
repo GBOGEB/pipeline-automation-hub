@@ -24,14 +24,14 @@ jobs:
         skill: [math, plots, math-plots]
     steps:
       - name: Checkout orchestrator exact PR head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Assert orchestrator exact head
         shell: bash
         run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
       - name: Checkout canonical skills exact SHA
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: GBOGEB/skills
           ref: ${{ env.SKILLS_SHA }}
@@ -62,7 +62,7 @@ jobs:
           assert r['authority_transfer'] is False
           PY
       - name: Upload individual worker-resolution receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: crew-skill-pulse-${{ matrix.skill }}
           path: pulse-receipts/${{ matrix.skill }}.json
@@ -72,11 +72,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout orchestrator exact PR head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Download all individual receipts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: crew-skill-pulse-*
           path: pulse-receipts
@@ -96,7 +96,7 @@ jobs:
           grep -q '"absolute_error": 0' pulse-output/SKILL_P1_SCORE.json
           grep -q '"SKILL_P2_prediction_state": "FROZEN_PENDING_NOT_DUE"' pulse-output/SKILL_P1_SCORE.json
       - name: Upload aggregate pulse evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: crew-skill-federated-pulse-score
           path: |

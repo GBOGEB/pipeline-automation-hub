@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact tested head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Compile Level-1 kernel
@@ -36,7 +36,7 @@ jobs:
       - name: Prove Level-1.0 and emit receipt
         run: python level1/runtime.py self-test | tee level1-receipt.json
       - name: Upload Level-1 receipts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: level1-mip-receipt
           path: |

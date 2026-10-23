@@ -36,8 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
       - name: Analyze committed measured multi-clock dataset
@@ -45,7 +45,7 @@ jobs:
           mkdir -p /tmp/gm_i_a_multiclock
           python mission-control/grand-missions/analytics/gm_i_a_multiclock_analyze.py             --input mission-control/grand-missions/analytics/GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json             --out /tmp/gm_i_a_multiclock/readiness.json             --pairs-out /tmp/gm_i_a_multiclock/runtime_pressure_pairs.json             --csv-out /tmp/gm_i_a_multiclock/measured_pulses.csv
           sha256sum /tmp/gm_i_a_multiclock/* | sort > /tmp/gm_i_a_multiclock/SHA256SUMS
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: gm-i-a-multiclock-${{ github.event.pull_request.head.sha || github.sha }}
           path: /tmp/gm_i_a_multiclock/
@@ -61,8 +61,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
       - name: Capture exact run/job clocks
@@ -73,7 +73,7 @@ jobs:
         run: |
           python mission-control/grand-missions/analytics/gm_i_a_multiclock_analyze.py             --input mission-control/grand-missions/analytics/GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json             --append-row /tmp/gm_i_a_repeat/new_row.json             --dataset-out /tmp/gm_i_a_repeat/expanded_dataset.json             --out /tmp/gm_i_a_repeat/readiness.json             --pairs-out /tmp/gm_i_a_repeat/runtime_pressure_pairs.json             --csv-out /tmp/gm_i_a_repeat/measured_pulses.csv
           sha256sum /tmp/gm_i_a_repeat/* | sort > /tmp/gm_i_a_repeat/SHA256SUMS
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: gm-i-a-multiclock-repeat-${{ inputs.pulse_id }}
           path: /tmp/gm_i_a_repeat/

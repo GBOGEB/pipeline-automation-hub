@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact consumer head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Verify five exact W189R delta blobs
@@ -35,7 +35,7 @@ jobs:
           verify_blob scripts/qps_w189r_validate_authoritative_return.py f0fe044519f15bbc7f8529c14f2fade1ec12538c
           verify_blob tests/test_qps_w189r_authoritative_return.py de4058b1db2bc2c951cb53e0f2e92647dc8494cb
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with: {python-version: '3.12'}
       - name: Execute authoritative-return validator
         run: python scripts/qps_w189r_validate_authoritative_return.py
@@ -49,7 +49,7 @@ jobs:
           Path('triage/w189/W189RF_EXACT_RETURN_RECEIPT.json').write_text(json.dumps({'schema':'w189rf-exact-return/v1','source_head':'39f011016db7fbe861663e5a521d9907d795d06b','exact_delta_blobs':5,'consumer_sha':os.environ['GITHUB_SHA'],'run_id':int(os.environ['GITHUB_RUN_ID']),'result':'PASS','accepted_samples':4,'pca':'MEASURED_SMALL_N_N4_PC1_STABLE_PC2_ROTATING','bt_global':'WITHHELD','fleet_denominator':None,'child_n200_control':False,'authority_transfer':False},indent=2,sort_keys=True)+'\n')
           PY
       - name: Upload W189RF receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: w189rf-${{ github.event.pull_request.head.sha || github.sha }}
           path: triage/w189/W189RF_EXACT_RETURN_RECEIPT.json

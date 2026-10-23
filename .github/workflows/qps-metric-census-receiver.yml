@@ -34,11 +34,11 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout receiver repository exact source
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       - name: Checkout pinned Mission Control census toolkit
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: GBOGEB/pipeline-automation-hub
           ref: ${{ inputs.toolkit_ref }}
@@ -65,7 +65,7 @@ jobs:
             --route "$QPS_ROUTE" --output "qps-census/$QPS_ROUTE.json"
       - name: Upload native check-census receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: qps-metric-${{ inputs.route }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: qps-census/*.json
