@@ -12,7 +12,13 @@
     "cohort_crosswalk": "data/COHORT_CROSSWALK_NPLUS1.json",
     "p_process_spec": "../qps-triage-ultra/p-process/p_process.yaml",
     "p_state": "../qps-triage-ultra/p-process/site/data/p_state.json",
-    "everred_census": "../qps-triage-ultra/p-process/site/everred/data/everred.json"
+    "everred_census": "../qps-triage-ultra/p-process/site/everred/data/everred.json",
+    "code_purple_census": "../qps-triage-ultra/p-process/site/code-purple/kit/census.json"
+  },
+  "scale_dock": {
+    "module": "mission-control/gogreen/scale_dock.py",
+    "docks": ["everred", "p_process", "code_purple"],
+    "note": "#781 scale-dock owns the EVERRED / P-process / Code Purple dock definitions and the cross-source consistency checks; this projection calls those functions instead of keeping a parallel definition. issue_bd and crosswalk docks need inputs JADE does not hold and stay NOT_DOCKED (UNKNOWN, never zero)."
   },
   "devops_census": {
     "census": "data/DEVOPS_CENSUS_N9.json",
@@ -110,6 +116,8 @@
     {"id": "OBJ.COHORT_CROSSWALK", "path": "mission-control/jade_temple/data/COHORT_CROSSWALK_NPLUS1.json", "kind": "data", "function": "N11 roster vs GoGREEN roster intersection"},
     {"id": "OBJ.DEVOPS_CENSUS", "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N9.json", "kind": "data", "function": "N+9 DevOps lifecycle census: 21 repos, S0..S9 levels, workflows, jobs, tests, git blob ids"},
     {"id": "OBJ.DEVOPS_OBJECTS", "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N9.json", "kind": "data", "function": "N+9 object table: python modules and test files with blob ids"},
+    {"id": "OBJ.SCALE_DOCK", "path": "mission-control/gogreen/scale_dock.py", "symbol": "dock_consistency", "kind": "code", "function": "#781 scale-dock: read-only EVERRED / P-process / Code Purple docks and cross-source consistency"},
+    {"id": "OBJ.CP_CENSUS", "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/kit/census.json", "kind": "data", "function": "Code Purple census v2: lift criteria, admission audit, follow-ups"},
     {"id": "OBJ.CICD_DAG", "path": "mission-control/jade_temple/tools/cicd_dag.py", "symbol": "project", "kind": "code", "function": "This projection: DAG/SIPOC, metrics, SHA/OID crosswalk"},
     {"id": "OBJ.JADE_QA_WF", "path": ".github/workflows/jade-temple-readonly-qa.yml", "kind": "workflow", "function": "JADE read-only QA: tests, coverage floors, --check parity"},
     {"id": "OBJ.P_PROCESS_WF", "path": ".github/workflows/p-process.yml", "kind": "workflow", "function": "P-process offline tests, TypeScript check, site zip"},
@@ -136,6 +144,7 @@
     "ROOT": ["OBJ.EVERRED_ROOTS", "OBJ.EVERRED_PROBE"],
     "BD": ["OBJ.BD_QUEUE"],
     "LIFECYCLE": ["OBJ.DEVOPS_CENSUS"],
+    "DOCK": ["OBJ.SCALE_DOCK", "OBJ.CP_CENSUS"],
     "CENSUS": ["OBJ.DEVOPS_CENSUS", "OBJ.DEVOPS_OBJECTS"],
     "ASSET": []
   },

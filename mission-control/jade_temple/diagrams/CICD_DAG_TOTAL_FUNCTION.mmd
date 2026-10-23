@@ -17,7 +17,7 @@ flowchart LR
     n19["Red-trace N+8 workflow history<br/><small>EVERRED</small>"]:::everred
     n20["Exact source SHAs<br/><small>PASS</small>"]:::pass
     n51["Cohort crosswalk N11 ∩ GoGREEN<br/><small>CROSSWALK</small>"]:::crosswalk
-    n52["Head crosswalk prior → observed SHA<br/><small>CROSSWALK</small>"]:::crosswalk
+    n53["Head crosswalk prior → observed SHA<br/><small>CROSSWALK</small>"]:::crosswalk
   end
   subgraph P["P · Process"]
     n3["H01 Exact default-branch SHA observed<br/><small>PASS</small>"]:::pass
@@ -57,6 +57,7 @@ flowchart LR
     n32["Disjoint candidate branches<br/><small>PASS</small>"]:::pass
     n33["Point release decision<br/><small>UNKNOWN</small>"]:::unknown
     n34["Deterministic JADE site artifacts<br/><small>NEUTRAL</small>"]:::neutral
+    n52["Source consistency (#781 scale-dock)<br/><small>PASS</small>"]:::pass
   end
   subgraph C["C · Customers"]
     n0["Federation consumers (CODEX / ABACUS)<br/><small>NEUTRAL</small>"]:::neutral
@@ -85,6 +86,7 @@ flowchart LR
   n14 --> n33
   n15 --> n21
   n16 -.->|harvest reads the EVERRED census| n39
+  n16 -.->|everred dock| n52
   n17 -->|first red / negative test| n12
   n18 --> n7
   n18 --> n8
@@ -123,6 +125,7 @@ flowchart LR
   n34 --> n0
   n34 --> n2
   n35 -.->|H1–H3 hand-off| n42
+  n35 -.->|code purple + p-process docks| n52
   n36 -.->|admission needs eligible indepen| n11
   n36 -->|admit| n33
   n36 --> n38
@@ -164,8 +167,8 @@ flowchart LR
   n50 --> n15
   n50 --> n18
   n50 --> n20
-  n51 -.->|roster join| n52
-  n52 -.->|prior → observed| n20
+  n51 -.->|roster join| n53
+  n53 -.->|prior → observed| n20
   classDef code_purple fill:#2c1f47,stroke:#b48cff,color:#eadcff
   classDef root_red fill:#4a1d17,stroke:#ff8a6b,color:#ffd9cf
   classDef everred fill:#3a1b1b,stroke:#ff6b6b,color:#ffd6d6

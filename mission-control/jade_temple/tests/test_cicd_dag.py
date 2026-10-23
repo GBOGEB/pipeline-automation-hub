@@ -284,6 +284,40 @@ class Census(unittest.TestCase):
         self.assertGreater(seen, 0)
 
 
+class ScaleDock(unittest.TestCase):
+    """#781 owns the dock definitions; this projection only calls them."""
+
+    def _sources(self):
+        return cd.load_sources(ROOT, POLICY)
+
+    def test_docks_come_from_scale_dock_and_agree(self):
+        docks = cd.scale_docks(HUB, POLICY, self._sources())
+        self.assertEqual(docks["consistency"]["state"], "CONSISTENT_WHERE_OBSERVED")
+        for name in ("issue_bd", "crosswalk"):
+            self.assertEqual(docks["docks"][name], {"status": "NOT_DOCKED", "metrics": None})
+        pp = SCOPES["TOTAL"]["metrics"]["p_process"]
+        self.assertEqual(pp["open_roots"], docks["docks"]["p_process"]["metrics"]["open_roots"])
+        self.assertEqual(pp["dock_consistency"], docks["consistency"]["state"])
+        node = {x["id"]: x for x in SCOPES["TOTAL"]["nodes"]}["X.DOCK_CONSISTENCY"]
+        self.assertEqual(node["status"], "PASS")
+        self.assertIn("scale_dock.py", node["oids"][0]["path"])
+
+    def test_source_disagreement_is_reported_not_repaired(self):
+        src = self._sources()
+        src["p_state"] = copy.deepcopy(src["p_state"])
+        first = sorted(src["p_state"]["repos"])[0]
+        src["p_state"]["repos"][first]["open_roots"] += 1
+        docks = cd.scale_docks(HUB, POLICY, src)
+        self.assertEqual(docks["consistency"]["state"], "HOLD_SOURCE_DISAGREEMENT")
+        self.assertEqual(cd.DOCK_STATUS[docks["consistency"]["state"]], "FAIL")
+
+    def test_dock_schema_drift_fails_closed(self):
+        src = self._sources()
+        src["code_purple"] = dict(src["code_purple"], schema="code-purple.census/v1")
+        with self.assertRaisesRegex(ValueError, "code_purple dock schema drift"):
+            cd.scale_docks(HUB, POLICY, src)
+
+
 class Outputs(unittest.TestCase):
     def test_tool_check_parity(self):
         buf = io.StringIO()
@@ -300,7 +334,7 @@ class Outputs(unittest.TestCase):
             root = Path(tmp) / "mission-control" / "jade_temple"
             shutil.copytree(ROOT, root, ignore=shutil.ignore_patterns("qa", "__pycache__", "*.pdf", "*.png"))
             for rel in ("mission-control/qps-triage-ultra/p-process", "mission-control/federation-atlas",
-                        ".github/workflows"):
+                        "mission-control/gogreen", ".github/workflows"):
                 shutil.copytree(HUB / rel, Path(tmp) / rel,
                                 ignore=shutil.ignore_patterns("fonts", "*.pdf", "node_modules"))
             buf = io.StringIO()

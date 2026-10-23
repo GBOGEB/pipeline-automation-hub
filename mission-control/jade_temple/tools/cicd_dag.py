@@ -410,9 +410,41 @@ def load_sources(root: Path, policy: dict) -> dict:
         "cohort_crosswalk": json.loads(src["cohort_crosswalk"]),
         "p_state": json.loads(src["p_state"]),
         "everred": json.loads(src["everred_census"]),
+        "code_purple": json.loads(src["code_purple_census"]),
         "digests": {rel: hashlib.sha256(src[k]).hexdigest()
                     for k, rel in policy["sources"].items()},
     }
+
+
+DOCK_STATUS = {"CONSISTENT_WHERE_OBSERVED": PASS, "HOLD_SOURCE_DISAGREEMENT": FAIL,
+               "NOT_COMPARABLE": UNKNOWN}
+
+
+def scale_docks(hub: Path, policy: dict, sources: dict) -> dict:
+    """Dock EVERRED / P-process / Code Purple with #781's own functions.
+
+    One definition: the metrics and the cross-source consistency come from
+    mission-control/gogreen/scale_dock.py, never from a parallel copy here.
+    """
+    cfg = policy["scale_dock"]
+    spec = importlib.util.spec_from_file_location("jade_scale_dock", hub / cfg["module"])
+    sd = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(sd)
+    payloads = {"everred": sources["everred"], "p_process": sources["p_state"],
+                "code_purple": sources["code_purple"]}
+    docks = {}
+    for name, schema in sd.DOCK_SCHEMAS.items():
+        if name not in cfg["docks"]:
+            docks[name] = {"status": "NOT_DOCKED", "metrics": None}
+            continue
+        payload = payloads[name]
+        if payload.get("schema") != schema:
+            raise ValueError(f"{name} dock schema drift: {payload.get('schema')}")
+        metrics = (sd.dock_everred(payload, []) if name == "everred"
+                   else sd.DOCKERS[name](payload))
+        docks[name] = {"status": "DOCKED_READ_ONLY_PROJECTION", "schema": schema,
+                       "input_sha256": sd.digest(payload), "metrics": metrics}
+    return {"docks": docks, "consistency": sd.dock_consistency(docks)}
 
 
 def everred_metrics(red_trace: dict) -> dict:
@@ -612,12 +644,25 @@ def build_total(ctx: dict) -> dict:
     for a, b in zip(loop, loop[1:]):
         g.edge(f"P.{a}", f"P.{b}")
     g.edge(f"P.{loop[-1]}", f"P.{loop[0]}", "TEMPORAL", "next pulse")
-    cp = sorted(_short(r) for r, v in pstate["repos"].items() if v["mode"] == "CODE_PURPLE")
+    docks = ctx["docks"]["docks"]
+    dpp, dcp, dev = (docks[k]["metrics"] for k in ("p_process", "code_purple", "everred"))
+    cp = sorted(_short(r) for r in dpp["code_purple_repos"])
     g.node("P.CODE_PURPLE", "P", "P_MODE", "Code Purple (acute mode)",
            flags={"CODE_PURPLE"} if cp else set(), default="P_PROCESS",
-           producers=["P_STEP", "OBJ.CP_INCIDENT", "OBJ.CP_READBACK"],
-           detail=f"{pstate['incident']} · lifted={pstate['lifted']} · repos: {', '.join(cp) or 'none'}",
-           metrics={"repos": cp, "lifted": pstate["lifted"]})
+           producers=["P_STEP", "OBJ.CP_INCIDENT", "OBJ.CP_READBACK", "DOCK"],
+           detail=f"{dcp['incident']} · lifted={dcp['lifted']} · lift {dcp['lift_met']}/{dcp['lift_total']}"
+                  f" (unmet {', '.join(dcp['lift_unmet']) or 'none'}) · gate green "
+                  f"{dcp['gate_green']}/{dcp['merged_since_unblock']} merges · repos: {', '.join(cp) or 'none'}",
+           metrics={"repos": cp, "lifted": dcp["lifted"], "lift_met": dcp["lift_met"],
+                    "lift_total": dcp["lift_total"], "lift_unmet": dcp["lift_unmet"]})
+    cons = ctx["docks"]["consistency"]
+    agree = sum(c["state"] == "AGREE" for c in cons["checks"])
+    g.node("X.DOCK_CONSISTENCY", "O", "CROSSWALK", "Source consistency (#781 scale-dock)",
+           flags={"CROSSWALK"}, status=DOCK_STATUS[cons["state"]], producers=["DOCK"],
+           detail=f"{cons['state']} · {agree}/{len(cons['checks'])} checks agree",
+           metrics={"state": cons["state"], "checks": cons["checks"]})
+    g.edge("I.EVERRED_CENSUS", "X.DOCK_CONSISTENCY", "CROSSWALK", "everred dock")
+    g.edge("P.CODE_PURPLE", "X.DOCK_CONSISTENCY", "CROSSWALK", "code purple + p-process docks")
     g.edge("P.control", "P.CODE_PURPLE", "FLOW", "E1–E3 escalate")
     g.edge("P.CODE_PURPLE", "P.root", "TEMPORAL", "H1–H3 hand-off")
     for x in pol["crosswalk_edges"]:
@@ -722,10 +767,16 @@ def build_total(ctx: dict) -> dict:
         },
         "everred": ev,
         "p_process": {
-            "modes": _count(v["mode"] for v in pstate["repos"].values()),
-            "code_purple_repos": cp, "lifted": pstate["lifted"],
-            "ruleset_red": sum(v["ruleset"] == "RED" for v in pstate["repos"].values()),
-            "open_roots": sum(v["open_roots"] for v in pstate["repos"].values()),
+            "source": "scale_dock.py (#781) docks",
+            "modes": dpp["modes"],
+            "code_purple_repos": cp, "lifted": dcp["lifted"],
+            "lift": f"{dcp['lift_met']}/{dcp['lift_total']}",
+            "gate_green_rate": dcp["gate_green_rate"], "red_merge_rate": dcp["red_merge_rate"],
+            "ruleset_red": len(dpp["ruleset_red"]), "ruleset_red_rate": dpp["ruleset_red_rate"],
+            "open_roots": dpp["open_roots"], "worst_priority": dpp["worst_priority"],
+            "everred_roots_open_by_priority": dev["roots_open_by_priority"],
+            "signature_match_rate": dev["signature_match_rate"],
+            "dock_consistency": ctx["docks"]["consistency"]["state"],
             "root_closure_rate": em["root_closure_rate"],
             "failure_amplification": em["failure_amplification"],
             "recurrence_rate": em["recurrence_rate"],
@@ -1090,7 +1141,7 @@ def project(root: Path = ROOT) -> dict:
            "rolling5": rolling, "sources": sources, "objects": objects, "hub": hub,
            "everred": everred_metrics(sources["red_trace"]), "common_cause": common,
            "pass_depth": pass_depth, "heads": heads, "site_digests": site_digests,
-           "census": census}
+           "census": census, "docks": scale_docks(hub, policy, sources)}
     total = build_total(ctx)
     repos = [build_repo(ctx, r) for r in sorted(snapshot["rows"], key=lambda r: r["rank"])]
     orch = build_orchestrators(ctx)

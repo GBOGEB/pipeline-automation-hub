@@ -55,10 +55,11 @@
   },
   "inputs": {
     "../qps-triage-ultra/p-process/p_process.yaml": "1425383354ae1f5da29e21ce94842a879f54ccc9b9ff1596bd65109bfb807b66",
+    "../qps-triage-ultra/p-process/site/code-purple/kit/census.json": "d638ad8dc530ea272ce96c36d370d46a32f61d608392076402f918af42429a20",
     "../qps-triage-ultra/p-process/site/data/p_state.json": "98cfa8ed19755bfc2172cfcda6f1267ec7f78c7779c2920a60a97fcb9045a45e",
     "../qps-triage-ultra/p-process/site/everred/data/everred.json": "0eb4b3c5287ee352f15669e8f8d500bc17c63d8da3617f76392e8f6b8ac25120",
     "data/BD_QUEUE.csv": "2231234ceaf46b79168c0c0f080b13b3a3b9691431df26bb0c6e558cc5393d13",
-    "data/CICD_DAG_POLICY.json": "4d2133193a056878467a72f58e82800e73f49b470efa4f12bc947ee7e628c383",
+    "data/CICD_DAG_POLICY.json": "76a6bba91a3c325d9c2f1a42061589683356f2f00512642a7e874b40bd0094f2",
     "data/COHORT_CROSSWALK_NPLUS1.json": "8e22c5963cc165b2ec8e83383a7469aebd177335eaddca8043b1692bf10e2cbc",
     "data/DEVOPS_CENSUS_N9.json": "8702957d2684d75b33259a23584645eed9757496d8e9474dc0c52e0455eb696b",
     "data/DEVOPS_OBJECTS_N9.json": "e960351c9c4c98441b2ee332cfc67389fa42ddae7590d0c83f2805ddd9880602",
@@ -1284,10 +1285,26 @@
       "symbol": null
     },
     {
+      "function": "#781 scale-dock: read-only EVERRED / P-process / Code Purple docks and cross-source consistency",
+      "id": "OBJ.SCALE_DOCK",
+      "kind": "code",
+      "oid": "c8910b30dc26148b6a1184ed085fd03e09fb19f3",
+      "path": "mission-control/gogreen/scale_dock.py",
+      "symbol": "dock_consistency"
+    },
+    {
+      "function": "Code Purple census v2: lift criteria, admission audit, follow-ups",
+      "id": "OBJ.CP_CENSUS",
+      "kind": "data",
+      "oid": "f1dc5a64310756e4a8130c7033f5da54904e7538",
+      "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/kit/census.json",
+      "symbol": null
+    },
+    {
       "function": "This projection: DAG/SIPOC, metrics, SHA/OID crosswalk",
       "id": "OBJ.CICD_DAG",
       "kind": "code",
-      "oid": "16053a358a1e49575394f675746556ed4721beb3",
+      "oid": "0f1b1de58a3fb830cc260221af29472c2e6cd840",
       "path": "mission-control/jade_temple/tools/cicd_dag.py",
       "symbol": "project"
     },
@@ -1295,7 +1312,7 @@
       "function": "JADE read-only QA: tests, coverage floors, --check parity",
       "id": "OBJ.JADE_QA_WF",
       "kind": "workflow",
-      "oid": "376bd1106e56a73a2ef4be9a691c02485959381c",
+      "oid": "b7d39e65a862c23e2c0e1536093c70ab411f67c6",
       "path": ".github/workflows/jade-temple-readonly-qa.yml",
       "symbol": null
     },
@@ -1336,7 +1353,7 @@
           "FAIL": 11,
           "ISSUE_BD": 1,
           "NEUTRAL": 7,
-          "PASS": 6,
+          "PASS": 7,
           "P_PROCESS": 7,
           "ROOT_RED": 2,
           "UNKNOWN": 8
@@ -1344,18 +1361,18 @@
         "by_sipoc": {
           "C": 3,
           "I": 8,
-          "O": 4,
+          "O": 5,
           "P": 31,
           "S": 7
         },
-        "crosswalk_edges": 22,
+        "crosswalk_edges": 24,
         "depth": 13,
         "edges": 78,
-        "nodes": 53,
-        "oid_coverage": 0.9811,
-        "sha_coverage": 0.4717,
-        "sinks": 9,
-        "sources": 10,
+        "nodes": 54,
+        "oid_coverage": 0.9815,
+        "sha_coverage": 0.463,
+        "sinks": 10,
+        "sources": 11,
         "temporal_edges": 3,
         "width_max": 7
       },
@@ -1512,6 +1529,13 @@
           "label": "harvest reads the EVERRED census of failing jobs",
           "state": null,
           "to": "P.harvest",
+          "type": "CROSSWALK"
+        },
+        {
+          "from": "I.EVERRED_CENSUS",
+          "label": "everred dock",
+          "state": null,
+          "to": "X.DOCK_CONSISTENCY",
           "type": "CROSSWALK"
         },
         {
@@ -1779,6 +1803,13 @@
           "state": null,
           "to": "P.root",
           "type": "TEMPORAL"
+        },
+        {
+          "from": "P.CODE_PURPLE",
+          "label": "code purple + p-process docks",
+          "state": null,
+          "to": "X.DOCK_CONSISTENCY",
+          "type": "CROSSWALK"
         },
         {
           "from": "P.admit",
@@ -2288,7 +2319,16 @@
           ],
           "consumer_replay_coverage": "UNKNOWN",
           "control_plane_red": "6/6",
+          "dock_consistency": "CONSISTENT_WHERE_OBSERVED",
+          "everred_roots_open_by_priority": {
+            "P0": 1,
+            "P1": 5,
+            "P2": 4,
+            "P3": 2
+          },
           "failure_amplification": 1.538,
+          "gate_green_rate": 0.0,
+          "lift": "2/5",
           "lifted": false,
           "modes": {
             "CODE_PURPLE": 1,
@@ -2296,8 +2336,13 @@
           },
           "open_roots": 12,
           "recurrence_rate": 0.0,
+          "red_merge_rate": 1.0,
           "root_closure_rate": 0.2,
-          "ruleset_red": 6
+          "ruleset_red": 6,
+          "ruleset_red_rate": 1.0,
+          "signature_match_rate": 0.0588,
+          "source": "scale_dock.py (#781) docks",
+          "worst_priority": "P0"
         },
         "source_red": {
           "common_cause": [
@@ -3873,7 +3918,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.CICD_DAG",
-              "oid": "16053a358a1e49575394f675746556ed4721beb3",
+              "oid": "0f1b1de58a3fb830cc260221af29472c2e6cd840",
               "path": "mission-control/jade_temple/tools/cicd_dag.py",
               "status": "BOUND",
               "symbol": "project"
@@ -3882,7 +3927,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.JADE_QA_WF",
-              "oid": "376bd1106e56a73a2ef4be9a691c02485959381c",
+              "oid": "b7d39e65a862c23e2c0e1536093c70ab411f67c6",
               "path": ".github/workflows/jade-temple-readonly-qa.yml",
               "status": "BOUND",
               "symbol": null
@@ -3907,12 +3952,19 @@
         },
         {
           "colour": "CODE_PURPLE",
-          "detail": "CP-2026-10-12-ABACUS-MERGE-STALL · lifted=False · repos: ABACUS",
+          "detail": "CP-2026-10-12-ABACUS-MERGE-STALL · lifted=False · lift 2/5 (unmet L2, L4, L5) · gate green 0/97 merges · repos: ABACUS",
           "id": "P.CODE_PURPLE",
           "kind": "P",
           "label": "Code Purple (acute mode)",
           "layer": 9,
           "metrics": {
+            "lift_met": 2,
+            "lift_total": 5,
+            "lift_unmet": [
+              "L2",
+              "L4",
+              "L5"
+            ],
             "lifted": false,
             "repos": [
               "ABACUS"
@@ -3954,6 +4006,24 @@
               "path": "mission-control/qps-triage-ultra/p-process/kit/readback.py",
               "status": "BOUND",
               "symbol": "gate_at_merge"
+            },
+            {
+              "at": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.gogreen.scale_dock",
+              "object": "OBJ.SCALE_DOCK",
+              "oid": "c8910b30dc26148b6a1184ed085fd03e09fb19f3",
+              "path": "mission-control/gogreen/scale_dock.py",
+              "status": "BOUND",
+              "symbol": "dock_consistency"
+            },
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.CP_CENSUS",
+              "oid": "f1dc5a64310756e4a8130c7033f5da54904e7538",
+              "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/kit/census.json",
+              "status": "BOUND",
+              "symbol": null
             }
           ],
           "phase": null,
@@ -4568,6 +4638,86 @@
           "url": null
         },
         {
+          "colour": "PASS",
+          "detail": "CONSISTENT_WHERE_OBSERVED · 7/7 checks agree",
+          "id": "X.DOCK_CONSISTENCY",
+          "kind": "O",
+          "label": "Source consistency (#781 scale-dock)",
+          "layer": 3,
+          "metrics": {
+            "checks": [
+              {
+                "check": "incident: code_purple == p_process",
+                "left": "CP-2026-10-12-ABACUS-MERGE-STALL",
+                "right": "CP-2026-10-12-ABACUS-MERGE-STALL",
+                "state": "AGREE"
+              },
+              {
+                "check": "lifted: code_purple == p_process",
+                "left": false,
+                "right": false,
+                "state": "AGREE"
+              },
+              {
+                "check": "open roots: everred == p_process",
+                "left": 12,
+                "right": 12,
+                "state": "AGREE"
+              },
+              {
+                "check": "snapshot: everred.generated_at == p_process.everred_at",
+                "left": "2026-10-18T13:29:56+00:00",
+                "right": "2026-10-18T13:29:56+00:00",
+                "state": "AGREE"
+              },
+              {
+                "check": "snapshot: code_purple.generated_at == p_process.census_at",
+                "left": "2026-10-18T13:27:47+00:00",
+                "right": "2026-10-18T13:27:47+00:00",
+                "state": "AGREE"
+              },
+              {
+                "check": "E2: open case => a repo in CODE_PURPLE mode",
+                "left": true,
+                "right": true,
+                "state": "AGREE"
+              },
+              {
+                "check": "E1: red P0 control-plane probe => a repo in CODE_PURPLE mode",
+                "left": true,
+                "right": true,
+                "state": "AGREE"
+              }
+            ],
+            "state": "CONSISTENT_WHERE_OBSERVED"
+          },
+          "oids": [
+            {
+              "at": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.gogreen.scale_dock",
+              "object": "OBJ.SCALE_DOCK",
+              "oid": "c8910b30dc26148b6a1184ed085fd03e09fb19f3",
+              "path": "mission-control/gogreen/scale_dock.py",
+              "status": "BOUND",
+              "symbol": "dock_consistency"
+            },
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.CP_CENSUS",
+              "oid": "f1dc5a64310756e4a8130c7033f5da54904e7538",
+              "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/kit/census.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [],
+          "status": "PASS",
+          "type": "CROSSWALK",
+          "url": null
+        },
+        {
           "colour": "CROSSWALK",
           "detail": "5/21 heads compared (null = no prior), 1 moved",
           "id": "X.HEADS",
@@ -4618,7 +4768,8 @@
           "O.BD",
           "O.CANDIDATES",
           "O.RELEASE",
-          "O.SITE"
+          "O.SITE",
+          "X.DOCK_CONSISTENCY"
         ],
         "P": [
           "H01",
@@ -6035,9 +6186,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:wf:pipeline-automation-hub:.github/workflows/mission-control-n3-evidence.yml",
               "object": null,
-              "oid": "524c90f6852485b01e214e0dbef686921c256da0",
+              "oid": "395e3547580fa369e10832d2689e53e2104a3f08",
               "path": ".github/workflows/mission-control-n3-evidence.yml",
               "status": "BOUND",
               "symbol": null
@@ -16962,7 +17113,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.CICD_DAG",
-              "oid": "16053a358a1e49575394f675746556ed4721beb3",
+              "oid": "0f1b1de58a3fb830cc260221af29472c2e6cd840",
               "path": "mission-control/jade_temple/tools/cicd_dag.py",
               "status": "BOUND",
               "symbol": "project"
@@ -17014,7 +17165,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.JADE_QA_WF",
-              "oid": "376bd1106e56a73a2ef4be9a691c02485959381c",
+              "oid": "b7d39e65a862c23e2c0e1536093c70ab411f67c6",
               "path": ".github/workflows/jade-temple-readonly-qa.yml",
               "status": "BOUND",
               "symbol": null
