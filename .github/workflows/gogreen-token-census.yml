@@ -1,0 +1,57 @@
+name: GOGREEN Token Census Telemetry
+# Read-only telemetry for the cross-repo fine-grained tokens. PR runs execute the
+# offline contract tests only. Scheduled and manual runs also probe the hub's four
+# token secrets (one GET each) and compare every consumer workflow's default-branch
+# runs before and after its secret was saved. Red only when a token is unhealthy
+# (unset, rejected, not selected, or a consumer log shows 401/403/missing secret).
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/token_census/**'
+      - '.github/workflows/gogreen-token-census.yml'
+  schedule:
+    - cron: '41 */6 * * *'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: gogreen-token-census-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  token-census:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Offline contract tests (no network, no secrets)
+        run: python -m unittest discover -s mission-control/gogreen/token_census/tests -v
+      - name: Live read-only token census
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROBE_CROSS_REPO_READ_TOKEN: ${{ secrets.CROSS_REPO_READ_TOKEN }}
+          PROBE_QPS_FEDERATION_READ_TOKEN: ${{ secrets.QPS_FEDERATION_READ_TOKEN }}
+          PROBE_GOGREEN_TOP21_READ_TOKEN: ${{ secrets.GOGREEN_TOP21_READ_TOKEN }}
+          PROBE_QPS_TRIAGE_DISPATCH_TOKEN: ${{ secrets.QPS_TRIAGE_DISPATCH_TOKEN }}
+        run: |
+          set -uo pipefail
+          out="$RUNNER_TEMP/token-census"
+          python mission-control/gogreen/token_census/token_census.py \
+            --registry mission-control/gogreen/token_census/REGISTRY.json --out "$out"
+          status=$?
+          cat "$out/token_census.md" >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always() && github.event_name != 'pull_request'
+        with:
+          name: gogreen-token-census-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/token-census/
+          retention-days: 30
+          if-no-files-found: warn
