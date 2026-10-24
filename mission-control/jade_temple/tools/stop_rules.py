@@ -15,11 +15,30 @@ REQUIRED_GATES = ("source_integrity", "native_tests", "matched_coverage", "secur
                   "required_checks", "blocked_red_canary", "hosted_parity", "owner_release")
 REQUIRED_METRICS = ("accepted_owner_actions", "deduplicated_owner_roots_closed",
                     "comparable_new_branches_covered", "new_evidence_edges_qualified")
+GATE_STATES = ("PASS", "FAIL", "UNKNOWN", "PENDING", "MISSING")
+# Solo owner: independent approval cannot exist, so MACH-II waives it and pays with machine gates
+# (ABACUS docs/governance/CODE_PURPLE_MACH_LADDER.md). The waiver replaces that one gate only.
+REVIEW_WAIVER = "WAIVED_MACH_II"
+AUTOMATED_REVIEW_KINDS = ("copilot_review", "codeql")
 
 
 def require(condition: bool, reason: str):
     if not condition:
         raise ValueError("JADE_STOP_FAIL_CLOSED: " + reason)
+
+
+def waiver_qualified(gates: dict, waiver, expected_head: str) -> bool:
+    """MACH-II compensation: platform-enforced required checks plus an automated review on this exact head."""
+    if not isinstance(waiver, dict) or waiver.get("level") != "MACH-II":
+        return False
+    review = waiver.get("automated_review")
+    if not isinstance(review, dict):
+        return False
+    return (gates["required_checks"] == "PASS"
+            and review.get("kind") in AUTOMATED_REVIEW_KINDS
+            and review.get("head_sha") == expected_head
+            and str(review.get("url", "")).startswith("https://github.com/")
+            and str(waiver.get("policy", "")).startswith("https://github.com/"))
 
 
 def comparable(a: dict, b: dict) -> bool:
@@ -49,11 +68,19 @@ def plateau(pulses: list[dict], window: int = 3) -> bool:
 
 
 def evaluate(gates: dict, pulses: list[dict], current_first_red: list[dict],
-             native_pending: bool, expected_head: str, release_repeat_proofs: list[dict]):
+             native_pending: bool, expected_head: str, release_repeat_proofs: list[dict],
+             review_waiver: dict | None = None):
     """Noncompensating stop ladder; HOLD is never overwritten by statistical stability."""
     require(bool(SHA40.fullmatch(expected_head or "")), "invalid current exact head")
     require(set(gates) == set(REQUIRED_GATES), "incomplete or extra gate keys")
-    require(all(x in ("PASS", "FAIL", "UNKNOWN", "PENDING", "MISSING") for x in gates.values()), "invalid gate state")
+    require(all(v in GATE_STATES or (k == "independent_review" and v == REVIEW_WAIVER)
+                for k, v in gates.items()), "invalid gate state")
+    require((gates["independent_review"] == REVIEW_WAIVER) == (review_waiver is not None),
+            "review waiver state and waiver record disagree")
+    waived = review_waiver is not None
+    if waived:
+        # An unqualified waiver is a missing review, never a pass.
+        gates = {**gates, "independent_review": "PASS" if waiver_qualified(gates, review_waiver, expected_head) else "MISSING"}
     require(isinstance(native_pending, bool), "pending must be boolean")
     require(isinstance(current_first_red, list), "first-red input must be list")
     require(isinstance(release_repeat_proofs, list), "replay proofs input must be list")
@@ -65,8 +92,10 @@ def evaluate(gates: dict, pulses: list[dict], current_first_red: list[dict],
     distinct_proofs = len({(r["source_sha"], r["run_id"]) for r in release_repeat_proofs})
     accepted = (all(s == "PASS" for s in gates.values()) and not current_first_red
                 and not native_pending and distinct_proofs >= 2)
+    # Only a waived model gains the key, so receipts without a waiver keep their exact bytes.
+    basis = {"review_basis": REVIEW_WAIVER if gates["independent_review"] == "PASS" else "WAIVER_UNQUALIFIED"} if waived else {}
     if accepted:
-        return {"action": "TARGET_MET_STOP_ENGINEERING", "reason": "all noncompensating gates and independent repeat runs qualified", "merge_admission": "HOLD", "stop_repetitive_waves": True, "formal_release_credit": False, "owner_action": "Separate authorized owner acceptance still required"}
+        return {"action": "TARGET_MET_STOP_ENGINEERING", "reason": "all noncompensating gates and independent repeat runs qualified", "merge_admission": "HOLD", "stop_repetitive_waves": True, "formal_release_credit": False, "owner_action": "Separate authorized owner acceptance still required", **basis}
     if current_first_red:
         action, reason = "REPAIR_FIRST_RED", "source-bound current-head failure; do not repeat broad census"
     elif native_pending:
@@ -77,7 +106,7 @@ def evaluate(gates: dict, pulses: list[dict], current_first_red: list[dict],
         action, reason = "PIVOT_DISJOINT_OWNER", "three comparable terminal zero-gain pulses; stop identical recensus only"
     else:
         action, reason = "CONTINUE_DISJOINT_MEASUREMENT", "progress gate still lacks independent source-bound proof"
-    return {"action": action, "reason": reason, "merge_admission": "HOLD", "stop_repetitive_waves": action in ("WAIT_NATIVE", "OWNER_BLOCKED", "PIVOT_DISJOINT_OWNER"), "formal_release_credit": False, "owner_action": "Obtain outstanding native, protection and owner receipts"}
+    return {"action": action, "reason": reason, "merge_admission": "HOLD", "stop_repetitive_waves": action in ("WAIT_NATIVE", "OWNER_BLOCKED", "PIVOT_DISJOINT_OWNER"), "formal_release_credit": False, "owner_action": "Obtain outstanding native, protection and owner receipts", **basis}
 
 
 def from_snapshot(data: dict):
@@ -85,7 +114,7 @@ def from_snapshot(data: dict):
     require(data.get("authority_transfer") is False and data.get("merge_admission") == "HOLD", "unsafe authority or admission")
     return evaluate(data["gates"], data["pulses"], data["first_red_current_head"],
                     data["native_pending"], data["current_main_sha"],
-                    data["release_repeat_proofs"])
+                    data["release_repeat_proofs"], data.get("review_waiver"))
 
 
 def main():
