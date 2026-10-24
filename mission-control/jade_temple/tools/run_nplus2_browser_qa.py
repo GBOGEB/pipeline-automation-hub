@@ -9,10 +9,10 @@ receipt={'schema':'jade.temple.nplus2.browser.v2','source':'site/burndown.html',
  'evidence_level':'LOCAL_RENDERED_SOURCE_BYTES','no_served_csp_claim':True,
  'method':'playwright.set_content with identical byte content inlined; CSP adjusted only for offline test',
  'viewports':{},'errors':[]}
-html=(SITE/'burndown.html').read_text()
-css=(SITE/'burndown.css').read_text()
-data=(SITE/'burndown-data.js').read_text()
-app=(SITE/'burndown.js').read_text()
+html=(SITE/'burndown.html').read_text(encoding='utf-8')
+css=(SITE/'burndown.css').read_text(encoding='utf-8')
+data=(SITE/'burndown-data.js').read_text(encoding='utf-8')
+app=(SITE/'burndown.js').read_text(encoding='utf-8')
 assert 'script-src \'self\'; style-src \'self\'' in html
 assert html.count('<script src="burndown-data.js"></script>')==1
 assembled=html.replace("script-src 'self'; style-src 'self'","script-src 'unsafe-inline'; style-src 'unsafe-inline'")
@@ -54,6 +54,6 @@ with sync_playwright() as pw:
         'horizontal_overflow':False,'screenshot':f'qa/nplus2/{name}.png'}
   page.close()
  browser.close()
-(OUT/'receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n')
+(OUT/'receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n',encoding='utf-8')
 print(json.dumps({'status':'PASS','viewports':len(receipt['viewports']),
      'sha256':hashlib.sha256((SITE/'burndown.html').read_bytes()).hexdigest()},sort_keys=True))

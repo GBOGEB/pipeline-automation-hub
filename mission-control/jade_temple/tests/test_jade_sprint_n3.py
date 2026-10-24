@@ -17,7 +17,7 @@ class SprintDAGTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.master=json.loads((ROOT/"mission-control"/"jade_temple"/"data"/
-                              "REPO_READINESS_NPLUS1.json").read_text())
+                              "REPO_READINESS_NPLUS1.json").read_text(encoding='utf-8'))
     def setUp(self):
         self.data=copy.deepcopy(self.master)
 
@@ -156,12 +156,12 @@ class SprintPreflightTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"STALE_OR_PROMOTED_LOCAL_RESULT"):
                 cli.seal(path,head,inputs)
     def test_ps1_does_not_hide_network_work(self):
-        script=(SPRINT/"Start-JadeSprint.ps1").read_text()
+        script=(SPRINT/"Start-JadeSprint.ps1").read_text(encoding='utf-8')
         for token in ("$FreshClone","$InstallOptionalDependencies","$Offline",
                       "$ExpectedHead","$NoCache","git clone","python.exe"):
             self.assertIn(token,script)
     def test_pinned_optional_dependencies(self):
-        txt=(SPRINT/"requirements-optional.txt").read_text()
+        txt=(SPRINT/"requirements-optional.txt").read_text(encoding='utf-8')
         self.assertIn("coverage==7.13.3",txt)
         self.assertIn("playwright==1.56.0",txt)
     def test_pool_max_enforced_before_exec(self):
@@ -171,7 +171,7 @@ class SprintPreflightTests(unittest.TestCase):
                 cli.local_run(ROOT,path,path/"cache","a"*40,"b"*64,8,12,True,False)
     def test_no_second_pages_deployer(self):
         script=(ROOT/".github"/"workflows"/"jade-sprint-n3-qualification.yml")
-        self.assertNotIn("deploy-pages",script.read_text())
+        self.assertNotIn("deploy-pages",script.read_text(encoding='utf-8'))
 
 if __name__=="__main__":
     unittest.main()

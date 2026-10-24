@@ -13,7 +13,7 @@ engine=importlib.util.module_from_spec(spec);spec.loader.exec_module(engine)
 spec2=importlib.util.spec_from_file_location('jade8build',ROOT/'site/build_eightpoint.py')
 builder=importlib.util.module_from_spec(spec2);spec2.loader.exec_module(builder)
 
-def read(name):return json.loads((ROOT/'data'/name).read_text())
+def read(name):return json.loads((ROOT/'data'/name).read_text(encoding='utf-8'))
 class EightPointMIP(unittest.TestCase):
  @classmethod
  def setUpClass(cls):
@@ -48,13 +48,13 @@ class EightPointMIP(unittest.TestCase):
   event=next(x for x in self.l['evidence'] if x['type']=='HISTORICAL_FIRST_RED')
   self.assertEqual(event['outcome'],'FAILURE');self.assertEqual(event['run'],39169421620)
  def test_no_invalid_html_authority(self):
-  h=(ROOT/'site/eightpoint.html').read_text()
+  h=(ROOT/'site/eightpoint.html').read_text(encoding='utf-8')
   self.assertIn('MERGE ADMISSION',h)
   self.assertIn('connect-src &#39;none&#39;',h.replace("'",'&#39;'))
   self.assertNotIn('http://',h)
  def test_csv_21_complete_noneditable(self):
   import csv
-  with (ROOT/'site/eightpoint.csv').open(newline='') as f:rows=list(csv.DictReader(f))
+  with (ROOT/'site/eightpoint.csv').open(newline='',encoding='utf-8') as f:rows=list(csv.DictReader(f))
   self.assertEqual(len(rows),21)
   self.assertTrue(all(r['release']=='UNQUALIFIED' for r in rows))
  def test_drift_tamper_rejected(self):

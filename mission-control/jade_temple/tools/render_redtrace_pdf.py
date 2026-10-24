@@ -33,7 +33,7 @@ def render(tmp: Path) -> None:
 
 
 def annotate(tmp: Path) -> dict:
-    manifest = json.loads((SITE / "redtrace-manifest.json").read_text())
+    manifest = json.loads((SITE / "redtrace-manifest.json").read_text(encoding="utf-8"))
     outline = manifest["slide_outline"]
     w = PdfWriter(clone_from=str(tmp))
     if len(w.pages) != len(outline):

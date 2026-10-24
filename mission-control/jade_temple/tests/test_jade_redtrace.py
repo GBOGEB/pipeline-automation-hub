@@ -18,8 +18,8 @@ def load_mod(rel, name):
 
 B = load_mod("site/build_redtrace.py", "build_redtrace")
 D = load_mod("tools/build_redtrace_data.py", "build_redtrace_data")
-FED = json.loads((ROOT / "data/RED_TRACE_FEDERATION_N8.json").read_text())
-GAP = json.loads((ROOT / "data/GAP_ANALYSIS_N8.json").read_text())
+FED = json.loads((ROOT / "data/RED_TRACE_FEDERATION_N8.json").read_text(encoding='utf-8'))
+GAP = json.loads((ROOT / "data/GAP_ANALYSIS_N8.json").read_text(encoding='utf-8'))
 
 
 class Sources(unittest.TestCase):
@@ -68,20 +68,20 @@ class Outputs(unittest.TestCase):
         self.assertEqual(B.build(), B.build())
 
     def test_every_red_row_has_text_status_not_colour_only(self):
-        html = (ROOT / "site/redtrace.html").read_text()
+        html = (ROOT / "site/redtrace.html").read_text(encoding='utf-8')
         self.assertEqual(html.count('data-red="1"'), FED["totals"]["red"])
         self.assertEqual(html.count("RED NOW"), FED["totals"]["red"])
 
     def test_explicit_actor_badges_and_links(self):
-        html = (ROOT / "site/redtrace.html").read_text()
+        html = (ROOT / "site/redtrace.html").read_text(encoding='utf-8')
         for a in ("agent", "owner", "ci"):
             self.assertIn(f"rt-actor-{a}", html)
         for link in ("redtrace-slides.html", "redtrace-slides.pdf", "jade.css"):
             self.assertIn(link, html)
 
     def test_slide_outline_matches_deck(self):
-        m = json.loads((ROOT / "site/redtrace-manifest.json").read_text())
-        deck = (ROOT / "site/redtrace-slides.html").read_text()
+        m = json.loads((ROOT / "site/redtrace-manifest.json").read_text(encoding='utf-8'))
+        deck = (ROOT / "site/redtrace-slides.html").read_text(encoding='utf-8')
         self.assertEqual(deck.count('class="slide"'), len(m["slide_outline"]))
         for s in m["slide_outline"]:
             self.assertIn(f'id="{s["id"]}"', deck)

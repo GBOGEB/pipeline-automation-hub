@@ -59,7 +59,7 @@ class Sandbox:
         self.count = getattr(self, "count", 0) + 1
         rel = f"data/snap_{self.count}.json"
         self.write(rel, snap)
-        ledger = json.loads((self.root / "data/ROLLING5_PULSES.json").read_text())
+        ledger = json.loads((self.root / "data/ROLLING5_PULSES.json").read_text(encoding="utf-8"))
         ledger["pulses"].append({
             "id": pid, "observed_date": snap["source"]["observed_date"],
             "snapshot": rel,
@@ -248,7 +248,7 @@ class EndToEndTests(unittest.TestCase):
         with redirect_stdout(io.StringIO()):
             self.assertEqual(r5.main(["--append-pulse", "data/next.json",
                                       "--pulse-id", "P2"], root=self.box.root), 0)
-        ledger = json.loads((self.box.root / "data/ROLLING5_PULSES.json").read_text())
+        ledger = json.loads((self.box.root / "data/ROLLING5_PULSES.json").read_text(encoding="utf-8"))
         self.assertEqual([p["id"] for p in ledger["pulses"]], ["P1", "P2"])
         self.assertEqual(ledger["pulses"][1]["origin"], "APPENDED")
         with self.assertRaisesRegex(ValueError, "duplicate"):
@@ -310,7 +310,7 @@ class GoldenThreadSourceRedTests(unittest.TestCase):
         self.assertEqual(closure["D"], set())
 
     def test_source_red_ranks_common_cause_and_edge_weight(self):
-        policy = json.loads((ROOT / "data" / "ROLLING5_POLICY.json").read_text())
+        policy = json.loads((ROOT / "data" / "ROLLING5_POLICY.json").read_text(encoding="utf-8"))
         rows = r5.rows_of(snapshot("d", five({
             "o/r1": {"H08": "FAIL", "H05": "FAIL"}, "o/r2": {"H08": "FAIL"},
             "o/r3": {"H08": "FAIL"}, "o/r4": {"H01": "PASS"}})))
@@ -326,7 +326,7 @@ class GoldenThreadSourceRedTests(unittest.TestCase):
         self.assertIn("H12", first["blocks"])
 
     def test_passing_dependents_are_not_counted_as_blocked(self):
-        policy = json.loads((ROOT / "data" / "ROLLING5_POLICY.json").read_text())
+        policy = json.loads((ROOT / "data" / "ROLLING5_POLICY.json").read_text(encoding="utf-8"))
         statuses = dict(ALL_PASS, H08="FAIL")
         rows = r5.rows_of(snapshot("d", [row("o/x", 1, statuses)]))
         inst = r5.source_red(rows, [], policy)["instances"][0]

@@ -59,7 +59,7 @@ def stage_redtrace(project_root, output_root, portal_hashes):
     for name in sorted(REDTRACE_REQUIRED):
         dst=output_root/'jade'/name;dst.parent.mkdir(parents=True,exist_ok=True)
         shutil.copyfile(site/name,dst)
-        portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
+        portal_hashes[dst.relative_to(output_root).as_posix()]=sha256(dst)
     return len(REDTRACE_REQUIRED)
 
 def stage_burndown(project_root, output_root, portal_hashes):
@@ -106,7 +106,7 @@ def stage_burndown(project_root, output_root, portal_hashes):
         dst=output_root/'jade'/name
         dst.parent.mkdir(parents=True,exist_ok=True)
         shutil.copyfile(src,dst)
-        portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
+        portal_hashes[dst.relative_to(output_root).as_posix()]=sha256(dst)
     return len(BURNDOWN_REQUIRED)
 
 EIGHT_REQUIRED={
@@ -165,7 +165,7 @@ def stage_eight_point(project_root, output_root, portal_hashes):
         dst=output_root/'jade'/name
         dst.parent.mkdir(parents=True,exist_ok=True)
         shutil.copyfile(src,dst)
-        portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
+        portal_hashes[dst.relative_to(output_root).as_posix()]=sha256(dst)
     return len(EIGHT_REQUIRED)
 
 SHA40=re.compile(r'^[0-9a-f]{40}$')
@@ -208,7 +208,7 @@ def stage_jade(project_root, output_root, portal_hashes, source_sha):
         if not src.is_file() or src.is_symlink():raise ValueError('JADE_STATIC_MISSING: '+name)
         dst=output_root/'jade'/name;dst.parent.mkdir(parents=True,exist_ok=True)
         shutil.copyfile(src,dst)
-        portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
+        portal_hashes[dst.relative_to(output_root).as_posix()]=sha256(dst)
     n2_assets=stage_burndown(project_root,output_root,portal_hashes)
     n3_assets=stage_eight_point(project_root,output_root,portal_hashes)
     n8_assets=stage_redtrace(project_root,output_root,portal_hashes)
@@ -223,5 +223,5 @@ def stage_jade(project_root, output_root, portal_hashes, source_sha):
         'redtrace_assets_in_pages':n8_assets}
     dst=output_root/'jade'/'publisher-receipt.json'
     dst.write_text(json.dumps(proof,sort_keys=True,indent=2)+'\n',encoding='utf-8')
-    portal_hashes[str(dst.relative_to(output_root))]=sha256(dst)
+    portal_hashes[dst.relative_to(output_root).as_posix()]=sha256(dst)
     return proof
