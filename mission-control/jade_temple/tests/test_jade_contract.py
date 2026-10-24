@@ -42,7 +42,7 @@ class JadeContractTest(unittest.TestCase):
         self.assertEqual(REG['nplus2_prior_zip']['sha256'],STATE['historical_nplus2_sha256']);self.assertTrue(REG['nplus2_prior_zip']['verified_crc'])
     def test_13_burndown_queue_ids(self):
         with (ROOT/'data/BD_QUEUE.csv').open(newline='',encoding='utf-8') as f: rows=list(csv.DictReader(f))
-        self.assertEqual(len(rows),14);self.assertEqual(len({r['id'] for r in rows}),14);self.assertIn('P0',{r['priority'] for r in rows})
+        self.assertEqual(len(rows),15);self.assertEqual(len({r['id'] for r in rows}),15);self.assertIn('P0',{r['priority'] for r in rows})
     def test_14_spine_non_authority(self):
         x=(ROOT/'diagrams/JADE_SPINE.mmd').read_text(encoding='utf-8');self.assertIn('flowchart',x);self.assertIn('reference-only',x);self.assertIn('HOLD',x)
     def test_15_html_determinism(self):

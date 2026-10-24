@@ -58,7 +58,7 @@
     "../qps-triage-ultra/p-process/site/code-purple/kit/census.json": "d638ad8dc530ea272ce96c36d370d46a32f61d608392076402f918af42429a20",
     "../qps-triage-ultra/p-process/site/data/p_state.json": "98cfa8ed19755bfc2172cfcda6f1267ec7f78c7779c2920a60a97fcb9045a45e",
     "../qps-triage-ultra/p-process/site/everred/data/everred.json": "0eb4b3c5287ee352f15669e8f8d500bc17c63d8da3617f76392e8f6b8ac25120",
-    "data/BD_QUEUE.csv": "2231234ceaf46b79168c0c0f080b13b3a3b9691431df26bb0c6e558cc5393d13",
+    "data/BD_QUEUE.csv": "ffe52c97d3175ddadd00015773d90d434f46378b055e891888ddd7786fb29632",
     "data/CICD_DAG_POLICY.json": "6dfc54df37f123708be7ec9dcd6265098c3534e75714c0ce97aed501def6b47e",
     "data/COHORT_CROSSWALK_NPLUS1.json": "8e22c5963cc165b2ec8e83383a7469aebd177335eaddca8043b1692bf10e2cbc",
     "data/DEVOPS_CENSUS_N10.json": "b6da8cdb470436688801711e54f41da2401eb62564b31fd65c8783ed38f0a754",
@@ -1249,7 +1249,7 @@
       "function": "JADE burn-down queue (issue BD)",
       "id": "OBJ.BD_QUEUE",
       "kind": "data",
-      "oid": "ef36a3a79c60d7638255bd82bcf97d519020db99",
+      "oid": "79e4535f78e2c3d6b6177c0e6f3b30ba9244e6ed",
       "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
       "symbol": null
     },
@@ -2352,10 +2352,10 @@
           "verified_completion_pct": 23.33
         },
         "issue_bd": {
-          "bd_open": 11,
-          "bd_total": 14,
+          "bd_open": 12,
+          "bd_total": 15,
           "by_status": {
-            "ACTIVE": 1,
+            "ACTIVE": 2,
             "BLOCKED_OWNER": 1,
             "DONE_LOCAL": 2,
             "DONE_NONATOMIC": 1,
@@ -3845,14 +3845,14 @@
         },
         {
           "colour": "ISSUE_BD",
-          "detail": "BD 11/14 open · 92 issues · 5 PRs (focus repos)",
+          "detail": "BD 12/15 open · 92 issues · 5 PRs (focus repos)",
           "id": "O.BD",
           "kind": "O",
           "label": "Issue / BD burn-down",
           "layer": 5,
           "metrics": {
             "bd_by_status": {
-              "ACTIVE": 1,
+              "ACTIVE": 2,
               "BLOCKED_OWNER": 1,
               "DONE_LOCAL": 2,
               "DONE_NONATOMIC": 1,
@@ -3861,17 +3861,17 @@
               "PENDING_NATIVE": 1,
               "PENDING_OWNER": 1
             },
-            "bd_open": 11,
-            "bd_total": 14,
+            "bd_open": 12,
+            "bd_total": 15,
             "open_issues": 92,
             "open_prs": 5
           },
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/BD_QUEUE.csv",
+              "jade_oid": null,
               "object": "OBJ.BD_QUEUE",
-              "oid": "ef36a3a79c60d7638255bd82bcf97d519020db99",
+              "oid": "79e4535f78e2c3d6b6177c0e6f3b30ba9244e6ed",
               "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
               "status": "BOUND",
               "symbol": null
@@ -7175,9 +7175,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/BD_QUEUE.csv",
+              "jade_oid": null,
               "object": "OBJ.BD_QUEUE",
-              "oid": "ef36a3a79c60d7638255bd82bcf97d519020db99",
+              "oid": "79e4535f78e2c3d6b6177c0e6f3b30ba9244e6ed",
               "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
               "status": "BOUND",
               "symbol": null
@@ -9854,9 +9854,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/BD_QUEUE.csv",
+              "jade_oid": null,
               "object": "OBJ.BD_QUEUE",
-              "oid": "ef36a3a79c60d7638255bd82bcf97d519020db99",
+              "oid": "79e4535f78e2c3d6b6177c0e6f3b30ba9244e6ed",
               "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
               "status": "BOUND",
               "symbol": null
@@ -12104,9 +12104,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/BD_QUEUE.csv",
+              "jade_oid": null,
               "object": "OBJ.BD_QUEUE",
-              "oid": "ef36a3a79c60d7638255bd82bcf97d519020db99",
+              "oid": "79e4535f78e2c3d6b6177c0e6f3b30ba9244e6ed",
               "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
               "status": "BOUND",
               "symbol": null
@@ -14403,9 +14403,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/BD_QUEUE.csv",
+              "jade_oid": null,
               "object": "OBJ.BD_QUEUE",
-              "oid": "ef36a3a79c60d7638255bd82bcf97d519020db99",
+              "oid": "79e4535f78e2c3d6b6177c0e6f3b30ba9244e6ed",
               "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
               "status": "BOUND",
               "symbol": null
@@ -16563,9 +16563,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/BD_QUEUE.csv",
+              "jade_oid": null,
               "object": "OBJ.BD_QUEUE",
-              "oid": "ef36a3a79c60d7638255bd82bcf97d519020db99",
+              "oid": "79e4535f78e2c3d6b6177c0e6f3b30ba9244e6ed",
               "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
               "status": "BOUND",
               "symbol": null
