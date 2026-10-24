@@ -12,6 +12,9 @@ on:
       - mission-control/qps-triage-ultra/w3_bt_observations.json
       - mission-control/qps-triage-ultra/w3_bt_gate.py
       - mission-control/qps-triage-ultra/test_w3_engines.py
+      - mission-control/qps-triage-ultra/w3_receipt_sync.py
+      - mission-control/qps-triage-ultra/w3_measured_analytics_receipt.json
+      - mission-control/qps-triage-ultra/w3_observed_bt_receipt.json
       - .github/workflows/qps-triage-w3-analytics.yml
   pull_request:
     paths:
@@ -20,6 +23,9 @@ on:
       - mission-control/qps-triage-ultra/w3_bt_observations.json
       - mission-control/qps-triage-ultra/w3_bt_gate.py
       - mission-control/qps-triage-ultra/test_w3_engines.py
+      - mission-control/qps-triage-ultra/w3_receipt_sync.py
+      - mission-control/qps-triage-ultra/w3_measured_analytics_receipt.json
+      - mission-control/qps-triage-ultra/w3_observed_bt_receipt.json
       - .github/workflows/qps-triage-w3-analytics.yml
   workflow_dispatch:
 
@@ -41,6 +47,9 @@ jobs:
 
       - name: Engine unit and negative controls (Jacobi, PCA DEFER branches, BT pair rules)
         run: python -m unittest discover -s mission-control/qps-triage-ultra -p 'test_w3_engines.py' -v
+
+      - name: Committed receipts equal engine output on committed inputs (drift guard)
+        run: python mission-control/qps-triage-ultra/w3_receipt_sync.py --check
 
       - name: Execute measured fleet analytics
         run: |
