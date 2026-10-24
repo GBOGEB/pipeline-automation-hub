@@ -6,6 +6,12 @@ one of the last 12 merged PRs, comes from GitHub Actions (integration_id 15368) 
 or was skipped on at least 90% of them. A required check that does not run on every PR blocks
 merges forever, so path-filtered jobs are excluded.
 
+One owner-approved exception (2026-10-24): the hub also requires `GOGREEN required gate`. On the
+last 12 merged PRs (#814-#831) it ran 12/12 times, unfiltered, from GitHub Actions, and passed 9/12
+(75%). All three failures were true reds, not flakes: #815, #820 and #821 merged with the JADE suite
+red (CI/CD DAG outputs stale, outdated pin test), repaired by #829. The 90% bar exists to keep flaky
+checks out; this gate missed it only because it caught real red merges, which is what it is for.
+
 Import: Settings -> Rules -> Rulesets -> New ruleset -> Import a ruleset (upload the .json),
 or: gh api -X POST repos/OWNER/REPO/rulesets --input FILE.json   (owner only; agents never apply)
 """
@@ -29,9 +35,9 @@ REPOS = {
     "GBOGEB/gg_MATH": {"branch": "main", "checks": ["first-kernel", "monte-carlo-reference"],
                        "methods": ["merge", "squash", "rebase"],
                        "why": "Numerical kernels: first kernel and Monte-Carlo reference run on every PR."},
-    "GBOGEB/pipeline-automation-hub": {"branch": "master", "checks": ["validate-ultra-control", "canonical-self-test-and-mutation"],
+    "GBOGEB/pipeline-automation-hub": {"branch": "master", "checks": ["validate-ultra-control", "canonical-self-test-and-mutation", "GOGREEN required gate"],
                                        "methods": ["squash", "rebase"], "linear": True, "copilot_review": True,
-                                       "why": "Hosts the Code Purple review site. Keeps linear history and Copilot review from the existing ruleset, which currently targets no branch."},
+                                       "why": "Hosts the Code Purple review site. Keeps linear history and Copilot review from the existing ruleset, which currently targets no branch. GOGREEN required gate is the MACH-II compensating check for the solo-owner review waiver; it is below the 90% bar (9/12) only because it failed on true reds (#815, #820, #821)."},
     "GBOGEB/Q_engineering_tools": {"branch": "main", "checks": ["build-and-exercise", "engineering-source-smoke"],
                                    "methods": ["merge", "squash", "rebase"],
                                    "why": "Build and engineering-source smoke run on every PR."},
@@ -106,16 +112,17 @@ def hard_abacus(b: dict) -> dict:
 
 def main():
     out = Path(__file__).parent
+    lf = {"encoding": "utf-8", "newline": "\n"}  # same bytes from Windows and Linux
     manifest = {}
     for repo, cfg in REPOS.items():
         b = basic(repo, cfg)
         name = repo.split("/")[1]
-        (out / f"{name}.basic.json").write_text(json.dumps(b, indent=2) + "\n")
+        (out / f"{name}.basic.json").write_text(json.dumps(b, indent=2) + "\n", **lf)
         manifest[repo] = {"file": f"{name}.basic.json", "branch": cfg["branch"], "checks": cfg["checks"], "why": cfg["why"]}
         if repo == "GBOGEB/ABACUS":
-            (out / "ABACUS.hard.json").write_text(json.dumps(hard_abacus(b), indent=2) + "\n")
+            (out / "ABACUS.hard.json").write_text(json.dumps(hard_abacus(b), indent=2) + "\n", **lf)
             manifest[repo]["hard_file"] = "ABACUS.hard.json"
-    (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", **lf)
     print("\n".join(f"{r}: {m['file']} -> {', '.join(m['checks'])}" for r, m in manifest.items()))
 
 
