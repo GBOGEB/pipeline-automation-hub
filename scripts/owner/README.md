@@ -71,8 +71,13 @@ emergency merge, add yourself as a bypass actor in the UI. Do not delete rules.
 ## Should BASIC require `First-Pass Closure Gate / first-pass-closure`?
 
 **What the JSON does today:** no BASIC file lists it. For the hub, the required checks are
-`validate-ultra-control` and `canonical-self-test-and-mutation`. The gate is not in
-`manifest.json` either.
+`validate-ultra-control`, `canonical-self-test-and-mutation` and `GOGREEN required gate`. The
+gate is not in `manifest.json` either.
+
+`GOGREEN required gate` is the one owner-approved exception to the 90% bar below. On the last 12
+merged PRs (#814-#831) it ran on all 12 and passed 9. The three failures (#815, #820, #821) were
+true reds that merged with the JADE suite red, not flakes. It is the MACH-II compensating check
+for the solo-owner review waiver, so it has to be enforced by the platform.
 
 **Recommendation: do not require it yet.** Add it only after the PR template carries the
 first-pass-closure receipt. Another worker is adding that receipt in a separate PR. The

@@ -76,6 +76,34 @@ python mission-control/gogreen/scale_dock.py --input <series.json> --out ./out -
   --crosswalk mission-control/gogreen/g5_gap_crosswalk_20261015.json
 ```
 
+## Real pulses (N0, N+1, …)
+
+`mission-control/gogreen/scale_dock_series.py` turns live read-only GitHub data into a `HISTORICAL_REPLAY` series. It imports its owners and copies nothing from them:
+- `bd_queue_wave`: `GitHubReader.paginate`, `scan`, `scan_public` and `family`;
+- EVERRED `harvest`: `occurrences_from_job`, `matches`, `norm` and `split_env`;
+- `scale_dock`: the series contract and `evaluate()`.
+
+**What one pulse records:**
+- **Exact heads.** The default-branch head of ABACUS, CODEX and the hub, each read once (AGENTS.md L6), plus every Actions job on that head. When an identity was attempted more than once, the latest attempt counts. A run that is still in progress is not read; it is counted in `provenance`.
+- **Findings.**
+  - A failed job is `RED`. Its first failed step comes from the owner `harvest` function, and its root ID from `harvest.matches()` against `roots.yaml`.
+  - A job identity that was `RED` in the previous pulse and passes on the new head is `RECOVERED`.
+  - The native `run_id`/`attempt`/`job_id` tuple is set only when all three are known; otherwise all three are null.
+- **Issue BD.** Live `scan_public()` over the three public repos. Private cryoplant data is read through the gh login and enters as aggregate counts only (`private_qps_open_issues`, `private_qps_open_prs`), labelled `GH_LOGIN_AGGREGATE_COUNT_NOT_OWNER_RECEIPT`. It never includes a private SHA, issue number, title or row. If the private read fails, both counts are `null` (UNKNOWN), never 0, and `private_receipt_status` stays HOLD.
+- **File docks.** EVERRED, Code Purple, P-process and the G5 crosswalk are read at the hub's pulse head SHA and pinned by git blob OID and sha256.
+- **Ledger.** `scale-dock/real/pulses.jsonl` holds one canonical JSON line per pulse. Each line chains the sha256 of the previous line, ordinals run 0, 1, 2, … and pulse times are strictly increasing. Lines are only ever appended; any edit, reorder or truncation is HOLD.
+
+PR-head failures are not findings, because the series contract allows one exact head per repo. They appear through the issue-BD dock.
+
+```bash
+python mission-control/gogreen/scale_dock_series.py pulse                      # observe live, append N+1 (gh login, no token handling)
+python mission-control/gogreen/scale_dock_series.py series --out series.json   # last 12 pulses + latest docks, validated by evaluate()
+python mission-control/gogreen/scale_dock.py --input series.json --out mission-control/gogreen/scale-dock/real/receipt \
+  --source-sha <hub_sha of the latest pulse>
+```
+
+The N0 receipt is in `scale-dock/real/receipt/`. Rebuild `series.json` from the ledger whenever it is needed; it is not committed. Tests replay recorded, field-trimmed `gh api` responses from `samples/scale_dock_series_api_fixture_20261024.json` and need neither the network nor PyYAML.
+
 ## Rebuild outputs
 
 `out/scale-dock.json`, `out/scale-dock.mmd`, `out/scale-dock.html`, `out/scale-dock-manifest.json`. Manifest binds exact *operator-supplied* generator SHA, member byte lengths and SHA-256. Rebuild assets only from an upstream source; never edit outward HTML into engineering truth. A GitHub-native run/job/artifact receipt and independent ZIP readback remain required for `EXACT_SHA_RECEIPT`.

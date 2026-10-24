@@ -51,11 +51,21 @@ def parse(path: str, text: str):
 def pick(doc, path: str):
     """Read a dotted path; ``name[]`` maps the rest of the path over a list.
 
+    ``name{}`` does the same over a mapping's entries, each seen as
+    ``{"key": k, "value": v}`` in the owner's order (e.g. repo-keyed state).
     Returns (value, found). A missing key gives (None, False); nothing is coerced.
     """
     if path == "[]":
         return doc, isinstance(doc, list)
     head, _, rest = path.partition(".")
+    if head.endswith("{}"):
+        mapping = doc.get(head[:-2]) if isinstance(doc, dict) else None
+        if not isinstance(mapping, dict):
+            return None, False
+        entries = [{"key": k, "value": v} for k, v in mapping.items()]
+        if not rest:
+            return entries, True
+        return [pick(entry, rest)[0] for entry in entries], True
     if head.endswith("[]"):
         items = doc if head == "[]" else (doc.get(head[:-2]) if isinstance(doc, dict) else None)
         if not isinstance(items, list):
