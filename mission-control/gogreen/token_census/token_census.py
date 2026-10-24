@@ -322,6 +322,35 @@ def markdown(receipt):
     return "\n".join(lines) + "\n"
 
 
+def _esc(text):
+    return str(text).replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+
+def annotations(receipt):
+    """Check annotations (Actions workflow commands) for every finding the owner must act on.
+
+    The step summary and artifact are not visible everywhere a check is; annotations are.
+    Only secret names, probe states and lane verdicts appear, never a value.
+    """
+    names = {t["id"]: t["name"] for t in receipt["tokens"]}
+    out = []
+    for tok in receipt["tokens"]:
+        for secret, state in sorted(tok["probes"].items()):
+            if state not in ("VALID", "NOT_PROBED"):
+                out.append("::error title=token census: %s::%s" % (_esc(secret), _esc(
+                    "hub probe of %s returned %s for token #%d %s (UNSET: secret empty; INVALID: re-save; "
+                    "NOT_SELECTED: the token does not select that repo or its org approval is pending)"
+                    % (PROBE_REPO, state, tok["id"], tok["name"]))))
+    for lane in receipt["lanes"]:
+        if lane["action"] in ("OWNER", "THREAD"):
+            level = "error" if lane["action"] == "OWNER" else "warning"
+            out.append("::%s title=token census %s: %s::%s" % (level, lane["action"], _esc(lane["workflow"]), _esc(
+                "%s (token #%d %s) on %s: %s [verdict %s, signal %s]" % (
+                    lane["secret"], lane["token"], names.get(lane["token"], "?"), lane["repo"], lane["why"],
+                    lane.get("verdict"), lane.get("signal", "-")))))
+    return out
+
+
 def main(argv=None, environ=None, fetch=http, now=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--registry", required=True, type=pathlib.Path)
@@ -340,6 +369,9 @@ def main(argv=None, environ=None, fetch=http, now=None):
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "token_census.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
     (args.out / "token_census.md").write_text(markdown(receipt), encoding="utf-8")
+    if env.get("GITHUB_ACTIONS") == "true":  # live CI only; offline tests stay silent
+        for line in annotations(receipt):
+            print(line)
     print(json.dumps({"token_health": receipt["token_health"], **receipt["totals"]}))
     return 1 if receipt["token_health"] != "HEALTHY" else 0
 
