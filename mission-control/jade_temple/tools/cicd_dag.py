@@ -103,7 +103,13 @@ def path_binding(hub: Path, repo: str, rel: str, census: dict | None = None) -> 
     return _binding(None, rel, None, git_blob_oid(p.read_bytes()), "BOUND")
 
 
-# --- DevOps census (peer N+9 input) ---------------------------------------
+# --- DevOps census (pinned pulse input) -----------------------------------
+
+def pulse_label(census: dict) -> str:
+    """'N10' -> 'N+10': the pulse name the census records about itself."""
+    it = str(census.get("iteration") or "")
+    return f"N+{it[1:]}" if it[:1] == "N" and it[1:].isdigit() else it or "UNKNOWN"
+
 
 def load_census(root: Path, policy: dict) -> dict | None:
     """Load the pinned census and index every path to (blob, jade oid, kind).
@@ -723,7 +729,7 @@ def build_total(ctx: dict) -> dict:
     if census:
         c = census["census"]
         t = c["fleet"]["totals"]
-        g.node("I.DEVOPS_CENSUS", "I", "INPUT", "DevOps lifecycle census N+9",
+        g.node("I.DEVOPS_CENSUS", "I", "INPUT", f"DevOps lifecycle census {pulse_label(c)}",
                flags={"CROSSWALK"}, producers=["CENSUS"],
                shas=sha_ref("census digest", c["digest_sha256"]),
                detail=f"{c['fleet']['reachable']}/{c['fleet']['repos']} repos · {t['wf_workflows']} workflows · "
@@ -1281,7 +1287,7 @@ def lifecycle_matrix(census: dict | None, snapshot: dict) -> dict | None:
             "status": {k: stage_status(r["stages"][k]) for k in keys},
             "next_blocker": {k: (r["stages"][k].get("next_blocker") or {}).get("probe") for k in keys},
         })
-    return {"schema": c["schema"], "digest_sha256": c["digest_sha256"],
+    return {"schema": c["schema"], "digest_sha256": c["digest_sha256"], "pulse": pulse_label(c),
             "observed_at_utc": c["observed_at_utc"], "stages": keys,
             "level_names": c["lifecycle"]["levels"], "repos": rows,
             "fleet": {k: {x: c["fleet"]["stages"][k][x] for x in ("median_level", "mean_completion", "repos_ge_L3")}

@@ -1,8 +1,8 @@
 # GoGreen launcher
 
-One page that links the existing GoGreen, JADE and Mission Control pages and shows the headline
-numbers for completion, progress, TODO, BD-queue, health, DMAIC, MIP, MYCELIUM and the golden
-thread.
+One page that links the existing GoGreen, JADE, Mission Control and PURPLE / P-process pages and
+shows the headline numbers for completion, progress, TODO, BD-queue, health, DMAIC, MIP, MYCELIUM,
+the golden thread, P-process mode, EVERRED and the Code Purple queue and iteration series.
 
 **It computes no metric.** Each tile reads fields verbatim from the committed output of the
 metric's canonical owner (AGENTS.md L4), and every input is read at one commit (L6). A field that
@@ -32,6 +32,13 @@ not this page.
 | MYCELIUM | `gogreen/mycelium_history` | `gogreen/mycelium_history/W10_LAST_GOOD_APPEND_20261018.json` |
 | Golden Thread | `jade_temple/tools/rolling5.py` (`golden_thread()`) | `jade_temple/site/rolling5.json` |
 | MIP (eight-point) | `jade_temple/site/build_eightpoint.py` | `jade_temple/site/eightpoint.json` |
+| P-process mode | `qps-triage-ultra/p-process/p_decide.py` | `qps-triage-ultra/p-process/site/data/p_state.json` |
+| EVERRED | `qps-triage-ultra/p-process/everred/harvest.py` | `qps-triage-ultra/p-process/site/everred/data/everred.json` |
+| BD-queue (Code Purple) | `federation-atlas` (`build_code_purple.py`) | `federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json` |
+| Code Purple iterations | `federation-atlas/code_purple_series.py` | `federation-atlas/CODE_PURPLE_ITERATION_SERIES_v1.json` |
+
+Field paths are dotted; `name[]` maps the rest of the path over a list and `name{}` over a
+mapping's entries, each read as `{"key": k, "value": v}` (used for the repo-keyed `p_state.json`).
 
 Paths are under `mission-control/`.
 

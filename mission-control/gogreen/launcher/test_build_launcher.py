@@ -34,6 +34,15 @@ class Pick(unittest.TestCase):
         rows = bl.parse("q.csv", "id,status\nJ1,DONE\n")
         self.assertEqual(bl.pick(rows, "[]"), ([{"id": "J1", "status": "DONE"}], True))
 
+    def test_mapping_entries_keep_owner_order_and_values(self):
+        doc = {"repos": {"GBOGEB/B": {"mode": "EVERRED"}, "GBOGEB/A": {"mode": None}}}
+        entries, found = bl.pick(doc, "repos{}")
+        self.assertTrue(found)
+        self.assertEqual([e["key"] for e in entries], ["GBOGEB/B", "GBOGEB/A"])
+        self.assertEqual(bl.pick(doc, "repos{}.value.mode"), (["EVERRED", None], True))
+        self.assertEqual(bl.pick(doc, "nope{}"), (None, False))
+        self.assertEqual(bl.pick({"repos": [1]}, "repos{}"), (None, False))
+
 
 class Committed(unittest.TestCase):
     @classmethod
