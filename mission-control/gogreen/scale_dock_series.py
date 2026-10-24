@@ -27,6 +27,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import re
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -80,8 +81,11 @@ class GhReader(bd.GitHubReader):
             raise ValueError('noncanonical API path')
         # A stale shell token would override the keyring login; gh alone authenticates.
         env = {k: v for k, v in os.environ.items() if k not in ('GITHUB_TOKEN', 'GH_TOKEN')}
-        out = self.run(['gh', 'api', route[1:]], capture_output=True, text=True,
-                       encoding='utf-8', env=env, timeout=120)
+        for _ in range(3):  # bounded retry on GitHub 5xx only; any other failure is final
+            out = self.run(['gh', 'api', route[1:]], capture_output=True, text=True,
+                           encoding='utf-8', env=env, timeout=120)
+            if out.returncode == 0 or not re.search(r'\(HTTP 5\d\d\)', out.stderr or ''):
+                break
         if out.returncode != 0:
             raise OSError(f"gh api {route.split('?')[0]} exit {out.returncode}")
         return json.loads(out.stdout)
