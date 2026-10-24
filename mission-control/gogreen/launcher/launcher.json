@@ -8,6 +8,7 @@
     "mission-control/grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json": "ff36eb882511cc80bfaed3db1533e4b5c0f6618a",
     "mission-control/jade_temple/data/BD_QUEUE.csv": "ef36a3a79c60d7638255bd82bcf97d519020db99",
     "mission-control/jade_temple/site/burndown.json": "f81f29954faac2cdf7646d55be02feada7bceb95",
+    "mission-control/jade_temple/site/eightpoint.json": "fb875e6f60c89122f6e21efbf518867cc003c9fb",
     "mission-control/jade_temple/site/rolling5.json": "29eb67ff11630bb2e205d76179e2da4af2a8825c",
     "mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json": "b8055243094c63b6a91bb4fbad8764f139f05fd0"
   },
@@ -136,8 +137,8 @@
   "repo_url": "https://github.com/GBOGEB/pipeline-automation-hub",
   "rule": "Read-only projection. Every value is read verbatim from the canonical owner's committed output; this launcher computes no metric (AGENTS.md L4). Missing or null values render as unknown, never zero.",
   "schema": "gogreen.launcher.snapshot.v1",
-  "source_date": "2026-10-23T18:52:59+02:00",
-  "source_sha": "1662606b98348ec84e5661d0fe7a311637f2680d",
+  "source_date": "2026-10-24T15:20:14+02:00",
+  "source_sha": "60208cd252eeab02a2da82eaf3afc7df378614d5",
   "tiles": [
     {
       "fields": [
@@ -769,15 +770,135 @@
       "schema": "missioncontrol.hm01.r3.dmaic_control.v3"
     },
     {
-      "id": "mit",
-      "label": "MIT",
+      "fields": [
+        {
+          "label": "Governance gates total",
+          "path": "metrics.governance_gate_total",
+          "value": 9
+        },
+        {
+          "label": "MIP sections",
+          "path": "metrics.eight_sections",
+          "value": 8
+        },
+        {
+          "label": "Actions open",
+          "path": "metrics.action_open",
+          "value": 21
+        },
+        {
+          "label": "Actions owner-closed",
+          "path": "metrics.action_owner_closed",
+          "value": 0
+        },
+        {
+          "label": "Native positive events",
+          "path": "metrics.native_positive_events",
+          "value": 5
+        },
+        {
+          "label": "Release qualified",
+          "path": "metrics.release_qualified",
+          "value": null
+        },
+        {
+          "label": "Merge admission",
+          "path": "merge_admission",
+          "value": "HOLD"
+        },
+        {
+          "label": "Observed",
+          "path": "source_observed_at",
+          "value": "2026-10-18T22:47:14+00:00"
+        }
+      ],
+      "headline": {
+        "label": "Governance gates passing",
+        "path": "metrics.governance_gate_pass",
+        "value": 1
+      },
+      "id": "mip",
+      "input": "mission-control/jade_temple/site/eightpoint.json",
+      "input_oid": "fb875e6f60c89122f6e21efbf518867cc003c9fb",
+      "label": "MIP",
+      "lists": [
+        {
+          "columns": [
+            "ID",
+            "MIP",
+            "Owner qualified",
+            "Admission blocker"
+          ],
+          "label": "Eight-point MIP",
+          "rows": [
+            [
+              "J01",
+              "Separate GitHub merge, CI, reviewer and effective ruleset dimensions; bind each receipt to exact head",
+              false,
+              "No protected independent admission proof"
+            ],
+            [
+              "J02",
+              "Typed full outer join with explicit exclusions and owner cohort election",
+              false,
+              "No owner-approved unified cohort"
+            ],
+            [
+              "J03",
+              "Single design tokens, keyboard-safe filters, searchable eight-axis cards, source hashes and one publisher",
+              false,
+              "Independent served HTTP proof unavailable"
+            ],
+            [
+              "J04",
+              "Immutable failure->repair->native->merge->postmerge causal chain, no merge-only green",
+              false,
+              "Latest-main terminal audit not qualified"
+            ],
+            [
+              "J05",
+              "Preserve complete 21-row BD queue with current head, role, next TODO and proof requirement",
+              false,
+              "Owner closure and release receipts missing"
+            ],
+            [
+              "J06",
+              "Pareto triage prioritizes source-owner cohorts; triage one candidate family before move/cleanup",
+              false,
+              "No authoritative defect classifications"
+            ],
+            [
+              "J07",
+              "Deterministic JSON/CSV/HTML build, SHA-256 manifest, native regression and screenshots",
+              false,
+              "New N+3 native QA not yet qualified"
+            ],
+            [
+              "J08",
+              "Reuse existing source-owned JADE sprint local DAG/worker pools; validate eight-point readiness as a distinct acceptance layer, not a second scheduler.",
+              false,
+              "Independent governance and served SHA remain unqualified; external sprint and new MIP must not double-count."
+            ]
+          ]
+        }
+      ],
+      "owner": "mission-control/jade_temple/site/build_eightpoint.py",
       "pages": [
         {
           "href": "../../jade_temple/site/eightpoint.html",
           "path": "mission-control/jade_temple/site/eightpoint.html"
+        },
+        {
+          "href": "../../federation-atlas/landing/MISSION_CONTROL_MACHII_N13.html",
+          "path": "mission-control/federation-atlas/landing/MISSION_CONTROL_MACHII_N13.html"
         }
       ],
-      "unresolved": "No MIT metric owner exists on origin/master. The only uses of MIT are a QPS interface label (CIS/MIT/ICT/MCB). Name the owner (or confirm MIT means MIP) before this tile shows numbers."
+      "schema": "jade.temple.eightpoint_projection.v3",
+      "status": {
+        "label": "Status",
+        "path": "stop_decision",
+        "value": "OWNER_BLOCKED"
+      }
     },
     {
       "fields": [

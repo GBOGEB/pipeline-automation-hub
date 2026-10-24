@@ -1,7 +1,7 @@
 # GoGreen launcher
 
 One page that links the existing GoGreen, JADE and Mission Control pages and shows the headline
-numbers for completion, progress, TODO, BD-queue, health, DMAIC, MIT, MYCELIUM and the golden
+numbers for completion, progress, TODO, BD-queue, health, DMAIC, MIP, MYCELIUM and the golden
 thread.
 
 **It computes no metric.** Each tile reads fields verbatim from the committed output of the
@@ -31,7 +31,7 @@ not this page.
 | DMAIC R3 control | `grand-missions` (`hm01-r3-dmaic-control.yml`) | `grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json` |
 | MYCELIUM | `gogreen/mycelium_history` | `gogreen/mycelium_history/W10_LAST_GOOD_APPEND_20261018.json` |
 | Golden Thread | `jade_temple/tools/rolling5.py` (`golden_thread()`) | `jade_temple/site/rolling5.json` |
-| MIT | **unresolved**: no owner on master | none |
+| MIP (eight-point) | `jade_temple/site/build_eightpoint.py` | `jade_temple/site/eightpoint.json` |
 
 Paths are under `mission-control/`.
 

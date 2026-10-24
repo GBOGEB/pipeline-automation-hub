@@ -170,10 +170,28 @@
       "pages": []
     },
     {
-      "id": "mit",
-      "label": "MIT",
-      "unresolved": "No MIT metric owner exists on origin/master. The only uses of MIT are a QPS interface label (CIS/MIT/ICT/MCB). Name the owner (or confirm MIT means MIP) before this tile shows numbers.",
-      "pages": ["mission-control/jade_temple/site/eightpoint.html"]
+      "id": "mip",
+      "label": "MIP",
+      "owner": "mission-control/jade_temple/site/build_eightpoint.py",
+      "input": "mission-control/jade_temple/site/eightpoint.json",
+      "status": "stop_decision",
+      "headline": {"label": "Governance gates passing", "path": "metrics.governance_gate_pass"},
+      "fields": [
+        {"label": "Governance gates total", "path": "metrics.governance_gate_total"},
+        {"label": "MIP sections", "path": "metrics.eight_sections"},
+        {"label": "Actions open", "path": "metrics.action_open"},
+        {"label": "Actions owner-closed", "path": "metrics.action_owner_closed"},
+        {"label": "Native positive events", "path": "metrics.native_positive_events"},
+        {"label": "Release qualified", "path": "metrics.release_qualified"},
+        {"label": "Merge admission", "path": "merge_admission"},
+        {"label": "Observed", "path": "source_observed_at"}
+      ],
+      "lists": [
+        {"label": "Eight-point MIP", "path": "sections[]", "columns": [
+          {"label": "ID", "key": "id"}, {"label": "MIP", "key": "MIP"},
+          {"label": "Owner qualified", "key": "owner_qualified"}, {"label": "Admission blocker", "key": "admission_blocker"}]}
+      ],
+      "pages": ["mission-control/jade_temple/site/eightpoint.html", "mission-control/federation-atlas/landing/MISSION_CONTROL_MACHII_N13.html"]
     },
     {
       "id": "mycelium",
