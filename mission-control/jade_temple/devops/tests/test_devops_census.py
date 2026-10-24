@@ -171,6 +171,17 @@ class EndToEnd(unittest.TestCase):
                               "remote.origin.partialclonefilter"], capture_output=True).stdout.decode().strip()
         self.assertEqual(cfg, "blob:none")
 
+    def test_failed_tag_read_is_unknown_not_zero(self):
+        d = self.tmp / "tags-probe.git"
+        shutil.copytree(C.cache_dir(self.cache, "demo/service"), d)
+        self.assertTrue(C.refresh_tags(d))
+        self.assertTrue((d / "jade-tags.txt").read_text(encoding="utf-8"))
+        git(self.tmp, "--git-dir", str(d), "remote", "set-url", "origin", (self.tmp / "gone").as_uri())
+        self.assertFalse(C.refresh_tags(d))
+        self.assertFalse((d / "jade-tags.txt").exists())
+        info = C.tag_info(self.tmp, "x/y")
+        self.assertIsNone(info["count"])
+
     def test_refetch_is_idempotent(self):
         again = C.fetch_repo(self.cache, "demo/service", "main", self.base, url=self.url)
         self.assertEqual((again["ok"], again["head"]), (True, self.head))
@@ -286,6 +297,40 @@ class EndToEnd(unittest.TestCase):
         self.assertIn("OBJECTS_DIGEST_DRIFT", errs)
         self.assertTrue(any("objects file drift" in e for e in errs))
 
+    def test_pulse_over_pulse_baseline_and_report(self):
+        base = C.census_baseline(self.census)
+        self.assertEqual(base["label"], "census N9 heads (2026-10-23T00:00:00Z)")
+        self.assertEqual(base["heads"], {"demo/service": self.head})
+        nxt, _obj = C.scan(self.cache, self.roster, "2026-10-24T00:00:00Z", get=self.get,
+                           fetch_log={"demo/missing": self.missing}, iteration="N10", baseline=base)
+        self.assertEqual(C.check(nxt, None), [])
+        self.assertEqual(nxt["iteration"], "N10")
+        self.assertEqual(nxt["sources"]["baseline"],
+                         {"kind": "census", "iteration": "N9", "digest_sha256": self.census["digest_sha256"],
+                          "label": base["label"]})
+        d = nxt["repos"][0]["delta"]
+        self.assertEqual((d["baseline_sha"], d["same_as_head"], d["commits"], d["baseline_label"]),
+                         (self.head, True, 0, base["label"]))
+        self.assertNotIn("delta", nxt["repos"][1])  # unreachable repos carry no delta at all
+        text = C.report(nxt, self.census)
+        for frag in ("# JADE N+10 DevOps census reading", "`data/DEVOPS_CENSUS_N10.json`",
+                     "## Change since the census N9 heads (2026-10-23T00:00:00Z)", "## Pulse over pulse: N9 → N10",
+                     "| service | same | none |", "| none | | | |"):
+            self.assertIn(frag, text)
+        self.assertNotIn("## Pulse over pulse", C.report(nxt))
+        prev = copy.deepcopy(self.census)
+        r0 = prev["repos"][0]
+        r0["head_sha"] = "0" * 40
+        r0["probes"]["plan.codeowners"]["state"] = L.FAIL
+        r0["stages"]["S0_PLAN"]["level"] = 0
+        prev["repos"].pop()
+        text = C.report(nxt, prev)
+        self.assertIn(f"| service | moved | S0 0→{nxt['repos'][0]['stages']['S0_PLAN']['level']} |", text)
+        self.assertIn("| `plan.codeowners` | FAIL | PASS | 1 |", text)
+        self.assertNotIn("| missing |", text.split("## Pulse over pulse")[1])
+        self.assertEqual([x.name for x in C.paths("N10")],
+                         ["DEVOPS_CENSUS_N10.json", "DEVOPS_OBJECTS_N10.json", "DEVOPS_CENSUS_N10_READING.md"])
+
     def test_report_renders_every_section_deterministically(self):
         text = C.report(self.census)
         self.assertEqual(text, C.report(json.loads(json.dumps(self.census))))
@@ -318,6 +363,15 @@ class EndToEnd(unittest.TestCase):
                               "--observed-at", "2026-10-23T00:00:00Z"])
             rc_check = C.main(["check", "--census", str(out / "c.json"), "--objects", str(out / "o.json")])
         self.assertEqual((rc_fetch, rc_scan, rc_check), (0, 0, 0), buf.getvalue())
+        with redirect_stdout(io.StringIO()):
+            self.assertEqual(C.main(["fetch", "--cache", str(cache), "--roster", str(roster), "--only", "demo/service",
+                                     "--baseline-census", str(out / "c.json")]), 0)
+            self.assertEqual(C.main(["scan", "--cache", str(cache), "--roster", str(roster), "--out", str(out / "c10.json"),
+                                     "--objects", str(out / "o10.json"), "--no-pages", "--no-api", "--iteration", "N10",
+                                     "--baseline-census", str(out / "c.json"), "--observed-at", "2026-10-24T00:00:00Z"]), 0)
+            self.assertEqual(C.main(["report", "--census", str(out / "c10.json"), "--previous", str(out / "c.json"),
+                                     "--out", str(out / "r10.md")]), 0)
+        self.assertIn("## Pulse over pulse: N9 → N10", (out / "r10.md").read_text(encoding="utf-8"))
         c = json.loads((out / "c.json").read_text(encoding="utf-8"))
         self.assertEqual(c["repos"][0]["delta"]["same_as_head"], True)
         self.assertEqual(c["sources"]["api"]["mode"], "off")
@@ -512,12 +566,16 @@ class Probes(unittest.TestCase):
 
 
 class CommittedCensus(unittest.TestCase):
-    """The committed fleet snapshot must satisfy every invariant the scanner enforces."""
+    """Every committed fleet pulse must satisfy every invariant the scanner enforces. Earlier pulses stay immutable."""
+
+    ITER, PREV = "N9", None
 
     @classmethod
     def setUpClass(cls):
-        cls.census = json.loads(C.OUT.read_text(encoding="utf-8"))
-        cls.objects = json.loads(C.OUT_OBJ.read_text(encoding="utf-8"))
+        cls.out, cls.out_obj, cls.out_md = C.paths(cls.ITER)
+        cls.census = json.loads(cls.out.read_text(encoding="utf-8"))
+        cls.objects = json.loads(cls.out_obj.read_text(encoding="utf-8"))
+        cls.previous = json.loads(C.paths(cls.PREV)[0].read_text(encoding="utf-8")) if cls.PREV else None
 
     def test_check_passes(self):
         self.assertEqual(C.check(self.census, self.objects), [])
@@ -542,7 +600,9 @@ class CommittedCensus(unittest.TestCase):
             self.assertEqual(sum(v["levels"].values()), len(live), k)
 
     def test_committed_reading_matches_census(self):
-        self.assertEqual(C.OUT_MD.read_text(encoding="utf-8").replace("\r\n", "\n"), C.report(self.census),
+        self.assertEqual(self.census["iteration"], self.ITER)
+        self.assertEqual(self.out_md.read_text(encoding="utf-8").replace("\r\n", "\n"),
+                         C.report(self.census, self.previous),
                          "run: python mission-control/jade_temple/devops/census.py report")
 
     def test_no_authority_and_lifecycle_contract(self):
@@ -552,6 +612,21 @@ class CommittedCensus(unittest.TestCase):
         self.assertEqual([s["key"] for s in self.census["lifecycle"]["stages"]], L.STAGE_KEYS)
         self.assertEqual(self.census["lifecycle"]["deploy_gates"], W.DP_GATES)
 
+
+class CommittedCensusN10(CommittedCensus):
+    ITER, PREV = "N10", "N9"
+
+    def test_baseline_is_the_n9_pulse(self):
+        b = self.census["sources"]["baseline"]
+        self.assertEqual((b["kind"], b["iteration"], b["digest_sha256"]),
+                         ("census", "N9", self.previous["digest_sha256"]))
+        n9 = {r["repo"]: r["head_sha"] for r in self.previous["repos"]}
+        for r in self.census["repos"]:
+            self.assertEqual(r["delta"]["baseline_sha"], n9.get(r["repo"]), r["repo"])
+
+    def test_n9_snapshot_is_unchanged(self):
+        self.assertEqual(self.previous["digest_sha256"],
+                         "1b3a1c5272145d62fa11b171def677186931c32af85adaa8e03fda90879d3bfd")
 
 if __name__ == "__main__":
     unittest.main()

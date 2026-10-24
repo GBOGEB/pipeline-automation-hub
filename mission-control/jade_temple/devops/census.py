@@ -47,6 +47,20 @@ RED_TRACE = "data/RED_TRACE_FEDERATION_N8.json"
 OUT = ROOT / "data" / "DEVOPS_CENSUS_N9.json"
 OUT_OBJ = ROOT / "data" / "DEVOPS_OBJECTS_N9.json"
 OUT_MD = HERE / "DEVOPS_CENSUS_N9_READING.md"
+ROSTER_BASELINE_LABEL = "TOP21 N11 roster head 2026-10-18 (non-atomic)"
+
+
+def paths(iteration: str) -> tuple[Path, Path, Path]:
+    """Committed census, object table and reading for one pulse (N9, N10, ...). Earlier pulses stay immutable."""
+    return (ROOT / "data" / f"DEVOPS_CENSUS_{iteration}.json", ROOT / "data" / f"DEVOPS_OBJECTS_{iteration}.json",
+            HERE / f"DEVOPS_CENSUS_{iteration}_READING.md")
+
+
+def census_baseline(prev: dict) -> dict:
+    """Use a previous pulse's exact heads as the delta baseline (pulse-over-pulse instead of roster heads)."""
+    return {"kind": "census", "iteration": prev["iteration"], "digest_sha256": prev["digest_sha256"],
+            "label": f"census {prev['iteration']} heads ({prev['observed_at_utc']})",
+            "heads": {r["repo"]: r["head_sha"] for r in prev["repos"] if r.get("head_sha")}}
 HUB = "GBOGEB/pipeline-automation-hub"
 HUB_PREFIX = "mission-control/jade_temple/"
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
@@ -236,6 +250,18 @@ def cache_dir(cache: Path, repo: str) -> Path:
     return Path(cache) / (repo.replace("/", "__") + ".git")
 
 
+def refresh_tags(gitdir: Path) -> bool:
+    """Record the remote's tags. A failed read removes the record, so tags stay UNKNOWN instead of reading as zero."""
+    out = Path(gitdir) / "jade-tags.txt"
+    p = subprocess.run(["git", "--git-dir", str(gitdir), "ls-remote", "--tags", "origin"], capture_output=True,
+                       timeout=300)
+    if p.returncode != 0:
+        out.unlink(missing_ok=True)
+        return False
+    out.write_text(p.stdout.decode("utf-8", errors="replace"), encoding="utf-8")
+    return True
+
+
 def fetch_repo(cache: Path, repo: str, branch: str, baseline: str | None, url: str | None = None) -> dict:
     """Clone or refresh one bare blobless cache, fetch the baseline commit and landed history."""
     url = url or f"https://github.com/{repo}.git"
@@ -258,9 +284,8 @@ def fetch_repo(cache: Path, repo: str, branch: str, baseline: str | None, url: s
             since = datetime.fromisoformat(g.commit_meta(baseline)["date"]) - timedelta(days=1)
             g.run("fetch", "-q", "--filter=blob:none", f"--shallow-since={since.date().isoformat()}", "origin",
                   f"+refs/heads/{branch}:refs/heads/{branch}", check=False)
-    tags = g.run("ls-remote", "--tags", "origin", check=False).decode()
-    (d / "jade-tags.txt").write_text(tags, encoding="utf-8")
-    shas = [head] + ([baseline] if base_ok and baseline != head else [])
+    refresh_tags(d)
+    shas =[head] + ([baseline] if base_ok and baseline != head else [])
     want = sorted({oid for s in shas for (_m, t, oid, path) in g.ls_tree(s) if t == "blob" and wanted(path)}
                   & set().union(*(g.missing(s) for s in shas)))
     g.fetch_blobs(want)
@@ -796,13 +821,15 @@ def repo_record(row: dict, g: Git | None, cache: Path, rt_idx: dict, pages: dict
                                                       w["sig"][j["id"]]["zero_test_guard"] or
                                                       w["sig"][j["id"]]["implicit_zero_guard"]))][:UNTESTED_CAP]},
                tags=tags, pages=pages, api=api, red_trace=rt_out)
-    rec["delta"] = delta(g, repo, row.get("commit_sha_observed"), head, sc, stages, tags, pages, api, rt)
+    rec["delta"] = delta(g, repo, row.get("commit_sha_observed"), head, sc, stages, tags, pages, api, rt,
+                         label=row.get("baseline_label", ROSTER_BASELINE_LABEL))
     objs = {"head_sha": head, "py_modules": [m[:8] for m in sc["modules"]], "test_files": sc["test_files"]}
     return rec, objs
 
 
-def delta(g: Git, repo: str, base: str | None, head: str, sc: dict, stages: dict, tags, pages, api, rt) -> dict:
-    out = {"baseline_sha": base, "baseline_label": "TOP21 N11 roster head 2026-10-18 (non-atomic)",
+def delta(g: Git, repo: str, base: str | None, head: str, sc: dict, stages: dict, tags, pages, api, rt,
+          label: str = "TOP21 N11 roster head 2026-10-18 (non-atomic)") -> dict:
+    out = {"baseline_sha": base, "baseline_label": label,
            "same_as_head": base == head, "reachable": False}
     if not base or not g.rev(base):
         return out
@@ -886,7 +913,7 @@ def fleet_summary(repos: list, contracts: dict) -> dict:
 
 def scan(cache: Path, roster_path: Path, observed_at: str, probe_pages_on=True, probe_api_on=True,
          get=http_get, only: set | None = None, fetch_log: dict | None = None, api_mode="unauthenticated",
-         api_budget=55) -> tuple[dict, dict]:
+         api_budget=55, iteration: str = "N9", baseline: dict | None = None) -> tuple[dict, dict]:
     roster = json.loads(roster_path.read_text(encoding="utf-8"))
     fed_path = ROOT / RED_TRACE
     fed = json.loads(fed_path.read_text(encoding="utf-8")) if fed_path.exists() else None
@@ -897,6 +924,8 @@ def scan(cache: Path, roster_path: Path, observed_at: str, probe_pages_on=True, 
     for row in sorted(roster["repositories"], key=lambda r: r["rank"]):
         if only and row["repo"] not in only:
             continue
+        if baseline:
+            row = dict(row, commit_sha_observed=baseline["heads"].get(row["repo"]), baseline_label=baseline["label"])
         d = cache_dir(cache, row["repo"])
         g = Git(d) if d.exists() else None
         head = g.rev(f"refs/heads/{row['branch']}") if g else None
@@ -909,7 +938,7 @@ def scan(cache: Path, roster_path: Path, observed_at: str, probe_pages_on=True, 
             hub_g, hub_head = g, head
     contracts = stage_contracts(hub_g, hub_head)
     census = {
-        "schema": SCHEMA, "iteration": "N9", "method": "JADE_CASTE / DevOps lifecycle S0..S9",
+        "schema": SCHEMA, "iteration": iteration, "method": "JADE_CASTE / DevOps lifecycle S0..S9",
         "authority": {"merge_admission": "HOLD", "merge_authorized": False, "release_authorized": False,
                       "deploy_authorized": False, "authority_transfer": False, "security_waiver": False},
         "observed_at_utc": observed_at,
@@ -922,6 +951,7 @@ def scan(cache: Path, roster_path: Path, observed_at: str, probe_pages_on=True, 
                   "Baseline delta holds the live probes (Pages, API, red-trace) constant; only structure differs.",
                   "No merge, release or deploy authority is derived from this census."],
         "sources": {"roster": ROSTER, "red_trace": RED_TRACE if fed else None,
+                    **({"baseline": {k: v for k, v in baseline.items() if k != "heads"}} if baseline else {}),
                     "api": {"mode": api_mode if probe_api_on else "off", "calls": budget[1],
                             "refused_status": budget[2]},
                     "red_trace_digest_sha256": (fed or {}).get("digest_sha256"),
@@ -1022,12 +1052,18 @@ def _dp_histogram(census: dict) -> tuple[int, Counter, list]:
     return len(jobs), fails, sorted(jobs)
 
 
-def report(census: dict) -> str:
-    """Deterministic Markdown reading of a census (tables only; prose lives in the architecture note)."""
+def report(census: dict, previous: dict | None = None) -> str:
+    """Deterministic Markdown reading of a census (tables only; prose lives in the architecture note).
+
+    With `previous`, a pulse-over-pulse section lists stage-level changes and probe-state flips per repository.
+    """
     f, keys = census["fleet"], L.STAGE_KEYS
     api = census["sources"]["api"]
-    out = ["# JADE N+9 DevOps census reading", "",
-           "Generated by `census.py report` from `data/DEVOPS_CENSUS_N9.json`; do not hand edit.",
+    it = census["iteration"]
+    base = census["sources"].get("baseline")
+    since = f"the {base['label']}" if base else "the TOP21 baseline (2026-10-18 heads)"
+    out = [f"# JADE N+{it[1:]} DevOps census reading", "",
+           f"Generated by `census.py report` from `data/DEVOPS_CENSUS_{it}.json`; do not hand edit.",
            f"Observed `{census['observed_at_utc']}` · digest `{census['digest_sha256'][:16]}` · "
            f"{f['reachable']}/{f['repos']} repositories reachable · API `{api['mode']}` "
            f"(refused: {api['refused_status']}) · merge admission {census['authority']['merge_admission']}.", "",
@@ -1063,7 +1099,7 @@ def report(census: dict) -> str:
             f"{t['tests_py_tested']} / {t['tests_py_untested']} |",
             f"| CI test jobs / without a zero-test guard | {t['wf_tests_ci']} / {t['wf_unguarded_test_jobs']} |",
             f"| Third-party actions pinned to a SHA | {t['wf_actions_pinned']} / {t['wf_actions_total']} |",
-            "", "## Change since the TOP21 baseline (2026-10-18 heads)", "",
+            "", f"## Change since {since}", "",
             "| Outcome | Fleet total |", "|---|---|"]
     out += [f"| {k} | {v} |" for k, v in sorted(o.items())]
     out += ["", "| Repository | Landed commits | fix | feat | test | Test cases Δ | Untested modules Δ |",
@@ -1092,7 +1128,44 @@ def report(census: dict) -> str:
     for pid, _st, lvl, _d in L.PROBES:
         c = Counter(r["probes"][pid]["state"] for r in live)
         out.append(f"| `{pid}` | L{lvl} | {c[L.PASS]} | {c[L.FAIL]} | {c[L.UNKNOWN]} |")
+    if previous is not None:
+        out += pulse_section(previous, census)
     return "\n".join(out) + "\n"
+
+
+def pulse_section(prev: dict, cur: dict) -> list[str]:
+    """Stage-level changes and probe flips between two pulses, matched by repository."""
+    keys = L.STAGE_KEYS
+    pr = {r["repo"]: r for r in prev["repos"]}
+    flips = Counter()
+    rows = []
+    for r in cur["repos"]:
+        o = pr.get(r["repo"])
+        if not o:
+            continue
+        for pid in L.PROBE_IDS:
+            a, b = o["probes"][pid]["state"], r["probes"][pid]["state"]
+            if a != b:
+                flips[(pid, a, b)] += 1
+        moves = [f"{k.split('_')[0]} {o['stages'][k]['level']}→{r['stages'][k]['level']}" for k in keys
+                 if o["stages"][k]["level"] != r["stages"][k]["level"]]
+        head = "same" if o.get("head_sha") == r.get("head_sha") else "moved"
+        rows.append(f"| {r['repo'].split('/')[1]} | {head} | {', '.join(moves) or 'none'} |")
+    po, pc = prev["fleet"]["totals"], cur["fleet"]["totals"]
+    out = ["", f"## Pulse over pulse: {prev['iteration']} → {cur['iteration']}", "",
+           f"Previous `{prev['observed_at_utc']}` digest `{prev['digest_sha256'][:16]}` → current "
+           f"`{cur['observed_at_utc']}` digest `{cur['digest_sha256'][:16]}`.", "",
+           "| Fleet measure | " + prev["iteration"] + " | " + cur["iteration"] + " |", "|---|---|---|"]
+    for k in ("wf_deploy", "wf_deploy_contract_core", "wf_deploy_verified", "wf_actions_pinned", "wf_actions_total",
+              "wf_unguarded_test_jobs", "tests_cases", "tests_py_untested", "tests_zero_case_files"):
+        out.append(f"| {k} | {po.get(k)} | {pc.get(k)} |")
+    out += ["", "| Stage | Median " + prev["iteration"] + " | Median " + cur["iteration"] + " |", "|---|---|---|"]
+    out += [f"| {k} | L{prev['fleet']['stages'][k]['median_level']} | L{cur['fleet']['stages'][k]['median_level']} |"
+            for k in keys]
+    out += ["", "| Repository | HEAD | Stage level changes |", "|---|---|---|"] + rows
+    out += ["", "| Probe | From | To | Repositories |", "|---|---|---|---|"]
+    out += [f"| `{pid}` | {a} | {b} | {n} |" for (pid, a, b), n in sorted(flips.items())] or ["| none | | | |"]
+    return out
 
 
 # --------------------------------------------------------------------------- CLI
@@ -1115,6 +1188,10 @@ def main(argv=None) -> int:
     sub.choices["scan"].add_argument("--observed-at", default=None)
     sub.choices["scan"].add_argument("--api-token-env", default=None,
                                      help="environment variable holding a read token for api.github.com (opt-in)")
+    sub.choices["scan"].add_argument("--iteration", default="N9", help="pulse name written into the census")
+    for name in ("fetch", "scan"):
+        sub.choices[name].add_argument("--baseline-census", type=Path, default=None,
+                                       help="previous pulse whose heads become the delta baseline")
     c = sub.add_parser("check")
     c.add_argument("--census", type=Path, default=OUT)
     c.add_argument("--objects", type=Path, default=OUT_OBJ)
@@ -1122,9 +1199,11 @@ def main(argv=None) -> int:
     rp.add_argument("--census", type=Path, default=OUT)
     rp.add_argument("--out", type=Path, default=OUT_MD)
     rp.add_argument("--check", action="store_true", help="fail when --out differs from the census")
+    rp.add_argument("--previous", type=Path, default=None, help="previous pulse for the pulse-over-pulse section")
     a = ap.parse_args(argv)
     if a.cmd == "report":
-        text = report(json.loads(a.census.read_text(encoding="utf-8")))
+        prev = json.loads(a.previous.read_text(encoding="utf-8")) if a.previous else None
+        text = report(json.loads(a.census.read_text(encoding="utf-8")), prev)
         if a.check:
             same = a.out.exists() and a.out.read_text(encoding="utf-8").replace("\r\n", "\n") == text
             print(json.dumps({"report": a.out.name, "parity": same}))
@@ -1143,13 +1222,15 @@ def main(argv=None) -> int:
     roster = json.loads(a.roster.read_text(encoding="utf-8"))
     a.cache.mkdir(parents=True, exist_ok=True)
     log_path = a.cache / "fetch-log.json"
+    baseline = census_baseline(json.loads(a.baseline_census.read_text(encoding="utf-8"))) if a.baseline_census else None
     if a.cmd == "fetch":
         log = json.loads(log_path.read_text(encoding="utf-8")) if log_path.exists() else {}
         for row in sorted(roster["repositories"], key=lambda r: r["rank"]):
             if only and row["repo"] not in only:
                 continue
             try:
-                info = fetch_repo(a.cache, row["repo"], row["branch"], row.get("commit_sha_observed"))
+                base = baseline["heads"].get(row["repo"]) if baseline else row.get("commit_sha_observed")
+                info = fetch_repo(a.cache, row["repo"], row["branch"], base)
             except (RuntimeError, subprocess.TimeoutExpired) as exc:
                 info = {"repo": row["repo"], "ok": False, "error": str(exc)[:200]}
             log[row["repo"]] = info
@@ -1162,7 +1243,7 @@ def main(argv=None) -> int:
     get = (lambda url: http_get(url, token=token)) if token else http_get
     census, obj = scan(a.cache, a.roster, observed, not a.no_pages, not a.no_api, get=get, only=only or None,
                        fetch_log=log, api_mode="token" if token else "unauthenticated",
-                       api_budget=900 if token else 55)
+                       api_budget=900 if token else 55, iteration=a.iteration, baseline=baseline)
     write_json(a.out, census)
     write_json(a.objects, obj)
     errs = check(census, obj)
