@@ -119,11 +119,13 @@ def project(spec: dict, sha: str) -> dict:
                 "rows": [[pick(r, c["key"])[0] for c in cols] for r in rows]})
         tiles.append(tile)
 
+    # Linked pages are navigation, not inputs: record only what the page shows (title), so
+    # regenerating a linked page does not make the launcher stale. A missing page still fails.
     pages = []
     for p in spec["pages"]:
-        oid, text = read_at(sha, p["path"])
+        _, text = read_at(sha, p["path"])
         m = TITLE.search(text)
-        pages.append({"group": p["group"], "path": p["path"], "href": rel(p["path"]), "oid": oid,
+        pages.append({"group": p["group"], "path": p["path"], "href": rel(p["path"]),
                       "title": m.group(1).strip() if m else p["path"]})
 
     return {
@@ -153,6 +155,21 @@ def dump(snapshot: dict) -> str:
     return json.dumps(snapshot, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
 
 
+def stale_reason(committed: dict, fresh: dict) -> str:
+    """Name what differs: changed inputs, changed page titles, or else the tile/page declarations."""
+    parts = []
+    old_in, new_in = committed.get("inputs", {}), fresh["inputs"]
+    inputs = sorted(p for p in set(old_in) | set(new_in) if old_in.get(p) != new_in.get(p))
+    if inputs:
+        parts.append("changed inputs: " + ", ".join(inputs))
+    old_pg = {p["path"]: p.get("title") for p in committed.get("pages", [])}
+    new_pg = {p["path"]: p["title"] for p in fresh["pages"]}
+    pages = sorted(p for p in set(old_pg) | set(new_pg) if old_pg.get(p) != new_pg.get(p))
+    if pages:
+        parts.append("changed pages: " + ", ".join(pages))
+    return "; ".join(parts) or "tile or page declarations changed (sources.json, template or builder)"
+
+
 def check(sha: str) -> list[str]:
     """Problems with the committed outputs, rebuilt from ``sha``; empty means current."""
     problems = []
@@ -160,9 +177,7 @@ def check(sha: str) -> list[str]:
     fresh = project(json.loads(SOURCES.read_text(encoding="utf-8")), sha)
     strip = lambda s: {k: v for k, v in s.items() if k not in PULSE_KEYS}
     if strip(committed) != strip(fresh):
-        changed = sorted(p for p in set(committed["inputs"]) | set(fresh["inputs"])
-                         if committed["inputs"].get(p) != fresh["inputs"].get(p))
-        problems.append("launcher.json is stale; changed inputs: " + (", ".join(changed) or "sources.json"))
+        problems.append("launcher.json is stale; " + stale_reason(committed, fresh))
     if PAGE.read_text(encoding="utf-8") != render(committed):
         problems.append("index.html does not match render(launcher.json)")
     if committed["missing_fields"]:
