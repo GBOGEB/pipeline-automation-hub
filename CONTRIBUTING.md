@@ -274,7 +274,7 @@ Contributors will be recognized in:
 
 ## 📄 License
 
-By contributing, you agree that your contributions will be licensed under the same license as the project.
+By contributing, you agree that your contributions will be licensed under the Apache License 2.0 (see [LICENSE](LICENSE), section 5). Third-party attributions are kept in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ---
 
