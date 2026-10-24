@@ -1,19 +1,43 @@
 {
   "authority_transfer": false,
+  "ci_proof": {
+    "artifact_digest": "sha256:f8af9a1a084d3d11cc697bbbc9c5c2f3cba1c3fd5647aed192c9c00145975933",
+    "artifact_id": 12513824712,
+    "binding": "native master run on unchanged inputs/engines; artifact bytes not downloaded here: equality to these committed bytes is proven by w3_receipt_sync.py --check in the native run of the PR that commits them",
+    "head_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
+    "previous_stale_ci_proof_runs": [
+      34685677445,
+      34685772355
+    ],
+    "run_id": 39984340926
+  },
   "current_frontier": {
     "candidates": [
-      "W3-10_11_M02B_SECOND_KERNEL_AND_CONSUMER",
-      "W3-12_M01_HEPAK_AUTHORITY_CLOSURE",
-      "W3-16_M03_FRONTIER_CENSUS"
+      "SEMANTIC_BOUNDARY_GUARD_REPAIR",
+      "STATISTICAL_TOLERANCE_REPAIR",
+      "UNREPAIRED_BASELINE"
     ],
-    "pair_count": 0,
-    "result": {"scores": {}, "status": "DEFER_NO_USABLE_COMPARISONS"}
+    "comparison_boundary": "BT ranks observed intervention types against the common unrepaired-baseline class. It does not claim that W3-10 beat W3-11 or vice versa.",
+    "pair_count": 2,
+    "pair_evidence_class": "MEASURED",
+    "pair_validation_failures": [],
+    "result": {
+      "scores": {
+        "SEMANTIC_BOUNDARY_GUARD_REPAIR": 1.4999999999995002,
+        "STATISTICAL_TOLERANCE_REPAIR": 1.4999999999995002,
+        "UNREPAIRED_BASELINE": 9.999999999993331e-13
+      },
+      "status": "PASS_OBSERVED_BT"
+    }
   },
   "evidence_policy": {
     "comparison_graph_must_be_connected": true,
+    "cross_objective_claim_boundary": "BT ranks observed intervention types against the common unrepaired-baseline class. It does not claim that W3-10 beat W3-11 or vice versa.",
     "historical_rex_is_seed_only": true,
     "minimum_current_frontier_pairs": 2,
+    "pair_evidence_class_required": "MEASURED",
     "project_bt_evidence": "EXPLICIT_REAL_CURRENT_FRONTIER_INTERVENTION_WIN_LOSS_ONLY",
+    "shared_baseline_semantics": "UNREPAIRED_BASELINE means the measured first-red head immediately preceding a bounded repair on the same objective; it is a comparator class, not one shared code revision.",
     "synthetic_fixture_is_project_evidence": false
   },
   "historical_control_rex": {
@@ -28,12 +52,6 @@
       "status": "PASS_OBSERVED_BT"
     }
   },
-  "schema": "qps-w3-observed-bt-receipt/v1",
-  "w3_15": "WITHHELD_NO_CURRENT_FRONTIER_PAIRWISE_OUTCOMES",
-  "ci_proof": {
-    "run_id": 34685772355,
-    "head_sha": "7d26ae5f893eb4dc0e11b4d566cf89d9bf36586b",
-    "artifact_id": 10296050515,
-    "artifact_digest": "sha256:3eb1e261cc9652134afb34344a16002ae1f889d967b3efa44d3962c08c2f2d5f"
-  }
+  "schema": "qps-w3-observed-bt-receipt/v2",
+  "w3_15": "PASS_OBSERVED_INTERVENTION_BT"
 }
