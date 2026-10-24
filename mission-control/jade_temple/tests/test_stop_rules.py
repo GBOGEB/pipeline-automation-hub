@@ -69,7 +69,7 @@ class StopTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"pending must be boolean"):
             mod.evaluate(GATES,[],[],None,SHA,[])
     def test_frozen_actual_stop_is_first_red_hold(self):
-        d=json.loads((ROOT/'data/STOP_MODEL_NPLUS2.json').read_text())
+        d=json.loads((ROOT/'data/STOP_MODEL_NPLUS2.json').read_text(encoding='utf-8'))
         x=mod.from_snapshot(d)
         self.assertEqual(x["action"],"REPAIR_FIRST_RED")
         self.assertEqual(x["merge_admission"],"HOLD")
@@ -80,14 +80,14 @@ class StopTests(unittest.TestCase):
             out=Path(t)/'receipt.json'
             with patch.object(sys,'argv',['stop_rules.py','--receipt',str(out)]):
                 mod.main()
-            data=json.loads(out.read_text())
+            data=json.loads(out.read_text(encoding='utf-8'))
             self.assertEqual(data['action'],'REPAIR_FIRST_RED')
     def test_incomplete_gate_population_refused(self):
         g=dict(GATES);del g['matched_coverage']
         with self.assertRaisesRegex(ValueError,'incomplete or extra'):
             self.stop(gates=g)
     def test_release_cannot_be_qualified_by_json_mutation(self):
-        d=json.loads((ROOT/'data/STOP_MODEL_NPLUS2.json').read_text())
+        d=json.loads((ROOT/'data/STOP_MODEL_NPLUS2.json').read_text(encoding='utf-8'))
         d["merge_admission"]="PASS"
         with self.assertRaisesRegex(ValueError,"unsafe authority"):
             mod.from_snapshot(d)

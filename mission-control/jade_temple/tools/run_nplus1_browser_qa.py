@@ -4,7 +4,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1];SITE=ROOT/'site';OUT=ROOT/'qa/nplus1';OUT.mkdir(parents=True,exist_ok=True)
 receipt={'schema':'jade.temple.browser.qa.v1','source':'site/green.html','evidence_level':'LOCAL_REPRODUCIBILITY','no_github_ci_claim':True,'no_hosted_pages_claim':True,'method':'playwright.set_content, exact HTML/CSS/JS asset bytes inlined for admin-blocked HTTP browser; CSP adjusted to permit inline execution; actual URL/CSP deployment untested','viewports':{},'failures':[]}
-css=(SITE/'jade.css').read_text();data=(SITE/'jade_data.js').read_text();app=(SITE/'jade.js').read_text();html=(SITE/'green.html').read_text()
+css=(SITE/'jade.css').read_text(encoding='utf-8');data=(SITE/'jade_data.js').read_text(encoding='utf-8');app=(SITE/'jade.js').read_text(encoding='utf-8');html=(SITE/'green.html').read_text(encoding='utf-8')
 assert '<link rel="stylesheet" href="jade.css">' in html
 assert '<script src="jade_data.js"></script>' in html and '<script src="jade.js" defer></script>' in html
 assembled=html.replace("script-src 'self'; style-src 'self'", "script-src 'unsafe-inline'; style-src 'unsafe-inline'")
@@ -47,12 +47,12 @@ try:
     assert 'GoGREEN / Evidence' in page.locator('.main-nav').inner_text()
     assert not errors and not http_errors,(errors,http_errors)
     assert not requests, 'Unexpected external asset requests '+str(requests)
-    page.set_content((SITE/'index.html').read_text(),wait_until='load')
+    page.set_content((SITE/'index.html').read_text(encoding='utf-8'),wait_until='load')
     assert page.locator('a[href="green.html"]').count()==1
     assert not page.evaluate('document.documentElement.scrollWidth > document.documentElement.clientWidth'),name+' old overflow'
     receipt['viewports'][name]={'width':width,'height':height,'errors':len(errors),'external_requests':0,'http_errors':len(http_errors),'horizontal_overflow':False,'search_reset_priority_green_filter_detail':'PASS','screenshot':f'qa/nplus1/{name}.png'}
     page.close()
    browser.close()
 finally:pass
-(OUT/'receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n')
+(OUT/'receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n',encoding='utf-8')
 print(json.dumps({'status':'PASS','viewports':len(receipt['viewports']),'source_sha256':hashlib.sha256((SITE/'green.html').read_bytes()).hexdigest()},indent=2))

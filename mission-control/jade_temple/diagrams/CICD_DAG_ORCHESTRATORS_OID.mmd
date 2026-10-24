@@ -10,19 +10,19 @@ flowchart LR
     n0["EVERRED harvest, roots, probes<br/><small>f94b2975c2 harvest.py::harvest</small>"]:::everred
     n1["JADE rolling-5, SOURCE_RED, DAG<br/><small>6d59c2f974 rolling5.py::source_red</small>"]:::crosswalk
     n3["P-process decide + Code Purple kit<br/><small>08673e505b p_process.yaml</small>"]:::p_process
-    n6["Red-trace federation ledger<br/><small>e32fe95f49 build_redtrace_data.py::assemble</small>"]:::root_red
+    n6["Red-trace federation ledger<br/><small>a25749af03 build_redtrace_data.py::assemble</small>"]:::root_red
     n9["ABACUS<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::code_purple
     n10["CODEX<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::everred
     n11["pipeline-automation-hub<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::everred
   end
   subgraph O["O · Outputs"]
-    n2["JADE read-only QA workflow<br/><small>27ee45b6fa jade-temple-readonly-qa.yml</small>"]:::neutral
-    n4["Single Pages publisher<br/><small>75c864c6d1 portal_bridge.py::stage_jade</small>"]:::neutral
-    n5["P-process workflow<br/><small>a4899f4d8d p-process.yml</small>"]:::neutral
+    n2["JADE read-only QA workflow<br/><small>3e047c2a09 jade-temple-readonly-qa.yml</small>"]:::neutral
+    n4["Single Pages publisher<br/><small>ac3d1da5b5 portal_bridge.py::stage_jade</small>"]:::neutral
+    n5["P-process workflow<br/><small>90d6f28fad p-process.yml</small>"]:::neutral
   end
   subgraph C["C · Customers"]
     n7["Repository owner (GBOGEB)<br/><small>13dfcffa54 incident.yaml</small>"]:::neutral
-    n8["Single Pages publisher<br/><small>75c864c6d1 portal_bridge.py::stage_jade</small>"]:::neutral
+    n8["Single Pages publisher<br/><small>ac3d1da5b5 portal_bridge.py::stage_jade</small>"]:::neutral
   end
   n0 -->|census + probes -› decide| n3
   n1 -->|--check parity, coverage floors| n2

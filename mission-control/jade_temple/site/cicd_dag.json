@@ -1168,7 +1168,7 @@
       "function": "Assembles per-repo red_trace reports into the federation ledger",
       "id": "OBJ.RED_TRACE_BUILD",
       "kind": "code",
-      "oid": "e32fe95f4928c038962b20fd11c126c50622811d",
+      "oid": "a25749af0316574b625ac29c1040a908708edbb4",
       "path": "mission-control/jade_temple/tools/build_redtrace_data.py",
       "symbol": "assemble"
     },
@@ -1312,7 +1312,7 @@
       "function": "JADE read-only QA: tests, coverage floors, --check parity",
       "id": "OBJ.JADE_QA_WF",
       "kind": "workflow",
-      "oid": "27ee45b6fa6619dbd075a870cf36554e79682660",
+      "oid": "3e047c2a09b8af26bc790cc8438a51fc64e65aab",
       "path": ".github/workflows/jade-temple-readonly-qa.yml",
       "symbol": null
     },
@@ -1320,7 +1320,7 @@
       "function": "P-process offline tests, TypeScript check, site zip",
       "id": "OBJ.P_PROCESS_WF",
       "kind": "workflow",
-      "oid": "a4899f4d8d3369a39ff64bab02f414daf592b0d2",
+      "oid": "90d6f28fad369b20831965092e668159d2acff37",
       "path": ".github/workflows/p-process.yml",
       "symbol": null
     },
@@ -1328,7 +1328,7 @@
       "function": "Validates and stages JADE assets into the single publisher",
       "id": "OBJ.PORTAL_BRIDGE",
       "kind": "code",
-      "oid": "75c864c6d1048bc688cf62e6d2644d94d652fb04",
+      "oid": "ac3d1da5b5a63955e4959520908d37be197520ff",
       "path": "mission-control/jade_temple/portal_bridge.py",
       "symbol": "stage_jade"
     },
@@ -2472,9 +2472,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.portal_bridge",
+              "jade_oid": null,
               "object": "OBJ.PORTAL_BRIDGE",
-              "oid": "75c864c6d1048bc688cf62e6d2644d94d652fb04",
+              "oid": "ac3d1da5b5a63955e4959520908d37be197520ff",
               "path": "mission-control/jade_temple/portal_bridge.py",
               "status": "BOUND",
               "symbol": "stage_jade"
@@ -3293,9 +3293,9 @@
             },
             {
               "at": null,
-              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.build_redtrace_data",
+              "jade_oid": null,
               "object": "OBJ.RED_TRACE_BUILD",
-              "oid": "e32fe95f4928c038962b20fd11c126c50622811d",
+              "oid": "a25749af0316574b625ac29c1040a908708edbb4",
               "path": "mission-control/jade_temple/tools/build_redtrace_data.py",
               "status": "BOUND",
               "symbol": "assemble"
@@ -3980,7 +3980,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.JADE_QA_WF",
-              "oid": "27ee45b6fa6619dbd075a870cf36554e79682660",
+              "oid": "3e047c2a09b8af26bc790cc8438a51fc64e65aab",
               "path": ".github/workflows/jade-temple-readonly-qa.yml",
               "status": "BOUND",
               "symbol": null
@@ -6242,7 +6242,7 @@
               "at": null,
               "jade_oid": null,
               "object": null,
-              "oid": "e0a919f56ed7fec870ac1617fa58afa6bdbe2d79",
+              "oid": "1e46a1953e2e1ca436c3a888f1b514a3537d0538",
               "path": ".github/workflows/mission-control-n3-evidence.yml",
               "status": "BOUND",
               "symbol": null
@@ -6282,7 +6282,7 @@
               "at": null,
               "jade_oid": null,
               "object": null,
-              "oid": "b1083f845b08ec3c2d800b8d2a73c2e7d2cdd7f6",
+              "oid": "0fa836ed0077d21655f56645bf1abf082c9f15fe",
               "path": ".github/workflows/gm-v-3pstar-mip-control.yml",
               "status": "BOUND",
               "symbol": null
@@ -6372,7 +6372,7 @@
               "at": null,
               "jade_oid": null,
               "object": null,
-              "oid": "56a1973a2e3114f406d11c421049b0bf3a122528",
+              "oid": "883b05cbee32acb8ac5e185ee5695bfc7cc67cb0",
               "path": ".github/workflows/gm-v-governor-readiness.yml",
               "status": "BOUND",
               "symbol": null
@@ -6417,7 +6417,7 @@
               "at": null,
               "jade_oid": null,
               "object": null,
-              "oid": "82ea0bf85a048dd634ba38045ee02e9b68848c80",
+              "oid": "583b90a370089b2bd4ee384b6ddbb53c1e05f646",
               "path": ".github/workflows/gm-iv-recon4-governor.yml",
               "status": "BOUND",
               "symbol": null
@@ -6462,7 +6462,7 @@
               "at": null,
               "jade_oid": null,
               "object": null,
-              "oid": "dd43e3584edf7eb85d05aa45118750c5a18c7b0e",
+              "oid": "a19c1295232f1aa3730a68f293a72178dc5ef870",
               "path": ".github/workflows/zero-test-gate-guard.yml",
               "status": "BOUND",
               "symbol": null
@@ -9123,9 +9123,9 @@
             },
             {
               "at": null,
-              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.build_redtrace_data",
+              "jade_oid": null,
               "object": "OBJ.RED_TRACE_BUILD",
-              "oid": "e32fe95f4928c038962b20fd11c126c50622811d",
+              "oid": "a25749af0316574b625ac29c1040a908708edbb4",
               "path": "mission-control/jade_temple/tools/build_redtrace_data.py",
               "status": "BOUND",
               "symbol": "assemble"
@@ -13637,9 +13637,9 @@
             },
             {
               "at": null,
-              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.build_redtrace_data",
+              "jade_oid": null,
               "object": "OBJ.RED_TRACE_BUILD",
-              "oid": "e32fe95f4928c038962b20fd11c126c50622811d",
+              "oid": "a25749af0316574b625ac29c1040a908708edbb4",
               "path": "mission-control/jade_temple/tools/build_redtrace_data.py",
               "status": "BOUND",
               "symbol": "assemble"
@@ -15922,9 +15922,9 @@
             },
             {
               "at": null,
-              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.build_redtrace_data",
+              "jade_oid": null,
               "object": "OBJ.RED_TRACE_BUILD",
-              "oid": "e32fe95f4928c038962b20fd11c126c50622811d",
+              "oid": "a25749af0316574b625ac29c1040a908708edbb4",
               "path": "mission-control/jade_temple/tools/build_redtrace_data.py",
               "status": "BOUND",
               "symbol": "assemble"
@@ -17223,7 +17223,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.JADE_QA_WF",
-              "oid": "27ee45b6fa6619dbd075a870cf36554e79682660",
+              "oid": "3e047c2a09b8af26bc790cc8438a51fc64e65aab",
               "path": ".github/workflows/jade-temple-readonly-qa.yml",
               "status": "BOUND",
               "symbol": null
@@ -17307,9 +17307,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.portal_bridge",
+              "jade_oid": null,
               "object": "OBJ.PORTAL_BRIDGE",
-              "oid": "75c864c6d1048bc688cf62e6d2644d94d652fb04",
+              "oid": "ac3d1da5b5a63955e4959520908d37be197520ff",
               "path": "mission-control/jade_temple/portal_bridge.py",
               "status": "BOUND",
               "symbol": "stage_jade"
@@ -17343,7 +17343,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_PROCESS_WF",
-              "oid": "a4899f4d8d3369a39ff64bab02f414daf592b0d2",
+              "oid": "90d6f28fad369b20831965092e668159d2acff37",
               "path": ".github/workflows/p-process.yml",
               "status": "BOUND",
               "symbol": null
@@ -17366,9 +17366,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.build_redtrace_data",
+              "jade_oid": null,
               "object": "OBJ.RED_TRACE_BUILD",
-              "oid": "e32fe95f4928c038962b20fd11c126c50622811d",
+              "oid": "a25749af0316574b625ac29c1040a908708edbb4",
               "path": "mission-control/jade_temple/tools/build_redtrace_data.py",
               "status": "BOUND",
               "symbol": "assemble"
@@ -17425,9 +17425,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.portal_bridge",
+              "jade_oid": null,
               "object": "OBJ.PORTAL_BRIDGE",
-              "oid": "75c864c6d1048bc688cf62e6d2644d94d652fb04",
+              "oid": "ac3d1da5b5a63955e4959520908d37be197520ff",
               "path": "mission-control/jade_temple/portal_bridge.py",
               "status": "BOUND",
               "symbol": "stage_jade"

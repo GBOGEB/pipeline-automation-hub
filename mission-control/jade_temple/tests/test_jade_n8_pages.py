@@ -61,14 +61,14 @@ class N8Pages(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             proj = copy_project(t)
             p = proj / "data/GAP_ANALYSIS_N8.json"
-            p.write_text(p.read_text() + " ")
+            p.write_text(p.read_text(encoding='utf-8') + " ",encoding='utf-8')
             with self.assertRaisesRegex(ValueError, "SOURCE_DIGEST_DRIFT"):
                 bridge.stage_redtrace(proj, Path(t) / "o", {})
 
     def test_html_tamper_rejected(self):
         with tempfile.TemporaryDirectory() as t:
             proj = copy_project(t)
-            (proj / "site/redtrace.html").write_text("<p>forged</p>")
+            (proj / "site/redtrace.html").write_text("<p>forged</p>",encoding='utf-8')
             with self.assertRaisesRegex(ValueError, "STATIC_DIGEST_DRIFT"):
                 bridge.stage_redtrace(proj, Path(t) / "o", {})
 
@@ -84,14 +84,14 @@ class N8Pages(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             proj = copy_project(t)
             p = proj / "site/redtrace-manifest.json"
-            m = json.loads(p.read_text())
+            m = json.loads(p.read_text(encoding='utf-8'))
             m["merge_authorized"] = True
-            p.write_text(json.dumps(m))
+            p.write_text(json.dumps(m),encoding='utf-8')
             with self.assertRaisesRegex(ValueError, "UNSAFE_MANIFEST"):
                 bridge.stage_redtrace(proj, Path(t) / "o", {})
 
     def test_published_page_has_no_relative_data_links(self):
-        html = (ROOT / "site/redtrace.html").read_text()
+        html = (ROOT / "site/redtrace.html").read_text(encoding='utf-8')
         self.assertNotIn('href="../', html, "Pages publishes only jade/; ../ links would 404")
 
 

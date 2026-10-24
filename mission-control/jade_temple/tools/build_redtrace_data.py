@@ -89,7 +89,7 @@ def main(argv=None):
     ap.add_argument("--reports", type=Path, required=True, help="dir with <repo>/red_trace.json")
     ap.add_argument("--out", type=Path, default=OUT)
     a = ap.parse_args(argv)
-    reports = {n: json.loads((a.reports / n / "red_trace.json").read_text()) for n in CORE}
+    reports = {n: json.loads((a.reports / n / "red_trace.json").read_text(encoding="utf-8")) for n in CORE}
     data = assemble(reports)
     a.out.write_text(json.dumps(data, indent=1, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({"status": "PASS", "totals": data["totals"]}, sort_keys=True))

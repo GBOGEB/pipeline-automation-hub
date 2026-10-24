@@ -55,11 +55,11 @@ try:
      assert "script-src 'self'; style-src 'self'" in html
      html=html.replace("script-src 'self'; style-src 'self'","script-src 'unsafe-inline'; style-src 'unsafe-inline'")
      html=html.replace('<link rel="stylesheet" href="eightpoint.css">',
-           '<style>'+(SITE/'eightpoint.css').read_text()+'</style>')
+           '<style>'+(SITE/'eightpoint.css').read_text(encoding='utf-8')+'</style>')
      html=html.replace('<script src="eightpoint-data.js"></script>',
-           '<script>'+(SITE/'eightpoint-data.js').read_text()+'</script>')
+           '<script>'+(SITE/'eightpoint-data.js').read_text(encoding='utf-8')+'</script>')
      html=html.replace('<script src="eightpoint.js" defer></script>',
-           '<script>'+(SITE/'eightpoint.js').read_text()+'</script>')
+           '<script>'+(SITE/'eightpoint.js').read_text(encoding='utf-8')+'</script>')
      page.set_content(html,wait_until='load')
      real_csp=False
      report['evidence_level']='LOCAL_RENDERED_SOURCE_BYTES_CSP_ADJUSTED'
@@ -96,7 +96,7 @@ try:
     page.close()
   finally:browser.close()
 finally:server.shutdown();server.server_close();thread.join(timeout=3)
-(OUT/'receipt.json').write_text(json.dumps(report,sort_keys=True,indent=2)+'\n')
+(OUT/'receipt.json').write_text(json.dumps(report,sort_keys=True,indent=2)+'\n',encoding='utf-8')
 print(json.dumps({'status':'PASS','viewports':len(report['viewports']),
  'source_sha256':hashlib.sha256((SITE/'eightpoint.html').read_bytes()).hexdigest(),
  'local_real_csp':all(x['local_real_csp'] for x in report['viewports'].values()),'hosted_GitHub_Pages_qualified':False},sort_keys=True))

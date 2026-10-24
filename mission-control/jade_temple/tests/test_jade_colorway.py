@@ -10,14 +10,14 @@ SITE=ROOT/'site'
 
 class ColorwayTests(unittest.TestCase):
     def test_n3_j8_naming_is_not_iteration_eight(self):
-        template=(SITE/'eightpoint_template.html').read_text()
+        template=(SITE/'eightpoint_template.html').read_text(encoding='utf-8')
         self.assertIn('>JT</span>',template)
         self.assertIn('N+3 DEVELOPMENT ITERATION',template)
         self.assertIn('J01–J08',template)
         self.assertIn('J08</strong> = bounded execution',template)
         self.assertNotIn('>J8</span>',template)
     def test_accessible_theme_switch_in_both_modes(self):
-        html=(SITE/'eightpoint.html').read_text();js=(SITE/'eightpoint.js').read_text();css=(SITE/'eightpoint.css').read_text()
+        html=(SITE/'eightpoint.html').read_text(encoding='utf-8');js=(SITE/'eightpoint.js').read_text(encoding='utf-8');css=(SITE/'eightpoint.css').read_text(encoding='utf-8')
         self.assertIn('id="theme-toggle"',html)
         self.assertIn('aria-pressed="false"',html)
         self.assertIn("themeSwitch.setAttribute('aria-pressed'",js)
@@ -25,7 +25,7 @@ class ColorwayTests(unittest.TestCase):
         self.assertIn('color-scheme:dark',css)
         self.assertIn('color-scheme:light',css)
     def test_eight_card_semantic_colours(self):
-        css=(SITE/'eightpoint.css').read_text()
+        css=(SITE/'eightpoint.css').read_text(encoding='utf-8')
         for i in range(1,9):
             self.assertIn('[data-axis="J%02d"]'%i,css)
         self.assertIn('.axis[data-axis="J08"]{--accent:var(--violet)',css)
@@ -34,7 +34,7 @@ class ColorwayTests(unittest.TestCase):
         self.assertIn('.gate.status-fail{',css)
         self.assertIn('.gate.status-unknown{',css)
     def test_source_and_authority_unchanged(self):
-        p=json.loads((SITE/'eightpoint.json').read_text())
+        p=json.loads((SITE/'eightpoint.json').read_text(encoding='utf-8'))
         self.assertEqual([x['id'] for x in p['sections']],[f'J{i:02d}' for i in range(1,9)])
         self.assertEqual(len(p['rows']),21)
         self.assertEqual(p['merge_admission'],'HOLD')
@@ -53,7 +53,7 @@ class ColorwayTests(unittest.TestCase):
         self.assertEqual(manifest['static_population'],6)
         self.assertEqual(manifest['merge_admission'],'HOLD')
     def test_no_eval_or_dom_html_injection(self):
-        js=(SITE/'eightpoint.js').read_text()
+        js=(SITE/'eightpoint.js').read_text(encoding='utf-8')
         self.assertNotIn('.innerHTML=',js)
         self.assertNotIn('eval(',js)
         self.assertIn('document.createTextNode',js)
