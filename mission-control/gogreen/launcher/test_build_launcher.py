@@ -86,7 +86,8 @@ class Committed(unittest.TestCase):
     def test_page_links_resolve_inside_repo(self):
         for p in self.snap["pages"]:
             with self.subTest(page=p["path"]):
-                self.assertRegex(p["oid"], r"^[0-9a-f]{40}$")
+                self.assertNotIn("oid", p)  # linked pages are navigation, not inputs
+                self.assertTrue(p["title"])
                 self.assertEqual(posixpath.normpath(posixpath.join(bl.SELF_DIR, p["href"])), p["path"])
 
 
@@ -116,6 +117,34 @@ class Stale(unittest.TestCase):
             with mock.patch.object(bl, "SNAPSHOT", fake):
                 problems = bl.check(bl.git("rev-parse", "HEAD^{commit}").strip())
         self.assertTrue(any(first in p for p in problems), problems)
+
+    def _check_with_page(self, transform):
+        """check(HEAD) with the first linked page's text passed through ``transform``."""
+        target = json.loads(bl.SOURCES.read_text(encoding="utf-8"))["pages"][0]["path"]
+        real = bl.read_at
+
+        def fake(sha, path):
+            oid, text = real(sha, path)
+            return (("f" * 40, transform(text)) if path == target else (oid, text))
+
+        with mock.patch.object(bl, "read_at", fake):
+            return target, bl.check(bl.git("rev-parse", "HEAD^{commit}").strip())
+
+    def test_regenerated_page_with_same_title_is_not_stale(self):
+        _, problems = self._check_with_page(lambda t: t + "\n<!-- regenerated -->\n")
+        self.assertEqual(problems, [])
+
+    def test_changed_page_title_is_named(self):
+        target, problems = self._check_with_page(
+            lambda t: bl.TITLE.sub("<title>Renamed page</title>", t, count=1))
+        self.assertTrue(any("changed pages: " + target in p for p in problems), problems)
+        self.assertFalse(any("sources.json" in p for p in problems), problems)
+
+    def test_stale_reason_names_inputs_and_pages(self):
+        old = {"inputs": {"a.json": "1", "b.json": "2"}, "pages": [{"path": "x.html", "title": "X"}]}
+        new = {"inputs": {"a.json": "1", "b.json": "3"}, "pages": [{"path": "x.html", "title": "Y"}]}
+        self.assertEqual(bl.stale_reason(old, new), "changed inputs: b.json; changed pages: x.html")
+        self.assertIn("declarations", bl.stale_reason(old, old))
 
     def test_pulse_fields_alone_are_not_stale(self):
         snap = json.loads(bl.SNAPSHOT.read_text(encoding="utf-8"))
