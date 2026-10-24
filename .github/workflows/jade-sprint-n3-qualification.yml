@@ -30,6 +30,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 12
     steps:
+      # Windows runners default to core.autocrlf=true, so committed generated outputs check out
+      # as CRLF and every byte-parity check against the LF generators fails. Keep blobs byte-exact.
+      - name: Check out LF bytes on every OS
+        run: git config --global core.autocrlf false
       - name: Exact-head checkout without saved credentials
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
