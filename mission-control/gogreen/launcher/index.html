@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<title>GoGreen Launcher</title>
+<style>
+:root{
+  --bg:#f6f8f7;--surface:#ffffff;--surface-2:#eef3f1;--line:#d5dfdb;--text:#14201c;--muted:#566660;
+  --green:#0f7b5f;--green-bg:#e2f4ed;--amber:#9a6200;--amber-bg:#fdf1db;--red:#b4382e;--red-bg:#fbe6e3;
+  --grey:#5f6b68;--grey-bg:#eceeee;--blue:#1f5f99;--blue-bg:#e3eef8;--focus:#1f5f99;
+  --mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1513;--surface:#151f1c;--surface-2:#1b2824;--line:#2a3a35;--text:#e4ece9;--muted:#9aaba5;
+  --green:#4fd1a5;--green-bg:#123329;--amber:#f0b54a;--amber-bg:#352811;--red:#f08a7e;--red-bg:#3a1a17;
+  --grey:#a3afab;--grey-bg:#222b29;--blue:#7fb8ee;--blue-bg:#14283a;--focus:#7fb8ee;}}
+:root[data-theme="dark"]{
+  --bg:#0e1513;--surface:#151f1c;--surface-2:#1b2824;--line:#2a3a35;--text:#e4ece9;--muted:#9aaba5;
+  --green:#4fd1a5;--green-bg:#123329;--amber:#f0b54a;--amber-bg:#352811;--red:#f08a7e;--red-bg:#3a1a17;
+  --grey:#a3afab;--grey-bg:#222b29;--blue:#7fb8ee;--blue-bg:#14283a;--focus:#7fb8ee;}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 var(--sans)}
+body{overflow-x:hidden}
+a{color:var(--blue)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.skip{position:absolute;left:-999px}.skip:focus{left:16px;top:8px;background:var(--surface);padding:8px;z-index:9}
+header{padding:20px 16px 12px;max-width:1360px;margin:0 auto}
+h1{font-size:clamp(22px,3vw,30px);margin:0 0 4px;letter-spacing:-.01em}
+h1 span{color:var(--green)}
+.sub{color:var(--muted);margin:0;max-width:900px}
+.pulse{font:12px var(--mono);color:var(--muted);margin-top:8px;word-break:break-all}
+nav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+nav .in{max-width:1360px;margin:0 auto;padding:8px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+nav a{text-decoration:none;color:var(--text);padding:10px 12px;border-radius:8px;min-height:44px;display:inline-flex;align-items:center}
+nav a:hover{background:var(--surface-2)}
+nav .grow{flex:1}
+input[type=search]{min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);font:inherit;width:min(260px,100%)}
+button{min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);font:inherit;cursor:pointer}
+main{max-width:1360px;margin:0 auto;padding:8px 16px 48px}
+section{margin-top:24px}
+h2{font-size:18px;margin:0 0 10px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--grey);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card[data-tone=green]{border-top-color:var(--green)}.card[data-tone=amber]{border-top-color:var(--amber)}
+.card[data-tone=red]{border-top-color:var(--red)}.card[data-tone=blue]{border-top-color:var(--blue)}
+.card h3{margin:0;font-size:16px;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.owner{font:12px var(--mono);color:var(--muted);word-break:break-word}
+.head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.head .v{font-size:30px;font-weight:650;letter-spacing:-.02em}
+.head .l{color:var(--muted)}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}
+dt{color:var(--muted)}dd{margin:0;text-align:right;word-break:break-word}
+.unk{color:var(--grey);font-style:italic}
+.pill{display:inline-block;font:600 11px var(--mono);padding:3px 7px;border-radius:999px;background:var(--grey-bg);color:var(--grey);white-space:nowrap}
+.pill[data-tone=green]{background:var(--green-bg);color:var(--green)}.pill[data-tone=amber]{background:var(--amber-bg);color:var(--amber)}
+.pill[data-tone=red]{background:var(--red-bg);color:var(--red)}.pill[data-tone=blue]{background:var(--blue-bg);color:var(--blue)}
+.chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end}
+.tbl{overflow:auto;max-height:260px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
+.cap{font-size:13px;color:var(--muted);margin:0 0 4px}
+.links{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.links a{font-size:13px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;text-decoration:none;min-height:32px;display:inline-flex;align-items:center}
+.src{font:12px var(--mono);color:var(--muted);word-break:break-all}
+.note{background:var(--amber-bg);color:var(--text);border-radius:8px;padding:10px;font-size:14px}
+.launch{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))}
+.launch a{display:block;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;text-decoration:none;color:var(--text);min-height:44px}
+.launch a:hover{border-color:var(--blue)}
+.launch b{display:block;font-weight:600}
+.launch small{font:11px var(--mono);color:var(--muted);word-break:break-all}
+.grp{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 6px}
+.prov td:nth-child(2),.prov td:nth-child(3){font-family:var(--mono);font-size:12px;word-break:break-all}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#metrics">Skip to metrics</a>
+<header>
+  <h1>Go<span>Green</span> launcher</h1>
+  <p class="sub" id="rule"></p>
+  <div class="pulse" id="pulse"></div>
+</header>
+<nav aria-label="Sections"><div class="in">
+  <a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#provenance">Provenance</a>
+  <span class="grow"></span>
+  <label for="q" class="skip">Filter</label>
+  <input id="q" type="search" placeholder="Filter tiles and pages" autocomplete="off">
+  <button id="theme" type="button" aria-pressed="false">Theme</button>
+</div></nav>
+<main>
+  <section id="metrics" aria-labelledby="h-metrics"><h2 id="h-metrics">Metrics</h2><div class="grid" id="tiles"></div></section>
+  <section id="launcher" aria-labelledby="h-launcher"><h2 id="h-launcher">Launcher</h2><div id="pages"></div></section>
+  <section id="provenance" aria-labelledby="h-prov"><h2 id="h-prov">Provenance</h2>
+    <p class="cap">Each input is read once, at the commit shown above. Owner modules keep their metric definitions; this page only reads them.</p>
+    <div class="tbl" style="max-height:none"><table class="prov"><thead><tr><th>Tile</th><th>Input</th><th>Blob OID</th><th>Owner</th><th>Schema</th></tr></thead><tbody id="prov"></tbody></table></div>
+  </section>
+</main>
+<script>
+"use strict";
+const D={"computes_metrics":false,"inputs":{"mission-control/federation-atlas/central/CODE_HEALTH_CENTRAL_v1.json":"6970506347d59037dcf5c56142495403a19b3a86","mission-control/gogreen/comparative/comparison.json":"6f437972dce09612b04792cde68fa2765c55307d","mission-control/gogreen/mycelium_history/W10_LAST_GOOD_APPEND_20261018.json":"1d5d78683721bd4ebe2e109d2bc2cb028bce7368","mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json":"989bbe0382801da182d765995956286727acea3c","mission-control/grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json":"ff36eb882511cc80bfaed3db1533e4b5c0f6618a","mission-control/jade_temple/data/BD_QUEUE.csv":"ef36a3a79c60d7638255bd82bcf97d519020db99","mission-control/jade_temple/site/burndown.json":"f81f29954faac2cdf7646d55be02feada7bceb95","mission-control/jade_temple/site/rolling5.json":"29eb67ff11630bb2e205d76179e2da4af2a8825c","mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json":"b8055243094c63b6a91bb4fbad8764f139f05fd0"},"missing_fields":[],"pages":[{"group":"GoGreen","href":"../../jade_temple/site/green.html","oid":"6baa3d3557c9946bd3a94d2b4ea3d0c9b954eb05","path":"mission-control/jade_temple/site/green.html","title":"JADE_CASTE \u00b7 GoGREEN | Top21 release observatory"},{"group":"GoGreen","href":"../comparative/index.html","oid":"5f88ef337999404daa227e574ea3493cf2725500","path":"mission-control/gogreen/comparative/index.html","title":"GoGREEN | Comparative Evidence 17 Oct 2026"},{"group":"JADE","href":"../../jade_temple/site/index.html","oid":"e19e6b1cc981b8c0baacd16dbd89aadd07db6e73","path":"mission-control/jade_temple/site/index.html","title":"JADE_TEMPLE \u00b7 JADE_CASTE Top21"},{"group":"JADE","href":"../../jade_temple/site/burndown.html","oid":"0c080e94141417965e0346f044c2e1eab5b9aa66","path":"mission-control/jade_temple/site/burndown.html","title":"JADE_CASTE | N+2 Top21 convergence control"},{"group":"JADE","href":"../../jade_temple/site/cicd_dag.html","oid":"f14e04decfc85f283844a2082dc9213f57543201","path":"mission-control/jade_temple/site/cicd_dag.html","title":"JADE CI/CD DAG"},{"group":"JADE","href":"../../jade_temple/site/eightpoint.html","oid":"ced1881a94acbdc83e65790f0452ab7cefa49804","path":"mission-control/jade_temple/site/eightpoint.html","title":"JADE_CASTE | N+3 eight-point MIP"},{"group":"JADE","href":"../../jade_temple/site/gate12_hub.html","oid":"2a2bf569a9beb7527e5daad14495eefe5a1faed9","path":"mission-control/jade_temple/site/gate12_hub.html","title":"JADE | H01-H12 DoV \u0026amp; Operations"},{"group":"JADE","href":"../../jade_temple/site/redtrace.html","oid":"6124c487e31db1085e71133cca1a7e471e40fb21","path":"mission-control/jade_temple/site/redtrace.html","title":"JADE N+8 \u00b7 Red-trace federation ledger"},{"group":"JADE","href":"../../jade_temple/site/qps_superstitch.html","oid":"cd8400e87865c1ef99f401a4468419d1cd7d4fd9","path":"mission-control/jade_temple/site/qps_superstitch.html","title":"JADE_TEMPLE \u2014 QPS Superstitch J25"},{"group":"Mission Control","href":"../../federation-atlas/landing/MISSION_CONTROL_MACHII_N13.html","oid":"669cbe0eb0eb0f557178a4956ae9c4e070201072","path":"mission-control/federation-atlas/landing/MISSION_CONTROL_MACHII_N13.html","title":"Mission Control / MACH-II \u00b7 Mycelium \u0026 MIP"},{"group":"Mission Control","href":"../../federation-atlas/landing/MISSION_CONTROL_RECURSIVE_MISSIONS_N12.html","oid":"e8709d7e4f844559b842fa50d850359ac43e6b5f","path":"mission-control/federation-atlas/landing/MISSION_CONTROL_RECURSIVE_MISSIONS_N12.html","title":"MISSION CONTROL | Recursive Mission City N12"},{"group":"Mission Control","href":"../../federation-atlas/landing/MISSION_CONTROL_TOP21_CENSUS_N11.html","oid":"8c39e95a6cab3b6af3ecdf7382caee599d21221a","path":"mission-control/federation-atlas/landing/MISSION_CONTROL_TOP21_CENSUS_N11.html","title":"Mission Control | Top-21 Repository and Dependency Observatory N11"},{"group":"Mission Control","href":"../../federation-atlas/landing/MISSION_CONTROL_FEDERATED_LAUNCH_N10.html","oid":"ad7ee7cb59b3ad6489a1024a144ebf6cf1e1b433","path":"mission-control/federation-atlas/landing/MISSION_CONTROL_FEDERATED_LAUNCH_N10.html","title":"Mission Control \u2014 Federated N10 Launch"},{"group":"Mission Control","href":"../../federation-atlas/live-census/view/index.html","oid":"2234a43be5229ec359bf98cd3775cc6840999b50","path":"mission-control/federation-atlas/live-census/view/index.html","title":"CODE PURPLE | Live Census \u0026amp; Diagnostics"},{"group":"Mission Control","href":"../../grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html","oid":"c2233a9ca1c48c7ce10053eef5aa3a2082abb8b0","path":"mission-control/grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html","title":"Grand Mission Fleet Control Dashboard v11"},{"group":"Mission Control","href":"../../../docs/mission-control/m3/index.html","oid":"9029dd75e097e63b9b6909d68935d8a9299416c5","path":"docs/mission-control/m3/index.html","title":"Mission Control M3 \u2014 Federation Flightdeck"},{"group":"Mission Control","href":"../../../docs/mission-control/m2/index.html","oid":"9c6ece1a5c0ad924fbebd850c339474e700d7fc3","path":"docs/mission-control/m2/index.html","title":"MissionControl \u2014 owner landing \u00b7 CODE PURPLE M2"}],"repo_url":"https://github.com/GBOGEB/pipeline-automation-hub","rule":"Read-only projection. Every value is read verbatim from the canonical owner's committed output; this launcher computes no metric (AGENTS.md L4). Missing or null values render as unknown, never zero.","schema":"gogreen.launcher.snapshot.v1","source_date":"2026-10-23T18:52:59+02:00","source_sha":"1662606b98348ec84e5661d0fe7a311637f2680d","tiles":[{"fields":[{"label":"Verified pass","path":"metrics.verified_pass","value":14},{"label":"Gate denominator","path":"metrics.gate_denominator","value":60},{"label":"Failing gate instances","path":"metrics.fail_gate_instances","value":8},{"label":"Nevergreen gate instances","path":"metrics.nevergreen_gate_instances","value":46},{"label":"NIRVANA count","path":"metrics.nirvana_count","value":0},{"label":"Latest pulse","path":"latest_pulse","value":"P0001"}],"headline":{"label":"Verified completion","path":"metrics.verified_completion_pct","unit":"%","value":23.33},"id":"completion","input":"mission-control/jade_temple/site/rolling5.json","input_oid":"29eb67ff11630bb2e205d76179e2da4af2a8825c","label":"Completion","lists":[],"owner":"mission-control/jade_temple/tools/rolling5.py","pages":[{"href":"../../jade_temple/site/cicd_dag.html","path":"mission-control/jade_temple/site/cicd_dag.html"},{"href":"../../jade_temple/site/green.html","path":"mission-control/jade_temple/site/green.html"}],"schema":"jade.temple.rolling5.projection/1.0","status":{"label":"Status","path":"merge_admission","value":"HOLD"}},{"fields":[{"label":"Owner actions closed","path":"metrics.owner_actions_closed","value":0},{"label":"Heads observed","path":"metrics.heads_observed","value":21},{"label":"Heads changed","path":"metrics.heads_changed","value":3},{"label":"Main check runs (success)","path":"metrics.main_check_runs.success","value":23},{"label":"Main check runs (total)","path":"metrics.main_check_runs.total","value":27},{"label":"Matched statement coverage","path":"metrics.global_matched_statement_coverage","value":null},{"label":"Merge admission","path":"controller.merge_admission","value":"HOLD"},{"label":"Observed","path":"source_observed_date","value":"2026-10-19"}],"headline":{"label":"Owner actions open","path":"metrics.owner_actions_open","value":21},"id":"progress","input":"mission-control/jade_temple/site/burndown.json","input_oid":"f81f29954faac2cdf7646d55be02feada7bceb95","label":"Progress","lists":[],"owner":"mission-control/jade_temple/site/build_burndown.py","pages":[{"href":"../../jade_temple/site/burndown.html","path":"mission-control/jade_temple/site/burndown.html"}],"schema":"jade.temple.burndown_projection.v2","status":{"label":"Status","path":"controller.action","value":"REPAIR_FIRST_RED"}},{"fields":[{"label":"By state","path":"summary.todo_by_state","value":{"BLOCKED":1,"CONTROL":1,"WAIT_RETURN":2}},{"label":"As of","path":"as_of","value":"2026-09-27"}],"headline":{"label":"Mission TODOs","path":"summary.todo_total","value":4},"id":"todo","input":"mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json","input_oid":"b8055243094c63b6a91bb4fbad8764f139f05fd0","label":"TODO","lists":[{"columns":["TODO","Priority","State","Next legal transition"],"label":"Mission TODOs","rows":[["GM-I-C-FIRST-RED","P1","WAIT_RETURN","VALIDATE_GENUINE_RETURN"],["LM11-FIRST-GT0","P1","BLOCKED","CONSUME_OWNER_RUNTIME_ADMISSION_CHANGE_OR_GENUINE_GT0_RUN"],["MC-EVO-02-ADOPTION","P1","CONTROL","MC-A1_READ_ONLY_CONSUMER_CROSSWALK"],["M01-HEPAK","P1","WAIT_RETURN","INGEST_AND_VALIDATE_EXACT_LICENSED_RECEIPT"]]}],"owner":"mission-control/v2/adoption/validate_mc_s2_a4_dashboard.py","pages":[{"href":"../../grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html","path":"mission-control/grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html"}],"schema":"missioncontrol.v2.adoption.dashboard_todo_surface.v1"},{"fields":[{"label":"Total","path":"bd.total","value":18},{"label":"Done","path":"bd.done","value":9},{"label":"Active","path":"bd.active","value":2},{"label":"TODO","path":"bd.todo","value":5},{"label":"Needs reader","path":"bd.needs_reader","value":2},{"label":"Observed","path":"window.observed_on","value":"2026-10-17"}],"headline":{"label":"Open BD items","path":"bd.open","value":9},"id":"bd_queue","input":"mission-control/gogreen/comparative/comparison.json","input_oid":"6f437972dce09612b04792cde68fa2765c55307d","label":"BD-queue","lists":[{"columns":["ID","Priority","State","Owner"],"label":"GoGreen TODO","rows":[["GG-W1","P0","MERGED_VERIFIED_PR597","Mission Control"],["GG-W2","P1","TODO","TEST_PILOT"],["GG-W3","P1","SOURCE_HEADS_21_OF_21","SCOUT"],["GG-W4","P1","TODO","CPQ owner"],["GG-W5","P1","TODO","REX"],["GG-W6","P2","TODO","gg_MATH/GoGREEN"],["GG-W7","P1","FOCUSED_53_TEST_COVERAGE_VERIFIED_REVIEW_HOLD","GoGREEN G7"],["GG-W8","P1","TODO","QPS/REX independent reader"]]}],"owner":"mission-control/gogreen/comparative (counts of mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json)","pages":[{"href":"../comparative/index.html","path":"mission-control/gogreen/comparative/index.html"}],"schema":"gogreen.comparative.snapshot.v1"},{"fields":[],"id":"jade_bd_queue","input":"mission-control/jade_temple/data/BD_QUEUE.csv","input_oid":"ef36a3a79c60d7638255bd82bcf97d519020db99","label":"BD-queue (JADE)","lists":[{"columns":["ID","Priority","Status","Next action"],"label":"JADE BD queue","rows":[["J00","P0","DONE_LOCAL","read canonical v2 generator before any V2 claim"],["J01","P0","DONE_NONATOMIC","exact branch/PR receipt first subsequent session"],["J02","P0","DONE_LOCAL","owner accept cohort scope and point release applicability"],["J03","P0","PENDING","owner choose docs path and deploy pilot"],["J04","P0","BLOCKED_OWNER","restore effective protections; no waiver"],["J05","P0","PARTIAL","pilot 5 core repo SPINE maps"],["J06","P1","PENDING","open draft PR only after duplicate/changed path check"],["J07","P1","PENDING_NATIVE","source owners reconcile first-red and branch conflicts"],["J08","P0","PENDING_OWNER","no authority transfer"],["J09","P1","PENDING","inspect changes since predecessor head"],["J10","P1","PENDING","pilot one owner-approved family, no bulk moves"],["J11","P1","PENDING","owner group applicability then prioritized wave"],["J12","P2","PENDING","inspect licenses, ownership, release/Pages necessity"],["J13","P0","ACTIVE","do at each session closeout"]]}],"owner":"mission-control/jade_temple (data/BD_QUEUE.csv)","pages":[{"href":"../../jade_temple/site/index.html","path":"mission-control/jade_temple/site/index.html"}],"schema":null},{"fields":[{"label":"By health","path":"summary.by_health","value":{"AMBER":4,"GREEN":5,"GREY":9}},{"label":"By execution","path":"summary.by_execution","value":{"ACTIVE":2,"BLOCKED":3,"CONTROL_WATCH":6,"UNKNOWN":5,"WAIT_EXTERNAL":2}},{"label":"By MCOV","path":"summary.by_mcov","value":{"MCOV-1":7,"MCOV-2":1,"MCOV-3":2,"MCOV-4":4,"MCOV-5":4}}],"headline":{"label":"Missions","path":"summary.missions","value":18},"id":"health","input":"mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json","input_oid":"b8055243094c63b6a91bb4fbad8764f139f05fd0","label":"Health","lists":[],"owner":"mission-control/v2/adoption/validate_mc_s2_a4_dashboard.py","pages":[{"href":"../../federation-atlas/live-census/view/index.html","path":"mission-control/federation-atlas/live-census/view/index.html"}],"schema":"missioncontrol.v2.adoption.dashboard_todo_surface.v1"},{"fields":[{"label":"Closed issues","path":"census.totals.closed_issues","value":412},{"label":"Open PRs","path":"census.totals.open_prs","value":68},{"label":"Closed PRs","path":"census.totals.closed_prs","value":5126},{"label":"Canonical roots open","path":"root_ledger.canonical_open","value":null},{"label":"Canonical roots closed","path":"root_ledger.canonical_closed","value":null},{"label":"Census date","path":"census_date","value":"2026-10-16"}],"headline":{"label":"Open issues","path":"census.totals.open_issues","value":143},"id":"code_health","input":"mission-control/federation-atlas/central/CODE_HEALTH_CENTRAL_v1.json","input_oid":"6970506347d59037dcf5c56142495403a19b3a86","label":"Code health","lists":[],"owner":"mission-control/federation-atlas/central/code_health.py","pages":[{"href":"../../federation-atlas/landing/MISSION_CONTROL_TOP21_CENSUS_N11.html","path":"mission-control/federation-atlas/landing/MISSION_CONTROL_TOP21_CENSUS_N11.html"}],"schema":"missioncontrol.code_health_frontier.v1"},{"fields":[{"label":"Top7","path":"current.top7_state","value":"ACTIVE"},{"label":"Top14","path":"current.top14_state","value":"SHADOW_MEASURE"},{"label":"Top21","path":"current.top21_state","value":"HOLD"},{"label":"Evolution level","path":"iteration_evolution.current_level","value":"E2_RECURSIVE"},{"label":"Complete iterations","path":"iteration_evolution.complete_iteration_count","value":2},{"label":"Distinct repos with full DMAIC","path":"current.mission_era_distinct_repos_full_dmaic","value":0}],"headline":{"label":"Full DMAIC iterations","path":"current.mission_era_full_dmaic_iterations","value":2},"id":"dmaic","input":"mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json","input_oid":"989bbe0382801da182d765995956286727acea3c","label":"DMAIC","lists":[],"owner":"mission-control/grand-missions (.github/workflows/gm-dmaic-evolution.yml)","pages":[{"href":"../../grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html","path":"mission-control/grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html"}],"schema":"missioncontrol.gm_dmaic_evolution.v1","status":{"label":"Status","path":"current.top7_state","value":"ACTIVE"}},{"fields":[{"label":"False accepts","path":"kpi.false_accept_count","value":0},{"label":"Ranked defects","path":"ranked_defects.total","value":5},{"label":"Open after exact-head proof","path":"ranked_defects.open_after_exact_head_public_proof","value":0},{"label":"Wave","path":"wave","value":"W285"},{"label":"As of","path":"as_of","value":"2026-09-18T17:03:00+02:00"}],"headline":{"label":"First-pass closure rate","path":"kpi.historical_r3_first_pass_closure_rate","value":0.25},"id":"dmaic_r3","input":"mission-control/grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json","input_oid":"ff36eb882511cc80bfaed3db1533e4b5c0f6618a","label":"DMAIC R3 control","lists":[],"owner":"mission-control/grand-missions (.github/workflows/hm01-r3-dmaic-control.yml)","pages":[],"schema":"missioncontrol.hm01.r3.dmaic_control.v3"},{"id":"mit","label":"MIT","pages":[{"href":"../../jade_temple/site/eightpoint.html","path":"mission-control/jade_temple/site/eightpoint.html"}],"unresolved":"No MIT metric owner exists on origin/master. The only uses of MIT are a QPS interface label (CIS/MIT/ICT/MCB). Name the owner (or confirm MIT means MIP) before this tile shows numbers."},{"fields":[{"label":"W9 PR","path":"parent_w9.pr","value":724},{"label":"Statements covered","path":"parent_w9.statements.covered","value":434},{"label":"Statements eligible","path":"parent_w9.statements.eligible","value":516},{"label":"Branches covered","path":"parent_w9.branches.covered","value":122},{"label":"Branches eligible","path":"parent_w9.branches.eligible","value":144},{"label":"Post-merge signal","path":"new_postmerge_signal.conclusion","value":"failure"},{"label":"Signal family","path":"new_postmerge_signal.family","value":"OSV-SCANNER_FAIL_ON_VULN"},{"label":"Checkpoint","path":"checkpoint_date_utc","value":"2026-10-18"}],"headline":{"label":"Tests per Python (W9)","path":"parent_w9.tests_per_python","value":77},"id":"mycelium","input":"mission-control/gogreen/mycelium_history/W10_LAST_GOOD_APPEND_20261018.json","input_oid":"1d5d78683721bd4ebe2e109d2bc2cb028bce7368","label":"MYCELIUM","lists":[],"owner":"mission-control/gogreen/mycelium_history","pages":[{"href":"../../federation-atlas/landing/MISSION_CONTROL_MACHII_N13.html","path":"mission-control/federation-atlas/landing/MISSION_CONTROL_MACHII_N13.html"}],"schema":"missioncontrol.code_purple.w10_append_checkpoint.v1","status":{"label":"Status","path":"parent_w9.conclusion","value":"success"}},{"fields":[],"id":"golden_thread","input":"mission-control/jade_temple/site/rolling5.json","input_oid":"29eb67ff11630bb2e205d76179e2da4af2a8825c","label":"Golden Thread","lists":[{"columns":["Repo","Position","Of","First break"],"label":"Golden thread per repo","rows":[["GBOGEB/pipeline-automation-hub",1,9,"OWNER_SCOPE"],["GBOGEB/cryoplant-project",1,9,"OWNER_SCOPE"],["GBOGEB/gg_MATH",1,9,"OWNER_SCOPE"],["GBOGEB/DOCX_RTM_Automation",1,9,"OWNER_SCOPE"],["GBOGEB/yaml-grammar",1,9,"OWNER_SCOPE"]]}],"owner":"mission-control/jade_temple/tools/rolling5.py (golden_thread())","pages":[{"href":"../../jade_temple/site/cicd_dag.html","path":"mission-control/jade_temple/site/cicd_dag.html"}],"schema":"jade.temple.rolling5.projection/1.0"},{"fields":[{"label":"Runs failure","path":"go_green.runs.failure","value":5},{"label":"Runs total","path":"go_green.runs.total","value":9},{"label":"Merge authorized","path":"authority.merge_authorized","value":false},{"label":"Window start","path":"window.start","value":"2026-10-16T00:00:00Z"},{"label":"Window end (excl.)","path":"window.end_exclusive","value":"2026-10-18T00:00:00Z"}],"headline":{"label":"Runs success","path":"go_green.runs.success","value":4},"id":"gogreen_runs","input":"mission-control/gogreen/comparative/comparison.json","input_oid":"6f437972dce09612b04792cde68fa2765c55307d","label":"GoGreen runs","lists":[],"owner":"mission-control/gogreen/comparative","pages":[{"href":"../comparative/index.html","path":"mission-control/gogreen/comparative/index.html"},{"href":"../../jade_temple/site/green.html","path":"mission-control/jade_temple/site/green.html"}],"schema":"gogreen.comparative.snapshot.v1"}]};
+const $=s=>document.querySelector(s);
+const esc=v=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const GREEN=/^(PASS|GREEN|SUCCESS|DONE|MERGED|CONTROL|TRUE)/i, RED=/(FAIL|RED\b|BLOCK|ERROR)/i,
+      AMBER=/^(HOLD|AMBER|WAIT|PENDING|SHADOW|TODO|REPAIR|NEEDS|ACTIVE)/i, GREY=/^(UNKNOWN|GREY|NONE|NULL)$/i;
+function tone(v){
+  if(v===null||v===undefined)return "grey";
+  const s=String(v);
+  if(GREY.test(s))return "grey"; if(RED.test(s))return "red"; if(GREEN.test(s))return "green"; if(AMBER.test(s))return "amber";
+  return "blue";
+}
+function val(v,unit){
+  if(v===null||v===undefined)return '<span class="unk">unknown</span>';
+  if(typeof v==="object"&&!Array.isArray(v))
+    return '<span class="chips">'+Object.entries(v).map(([k,x])=>'<span class="pill" data-tone="'+tone(k)+'">'+esc(k)+' '+esc(x===null?"unknown":x)+'</span>').join("")+'</span>';
+  if(Array.isArray(v))return esc(v.join(", "));
+  return esc(v)+(unit?esc(unit):"");
+}
+const blob=(p)=>D.repo_url+"/blob/"+D.source_sha+"/"+p;
+function tile(t){
+  const st=t.status?t.status.value:(t.unresolved?"OWNER_UNRESOLVED":null);
+  const tn=t.unresolved?"amber":tone(st);
+  let h='<article class="card" data-tone="'+tn+'" data-q="'+esc((t.label+" "+(t.owner||"")+" "+(t.input||"")).toLowerCase())+'">';
+  h+='<h3><span>'+esc(t.label)+'</span>'+(st!==null&&st!==undefined?'<span class="pill" data-tone="'+tn+'">'+esc(st)+'</span>':"")+'</h3>';
+  if(t.owner)h+='<div class="owner">owner: '+esc(t.owner)+'</div>';
+  if(t.unresolved)h+='<div class="note">'+esc(t.unresolved)+'</div>';
+  if(t.headline)h+='<div class="head"><span class="v">'+val(t.headline.value,t.headline.unit)+'</span><span class="l">'+esc(t.headline.label)+'</span></div>';
+  if(t.fields&&t.fields.length)h+='<dl>'+t.fields.map(f=>'<dt>'+esc(f.label)+'</dt><dd>'+val(f.value,f.unit)+'</dd>').join("")+'</dl>';
+  (t.lists||[]).forEach(l=>{
+    h+='<div><p class="cap">'+esc(l.label)+' ('+l.rows.length+')</p><div class="tbl"><table><thead><tr>'+l.columns.map(c=>'<th scope="col">'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+
+       l.rows.map(r=>'<tr>'+r.map(c=>'<td>'+val(c)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div></div>';
+  });
+  h+='<div class="links">'+t.pages.map(p=>'<a href="'+esc(p.href)+'">'+esc(p.path.split("/").pop())+'</a>').join("");
+  if(t.input)h+='<a href="'+esc(blob(t.input))+'" rel="noopener noreferrer">source @ '+esc(t.input_oid.slice(0,7))+'</a>';
+  return h+'</div></article>';
+}
+function render(){
+  $("#rule").textContent=D.rule;
+  $("#pulse").textContent="read at "+D.source_sha+" · "+D.source_date+" · computes_metrics="+D.computes_metrics+" · missing_fields="+D.missing_fields.length;
+  $("#tiles").innerHTML=D.tiles.map(tile).join("");
+  const groups=[...new Set(D.pages.map(p=>p.group))];
+  $("#pages").innerHTML=groups.map(g=>'<div class="grp">'+esc(g)+'</div><div class="launch">'+D.pages.filter(p=>p.group===g).map(p=>
+    '<a href="'+esc(p.href)+'" data-q="'+esc((p.title+" "+p.path).toLowerCase())+'"><b>'+esc(p.title)+'</b><small>'+esc(p.path)+'</small></a>').join("")+'</div>').join("");
+  $("#prov").innerHTML=D.tiles.filter(t=>t.input).map(t=>'<tr><td>'+esc(t.label)+'</td><td><a href="'+esc(blob(t.input))+'" rel="noopener noreferrer">'+esc(t.input)+'</a></td><td>'+esc(t.input_oid)+'</td><td>'+esc(t.owner)+'</td><td>'+val(t.schema)+'</td></tr>').join("");
+}
+render();
+$("#q").addEventListener("input",e=>{const q=e.target.value.trim().toLowerCase();
+  document.querySelectorAll("[data-q]").forEach(n=>{n.hidden=q!==""&&!n.dataset.q.includes(q);});});
+$("#theme").addEventListener("click",e=>{const r=document.documentElement;
+  const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme=dark?"light":"dark";e.currentTarget.setAttribute("aria-pressed",String(!dark));});
+</script>
+</body>
+</html>

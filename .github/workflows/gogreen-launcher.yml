@@ -1,0 +1,36 @@
+name: GOGREEN launcher
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/launcher/**'
+      - '.github/workflows/gogreen-launcher.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: gogreen-launcher-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  launcher:
+    name: Launcher outputs current and tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - name: Checkout exact author head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Check outputs and run tests
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          python mission-control/gogreen/launcher/build_launcher.py --check
+          python -m unittest discover -s mission-control/gogreen/launcher -p "test_*.py" -v

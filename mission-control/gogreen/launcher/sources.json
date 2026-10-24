@@ -1,0 +1,225 @@
+{
+  "schema": "gogreen.launcher.sources.v1",
+  "rule": "Read-only projection. Every value is read verbatim from the canonical owner's committed output; this launcher computes no metric (AGENTS.md L4). Missing or null values render as unknown, never zero.",
+  "repo_url": "https://github.com/GBOGEB/pipeline-automation-hub",
+  "pages": [
+    {"group": "GoGreen", "path": "mission-control/jade_temple/site/green.html"},
+    {"group": "GoGreen", "path": "mission-control/gogreen/comparative/index.html"},
+    {"group": "JADE", "path": "mission-control/jade_temple/site/index.html"},
+    {"group": "JADE", "path": "mission-control/jade_temple/site/burndown.html"},
+    {"group": "JADE", "path": "mission-control/jade_temple/site/cicd_dag.html"},
+    {"group": "JADE", "path": "mission-control/jade_temple/site/eightpoint.html"},
+    {"group": "JADE", "path": "mission-control/jade_temple/site/gate12_hub.html"},
+    {"group": "JADE", "path": "mission-control/jade_temple/site/redtrace.html"},
+    {"group": "JADE", "path": "mission-control/jade_temple/site/qps_superstitch.html"},
+    {"group": "Mission Control", "path": "mission-control/federation-atlas/landing/MISSION_CONTROL_MACHII_N13.html"},
+    {"group": "Mission Control", "path": "mission-control/federation-atlas/landing/MISSION_CONTROL_RECURSIVE_MISSIONS_N12.html"},
+    {"group": "Mission Control", "path": "mission-control/federation-atlas/landing/MISSION_CONTROL_TOP21_CENSUS_N11.html"},
+    {"group": "Mission Control", "path": "mission-control/federation-atlas/landing/MISSION_CONTROL_FEDERATED_LAUNCH_N10.html"},
+    {"group": "Mission Control", "path": "mission-control/federation-atlas/live-census/view/index.html"},
+    {"group": "Mission Control", "path": "mission-control/grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html"},
+    {"group": "Mission Control", "path": "docs/mission-control/m3/index.html"},
+    {"group": "Mission Control", "path": "docs/mission-control/m2/index.html"}
+  ],
+  "tiles": [
+    {
+      "id": "completion",
+      "label": "Completion",
+      "owner": "mission-control/jade_temple/tools/rolling5.py",
+      "input": "mission-control/jade_temple/site/rolling5.json",
+      "status": "merge_admission",
+      "headline": {"label": "Verified completion", "path": "metrics.verified_completion_pct", "unit": "%"},
+      "fields": [
+        {"label": "Verified pass", "path": "metrics.verified_pass"},
+        {"label": "Gate denominator", "path": "metrics.gate_denominator"},
+        {"label": "Failing gate instances", "path": "metrics.fail_gate_instances"},
+        {"label": "Nevergreen gate instances", "path": "metrics.nevergreen_gate_instances"},
+        {"label": "NIRVANA count", "path": "metrics.nirvana_count"},
+        {"label": "Latest pulse", "path": "latest_pulse"}
+      ],
+      "pages": ["mission-control/jade_temple/site/cicd_dag.html", "mission-control/jade_temple/site/green.html"]
+    },
+    {
+      "id": "progress",
+      "label": "Progress",
+      "owner": "mission-control/jade_temple/site/build_burndown.py",
+      "input": "mission-control/jade_temple/site/burndown.json",
+      "status": "controller.action",
+      "headline": {"label": "Owner actions open", "path": "metrics.owner_actions_open"},
+      "fields": [
+        {"label": "Owner actions closed", "path": "metrics.owner_actions_closed"},
+        {"label": "Heads observed", "path": "metrics.heads_observed"},
+        {"label": "Heads changed", "path": "metrics.heads_changed"},
+        {"label": "Main check runs (success)", "path": "metrics.main_check_runs.success"},
+        {"label": "Main check runs (total)", "path": "metrics.main_check_runs.total"},
+        {"label": "Matched statement coverage", "path": "metrics.global_matched_statement_coverage"},
+        {"label": "Merge admission", "path": "controller.merge_admission"},
+        {"label": "Observed", "path": "source_observed_date"}
+      ],
+      "pages": ["mission-control/jade_temple/site/burndown.html"]
+    },
+    {
+      "id": "todo",
+      "label": "TODO",
+      "owner": "mission-control/v2/adoption/validate_mc_s2_a4_dashboard.py",
+      "input": "mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json",
+      "headline": {"label": "Mission TODOs", "path": "summary.todo_total"},
+      "fields": [
+        {"label": "By state", "path": "summary.todo_by_state"},
+        {"label": "As of", "path": "as_of"}
+      ],
+      "lists": [
+        {"label": "Mission TODOs", "path": "todos[]", "columns": [
+          {"label": "TODO", "key": "todo_id"}, {"label": "Priority", "key": "priority"},
+          {"label": "State", "key": "state"}, {"label": "Next legal transition", "key": "next_legal_transition"}]}
+      ],
+      "pages": ["mission-control/grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html"]
+    },
+    {
+      "id": "bd_queue",
+      "label": "BD-queue",
+      "owner": "mission-control/gogreen/comparative (counts of mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json)",
+      "input": "mission-control/gogreen/comparative/comparison.json",
+      "headline": {"label": "Open BD items", "path": "bd.open"},
+      "fields": [
+        {"label": "Total", "path": "bd.total"},
+        {"label": "Done", "path": "bd.done"},
+        {"label": "Active", "path": "bd.active"},
+        {"label": "TODO", "path": "bd.todo"},
+        {"label": "Needs reader", "path": "bd.needs_reader"},
+        {"label": "Observed", "path": "window.observed_on"}
+      ],
+      "lists": [
+        {"label": "GoGreen TODO", "path": "todo[]", "columns": [
+          {"label": "ID", "key": "id"}, {"label": "Priority", "key": "priority"},
+          {"label": "State", "key": "state"}, {"label": "Owner", "key": "owner"}]}
+      ],
+      "pages": ["mission-control/gogreen/comparative/index.html"]
+    },
+    {
+      "id": "jade_bd_queue",
+      "label": "BD-queue (JADE)",
+      "owner": "mission-control/jade_temple (data/BD_QUEUE.csv)",
+      "input": "mission-control/jade_temple/data/BD_QUEUE.csv",
+      "lists": [
+        {"label": "JADE BD queue", "path": "[]", "columns": [
+          {"label": "ID", "key": "id"}, {"label": "Priority", "key": "priority"},
+          {"label": "Status", "key": "status"}, {"label": "Next action", "key": "next_action"}]}
+      ],
+      "pages": ["mission-control/jade_temple/site/index.html"]
+    },
+    {
+      "id": "health",
+      "label": "Health",
+      "owner": "mission-control/v2/adoption/validate_mc_s2_a4_dashboard.py",
+      "input": "mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json",
+      "headline": {"label": "Missions", "path": "summary.missions"},
+      "fields": [
+        {"label": "By health", "path": "summary.by_health"},
+        {"label": "By execution", "path": "summary.by_execution"},
+        {"label": "By MCOV", "path": "summary.by_mcov"}
+      ],
+      "pages": ["mission-control/federation-atlas/live-census/view/index.html"]
+    },
+    {
+      "id": "code_health",
+      "label": "Code health",
+      "owner": "mission-control/federation-atlas/central/code_health.py",
+      "input": "mission-control/federation-atlas/central/CODE_HEALTH_CENTRAL_v1.json",
+      "headline": {"label": "Open issues", "path": "census.totals.open_issues"},
+      "fields": [
+        {"label": "Closed issues", "path": "census.totals.closed_issues"},
+        {"label": "Open PRs", "path": "census.totals.open_prs"},
+        {"label": "Closed PRs", "path": "census.totals.closed_prs"},
+        {"label": "Canonical roots open", "path": "root_ledger.canonical_open"},
+        {"label": "Canonical roots closed", "path": "root_ledger.canonical_closed"},
+        {"label": "Census date", "path": "census_date"}
+      ],
+      "pages": ["mission-control/federation-atlas/landing/MISSION_CONTROL_TOP21_CENSUS_N11.html"]
+    },
+    {
+      "id": "dmaic",
+      "label": "DMAIC",
+      "owner": "mission-control/grand-missions (.github/workflows/gm-dmaic-evolution.yml)",
+      "input": "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
+      "status": "current.top7_state",
+      "headline": {"label": "Full DMAIC iterations", "path": "current.mission_era_full_dmaic_iterations"},
+      "fields": [
+        {"label": "Top7", "path": "current.top7_state"},
+        {"label": "Top14", "path": "current.top14_state"},
+        {"label": "Top21", "path": "current.top21_state"},
+        {"label": "Evolution level", "path": "iteration_evolution.current_level"},
+        {"label": "Complete iterations", "path": "iteration_evolution.complete_iteration_count"},
+        {"label": "Distinct repos with full DMAIC", "path": "current.mission_era_distinct_repos_full_dmaic"}
+      ],
+      "pages": ["mission-control/grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html"]
+    },
+    {
+      "id": "dmaic_r3",
+      "label": "DMAIC R3 control",
+      "owner": "mission-control/grand-missions (.github/workflows/hm01-r3-dmaic-control.yml)",
+      "input": "mission-control/grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json",
+      "headline": {"label": "First-pass closure rate", "path": "kpi.historical_r3_first_pass_closure_rate"},
+      "fields": [
+        {"label": "False accepts", "path": "kpi.false_accept_count"},
+        {"label": "Ranked defects", "path": "ranked_defects.total"},
+        {"label": "Open after exact-head proof", "path": "ranked_defects.open_after_exact_head_public_proof"},
+        {"label": "Wave", "path": "wave"},
+        {"label": "As of", "path": "as_of"}
+      ],
+      "pages": []
+    },
+    {
+      "id": "mit",
+      "label": "MIT",
+      "unresolved": "No MIT metric owner exists on origin/master. The only uses of MIT are a QPS interface label (CIS/MIT/ICT/MCB). Name the owner (or confirm MIT means MIP) before this tile shows numbers.",
+      "pages": ["mission-control/jade_temple/site/eightpoint.html"]
+    },
+    {
+      "id": "mycelium",
+      "label": "MYCELIUM",
+      "owner": "mission-control/gogreen/mycelium_history",
+      "input": "mission-control/gogreen/mycelium_history/W10_LAST_GOOD_APPEND_20261018.json",
+      "status": "parent_w9.conclusion",
+      "headline": {"label": "Tests per Python (W9)", "path": "parent_w9.tests_per_python"},
+      "fields": [
+        {"label": "W9 PR", "path": "parent_w9.pr"},
+        {"label": "Statements covered", "path": "parent_w9.statements.covered"},
+        {"label": "Statements eligible", "path": "parent_w9.statements.eligible"},
+        {"label": "Branches covered", "path": "parent_w9.branches.covered"},
+        {"label": "Branches eligible", "path": "parent_w9.branches.eligible"},
+        {"label": "Post-merge signal", "path": "new_postmerge_signal.conclusion"},
+        {"label": "Signal family", "path": "new_postmerge_signal.family"},
+        {"label": "Checkpoint", "path": "checkpoint_date_utc"}
+      ],
+      "pages": ["mission-control/federation-atlas/landing/MISSION_CONTROL_MACHII_N13.html"]
+    },
+    {
+      "id": "golden_thread",
+      "label": "Golden Thread",
+      "owner": "mission-control/jade_temple/tools/rolling5.py (golden_thread())",
+      "input": "mission-control/jade_temple/site/rolling5.json",
+      "lists": [
+        {"label": "Golden thread per repo", "path": "repos[]", "columns": [
+          {"label": "Repo", "key": "repo"}, {"label": "Position", "key": "golden_thread.position"},
+          {"label": "Of", "key": "golden_thread.of"}, {"label": "First break", "key": "golden_thread.first_break"}]}
+      ],
+      "pages": ["mission-control/jade_temple/site/cicd_dag.html"]
+    },
+    {
+      "id": "gogreen_runs",
+      "label": "GoGreen runs",
+      "owner": "mission-control/gogreen/comparative",
+      "input": "mission-control/gogreen/comparative/comparison.json",
+      "headline": {"label": "Runs success", "path": "go_green.runs.success"},
+      "fields": [
+        {"label": "Runs failure", "path": "go_green.runs.failure"},
+        {"label": "Runs total", "path": "go_green.runs.total"},
+        {"label": "Merge authorized", "path": "authority.merge_authorized"},
+        {"label": "Window start", "path": "window.start"},
+        {"label": "Window end (excl.)", "path": "window.end_exclusive"}
+      ],
+      "pages": ["mission-control/gogreen/comparative/index.html", "mission-control/jade_temple/site/green.html"]
+    }
+  ]
+}
