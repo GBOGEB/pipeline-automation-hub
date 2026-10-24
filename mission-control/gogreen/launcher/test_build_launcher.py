@@ -65,12 +65,11 @@ class Committed(unittest.TestCase):
                     self.assertEqual(self.snap["inputs"][t["input"]], t["input_oid"])
 
     def test_values_are_verbatim_owner_values(self):
-        sha = self.snap["source_sha"]
+        # Read by recorded blob OID: CI's shallow clone may not hold the build commit.
         for t in self.snap["tiles"]:
             if "input" not in t:
                 continue
-            _, text = bl.read_at(sha, t["input"])
-            doc = bl.parse(t["input"], text)
+            doc = bl.parse(t["input"], bl.git("cat-file", "blob", t["input_oid"]))
             for f in t["fields"] + ([t["headline"]] if "headline" in t else []):
                 with self.subTest(tile=t["id"], path=f["path"]):
                     self.assertEqual(f["value"], bl.pick(doc, f["path"])[0])
@@ -106,7 +105,7 @@ class Stale(unittest.TestCase):
             fake = Path(tmp) / "launcher.json"
             fake.write_text(bl.dump(snap), encoding="utf-8")
             with mock.patch.object(bl, "SNAPSHOT", fake):
-                problems = bl.check(snap["source_sha"])
+                problems = bl.check(bl.git("rev-parse", "HEAD^{commit}").strip())
         self.assertTrue(any(first in p for p in problems), problems)
 
     def test_pulse_fields_alone_are_not_stale(self):
