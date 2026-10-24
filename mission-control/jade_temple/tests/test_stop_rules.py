@@ -86,6 +86,61 @@ class StopTests(unittest.TestCase):
         g=dict(GATES);del g['matched_coverage']
         with self.assertRaisesRegex(ValueError,'incomplete or extra'):
             self.stop(gates=g)
+    # MACH-II: the solo owner's review waiver counts only when the platform enforces required
+    # checks and an automated review exists on the exact head.
+    REPLAY=[{"source_sha":SHA,"run_id":1,"conclusion":"success"},{"source_sha":SHA,"run_id":2,"conclusion":"success"}]
+    def waiver(self,**review):
+        r={"kind":"copilot_review","head_sha":SHA,"url":"https://github.com/GBOGEB/pipeline-automation-hub/pull/1#pullrequestreview-1",**review}
+        return {"level":"MACH-II","policy":"https://github.com/GBOGEB/ABACUS/blob/main/docs/governance/CODE_PURPLE_MACH_LADDER.md","automated_review":r}
+    def waived(self,waiver,**gates):
+        g={**GATES,"independent_review":mod.REVIEW_WAIVER,**gates}
+        return mod.evaluate(g,[],[],False,SHA,self.REPLAY,waiver)
+    def test_qualified_mach2_waiver_meets_target_and_is_labelled(self):
+        a=self.waived(self.waiver())
+        self.assertEqual(a["action"],"TARGET_MET_STOP_ENGINEERING")
+        self.assertEqual(a["review_basis"],"WAIVED_MACH_II")
+        self.assertEqual(a["merge_admission"],"HOLD")
+        self.assertFalse(a["formal_release_credit"])
+    def test_codeql_counts_as_automated_review(self):
+        self.assertEqual(self.waived(self.waiver(kind="codeql"))["action"],"TARGET_MET_STOP_ENGINEERING")
+    def test_waiver_without_enforced_required_checks_is_owner_blocked(self):
+        for state in ("UNKNOWN","FAIL","MISSING","PENDING"):
+            a=self.waived(self.waiver(),required_checks=state)
+            self.assertEqual(a["action"],"OWNER_BLOCKED",state)
+            self.assertEqual(a["review_basis"],"WAIVER_UNQUALIFIED")
+    def test_automated_review_on_another_head_does_not_qualify(self):
+        a=self.waived(self.waiver(head_sha="c"*40))
+        self.assertEqual(a["action"],"OWNER_BLOCKED")
+        self.assertEqual(a["review_basis"],"WAIVER_UNQUALIFIED")
+    def test_unknown_review_kind_or_untrusted_links_do_not_qualify(self):
+        for w in (self.waiver(kind="human_self_approval"),self.waiver(url="http://example.com/r"),
+                  {**self.waiver(),"policy":"local-note.md"},{**self.waiver(),"level":"MACH-I"},
+                  {**self.waiver(),"automated_review":None}):
+            self.assertEqual(self.waived(w)["action"],"OWNER_BLOCKED",w)
+    def test_waiver_replaces_review_only(self):
+        for gate in ("security","required_checks","blocked_red_canary","owner_release"):
+            with self.assertRaisesRegex(ValueError,"invalid gate state"):
+                self.waived(self.waiver(),**{gate:mod.REVIEW_WAIVER})
+    def test_waiver_flag_and_record_must_agree(self):
+        with self.assertRaisesRegex(ValueError,"waiver state and waiver record disagree"):
+            mod.evaluate({**GATES,"independent_review":mod.REVIEW_WAIVER},[],[],False,SHA,self.REPLAY)
+        with self.assertRaisesRegex(ValueError,"waiver state and waiver record disagree"):
+            mod.evaluate(dict(GATES),[],[],False,SHA,self.REPLAY,self.waiver())
+    def test_waiver_does_not_override_first_red(self):
+        reds=[{"source_sha":SHA,"owner":"MissionControl","url":"https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/1"}]
+        g={**GATES,"independent_review":mod.REVIEW_WAIVER}
+        self.assertEqual(mod.evaluate(g,[],reds,False,SHA,self.REPLAY,self.waiver())["action"],"REPAIR_FIRST_RED")
+    def test_snapshot_without_waiver_keeps_receipt_shape(self):
+        d=json.loads((ROOT/'data/STOP_MODEL_NPLUS2.json').read_text(encoding='utf-8'))
+        self.assertNotIn("review_waiver",d)
+        self.assertNotIn("review_basis",mod.from_snapshot(d))
+    def test_snapshot_carries_waiver_record(self):
+        d=json.loads((ROOT/'data/STOP_MODEL_NPLUS2.json').read_text(encoding='utf-8'))
+        d["gates"]["independent_review"]=mod.REVIEW_WAIVER
+        d["review_waiver"]=self.waiver(head_sha=d["current_main_sha"])
+        x=mod.from_snapshot(d)
+        self.assertEqual(x["action"],"REPAIR_FIRST_RED")
+        self.assertEqual(x["review_basis"],"WAIVER_UNQUALIFIED")
     def test_release_cannot_be_qualified_by_json_mutation(self):
         d=json.loads((ROOT/'data/STOP_MODEL_NPLUS2.json').read_text(encoding='utf-8'))
         d["merge_admission"]="PASS"
