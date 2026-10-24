@@ -217,7 +217,7 @@ def heatmap(model):
         rows.append(f'<tr><td>{r["rank"]}</td><td><b>{E(dag._short(r["repo"]))}</b><br><small>{E(r["lane"])} · '
                     f'<code>{E((r["head_sha"] or "")[:10])}</code></small> {drift}</td>{cells}</tr>')
     fleet = "".join(f'<td class="lv">L{lc["fleet"][k]["median_level"]}<small>≥L3 {lc["fleet"][k]["repos_ge_L3"]}/21</small></td>' for k in keys)
-    return (f'<h2 class="cd-sec" id="lifecycle">DevOps lifecycle maturity S0–S9 (21 repos, census N+9)</h2>'
+    return (f'<h2 class="cd-sec" id="lifecycle">DevOps lifecycle maturity S0–S9 (21 repos, census {E(lc["pulse"])})</h2>'
             f'<p class="cd-lead">Level per stage on the census ladder (L0 ABSENT … L5 CONTROLLED); the cell text gives the level and the stage status '
             f'(the level is attainment, not a verdict; the label is the state of the next blocking probe above it, so an unobservable blocker stays UNKNOWN). Census <code>{E(lc["digest_sha256"][:12])}</code> '
             f'observed {E(lc["observed_at_utc"])}; HEADs can be newer than the gate SHAs.</p>'

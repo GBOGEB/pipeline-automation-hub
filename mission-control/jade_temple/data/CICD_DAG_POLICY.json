@@ -21,13 +21,13 @@
     "note": "#781 scale-dock owns the EVERRED / P-process / Code Purple dock definitions and the cross-source consistency checks; this projection calls those functions instead of keeping a parallel definition. issue_bd and crosswalk docks need inputs JADE does not hold and stay NOT_DOCKED (UNKNOWN, never zero)."
   },
   "devops_census": {
-    "census": "data/DEVOPS_CENSUS_N9.json",
-    "objects": "data/DEVOPS_OBJECTS_N9.json",
+    "census": "data/DEVOPS_CENSUS_N10.json",
+    "objects": "data/DEVOPS_OBJECTS_N10.json",
     "schema": "jade.devops.census.v1",
-    "digest_sha256": "1b3a1c5272145d62fa11b171def677186931c32af85adaa8e03fda90879d3bfd",
-    "source_commit": "2fc580ddb6e9e30ef52f8f8d53e187ee94a47253",
-    "source_branch": "feat/jade-devops-lifecycle-n9-20261023",
-    "note": "Peer N+9 census, copied as the exact committed blobs. Its blob ids are read at each repo's census HEAD, which can be newer than the FOCUS5 gate SHA; every such binding carries that HEAD and the drift is reported, never hidden."
+    "digest_sha256": "f265b5742a30c9e11f2051367b0c5d308467b3adb0e7d9555e2f5fbda4d954da",
+    "source_commit": "eb26b0026f02526cd7d8f0820164aa56afc21cec",
+    "source_branch": "master (#834)",
+    "note": "Latest committed census pulse (N+10; N+9 stays immutable beside it). Re-pin census, objects and digest here when a new pulse lands, then regenerate (AGENTS.md L7). Its blob ids are read at each repo's census HEAD, which can be newer than the FOCUS5 gate SHA; every such binding carries that HEAD and the drift is reported, never hidden."
   },
   "lifecycle_level_status": {"0": "FAIL", "1": "FAIL", "2": "UNKNOWN", "3": "PASS", "4": "PASS", "5": "PASS"},
   "lifecycle_level_note": "Fleet stage colour uses the median census level: L3 AUTOMATED is the pass floor, L2 DEFINED is not yet automated, L0-L1 is red. Per-repo stage nodes are coloured by the state of the next blocking probe (census level = attainment, not a verdict): no blocker (L5) is PASS, a FAIL blocker is FAIL, an UNKNOWN blocker stays UNKNOWN.",
@@ -114,8 +114,8 @@
     {"id": "OBJ.BD_QUEUE", "path": "mission-control/jade_temple/data/BD_QUEUE.csv", "kind": "data", "function": "JADE burn-down queue (issue BD)"},
     {"id": "OBJ.HEAD_CROSSWALK", "path": "mission-control/jade_temple/data/HEAD_CROSSWALK.json", "kind": "data", "function": "Prior vs observed default-branch SHA per repo"},
     {"id": "OBJ.COHORT_CROSSWALK", "path": "mission-control/jade_temple/data/COHORT_CROSSWALK_NPLUS1.json", "kind": "data", "function": "N11 roster vs GoGREEN roster intersection"},
-    {"id": "OBJ.DEVOPS_CENSUS", "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N9.json", "kind": "data", "function": "N+9 DevOps lifecycle census: 21 repos, S0..S9 levels, workflows, jobs, tests, git blob ids"},
-    {"id": "OBJ.DEVOPS_OBJECTS", "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N9.json", "kind": "data", "function": "N+9 object table: python modules and test files with blob ids"},
+    {"id": "OBJ.DEVOPS_CENSUS", "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json", "kind": "data", "function": "N+10 DevOps lifecycle census: 21 repos, S0..S9 levels, workflows, jobs, tests, git blob ids"},
+    {"id": "OBJ.DEVOPS_OBJECTS", "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json", "kind": "data", "function": "N+10 object table: python modules and test files with blob ids"},
     {"id": "OBJ.SCALE_DOCK", "path": "mission-control/gogreen/scale_dock.py", "symbol": "dock_consistency", "kind": "code", "function": "#781 scale-dock: read-only EVERRED / P-process / Code Purple docks and cross-source consistency"},
     {"id": "OBJ.CP_CENSUS", "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/kit/census.json", "kind": "data", "function": "Code Purple census v2: lift criteria, admission audit, follow-ups"},
     {"id": "OBJ.CICD_DAG", "path": "mission-control/jade_temple/tools/cicd_dag.py", "symbol": "project", "kind": "code", "function": "This projection: DAG/SIPOC, metrics, SHA/OID crosswalk"},

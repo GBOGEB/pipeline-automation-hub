@@ -230,6 +230,14 @@ class Census(unittest.TestCase):
         self.assertIsNone(cd.load_census(ROOT, {k: v for k, v in POLICY.items() if k != "devops_census"}))
         self.assertIsNone(cd.census_binding(None, "GBOGEB/x", "a.py"))
 
+    def test_pulse_label_comes_from_the_census_iteration(self):
+        self.assertEqual(cd.pulse_label({"iteration": "N10"}), "N+10")
+        self.assertEqual(cd.pulse_label({"iteration": "FRESH"}), "FRESH")
+        self.assertEqual(cd.pulse_label({}), "UNKNOWN")
+        cfg = POLICY["devops_census"]
+        pinned = json.loads((ROOT / cfg["census"]).read_text(encoding="utf-8"))
+        self.assertIn(f"census {cd.pulse_label(pinned)}", (ROOT / "site/cicd_dag.html").read_text(encoding="utf-8"))
+
     def test_lifecycle_chain_is_acyclic_with_one_feedback_edge(self):
         for name in ["TOTAL"] + [s for s in SCOPES if s.startswith("REPO:")]:
             s = SCOPES[name]
