@@ -250,6 +250,18 @@ def cache_dir(cache: Path, repo: str) -> Path:
     return Path(cache) / (repo.replace("/", "__") + ".git")
 
 
+def refresh_tags(gitdir: Path) -> bool:
+    """Record the remote's tags. A failed read removes the record, so tags stay UNKNOWN instead of reading as zero."""
+    out = Path(gitdir) / "jade-tags.txt"
+    p = subprocess.run(["git", "--git-dir", str(gitdir), "ls-remote", "--tags", "origin"], capture_output=True,
+                       timeout=300)
+    if p.returncode != 0:
+        out.unlink(missing_ok=True)
+        return False
+    out.write_text(p.stdout.decode("utf-8", errors="replace"), encoding="utf-8")
+    return True
+
+
 def fetch_repo(cache: Path, repo: str, branch: str, baseline: str | None, url: str | None = None) -> dict:
     """Clone or refresh one bare blobless cache, fetch the baseline commit and landed history."""
     url = url or f"https://github.com/{repo}.git"
@@ -272,9 +284,8 @@ def fetch_repo(cache: Path, repo: str, branch: str, baseline: str | None, url: s
             since = datetime.fromisoformat(g.commit_meta(baseline)["date"]) - timedelta(days=1)
             g.run("fetch", "-q", "--filter=blob:none", f"--shallow-since={since.date().isoformat()}", "origin",
                   f"+refs/heads/{branch}:refs/heads/{branch}", check=False)
-    tags = g.run("ls-remote", "--tags", "origin", check=False).decode()
-    (d / "jade-tags.txt").write_text(tags, encoding="utf-8")
-    shas = [head] + ([baseline] if base_ok and baseline != head else [])
+    refresh_tags(d)
+    shas =[head] + ([baseline] if base_ok and baseline != head else [])
     want = sorted({oid for s in shas for (_m, t, oid, path) in g.ls_tree(s) if t == "blob" and wanted(path)}
                   & set().union(*(g.missing(s) for s in shas)))
     g.fetch_blobs(want)

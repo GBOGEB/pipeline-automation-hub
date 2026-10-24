@@ -171,6 +171,17 @@ class EndToEnd(unittest.TestCase):
                               "remote.origin.partialclonefilter"], capture_output=True).stdout.decode().strip()
         self.assertEqual(cfg, "blob:none")
 
+    def test_failed_tag_read_is_unknown_not_zero(self):
+        d = self.tmp / "tags-probe.git"
+        shutil.copytree(C.cache_dir(self.cache, "demo/service"), d)
+        self.assertTrue(C.refresh_tags(d))
+        self.assertTrue((d / "jade-tags.txt").read_text(encoding="utf-8"))
+        git(self.tmp, "--git-dir", str(d), "remote", "set-url", "origin", (self.tmp / "gone").as_uri())
+        self.assertFalse(C.refresh_tags(d))
+        self.assertFalse((d / "jade-tags.txt").exists())
+        info = C.tag_info(self.tmp, "x/y")
+        self.assertIsNone(info["count"])
+
     def test_refetch_is_idempotent(self):
         again = C.fetch_repo(self.cache, "demo/service", "main", self.base, url=self.url)
         self.assertEqual((again["ok"], again["head"]), (True, self.head))
