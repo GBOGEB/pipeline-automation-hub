@@ -19,7 +19,12 @@
     {"group": "Mission Control", "path": "mission-control/federation-atlas/live-census/view/index.html"},
     {"group": "Mission Control", "path": "mission-control/grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html"},
     {"group": "Mission Control", "path": "docs/mission-control/m3/index.html"},
-    {"group": "Mission Control", "path": "docs/mission-control/m2/index.html"}
+    {"group": "Mission Control", "path": "docs/mission-control/m2/index.html"},
+    {"group": "PURPLE / P-process", "path": "mission-control/qps-triage-ultra/p-process/site/index.html"},
+    {"group": "PURPLE / P-process", "path": "mission-control/qps-triage-ultra/p-process/site/everred/index.html"},
+    {"group": "PURPLE / P-process", "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/index.html"},
+    {"group": "PURPLE / P-process", "path": "docs/code-purple-live/index.html"},
+    {"group": "PURPLE / P-process", "path": "docs/code-purple-w1/index.html"}
   ],
   "tiles": [
     {
@@ -238,6 +243,84 @@
         {"label": "Window end (excl.)", "path": "window.end_exclusive"}
       ],
       "pages": ["mission-control/gogreen/comparative/index.html", "mission-control/jade_temple/site/green.html"]
+    },
+    {
+      "id": "p_process",
+      "label": "P-process mode",
+      "owner": "mission-control/qps-triage-ultra/p-process/p_decide.py",
+      "input": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
+      "headline": {"label": "Code Purple lifted", "path": "lifted"},
+      "fields": [
+        {"label": "Incident", "path": "incident"},
+        {"label": "Generated", "path": "generated_at"},
+        {"label": "Census at", "path": "census_at"},
+        {"label": "EVERRED at", "path": "everred_at"},
+        {"label": "Drift at", "path": "drift_at"}
+      ],
+      "lists": [
+        {"label": "Mode per repo", "path": "repos{}", "columns": [
+          {"label": "Repo", "key": "key"}, {"label": "Mode", "key": "value.mode"},
+          {"label": "Ruleset", "key": "value.ruleset"}, {"label": "Open roots", "key": "value.open_roots"},
+          {"label": "Worst", "key": "value.worst"}, {"label": "Reasons", "key": "value.reasons"}]}
+      ],
+      "pages": ["mission-control/qps-triage-ultra/p-process/site/index.html"]
+    },
+    {
+      "id": "everred",
+      "label": "EVERRED",
+      "owner": "mission-control/qps-triage-ultra/p-process/everred/harvest.py",
+      "input": "mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json",
+      "headline": {"label": "Root closure rate", "path": "metrics.root_closure_rate"},
+      "fields": [
+        {"label": "Recurrence rate", "path": "metrics.recurrence_rate"},
+        {"label": "Independent roots", "path": "metrics.roots_independent"},
+        {"label": "Triaged or later", "path": "metrics.roots_triaged_or_later"},
+        {"label": "Roots by state", "path": "metrics.active_roots_by_state"},
+        {"label": "Occurrences", "path": "metrics.occurrences_total"},
+        {"label": "Failure amplification", "path": "metrics.failure_amplification"},
+        {"label": "Control plane red", "path": "metrics.control_plane_red"},
+        {"label": "Control plane probed", "path": "metrics.control_plane_probed"},
+        {"label": "Generated", "path": "generated_at"}
+      ],
+      "lists": [
+        {"label": "Roots", "path": "roots[]", "columns": [
+          {"label": "ID", "key": "id"}, {"label": "Severity", "key": "severity"},
+          {"label": "State", "key": "state"}, {"label": "Title", "key": "title"}]}
+      ],
+      "pages": ["mission-control/qps-triage-ultra/p-process/site/everred/index.html"]
+    },
+    {
+      "id": "code_purple_bd",
+      "label": "BD-queue (Code Purple)",
+      "owner": "mission-control/federation-atlas (build_code_purple.py)",
+      "input": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+      "fields": [
+        {"label": "Open states", "path": "open_states"},
+        {"label": "Formal credit delta", "path": "formal_credit_delta"},
+        {"label": "Engineering credit delta", "path": "engineering_credit_delta"}
+      ],
+      "lists": [
+        {"label": "Code Purple BD items", "path": "items[]", "columns": [
+          {"label": "ID", "key": "id"}, {"label": "Severity", "key": "severity"},
+          {"label": "Beam", "key": "beam"}, {"label": "Critical path", "key": "critical_path"},
+          {"label": "Title", "key": "title"}]}
+      ],
+      "pages": ["mission-control/qps-triage-ultra/p-process/site/code-purple/index.html", "docs/code-purple-w1/index.html"]
+    },
+    {
+      "id": "code_purple_series",
+      "label": "Code Purple iterations",
+      "owner": "mission-control/federation-atlas/code_purple_series.py",
+      "input": "mission-control/federation-atlas/CODE_PURPLE_ITERATION_SERIES_v1.json",
+      "fields": [
+        {"label": "Index", "path": "index"}
+      ],
+      "lists": [
+        {"label": "Iteration series", "path": "entries[]", "columns": [
+          {"label": "Key", "key": "key"}, {"label": "Closes", "key": "closes"},
+          {"label": "Evidence", "key": "evidence_class"}, {"label": "Label", "key": "label"}]}
+      ],
+      "pages": ["docs/code-purple-live/index.html"]
     }
   ]
 }

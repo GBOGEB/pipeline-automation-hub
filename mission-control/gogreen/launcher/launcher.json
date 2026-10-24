@@ -1,6 +1,8 @@
 {
   "computes_metrics": false,
   "inputs": {
+    "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json": "426a8b6ed3630c874eca4c2c1daaea7d13f3492a",
+    "mission-control/federation-atlas/CODE_PURPLE_ITERATION_SERIES_v1.json": "022a588b5f56b7ba09c9d59bc1f3bf3439fe1fb0",
     "mission-control/federation-atlas/central/CODE_HEALTH_CENTRAL_v1.json": "6970506347d59037dcf5c56142495403a19b3a86",
     "mission-control/gogreen/comparative/comparison.json": "6f437972dce09612b04792cde68fa2765c55307d",
     "mission-control/gogreen/mycelium_history/W10_LAST_GOOD_APPEND_20261018.json": "1d5d78683721bd4ebe2e109d2bc2cb028bce7368",
@@ -10,6 +12,8 @@
     "mission-control/jade_temple/site/burndown.json": "f81f29954faac2cdf7646d55be02feada7bceb95",
     "mission-control/jade_temple/site/eightpoint.json": "fb875e6f60c89122f6e21efbf518867cc003c9fb",
     "mission-control/jade_temple/site/rolling5.json": "29eb67ff11630bb2e205d76179e2da4af2a8825c",
+    "mission-control/qps-triage-ultra/p-process/site/data/p_state.json": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+    "mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json": "598302afb690cb97e44070eeb0e72e582729a8a9",
     "mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json": "b8055243094c63b6a91bb4fbad8764f139f05fd0"
   },
   "missing_fields": [],
@@ -45,7 +49,7 @@
     {
       "group": "JADE",
       "href": "../../jade_temple/site/cicd_dag.html",
-      "oid": "f14e04decfc85f283844a2082dc9213f57543201",
+      "oid": "6857e7817aa3d8ed7c536a84b96ae3722dfb7243",
       "path": "mission-control/jade_temple/site/cicd_dag.html",
       "title": "JADE CI/CD DAG"
     },
@@ -132,13 +136,48 @@
       "oid": "9c6ece1a5c0ad924fbebd850c339474e700d7fc3",
       "path": "docs/mission-control/m2/index.html",
       "title": "MissionControl — owner landing · CODE PURPLE M2"
+    },
+    {
+      "group": "PURPLE / P-process",
+      "href": "../../qps-triage-ultra/p-process/site/index.html",
+      "oid": "3c46f4e0477f350f17a00b13849705f58fcd76c4",
+      "path": "mission-control/qps-triage-ultra/p-process/site/index.html",
+      "title": "P Process"
+    },
+    {
+      "group": "PURPLE / P-process",
+      "href": "../../qps-triage-ultra/p-process/site/everred/index.html",
+      "oid": "a9f24f1a77ea934ffa591ae439f9ac7021a55877",
+      "path": "mission-control/qps-triage-ultra/p-process/site/everred/index.html",
+      "title": "EVERRED Register"
+    },
+    {
+      "group": "PURPLE / P-process",
+      "href": "../../qps-triage-ultra/p-process/site/code-purple/index.html",
+      "oid": "af80bb229768a82a30d006da8065f41ba2db1ed1",
+      "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/index.html",
+      "title": "Global Code Purple"
+    },
+    {
+      "group": "PURPLE / P-process",
+      "href": "../../../docs/code-purple-live/index.html",
+      "oid": "2234a43be5229ec359bf98cd3775cc6840999b50",
+      "path": "docs/code-purple-live/index.html",
+      "title": "CODE PURPLE | Live Census &amp; Diagnostics"
+    },
+    {
+      "group": "PURPLE / P-process",
+      "href": "../../../docs/code-purple-w1/index.html",
+      "oid": "4b3628400127ece3cc7c6c4e05e15ff6245237e6",
+      "path": "docs/code-purple-w1/index.html",
+      "title": "CODE PURPLE W+1 | Mission Control federation / orchestration navigation"
     }
   ],
   "repo_url": "https://github.com/GBOGEB/pipeline-automation-hub",
   "rule": "Read-only projection. Every value is read verbatim from the canonical owner's committed output; this launcher computes no metric (AGENTS.md L4). Missing or null values render as unknown, never zero.",
   "schema": "gogreen.launcher.snapshot.v1",
-  "source_date": "2026-10-24T15:20:14+02:00",
-  "source_sha": "60208cd252eeab02a2da82eaf3afc7df378614d5",
+  "source_date": "2026-10-24T16:05:16+02:00",
+  "source_sha": "b92f5403cac21f9769108a60d49ba613bd4519e1",
   "tiles": [
     {
       "fields": [
@@ -1075,6 +1114,562 @@
         }
       ],
       "schema": "gogreen.comparative.snapshot.v1"
+    },
+    {
+      "fields": [
+        {
+          "label": "Incident",
+          "path": "incident",
+          "value": "CP-2026-10-12-ABACUS-MERGE-STALL"
+        },
+        {
+          "label": "Generated",
+          "path": "generated_at",
+          "value": "2026-10-18T13:33:21+00:00"
+        },
+        {
+          "label": "Census at",
+          "path": "census_at",
+          "value": "2026-10-18T13:27:47+00:00"
+        },
+        {
+          "label": "EVERRED at",
+          "path": "everred_at",
+          "value": "2026-10-18T13:29:56+00:00"
+        },
+        {
+          "label": "Drift at",
+          "path": "drift_at",
+          "value": "2026-10-18T13:29:50+00:00"
+        }
+      ],
+      "headline": {
+        "label": "Code Purple lifted",
+        "path": "lifted",
+        "value": false
+      },
+      "id": "p_process",
+      "input": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
+      "input_oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+      "label": "P-process mode",
+      "lists": [
+        {
+          "columns": [
+            "Repo",
+            "Mode",
+            "Ruleset",
+            "Open roots",
+            "Worst",
+            "Reasons"
+          ],
+          "label": "Mode per repo",
+          "rows": [
+            [
+              "GBOGEB/ABACUS",
+              "CODE_PURPLE",
+              "RED",
+              6,
+              "P0",
+              [
+                "E2: Code Purple case open, 2 of 5 lift criteria met",
+                "E1: ABACUS-RC-2026-0001 P0 control-plane probe red"
+              ]
+            ],
+            [
+              "GBOGEB/CODEX",
+              "EVERRED",
+              "RED",
+              2,
+              "P1",
+              []
+            ],
+            [
+              "GBOGEB/Q_engineering_tools",
+              "EVERRED",
+              "RED",
+              1,
+              "P3",
+              []
+            ],
+            [
+              "GBOGEB/cryoplant-project",
+              "EVERRED",
+              "RED",
+              1,
+              "P1",
+              []
+            ],
+            [
+              "GBOGEB/gg_MATH",
+              "EVERRED",
+              "RED",
+              1,
+              "P2",
+              []
+            ],
+            [
+              "GBOGEB/pipeline-automation-hub",
+              "EVERRED",
+              "RED",
+              1,
+              "P2",
+              []
+            ]
+          ]
+        }
+      ],
+      "owner": "mission-control/qps-triage-ultra/p-process/p_decide.py",
+      "pages": [
+        {
+          "href": "../../qps-triage-ultra/p-process/site/index.html",
+          "path": "mission-control/qps-triage-ultra/p-process/site/index.html"
+        }
+      ],
+      "schema": "p-process.state/1.0"
+    },
+    {
+      "fields": [
+        {
+          "label": "Recurrence rate",
+          "path": "metrics.recurrence_rate",
+          "value": 0.0
+        },
+        {
+          "label": "Independent roots",
+          "path": "metrics.roots_independent",
+          "value": 15
+        },
+        {
+          "label": "Triaged or later",
+          "path": "metrics.roots_triaged_or_later",
+          "value": 13
+        },
+        {
+          "label": "Roots by state",
+          "path": "metrics.active_roots_by_state",
+          "value": {
+            "BLOCKED_AUTHORITY": 6,
+            "DISCOVERED": 2,
+            "OWNED": 1,
+            "PRODUCER_GREEN": 1,
+            "TRIAGED": 2,
+            "VERIFIED_FIXED": 3
+          }
+        },
+        {
+          "label": "Occurrences",
+          "path": "metrics.occurrences_total",
+          "value": 375
+        },
+        {
+          "label": "Failure amplification",
+          "path": "metrics.failure_amplification",
+          "value": 1.538
+        },
+        {
+          "label": "Control plane red",
+          "path": "metrics.control_plane_red",
+          "value": 6
+        },
+        {
+          "label": "Control plane probed",
+          "path": "metrics.control_plane_probed",
+          "value": 6
+        },
+        {
+          "label": "Generated",
+          "path": "generated_at",
+          "value": "2026-10-18T13:29:56+00:00"
+        }
+      ],
+      "headline": {
+        "label": "Root closure rate",
+        "path": "metrics.root_closure_rate",
+        "value": 0.2
+      },
+      "id": "everred",
+      "input": "mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json",
+      "input_oid": "598302afb690cb97e44070eeb0e72e582729a8a9",
+      "label": "EVERRED",
+      "lists": [
+        {
+          "columns": [
+            "ID",
+            "Severity",
+            "State",
+            "Title"
+          ],
+          "label": "Roots",
+          "rows": [
+            [
+              "ABACUS-RC-2026-0001",
+              "P0",
+              "BLOCKED_AUTHORITY",
+              "ABACUS default branch has no required status checks (rules emptied 12 Oct; partly restored 15 Oct)"
+            ],
+            [
+              "ABACUS-RC-2026-0002",
+              "P1",
+              "OWNED",
+              "Fixed 75% repository coverage threshold above measured main coverage (structural admission deadlock)"
+            ],
+            [
+              "ABACUS-RC-2026-0003",
+              "P2",
+              "TRIAGED",
+              "Code-quality full-red surface (Black / isort / Flake8 umbrella)"
+            ],
+            [
+              "ABACUS-RC-2026-0004",
+              "P1",
+              "TRIAGED",
+              "Bandit full-scan security debt (6,363 raw observations)"
+            ],
+            [
+              "ABACUS-RC-2026-0005",
+              "P1",
+              "PRODUCER_GREEN",
+              "DMAIC measurement-receipt failure broke the broad coverage suite"
+            ],
+            [
+              "ABACUS-RC-2026-0006",
+              "P2",
+              "VERIFIED_FIXED",
+              "Workflow rationalization report stale after policy change"
+            ],
+            [
+              "ABACUS-RC-2026-0007",
+              "P3",
+              "TRIAGED",
+              "Full Red Proof Summary (dependent red)"
+            ],
+            [
+              "ABACUS-RC-2026-0008",
+              "P1",
+              "DISCOVERED",
+              "Safety scanner exit 64 (unclassified: auth, invocation, version or vulnerability)"
+            ],
+            [
+              "ABACUS-RC-2026-0009",
+              "P2",
+              "VERIFIED_FIXED",
+              "Bandit census coverage producer (module identity / JUnit receipt mismatch)"
+            ],
+            [
+              "CODEX-RC-2026-0001",
+              "P2",
+              "DISCOVERED",
+              "OSV-Scanner reporter fails on every CODEX main push"
+            ],
+            [
+              "CODEX-RC-2026-0002",
+              "P3",
+              "VERIFIED_FIXED",
+              "Deterministic materializations differed after"
+            ],
+            [
+              "CODEX-RC-2026-0003",
+              "P1",
+              "BLOCKED_AUTHORITY",
+              "CODEX default branch unprotected (no ruleset)"
+            ],
+            [
+              "CRYO-RC-2026-0001",
+              "P1",
+              "BLOCKED_AUTHORITY",
+              "cryoplant-project default branch unprotected (no ruleset)"
+            ],
+            [
+              "GGMATH-RC-2026-0001",
+              "P2",
+              "BLOCKED_AUTHORITY",
+              "gg_MATH default branch unprotected (no ruleset)"
+            ],
+            [
+              "PAH-RC-2026-0001",
+              "P2",
+              "BLOCKED_AUTHORITY",
+              "pipeline-automation-hub ruleset active but targets no branch"
+            ],
+            [
+              "QET-RC-2026-0001",
+              "P3",
+              "BLOCKED_AUTHORITY",
+              "Q_engineering_tools default branch unprotected (no ruleset)"
+            ]
+          ]
+        }
+      ],
+      "owner": "mission-control/qps-triage-ultra/p-process/everred/harvest.py",
+      "pages": [
+        {
+          "href": "../../qps-triage-ultra/p-process/site/everred/index.html",
+          "path": "mission-control/qps-triage-ultra/p-process/site/everred/index.html"
+        }
+      ],
+      "schema": "everred.census/1.0"
+    },
+    {
+      "fields": [
+        {
+          "label": "Open states",
+          "path": "open_states",
+          "value": [
+            "TODO",
+            "ACTIVE",
+            "UNKNOWN_NEEDS_READER"
+          ]
+        },
+        {
+          "label": "Formal credit delta",
+          "path": "formal_credit_delta",
+          "value": 0
+        },
+        {
+          "label": "Engineering credit delta",
+          "path": "engineering_credit_delta",
+          "value": 0
+        }
+      ],
+      "id": "code_purple_bd",
+      "input": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+      "input_oid": "426a8b6ed3630c874eca4c2c1daaea7d13f3492a",
+      "label": "BD-queue (Code Purple)",
+      "lists": [
+        {
+          "columns": [
+            "ID",
+            "Severity",
+            "Beam",
+            "Critical path",
+            "Title"
+          ],
+          "label": "Code Purple BD items",
+          "rows": [
+            [
+              "CPQ-001",
+              "P1",
+              "B1",
+              false,
+              "Cohort promotion gate CI was green while executing zero tests"
+            ],
+            [
+              "CPQ-002",
+              "P2",
+              "B1",
+              false,
+              "Flake8 propagation cohort test was not run by any workflow"
+            ],
+            [
+              "CPQ-003",
+              "P1",
+              "B8",
+              false,
+              "v0.1 atlas QA claims had no SHA, run or receipt"
+            ],
+            [
+              "CPQ-004",
+              "P1",
+              "B8",
+              false,
+              "Cohort modes shown as labels; promotion predicates not evaluated"
+            ],
+            [
+              "CPQ-005",
+              "P2",
+              "B8",
+              false,
+              "No as-of date or evidence age on the atlas"
+            ],
+            [
+              "CPQ-006",
+              "P2",
+              "B8",
+              false,
+              "Parallel TypeScript contracts and a duplicate dashboard"
+            ],
+            [
+              "CPQ-007",
+              "P2",
+              "B8",
+              false,
+              "Federation graph draws declared dispatch edges like receipt-bound edges"
+            ],
+            [
+              "CPQ-008",
+              "P3",
+              "B8",
+              false,
+              "Vocabulary drift: MCP vs TCP, health enum"
+            ],
+            [
+              "CPQ-009",
+              "P3",
+              "B9",
+              false,
+              "Kubernetes and TCP telemetry have no data source"
+            ],
+            [
+              "CPQ-010",
+              "P1",
+              "B3",
+              true,
+              "ABACUS-I2 recorded as PENDING although its exact-head proof and G75 recurrence exist"
+            ],
+            [
+              "CPQ-011",
+              "P1",
+              "B4",
+              true,
+              "Second fresh Top7 recensus pulse is not recorded"
+            ],
+            [
+              "CPQ-012",
+              "P2",
+              "B4",
+              false,
+              "document-organization-system has no exact-head proof on its current head"
+            ],
+            [
+              "CPQ-013",
+              "P1",
+              "B4",
+              true,
+              "max_unchanged_root_auto_repeat_after_control is null, which blocks both promotion gates"
+            ],
+            [
+              "CPQ-014",
+              "P2",
+              "B6",
+              false,
+              "QPS federation edge (hub -> cryoplant-project) is declared with no receipt"
+            ],
+            [
+              "CPQ-015",
+              "P2",
+              "B7",
+              false,
+              "No cross-repo dispatch and return path exists; 'dispatch' edges are declarations"
+            ],
+            [
+              "CPQ-016",
+              "P1",
+              "B2",
+              false,
+              "PRs merged while First-Pass Closure was red or still running (REX-CM-005 recurrence)"
+            ],
+            [
+              "CPQ-017",
+              "P2",
+              "B8",
+              false,
+              "Metrics and BD states must advance with each iteration, keyed by ordinal"
+            ],
+            [
+              "CPQ-018",
+              "P3",
+              "B10",
+              false,
+              "LM-10 MIP roundtrip gg_MATH -> Mission Control -> ABACUS/QPS has no state newer than 2026-09-21"
+            ],
+            [
+              "CPQ-019",
+              "P1",
+              "B3",
+              true,
+              "ABACUS DMAIC CI red: Unit Tests (3.10) cannot install matplotlib>=3.11.2"
+            ]
+          ]
+        }
+      ],
+      "owner": "mission-control/federation-atlas (build_code_purple.py)",
+      "pages": [
+        {
+          "href": "../../qps-triage-ultra/p-process/site/code-purple/index.html",
+          "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/index.html"
+        },
+        {
+          "href": "../../../docs/code-purple-w1/index.html",
+          "path": "docs/code-purple-w1/index.html"
+        }
+      ],
+      "schema": "missioncontrol.code_purple.bd_queue.v1"
+    },
+    {
+      "fields": [
+        {
+          "label": "Index",
+          "path": "index",
+          "value": "WAVE.CYCLE.ITERATION.SUB"
+        }
+      ],
+      "id": "code_purple_series",
+      "input": "mission-control/federation-atlas/CODE_PURPLE_ITERATION_SERIES_v1.json",
+      "input_oid": "022a588b5f56b7ba09c9d59bc1f3bf3439fe1fb0",
+      "label": "Code Purple iterations",
+      "lists": [
+        {
+          "columns": [
+            "Key",
+            "Closes",
+            "Evidence",
+            "Label"
+          ],
+          "label": "Iteration series",
+          "rows": [
+            [
+              "W1.C1.I0.S0",
+              "OPEN",
+              "MEASURED",
+              "Review filed against v0.1 atlas and the gate it cites (baseline)"
+            ],
+            [
+              "W1.C1.I1.S0",
+              "ITERATION",
+              "MEASURED",
+              "Gate-integrity iteration closed: PR #518 merged (F1, F2 DONE)"
+            ],
+            [
+              "W1.C1.I1.S1",
+              "SUB",
+              "MEASURED",
+              "Sub-iteration: #519, #521, #522 landed the method atlas (F3 partial; F6, F8 DONE)"
+            ],
+            [
+              "W1.C1.I2.S0",
+              "OPEN",
+              "MEASURED",
+              "This PR: BD queue, beams DAG, ordinal series; CPQ-010..018 filed"
+            ],
+            [
+              "W1.C1.I2.S1",
+              "SUB",
+              "MEASURED",
+              "CPQ N4 five source-proved DONE, Top7 7-repo recensus, QPS native evidence edge"
+            ],
+            [
+              "W1.C1.I3.S0",
+              "ITERATION",
+              "MEASURED",
+              "I3: native ABACUS DMAIC first-red, repeat metric, 4/6 KPIs bound; py310 root fixed (#2130)"
+            ],
+            [
+              "W1.C1.I3.S1",
+              "SUB",
+              "PROVISIONAL_PR_HEAD",
+              "Contract rebind: ABACUS-I2 CONTROL, repeat=8 bound, I3 active; CPQ-019 DONE"
+            ]
+          ]
+        }
+      ],
+      "owner": "mission-control/federation-atlas/code_purple_series.py",
+      "pages": [
+        {
+          "href": "../../../docs/code-purple-live/index.html",
+          "path": "docs/code-purple-live/index.html"
+        }
+      ],
+      "schema": "missioncontrol.code_purple.iteration_series.v1"
     }
   ]
 }
