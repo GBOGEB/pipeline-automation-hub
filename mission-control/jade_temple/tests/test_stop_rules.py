@@ -141,6 +141,51 @@ class StopTests(unittest.TestCase):
         x=mod.from_snapshot(d)
         self.assertEqual(x["action"],"REPAIR_FIRST_RED")
         self.assertEqual(x["review_basis"],"WAIVER_UNQUALIFIED")
+    # N+10: the first pulse bound to exact-head native receipts after the hub ruleset was enforced.
+    def n10(self):
+        return json.loads((ROOT/'data/STOP_MODEL_N10.json').read_text(encoding='utf-8'))
+    def test_n10_replays_owner_blocked_on_security_with_qualified_waiver(self):
+        d=self.n10();x=mod.from_snapshot(d)
+        self.assertEqual(x["action"],"OWNER_BLOCKED")
+        self.assertEqual(x["review_basis"],"WAIVED_MACH_II")
+        self.assertEqual(d["gates"]["security"],"FAIL")
+        self.assertEqual(x["merge_admission"],"HOLD")
+    def test_n10_committed_receipt_matches_replay(self):
+        d=self.n10()
+        r=json.loads((ROOT/'data/STOP_RECEIPT_N10.json').read_text(encoding='utf-8'))
+        self.assertEqual(r,{"schema":"jade.temple.stop_receipt.v2","source_sha":d["current_main_sha"],
+                            "proof_level":"SOURCE_MODEL_REPLAY_ONLY",**mod.from_snapshot(d)})
+    def test_n10_every_gate_has_a_bound_receipt(self):
+        d=self.n10();head=d["current_main_sha"]
+        self.assertEqual(set(d["gate_receipts"]),set(mod.REQUIRED_GATES))
+        for gate,rec in d["gate_receipts"].items():
+            self.assertEqual(rec["state"],d["gates"][gate],gate)
+            if rec["state"]=="UNKNOWN":
+                self.assertEqual(rec["evidence"],[],gate)
+                continue
+            self.assertTrue(rec["evidence"],gate)
+            for e in rec["evidence"]:
+                self.assertTrue(e["url"].startswith("https://github.com/"),gate)
+                if gate!="required_checks":
+                    self.assertRegex(e["source_sha"],r"^[0-9a-f]{40}$",gate)
+                if gate not in ("blocked_red_canary","required_checks"):
+                    self.assertEqual(e["source_sha"],head,gate)
+    def test_n10_security_alerts_are_what_holds_the_gate(self):
+        d=self.n10();alerts=[e for e in d["gate_receipts"]["security"]["evidence"] if e["kind"]=="open_code_scanning_alert"]
+        self.assertTrue(alerts)
+        self.assertTrue(all(a["path"].startswith("mission-control/jade_temple/") for a in alerts))
+    def test_n10_only_security_and_owner_release_remain(self):
+        d=self.n10();d["gates"]["security"]="PASS"
+        self.assertEqual(mod.from_snapshot(d)["action"],"CONTINUE_DISJOINT_MEASUREMENT")
+        d["gates"]["owner_release"]="PASS"
+        self.assertEqual(mod.from_snapshot(d)["action"],"TARGET_MET_STOP_ENGINEERING")
+    def test_n10_pulse_reads_the_same_cohort_without_inventing_metrics(self):
+        d=self.n10();p=d["pulses"][-1];prev=d["pulses"][-2]
+        self.assertEqual(p["id"],"N+10_READBACK")
+        self.assertEqual((p["cohort_sha"],p["scope"],p["eligible_denominator"]),(prev["cohort_sha"],prev["scope"],21))
+        self.assertEqual(sorted(p["heads"]),sorted(prev["heads"]))
+        self.assertTrue(all(v is None for v in p["metrics"].values()))
+        self.assertIsNone(d["current_owner_actions"])
     def test_release_cannot_be_qualified_by_json_mutation(self):
         d=json.loads((ROOT/'data/STOP_MODEL_NPLUS2.json').read_text(encoding='utf-8'))
         d["merge_admission"]="PASS"

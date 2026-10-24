@@ -1,6 +1,6 @@
 # JADE_CASTE — Executable stop/pivot/retrigger contract v2
 
-SSOT: `data/STOP_MODEL_NPLUS2.json` (immutable input); engine: `tools/stop_rules.py`; HTML: `site/burndown.html` (derived projection); native QA: `tests/test_stop_rules.py`. Every pulse must declare cohort Git blob, 21 eligible source heads, denominator, instrumentor version, exact-native run/job/attempt and all independent gate values. A count without a current-head trusted receipt is `null`.
+SSOT: `data/STOP_MODEL_NPLUS2.json` (immutable input; frozen N+2 snapshot). Current pulse: `data/STOP_MODEL_N10.json`, which binds every gate to an exact-head receipt in `gate_receipts`, with its controller replay in `data/STOP_RECEIPT_N10.json`. A new pulse is a new file, never an edit to an older one; engine: `tools/stop_rules.py`; HTML: `site/burndown.html` (derived projection); native QA: `tests/test_stop_rules.py`. Every pulse must declare cohort Git blob, 21 eligible source heads, denominator, instrumentor version, exact-native run/job/attempt and all independent gate values. A count without a current-head trusted receipt is `null`.
 
 ## States, precedence and exits
 
