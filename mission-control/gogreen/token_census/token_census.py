@@ -369,8 +369,9 @@ def main(argv=None, environ=None, fetch=http, now=None):
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "token_census.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
     (args.out / "token_census.md").write_text(markdown(receipt), encoding="utf-8")
-    for line in annotations(receipt):
-        print(line)
+    if env.get("GITHUB_ACTIONS") == "true":  # live CI only; offline tests stay silent
+        for line in annotations(receipt):
+            print(line)
     print(json.dumps({"token_health": receipt["token_health"], **receipt["totals"]}))
     return 1 if receipt["token_health"] != "HEALTHY" else 0
 

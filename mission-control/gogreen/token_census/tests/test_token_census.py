@@ -293,13 +293,18 @@ class Main(unittest.TestCase):
         routes = world([run(1, "2026-10-23T10:30:00Z", "success")])
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
-            code, receipt, _ = self.run_main({"GH_TOKEN": "public", "PROBE_READ": SECRET_VALUE},
+            code, receipt, _ = self.run_main({"GH_TOKEN": "public", "PROBE_READ": SECRET_VALUE, "GITHUB_ACTIONS": "true"},
                                              dict(routes, **{probe_url: (404, b"{}", None)}))
         lines = [l for l in out.getvalue().splitlines() if l.startswith("::")]
         self.assertEqual(code, 1)
         self.assertTrue(any(l.startswith("::error title=token census: READ::") and "NOT_SELECTED" in l for l in lines))
         self.assertTrue(all("\n" not in l and SECRET_VALUE not in l for l in lines))
         self.assertEqual(tc.annotations(dict(receipt, tokens=[], lanes=[])), [])
+        quiet = io.StringIO()
+        with contextlib.redirect_stdout(quiet):  # offline (no GITHUB_ACTIONS): no annotations
+            self.run_main({"GH_TOKEN": "public", "PROBE_READ": SECRET_VALUE},
+                          dict(routes, **{probe_url: (404, b"{}", None)}))
+        self.assertNotIn("::error", quiet.getvalue())
 
     def test_local_run_without_probe_env_is_not_probed(self):
         code, receipt, text = self.run_main({"GH_TOKEN": "public"}, world([run(1, "2026-10-23T10:30:00Z", "success")]))
