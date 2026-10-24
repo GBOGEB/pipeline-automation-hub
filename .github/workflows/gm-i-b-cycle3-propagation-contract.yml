@@ -18,7 +18,7 @@ jobs:
       EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - name: Checkout literal source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ env.EXACT_HEAD }}
       - name: Verify literal source head
@@ -53,7 +53,7 @@ jobs:
           print('PASS_GM_I_B_CYCLE3_CONTRACT')
           PY
       - name: Upload contract proof
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gm-i-b-cycle3-contract-${{ env.EXACT_HEAD }}
           path: |

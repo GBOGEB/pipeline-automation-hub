@@ -20,7 +20,7 @@ jobs:
     name: Exact-head temporal maturity and N+2 negative tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
@@ -44,7 +44,7 @@ jobs:
           print("temporal coverage:", stats["covered_lines"], "/", stats["num_statements"],
                 "branches", stats["covered_branches"], "/", stats["num_branches"])
           PY
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: mip-maturity-temporal-${{ github.run_id }}
           path: out/mip-maturity/
@@ -54,7 +54,7 @@ jobs:
     name: Pinned gg_MATH provider and method geometry proofs
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
@@ -63,7 +63,7 @@ jobs:
       - name: Install scientific and branch-coverage dependencies
         run: python -m pip install numpy==2.3.4 scipy==1.16.2 coverage==7.13.3
       - name: Checkout exact canonical math provider
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: GBOGEB/gg_MATH
           ref: 3a6417bff30a5894ea775b2a489d0076d16c1f3b
@@ -92,7 +92,7 @@ jobs:
           print("math coverage:", stats["covered_lines"], "/", stats["num_statements"],
                 "branches", stats["covered_branches"], "/", stats["num_branches"])
           PY
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: mip-maturity-provider-${{ github.run_id }}
           path: out/mip-maturity/

@@ -31,12 +31,12 @@ jobs:
         working-directory: mission-control/qps-triage-ultra/site
     steps:
       - name: Checkout exact source
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@26e5b7d197ebf60545ee9667bcbace0be11ccaec # v1
         with:
           ruby-version: '3.3'
 
@@ -44,7 +44,7 @@ jobs:
         run: bundle install
 
       - name: Set up Python for the offline Plotly bundle
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
 
@@ -72,7 +72,7 @@ jobs:
           diff -qr _site_a _site_b
 
       - name: Publish evidence artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: qps-triage-web-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/qps-triage-ultra/site/_site_a

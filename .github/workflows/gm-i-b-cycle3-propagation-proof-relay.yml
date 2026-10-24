@@ -22,7 +22,7 @@ jobs:
       QPS_RELAY: mission-control/grand-missions/evidence_mirror/QPS_W264_3P3_TEMPORAL_PCA_PROPAGATION_CHILD_RECEIPT_v1.json
     steps:
       - name: Checkout literal MissionControl relay head
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ env.EXACT_HEAD }}
       - name: Verify literal relay head
@@ -118,7 +118,7 @@ jobs:
           PY
       - name: Upload Cycle3 relay proof
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gm-i-b-cycle3-content-address-relay-${{ env.EXACT_HEAD }}
           path: |

@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout exact source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
@@ -51,7 +51,7 @@ jobs:
           cmp mission-control/grand-missions/GM_IV_EVIDENCE_ECONOMICS_RECEIPT.json /tmp/evidence-economics-repeat.json
 
       - name: Upload exact-head evidence economics receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gm-iv-evidence-economics-${{ github.event.pull_request.head.sha || github.sha }}
           path: mission-control/grand-missions/GM_IV_EVIDENCE_ECONOMICS_RECEIPT.json

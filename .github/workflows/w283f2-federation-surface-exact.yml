@@ -24,7 +24,7 @@ jobs:
         working-directory: federation/w283/payload
     steps:
       - name: Checkout exact consumer head
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Verify six exact W283 source blobs
@@ -41,7 +41,7 @@ jobs:
       - name: Execute W283 tests
         run: python -m unittest tests/test_qps_w283_federation_surface.py -v
       - name: Upload W283F2 receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: w283f2-${{ github.event.pull_request.head.sha || github.sha }}
           path: federation/w283/payload/w283f2-validation-receipt.json

@@ -1304,7 +1304,7 @@
       "function": "This projection: DAG/SIPOC, metrics, SHA/OID crosswalk",
       "id": "OBJ.CICD_DAG",
       "kind": "code",
-      "oid": "0f1b1de58a3fb830cc260221af29472c2e6cd840",
+      "oid": "4e6b195957caf66c71c44cc4cad523fa82d9e602",
       "path": "mission-control/jade_temple/tools/cicd_dag.py",
       "symbol": "project"
     },
@@ -1312,7 +1312,7 @@
       "function": "JADE read-only QA: tests, coverage floors, --check parity",
       "id": "OBJ.JADE_QA_WF",
       "kind": "workflow",
-      "oid": "b7d39e65a862c23e2c0e1536093c70ab411f67c6",
+      "oid": "3e047c2a09b8af26bc790cc8438a51fc64e65aab",
       "path": ".github/workflows/jade-temple-readonly-qa.yml",
       "symbol": null
     },
@@ -1320,7 +1320,7 @@
       "function": "P-process offline tests, TypeScript check, site zip",
       "id": "OBJ.P_PROCESS_WF",
       "kind": "workflow",
-      "oid": "951e17f1db78640bad7882ae8f2ca141e530d89d",
+      "oid": "90d6f28fad369b20831965092e668159d2acff37",
       "path": ".github/workflows/p-process.yml",
       "symbol": null
     },
@@ -1341,6 +1341,59 @@
       "symbol": "build"
     }
   ],
+  "pulse_alignment": {
+    "census_digest_sha256": "1b3a1c5272145d62fa11b171def677186931c32af85adaa8e03fda90879d3bfd",
+    "census_observed_at_utc": "2026-10-23T09:55:39Z",
+    "focus_repos": 5,
+    "gate_observed_date": "2026-10-19",
+    "gate_pulse": "P0001",
+    "gate_snapshot": "data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+    "mismatch_count": 4,
+    "mismatched": [
+      "pipeline-automation-hub",
+      "cryoplant-project",
+      "gg_MATH",
+      "DOCX_RTM_Automation"
+    ],
+    "one_pulse": false,
+    "repos": {
+      "DOCX_RTM_Automation": {
+        "census_sha": "30f0254e179bc97a890e8bde64ffe38dad8ed93d",
+        "gate_sha": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "pulse_mismatch": true,
+        "repo": "GBOGEB/DOCX_RTM_Automation",
+        "state": "MISMATCH"
+      },
+      "cryoplant-project": {
+        "census_sha": "81f159238be2a31aabaef235b2f067816ed503da",
+        "gate_sha": "1072a6ed78245b956951684c0b716a98924b3558",
+        "pulse_mismatch": true,
+        "repo": "GBOGEB/cryoplant-project",
+        "state": "MISMATCH"
+      },
+      "gg_MATH": {
+        "census_sha": "5338161a48cfc5f7bea6d02cc36a25104e8afac3",
+        "gate_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+        "pulse_mismatch": true,
+        "repo": "GBOGEB/gg_MATH",
+        "state": "MISMATCH"
+      },
+      "pipeline-automation-hub": {
+        "census_sha": "24c7dd93648141b9ded9aa5e1a102c920930b4d0",
+        "gate_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+        "pulse_mismatch": true,
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "state": "MISMATCH"
+      },
+      "yaml-grammar": {
+        "census_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "gate_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "pulse_mismatch": false,
+        "repo": "GBOGEB/yaml-grammar",
+        "state": "ALIGNED"
+      }
+    }
+  },
   "release_credit": false,
   "schema": "jade.temple.cicd_dag.projection/1.0",
   "scopes": [
@@ -3918,7 +3971,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.CICD_DAG",
-              "oid": "0f1b1de58a3fb830cc260221af29472c2e6cd840",
+              "oid": "4e6b195957caf66c71c44cc4cad523fa82d9e602",
               "path": "mission-control/jade_temple/tools/cicd_dag.py",
               "status": "BOUND",
               "symbol": "project"
@@ -3927,7 +3980,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.JADE_QA_WF",
-              "oid": "b7d39e65a862c23e2c0e1536093c70ab411f67c6",
+              "oid": "3e047c2a09b8af26bc790cc8438a51fc64e65aab",
               "path": ".github/workflows/jade-temple-readonly-qa.yml",
               "status": "BOUND",
               "symbol": null
@@ -5525,7 +5578,8 @@
           "ruleset": "RED",
           "ruleset_gaps": 6,
           "worst": "P2"
-        }
+        },
+        "pulse_mismatch": true
       },
       "nodes": [
         {
@@ -6186,9 +6240,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:wf:pipeline-automation-hub:.github/workflows/mission-control-n3-evidence.yml",
+              "jade_oid": null,
               "object": null,
-              "oid": "395e3547580fa369e10832d2689e53e2104a3f08",
+              "oid": "1e46a1953e2e1ca436c3a888f1b514a3537d0538",
               "path": ".github/workflows/mission-control-n3-evidence.yml",
               "status": "BOUND",
               "symbol": null
@@ -6226,9 +6280,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:wf:pipeline-automation-hub:.github/workflows/gm-v-3pstar-mip-control.yml",
+              "jade_oid": null,
               "object": null,
-              "oid": "196a43b7bb382de8ab29ba2d4dff4b58875610bc",
+              "oid": "0fa836ed0077d21655f56645bf1abf082c9f15fe",
               "path": ".github/workflows/gm-v-3pstar-mip-control.yml",
               "status": "BOUND",
               "symbol": null
@@ -6316,9 +6370,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:wf:pipeline-automation-hub:.github/workflows/gm-v-governor-readiness.yml",
+              "jade_oid": null,
               "object": null,
-              "oid": "fcaa0341a8237cbd19aa1cd8252c9229435261a0",
+              "oid": "883b05cbee32acb8ac5e185ee5695bfc7cc67cb0",
               "path": ".github/workflows/gm-v-governor-readiness.yml",
               "status": "BOUND",
               "symbol": null
@@ -6361,9 +6415,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:wf:pipeline-automation-hub:.github/workflows/gm-iv-recon4-governor.yml",
+              "jade_oid": null,
               "object": null,
-              "oid": "5afe8eea68b912049f4528aca0f0cc474ed35303",
+              "oid": "583b90a370089b2bd4ee384b6ddbb53c1e05f646",
               "path": ".github/workflows/gm-iv-recon4-governor.yml",
               "status": "BOUND",
               "symbol": null
@@ -6406,9 +6460,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:wf:pipeline-automation-hub:.github/workflows/zero-test-gate-guard.yml",
+              "jade_oid": null,
               "object": null,
-              "oid": "2a314e4c758a6479e5b55707710f7dd21bb1d054",
+              "oid": "a19c1295232f1aa3730a68f293a72178dc5ef870",
               "path": ".github/workflows/zero-test-gate-guard.yml",
               "status": "BOUND",
               "symbol": null
@@ -8134,7 +8188,8 @@
           "ruleset": "RED",
           "ruleset_gaps": 4,
           "worst": "P1"
-        }
+        },
+        "pulse_mismatch": true
       },
       "nodes": [
         {
@@ -10642,7 +10697,8 @@
           "ruleset": "RED",
           "ruleset_gaps": 4,
           "worst": "P2"
-        }
+        },
+        "pulse_mismatch": true
       },
       "nodes": [
         {
@@ -12855,7 +12911,8 @@
           "ruleset": null,
           "ruleset_gaps": 0,
           "worst": null
-        }
+        },
+        "pulse_mismatch": true
       },
       "nodes": [
         {
@@ -15139,7 +15196,8 @@
           "ruleset": null,
           "ruleset_gaps": 0,
           "worst": null
-        }
+        },
+        "pulse_mismatch": false
       },
       "nodes": [
         {
@@ -17113,7 +17171,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.CICD_DAG",
-              "oid": "0f1b1de58a3fb830cc260221af29472c2e6cd840",
+              "oid": "4e6b195957caf66c71c44cc4cad523fa82d9e602",
               "path": "mission-control/jade_temple/tools/cicd_dag.py",
               "status": "BOUND",
               "symbol": "project"
@@ -17165,7 +17223,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.JADE_QA_WF",
-              "oid": "b7d39e65a862c23e2c0e1536093c70ab411f67c6",
+              "oid": "3e047c2a09b8af26bc790cc8438a51fc64e65aab",
               "path": ".github/workflows/jade-temple-readonly-qa.yml",
               "status": "BOUND",
               "symbol": null
@@ -17283,9 +17341,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:wf:pipeline-automation-hub:.github/workflows/p-process.yml",
+              "jade_oid": null,
               "object": "OBJ.P_PROCESS_WF",
-              "oid": "951e17f1db78640bad7882ae8f2ca141e530d89d",
+              "oid": "90d6f28fad369b20831965092e668159d2acff37",
               "path": ".github/workflows/p-process.yml",
               "status": "BOUND",
               "symbol": null

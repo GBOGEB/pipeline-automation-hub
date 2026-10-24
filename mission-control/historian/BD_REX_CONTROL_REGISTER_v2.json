@@ -1,7 +1,7 @@
 {
   "schema": "missioncontrol.bd_rex_control_register.v2",
   "status": "ACTIVE_LIVING_REGISTER",
-  "as_of": "2026-09-28T18:23:00+02:00",
+  "as_of": "2026-10-23T15:00:00+02:00",
   "authority_transfer": false,
   "supersedes_current_view": "BD_REX_CONTROL_REGISTER_v1.json",
   "history_preservation_rule": "v1 remains immutable historical evidence; v2 is the current-state overlay and does not erase negative, superseded, or prior open states",
@@ -10,16 +10,16 @@
   "runner_economics_issue": 79,
   "bounded_sample": {
     "audited_prs_minimum": 50,
-    "review_finding_occurrences_observed_cumulative": 62,
+    "review_finding_occurrences_observed_cumulative": 64,
     "durable_bd_roots_total": 37,
     "current_open_bd_roots": 0,
-    "current_unresolved_occurrences_minimum": 0,
+    "current_unresolved_occurrences_minimum": 1,
     "done_or_control_roots": 37,
     "recurring_root_families_total": 7,
     "recurring_open_families": 2,
     "controlled_recurring_families": 4,
     "fleet_denominator_claim": false,
-    "note": "Bounded Historian census only; 83/83 fleet coverage does not imply 83/83 deep audit. Every HIST-BD root is paired with a reusable REX-BD repair/prevention entry. HIST-BD-035/036 are DONE after #1385 exact-head Line-S proof and current-main blob survival. REX-CM-006 remains ACTIVE_FIRST_PROOF pending a later distinct-source repeat. REX-CM-005, cryoplant#923 and ABACUS#1313 remain independent gates.",
+    "note": "Bounded Historian census only; 83/83 fleet coverage does not imply 83/83 deep audit. Every HIST-BD root is paired with a reusable REX-BD repair/prevention entry. HIST-BD-035/036 are DONE after #1385 exact-head Line-S proof and current-main blob survival. REX-CM-006 remains ACTIVE_FIRST_PROOF pending a later distinct-source repeat. REX-CM-005, cryoplant#923 and ABACUS#1313 remain independent gates. 2026-10-23 JADE N+9: HIST-BD-015/REX-CM-003 recurred cross-repo (hub publish-pages repaired by pipeline-automation-hub#786; CODEX pages.yml#deploy open), counted as one unresolved occurrence; family counts unchanged pending owner classification.",
     "active_prevention_withheld_controls": 1
   },
   "lifecycle": [
@@ -411,15 +411,17 @@
       "class": "SUPPLY_CHAIN_CONTROL",
       "severity": "P1",
       "state": "CONTROL",
-      "occurrence_count": 2,
+      "occurrence_count": 4,
       "repos": [
-        "GBOGEB/ABACUS"
+        "GBOGEB/ABACUS",
+        "GBOGEB/pipeline-automation-hub"
       ],
       "source_prs": [
         1178,
         1184,
         1189,
-        1271
+        1271,
+        786
       ],
       "rex_control_id": "REX-CM-003",
       "crew_owner": [
@@ -432,9 +434,15 @@
         "run34776328022 step4 PASS",
         "ABACUS#1271@a4d3c196aa4d6617acd810734ce525df23ca3e17",
         "CI governance run35349719045 step4 PASS immutable_pins=true",
-        "W74 run35349719151 PASS"
+        "W74 run35349719151 PASS",
+        "pipeline-automation-hub#786@7162446fec0b8ec5d7c04302387e5cb2450f66ab merged ff4e25bc23300ecdd55bcd289d3a5abd9b66430e: code-purple-method-atlas.yml#publish-pages 6 floating action tags pinned to the commits they resolved to (runtime unchanged)",
+        "pipeline-automation-hub run39945532906 'Publish CODE PURPLE review site' PASS on master ff4e25bc (first SHA-pinned Pages deploy incl. hosted parity)",
+        "pipeline-automation-hub run39945532649 'JADE N+9 DevOps census' PASS: devops/workflows.py lint asserts publish-pages DP1-DP10 incl. DP6",
+        "JADE N+9 census data/DEVOPS_CENSUS_N9.json digest 1b3a1c5272145d62fa11b171def677186931c32af85adaa8e03fda90879d3bfd (2026-10-23T09:55:39Z): hub publish-pages DP6 FAIL before #786; CODEX .github/workflows/pages.yml#deploy DP6 FAIL at 86c969e4 (open)",
+        "current master 38b2d82434 survival of #786 pins confirmed 2026-10-23"
       ],
-      "done_when": "SATISFIED_CONTROL"
+      "done_when": "SATISFIED_CONTROL",
+      "recurrence_episode_count": 1
     },
     {
       "bd_id": "HIST-BD-016",
@@ -1456,6 +1464,17 @@
         "ABACUS#1271@a4d3c196aa4d6617acd810734ce525df23ca3e17",
         "run35349719045 validator step PASS",
         "run35349719151 W74 PASS"
+      ],
+      "cross_repo_recurrence": [
+        "GBOGEB/pipeline-automation-hub",
+        "GBOGEB/CODEX"
+      ],
+      "recurrence_refs": [
+        "JADE N+9 census 1b3a1c52: hub publish-pages DP6 (repaired by pipeline-automation-hub#786)",
+        "JADE N+9 census 1b3a1c52: CODEX pages.yml#deploy DP6 at 86c969e4 (unresolved; CODEX-owned repair)"
+      ],
+      "open_cross_repo_occurrences": [
+        "GBOGEB/CODEX .github/workflows/pages.yml#deploy @86c969e4 floating action tags"
       ]
     },
     {
@@ -1593,7 +1612,8 @@
     "ABACUS#1313 continue source-bound Appendix 8.4 state transcription without inferring unresolved modes",
     "REX-CM-006 later distinct-source recurrence-free repeat",
     "REX-CM-005 owner/admin merge-admission proof",
-    "cryoplant-project#923 separate owner runner-admission recovery"
+    "cryoplant-project#923 separate owner runner-admission recovery",
+    "CODEX pages.yml#deploy pin floating actions (HIST-BD-015 cross-repo recurrence, JADE N+9 census DP6)"
   ],
   "pca_bt_eligibility": "LOCAL_MEASURED_MODELS_CONTROLLED_WITH_BOUNDARIES; CROSS_REPO_FLEET_MODEL_DEFERRED_UNTIL_DENOMINATORS_AND_FEATURE_CONTRACTS_STABLE",
   "control_priority": [
@@ -2103,14 +2123,21 @@
       "detection_signature": "SUPPLY_CHAIN_CONTROL: Pin governed GitHub Action dependencies to immutable commit SHAs",
       "shared_control_id": "REX-CM-003",
       "repair_recipe": {
-        "current_fix_patterns": [],
+        "current_fix_patterns": [
+          "Resolve each floating action tag to the commit it points to today (git ls-remote --tags, peeled ^{}) and pin that 40-hex SHA with a '# vX.Y.Z' comment, so the pin changes no runtime behaviour",
+          "Detect fleet-wide with mission-control/jade_temple/devops/workflows.py lint (deploy contract DP6) and the census probe build.pinned_actions"
+        ],
         "proof_contract": "SATISFIED_CONTROL",
-        "negative_regression_seeds": [],
+        "negative_regression_seeds": [
+          "pipeline-automation-hub code-purple-method-atlas.yml#publish-pages used actions/*@v3/@v4/@v5 tags before #786",
+          "CODEX .github/workflows/pages.yml#deploy floating action tags at 86c969e4 (JADE N+9 census, open)"
+        ],
         "source_prs": [
           1178,
           1184,
           1189,
-          1271
+          1271,
+          786
         ],
         "source_issues": []
       },
@@ -2124,10 +2151,15 @@
         "run34776328022 step4 PASS",
         "ABACUS#1271@a4d3c196aa4d6617acd810734ce525df23ca3e17",
         "CI governance run35349719045 step4 PASS immutable_pins=true",
-        "W74 run35349719151 PASS"
+        "W74 run35349719151 PASS",
+        "pipeline-automation-hub#786@7162446fec0b8ec5d7c04302387e5cb2450f66ab merged ff4e25bc23300ecdd55bcd289d3a5abd9b66430e: code-purple-method-atlas.yml#publish-pages 6 floating action tags pinned to the commits they resolved to (runtime unchanged)",
+        "pipeline-automation-hub run39945532906 'Publish CODE PURPLE review site' PASS on master ff4e25bc (first SHA-pinned Pages deploy incl. hosted parity)",
+        "pipeline-automation-hub run39945532649 'JADE N+9 DevOps census' PASS: devops/workflows.py lint asserts publish-pages DP1-DP10 incl. DP6",
+        "JADE N+9 census data/DEVOPS_CENSUS_N9.json digest 1b3a1c5272145d62fa11b171def677186931c32af85adaa8e03fda90879d3bfd (2026-10-23T09:55:39Z): hub publish-pages DP6 FAIL before #786; CODEX .github/workflows/pages.yml#deploy DP6 FAIL at 86c969e4 (open)",
+        "current master 38b2d82434 survival of #786 pins confirmed 2026-10-23"
       ],
-      "occurrence_count": 2,
-      "recurrence_episode_count": 0,
+      "occurrence_count": 4,
+      "recurrence_episode_count": 1,
       "authority_transfer": false,
       "formal_credit_delta": 0
     },
@@ -3344,7 +3376,8 @@
       "lifecycle_state": "CONTROL",
       "applicability_state": "CONTROLLED",
       "repos": [
-        "GBOGEB/ABACUS"
+        "GBOGEB/ABACUS",
+        "GBOGEB/pipeline-automation-hub"
       ],
       "shared_control_id": "REX-CM-003"
     },
@@ -3774,6 +3807,7 @@
         "REX-BD-024"
       ],
       "shared_control_ids": [
+        "REX-CM-003",
         "REX-CM-005"
       ],
       "active_root_ids": [],
@@ -4015,7 +4049,8 @@
         "HIST-BD-010",
         "HIST-BD-011",
         "HIST-BD-012",
-        "HIST-BD-013"
+        "HIST-BD-013",
+        "HIST-BD-015"
       ],
       "rex_ids": [
         "REX-BD-001",
@@ -4030,11 +4065,13 @@
         "REX-BD-010",
         "REX-BD-011",
         "REX-BD-012",
-        "REX-BD-013"
+        "REX-BD-013",
+        "REX-BD-015"
       ],
       "shared_control_ids": [
         "REX-CM-001",
         "REX-CM-002",
+        "REX-CM-003",
         "REX-CM-005"
       ],
       "active_root_ids": [],
@@ -4053,7 +4090,8 @@
         "HIST-BD-004",
         "HIST-BD-005",
         "HIST-BD-009",
-        "HIST-BD-013"
+        "HIST-BD-013",
+        "HIST-BD-015"
       ],
       "superseded_watch_root_ids": [],
       "entries": [
@@ -4134,6 +4172,12 @@
           "rex_id": "REX-BD-013",
           "state": "CONTROL_WATCH",
           "shared_control_id": null
+        },
+        {
+          "bd_id": "HIST-BD-015",
+          "rex_id": "REX-BD-015",
+          "state": "CONTROL_WATCH",
+          "shared_control_id": "REX-CM-003"
         }
       ],
       "authority_transfer": false,

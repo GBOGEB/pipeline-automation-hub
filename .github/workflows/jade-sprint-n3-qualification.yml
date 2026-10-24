@@ -31,11 +31,11 @@ jobs:
     timeout-minutes: 12
     steps:
       - name: Exact-head checkout without saved credentials
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python }}
       - name: Source SHA and full N+3 adversarial testflight
@@ -92,7 +92,7 @@ jobs:
           Copy-Item (Join-Path $work 'output/LOCAL_RUN.json') 'jade_sprint_results/WINDOWS_LOCAL_RUN.json'
       - name: Retain first-red diagnostics even if Windows local preflight fails
         if: always() && matrix.os == 'windows-2022'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: jade-sprint-local-debug-${{ github.run_id }}-a${{ github.run_attempt }}
           path: |
@@ -102,7 +102,7 @@ jobs:
           if-no-files-found: warn
       - name: Retain Windows local diagnostic proof only
         if: matrix.os == 'windows-2022'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: jade-sprint-local-${{ github.run_id }}-a${{ github.run_attempt }}
           path: jade_sprint_results/WINDOWS_LOCAL_RUN.json
@@ -110,7 +110,7 @@ jobs:
           if-no-files-found: warn
       - name: Retain JADE non-authoritative candidate receipts
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: jade-sprint-${{ matrix.os }}-${{ matrix.python }}-${{ github.run_id }}-a${{ github.run_attempt }}
           path: jade_sprint_results/

@@ -18,7 +18,7 @@ jobs:
     name: Exact ABACUS source/job identities through canonical MIP
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
@@ -26,7 +26,7 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install coverage==7.13.3
       - name: Checkout exact ABACUS producer commit
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: GBOGEB/ABACUS
           ref: 22c90e0412d0ecc8384917df5e7e19a3195ce86b
@@ -89,7 +89,7 @@ jobs:
                 "attributed", stats["first_red_manifestations"],
                 "unattributed", stats["red_jobs_unattributed"])
           PY
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: mip-native-source-bound-${{ github.run_id }}
           path: out/mip-native/

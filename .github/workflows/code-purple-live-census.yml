@@ -17,7 +17,7 @@ jobs:
     name: No-authority graph and feed negative controls
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
@@ -79,7 +79,7 @@ jobs:
           )
           PYRECEIPT
       - name: Upload diagnostic artifact only, no Pages publish or source mutation
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: disjoint-census-contract-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/out/
@@ -91,7 +91,7 @@ jobs:
     outputs:
       census_disposition: ${{ steps.refresh.outputs.census }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
@@ -133,7 +133,7 @@ jobs:
           echo "census=NATIVE_READ" >> "$GITHUB_OUTPUT"
       - name: Upload fresh native read-only GET snapshot, NOT accepted REX
         if: ${{ steps.refresh.outputs.census == 'NATIVE_READ' }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: disjoint-census-native-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/out/
@@ -141,7 +141,7 @@ jobs:
 
       - name: Preserve typed credential-deferral receipt
         if: ${{ steps.refresh.outputs.census == 'DEFERRED_NO_CROSS_REPO_READ_TOKEN' }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: disjoint-census-deferred-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/out/access_diagnostic.json
@@ -149,7 +149,7 @@ jobs:
 
       - name: Preserve native cross-repo source-access diagnostics on failure
         if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: disjoint-census-access-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/out/access_diagnostic.json
@@ -165,7 +165,7 @@ jobs:
       actions: read
     steps:
       - name: Checkout immutable workflow source only
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
@@ -193,7 +193,7 @@ jobs:
             --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" \
             --output qualified-output/qualification.json
       - name: Publish narrowly scoped qualified readback receipt only
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: five-repo-native-qualified-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/qualified-output/qualification.json

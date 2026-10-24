@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout MissionControl exact head
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           path: control
@@ -26,13 +26,13 @@ jobs:
           set -euo pipefail
           test "$(git -C control rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
       - name: Checkout F05 ABACUS exact target
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: GBOGEB/ABACUS
           ref: 15acb02f7f191d4f3c251ab747ef9f41487da7ce
           path: f05
       - name: Checkout F06 CODEX exact target
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: GBOGEB/CODEX
           ref: df60e22fc57a6f36ac3e949d4c161442ff050ee4
@@ -68,7 +68,7 @@ jobs:
           print('PASS_GM_IV_F05_F06_NONPROMOTION_GUARD')
           PY
       - name: Upload F05 F06 receipts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gm-iv-f05-f06-bounded-probe-${{ github.event.pull_request.head.sha || github.sha }}
           path: |

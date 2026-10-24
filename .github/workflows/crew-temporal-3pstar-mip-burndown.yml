@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact source head
@@ -137,14 +137,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact scheduled source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
       - name: Assert exact scheduled source head
         shell: bash
         run: test "$(git rev-parse HEAD)" = "${{ github.event.workflow_run.head_sha }}"
       - name: Download governed temporal policy artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: crew-temporal-pc3-${{ github.event.workflow_run.head_sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/trigger-artifact
@@ -188,7 +188,7 @@ jobs:
               'authority_transfer':False,
           },sort_keys=True))
       - name: Upload governed temporal burndown
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: temporal-3pstar-mip-burndown-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.head_sha }}
           path: mission-control/qps-triage-ultra/crew/measured/frontier/temporal/TEMPORAL_3PSTAR_MIP_BURNDOWN.json

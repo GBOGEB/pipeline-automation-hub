@@ -161,9 +161,12 @@ class SprintPreflightTests(unittest.TestCase):
                       "$ExpectedHead","$NoCache","git clone","python.exe"):
             self.assertIn(token,script)
     def test_pinned_optional_dependencies(self):
+        # Exact pins, not exact versions: Dependabot (pip-jade-sprint-minor-patch) owns the bump.
         txt=(SPRINT/"requirements-optional.txt").read_text(encoding='utf-8')
-        self.assertIn("coverage==7.13.3",txt)
-        self.assertIn("playwright==1.56.0",txt)
+        pins=dict(line.split("==",1) for line in txt.split())
+        self.assertEqual(sorted(pins),["coverage","playwright"])
+        for name,version in pins.items():
+            self.assertRegex(version,r"^\d+\.\d+\.\d+$",name)
     def test_pool_max_enforced_before_exec(self):
         with tempfile.TemporaryDirectory() as d:
             path=Path(d)

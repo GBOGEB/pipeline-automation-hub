@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout exact event SHA
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
@@ -80,7 +80,7 @@ jobs:
           node mission-control/federation-atlas/m3_session/m3_offline_delivery.js --site out/m3/site --sha "$EXPECTED_SHA" --out out/m3/M3_OPEN_ME_OFFLINE.html
           node mission-control/federation-atlas/m3_session/test_m3_offline_delivery.js
       - name: Publish diagnostic receipt, never Pages
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: m3-graph-contract-${{ github.run_id }}-${{ github.run_attempt }}
           path: out/m3/
@@ -92,7 +92,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout exact event SHA
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
@@ -127,7 +127,7 @@ jobs:
           python mission-control/federation-atlas/m3_session/m3_browser_qa.py --out out/m3/browser
       - name: Upload QA screenshots and negative receipt
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: m3-browser-qa-${{ github.run_id }}-${{ github.run_attempt }}
           path: out/m3/browser/
