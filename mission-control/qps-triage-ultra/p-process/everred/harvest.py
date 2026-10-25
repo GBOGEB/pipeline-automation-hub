@@ -304,7 +304,7 @@ def build_report(scope: list[str], roots: list[dict], occ: list[dict], probes: d
                          "affected_prs": sorted({o["pr"] for o in pub(linked[r["id"]]) if o["pr"]}),
                          "affected_shas": len({o["sha"] for o in linked[r["id"]]}),
                          "probe": probes.get(r["id"]),
-                         "last_seen": max((o["completed_at"] or "" for o in linked[r["id"]]), default=None)} for r in roots],
+                         "last_seen": max((o["completed_at"] or "" for o in pub(linked[r["id"]])), default=None)} for r in roots],
               "unmatched": [{"signature": s, "occurrences": len(v), "prs": sorted({o["pr"] for o in v if o["pr"]}),
                              "repos": sorted({o["repo"] for o in v}), "example_url": v[0]["url"]} for s, v in sorted(public_unmatched.items(), key=lambda x: -len(x[1]))],
               "private_rows": "AGGREGATE_ONLY", "private_aggregate": private_aggregate}
