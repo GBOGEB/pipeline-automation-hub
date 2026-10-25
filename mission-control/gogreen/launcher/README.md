@@ -11,10 +11,10 @@ not this page.
 
 | File | Role |
 |---|---|
-| `sources.json` | Declares each tile: owner, input file, field paths, related pages; and the launcher page list |
+| `sources.json` | Declares each tile: owner, input file, field paths, related pages; the launcher page list; the verified GitHub Pages site root |
 | `build_launcher.py` | Reads the inputs at one commit with `git cat-file`, writes `launcher.json` and `index.html` |
 | `launcher_template.html` | Self-contained page (no external scripts or styles; CSP `default-src 'none'`) |
-| `launcher.json` | Generated snapshot: source SHA, blob OID of every input, values, missing fields |
+| `launcher.json` | Generated snapshot: source SHA, blob OID of every input, values, missing fields, HTML catalog |
 | `index.html` | Generated page; do not hand-edit |
 
 ## Tiles and owners

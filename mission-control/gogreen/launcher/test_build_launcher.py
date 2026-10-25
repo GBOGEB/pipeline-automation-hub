@@ -3,6 +3,7 @@ import importlib.util
 import json
 import posixpath
 import re
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -110,6 +111,74 @@ class Committed(unittest.TestCase):
         self.assertIn("J03", a["pages_note"])  # hosting is qualified by its owner, not here
 
 
+class Catalog(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.snap = json.loads(bl.SNAPSHOT.read_text(encoding="utf-8"))
+        cls.cat = cls.snap["catalog"]
+
+    def _tree_rev(self):
+        # CI checks out a shallow clone that may not hold the read-at commit; check() at HEAD
+        # already proves the catalog matches HEAD, so fall back to HEAD only then.
+        sha = self.snap["source_sha"]
+        r = subprocess.run(["git", "cat-file", "-e", sha + "^{commit}"], cwd=bl.HERE, capture_output=True)
+        return sha if r.returncode == 0 else "HEAD"
+
+    def test_catalog_is_every_committed_html_page(self):
+        paths = [e["path"] for e in self.cat]
+        self.assertEqual(len(paths), len(set(paths)))
+        self.assertEqual(sorted(paths), bl.html_paths(self._tree_rev()))
+        self.assertGreater(len(paths), len(self.snap["pages"]))
+        self.assertIn(bl.SELF_DIR + "/index.html", paths)
+
+    def test_catalog_sorted_grouped_and_navigation_only(self):
+        self.assertEqual(self.cat, sorted(self.cat, key=lambda e: (e["group"], e["path"])))
+        for e in self.cat:
+            with self.subTest(page=e["path"]):
+                self.assertEqual(set(e), {"path", "group", "title", "href", "github"})
+                self.assertEqual(e["group"], bl.group_of(e["path"]))
+                self.assertTrue(e["path"].startswith(e["group"] + "/") or e["group"] == ".")
+                self.assertTrue(e["title"])
+
+    def test_catalog_href_resolves_to_path_inside_repo(self):
+        for e in self.cat:
+            with self.subTest(page=e["path"]):
+                target = posixpath.normpath(posixpath.join(bl.SELF_DIR, e["href"]))
+                self.assertEqual(target, e["path"])
+                self.assertFalse(target.startswith(".."))
+
+    def test_github_urls_from_repo_url_and_source_sha(self):
+        for e in self.cat:
+            self.assertEqual(e["github"], f"{self.snap['repo_url']}/blob/{self.snap['source_sha']}/{e['path']}")
+
+    def test_group_of(self):
+        self.assertEqual(bl.group_of("docs/mission-control/m2/index.html"), "docs/mission-control")
+        self.assertEqual(bl.group_of("docs/index.html"), "docs")
+        self.assertEqual(bl.group_of("index.html"), ".")
+
+    def test_pages_site_is_verified_root_only(self):
+        site = self.snap["pages_site"]
+        self.assertEqual(site, json.loads(bl.SOURCES.read_text(encoding="utf-8"))["pages_site"])
+        self.assertRegex(site["url"], r"^https://[a-z0-9-]+\.github\.io/[A-Za-z0-9._-]+/$")
+        self.assertRegex(site["verified_on"], r"^\d{4}-\d{2}-\d{2}$")
+        self.assertTrue(site["verified_by"] and site["observed"])
+        # No per-page Pages URL is inferred from committed HTML.
+        self.assertNotIn("github.io", json.dumps(self.cat))
+
+    def test_rebuild_on_other_commit_only_changes_github_sha(self):
+        snap = json.loads(bl.SNAPSHOT.read_text(encoding="utf-8"))
+        for e in snap["catalog"]:
+            e["github"] = e["github"].replace(snap["source_sha"], "f" * 40)
+        snap["source_sha"] = "f" * 40
+        self.assertEqual(bl.strip_pulse(snap), bl.strip_pulse(self.snap))
+
+    def test_catalog_change_is_named(self):
+        old = {"inputs": {}, "pages": [], "catalog": [{"path": "a.html", "title": "A"}, {"path": "b.html", "title": "B"}]}
+        new = {"inputs": {}, "pages": [], "catalog": [{"path": "a.html", "title": "A2"}, {"path": "c.html", "title": "C"}]}
+        self.assertEqual(bl.stale_reason(old, new),
+                         "catalog added: c.html; catalog removed: b.html; catalog retitled: a.html")
+
+
 class Render(unittest.TestCase):
     def test_page_passes_static_html_contract(self):
         # Reuse the html_qa owner's static contract (AGENTS.md L4) instead of re-checking here.
@@ -127,6 +196,9 @@ class Render(unittest.TestCase):
         self.assertIsNone(re.search(r"<link[^>]+stylesheet", html, re.I))
         self.assertIn("default-src 'none'", html)
         self.assertEqual(html.count(bl.DATA_HOLE), 1)
+        self.assertNotRegex(html, r"\b(?:src|href)=\"(?:https?:)?//")  # no hard-coded external loads
+        for anchor in ('id="access"', 'id="catalog"', 'id="acc-local"', "location.protocol"):
+            self.assertIn(anchor, html)
 
     def test_data_cannot_close_the_script(self):
         snap = {"x": "</script><img src=x onerror=alert(1)>&"}
@@ -147,21 +219,37 @@ class Stale(unittest.TestCase):
                 problems = bl.check(bl.git("rev-parse", "HEAD^{commit}").strip())
         self.assertTrue(any(first in p for p in problems), problems)
 
-    def _check_with_page(self, transform):
-        """check(HEAD) with the first linked page's text passed through ``transform``."""
-        target = json.loads(bl.SOURCES.read_text(encoding="utf-8"))["pages"][0]["path"]
-        real = bl.read_at
+    def _check_with_page(self, transform, target=None):
+        """check(HEAD) with one page's text (default: first linked page) passed through ``transform``."""
+        target = target or json.loads(bl.SOURCES.read_text(encoding="utf-8"))["pages"][0]["path"]
+        real = bl.read_texts
 
-        def fake(sha, path):
-            oid, text = real(sha, path)
-            return (("f" * 40, transform(text)) if path == target else (oid, text))
+        def fake(sha, paths):
+            return {p: (transform(x) if p == target else x) for p, x in real(sha, paths).items()}
 
-        with mock.patch.object(bl, "read_at", fake):
+        with mock.patch.object(bl, "read_texts", fake):
             return target, bl.check(bl.git("rev-parse", "HEAD^{commit}").strip())
 
     def test_regenerated_page_with_same_title_is_not_stale(self):
         _, problems = self._check_with_page(lambda t: t + "\n<!-- regenerated -->\n")
         self.assertEqual(problems, [])
+
+    def _unrelated_page(self):
+        snap = json.loads(bl.SNAPSHOT.read_text(encoding="utf-8"))
+        linked = {p["path"] for p in snap["pages"]} | {bl.SELF_DIR + "/index.html"}
+        return next(e["path"] for e in snap["catalog"] if e["path"] not in linked)
+
+    def test_regenerated_unrelated_catalog_page_is_not_stale(self):
+        target = self._unrelated_page()
+        _, problems = self._check_with_page(lambda t: t + "\n<p>new content</p>\n", target)
+        self.assertEqual(problems, [])
+
+    def test_retitled_unrelated_catalog_page_is_named(self):
+        target = self._unrelated_page()
+        _, problems = self._check_with_page(
+            lambda t: bl.TITLE.sub("<title>Renamed page</title>", t, count=1)
+            if bl.TITLE.search(t) else "<title>Renamed page</title>" + t, target)
+        self.assertTrue(any("catalog retitled: " + target in p for p in problems), problems)
 
     def test_changed_page_title_is_named(self):
         target, problems = self._check_with_page(

@@ -103,6 +103,140 @@ def verify(expected_dir: Path, base: str, *, repeat: int = 2,
             "merge_admission":"HOLD","authority_transfer":False}
 
 
+MAX_PROBE_BYTES = 8_000_000
+QUALIFY_SCHEMA = "missioncontrol.pages.hosted_qualification.v1"
+
+
+def fetch_status(url: str):
+    """Read-only GET that reports non-200 instead of raising.
+
+    Returns (status, body, final_url); status/body are None when no HTTP answer
+    was received (UNKNOWN, never zero)."""
+    from urllib.error import HTTPError
+    req = Request(url, headers={"Cache-Control": "no-cache", "Pragma": "no-cache",
+                                "User-Agent": "G3P-Pages-Parity/1.0"})
+    try:
+        with urlopen(req, timeout=15) as response:
+            body = response.read(MAX_PROBE_BYTES + 1)
+            if len(body) > MAX_PROBE_BYTES:
+                return response.status, None, response.url
+            return response.status, body, response.url
+    except HTTPError as exc:
+        return exc.code, None, url
+    except OSError:
+        return None, None, url
+
+
+def _page_parser():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "html_contract", Path(__file__).resolve().parent / "html_contract.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.PageParser
+
+
+def local_links(html: bytes, page_url: str, base: str) -> list[str]:
+    """Same-site href/src targets of a served page, as absolute URLs (no fragment/query).
+
+    Reuses html_contract.PageParser; external origins, mailto and pure in-page anchors
+    are not host assets and are skipped."""
+    parser = _page_parser()()
+    parser.feed(html.decode("utf-8", errors="replace"))
+    values = [a.get("href") for a in parser.anchors] + [a["value"] for a in parser.assets]
+    out = set()
+    for value in values:
+        if not value or value.startswith("#"):
+            continue
+        target = urlparse(urljoin(page_url, value.strip()))
+        if target.scheme != "https" or target.hostname != "gbogeb.github.io":
+            continue
+        if not target.path.startswith(EXPECTED_ROUTE):
+            continue
+        out.add(target._replace(query="", fragment="").geturl())
+    return sorted(out)
+
+
+def _relative(base: str, url: str) -> str:
+    return urlparse(url).path[len(urlparse(base).path):]
+
+
+def qualify(base: str, paths, *, expected=None, repeat: int = 2,
+            follow_links: bool = True, fetch=fetch_status) -> dict:
+    """Per-path hosted qualification: HTTP status, sha256, repeated convergence,
+    optional parity against expected sha256 bytes and local link resolution.
+
+    ``paths`` are base-relative ("" is the root). ``expected`` maps a path to the
+    sha256 of the bytes that should be served (publisher manifest or git blob); a
+    path without one keeps parity None (UNKNOWN). Read-only; no credit, no merge."""
+    check_base(base)
+    if not 2 <= repeat <= 4:
+        raise ValueError("invalid bounded repeat policy")
+    expected = expected or {}
+    link_cache = {}
+
+    def off_origin(final):
+        parsed = urlparse(final or "")
+        return bool(final) and (parsed.hostname != "gbogeb.github.io" or parsed.scheme != "https")
+
+    def link_status(url):
+        if url not in link_cache:
+            status, _, final = fetch(url)
+            link_cache[url] = None if off_origin(final) else status
+        return link_cache[url]
+
+    results = []
+    for rel in paths:
+        url = urljoin(base, rel)
+        fetches = []
+        bodies = []
+        for _ in range(repeat):
+            status, body, final = fetch(url)
+            if off_origin(final):
+                status, body = None, None
+            ok = status == 200 and body is not None
+            bodies.append(body if ok else None)
+            fetches.append({"status": status,
+                            "sha256": sha256(body) if ok else None,
+                            "bytes": len(body) if ok else None})
+        digests = {f["sha256"] for f in fetches}
+        converged = (all(f["status"] == 200 for f in fetches) and len(digests) == 1
+                     and None not in digests)
+        served = fetches[0]["sha256"] if converged else None
+        want = expected.get(rel)
+        if want is None or not converged:
+            parity = None
+        else:
+            parity = "MATCH" if served == want else "MISMATCH"
+        record = {"path": rel, "url": url, "fetches": fetches, "converged": converged,
+                  "served_sha256": served, "expected_sha256": want, "parity": parity,
+                  "links": None}
+        is_html = rel == "" or rel.endswith("/") or rel.endswith((".html", ".htm"))
+        if follow_links and converged and is_html:
+            record["links"] = [{"path": _relative(base, target), "status": link_status(target)}
+                               for target in local_links(bodies[0], url, base)]
+        results.append(record)
+
+    def count(pred):
+        return sum(1 for r in results if pred(r))
+
+    link_rows = [link for r in results for link in (r["links"] or [])]
+    summary = {
+        "paths": len(results),
+        "http_200_converged": count(lambda r: r["converged"]),
+        "non_200_or_unstable": count(lambda r: not r["converged"]),
+        "parity_match": count(lambda r: r["parity"] == "MATCH"),
+        "parity_mismatch": count(lambda r: r["parity"] == "MISMATCH"),
+        "parity_unknown": count(lambda r: r["parity"] is None),
+        "links_checked": len({link["path"] for link in link_rows}),
+        "links_200": len({link["path"] for link in link_rows if link["status"] == 200}),
+        "links_broken": sorted({link["path"] for link in link_rows if link["status"] != 200}),
+    }
+    return {"schema": QUALIFY_SCHEMA, "base_url": base, "repeat": repeat,
+            "results": results, "summary": summary,
+            "merge_admission": "HOLD", "authority_transfer": False}
+
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--expected-dir",type=Path,required=True)

@@ -537,6 +537,13 @@
       "title": "CODE PURPLE W+1 | Mission Control federation / orchestration navigation"
     }
   ],
+  "pages_site": {
+    "observed": "status built, build_type workflow, source master:/docs, public, https_enforced",
+    "scope": "Site root only. Which committed pages the Pages workflow publishes, and at which URLs, is not verified, so no per-page Pages URL is given (never infer a published URL from committed HTML).",
+    "url": "https://gbogeb.github.io/pipeline-automation-hub/",
+    "verified_by": "gh api repos/GBOGEB/pipeline-automation-hub/pages",
+    "verified_on": "2026-10-25"
+  },
   "repo_url": "https://github.com/GBOGEB/pipeline-automation-hub",
   "rule": "Read-only projection. Every value is read verbatim from the canonical owner's committed output; this launcher computes no metric (AGENTS.md L4). Missing or null values render as unknown, never zero.",
   "schema": "gogreen.launcher.snapshot.v1",

@@ -19,9 +19,22 @@
     if (status) { status.textContent = "Charts rendered from the committed figure JSON with the offline Plotly bundle."; }
   }
 
+  // Only load the vendored bundle from this site's own origin (no CDN, no javascript: or data: URLs).
+  function sameOriginScript(value) {
+    var parsed;
+    try { parsed = new URL(String(value || ""), document.baseURI); } catch (_error) { return null; }
+    if ((parsed.protocol !== "https:" && parsed.protocol !== "http:") || parsed.origin !== window.location.origin) { return null; }
+    try { return encodeURI(decodeURI(parsed.pathname)); } catch (_error) { return null; }
+  }
+
   if (window.Plotly) { render(); return; }
+  var bundle = sameOriginScript(source.getAttribute("data-plotlyjs"));
+  if (!bundle) {
+    if (status) { status.textContent = "Plotly bundle not vendored in this build; the tables are the evidence."; }
+    return;
+  }
   var script = document.createElement("script");
-  script.src = source.getAttribute("data-plotlyjs");
+  script.src = bundle;
   script.onload = render;
   script.onerror = function () {
     if (status) { status.textContent = "Plotly bundle not vendored in this build; the tables are the evidence."; }
