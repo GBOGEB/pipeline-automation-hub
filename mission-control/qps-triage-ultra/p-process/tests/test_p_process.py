@@ -231,11 +231,11 @@ class Site(unittest.TestCase):
     def test_census_markers_rewrite(self):
         page = P / "build" / "cp_test.html"
         page.parent.mkdir(exist_ok=True)
-        page.write_text("<div>\n<!-- census:begin x -->\nOLD\n<!-- census:end -->\n</div>")
+        page.write_text("<div>\n<!-- census:begin x -->\nOLD\n<!-- census:end -->\n</div>", encoding="utf-8")
         c = {"lifted": False, "lift": [{"ok": True}, {"ok": False}], "generated_at": "2026-10-17T20:25:00+00:00",
              "repos": {"GBOGEB/ABACUS": {"open_prs": 9}}, "merges_since_unblock": 3}
         refresh.stamp_code_purple(page, c)
-        t = page.read_text()
+        t = page.read_text(encoding="utf-8")
         self.assertNotIn("OLD", t)
         self.assertIn("NOT LIFTED · 1 of 2 lift criteria", t)
         self.assertIn("ABACUS: 9 open PRs", t)
@@ -246,6 +246,29 @@ class Site(unittest.TestCase):
         for rel, h in man["files_sha256"].items():
             with self.subTest(file=rel):
                 self.assertEqual(hashlib.sha256((P / "site" / rel).read_bytes()).hexdigest(), h)
+
+    def test_manifest_never_claims_carried_over_files_as_current(self):
+        man = json.loads((P / "site/manifest.json").read_text(encoding="utf-8"))
+        for rel, origin in man.get("carried_over", {}).items():
+            with self.subTest(file=rel):
+                self.assertIn(rel, refresh.CENSUS_DATED)
+                self.assertIn(rel, man["files_sha256"])
+                self.assertNotEqual(origin, man["census_at"], "a carried-over file must name its own census")
+        md = (P / "site/code-purple/code-purple.md").read_text(encoding="utf-8")
+        stamp = re.search(r"readback (\d{4}-\d{2}-\d{2})", md).group(1)
+        if not man["census_at"].startswith(stamp):
+            self.assertIn("code-purple/code-purple.md", man.get("carried_over", {}),
+                          "code-purple.md is from another census but the manifest presents it as current")
+
+    def test_carried_over_rules(self):
+        prev = {"census_at": "2026-10-18T00:00:00+00:00", "files_sha256": {"P-process-deck.pdf": "a", "code-purple/code-purple.md": "b"}}
+        now = {"P-process-deck.pdf": "a", "code-purple/code-purple.md": "CHANGED", "index.html": "x"}
+        self.assertEqual(refresh.carried_over(prev, now, rebuilt=True), {})
+        self.assertEqual(refresh.carried_over(prev, now, rebuilt=False),
+                         {"P-process-deck.pdf": "2026-10-18T00:00:00+00:00", "code-purple/code-purple.md": None})
+        chained = {**prev, "census_at": "2026-10-25T00:00:00+00:00", "carried_over": {"P-process-deck.pdf": "2026-10-18T00:00:00+00:00"}}
+        self.assertEqual(refresh.carried_over(chained, {"P-process-deck.pdf": "a"}, rebuilt=False),
+                         {"P-process-deck.pdf": "2026-10-18T00:00:00+00:00"}, "origin survives repeated --no-pdf runs")
 
     def test_pages_link_together_and_census_is_current(self):
         idx = (P / "site/index.html").read_text()
