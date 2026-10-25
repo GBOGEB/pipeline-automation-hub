@@ -213,6 +213,65 @@ class Everred(unittest.TestCase):
                 harvest.gh("repos/x/gone")
         self.assertEqual(run.call_count, 1, "a 404 is an answer, not a transient error")
 
+    @staticmethod
+    def _occ(repo, pr, sha, step, run_id):
+        url = f"https://github.com/{repo}/actions/runs/{run_id}/job/{run_id + 1}"
+        return {"repo": repo, "sha": sha, "pr": pr, "source": "open-pr", "workflow": "CI", "job": "tests", "env": "",
+                "step": step, "step_number": 3, "run_id": run_id, "run_attempt": 1, "job_id": run_id + 1, "url": url,
+                "completed_at": "2026-10-25T10:00:00Z", "runner": f"runner-{run_id}", "signature": f"CI :: tests :: {step}"}
+
+    def _private_fixture(self):
+        roots = [{"id": "PUB-RC-2026-0001", "title": "lint root", "class": "PRODUCT_DEFECT", "state": "TRIAGED", "dims": {},
+                  "match": [{"step": "lint"}]}]
+        pub, priv = "GBOGEB/pubrepo", "GBOGEB/secretrepo"
+        occ = [self._occ(pub, 11, "a" * 40, "lint", 900001), self._occ(pub, 12, "b" * 40, "public-unmatched-step", 900003),
+               self._occ(priv, 7771, "c" * 40, "lint", 800001), self._occ(priv, 7772, "d" * 40, "secret-step-text", 800003),
+               self._occ(priv, 7773, "e" * 40, "secret-step-text", 800005)]
+        secrets = ["7771", "7772", "7773", "c" * 40, "d" * 40, "e" * 40, "800001", "800003", "800005",
+                   "secret-step-text", "runner-800", f"{priv}/actions", f"{priv}/pull"]
+        return roots, occ, pub, priv, secrets
+
+    def test_private_repo_rows_never_reach_any_output(self):
+        roots, occ, pub, priv, secrets = self._private_fixture()
+        rep, rows = harvest.build_report([pub, priv], roots, occ, {}, "2026-10-25T00:00:00+00:00", {priv})
+        outputs = {"everred.json": json.dumps(rep), "occurrences.json": json.dumps(rows), "register.md": harvest.render(rep),
+                   "rex_return.yaml": yaml.safe_dump(harvest.rex_return(rep, rep["generated_at"]))}
+        for name, text in outputs.items():
+            for s in secrets:
+                with self.subTest(output=name, secret=s):
+                    self.assertNotIn(s, text)
+        # ...while every count still includes the private occurrences
+        m = rep["metrics"]
+        self.assertEqual((m["occurrences_total"], m["distinct_signatures"], m["unmatched_signatures"]), (5, 3, 2))
+        root = rep["roots"][0]
+        self.assertEqual((root["occurrences"], root["affected_shas"], root["affected_prs"]), (2, 2, [11]))
+        self.assertEqual(rep["private_rows"], "AGGREGATE_ONLY")
+        self.assertEqual(rep["private_aggregate"], {priv: {"occurrences": 3, "distinct_signatures": 2, "unmatched_signatures": 1,
+                                                           "linked_roots": {"PUB-RC-2026-0001": 1}}})
+        self.assertEqual([u["signature"] for u in rep["unmatched"]], ["CI :: tests :: public-unmatched-step"])
+        self.assertEqual({o["repo"] for o in rows}, {pub})
+        self.assertIn(priv, outputs["register.md"], "the private repo is named with its counts")
+
+    def test_public_behaviour_unchanged_without_private_repos(self):
+        roots, occ, pub, priv, _ = self._private_fixture()
+        rep, rows = harvest.build_report([pub, priv], roots, occ, {}, "2026-10-25T00:00:00+00:00", set())
+        self.assertEqual(len(rows), 5)
+        self.assertEqual(rep["private_aggregate"], {})
+        self.assertEqual(rep["roots"][0]["affected_prs"], [11, 7771])
+        self.assertEqual({u["signature"]: u["occurrences"] for u in rep["unmatched"]},
+                         {"CI :: tests :: secret-step-text": 2, "CI :: tests :: public-unmatched-step": 1})
+
+    def test_privacy_is_read_from_the_source_and_fails_closed(self):
+        def answer(path):
+            if path.endswith("/gone"):
+                raise RuntimeError("gh api: HTTP 404")
+            return {"repos/GBOGEB/open": {"private": False}, "repos/GBOGEB/closed": {"private": True}}.get(path, {})
+        self._stub_gh(answer)
+        self.assertFalse(harvest.is_private("GBOGEB/open"))
+        self.assertTrue(harvest.is_private("GBOGEB/closed"))
+        self.assertTrue(harvest.is_private("GBOGEB/gone"), "a failed lookup is private")
+        self.assertTrue(harvest.is_private("GBOGEB/nofield"), "no explicit private: false is private")
+
     def test_probe_is_not_a_signature_match(self):
         self.assertFalse(harvest.matches({"repo": "r", "workflow": "w", "job": "j", "step": "s"}, {"probe": "ruleset_drift"}))
 

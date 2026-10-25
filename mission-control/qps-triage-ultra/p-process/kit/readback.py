@@ -20,14 +20,20 @@ import datetime as dt
 import json
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import yaml
 
 
-def gh(path: str, paginate: bool = False):
+def gh(path: str, paginate: bool = False, tries: int = 4):
+    """gh api read. Transport errors and 5xx are retried with backoff; 4xx fails at once."""
     cmd = ["gh", "api", path] + (["--paginate"] if paginate else [])
-    out = subprocess.run(cmd, capture_output=True, text=True)
+    for attempt in range(tries):
+        out = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+        if out.returncode == 0 or "HTTP 4" in out.stderr or attempt == tries - 1:
+            break
+        time.sleep(2 * (attempt + 1))
     if out.returncode != 0:
         raise RuntimeError(f"gh api {path}: {out.stderr.strip()[:300]}")
     txt = out.stdout.strip()

@@ -8,14 +8,19 @@ Output: drift.json (consumed by EVERRED as CONTROL_PLANE_DRIFT probes).
 """
 import json
 import subprocess
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 D = Path(__file__).parent
 
 
-def gh(p):
-    r = subprocess.run(["gh", "api", p], capture_output=True, text=True)
+def gh(p, tries=4):
+    for attempt in range(tries):  # transport errors and 5xx are retried; a 4xx is an answer
+        r = subprocess.run(["gh", "api", p], capture_output=True, text=True, encoding="utf-8")
+        if r.returncode == 0 or "HTTP 4" in r.stderr or attempt == tries - 1:
+            break
+        time.sleep(2 * (attempt + 1))
     return json.loads(r.stdout) if r.returncode == 0 and r.stdout.strip() else {"_error": r.stderr.strip()[:200]}
 
 
