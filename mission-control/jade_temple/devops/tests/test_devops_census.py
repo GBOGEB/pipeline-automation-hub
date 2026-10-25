@@ -16,6 +16,7 @@ import unittest
 import uuid
 from contextlib import redirect_stdout
 from pathlib import Path
+from urllib.parse import urlparse
 
 HERE = Path(__file__).resolve().parents[1]
 JADE = HERE.parent
@@ -140,7 +141,7 @@ class EndToEnd(unittest.TestCase):
         def fake_get(url):
             if url.endswith("site-manifest.json"):
                 return 200, json.dumps({"source_git_sha": cls.head}).encode()
-            if "api.github.com" in url:
+            if urlparse(url).hostname == "api.github.com":
                 if url.endswith("/branches/main"):
                     return 200, b'{"protected": true}'
                 if url.endswith("/environments"):
