@@ -1,0 +1,151 @@
+{
+  "schema": "codepurple/convergence-resolution/1",
+  "retrieved_utc": "2026-10-25T19:21:51Z",
+  "authority": "GH_API_READONLY",
+  "retrieved_by": "gh CLI (keyring auth GBOGEB), read-only",
+  "pulse": {
+    "note": "one pulse per snapshot: every fact below names the exact SHA it was read at",
+    "hub_worktree_sha": "313a2009c1be5844bfe6a7c634e7162207885ef9",
+    "hub_origin_master_sha": "313a2009c1be5844bfe6a7c634e7162207885ef9",
+    "abacus_main_sha": "817e0d5187e5879348531fc1745dc34485174712"
+  },
+  "resolutions": {
+    "C18_abacus_2367_conflict": {
+      "kind": "SUPERSESSION",
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2367,
+      "pr_url": "https://github.com/GBOGEB/ABACUS/pull/2367",
+      "head_ref": "code-purple/w76-zero-covered-dmaic-federation-20261021",
+      "base_ref": "main",
+      "old_head": {
+        "sha": "301960e92b12e687d6fe0245bf550d6b8ebb7cae",
+        "reported_prefix": "301960e92b12",
+        "reported_by": "chat:1156Z",
+        "read_at_sha": "301960e92b12e687d6fe0245bf550d6b8ebb7cae",
+        "in_pr_commit_list": true
+      },
+      "run": {
+        "id": 39769223048,
+        "workflow": "CODE PURPLE W76 Zero-Covered Asset Recovery",
+        "event": "pull_request",
+        "head_sha": "301960e92b12e687d6fe0245bf550d6b8ebb7cae",
+        "status": "completed",
+        "conclusion": "success",
+        "attempt": 2,
+        "url": "https://github.com/GBOGEB/ABACUS/actions/runs/39769223048",
+        "read_at_sha": "301960e92b12e687d6fe0245bf550d6b8ebb7cae",
+        "attempts": [
+          {
+            "conclusion": "action_required",
+            "created_at": "2026-10-22T11:15:33Z",
+            "head_sha": "301960e92b12e687d6fe0245bf550d6b8ebb7cae",
+            "run_attempt": 1,
+            "status": "completed",
+            "updated_at": "2026-10-22T11:15:33Z"
+          },
+          {
+            "conclusion": "success",
+            "created_at": "2026-10-22T12:47:34Z",
+            "head_sha": "301960e92b12e687d6fe0245bf550d6b8ebb7cae",
+            "run_attempt": 2,
+            "status": "completed",
+            "updated_at": "2026-10-22T13:00:55Z"
+          }
+        ]
+      },
+      "new_head": {
+        "sha": "15dd7b73553e431e9e84c857eb19d3a4070b80b3",
+        "committed_utc": "2026-10-23T08:02:42Z",
+        "read_at_sha": "15dd7b73553e431e9e84c857eb19d3a4070b80b3",
+        "in_pr_commit_list": true
+      },
+      "ancestry": {
+        "base": "301960e92b12e687d6fe0245bf550d6b8ebb7cae",
+        "head": "15dd7b73553e431e9e84c857eb19d3a4070b80b3",
+        "ahead_by": 56,
+        "behind_by": 0,
+        "merge_base": "301960e92b12e687d6fe0245bf550d6b8ebb7cae",
+        "status": "ahead",
+        "read_at_sha": "15dd7b73553e431e9e84c857eb19d3a4070b80b3"
+      },
+      "pr_state": "MERGED",
+      "merged_utc": "2026-10-23T08:02:54Z",
+      "merge_commit": {
+        "parents": [
+          "3be1698eb6d2e18ff58f5cfc437659ab3ba895be",
+          "15dd7b73553e431e9e84c857eb19d3a4070b80b3"
+        ],
+        "sha": "94a3c281e947dba8aed85a831a67ffc55309080a",
+        "read_at_sha": "94a3c281e947dba8aed85a831a67ffc55309080a"
+      },
+      "checks_at_new_head": {
+        "read_at_sha": "15dd7b73553e431e9e84c857eb19d3a4070b80b3",
+        "total": 121,
+        "by_conclusion": {
+          "FAILURE": 11,
+          "NEUTRAL": 2,
+          "SKIPPED": 8,
+          "SUCCESS": 100
+        },
+        "failed": 11,
+        "failed_names": [
+          "Bandit Disjoint Census / census",
+          "CI - ABACUS Matrix / ABACUS - ubuntu-24.04 - Python 3.10",
+          "CI - ABACUS Matrix / ABACUS compatibility gate",
+          "CI - ABACUS Matrix / Python proof completeness",
+          "CI Workflow Governance / policy-and-inventory",
+          "CI/CD Test Suite / Code Quality Checks",
+          "CI/CD Test Suite / Full Red Proof Summary",
+          "CI/CD Test Suite / Unit Tests (Python 3.10, macos-latest)",
+          "CI/CD Test Suite / Unit Tests (Python 3.10, ubuntu-latest)",
+          "CI/CD Test Suite / Unit Tests (Python 3.10, windows-latest)",
+          "W81 Repair Outcome Block / governance-report-preview"
+        ],
+        "completed_after_merge": 120,
+        "required_checks": {
+          "state": "OBSERVED_EMPTY",
+          "value": [],
+          "sources": [
+            "gh api repos/GBOGEB/ABACUS/rules/branches/main (no required_status_checks rule)",
+            "gh api repos/GBOGEB/ABACUS/branches/main/protection (404)"
+          ]
+        },
+        "required_read_at_sha": "817e0d5187e5879348531fc1745dc34485174712",
+        "base_parent": "3be1698eb6d2e18ff58f5cfc437659ab3ba895be",
+        "failed_preexisting_on_base_parent": [
+          "Code Quality Checks",
+          "Full Red Proof Summary",
+          "Unit Tests (Python 3.10, macos-latest)",
+          "Unit Tests (Python 3.10, ubuntu-latest)",
+          "Unit Tests (Python 3.10, windows-latest)"
+        ],
+        "failed_not_shown_unrelated": [
+          "ABACUS - ubuntu-24.04 - Python 3.10",
+          "ABACUS compatibility gate",
+          "Python proof completeness",
+          "census",
+          "governance-report-preview",
+          "policy-and-inventory"
+        ]
+      },
+      "discrepancies": [
+        "caller brief said 9 of 121 checks failed; this retrieval observed 11 FAILURE of 121 on 15dd7b73553e431e9e84c857eb19d3a4070b80b3",
+        "run 39769223048 attempt 1 concluded action_required (matches chat 1156Z '30/30 action_required'); attempt 2 concluded success: both reports were true at different times on the same exact head"
+      ],
+      "commands": [
+        "gh api repos/GBOGEB/ABACUS/commits/main --jq {sha: .sha}",
+        "gh run view 39769223048 -R GBOGEB/ABACUS --json databaseId,headSha,conclusion,status,attempt,event,headBranch,workflowName,createdAt,updatedAt,url",
+        "gh api repos/GBOGEB/ABACUS/actions/runs/39769223048/attempts/1 --jq {run_attempt, conclusion, status, head_sha, created_at, updated_at}",
+        "gh api repos/GBOGEB/ABACUS/actions/runs/39769223048/attempts/2 --jq {run_attempt, conclusion, status, head_sha, created_at, updated_at}",
+        "gh pr view 2367 -R GBOGEB/ABACUS --json number,state,headRefOid,headRefName,baseRefName,mergeCommit,mergedAt,url,commits",
+        "gh api repos/GBOGEB/ABACUS/compare/301960e92b12e687d6fe0245bf550d6b8ebb7cae...15dd7b73553e431e9e84c857eb19d3a4070b80b3 --jq {status, ahead_by, behind_by, merge_base: .merge_base_commit.sha}",
+        "gh api repos/GBOGEB/ABACUS/commits/94a3c281e947dba8aed85a831a67ffc55309080a --jq {sha: .sha, parents: [.parents[].sha]}",
+        "gh api repos/GBOGEB/ABACUS/commits/15dd7b73553e431e9e84c857eb19d3a4070b80b3 --jq {committed_utc: .commit.committer.date}",
+        "gh pr view 2367 -R GBOGEB/ABACUS --json statusCheckRollup",
+        "gh api repos/GBOGEB/ABACUS/rules/branches/main",
+        "gh api repos/GBOGEB/ABACUS/branches/main/protection  # HTTP 404 Branch not protected",
+        "gh api repos/GBOGEB/ABACUS/commits/3be1698eb6d2e18ff58f5cfc437659ab3ba895be/check-runs?per_page=100 --jq [.check_runs[] | select(.conclusion == \"failure\") | .name]"
+      ]
+    }
+  }
+}

@@ -43,6 +43,9 @@ NOVEL_CLASSES = {"NEW_TERMINAL_EVENT", "NEW_TERMINAL_RED", "NEW_FIRST_RED", "ATT
                  "MEANINGFUL_MISMATCH", "NEW_TERMINAL_MISMATCH"}
 STABLE_HOLD_TRANSITIONS = 3
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
+C18_ID = "C18_abacus_2367_conflict"
+RESOLUTION_SCHEMA = "codepurple/convergence-resolution/1"
+RESOLUTION_AUTHORITY = "GH_API_READONLY"
 
 
 def evidence(state, value=None, sources=(), numerator=None, denominator=None, scope=None):
@@ -80,6 +83,117 @@ def load(inputs_dir):
     manifest.append({"file": CHAT_FILE, "sha256": sha256_file(d / CHAT_FILE),
                      "authority": "CHAT_TRANSCRIPT_UNVERIFIED"})
     return data, manifest
+
+
+def load_resolutions(path):
+    """Optional resolution addendum: {item id: record}. No path -> no resolutions (behaviour unchanged)."""
+    if path is None:
+        return {}, None
+    p = Path(path).resolve()
+    doc = json.loads(p.read_text(encoding="utf-8"))
+    if doc.get("schema") != RESOLUTION_SCHEMA or doc.get("authority") != RESOLUTION_AUTHORITY:
+        raise ValueError(f"{p.name}: not a {RESOLUTION_SCHEMA} addendum with authority {RESOLUTION_AUTHORITY}")
+    try:
+        name = p.relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        name = p.name
+    return doc["resolutions"], {"file": name, "sha256": sha256_file(p), "authority": RESOLUTION_AUTHORITY}
+
+
+# --------------------------------------------------------------------------- resolutions
+
+def _sha40(v):
+    return isinstance(v, str) and bool(SHA40.match(v))
+
+
+def validate_supersession(rec, reported_prefix, reported_runs):
+    """Return the reasons a supersession record does not prove 'old head replaced by merged head'.
+    An empty list means the record is valid. A prefix is never accepted in place of an exact SHA."""
+    errs = []
+    if rec.get("kind") != "SUPERSESSION":
+        errs.append(f"kind {rec.get('kind')!r} is not SUPERSESSION")
+    old = rec.get("old_head", {}).get("sha")
+    new = rec.get("new_head", {}).get("sha")
+    for label, sha in (("old_head", old), ("new_head", new)):
+        if not _sha40(sha):
+            errs.append(f"{label} {sha!r} is not an exact 40-hex SHA")
+    if errs:
+        return errs
+    if not reported_prefix or not old.startswith(reported_prefix):
+        errs.append(f"old_head {old} does not extend the reported prefix {reported_prefix!r}")
+    if rec["old_head"].get("reported_prefix") != reported_prefix:
+        errs.append(f"record prefix {rec['old_head'].get('reported_prefix')!r} != reported {reported_prefix!r}")
+    if old == new:
+        errs.append("old_head equals new_head: nothing was superseded")
+    run = rec.get("run", {})
+    if run.get("head_sha") != old:
+        errs.append(f"run {run.get('id')} headSha {run.get('head_sha')!r} != old_head {old}")
+    if run.get("id") not in reported_runs:
+        errs.append(f"run {run.get('id')} is not among the reported runs {reported_runs}")
+    anc = rec.get("ancestry", {})
+    if (anc.get("base"), anc.get("head"), anc.get("merge_base")) != (old, new, old) \
+            or anc.get("behind_by") != 0 or not isinstance(anc.get("ahead_by"), int) or anc["ahead_by"] < 1:
+        errs.append(f"ancestry does not show {old} as a strict ancestor of {new}: {anc}")
+    if rec.get("pr_state") != "MERGED":
+        errs.append(f"PR state {rec.get('pr_state')!r} is not MERGED")
+    merge = rec.get("merge_commit", {})
+    if not _sha40(merge.get("sha")) or new not in merge.get("parents", []):
+        errs.append(f"merge commit {merge.get('sha')!r} does not have new_head {new} as a parent")
+    checks = rec.get("checks_at_new_head", {})
+    for label, part, want in (("old_head", rec["old_head"], old), ("new_head", rec["new_head"], new),
+                              ("run", run, old), ("merge_commit", merge, merge.get("sha")),
+                              ("checks_at_new_head", checks, new)):
+        if part.get("read_at_sha") != want or not _sha40(want):
+            errs.append(f"{label} read_at_sha {part.get('read_at_sha')!r} is not the exact SHA {want!r}")
+    total, failed, names = checks.get("total"), checks.get("failed"), checks.get("failed_names")
+    if not (isinstance(total, int) and isinstance(failed, int) and isinstance(names, list)
+            and 0 <= failed <= total and failed == len(names)):
+        errs.append(f"check counts inconsistent: total={total} failed={failed} names={names}")
+    return errs
+
+
+def grade_supersession(rec):
+    """PASS only when no check failed, or every failure is shown non-required AND pre-existing on the base.
+    A missing required-check reading is NOT_OBSERVED (unknown), never 'no required checks'."""
+    checks = rec["checks_at_new_head"]
+    if checks["failed"] == 0:
+        return "PASS", "0 failed checks at the merged head"
+    req = checks.get("required_checks") or evidence("NOT_OBSERVED")
+    req_names = set(req.get("value") or [])
+    failed_jobs = set(checks.get("failed_preexisting_on_base_parent") or []) | \
+        set(checks.get("failed_not_shown_unrelated") or [])
+    non_required = req.get("state") in ("OBSERVED_EMPTY", "VERIFIED") and not (req_names & failed_jobs)
+    unexplained = checks.get("failed_not_shown_unrelated")
+    unrelated = unexplained == []
+    if non_required and unrelated:
+        return "PASS", f"{checks['failed']} failed checks, all non-required and pre-existing on the base parent"
+    why = [f"{checks['failed']}/{checks['total']} checks FAILED at merged head {rec['new_head']['sha']}"]
+    why.append("non-required by ruleset (required set " + req["state"] + ")" if non_required
+               else "required-check set " + req.get("state", "NOT_OBSERVED") + ": non-required not shown")
+    why.append("not shown unrelated: " + (", ".join(unexplained) if unexplained else "UNKNOWN"))
+    return "WARN", "; ".join(why)
+
+
+def resolve_c18(check, rec, chat_event):
+    """Apply an optional supersession record to the C18 result; invalid records leave it FAIL."""
+    if rec is None:
+        return check
+    errs = validate_supersession(rec, chat_event["head_sha"], chat_event.get("run_ids", []))
+    if errs:
+        return {**check, "detail": check["detail"] + "; supersession record REJECTED", "resolution_rejected": errs}
+    result, why = grade_supersession(rec)
+    run, checks = rec["run"], rec["checks_at_new_head"]
+    detail = (f"SUPERSEDED: #{rec['pr']} head {rec['old_head']['sha']} (chat prefix {rec['old_head']['reported_prefix']}) "
+              f"run {run['id']} conclusion {run['conclusion']} was superseded by {rec['new_head']['sha']}, merged as "
+              f"{rec['merge_commit']['sha']}; the two reports describe different heads/attempts, not a contradiction. "
+              + why)
+    return {**check, "result": result, "detail": detail, "resolution": "SUPERSEDED",
+            "resolution_evidence": {
+                "pr": rec["pr"], "old_head_sha": rec["old_head"]["sha"], "new_head_sha": rec["new_head"]["sha"],
+                "merge_commit_sha": rec["merge_commit"]["sha"], "run_id": run["id"],
+                "run_head_sha": run["head_sha"], "run_conclusion": run["conclusion"],
+                "checks_total": checks["total"], "checks_failed": checks["failed"],
+                "failed_names": checks["failed_names"]}}
 
 
 # --------------------------------------------------------------------------- events
@@ -170,7 +284,7 @@ def archive_status(data):
 
 # --------------------------------------------------------------------------- cross-checks
 
-def crosschecks(data, events):
+def crosschecks(data, events, resolutions=None):
     z, m, t, n = data["zip"], data["members"], data["terminal"], data["new_terminals"]
     zi = {a["artifact_id"]: a for a in z["archives"]}
     mi = {a["artifact_id"]: a for a in m}
@@ -292,10 +406,11 @@ def crosschecks(data, events):
                           "NOT_OBSERVED; anchor 763/852 is a PR-head (#2017) cohort, not main"})
 
     w76_chat = [e for e in events if e["pr"] == 2367]
-    res.append({"id": "C18_abacus_2367_conflict", "result": "FAIL",
-                "detail": f"chat 1156Z: #2367 head {w76_chat[0]['head_sha']}... 30/30 action_required; "
-                          f"terminal pulse baseline: '{t['comparison_baseline']}'. No exact head in either -> "
-                          "cannot tell supersession from contradiction"})
+    c18 = {"id": C18_ID, "result": "FAIL",
+           "detail": f"chat 1156Z: #2367 head {w76_chat[0]['head_sha']}... 30/30 action_required; "
+                     f"terminal pulse baseline: '{t['comparison_baseline']}'. No exact head in either -> "
+                     "cannot tell supersession from contradiction"}
+    res.append(resolve_c18(c18, (resolutions or {}).get(C18_ID), w76_chat[0]))
 
     trunc = sorted({f"{e['repo'].split('/')[1]}#{e['pr']}" for e in events if e["head_sha"] and not e["head_sha_exact"]})
     res.append({"id": "C19_truncated_heads", "result": "WARN" if trunc else "PASS",
@@ -520,10 +635,15 @@ def main():
     ap.add_argument("--inputs", default=str(EVIDENCE_DIR))
     ap.add_argument("--schema", default=str(REPO_ROOT / "contracts" / "convergence-receipt.schema.json"))
     ap.add_argument("--out", default=str(EVIDENCE_DIR / "CODE_PURPLE_SCALED_CONVERGENCE_20261022.json"))
+    ap.add_argument("--resolutions", default=None,
+                    help="optional resolution addendum (codepurple/convergence-resolution/1) keyed by item id")
     args = ap.parse_args()
     data, manifest = load(args.inputs)
+    resolutions, res_entry = load_resolutions(args.resolutions)
+    if res_entry:
+        manifest.append(res_entry)
     events = normalise_events(data)
-    checks = crosschecks(data, events)
+    checks = crosschecks(data, events, resolutions)
     receipt = reduce(data, manifest, checks, events)
 
     try:
