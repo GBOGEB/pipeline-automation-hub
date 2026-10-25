@@ -14,29 +14,16 @@ regen = importlib.util.module_from_spec(spec)
 sys.modules["regen"] = regen  # dataclasses resolve annotations through sys.modules
 spec.loader.exec_module(regen)
 
-# Paths the CI/CD DAG binds by blob OID that the JADE workflow's pull_request filter does not cover.
-# Editing one merges green and turns the next JADE PR red. Ratchet: a new gap fails here; Phase 2 widens
-# the filter and empties this list.
-KNOWN_UNFILTERED = {
-    ".github/workflows/gm-iv-recon4-governor.yml",
-    ".github/workflows/gm-v-3pstar-mip-control.yml",
-    ".github/workflows/gm-v-governor-readiness.yml",
-    ".github/workflows/mission-control-n3-evidence.yml",
-    ".github/workflows/zero-test-gate-guard.yml",
-    "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
-    "mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json",
-    "mission-control/gogreen/red_trace/README.md",
-    "scripts/zero_test_gate_audit.py",
-}
-
-
 # Scripts the JADE workflow runs that produce no committed output (receipt run, browser QA job).
 NOT_GENERATORS = re.compile(r"stop_rules\.py|run_\w+_browser_qa\.py")
 
 
-def workflow_filters():
-    wf = WORKFLOW.read_text(encoding="utf-8")
-    return re.findall(r"- '([^']+)'", wf.split("pull_request:", 1)[1].split("workflow_dispatch", 1)[0])
+def workflow_filters(event="pull_request"):
+    """Path filter of one trigger: the pull_request block ends at push:, the push block at workflow_dispatch."""
+    on = WORKFLOW.read_text(encoding="utf-8").split("\njobs:", 1)[0]
+    block = on.split(f"  {event}:", 1)[1]
+    block = block.split("  push:", 1)[0] if event == "pull_request" else block
+    return re.findall(r"- '([^']+)'", block.split("workflow_dispatch", 1)[0])
 
 
 def dag_bound_paths():
@@ -80,10 +67,21 @@ class Chain(unittest.TestCase):
 
 
 class PinCoverage(unittest.TestCase):
-    def test_no_new_pinned_path_outside_the_workflow_filter(self):
+    def test_every_pinned_path_triggers_jade_qa(self):
+        # A pinned path outside the filter merges green and turns the next JADE PR red (10-23..10-25: 18 of 18
+        # non-canary JADE reds). Add the path to both triggers in jade-temple-readonly-qa.yml.
         pats = [g.replace("**", "*") for g in workflow_filters()]
         gaps = {p for p in dag_bound_paths() if not any(fnmatch.fnmatchcase(p, g) for g in pats)}
-        self.assertEqual(gaps - KNOWN_UNFILTERED, set(), "pinned by the DAG but not a trigger of JADE QA")
+        self.assertEqual(gaps, set(), "pinned by the CI/CD DAG but not a trigger of JADE QA")
+
+    def test_master_runs_the_same_filter(self):
+        self.assertEqual(workflow_filters("push"), workflow_filters("pull_request"))
+        self.assertRegex(WORKFLOW.read_text(encoding="utf-8"), r"\n  push:\n    branches: \[master\]\n")
+
+    def test_launcher_runs_on_every_pr_and_on_master(self):
+        wf = (ROOT / ".github/workflows/gogreen-launcher.yml").read_text(encoding="utf-8").split("\njobs:", 1)[0]
+        self.assertNotIn("paths:", wf, "the launcher pins page titles across the repository; a path filter misses them")
+        self.assertIn("  push:\n    branches: [master]", wf)
 
 
 class Report(unittest.TestCase):
