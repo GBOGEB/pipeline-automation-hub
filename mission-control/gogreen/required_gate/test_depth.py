@@ -111,6 +111,28 @@ class Census(unittest.TestCase):
         self.assertIsNone(d.resolve_targets(self.root, ".", "missing/dir", "test_*.py"))
         self.assertIsNone(d.resolve_targets(self.root, ".", "$TESTS", "test_*.py"))
 
+    def test_runner_invocations_are_command_segments(self):
+        inv = d.runner_invocations
+        for none in ("pip install pytest pytest-cov", "python -m pip install -U pytest", "echo pytest done",
+                     "pytest --version", "npm i node"):
+            self.assertEqual(inv(none), [], none)
+        self.assertEqual(inv("PYTHONPATH=. timeout 600 python -m pytest tests -q > log 2>&1"),
+                         [("pytest", " tests -q", False)])
+        self.assertEqual(inv("coverage run --branch -m pytest tests/unit | tee a")[0][:2], ("pytest", " tests/unit"))
+        self.assertTrue(inv("pytest -m smoke tests")[0][2])
+        self.assertTrue(inv("pytest --collect-only")[0][2])
+        self.assertTrue(inv("pytest -k 'a and b'")[0][2])
+        self.assertEqual(len(inv("pytest a.py && pytest b.py")), 2)
+
+    def test_bare_pytest_uses_configured_testpaths(self):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            self.assertEqual(d.pytest_testpaths(root), ["."])
+            (root / "pyproject.toml").write_text('[tool.pytest.ini_options]\ntestpaths = ["tests", "lib/tests"]\n')
+            self.assertEqual(d.pytest_testpaths(root), ["tests", "lib/tests"])
+            (root / "pytest.ini").write_text("[pytest]\ntestpaths = unit\n")
+            self.assertEqual(d.pytest_testpaths(root), ["unit"])
+
     def test_area_keys(self):
         self.assertEqual(d.area("mission-control/gogreen/x.py"), "mission-control/gogreen")
         self.assertEqual(d.area("README.md"), "(root)")

@@ -37,8 +37,55 @@ sys.path.insert(0, str(HERE))
 import gate as g  # noqa: E402
 
 SCHEMA = "gogreen.depth_census.v1"
-PYTEST_RX = re.compile(r"\b(?:python(?:3(?:\.\d+)?)?\s+-m\s+pytest|pytest)\b([^\n|;&>]*)")
-NODE_RX = re.compile(r"\bnode\s+--test\b([^\n|;&>]*)")
+# A runner invocation is a command SEGMENT that starts with the runner (after env assignments
+# and wrappers). Matching the word anywhere also matched `pip install pytest pytest-cov` and
+# counted the whole suite for it (N+12 correction).
+PYTEST_HEAD = re.compile(r"^(?:python(?:3(?:\.\d+)?)?\s+-m\s+)?(?:coverage\s+run\s+(?:--?\S+(?:=\S+)?\s+)*-m\s+)?"
+                         r"(?:pytest|py\.test)(?=\s|$)(.*)$")
+NODE_HEAD = re.compile(r"^node\s+--test(?=\s|$)(.*)$")
+WRAPPER = re.compile(r"^(?:(?:[A-Z_][A-Z0-9_]*=\S*|timeout\s+\S+|time|xvfb-run(?:\s+-a)?|exec|command)\s+)+")
+SEGMENT = re.compile(r"\n|&&|\|\||;|\|")
+# Flags that select a subset (or nothing): such a run is not the files' full test set.
+SELECTING = ("-m", "-k", "--collect-only", "--co", "--benchmark-only", "--lf", "--last-failed", "--sw",
+             "--stepwise", "--deselect")
+ARG_FLAGS = {"-k", "-m", "-p", "-c", "-o", "-n", "-W", "--rootdir", "--cov", "--cov-report", "--cov-config",
+             "--junitxml", "--maxfail", "--timeout", "--tb", "--durations", "--basetemp", "--ignore",
+             "--deselect", "--benchmark-json", "--json-report-file", "--confcutdir", "--import-mode"}
+
+
+def runner_invocations(run: str) -> list:
+    """[(runner, args, selecting)] for each command segment that invokes pytest or node --test."""
+    out = []
+    for seg in SEGMENT.split(run):
+        seg = re.split(r"\s\d?>{1,2}\s*\S*", " " + seg.strip())[0].strip()  # drop redirections
+        seg = WRAPPER.sub("", seg)
+        for runner, head in (("pytest", PYTEST_HEAD), ("node", NODE_HEAD)):
+            m = head.match(seg)
+            if m:
+                args = m.group(1)
+                try:
+                    toks = shlex.split(args)
+                except ValueError:
+                    toks = args.split()
+                if any(t in ("--version", "-V", "--help", "-h", "--fixtures", "--markers") for t in toks):
+                    continue  # prints and exits: runs no tests
+                sel = any(t in SELECTING or any(t.startswith(f + "=") for f in SELECTING if f.startswith("--"))
+                          for t in toks)
+                out.append((runner, args, sel))
+    return out
+
+
+def pytest_testpaths(root: Path) -> list:
+    """testpaths from pytest config: what a bare `pytest` collects (default: the rootdir)."""
+    for name, rx in (("pytest.ini", r"(?ms)^\[pytest\].*?^testpaths\s*=\s*(.+?)$"),
+                     ("pyproject.toml", r"(?ms)^\[tool\.pytest\.ini_options\].*?^testpaths\s*=\s*(\[.*?\]|.+?)$"),
+                     ("setup.cfg", r"(?ms)^\[tool:pytest\].*?^testpaths\s*=\s*(.+?)$")):
+        f = Path(root) / name
+        if f.is_file():
+            m = re.search(rx, f.read_text(encoding="utf-8", errors="replace"))
+            if m:
+                return [x for x in re.findall(r"[A-Za-z0-9_./-]+", m.group(1)) if x]
+    return ["."]
 TEST_FILE = re.compile(r"(^|/)(test_[^/]*\.py|[^/]*_test\.py|[^/]*\.test\.m?[jt]s)$")
 SRC_EXT = (".py", ".mjs", ".js", ".ts")
 # Not "zero-tested": the module IS a check (browser/QA/validator harness), or carries no logic.
@@ -85,7 +132,7 @@ def node_count(path: Path) -> int | None:
     return len(re.findall(r"(?m)^\s*(?:test|it)\s*\(", text))
 
 
-def resolve_targets(root: Path, wd: str, args: str, default_glob: str) -> list | None:
+def resolve_targets(root: Path, wd: str, args: str, default_glob: str, default_targets=None) -> list | None:
     try:
         toks = shlex.split(args)
     except ValueError:
@@ -97,7 +144,7 @@ def resolve_targets(root: Path, wd: str, args: str, default_glob: str) -> list |
         if skip:
             skip = False
             continue
-        if t in ("-k", "-m", "-p", "-c", "--rootdir", "-o", "--cov", "--cov-report", "--junitxml", "--maxfail"):
+        if t in ARG_FLAGS:
             skip = True
             continue
         if t.startswith("-"):
@@ -105,7 +152,7 @@ def resolve_targets(root: Path, wd: str, args: str, default_glob: str) -> list |
         targets.append(t.split("::")[0])
     base = (root / wd).resolve()
     files = []
-    for t in targets or ["."]:
+    for t in targets or (default_targets or ["."]):
         p = (base / t)
         if p.is_dir():
             files += sorted(x for x in p.rglob(default_glob) if "node_modules" not in x.parts)
@@ -148,21 +195,25 @@ def workflow_tests(root: Path, audit_rows: list) -> dict:
                     continue
                 run = re.sub(r"\\\s*\n\s*", " ", run)
                 wd = step.get("working-directory", jwd)
-                for rx, runner, glob, counter in ((PYTEST_RX, "pytest", "test_*.py", pytest_count),
-                                                  (NODE_RX, "node", "*.test.mjs", node_count)):
-                    for m in rx.finditer(run):
-                        w = out.setdefault(wf.name, {"invocations": 0, "tests": 0, "unknown": 0, "by_runner": {},
-                                                     "files": {}})
-                        w["invocations"] += 1
-                        files = resolve_targets(root, str(wd), m.group(1), glob)
-                        counts = [counter(f) for f in files] if files is not None else None
-                        if counts is None or any(c is None for c in counts):
-                            w["unknown"] += 1
-                            continue
-                        w["tests"] += sum(counts)
-                        for f, c in zip(files, counts):
-                            w["files"][f.relative_to(root.resolve()).as_posix() if f.is_absolute() else str(f)] = c
-                        w["by_runner"][runner] = w["by_runner"].get(runner, 0) + sum(counts)
+                for runner, args, selecting in runner_invocations(run):
+                    glob, counter = (("test_*.py", pytest_count) if runner == "pytest" else ("*.test.mjs", node_count))
+                    w = out.setdefault(wf.name, {"invocations": 0, "tests": 0, "unknown": 0, "by_runner": {},
+                                                 "files": {}})
+                    w["invocations"] += 1
+                    if selecting:  # -m/-k/--collect-only: a subset of unknown size, never the full set
+                        w["selected"] = w.get("selected", 0) + 1
+                        w["unknown"] += 1
+                        continue
+                    files = resolve_targets(root, str(wd), args, glob,
+                                            pytest_testpaths(root) if runner == "pytest" and str(wd) in (".", "") else None)
+                    counts = [counter(f) for f in files] if files is not None else None
+                    if counts is None or any(c is None for c in counts):
+                        w["unknown"] += 1
+                        continue
+                    w["tests"] += sum(counts)
+                    for f, c in zip(files, counts):
+                        w["files"][f.relative_to(root.resolve()).as_posix() if f.is_absolute() else str(f)] = c
+                    w["by_runner"][runner] = w["by_runner"].get(runner, 0) + sum(counts)
     return out
 
 
