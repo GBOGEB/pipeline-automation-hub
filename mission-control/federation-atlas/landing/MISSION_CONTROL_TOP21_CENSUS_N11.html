@@ -58,7 +58,7 @@ const D=JSON.parse(document.querySelector('#model').textContent);
 const $=s=>document.querySelector(s);
 const fmt=n=>Number(n||0).toLocaleString('en-US');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const repoUrl=r=>'https://github.com/'+r.name+'/tree/'+encodeURIComponent(r.sha);
+const repoUrl=r=>'https://github.com/'+String(r.name??'').split('/').map(encodeURIComponent).join('/')+'/tree/'+encodeURIComponent(r.sha);
 const byName=(a,b)=>a.name.localeCompare(b.name);
 let repoChoice=D.repo.slice().sort(byName);
 $('#kRepos').textContent=D.totals.repositories+'/'+D.totals.repositories;
@@ -81,14 +81,14 @@ function renderMatrix(){
  let q=$('#filter').value.toLowerCase().trim(),sort=$('#sort').value;
  let rows=D.repo.filter(r=>r.name.toLowerCase().includes(q));
  rows.sort(sort==='name'?byName:(a,b)=>(sort==='files'?b.files-a.files:sort==='issues'?b.open_issues-a.open_issues:b.review-a.review)||a.name.localeCompare(b.name));
- $('#matrixBody').innerHTML=rows.map(r=>'<tr><td><a target="_blank" rel="noopener" href="'+repoUrl(r)+'">'+esc(r.name.split('/')[1])+'</a></td>'+[r.files,r.kind['.py'],r.kind['.md'],(r.kind['.yaml']||0)+(r.kind['.yml']||0),r.kind['.json'],(r.kind['.js']||0)+(r.kind['.mjs']||0)+(r.kind['.cjs']||0)+(r.kind['.jsx']||0),(r.kind['.ts']||0)+(r.kind['.tsx']||0),r.kind['.ps1'],r.root,r.review,r.open_issues].map(n=>'<td>'+fmt(n)+'</td>').join('')+'</tr>').join('')||'<tr><td colspan="12">No matching repositories</td></tr>';
+ $('#matrixBody').innerHTML=rows.map(r=>'<tr><td><a target="_blank" rel="noopener" href="'+esc(repoUrl(r))+'">'+esc(r.name.split('/')[1])+'</a></td>'+[r.files,r.kind['.py'],r.kind['.md'],(r.kind['.yaml']||0)+(r.kind['.yml']||0),r.kind['.json'],(r.kind['.js']||0)+(r.kind['.mjs']||0)+(r.kind['.cjs']||0)+(r.kind['.jsx']||0),(r.kind['.ts']||0)+(r.kind['.tsx']||0),r.kind['.ps1'],r.root,r.review,r.open_issues].map(n=>'<td>'+fmt(n)+'</td>').join('')+'</tr>').join('')||'<tr><td colspan="12">No matching repositories</td></tr>';
 }
 $('#filter').addEventListener('input',renderMatrix);$('#sort').addEventListener('change',renderMatrix);renderMatrix();
 const options=repoChoice.map(r=>'<option value="'+esc(r.name)+'">'+esc(r.name.split('/')[1])+'</option>').join('');
 $('#repoSelect').innerHTML=options;$('#rootRepo').innerHTML=options;
 function renderWire(){
  const r=D.repo.find(x=>x.name===$('#repoSelect').value);if(!r)return;
- $('#wireSummary').innerHTML='<p><a target="_blank" rel="noopener" href="'+repoUrl(r)+'">'+esc(r.name)+'</a> · '+fmt(r.files)+' tracked files · '+fmt(r.root)+' root entries · SHA <code>'+esc(r.sha)+'</code></p>';
+ $('#wireSummary').innerHTML='<p><a target="_blank" rel="noopener" href="'+esc(repoUrl(r))+'">'+esc(r.name)+'</a> · '+fmt(r.files)+' tracked files · '+fmt(r.root)+' root entries · SHA <code>'+esc(r.sha)+'</code></p>';
  const rows=r.wireframe.slice(0,20),max=Math.max(1,...rows.map(x=>x.files));
  $('#wireBars').innerHTML=rows.map(x=>'<div class="barrow"><div>'+esc(x.name)+'<div class="bartrack"><div class="barfill" style="width:'+((x.files/max)*100).toFixed(2)+'%"></div></div></div><b>'+fmt(x.files)+'</b></div>').join('');
  $('#wireKinds').innerHTML=Object.entries(r.kind).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).map(([k,v])=>'<span class="chip">'+esc(k)+' '+fmt(v)+'</span>').join('');
