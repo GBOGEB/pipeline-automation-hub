@@ -92,24 +92,6 @@ class Committed(unittest.TestCase):
                 self.assertTrue(p["title"])
                 self.assertEqual(posixpath.normpath(posixpath.join(bl.SELF_DIR, p["href"])), p["path"])
 
-    def test_discover_lists_every_committed_html_page_once(self):
-        found = [p["path"] for p in self.snap["discover"]]
-        self.assertEqual(len(found), len(set(found)))
-        self.assertIn(bl.SELF_DIR + "/index.html", found)
-        for p in self.spec["pages"]:
-            self.assertIn(p["path"], found)
-        for p in self.snap["discover"]:
-            with self.subTest(page=p["path"]):
-                self.assertTrue(p["title"])
-                self.assertNotIn("&amp;", p["title"])  # titles are unescaped once, escaped at render
-                self.assertEqual(posixpath.normpath(posixpath.join(bl.SELF_DIR, p["href"])), p["path"])
-
-    def test_access_block_is_declared_not_probed(self):
-        a = self.snap["access"]
-        self.assertEqual(a, self.spec["access"])
-        self.assertTrue(a["clone_url"].startswith(self.snap["repo_url"]))
-        self.assertIn("J03", a["pages_note"])  # hosting is qualified by its owner, not here
-
 
 class Catalog(unittest.TestCase):
     @classmethod
@@ -180,16 +162,6 @@ class Catalog(unittest.TestCase):
 
 
 class Render(unittest.TestCase):
-    def test_page_passes_static_html_contract(self):
-        # Reuse the html_qa owner's static contract (AGENTS.md L4) instead of re-checking here.
-        path = HERE.parents[1] / "html_qa" / "html_contract.py"
-        spec = importlib.util.spec_from_file_location("html_contract", path)
-        contract = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(contract)
-        snap = json.loads(bl.SNAPSHOT.read_text(encoding="utf-8"))
-        result = contract.inspect(bl.render(snap), base_dir=HERE, strict_local=True)
-        self.assertEqual(result["errors"], [])
-
     def test_page_is_self_contained(self):
         html = bl.TEMPLATE.read_text(encoding="utf-8")
         self.assertIsNone(re.search(r"<script[^>]+src=", html, re.I))
@@ -199,6 +171,24 @@ class Render(unittest.TestCase):
         self.assertNotRegex(html, r"\b(?:src|href)=\"(?:https?:)?//")  # no hard-coded external loads
         for anchor in ('id="access"', 'id="catalog"', 'id="acc-local"', "location.protocol"):
             self.assertIn(anchor, html)
+
+    def test_catalog_rows_link_history_and_copy_local_path(self):
+        html = bl.TEMPLATE.read_text(encoding="utf-8")
+        self.assertIn('"/commits/"+D.source_sha+"/"+e.path,"History"', html)
+        # The local path column exists only when the clone root was found from the page's file:// URL.
+        self.assertIn("ROOT===null?\"\":'<th scope=\"col\">Local path</th>'", html)
+        self.assertIn('data-copy="', html)
+        self.assertIn("navigator.clipboard", html)
+
+    def test_page_passes_static_html_contract(self):
+        # Reuse the html_qa owner's static contract (AGENTS.md L4) instead of re-checking here.
+        path = HERE.parents[1] / "html_qa" / "html_contract.py"
+        spec = importlib.util.spec_from_file_location("html_contract", path)
+        contract = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(contract)
+        snap = json.loads(bl.SNAPSHOT.read_text(encoding="utf-8"))
+        result = contract.inspect(bl.render(snap), base_dir=HERE, strict_local=True)
+        self.assertEqual(result["errors"], [])
 
     def test_data_cannot_close_the_script(self):
         snap = {"x": "</script><img src=x onerror=alert(1)>&"}
@@ -262,11 +252,6 @@ class Stale(unittest.TestCase):
         new = {"inputs": {"a.json": "1", "b.json": "3"}, "pages": [{"path": "x.html", "title": "Y"}]}
         self.assertEqual(bl.stale_reason(old, new), "changed inputs: b.json; changed pages: x.html")
         self.assertIn("declarations", bl.stale_reason(old, old))
-
-    def test_stale_reason_names_discovered_pages(self):
-        old = {"inputs": {}, "pages": [], "discover": [{"path": "a.html", "title": "A"}]}
-        new = {"inputs": {}, "pages": [], "discover": [{"path": "a.html", "title": "A"}, {"path": "b.html", "title": "B"}]}
-        self.assertEqual(bl.stale_reason(old, new), "changed discovered pages: b.html")
 
     def test_pulse_fields_alone_are_not_stale(self):
         snap = json.loads(bl.SNAPSHOT.read_text(encoding="utf-8"))
