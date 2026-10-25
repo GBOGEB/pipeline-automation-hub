@@ -39,8 +39,8 @@ with sync_playwright() as p:
         assert not overflow,(name,'overflow')
         assert not errors,(name,'pageerror',errors)
         assert not console,(name,'console',console)
-        assert page.locator('a[href="mission_brief.pptx"]').count()==1
-        assert page.locator('a[href="linked_evidence_book.pdf"]').count()==1
+        assert page.locator('a[href="mission_brief.pptx"]').count()==0
+        assert page.locator('a[href="linked_evidence_book.pdf"]').count()==0
         results['viewports'].append({'name':name,'width':width,'height':height,'initial_visible_rows':before,'missing_only':only_missing,'codex_unknown_rows':filtered,'search_hits':searched,'horiz_overflow':overflow,'errors':errors,'console_errors':console,'screenshot':f'qa/{name}.png','status':'PASS'})
         page.close()
     browser.close()

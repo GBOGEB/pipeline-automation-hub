@@ -3,8 +3,8 @@
 import argparse, hashlib, html, json, re, shutil
 from pathlib import Path
 
-ALLOW={"index.html","code-purple.html","code-purple.json","lane-process.html","lane-process.mmd","federation.svg","federation-latest.html","federation-wave-metrics.json","federation-latest.json","metrics.json","lane-process.json","code-health.html","code-health.json","code-health-dag.mmd","code-health-manifest.json","sideload-k8s.html","sideload-k8s.json","sideload-k8s.mmd","sideload-k8s.sha256.json","sideload-operator.html","sideload-operator-receipt.json","sideload-telemetry.json","sideload-telemetry.sha256.json"}
-FLIGHT={"index.html","flightdeck.svg","census.json","bd_leaves.json","anchors.json","manifest.json"}
+ALLOW={"index.html","code-purple.html","code-purple.json","lane-process.html","lane-process.mmd","federation.svg","federation-latest.html","federation-wave-metrics.json","federation-latest.json","metrics.json","lane-process.json","code-health.html","code-health.json","code-health-dag.mmd","code-health-manifest.json","sideload-k8s.html","sideload-k8s.json","sideload-k8s.mmd","sideload-k8s.sha256.json","sideload-operator.html","sideload-operator-receipt.json","sideload-telemetry.json","sideload-telemetry.sha256.json","federation-wave.html","phase02-temporal.html","phase02-temporal.json"}
+FLIGHT={"index.html","flightdeck.svg","census.json","bd_leaves.json","anchors.json","manifest.json","GUIDE.md"}
 
 # W55: optional, source-owned coverage-integrity viewer; never a second publisher.
 COVERAGE_INTEGRITY_SOURCE = Path(__file__).resolve().parent / "COVERAGE_INTEGRITY_OBSERVATIONS_v1.json"
