@@ -33,11 +33,11 @@ Goal: make `cryoplant-project` and QPS TRIAGE (`mission-control/qps-triage-ultra
 
 | Wave | Repository | Work | Probes it should move |
 |---|---|---|---|
-| A | cryoplant | Pin every action to a commit SHA; fail-closed core suite through `jade-reusable-ci.yml`; burn down untested live modules in slices | `build.pinned_actions`, `test.fail_closed` |
+| A | cryoplant | Pin every action to a commit SHA; fail-closed core suite through `jade-reusable-ci.yml`; burn down untested live modules in slices | `build.pinned_actions`, `test.fail_closed`; the burn-down itself closes only on `test.controlled` (coverage floor ≥ 80 and untested ≤ 20% of modules) |
 | A2 | hub census | Count `src.`-prefixed imports as tested (`src/golden_thread.py` is tested but read as untested); a declared rule for archive trees, which hold all 4 of cryoplant's zero-case test files | `test.fail_closed` (cryoplant) |
 | B | cryoplant + hub | Automated release tags and changelog | `release.automation` (S5 L2 → L3+) |
 | C | cryoplant + QPS TRIAGE | Installable packages for the calculation core and the triage logic; a read-only HTTP API deployed through `jade-reusable-deploy.yml` | `deploy.contract`, `operate.rollback`, `monitor.live_parity` |
-| D | hub | Register both as hub consumers; one census pulse per wave | `control.red_trace` |
+| D | hub | Register both as hub consumers; one census pulse per wave; remediate cryoplant's 9 EVERRED red-trace workflows | `control.red_trace` closes only when those EVERRED entries are gone. Registration itself has no census probe yet (QPS TRIAGE is a hub directory, not a scanned repository), so it is checked against the hub consumer list |
 | E | ML | Time series first (plant process data; census pulses as a series); DNN/CNN only with labelled data; GAN last, for synthetic data | after C |
 
 N+10 baseline:
@@ -47,9 +47,9 @@ N+10 baseline:
 - Wave A is GBOGEB/cryoplant-project#2071: action uses pinned 53/422 → 425/425; 13 new tests; zero-test guard `min-tests: 13`.
 
 Recursive hooks:
-- **Each pulse:** `census.py scan --iteration N<k+1> --baseline-census N<k>`. A probe that flipped to PASS closes its wave row; a flip to FAIL becomes the next wave's first item.
+- **Each pulse:** `census.py fetch --cache ../_jade_cache --baseline-census data/DEVOPS_CENSUS_N<k>.json`, then `census.py scan --cache ../_jade_cache --iteration N<k+1> --baseline-census data/DEVOPS_CENSUS_N<k>.json --out data/DEVOPS_CENSUS_N<k+1>.json --objects data/DEVOPS_OBJECTS_N<k+1>.json`. A probe that flipped to PASS closes its wave row; a flip to FAIL becomes the next wave's first item.
 - **Burn-down slices:** each slice appends its test files to the caller's `test-args` and raises `min-tests`. Lowering it is a first red.
-- **Pins:** Dependabot moves the SHA pins weekly, and each pulse recounts them. Pinned below 100% is a regression.
+- **Pins:** Dependabot moves the SHA pins weekly, and each pulse recounts them. `build.pinned_actions` passes at 90%, so the 100% ratchet is checked on the raw `actions_pinned / actions_total` ratio per repository, not on the probe; any drop below 100% is a regression.
 - **The JADE DAG:** after a pulse lands, re-pin `data/CICD_DAG_POLICY.json` and regenerate per AGENTS.md L7 (#834 → #837).
 - **Gates:** write the FPC receipt before a wave PR leaves draft, and merge only once first-pass-closure is green on that exact head, Codex review included.
 
