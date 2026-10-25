@@ -13,6 +13,20 @@ class TestPages(unittest.TestCase):
    self.assertNotIn("secret.txt",str(m))
    self.assertTrue((p/"out"/"index.html").is_file())
    self.assertTrue((p/"out"/"atlas"/"lane-process.mmd").is_file())
+ def test_j03_linked_atlas_children_are_published(self):
+  with tempfile.TemporaryDirectory() as d:
+   p=Path(d);src=p/"atlas";(src/"flightdeck").mkdir(parents=True)
+   (src/"index.html").write_text("<html>Atlas</html>")
+   for n in ("federation-wave.html","phase02-temporal.html","phase02-temporal.json"):
+    (src/n).write_text("x")
+   for n in ("GUIDE.md","evidence_register.xlsx","federation_report.docx","mission_brief.pptx","linked_evidence_book.pdf"):
+    (src/"flightdeck"/n).write_text("x")
+   pages_portal.build(src,p/"out","a"*40)
+   a=p/"out"/"atlas"
+   for n in ("federation-wave.html","phase02-temporal.html","phase02-temporal.json","flightdeck/GUIDE.md"):
+    self.assertTrue((a/n).is_file(),n)
+   for n in ("evidence_register.xlsx","federation_report.docx","mission_brief.pptx","linked_evidence_book.pdf"):
+    self.assertFalse((a/"flightdeck"/n).exists(),n)
  def test_missioncontrol_launch_is_in_existing_publisher(self):
   with tempfile.TemporaryDirectory() as d:
    p=Path(d);src=p/"atlas";src.mkdir()
