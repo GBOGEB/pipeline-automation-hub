@@ -50,7 +50,7 @@ def stamp_code_purple(page: Path, census: dict) -> None:
     new, n = re.subn(r"(<!-- census:begin[^>]*-->\n).*?(<!-- census:end -->)", lambda m: m.group(1) + live_row(census) + m.group(2), t, flags=re.S)
     if n != 1:
         raise SystemExit("census markers missing in code-purple/index.html")
-    page.write_text(new, encoding="utf-8")
+    page.write_text(new, encoding="utf-8", newline="\n")
 
 
 def print_page_pdf(page: Path, pdf: Path) -> int:
@@ -87,7 +87,7 @@ def main():
         for f in ("census.json", "after_action.md"):
             copy(ROOT / "kit/out" / f, SITE / "code-purple/kit" / f)
     census_f = SITE / "code-purple/kit/census.json"
-    census = json.loads(census_f.read_text())
+    census = json.loads(census_f.read_text(encoding="utf-8"))
     copy(ROOT / "everred/roots.yaml", SITE / "everred/data/roots.yaml")
     for f in ("incident.yaml", "readback.py"):
         copy(ROOT / "kit" / f, SITE / "code-purple/kit" / f)
@@ -110,7 +110,7 @@ def main():
     files = sorted(p for p in SITE.rglob("*") if p.is_file() and p.name != "manifest.json")
     man = {"schema": "p-process.site/1.0", "census_at": census["generated_at"],
            "files_sha256": {str(p.relative_to(SITE)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}}
-    (SITE / "manifest.json").write_text(json.dumps(man, indent=2) + "\n")
+    (SITE / "manifest.json").write_text(json.dumps(man, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({"site_files": len(files), "census_at": census["generated_at"], "lifted": census["lifted"]}))
 
 

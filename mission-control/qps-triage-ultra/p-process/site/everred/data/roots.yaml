@@ -229,11 +229,15 @@ roots:
     title: pipeline-automation-hub ruleset active but targets no branch
     class: CONTROL_PLANE_DRIFT
     severity: P2
-    state: BLOCKED_AUTHORITY
-    dims: {diagnosis: CONFIRMED, repair: PROPOSED, integration: NA, security: NA, governance: INEFFECTIVE, admission: NA, control: UNCONTROLLED}
+    state: VERIFIED_FIXED
+    dims: {diagnosis: CONFIRMED, repair: PRODUCER_VERIFIED, integration: NA, security: NA, governance: EFFECTIVE, admission: NA, control: UNDER_OBSERVATION}
     owner: GBOGEB
     match: [{probe: ruleset_drift, repo: GBOGEB/pipeline-automation-hub}]
-    evidence: ["Ruleset 25252917 'QPS TRAIGE project' has ref_name include [] — no branch protected; default branch master"]
+    evidence:
+      - "Ruleset 25252917 'QPS TRAIGE project' has ref_name include [] — no branch protected; default branch master"
+      - "Repair: ruleset 25789280 'P-BASIC pipeline-automation-hub default branch' active on master (canonical rulesets/pipeline-automation-hub.basic.json)"
+      - "25 Oct 18:15 UTC verify_rulesets.py probe: GBOGEB/pipeline-automation-hub gaps [] (rulesets/drift.json); p_state ruleset GREEN"
+      - "Observation, not a gap of this root: required checks are validate-ultra-control, canonical-self-test-and-mutation, GOGREEN required gate; first-pass-closure is not required (#838 merged while it was red)"
     canonical_repair: "Set its target to ~DEFAULT_BRANCH or import rulesets/pipeline-automation-hub.basic.json"
     regression_contract: "verify_rulesets.py reports untargeted rulesets"
     consumers: [all pipeline-automation-hub PRs]

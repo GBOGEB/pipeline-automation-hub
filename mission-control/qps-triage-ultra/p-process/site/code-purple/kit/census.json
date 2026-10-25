@@ -1,30 +1,21 @@
 {
   "schema": "code-purple.census/v2",
   "incident": "CP-2026-10-12-ABACUS-MERGE-STALL",
-  "generated_at": "2026-10-18T13:27:47+00:00",
+  "generated_at": "2026-10-25T18:30:34+00:00",
   "repos": {
     "GBOGEB/ABACUS": {
-      "default_head": "337109e102e9caa515dbf9837848c4917e9383a0",
-      "default_head_at": "2026-10-18T10:20:31Z",
-      "open_prs": 13,
+      "default_head": "8d27bca878d6da8a0a8ff8bdf72cf862d3488fa1",
+      "default_head_at": "2026-10-24T21:41:40Z",
+      "open_prs": 10,
       "nightly": {
         "workflow": "ci-cd-tests.yml",
-        "run_id": 39089613256,
-        "sha": "49c945268ba26a8addb8a9cfa788de057b93fe1e",
-        "at": "2026-10-18T02:18:26Z",
+        "run_id": 40154042077,
+        "sha": "8d27bca878d6da8a0a8ff8bdf72cf862d3488fa1",
+        "at": "2026-10-25T02:20:00Z",
         "reds": [
           "Code Quality Checks",
           "Full Red Proof Summary",
-          "Security Scanning",
-          "Unit Tests (Python 3.10, macos-latest)",
-          "Unit Tests (Python 3.10, ubuntu-latest)",
-          "Unit Tests (Python 3.10, windows-latest)",
-          "Unit Tests (Python 3.11, macos-latest)",
-          "Unit Tests (Python 3.11, ubuntu-latest)",
-          "Unit Tests (Python 3.11, windows-latest)",
-          "Unit Tests (Python 3.12, macos-latest)",
-          "Unit Tests (Python 3.12, ubuntu-latest)",
-          "Unit Tests (Python 3.12, windows-latest)"
+          "Security Scanning"
         ]
       },
       "ruleset": {
@@ -55,16 +46,29 @@
           },
           {
             "type": "non_fast_forward"
+          },
+          {
+            "type": "code_quality",
+            "parameters": {
+              "severity": "errors"
+            }
+          },
+          {
+            "type": "copilot_code_review",
+            "parameters": {
+              "review_on_push": false,
+              "review_draft_pull_requests": true
+            }
           }
         ],
-        "updated_at": "2026-10-17T18:54:28.763+02:00"
+        "updated_at": "2026-10-23T09:57:58.056+02:00"
       },
       "default_branch_protected": true
     },
     "GBOGEB/CODEX": {
-      "default_head": "e422201c615db88f74aa0af02460bb5d23bfd262",
-      "default_head_at": "2026-10-18T12:32:35Z",
-      "open_prs": 0,
+      "default_head": "dca0e79e4e302dec83f89277f314001f1bcf2290",
+      "default_head_at": "2026-10-25T15:44:50Z",
+      "open_prs": 5,
       "nightly": {
         "workflow": null,
         "reds": []
@@ -139,13 +143,13 @@
       "id": "L2",
       "text": "Gate restored (ruleset active, no bypass, expected rules present)",
       "ok": false,
-      "evidence": "active, bypass=6, rules=3; missing: required_status_checks rule absent"
+      "evidence": "active, bypass=6, rules=5; missing: required_status_checks rule absent"
     },
     {
       "id": "L5",
       "text": "Admission integrity (no merge since the unblocker without a green gate)",
       "ok": false,
-      "evidence": "97 merged; gate green on 0; 97 merged with red checks"
+      "evidence": "97 merged; gate green on 1; 64 merged with red checks"
     },
     {
       "id": "L3",
@@ -157,7 +161,7 @@
       "id": "L4",
       "text": "Open PR backlog at most a quarter of the baseline",
       "ok": false,
-      "evidence": "13 open (baseline 20)"
+      "evidence": "10 open (baseline 20)"
     }
   ],
   "follow_ups": [
@@ -180,790 +184,791 @@
     "since": "2026-10-12T16:17:07Z",
     "gate_check": "PR Feedback Gate",
     "merged": 97,
-    "gate_green": 0,
-    "ungated": 97,
-    "with_red_checks": 97,
+    "gate_green": 1,
+    "ungated": 96,
+    "with_red_checks": 64,
     "by_gate_state": {
-      "failure": 29,
-      "in_progress": 3,
-      "none": 65
+      "failure": 39,
+      "in_progress": 38,
+      "none": 19,
+      "success": 1
     },
     "rows": [
       {
-        "number": 2023,
-        "merged_at": "2026-10-17T17:33:01Z",
-        "head": "6af3508667fdcb849c0b2f8e0cdaeb4cfdfa6ae4",
+        "number": 2333,
+        "merged_at": "2026-10-19T17:37:19Z",
+        "head": "a84a922d400322467f32f073527d79eccd6fd571",
         "merged_by": "GBOGEB",
         "gate": "failure",
-        "reds": 2
-      },
-      {
-        "number": 1989,
-        "merged_at": "2026-10-17T17:33:49Z",
-        "head": "79672200a0fb37b7538b996b03a1e82dceb83a2f",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 7
-      },
-      {
-        "number": 1993,
-        "merged_at": "2026-10-17T17:34:32Z",
-        "head": "364c32a479136458482e0002112e8e830c72e4df",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 9
-      },
-      {
-        "number": 1994,
-        "merged_at": "2026-10-17T17:34:50Z",
-        "head": "1cdacce594fcd2b091d0aab6bf6b717ea6fde036",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 15
-      },
-      {
-        "number": 1988,
-        "merged_at": "2026-10-17T17:35:49Z",
-        "head": "0ea8e89ebe82e86948d24b2f1171d5cf2c35a4bd",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 22
-      },
-      {
-        "number": 1981,
-        "merged_at": "2026-10-17T17:38:02Z",
-        "head": "b000a18d4f2a20d964ae798dfce72d676f836dbc",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 11
-      },
-      {
-        "number": 2073,
-        "merged_at": "2026-10-17T17:38:37Z",
-        "head": "1fc921a82d1c9b688167dab06e2e0d640e7b8354",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 21
-      },
-      {
-        "number": 2052,
-        "merged_at": "2026-10-17T17:38:39Z",
-        "head": "ee29aae0af12ab5ea8fd425bee2e47ffd9cf4e8d",
-        "merged_by": null,
-        "gate": "failure",
-        "reds": 9
-      },
-      {
-        "number": 2074,
-        "merged_at": "2026-10-17T17:39:28Z",
-        "head": "f0899e165239de76c1002c23342c6701222ea218",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 3
-      },
-      {
-        "number": 2002,
-        "merged_at": "2026-10-17T17:39:46Z",
-        "head": "50fb312c5bab619912b5cb444ccb83a2c956550e",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 10
-      },
-      {
-        "number": 2055,
-        "merged_at": "2026-10-17T17:40:43Z",
-        "head": "c8da9a41c117ef6e315ebf0998a351e6d7f0c303",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 12
-      },
-      {
-        "number": 2006,
-        "merged_at": "2026-10-17T17:41:17Z",
-        "head": "54e01b3796d97022de70690990241e223251c238",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 25
-      },
-      {
-        "number": 2059,
-        "merged_at": "2026-10-17T17:41:18Z",
-        "head": "ea049249c5082d9906b348ef8491225f9a6cbdd0",
-        "merged_by": "GBOGEB",
-        "gate": "none",
         "reds": 20
       },
       {
-        "number": 1970,
-        "merged_at": "2026-10-17T17:41:54Z",
-        "head": "c697aed15b3c1576d610c9c49b270ff950efb6e5",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 15
-      },
-      {
-        "number": 1966,
-        "merged_at": "2026-10-17T17:42:09Z",
-        "head": "50646bcf5788e7dc2ba52fb435e579019cfb1a76",
+        "number": 2336,
+        "merged_at": "2026-10-19T18:07:31Z",
+        "head": "a1a989080ccb150f54a609ec09e87011630e6816",
         "merged_by": "GBOGEB",
         "gate": "in_progress",
-        "reds": 4
+        "reds": 0
       },
       {
-        "number": 2082,
-        "merged_at": "2026-10-17T17:43:13Z",
-        "head": "0b02071aa6e8e80ad9870b69d32348c0945feaf6",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 5
-      },
-      {
-        "number": 2078,
-        "merged_at": "2026-10-17T17:43:26Z",
-        "head": "7a732b2dab9f5fa7c4773896c09f2e1b64db856a",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 3
-      },
-      {
-        "number": 2083,
-        "merged_at": "2026-10-17T17:43:38Z",
-        "head": "88d33855dd7a486fa0ca49b9f2c8c7687e5dd782",
+        "number": 2339,
+        "merged_at": "2026-10-19T18:08:24Z",
+        "head": "71bfc21ecab8ae376337686f8fb77168f11898ea",
         "merged_by": "GBOGEB",
         "gate": "in_progress",
-        "reds": 4
+        "reds": 0
       },
       {
-        "number": 2081,
-        "merged_at": "2026-10-17T17:43:50Z",
-        "head": "ee80f15033238c513e425dc4261e650b729c884a",
+        "number": 2342,
+        "merged_at": "2026-10-19T20:22:55Z",
+        "head": "a336a52919203e07763b24f35dc083aa75655ecc",
         "merged_by": "GBOGEB",
         "gate": "failure",
-        "reds": 9
+        "reds": 20
       },
       {
-        "number": 2038,
-        "merged_at": "2026-10-17T17:44:34Z",
-        "head": "c84450f8d485660f7a056b3fcc29de1c36ea3535",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 8
-      },
-      {
-        "number": 2040,
-        "merged_at": "2026-10-17T17:44:49Z",
-        "head": "c26c462d8131fd34ba59be3dddc0c7a824fe5e69",
+        "number": 2343,
+        "merged_at": "2026-10-20T06:19:27Z",
+        "head": "d4d9b85ceb89a894c5d503759b1026ab9bf2ed9d",
         "merged_by": "GBOGEB",
         "gate": "failure",
-        "reds": 8
+        "reds": 18
       },
       {
-        "number": 2076,
-        "merged_at": "2026-10-17T17:45:30Z",
-        "head": "154cd81107e0acd629c20de786140b757c57e26d",
+        "number": 2077,
+        "merged_at": "2026-10-20T08:45:15Z",
+        "head": "53b671f357eefb7f4dc329cdfff7ff52ab8da480",
         "merged_by": "GBOGEB",
-        "gate": "none",
+        "gate": "failure",
+        "reds": 26
+      },
+      {
+        "number": 2090,
+        "merged_at": "2026-10-20T09:47:40Z",
+        "head": "da58f9ceecd2dbf402851096682de85ac952c5ff",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 29
+      },
+      {
+        "number": 2091,
+        "merged_at": "2026-10-20T10:03:53Z",
+        "head": "476aed2e1fcaaea550a41eddb39d2f0448fa7e74",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
         "reds": 24
       },
       {
-        "number": 2027,
-        "merged_at": "2026-10-17T17:46:02Z",
-        "head": "8cb4d742ad046ab688d691f4cc68c4171ad4308f",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 12
-      },
-      {
-        "number": 1977,
-        "merged_at": "2026-10-17T17:47:06Z",
-        "head": "2f69cfc79ac1409ea39215006ac8f13bf191648e",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 19
-      },
-      {
-        "number": 2030,
-        "merged_at": "2026-10-17T17:47:34Z",
-        "head": "9cbf3929680b6cbf7fa93596616472190e7dede1",
+        "number": 2101,
+        "merged_at": "2026-10-20T10:03:54Z",
+        "head": "67caf23e9f85afee2d0862c931c2de6787f7318c",
         "merged_by": "GBOGEB",
         "gate": "none",
         "reds": 23
       },
       {
-        "number": 2032,
-        "merged_at": "2026-10-17T17:47:52Z",
-        "head": "60d288550424abe8f2368656b2c1f03274069733",
+        "number": 2144,
+        "merged_at": "2026-10-20T10:04:16Z",
+        "head": "c1abc1627e4455d773d286a72bc7e0153431846d",
         "merged_by": "GBOGEB",
         "gate": "failure",
-        "reds": 2
+        "reds": 18
       },
       {
-        "number": 2010,
-        "merged_at": "2026-10-17T17:48:30Z",
-        "head": "487b5acafaca3fe8d90d0e00ead74baffabb96ca",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 2
-      },
-      {
-        "number": 1990,
-        "merged_at": "2026-10-17T17:48:32Z",
-        "head": "01d99b1bda4ec828d6ffbe6f3fa6a911cd89ffcd",
-        "merged_by": null,
-        "gate": "failure",
-        "reds": 2
-      },
-      {
-        "number": 2005,
-        "merged_at": "2026-10-17T17:48:34Z",
-        "head": "487b5acafaca3fe8d90d0e00ead74baffabb96ca",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 2
-      },
-      {
-        "number": 2025,
-        "merged_at": "2026-10-17T17:48:45Z",
-        "head": "4d8240082f532c13d5cfb240747b04caed13e5bf",
+        "number": 2092,
+        "merged_at": "2026-10-20T10:04:36Z",
+        "head": "a5c295470fa58223fc59aab6aff1d1b556301227",
         "merged_by": "GBOGEB",
         "gate": "failure",
-        "reds": 9
+        "reds": 22
       },
       {
-        "number": 2037,
-        "merged_at": "2026-10-17T17:49:15Z",
-        "head": "6b8e3c0b1e95f21545bfbd37161e48d11a30b386",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 19
-      },
-      {
-        "number": 2000,
-        "merged_at": "2026-10-17T17:49:34Z",
-        "head": "7d20d3cf71009018d24ec9b7020b08f6b76431a6",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 10
-      },
-      {
-        "number": 1972,
-        "merged_at": "2026-10-17T17:49:51Z",
-        "head": "2785372417e8bd0e21f5496761240255946fe4eb",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 9
-      },
-      {
-        "number": 1999,
-        "merged_at": "2026-10-17T17:50:34Z",
-        "head": "54734c895756db970f1051b8bcfca637da14e923",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 6
-      },
-      {
-        "number": 2024,
-        "merged_at": "2026-10-17T17:50:53Z",
-        "head": "323a47e9194003432ba386e4727bc51aa2ae5f02",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 16
-      },
-      {
-        "number": 1979,
-        "merged_at": "2026-10-17T17:51:43Z",
-        "head": "43e905f3061ba11b997c0f4b376c0d7dd4f3502e",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 10
-      },
-      {
-        "number": 1980,
-        "merged_at": "2026-10-17T17:52:13Z",
-        "head": "b24887d2822e9d3dd2a2281e776bffd4977c5db3",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 21
-      },
-      {
-        "number": 1997,
-        "merged_at": "2026-10-17T17:52:33Z",
-        "head": "1cb55efd15974af8e3554ee3f9bd5650eb9d3b9e",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 9
-      },
-      {
-        "number": 2041,
-        "merged_at": "2026-10-17T17:53:13Z",
-        "head": "c427598abd0b6591b6dbabc91b3bd36a85be36a5",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 19
-      },
-      {
-        "number": 2094,
-        "merged_at": "2026-10-17T17:53:48Z",
-        "head": "5571de5cdc5d48e4333b10885c838e9a13bbb1fb",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 6
-      },
-      {
-        "number": 2075,
-        "merged_at": "2026-10-17T17:54:20Z",
-        "head": "3a44af9069b79562a4d68fdb83a855d157f5ac8c",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 9
-      },
-      {
-        "number": 2050,
-        "merged_at": "2026-10-17T17:54:49Z",
-        "head": "fcb84f512a278d49c347f87da8cd52f86185a6cf",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 36
-      },
-      {
-        "number": 2045,
-        "merged_at": "2026-10-17T17:55:19Z",
-        "head": "4488618e5d8899033c173df4c95e819aa527abcb",
-        "merged_by": "GBOGEB",
-        "gate": "in_progress",
-        "reds": 4
-      },
-      {
-        "number": 2113,
-        "merged_at": "2026-10-17T17:55:44Z",
-        "head": "574b1a2639fd5b60c815ca509abeb26e8eb8ff66",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 10
-      },
-      {
-        "number": 2135,
-        "merged_at": "2026-10-17T17:56:16Z",
-        "head": "dc2804cfc74f0ef92fa4fe9193c79cdad0f8fcd1",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 5
-      },
-      {
-        "number": 2047,
-        "merged_at": "2026-10-17T17:57:09Z",
-        "head": "1c8ff24887c8d757c11ab6c81a1b70d44fc27edd",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 28
-      },
-      {
-        "number": 2126,
-        "merged_at": "2026-10-17T17:57:49Z",
-        "head": "df5fc2f7f1b5b6f5652a8a07920045345daba353",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 14
-      },
-      {
-        "number": 2148,
-        "merged_at": "2026-10-17T17:58:07Z",
-        "head": "b17e056998ee3ab9cf683fc9d5c28476860797f9",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 13
-      },
-      {
-        "number": 2153,
-        "merged_at": "2026-10-17T17:58:21Z",
-        "head": "32e0db3df79e5e38365fb2ccdf06c053e1e5f2a5",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 7
-      },
-      {
-        "number": 2154,
-        "merged_at": "2026-10-17T17:58:42Z",
-        "head": "f29572b5eb6a0a42685cca6d599aa1e9ef57b322",
+        "number": 2098,
+        "merged_at": "2026-10-20T10:04:37Z",
+        "head": "612464449a92180451fa4ab2ae573763572b0a78",
         "merged_by": "GBOGEB",
         "gate": "none",
         "reds": 8
       },
       {
-        "number": 2105,
-        "merged_at": "2026-10-17T17:59:25Z",
-        "head": "87fedbc5381452a29d7fb1408953c2a4b4ecad52",
+        "number": 2344,
+        "merged_at": "2026-10-20T10:22:53Z",
+        "head": "ebeb7636ac4f56877d0ecaaae6e9d070c940c596",
         "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 7
+        "gate": "in_progress",
+        "reds": 17
       },
       {
-        "number": 1995,
-        "merged_at": "2026-10-17T18:00:25Z",
-        "head": "4f1266d3772d243bb58e98848f726d7f305f3308",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 9
-      },
-      {
-        "number": 2167,
-        "merged_at": "2026-10-17T18:47:54Z",
-        "head": "e3f6302ffa1d5312be7ec8a91f7b5969e8848cb6",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 35
-      },
-      {
-        "number": 2168,
-        "merged_at": "2026-10-17T19:11:03Z",
-        "head": "bd589b5ab47f1011c50dace23cb86a9a75cc09a5",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 10
-      },
-      {
-        "number": 2175,
-        "merged_at": "2026-10-17T19:13:41Z",
-        "head": "554a5fdd4d2a268c6e97e883788ad6c3e6e5a156",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 34
-      },
-      {
-        "number": 2178,
-        "merged_at": "2026-10-17T19:14:45Z",
-        "head": "e31452a78ba33ba1eb03fe80a4517eea84e6bf68",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 18
-      },
-      {
-        "number": 2185,
-        "merged_at": "2026-10-17T19:47:18Z",
-        "head": "cfef674ab131092289ece7db80dc1082fdbf5f2a",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 26
-      },
-      {
-        "number": 2182,
-        "merged_at": "2026-10-17T19:47:35Z",
-        "head": "203f7d3e083eb1738a91655b9610b24d36e39351",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 2
-      },
-      {
-        "number": 2183,
-        "merged_at": "2026-10-17T19:47:37Z",
-        "head": "c79fe0398bccdf1dc37ab1162d6cbc5f9485ea3c",
-        "merged_by": null,
-        "gate": "none",
-        "reds": 25
-      },
-      {
-        "number": 2186,
-        "merged_at": "2026-10-17T19:47:37Z",
-        "head": "a4e58db04088c4b59a1215cda4f3fc091020b38e",
-        "merged_by": null,
-        "gate": "none",
-        "reds": 16
-      },
-      {
-        "number": 2116,
-        "merged_at": "2026-10-17T19:48:05Z",
-        "head": "81e5266941ab080c780108eaad69950a8dfae656",
-        "merged_by": "GBOGEB",
-        "gate": "failure",
-        "reds": 24
-      },
-      {
-        "number": 2177,
-        "merged_at": "2026-10-17T19:49:04Z",
-        "head": "56ffc2de5c4ab40f99f540564044350a609f60e1",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 20
-      },
-      {
-        "number": 2176,
-        "merged_at": "2026-10-17T19:49:18Z",
-        "head": "adf9777822ab28bce250997cf58414cf885af430",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 3
-      },
-      {
-        "number": 2163,
-        "merged_at": "2026-10-17T19:49:35Z",
-        "head": "40012148352101a004f004d72c47ef70eef339f2",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 22
-      },
-      {
-        "number": 2165,
-        "merged_at": "2026-10-17T19:49:51Z",
-        "head": "6ffd56d48128d4efc574b357eecb333618fa0388",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 20
-      },
-      {
-        "number": 2164,
-        "merged_at": "2026-10-17T19:51:16Z",
-        "head": "d74030d87997f26943c3f46dbf0f0706e5120f46",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 21
-      },
-      {
-        "number": 2179,
-        "merged_at": "2026-10-17T19:51:40Z",
-        "head": "444ba527e58f057f240a7cc189a8d68d711a6099",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 18
-      },
-      {
-        "number": 2172,
-        "merged_at": "2026-10-17T19:52:00Z",
-        "head": "14c8b5836875de7736d6333a630c496efb6a6630",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 22
-      },
-      {
-        "number": 2173,
-        "merged_at": "2026-10-17T19:52:21Z",
-        "head": "23d44ec8269bf9493500f7e7523f961a80c64cb6",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 35
-      },
-      {
-        "number": 2174,
-        "merged_at": "2026-10-17T19:52:38Z",
-        "head": "ddb8d70cd301989c4b2a682e717eeff984ae56a5",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 22
-      },
-      {
-        "number": 2181,
-        "merged_at": "2026-10-17T19:53:16Z",
-        "head": "d6f300650fdc5c2c61f9c217eae4c5beb435bf78",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 10
-      },
-      {
-        "number": 2166,
-        "merged_at": "2026-10-17T19:53:53Z",
-        "head": "707ae0b6ecba4db26a7cb26923668c296daf3257",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 16
-      },
-      {
-        "number": 2162,
-        "merged_at": "2026-10-17T19:55:08Z",
-        "head": "1fa583e821cce507ade931b67e6d71baf9a065bc",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 22
-      },
-      {
-        "number": 2169,
-        "merged_at": "2026-10-17T19:56:24Z",
-        "head": "2e677f112600cb55923a369c6a9c752a7015ad50",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 21
-      },
-      {
-        "number": 2187,
-        "merged_at": "2026-10-17T20:04:00Z",
-        "head": "c4c86bae0e23ff5f0ec6e4f5a72b239e1b4768da",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 11
-      },
-      {
-        "number": 2189,
-        "merged_at": "2026-10-17T20:14:40Z",
-        "head": "d555a78b6a639ebe9a3304c61578aa0ed7e841f0",
+        "number": 2345,
+        "merged_at": "2026-10-20T10:24:52Z",
+        "head": "cd857c499f37581beeb294a41b21de02a99a5ea8",
         "merged_by": "GBOGEB",
         "gate": "none",
         "reds": 17
       },
       {
-        "number": 2188,
-        "merged_at": "2026-10-17T20:15:30Z",
-        "head": "43f20c25a1b922ec61f037eca47abfc28fecb3a9",
+        "number": 2346,
+        "merged_at": "2026-10-20T12:15:30Z",
+        "head": "4d2e843665b05a3ef0a43fb657cb0702a3f409c4",
         "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 18
+        "gate": "failure",
+        "reds": 19
       },
       {
-        "number": 2204,
-        "merged_at": "2026-10-17T20:41:58Z",
-        "head": "d2b47d05364a6b53bc010bd09fe6735b7443b95b",
+        "number": 2348,
+        "merged_at": "2026-10-20T12:15:56Z",
+        "head": "cbf9d74a3460920e577079852baa7d8b1b2dbe2b",
         "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 9
-      },
-      {
-        "number": 2203,
-        "merged_at": "2026-10-17T20:42:18Z",
-        "head": "25163da0a09fd21fdc9138ab03c18bcf99157421",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 1
-      },
-      {
-        "number": 2202,
-        "merged_at": "2026-10-17T20:43:00Z",
-        "head": "26a31bd62cb2bf1d7196ad3c1e918a6839bd6482",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 8
-      },
-      {
-        "number": 2201,
-        "merged_at": "2026-10-17T20:43:19Z",
-        "head": "6fa42d46452615bdfb113b5d6bb59ba146979553",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 3
-      },
-      {
-        "number": 2199,
-        "merged_at": "2026-10-17T20:44:32Z",
-        "head": "06ce819b06f34f2427dd7f7a728c387dbb0e744f",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 3
-      },
-      {
-        "number": 2198,
-        "merged_at": "2026-10-17T20:44:52Z",
-        "head": "34b6580c52a8465a6fd2665306f1e2b7d52023c8",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 4
-      },
-      {
-        "number": 2197,
-        "merged_at": "2026-10-17T20:45:18Z",
-        "head": "5b3e4f61b6073952b3cc8ed2ee518768e5d1609a",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 3
-      },
-      {
-        "number": 2196,
-        "merged_at": "2026-10-17T20:45:32Z",
-        "head": "fbbb4d6ab5e345fd2d4ce07b6d34d7ba5604b667",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 1
-      },
-      {
-        "number": 2195,
-        "merged_at": "2026-10-17T20:45:44Z",
-        "head": "3720b6fe67e873052ce2327ecf9d6930e3896621",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 3
-      },
-      {
-        "number": 2194,
-        "merged_at": "2026-10-17T20:46:03Z",
-        "head": "5ad9e85a0e163a267a401980f71667f347d0b8ba",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 11
-      },
-      {
-        "number": 2193,
-        "merged_at": "2026-10-17T20:46:19Z",
-        "head": "5799e11cadd65e554fa837da719e48c173e6e85f",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 7
-      },
-      {
-        "number": 2192,
-        "merged_at": "2026-10-17T20:46:45Z",
-        "head": "2684994aca167b5a616e32cf5ed959922d668b86",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 7
-      },
-      {
-        "number": 2191,
-        "merged_at": "2026-10-17T20:47:08Z",
-        "head": "c551f7cb2a03f2fb7654e9e424b9590afe286078",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 11
-      },
-      {
-        "number": 2190,
-        "merged_at": "2026-10-17T20:47:52Z",
-        "head": "f1c11bd13e8f46a8b94b40dd45836a3ccacfd4c6",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 7
-      },
-      {
-        "number": 2208,
-        "merged_at": "2026-10-17T20:48:52Z",
-        "head": "636455d0ab100c88c314a3317447dbb8de3491b1",
-        "merged_by": "GBOGEB",
-        "gate": "none",
+        "gate": "failure",
         "reds": 5
       },
       {
-        "number": 2206,
-        "merged_at": "2026-10-17T20:49:20Z",
-        "head": "17c0f265b1150cf1f88915989828b998818b3bc8",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 5
-      },
-      {
-        "number": 2205,
-        "merged_at": "2026-10-17T20:52:44Z",
-        "head": "92f600ff1cf8f64795da20c96795340de037d1f3",
-        "merged_by": "GBOGEB",
-        "gate": "none",
-        "reds": 16
-      },
-      {
-        "number": 2207,
-        "merged_at": "2026-10-18T06:35:26Z",
-        "head": "35252aa9b105db885371afec198d5d3cbc17e394",
+        "number": 2349,
+        "merged_at": "2026-10-20T12:17:51Z",
+        "head": "27826e41ba87d95092d42c34d60a6d686cfa1179",
         "merged_by": "GBOGEB",
         "gate": "failure",
         "reds": 6
       },
       {
-        "number": 2200,
-        "merged_at": "2026-10-18T06:38:08Z",
-        "head": "d8e3b6721caf55c604002f7d0058de3f4b34d39b",
+        "number": 2350,
+        "merged_at": "2026-10-20T12:18:17Z",
+        "head": "43ce1324fe7d62d3aec84191aa92ab168c2a0025",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 16
+      },
+      {
+        "number": 2145,
+        "merged_at": "2026-10-20T12:20:34Z",
+        "head": "54e90032fe909d1fe6f4562d873322fa029d1784",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 23
+      },
+      {
+        "number": 2355,
+        "merged_at": "2026-10-20T14:43:21Z",
+        "head": "d802566932f6768c89ac5317ba4b01b93b60784a",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 3
+      },
+      {
+        "number": 2351,
+        "merged_at": "2026-10-20T14:43:40Z",
+        "head": "e020675953b424cd74ab2155cd88823aff5866d7",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 3
+      },
+      {
+        "number": 2352,
+        "merged_at": "2026-10-20T14:43:56Z",
+        "head": "ce560bff312a988da84a68b656d4a4782098321d",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 3
+      },
+      {
+        "number": 2353,
+        "merged_at": "2026-10-20T14:47:33Z",
+        "head": "b1c8fb3a964f2d07d9e4673f4b18f460fab0d22e",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 2
+      },
+      {
+        "number": 2354,
+        "merged_at": "2026-10-20T14:47:51Z",
+        "head": "42113b1f5301f03d62a161a6e26a4950b8dee7d4",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 2
+      },
+      {
+        "number": 2356,
+        "merged_at": "2026-10-20T14:48:10Z",
+        "head": "299f51ee4cddbb98373d9cabcf22b958bd7b1a81",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 2
+      },
+      {
+        "number": 2347,
+        "merged_at": "2026-10-20T14:49:50Z",
+        "head": "344800f8837dbaacc45ae58246f3f125404a64a1",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 5
+      },
+      {
+        "number": 2357,
+        "merged_at": "2026-10-20T15:46:03Z",
+        "head": "0b2eb9010a5a0204623a26fed383e925412bc6b0",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 2
+      },
+      {
+        "number": 2151,
+        "merged_at": "2026-10-20T15:54:40Z",
+        "head": "290a85549320d5ab717603c4ff762b2c5be69281",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 8
+      },
+      {
+        "number": 2358,
+        "merged_at": "2026-10-20T21:39:16Z",
+        "head": "2e2d4dfa0d10e20514ef183dbb259fed8926185d",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 7
+      },
+      {
+        "number": 2371,
+        "merged_at": "2026-10-21T15:36:53Z",
+        "head": "4cab93fba7e8de368315c09368a4e683a8d7f8f2",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 22
+      },
+      {
+        "number": 2372,
+        "merged_at": "2026-10-21T15:37:29Z",
+        "head": "0911ea24c4e2f2c032ae8163fe76d3f1f106b557",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 2
+      },
+      {
+        "number": 2362,
+        "merged_at": "2026-10-21T15:38:09Z",
+        "head": "7fc2e94ea57bcf015d468b0104344a5ad7ea7ede",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 2
+      },
+      {
+        "number": 2399,
+        "merged_at": "2026-10-22T19:03:37Z",
+        "head": "c04ca4dfee4701caef9eb73670cfae93419eb276",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 0
+      },
+      {
+        "number": 2400,
+        "merged_at": "2026-10-22T19:04:13Z",
+        "head": "f04765b2fca9fe30788640e3550cf3644cdb2204",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 0
+      },
+      {
+        "number": 2398,
+        "merged_at": "2026-10-22T19:04:34Z",
+        "head": "6d27c77bcc917b85b9d304d7791195cdc766fafa",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 0
+      },
+      {
+        "number": 2370,
+        "merged_at": "2026-10-23T07:58:26Z",
+        "head": "a5900d029ae8fc892f344daab0fcaae3062520a0",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2396,
+        "merged_at": "2026-10-23T07:58:27Z",
+        "head": "08db26acfdce3f2d06aa3d7084a40fb6be4efec0",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 0
+      },
+      {
+        "number": 2394,
+        "merged_at": "2026-10-23T07:58:58Z",
+        "head": "7bce1a040081f8723596e18ff9b40837c4b921f5",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 0
+      },
+      {
+        "number": 2384,
+        "merged_at": "2026-10-23T07:58:58Z",
+        "head": "eadf62fdf708b1b0727f61d21e2f88130eeff27a",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 0
+      },
+      {
+        "number": 2390,
+        "merged_at": "2026-10-23T07:59:55Z",
+        "head": "3fd8eb7dac09597708c3e1548814d389ae679994",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 10
+      },
+      {
+        "number": 2381,
+        "merged_at": "2026-10-23T08:00:15Z",
+        "head": "0928163a4be049e0fcf3a573a44e52f7465a63c9",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2361,
+        "merged_at": "2026-10-23T08:01:36Z",
+        "head": "7e23036a8054789e658b6a0c48b95e350f6997bf",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 1
+      },
+      {
+        "number": 2363,
+        "merged_at": "2026-10-23T08:01:53Z",
+        "head": "e06767a80eec08ebcf53c7ba634775597b67431f",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 1
+      },
+      {
+        "number": 2366,
+        "merged_at": "2026-10-23T08:02:11Z",
+        "head": "46102a6646fbc42838a6d9b28191efdcf6228c24",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2367,
+        "merged_at": "2026-10-23T08:02:54Z",
+        "head": "15dd7b73553e431e9e84c857eb19d3a4070b80b3",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 9
+      },
+      {
+        "number": 2374,
+        "merged_at": "2026-10-23T08:03:12Z",
+        "head": "693944fbaf84a991754fbc862db83e9be98747cd",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 5
+      },
+      {
+        "number": 2376,
+        "merged_at": "2026-10-23T08:03:30Z",
+        "head": "08bbbea45fbd761ba68e6429d28b6d0cf2dcfec5",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 1
+      },
+      {
+        "number": 2379,
+        "merged_at": "2026-10-23T08:03:46Z",
+        "head": "eaddd3dad4b640aba13875e7b0334a019c6c8f7b",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2385,
+        "merged_at": "2026-10-23T08:04:02Z",
+        "head": "95084b427bf7e488958da81aa66ace8d1d01ab88",
         "merged_by": "GBOGEB",
         "gate": "failure",
         "reds": 4
       },
       {
-        "number": 2058,
-        "merged_at": "2026-10-18T10:20:31Z",
-        "head": "123adadf2906ca3b3ba9d0d6836b75c8fbfa76c1",
+        "number": 2387,
+        "merged_at": "2026-10-23T08:04:25Z",
+        "head": "33023e7c0b78de9266b22d2876b9d0f4a536da29",
         "merged_by": "GBOGEB",
         "gate": "failure",
-        "reds": 8
+        "reds": 6
+      },
+      {
+        "number": 2380,
+        "merged_at": "2026-10-23T08:04:40Z",
+        "head": "a915ab44c6aa9e065a47ff07df3f7285419f9484",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 3
+      },
+      {
+        "number": 2375,
+        "merged_at": "2026-10-23T08:06:07Z",
+        "head": "d99e70d2add0fbf2337fa24caf8c70650270385f",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 7
+      },
+      {
+        "number": 2386,
+        "merged_at": "2026-10-23T08:07:15Z",
+        "head": "fba8dc3cb0e125f6bcaceb704723ecff4c12dbfd",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 11
+      },
+      {
+        "number": 2369,
+        "merged_at": "2026-10-23T08:07:35Z",
+        "head": "657ad299fab914f02206b1a43829d68fe5e1dad3",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2365,
+        "merged_at": "2026-10-23T08:07:52Z",
+        "head": "93bb0f5146fd8901ac8bea21ec313bdeb46df49d",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 2
+      },
+      {
+        "number": 2383,
+        "merged_at": "2026-10-23T08:08:09Z",
+        "head": "8cb01e0f94b05b28d4638b91e6368f0e6e343355",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 1
+      },
+      {
+        "number": 2382,
+        "merged_at": "2026-10-23T08:08:28Z",
+        "head": "9572120c5bf62d03ec44dae3219f8fb6f17cc91f",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 1
+      },
+      {
+        "number": 2364,
+        "merged_at": "2026-10-23T08:08:46Z",
+        "head": "da1950904cadcebf61959e6259db3ef5bcf7c6fc",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 3
+      },
+      {
+        "number": 2388,
+        "merged_at": "2026-10-23T08:09:06Z",
+        "head": "b44aaa7d4f35136e3d5bdaa9bf13e4b1a062ab51",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 2
+      },
+      {
+        "number": 2389,
+        "merged_at": "2026-10-23T08:09:33Z",
+        "head": "6048971eb4077f0f778e782ab375a03430039af5",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 3
+      },
+      {
+        "number": 2392,
+        "merged_at": "2026-10-23T08:09:55Z",
+        "head": "248535e287ba88e6ca920b1ddf9e68602c957dd1",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 2
+      },
+      {
+        "number": 2393,
+        "merged_at": "2026-10-23T08:10:40Z",
+        "head": "b449e7928b5d1d9154b06aa2f62a4ae0e2b7a75a",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 9
+      },
+      {
+        "number": 2402,
+        "merged_at": "2026-10-23T10:15:52Z",
+        "head": "130082c081bb413eea2d0c57bc9c061abf522ad8",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 7
+      },
+      {
+        "number": 2405,
+        "merged_at": "2026-10-23T11:41:44Z",
+        "head": "e2f123797fb0d20a86248138c2a773549acb483e",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2404,
+        "merged_at": "2026-10-23T11:57:19Z",
+        "head": "9fe7e1f6412cc9bdb89c47f6ffafa2d3c3c7a13d",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2406,
+        "merged_at": "2026-10-23T12:15:39Z",
+        "head": "6466d93639ccda9df9b85c62a5723df1e312647a",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 5
+      },
+      {
+        "number": 2403,
+        "merged_at": "2026-10-23T12:15:57Z",
+        "head": "5c7b0398a051483d0e715a00c2db36d8c043dad0",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 3
+      },
+      {
+        "number": 2401,
+        "merged_at": "2026-10-23T12:18:48Z",
+        "head": "06bd409b7c1ccc1d60d18dcd7c730203fd83d8d2",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 3
+      },
+      {
+        "number": 2407,
+        "merged_at": "2026-10-23T12:34:27Z",
+        "head": "7e24386c161b991cfb87da1f400a1d671cfd08c3",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2410,
+        "merged_at": "2026-10-23T12:42:46Z",
+        "head": "edb00d731a268c026ca27053127ffd913822beb1",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 2
+      },
+      {
+        "number": 2408,
+        "merged_at": "2026-10-23T12:58:46Z",
+        "head": "c2028ebfc5f790e0e4eb9285e6ea069fe620ba76",
+        "merged_by": "GBOGEB",
+        "gate": "success",
+        "reds": 0
+      },
+      {
+        "number": 2411,
+        "merged_at": "2026-10-23T12:59:09Z",
+        "head": "a12747eae1de74c4ba97b6e70d81a054b5397643",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2409,
+        "merged_at": "2026-10-23T12:59:28Z",
+        "head": "ffeecdf4aef93857d8a737dfea772f13428cc5d5",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2412,
+        "merged_at": "2026-10-23T14:03:47Z",
+        "head": "48401a60524c62cd7f18c9b02fac636905eadaf6",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2413,
+        "merged_at": "2026-10-23T15:30:34Z",
+        "head": "8a8d5751552a138285ea16998384da1a74495f46",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2414,
+        "merged_at": "2026-10-23T16:04:01Z",
+        "head": "2ac73a9649c8da01fe19951bad3b8d33978e1c1d",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2415,
+        "merged_at": "2026-10-23T16:13:30Z",
+        "head": "0d54aaf773d1e45ca91727157e93679289dcbc5f",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 1
+      },
+      {
+        "number": 2416,
+        "merged_at": "2026-10-23T16:42:19Z",
+        "head": "94ba31d7148aad9bf1ced48a470fec00f53562da",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2156,
+        "merged_at": "2026-10-23T16:43:01Z",
+        "head": "2aefef960c90941d9bd4e1a4241a6a09183137f2",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 9
+      },
+      {
+        "number": 2109,
+        "merged_at": "2026-10-23T16:43:55Z",
+        "head": "0d42735fbb2c41b0b4856744ff416c065a7beffb",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 12
+      },
+      {
+        "number": 2063,
+        "merged_at": "2026-10-23T16:48:51Z",
+        "head": "3a907ca06c195e98f27033378d795b812383b6c6",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 3
+      },
+      {
+        "number": 2417,
+        "merged_at": "2026-10-23T16:49:36Z",
+        "head": "0990e7d1384a87f1c49fa69560a800a3a72a0a4d",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2419,
+        "merged_at": "2026-10-24T09:41:58Z",
+        "head": "be95909f91e42c3110d04a06e8226db6318fa47a",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2418,
+        "merged_at": "2026-10-24T10:44:05Z",
+        "head": "a0fe37104973f043c61ac3ad2070d69d74959e3b",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2420,
+        "merged_at": "2026-10-24T12:03:55Z",
+        "head": "d1d496cdc6ce005a60e1a7fe1ea191520c7c3d2c",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2422,
+        "merged_at": "2026-10-24T14:03:54Z",
+        "head": "f7659f26cc7f02dc33bcbd2b13aadde96c20e73b",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 2
+      },
+      {
+        "number": 2426,
+        "merged_at": "2026-10-24T15:30:12Z",
+        "head": "bb73239693dbc34dc0dcee93c72a96f563536e6b",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 5
+      },
+      {
+        "number": 2427,
+        "merged_at": "2026-10-24T15:32:58Z",
+        "head": "a17ec5d6bb7ddb1bd0203c18e0ed53fb4d946c57",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 1
+      },
+      {
+        "number": 2425,
+        "merged_at": "2026-10-24T15:53:09Z",
+        "head": "02d5a97f36918e8936a76b7e30f3a7a8c91a4c9f",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 2
+      },
+      {
+        "number": 2423,
+        "merged_at": "2026-10-24T15:57:23Z",
+        "head": "49ddf90c76f38f132f638b64315715df2e6622de",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 0
+      },
+      {
+        "number": 2424,
+        "merged_at": "2026-10-24T16:00:14Z",
+        "head": "e631d5b69545dd04ef4a00ec48da6482424c0308",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2421,
+        "merged_at": "2026-10-24T16:00:32Z",
+        "head": "04aad7e56f628318917a5849871dba0f8e9285fd",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 0
+      },
+      {
+        "number": 2428,
+        "merged_at": "2026-10-24T16:37:36Z",
+        "head": "7b673cc211ce63e0041d7cce66edba0b74f1c958",
+        "merged_by": "GBOGEB",
+        "gate": "none",
+        "reds": 0
+      },
+      {
+        "number": 2429,
+        "merged_at": "2026-10-24T17:14:39Z",
+        "head": "feadb527a16f7d05a955062ee1a8df1de62676a2",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 1
+      },
+      {
+        "number": 2430,
+        "merged_at": "2026-10-24T17:25:05Z",
+        "head": "af8c720342154497afdc83b05d92ef37f622c79d",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
+      },
+      {
+        "number": 2431,
+        "merged_at": "2026-10-24T21:38:25Z",
+        "head": "1887475a53b8d2f7b307179954c376647ee08b9d",
+        "merged_by": "GBOGEB",
+        "gate": "failure",
+        "reds": 3
+      },
+      {
+        "number": 2432,
+        "merged_at": "2026-10-24T21:41:41Z",
+        "head": "1a0d0c2e45bed88fb8d16e75039a17435689db1c",
+        "merged_by": "GBOGEB",
+        "gate": "in_progress",
+        "reds": 0
       }
     ]
   },

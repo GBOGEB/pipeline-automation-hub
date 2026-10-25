@@ -34,6 +34,54 @@ p_decide = load("p_decide", "p_decide.py")
 refresh = load("p_refresh", "refresh.py")
 
 
+class GhTransport(unittest.TestCase):
+    """gh helpers retry network blips only, and decode UTF-8 (Windows defaults to cp1252)."""
+
+    def _fake(self, results):
+        calls = []
+
+        def run(cmd, **kw):
+            calls.append(kw)
+            rc, out, err = results[min(len(calls), len(results)) - 1]
+            return subprocess.CompletedProcess(cmd, rc, out, err)
+        return run, calls
+
+    def _patched(self, mod, results):
+        from unittest import mock
+        run, calls = self._fake(results)
+        return mock.patch.object(mod.subprocess, "run", run), mock.patch.object(mod.time, "sleep", lambda s: None), calls
+
+    def test_transient_error_is_retried_then_succeeds(self):
+        for mod, call in ((readback, lambda: readback.gh("repos/x/pulls/1")),
+                          (verify_rulesets, lambda: verify_rulesets.gh("repos/x/rulesets"))):
+            with self.subTest(mod=mod.__name__):
+                p1, p2, calls = self._patched(mod, [(1, "", "net/http: TLS handshake timeout"), (0, '{"ok": 1}', "")])
+                with p1, p2:
+                    self.assertEqual(call(), {"ok": 1})
+                self.assertEqual(len(calls), 2)
+                self.assertTrue(all(kw.get("encoding") == "utf-8" for kw in calls))
+
+    def test_http_404_is_not_retried(self):
+        p1, p2, calls = self._patched(readback, [(1, "", "gh: Not Found (HTTP 404)")])
+        with p1, p2, self.assertRaises(RuntimeError):
+            readback.gh("repos/x/pulls/404")
+        self.assertEqual(len(calls), 1)
+
+    def test_persistent_outage_gives_up_and_never_reads_as_clean(self):
+        p1, p2, calls = self._patched(verify_rulesets, [(1, "", "dial tcp: connectex: timed out")])
+        with p1, p2:
+            self.assertIn("_error", verify_rulesets.gh("repos/x/rulesets"))
+        self.assertEqual(len(calls), 5)
+
+    def test_harvest_retries_and_caches(self):
+        harvest.CACHE.pop("repos/x/runs", None)
+        p1, p2, calls = self._patched(harvest, [(1, "", "HTTP 502"), (0, "[1]", "")])
+        with p1, p2:
+            self.assertEqual(harvest.gh("repos/x/runs"), [1])
+            self.assertEqual(harvest.gh("repos/x/runs"), [1])
+        self.assertEqual(len(calls), 2)
+
+
 class CodePurpleKit(unittest.TestCase):
     def test_empty_ruleset_is_not_clean(self):
         # 13 Oct lesson: a ruleset with zero rules passed L2. It must report every expected rule as absent.

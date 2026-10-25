@@ -28,6 +28,7 @@ import json
 import re
 import subprocess
 import sys
+import time
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -42,12 +43,17 @@ ENV_RE = [
 HEX_RE = re.compile(r"\b[0-9a-f]{7,40}\b")
 SEQ_RE = re.compile(r"(?<=-)\d{3}\b")
 CACHE: dict[str, object] = {}
+TRANSIENT = re.compile(r"timeout|timed out|TLS handshake|connection (reset|refused)|connectex|unexpected EOF|HTTP 50[234]", re.I)
 
 
 def gh(path: str):
     if path in CACHE:
         return CACHE[path]
-    out = subprocess.run(["gh", "api", path], capture_output=True, text=True)
+    for attempt in range(5):  # retry network blips only; 4xx and auth errors fail at once
+        out = subprocess.run(["gh", "api", path], capture_output=True, text=True, encoding="utf-8", errors="replace")
+        if out.returncode == 0 or not TRANSIENT.search(out.stderr):
+            break
+        time.sleep(3 * (attempt + 1))
     if out.returncode != 0:
         raise RuntimeError(f"gh api {path}: {out.stderr.strip()[:200]}")
     CACHE[path] = json.loads(out.stdout) if out.stdout.strip() else None
@@ -137,7 +143,7 @@ def load_drift(drift_path: str | None = None) -> dict:
     """Per-repo ruleset drift. Reads drift_path (from verify_rulesets.py) or runs the probe now."""
     rs_dir = Path(__file__).resolve().parent.parent / "rulesets"
     if not drift_path:
-        r = subprocess.run([sys.executable, str(rs_dir / "verify_rulesets.py")], capture_output=True, text=True, cwd=rs_dir)
+        r = subprocess.run([sys.executable, str(rs_dir / "verify_rulesets.py")], capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=rs_dir)
         if r.returncode != 0:
             raise RuntimeError(f"verify_rulesets.py failed: {r.stderr.strip()[:300]}")
         drift_path = str(rs_dir / "drift.json")
@@ -222,7 +228,7 @@ def main():
 
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "occurrences.json").write_text(json.dumps(occ, indent=1), encoding="utf-8")
+    (out / "occurrences.json").write_text(json.dumps(occ, indent=1), encoding="utf-8", newline="\n")
     report = {"schema": "everred.census/1.0", "generated_at": now, "scope": ledger["repo_scope"], "metrics": metrics, "probes": probes,
               "roots": [{**{k: v for k, v in r.items() if k != "match"},
                          "occurrences": len(linked[r["id"]]),
@@ -232,9 +238,9 @@ def main():
                          "last_seen": max((o["completed_at"] or "" for o in linked[r["id"]]), default=None)} for r in roots],
               "unmatched": [{"signature": s, "occurrences": len(v), "prs": sorted({o["pr"] for o in v if o["pr"]}),
                              "repos": sorted({o["repo"] for o in v}), "example_url": v[0]["url"]} for s, v in sorted(unmatched.items(), key=lambda x: -len(x[1]))]}
-    (out / "everred.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
-    (out / "rex_return.yaml").write_text(yaml.safe_dump(rex_return(report, now), sort_keys=False, allow_unicode=True), encoding="utf-8")
-    (out / "register.md").write_text(render(report), encoding="utf-8")
+    (out / "everred.json").write_text(json.dumps(report, indent=1), encoding="utf-8", newline="\n")
+    (out / "rex_return.yaml").write_text(yaml.safe_dump(rex_return(report, now), sort_keys=False, allow_unicode=True), encoding="utf-8", newline="\n")
+    (out / "register.md").write_text(render(report), encoding="utf-8", newline="\n")
     print(json.dumps(metrics, indent=1))
 
 
