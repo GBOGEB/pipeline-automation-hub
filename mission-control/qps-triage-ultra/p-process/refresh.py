@@ -109,7 +109,7 @@ def main():
         print_page_pdf(SITE / "code-purple/index.html", SITE / "code-purple/code-purple.pdf")
     files = sorted(p for p in SITE.rglob("*") if p.is_file() and p.name != "manifest.json")
     man = {"schema": "p-process.site/1.0", "census_at": census["generated_at"],
-           "files_sha256": {str(p.relative_to(SITE)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}}
+           "files_sha256": {p.relative_to(SITE).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}}
     (SITE / "manifest.json").write_text(json.dumps(man, indent=2) + "\n")
     print(json.dumps({"site_files": len(files), "census_at": census["generated_at"], "lifted": census["lifted"]}))
 

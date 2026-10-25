@@ -336,6 +336,11 @@ class Site(unittest.TestCase):
             with self.subTest(file=rel):
                 self.assertEqual(hashlib.sha256((P / "site" / rel).read_bytes()).hexdigest(), h)
 
+    def test_manifest_paths_are_posix(self):
+        # a refresh on Windows once wrote 'rulesets\\x.json', which Linux CI cannot open
+        man = json.loads((P / "site/manifest.json").read_text())
+        self.assertEqual([k for k in man["files_sha256"] if "\\" in k], [])
+
     def test_pages_link_together_and_census_is_current(self):
         idx = (P / "site/index.html").read_text()
         for href in ("code-purple/index.html", "everred/index.html", "P-process-deck.pdf"):
