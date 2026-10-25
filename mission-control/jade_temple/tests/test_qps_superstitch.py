@@ -42,6 +42,14 @@ class QpsSuperstitchPage(unittest.TestCase):
     def test_repo_links_pass_the_https_guard(self):
         self.assertIn("let href=safeUrl('https://github.com/'+encodeURI(repo))", self.html)
 
+    def test_dom_helpers_are_never_shadowed(self):
+        # A local `let b=...` in the lasso handler once shadowed a `b()` helper and threw on use.
+        for name in ("el", "bold", "safeUrl", "repoLink"):
+            self.assertEqual(len(re.findall(rf"\bfunction {name}\(", self.html)), 1, name)
+            rebinds = re.findall(rf"\b(?:let|const|var)\s+{name}\s*=", self.html)
+            params = re.findall(rf"[(,]\s*{name}\s*(?:=>|[,)]\s*=>)", self.html)
+            self.assertEqual(rebinds + params, [], name)
+
     def test_page_is_offline(self):
         self.assertNotRegex(self.html, r"<script[^>]+src=")
         self.assertNotRegex(self.html, r"<link[^>]+href=")
