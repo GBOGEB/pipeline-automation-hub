@@ -223,7 +223,11 @@ def probe(token, fetch=http):
     if not token:
         return "UNSET"
     status, _, _ = fetch(API + "/repos/" + PROBE_REPO, token)
-    return PROBE_STATES.get(status, "HTTP_%d" % status)
+    # Return only constants: nothing derived from the token-bearing response reaches logs or receipts.
+    for code, label in PROBE_STATES.items():
+        if status == code:
+            return label
+    return "HTTP_OTHER"
 
 
 def action_for(lane):

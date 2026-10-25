@@ -152,7 +152,7 @@ class Probes(unittest.TestCase):
     def test_states_and_unset(self):
         self.assertEqual(tc.probe("", Fake({})), "UNSET")
         url = tc.API + "/repos/" + tc.PROBE_REPO
-        for status, want in ((200, "VALID"), (401, "INVALID"), (403, "FORBIDDEN"), (404, "NOT_SELECTED"), (500, "HTTP_500")):
+        for status, want in ((200, "VALID"), (401, "INVALID"), (403, "FORBIDDEN"), (404, "NOT_SELECTED"), (500, "HTTP_OTHER")):
             fake = Fake({url: (status, b"{}", None)})
             self.assertEqual(tc.probe(SECRET_VALUE, fake), want)
             self.assertEqual(fake.calls, [(url, SECRET_VALUE)])
