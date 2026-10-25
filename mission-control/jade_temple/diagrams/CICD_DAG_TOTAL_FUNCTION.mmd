@@ -10,7 +10,7 @@ flowchart LR
     n50["yaml-grammar<br/><small>NEUTRAL</small>"]:::neutral
   end
   subgraph I["I · Inputs"]
-    n15["DevOps lifecycle census N+10<br/><small>CROSSWALK</small>"]:::crosswalk
+    n15["DevOps lifecycle census N+11<br/><small>CROSSWALK</small>"]:::crosswalk
     n16["EVERRED census (PR + nightly)<br/><small>EVERRED</small>"]:::everred
     n17["First-red commits (shared break roots)<br/><small>FAIL</small>"]:::root_red
     n18["Native Actions runs on exact SHA<br/><small>FAIL</small>"]:::fail
@@ -34,7 +34,7 @@ flowchart LR
     n14["H12 Owner point-release tag, assets and rollback<br/><small>UNKNOWN</small>"]:::unknown
     n21["S0_PLAN · Is work routed, owned and protected be<br/><small>FAIL</small>"]:::fail
     n22["S1_CODE · Is source linted and type-checked by t<br/><small>FAIL</small>"]:::fail
-    n23["S2_BUILD · Is the build declared, pinned and rep<br/><small>PASS</small>"]:::pass
+    n23["S2_BUILD · Is the build declared, pinned and rep<br/><small>UNKNOWN</small>"]:::unknown
     n24["S3_TEST · Do tests run on every change, fail clo<br/><small>PASS</small>"]:::pass
     n25["S4_SECURE · Are dependencies, workflows and arte<br/><small>FAIL</small>"]:::fail
     n26["S5_RELEASE · Is a versioned, test-gated, provena<br/><small>FAIL</small>"]:::fail
