@@ -42,31 +42,33 @@ mapping's entries, each read as `{"key": k, "value": v}` (used for the repo-keye
 
 Paths are under `mission-control/`.
 
-## Open the pages
+## All pages (catalog) and How to access
 
-GitHub shows an HTML file's source and history, not the rendered page. To see the pages, open them
-from a local clone:
+`launcher.json` also carries a `catalog`: every committed `*.html` file at the read-at commit
+(`git ls-tree -r --full-tree`), sorted by `group` then `path`. Each entry has `path`, `group` (the
+first two directory levels, e.g. `docs/mission-control`, `mission-control/jade_temple`), `title`
+(the page's `<title>`, else its file name), `href` (relative to this directory) and `github`
+(`{repo_url}/blob/{source_sha}/{path}`). The page adds a **History** link per row
+(`{repo_url}/commits/{source_sha}/{path}`). The catalog is navigation only: no blob OID, no metric.
+Some entries are templates or Jekyll layouts that only render after their own build.
 
-```powershell
-git clone https://github.com/GBOGEB/pipeline-automation-hub.git
-cd pipeline-automation-hub
-Start-Process .\mission-control\gogreen\launcher\index.html   # or double-click it in File Explorer
-explorer .\mission-control\gogreen\launcher                    # open the folder in File Explorer
-```
+The page's **How to access** section explains three ways in:
 
-In Git Bash, `start mission-control/gogreen/launcher/index.html` does the same. For a smaller clone,
-use `git clone --filter=blob:none --sparse <url>` and then `git sparse-checkout set mission-control docs`.
-Pages outside those folders will not open locally.
-
-The page's **Start here** section repeats these steps and says where the page is open from. When it
-is opened from a local clone, it shows the clone folder; it works that out from the page's own
-`file://` address, so no machine path is committed. **Discover** lists every committed HTML page
-(`git ls-tree` at the build commit, grouped by first two folders) with its title, an **Open** link
-that works from the clone, the GitHub **Source** and **History** links, and, when local, the file's
-path for File Explorer with a copy button.
-
-GitHub Pages is configured to publish `docs/` from master (`sources.json` `access.pages_site`). This
-page does not check what is hosted; JADE BD item J03 owns that.
+- **Local / File Explorer**: `git clone https://github.com/GBOGEB/pipeline-automation-hub.git`, then
+  open `mission-control\gogreen\launcher\index.html` by double-clicking it in File Explorer, or run
+  `start mission-control\gogreen\launcher\index.html` / `explorer mission-control\gogreen\launcher`
+  from the clone root. When the page is opened from disk (`file:`), it shows its own folder and the
+  clone root, and the relative **Open** links open sibling pages from the clone. In that case each
+  **All pages** row also shows the page's local path for File Explorer, with a **Copy** button (it
+  selects the text where the browser blocks the clipboard on `file:`). The clone root is worked out
+  from the page's own `file://` address, so no machine path is committed.
+- **GitHub**: the repository and this page's source at the read-at commit. github.com shows HTML
+  as source, so render pages from a clone or through the Pages site.
+- **GitHub Pages**: only the site root recorded under `pages_site` in `sources.json`, with how and
+  when it was verified (`gh api repos/GBOGEB/pipeline-automation-hub/pages` on 2026-10-25: status
+  built, build_type workflow, source master:/docs). Which pages the Pages workflow publishes is not
+  verified, so no per-page Pages URL is emitted. Re-verify and update `pages_site` if the Pages
+  configuration changes.
 
 ## Build and check
 
@@ -80,8 +82,6 @@ python -m unittest discover -s mission-control/gogreen/launcher -p "test_*.py"
 `--check` rebuilds from the commit in memory and compares everything except the recorded
 `source_sha` and `source_date`. When an owner updates an input, it reports that input by path. Rebuild and
 commit the outputs. Linked pages are navigation, not inputs: only their titles are recorded, so a
-regenerated page with the same title is not stale; a changed title is reported by page path. The
-Discover list follows the same rule: adding, removing or retitling any HTML page in the repository is
-reported as "changed discovered pages" until the launcher is rebuilt. The `GOGREEN launcher` workflow runs only when this directory changes, so an
+regenerated page with the same title is not stale; a changed title is reported by page path. The catalog follows the same rule: a regenerated page with the same title is not stale; an added, removed or retitled HTML file is reported by path (`catalog added/removed/retitled`). The `github` links name the read-at commit and are ignored by `--check`, like `source_sha`. The `GOGREEN launcher` workflow runs only when this directory changes, so an
 owner's PR is never blocked by this page; the page can lag an owner until it is rebuilt, and it
 shows the commit it was read at.
