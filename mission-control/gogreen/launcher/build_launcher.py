@@ -27,7 +27,6 @@ SELF_DIR = "mission-control/gogreen/launcher"
 SCHEMA = "gogreen.launcher.snapshot.v1"
 DATA_HOLE = "/*GOGREEN_LAUNCHER_DATA*/null"
 TITLE = re.compile(r"<title>([^<]*)</title>", re.I)
-HOSTED = re.compile(r"^https://[a-z0-9.-]+\.github\.io/[A-Za-z0-9._/-]*$")
 # Fields that name the commit the build read from; --check ignores them so a
 # rebuild on a later commit with unchanged inputs is not reported as stale.
 PULSE_KEYS = ("source_sha", "source_date")
@@ -132,11 +131,6 @@ def catalog(sha: str, repo_url: str) -> list[dict]:
 
 
 def project(spec: dict, sha: str) -> dict:
-    # Hosted copies are declared, not discovered; only GitHub Pages https URLs are accepted.
-    hosted = spec.get("hosted", [])
-    for h in hosted:
-        if not HOSTED.match(h.get("url", "")):
-            raise ValueError(f"hosted url must be a GitHub Pages https URL: {h.get('url')!r}")
     inputs: dict[str, dict] = {}
     missing: list[str] = []
 
@@ -196,8 +190,6 @@ def project(spec: dict, sha: str) -> dict:
         "schema": SCHEMA,
         "rule": spec["rule"],
         "repo_url": spec["repo_url"],
-        "self_path": SELF_DIR + "/index.html",
-        "hosted": hosted,
         "source_sha": sha,
         "source_date": git("show", "-s", "--format=%cI", sha).strip(),
         "computes_metrics": False,
