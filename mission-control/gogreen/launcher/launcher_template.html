@@ -68,10 +68,20 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
 .src{font:12px var(--mono);color:var(--muted);word-break:break-all}
 .note{background:var(--amber-bg);color:var(--text);border-radius:8px;padding:10px;font-size:14px}
 .launch{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))}
-.launch a{display:block;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;text-decoration:none;color:var(--text);min-height:44px}
-.launch a:hover{border-color:var(--blue)}
+.launch>div{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:10px;min-width:0}
+.launch>div:hover{border-color:var(--blue)}
+.launch .open{display:block;padding:12px 12px 6px;text-decoration:none;color:var(--text);min-height:44px}
+.launch .gh{font-size:12px;padding:4px 12px 10px;align-self:flex-start;min-height:28px;display:inline-flex;align-items:center}
 .launch b{display:block;font-weight:600}
 .launch small{font:11px var(--mono);color:var(--muted);word-break:break-all}
+.access{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr))}
+.access .card{border-top-color:var(--blue)}
+.access h3{font-size:15px}
+.access ol,.access ul{margin:0;padding-left:20px;font-size:14px}
+.access li{margin:4px 0}
+code,.cmd{font:12.5px var(--mono)}
+.cmd{display:block;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:4px 0;overflow-x:auto;white-space:pre;user-select:all}
+.here{background:var(--green-bg);border-radius:8px;padding:8px 10px;font-size:14px;word-break:break-all}
 .grp{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 6px}
 .prov td:nth-child(2),.prov td:nth-child(3){font-family:var(--mono);font-size:12px;word-break:break-all}
 [hidden]{display:none!important}
@@ -86,13 +96,37 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
   <div class="pulse" id="pulse"></div>
 </header>
 <nav aria-label="Sections"><div class="in">
-  <a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#provenance">Provenance</a>
+  <a href="#access">Access</a><a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#provenance">Provenance</a>
   <span class="grow"></span>
   <label for="q" class="skip">Filter</label>
   <input id="q" type="search" placeholder="Filter tiles and pages" autocomplete="off">
   <button id="theme" type="button" aria-pressed="false">Theme</button>
 </div></nav>
 <main>
+  <section id="access" aria-labelledby="h-access"><h2 id="h-access">Access: how to open these pages</h2>
+    <div class="access">
+      <article class="card"><h3>On this computer (File Explorer)</h3>
+        <div class="here" id="here"></div>
+        <ol>
+          <li>Open File Explorer at your checkout of the hub (folder <code>pipeline-automation-hub</code>, or a worktree of it).</li>
+          <li>Go to <code id="selfdir"></code> and double-click <code>index.html</code>. It opens in your browser.</li>
+          <li>Every page link below is relative to that file, so all pages open from the same checkout. No server or network is needed.</li>
+          <li>Update the checkout first, so the pages match the latest <code>master</code>:</li>
+        </ol>
+        <span class="cmd" id="cmd-pull"></span>
+        <p class="cap">PowerShell: open this launcher, or its folder in File Explorer</p>
+        <span class="cmd" id="cmd-open"></span>
+        <span class="cmd" id="cmd-explorer"></span>
+      </article>
+      <article class="card"><h3>On GitHub</h3>
+        <ul id="gh"></ul>
+        <p class="cap">GitHub shows an HTML file's source, not the rendered page. To see a page rendered, open it from a local checkout. First-time setup:</p>
+        <span class="cmd" id="cmd-clone"></span>
+        <p class="cap" id="hosted-cap">Published online:</p>
+        <ul id="hosted"></ul>
+      </article>
+    </div>
+  </section>
   <section id="metrics" aria-labelledby="h-metrics"><h2 id="h-metrics">Metrics</h2><div class="grid" id="tiles"></div></section>
   <section id="launcher" aria-labelledby="h-launcher"><h2 id="h-launcher">Launcher</h2><div id="pages"></div></section>
   <section id="provenance" aria-labelledby="h-prov"><h2 id="h-prov">Provenance</h2>
@@ -121,6 +155,36 @@ function val(v,unit){
   return esc(v)+(unit?esc(unit):"");
 }
 const blob=(p)=>D.repo_url+"/blob/"+D.source_sha+"/"+p;
+const tree=(p,ref)=>D.repo_url+"/tree/"+(ref||D.source_sha)+"/"+p;
+const SELF_DIR=D.self_path.slice(0,D.self_path.lastIndexOf("/"));
+// Where this copy lives: derived in the browser from the file URL, never baked into the build.
+function localRoot(){
+  if(location.protocol!=="file:")return null;
+  let p=decodeURIComponent(location.pathname);
+  const win=/^\/[A-Za-z]:\//.test(p);
+  if(win)p=p.slice(1).replace(/\//g,"\\");
+  const rel=win?D.self_path.replace(/\//g,"\\"):D.self_path;
+  const root=p.toLowerCase().endsWith(rel.toLowerCase())?p.slice(0,p.length-rel.length).replace(/[\\/]$/,""):null;
+  return {root,file:p,win};
+}
+function access(){
+  const L=localRoot(), win=!L||L.win, sep=win?"\\":"/", dirRel=SELF_DIR.split("/").join(sep);
+  const root=L&&L.root?L.root:(win?"<your clone>":"~/pipeline-automation-hub");
+  $("#here").textContent=L?("You are viewing a local copy: "+L.file):
+    "You are not viewing a local file ("+location.protocol+"). Open the launcher from a checkout, as below, to get working page links.";
+  $("#selfdir").textContent=dirRel;
+  $("#cmd-pull").textContent='git -C "'+root+'" pull --ff-only';
+  $("#cmd-open").textContent='Start-Process "'+root+sep+dirRel+sep+'index.html"';
+  $("#cmd-explorer").textContent='explorer "'+root+sep+dirRel+'"';
+  $("#cmd-clone").textContent="git clone "+D.repo_url+".git";
+  const gh=[["Repository",D.repo_url],["This launcher's folder at the read commit "+D.source_sha.slice(0,7),tree(SELF_DIR)],
+    ["This page's source at "+D.source_sha.slice(0,7),blob(D.self_path)],["Launcher folder on latest master",tree(SELF_DIR,"master")],
+    ["Scale-dock pulse ledger and receipt (master)",tree("mission-control/gogreen/scale-dock/real","master")]];
+  $("#gh").innerHTML=gh.map(([l,u])=>'<li><a href="'+esc(u)+'" rel="noopener noreferrer">'+esc(l)+'</a></li>').join("");
+  const H=D.hosted||[];
+  $("#hosted-cap").hidden=!H.length;
+  $("#hosted").innerHTML=H.map(h=>'<li><a href="'+esc(h.url)+'" rel="noopener noreferrer">'+esc(h.label)+'</a>'+(h.note?' · '+esc(h.note):"")+'</li>').join("");
+}
 function tile(t){
   const st=t.status?t.status.value:(t.unresolved?"OWNER_UNRESOLVED":null);
   const tn=t.unresolved?"amber":tone(st);
@@ -144,7 +208,9 @@ function render(){
   $("#tiles").innerHTML=D.tiles.map(tile).join("");
   const groups=[...new Set(D.pages.map(p=>p.group))];
   $("#pages").innerHTML=groups.map(g=>'<div class="grp">'+esc(g)+'</div><div class="launch">'+D.pages.filter(p=>p.group===g).map(p=>
-    '<a href="'+esc(p.href)+'" data-q="'+esc((p.title+" "+p.path).toLowerCase())+'"><b>'+esc(p.title)+'</b><small>'+esc(p.path)+'</small></a>').join("")+'</div>').join("");
+    '<div data-q="'+esc((p.title+" "+p.path).toLowerCase())+'"><a class="open" href="'+esc(p.href)+'"><b>'+esc(p.title)+'</b><small>'+esc(p.path)+'</small></a>'+
+    '<a class="gh" href="'+esc(blob(p.path))+'" rel="noopener noreferrer" aria-label="'+esc(p.title)+' on GitHub">GitHub source</a></div>').join("")+'</div>').join("");
+  access();
   $("#prov").innerHTML=D.tiles.filter(t=>t.input).map(t=>'<tr><td>'+esc(t.label)+'</td><td><a href="'+esc(blob(t.input))+'" rel="noopener noreferrer">'+esc(t.input)+'</a></td><td>'+esc(t.input_oid)+'</td><td>'+esc(t.owner)+'</td><td>'+val(t.schema)+'</td></tr>').join("");
 }
 render();

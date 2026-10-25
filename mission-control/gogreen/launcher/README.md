@@ -17,6 +17,29 @@ not this page.
 | `launcher.json` | Generated snapshot: source SHA, blob OID of every input, values, missing fields |
 | `index.html` | Generated page; do not hand-edit |
 
+## How to open it (entry and discovery)
+
+The launcher is the hub's single entry page. Its **Access** section repeats these steps, and fills in the real local path when you open the page from disk.
+
+**On this computer.** Every page link is relative, so the whole set works from any checkout with no server and no network.
+1. Open File Explorer at your checkout of `pipeline-automation-hub` (or a worktree of it).
+2. Go to `mission-control\gogreen\launcher\` and double-click `index.html`.
+3. From PowerShell, in the checkout:
+   ```powershell
+   git pull --ff-only
+   Start-Process .\mission-control\gogreen\launcher\index.html
+   explorer .\mission-control\gogreen\launcher
+   ```
+
+**On GitHub.**
+- Repository: <https://github.com/GBOGEB/pipeline-automation-hub>
+- This page's folder on master: <https://github.com/GBOGEB/pipeline-automation-hub/tree/master/mission-control/gogreen/launcher>
+
+  GitHub shows the source of an HTML file, not the rendered page. Each page card in the launcher links to its GitHub source at the commit the launcher was read at.
+- To get a local copy: `git clone https://github.com/GBOGEB/pipeline-automation-hub.git`.
+
+**Hosted.** Only the CODE PURPLE method atlas is published, at <https://gbogeb.github.io/pipeline-automation-hub/>. It is declared under `hosted` in `sources.json`, and the build accepts only `https://*.github.io/` URLs there.
+
 ## Tiles and owners
 
 | Tile | Owner | Input |
@@ -36,6 +59,7 @@ not this page.
 | EVERRED | `qps-triage-ultra/p-process/everred/harvest.py` | `qps-triage-ultra/p-process/site/everred/data/everred.json` |
 | BD-queue (Code Purple) | `federation-atlas` (`build_code_purple.py`) | `federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json` |
 | Code Purple iterations | `federation-atlas/code_purple_series.py` | `federation-atlas/CODE_PURPLE_ITERATION_SERIES_v1.json` |
+| Scale dock (real pulses) | `gogreen/scale_dock.py` over `gogreen/scale_dock_series.py` | `gogreen/scale-dock/real/receipt/scale-dock.json` |
 
 Field paths are dotted; `name[]` maps the rest of the path over a list and `name{}` over a
 mapping's entries, each read as `{"key": k, "value": v}` (used for the repo-keyed `p_state.json`).

@@ -1,17 +1,25 @@
 {
   "computes_metrics": false,
+  "hosted": [
+    {
+      "label": "CODE PURPLE method atlas (GitHub Pages)",
+      "note": "The only page the hub publishes; every other page opens from a local checkout.",
+      "url": "https://gbogeb.github.io/pipeline-automation-hub/"
+    }
+  ],
   "inputs": {
     "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json": "426a8b6ed3630c874eca4c2c1daaea7d13f3492a",
     "mission-control/federation-atlas/CODE_PURPLE_ITERATION_SERIES_v1.json": "022a588b5f56b7ba09c9d59bc1f3bf3439fe1fb0",
     "mission-control/federation-atlas/central/CODE_HEALTH_CENTRAL_v1.json": "6970506347d59037dcf5c56142495403a19b3a86",
     "mission-control/gogreen/comparative/comparison.json": "6f437972dce09612b04792cde68fa2765c55307d",
     "mission-control/gogreen/mycelium_history/W10_LAST_GOOD_APPEND_20261018.json": "1d5d78683721bd4ebe2e109d2bc2cb028bce7368",
+    "mission-control/gogreen/scale-dock/real/receipt/scale-dock.json": "656cf60e5af537d66ce2311bd8852187da31f2d5",
     "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json": "989bbe0382801da182d765995956286727acea3c",
     "mission-control/grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json": "ff36eb882511cc80bfaed3db1533e4b5c0f6618a",
-    "mission-control/jade_temple/data/BD_QUEUE.csv": "ef36a3a79c60d7638255bd82bcf97d519020db99",
+    "mission-control/jade_temple/data/BD_QUEUE.csv": "79e4535f78e2c3d6b6177c0e6f3b30ba9244e6ed",
     "mission-control/jade_temple/site/burndown.json": "f81f29954faac2cdf7646d55be02feada7bceb95",
     "mission-control/jade_temple/site/eightpoint.json": "fb875e6f60c89122f6e21efbf518867cc003c9fb",
-    "mission-control/jade_temple/site/rolling5.json": "29eb67ff11630bb2e205d76179e2da4af2a8825c",
+    "mission-control/jade_temple/site/rolling5.json": "6fd680773cfd64940d8d31d7378c4d1e261026c7",
     "mission-control/qps-triage-ultra/p-process/site/data/p_state.json": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
     "mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json": "598302afb690cb97e44070eeb0e72e582729a8a9",
     "mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json": "b8055243094c63b6a91bb4fbad8764f139f05fd0"
@@ -149,20 +157,27 @@
       "href": "../../../docs/code-purple-w1/index.html",
       "path": "docs/code-purple-w1/index.html",
       "title": "CODE PURPLE W+1 | Mission Control federation / orchestration navigation"
+    },
+    {
+      "group": "Scale dock",
+      "href": "../scale-dock/real/receipt/scale-dock.html",
+      "path": "mission-control/gogreen/scale-dock/real/receipt/scale-dock.html",
+      "title": "CODE PURPLE — scale dock"
     }
   ],
   "repo_url": "https://github.com/GBOGEB/pipeline-automation-hub",
   "rule": "Read-only projection. Every value is read verbatim from the canonical owner's committed output; this launcher computes no metric (AGENTS.md L4). Missing or null values render as unknown, never zero.",
   "schema": "gogreen.launcher.snapshot.v1",
-  "source_date": "2026-10-24T19:16:21+02:00",
-  "source_sha": "c29f8d3daff2c98922e97a0b36c8f7551062e665",
+  "self_path": "mission-control/gogreen/launcher/index.html",
+  "source_date": "2026-10-25T19:18:43+01:00",
+  "source_sha": "785dbbec1d8be46557aa0a9e32133b17d3be63d6",
   "tiles": [
     {
       "fields": [
         {
           "label": "Verified pass",
           "path": "metrics.verified_pass",
-          "value": 14
+          "value": 17
         },
         {
           "label": "Gate denominator",
@@ -172,12 +187,12 @@
         {
           "label": "Failing gate instances",
           "path": "metrics.fail_gate_instances",
-          "value": 8
+          "value": 2
         },
         {
           "label": "Nevergreen gate instances",
           "path": "metrics.nevergreen_gate_instances",
-          "value": 46
+          "value": 42
         },
         {
           "label": "NIRVANA count",
@@ -187,18 +202,18 @@
         {
           "label": "Latest pulse",
           "path": "latest_pulse",
-          "value": "P0001"
+          "value": "P0002"
         }
       ],
       "headline": {
         "label": "Verified completion",
         "path": "metrics.verified_completion_pct",
         "unit": "%",
-        "value": 23.33
+        "value": 28.33
       },
       "id": "completion",
       "input": "mission-control/jade_temple/site/rolling5.json",
-      "input_oid": "29eb67ff11630bb2e205d76179e2da4af2a8825c",
+      "input_oid": "6fd680773cfd64940d8d31d7378c4d1e261026c7",
       "label": "Completion",
       "lists": [],
       "owner": "mission-control/jade_temple/tools/rolling5.py",
@@ -474,7 +489,7 @@
       "fields": [],
       "id": "jade_bd_queue",
       "input": "mission-control/jade_temple/data/BD_QUEUE.csv",
-      "input_oid": "ef36a3a79c60d7638255bd82bcf97d519020db99",
+      "input_oid": "79e4535f78e2c3d6b6177c0e6f3b30ba9244e6ed",
       "label": "BD-queue (JADE)",
       "lists": [
         {
@@ -569,6 +584,12 @@
               "P0",
               "ACTIVE",
               "do at each session closeout"
+            ],
+            [
+              "J14",
+              "P1",
+              "ACTIVE",
+              "merge W1 green, then W2 (F2 handover); prune list awaits owner yes"
             ]
           ]
         }
@@ -988,7 +1009,7 @@
       "fields": [],
       "id": "golden_thread",
       "input": "mission-control/jade_temple/site/rolling5.json",
-      "input_oid": "29eb67ff11630bb2e205d76179e2da4af2a8825c",
+      "input_oid": "6fd680773cfd64940d8d31d7378c4d1e261026c7",
       "label": "Golden Thread",
       "lists": [
         {
@@ -1648,6 +1669,203 @@
         }
       ],
       "schema": "missioncontrol.code_purple.iteration_series.v1"
+    },
+    {
+      "fields": [
+        {
+          "label": "Pulses in window",
+          "path": "red_metrics.window_pulses",
+          "value": 2
+        },
+        {
+          "label": "Ever red in window",
+          "path": "red_metrics.ever_red_in_window",
+          "value": 18
+        },
+        {
+          "label": "Red burn-down",
+          "path": "red_metrics.red_burndown",
+          "value": -11
+        },
+        {
+          "label": "Recovery rate",
+          "path": "red_metrics.recovery_rate",
+          "value": 0.1667
+        },
+        {
+          "label": "Regression rate",
+          "path": "red_metrics.regression_rate",
+          "value": 0.0
+        },
+        {
+          "label": "Findings (latest pulse)",
+          "path": "source_bound_breadth.observed",
+          "value": 18
+        },
+        {
+          "label": "Eligible jobs (latest)",
+          "path": "source_bound_breadth.eligible",
+          "value": 261
+        },
+        {
+          "label": "Dock consistency",
+          "path": "dock_consistency.state",
+          "value": "CONSISTENT_WHERE_OBSERVED"
+        },
+        {
+          "label": "Queue regime",
+          "path": "shadow_proposals.regime",
+          "value": "CONGESTED_HOLD"
+        },
+        {
+          "label": "Merge admission",
+          "path": "merge_admission",
+          "value": "HOLD"
+        }
+      ],
+      "headline": {
+        "label": "red per pulse, N0 → latest",
+        "path": "red_metrics.pulses[].red",
+        "value": [
+          4,
+          15
+        ]
+      },
+      "id": "scale_dock",
+      "input": "mission-control/gogreen/scale-dock/real/receipt/scale-dock.json",
+      "input_oid": "656cf60e5af537d66ce2311bd8852187da31f2d5",
+      "label": "Scale dock (real pulses)",
+      "lists": [
+        {
+          "columns": [
+            "N",
+            "Red",
+            "First step known",
+            "Root-linked",
+            "Unrooted",
+            "Root red"
+          ],
+          "label": "Red per pulse",
+          "rows": [
+            [
+              0,
+              4,
+              2,
+              1,
+              3,
+              [
+                "CODEX-RC-2026-0001"
+              ]
+            ],
+            [
+              1,
+              15,
+              15,
+              3,
+              12,
+              [
+                "ABACUS-RC-2026-0003",
+                "ABACUS-RC-2026-0004",
+                "ABACUS-RC-2026-0007"
+              ]
+            ]
+          ]
+        },
+        {
+          "columns": [
+            "From",
+            "To",
+            "New first reds",
+            "Recoveries",
+            "Regressions",
+            "Unobserved after"
+          ],
+          "label": "Transitions",
+          "rows": [
+            [
+              0,
+              1,
+              [
+                "GBOGEB/ABACUS::CBD E2E Graph Contract QA :: graph-contract (3.11)",
+                "GBOGEB/ABACUS::CBD E2E Graph Contract QA :: graph-contract (3.12)",
+                "GBOGEB/ABACUS::CI/CD Test Suite :: Code Quality Checks",
+                "GBOGEB/ABACUS::CI/CD Test Suite :: Full Red Proof Summary",
+                "GBOGEB/ABACUS::CI/CD Test Suite :: Security Scanning",
+                "GBOGEB/ABACUS::CODE PURPLE quality-ratchet targeted regression :: ratchet-negative-proof",
+                "GBOGEB/ABACUS::DMAIC V3 Bridge Integration - Test System :: 🚀 Full Deployment Test",
+                "GBOGEB/ABACUS::Deploy Next.js site to Pages :: build",
+                "GBOGEB/ABACUS::EVERRED V3 Governed Control Plane :: EVERRED source, provenance and negative tests (3.10)",
+                "GBOGEB/ABACUS::EVERRED V3 Governed Control Plane :: EVERRED source, provenance and negative tests (3.12)",
+                "GBOGEB/ABACUS::Inventory Scan :: scan",
+                "GBOGEB/ABACUS::export-docs :: export",
+                "GBOGEB/pipeline-automation-hub::CODE PURPLE Disjoint Live Census (read-only) :: Fresh GitHub GET and source-bound graph artifact",
+                "GBOGEB/pipeline-automation-hub::GOGREEN Token Census Telemetry :: token-census"
+              ],
+              [
+                "GBOGEB/CODEX::CODEX Metrics — Per-Commit Tracking & Feedback Loop :: Collect Repository Metrics",
+                "GBOGEB/CODEX::OSV-Scanner :: scan-scheduled / osv-scan",
+                "GBOGEB/pipeline-automation-hub::GOGREEN Red-Trace Ledger (read-only) :: Master red/green transition ledger"
+              ],
+              [],
+              []
+            ]
+          ]
+        },
+        {
+          "columns": [
+            "Dock",
+            "Status",
+            "Age (h)",
+            "Stale"
+          ],
+          "label": "Docked sources",
+          "rows": [
+            [
+              "code_purple",
+              "DOCKED_READ_ONLY_PROJECTION",
+              172.62,
+              true
+            ],
+            [
+              "crosswalk",
+              "DOCKED_READ_ONLY_PROJECTION",
+              null,
+              null
+            ],
+            [
+              "everred",
+              "DOCKED_READ_ONLY_PROJECTION",
+              172.58,
+              true
+            ],
+            [
+              "issue_bd",
+              "DOCKED_READ_ONLY_PROJECTION",
+              0.0,
+              false
+            ],
+            [
+              "p_process",
+              "DOCKED_READ_ONLY_PROJECTION",
+              172.53,
+              true
+            ]
+          ]
+        }
+      ],
+      "owner": "mission-control/gogreen/scale_dock.py (receipt) over scale_dock_series.py (pulse ledger)",
+      "pages": [
+        {
+          "href": "../scale-dock/real/receipt/scale-dock.html",
+          "path": "mission-control/gogreen/scale-dock/real/receipt/scale-dock.html"
+        }
+      ],
+      "schema": "codepurple.scale-dock.receipt.v1",
+      "status": {
+        "label": "Status",
+        "path": "stop_decision",
+        "value": "HOLD_INCOMPARABLE_OR_NEW_STATE"
+      }
     }
   ]
 }

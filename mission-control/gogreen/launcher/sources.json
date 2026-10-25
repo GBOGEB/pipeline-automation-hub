@@ -2,6 +2,10 @@
   "schema": "gogreen.launcher.sources.v1",
   "rule": "Read-only projection. Every value is read verbatim from the canonical owner's committed output; this launcher computes no metric (AGENTS.md L4). Missing or null values render as unknown, never zero.",
   "repo_url": "https://github.com/GBOGEB/pipeline-automation-hub",
+  "hosted": [
+    {"label": "CODE PURPLE method atlas (GitHub Pages)", "url": "https://gbogeb.github.io/pipeline-automation-hub/",
+     "note": "The only page the hub publishes; every other page opens from a local checkout."}
+  ],
   "pages": [
     {"group": "GoGreen", "path": "mission-control/jade_temple/site/green.html"},
     {"group": "GoGreen", "path": "mission-control/gogreen/comparative/index.html"},
@@ -24,7 +28,8 @@
     {"group": "PURPLE / P-process", "path": "mission-control/qps-triage-ultra/p-process/site/everred/index.html"},
     {"group": "PURPLE / P-process", "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/index.html"},
     {"group": "PURPLE / P-process", "path": "docs/code-purple-live/index.html"},
-    {"group": "PURPLE / P-process", "path": "docs/code-purple-w1/index.html"}
+    {"group": "PURPLE / P-process", "path": "docs/code-purple-w1/index.html"},
+    {"group": "Scale dock", "path": "mission-control/gogreen/scale-dock/real/receipt/scale-dock.html"}
   ],
   "tiles": [
     {
@@ -321,6 +326,38 @@
           {"label": "Evidence", "key": "evidence_class"}, {"label": "Label", "key": "label"}]}
       ],
       "pages": ["docs/code-purple-live/index.html"]
+    },
+    {
+      "id": "scale_dock",
+      "label": "Scale dock (real pulses)",
+      "owner": "mission-control/gogreen/scale_dock.py (receipt) over scale_dock_series.py (pulse ledger)",
+      "input": "mission-control/gogreen/scale-dock/real/receipt/scale-dock.json",
+      "status": "stop_decision",
+      "headline": {"label": "red per pulse, N0 → latest", "path": "red_metrics.pulses[].red"},
+      "fields": [
+        {"label": "Pulses in window", "path": "red_metrics.window_pulses"},
+        {"label": "Ever red in window", "path": "red_metrics.ever_red_in_window"},
+        {"label": "Red burn-down", "path": "red_metrics.red_burndown"},
+        {"label": "Recovery rate", "path": "red_metrics.recovery_rate"},
+        {"label": "Regression rate", "path": "red_metrics.regression_rate"},
+        {"label": "Findings (latest pulse)", "path": "source_bound_breadth.observed"},
+        {"label": "Eligible jobs (latest)", "path": "source_bound_breadth.eligible"},
+        {"label": "Dock consistency", "path": "dock_consistency.state"},
+        {"label": "Queue regime", "path": "shadow_proposals.regime"},
+        {"label": "Merge admission", "path": "merge_admission"}
+      ],
+      "lists": [
+        {"label": "Red per pulse", "path": "red_metrics.pulses[]", "columns": [
+          {"label": "N", "key": "n"}, {"label": "Red", "key": "red"}, {"label": "First step known", "key": "red_first_step_known"},
+          {"label": "Root-linked", "key": "root_linked_red"}, {"label": "Unrooted", "key": "unrooted_red"}, {"label": "Root red", "key": "root_red"}]},
+        {"label": "Transitions", "path": "red_metrics.transitions[]", "columns": [
+          {"label": "From", "key": "before_n"}, {"label": "To", "key": "after_n"}, {"label": "New first reds", "key": "new_first_reds"},
+          {"label": "Recoveries", "key": "recoveries"}, {"label": "Regressions", "key": "regressions"}, {"label": "Unobserved after", "key": "unobserved_after"}]},
+        {"label": "Docked sources", "path": "docks{}", "columns": [
+          {"label": "Dock", "key": "key"}, {"label": "Status", "key": "value.status"},
+          {"label": "Age (h)", "key": "value.age_hours_at_latest_pulse"}, {"label": "Stale", "key": "value.stale"}]}
+      ],
+      "pages": ["mission-control/gogreen/scale-dock/real/receipt/scale-dock.html"]
     }
   ]
 }

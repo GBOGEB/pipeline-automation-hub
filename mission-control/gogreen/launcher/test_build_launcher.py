@@ -99,6 +99,21 @@ class Render(unittest.TestCase):
         self.assertIn("default-src 'none'", html)
         self.assertEqual(html.count(bl.DATA_HOLE), 1)
 
+    def test_access_section_names_local_and_github_routes(self):
+        html = bl.TEMPLATE.read_text(encoding="utf-8")
+        for anchor in ('id="access"', 'href="#access"', 'id="cmd-open"', 'id="cmd-explorer"', 'id="cmd-clone"', 'id="gh"'):
+            self.assertIn(anchor, html)
+        snap = json.loads(bl.SNAPSHOT.read_text(encoding="utf-8"))
+        self.assertEqual(snap["self_path"], bl.SELF_DIR + "/index.html")
+        self.assertTrue(snap["hosted"])
+        # No machine path is baked into the build; the page derives it from its own file URL.
+        self.assertNotRegex(bl.PAGE.read_text(encoding="utf-8"), r"[A-Za-z]:\\\\Users")
+
+    def test_hosted_urls_must_be_github_pages(self):
+        for url in ("javascript:alert(1)", "http://gbogeb.github.io/x/", "https://evil.example/x"):
+            with self.subTest(url=url), self.assertRaisesRegex(ValueError, "GitHub Pages"):
+                bl.project({"hosted": [{"label": "x", "url": url}], "tiles": [], "pages": []}, "0" * 40)
+
     def test_data_cannot_close_the_script(self):
         snap = {"x": "</script><img src=x onerror=alert(1)>&"}
         out = bl.render(snap)
