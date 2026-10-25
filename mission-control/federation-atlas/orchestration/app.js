@@ -54,12 +54,19 @@
     return "unknown";
   }
   function badge(value) { return element("span", text(value), "badge " + statusClass(value)); }
+  function encodedURL(value) {
+    // Re-encode through encodeURI so markup/script metacharacters cannot survive into href.
+    try { return encodeURI(decodeURI(value)); } catch (_error) { return null; }
+  }
   function safeURL(value) {
     if (typeof value !== "string" || !value || /[\x00-\x1f\\]/.test(value)) return null;
     if (/^https?:\/\//i.test(value)) {
-      try { return new URL(value).href; } catch (_error) { return null; }
+      let parsed;
+      try { parsed = new URL(value); } catch (_error) { return null; }
+      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return null;
+      return encodedURL(parsed.href);
     }
-    return !value.startsWith("/") && !value.split("/")[0].includes(":") ? value : null;
+    return !value.startsWith("/") && !value.split("/")[0].includes(":") ? encodedURL(value) : null;
   }
   function sourceURL(record) {
     const explicit = safeURL(record.source_url);
@@ -67,7 +74,7 @@
     const repository = record.repo || source.repository;
     const head = record.head_sha || source.head_sha;
     if (typeof repository === "string" && /^[\w.-]+\/[\w.-]+$/.test(repository) && head && record.source_path) {
-      return "https://github.com/" + repository + "/blob/" + encodeURIComponent(head) + "/" + String(record.source_path).split("/").map(encodeURIComponent).join("/");
+      return "https://github.com/" + repository.split("/").map(encodeURIComponent).join("/") + "/blob/" + encodeURIComponent(head) + "/" + String(record.source_path).split("/").map(encodeURIComponent).join("/");
     }
     return null;
   }

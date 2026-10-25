@@ -15,6 +15,7 @@ import posixpath
 import re
 import subprocess
 import sys
+from html import unescape
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -29,6 +30,8 @@ TITLE = re.compile(r"<title>([^<]*)</title>", re.I)
 # Fields that name the commit the build read from; --check ignores them so a
 # rebuild on a later commit with unchanged inputs is not reported as stale.
 PULSE_KEYS = ("source_sha", "source_date")
+# Catalog fields derived from the read-at commit only (github = repo_url/blob/source_sha/path).
+CATALOG_PULSE_KEYS = ("github",)
 
 
 def git(*args: str) -> str:
@@ -40,6 +43,25 @@ def read_at(sha: str, path: str) -> tuple[str, str]:
     """Return (blob OID, text) of ``path`` at commit ``sha``."""
     oid = git("rev-parse", f"{sha}:{path}").strip()
     return oid, git("cat-file", "blob", oid)
+
+
+def read_texts(sha: str, paths: list[str]) -> dict[str, str]:
+    """Text of each of ``paths`` at commit ``sha``, read in one ``git cat-file --batch``."""
+    if not paths:
+        return {}
+    req = "".join(f"{sha}:{p}\n" for p in paths).encode("utf-8")
+    out = subprocess.run(["git", "cat-file", "--batch"], cwd=HERE, input=req,
+                         capture_output=True, check=True).stdout
+    texts, pos = {}, 0
+    for path in paths:
+        end = out.index(b"\n", pos)
+        header = out[pos:end].decode("utf-8").split()
+        if len(header) != 3 or header[1] != "blob":
+            raise FileNotFoundError(f"{sha}:{path} is not a blob ({' '.join(header)})")
+        size = int(header[2])
+        texts[path] = out[end + 1:end + 1 + size].decode("utf-8", errors="replace")
+        pos = end + 1 + size + 1
+    return texts
 
 
 def parse(path: str, text: str):
@@ -80,6 +102,32 @@ def pick(doc, path: str):
 
 def rel(target: str) -> str:
     return posixpath.relpath(target, SELF_DIR)
+
+
+def page_title(text: str, fallback: str) -> str:
+    m = TITLE.search(text)
+    return (unescape(m.group(1)).strip() if m else "") or fallback
+
+
+def html_paths(sha: str) -> list[str]:
+    """Every committed ``*.html`` path at commit ``sha``, sorted."""
+    return sorted(p for p in git("ls-tree", "-r", "--full-tree", "--name-only", "-z", sha).split("\0")
+                  if p.lower().endswith(".html"))
+
+
+def group_of(path: str) -> str:
+    """Catalog group: the first two directory levels of the path ('.' at the repo root)."""
+    return "/".join(path.split("/")[:-1][:2]) or "."
+
+
+def catalog(sha: str, repo_url: str) -> list[dict]:
+    """Discovery list of every committed HTML page. Navigation only: no OID, no metric."""
+    out = []
+    for path, text in read_texts(sha, html_paths(sha)).items():
+        out.append({"path": path, "group": group_of(path),
+                    "title": page_title(text, posixpath.basename(path)),
+                    "href": rel(path), "github": f"{repo_url}/blob/{sha}/{path}"})
+    return sorted(out, key=lambda e: (e["group"], e["path"]))
 
 
 def project(spec: dict, sha: str) -> dict:
@@ -132,11 +180,11 @@ def project(spec: dict, sha: str) -> dict:
     # Linked pages are navigation, not inputs: record only what the page shows (title), so
     # regenerating a linked page does not make the launcher stale. A missing page still fails.
     pages = []
+    texts = read_texts(sha, [p["path"] for p in spec["pages"]])
     for p in spec["pages"]:
-        _, text = read_at(sha, p["path"])
-        m = TITLE.search(text)
+        text = texts[p["path"]]
         pages.append({"group": p["group"], "path": p["path"], "href": rel(p["path"]),
-                      "title": m.group(1).strip() if m else p["path"]})
+                      "title": page_title(text, p["path"])})
 
     return {
         "schema": SCHEMA,
@@ -148,6 +196,9 @@ def project(spec: dict, sha: str) -> dict:
         "inputs": {p: v["oid"] for p, v in sorted(inputs.items())},
         "missing_fields": missing,
         "pages": pages,
+        "pages_site": spec.get("pages_site"),
+        "self_path": SELF_DIR + "/index.html",
+        "catalog": catalog(sha, spec["repo_url"]),
         "tiles": tiles,
     }
 
@@ -177,7 +228,24 @@ def stale_reason(committed: dict, fresh: dict) -> str:
     pages = sorted(p for p in set(old_pg) | set(new_pg) if old_pg.get(p) != new_pg.get(p))
     if pages:
         parts.append("changed pages: " + ", ".join(pages))
+    old_cat = {e["path"]: e.get("title") for e in committed.get("catalog", [])}
+    new_cat = {e["path"]: e["title"] for e in fresh.get("catalog", [])}
+    for label, names in (("added", sorted(set(new_cat) - set(old_cat))),
+                         ("removed", sorted(set(old_cat) - set(new_cat))),
+                         ("retitled", sorted(p for p in set(old_cat) & set(new_cat)
+                                             if old_cat[p] != new_cat[p]))):
+        if names:
+            parts.append(f"catalog {label}: " + ", ".join(names))
     return "; ".join(parts) or "tile or page declarations changed (sources.json, template or builder)"
+
+
+def strip_pulse(snapshot: dict) -> dict:
+    """The snapshot without what only names the read-at commit (see PULSE_KEYS)."""
+    out = {k: v for k, v in snapshot.items() if k not in PULSE_KEYS}
+    if "catalog" in out:
+        out["catalog"] = [{k: v for k, v in e.items() if k not in CATALOG_PULSE_KEYS}
+                          for e in out["catalog"]]
+    return out
 
 
 def check(sha: str) -> list[str]:
@@ -185,8 +253,7 @@ def check(sha: str) -> list[str]:
     problems = []
     committed = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
     fresh = project(json.loads(SOURCES.read_text(encoding="utf-8")), sha)
-    strip = lambda s: {k: v for k, v in s.items() if k not in PULSE_KEYS}
-    if strip(committed) != strip(fresh):
+    if strip_pulse(committed) != strip_pulse(fresh):
         problems.append("launcher.json is stale; " + stale_reason(committed, fresh))
     if PAGE.read_text(encoding="utf-8") != render(committed):
         problems.append("index.html does not match render(launcher.json)")
@@ -211,7 +278,7 @@ def main(argv=None) -> int:
     SNAPSHOT.write_text(dump(snapshot), encoding="utf-8", newline="\n")
     PAGE.write_text(render(snapshot), encoding="utf-8", newline="\n")
     print("GOGREEN_LAUNCHER_BUILD=PASS", "rev=" + sha, "tiles=%d" % len(snapshot["tiles"]),
-          "pages=%d" % len(snapshot["pages"]), "missing=%d" % len(snapshot["missing_fields"]))
+          "pages=%d" % len(snapshot["pages"]), "catalog=%d" % len(snapshot["catalog"]), "missing=%d" % len(snapshot["missing_fields"]))
     return 0
 
 
