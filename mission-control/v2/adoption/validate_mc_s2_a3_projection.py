@@ -158,7 +158,9 @@ def validate_documents(enforcement, a1, a2, status, official, current, repair, t
         req(trusted_fpc.get("artifact_digest") == evidence.get("trusted_fpc_artifact_digest"), "A3 enforcement trusted FPC artifact digest drift")
         req(repair_binding.get("disposition_receipt") == TRUSTED_DISPOSITION_REL, "A3 enforcement trusted disposition binding drift")
     else:
-        req(False, f"unsupported A3 repair lifecycle state: {repair_state}")
+        # Do not echo the raw state value into the logged receipt (CodeQL
+        # py/clear-text-logging-sensitive-data); report only whether it was set.
+        req(False, f"unsupported A3 repair lifecycle state (state_present={repair_state is not None})")
 
     mp = enforcement.get("mutation_policy", {})
     for key in (
