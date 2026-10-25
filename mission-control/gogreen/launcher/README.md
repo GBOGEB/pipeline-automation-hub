@@ -48,7 +48,8 @@ Paths are under `mission-control/`.
 (`git ls-tree -r --full-tree`), sorted by `group` then `path`. Each entry has `path`, `group` (the
 first two directory levels, e.g. `docs/mission-control`, `mission-control/jade_temple`), `title`
 (the page's `<title>`, else its file name), `href` (relative to this directory) and `github`
-(`{repo_url}/blob/{source_sha}/{path}`). The catalog is navigation only: no blob OID, no metric.
+(`{repo_url}/blob/{source_sha}/{path}`). The page adds a **History** link per row
+(`{repo_url}/commits/{source_sha}/{path}`). The catalog is navigation only: no blob OID, no metric.
 Some entries are templates or Jekyll layouts that only render after their own build.
 
 The page's **How to access** section explains three ways in:
@@ -57,7 +58,10 @@ The page's **How to access** section explains three ways in:
   open `mission-control\gogreen\launcher\index.html` by double-clicking it in File Explorer, or run
   `start mission-control\gogreen\launcher\index.html` / `explorer mission-control\gogreen\launcher`
   from the clone root. When the page is opened from disk (`file:`), it shows its own folder and the
-  clone root, and the relative **Open** links open sibling pages from the clone.
+  clone root, and the relative **Open** links open sibling pages from the clone. In that case each
+  **All pages** row also shows the page's local path for File Explorer, with a **Copy** button (it
+  selects the text where the browser blocks the clipboard on `file:`). The clone root is worked out
+  from the page's own `file://` address, so no machine path is committed.
 - **GitHub**: the repository and this page's source at the read-at commit. github.com shows HTML
   as source, so render pages from a clone or through the Pages site.
 - **GitHub Pages**: only the site root recorded under `pages_site` in `sources.json`, with how and
