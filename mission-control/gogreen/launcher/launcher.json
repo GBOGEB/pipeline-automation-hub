@@ -1,5 +1,391 @@
 {
+  "access": {
+    "clone_url": "https://github.com/GBOGEB/pipeline-automation-hub.git",
+    "default_branch": "master",
+    "pages_note": "GitHub Pages is configured to publish docs/ from master. This launcher does not check what is hosted; JADE BD item J03 owns that qualification.",
+    "pages_site": "https://gbogeb.github.io/pipeline-automation-hub/"
+  },
   "computes_metrics": false,
+  "discover": [
+    {
+      "group": "docs/code-purple-live",
+      "href": "../../../docs/code-purple-live/index.html",
+      "path": "docs/code-purple-live/index.html",
+      "title": "CODE PURPLE | Live Census & Diagnostics"
+    },
+    {
+      "group": "docs/code-purple-w1",
+      "href": "../../../docs/code-purple-w1/index.html",
+      "path": "docs/code-purple-w1/index.html",
+      "title": "CODE PURPLE W+1 | Mission Control federation / orchestration navigation"
+    },
+    {
+      "group": "docs",
+      "href": "../../../docs/index.html",
+      "path": "docs/index.html",
+      "title": "MissionControl | CODE PURPLE evidence portal"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/g3p-math/index.html",
+      "path": "docs/mission-control/g3p-math/index.html",
+      "title": "Mission Control × gg_MATH | G3P Observed Convergence"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m2/burndown.html",
+      "path": "docs/mission-control/m2/burndown.html",
+      "title": "Release burndown — explicit acceptance gates · CODE PURPLE M2"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m2/federation.html",
+      "path": "docs/mission-control/m2/federation.html",
+      "title": "Federation — combined body of knowledge · CODE PURPLE M2"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m2/handover.html",
+      "path": "docs/mission-control/m2/handover.html",
+      "title": "Recursive Milestone 2 — lossless intent handover · CODE PURPLE M2"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m2/index.html",
+      "path": "docs/mission-control/m2/index.html",
+      "title": "MissionControl — owner landing · CODE PURPLE M2"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m2/pipeline.html",
+      "path": "docs/mission-control/m2/pipeline.html",
+      "title": "Pipeline — owner preflight and testflight · CODE PURPLE M2"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m2/repo-abacus.html",
+      "path": "docs/mission-control/m2/repo-abacus.html",
+      "title": "ABACUS — owner profile · CODE PURPLE M2"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m2/repo-codex.html",
+      "path": "docs/mission-control/m2/repo-codex.html",
+      "title": "CODEX — owner profile · CODE PURPLE M2"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m2/repo-documents.html",
+      "path": "docs/mission-control/m2/repo-documents.html",
+      "title": "DOCX_RTM_Automation — owner profile · CODE PURPLE M2"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m2/repo-math.html",
+      "path": "docs/mission-control/m2/repo-math.html",
+      "title": "gg_MATH — owner profile · CODE PURPLE M2"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m2/repo-missioncontrol.html",
+      "path": "docs/mission-control/m2/repo-missioncontrol.html",
+      "title": "pipeline-automation-hub — owner profile · CODE PURPLE M2"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m2/repo-qps.html",
+      "path": "docs/mission-control/m2/repo-qps.html",
+      "title": "cryoplant-project — owner profile · CODE PURPLE M2"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m2/runtime.html",
+      "path": "docs/mission-control/m2/runtime.html",
+      "title": "Runtime — agents, skills, MCP, Docker, LLDB and LDAB · CODE PURPLE M2"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/m3/index.html",
+      "path": "docs/mission-control/m3/index.html",
+      "title": "Mission Control M3 — Federation Flightdeck"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/w18/cards.html",
+      "path": "docs/mission-control/w18/cards.html",
+      "title": "cp-w18-fleet-dov-20261017 | cards"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/w18/deck.html",
+      "path": "docs/mission-control/w18/deck.html",
+      "title": "cp-w18-fleet-dov-20261017 | deck"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/w18/index.html",
+      "path": "docs/mission-control/w18/index.html",
+      "title": "cp-w18-fleet-dov-20261017 | dashboard"
+    },
+    {
+      "group": "docs/mission-control",
+      "href": "../../../docs/mission-control/w19/burndown.html",
+      "path": "docs/mission-control/w19/burndown.html",
+      "title": "docs/mission-control/w19/burndown.html"
+    },
+    {
+      "group": "mission-control/federation-atlas",
+      "href": "../../federation-atlas/G3P_LIVE_LEDGER.html",
+      "path": "mission-control/federation-atlas/G3P_LIVE_LEDGER.html",
+      "title": "G3P Live Lineage"
+    },
+    {
+      "group": "mission-control/federation-atlas",
+      "href": "../../federation-atlas/central/dashboard_template.html",
+      "path": "mission-control/federation-atlas/central/dashboard_template.html",
+      "title": "CODE-HEALTH — Mission Control Central"
+    },
+    {
+      "group": "mission-control/federation-atlas",
+      "href": "../../federation-atlas/code_purple_template.html",
+      "path": "mission-control/federation-atlas/code_purple_template.html",
+      "title": "CODE PURPLE Control"
+    },
+    {
+      "group": "mission-control/federation-atlas",
+      "href": "../../federation-atlas/flightdeck/pulses/federation_landing_p4.html",
+      "path": "mission-control/federation-atlas/flightdeck/pulses/federation_landing_p4.html",
+      "title": "CODE PURPLE / Local federation SIPOC explorer P4"
+    },
+    {
+      "group": "mission-control/federation-atlas",
+      "href": "../../federation-atlas/landing/MISSION_CONTROL_FEDERATED_LAUNCH_N10.html",
+      "path": "mission-control/federation-atlas/landing/MISSION_CONTROL_FEDERATED_LAUNCH_N10.html",
+      "title": "Mission Control — Federated N10 Launch"
+    },
+    {
+      "group": "mission-control/federation-atlas",
+      "href": "../../federation-atlas/landing/MISSION_CONTROL_MACHII_N13.html",
+      "path": "mission-control/federation-atlas/landing/MISSION_CONTROL_MACHII_N13.html",
+      "title": "Mission Control / MACH-II · Mycelium & MIP"
+    },
+    {
+      "group": "mission-control/federation-atlas",
+      "href": "../../federation-atlas/landing/MISSION_CONTROL_RECURSIVE_MISSIONS_N12.html",
+      "path": "mission-control/federation-atlas/landing/MISSION_CONTROL_RECURSIVE_MISSIONS_N12.html",
+      "title": "MISSION CONTROL | Recursive Mission City N12"
+    },
+    {
+      "group": "mission-control/federation-atlas",
+      "href": "../../federation-atlas/landing/MISSION_CONTROL_TOP21_CENSUS_N11.html",
+      "path": "mission-control/federation-atlas/landing/MISSION_CONTROL_TOP21_CENSUS_N11.html",
+      "title": "Mission Control | Top-21 Repository and Dependency Observatory N11"
+    },
+    {
+      "group": "mission-control/federation-atlas",
+      "href": "../../federation-atlas/live-census/view/index.html",
+      "path": "mission-control/federation-atlas/live-census/view/index.html",
+      "title": "CODE PURPLE | Live Census & Diagnostics"
+    },
+    {
+      "group": "mission-control/federation-atlas",
+      "href": "../../federation-atlas/mission_rebuild/template.html",
+      "path": "mission-control/federation-atlas/mission_rebuild/template.html",
+      "title": "MISSION CONTROL | Federation Rebuild"
+    },
+    {
+      "group": "mission-control/federation-atlas",
+      "href": "../../federation-atlas/orchestration/template.html",
+      "path": "mission-control/federation-atlas/orchestration/template.html",
+      "title": "__TITLE__"
+    },
+    {
+      "group": "mission-control/federation-atlas",
+      "href": "../../federation-atlas/superstitch/template.html",
+      "path": "mission-control/federation-atlas/superstitch/template.html",
+      "title": "CODE PURPLE | W34 Superstitch Flight Deck"
+    },
+    {
+      "group": "mission-control/gogreen",
+      "href": "../comparative/index.html",
+      "path": "mission-control/gogreen/comparative/index.html",
+      "title": "GoGREEN | Comparative Evidence 17 Oct 2026"
+    },
+    {
+      "group": "mission-control/gogreen",
+      "href": "index.html",
+      "path": "mission-control/gogreen/launcher/index.html",
+      "title": "GoGreen Launcher"
+    },
+    {
+      "group": "mission-control/gogreen",
+      "href": "launcher_template.html",
+      "path": "mission-control/gogreen/launcher/launcher_template.html",
+      "title": "GoGreen Launcher"
+    },
+    {
+      "group": "mission-control/gogreen",
+      "href": "../scale-dock/real/receipt/scale-dock.html",
+      "path": "mission-control/gogreen/scale-dock/real/receipt/scale-dock.html",
+      "title": "CODE PURPLE — scale dock"
+    },
+    {
+      "group": "mission-control/grand-missions",
+      "href": "../../grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html",
+      "path": "mission-control/grand-missions/dashboard/GM_FLEET_CONTROL_DASHBOARD_v11.html",
+      "title": "Grand Mission Fleet Control Dashboard v11"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/burndown.html",
+      "path": "mission-control/jade_temple/site/burndown.html",
+      "title": "JADE_CASTE | N+2 Top21 convergence control"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/burndown_template.html",
+      "path": "mission-control/jade_temple/site/burndown_template.html",
+      "title": "JADE_CASTE | N+2 Top21 convergence control"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/cicd_dag.html",
+      "path": "mission-control/jade_temple/site/cicd_dag.html",
+      "title": "JADE CI/CD DAG"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/eightpoint.html",
+      "path": "mission-control/jade_temple/site/eightpoint.html",
+      "title": "JADE_CASTE | N+3 eight-point MIP"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/eightpoint_template.html",
+      "path": "mission-control/jade_temple/site/eightpoint_template.html",
+      "title": "JADE_CASTE | N+3 eight-point MIP"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/gate12_hub.html",
+      "path": "mission-control/jade_temple/site/gate12_hub.html",
+      "title": "JADE | H01-H12 DoV & Operations"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/green.html",
+      "path": "mission-control/jade_temple/site/green.html",
+      "title": "JADE_CASTE · GoGREEN | Top21 release observatory"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/green_template.html",
+      "path": "mission-control/jade_temple/site/green_template.html",
+      "title": "JADE_CASTE · GoGREEN | Top21 release observatory"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/index.html",
+      "path": "mission-control/jade_temple/site/index.html",
+      "title": "JADE_TEMPLE · JADE_CASTE Top21"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/qps_superstitch.html",
+      "path": "mission-control/jade_temple/site/qps_superstitch.html",
+      "title": "JADE_TEMPLE — QPS Superstitch J25"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/redtrace-slides.html",
+      "path": "mission-control/jade_temple/site/redtrace-slides.html",
+      "title": "JADE N+8 · Red-trace federation slides"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/redtrace.html",
+      "path": "mission-control/jade_temple/site/redtrace.html",
+      "title": "JADE N+8 · Red-trace federation ledger"
+    },
+    {
+      "group": "mission-control/jade_temple",
+      "href": "../../jade_temple/site/template.html",
+      "path": "mission-control/jade_temple/site/template.html",
+      "title": "JADE_TEMPLE · JADE_CASTE Top21"
+    },
+    {
+      "group": "mission-control/launchpad",
+      "href": "../../launchpad/launchpad_template.html",
+      "path": "mission-control/launchpad/launchpad_template.html",
+      "title": "MissionControl | Federation Navigator"
+    },
+    {
+      "group": "mission-control/pipeline_runtime",
+      "href": "../../pipeline_runtime/runs/20261020/report.html",
+      "path": "mission-control/pipeline_runtime/runs/20261020/report.html",
+      "title": "Master_Input pipeline runtime"
+    },
+    {
+      "group": "mission-control/qps-triage-ultra",
+      "href": "../../qps-triage-ultra/p-process/code-purple/index.html",
+      "path": "mission-control/qps-triage-ultra/p-process/code-purple/index.html",
+      "title": "Global Code Purple"
+    },
+    {
+      "group": "mission-control/qps-triage-ultra",
+      "href": "../../qps-triage-ultra/p-process/site/code-purple/index.html",
+      "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/index.html",
+      "title": "Global Code Purple"
+    },
+    {
+      "group": "mission-control/qps-triage-ultra",
+      "href": "../../qps-triage-ultra/p-process/site/everred/index.html",
+      "path": "mission-control/qps-triage-ultra/p-process/site/everred/index.html",
+      "title": "EVERRED Register"
+    },
+    {
+      "group": "mission-control/qps-triage-ultra",
+      "href": "../../qps-triage-ultra/p-process/site/index.html",
+      "path": "mission-control/qps-triage-ultra/p-process/site/index.html",
+      "title": "P Process"
+    },
+    {
+      "group": "mission-control/qps-triage-ultra",
+      "href": "../../qps-triage-ultra/site/_layouts/default.html",
+      "path": "mission-control/qps-triage-ultra/site/_layouts/default.html",
+      "title": "{{ page.title }} · {{ site.title }}"
+    },
+    {
+      "group": "mission-control/qps-triage-ultra",
+      "href": "../../qps-triage-ultra/site/_layouts/qps.html",
+      "path": "mission-control/qps-triage-ultra/site/_layouts/qps.html",
+      "title": "{{ page.title }} · {{ site.title }}"
+    },
+    {
+      "group": "mission-control/side-missions",
+      "href": "../../side-missions/MCEX_W1/comparison/index.html",
+      "path": "mission-control/side-missions/MCEX_W1/comparison/index.html",
+      "title": "MCEX-W1 | Mutation & Admission Lab"
+    },
+    {
+      "group": "mission-control/v2",
+      "href": "../../v2/g3p_live_template.html",
+      "path": "mission-control/v2/g3p_live_template.html",
+      "title": "Mission Control — Live G3P Lineage / N+6"
+    },
+    {
+      "group": "mission-control/v2",
+      "href": "../../v2/handoff/live_lossless/index.html",
+      "path": "mission-control/v2/handoff/live_lossless/index.html",
+      "title": "CODE PURPLE | Live Lossless"
+    },
+    {
+      "group": "mission-control/v2",
+      "href": "../../v2/handoff/live_lossless/published/index.html",
+      "path": "mission-control/v2/handoff/live_lossless/published/index.html",
+      "title": "CODE PURPLE | Live Lossless"
+    }
+  ],
   "inputs": {
     "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json": "426a8b6ed3630c874eca4c2c1daaea7d13f3492a",
     "mission-control/federation-atlas/CODE_PURPLE_ITERATION_SERIES_v1.json": "022a588b5f56b7ba09c9d59bc1f3bf3439fe1fb0",
@@ -8,10 +394,10 @@
     "mission-control/gogreen/mycelium_history/W10_LAST_GOOD_APPEND_20261018.json": "1d5d78683721bd4ebe2e109d2bc2cb028bce7368",
     "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json": "989bbe0382801da182d765995956286727acea3c",
     "mission-control/grand-missions/R3_DMAIC_CONTROL_CURRENT_v1.json": "ff36eb882511cc80bfaed3db1533e4b5c0f6618a",
-    "mission-control/jade_temple/data/BD_QUEUE.csv": "ef36a3a79c60d7638255bd82bcf97d519020db99",
+    "mission-control/jade_temple/data/BD_QUEUE.csv": "79e4535f78e2c3d6b6177c0e6f3b30ba9244e6ed",
     "mission-control/jade_temple/site/burndown.json": "f81f29954faac2cdf7646d55be02feada7bceb95",
     "mission-control/jade_temple/site/eightpoint.json": "fb875e6f60c89122f6e21efbf518867cc003c9fb",
-    "mission-control/jade_temple/site/rolling5.json": "29eb67ff11630bb2e205d76179e2da4af2a8825c",
+    "mission-control/jade_temple/site/rolling5.json": "6fd680773cfd64940d8d31d7378c4d1e261026c7",
     "mission-control/qps-triage-ultra/p-process/site/data/p_state.json": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
     "mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json": "598302afb690cb97e44070eeb0e72e582729a8a9",
     "mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json": "b8055243094c63b6a91bb4fbad8764f139f05fd0"
@@ -58,7 +444,7 @@
       "group": "JADE",
       "href": "../../jade_temple/site/gate12_hub.html",
       "path": "mission-control/jade_temple/site/gate12_hub.html",
-      "title": "JADE | H01-H12 DoV &amp; Operations"
+      "title": "JADE | H01-H12 DoV & Operations"
     },
     {
       "group": "JADE",
@@ -100,7 +486,7 @@
       "group": "Mission Control",
       "href": "../../federation-atlas/live-census/view/index.html",
       "path": "mission-control/federation-atlas/live-census/view/index.html",
-      "title": "CODE PURPLE | Live Census &amp; Diagnostics"
+      "title": "CODE PURPLE | Live Census & Diagnostics"
     },
     {
       "group": "Mission Control",
@@ -142,7 +528,7 @@
       "group": "PURPLE / P-process",
       "href": "../../../docs/code-purple-live/index.html",
       "path": "docs/code-purple-live/index.html",
-      "title": "CODE PURPLE | Live Census &amp; Diagnostics"
+      "title": "CODE PURPLE | Live Census & Diagnostics"
     },
     {
       "group": "PURPLE / P-process",
@@ -154,15 +540,16 @@
   "repo_url": "https://github.com/GBOGEB/pipeline-automation-hub",
   "rule": "Read-only projection. Every value is read verbatim from the canonical owner's committed output; this launcher computes no metric (AGENTS.md L4). Missing or null values render as unknown, never zero.",
   "schema": "gogreen.launcher.snapshot.v1",
-  "source_date": "2026-10-24T19:16:21+02:00",
-  "source_sha": "c29f8d3daff2c98922e97a0b36c8f7551062e665",
+  "self_dir": "mission-control/gogreen/launcher",
+  "source_date": "2026-10-25T13:02:08+01:00",
+  "source_sha": "313a2009c1be5844bfe6a7c634e7162207885ef9",
   "tiles": [
     {
       "fields": [
         {
           "label": "Verified pass",
           "path": "metrics.verified_pass",
-          "value": 14
+          "value": 17
         },
         {
           "label": "Gate denominator",
@@ -172,12 +559,12 @@
         {
           "label": "Failing gate instances",
           "path": "metrics.fail_gate_instances",
-          "value": 8
+          "value": 2
         },
         {
           "label": "Nevergreen gate instances",
           "path": "metrics.nevergreen_gate_instances",
-          "value": 46
+          "value": 42
         },
         {
           "label": "NIRVANA count",
@@ -187,18 +574,18 @@
         {
           "label": "Latest pulse",
           "path": "latest_pulse",
-          "value": "P0001"
+          "value": "P0002"
         }
       ],
       "headline": {
         "label": "Verified completion",
         "path": "metrics.verified_completion_pct",
         "unit": "%",
-        "value": 23.33
+        "value": 28.33
       },
       "id": "completion",
       "input": "mission-control/jade_temple/site/rolling5.json",
-      "input_oid": "29eb67ff11630bb2e205d76179e2da4af2a8825c",
+      "input_oid": "6fd680773cfd64940d8d31d7378c4d1e261026c7",
       "label": "Completion",
       "lists": [],
       "owner": "mission-control/jade_temple/tools/rolling5.py",
@@ -474,7 +861,7 @@
       "fields": [],
       "id": "jade_bd_queue",
       "input": "mission-control/jade_temple/data/BD_QUEUE.csv",
-      "input_oid": "ef36a3a79c60d7638255bd82bcf97d519020db99",
+      "input_oid": "79e4535f78e2c3d6b6177c0e6f3b30ba9244e6ed",
       "label": "BD-queue (JADE)",
       "lists": [
         {
@@ -569,6 +956,12 @@
               "P0",
               "ACTIVE",
               "do at each session closeout"
+            ],
+            [
+              "J14",
+              "P1",
+              "ACTIVE",
+              "merge W1 green, then W2 (F2 handover); prune list awaits owner yes"
             ]
           ]
         }
@@ -988,7 +1381,7 @@
       "fields": [],
       "id": "golden_thread",
       "input": "mission-control/jade_temple/site/rolling5.json",
-      "input_oid": "29eb67ff11630bb2e205d76179e2da4af2a8825c",
+      "input_oid": "6fd680773cfd64940d8d31d7378c4d1e261026c7",
       "label": "Golden Thread",
       "lists": [
         {

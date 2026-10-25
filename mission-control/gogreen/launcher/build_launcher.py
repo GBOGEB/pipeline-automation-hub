@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import html
 import io
 import json
 import posixpath
@@ -82,6 +83,42 @@ def rel(target: str) -> str:
     return posixpath.relpath(target, SELF_DIR)
 
 
+def title_of(text: str, fallback: str) -> str:
+    m = TITLE.search(text)
+    return " ".join(html.unescape(m.group(1)).split()) if m else fallback
+
+
+def read_blobs(oids: list[str]) -> list[str]:
+    """Texts of many blobs in one ``git cat-file --batch`` call."""
+    out = subprocess.run(["git", "cat-file", "--batch"], cwd=HERE, input="".join(o + "\n" for o in oids).encode(),
+                         capture_output=True, check=True).stdout
+    texts, pos = [], 0
+    for _ in oids:
+        end = out.index(b"\n", pos)
+        size = int(out[pos:end].split()[2])
+        texts.append(out[end + 1:end + 1 + size].decode("utf-8", "replace"))
+        pos = end + 1 + size + 1
+    return texts
+
+
+def discover(rule: dict, sha: str) -> list[dict]:
+    """Every committed HTML page at ``sha``, with its title, grouped by its first two directories."""
+    pattern = re.compile(rule["pattern"], re.I)
+    found = []
+    for entry in git("ls-tree", "-r", "-z", "--full-tree", sha).split("\0"):
+        if not entry:
+            continue
+        meta, path = entry.split("\t", 1)
+        if meta.split()[1] == "blob" and pattern.search(path) and not any(x in path for x in rule["exclude"]):
+            found.append((path, meta.split()[2]))
+    pages = []
+    for (path, _), text in zip(found, read_blobs([oid for _, oid in found])):
+        parts = path.split("/")
+        pages.append({"path": path, "href": rel(path), "title": title_of(text, path),
+                      "group": "/".join(parts[:2]) if len(parts) > 2 else (parts[0] if len(parts) > 1 else "(root)")})
+    return pages
+
+
 def project(spec: dict, sha: str) -> dict:
     inputs: dict[str, dict] = {}
     missing: list[str] = []
@@ -134,14 +171,16 @@ def project(spec: dict, sha: str) -> dict:
     pages = []
     for p in spec["pages"]:
         _, text = read_at(sha, p["path"])
-        m = TITLE.search(text)
         pages.append({"group": p["group"], "path": p["path"], "href": rel(p["path"]),
-                      "title": m.group(1).strip() if m else p["path"]})
+                      "title": title_of(text, p["path"])})
 
     return {
         "schema": SCHEMA,
         "rule": spec["rule"],
         "repo_url": spec["repo_url"],
+        "self_dir": SELF_DIR,
+        "access": spec["access"],
+        "discover": discover(spec["discover"], sha),
         "source_sha": sha,
         "source_date": git("show", "-s", "--format=%cI", sha).strip(),
         "computes_metrics": False,
@@ -177,6 +216,11 @@ def stale_reason(committed: dict, fresh: dict) -> str:
     pages = sorted(p for p in set(old_pg) | set(new_pg) if old_pg.get(p) != new_pg.get(p))
     if pages:
         parts.append("changed pages: " + ", ".join(pages))
+    old_dc = {p["path"]: p.get("title") for p in committed.get("discover", [])}
+    new_dc = {p["path"]: p["title"] for p in fresh.get("discover", [])}
+    found = sorted(p for p in set(old_dc) | set(new_dc) if old_dc.get(p) != new_dc.get(p))
+    if found:
+        parts.append("changed discovered pages: " + ", ".join(found))
     return "; ".join(parts) or "tile or page declarations changed (sources.json, template or builder)"
 
 
@@ -211,7 +255,7 @@ def main(argv=None) -> int:
     SNAPSHOT.write_text(dump(snapshot), encoding="utf-8", newline="\n")
     PAGE.write_text(render(snapshot), encoding="utf-8", newline="\n")
     print("GOGREEN_LAUNCHER_BUILD=PASS", "rev=" + sha, "tiles=%d" % len(snapshot["tiles"]),
-          "pages=%d" % len(snapshot["pages"]), "missing=%d" % len(snapshot["missing_fields"]))
+          "pages=%d" % len(snapshot["pages"]), "discovered=%d" % len(snapshot["discover"]), "missing=%d" % len(snapshot["missing_fields"]))
     return 0
 
 

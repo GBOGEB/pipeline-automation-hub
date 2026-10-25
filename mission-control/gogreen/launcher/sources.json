@@ -2,6 +2,13 @@
   "schema": "gogreen.launcher.sources.v1",
   "rule": "Read-only projection. Every value is read verbatim from the canonical owner's committed output; this launcher computes no metric (AGENTS.md L4). Missing or null values render as unknown, never zero.",
   "repo_url": "https://github.com/GBOGEB/pipeline-automation-hub",
+  "access": {
+    "clone_url": "https://github.com/GBOGEB/pipeline-automation-hub.git",
+    "default_branch": "master",
+    "pages_site": "https://gbogeb.github.io/pipeline-automation-hub/",
+    "pages_note": "GitHub Pages is configured to publish docs/ from master. This launcher does not check what is hosted; JADE BD item J03 owns that qualification."
+  },
+  "discover": {"pattern": "\\.html?$", "exclude": ["node_modules/"]},
   "pages": [
     {"group": "GoGreen", "path": "mission-control/jade_temple/site/green.html"},
     {"group": "GoGreen", "path": "mission-control/gogreen/comparative/index.html"},

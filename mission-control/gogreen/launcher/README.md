@@ -42,6 +42,32 @@ mapping's entries, each read as `{"key": k, "value": v}` (used for the repo-keye
 
 Paths are under `mission-control/`.
 
+## Open the pages
+
+GitHub shows an HTML file's source and history, not the rendered page. To see the pages, open them
+from a local clone:
+
+```powershell
+git clone https://github.com/GBOGEB/pipeline-automation-hub.git
+cd pipeline-automation-hub
+Start-Process .\mission-control\gogreen\launcher\index.html   # or double-click it in File Explorer
+explorer .\mission-control\gogreen\launcher                    # open the folder in File Explorer
+```
+
+In Git Bash, `start mission-control/gogreen/launcher/index.html` does the same. For a smaller clone,
+use `git clone --filter=blob:none --sparse <url>` and then `git sparse-checkout set mission-control docs`.
+Pages outside those folders will not open locally.
+
+The page's **Start here** section repeats these steps and says where the page is open from. When it
+is opened from a local clone, it shows the clone folder; it works that out from the page's own
+`file://` address, so no machine path is committed. **Discover** lists every committed HTML page
+(`git ls-tree` at the build commit, grouped by first two folders) with its title, an **Open** link
+that works from the clone, the GitHub **Source** and **History** links, and, when local, the file's
+path for File Explorer with a copy button.
+
+GitHub Pages is configured to publish `docs/` from master (`sources.json` `access.pages_site`). This
+page does not check what is hosted; JADE BD item J03 owns that.
+
 ## Build and check
 
 ```bash
@@ -54,6 +80,8 @@ python -m unittest discover -s mission-control/gogreen/launcher -p "test_*.py"
 `--check` rebuilds from the commit in memory and compares everything except the recorded
 `source_sha` and `source_date`. When an owner updates an input, it reports that input by path. Rebuild and
 commit the outputs. Linked pages are navigation, not inputs: only their titles are recorded, so a
-regenerated page with the same title is not stale; a changed title is reported by page path. The `GOGREEN launcher` workflow runs only when this directory changes, so an
+regenerated page with the same title is not stale; a changed title is reported by page path. The
+Discover list follows the same rule: adding, removing or retitling any HTML page in the repository is
+reported as "changed discovered pages" until the launcher is rebuilt. The `GOGREEN launcher` workflow runs only when this directory changes, so an
 owner's PR is never blocked by this page; the page can lag an owner until it is rebuilt, and it
 shows the commit it was read at.
