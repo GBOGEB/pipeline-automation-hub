@@ -451,6 +451,27 @@ class ContentAnalysis(unittest.TestCase):
         m = C.map_tests(mods, refs)
         self.assertEqual(m, {"pkg/a.py": ("import", 1), "tools/b.py": ("path", 1), "c.py": ("none", 0)})
 
+    def test_src_prefixed_import_maps_to_the_module(self):
+        # tests import `src.golden_thread` while module_parts strips src/ (census N+10 false 'untested').
+        mods = {"src/golden_thread.py": C.module_parts("src/golden_thread.py"), "src/other.py": ("other",)}
+        m = C.map_tests(mods, {"tests/test_g.py": ({"src.golden_thread", "src.golden_thread.replay"}, set())})
+        self.assertEqual(m, {"src/golden_thread.py": ("import", 1), "src/other.py": ("none", 0)})
+
+    def test_archived_copies_are_counted_apart_from_live_code(self):
+        sc = {"test_files": [["tests/test_a.py", "1" * 40, "python", 3],
+                             ["triage/w366/x/recovered/history/test_all.py", "2" * 40, "python", 0],
+                             ["triage/w367/archive_incubator/p/selfsmoke_test.py", "3" * 40, "python", 0],
+                             ["tests/test_empty.py", "4" * 40, "python", 0]],
+              "modules": [["src/live.py", "5" * 40, "live", 3, 0, False, "none", 0, []],
+                          ["src/done.py", "6" * 40, "done", 3, 0, True, "import", 1, []],
+                          ["docs/a.zip.d/gen.py", "7" * 40, "gen", 9, 0, False, "none", 0, []]]}
+        t = C.tests_summary(sc)
+        self.assertEqual((t["files"], t["zero_case_files"], t["py_modules"], t["py_untested"]), (4, 3, 3, 2))
+        self.assertEqual((t["live_zero_case_files"], t["live_py_modules"], t["live_py_untested"]), (1, 2, 1))
+        self.assertEqual((t["archived_test_files"], t["archived_py_modules"]), (2, 1))
+        for live in ("src/archive_tools.py", "tools/recovery.py", "qps/recovered_state.py"):
+            self.assertIsNone(C.ARCHIVED.search(live), live)
+
     def test_floors_health_and_commit_types(self):
         self.assertEqual(C.toml_floor("[tool.coverage.report]\nfail_under = 85\n"), 85.0)
         self.assertIsNone(C.toml_floor("x = 1"))
