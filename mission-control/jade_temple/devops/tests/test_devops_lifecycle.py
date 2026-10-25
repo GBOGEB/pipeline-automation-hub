@@ -122,6 +122,16 @@ class Ladder(unittest.TestCase):
         f = good_facts(tests={"files": 4, "cases": 40, "zero_case_files": 1, "py_modules": 10, "py_untested": 0})
         self.assertEqual(L.probe_states(f)["test.fail_closed"], L.FAIL)
 
+    def test_live_counts_drive_the_test_probes_when_present(self):
+        # Archived zero-case files and modules stay counted but do not decide the live-code probes.
+        live = {"files": 6, "cases": 40, "zero_case_files": 4, "py_modules": 30, "py_untested": 21,
+                "live_zero_case_files": 0, "live_py_modules": 10, "live_py_untested": 1}
+        states = L.probe_states(good_facts(tests=live))
+        self.assertEqual((states["test.fail_closed"], states["test.controlled"]), (L.PASS, L.PASS))
+        live.update(live_zero_case_files=1, live_py_untested=3)
+        states = L.probe_states(good_facts(tests=live))
+        self.assertEqual((states["test.fail_closed"], states["test.controlled"]), (L.FAIL, L.FAIL))
+
 
 class Formalization(unittest.TestCase):
     def test_four_states(self):
