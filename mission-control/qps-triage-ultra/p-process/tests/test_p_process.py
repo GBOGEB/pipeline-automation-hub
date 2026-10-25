@@ -167,7 +167,7 @@ class Everred(unittest.TestCase):
             return {"id": int(path.rsplit("/", 1)[1]), "name": "job"}
         served = self._stub_gh(answer)
         self.assertEqual([j["id"] for j in harvest.failed_jobs_for_sha(repo, sha)], [7, 105, 121])
-        self.assertEqual(sum("/check-runs?" in p for p in served), 2, "exactly two pages for 121 runs")
+        self.assertEqual(sum("/check-runs?" in p for p in served), 4, "two stable passes of two pages for 121 runs")
 
     def test_check_run_pages_fail_closed(self):
         repo, sha = "GBOGEB/stub", "b" * 40
@@ -178,14 +178,34 @@ class Everred(unittest.TestCase):
             harvest.failed_jobs_for_sha(repo, sha)
         self.assertFalse(any("/actions/jobs/" in p for p in served), "no job is read from a short census")
 
-    def test_check_run_total_growing_mid_read_is_accepted(self):
-        # A live head gains runs between pages (2026-10-25: ABACUS main 807 -> 811 within one read).
-        # Every run that existed when the read began is held, the duplicate shifted onto page 2 is dropped.
+    def test_check_run_population_changing_mid_read_fails_closed(self):
+        # Codex review on #858: counts that add up do not prove a consistent snapshot. Here run 1 lands
+        # after page 1 is read, so every pass sees ids 2-102 and never run 1. If run 1 is a failure, accepting
+        # that read would undercount it, so a census whose population moves during pagination is never accepted.
         repo, sha = "GBOGEB/stub", "c" * 40
         runs = [{"id": i, "conclusion": "success", "html_url": ""} for i in range(1, 103)]
-        pages = {1: (101, runs[1:101]), 2: (102, runs[100:102]), 3: (102, [])}  # run 1 lands after page 1 is read
+        pages = {1: (101, runs[1:101]), 2: (102, runs[100:102]), 3: (102, [])}
         self._stub_gh(lambda path: dict(zip(("total_count", "check_runs"), pages[self._page(path)])))
-        self.assertEqual(len(harvest.check_runs_for_sha(repo, sha)), 101)
+        with self.assertRaisesRegex(RuntimeError, "no two consecutive stable reads agreed; last read 101 distinct of total_count 101/102"):
+            harvest.check_runs_for_sha(repo, sha)
+
+    def test_check_run_growth_that_settles_is_read_whole(self):
+        # A live head grows during the first pass (2026-10-25: ABACUS main 807 -> 811), then settles: the
+        # read repeats until two consecutive passes agree, and the run that landed mid-read (id 1) is held.
+        repo, sha = "GBOGEB/stub", "e" * 40
+        runs = [{"id": i, "conclusion": "failure" if i == 1 else "success", "html_url": ""} for i in range(1, 103)]
+        growing = {1: (101, runs[1:101]), 2: (102, runs[100:102]), 3: (102, [])}
+        settled = {1: (102, runs[:100]), 2: (102, runs[100:102])}
+        passes = []
+
+        def answer(path):
+            if self._page(path) == 1:
+                passes.append(path)
+            return dict(zip(("total_count", "check_runs"), (growing if len(passes) == 1 else settled)[self._page(path)]))
+        self._stub_gh(answer)
+        got = harvest.check_runs_for_sha(repo, sha)
+        self.assertEqual(sorted(r["id"] for r in got), list(range(1, 103)))
+        self.assertEqual(len(passes), 3, "one moving pass, then two agreeing stable passes")
 
     def test_check_run_total_falling_mid_read_restarts_then_fails_closed(self):
         # A run vanished mid-read (e.g. superseded by a rerun): later pages shift back and a run can be skipped.

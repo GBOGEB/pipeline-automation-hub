@@ -75,33 +75,41 @@ def norm(s: str) -> str:
     return SEQ_RE.sub("*", HEX_RE.sub("<sha>", s)).strip()
 
 
-def check_runs_for_sha(repo: str, sha: str, attempts: int = 3) -> list[dict]:
-    """Every check run on sha, paged against total_count. Fails closed if the pages do not add up.
+def _check_run_pass(repo: str, sha: str) -> tuple[dict, list[int]]:
+    """One uncached paged read: runs by id and the total_count reported on each page."""
+    runs, totals, page = {}, [], 1
+    while True:
+        path = f"repos/{repo}/commits/{sha}/check-runs?per_page=100&page={page}"
+        CACHE.pop(path, None)
+        body = gh(path)
+        totals.append(body["total_count"])
+        batch = body["check_runs"]
+        for r in batch:
+            runs.setdefault(r["id"], r)
+        if not batch or len(runs) >= totals[-1]:
+            return runs, totals
+        page += 1
+
+
+def check_runs_for_sha(repo: str, sha: str, attempts: int = 4) -> list[dict]:
+    """Every check run on sha, paged against total_count. Fails closed unless the census is stable.
 
     A single per_page=100 read silently dropped runs past 100 (ABACUS main had 121 on 2026-10-24).
-    A head with live CI gains runs between pages (ABACUS main grew 807 -> 811 within one read on
-    2026-10-25). Runs are de-duplicated by id; a read is accepted only if total_count never fell and
-    at least the total seen on page 1 (the snapshot when the read began) was read. Otherwise the read
-    restarts uncached, up to `attempts` times, then raises.
+    A head with live CI gains or loses runs between pages (ABACUS main grew 807 -> 811 within one read
+    on 2026-10-25), and a shifted page can then hide a run although the counts add up. A pass is stable
+    when total_count did not change across its pages and exactly that many distinct runs were read. The
+    census is accepted only when two consecutive stable passes return the same id set; otherwise it is
+    re-read, up to `attempts` passes, then raises.
     """
-    paths: list[str] = []
+    prev: dict | None = None
     for _ in range(attempts):
-        for p in paths:
-            CACHE.pop(p, None)
-        paths, runs, totals, page = [], {}, [], 1
-        while True:
-            paths.append(f"repos/{repo}/commits/{sha}/check-runs?per_page=100&page={page}")
-            body = gh(paths[-1])
-            totals.append(body["total_count"])
-            batch = body["check_runs"]
-            for r in batch:
-                runs.setdefault(r["id"], r)
-            if not batch or len(runs) >= totals[-1]:
-                break
-            page += 1
-        if totals == sorted(totals) and totals[0] <= len(runs) <= totals[-1]:
+        runs, totals = _check_run_pass(repo, sha)
+        stable = len(set(totals)) == 1 and len(runs) == totals[0]
+        if stable and prev is not None and set(runs) == set(prev):
             return list(runs.values())
-    raise RuntimeError(f"check-runs for {repo}@{sha}: read {len(runs)} distinct of total_count {'/'.join(map(str, totals))}")
+        prev = runs if stable else None
+    raise RuntimeError(f"check-runs for {repo}@{sha}: no two consecutive stable reads agreed; "
+                       f"last read {len(runs)} distinct of total_count {'/'.join(map(str, totals))}")
 
 
 def failed_jobs_for_sha(repo: str, sha: str) -> list[dict]:
