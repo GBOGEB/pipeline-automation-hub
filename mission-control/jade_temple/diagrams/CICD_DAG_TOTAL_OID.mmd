@@ -23,8 +23,8 @@ flowchart LR
     n3["H01 Exact default-branch SHA observed<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::pass
     n4["H02 Root source and entrypoint located<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::pass
     n5["H03 Release applicability and owner signed<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::unknown
-    n6["H04 Reproducible dependency/build contract quali<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::fail
-    n7["H05 Native primary B0/test equivalent terminal P<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::fail
+    n6["H04 Reproducible dependency/build contract quali<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::unknown
+    n7["H05 Native primary B0/test equivalent terminal P<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::unknown
     n8["H06 Independent domain/integration smoke termina<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::unknown
     n9["H07 Security and supply-chain gates accepted<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::unknown
     n10["H08 Effective protection and rejected RED canary<br/><small>6d59c2f974 rolling5.py::source_red</small>"]:::root_red
@@ -54,7 +54,7 @@ flowchart LR
   end
   subgraph O["O · Outputs"]
     n31["Issue / BD burn-down<br/><small>79e4535f78 BD_QUEUE.csv</small>"]:::issue_bd
-    n32["Disjoint candidate branches<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::pass
+    n32["Disjoint candidate branches<br/><small>907f2249ca FOCUS5_POINT_RELEASE_NPLUS7.json</small>"]:::unknown
     n33["Point release decision<br/><small>451f9ea184 stop_rules.py::evaluate</small>"]:::unknown
     n34["Deterministic JADE site artifacts<br/><small>729e5785a1 cicd_dag.py::project</small>"]:::neutral
     n52["Source consistency (#781 scale-dock)<br/><small>c8910b30dc scale_dock.py::dock_consistency</small>"]:::pass
