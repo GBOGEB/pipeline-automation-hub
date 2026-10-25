@@ -298,6 +298,7 @@ class Main(unittest.TestCase):
         lines = [l for l in out.getvalue().splitlines() if l.startswith("::")]
         self.assertEqual(code, 1)
         self.assertTrue(any(l.startswith("::error title=token census: READ::") and "NOT_SELECTED" in l for l in lines))
+        self.assertEqual(sum(l.startswith("::error title=token census: READ::") for l in lines), 1)  # one per secret
         self.assertTrue(all("\n" not in l and SECRET_VALUE not in l for l in lines))
         self.assertEqual(tc.annotations(dict(receipt, tokens=[], lanes=[])), [])
         quiet = io.StringIO()
@@ -305,6 +306,18 @@ class Main(unittest.TestCase):
             self.run_main({"GH_TOKEN": "public", "PROBE_READ": SECRET_VALUE},
                           dict(routes, **{probe_url: (404, b"{}", None)}))
         self.assertNotIn("::error", quiet.getvalue())
+
+    def test_annotations_stay_below_the_per_step_limit(self):
+        lanes = [{"secret": "S%02d" % i, "token": 1, "repo": "o/r", "workflow": "w%d.yml" % i, "action": "OWNER",
+                  "why": "re-save"} for i in range(13)]
+        lanes += [{"secret": "S00", "token": 1, "repo": "o/r", "workflow": "t%d.yml" % i, "action": "THREAD",
+                   "why": "other"} for i in range(12)]
+        out = tc.annotations({"tokens": [{"id": 1, "name": "t", "probes": {}}], "lanes": lanes})
+        errors = [l for l in out if l.startswith("::error")]
+        warnings = [l for l in out if l.startswith("::warning")]
+        self.assertEqual((len(errors), len(warnings)), (10, 10))
+        self.assertIn("4 more findings", errors[-1])
+        self.assertIn("3 more findings", warnings[-1])
 
     def test_local_run_without_probe_env_is_not_probed(self):
         code, receipt, text = self.run_main({"GH_TOKEN": "public"}, world([run(1, "2026-10-23T10:30:00Z", "success")]))
