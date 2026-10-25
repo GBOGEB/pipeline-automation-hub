@@ -84,6 +84,9 @@ code,.cmd{font:12.5px var(--mono)}
 .here{background:var(--green-bg);border-radius:8px;padding:8px 10px;font-size:14px;word-break:break-all}
 .grp{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 6px}
 .prov td:nth-child(2),.prov td:nth-child(3){font-family:var(--mono);font-size:12px;word-break:break-all}
+.cmd{margin:0;padding:8px 10px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;font:12px/1.5 var(--mono);white-space:pre-wrap;word-break:break-all;user-select:all}
+.cat td:first-child{width:45%}.cat small{display:block;font:11px var(--mono);color:var(--muted);word-break:break-all}
+.cat td:last-child{white-space:nowrap}.cat td:last-child a{margin-right:10px}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
@@ -129,6 +132,31 @@ code,.cmd{font:12.5px var(--mono)}
   </section>
   <section id="metrics" aria-labelledby="h-metrics"><h2 id="h-metrics">Metrics</h2><div class="grid" id="tiles"></div></section>
   <section id="launcher" aria-labelledby="h-launcher"><h2 id="h-launcher">Launcher</h2><div id="pages"></div></section>
+  <section id="access" aria-labelledby="h-access"><h2 id="h-access">How to access</h2>
+    <div class="grid">
+      <article class="card" data-tone="green"><h3>Local / File Explorer</h3>
+        <p class="cap">Clone once, then open this page from the clone. Its relative links open the sibling pages from your disk.</p>
+        <pre class="cmd" id="acc-clone"></pre>
+        <p class="cap">This page inside the clone:</p><pre class="cmd" id="acc-self"></pre>
+        <p class="cap">In Windows File Explorer, go to that folder and double-click <code>index.html</code>. Or, from the clone root:</p>
+        <pre class="cmd" id="acc-open"></pre>
+        <div id="acc-local" hidden><p class="cap">You opened this page from disk. Its folder:</p><pre class="cmd" id="acc-dir"></pre>
+          <p class="cap">Clone root:</p><pre class="cmd" id="acc-root"></pre></div>
+      </article>
+      <article class="card" data-tone="blue"><h3>GitHub</h3>
+        <div class="links" id="acc-gh"></div>
+        <p class="cap">github.com shows HTML files as source code, not as a page. To see a page rendered, open it from a local clone or through the Pages site.</p>
+      </article>
+      <article class="card" data-tone="blue"><h3>GitHub Pages site</h3>
+        <div class="links" id="acc-pages"></div>
+        <p class="cap" id="acc-pages-note"></p>
+      </article>
+    </div>
+  </section>
+  <section id="catalog" aria-labelledby="h-catalog"><h2 id="h-catalog">All pages</h2>
+    <p class="cap" id="cat-cap"></p>
+    <div id="cat"></div>
+  </section>
   <section id="provenance" aria-labelledby="h-prov"><h2 id="h-prov">Provenance</h2>
     <p class="cap">Each input is read once, at the commit shown above. Owner modules keep their metric definitions; this page only reads them.</p>
     <div class="tbl" style="max-height:none"><table class="prov"><thead><tr><th>Tile</th><th>Input</th><th>Blob OID</th><th>Owner</th><th>Schema</th></tr></thead><tbody id="prov"></tbody></table></div>
@@ -202,6 +230,35 @@ function tile(t){
   if(t.input)h+='<a href="'+esc(blob(t.input))+'" rel="noopener noreferrer">source @ '+esc(t.input_oid.slice(0,7))+'</a>';
   return h+'</div></article>';
 }
+const link=(href,text)=>'<a href="'+esc(href)+'" rel="noopener noreferrer">'+esc(text)+'</a>';
+function access(){
+  const win=D.self_path.replace(/\//g,"\\"), dir=win.replace(/\\[^\\]*$/,"");
+  $("#acc-clone").textContent="git clone "+D.repo_url+".git\ncd pipeline-automation-hub";
+  $("#acc-self").textContent=win;
+  $("#acc-open").textContent="start "+win+"\nexplorer "+dir;
+  if(location.protocol==="file:"){
+    // Windows file URLs look like /C:/Users/...; show them with drive letter and backslashes.
+    let p=decodeURIComponent(location.pathname);
+    if(/^\/[A-Za-z]:\//.test(p))p=p.slice(1).replace(/\//g,"\\");
+    const sep=p.includes("\\")?"\\":"/", here=p.slice(0,p.lastIndexOf(sep)), tail=sep+dir.split("\\").join(sep);
+    $("#acc-dir").textContent=here;
+    $("#acc-root").textContent=here.endsWith(tail)?here.slice(0,-tail.length):"(this copy is not inside a clone of the repo)";
+    $("#acc-local").hidden=false;
+  }
+  $("#acc-gh").innerHTML=link(D.repo_url,"Repository")+link(blob(D.self_path),"This page's source @ "+D.source_sha.slice(0,7));
+  const s=D.pages_site;
+  if(s){
+    $("#acc-pages").innerHTML=link(s.url,s.url);
+    $("#acc-pages-note").textContent="Verified "+s.verified_on+" with "+s.verified_by+": "+s.observed+". "+s.scope;
+  }else{$("#acc-pages-note").textContent="No verified Pages site recorded.";}
+}
+function catalog(){
+  const c=D.catalog||[], groups=[...new Set(c.map(e=>e.group))];
+  $("#cat-cap").textContent=c.length+" committed HTML pages at "+D.source_sha.slice(0,7)+", grouped by directory. Open uses a relative link (works from a local clone); GitHub shows the source at the read-at commit. Some entries are templates or layouts that only render after a build.";
+  $("#cat").innerHTML=groups.map(g=>'<div data-grp><div class="grp">'+esc(g)+'</div><div class="tbl" style="max-height:none"><table class="cat"><thead><tr><th scope="col">Page</th><th scope="col">Path</th><th scope="col">Links</th></tr></thead><tbody>'+
+    c.filter(e=>e.group===g).map(e=>'<tr data-q="'+esc((e.title+" "+e.path).toLowerCase())+'"><td>'+esc(e.title)+'</td><td><small>'+esc(e.path)+'</small></td><td><a href="'+esc(e.href)+'">Open</a>'+link(e.github,"GitHub")+'</td></tr>').join("")+
+    '</tbody></table></div></div>').join("");
+}
 function render(){
   $("#rule").textContent=D.rule;
   $("#pulse").textContent="read at "+D.source_sha+" · "+D.source_date+" · computes_metrics="+D.computes_metrics+" · missing_fields="+D.missing_fields.length;
@@ -215,7 +272,8 @@ function render(){
 }
 render();
 $("#q").addEventListener("input",e=>{const q=e.target.value.trim().toLowerCase();
-  document.querySelectorAll("[data-q]").forEach(n=>{n.hidden=q!==""&&!n.dataset.q.includes(q);});});
+  document.querySelectorAll("[data-q]").forEach(n=>{n.hidden=q!==""&&!n.dataset.q.includes(q);});
+  document.querySelectorAll("[data-grp]").forEach(g=>{g.hidden=!g.querySelector("tr[data-q]:not([hidden])");});});
 $("#theme").addEventListener("click",e=>{const r=document.documentElement;
   const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
   r.dataset.theme=dark?"light":"dark";e.currentTarget.setAttribute("aria-pressed",String(!dark));});
