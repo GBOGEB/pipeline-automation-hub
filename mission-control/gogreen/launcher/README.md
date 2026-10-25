@@ -53,6 +53,7 @@ python -m unittest discover -s mission-control/gogreen/launcher -p "test_*.py"
 
 `--check` rebuilds from the commit in memory and compares everything except the recorded
 `source_sha` and `source_date`. When an owner updates an input, it reports that input by path. Rebuild and
-commit the outputs. The `GOGREEN launcher` workflow runs only when this directory changes, so an
+commit the outputs. Linked pages are navigation, not inputs: only their titles are recorded, so a
+regenerated page with the same title is not stale; a changed title is reported by page path. The `GOGREEN launcher` workflow runs only when this directory changes, so an
 owner's PR is never blocked by this page; the page can lag an owner until it is rebuilt, and it
 shows the commit it was read at.

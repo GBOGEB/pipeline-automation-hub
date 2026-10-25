@@ -195,7 +195,8 @@ class Projection(unittest.TestCase):
             if s["scope"].startswith("REPO:"):
                 g = s["metrics"]["gates"]
                 self.assertTrue(set(g["root_red"]) <= set(g["source_red"]), s["scope"])
-                self.assertTrue(g["root_red"], s["scope"])
+                # A repo with any red gate has a root red; a repo with none has none.
+                self.assertEqual(bool(g["root_red"]), bool(g["source_red"]), s["scope"])
 
     def test_temporal_edges_close_the_p_loop_without_a_cycle(self):
         t = [x for x in SCOPES["TOTAL"]["edges"] if x["type"] == "TEMPORAL"]
