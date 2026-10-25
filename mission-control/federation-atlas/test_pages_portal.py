@@ -44,6 +44,25 @@ class TestPages(unittest.TestCase):
    self.assertEqual(len(atom["atoms"]),32)
    self.assertIn("missioncontrol/GRAPH_ATOMS_W1_v1.json",m["public_files_sha256"])
    self.assertFalse(m["merge_authorized"])
+ def test_built_link_targets_are_published(self):
+  # J03: every relative link from a published atlas page to a file the atlas built must resolve on Pages.
+  import re
+  with tempfile.TemporaryDirectory() as d:
+   p=Path(d);src=p/"atlas";fd=src/"flightdeck";fd.mkdir(parents=True)
+   (src/"index.html").write_text('<a href="federation-wave.html">w</a><a href="phase02-temporal.html">t</a><a href="flightdeck/GUIDE.md">g</a>')
+   (src/"lane-process.html").write_text('<a href="phase02-temporal.html">t</a>')
+   for n in ("federation-wave.html","phase02-temporal.html","phase02-temporal.json"):(src/n).write_text(n)
+   links=("GUIDE.md","evidence_register.xlsx","federation_report.docx","mission_brief.pptx","linked_evidence_book.pdf")
+   (fd/"index.html").write_text("".join(f'<a href="{n}">{n}</a>' for n in links))
+   for n in links:(fd/n).write_text(n)
+   m=pages_portal.build(src,p/"out","a"*40)
+   pub=p/"out"/"atlas";missing=[]
+   for page in pub.rglob("*.html"):
+    for href in re.findall(r'href="([^"#?:]+)"',page.read_text()):
+     built=src/page.parent.relative_to(pub)/href
+     if built.is_file() and not (page.parent/href).is_file():missing.append((page.name,href))
+   self.assertEqual(missing,[])
+   self.assertIn("atlas/flightdeck/linked_evidence_book.pdf",m["public_files_sha256"])
  def test_bad_sha(self):
   with tempfile.TemporaryDirectory() as d:
    p=Path(d);p.joinpath("index.html").write_text("x")
