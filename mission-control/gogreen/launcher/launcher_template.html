@@ -74,9 +74,20 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
 .launch small{font:11px var(--mono);color:var(--muted);word-break:break-all}
 .grp{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 6px}
 .prov td:nth-child(2),.prov td:nth-child(3){font-family:var(--mono);font-size:12px;word-break:break-all}
-.cmd{margin:0;padding:8px 10px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;font:12px/1.5 var(--mono);white-space:pre-wrap;word-break:break-all;user-select:all}
-.cat td:first-child{width:45%}.cat small{display:block;font:11px var(--mono);color:var(--muted);word-break:break-all}
-.cat td:last-child{white-space:nowrap}.cat td:last-child a{margin-right:10px}
+.access{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr))}
+.acard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+.acard h3{margin:0 0 8px;font-size:16px}
+.acard p,.acard ol{margin:0 0 8px;font-size:14px}.acard ol{padding-left:20px}
+.here{border-left:4px solid var(--blue)}.here[data-tone=green]{border-left-color:var(--green)}
+pre{margin:0 0 8px;background:var(--surface-2);border-radius:8px;padding:10px;overflow:auto;font:12px/1.5 var(--mono)}
+code{font:12px var(--mono);word-break:break-all}
+.pathc{display:flex;gap:6px;align-items:center;min-width:0}
+.pathc button{min-height:32px;padding:0 8px;font-size:12px;flex:none}
+details{margin-top:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+summary{cursor:pointer;padding:10px 12px;font-weight:600;min-height:44px;display:flex;align-items:center;gap:8px}
+summary small{font:12px var(--mono);color:var(--muted);font-weight:400}
+details .tbl{border:0;border-top:1px solid var(--line);border-radius:0 0 10px 10px;max-height:none}
+.disc td:nth-child(3){white-space:nowrap}.disc td:nth-child(3) a{margin-right:8px}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
@@ -89,39 +100,36 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
   <div class="pulse" id="pulse"></div>
 </header>
 <nav aria-label="Sections"><div class="in">
-  <a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#access">How to access</a><a href="#catalog">All pages</a><a href="#provenance">Provenance</a>
+  <a href="#start">Start here</a><a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#discover">Discover</a><a href="#provenance">Provenance</a>
   <span class="grow"></span>
   <label for="q" class="skip">Filter</label>
   <input id="q" type="search" placeholder="Filter tiles and pages" autocomplete="off">
   <button id="theme" type="button" aria-pressed="false">Theme</button>
 </div></nav>
 <main>
-  <section id="metrics" aria-labelledby="h-metrics"><h2 id="h-metrics">Metrics</h2><div class="grid" id="tiles"></div></section>
-  <section id="launcher" aria-labelledby="h-launcher"><h2 id="h-launcher">Launcher</h2><div id="pages"></div></section>
-  <section id="access" aria-labelledby="h-access"><h2 id="h-access">How to access</h2>
-    <div class="grid">
-      <article class="card" data-tone="green"><h3>Local / File Explorer</h3>
-        <p class="cap">Clone once, then open this page from the clone. Its relative links open the sibling pages from your disk.</p>
-        <pre class="cmd" id="acc-clone"></pre>
-        <p class="cap">This page inside the clone:</p><pre class="cmd" id="acc-self"></pre>
-        <p class="cap">In Windows File Explorer, go to that folder and double-click <code>index.html</code>. Or, from the clone root:</p>
-        <pre class="cmd" id="acc-open"></pre>
-        <div id="acc-local" hidden><p class="cap">You opened this page from disk. Its folder:</p><pre class="cmd" id="acc-dir"></pre>
-          <p class="cap">Clone root:</p><pre class="cmd" id="acc-root"></pre></div>
-      </article>
-      <article class="card" data-tone="blue"><h3>GitHub</h3>
-        <div class="links" id="acc-gh"></div>
-        <p class="cap">github.com shows HTML files as source code, not as a page. To see a page rendered, open it from a local clone or through the Pages site.</p>
-      </article>
-      <article class="card" data-tone="blue"><h3>GitHub Pages site</h3>
-        <div class="links" id="acc-pages"></div>
-        <p class="cap" id="acc-pages-note"></p>
-      </article>
+  <section id="start" aria-labelledby="h-start"><h2 id="h-start">Start here</h2>
+    <div class="access">
+      <div class="acard here" id="here"><h3>Where you are</h3><div id="where"></div></div>
+      <div class="acard"><h3>Open the pages from File Explorer</h3>
+        <ol><li>Clone the repository once (PowerShell or Git Bash):</li></ol>
+        <pre id="clone"></pre>
+        <ol start="2"><li>In File Explorer, go to the clone's <code>mission-control\gogreen\launcher</code> folder and double-click <code>index.html</code>. Or, from the clone folder:</li></ol>
+        <pre id="open"></pre>
+        <ol start="3"><li>Every page and link on this launcher then opens from your disk. To refresh, run <code>git pull</code>; the pages are committed, so nothing needs building.</li></ol>
+        <p class="cap" id="sparse"></p>
+      </div>
+      <div class="acard"><h3>On GitHub</h3>
+        <p>GitHub shows an HTML file's source and history, not the rendered page. Use it to read, review or link a page; open it locally to see it.</p>
+        <div class="links" id="gh"></div>
+      </div>
+      <div class="acard"><h3>GitHub Pages</h3><p id="pagesNote"></p><div class="links" id="pagesLink"></div></div>
     </div>
   </section>
-  <section id="catalog" aria-labelledby="h-catalog"><h2 id="h-catalog">All pages</h2>
-    <p class="cap" id="cat-cap"></p>
-    <div id="cat"></div>
+  <section id="metrics" aria-labelledby="h-metrics"><h2 id="h-metrics">Metrics</h2><div class="grid" id="tiles"></div></section>
+  <section id="launcher" aria-labelledby="h-launcher"><h2 id="h-launcher">Launcher</h2><div id="pages"></div></section>
+  <section id="discover" aria-labelledby="h-disc"><h2 id="h-disc">Discover: every HTML page in the repository</h2>
+    <p class="cap" id="discCap"></p>
+    <div id="disc"></div>
   </section>
   <section id="provenance" aria-labelledby="h-prov"><h2 id="h-prov">Provenance</h2>
     <p class="cap">Each input is read once, at the commit shown above. Owner modules keep their metric definitions; this page only reads them.</p>
@@ -202,11 +210,58 @@ function render(){
   const groups=[...new Set(D.pages.map(p=>p.group))];
   $("#pages").innerHTML=groups.map(g=>'<div class="grp">'+esc(g)+'</div><div class="launch">'+D.pages.filter(p=>p.group===g).map(p=>
     '<a href="'+esc(p.href)+'" data-q="'+esc((p.title+" "+p.path).toLowerCase())+'"><b>'+esc(p.title)+'</b><small>'+esc(p.path)+'</small></a>').join("")+'</div>').join("");
-  access();
-  catalog();
+  renderAccess();
   $("#prov").innerHTML=D.tiles.filter(t=>t.input).map(t=>'<tr><td>'+esc(t.label)+'</td><td><a href="'+esc(blob(t.input))+'" rel="noopener noreferrer">'+esc(t.input)+'</a></td><td>'+esc(t.input_oid)+'</td><td>'+esc(t.owner)+'</td><td>'+val(t.schema)+'</td></tr>').join("");
 }
+// Local clone root, derived from this page's own file:// location; nothing machine-specific is committed.
+function cloneRoot(){
+  if(location.protocol!=="file:")return null;
+  const p=decodeURIComponent(location.pathname), i=p.lastIndexOf("/"+D.self_dir+"/");
+  return i<0?null:p.slice(0,i);
+}
+const ROOT=cloneRoot(), WIN=ROOT!==null&&/^\/[A-Za-z]:/.test(ROOT);
+function localPath(rp){
+  const p=ROOT+"/"+rp;
+  return WIN?p.slice(1).replace(/\//g,"\\"):p;
+}
+const ghBlob=p=>D.repo_url+"/blob/"+D.access.default_branch+"/"+p;
+const ghHist=p=>D.repo_url+"/commits/"+D.access.default_branch+"/"+p;
+const ext=(u,t)=>'<a href="'+esc(u)+'" rel="noopener noreferrer">'+esc(t)+'</a>';
+const copyBtn=t=>'<button type="button" data-copy="'+esc(t)+'" aria-label="Copy path '+esc(t)+'">Copy</button>';
+function renderAccess(){
+  const A=D.access, dirName=A.clone_url.replace(/\.git$/,"").split("/").pop(), selfWin=D.self_dir.replace(/\//g,"\\");
+  let w;
+  if(ROOT!==null){
+    $("#here").dataset.tone="green";
+    w='<p>This page is open from a local clone. Links open the pages on your disk.</p><p class="cap">Clone folder (paste into the File Explorer address bar):</p>'+
+      '<div class="pathc"><code>'+esc(WIN?ROOT.slice(1).replace(/\//g,"\\"):ROOT)+'</code>'+copyBtn(WIN?ROOT.slice(1).replace(/\//g,"\\"):ROOT)+'</div>'+
+      '<p class="cap">This launcher: <code>'+esc(localPath(D.self_dir+"/index.html"))+'</code></p>';
+  }else if(location.protocol==="file:"){
+    w='<p>This page is open from disk, but not from inside a full clone at <code>'+esc(D.self_dir)+'</code>, so links to other pages may not resolve. Open it from a clone (steps alongside).</p>';
+  }else{
+    w='<p>This page is served from <code>'+esc(location.origin)+'</code>. Links to other pages work only where the whole repository is served; a local clone always works.</p>';
+  }
+  $("#where").innerHTML=w+'<p class="cap">Data read at commit <a href="'+esc(D.repo_url+"/tree/"+D.source_sha)+'" rel="noopener noreferrer">'+esc(D.source_sha.slice(0,12))+'</a>, '+esc(D.source_date)+'.</p>';
+  $("#clone").textContent="git clone "+A.clone_url+"\ncd "+dirName;
+  $("#open").textContent="# PowerShell\nStart-Process .\\"+selfWin+"\\index.html\nexplorer .\\"+selfWin+"\n\n# Git Bash\nstart "+D.self_dir+"/index.html";
+  $("#sparse").textContent="Smaller clone (pages only): git clone --filter=blob:none --sparse "+A.clone_url+", then git sparse-checkout set mission-control docs. A page outside those folders will not open locally.";
+  $("#gh").innerHTML=[ext(D.repo_url,"Repository"),ext(D.repo_url+"/tree/"+A.default_branch+"/"+D.self_dir,"Launcher folder"),
+    ext(ghBlob(D.self_dir+"/index.html"),"This page's source"),ext(D.repo_url+"/blob/"+A.default_branch+"/"+D.self_dir+"/README.md","Launcher README"),
+    ext(D.repo_url+"/archive/refs/heads/"+A.default_branch+".zip","Download ZIP")].join("");
+  $("#pagesNote").textContent=A.pages_note;
+  $("#pagesLink").innerHTML=ext(A.pages_site,A.pages_site);
+  const groups=[...new Set(D.discover.map(p=>p.group))];
+  $("#discCap").textContent=D.discover.length+" committed HTML pages at "+D.source_sha.slice(0,12)+", in "+groups.length+" folders. Open runs the page from this clone; GitHub and History show its source."+(ROOT!==null?" Local path is the file on your disk.":" Open this launcher from a local clone to see local paths.");
+  $("#disc").innerHTML=groups.map(g=>{const rows=D.discover.filter(p=>p.group===g);
+    return '<details open><summary>'+esc(g)+' <small>'+rows.length+' page'+(rows.length===1?"":"s")+'</small></summary><div class="tbl"><table class="disc"><thead><tr><th scope="col">Page</th><th scope="col">Path</th><th scope="col">GitHub</th>'+(ROOT!==null?'<th scope="col">Local path</th>':"")+'</tr></thead><tbody>'+
+      rows.map(p=>'<tr data-q="'+esc((p.title+" "+p.path).toLowerCase())+'"><td><a href="'+esc(p.href)+'">'+esc(p.title)+'</a></td><td><code>'+esc(p.path)+'</code></td><td>'+ext(ghBlob(p.path),"Source")+ext(ghHist(p.path),"History")+'</td>'+
+        (ROOT!==null?'<td><div class="pathc"><code>'+esc(localPath(p.path))+'</code>'+copyBtn(localPath(p.path))+'</div></td>':"")+'</tr>').join("")+'</tbody></table></div></details>';}).join("");
+}
 render();
+document.addEventListener("click",e=>{const b=e.target.closest("[data-copy]");if(!b)return;
+  const t=b.dataset.copy, done=ok=>{b.textContent=ok?"Copied":"Select";};
+  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(()=>done(true),()=>done(false));
+  else{const r=document.createRange();r.selectNodeContents(b.previousElementSibling);const s=getSelection();s.removeAllRanges();s.addRange(r);done(false);}});
 $("#q").addEventListener("input",e=>{const q=e.target.value.trim().toLowerCase();
   document.querySelectorAll("[data-q]").forEach(n=>{n.hidden=q!==""&&!n.dataset.q.includes(q);});
   document.querySelectorAll("[data-grp]").forEach(g=>{g.hidden=!g.querySelector("tr[data-q]:not([hidden])");});});
