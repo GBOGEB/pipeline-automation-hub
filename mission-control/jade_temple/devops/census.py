@@ -137,6 +137,9 @@ KIND_STAGE = {kind: stage for _, stage, kind in RULES}
 KIND_STAGE.update({"workflow": "S9_CONTROL", "test_file": "S3_TEST"})
 VENDORED = _r(r"(^|/)(node_modules|vendor|third_party|third-party|\.venv|venv|site-packages|dist|build|\.git|"
               r"__pycache__|\.tox|\.mypy_cache)/")
+# Archived copies (recovered snapshots, unpacked .zip.d / .tar.gz.d payloads, archive incubators) are still read
+# and counted, but never feed the live-code test probes: an archived test file is not a test the repo runs.
+ARCHIVED = _r(r"(^|/)(archive|archives|archived|archive_incubator|recovered|attic)/|\.(zip|tar|tgz|tar\.gz)\.d/")
 FIXTURE = _r(r"(^|/)(tests?|__tests__|spec|fixtures?|testdata|test-data|examples?|samples?|__snapshots__|"
              r"benchmarks?|docs/examples)/")
 SRC_EXT = {".py": "python", ".js": "js", ".mjs": "js", ".cjs": "js", ".ts": "ts", ".tsx": "ts", ".jsx": "js",
@@ -392,8 +395,10 @@ def map_tests(modules: dict, test_refs: dict) -> dict:
     """modules: path -> parts; test_refs: test path -> (imports, strings). Returns path -> (via, n_refs)."""
     by_suffix: dict[tuple, set] = {}
     for path, parts in modules.items():
-        for k in range(1, len(parts) + 1):
-            by_suffix.setdefault(parts[-k:], set()).add(path)
+        # The stripped parts (src/x.py -> x) and the full path (src.x), so `import src.x` maps too.
+        for name in {parts, tuple(path[:-3].split("/"))}:
+            for k in range(1, len(name) + 1):
+                by_suffix.setdefault(name[-k:], set()).add(path)
     hits: dict[str, dict] = {p: {} for p in modules}
     for tpath, (imports, strings) in sorted(test_refs.items()):
         for name in imports:
@@ -582,7 +587,13 @@ def tests_summary(sc: dict) -> dict:
             "zero_case_files": sum(1 for t in known if t[3] == 0), "by_lang": dict(sorted(by_lang.items())),
             "py_modules": len(mods), "py_tested": sum(1 for m in mods if m[5]),
             "py_untested": sum(1 for m in mods if not m[5]),
-            "py_tested_via": dict(sorted(Counter(m[6] for m in mods).items()))}
+            "py_tested_via": dict(sorted(Counter(m[6] for m in mods).items())),
+            # Live code only: the inputs of test.fail_closed and test.controlled.
+            "live_zero_case_files": sum(1 for t in known if t[3] == 0 and not ARCHIVED.search(t[0])),
+            "live_py_modules": sum(1 for m in mods if not ARCHIVED.search(m[0])),
+            "live_py_untested": sum(1 for m in mods if not m[5] and not ARCHIVED.search(m[0])),
+            "archived_test_files": sum(1 for t in tf if ARCHIVED.search(t[0])),
+            "archived_py_modules": sum(1 for m in mods if ARCHIVED.search(m[0]))}
 
 
 def tag_info(cache: Path, repo: str) -> dict:
@@ -798,7 +809,7 @@ def repo_record(row: dict, g: Git | None, cache: Path, rt_idx: dict, pages: dict
     rt_out = None
     if rt:
         rt_out = dict(rt, first_red_roots=[dict(x, blob_oid=wf_oid.get(x["path"])) for x in rt["first_red_roots"]])
-    untested = sorted((m for m in sc["modules"] if not m[5]), key=lambda m: (-(m[3] or 0), m[0]))[:UNTESTED_CAP]
+    untested = sorted((m for m in sc["modules"] if not m[5] and not ARCHIVED.search(m[0])), key=lambda m: (-(m[3] or 0), m[0]))[:UNTESTED_CAP]
     known_tests = [t for t in sc["test_files"] if t[3] is not None]
     rec = dict(base, reachable=True, error=None, head_sha=head, tree_oid=meta["tree"], commit_date=meta["date"],
                blobs_unread=sc["unread"], tree_entries=sc["rows"],
@@ -810,7 +821,7 @@ def repo_record(row: dict, g: Git | None, cache: Path, rt_idx: dict, pages: dict
                workflows=[{k: v for k, v in w.items() if k != "sig"} for w in sc["workflows"]],
                tests=tests,
                zero_test={"zero_case_files": [{"path": t[0], "blob_oid": t[1], "lang": t[2]} for t in known_tests
-                                              if t[3] == 0][:UNTESTED_CAP],
+                                              if t[3] == 0 and not ARCHIVED.search(t[0])][:UNTESTED_CAP],
                           "untested_modules_top": [{"path": m[0], "blob_oid": m[1], "oid": f"jade:py:{name}:{m[2]}",
                                                     "symbols": m[3], "methods": m[4], "names": (m[8] or [])[:12]}
                                                    for m in untested],

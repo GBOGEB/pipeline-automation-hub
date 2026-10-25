@@ -42,7 +42,8 @@ for(const n of beamNodes){
  group.addEventListener("click",()=>detail(n));group.addEventListener("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();detail(n)}});
  svg.append(group);
 }
-d.repos.forEach(x=>{let a=txt("a","");a.href=x.url;a.target="_blank";a.rel="noopener noreferrer";a.className="repo";a.append(txt("strong",x.label),txt("small",x.role),txt("span","Open source ↗"));$("repos").append(a)});
+const safeHref=v=>{try{const s=String(v??""),u=new URL(s,document.baseURI);return u.protocol==="https:"||u.protocol==="http:"?encodeURI(decodeURI(s)):null}catch(_){return null}};
+d.repos.forEach(x=>{let a=txt("a","");const href=safeHref(x.url);if(href)a.href=href;a.target="_blank";a.rel="noopener noreferrer";a.className="repo";a.append(txt("strong",x.label),txt("small",x.role),txt("span","Open source ↗"));$("repos").append(a)});
 function detail(n){let box=$("details");box.replaceChildren(txt("h3",n.label),txt("pre",JSON.stringify({atom:n,inbound:d.edges.filter(e=>e.target===n.id),outbound:d.edges.filter(e=>e.source===n.id)},null,2)))}
 function redraw(){let q=$("query").value.toLowerCase(),kind=$("layer").value,host=$("nodes");host.replaceChildren();let found=d.nodes.filter(n=>(kind==="ALL"||kind===n.kind)&&JSON.stringify(n).toLowerCase().includes(q));found.forEach(n=>{let b=txt("button","");b.className="node";b.append(txt("strong",n.kind+" · "+n.label),txt("small",n.id));b.addEventListener("click",()=>detail(n));host.append(b)});if(!found.length)host.append(txt("p","No matches."))}
 $("query").addEventListener("input",redraw);$("layer").addEventListener("change",redraw);$("reset").addEventListener("click",()=>{$("query").value="";$("layer").value="ALL";redraw()});redraw();
