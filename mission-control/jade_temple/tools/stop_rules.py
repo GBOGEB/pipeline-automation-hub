@@ -126,7 +126,7 @@ def main():
     report = {"schema": "jade.temple.stop_receipt.v2", "source_sha": model["current_main_sha"],
               "proof_level": "SOURCE_MODEL_REPLAY_ONLY", **from_snapshot(model)}
     s = json.dumps(report, sort_keys=True, indent=2) + "\n"
-    if a.receipt: Path(a.receipt).write_text(s, encoding="utf-8")
+    if a.receipt: Path(a.receipt).write_text(s, encoding="utf-8", newline="\n")
     print(s.strip())
 
 if __name__ == "__main__": main()

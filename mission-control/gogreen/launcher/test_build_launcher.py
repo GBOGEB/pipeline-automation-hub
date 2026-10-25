@@ -1,4 +1,5 @@
 """GoGreen launcher: committed outputs current, verbatim reads, no coercion, safe render."""
+import importlib.util
 import json
 import posixpath
 import re
@@ -185,6 +186,24 @@ class Render(unittest.TestCase):
         for url in ("javascript:alert(1)", "http://gbogeb.github.io/x/", "https://evil.example/x"):
             with self.subTest(url=url), self.assertRaisesRegex(ValueError, "GitHub Pages"):
                 bl.project({"hosted": [{"label": "x", "url": url}], "tiles": [], "pages": []}, "0" * 40)
+
+    def test_catalog_rows_link_history_and_copy_local_path(self):
+        html = bl.TEMPLATE.read_text(encoding="utf-8")
+        self.assertIn('"/commits/"+D.source_sha+"/"+e.path,"History"', html)
+        # The local path column exists only when the clone root was found from the page's file:// URL.
+        self.assertIn("ROOT===null?\"\":'<th scope=\"col\">Local path</th>'", html)
+        self.assertIn('data-copy="', html)
+        self.assertIn("navigator.clipboard", html)
+
+    def test_page_passes_static_html_contract(self):
+        # Reuse the html_qa owner's static contract (AGENTS.md L4) instead of re-checking here.
+        path = HERE.parents[1] / "html_qa" / "html_contract.py"
+        spec = importlib.util.spec_from_file_location("html_contract", path)
+        contract = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(contract)
+        snap = json.loads(bl.SNAPSHOT.read_text(encoding="utf-8"))
+        result = contract.inspect(bl.render(snap), base_dir=HERE, strict_local=True)
+        self.assertEqual(result["errors"], [])
 
     def test_data_cannot_close_the_script(self):
         snap = {"x": "</script><img src=x onerror=alert(1)>&"}
