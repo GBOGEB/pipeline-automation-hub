@@ -83,8 +83,7 @@ class Boundary:
 
     # pass 1: the private repo's identifiers. Commit SHAs name the private repo wherever they occur;
     # blob OIDs hash content, so a file copied into a public repo has the same OID there and a blob
-    # OID is redacted only inside a private row. Blob entries are kept as "blob:<oid>"; an object id
-    # that a public row also records (a GitHub tree "sha" of a shared file) is "public:<oid>" and kept.
+    # OID is redacted only inside a private row. Blob entries are kept as "blob:<oid>".
     def collect(self, o, priv=False, shas=None) -> set[str]:
         shas = set() if shas is None else shas
         if isinstance(o, dict):
@@ -97,8 +96,6 @@ class Boundary:
                         shas.add("blob:" + v)
                     elif (kp and sha_key(k)) or self.names_private(k):
                         shas.add(v)
-                    elif not kp and (sha_key(k) or k == "oid"):
-                        shas.add("public:" + v)
                 self.collect(v, kp, shas)
         elif isinstance(o, list):
             for v in o:
@@ -138,9 +135,8 @@ class Boundary:
         return o
 
     def apply_all(self, docs, shas: set[str]):
-        public = {x[7:] for x in shas if x.startswith("public:")}
         blobs = frozenset(x[5:] for x in shas if x.startswith("blob:"))
-        commits = frozenset(x for x in shas if ":" not in x) - public
+        commits = frozenset(x for x in shas if ":" not in x)
         return [self.apply(d, False, commits, blobs) for d in docs]
 
     def project(self, doc, extra_shas=()):

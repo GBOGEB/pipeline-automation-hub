@@ -27,6 +27,7 @@ def _load(name, rel):
 cd = _load("cicd_dag_under_test", "tools/cicd_dag.py")
 page = _load("build_cicd_dag_under_test", "site/build_cicd_dag.py")
 MODEL = cd.project(ROOT)
+OID = r"^(?:[0-9a-f]{40}|" + cd.PB.MARK + ")$"  # a private repo's ids are PB.MARK (counts only)
 SCOPES = {s["scope"]: s for s in MODEL["scopes"]}
 POLICY = json.loads((ROOT / cd.POLICY).read_text(encoding="utf-8"))
 CENSUS = cd.load_census(ROOT, POLICY)
@@ -168,9 +169,9 @@ class Projection(unittest.TestCase):
                     if b["oid"] is None:
                         self.assertIn(b["status"], {"EXTERNAL_UNOBSERVED", "NOT_IN_CHECKOUT"})
                     else:
-                        self.assertRegex(b["oid"], r"^[0-9a-f]{40}$")
+                        self.assertRegex(b["oid"], OID)
                     if b["status"] == "BOUND_AT_CENSUS_HEAD" and b["at"] is not None:
-                        self.assertRegex(b["at"], r"^[0-9a-f]{40}$")
+                        self.assertRegex(b["at"], OID)
 
     def test_total_gate_metrics_agree_with_rolling5(self):
         g = SCOPES["TOTAL"]["metrics"]["gates"]

@@ -21,7 +21,7 @@ FILES = {
     "roster": "data/TOP21_PORTFOLIO.json",
     "dependencies": "data/ROLLING5_POLICY.json",
 }
-HEAD = re.compile(r"^[0-9a-f]{40}$")
+HEAD = re.compile(r"^(?:[0-9a-f]{40}|" + PB.MARK + r")$")  # a private head is PB.MARK (counts only)
 STATES = {"PASS", "FAIL", "UNKNOWN"}
 COLUMNS = ["rank", "repository", "pillar", "status", "readiness",
            "blocked_by", "owner", "action", "source_sha", "evidence"]
