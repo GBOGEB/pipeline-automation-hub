@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import ast
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -39,6 +40,10 @@ ROOT = HERE.parent  # mission-control/jade_temple
 sys.path.insert(0, str(HERE))
 import lifecycle as L  # noqa: E402
 import workflows as W  # noqa: E402
+
+_pb = importlib.util.spec_from_file_location("jade_private_boundary", ROOT / "tools" / "private_boundary.py")
+PB = importlib.util.module_from_spec(_pb)
+_pb.loader.exec_module(PB)
 
 SCHEMA = "jade.devops.census.v1"
 OBJ_SCHEMA = "jade.devops.objects.v1"
@@ -978,11 +983,13 @@ def scan(cache: Path, roster_path: Path, observed_at: str, probe_pages_on=True, 
         "fleet": fleet_summary(repos, contracts),
         "repos": repos,
     }
-    census["digest_sha256"] = hashlib.sha256(canonical(census)).hexdigest()
-    obj = {"schema": OBJ_SCHEMA, "census_digest_sha256": census["digest_sha256"], "observed_at_utc": observed_at,
+    obj = {"schema": OBJ_SCHEMA, "observed_at_utc": observed_at,
            "columns": {"py_modules": ["path", "blob_oid", "dotted", "symbols", "methods", "tested", "via", "test_refs"],
                        "test_files": ["path", "blob_oid", "lang", "cases"]},
            "repos": objects}
+    census, obj = PB.project_many(census, obj)  # private repos: counts only, sealed after projection
+    census["digest_sha256"] = hashlib.sha256(canonical(census)).hexdigest()
+    obj = {"schema": obj.pop("schema"), "census_digest_sha256": census["digest_sha256"], **obj}
     return census, obj
 
 
@@ -1009,8 +1016,12 @@ def check(census: dict, objects: dict | None = None) -> list[str]:
             if any(v["state"] != L.UNKNOWN for v in r["probes"].values()):
                 errs.append(f"{tag}: unreachable repo claims a probe")
             continue
+        private = PB.boundary().names_private(tag)  # private ids are PB.MARK (counts only)
+
+        def oid(v, private=private):
+            return bool(SHA40.match(v or "")) or (private and v == PB.MARK)
         for k in ("head_sha", "tree_oid"):
-            if not SHA40.match(r.get(k) or ""):
+            if not oid(r.get(k)):
                 errs.append(f"{tag}: {k}")
         for pid, p in r["probes"].items():
             if p["state"] not in L.STATES:
@@ -1022,10 +1033,10 @@ def check(census: dict, objects: dict | None = None) -> list[str]:
             errs.append(f"{tag}: stage scores do not follow from probes")
         for st, items in r["evidence"].items():
             for e in items:
-                if not SHA40.match(e["blob_oid"] or ""):
+                if not oid(e["blob_oid"]):
                     errs.append(f"{tag}: evidence blob_oid {e['path']}")
         for w in r["workflows"]:
-            if w["blob_oid"] and not SHA40.match(w["blob_oid"]):
+            if w["blob_oid"] and not oid(w["blob_oid"]):
                 errs.append(f"{tag}: workflow blob_oid {w['path']}")
         t = r["tests"]
         if t["py_tested"] + t["py_untested"] != t["py_modules"]:

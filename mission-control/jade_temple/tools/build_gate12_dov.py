@@ -5,12 +5,16 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import importlib.util
 import io
 import json
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+_pb = importlib.util.spec_from_file_location("jade_private_boundary", ROOT / "tools" / "private_boundary.py")
+PB = importlib.util.module_from_spec(_pb)
+_pb.loader.exec_module(PB)
 FILES = {
     "actions": "data/GATE12_DOV_ACTIONS.json",
     "focus": "data/FOCUS5_POINT_RELEASE_NPLUS7.json",
@@ -47,6 +51,11 @@ def canonical(obj: dict, pretty: bool = False) -> bytes:
 
 
 def project(root: Path = ROOT) -> dict:
+    """The model with private repos projected to counts only (tools/private_boundary.py)."""
+    return PB.project(_project(root))
+
+
+def _project(root: Path = ROOT) -> dict:
     a, f, roster, p = [read(root, name) for name in ("actions", "focus", "roster", "dependencies")]
     need(a.get("schema") == "jade.temple.gate12.actions.v1"
          and a.get("merge_admission") == "HOLD"

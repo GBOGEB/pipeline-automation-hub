@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse,csv,hashlib,importlib.util,io,json,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];SITE=ROOT/'site';DATA=ROOT/'data'
+_pb=importlib.util.spec_from_file_location('jade_private_boundary',ROOT/'tools/private_boundary.py');PB=importlib.util.module_from_spec(_pb);_pb.loader.exec_module(PB)
 SOURCES=("data/READBACK_NPLUS2.json","data/EVIDENCE_EVENTS_NPLUS2.json","data/STOP_MODEL_NPLUS2.json","data/REPO_READINESS_NPLUS1.json")
 
 def load(rel): return json.loads((ROOT/rel).read_text(encoding='utf-8'))
@@ -19,7 +20,7 @@ def builds():
     assert [x['repo'] for x in r['rows']]==[x['repo'] for x in prior['rows']]
     assert sum(x['head_changed'] for x in r['rows'])==3
     assert sum(x['priority']=='P0' for x in r['rows'])==5 and sum(x['priority']=='P1' for x in r['rows'])==9
-    assert all(bool(re.fullmatch('[0-9a-f]{40}',x['current_head'])) for x in r['rows'])
+    assert all(bool(re.fullmatch('[0-9a-f]{40}',x['current_head'])) or x['current_head']==PB.MARK for x in r['rows'])
     assert all(x['owner_final_action_closed'] is False and x['owner_J5_point_release'] is None for x in r['rows'])
     check=e['summary']['main_exact_head_check_runs'];assert check=={'success':23,'skipped':3,'failure':1,'total':27}
     assert e['summary']['owner_root_closures_credited']==0 and m['current_owner_actions']['closed_qualified']==0
@@ -42,6 +43,7 @@ def builds():
       'pulses':m['pulses'],'first_red_current_head':m['first_red_current_head'],
       'governance_no_review_pr':732,'source_links':[ev['url'] for ev in e['events'] if 'url' in ev],
       'stop_policy':m['stop_rules']}
+    z=PB.project(z);r=dict(r,rows=z['rows'])
     files={}
     files['burndown.html']=(SITE/'burndown_template.html').read_bytes()
     files['burndown.json']=(json.dumps(z,sort_keys=True,indent=2,ensure_ascii=True)+'\n').encode('utf-8')

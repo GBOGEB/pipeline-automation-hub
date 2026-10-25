@@ -24,7 +24,7 @@
     "census": "data/DEVOPS_CENSUS_N10.json",
     "objects": "data/DEVOPS_OBJECTS_N10.json",
     "schema": "jade.devops.census.v1",
-    "digest_sha256": "f265b5742a30c9e11f2051367b0c5d308467b3adb0e7d9555e2f5fbda4d954da",
+    "digest_sha256": "851dc9de38b16f1d605ea3516d3b0b59a6800756eed539014d69301348643958",
     "source_commit": "eb26b0026f02526cd7d8f0820164aa56afc21cec",
     "source_branch": "master (#834)",
     "note": "Latest committed census pulse (N+10; N+9 stays immutable beside it). Re-pin census, objects and digest here when a new pulse lands, then regenerate (AGENTS.md L7). Its blob ids are read at each repo's census HEAD, which can be newer than the FOCUS5 gate SHA; every such binding carries that HEAD and the drift is reported, never hidden."
