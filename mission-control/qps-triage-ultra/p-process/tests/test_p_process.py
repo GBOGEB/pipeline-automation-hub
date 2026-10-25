@@ -135,6 +135,84 @@ class Everred(unittest.TestCase):
         self.assertFalse(green["red"])
         self.assertIsNone(harvest.probe_root({"id": "Y", "match": [{"job": "lint"}]}, {}))
 
+    def _stub_gh(self, answer):
+        """Offline gh(): answer(path) -> body; every served path is recorded. CACHE is cleared around the test."""
+        from unittest import mock
+        served = []
+        harvest.CACHE.clear()
+        self.addCleanup(harvest.CACHE.clear)
+
+        def fake(path):
+            served.append(path)
+            return answer(path)
+        patcher = mock.patch.object(harvest, "gh", fake)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return served
+
+    @staticmethod
+    def _page(path):
+        return int(re.search(r"[?&]page=(\d+)", path).group(1))
+
+    def test_failed_jobs_reads_past_the_first_page(self):
+        # 2026-10-24: ABACUS main had 121 check runs; the single per_page=100 read missed failures 101-121.
+        repo, sha = "GBOGEB/stub", "a" * 40
+        url = "https://github.com/GBOGEB/stub/actions/runs/1/job/{}"
+        runs = [{"id": i, "conclusion": "failure" if i in (7, 105, 121) else "success", "html_url": url.format(i)} for i in range(1, 122)]
+
+        def answer(path):
+            if "/check-runs?" in path:
+                n = self._page(path)
+                return {"total_count": 121, "check_runs": runs[(n - 1) * 100:n * 100]}
+            return {"id": int(path.rsplit("/", 1)[1]), "name": "job"}
+        served = self._stub_gh(answer)
+        self.assertEqual([j["id"] for j in harvest.failed_jobs_for_sha(repo, sha)], [7, 105, 121])
+        self.assertEqual(sum("/check-runs?" in p for p in served), 2, "exactly two pages for 121 runs")
+
+    def test_check_run_pages_fail_closed(self):
+        repo, sha = "GBOGEB/stub", "b" * 40
+        runs = [{"id": i, "conclusion": "failure", "html_url": "https://x/actions/runs/1/job/1"} for i in range(1, 101)]
+        # page 2 comes back empty although total_count says 121: never return a short list
+        served = self._stub_gh(lambda path: {"total_count": 121, "check_runs": runs if self._page(path) == 1 else []})
+        with self.assertRaisesRegex(RuntimeError, "read 100 distinct of total_count 121"):
+            harvest.failed_jobs_for_sha(repo, sha)
+        self.assertFalse(any("/actions/jobs/" in p for p in served), "no job is read from a short census")
+
+    def test_check_run_total_growing_mid_read_is_accepted(self):
+        # A live head gains runs between pages (2026-10-25: ABACUS main 807 -> 811 within one read).
+        # Every run that existed when the read began is held, the duplicate shifted onto page 2 is dropped.
+        repo, sha = "GBOGEB/stub", "c" * 40
+        runs = [{"id": i, "conclusion": "success", "html_url": ""} for i in range(1, 103)]
+        pages = {1: (101, runs[1:101]), 2: (102, runs[100:102]), 3: (102, [])}  # run 1 lands after page 1 is read
+        self._stub_gh(lambda path: dict(zip(("total_count", "check_runs"), pages[self._page(path)])))
+        self.assertEqual(len(harvest.check_runs_for_sha(repo, sha)), 101)
+
+    def test_check_run_total_falling_mid_read_restarts_then_fails_closed(self):
+        # A run vanished mid-read (e.g. superseded by a rerun): later pages shift back and a run can be skipped.
+        repo, sha = "GBOGEB/stub", "d" * 40
+        runs = [{"id": i, "conclusion": "success", "html_url": ""} for i in range(1, 103)]
+        pages = {1: (102, runs[:100]), 2: (101, runs[101:102]), 3: (101, [])}  # run 101 skipped by the shift
+        served = self._stub_gh(lambda path: dict(zip(("total_count", "check_runs"), pages[self._page(path)])))
+        with self.assertRaisesRegex(RuntimeError, "read 101 distinct of total_count 102/101"):
+            harvest.check_runs_for_sha(repo, sha, attempts=2)
+        self.assertEqual(sum(p.endswith("page=1") for p in served), 2, "the read restarts from page 1")
+
+    def test_gh_retries_transport_errors_but_not_4xx(self):
+        from types import SimpleNamespace
+        from unittest import mock
+        harvest.CACHE.clear()
+        self.addCleanup(harvest.CACHE.clear)
+        flaky = [SimpleNamespace(returncode=1, stdout="", stderr="dial tcp: connection attempt failed"),
+                 SimpleNamespace(returncode=0, stdout='{"ok": 1}', stderr="")]
+        with mock.patch.object(harvest.subprocess, "run", side_effect=flaky) as run, mock.patch.object(harvest.time, "sleep"):
+            self.assertEqual(harvest.gh("repos/x/flaky"), {"ok": 1})
+        self.assertEqual(run.call_count, 2)
+        gone = SimpleNamespace(returncode=1, stdout="", stderr="gh: Not Found (HTTP 404)")
+        with mock.patch.object(harvest.subprocess, "run", return_value=gone) as run, mock.patch.object(harvest.time, "sleep"):
+            with self.assertRaises(RuntimeError):
+                harvest.gh("repos/x/gone")
+        self.assertEqual(run.call_count, 1, "a 404 is an answer, not a transient error")
+
     def test_probe_is_not_a_signature_match(self):
         self.assertFalse(harvest.matches({"repo": "r", "workflow": "w", "job": "j", "step": "s"}, {"probe": "ruleset_drift"}))
 

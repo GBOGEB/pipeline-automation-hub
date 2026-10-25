@@ -28,6 +28,7 @@ import json
 import re
 import subprocess
 import sys
+import time
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -44,10 +45,15 @@ SEQ_RE = re.compile(r"(?<=-)\d{3}\b")
 CACHE: dict[str, object] = {}
 
 
-def gh(path: str):
+def gh(path: str, tries: int = 4):
+    """One cached gh api read. Transport errors and 5xx are retried with backoff; 4xx fails at once."""
     if path in CACHE:
         return CACHE[path]
-    out = subprocess.run(["gh", "api", path], capture_output=True, text=True)
+    for attempt in range(tries):
+        out = subprocess.run(["gh", "api", path], capture_output=True, text=True, encoding="utf-8")
+        if out.returncode == 0 or "HTTP 4" in out.stderr or attempt == tries - 1:
+            break
+        time.sleep(2 * (attempt + 1))
     if out.returncode != 0:
         raise RuntimeError(f"gh api {path}: {out.stderr.strip()[:200]}")
     CACHE[path] = json.loads(out.stdout) if out.stdout.strip() else None
@@ -67,8 +73,37 @@ def norm(s: str) -> str:
     return SEQ_RE.sub("*", HEX_RE.sub("<sha>", s)).strip()
 
 
+def check_runs_for_sha(repo: str, sha: str, attempts: int = 3) -> list[dict]:
+    """Every check run on sha, paged against total_count. Fails closed if the pages do not add up.
+
+    A single per_page=100 read silently dropped runs past 100 (ABACUS main had 121 on 2026-10-24).
+    A head with live CI gains runs between pages (ABACUS main grew 807 -> 811 within one read on
+    2026-10-25). Runs are de-duplicated by id; a read is accepted only if total_count never fell and
+    at least the total seen on page 1 (the snapshot when the read began) was read. Otherwise the read
+    restarts uncached, up to `attempts` times, then raises.
+    """
+    paths: list[str] = []
+    for _ in range(attempts):
+        for p in paths:
+            CACHE.pop(p, None)
+        paths, runs, totals, page = [], {}, [], 1
+        while True:
+            paths.append(f"repos/{repo}/commits/{sha}/check-runs?per_page=100&page={page}")
+            body = gh(paths[-1])
+            totals.append(body["total_count"])
+            batch = body["check_runs"]
+            for r in batch:
+                runs.setdefault(r["id"], r)
+            if not batch or len(runs) >= totals[-1]:
+                break
+            page += 1
+        if totals == sorted(totals) and totals[0] <= len(runs) <= totals[-1]:
+            return list(runs.values())
+    raise RuntimeError(f"check-runs for {repo}@{sha}: read {len(runs)} distinct of total_count {'/'.join(map(str, totals))}")
+
+
 def failed_jobs_for_sha(repo: str, sha: str) -> list[dict]:
-    runs = gh(f"repos/{repo}/commits/{sha}/check-runs?per_page=100")["check_runs"]
+    runs = check_runs_for_sha(repo, sha)
     jobs = []
     for r in runs:
         if r["conclusion"] != "failure" or "/actions/runs/" not in (r.get("html_url") or ""):
