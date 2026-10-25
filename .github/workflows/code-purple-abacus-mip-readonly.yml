@@ -22,10 +22,10 @@ jobs:
   contract:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.11'
       - name: Read-only bridge and native acquisition negative controls
@@ -38,17 +38,53 @@ jobs:
     needs: contract
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      # Admission gate (CodeQL actions/cache-poisoning/poisonable-step #27, #28):
+      # this job runs on the default branch and executes ABACUS code, so only a
+      # commit already reachable from ABACUS's default branch is admitted. A
+      # dispatcher-supplied SHA from a fork PR or unmerged branch is refused
+      # before anything is checked out or executed.
+      - name: Admit only ABACUS commits reachable from its default branch
+        id: admit
+        env:
+          REQUESTED_ABACUS_SHA: ${{ inputs.abacus_sha }}
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, re, subprocess
+          requested = os.environ['REQUESTED_ABACUS_SHA']
+          if not re.fullmatch(r'[a-f0-9]{40}', requested):
+              raise SystemExit('invalid exact ABACUS source identity')
+          def api(path):
+              return json.loads(subprocess.check_output(['gh', 'api', path], text=True))
+          default = api('repos/GBOGEB/ABACUS')['default_branch']
+          compare = api(f'repos/GBOGEB/ABACUS/compare/{default}...{requested}')
+          if compare.get('status') not in ('behind', 'identical'):
+              raise SystemExit(f'ABACUS source is not on {default} (status={compare.get("status")}); refusing')
+          revision = api(f'repos/GBOGEB/ABACUS/commits/{requested}')['sha']
+          if revision != requested:
+              raise SystemExit('ABACUS source identity drift')
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as fh:
+              print(f'revision={revision}', file=fh)
+          PY
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.sha }}
           path: control
           persist-credentials: false
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Assert exact control head
+        shell: bash
+        env:
+          MISSION_CONTROL_SHA: ${{ github.sha }}
+        run: test "$(git -C control rev-parse HEAD)" = "$MISSION_CONTROL_SHA"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: GBOGEB/ABACUS
-          ref: ${{ inputs.abacus_sha }}
+          ref: ${{ steps.admit.outputs.revision }}
           path: native-abacus
           persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.11'
       - name: Acquire complete exact-SHA native runs and use canonical producer
@@ -149,7 +185,7 @@ jobs:
               json.dumps(record, sort_keys=True, indent=2)+'\n', encoding='utf-8'
           )
           PY
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: abacus-mip-supporting-${{ github.run_id }}
           path: out/

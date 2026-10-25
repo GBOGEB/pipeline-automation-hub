@@ -50,23 +50,68 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
+      # Admission gate (CodeQL actions/cache-poisoning/poisonable-step #10):
+      # this job runs on the default branch, so the dispatcher-supplied
+      # skills ref is resolved to an exact commit and admitted only when that
+      # commit is reachable from GBOGEB/skills' default branch.
+      - name: Admit only skills commits reachable from the default branch
+        id: admit
+        env:
+          REQUESTED_SKILLS_REF: ${{ inputs.skills_ref }}
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, re, subprocess
+          from urllib.parse import quote
+          requested = os.environ['REQUESTED_SKILLS_REF']
+          if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._/-]{0,199}', requested) or '..' in requested:
+              raise SystemExit('invalid GBOGEB/skills ref')
+          def api(path):
+              return json.loads(subprocess.check_output(['gh', 'api', path], text=True))
+          default = api('repos/GBOGEB/skills')['default_branch']
+          revision = api(f'repos/GBOGEB/skills/commits/{quote(requested, safe="")}')['sha']
+          if not re.fullmatch(r'[a-f0-9]{40}', revision):
+              raise SystemExit('unresolvable GBOGEB/skills ref')
+          compare = api(f'repos/GBOGEB/skills/compare/{default}...{revision}')
+          if compare.get('status') not in ('behind', 'identical'):
+              raise SystemExit(f'skills ref is not on {default} (status={compare.get("status")}); refusing')
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as fh:
+              print(f'revision={revision}', file=fh)
+          PY
       - name: Checkout orchestrator exact head
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Assert exact orchestrator head
+        shell: bash
+        env:
+          ORCHESTRATOR_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$ORCHESTRATOR_SHA"
       - name: Checkout canonical skills ref
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: GBOGEB/skills
-          ref: ${{ inputs.skills_ref }}
+          ref: ${{ steps.admit.outputs.revision }}
           path: .skill-provider
+          persist-credentials: false
       - name: Resolve skill bundle
+        env:
+          SKILL: ${{ inputs.skill }}
+          TASK_ID: ${{ inputs.task_id }}
+          SOURCE_REPO: ${{ github.repository }}
+          SOURCE_SHA: ${{ github.sha }}
+          SKILLS_REF: ${{ inputs.skills_ref }}
         run: |
           python mission-control/qps-triage-ultra/crew/resolve_crew_skill.py \
             --skills-root .skill-provider \
-            --skill '${{ inputs.skill }}' \
-            --task-id '${{ inputs.task_id }}' \
-            --source-repo '${{ github.repository }}' \
-            --source-ref '${{ github.sha }}' \
-            --skills-ref '${{ inputs.skills_ref }}' \
+            --skill "$SKILL" \
+            --task-id "$TASK_ID" \
+            --source-repo "$SOURCE_REPO" \
+            --source-ref "$SOURCE_SHA" \
+            --skills-ref "$SKILLS_REF" \
             --resolution-mode workflow_dispatch \
             --out mission-control/qps-triage-ultra/crew/SKILL_RESOLUTION_RECEIPT.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
