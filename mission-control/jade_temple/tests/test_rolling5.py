@@ -82,19 +82,23 @@ class RealDataTests(unittest.TestCase):
 
     def test_reproduces_focus5_denominator_without_credit(self):
         m = self.model["metrics"]
-        self.assertEqual((m["verified_pass"], m["gate_denominator"]), (14, 60))
-        self.assertEqual(m["verified_completion_pct"], 23.33)
+        # Latest pulse P0002 (2026-10-25); P0001 was 14/60.
+        self.assertEqual((m["verified_pass"], m["gate_denominator"]), (17, 60))
+        self.assertEqual(m["verified_completion_pct"], 28.33)
         self.assertEqual(m["nirvana_count"], 0)
         self.assertEqual(self.model["merge_admission"], "HOLD")
         self.assertFalse(self.model["release_credit"])
         self.assertFalse(self.model["authority_transfer"])
 
-    def test_h08_is_common_cause_core_focus(self):
+    def test_h08_is_core_focus(self):
+        # P0001: H08 FAIL in all five (COMMON_CAUSE). P0002: protection is active on
+        # hub, cryoplant-project and gg_MATH (H08 UNKNOWN until a RED canary), so the
+        # remaining H08 red is LOCAL to the two unprotected repos.
         red = self.model["source_red"]
         self.assertEqual(red["core_focus"], "H08")
         top = red["ranked_gates"][0]
         self.assertEqual((top["gate"], top["repo_count"], top["class"]),
-                         ("H08", 5, "COMMON_CAUSE"))
+                         ("H08", 2, "LOCAL"))
 
     def test_h03_is_common_unknown_breaking_every_golden_thread(self):
         unknown = {u["gate"]: u for u in self.model["source_red"]["common_unknown"]}
@@ -108,12 +112,12 @@ class RealDataTests(unittest.TestCase):
         self.assertEqual(w["next"], w["current"])
         self.assertEqual(w["admitted"], [])
 
-    def test_single_pulse_history_is_declared_not_extrapolated(self):
-        self.assertEqual(self.model["history_depth"], 1)
+    def test_short_history_is_declared_not_extrapolated(self):
+        # Two pulses: fewer than three, so 'unattended' is never inferred.
+        self.assertEqual(self.model["history_depth"], 2)
         for repo in self.model["repos"]:
             for s in repo["streaks"].values():
                 self.assertIsNone(s["unattended"])
-                self.assertIsNone(s["previous_streak"])
 
     def test_committed_outputs_are_in_parity(self):
         with redirect_stdout(io.StringIO()):
