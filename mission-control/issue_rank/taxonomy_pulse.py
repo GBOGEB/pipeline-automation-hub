@@ -19,7 +19,9 @@ from pathlib import Path
 import title_taxonomy as tax
 
 SCHEMA = "jade.taxonomy-pulse.v1"
-RANK_SCHEMAS = frozenset(("jade.issue-rank.v1", "jade.issue-rank.v2"))
+RANK_SCHEMA = "jade.issue-rank.v1"
+# issue_rank method v2 (jade.issue-rank.v2) keeps every field this reader uses.
+RANK_SCHEMAS = frozenset((RANK_SCHEMA, "jade.issue-rank.v2"))
 JADE_REPOS = {"ABACUS", "CODEX", "cryoplant-project", "pipeline-automation-hub"}
 SHA = re.compile(r"^[0-9a-f]{40}$", re.I)
 

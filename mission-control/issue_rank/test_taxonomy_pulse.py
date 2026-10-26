@@ -32,7 +32,7 @@ def item(repo, number, title, kind="Issue", private=None):
 
 def model(items=None, at=TIME, heads=None):
     return {
-        "schema": "jade.issue-rank.v2", "fetched_at": at,
+        "schema": pulse.RANK_SCHEMA, "fetched_at": at,
         "heads": copy.deepcopy(HEADS if heads is None else heads),
         "items": copy.deepcopy(items if items is not None else [
             item(HUB, 1, "fix(jade devops): census fails closed when blobs are missing", "PullRequest"),

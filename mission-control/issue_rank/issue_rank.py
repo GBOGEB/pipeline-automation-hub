@@ -1691,10 +1691,14 @@ def _fmt_pct(x):
 
 def write_outputs(out: Path, model: dict, delta: dict, *,
                   previous_model: dict | None = None, parser_sha: str | None = None,
-                  previous_parser_sha: str | None = None) -> dict[str, str]:
-    """Write taxonomy pulse through the existing single-writer output manifest."""
+                  previous_parser_sha: str | None = None, pulse_model: dict | None = None) -> dict[str, str]:
+    """Write taxonomy pulse through the existing single-writer output manifest.
+
+    ``pulse_model`` is the unredacted model: taxonomy_pulse validates source
+    identities and heads first, then drops private material itself (public=True).
+    """
     out.mkdir(parents=True, exist_ok=True)
-    pulse = tp.build(model, previous_model, public=True, parser_sha=parser_sha,
+    pulse = tp.build(pulse_model or model, previous_model, public=True, parser_sha=parser_sha,
                      previous_parser_sha=previous_parser_sha)
     files = {"issue_rank.json": canonical(model), "issue_rank.csv": to_csv(model).encode("utf-8"),
              "issue_rank.html": render_html(model, delta).encode("utf-8"), "delta.json": canonical(delta),
@@ -1757,6 +1761,8 @@ def main(argv=None) -> int:
         p.add_argument("--draws", type=int, default=MC_DRAWS, help="Monte Carlo draws (0 disables)")
         p.add_argument("--overlay", type=Path, action="append", default=None,
                        help="owner priority overlay JSON (repeatable); default overlay.json and out/overlay_private.json")
+        p.add_argument("--parser-sha", help="exact checked-out taxonomy producer 40-hex SHA")
+        p.add_argument("--previous-parser-sha", help="previous checked-out taxonomy producer SHA")
     v = sub.add_parser("verify-ledger")
     v.add_argument("--ledger", type=Path, default=DEFAULT_OUT / "jade" / "ledger.jsonl")
     args = ap.parse_args(argv)
@@ -1787,13 +1793,18 @@ def main(argv=None) -> int:
         prev = json.loads(last.read_text(encoding="utf-8")) if last.exists() else None
     model = rank(snap, overlay=load_overlay(args.overlay), draws=args.draws)
     delta = diff(prev, model)
+    full = model
+    if prev and any(h.get("private") and not h.get("head_sha") for h in prev.get("heads", {}).values()):
+        prev = None  # a redacted previous model cannot be source-validated: no taxonomy comparison
     if args.redact_private:
         private_refs = {i["key"] for i in model["items"] if i.get("private")}
         if isinstance(delta.get("taxonomy_moves"), list):
             delta["taxonomy_moves"] = [d for d in delta["taxonomy_moves"]
                                        if d["key"] not in private_refs]
         model, delta = redact(model, delta)
-    digests = write_outputs(out, model, delta)
+    digests = write_outputs(out, model, delta, previous_model=prev, pulse_model=full,
+                            parser_sha=args.parser_sha,
+                            previous_parser_sha=args.previous_parser_sha)
     if args.cmd == "run":
         row = append_ledger(out / "ledger.jsonl", {
             "snapshot_sha256": sha256(canonical(snap)), "outputs": digests,
