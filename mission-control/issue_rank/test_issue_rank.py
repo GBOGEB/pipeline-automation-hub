@@ -1,11 +1,14 @@
 """Contract tests for issue_rank on synthetic snapshots (no network, no private data)."""
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import issue_rank as ir  # noqa: E402
@@ -111,6 +114,10 @@ class Refs(unittest.TestCase):
         r = ir.extract_refs("- [x] #11 done\n- [ ] #12 open", HUB)
         self.assertEqual([(x["number"], x["kind"], x["ticked"]) for x in r], [(11, "CHILD", True), (12, "CHILD", False)])
 
+    def test_dropped_checklist_ref_is_not_a_child(self):
+        r = ir.extract_refs("- [~] #13 obsolete\n- [-] #14", HUB)
+        self.assertEqual([(x["number"], x["kind"], x["ticked"]) for x in r], [(13, "MENTION", None), (14, "MENTION", None)])
+
     def test_code_is_ignored(self):
         self.assertEqual(self.refs("`#99` and\n```\n#98\n```"), [])
 
@@ -185,6 +192,12 @@ class Rank(unittest.TestCase):
         self.assertEqual(lane["pipeline-automation-hub#10"], "FIX_RED")
         self.assertEqual(lane["pipeline-automation-hub#11"], "MERGE_READY")
         self.assertEqual(lane["cryoplant-project#7"], "NOT_STARTED")
+
+    def test_approved_pr_with_pending_checks_is_not_merge_ready(self):
+        for checks in ("PENDING", "EXPECTED", None):
+            with self.subTest(checks=checks):
+                m = ir.rank(snapshot([pr(HUB, 20, checks=checks, review="APPROVED")]))
+                self.assertEqual(m["items"][0]["lane"], "AWAIT_CHECKS")
 
     def test_scores_ranks_and_authority(self):
         self.assertEqual([i["rank_global"] for i in self.m["items"]], list(range(1, len(self.m["items"]) + 1)))
@@ -291,6 +304,19 @@ class Fetch(unittest.TestCase):
         m = ir.rank(snap)
         self.assertEqual(m["items"][0]["linked_prs"][0]["pr"], "GBOGEB/r#9")
         self.assertNotIn("GBOGEB/r#50", {e["target"] for e in m["edges"]})
+
+    def test_redacted_run_persists_no_raw_snapshot(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(ir, "Gh", FakeGh), \
+                contextlib.redirect_stdout(io.StringIO()):
+            out = Path(d) / "jade"
+            out.mkdir()
+            (out / "snapshot.json").write_text("{\"stale\": \"raw private body\"}", encoding="utf-8")
+            self.assertEqual(ir.main(["run", "--repos", "r", "--out", d, "--redact-private"]), 0)
+            self.assertFalse((out / "snapshot.json").exists())
+            self.assertTrue((out / "issue_rank.json").exists())
+            self.assertEqual(ir.verify_ledger(out / "ledger.jsonl"), 1)
+            ir.main(["run", "--repos", "r", "--out", d])
+            self.assertTrue((out / "snapshot.json").exists())
 
 
 if __name__ == "__main__":
