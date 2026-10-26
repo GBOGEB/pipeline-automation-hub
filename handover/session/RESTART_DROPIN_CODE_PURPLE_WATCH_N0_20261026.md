@@ -61,9 +61,7 @@ The original monitored PRs, ABACUS #1998/#1990/#1989/#1994/#1997 and Mission Con
   - Main has executable-inventory drift.
   - Reconciliation branch `f72fbd3d` passed 98 bounded invocations; that is not a main recovery.
   - Workflow GREEN over a Ruff/governance RED remains a blocker.
-- **QPS (aggregate only).**
-  - JADE: 61/61 tests; 728/934 statements, 108/164 branches.
-  - Open: W163 namespace (a candidate fix is open), Debug DAG producer collision, lineage duplicates 110/111, owner acceptance.
+- **QPS.** Owner-only (`RESTRICTED_OWNER_RETURN`): read QPS state inside `cryoplant-project` with authorized access. Never copy private counts, identifiers or defect titles into this public repo; publish only an approved receipt pointer or `UNKNOWN`. Owner acceptance WITHHELD.
 - **gg_MATH.** No new qualifying transition.
 - **Readiness.** PC3 2/5. M1/M2/M3 PARTIAL/HOLD/HOLD. PCA/BT NOT ASSESSABLE. Worker-hours UNKNOWN.
 

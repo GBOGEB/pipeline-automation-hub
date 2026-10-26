@@ -60,9 +60,13 @@
   "531": "2026-10-15T10:19:30Z",
   "533": "2026-10-15T10:29:05Z"
  },
- "private_repos_projection": "cryoplant-project rows projected with mission-control/jade_temple/tools/private_boundary.py",
+ "private_repos_projection": "cryoplant-project is RESTRICTED_OWNER_RETURN (mission-control/v2/handoff/CENSUS_PULL_ROUTING_V2.md): no private rows in this public session state; head shown as PRIVATE_AGGREGATE_ONLY only.",
  "related_checkpoints": [
   "mission-control/jade_temple/DROPIN_NEXT_CHAT.md",
   "handover/session/LOSSLESS_HANDOVER_CODE_PURPLE_WATCH_N0_20261026.md"
- ]
+ ],
+ "ledger_privacy_enforcement": {
+  "EVIDENCE_LEDGER_N0.jsonl": "NOT covered by private_boundary.py --check (it scans jade_temple/data and site JSON only). Rule: append public-repo rows only; never append cryoplant-project or other private-repo rows. Enforcement belongs in the owner module in its own PR.",
+  "status": "MANUAL_RULE_ONLY"
+ }
 }

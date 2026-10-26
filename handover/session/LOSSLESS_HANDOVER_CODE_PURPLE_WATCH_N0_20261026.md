@@ -12,7 +12,7 @@ Restart from [RESTART_DROPIN_CODE_PURPLE_WATCH_N0_20261026.md](RESTART_DROPIN_CO
 - **N0 observed**: read from the GitHub API by the N0 session on 2026-10-26 around 00:22–00:35Z (Section 4).
 - **UNKNOWN** means not read or not readable. It is never zero, PASS or absence.
 
-`cryoplant-project` (QPS) is private and this hub is public. Following `mission-control/jade_temple/tools/private_boundary.py` and `gogreen/token_census/REGISTRY.json`, QPS commit SHAs, run, job, PR and issue numbers are shown as `PRIVATE_AGGREGATE_ONLY`. Counts, statuses and workflow or wave names are kept.
+`cryoplant-project` (QPS) is private and this hub is public. QPS evidence is transport class `RESTRICTED_OWNER_RETURN` ([CENSUS_PULL_ROUTING_V2.md](../../mission-control/v2/handoff/CENSUS_PULL_ROUTING_V2.md)): no private SHA, identifier, count, defect title or workload summary is committed here. QPS rows carry only `PRIVATE_AGGREGATE_ONLY` or `UNKNOWN` (public) and point to the QPS owner's own records. The looser count-preserving projection in `jade_temple/tools/private_boundary.py` applies to public JADE outputs only and is not used for this handover.
 
 ## 1. Last reported repository identities (reported, not re-verified)
 
@@ -78,15 +78,10 @@ Both newer runs pass 18 lane-process cases, series `W1.C1.I3.S1`. Generated size
 - **Reconciliation branch** `f72fbd3d3ec387fd65f1ccc7d1b58e048185f7d5`: 98 bounded N7–N10 test invocations passed. N7 coverage was 495/512 statements and 114/136 branches, with 49 unresolved registration-debt entries.
 - **Admission blockers.** Workflow SUCCESS over a failed Ruff/governance receipt stays an admission blocker. Synthetic-merge executions are kept separate from exact-PR-head executions.
 
-### QPS: engineering source and runtime controls are independent (aggregate only)
+### QPS: owner-only evidence (`RESTRICTED_OWNER_RETURN`)
 
-- **JADE.** The last reported main JADE proof passed 61/61 tests; selected scope covered 728/934 statements and 108/164 branches.
-- **Open concerns:**
-  - W163 unregistered G-prefix identifier;
-  - Debug DAG producer-name collision;
-  - duplicated current lineage identities 110/111;
-  - owner acceptance;
-  - operational qualification of the merged issue-write guard.
+- Test, coverage and open-defect state: `UNKNOWN` in public. The retired watch's QPS observations stay with the QPS engineering owner in `cryoplant-project`; no public receipt pointer has been approved yet.
+- Owner acceptance: WITHHELD.
 - Bidder originals, RTM, OCD/ADR, offer analysis and release decisions stay under QPS owner control only. Neither a federation dashboard nor a passing software test may promote them.
 
 ### gg_MATH
@@ -120,7 +115,7 @@ Two governance observations stay separate, and neither overwrites the other:
 | ABACUS W76 target assets covered | 0/10 | 10/10 | Targeted, source-blob-matched recovery |
 | ABACUS W44 statements / branches | 240/260 · 102/120 | 248/260 · 110/120 | Matched test-selection expansion |
 | CODEX focused statements / branches | 177/193 · 46/58 | unchanged | No change |
-| QPS JADE matched statements / branches | 728/934 · 108/164 | unchanged | No change |
+| QPS | `UNKNOWN` (public) | `UNKNOWN` (public) | Owner-only; not reported here |
 | ABACUS Flake8 raw findings | 15,726 | 15,517 | Raw census change across different revisions; not source-matched |
 | Method Atlas lane-process cases | 16 | 18 | Expanded contract; not a common-cohort uplift |
 | #531 fresh authenticated breadth | 0/42 | 0/42 | No progress |
@@ -156,7 +151,7 @@ Default heads were read once at about 00:22Z:
 
 - **#531 census.** The last run is still `40244674158` at the old `master` `e4b901a`. It has failed on every hourly schedule; fresh breadth is 0/42. This root (repeated cross-repo HTTP 401) is a STABLE_HOLD candidate.
 - **#858.** First-Pass run `40246756160` failed at both attempt 1 and attempt 2 at the same head `df38b253f82ccddd5dab426d625f6a5dfc13a43f`. That makes it persistent, not a flake.
-- **QPS.** One open candidate fix targets the W163 namespace control; its 14 PR-level runs succeeded. It is unmerged, so there is no main credit.
+- **QPS.** Default head unchanged. PR and run activity: owner-only, `UNKNOWN` in public. No main credit.
 
 ### Discrepancies
 
