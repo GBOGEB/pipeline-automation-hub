@@ -26,7 +26,7 @@ HEX64 = re.compile(r"[0-9a-f]{64}\Z")
 SHA40 = re.compile(r"[0-9a-f]{40}\Z")
 CLASSES = frozenset("ABCD")
 CHECK_KEYS = frozenset({
-    "source_native_verified", "qps_owner_verified", "qps_native",
+    "source_native_verified", "qps_owner_verified", "source_cohort_complete", "qps_native",
     "security", "independent_review", "required_checks",
     "last_push_approval", "stale_dismissal", "threads_resolved",
     "up_to_date", "blocked_red_canary", "matched_coverage",
@@ -134,7 +134,7 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,
             "signed completion / issued clock")
     c = exact(a["checks"], CHECK_KEYS, "checks")
     for k in ("source_native_verified", "qps_owner_verified",
-              "independent_review", "last_push_approval",
+              "source_cohort_complete", "independent_review", "last_push_approval",
               "stale_dismissal", "threads_resolved", "up_to_date",
               "blocked_red_canary", "matched_coverage",
               "authenticated_missioncontrol"):
@@ -164,7 +164,8 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,
                                     "REQUIRED_RECEIPT_RECOVERY_CANDIDATE"}),
                 "A requires governed parent and a recovered named QPS edge")
     elif cls == "B":
-        require(baseline is not None and type(baseline) is dict, "B baseline absent")
+        require(baseline is not None and type(baseline) is dict
+                and c["source_cohort_complete"], "B baseline/cohort completeness absent")
         decision.validate(baseline)
         require(a["baseline_sha256"] == decision._digest(baseline),
                 "B signed baseline mismatch")
@@ -302,6 +303,42 @@ def _insert_native(db: sqlite3.Connection, event: dict) -> tuple[str, bool]:
     return eid, True
 
 
+def _check_latest_baseline(db: sqlite3.Connection, event: dict,
+                           baseline: dict) -> None:
+    """Class B must use the immediately prior persisted native event in lane.
+
+    The owner-side signature additionally attests completeness of the
+    underlying source cohort. Database order alone cannot prove that GitHub
+    returned all eligible jobs when the native API was inaccessible.
+    """
+    current_id, lane = _source_key(event)
+    previous_id, previous_lane = _source_key(baseline)
+    require(lane == previous_lane, "B previous lane mismatch")
+    previous_row = db.execute(
+        "SELECT payload_sha256 FROM native_observations WHERE event_key=?",
+        (previous_id,)).fetchone()
+    immutable = copy.deepcopy(baseline)
+    immutable["native"].pop("observed_at")
+    require(previous_row is not None and previous_row[0] == digest(immutable),
+            "B predecessor not present with immutable native evidence")
+    n = event["native"]
+    current_order = (utc(n["completed_at"]), n["run_id"], n["attempt"], n["job_id"])
+    nearest = None
+    nearest_id = None
+    for eid, payload in db.execute(
+            "SELECT event_key,payload_json FROM native_observations WHERE lane=?",
+            (lane,)):
+        if eid == current_id:
+            continue
+        previous = json.loads(payload)["native"]
+        ordering = (utc(previous["completed_at"]), previous["run_id"],
+                    previous["attempt"], previous["job_id"])
+        if ordering < current_order and (nearest is None or ordering > nearest):
+            nearest, nearest_id = ordering, eid
+    require(nearest_id == previous_id,
+            "B baseline is not immediately preceding native observation")
+
+
 def observe(db: sqlite3.Connection, event: dict) -> dict:
     """Store public native evidence without inventing a new QPS transition."""
     db.execute("BEGIN IMMEDIATE")
@@ -326,7 +363,10 @@ def record(db: sqlite3.Connection, event: dict, candidate: dict,
     eid, child, root = q["event_key"], q["child_token"], q["dependency_token"]
     db.execute("BEGIN IMMEDIATE")
     try:
+        verify(db, key)
         _insert_native(db, event)
+        if q["class"] == "B":
+            _check_latest_baseline(db, event, baseline)
         row = db.execute(
             "SELECT proof_digest FROM observations WHERE event_key=? AND child_token=?",
             (eid, child)).fetchone()
