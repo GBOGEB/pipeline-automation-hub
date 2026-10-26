@@ -23,6 +23,15 @@ class TitleParsing(unittest.TestCase):
         self.assertEqual(r["path"], "feat/test/fix/W51/C0")
         self.assertEqual(r["prefix_segments"][2]["depth"], 2)
 
+    def test_markdown_heading_qualifier_chains(self):
+        self.assertEqual(tax.parse_title("metrics: #### ###(fix) refresh metrics")["path"],
+                         "metrics/fix")
+        self.assertEqual(tax.parse_title("metrics: ###(fix(test W51-C0)) repair")["path"],
+                         "metrics/fix/test/W51/C0")
+        self.assertEqual(tax.parse_title("metrics: (draft) ordinary prose")["path"],
+                         "metrics")
+        self.assertEqual(tax.parse_title("metrics: #123 reference")["path"],
+                         "metrics")
     def test_issue_brackets_waves_and_safety(self):
         i = tax.parse_title("[U14] Main red since 2026-10-18: import networkx")
         self.assertEqual(i["path"], "UNCLASSIFIED/U14")
