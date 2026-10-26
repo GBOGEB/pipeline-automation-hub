@@ -83,4 +83,14 @@ class ParserN2(unittest.TestCase):
   p=m.project(c);self.assertEqual(p["issues"][A+"#1"]["blocker_candidates"],1)  # both sides declare one pair;self.assertEqual(p["issues"][A+"#2"]["dependent_candidates"],1)
   self.assertEqual(p["issues"][A+"#2"]["parked_intent"]["id"],"U12");self.assertIsNone(p["issues"][A+"#1"]["parked_intent"])
   self.assertEqual(m.parked_intent("<!-- parked-intent:v1 {bad json} -->")["valid"],False)
+ def test_codex_p2_fixes(self):
+  self.assertEqual(self.refs("> ```\n> blocked by #2\n> ```\nsee #1"),[(B+"#1","TEXT_ASSOCIATION")])
+  self.assertIsNone(m.checklist("> ```\n> - [ ] quoted example\n> ```")["OTHER"]["progress"])
+  self.assertEqual(self.refs("example: ``blocked by #3`` and ```x `#4` y```, see #5"),[(B+"#5","TEXT_ASSOCIATION")])
+  c=sample();c["issues"][0]["body"]="";c["issues"][1]["body"]="This blocks #1"
+  self.assertEqual(m.project(c)["metrics"]["candidate_dependency_links_in_scope"],1)
+ def test_withdrawn_items_declare_nothing(self):
+  got=self.refs("- [~] depends on #15\n- [-] blocks #17\n- [~] superseded by #18\n- [ ] ~~depends on #19~~",home=A)
+  self.assertEqual({k for _,k in got},{"TEXT_ASSOCIATION"})
+  self.assertEqual(self.refs("- [-] closes #16",home=A,pr=True),[(A+"#16","PR_ASSOCIATION")])
 if __name__=="__main__":unittest.main()
