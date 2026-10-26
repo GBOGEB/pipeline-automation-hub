@@ -108,7 +108,8 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,
     exact(envelope, {"attestation", "signature"}, "signed proof")
     a = exact(envelope["attestation"], {
         "schema", "class", "effect", "event_key", "source_sha",
-        "run_id", "attempt", "job_id", "completed_at", "issued_at", "baseline_sha256",
+        "run_id", "attempt", "job_id", "completed_at", "issued_at",
+        "candidate_sha256", "baseline_sha256",
         "child_token", "dependency_token", "receipt_token", "checks",
     }, "attestation")
     require(a["schema"] == SCHEMA, "attestation schema")
@@ -120,6 +121,9 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,
         _hex(a[k], k)
     _hex(a["source_sha"], "source SHA", sha=True)
     require(a["event_key"] == event_key, "signed event mismatch")
+    _hex(a["candidate_sha256"], "candidate digest")
+    require(a["candidate_sha256"] == digest(candidate),
+            "signed candidate justification mismatch")
     require(a["source_sha"] == event["identity"]["checkout_sha"],
             "signed source checkout mismatch")
     n = event["native"]
@@ -425,8 +429,14 @@ def acknowledge(db: sqlite3.Connection, notification_id: str, provider_digest: s
         raise
 
 
-def verify(db: sqlite3.Connection, key: bytes | None = None) -> dict:
-    """Verify local append-only audit chain and optional owner MAC integrity."""
+def verify(db: sqlite3.Connection, key: bytes | None = None,
+           expected_root: str | None = None) -> dict:
+    """Verify audit chain, owner MAC and (when independently anchored) final root.
+
+    This DB is append-only by application contract, not tamperproof against a
+    database administrator. A separately stored trusted expected_root detects
+    truncation or rollback of a correctly chained ledger.
+    """
     previous = None
     count = 0
     for parent, entry, action, event_key, payload in db.execute(
@@ -436,6 +446,9 @@ def verify(db: sqlite3.Connection, key: bytes | None = None) -> dict:
                 digest([parent, action, event_key, payload]) == entry,
                 "audit chain tampering")
         previous, count = entry, count + 1
+    if expected_root is not None:
+        _hex(expected_root, "trusted external audit root")
+        require(previous == expected_root, "audit root rollback / mismatch")
     native = 0
     for checksum, payload in db.execute(
             "SELECT payload_sha256,payload_json FROM native_observations"):
