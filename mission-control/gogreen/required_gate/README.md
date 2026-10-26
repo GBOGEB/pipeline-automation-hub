@@ -33,6 +33,9 @@ Anything else is `OBSERVED` with the reason codes that held it back (`RED_NOW_MA
 - **Polling.** One `/actions/runs?head_sha=` listing per poll, however many gates are watched. N+8 made one call per gate per poll.
 - **Visibility.** `OBSERVED` gates are snapshot when the enforced ones finish: a red one becomes a `::warning`, never a failure. Unlisted workflows are reported as such. The gate never waits for itself.
 - **Fail closed.** An enforced gate with no terminal run on the exact head by the deadline fails.
+- **Latest run (#886).** A gate's verdict comes from the run that *started* last (`run_started_at`, then `created_at`, attempt, id). A re-run keeps its `created_at` but gets a new start time, so it beats an older run. Every applicable enforced gate is re-read on every poll, so a gate re-run while the aggregator waits decides the verdict.
+- **Deciding run (#886).** Each gate records its deciding run (`run`: id, attempt, conclusion, link to that attempt). The `::error` line and the job-summary table link it. The full JSON goes only to `--out` (uploaded as an artifact).
+- **Re-check (#886).** `gogreen-required-gate-recheck.yml` runs on `workflow_run: completed` of the enforced gates. When a gate succeeds on a PR head, `gate.py recheck` re-runs the latest *failed* aggregator run on that head (`actions: write`; the only write), so re-running a red gate turns this check green without a manual re-run. It runs from the default branch (checks out `github.sha` and asserts it) and so only takes effect after merge. Its trigger list is generated: `python mission-control/gogreen/required_gate/gate.py recheck-names --write` after the ledger changes; `test_gate.py` fails while it is out of sync.
 
 ## Depth census (N+10, `depth.py`)
 
