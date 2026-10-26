@@ -32,6 +32,51 @@ PROGRAMS = {
     "keb": "KEB", "bd": "BD", "devops": "DEVOPS", "watch": "WATCH",
     "fpc": "FPC", "codepurple": "CODE_PURPLE", "code-purple": "CODE_PURPLE",
 }
+
+# Explicit vocabulary for non-exclusive semantic themes. The source is the
+# title and labels only; these are heuristic associations, never typed edges.
+TOPIC_FAMILIES = {
+    "jade-devops": ("jade devops", "jade-devops", "jade/devops"),
+    "gogreen": ("gogreen", "go green", "go-green"),
+    "code-purple": ("code purple", "code-purple", "code_purple"),
+    "everred": ("everred",), "p-process": ("p-process", "p proces", "p-proces"),
+    "handover": ("handover", "hand-off", "handoff"),
+    "watch": ("watch", "watcher"), "jade": ("jade", "jade temple"),
+    "bread-butter": ("bread and butter", "bread & butter", "bnb"),
+    "qps": ("qps", "cryoplant"), "mycelium": ("mycelium",),
+    "federation": ("federation", "federated", "mesh"),
+    "rtm": ("rtm", "requirements traceability"), "ocd": ("ocd",),
+    "adr": ("adr",), "rfi": ("rfi",), "ldab": ("ldab", "lldb"),
+    "dmaic": ("dmaic", "mip"), "testpilot": ("testpilot", "test pilot"),
+}
+TECHNICAL_CLUSTERS = {
+    "census": ("census", "recensus", "inventory"),
+    "telemetry": ("telemetry", "metrics", "statistics", "dashboard", "kpi"),
+    "integrity": ("integrity", "hash chain", "hash-chain", "signed payload", "outbox"),
+    "fail-closed": ("fail closed", "fail-closed", "missing blob", "missing blobs"),
+    "governance": ("governance", "ruleset", "protection", "branch protection"),
+    "admission": ("admission", "merge gate", "required gate", "canary"),
+    "first-red": ("first red", "first-red", "root red", "root-red"),
+    "coverage": ("coverage", "changed line", "changed-line"),
+    "security": ("security", "codeql", "bandit", "privacy", "secret"),
+    "review": ("review", "approval", "disposition"),
+    "ci": ("ci", "workflow", "runner", "checks"),
+    "handover": ("handover", "handoff", "lossless"),
+    "release": ("release", "point release", "deployment", "publish", "pages"),
+    "dependencies": ("dependabot", "dependency", "dependencies", "deps"),
+    "documentation": ("documentation", "docs", "readme"),
+    "cost": ("commercial", "cost", "capex", "opex", "pricing", "mto"),
+    "engineering": ("mass flow", "thermal", "cryogenic", "icd", "fat", "sat"),
+    "source": ("master_input", "source-bound", "provenance", "sha", "receipt"),
+    "retirement": ("retire", "supersede", "archive"),
+}
+
+def _matches(text: str, definitions: dict) -> list[str]:
+    return sorted(key for key, aliases in definitions.items()
+                  if any(re.search(r"(?<![a-z0-9])" + re.escape(alias.casefold())
+                                   + r"(?![a-z0-9])", text.casefold())
+                         for alias in aliases))
+
 CODE = re.compile(
     r"(?:W\d+[A-Za-z0-9]*|N\+?\d+[A-Za-z0-9]*|C\d+[A-Za-z0-9]*"
     r"|U\d+[A-Za-z0-9]*|R\d+[A-Za-z0-9]*|J\d+[A-Za-z0-9]*"
@@ -140,7 +185,7 @@ def _frontmatter(text: str, tags: list[dict], warnings: list[str]) -> str:
     return rest
 
 
-def parse_title(title: str | None, item_type: str | None = None) -> dict:
+def parse_title(title: str | None, item_type: str | None = None, labels=()) -> dict:
     """Conservative prefix recursion: never infer primary family from body prose."""
     raw = title if isinstance(title, str) else ""
     text, warnings, flags, tags = raw.strip(), [], [], []
@@ -148,7 +193,8 @@ def parse_title(title: str | None, item_type: str | None = None) -> dict:
         return {"schema": SCHEMA, "family": "UNCLASSIFIED", "subfamily": None,
                 "path": "UNCLASSIFIED", "prefix_segments": [], "raw_prefix": "",
                 "remaining_title": "", "programmes": [], "codes": [], "priority": None,
-                "policy_flags": [], "lint": ["EMPTY_TITLE"], "classification": "UNCLASSIFIED"}
+                "policy_flags": [], "topic_families": [], "technical_clusters": [],
+                "lint": ["EMPTY_TITLE"], "classification": "UNCLASSIFIED"}
     if len(text) > MAX_CHARS:
         warnings.append("TITLE_TOO_LONG_TRUNCATED_FOR_PARSING")
         text = text[:MAX_CHARS]
@@ -198,6 +244,11 @@ def parse_title(title: str | None, item_type: str | None = None) -> dict:
         warnings.append("NO_EXPLICIT_ACTION_FAMILY")
     if len(actions) > 1:
         warnings.append("NESTED_ACTION_FAMILIES_RETAINED")
+    labels_text = " ".join(l if isinstance(l, str) else str(l.get("name", ""))
+                           for l in (labels or []))
+    semantic_text = raw + " " + labels_text
+    topic_families = _matches(semantic_text, TOPIC_FAMILIES)
+    technical_clusters = _matches(semantic_text, TECHNICAL_CLUSTERS)
     return {
         "schema": SCHEMA, "family": family,
         "subfamily": next((v for v in segments[1:] if v not in codes), None),
@@ -205,6 +256,8 @@ def parse_title(title: str | None, item_type: str | None = None) -> dict:
         "prefix_segments": tags, "raw_prefix": raw[:max(0, len(raw) - len(text))].strip(),
         "remaining_title": text.strip(), "programmes": programmes,
         "codes": codes, "priority": priority, "policy_flags": flags,
+        "topic_families": topic_families,
+        "technical_clusters": technical_clusters,
         "lint": sorted(set(warnings)),
         "classification": "EXPLICIT_ACTION" if actions else "CODES_ONLY" if tags else "UNCLASSIFIED",
     }
@@ -217,6 +270,8 @@ def summary(items: list[dict]) -> dict:
     hierarchy = defaultdict(Counter)
     programmes = defaultdict(Counter)
     codes = defaultdict(Counter)
+    topics = defaultdict(Counter)
+    clusters = defaultdict(Counter)
     classifications, lint, types = Counter(), Counter(), Counter()
     for item in items:
         obj = item.get("title_taxonomy") or parse_title(item.get("title"), item.get("type"))
@@ -231,6 +286,10 @@ def summary(items: list[dict]) -> dict:
             programmes[name][kind] += 1
         for name in set(obj["codes"]):
             codes[name][kind] += 1
+        for name in set(obj.get("topic_families", [])):
+            topics[name][kind] += 1
+        for name in set(obj.get("technical_clusters", [])):
+            clusters[name][kind] += 1
         classifications[obj["classification"]] += 1
         lint.update(obj["lint"])
     def compact(group):
@@ -242,6 +301,8 @@ def summary(items: list[dict]) -> dict:
         "leaf_clusters": compact(leaf), "hierarchy_nodes_nonadditive": compact(hierarchy),
         "programmes_nonexclusive": compact(programmes),
         "codes_nonexclusive": compact(codes),
+        "topic_families_nonexclusive": compact(topics),
+        "technical_clusters_nonexclusive": compact(clusters),
         "classification": dict(sorted(classifications.items())),
         "lint": dict(sorted(lint.items())), "family_counts_additive_only": True,
         "hierarchy_nodes_additive": False, "merge_admission_authority": False,
