@@ -249,6 +249,51 @@ class Telemetry(unittest.TestCase):
                 ir.verify_ledger(path)
 
 
+
+    def test_taxonomy_pulse_output_is_hashed_by_existing_single_writer(self):
+        current = ir.rank(fixture())
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            hashes = ir.write_outputs(out, current, {"baseline": True},
+                                      parser_sha="c" * 40)
+            self.assertIn("taxonomy_pulse.json", hashes)
+            self.assertIn("taxonomy_pulse.csv", hashes)
+            pulse = json.loads((out / "taxonomy_pulse.json").read_text(encoding="utf-8"))
+            self.assertEqual(pulse["schema"], "jade.taxonomy-pulse.v1")
+            self.assertEqual(pulse["parser_sha"], "c" * 40)
+            self.assertEqual(pulse["population"]["total"], 7)
+            self.assertNotIn(QPS, pulse["source_heads"])
+            self.assertNotIn(QPS, pulse["rollups"])
+            self.assertEqual(len(pulse["history_points"]), 1)
+            self.assertEqual(pulse["history_points"][0]["wave"], "N0")
+            self.assertIn("N0", (out / "taxonomy_pulse.csv").read_text())
+
+    def test_two_pulses_share_existing_ledger_and_do_not_claim_closed(self):
+        old = ir.rank(fixture())
+        newer_snapshot = fixture()
+        newer_snapshot["fetched_at"] = "2026-10-27T00:00:00Z"
+        newer_snapshot["repos"][HUB]["issues"][0]["title"] = "fix(watch): census fails closed"
+        now = ir.rank(newer_snapshot)
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            hashes = ir.write_outputs(out, now, ir.diff(old, now),
+                                      previous_model=old, parser_sha="c" * 40,
+                                      previous_parser_sha="c" * 40)
+            pulse = json.loads((out / "taxonomy_pulse.json").read_text())
+            self.assertEqual([p["wave"] for p in pulse["history_points"]], ["N", "N+1"])
+            self.assertTrue(pulse["delta"]["comparable"])
+            self.assertTrue(pulse["delta"]["parser_identity_comparable"])
+            self.assertIsNone(pulse["delta"]["verified_closed"])
+            self.assertEqual(pulse["formal_credit_delta"], 0)
+            csv_data = (out / "taxonomy_pulse.csv").read_text()
+            self.assertIn(",N,", csv_data)
+            self.assertIn(",N+1,", csv_data)
+            ledger = out / "ledger.jsonl"
+            row = ir.append_ledger(ledger, {"outputs": hashes})
+            self.assertEqual(row["outputs"]["taxonomy_pulse.json"], hashes["taxonomy_pulse.json"])
+            self.assertEqual(ir.verify_ledger(ledger), 1)
+
+
 class FakeGh:
     """Serves canned GraphQL pages keyed by the query's root field."""
 

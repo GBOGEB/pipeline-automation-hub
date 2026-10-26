@@ -17,6 +17,8 @@ Outputs (out/):
   rex_return.yaml    CODEX REX return (schema gbogeb-repo-rex-return/1.0): one record per root, merge key = signature
   register.md        human register
 
+Private repos (gh api repos/<r> says private, or the lookup fails) count in every metric but are
+published as counts only (`private_aggregate`); none of their rows reach any output.
 Metrics follow EVERRED §9: unknown denominators produce "UNKNOWN", never 0.
 Usage: python harvest.py [roots.yaml] [--merged 20] [--out DIR]
 """
@@ -28,6 +30,7 @@ import json
 import re
 import subprocess
 import sys
+import time
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -42,12 +45,19 @@ ENV_RE = [
 HEX_RE = re.compile(r"\b[0-9a-f]{7,40}\b")
 SEQ_RE = re.compile(r"(?<=-)\d{3}\b")
 CACHE: dict[str, object] = {}
+TRANSIENT = re.compile(r"timeout|timed out|TLS handshake|connection (reset|refused|attempt failed)|connectex|unexpected EOF|HTTP 5\d\d", re.I)
 
 
-def gh(path: str):
+def gh(path: str, tries: int = 5):
+    """One cached gh api read. Network blips (TRANSIENT) are retried with backoff; 4xx, auth and any
+    other error fail at once, and a blip that outlasts every try raises."""
     if path in CACHE:
         return CACHE[path]
-    out = subprocess.run(["gh", "api", path], capture_output=True, text=True)
+    for attempt in range(tries):
+        out = subprocess.run(["gh", "api", path], capture_output=True, text=True, encoding="utf-8", errors="replace")
+        if out.returncode == 0 or not TRANSIENT.search(out.stderr) or attempt == tries - 1:
+            break
+        time.sleep(3 * (attempt + 1))
     if out.returncode != 0:
         raise RuntimeError(f"gh api {path}: {out.stderr.strip()[:200]}")
     CACHE[path] = json.loads(out.stdout) if out.stdout.strip() else None
@@ -67,8 +77,45 @@ def norm(s: str) -> str:
     return SEQ_RE.sub("*", HEX_RE.sub("<sha>", s)).strip()
 
 
+def _check_run_pass(repo: str, sha: str) -> tuple[dict, list[int]]:
+    """One uncached paged read: runs by id and the total_count reported on each page."""
+    runs, totals, page = {}, [], 1
+    while True:
+        path = f"repos/{repo}/commits/{sha}/check-runs?per_page=100&page={page}"
+        CACHE.pop(path, None)
+        body = gh(path)
+        totals.append(body["total_count"])
+        batch = body["check_runs"]
+        for r in batch:
+            runs.setdefault(r["id"], r)
+        if not batch or len(runs) >= totals[-1]:
+            return runs, totals
+        page += 1
+
+
+def check_runs_for_sha(repo: str, sha: str, attempts: int = 4) -> list[dict]:
+    """Every check run on sha, paged against total_count. Fails closed unless the census is stable.
+
+    A single per_page=100 read silently dropped runs past 100 (ABACUS main had 121 on 2026-10-24).
+    A head with live CI gains or loses runs between pages (ABACUS main grew 807 -> 811 within one read
+    on 2026-10-25), and a shifted page can then hide a run although the counts add up. A pass is stable
+    when total_count did not change across its pages and exactly that many distinct runs were read. The
+    census is accepted only when two consecutive stable passes return the same id set; otherwise it is
+    re-read, up to `attempts` passes, then raises.
+    """
+    prev: dict | None = None
+    for _ in range(attempts):
+        runs, totals = _check_run_pass(repo, sha)
+        stable = len(set(totals)) == 1 and len(runs) == totals[0]
+        if stable and prev is not None and set(runs) == set(prev):
+            return list(runs.values())
+        prev = runs if stable else None
+    raise RuntimeError(f"check-runs for {repo}@{sha}: no two consecutive stable reads agreed; "
+                       f"last read {len(runs)} distinct of total_count {'/'.join(map(str, totals))}")
+
+
 def failed_jobs_for_sha(repo: str, sha: str) -> list[dict]:
-    runs = gh(f"repos/{repo}/commits/{sha}/check-runs?per_page=100")["check_runs"]
+    runs = check_runs_for_sha(repo, sha)
     jobs = []
     for r in runs:
         if r["conclusion"] != "failure" or "/actions/runs/" not in (r.get("html_url") or ""):
@@ -137,11 +184,11 @@ def load_drift(drift_path: str | None = None) -> dict:
     """Per-repo ruleset drift. Reads drift_path (from verify_rulesets.py) or runs the probe now."""
     rs_dir = Path(__file__).resolve().parent.parent / "rulesets"
     if not drift_path:
-        r = subprocess.run([sys.executable, str(rs_dir / "verify_rulesets.py")], capture_output=True, text=True, cwd=rs_dir)
+        r = subprocess.run([sys.executable, str(rs_dir / "verify_rulesets.py")], capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=rs_dir)
         if r.returncode != 0:
             raise RuntimeError(f"verify_rulesets.py failed: {r.stderr.strip()[:300]}")
         drift_path = str(rs_dir / "drift.json")
-    return json.loads(Path(drift_path).read_text())["repos"]
+    return json.loads(Path(drift_path).read_text(encoding="utf-8"))["repos"]
 
 
 def probe_root(root: dict, drift: dict) -> dict | None:
@@ -184,7 +231,35 @@ def main():
     for repo in ledger["repo_scope"]:
         occ += harvest(repo, "main", ledger.get("nightly_workflows", {}).get(repo, []), a.merged)
     probes = run_probes(roots, a.drift)
+    private = {repo for repo in ledger["repo_scope"] if is_private(repo)}
+    report, public_occ = build_report(ledger["repo_scope"], roots, occ, probes, now, private)
 
+    out = Path(a.out)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "occurrences.json").write_text(json.dumps(public_occ, indent=1), encoding="utf-8", newline="\n")
+    (out / "everred.json").write_text(json.dumps(report, indent=1), encoding="utf-8", newline="\n")
+    (out / "rex_return.yaml").write_text(yaml.safe_dump(rex_return(report, now), sort_keys=False, allow_unicode=True), encoding="utf-8", newline="\n")
+    (out / "register.md").write_text(render(report), encoding="utf-8", newline="\n")
+    print(json.dumps(report["metrics"], indent=1))
+
+
+def is_private(repo: str) -> bool:
+    """Privacy is read from the source (gh api repos/<r>, cached by gh()). Fails closed: a failed or
+    ambiguous lookup counts the repo as private."""
+    try:
+        return (gh(f"repos/{repo}") or {}).get("private") is not False
+    except RuntimeError:
+        return True
+
+
+def build_report(scope: list[str], roots: list[dict], occ: list[dict], probes: dict, now: str,
+                 private: set[str] = frozenset()) -> tuple[dict, list[dict]]:
+    """everred.json report + the publishable occurrence rows.
+
+    Occurrences from `private` repos count in every aggregate metric, but no row-level private data
+    (PR numbers, SHAs, run/job ids or URLs, workflow/job/step text, signatures, runners) is returned:
+    they appear only as counts under `private_aggregate`.
+    """
     linked = defaultdict(list)
     unmatched = defaultdict(list)
     for o in occ:
@@ -220,22 +295,30 @@ def main():
         "dims": {d: dict(Counter((r.get("dims") or {}).get(d, "UNKNOWN") for r in independent)) for d in ["diagnosis", "repair", "integration", "security", "governance", "admission", "control"]},
     }
 
-    out = Path(a.out)
-    out.mkdir(parents=True, exist_ok=True)
-    (out / "occurrences.json").write_text(json.dumps(occ, indent=1), encoding="utf-8")
-    report = {"schema": "everred.census/1.0", "generated_at": now, "scope": ledger["repo_scope"], "metrics": metrics, "probes": probes,
+    def pub(rows):
+        return [o for o in rows if o["repo"] not in private]
+
+    public_unmatched = defaultdict(list)
+    for o in pub(occ):
+        if not o["root"]:
+            public_unmatched[o["signature"]].append(o)
+    private_aggregate = {}
+    for repo in sorted(private):
+        mine = [o for o in occ if o["repo"] == repo]
+        private_aggregate[repo] = {"occurrences": len(mine), "distinct_signatures": len({o["signature"] for o in mine}),
+                                   "unmatched_signatures": len({o["signature"] for o in mine if not o["root"]}),
+                                   "linked_roots": dict(Counter(o["root"] for o in mine if o["root"]))}
+    report = {"schema": "everred.census/1.0", "generated_at": now, "scope": scope, "metrics": metrics, "probes": probes,
               "roots": [{**{k: v for k, v in r.items() if k != "match"},
                          "occurrences": len(linked[r["id"]]),
-                         "affected_prs": sorted({o["pr"] for o in linked[r["id"]] if o["pr"]}),
+                         "affected_prs": sorted({o["pr"] for o in pub(linked[r["id"]]) if o["pr"]}),
                          "affected_shas": len({o["sha"] for o in linked[r["id"]]}),
                          "probe": probes.get(r["id"]),
-                         "last_seen": max((o["completed_at"] or "" for o in linked[r["id"]]), default=None)} for r in roots],
+                         "last_seen": max((o["completed_at"] or "" for o in pub(linked[r["id"]])), default=None)} for r in roots],
               "unmatched": [{"signature": s, "occurrences": len(v), "prs": sorted({o["pr"] for o in v if o["pr"]}),
-                             "repos": sorted({o["repo"] for o in v}), "example_url": v[0]["url"]} for s, v in sorted(unmatched.items(), key=lambda x: -len(x[1]))]}
-    (out / "everred.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
-    (out / "rex_return.yaml").write_text(yaml.safe_dump(rex_return(report, now), sort_keys=False, allow_unicode=True), encoding="utf-8")
-    (out / "register.md").write_text(render(report), encoding="utf-8")
-    print(json.dumps(metrics, indent=1))
+                             "repos": sorted({o["repo"] for o in v}), "example_url": v[0]["url"]} for s, v in sorted(public_unmatched.items(), key=lambda x: -len(x[1]))],
+              "private_rows": "AGGREGATE_ONLY", "private_aggregate": private_aggregate}
+    return report, pub(occ)
 
 
 STATE_TO_REX = {"DISCOVERED": "OPEN", "TRIAGED": "OPEN", "OWNED": "OPEN", "REOPENED": "OPEN", "FIX_COMMITTED": "CONTAINED",
@@ -271,6 +354,11 @@ def render(rep: dict) -> str:
         L.append(f"| {r['id']}{' (derived)' if r.get('derived') else ''} | {r['class']} | {r['state']} | {r.get('owner') or '—'} | {r['occurrences']} | {pr or '—'} | {probe} | {r['title']} |")
     L += ["", "## Unmatched signatures (candidate roots — search the ledger before repairing)", "", "| Signature | Occurrences | PRs | Example |", "|---|---|---|---|"]
     L += [f"| `{u['signature']}` | {u['occurrences']} | {', '.join(f'#{n}' for n in u['prs'][:6]) or 'main'} | [run]({u['example_url']}) |" for u in rep["unmatched"]]
+    if rep.get("private_aggregate"):
+        L += ["", "## Private repositories (aggregate counts only; no rows are published)", "",
+              "| Repo | Occurrences | Distinct signatures | Unmatched signatures | Linked roots |", "|---|---|---|---|---|"]
+        L += [f"| {repo} | {a['occurrences']} | {a['distinct_signatures']} | {a['unmatched_signatures']} | "
+              f"{', '.join(f'{k}: {v}' for k, v in a['linked_roots'].items()) or '—'} |" for repo, a in rep["private_aggregate"].items()]
     return "\n".join(L) + "\n"
 
 
