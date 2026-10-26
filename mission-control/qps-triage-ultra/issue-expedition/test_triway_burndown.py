@@ -27,6 +27,19 @@ class Tests(unittest.TestCase):
  def test_deltas_are_not_closures(self):
   c=sample();a=m.project(c);self.assertEqual(a,m.project(c));d=copy.deepcopy(c);d["issues"].pop();d["counts"][B]["issues"]=0
   z=m.project(d,a)["open_identity_delta"];self.assertEqual(z["absent_from_open_not_necessarily_closed"],[B+"#3"]);self.assertIsNone(z["verified_causal_root_closure"])
+ def test_recursive_title_family_does_not_override_issue(self):
+  c=sample()
+  c["issues"][0]["title"]="feat(test W51-C0): producer"
+  c["issues"][1]["body"]="See #1"
+  c["issues"][0]["labels"]=["P0","CODE PURPLE"]
+  p=m.project(c)
+  parent=p["issues"][A+"#1"]["title_taxonomy"]
+  child=p["issues"][A+"#2"]["title_taxonomy"]
+  self.assertEqual(parent["path"],"feat/test/W51/C0")
+  self.assertIn("code-purple",parent["topic_families"])
+  self.assertEqual(child["family"],"UNCLASSIFIED")
+  self.assertIn("feat",[x["family"] for x in child["related_families"]])
+  self.assertTrue(all(x["grade"]=="UNVERIFIED_ASSOCIATION_ONLY" for x in child["related_families"]))
  def test_code_fences_ignored(self):
   self.assertEqual([r["target"] for r in m.references("~~~\nblocked by #2\n~~~\nsee #1",A)],[A+"#1"])
  def test_csv(self):
@@ -83,4 +96,14 @@ class ParserN2(unittest.TestCase):
   p=m.project(c);self.assertEqual(p["issues"][A+"#1"]["blocker_candidates"],1)  # both sides declare one pair;self.assertEqual(p["issues"][A+"#2"]["dependent_candidates"],1)
   self.assertEqual(p["issues"][A+"#2"]["parked_intent"]["id"],"U12");self.assertIsNone(p["issues"][A+"#1"]["parked_intent"])
   self.assertEqual(m.parked_intent("<!-- parked-intent:v1 {bad json} -->")["valid"],False)
+ def test_codex_p2_fixes(self):
+  self.assertEqual(self.refs("> ```\n> blocked by #2\n> ```\nsee #1"),[(B+"#1","TEXT_ASSOCIATION")])
+  self.assertIsNone(m.checklist("> ```\n> - [ ] quoted example\n> ```")["OTHER"]["progress"])
+  self.assertEqual(self.refs("example: ``blocked by #3`` and ```x `#4` y```, see #5"),[(B+"#5","TEXT_ASSOCIATION")])
+  c=sample();c["issues"][0]["body"]="";c["issues"][1]["body"]="This blocks #1"
+  self.assertEqual(m.project(c)["metrics"]["candidate_dependency_links_in_scope"],1)
+ def test_withdrawn_items_declare_nothing(self):
+  got=self.refs("- [~] depends on #15\n- [-] blocks #17\n- [~] superseded by #18\n- [ ] ~~depends on #19~~",home=A)
+  self.assertEqual({k for _,k in got},{"TEXT_ASSOCIATION"})
+  self.assertEqual(self.refs("- [-] closes #16",home=A,pr=True),[(A+"#16","PR_ASSOCIATION")])
 if __name__=="__main__":unittest.main()

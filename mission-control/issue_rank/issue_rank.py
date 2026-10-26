@@ -50,6 +50,8 @@ from collections import Counter, defaultdict, deque
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import title_taxonomy as tt
+
 SCHEMA = "jade.issue-rank.v2"
 SNAPSHOT_SCHEMA = "jade.issue-rank.snapshot.v2"
 LEDGER_SCHEMA = "jade.issue-rank.ledger.v1"
@@ -1062,6 +1064,7 @@ def rank(snap: dict, now: float | None = None, overlay: dict | None = None,
         items.append({
             "key": k, "repo": n["repo"], "number": n["number"], "type": n["type"],
             "title": n.get("title"), "url": n.get("url"), "private": n.get("private"),
+            "title_taxonomy": tt.parse_title(n.get("title"), n["type"], n.get("labels")),
             "created_at": n.get("created_at"), "updated_at": n.get("updated_at"),
             "age_days": round((now - _ts(n["created_at"])) / 86400, 1),
             "idle_days": round((now - _ts(n["updated_at"])) / 86400, 1),
@@ -1088,6 +1091,9 @@ def rank(snap: dict, now: float | None = None, overlay: dict | None = None,
             "priority": prio, "priority_basis": basis,
             "overlay": (overlay or {}).get(k),
         })
+    associated = tt.associated_families(items, edges, max_hops=2)
+    for item in items:
+        item["title_taxonomy"]["related_families"] = associated[item["key"]]
 
     # Urgency (own) and pressure (own + inherited from waiters) in one walk.
     parts = urgency_parts(items)
@@ -1216,6 +1222,7 @@ def rollup(items: list[dict], nodes: dict, edges: list[dict]) -> dict:
         "thread_funnel": dict(sorted(Counter((i.get("golden_thread") or {}).get("first_break") or "CLOSABLE"
                                              for i in issues).items())),
         "by_assignee": _by_assignee(items),
+        "title_taxonomy": tt.summary(items),
     }
 
 
@@ -1307,6 +1314,11 @@ def diff(prev: dict | None, cur: dict) -> dict:
             ticks.append({"key": k, "from": f"{a['done']}/{a['total']}", "to": f"{b['done']}/{b['total']}"})
     lane_moves = [{"key": k, "from": p_items[k]["lane"], "to": c_items[k]["lane"]}
                   for k in sorted(set(p_items) & set(c_items)) if p_items[k]["lane"] != c_items[k]["lane"]]
+    taxonomy_moves = [{"key": k, "from": p_items[k].get("title_taxonomy", {}).get("path"),
+                       "to": c_items[k].get("title_taxonomy", {}).get("path")}
+                      for k in sorted(set(p_items) & set(c_items))
+                      if p_items[k].get("title_taxonomy", {}).get("path") !=
+                      c_items[k].get("title_taxonomy", {}).get("path")]
     new_edges = sorted(c_edges - p_edges)
     # Progress (ticks) and scope (items added) are separate: 2/5 -> 3/6 is one
     # tick and one unit of scope growth, not zero movement.
@@ -1337,7 +1349,8 @@ def diff(prev: dict | None, cur: dict) -> dict:
             "new_pr_dependencies": [list(e) for e in new_edges if e[2] == "CLOSES"],
             "checklist_moves": ticks, "lane_moves": lane_moves,
             "tasks_ticked_net": ticked, "scope_added_net": scope,
-            "thread_moves": dict(sorted(thread_moves.items()))}
+            "thread_moves": dict(sorted(thread_moves.items())),
+            "taxonomy_moves": taxonomy_moves}
 
 
 def telemetry(model: dict, snap: dict, delta: dict) -> dict:
@@ -1424,8 +1437,16 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
         return o
     out = walk(json.loads(json.dumps({"model": model, "delta": delta})))
     m = out["model"]
+    private_refs = {i["key"] for i in m["items"] if i["repo"] in priv}
     for i in m["items"]:
+        if i["repo"] not in priv and "title_taxonomy" in i:  # no family candidate sourced from a private item
+            i["title_taxonomy"]["related_families"] = [
+                r for r in i["title_taxonomy"].get("related_families", []) if r["source_item"] not in private_refs]
         if i["repo"] in priv:
+            i["title_taxonomy"] = {"schema": tt.SCHEMA, "family": "REDACTED_PRIVATE",
+                                   "path": "REDACTED_PRIVATE", "programmes": [], "codes": [],
+                                   "topic_families": [], "technical_clusters": [],
+                                   "classification": "UNCLASSIFIED", "lint": [], "related_families": []}
             i.update(title=None, url=None, number=None, labels=[], assignees=[], overlay=None)
             i["checklist"]["next_open"] = None
             if i["action"].startswith(("next:", "start:")):
@@ -1433,6 +1454,14 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
     for r, h in m["heads"].items():
         if r in priv:
             h["head_sha"] = None
+    jade, focus = set(jade_roster()), {f"{m['owner']}/{r}" for r in FOCUS_REPOS}
+    for scope, roll in m["rollups"].items():
+        members = (set(m["heads"]) if scope == "USER" else jade if scope == "JADE"
+                   else focus if scope == "FOCUS4" else {scope})
+        visible = [i for i in m["items"] if i["repo"] in members and i["repo"] not in priv]
+        roll["title_taxonomy"] = tt.summary(visible)
+        roll["title_taxonomy"]["private_items_excluded"] = sum(
+            1 for i in m["items"] if i["repo"] in members and i["repo"] in priv)
     boundary = pb.Boundary(sorted(priv))
     out = boundary.project(out)
     if boundary.project(out) != out:
@@ -1442,11 +1471,24 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
 
 CSV_COLS = ("rank_global", "rank_repo", "key", "type", "lane", "score", "rank_p05", "rank_p95", "p_top",
             "urgency", "coverage", "inherited_share", "progress", "thread", "first_break", "pressure",
-            "unblocks_now", "chain_below", "open_blockers", "linked_prs", "age_days", "idle_days", "action", "title")
+            "unblocks_now", "chain_below", "open_blockers", "linked_prs", "age_days", "idle_days", "action", "title",
+            "family", "prefix_path", "prefix_codes", "topic_families", "technical_clusters",
+            "related_family_candidates")
 
 
 def _csv_value(i: dict, c: str):
     ri, gt = i.get("rank_interval") or {}, i.get("golden_thread") or {}
+    tax = i.get("title_taxonomy") or {}
+    if c == "family":
+        return tax.get("family", "")
+    if c == "prefix_path":
+        return tax.get("path", "")
+    if c == "prefix_codes":
+        return ";".join(tax.get("codes", []))
+    if c in ("topic_families", "technical_clusters"):
+        return ";".join(tax.get(c, []))
+    if c == "related_family_candidates":
+        return ";".join(r["family"] for r in tax.get("related_families", []))
     if c == "open_blockers":
         return " ".join(i[c])
     if c == "linked_prs":
@@ -1509,11 +1551,13 @@ def render_html(model: dict, delta: dict | None = None) -> str:
                 f'<td>{bar(i)}</td><td>{thread(i)}</td><td class="num">{i["pressure"]}</td>'
                 f'<td>{" ".join(link(b) for b in i["open_blockers"][:4])}</td>'
                 f'<td class="num">{i["age_days"]:.0f}</td><td>{esc(i["action"])}</td>'
+                f'<td>{esc((i.get("title_taxonomy") or {}).get("path", "UNKNOWN"))}</td>'
                 f'<td>{esc(i.get("title") or "")}</td></tr>')
 
     head = ('<tr><th>#</th><th>item</th><th>lane</th><th>score</th><th>rank 90%</th>'
             '<th>progress (DoD/DoV/steps)</th><th>golden thread</th>'
-            '<th>pressure</th><th>open blockers</th><th>age d</th><th>next action</th><th>title</th></tr>')
+            '<th>pressure</th><th>open blockers</th><th>age d</th><th>next action</th>'
+            '<th>family / prefix path</th><th>title</th></tr>')
 
     def table(keys, limit=40):
         return f'<table>{head}{"".join(row(items[k]) for k in keys[:limit])}</table>'
@@ -1526,6 +1570,27 @@ def render_html(model: dict, delta: dict | None = None) -> str:
         f'<td class="num">{r["prs_unreviewed"]}</td><td class="num">{r["stale_21d"]}</td>'
         f'<td>{esc(" ".join("%s:%d" % kv for kv in r["lanes"].items()))}</td></tr>'
         for s, r in model["rollups"].items())
+    taxonomy_rows = "".join(
+        f'<tr><td>{esc(scope)}</td><td>{esc(fam)}</td><td class="num">{count["Issue"]}</td>'
+        f'<td class="num">{count["PullRequest"]}</td><td class="num">{count["total"]}</td></tr>'
+        for scope, roll in model["rollups"].items()
+        for fam, count in roll["title_taxonomy"]["family"].items())
+    leaf_clusters = sorted(model["rollups"]["USER"]["title_taxonomy"]["leaf_clusters"].items(),
+                           key=lambda kv: (-kv[1]["total"], kv[0]))[:60]
+    cluster_rows = "".join(
+        f'<tr><td>{esc(path)}</td><td class="num">{count["Issue"]}</td>'
+        f'<td class="num">{count["PullRequest"]}</td><td class="num">{count["total"]}</td></tr>'
+        for path, count in leaf_clusters)
+    technical_rows = "".join(
+        f'<tr><td>{esc(scope)}</td><td>{esc(name)}</td><td class="num">{value["Issue"]}</td>'
+        f'<td class="num">{value["PullRequest"]}</td><td class="num">{value["total"]}</td></tr>'
+        for scope, roll in model["rollups"].items()
+        for name, value in roll["title_taxonomy"]["technical_clusters_nonexclusive"].items())
+    topic_rows = "".join(
+        f'<tr><td>{esc(scope)}</td><td>{esc(name)}</td><td class="num">{value["Issue"]}</td>'
+        f'<td class="num">{value["PullRequest"]}</td><td class="num">{value["total"]}</td></tr>'
+        for scope, roll in model["rollups"].items()
+        for name, value in roll["title_taxonomy"]["topic_families_nonexclusive"].items())
     roots = "".join(
         f'<tr><td>{link(g["root"])}</td><td>{"open" if g["open_root"] else "closed/stub"}</td>'
         f'<td class="num">{g["descendants"]}</td><td class="num">{g["longest"]}</td></tr>'
@@ -1597,6 +1662,14 @@ ticked boxes are not verified DoD · heads: {heads}</p>
 <p>Dependency cycles: {dead}</p><p>Longest blocker chain: {crit}</p>
 <div class="wrap"><table><tr><th>closed with open items, no successor</th><th>ticked</th><th>closed at</th></tr>{leaks}</table></div>
 <p class="muted">Parked intents ({len(parked)}): {" ".join(link(k) for k in parked)}</p>
+<h2>Title family census · disjoint counts per repository and total</h2>
+<div class="wrap"><table><tr><th>scope</th><th>family</th><th>issues</th><th>PRs</th><th>total</th></tr>{taxonomy_rows}</table></div>
+<h2>Nested clusters · USER leaf paths (non-additive ancestry)</h2>
+<div class="wrap"><table><tr><th>prefix path</th><th>issues</th><th>PRs</th><th>total</th></tr>{cluster_rows}</table></div>
+<h2>Topic families · overlapping title / label associations</h2>
+<div class="wrap"><table><tr><th>scope</th><th>topic</th><th>issues</th><th>PRs</th><th>matches</th></tr>{topic_rows}</table></div>
+<h2>Technical clusters · overlapping title / label associations</h2>
+<div class="wrap"><table><tr><th>scope</th><th>cluster</th><th>issues</th><th>PRs</th><th>matches</th></tr>{technical_rows}</table></div>
 <h2>All items (pressure order)</h2>
 <div class="wrap">{table([i["key"] for i in model["items"]], 60)}</div>
 <h2>Nearly finished / close candidates</h2><div class="wrap">{table(nearly, 30)}</div>
@@ -1707,6 +1780,10 @@ def main(argv=None) -> int:
     model = rank(snap, overlay=load_overlay(args.overlay), draws=args.draws)
     delta = diff(prev, model)
     if args.redact_private:
+        private_refs = {i["key"] for i in model["items"] if i.get("private")}
+        if isinstance(delta.get("taxonomy_moves"), list):
+            delta["taxonomy_moves"] = [d for d in delta["taxonomy_moves"]
+                                       if d["key"] not in private_refs]
         model, delta = redact(model, delta)
     digests = write_outputs(out, model, delta)
     if args.cmd == "run":

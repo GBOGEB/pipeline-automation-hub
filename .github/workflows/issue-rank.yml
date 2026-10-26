@@ -8,6 +8,7 @@ on:
       - 'mission-control/jade_temple/tools/private_boundary.py'
       - 'mission-control/jade_temple/data/TOP21_PORTFOLIO.json'
       - 'mission-control/gogreen/token_census/REGISTRY.json'
+      - 'mission-control/qps-triage-ultra/issue-expedition/test_triway_burndown.py'
       - '.github/workflows/issue-rank.yml'
   workflow_dispatch: {}
 permissions:
@@ -44,5 +45,6 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check coverage==7.13.3
-          python -m coverage run --branch --include=issue_rank.py,issue_math.py -m unittest -v test_issue_rank test_issue_rank_v2
+          python -m coverage run --branch --include=issue_rank.py,issue_math.py -m unittest -v test_issue_rank test_issue_rank_v2 test_title_taxonomy
           python -m coverage report --fail-under=80
+          python -m unittest discover -s ../qps-triage-ultra/issue-expedition -p test_triway_burndown.py -v
