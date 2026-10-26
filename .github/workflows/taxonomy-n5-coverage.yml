@@ -37,7 +37,7 @@ jobs:
           set -euo pipefail
           python -m pip install --disable-pip-version-check coverage==7.13.3
           python -m coverage run --branch --source=title_taxonomy,taxonomy_pulse,taxonomy_explorer -m unittest -v test_title_taxonomy test_taxonomy_pulse test_taxonomy_explorer test_taxonomy_coverage_n5
-          python -m coverage report --fail-under=75
+          python -m coverage report --fail-under=90
           python -m coverage json -o coverage-n5.json
           python - <<'PY'
           import json
@@ -46,9 +46,12 @@ jobs:
           assert len(files)==3, ('COVERAGE_COHORT_DRIFT',sorted(files))
           zero=[p for p,v in files.items() if v['summary']['covered_lines']==0]
           assert not zero, ('ZERO_COVERED_FILES',zero)
-          assert d['totals']['percent_covered']>=75, d['totals']
+          below=[(p,v['summary']['percent_covered']) for p,v in files.items()
+                 if v['summary']['percent_covered']<90]
+          assert not below, ('PER_FILE_COVERAGE_BELOW_90',below)
+          assert d['totals']['percent_covered']>=90, d['totals']
           print('N5_COVERAGE_RECEIPT',json.dumps({
-              'files':sorted(files),'zero_covered_files':0,
+              'files':sorted(files),'zero_covered_files':0,'per_file_floor':90,
               'percent_covered':d['totals']['percent_covered'],
               'line_count':d['totals']['num_statements'],
               'covered_lines':d['totals']['covered_lines'],
