@@ -115,6 +115,23 @@ class Contract(unittest.TestCase):
         self.assertIn(f'<code id="source-sha">{SHA}</code>', page)
         self.assertIn(f'<code id="source-blob">{BLOB}</code>', page)
 
+    def test_each_mip_row_displays_row_specific_navigation(self):
+        snapshot = V.project(owner(), SHA, BLOB)
+        page = V.render(snapshot)
+        self.assertIn("<th>Source / PR links</th>", page)
+        for number in (881, 882, 530, 531, 533):
+            self.assertIn(f'href="{V.REPO_URL}/pull/{number}"', page)
+        self.assertEqual(page.count("<tr><th scope='row'>"), 15)
+        self.assertIn("ABACUS / CODEX", page)
+
+    def test_navigation_html_cannot_inject_active_elements_or_urls(self):
+        p = V.navigation_markup("<img src=x onerror=alert(1)> #881")
+        self.assertNotIn("<img", p)
+        self.assertIn("&lt;img", p)
+        self.assertIn(f'href="{V.REPO_URL}/pull/881"', p)
+        with self.assertRaises(ValueError):
+            V.navigation_markup(None)
+
     def test_actual_repository_generation_has_hash_manifest(self):
         with tempfile.TemporaryDirectory() as path:
             out = Path(path)
