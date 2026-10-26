@@ -163,6 +163,34 @@ class NirvanaRotationTests(unittest.TestCase):
         s = snapshot("2026-10-01", five({"o/r1": ALL_PASS}))
         self.assertTrue(r5.nirvana("o/r1", self.timeline(s, s), 2))
 
+    def test_missing_duplicate_and_extra_gate_denied(self):
+        for mode in ("missing", "duplicate", "extra"):
+            items = five({"o/r1": ALL_PASS})
+            gates = items[0]["gates"]
+            if mode == "missing":
+                gates.pop()
+            elif mode == "duplicate":
+                gates[-1] = dict(gates[0])
+            else:
+                gates.append({"id": "H13", "status": "PASS"})
+            with self.subTest(mode=mode), self.assertRaisesRegex(
+                    ValueError, "invalid H01-H12 gate inventory"):
+                r5.rows_of(snapshot("2026-10-02", items))
+
+    def test_duplicate_repo_denied(self):
+        items = five()
+        items.append(copy.deepcopy(items[0]))
+        with self.assertRaisesRegex(ValueError, "duplicate repository"):
+            r5.rows_of(snapshot("2026-10-02", items))
+
+    def test_direct_nirvana_requires_exact_inventory(self):
+        items = five({"o/r1": ALL_PASS})
+        timeline = self.timeline(snapshot("2026-10-01", items),
+                                 snapshot("2026-10-02", items))
+        self.assertTrue(r5.nirvana("o/r1", timeline, 2))
+        timeline[1]["o/r1"]["gates"].pop("H12")
+        self.assertFalse(r5.nirvana("o/r1", timeline, 2))
+
     def test_sha_drift_or_one_unknown_denies_nirvana(self):
         a = snapshot("2026-10-01", five({"o/r1": ALL_PASS}))
         b = snapshot("2026-10-02", five({"o/r1": ALL_PASS}, sha=SHA_B))
