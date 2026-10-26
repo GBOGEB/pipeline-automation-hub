@@ -308,6 +308,28 @@ class FourClassNoncompensatingGates(unittest.TestCase):
             Q.qualify(e, cand, proof(e, cand), KEY)
 
 
+    def test_signed_receipt_rejects_required_check_state_relabel(self):
+        native = event()
+        candidate = candidates(native)[0]
+        signed_by_owner = proof(native, candidate)
+        altered = copy.deepcopy(native)
+        altered["result"]["required_receipts"][0]["state"] = "UNKNOWN"
+        with self.assertRaisesRegex(ValueError, "signed event payload mismatch"):
+            Q.qualify(altered, candidate, signed_by_owner, KEY)
+
+    def test_branch_gain_cannot_compensate_statement_regression(self):
+        original = event(1, outcome="success", covered=9)
+        changed = event(2, outcome="success", covered=8)
+        changed["coverage"]["branches"]["covered"] = 4
+        candidate = candidates(original, changed)[0]
+        self.assertEqual(candidate["coverage_delta"],
+                         {"statements": -1, "branches": 1})
+        with self.assertRaisesRegex(ValueError, "coverage improvement"):
+            Q.qualify(changed, candidate,
+                      proof(changed, candidate, "B", "ACCEPT", baseline=original),
+                      KEY, baseline=original)
+
+
 class DurableReplayAndOutbox(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
