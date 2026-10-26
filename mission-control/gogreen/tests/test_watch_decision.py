@@ -191,6 +191,28 @@ class ReplayAndStability(unittest.TestCase):
         self.assertEqual(len(state["seen"]), 2)
         self.assertEqual(alerts, [])
 
+    def test_two_terminal_jobs_in_one_poll_keep_native_completion_order(self):
+        first = terminal(1)
+        second = terminal(2, outcome="success", fingerprint=None)
+        # Source collector attaches the same poll observed_at to both jobs.
+        same_poll = "2026-10-26T01:03:10Z"
+        first["native"]["observed_at"] = same_poll
+        second["native"]["observed_at"] = same_poll
+        state, alerts = W.fold([first, second])
+        lane = next(iter(state["lanes"].values()))
+        self.assertEqual(lane["conclusion"], "success")
+        self.assertEqual(len(state["seen"]), 2)
+        self.assertIn("RED_TO_GREEN", [reason for x in alerts for reason in x["reasons"]])
+
+    def test_same_native_completion_clock_uses_job_identity_tiebreaker(self):
+        first = terminal(1)
+        second = terminal(2, outcome="success", fingerprint=None)
+        second["native"]["completed_at"] = first["native"]["completed_at"]
+        second["native"]["observed_at"] = first["native"]["observed_at"]
+        state, alerts = W.fold([first, second])
+        self.assertEqual(next(iter(state["lanes"].values()))["conclusion"], "success")
+        self.assertIn("RED_TO_GREEN", [r for x in alerts for r in x["reasons"]])
+
     def test_delayed_old_completion_cannot_roll_back_newer_state(self):
         newer = terminal(3, outcome="success", fingerprint=None)
         older = terminal(2)
@@ -241,6 +263,27 @@ class CursorPersistence(unittest.TestCase):
             self.assertEqual(cursor.read_bytes(), first)
             self.assertEqual(json.loads(out.getvalue())["new_native_identities"], 0)
             self.assertEqual(json.loads(out.getvalue())["notifications"], [])
+
+    def test_posix_cursor_replace_fsyncs_directory_entry(self):
+        import contextlib
+        import io
+        import json
+        import os
+        import tempfile
+        from unittest import mock
+
+        if os.name != "posix":
+            self.skipTest("directory fsync requires POSIX")
+        with tempfile.TemporaryDirectory() as folder:
+            events = pathlib.Path(folder) / "events.jsonl"
+            cursor = pathlib.Path(folder) / "cursor.json"
+            events.write_text(json.dumps(terminal(1)) + "\n", encoding="utf-8")
+            with mock.patch("os.fsync", wraps=os.fsync) as syncing:
+                with contextlib.redirect_stdout(io.StringIO()):
+                    W.main(["--events", str(events), "--cursor", str(cursor),
+                            "--write-cursor"])
+            self.assertTrue(cursor.exists())
+            self.assertGreaterEqual(syncing.call_count, 2)
 
     def test_source_private_row_rejected_before_cursor_mutation(self):
         import json
