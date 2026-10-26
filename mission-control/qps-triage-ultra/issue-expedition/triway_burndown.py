@@ -8,6 +8,7 @@ a candidate blocker, a PR is not proof, and no score confers closure credit.
 from __future__ import annotations
 import argparse
 import csv
+import importlib.util
 import hashlib
 import io
 import json
@@ -18,6 +19,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote
 from urllib.request import Request, urlopen
+
+# Consume the sole title-vocabulary authority in issue_rank, never fork a parser.
+_TAXONOMY_PATH = Path(__file__).resolve().parents[2] / "issue_rank" / "title_taxonomy.py"
+_spec = importlib.util.spec_from_file_location("missioncontrol_title_taxonomy", _TAXONOMY_PATH)
+if _spec is None or _spec.loader is None:
+    raise RuntimeError("title taxonomy provider unavailable")
+tt = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(tt)
 
 SCHEMA = "missioncontrol.issue_expedition.triway.v1"
 CENSUS = "missioncontrol.issue_expedition.github_census.v1"
@@ -82,6 +91,9 @@ KINDS = (
         r"\b(?:parent|epic|umbrella|part of|child of|tracked (?:in|by))\b.{0,72}\Z", re.I)),
     ("DECLARED_DUPLICATE_OF", re.compile(r"\b(?:duplicate of|dup of)\b.{0,72}\Z", re.I)),
 )
+QUOTE = re.compile(r"^(?:\s*>)*\s*")
+# A code span opens and closes with backtick runs of equal length (CommonMark).
+CODE_SPAN = re.compile(r"(`+)(?!`)(.+?)(?<!`)\1(?!`)")
 META = re.compile(r"^\s*(?:related|refs?|references|see also|sources?|links?)\s*:", re.I)
 NEGATED = re.compile(r"\b(?:not|no longer|never|unrelated|instead of)\b", re.I)
 JOINER = re.compile(r"[\s,;&+]*(?:(?:and|or)\b[\s,;&+]*)?\Z", re.I)
@@ -120,7 +132,7 @@ def _source_lines(body):
     """Body lines outside HTML comments and fenced code blocks."""
     fence = None
     for line in COMMENT.sub("", body).splitlines():
-        mark = line.strip()[:3]
+        mark = QUOTE.sub("", line)[:3]  # a fence may sit inside a blockquote ("> ```")
         if fence:
             if mark == fence:
                 fence = None
@@ -213,8 +225,10 @@ def references(body, repo, pr=False):
     """
     found = {}
     for raw in _source_lines(body):
-        line = re.sub(chr(96) + "[^" + chr(96) + "]*" + chr(96), "", raw)
+        line = CODE_SPAN.sub("", raw)
         item = ITEM.match(line)
+        # A withdrawn item ([~], [-] or fully struck) declares nothing: its references stay textual.
+        withdrawn = bool(item) and (item.group(1) in "~-" or bool(STRUCK.fullmatch(item.group(2))))
         last_end, last_repo, last_kind = 0, None, None
         for m in REF.finditer(line):
             # The typing window ends at the '#', so "QPS parent #1920" sees "parent".
@@ -235,7 +249,9 @@ def references(body, repo, pr=False):
                 continue
             target = identity("GBOGEB/" + name, num)
             before = window[-90:]
-            if pr:
+            if withdrawn:
+                kind = "PR_ASSOCIATION" if pr else "TEXT_ASSOCIATION"
+            elif pr:
                 kind = "PR_CLOSURE_CLAIM" if CLAIM.search(before) else "PR_ASSOCIATION"
                 if last_kind == "PR_CLOSURE_CLAIM" and JOINER.fullmatch(window):
                     kind = last_kind
@@ -329,6 +345,7 @@ def project(census, previous=None):
             "ref": key, "repo": repo, "number": n,
             "url": f"https://github.com/{repo}/issues/{n}",
             "title": issue["title"],
+            "title_taxonomy": tt.parse_title(issue["title"], "Issue", issue["labels"]),
             "created_at": timestamp(issue["created_at"]),
             "updated_at": timestamp(issue["updated_at"]),
             "priority": p, "priority_basis": basis,
@@ -406,6 +423,8 @@ def project(census, previous=None):
             "count": len(selection),
             "priority_counts": dict(Counter(x["priority"] for x in selection)),
             "views": views(selection),
+            "title_taxonomy": tt.summary([{"type": "Issue", "title_taxonomy": x["title_taxonomy"]}
+                                         for x in selection]),
         }
     delta = None
     if previous is not None:
@@ -419,6 +438,13 @@ def project(census, previous=None):
             "verified_causal_root_closure": None,
         }
     edges = sorted(edge_map.values(), key=lambda x: (x["from"], x["to"], x["kind"]))
+    related = tt.associated_families(
+        [{"key": k, "type": "Issue", "title_taxonomy": x["title_taxonomy"]}
+         for k, x in nodes.items()],
+        [{"source": e["from"], "target": e["to"], "kind": e["kind"]}
+         for e in edges if e["to"] in nodes], max_hops=2)
+    for issue_ref, candidates in related.items():
+        nodes[issue_ref]["title_taxonomy"]["related_families"] = candidates
     return {
         "schema": SCHEMA, "observed_at": observed,
         "source_grade": "NON_ATOMIC_COMPLETE_API_PAGINATION",
@@ -435,12 +461,15 @@ def project(census, previous=None):
             "with_uncategorized_checklists": sum(
                 x["unclassified_checklist"]["progress"] is not None for x in nodes.values()),
             "candidate_dependency_links_in_scope": sum(
-                x["kind"] == "DECLARED_BLOCKER_CANDIDATE" and x["to"] in nodes for x in edges),
+                x["kind"] in ("DECLARED_BLOCKER_CANDIDATE", "DECLARED_BLOCKS_CANDIDATE")
+                and x["to"] in nodes for x in edges),
             "association_or_candidate_links": len(edges),
             "verified_DoD_steps": None, "verified_DoV_steps": None,
             "verified_root_closures": None,
         },
         "issues": dict(sorted(nodes.items())), "edges": edges, "views": views(nodes.values()),
+        "title_taxonomy_total": tt.summary([{"type": "Issue", "title_taxonomy": x["title_taxonomy"]}
+                                            for x in nodes.values()]),
         "by_repository": per_repo, "open_identity_delta": delta,
     }
 
