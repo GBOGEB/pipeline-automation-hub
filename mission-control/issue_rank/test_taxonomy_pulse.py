@@ -105,6 +105,29 @@ class PulseIdentity(unittest.TestCase):
         self.assertEqual(r2["delta"]["classification_attribution"],
                          "WITHHELD_PARSER_VERSION_NOT_MATCHED")
 
+    def test_empty_cluster_first_red_is_safe_and_additive(self):
+        # Native first red 40329143161, Python 3.11/3.12:
+        # taxonomy_pulse.py:125 IndexError when family==scope but clusters=[].
+        x = item(HUB, 1, "fix(watch): status")
+        projected = pulse.visible(model([x]), public=True)["items"][0]
+        self.assertEqual(projected["technical_clusters"], [])
+        facet = pulse.facets(projected)
+        self.assertEqual(facet["scope"], "watch")
+        self.assertEqual(facet["family"], "watch")
+        self.assertEqual(facet["cluster"], "general")
+        report = pulse.build(model([x]))
+        self.assertEqual(report["rollups"]["USER"]["total"], 1)
+        self.assertEqual(sum(report["rollups"]["USER"]["single_composite"].values()), 1)
+
+    def test_empty_cluster_and_unscoped_title_stays_general(self):
+        x = item(HUB, 1, "[U14] plain status note")
+        projected = pulse.visible(model([x]), public=True)["items"][0]
+        facet = pulse.facets(projected)
+        self.assertEqual(facet["scope"], "unscoped")
+        self.assertEqual(facet["family"], "general")
+        self.assertEqual(facet["cluster"], "general")
+        self.assertEqual(facet["action"], "unclassified")
+
     def test_reject_duplicates_unknown_ids_and_inconsistent_privacy(self):
         source = model()
         source["items"].append(copy.deepcopy(source["items"][0]))
