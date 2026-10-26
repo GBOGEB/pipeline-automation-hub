@@ -8,6 +8,7 @@ a candidate blocker, a PR is not proof, and no score confers closure credit.
 from __future__ import annotations
 import argparse
 import csv
+import importlib.util
 import hashlib
 import io
 import json
@@ -18,6 +19,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote
 from urllib.request import Request, urlopen
+
+# Consume the sole title-vocabulary authority in issue_rank, never fork a parser.
+_TAXONOMY_PATH = Path(__file__).resolve().parents[2] / "issue_rank" / "title_taxonomy.py"
+_spec = importlib.util.spec_from_file_location("missioncontrol_title_taxonomy", _TAXONOMY_PATH)
+if _spec is None or _spec.loader is None:
+    raise RuntimeError("title taxonomy provider unavailable")
+tt = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(tt)
 
 SCHEMA = "missioncontrol.issue_expedition.triway.v1"
 CENSUS = "missioncontrol.issue_expedition.github_census.v1"
@@ -178,6 +187,7 @@ def project(census, previous=None):
             "ref": key, "repo": repo, "number": n,
             "url": f"https://github.com/{repo}/issues/{n}",
             "title": issue["title"],
+            "title_taxonomy": tt.parse_title(issue["title"], "Issue"),
             "created_at": timestamp(issue["created_at"]),
             "updated_at": timestamp(issue["updated_at"]),
             "priority": p, "priority_basis": basis,
@@ -251,6 +261,8 @@ def project(census, previous=None):
             "count": len(selection),
             "priority_counts": dict(Counter(x["priority"] for x in selection)),
             "views": views(selection),
+            "title_taxonomy": tt.summary([{"type": "Issue", "title_taxonomy": x["title_taxonomy"]}
+                                         for x in selection]),
         }
     delta = None
     if previous is not None:
@@ -286,6 +298,8 @@ def project(census, previous=None):
             "verified_root_closures": None,
         },
         "issues": dict(sorted(nodes.items())), "edges": edges, "views": views(nodes.values()),
+        "title_taxonomy_total": tt.summary([{"type": "Issue", "title_taxonomy": x["title_taxonomy"]}
+                                            for x in nodes.values()]),
         "by_repository": per_repo, "open_identity_delta": delta,
     }
 
