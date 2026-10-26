@@ -75,3 +75,7 @@ Codex review learnings/first-reds promoted into source or queued:
 MERGE_ADMISSION=HOLD; QPS_OWNER_ACCEPTANCE=WITHHELD; SECURITY_WAIVER=NONE; FORMAL_ENGINEERING_CREDIT_DELTA=0. No credential writes, runner dispatch beyond native PR CI, scheduled task activation, auto merge, engineering acceptance or owner-approved root closure claimed.
 
 **For N3 restart:** Read this file, STATE_N2.json, original PR #876 N0/N1 lossless and separate MIP-01..15. Refresh exact GitHub heads and native receipts before comparison. Do not resurrect the repetitive hourly chat scan. Iterate targeted P0 gates, independently governed PR landings and the source-owner handover.
+
+## N2.1 exact-head native receipt addendum
+
+[Machine-readable N2.1 tested-commit receipts](../../mission-control/federation-atlas/watch_n2_session/N2_1_EXACT_HEAD_RECEIPTS.json) supersede **only** the earlier *candidate-currentness* observations, not the N0/N1 historical source record. They pin signed-edge #891 at 5cd77c75... with both G4 suites 671 tests OK and 16 packet tests; crash-safe cursor #894 at bf1cf0b0... with 626 tests OK per G4 suite and 16 packet tests; and flightdeck #893 at 4d0516ae... with 10 static tests and all three browser viewports passed. #893 current-head First-Pass remains FAIL (CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD); fresh exact-head Codex review was explicitly requested. This is **not** a merged-main or protected admission receipt.
