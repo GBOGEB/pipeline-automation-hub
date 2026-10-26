@@ -101,10 +101,12 @@ def assess(source:dict) -> dict:
                 all(p["total_lines"]==first["total_lines"] for p in parsed))
     any_red=any(p["tests_failed"]>0 for p in parsed)
     congested=last["queue_depth"]>MAX_QUEUED
-    stable=(len(parsed)>=4 and all(
+    # Three consecutive *observed* waves with identical coverage AND
+    # zero-file count mean two consecutive N+1=N transitions.
+    stable=(len(parsed)>=3 and all(
         parsed[i]["covered_lines"]==parsed[i-1]["covered_lines"] and
         parsed[i]["zero_covered_files"]==parsed[i-1]["zero_covered_files"]
-        for i in (-1,-2,-3)))
+        for i in (-1,-2)))
     changes={
         "matched_denominator":comparable,
         "coverage_delta_pp":round((last["coverage"]-first["coverage"])*100,4)
