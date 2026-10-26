@@ -1,7 +1,7 @@
 # Title census: artefacts and handover (data, not a code path)
 
 Evidence and vocabulary from a full PR and issue title census of 23 GBOGEB source repositories
-(pulse 2026-10-26T09:06:51Z, 7,278 titles, 634 PR/issue links). It feeds the title parser owned by
+(pulse 2026-10-26T09:18:34Z, 7,278 titles, 17,665 PR/issue links). It feeds the title parser owned by
 [`../title_taxonomy.py`](../title_taxonomy.py) (#927, schema `jade.title-taxonomy.v1`).
 
 **Nothing here is imported or run by `issue_rank.py`, `triway_burndown.py` or CI.** There is no second
@@ -20,9 +20,9 @@ the handover is lossless; it is to be reconciled into the owner, not run from he
 |---|---|---|
 | `vocabulary.json` | 12 types, 26 families, scopes and aliases, 13 qualifier classes, type keywords, label map | Calibrated on the census; the main input to reconciliation |
 | `dashboard/index.html` | Page of the published dashboard (d3 only) | Live copy: https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw (private until shared) |
-| `data/raw.json.gz` | The pulse: every PR and issue title, state, dates, labels, parent, closing PRs, per-repo head SHA | Source of truth |
+| `data/raw.json.gz` | The pulse: every PR and issue title, state, dates, labels, parent, closing references, body references and timeline cross-references (bodies themselves not stored), per-repo head SHA | Source of truth |
 | `outputs/*.gz`, `outputs/*.md`, `outputs/*.json`, `outputs/conformance.csv` | Census outputs (`census.json`, `rows.csv`, `stats.csv`, `timeseries.csv`), keyword inventory, issue plan, gap table | `out/` in the handover; large files gzipped |
-| `outputs/edges.csv.gz` | PR / issue links (closes, parent, title mentions) with each end's family and scope | Counts only; ranking stays in `issue_rank.py` |
+| `outputs/edges.csv.gz` | PR / issue links (closes, parent, title mentions, body refs, timeline cross-references; one per pair, merged evidence) with each end's family and scope | Counts only; ranking stays in `issue_rank.py` |
 | `outputs/dash/*.json.gz`, `outputs/dash/blobs.json` | The dashboard's attached datasets and their blob ids | `out/dash/` in the handover |
 | `outputs/apply_log.txt` | The GitHub issue edits made on 2026-10-26 (12 issues labelled, 10 retitled, user-approved) | |
 | `MANIFEST.json` | sha256 of every output (uncompressed) and dataset, per-repo head SHAs | |

@@ -156,12 +156,29 @@
 
   <section class="tx-graph-sec" id="crosswalk" style="display:grid;gap:var(--cds-gap-md)">
     <header><h2>PR ↔ issue crosswalk and dependency graph</h2>
-      <span class="muted">Edges are GitHub closing references (PR closes issue, from both sides), sub-issue parents, and #123 / Repo#123 / PR123 mentions in titles that resolve inside this snapshot. Counts only; ranking metrics stay with issue_rank.</span></header>
+      <span class="muted">One link per pair, typed by its strongest evidence: closes (GitHub closing references, Closes/Fixes/Resolves in a PR body, or a closing cross-reference), parent (sub-issues), title mentions (#123, Repo#123, PR123), body refs (references in a PR or issue body) and timeline (GitHub cross-reference events). Only links between items in this snapshot. Counts only; ranking metrics stay with issue_rank.</span></header>
     <article class="tx-card" id="xw">
       <header><h2>Crosswalk per family</h2><span class="muted">For the chosen repository: PRs and issues per family, how many issues a PR closes, and where the links go. Click a row to graph that family.</span></header>
       <div class="tx-scroll">
         <table class="tx-t-xw" data-source="crosswalk" data-row-key="id">
           <thead><tr><th data-field="family">Family</th><th class="num" data-field="prs">PRs</th><th class="num" data-field="issues">Issues</th><th class="num" data-field="open_issues">Open issues</th><th class="num" data-field="issues_closed_by_pr">Issues with a closing PR</th><th class="num" data-field="link_rate">Issue link rate</th><th class="num" data-field="prs_closing">PRs that close issues</th><th class="num" data-field="edges">Edges</th><th class="num" data-field="internal">Inside family</th><th class="num" data-field="outgoing">To other families</th><th class="num" data-field="incoming">From other families</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+    <article class="tx-card" id="none-links">
+      <header><div class="row"><h2>(none): can it reuse an existing family?</h2>
+        <label class="muted">Show <select id="f-nstatus"><option value="clear">Clear candidate</option><option value="mixed">Mixed links</option><option value="no family neighbour">No family neighbour</option><option value="">All</option></select></label></div>
+        <span class="muted">Titles whose own text maps to no family, given a candidate from the families of everything they link to (closes and parent count 3, title mentions 2, body refs and timeline 1). Clear = the top family has at least 60% of the weight. A candidate never overwrites the title's own family.</span></header>
+      <div class="tx-stats" id="c-none">
+        <div><span class="muted">(none) titles</span><b class="tx-n" data-n="total" data-source="nonelinks" data-field="total">—</b></div>
+        <div><span class="muted">Clear candidate</span><b class="tx-n" data-n="clear" data-source="nonelinks" data-field="clear">—</b></div>
+        <div><span class="muted">Mixed links</span><b class="tx-n" data-n="mixed" data-source="nonelinks" data-field="mixed">—</b></div>
+        <div><span class="muted">No family neighbour</span><b class="tx-n" data-n="isolated" data-source="nonelinks" data-field="isolated">—</b></div>
+      </div>
+      <div class="tx-scroll">
+        <table class="tx-t-none" data-source="titles" data-row-key="id">
+          <thead><tr><th data-field="number">#</th><th data-field="repo">Repo</th><th data-field="title">Title</th><th data-field="link_family">Candidate family</th><th class="num" data-field="link_share">Vote share</th><th data-field="link_status">Status</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -175,7 +192,7 @@
         <header><div class="row"><h2>Dependency graph</h2>
           <label class="muted">Group <select id="f-gfam" data-source="crosswalk"></select></label></div>
           <div class="row"><span class="muted">Filled: in the group; faded: linked from outside it. Circle = PR, square = issue. Drag to rearrange; click a node to open it on GitHub.</span>
-          <span class="tx-etypes"><label class="muted"><input type="checkbox" id="e-closes" checked> closes</label> <label class="muted"><input type="checkbox" id="e-parent" checked> parent</label> <label class="muted"><input type="checkbox" id="e-mentions" checked> mentions</label></span></div></header>
+          <span class="tx-etypes"><label class="muted"><input type="checkbox" id="e-closes" checked> closes</label> <label class="muted"><input type="checkbox" id="e-parent" checked> parent</label> <label class="muted"><input type="checkbox" id="e-mentions" checked> title mentions</label> <label class="muted"><input type="checkbox" id="e-refs" checked> body refs</label> <label class="muted"><input type="checkbox" id="e-xref"> timeline</label></span></div></header>
         <div class="tx-chart" id="c-graph" data-source="edges titles" style="min-height:26rem"></div>
       </article>
     </div>
@@ -184,7 +201,7 @@
         <span class="muted tx-edges-note">Every edge with at least one end in the group.</span></header>
       <div class="tx-scroll">
         <table class="tx-t-edges" data-source="edges" data-row-key="id">
-          <thead><tr><th data-field="src">From</th><th data-field="type">Link</th><th data-field="dst">To</th><th data-field="src_family">From family</th><th data-field="dst_family">To family</th><th data-field="cross_repo">Cross-repo</th><th>From title</th><th>To title</th></tr></thead>
+          <thead><tr><th data-field="src">From</th><th data-field="type">Link</th><th data-field="evidence">Evidence</th><th data-field="dst">To</th><th data-field="src_family">From family</th><th data-field="dst_family">To family</th><th data-field="cross_repo">Cross-repo</th><th>From title</th><th>To title</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -277,6 +294,21 @@ dash.calc('crosswalk', {
   },
 });
 
+dash.calc('nonelinks', {
+  inputs: ['titles'],
+  title: '(none) titles by link candidate',
+  description: 'Per repository and ALL: titles with no family of their own, split by whether their links give a clear candidate family, a mixed one, or none.',
+  fn: (titles) => {
+    const out = new Map();
+    titles.filter((t) => t.family === '?').forEach((t) => [t.repo, 'ALL'].forEach((repo) => {
+      if (!out.has(repo)) out.set(repo, { id: repo, total: 0, clear: 0, mixed: 0, isolated: 0 });
+      const g = out.get(repo); g.total += 1;
+      if (t.link_status === 'clear') g.clear += 1; else if (t.link_status === 'mixed') g.mixed += 1; else g.isolated += 1;
+    }));
+    return [...out.values()];
+  },
+});
+
 dash.calc('flow', {
   inputs: ['edges'],
   title: 'Family to family link counts',
@@ -285,7 +317,7 @@ dash.calc('flow', {
     const out = new Map();
     edges.forEach((e) => [...new Set([e.src_repo, e.dst_repo, 'ALL'])].forEach((repo) => {
       const id = `${repo}|${e.src_family}|${e.dst_family}`;
-      if (!out.has(id)) out.set(id, { id, repo, src_family: e.src_family, dst_family: e.dst_family, n: 0, closes: 0, parent: 0, mentions: 0 });
+      if (!out.has(id)) out.set(id, { id, repo, src_family: e.src_family, dst_family: e.dst_family, n: 0, closes: 0, parent: 0, mentions: 0, refs: 0, xref: 0 });
       const f = out.get(id); f.n += 1; f[e.type] += 1;
     }));
     return [...out.values()];
@@ -524,7 +556,7 @@ dash.calc('flow', {
   // ---- crosswalk, flow matrix, dependency graph, edge list ----
   const gfamSel = document.getElementById('f-gfam');
   gfamSel.addEventListener('change', () => dash.setParams({ gfam: gfamSel.value }));
-  ['e-closes', 'e-parent', 'e-mentions', 'q-edges'].forEach((id) => document.getElementById(id).addEventListener('input', () => drawCrosswalk(P().repo)));
+  ['e-closes', 'e-parent', 'e-mentions', 'e-refs', 'e-xref', 'q-edges', 'f-nstatus'].forEach((id) => document.getElementById(id).addEventListener('input', () => drawCrosswalk(P().repo)));
   let sim = null;
 
   function drawCrosswalk(repo) {
@@ -539,6 +571,15 @@ dash.calc('flow', {
       { k: 'issues_closed_by_pr', num: true }, { f: (r) => (r.link_rate == null ? '–' : pct(r.link_rate)), num: true }, { k: 'prs_closing', num: true },
       { k: 'edges', num: true }, { k: 'internal', num: true }, { k: 'outgoing', num: true }, { k: 'incoming', num: true }], 'id');
     [...xtb.rows].forEach((tr) => { tr.className = 'clickable'; if (tr.dataset.key.split('|')[1] === gfam) tr.style.fontWeight = 'var(--cds-font-weight-medium)'; tr.addEventListener('click', () => { dash.setParams({ gfam: tr.dataset.key.split('|')[1] }); document.getElementById('graph').scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
+
+    // (none) post-assignment candidates
+    const nl = rows('nonelinks').find((r) => r.id === repo);
+    document.querySelectorAll('.tx-n').forEach((el) => { el.dataset.where = `id=${encodeURIComponent(repo)}`; el.textContent = nl ? fmt(nl[el.dataset.n]) : '—'; });
+    const nst = document.getElementById('f-nstatus').value;
+    table(document.querySelector('.tx-t-none tbody'), rows('titles').filter((t) => t.family === '?' && (repo === 'ALL' || t.repo === repo) && (!nst || t.link_status === nst))
+      .sort((a, b) => (b.link_share || 0) - (a.link_share || 0)).slice(0, 500), [
+      { f: (t) => `#${t.number}`, link: gh }, { k: 'repo' }, { k: 'title', link: gh }, { f: (t) => t.link_family || '–' },
+      { f: (t) => (t.link_share == null ? '–' : pct(t.link_share)), num: true }, { k: 'link_status' }], 'id');
 
     // flow matrix
     const cf = document.getElementById('c-flow');
@@ -558,7 +599,7 @@ dash.calc('flow', {
           const i = fams.indexOf(f.dst_family), j = fams.indexOf(f.src_family); if (i < 0 || j < 0) return;
           svg.append('rect').attr('x', left + i * cw + 1).attr('y', top + j * ch + 1).attr('width', cw - 2).attr('height', ch - 2).attr('rx', 3)
             .attr('fill', i === j ? dash.colors[1] : dash.colors[0]).attr('fill-opacity', op(f.n)).style('cursor', 'pointer')
-            .on('mousemove', (ev) => showTip(cf, ev, [`${name(f.src_family)} → ${name(f.dst_family)}`, `${fmt(f.n)} links: ${f.closes} closes, ${f.parent} parent, ${f.mentions} mentions`, 'click to graph the source family']))
+            .on('mousemove', (ev) => showTip(cf, ev, [`${name(f.src_family)} → ${name(f.dst_family)}`, `${fmt(f.n)} links: ${f.closes} closes, ${f.parent} parent, ${f.mentions} title, ${f.refs} body, ${f.xref} timeline`, 'click to graph the source family']))
             .on('mouseleave', hideTip).on('click', () => dash.setParams({ gfam: f.src_family }));
           svg.append('text').attr('x', left + i * cw + cw / 2).attr('y', top + j * ch + ch / 2).attr('dy', '0.35em').attr('text-anchor', 'middle').attr('font-size', 10).attr('pointer-events', 'none')
             .attr('fill', op(f.n) > 0.6 ? 'var(--color-bg)' : 'var(--color-fg)').text(fmt(f.n));
@@ -569,7 +610,7 @@ dash.calc('flow', {
     // graph
     const cg = document.getElementById('c-graph');
     if (!ok('edges') || !ok('titles')) { fail(cg, ok('edges') ? 'titles' : 'edges'); return; }
-    const types = new Set(['closes', 'parent', 'mentions'].filter((t) => document.getElementById('e-' + t).checked));
+    const types = new Set(['closes', 'parent', 'mentions', 'refs', 'xref'].filter((t) => document.getElementById('e-' + t).checked));
     const node = new Map(rows('titles').map((t) => [t.id, t]));
     const inRepo = (e) => repo === 'ALL' || e.src_repo === repo || e.dst_repo === repo;
     const inGroup = (id) => gfam === '*' || (node.get(id) && node.get(id).family === gfam);
@@ -591,7 +632,7 @@ dash.calc('flow', {
     document.querySelector('.tx-edges-h').textContent = gfam === '*' ? 'Links (most linked items)' : `Links touching ${gfam === '?' ? '(none)' : gfam}`;
     document.querySelector('.tx-edges-note').textContent = `${fmt(list.length)} links${capped ? `; graph and list limited to the ${CAP} most linked items` : ''}. Item numbers open GitHub.`;
     table(document.querySelector('.tx-t-edges tbody'), list.slice(0, 600), [
-      { f: (e) => label(e.src), link: (e) => ghE(e.src) }, { k: 'type' }, { f: (e) => label(e.dst), link: (e) => ghE(e.dst) },
+      { f: (e) => label(e.src), link: (e) => ghE(e.src) }, { k: 'type' }, { k: 'evidence' }, { f: (e) => label(e.dst), link: (e) => ghE(e.dst) },
       { f: (e) => (e.src_family === '?' ? '(none)' : e.src_family) }, { f: (e) => (e.dst_family === '?' ? '(none)' : e.dst_family) },
       { f: (e) => (e.cross_repo ? 'yes' : '') }, { f: (e) => ttl(e.src) }, { f: (e) => ttl(e.dst) }], 'id');
 
@@ -600,9 +641,9 @@ dash.calc('flow', {
     if (!nodes.length) { const d = document.createElement('div'); d.className = 'muted'; d.textContent = 'No links of the chosen types for this group.'; cg.append(d); return; }
     const W = cg.clientWidth || 600, H = 460;
     const svg = d3.select(cg).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
-    const ecol = { closes: dash.colors[0], parent: dash.colors[2], mentions: 'var(--cds-chart-muted)' };
-    const link = svg.append('g').selectAll('line').data(links).join('line').attr('stroke', (d) => ecol[d.type]).attr('stroke-width', (d) => (d.type === 'mentions' ? 1 : 1.6)).attr('stroke-opacity', 0.7)
-      .attr('stroke-dasharray', (d) => (d.type === 'mentions' ? '3 3' : null));
+    const ecol = { closes: dash.colors[0], parent: dash.colors[2], mentions: dash.colors[3], refs: 'var(--cds-chart-muted)', xref: 'var(--cds-chart-muted)' };
+    const link = svg.append('g').selectAll('line').data(links).join('line').attr('stroke', (d) => ecol[d.type]).attr('stroke-width', (d) => (d.type === 'closes' || d.type === 'parent' ? 1.6 : 1)).attr('stroke-opacity', 0.7)
+      .attr('stroke-dasharray', (d) => (d.type === 'xref' ? '2 3' : d.type === 'refs' ? '5 3' : null));
     const r = (d) => 4 + Math.sqrt(d.deg) * 2.2;
     const g = svg.append('g').selectAll('a').data(nodes).join('a').attr('href', (d) => (d.t ? gh(d.t) : null)).attr('target', '_blank').attr('rel', 'noopener');
     g.append('path').attr('d', (d) => d3.symbol(d.t && d.t.kind === 'pr' ? d3.symbolCircle : d3.symbolSquare, Math.PI * r(d) * r(d))())

@@ -16,12 +16,13 @@ Nothing below is implemented in `title_taxonomy.py` by this PR.
 | Evidence source per field: `title`, `lead`, `label`, `branch`, `pr#N`, `keyword`, `parent#N`, `children`, and confidence `explicit` / `strong` / `inferred` / `none` | `classification` (`EXPLICIT_ACTION` / `CODES_ONLY` / `UNCLASSIFIED`), recursive family candidates | Keep the owner's rule: linked candidates never overwrite. Add closing-PR evidence (`closedByPullRequestsReferences`) as a candidate source |
 | Lint T001–T011 | `lint` warnings | Map codes one to one; T007 (scope used as type) and T011 (freeform lead label) are the most frequent in the census |
 | Per level: n, share, rank, open/closed/merged, 30-day trend, median days to close, monthly running totals; spread stats (keys, mean, median, P90, max, top-5 share, tail share, Gini) | `summary()` per repo / JADE / USER | Add these metrics to `summary()` output and render the dashboard from it |
-| PR / issue crosswalk edges (`closes` from both sides incl. cross-repo, `parent`, title `mentions`), per-family crosswalk and family-to-family link counts | `build_graph()` and `associated_families()` (typed reference graph, max two hops) | Feed `closingIssuesReferences` / `closedByPullRequestsReferences` with repo names into `build_graph()`; keep PageRank / betweenness there; add the per-family crosswalk counts to `summary()` |
+| PR / issue crosswalk edges, one per pair with merged evidence: `closes` (both sides, body keywords, closing cross-references), `parent`, title `mentions`, body `refs`, timeline `xref`; per-family crosswalk and family-to-family link counts | `build_graph()` and `associated_families()` (typed reference graph, max two hops) | Feed `closingIssuesReferences` / `closedByPullRequestsReferences` with repo names into `build_graph()`; keep PageRank / betweenness there; add the per-family crosswalk counts to `summary()` |
+| Link-voted candidate family for titles with none (`link_family`, `link_share`, `link_status`) | linked family candidates in `associated_families()` (never overwrite) | Same rule; the census adds type weights (closes/parent 3, title 2, body/timeline 1) and a 60% clear threshold that can be ported |
 | Lossless retitle suggestion and snapshot-guarded `apply_issues.py` | none: #927 forbids renames | Keep it out of the owner; any future rename tool needs its own owner decision |
 
 ## Census numbers this rests on
 
-Pulse 2026-10-26T09:06:51Z, 23 repos, 6,652 PRs and 626 issues. Explicit `type(scope)` prefix:
+Pulse 2026-10-26T09:18:34Z, 23 repos, 6,652 PRs and 626 issues, 17,665 PR/issue links. Explicit `type(scope)` prefix:
 PRs 35.0%, issues 3.5%. Resolved to a type and family by any evidence: 68.4%. See `outputs/keywords.md`
 and the dashboard for per-repo and per-family figures.
 

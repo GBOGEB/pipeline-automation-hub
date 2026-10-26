@@ -2,7 +2,7 @@
 
 Grammar: `<type>(<scope>[,<scope>][ <qualifier>...])[!]: <subject>`, e.g. `fix(jade devops N12): census fails closed`.
 
-Pulse 2026-10-26T09:06:51Z, vocabulary sha256 `54a274e662c9`.
+Pulse 2026-10-26T09:18:34Z, vocabulary sha256 `54a274e662c9`.
 
 ## Types
 

@@ -31,8 +31,8 @@ Lint rules T001 to T011 (`taxonomy.py` `LINT_RULES`): no prefix, unknown type, t
 | File | Role |
 |---|---|
 | `vocabulary.json` | The vocabulary: 12 types, 26 families, scopes and aliases (`=alias` = only inside an explicit prefix or label, never free text), qualifier patterns, type keywords, label map, `generic` families that lose to domain families in free-text inference |
-| `graph.py` | PR / issue crosswalk edges: `closes` (PR -> issue, both sides, cross-repo), `parent` (sub-issues), `mentions` (`#123`, `Repo#123`, `PR123` in titles, resolved inside the pulse). Counts only: PageRank / betweenness stay with `issue_rank.py` |
-| `test_graph.py` | 4 edge tests |
+| `graph.py` | PR / issue crosswalk edges: `closes` (PR -> issue, both sides, cross-repo), `parent` (sub-issues), `mentions` (`#123`, `Repo#123`, `PR123` in titles), `refs` (body references), `xref` (timeline cross-references); one edge per pair, strongest type wins. Counts only: PageRank / betweenness stay with `issue_rank.py` |
+| `test_graph.py` | 7 edge tests |
 | `taxonomy.py` | `Vocabulary`, `parse_title`, `lint`, `classify_own`, `classify_all` (recursive issue inheritance), `suggest_title` (lossless: never drops a label token or ID), `levels` |
 | `test_taxonomy.py` | 18 unit tests (`python -m unittest test_taxonomy`) |
 | `fetch.py` | Read-only GraphQL fetch via `gh`; one pulse, each repo's default-branch head SHA recorded (AGENTS.md L6); `--resume` reuses `data/repos/*.json` |
@@ -41,7 +41,7 @@ Lint rules T001 to T011 (`taxonomy.py` `LINT_RULES`): no prefix, unknown type, t
 | `apply_issues.py` | Applies the issue plan with `gh issue edit`; dry run unless `--apply`; adds labels only, never removes; re-reads each issue and skips it if its title or state changed since the pulse |
 | `manifest.py` | `MANIFEST.json` with sha256 of every artefact; `--check` regenerates everything from `data/raw.json.gz` and fails on any difference |
 | `dash/index.html` | The dashboard page (d3 only; the dashboard host allows no other script) |
-| `data/raw.json.gz` | The pulse (source of truth, 7,278 rows, 23 repos, 2026-10-26T09:06:51Z; issues and PRs carry repo-qualified closing and parent references) |
+| `data/raw.json.gz` | The pulse (source of truth, 7,278 rows, 23 repos, 2026-10-26T09:18:34Z; repo-qualified closing and parent references, body references and timeline cross-references) |
 | `out/` | Generated outputs (reproducible from the pulse; `manifest.py --check` proves it) |
 | `out/apply_log.txt` | Log of the GitHub edits made on 2026-10-26 |
 
@@ -58,7 +58,7 @@ python apply_issues.py --min-confidence strong                   # dry run; add 
 
 Windows: `unset GITHUB_TOKEN GH_TOKEN` (or the PowerShell equivalent) before `gh`; set `PYTHONIOENCODING=utf-8` for console output with emoji titles.
 
-## Results at the 09:06 pulse
+## Results at the 09:18 pulse
 
 | | PRs | Issues | All |
 |---|---|---|---|
@@ -82,7 +82,22 @@ https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw (private until shared). Data a
 
 ## Crosswalk and dependency graph
 
-634 links at the 09:06 pulse: 335 `closes`, 295 `mentions`, 4 `parent`; 2 cross-repo; 388 inside one family. `out/edges.csv` and the dashboard `edges` dataset carry each end's family and scope. The dashboard adds a per-family crosswalk (PRs, issues, issues closed by a PR, link rate, PRs that close issues, links inside / to / from other families), a family-to-family link matrix, a force-directed graph per family (PR circles, issue squares, nodes open GitHub) and the link list.
+17,665 links at the 09:18 pulse (one per ordered pair, typed by its strongest evidence, every source kept in `evidence`):
+10,021 `refs` (PR / issue body references: `#n`, `Repo#n`, `GBOGEB/repo#n`, GitHub URLs; code blocks and HTML comments ignored),
+7,030 `xref` (GitHub timeline cross-reference events), 336 `closes` (closing references from both sides, `Closes/Fixes/Resolves`
+in a PR body, closing cross-references), 274 `mentions` (title references), 4 `parent`. 1,032 cross-repo; 5,626 inside one family.
+Bodies are read only to extract references and are never stored. `out/edges.csv` and the dashboard `edges` dataset carry each
+end's family and scope. The dashboard adds a per-family crosswalk, a family-to-family link matrix, a force-directed graph per
+family (PR circles, issue squares, nodes open GitHub; link types can be toggled) and the link list.
+
+### Post-assignment of `(none)`
+
+Titles whose own text maps to no family (655) get a **candidate** family voted by the families of everything they link to
+(closes and parent weigh 3, title mentions 2, body refs and timeline 1). It is stored as `link_family`, `link_share`,
+`link_status` on the `titles` dataset and never overwrites the title's family. Result: 136 clear (top family has at least 60%
+of the weight; mostly ci-ops 40, governance 26, qps 22, cryo-eng 12), 328 mixed (links spread over several families:
+cross-cutting items), 191 with no linked item that has a family (generic one-off titles such as "add ...", "repeat pass",
+"accidental", Copilot setup; no hidden new family among them).
 
 ## Overlap with pipeline-automation-hub #925 / #927 (read before landing)
 
@@ -104,6 +119,6 @@ This work should not land as a second parser. What it adds that #927 lacks, to b
 
 - Verified on the workstation's Python 3.12 only; code avoids 3.12-only syntax but CI on the repo's declared runtime has not run. Treat as unverified until it does.
 - Keyword inference is heuristic: `inferred` rows are guesses; only `explicit` and `strong` were applied.
-- Dashboard data are a static copy from the 09:06 pulse.
-- Links come only from GitHub closing references, sub-issue parents and references written in titles. References in PR and issue bodies, timeline cross-references and commits are not read yet, so the graph undercounts.
+- Dashboard data are a static copy from the 09:18 pulse.
+- Links come from closing references, sub-issue parents, titles, bodies and timeline cross-references. Comments and commit messages are only seen indirectly through timeline events; references to items outside the snapshot (older or other owners) are dropped.
 - 9% of titles still map to no family; see `out/keywords.md` "Unmapped" and the dashboard table.

@@ -8,8 +8,9 @@ Resume the GBOGEB title-taxonomy work. Read title_taxonomy/HANDOVER.md first, th
 State on 2026-10-26:
 - title_taxonomy/ parses PR and issue titles into type(scope qualifier): subject, with levels
   type family > type and family > scope > qualifier, prefix = type(scope). Vocabulary in vocabulary.json
-  (12 types, 26 families, 13 qualifier classes). 22 unit tests pass (python -m unittest test_taxonomy test_graph).
-- Pulse 2026-10-26T09:06:51Z, 23 GBOGEB repos, 7,278 titles and 634 PR/issue links (graph.py), in data/raw.json.gz.
+  (12 types, 26 families, 13 qualifier classes). 25 unit tests pass (python -m unittest test_taxonomy test_graph).
+- Pulse 2026-10-26T09:18:34Z, 23 GBOGEB repos, 7,278 titles and 17,665 PR/issue links (graph.py: closes, parent,
+  title mentions, body refs, timeline xrefs), in data/raw.json.gz. (none) titles carry a link-voted candidate family.
   `python manifest.py --check` must print "reproducible".
 - Dashboard: https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw (Dashboard type, attached JSON datasets,
   blob ids in out/dash/blobs.json; page source dash/index.html).

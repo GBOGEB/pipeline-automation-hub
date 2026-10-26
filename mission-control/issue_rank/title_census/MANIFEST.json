@@ -1,7 +1,7 @@
 {
  "schema": "gbogeb.title-taxonomy.manifest/1.0",
  "pulse": {
-  "fetched_at": "2026-10-26T09:06:51Z",
+  "fetched_at": "2026-10-26T09:18:34Z",
   "owner": "GBOGEB",
   "repos": {
    "ABACUS": "c9ec9f95b82add1228187d755e7c6761bfcaaacc",
@@ -24,15 +24,15 @@
    "github_Documents": "f0dc40d437c37364c1933d41f4114ab2a6cdedcb",
    "gpt_session_toolkit": "c026fdbe8f588ca2f493f30b7d4c231c2f3c7cb4",
    "orchestration-sandbox": "b1526e6c0e1359f9082afdf678ed0a9efe787771",
-   "pipeline-automation-hub": "d065dddf661f0c4577cd746f9b8fdae4a4246eec",
+   "pipeline-automation-hub": "f57ea39444a4f61bc0e4ab4fde7ad7344f33b92b",
    "qps_deck": "23276d00a4abf8b81c713cd89f0806f3642aef99",
    "skills-introduction-to-github": "8578b799735b622c06f62902d14d8ce82cffc80a"
   }
  },
  "source": {
   "data/raw.json.gz": {
-   "sha256": "4188c8142a7b6747fb18bef11b81310295db25c6608a75f5fa922197171eecb3",
-   "bytes": 391178,
+   "sha256": "d8392737c9a0a2cc5d803061e5d53c4c85a35db0fc81074df54aa3215684d779",
+   "bytes": 529552,
    "rows": 7278
   },
   "vocabulary.json": {
@@ -41,16 +41,16 @@
  },
  "outputs": {
   "out/census.json": {
-   "sha256": "4a7f773c5abc3f7a00fca2b62233845ad5431a4e30cf886b67c88298bea0719d",
-   "bytes": 6658000
+   "sha256": "ad1915c0c96fd95e73101401d648677582aef8525a20d0139d8c96871dc0bdef",
+   "bytes": 6657992
   },
   "out/rows.csv": {
-   "sha256": "bf06b570ba133e81cdf835decae3913a29648cea010796a3e85c51bb8d3dc6d5",
-   "bytes": 1675822
+   "sha256": "bd681f567475ab1762530d12a93e086a0a6a6a767608fb1ab32add6e9164309c",
+   "bytes": 1675834
   },
   "out/stats.csv": {
-   "sha256": "205dc1b0fe69bab77beda789afb425b4aaaa79a92cb26ca676de20fa5e85a25e",
-   "bytes": 1640445
+   "sha256": "a52a1928c1069058f3cbd81e797d2f42b9f3a2aafca53bb304e3872f421c44f4",
+   "bytes": 1640437
   },
   "out/timeseries.csv": {
    "sha256": "dc8030059b3d2720c2a1d05df548b17786a4107293bcf298f5f87d5a046cac5b",
@@ -61,11 +61,11 @@
    "bytes": 18515
   },
   "out/keywords.md": {
-   "sha256": "c5fe84a9506110f3d0036c78bbd182b815bff848f8c8a7f5779e9428c49a3138",
+   "sha256": "02266c8e86db2956dde251b3c5a520e6514599daa3d8a44331bf033eeda46bc4",
    "bytes": 22076
   },
   "out/issue_plan.json": {
-   "sha256": "20c84973f07cd8090f45b9fda0e9790c05907a6b8740d9e2f61d3b69baad0d61",
+   "sha256": "2714201a570405ea6a2c9f8c3dabe808a1c3a3319df0752ae9a2fd5d49aabbba",
    "bytes": 75088
   },
   "out/issue_plan.md": {
@@ -73,30 +73,30 @@
    "bytes": 30178
   },
   "out/edges.csv": {
-   "sha256": "e7a269e038beb3a5c5c1ead09b6cdc39be1b25c2fc6fef6ed873c3a2fafbc59a",
-   "bytes": 115743
+   "sha256": "f91b70196dbd72a0ecf171e7643b71fd00d6b36d5deff3b866aaeb573e97cd12",
+   "bytes": 3196361
   }
  },
  "dashboard": {
   "url": "https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw",
   "page": {
-   "dash/index.html": "edb2d7e84180f878fecdeeba46a919be044c091067dcd8025ac91e63b6d966ad"
+   "dash/index.html": "bf62fd09c6d792fa6c054c81dda55ab7d6738afd388fc499bdc6494e8b0d2e11"
   },
   "datasets": {
    "titles": {
     "file": "out/dash/titles.json",
-    "sha256": "4bc935dbcafb2e695429c706cf6106685213783b0cf8751022586de3785bd63d",
-    "blob": "/_blob/fbcbef426440b9c48a5dc3dd02b77b48"
+    "sha256": "7b3782202d8c36cb6155dd2e630579a298dd1054758758b4ccf5fee4e35d2177",
+    "blob": "/_blob/0d4af9704b572871cb5537425c714626"
    },
    "edges": {
     "file": "out/dash/edges.json",
-    "sha256": "c145200f8554e886c64146ddd02bbc74964f97f91838efe8b0bdec3028b55034",
-    "blob": "/_blob/3e269f045b5f3f7b0b6f0bf3b8df2c50"
+    "sha256": "c410e36433fa76600a9a0782aed4c15c9c4e1e0419c1f94837ff9b35331ceb91",
+    "blob": "/_blob/99aa944af79485ba28e01ccf3af31347"
    },
    "stats": {
     "file": "out/dash/stats.json",
-    "sha256": "ea5e7b931621d89ef354b7fd5363753553d1247263ca9088bbd6845f65bd9785",
-    "blob": "/_blob/e74f4dd763b87418baf659fe03700f92"
+    "sha256": "92387ad2e6961f9d4b797513bed51eb1af2770a391819882765a08c643659438",
+    "blob": "/_blob/b775f7e5da1138d111fb0457dff1843b"
    },
    "series": {
     "file": "out/dash/series.json",
@@ -110,8 +110,8 @@
    },
    "pulse": {
     "file": "out/dash/pulse.json",
-    "sha256": "a1066060c1afc096ff8e4f0caa778598e05638c66dcffd7e7d365b96c254ebf1",
-    "blob": "/_blob/4fcbd91cdc755e6af3e1021dbb140b30"
+    "sha256": "b61323269d9ce00b864cf4d18237d48ed7f37d5c9348528e6d21551dd0f1fab3",
+    "blob": "/_blob/8556b77444f151ae816515ffd2aaeaf4"
    },
    "keywords": {
     "file": "out/dash/keywords.json",
