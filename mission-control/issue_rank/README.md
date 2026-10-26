@@ -29,7 +29,9 @@ if it returns 401). Each scope writes to `out/<scope>/`: `snapshot.json`, `issue
 
 `out/` is gitignored. This repository is public and `cryoplant-project` is private, so
 snapshots and rankings never get committed. `--redact-private` strips titles, URLs and
-free-text actions of private items before anything is written.
+free-text actions of private items before anything is written, and does not persist
+`snapshot.json` (raw bodies and comments): it deletes any earlier copy and keeps only the
+snapshot digest in the ledger.
 
 ## Per-item progress (DoV / DoD / steps)
 
@@ -43,8 +45,8 @@ The parser reads the issue body (comments are status notes, not the plan):
   overrides the heading.
 - Plain bullets under a DOV / DOD / STEPS heading are **declared but untracked**
   criteria. They are counted as `untracked`, never as done.
-- A checklist item that references another issue (`- [ ] #123`) makes that issue a
-  CHILD. A tick that disagrees with the child's state is reported as checklist drift.
+- A live checklist item that references another issue (`- [ ] #123`, `- [x] #123`) makes
+  that issue a CHILD; a dropped one (`- [~] #123`) stays a MENTION. A tick that disagrees with the child's state is reported as checklist drift.
 
 Progress reads like `4/7 (DOV 1/2, DOD 2/3, STEPS 1/2) +3 untracked`. The checklist
 state is one of `NO_CHECKLIST`, `UNTRACKED_CRITERIA`, `NOT_STARTED`, `IN_PROGRESS` or
@@ -99,7 +101,8 @@ score = 0.25·pressure + 0.20·nearness + 0.15·priority + 0.15·centrality
 `score_parts` is stored per item so every rank can be explained. The lane gives the
 next action, checked in this order:
 
-- PRs: `FIX_RED`, `IN_FLIGHT` (draft), `REVIEW` (not approved), `MERGE_READY`.
+- PRs: `FIX_RED`, `IN_FLIGHT` (draft), `REVIEW` (not approved), `AWAIT_CHECKS` (approved,
+  checks not all green yet), `MERGE_READY` (approved and every check green).
 - Issues: `BLOCKED`, `CLOSE_CANDIDATE`, `FIX_RED`, `BOTTLENECK` (two or more open
   waiters), `NEARLY_DONE` (70% or more ticked), `TRACK_DOD`, `DEFINE_DOD`,
   `NOT_STARTED`, `IN_PROGRESS`.
@@ -121,13 +124,12 @@ new and gone items, new and removed links, new PR→issue dependencies, checklis
 
 ## Reuse and ownership
 
-- **Overlap with #906 (on master).** `qps-triage-ultra/issue-expedition/triway_burndown.py`
-  already owns the oldest / newest / connected orderings and an explicit DoD/DoV checklist
-  parser. This module was built in parallel and must be reconciled before merge (AGENTS.md
-  L4): either the checklist and reference parsers here move into `triway_burndown.py`
-  (which gains STEPS, untracked criteria, federation aliases and negation) and this module
-  imports them, or this module is folded into `issue-expedition/`. The graph metrics,
-  lanes, rollups and ledger here have no owner on master.
+- **Overlap with #906.** `qps-triage-ultra/issue-expedition/triway_burndown.py` owns the
+  oldest / newest / connected orderings and the DoD/DoV checklist parser. Owner decision
+  (2026-10-26): the checklist and reference parsers here (STEPS, untracked criteria,
+  federation aliases, negation, typed edges) move into `triway_burndown.py` in their own
+  PR, and this module then imports them instead of keeping `parse_checklist()` and
+  `extract_refs()`. The graph metrics, lanes, rollups and ledger stay here.
 - gg_MATH (`GBOGEB/gg_MATH`) has `kernels/bradley_terry.py` (pairwise ranking),
   `kernels/spectral_graph.py` (Laplacian, Dirichlet energy) and
   `mission/federation/n5_repo_graph_math.py` (typed graph, spectral gap; at most 64

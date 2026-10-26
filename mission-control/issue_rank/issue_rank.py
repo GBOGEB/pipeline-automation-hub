@@ -212,13 +212,15 @@ def extract_refs(text: str | None, home: str, owner: str = OWNER) -> list[dict]:
                 if hit:
                     kind = "MENTION" if NEGATED.search(before[:hit.start()]) else name
                     break
-            if check and kind == "MENTION":
+            # Only live [ ] / [x] items make a CHILD; a dropped [~] / [-] item stays a mention.
+            live = check is not None and check.group(1) not in "~-"
+            if live and kind == "MENTION":
                 kind = "CHILD"
             k = (repo, n, kind)
             if k not in seen:
                 seen.add(k)
                 out.append({"repo": repo, "number": n, "kind": kind,
-                            "ticked": (check.group(1) in "xX") if check else None})
+                            "ticked": (check.group(1) in "xX") if live else None})
     return out
 
 # ---------------------------------------------------------------- fetch
@@ -681,6 +683,8 @@ def classify(item: dict) -> tuple[str, str]:
             return "IN_FLIGHT", "finish draft, mark ready when DoD of the issue it closes is met"
         if item.get("review_decision") != "APPROVED":
             return "REVIEW", "needs an independent approving review before merge"
+        if item.get("checks") != "SUCCESS":
+            return "AWAIT_CHECKS", "approved; wait for every required check to pass before merge"
         return "MERGE_READY", "approved and green: merge under the ruleset"
     if item["open_blockers"] and cl["state"] != "ALL_TICKED":
         return "BLOCKED", f"unblock first: {', '.join(item['open_blockers'][:3])}"
@@ -1108,8 +1112,14 @@ def main(argv=None) -> int:
         snap = fetch(gh, _repos(args, gh), args.owner)
         out = args.out / args.scope  # one pulse directory per scope
         out.mkdir(parents=True, exist_ok=True)
-        (out / "snapshot.json").write_bytes(canonical(snap))
-        print(f"snapshot {out / 'snapshot.json'} {snap['telemetry']}")
+        if getattr(args, "redact_private", False):
+            # The snapshot holds raw private bodies and comments; a redacted run keeps
+            # only its digest (in the ledger) and removes any earlier raw copy.
+            (out / "snapshot.json").unlink(missing_ok=True)
+            print(f"snapshot not persisted (--redact-private) {snap['telemetry']}")
+        else:
+            (out / "snapshot.json").write_bytes(canonical(snap))
+            print(f"snapshot {out / 'snapshot.json'} {snap['telemetry']}")
         if args.cmd == "fetch":
             return 0
         last = out / "issue_rank.json"
