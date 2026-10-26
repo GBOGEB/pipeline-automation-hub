@@ -104,5 +104,58 @@ class RedactedPulse(unittest.TestCase):
             self.assertEqual(pulse["formal_credit_delta"], 0)
 
 
+class MathCoverageFrontier(unittest.TestCase):
+    """Disjoint graph/statistics negatives; no live source or private records."""
+
+    def test_empty_structure_has_no_fabricated_critical_chain(self):
+        self.assertEqual(ir.IM.strongly_connected([], {}), [])
+        result = ir.IM.blocker_chains([], {})
+        self.assertEqual(result, {"below": {}, "above": {}, "critical": [], "cycles": []})
+
+    def test_singleton_and_unknown_scc_neighbors(self):
+        self.assertEqual(ir.IM.strongly_connected(["a"], {"a": ["missing"]}), [["a"]])
+        out = ir.IM.blocker_chains(["a"], {"a": ["absent"]})
+        self.assertEqual(out["critical"], ["a"])
+        self.assertEqual(out["below"]["a"], 0)
+
+    def test_empty_and_singleton_quantile(self):
+        self.assertIsNone(ir.IM.quantile([], .5))
+        self.assertEqual(ir.IM.quantile([7], .5), 7)
+        self.assertEqual(ir.IM.quantile([1, 2, 3, 4], 0), 1)
+        self.assertEqual(ir.IM.quantile([1, 2, 3, 4], 1), 4)
+
+    def test_rank_mismatch_constant_or_singleton_is_withheld(self):
+        self.assertIsNone(ir.IM.spearman([1], [1]))
+        self.assertIsNone(ir.IM.spearman([1, 2], [1]))
+        self.assertIsNone(ir.IM.spearman([3, 3, 3], [1, 2, 3]))
+        self.assertIsNone(ir.IM.kendall_tau_b([1], [1]))
+        self.assertIsNone(ir.IM.kendall_tau_b([1, 2], [1]))
+
+    def test_kendall_ties_and_no_pairs_are_handled_without_fake_signal(self):
+        self.assertIsNone(ir.IM.kendall_tau_b([2, 2, 2], [3, 3, 3]))
+        value = ir.IM.kendall_tau_b([1, 1, 2, 3], [1, 2, 2, 3])
+        self.assertIsNotNone(value)
+        self.assertTrue(-1 <= value <= 1)
+
+    def test_poisson_boundary_and_invalid_level(self):
+        self.assertEqual(ir.IM._poisson_cdf(-1, 2.0), 0)
+        self.assertEqual(ir.IM._poisson_cdf(0, 0), 1)
+        for k, level in ((-1, .90), (1.0, .90), (1, 0), (1, 1)):
+            with self.assertRaises(ValueError):
+                ir.IM.poisson_interval(k, level)
+
+    def test_dirichlet_zero_gamma_draws_fallback(self):
+        class ZeroRandom:
+            def gammavariate(self, alpha, beta):
+                return 0.0
+        self.assertEqual(ir.IM.dirichlet(ZeroRandom(), [1.0, 2.0, 4.0]),
+                         [1 / 3, 1 / 3, 1 / 3])
+
+    def test_tie_ranks_stable_under_permutation(self):
+        self.assertEqual(ir.IM.average_ranks([7, 2, 7, 9]), [2.5, 1.0, 2.5, 4.0])
+        self.assertEqual(ir.IM.average_ranks([]), [])
+
+
+
 if __name__ == "__main__":
     unittest.main()
