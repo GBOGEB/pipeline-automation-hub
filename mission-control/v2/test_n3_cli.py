@@ -20,14 +20,14 @@ class CLITests(unittest.TestCase):
             out=Path(t)/'audit.json'
             with patch.object(sys,'argv',['n3_integrity.py',str(LEDGER),'--out',str(out)]):
                 self.assertEqual(n3_integrity.main(),0)
-            self.assertEqual(json.loads(out.read_text())['unknown_count'],9)
+            self.assertEqual(json.loads(out.read_text(encoding="utf-8"))['unknown_count'],9)
 
     def test_integrity_cli_invalid(self):
         with tempfile.TemporaryDirectory() as t:
-            obj=json.loads(LEDGER.read_text())
+            obj=json.loads(LEDGER.read_text(encoding="utf-8"))
             obj['receipts'][2]['coverage_delta']=101
             obj['receipts'][2]['coverage_matched']=True
-            raw=Path(t)/'bad.json';raw.write_text(json.dumps(obj))
+            raw=Path(t)/'bad.json';raw.write_text(json.dumps(obj), encoding="utf-8", newline="\n")
             with patch.object(sys,'argv',['n3_integrity.py',str(raw)]):
                 self.assertEqual(n3_integrity.main(),1)
 
@@ -36,19 +36,19 @@ class CLITests(unittest.TestCase):
             p=Path(t)/'metrics.json'
             with patch.object(sys,'argv',['n3_metrics.py',str(LEDGER),'--out',str(p)]):
                 self.assertIsNone(n3_metrics.main())
-            self.assertEqual(json.loads(p.read_text())['metrics']['pulse_receipts'],3)
+            self.assertEqual(json.loads(p.read_text(encoding="utf-8"))['metrics']['pulse_receipts'],3)
 
     def test_dashboard_cli_writes_two_outputs(self):
         with tempfile.TemporaryDirectory() as t:
             h=Path(t)/'html'/'index.html';j=Path(t)/'metrics.json'
             with patch.object(sys,'argv',['n3_dashboard.py',str(LEDGER),'--html',str(h),'--metrics',str(j)]):
                 self.assertIsNone(n3_dashboard.main())
-            data=json.loads(j.read_text())
-            self.assertIn(data['source_ledger_digest'],h.read_text())
+            data=json.loads(j.read_text(encoding="utf-8"))
+            self.assertIn(data['source_ledger_digest'],h.read_text(encoding="utf-8"))
 
     def test_valid_coverage_denominators(self):
         from n3_continuation import digest
-        obj=json.loads(LEDGER.read_text())
+        obj=json.loads(LEDGER.read_text(encoding="utf-8"))
         r=obj['receipts'][0]
         r.update(coverage_delta=1.3,coverage_matched=True,
                  coverage_comparison={'baseline_eligible':100,'actual_eligible':100})
@@ -58,7 +58,7 @@ class CLITests(unittest.TestCase):
 
     def test_invalid_native_attempt(self):
         from n3_continuation import digest
-        obj=json.loads(LEDGER.read_text())
+        obj=json.loads(LEDGER.read_text(encoding="utf-8"))
         r=obj['receipts'][2]
         r['tests']['kind']='NATIVE_EXACT_HEAD'
         r['tests']['tested_sha']=r['output_source_sha']
@@ -67,7 +67,7 @@ class CLITests(unittest.TestCase):
 
     def test_source_evidence_invalid_shape(self):
         from n3_continuation import digest
-        obj=json.loads(LEDGER.read_text())
+        obj=json.loads(LEDGER.read_text(encoding="utf-8"))
         obj['receipts'][2]['source_evidence']={'source_sha':obj['receipts'][2]['output_source_sha'],'class':'FAKE','locator':'x'}
         self.assertIn('CONTRADICTORY_SOURCE_PROOF','|'.join(n3_integrity.inspect(obj)['issues']))
 

@@ -1,0 +1,9 @@
+id,priority,state,owner,done_when,depends_on,github_evidence
+SC-A001,P0,IN_PR,Claude Code session (this record's PR),PR merged to master with CP.CLOSE GitHub Handover QA green at the exact head and a master readback of the merge SHA.,,https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/README.md
+SC-A003,P0,HOLD,Repository owner (GBOGEB),A scheduled code-purple-live-census run at current master passes step 4 with no HTTP 401 and uploads a source-bound graph artifact.,,https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40244674158|https://github.com/GBOGEB/pipeline-automation-hub/pull/843
+SC-A004,P1,TODO,CODE PURPLE BD queue owner,One CPQ item exists for the 401 root; later failures append occurrences and never add items.,,https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json
+SC-A005,P0,HOLD,QPS engineering owner / SPOC,A native QPS owner acceptance or blockage receipt names the affected QPS child requirement.,,
+SC-A006,P1,TODO,Next CODE PURPLE method session,"Replaying R1 and the 48-hour ledger yields zero alerts, one 401 root with many occurrences, and no unlock without a named QPS child.",SC-A001,https://github.com/GBOGEB/pipeline-automation-hub/pull/876
+SC-A007,P1,HOLD,Repository owner (GBOGEB),A required_status_checks rule exists on ABACUS main and a deliberately red canary is blocked from merging.,,https://github.com/GBOGEB/ABACUS/pull/2470|https://github.com/GBOGEB/ABACUS/issues/1860
+SC-A008,P2,TODO,Next CP.RESUME session,"A fresh session reproduces R1 heads and roots, or records each difference as a new dated delta.",SC-A001,https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/CP_HANDOFF_RESUME_V1.json
+SC-A009,P3,TODO,Owner (GBOGEB),Each remaining scheduled task has a recorded keep/retire decision.,,

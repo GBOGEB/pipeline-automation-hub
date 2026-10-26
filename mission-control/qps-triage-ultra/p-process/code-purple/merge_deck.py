@@ -32,7 +32,7 @@ def merge(build: Path, out: Path, subject: str) -> tuple[int, int, int]:
     w = PdfWriter(clone_from=str(build / "deck_landscape.pdf"))
     w.insert_page(PdfReader(str(build / "deck_portrait.pdf")).pages[0], index=PORTRAIT_AT)
     w.add_metadata({"/Title": "Global Code Purple", "/Author": "GBO (prepared with Claude)", "/Subject": subject})
-    for name, idx in json.loads((build / "deck_sections.json").read_text()):
+    for name, idx in json.loads((build / "deck_sections.json").read_text(encoding="utf-8")):
         w.add_outline_item(name, idx)  # build_deck.js numbers pages with the portrait page already counted
         if name.startswith("C"):
             w.add_outline_item("    Pulse, portrait detail", PORTRAIT_AT)
@@ -51,7 +51,7 @@ def main() -> None:
     a = ap.parse_args()
     cands = [a.census, ROOT / "kit/out/census.json", ROOT / "site/code-purple/kit/census.json"]
     census = next(Path(c) for c in cands if c and Path(c).is_file())
-    c = json.loads(census.read_text())
+    c = json.loads(census.read_text(encoding="utf-8"))
     subject = f"Code Purple status deck, GitHub readback {c['generated_at'][:16].replace('T', ' ')} UTC"
     pages, links, internal = merge(Path(a.build), Path(a.out), subject)
     print(json.dumps({"pages": pages, "links": links, "internal": internal, "out": a.out}))

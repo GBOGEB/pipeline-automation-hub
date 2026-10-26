@@ -192,7 +192,7 @@ def test_viewport(browser,url,mode,w,h,snap,out,report):
 
 def run(source,out):
     out.mkdir(parents=True,exist_ok=True)
-    snap=json.loads((source/"snapshot.json").read_text())
+    snap=json.loads((source/"snapshot.json").read_text(encoding="utf-8"))
     http=ThreadingHTTPServer(("127.0.0.1",0),partial(Handler,directory=str(source)))
     thread=threading.Thread(target=http.serve_forever,daemon=True)
     thread.start()
@@ -228,7 +228,7 @@ def run(source,out):
         http.shutdown();thread.join(timeout=5);http.server_close()
     receipt["checks_total"]=sum(x["assertions"] for x in receipt["viewports"])
     receipt["status"]="PASS"
-    (out/"qa-receipt.json").write_text(json.dumps(receipt,indent=2,sort_keys=True)+"\n")
+    (out/"qa-receipt.json").write_text(json.dumps(receipt,indent=2,sort_keys=True)+"\n",encoding="utf-8",newline="\n")
     return receipt
 
 

@@ -88,7 +88,7 @@ def main():
                    source_sha=args.producer_sha,
                    source_digests={name:hashlib.sha256(blob).hexdigest() for name,blob in blobs.items()})
     args.out.parent.mkdir(parents=True,exist_ok=True)
-    args.out.write_text(json.dumps(result,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+    args.out.write_text(json.dumps(result,indent=2,sort_keys=True)+"\n",encoding="utf-8",newline="\n")
     print("MYCELIUM=STAGED_READ_ONLY; NODES=%d; EDGES=%d"%(len(result["nodes"]),len(result["edges"])))
 
 if __name__=="__main__": main()

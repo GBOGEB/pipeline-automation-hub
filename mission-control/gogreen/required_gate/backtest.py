@@ -146,19 +146,19 @@ def main(argv=None):
     ap.add_argument("--files-json", type=Path, help="offline: {pr: [files]} instead of the API")
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
-    lane = json.loads(a.pr_trace.read_text())
-    ledger = json.loads(a.ledger.read_text()) if a.ledger and a.ledger.exists() else None
+    lane = json.loads(a.pr_trace.read_text(encoding="utf-8"))
+    ledger = json.loads(a.ledger.read_text(encoding="utf-8")) if a.ledger and a.ledger.exists() else None
     recent = sorted(lane["merge_matrix"], key=lambda m: (m["merged_at"], m["pr"]))[-a.limit:]
     if a.files_json:
-        files = {int(k): v for k, v in json.loads(a.files_json.read_text()).items()}
+        files = {int(k): v for k, v in json.loads(a.files_json.read_text(encoding="utf-8")).items()}
     else:
         reader = g.Reader(a.repo)
         files = {m["pr"]: g.changed_files(reader, m["pr"]) for m in recent}
-    master = json.loads(a.master_trace.read_text()) if a.master_trace else None
+    master = json.loads(a.master_trace.read_text(encoding="utf-8")) if a.master_trace else None
     rep = run(a.root, lane, ledger, files, a.limit, master)
     a.out.mkdir(parents=True, exist_ok=True)
-    (a.out / "backtest.json").write_text(json.dumps(rep, indent=1, sort_keys=True) + "\n")
-    (a.out / "backtest.md").write_text(markdown(rep))
+    (a.out / "backtest.json").write_text(json.dumps(rep, indent=1, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    (a.out / "backtest.md").write_text(markdown(rep), encoding="utf-8", newline="\n")
     print(json.dumps({k: v["summary"] | {"enforced": v["enforced"]} for k, v in rep["policies"].items()},
                      sort_keys=True))
     return rep

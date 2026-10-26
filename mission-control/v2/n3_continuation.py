@@ -156,7 +156,7 @@ def main():
         result = validate(ledger)
     if a.out:
         a.out.parent.mkdir(parents=True, exist_ok=True)
-        a.out.write_text(json.dumps(ledger, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        a.out.write_text(json.dumps(ledger, sort_keys=True, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(result, sort_keys=True, indent=2))
     return 2 if result["disposition"] == "STOP_MAJOR_BLOCKER" else 0
 

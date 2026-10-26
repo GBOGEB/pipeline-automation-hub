@@ -266,7 +266,7 @@ def refresh_tags(gitdir: Path) -> bool:
     if p.returncode != 0:
         out.unlink(missing_ok=True)
         return False
-    out.write_text(p.stdout.decode("utf-8", errors="replace"), encoding="utf-8")
+    out.write_text(p.stdout.decode("utf-8", errors="replace"), encoding="utf-8", newline="\n")
     return True
 
 

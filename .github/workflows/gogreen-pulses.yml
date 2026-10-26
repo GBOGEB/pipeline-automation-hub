@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: gogreen-g4-${{ github.ref }}
+  group: gogreen-wave-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:

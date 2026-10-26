@@ -13,7 +13,7 @@ import replay_lane as rl  # noqa: E402
 
 REPO = "GBOGEB/pipeline-automation-hub"
 NOW = datetime(2026, 10, 20, 12, 0, tzinfo=timezone.utc)
-POLICY = json.loads((HERE / "REPLAY_POLICY.json").read_text())
+POLICY = json.loads((HERE / "REPLAY_POLICY.json").read_text(encoding="utf-8"))
 
 RO = "permissions:\n  contents: read\n  actions: read\n"
 WF = {
@@ -74,7 +74,7 @@ class Lane(unittest.TestCase):
         self.root = Path(self.tmp.name)
         (self.root / ".github/workflows").mkdir(parents=True)
         for n, t in WF.items():
-            (self.root / ".github/workflows" / n).write_text(t)
+            (self.root / ".github/workflows" / n).write_text(t, encoding="utf-8", newline="\n")
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -126,7 +126,7 @@ class Lane(unittest.TestCase):
 
     def test_main_dry_run_never_writes_and_live_writes_only_dispatch(self):
         t = self.root / "trace.json"
-        t.write_text(json.dumps(trace([wf("ok1.yml"), wf("ok2.yml")])))
+        t.write_text(json.dumps(trace([wf("ok1.yml"), wf("ok2.yml")])), encoding="utf-8", newline="\n")
         for dry in (True, False):
             fake = Fake()
             api = fake.api()
@@ -137,7 +137,7 @@ class Lane(unittest.TestCase):
                 rl.main(args + (["--dry-run"] if dry else []))
             finally:
                 rl.Api = orig
-            rep = json.loads((self.root / "o.json").read_text())
+            rep = json.loads((self.root / "o.json").read_text(encoding="utf-8"))
             if dry:
                 self.assertEqual(fake.writes, [])
                 self.assertEqual(rep["dispatched"], [])
@@ -150,7 +150,7 @@ class Lane(unittest.TestCase):
 
     def test_refuses_non_default_branch_trace(self):
         t = self.root / "trace.json"
-        t.write_text(json.dumps(dict(trace([]), branch="feature")))
+        t.write_text(json.dumps(dict(trace([]), branch="feature")), encoding="utf-8", newline="\n")
         with self.assertRaises(SystemExit):
             rl.main(["--repo", REPO, "--trace", str(t), "--root", str(self.root), "--out", str(self.root / "o.json")])
 
@@ -159,7 +159,7 @@ class Lane(unittest.TestCase):
             Fake().api().dispatch(".github/workflows/../../x", "master")
 
     def test_no_cascade_dispatchers_refused(self):
-        (self.root / ".github/workflows/disp.yml").write_text("on:\n  workflow_dispatch:\npermissions:\n  actions: write\n  contents: read\njobs: {}\n")
+        (self.root / ".github/workflows/disp.yml").write_text("on:\n  workflow_dispatch:\npermissions:\n  actions: write\n  contents: read\njobs: {}\n", encoding="utf-8", newline="\n")
         rep, _ = self.plan([wf("disp.yml")])
         self.assertIn("writes actions", self.reasons(rep)["disp.yml"])
 
