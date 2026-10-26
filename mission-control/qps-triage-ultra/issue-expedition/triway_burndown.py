@@ -276,6 +276,13 @@ def project(census, previous=None):
             "verified_causal_root_closure": None,
         }
     edges = sorted(edge_map.values(), key=lambda x: (x["from"], x["to"], x["kind"]))
+    related = tt.associated_families(
+        [{"key": k, "type": "Issue", "title_taxonomy": x["title_taxonomy"]}
+         for k, x in nodes.items()],
+        [{"source": e["from"], "target": e["to"], "kind": e["kind"]}
+         for e in edges if e["to"] in nodes], max_hops=2)
+    for issue_ref, candidates in related.items():
+        nodes[issue_ref]["title_taxonomy"]["related_families"] = candidates
     return {
         "schema": SCHEMA, "observed_at": observed,
         "source_grade": "NON_ATOMIC_COMPLETE_API_PAGINATION",
