@@ -87,6 +87,7 @@ def proof(e, c, cls="C", effect="BLOCK", *, baseline=None, overrides=None,
     a = {
         "schema": Q.SCHEMA, "class": cls, "effect": effect,
         "event_key": c["event_key"],
+        "candidate_sha256": Q.digest(c),
         "source_sha": e["identity"]["checkout_sha"],
         "run_id": n["run_id"], "attempt": n["attempt"],
         "job_id": n["job_id"], "completed_at": n["completed_at"],
@@ -222,6 +223,15 @@ class FourClassNoncompensatingGates(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "authenticated MissionControl"):
             signed(event(2, outcome="success"), candidates(event(1), event(2, outcome="success"))[-1],
                    "D", "ACCEPT")
+
+    def test_signature_cannot_be_reused_with_changed_notification_reason(self):
+        e = event()
+        candidate = candidates(e)[0]
+        signed_original = proof(e, candidate)
+        tampered_candidate = copy.deepcopy(candidate)
+        tampered_candidate["reasons"] = ["RED_TO_GREEN"]
+        with self.assertRaisesRegex(ValueError, "signed candidate justification mismatch"):
+            Q.qualify(e, tampered_candidate, signed_original, KEY)
 
     def test_unsigned_changed_candidate_reason_fails(self):
         e = event()

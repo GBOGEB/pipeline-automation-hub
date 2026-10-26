@@ -124,6 +124,9 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,
     require(a["event_sha256"] == digest(event), "attestation event payload mismatch")
     require(a["candidate_sha256"] == digest(candidate), "attestation candidate payload mismatch")
     require(a["event_key"] == event_key, "signed event mismatch")
+    _hex(a["candidate_sha256"], "candidate digest")
+    require(a["candidate_sha256"] == digest(candidate),
+            "signed candidate justification mismatch")
     require(a["source_sha"] == event["identity"]["checkout_sha"],
             "signed source checkout mismatch")
     n = event["native"]
@@ -459,8 +462,14 @@ def acknowledge(db: sqlite3.Connection, notification_id: str, provider_digest: s
         raise
 
 
-def verify(db: sqlite3.Connection, key: bytes | None = None) -> dict:
-    """Verify local append-only audit chain and optional owner MAC integrity."""
+def verify(db: sqlite3.Connection, key: bytes | None = None,
+           expected_root: str | None = None) -> dict:
+    """Verify audit chain, owner MAC and (when independently anchored) final root.
+
+    This DB is append-only by application contract, not tamperproof against a
+    database administrator. A separately stored trusted expected_root detects
+    truncation or rollback of a correctly chained ledger.
+    """
     previous = None
     count = 0
     for parent, entry, action, event_key, payload in db.execute(
@@ -470,6 +479,9 @@ def verify(db: sqlite3.Connection, key: bytes | None = None) -> dict:
                 digest([parent, action, event_key, payload]) == entry,
                 "audit chain tampering")
         previous, count = entry, count + 1
+    if expected_root is not None:
+        _hex(expected_root, "trusted external audit root")
+        require(previous == expected_root, "audit root rollback / mismatch")
     native = 0
     for checksum, payload in db.execute(
             "SELECT payload_sha256,payload_json FROM native_observations"):
