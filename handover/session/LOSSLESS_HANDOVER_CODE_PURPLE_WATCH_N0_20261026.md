@@ -132,7 +132,7 @@ Default heads were read once at about 00:22Z:
 | ABACUS | `6ebebbc2aee8c400ecec7a8b9ee76fff80153c17` | unchanged |
 | Mission Control | `57f08d221bc68f4e691591336ee49c71014fdbb0` | +1 commit (#865) |
 | CODEX | `cb3b0d269bcd0ff9e96982cfc8276aa4bc187acf` | unchanged |
-| QPS | `PRIVATE_AGGREGATE_ONLY` | unchanged |
+| QPS | `PRIVATE_AGGREGATE_ONLY` | `UNKNOWN` (owner-only) |
 | gg_MATH | `61ce59f754d23e010958927a731432672abf7621` | unchanged |
 
 ### Material observations
@@ -151,7 +151,7 @@ Default heads were read once at about 00:22Z:
 
 - **#531 census.** The last run is still `40244674158` at the old `master` `e4b901a`. It has failed on every hourly schedule; fresh breadth is 0/42. This root (repeated cross-repo HTTP 401) is a STABLE_HOLD candidate.
 - **#858.** First-Pass run `40246756160` failed at both attempt 1 and attempt 2 at the same head `df38b253f82ccddd5dab426d625f6a5dfc13a43f`. That makes it persistent, not a flake.
-- **QPS.** Default head unchanged. PR and run activity: owner-only, `UNKNOWN` in public. No main credit.
+- **QPS.** Owner-only: head delta, PR and run activity are `UNKNOWN` in public and are not classified as changed or unchanged. No main credit.
 
 ### Discrepancies
 
