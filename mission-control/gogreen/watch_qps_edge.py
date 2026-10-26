@@ -109,7 +109,7 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,
     a = exact(envelope["attestation"], {
         "schema", "class", "effect", "event_key", "source_sha",
         "run_id", "attempt", "job_id", "completed_at", "issued_at", "baseline_sha256",
-        "child_token", "dependency_token", "receipt_token", "checks",
+        "event_sha256", "candidate_sha256", "child_token", "dependency_token", "receipt_token", "checks",
     }, "attestation")
     require(a["schema"] == SCHEMA, "attestation schema")
     _hex(envelope["signature"], "signature")
@@ -119,6 +119,10 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,
     for k in ("child_token", "dependency_token", "receipt_token"):
         _hex(a[k], k)
     _hex(a["source_sha"], "source SHA", sha=True)
+    _hex(a["event_sha256"], "event attestation digest")
+    _hex(a["candidate_sha256"], "candidate attestation digest")
+    require(a["event_sha256"] == digest(event), "attestation event payload mismatch")
+    require(a["candidate_sha256"] == digest(candidate), "attestation candidate payload mismatch")
     require(a["event_key"] == event_key, "signed event mismatch")
     require(a["source_sha"] == event["identity"]["checkout_sha"],
             "signed source checkout mismatch")
@@ -182,6 +186,7 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,
                 and type(delta) is dict
                 and set(delta) == {"statements", "branches"}
                 and all(type(delta[k]) is int for k in delta)
+                and all(delta[k] >= 0 for k in delta)
                 and any(delta[k] > 0 for k in delta),
                 "B requires matched source/cohort coverage improvement")
     elif cls == "C":
@@ -379,15 +384,44 @@ def record(db: sqlite3.Connection, event: dict, candidate: dict,
             "admission": "HOLD"}
 
 
+def _verified_outbox_payload(db, notification_id, payload_json,
+                             event_key, child_token, cls):
+    """Reject payload substitutions before a local delivery claim.
+
+    Every queued payload must match its immutable OUTBOX_QUEUED audit digest
+    and the relational row; this is integrity only, not an owner signature.
+    """
+    try:
+        payload = json.loads(payload_json)
+    except (ValueError, TypeError) as exc:
+        raise ValueError("QPS_EDGE_HOLD:outbox payload invalid JSON") from exc
+    require(type(payload) is dict, "outbox payload not an object")
+    rows = db.execute(
+        "SELECT payload_sha256 FROM audit WHERE action='OUTBOX_QUEUED'"
+        " AND event_key=?", (notification_id,)).fetchall()
+    require(len(rows) == 1 and digest(payload) == rows[0][0],
+            "outbox payload audit digest mismatch")
+    require(payload.get("notification_id") == notification_id
+            and payload.get("event_key") == event_key
+            and payload.get("child_token") == child_token
+            and payload.get("class") == cls
+            and payload.get("merge_admission") == "HOLD"
+            and payload.get("formal_engineering_credit_delta") == 0
+            and payload.get("delivery") == "NOT_SENT",
+            "outbox payload relational identity or authority mismatch")
+    return payload
+
+
 def claim(db: sqlite3.Connection, notification_id: str, claimed_at: str):
     """Opt-in single-use claim. No retry after a crash without reconciliation."""
     _hex(notification_id, "notification")
     utc(claimed_at)
     db.execute("BEGIN IMMEDIATE")
     try:
-        row = db.execute("SELECT payload_json,state FROM outbox WHERE notification_id=?",
+        row = db.execute("SELECT payload_json,state,event_key,child_token,class FROM outbox WHERE notification_id=?",
                          (notification_id,)).fetchone()
         require(row is not None, "unknown outbox identity")
+        qualified_payload = _verified_outbox_payload(db, notification_id, row[0], row[2], row[3], row[4])
         if row[1] != "PENDING":
             db.execute("COMMIT")
             return None
@@ -395,7 +429,7 @@ def claim(db: sqlite3.Connection, notification_id: str, claimed_at: str):
                    (claimed_at, notification_id))
         _audit(db, "OUTBOX_CLAIMED", notification_id, digest([claimed_at]))
         db.execute("COMMIT")
-        return json.loads(row[0])
+        return qualified_payload
     except BaseException:
         db.execute("ROLLBACK")
         raise
@@ -442,6 +476,15 @@ def verify(db: sqlite3.Connection, key: bytes | None = None) -> dict:
         require(digest(json.loads(payload)) == checksum,
                 "immutable native payload tampering")
         native += 1
+    outbox_count = 0
+    for notification_id, event_key, child_token, cls, payload_json in db.execute(
+            "SELECT notification_id,event_key,child_token,class,payload_json FROM outbox"):
+        _verified_outbox_payload(db, notification_id, payload_json, event_key,
+                                 child_token, cls)
+        outbox_count += 1
+    audit_queued = db.execute(
+        "SELECT COUNT(*) FROM audit WHERE action='OUTBOX_QUEUED'").fetchone()[0]
+    require(outbox_count == audit_queued, "outbox row/audit count mismatch")
     observations = 0
     for proof_digest, payload in db.execute("SELECT proof_digest,proof_json FROM observations"):
         doc = json.loads(payload)
