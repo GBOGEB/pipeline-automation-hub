@@ -1,0 +1,37 @@
+name: Taxonomy Admission Audit — evidence only
+on:
+  pull_request:
+    paths:
+      - 'mission-control/issue_rank/taxonomy_admission_audit.py'
+      - 'mission-control/issue_rank/test_taxonomy_admission_audit.py'
+      - '.github/workflows/taxonomy-admission-audit.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: taxonomy-admission-audit-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  read-only-contract:
+    runs-on: ubuntu-24.04
+    name: admission evidence contracts (py${{ matrix.python }})
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Check exact source head
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$HEAD"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Run negative security admission contracts
+        working-directory: mission-control/issue_rank
+        run: python -m unittest -v test_taxonomy_admission_audit
