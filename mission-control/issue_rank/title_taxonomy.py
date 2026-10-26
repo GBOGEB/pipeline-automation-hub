@@ -204,6 +204,29 @@ def parse_title(title: str | None, item_type: str | None = None, labels=()) -> d
         flags.append("DO_NOT_MERGE")
         text = re.sub(r"^\s*[\s:\-\u2013\u2014]+", "", text[flag.end():])
     text = _frontmatter(text, tags, warnings)
+    # GitHub issue/title imports sometimes prepend Markdown heading fragments
+    # to a second parenthesized qualifier: "metrics: #### ###(fix) ...".
+    # Treat only explicitly recognized initial action/programme/code qualifiers
+    # as taxonomy; never consume arbitrary parenthesized body prose.
+    for _ in range(4):
+        markdown = re.match(r"^(?:#{2,6}\s*)+", text)
+        probe = text[markdown.end():].lstrip() if markdown else text
+        if not probe.startswith(("(", "[")):
+            break
+        end, body = _balanced(probe, 0)
+        if end is None:
+            warnings.append("UNBALANCED_POSTFIX_QUALIFIER")
+            break
+        nested = _scope_tokens(body, 1, warnings)
+        if not nested:
+            break
+        top = nested[0]["value"]
+        if not (top.lower() in ACTIONS or top in PROGRAMS.values()
+                or CODE.fullmatch(top)):
+            break
+        tags.extend({"value": x["value"], "depth": x["depth"],
+                     "source": "postfix_qualifier"} for x in nested)
+        text = probe[end + 1:].lstrip()
     m = re.match(r"^([^:\u2013\u2014]{1,90})([:\u2013\u2014])\s*", text)
     if m:
         clause = re.sub(r"(?i)\bCODE\s+PURPLE\b", "CODEPURPLE", m.group(1).strip().strip("- "))
