@@ -43,4 +43,6 @@ jobs:
           python -m pip install --disable-pip-version-check coverage==7.13.3
           python -m coverage run --include=issue_rank.py -m unittest -v test_issue_rank test_title_taxonomy
           python -m coverage report --fail-under=80
+          python -m coverage run --include=burndown_apply.py -m unittest -v test_burndown_apply
+          python -m coverage report --fail-under=80
           python -m unittest discover -s ../qps-triage-ultra/issue-expedition -p test_triway_burndown.py -v
