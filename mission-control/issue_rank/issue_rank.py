@@ -36,6 +36,8 @@ from collections import Counter, defaultdict, deque
 from datetime import datetime, timezone
 from pathlib import Path
 
+import title_taxonomy as tt
+
 SCHEMA = "jade.issue-rank.v1"
 SNAPSHOT_SCHEMA = "jade.issue-rank.snapshot.v1"
 LEDGER_SCHEMA = "jade.issue-rank.ledger.v1"
@@ -726,6 +728,7 @@ def rank(snap: dict, now: float | None = None) -> dict:
                  if e.get("ticked") is False and nodes[e["target"]].get("open") is False]
         items.append({
             "key": k, "repo": n["repo"], "number": n["number"], "type": n["type"],
+            "taxonomy": tt.classify_title(n.get("title"), n.get("labels"), n["type"]),
             "title": n.get("title"), "url": n.get("url"), "private": n.get("private"),
             "created_at": n.get("created_at"), "updated_at": n.get("updated_at"),
             "age_days": round((now - _ts(n["created_at"])) / 86400, 1),
@@ -765,6 +768,8 @@ def rank(snap: dict, now: float | None = None) -> dict:
         i["score_parts"] = {k: round(v, 4) for k, v in parts.items()}
         i["score"] = round(sum(WEIGHTS[k] * v for k, v in parts.items()), 4)
         i["lane"], i["action"] = classify(i)
+    # Reuse the existing issue dependency graph: parent-family projection only.
+    tt.inherit_parent_families(items, edges)
     items.sort(key=lambda i: (-i["score"], i["key"]))
     for r, i in enumerate(items, 1):
         i["rank_global"] = r
@@ -814,6 +819,7 @@ def rollup(items: list[dict], nodes: dict, edges: list[dict]) -> dict:
     lanes = Counter(i["lane"] for i in items)
     return {
         "open_issues": len(issues), "open_prs": len(prs),
+        "taxonomy": tt.rollup(items),
         "checklist_coverage": _ratio(len(with_cl), len(issues)),
         "dod_declared": _ratio(sum(1 for i in issues if i["checklist"]["dod_declared"]), len(issues)),
         "dov_declared": _ratio(sum(1 for i in issues if i["checklist"]["dov_declared"]), len(issues)),
@@ -941,11 +947,19 @@ def redact(model: dict) -> dict:
     out = json.loads(json.dumps(model))
     for i in out["items"]:
         if i.get("private"):
+            # Title-derived keyword fingerprints are private free text, too.
+            i["taxonomy"] = {"privacy": "REDACTED"}
             for f in ("title", "url"):
                 i[f] = None
             i["checklist"]["next_open"] = None
             if i["action"].startswith(("next:", "start:")):
                 i["action"] = i["action"].split(":")[0] + ": <private>"
+    # Do not leak private keyword membership via aggregated counts.
+    private_repos = {i["repo"] for i in out["items"] if i.get("private")}
+    if private_repos:
+        for name, scope in out["rollups"].items():
+            if name in ("USER", "JADE") or name in private_repos:
+                scope["taxonomy"] = {"privacy": "REDACTED_PRIVATE_SCOPE"}
     return out
 
 
