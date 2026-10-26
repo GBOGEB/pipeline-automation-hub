@@ -22,3 +22,5 @@ Use this block to continue in a **new** session, governed coding agent or Work-m
 - Source-pinned flightdeck: https://github.com/GBOGEB/pipeline-automation-hub/pull/893
 - Authentic 42-cell owner: merged #531; source owner workflow code-purple-live-census.yml
 - Last fresh read of master (historical N2): f1f415d2ec1087c734701cba30fa872abcf1c992. **Always refresh.**
+
+For the newest N2.1 exact-head test counts and renewed SHA values, also read mission-control/federation-atlas/watch_n2_session/N2_1_EXACT_HEAD_RECEIPTS.json. In particular #891, #893 and #894 have newer terminal native receipts than the initial N2 snapshot; do not promote earlier tested SHA after commits.
