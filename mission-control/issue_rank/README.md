@@ -1,0 +1,150 @@
+# Issue burndown ranking
+
+`issue_rank.py` ranks every open issue and PR, per repository, for JADE (the four
+federated repositories) and for USER (every repository of the owner that has open
+items). It reads them from three sides:
+
+| View | Order | Question it answers |
+|---|---|---|
+| 1. Bottom-up + golden thread | oldest first | Which old roots still carry open work, and through which chain of references? |
+| 2. Top-down (mycelium) | newest first | What does each new item attach to (hyphae), and how far does it reach in two hops? |
+| 3. Nodes / edges / graph | PageRank | Which items are central, which ones bridge clusters, and which ones block others? |
+
+The ranking is **advisory**. It grants no closure, merge or dispatch authority.
+A ticked checkbox is not a verified DoD; `CLOSE_CANDIDATE` means "verify the
+evidence and close", not "closed".
+
+## Run
+
+```bash
+python mission-control/issue_rank/issue_rank.py run --scope jade
+python mission-control/issue_rank/issue_rank.py run --scope user
+python mission-control/issue_rank/issue_rank.py verify-ledger --ledger mission-control/issue_rank/out/jade/ledger.jsonl
+python mission-control/issue_rank/issue_rank.py rank --snapshot out/jade/snapshot.json --prev old/issue_rank.json --out /tmp/r
+```
+
+`run` makes read-only GraphQL calls through `gh` (keyring auth; `unset GITHUB_TOKEN GH_TOKEN`
+if it returns 401). Each scope writes to `out/<scope>/`: `snapshot.json`, `issue_rank.json`,
+`issue_rank.csv`, `issue_rank.html`, `delta.json` and `ledger.jsonl`.
+
+`out/` is gitignored. This repository is public and `cryoplant-project` is private, so
+snapshots and rankings never get committed. `--redact-private` strips titles, URLs and
+free-text actions of private items before anything is written.
+
+## Per-item progress (DoV / DoD / steps)
+
+The parser reads the issue body (comments are status notes, not the plan):
+
+- `- [x]` is done, `- [ ]` is open, `- [~]` / `- [-]` are dropped and not counted.
+- The nearest heading sets the kind: **DOV** (DoV, verification, validation, evidence,
+  proof), **DOD** (DoD, definition of done, acceptance, exit criteria, closure, done
+  when, victory, predicate, required outputs/disposition/return), **STEPS** (steps,
+  tasks, todo, plan, checklist, deliverables, next actions). An inline `- [ ] DoD: …`
+  overrides the heading.
+- Plain bullets under a DOV / DOD / STEPS heading are **declared but untracked**
+  criteria. They are counted as `untracked`, never as done.
+- A checklist item that references another issue (`- [ ] #123`) makes that issue a
+  CHILD. A tick that disagrees with the child's state is reported as checklist drift.
+
+Progress reads like `4/7 (DOV 1/2, DOD 2/3, STEPS 1/2) +3 untracked`. The checklist
+state is one of `NO_CHECKLIST`, `UNTRACKED_CRITERIA`, `NOT_STARTED`, `IN_PROGRESS` or
+`ALL_TICKED`.
+
+To make an issue measurable, write it like this:
+
+```markdown
+## DoD
+- [ ] behaviour X on exact head SHA, test name
+- [ ] owner disposition recorded in #NNN
+## DoV
+- [ ] native CI run URL on the merged SHA
+## Steps
+- [ ] #NNN child task
+Blocked by #MMM
+```
+
+## Edges
+
+References come from issue and PR bodies, the last five comments, PR closing
+references and the timeline (cross-references, connected PRs). Forms:
+`https://github.com/O/R/issues/N`, `O/R#N`, federation shorthand (`QPS #N`,
+`ABACUS PR #N`, `CODEX #N`, `hub #N`) and bare `#N` (home repository). Code spans
+and fences are skipped.
+
+The words just before a reference on the same line type it: `CLOSES`, `DEPENDS_ON`
+(blocked by, depends on, requires, waits on, needs), `BLOCKS` (stored reversed, as
+DEPENDS_ON), `PARENT` (parent, epic, tracked in, part of, child of), `SUPERSEDES`,
+otherwise `MENTION`. A negation (`not part of #N`) keeps it a MENTION. Every
+referenced item outside the snapshot is resolved for its state and creation time;
+references to nothing (`#1` used as list numbering) are dropped. A blocker whose state
+is unknown counts as open (fail closed).
+
+## Score and lanes
+
+```
+score = 0.25·pressure + 0.20·nearness + 0.15·priority + 0.15·centrality
+      + 0.10·bridge + 0.10·pr_ready + 0.05·age
+```
+
+| Part | Definition |
+|---|---|
+| pressure | open items that transitively wait on this one (DEPENDS_ON, CHILD, PARENT), log-scaled |
+| nearness | ticked / total; 1.0 when all ticked |
+| priority | P0 1.0, P1 0.66, P2 0.33, P3 0.1 (label or title); critical / urgent / blocker 0.66 |
+| centrality | percentile of weighted PageRank (a reference passes importance to its target) |
+| bridge | percentile of Brandes betweenness on the undirected graph |
+| pr_ready | linked or own PR green 1.0, red 0.5, none 0 |
+| age | percentile of age |
+
+`score_parts` is stored per item so every rank can be explained. The lane gives the
+next action, checked in this order:
+
+- PRs: `FIX_RED`, `IN_FLIGHT` (draft), `REVIEW` (not approved), `MERGE_READY`.
+- Issues: `BLOCKED`, `CLOSE_CANDIDATE`, `FIX_RED`, `BOTTLENECK` (two or more open
+  waiters), `NEARLY_DONE` (70% or more ticked), `TRACK_DOD`, `DEFINE_DOD`,
+  `NOT_STARTED`, `IN_PROGRESS`.
+
+## Rollups and telemetry
+
+For each scope (USER, JADE, each repository) the rollup reports open issues and PRs,
+tasks ticked / total, untracked criteria, checklist / DoD / DoV coverage, the state and
+lane distributions, red and unapproved PRs, median age, items idle for more than 21
+days, checklist drift, the top 10, the bottlenecks and the nearly-finished items.
+
+Every `run` appends a row to `ledger.jsonl` (`jade.issue-rank.ledger.v1`). Each row is
+sha256-chained to the one before it and records the snapshot and output digests, the
+default-branch head SHA of every repository (one pulse per snapshot), fetch telemetry
+(API calls, retries, seconds, resolved and missing references), graph stats, scope
+rollups and the delta counts. `delta.json` lists what moved since the previous pulse:
+new and gone items, new and removed links, new PR→issue dependencies, checklist moves
+(`2/5 → 3/5`) and lane moves.
+
+## Reuse and ownership
+
+- gg_MATH (`GBOGEB/gg_MATH`) has `kernels/bradley_terry.py` (pairwise ranking),
+  `kernels/spectral_graph.py` (Laplacian, Dirichlet energy) and
+  `mission/federation/n5_repo_graph_math.py` (typed graph, spectral gap; at most 64
+  nodes). None of them does PageRank, betweenness or transitive pressure on a graph of
+  this size, so those live here. Bradley–Terry needs pairwise judgements, which issues
+  do not provide.
+- The CODE PURPLE BD census (`gogreen/bd_queue_wave.py`) and the scale dock's
+  `dock_issue_bd` count workflow manifestations on PRs. This module ranks items; it does
+  not re-count those manifestations.
+
+## Roadmap
+
+1. **Now.** Engine, contract tests (3.11 / 3.12), local pulses for JADE and USER.
+2. **Make progress measurable.** Agree the DoD / DoV / Steps template with the owners.
+   Convert the `TRACK_DOD` issues, top-ranked first, from plain bullets to checkboxes.
+   This edits issues, so the owner decides.
+3. **Scheduled public pulse.** Run a cron workflow on the three public repositories with
+   `--redact-private`, and keep the ledger as a workflow artifact. Add `dock_issue_rank`
+   to `gogreen/scale_dock.py` in its own PR, since that module owns the docks.
+4. **Root join.** Join `FIX_RED` lanes to EVERRED roots (`p-process/everred/harvest.py`)
+   so red PRs rank by root, not by occurrence. Feed the QPS 67-ID BD recensus (#481).
+5. **gg_MATH upstream.** Propose `kernels/graph_centrality.py` (PageRank, Brandes) to
+   gg_MATH, then bind it through `ggmath_bridge.py rebind` and import it here instead
+   of the local copy. Cross-check each component's spectral gap with
+   `spectral_graph.laplacian`.
+6. **Owner pairwise priority.** Where owners rank items pairwise, fit Bradley–Terry with
+   `level1/runtime.py` `bt()` and add it as a score part.
