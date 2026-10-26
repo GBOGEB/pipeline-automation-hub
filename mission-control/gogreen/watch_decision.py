@@ -211,6 +211,14 @@ def _signature(event):
                                  if event["coverage"] else None)})
 
 
+def _native_payload(event):
+    # A later poll may re-observe the same immutable terminal event.
+    # Observation clock is not part of native evidence identity.
+    immutable = copy.deepcopy(event)
+    immutable["native"].pop("observed_at")
+    return _digest(immutable)
+
+
 def fold(events, cursor=None):
     """Deterministic, replay-idempotent projection with one alert per transition.
 
@@ -228,7 +236,7 @@ def fold(events, cursor=None):
         n, i, r = event["native"], event["identity"], event["result"]
         lane = event["repository"] + "::" + event["lane"] + "::" + i["kind"]
         key = _digest([lane, i["checkout_sha"], n["run_id"], n["attempt"], n["job_id"]])
-        payload = _digest(event)
+        payload = _native_payload(event)
         seen = state["seen"]
         if key in seen:
             _require(seen[key] == payload, "native identity reused with changed evidence")
