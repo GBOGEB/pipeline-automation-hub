@@ -60,6 +60,10 @@ def assess(source:dict) -> dict:
             raise ValueError("UNMATCHED_WAVE_INDEX")
         if w.get("cohort_id")!=cohort:
             raise ValueError("COHORT_CHANGED")
+        if not isinstance(w.get("file_roster_sha256"),str) or not re.fullmatch(r"[a-f0-9]{64}",w["file_roster_sha256"],re.I):
+            raise ValueError("FILE_ROSTER_NOT_PINNED")
+        if i>0 and w["file_roster_sha256"]!=waves[0]["file_roster_sha256"]:
+            raise ValueError("FILE_ROSTER_CHANGED")
         if not isinstance(w.get("head_sha"),str) or not SHA.fullmatch(w["head_sha"]):
             raise ValueError("HEAD_NOT_PINNED")
         now=parse_time(w.get("observed_at"))
@@ -80,6 +84,7 @@ def assess(source:dict) -> dict:
         if w["zero_step_jobs"]>w["executed_jobs"]:
             raise ValueError("ZERO_STEP_GT_JOBS")
         parsed.append({"wave":i,"head_sha":w["head_sha"],
+                       "file_roster_sha256":w["file_roster_sha256"],
                        "covered_lines":w["covered_lines"],
                        "total_lines":w["total_lines"],
                        "coverage":round(w["covered_lines"]/w["total_lines"],6),
