@@ -23,12 +23,16 @@ UNKNOWN is never PASS, and the snapshot grants no release credit.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import re
 import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+_pb = importlib.util.spec_from_file_location("jade_private_boundary", ROOT / "tools" / "private_boundary.py")
+PB = importlib.util.module_from_spec(_pb)
+_pb.loader.exec_module(PB)
 WINDOW = "site/rolling5.json"
 LEDGER = "data/ROLLING5_PULSES.json"
 RUN_GATES = ("H04", "H05", "H06")
@@ -160,7 +164,7 @@ def build_snapshot(prev: dict, repos: list[str], date: str, lookup=gh) -> dict:
                            unknown=total - passed - failed, verified_completion_pct=round(100 * passed / total, 2),
                            globally_admitted_point_release=None)
     snap["rows"] = rows
-    return snap
+    return PB.project(snap)  # private repos: counts and statuses only
 
 
 def main(argv: list[str] | None = None) -> int:

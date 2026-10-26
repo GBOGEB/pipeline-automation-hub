@@ -478,7 +478,7 @@
       "role": "QPS TRIAGE engineering / canonical OCD ADR SSOT",
       "owner_lane": "QPS/source namespace & artifact owner",
       "default_branch": "main",
-      "source_sha": "82eca19671332db3e3d7c10dcbe3532311fcd280",
+      "source_sha": "PRIVATE_AGGREGATE_ONLY",
       "head_readback": "2026-10-25 one pulse",
       "release": "HOLD",
       "cohort": "FOCUS5_FROM_N11",
@@ -491,13 +491,13 @@
         {
           "id": "H01",
           "status": "PASS",
-          "evidence": "https://github.com/GBOGEB/cryoplant-project/commit/82eca19671332db3e3d7c10dcbe3532311fcd280",
+          "evidence": "PRIVATE_AGGREGATE_ONLY",
           "reason": "Default branch exact SHA read back in this pulse"
         },
         {
           "id": "H02",
           "status": "PASS",
-          "evidence": "https://github.com/GBOGEB/cryoplant-project/tree/82eca19671332db3e3d7c10dcbe3532311fcd280",
+          "evidence": "PRIVATE_AGGREGATE_ONLY",
           "reason": "Root README present at this SHA"
         },
         {
@@ -515,13 +515,13 @@
         {
           "id": "H05",
           "status": "PASS",
-          "evidence": "https://github.com/GBOGEB/cryoplant-project/actions/runs/40181089486",
+          "evidence": "PRIVATE_AGGREGATE_ONLY",
           "reason": "qps-canonicalization success on this exact SHA (same workflow as previous pulse)"
         },
         {
           "id": "H06",
           "status": "PASS",
-          "evidence": "https://github.com/GBOGEB/cryoplant-project/actions/runs/40181089525",
+          "evidence": "PRIVATE_AGGREGATE_ONLY",
           "reason": "QPS PR binary refresh success on this exact SHA (same workflow as previous pulse)"
         },
         {
@@ -533,7 +533,7 @@
         {
           "id": "H08",
           "status": "UNKNOWN",
-          "evidence": "https://github.com/GBOGEB/cryoplant-project/settings/rules",
+          "evidence": "PRIVATE_AGGREGATE_ONLY",
           "reason": "Pull request rule active (deletion, non_fast_forward, pull_request); rejected RED canary not evidenced in this pulse"
         },
         {
@@ -569,39 +569,39 @@
       "open_github_prs": 0,
       "native_observations": [
         {
-          "source_sha": "82eca19671332db3e3d7c10dcbe3532311fcd280",
-          "run_id": 40184164591,
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
           "workflow_name": "Branch hygiene (lossless)",
           "conclusion": "success",
-          "evidence_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/40184164591"
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
         },
         {
-          "source_sha": "82eca19671332db3e3d7c10dcbe3532311fcd280",
-          "run_id": 40181089897,
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
           "workflow_name": "JADE CI (core suite, fail-closed)",
           "conclusion": "success",
-          "evidence_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/40181089897"
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
         },
         {
-          "source_sha": "82eca19671332db3e3d7c10dcbe3532311fcd280",
-          "run_id": 40181089486,
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
           "workflow_name": "qps-canonicalization",
           "conclusion": "success",
-          "evidence_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/40181089486"
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
         },
         {
-          "source_sha": "82eca19671332db3e3d7c10dcbe3532311fcd280",
-          "run_id": 40181089525,
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
           "workflow_name": "QPS PR binary refresh",
           "conclusion": "success",
-          "evidence_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/40181089525"
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
         },
         {
-          "source_sha": "82eca19671332db3e3d7c10dcbe3532311fcd280",
-          "run_id": 40181089487,
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
           "workflow_name": "TRIAGE Repository Census",
           "conclusion": "success",
-          "evidence_url": "https://github.com/GBOGEB/cryoplant-project/actions/runs/40181089487"
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
         }
       ],
       "input_paths": [

@@ -30,6 +30,9 @@ import statistics
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+_pb = importlib.util.spec_from_file_location("jade_private_boundary", ROOT / "tools" / "private_boundary.py")
+PB = importlib.util.module_from_spec(_pb)
+_pb.loader.exec_module(PB)
 POLICY = "data/CICD_DAG_POLICY.json"
 OUT_JSON = "site/cicd_dag.json"
 OUT_CSV = "site/cicd_dag_crosswalk.csv"
@@ -1130,6 +1133,11 @@ def build_orchestrators(ctx: dict) -> dict:
 # --- Projection -----------------------------------------------------------
 
 def project(root: Path = ROOT) -> dict:
+    """The model with private repos projected to counts only (tools/private_boundary.py)."""
+    return PB.project(_project(root))
+
+
+def _project(root: Path = ROOT) -> dict:
     hub = root.parents[1]
     policy = json.loads((root / POLICY).read_text(encoding="utf-8"))
     r5_policy = json.loads((root / r5.POLICY).read_text(encoding="utf-8"))
