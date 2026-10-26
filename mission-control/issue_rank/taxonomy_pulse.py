@@ -122,7 +122,7 @@ def facets(item: dict) -> dict:
     else:
         family = scope if scope != "unscoped" else "general"
     remaining = [c for c in clusters if c != family]
-    cluster = remaining[0] if remaining else (clusters[0] if family == scope else "general")
+    cluster = remaining[0] if remaining else (clusters[0] if clusters and family == scope else "general")
     return {"action": action, "scope": scope, "family": family,
             "cluster": cluster,
             "composite": "/".join((action, scope, family, cluster))}
