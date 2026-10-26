@@ -19,7 +19,7 @@ def reconcile(older, newer):
         counts = {state: sum(g["status"] == state for r in rows for g in r["gates"])
                   for state in ("PASS", "FAIL", "UNKNOWN")}
         assert sum(counts.values()) == 60
-        assert all(data["metrics"][k.lower() if k != "PASS" else "passed"] == v for k, v in counts.items() if k != "FAIL") if False else True
+        assert counts == {"PASS": data["metrics"]["passed"], "FAIL": data["metrics"]["failed"], "UNKNOWN": data["metrics"]["unknown"]}
         out[label] = counts
     return {"before": out["earlier"], "after": out["later"],
             "delta_pass": out["later"]["PASS"] - out["earlier"]["PASS"],
