@@ -74,6 +74,8 @@ def calculate(payload: dict) -> dict:
             raise ValueError("EXECUTION_COUNT_INVALID")
         if status in ("RED","GREEN") and steps==0:
             raise ValueError("ZERO_STEP_CANNOT_BE_TERMINAL_PROOF")
+        if status=="QUEUED" and steps!=0:
+            raise ValueError("QUEUED_WITH_EXECUTION_COUNT")
         when=instant(row.get("observed_at"))
         delivery=(run,attempt,job,step)
         semantic=(head,fingerprint,status,wave,steps,when.isoformat())
