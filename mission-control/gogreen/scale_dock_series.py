@@ -179,6 +179,11 @@ def observe_repo(reader, repo, roots, previous):
         row = {'id': key, 'repo': repo, 'source_sha': head, 'state': state, 'run_id': run_id,
                'attempt': attempt, 'job_id': job_id, 'owner_accepted': False, 'dag_node': repo,
                'mode': 'UNSUPERVISED_READONLY', 'mutation_paths': []}
+        # Preserve the native event clock for future bitemporal consumers.
+        # Legacy pulses lacking job.completed_at remain historical UNKNOWN.
+        if job.get('completed_at') is not None:
+            sd.utc(job['completed_at'])  # do not mint a timestamp from poll time
+            row['completed_at'] = job['completed_at']
         if state == 'RED':
             occ = h.occurrences_from_job(repo, job, None, f'{branch}:head')
             failed = sorted((s for s in job.get('steps') or [] if s.get('conclusion') == 'failure'),
