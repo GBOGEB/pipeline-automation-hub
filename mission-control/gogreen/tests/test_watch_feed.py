@@ -116,7 +116,7 @@ class PublicAdapter(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             p = pathlib.Path(tmp) / "pulse.jsonl"
             out = pathlib.Path(tmp) / "public.jsonl"
-            p.write_text(F.source.line(rec(complete=None)) + "\n", encoding="ascii")
+            p.write_text(F.source.line(rec(complete=None)) + "\n", encoding="ascii", newline="\n")
             with contextlib.redirect_stdout(io.StringIO()) as stdout:
                 self.assertEqual(F.main(["--ledger", str(p), "--output", str(out)]), 0)
             self.assertFalse(out.exists())
@@ -157,11 +157,11 @@ class PublicAdapter(unittest.TestCase):
             p = pathlib.Path(tmp) / "pulse.jsonl"
             out = pathlib.Path(tmp) / "public.jsonl"
             r = rec()
-            p.write_text(F.source.line(r) + "\n", encoding="ascii")
+            p.write_text(F.source.line(r) + "\n", encoding="ascii", newline="\n")
             self.assertEqual(F.main(["--ledger", str(p), "--output", str(out)]), 0)
-            self.assertEqual(len(out.read_text().splitlines()), 1)
+            self.assertEqual(len(out.read_text(encoding="utf-8").splitlines()), 1)
             r["prev_sha256"] = "f" * 64
-            p.write_text(F.source.line(r) + "\n", encoding="ascii")
+            p.write_text(F.source.line(r) + "\n", encoding="ascii", newline="\n")
             with self.assertRaisesRegex(ValueError, "ledger chain"):
                 F.main(["--ledger", str(p), "--output", str(out)])
 
