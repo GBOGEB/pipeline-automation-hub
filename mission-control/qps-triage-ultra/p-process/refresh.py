@@ -19,6 +19,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 SITE = ROOT / "site"
 PY = sys.executable
+# Built only in the PDF pass; --no-pdf leaves them from an earlier census.
+CENSUS_DATED = ("P-process-deck.pdf", "code-purple/Code-Purple-deck.pdf",
+                "code-purple/code-purple.md", "code-purple/code-purple.pdf")
+
+
+def carried_over(prev: dict, hashes: dict, rebuilt: bool) -> dict:
+    """Census-dated files this run did not rebuild, each mapped to the census it was built from.
+
+    A file whose bytes still match the previous manifest keeps that manifest's origin; one that
+    changed without being rebuilt is None (unknown), never the current census.
+    """
+    if rebuilt:
+        return {}
+    old, origin = prev.get("files_sha256", {}), prev.get("carried_over", {})
+    return {rel: (origin.get(rel, prev.get("census_at")) if old.get(rel) == hashes[rel] else None)
+            for rel in CENSUS_DATED if rel in hashes}
 
 
 def run(*cmd, cwd=ROOT):
@@ -50,7 +66,7 @@ def stamp_code_purple(page: Path, census: dict) -> None:
     new, n = re.subn(r"(<!-- census:begin[^>]*-->\n).*?(<!-- census:end -->)", lambda m: m.group(1) + live_row(census) + m.group(2), t, flags=re.S)
     if n != 1:
         raise SystemExit("census markers missing in code-purple/index.html")
-    page.write_text(new, encoding="utf-8")
+    page.write_text(new, encoding="utf-8", newline="\n")
 
 
 def print_page_pdf(page: Path, pdf: Path) -> int:
@@ -87,7 +103,7 @@ def main():
         for f in ("census.json", "after_action.md"):
             copy(ROOT / "kit/out" / f, SITE / "code-purple/kit" / f)
     census_f = SITE / "code-purple/kit/census.json"
-    census = json.loads(census_f.read_text())
+    census = json.loads(census_f.read_text(encoding="utf-8"))
     copy(ROOT / "everred/roots.yaml", SITE / "everred/data/roots.yaml")
     for f in ("incident.yaml", "readback.py"):
         copy(ROOT / "kit" / f, SITE / "code-purple/kit" / f)
@@ -108,10 +124,15 @@ def main():
         copy(ROOT / "build/code-purple.md", SITE / "code-purple/code-purple.md")
         print_page_pdf(SITE / "code-purple/index.html", SITE / "code-purple/code-purple.pdf")
     files = sorted(p for p in SITE.rglob("*") if p.is_file() and p.name != "manifest.json")
+    hashes = {p.relative_to(SITE).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+    prev_f = SITE / "manifest.json"
+    prev = json.loads(prev_f.read_text(encoding="utf-8")) if prev_f.exists() else {}
     man = {"schema": "p-process.site/1.0", "census_at": census["generated_at"],
-           "files_sha256": {str(p.relative_to(SITE)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}}
-    (SITE / "manifest.json").write_text(json.dumps(man, indent=2) + "\n")
-    print(json.dumps({"site_files": len(files), "census_at": census["generated_at"], "lifted": census["lifted"]}))
+           "carried_over": carried_over(prev, hashes, rebuilt=not a.no_pdf),
+           "files_sha256": hashes}
+    (SITE / "manifest.json").write_text(json.dumps(man, indent=2) + "\n", encoding="utf-8", newline="\n")
+    print(json.dumps({"site_files": len(files), "census_at": census["generated_at"], "lifted": census["lifted"],
+                      "carried_over": man["carried_over"]}))
 
 
 if __name__ == "__main__":

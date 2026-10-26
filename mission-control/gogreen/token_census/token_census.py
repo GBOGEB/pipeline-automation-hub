@@ -392,8 +392,8 @@ def main(argv=None, environ=None, fetch=http, now=None):
     gh = GitHub(env.get("GH_TOKEN", ""), private, registry["private_repos"], fetch)
     receipt = census(registry, gh, probes, now or datetime.now(timezone.utc))
     args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "token_census.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
-    (args.out / "token_census.md").write_text(markdown(receipt), encoding="utf-8")
+    (args.out / "token_census.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8", newline="\n")
+    (args.out / "token_census.md").write_text(markdown(receipt), encoding="utf-8", newline="\n")
     if env.get("GITHUB_ACTIONS") == "true":  # live CI only; offline tests stay silent
         published = json.loads((args.out / "token_census.json").read_text(encoding="utf-8"))
         for line in annotations(published):

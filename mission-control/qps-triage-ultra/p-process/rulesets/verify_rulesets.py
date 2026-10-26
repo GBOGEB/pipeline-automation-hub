@@ -7,15 +7,24 @@ or required checks are missing. A ruleset that targets no branch contributes not
 Output: drift.json (consumed by EVERRED as CONTROL_PLANE_DRIFT probes).
 """
 import json
+import re
 import subprocess
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 D = Path(__file__).parent
 
 
+TRANSIENT = re.compile(r"timeout|timed out|TLS handshake|connection (reset|refused|attempt failed)|connectex|unexpected EOF|HTTP 5\d\d", re.I)
+
+
 def gh(p):
-    r = subprocess.run(["gh", "api", p], capture_output=True, text=True)
+    for attempt in range(5):  # a blip must not be recorded as ruleset drift
+        r = subprocess.run(["gh", "api", p], capture_output=True, text=True, encoding="utf-8", errors="replace")
+        if r.returncode == 0 or not TRANSIENT.search(r.stderr):
+            break
+        time.sleep(3 * (attempt + 1))
     return json.loads(r.stdout) if r.returncode == 0 and r.stdout.strip() else {"_error": r.stderr.strip()[:200]}
 
 
@@ -114,7 +123,7 @@ def main():
             res["repos"][repo]["hard_gate"] = probe_status(
                 eff, sets, branch, hard_expected, untargeted
             )
-    (D / "drift.json").write_text(json.dumps(res, indent=2) + "\n")
+    (D / "drift.json").write_text(json.dumps(res, indent=2) + "\n", encoding="utf-8", newline="\n")
     for r, v in res["repos"].items():
         print(f"{v['probe_status']:21s} {r:34s} observed={v['observation_coverage']['observed']}/3  gaps={len(v['gaps'])}  unknown={len(v['unknown_readbacks'])}")
 
