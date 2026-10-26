@@ -101,6 +101,26 @@
       "fpc_body_receipt": "WRITTEN_TO_PR",
       "codex_clean_review": "UNVERIFIED",
       "landing": "HOLD"
+    },
+    {
+      "lane": "CURSOR_ADVISORY",
+      "pr": 894,
+      "stacked_on": 881,
+      "source_head_at_read": "bf1cf0b07059b56e1527daf8036ee09e3aa7c722",
+      "change_set": [
+        "process_released_os_advisory_lock",
+        "crash_leftover_file_recovery",
+        "concurrent_writer_veto"
+      ],
+      "native_qualification": "EXACT_HEAD_CI_PENDING_AT_N2_AUTHORING",
+      "landing": "HOLD"
+    },
+    {
+      "lane": "N2_HANDOVER",
+      "pr": null,
+      "source": "handover/session/CODE_PURPLE_WATCH_N2_GOVERNED_SPRINT_20261026.md",
+      "qualification": "DOCUMENTATION_ONLY_NO_RELEASE_CREDIT",
+      "landing": "HOLD"
     }
   ],
   "historical_owner_metrics": {
