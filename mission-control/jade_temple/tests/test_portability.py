@@ -15,8 +15,8 @@ MC=ROOT.parent
 TREES=(ROOT,MC/"gogreen",MC/"v2",MC/"qps-triage-ultra"/"p-process")
 SOURCES=sorted(p for t in TREES for p in t.rglob("*.py") if "__pycache__" not in p.parts)
 # Writers not yet converted, by mission-control path. Each is pinned by the
-# CICD DAG (a change re-pins outputs owned by open PRs #858/#860) or is a
-# p-process file those PRs own. P1b phase B converts them once both land; an
+# CICD DAG (a change re-pins outputs owned by #931, which supersedes #858/#860)
+# or is a p-process file it owns. P1b phase B converts them once it lands; an
 # entry that has no finding left fails test_pending_is_not_stale.
 PENDING={
     "jade_temple/portal_bridge.py",
