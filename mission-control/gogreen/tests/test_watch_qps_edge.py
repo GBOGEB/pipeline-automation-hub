@@ -442,7 +442,10 @@ class DurableReplayAndOutbox(unittest.TestCase):
         self.assertEqual(Q.verify(db, KEY, expected_root=root)["last_audit_sha256"], root)
         # A database admin could delete a correctly chained final row.
         db.execute("DELETE FROM audit WHERE seq=(SELECT MAX(seq) FROM audit)")
-        self.assertGreater(Q.verify(db, KEY)["audit_entries"], 0)
+        # The replay verifier rejects the deleted queue event even without a
+        # trusted external anchor; the anchor separately detects rollback.
+        with self.assertRaisesRegex(ValueError, "outbox queue vs audit inventory"):
+            Q.verify(db, KEY)
         with self.assertRaisesRegex(ValueError, "audit root rollback"):
             Q.verify(db, KEY, expected_root=root)
 
