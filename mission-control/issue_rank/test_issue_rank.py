@@ -376,8 +376,10 @@ class Fetch(unittest.TestCase):
             self.assertFalse((out / "snapshot.json").exists())
             self.assertTrue((out / "issue_rank.json").exists())
             self.assertEqual(ir.verify_ledger(out / "ledger.jsonl"), 1)
-            ir.main(["run", "--repos", "r", "--out", d])
-            self.assertTrue((out / "snapshot.json").exists())
+            # A plain run persists its snapshot. Own scope directory: a second pulse in the
+            # same directory within the same second fails the taxonomy series' strict order.
+            ir.main(["run", "--scope", "user", "--repos", "r", "--out", d])
+            self.assertTrue((Path(d) / "user" / "snapshot.json").exists())
 
 
 if __name__ == "__main__":
