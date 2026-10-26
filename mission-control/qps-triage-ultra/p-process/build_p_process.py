@@ -260,14 +260,14 @@ def main():
     SITE.mkdir(parents=True, exist_ok=True)
     (SITE / "data").mkdir(exist_ok=True)
     shutil.copyfile(ROOT / "p_process.yaml", SITE / "data/p_process.yaml")
-    (SITE / "index.html").write_text(page(d), encoding="utf-8")
+    (SITE / "index.html").write_text(page(d), encoding="utf-8", newline="\n")
     out = {"index": str(SITE / "index.html")}
     if not a.no_pdf:
         FONTS = fonts_css()
         build = ROOT / "build"
         build.mkdir(exist_ok=True)
         dh = build / "p-process-deck.html"
-        dh.write_text(page(d, deck=True), encoding="utf-8")
+        dh.write_text(page(d, deck=True), encoding="utf-8", newline="\n")
         n, over = render_pdf(dh, SITE / "P-process-deck.pdf", len(SECTS))
         out.update(pdf_pages=n, overflow_sections=over)
     print(json.dumps(out))

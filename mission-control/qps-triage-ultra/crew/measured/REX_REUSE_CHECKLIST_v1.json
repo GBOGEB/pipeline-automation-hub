@@ -54,6 +54,41 @@
       "before_task": ["workflow existence is not treated as runtime evidence", "runner/job telemetry will capture actual execution"],
       "if_triggered": ["route to Dockmaster/runtime lane", "do not patch application code before runner assignment unless separate evidence justifies it", "withhold runtime competency credit"],
       "proof_of_prevention": ["runner/job reference present", "steps_executed > 0", "runtime receipt bound to exact SHA"]
+    },
+    {
+      "rex_id": "REX-007",
+      "problem": "CRLF bytes from Windows text writers drift pinned blob OIDs",
+      "before_task": ["every new text writer passes newline=\"\\n\" and encoding=\"utf-8\"", "git ls-files --eol shows i/lf w/lf for touched files"],
+      "if_triggered": ["strip CR from the written files", "rewrite the writer with newline=\"\\n\"", "regenerate pinned outputs (REX-008)"],
+      "proof_of_prevention": ["test_bound_oids_equal_git_head_objects PASS", "JADE QA portability PASS on the exact head"]
+    },
+    {
+      "rex_id": "REX-008",
+      "problem": "pinned generated outputs stale after a pinned-source change",
+      "before_task": ["is the changed file a DAG/launcher input (regen.py --list)?", "source change committed before regeneration"],
+      "if_triggered": ["python mission-control/jade_temple/tools/regen.py --write", "commit the regenerated outputs as their own commit"],
+      "proof_of_prevention": ["regen.py --check exits 0", "Launcher outputs current and tests PASS on the exact head"]
+    },
+    {
+      "rex_id": "REX-009",
+      "problem": "second session on a live PR branch duplicates the fix",
+      "before_task": ["git fetch origin <branch> and compare with the PR headRefOid", "Invoke-DraftPrPass.ps1 does not class the PR as LIVE"],
+      "if_triggered": ["stop editing; drop the duplicate commits", "verify the other session's fix covers the finding", "correct any reply that cites an unpushed SHA"],
+      "proof_of_prevention": ["push is a fast-forward", "one fixing commit per finding on the PR"]
+    },
+    {
+      "rex_id": "REX-010",
+      "problem": "addressed bot review threads left unresolved keep first-pass-closure red",
+      "before_task": ["list unresolved threads with priority, author and outdated flag (Invoke-DraftPrPass.ps1 -ShowThreads)"],
+      "if_triggered": ["verify each thread against the head", "reply with fixing SHA and file:line, then resolve", "fix and push the ones that are not addressed", "re-run the pass after Codex re-reviews"],
+      "proof_of_prevention": ["0 unresolved threads on the exact head", "first-pass-closure PASS on that head"]
+    },
+    {
+      "rex_id": "REX-011",
+      "problem": "stale GITHUB_TOKEN in an inherited shell returns 401 from gh",
+      "before_task": ["gh calls run with GITHUB_TOKEN/GH_TOKEN unset or in a stripped child process"],
+      "if_triggered": ["unset the variables for that command", "run Invoke-WorkspaceAudit.ps1 to find the scope that still sets it", "remove it there and restart the parent app"],
+      "proof_of_prevention": ["gh api user succeeds with the keyring login", "audit token check reports no invalid token"]
     }
   ],
   "task_record_required": {
