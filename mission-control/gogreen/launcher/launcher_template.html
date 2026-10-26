@@ -90,7 +90,7 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
   <div class="pulse" id="pulse"></div>
 </header>
 <nav aria-label="Sections"><div class="in">
-  <a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#access">How to access</a><a href="#catalog">All pages</a><a href="#provenance">Provenance</a>
+  <a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#access">How to access</a><a href="#ops">Operational tools</a><a href="#catalog">All pages</a><a href="#provenance">Provenance</a>
   <span class="grow"></span>
   <label for="q" class="skip">Filter</label>
   <input id="q" type="search" placeholder="Filter tiles and pages" autocomplete="off">
@@ -117,6 +117,35 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
       <article class="card" data-tone="blue"><h3>GitHub Pages site</h3>
         <div class="links" id="acc-pages"></div>
         <p class="cap" id="acc-pages-note"></p>
+      </article>
+    </div>
+  </section>
+  <section id="ops" aria-labelledby="h-ops"><h2 id="h-ops">Operational tools</h2>
+    <p class="cap">Everyday PowerShell 7 commands, run from the clone root. Each one reads only, unless the card says otherwise. Every <code>gh</code> call runs with <code>GITHUB_TOKEN</code>/<code>GH_TOKEN</code> stripped, so the keyring login is used (REX-011).</p>
+    <div class="grid">
+      <article class="card" data-tone="green"><h3>Draft PR pass</h3>
+        <p class="cap">Lists every open draft PR with its class: LIVE, THREAD-P1, CONFLICT, RED, OUTDATED, THREAD or CLEAN. Shows unresolved Codex, Copilot and CodeQL threads with priority. Never pushes, comments or resolves.</p>
+        <pre class="cmd">pwsh -NoProfile -File tools\workstation\Invoke-DraftPrPass.ps1 -ShowThreads</pre>
+        <p class="cap">One repo, ready PRs too:</p>
+        <pre class="cmd">pwsh -NoProfile -File tools\workstation\Invoke-DraftPrPass.ps1 -Repo pipeline-automation-hub -IncludeReady</pre>
+      </article>
+      <article class="card" data-tone="green"><h3>Workspace audit</h3>
+        <p class="cap">Finds stale tokens, unpushed branches (PUSH-ME) and removable worktrees. <code>-Apply</code> removes clean, landed worktrees only.</p>
+        <pre class="cmd">pwsh -NoProfile -File tools\workstation\Invoke-WorkspaceAudit.ps1</pre>
+      </article>
+      <article class="card" data-tone="blue"><h3>Pinned outputs</h3>
+        <p class="cap">After any change to a DAG-pinned file, commit the change, then regenerate in order and commit the outputs (REX-008).</p>
+        <pre class="cmd">python mission-control\jade_temple\tools\regen.py --write</pre>
+        <pre class="cmd">python mission-control\jade_temple\tools\regen.py --check</pre>
+      </article>
+      <article class="card" data-tone="blue"><h3>Before you touch a PR branch</h3>
+        <p class="cap">The main checkout fetches master only. Ask the remote for the branch head, and leave the PR alone if another session is live on it (REX-009).</p>
+        <pre class="cmd">Remove-Item Env:GITHUB_TOKEN,Env:GH_TOKEN -ErrorAction SilentlyContinue; git fetch origin &lt;branch&gt;; gh pr view &lt;N&gt; --json headRefOid,updatedAt</pre>
+        <pre class="cmd">python scripts\preflight_overlap.py &lt;terms&gt;</pre>
+      </article>
+      <article class="card" data-tone="blue"><h3>Known fixes (REX)</h3>
+        <p class="cap">Repeated issues, each with the fix that worked: <code>mission-control/qps-triage-ultra/crew/REX_LEARNING_LEDGER_v1.json</code> (<code>known_fix</code>) and its checklist <code>crew/measured/REX_REUSE_CHECKLIST_v1.json</code>.</p>
+        <pre class="cmd">python mission-control\qps-triage-ultra\crew\measured\validate_rex_reuse.py</pre>
       </article>
     </div>
   </section>

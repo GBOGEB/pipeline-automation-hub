@@ -30,7 +30,8 @@ def build(out_dir: Path) -> Path:
             zf.writestr(info, (SITE / rel).read_bytes())
     digest = hashlib.sha256(z.read_bytes()).hexdigest()
     (z.parent / (z.name + ".sha256")).write_text(f"{digest}  {z.name}\n")
-    print(json.dumps({"zip": str(z), "files": len(man["files_sha256"]) + 1, "sha256": digest}))
+    print(json.dumps({"zip": str(z), "files": len(man["files_sha256"]) + 1, "sha256": digest,
+                      "carried_over": man.get("carried_over", {})}))
     return z
 
 
