@@ -46,6 +46,37 @@ jobs:
           else
             echo COMMITTED_RECORD_BYTE_PARITY=PENDING_FIRST_GENERATION
           fi
+      - name: CP-QPS-UNLOCK-RETIRE-20261026 byte parity and private boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/v2/handoff/closeout
+          REC="$SRC/records/CP-QPS-UNLOCK-RETIRE-20261026"
+          python "$SRC/cp_close.py" --intake "$SRC/intakes/CP-QPS-UNLOCK-RETIRE-20261026.json" --bd mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json --out "$REC" --check
+          REC="$REC" python - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          rec=Path(os.environ['REC'])
+          mark='PRIVATE_AGGREGATE_ONLY'
+          def walk(o):
+              if isinstance(o,dict):
+                  for k,v in o.items():
+                      if (k.endswith(('sha','_id')) or k in ('pr','via')) and v is not None:
+                          assert all(x in (mark,'UNKNOWN') for x in (v if isinstance(v,list) else [v])),(k,v)
+                      walk(v)
+              elif isinstance(o,list):
+                  for x in o: walk(x)
+          rows=0
+          for name in ('PULSE_R1_EVIDENCE.jsonl','PULSE_R1_CAUSAL_ROOTS.jsonl'):
+              for line in (rec/name).read_text(encoding='utf-8').splitlines():
+                  r=json.loads(line)
+                  if r.get('repo')=='GBOGEB/cryoplant-project':
+                      walk({k:v for k,v in r.items() if k not in ('ahead_by',)})
+                      assert not re.search(r'\b[0-9a-f]{7,40}\b|#\d+|\b\d{8,}\b',json.dumps(r)),r
+                      rows+=1
+          assert 'github.com/GBOGEB/cryoplant-project' not in (rec/'SOURCE_ADDENDUM.md').read_text(encoding='utf-8')
+          print('CP_QPS_UNLOCK_RETIRE_PARITY=PASS PRIVATE_ROWS_PROJECTED='+str(rows))
+          PY
       - name: Native SHA and privacy assertions
         shell: bash
         run: |
