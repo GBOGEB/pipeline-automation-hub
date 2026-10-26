@@ -178,7 +178,7 @@ def main(argv=None):
                     max_slots=a.max_slots)
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n",
-                     encoding="utf-8")
+                     encoding="utf-8", newline="\n")
     print(json.dumps({"plan": out["horizon_target"], "slots": out["proposed_slots"],
                       "deferred": len(out["deferred"]),
                       "queue": out["queue_admission"], "merge": out["admission"]},
