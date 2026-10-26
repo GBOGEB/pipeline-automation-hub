@@ -207,5 +207,5 @@ q.addEventListener('input',f);f();}})();
 """
 out = Path(a.out)
 out.parent.mkdir(parents=True, exist_ok=True)
-out.write_text(page, encoding="utf-8")
+out.write_text(page, encoding="utf-8", newline="\n")
 print("ok", len(page))
