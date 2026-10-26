@@ -94,7 +94,7 @@ def run(html_file: Path, output: Path):
         "formal_engineering_credit_delta": 0,
     }
     (output / "receipt.json").write_text(
-        json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     return receipt
 
 
