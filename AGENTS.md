@@ -93,6 +93,7 @@ One canonical module per metric. Import these; do not re-implement them. Paths a
 | CI/CD DAG + SIPOC (FUNCTION / SHA / OID lenses, DAG stats, red-trace EVERRED ratios) | `mission-control/jade_temple/tools/cicd_dag.py` | `project()`, `dag_stats()`, `critical_path()`, `gate_frontier()`, `everred_metrics()`, `scale_docks()` (delegates to `scale_dock.py`), `git_blob_oid()` | `site/cicd_dag.json`, `site/cicd_dag_crosswalk.csv`, `diagrams/CICD_DAG_*.mmd` |
 | CI/CD DAG page | `mission-control/jade_temple/site/build_cicd_dag.py` | renders `cicd_dag.project()`; no metrics of its own | `site/cicd_dag.html` |
 | DevOps fleet census (exact-head blob ids, lifecycle stages) | `mission-control/jade_temple/devops/census.py` | `fetch` / `scan` / `check` / `report` subcommands | `data/DEVOPS_CENSUS_N9.json`, `data/DEVOPS_OBJECTS_N9.json` |
+| Actions usage + performance metrics (per workflow / repo / FOCUS5 fleet: billable minutes, job run and queue time, job failure rate, failed-job minutes, class / band / event groupings) | `mission-control/jade_temple/devops/actions_metrics.py` | `aggregate()`, `project()`, `fetch` / `project` subcommands; reuses `bd_queue_wave.utc()` / `percentile()` / `queue_seconds()` | `data/ACTIONS_METRICS_FOCUS5.json` (`jade.devops.actions-metrics.v1`), `site/actions_metrics.csv` |
 
 Note the two EVERRED views: `harvest.py` owns the root register metrics (per root, from Actions
 failures); `cicd_dag.everred_metrics()` owns the per-workflow red-trace ratios (`everred_ratio`,
