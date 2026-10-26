@@ -19,7 +19,7 @@ from pathlib import Path
 import title_taxonomy as tax
 
 SCHEMA = "jade.taxonomy-pulse.v1"
-RANK_SCHEMA = "jade.issue-rank.v1"
+RANK_SCHEMAS = frozenset(("jade.issue-rank.v1", "jade.issue-rank.v2"))
 JADE_REPOS = {"ABACUS", "CODEX", "cryoplant-project", "pipeline-automation-hub"}
 SHA = re.compile(r"^[0-9a-f]{40}$", re.I)
 
@@ -43,7 +43,7 @@ def _timestamp(value: str) -> datetime:
 
 def visible(model: dict, *, public: bool) -> dict:
     """Validate identity/pins BEFORE removing private material; never emit titles."""
-    if model.get("schema") != RANK_SCHEMA:
+    if model.get("schema") not in RANK_SCHEMAS:
         raise ValueError("RANK_SCHEMA_MISMATCH")
     observed = model.get("fetched_at")
     _timestamp(observed)
