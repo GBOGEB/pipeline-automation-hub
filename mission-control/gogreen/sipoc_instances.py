@@ -271,11 +271,11 @@ def main():
     raw = (json.dumps(receipt, sort_keys=True, indent=2) + "\n").encode()
     (opts.out / "sipoc_instance_receipt.json").write_bytes(raw)
     (opts.out / "sipoc_instance_receipt.sha256").write_text(
-        hashlib.sha256(raw).hexdigest() + "\n", encoding="ascii")
+        hashlib.sha256(raw).hexdigest() + "\n", encoding="ascii", newline="\n")
     if opts.synthetic_replay:
         replay = asyncio.run(synthetic_asyncio_replay(receipt))
         (opts.out / "asyncio_synthetic_only.json").write_text(
-            json.dumps(replay, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            json.dumps(replay, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(receipt["kpi"], sort_keys=True))
 
 

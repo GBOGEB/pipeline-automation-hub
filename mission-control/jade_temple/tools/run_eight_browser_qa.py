@@ -96,7 +96,7 @@ try:
     page.close()
   finally:browser.close()
 finally:server.shutdown();server.server_close();thread.join(timeout=3)
-(OUT/'receipt.json').write_text(json.dumps(report,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+(OUT/'receipt.json').write_text(json.dumps(report,sort_keys=True,indent=2)+'\n',encoding='utf-8',newline="\n")
 print(json.dumps({'status':'PASS','viewports':len(report['viewports']),
  'source_sha256':hashlib.sha256((SITE/'eightpoint.html').read_bytes()).hexdigest(),
  'local_real_csp':all(x['local_real_csp'] for x in report['viewports'].values()),'hosted_GitHub_Pages_qualified':False},sort_keys=True))

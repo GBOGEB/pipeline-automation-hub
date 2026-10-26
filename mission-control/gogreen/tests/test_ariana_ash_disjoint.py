@@ -217,7 +217,7 @@ class ASHDisjointRecoveryTests(unittest.TestCase):
     def test_cli_corrupted_json_fails_closed_without_receipt(self):
         with tempfile.TemporaryDirectory() as temp:
             bad = Path(temp) / "broken.json"
-            bad.write_text("{invalid", encoding="utf-8")
+            bad.write_text("{invalid", encoding="utf-8", newline="\n")
             stdout, stderr = io.StringIO(), io.StringIO()
             with mock.patch.object(
                 sys, "argv", ["ash_survival.py", "--input", str(bad)]

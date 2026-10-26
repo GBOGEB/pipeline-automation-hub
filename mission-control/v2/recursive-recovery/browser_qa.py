@@ -98,7 +98,7 @@ def main():
                          "NATIVE_CARDS", "WAVE_RECUPERATION",
                          "ZERO_JS_ERRORS", "NO_GLOBAL_HORIZONTAL_OVERFLOW"]
     receipt["result"] = "PASS_BROWSER_VISUAL_AND_FUNCTIONAL_NOT_ENGINEERING_ACCEPTANCE"
-    (OUT / "qa_receipt.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+    (OUT / "qa_receipt.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({"result": receipt["result"], "viewports": len(receipt["viewports"]),
                       "checks": len(receipt["checks"]), "sha": receipt["source_sha"]}))
 

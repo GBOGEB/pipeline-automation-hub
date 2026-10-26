@@ -23,7 +23,7 @@ class BridgeTest(unittest.TestCase):
    import shutil
    for name in mod.STATIC_REQUIRED|{'jade.css','jade.js'}:shutil.copyfile(ROOT/'site'/name,proj/'site'/name)
    for name in ['REPO_READINESS_NPLUS1.json','COHORT_CROSSWALK_NPLUS1.json','GLOBAL_METRICS_NPLUS1.json']:shutil.copyfile(ROOT/'data'/name,proj/'data'/name)
-   (proj/'site/jade_data.js').write_text('window.JADE_NPLUS1={};',encoding='utf-8')
+   (proj/'site/jade_data.js').write_text('window.JADE_NPLUS1={};',encoding='utf-8',newline="\n")
    with self.assertRaisesRegex(ValueError,'JADE_STATIC_SHA256_MISMATCH'):mod.stage_jade(proj,Path(t)/'out',{},HEAD)
  def test_no_false_admission(self):
   with self.assertRaisesRegex(ValueError,'SOURCE_SHA_INVALID'):mod.stage_jade(ROOT,Path('/tmp/jade-should-not-create'),{},'bad')

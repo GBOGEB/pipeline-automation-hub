@@ -23,7 +23,7 @@ def mini_repo(d, workflows):
     w = Path(d) / ".github" / "workflows"
     w.mkdir(parents=True)
     for name, text in workflows.items():
-        (w / name).write_text(text)
+        (w / name).write_text(text, encoding="utf-8", newline="\n")
     return Path(d)
 
 
@@ -60,18 +60,18 @@ class Triggers(unittest.TestCase):
     def test_trigger_shapes(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "w.yml"
-            p.write_text("on: [push, pull_request]\n")
+            p.write_text("on: [push, pull_request]\n", encoding="utf-8", newline="\n")
             t = g.triggers(p)
             self.assertTrue(t["pull_request"])
             self.assertIsNone(t["paths"])
-            p.write_text("on:\n  pull_request:\n    branches: [master]\n    paths: ['a/**']\n    types: [labeled]\n")
+            p.write_text("on:\n  pull_request:\n    branches: [master]\n    paths: ['a/**']\n    types: [labeled]\n", encoding="utf-8", newline="\n")
             t = g.triggers(p)
             self.assertEqual((t["branches"], t["paths"], t["types"]), (["master"], ["a/**"], ["labeled"]))
             self.assertIn("types", g.fires_for_base(t, "master"))
-            p.write_text("on:\n  pull_request_target: {}\n")
+            p.write_text("on:\n  pull_request_target: {}\n", encoding="utf-8", newline="\n")
             t = g.triggers(p)
             self.assertEqual((t["pull_request"], t["pull_request_target"]), (False, True))
-            p.write_text("on: [unclosed\n")
+            p.write_text("on: [unclosed\n", encoding="utf-8", newline="\n")
             self.assertIn("parse_error", g.triggers(p))
 
     def test_base_branch_filter(self):
@@ -99,16 +99,16 @@ class RealWorkflows(unittest.TestCase):
     def test_rejects_non_pull_request_workflows(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "w.yml"
-            p.write_text("on:\n  push: {}\n")
+            p.write_text("on:\n  push: {}\n", encoding="utf-8", newline="\n")
             with self.assertRaises(ValueError):
                 g.path_filters(p)
-            p.write_text("on:\n  pull_request:\n    paths-ignore: ['x']\n")
+            p.write_text("on:\n  pull_request:\n    paths-ignore: ['x']\n", encoding="utf-8", newline="\n")
             self.assertIsNone(g.path_filters(p), "paths-ignore is supported since v2")
 
     def test_committed_ledger_is_complete_and_legal(self):
-        doc = json.loads((ROOT / g.ADMISSION).read_text())
+        doc = json.loads((ROOT / g.ADMISSION).read_text(encoding="utf-8"))
         pol = g.policy_from_doc(doc, "head")
-        files = sorted(str(f.relative_to(ROOT)) for f in (ROOT / ".github/workflows").glob("*.y*ml"))
+        files = sorted(f.relative_to(ROOT).as_posix() for f in (ROOT / ".github/workflows").glob("*.y*ml"))
         missing = [f for f in files if f not in pol["entries"]]
         self.assertLessEqual(len(missing), max(10, len(files) // 10),
                              f"ledger badly out of date; regenerate with admission.py ({missing[:5]})")

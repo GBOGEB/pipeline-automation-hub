@@ -85,12 +85,12 @@ def output(repos,directory):
        "verdicts":dict(Counter(r["verdict"] for r in rows)),
        "global_success_rate":None,"formal_root_closures":0,
        "historical_complete":False,"admission_authorized":False}
-    (target/"snapshot.json").write_text(json.dumps({"stats":stats,"repositories":repos},indent=2)+"\n")
-    with (target/"everred_candidates.csv").open("w",newline="") as fh:
+    (target/"snapshot.json").write_text(json.dumps({"stats":stats,"repositories":repos},indent=2)+"\n",encoding="utf-8",newline="\n")
+    with (target/"everred_candidates.csv").open("w",newline="",encoding="utf-8") as fh:
         cols=["repo","pr","run_id","attempt","workflow","classification","first_red",
               "source_head_sha","url","root_closure_credit"]
         writer=csv.DictWriter(fh,fieldnames=cols);writer.writeheader();writer.writerows(debt)
-    with (target/"merged_pr_rollup.csv").open("w",newline="") as fh:
+    with (target/"merged_pr_rollup.csv").open("w",newline="",encoding="utf-8") as fh:
         writer=csv.writer(fh)
         writer.writerow(["repository","merged_pr","source_head","observed_runs","status","page_complete"])
         for r in rows:writer.writerow([r["repo"],r["number"],r["head_sha"],r["run_count"],
@@ -99,7 +99,7 @@ def output(repos,directory):
     manifest={"schema":"gogreen.merged-top21.manifest.v1",
        "file_sha256":{n:hashlib.sha256((target/n).read_bytes()).hexdigest() for n in names},
        "merge_authorized":False}
-    (target/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
+    (target/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n",encoding="utf-8",newline="\n")
     return stats
 
 def main():
@@ -110,6 +110,6 @@ def main():
     if not 1<=a.limit<=10: raise SystemExit("bounded limit 1..10")
     token=os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
     if not token:raise SystemExit("authenticated read-only token required")
-    roster=json.loads(pathlib.Path(a.roster).read_text())
+    roster=json.loads(pathlib.Path(a.roster).read_text(encoding="utf-8"))
     print(json.dumps(output(execute(roster,token,a.limit),a.out),sort_keys=True))
 if __name__=="__main__":main()

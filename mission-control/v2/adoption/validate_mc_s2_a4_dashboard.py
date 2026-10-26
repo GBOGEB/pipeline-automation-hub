@@ -120,7 +120,7 @@ def validate(surface,status,current,trusted,a4_trusted,crew_trusted):
     req(crinv.get("authority_transfer") is False,"A4 crew-runner authority transfer drift")
     req(crinv.get("formal_credit_delta")==0,"A4 crew-runner formal credit drift")
     req(crinv.get("engineering_credit_delta")==0,"A4 crew-runner engineering credit drift")
-    src_blob=subprocess.check_output(["git","hash-object",str(STATUS.relative_to(ROOT))],cwd=ROOT,text=True).strip()
+    src_blob=subprocess.check_output(["git","hash-object",STATUS.relative_to(ROOT).as_posix()],cwd=ROOT,text=True).strip()
     source=surface.get("source",{})
     req(source.get("path")=="mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json","A4 source path drift")
     req(source.get("blob")==src_blob,"A4 source blob drift")

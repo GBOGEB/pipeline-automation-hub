@@ -74,7 +74,7 @@ class N3Contract(unittest.TestCase):
 
     def test_00_template_refuses_to_fake_live_head(self):
         with self.assertRaises(ValueError):
-            p.charter(json.loads(TEMPLATE.read_text()))
+            p.charter(json.loads(TEMPLATE.read_text(encoding="utf-8")))
 
     def test_charter_good_and_baseline(self):
         self.assertEqual(p.charter(self.c)["method"],"3PSTAR")
@@ -169,7 +169,7 @@ class N3Contract(unittest.TestCase):
             rec,m=p.produce(self.c,x,d)
             for k,v in m["files_sha256"].items():
                 self.assertEqual(hashlib.sha256((d/k).read_bytes()).hexdigest(),v)
-            self.assertIn("SIPOC", (d/"sipoc_dag.json").read_text().upper() or "SIPOC")
+            self.assertIn("SIPOC", (d/"sipoc_dag.json").read_text(encoding="utf-8").upper() or "SIPOC")
             with self.assertRaises(ValueError):
                 p.produce(self.c,x,d)
 
@@ -181,7 +181,7 @@ class N3Contract(unittest.TestCase):
             with patch.object(sys,"argv",argv),contextlib.redirect_stdout(buf):
                 runpy.run_path(str(SOURCE),run_name="__main__")
             self.assertEqual(json.loads(buf.getvalue())["checkpoint"],"N+0")
-            self.assertEqual(json.loads((out/"ledger.json").read_text())["checkpoints"],[])
+            self.assertEqual(json.loads((out/"ledger.json").read_text(encoding="utf-8"))["checkpoints"],[])
 
     def test_cli_three_observations_in_one_bounded_call(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -194,7 +194,7 @@ class N3Contract(unittest.TestCase):
             with patch.object(sys,"argv",argv),contextlib.redirect_stdout(buf):
                 runpy.run_path(str(SOURCE),run_name="__main__")
             self.assertTrue(json.loads(buf.getvalue())["complete"])
-            self.assertEqual(len(json.loads((out/"ledger.json").read_text())["checkpoints"]),3)
+            self.assertEqual(len(json.loads((out/"ledger.json").read_text(encoding="utf-8"))["checkpoints"]),3)
 
     def test_sipoc_source_to_customer_dag(self):
         d=p.sipoc(self.c,self.l)
@@ -473,16 +473,16 @@ class N3Contract(unittest.TestCase):
                   "--observations",str(obs),"--out",str(target)]
             with patch.object(sys,"argv",argv),contextlib.redirect_stdout(out):
                 runpy.run_path(str(SOURCE),run_name="__main__")
-            receipt=json.loads((target/"return_receipt.json").read_text())
+            receipt=json.loads((target/"return_receipt.json").read_text(encoding="utf-8"))
             self.assertFalse(receipt["three_pulses_complete"])
             self.assertEqual(receipt["verified_checkpoint_count"],0)
             self.assertEqual(receipt["next_action"],"HOLD_MAJOR")
             self.assertEqual(receipt["stop_reason"]["at"],"N+1")
-            self.assertEqual(len(json.loads((target/"ledger.json").read_text())["checkpoints"]),0)
+            self.assertEqual(len(json.loads((target/"ledger.json").read_text(encoding="utf-8"))["checkpoints"]),0)
             self.assertFalse(json.loads(out.getvalue())["complete"])
 
     def test_immutable_historical_root_baseline(self):
-        tax=json.loads((REPO/"mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json").read_text())
+        tax=json.loads((REPO/"mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json").read_text(encoding="utf-8"))
         self.assertEqual(tax["as_of"],"2026-09-27")
         self.assertEqual(tax["reservations"]["3PR"]["canonical_meaning"],
                          "THREE_P_REFRESH_PROBE_RANK")

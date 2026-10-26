@@ -354,7 +354,7 @@ class PulseLedgerTests(unittest.TestCase):
     def test_tampered_ledger_holds(self):
         n0 = mod.append(self.path, first_pulse())
         mod.append(self.path, mod.observe(reader(), ROOTS, n0, fake_git(), now=T1))
-        lines = self.path.read_text().splitlines()
+        lines = self.path.read_text(encoding="utf-8").splitlines()
         cases = {'chain broken': [mod.line({**json.loads(lines[0]), 'hub_sha': 'b' * 40}), lines[1]],
                  'not canonical': [lines[0].replace('{', '{ ', 1), lines[1]],
                  'not JSON': ['{', lines[1]],
@@ -362,7 +362,7 @@ class PulseLedgerTests(unittest.TestCase):
         for message, broken in cases.items():
             with self.subTest(message), self.assertRaisesRegex(ValueError, message):
                 mod.verify(broken)
-        self.path.write_text(lines[0])  # no trailing newline: an interrupted write
+        self.path.write_text(lines[0], encoding="utf-8", newline="\n")  # no trailing newline: an interrupted write
         with self.assertRaisesRegex(ValueError, 'truncated'):
             mod.read_ledger(self.path)
 
@@ -415,16 +415,16 @@ class CliTests(unittest.TestCase):
         yaml_stub = types.SimpleNamespace(safe_load=lambda text: {'roots': ROOTS})
         with tempfile.TemporaryDirectory() as tmp:
             ledger, roots, fixture, out = (Path(tmp) / n for n in ('p.jsonl', 'roots.yaml', 'fx.json', 's.json'))
-            roots.write_text('roots: []\n')
+            roots.write_text('roots: []\n', encoding="utf-8", newline="\n")
             with patch.dict(sys.modules, {'yaml': yaml_stub}), patch.object(mod, 'GhReader', lambda: reader()), \
                     patch.object(mod, 'git_reader', lambda: fake_git()), patch('sys.stdout'):
                 self.assertEqual(mod.main(['pulse', '--ledger', str(ledger), '--roots', str(roots),
                                            '--record', str(fixture)]), 0)
                 self.assertEqual(mod.main(['series', '--ledger', str(ledger), '--out', str(out)]), 0)
-            recorded = json.loads(fixture.read_text())
+            recorded = json.loads(fixture.read_text(encoding="utf-8"))
             self.assertTrue(recorded)
             self.assertFalse([r for r in recorded if '/pulls' in r or '/search/' in r or 'cryoplant' in r])
-            self.assertEqual(json.loads(out.read_text())['observation_class'], 'HISTORICAL_REPLAY')
+            self.assertEqual(json.loads(out.read_text(encoding="utf-8"))['observation_class'], 'HISTORICAL_REPLAY')
 
 
 class CommittedLedgerTests(unittest.TestCase):

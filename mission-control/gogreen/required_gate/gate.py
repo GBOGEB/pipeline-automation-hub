@@ -205,7 +205,7 @@ def load_policy(reader, base_sha: str | None, root: Path, mode: str) -> dict:
     if mode == "bootstrap":
         return bootstrap_policy()
     if mode == "head":
-        return policy_from_doc(json.loads((Path(root) / ADMISSION).read_text()), "head:" + ADMISSION)
+        return policy_from_doc(json.loads((Path(root) / ADMISSION).read_text(encoding="utf-8")), "head:" + ADMISSION)
     if not base_sha or not re.fullmatch(r"[0-9a-f]{40}", base_sha):
         raise ValueError("base policy needs the exact base SHA")
     try:
@@ -228,7 +228,7 @@ def evaluate(reader, root, pr, sha, deadline_s, poll_s=30, clock=time.monotonic,
               "policy_source": policy["source"], "changed_files": len(changed),
               "gates": [], "observed": [], "excluded": [], "merge_authorized": False}
     wdir = Path(root) / ".github" / "workflows"
-    universe = sorted(str(f.relative_to(root)) for f in list(wdir.glob("*.yml")) + list(wdir.glob("*.yaml")))
+    universe = sorted(f.relative_to(root).as_posix() for f in list(wdir.glob("*.yml")) + list(wdir.glob("*.yaml")))
     for rel in universe:
         disp = policy["entries"].get(rel)
         if rel == SELF:  # deadlock invariant: the gate never waits for itself, whatever the ledger says
@@ -314,7 +314,7 @@ def main(argv=None):
     rep["requests"] = reader.requests
     text = json.dumps(rep, indent=2, sort_keys=True)
     if a.out:
-        a.out.write_text(text + "\n")
+        a.out.write_text(text + "\n", encoding="utf-8", newline="\n")
     print(text)
     for g in rep["gates"]:
         print(f"{g['workflow']}: {g['state']}" + (f" ({len(g['matched_files'])} matched)" if g["matched_files"] else ""))
@@ -325,7 +325,7 @@ def main(argv=None):
         if g["state"] == FAIL and g["matched_files"]:
             print(f"::warning title=GOGREEN observed (not blocking) {g['state']}::{g.get('name') or g['workflow']}")
     if os.environ.get("GITHUB_STEP_SUMMARY"):
-        with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
+        with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8", newline="\n") as fh:
             fh.write(summary_markdown(rep))
     return 0 if rep["verdict"] == PASS else 1
 

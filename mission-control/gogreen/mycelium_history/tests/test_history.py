@@ -488,13 +488,13 @@ class CanonicalBDProjectionTests(unittest.TestCase):
             result = history.build(fixture(), C, path)
             self.assertIn("canonical_bd_status", result)
             self.assertEqual(result["canonical_bd_status"]["items"], 19)
-            m = json.loads((path / "manifest.json").read_text())
+            m = json.loads((path / "manifest.json").read_text(encoding="utf-8"))
             self.assertIn("bd_queue.json", m["file_sha256"])
             self.assertEqual(
                 hashlib.sha256((path/"bd_queue.json").read_bytes()).hexdigest(),
                 m["file_sha256"]["bd_queue.json"])
             self.assertIn("Canonical CODE PURPLE BD queue",
-                          (path/"index.html").read_text())
+                          (path/"index.html").read_text(encoding="utf-8"))
             history.build(fixture(), C, path, check=True)
 
 
@@ -566,7 +566,7 @@ class PresentationTests(unittest.TestCase):
             report = history.build(source, C, a)
             history.build(source, C, b)
             history.build(source, C, a, check=True)
-            manifest = json.loads((a / "manifest.json").read_text())
+            manifest = json.loads((a / "manifest.json").read_text(encoding="utf-8"))
             for name, digest in manifest["file_sha256"].items():
                 self.assertEqual(hashlib.sha256((a/name).read_bytes()).hexdigest(),
                                  digest)
@@ -578,7 +578,7 @@ class PresentationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             out = Path(root)
             history.build(fixture(), C, out)
-            (out/"index.html").write_text("drift", encoding="utf-8")
+            (out/"index.html").write_text("drift", encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError, "determinism drift"):
                 history.build(fixture(), C, out, check=True)
 
@@ -586,7 +586,7 @@ class PresentationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             out = Path(root)
             history.build(fixture(), C, out)
-            (out/"shadow.json").write_text("{}")
+            (out/"shadow.json").write_text("{}", encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError, "unexpected or missing"):
                 history.build(fixture(), C, out, check=True)
 

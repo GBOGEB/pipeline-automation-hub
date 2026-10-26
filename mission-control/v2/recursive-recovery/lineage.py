@@ -314,7 +314,7 @@ def main(argv=None):
     projection = build(spec, data)
     path = Path(args.out)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(projection, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(projection, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({"schema": SCHEMA, "sha256": projection["semantic_sha256"],
                       "missions": len(projection["missions"]),
                       "crew": projection["metrics"]["crew_registered"],

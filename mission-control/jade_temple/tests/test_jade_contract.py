@@ -57,9 +57,9 @@ class JadeContractTest(unittest.TestCase):
         old=m.DATA
         try:
             tmp=ROOT/'data/__negative__.json'
-            b=json.loads(json.dumps(PORT));b['merge_admission']='PASS';tmp.write_text(json.dumps(b),encoding='utf-8');m.DATA=tmp
+            b=json.loads(json.dumps(PORT));b['merge_admission']='PASS';tmp.write_text(json.dumps(b),encoding='utf-8',newline="\n");m.DATA=tmp
             with self.assertRaises(AssertionError):m.generate()
-            b['merge_admission']='HOLD';b['repositories'][0]['release']['readiness_level']='J5';tmp.write_text(json.dumps(b),encoding='utf-8')
+            b['merge_admission']='HOLD';b['repositories'][0]['release']['readiness_level']='J5';tmp.write_text(json.dumps(b),encoding='utf-8',newline="\n")
             with self.assertRaises(AssertionError):m.generate()
         finally:
             m.DATA=old;tmp.unlink(missing_ok=True)

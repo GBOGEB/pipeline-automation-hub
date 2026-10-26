@@ -229,7 +229,7 @@ class RerunTriageTests(unittest.TestCase):
             raw = (Path(tmp) / "rerun_receipt.json").read_bytes()
             self.assertEqual(hashlib.sha256(raw).hexdigest(), digest)
             self.assertEqual(
-                (Path(tmp) / "rerun_receipt.sha256").read_text().strip(), digest
+                (Path(tmp) / "rerun_receipt.sha256").read_text(encoding="utf-8").strip(), digest
             )
 
 

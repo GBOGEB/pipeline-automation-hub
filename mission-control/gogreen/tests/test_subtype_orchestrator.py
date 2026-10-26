@@ -50,7 +50,7 @@ class SubtypePlannerTests(unittest.TestCase):
 
     def test_sample(self):
         sample = Path(__file__).resolve().parents[1] / "samples" / "cbd_abacus_20261016.json"
-        receipt = MOD.plan(json.loads(sample.read_text()))
+        receipt = MOD.plan(json.loads(sample.read_text(encoding="utf-8")))
         self.assertEqual(receipt["kpi"]["packets_total"], 18)
         self.assertEqual(receipt["kpi"]["ready_now"], 7)
         self.assertEqual(receipt["kpi"]["blocked"], 3)

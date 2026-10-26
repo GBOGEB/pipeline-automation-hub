@@ -183,9 +183,9 @@ class W75SubtypeAdversarial(unittest.TestCase):
             out=pathlib.Path(tmp)
             digest=MOD.emit(x,out)
             self.assertEqual(len(digest),64)
-            self.assertEqual(json.loads((out/"subtype_receipt.json").read_text())["dispatch_authorized"],False)
-            self.assertEqual((out/"subtype_receipt.sha256").read_text().strip(),digest)
-            self.assertIn("accepted causal-root", (out/"subtype_receipt.md").read_text())
+            self.assertEqual(json.loads((out/"subtype_receipt.json").read_text(encoding="utf-8"))["dispatch_authorized"],False)
+            self.assertEqual((out/"subtype_receipt.sha256").read_text(encoding="utf-8").strip(),digest)
+            self.assertIn("accepted causal-root", (out/"subtype_receipt.md").read_text(encoding="utf-8"))
 
     def test_untrusted_proof_count_remains_caller_claim_only(self):
         p=packet()

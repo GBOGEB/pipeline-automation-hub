@@ -111,7 +111,7 @@ def main():
     a = parser.parse_args()
     result = run(a.total, a.queue_depth, a.workers, a.cycles, a.inject_failure)
     a.output.parent.mkdir(parents=True, exist_ok=True)
-    a.output.write_text(json.dumps(result, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    a.output.write_text(json.dumps(result, sort_keys=True, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({"outcome": result["outcome"], "synthetic": True}))
 
 

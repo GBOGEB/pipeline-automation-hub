@@ -131,7 +131,7 @@ class EndToEnd(unittest.TestCase):
             {"rank": 1, "repo": "demo/service", "branch": "main", "cohort_lane": "CORE", "role": "demo",
              "commit_sha_observed": cls.base},
             {"rank": 2, "repo": "demo/missing", "branch": "main", "cohort_lane": "SUPPORT", "role": "absent",
-             "commit_sha_observed": None}]}), encoding="utf-8")
+             "commit_sha_observed": None}]}), encoding="utf-8", newline="\n")
         cls.cache = cls.tmp / "cache"
         cls.cache.mkdir()
         cls.fetch = C.fetch_repo(cls.cache, "demo/service", "main", cls.base, url=cls.url)
@@ -354,7 +354,7 @@ class EndToEnd(unittest.TestCase):
         row = {"rank": 1, "repo": "demo/service", "branch": "main", "cohort_lane": "CORE", "role": "demo",
                "commit_sha_observed": self.head}
         roster = out / "roster.json"
-        roster.write_text(json.dumps({"repositories": [row]}), encoding="utf-8")
+        roster.write_text(json.dumps({"repositories": [row]}), encoding="utf-8", newline="\n")
         cache.mkdir()
         shutil.copytree(C.cache_dir(self.cache, "demo/service"), C.cache_dir(cache, "demo/service"))
         with redirect_stdout(buf):
@@ -380,10 +380,10 @@ class EndToEnd(unittest.TestCase):
         with redirect_stdout(io.StringIO()):
             self.assertEqual(C.main(["report", "--census", str(out / "c.json"), "--out", str(md)]), 0)
             self.assertEqual(C.main(["report", "--census", str(out / "c.json"), "--out", str(md), "--check"]), 0)
-            md.write_text(md.read_text(encoding="utf-8") + "drift\n", encoding="utf-8")
+            md.write_text(md.read_text(encoding="utf-8") + "drift\n", encoding="utf-8", newline="\n")
             self.assertEqual(C.main(["report", "--census", str(out / "c.json"), "--out", str(md), "--check"]), 1)
         c["iteration"] = "tampered"
-        (out / "c.json").write_text(json.dumps(c), encoding="utf-8")
+        (out / "c.json").write_text(json.dumps(c), encoding="utf-8", newline="\n")
         with redirect_stdout(io.StringIO()):
             self.assertEqual(C.main(["check", "--census", str(out / "c.json"), "--objects", str(out / "o.json")]), 1)
 

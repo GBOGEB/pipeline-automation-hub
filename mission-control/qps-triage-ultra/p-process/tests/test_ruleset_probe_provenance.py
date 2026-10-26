@@ -6,7 +6,7 @@ from pathlib import Path
 P=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location("ruleset_provenance",P/"rulesets/verify_rulesets.py")
 v=importlib.util.module_from_spec(spec);spec.loader.exec_module(v)
-EXPECT=json.loads((P/"rulesets/ABACUS.basic.json").read_text())
+EXPECT=json.loads((P/"rulesets/ABACUS.basic.json").read_text(encoding="utf-8"))
 RULES=EXPECT["rules"]
 
 class ReadbackProvenance(unittest.TestCase):
@@ -53,7 +53,7 @@ class ReadbackProvenance(unittest.TestCase):
         self.assertTrue(r["gaps"])
 
     def test_basic_does_not_substitute_for_hard(self):
-        hard=json.loads((P/"rulesets/ABACUS.hard.json").read_text())
+        hard=json.loads((P/"rulesets/ABACUS.hard.json").read_text(encoding="utf-8"))
         result=v.gaps(RULES,hard)
         self.assertIn("required approvals below 1", result)
         self.assertIn("last-push approval off", result)
@@ -61,11 +61,11 @@ class ReadbackProvenance(unittest.TestCase):
         self.assertTrue(any("PR Feedback Gate" in x for x in result))
 
     def test_full_hard_rule_set_meets_strength(self):
-        hard=json.loads((P/"rulesets/ABACUS.hard.json").read_text())
+        hard=json.loads((P/"rulesets/ABACUS.hard.json").read_text(encoding="utf-8"))
         self.assertEqual(v.gaps(hard["rules"], hard), [])
 
     def test_hard_profile_cannot_promote_unknown_api(self):
-        hard=json.loads((P/"rulesets/ABACUS.hard.json").read_text())
+        hard=json.loads((P/"rulesets/ABACUS.hard.json").read_text(encoding="utf-8"))
         read=v.probe_status({"_error":"403"},[],{"protected":True},hard)
         self.assertTrue(read["red"])
         self.assertEqual(read["probe_status"],"UNKNOWN_API_READBACK")
