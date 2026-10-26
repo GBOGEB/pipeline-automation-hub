@@ -78,8 +78,7 @@ class AdmissionAudit(unittest.TestCase):
                        "required_check_failed": True}
         r = a.audit(m)
         self.assertFalse(r["blocked_red_canary_verified"])
-        self.assertIn("main_targeted", [k for k, v in
-                         [("main_targeted", "main_targeted" not in r["missing_controls"])]] )
+        self.assertNotIn("main_targeted", r["missing_controls"])
 
     def test_fail_closed_unknown_schema_shas_rules_review_and_times(self):
         m = observation()
