@@ -1,0 +1,167 @@
+{
+  "schema": "codepurple.watch.n2-readback/v1",
+  "handover_from": "CODE_PURPLE_WATCH_RESTART_20261026_N0",
+  "observation_date_utc": "2026-10-26",
+  "evidence_class": "LIVE_GITHUB_SOURCE_READBACK_SEPARATE_FROM_HISTORICAL_N0_N1",
+  "current_at_observation_not_live_forever": true,
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "master_head_sha": "f1f415d2ec1087c734701cba30fa872abcf1c992",
+  "master_required_status_checks": {
+    "enforcement": "OFF_OBSERVED",
+    "contexts": [],
+    "noncompensating_veto": "HOLD"
+  },
+  "canonical_owners": {
+    "zip_semantics": "merged #530 code; #878 enhancement merged",
+    "authenticated_breadth": "merged #531 code, fresh 42-cell readback UNKNOWN",
+    "viewer": "merged #533 Method Atlas, new #893 view is consumer only",
+    "pulse_journal": "mission-control/gogreen/scale_dock_series.py",
+    "transition_consumer": "PR #881 watch_decision.py",
+    "public_feed": "PR #882 watch_feed.py",
+    "owner_signed_edge": "PR #890 watch_qps_edge.py; PR #891 stacked hardening",
+    "flightdeck": "PR #893 watch_vnext"
+  },
+  "public_source_heads": {
+    "ABACUS": "6ebebbc2aee8c400ecec7a8b9ee76fff80153c17",
+    "CODEX": "cb3b0d269bcd0ff9e96982cfc8276aa4bc187acf",
+    "gg_MATH": "61ce59f754d23e010958927a731432672abf7621",
+    "HUB": "f1f415d2ec1087c734701cba30fa872abcf1c992"
+  },
+  "private_qps": {
+    "visibility": "RESTRICTED_OWNER_RETURN",
+    "commit_sha": "PRIVATE_AGGREGATE_ONLY",
+    "native_rows_exported": 0,
+    "engineering_acceptance": "WITHHELD"
+  },
+  "prior_merges": [
+    {
+      "pr": 878,
+      "main_commit": "6330b4b6c617be2ef54c1d9b49a78797a9288577",
+      "class": "GOVERNED_STATUS_NOT_REVALIDATED"
+    },
+    {
+      "pr": 883,
+      "main_commit": "f1f415d2ec1087c734701cba30fa872abcf1c992",
+      "class": "GOVERNED_STATUS_NOT_REVALIDATED"
+    }
+  ],
+  "intervening_stack": {
+    "ordered_prs": [
+      881,
+      882,
+      890,
+      891
+    ],
+    "other_overlap_pr": 889,
+    "selection": "PR_889_AND_890_SAME_BRANCH_DIFFERENT_BASE_REQUIRES_OWNER_DECISION",
+    "no_automatic_merge": true
+  },
+  "candidate_lanes": [
+    {
+      "lane": "SECURITY",
+      "pr": 891,
+      "source_head_at_read": "c5e379f723984522ed1b195c5bcebb4cfd00c314",
+      "change_set": [
+        "event_digest_in_owner_hmac",
+        "candidate_digest_in_owner_hmac",
+        "all_coverage_axes_nonnegative",
+        "verified_outbox_audit_payload"
+      ],
+      "native_qualification": "PENDING_OR_FAILED_EXACT_HEAD_RECHECK",
+      "review": "UNKNOWN_OR_PENDING",
+      "landing": "HOLD"
+    },
+    {
+      "lane": "FLIGHTDECK",
+      "pr": 893,
+      "source_head_at_read": "c7467a26893691275229c97436b9ad0dea85cf68",
+      "source_receipt_blob": "59aeb2253d356e4c362c80fba9b4cde60c5aa7fb",
+      "ui_structural_tests": 8,
+      "browser_viewports_passed": 3,
+      "browser_receipt_run": 40254317998,
+      "html_sha256": "0aa58eb40dde484fb0de03b33fd6167a2aa7c1dd2391b77a076",
+      "hosted_verified": false,
+      "manual_visual_review": "PENDING",
+      "landing": "HOLD"
+    },
+    {
+      "lane": "TRANSITION",
+      "pr": 881,
+      "source_head_at_read": "cbbeaa3d1bd4f6504a214872e47006f8dd7b9f85",
+      "fpc_proof_run": 40253607766,
+      "fpc_body_receipt": "WRITTEN_TO_PR",
+      "codex_clean_review": "UNVERIFIED",
+      "landing": "HOLD"
+    },
+    {
+      "lane": "FEED",
+      "pr": 882,
+      "source_head_at_read": "3cd3216172ff37bf38d8da36abd3784c2266b2b8",
+      "fpc_proof_run": 40253858524,
+      "fpc_body_receipt": "WRITTEN_TO_PR",
+      "codex_clean_review": "UNVERIFIED",
+      "landing": "HOLD"
+    },
+    {
+      "lane": "CURSOR_ADVISORY",
+      "pr": 894,
+      "stacked_on": 881,
+      "source_head_at_read": "bf1cf0b07059b56e1527daf8036ee09e3aa7c722",
+      "change_set": [
+        "process_released_os_advisory_lock",
+        "crash_leftover_file_recovery",
+        "concurrent_writer_veto"
+      ],
+      "native_qualification": "EXACT_HEAD_CI_PENDING_AT_N2_AUTHORING",
+      "landing": "HOLD"
+    },
+    {
+      "lane": "N2_HANDOVER",
+      "pr": null,
+      "source": "handover/session/CODE_PURPLE_WATCH_N2_GOVERNED_SPRINT_20261026.md",
+      "qualification": "DOCUMENTATION_ONLY_NO_RELEASE_CREDIT",
+      "landing": "HOLD"
+    }
+  ],
+  "historical_owner_metrics": {
+    "source": "mission-control/gogreen/scale-dock/real/receipt/scale-dock.json",
+    "cohort": "THREE_PUBLIC_REPOS_HISTORICAL",
+    "pulses": 3,
+    "ever_red_manifestations": 27,
+    "observed_cells": 13,
+    "eligible_cells": 150,
+    "canonical_six_repo_fresh_cells": null,
+    "formal_root_closures_accepted": null,
+    "regime": "CONGESTED_HOLD",
+    "capacity_worker_hours": null
+  },
+  "fresh_token_census": {
+    "run_id": 40253229643,
+    "job_id": 121349446465,
+    "state": "ACTION_REQUIRED",
+    "token_lanes": 9,
+    "ok": 5,
+    "owner_action": 3,
+    "waiting": 1,
+    "fixed": 1,
+    "broke": 2,
+    "source_head": "f1f415d2ec1087c734701cba30fa872abcf1c992",
+    "credential_values_exported": false,
+    "authenticated_six_repo_status": "UNKNOWN"
+  },
+  "launch_state": {
+    "scheduled_watch_newly_created": false,
+    "github_pages_deployed_by_new_lane": false,
+    "notification_sent": false,
+    "worker_dispatches_by_new_lanes": 0,
+    "verified_n2_browser_qa": true
+  },
+  "governance": {
+    "MERGE_ADMISSION": "HOLD",
+    "FORMAL_ENGINEERING_CREDIT_DELTA": 0,
+    "QPS_OWNER_ACCEPTANCE": "WITHHELD",
+    "SECURITY_WAIVER": "NONE",
+    "INDEPENDENT_REVIEW": "REQUIRED_NOT_PROVEN"
+  },
+  "validity": "TIME_BOUNDED; refresh each PR SHA, CI, review and ruleset at next wave; no automatic promotion"
+}
