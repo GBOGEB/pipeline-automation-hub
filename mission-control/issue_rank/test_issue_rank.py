@@ -167,7 +167,7 @@ class Graph(unittest.TestCase):
                          issue(HUB, 2, "follow-up of #1", created="2026-09-10T00:00:00Z"),
                          issue(HUB, 3, "see #2 and #1", created="2026-10-01T00:00:00Z")])
         g = ir.build_graph(snap)
-        t = ir.golden_threads(g["nodes"], g["edges"])
+        t = ir.lineages(g["nodes"], g["edges"])
         self.assertEqual(t[f"{HUB}#3"], [f"{HUB}#1", f"{HUB}#3"])  # oldest older ref first
         self.assertEqual(t[f"{HUB}#2"], [f"{HUB}#1", f"{HUB}#2"])
         m = ir.mycelium(g["nodes"], g["edges"])
@@ -211,16 +211,16 @@ class Rank(unittest.TestCase):
     def test_scores_ranks_and_authority(self):
         self.assertEqual([i["rank_global"] for i in self.m["items"]], list(range(1, len(self.m["items"]) + 1)))
         self.assertEqual(self.by[f"{HUB}#3"]["pressure"], 2)
-        self.assertEqual(self.by[f"{HUB}#1"]["score_parts"]["nearness"], 1.0)
-        for i in self.m["items"]:
-            self.assertAlmostEqual(i["score"], sum(ir.WEIGHTS[k] * v for k, v in i["score_parts"].items()), places=3)
+        self.assertEqual(self.by[f"{HUB}#1"]["urgency_parts"]["nearness"], 1.0)
+        for i in self.m["items"]:  # score = own urgency + pressure inherited from waiters, exactly
+            self.assertAlmostEqual(i["score"], i["score_parts"]["own"] + i["score_parts"]["inherited"], places=3)
         a = self.m["authority"]
         self.assertTrue(a["advisory_only"])
         self.assertFalse(a["closure_authorized"] or a["merge_authorized"] or a["dispatch_authorized"])
 
     def test_rollups(self):
         r = self.m["rollups"]
-        self.assertEqual(set(r), {"USER", "JADE", HUB, QPS})
+        self.assertEqual(set(r), {"USER", "JADE", "FOCUS4", HUB, QPS})
         self.assertEqual(r[HUB]["open_issues"], 5)
         self.assertEqual((r[HUB]["tasks_done"], r[HUB]["tasks_total"]), (6, 9))
         self.assertEqual(r["USER"]["open_issues"], 6)
@@ -236,8 +236,12 @@ class Rank(unittest.TestCase):
 
     def test_redact_hides_private_text(self):
         red = ir.redact(self.m)
-        q = next(i for i in red["items"] if i["key"] == f"{QPS}#7")
+        q = next(i for i in red["items"] if i["repo"] == QPS)
+        self.assertEqual(q["key"], f"{QPS}#PRIVATE-001")
         self.assertIsNone(q["title"])
+        self.assertIsNone(q["number"])
+        self.assertNotIn(f"{QPS}#7", json.dumps(red))
+        self.assertIsNone(red["heads"][QPS]["head_sha"])
         self.assertNotIn("secret", json.dumps(red))
         self.assertNotIn("confidential", ir.render_html(red))
 
@@ -295,6 +299,9 @@ class FakeGh:
                                                             "repository": {"nameWithOwner": "GBOGEB/r"}}}]}}
             return {"repository": {"issues": {"pageInfo": {"hasNextPage": not page, "endCursor": "c1"},
                                               "nodes": [node]}}}
+        if "issues(states:CLOSED,first" in query:
+            return {"repository": {"issues": {"pageInfo": {"hasNextPage": False, "endCursor": None},
+                                              "nodes": []}}}
         if "pullRequests(states:OPEN" in query:
             return {"repository": {"pullRequests": {"pageInfo": {"hasNextPage": False, "endCursor": None},
                                                     "nodes": []}}}
@@ -317,14 +324,14 @@ class Fetch(unittest.TestCase):
     def test_redacted_run_persists_no_raw_snapshot(self):
         with tempfile.TemporaryDirectory() as d, mock.patch.object(ir, "Gh", FakeGh), \
                 contextlib.redirect_stdout(io.StringIO()):
-            out = Path(d) / "jade"
+            out = Path(d) / "focus"
             out.mkdir()
             (out / "snapshot.json").write_text("{\"stale\": \"raw private body\"}", encoding="utf-8")
-            self.assertEqual(ir.main(["run", "--repos", "r", "--out", d, "--redact-private"]), 0)
+            self.assertEqual(ir.main(["run", "--repos", "r", "--out", d, "--redact-private", "--draws", "5"]), 0)
             self.assertFalse((out / "snapshot.json").exists())
             self.assertTrue((out / "issue_rank.json").exists())
             self.assertEqual(ir.verify_ledger(out / "ledger.jsonl"), 1)
-            ir.main(["run", "--repos", "r", "--out", d])
+            ir.main(["run", "--repos", "r", "--out", d, "--draws", "5"])
             self.assertTrue((out / "snapshot.json").exists())
 
 
