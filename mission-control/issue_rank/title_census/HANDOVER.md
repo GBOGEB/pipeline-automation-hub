@@ -33,6 +33,7 @@ Lint rules T001 to T011 (`taxonomy.py` `LINT_RULES`): no prefix, unknown type, t
 | `vocabulary.json` | The vocabulary: 12 types, 26 families, scopes and aliases (`=alias` = only inside an explicit prefix or label, never free text), qualifier patterns, type keywords, label map, `generic` families that lose to domain families in free-text inference |
 | `graph.py` | PR / issue crosswalk edges: `closes` (PR -> issue, both sides, cross-repo), `parent` (sub-issues), `mentions` (`#123`, `Repo#123`, `PR123` in titles), `refs` (body references), `xref` (timeline cross-references); one edge per pair, strongest type wins. Counts only: PageRank / betweenness stay with `issue_rank.py` |
 | `test_graph.py` | 7 edge tests |
+| `test_fetch.py` | 4 tests: timeline and check-suite paging, run binding for --resume |
 | `fetch_checks.py` | Per-PR CI evidence (head OID, last 10 commit states, head-commit workflow runs); about 2 GraphQL points per 50 PRs |
 | `ci_census.py` | Per-family CI view on the PAH owners (`red_trace.classify`, `cicd_dag.everred_metrics`, red-trace data, DAG crosswalk) |
 | `taxonomy.py` | `Vocabulary`, `parse_title`, `lint`, `classify_own`, `classify_all` (recursive issue inheritance), `suggest_title` (lossless: never drops a label token or ID), `levels` |
@@ -43,7 +44,7 @@ Lint rules T001 to T011 (`taxonomy.py` `LINT_RULES`): no prefix, unknown type, t
 | `apply_issues.py` | Applies the issue plan with `gh issue edit`; dry run unless `--apply`; adds labels only, never removes; re-reads each issue and skips it if its title or state changed since the pulse |
 | `manifest.py` | `MANIFEST.json` with sha256 of every artefact; `--check` regenerates everything from `data/raw.json.gz` and fails on any difference |
 | `dash/index.html` | The dashboard page (d3 only; the dashboard host allows no other script) |
-| `data/raw.json.gz` | The pulse (source of truth, 7,278 rows, 23 repos, 2026-10-26T09:18:34Z; repo-qualified closing and parent references, body references and timeline cross-references) |
+| `data/raw.json.gz` | The pulse (source of truth, 7,278 rows, 23 repos, 2026-10-26T10:07:10Z; repo-qualified closing and parent references, body references and timeline cross-references) |
 | `out/` | Generated outputs (reproducible from the pulse; `manifest.py --check` proves it) |
 | `out/apply_log.txt` | Log of the GitHub edits made on 2026-10-26 |
 
@@ -60,7 +61,7 @@ python apply_issues.py --min-confidence strong                   # dry run; add 
 
 Windows: `unset GITHUB_TOKEN GH_TOKEN` (or the PowerShell equivalent) before `gh`; set `PYTHONIOENCODING=utf-8` for console output with emoji titles.
 
-## Results at the 09:18 pulse
+## Results at the 10:07 pulse
 
 | | PRs | Issues | All |
 |---|---|---|---|
@@ -84,7 +85,7 @@ https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw (private until shared). Data a
 
 ## Crosswalk and dependency graph
 
-17,665 links at the 09:18 pulse (one per ordered pair, typed by its strongest evidence, every source kept in `evidence`):
+17,914 links at the 10:07 pulse (timelines paged) (one per ordered pair, typed by its strongest evidence, every source kept in `evidence`):
 10,021 `refs` (PR / issue body references: `#n`, `Repo#n`, `GBOGEB/repo#n`, GitHub URLs; code blocks and HTML comments ignored),
 7,030 `xref` (GitHub timeline cross-reference events), 336 `closes` (closing references from both sides, `Closes/Fixes/Resolves`
 in a PR body, closing cross-references), 274 `mentions` (title references), 4 `parent`. 1,032 cross-repo; 5,626 inside one family.
@@ -103,28 +104,39 @@ cross-cutting items), 191 with no linked item that has a family (generic one-off
 
 ## CI health per family (EVERRED, red / green, checks, DAG / SIPOC, OID)
 
-For every family with more than 10 titles (27 families), from `data/checks.json.gz` (fetched by `fetch_checks.py`: per PR the head
-OID, the combined check state of its last 10 commits, and the workflow runs on its head commit with file path and conclusion).
-`ci_census.py` imports the PAH owners instead of re-implementing them:
+For every family with more than 10 titles (27 families), from `data/checks.json.gz` (`fetch_checks.py`: per PR the head OID,
+the combined check state of its last 10 commits, and every check suite on its head commit, paginated). `ci_census.py` imports
+the PAH owners instead of re-implementing them, and offers three lenses:
 
-| Piece | Owner used | Output |
+| Lens | What it measures | Owners used |
 |---|---|---|
-| Class per PR over its commits: EVERRED, GREEN_TO_RED, RED_TO_GREEN, FLAKY, STABLE_GREEN | `mission-control/gogreen/red_trace/red_trace.py` `classify()` | `out/ci_prs.csv` |
-| everred ratio, recovery rate, flake rate, red now, red-now median age per family | `mission-control/jade_temple/tools/cicd_dag.py` `everred_metrics()` (fed a red_trace-shaped document per family) | `out/ci_family.csv` |
-| Workflow class on the default branch | `mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json` (five core repos) | `out/ci_checks.csv` `default_branch_class` |
-| DAG node, SIPOC letter, node type, DMAIC phase, layer, bound blob OID per workflow file | `mission-control/jade_temple/site/cicd_dag_crosswalk.csv` | `out/ci_checks.csv` |
+| **Default branch, per check** (headline) | Each check the family's PRs ran, classed by its default-branch history (STABLE_GREEN, RED_TO_GREEN, FLAKY, GREEN_TO_RED, EVERRED), weighted by 1 + its test jobs | `RED_TRACE_FEDERATION_N8.json`, `cicd_dag.everred_metrics()`, `jade_temple/devops` census N11 (`signals` tests / pytest per job) |
+| **PR head, code checks** | Per PR: green when every non-gate check on its last commit passed; test-weighted pass share per family; rank = 95% Wilson lower bound of that share over the family's PRs | always-red gates detected from the data: failed on at least 80% of 20 or more PR heads (28 at the 10:07 pulse, mostly legacy ABACUS DMAIC / CD pipelines and PAH First-Pass Closure) |
+| **Combined, incl. gates** | GitHub's single combined state over the last 10 commits, classed with `red_trace.classify()`; one red check makes the commit red | `red_trace.classify()`, `cicd_dag.everred_metrics()` |
 
-Also per family: the newest PR (state, final CI state, head OID), the **main red driver** (the workflow failing on the head commit
-of the most red PRs), and **activity signatures** (PRs that ran exactly the same set of workflows; `out/ci_signatures.csv`).
+Why three: the combined lens alone made almost every family look EVERRED (qps 739 of 1,305 PRs) because a handful of gates
+fail on nearly every PR. On the default branch the five federation core repositories have 186 of 340 workflows stable green
+(recovery rate 53%; PAH 56 of 78 stable, 1 EVERRED) and 410 test jobs over 17,142 test cases. Per family the default-branch
+EVERRED share is 4-19% and the test-weighted code-check pass share 48-92%.
 
-Finding at the 09:18 pulse: most PRs in every family never reach a green combined state (qps 739 of 1,305 EVERRED; ci-ops 367
-of 487). The per-workflow view shows why: a few checks fail on almost every PR, e.g. First-Pass Closure Gate is the main red
-driver for gogreen (51 of 66 red PRs) and jade-devops (50 of 77); `verify-ssot` for qps and the unassigned group; Validate Docs
-for ci-ops. Read EVERRED here as "a gate stayed red", not "the change is broken". The unit is a PR, not a default-branch
-workflow, so these numbers do not replace the EVERRED ledger. 512 of 10,740 family × workflow rows bind to a DAG node (260 with
-a blob OID): the DAG covers pipeline-automation-hub, cryoplant-project, DOCX_RTM_Automation, gg_MATH and yaml-grammar only.
+Outputs: `out/ci_family.csv` (all three lenses, rank, newest PR with head OID, main red driver), `out/ci_checks.csv` (per family
+and check: outcomes, gate flag, weight, test jobs, default-branch class, DAG node, SIPOC, DMAIC, blob OID), `out/ci_scope.csv`
+(owner statistics by scope), `out/ci_gates.csv`, `out/ci_signatures.csv` (PRs that ran the same check set), `out/ci_prs.csv`.
+The dashboard legend toggles classes on and off (the rest close up to the left; one class left = a ranked single-class view).
 
-`python manifest.py --check --pah <pipeline-automation-hub checkout>` regenerates the CI outputs too (they need the owner modules).
+LDAB: `mission-control/federation-atlas/mission_rebuild/ldab_dag_sipoc.py` crosswalks the LDAB graph to SIPOC but records
+`native_test_count: None`, so test weights come from the DevOps census. 512 family x check rows bind to a CI/CD DAG node;
+the DAG covers pipeline-automation-hub, cryoplant-project, DOCX_RTM_Automation, gg_MATH and yaml-grammar only.
+
+`python manifest.py --check --pah <pipeline-automation-hub checkout>` regenerates the CI outputs and datasets too.
+
+### Review fixes (Codex on cf91a33)
+
+- `fetch.py` pages timeline cross-references past the first 30 (35 items had more; 16,010 events instead of 14,806).
+- `fetch_checks.py` pages check suites past the first page (954 PR heads had more than 30; up to 153).
+- `fetch.py --resume` only reuses per-repo files of the same run (`data/repos/_run.json`); the pulse keeps the run's start
+  time. `fetch_checks.py --resume` only reuses files fetched against the same pulse.
+- `manifest.py --check` also verifies every dashboard dataset and the dashboard page against the published hashes.
 
 ## Overlap with pipeline-automation-hub #925 / #927 (read before landing)
 
@@ -146,6 +158,6 @@ This work should not land as a second parser. What it adds that #927 lacks, to b
 
 - Verified on the workstation's Python 3.12 only; code avoids 3.12-only syntax but CI on the repo's declared runtime has not run. Treat as unverified until it does.
 - Keyword inference is heuristic: `inferred` rows are guesses; only `explicit` and `strong` were applied.
-- Dashboard data are a static copy from the 09:18 pulse.
+- Dashboard data are a static copy from the 10:07 pulse.
 - Links come from closing references, sub-issue parents, titles, bodies and timeline cross-references. Comments and commit messages are only seen indirectly through timeline events; references to items outside the snapshot (older or other owners) are dropped.
 - 9% of titles still map to no family; see `out/keywords.md` "Unmapped" and the dashboard table.

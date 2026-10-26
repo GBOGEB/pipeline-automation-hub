@@ -41,6 +41,11 @@
   .tx-sipoc h3 { margin: 0; font-size: var(--cds-font-size-caption); font-weight: var(--cds-font-weight-medium); }
   .tx-sipoc span { font-size: var(--cds-font-size-caption); overflow-wrap: anywhere; padding: 2px var(--cds-pad-xs); border-radius: var(--cds-radius); }
   @media (max-width: 640px) { .tx-sipoc { grid-template-columns: 1fr; } }
+  .tx-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); margin-bottom: var(--cds-gap-sm); }
+  .tx-lg { font: inherit; font-size: var(--cds-font-size-caption); display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-panel); color: var(--color-fg); padding: 2px var(--cds-pad-sm); cursor: pointer; }
+  .tx-lg i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  .tx-lg[aria-pressed="false"] { opacity: .45; text-decoration: line-through; }
+  .tx-lg-reset { color: var(--color-fg-muted); }
   .tx [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
   .tx [data-dash-source-state=empty] { color: transparent; }
   .tx .fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); min-height: 6rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
@@ -214,38 +219,67 @@
   </section>
 
   <section id="ci" style="display:grid;gap:var(--cds-gap-md)">
-    <header><h2>CI health per family: EVERRED, red ↔ green, checks, DAG / SIPOC and OIDs</h2>
-      <span class="muted">Families with more than 10 titles. Each PR's combined check state over its last 10 commits is classified with GOGREEN red_trace.classify(), and the rates come from cicd_dag.everred_metrics(), the same definitions as the EVERRED ledger. The unit is a PR, not a default-branch workflow.</span></header>
+    <header><h2>CI health: EVERRED, red ↔ green, checks, DAG / SIPOC and OIDs</h2>
+      <span class="muted">Three lenses, all on the PAH owners. Default branch: each check's class from the EVERRED red-trace ledger (red_trace.classify(), cicd_dag.everred_metrics()), weighted by the check's test jobs in DevOps census N11. PR head: the checks on each PR's last commit, with always-red policy gates set apart. Combined: GitHub's single combined state per commit, gates included (the strictest and most pessimistic view).</span></header>
+
+    <article class="tx-card" id="ci-scope">
+      <header><h2>Default branch by scope</h2><span class="muted">Workflows traced on each repository's default branch in the EVERRED ledger, with the test cases and test jobs the DevOps census found. These are the owners' own numbers.</span></header>
+      <div class="tx-legend" id="lg-scope"></div>
+      <div class="tx-chart" id="c-ci-scope" data-source="ci_scope" style="min-height:9rem"></div>
+    </article>
+
     <article class="tx-card" id="ci-family">
-      <header><h2>Red and green by family</h2><span class="muted">EVERRED: never green in its commits. GREEN→RED: red now, was green. RED→GREEN: recovered. FLAKY: 3 or more flips. Recovery rate = RED→GREEN ÷ (RED→GREEN + GREEN→RED + EVERRED). Last PR: newest PR in the family, its final CI state and head OID. Main red driver: the workflow failing on the head commit of the most red PRs; one always-red gate can make a whole family read as EVERRED.</span></header>
-      <div class="tx-chart" id="c-ci-bars" data-source="ci_family" style="min-height:10rem"></div>
+      <header><div class="row"><h2>Families</h2>
+        <label class="muted">Lens <select id="f-cilens"><option value="db">Default branch, per check, test-weighted</option><option value="code">PR head, code checks (gates apart)</option><option value="combined">Combined state incl. gates</option></select></label></div>
+        <span class="muted tx-lens-note"></span></header>
+      <div class="tx-legend" id="lg-family"></div>
+      <div class="tx-chart" id="c-ci-bars" data-source="ci_family" style="min-height:12rem"></div>
+    </article>
+
+    <article class="tx-card" id="ci-rank">
+      <header><h2>Ranking</h2><span class="muted">Score = lower bound of the 95% Wilson interval on the test-weighted pass share of code checks on PR heads. A family with few PRs needs a higher pass share to rank as high, so size no longer hides behind a percentage. Click a row to see its checks.</span></header>
       <div class="tx-scroll">
         <table class="tx-t-cif" data-source="ci_family" data-row-key="id">
-          <thead><tr><th data-field="family">Family</th><th class="num" data-field="prs_with_ci">PRs with CI</th><th class="num" data-field="everred">EVERRED</th><th class="num" data-field="green_to_red">Green→red</th><th class="num" data-field="red_to_green">Red→green</th><th class="num" data-field="flaky">Flaky</th><th class="num" data-field="stable_green">Stable</th><th class="num" data-field="everred_ratio">EVERRED ratio</th><th class="num" data-field="recovery_rate">Recovery</th><th class="num" data-field="flake_rate">Flake rate</th><th class="num" data-field="red_now_open">Red now (open)</th><th class="num" data-field="red_now_median_age_days">Red age, days</th><th data-field="top_red_driver">Main red driver</th><th data-field="last_pr">Last PR</th><th data-field="last_pr_ci">Last PR CI</th><th data-field="last_pr_oid">Head OID</th></tr></thead>
+          <thead><tr><th class="num" data-field="rank">Rank</th><th data-field="family">Family</th><th class="num" data-field="rank_score">Score</th><th class="num" data-field="weighted_pass">Weighted pass</th><th class="num" data-field="code_prs">PRs</th><th class="num" data-field="code_green">Code green</th><th class="num" data-field="code_red">Code red</th><th class="num" data-field="db_stable_green">Default stable</th><th class="num" data-field="db_everred">Default EVERRED</th><th class="num" data-field="gate_red_prs">PRs red on a gate</th><th class="num" data-field="nodes">Checks</th><th data-field="last_pr">Last PR</th><th data-field="last_pr_ci">Last PR CI</th><th data-field="last_pr_oid">Head OID</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
     </article>
+
     <article class="tx-card" id="ci-checks">
-      <header><div class="row"><h2>Checks run by a family's PRs</h2><label class="muted">Family <select id="f-cfam" data-source="ci_family"></select></label></div>
-        <span class="muted">Workflows on each PR's head commit, their outcomes, the workflow's class on the default branch (EVERRED ledger, five core repos), and where it sits in the CI/CD DAG: SIPOC letter, node type, DMAIC phase, layer and the bound blob OID.</span></header>
+      <header><div class="row"><h2>Checks (nodes) of a family</h2><label class="muted">Family <select id="f-cfam" data-source="ci_family"></select></label></div>
+        <span class="muted">Each check that ran on the family's PR heads: pass and fail counts, its weight (1 + test jobs), whether it is an always-red gate, its default-branch class, and where it sits in the CI/CD DAG (SIPOC, DMAIC, blob OID). Bars: the 25 heaviest checks.</span></header>
+      <div class="tx-legend" id="lg-nodes"></div>
+      <div class="tx-chart" id="c-ci-nodes" data-source="ci_checks" style="min-height:10rem"></div>
       <div class="tx-sipoc" id="c-sipoc" data-source="ci_checks"></div>
       <div class="tx-scroll">
         <table class="tx-t-cic" data-source="ci_checks" data-row-key="id">
-          <thead><tr><th data-field="workflow">Workflow</th><th data-field="workflow_repo">Repo</th><th class="num" data-field="runs">Runs</th><th class="num" data-field="failure">Failed</th><th class="num" data-field="failure_share">Fail share</th><th data-field="default_branch_class">Default branch</th><th data-field="sipoc">SIPOC</th><th data-field="dag_nodes">DAG nodes</th><th data-field="dmaic">DMAIC</th><th data-field="oid">Blob OID</th><th data-field="path">File</th></tr></thead>
+          <thead><tr><th data-field="workflow">Check</th><th data-field="workflow_repo">Repo</th><th class="num" data-field="weight">Weight</th><th class="num" data-field="test_jobs">Test jobs</th><th class="num" data-field="runs">Runs</th><th class="num" data-field="failure">Failed</th><th class="num" data-field="failure_share">Fail share</th><th data-field="gate">Gate</th><th data-field="default_branch_class">Default branch</th><th data-field="sipoc">SIPOC</th><th data-field="dag_nodes">DAG nodes</th><th data-field="dmaic">DMAIC</th><th data-field="blob_oid">Blob OID</th><th data-field="path">File</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
     </article>
-    <article class="tx-card" id="ci-sigs">
-      <header><h2>Activity signatures</h2><span class="muted">PRs in the family that ran exactly the same set of workflows on their head commit (at least 2 PRs). Same signature = same tests and activities.</span></header>
-      <div class="tx-scroll">
-        <table class="tx-t-sig" data-source="ci_signatures" data-row-key="id">
-          <thead><tr><th class="num" data-field="prs">PRs</th><th class="num" data-field="n_workflows">Workflows</th><th class="num" data-field="red_now">Red now</th><th data-field="classes">Classes</th><th data-field="workflows">Workflow set</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </article>
+
+    <div class="tx-grid">
+      <article class="tx-card" id="ci-gates">
+        <header><h2>Always-red gates</h2><span class="muted">Checks that failed on at least 80% of the 20 or more PR heads they ran on. They are set apart in the PR-head lens; the combined lens still counts them.</span></header>
+        <div class="tx-scroll">
+          <table class="tx-t-gates" data-source="ci_gates" data-row-key="id">
+            <thead><tr><th data-field="workflow">Gate</th><th data-field="repo">Repo</th><th class="num" data-field="runs">Runs</th><th class="num" data-field="red_share">Red share</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+      <article class="tx-card" id="ci-sigs">
+        <header><h2>Activity signatures</h2><span class="muted">PRs in the chosen family that ran exactly the same set of checks on their head commit (at least 2 PRs).</span></header>
+        <div class="tx-scroll">
+          <table class="tx-t-sig" data-source="ci_signatures" data-row-key="id">
+            <thead><tr><th class="num" data-field="prs">PRs</th><th class="num" data-field="n_workflows">Checks</th><th class="num" data-field="red_now">Red now</th><th data-field="classes">Classes</th><th data-field="workflows">Check set</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+    </div>
   </section>
 
   <article class="tx-card" id="keywords">
@@ -594,57 +628,129 @@ dash.calc('flow', {
     drawCI(repo);
   }
 
-  // ---- CI health per family ----
-  const cfamSel = document.getElementById('f-cfam');
+  // ---- CI health ----
+  const cfamSel = document.getElementById('f-cfam'), lensSel = document.getElementById('f-cilens');
   cfamSel.addEventListener('change', () => dash.setParams({ cfam: cfamSel.value }));
+  lensSel.addEventListener('change', () => dash.setParams({ cilens: lensSel.value }));
   const commitUrl = (repo, oid) => `https://github.com/GBOGEB/${repo}/commit/${oid}`;
   const rate = (v) => (v == null || v === '' ? '–' : pct(v));
-  function drawCI(repo) {
-    const cf = rows('ci_family').filter((r) => r.repo === repo).sort((a, b) => b.prs - a.prs);
-    const cfam = dash.params().cfam && cf.some((r) => r.family === dash.params().cfam) ? dash.params().cfam : (cf[0] && cf[0].family);
-    if (ok('ci_family')) { cfamSel.replaceChildren(...cf.map((r) => new Option(r.family === '?' ? '(none)' : r.family, r.family))); if (cfam) cfamSel.value = cfam; }
+  const fam = (f) => (f === '?' ? '(none)' : f);
+  const CLS = {
+    stable: ['Stable green', 'var(--color-ok)'], r2g: ['Red→green', dash.colors[0]], flaky: ['Flaky', 'var(--color-warn)'],
+    g2r: ['Green→red', dash.colors[4]], everred: ['EVERRED', 'var(--color-bad)'],
+    green: ['Code checks green', 'var(--color-ok)'], red: ['Code checks red', 'var(--color-bad)'],
+    pass: ['Passed', 'var(--color-ok)'], fail: ['Failed', 'var(--color-bad)'],
+  };
+  const hidden = { scope: new Set(), family: new Set(), nodes: new Set() };   // per chart: classes switched off in the legend
 
-    // stacked class bars per family
-    const cb = document.getElementById('c-ci-bars');
-    if (!ok('ci_family')) fail(cb, 'ci_family'); else {
-      cb.replaceChildren();
-      const keys = [['stable_green', 'Stable green', 'var(--color-ok)'], ['red_to_green', 'Red→green', dash.colors[0]], ['flaky', 'Flaky', 'var(--color-warn)'], ['green_to_red', 'Green→red', dash.colors[4]], ['everred', 'EVERRED', 'var(--color-bad)']];
-      const data = cf.filter((r) => r.prs_with_ci);
-      if (data.length) {
-        const W = cb.clientWidth || 600, bh = 18, gap = 6, left = 130, top = 24, H = top + data.length * (bh + gap);
-        const svg = d3.select(cb).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
-        keys.forEach(([k, label, col], i) => { const g = svg.append('g').attr('transform', `translate(${left + i * Math.min(110, (W - left) / 5)},4)`); g.append('rect').attr('width', 10).attr('height', 10).attr('rx', 2).attr('fill', col); g.append('text').attr('x', 14).attr('y', 9).attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text(label); });
-        const x = d3.scaleLinear([0, 1], [left, W - 8]);
-        data.forEach((r, j) => {
-          const y = top + j * (bh + gap); let acc = 0;
-          svg.append('text').attr('x', left - 6).attr('y', y + bh / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg)').text(r.family === '?' ? '(none)' : r.family);
-          keys.forEach(([k, label, col]) => {
-            const share = r[k] / r.prs_with_ci; if (!share) return;
-            svg.append('rect').attr('x', x(acc)).attr('y', y).attr('width', Math.max(1, x(acc + share) - x(acc))).attr('height', bh).attr('fill', col)
-              .on('mousemove', (ev) => showTip(cb, ev, [r.family, `${label}: ${fmt(r[k])} of ${fmt(r.prs_with_ci)} PRs (${pct(share)})`, `recovery ${rate(r.recovery_rate)} · EVERRED ratio ${rate(r.everred_ratio)}`])).on('mouseleave', hideTip)
-              .style('cursor', 'pointer').on('click', () => dash.setParams({ cfam: r.family }));
-            acc += share;
-          });
-        });
-      }
-    }
-    table(document.querySelector('.tx-t-cif tbody'), cf, [
-      { f: (r) => (r.family === '?' ? '(none)' : r.family) }, { k: 'prs_with_ci', num: true }, { k: 'everred', num: true }, { k: 'green_to_red', num: true }, { k: 'red_to_green', num: true },
-      { k: 'flaky', num: true }, { k: 'stable_green', num: true }, { f: (r) => rate(r.everred_ratio), num: true }, { f: (r) => rate(r.recovery_rate), num: true }, { f: (r) => rate(r.flake_rate), num: true },
-      { k: 'red_now_open', num: true }, { f: (r) => (r.red_now_median_age_days == null ? '–' : r.red_now_median_age_days), num: true },
-      { f: (r) => (r.top_red_driver ? `${r.top_red_driver} (${fmt(r.top_red_driver_prs)} of ${fmt(r.red_prs)} red PRs)` : '–') },
+  // legend: tick a class off and the rest close up to the left; leave one ticked for a single-class view
+  function legend(el, chart, keys) {
+    el.replaceChildren(...keys.map((k) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tx-lg';
+      b.setAttribute('aria-pressed', String(!hidden[chart].has(k)));
+      const sw = document.createElement('i'); sw.style.background = CLS[k][1];
+      b.append(sw, document.createTextNode(CLS[k][0]));
+      b.addEventListener('click', () => { hidden[chart].has(k) ? hidden[chart].delete(k) : hidden[chart].add(k); drawCI(P().repo); });
+      return b;
+    }), (() => {
+      const r = document.createElement('button'); r.type = 'button'; r.className = 'tx-lg tx-lg-reset'; r.textContent = 'Show all';
+      r.hidden = !hidden[chart].size; r.addEventListener('click', () => { hidden[chart].clear(); drawCI(P().repo); }); return r;
+    })());
+  }
+
+  // stacked bars over the visible classes; one visible class = a ranked single-class bar chart
+  function stack(el, rows, keys, chart, opts) {
+    el.replaceChildren();
+    const vis = keys.filter((k) => !hidden[chart].has(k));
+    if (!rows.length || !vis.length) { const d = document.createElement('div'); d.className = 'muted'; d.textContent = vis.length ? 'No rows.' : 'Every class is switched off: tick one in the legend.'; el.append(d); return; }
+    const total = (r) => d3.sum(keys, (k) => r.v[k] || 0);
+    const shown = (r) => d3.sum(vis, (k) => r.v[k] || 0);
+    let data = rows.filter((r) => total(r) > 0);
+    const single = vis.length === 1;
+    if (single) data = data.slice().sort((a, b) => (b.v[vis[0]] || 0) / total(b) - (a.v[vis[0]] || 0) / total(a));
+    const W = el.clientWidth || 600, bh = 18, gap = 6;
+    const svg = d3.select(el).append('svg').attr('width', '100%');
+    const probe = svg.append('text').attr('font-size', 11);
+    let left = 0; data.forEach((r) => { probe.text(r.label); left = Math.max(left, probe.node().getComputedTextLength()); }); probe.remove();
+    left = Math.min(left + 10, W * 0.4); const right = 64, H = data.length * (bh + gap);
+    svg.attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+    // shares are of the whole row (all classes), so switching a class off leaves the others' sizes honest
+    const max = single ? d3.max(data, (r) => (r.v[vis[0]] || 0) / total(r)) || 1 : d3.max(data, (r) => shown(r) / total(r)) || 1;
+    const x = d3.scaleLinear([0, max], [left, W - right]);
+    data.forEach((r, j) => {
+      const y = j * (bh + gap); let acc = 0;
+      svg.append('text').attr('x', left - 6).attr('y', y + bh / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg)').text(r.label);
+      vis.forEach((k) => {
+        const share = (r.v[k] || 0) / total(r); if (!share) return;
+        svg.append('rect').attr('x', x(acc)).attr('y', y).attr('width', Math.max(1, x(acc + share) - x(acc))).attr('height', bh).attr('fill', CLS[k][1])
+          .on('mousemove', (ev) => showTip(el, ev, [r.label, `${CLS[k][0]}: ${pct(share)}${r.unit ? ` of ${fmt(Math.round(total(r)))} ${r.unit}` : ''}`].concat(r.tip || []))).on('mouseleave', hideTip)
+          .style('cursor', opts && opts.onClick ? 'pointer' : null).on('click', () => opts && opts.onClick && opts.onClick(r));
+        acc += share;
+      });
+      svg.append('text').attr('x', x(acc) + 5).attr('y', y + bh / 2).attr('dy', '0.35em').attr('font-size', 10).attr('fill', 'var(--color-fg-muted)')
+        .text(single || vis.length < keys.length ? pct(acc) : (r.note || ''));
+    });
+  }
+
+  const LENS = {
+    db: { keys: ['stable', 'r2g', 'flaky', 'g2r', 'everred'], note: 'Every check the family\'s PRs ran, weighted by 1 + its test jobs, coloured by its class on the default branch in the EVERRED ledger. Checks outside the five traced repositories are left out.',
+      v: (r) => ({ stable: r.db_stable_green, r2g: r.db_red_to_green, flaky: r.db_flaky, g2r: r.db_green_to_red, everred: r.db_everred }), unit: '', sort: (a, b) => (b.db_stable_green || 0) - (a.db_stable_green || 0) },
+    code: { keys: ['green', 'red'], note: 'Each PR\'s last commit: green when every non-gate check passed. Always-red gates are set apart (see the list below). The ranking table weights each check by its test jobs.',
+      v: (r) => ({ green: r.code_green, red: r.code_red }), unit: 'PRs', sort: (a, b) => (b.rank_score || 0) - (a.rank_score || 0) },
+    combined: { keys: ['stable', 'r2g', 'flaky', 'g2r', 'everred'], note: 'GitHub\'s combined state over each PR\'s last 10 commits, classified with red_trace.classify(). Any one red check, gates included, makes a commit red, so this is the most pessimistic view.',
+      v: (r) => ({ stable: r.stable_green, r2g: r.red_to_green, flaky: r.flaky, g2r: r.green_to_red, everred: r.everred }), unit: 'PRs', sort: (a, b) => b.prs_with_ci - a.prs_with_ci },
+  };
+
+  function drawCI(repo) {
+    const cf = rows('ci_family').filter((r) => r.repo === repo);
+    const cfam = dash.params().cfam && cf.some((r) => r.family === dash.params().cfam) ? dash.params().cfam : (cf[0] && cf.slice().sort((a, b) => b.prs - a.prs)[0].family);
+    const lens = LENS[dash.params().cilens] ? dash.params().cilens : 'db';
+    lensSel.value = lens;
+    if (ok('ci_family')) { cfamSel.replaceChildren(...cf.slice().sort((a, b) => b.prs - a.prs).map((r) => new Option(fam(r.family), r.family))); if (cfam) cfamSel.value = cfam; }
+
+    // scopes (owner statistics)
+    const sc = rows('ci_scope');
+    legend(document.getElementById('lg-scope'), 'scope', LENS.db.keys);
+    if (!ok('ci_scope')) fail(document.getElementById('c-ci-scope'), 'ci_scope');
+    else stack(document.getElementById('c-ci-scope'), sc.map((r) => ({ label: r.scope.replace('GBOGEB/', ''), unit: 'workflows',
+      v: { stable: r.stable_green, r2g: r.red_to_green, flaky: r.flaky, g2r: r.green_to_red, everred: r.everred },
+      tip: [`recovery ${rate(r.recovery_rate)} · EVERRED ratio ${rate(r.everred_ratio)}`, `${fmt(r.test_cases || 0)} test cases · ${fmt(r.test_jobs || 0)} test jobs`],
+      note: `${fmt(r.workflows_traced)} wf · ${fmt(r.test_cases || 0)} tests` })), LENS.db.keys, 'scope');
+
+    // families under the chosen lens
+    const L = LENS[lens];
+    document.querySelector('.tx-lens-note').textContent = L.note;
+    legend(document.getElementById('lg-family'), 'family', L.keys);
+    if (!ok('ci_family')) fail(document.getElementById('c-ci-bars'), 'ci_family');
+    else stack(document.getElementById('c-ci-bars'), cf.slice().sort(L.sort).map((r) => ({ label: fam(r.family), family: r.family, v: L.v(r), unit: L.unit,
+      tip: [`rank ${r.rank || '–'} · score ${r.rank_score == null ? '–' : r.rank_score.toFixed(2)} · weighted pass ${rate(r.weighted_pass)}`],
+      note: lens === 'code' ? `#${r.rank || '–'}` : '' })), L.keys, 'family', { onClick: (r) => dash.setParams({ cfam: r.family }) });
+
+    // ranking table
+    const rk = cf.slice().sort((a, b) => (a.rank || 999) - (b.rank || 999));
+    table(document.querySelector('.tx-t-cif tbody'), rk, [
+      { f: (r) => r.rank || '–', num: true }, { f: (r) => fam(r.family) }, { f: (r) => (r.rank_score == null ? '–' : r.rank_score.toFixed(3)), num: true },
+      { f: (r) => rate(r.weighted_pass), num: true }, { k: 'code_prs', num: true }, { k: 'code_green', num: true }, { k: 'code_red', num: true },
+      { f: (r) => rate(r.db_stable_green), num: true }, { f: (r) => rate(r.db_everred), num: true }, { k: 'gate_red_prs', num: true }, { k: 'nodes', num: true },
       { f: (r) => `${r.last_pr_repo}#${r.last_pr} (${r.last_pr_state})`, link: (r) => `https://github.com/GBOGEB/${r.last_pr_repo}/pull/${r.last_pr}` },
       { f: (r) => r.last_pr_ci || '–' }, { f: (r) => (r.last_pr_oid || '').slice(0, 10), link: (r) => commitUrl(r.last_pr_repo, r.last_pr_oid) }], 'id');
-    [...document.querySelectorAll('.tx-t-cif tbody tr')].forEach((tr) => { tr.className = 'clickable'; tr.addEventListener('click', (ev) => { if (ev.target.closest('a')) return; dash.setParams({ cfam: tr.dataset.key.split('|')[1] }); }); });
+    [...document.querySelectorAll('.tx-t-cif tbody tr')].forEach((tr) => { tr.className = 'clickable'; tr.addEventListener('click', (ev) => { if (ev.target.closest('a')) return; dash.setParams({ cfam: tr.dataset.key.split('|')[1] }); document.getElementById('ci-checks').scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
 
-    // checks of the chosen family
-    const cc = rows('ci_checks').filter((r) => r.repo === repo && r.family === cfam).sort((a, b) => b.runs - a.runs);
-    table(document.querySelector('.tx-t-cic tbody'), cc.slice(0, 400), [
-      { f: (r) => r.workflow || r.path }, { k: 'workflow_repo' }, { k: 'runs', num: true }, { k: 'failure', num: true }, { f: (r) => rate(r.failure_share), num: true },
-      { k: 'default_branch_class' }, { k: 'sipoc' }, { k: 'dag_nodes' }, { k: 'dmaic' }, { f: (r) => (r.oid || '').slice(0, 10) },
+    // checks (nodes) of the chosen family
+    const cc = rows('ci_checks').filter((r) => r.repo === repo && r.family === cfam);
+    legend(document.getElementById('lg-nodes'), 'nodes', ['pass', 'fail']);
+    const heavy = cc.filter((r) => r.path && r.path.startsWith('.github')).sort((a, b) => b.weight * b.runs - a.weight * a.runs).slice(0, 25);
+    if (!ok('ci_checks')) fail(document.getElementById('c-ci-nodes'), 'ci_checks');
+    else stack(document.getElementById('c-ci-nodes'), heavy.map((r) => ({ label: `${r.gate ? '⛔ ' : ''}${r.workflow || r.path}`, unit: 'runs',
+      v: { pass: r.success, fail: r.failure }, tip: [`${r.workflow_repo} · weight ${r.weight} (${r.test_jobs} test jobs)${r.gate ? ' · always-red gate' : ''}`, `default branch: ${r.default_branch_class}${r.sipoc ? ` · SIPOC ${r.sipoc}` : ''}`],
+      note: `w${r.weight}` })), ['pass', 'fail'], 'nodes');
+    table(document.querySelector('.tx-t-cic tbody'), cc.slice().sort((a, b) => b.weight * b.runs - a.weight * a.runs).slice(0, 400), [
+      { f: (r) => r.workflow || r.path }, { k: 'workflow_repo' }, { k: 'weight', num: true }, { k: 'test_jobs', num: true }, { k: 'runs', num: true }, { k: 'failure', num: true },
+      { f: (r) => rate(r.failure_share), num: true }, { f: (r) => (r.gate ? 'gate' : '') }, { k: 'default_branch_class' }, { k: 'sipoc' }, { k: 'dag_nodes' }, { k: 'dmaic' },
+      { f: (r) => (r.blob_oid || r.oid || '').slice(0, 10) },
       { f: (r) => r.path, link: (r) => (r.path && r.path.startsWith('.github') ? `https://github.com/GBOGEB/${r.workflow_repo}/blob/HEAD/${r.path}` : '#') }], 'id');
 
-    // SIPOC strip: the family's checks placed on the DAG's SIPOC letters
+    // SIPOC strip
     const sp = document.getElementById('c-sipoc');
     if (!ok('ci_checks')) fail(sp, 'ci_checks'); else {
       const names = { S: 'Suppliers', I: 'Inputs', P: 'Process', O: 'Outputs', C: 'Customers' };
@@ -656,13 +762,14 @@ dash.calc('flow', {
         items.slice(0, 12).forEach((r) => { const s = document.createElement('span'); s.textContent = `${r.workflow || r.path} · ${fmt(r.runs)} runs, ${rate(r.failure_share)} failed`; s.style.background = `color-mix(in srgb, var(--color-bad) ${Math.round(100 * (r.failure_share || 0) * 0.5)}%, transparent)`; col.append(s); });
         return col;
       }));
-      if (!mapped.length) { const d = document.createElement('div'); d.className = 'muted'; d.style.gridColumn = '1 / -1'; d.textContent = `None of the ${fmt(cc.length)} workflows this family runs is bound to a node in the CI/CD DAG (the DAG covers pipeline-automation-hub, cryoplant-project, DOCX_RTM_Automation, gg_MATH and yaml-grammar).`; sp.append(d); }
+      if (!mapped.length) { const d = document.createElement('div'); d.className = 'muted'; d.style.gridColumn = '1 / -1'; d.textContent = `None of the ${fmt(cc.length)} checks this family ran is bound to a node in the CI/CD DAG (the DAG covers pipeline-automation-hub, cryoplant-project, DOCX_RTM_Automation, gg_MATH and yaml-grammar).`; sp.append(d); }
     }
 
+    table(document.querySelector('.tx-t-gates tbody'), rows('ci_gates').filter((g) => repo === 'ALL' || g.repo === repo).sort((a, b) => b.runs - a.runs), [
+      { f: (r) => r.workflow || r.path }, { k: 'repo' }, { k: 'runs', num: true }, { f: (r) => pct(r.red_share), num: true }], 'id');
     table(document.querySelector('.tx-t-sig tbody'), rows('ci_signatures').filter((r) => r.repo === repo && r.family === cfam).sort((a, b) => b.prs - a.prs).slice(0, 200), [
       { k: 'prs', num: true }, { k: 'n_workflows', num: true }, { k: 'red_now', num: true }, { k: 'classes' }, { k: 'workflows' }], 'id');
   }
-
   // ---- crosswalk, flow matrix, dependency graph, edge list ----
   const gfamSel = document.getElementById('f-gfam');
   gfamSel.addEventListener('change', () => dash.setParams({ gfam: gfamSel.value }));
