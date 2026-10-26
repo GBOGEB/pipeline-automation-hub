@@ -183,6 +183,18 @@ class ReplayAndStability(unittest.TestCase):
         self.assertEqual(len(state["seen"]), 2)
         self.assertEqual(alerts, [])
 
+    def test_delayed_old_completion_cannot_roll_back_newer_state(self):
+        newer = terminal(3, outcome="success", fingerprint=None)
+        older = terminal(2)
+        # The older completed event was discovered by the reader much later.
+        older["native"]["observed_at"] = "2026-10-26T01:05:10Z"
+        state, alerts = W.fold([newer, older])
+        lane = next(iter(state["lanes"].values()))
+        self.assertEqual(lane["conclusion"], "success")
+        self.assertEqual(lane["completed_at"], newer["native"]["completed_at"])
+        self.assertEqual(len(alerts), 0)
+        self.assertEqual(len(state["seen"]), 2)
+
     def test_invalid_source_blob_scope_rejected(self):
         bad = terminal()
         bad["coverage"]["files"].append({"path": "../private.json", "blob_sha": BLOB})
