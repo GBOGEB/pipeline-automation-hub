@@ -131,7 +131,7 @@ class EndToEnd(unittest.TestCase):
             {"rank": 1, "repo": "demo/service", "branch": "main", "cohort_lane": "CORE", "role": "demo",
              "commit_sha_observed": cls.base},
             {"rank": 2, "repo": "demo/missing", "branch": "main", "cohort_lane": "SUPPORT", "role": "absent",
-             "commit_sha_observed": None}]}), encoding="utf-8")
+             "commit_sha_observed": None}]}), encoding="utf-8", newline="\n")
         cls.cache = cls.tmp / "cache"
         cls.cache.mkdir()
         cls.fetch = C.fetch_repo(cls.cache, "demo/service", "main", cls.base, url=cls.url)
@@ -354,7 +354,7 @@ class EndToEnd(unittest.TestCase):
         row = {"rank": 1, "repo": "demo/service", "branch": "main", "cohort_lane": "CORE", "role": "demo",
                "commit_sha_observed": self.head}
         roster = out / "roster.json"
-        roster.write_text(json.dumps({"repositories": [row]}), encoding="utf-8")
+        roster.write_text(json.dumps({"repositories": [row]}), encoding="utf-8", newline="\n")
         cache.mkdir()
         shutil.copytree(C.cache_dir(self.cache, "demo/service"), C.cache_dir(cache, "demo/service"))
         with redirect_stdout(buf):
@@ -380,10 +380,10 @@ class EndToEnd(unittest.TestCase):
         with redirect_stdout(io.StringIO()):
             self.assertEqual(C.main(["report", "--census", str(out / "c.json"), "--out", str(md)]), 0)
             self.assertEqual(C.main(["report", "--census", str(out / "c.json"), "--out", str(md), "--check"]), 0)
-            md.write_text(md.read_text(encoding="utf-8") + "drift\n", encoding="utf-8")
+            md.write_text(md.read_text(encoding="utf-8") + "drift\n", encoding="utf-8", newline="\n")
             self.assertEqual(C.main(["report", "--census", str(out / "c.json"), "--out", str(md), "--check"]), 1)
         c["iteration"] = "tampered"
-        (out / "c.json").write_text(json.dumps(c), encoding="utf-8")
+        (out / "c.json").write_text(json.dumps(c), encoding="utf-8", newline="\n")
         with redirect_stdout(io.StringIO()):
             self.assertEqual(C.main(["check", "--census", str(out / "c.json"), "--objects", str(out / "o.json")]), 1)
 
@@ -607,8 +607,8 @@ class CommittedCensus(unittest.TestCase):
         want = [r["repo"] for r in sorted(roster["repositories"], key=lambda r: r["rank"])]
         self.assertEqual([r["repo"] for r in self.census["repos"]], want)
         for r in self.census["repos"]:
-            if r["reachable"]:
-                self.assertRegex(r["head_sha"], r"^[0-9a-f]{40}$")
+            if r["reachable"]:  # a private repo's head is PB.MARK (counts only)
+                self.assertRegex(r["head_sha"], r"^(?:[0-9a-f]{40}|" + C.PB.MARK + ")$")
                 self.assertEqual(r["oid"], "jade:repo:" + r["repo"])
 
     def test_fleet_totals_reconcile(self):
@@ -647,8 +647,10 @@ class CommittedCensusN10(CommittedCensus):
             self.assertEqual(r["delta"]["baseline_sha"], n9.get(r["repo"]), r["repo"])
 
     def test_n9_snapshot_is_unchanged(self):
+        # Re-sealed once (2026-10-25) when the private repo was projected to counts only
+        # (tools/private_boundary.py); unchanged since.
         self.assertEqual(self.previous["digest_sha256"],
-                         "1b3a1c5272145d62fa11b171def677186931c32af85adaa8e03fda90879d3bfd")
+                         "fb1aa7de748a1a94c0581e37907b14233a300116bb22b8442893bf081d3e79f4")
 
 if __name__ == "__main__":
     unittest.main()

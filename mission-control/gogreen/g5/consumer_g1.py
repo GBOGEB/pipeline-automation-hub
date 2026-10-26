@@ -107,7 +107,7 @@ def emit(result, directory: Path):
     data = (json.dumps(result, sort_keys=True, indent=2) + "\n").encode()
     digest = _sha(data)
     (directory / "g1_consumer_receipt.json").write_bytes(data)
-    (directory / "g1_consumer_receipt.sha256").write_text(digest + "\n", encoding="ascii")
+    (directory / "g1_consumer_receipt.sha256").write_text(digest + "\n", encoding="ascii", newline="\n")
     (directory / "g1_consumer_receipt.md").write_text(
         "# G1 → G5 consumer-replay proof\n\n"
         "One pinned GitHub producer ZIP has been independently downloaded and "
@@ -115,7 +115,7 @@ def emit(result, directory: Path):
         "Same-repository producer→consumer links: **1**. "
         "Cross-repository consumer hops: **0**. "
         "QPS ACCEPT: **0**. Admission: **HOLD**.\n\n"
-        "SHA-256: " + digest + "\n", encoding="utf-8")
+        "SHA-256: " + digest + "\n", encoding="utf-8", newline="\n")
     prod = result["producer"]
     # All interpolated identifiers are validated immutable integers/hex strings.
     page = ("""<!doctype html>
@@ -145,7 +145,7 @@ str(prod["run_id"]) + """">""" + str(prod["run_id"]) + """</a>; job """ + str(pr
 <footer>Admission: HOLD · QPS: DEFER · authority transfer: false · consumer proof SHA-256:
 <code>""" + digest + """</code><p>Review derivative only — the SSOT stays at its owner.</p></footer>
 </main></body></html>""")
-    (directory / "g1_consumer_receipt.html").write_text(page, encoding="utf-8")
+    (directory / "g1_consumer_receipt.html").write_text(page, encoding="utf-8", newline="\n")
     return digest
 
 

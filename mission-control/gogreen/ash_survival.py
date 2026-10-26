@@ -143,7 +143,7 @@ def main() -> int:
             print(raw, end="")
         else:
             args.out.parent.mkdir(parents=True, exist_ok=True)
-            args.out.write_text(raw, encoding="utf-8")
+            args.out.write_text(raw, encoding="utf-8", newline="\n")
         return 0
     except (ValueError, KeyError, TypeError, OSError) as err:
         print(f"CBD_ASH_FAIL_CLOSED: {err}", file=sys.stderr)

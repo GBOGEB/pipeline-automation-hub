@@ -131,7 +131,7 @@ class GraphVisualQANative(unittest.TestCase):
 
     def test_real_cli_visual_qa(self):
         with tempfile.TemporaryDirectory() as tmp:
-            src=Path(tmp)/"input.json";src.write_text(json.dumps(self.dag))
+            src=Path(tmp)/"input.json";src.write_text(json.dumps(self.dag), encoding="utf-8", newline="\n")
             out=Path(tmp)/"out"
             argv=["graph_quality.py","--input",str(src),"--out",str(out),
                   "--source-sha",SHA]

@@ -41,11 +41,11 @@ class ExecutionAdapterTests(unittest.TestCase):
         fixtures.mkdir(parents=True)
         records = [{"repository": f"GBOGEB/repo-{i}", "object_type": "issue",
                     "anchor_sha": "a" * 40, "snapshot": {"number": i}} for i in range(4)]
-        (fixtures/"GT_BD_011_BOOTSTRAP_BATCH001_20260917.json").write_text(json.dumps({"records": records}))
-        (fixtures/"GT_BD_002_REAL_CONE_BATCH001_v1.json").write_text(json.dumps({"expected": {"status": "PASS"}}))
+        (fixtures/"GT_BD_011_BOOTSTRAP_BATCH001_20260917.json").write_text(json.dumps({"records": records}), encoding="utf-8", newline="\n")
+        (fixtures/"GT_BD_002_REAL_CONE_BATCH001_v1.json").write_text(json.dumps({"expected": {"status": "PASS"}}), encoding="utf-8", newline="\n")
         gt = cls.repo / "mission-control/golden-thread"
         for fname in ["federation_frontier.py", "occurrence_connector_adapter.py"]:
-            (gt/fname).write_text("# pinned test stub\n")
+            (gt/fname).write_text("# pinned test stub\n", encoding="utf-8", newline="\n")
         (gt/"dependency_recompute.py").write_text('''import json
 from pathlib import Path
 
@@ -55,7 +55,7 @@ def execute_cone(manifest, out):
         (out/fname).write_text(json.dumps({"source": "real_file", "occurrence_count": 4}) + "\\n")
     return {"closure":{"status":"PASS", "stale_survivor_count":0, "stale_rendition_count":0},
             "summary":{"occurrence_count":4}}
-''')
+''', encoding="utf-8", newline="\n")
         subprocess.run(["git", "init", "-q", str(cls.repo)], check=True)
         subprocess.run(["git", "-C", str(cls.repo), "config", "user.email", "test@example.invalid"], check=True)
         subprocess.run(["git", "-C", str(cls.repo), "config", "user.name", "SIPOC Test"], check=True)
@@ -67,10 +67,10 @@ def execute_cone(manifest, out):
         cls.policy_file=s/"execution_policy_pilot_v1.json"
         cls.tasks_file=s/"task_bindings_pilot_v1.json"
         cls.atlas_file=cls.repo/"mission-control/federation-atlas/PROCESS_LANES_v1.json"
-        cls.plan = json.loads(cls.plan_file.read_text())
-        cls.policy = json.loads(cls.policy_file.read_text())
-        cls.tasks = json.loads(cls.tasks_file.read_text())
-        cls.atlas = json.loads(cls.atlas_file.read_text())
+        cls.plan = json.loads(cls.plan_file.read_text(encoding="utf-8"))
+        cls.policy = json.loads(cls.policy_file.read_text(encoding="utf-8"))
+        cls.tasks = json.loads(cls.tasks_file.read_text(encoding="utf-8"))
+        cls.atlas = json.loads(cls.atlas_file.read_text(encoding="utf-8"))
         cls.cached_out=pathlib.Path(cls.tmp.name)/"base-real-run"
         cls.cached_args=SimpleNamespace(repo=str(cls.repo),plan=str(cls.plan_file),
                                        atlas=str(cls.atlas_file),tasks=str(cls.tasks_file),
@@ -101,9 +101,9 @@ def execute_cone(manifest, out):
         self.assertFalse(receipt["synthetic"])
         self.assertEqual(receipt["execution"]["tasks_executed"], 6)
         self.assertTrue(mod.verify_receipt(receipt))
-        self.assertEqual(json.loads((self.out/"i/source_index.json").read_text())["record_count"], 4)
+        self.assertEqual(json.loads((self.out/"i/source_index.json").read_text(encoding="utf-8"))["record_count"], 4)
         self.assertEqual(len(list((self.out/"p-cone").glob("*.json"))), 2)
-        self.assertEqual(json.loads((self.out/"o/projection_index.json").read_text())["sources"], 3)
+        self.assertEqual(json.loads((self.out/"o/projection_index.json").read_text(encoding="utf-8"))["sources"], 3)
         self.assertFalse(receipt["signed_by_trusted_owner"])
         self.assertFalse(receipt["remote_dispatch_authorized"])
 
@@ -119,7 +119,7 @@ def execute_cone(manifest, out):
 
     def test_corrupted_output_fails_closed_on_reuse(self):
         shutil.copytree(self.cached_out,self.out)
-        (self.out/"s/source_digest.json").write_text('changed')
+        (self.out/"s/source_digest.json").write_text('changed', encoding="utf-8", newline="\n")
         with self.assertRaisesRegex(mod.ExecutionHold, "corruption"):
             mod.run(self.args())
 
@@ -224,7 +224,7 @@ def execute_cone(manifest, out):
 
     def test_untracked_task_manifest_rejected(self):
         file=pathlib.Path(self.output.name)/"external.json"
-        file.write_text(self.tasks_file.read_text())
+        file.write_text(self.tasks_file.read_text(encoding="utf-8"), encoding="utf-8", newline="\n")
         args=self.args();args.tasks=str(file)
         with self.assertRaisesRegex(mod.ExecutionHold, "external"):
             mod.run(args)

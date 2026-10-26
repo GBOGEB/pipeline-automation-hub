@@ -214,7 +214,7 @@ def emit(result, out):
     evidence=json.dumps(result,sort_keys=True,indent=2,ensure_ascii=True).encode()+b"\n"
     digest=hashlib.sha256(evidence).hexdigest()
     (out/"federation_census.json").write_bytes(evidence)
-    (out/"federation_census.sha256").write_text(digest+"\n",encoding="ascii")
+    (out/"federation_census.sha256").write_text(digest+"\n",encoding="ascii",newline="\n")
     rows=["# GOGREEN G5 source-bound federation pulse", "",
           "| Metric | G0 | G1 imported |", "|---|---:|---:|",
           f"| Observed repo-family cells | {result['population']['G0_observed']}/{result['population']['target_cells']} | {result['population']['G1_observed']}/{result['population']['target_cells']} |", "",
@@ -222,7 +222,7 @@ def emit(result, out):
           f"Passive packets staged: {result['fan_out']['packets_staged']}; no remote dispatch or merge authority.",
           "", "PCA and 3P* claims are held for missing comparable data. QPS remains DEFER.",
           "", "SHA-256: "+digest, ""]
-    (out/"federation_pulse.md").write_text("\n".join(rows),encoding="utf-8")
+    (out/"federation_pulse.md").write_text("\n".join(rows),encoding="utf-8",newline="\n")
     return digest
 
 def main():
@@ -234,7 +234,7 @@ def main():
     p.add_argument('--max-parallel',type=int,default=2)
     p.add_argument('--max-packets',type=int,default=12)
     a=p.parse_args()
-    result=calculate(json.loads(a.g0.read_text()),json.loads(a.g1.read_text()),json.loads(a.snapshot.read_text()),max_parallel=a.max_parallel,max_packets=a.max_packets)
+    result=calculate(json.loads(a.g0.read_text(encoding="utf-8")),json.loads(a.g1.read_text(encoding="utf-8")),json.loads(a.snapshot.read_text(encoding="utf-8")),max_parallel=a.max_parallel,max_packets=a.max_packets)
     emit(result,a.out)
     print(json.dumps({'G0':result['population']['G0_observed'],'G1':result['population']['G1_observed'], 'declared_edges':result['depth']['declared_edges'],'native_edges':result['depth']['native_executed_edges'],'packets_staged':result['fan_out']['packets_staged']}))
 

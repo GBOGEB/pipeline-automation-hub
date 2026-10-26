@@ -101,7 +101,7 @@ def main():
     report = json.loads(raw)
     digest = hashlib.sha256(raw).hexdigest()
     output = render(report, a.source_sha, digest)
-    a.out.write_text(output, encoding="utf-8")
+    a.out.write_text(output, encoding="utf-8", newline="\n")
     print(json.dumps({"schema": "gogreen.g1.html-render.v1",
                       "source_sha": a.source_sha, "rollup_sha256": digest,
                       "generated_html_sha256": hashlib.sha256(output.encode()).hexdigest(),

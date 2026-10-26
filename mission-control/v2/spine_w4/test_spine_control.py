@@ -112,9 +112,9 @@ class SpineW4(unittest.TestCase):
             self.assertEqual(m["gate"],"HOLD")
             self.assertEqual(len(m["artifacts_sha256"]),5)
             self.assertIn("Admission remains HOLD",
-                          (out/"spine-control.html").read_text())
+                          (out/"spine-control.html").read_text(encoding="utf-8"))
             self.assertIn("This is an architectural review view",
-                          (out/"spine-control.html").read_text())
+                          (out/"spine-control.html").read_text(encoding="utf-8"))
             for name,digest in m["artifacts_sha256"].items():
                 self.assertEqual(hashlib.sha256((out/name).read_bytes()).hexdigest(),digest)
             self.assertEqual(m,build(self.d,out))

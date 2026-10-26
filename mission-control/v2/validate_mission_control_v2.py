@@ -499,7 +499,7 @@ def main():
 
     print(json.dumps(receipt, indent=2, sort_keys=True))
     if args.emit_receipt:
-        Path(args.emit_receipt).write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        Path(args.emit_receipt).write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     raise SystemExit(0 if not errors else 1)
 
 if __name__ == "__main__":

@@ -16,6 +16,7 @@ EXPAND/SUPPORT lanes. Design, maturity model and the deploy/production reference
 | `../../../.github/workflows/jade-reusable-deploy.yml` | Reusable deploy: admit, verify digest, serialized environment, readback, receipt |
 | `templates/jade-cicd-caller.yml` | Drop-in caller for any repository |
 | `../../../.github/workflows/jade-devops-census.yml` | Offline qualification on change; weekly read-only refresh + drift report |
+| `DR_DERIVED_OUTPUTS_OWNERSHIP.md` | Decision record (proposed, P3 of #870): master owns derived outputs (D), semantic function pins (E) |
 
 ## Run
 

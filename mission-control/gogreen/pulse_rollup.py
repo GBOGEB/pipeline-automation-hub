@@ -127,7 +127,7 @@ def emit(report, out):
     raw = (json.dumps(report, sort_keys=True, indent=2) + '\n').encode()
     (out / 'pulse_rollup.json').write_bytes(raw)
     digest = hashlib.sha256(raw).hexdigest()
-    (out / 'pulse_rollup.sha256').write_text(digest + '\n', encoding='ascii')
+    (out / 'pulse_rollup.sha256').write_text(digest + '\n', encoding='ascii', newline="\n")
     rows = report['waves']
     lines = ['# GOGREEN wave metrics', '',
              '| Wave | Cells | Observed | Breadth | Status only | Byte proofs | Comparable coverage |',
@@ -139,7 +139,7 @@ def emit(report, out):
               str(report['scale_plan']['packets_remaining']) + '; concurrency ceiling: ' +
               str(report['scale_plan']['workers_max_parallel']) + '. No dispatch.',
               '', 'JSON SHA-256: ' + digest, '']
-    (out / 'pulse_rollup.md').write_text('\n'.join(lines), encoding='utf-8')
+    (out / 'pulse_rollup.md').write_text('\n'.join(lines), encoding='utf-8', newline="\n")
     return digest
 
 
@@ -153,7 +153,7 @@ def main():
     p.add_argument('--per-repo', type=int, default=1)
     p.add_argument('--packet-budget', type=int, default=12)
     a = p.parse_args()
-    report = rollup(json.loads(a.g0.read_text()), json.loads(a.g1.read_text()),
+    report = rollup(json.loads(a.g0.read_text(encoding="utf-8")), json.loads(a.g1.read_text(encoding="utf-8")),
                     source_sha=a.source_sha, workers=a.workers,
                     per_repo=a.per_repo, packet_budget=a.packet_budget)
     emit(report, a.out)
