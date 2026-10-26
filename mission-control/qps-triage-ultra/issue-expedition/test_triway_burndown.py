@@ -27,6 +27,19 @@ class Tests(unittest.TestCase):
  def test_deltas_are_not_closures(self):
   c=sample();a=m.project(c);self.assertEqual(a,m.project(c));d=copy.deepcopy(c);d["issues"].pop();d["counts"][B]["issues"]=0
   z=m.project(d,a)["open_identity_delta"];self.assertEqual(z["absent_from_open_not_necessarily_closed"],[B+"#3"]);self.assertIsNone(z["verified_causal_root_closure"])
+ def test_recursive_title_family_does_not_override_issue(self):
+  c=sample()
+  c["issues"][0]["title"]="feat(test W51-C0): producer"
+  c["issues"][1]["body"]="See #1"
+  c["issues"][0]["labels"]=["P0","CODE PURPLE"]
+  p=m.project(c)
+  parent=p["issues"][A+"#1"]["title_taxonomy"]
+  child=p["issues"][A+"#2"]["title_taxonomy"]
+  self.assertEqual(parent["path"],"feat/test/W51/C0")
+  self.assertIn("code-purple",parent["topic_families"])
+  self.assertEqual(child["family"],"UNCLASSIFIED")
+  self.assertIn("feat",[x["family"] for x in child["related_families"]])
+  self.assertTrue(all(x["grade"]=="UNVERIFIED_ASSOCIATION_ONLY" for x in child["related_families"]))
  def test_code_fences_ignored(self):
   self.assertEqual([r["target"] for r in m.references("~~~\nblocked by #2\n~~~\nsee #1",A)],[A+"#1"])
  def test_csv(self):
