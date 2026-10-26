@@ -429,6 +429,7 @@ def claim(db: sqlite3.Connection, notification_id: str, claimed_at: str):
     utc(claimed_at)
     db.execute("BEGIN IMMEDIATE")
     try:
+        verify(db)
         row = db.execute("SELECT payload_json,state FROM outbox WHERE notification_id=?",
                          (notification_id,)).fetchone()
         require(row is not None, "unknown outbox identity")
@@ -451,6 +452,7 @@ def acknowledge(db: sqlite3.Connection, notification_id: str, provider_digest: s
     _hex(provider_digest, "provider receipt")
     db.execute("BEGIN IMMEDIATE")
     try:
+        verify(db)
         row = db.execute("SELECT state,ack_digest FROM outbox WHERE notification_id=?",
                          (notification_id,)).fetchone()
         require(row is not None, "unknown outbox identity")
@@ -469,6 +471,139 @@ def acknowledge(db: sqlite3.Connection, notification_id: str, provider_digest: s
         raise
 
 
+
+def _verify_tables_against_audit(db: sqlite3.Connection, audit_rows: list,
+                                 key: bytes | None) -> tuple[int, int]:
+    """Replay signed/audited native, root and outbox state; reject silent edits.
+
+    The chain is integrity evidence only with independently anchored root.
+    This function also protects runtime claim() from trusting a mutated table.
+    """
+    native = {}
+    for eid, repo, lane, fingerprint, checksum, payload, completed in db.execute(
+            "SELECT event_key,repository,lane,fingerprint,payload_sha256,"
+            "payload_json,completed_at FROM native_observations"):
+        value = json.loads(payload)
+        require(digest(value) == checksum, "immutable native payload tampering")
+        i, n = value["identity"], value["native"]
+        actual_lane = repo + "::" + value["lane"] + "::" + i["kind"]
+        derived_eid = decision._digest([actual_lane, i["checkout_sha"],
+                                       n["run_id"], n["attempt"], n["job_id"]])
+        require(repo == value["repository"] and lane == actual_lane
+                and eid == derived_eid and completed == n["completed_at"]
+                and fingerprint == value["result"]["fingerprint"],
+                "native metadata tampering")
+        require(eid not in native, "duplicate native event")
+        native[eid] = checksum
+
+    observations = {}
+    for eid, child, cls, checksum, payload, completed, disposition in db.execute(
+            "SELECT event_key,child_token,class,proof_digest,proof_json,"
+            "completed_at,disposition FROM observations"):
+        doc = json.loads(payload)
+        require(digest(doc) == checksum, "observation payload tampering")
+        a = doc["attestation"]
+        require(eid == a["event_key"] and child == a["child_token"]
+                and cls == a["class"] and completed == a["completed_at"]
+                and eid in native, "signed observation metadata tampering")
+        if key is not None:
+            require(hmac.compare_digest(owner_mac(key, a), doc["signature"]),
+                    "owner MAC tampering")
+        require((eid, checksum) not in observations, "duplicate signed observation")
+        observations[(eid, checksum)] = (a, disposition)
+
+    outbox = {}
+    for nid, eid, child, cls, payload_json, status, claimed, ack in db.execute(
+            "SELECT notification_id,event_key,child_token,class,payload_json,"
+            "state,claimed_at,ack_digest FROM outbox"):
+        payload = json.loads(payload_json)
+        require(type(payload) is dict and payload.get("notification_id") == nid
+                and payload.get("event_key") == eid
+                and payload.get("child_token") == child
+                and payload.get("class") == cls
+                and payload.get("merge_admission") == "HOLD"
+                and payload.get("formal_engineering_credit_delta") == 0
+                and payload.get("delivery") == "NOT_SENT",
+                "outbox payload metadata tampering")
+        require(nid not in outbox, "duplicate notification id")
+        outbox[nid] = (eid, child, cls, payload, status, claimed, ack)
+
+    seen_native, seen_obs = set(), set()
+    replay_outbox, replay_roots = {}, {}
+    for _seq, _parent, _entry, action, subject, payload_digest in audit_rows:
+        if action == "NATIVE_OBSERVED":
+            require(subject in native and native[subject] == payload_digest
+                    and subject not in seen_native,
+                    "native inventory vs audit mismatch")
+            seen_native.add(subject)
+        elif action.startswith("OBSERVATION_"):
+            receipt = (subject, payload_digest)
+            require(receipt in observations and receipt not in seen_obs,
+                    "signed observation vs audit mismatch")
+            a, disposition = observations[receipt]
+            require(action == "OBSERVATION_" + disposition
+                    and subject in seen_native, "observation transition mismatch")
+            seen_obs.add(receipt)
+            if a["class"] == "C" and disposition == "QUEUED":
+                desired = "OPEN" if a["effect"] == "BLOCK" else "CLOSED"
+                replay_roots[(a["child_token"], a["dependency_token"])] = (
+                    desired, a["completed_at"])
+        elif action == "OUTBOX_QUEUED":
+            require(subject in outbox and subject not in replay_outbox,
+                    "outbox enqueue vs audit mismatch")
+            eid, child, cls, payload, status, claimed, ack = outbox[subject]
+            require(digest(payload) == payload_digest, "outbox payload vs audit mismatch")
+            receipt = (eid, payload.get("proof_digest"))
+            require(receipt in seen_obs, "unbacked outbox signed receipt")
+            signed, disposition = observations[receipt]
+            require(disposition == "QUEUED" and child == signed["child_token"]
+                    and cls == signed["class"]
+                    and subject == digest(["QPS_EDGE_NOTIFY_V1", cls, eid,
+                                           child, signed["dependency_token"]])
+                    and payload.get("dependency_token") == signed["dependency_token"]
+                    and payload.get("receipt_token") == signed["receipt_token"]
+                    and payload.get("completed_at") == signed["completed_at"]
+                    and payload.get("source_sha") == signed["source_sha"]
+                    and payload.get("effect") == signed["effect"],
+                    "outbox does not bind signed acceptance observation")
+            replay_outbox[subject] = "PENDING"
+        elif action == "OUTBOX_CLAIMED":
+            require(subject in replay_outbox and replay_outbox[subject] == "PENDING",
+                    "outbox claim history mismatch")
+            claimed = outbox[subject][5]
+            require(claimed is not None and digest([claimed]) == payload_digest,
+                    "outbox claim timestamp mismatch")
+            replay_outbox[subject] = "CLAIMED"
+        elif action == "OUTBOX_ACKED":
+            require(subject in replay_outbox and replay_outbox[subject] == "CLAIMED",
+                    "outbox acknowledgment history mismatch")
+            ack = outbox[subject][6]
+            require(ack is not None and ack == payload_digest,
+                    "outbox acknowledgment digest mismatch")
+            replay_outbox[subject] = "ACKED"
+        else:
+            require(False, "unrecognized audit mutation action")
+
+    require(seen_native == set(native) and seen_obs == set(observations),
+            "orphan native/signed observations not in audit")
+    require(set(replay_outbox) == set(outbox), "outbox queue vs audit inventory mismatch")
+    for nid, state in replay_outbox.items():
+        _eid, _child, _cls, _payload, actual_state, claimed, ack = outbox[nid]
+        require(actual_state == state, "outbox delivery state tampering")
+        require((claimed is None) == (state == "PENDING"),
+                "outbox claim metadata tampering")
+        require((ack is None) == (state != "ACKED"),
+                "outbox acknowledgement state tampering")
+    stored_roots = {
+        (child, dep): (state, complete)
+        for child, dep, state, complete in db.execute(
+            "SELECT child_token,dependency_token,state,completed_at FROM root_state")
+    }
+    require(stored_roots == replay_roots, "root_state diverges from audited evidence")
+    return len(native), len(observations)
+
+
+
 def verify(db: sqlite3.Connection, key: bytes | None = None,
            expected_root: str | None = None) -> dict:
     """Verify audit chain, owner MAC and (when independently anchored) final root.
@@ -478,31 +613,20 @@ def verify(db: sqlite3.Connection, key: bytes | None = None,
     truncation or rollback of a correctly chained ledger.
     """
     previous = None
-    count = 0
-    for parent, entry, action, event_key, payload in db.execute(
-            "SELECT previous_sha256,entry_sha256,action,event_key,payload_sha256"
-            " FROM audit ORDER BY seq"):
-        require(parent == previous and
+    audit_rows = list(db.execute(
+        "SELECT seq,previous_sha256,entry_sha256,action,event_key,payload_sha256"
+        " FROM audit ORDER BY seq"))
+    previous_sequence = 0
+    for seq, parent, entry, action, event_key, payload in audit_rows:
+        require(seq > previous_sequence and parent == previous and
                 digest([parent, action, event_key, payload]) == entry,
                 "audit chain tampering")
-        previous, count = entry, count + 1
+        previous, previous_sequence = entry, seq
+    count = len(audit_rows)
     if expected_root is not None:
         _hex(expected_root, "trusted external audit root")
         require(previous == expected_root, "audit root rollback / mismatch")
-    native = 0
-    for checksum, payload in db.execute(
-            "SELECT payload_sha256,payload_json FROM native_observations"):
-        require(digest(json.loads(payload)) == checksum,
-                "immutable native payload tampering")
-        native += 1
-    observations = 0
-    for proof_digest, payload in db.execute("SELECT proof_digest,proof_json FROM observations"):
-        doc = json.loads(payload)
-        require(digest(doc) == proof_digest, "observation payload tampering")
-        if key is not None:
-            require(hmac.compare_digest(owner_mac(key, doc["attestation"]),
-                                        doc["signature"]), "owner MAC tampering")
-        observations += 1
+    native, observations = _verify_tables_against_audit(db, audit_rows, key)
     return {"audit_entries": count, "native_observations": native,
             "observations": observations,
             "pending": db.execute("SELECT COUNT(*) FROM outbox WHERE state='PENDING'").fetchone()[0],
