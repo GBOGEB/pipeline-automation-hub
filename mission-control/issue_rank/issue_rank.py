@@ -51,6 +51,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import title_taxonomy as tt
+import taxonomy_pulse as tp
 
 SCHEMA = "jade.issue-rank.v2"
 SNAPSHOT_SCHEMA = "jade.issue-rank.snapshot.v2"
@@ -1688,10 +1689,17 @@ def _fmt_pct(x):
     return "n/a" if x is None else f"{100 * x:.0f}%"
 
 
-def write_outputs(out: Path, model: dict, delta: dict) -> dict[str, str]:
+def write_outputs(out: Path, model: dict, delta: dict, *,
+                  previous_model: dict | None = None, parser_sha: str | None = None,
+                  previous_parser_sha: str | None = None) -> dict[str, str]:
+    """Write taxonomy pulse through the existing single-writer output manifest."""
     out.mkdir(parents=True, exist_ok=True)
+    pulse = tp.build(model, previous_model, public=True, parser_sha=parser_sha,
+                     previous_parser_sha=previous_parser_sha)
     files = {"issue_rank.json": canonical(model), "issue_rank.csv": to_csv(model).encode("utf-8"),
-             "issue_rank.html": render_html(model, delta).encode("utf-8"), "delta.json": canonical(delta)}
+             "issue_rank.html": render_html(model, delta).encode("utf-8"), "delta.json": canonical(delta),
+             "taxonomy_pulse.json": tp.canonical(pulse) + b"\n",
+             "taxonomy_pulse.csv": tp.csv_view(pulse).encode("utf-8")}
     for name, data in files.items():
         (out / name).write_bytes(data)
     return {name: sha256(data) for name, data in files.items()}
