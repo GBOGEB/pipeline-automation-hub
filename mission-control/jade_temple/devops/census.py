@@ -1192,7 +1192,9 @@ def pulse_section(prev: dict, cur: dict) -> list[str]:
 
 # --------------------------------------------------------------------------- CLI
 def write_json(path: Path, data) -> None:
-    path.write_text(json.dumps(data, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
+    # LF on every OS: the CICD DAG pins these bytes.
+    path.write_text(json.dumps(data, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8",
+                    newline="\n")
 
 
 def main(argv=None) -> int:
