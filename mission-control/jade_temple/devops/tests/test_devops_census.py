@@ -675,5 +675,22 @@ class CommittedCensusN10(CommittedCensus):
         self.assertEqual(self.previous["digest_sha256"],
                          "1b3a1c5272145d62fa11b171def677186931c32af85adaa8e03fda90879d3bfd")
 
+
+class CommittedCensusN11(CommittedCensus):
+    ITER, PREV = "N11", "N10"
+
+    def test_baseline_is_the_n10_pulse(self):
+        b = self.census["sources"]["baseline"]
+        self.assertEqual((b["kind"], b["iteration"], b["digest_sha256"]),
+                         ("census", "N10", self.previous["digest_sha256"]))
+        n10 = {r["repo"]: r["head_sha"] for r in self.previous["repos"]}
+        for r in self.census["repos"]:
+            self.assertEqual(r["delta"]["baseline_sha"], n10.get(r["repo"]), r["repo"])
+
+    def test_every_wanted_blob_was_read(self):
+        # The first N+11 attempt read 0 of 14 workflow actions at an unchanged head; never again.
+        self.assertEqual(C.unread_errors(self.census), [])
+        self.assertEqual(self.previous["digest_sha256"], "f265b5742a30c9e11f2051367b0c5d308467b3adb0e7d9555e2f5fbda4d954da")
+
 if __name__ == "__main__":
     unittest.main()

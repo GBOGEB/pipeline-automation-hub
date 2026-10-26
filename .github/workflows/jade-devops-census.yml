@@ -59,8 +59,8 @@ jobs:
           from pathlib import Path
           log = (Path(os.environ["RUNNER_TEMP"]) / "devops-tests.log").read_text()
           ran = [int(n) for n in re.findall(r"^Ran (\d+) tests in ", log, re.M)]
-          if not ran or ran[-1] < 77:
-              raise SystemExit("DEVOPS_TEST_POPULATION_FIRST_RED: need >= 77 executed tests")
+          if not ran or ran[-1] < 84:
+              raise SystemExit("DEVOPS_TEST_POPULATION_FIRST_RED: need >= 84 executed tests")
           if re.search(r"skipped=\d+", log):
               raise SystemExit("DEVOPS_TEST_SKIP_FIRST_RED: no skipped tests on the hosted runner")
           subprocess.run(["python", "-m", "coverage", "json", "-q", "-o", os.environ["RUNNER_TEMP"] + "/devops-coverage.json"], check=True)
@@ -86,6 +86,9 @@ jobs:
           python $D/census.py check --census $A/DEVOPS_CENSUS_N10.json --objects $A/DEVOPS_OBJECTS_N10.json
           python $D/census.py report --check --census $A/DEVOPS_CENSUS_N10.json \
             --previous $A/DEVOPS_CENSUS_N9.json --out $D/DEVOPS_CENSUS_N10_READING.md
+          python $D/census.py check --census $A/DEVOPS_CENSUS_N11.json --objects $A/DEVOPS_OBJECTS_N11.json
+          python $D/census.py report --check --census $A/DEVOPS_CENSUS_N11.json \
+            --previous $A/DEVOPS_CENSUS_N10.json --out $D/DEVOPS_CENSUS_N11_READING.md
           python mission-control/jade_temple/devops/workflows.py lint --require-deploy \
             .github/workflows/jade-reusable-deploy.yml \
             mission-control/jade_temple/devops/templates/jade-cicd-caller.yml > "$RUNNER_TEMP/deploy-lint.json"
@@ -125,7 +128,7 @@ jobs:
           set -euo pipefail
           python -m pip install --disable-pip-version-check pyyaml==6.0.3
           D=mission-control/jade_temple/devops
-          LATEST=mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json
+          LATEST=mission-control/jade_temple/data/DEVOPS_CENSUS_N11.json
           python $D/census.py fetch --cache "$RUNNER_TEMP/cache" --baseline-census $LATEST | tee "$RUNNER_TEMP/fetch.jsonl"
           python $D/census.py scan --cache "$RUNNER_TEMP/cache" --api-token-env CENSUS_TOKEN \
             --iteration FRESH --baseline-census $LATEST \
@@ -135,7 +138,7 @@ jobs:
           python - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
           import json, os
           from pathlib import Path
-          old = json.loads(Path("mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json").read_text())
+          old = json.loads(Path("mission-control/jade_temple/data/DEVOPS_CENSUS_N11.json").read_text())
           new = json.loads((Path(os.environ["RUNNER_TEMP"]) / "DEVOPS_CENSUS_FRESH.json").read_text())
           o = {r["repo"]: r for r in old["repos"]}
           print(f"## JADE DevOps census drift\n\ncommitted `{old['observed_at_utc']}` -> fresh `{new['observed_at_utc']}`\n")
