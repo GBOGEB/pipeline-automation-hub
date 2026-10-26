@@ -48,7 +48,8 @@ def project(records):
     Unqualified legacy pulses are excluded with explicit aggregate gap counts.
     """
     _fail(type(records) is not list, "source records must be a list")
-    events, gaps = [], {"MISSING_NATIVE_COMPLETION": 0, "MISSING_NATIVE_IDENTITY": 0,\n                        "NATIVE_AFTER_PULSE": 0}
+    events, gaps = [], {"MISSING_NATIVE_COMPLETION": 0, "MISSING_NATIVE_IDENTITY": 0,
+                        "NATIVE_AFTER_PULSE": 0}
     for record in records:
         _fail(type(record) is not dict
               or record.get("schema") != source.LEDGER_SCHEMA
@@ -80,7 +81,9 @@ def project(records):
                 gaps["MISSING_NATIVE_COMPLETION"] += 1
                 continue
             if decision._utc(completed) > decision._utc(stamp):
-                # An older immutable pulse may have been sampled before a job\n                # completed. Retain the gap but never poison all later pulses.\n                gaps["NATIVE_AFTER_PULSE"] += 1
+                # An older immutable pulse may have been sampled before a job
+                # completed. Retain the gap but never poison all later pulses.
+                gaps["NATIVE_AFTER_PULSE"] += 1
                 continue
             state = "failure" if finding["state"] == "RED" else "success"
             fprint = finding.get("fingerprint")
