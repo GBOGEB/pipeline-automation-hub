@@ -286,3 +286,75 @@ def fold(events, cursor=None):
                      "ACTIVE" if cohort is not None else "STARVED"),
         }
     return state, alerts
+
+
+def main(argv=None):
+    """Offline opt-in cursor persistence; never contacts GitHub or sends alerts.
+
+    The existing scale-dock hash-chained ledger remains the event authority.
+    --events is a source-owned, allowlisted terminal JSONL export; --cursor
+    stores only already-qualified decisions and observed native identities.
+    Default is dry-run. --write-cursor uses an exclusive local lock.
+    """
+    import argparse
+    import os
+    import tempfile
+    from pathlib import Path
+
+    parser = argparse.ArgumentParser(description="CODE PURPLE consumer-only watch decisions")
+    parser.add_argument("--events", required=True, type=Path)
+    parser.add_argument("--cursor", required=True, type=Path)
+    parser.add_argument("--write-cursor", action="store_true")
+    args = parser.parse_args(argv)
+    raw = args.events.read_bytes()
+    _require(len(raw) <= 4_000_000, "events over offline budget")
+    lines = raw.splitlines()
+    _require(0 < len(lines) <= 2000 and all(line.strip() for line in lines),
+             "empty or oversized input journal")
+    try:
+        events = [json.loads(line) for line in lines]
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("WATCH_HOLD:invalid terminal JSONL") from exc
+    prior_raw = args.cursor.read_bytes() if args.cursor.exists() else None
+    prior = json.loads(prior_raw) if prior_raw is not None else empty_cursor()
+    cursor, notifications = fold(events, prior)
+    result = {
+        "schema": "codepurple.watch.decision.v1",
+        "input_sha256": hashlib.sha256(raw).hexdigest(),
+        "cursor_sha256": _digest(cursor),
+        "new_native_identities": len(cursor["seen"]) - len(prior["seen"]),
+        "notifications": notifications,
+        "notification_emission": "NONE_LOCAL_PREVIEW",
+        "source_authentication": "CALLER_ASSERTED_NOT_NATIVE_READBACK",
+        "admission": "HOLD",
+    }
+    if args.write_cursor:
+        args.cursor.parent.mkdir(parents=True, exist_ok=True)
+        lock = args.cursor.with_name(args.cursor.name + ".lock")
+        try:
+            fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+        except FileExistsError as exc:
+            raise ValueError("WATCH_HOLD:cursor single-writer lock held") from exc
+        try:
+            os.close(fd)
+            current = args.cursor.read_bytes() if args.cursor.exists() else None
+            _require(current == prior_raw, "cursor changed during evaluation")
+            payload = (_canonical(cursor) + "\n").encode("ascii")
+            fd2, tmp = tempfile.mkstemp(prefix=".watch_cursor_", dir=args.cursor.parent)
+            try:
+                with os.fdopen(fd2, "wb") as fh:
+                    fh.write(payload)
+                    fh.flush()
+                    os.fsync(fh.fileno())
+                os.replace(tmp, args.cursor)
+            finally:
+                if os.path.exists(tmp):
+                    os.unlink(tmp)
+        finally:
+            os.unlink(lock)
+    print(_canonical(result))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
