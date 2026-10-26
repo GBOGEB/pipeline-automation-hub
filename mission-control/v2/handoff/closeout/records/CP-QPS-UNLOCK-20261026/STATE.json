@@ -1,0 +1,82 @@
+{
+  "schema": "code_purple.qps_watch_retirement.h1.v1",
+  "observation_date": "2026-10-26",
+  "snapshot_atomic": false,
+  "historical_heads": {
+    "GBOGEB/ABACUS": "20b4c2383f442891211c99bae2725bcf1688299b",
+    "GBOGEB/CODEX": "cb3b0d269bcd0ff9e96982cfc8276aa4bc187acf",
+    "GBOGEB/cryoplant-project": "da42e2126bb6cd5862b65aebef638c5ca2ff774e",
+    "GBOGEB/pipeline-automation-hub": "e4b901afa7706dee862730c4a468a96b7b07bcfc"
+  },
+  "readback_heads": {
+    "GBOGEB/ABACUS": "6ebebbc2aee8c400ecec7a8b9ee76fff80153c17",
+    "GBOGEB/CODEX": "cb3b0d269bcd0ff9e96982cfc8276aa4bc187acf",
+    "GBOGEB/cryoplant-project": "57c112a2a1252eb45039f17ed79943822238f92a",
+    "GBOGEB/pipeline-automation-hub": "516b905821bc1dcb299cd454a10c8c0b0f8adce3"
+  },
+  "prs": {
+    "ABACUS#2441": "MERGED",
+    "CODEX#1192": "MERGED",
+    "QPS#2091": "MERGED_ORDINARY_NOT_OWNER_ACCEPTANCE",
+    "HUB#843": "OPEN",
+    "HUB#848": "MERGED",
+    "HUB#849": "OPEN"
+  },
+  "historical_native_runs": {
+    "QPS_W163": {
+      "run_id": 40238792507,
+      "attempt": 1,
+      "conclusion": "failure",
+      "sha": "da42e2126bb6cd5862b65aebef638c5ca2ff774e"
+    },
+    "HUB_HTTP401": {
+      "run_id": 40240126521,
+      "attempt": 1,
+      "conclusion": "failure",
+      "sha": "e4b901afa7706dee862730c4a468a96b7b07bcfc"
+    }
+  },
+  "hub_ruleset_readback": {
+    "id": 25789280,
+    "enforcement": "active",
+    "required_approvals": 0,
+    "last_push_approval": false,
+    "up_to_date_required": false,
+    "contexts": [
+      "validate-ultra-control",
+      "canonical-self-test-and-mutation",
+      "GOGREEN required gate"
+    ],
+    "branch_protection_read": "403 integration forbidden"
+  },
+  "readiness_projection": {
+    "P0001": {
+      "pass": 14,
+      "fail": 8,
+      "unknown": 38,
+      "total": 60
+    },
+    "P0002": {
+      "pass": 17,
+      "fail": 2,
+      "unknown": 41,
+      "total": 60
+    },
+    "matched_members": false
+  },
+  "http401_root": {
+    "distinct_causal_roots_established": 1,
+    "observed_occurrences_lower_bound": 12
+  },
+  "controls": {
+    "merge_admission": "HOLD",
+    "qps_engineering_acceptance": "NOT_ESTABLISHED",
+    "matched_coverage_delta": null,
+    "formal_qps_unlocks_established": 0,
+    "authority_transfer": false,
+    "auto_merge": false,
+    "new_watch_created": false
+  },
+  "historical_task_state": "old CODE PURPLE QPS Unlock Watch disabled per supplied handover; not independently rechecked",
+  "fidelity": "historical handover + bounded live readback; not full original artifact byte custody"
+}
