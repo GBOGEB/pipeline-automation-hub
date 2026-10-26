@@ -31,7 +31,7 @@
       "title": "No cross-repo dispatch and return path exists; 'dispatch' edges are declarations"
     },
     {
-      "at": "W1.C1.I2.S1",
+      "at": "W1.C1.I3.S1",
       "control_when": "Negative and positive admission repeat retained (REX-CM-005 control rule).",
       "done_when": "Owner/admin ruleset makes first-pass-closure a required status (#336) and a red check provably blocks merge.",
       "flow": "RETURN_OWNER",
@@ -39,10 +39,12 @@
       "links": [
         "https://github.com/GBOGEB/pipeline-automation-hub/issues/336",
         "https://github.com/GBOGEB/pipeline-automation-hub/issues/304",
-        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38250379852"
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38250379852",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/880",
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40252128567"
       ],
       "severity": "P1",
-      "source_evidence": "Hub master protected=false at 4136710496894daa7ffd4c920f64a38b9dfd401b; owner/admin #336 red-block/green-admit required-status canary unproved.",
+      "source_evidence": "Recurrence (occurrence, not a new root): hub #880 head 524c024d264df5d2ca71e693b95761c62a826978 marked ready 2026-10-26T01:01:05Z and merged 01:02:42Z as 2c2079327aec7b350f172146e5e50de4373cd926 while First-Pass Closure Gate run 40252128567 job 121346125131 was FAIL (receipt reason MISSING_RECEIPT: PR body held only the FPC_RECEIPT_V1 PENDING placeholder) and the Codex exact-head review was still Running. The other 19 checks passed. Same pattern for #865, #867, #854 and #871 is recorded in #876. #336 required-status canary still unproved.",
       "state": "UNKNOWN_NEEDS_READER",
       "title": "PRs merged while First-Pass Closure was red or still running (REX-CM-005 recurrence)"
     }
@@ -59,5 +61,5 @@
   "read_only_historical": true,
   "schema": "missioncontrol.cp_close.bd_projection.v1",
   "source_path": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
-  "source_sha256": "a1d1b32ec9f53ceb7028493a6b28a8967852e99f00263139377d65a00a241748"
+  "source_sha256": "52f3039deeb09fd2a75ca8edd56c6faa07cb111056b93d1cd9b756fe84849388"
 }
