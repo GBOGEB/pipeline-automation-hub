@@ -3,6 +3,7 @@ import json
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
@@ -110,6 +111,76 @@ class Census(unittest.TestCase):
         self.assertEqual(d.node_count(self.root / "web/widget.test.mjs"), 2)
         self.assertIsNone(d.resolve_targets(self.root, ".", "missing/dir", "test_*.py"))
         self.assertIsNone(d.resolve_targets(self.root, ".", "$TESTS", "test_*.py"))
+
+    def test_runner_invocations_are_command_segments(self):
+        inv = d.runner_invocations
+        for none in ("pip install pytest pytest-cov", "python -m pip install -U pytest", "echo pytest done",
+                     "pytest --version", "npm i node"):
+            self.assertEqual(inv(none), [], none)
+        self.assertEqual(inv("PYTHONPATH=. timeout 600 python -m pytest tests -q > log 2>&1"),
+                         [("pytest", "tests -q", False)])
+        self.assertEqual(inv("coverage run --branch -m pytest tests/unit | tee a")[0][:2], ("pytest", "tests/unit"))
+        self.assertTrue(inv("pytest -m smoke tests")[0][2])
+        self.assertTrue(inv("pytest --collect-only")[0][2])
+        self.assertTrue(inv("pytest -k 'a and b'")[0][2])
+        self.assertEqual(len(inv("pytest a.py && pytest b.py")), 2)
+
+    def test_bare_pytest_uses_configured_testpaths(self):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            self.assertEqual(d.pytest_testpaths(root), ["."])
+            (root / "pyproject.toml").write_text('[tool.pytest.ini_options]\ntestpaths = ["tests", "lib/tests"]\n',
+                                                 encoding="utf-8", newline="\n")
+            self.assertEqual(d.pytest_testpaths(root), ["tests", "lib/tests"])
+            (root / "pytest.ini").write_text("[pytest]\ntestpaths = unit\n", encoding="utf-8", newline="\n")
+            self.assertEqual(d.pytest_testpaths(root), ["unit"])
+
+    def test_runner_head_is_linear_on_adversarial_input(self):
+        # CodeQL py/redos (alert 63): 'coverage run -' + many '!=! -' backtracked exponentially.
+        evil = "coverage run -" + "!=! -" * 5000
+        t0 = time.perf_counter()
+        self.assertEqual(d.runner_invocations(evil), [])
+        self.assertLess(time.perf_counter() - t0, 2.0)
+        self.assertEqual(d.runner_invocations("python3.12 -m coverage run --branch -m pytest t")[0][:2],
+                         ("pytest", "t"))
+        self.assertEqual(d.runner_invocations("coverage run script.py"), [])
+        self.assertEqual(d.runner_invocations("xvfb-run -a node --test web")[0][:2], ("node", "web"))
+
+    def test_attached_short_selectors_are_selecting(self):
+        inv = d.runner_invocations
+        for sel in ("pytest -m=smoke tests", "pytest -msmoke tests", "pytest -kexpr tests", "pytest -k=expr tests"):
+            self.assertTrue(inv(sel)[0][2], sel)
+        for full in ("pytest -q tests", "pytest -p no:cacheprovider tests", "pytest --maxfail=1 tests"):
+            self.assertFalse(inv(full)[0][2], full)
+
+    def test_multiline_ini_testpaths(self):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            (root / "setup.cfg").write_text("[tool:pytest]\ntestpaths =\n    tests\n    integration\naddopts = -q\n",
+                                            encoding="utf-8", newline="\n")
+            self.assertEqual(d.pytest_testpaths(root), ["tests", "integration"])
+            (root / "tox.ini").write_text("[pytest]\ntestpaths = a\n  b\n", encoding="utf-8", newline="\n")
+            self.assertEqual(d.pytest_testpaths(root), ["a", "b"])  # tox.ini precedes setup.cfg
+
+    def test_working_directory_uses_its_own_testpaths(self):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            sub = root / "sub"
+            for f, body in (("pytest.ini", "[pytest]\ntestpaths =\n    tests\n"),
+                            ("tests/test_a.py", "def test_a():\n    pass\n"),
+                            ("integration/test_slow.py", "def test_s():\n    pass\ndef test_t():\n    pass\n")):
+                (sub / f).parent.mkdir(parents=True, exist_ok=True)
+                (sub / f).write_text(body, encoding="utf-8", newline="\n")
+            wf = root / ".github" / "workflows"
+            wf.mkdir(parents=True)
+            (wf / "sub.yml").write_text("on: pull_request\njobs:\n  t:\n    runs-on: ubuntu-latest\n"
+                                        "    defaults:\n      run:\n        working-directory: sub\n"
+                                        "    steps:\n      - run: pytest\n", encoding="utf-8", newline="\n")
+            w = d.workflow_tests(root, [])["sub.yml"]
+            self.assertEqual((w["tests"], w["unknown"]), (1, 0))
+            self.assertEqual(list(w["files"]), ["sub/tests/test_a.py"])
+            (sub / "pytest.ini").unlink()  # no config in the working directory: pytest collects it whole
+            self.assertEqual(d.workflow_tests(root, [])["sub.yml"]["tests"], 3)
 
     def test_area_keys(self):
         self.assertEqual(d.area("mission-control/gogreen/x.py"), "mission-control/gogreen")
