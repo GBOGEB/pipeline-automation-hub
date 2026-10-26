@@ -12,11 +12,15 @@ from __future__ import annotations
 import argparse
 import hashlib
 import html
+import importlib.util
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site"
+_pb = importlib.util.spec_from_file_location("jade_private_boundary", ROOT / "tools" / "private_boundary.py")
+PB = importlib.util.module_from_spec(_pb)
+_pb.loader.exec_module(PB)
 FED = "data/RED_TRACE_FEDERATION_N8.json"
 GAP = "data/GAP_ANALYSIS_N8.json"
 OUTPUTS = ("redtrace.html", "redtrace-slides.html")
@@ -34,7 +38,7 @@ def load(rel):
 
 
 def short(s):
-    return (s or "")[:8]
+    return s if s == PB.MARK else (s or "")[:8]
 
 
 def chip(kind, label):
@@ -58,8 +62,10 @@ def window_text(w, repo):
         first = f'<code>{E(short(t["first_red_sha"]))}</code>'
         parts.append(f'<a href="{E(base + str(run))}">{first}</a>' if run else first)
     if t.get("recovery_sha"):
-        parts.append(f' → ✓<a href="{E(base + str(t.get("recovery_run")))}"><code>{E(short(t["recovery_sha"]))}</code></a>'
-                     f' <small>({E(t.get("red_hours"))} h red)</small>')
+        sha = f'<code>{E(short(t["recovery_sha"]))}</code>'
+        run = t.get("recovery_run")
+        parts.append(f' → ✓<a href="{E(base + str(run))}">{sha}</a>' if run else f' → ✓{sha}')
+        parts.append(f' <small>({E(t.get("red_hours"))} h red)</small>')
     elif t.get("red_streak_runs"):
         parts.append(f' <small>({E(t["red_streak_runs"])} red)</small>')
     return "".join(parts) or "—"
@@ -249,7 +255,9 @@ def slides(fed, gap):
     slide("s-decide", "Owner decisions", '<h2>Owner decisions that unblock the rest</h2><ol>' +
           "".join(f'<li><b>{E(x["id"])}</b> {E(x["title"])}: {E(x["next"])}</li>' for x in owner) + "</ol>")
     slide("s-sources", "Sources", '<h2>Sources & replay</h2><ul>' + "".join(
-        f'<li><a href="https://github.com/{E(r["repository"])}/actions">{E(r["repository"])}</a>: {r["workflows_traced"]} workflows, '
+        (f'<li>{E(r["repository"])} (private: counts only): ' if PB.boundary().names_private(r["repository"]) else
+         f'<li><a href="https://github.com/{E(r["repository"])}/actions">{E(r["repository"])}</a>: ') +
+        f'{r["workflows_traced"]} workflows, '
         f'{r["runs"]:,} runs, digest <code>{E(r["source_digest"][:12])}</code></li>' for r in fed["repositories"]) +
           '<li>Replay: <code>python mission-control/gogreen/red_trace/red_trace.py --repo … --root … --out …</code> then '
           '<code>tools/build_redtrace_data.py</code> and <code>site/build_redtrace.py</code></li></ul>')

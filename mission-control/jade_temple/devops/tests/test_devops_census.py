@@ -607,8 +607,8 @@ class CommittedCensus(unittest.TestCase):
         want = [r["repo"] for r in sorted(roster["repositories"], key=lambda r: r["rank"])]
         self.assertEqual([r["repo"] for r in self.census["repos"]], want)
         for r in self.census["repos"]:
-            if r["reachable"]:
-                self.assertRegex(r["head_sha"], r"^[0-9a-f]{40}$")
+            if r["reachable"]:  # a private repo's head is PB.MARK (counts only)
+                self.assertRegex(r["head_sha"], r"^(?:[0-9a-f]{40}|" + C.PB.MARK + ")$")
                 self.assertEqual(r["oid"], "jade:repo:" + r["repo"])
 
     def test_fleet_totals_reconcile(self):
@@ -647,8 +647,10 @@ class CommittedCensusN10(CommittedCensus):
             self.assertEqual(r["delta"]["baseline_sha"], n9.get(r["repo"]), r["repo"])
 
     def test_n9_snapshot_is_unchanged(self):
+        # Re-sealed once (2026-10-25) when the private repo was projected to counts only
+        # (tools/private_boundary.py); unchanged since.
         self.assertEqual(self.previous["digest_sha256"],
-                         "1b3a1c5272145d62fa11b171def677186931c32af85adaa8e03fda90879d3bfd")
+                         "fb1aa7de748a1a94c0581e37907b14233a300116bb22b8442893bf081d3e79f4")
 
 if __name__ == "__main__":
     unittest.main()
