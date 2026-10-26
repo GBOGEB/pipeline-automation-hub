@@ -111,6 +111,8 @@ Both issues and pull requests now consume the same deterministic prefix grammar 
 | GitHub title example | Primary family | Canonical prefix path | Distinct facet |
 |---|---|---|---|
 | metrics: refresh DMAIC commit metrics | metrics | metrics | DMAIC in description only |
+| metrics: #### ###(fix) refresh | metrics | metrics/fix | Markdown heading fragments are presentation, not family IDs |
+| metrics: ###(fix(test W51-C0)) repair | metrics | metrics/fix/test/W51/C0 | nested post-head action, test, wave, cohort |
 | feat(test W51-C0): zero-to-positive coverage | feat | feat/test/W51/C0 | W51 wave; C0 cohort |
 | metrics: fix(test W51-C0): ... | metrics | metrics/fix/test/W51/C0 | nested action fix + test |
 | fix(jade devops): ... | fix | fix/JADE/DEVOPS | two scope levels |
