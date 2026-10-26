@@ -31,6 +31,7 @@ OUT_CSV = "site/rolling5.csv"
 SCHEMA = "jade.temple.rolling5.projection/1.0"
 PASS, FAIL, UNKNOWN = "PASS", "FAIL", "UNKNOWN"
 SHA40 = re.compile(r"[0-9a-f]{40}")
+REQUIRED_GATES = frozenset(f"H{i:02d}" for i in range(1, 13))
 
 
 def sha256(data: bytes) -> str:
@@ -88,9 +89,14 @@ def append_pulse(root: Path, snapshot_rel: str, pulse_id: str) -> dict:
 def rows_of(snapshot: dict) -> dict[str, dict]:
     rows = {}
     for row in snapshot["rows"]:
+        gate_ids = [g["id"] for g in row["gates"]]
+        if len(gate_ids) != len(REQUIRED_GATES) or set(gate_ids) != REQUIRED_GATES:
+            raise ValueError(f"invalid H01-H12 gate inventory in {row['repo']}")
         gates = {g["id"]: g["status"] for g in row["gates"]}
         if any(s not in (PASS, FAIL, UNKNOWN) for s in gates.values()):
             raise ValueError(f"unknown gate status in {row['repo']}")
+        if row["repo"] in rows:
+            raise ValueError(f"duplicate repository in pulse: {row['repo']}")
         rows[row["repo"]] = {
             "rank": row["rank"],
             "source_sha": row.get("source_sha"),
@@ -149,7 +155,9 @@ def nirvana(repo: str, timeline: list[dict], sustain: int) -> bool:
     return (
         len(shas) == 1
         and bool(SHA40.fullmatch(next(iter(shas)) or ""))
-        and all(r["gates"] and set(r["gates"].values()) == {PASS} for r in recent)
+        and all(set(r["gates"]) == REQUIRED_GATES
+                and all(state == PASS for state in r["gates"].values())
+                for r in recent)
     )
 
 
