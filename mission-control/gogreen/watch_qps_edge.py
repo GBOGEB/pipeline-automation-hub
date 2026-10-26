@@ -84,7 +84,7 @@ def _source_key(event: dict):
                              native["attempt"], native["job_id"]]), lane
 
 
-def qualify(event: dict, candidate: dict, envelope: dict, key: bytes) -> dict:
+def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,\n            baseline: dict | None = None) -> dict:
     """Fail-closed, signed qualification; NEVER native acceptance authority.
 
     Authenticity is conditional on QPS private key custody and the QPS signer
@@ -106,7 +106,7 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes) -> dict:
     exact(envelope, {"attestation", "signature"}, "signed proof")
     a = exact(envelope["attestation"], {
         "schema", "class", "effect", "event_key", "source_sha",
-        "run_id", "attempt", "job_id", "completed_at", "issued_at",
+        "run_id", "attempt", "job_id", "completed_at", "issued_at", "baseline_sha256",
         "child_token", "dependency_token", "receipt_token", "checks",
     }, "attestation")
     require(a["schema"] == SCHEMA, "attestation schema")
@@ -145,13 +145,35 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes) -> dict:
             and c["security"] == "PASS"
             and c["required_checks"] == "PASS")
     cls, effect = a["class"], a["effect"]
+    if cls in {"A", "B", "D"} or (cls == "C" and effect == "UNBLOCK"):
+        require(event["identity"]["kind"] != "SYNTHETIC_MERGE",
+                "synthetic merge is not exact native admission")
+        require(all(x["state"] == "PASS" for x in event["result"]["required_receipts"]),
+                "raw required-check veto")
+    if cls != "B":
+        require(a["baseline_sha256"] is None, "non-B baseline not permitted")
     if cls == "A":
         require(effect == "ACCEPT" and success and full
                 and bool(reasons & {"RED_TO_GREEN",
                                     "REQUIRED_RECEIPT_RECOVERY_CANDIDATE"}),
                 "A requires governed parent and a recovered named QPS edge")
     elif cls == "B":
+        require(baseline is not None and type(baseline) is dict, "B baseline absent")
+        decision.validate(baseline)
+        require(a["baseline_sha256"] == decision._digest(baseline),
+                "B signed baseline mismatch")
+        require(baseline["repository"] == event["repository"]
+                and baseline["lane"] == event["lane"]
+                and baseline["identity"]["kind"] == event["identity"]["kind"]
+                and utc(baseline["native"]["completed_at"]) < utc(n["completed_at"])
+                and baseline["coverage"] is not None
+                and event["coverage"] is not None
+                and decision._coverage(baseline["coverage"]) == decision._coverage(event["coverage"]),
+                "B source/instrumentation/denominator cohort mismatch")
+        computed = {axis: event["coverage"][axis]["covered"] - baseline["coverage"][axis]["covered"]
+                    for axis in ("statements", "branches")}
         delta = candidate["coverage_delta"]
+        require(delta == computed, "B coverage delta differs from native observations")
         require(effect == "ACCEPT" and success and full
                 and c["matched_coverage"] and
                 "SOURCE_MATCHED_COVERAGE_CHANGE" in reasons
@@ -249,13 +271,13 @@ def _audit(db, action: str, event_key: str, payload_digest: str) -> None:
 
 
 def record(db: sqlite3.Connection, event: dict, candidate: dict,
-           envelope: dict, key: bytes) -> dict:
+           envelope: dict, key: bytes, baseline: dict | None = None) -> dict:
     """Transactional append-only evidence + at-most-once local outbox enqueue.
 
     No network delivery. On a crash after CLAIMED, reconcile provider receipt
     manually; never automatically resend a claimed notification.
     """
-    q = qualify(event, candidate, envelope, key)
+    q = qualify(event, candidate, envelope, key, baseline)
     eid, child, root = q["event_key"], q["child_token"], q["dependency_token"]
     db.execute("BEGIN IMMEDIATE")
     try:
@@ -392,6 +414,7 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="Offline signed QPS-effect gate (no alert sender)")
     for arg in ("event", "candidate", "proof"):
         parser.add_argument("--" + arg, type=Path, required=True)
+    parser.add_argument("--baseline", type=Path,\n                        help="required for B: exact previous native comparator")
     parser.add_argument("--database", type=Path)
     parser.add_argument("--record", action="store_true",
                         help="opt-in local SQLite observation/outbox write")
@@ -403,11 +426,12 @@ def main(argv=None) -> int:
     event = json.loads(args.event.read_text(encoding="utf-8"))
     candidate = json.loads(args.candidate.read_text(encoding="utf-8"))
     proof = json.loads(args.proof.read_text(encoding="utf-8"))
-    verdict = qualify(event, candidate, proof, secret)
+    baseline = json.loads(args.baseline.read_text(encoding="utf-8")) if args.baseline else None
+    verdict = qualify(event, candidate, proof, secret, baseline)
     if args.record:
         require(args.database is not None, "database required to record")
         with connect(args.database) as db:
-            result = record(db, event, candidate, proof, secret)
+            result = record(db, event, candidate, proof, secret, baseline)
             result["local_store"] = verify(db, secret)
     else:
         result = {"status": "SIGNED_CANDIDATE_DRY_RUN", "queued": False,
