@@ -91,7 +91,7 @@ permissions:
 
 concurrency:
   group: gogreen-required-gate-recheck-${{ github.event.workflow_run.head_sha }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   recheck:
