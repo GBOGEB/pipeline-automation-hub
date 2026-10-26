@@ -1,6 +1,6 @@
 import json,subprocess,collections,sys
 def gh(p):
-    r=subprocess.run(["gh","api",p],capture_output=True,text=True)
+    r=subprocess.run(["gh","api",p],capture_output=True,text=True,encoding="utf-8",errors="replace")
     if r.returncode: return {"_error":r.stderr.strip()[:160]}
     return json.loads(r.stdout) if r.stdout.strip() else None
 out={}

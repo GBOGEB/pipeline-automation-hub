@@ -1,0 +1,119 @@
+{
+ "authority": {
+  "actor": "AGENT",
+  "merge_authorized": false
+ },
+ "corrects": [
+  "evidence/N10_20261020.json",
+  "evidence/N11_FEDERATION_20261020.json",
+  "#529 comments of 2026-10-20 (N+10, N+11)"
+ ],
+ "defect": "depth.py matched the word pytest anywhere in a run step, so `pip install pytest pytest-cov` was counted as a full-suite run; -m/-k/--collect-only selections and `pytest --version` were counted as full runs; a bare `pytest` resolved to the rootdir instead of the configured testpaths",
+ "federation": {
+  "after": {
+   "fanout": 7.9,
+   "test_executions_per_pass": 107804,
+   "unique_tests": 13686
+  },
+  "before": {
+   "fanout": 21.9,
+   "test_executions_per_pass": 342625,
+   "unique_tests": 15652
+  }
+ },
+ "fix": "command-segment parser (runner_invocations): runner must start a segment after env/wrappers; selecting flags -> subset of unknown size (UNKNOWN, never full); --version/--help -> no tests; bare pytest -> pytest.ini/pyproject/setup.cfg testpaths",
+ "iteration": "N+12",
+ "method": "old and fixed depth.py run on the SAME head per repo (heads recorded); only the parser differs",
+ "repositories": {
+  "ABACUS": {
+   "after": {
+    "fanout": 14.2,
+    "selected_subset_invocations": 24,
+    "test_executions_per_pass": 90731,
+    "unique_tests": 6406,
+    "unknown_invocations": 36
+   },
+   "before": {
+    "fanout": 40.3,
+    "selected_subset_invocations": 0,
+    "test_executions_per_pass": 282604,
+    "unique_tests": 7017,
+    "unknown_invocations": 106
+   },
+   "head_sha": "3fe7c86b0a0e2f6643a717d68f12b7a8dda8e58e"
+  },
+  "CODEX": {
+   "after": {
+    "fanout": 4.4,
+    "selected_subset_invocations": 0,
+    "test_executions_per_pass": 8442,
+    "unique_tests": 1933,
+    "unknown_invocations": 2
+   },
+   "before": {
+    "fanout": 20.4,
+    "selected_subset_invocations": 0,
+    "test_executions_per_pass": 43254,
+    "unique_tests": 2124,
+    "unknown_invocations": 15
+   },
+   "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a"
+  },
+  "cryoplant-project": {
+   "after": {
+    "fanout": 1.4,
+    "selected_subset_invocations": 5,
+    "test_executions_per_pass": 3090,
+    "unique_tests": 2210,
+    "unknown_invocations": 9
+   },
+   "before": {
+    "fanout": 1.4,
+    "selected_subset_invocations": 0,
+    "test_executions_per_pass": 3178,
+    "unique_tests": 2210,
+    "unknown_invocations": 32
+   },
+   "head_sha": "640bcae096c8dc9100fba03c155064c769392a12"
+  },
+  "gg_MATH": {
+   "after": {
+    "fanout": 2.3,
+    "selected_subset_invocations": 0,
+    "test_executions_per_pass": 942,
+    "unique_tests": 412,
+    "unknown_invocations": 0
+   },
+   "before": {
+    "fanout": 3.3,
+    "selected_subset_invocations": 0,
+    "test_executions_per_pass": 1354,
+    "unique_tests": 412,
+    "unknown_invocations": 0
+   },
+   "head_sha": "61ce59f754d23e010958927a731432672abf7621"
+  },
+  "pipeline-automation-hub": {
+   "after": {
+    "fanout": 1.7,
+    "selected_subset_invocations": 0,
+    "test_executions_per_pass": 4599,
+    "unique_tests": 2725,
+    "unknown_invocations": 0
+   },
+   "before": {
+    "fanout": 3.1,
+    "selected_subset_invocations": 0,
+    "test_executions_per_pass": 12235,
+    "unique_tests": 3889,
+    "unknown_invocations": 2
+   },
+   "head_sha": "737fdcea1e941366dce9d61aade011f652148eb9"
+  }
+ },
+ "schema": "gogreen.required_gate.erratum.v1",
+ "unchanged": [
+  "breadth (evidence), admission ledgers, backtests, merged-red counts: they never used test counts",
+  "unittest counts (zero_test_gate_audit)"
+ ]
+}
