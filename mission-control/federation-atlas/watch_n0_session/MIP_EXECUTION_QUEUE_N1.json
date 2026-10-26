@@ -24,21 +24,22 @@
       "candidate_pr": 876
     },
     {
+      "name": "required_gate_collision_repair",
+      "candidate_pr": 883
+    },
+    {
       "name": "semantic_verifier",
       "candidate_pr": 878
     },
     {
       "name": "transition_consumer",
-      "candidate_pr": 881
+      "candidate_pr": 881,
+      "depends_on_pr": 883
     },
     {
       "name": "public_native_feed_stacked",
       "candidate_pr": 882,
       "depends_on_pr": 881
-    },
-    {
-      "name": "required_gate_collision_repair",
-      "candidate_pr": 883
     },
     {
       "name": "integrated_dashboard",
