@@ -24,10 +24,10 @@
     "census": "data/DEVOPS_CENSUS_N11.json",
     "objects": "data/DEVOPS_OBJECTS_N11.json",
     "schema": "jade.devops.census.v1",
-    "digest_sha256": "851dc9de38b16f1d605ea3516d3b0b59a6800756eed539014d69301348643958",
-    "source_commit": "eb26b0026f02526cd7d8f0820164aa56afc21cec",
-    "source_branch": "master (#834)",
-    "note": "Latest committed census pulse (N+10; N+9 stays immutable beside it). Re-pin census, objects and digest here when a new pulse lands, then regenerate (AGENTS.md L7). Its blob ids are read at each repo's census HEAD, which can be newer than the FOCUS5 gate SHA; every such binding carries that HEAD and the drift is reported, never hidden."
+    "digest_sha256": "35bf393ddcd6b4886b43d384e956f3540bae7e0ee3f4925b178bf49b637b806b",
+    "source_commit": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+    "source_branch": "feat/jade-n11-recensus-20261026 (pulse at master e4b901a, 2026-10-25T23:31Z)",
+    "note": "Latest committed census pulse (N+11; N+9 and N+10 stay beside it). Re-pin census, objects and digest here when a new pulse lands, then regenerate (AGENTS.md L7). Its blob ids are read at each repo's census HEAD, which can be newer than the FOCUS5 gate SHA; every such binding carries that HEAD and the drift is reported, never hidden."
   },
   "lifecycle_level_status": {"0": "FAIL", "1": "FAIL", "2": "UNKNOWN", "3": "PASS", "4": "PASS", "5": "PASS"},
   "lifecycle_level_note": "Fleet stage colour uses the median census level: L3 AUTOMATED is the pass floor, L2 DEFINED is not yet automated, L0-L1 is red. Per-repo stage nodes are coloured by the state of the next blocking probe (census level = attainment, not a verdict): no blocker (L5) is PASS, a FAIL blocker is FAIL, an UNKNOWN blocker stays UNKNOWN.",

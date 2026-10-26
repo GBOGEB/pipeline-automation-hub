@@ -58,11 +58,11 @@
     "../qps-triage-ultra/p-process/site/code-purple/kit/census.json": "d638ad8dc530ea272ce96c36d370d46a32f61d608392076402f918af42429a20",
     "../qps-triage-ultra/p-process/site/data/p_state.json": "98cfa8ed19755bfc2172cfcda6f1267ec7f78c7779c2920a60a97fcb9045a45e",
     "../qps-triage-ultra/p-process/site/everred/data/everred.json": "0eb4b3c5287ee352f15669e8f8d500bc17c63d8da3617f76392e8f6b8ac25120",
-    "data/BD_QUEUE.csv": "3e37e8e0be528f24c7b52dac182870be924182782e0afdba9a9f7e87ed32ef57",
-    "data/CICD_DAG_POLICY.json": "f18394aad1762f22a056eec41917b4427beb1fa7152822eb50fe5cd940e6e612",
+    "data/BD_QUEUE.csv": "e17e22ecf996c66858c67e6d37ffe137d9053c84f53faee11741798ca841c445",
+    "data/CICD_DAG_POLICY.json": "1461988c949d81470b7cd00cfbb908ba300b025e8f10d455e1e3d1db67152050",
     "data/COHORT_CROSSWALK_NPLUS1.json": "8e22c5963cc165b2ec8e83383a7469aebd177335eaddca8043b1692bf10e2cbc",
-    "data/DEVOPS_CENSUS_N10.json": "c9553264622f875f877662475adcb6082765dbeb7a50c6f664dd04d55fcfaf69",
-    "data/DEVOPS_OBJECTS_N10.json": "94b768277c130d7f706cc2265d455cc2418c8d101a68962ac12b0968f599e2e8",
+    "data/DEVOPS_CENSUS_N11.json": "0122edc4f7c55adff5406c8afc54c85c14cfa99661b2b7fd9c06eb05a2c3f077",
+    "data/DEVOPS_OBJECTS_N11.json": "c4c7bac66eb7af1a379ce5ad0c4a5decc8fa989b478fb078ef33568f15229269",
     "data/HEAD_CROSSWALK.json": "70d2ca8d6fb2364e6d385f43b2043fea5157edd96cbafb233362b3b1254c70bc",
     "data/RED_TRACE_FEDERATION_N8.json": "3238f61bd0bac44656f454d3d59d92610df4cc9157a56df67bf59c99a1ee0e89",
     "data/ROLLING5_POLICY.json": "77228bf9f0f54b2a9d3567ddef28c340d3ddf89fe333926b1b70d77a9bbd2d85",
@@ -77,7 +77,7 @@
     "OID"
   ],
   "lifecycle": {
-    "digest_sha256": "851dc9de38b16f1d605ea3516d3b0b59a6800756eed539014d69301348643958",
+    "digest_sha256": "35bf393ddcd6b4886b43d384e956f3540bae7e0ee3f4925b178bf49b637b806b",
     "fleet": {
       "S0_PLAN": {
         "mean_completion": 0.4857,
@@ -1343,16 +1343,15 @@
     }
   ],
   "pulse_alignment": {
-    "census_digest_sha256": "851dc9de38b16f1d605ea3516d3b0b59a6800756eed539014d69301348643958",
-    "census_observed_at_utc": "2026-10-24T15:06:03Z",
+    "census_digest_sha256": "35bf393ddcd6b4886b43d384e956f3540bae7e0ee3f4925b178bf49b637b806b",
+    "census_observed_at_utc": "2026-10-25T23:31:24Z",
     "focus_repos": 5,
     "gate_observed_date": "2026-10-25",
     "gate_pulse": "P0002",
     "gate_snapshot": "data/FOCUS5_POINT_RELEASE_P0002.json",
-    "mismatch_count": 2,
+    "mismatch_count": 1,
     "mismatched": [
-      "pipeline-automation-hub",
-      "DOCX_RTM_Automation"
+      "pipeline-automation-hub"
     ],
     "one_pulse": false,
     "repos": {
@@ -1405,10 +1404,10 @@
           "FAIL": 9,
           "ISSUE_BD": 1,
           "NEUTRAL": 7,
-          "PASS": 5,
+          "PASS": 4,
           "P_PROCESS": 7,
           "ROOT_RED": 2,
-          "UNKNOWN": 12
+          "UNKNOWN": 13
         },
         "by_sipoc": {
           "C": 3,
@@ -2177,14 +2176,13 @@
         "devops": {
           "actions_pinned_pct": 43.66,
           "census_sha_drift": [
-            "DOCX_RTM_Automation",
             "pipeline-automation-hub"
           ],
           "deploy_contract_core": "2/30",
           "deploy_env": 23,
           "deploy_verified": 9,
-          "digest_sha256": "851dc9de38b16f1d605ea3516d3b0b59a6800756eed539014d69301348643958",
-          "jobs": 1250,
+          "digest_sha256": "35bf393ddcd6b4886b43d384e956f3540bae7e0ee3f4925b178bf49b637b806b",
+          "jobs": 1197,
           "lifecycle_median_level": {
             "S0_PLAN": 1,
             "S1_CODE": 1,
@@ -3111,7 +3109,7 @@
             {
               "kind": "sha256",
               "label": "census digest",
-              "value": "851dc9de38b16f1d605ea3516d3b0b59a6800756eed539014d69301348643958"
+              "value": "35bf393ddcd6b4886b43d384e956f3540bae7e0ee3f4925b178bf49b637b806b"
             }
           ],
           "status": null,
@@ -8467,7 +8465,7 @@
           "FAIL": 10,
           "ISSUE_BD": 1,
           "NEUTRAL": 5,
-          "PASS": 9,
+          "PASS": 10,
           "ROOT_RED": 1,
           "UNKNOWN": 12
         },
@@ -9110,7 +9108,7 @@
       "metrics": {
         "critical_path_pass_depth": 2,
         "devops": {
-          "actions_pinned": "48/417",
+          "actions_pinned": "425/425",
           "census_head": "PRIVATE_AGGREGATE_ONLY",
           "ci_mttr_hours_median": 640.56,
           "commits_since_baseline": null,
@@ -9129,23 +9127,11 @@
             "S8_MONITOR": 3,
             "S9_CONTROL": 3
           },
-          "outcomes_since_baseline": {
-            "automation": 0,
-            "ci_changes": 1,
-            "controlled": 0,
-            "dependency_updates": 0,
-            "expanded": 1,
-            "fixed": 3,
-            "test_cases_added_net": 86,
-            "test_files_added_net": 17,
-            "tested": 0,
-            "untested_modules_net": 141,
-            "zero_case_files_net": 1
-          },
-          "py_untested": "731/1048",
+          "outcomes_since_baseline": null,
+          "py_untested": "727/1071",
           "sha_drift": false,
-          "test_cases": 3229,
-          "tests_ci": 74,
+          "test_cases": 3444,
+          "tests_ci": 78,
           "unguarded_test_jobs": 52,
           "workflows": 148
         },
@@ -10258,19 +10244,19 @@
             },
             {
               "at": "PRIVATE_AGGREGATE_ONLY",
-              "jade_oid": "jade:py:cryoplant-project:triage.w367.archive_incubator.ICD-EL-001_rev1_2_HANDOVER_20261009.ICD-EL-001_rev1_2_HANDOVER_20261009.deliverables.ICD-EL-001_Electrical_Interface_rev1_2_DRAWINGS.zip.d.generate_icd_el_1lines",
+              "jade_oid": "jade:py:cryoplant-project:scripts.qps_w85_materialize_alat_surfaces",
               "object": null,
               "oid": "PRIVATE_AGGREGATE_ONLY",
-              "path": "GBOGEB/cryoplant-project:triage/w367/archive_incubator/ICD-EL-001_rev1_2_HANDOVER_20261009/ICD-EL-001_rev1_2_HANDOVER_20261009/deliverables/ICD-EL-001_Electrical_Interface_rev1_2_DRAWINGS.zip.d/generate_icd_el_1lines.py",
+              "path": "GBOGEB/cryoplant-project:scripts/qps_w85_materialize_alat_surfaces.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
             },
             {
               "at": "PRIVATE_AGGREGATE_ONLY",
-              "jade_oid": "jade:py:cryoplant-project:triage.w367.archive_incubator.ICD-EL-001_rev1_2_HANDOVER_20261009.ICD-EL-001_rev1_2_HANDOVER_20261009.repo_payload.triage.w363.icd_el_001_rev1_2.generate_icd_el_1lines",
+              "jade_oid": "jade:py:cryoplant-project:docs.offer_eval.rtm_evaluation.scripts.build_deck2",
               "object": null,
               "oid": "PRIVATE_AGGREGATE_ONLY",
-              "path": "GBOGEB/cryoplant-project:triage/w367/archive_incubator/ICD-EL-001_rev1_2_HANDOVER_20261009/ICD-EL-001_rev1_2_HANDOVER_20261009/repo_payload/triage/w363/icd_el_001_rev1_2/generate_icd_el_1lines.py",
+              "path": "GBOGEB/cryoplant-project:docs/offer_eval/rtm_evaluation/scripts/build_deck2.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
             },
