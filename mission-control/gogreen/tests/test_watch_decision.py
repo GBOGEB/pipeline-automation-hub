@@ -285,6 +285,49 @@ class CursorPersistence(unittest.TestCase):
             self.assertTrue(cursor.exists())
             self.assertGreaterEqual(syncing.call_count, 2)
 
+    def test_crash_leftover_marker_does_not_block_new_owner(self):
+        import contextlib
+        import io
+        import json
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as folder:
+            events = pathlib.Path(folder) / "events.jsonl"
+            cursor = pathlib.Path(folder) / "cursor.json"
+            marker = cursor.with_name(cursor.name + ".lock")
+            events.write_text(json.dumps(terminal(1)) + "\n", encoding="utf-8")
+            marker.write_text("orphaned-old-exclusive-lock", encoding="utf-8")
+            # Old O_EXCL locking failed here forever; advisory lock acquires
+            # because no live process holds a lease on the inode.
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(W.main(["--events", str(events),
+                                         "--cursor", str(cursor),
+                                         "--write-cursor"]), 0)
+            self.assertTrue(cursor.exists())
+            self.assertTrue(marker.exists(), "lock inode remains stable for all writers")
+
+    def test_concurrent_writer_is_refused_without_mutating_cursor(self):
+        import contextlib
+        import io
+        import json
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as folder:
+            events = pathlib.Path(folder) / "events.jsonl"
+            cursor = pathlib.Path(folder) / "cursor.json"
+            events.write_text(json.dumps(terminal(1)) + "\n", encoding="utf-8")
+            marker = cursor.with_name(cursor.name + ".lock")
+            with W.cursor_writer_lock(marker):
+                with self.assertRaisesRegex(ValueError, "single-writer lock held"):
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        W.main(["--events", str(events), "--cursor", str(cursor),
+                                "--write-cursor"])
+                self.assertFalse(cursor.exists())
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(W.main(["--events", str(events), "--cursor", str(cursor),
+                                         "--write-cursor"]), 0)
+            self.assertTrue(cursor.exists())
+
     def test_source_private_row_rejected_before_cursor_mutation(self):
         import json
         import tempfile
