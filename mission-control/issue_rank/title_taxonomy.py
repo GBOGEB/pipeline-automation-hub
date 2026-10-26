@@ -140,11 +140,11 @@ def _scope_tokens(text: str, depth: int, warnings: list[str]) -> list[dict]:
                 return out
             out.extend(_scope_tokens(inner, depth + 1, warnings))
             index = last + 1
-        elif char.isspace() or char in ",/+;":
+        elif char.isspace() or char in ",/;":
             index += 1
         else:
             end = index
-            while end < len(text) and not text[end].isspace() and text[end] not in "()[]{},/+;":
+            while end < len(text) and not text[end].isspace() and text[end] not in "()[]{},/;":
                 end += 1
             out.extend({"value": t, "depth": depth, "source": "scope"}
                        for t in _split_atom(text[index:end]) if t)
