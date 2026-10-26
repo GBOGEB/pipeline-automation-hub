@@ -1809,8 +1809,19 @@ def main(argv=None) -> int:
             delta["taxonomy_moves"] = [d for d in delta["taxonomy_moves"]
                                        if d["key"] not in private_refs]
         model, delta = redact(model, delta)
+    # A repeated source observation at the exact same instant is not N+1.
+    # Preserve the strict monotonicity invariant in taxonomy_pulse.build;
+    # do not fabricate an additional history point for an idempotent rerun.
+    pulse_previous = prev
+    if prev is not None:
+        old_time = datetime.fromisoformat(prev["fetched_at"].replace("Z", "+00:00"))
+        new_time = datetime.fromisoformat(model["fetched_at"].replace("Z", "+00:00"))
+        if old_time == new_time:
+            pulse_previous = None
+        elif old_time > new_time:
+            raise ValueError("PULSE_TIMESTAMP_REVERSED")
     digests = write_outputs(
-        out, model, delta, previous_model=prev,
+        out, model, delta, previous_model=pulse_previous,
         parser_sha=args.parser_sha, previous_parser_sha=args.previous_parser_sha)
     if args.cmd == "run":
         row = append_ledger(out / "ledger.jsonl", {
