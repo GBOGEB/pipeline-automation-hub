@@ -7,6 +7,7 @@ Read first, in GitHub:
 - `handover/session/LOSSLESS_HANDOVER_CODE_PURPLE_WATCH_N0_20261026.md`: state, authority map, N0 delta, discrepancies.
 - `mission-control/federation-atlas/watch_n0_session/STATE_N0.json` and `EVIDENCE_LEDGER_N0.jsonl`.
 - `handover/session/MIP_WATCH_EVOLUTION_20261026.md`: future work, NOT IMPLEMENTED.
+- `handover/session/CODE_PURPLE_WATCH_VNEXT_EXECUTION_CROSSWALK_20261026.md`: concrete MIP-01..15 owners, implementation gaps and PR dependencies; #878 and #881 are still candidates, NOT merge acceptance.
 - `mission-control/jade_temple/DROPIN_NEXT_CHAT.md`: JADE N+11 checkpoint, owned by #867.
 
 Then re-resolve every default head and relevant PR head before comparing anything.
