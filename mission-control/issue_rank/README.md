@@ -107,6 +107,33 @@ next action, checked in this order:
   waiters), `NEARLY_DONE` (70% or more ticked), `TRACK_DOD`, `DEFINE_DOD`,
   `NOT_STARTED`, `IN_PROGRESS`.
 
+## Recursive title families for issues and PRs (v1)
+
+Both issues and pull requests now consume the same deterministic prefix grammar from title_taxonomy.py. Source titles remain unchanged. Parser precedence: safety markers, bracket tags, chained Conventional Commit heads, recursively nested parentheses, then leading programme/wave clauses. Do not derive action family from ordinary body prose.
+
+| GitHub title example | Primary family | Canonical prefix path | Distinct facet |
+|---|---|---|---|
+| metrics: refresh DMAIC commit metrics | metrics | metrics | DMAIC in description only |
+| metrics: #### ###(fix) refresh | metrics | metrics/fix | Markdown heading fragments are presentation, not family IDs |
+| metrics: ###(fix(test W51-C0)) repair | metrics | metrics/fix/test/W51/C0 | nested post-head action, test, wave, cohort |
+| feat(test W51-C0): zero-to-positive coverage | feat | feat/test/W51/C0 | W51 wave; C0 cohort |
+| metrics: fix(test W51-C0): ... | metrics | metrics/fix/test/W51/C0 | nested action fix + test |
+| fix(jade devops): ... | fix | fix/JADE/DEVOPS | two scope levels |
+| [U14] Main red since ... | UNCLASSIFIED | UNCLASSIFIED/U14 | U14 work ID; no invented fix |
+| P0 CBS N+4: ... | UNCLASSIFIED | UNCLASSIFIED/P0/CBS/N+4 | label text is not accepted owner priority |
+| DO NOT MERGE — MACH-II canary | UNCLASSIFIED | UNCLASSIFIED/MACH-II | DO_NOT_MERGE flag survives |
+| QPS BNB N+4 R01 — ... | UNCLASSIFIED | UNCLASSIFIED/QPS/BNB/N+4/R01 | programme and wave |
+
+Each item emits title_taxonomy.family, path, prefix_segments with nesting depth and source, programmes, codes, priority, policy_flags, classification and lint. The item also records related_families from up to two graph hops with source item, edge type and UNVERIFIED_ASSOCIATION_ONLY grade. Related PR names never overwrite an issue's family or confer closure, status, ownership or acceptance.
+
+Each rollups[repo].title_taxonomy and rollups.JADE/USER.title_taxonomy contains disjoint family counts split by Issue/PullRequest, exact leaf_clusters, non-additive hierarchy_nodes_nonadditive, programme/code facets, **nonexclusive topic_families and technical_clusters from case-insensitive, word-bounded matches on title and labels**, lint counts and coverage. Family totals sum to the actual item population; parent hierarchy nodes must not be summed as totals. HTML presents a per-repo/JADE/USER family census and top leaf clusters; CSV adds family, prefix_path, prefix_codes and candidate-family fields; delta.json records taxonomy_moves separately from real completion.
+
+Privacy: --redact-private replaces every private title taxonomy with REDACTED_PRIVATE, removes private-issue linked candidate labels, and rebuilds each rollup from public records only; private_items_excluded is explicit. Do not commit raw snapshots or unredacted QPS title clusters into public repositories.
+
+Overlap control (26 October): #925 is an independent parallel title-taxonomy draft that touches the same paths. Its selected topic and technical cluster vocabulary is integrated here as secondary, nonexclusive observational facets. #925 and #927 must not both merge independently. #926 fixes critical prior #907 privacy, ready-state and dropped-checkbox bugs and should be governed-landed first; rebase/retest this PR afterwards. No check success on this PR authorizes bypassing #926. Explicit syntactic prefix family and associated title/label topics are **different dimensions**; only primary families are disjoint and additive. Inferred cross-linked candidates do not inherit authoritative family, class, DoV/DoD, reviewer or owner approval.
+
+No automatic GitHub issue title rewrites. A later owner-authorized metadata migration can propose conventional family prefixes on issues while retaining old title, number, source signature and dependency edges; until then unknown prefixes stay UNCLASSIFIED.
+
 ## Rollups and telemetry
 
 For each scope (USER, JADE, each repository) the rollup reports open issues and PRs,
@@ -124,12 +151,9 @@ new and gone items, new and removed links, new PR→issue dependencies, checklis
 
 ## Reuse and ownership
 
-- **Overlap with #906.** `qps-triage-ultra/issue-expedition/triway_burndown.py` owns the
-  oldest / newest / connected orderings and the DoD/DoV checklist parser. Owner decision
-  (2026-10-26): the checklist and reference parsers here (STEPS, untracked criteria,
-  federation aliases, negation, typed edges) move into `triway_burndown.py` in their own
-  PR, and this module then imports them instead of keeping `parse_checklist()` and
-  `extract_refs()`. The graph metrics, lanes, rollups and ledger stay here.
+- **Reconciled merged owners (#906 and #907):** triway keeps its standalone five-repo issue-only census and DoV/DoD projection. This module owns USER/JADE graph ranking, PR/issue edges, lanes and ledger. Both consume the same title-vocabulary provider in this directory. Neither merge event establishes governance admission.
+- **Parsers.** Owner decision (2026-10-26): the checklist and reference parsers move into
+  `triway_burndown.py` (#928) and this module imports them (#929).
 - gg_MATH (`GBOGEB/gg_MATH`) has `kernels/bradley_terry.py` (pairwise ranking),
   `kernels/spectral_graph.py` (Laplacian, Dirichlet energy) and
   `mission/federation/n5_repo_graph_math.py` (typed graph, spectral gap; at most 64
