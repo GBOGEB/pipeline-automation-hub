@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 import uuid
 from contextlib import redirect_stdout
 from pathlib import Path
@@ -171,6 +172,30 @@ class EndToEnd(unittest.TestCase):
         cfg = subprocess.run(["git", "--git-dir", str(C.cache_dir(self.cache, "demo/service")), "config",
                               "remote.origin.partialclonefilter"], capture_output=True).stdout.decode().strip()
         self.assertEqual(cfg, "blob:none")
+
+    def test_unfetched_blobs_fail_closed(self):
+        # A blob fetch that silently returns nothing (network timeout) must not read as absent files.
+        cache = self.tmp / "starved"
+        cache.mkdir(exist_ok=True)
+        with mock.patch.object(C.Git, "fetch_blobs", lambda _self, _oids: None):
+            info = C.fetch_repo(cache, "demo/service", "main", self.base, url=self.url)
+        self.assertFalse(info["ok"])
+        self.assertTrue(info["error"].startswith("BLOBS_UNFETCHED"), info)
+        self.assertGreater(info["blobs_unfetched"], 0)
+        census, _obj = C.scan(cache, self.roster, "2026-10-23T00:00:00Z", probe_pages_on=False, probe_api_on=False,
+                              only={"demo/service"})
+        self.assertGreater(census["repos"][0]["blobs_unread"], 0)
+        self.assertEqual(C.unread_errors(census), [f"BLOBS_UNREAD:demo/service:{census['repos'][0]['blobs_unread']}"])
+        self.assertEqual(C.unread_errors(self.census), [])
+        roster = self.tmp / "starved-roster.json"
+        roster.write_text(json.dumps({"repositories": [json.loads(self.roster.read_text())["repositories"][0]]}),
+                          encoding="utf-8")
+        with redirect_stdout(io.StringIO()), mock.patch.object(C.Git, "fetch_blobs", lambda _self, _oids: None):
+            self.assertEqual(C.main(["fetch", "--cache", str(cache), "--roster", str(roster)]), 1)
+        with redirect_stdout(io.StringIO()):
+            self.assertEqual(C.main(["scan", "--cache", str(cache), "--roster", str(roster), "--no-pages", "--no-api",
+                                     "--out", str(self.tmp / "starved.json"), "--objects", str(self.tmp / "starved-o.json"),
+                                     "--observed-at", "2026-10-23T00:00:00Z"]), 1)
 
     def test_failed_tag_read_is_unknown_not_zero(self):
         d = self.tmp / "tags-probe.git"
