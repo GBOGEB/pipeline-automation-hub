@@ -1,0 +1,282 @@
+{
+  "schema": "codepurple.watch.mip-execution-queue/v1",
+  "handover": "CODE_PURPLE_WATCH_RESTART_20261026_N0",
+  "source_class": "PLANNED_CHANGE_NOT_NATIVE_RELEASE_EVIDENCE",
+  "historical_cutoff": "2026-10-26T00:43:00+01:00",
+  "as_of": "2026-10-26",
+  "frozen_source_note": "PR #876 N0 is historical; N1 appends native source observations without rewriting old events",
+  "references": [
+    "handover/session/LOSSLESS_HANDOVER_CODE_PURPLE_WATCH_N0_20261026.md",
+    "handover/session/CODE_PURPLE_WATCH_VNEXT_EXECUTION_CROSSWALK_20261026.md",
+    "handover/session/CODE_PURPLE_WATCH_VNEXT_N1_EXECUTION_DELTA_20261026.md",
+    "handover/session/RESTART_DROPIN_CODE_PURPLE_WATCH_N0_20261026.md"
+  ],
+  "governance": {
+    "merge_admission": "HOLD",
+    "security_waiver": "NONE",
+    "qps_owner_acceptance": "WITHHELD",
+    "formal_engineering_credit_delta": 0,
+    "no_new_scheduled_watch": true
+  },
+  "landing_order": [
+    {
+      "name": "preservation",
+      "candidate_pr": 876
+    },
+    {
+      "name": "semantic_verifier",
+      "candidate_pr": 878
+    },
+    {
+      "name": "transition_consumer",
+      "candidate_pr": 881
+    },
+    {
+      "name": "public_native_feed_stacked",
+      "candidate_pr": 882,
+      "depends_on_pr": 881
+    },
+    {
+      "name": "required_gate_collision_repair",
+      "candidate_pr": 883
+    },
+    {
+      "name": "integrated_dashboard",
+      "candidate_pr": null,
+      "blocked_on": "current-head native source and independent governance"
+    }
+  ],
+  "alert_contract": {
+    "stable_hold_equal_transitions": 3,
+    "distinct_qualifying_observations": 4,
+    "notify_only_meaningful": true,
+    "unknown_is_not_zero": true
+  },
+  "tasks": [
+    {
+      "id": "MIP-01",
+      "priority": "P0",
+      "status": "CANDIDATE_UNMERGED",
+      "canonical_owner": "gogreen/scale_dock_series.py + watch_decision.py",
+      "candidate_prs": [
+        876,
+        881
+      ],
+      "dependencies": [],
+      "definition_of_done": "Native replay once, one durable qualified cursor, no duplicate event credit",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-02",
+      "priority": "P0",
+      "status": "CANDIDATE_UNMERGED",
+      "canonical_owner": "gogreen/watch_decision.py",
+      "candidate_prs": [
+        881
+      ],
+      "dependencies": [
+        "MIP-01"
+      ],
+      "definition_of_done": "Five distinct SHAs and a negative synthetic-merge-as-PR-head test",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-03",
+      "priority": "P0",
+      "status": "CANDIDATE_UNMERGED",
+      "canonical_owner": "gogreen/verify_native_zip.py",
+      "candidate_prs": [
+        878
+      ],
+      "dependencies": [],
+      "definition_of_done": "Valid ZIP with invalid JSON or contradictory producer fails semantic QA; exact-head owner receipt",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-04",
+      "priority": "P0",
+      "status": "CANDIDATE_UNMERGED",
+      "canonical_owner": "scripts/first_pass_closure_gate.py; gogreen/watch_decision.py",
+      "candidate_prs": [
+        881,
+        883
+      ],
+      "dependencies": [
+        "MIP-02"
+      ],
+      "definition_of_done": "Required failed receipt vetoes workflow GREEN; current-head gate/independent review proof",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-05",
+      "priority": "P0",
+      "status": "EXISTING_PARTIAL",
+      "canonical_owner": "gogreen/verify_native_zip.py; code-purple-live-census.yml; federation-atlas/build_atlas.py",
+      "candidate_prs": [
+        530,
+        531,
+        533
+      ],
+      "dependencies": [
+        "MIP-03"
+      ],
+      "definition_of_done": "Distinct producer/consumer authority, native source readback and no competing breadth",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-06",
+      "priority": "P0",
+      "status": "OPERATOR_HOLD",
+      "canonical_owner": "ChatGPT scheduled tasks / one owner per lane",
+      "candidate_prs": [],
+      "dependencies": [],
+      "definition_of_done": "Reconcile live enabled tasks without silently disabling owner-specific monitoring",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-07",
+      "priority": "P1",
+      "status": "OPEN",
+      "canonical_owner": "native JUnit/accounting source owner; source-bound consumer",
+      "candidate_prs": [],
+      "dependencies": [
+        "MIP-02"
+      ],
+      "definition_of_done": "Testcases, suite headers, skips and matrix repetitions reconcile",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-08",
+      "priority": "P1",
+      "status": "EXISTING_PARTIAL",
+      "canonical_owner": "federation-atlas/coverage_integrity.py; gogreen/watch_decision.py",
+      "candidate_prs": [
+        881
+      ],
+      "dependencies": [
+        "MIP-02"
+      ],
+      "definition_of_done": "Matched file blobs, tool, selection, eligible denominators before delta",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-09",
+      "priority": "P1",
+      "status": "CANDIDATE_UNMERGED",
+      "canonical_owner": "everred/harvest.py; gogreen/watch_decision.py",
+      "candidate_prs": [
+        881
+      ],
+      "dependencies": [
+        "MIP-01"
+      ],
+      "definition_of_done": "Repeated occurrences not roots; owner root closure independent",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-10",
+      "priority": "P1",
+      "status": "EXISTING_PARTIAL",
+      "canonical_owner": "gogreen/success_graph/runner_telemetry.py",
+      "candidate_prs": [],
+      "dependencies": [
+        "MIP-01"
+      ],
+      "definition_of_done": "Native queue/idle/active/runner-hours measurable, not estimates",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-11",
+      "priority": "P1",
+      "status": "CANDIDATE_UNMERGED",
+      "canonical_owner": "federation/convergence/converge.py; gogreen/watch_decision.py",
+      "candidate_prs": [
+        881,
+        882
+      ],
+      "dependencies": [
+        "MIP-01",
+        "MIP-02"
+      ],
+      "definition_of_done": "Four distinct comparable native events, stable HOLD and replay suppression",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-12",
+      "priority": "P1",
+      "status": "BLOCKED_ON_SOURCE",
+      "canonical_owner": "gogreen/launcher; federation-atlas/build_atlas.py",
+      "candidate_prs": [],
+      "dependencies": [
+        "MIP-03",
+        "MIP-05",
+        "MIP-11"
+      ],
+      "definition_of_done": "One navigable source-pinned watch view; Playwright, links and published route QA",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-13",
+      "priority": "P2",
+      "status": "NOT_ASSESSABLE",
+      "canonical_owner": "gg_MATH source; federation statistical consumer",
+      "candidate_prs": [],
+      "dependencies": [
+        "MIP-08",
+        "MIP-10",
+        "MIP-11"
+      ],
+      "definition_of_done": "Population-bound PCA and connected BT; no fabricated qualification",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-14",
+      "priority": "P2",
+      "status": "CANDIDATE_UNMERGED",
+      "canonical_owner": "gogreen/tests; canonical negative-test suites",
+      "candidate_prs": [
+        878,
+        881,
+        882,
+        883
+      ],
+      "dependencies": [
+        "MIP-02",
+        "MIP-03",
+        "MIP-04"
+      ],
+      "definition_of_done": "Mutation, reverse, replay, negative, failed-gate and privacy tests pass exact-head",
+      "completed": false,
+      "formal_credit_delta": 0
+    },
+    {
+      "id": "MIP-15",
+      "priority": "P2",
+      "status": "EXISTING_PARTIAL",
+      "canonical_owner": "v2/handoff; handover/session; watch_n0_session",
+      "candidate_prs": [
+        876
+      ],
+      "dependencies": [
+        "MIP-01",
+        "MIP-06"
+      ],
+      "definition_of_done": "Session can retire and restart from immutable repo receipts without replay duplication",
+      "completed": false,
+      "formal_credit_delta": 0
+    }
+  ]
+}
