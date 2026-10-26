@@ -121,6 +121,13 @@ new and gone items, new and removed links, new PR→issue dependencies, checklis
 
 ## Reuse and ownership
 
+- **Overlap with #906 (on master).** `qps-triage-ultra/issue-expedition/triway_burndown.py`
+  already owns the oldest / newest / connected orderings and an explicit DoD/DoV checklist
+  parser. This module was built in parallel and must be reconciled before merge (AGENTS.md
+  L4): either the checklist and reference parsers here move into `triway_burndown.py`
+  (which gains STEPS, untracked criteria, federation aliases and negation) and this module
+  imports them, or this module is folded into `issue-expedition/`. The graph metrics,
+  lanes, rollups and ledger here have no owner on master.
 - gg_MATH (`GBOGEB/gg_MATH`) has `kernels/bradley_terry.py` (pairwise ranking),
   `kernels/spectral_graph.py` (Laplacian, Dirichlet energy) and
   `mission/federation/n5_repo_graph_math.py` (typed graph, spectral gap; at most 64
