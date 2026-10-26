@@ -243,7 +243,7 @@ class CursorPersistence(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             source = pathlib.Path(folder) / "source.jsonl"
             cursor = pathlib.Path(folder) / "watch_cursor.json"
-            source.write_text(json.dumps(terminal(1)) + "\n", encoding="utf-8")
+            source.write_text(json.dumps(terminal(1)) + "\n", encoding="utf-8", newline="\n")
             out = io.StringIO()
             with contextlib.redirect_stdout(out):
                 self.assertEqual(W.main(["--events", str(source), "--cursor", str(cursor)]), 0)
@@ -277,7 +277,7 @@ class CursorPersistence(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             events = pathlib.Path(folder) / "events.jsonl"
             cursor = pathlib.Path(folder) / "cursor.json"
-            events.write_text(json.dumps(terminal(1)) + "\n", encoding="utf-8")
+            events.write_text(json.dumps(terminal(1)) + "\n", encoding="utf-8", newline="\n")
             with mock.patch("os.fsync", wraps=os.fsync) as syncing:
                 with contextlib.redirect_stdout(io.StringIO()):
                     W.main(["--events", str(events), "--cursor", str(cursor),
@@ -295,8 +295,8 @@ class CursorPersistence(unittest.TestCase):
             events = pathlib.Path(folder) / "events.jsonl"
             cursor = pathlib.Path(folder) / "cursor.json"
             marker = cursor.with_name(cursor.name + ".lock")
-            events.write_text(json.dumps(terminal(1)) + "\n", encoding="utf-8")
-            marker.write_text("orphaned-old-exclusive-lock", encoding="utf-8")
+            events.write_text(json.dumps(terminal(1)) + "\n", encoding="utf-8", newline="\n")
+            marker.write_text("orphaned-old-exclusive-lock", encoding="utf-8", newline="\n")
             # Old O_EXCL locking failed here forever; advisory lock acquires
             # because no live process holds a lease on the inode.
             with contextlib.redirect_stdout(io.StringIO()):
@@ -315,7 +315,7 @@ class CursorPersistence(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             events = pathlib.Path(folder) / "events.jsonl"
             cursor = pathlib.Path(folder) / "cursor.json"
-            events.write_text(json.dumps(terminal(1)) + "\n", encoding="utf-8")
+            events.write_text(json.dumps(terminal(1)) + "\n", encoding="utf-8", newline="\n")
             marker = cursor.with_name(cursor.name + ".lock")
             with W.cursor_writer_lock(marker):
                 with self.assertRaisesRegex(ValueError, "single-writer lock held"):
@@ -336,7 +336,7 @@ class CursorPersistence(unittest.TestCase):
             cursor = pathlib.Path(folder) / "watch_cursor.json"
             bad = terminal()
             bad["repository"] = "GBOGEB/cryoplant-project"
-            source.write_text(json.dumps(bad) + "\n", encoding="utf-8")
+            source.write_text(json.dumps(bad) + "\n", encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError, "restricted"):
                 W.main(["--events", str(source), "--cursor", str(cursor),
                         "--write-cursor"])
