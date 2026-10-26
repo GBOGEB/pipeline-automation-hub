@@ -999,7 +999,7 @@ def flow(snap: dict, repos: set[str], level: float = 0.90) -> dict | None:
 def predicate_leaks(nodes: dict, edges: list[dict]) -> list[dict]:
     """Issues closed in the window as completed with open checklist items and no
     open successor (supersession) or open parent to carry them: work that may
-    have vanished from the burndown (the QPS #210 pattern)."""
+    have vanished from the burndown (the D+14 E-07 closure pattern)."""
     near = defaultdict(set)
     for e in edges:
         if e["kind"] in ("SUPERSEDES", "DUPLICATE_OF"):
