@@ -288,7 +288,7 @@ def main() -> None:
     payload=json.dumps(out,indent=2,sort_keys=True)+"\n"
     if args.out:
         args.out.parent.mkdir(parents=True,exist_ok=True)
-        args.out.write_text(payload,encoding="utf-8")
+        args.out.write_text(payload,encoding="utf-8",newline="\n")
     print(json.dumps({"schema":out["schema"],"GM":out["counts"]["GM"],
                       "node_count":out["mycelium_graph"]["projection_receipt"]["nodes"],
                       "edge_count":out["mycelium_graph"]["projection_receipt"]["edges"],

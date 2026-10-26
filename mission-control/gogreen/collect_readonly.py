@@ -164,8 +164,8 @@ def main():
     token = os.environ.get("GITHUB_TOKEN", "")
     result, metadata = scan(catalog, lambda path: get_json(path, token), args.max_runs, args.max_jobs)
     args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "live_intake.json").write_text(json.dumps(result, sort_keys=True, indent=2) + "\n", encoding="utf-8")
-    (args.out / "live_scanner_metadata.json").write_text(json.dumps(metadata, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    (args.out / "live_intake.json").write_text(json.dumps(result, sort_keys=True, indent=2) + "\n", encoding="utf-8", newline="\n")
+    (args.out / "live_scanner_metadata.json").write_text(json.dumps(metadata, sort_keys=True, indent=2) + "\n", encoding="utf-8", newline="\n")
     emit(result, args.out)
     print(canonical({"errors": len(metadata["collection_errors"]),
                      "unknown_failures": len(metadata["unattributed_non_green"]),

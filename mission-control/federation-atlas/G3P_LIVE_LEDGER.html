@@ -11,7 +11,7 @@
 <section><h2>Source provenance and errors</h2><pre id="diagnostics"></pre></section></main>
 <script>
 "use strict";
-var sources=[["W-CBD-GRAPH-01","master","CBD_GOLDEN_GRAPH_N3_20261017.json",1],["W-CBD-GRAPH-02","master","CBD_GOLDEN_GRAPH_N6_20261017.json",4],["W-CBD-GRAPH-03","feat/mc-g3p-n7-n9-evidence-20261017","CBD_GOLDEN_GRAPH_N9_20261017.json",7],["W-CBD-GRAPH-04","feat/mc-g3a-n10-n12-evidence-20261017","G3A_N10_N12_LEDGER_20261017.json",10]];
+var sources=[["W-CBD-GRAPH-01","master","CBD_GOLDEN_GRAPH_N3_20261017.json",1],["W-CBD-GRAPH-02","master","CBD_GOLDEN_GRAPH_N6_20261017.json",4],["W-CBD-GRAPH-03","master","CBD_GOLDEN_GRAPH_N9_20261017.json",7],["W-CBD-GRAPH-04","feat/mc-g3a-n10-n12-evidence-20261017","G3A_N10_N12_LEDGER_20261017.json",10]];
 var repo="GBOGEB/pipeline-automation-hub",dir="mission-control/federation-atlas/",clock=null,loaded=null,busy=false;
 function id(s){return document.getElementById(s)}function chk(ok,msg){if(!ok)throw Error(msg)}
 async function read(s){var url="https://raw.githubusercontent.com/"+repo+"/"+encodeURIComponent(s[1])+"/"+dir+s[2]+"?r="+Date.now();var r=await fetch(url,{cache:"no-store"});chk(r.ok,s[0]+" HTTP "+r.status);var d=await r.json();

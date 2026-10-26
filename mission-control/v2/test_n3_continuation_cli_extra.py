@@ -23,14 +23,14 @@ class ContinuationCLIExtraTests(unittest.TestCase):
             path = Path(d) / 'copy.json'
             with patch.object(sys, 'argv', ['n3_continuation.py', str(LEDGER), '--out', str(path)]):
                 self.assertEqual(continuation.main(), 0)
-            saved = json.loads(path.read_text())
+            saved = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(saved['receipts'][-1]['ordinal'], 6)
             self.assertEqual(saved['authority_transfer'], False)
 
     def test_record_requires_out(self):
         with tempfile.TemporaryDirectory() as d:
             rec = Path(d) / 'receipt.json'
-            rec.write_text('{}')
+            rec.write_text('{}', encoding="utf-8", newline="\n")
             with patch.object(sys, 'argv', ['n3_continuation.py', str(LEDGER), '--record', str(rec)]):
                 with self.assertRaisesRegex(ValueError, '--out required'):
                     continuation.main()
@@ -38,7 +38,7 @@ class ContinuationCLIExtraTests(unittest.TestCase):
     def test_record_when_no_slots_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             rec = Path(d) / 'receipt.json'
-            rec.write_text('{}')
+            rec.write_text('{}', encoding="utf-8", newline="\n")
             target = Path(d) / 'next.json'
             with patch.object(sys, 'argv', ['n3_continuation.py', str(LEDGER), '--record', str(rec), '--out', str(target)]):
                 with self.assertRaisesRegex(ValueError, 'no legal next pulse'):
@@ -47,7 +47,7 @@ class ContinuationCLIExtraTests(unittest.TestCase):
 
     def test_blocked_receipt_cli_returns_exit_two(self):
         with tempfile.TemporaryDirectory() as d:
-            obj = json.loads(LEDGER.read_text())
+            obj = json.loads(LEDGER.read_text(encoding="utf-8"))
             obj['receipts'] = obj['receipts'][:1]
             first = obj['receipts'][0]
             obj['receipts'].append({
@@ -62,10 +62,10 @@ class ContinuationCLIExtraTests(unittest.TestCase):
             })
             source = Path(d) / 'blocked.json'
             out = Path(d) / 'out.json'
-            source.write_text(json.dumps(obj))
+            source.write_text(json.dumps(obj), encoding="utf-8", newline="\n")
             with patch.object(sys, 'argv', ['n3_continuation.py', str(source), '--out', str(out)]):
                 self.assertEqual(continuation.main(), 2)
-            self.assertEqual(json.loads(out.read_text())['receipts'][-1]['status'], 'BLOCKED')
+            self.assertEqual(json.loads(out.read_text(encoding="utf-8"))['receipts'][-1]['status'], 'BLOCKED')
 
     def test_valid_path_requires_clean_segments(self):
         self.assertFalse(continuation.safe_path('../evil'))
@@ -74,7 +74,7 @@ class ContinuationCLIExtraTests(unittest.TestCase):
         self.assertTrue(continuation.safe_path('mission-control/v2/file.py'))
 
     def test_reject_unsafe_receipt_even_when_sha_matches(self):
-        o = json.loads(LEDGER.read_text())
+        o = json.loads(LEDGER.read_text(encoding="utf-8"))
         o['receipts'][0]['security_waiver'] = True
         with self.assertRaisesRegex(ValueError, 'authority escalation'):
             continuation.validate(o)

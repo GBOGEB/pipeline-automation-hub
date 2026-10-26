@@ -5,12 +5,17 @@ Read-only, not a scheduler, remote worker, issuer, release gate or owner SSOT.
 from __future__ import annotations
 import hashlib
 import html
+import importlib.util
 import json
 import re
 from collections import Counter, defaultdict
+from pathlib import Path
 
 SCHEMA = "jade.temple.sprint.dag.v1"
 SHA = re.compile(r"[0-9a-f]{40}\Z")
+_pb = importlib.util.spec_from_file_location("jade_private_boundary", Path(__file__).resolve().parents[1] / "tools" / "private_boundary.py")
+PB = importlib.util.module_from_spec(_pb)
+_pb.loader.exec_module(PB)
 AXES = (
     ("source_coverage", "matched statement and branch arcs", "ABACUS / repo owner"),
     ("adversarial_penetration", "effective fault/oracle pairs", "native test owner"),
@@ -51,7 +56,7 @@ def validate(source, readback=None):
     demand(len({r.get("rank") for r in rows})==21,"RANK_COLLISION")
     for r in rows:
         demand(type(r.get("repo")) is str and r["repo"].startswith("GBOGEB/"),"FOREIGN_OWNER")
-        demand(type(r.get("head_readback")) is str and SHA.fullmatch(r["head_readback"]),"UNPINNED_HEAD")
+        demand(type(r.get("head_readback")) is str and (SHA.fullmatch(r["head_readback"]) or r["head_readback"]==PB.MARK),"UNPINNED_HEAD")
         demand(r.get("priority") in PRIORITY and 1 <= r.get("rank",0) <= 21,"BAD_PRIORITY")
         demand(r.get("readiness",{}).get("inventory")=="J0_OBSERVED","J0_UNVERIFIED")
         demand(r.get("readiness",{}).get("point_release")=="UNQUALIFIED" and
@@ -67,7 +72,7 @@ def validate(source, readback=None):
         demand(type(newer) is list and len(newer)==21 and
                {r["repo"] for r in rows}=={r["repo"] for r in newer},"READBACK_COHORT")
         for r in newer:
-            demand(type(r.get("current_head")) is str and SHA.fullmatch(r["current_head"]),"READBACK_HEAD")
+            demand(type(r.get("current_head")) is str and (SHA.fullmatch(r["current_head"]) or r["current_head"]==PB.MARK),"READBACK_HEAD")
             for field in ("owner_J1_navigation_qualified","owner_J2_pages_qualified",
                           "owner_J3_governance_qualified","owner_J4_exact_head_release_ci",
                           "owner_J5_point_release"):

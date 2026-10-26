@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Deterministic, offline JADE GoGREEN projection. Never fetch live GitHub here."""
-import csv, hashlib, io, json, re, sys
+import csv, hashlib, importlib.util, io, json, re, sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/'data'
 SITE=ROOT/'site'
+_pb=importlib.util.spec_from_file_location('jade_private_boundary',ROOT/'tools/private_boundary.py');PB=importlib.util.module_from_spec(_pb);_pb.loader.exec_module(PB)
 def read(name):return json.loads((DATA/name).read_text('utf-8'))
 def compact(obj):return json.dumps(obj,sort_keys=True,separators=(',',':'),ensure_ascii=True).replace('<','\\u003c').replace('>','\\u003e').replace('&','\\u0026')
 def build():
@@ -16,12 +17,12 @@ def build():
  assert sum(r['historical_n11_root_candidates'] for r in rows)==706
  assert sum(not r['observed_recent_branch_runs'] for r in rows)==8
  assert sum(r['site']['successful_dynamic_pages_workflow_observed'] for r in rows)==3
- assert all(re.fullmatch('[0-9a-f]{40}',r['head_readback']) and r['readiness']['point_release']=='UNQUALIFIED' and not r['authority_transfer'] and r['merge_admission']=='HOLD' for r in rows)
+ assert all((re.fullmatch('[0-9a-f]{40}',r['head_readback']) or r['head_readback']==PB.MARK) and r['readiness']['point_release']=='UNQUALIFIED' and not r['authority_transfer'] and r['merge_admission']=='HOLD' for r in rows)
  assert all(r['site']['served_http_url'] is None and r['site']['served_sha'] is None for r in rows)
  assert {r['historical_gogreen']['status'] for r in rows}=={'COHORT_NOT_SAMPLED','HISTORICAL_RED_OBSERVED','POSITIVE_OBSERVED_HISTORICAL','NO_NATIVE_CHECK_EVIDENCE'}
  g=m['kpis'];assert g['n11_green_sample_overlap']['numerator']==13 and g['positive_historical_sample_n11_overlap']['numerator']==9
  assert g['historical_gogreen_sample_prs']=={'sampled_prs':41,'check_ids':509,'failed_check_manifestations':33,'cohort':'OTHER_TOP21_COHORT'}
- z={'schema':'jade.temple.presentation.v1','admission':'HOLD','authority_transfer':False,'source_observed_window':d['observed_window'],'crosswalk':c,'metrics':m,'rows':rows,'evidence_promoted':False,'security_waiver':False}
+ z=PB.project({'schema':'jade.temple.presentation.v1','admission':'HOLD','authority_transfer':False,'source_observed_window':d['observed_window'],'crosswalk':c,'metrics':m,'rows':rows,'evidence_promoted':False,'security_waiver':False});rows=z['rows']
  out={}
  out['green.html']=(SITE/'green_template.html').read_bytes()
  out['jade_data.js']=('window.JADE_NPLUS1='+compact(z)+';\n').encode('utf-8')

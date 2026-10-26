@@ -242,7 +242,7 @@ class NativeIncubatorTests(unittest.TestCase):
             p = Path(tmp)
             data = specimen()
             mod.build(data, SHA, p)
-            (p / "index.html").write_text("corrupted", encoding="utf-8")
+            (p / "index.html").write_text("corrupted", encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError, "generated preview drift"):
                 mod.build(data, SHA, p, check=True)
 

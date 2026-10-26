@@ -46,7 +46,7 @@ def abacus_routes(conclusion='success', head=ABACUS_HEAD):
     return {f'/repos/{ABACUS}': {'default_branch': 'main'},
             f'/repos/{ABACUS}/commits/main': {'sha': head},
             f'/repos/{ABACUS}/actions/runs?head_sha={head}&per_page=100&page=1':
-                {'total_count': 1, 'workflow_runs': [{'id': 801, 'head_sha': head, 'name': 'CI'}]},
+                {'total_count': 1, 'workflow_runs': [{'id': 801, 'head_sha': head, 'name': 'CI', 'status': 'completed'}]},
             f'/repos/{ABACUS}/actions/runs/801/jobs?per_page=100&page=1': {'total_count': 1, 'jobs': [job]},
             f'/repos/{ABACUS}/actions/runs?status=queued&per_page=100&page=1': {'total_count': 0, 'workflow_runs': []}}
 
@@ -110,7 +110,8 @@ class GhReaderTests(unittest.TestCase):
             calls.append((args, kw))
             rc, out, err = results[min(len(calls), len(results)) - 1]
             return subprocess.CompletedProcess(args, rc, out, err)
-        return mod.GhReader(run=run), calls
+        self.waits = []
+        return mod.GhReader(run=run, sleep=self.waits.append), calls
 
     def test_uses_gh_login_without_shell_tokens(self):
         gh, calls = self.run_with((0, '{"sha": "x"}', ''))
@@ -126,12 +127,12 @@ class GhReaderTests(unittest.TestCase):
         gh, calls = self.run_with((1, '', 'gh: Server Error (HTTP 502)'))
         with self.assertRaises(OSError):
             gh.get('/repos/x/y')
-        self.assertEqual(len(calls), 3)
+        self.assertEqual((len(calls), self.waits), (3, [5, 10]))
 
-    def test_recovers_after_one_5xx(self):
-        gh, calls = self.run_with((1, '', 'gh: Server Error (HTTP 502)'), (0, '[]', ''))
+    def test_recovers_after_one_transport_error(self):
+        gh, calls = self.run_with((1, '', 'Get "https://api.github.com/x": dial tcp: i/o timeout'), (0, '[]', ''))
         self.assertEqual(gh.get('/repos/x/y'), [])
-        self.assertEqual(len(calls), 2)
+        self.assertEqual((len(calls), self.waits), (2, [5]))
 
     def test_no_retry_on_4xx(self):
         gh, calls = self.run_with((1, '', 'gh: Not Found (HTTP 404)'))
@@ -173,7 +174,7 @@ class ObserveRepoTests(unittest.TestCase):
         seen = mod.observe_repo(reader(), CODEX, ROOTS, {})
         self.assertEqual(seen['head'], CODEX_HEAD)
         self.assertEqual(seen['eligible'], 46)
-        self.assertEqual(seen['provenance'], {'branch': 'main', 'runs': 24, 'jobs_seen': 46,
+        self.assertEqual(seen['provenance'], {'branch': 'main', 'runs': 24, 'runs_in_progress': 0, 'jobs_seen': 46,
                                               'job_identities': 46, 'completed': 46, 'incomplete': 0})
         red = {f['id']: f for f in seen['findings']}
         self.assertEqual(len(red), 2)
@@ -215,7 +216,7 @@ class ObserveRepoTests(unittest.TestCase):
     def test_latest_attempt_wins_one_identity(self):
         routes = abacus_routes('failure')
         runs = routes[f'/repos/{ABACUS}/actions/runs?head_sha={ABACUS_HEAD}&per_page=100&page=1']
-        runs['workflow_runs'].append({'id': 802, 'head_sha': ABACUS_HEAD, 'name': 'CI'})
+        runs['workflow_runs'].append({'id': 802, 'head_sha': ABACUS_HEAD, 'name': 'CI', 'status': 'completed'})
         runs['total_count'] = 2
         retry = copy.deepcopy(routes[f'/repos/{ABACUS}/actions/runs/801/jobs?per_page=100&page=1'])
         retry['jobs'][0].update(id=9002, run_id=802, run_attempt=2, conclusion='success')
@@ -227,6 +228,14 @@ class ObserveRepoTests(unittest.TestCase):
         runs['workflow_runs'].reverse()  # an older attempt listed after the retry still loses
         seen = mod.observe_repo(FakeReader(routes), ABACUS, ROOTS, {})
         self.assertEqual((seen['provenance']['job_identities'], seen['findings']), (1, []))
+
+    def test_in_progress_run_is_not_read(self):
+        routes = abacus_routes()
+        routes[f'/repos/{ABACUS}/actions/runs?head_sha={ABACUS_HEAD}&per_page=100&page=1']['workflow_runs'][0]['status'] = 'in_progress'
+        fake = FakeReader(routes)
+        seen = mod.observe_repo(fake, ABACUS, ROOTS, {})
+        self.assertEqual((seen['eligible'], seen['provenance']['runs_in_progress'], seen['provenance']['jobs_seen']), (0, 1, 0))
+        self.assertFalse([r for r in fake.calls if '/jobs' in r])
 
     def test_incomplete_job_not_eligible(self):
         routes = abacus_routes()
@@ -345,7 +354,7 @@ class PulseLedgerTests(unittest.TestCase):
     def test_tampered_ledger_holds(self):
         n0 = mod.append(self.path, first_pulse())
         mod.append(self.path, mod.observe(reader(), ROOTS, n0, fake_git(), now=T1))
-        lines = self.path.read_text().splitlines()
+        lines = self.path.read_text(encoding="utf-8").splitlines()
         cases = {'chain broken': [mod.line({**json.loads(lines[0]), 'hub_sha': 'b' * 40}), lines[1]],
                  'not canonical': [lines[0].replace('{', '{ ', 1), lines[1]],
                  'not JSON': ['{', lines[1]],
@@ -353,7 +362,7 @@ class PulseLedgerTests(unittest.TestCase):
         for message, broken in cases.items():
             with self.subTest(message), self.assertRaisesRegex(ValueError, message):
                 mod.verify(broken)
-        self.path.write_text(lines[0])  # no trailing newline: an interrupted write
+        self.path.write_text(lines[0], encoding="utf-8", newline="\n")  # no trailing newline: an interrupted write
         with self.assertRaisesRegex(ValueError, 'truncated'):
             mod.read_ledger(self.path)
 
@@ -406,16 +415,16 @@ class CliTests(unittest.TestCase):
         yaml_stub = types.SimpleNamespace(safe_load=lambda text: {'roots': ROOTS})
         with tempfile.TemporaryDirectory() as tmp:
             ledger, roots, fixture, out = (Path(tmp) / n for n in ('p.jsonl', 'roots.yaml', 'fx.json', 's.json'))
-            roots.write_text('roots: []\n')
+            roots.write_text('roots: []\n', encoding="utf-8", newline="\n")
             with patch.dict(sys.modules, {'yaml': yaml_stub}), patch.object(mod, 'GhReader', lambda: reader()), \
                     patch.object(mod, 'git_reader', lambda: fake_git()), patch('sys.stdout'):
                 self.assertEqual(mod.main(['pulse', '--ledger', str(ledger), '--roots', str(roots),
                                            '--record', str(fixture)]), 0)
                 self.assertEqual(mod.main(['series', '--ledger', str(ledger), '--out', str(out)]), 0)
-            recorded = json.loads(fixture.read_text())
+            recorded = json.loads(fixture.read_text(encoding="utf-8"))
             self.assertTrue(recorded)
             self.assertFalse([r for r in recorded if '/pulls' in r or '/search/' in r or 'cryoplant' in r])
-            self.assertEqual(json.loads(out.read_text())['observation_class'], 'HISTORICAL_REPLAY')
+            self.assertEqual(json.loads(out.read_text(encoding="utf-8"))['observation_class'], 'HISTORICAL_REPLAY')
 
 
 class CommittedLedgerTests(unittest.TestCase):

@@ -20,7 +20,7 @@ CURRENT = "c" * 40
 class EvolutionaryTimelineTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.source = json.loads(SAMPLE.read_text())
+        cls.source = json.loads(SAMPLE.read_text(encoding="utf-8"))
 
     def data(self):
         return copy.deepcopy(self.source)
@@ -171,7 +171,7 @@ class EvolutionaryTimelineTests(unittest.TestCase):
             self.assertEqual(a, b)
             self.assertEqual(len(a), 64)
             self.assertEqual(first, (out / "wave_timeline.json").read_bytes())
-            self.assertIn("G2", (out / "wave_timeline.html").read_text())
+            self.assertIn("G2", (out / "wave_timeline.html").read_text(encoding="utf-8"))
 
     def test_native_cli_fail_closed_admission(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -185,7 +185,7 @@ class EvolutionaryTimelineTests(unittest.TestCase):
             self.assertEqual(payload["latest"], f"G{len(self.data()['waves'])-1}")
             self.assertEqual(payload["next"], f"G{len(self.data()['waves'])}")
             self.assertFalse(payload["merge_authorized"])
-            stored = json.loads((Path(temp) / "wave_timeline.json").read_text())
+            stored = json.loads((Path(temp) / "wave_timeline.json").read_text(encoding="utf-8"))
             self.assertEqual(stored["admission"], "HOLD")
 
 

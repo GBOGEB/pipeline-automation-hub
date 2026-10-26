@@ -16,9 +16,9 @@ SAMPLES=HERE/'samples'
 class FederationContract(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.g0=json.loads((SAMPLES/'fleet_g0.json').read_text())
-        cls.g1=json.loads((SAMPLES/'fleet_g1_snapshot.json').read_text())
-        cls.doc=json.loads((SAMPLES/'federation_g5.json').read_text())
+        cls.g0=json.loads((SAMPLES/'fleet_g0.json').read_text(encoding="utf-8"))
+        cls.g1=json.loads((SAMPLES/'fleet_g1_snapshot.json').read_text(encoding="utf-8"))
+        cls.doc=json.loads((SAMPLES/'federation_g5.json').read_text(encoding="utf-8"))
 
     def sample(self):
         return copy.deepcopy(self.doc)
@@ -127,7 +127,7 @@ class FederationContract(unittest.TestCase):
             a=f.emit(r,out);b=f.emit(r,out)
             self.assertEqual(a,b)
             self.assertEqual(a,hashlib.sha256((out/'federation_census.json').read_bytes()).hexdigest())
-            self.assertIn('GOGREEN G5',(out/'federation_pulse.md').read_text())
+            self.assertIn('GOGREEN G5',(out/'federation_pulse.md').read_text(encoding="utf-8"))
 
     def test_cli_real_execution(self):
         with tempfile.TemporaryDirectory() as tmp:

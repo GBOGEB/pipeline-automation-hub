@@ -197,19 +197,19 @@ class SipocInstancePlannerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             inp, contract, out = root / 'input.json', root / 'atlas.json', root / 'out'
-            inp.write_text(json.dumps(sample()), encoding='utf-8')
-            contract.write_text(json.dumps(atlas()), encoding='utf-8')
+            inp.write_text(json.dumps(sample()), encoding='utf-8', newline="\n")
+            contract.write_text(json.dumps(atlas()), encoding='utf-8', newline="\n")
             argv = ['sipoc_instances.py', '--input', str(inp), '--atlas', str(contract),
                     '--out', str(out), '--synthetic-replay']
             with patch('sys.argv', argv), redirect_stdout(StringIO()):
                 MOD.main()
-            receipt = json.loads((out / 'sipoc_instance_receipt.json').read_text())
-            replay = json.loads((out / 'asyncio_synthetic_only.json').read_text())
+            receipt = json.loads((out / 'sipoc_instance_receipt.json').read_text(encoding="utf-8"))
+            replay = json.loads((out / 'asyncio_synthetic_only.json').read_text(encoding="utf-8"))
             self.assertEqual(len(receipt['input_sha256']), 64)
             self.assertEqual(len(receipt['canonical_atlas_sha256']), 64)
             self.assertFalse(receipt['dispatch_authorized'])
             self.assertFalse(replay['native_proof'])
-            self.assertEqual(len((out / 'sipoc_instance_receipt.sha256').read_text().strip()), 64)
+            self.assertEqual(len((out / 'sipoc_instance_receipt.sha256').read_text(encoding="utf-8").strip()), 64)
 
     def test_validator_negative_surface_no_false_green(self):
         modifiers = [

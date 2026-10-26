@@ -1,0 +1,33 @@
+flowchart LR
+SRC["Native run/attempt/job provenance"] --> LDAB["LDAB manifestation"]
+LDAB --> ROOT["Fingerprint != accepted causal root"]
+ROOT --> DAG["Hard DAG / dependency fanout"]
+DAG --> QUEUE{"Adaptive queue + supervision gate"}
+QUEUE --> READ["Unsupervised read-only proposal"]
+QUEUE --> WRITE["Supervised owner repair proposal - no dispatch"]
+READ --> MATH["gg_MATH forecast/plateau dock - descriptive"]
+WRITE --> TEST["Native tests / independent security"]
+TEST --> PROOF["#530 ZIP bytes / #531 breadth / #533 viewer"]
+MATH --> STOP{"N+1 = N?"}
+PROOF --> STOP
+STOP --> HOLD["HOLD / independent human admission"]
+BD["Issue / PR BD queue - DOCKED_READ_ONLY_PROJECTION"] -.-> LDAB
+EVR["EVERRED root census - DOCKED_READ_ONLY_PROJECTION"] -.-> ROOT
+CPC["CODE PURPLE lift census - DOCKED_READ_ONLY_PROJECTION"] -.-> QUEUE
+PPM["P-process mode - DOCKED_READ_ONLY_PROJECTION"] -.-> QUEUE
+XW["G5 gap crosswalk - DOCKED_READ_ONLY_PROJECTION"] -.-> PROOF
+XC{"Dock consistency: CONSISTENT_WHERE_OBSERVED"}
+EVR -.-> XC
+CPC -.-> XC
+PPM -.-> XC
+XC -.-> STOP
+classDef dock fill:#ede9fe,stroke:#7c3aed,color:#4c1d95
+class BD,EVR,CPC,PPM,XW,XC dock
+classDef obs fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+classDef act fill:#dcfce7,stroke:#16a34a,color:#14532d
+classDef gate fill:#fef3c7,stroke:#d97706,color:#78350f
+classDef hold fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+class SRC,LDAB,ROOT,DAG obs
+class READ,WRITE,MATH,TEST act
+class QUEUE,STOP gate
+class HOLD hold

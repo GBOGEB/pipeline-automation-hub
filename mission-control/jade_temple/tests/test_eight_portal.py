@@ -28,19 +28,19 @@ class EightPortal(unittest.TestCase):
     bridge.stage_eight_point(p,Path(temp)/'out',{})
  def test_poisoned_source_fails(self):
   with tempfile.TemporaryDirectory() as temp:
-   p=self.fixture(temp);(p/'data/EIGHT_POINT_AUDIT_NPLUS3.json').write_text('{}',encoding='utf-8')
+   p=self.fixture(temp);(p/'data/EIGHT_POINT_AUDIT_NPLUS3.json').write_text('{}',encoding='utf-8',newline="\n")
    with self.assertRaisesRegex(ValueError,'JADE_EIGHT_SOURCE_DIGEST_DRIFT'):
     bridge.stage_eight_point(p,Path(temp)/'out',{})
  def test_poisoned_static_fails(self):
   with tempfile.TemporaryDirectory() as temp:
-   p=self.fixture(temp);(p/'site/eightpoint.js').write_text('BAD',encoding='utf-8')
+   p=self.fixture(temp);(p/'site/eightpoint.js').write_text('BAD',encoding='utf-8',newline="\n")
    with self.assertRaisesRegex(ValueError,'JADE_EIGHT_STATIC_DIGEST_DRIFT'):
     bridge.stage_eight_point(p,Path(temp)/'out',{})
  def test_false_release_claim_fails(self):
   with tempfile.TemporaryDirectory() as temp:
-   p=self.fixture(temp);f=p/'site/eightpoint.json';data=json.loads(f.read_text(encoding='utf-8'));data['merge_admission']='PASS';f.write_text(json.dumps(data),encoding='utf-8')
+   p=self.fixture(temp);f=p/'site/eightpoint.json';data=json.loads(f.read_text(encoding='utf-8'));data['merge_admission']='PASS';f.write_text(json.dumps(data),encoding='utf-8',newline="\n")
    with self.assertRaisesRegex(ValueError,'JADE_EIGHT_UNSAFE_PROJECTION'):
-    m=p/'site/eightpoint-manifest.json';x=json.loads(m.read_text(encoding='utf-8'));x['public_files_sha256']['eightpoint.json']=bridge.sha256(f);m.write_text(json.dumps(x),encoding='utf-8')
+    m=p/'site/eightpoint-manifest.json';x=json.loads(m.read_text(encoding='utf-8'));x['public_files_sha256']['eightpoint.json']=bridge.sha256(f);m.write_text(json.dumps(x),encoding='utf-8',newline="\n")
     bridge.stage_eight_point(p,Path(temp)/'out',{})
  def test_legacy_n2_only_replay_supported(self):
   with tempfile.TemporaryDirectory() as temp:

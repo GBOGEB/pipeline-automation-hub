@@ -1,0 +1,63 @@
+{
+  "authority_transfer": false,
+  "focus": [
+    {
+      "at": "W1.C1.I3.S1",
+      "control_when": "Value re-measured in pulse 3.",
+      "done_when": "The metric has a written denominator (controlled roots x subsequent exact-head runs of the owning job) and a value bound to run ids.",
+      "flow": "IN_PR",
+      "id": "CPQ-013",
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/428"
+      ],
+      "severity": "P1",
+      "source_evidence": "Contract binds max_unchanged_root_auto_repeat_after_control = 8 (predicate FAIL).",
+      "state": "ACTIVE",
+      "title": "max_unchanged_root_auto_repeat_after_control is null, which blocks both promotion gates"
+    },
+    {
+      "at": "W1.C1.I2.S1",
+      "control_when": "A second dispatch to a different repo returns a valid receipt.",
+      "done_when": "One bounded satellite task is dispatched from the hub and returns exact source, head and output digests (MIP/FEDERATION_ACTIVITY.yaml next_victory).",
+      "flow": "RETURN_OWNER",
+      "id": "CPQ-015",
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/63",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/188"
+      ],
+      "severity": "P2",
+      "source_evidence": "No authenticated cross-repo allowlisted dispatch with path lease/idempotency and signed return; owner approval remains required.",
+      "state": "TODO",
+      "title": "No cross-repo dispatch and return path exists; 'dispatch' edges are declarations"
+    },
+    {
+      "at": "W1.C1.I2.S1",
+      "control_when": "Negative and positive admission repeat retained (REX-CM-005 control rule).",
+      "done_when": "Owner/admin ruleset makes first-pass-closure a required status (#336) and a red check provably blocks merge.",
+      "flow": "RETURN_OWNER",
+      "id": "CPQ-016",
+      "links": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/336",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/304",
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38250379852"
+      ],
+      "severity": "P1",
+      "source_evidence": "Hub master protected=false at 4136710496894daa7ffd4c920f64a38b9dfd401b; owner/admin #336 red-block/green-admit required-status canary unproved.",
+      "state": "UNKNOWN_NEEDS_READER",
+      "title": "PRs merged while First-Pass Closure was red or still running (REX-CM-005 recurrence)"
+    }
+  ],
+  "global_item_count": 19,
+  "global_lifecycle_counts": {
+    "ACTIVE": 5,
+    "DONE": 10,
+    "TODO": 2,
+    "UNKNOWN_NEEDS_READER": 2
+  },
+  "new_canonical_bd_items": 0,
+  "owner": "CANONICAL_CODE_PURPLE_BD_QUEUE_ONLY",
+  "read_only_historical": true,
+  "schema": "missioncontrol.cp_close.bd_projection.v1",
+  "source_path": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+  "source_sha256": "a1d1b32ec9f53ceb7028493a6b28a8967852e99f00263139377d65a00a241748"
+}

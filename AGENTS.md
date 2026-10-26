@@ -66,16 +66,16 @@ The generated JADE outputs pin the git blob OIDs of the p-process files,
 `mission-control/jade_temple/data/CICD_DAG_POLICY.json`). Changing any of them turns JADE QA red by
 design until the outputs are regenerated.
 
-- After changing a pinned input, regenerate and verify in the same PR:
+- After changing a pinned input, and after every merge of master into your branch, regenerate and verify
+  in the same PR with one command. It runs the whole chain in dependency order, leaves fresh steps alone
+  and then runs every check (`--list` prints the chain, plain `regen.py` only checks):
   ```
-  python mission-control/jade_temple/tools/rolling5.py --write
-  python mission-control/jade_temple/tools/cicd_dag.py --write
-  python mission-control/jade_temple/site/build_cicd_dag.py
-  python mission-control/jade_temple/tools/rolling5.py --check
-  python mission-control/jade_temple/tools/cicd_dag.py --check
-  python mission-control/jade_temple/site/build_cicd_dag.py --check
+  python mission-control/jade_temple/tools/regen.py --write
   ```
+  If it reports `REGEN_DEFER launcher`, commit and run it again: the launcher reads its inputs at HEAD.
 - Never hand-edit `site/cicd_dag.*`, `site/rolling5.*` or `diagrams/CICD_DAG_*.mmd`; they are generated.
+- Line endings are hashed. `.gitattributes` keeps text LF on every platform; on Windows write generated
+  files with `newline="\n"` and `encoding="utf-8"`.
 
 ## Metric ownership
 
@@ -88,9 +88,12 @@ One canonical module per metric. Import these; do not re-implement them. Paths a
 | P-process mode per repo | `mission-control/qps-triage-ultra/p-process/p_decide.py` | `decide(census, everred, drift, cp_repos)`, `repo_of()` | `site/data/p_state.json` (`p-process.state/1.0`) |
 | P-process home page and deck | `mission-control/qps-triage-ultra/p-process/build_p_process.py` | CLI only | `site/index.html`, `site/P-process-deck.pdf` |
 | Scale dock (first-red / root-red metrics, EVERRED / Code Purple / P-process docks, cross-source consistency) | `mission-control/gogreen/scale_dock.py` | `red_metrics()`, `dock_everred()`, `DOCKERS[name]()` (`dock_code_purple`, `dock_p_process`, `dock_issue_bd`, `dock_crosswalk`), `dock_consistency()`, `DOCK_SCHEMAS`, `evaluate()` | `codepurple.scale-dock.series.v1` |
+| Scale-dock real pulses (live default-head RED/RECOVERED jobs, sha256-chained pulse ledger) | `mission-control/gogreen/scale_dock_series.py` | `observe()`, `append()`, `verify()`, `series()`; reuses `bd_queue_wave`, `harvest` and `scale_dock` | `gogreen/scale-dock/real/pulses.jsonl` (`codepurple.scale-dock.pulse-ledger.v1`) |
 | Rolling-5 window (NIRVANA rotation, streaks, golden thread, SOURCE_RED) | `mission-control/jade_temple/tools/rolling5.py` | `project()`, `verified_pulses()`, `append_pulse()`, `streak_stats()`, `nirvana()`, `source_red()` | `site/rolling5.json`, `site/rolling5.csv` |
 | CI/CD DAG + SIPOC (FUNCTION / SHA / OID lenses, DAG stats, red-trace EVERRED ratios) | `mission-control/jade_temple/tools/cicd_dag.py` | `project()`, `dag_stats()`, `critical_path()`, `gate_frontier()`, `everred_metrics()`, `scale_docks()` (delegates to `scale_dock.py`), `git_blob_oid()` | `site/cicd_dag.json`, `site/cicd_dag_crosswalk.csv`, `diagrams/CICD_DAG_*.mmd` |
 | CI/CD DAG page | `mission-control/jade_temple/site/build_cicd_dag.py` | renders `cicd_dag.project()`; no metrics of its own | `site/cicd_dag.html` |
+| Issue triway burndown (oldest / newest / connected orderings, explicit DoD/DoV checklist, owner-review queue) | `mission-control/qps-triage-ultra/issue-expedition/triway_burndown.py` | `checklist()`, `references()`, `priority()`, `project()`, `collect()` | `missioncontrol.issue_expedition.triway.v1` |
+| Issue burndown ranking (PROPOSED in its PR; overlaps the triway row above, reconcile before merge: typed reference graph, PageRank / betweenness / unblock pressure, lanes, per-repo / JADE / USER rollups, chained pulse ledger) | `mission-control/issue_rank/issue_rank.py` | `build_graph()`, `unblock_pressure()`, `pagerank()`, `betweenness()`, `rank()`, `diff()`, `append_ledger()` | `out/<scope>/issue_rank.json` (`jade.issue-rank.v1`, local only, gitignored) |
 | DevOps fleet census (exact-head blob ids, lifecycle stages) | `mission-control/jade_temple/devops/census.py` | `fetch` / `scan` / `check` / `report` subcommands | `data/DEVOPS_CENSUS_N9.json`, `data/DEVOPS_OBJECTS_N9.json` |
 
 Note the two EVERRED views: `harvest.py` owns the root register metrics (per root, from Actions
