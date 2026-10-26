@@ -51,3 +51,17 @@ Public Mission Control must not expose QPS private owner records, bidder content
 **Control state:** MERGE_ADMISSION=HOLD; QPS_OWNER_ACCEPTANCE=WITHHELD; SECURITY_WAIVER=NONE; FORMAL_ENGINEERING_CREDIT_DELTA=0.
 
 This N1 page closes no MIP item: it advances bounded source branches while preserving the original MIP-01..15 backlog and outstanding exit gates.
+
+
+## N1.1 native recovery readback (subsequent exact-head qualification)
+
+On draft [#883](https://github.com/GBOGEB/pipeline-automation-hub/pull/883), exact head `28d28a240a9408cbccc68b2b4927457835e78e34` now has **16 completed-success checks and one skipped first-pass-closure check**, with zero submitted reviews at the readback:
+
+- [GOGREEN G4 Wave Metrics](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40252788102/job/121348104500): native G4 full-suite `592 tests / OK` and additional W32 packet suite `16 tests / OK`.
+- [GOGREEN G4 MissionControl-Wide Bounded Census](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40252787999/job/121348102788): independently executed native `592 tests / OK`.
+- [GOGREEN required gate](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40252787975/job/121348102458): terminal SUCCESS.
+- CodeQL and other listed checks were terminal-success at readback. The `first-pass-closure` check was SKIPPED; no eligible independent submitted review was found.
+
+This is strong **candidate technical recovery of the G4 concurrency first-red** at one exact PR head. It is not proof of an approved root closure, enforced required-status branch rule, First-Pass completion, independent approval or a merged-main recovery. #881's earlier gate failure remains a distinct immutable historical event until its current-head proof is renewed.
+
+**Disposition remains HOLD; zero formal credit.**
