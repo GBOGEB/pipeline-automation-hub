@@ -70,6 +70,8 @@ def audit(snapshot: dict) -> dict:
         "resolved_threads": pr.get("required_review_thread_resolution") is True,
         "no_bypass_actors": isinstance(ruleset.get("bypass_actors"), list)
                            and len(ruleset["bypass_actors"]) == 0,
+        "main_targeted": any(x in ("~DEFAULT_BRANCH", "refs/heads/master") for x
+                             in ((ruleset.get("conditions") or {}).get("ref_name") or {}).get("include", [])),
     }
     runs = snapshot.get("workflow_runs")
     if not isinstance(runs, list):
@@ -126,7 +128,9 @@ def audit(snapshot: dict) -> dict:
         "merged": pull.get("merged"), "merge_observation": observation,
         "red_before_merge": reds, "missing_controls": gaps,
         "eligible_approval_on_last_head_observed": approval,
-        "blocked_red_canary_verified": bool(blocked),
+        "blocked_red_canary_claim_consistent": bool(blocked),
+        "blocked_red_canary_verified": False,
+        "blocked_red_canary_evidence": "EXTERNAL_API_REFUSAL_AUTHENTICATION_REQUIRED",
         "governed_admission": "HOLD",
         "engineering_credit": 0, "formal_credit_delta": 0,
         "authority_transfer": False,
