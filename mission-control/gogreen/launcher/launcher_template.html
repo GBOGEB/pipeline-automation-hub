@@ -140,7 +140,7 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
       </article>
       <article class="card" data-tone="blue"><h3>Before you touch a PR branch</h3>
         <p class="cap">The main checkout fetches master only. Ask the remote for the branch head, and leave the PR alone if another session is live on it (REX-009).</p>
-        <pre class="cmd">git fetch origin &lt;branch&gt;; gh pr view &lt;N&gt; --json headRefOid,updatedAt</pre>
+        <pre class="cmd">Remove-Item Env:GITHUB_TOKEN,Env:GH_TOKEN -ErrorAction SilentlyContinue; git fetch origin &lt;branch&gt;; gh pr view &lt;N&gt; --json headRefOid,updatedAt</pre>
         <pre class="cmd">python scripts\preflight_overlap.py &lt;terms&gt;</pre>
       </article>
       <article class="card" data-tone="blue"><h3>Known fixes (REX)</h3>

@@ -21,7 +21,8 @@
       RED       failing checks only. Open the first red job.
       OUTDATED  only outdated threads remain. Verify each against the head, reply with the fixing SHA, resolve.
       THREAD    unresolved P2/P3 threads on the current head.
-      CLEAN     nothing open. Write the FPC receipt before it leaves draft.
+      PENDING   nothing open, but checks are still queued or running. Wait for them.
+      CLEAN     nothing open and every check completed. Write the FPC receipt before it leaves draft.
 
     Read-only. It never pushes, comments, resolves threads or changes a PR.
     All gh calls run in a child process with GITHUB_TOKEN/GH_TOKEN stripped, so the keyring login is
@@ -54,7 +55,7 @@ $ErrorActionPreference = 'Stop'
 $now = [DateTimeOffset]::UtcNow
 $tokenNames = 'GITHUB_TOKEN', 'GH_TOKEN'
 $securityPattern = 'secur|inject|token|secret|poison|traversal|XSS|untrusted|privilege|CodeQL|ReDoS|backtracking'
-$classOrder = 'LIVE', 'THREAD-P1', 'CONFLICT', 'RED', 'OUTDATED', 'THREAD', 'CLEAN'
+$classOrder = 'LIVE', 'THREAD-P1', 'CONFLICT', 'RED', 'OUTDATED', 'THREAD', 'PENDING', 'CLEAN'
 
 # ---------------------------------------------------------------- helpers --
 function Invoke-Gh {
@@ -88,16 +89,24 @@ function Get-Title([string]$Body) {
     (($t -split "`n")[0]).Trim()
 }
 
+function Get-Slug([string]$Url) {
+    # Same rule as Invoke-WorkspaceAudit.ps1.
+    if ($Url -match 'github\.com[:/]([^/]+)/([^/]+?)(\.git)?/?$') { "$($Matches[1])/$($Matches[2])".ToLower() }
+}
+
 function Get-LiveWorktrees {
-    <# Map branch -> worktrees that look live (dirty, or reflog younger than -LiveMinutes). #>
+    <# Map "owner/repo|branch" -> worktrees that look live (dirty, or reflog younger than -LiveMinutes).
+       Keyed by repository too, so a same-named branch in another repo is never marked LIVE. #>
     $live = @{}
     foreach ($main in $MainRepo) {
         if (-not (Test-Path -LiteralPath $main)) { continue }
+        $slug = Get-Slug ((& git.exe -C $main remote get-url origin 2>$null) | Select-Object -First 1)
+        if (-not $slug) { continue }
         $path = $null
         foreach ($line in @(& git.exe -C $main worktree list --porcelain 2>$null)) {
             if ($line -like 'worktree *') { $path = $line.Substring(9); continue }
             if ($line -notlike 'branch refs/heads/*' -or -not $path -or -not (Test-Path -LiteralPath $path)) { continue }
-            $branch = $line.Substring(18)
+            $branch = "$slug|$($line.Substring(18))"
             $dirty = @(& git.exe -C $path status --porcelain --untracked-files=normal 2>$null | Where-Object { $_ }).Count
             $last = (& git.exe -C $path reflog -1 --format=%ct 2>$null) | Select-Object -First 1
             $ageMin = if ($last) { ($now - [DateTimeOffset]::FromUnixTimeSeconds([long]$last)).TotalMinutes } else { [double]::MaxValue }
@@ -111,9 +120,24 @@ function Get-LiveWorktrees {
 }
 
 $threadQuery = @'
-query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){
-  reviewThreads(first:100){nodes{id isResolved isOutdated path line comments(first:1){nodes{author{login} body url}}}}}}}
+query($o:String!,$r:String!,$n:Int!,$after:String){repository(owner:$o,name:$r){pullRequest(number:$n){
+  reviewThreads(first:100,after:$after){pageInfo{hasNextPage endCursor}
+    nodes{id isResolved isOutdated path line comments(first:1){nodes{author{login} body url}}}}}}}
 '@
+
+function Get-ReviewThreads([string]$Owner, [string]$Name, [int]$Number) {
+    <# Every review thread, page by page: a P1 past the first 100 must still be counted. #>
+    $all = [System.Collections.Generic.List[object]]::new()
+    $after = $null
+    do {
+        $ghArgs = @('api', 'graphql', '-f', "query=$threadQuery", '-F', "o=$Owner", '-F', "r=$Name", '-F', "n=$Number")
+        if ($after) { $ghArgs += @('-f', "after=$after") }
+        $conn = (Get-GhJson $ghArgs).data.repository.pullRequest.reviewThreads
+        foreach ($node in @($conn.nodes)) { $all.Add($node) }
+        $after = $conn.pageInfo.endCursor
+    } while ($conn.pageInfo.hasNextPage)
+    $all
+}
 
 # ------------------------------------------------------------------ scan --
 $state = @(if (-not $IncludeReady) { '--draft' })
@@ -129,8 +153,7 @@ foreach ($slug in $repos) {
         'number,title,isDraft,headRefName,headRefOid,mergeable,updatedAt,url,statusCheckRollup')
     foreach ($pr in @($prs | Where-Object { $IncludeReady -or $_.isDraft })) {
         $owner, $name = $slug -split '/'
-        $t = Get-GhJson @('api', 'graphql', '-f', "query=$threadQuery", '-F', "o=$owner", '-F', "r=$name", '-F', "n=$($pr.number)")
-        $threads = @($t.data.repository.pullRequest.reviewThreads.nodes | Where-Object { -not $_.isResolved } | ForEach-Object {
+        $threads = @(Get-ReviewThreads $owner $name $pr.number | Where-Object { -not $_.isResolved } | ForEach-Object {
             $c = $_.comments.nodes[0]
             $login = if ($c.author) { $c.author.login } else { 'ghost' }
             $pri = Get-Priority $c.body
@@ -143,19 +166,25 @@ foreach ($slug in $repos) {
                 ($_.PSObject.Properties['conclusion'] -and $_.conclusion -in 'FAILURE', 'TIMED_OUT', 'CANCELLED', 'ACTION_REQUIRED', 'STARTUP_FAILURE') -or
                 ($_.PSObject.Properties['state'] -and $_.state -in 'FAILURE', 'ERROR') } |
             ForEach-Object { if ($_.PSObject.Properties['name']) { $_.name } else { $_.context } } | Sort-Object -Unique)
+        # A CheckRun that has not completed has an empty conclusion; a StatusContext reports PENDING/EXPECTED.
+        $pending = @($pr.statusCheckRollup | Where-Object {
+                ($_.PSObject.Properties['status'] -and $_.status -and $_.status -ne 'COMPLETED') -or
+                ($_.PSObject.Properties['state'] -and $_.state -in 'PENDING', 'EXPECTED') }).Count
         $current = @($threads | Where-Object { -not $_.Outdated })
         $urgent = @($current | Where-Object { $_.Priority -in 'P0', 'P1' -or $_.Security })
-        $liveHere = @(if ($live.ContainsKey($pr.headRefName)) { $live[$pr.headRefName] })
+        $liveKey = "$($slug.ToLower())|$($pr.headRefName)"
+        $liveHere = @(if ($live.ContainsKey($liveKey)) { $live[$liveKey] })
         $class = if ($liveHere.Count) { 'LIVE' }
                  elseif ($urgent.Count) { 'THREAD-P1' }
                  elseif ($pr.mergeable -eq 'CONFLICTING') { 'CONFLICT' }
                  elseif ($failing.Count) { 'RED' }
                  elseif ($threads.Count -and -not $current.Count) { 'OUTDATED' }
                  elseif ($threads.Count) { 'THREAD' }
+                 elseif ($pending) { 'PENDING' }
                  else { 'CLEAN' }
         $rows.Add([pscustomobject]@{
             PR = "$name#$($pr.number)"; Class = $class; Draft = $pr.isDraft; Mergeable = $pr.mergeable
-            Red = $failing.Count; FirstRed = ($failing | Select-Object -First 1); Open = $threads.Count; P1 = $urgent.Count; Outdated = @($threads | Where-Object Outdated).Count
+            Red = $failing.Count; Pending = $pending; FirstRed = ($failing | Select-Object -First 1); Open = $threads.Count; P1 = $urgent.Count; Outdated = @($threads | Where-Object Outdated).Count
             UpdatedHours = [math]::Round(($now - [DateTimeOffset]::Parse($pr.updatedAt)).TotalHours, 1)
             Branch = $pr.headRefName; Head = $pr.headRefOid.Substring(0, 8); Url = $pr.url; Title = $pr.title
             FailingChecks = $failing; Threads = $threads; LiveWorktrees = $liveHere
