@@ -187,7 +187,7 @@ def project(census, previous=None):
             "ref": key, "repo": repo, "number": n,
             "url": f"https://github.com/{repo}/issues/{n}",
             "title": issue["title"],
-            "title_taxonomy": tt.parse_title(issue["title"], "Issue"),
+            "title_taxonomy": tt.parse_title(issue["title"], "Issue", issue["labels"]),
             "created_at": timestamp(issue["created_at"]),
             "updated_at": timestamp(issue["updated_at"]),
             "priority": p, "priority_basis": basis,
