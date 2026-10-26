@@ -261,7 +261,7 @@ class Telemetry(unittest.TestCase):
             pulse = json.loads((out / "taxonomy_pulse.json").read_text(encoding="utf-8"))
             self.assertEqual(pulse["schema"], "jade.taxonomy-pulse.v1")
             self.assertEqual(pulse["parser_sha"], "c" * 40)
-            self.assertEqual(pulse["population"]["total"], 6)
+            self.assertEqual(pulse["population"]["total"], 7)
             self.assertNotIn(QPS, pulse["source_heads"])
             self.assertNotIn(QPS, pulse["rollups"])
             self.assertEqual(len(pulse["history_points"]), 1)
