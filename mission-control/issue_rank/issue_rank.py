@@ -730,6 +730,7 @@ def rank(snap: dict, now: float | None = None) -> dict:
             "key": k, "repo": n["repo"], "number": n["number"], "type": n["type"],
             "taxonomy": tt.classify_title(n.get("title"), n.get("labels"), n["type"]),
             "title": n.get("title"), "url": n.get("url"), "private": n.get("private"),
+            "title_taxonomy": tt.parse_title(n.get("title"), n["type"], n.get("labels")),
             "created_at": n.get("created_at"), "updated_at": n.get("updated_at"),
             "age_days": round((now - _ts(n["created_at"])) / 86400, 1),
             "idle_days": round((now - _ts(n["updated_at"])) / 86400, 1),
@@ -747,6 +748,9 @@ def rank(snap: dict, now: float | None = None) -> dict:
             "golden_thread": threads.get(k, [k]), "mycelium": myc.get(k),
             "priority": priority_of(n),
         })
+    associated = tt.associated_families(items, edges, max_hops=2)
+    for item in items:
+        item["title_taxonomy"]["related_families"] = associated[item["key"]]
     pct_pr = _pct({i["key"]: i["pagerank"] for i in items})
     pct_bc = _pct({i["key"]: i["betweenness"] for i in items})
     pct_age = _pct({i["key"]: i["age_days"] for i in items})
@@ -836,6 +840,7 @@ def rollup(items: list[dict], nodes: dict, edges: list[dict]) -> dict:
         "top": [i["key"] for i in items[:10]],
         "bottlenecks": [i["key"] for i in sorted(items, key=lambda i: -i["pressure"]) if i["pressure"] >= 2][:10],
         "nearly_finished": [i["key"] for i in items if i["lane"] in ("CLOSE_CANDIDATE", "NEARLY_DONE", "MERGE_READY")][:15],
+        "title_taxonomy": tt.summary(items),
     }
 
 
@@ -893,6 +898,11 @@ def diff(prev: dict | None, cur: dict) -> dict:
             ticks.append({"key": k, "from": f"{a['done']}/{a['total']}", "to": f"{b['done']}/{b['total']}"})
     lane_moves = [{"key": k, "from": p_items[k]["lane"], "to": c_items[k]["lane"]}
                   for k in sorted(set(p_items) & set(c_items)) if p_items[k]["lane"] != c_items[k]["lane"]]
+    taxonomy_moves = [{"key": k, "from": p_items[k].get("title_taxonomy", {}).get("path"),
+                       "to": c_items[k].get("title_taxonomy", {}).get("path")}
+                      for k in sorted(set(p_items) & set(c_items))
+                      if p_items[k].get("title_taxonomy", {}).get("path") !=
+                      c_items[k].get("title_taxonomy", {}).get("path")]
     new_edges = sorted(c_edges - p_edges)
     return {"baseline": False, "since": prev["fetched_at"],
             "new_items": sorted(set(c_items) - set(p_items)),
@@ -900,7 +910,8 @@ def diff(prev: dict | None, cur: dict) -> dict:
             "new_links": [list(e) for e in new_edges],
             "removed_links": [list(e) for e in sorted(p_edges - c_edges)],
             "new_pr_dependencies": [list(e) for e in new_edges if e[2] == "CLOSES"],
-            "checklist_moves": ticks, "lane_moves": lane_moves}
+            "checklist_moves": ticks, "lane_moves": lane_moves,
+            "taxonomy_moves": taxonomy_moves}
 
 
 def telemetry(model: dict, snap: dict, delta: dict) -> dict:
@@ -945,7 +956,11 @@ def verify_ledger(path: Path) -> int:
 def redact(model: dict) -> dict:
     """Drop titles, URLs and free text of private-repository items."""
     out = json.loads(json.dumps(model))
+    private_refs = {i["key"] for i in out["items"] if i.get("private")}
     for i in out["items"]:
+        if not i.get("private") and "title_taxonomy" in i:
+            i["title_taxonomy"]["related_families"] = [r for r in i["title_taxonomy"].get("related_families", [])
+                                                         if r["source_item"] not in private_refs]
         if i.get("private"):
             # Title-derived keyword fingerprints are private free text, too.
             i["taxonomy"] = {"privacy": "REDACTED"}
@@ -964,7 +979,9 @@ def redact(model: dict) -> dict:
 
 
 CSV_COLS = ("rank_global", "rank_repo", "key", "type", "lane", "score", "progress", "pressure",
-            "open_blockers", "linked_prs", "age_days", "idle_days", "action", "title")
+            "open_blockers", "linked_prs", "age_days", "idle_days", "action", "title",
+            "family", "prefix_path", "prefix_codes", "topic_families", "technical_clusters",
+            "related_family_candidates")
 
 
 def to_csv(model: dict) -> str:
@@ -974,8 +991,24 @@ def to_csv(model: dict) -> str:
     w = csv.writer(buf, lineterminator="\n")
     w.writerow(CSV_COLS)
     for i in model["items"]:
-        w.writerow([" ".join(i[c]) if c == "open_blockers" else
-                    " ".join(p["pr"] for p in i[c]) if c == "linked_prs" else i[c] for c in CSV_COLS])
+        title_tax = i.get("title_taxonomy") or {}
+        def cell(name):
+            if name == "open_blockers":
+                return " ".join(i[name])
+            if name == "linked_prs":
+                return " ".join(p["pr"] for p in i[name])
+            if name == "family":
+                return title_tax.get("family", "")
+            if name == "prefix_path":
+                return title_tax.get("path", "")
+            if name == "prefix_codes":
+                return ";".join(title_tax.get("codes", []))
+            if name in ("topic_families", "technical_clusters"):
+                return ";".join(title_tax.get(name, []))
+            if name == "related_family_candidates":
+                return ";".join(r["family"] for r in title_tax.get("related_families", []))
+            return i.get(name)
+        w.writerow([cell(col) for col in CSV_COLS])
     return buf.getvalue()
 
 
@@ -1003,10 +1036,11 @@ def render_html(model: dict, delta: dict | None = None) -> str:
                 f'<td class="num">{i["score"]:.3f}</td><td>{bar(i)}</td><td class="num">{i["pressure"]}</td>'
                 f'<td>{" ".join(link(b) for b in i["open_blockers"][:4])}</td>'
                 f'<td class="num">{i["age_days"]:.0f}</td><td>{esc(i["action"])}</td>'
+                f'<td>{esc((i.get("title_taxonomy") or {}).get("path", "UNKNOWN"))}</td>'
                 f'<td>{esc(i.get("title") or "")}</td></tr>')
 
     head = ('<tr><th>#</th><th>item</th><th>lane</th><th>score</th><th>progress (DoD/DoV/steps)</th>'
-            '<th>pressure</th><th>open blockers</th><th>age d</th><th>next action</th><th>title</th></tr>')
+            '<th>pressure</th><th>open blockers</th><th>age d</th><th>next action</th><th>family / prefix path</th><th>title</th></tr>')
 
     def table(keys, limit=40):
         return f'<table>{head}{"".join(row(items[k]) for k in keys[:limit])}</table>'
@@ -1019,6 +1053,27 @@ def render_html(model: dict, delta: dict | None = None) -> str:
         f'<td class="num">{r["prs_unreviewed"]}</td><td class="num">{r["stale_21d"]}</td>'
         f'<td>{esc(" ".join("%s:%d" % kv for kv in r["lanes"].items()))}</td></tr>'
         for s, r in model["rollups"].items())
+    taxonomy_rows = "".join(
+        f'<tr><td>{esc(scope)}</td><td>{esc(fam)}</td><td class="num">{count["Issue"]}</td>'
+        f'<td class="num">{count["PullRequest"]}</td><td class="num">{count["total"]}</td></tr>'
+        for scope, roll in model["rollups"].items()
+        for fam, count in roll["title_taxonomy"]["family"].items())
+    leaf_clusters = sorted(model["rollups"]["USER"]["title_taxonomy"]["leaf_clusters"].items(),
+                           key=lambda kv: (-kv[1]["total"], kv[0]))[:60]
+    cluster_rows = "".join(
+        f'<tr><td>{esc(path)}</td><td class="num">{count["Issue"]}</td>'
+        f'<td class="num">{count["PullRequest"]}</td><td class="num">{count["total"]}</td></tr>'
+        for path, count in leaf_clusters)
+    technical_rows = "".join(
+        f'<tr><td>{esc(scope)}</td><td>{esc(name)}</td><td class="num">{value["Issue"]}</td>'
+        f'<td class="num">{value["PullRequest"]}</td><td class="num">{value["total"]}</td></tr>'
+        for scope, roll in model["rollups"].items()
+        for name, value in roll["title_taxonomy"]["technical_clusters_nonexclusive"].items())
+    topic_rows = "".join(
+        f'<tr><td>{esc(scope)}</td><td>{esc(name)}</td><td class="num">{value["Issue"]}</td>'
+        f'<td class="num">{value["PullRequest"]}</td><td class="num">{value["total"]}</td></tr>'
+        for scope, roll in model["rollups"].items()
+        for name, value in roll["title_taxonomy"]["topic_families_nonexclusive"].items())
     roots = "".join(
         f'<tr><td>{link(g["root"])}</td><td>{"open" if g["open_root"] else "closed/stub"}</td>'
         f'<td class="num">{g["descendants"]}</td><td class="num">{g["longest"]}</td></tr>'
@@ -1057,6 +1112,14 @@ ticked boxes are not verified DoD · heads: {heads}</p>
 {gs["isolated_open_items"]} isolated open items · delta: {delta_html}</p>
 <h2>Scopes</h2><div class="wrap"><table><tr><th>scope</th><th>issues</th><th>PRs</th><th>tasks ticked</th>
 <th>checklist</th><th>DoD</th><th>DoV</th><th>red PRs</th><th>unapproved PRs</th><th>idle &gt;21d</th><th>lanes</th></tr>{scopes}</table></div>
+<h2>Title family census · disjoint counts per repository and total</h2>
+<div class="wrap"><table><tr><th>scope</th><th>family</th><th>issues</th><th>PRs</th><th>total</th></tr>{taxonomy_rows}</table></div>
+<h2>Nested clusters · USER leaf paths (non-additive ancestry)</h2>
+<div class="wrap"><table><tr><th>prefix path</th><th>issues</th><th>PRs</th><th>total</th></tr>{cluster_rows}</table></div>
+<h2>Topic families · overlapping title / label associations</h2>
+<div class="wrap"><table><tr><th>scope</th><th>topic</th><th>issues</th><th>PRs</th><th>matches</th></tr>{topic_rows}</table></div>
+<h2>Technical clusters · overlapping title / label associations</h2>
+<div class="wrap"><table><tr><th>scope</th><th>cluster</th><th>issues</th><th>PRs</th><th>matches</th></tr>{technical_rows}</table></div>
 <h2>Ranked (composite)</h2><p class="muted">score = {formula}</p>
 <div class="wrap">{table([i["key"] for i in model["items"]], 60)}</div>
 <h2>Nearly finished / close candidates</h2><div class="wrap">{table(nearly, 30)}</div>
@@ -1131,6 +1194,10 @@ def main(argv=None) -> int:
     model = rank(snap)
     delta = diff(prev, model)
     if args.redact_private:
+        private_refs = {i["key"] for i in model["items"] if i.get("private")}
+        if isinstance(delta.get("taxonomy_moves"), list):
+            delta["taxonomy_moves"] = [d for d in delta["taxonomy_moves"]
+                                       if d["key"] not in private_refs]
         model = redact(model)
     digests = write_outputs(out, model, delta)
     if args.cmd == "run":
