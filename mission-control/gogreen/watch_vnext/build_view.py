@@ -287,7 +287,7 @@ def build(revision, out):
     (out / "index.html").write_bytes(page)
     (out / "snapshot.json").write_bytes(snapshot)
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n",
-                                       encoding="utf-8")
+                                       encoding="utf-8", newline="\n")
     return manifest
 
 
