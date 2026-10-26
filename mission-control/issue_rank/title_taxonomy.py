@@ -54,6 +54,7 @@ TECHNICAL_CLUSTERS = {
     "telemetry": ("telemetry", "metrics", "statistics", "dashboard", "kpi"),
     "integrity": ("integrity", "hash chain", "hash-chain", "signed payload", "outbox"),
     "fail-closed": ("fail closed", "fails closed", "failed closed", "fail-closed",
+                    "fails-closed", "fail_closed", "fails_closed",
                     "missing blob", "missing blobs"),
     "governance": ("governance", "ruleset", "protection", "branch protection"),
     "admission": ("admission", "merge gate", "required gate", "canary"),

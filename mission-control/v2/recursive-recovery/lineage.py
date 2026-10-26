@@ -27,8 +27,37 @@ def git_blob(raw):
     return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\x00" + raw).hexdigest()
 
 
+def validate_successor(spec, frozen_raw):
+    """Reject historical-identity rewriting or unauthorized source substitutions."""
+    predecessor = spec.get("successor_of", {})
+    if (predecessor.get("file") != "N12_SOURCE_ATLAS.json"
+            or predecessor.get("preserved_unchanged") is not True
+            or git_blob(frozen_raw) != predecessor.get("blob_sha")):
+        raise ValueError("FROZEN_ATLAS_IDENTITY_DRIFT")
+    frozen = json.loads(frozen_raw)
+    old = {row["id"]: row for row in frozen["internal"]}
+    new = {row["id"]: row for row in spec["internal"]}
+    if len(old) != len(new) or set(old) != set(new):
+        raise ValueError("FROZEN_ATLAS_SOURCE_SET_DRIFT")
+    for source_id, current in new.items():
+        baseline = old[source_id]
+        if source_id == "breadth":
+            if (current.get("previous_frozen_blob_sha") != baseline["blob_sha"]
+                    or current.get("path") != baseline["path"]
+                    or current.get("authority") != baseline["authority"]
+                    or current.get("blob_sha") != spec["source_refresh_evidence"]["new_blob_sha"]
+                    or baseline["blob_sha"] != spec["source_refresh_evidence"]["old_blob_sha"]):
+                raise ValueError("FROZEN_BREADTH_SUCCESSOR_INVALID")
+        elif current != baseline:
+            raise ValueError("UNAUTHORIZED_FROZEN_SOURCE_REWRITE: " + source_id)
+    if spec.get("source_refresh_evidence", {}).get("changed_internal_blobs") != 1:
+        raise ValueError("SOURCE_REFRESH_DENOMINATOR_DRIFT")
+
+
 def load_canonical():
-    spec = json.loads((HERE / "N12_SOURCE_ATLAS.json").read_text(encoding="utf-8"))
+    frozen_raw = (HERE / "N12_SOURCE_ATLAS.json").read_bytes()
+    spec = json.loads((HERE / "N12_SOURCE_ATLAS_20261026.json").read_text(encoding="utf-8"))
+    validate_successor(spec, frozen_raw)
     if spec.get("controller", {}).get("authority_transfer") is not False:
         raise ValueError("source controller authority may not transfer")
     content = {}
