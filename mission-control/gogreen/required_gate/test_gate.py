@@ -543,3 +543,21 @@ class RecheckWorkflow(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
+class RecheckStormControl(unittest.TestCase):
+    def test_same_head_burst_is_coalesced_without_weakening_required_gate(self):
+        """Fifty successful enforced gate events must not queue fifty runner jobs."""
+        workflow = yaml.safe_load((ROOT / g.RECHECK).read_text(encoding="utf-8"))
+        concurrency = workflow["concurrency"]
+        self.assertIn("github.event.workflow_run.head_sha", concurrency["group"])
+        self.assertIs(concurrency["cancel-in-progress"], True)
+        job = workflow["jobs"]["recheck"]
+        self.assertEqual(job["permissions"]["actions"], "write")
+        self.assertEqual(workflow["permissions"]["contents"], "read")
+        self.assertIn("github.event.workflow_run.event == 'pull_request'", job["if"])
+        self.assertIn("github.event.workflow_run.conclusion == 'success'", job["if"])
+        self.assertIn("--sha", job["steps"][-1]["run"])
+        self.assertIn("--conclusion", job["steps"][-1]["run"])
+        self.assertNotIn("continue-on-error", job)

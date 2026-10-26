@@ -67,7 +67,7 @@ def main() -> None:
     st = decide(census, ev, drift, cp)
     st["incident"] = inc["id"]
     o = Path(a.out); o.parent.mkdir(parents=True, exist_ok=True)
-    o.write_text(json.dumps(st, indent=2) + "\n")
+    o.write_text(json.dumps(st, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({k: v["mode"] for k, v in st["repos"].items()}))
 
 
