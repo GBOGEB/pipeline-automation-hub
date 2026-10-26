@@ -9,6 +9,7 @@ The HMAC key is provisioned solely by the owner-side execution environment.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import hmac
 import json
@@ -223,6 +224,11 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,\n         
 
 
 DDL = """
+CREATE TABLE IF NOT EXISTS native_observations (
+ event_key TEXT PRIMARY KEY, repository TEXT NOT NULL, lane TEXT NOT NULL,
+ fingerprint TEXT, payload_sha256 TEXT NOT NULL,
+ payload_json TEXT NOT NULL, completed_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS observations (
  event_key TEXT NOT NULL, child_token TEXT NOT NULL,
  class TEXT NOT NULL, proof_digest TEXT NOT NULL,
@@ -270,6 +276,40 @@ def _audit(db, action: str, event_key: str, payload_digest: str) -> None:
                " VALUES(?,?,?,?,?)", (parent, entry, action, event_key, payload_digest))
 
 
+def _insert_native(db: sqlite3.Connection, event: dict) -> tuple[str, bool]:
+    decision.validate(event)
+    eid, lane = _source_key(event)
+    immutable = copy.deepcopy(event)
+    immutable["native"].pop("observed_at")  # poll timing not source identity
+    payload = canonical(immutable)
+    checksum = digest(immutable)
+    row = db.execute(
+        "SELECT payload_sha256 FROM native_observations WHERE event_key=?",
+        (eid,)).fetchone()
+    if row:
+        require(row[0] == checksum, "native observation digest collision")
+        return eid, False
+    db.execute("INSERT INTO native_observations VALUES(?,?,?,?,?,?,?)",
+               (eid, event["repository"], lane,
+                event["result"]["fingerprint"], checksum,
+                payload, event["native"]["completed_at"]))
+    _audit(db, "NATIVE_OBSERVED", eid, checksum)
+    return eid, True
+
+
+def observe(db: sqlite3.Connection, event: dict) -> dict:
+    """Store public native evidence without inventing a new QPS transition."""
+    db.execute("BEGIN IMMEDIATE")
+    try:
+        key, inserted = _insert_native(db, event)
+        db.execute("COMMIT")
+        return {"event_key": key, "new_native_observation": inserted,
+                "notification_emission": "NONE"}
+    except BaseException:
+        db.execute("ROLLBACK")
+        raise
+
+
 def record(db: sqlite3.Connection, event: dict, candidate: dict,
            envelope: dict, key: bytes, baseline: dict | None = None) -> dict:
     """Transactional append-only evidence + at-most-once local outbox enqueue.
@@ -281,6 +321,7 @@ def record(db: sqlite3.Connection, event: dict, candidate: dict,
     eid, child, root = q["event_key"], q["child_token"], q["dependency_token"]
     db.execute("BEGIN IMMEDIATE")
     try:
+        _insert_native(db, event)
         row = db.execute(
             "SELECT proof_digest FROM observations WHERE event_key=? AND child_token=?",
             (eid, child)).fetchone()
@@ -394,6 +435,12 @@ def verify(db: sqlite3.Connection, key: bytes | None = None) -> dict:
                 digest([parent, action, event_key, payload]) == entry,
                 "audit chain tampering")
         previous, count = entry, count + 1
+    native = 0
+    for checksum, payload in db.execute(
+            "SELECT payload_sha256,payload_json FROM native_observations"):
+        require(digest(json.loads(payload)) == checksum,
+                "immutable native payload tampering")
+        native += 1
     observations = 0
     for proof_digest, payload in db.execute("SELECT proof_digest,proof_json FROM observations"):
         doc = json.loads(payload)
@@ -402,7 +449,7 @@ def verify(db: sqlite3.Connection, key: bytes | None = None) -> dict:
             require(hmac.compare_digest(owner_mac(key, doc["attestation"]),
                                         doc["signature"]), "owner MAC tampering")
         observations += 1
-    return {"audit_entries": count, "observations": observations,
+    return {"audit_entries": count, "native_observations": native,\n            "observations": observations,
             "pending": db.execute("SELECT COUNT(*) FROM outbox WHERE state='PENDING'").fetchone()[0],
             "claimed": db.execute("SELECT COUNT(*) FROM outbox WHERE state='CLAIMED'").fetchone()[0],
             "acked": db.execute("SELECT COUNT(*) FROM outbox WHERE state='ACKED'").fetchone()[0],
