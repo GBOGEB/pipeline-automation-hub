@@ -109,7 +109,7 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,
     a = exact(envelope["attestation"], {
         "schema", "class", "effect", "event_key", "source_sha",
         "run_id", "attempt", "job_id", "completed_at", "issued_at",
-        "candidate_sha256", "baseline_sha256",
+        "event_sha256", "candidate_sha256", "baseline_sha256",
         "child_token", "dependency_token", "receipt_token", "checks",
     }, "attestation")
     require(a["schema"] == SCHEMA, "attestation schema")
@@ -121,6 +121,8 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,
         _hex(a[k], k)
     _hex(a["source_sha"], "source SHA", sha=True)
     require(a["event_key"] == event_key, "signed event mismatch")
+    _hex(a["event_sha256"], "event digest")
+    require(a["event_sha256"] == digest(event), "signed event payload mismatch")
     _hex(a["candidate_sha256"], "candidate digest")
     require(a["candidate_sha256"] == digest(candidate),
             "signed candidate justification mismatch")
@@ -186,7 +188,7 @@ def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,
                 "SOURCE_MATCHED_COVERAGE_CHANGE" in reasons
                 and type(delta) is dict
                 and set(delta) == {"statements", "branches"}
-                and all(type(delta[k]) is int for k in delta)
+                and all(type(delta[k]) is int and delta[k] >= 0 for k in delta)
                 and any(delta[k] > 0 for k in delta),
                 "B requires matched source/cohort coverage improvement")
     elif cls == "C":

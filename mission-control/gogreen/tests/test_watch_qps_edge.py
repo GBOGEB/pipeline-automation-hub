@@ -88,6 +88,7 @@ def proof(e, c, cls="C", effect="BLOCK", *, baseline=None, overrides=None,
     a = {
         "schema": Q.SCHEMA, "class": cls, "effect": effect,
         "event_key": c["event_key"],
+        "event_sha256": Q.digest(e),
         "candidate_sha256": Q.digest(c),
         "source_sha": e["identity"]["checkout_sha"],
         "run_id": n["run_id"], "attempt": n["attempt"],
@@ -220,14 +221,18 @@ class FourClassNoncompensatingGates(unittest.TestCase):
     def test_B_store_rejects_unrecorded_predecessor(self):
         with tempfile.TemporaryDirectory() as tmp:
             db = Q.connect(pathlib.Path(tmp) / "test.db")
-            self.addCleanup(db.close)
-            old = event(1, outcome="success", covered=7)
-            new = event(2, outcome="success", covered=9)
-            candidate = candidates(old, new)[0]
-            with self.assertRaisesRegex(ValueError, "predecessor not present"):
-                Q.record(db, new, candidate,
-                         proof(new, candidate, "B", "ACCEPT", baseline=old),
-                         KEY, baseline=old)
+            try:
+                old = event(1, outcome="success", covered=7)
+                new = event(2, outcome="success", covered=9)
+                candidate = candidates(old, new)[0]
+                with self.assertRaisesRegex(ValueError, "predecessor not present"):
+                    Q.record(db, new, candidate,
+                             proof(new, candidate, "B", "ACCEPT", baseline=old),
+                             KEY, baseline=old)
+            finally:
+                # Close before TemporaryDirectory cleanup: Windows cannot
+                # unlink an open SQLite file (WinError 32).
+                db.close()
 
     def test_B_no_gain_or_wrong_delta_rejected(self):
         a = event(1, outcome="success", covered=7)
@@ -268,12 +273,65 @@ class FourClassNoncompensatingGates(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "signed candidate justification mismatch"):
             Q.qualify(e, tampered_candidate, signed_original, KEY)
 
+    def test_signed_proof_rejects_changed_native_event_payload(self):
+        native = event()
+        candidate = candidates(native)[0]
+        signed_by_owner = proof(native, candidate)
+        changed = copy.deepcopy(native)
+        changed["result"]["conclusion"] = "success"
+        changed["result"]["fingerprint"] = None
+        with self.assertRaisesRegex(ValueError, "signed event payload mismatch"):
+            Q.qualify(changed, candidate, signed_by_owner, KEY)
+
+    def test_owner_signed_digest_field_must_be_hex64(self):
+        native = event()
+        candidate = candidates(native)[0]
+        signed_by_owner = proof(native, candidate)
+        signed_by_owner["attestation"]["event_sha256"] = "malformed"
+        signed_by_owner["signature"] = Q.owner_mac(KEY, signed_by_owner["attestation"])
+        with self.assertRaisesRegex(ValueError, "event digest"):
+            Q.qualify(native, candidate, signed_by_owner, KEY)
+
+    def test_mixed_axis_coverage_regression_does_not_qualify(self):
+        original = event(1, outcome="success", covered=7)
+        changed = event(2, outcome="success", covered=9)
+        changed["coverage"]["branches"]["covered"] = 1
+        candidate = candidates(original, changed)[0]
+        self.assertEqual(candidate["coverage_delta"],
+                         {"statements": 2, "branches": -2})
+        with self.assertRaisesRegex(ValueError, "coverage improvement"):
+            Q.qualify(changed, candidate,
+                      proof(changed, candidate, "B", "ACCEPT", baseline=original),
+                      KEY, baseline=original)
+
     def test_unsigned_changed_candidate_reason_fails(self):
         e = event()
         cand = copy.deepcopy(candidates(e)[0])
         cand["event_key"] = "a" * 64
         with self.assertRaisesRegex(ValueError, "native identity mismatch"):
             Q.qualify(e, cand, proof(e, cand), KEY)
+
+
+    def test_signed_receipt_rejects_required_check_state_relabel(self):
+        native = event()
+        candidate = candidates(native)[0]
+        signed_by_owner = proof(native, candidate)
+        altered = copy.deepcopy(native)
+        altered["result"]["required_receipts"][0]["state"] = "UNKNOWN"
+        with self.assertRaisesRegex(ValueError, "signed event payload mismatch"):
+            Q.qualify(altered, candidate, signed_by_owner, KEY)
+
+    def test_branch_gain_cannot_compensate_statement_regression(self):
+        original = event(1, outcome="success", covered=9)
+        changed = event(2, outcome="success", covered=8)
+        changed["coverage"]["branches"]["covered"] = 4
+        candidate = candidates(original, changed)[0]
+        self.assertEqual(candidate["coverage_delta"],
+                         {"statements": -1, "branches": 1})
+        with self.assertRaisesRegex(ValueError, "coverage improvement"):
+            Q.qualify(changed, candidate,
+                      proof(changed, candidate, "B", "ACCEPT", baseline=original),
+                      KEY, baseline=original)
 
 
 class DurableReplayAndOutbox(unittest.TestCase):
