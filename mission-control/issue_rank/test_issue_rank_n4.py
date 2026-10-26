@@ -57,6 +57,26 @@ class RedactedPulse(unittest.TestCase):
         self.assertTrue(r["delta"]["parser_identity_comparable"])
         self.assertEqual(r["formal_credit_delta"], 0)
 
+    def test_same_source_time_is_not_fabricated_as_n_plus_one(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            first = fixture()
+            first["fetched_at"] = "2026-10-26T10:00:00Z"
+            src = root / "same.json"
+            src.write_text(json.dumps(first), encoding="utf-8")
+            out = root / "out"
+            args = ["rank", "--snapshot", str(src), "--out", str(out),
+                    "--draws", "0", "--redact-private"]
+            with redirect_stdout(io.StringIO()):
+                self.assertEqual(ir.main(args), 0)
+                first_pulse = json.loads((out / "taxonomy_pulse.json").read_text())
+                args.extend(["--prev", str(out / "issue_rank.json")])
+                self.assertEqual(ir.main(args), 0)
+            repeated = json.loads((out / "taxonomy_pulse.json").read_text())
+            self.assertEqual(len(first_pulse["history_points"]), 1)
+            self.assertEqual(len(repeated["history_points"]), 1)
+            self.assertEqual(repeated["delta"]["formal_credit_delta"], 0)
+
     def test_parser_flags_and_previous_model_reach_taxonomy_outputs(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
