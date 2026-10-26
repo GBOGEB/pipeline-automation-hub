@@ -1,0 +1,36 @@
+name: Taxonomy Explorer — Playwright 3-view QA
+on:
+  pull_request:
+    paths:
+      - 'mission-control/issue_rank/taxonomy_browser_qa.py'
+      - '.github/workflows/taxonomy-browser-qa.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: taxonomy-browser-qa-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  browser-qa:
+    name: taxonomy 3-viewport privacy and interaction QA
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact PR source
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$HEAD"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Install pinned local QA tools
+        run: |
+          python -m pip install --disable-pip-version-check playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Execute synthetic no-network browser QA
+        working-directory: mission-control/issue_rank
+        run: python taxonomy_browser_qa.py
