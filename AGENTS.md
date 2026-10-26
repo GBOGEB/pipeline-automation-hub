@@ -66,16 +66,16 @@ The generated JADE outputs pin the git blob OIDs of the p-process files,
 `mission-control/jade_temple/data/CICD_DAG_POLICY.json`). Changing any of them turns JADE QA red by
 design until the outputs are regenerated.
 
-- After changing a pinned input, regenerate and verify in the same PR:
+- After changing a pinned input, and after every merge of master into your branch, regenerate and verify
+  in the same PR with one command. It runs the whole chain in dependency order, leaves fresh steps alone
+  and then runs every check (`--list` prints the chain, plain `regen.py` only checks):
   ```
-  python mission-control/jade_temple/tools/rolling5.py --write
-  python mission-control/jade_temple/tools/cicd_dag.py --write
-  python mission-control/jade_temple/site/build_cicd_dag.py
-  python mission-control/jade_temple/tools/rolling5.py --check
-  python mission-control/jade_temple/tools/cicd_dag.py --check
-  python mission-control/jade_temple/site/build_cicd_dag.py --check
+  python mission-control/jade_temple/tools/regen.py --write
   ```
+  If it reports `REGEN_DEFER launcher`, commit and run it again: the launcher reads its inputs at HEAD.
 - Never hand-edit `site/cicd_dag.*`, `site/rolling5.*` or `diagrams/CICD_DAG_*.mmd`; they are generated.
+- Line endings are hashed. `.gitattributes` keeps text LF on every platform; on Windows write generated
+  files with `newline="\n"` and `encoding="utf-8"`.
 
 ## Metric ownership
 
@@ -92,6 +92,9 @@ One canonical module per metric. Import these; do not re-implement them. Paths a
 | Rolling-5 window (NIRVANA rotation, streaks, golden thread, SOURCE_RED) | `mission-control/jade_temple/tools/rolling5.py` | `project()`, `verified_pulses()`, `append_pulse()`, `streak_stats()`, `nirvana()`, `source_red()` | `site/rolling5.json`, `site/rolling5.csv` |
 | CI/CD DAG + SIPOC (FUNCTION / SHA / OID lenses, DAG stats, red-trace EVERRED ratios) | `mission-control/jade_temple/tools/cicd_dag.py` | `project()`, `dag_stats()`, `critical_path()`, `gate_frontier()`, `everred_metrics()`, `scale_docks()` (delegates to `scale_dock.py`), `git_blob_oid()` | `site/cicd_dag.json`, `site/cicd_dag_crosswalk.csv`, `diagrams/CICD_DAG_*.mmd` |
 | CI/CD DAG page | `mission-control/jade_temple/site/build_cicd_dag.py` | renders `cicd_dag.project()`; no metrics of its own | `site/cicd_dag.html` |
+| Issue triway burndown (oldest / newest / connected orderings, explicit DoD/DoV checklist, owner-review queue) | `mission-control/qps-triage-ultra/issue-expedition/triway_burndown.py` | `checklist()`, `references()`, `priority()`, `project()`, `collect()` | `missioncontrol.issue_expedition.triway.v1` |
+| Issue burndown ranking (merged #907; typed reference graph, PageRank / betweenness / unblock pressure, lanes, per-repo / JADE / USER rollups, chained pulse ledger; does not own the triway implementation) | `mission-control/issue_rank/issue_rank.py` | `build_graph()`, `unblock_pressure()`, `pagerank()`, `betweenness()`, `rank()`, `diff()`, `append_ledger()` | `out/<scope>/issue_rank.json` (`jade.issue-rank.v1`, local only, gitignored) |
+| Issue/PR title-family grammar and recursive vocabulary (sole SSOT, additive; classification and linked candidates never alter issue state) | `mission-control/issue_rank/title_taxonomy.py` | `parse_title()`, `summary()`, `associated_families()`; consumed by issue_rank and triway | `jade.title-taxonomy.v1` / per-repo, JADE and USER family and leaf-cluster views |
 | DevOps fleet census (exact-head blob ids, lifecycle stages) | `mission-control/jade_temple/devops/census.py` | `fetch` / `scan` / `check` / `report` subcommands | `data/DEVOPS_CENSUS_N9.json`, `data/DEVOPS_OBJECTS_N9.json` |
 | Actions usage + performance metrics (per workflow / repo / FOCUS5 fleet: billable minutes, job run and queue time, job failure rate, failed-job minutes, class / band / event groupings) | `mission-control/jade_temple/devops/actions_metrics.py` | `aggregate()`, `project()`, `fetch` / `project` subcommands; reuses `bd_queue_wave.utc()` / `percentile()` / `queue_seconds()` | `data/ACTIONS_METRICS_FOCUS5.json` (`jade.devops.actions-metrics.v1`), `site/actions_metrics.csv` |
 
