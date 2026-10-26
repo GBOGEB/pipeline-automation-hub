@@ -423,11 +423,11 @@ def main(argv=None):
         import admission  # noqa: E402  (same scope rules the hub ledger uses)
         ledger = admission.build(a.root, None, None, {"entries": []}, {})
     else:
-        ledger = json.loads(Path(a.ledger or a.root / g.ADMISSION).read_text())
+        ledger = json.loads(Path(a.ledger or a.root / g.ADMISSION).read_text(encoding="utf-8"))
     doc = build(a.root, ledger, load_audit(a.root.resolve()))
     a.out.mkdir(parents=True, exist_ok=True)
-    (a.out / "depth.json").write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n")
-    (a.out / "depth.md").write_text(markdown(doc))
+    (a.out / "depth.json").write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    (a.out / "depth.md").write_text(markdown(doc), encoding="utf-8", newline="\n")
     print(json.dumps(doc["totals"], sort_keys=True))
     return doc
 

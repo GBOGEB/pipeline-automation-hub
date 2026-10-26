@@ -3,6 +3,7 @@
 Run from the repository root: python -m pytest federation/convergence/tests
 """
 import copy
+import hashlib
 import json
 import unittest
 
@@ -278,6 +279,157 @@ class ReviewFindings(unittest.TestCase):
         bad["fingerprints"][0]["closed"] = True
         with self.assertRaises(jsonschema.ValidationError):
             jsonschema.validate(bad, SCHEMA)
+
+
+ADDENDUM = converge.REPO_ROOT / "federation" / "convergence" / "evidence" / "20261025" / \
+    "C18_ABACUS_2367_SUPERSESSION_20261025.json"
+OLD_RECEIPT = EVIDENCE / "CODE_PURPLE_SCALED_CONVERGENCE_20261022.json"
+OLD_RECEIPT_SHA256 = "4d6eda634a13852f8c6517e96fe0714540dd52f1cb83ba3b97dea8cf3433a79b"
+NEW_RECEIPT = ADDENDUM.with_name("CODE_PURPLE_SCALED_CONVERGENCE_20261025.json")
+
+
+class C18Supersession(unittest.TestCase):
+    """W2 / C18: a supersession record keyed by item id resolves C18 only with exact-SHA evidence."""
+
+    def run_c18(self, resolutions):
+        data, _ = converge.load(EVIDENCE)
+        events = converge.normalise_events(data)
+        return next(c for c in converge.crosschecks(data, events, resolutions) if c["id"] == converge.C18_ID)
+
+    def record(self):
+        resolutions, _ = converge.load_resolutions(ADDENDUM)
+        return copy.deepcopy(resolutions)
+
+    def test_with_addendum_c18_superseded(self):
+        c = self.run_c18(self.record())
+        self.assertEqual(c["resolution"], "SUPERSEDED")
+        self.assertIn(c["result"], ("PASS", "WARN"))
+        self.assertNotIn("resolution_rejected", c)
+        ev = c["resolution_evidence"]
+        self.assertEqual((ev["old_head_sha"], ev["new_head_sha"], ev["merge_commit_sha"]),
+                         ("301960e92b12e687d6fe0245bf550d6b8ebb7cae", "15dd7b73553e431e9e84c857eb19d3a4070b80b3",
+                          "94a3c281e947dba8aed85a831a67ffc55309080a"))
+        self.assertEqual(ev["run_head_sha"], ev["old_head_sha"])
+
+    def test_failed_checks_keep_warn_not_pass(self):
+        c = self.run_c18(self.record())
+        self.assertGreater(c["resolution_evidence"]["checks_failed"], 0)
+        self.assertEqual(c["result"], "WARN")
+
+    def test_without_addendum_c18_fails(self):
+        for resolutions in (None, {}):
+            c = self.run_c18(resolutions)
+            self.assertEqual(c["result"], "FAIL")
+            self.assertNotIn("resolution", c)
+
+    def assert_rejected(self, mutate):
+        rec = self.record()
+        mutate(rec[converge.C18_ID])
+        c = self.run_c18(rec)
+        self.assertEqual(c["result"], "FAIL")
+        self.assertNotIn("resolution", c)
+        self.assertTrue(c["resolution_rejected"])
+        return c["resolution_rejected"]
+
+    def test_prefix_only_sha_rejected(self):
+        def mutate(r):
+            r["old_head"]["sha"] = "301960e92b12"
+        self.assertTrue(any("40-hex" in e for e in self.assert_rejected(mutate)))
+
+    def test_prefix_only_new_head_rejected(self):
+        def mutate(r):
+            r["new_head"]["sha"] = r["new_head"]["sha"][:12]
+        self.assert_rejected(mutate)
+
+    def test_mismatched_old_head_rejected(self):
+        def mutate(r):
+            r["old_head"]["sha"] = "0" * 40
+        self.assertTrue(any("reported prefix" in e for e in self.assert_rejected(mutate)))
+
+    def test_run_on_other_head_rejected(self):
+        def mutate(r):
+            r["run"]["head_sha"] = "f" * 40
+        self.assert_rejected(mutate)
+
+    def test_merge_without_new_head_parent_rejected(self):
+        def mutate(r):
+            r["merge_commit"]["parents"] = ["a" * 40]
+        self.assert_rejected(mutate)
+
+    def test_not_ancestor_rejected(self):
+        def mutate(r):
+            r["ancestry"]["behind_by"] = 3
+        self.assert_rejected(mutate)
+
+    def test_inconsistent_check_counts_rejected(self):
+        def mutate(r):
+            r["checks_at_new_head"]["failed"] = 9
+        self.assert_rejected(mutate)
+
+    def test_pass_only_when_failures_shown_non_required_and_unrelated(self):
+        rec = self.record()
+        chk = rec[converge.C18_ID]["checks_at_new_head"]
+        chk["failed_preexisting_on_base_parent"] += chk["failed_not_shown_unrelated"]
+        chk["failed_not_shown_unrelated"] = []
+        self.assertEqual(self.run_c18(rec)["result"], "PASS")
+        # unknown required set is NOT_OBSERVED, never "none required"
+        chk.pop("required_checks")
+        self.assertEqual(self.run_c18(rec)["result"], "WARN")
+        # missing unrelated list is UNKNOWN, not an empty list
+        rec2 = self.record()
+        rec2[converge.C18_ID]["checks_at_new_head"].pop("failed_not_shown_unrelated")
+        self.assertEqual(self.run_c18(rec2)["result"], "WARN")
+
+    def test_wrong_authority_addendum_refused(self):
+        import tempfile
+        from pathlib import Path
+        doc = json.loads(ADDENDUM.read_text(encoding="utf-8"))
+        doc["authority"] = "CHAT_TRANSCRIPT_UNVERIFIED"
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "bad.json"
+            p.write_text(json.dumps(doc), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                converge.load_resolutions(p)
+
+    @needs_jsonschema
+    def test_schema_valid_with_and_without_resolution(self):
+        for resolutions in (None, self.record()):
+            data, manifest = converge.load(EVIDENCE)
+            events = converge.normalise_events(data)
+            checks = converge.crosschecks(data, events, resolutions)
+            jsonschema.validate(converge.reduce(data, manifest, checks, events), SCHEMA)
+
+    @needs_jsonschema
+    def test_schema_rejects_superseded_fail(self):
+        receipt = json.loads(NEW_RECEIPT.read_text(encoding="utf-8"))
+        jsonschema.validate(receipt, SCHEMA)
+        c18 = next(c for c in receipt["crosschecks"] if c["id"] == converge.C18_ID)
+        c18["result"] = "FAIL"
+        with self.assertRaises(jsonschema.ValidationError):
+            jsonschema.validate(receipt, SCHEMA)
+
+
+class Receipts(unittest.TestCase):
+    def test_old_receipt_byte_identical(self):
+        raw = OLD_RECEIPT.read_bytes()
+        self.assertEqual(hashlib.sha256(raw).hexdigest(), OLD_RECEIPT_SHA256)
+        sidecar = OLD_RECEIPT.with_name(OLD_RECEIPT.name + ".sha256").read_text(encoding="utf-8")
+        self.assertEqual(sidecar, f"{OLD_RECEIPT_SHA256}  {OLD_RECEIPT.name}\n")
+
+    def test_no_addendum_reproduces_old_receipt_bytes(self):
+        old = json.loads(OLD_RECEIPT.read_text(encoding="utf-8"))
+        _, receipt, _ = build()
+        receipt["generated_utc"] = old["generated_utc"]
+        body = json.dumps(receipt, indent=2, sort_keys=False) + "\n"
+        self.assertEqual(body.encode("utf-8"), OLD_RECEIPT.read_bytes())
+
+    def test_new_receipt_sidecar_and_input_digest(self):
+        raw = NEW_RECEIPT.read_bytes()
+        self.assertNotIn(b"\r\n", raw)
+        sidecar = NEW_RECEIPT.with_name(NEW_RECEIPT.name + ".sha256").read_text(encoding="utf-8")
+        self.assertEqual(sidecar, f"{hashlib.sha256(raw).hexdigest()}  {NEW_RECEIPT.name}\n")
+        entry = json.loads(raw)["inputs"][-1]
+        self.assertEqual(entry["sha256"], hashlib.sha256(ADDENDUM.read_bytes()).hexdigest())
 
 
 if __name__ == "__main__":

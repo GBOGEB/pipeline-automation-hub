@@ -15,8 +15,8 @@ class PulseTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         samples = ROOT / 'samples'
-        cls.g0 = json.loads((samples / 'fleet_g0.json').read_text())
-        cls.g1 = json.loads((samples / 'fleet_g1.json').read_text())
+        cls.g0 = json.loads((samples / 'fleet_g0.json').read_text(encoding="utf-8"))
+        cls.g1 = json.loads((samples / 'fleet_g1.json').read_text(encoding="utf-8"))
 
     def test_fixed_catalog_and_growth(self):
         report = m.rollup(self.g0, self.g1, workers=2, packet_budget=12)
@@ -70,7 +70,7 @@ class PulseTests(unittest.TestCase):
             b = m.emit(report, p)
             self.assertEqual(a, b)
             self.assertEqual(len(a),64)
-            self.assertIn('G1', (p / 'pulse_rollup.md').read_text())
+            self.assertIn('G1', (p / 'pulse_rollup.md').read_text(encoding="utf-8"))
 
     def test_counterfactual_denominator_change_rejected(self):
         from unittest.mock import patch
@@ -102,7 +102,7 @@ class PulseTests(unittest.TestCase):
             proc = subprocess.run(cmd, capture_output=True, text=True,
                                   check=True, timeout=10)
             self.assertEqual(json.loads(proc.stdout)['scale_plan_count'], 6)
-            self.assertEqual(json.loads((out / 'pulse_rollup.json').read_text())['source_git_sha'], 'a' * 40)
+            self.assertEqual(json.loads((out / 'pulse_rollup.json').read_text(encoding="utf-8"))['source_git_sha'], 'a' * 40)
 
     def test_python_main_guard_executes(self):
         import contextlib

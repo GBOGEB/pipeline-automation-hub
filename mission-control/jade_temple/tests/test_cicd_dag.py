@@ -27,6 +27,7 @@ def _load(name, rel):
 cd = _load("cicd_dag_under_test", "tools/cicd_dag.py")
 page = _load("build_cicd_dag_under_test", "site/build_cicd_dag.py")
 MODEL = cd.project(ROOT)
+OID = r"^(?:[0-9a-f]{40}|" + cd.PB.MARK + ")$"  # a private repo's ids are PB.MARK (counts only)
 SCOPES = {s["scope"]: s for s in MODEL["scopes"]}
 POLICY = json.loads((ROOT / cd.POLICY).read_text(encoding="utf-8"))
 CENSUS = cd.load_census(ROOT, POLICY)
@@ -68,7 +69,7 @@ class Identity(unittest.TestCase):
     def test_bind_objects_fails_closed_on_missing_file_or_symbol(self):
         with tempfile.TemporaryDirectory() as tmp:
             t = Path(tmp)
-            (t / "a.py").write_text("def real():\n    pass\n", encoding="utf-8")
+            (t / "a.py").write_text("def real():\n    pass\n", encoding="utf-8", newline="\n")
             ok = cd.bind_objects(t, [{"id": "X", "path": "a.py", "symbol": "real"}])
             self.assertRegex(ok["X"]["oid"], r"^[0-9a-f]{40}$")
             with self.assertRaisesRegex(ValueError, "no def ghost"):
@@ -168,9 +169,9 @@ class Projection(unittest.TestCase):
                     if b["oid"] is None:
                         self.assertIn(b["status"], {"EXTERNAL_UNOBSERVED", "NOT_IN_CHECKOUT"})
                     else:
-                        self.assertRegex(b["oid"], r"^[0-9a-f]{40}$")
+                        self.assertRegex(b["oid"], OID)
                     if b["status"] == "BOUND_AT_CENSUS_HEAD" and b["at"] is not None:
-                        self.assertRegex(b["at"], r"^[0-9a-f]{40}$")
+                        self.assertRegex(b["at"], OID)
 
     def test_total_gate_metrics_agree_with_rolling5(self):
         g = SCOPES["TOTAL"]["metrics"]["gates"]
@@ -195,7 +196,8 @@ class Projection(unittest.TestCase):
             if s["scope"].startswith("REPO:"):
                 g = s["metrics"]["gates"]
                 self.assertTrue(set(g["root_red"]) <= set(g["source_red"]), s["scope"])
-                self.assertTrue(g["root_red"], s["scope"])
+                # A repo with any red gate has a root red; a repo with none has none.
+                self.assertEqual(bool(g["root_red"]), bool(g["source_red"]), s["scope"])
 
     def test_temporal_edges_close_the_p_loop_without_a_cycle(self):
         t = [x for x in SCOPES["TOTAL"]["edges"] if x["type"] == "TEMPORAL"]
@@ -222,7 +224,7 @@ class Census(unittest.TestCase):
             shutil.copy(ROOT / cfg["census"], t / cfg["census"])
             obj = json.loads((ROOT / cfg["objects"]).read_text(encoding="utf-8"))
             obj["census_digest_sha256"] = "f" * 64
-            (t / cfg["objects"]).write_text(json.dumps(obj), encoding="utf-8")
+            (t / cfg["objects"]).write_text(json.dumps(obj), encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError, "not bound to the pinned census"):
                 cd.load_census(t, POLICY)
 
@@ -430,7 +432,7 @@ class Outputs(unittest.TestCase):
             buf = io.StringIO()
             with redirect_stdout(buf):
                 self.assertEqual(cd.main(["--check"], root=root), 0, buf.getvalue())
-                (root / cd.OUT_CSV).write_text("tampered\n", encoding="utf-8")
+                (root / cd.OUT_CSV).write_text("tampered\n", encoding="utf-8", newline="\n")
                 self.assertEqual(cd.main(["--check"], root=root), 1)
             self.assertIn("CICD_DAG_FIRST_RED", buf.getvalue())
             self.assertIn("none of the pinned OIDs/digests moved", buf.getvalue())
@@ -459,7 +461,7 @@ class Outputs(unittest.TestCase):
                 self.assertIn(drifted[2] + " (sha256 ", out)
                 self.assertIn("regenerate with: " + cd.REGEN_CMD, out)
                 self.assertNotIn("tools/rolling5.py (git blob", out)
-            (root / cd.OUT_JSON).write_text("not json", encoding="utf-8")
+            (root / cd.OUT_JSON).write_text("not json", encoding="utf-8", newline="\n")
             self.assertEqual(cd.source_drift(root, cd.project(root)),
                              [f"{cd.OUT_JSON} (missing or unreadable: no pins to compare)"])
 

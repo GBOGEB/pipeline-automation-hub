@@ -29,6 +29,7 @@ import json
 import os
 import re
 import subprocess
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -72,20 +73,21 @@ sd, bd = owner('scale_dock'), owner('bd_queue_wave')
 class GhReader(bd.GitHubReader):
     """bd_queue_wave.GitHubReader over the gh CLI login; paginate() and its total_count check are inherited."""
 
-    def __init__(self, run=subprocess.run):
+    def __init__(self, run=subprocess.run, sleep=time.sleep):
         super().__init__(token='')
-        self.run = run
+        self.run, self.sleep = run, sleep
 
     def get(self, route):
         if not route.startswith('/') or '..' in route or '\\' in route:
             raise ValueError('noncanonical API path')
         # A stale shell token would override the keyring login; gh alone authenticates.
         env = {k: v for k, v in os.environ.items() if k not in ('GITHUB_TOKEN', 'GH_TOKEN')}
-        for _ in range(3):  # bounded retry on GitHub 5xx only; any other failure is final
+        for attempt in range(3):  # bounded retry on 5xx/transport errors; a 4xx answer is final
             out = self.run(['gh', 'api', route[1:]], capture_output=True, text=True,
                            encoding='utf-8', env=env, timeout=120)
-            if out.returncode == 0 or not re.search(r'\(HTTP 5\d\d\)', out.stderr or ''):
+            if out.returncode == 0 or re.search(r'\(HTTP 4\d\d\)', out.stderr or '') or attempt == 2:
                 break
+            self.sleep(5 * (attempt + 1))
         if out.returncode != 0:
             raise OSError(f"gh api {route.split('?')[0]} exit {out.returncode}")
         return json.loads(out.stdout)
@@ -148,9 +150,12 @@ def observe_repo(reader, repo, roots, previous):
     h = owner('harvest')
     branch, head = head_of(reader, repo)
     runs = reader.paginate(f'/repos/{repo}/actions/runs?head_sha={head}', key='workflow_runs')
-    chosen, seen = {}, 0
+    chosen, seen, running = {}, 0, 0
     for run in runs:
         sd.require(run.get('head_sha') == head, repo + ' run exact-head mismatch')
+        if run.get('status') != 'completed':
+            running += 1  # its job list is still growing; none of its jobs is eligible yet
+            continue
         for job in reader.paginate(f"/repos/{repo}/actions/runs/{run['id']}/jobs", key='jobs'):
             sd.require(job.get('head_sha') == head, repo + ' job exact-head mismatch')
             job.setdefault('workflow_name', run.get('name'))
@@ -188,7 +193,7 @@ def observe_repo(reader, repo, roots, previous):
                        root_id=before.get('root_id'), priority=before['priority'], family=before['family'])
         findings.append(row)
     return {'branch': branch, 'head': head, 'findings': findings, 'eligible': completed,
-            'provenance': {'branch': branch, 'runs': len(runs), 'jobs_seen': seen, 'job_identities': len(chosen),
+            'provenance': {'branch': branch, 'runs': len(runs), 'runs_in_progress': running, 'jobs_seen': seen, 'job_identities': len(chosen),
                            'completed': completed, 'incomplete': len(chosen) - completed}}
 
 

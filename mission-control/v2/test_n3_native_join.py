@@ -70,12 +70,12 @@ class NativeJoinTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             source=Path(tmp)/'native.json'
             target=Path(tmp)/'reports'/'metric.json'
-            source.write_text(json.dumps(self.s))
+            source.write_text(json.dumps(self.s), encoding="utf-8", newline="\n")
             with mock.patch.object(sys, 'argv', ['n3_native_join',str(source),'--out',str(target)]):
                 with redirect_stdout(io.StringIO()) as capture:
                     n3_native_join.main()
-            self.assertEqual(json.loads(capture.getvalue()),json.loads(target.read_text()))
-            self.assertEqual(json.loads(target.read_text())['merge_admission'],'HOLD')
+            self.assertEqual(json.loads(capture.getvalue()),json.loads(target.read_text(encoding="utf-8")))
+            self.assertEqual(json.loads(target.read_text(encoding="utf-8"))['merge_admission'],'HOLD')
             with mock.patch.object(sys, 'argv', ['n3_native_join',str(source)]):
                 with redirect_stdout(io.StringIO()) as capture:
                     n3_native_join.main()
@@ -84,7 +84,7 @@ class NativeJoinTests(unittest.TestCase):
     def test_direct_module_cli_main_proves_entrypoint(self):
         with tempfile.TemporaryDirectory() as tmp:
             source=Path(tmp)/'snapshot.json'
-            source.write_text(json.dumps(self.s))
+            source.write_text(json.dumps(self.s), encoding="utf-8", newline="\n")
             with mock.patch.object(sys,'argv',['n3_native_join',str(source)]):
                 with redirect_stdout(io.StringIO()) as capture:
                     runpy.run_path(str(HERE/'n3_native_join.py'),run_name='__main__')

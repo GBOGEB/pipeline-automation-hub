@@ -271,7 +271,7 @@ class Main(unittest.TestCase):
     def run_main(self, environ, routes):
         with tempfile.TemporaryDirectory() as d:
             reg = pathlib.Path(d, "r.json")
-            reg.write_text(json.dumps(registry()), encoding="utf-8")
+            reg.write_text(json.dumps(registry()), encoding="utf-8", newline="\n")
             code = tc.main(["--registry", str(reg), "--out", d], environ, Fake(routes), NOW)
             receipt = pathlib.Path(d, "token_census.json").read_text(encoding="utf-8")
             summary = pathlib.Path(d, "token_census.md").read_text(encoding="utf-8")

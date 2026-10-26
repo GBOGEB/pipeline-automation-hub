@@ -238,7 +238,7 @@ def emit(current, previous, outdir):
     manifest = {"schema": "gogreen.federation.rollup.manifest.v1",
                 "sha256": {"rollup.json": hashlib.sha256(data).hexdigest()},
                 "pulse_id": out["pulse_id"], "authority_transfer": False}
-    (target / "manifest.json").write_text(canonical(manifest) + "\n", encoding="utf8")
+    (target / "manifest.json").write_text(canonical(manifest) + "\n", encoding="utf8", newline="\n")
     return out
 
 

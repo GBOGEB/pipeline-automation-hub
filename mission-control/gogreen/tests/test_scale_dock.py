@@ -241,8 +241,8 @@ class ScaleDockTests(unittest.TestCase):
                 raw=(Path(a)/name).read_bytes()
                 self.assertEqual(row['bytes'],len(raw))
                 self.assertEqual(row['sha256'],hashlib.sha256(raw).hexdigest())
-            self.assertIn('N+1 = N?', (Path(a)/'scale-dock.mmd').read_text())
-            self.assertIn('<table>', (Path(a)/'scale-dock.html').read_text())
+            self.assertIn('N+1 = N?', (Path(a)/'scale-dock.mmd').read_text(encoding="utf-8"))
+            self.assertIn('<table>', (Path(a)/'scale-dock.html').read_text(encoding="utf-8"))
     def test_html_escapes_ids(self):
         x=fixture()
         for p in x['pulses']:p['findings'][0]['id']='<script>attack()</script>'
@@ -337,7 +337,7 @@ class DockTests(unittest.TestCase):
         r=dock.evaluate(docked())
         with tempfile.TemporaryDirectory() as a:
             dock.emit(r,Path(a),A)
-            page=(Path(a)/'scale-dock.html').read_text();graph=(Path(a)/'scale-dock.mmd').read_text()
+            page=(Path(a)/'scale-dock.html').read_text(encoding="utf-8");graph=(Path(a)/'scale-dock.mmd').read_text(encoding="utf-8")
         self.assertIn('Docked metrics',page);self.assertIn('75.0%',page)
         self.assertIn('EVERRED root census - DOCKED_READ_ONLY_PROJECTION',graph)
         self.assertIn('N+1 = N?',graph)

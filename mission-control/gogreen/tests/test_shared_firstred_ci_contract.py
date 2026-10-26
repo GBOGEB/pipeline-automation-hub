@@ -43,62 +43,62 @@ class SharedFirstRedContractTests(unittest.TestCase):
         self.assertIsNotNone(spec.loader)
 
     def test_test_import_points_to_production_sibling(self):
-        self.assertTrue(safe_import_binding(TEST_FILE.read_text()))
+        self.assertTrue(safe_import_binding(TEST_FILE.read_text(encoding="utf-8")))
 
     def test_existing_test_parses(self):
-        ast.parse(TEST_FILE.read_text())
+        ast.parse(TEST_FILE.read_text(encoding="utf-8"))
 
     def test_hostile_test_relative_path_rejected(self):
-        mutated = TEST_FILE.read_text().replace(CORRECT, WRONG)
+        mutated = TEST_FILE.read_text(encoding="utf-8").replace(CORRECT, WRONG)
         self.assertFalse(safe_import_binding(mutated))
 
     def test_missing_producer_link_rejected(self):
-        self.assertFalse(safe_import_binding(TEST_FILE.read_text().replace(CORRECT, "")))
+        self.assertFalse(safe_import_binding(TEST_FILE.read_text(encoding="utf-8").replace(CORRECT, "")))
 
     def test_all_workflows_install_signature_dependency(self):
         for path in TARGETS:
             with self.subTest(path=path):
-                self.assertTrue(dependency_before_tests((ROOT / path).read_text()))
+                self.assertTrue(dependency_before_tests((ROOT / path).read_text(encoding="utf-8")))
 
     def test_hostile_omitted_dependency_rejected(self):
         for path in TARGETS:
-            text = (ROOT / path).read_text()
+            text = (ROOT / path).read_text(encoding="utf-8")
             with self.subTest(path=path):
                 self.assertFalse(dependency_before_tests(text.replace(PIN, "no-crypto-pin")))
 
     def test_duplicate_install_step_rejected(self):
-        text = (ROOT / TARGETS[0]).read_text()
+        text = (ROOT / TARGETS[0]).read_text(encoding="utf-8")
         self.assertFalse(dependency_before_tests(text + "\n" +
             "Install pinned GoGREEN receipt-signature dependency"))
 
     def test_dependency_installed_before_suite(self):
         for path in TARGETS:
             with self.subTest(path=path):
-                text = (ROOT / path).read_text()
+                text = (ROOT / path).read_text(encoding="utf-8")
                 self.assertLess(text.index(PIN), text.index("-m unittest"))
 
     def test_no_weakening_by_unconditional_skip(self):
         for path in TARGETS:
             with self.subTest(path=path):
-                text = (ROOT / path).read_text()
+                text = (ROOT / path).read_text(encoding="utf-8")
                 self.assertNotRegex(text, r"(?:--ignore|skipIf|--maxfail=0)")
 
     def test_read_only_workflow_permissions_preserved(self):
         for path in TARGETS:
             with self.subTest(path=path):
-                text = (ROOT / path).read_text()
+                text = (ROOT / path).read_text(encoding="utf-8")
                 self.assertNotRegex(text, r"(?m)^\\s*(?:contents|actions|pull-requests):\\s*write\\s*$")
 
     def test_checkout_still_source_bound(self):
         for path in TARGETS:
             with self.subTest(path=path):
-                text = (ROOT / path).read_text()
+                text = (ROOT / path).read_text(encoding="utf-8")
                 self.assertIn("github.event.pull_request.head.sha || github.sha", text)
 
     def test_no_test_discovery_diversion(self):
         for path in TARGETS:
             with self.subTest(path=path):
-                self.assertIn("mission-control/gogreen/tests", (ROOT / path).read_text())
+                self.assertIn("mission-control/gogreen/tests", (ROOT / path).read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
